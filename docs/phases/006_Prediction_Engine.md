@@ -19,7 +19,7 @@ Product truth this phase implements:
 | Topic | Owner |
 | --- | --- |
 | Blend, features, show gate, learning, metrics | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5 |
-| What Jev receives; opt-in sharing | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 3.2 |
+| What Jev receives; the Jev sharing setting (on by default) | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 3.2 |
 | Tables and columns | `docs/product/Language_And_Voice_Schema.md` § 6.2c–6.2e |
 | Strip layout, cap of four, zero layout shift | `docs/product/Motor_Grid_And_Art.md` § 2 |
 | Entity representation in a Jev request | `docs/product/Personal_Entities.md` § Enrichment |
@@ -221,7 +221,7 @@ they speak sentences.
 
 ---
 
-## Slice 5 — Jev reranker behind opt-in sharing
+## Slice 5 — Jev reranker behind the sharing setting
 
 Goal: with Jev sharing on, Jev re-ranks the shortlist on meaning; with it
 off, nothing leaves the device.
@@ -234,8 +234,8 @@ Files: `src/worker/index.js` (a rank route that forwards to
 `https://api.typesafe.ai/v1/systemone` with the secret and logs no body),
 `public/shared/jev.mjs` (new: `buildJevRequest`, pure),
 `public/shared/funnel.mjs` (re-rank with `with_jev`),
-`public/board.js` (Parent corner: Jev sharing toggle, off by default,
-offered at setup), `src/worker/index.test.mjs`, `jev.test.mjs` (new, in
+`public/board.js` (Parent corner: Jev sharing toggle, on by
+default), `src/worker/index.test.mjs`, `jev.test.mjs` (new, in
 src/board).
 
 1. `buildJevRequest(shortlist, sentence, partnerWords)` returns `null`
@@ -274,7 +274,7 @@ Proof command: `scripts/test.sh` on `jev.test.mjs` and
 Missing proof / waiver: the live smoke waits for the key.
 
 Done when: the contract test passes, the toggle is in the Parent corner and
-off by default, and with sharing on a person sees the strip re-rank on a
+on by default, and with sharing on a person sees the strip re-rank on a
 real device.
 
 ---

@@ -171,7 +171,7 @@ Instead of forcing the learner into a single rigid grid:
 ### 4.5 Dual-Engine Predictive Intelligence
 - **The Intelligence Breakthrough:** Blending ultra-low-latency System One semantic classification (TypeSafe Jev) with private, on-device behavioral memory (SQLite/IndexedDB).
 - **DECIDED 2026-09-22** (not built). The local engine owns context (time, occasion, habit, phrase history); Jev owns meaning (does the word fit the sentence, and what the partner said when listening heard it). The blend learns each child's weights from their own picks, on the device.
-- **DECIDED 2026-09-22** (not built). The family controls it: Jev sharing is opt-in; listening is off unless turned on, and then runs only while the Listen key is on.
+- **DECIDED 2026-09-22** (not built). The family controls it: Jev sharing is on by default and can be turned off; listening is off unless turned on, and then runs only while the Listen key is on.
 - **DECIDED 2026-09-22** (direction, not built). Prediction as a fading prompt: likely core words are haloed in their home cell and the halo fades as independent use grows; fringe words get the strip shortcut.
 - Full specification: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 

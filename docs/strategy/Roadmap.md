@@ -26,7 +26,7 @@ Next slice: 1 — core board. See `docs/phases/README.md`.
 
 **DECIDED 2026-09-22** (not built). Owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 
-1. 006 — Prediction engine: fix local time, track sentences, log impressions and measure, the learned local model, on-device learning, then Jev behind opt-in sharing (`docs/phases/006_Prediction_Engine.md`).
+1. 006 — Prediction engine: fix local time, track sentences, log impressions and measure, the learned local model, on-device learning, then Jev behind the sharing setting (on by default) (`docs/phases/006_Prediction_Engine.md`).
 2. 007 — Occasions: breakfast experiment (LLM vs. Jev), then an occasion prior and each child's own windows (`docs/phases/007_Occasions.md`).
 3. 008 — Partner listening: setting, Listen key, on-device speech, partner words for one turn (`docs/phases/008_Partner_Listening.md`).
 4. No phase yet: core-cell halos as a fading prompt and the SLP independence report (strategy doc § 7.4).

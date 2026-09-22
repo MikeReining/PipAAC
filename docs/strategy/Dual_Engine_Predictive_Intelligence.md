@@ -36,7 +36,7 @@ Transforming Augmentative and Alternative Communication (AAC) from an obsolete, 
 |  - Local engine owns context: time, occasion, habit, phrase history, recency      |
 |  - Jev owns meaning: does this word fit the sentence (and what the partner said)  |
 |  - The blend learns each child's weights from their own taps, on the device       |
-|  - Jev sharing is opt-in; listening is off unless the family turns it on          |
+|  - Jev sharing is on by default (can be turned off); listening is off unless on   |
 |  - Predictive strip: at most four fringe tiles; core cells never reorder         |
 |                                                                                   |
 +-----------------------------------------------------------------------------------+
@@ -62,7 +62,7 @@ AAC prediction has historically been crippled by a false dichotomy between two f
 | **Latency** | Instant (0ms) but semantically useless | High (500ms–2,000ms+ token stream) | **Local first paint <50 ms; Jev ~100 ms, never blocking** |
 | **Economics** | Free (baked into offline app) | Prohibitive (\$15–\$50/month per child) | **Low.** Jev bills input tokens only (\$0.042/Mtok); estimate a few dollars per child-year at heavy use, not measured |
 | **Motor Memory** | Jumps buttons around unpredictably | Incompatible with fixed grid layouts | **Core cells stay put. Halos mark words already on the grid. A strip of at most four tiles offers words that are not.** |
-| **Privacy** | Offline / Private | Requires sending student dialogue to LLM clouds | **History never leaves the device.** Opt-in Jev sharing sends only the shortlist and the sentence being built (plus partner words when listening is on). |
+| **Privacy** | Offline / Private | Requires sending student dialogue to LLM clouds | **History never leaves the device.** Jev sharing (on by default, can be turned off) sends only the shortlist and the sentence being built (plus partner words when listening is on). |
 
 ### The Core Mathematical Insight
 Human speech generation in an AAC environment is **not an open-ended prose generation problem**. An AAC learner has a defined, personalized universe of words:
@@ -102,8 +102,8 @@ all arithmetic and time logic in code.
 
 ### 3.2 What Jev receives — and never receives
 
-Jev sharing is a per-profile setting, **off until an adult turns it on**
-(offered during setup). Off means no Jev call, ever; the strip runs on the
+Jev sharing is a per-profile setting, **on by default**; a parent can turn
+it off in the Parent corner. Off means no Jev call, ever; the strip runs on the
 local engine alone. No zero-retention contract is assumed; the request is
 anonymous by construction.
 
@@ -444,7 +444,7 @@ guess. Pip answers it by design:
   - Two-model division: Muse Spark (`meta/muse-spark-1.3-contributor` via OpenRouter) enriches each personal entity once at write time; Jev ranks candidates at read time. Enrichment output is a cached hint with provenance, not stored truth.
 - **DECIDED 2026-09-22** (founder review; not built):
   - Jev is a meaning-only reranker: it receives the shortlist and the sentence so far, plus partner words only when listening heard them. No time, occasion, or history (§ 3.2).
-  - Jev sharing is an opt-in profile setting; off means no call. No zero-retention contract (§ 3.2).
+  - Jev sharing is a profile setting, on by default; a parent can turn it off, and off means no call. No zero-retention contract (§ 3.2).
   - Blend: one log-linear model over the shortlist with an explicit `none`; Jev enters as `log P_Jev`; weights learned per child on the device, in two sets (`local_only`, `with_jev`) (§ 5.3–5.5).
   - Show gate on blended probabilities, not Jev confidence (§ 5.4).
   - Sentences are tracked; a cleared sentence is a restart and not a training example (§ 5.5).

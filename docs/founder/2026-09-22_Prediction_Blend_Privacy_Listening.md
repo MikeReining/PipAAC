@@ -13,9 +13,10 @@ below.
 1. Prediction is the category-defining feature. Suggesting likely words is
    not spoon-feeding when the suggestions are usually right and the child
    still chooses. Communication rate is the problem being solved.
-2. **Jev sharing is an opt-in setting.** No enterprise zero-retention
+2. **Jev sharing is a setting, on by default** (founder ruling, same day:
+   "on by default"); a parent can turn it off. No enterprise zero-retention
    contract. What goes to Jev is anonymous: TypeSafe does not know the app
-   or the user. Founder expects everyone to turn it on.
+   or the user. Founder expects almost no one to turn it off.
 3. **Jev gets no time of day and no history.** Jev judges meaning. Local
    code owns time, occasion, habit, and everything the child said before.
 4. **The device is not always listening.** Listening can be off for good in
@@ -58,7 +59,7 @@ below.
 ## Routed decisions
 
 - **DECIDED 2026-09-22** (not built). Blend, learning, confidence gate,
-  Jev request contents, opt-in sharing:
+  Jev request contents, Jev sharing on by default:
   `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 3, § 5.
 - **DECIDED 2026-09-22** (not built). Listening modes and the Listen key:
   `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 6; layout in

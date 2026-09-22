@@ -565,8 +565,8 @@ Jev answered after the 150 ms display window: logged, not shown.
 **DECIDED 2026-09-22** (not built). Per profile.
 
 ```sql
-ALTER TABLE learner_profile ADD COLUMN jev_sharing INTEGER NOT NULL DEFAULT 0
-  CHECK (jev_sharing IN (0, 1));           -- opt-in; 0 = never call Jev
+ALTER TABLE learner_profile ADD COLUMN jev_sharing INTEGER NOT NULL DEFAULT 1
+  CHECK (jev_sharing IN (0, 1));           -- on by default; 0 = never call Jev
 ALTER TABLE learner_profile ADD COLUMN listening INTEGER NOT NULL DEFAULT 0
   CHECK (listening IN (0, 1));             -- 0 = no Listen key, no mic request
 
