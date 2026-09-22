@@ -46,7 +46,7 @@ test("sentence invites an entity: 'play with' offers Cooper", () => {
   const before = snapshotCoreCells(db);
 
   const candidates = stripCandidates(db, [S("play"), S("with")], NOW);
-  assert.ok(candidates.includes(cooper.id));
+  assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
   assert.ok(candidates.length <= STRIP_CAP);
   assert.deepEqual(snapshotCoreCells(db), before);
 });
@@ -57,7 +57,7 @@ test("recent selection makes Cooper eligible even without a noun-inviting tail",
   logSelection(db, "entity", cooper.id, NOW - 60_000);
 
   const candidates = stripCandidates(db, [S("happy")], NOW); // adjective tail — nothing invited
-  assert.ok(candidates.includes(cooper.id));
+  assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
 });
 
 test("low-signal state renders no strip", () => {
@@ -82,7 +82,7 @@ test("cap and ordering: at most 4 tiles, invited+recent outranks stale", () => {
 
   const afterVerb = stripCandidates(db, [S("want")], NOW);
   assert.ok(afterVerb.length <= STRIP_CAP);
-  assert.ok(afterVerb.includes(cooper));
+  assert.ok(afterVerb.some((c) => c.kind === "entity" && c.id === cooper));
   // all six are eligible by invitation; the cap keeps the strip at 4
   assert.equal(afterVerb.length, STRIP_CAP);
 });

@@ -67,7 +67,7 @@ test("the save moves nothing: sense count, coordinate table, enrichment rows", (
   });
 
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sense").get().n, sensesBefore);
-  assert.equal(sensesBefore, 75);
+  assert.equal(sensesBefore, 599);
   assert.deepEqual(snapshotCoreCells(db), cellsBefore);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM entity_enrichment").get().n, 0);
 

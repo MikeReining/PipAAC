@@ -109,10 +109,12 @@ Done when: the compare and the candidate assertion pass, and a person can see Co
 
 ## Out of scope
 
-The illustrated launch library. **DECIDED 2026-09-22** (not built). Do not draw
-the 599 words, and do not load the 524 fringe records into the app, until
-slices 2 and 3 have passed. The catalog in `docs/product/Initial_Vocabulary_600.md`
-remains the source for that later work. A failed Cooper proof cancels it.
+The illustrated launch library. **DECIDED 2026-09-22, amended same day.** Do
+not draw the 599 words until the slices pass — but the 524 fringe records
+*are* loaded on-device as labels (founder ruling: empty zones are a broken
+first-run experience; the gate was on illustrations, which labels don't
+need). The catalog in `docs/product/Initial_Vocabulary_600.md` remains the
+source for illustration work.
 
 **PROPOSED**, not this phase. A parent or teacher on their own phone, which will not share the child's Apple ID:
 

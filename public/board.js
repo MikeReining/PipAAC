@@ -1,7 +1,7 @@
 /**
  * Board runtime: renders grid60 from the on-device SQLite, sentence bar,
- * zones, and the name+photo add flow. Speech is device TTS
- * (speechSynthesis) — the proof board has no bundled clips.
+ * zones, and the name+photo add flow. Catalog senses speak via bundled
+ * clips (schema §7); personal entities use device TTS.
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
@@ -84,23 +84,39 @@ $("clear").addEventListener("click", () => {
 async function renderStrip() {
   const strip = $("strip");
   strip.innerHTML = "";
-  const ids = stripCandidates(
+  const items = stripCandidates(
     db,
     sentence.map((s) => ({ kind: s.kind, id: s.id })),
   );
-  for (const id of ids) {
-    const e = ALL(db, "SELECT * FROM personal_entity WHERE id = ?", [id])[0];
-    const el = document.createElement("div");
-    el.className = "tile";
-    const url = await loadPhotoURL(e.photo_key);
-    if (url) {
-      const img = document.createElement("img");
-      img.src = url;
-      el.appendChild(img);
+  for (const c of items) {
+    if (c.kind === "entity") {
+      const e = ALL(db, "SELECT * FROM personal_entity WHERE id = ?", [c.id])[0];
+      const el = document.createElement("div");
+      el.className = "tile";
+      const url = await loadPhotoURL(e.photo_key);
+      if (url) {
+        const img = document.createElement("img");
+        img.src = url;
+        el.appendChild(img);
+      }
+      el.appendChild(document.createTextNode(e.spoken_name));
+      el.addEventListener("click", () => tap(e.spoken_name, "entity", e.id));
+      strip.appendChild(el);
+    } else {
+      const w = ALL(
+        db,
+        `SELECT s.id, l.text AS label, s.fitzgerald_role
+         FROM sense s JOIN label l ON l.sense_id = s.id
+           AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+         WHERE s.id = ?`,
+        [c.id],
+      )[0];
+      const el = document.createElement("div");
+      el.className = `tile r-${w.fitzgerald_role}`;
+      el.textContent = w.label;
+      el.addEventListener("click", () => tap(w.label, "sense", w.id));
+      strip.appendChild(el);
     }
-    el.appendChild(document.createTextNode(e.spoken_name));
-    el.addEventListener("click", () => tap(e.spoken_name, "entity", e.id));
-    strip.appendChild(el);
   }
 }
 
@@ -174,13 +190,17 @@ function renderZoneList() {
   const zones = ["My Words", ...CATEGORIES];
   for (const z of zones) {
     const cat = z === "My Words" ? null : z;
-    const n = ALL(
+    const nEntities = ALL(
       db,
       cat === null
         ? "SELECT COUNT(*) AS n FROM personal_entity WHERE category IS NULL"
         : "SELECT COUNT(*) AS n FROM personal_entity WHERE category = ?",
       cat === null ? [] : [cat],
     )[0].n;
+    const nFringe = cat === null
+      ? 0
+      : ALL(db, "SELECT COUNT(*) AS n FROM sense WHERE category = ?", [cat])[0].n;
+    const n = nEntities + nFringe;
     const el = document.createElement("button");
     el.className = "zone-item";
     el.textContent = `${z} (${n})`;
@@ -204,13 +224,32 @@ async function renderZone(title, category) {
       : "SELECT * FROM personal_entity WHERE category = ? ORDER BY spoken_name",
     category === null ? [] : [category],
   );
-  if (entities.length === 0) {
+  // fringe senses filed in this zone — labels + Fitzgerald color, no art yet
+  const fringe =
+    category === null
+      ? []
+      : ALL(
+          db,
+          `SELECT s.id AS sense_id, l.text AS label, s.fitzgerald_role
+           FROM sense s JOIN label l ON l.sense_id = s.id
+             AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+           WHERE s.category = ? ORDER BY l.text`,
+          [category],
+        );
+  if (entities.length === 0 && fringe.length === 0) {
     const empty = document.createElement("p");
     empty.className = "hint";
     empty.textContent = "Nothing here yet.";
     items.appendChild(empty);
   }
   for (const e of entities) items.appendChild(await entityTile(e));
+  for (const w of fringe) {
+    const el = document.createElement("button");
+    el.className = `zone-item r-${w.fitzgerald_role}`;
+    el.textContent = w.label;
+    el.addEventListener("click", () => tap(w.label, "sense", w.sense_id));
+    items.appendChild(el);
+  }
   $("add-in-zone").onclick = () => {
     zoneContext = category;
     close("zone");

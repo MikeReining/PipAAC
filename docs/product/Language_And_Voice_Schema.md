@@ -798,8 +798,8 @@ The filename rounds. No 600th word was removed.
 The catalog generator emits:
 
 - 599 senses, 599 English utterances, and 599 approved English lemma labels, generated from that catalog. For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
-- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 75 for `grid80`, 60 for `grid60`. The device import applies a tier filter — only the 75 root-core senses land on-device until the illustrated library phase (`docs/phases/002_Core_Board_And_Customize.md` § Out of scope).
-- One default bundled voice, locale `en`, and zero clips until recordings exist.
+- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 75 for `grid80`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 599 senses — labels only, no art required. An empty zone was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
+- One default bundled voice, locale `en`, and one clip per utterance: WorkbookBench recordings where the catalog has them, ElevenLabs (`eleven_v3`, the WorkbookBench voice id and settings) for misses.
 - One profile pointing at that voice.
 - No second locale, no alias rows, no voice picker, no override recorder.
 
