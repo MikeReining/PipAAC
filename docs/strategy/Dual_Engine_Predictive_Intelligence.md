@@ -230,6 +230,7 @@ The record is cached with model and prompt version, abstention is a valid outcom
 Stage 1 — local retrieval (SQLite, sub-millisecond, always runs):
 
 - **Sentence position.** The grammar slot narrows the pool: after "I want", strip candidates are nouns and entities. Core continuations (`to`, `you`) are on the grid — they are haloed in place per § 3.4, never copied into the strip. The funnel produces both lists: fringe/entity tiles for the strip, core cells to halo.
+- **Keyboard-mode exception.** **DECIDED 2026-09-22** (not built). While the keyboard is open the grid is hidden, so there is nothing to halo and the reason for keeping core words off the strip does not apply. In keyboard mode only, after a committed word, core continuations may take strip slots, ranked with learner bigrams (ids only). Cap stays 4. Spec: `docs/phases/004_Keyboard.md` slice 7.
 - **Partner-utterance echo.** Offered items in the partner's question ("pancakes or waffles?") are direct candidates — nearly free signal, no history needed.
 - **Routine / time-of-day histogram.** What this learner has chosen at this time of day before (`learner_event_log`, § 4.2).
 - **Recency.** Recently used entities and words — this is also how a just-added entity can surface before any enrichment exists.

@@ -893,7 +893,7 @@ entity id. This proposal does not otherwise redesign prediction.
 ## 10. Out of scope
 
 - Building recordings, a voice picker, or a recorder.
-- Conjugations and the morphological flow in `docs/strategy/Vision.md`. A later inflected form is another label and, when it sounds different, another utterance.
+- Conjugations and the morphological flow in `docs/strategy/Vision.md`. A later inflected form is another label and, when it sounds different, another utterance. **Amended 2026-09-22:** now scheduled; see § 13.5 item 2 and `docs/phases/005_Word_Forms.md`.
 - Phrase attributes, captions, and workbook-style paste.
 - Accounts, sync, and a second device.
 - Timestamps and a `schema_version` table (`PRAGMA user_version` carries the version).
@@ -994,6 +994,8 @@ Fixes are routed to `docs/phases/003b_Groups_Language_Followup.md` and
 | Strip grammar matches the English text `"to"` | **DECIDED 2026-09-22** (not built) | 003b slice 3: per-locale rules, keyed by sense id |
 | Keyboard letters, punctuation, capitals, and spelling rules are English | **DECIDED 2026-09-22** (not built) | 004: per-locale key maps, accent-insensitive matching, per-locale sound keys and fixtures |
 | Digits have no language-neutral path to number senses | **DECIDED 2026-09-22** (not built) | 004 slice 2: digit **alias labels** per locale (below) |
+| No inflected forms (*wants*, *went*, *played* are missing) | **DECIDED 2026-09-22** (not built) | `docs/phases/005_Word_Forms.md` |
+| Audio file slugs keep only `a–z0-9` | **DECIDED 2026-09-22** (not built) | 005 slice 2 |
 
 ### 13.3 Amendment — digit aliases
 
@@ -1020,29 +1022,56 @@ locale. No other alias rows are added by this amendment.
   built-in group names, digit aliases, and one active default voice. The
   build fails otherwise.
 
-### 13.5 Open before the first second language
+### 13.5 Rulings for the first second language
 
-**PROPOSED** — each needs a founder ruling or its own slice when the first
-non-English market starts:
+**DECIDED 2026-09-22** (founder: "All approved, proceed"; not built). Items
+1, 3, 4, and 5 execute in the first non-English phase. Item 2 is its own
+phase, built in English first: `docs/phases/005_Word_Forms.md`.
 
-1. **Function words do not map one-to-one.** One sense per meaning works
-   for *ball* and *want*. It breaks for *the* (German
-   der/die/das/den/dem/des) and *to* (Spanish *a*/*para*). Proposed
-   ruling: content words (nouns, verbs, describing words) keep their
-   coordinates in every locale, so bilingual children keep their motor
-   plan; function-word slots use a per-locale layout (`grid60.de`), with
-   locale-only senses where no shared meaning exists.
-2. **Morphology is a launch requirement for de/es/fr.** Verb endings and
-   gender carry far more meaning than in English. The morphology flow in
-   `docs/strategy/Vision.md` (out of scope in § 10) must be scheduled
-   before those launches, not after.
-3. **Normalizer v2.** `normalize_v1` uses JS `toLowerCase`, which keeps
-   `ß` (full casefold gives `ss`). German uniqueness needs a `v2` fold, as
-   a new version per § 4, never a quiet edit of v1.
-4. **Split the lexicon source.** `Initial_Vocabulary_600.md` is both the
-   sense inventory and the English labels. A second locale needs a label
-   source per locale keyed by sense id (for example `data/labels/de.json`),
-   with the build failing on an unknown or duplicate id.
-5. **Bilingual profiles.** Switching `profile.locale` and its voice
-   together already works under the triggers. A one-tap language switch
-   for bilingual families is a product decision, not a schema change.
+1. **Mirror shared meanings; give grammar words per-language slots.**
+   - Each language's core list is built natively from that language's
+     child-language research, never by translating English (Spanish: Soto &
+     Cooper 2021; German: the Cologne Kernvokabular, Boenisch & Sachse).
+   - A native core word that means the same as an existing sense maps to it
+     and keeps that sense's coordinate in every layout (*want* / *quiero* /
+     *will*). Bilingual children keep one motor plan.
+   - Grammar words with no shared meaning (*der/die/das*, Spanish *a* and
+     *para*, *se*) become locale-only senses. They go in a per-locale layout
+     (`core_cell.layout = 'grid60.de'`) whose differing slots sit where the
+     English grammar words sit. Every other slot is identical to `grid60`.
+   - Gate: the build prints the percentage of slots identical to `grid60`
+     and fails if a shared-meaning sense sits at a different slot. We push
+     the percentage up, but never by dropping a word the language needs on
+     its home page (AssistiveWare's Spain Spanish needed a larger grid to fit
+     every subject pronoun).
+   - German articles are separate core buttons in v1. Case forms (*den*,
+     *dem*) come through word forms (item 2).
+2. **Word forms: a tap gives the base form, one more tap shows the forms.**
+   Forms are `label` rows of kind `form` with UniMorph `features` and their
+   own utterance and clip in the same voice. A Forms key sits next to ⌫ in
+   the top bar; the strip shows up to 4 forms ranked by per-locale context;
+   the child chooses. No long-press, no modal, no automatic replacement
+   (automatic agreement is a later per-profile option). This amends § 10:
+   morphology is no longer out of scope. Each language supplies its own
+   forms data; picking a dataset is a licensing decision for the founder.
+3. **Normalizer v2 = Unicode full case folding** (CaseFolding.txt, status
+   C + F: `ß → ss`), then NFC, then the v1 whitespace rules. JS has no full
+   case fold, so the fold table is generated from the Unicode data file and
+   committed. v2 applies to every locale at once. Normalized columns are
+   catalog-only, and the catalog is replaced on import, so no device
+   migration is needed.
+4. **Split the lexicon source** as the first slice of the first
+   non-English phase: `data/senses.json` (language-neutral: id, role, art,
+   tier, category, art prompt) plus `data/labels/<locale>.json` (text, part
+   of speech, keyed by sense id). The build fails on an unknown or duplicate
+   id. `Initial_Vocabulary_600.md` becomes the English label source or a
+   generated view. Also fix `slug()` in the audio scripts, which keeps only
+   `a–z0-9` (see `docs/phases/005_Word_Forms.md` slice 2).
+5. **Bilingual profiles:** one profile with a primary and a secondary
+   locale (a voice each). A one-tap language switch at the left end of the
+   sentence bar, shown only on bilingual profiles; unlike the keyboard
+   setting, choosing a language is communication, so the child can reach it.
+   Code-switching inside a sentence is allowed: each sentence item stores
+   the locale it was chosen in and plays in that locale. The two voices
+   should be the **same speaker** (ElevenLabs multilingual voices allow
+   this), which keeps the "one voice, one speaker" rule in § 2.

@@ -153,6 +153,7 @@ In legacy apps, conjugating a verb requires holding a button down until a modal 
 - Pip AAC introduces an inline **Morphological Flow Engine**.
 - If the communicator taps `Yesterday` $\rightarrow$ `I` $\rightarrow$ `go`, the engine intelligently surfaces or automatically infers `went`.
 - The communicator retains complete agency: they can speak telegraphically (*"go store"*) or expand into grammatically complete syntax (*"I went to the store"*) with zero friction.
+- **DECIDED 2026-09-22** (not built): the first version *suggests* forms in the strip, ranked by context, via a Forms key next to ⌫ in the top bar; it never replaces a word automatically. Automatic agreement is a later per-profile option. Spec: `docs/phases/005_Word_Forms.md`.
 
 ### 4.3 Multi-Surface Views (One Child, Many Contexts)
 Instead of forcing the learner into a single rigid grid:

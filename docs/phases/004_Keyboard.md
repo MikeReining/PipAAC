@@ -641,28 +641,87 @@ available, the slice stays open. Do not waive it.
 
 ---
 
-## Slice 7 — Next word while typing (needs a founder ruling first)
+## Slice 7 — Next word while typing
 
-**PROPOSED.** Blocked on a decision.
+**DECIDED 2026-09-22** (founder: "All approved, proceed"). Recorded in
+`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2.
 
-The conflict: `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2
-says core continuations (`to`, `you`, `want`) are haloed on the grid and
-never copied into the strip. In keyboard mode the grid is hidden, so a
-keyboard user never sees them and has to spell `want` every time.
+Goal: After a word is committed in keyboard mode, the strip offers the
+likely next words, **core words included**, so a speller never has to type
+`want` again.
 
-Proposed ruling: **in keyboard mode only**, when the buffer is empty and the
-sentence is not, the strip may show core continuations, because the grid is
-not visible. Outside keyboard mode, nothing changes.
+Why: the "core words never in the strip" rule exists so the child learns
+each core word's grid position. In keyboard mode the grid is not visible,
+so that reason does not apply. Core words make up most of what people say,
+so leaving them out wastes most of the benefit. Word-prediction research
+(Koester & Levine; Trnka et al.) finds that suggestions pay off for slow
+typists, and one-key-at-a-time tapping on a touch grid is slow typing. The
+4-card cap stays, to limit scanning.
 
-Proposed mechanism, once ruled: a pure `keyboardContinuations(db, sentence,
-locale)` in `public/shared/funnel.mjs` that merges `stripCandidates` with
-learner-log bigrams (consecutive `learner_event_log` rows less than 20 s
-apart, keyed by the previous item's id) and the per-locale grammar rules from
-003b slice 3, extended to `root_core` senses. Bigrams are ids only, so they
-work in any language. Cap 4. Works Test: after logging `I → want` five
-times, typing `i` + space offers *want* first.
+Files: `public/shared/funnel.mjs`, `public/board.js` (`renderStrip`),
+`src/board/fixtures/typing_sentences.en.json` (new),
+`typing_sim.test.mjs` (new, in the src/board folder).
 
-Do not start this slice until the ruling is recorded in the Dual_Engine doc.
+1. **When:** keyboard open, buffer empty, sentence not empty. Outside
+   keyboard mode nothing changes. Mid-word, the strip keeps showing
+   completions (slice 3), which already include core words.
+2. **`keyboardContinuations(db, sentence, locale, now)`** in `funnel.mjs`,
+   pure over the db. Candidates, all by id:
+   - **bigrams:** items the learner picked right after the tail item before
+     (consecutive `learner_event_log` rows less than 20 s apart, keyed by
+     the previous row's `item_kind:item_id`). Ids only, so this works in
+     every language;
+   - **grammar invitation**, from the per-locale `GRAMMAR` table
+     (003b slice 3), extended to `root_core` senses (English: a pronoun
+     tail invites core verbs such as *want*, *like*, *go*, *need*);
+   - **`stripCandidates`** (entities and fringe with evidence), unchanged.
+   Rank: bigram count first, then invitation, then overall frequency, then
+   recency. Dedupe. Cap 4. Masked words are excluded once masking exists.
+3. **`renderStrip`:** in the state above, use `keyboardContinuations`
+   instead of `stripCandidates`. Card shape is unchanged.
+
+### Proof — a typing simulation, written before the code
+
+**Fixture first, in its own commit:**
+`src/board/fixtures/typing_sentences.en.json` — at least 30 short sentences
+a child might type, every word a catalog lemma. Starter set (all verified in
+the catalog at `2783d01`): *I want juice*, *I want to go outside*, *can I
+have more*, *I need help*, *my turn*, *where is mom*, *I like the dog*, *he
+is sad*, *we go to the park*, *I want to play with you*, *stop it*, *I feel
+sick*, *what is that*, *give me the ball*, *look at this*, *I am hungry*.
+
+**`typing_sim.test.mjs`** runs an "ideal user", the standard
+keystroke-savings method: for each word, before each letter, if the target
+word is on one of the 4 strip cards, tap it (1 tap); otherwise type the
+next letter (1 tap) and, when the word is finished, space (1 tap). It counts
+taps per word under three conditions on the same fixture:
+
+| Condition | Strip while typing |
+| --- | --- |
+| A | nothing (letters and space only) |
+| B | slice 3 completions only |
+| C | completions plus continuations (this slice) |
+
+Run each condition twice: with an empty event log, and after the whole
+fixture has been entered once (so bigrams exist).
+
+**Gates:**
+- with history, C uses **fewer** taps per word than B;
+- with an empty log, C is **never worse** than B;
+- print keystroke savings (`1 − taps_C / taps_A`) for both runs and record
+  them in the closeout.
+
+The ideal user ignores the time spent reading the cards; that is the
+known limit of this measure (Koester & Levine). So the cap stays at 4, and
+the manual check below is required too.
+
+Works Test (manual, recorded, `dev:agent`, empty history): open the
+keyboard, type `i` + space. The strip shows core verbs (*want*, *like*,
+*go*, *need* or similar). Tap *want*: it is added and spoken. Type `ju`:
+the strip switches to completions and shows *juice*.
+
+Done when: both gates pass, and the savings numbers and manual check are in
+the closeout.
 
 ---
 
@@ -685,14 +744,13 @@ Do not start this slice until the ruling is recorded in the Dual_Engine doc.
 
 ## Closeout checklist
 
-- [ ] Slices 1–6 done. Slice 7 either ruled and done, or moved to
-      `docs/backlog/`.
+- [ ] Slices 1–7 done.
 - [ ] `npm run check` green.
 - [ ] `docs/product/Profile_Presentation_Modes.md` § 4 tags flipped from
       DECIDED to BUILT, with citations.
 - [ ] `docs/product/Language_And_Voice_Schema.md` § 13 keyboard rows flipped
       to BUILT.
-- [ ] The measured letter/key ratio and the spelling recall % are recorded
-      here.
+- [ ] The measured letter/key ratio, the spelling recall %, and the
+      typing-simulation savings are recorded here.
 - [ ] Archive this doc per `docs/operations/Execution-Playbook.md` § Phase
       Archive.
