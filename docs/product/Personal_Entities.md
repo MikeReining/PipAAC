@@ -70,10 +70,42 @@ semantics: a fish does not walk, and four rows cannot hold what a puppy is.
 
 Strip relevance is computed live instead. On-device: the sentence so far and
 recency. Online: the classifier evaluates candidates against state in real
-time (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`). Neither path
-reads a stored semantic link, so none is stored. A personal entity is
-reachable from the moment it is saved — through its zone, and through the
-strip's recency input — before any classification exists.
+time (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`). A personal
+entity is reachable from the moment it is saved — through its zone, and
+through the strip's recency input — before any classification exists.
+
+### Enrichment — write-time, passive, never a gate
+
+**DECIDED 2026-09-22** (not built). Once per entity, in the background, a
+multimodal LLM reads the photo, the spoken name, and the hint, and writes
+one semantic record: a description, a category suggestion, and related
+sense ids. This is the model: **`meta/muse-spark-1.3-contributor`** (Meta
+Muse Spark), called through the OpenRouter API.
+
+The rules, same shape as the LocalFlyers classification cache:
+
+- Runs once per entity; the result is stored with the model id and a
+  prompt version. It is never re-asked for the same record.
+- Deferred, never blocking. A save performs no network call; with the
+  network off, enrichment queues and lands later.
+- Abstention is a valid outcome. A record the model cannot describe stays
+  unenriched and works anyway — filed in its zone, spoken by name,
+  strip-eligible by recency.
+- Enrichment annotates; it never rewrites. `spoken_name` and the photo
+  are the adult's facts. A name or photo change supersedes the record.
+- The honest miss surface is relational, not object identity — a vision
+  model will not call a dog an uncle, but it can guess *friend* where the
+  truth is *brother*. So enrichment output is a ranking hint with
+  provenance, not a fact; the caregiver can correct it from the record's
+  edit surface.
+
+This is the only path that sends an adult-supplied name or photo off the
+device, and only while online, and only the entity's own fields. It is not
+the communication log — the zero-PII rule for learner history
+(`docs/strategy/Dual_Engine_Predictive_Intelligence.md`) is untouched.
+
+The record is what the offline ranker reads when the classifier cannot
+run: the cached judgment of a model that saw the picture.
 
 ---
 
@@ -101,3 +133,6 @@ These are the negative tests for the customization slice.
 | A category open or a strip offer writes the core map | Same snapshot compare. |
 | The save path performs a network call | With the network unavailable the save succeeds; no request is attempted. |
 | The add form asks the adult something a model can infer | The form collects name, photo, and optional hint. No type, no pronoun, no edge UI. |
+| Enrichment gates or blocks a save | Enrichment is a deferred background job; the entity is fully usable with none. |
+| Enrichment silently rewrites the adult's facts | It never edits `spoken_name` or the photo; a rename or photo change supersedes it. |
+| Entity data leaves the device outside enrichment | The only off-device transmission is the enrichment call itself, online only, entity fields only. |

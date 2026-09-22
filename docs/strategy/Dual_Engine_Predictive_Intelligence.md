@@ -215,6 +215,14 @@ If network connectivity drops or latency exceeds $150\text{ms}$:
 - The local on-device database handles prediction seamlessly using cached preference statistics and the local Relational Graph.
 - Communication is an emergency lifeline; **it must never stall because of an API timeout**.
 
+### 5.1 The third lane: write-time enrichment
+
+**DECIDED 2026-09-22** (not built). Ranking has two lanes — the local floor and Jev — and both are *read-time*: they answer "which candidates fit this state" per tap. A third, slower lane exists *once per personal entity*: **write-time enrichment** by Muse Spark (`meta/muse-spark-1.3-contributor`, Meta's multimodal model, via OpenRouter), which reads the entity's photo, name, and hint and writes a semantic record (description, category suggestion, related sense ids). Jev is text-only and cannot see the photo; enrichment is the one-time translation from pixels to the text Jev ranks against.
+
+The record is cached with model and prompt version, abstention is a valid outcome, and it is the only semantic signal the local ranker has when Jev cannot run. Contract: `docs/product/Personal_Entities.md` § Enrichment; storage: `docs/product/Language_And_Voice_Schema.md` § 6.2b.
+
+**Privacy carve-out, stated plainly:** the enrichment call transmits the entity's own name, hint, and photo off-device (to OpenRouter), only while online, only once per entity. It is the sole exception to the zero-PII mandate — learner communication history still never leaves the device. The save itself performs no network call.
+
 ---
 
 ## 6. Privacy-Preserving Multimodal Partner Input
@@ -279,6 +287,7 @@ Traditional AAC apps require families to spend 5 to 10 hours a week manually cre
   - On the motor-grid view, the predictive strip is where a suggestion may show a word that is not already a core cell. The Context River stays a separate situational surface. Maximum four strip tiles. Layout: `docs/product/Motor_Grid_And_Art.md`.
   - Strip first paint is on-device and under 50 ms. Jev refines asynchronously and must not block that paint or reorder core indices.
   - Strip bias inputs: sentence-bar tokens, time of day, and learner-added fringe entities.
+  - Two-model division: Muse Spark (`meta/muse-spark-1.3-contributor` via OpenRouter) enriches each personal entity once at write time; Jev ranks candidates at read time. Enrichment output is a cached hint with provenance, not stored truth.
 - **PROPOSED**:
   - Phase 1 Slice: Relational Language Graph schema + Local SQLite memory store stub + TypeSafe Jev proxy in `src/worker/index.js:12-14`.
   - Works Test: Automated benchmark testing classification latency ($<100\text{ms}$) and confidence-gated candidate selection against mock breakfast/recess state.

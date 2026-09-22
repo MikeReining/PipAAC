@@ -85,7 +85,7 @@ Works Test: With the network unavailable, save the fixture entity Cooper — spo
 
 Proof command: `scripts/test.sh` on the test file this slice adds.
 
-Missing proof / waiver: classification is waived — it needs the network this slice does not use. Cooper files by context instead.
+Missing proof / waiver: enrichment is waived — the Muse Spark call needs the network this slice does not use. Cooper files by context instead; the enrichment job is proven when it exists.
 
 Done when: that test passes, and a person can perform the add from the parent corner and then select Cooper in his zone.
 

@@ -86,6 +86,7 @@ Prefixes are fixed so a JSON id and a SQLite id name the same kind of row.
 | `cel_` | core cell |
 | `prf_` | learner profile |
 | `ent_` | personal entity |
+| `enr_` | entity enrichment |
 | `ovr_` | clip override |
 
 Every id is `GLOB '<prefix>*'` with at least one character after the
@@ -95,8 +96,8 @@ the check.
 Catalog ids are minted deterministically by the generator — `sns_`,
 `utt_`, `lbl_` from the catalog slot number, `cel_` from layout and
 slot_index — so the same source always produces the same ids and the
-shipped JSON diffs cleanly. Device-row ids (`prf_`, `ent_`, `ovr_`) are
-minted on-device.
+shipped JSON diffs cleanly. Device-row ids (`prf_`, `ent_`, `enr_`,
+`ovr_`) are minted on-device.
 
 ### Normalization `v1`
 
@@ -397,11 +398,57 @@ adult supplies facts a model cannot know — the name, the photo, an
 optional hint. Filing comes from context (a sub-zone open at add time) or
 from classification when the device is online; `category IS NULL` files
 the entity in the personal zone (`docs/product/Personal_Entities.md`).
-Strip relevance is computed live, never stored: sentence position and
-recency on-device, the classifier when online.
+Strip relevance is computed live: sentence position and recency
+on-device, the classifier when online. The only stored semantics are the
+enrichment rows below — cached model output with provenance, never an
+authored table.
 
-Changing `spoken_name` supersedes that entity's ready override in the
-same write. The old recording spoke the old name.
+Changing `spoken_name` or `photo_key` supersedes that entity's ready
+override and ready enrichment in the same write. The old recording spoke
+the old name, and the old enrichment described the old input.
+
+### 6.2b Entity enrichment
+
+The cached output of the write-time enrichment call defined in
+`docs/product/Personal_Entities.md` § Enrichment: Muse Spark
+(`meta/muse-spark-1.3-contributor`, multimodal, via OpenRouter) reading
+the entity's photo, name, and hint once per entity. A device row, never
+shipped.
+
+```sql
+CREATE TABLE entity_enrichment (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'enr_*'),
+  entity_id TEXT NOT NULL REFERENCES personal_entity(id),
+  description TEXT,
+  category_suggestion TEXT CHECK (category_suggestion IS NULL OR category_suggestion IN (
+    'Food & Drink',
+    'Body, Health & Hygiene',
+    'Feelings, Emotions & Sensory States',
+    'Daily Actions & Activity Verbs',
+    'People, Family & Roles',
+    'Places, Rooms & Community',
+    'Toys, Play, Media & Leisure',
+    'Home, Household Objects & Daily Tools',
+    'Clothing & Accessories',
+    'Animals & Nature',
+    'Vehicles & Transportation',
+    'Descriptors, Adjectives & Opposites',
+    'Time, Calendar & Sequencing',
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+  )),
+  associations TEXT,
+  model TEXT NOT NULL,
+  prompt_version TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))
+);
+```
+
+`associations` is a JSON array of `sns_` ids: the model's related-word
+list resolved against `label` at write time. Entries that resolve to no
+loaded sense are dropped, not stored. `category_suggestion` may be applied
+to `personal_entity.category` only when that column is null — filing the
+adult established by context is not overridden by inference. `abstained`
+rows record a deliberate no-answer so the job is not retried forever.
 
 ### 6.3 Override
 
@@ -456,6 +503,10 @@ CREATE UNIQUE INDEX override_one_ready_utterance
 CREATE UNIQUE INDEX override_one_ready_entity
   ON clip_override(entity_id)
   WHERE status = 'ready' AND entity_id IS NOT NULL;
+
+CREATE UNIQUE INDEX enrichment_one_ready
+  ON entity_enrichment(entity_id)
+  WHERE status = 'ready';
 ```
 
 ### 6.5 Triggers
@@ -584,6 +635,17 @@ BEGIN
   UPDATE clip_override
     SET status = 'superseded'
     WHERE entity_id = NEW.id AND status = 'ready';
+END;
+
+CREATE TRIGGER entity_input_change_supersedes_enrichment
+AFTER UPDATE OF spoken_name, photo_key ON personal_entity
+FOR EACH ROW
+WHEN NEW.spoken_name != OLD.spoken_name
+   OR NEW.photo_key IS NOT OLD.photo_key
+BEGIN
+  UPDATE entity_enrichment
+    SET status = 'superseded'
+    WHERE entity_id = NEW.id AND status IN ('ready', 'abstained');
 END;
 
 CREATE TRIGGER label_locale_matches_utterance_on_update
@@ -729,7 +791,9 @@ It is a device row, never a catalog row, and it never mixes with bundled
 clips (§ 5.5, § 7).
 
 Personal entities store name, optional photo, optional hint, and a
-nullable category (§ 6.2). There are no edge rows to write.
+nullable category (§ 6.2). Enrichment rows (§ 6.2b) are written by the
+background job, once per entity, when the network is available. There are
+no edge rows to write.
 
 The cell shows the English label and the Fitzgerald color from the sense.
 
@@ -749,7 +813,7 @@ entity id. This proposal does not otherwise redesign prediction.
 - Phrase attributes, captions, and workbook-style paste.
 - Accounts, sync, and a second device.
 - Timestamps and a `schema_version` table (`PRAGMA user_version` carries the version).
-- Semantic edge storage. Strip relevance is computed — sentence position and recency on-device, the classifier when online — never stored as rows.
+- Semantic edge storage. Strip relevance is computed — sentence position and recency on-device, the classifier when online. `entity_enrichment` is a cached model judgment consumed as a hint, not an authored link table.
 - Rewriting the prediction math.
 
 ---
@@ -770,7 +834,10 @@ entity id. This proposal does not otherwise redesign prediction.
 | A renamed utterance keeps playing the old bytes | The rename trigger sets those clips `superseded`. `recorded_text` no longer matches, so playback is silence. |
 | A personal name is inserted as a sense | Saving Cooper leaves the sense count unchanged. |
 | The add form asks the adult what a model can infer | `personal_entity` has no `type`, no `pronoun`, and no edge table. |
-| An authored edge table decides strip relevance | No such table exists; ranking inputs are sentence position, recency, and live classification. |
+| An authored edge table decides strip relevance | No such table exists; ranking inputs are sentence position, recency, cached enrichment, and live classification. |
+| Enrichment gates or blocks a save | The save writes no enrichment row and attempts no network call; the job is deferred. |
+| Enrichment silently rewrites the adult's facts | It never edits `spoken_name` or `photo_key`; a name or photo change supersedes its rows. |
+| A stale enrichment survives a rename or re-photo | `entity_input_change_supersedes_enrichment` marks them `superseded`. |
 | An override is copied into the shipped catalog JSON | The import file has no `clip_override` rows and no Cooper audio. |
 | A profile names a Spanish voice while `locale` is `en` | The profile insert trigger aborts. |
 | A retired voice stays selected | The retire trigger aborts until profiles are repointed. |
@@ -795,3 +862,8 @@ Accepted in founder review the day it was proposed. The amendments:
    proof board can speak. It remains a device row.
 5. Catalog ids are deterministic (§ 4); `PRAGMA user_version` carries the
    schema version.
+6. `entity_enrichment` added later the same day: the write-time
+   enrichment layer (Muse Spark via OpenRouter, once per entity,
+   abstention valid, superseded on name/photo change). Jev remains the
+   read-time ranker; enrichment is the cached semantic record it — and
+   the offline ranker — reads.

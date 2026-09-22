@@ -49,6 +49,22 @@ Personal entity records and the on-device add have one owner:
 `docs/product/Personal_Entities.md`. **DECIDED 2026-09-22** (not built). An add
 does not write the coordinate map.
 
+## 7. Who owns which judgment
+
+**DECIDED 2026-09-22.** Deterministic code owns structure and invariants —
+constraints, triggers, layout law, offline behavior. Models own judgment —
+what a thing is, what fits a context. The adult supplies only facts a model
+cannot know (a name, a photo, a hint).
+
+Two corollaries:
+
+- A lookup table pretending to be semantics is a defect. Type tables, authored
+  word edges, and confirm chips were removed from the entity contract for this
+  reason on 2026-09-22.
+- Model output that is stored carries provenance (model id, prompt version)
+  and a supersede path, and is consumed as a hint — never silently as fact.
+  Abstention is a valid model outcome, not an error.
+
 Captioning, motion, and child-safety claims still need an explicit owner in
 `docs/product/SSOT.md` before anyone asserts compliance. Until that owner
 exists, do not assert those outcomes in code comments alone.
