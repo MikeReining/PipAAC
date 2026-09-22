@@ -90,6 +90,7 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
        FROM personal_entity e
        LEFT JOIN learner_event_log l
          ON l.item_kind = 'entity' AND l.item_id = e.id
+       WHERE e.status = 'active'
        GROUP BY e.id`,
     )
     .all(recentCutoff, hour)
@@ -210,7 +211,7 @@ export function keyboardContinuations(db, sentence, locale, now = Date.now()) {
       }
     }
     if (invitesNoun) {
-      for (const e of db.prepare("SELECT id FROM personal_entity").all()) {
+      for (const e of db.prepare("SELECT id FROM personal_entity WHERE status = 'active'").all()) {
         put("entity", e.id, { invited: true });
       }
     }

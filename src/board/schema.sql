@@ -118,6 +118,10 @@ CREATE TABLE IF NOT EXISTS learner_profile (
 CREATE TABLE IF NOT EXISTS personal_entity (
   id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),
   spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),
+  -- Retire, never delete (schema § 14.5): Remove on the word card flips
+  -- this to 'retired'; the row, photo, recording and placements stay,
+  -- and the entity renders nowhere until restored.
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'retired')),
   photo_key TEXT,
   category TEXT CHECK (category IS NULL OR category IN (
     'Food & Drink',

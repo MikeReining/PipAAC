@@ -74,19 +74,20 @@ Naming note: "My Words" is already the default group. The Library tab is
 ## 4. The word card
 
 **DECIDED 2026-09-22.** One screen answers where the word is, how it sounds,
-and what can change. It opens from the Library, from `+ Add` results, and
-by tapping an item in Edit mode (`docs/product/Motor_Grid_And_Art.md`
-§ Groups, the home-screen model).
+and what can change. **BUILT** (009 slice 2): it opens by tapping an item
+in Edit mode (`openWordCard` in `public/board.js`, `#wordcard` in
+`public/index.html`). Openings from the Library and from `+ Add` results
+are scheduled with those slices.
 
 | Row | Personal entity (Cooper) | Catalog word (`cup`) |
 | --- | --- | --- |
-| Picture | Photo, or change it (camera, photos, library art) | Our art, or "Use my own picture" (§ 5) |
-| Name | Editable. A rename supersedes the recording and the enrichment (schema § 6.2) | Not renamed. For another word, add it as a new word |
-| Sound | ▶ plays what the board plays. **Record my own** / **Use the voice again** | Same |
-| In groups | Chips, one per group. × removes, **+ Add to group** lists groups | Same. A seeded word cannot leave its built-in group; use Hide |
+| Picture | Photo, or change it — **BUILT** (file input → `savePhoto`) | Our art — **BUILT** (approved `image` key). "Use my own picture" is § 5's slice |
+| Name | Editable — **BUILT**. A rename supersedes the ready recording and enrichment (schema § 6.2; `renameEntity`) | Read-only — **BUILT**. For another word, add it as a new word |
+| Sound | ▶ plays what the board plays — **BUILT** (clip for senses, device TTS for entities). **Record my own** / **Use the voice again** are not built |
+| In groups | Chips, one per group — **BUILT** (`entityGroups`/`senseGroups`). × removes with Undo — **BUILT**. **+ Add to group** lists groups — **BUILT** | Same. A seeded word cannot leave its built-in group; use Hide |
 | Occasions | Read-only chips once 007 lands | Same |
-| Show on board | Opens the group page with the cell highlighted | Same |
-| Remove / Hide | **Remove** retires the entity (restorable, `docs/product/Vocabulary_Masking_And_Safety.md` § 3.2) | **Hide** masks it (same doc § 2) |
+| Show on board | **BUILT** — opens the group page with the cell flashed; a core-mapped sense flashes on the board | Same |
+| Remove / Hide | **Remove** retires the entity — **BUILT** (`retireEntity`, restorable; `docs/product/Vocabulary_Masking_And_Safety.md` § 3.2) | **Hide** masks it — not built (009 slice 9) |
 
 Rules:
 
@@ -96,7 +97,8 @@ Rules:
   deliberately putting a word somewhere else, so a group list is the answer
   to the question they asked.
 - **Never none.** Removing an entity's last group chip puts it in My Words.
-  **BUILT** in `removeItem` (`public/shared/groups.mjs`).
+  **BUILT** in `removeItem` (`public/shared/groups.mjs`); the My Words
+  chip has no × — Remove on the card retires instead.
 - The card never writes the core map.
 
 ## 5. Adding words

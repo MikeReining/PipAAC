@@ -1,6 +1,7 @@
 # Phase 009 — Word Library and customization
 
-**Status:** Executing. Slice 1 built and proven (see its Works Test note).
+**Status:** Executing. Slices 1–2 built and proven (see their Works Test
+notes).
 
 **DECIDED 2026-09-22** (founder: "if we nail customization and really make
 it dramatically better we can win a key area that's really hard and
@@ -137,6 +138,17 @@ Works Test:
 
 Done when: that passes and a person on an iPad can drag, remove, add into
 a gap, and rename Cooper without anything else moving.
+
+**Works Test (proven 2026-09-23):** `src/board/edit_mode.test.mjs` +
+`src/board/word_card.test.mjs` — 9/9 pass covering 1–5
+(`removeItemUndoable`, `placeItem` with a target cell, `renameEntity`
+supersession, chip add/remove landing in My Words, retire/restore
+invisibility in `groupPage`, strip candidates, keyboard index, and typed
+resolution, core-map snapshot). Headless-Chrome drive on an agent copy
+verified the rendered flow: one tap opens a group in Edit mode, tap opens
+the card (chips `My Words` + `Animals×`), rename persists, chip-× toasts
+and Undoes, a mouse drag moves a sense to the tapped empty slot, empty-slot
+tap opens `+ Add`, and card Remove retires then Undo restores.
 
 ---
 

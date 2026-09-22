@@ -15,6 +15,7 @@ import {
   entityMatches,
   createGroup,
   deleteGroup,
+  entityGroups,
   groupDisplayName,
   groupIndex,
   groupPage,
@@ -23,6 +24,11 @@ import {
   pageCount,
   placeItem,
   removeItem,
+  removeItemUndoable,
+  renameEntity,
+  restoreEntity,
+  retireEntity,
+  senseGroups,
   swapGroups,
   swapItems,
 } from "./shared/groups.mjs";
@@ -39,11 +45,11 @@ const { locale, voiceId } = resolveProfile(db);
 document.documentElement.lang = locale;
 const sentence = []; // [{kind, id, text}]
 let addTarget = null;  // board_group id the add form files into
+let addCell = null;    // {page, slot_index} when + came from tapping an empty slot
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let groupKey = null;   // board_group id of the open group page
 let groupPageNo = 0;   // current page of the open group
 let editing = false; // caregiver Edit mode — same gesture on index and pages
-let lifted = null;   // index: board_group id; page: {item_kind, item_id}
 
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
@@ -236,6 +242,7 @@ async function idleStarters() {
     db,
     `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
      LEFT JOIN learner_event_log l ON l.item_kind = 'entity' AND l.item_id = e.id
+     WHERE e.status = 'active'
      GROUP BY e.id ORDER BY COUNT(l.id) DESC, MAX(l.selected_at) DESC, e.rowid LIMIT 1`,
   )[0];
   if (top) cards.push({ entity: top });
@@ -874,7 +881,7 @@ function resolveTyped(text) {
     [norm, locale],
   )[0];
   if (hit) return { kind: "sense", id: hit.id, display: hit.kind === "lemma" ? hit.label : text };
-  const ent = ALL(db, "SELECT id, spoken_name FROM personal_entity").find(
+  const ent = ALL(db, "SELECT id, spoken_name FROM personal_entity WHERE status = 'active'").find(
     (e) => normalizeV1(e.spoken_name) === norm,
   );
   if (ent) return { kind: "entity", id: ent.id, display: ent.spoken_name };
@@ -921,7 +928,8 @@ function buildKbIndex() {
     `SELECT e.*,
        (SELECT COUNT(*) FROM learner_event_log le
          WHERE le.item_kind = 'entity' AND le.item_id = e.id) AS freq
-     FROM personal_entity e`,
+     FROM personal_entity e
+     WHERE e.status = 'active'`,
   ).map((e) => ({ kind: "entity", id: e.id, text: e.spoken_name, freq: e.freq, entity: e }));
   return buildIndex([...senses, ...ents], locale);
 }
@@ -1044,14 +1052,13 @@ function deviceFeed(ch) {
    Edit-mode action, rendered only while editing so the child never sees
    adult controls. Group positions persist in board_group.index_slot and
    items in group_cell — the same motor-memory law as core_cell: slots
-   only move in Edit mode (tap to lift, tap a slot to place; occupied
-   slot swaps). All writes go through shared/groups.mjs. --- */
+   only move in Edit mode (drag to move/swap, tap opens the card or the
+   group, × removes with Undo). All writes go through shared/groups.mjs. --- */
 
 /** One mode everywhere: entering Edit marks the body (dashed borders)
- *  and turns the corner button into ✓ Done; leaving clears the lift. */
+ *  and turns the corner button into ✓ Done. */
 function setEditing(on) {
   editing = on;
-  lifted = null;
   document.body.classList.toggle("editing", on);
   $("corner").textContent = on ? "✓ Done" : "✚";
   $("corner").title = on ? "Done editing" : "Parent corner";
@@ -1070,6 +1077,85 @@ function navCell(label, onTap) {
   el.textContent = label;
   el.addEventListener("click", onTap);
   return el;
+}
+
+/** Live pointer-drag for Edit mode: a clone follows the finger; the slot
+ *  under the release point decides the landing. `onDrop(slot)` gets the
+ *  target's data-slot; `onTap` fires when the press never became a drag. */
+function editPointer(el, { onDrop, onTap }) {
+  let lastPointer = 0;
+  // Keyboard/AT Enter fires click with no pointer events — treat it as a tap.
+  el.addEventListener("click", () => {
+    if (Date.now() - lastPointer > 400) onTap?.();
+  });
+  el.addEventListener("pointerdown", (e) => {
+    lastPointer = Date.now();
+    if (e.button !== 0 || e.target.closest(".x")) return;
+    const startX = e.clientX, startY = e.clientY;
+    let dragging = false, clone = null, hinted = null;
+    const clearHint = () => { hinted?.classList.remove("drop-hint"); hinted = null; };
+    const move = (ev) => {
+      if (!dragging && Math.hypot(ev.clientX - startX, ev.clientY - startY) < 10) return;
+      if (!dragging) {
+        dragging = true;
+        const r = el.getBoundingClientRect();
+        clone = el.cloneNode(true);
+        clone.classList.add("drag-clone");
+        clone.style.width = `${r.width}px`;
+        clone.style.height = `${r.height}px`;
+        document.body.appendChild(clone);
+        el.classList.add("drag-src");
+      }
+      clone.style.left = `${ev.clientX - clone.offsetWidth / 2}px`;
+      clone.style.top = `${ev.clientY - clone.offsetHeight / 2}px`;
+      clearHint();
+      const t = document.elementFromPoint(ev.clientX, ev.clientY)
+        ?.closest("#groupgrid [data-slot]");
+      if (t && t !== el) { hinted = t; t.classList.add("drop-hint"); }
+    };
+    const finish = (ev, cancelled) => {
+      document.removeEventListener("pointermove", move);
+      clearHint();
+      clone?.remove();
+      el.classList.remove("drag-src");
+      if (!dragging) { if (!cancelled && onTap) onTap(); return; }
+      if (cancelled) return;
+      const t = document.elementFromPoint(ev.clientX, ev.clientY)
+        ?.closest("#groupgrid [data-slot]");
+      if (t && t !== el) onDrop(Number(t.dataset.slot));
+    };
+    document.addEventListener("pointermove", move);
+    document.addEventListener("pointerup", (ev) => finish(ev, false), { once: true });
+    document.addEventListener("pointercancel", (ev) => finish(ev, true), { once: true });
+  });
+}
+
+function xBadge(onRemove) {
+  const x = document.createElement("button");
+  x.className = "x";
+  x.textContent = "×";
+  x.title = "Remove";
+  x.addEventListener("click", (e) => { e.stopPropagation(); onRemove(); });
+  x.addEventListener("pointerdown", (e) => e.stopPropagation());
+  return x;
+}
+
+/** One pending undo at a time. */
+let toastTimer = null;
+function toast(text, undo) {
+  const el = $("toast");
+  clearTimeout(toastTimer);
+  $("toast-text").textContent = text;
+  el.hidden = false;
+  $("toast-undo").onclick = () => { el.hidden = true; undo(); };
+  toastTimer = setTimeout(() => { el.hidden = true; }, 6000);
+}
+
+/** "Show on board" marks the cell for a beat after re-render. */
+function flashCell(el) {
+  if (!el) return;
+  el.classList.add("flash");
+  setTimeout(() => el.classList.remove("flash"), 1600);
 }
 
 /** One group on the index. `row` is a board_group row; the label and
@@ -1095,23 +1181,24 @@ function groupIndexCell(row) {
   lb.textContent = groupDisplayName(db, row, locale);
   el.appendChild(g);
   el.appendChild(lb);
-  el.addEventListener("click", () => {
-    if (!editing) return openGroup(row.id);
-    if (!lifted) {
-      lifted = row.id;
+  if (!editing) {
+    el.addEventListener("click", () => openGroup(row.id));
+    return el;
+  }
+  // Edit mode: tap opens the group, drag moves/swaps index slots, ×
+  // deletes a custom group (confirmed — its items land in My Words).
+  if (row.kind === "custom") {
+    el.appendChild(xBadge(() => askDeleteGroup(row)));
+  }
+  editPointer(el, {
+    onTap: () => openGroup(row.id),
+    onDrop: (slot) => {
+      if (slot < 10) return;
+      const other = groupIndex(db).find((g) => g.index_slot === slot);
+      if (other) swapGroups(db, row.id, other.id);
+      else moveGroup(db, row.id, slot);
       renderGroupIndex();
-      return;
-    }
-    if (lifted === row.id) {
-      // Dropping a group on itself sets it back down and opens it — the
-      // only way into a group page while editing. Escape drops instead.
-      openGroup(row.id);
-      return;
-    }
-    // occupied slot: swap coordinates
-    swapGroups(db, lifted, row.id);
-    lifted = null;
-    renderGroupIndex();
+    },
   });
   return el;
 }
@@ -1132,7 +1219,6 @@ function askDeleteGroup(row) {
   $("del-title").textContent = `Delete ${groupDisplayName(db, row, locale)}?`;
   $("del-yes").onclick = () => {
     deleteGroup(db, row.id);
-    lifted = null;
     close("delform");
     renderGroupIndex();
   };
@@ -1144,51 +1230,33 @@ function renderGroupIndex() {
   zg.innerHTML = "";
   const rows = groupIndex(db);
   const placed = new Map(rows.map((g) => [g.index_slot, g]));
-  const liftedRow = lifted ? rows.find((g) => g.id === lifted) : null;
   for (let slot = 0; slot < 60; slot++) {
     if (slot === 0) {
       zg.appendChild(navCell("← Board", () => setView("board")));
       continue;
     }
     if (slot === 1) {
-      if (editing && liftedRow?.kind === "custom") {
-        zg.appendChild(editSlotCell("Delete group", () => askDeleteGroup(liftedRow)));
-      } else {
-        zg.appendChild(editSlotCell(editing && !lifted && "+ Group", () => open("groupform")));
-      }
+      zg.appendChild(editSlotCell(editing && "+ Group", () => open("groupform")));
       continue;
     }
     const row = placed.get(slot);
     if (row) {
-      const el = groupIndexCell(row);
-      if (editing && row.id === lifted) el.classList.add("lifted");
-      zg.appendChild(el);
+      zg.appendChild(groupIndexCell(row));
       continue;
     }
     const empty = document.createElement("button");
     empty.className = "gcell empty";
-    if (editing && slot >= 10) {
-      empty.classList.add("drop");
-      empty.addEventListener("click", () => {
-        if (!lifted) return;
-        moveGroup(db, lifted, slot);
-        lifted = null;
-        renderGroupIndex();
-      });
-    } else {
-      empty.disabled = true;
-    }
+    empty.dataset.slot = slot; // drag target for group moves
+    empty.disabled = true;
     zg.appendChild(empty);
   }
 }
 
 function openGroupIndex() {
-  lifted = null;
   setView("groupIndex");
 }
 
 async function openGroup(groupId) {
-  lifted = null;
   groupKey = groupId;
   groupPageNo = 0;
   setView("group");
@@ -1214,43 +1282,61 @@ async function entityCell(e, onTap) {
   return el;
 }
 
-/** The gesture, same as the index: tap lifts, the same cell drops,
- *  another item swaps. Moves to an empty slot happen on this page only —
- *  cross-page moves are out of scope. */
-function itemGesture(item) {
-  if (!lifted) {
-    lifted = { item_kind: item.item_kind, item_id: item.item_id };
-  } else if (lifted.item_kind === item.item_kind && lifted.item_id === item.item_id) {
-    lifted = null;
-  } else {
-    swapItems(db, groupKey, lifted, { item_kind: item.item_kind, item_id: item.item_id });
-    lifted = null;
-  }
-  renderGroupPage();
-}
-
 /** One item on a group page — a catalog sense or a personal entity at its
- *  stored slot. In Edit mode the tap lifts instead of speaking. */
-async function itemCell(item) {
-  const speak = () =>
-    item.item_kind === "sense"
-      ? tap(item.label, "sense", item.item_id)
-      : tap(item.label, "entity", item.item_id);
-  const onTap = editing ? () => itemGesture(item) : speak;
-  if (item.item_kind === "sense") {
-    return senseCell(
-      { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
-      onTap,
-    );
+ *  stored slot. In Edit mode a tap opens the word card, a drag moves or
+ *  swaps it, and × removes it from this group (Undo brings it back). */
+async function itemCell(item, gKind) {
+  // Speak taps exist only outside Edit — inside it the pointer owns the
+  // cell (tap = card, drag = move/swap, × = remove).
+  const onSpeak = editing
+    ? () => {}
+    : () => tap(item.label, item.item_kind, item.item_id);
+  const el = item.item_kind === "sense"
+    ? senseCell(
+        { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
+        onSpeak,
+      )
+    : await entityCell(
+        { spoken_name: item.label, photo_key: item.photo_key },
+        onSpeak,
+      );
+  el.dataset.slot = item.slot_index;
+  el.dataset.item = `${item.item_kind}:${item.item_id}`;
+  if (!editing) return el;
+
+  // Removal is only offered where it can succeed: a sense never leaves a
+  // built-in group (the findability guarantee), and an entity's last cell
+  // is My Words, so it has no × there — the card's Remove retires it.
+  const removable =
+    item.item_kind === "entity" ? groupKey !== "grp_my_words" : gKind !== "builtin";
+  if (removable) {
+    el.appendChild(xBadge(() => {
+      const undo = removeItemUndoable(db, groupKey, item.item_kind, item.item_id);
+      renderGroupPage();
+      toast(`Removed ${item.label}`, () => { undo.undo(); renderGroupPage(); });
+    }));
   }
-  return entityCell({ spoken_name: item.label, photo_key: item.photo_key }, onTap);
+  editPointer(el, {
+    onTap: () => openWordCard(item),
+    onDrop: (slot) => {
+      const target = groupPage(db, groupKey, groupPageNo, locale)
+        .find((r) => r.slot_index === slot);
+      if (target) {
+        swapItems(db, groupKey, item, { item_kind: target.item_kind, item_id: target.item_id });
+      } else {
+        moveItem(db, groupKey, item.item_kind, item.item_id, groupPageNo, slot);
+      }
+      renderGroupPage();
+    },
+  });
+  return el;
 }
 
-/** Group page: slot 0 = back to index, slot 1 = the Edit-mode action
- *  (`+ Add`, or `Remove` while a removable item is lifted), items at
- *  their stored (page, slot_index) in 2–58, slot 59 = Next › when the
- *  group has a second page. Word taps speak and stay in the group —
- *  leaving is one learned gesture. */
+/** Group page: slot 0 = back to index, slot 1 = `+ Add` while editing,
+ *  items at their stored (page, slot_index) in 2–58, slot 59 = Next ›
+ *  when the group has a second page. Tapping an empty slot while editing
+ *  opens + Add aimed at that slot — the slot is the picker. Word taps
+ *  speak and stay in the group — leaving is one learned gesture. */
 async function renderGroupPage() {
   const zg = $("groupgrid");
   zg.innerHTML = "";
@@ -1259,10 +1345,6 @@ async function renderGroupPage() {
   );
   const pages = pageCount(db, groupKey);
   const gKind = ALL(db, "SELECT kind FROM board_group WHERE id = ?", [groupKey])[0]?.kind;
-  // Removal is only offered where it can succeed: a sense never leaves a
-  // built-in group (that is the findability guarantee), so slot 1 stays
-  // blank for a lifted sense there.
-  const removable = lifted && !(lifted.item_kind === "sense" && gKind === "builtin");
 
   for (let slot = 0; slot < 60; slot++) {
     if (slot === 0) {
@@ -1270,23 +1352,12 @@ async function renderGroupPage() {
       continue;
     }
     if (slot === 1) {
-      if (editing && removable) {
-        zg.appendChild(editSlotCell("Remove", () => {
-          removeItem(db, groupKey, lifted.item_kind, lifted.item_id);
-          lifted = null;
-          renderGroupPage();
-        }));
-      } else {
-        zg.appendChild(editSlotCell(editing && !lifted && "+ Add", () => {
-          openAddForm(groupKey);
-        }));
-      }
+      zg.appendChild(editSlotCell(editing && "+ Add", () => openAddForm(groupKey)));
       continue;
     }
     if (slot === 59) {
       if (pages > 1) {
         const el = navCell("Next ›", () => {
-          lifted = null;
           groupPageNo = (groupPageNo + 1) % pages;
           renderGroupPage();
         });
@@ -1307,22 +1378,15 @@ async function renderGroupPage() {
       const empty = document.createElement("div");
       empty.className = "gcell empty";
       if (editing) {
-        empty.classList.add("drop");
+        empty.dataset.slot = slot; // drag target
         empty.addEventListener("click", () => {
-          if (!lifted) return;
-          moveItem(db, groupKey, lifted.item_kind, lifted.item_id, groupPageNo, slot);
-          lifted = null;
-          renderGroupPage();
+          openAddForm(groupKey, { page: groupPageNo, slot_index: slot });
         });
       }
       zg.appendChild(empty);
       continue;
     }
-    const el = await itemCell(item);
-    if (editing && lifted?.item_kind === item.item_kind && lifted?.item_id === item.item_id) {
-      el.classList.add("lifted");
-    }
-    zg.appendChild(el);
+    zg.appendChild(await itemCell(item, gKind));
   }
   fitLabels(zg);
 }
@@ -1344,8 +1408,9 @@ $("group-save").addEventListener("click", async () => {
    the real sense (its color, its voice); "New" makes a personal entity.
    The adult never picks a folder — the group they are standing in is the
    target. No type, pronoun, or category picker. --- */
-function openAddForm(groupId) {
+function openAddForm(groupId, cell = null) {
   addTarget = groupId;
+  addCell = cell;
   const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [groupId])[0];
   const name = row ? groupDisplayName(db, row, locale) : "";
   $("add-title").textContent = name ? `Add to ${name}` : "Add";
@@ -1383,7 +1448,7 @@ function renderAddMatches() {
     return el;
   };
   const place = (kind, id) => () => {
-    placeItem(db, addTarget, kind, id);
+    placeItem(db, addTarget, kind, id, addCell);
     close("addform");
     rerenderView();
     renderStrip();
@@ -1461,11 +1526,182 @@ $("add-save").addEventListener("click", async () => {
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES (?, ?, ?, ?, ?)",
     [id, name, photoKey, category, hint],
   );
-  placeItem(db, addTarget, "entity", id);
+  placeItem(db, addTarget, "entity", id, addCell);
   kbIndex = null; // new entity joins the completion index
   close("addform");
   rerenderView();
   renderStrip();
+});
+
+/* --- the word card (Word_Library § 4): where the word is, how it
+   sounds, what can change. Entities rename/photo/retire; catalog words
+   are read-only here — masking is the Hide slice. --- */
+let cardItem = null; // { item_kind, item_id, label } currently shown
+
+function cardGroups() {
+  return cardItem.item_kind === "entity"
+    ? entityGroups(db, cardItem.item_id, locale)
+    : senseGroups(db, cardItem.item_id, locale);
+}
+
+function renderCardGroups() {
+  const box = $("wc-groups");
+  box.innerHTML = "";
+  for (const g of cardGroups()) {
+    const chip = document.createElement("span");
+    chip.className = "wchip";
+    chip.textContent = g.name;
+    const removable =
+      cardItem.item_kind === "entity"
+        ? g.id !== "grp_my_words" // last cell is My Words — Remove retires
+        : g.kind !== "builtin"; // senses never leave built-ins
+    if (removable) {
+      chip.appendChild(xBadge(() => {
+        const undo = removeItemUndoable(db, g.id, cardItem.item_kind, cardItem.item_id);
+        renderCardGroups();
+        rerenderView();
+        toast(`Removed from ${g.name}`, () => { undo.undo(); renderCardGroups(); rerenderView(); });
+      }));
+    }
+    box.appendChild(chip);
+  }
+}
+
+function openWordCard(item) {
+  cardItem = { item_kind: item.item_kind, item_id: item.item_id, label: item.label };
+  const isEnt = item.item_kind === "entity";
+  const meta = isEnt ? { role: "Yellow" } : metaFor(item.item_id);
+  const pic = $("wc-pic");
+  pic.className = `pic r-${meta.role ?? "None"}`;
+  pic.replaceChildren();
+  $("wc-name").value = item.label;
+  $("wc-name").disabled = !isEnt; // a catalog word is renamed by a new copy, not here
+  $("wc-role").textContent = isEnt ? "personal word" : "catalog word";
+  $("wc-photolabel").hidden = !isEnt;
+  $("wc-photo").value = "";
+  $("wc-remove").hidden = !isEnt;
+  $("wc-grouplist").hidden = true;
+  if (isEnt && item.photo_key) {
+    loadPhotoURL(item.photo_key).then((url) => {
+      if (!url) return;
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "";
+      pic.replaceChildren(img);
+      pic.classList.add("photo");
+    });
+  } else if (!isEnt && meta.art) {
+    const img = document.createElement("img");
+    img.src = `/${meta.art}`;
+    img.alt = "";
+    pic.appendChild(img);
+  } else {
+    pic.textContent = item.label[0].toUpperCase();
+  }
+  renderCardGroups();
+  open("wordcard");
+}
+
+$("wc-name").addEventListener("change", () => {
+  if (!cardItem || cardItem.item_kind !== "entity") return;
+  const name = $("wc-name").value.trim();
+  if (!name || name === cardItem.label) { $("wc-name").value = cardItem.label; return; }
+  renameEntity(db, cardItem.item_id, name);
+  cardItem.label = name;
+  kbIndex = null; // completions index the old spelling
+  rerenderView();
+  renderStrip();
+});
+
+$("wc-photo").addEventListener("change", async () => {
+  const file = $("wc-photo").files[0];
+  if (!file || !cardItem) return;
+  const photoKey = await savePhoto(cardItem.item_id, file);
+  RUN(db, "UPDATE personal_entity SET photo_key = ? WHERE id = ?", [photoKey, cardItem.item_id]);
+  entityPhoto.delete(cardItem.item_id);
+  rerenderView();
+});
+
+$("wc-play").addEventListener("click", () => {
+  if (!cardItem) return;
+  if (cardItem.item_kind === "sense") {
+    const key = clipKeyFor(cardItem.item_id);
+    if (key) return playClip(key);
+  }
+  speak(cardItem.label);
+});
+
+/** Groups the item is not yet in — one tap places it at the next free
+ *  cell of that group. */
+$("wc-addgroup").addEventListener("click", () => {
+  const list = $("wc-grouplist");
+  list.hidden = !list.hidden;
+  if (list.hidden) return;
+  list.innerHTML = "";
+  const member = new Set(cardGroups().map((g) => g.id));
+  for (const g of groupIndex(db)) {
+    if (member.has(g.id)) continue;
+    const chip = document.createElement("button");
+    chip.className = "wchip";
+    chip.textContent = groupDisplayName(db, g, locale);
+    chip.addEventListener("click", () => {
+      placeItem(db, g.id, cardItem.item_kind, cardItem.item_id);
+      renderCardGroups();
+      list.hidden = true;
+      rerenderView();
+    });
+    list.appendChild(chip);
+  }
+});
+
+/** Show on board: jump to where the word lives and mark its cell for a
+ *  beat. An entity or custom-group sense flashes in the group we opened
+ *  the card from (else its first group); a built-in sense flashes on the
+ *  core board. */
+$("wc-show").addEventListener("click", () => {
+  const it = cardItem;
+  close("wordcard");
+  const onBoard = it.item_kind === "sense" &&
+    ALL(db, "SELECT 1 AS x FROM core_cell WHERE sense_id = ?", [it.item_id])[0];
+  if (onBoard) {
+    setView("board");
+    flashCell(cellEls.get(it.item_id));
+    return;
+  }
+  const homes = cardItem.item_kind === "entity"
+    ? entityGroups(db, it.item_id, locale)
+    : senseGroups(db, it.item_id, locale);
+  const target = homes.find((g) => g.id === groupKey) ?? homes[0];
+  if (!target) { setView("board"); return; }
+  groupKey = target.id;
+  const cell = ALL(
+    db,
+    "SELECT page FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupKey, it.item_kind, it.item_id],
+  )[0];
+  groupPageNo = cell?.page ?? 0;
+  setView("group");
+  // Render is async; flash once the cells exist.
+  requestAnimationFrame(() =>
+    flashCell($("groupgrid").querySelector(`[data-item="${it.item_kind}:${it.item_id}"]`)),
+  );
+});
+
+/** Remove = retire (never delete). The row, photo, and placements stay;
+ *  Undo restores it. */
+$("wc-remove").addEventListener("click", () => {
+  const it = cardItem;
+  retireEntity(db, it.item_id);
+  close("wordcard");
+  kbIndex = null;
+  rerenderView();
+  renderStrip();
+  toast(`Removed ${it.label}`, () => {
+    restoreEntity(db, it.item_id);
+    kbIndex = null;
+    rerenderView();
+    renderStrip();
+  });
 });
 
 renderGrid();

@@ -254,6 +254,7 @@ export function groupPage(db, groupId, page = 0, locale) {
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
      LEFT JOIN personal_entity e ON gc.item_kind = 'entity' AND e.id = gc.item_id
      WHERE gc.group_id = ? AND gc.page = ?
+       AND (gc.item_kind = 'sense' OR e.status = 'active')
      ORDER BY gc.slot_index`,
     [locale, groupId, page],
   );
@@ -283,7 +284,8 @@ export function entityMatches(db, text, groupId, locale, seedCategory = null) {
      LEFT JOIN group_cell gc ON gc.item_kind = 'entity' AND gc.item_id = e.id
      LEFT JOIN board_group g ON g.id = gc.group_id
      LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
-     WHERE NOT EXISTS (
+     WHERE e.status = 'active'
+       AND NOT EXISTS (
        SELECT 1 FROM group_cell x
        WHERE x.group_id = ? AND x.item_kind = 'entity' AND x.item_id = e.id
      )
@@ -357,17 +359,27 @@ export function nextFreeCell(db, groupId) {
   }
 }
 
-/** Append an item at the next free cell. No-op when already present. */
-export function placeItem(db, groupId, kind, id) {
+/** Append an item at the next free cell — or at `cell` when the adult
+ *  tapped an empty slot to add there (the slot is the picker). No-op when
+ *  already present; an occupied target refuses. */
+export function placeItem(db, groupId, kind, id, cell = null) {
   const existing = one(
     db,
     "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
     [groupId, kind, id],
   );
   if (existing) return { page: existing.page, slot_index: existing.slot_index };
-  const cell = nextFreeCell(db, groupId);
-  insertCell(db, groupId, kind, id, cell.page, cell.slot_index);
-  return cell;
+  if (cell) {
+    const taken = one(
+      db,
+      "SELECT item_id FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
+      [groupId, cell.page, cell.slot_index],
+    );
+    if (taken) throw new Error(`group ${groupId} slot ${cell.page}:${cell.slot_index} is occupied`);
+  }
+  const target = cell ?? nextFreeCell(db, groupId);
+  insertCell(db, groupId, kind, id, target.page, target.slot_index);
+  return target;
 }
 
 /** Move an item to a free slot on any page of the same group. */
@@ -436,6 +448,95 @@ export function removeItem(db, groupId, kind, id) {
     ).n;
     if (left === 0) placeItem(db, "grp_my_words", "entity", id);
   }
+}
+
+/**
+ * removeItem with a way back (Edit-mode × + Undo toast): returns the
+ * removed row and an undo() that restores it byte-for-byte — including
+ * reverting the never-orphan landing in My Words when it fired.
+ */
+export function removeItemUndoable(db, groupId, kind, id) {
+  const removed = one(
+    db,
+    "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupId, kind, id],
+  );
+  if (!removed) throw new Error(`item ${id} is not in group ${groupId}`);
+  const myWordsBefore = kind === "entity" &&
+    one(
+      db,
+      "SELECT 1 AS x FROM group_cell WHERE group_id = 'grp_my_words' AND item_kind = 'entity' AND item_id = ?",
+      [id],
+    );
+  removeItem(db, groupId, kind, id);
+  return {
+    removed,
+    undo() {
+      if (kind === "entity" && !myWordsBefore) {
+        db.prepare(
+          "DELETE FROM group_cell WHERE group_id = 'grp_my_words' AND item_kind = 'entity' AND item_id = ?",
+        ).run(id);
+      }
+      insertCell(db, groupId, kind, id, removed.page, removed.slot_index);
+    },
+  };
+}
+
+/**
+ * The word card's edits (Word_Library § 4). Rename supersedes the ready
+ * recording override and enrichment — the old name must not keep playing
+ * (schema § 6.2). The rows stay; only their status moves.
+ */
+export function renameEntity(db, id, newName) {
+  const name = newName.trim();
+  if (!name) throw new Error("renameEntity: empty name");
+  txn(db, () => {
+    db.prepare("UPDATE personal_entity SET spoken_name = ? WHERE id = ?").run(name, id);
+    db.prepare(
+      "UPDATE clip_override SET status = 'superseded' WHERE entity_id = ? AND status = 'ready'",
+    ).run(id);
+    db.prepare(
+      "UPDATE entity_enrichment SET status = 'superseded' WHERE entity_id = ? AND status = 'ready'",
+    ).run(id);
+  });
+}
+
+/** Retire, never delete: the entity renders nowhere until restored. */
+export function retireEntity(db, id) {
+  db.prepare("UPDATE personal_entity SET status = 'retired' WHERE id = ?").run(id);
+}
+export function restoreEntity(db, id) {
+  db.prepare("UPDATE personal_entity SET status = 'active' WHERE id = ?").run(id);
+}
+
+/** The groups an entity sits in, index order — the card's chips. */
+export function entityGroups(db, entityId, locale) {
+  requireLocale(locale);
+  return all(
+    db,
+    `SELECT g.id, COALESCE(g.name, gl.text) AS name
+     FROM group_cell gc
+     JOIN board_group g ON g.id = gc.group_id
+     LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
+     WHERE gc.item_kind = 'entity' AND gc.item_id = ?
+     ORDER BY g.index_slot`,
+    [locale, entityId],
+  );
+}
+
+/** The groups a sense sits in — the card's chips for a catalog word. */
+export function senseGroups(db, senseId, locale) {
+  requireLocale(locale);
+  return all(
+    db,
+    `SELECT g.id, g.kind, COALESCE(g.name, gl.text) AS name
+     FROM group_cell gc
+     JOIN board_group g ON g.id = gc.group_id
+     LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
+     WHERE gc.item_kind = 'sense' AND gc.item_id = ?
+     ORDER BY g.index_slot`,
+    [locale, senseId],
+  );
 }
 
 /** Create a custom group at the lowest free index slot. */

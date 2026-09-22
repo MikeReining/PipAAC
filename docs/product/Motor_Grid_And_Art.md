@@ -103,17 +103,18 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   removed from its last group returns to My Words and is never orphaned.
 - **One Edit mode.** Parent Corner → `Edit groups`. The corner button
   reads `✓ Done` while editing. Built-in groups can be moved but not
-  deleted or renamed. **BUILT** today: tap to lift, then tap an empty slot
-  to move or an occupied slot to swap.
-  **DECIDED 2026-09-22** (founder, not built): Edit mode works like the
-  iPhone home screen, with one deliberate difference. Execution:
-  `docs/phases/009_Word_Library_And_Customize.md` slice 2.
+  deleted or renamed. **BUILT** (009 slice 2): Edit mode works like the
+  iPhone home screen, with one deliberate difference.
   - **Drag** an item to an empty slot to move it, or onto another item to
-    swap the two. Only the dragged item (and a swapped partner) moves.
+    swap the two. Only the dragged item (and a swapped partner) moves
+    (`editPointer` in `public/board.js`; `moveItem`/`swapItems` in
+    `public/shared/groups.mjs`). On the group index the same drag moves a
+    group between index slots ≥ 10.
   - **Tap** an item to open its word card (`docs/product/Word_Library.md`
-    § 4).
+    § 4); tap a group to open it.
   - **×** badge on each removable item removes it from this group, with
-    an Undo toast.
+    an Undo toast (`removeItemUndoable` restores the row byte-for-byte).
+    A custom group's × deletes the group after a two-button ask.
   - **Tap an empty slot** to add straight into that slot (the slot is the
     picker, as the group is today).
   - **The difference from the home screen: removal never reflows.** The

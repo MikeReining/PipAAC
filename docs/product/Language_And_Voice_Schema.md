@@ -406,9 +406,13 @@ CREATE TABLE personal_entity (
     'Function Words & Grammar',
     'Numbers & Counting'
   )),
-  hint TEXT
+  hint TEXT,
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'retired'))
 );
 ```
+
+`status` is retirement (§ 14.5): `retired` renders nowhere and every read
+path filters on `'active'`; the row and its `group_cell` placements stay.
 
 There is no `type` column, no `pronoun` column, and no edge table. The
 adult supplies facts a model cannot know — the name, the photo, an
@@ -1257,10 +1261,13 @@ a ghost tile (`docs/product/Vocabulary_Masking_And_Safety.md` § 2).
 
 ### 14.5 Retired entities (009 slice 2)
 
-`personal_entity` gains `status TEXT NOT NULL DEFAULT 'active' CHECK
-(status IN ('active', 'retired'))`. Remove on the word card retires; the
-row, photo and recording stay (§ 1, "Retire, never delete"). A retired
-entity renders nowhere and is restorable.
+**BUILT** — `personal_entity.status TEXT NOT NULL DEFAULT 'active' CHECK
+(status IN ('active', 'retired'))` in `src/board/schema.sql`. Remove on the
+word card retires (`retireEntity`); the row, photo and recording stay
+(§ 1, "Retire, never delete"). Every read path filters on `'active'` —
+`groupPage`, `entityMatches`, strip candidates, keyboard completions,
+typed-word resolution, idle starters — so a retired entity renders
+nowhere and `restoreEntity` brings it back with its placements.
 
 ### 14.6 Sync op log (011 slice 1)
 
