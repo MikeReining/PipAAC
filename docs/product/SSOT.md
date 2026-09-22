@@ -12,6 +12,7 @@ do not duplicate long policy in `AGENTS.md`.
 | **DECIDED 2026-09-21**. Dual-Engine Predictive Intelligence (TypeSafe Jev + Local-First SQLite) | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` |
 | **DECIDED 2026-09-22** (not built). Clean-room motor grid, Fitzgerald color, stick-figure and object art, predictive-strip layout | `docs/product/Motor_Grid_And_Art.md` |
 | **DECIDED 2026-09-22** (not built). Coordinate map: `grid60` default (10×6) + `grid90` dense (10×9, all 81 core cells); Groups anchor | `docs/product/Core_Coordinate_Map.md` |
+| **DECIDED 2026-09-22** (not built). Zones are an in-place board mode on their own coordinate map (`zone_slot`); custom groups are first-class zones; positions move only in caregiver arrange mode | `docs/product/Motor_Grid_And_Art.md` + `docs/product/Language_And_Voice_Schema.md` §6.3b |
 | **DECIDED 2026-09-22** (not built). Clean-room initial launch vocabulary (656 words: 81 Root Core + 575 Primary Fringe), membership ranked by `data/reference/` AoA + Fry | `docs/product/Initial_Vocabulary_600.md` |
 | **DECIDED 2026-09-22** (not built). Personal entity is a record, not a core cell. Add = name + photo + optional hint, one confirm; filing by context or classification, never a form | `docs/product/Personal_Entities.md` |
 | **DECIDED 2026-09-22** (not built). Sense, utterance, label, shared picture, one clip per voice. Profile picks one voice. Core cells store sense ids per layout. No edge table — strip relevance is computed live | `docs/product/Language_And_Voice_Schema.md` |

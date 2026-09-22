@@ -104,6 +104,40 @@
       .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; flex: none; }
       .anchor span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #grid { flex: 1; display: grid; gap: var(--gap); }
+      /* Zone index and zone pages replace the grid in place — same 10×6
+         geometry, same physical positions. Navigation is a board mode,
+         never a modal; the strip and bar stay put. */
+      #zonegrid { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
+      body.zones #grid { display: none; }
+      body.zones #zonegrid { display: grid; }
+      /* Zone cells: same footprint as .cell. Neutral navigation color —
+         zones are a map, not vocabulary, so no Fitzgerald role. */
+      .zcell {
+        border-radius: 12px;
+        border: 3px solid #8a8578;
+        background: #f2efe6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        font-weight: 700;
+        font-size: clamp(11px, 1.9vmin, 17px);
+        color: #1a1a1a;
+        overflow: hidden;
+        padding: 4px;
+        text-align: center;
+      }
+      .zcell .glyph { font-size: clamp(18px, 3.2vmin, 32px); line-height: 1; }
+      .zcell .zlabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .zcell:active { filter: brightness(0.92); }
+      .zcell.nav { border-color: #5b5348; background: #e8e3d6; font-size: clamp(13px, 2.2vmin, 20px); }
+      .zcell.empty { border-style: dashed; border-color: #d8d4c8; background: transparent; }
+      .zcell.empty:disabled { border-color: transparent; }
+      .zcell.arrange { border-style: dashed; border-color: #8a7fbf; }
+      .zcell.lifted { outline: 4px solid #2f6fd0; outline-offset: 2px; }
+      .cell.entity { flex-direction: column; gap: 2px; font-size: clamp(11px, 1.9vmin, 17px); }
+      .cell.entity img { width: 44%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
       /* Keyboard replaces the grid in place — same 10×6 geometry, same
          physical positions. Never a modal; the strip and bar stay put. */
       #kb { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
@@ -186,42 +220,6 @@
         font-weight: 700;
       }
       .btn.secondary { background: #fff; color: #2f6fd0; }
-      .zone-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px;
-        border: 3px solid #e3ded2;
-        border-radius: 10px;
-        font-size: clamp(12px, 1.9vmin, 17px);
-        font-weight: 700;
-        background: #fff;
-        text-align: left;
-        overflow: hidden;
-      }
-      /* Same anatomy as .pred: 1:1 square left, label right. Clip art lands
-         inside .swatch later — geometry is already final. */
-      .zone-item .swatch {
-        width: 44px;
-        height: 44px;
-        flex: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        border-radius: 7px;
-        background: rgba(255, 255, 255, 0.55);
-        overflow: hidden;
-      }
-      .zone-item .swatch img { width: 100%; height: 100%; object-fit: cover; }
-      .zone-item.r-Yellow { background: #fdf0c8; border-color: #d9a410; }
-      .zone-item.r-Green  { background: #dcf0dd; border-color: #2e8b3a; }
-      .zone-item.r-Blue   { background: #dcecfd; border-color: #2f6fd0; }
-      .zone-item.r-Pink   { background: #fbdfee; border-color: #d0438c; }
-      .zone-item.r-Red    { background: #fbdcdc; border-color: #c62828; }
-      .zone-item.nav { padding: 14px; font-size: 18px; }
-      .zone-items { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-      #zone .sheet { width: min(680px, 94vw); }
       .hint { color: #777; font-size: 14px; }
 
       /* On-screen keyboard styles live with the grid (#kb) — it is a board
@@ -245,6 +243,7 @@
       </button>
     </div>
     <div id="grid"></div>
+    <div id="zonegrid"></div>
     <div id="kb"></div>
 
     <div class="overlay" id="menu">
@@ -252,24 +251,22 @@
         <h2>Parent corner</h2>
         <button class="btn" id="add-mywords">Add a word</button>
         <button class="btn secondary" id="browse-zones">Zones</button>
+        <button class="btn secondary" id="arrange-zones">Arrange zones</button>
         <button class="btn secondary" data-close>Close</button>
       </div>
     </div>
 
-    <div class="overlay" id="zones">
+    <div class="overlay" id="groupform">
       <div class="sheet">
-        <h2>Zones</h2>
-        <div id="zone-list"></div>
-        <button class="btn secondary" data-close>Back</button>
-      </div>
-    </div>
-
-    <div class="overlay" id="zone">
-      <div class="sheet">
-        <h2 id="zone-title"></h2>
-        <div class="zone-items" id="zone-items"></div>
-        <button class="btn" id="add-in-zone">Add a word here</button>
-        <button class="btn secondary" data-close>Back</button>
+        <h2>New group</h2>
+        <input type="text" id="group-name" placeholder="Group name, e.g. Sofia's snacks" autocomplete="off" />
+        <label class="hint">Photo (optional)
+          <input type="file" id="group-photo" accept="image/*" />
+        </label>
+        <div class="row">
+          <button class="btn" id="group-save">Save</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
       </div>
     </div>
 

@@ -87,4 +87,19 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
       "INSERT OR IGNORE INTO learner_profile (id, locale, preferred_voice_id) VALUES (?, ?, ?)",
     ).run("prf_local", defaultVoice.locale, defaultVoice.id);
   }
+
+  // Zone coordinate defaults: My Words first, then fringe categories in
+  // catalog order. OR IGNORE keeps caregiver-arranged positions intact.
+  const insZone = db.prepare(
+    "INSERT OR IGNORE INTO zone_slot (zone_key, slot_index) VALUES (?, ?)",
+  );
+  insZone.run("my_words", 10);
+  const seeded = new Set();
+  let slot = 11;
+  for (const s of senses) {
+    if (s.category && !seeded.has(s.category)) {
+      seeded.add(s.category);
+      insZone.run(s.category, slot++);
+    }
+  }
 }

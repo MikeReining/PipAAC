@@ -154,7 +154,9 @@ CREATE TABLE sense (
       'Vehicles & Transportation',
       'Descriptors, Adjectives & Opposites',
       'Time, Calendar & Sequencing',
-      'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+      'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
+      'Function Words & Grammar',
+      'Numbers & Counting'
     ))
   )
 );
@@ -388,7 +390,9 @@ CREATE TABLE personal_entity (
     'Vehicles & Transportation',
     'Descriptors, Adjectives & Opposites',
     'Time, Calendar & Sequencing',
-    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
+    'Function Words & Grammar',
+    'Numbers & Counting'
   )),
   hint TEXT
 );
@@ -435,7 +439,9 @@ CREATE TABLE entity_enrichment (
     'Vehicles & Transportation',
     'Descriptors, Adjectives & Opposites',
     'Time, Calendar & Sequencing',
-    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
+    'Function Words & Grammar',
+    'Numbers & Counting'
   )),
   associations TEXT,
   model TEXT NOT NULL,
@@ -493,6 +499,42 @@ person for the library, plus an occasional recording of a name or a word.
 The insert trigger enforces `recorded_text` matching the utterance's
 `spoken_text` or the entity's `spoken_name` at write time — the same
 invariant `clip` already enforces, not a read-time hope.
+
+### 6.3b Zone map
+
+```sql
+CREATE TABLE zone_slot (
+  zone_key TEXT PRIMARY KEY CHECK (length(zone_key) > 0),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 10 AND slot_index < 60)
+);
+```
+
+The zone index is a second coordinate map — navigation gets the same
+motor-memory law as `core_cell`. `zone_key` is `my_words`, a catalog
+category name, or a `custom_group` id. Slots 0–9 of the zone view are
+pinned nav cells (`← Board`, `+ Group`); zones occupy 10–59. Import seeds
+defaults (My Words first, then categories in catalog order) with
+`INSERT OR IGNORE` — a caregiver's arrange-mode move is never overwritten
+by a reconcile.
+
+```sql
+CREATE TABLE custom_group (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),
+  name TEXT NOT NULL CHECK (length(name) > 0),
+  photo_key TEXT
+);
+
+CREATE TABLE group_item (
+  group_id TEXT NOT NULL REFERENCES custom_group(id),
+  entity_id TEXT NOT NULL REFERENCES personal_entity(id),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
+  PRIMARY KEY (group_id, entity_id)
+);
+```
+
+Custom groups are caregiver-authored zones holding personal entities in
+stable order (first-added = first slot). `+ Group` on the zone index
+creates one and claims the first free zone slot.
 
 ### 6.4 Indexes
 

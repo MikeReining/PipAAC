@@ -124,7 +124,9 @@ CREATE TABLE IF NOT EXISTS personal_entity (
     'Vehicles & Transportation',
     'Descriptors, Adjectives & Opposites',
     'Time, Calendar & Sequencing',
-    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
+    'Function Words & Grammar',
+    'Numbers & Counting'
   )),
   hint TEXT
 );
@@ -147,7 +149,9 @@ CREATE TABLE IF NOT EXISTS entity_enrichment (
     'Vehicles & Transportation',
     'Descriptors, Adjectives & Opposites',
     'Time, Calendar & Sequencing',
-    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
+    'Function Words & Grammar',
+    'Numbers & Counting'
   )),
   associations TEXT,
   model TEXT NOT NULL,
@@ -175,6 +179,30 @@ CREATE TABLE IF NOT EXISTS clip_override (
   key TEXT NOT NULL CHECK (length(key) > 0),
   status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),
   CHECK ((utterance_id IS NULL) != (entity_id IS NULL))
+);
+
+-- The zone index is a second coordinate map: navigation gets the same
+-- motor-memory law as core_cell. zone_key is 'my_words', a catalog
+-- category name, or a custom_group id. Slots 0–9 are pinned nav cells;
+-- zones occupy 10–59. Positions only move via caregiver arrange mode.
+CREATE TABLE IF NOT EXISTS zone_slot (
+  zone_key TEXT PRIMARY KEY CHECK (length(zone_key) > 0),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 10 AND slot_index < 60)
+);
+
+CREATE TABLE IF NOT EXISTS custom_group (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),
+  name TEXT NOT NULL CHECK (length(name) > 0),
+  photo_key TEXT
+);
+
+-- Custom groups hold personal entities in stable order (first-added =
+-- first slot — mini motor memory inside the group).
+CREATE TABLE IF NOT EXISTS group_item (
+  group_id TEXT NOT NULL REFERENCES custom_group(id),
+  entity_id TEXT NOT NULL REFERENCES personal_entity(id),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
+  PRIMARY KEY (group_id, entity_id)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text
@@ -385,4 +413,4 @@ BEGIN
   );
 END;
 
-PRAGMA user_version = 1;
+PRAGMA user_version = 2;

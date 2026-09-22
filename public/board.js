@@ -23,7 +23,52 @@ const CATEGORIES = [
 
 const { db } = await bootDb();
 const sentence = []; // [{kind, id, text}]
-let zoneContext = null; // category the add form files into
+let zoneContext = null; // {category} | {group} | null(My Words) — where the add form files
+let view = "board";    // 'board' | 'zoneIndex' | 'zone' — zones are a board mode, not a modal
+let zoneKey = null;    // zone_key of the open zone page
+let arranging = false; // caregiver arrange mode on the zone index
+let lifted = null;     // zone_key picked up in arrange mode
+
+// Short display names + glyphs for zone cells — presentational only; the
+// durable zone key stays the full catalog category name.
+const ZONE_SHORT = {
+  "my_words": "My Words",
+  "Food & Drink": "Food",
+  "Body, Health & Hygiene": "Body",
+  "Feelings, Emotions & Sensory States": "Feelings",
+  "Daily Actions & Activity Verbs": "Actions",
+  "People, Family & Roles": "People",
+  "Places, Rooms & Community": "Places",
+  "Toys, Play, Media & Leisure": "Play",
+  "Home, Household Objects & Daily Tools": "Home",
+  "Clothing & Accessories": "Clothes",
+  "Animals & Nature": "Animals",
+  "Vehicles & Transportation": "Vehicles",
+  "Descriptors, Adjectives & Opposites": "Describing",
+  "Time, Calendar & Sequencing": "Time",
+  "Social Etiquette, Pragmatic Interjections & Urgent/Safety": "Social",
+  "Function Words & Grammar": "Grammar",
+  "Numbers & Counting": "Numbers",
+};
+const ZONE_GLYPH = {
+  "my_words": "⭐",
+  "Food & Drink": "🍎",
+  "Body, Health & Hygiene": "🧍",
+  "Feelings, Emotions & Sensory States": "😊",
+  "Daily Actions & Activity Verbs": "🏃",
+  "People, Family & Roles": "👪",
+  "Places, Rooms & Community": "🏠",
+  "Toys, Play, Media & Leisure": "⚽",
+  "Home, Household Objects & Daily Tools": "🛋️",
+  "Clothing & Accessories": "👕",
+  "Animals & Nature": "🐶",
+  "Vehicles & Transportation": "🚗",
+  "Descriptors, Adjectives & Opposites": "🎨",
+  "Time, Calendar & Sequencing": "🕐",
+  "Social Etiquette, Pragmatic Interjections & Urgent/Safety": "💬",
+  "Function Words & Grammar": "➕",
+  "Numbers & Counting": "🔢",
+};
 
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
@@ -110,7 +155,7 @@ async function idleStarters() {
       onTap: () => tap(hello.label, "sense", hello.id) });
   }
   cards.push({ label: "Food", glyph: "🥞", role: "Pink",
-    onTap: () => { renderZone("Food & Drink", "Food & Drink"); open("zone"); } });
+    onTap: () => openZone("Food & Drink") });
   const top = ALL(
     db,
     `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
@@ -257,7 +302,19 @@ document.querySelectorAll(".overlay").forEach((o) =>
 );
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
-    document.querySelectorAll(".overlay.open").forEach((o) => o.classList.remove("open"));
+    const anyOverlay = document.querySelector(".overlay.open");
+    if (anyOverlay) {
+      document.querySelectorAll(".overlay.open").forEach((o) => o.classList.remove("open"));
+      return;
+    }
+    if (arranging) {
+      arranging = false;
+      lifted = null;
+      renderZoneIndex();
+      return;
+    }
+    if (view === "zone") return openZoneIndex();
+    if (view === "zoneIndex") return setView("board");
     if (kbOpen) closeKb();
     return;
   }
@@ -278,8 +335,14 @@ document.addEventListener("keydown", (e) => {
 $("corner").addEventListener("click", () => open("menu"));
 $("browse-zones").addEventListener("click", () => {
   close("menu");
-  renderZoneList();
-  open("zones");
+  openZoneIndex();
+});
+$("arrange-zones").addEventListener("click", () => {
+  close("menu");
+  openZoneIndex();
+  arranging = true;
+  lifted = null;
+  renderZoneIndex();
 });
 $("add-mywords").addEventListener("click", () => {
   close("menu");
@@ -288,11 +351,11 @@ $("add-mywords").addEventListener("click", () => {
 });
 
 /* --- permanent utility anchors --- */
-$("anchor-kb").addEventListener("click", openKb);
-$("anchor-groups").addEventListener("click", () => {
-  renderZoneList();
-  open("zones");
+$("anchor-kb").addEventListener("click", () => {
+  setView("board");
+  openKb();
 });
+$("anchor-groups").addEventListener("click", openZoneIndex);
 
 /* --- keyboard: a board mode, not a modal. Letters replace the grid in
    place (same 10×6 geometry). Typing feeds prefix completions into the
@@ -300,6 +363,16 @@ $("anchor-groups").addEventListener("click", () => {
 let kbOpen = false;
 let kbText = "";
 let kbBuilt = false;
+
+/** Grid-area view swap: board | zoneIndex | zone render into #zonegrid,
+ *  keyboard into #kb — same physical space, strip and bar never move. */
+function setView(v) {
+  view = v;
+  if (v !== "board" && kbOpen) closeKb();
+  document.body.classList.toggle("zones", v !== "board");
+  if (v === "zoneIndex") renderZoneIndex();
+  else if (v === "zone") renderZonePage();
+}
 
 function openKb() {
   if (!kbBuilt) buildKb();
@@ -404,20 +477,132 @@ function kbCompletions() {
     .slice(0, 4);
 }
 
-async function entityTile(e) {
+/* --- zones: an in-place board mode, not a modal. The zone index and each
+   zone page render into #zonegrid — the same physical space and cell size
+   as the core grid. Slot 0 is always "back"; slot 1 is the authoring
+   action. Zone positions persist in zone_slot — navigation gets the same
+   motor-memory law as core_cell: slots only move in caregiver arrange
+   mode (tap to lift, tap a slot to place; occupied slot swaps). --- */
+
+function navCell(label, onTap) {
   const el = document.createElement("button");
-  el.className = "zone-item r-Yellow";
-  const sw = document.createElement("span");
-  sw.className = "swatch";
+  el.className = "zcell nav";
+  el.textContent = label;
+  el.addEventListener("click", onTap);
+  return el;
+}
+
+function zoneCell(key, slot) {
+  const group = key.startsWith("grp_")
+    ? ALL(db, "SELECT * FROM custom_group WHERE id = ?", [key])[0]
+    : null;
+  const label = group ? group.name : ZONE_SHORT[key] ?? key;
+  const glyph = group ? "🗂️" : ZONE_GLYPH[key] ?? "📁";
+  const el = document.createElement("button");
+  el.className = "zcell";
+  el.dataset.slot = slot;
+  el.dataset.zone = key;
+  const g = document.createElement("span");
+  g.className = "glyph";
+  g.textContent = glyph;
+  const lb = document.createElement("span");
+  lb.className = "zlabel";
+  lb.textContent = label;
+  el.appendChild(g);
+  el.appendChild(lb);
+  el.addEventListener("click", () => {
+    if (!arranging) return openZone(key);
+    if (!lifted) {
+      lifted = key;
+      renderZoneIndex();
+      return;
+    }
+    if (lifted === key) {
+      lifted = null;
+      renderZoneIndex();
+      return;
+    }
+    // occupied slot: swap coordinates
+    const other = ALL(db, "SELECT slot_index FROM zone_slot WHERE zone_key = ?", [lifted])[0];
+    RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [slot, lifted]);
+    RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [other.slot_index, key]);
+    lifted = null;
+    renderZoneIndex();
+  });
+  return el;
+}
+
+function renderZoneIndex() {
+  const zg = $("zonegrid");
+  zg.innerHTML = "";
+  const placed = new Map(
+    ALL(db, "SELECT zone_key, slot_index FROM zone_slot").map((r) => [r.slot_index, r.zone_key]),
+  );
+  for (let slot = 0; slot < 60; slot++) {
+    if (slot === 0) {
+      zg.appendChild(
+        arranging
+          ? navCell("Done ✓", () => { arranging = false; lifted = null; renderZoneIndex(); })
+          : navCell("← Board", () => setView("board")),
+      );
+      continue;
+    }
+    if (slot === 1) {
+      zg.appendChild(navCell("+ Group", () => open("groupform")));
+      continue;
+    }
+    const key = placed.get(slot);
+    if (key) {
+      const el = zoneCell(key, slot);
+      if (arranging) el.classList.add(key === lifted ? "lifted" : "arrange");
+      zg.appendChild(el);
+      continue;
+    }
+    const empty = document.createElement("button");
+    empty.className = "zcell empty";
+    if (arranging && slot >= 10) {
+      empty.classList.add("arrange");
+      empty.addEventListener("click", () => {
+        if (!lifted) return;
+        RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [slot, lifted]);
+        lifted = null;
+        renderZoneIndex();
+      });
+    } else {
+      empty.disabled = true;
+    }
+    zg.appendChild(empty);
+  }
+}
+
+function openZoneIndex() {
+  arranging = false;
+  lifted = null;
+  setView("zoneIndex");
+}
+
+async function openZone(key) {
+  zoneKey = key;
+  setView("zone");
+}
+
+function senseCell(w) {
+  const el = document.createElement("button");
+  el.className = `cell r-${w.fitzgerald_role}`;
+  el.textContent = w.label;
+  el.addEventListener("click", () => tap(w.label, "sense", w.sense_id));
+  return el;
+}
+
+async function entityCell(e) {
+  const el = document.createElement("button");
+  el.className = "cell r-Yellow entity";
   const url = await loadPhotoURL(e.photo_key);
   if (url) {
     const img = document.createElement("img");
     img.src = url;
-    sw.appendChild(img);
-  } else {
-    sw.textContent = e.spoken_name[0].toUpperCase();
+    el.appendChild(img);
   }
-  el.appendChild(sw);
   const lb = document.createElement("span");
   lb.textContent = e.spoken_name;
   el.appendChild(lb);
@@ -425,88 +610,87 @@ async function entityTile(e) {
   return el;
 }
 
-function fringeTile(w) {
-  const el = document.createElement("button");
-  el.className = `zone-item r-${w.fitzgerald_role}`;
-  const sw = document.createElement("span");
-  sw.className = "swatch";
-  sw.textContent = w.label[0].toUpperCase();
-  el.appendChild(sw);
-  const lb = document.createElement("span");
-  lb.textContent = w.label;
-  el.appendChild(lb);
-  el.addEventListener("click", () => tap(w.label, "sense", w.sense_id));
-  return el;
-}
+/** Zone page: slot 0 = back to index, slot 1 = add here, items from slot 2.
+ *  Word taps speak and stay in the zone — leaving is one learned gesture. */
+async function renderZonePage() {
+  const zg = $("zonegrid");
+  zg.innerHTML = "";
+  const key = zoneKey;
+  const group = key?.startsWith("grp_") ? key : null;
+  const category = group || key === "my_words" ? null : key;
 
-function renderZoneList() {
-  const list = $("zone-list");
-  list.innerHTML = "";
-  const zones = ["My Words", ...CATEGORIES];
-  for (const z of zones) {
-    const cat = z === "My Words" ? null : z;
-    const nEntities = ALL(
+  const items = [];
+  if (group) {
+    for (const r of ALL(
       db,
-      cat === null
-        ? "SELECT COUNT(*) AS n FROM personal_entity WHERE category IS NULL"
-        : "SELECT COUNT(*) AS n FROM personal_entity WHERE category = ?",
-      cat === null ? [] : [cat],
-    )[0].n;
-    const nFringe = cat === null
-      ? 0
-      : ALL(db, "SELECT COUNT(*) AS n FROM sense WHERE category = ?", [cat])[0].n;
-    const n = nEntities + nFringe;
-    const el = document.createElement("button");
-    el.className = "zone-item nav";
-    el.textContent = `${z} (${n})`;
-    el.addEventListener("click", () => {
-      close("zones");
-      renderZone(z, cat);
-      open("zone");
-    });
-    list.appendChild(el);
+      `SELECT e.* FROM group_item gi JOIN personal_entity e ON e.id = gi.entity_id
+       WHERE gi.group_id = ? ORDER BY gi.slot_index`,
+      [group],
+    )) items.push({ kind: "entity", row: r });
+  } else {
+    for (const r of ALL(
+      db,
+      category === null
+        ? "SELECT * FROM personal_entity WHERE category IS NULL ORDER BY spoken_name"
+        : "SELECT * FROM personal_entity WHERE category = ? ORDER BY spoken_name",
+      category === null ? [] : [category],
+    )) items.push({ kind: "entity", row: r });
+    if (category) {
+      for (const r of ALL(
+        db,
+        `SELECT s.id AS sense_id, l.text AS label, s.fitzgerald_role
+         FROM sense s JOIN label l ON l.sense_id = s.id
+           AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+         WHERE s.category = ? ORDER BY l.text`,
+        [category],
+      )) items.push({ kind: "sense", row: r });
+    }
+  }
+  if (items.length > 58) console.warn(`zone ${key} has ${items.length} items; 58 fit — paging is unbuilt`);
+
+  for (let slot = 0; slot < 60; slot++) {
+    if (slot === 0) {
+      zg.appendChild(navCell("← Zones", openZoneIndex));
+      continue;
+    }
+    if (slot === 1) {
+      zg.appendChild(navCell("+ Add", () => {
+        zoneContext = group ? { group } : { category };
+        open("addform");
+      }));
+      continue;
+    }
+    const item = items[slot - 2];
+    if (!item) {
+      const empty = document.createElement("div");
+      empty.className = "zcell empty";
+      zg.appendChild(empty);
+      continue;
+    }
+    zg.appendChild(item.kind === "sense" ? senseCell(item.row) : await entityCell(item.row));
   }
 }
 
-async function renderZone(title, category) {
-  $("zone-title").textContent = title;
-  const items = $("zone-items");
-  items.innerHTML = "";
-  const entities = ALL(
-    db,
-    category === null
-      ? "SELECT * FROM personal_entity WHERE category IS NULL ORDER BY spoken_name"
-      : "SELECT * FROM personal_entity WHERE category = ? ORDER BY spoken_name",
-    category === null ? [] : [category],
-  );
-  // fringe senses filed in this zone — labels + Fitzgerald color, no art yet
-  const fringe =
-    category === null
-      ? []
-      : ALL(
-          db,
-          `SELECT s.id AS sense_id, l.text AS label, s.fitzgerald_role
-           FROM sense s JOIN label l ON l.sense_id = s.id
-             AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
-           WHERE s.category = ? ORDER BY l.text`,
-          [category],
-        );
-  if (entities.length === 0 && fringe.length === 0) {
-    const empty = document.createElement("p");
-    empty.className = "hint";
-    empty.textContent = "Nothing here yet.";
-    items.appendChild(empty);
-  }
-  for (const e of entities) items.appendChild(await entityTile(e));
-  for (const w of fringe) items.appendChild(fringeTile(w));
-  $("add-in-zone").onclick = () => {
-    zoneContext = category;
-    close("zone");
-    open("addform");
-  };
-}
+/* --- custom groups: + Group on the zone index --- */
+$("group-save").addEventListener("click", async () => {
+  const name = $("group-name").value.trim();
+  if (!name) return;
+  const id = `grp_${crypto.randomUUID().replaceAll("-", "")}`;
+  const file = $("group-photo").files[0];
+  const photoKey = file ? await savePhoto(id, file) : null;
+  RUN(db, "INSERT INTO custom_group (id, name, photo_key) VALUES (?, ?, ?)", [id, name, photoKey]);
+  const used = new Set(ALL(db, "SELECT slot_index FROM zone_slot").map((r) => r.slot_index));
+  let slot = 10;
+  while (used.has(slot)) slot++;
+  RUN(db, "INSERT INTO zone_slot (zone_key, slot_index) VALUES (?, ?)", [id, slot]);
+  $("group-name").value = "";
+  $("group-photo").value = "";
+  close("groupform");
+  renderZoneIndex();
+});
 
-/* --- add flow: name, photo, save --- */
+/* --- add flow: name, photo, save. Files into the open zone: a catalog
+   category, a custom group, or My Words (null). --- */
 $("add-save").addEventListener("click", async () => {
   const name = $("add-name").value.trim();
   if (!name) return;
@@ -514,17 +698,23 @@ $("add-save").addEventListener("click", async () => {
   const file = $("add-photo").files[0];
   const photoKey = file ? await savePhoto(id, file) : null;
   const hint = $("add-hint").value.trim() || null;
+  const category = zoneContext?.category ?? null;
   RUN(
     db,
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES (?, ?, ?, ?, ?)",
-    [id, name, photoKey, zoneContext, hint],
+    [id, name, photoKey, category, hint],
   );
+  if (zoneContext?.group) {
+    const n = ALL(db, "SELECT COUNT(*) AS n FROM group_item WHERE group_id = ?", [zoneContext.group])[0].n;
+    RUN(db, "INSERT INTO group_item (group_id, entity_id, slot_index) VALUES (?, ?, ?)",
+      [zoneContext.group, id, n]);
+  }
   $("add-name").value = "";
   $("add-photo").value = "";
   $("add-hint").value = "";
   close("addform");
-  renderZone(zoneContext ?? "My Words", zoneContext);
-  open("zone");
+  if (view === "zone") await renderZonePage();
+  else if (view === "zoneIndex") renderZoneIndex();
   renderStrip();
 });
 

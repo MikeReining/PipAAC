@@ -58,13 +58,26 @@ These are both in force. They answer different questions.
 
 When a grid engine exists, a test must show that a suggestion model cannot reorder or swap primary core indices. That test is **PROPOSED**. It does not exist yet.
 
-Category folders open as an in-place sub-zone. **DECIDED 2026-09-22** (not built). The sentence bar and navigation anchors stay put. Closing the sub-zone restores the same core indices as before.
+Category folders open as an in-place sub-zone — a board mode, not a modal.
+**DECIDED 2026-09-22, amended same day.** The zone index and each zone page
+render in the same physical space and cell size as the core grid; the
+sentence bar and strip stay put, and a word tapped inside a zone speaks and
+stays in the zone. Slot 0 is always the back cell. Closing a sub-zone
+restores the same core indices as before.
+
+The zone index is itself a coordinate map (`zone_slot` table): navigation
+gets the same motor-memory law as `core_cell`. Zones occupy slots 10–59 and
+only move in caregiver arrange mode (tap to lift, tap a slot to place or
+swap). Custom groups (`custom_group` + `group_item`) are first-class cells
+on the same map, created from `+ Group` and holding personal entities in
+stable order.
 
 The folder entry point is one `Groups` anchor cell on the board, which opens
-the in-place index of the 14 sub-zones. **DECIDED 2026-09-22** (not built). A
-dock row of category buttons is not the design: it does not scale to 14
-categories, and it spends prime motor real estate on navigation instead of
-language. The strip, not a folder tree, is the primary path to fringe words.
+the in-place index of the sub-zones. **DECIDED 2026-09-22** (not built). A
+dock row of category buttons is not the design: it does not scale past a
+dozen categories, and it spends prime motor real estate on navigation
+instead of language. The strip, not a folder tree, is the primary path to
+fringe words.
 
 Each named layout (`grid60`, `grid90`) is its own map. Changing density swaps
 the map; it does not move a cell within one. Assignments:
