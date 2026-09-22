@@ -16,7 +16,12 @@
     "bootstrap:env": "node scripts/bootstrap_local_env.mjs",
     "dev": "node scripts/dev.mjs browse",
     "dev:agent": "node scripts/dev.mjs auto",
-    "dev:status": "node scripts/dev.mjs status"
+    "dev:status": "node scripts/dev.mjs status",
+    "catalog:lexicon": "node scripts/catalog/extract_launch_lexicon.mjs",
+    "catalog:lexicon:check": "node scripts/catalog/extract_launch_lexicon.mjs --check",
+    "catalog:audio:coverage": "node scripts/catalog/coverage.mjs",
+    "catalog:audio:import": "node scripts/catalog/import_wbb_audio.mjs",
+    "catalog:audio:materialize": "node scripts/catalog/materialize_audio.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.45.0"

@@ -1,0 +1,3600 @@
+{
+  "schemaVersion": 1,
+  "source": "docs/product/Initial_Vocabulary_600.md",
+  "entries": [
+    {
+      "slot": 1,
+      "tier": 1,
+      "spokenText": "I",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 2,
+      "tier": 1,
+      "spokenText": "you",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 3,
+      "tier": 1,
+      "spokenText": "me",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 4,
+      "tier": 1,
+      "spokenText": "my",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 5,
+      "tier": 1,
+      "spokenText": "mine",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 6,
+      "tier": 1,
+      "spokenText": "he",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 7,
+      "tier": 1,
+      "spokenText": "she",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 8,
+      "tier": 1,
+      "spokenText": "it",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 9,
+      "tier": 1,
+      "spokenText": "we",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 10,
+      "tier": 1,
+      "spokenText": "they",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 11,
+      "tier": 1,
+      "spokenText": "that",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 12,
+      "tier": 1,
+      "spokenText": "this",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 13,
+      "tier": 1,
+      "spokenText": "want",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 14,
+      "tier": 1,
+      "spokenText": "like",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 15,
+      "tier": 1,
+      "spokenText": "go",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 16,
+      "tier": 1,
+      "spokenText": "come",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 17,
+      "tier": 1,
+      "spokenText": "get",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 18,
+      "tier": 1,
+      "spokenText": "make",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 19,
+      "tier": 1,
+      "spokenText": "do",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 20,
+      "tier": 1,
+      "spokenText": "see",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 21,
+      "tier": 1,
+      "spokenText": "look",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 22,
+      "tier": 1,
+      "spokenText": "put",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 23,
+      "tier": 1,
+      "spokenText": "take",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 24,
+      "tier": 1,
+      "spokenText": "give",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 25,
+      "tier": 1,
+      "spokenText": "help",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 26,
+      "tier": 1,
+      "spokenText": "stop",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 27,
+      "tier": 1,
+      "spokenText": "play",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 28,
+      "tier": 1,
+      "spokenText": "eat",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 29,
+      "tier": 1,
+      "spokenText": "drink",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 30,
+      "tier": 1,
+      "spokenText": "open",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 31,
+      "tier": 1,
+      "spokenText": "turn",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 32,
+      "tier": 1,
+      "spokenText": "read",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 33,
+      "tier": 1,
+      "spokenText": "can",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 34,
+      "tier": 1,
+      "spokenText": "need",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 35,
+      "tier": 1,
+      "spokenText": "feel",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 36,
+      "tier": 1,
+      "spokenText": "tell",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 37,
+      "tier": 1,
+      "spokenText": "think",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 38,
+      "tier": 1,
+      "spokenText": "find",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 39,
+      "tier": 1,
+      "spokenText": "work",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 40,
+      "tier": 1,
+      "spokenText": "wait",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 41,
+      "tier": 1,
+      "spokenText": "in",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 42,
+      "tier": 1,
+      "spokenText": "out",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 43,
+      "tier": 1,
+      "spokenText": "on",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 44,
+      "tier": 1,
+      "spokenText": "off",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 45,
+      "tier": 1,
+      "spokenText": "up",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 46,
+      "tier": 1,
+      "spokenText": "down",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 47,
+      "tier": 1,
+      "spokenText": "away",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 48,
+      "tier": 1,
+      "spokenText": "here",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 49,
+      "tier": 1,
+      "spokenText": "there",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 50,
+      "tier": 1,
+      "spokenText": "with",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 51,
+      "tier": 1,
+      "spokenText": "under",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 52,
+      "tier": 1,
+      "spokenText": "over",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 53,
+      "tier": 1,
+      "spokenText": "to",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 54,
+      "tier": 1,
+      "spokenText": "for",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 55,
+      "tier": 1,
+      "spokenText": "more",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 56,
+      "tier": 1,
+      "spokenText": "all done",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 57,
+      "tier": 1,
+      "spokenText": "big",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 58,
+      "tier": 1,
+      "spokenText": "little",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 59,
+      "tier": 1,
+      "spokenText": "good",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 60,
+      "tier": 1,
+      "spokenText": "bad",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 61,
+      "tier": 1,
+      "spokenText": "happy",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 62,
+      "tier": 1,
+      "spokenText": "same",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 63,
+      "tier": 1,
+      "spokenText": "different",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 64,
+      "tier": 1,
+      "spokenText": "some",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 65,
+      "tier": 1,
+      "spokenText": "all",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 66,
+      "tier": 1,
+      "spokenText": "what",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 67,
+      "tier": 1,
+      "spokenText": "where",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 68,
+      "tier": 1,
+      "spokenText": "who",
+      "partOfSpeech": "Pronoun"
+    },
+    {
+      "slot": 69,
+      "tier": 1,
+      "spokenText": "why",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 70,
+      "tier": 1,
+      "spokenText": "how",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 71,
+      "tier": 1,
+      "spokenText": "when",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 72,
+      "tier": 1,
+      "spokenText": "no",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 73,
+      "tier": 1,
+      "spokenText": "yes",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 74,
+      "tier": 1,
+      "spokenText": "not",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 75,
+      "tier": 1,
+      "spokenText": "please",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 76,
+      "tier": 2,
+      "spokenText": "water",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 77,
+      "tier": 2,
+      "spokenText": "milk",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 78,
+      "tier": 2,
+      "spokenText": "juice",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 79,
+      "tier": 2,
+      "spokenText": "apple juice",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 80,
+      "tier": 2,
+      "spokenText": "chocolate milk",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 81,
+      "tier": 2,
+      "spokenText": "tea",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 82,
+      "tier": 2,
+      "spokenText": "smoothie",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 83,
+      "tier": 2,
+      "spokenText": "bread",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 84,
+      "tier": 2,
+      "spokenText": "toast",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 85,
+      "tier": 2,
+      "spokenText": "cereal",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 86,
+      "tier": 2,
+      "spokenText": "oatmeal",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 87,
+      "tier": 2,
+      "spokenText": "pancake",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 88,
+      "tier": 2,
+      "spokenText": "waffle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 89,
+      "tier": 2,
+      "spokenText": "bagel",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 90,
+      "tier": 2,
+      "spokenText": "egg",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 91,
+      "tier": 2,
+      "spokenText": "butter",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 92,
+      "tier": 2,
+      "spokenText": "jam",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 93,
+      "tier": 2,
+      "spokenText": "syrup",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 94,
+      "tier": 2,
+      "spokenText": "pizza",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 95,
+      "tier": 2,
+      "spokenText": "pasta",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 96,
+      "tier": 2,
+      "spokenText": "macaroni",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 97,
+      "tier": 2,
+      "spokenText": "sandwich",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 98,
+      "tier": 2,
+      "spokenText": "chicken",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 99,
+      "tier": 2,
+      "spokenText": "nuggets",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 100,
+      "tier": 2,
+      "spokenText": "burger",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 101,
+      "tier": 2,
+      "spokenText": "hot dog",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 102,
+      "tier": 2,
+      "spokenText": "soup",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 103,
+      "tier": 2,
+      "spokenText": "rice",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 104,
+      "tier": 2,
+      "spokenText": "cheese",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 105,
+      "tier": 2,
+      "spokenText": "meat",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 106,
+      "tier": 2,
+      "spokenText": "fish",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 107,
+      "tier": 2,
+      "spokenText": "snack",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 108,
+      "tier": 2,
+      "spokenText": "cracker",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 109,
+      "tier": 2,
+      "spokenText": "cookie",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 110,
+      "tier": 2,
+      "spokenText": "chips",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 111,
+      "tier": 2,
+      "spokenText": "popcorn",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 112,
+      "tier": 2,
+      "spokenText": "pretzel",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 113,
+      "tier": 2,
+      "spokenText": "yogurt",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 114,
+      "tier": 2,
+      "spokenText": "fruit snack",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 115,
+      "tier": 2,
+      "spokenText": "ice cream",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 116,
+      "tier": 2,
+      "spokenText": "popsicle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 117,
+      "tier": 2,
+      "spokenText": "candy",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 118,
+      "tier": 2,
+      "spokenText": "cake",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 119,
+      "tier": 2,
+      "spokenText": "muffin",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 120,
+      "tier": 2,
+      "spokenText": "donut",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 121,
+      "tier": 2,
+      "spokenText": "fruit",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 122,
+      "tier": 2,
+      "spokenText": "apple",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 123,
+      "tier": 2,
+      "spokenText": "banana",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 124,
+      "tier": 2,
+      "spokenText": "strawberry",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 125,
+      "tier": 2,
+      "spokenText": "orange",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 126,
+      "tier": 2,
+      "spokenText": "grapes",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 127,
+      "tier": 2,
+      "spokenText": "watermelon",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 128,
+      "tier": 2,
+      "spokenText": "carrot",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 129,
+      "tier": 2,
+      "spokenText": "broccoli",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 130,
+      "tier": 2,
+      "spokenText": "corn",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 131,
+      "tier": 2,
+      "spokenText": "body",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 132,
+      "tier": 2,
+      "spokenText": "head",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 133,
+      "tier": 2,
+      "spokenText": "face",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 134,
+      "tier": 2,
+      "spokenText": "hair",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 135,
+      "tier": 2,
+      "spokenText": "eye",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 136,
+      "tier": 2,
+      "spokenText": "ear",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 137,
+      "tier": 2,
+      "spokenText": "nose",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 138,
+      "tier": 2,
+      "spokenText": "mouth",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 139,
+      "tier": 2,
+      "spokenText": "teeth",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 140,
+      "tier": 2,
+      "spokenText": "tongue",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 141,
+      "tier": 2,
+      "spokenText": "neck",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 142,
+      "tier": 2,
+      "spokenText": "shoulder",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 143,
+      "tier": 2,
+      "spokenText": "arm",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 144,
+      "tier": 2,
+      "spokenText": "hand",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 145,
+      "tier": 2,
+      "spokenText": "fingers",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 146,
+      "tier": 2,
+      "spokenText": "tummy",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 147,
+      "tier": 2,
+      "spokenText": "back",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 148,
+      "tier": 2,
+      "spokenText": "leg",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 149,
+      "tier": 2,
+      "spokenText": "knee",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 150,
+      "tier": 2,
+      "spokenText": "foot",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 151,
+      "tier": 2,
+      "spokenText": "toes",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 152,
+      "tier": 2,
+      "spokenText": "bathroom",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 153,
+      "tier": 2,
+      "spokenText": "potty",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 154,
+      "tier": 2,
+      "spokenText": "toilet",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 155,
+      "tier": 2,
+      "spokenText": "diaper",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 156,
+      "tier": 2,
+      "spokenText": "wet wipe",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 157,
+      "tier": 2,
+      "spokenText": "bath",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 158,
+      "tier": 2,
+      "spokenText": "shower",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 159,
+      "tier": 2,
+      "spokenText": "soap",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 160,
+      "tier": 2,
+      "spokenText": "toothbrush",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 161,
+      "tier": 2,
+      "spokenText": "toothpaste",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 162,
+      "tier": 2,
+      "spokenText": "towel",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 163,
+      "tier": 2,
+      "spokenText": "comb",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 164,
+      "tier": 2,
+      "spokenText": "tissue",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 165,
+      "tier": 2,
+      "spokenText": "bandage",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 166,
+      "tier": 2,
+      "spokenText": "hurt",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 167,
+      "tier": 2,
+      "spokenText": "sick",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 168,
+      "tier": 2,
+      "spokenText": "pain",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 169,
+      "tier": 2,
+      "spokenText": "fever",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 170,
+      "tier": 2,
+      "spokenText": "cough",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 171,
+      "tier": 2,
+      "spokenText": "medicine",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 172,
+      "tier": 2,
+      "spokenText": "dentist",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 173,
+      "tier": 2,
+      "spokenText": "sad",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 174,
+      "tier": 2,
+      "spokenText": "mad",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 175,
+      "tier": 2,
+      "spokenText": "angry",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 176,
+      "tier": 2,
+      "spokenText": "scared",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 177,
+      "tier": 2,
+      "spokenText": "excited",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 178,
+      "tier": 2,
+      "spokenText": "silly",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 179,
+      "tier": 2,
+      "spokenText": "nervous",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 180,
+      "tier": 2,
+      "spokenText": "calm",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 181,
+      "tier": 2,
+      "spokenText": "frustrated",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 182,
+      "tier": 2,
+      "spokenText": "proud",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 183,
+      "tier": 2,
+      "spokenText": "shy",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 184,
+      "tier": 2,
+      "spokenText": "surprised",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 185,
+      "tier": 2,
+      "spokenText": "bored",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 186,
+      "tier": 2,
+      "spokenText": "lonely",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 187,
+      "tier": 2,
+      "spokenText": "hungry",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 188,
+      "tier": 2,
+      "spokenText": "thirsty",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 189,
+      "tier": 2,
+      "spokenText": "tired",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 190,
+      "tier": 2,
+      "spokenText": "sleepy",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 191,
+      "tier": 2,
+      "spokenText": "energetic",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 192,
+      "tier": 2,
+      "spokenText": "hot",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 193,
+      "tier": 2,
+      "spokenText": "cold",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 194,
+      "tier": 2,
+      "spokenText": "warm",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 195,
+      "tier": 2,
+      "spokenText": "loud",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 196,
+      "tier": 2,
+      "spokenText": "quiet",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 197,
+      "tier": 2,
+      "spokenText": "noisy",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 198,
+      "tier": 2,
+      "spokenText": "bright",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 199,
+      "tier": 2,
+      "spokenText": "dark",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 200,
+      "tier": 2,
+      "spokenText": "soft",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 201,
+      "tier": 2,
+      "spokenText": "rough",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 202,
+      "tier": 2,
+      "spokenText": "sticky",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 203,
+      "tier": 2,
+      "spokenText": "dizzy",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 204,
+      "tier": 2,
+      "spokenText": "gross",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 205,
+      "tier": 2,
+      "spokenText": "comfortable",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 206,
+      "tier": 2,
+      "spokenText": "uncomfortable",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 207,
+      "tier": 2,
+      "spokenText": "overwhelmed",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 208,
+      "tier": 2,
+      "spokenText": "run",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 209,
+      "tier": 2,
+      "spokenText": "jump",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 210,
+      "tier": 2,
+      "spokenText": "walk",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 211,
+      "tier": 2,
+      "spokenText": "sit",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 212,
+      "tier": 2,
+      "spokenText": "stand",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 213,
+      "tier": 2,
+      "spokenText": "climb",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 214,
+      "tier": 2,
+      "spokenText": "dance",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 215,
+      "tier": 2,
+      "spokenText": "swim",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 216,
+      "tier": 2,
+      "spokenText": "ride",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 217,
+      "tier": 2,
+      "spokenText": "crawl",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 218,
+      "tier": 2,
+      "spokenText": "kick",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 219,
+      "tier": 2,
+      "spokenText": "throw",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 220,
+      "tier": 2,
+      "spokenText": "catch",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 221,
+      "tier": 2,
+      "spokenText": "push",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 222,
+      "tier": 2,
+      "spokenText": "pull",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 223,
+      "tier": 2,
+      "spokenText": "swing",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 224,
+      "tier": 2,
+      "spokenText": "slide",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 225,
+      "tier": 2,
+      "spokenText": "fall",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 226,
+      "tier": 2,
+      "spokenText": "carry",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 227,
+      "tier": 2,
+      "spokenText": "drop",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 228,
+      "tier": 2,
+      "spokenText": "write",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 229,
+      "tier": 2,
+      "spokenText": "draw",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 230,
+      "tier": 2,
+      "spokenText": "color",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 231,
+      "tier": 2,
+      "spokenText": "paint",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 232,
+      "tier": 2,
+      "spokenText": "cut",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 233,
+      "tier": 2,
+      "spokenText": "glue",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 234,
+      "tier": 2,
+      "spokenText": "listen",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 235,
+      "tier": 2,
+      "spokenText": "speak",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 236,
+      "tier": 2,
+      "spokenText": "talk",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 237,
+      "tier": 2,
+      "spokenText": "sing",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 238,
+      "tier": 2,
+      "spokenText": "count",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 239,
+      "tier": 2,
+      "spokenText": "share",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 240,
+      "tier": 2,
+      "spokenText": "clean up",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 241,
+      "tier": 2,
+      "spokenText": "wash",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 242,
+      "tier": 2,
+      "spokenText": "wipe action",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 243,
+      "tier": 2,
+      "spokenText": "cook",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 244,
+      "tier": 2,
+      "spokenText": "build",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 245,
+      "tier": 2,
+      "spokenText": "fix",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 246,
+      "tier": 2,
+      "spokenText": "hold",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 247,
+      "tier": 2,
+      "spokenText": "touch",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 248,
+      "tier": 2,
+      "spokenText": "know",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 249,
+      "tier": 2,
+      "spokenText": "remember",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 250,
+      "tier": 2,
+      "spokenText": "forget",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 251,
+      "tier": 2,
+      "spokenText": "choose",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 252,
+      "tier": 2,
+      "spokenText": "show",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 253,
+      "tier": 2,
+      "spokenText": "ask",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 254,
+      "tier": 2,
+      "spokenText": "hug",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 255,
+      "tier": 2,
+      "spokenText": "kiss",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 256,
+      "tier": 2,
+      "spokenText": "laugh",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 257,
+      "tier": 2,
+      "spokenText": "cry",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 258,
+      "tier": 2,
+      "spokenText": "sleep",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 259,
+      "tier": 2,
+      "spokenText": "wake up",
+      "partOfSpeech": "Verb"
+    },
+    {
+      "slot": 260,
+      "tier": 2,
+      "spokenText": "family",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 261,
+      "tier": 2,
+      "spokenText": "mom",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 262,
+      "tier": 2,
+      "spokenText": "dad",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 263,
+      "tier": 2,
+      "spokenText": "mama",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 264,
+      "tier": 2,
+      "spokenText": "dada",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 265,
+      "tier": 2,
+      "spokenText": "baby",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 266,
+      "tier": 2,
+      "spokenText": "brother",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 267,
+      "tier": 2,
+      "spokenText": "sister",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 268,
+      "tier": 2,
+      "spokenText": "grandma",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 269,
+      "tier": 2,
+      "spokenText": "grandpa",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 270,
+      "tier": 2,
+      "spokenText": "aunt",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 271,
+      "tier": 2,
+      "spokenText": "uncle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 272,
+      "tier": 2,
+      "spokenText": "cousin",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 273,
+      "tier": 2,
+      "spokenText": "pet",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 274,
+      "tier": 2,
+      "spokenText": "teacher",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 275,
+      "tier": 2,
+      "spokenText": "therapist",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 276,
+      "tier": 2,
+      "spokenText": "aide",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 277,
+      "tier": 2,
+      "spokenText": "student",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 278,
+      "tier": 2,
+      "spokenText": "friend",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 279,
+      "tier": 2,
+      "spokenText": "class",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 280,
+      "tier": 2,
+      "spokenText": "firefighter",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 281,
+      "tier": 2,
+      "spokenText": "police officer",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 282,
+      "tier": 2,
+      "spokenText": "bus driver",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 283,
+      "tier": 2,
+      "spokenText": "neighbor",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 284,
+      "tier": 2,
+      "spokenText": "person",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 285,
+      "tier": 2,
+      "spokenText": "people",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 286,
+      "tier": 2,
+      "spokenText": "kids",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 287,
+      "tier": 2,
+      "spokenText": "doctor",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 288,
+      "tier": 2,
+      "spokenText": "nurse",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 289,
+      "tier": 2,
+      "spokenText": "babysitter",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 290,
+      "tier": 2,
+      "spokenText": "home",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 291,
+      "tier": 2,
+      "spokenText": "house",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 292,
+      "tier": 2,
+      "spokenText": "bedroom",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 293,
+      "tier": 2,
+      "spokenText": "living room",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 294,
+      "tier": 2,
+      "spokenText": "kitchen",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 295,
+      "tier": 2,
+      "spokenText": "basement",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 296,
+      "tier": 2,
+      "spokenText": "stairs",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 297,
+      "tier": 2,
+      "spokenText": "yard",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 298,
+      "tier": 2,
+      "spokenText": "school",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 299,
+      "tier": 2,
+      "spokenText": "classroom",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 300,
+      "tier": 2,
+      "spokenText": "playground",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 301,
+      "tier": 2,
+      "spokenText": "gym",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 302,
+      "tier": 2,
+      "spokenText": "cafeteria",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 303,
+      "tier": 2,
+      "spokenText": "library",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 304,
+      "tier": 2,
+      "spokenText": "hallway",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 305,
+      "tier": 2,
+      "spokenText": "desk",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 306,
+      "tier": 2,
+      "spokenText": "park",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 307,
+      "tier": 2,
+      "spokenText": "store",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 308,
+      "tier": 2,
+      "spokenText": "grocery store",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 309,
+      "tier": 2,
+      "spokenText": "restaurant",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 310,
+      "tier": 2,
+      "spokenText": "pool",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 311,
+      "tier": 2,
+      "spokenText": "beach",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 312,
+      "tier": 2,
+      "spokenText": "zoo",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 313,
+      "tier": 2,
+      "spokenText": "doctor office",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 314,
+      "tier": 2,
+      "spokenText": "hospital",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 315,
+      "tier": 2,
+      "spokenText": "museum",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 316,
+      "tier": 2,
+      "spokenText": "movie theater",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 317,
+      "tier": 2,
+      "spokenText": "mall",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 318,
+      "tier": 2,
+      "spokenText": "farm",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 319,
+      "tier": 2,
+      "spokenText": "airport",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 320,
+      "tier": 2,
+      "spokenText": "outside",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 321,
+      "tier": 2,
+      "spokenText": "inside",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 322,
+      "tier": 2,
+      "spokenText": "street",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 323,
+      "tier": 2,
+      "spokenText": "town",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 324,
+      "tier": 2,
+      "spokenText": "church",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 325,
+      "tier": 2,
+      "spokenText": "toy",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 326,
+      "tier": 2,
+      "spokenText": "ball",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 327,
+      "tier": 2,
+      "spokenText": "blocks",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 328,
+      "tier": 2,
+      "spokenText": "puzzle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 329,
+      "tier": 2,
+      "spokenText": "doll",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 330,
+      "tier": 2,
+      "spokenText": "action figure",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 331,
+      "tier": 2,
+      "spokenText": "bubbles",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 332,
+      "tier": 2,
+      "spokenText": "play dough",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 333,
+      "tier": 2,
+      "spokenText": "toy car",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 334,
+      "tier": 2,
+      "spokenText": "toy train",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 335,
+      "tier": 2,
+      "spokenText": "stuffed animal",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 336,
+      "tier": 2,
+      "spokenText": "dinosaur",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 337,
+      "tier": 2,
+      "spokenText": "robot",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 338,
+      "tier": 2,
+      "spokenText": "legos",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 339,
+      "tier": 2,
+      "spokenText": "board game",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 340,
+      "tier": 2,
+      "spokenText": "swing set",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 341,
+      "tier": 2,
+      "spokenText": "sandbox",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 342,
+      "tier": 2,
+      "spokenText": "bike",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 343,
+      "tier": 2,
+      "spokenText": "scooter",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 344,
+      "tier": 2,
+      "spokenText": "skateboard",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 345,
+      "tier": 2,
+      "spokenText": "wagon",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 346,
+      "tier": 2,
+      "spokenText": "chalk",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 347,
+      "tier": 2,
+      "spokenText": "jump rope",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 348,
+      "tier": 2,
+      "spokenText": "music",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 349,
+      "tier": 2,
+      "spokenText": "song",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 350,
+      "tier": 2,
+      "spokenText": "tablet",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 351,
+      "tier": 2,
+      "spokenText": "iPad",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 352,
+      "tier": 2,
+      "spokenText": "phone",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 353,
+      "tier": 2,
+      "spokenText": "TV",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 354,
+      "tier": 2,
+      "spokenText": "movie",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 355,
+      "tier": 2,
+      "spokenText": "video",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 356,
+      "tier": 2,
+      "spokenText": "headphones",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 357,
+      "tier": 2,
+      "spokenText": "computer",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 358,
+      "tier": 2,
+      "spokenText": "camera",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 359,
+      "tier": 2,
+      "spokenText": "paper",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 360,
+      "tier": 2,
+      "spokenText": "markers",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 361,
+      "tier": 2,
+      "spokenText": "crayons",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 362,
+      "tier": 2,
+      "spokenText": "book",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 363,
+      "tier": 2,
+      "spokenText": "chair",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 364,
+      "tier": 2,
+      "spokenText": "couch",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 365,
+      "tier": 2,
+      "spokenText": "table",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 366,
+      "tier": 2,
+      "spokenText": "bed",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 367,
+      "tier": 2,
+      "spokenText": "door",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 368,
+      "tier": 2,
+      "spokenText": "window",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 369,
+      "tier": 2,
+      "spokenText": "lamp",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 370,
+      "tier": 2,
+      "spokenText": "clock",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 371,
+      "tier": 2,
+      "spokenText": "trash",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 372,
+      "tier": 2,
+      "spokenText": "sink",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 373,
+      "tier": 2,
+      "spokenText": "mirror",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 374,
+      "tier": 2,
+      "spokenText": "rug",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 375,
+      "tier": 2,
+      "spokenText": "plate",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 376,
+      "tier": 2,
+      "spokenText": "bowl",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 377,
+      "tier": 2,
+      "spokenText": "cup",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 378,
+      "tier": 2,
+      "spokenText": "fork",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 379,
+      "tier": 2,
+      "spokenText": "spoon",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 380,
+      "tier": 2,
+      "spokenText": "knife",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 381,
+      "tier": 2,
+      "spokenText": "napkin",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 382,
+      "tier": 2,
+      "spokenText": "bottle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 383,
+      "tier": 2,
+      "spokenText": "straw",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 384,
+      "tier": 2,
+      "spokenText": "fridge",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 385,
+      "tier": 2,
+      "spokenText": "microwave",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 386,
+      "tier": 2,
+      "spokenText": "backpack",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 387,
+      "tier": 2,
+      "spokenText": "bag",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 388,
+      "tier": 2,
+      "spokenText": "keys",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 389,
+      "tier": 2,
+      "spokenText": "wallet",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 390,
+      "tier": 2,
+      "spokenText": "glasses",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 391,
+      "tier": 2,
+      "spokenText": "umbrella",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 392,
+      "tier": 2,
+      "spokenText": "blanket",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 393,
+      "tier": 2,
+      "spokenText": "pillow",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 394,
+      "tier": 2,
+      "spokenText": "fan",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 395,
+      "tier": 2,
+      "spokenText": "charger",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 396,
+      "tier": 2,
+      "spokenText": "box",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 397,
+      "tier": 2,
+      "spokenText": "battery",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 398,
+      "tier": 2,
+      "spokenText": "broom",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 399,
+      "tier": 2,
+      "spokenText": "vacuum",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 400,
+      "tier": 2,
+      "spokenText": "sponge",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 401,
+      "tier": 2,
+      "spokenText": "tape",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 402,
+      "tier": 2,
+      "spokenText": "flashlight",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 403,
+      "tier": 2,
+      "spokenText": "bucket",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 404,
+      "tier": 2,
+      "spokenText": "paper towel",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 405,
+      "tier": 2,
+      "spokenText": "shirt",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 406,
+      "tier": 2,
+      "spokenText": "pants",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 407,
+      "tier": 2,
+      "spokenText": "shorts",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 408,
+      "tier": 2,
+      "spokenText": "underwear",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 409,
+      "tier": 2,
+      "spokenText": "dress",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 410,
+      "tier": 2,
+      "spokenText": "skirt",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 411,
+      "tier": 2,
+      "spokenText": "sweater",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 412,
+      "tier": 2,
+      "spokenText": "sweatshirt",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 413,
+      "tier": 2,
+      "spokenText": "socks",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 414,
+      "tier": 2,
+      "spokenText": "shoes",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 415,
+      "tier": 2,
+      "spokenText": "pajamas",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 416,
+      "tier": 2,
+      "spokenText": "robe",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 417,
+      "tier": 2,
+      "spokenText": "slippers",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 418,
+      "tier": 2,
+      "spokenText": "jacket",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 419,
+      "tier": 2,
+      "spokenText": "coat",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 420,
+      "tier": 2,
+      "spokenText": "hat",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 421,
+      "tier": 2,
+      "spokenText": "mittens",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 422,
+      "tier": 2,
+      "spokenText": "gloves",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 423,
+      "tier": 2,
+      "spokenText": "scarf",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 424,
+      "tier": 2,
+      "spokenText": "boots",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 425,
+      "tier": 2,
+      "spokenText": "raincoat",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 426,
+      "tier": 2,
+      "spokenText": "swimsuit",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 427,
+      "tier": 2,
+      "spokenText": "sunglasses",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 428,
+      "tier": 2,
+      "spokenText": "zipper",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 429,
+      "tier": 2,
+      "spokenText": "button",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 430,
+      "tier": 2,
+      "spokenText": "belt",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 431,
+      "tier": 2,
+      "spokenText": "pocket",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 432,
+      "tier": 2,
+      "spokenText": "sandals",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 433,
+      "tier": 2,
+      "spokenText": "animal",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 434,
+      "tier": 2,
+      "spokenText": "dog",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 435,
+      "tier": 2,
+      "spokenText": "cat",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 436,
+      "tier": 2,
+      "spokenText": "puppy",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 437,
+      "tier": 2,
+      "spokenText": "kitten",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 438,
+      "tier": 2,
+      "spokenText": "bird",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 439,
+      "tier": 2,
+      "spokenText": "bunny",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 440,
+      "tier": 2,
+      "spokenText": "duck",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 441,
+      "tier": 2,
+      "spokenText": "hen",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 442,
+      "tier": 2,
+      "spokenText": "cow",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 443,
+      "tier": 2,
+      "spokenText": "horse",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 444,
+      "tier": 2,
+      "spokenText": "pig",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 445,
+      "tier": 2,
+      "spokenText": "sheep",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 446,
+      "tier": 2,
+      "spokenText": "goat",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 447,
+      "tier": 2,
+      "spokenText": "bear",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 448,
+      "tier": 2,
+      "spokenText": "lion",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 449,
+      "tier": 2,
+      "spokenText": "tiger",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 450,
+      "tier": 2,
+      "spokenText": "elephant",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 451,
+      "tier": 2,
+      "spokenText": "monkey",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 452,
+      "tier": 2,
+      "spokenText": "giraffe",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 453,
+      "tier": 2,
+      "spokenText": "zebra",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 454,
+      "tier": 2,
+      "spokenText": "hippo",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 455,
+      "tier": 2,
+      "spokenText": "penguin",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 456,
+      "tier": 2,
+      "spokenText": "dolphin",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 457,
+      "tier": 2,
+      "spokenText": "whale",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 458,
+      "tier": 2,
+      "spokenText": "snake",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 459,
+      "tier": 2,
+      "spokenText": "turtle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 460,
+      "tier": 2,
+      "spokenText": "frog",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 461,
+      "tier": 2,
+      "spokenText": "bug",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 462,
+      "tier": 2,
+      "spokenText": "spider",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 463,
+      "tier": 2,
+      "spokenText": "butterfly",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 464,
+      "tier": 2,
+      "spokenText": "tree",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 465,
+      "tier": 2,
+      "spokenText": "grass",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 466,
+      "tier": 2,
+      "spokenText": "flower",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 467,
+      "tier": 2,
+      "spokenText": "sun",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 468,
+      "tier": 2,
+      "spokenText": "rain",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 469,
+      "tier": 2,
+      "spokenText": "snow",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 470,
+      "tier": 2,
+      "spokenText": "wind",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 471,
+      "tier": 2,
+      "spokenText": "cloud",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 472,
+      "tier": 2,
+      "spokenText": "moon",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 473,
+      "tier": 2,
+      "spokenText": "vehicle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 474,
+      "tier": 2,
+      "spokenText": "car",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 475,
+      "tier": 2,
+      "spokenText": "bus",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 476,
+      "tier": 2,
+      "spokenText": "school bus",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 477,
+      "tier": 2,
+      "spokenText": "truck",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 478,
+      "tier": 2,
+      "spokenText": "fire truck",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 479,
+      "tier": 2,
+      "spokenText": "police car",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 480,
+      "tier": 2,
+      "spokenText": "ambulance",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 481,
+      "tier": 2,
+      "spokenText": "train",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 482,
+      "tier": 2,
+      "spokenText": "bicycle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 483,
+      "tier": 2,
+      "spokenText": "motorcycle",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 484,
+      "tier": 2,
+      "spokenText": "van",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 485,
+      "tier": 2,
+      "spokenText": "tractor",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 486,
+      "tier": 2,
+      "spokenText": "stroller",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 487,
+      "tier": 2,
+      "spokenText": "airplane",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 488,
+      "tier": 2,
+      "spokenText": "helicopter",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 489,
+      "tier": 2,
+      "spokenText": "rocket",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 490,
+      "tier": 2,
+      "spokenText": "boat",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 491,
+      "tier": 2,
+      "spokenText": "ship",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 492,
+      "tier": 2,
+      "spokenText": "canoe",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 493,
+      "tier": 2,
+      "spokenText": "subway",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 494,
+      "tier": 2,
+      "spokenText": "road",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 495,
+      "tier": 2,
+      "spokenText": "track",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 496,
+      "tier": 2,
+      "spokenText": "stoplight",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 497,
+      "tier": 2,
+      "spokenText": "gas station",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 498,
+      "tier": 2,
+      "spokenText": "red",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 499,
+      "tier": 2,
+      "spokenText": "blue",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 500,
+      "tier": 2,
+      "spokenText": "green",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 501,
+      "tier": 2,
+      "spokenText": "yellow",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 502,
+      "tier": 2,
+      "spokenText": "orange color",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 503,
+      "tier": 2,
+      "spokenText": "purple",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 504,
+      "tier": 2,
+      "spokenText": "pink color",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 505,
+      "tier": 2,
+      "spokenText": "brown",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 506,
+      "tier": 2,
+      "spokenText": "black",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 507,
+      "tier": 2,
+      "spokenText": "white",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 508,
+      "tier": 2,
+      "spokenText": "fast",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 509,
+      "tier": 2,
+      "spokenText": "slow",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 510,
+      "tier": 2,
+      "spokenText": "tall",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 511,
+      "tier": 2,
+      "spokenText": "short",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 512,
+      "tier": 2,
+      "spokenText": "long",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 513,
+      "tier": 2,
+      "spokenText": "heavy",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 514,
+      "tier": 2,
+      "spokenText": "light weight",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 515,
+      "tier": 2,
+      "spokenText": "thick",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 516,
+      "tier": 2,
+      "spokenText": "thin",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 517,
+      "tier": 2,
+      "spokenText": "wide",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 518,
+      "tier": 2,
+      "spokenText": "narrow",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 519,
+      "tier": 2,
+      "spokenText": "hard",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 520,
+      "tier": 2,
+      "spokenText": "wet",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 521,
+      "tier": 2,
+      "spokenText": "dry",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 522,
+      "tier": 2,
+      "spokenText": "clean item",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 523,
+      "tier": 2,
+      "spokenText": "dirty",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 524,
+      "tier": 2,
+      "spokenText": "smooth",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 525,
+      "tier": 2,
+      "spokenText": "broken",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 526,
+      "tier": 2,
+      "spokenText": "fixed",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 527,
+      "tier": 2,
+      "spokenText": "empty",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 528,
+      "tier": 2,
+      "spokenText": "full",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 529,
+      "tier": 2,
+      "spokenText": "safe",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 530,
+      "tier": 2,
+      "spokenText": "dangerous",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 531,
+      "tier": 2,
+      "spokenText": "easy",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 532,
+      "tier": 2,
+      "spokenText": "difficult",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 533,
+      "tier": 2,
+      "spokenText": "right",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 534,
+      "tier": 2,
+      "spokenText": "wrong",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 535,
+      "tier": 2,
+      "spokenText": "new",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 536,
+      "tier": 2,
+      "spokenText": "old",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 537,
+      "tier": 2,
+      "spokenText": "pretty",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 538,
+      "tier": 2,
+      "spokenText": "cool",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 539,
+      "tier": 2,
+      "spokenText": "special",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 540,
+      "tier": 2,
+      "spokenText": "ready",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 541,
+      "tier": 2,
+      "spokenText": "favorite",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 542,
+      "tier": 2,
+      "spokenText": "weird",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 543,
+      "tier": 2,
+      "spokenText": "funny",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 544,
+      "tier": 2,
+      "spokenText": "dark color",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 545,
+      "tier": 2,
+      "spokenText": "light color",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 546,
+      "tier": 2,
+      "spokenText": "morning",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 547,
+      "tier": 2,
+      "spokenText": "afternoon",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 548,
+      "tier": 2,
+      "spokenText": "evening",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 549,
+      "tier": 2,
+      "spokenText": "night",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 550,
+      "tier": 2,
+      "spokenText": "bedtime",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 551,
+      "tier": 2,
+      "spokenText": "naptime",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 552,
+      "tier": 2,
+      "spokenText": "now",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 553,
+      "tier": 2,
+      "spokenText": "later",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 554,
+      "tier": 2,
+      "spokenText": "soon",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 555,
+      "tier": 2,
+      "spokenText": "today",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 556,
+      "tier": 2,
+      "spokenText": "tomorrow",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 557,
+      "tier": 2,
+      "spokenText": "yesterday",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 558,
+      "tier": 2,
+      "spokenText": "before",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 559,
+      "tier": 2,
+      "spokenText": "after",
+      "partOfSpeech": "Preposition"
+    },
+    {
+      "slot": 560,
+      "tier": 2,
+      "spokenText": "again",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 561,
+      "tier": 2,
+      "spokenText": "always",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 562,
+      "tier": 2,
+      "spokenText": "never",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 563,
+      "tier": 2,
+      "spokenText": "sometimes",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 564,
+      "tier": 2,
+      "spokenText": "first",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 565,
+      "tier": 2,
+      "spokenText": "next",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 566,
+      "tier": 2,
+      "spokenText": "then",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 567,
+      "tier": 2,
+      "spokenText": "last",
+      "partOfSpeech": "Adverb"
+    },
+    {
+      "slot": 568,
+      "tier": 2,
+      "spokenText": "minute",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 569,
+      "tier": 2,
+      "spokenText": "hour",
+      "partOfSpeech": "Noun"
+    },
+    {
+      "slot": 570,
+      "tier": 2,
+      "spokenText": "1",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 571,
+      "tier": 2,
+      "spokenText": "2",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 572,
+      "tier": 2,
+      "spokenText": "3",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 573,
+      "tier": 2,
+      "spokenText": "4",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 574,
+      "tier": 2,
+      "spokenText": "5",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 575,
+      "tier": 2,
+      "spokenText": "10",
+      "partOfSpeech": "Adjective"
+    },
+    {
+      "slot": 576,
+      "tier": 2,
+      "spokenText": "hello",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 577,
+      "tier": 2,
+      "spokenText": "hi",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 578,
+      "tier": 2,
+      "spokenText": "goodbye",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 579,
+      "tier": 2,
+      "spokenText": "bye",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 580,
+      "tier": 2,
+      "spokenText": "thank you",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 581,
+      "tier": 2,
+      "spokenText": "you're welcome",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 582,
+      "tier": 2,
+      "spokenText": "sorry",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 583,
+      "tier": 2,
+      "spokenText": "excuse me",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 584,
+      "tier": 2,
+      "spokenText": "good morning",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 585,
+      "tier": 2,
+      "spokenText": "good night",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 586,
+      "tier": 2,
+      "spokenText": "okay",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 587,
+      "tier": 2,
+      "spokenText": "ready to go",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 588,
+      "tier": 2,
+      "spokenText": "wow",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 589,
+      "tier": 2,
+      "spokenText": "really",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 590,
+      "tier": 2,
+      "spokenText": "maybe",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 591,
+      "tier": 2,
+      "spokenText": "I don't know",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 592,
+      "tier": 2,
+      "spokenText": "look at this",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 593,
+      "tier": 2,
+      "spokenText": "my turn",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 594,
+      "tier": 2,
+      "spokenText": "your turn",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 595,
+      "tier": 2,
+      "spokenText": "careful",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 596,
+      "tier": 2,
+      "spokenText": "emergency",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 597,
+      "tier": 2,
+      "spokenText": "no way",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 598,
+      "tier": 2,
+      "spokenText": "don't",
+      "partOfSpeech": "Interjection"
+    },
+    {
+      "slot": 599,
+      "tier": 2,
+      "spokenText": "bathroom urgent",
+      "partOfSpeech": "Interjection"
+    }
+  ]
+}

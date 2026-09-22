@@ -1,0 +1,3 @@
+# Materialized WorkbookBench audio (MP3)
+
+Populated by `npm run catalog:audio:materialize`. MP3 files are gitignored; `data/catalog/audio_import.json` holds keys + hashes.

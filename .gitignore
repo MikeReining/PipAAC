@@ -87,9 +87,12 @@ temp/
 cache/
 out/
 people/
+assets/catalog/audio/**/*.mp3
 *.wav
 *.mp4
 *.webm
+*.db
+*.sqlite
 
 # Wrangler local state
 .wrangler/
