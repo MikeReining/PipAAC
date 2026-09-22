@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Pip AAC</title>
+    <style>
+      :root {
+        --gap: 6px;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      body {
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+        background: #f6f4ef;
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        padding: var(--gap);
+        gap: var(--gap);
+      }
+      #bar {
+        height: 52px;
+        border: 2px solid #d8d4c8;
+        border-radius: 10px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        font-size: 20px;
+        color: #999;
+      }
+      #grid {
+        flex: 1;
+        display: grid;
+        gap: var(--gap);
+      }
+      .cell {
+        border-radius: 12px;
+        border: 3px solid;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: clamp(14px, 2.6vmin, 26px);
+        color: #1a1a1a;
+        user-select: none;
+        cursor: pointer;
+        text-align: center;
+        padding: 4px;
+      }
+      .cell:active { filter: brightness(0.92); }
+      /* Modified Fitzgerald roles: tint background, solid border */
+      .r-Yellow { border-color: #d9a410; background: #fdf0c8; }
+      .r-Green  { border-color: #2e8b3a; background: #dcf0dd; }
+      .r-Blue   { border-color: #2f6fd0; background: #dcecfd; }
+      .r-Pink   { border-color: #d0438c; background: #fbdfee; }
+      .r-Red    { border-color: #c62828; background: #fbdcdc; }
+    </style>
+  </head>
+  <body>
+    <div id="bar">…</div>
+    <div id="grid"></div>
+    <script type="module" src="/board.js"></script>
+  </body>
+</html>

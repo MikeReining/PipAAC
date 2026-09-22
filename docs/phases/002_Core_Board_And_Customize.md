@@ -1,6 +1,6 @@
 # Phase 002 — Core board and the Cooper proof
 
-**Status:** Executing. Slice 1 not started.
+**Status:** Executing. Slice 1 built and proven; slice 2 not started.
 
 **DECIDED 2026-09-22** (not built). Revised the same day. Prove that an adult
 can add Cooper before anyone draws the launch library. The 599-word catalog
@@ -126,4 +126,11 @@ Live partner modeling, the context river, and visual scenes stay in `docs/strate
 
 ## Current state
 
-**BUILT** (`src/worker/index.js:12-14`): the Worker answers `GET /health`. No board, lexicon runtime, coordinate map, or entity store exists in `src/`.
+**BUILT** (slice 1): the coordinate table exists and is proven immutable
+under the slice's placeholder ops. `scripts/catalog/build_catalog.mjs`
+generates `data/catalog/catalog.json` (599 senses/utterances/labels,
+135 `core_cell` rows, `grid80` anchors) from the lexicon and the map doc —
+both stay the source. `src/board/schema.sql` + `src/board/catalog.mjs`
+create and import the on-device database (`node:sqlite`). The board renders
+`grid60` at `GET /` (`public/board.js` + `src/worker/index.js` `/catalog.json`).
+Proof: `scripts/test.sh src/board/core_map.test.mjs` (6 tests).

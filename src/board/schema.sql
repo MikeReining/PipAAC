@@ -1,0 +1,373 @@
+-- Pip AAC schema v1 — docs/product/Language_And_Voice_Schema.md is the owner.
+-- Apply with PRAGMA foreign_keys = ON. Version carried in PRAGMA user_version.
+
+CREATE TABLE sense (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),
+  fitzgerald_role TEXT NOT NULL
+    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Red')),
+  art_archetype TEXT NOT NULL
+    CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),
+  tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),
+  category TEXT,
+  default_image_id TEXT REFERENCES image(id),
+  CHECK (
+    (tier = 'root_core' AND category IS NULL)
+    OR (tier = 'primary_fringe' AND category IN (
+      'Food & Drink',
+      'Body, Health & Hygiene',
+      'Feelings, Emotions & Sensory States',
+      'Daily Actions & Activity Verbs',
+      'People, Family & Roles',
+      'Places, Rooms & Community',
+      'Toys, Play, Media & Leisure',
+      'Home, Household Objects & Daily Tools',
+      'Clothing & Accessories',
+      'Animals & Nature',
+      'Vehicles & Transportation',
+      'Descriptors, Adjectives & Opposites',
+      'Time, Calendar & Sequencing',
+      'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+    ))
+  )
+);
+
+CREATE TABLE utterance (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'utt_*'),
+  locale TEXT NOT NULL CHECK (length(locale) > 0),
+  spoken_text TEXT NOT NULL CHECK (length(spoken_text) > 0),
+  normalized_spoken_text TEXT NOT NULL CHECK (length(normalized_spoken_text) > 0),
+  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),
+  UNIQUE (locale, normalized_spoken_text)
+);
+
+CREATE TABLE label (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'lbl_*'),
+  sense_id TEXT NOT NULL REFERENCES sense(id),
+  utterance_id TEXT NOT NULL REFERENCES utterance(id),
+  locale TEXT NOT NULL CHECK (length(locale) > 0),
+  text TEXT NOT NULL CHECK (length(text) > 0),
+  normalized_text TEXT NOT NULL CHECK (length(normalized_text) > 0),
+  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),
+  kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),
+  part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (
+    'Adjective', 'Adverb', 'Interjection', 'Noun', 'Preposition', 'Pronoun', 'Verb'
+  )),
+  default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),
+  status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))
+);
+
+CREATE TABLE image (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'img_*'),
+  sense_id TEXT NOT NULL REFERENCES sense(id),
+  key TEXT NOT NULL CHECK (length(key) > 0),
+  status TEXT NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')),
+  sha256 TEXT NOT NULL CHECK (length(sha256) > 0)
+);
+
+CREATE TABLE voice (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'voi_*'),
+  locale TEXT NOT NULL CHECK (length(locale) > 0),
+  display_name TEXT NOT NULL CHECK (length(display_name) > 0),
+  source TEXT NOT NULL CHECK (source IN ('bundled', 'device_tts')),
+  engine_id TEXT,
+  is_default INTEGER NOT NULL CHECK (is_default IN (0, 1)),
+  status TEXT NOT NULL CHECK (status IN ('active', 'retired')),
+  CHECK (source != 'device_tts' OR engine_id IS NOT NULL),
+  CHECK (source != 'bundled' OR engine_id IS NULL),
+  CHECK (status != 'retired' OR is_default = 0)
+);
+
+CREATE TABLE clip (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'clp_*'),
+  voice_id TEXT NOT NULL REFERENCES voice(id),
+  utterance_id TEXT NOT NULL REFERENCES utterance(id),
+  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),
+  key TEXT NOT NULL CHECK (length(key) > 0),
+  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),
+  sha256 TEXT NOT NULL CHECK (length(sha256) > 0),
+  source TEXT NOT NULL CHECK (length(source) > 0)
+);
+
+CREATE TABLE core_cell (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'cel_*'),
+  layout TEXT NOT NULL CHECK (length(layout) > 0),
+  sense_id TEXT NOT NULL REFERENCES sense(id),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
+  UNIQUE (layout, slot_index),
+  UNIQUE (layout, sense_id)
+);
+
+CREATE TABLE learner_profile (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'prf_*'),
+  locale TEXT NOT NULL CHECK (length(locale) > 0),
+  preferred_voice_id TEXT NOT NULL REFERENCES voice(id)
+);
+
+CREATE TABLE personal_entity (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),
+  spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),
+  photo_key TEXT,
+  category TEXT CHECK (category IS NULL OR category IN (
+    'Food & Drink',
+    'Body, Health & Hygiene',
+    'Feelings, Emotions & Sensory States',
+    'Daily Actions & Activity Verbs',
+    'People, Family & Roles',
+    'Places, Rooms & Community',
+    'Toys, Play, Media & Leisure',
+    'Home, Household Objects & Daily Tools',
+    'Clothing & Accessories',
+    'Animals & Nature',
+    'Vehicles & Transportation',
+    'Descriptors, Adjectives & Opposites',
+    'Time, Calendar & Sequencing',
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+  )),
+  hint TEXT
+);
+
+CREATE TABLE entity_enrichment (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'enr_*'),
+  entity_id TEXT NOT NULL REFERENCES personal_entity(id),
+  description TEXT,
+  category_suggestion TEXT CHECK (category_suggestion IS NULL OR category_suggestion IN (
+    'Food & Drink',
+    'Body, Health & Hygiene',
+    'Feelings, Emotions & Sensory States',
+    'Daily Actions & Activity Verbs',
+    'People, Family & Roles',
+    'Places, Rooms & Community',
+    'Toys, Play, Media & Leisure',
+    'Home, Household Objects & Daily Tools',
+    'Clothing & Accessories',
+    'Animals & Nature',
+    'Vehicles & Transportation',
+    'Descriptors, Adjectives & Opposites',
+    'Time, Calendar & Sequencing',
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+  )),
+  associations TEXT,
+  model TEXT NOT NULL,
+  prompt_version TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))
+);
+
+CREATE TABLE clip_override (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),
+  utterance_id TEXT REFERENCES utterance(id),
+  entity_id TEXT REFERENCES personal_entity(id),
+  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),
+  key TEXT NOT NULL CHECK (length(key) > 0),
+  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),
+  CHECK ((utterance_id IS NULL) != (entity_id IS NULL))
+);
+
+CREATE UNIQUE INDEX label_one_row_per_sense_text
+  ON label(sense_id, locale, normalized_text);
+CREATE UNIQUE INDEX label_one_approved_lemma
+  ON label(sense_id, locale)
+  WHERE kind = 'lemma' AND status = 'approved';
+CREATE UNIQUE INDEX label_one_default_text
+  ON label(locale, normalized_text)
+  WHERE status = 'approved' AND default_for_text = 1;
+CREATE UNIQUE INDEX voice_one_active_default
+  ON voice(locale)
+  WHERE status = 'active' AND is_default = 1;
+CREATE UNIQUE INDEX clip_one_ready
+  ON clip(voice_id, utterance_id)
+  WHERE status = 'ready';
+CREATE UNIQUE INDEX override_one_ready_utterance
+  ON clip_override(utterance_id)
+  WHERE status = 'ready' AND utterance_id IS NOT NULL;
+CREATE UNIQUE INDEX override_one_ready_entity
+  ON clip_override(entity_id)
+  WHERE status = 'ready' AND entity_id IS NOT NULL;
+CREATE UNIQUE INDEX enrichment_one_ready
+  ON entity_enrichment(entity_id)
+  WHERE status = 'ready';
+
+CREATE TRIGGER label_locale_matches_utterance
+BEFORE INSERT ON label
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'label locale must match its utterance')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM utterance
+    WHERE utterance.id = NEW.utterance_id
+      AND utterance.locale = NEW.locale
+  );
+END;
+
+CREATE TRIGGER clip_matches_voice_and_utterance
+BEFORE INSERT ON clip
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')
+  WHERE (
+    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id
+  ) IS NOT (
+    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id
+  );
+  SELECT RAISE(ABORT, 'device_tts voice has no clips')
+  WHERE EXISTS (
+    SELECT 1 FROM voice
+    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'
+  );
+  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM utterance
+    WHERE utterance.id = NEW.utterance_id
+      AND utterance.spoken_text = NEW.recorded_text
+  );
+END;
+
+CREATE TRIGGER override_recorded_text_matches
+BEFORE INSERT ON clip_override
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'override recorded_text must equal utterance.spoken_text')
+  WHERE NEW.utterance_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM utterance
+    WHERE utterance.id = NEW.utterance_id
+      AND utterance.spoken_text = NEW.recorded_text
+  );
+  SELECT RAISE(ABORT, 'override recorded_text must equal entity spoken_name')
+  WHERE NEW.entity_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM personal_entity
+    WHERE personal_entity.id = NEW.entity_id
+      AND personal_entity.spoken_name = NEW.recorded_text
+  );
+END;
+
+CREATE TRIGGER sense_default_image_same_sense
+BEFORE UPDATE OF default_image_id ON sense
+FOR EACH ROW
+WHEN NEW.default_image_id IS NOT NULL
+BEGIN
+  SELECT RAISE(ABORT, 'default image belongs to another sense')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM image
+    WHERE image.id = NEW.default_image_id
+      AND image.sense_id = NEW.id
+  );
+END;
+
+CREATE TRIGGER core_cell_root_only
+BEFORE INSERT ON core_cell
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'core cell requires a root_core sense')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM sense
+    WHERE sense.id = NEW.sense_id AND sense.tier = 'root_core'
+  );
+END;
+
+CREATE TRIGGER profile_voice_is_active_same_locale
+BEFORE INSERT ON learner_profile
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM voice
+    WHERE voice.id = NEW.preferred_voice_id
+      AND voice.status = 'active'
+      AND voice.locale = NEW.locale
+  );
+END;
+
+CREATE TRIGGER voice_retire_blocks_if_preferred
+BEFORE UPDATE OF status ON voice
+FOR EACH ROW
+WHEN NEW.status = 'retired' AND OLD.status != 'retired'
+BEGIN
+  SELECT RAISE(ABORT, 'repoint profiles before retiring this voice')
+  WHERE EXISTS (
+    SELECT 1 FROM learner_profile
+    WHERE preferred_voice_id = OLD.id
+  );
+END;
+
+CREATE TRIGGER utterance_rename_supersedes_audio
+AFTER UPDATE OF spoken_text ON utterance
+FOR EACH ROW
+WHEN NEW.spoken_text != OLD.spoken_text
+BEGIN
+  UPDATE clip
+    SET status = 'superseded'
+    WHERE utterance_id = NEW.id AND status = 'ready';
+  UPDATE clip_override
+    SET status = 'superseded'
+    WHERE utterance_id = NEW.id AND status = 'ready';
+END;
+
+CREATE TRIGGER entity_rename_supersedes_override
+AFTER UPDATE OF spoken_name ON personal_entity
+FOR EACH ROW
+WHEN NEW.spoken_name != OLD.spoken_name
+BEGIN
+  UPDATE clip_override
+    SET status = 'superseded'
+    WHERE entity_id = NEW.id AND status = 'ready';
+END;
+
+CREATE TRIGGER entity_input_change_supersedes_enrichment
+AFTER UPDATE OF spoken_name, photo_key ON personal_entity
+FOR EACH ROW
+WHEN NEW.spoken_name != OLD.spoken_name
+   OR NEW.photo_key IS NOT OLD.photo_key
+BEGIN
+  UPDATE entity_enrichment
+    SET status = 'superseded'
+    WHERE entity_id = NEW.id AND status IN ('ready', 'abstained');
+END;
+
+CREATE TRIGGER label_locale_matches_utterance_on_update
+BEFORE UPDATE OF utterance_id, locale ON label
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'label locale must match its utterance')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM utterance
+    WHERE utterance.id = NEW.utterance_id
+      AND utterance.locale = NEW.locale
+  );
+END;
+
+CREATE TRIGGER clip_matches_voice_and_utterance_on_update
+BEFORE UPDATE OF voice_id, utterance_id, recorded_text ON clip
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')
+  WHERE (
+    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id
+  ) IS NOT (
+    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id
+  );
+  SELECT RAISE(ABORT, 'device_tts voice has no clips')
+  WHERE EXISTS (
+    SELECT 1 FROM voice
+    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'
+  );
+  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM utterance
+    WHERE utterance.id = NEW.utterance_id
+      AND utterance.spoken_text = NEW.recorded_text
+  );
+END;
+
+CREATE TRIGGER profile_voice_is_active_same_locale_on_update
+BEFORE UPDATE OF preferred_voice_id, locale ON learner_profile
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM voice
+    WHERE voice.id = NEW.preferred_voice_id
+      AND voice.status = 'active'
+      AND voice.locale = NEW.locale
+  );
+END;
+
+PRAGMA user_version = 1;

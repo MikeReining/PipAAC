@@ -1,3600 +1,5397 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "source": "docs/product/Initial_Vocabulary_600.md",
   "entries": [
     {
       "slot": 1,
       "tier": 1,
       "spokenText": "I",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 2,
       "tier": 1,
       "spokenText": "you",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 3,
       "tier": 1,
       "spokenText": "me",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 4,
       "tier": 1,
       "spokenText": "my",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 5,
       "tier": 1,
       "spokenText": "mine",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 6,
       "tier": 1,
       "spokenText": "he",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 7,
       "tier": 1,
       "spokenText": "she",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 8,
       "tier": 1,
       "spokenText": "it",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 9,
       "tier": 1,
       "spokenText": "we",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 10,
       "tier": 1,
       "spokenText": "they",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 11,
       "tier": 1,
       "spokenText": "that",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 12,
       "tier": 1,
       "spokenText": "this",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 13,
       "tier": 1,
       "spokenText": "want",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 14,
       "tier": 1,
       "spokenText": "like",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 15,
       "tier": 1,
       "spokenText": "go",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 16,
       "tier": 1,
       "spokenText": "come",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 17,
       "tier": 1,
       "spokenText": "get",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 18,
       "tier": 1,
       "spokenText": "make",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 19,
       "tier": 1,
       "spokenText": "do",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 20,
       "tier": 1,
       "spokenText": "see",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 21,
       "tier": 1,
       "spokenText": "look",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 22,
       "tier": 1,
       "spokenText": "put",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 23,
       "tier": 1,
       "spokenText": "take",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 24,
       "tier": 1,
       "spokenText": "give",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 25,
       "tier": 1,
       "spokenText": "help",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 26,
       "tier": 1,
       "spokenText": "stop",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 27,
       "tier": 1,
       "spokenText": "play",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 28,
       "tier": 1,
       "spokenText": "eat",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 29,
       "tier": 1,
       "spokenText": "drink",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 30,
       "tier": 1,
       "spokenText": "open",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 31,
       "tier": 1,
       "spokenText": "turn",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 32,
       "tier": 1,
       "spokenText": "read",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 33,
       "tier": 1,
       "spokenText": "can",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 34,
       "tier": 1,
       "spokenText": "need",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 35,
       "tier": 1,
       "spokenText": "feel",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 36,
       "tier": 1,
       "spokenText": "tell",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 37,
       "tier": 1,
       "spokenText": "think",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 38,
       "tier": 1,
       "spokenText": "find",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 39,
       "tier": 1,
       "spokenText": "work",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 40,
       "tier": 1,
       "spokenText": "wait",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 41,
       "tier": 1,
       "spokenText": "in",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 42,
       "tier": 1,
       "spokenText": "out",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 43,
       "tier": 1,
       "spokenText": "on",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 44,
       "tier": 1,
       "spokenText": "off",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 45,
       "tier": 1,
       "spokenText": "up",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 46,
       "tier": 1,
       "spokenText": "down",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 47,
       "tier": 1,
       "spokenText": "away",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 48,
       "tier": 1,
       "spokenText": "here",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 49,
       "tier": 1,
       "spokenText": "there",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 50,
       "tier": 1,
       "spokenText": "with",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 51,
       "tier": 1,
       "spokenText": "under",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 52,
       "tier": 1,
       "spokenText": "over",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 53,
       "tier": 1,
       "spokenText": "to",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 54,
       "tier": 1,
       "spokenText": "for",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 55,
       "tier": 1,
       "spokenText": "more",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 56,
       "tier": 1,
       "spokenText": "all done",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 57,
       "tier": 1,
       "spokenText": "big",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 58,
       "tier": 1,
       "spokenText": "little",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 59,
       "tier": 1,
       "spokenText": "good",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 60,
       "tier": 1,
       "spokenText": "bad",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 61,
       "tier": 1,
       "spokenText": "happy",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 62,
       "tier": 1,
       "spokenText": "same",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 63,
       "tier": 1,
       "spokenText": "different",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 64,
       "tier": 1,
       "spokenText": "some",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 65,
       "tier": 1,
       "spokenText": "all",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 66,
       "tier": 1,
       "spokenText": "what",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 67,
       "tier": 1,
       "spokenText": "where",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 68,
       "tier": 1,
       "spokenText": "who",
-      "partOfSpeech": "Pronoun"
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 69,
       "tier": 1,
       "spokenText": "why",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 70,
       "tier": 1,
       "spokenText": "how",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 71,
       "tier": 1,
       "spokenText": "when",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 72,
       "tier": 1,
       "spokenText": "no",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 73,
       "tier": 1,
       "spokenText": "yes",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 74,
       "tier": 1,
       "spokenText": "not",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": null
     },
     {
       "slot": 75,
       "tier": 1,
       "spokenText": "please",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": null
     },
     {
       "slot": 76,
       "tier": 2,
       "spokenText": "water",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 77,
       "tier": 2,
       "spokenText": "milk",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 78,
       "tier": 2,
       "spokenText": "juice",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 79,
       "tier": 2,
       "spokenText": "apple juice",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 80,
       "tier": 2,
       "spokenText": "chocolate milk",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 81,
       "tier": 2,
       "spokenText": "tea",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 82,
       "tier": 2,
       "spokenText": "smoothie",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 83,
       "tier": 2,
       "spokenText": "bread",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 84,
       "tier": 2,
       "spokenText": "toast",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 85,
       "tier": 2,
       "spokenText": "cereal",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 86,
       "tier": 2,
       "spokenText": "oatmeal",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 87,
       "tier": 2,
       "spokenText": "pancake",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 88,
       "tier": 2,
       "spokenText": "waffle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 89,
       "tier": 2,
       "spokenText": "bagel",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 90,
       "tier": 2,
       "spokenText": "egg",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 91,
       "tier": 2,
       "spokenText": "butter",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 92,
       "tier": 2,
       "spokenText": "jam",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 93,
       "tier": 2,
       "spokenText": "syrup",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 94,
       "tier": 2,
       "spokenText": "pizza",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 95,
       "tier": 2,
       "spokenText": "pasta",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 96,
       "tier": 2,
       "spokenText": "macaroni",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 97,
       "tier": 2,
       "spokenText": "sandwich",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 98,
       "tier": 2,
       "spokenText": "chicken",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 99,
       "tier": 2,
       "spokenText": "nuggets",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 100,
       "tier": 2,
       "spokenText": "burger",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 101,
       "tier": 2,
       "spokenText": "hot dog",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 102,
       "tier": 2,
       "spokenText": "soup",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 103,
       "tier": 2,
       "spokenText": "rice",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 104,
       "tier": 2,
       "spokenText": "cheese",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 105,
       "tier": 2,
       "spokenText": "meat",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 106,
       "tier": 2,
       "spokenText": "fish",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 107,
       "tier": 2,
       "spokenText": "snack",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 108,
       "tier": 2,
       "spokenText": "cracker",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 109,
       "tier": 2,
       "spokenText": "cookie",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 110,
       "tier": 2,
       "spokenText": "chips",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 111,
       "tier": 2,
       "spokenText": "popcorn",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 112,
       "tier": 2,
       "spokenText": "pretzel",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 113,
       "tier": 2,
       "spokenText": "yogurt",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 114,
       "tier": 2,
       "spokenText": "fruit snack",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 115,
       "tier": 2,
       "spokenText": "ice cream",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 116,
       "tier": 2,
       "spokenText": "popsicle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 117,
       "tier": 2,
       "spokenText": "candy",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 118,
       "tier": 2,
       "spokenText": "cake",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 119,
       "tier": 2,
       "spokenText": "muffin",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 120,
       "tier": 2,
       "spokenText": "donut",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 121,
       "tier": 2,
       "spokenText": "fruit",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 122,
       "tier": 2,
       "spokenText": "apple",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 123,
       "tier": 2,
       "spokenText": "banana",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 124,
       "tier": 2,
       "spokenText": "strawberry",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 125,
       "tier": 2,
       "spokenText": "orange",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 126,
       "tier": 2,
       "spokenText": "grapes",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 127,
       "tier": 2,
       "spokenText": "watermelon",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 128,
       "tier": 2,
       "spokenText": "carrot",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 129,
       "tier": 2,
       "spokenText": "broccoli",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 130,
       "tier": 2,
       "spokenText": "corn",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     },
     {
       "slot": 131,
       "tier": 2,
       "spokenText": "body",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 132,
       "tier": 2,
       "spokenText": "head",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 133,
       "tier": 2,
       "spokenText": "face",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 134,
       "tier": 2,
       "spokenText": "hair",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 135,
       "tier": 2,
       "spokenText": "eye",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 136,
       "tier": 2,
       "spokenText": "ear",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 137,
       "tier": 2,
       "spokenText": "nose",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 138,
       "tier": 2,
       "spokenText": "mouth",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 139,
       "tier": 2,
       "spokenText": "teeth",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 140,
       "tier": 2,
       "spokenText": "tongue",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 141,
       "tier": 2,
       "spokenText": "neck",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 142,
       "tier": 2,
       "spokenText": "shoulder",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 143,
       "tier": 2,
       "spokenText": "arm",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 144,
       "tier": 2,
       "spokenText": "hand",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 145,
       "tier": 2,
       "spokenText": "fingers",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 146,
       "tier": 2,
       "spokenText": "tummy",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 147,
       "tier": 2,
       "spokenText": "back",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 148,
       "tier": 2,
       "spokenText": "leg",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 149,
       "tier": 2,
       "spokenText": "knee",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 150,
       "tier": 2,
       "spokenText": "foot",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 151,
       "tier": 2,
       "spokenText": "toes",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 152,
       "tier": 2,
       "spokenText": "bathroom",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 153,
       "tier": 2,
       "spokenText": "potty",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 154,
       "tier": 2,
       "spokenText": "toilet",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 155,
       "tier": 2,
       "spokenText": "diaper",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 156,
       "tier": 2,
       "spokenText": "wet wipe",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 157,
       "tier": 2,
       "spokenText": "bath",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 158,
       "tier": 2,
       "spokenText": "shower",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 159,
       "tier": 2,
       "spokenText": "soap",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 160,
       "tier": 2,
       "spokenText": "toothbrush",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 161,
       "tier": 2,
       "spokenText": "toothpaste",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 162,
       "tier": 2,
       "spokenText": "towel",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 163,
       "tier": 2,
       "spokenText": "comb",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 164,
       "tier": 2,
       "spokenText": "tissue",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 165,
       "tier": 2,
       "spokenText": "bandage",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 166,
       "tier": 2,
       "spokenText": "hurt",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 167,
       "tier": 2,
       "spokenText": "sick",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 168,
       "tier": 2,
       "spokenText": "pain",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 169,
       "tier": 2,
       "spokenText": "fever",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 170,
       "tier": 2,
       "spokenText": "cough",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 171,
       "tier": 2,
       "spokenText": "medicine",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 172,
       "tier": 2,
       "spokenText": "dentist",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 173,
       "tier": 2,
       "spokenText": "sad",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 174,
       "tier": 2,
       "spokenText": "mad",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 175,
       "tier": 2,
       "spokenText": "angry",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 176,
       "tier": 2,
       "spokenText": "scared",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 177,
       "tier": 2,
       "spokenText": "excited",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 178,
       "tier": 2,
       "spokenText": "silly",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 179,
       "tier": 2,
       "spokenText": "nervous",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 180,
       "tier": 2,
       "spokenText": "calm",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 181,
       "tier": 2,
       "spokenText": "frustrated",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 182,
       "tier": 2,
       "spokenText": "proud",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 183,
       "tier": 2,
       "spokenText": "shy",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 184,
       "tier": 2,
       "spokenText": "surprised",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 185,
       "tier": 2,
       "spokenText": "bored",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 186,
       "tier": 2,
       "spokenText": "lonely",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 187,
       "tier": 2,
       "spokenText": "hungry",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 188,
       "tier": 2,
       "spokenText": "thirsty",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 189,
       "tier": 2,
       "spokenText": "tired",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 190,
       "tier": 2,
       "spokenText": "sleepy",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 191,
       "tier": 2,
       "spokenText": "energetic",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 192,
       "tier": 2,
       "spokenText": "hot",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 193,
       "tier": 2,
       "spokenText": "cold",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 194,
       "tier": 2,
       "spokenText": "warm",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 195,
       "tier": 2,
       "spokenText": "loud",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 196,
       "tier": 2,
       "spokenText": "quiet",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 197,
       "tier": 2,
       "spokenText": "noisy",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 198,
       "tier": 2,
       "spokenText": "bright",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 199,
       "tier": 2,
       "spokenText": "dark",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 200,
       "tier": 2,
       "spokenText": "soft",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 201,
       "tier": 2,
       "spokenText": "rough",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 202,
       "tier": 2,
       "spokenText": "sticky",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 203,
       "tier": 2,
       "spokenText": "dizzy",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 204,
       "tier": 2,
       "spokenText": "gross",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 205,
       "tier": 2,
       "spokenText": "comfortable",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 206,
       "tier": 2,
       "spokenText": "uncomfortable",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 207,
       "tier": 2,
       "spokenText": "overwhelmed",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 208,
       "tier": 2,
       "spokenText": "run",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 209,
       "tier": 2,
       "spokenText": "jump",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 210,
       "tier": 2,
       "spokenText": "walk",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 211,
       "tier": 2,
       "spokenText": "sit",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 212,
       "tier": 2,
       "spokenText": "stand",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 213,
       "tier": 2,
       "spokenText": "climb",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 214,
       "tier": 2,
       "spokenText": "dance",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 215,
       "tier": 2,
       "spokenText": "swim",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 216,
       "tier": 2,
       "spokenText": "ride",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 217,
       "tier": 2,
       "spokenText": "crawl",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 218,
       "tier": 2,
       "spokenText": "kick",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 219,
       "tier": 2,
       "spokenText": "throw",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 220,
       "tier": 2,
       "spokenText": "catch",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 221,
       "tier": 2,
       "spokenText": "push",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 222,
       "tier": 2,
       "spokenText": "pull",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 223,
       "tier": 2,
       "spokenText": "swing",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 224,
       "tier": 2,
       "spokenText": "slide",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 225,
       "tier": 2,
       "spokenText": "fall",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 226,
       "tier": 2,
       "spokenText": "carry",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 227,
       "tier": 2,
       "spokenText": "drop",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 228,
       "tier": 2,
       "spokenText": "write",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 229,
       "tier": 2,
       "spokenText": "draw",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 230,
       "tier": 2,
       "spokenText": "color",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 231,
       "tier": 2,
       "spokenText": "paint",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 232,
       "tier": 2,
       "spokenText": "cut",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Illustrated Object",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 233,
       "tier": 2,
       "spokenText": "glue",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Illustrated Object",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 234,
       "tier": 2,
       "spokenText": "listen",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 235,
       "tier": 2,
       "spokenText": "speak",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 236,
       "tier": 2,
       "spokenText": "talk",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 237,
       "tier": 2,
       "spokenText": "sing",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 238,
       "tier": 2,
       "spokenText": "count",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 239,
       "tier": 2,
       "spokenText": "share",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 240,
       "tier": 2,
       "spokenText": "clean up",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 241,
       "tier": 2,
       "spokenText": "wash",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 242,
       "tier": 2,
       "spokenText": "wipe action",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 243,
       "tier": 2,
       "spokenText": "cook",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 244,
       "tier": 2,
       "spokenText": "build",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 245,
       "tier": 2,
       "spokenText": "fix",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 246,
       "tier": 2,
       "spokenText": "hold",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 247,
       "tier": 2,
       "spokenText": "touch",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 248,
       "tier": 2,
       "spokenText": "know",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 249,
       "tier": 2,
       "spokenText": "remember",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 250,
       "tier": 2,
       "spokenText": "forget",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 251,
       "tier": 2,
       "spokenText": "choose",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 252,
       "tier": 2,
       "spokenText": "show",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 253,
       "tier": 2,
       "spokenText": "ask",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 254,
       "tier": 2,
       "spokenText": "hug",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 255,
       "tier": 2,
       "spokenText": "kiss",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 256,
       "tier": 2,
       "spokenText": "laugh",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 257,
       "tier": 2,
       "spokenText": "cry",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 258,
       "tier": 2,
       "spokenText": "sleep",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 259,
       "tier": 2,
       "spokenText": "wake up",
-      "partOfSpeech": "Verb"
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 260,
       "tier": 2,
       "spokenText": "family",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 261,
       "tier": 2,
       "spokenText": "mom",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 262,
       "tier": 2,
       "spokenText": "dad",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 263,
       "tier": 2,
       "spokenText": "mama",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 264,
       "tier": 2,
       "spokenText": "dada",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 265,
       "tier": 2,
       "spokenText": "baby",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 266,
       "tier": 2,
       "spokenText": "brother",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 267,
       "tier": 2,
       "spokenText": "sister",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 268,
       "tier": 2,
       "spokenText": "grandma",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 269,
       "tier": 2,
       "spokenText": "grandpa",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 270,
       "tier": 2,
       "spokenText": "aunt",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 271,
       "tier": 2,
       "spokenText": "uncle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 272,
       "tier": 2,
       "spokenText": "cousin",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 273,
       "tier": 2,
       "spokenText": "pet",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 274,
       "tier": 2,
       "spokenText": "teacher",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 275,
       "tier": 2,
       "spokenText": "therapist",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 276,
       "tier": 2,
       "spokenText": "aide",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 277,
       "tier": 2,
       "spokenText": "student",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 278,
       "tier": 2,
       "spokenText": "friend",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 279,
       "tier": 2,
       "spokenText": "class",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 280,
       "tier": 2,
       "spokenText": "firefighter",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 281,
       "tier": 2,
       "spokenText": "police officer",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 282,
       "tier": 2,
       "spokenText": "bus driver",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 283,
       "tier": 2,
       "spokenText": "neighbor",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 284,
       "tier": 2,
       "spokenText": "person",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 285,
       "tier": 2,
       "spokenText": "people",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 286,
       "tier": 2,
       "spokenText": "kids",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 287,
       "tier": 2,
       "spokenText": "doctor",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 288,
       "tier": 2,
       "spokenText": "nurse",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 289,
       "tier": 2,
       "spokenText": "babysitter",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
     },
     {
       "slot": 290,
       "tier": 2,
       "spokenText": "home",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 291,
       "tier": 2,
       "spokenText": "house",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 292,
       "tier": 2,
       "spokenText": "bedroom",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 293,
       "tier": 2,
       "spokenText": "living room",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 294,
       "tier": 2,
       "spokenText": "kitchen",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 295,
       "tier": 2,
       "spokenText": "basement",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 296,
       "tier": 2,
       "spokenText": "stairs",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 297,
       "tier": 2,
       "spokenText": "yard",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 298,
       "tier": 2,
       "spokenText": "school",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 299,
       "tier": 2,
       "spokenText": "classroom",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 300,
       "tier": 2,
       "spokenText": "playground",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 301,
       "tier": 2,
       "spokenText": "gym",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 302,
       "tier": 2,
       "spokenText": "cafeteria",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 303,
       "tier": 2,
       "spokenText": "library",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 304,
       "tier": 2,
       "spokenText": "hallway",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 305,
       "tier": 2,
       "spokenText": "desk",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 306,
       "tier": 2,
       "spokenText": "park",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 307,
       "tier": 2,
       "spokenText": "store",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 308,
       "tier": 2,
       "spokenText": "grocery store",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 309,
       "tier": 2,
       "spokenText": "restaurant",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 310,
       "tier": 2,
       "spokenText": "pool",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 311,
       "tier": 2,
       "spokenText": "beach",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 312,
       "tier": 2,
       "spokenText": "zoo",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 313,
       "tier": 2,
       "spokenText": "doctor office",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 314,
       "tier": 2,
       "spokenText": "hospital",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 315,
       "tier": 2,
       "spokenText": "museum",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 316,
       "tier": 2,
       "spokenText": "movie theater",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 317,
       "tier": 2,
       "spokenText": "mall",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 318,
       "tier": 2,
       "spokenText": "farm",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 319,
       "tier": 2,
       "spokenText": "airport",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 320,
       "tier": 2,
       "spokenText": "outside",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 321,
       "tier": 2,
       "spokenText": "inside",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 322,
       "tier": 2,
       "spokenText": "street",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 323,
       "tier": 2,
       "spokenText": "town",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 324,
       "tier": 2,
       "spokenText": "church",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Places, Rooms & Community"
     },
     {
       "slot": 325,
       "tier": 2,
       "spokenText": "toy",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 326,
       "tier": 2,
       "spokenText": "ball",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 327,
       "tier": 2,
       "spokenText": "blocks",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 328,
       "tier": 2,
       "spokenText": "puzzle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 329,
       "tier": 2,
       "spokenText": "doll",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 330,
       "tier": 2,
       "spokenText": "action figure",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 331,
       "tier": 2,
       "spokenText": "bubbles",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 332,
       "tier": 2,
       "spokenText": "play dough",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 333,
       "tier": 2,
       "spokenText": "toy car",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 334,
       "tier": 2,
       "spokenText": "toy train",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 335,
       "tier": 2,
       "spokenText": "stuffed animal",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 336,
       "tier": 2,
       "spokenText": "dinosaur",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 337,
       "tier": 2,
       "spokenText": "robot",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 338,
       "tier": 2,
       "spokenText": "legos",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 339,
       "tier": 2,
       "spokenText": "board game",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 340,
       "tier": 2,
       "spokenText": "swing set",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 341,
       "tier": 2,
       "spokenText": "sandbox",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 342,
       "tier": 2,
       "spokenText": "bike",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 343,
       "tier": 2,
       "spokenText": "scooter",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 344,
       "tier": 2,
       "spokenText": "skateboard",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 345,
       "tier": 2,
       "spokenText": "wagon",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 346,
       "tier": 2,
       "spokenText": "chalk",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 347,
       "tier": 2,
       "spokenText": "jump rope",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 348,
       "tier": 2,
       "spokenText": "music",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 349,
       "tier": 2,
       "spokenText": "song",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 350,
       "tier": 2,
       "spokenText": "tablet",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 351,
       "tier": 2,
       "spokenText": "iPad",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 352,
       "tier": 2,
       "spokenText": "phone",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 353,
       "tier": 2,
       "spokenText": "TV",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 354,
       "tier": 2,
       "spokenText": "movie",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 355,
       "tier": 2,
       "spokenText": "video",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 356,
       "tier": 2,
       "spokenText": "headphones",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 357,
       "tier": 2,
       "spokenText": "computer",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 358,
       "tier": 2,
       "spokenText": "camera",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 359,
       "tier": 2,
       "spokenText": "paper",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 360,
       "tier": 2,
       "spokenText": "markers",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 361,
       "tier": 2,
       "spokenText": "crayons",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 362,
       "tier": 2,
       "spokenText": "book",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Toys, Play, Media & Leisure"
     },
     {
       "slot": 363,
       "tier": 2,
       "spokenText": "chair",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 364,
       "tier": 2,
       "spokenText": "couch",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 365,
       "tier": 2,
       "spokenText": "table",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 366,
       "tier": 2,
       "spokenText": "bed",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 367,
       "tier": 2,
       "spokenText": "door",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 368,
       "tier": 2,
       "spokenText": "window",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 369,
       "tier": 2,
       "spokenText": "lamp",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 370,
       "tier": 2,
       "spokenText": "clock",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 371,
       "tier": 2,
       "spokenText": "trash",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 372,
       "tier": 2,
       "spokenText": "sink",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 373,
       "tier": 2,
       "spokenText": "mirror",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 374,
       "tier": 2,
       "spokenText": "rug",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 375,
       "tier": 2,
       "spokenText": "plate",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 376,
       "tier": 2,
       "spokenText": "bowl",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 377,
       "tier": 2,
       "spokenText": "cup",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 378,
       "tier": 2,
       "spokenText": "fork",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 379,
       "tier": 2,
       "spokenText": "spoon",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 380,
       "tier": 2,
       "spokenText": "knife",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 381,
       "tier": 2,
       "spokenText": "napkin",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 382,
       "tier": 2,
       "spokenText": "bottle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 383,
       "tier": 2,
       "spokenText": "straw",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 384,
       "tier": 2,
       "spokenText": "fridge",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 385,
       "tier": 2,
       "spokenText": "microwave",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 386,
       "tier": 2,
       "spokenText": "backpack",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 387,
       "tier": 2,
       "spokenText": "bag",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 388,
       "tier": 2,
       "spokenText": "keys",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 389,
       "tier": 2,
       "spokenText": "wallet",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 390,
       "tier": 2,
       "spokenText": "glasses",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 391,
       "tier": 2,
       "spokenText": "umbrella",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 392,
       "tier": 2,
       "spokenText": "blanket",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 393,
       "tier": 2,
       "spokenText": "pillow",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 394,
       "tier": 2,
       "spokenText": "fan",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 395,
       "tier": 2,
       "spokenText": "charger",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 396,
       "tier": 2,
       "spokenText": "box",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 397,
       "tier": 2,
       "spokenText": "battery",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 398,
       "tier": 2,
       "spokenText": "broom",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 399,
       "tier": 2,
       "spokenText": "vacuum",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 400,
       "tier": 2,
       "spokenText": "sponge",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 401,
       "tier": 2,
       "spokenText": "tape",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 402,
       "tier": 2,
       "spokenText": "flashlight",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 403,
       "tier": 2,
       "spokenText": "bucket",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 404,
       "tier": 2,
       "spokenText": "paper towel",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Home, Household Objects & Daily Tools"
     },
     {
       "slot": 405,
       "tier": 2,
       "spokenText": "shirt",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 406,
       "tier": 2,
       "spokenText": "pants",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 407,
       "tier": 2,
       "spokenText": "shorts",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 408,
       "tier": 2,
       "spokenText": "underwear",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 409,
       "tier": 2,
       "spokenText": "dress",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 410,
       "tier": 2,
       "spokenText": "skirt",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 411,
       "tier": 2,
       "spokenText": "sweater",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 412,
       "tier": 2,
       "spokenText": "sweatshirt",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 413,
       "tier": 2,
       "spokenText": "socks",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 414,
       "tier": 2,
       "spokenText": "shoes",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 415,
       "tier": 2,
       "spokenText": "pajamas",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 416,
       "tier": 2,
       "spokenText": "robe",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 417,
       "tier": 2,
       "spokenText": "slippers",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 418,
       "tier": 2,
       "spokenText": "jacket",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 419,
       "tier": 2,
       "spokenText": "coat",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 420,
       "tier": 2,
       "spokenText": "hat",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 421,
       "tier": 2,
       "spokenText": "mittens",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 422,
       "tier": 2,
       "spokenText": "gloves",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 423,
       "tier": 2,
       "spokenText": "scarf",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 424,
       "tier": 2,
       "spokenText": "boots",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 425,
       "tier": 2,
       "spokenText": "raincoat",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 426,
       "tier": 2,
       "spokenText": "swimsuit",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 427,
       "tier": 2,
       "spokenText": "sunglasses",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 428,
       "tier": 2,
       "spokenText": "zipper",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 429,
       "tier": 2,
       "spokenText": "button",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 430,
       "tier": 2,
       "spokenText": "belt",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 431,
       "tier": 2,
       "spokenText": "pocket",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 432,
       "tier": 2,
       "spokenText": "sandals",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Clothing & Accessories"
     },
     {
       "slot": 433,
       "tier": 2,
       "spokenText": "animal",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 434,
       "tier": 2,
       "spokenText": "dog",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 435,
       "tier": 2,
       "spokenText": "cat",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 436,
       "tier": 2,
       "spokenText": "puppy",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 437,
       "tier": 2,
       "spokenText": "kitten",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 438,
       "tier": 2,
       "spokenText": "bird",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 439,
       "tier": 2,
       "spokenText": "bunny",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 440,
       "tier": 2,
       "spokenText": "duck",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 441,
       "tier": 2,
       "spokenText": "hen",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 442,
       "tier": 2,
       "spokenText": "cow",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 443,
       "tier": 2,
       "spokenText": "horse",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 444,
       "tier": 2,
       "spokenText": "pig",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 445,
       "tier": 2,
       "spokenText": "sheep",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 446,
       "tier": 2,
       "spokenText": "goat",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 447,
       "tier": 2,
       "spokenText": "bear",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 448,
       "tier": 2,
       "spokenText": "lion",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 449,
       "tier": 2,
       "spokenText": "tiger",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 450,
       "tier": 2,
       "spokenText": "elephant",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 451,
       "tier": 2,
       "spokenText": "monkey",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 452,
       "tier": 2,
       "spokenText": "giraffe",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 453,
       "tier": 2,
       "spokenText": "zebra",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 454,
       "tier": 2,
       "spokenText": "hippo",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 455,
       "tier": 2,
       "spokenText": "penguin",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 456,
       "tier": 2,
       "spokenText": "dolphin",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 457,
       "tier": 2,
       "spokenText": "whale",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 458,
       "tier": 2,
       "spokenText": "snake",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 459,
       "tier": 2,
       "spokenText": "turtle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 460,
       "tier": 2,
       "spokenText": "frog",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 461,
       "tier": 2,
       "spokenText": "bug",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 462,
       "tier": 2,
       "spokenText": "spider",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 463,
       "tier": 2,
       "spokenText": "butterfly",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 464,
       "tier": 2,
       "spokenText": "tree",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 465,
       "tier": 2,
       "spokenText": "grass",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 466,
       "tier": 2,
       "spokenText": "flower",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 467,
       "tier": 2,
       "spokenText": "sun",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 468,
       "tier": 2,
       "spokenText": "rain",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 469,
       "tier": 2,
       "spokenText": "snow",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 470,
       "tier": 2,
       "spokenText": "wind",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 471,
       "tier": 2,
       "spokenText": "cloud",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 472,
       "tier": 2,
       "spokenText": "moon",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Animals & Nature"
     },
     {
       "slot": 473,
       "tier": 2,
       "spokenText": "vehicle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 474,
       "tier": 2,
       "spokenText": "car",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 475,
       "tier": 2,
       "spokenText": "bus",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 476,
       "tier": 2,
       "spokenText": "school bus",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 477,
       "tier": 2,
       "spokenText": "truck",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 478,
       "tier": 2,
       "spokenText": "fire truck",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 479,
       "tier": 2,
       "spokenText": "police car",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 480,
       "tier": 2,
       "spokenText": "ambulance",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 481,
       "tier": 2,
       "spokenText": "train",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 482,
       "tier": 2,
       "spokenText": "bicycle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 483,
       "tier": 2,
       "spokenText": "motorcycle",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 484,
       "tier": 2,
       "spokenText": "van",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 485,
       "tier": 2,
       "spokenText": "tractor",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 486,
       "tier": 2,
       "spokenText": "stroller",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 487,
       "tier": 2,
       "spokenText": "airplane",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 488,
       "tier": 2,
       "spokenText": "helicopter",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 489,
       "tier": 2,
       "spokenText": "rocket",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 490,
       "tier": 2,
       "spokenText": "boat",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 491,
       "tier": 2,
       "spokenText": "ship",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 492,
       "tier": 2,
       "spokenText": "canoe",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 493,
       "tier": 2,
       "spokenText": "subway",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 494,
       "tier": 2,
       "spokenText": "road",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 495,
       "tier": 2,
       "spokenText": "track",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 496,
       "tier": 2,
       "spokenText": "stoplight",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 497,
       "tier": 2,
       "spokenText": "gas station",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Vehicles & Transportation"
     },
     {
       "slot": 498,
       "tier": 2,
       "spokenText": "red",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 499,
       "tier": 2,
       "spokenText": "blue",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 500,
       "tier": 2,
       "spokenText": "green",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 501,
       "tier": 2,
       "spokenText": "yellow",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 502,
       "tier": 2,
       "spokenText": "orange color",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 503,
       "tier": 2,
       "spokenText": "purple",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 504,
       "tier": 2,
       "spokenText": "pink color",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 505,
       "tier": 2,
       "spokenText": "brown",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 506,
       "tier": 2,
       "spokenText": "black",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 507,
       "tier": 2,
       "spokenText": "white",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 508,
       "tier": 2,
       "spokenText": "fast",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 509,
       "tier": 2,
       "spokenText": "slow",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 510,
       "tier": 2,
       "spokenText": "tall",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 511,
       "tier": 2,
       "spokenText": "short",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 512,
       "tier": 2,
       "spokenText": "long",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 513,
       "tier": 2,
       "spokenText": "heavy",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 514,
       "tier": 2,
       "spokenText": "light weight",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 515,
       "tier": 2,
       "spokenText": "thick",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 516,
       "tier": 2,
       "spokenText": "thin",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 517,
       "tier": 2,
       "spokenText": "wide",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 518,
       "tier": 2,
       "spokenText": "narrow",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 519,
       "tier": 2,
       "spokenText": "hard",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 520,
       "tier": 2,
       "spokenText": "wet",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 521,
       "tier": 2,
       "spokenText": "dry",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 522,
       "tier": 2,
       "spokenText": "clean item",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 523,
       "tier": 2,
       "spokenText": "dirty",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 524,
       "tier": 2,
       "spokenText": "smooth",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 525,
       "tier": 2,
       "spokenText": "broken",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 526,
       "tier": 2,
       "spokenText": "fixed",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Illustrated Object",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 527,
       "tier": 2,
       "spokenText": "empty",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 528,
       "tier": 2,
       "spokenText": "full",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 529,
       "tier": 2,
       "spokenText": "safe",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 530,
       "tier": 2,
       "spokenText": "dangerous",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 531,
       "tier": 2,
       "spokenText": "easy",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 532,
       "tier": 2,
       "spokenText": "difficult",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 533,
       "tier": 2,
       "spokenText": "right",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 534,
       "tier": 2,
       "spokenText": "wrong",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 535,
       "tier": 2,
       "spokenText": "new",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 536,
       "tier": 2,
       "spokenText": "old",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 537,
       "tier": 2,
       "spokenText": "pretty",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 538,
       "tier": 2,
       "spokenText": "cool",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 539,
       "tier": 2,
       "spokenText": "special",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 540,
       "tier": 2,
       "spokenText": "ready",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 541,
       "tier": 2,
       "spokenText": "favorite",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 542,
       "tier": 2,
       "spokenText": "weird",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 543,
       "tier": 2,
       "spokenText": "funny",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 544,
       "tier": 2,
       "spokenText": "dark color",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 545,
       "tier": 2,
       "spokenText": "light color",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 546,
       "tier": 2,
       "spokenText": "morning",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 547,
       "tier": 2,
       "spokenText": "afternoon",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 548,
       "tier": 2,
       "spokenText": "evening",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 549,
       "tier": 2,
       "spokenText": "night",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 550,
       "tier": 2,
       "spokenText": "bedtime",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 551,
       "tier": 2,
       "spokenText": "naptime",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 552,
       "tier": 2,
       "spokenText": "now",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 553,
       "tier": 2,
       "spokenText": "later",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 554,
       "tier": 2,
       "spokenText": "soon",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 555,
       "tier": 2,
       "spokenText": "today",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 556,
       "tier": 2,
       "spokenText": "tomorrow",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 557,
       "tier": 2,
       "spokenText": "yesterday",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 558,
       "tier": 2,
       "spokenText": "before",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 559,
       "tier": 2,
       "spokenText": "after",
-      "partOfSpeech": "Preposition"
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 560,
       "tier": 2,
       "spokenText": "again",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 561,
       "tier": 2,
       "spokenText": "always",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 562,
       "tier": 2,
       "spokenText": "never",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 563,
       "tier": 2,
       "spokenText": "sometimes",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 564,
       "tier": 2,
       "spokenText": "first",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 565,
       "tier": 2,
       "spokenText": "next",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 566,
       "tier": 2,
       "spokenText": "then",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 567,
       "tier": 2,
       "spokenText": "last",
-      "partOfSpeech": "Adverb"
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 568,
       "tier": 2,
       "spokenText": "minute",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 569,
       "tier": 2,
       "spokenText": "hour",
-      "partOfSpeech": "Noun"
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 570,
       "tier": 2,
       "spokenText": "1",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 571,
       "tier": 2,
       "spokenText": "2",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 572,
       "tier": 2,
       "spokenText": "3",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 573,
       "tier": 2,
       "spokenText": "4",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 574,
       "tier": 2,
       "spokenText": "5",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 575,
       "tier": 2,
       "spokenText": "10",
-      "partOfSpeech": "Adjective"
+      "partOfSpeech": "Adjective",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Time, Calendar & Sequencing"
     },
     {
       "slot": 576,
       "tier": 2,
       "spokenText": "hello",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 577,
       "tier": 2,
       "spokenText": "hi",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 578,
       "tier": 2,
       "spokenText": "goodbye",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 579,
       "tier": 2,
       "spokenText": "bye",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 580,
       "tier": 2,
       "spokenText": "thank you",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 581,
       "tier": 2,
       "spokenText": "you're welcome",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 582,
       "tier": 2,
       "spokenText": "sorry",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 583,
       "tier": 2,
       "spokenText": "excuse me",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 584,
       "tier": 2,
       "spokenText": "good morning",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 585,
       "tier": 2,
       "spokenText": "good night",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 586,
       "tier": 2,
       "spokenText": "okay",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 587,
       "tier": 2,
       "spokenText": "ready to go",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 588,
       "tier": 2,
       "spokenText": "wow",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 589,
       "tier": 2,
       "spokenText": "really",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 590,
       "tier": 2,
       "spokenText": "maybe",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 591,
       "tier": 2,
       "spokenText": "I don't know",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 592,
       "tier": 2,
       "spokenText": "look at this",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 593,
       "tier": 2,
       "spokenText": "my turn",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 594,
       "tier": 2,
       "spokenText": "your turn",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 595,
       "tier": 2,
       "spokenText": "careful",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 596,
       "tier": 2,
       "spokenText": "emergency",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 597,
       "tier": 2,
       "spokenText": "no way",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 598,
       "tier": 2,
       "spokenText": "don't",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 599,
       "tier": 2,
       "spokenText": "bathroom urgent",
-      "partOfSpeech": "Interjection"
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     }
   ]
 }

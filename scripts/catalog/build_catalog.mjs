@@ -1,0 +1,179 @@
+#!/usr/bin/env node
+/**
+ * Regenerate data/catalog/catalog.json from:
+ *   - data/launch_lexicon.json   (derived from docs/product/Initial_Vocabulary_600.md)
+ *   - docs/product/Core_Coordinate_Map.md  (truth owner for slot assignments)
+ *
+ *   node scripts/catalog/build_catalog.mjs
+ *   node scripts/catalog/build_catalog.mjs --check
+ *
+ * Ids are deterministic (schema doc §4): sns_/utt_/lbl_ from the catalog slot,
+ * cel_ from layout + slot_index. The shipped file contains catalog tables only
+ * — never device rows.
+ */
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+
+import { normalizeV1 } from "../../src/board/normalize.mjs";
+import { DEFAULT_LEXICON_PATH, repoRoot } from "./paths.mjs";
+
+const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
+const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
+const CATALOG_SCHEMA_VERSION = 1;
+
+const MAP_SECTION_RE = /^## \d+\.\s+`?(grid\d+)`?/;
+const MAP_ROW_RE = /^\|\s*\d+\s*\|\s*(.+?)\s*\|$/;
+const ANCHOR_KINDS = { reserved: "reserved", Groups: "groups" };
+
+/**
+ * Parse the slot tables out of the coordinate map doc.
+ * @returns {{ layouts: Record<string, { cols: number, rows: number, anchors: object[], cells: string[] }> }}
+ *   `cells` is a row-major array of spoken words; anchors carry { slot, kind }.
+ */
+export function parseCoordinateMapMarkdown(raw) {
+  const layouts = {};
+  let current = null;
+
+  for (const line of raw.split("\n")) {
+    const section = MAP_SECTION_RE.exec(line);
+    if (section) {
+      current = section[1];
+      layouts[current] = { cells: [], anchors: [] };
+      continue;
+    }
+    if (line.startsWith("## ")) {
+      current = null;
+      continue;
+    }
+    if (!current) continue;
+
+    const row = MAP_ROW_RE.exec(line);
+    if (!row) continue;
+    for (const token of row[1].split("·").map((t) => t.trim())) {
+      const slot = layouts[current].cells.length + layouts[current].anchors.length;
+      if (token in ANCHOR_KINDS) {
+        layouts[current].anchors.push({ slot, kind: ANCHOR_KINDS[token] });
+      } else {
+        layouts[current].cells.push({ slot, word: token });
+      }
+    }
+  }
+  return layouts;
+}
+
+/** Build the catalog JSON object from lexicon entries + parsed map layouts. */
+export function buildCatalog(lexicon, mapLayouts) {
+  const tier1ByWord = new Map();
+  for (const e of lexicon.entries) {
+    if (e.tier !== 1) continue;
+    const key = normalizeV1(e.spokenText);
+    if (tier1ByWord.has(key)) {
+      throw new Error(`duplicate root-core spoken text: ${e.spokenText}`);
+    }
+    tier1ByWord.set(key, e);
+  }
+
+  const pad4 = (n) => String(n).padStart(4, "0");
+  const senses = lexicon.entries.map((e) => ({
+    id: `sns_${pad4(e.slot)}`,
+    fitzgerald_role: e.fitzgeraldColor,
+    art_archetype: e.visualStyle,
+    tier: e.tier === 1 ? "root_core" : "primary_fringe",
+    category: e.category,
+  }));
+  const utterances = lexicon.entries.map((e) => ({
+    id: `utt_${pad4(e.slot)}`,
+    locale: "en",
+    spoken_text: e.spokenText,
+    normalized_spoken_text: normalizeV1(e.spokenText),
+    normalizer_version: "v1",
+  }));
+  const labels = lexicon.entries.map((e) => ({
+    id: `lbl_${pad4(e.slot)}`,
+    sense_id: `sns_${pad4(e.slot)}`,
+    utterance_id: `utt_${pad4(e.slot)}`,
+    locale: "en",
+    text: e.spokenText,
+    normalized_text: normalizeV1(e.spokenText),
+    normalizer_version: "v1",
+    kind: "lemma",
+    part_of_speech: e.partOfSpeech,
+    default_for_text: 1,
+    status: "approved",
+  }));
+
+  const coreCells = [];
+  const layouts = {};
+  for (const [layout, parsed] of Object.entries(mapLayouts)) {
+    const cols = 10;
+    const slots = parsed.cells.length + parsed.anchors.length;
+    layouts[layout] = { cols, rows: slots / cols, anchors: parsed.anchors };
+    if (!Number.isInteger(slots / cols)) {
+      throw new Error(`${layout}: ${slots} slots is not a multiple of ${cols} columns`);
+    }
+    for (const cell of parsed.cells) {
+      const sense = tier1ByWord.get(normalizeV1(cell.word));
+      if (!sense) {
+        throw new Error(`${layout} slot ${cell.slot}: "${cell.word}" is not a root-core lexicon word`);
+      }
+      coreCells.push({
+        id: `cel_${layout}_${String(cell.slot).padStart(3, "0")}`,
+        layout,
+        sense_id: `sns_${pad4(sense.slot)}`,
+        slot_index: cell.slot,
+      });
+    }
+  }
+
+  return {
+    schemaVersion: CATALOG_SCHEMA_VERSION,
+    source: {
+      lexicon: "data/launch_lexicon.json",
+      coordinateMap: "docs/product/Core_Coordinate_Map.md",
+    },
+    layouts,
+    senses,
+    utterances,
+    labels,
+    images: [],
+    voices: [
+      {
+        id: "voi_default_en",
+        locale: "en",
+        display_name: "Default",
+        source: "bundled",
+        engine_id: null,
+        is_default: 1,
+        status: "active",
+      },
+    ],
+    clips: [],
+    coreCells,
+  };
+}
+
+function main() {
+  const check = process.argv.includes("--check");
+  const lexicon = JSON.parse(readFileSync(DEFAULT_LEXICON_PATH, "utf8"));
+  const map = parseCoordinateMapMarkdown(readFileSync(MAP_MD, "utf8"));
+  const catalog = buildCatalog(lexicon, map);
+
+  if (check) {
+    const existing = JSON.parse(readFileSync(CATALOG_OUT, "utf8"));
+    if (JSON.stringify(existing) !== JSON.stringify(catalog)) {
+      console.error("catalog.json is stale — run build_catalog.mjs");
+      process.exit(1);
+    }
+    console.log(`catalog.json OK (${catalog.senses.length} senses, ${catalog.coreCells.length} cells)`);
+    return;
+  }
+
+  writeFileSync(CATALOG_OUT, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+  console.log(
+    `Wrote ${CATALOG_OUT} (${catalog.senses.length} senses, ${catalog.coreCells.length} core cells)`,
+  );
+}
+
+if (process.argv[1] && import.meta.url === `file://${process.argv[1]}`) {
+  main();
+}

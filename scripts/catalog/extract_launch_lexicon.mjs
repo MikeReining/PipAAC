@@ -13,11 +13,13 @@ import { fileURLToPath } from "node:url";
 import { DEFAULT_LEXICON_PATH, repoRoot } from "./paths.mjs";
 
 const LEXICON_MD = join(repoRoot, "docs/product/Initial_Vocabulary_600.md");
-const ROW_RE = /^\|\s*(\d+)\s*\|\s*\*\*([^*]+)\*\*\s*\|\s*([^|]+?)\s*\|/;
+const ROW_RE = /^\|\s*(\d+)\s*\|\s*\*\*([^*]+)\*\*\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|/;
+const CATEGORY_RE = /^### 3\.\d+ (.+?) \(\d+ words\)/;
 
 /** @returns {{ schemaVersion: number, source: string, entries: object[] }} */
 export function parseLaunchLexiconMarkdown(raw) {
   let tier = 0;
+  let category = null;
   /** @type {Map<number, object>} */
   const bySlot = new Map();
 
@@ -27,17 +29,28 @@ export function parseLaunchLexiconMarkdown(raw) {
     else if (line.startsWith("## 4.")) tier = 0;
 
     if (tier === 0) continue;
+    const cat = CATEGORY_RE.exec(line);
+    if (cat) {
+      category = cat[1].trim();
+      continue;
+    }
     const m = ROW_RE.exec(line);
     if (!m) continue;
     const slot = Number(m[1]);
-    const spokenText = m[2].trim();
-    const partOfSpeech = m[3].trim();
-    bySlot.set(slot, { slot, tier, spokenText, partOfSpeech });
+    bySlot.set(slot, {
+      slot,
+      tier,
+      spokenText: m[2].trim(),
+      partOfSpeech: m[3].trim(),
+      fitzgeraldColor: m[4].trim(),
+      visualStyle: m[5].trim(),
+      category: tier === 2 ? category : null,
+    });
   }
 
   const entries = [...bySlot.values()].sort((a, b) => a.slot - b.slot);
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     source: "docs/product/Initial_Vocabulary_600.md",
     entries,
   };
