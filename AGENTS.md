@@ -27,6 +27,7 @@ files touched, proof state, and next action.
 | Pre-closeout architecture review | `docs/operations/Code_Audit.md` |
 | Hunk-level cleanup after product work | `docs/operations/Deslop.md` |
 | Product vocabulary and durable truths | `docs/product/SSOT.md` |
+| Visual design: tokens, tiles, brand marks | `docs/product/Design_System.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |
 | Repo conventions | `docs/operations/Contributing.md` |

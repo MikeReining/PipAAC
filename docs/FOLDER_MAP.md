@@ -29,6 +29,7 @@ PipAAC/
     product/
       SSOT.md
       Design_Invariants.md
+      Design_System.md
       Motor_Grid_And_Art.md
       Core_Coordinate_Map.md
       Initial_Vocabulary_600.md
@@ -77,6 +78,9 @@ PipAAC/
 - `docs/strategy/Roadmap.md` — phase sequence map.
 - `docs/product/SSOT.md` — durable product facts map.
 - `docs/product/Motor_Grid_And_Art.md` — clean-room motor grid, Fitzgerald color, stick figure, object art, predictive-strip layout.
+- `docs/product/Design_System.md` — designer handoff: palette tokens, word-tile anatomy and states, brand marks, strip/sentence-bar visuals.
+- `assets/brand/` — Pip mark masters (SVG + PNG poses); `public/brand/` — served copies (favicon, ink mark, touch/maskable icons).
+- `assets/style-refs/` — frozen art style bundles, incl. `tile-v1/` placeholder crops.
 - `docs/product/Core_Coordinate_Map.md` — slot assignments per named layout (`grid60`, `grid90`).
 - `docs/product/Personal_Entities.md` — personal entity records and the on-device add.
 - `docs/product/Word_Library.md` — Word Library, word card, add paths, voices and recordings, suggested words.

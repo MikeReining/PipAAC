@@ -181,6 +181,9 @@ On the motor-grid view, the strip is where a suggestion may show a word that is 
 
 **DECIDED 2026-09-22** (not built). Button fields and stick-figure torsos use these roles. The torso is a grammar cue, not clothing.
 
+The hex values, tile anatomy, and states are **BUILT** and owned by
+`docs/product/Design_System.md`; this section owns which role a word gets.
+
 | Color | Role |
 | --- | --- |
 | Yellow / orange | Pronouns, people, nouns |

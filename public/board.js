@@ -95,26 +95,113 @@ async function speakSentence() {
   for (const item of sentence) await speakItem(item);
 }
 
+/** Cache: sense id → { role, art } — the label-strip color and the
+ *  approved symbol key (null while no art is shipped). */
+const senseMeta = new Map();
+function metaFor(senseId) {
+  if (!senseMeta.has(senseId)) {
+    senseMeta.set(
+      senseId,
+      ALL(
+        db,
+        `SELECT s.fitzgerald_role AS role,
+           (SELECT i.key FROM image i WHERE i.id = s.default_image_id AND i.status = 'approved') AS art
+         FROM sense s WHERE s.id = ?`,
+        [senseId],
+      )[0] ?? { role: null, art: null },
+    );
+  }
+  return senseMeta.get(senseId);
+}
+
+/** Cache: entity id → photo_key (entities are few; the row rarely changes). */
+const entityPhoto = new Map();
+function photoFor(entityId) {
+  if (!entityPhoto.has(entityId)) {
+    entityPhoto.set(
+      entityId,
+      ALL(db, "SELECT photo_key FROM personal_entity WHERE id = ?", [entityId])[0]
+        ?.photo_key ?? null,
+    );
+  }
+  return entityPhoto.get(entityId);
+}
+
 function renderBar() {
   const bar = $("bar");
   bar.innerHTML = "";
   // Display-only: capitalization and ¿¡/?! marks live on the items as
   // lead/punct; item.text and spoken text are unchanged (slice 2 rule 7).
-  bar.appendChild(document.createTextNode(displaySentence(sentence, locale).join(" ")));
+  // Each item renders as a miniature word tile — role border and a
+  // role-tinted label strip, art underneath (Design_System § Tiles).
+  const texts = displaySentence(sentence, locale);
+  sentence.forEach((item, i) => {
+    const role =
+      item.kind === "entity"
+        ? "Yellow"
+        : item.kind === "sense"
+          ? metaFor(item.id).role
+          : null;
+    const chip = document.createElement("span");
+    chip.className = `chip r-${role ?? "None"}`;
+    const lb = document.createElement("span");
+    lb.className = "clabel";
+    lb.textContent = texts[i];
+    const ar = document.createElement("span");
+    ar.className = "cart";
+    chip.append(lb, ar);
+    if (item.kind === "sense") {
+      const art = metaFor(item.id).art;
+      if (art) {
+        const img = document.createElement("img");
+        img.src = `/${art}`;
+        img.alt = "";
+        ar.appendChild(img);
+      }
+    } else if (item.kind === "entity") {
+      loadPhotoURL(photoFor(item.id)).then((url) => {
+        if (!url) return;
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "";
+        ar.appendChild(img);
+        chip.classList.add("photo");
+      });
+    }
+    bar.appendChild(chip);
+  });
   if (kbText) {
     const p = document.createElement("span");
     p.className = "partial";
-    p.textContent = (sentence.length ? " " : "") + kbText + "▌";
+    p.textContent = kbText + "▌";
     bar.appendChild(p);
   }
+  if (!sentence.length && !kbText) {
+    // The ink bird (never the gold one near the grid) holds the empty bar.
+    const img = document.createElement("img");
+    img.className = "pip-ink";
+    img.src = "/brand/pip-mark-ink.svg";
+    img.alt = "";
+    const note = document.createElement("span");
+    note.className = "empty-note";
+    note.textContent = "Tap a word to start.";
+    bar.append(img, note);
+  }
+  $("clear").disabled = !sentence.length && !kbText;
+  $("speak").disabled = !sentence.length;
+  fitLabels(bar);
 }
 $("bar").addEventListener("click", () => {
   if (sentence.length) speakSentence();
 });
 $("clear").addEventListener("click", () => {
-  sentence.pop();
+  sentence.length = 0;
+  kbText = "";
   renderBar();
   renderStrip();
+});
+$("speak").addEventListener("click", () => {
+  if (sentence.length) speakSentence();
 });
 
 const senseById = (senseId) =>
@@ -136,7 +223,7 @@ async function idleStarters() {
   const cards = [];
   const hello = senseById(HELLO_SENSE_ID);
   if (hello) {
-    cards.push({ label: hello.label, glyph: "👋", role: hello.fitzgerald_role,
+    cards.push({ id: hello.id, label: hello.label, glyph: "👋", role: hello.fitzgerald_role,
       onTap: () => tap(hello.label, "sense", hello.id, { hint: true }) });
   }
   const foodRow = ALL(db, "SELECT id, name FROM board_group WHERE id = 'grp_food'")[0];
@@ -153,35 +240,48 @@ async function idleStarters() {
   if (top) cards.push({ entity: top });
   const help = senseById(HELP_SENSE_ID);
   if (help) {
-    cards.push({ label: help.label, glyph: "🆘", role: help.fitzgerald_role,
+    cards.push({ id: help.id, label: help.label, glyph: "🆘", role: help.fitzgerald_role,
       onTap: () => tap(help.label, "sense", help.id, { hint: true }) });
   }
   return cards.slice(0, 4);
 }
 
+/** A strip card is an ordinary word tile turned sideways: art on a white
+ *  square at left, the label on the role fill at right (Design_System §
+ *  Strip). Senses show their approved symbol when one ships, else a
+ *  glyph or the label's initial. */
 async function predCard(c) {
   const el = document.createElement("button");
   el.className = `pred${c.entity ? " r-Yellow" : c.role ? ` r-${c.role}` : ""}`;
-  const sw = document.createElement("span");
-  sw.className = "swatch";
+  const part = document.createElement("span");
+  part.className = "part";
   const lb = document.createElement("span");
-  lb.className = "label";
+  lb.className = "plabel";
   if (c.entity) {
     const url = await loadPhotoURL(c.entity.photo_key);
     if (url) {
       const img = document.createElement("img");
       img.src = url;
-      sw.appendChild(img);
+      img.alt = "";
+      part.appendChild(img);
+      el.classList.add("photo");
     } else {
-      sw.textContent = c.entity.spoken_name[0].toUpperCase();
+      part.textContent = c.entity.spoken_name[0].toUpperCase();
     }
     lb.textContent = c.entity.spoken_name;
   } else {
-    sw.textContent = c.glyph ?? c.label[0].toUpperCase();
+    const art = c.id ? metaFor(c.id).art : null;
+    if (art) {
+      const img = document.createElement("img");
+      img.src = `/${art}`;
+      img.alt = "";
+      part.appendChild(img);
+    } else {
+      part.textContent = c.glyph ?? c.label[0].toUpperCase();
+    }
     lb.textContent = c.label;
   }
-  el.appendChild(sw);
-  el.appendChild(lb);
+  el.append(part, lb);
   const onTap =
     c.onTap ??
     (c.entity ? () => tap(c.entity.spoken_name, "entity", c.entity.id, { hint: true }) : () => {});
@@ -189,23 +289,17 @@ async function predCard(c) {
   return el;
 }
 
+/** Ghost card: a dashed placeholder — the tray never collapses. */
 function ghostCard() {
   const el = document.createElement("div");
   el.className = "pred ghost";
-  const sw = document.createElement("span");
-  sw.className = "swatch";
-  el.appendChild(sw);
-  const lb = document.createElement("span");
-  lb.className = "label";
-  lb.textContent = "···";
-  el.appendChild(lb);
+  el.setAttribute("aria-hidden", "true");
   return el;
 }
 
 async function renderStrip() {
-  const strip = $("strip");
-  strip.querySelectorAll(".pred").forEach((n) => n.remove());
-  const firstAnchor = $("anchor-groups");
+  const tray = $("tray");
+  tray.querySelectorAll(".pred").forEach((n) => n.remove());
   let cards;
   if (kbText) {
     // mid-word: the strip switches from continuations to completions
@@ -235,15 +329,16 @@ async function renderStrip() {
            WHERE s.id = ?`,
           [locale, c.id],
         )[0];
-        cards.push({ label: w.label, role: w.fitzgerald_role,
+        cards.push({ id: w.id, label: w.label, role: w.fitzgerald_role,
           onTap: () => tap(w.label, "sense", w.id, { hint: true }) });
       }
     }
   }
   for (let i = 0; i < 4; i++) {
-    const el = cards[i] ? await predCard(cards[i]) : ghostCard();
-    strip.insertBefore(el, firstAnchor);
+    tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
   }
+  fitLabels(tray);
+  applyLikely();
 }
 
 function tap(text, kind = "sense", id = null, { hint = false } = {}) {
@@ -306,6 +401,50 @@ function showGroupHint(kind, id) {
 }
 document.addEventListener("pointerdown", clearGroupHint, { capture: true });
 
+/** One word tile (Design_System § Tiles): role-tinted label strip on
+ *  top, art on white below. Photos fill the art area edge to edge. */
+function wordTile({ label, role, art = null, photoURL = null }) {
+  const el = document.createElement("button");
+  el.className = `cell r-${role ?? "None"}`;
+  const lb = document.createElement("span");
+  lb.className = "tlabel";
+  lb.textContent = label;
+  const ar = document.createElement("span");
+  ar.className = "tart";
+  if (art || photoURL) {
+    const img = document.createElement("img");
+    img.src = photoURL ?? `/${art}`;
+    img.alt = "";
+    ar.appendChild(img);
+    if (photoURL) el.classList.add("photo");
+  }
+  el.append(lb, ar);
+  return el;
+}
+
+/** Shrink-to-fit labels: Andika Bold on one line, stepping down until the
+ *  text fits its strip — a word never breaks inside itself; multi-word
+ *  labels may wrap between words. */
+function fitLabels(root) {
+  document.fonts.ready.then(() => {
+    for (const lb of root.querySelectorAll(".tlabel, .plabel, .clabel")) {
+      const maxW = lb.clientWidth;
+      const maxH = lb.clientHeight;
+      if (!maxW || !maxH) continue;
+      let px = Math.floor(maxH * 0.8);
+      lb.style.fontSize = `${px}px`;
+      for (let guard = 14; guard > 0 && px > 8; guard--) {
+        if (lb.scrollWidth <= maxW && lb.scrollHeight <= maxH) break;
+        px = Math.max(8, Math.floor(px * 0.86));
+        lb.style.fontSize = `${px}px`;
+      }
+    }
+  });
+}
+
+/** sense_id → its grid element, for the likely-next halo pass. */
+const cellEls = new Map();
+
 function renderGrid() {
   const cells = ALL(
     db,
@@ -318,15 +457,47 @@ function renderGrid() {
      ORDER BY cc.slot_index`,
     [locale],
   );
+  const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
   const grid = $("grid");
   grid.style.gridTemplateColumns = "repeat(10, 1fr)";
   grid.style.gridTemplateRows = "repeat(6, 1fr)";
-  for (const c of cells) {
-    const el = document.createElement("div");
-    el.className = `cell r-${c.fitzgerald_role}`;
-    el.textContent = c.label;
+  grid.innerHTML = "";
+  cellEls.clear();
+  // Every slot renders: a missing cell is a dashed placeholder, never a
+  // collapsed gap — the coordinate map is the motor plan.
+  for (let slot = 0; slot < 60; slot++) {
+    const c = bySlot.get(slot);
+    if (!c) {
+      const empty = document.createElement("div");
+      empty.className = "cell empty";
+      empty.setAttribute("aria-hidden", "true");
+      grid.appendChild(empty);
+      continue;
+    }
+    const el = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
     el.addEventListener("click", () => tap(c.label, "sense", c.sense_id));
+    cellEls.set(c.sense_id, el);
     grid.appendChild(el);
+  }
+  fitLabels(grid);
+}
+
+/** "Highlight likely next words" (Parent Corner, default OFF): up to
+ *  three core cells the ranker invites next get a thicker inner border
+ *  in their own role color. Grid only — never while editing, in a
+ *  group, or with the keyboard open (the grid isn't visible). */
+let highlightNext = false;
+function applyLikely() {
+  for (const el of cellEls.values()) el.classList.remove("likely");
+  if (!highlightNext || editing || view !== "board" || kbOpen || !sentence.length) return;
+  const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
+  let marked = 0;
+  for (const c of keyboardContinuations(db, sents, locale, Date.now())) {
+    if (c.kind !== "sense") continue;
+    const el = cellEls.get(c.id);
+    if (!el) continue;
+    el.classList.add("likely");
+    if (++marked === 3) break;
   }
 }
 
@@ -429,10 +600,11 @@ $("add-mywords").addEventListener("click", () => {
  * correct across a locale change. */
 const kbProfile = ALL(
   db,
-  "SELECT keyboard_mode, keyboard_order FROM learner_profile WHERE id = 'prf_local'",
+  "SELECT keyboard_mode, keyboard_order, highlight_next FROM learner_profile WHERE id = 'prf_local'",
 )[0] ?? {};
 let kbMode = kbProfile.keyboard_mode ?? "pip";
 let kbOrder = kbProfile.keyboard_order ?? "standard";
+highlightNext = (kbProfile.highlight_next ?? 0) === 1;
 
 function syncKbSettings() {
   $("kb-order-standard").textContent = resolveKeymap(locale)?.standardName ?? "Standard";
@@ -443,6 +615,9 @@ function syncKbSettings() {
     b.classList.toggle("on", b.dataset.v === kbOrder);
   }
   $("kb-order").classList.toggle("disabled", kbMode === "device");
+  for (const b of $("hl-next").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === (highlightNext ? "1" : "0"));
+  }
 }
 syncKbSettings();
 
@@ -470,6 +645,16 @@ $("kb-order").addEventListener("click", (e) => {
   RUN(db, "UPDATE learner_profile SET keyboard_order = ? WHERE id = 'prf_local'", [v]);
   rebuildKb();
   syncKbSettings();
+});
+$("hl-next").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v === undefined) return;
+  highlightNext = v === "1";
+  RUN(db, "UPDATE learner_profile SET highlight_next = ? WHERE id = 'prf_local'", [
+    highlightNext ? 1 : 0,
+  ]);
+  syncKbSettings();
+  applyLikely();
 });
 
 /* --- permanent utility anchors --- */
@@ -505,6 +690,7 @@ function setView(v) {
   document.body.classList.toggle("groups", v !== "board");
   if (v === "groupIndex") renderGroupIndex();
   else if (v === "group") renderGroupPage();
+  applyLikely();
 }
 
 function openKb() {
@@ -522,6 +708,7 @@ function closeKb() {
   $("kb-device")?.blur();
   document.body.classList.remove("kb");
   renderKbAnchor();
+  applyLikely();
 }
 
 /** While the keyboard is open the anchor that opened it becomes the way
@@ -575,6 +762,10 @@ function fitKbCaps() {
 }
 window.addEventListener("resize", () => {
   if (kbOpen) fitKbCaps();
+  fitLabels($("grid"));
+  fitLabels($("tray"));
+  fitLabels($("bar"));
+  if (view !== "board") fitLabels($("groupgrid"));
 });
 
 /** One key of the Pip-keys map. Char keys are white with a big cap;
@@ -750,6 +941,7 @@ function kbCompletions() {
           },
         }
       : {
+          id: e.id,
           label: e.text,
           role: e.role,
           freq: e.freq,
@@ -862,6 +1054,7 @@ function setEditing(on) {
   document.body.classList.toggle("editing", on);
   $("corner").textContent = on ? "✓ Done" : "✚";
   $("corner").title = on ? "Done editing" : "Parent corner";
+  applyLikely();
 }
 
 /** Re-render whatever view is on screen after a mode change or write. */
@@ -1001,25 +1194,21 @@ async function openGroup(groupId) {
 }
 
 function senseCell(w, onTap) {
-  const el = document.createElement("button");
-  el.className = `cell r-${w.fitzgerald_role}`;
-  el.textContent = w.label;
+  const el = wordTile({ label: w.label, role: w.fitzgerald_role, art: w.art ?? null });
   el.addEventListener("click", onTap);
   return el;
 }
 
 async function entityCell(e, onTap) {
-  const el = document.createElement("button");
-  el.className = "cell r-Yellow entity";
+  const el = wordTile({ label: e.spoken_name, role: "Yellow" });
   const url = await loadPhotoURL(e.photo_key);
   if (url) {
     const img = document.createElement("img");
     img.src = url;
-    el.appendChild(img);
+    img.alt = "";
+    el.querySelector(".tart").appendChild(img);
+    el.classList.add("photo");
   }
-  const lb = document.createElement("span");
-  lb.textContent = e.spoken_name;
-  el.appendChild(lb);
   el.addEventListener("click", onTap);
   return el;
 }
@@ -1048,7 +1237,10 @@ async function itemCell(item) {
       : tap(item.label, "entity", item.item_id);
   const onTap = editing ? () => itemGesture(item) : speak;
   if (item.item_kind === "sense") {
-    return senseCell({ fitzgerald_role: item.fitzgerald_role, label: item.label }, onTap);
+    return senseCell(
+      { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
+      onTap,
+    );
   }
   return entityCell({ spoken_name: item.label, photo_key: item.photo_key }, onTap);
 }
@@ -1131,6 +1323,7 @@ async function renderGroupPage() {
     }
     zg.appendChild(el);
   }
+  fitLabels(zg);
 }
 
 /* --- custom groups: + Group on the group index --- */
@@ -1224,6 +1417,7 @@ $("add-save").addEventListener("click", async () => {
 });
 
 renderGrid();
+renderBar();
 renderStrip();
 
 // Console handle for works tests and founder debugging — read-only access

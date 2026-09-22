@@ -3,23 +3,59 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6f4ef" />
     <link rel="preload" href="/fonts/andika-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/brand/pip-mark-32.svg" type="image/svg+xml" />
+    <link rel="icon" href="/brand/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/brand/icon-180.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <title>Pip AAC</title>
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
-         Self-hosted; the app is offline-first, never a CDN. Keyboard
-         keycaps only. */
+         Self-hosted; the app is offline-first, never a CDN. It is the
+         face of every word the learner sees: tile labels, strip cards,
+         sentence chips, keycaps. */
       @font-face {
         font-family: "Andika";
         src: url("/fonts/andika-bold.woff2") format("woff2");
         font-weight: 700;
         font-display: block;
       }
-      :root { --gap: 6px; }
+
+      /* Design tokens — docs/product/Design_System.md owns this palette.
+         Hue means grammar and nothing else: role colors paint word tiles,
+         and UI chrome stays ink + warm neutrals. Pip's amber is the bird's
+         — icon and marketing only, never a control. */
+      :root {
+        --gap: 6px;
+        --ink: #2a241d;          /* primary action, focus, icon ground */
+        --ink-text: #1a1a1a;     /* text on light; pressed/focus ink */
+        --cream: #f6f4ef;        /* page background */
+        --line: #d8d4c8;         /* hairlines, empty/ghost dashes */
+        --tray: #e8e3d6;         /* prediction tray, neutral fills */
+        --edge: #8a8578;         /* neutral cell border */
+        --muted: #5b5348;        /* secondary text, anchor border */
+        --neutral-text: #3a352c; /* neutral on-fill text */
+        --mask-b: #cfc9bb;       /* masked border */
+        --mask-f: #efeadf;       /* masked/disabled fill */
+        --mask-t: #a39c8a;       /* masked text */
+        --press-f: #f2efe6;      /* pressed tile art area */
+        --word-font: "Andika", -apple-system, "Helvetica Neue", sans-serif;
+      }
+      /* Grammar roles: --rb border, --rf label-strip fill. One pair per
+         role; every surface (grid tile, strip card, sentence chip,
+         swatch) reads the same two vars. */
+      .r-Yellow { --rb: #b07f00; --rf: #fdf0c8; }
+      .r-Green  { --rb: #2e8b3a; --rf: #dcf0dd; }
+      .r-Blue   { --rb: #2f6fd0; --rf: #dcecfd; }
+      .r-Pink   { --rb: #d0438c; --rf: #fbdfee; }
+      .r-Red    { --rb: #c62828; --rf: #fbdcdc; }
+      .r-None   { --rb: #8a8578; --rf: #f2efe6; } /* typed words — no role */
+
       * { box-sizing: border-box; margin: 0; }
       body {
         font-family: -apple-system, "Helvetica Neue", sans-serif;
-        background: #f6f4ef;
+        background: var(--cream);
         height: 100dvh;
         display: flex;
         flex-direction: column;
@@ -27,29 +63,108 @@
         gap: var(--gap);
       }
       button { font: inherit; cursor: pointer; }
+
+      /* Switch / keyboard / eye-gaze focus: cream + ink double ring.
+         :focus-visible never fires for touch — the ring only shows for
+         non-pointer input, as the spec requires. */
+      .cell:focus-visible, .pred:focus-visible, .anchor:focus-visible,
+      .gcell:focus-visible, .kb-key:focus-visible, .bar-btn:focus-visible,
+      .corner-btn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 4px var(--cream), 0 0 0 9px var(--ink-text);
+        z-index: 2;
+      }
+
+      /* --- top bar: sentence chips + Clear / Speak + Parent corner --- */
       #topbar { display: flex; gap: var(--gap); height: 52px; }
       #bar {
         flex: 1;
-        border: 2px solid #d8d4c8;
+        min-width: 0;
+        border: 2px solid var(--line);
         border-radius: 10px;
         background: #fff;
         display: flex;
         align-items: center;
-        padding: 0 12px;
-        font-size: 20px;
-        color: #1a1a1a;
-        gap: 8px;
+        padding: 4px 6px;
+        gap: 5px;
         overflow-x: auto;
-        font-weight: 600;
       }
-      #bar:empty::before { content: "…"; color: #999; }
+      /* The ink bird (never the gold one — gold stays off the grid)
+         holds the empty bar. */
+      #bar .pip-ink { height: 100%; flex: none; }
+      #bar .empty-note {
+        color: #777;
+        font-family: var(--word-font);
+        font-weight: 700;
+        font-size: 17px;
+        white-space: nowrap;
+      }
+      /* Sentence chip: a miniature word tile — role border, role-tinted
+         label strip on top, art below. Typed words carry no role. */
+      .chip {
+        height: 100%;
+        aspect-ratio: 1.15;
+        flex: none;
+        border: 2px solid var(--rb, var(--edge));
+        border-radius: 8px;
+        background: #fff;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .chip .clabel {
+        flex: none;
+        height: 34%;
+        background: var(--rf);
+        color: var(--ink-text);
+        font-family: var(--word-font);
+        font-weight: 700;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 0 2px;
+      }
+      .chip .cart {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px;
+      }
+      .chip .cart img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+      .chip.photo .cart { padding: 0; }
+      .chip.photo .cart img { width: 100%; height: 100%; object-fit: cover; }
+      #bar .partial { color: var(--muted); font-weight: 700; font-size: 20px; white-space: nowrap; }
+      .bar-btn {
+        height: 100%;
+        border: 2px solid var(--ink);
+        border-radius: 10px;
+        background: #fff;
+        color: var(--ink);
+        font-family: var(--word-font);
+        font-weight: 700;
+        font-size: 17px;
+        padding: 0 16px;
+      }
+      .bar-btn.primary { background: var(--ink); color: var(--cream); }
+      .bar-btn:disabled {
+        border-color: var(--mask-b);
+        background: var(--mask-f);
+        color: var(--mask-t);
+      }
       .corner-btn {
         min-width: 52px;
-        border: 2px solid #d8d4c8;
+        border: 2px solid var(--line);
         border-radius: 10px;
         background: #fff;
         font-size: 22px;
       }
+
+      /* --- prediction strip: a neutral tray holding four word tiles --- */
       /* Permanent strip: fixed height, always rendered. The 60-cell grid
          below never shifts — zero layout shift on prediction updates. */
       #strip {
@@ -59,69 +174,93 @@
         grid-template-columns: repeat(10, 1fr);
         gap: var(--gap);
       }
-      /* Prediction card: 2 columns wide, 1:1 square symbol/photo left,
-         label right. Fitzgerald color of the candidate. */
-      .pred {
-        grid-column: span 2;
+      /* The tray marks the zone that changes — neutral, so no prediction
+         color is needed and lavender stays retired. */
+      #tray {
+        grid-column: span 8;
+        min-width: 0;
+        background: var(--tray);
         border-radius: 12px;
-        border: 3px solid #8a7fbf;
-        background: #ece8f9;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 700;
-        font-size: clamp(13px, 2.4vmin, 22px);
-        color: #1a1a1a;
-        overflow: hidden;
-        text-align: left;
-        padding: 0;
+        padding: 5px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--gap);
       }
-      .pred .swatch {
-        height: 100%;
+      /* Strip card: an ordinary word tile turned sideways — art on a
+         white square at left, label on the role fill at right. */
+      .pred {
+        border-radius: 10px;
+        border: 3px solid var(--rb, var(--edge));
+        background: #fff;
+        display: flex;
+        align-items: stretch;
+        overflow: hidden;
+        padding: 0;
+        min-width: 0;
+        text-align: left;
+      }
+      .pred .part {
+        align-self: stretch;
         aspect-ratio: 1;
         flex: none;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 4px;
         font-size: clamp(18px, 3.4vmin, 34px);
-        background: rgba(255, 255, 255, 0.55);
+        background: #fff;
       }
-      .pred .swatch img { width: 100%; height: 100%; object-fit: cover; }
-      .pred .label { padding-right: 6px; }
-      .pred.ghost {
-        border-style: dashed;
-        border-color: #cfc9bb;
-        background: #efeadf;
-        color: #a39c8a;
+      .pred .part img { width: 100%; height: 100%; object-fit: contain; display: block; }
+      .pred.photo .part { padding: 0; }
+      .pred.photo .part img { object-fit: cover; }
+      .pred .plabel {
+        flex: 1;
+        min-width: 0;
+        background: var(--rf, var(--tray));
+        color: var(--ink-text);
+        font-family: var(--word-font);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.05;
+        padding: 0 4px;
+        overflow: hidden;
       }
-      .pred.ghost .swatch { background: transparent; }
-      /* Utility anchors: one column each, always visible. Same anatomy as
-         .pred — glyph left, label right — adapted to a 1-column tile. */
+      .pred.ghost { border-style: dashed; border-color: var(--line); background: transparent; }
+      .pred:active { border-color: var(--ink-text); }
+      .pred:active .part { background: var(--press-f); }
+      /* Utility anchors: one column each, always visible. */
       .anchor {
         border-radius: 12px;
-        border: 3px solid #5b5348;
-        background: #e8e3d6;
+        border: 3px solid var(--muted);
+        background: var(--tray);
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
         font-weight: 700;
         font-size: clamp(10px, 1.7vmin, 14px);
-        color: #3a352c;
+        color: var(--neutral-text);
         overflow: hidden;
         padding: 0 4px;
       }
       .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; flex: none; }
       .anchor span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      /* "Show me where": a 1.5s halo on the Groups anchor plus a fixed-
-         position caption — out of flow, so zero layout shift, and
+      /* "Show me where": a 1.5s ink halo on the Groups anchor plus a
+         fixed-position caption — out of flow, so zero layout shift, and
          pointer-events: none so it never eats a tap. */
-      .anchor.halo { outline: 4px solid #2f6fd0; outline-offset: 2px; box-shadow: 0 0 14px rgba(47, 111, 208, 0.65); }
+      .anchor.halo {
+        outline: 4px solid var(--ink);
+        outline-offset: 2px;
+        box-shadow: 0 0 14px rgba(42, 36, 29, 0.65);
+      }
       #pathhint {
         position: fixed;
         z-index: 20;
         transform: translateX(-50%);
-        background: #1a1a1a;
+        background: var(--ink-text);
         color: #fff;
         font-weight: 700;
         font-size: 14px;
@@ -130,10 +269,77 @@
         white-space: nowrap;
         pointer-events: none;
       }
+
+      /* --- word tile anatomy (Design_System § Tiles) ---
+         Label strip on top in the role's fill, art on white below, role
+         color on the border. Grammar is carried by strip + border; the
+         tile face itself is white. */
       #grid { flex: 1; display: grid; gap: var(--gap); }
-      /* Group index and group pages replace the grid in place — same 10×6
-         geometry, same physical positions. Navigation is a board mode,
-         never a modal; the strip and bar stay put. */
+      .cell {
+        border-radius: 10px;
+        border: 3px solid var(--rb, var(--edge));
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
+        user-select: none;
+        cursor: pointer;
+        min-width: 0;
+        min-height: 0;
+      }
+      .cell .tlabel {
+        flex: none;
+        height: 22%;
+        width: 100%;
+        background: var(--rf, var(--press-f));
+        color: var(--ink-text);
+        font-family: var(--word-font);
+        font-weight: 700;
+        line-height: 1.05;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0 6%;
+        overflow: hidden;
+      }
+      .cell .tart {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3%;
+      }
+      .cell .tart img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+      /* Photos fill the art area edge to edge. */
+      .cell.photo .tart { padding: 0; }
+      .cell.photo .tart img { width: 100%; height: 100%; object-fit: cover; }
+      /* Pressed — border goes to ink, art area to warm fill. No scale,
+         no movement. */
+      .cell:active { border-color: var(--ink-text); background: var(--press-f); }
+      /* Likely next (Parent Corner setting, default OFF) — a thicker
+         inner border in the tile's own role color. Tile size unchanged. */
+      .cell.likely { box-shadow: inset 0 0 0 4px var(--rb); }
+      /* Masked — space preserved, word unreachable. */
+      .cell.masked { border-color: var(--mask-b); background: var(--mask-f); pointer-events: none; }
+      .cell.masked .tlabel { background: var(--mask-f); color: var(--mask-t); }
+      .cell.masked .tart img { opacity: 0.18; }
+      /* Empty cell — reserved space, never collapses. */
+      .cell.empty {
+        border-style: dashed;
+        border-color: var(--line);
+        background: transparent;
+        cursor: default;
+      }
+
+      /* --- groups: an in-place board mode, same 10×6 geometry --- */
       #groupgrid { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
       body.groups #grid { display: none; }
       body.groups #groupgrid { display: grid; }
@@ -141,8 +347,8 @@
          groups are a map, not vocabulary, so no Fitzgerald role. */
       .gcell {
         border-radius: 12px;
-        border: 3px solid #8a8578;
-        background: #f2efe6;
+        border: 3px solid var(--edge);
+        background: var(--press-f);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -150,7 +356,7 @@
         gap: 2px;
         font-weight: 700;
         font-size: clamp(11px, 1.9vmin, 17px);
-        color: #1a1a1a;
+        color: var(--ink-text);
         overflow: hidden;
         padding: 4px;
         text-align: center;
@@ -160,25 +366,28 @@
       .gcell .badge {
         font-size: clamp(9px, 1.4vmin, 12px);
         font-weight: 700;
-        color: #5b5348;
+        color: var(--muted);
         line-height: 1;
       }
       .gcell .glabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .gcell:active { filter: brightness(0.92); }
-      .gcell.nav { border-color: #5b5348; background: #e8e3d6; font-size: clamp(13px, 2.2vmin, 20px); }
-      .gcell.empty { border-style: dashed; border-color: #d8d4c8; background: transparent; }
+      .gcell.nav { border-color: var(--muted); background: var(--tray); font-size: clamp(13px, 2.2vmin, 20px); }
+      .gcell.empty { border-style: dashed; border-color: var(--line); background: transparent; }
       .gcell.empty:disabled { border-color: transparent; }
       /* Edit mode: every liftable cell goes dashed; empty slots that can
-         take a drop go purple; the lifted cell gets the blue outline. */
+         take a drop darken their dashes; the lifted cell carries the
+         dashed-ink-plus-shadow arrange state. */
       body.editing #groupgrid .gcell:not(.nav):not(.empty),
       body.editing #groupgrid .cell { border-style: dashed; }
-      body.editing #groupgrid .gcell.drop { border-color: #8a7fbf; cursor: pointer; }
-      .lifted { outline: 4px solid #2f6fd0; outline-offset: 2px; }
+      body.editing #groupgrid .gcell.drop { border-color: var(--muted); cursor: pointer; }
+      .lifted {
+        border-style: dashed;
+        border-color: var(--ink-text);
+        box-shadow: 0 8px 18px rgba(30, 26, 20, 0.28);
+      }
       body.editing #corner { font-size: 15px; }
-      .cell.entity { flex-direction: column; gap: 2px; font-size: clamp(11px, 1.9vmin, 17px); }
-      .cell.entity img { width: 44%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
-      /* Keyboard replaces the grid in place — same 10×6 geometry, same
-         physical positions. Never a modal; the strip and bar stay put. */
+
+      /* --- keyboard: a board mode, same 10×6 geometry, never a modal --- */
       #kb { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
       body.kb #grid { display: none; }
       body.kb #kb { display: grid; }
@@ -189,38 +398,38 @@
       .kb-key {
         container-type: size;
         border-radius: 12px;
-        border: 3px solid #8a8578;
+        border: 3px solid var(--edge);
         background: #fff;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        font-family: "Andika", -apple-system, "Helvetica Neue", sans-serif;
+        font-family: var(--word-font);
         font-weight: 700;
-        color: #1a1a1a;
+        color: var(--ink-text);
         overflow: hidden;
         padding: 0;
       }
       .kb-key .kc { font-size: min(70cqh, 80cqw); line-height: 1; }
       .kb-key:active { filter: brightness(0.92); }
-      .kb-util { border-color: #5b5348; background: #e8e3d6; }
+      .kb-util { border-color: var(--muted); background: var(--tray); }
       .kb-util .kc { font-size: min(34cqh, 22cqw); }
-      .kb-key.latched { box-shadow: inset 0 0 0 3px #5b5348; background: #ddd6c4; }
-      /* Partner keys carry their sense's Fitzgerald color and wrap a
-         phrase label, sized by fitKbCaps like any other cap. */
+      .kb-key.latched { box-shadow: inset 0 0 0 3px var(--muted); background: #ddd6c4; }
+      /* Partner keys carry their sense's Fitzgerald color. */
+      .kb-partner { border-color: var(--rb); background: var(--rf); }
       .kb-partner .kc { padding: 0 6px; }
       .kb-partner.flash { filter: brightness(0.82); }
       /* Device mode: the field holds the word in progress; the system
          keyboard covers rows 3–6. */
       #kb-device {
         resize: none;
-        border: 3px solid #8a8578;
+        border: 3px solid var(--edge);
         border-radius: 12px;
         background: #fff;
-        font-family: "Andika", -apple-system, "Helvetica Neue", sans-serif;
+        font-family: var(--word-font);
         font-size: 2.2rem;
         font-weight: 700;
-        color: #1a1a1a;
+        color: var(--ink-text);
         padding: 0.4em 0.6em;
         line-height: 1.2;
         overflow: hidden;
@@ -229,42 +438,22 @@
         font-family: -apple-system, "Helvetica Neue", sans-serif;
         font-size: min(16cqh, 12cqw);
         font-weight: 600;
-        color: #5b5348;
+        color: var(--muted);
         line-height: 1;
       }
-      #bar .partial { color: #8a7fbf; }
-      /* Parent corner segmented controls — write on tap, no Save. */
+
+      /* --- Parent corner sheets (adult chrome: system font) --- */
       .seg-row { margin-top: 14px; text-align: left; }
       .seg-label { display: block; font-weight: 700; margin-bottom: 4px; }
       .seg { display: flex; gap: 6px; }
       .seg button {
         flex: 1; padding: 10px 8px; border-radius: 10px;
-        border: 2px solid #8a8578; background: #fff; font-weight: 700;
+        border: 2px solid var(--edge); background: #fff; font-weight: 700;
         font-size: 15px; cursor: pointer;
       }
-      .seg button.on { border-color: #1a1a1a; background: #e8e3d6; }
+      .seg button.on { border-color: var(--ink-text); background: var(--tray); }
       .seg.disabled { opacity: 0.45; pointer-events: none; }
-      .seg-row .hint { font-size: 13px; color: #5b5348; margin: 6px 0 0; }
-      .cell {
-        border-radius: 12px;
-        border: 3px solid;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: clamp(14px, 2.6vmin, 26px);
-        color: #1a1a1a;
-        user-select: none;
-        cursor: pointer;
-        text-align: center;
-        padding: 4px;
-      }
-      .cell:active { filter: brightness(0.92); }
-      .r-Yellow { border-color: #d9a410; background: #fdf0c8; }
-      .r-Green  { border-color: #2e8b3a; background: #dcf0dd; }
-      .r-Blue   { border-color: #2f6fd0; background: #dcecfd; }
-      .r-Pink   { border-color: #d0438c; background: #fbdfee; }
-      .r-Red    { border-color: #c62828; background: #fbdcdc; }
+      .seg-row .hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
 
       .overlay {
         position: fixed;
@@ -291,21 +480,23 @@
       .sheet input[type="text"] {
         font-size: 20px;
         padding: 10px 12px;
-        border: 2px solid #d8d4c8;
+        border: 2px solid var(--line);
         border-radius: 10px;
       }
       .sheet .row { display: flex; gap: 10px; }
       .sheet .row > * { flex: 1; }
+      /* Primary actions are solid ink — blue is a grammar color and never
+         paints a button. */
       .btn {
-        border: 2px solid #2f6fd0;
-        background: #2f6fd0;
-        color: #fff;
+        border: 2px solid var(--ink);
+        background: var(--ink);
+        color: var(--cream);
         border-radius: 10px;
         padding: 12px;
         font-size: 18px;
         font-weight: 700;
       }
-      .btn.secondary { background: #fff; color: #2f6fd0; }
+      .btn.secondary { background: #fff; color: var(--ink); }
       .btn.danger { border-color: #c62828; background: #c62828; }
       /* Add-flow match rows: label + Fitzgerald swatch. */
       #add-matches { display: flex; flex-direction: column; gap: 8px; }
@@ -313,7 +504,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        border: 2px solid #d8d4c8;
+        border: 2px solid var(--line);
         border-radius: 10px;
         padding: 8px 10px;
         font-weight: 700;
@@ -325,26 +516,26 @@
         width: 26px;
         height: 26px;
         border-radius: 6px;
-        border: 2px solid;
+        border: 2px solid var(--rb);
+        background: var(--rf);
         flex: none;
       }
-      #add-new { border-style: dashed; color: #3a352c; }
+      #add-new { border-style: dashed; color: var(--neutral-text); }
       #add-newfields { display: flex; flex-direction: column; gap: 12px; }
       .hint { color: #777; font-size: 14px; }
-
-      /* On-screen keyboard styles live with the grid (#kb) — it is a board
-         mode, not a sheet. */
     </style>
   </head>
   <body>
     <div id="topbar">
       <div id="bar" title="Sentence"></div>
-      <button id="clear" class="corner-btn" title="Clear">⌫</button>
+      <button id="clear" class="bar-btn" title="Clear" disabled>Clear</button>
+      <button id="speak" class="bar-btn primary" title="Speak" disabled>Speak</button>
       <button id="corner" class="corner-btn" title="Parent corner">✚</button>
     </div>
     <div id="strip">
-      <!-- 4 prediction slots (2 cols each) are rendered by board.js;
-           the two utility anchors are permanent markup. -->
+      <!-- The tray holds the four prediction cards; the two utility
+           anchors are permanent markup. -->
+      <div id="tray"></div>
       <button class="anchor" id="anchor-groups" title="Groups">
         <span class="glyph">🗂️</span><span>Groups</span>
       </button>
@@ -361,6 +552,14 @@
         <h2>Parent corner</h2>
         <button class="btn" id="add-mywords">Add to My Words</button>
         <button class="btn secondary" id="edit-groups">Edit groups</button>
+        <div class="seg-row">
+          <span class="seg-label">Highlight likely next words</span>
+          <div class="seg" id="hl-next">
+            <button data-v="0">Off</button>
+            <button data-v="1">On</button>
+          </div>
+          <p class="hint">Up to three grid words get a thicker inner border in their own color.</p>
+        </div>
         <div class="seg-row">
           <span class="seg-label">Keyboard</span>
           <div class="seg" id="kb-mode">

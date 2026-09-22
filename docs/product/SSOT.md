@@ -11,6 +11,7 @@ do not duplicate long policy in `AGENTS.md`.
 | **DECIDED 2026-09-21**. Relational Language Graph AAC with Multi-Surface Views (founder brief) | `docs/strategy/Vision.md` |
 | **DECIDED 2026-09-21**. Dual-Engine Predictive Intelligence (TypeSafe Jev + Local-First SQLite) | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` |
 | **DECIDED 2026-09-22** (not built). Clean-room motor grid, Fitzgerald color, stick-figure and object art, predictive-strip layout | `docs/product/Motor_Grid_And_Art.md` |
+| **BUILT** (`public/index.html`, `public/board.js`). Designer handoff: brand palette + grammar role hexes, word-tile anatomy (label strip + art area), tile states, neutral prediction tray, ink chrome, Pip mark/icon set | `docs/product/Design_System.md` |
 | **DECIDED 2026-09-22** (not built). Coordinate map: `grid60` default (10×6) + `grid90` dense (10×9, all 83 core cells); Groups anchor | `docs/product/Core_Coordinate_Map.md` |
 | **BUILT** (fb5a8d7…0555aa9). Groups: one container kind (built-in, My Words, custom), in place at board geometry, fixed slots on the index and inside every group, one level deep, many-to-many, one Edit mode, add-where-you-are, classification only adds. | `docs/product/Motor_Grid_And_Art.md` § Groups + `docs/product/Personal_Entities.md` § Filing |
 | **DECIDED 2026-09-22** (not built). Clean-room initial launch vocabulary (677 words: 83 Root Core + 594 Primary Fringe), membership ranked by `data/reference/` AoA + Fry | `docs/product/Initial_Vocabulary_600.md` |

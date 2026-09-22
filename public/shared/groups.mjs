@@ -236,7 +236,7 @@ export function groupIndex(db) {
 /**
  * One page of a group: items at their stored slots, joined to label and
  * Fitzgerald role. Entities carry photo_key; senses resolve their approved
- * English lemma.
+ * English lemma and their approved symbol key (art, null until art ships).
  */
 export function groupPage(db, groupId, page = 0, locale) {
   requireLocale(locale);
@@ -245,7 +245,9 @@ export function groupPage(db, groupId, page = 0, locale) {
     `SELECT gc.item_kind, gc.item_id, gc.slot_index,
             COALESCE(l.text, e.spoken_name) AS label,
             COALESCE(s.fitzgerald_role, 'Yellow') AS fitzgerald_role,
-            e.photo_key AS photo_key
+            e.photo_key AS photo_key,
+            (SELECT i.key FROM image i
+              WHERE i.id = s.default_image_id AND i.status = 'approved') AS art
      FROM group_cell gc
      LEFT JOIN sense s ON gc.item_kind = 'sense' AND s.id = gc.item_id
      LEFT JOIN label l ON gc.item_kind = 'sense' AND l.sense_id = gc.item_id

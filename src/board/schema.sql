@@ -109,7 +109,10 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   locale TEXT NOT NULL CHECK (length(locale) > 0),
   preferred_voice_id TEXT NOT NULL REFERENCES voice(id),
   keyboard_mode TEXT NOT NULL DEFAULT 'pip' CHECK (keyboard_mode IN ('pip', 'device')),
-  keyboard_order TEXT NOT NULL DEFAULT 'standard' CHECK (keyboard_order IN ('standard', 'abc'))
+  keyboard_order TEXT NOT NULL DEFAULT 'standard' CHECK (keyboard_order IN ('standard', 'abc')),
+  -- Parent Corner: "Highlight likely next words" — halo up to 3 grid cells
+  -- the ranker predicts. Default OFF (docs/product/Design_System.md § States).
+  highlight_next INTEGER NOT NULL DEFAULT 0 CHECK (highlight_next IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (
