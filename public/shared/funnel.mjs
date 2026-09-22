@@ -11,6 +11,22 @@
 const RECENT_WINDOW_MS = 15 * 60 * 1000;
 export const STRIP_CAP = 4;
 
+const TO_SENSE_ID = "sns_0053"; // infinitival "to" — matched by sense id, never by English text
+
+/**
+ * Sentence-position rules per locale (docs/phases/003b slice 3). A locale
+ * with no entry gets no invitations — the strip then ranks by recency,
+ * time of day, and frequency only. A wrong rule is worse than no rule:
+ * German word order is not English word order.
+ */
+export const GRAMMAR = {
+  en: {
+    invitesNoun: ({ pos }) => pos === "Verb" || pos === "Preposition",
+    invitesVerb: ({ pos, prevPos, tailId }) =>
+      pos === "Pronoun" || (pos === "Preposition" && tailId === TO_SENSE_ID && prevPos === "Verb"),
+  },
+};
+
 export function logSelection(db, kind, id, at = Date.now()) {
   db.prepare(
     "INSERT INTO learner_event_log (item_kind, item_id, selected_at) VALUES (?, ?, ?)",
@@ -56,10 +72,10 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
   }
   const { pos, prevPos } = tailInfo(db, sentence, locale);
   const tail = sentence[sentence.length - 1];
-  const tailText = tail?.kind === "sense" ? tailTextOf(db, tail.id, locale) : null;
-  const invitesNoun = pos === "Verb" || pos === "Preposition";
-  const invitesVerb =
-    pos === "Pronoun" || (pos === "Preposition" && tailText === "to" && prevPos === "Verb");
+  const ctx = { pos, prevPos, tailId: tail?.kind === "sense" ? tail.id : null };
+  const rules = GRAMMAR[locale];
+  const invitesNoun = rules ? rules.invitesNoun(ctx) : false;
+  const invitesVerb = rules ? rules.invitesVerb(ctx) : false;
   const recentCutoff = now - RECENT_WINDOW_MS;
   const hour = new Date(now).getHours();
 
@@ -108,14 +124,6 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
     .sort((a, b) => b.score - a.score || b.last - a.last || a.id.localeCompare(b.id))
     .slice(0, STRIP_CAP)
     .map((r) => ({ kind: r.kind, id: r.id }));
-}
-
-function tailTextOf(db, senseId, locale) {
-  return db
-    .prepare(
-      `SELECT text FROM label WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
-    )
-    .all(senseId, locale)[0]?.text ?? null;
 }
 
 function scoreRow(r, invited, now) {

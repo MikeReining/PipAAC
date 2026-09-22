@@ -70,6 +70,24 @@ test("low-signal state renders no strip", () => {
   assert.deepEqual(stripCandidates(db, [S("happy")], NOW, "en"), []);
 });
 
+test("a locale with no GRAMMAR entry gets no invitations — recency only (003b slice 3)", () => {
+  const db = openDb();
+  // a fringe noun with usage evidence: invited under en after a verb
+  // tail, invisible under de — the de tail is not English grammar
+  const dog = S("dog");
+  for (let i = 0; i < 3; i++) logSelection(db, "sense", dog.id, NOW - 3600_000);
+  const en = stripCandidates(db, [S("want")], NOW, "en");
+  assert.ok(en.some((c) => c.id === dog.id));
+  const de = stripCandidates(db, [S("want")], NOW, "de");
+  assert.ok(!de.some((c) => c.id === dog.id));
+  // recency is locale-independent: a recently tapped entity still ranks
+  const ent = addPersonalEntity(db, { spokenName: "Cooper" });
+  logSelection(db, "entity", ent.id, NOW - 60_000);
+  assert.ok(
+    stripCandidates(db, [S("want")], NOW, "de").some((c) => c.kind === "entity" && c.id === ent.id),
+  );
+});
+
 test("cap and ordering: at most 4 tiles, invited+recent outranks stale", () => {
   const db = openDb();
   const ids = ["Cooper", "Baba", "Bluey", "Spot", "Rex", "Mom"].map(
