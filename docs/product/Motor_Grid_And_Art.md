@@ -62,7 +62,7 @@ When a grid engine exists, a test must show that a suggestion model cannot reord
 
 **DECIDED 2026-09-22** (founder review of the zones build; supersedes the
 "sub-zone" / "zone" wording and the `zone_slot` + `custom_group` model from
-earlier the same day). Not built yet. Execution: `docs/phases/003_Groups_2.md`.
+earlier the same day). **BUILT** (fb5a8d7…0555aa9).
 
 The strip is the primary path to fringe words. Groups are the guaranteed
 path: **every catalog word is reachable in at least one group**, one level

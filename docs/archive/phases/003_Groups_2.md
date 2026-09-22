@@ -1,6 +1,7 @@
 # Phase 003 — Groups 2.0
 
-**Status:** Ready to execute. Not started.
+**Status:** Complete — slices 1–6 shipped as fb5a8d7…0555aa9 (plus the
+c2c2fd2 persistence fix the slice-3 live proof surfaced).
 
 **DECIDED 2026-09-22** (founder: "proceed", after the groups review in the
 same session). This doc packs the whole phase for one developer to execute

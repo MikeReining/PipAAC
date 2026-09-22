@@ -15,7 +15,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Slice 1 — one name, fewer buttons (groups UI cleanup), then slice 2 — groups data model and paging (fixes unreachable Food/Actions words). | `docs/phases/003_Groups_2.md` |
+| **P1** | Slice 1 — built-in group names by locale (003b must finish before 004 begins). | `docs/phases/003b_Groups_Language_Followup.md` |
 
 ## Live index
 
@@ -24,8 +24,8 @@ Executing phases only. Each row names the **next** slice.
 | Phase | Next slice |
 | --- | --- |
 | [002 — Core board and the Cooper proof](002_Core_Board_And_Customize.md) | Slice 1 — core board |
-| [003 — Groups 2.0](003_Groups_2.md) | Slice 1 — one name, fewer buttons |
-| [004 — Keyboard 2.0](004_Keyboard.md) | Slice 1 — key map, big letters, no Done (starts after 003 slice 2) |
+| [003b — Groups 2.0 language follow-up](003b_Groups_Language_Followup.md) | Slice 1 — built-in group names by locale |
+| [004 — Keyboard 2.0](004_Keyboard.md) | Slice 1 — key map, big letters, no Done (starts after 003b) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

@@ -54,8 +54,8 @@ does not pick a color. Owner of the color roles: `docs/product/Motor_Grid_And_Ar
 ### Filing
 
 **DECIDED 2026-09-22** (amended by the groups review; replaces the
-category-and-My-Words filing written earlier the same day). Not built yet.
-Execution: `docs/phases/003_Groups_2.md` slices 2, 4, 5. Group model:
+category-and-My-Words filing written earlier the same day). **BUILT**
+(fb5a8d7…0555aa9). Group model:
 `docs/product/Motor_Grid_And_Art.md` § Groups.
 
 - **The place is the picker.** An add starts inside a group, in Edit mode
