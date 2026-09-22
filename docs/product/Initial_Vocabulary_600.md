@@ -732,21 +732,19 @@ The unshakeable foundation of daily generative communication. Derived from the c
 
 ---
 
-## 4. Visual Prompt Generation Templates
+## 4. Visual Prompt Generation (WorkbookBench Standard)
 
-For both batch-generating the initial 599 bundle and dynamically generating Tier 3 fringe items on demand, the asset pipeline uses three locked prompt templates:
+Following the proven clipart generation standard from WorkbookBench (`promptStyle.mjs` and `gen.mjs` in WorkbookBench), prompt generation eliminates paragraph-long attribute lists in favor of 3 reference images and a tight 3-line prompt:
 
-### 4.1 Stick Figure Template (People, Pronouns, Actions, Somatic States)
 ```text
-Universal AAC vector icon of [WORD/ACTION]. Style: single neutral genderless human stick figure, solid circular head floating above neck, monoline stroke of uniform 6px line weight, rounded joints and limb terminals, no hair, no facial features, no racial or ethnic markers. Torso filled with flat [FITZGERALD_COLOR] (#HEX). Action: [SPECIFIC_POSTURE_AND_DIRECTIONAL_ARROWS]. Minimalist, clean vector illustration, isolated on pure white background, high contrast, child-accessible.
+We are trying to teach a child the concept of: {word}.
+Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.
+Do not include any text in the image.
+{sceneHint}
 ```
 
-### 4.2 Illustrated Object Template (Inanimate Nouns, Animals, Food, Tools)
-```text
-Warm illustrated AAC pictogram of [OBJECT/ANIMAL]. Style: soft rounded curves, clean bold 3px contour outline, solid warm flat fills, subtle friendly styling, zero realistic clutter, perfectly centered. Pure object presentation (no human figure, no background scene). Isolated on pure white background, high contrast, instantly recognizable to pediatric communicators.
-```
-
-### 4.3 Diagrammatic / Abstract Template (Prepositions, Questions, Regulators)
-```text
-Clean geometric AAC symbol for abstract concept [CONCEPT/PREPOSITION]. Style: bold directional vector arrows, clean geometric wireframe reference objects (e.g. open cube, horizontal plane), vibrant high-contrast [FITZGERALD_COLOR] accents, unambiguous spatial relation. No distracting texture, flat modern icon design, isolated on pure white background.
-```
+- **Reference Images**: Exactly 3 frozen reference images in `assets/style-refs/` carry the hand, line weight, and character style.
+- **The Frame**: The 5 load-bearing words (`pure white background, bold black outline, flat solid colour, no shading`) anchor the canvas.
+- **Scene Hint**: When an abstract word requires metaphor disambiguation (e.g. *make*, *know*, *in*), a single 5-to-10 word `sceneHint` is appended (e.g. `hands putting blocks together`). Pure nouns use no `sceneHint`.
+- **Torso Fill**: For stick figure characters, a one-line color hint specifies the Fitzgerald key (e.g. `The stick figure's torso is solid green.`).
+- **Re-Roll Lever**: Variance between seeds is larger than any prompt tweak. Re-roll is the quality lever, not prompt bloat.
