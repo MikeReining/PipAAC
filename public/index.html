@@ -103,6 +103,23 @@
       }
       .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; flex: none; }
       .anchor span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      /* "Show me where": a 1.5s halo on the Groups anchor plus a fixed-
+         position caption — out of flow, so zero layout shift, and
+         pointer-events: none so it never eats a tap. */
+      .anchor.halo { outline: 4px solid #2f6fd0; outline-offset: 2px; box-shadow: 0 0 14px rgba(47, 111, 208, 0.65); }
+      #pathhint {
+        position: fixed;
+        z-index: 20;
+        transform: translateX(-50%);
+        background: #1a1a1a;
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        padding: 4px 10px;
+        border-radius: 8px;
+        white-space: nowrap;
+        pointer-events: none;
+      }
       #grid { flex: 1; display: grid; gap: var(--gap); }
       /* Group index and group pages replace the grid in place — same 10×6
          geometry, same physical positions. Navigation is a board mode,
@@ -332,6 +349,7 @@
       </div>
     </div>
 
+    <div id="pathhint" hidden></div>
     <script type="module" src="/board.js"></script>
   </body>
 </html>

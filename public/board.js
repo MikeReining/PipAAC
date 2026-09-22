@@ -117,7 +117,7 @@ async function idleStarters() {
   const hello = senseByLemma("hello");
   if (hello) {
     cards.push({ label: "hello", glyph: "👋", role: hello.fitzgerald_role,
-      onTap: () => tap(hello.label, "sense", hello.id) });
+      onTap: () => tap(hello.label, "sense", hello.id, { hint: true }) });
   }
   cards.push({ label: "Food", glyph: "🥞", role: "Pink",
     onTap: () => openGroup("grp_food") });
@@ -131,7 +131,7 @@ async function idleStarters() {
   const help = senseByLemma("help");
   if (help) {
     cards.push({ label: "help", glyph: "🆘", role: help.fitzgerald_role,
-      onTap: () => tap(help.label, "sense", help.id) });
+      onTap: () => tap(help.label, "sense", help.id, { hint: true }) });
   }
   return cards.slice(0, 4);
 }
@@ -161,7 +161,7 @@ async function predCard(c) {
   el.appendChild(lb);
   const onTap =
     c.onTap ??
-    (c.entity ? () => tap(c.entity.spoken_name, "entity", c.entity.id) : () => {});
+    (c.entity ? () => tap(c.entity.spoken_name, "entity", c.entity.id, { hint: true }) : () => {});
   el.addEventListener("click", onTap);
   return el;
 }
@@ -210,7 +210,7 @@ async function renderStrip() {
           [c.id],
         )[0];
         cards.push({ label: w.label, role: w.fitzgerald_role,
-          onTap: () => tap(w.label, "sense", w.id) });
+          onTap: () => tap(w.label, "sense", w.id, { hint: true }) });
       }
     }
   }
@@ -220,14 +220,63 @@ async function renderStrip() {
   }
 }
 
-function tap(text, kind = "sense", id = null) {
+function tap(text, kind = "sense", id = null, { hint = false } = {}) {
   const item = { kind, id, text };
   sentence.push(item);
   renderBar();
   speakItem(item);
   if (id) logSelection(db, kind, id);
+  if (hint && id) showGroupHint(kind, id);
   renderStrip();
 }
+
+/* --- "Show me where": when a non-core word arrives from the strip or
+   the keyboard, halo the Groups anchor and caption the path (Groups ›
+   Food) for 1.5 s. Out-of-flow and pointer-events:none — no sound, no
+   blocking, no layout shift. A new tap cancels it. --- */
+let hintTimer = null;
+
+function clearGroupHint() {
+  clearTimeout(hintTimer);
+  hintTimer = null;
+  $("anchor-groups").classList.remove("halo");
+  $("pathhint").hidden = true;
+}
+
+function showGroupHint(kind, id) {
+  let name = null;
+  if (kind === "sense") {
+    // core words need no backup route — they are always on screen
+    if (ALL(db, "SELECT 1 AS x FROM core_cell WHERE layout = 'grid60' AND sense_id = ?", [id]).length) return;
+    name = ALL(
+      db,
+      `SELECT g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
+       WHERE gc.item_kind = 'sense' AND gc.item_id = ? AND g.kind = 'builtin'
+       ORDER BY g.index_slot`,
+      [id],
+    )[0]?.name;
+  } else if (kind === "entity") {
+    name = ALL(
+      db,
+      `SELECT g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
+       WHERE gc.item_kind = 'entity' AND gc.item_id = ?
+       ORDER BY g.index_slot`,
+      [id],
+    )[0]?.name;
+  }
+  if (!name) return;
+  const anchor = $("anchor-groups");
+  const r = anchor.getBoundingClientRect();
+  const hint = $("pathhint");
+  hint.textContent = `Groups › ${name}`;
+  hint.style.left = `${r.left + r.width / 2}px`;
+  hint.style.top = `${r.bottom + 4}px`;
+  hint.hidden = false;
+  anchor.classList.add("halo");
+  clearTimeout(hintTimer);
+  hintTimer = setTimeout(clearGroupHint, 1500);
+}
+document.addEventListener("pointerdown", clearGroupHint, { capture: true });
 
 function renderGrid() {
   const cells = ALL(
@@ -394,8 +443,8 @@ function commitKb() {
     return;
   }
   const hit = senseByLemma(t);
-  if (hit) tap(hit.label, "sense", hit.id);
-  else tap(t, "typed", null);
+  if (hit) tap(hit.label, "sense", hit.id, { hint: true });
+  else tap(t, "typed", null, { hint: true });
 }
 
 /** Prefix completions for the strip while a word is in progress. */
@@ -419,7 +468,7 @@ function kbCompletions() {
     onTap: () => {
       kbText = "";
       renderBar();
-      tap(w.label, "sense", w.id);
+      tap(w.label, "sense", w.id, { hint: true });
     },
   }));
   const ents = ALL(
@@ -435,7 +484,7 @@ function kbCompletions() {
     onTap: () => {
       kbText = "";
       renderBar();
-      tap(e.spoken_name, "entity", e.id);
+      tap(e.spoken_name, "entity", e.id, { hint: true });
     },
   }));
   return [...ents, ...senses]
