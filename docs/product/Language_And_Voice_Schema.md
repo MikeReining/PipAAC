@@ -1072,7 +1072,7 @@ Accepted in founder review the day it was proposed. The amendments:
 Founder question: is the core built correctly for German, Spanish, and
 French? Answer: **the schema is; the runtime and a few seams are not yet.**
 Fixes are routed to `docs/archive/phases/003b_Groups_Language_Followup.md`
-(complete) and `docs/phases/004_Keyboard.md`.
+(complete) and `docs/archive/phases/004_Keyboard.md` (complete).
 
 ### 13.1 What is already right
 

@@ -1,9 +1,12 @@
 # Phase 004 — Keyboard 2.0
 
-**Status:** Implemented — slices 1–7 landed (`26d4e52` … `9ca4653`),
-`npm run check` green. One open gate: the slice 6 works test requires a
-**real iPad** (system-keyboard size/resize can't be reproduced on desktop)
-and the doc forbids waiving it — founder runs it, then archive.
+**Status:** Complete (archived). Slices 1–7 landed (`26d4e52` … `9ca4653`),
+`npm run check` green (105 tests, all gates). **Deferred by founder
+decision:** the slice 6 works test requires a **real iPad** — the doc said
+"do not waive," the founder explicitly deferred it at closeout. The
+desktop-verifiable parts (layout, focus-in-gesture, buffer mirroring,
+commits, close/blur, unsupported-locale fallback) all pass; the
+system-keyboard size/resize check on physical hardware remains unproven.
 
 **DECIDED 2026-09-22** (founder: "I fully agree", after the keyboard review in
 the same session; locale amendments approved the same day: "Please do all of
@@ -753,9 +756,9 @@ the closeout.
 
 ## Closeout checklist
 
-- [x] Slices 1–7 done — except the slice 6 real-iPad works test, which
-      stays open for the founder (the phase doc forbids waiving it).
-      Desktop-verifiable gates all pass (`3210218`).
+- [x] Slices 1–7 done — the slice 6 real-iPad works test is
+      **founder-deferred** (explicit closeout decision, overriding the
+      doc's no-waive clause). Desktop-verifiable gates all pass (`3210218`).
 - [x] `npm run check` green (105 tests, all gates, `d3eefcb`).
 - [x] `docs/product/Profile_Presentation_Modes.md` § 4 tags flipped from
       DECIDED to BUILT, with citations.
@@ -763,8 +766,8 @@ the closeout.
       to BUILT.
 - [x] The measured letter/key ratio, the spelling recall %, and the
       typing-simulation savings are recorded here.
-- [ ] Archive this doc per `docs/operations/Execution-Playbook.md` § Phase
-      Archive — pending the slice 6 iPad check.
+- [x] Archive this doc per `docs/operations/Execution-Playbook.md` § Phase
+      Archive.
 
 ## Measurements
 

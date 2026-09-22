@@ -7,7 +7,7 @@ recommendation in the locale review). Built in English first; it is the
 mechanism every later language plugs its data into. It does not block the
 English launch, and it must ship before the first non-English launch.
 
-**Start after** `docs/phases/004_Keyboard.md`. Slice 4 here changes
+**Start after** `docs/archive/phases/004_Keyboard.md` (complete). Slice 4 here changes
 `commitKb` from that phase.
 
 Product truth this phase implements:

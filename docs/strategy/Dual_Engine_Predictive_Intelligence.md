@@ -264,7 +264,7 @@ longer option lists are fine (Choice accepts up to 255), the 2026-09-22
 spec assumed shorter is better. `docs/phases/006_Prediction_Engine.md`
 slice 5 runs 8 / 16 / 32 on the simulation.
 
-**Keyboard-mode exception.** **DECIDED 2026-09-22** (not built). While the keyboard is open the grid is hidden, so there is nothing to halo. In keyboard mode only, after a committed word, core continuations may take strip slots, ranked with learner pairs (ids only). Cap stays 4. Spec: `docs/phases/004_Keyboard.md` slice 7.
+**Keyboard-mode exception.** **BUILT** (`9ca4653`). Decided 2026-09-22. While the keyboard is open the grid is hidden, so there is nothing to halo. In keyboard mode only, after a committed word, core continuations may take strip slots, ranked with learner pairs (ids only). Cap stays 4. Spec: `docs/archive/phases/004_Keyboard.md` slice 7.
 
 Stage 2 — Jev rerank (sharing on, online, and something to judge): § 3.
 

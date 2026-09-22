@@ -7,7 +7,7 @@ please update all documents and create the new documents that we need").
 Intake: `docs/founder/2026-09-22_Prediction_Blend_Privacy_Listening.md`.
 
 **Order.** Slice 1 is a fix to built code and does not depend on anything;
-it should land before `docs/phases/004_Keyboard.md` slice 7, which reads the
+it should land before `docs/archive/phases/004_Keyboard.md` slice 7, which reads the
 same event log. Slices 2–5 run in order. Occasions
 (`docs/phases/007_Occasions.md`) feed the `occasion` feature when they
 exist; this phase works without them. Partner words
@@ -119,7 +119,7 @@ fills `chosen_*`), `src/board/fixtures/routine_days.en.json` (new),
 4. The simulation replays days 1–10 through the real logging path and
    measures days 11–14. Taps per word: 1 if the word is a core cell or a
    shown tile; otherwise the group path (Groups anchor, group, item = 3).
-   Same method as `docs/phases/004_Keyboard.md` slice 7.
+   Same method as `docs/archive/phases/004_Keyboard.md` slice 7.
 
 Truth owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.7.
 
