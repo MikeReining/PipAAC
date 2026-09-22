@@ -7,7 +7,7 @@ const json = (data, init = {}) =>
   });
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/$/, "") || "/";
 
@@ -19,6 +19,16 @@ export default {
       return json(catalog);
     }
 
-    return json({ error: "not_found", path }, { status: 404 });
+    // Static shell. COOP/COEP make the page cross-origin isolated so the
+    // SQLite WASM OPFS database can persist on-device.
+    if (!env?.ASSETS) {
+      return json({ error: "not_found", path }, { status: 404 });
+    }
+    const res = await env.ASSETS.fetch(request);
+    const headers = new Headers(res.headers);
+    headers.set("Cross-Origin-Opener-Policy", "same-origin");
+    headers.set("Cross-Origin-Embedder-Policy", "require-corp");
+    headers.set("Cross-Origin-Resource-Policy", "same-origin");
+    return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
   },
 };

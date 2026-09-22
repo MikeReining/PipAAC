@@ -450,6 +450,25 @@ to `personal_entity.category` only when that column is null — filing the
 adult established by context is not overridden by inference. `abstained`
 rows record a deliberate no-answer so the job is not retried forever.
 
+### 6.2c Event log
+
+Selection events feed the local candidate funnel's recency and
+routine/time-of-day histogram
+(`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2). Ids only —
+never the English string (ban: spelling is not a key).
+
+```sql
+CREATE TABLE learner_event_log (
+  id INTEGER PRIMARY KEY,
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL CHECK (length(item_id) > 0),
+  selected_at INTEGER NOT NULL CHECK (selected_at > 0)
+);
+
+CREATE INDEX event_log_item ON learner_event_log(item_kind, item_id, selected_at);
+CREATE INDEX event_log_time ON learner_event_log(selected_at);
+```
+
 ### 6.3 Override
 
 A caregiver recording of one catalog utterance, or of one personal name.
@@ -867,3 +886,9 @@ Accepted in founder review the day it was proposed. The amendments:
    abstention valid, superseded on name/photo change). Jev remains the
    read-time ranker; enrichment is the cached semantic record it — and
    the offline ranker — reads.
+7. `learner_event_log` added when slice 3 needed it: selection events
+   keyed by id (`item_kind`, `item_id`, `selected_at`) feeding the local
+   funnel's recency and time-of-day histogram. DDL is applied with
+   `IF NOT EXISTS` so boot is idempotent on an existing database;
+   `PRAGMA user_version` still carries the schema version for future
+   real migrations.

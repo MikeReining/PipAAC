@@ -1,6 +1,6 @@
 # Phase 002 — Core board and the Cooper proof
 
-**Status:** Executing. Slice 1 built and proven; slice 2 not started.
+**Status:** Executing. Slices 1–3 built and proven on the dev board.
 
 **DECIDED 2026-09-22** (not built). Revised the same day. Prove that an adult
 can add Cooper before anyone draws the launch library. The 599-word catalog
@@ -129,8 +129,24 @@ Live partner modeling, the context river, and visual scenes stay in `docs/strate
 **BUILT** (slice 1): the coordinate table exists and is proven immutable
 under the slice's placeholder ops. `scripts/catalog/build_catalog.mjs`
 generates `data/catalog/catalog.json` (599 senses/utterances/labels,
-135 `core_cell` rows, `grid80` anchors) from the lexicon and the map doc —
-both stay the source. `src/board/schema.sql` + `src/board/catalog.mjs`
-create and import the on-device database (`node:sqlite`). The board renders
-`grid60` at `GET /` (`public/board.js` + `src/worker/index.js` `/catalog.json`).
+135 `core_cell` rows, `grid80` anchors, embedded `schemaSql`) from the
+lexicon and the map doc — both stay the source. `src/board/schema.sql` +
+`public/shared/import.mjs` create and import the on-device database
+(shared by `node:sqlite` in tests and sqlite-wasm in the page).
 Proof: `scripts/test.sh src/board/core_map.test.mjs` (6 tests).
+
+**BUILT** (slice 2): `src/board/entities.mjs` + the browser runtime —
+SQLite WASM (`@sqlite.org/sqlite-wasm` vendored in `public/vendor/`) with
+OPFS persistence (`public/db.js`), zones UI, and the name+photo add flow
+(`public/board.js`, `public/index.html`). Photos persist as OPFS files
+keyed by entity id. Speech is `speechSynthesis` (device TTS lane).
+Proof: `src/board/entities.test.mjs` (3 tests) + headless-Chrome smoke
+run of the live add flow.
+
+**BUILT** (slice 3): `learner_event_log` (schema doc § 6.2c) +
+`public/shared/funnel.mjs` — sentence position (verb/preposition tail
+invites an entity), recency (15-min window), same-hour frequency, capped
+at 4 tiles, read-only against `core_cell`. The strip renders offers above
+the grid; every tap logs a selection event.
+Proof: `src/board/strip.test.mjs` (4 tests) + smoke run showed Cooper
+offered after tapping `play`.

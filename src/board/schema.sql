@@ -1,7 +1,7 @@
 -- Pip AAC schema v1 — docs/product/Language_And_Voice_Schema.md is the owner.
 -- Apply with PRAGMA foreign_keys = ON. Version carried in PRAGMA user_version.
 
-CREATE TABLE sense (
+CREATE TABLE IF NOT EXISTS sense (
   id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),
   fitzgerald_role TEXT NOT NULL
     CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Red')),
@@ -31,7 +31,7 @@ CREATE TABLE sense (
   )
 );
 
-CREATE TABLE utterance (
+CREATE TABLE IF NOT EXISTS utterance (
   id TEXT PRIMARY KEY CHECK (id GLOB 'utt_*'),
   locale TEXT NOT NULL CHECK (length(locale) > 0),
   spoken_text TEXT NOT NULL CHECK (length(spoken_text) > 0),
@@ -40,7 +40,7 @@ CREATE TABLE utterance (
   UNIQUE (locale, normalized_spoken_text)
 );
 
-CREATE TABLE label (
+CREATE TABLE IF NOT EXISTS label (
   id TEXT PRIMARY KEY CHECK (id GLOB 'lbl_*'),
   sense_id TEXT NOT NULL REFERENCES sense(id),
   utterance_id TEXT NOT NULL REFERENCES utterance(id),
@@ -56,7 +56,7 @@ CREATE TABLE label (
   status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))
 );
 
-CREATE TABLE image (
+CREATE TABLE IF NOT EXISTS image (
   id TEXT PRIMARY KEY CHECK (id GLOB 'img_*'),
   sense_id TEXT NOT NULL REFERENCES sense(id),
   key TEXT NOT NULL CHECK (length(key) > 0),
@@ -64,7 +64,7 @@ CREATE TABLE image (
   sha256 TEXT NOT NULL CHECK (length(sha256) > 0)
 );
 
-CREATE TABLE voice (
+CREATE TABLE IF NOT EXISTS voice (
   id TEXT PRIMARY KEY CHECK (id GLOB 'voi_*'),
   locale TEXT NOT NULL CHECK (length(locale) > 0),
   display_name TEXT NOT NULL CHECK (length(display_name) > 0),
@@ -77,7 +77,7 @@ CREATE TABLE voice (
   CHECK (status != 'retired' OR is_default = 0)
 );
 
-CREATE TABLE clip (
+CREATE TABLE IF NOT EXISTS clip (
   id TEXT PRIMARY KEY CHECK (id GLOB 'clp_*'),
   voice_id TEXT NOT NULL REFERENCES voice(id),
   utterance_id TEXT NOT NULL REFERENCES utterance(id),
@@ -88,7 +88,7 @@ CREATE TABLE clip (
   source TEXT NOT NULL CHECK (length(source) > 0)
 );
 
-CREATE TABLE core_cell (
+CREATE TABLE IF NOT EXISTS core_cell (
   id TEXT PRIMARY KEY CHECK (id GLOB 'cel_*'),
   layout TEXT NOT NULL CHECK (length(layout) > 0),
   sense_id TEXT NOT NULL REFERENCES sense(id),
@@ -97,13 +97,13 @@ CREATE TABLE core_cell (
   UNIQUE (layout, sense_id)
 );
 
-CREATE TABLE learner_profile (
+CREATE TABLE IF NOT EXISTS learner_profile (
   id TEXT PRIMARY KEY CHECK (id GLOB 'prf_*'),
   locale TEXT NOT NULL CHECK (length(locale) > 0),
   preferred_voice_id TEXT NOT NULL REFERENCES voice(id)
 );
 
-CREATE TABLE personal_entity (
+CREATE TABLE IF NOT EXISTS personal_entity (
   id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),
   spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),
   photo_key TEXT,
@@ -126,7 +126,7 @@ CREATE TABLE personal_entity (
   hint TEXT
 );
 
-CREATE TABLE entity_enrichment (
+CREATE TABLE IF NOT EXISTS entity_enrichment (
   id TEXT PRIMARY KEY CHECK (id GLOB 'enr_*'),
   entity_id TEXT NOT NULL REFERENCES personal_entity(id),
   description TEXT,
@@ -152,7 +152,19 @@ CREATE TABLE entity_enrichment (
   status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))
 );
 
-CREATE TABLE clip_override (
+-- Selection events feed the local funnel's recency and time-of-day
+-- histogram (Dual_Engine §5.2). Ids only — never the English string.
+CREATE TABLE IF NOT EXISTS learner_event_log (
+  id INTEGER PRIMARY KEY,
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL CHECK (length(item_id) > 0),
+  selected_at INTEGER NOT NULL CHECK (selected_at > 0)
+);
+
+CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);
+CREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);
+
+CREATE TABLE IF NOT EXISTS clip_override (
   id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),
   utterance_id TEXT REFERENCES utterance(id),
   entity_id TEXT REFERENCES personal_entity(id),
@@ -162,31 +174,31 @@ CREATE TABLE clip_override (
   CHECK ((utterance_id IS NULL) != (entity_id IS NULL))
 );
 
-CREATE UNIQUE INDEX label_one_row_per_sense_text
+CREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text
   ON label(sense_id, locale, normalized_text);
-CREATE UNIQUE INDEX label_one_approved_lemma
+CREATE UNIQUE INDEX IF NOT EXISTS label_one_approved_lemma
   ON label(sense_id, locale)
   WHERE kind = 'lemma' AND status = 'approved';
-CREATE UNIQUE INDEX label_one_default_text
+CREATE UNIQUE INDEX IF NOT EXISTS label_one_default_text
   ON label(locale, normalized_text)
   WHERE status = 'approved' AND default_for_text = 1;
-CREATE UNIQUE INDEX voice_one_active_default
+CREATE UNIQUE INDEX IF NOT EXISTS voice_one_active_default
   ON voice(locale)
   WHERE status = 'active' AND is_default = 1;
-CREATE UNIQUE INDEX clip_one_ready
+CREATE UNIQUE INDEX IF NOT EXISTS clip_one_ready
   ON clip(voice_id, utterance_id)
   WHERE status = 'ready';
-CREATE UNIQUE INDEX override_one_ready_utterance
+CREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_utterance
   ON clip_override(utterance_id)
   WHERE status = 'ready' AND utterance_id IS NOT NULL;
-CREATE UNIQUE INDEX override_one_ready_entity
+CREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_entity
   ON clip_override(entity_id)
   WHERE status = 'ready' AND entity_id IS NOT NULL;
-CREATE UNIQUE INDEX enrichment_one_ready
+CREATE UNIQUE INDEX IF NOT EXISTS enrichment_one_ready
   ON entity_enrichment(entity_id)
   WHERE status = 'ready';
 
-CREATE TRIGGER label_locale_matches_utterance
+CREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance
 BEFORE INSERT ON label
 FOR EACH ROW
 BEGIN
@@ -198,7 +210,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER clip_matches_voice_and_utterance
+CREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance
 BEFORE INSERT ON clip
 FOR EACH ROW
 BEGIN
@@ -221,7 +233,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER override_recorded_text_matches
+CREATE TRIGGER IF NOT EXISTS override_recorded_text_matches
 BEFORE INSERT ON clip_override
 FOR EACH ROW
 BEGIN
@@ -239,7 +251,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER sense_default_image_same_sense
+CREATE TRIGGER IF NOT EXISTS sense_default_image_same_sense
 BEFORE UPDATE OF default_image_id ON sense
 FOR EACH ROW
 WHEN NEW.default_image_id IS NOT NULL
@@ -252,7 +264,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER core_cell_root_only
+CREATE TRIGGER IF NOT EXISTS core_cell_root_only
 BEFORE INSERT ON core_cell
 FOR EACH ROW
 BEGIN
@@ -263,7 +275,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER profile_voice_is_active_same_locale
+CREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale
 BEFORE INSERT ON learner_profile
 FOR EACH ROW
 BEGIN
@@ -276,7 +288,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER voice_retire_blocks_if_preferred
+CREATE TRIGGER IF NOT EXISTS voice_retire_blocks_if_preferred
 BEFORE UPDATE OF status ON voice
 FOR EACH ROW
 WHEN NEW.status = 'retired' AND OLD.status != 'retired'
@@ -288,7 +300,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER utterance_rename_supersedes_audio
+CREATE TRIGGER IF NOT EXISTS utterance_rename_supersedes_audio
 AFTER UPDATE OF spoken_text ON utterance
 FOR EACH ROW
 WHEN NEW.spoken_text != OLD.spoken_text
@@ -301,7 +313,7 @@ BEGIN
     WHERE utterance_id = NEW.id AND status = 'ready';
 END;
 
-CREATE TRIGGER entity_rename_supersedes_override
+CREATE TRIGGER IF NOT EXISTS entity_rename_supersedes_override
 AFTER UPDATE OF spoken_name ON personal_entity
 FOR EACH ROW
 WHEN NEW.spoken_name != OLD.spoken_name
@@ -311,7 +323,7 @@ BEGIN
     WHERE entity_id = NEW.id AND status = 'ready';
 END;
 
-CREATE TRIGGER entity_input_change_supersedes_enrichment
+CREATE TRIGGER IF NOT EXISTS entity_input_change_supersedes_enrichment
 AFTER UPDATE OF spoken_name, photo_key ON personal_entity
 FOR EACH ROW
 WHEN NEW.spoken_name != OLD.spoken_name
@@ -322,7 +334,7 @@ BEGIN
     WHERE entity_id = NEW.id AND status IN ('ready', 'abstained');
 END;
 
-CREATE TRIGGER label_locale_matches_utterance_on_update
+CREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance_on_update
 BEFORE UPDATE OF utterance_id, locale ON label
 FOR EACH ROW
 BEGIN
@@ -334,7 +346,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER clip_matches_voice_and_utterance_on_update
+CREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance_on_update
 BEFORE UPDATE OF voice_id, utterance_id, recorded_text ON clip
 FOR EACH ROW
 BEGIN
@@ -357,7 +369,7 @@ BEGIN
   );
 END;
 
-CREATE TRIGGER profile_voice_is_active_same_locale_on_update
+CREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale_on_update
 BEFORE UPDATE OF preferred_voice_id, locale ON learner_profile
 FOR EACH ROW
 BEGIN

@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Pip AAC</title>
     <style>
-      :root {
-        --gap: 6px;
-      }
+      :root { --gap: 6px; }
       * { box-sizing: border-box; margin: 0; }
       body {
         font-family: -apple-system, "Helvetica Neue", sans-serif;
@@ -18,22 +16,52 @@
         padding: var(--gap);
         gap: var(--gap);
       }
+      button { font: inherit; cursor: pointer; }
+      #topbar { display: flex; gap: var(--gap); height: 52px; }
       #bar {
-        height: 52px;
+        flex: 1;
         border: 2px solid #d8d4c8;
         border-radius: 10px;
         background: #fff;
         display: flex;
         align-items: center;
-        padding: 0 14px;
+        padding: 0 12px;
         font-size: 20px;
-        color: #999;
+        color: #1a1a1a;
+        gap: 8px;
+        overflow-x: auto;
+        font-weight: 600;
       }
-      #grid {
-        flex: 1;
+      #bar:empty::before { content: "…"; color: #999; }
+      .corner-btn {
+        min-width: 52px;
+        border: 2px solid #d8d4c8;
+        border-radius: 10px;
+        background: #fff;
+        font-size: 22px;
+      }
+      #strip {
+        height: 88px;
         display: grid;
+        grid-template-columns: repeat(4, 1fr);
         gap: var(--gap);
       }
+      #strip:empty { display: none; }
+      .tile {
+        border-radius: 12px;
+        border: 3px solid #8a7fbf;
+        background: #ece8f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: clamp(14px, 2.6vmin, 24px);
+        color: #1a1a1a;
+        overflow: hidden;
+      }
+      .tile img { height: 100%; aspect-ratio: 1; object-fit: cover; }
+      #grid { flex: 1; display: grid; gap: var(--gap); }
       .cell {
         border-radius: 12px;
         border: 3px solid;
@@ -49,17 +77,119 @@
         padding: 4px;
       }
       .cell:active { filter: brightness(0.92); }
-      /* Modified Fitzgerald roles: tint background, solid border */
       .r-Yellow { border-color: #d9a410; background: #fdf0c8; }
       .r-Green  { border-color: #2e8b3a; background: #dcf0dd; }
       .r-Blue   { border-color: #2f6fd0; background: #dcecfd; }
       .r-Pink   { border-color: #d0438c; background: #fbdfee; }
       .r-Red    { border-color: #c62828; background: #fbdcdc; }
+
+      .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(30, 26, 20, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+      .overlay.open { display: flex; }
+      .sheet {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        width: min(520px, 92vw);
+        max-height: 80dvh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sheet h2 { font-size: 20px; }
+      .sheet input[type="text"] {
+        font-size: 20px;
+        padding: 10px 12px;
+        border: 2px solid #d8d4c8;
+        border-radius: 10px;
+      }
+      .sheet .row { display: flex; gap: 10px; }
+      .sheet .row > * { flex: 1; }
+      .btn {
+        border: 2px solid #2f6fd0;
+        background: #2f6fd0;
+        color: #fff;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .btn.secondary { background: #fff; color: #2f6fd0; }
+      .zone-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border: 2px solid #e3ded2;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        background: #fff;
+        text-align: left;
+      }
+      .zone-item img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; }
+      .zone-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .hint { color: #777; font-size: 14px; }
     </style>
   </head>
   <body>
-    <div id="bar">…</div>
+    <div id="topbar">
+      <div id="bar" title="Sentence"></div>
+      <button id="clear" class="corner-btn" title="Clear">⌫</button>
+      <button id="corner" class="corner-btn" title="Parent corner">✚</button>
+    </div>
+    <div id="strip"></div>
     <div id="grid"></div>
+
+    <div class="overlay" id="menu">
+      <div class="sheet">
+        <h2>Parent corner</h2>
+        <button class="btn" id="add-mywords">Add a word</button>
+        <button class="btn secondary" id="browse-zones">Zones</button>
+        <button class="btn secondary" data-close>Close</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="zones">
+      <div class="sheet">
+        <h2>Zones</h2>
+        <div id="zone-list"></div>
+        <button class="btn secondary" data-close>Back</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="zone">
+      <div class="sheet">
+        <h2 id="zone-title"></h2>
+        <div class="zone-items" id="zone-items"></div>
+        <button class="btn" id="add-in-zone">Add a word here</button>
+        <button class="btn secondary" data-close>Back</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="addform">
+      <div class="sheet">
+        <h2>Add a word</h2>
+        <input type="text" id="add-name" placeholder="Name, e.g. Cooper" autocomplete="off" />
+        <label class="hint">Photo (optional)
+          <input type="file" id="add-photo" accept="image/*" />
+        </label>
+        <input type="text" id="add-hint" placeholder="Hint (optional), e.g. our dog" autocomplete="off" />
+        <div class="row">
+          <button class="btn" id="add-save">Save</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="/board.js"></script>
   </body>
 </html>
