@@ -26,6 +26,7 @@ import {
 const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
 const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
 const GROUP_SEED = join(repoRoot, "data/group_seed.json");
+const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const DEFAULT_VOICE_ID = "voi_default_en";
@@ -190,11 +191,53 @@ export function buildGroups(lexicon, seed, locales = ["en"]) {
   return { groups, groupCells, groupLabels };
 }
 
+/**
+ * Digit alias labels (schema doc § 13.3 — the one allowed alias kind).
+ * Each digit string resolves through its locale's lemma to exactly one
+ * Number sense and points at the lemma's utterance, so typing `3` plays
+ * the bundled clip for *three*. Fails the build on zero or ambiguous hits.
+ */
+export function buildDigitAliases(lexicon, numberAliases) {
+  const ownerSlotByNorm = new Map();
+  for (const e of lexicon.entries) {
+    const n = normalizeV1(e.spokenText);
+    ownerSlotByNorm.set(n, Math.min(ownerSlotByNorm.get(n) ?? Infinity, e.slot));
+  }
+  const out = [];
+  for (const [loc, digits] of Object.entries(numberAliases.locales ?? {})) {
+    for (const [digit, word] of Object.entries(digits)) {
+      const hits = lexicon.entries.filter(
+        (e) => e.partOfSpeech === "Number" && normalizeV1(e.spokenText) === normalizeV1(word),
+      );
+      if (hits.length !== 1) {
+        throw new Error(
+          `number alias "${digit}"→"${word}" (${loc}) resolves to ${hits.length} Number senses (want exactly 1)`,
+        );
+      }
+      out.push({
+        id: `lbl_alias_${loc}_${digit}`,
+        sense_id: `sns_${pad4(hits[0].slot)}`,
+        utterance_id: `utt_${pad4(ownerSlotByNorm.get(normalizeV1(word)))}`,
+        locale: loc,
+        text: digit,
+        normalized_text: normalizeV1(digit),
+        normalizer_version: "v1",
+        kind: "alias",
+        part_of_speech: "Number",
+        default_for_text: 1,
+        status: "approved",
+      });
+    }
+  }
+  return out;
+}
+
 /** Build the catalog JSON object from lexicon entries + parsed map layouts. */
 export function buildCatalog(
   lexicon,
   mapLayouts,
   groupSeed = JSON.parse(readFileSync(GROUP_SEED, "utf8")),
+  numberAliases = JSON.parse(readFileSync(NUMBER_ALIASES, "utf8")),
 ) {
   const tier1ByWord = new Map();
   for (const e of lexicon.entries) {
@@ -250,6 +293,7 @@ export function buildCatalog(
     default_for_text: ownerSlotByNorm.get(normalizeV1(e.spokenText)) === e.slot ? 1 : 0,
     status: "approved",
   }));
+  labels.push(...buildDigitAliases(lexicon, numberAliases));
 
   const coreCells = [];
   const layouts = {};
@@ -284,6 +328,7 @@ export function buildCatalog(
       coordinateMap: "docs/product/Core_Coordinate_Map.md",
       schema: "src/board/schema.sql",
       groupSeed: "data/group_seed.json",
+      numberAliases: "data/number_aliases.json",
     },
     // The bundle is the full device bootstrap: DDL plus rows, one fetch.
     schemaSql: readFileSync(SCHEMA_SQL, "utf8"),

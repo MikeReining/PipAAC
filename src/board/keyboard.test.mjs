@@ -7,7 +7,12 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import { KEYMAPS } from "../../public/shared/keymaps.mjs";
-import { keyMap, resolveKeymap } from "../../public/shared/keyboard.mjs";
+import {
+  applyKey,
+  displaySentence,
+  keyMap,
+  resolveKeymap,
+} from "../../public/shared/keyboard.mjs";
 
 const LOCALES = Object.keys(KEYMAPS);
 const ORDERS = ["standard", "abc"];
@@ -93,4 +98,91 @@ test("resolveKeymap: exact tag, then language subtag, else null", () => {
   assert.equal(resolveKeymap("de"), KEYMAPS.de);
   assert.equal(resolveKeymap("ja"), null);
   assert.equal(resolveKeymap(""), null);
+});
+
+/* --- slice 2: typing that behaves ------------------------------------ */
+
+/** Feed keystrokes through the reducer; returns the final state and the
+ *  concatenated effects. */
+function type(keys, locale, seed = {}) {
+  let state = { buffer: "", pendingAccent: null, lead: null, items: [], ...seed };
+  const effects = [];
+  for (const k of keys) {
+    const res = applyKey(state, k, locale);
+    state = res.state;
+    effects.push(...res.effects);
+  }
+  return { state, effects };
+}
+
+test("en: 'i want juice.' capitalizes the head and parks the mark", () => {
+  const { state, effects } = type([..."i", " ", ..."want", " ", ..."juice", "."], "en");
+  assert.equal(effects.filter((e) => e.type === "commit").length, 3);
+  assert.equal(state.buffer, "");
+  assert.equal(displaySentence(state.items, "en").join(" "), "I want juice.");
+  // stored text is untouched — display only
+  assert.deepEqual(
+    state.items.map((i) => i.text),
+    ["i", "want", "juice"],
+  );
+  assert.equal(state.items[2].punct, ".");
+});
+
+test("en: standalone i and i'm display as I…", () => {
+  const { state } = type([..."i'm", " ", "i", " "], "en");
+  assert.equal(displaySentence(state.items, "en").join(" "), "I'm I");
+});
+
+test("es: dead key accents the next vowel; twice cancels", () => {
+  assert.equal(type(["´", "a"], "es").state.buffer, "á");
+  assert.equal(type(["´", "´", "a"], "es").state.buffer, "a");
+  // ´ then a consonant types the consonant with no accent
+  assert.equal(type(["´", "s"], "es").state.buffer, "s");
+});
+
+test("es: ¿ attaches to the next item; capital follows the mark", () => {
+  const { state } = type(["¿", ..."que", "?"], "es");
+  assert.equal(state.items[0].lead, "¿");
+  assert.equal(state.items[0].punct, "?");
+  assert.equal(displaySentence(state.items, "es").join(" "), "¿Que?");
+});
+
+test("fr: narrow no-break space before ?", () => {
+  const { state } = type([..."quoi", "?"], "fr");
+  assert.equal(displaySentence(state.items, "fr").join(" "), "Quoi ?");
+});
+
+test("de: a stored capital noun keeps its capital mid-sentence", () => {
+  const { state } = type([..."saft", " "], "de", {
+    items: [{ kind: "sense", id: "sns_x", text: "ich" }],
+  });
+  state.items[1].text = "Saft"; // a lemma hit stores the lemma's text
+  assert.equal(displaySentence(state.items, "de").join(" "), "Ich Saft");
+});
+
+test("⌫ empty buffer: takes the mark, then reopens the item", () => {
+  let { state } = type([..."hi", "."], "en");
+  assert.equal(displaySentence(state.items, "en").join(" "), "Hi.");
+  ({ state } = type(["Backspace"], "en", { items: state.items }));
+  assert.equal(state.items.at(-1).punct, undefined);
+  assert.equal(state.buffer, "");
+  ({ state } = type(["Backspace"], "en", { items: state.items }));
+  assert.equal(state.items.length, 0);
+  assert.equal(state.buffer, "hi");
+  ({ state } = type(["Backspace"], "en", { buffer: state.buffer }));
+  assert.equal(state.buffer, "h");
+});
+
+test("Enter commits the buffer and speaks the sentence", () => {
+  const { effects } = type([..."go", "Enter"], "en");
+  assert.deepEqual(
+    effects.map((e) => e.type),
+    ["commit", "speak"],
+  );
+});
+
+test("digits are word characters; punctuation never enters the buffer", () => {
+  const { state } = type(["3", " ", ..."hi5"], "en");
+  assert.equal(state.items[0].text, "3");
+  assert.equal(state.buffer, "hi5");
 });

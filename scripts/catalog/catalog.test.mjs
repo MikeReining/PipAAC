@@ -4,7 +4,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { parseLaunchLexiconMarkdown } from "./extract_launch_lexicon.mjs";
-import { buildCatalog, parseCoordinateMapMarkdown } from "./build_catalog.mjs";
+import {
+  buildCatalog,
+  buildDigitAliases,
+  parseCoordinateMapMarkdown,
+} from "./build_catalog.mjs";
 import { clipPayloadFromWbb, summarizeAudioResolution } from "./wbb_audio.mjs";
 import { localPathForAudioKey, r2GetArgs } from "./storage.mjs";
 import { repoRoot } from "./paths.mjs";
@@ -71,6 +75,54 @@ test("homograph senses share one utterance; only the owner label is default", ()
     assert.equal(owners.length, 1);
     assert.equal(owners[0].sense_id, owner);
   }
+});
+
+test("digit aliases 1–10 land on their Number sense, sharing its utterance (004 slice 2)", () => {
+  const lexRaw = readFileSync(join(repoRoot, "docs/product/Initial_Vocabulary_600.md"), "utf8");
+  const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8");
+  const catalog = buildCatalog(
+    parseLaunchLexiconMarkdown(lexRaw),
+    parseCoordinateMapMarkdown(mapRaw),
+  );
+  const lemmaOf = catalog.labels.filter(
+    (l) => l.kind === "lemma" && l.part_of_speech === "Number",
+  );
+  const lemmaByText = new Map(lemmaOf.map((l) => [l.normalized_text, l]));
+  for (const [digit, word] of Object.entries(
+    JSON.parse(readFileSync(join(repoRoot, "data/number_aliases.json"), "utf8")).locales.en,
+  )) {
+    const alias = catalog.labels.find((l) => l.kind === "alias" && l.text === digit);
+    assert.ok(alias, `alias label for ${digit}`);
+    const lemma = lemmaByText.get(word);
+    assert.ok(lemma, `lemma for ${word}`);
+    assert.equal(alias.sense_id, lemma.sense_id, `${digit} must sit on ${word}'s sense`);
+    assert.equal(alias.utterance_id, lemma.utterance_id, `${digit} plays ${word}'s clip`);
+    assert.equal(alias.status, "approved");
+    assert.equal(alias.default_for_text, 1);
+    assert.equal(alias.part_of_speech, "Number");
+  }
+});
+
+test("a digit alias resolving to zero or two senses fails the build", () => {
+  const lexicon = {
+    entries: [
+      { slot: 1, spokenText: "one", partOfSpeech: "Number" },
+      { slot: 2, spokenText: "Two", partOfSpeech: "Number" },
+      { slot: 3, spokenText: "two", partOfSpeech: "Number" },
+      { slot: 4, spokenText: "one", partOfSpeech: "Noun" },
+    ],
+  };
+  // zero Number senses
+  assert.throws(() =>
+    buildDigitAliases(lexicon, { locales: { en: { "9": "nine" } } }),
+  );
+  // two Number senses share the normalized lemma
+  assert.throws(() =>
+    buildDigitAliases(lexicon, { locales: { en: { "2": "two" } } }),
+  );
+  // a non-Number homograph must not count
+  const ok = buildDigitAliases(lexicon, { locales: { en: { "1": "one" } } });
+  assert.equal(ok[0].sense_id, "sns_0001");
 });
 
 test("clipPayloadFromWbb maps manifest fields", () => {

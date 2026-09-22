@@ -5,7 +5,7 @@
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
-import { keyMap } from "./shared/keyboard.mjs";
+import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
@@ -96,7 +96,9 @@ async function speakSentence() {
 function renderBar() {
   const bar = $("bar");
   bar.innerHTML = "";
-  bar.appendChild(document.createTextNode(sentence.map((s) => s.text).join(" ")));
+  // Display-only: capitalization and ¿¡/?! marks live on the items as
+  // lead/punct; item.text and spoken text are unchanged (slice 2 rule 7).
+  bar.appendChild(document.createTextNode(displaySentence(sentence, locale).join(" ")));
   if (kbText) {
     const p = document.createElement("span");
     p.className = "partial";
@@ -112,17 +114,6 @@ $("clear").addEventListener("click", () => {
   renderBar();
   renderStrip();
 });
-
-const senseByLemma = (text) =>
-  ALL(
-    db,
-    `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
-     JOIN label l ON l.sense_id = s.id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-     WHERE l.normalized_text = ?
-     ORDER BY l.default_for_text DESC`,
-    [locale, normalizeV1(text)],
-  )[0];
 
 const senseById = (senseId) =>
   ALL(
@@ -366,19 +357,36 @@ document.addEventListener("keydown", (e) => {
     if (kbOpen) closeKb();
     return;
   }
-  if (!kbOpen) return;
-  if (/^[a-z.'?]$/i.test(e.key)) kbType(e.key.toLowerCase());
-  else if (e.key === "Backspace") {
-    kbText = kbText.slice(0, -1);
-    renderBar();
-    renderStrip();
-  } else if (e.key === " ") {
+  // Hardware keys work in any mode: a letter or digit opens the keyboard
+  // and types itself. Never inside a form field, an open overlay, or a
+  // meta/ctrl/alt chord.
+  const t = e.target;
+  if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement) return;
+  if (document.querySelector(".overlay.open")) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const km = keyMap(locale, kbOrder);
+  if (e.key === "Backspace" || e.key === " " || e.key === "Enter") {
+    if (!kbOpen) return;
     e.preventDefault();
-    commitKb();
-  } else if (e.key === "Enter") {
-    commitKb();
-    closeKb();
+    kbPress(e.key);
+    return;
   }
+  if (e.key === "Dead") {
+    // a real QWERTZ/AZERTY/Spanish keyboard's dead key arrives as "Dead"
+    const dead = resolveKeymap(locale)?.dead;
+    if (dead) {
+      if (!kbOpen) openKb();
+      kbPress(dead);
+    }
+    return;
+  }
+  if (e.key.length !== 1) return;
+  const ch = e.key.toLowerCase();
+  const isDigit = ch >= "0" && ch <= "9";
+  const inMap = km ? km.some((k) => (k.kind === "char" || k.kind === "dead") && k.value === ch) : /[\p{L}\p{N}]/u.test(ch);
+  if (!inMap && !isDigit) return;
+  if (!kbOpen) openKb();
+  kbPress(e.key);
 });
 $("corner").addEventListener("click", () => {
   if (editing) {
@@ -411,10 +419,12 @@ $("anchor-groups").addEventListener("click", openGroupIndex);
    completions into the strip; space commits the word (and speaks it);
    the ⌨ anchor toggles — there is no Done key. */
 let kbOpen = false;
-let kbText = "";
+let kbText = ""; // the buffer — the word in progress
 let kbBuilt = false;
 let kbOrder = "standard"; // slice 5 wires this to learner_profile.keyboard_order
 let kbPendingAccent = null; // dead key latched, waiting for its vowel
+let kbLead = null; // opening mark (¿ ¡) waiting for the next committed item
+let kbDeadEl = null; // the dead key's element, for the latched style
 
 /** Grid-area view swap: board | groupIndex | group render into
  *  #groupgrid, keyboard into #kb — same physical space, strip and bar
@@ -509,14 +519,10 @@ function kbCell(k) {
   if (k.kind === "char") {
     el.className = "kb-key";
     cap.textContent = k.value;
-    el.addEventListener("click", () => kbType(k.value));
   } else if (k.kind === "dead") {
     el.className = "kb-key kb-util";
     cap.textContent = k.value;
-    el.addEventListener("click", () => {
-      kbPendingAccent = kbPendingAccent ? null : k.value;
-      el.classList.toggle("latched", kbPendingAccent !== null);
-    });
+    kbDeadEl = el;
   } else if (k.kind === "space") {
     el.className = "kb-key kb-util kb-spacekey";
     cap.textContent = "␣";
@@ -524,39 +530,76 @@ function kbCell(k) {
     sub.className = "sub";
     sub.textContent = "space";
     el.appendChild(sub);
-    el.addEventListener("click", commitKb);
   } else {
     // backspace
     el.className = "kb-key kb-util";
     cap.textContent = "⌫";
-    el.addEventListener("click", () => {
-      kbText = kbText.slice(0, -1);
-      renderBar();
-      renderStrip();
-    });
   }
+  el.addEventListener("click", () => kbPress(k.value));
   return el;
 }
 
-function kbType(ch) {
-  kbText += ch;
+/** One keystroke, from screen or hardware: the pure reducer updates
+ *  buffer/marks/items, then this does the side effects — resolve each
+ *  committed word, speak it, log it, re-render. */
+function kbPress(key) {
+  const res = applyKey(
+    { buffer: kbText, pendingAccent: kbPendingAccent, lead: kbLead, items: sentence },
+    key,
+    locale,
+  );
+  kbText = res.state.buffer;
+  kbPendingAccent = res.state.pendingAccent;
+  kbLead = res.state.lead;
+  sentence.splice(0, sentence.length, ...res.state.items);
+  for (const e of res.effects) {
+    if (e.type === "commit") commitKbItem(e.index);
+    else if (e.type === "speak") speakSentence();
+  }
+  if (kbDeadEl) kbDeadEl.classList.toggle("latched", kbPendingAccent !== null);
   renderBar();
   renderStrip();
 }
 
-/** Commit the typed word: catalog hit speaks with the bundled voice, a
- *  non-word speaks via device TTS (schema §7.3). Typing never speaks. */
-function commitKb() {
-  const t = kbText.trim();
-  kbText = "";
-  renderBar();
-  if (!t) {
-    renderStrip();
-    return;
+/**
+ * Commit resolution (slice 2 rule 4), on the normalized buffer in the
+ * profile locale: an approved label (lemma or alias) → an exact entity
+ * spoken_name → the typed string through device TTS. An alias hit keeps
+ * the typed text in the bar, so `3` stays `3` while the *three* clip
+ * plays. Never replaces what was typed with a guess.
+ */
+function resolveTyped(text) {
+  const norm = normalizeV1(text);
+  const hit = ALL(
+    db,
+    `SELECT s.id, l.text AS label, l.kind
+     FROM label l JOIN sense s ON s.id = l.sense_id
+     WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
+     ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC`,
+    [norm, locale],
+  )[0];
+  if (hit) return { kind: "sense", id: hit.id, display: hit.kind === "lemma" ? hit.label : text };
+  const ent = ALL(db, "SELECT id, spoken_name FROM personal_entity").find(
+    (e) => normalizeV1(e.spoken_name) === norm,
+  );
+  if (ent) return { kind: "entity", id: ent.id, display: ent.spoken_name };
+  return { kind: "typed", id: null, display: text };
+}
+
+/** Replace the placeholder item applyKey committed with the resolved
+ *  item, then speak/log it — the same side effects as a grid tap. */
+function commitKbItem(index) {
+  const raw = sentence[index];
+  const hit = resolveTyped(raw.text);
+  const item = { kind: hit.kind, id: hit.id, text: hit.display };
+  if (raw.punct) item.punct = raw.punct;
+  if (raw.lead) item.lead = raw.lead;
+  sentence[index] = item;
+  speakItem(item);
+  if (item.id) {
+    logSelection(db, item.kind, item.id);
+    showGroupHint(item.kind, item.id);
   }
-  const hit = senseByLemma(t);
-  if (hit) tap(hit.label, "sense", hit.id, { hint: true });
-  else tap(t, "typed", null, { hint: true });
 }
 
 /** Prefix completions for the strip while a word is in progress. */
@@ -987,4 +1030,18 @@ renderStrip();
 // Console handle for works tests and founder debugging — read-only access
 // to the live db and resolved profile. Product truth still flows through
 // the functions above; this exposes, it does not own.
-window.pip = { db, catalog, locale };
+window.pip = {
+  db,
+  catalog,
+  locale,
+  audio,
+  get sentence() {
+    return sentence.map((i) => ({ ...i }));
+  },
+  get kbText() {
+    return kbText;
+  },
+  get kbOpen() {
+    return kbOpen;
+  },
+};
