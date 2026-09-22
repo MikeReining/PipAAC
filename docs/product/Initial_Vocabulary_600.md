@@ -24,8 +24,8 @@ In human communication, vocabulary usage follows a steep Pareto distribution:
 
 | Layer / Tier | Word Count | % of Spoken Daily Communication | Engineering Delivery Mode | Visual Archetype |
 | :--- | :---: | :---: | :--- | :--- |
-| **Tier 1: Root Core Grid** | **81 words** | ~75% – 80% | Pre-generated, bundled locally in app, permanent motor coordinates | Stick Figure (Verbs/Pronouns) + Diagrammatic (Prepositions/Grammar) |
-| **Tier 2: Primary Fringe Folders** | **575 words** | ~10% – 15% | Pre-generated, bundled locally, 1-tap category drill-down & predictive strip | Illustrated Object (Inanimate Nouns/Animals) + Stick Figure (Actions/States) |
+| **Tier 1: Root Core Grid** | **83 words** | ~75% – 80% | Pre-generated, bundled locally in app, permanent motor coordinates | Stick Figure (Verbs/Pronouns) + Diagrammatic (Prepositions/Grammar) |
+| **Tier 2: Primary Fringe Folders** | **573 words** | ~10% – 15% | Pre-generated, bundled locally, 1-tap category drill-down & predictive strip | Illustrated Object (Inanimate Nouns/Animals) + Stick Figure (Actions/States) |
 | **Total Launch MVP Bundle** | **656 words** | **~90% – 95%** | **100% Offline in iOS App Bundle (0 ms cold start, zero cloud latency)** | Clean-room in-house vector/asset set |
 | *Tier 3: Secondary Fringe (Pipeline)* | *1,500 – 3,000* | *~5%* | Automated image generation pipeline with locked prompt templates | Automated Illustrated Object pipeline |
 | *Tier 4: Deep Personal Entities* | *Infinite* | *< 1%* | Caregiver camera roll / local photo picker fallback | Authentic personal photos & custom tiles |
@@ -47,9 +47,15 @@ Every word receives an immutable color assignment across the core grid, category
 
 ---
 
-## 2. Tier 1: Root Core Grid (81 Words)
+## 2. Tier 1: Root Core Grid (83 Words)
 
 The unshakeable foundation of daily generative communication. Derived from the convergence of the **Banajee 40**, **Project Core 36**, and **MacArthur-Bates CDI** core lists.
+
+**Amended 2026-09-22 (final grid ruling).** `hurt` (#172, was Body, Health &
+Hygiene) and `sad` (#179, was Feelings) are promoted to Root Core so the
+default board can report pain and distress without navigation — rule 0 in
+`docs/product/Core_Grid_Membership.md` §2. They keep their original row
+numbers, so sense ids and bundled audio clips are unchanged.
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Sub-Category | Clinical Source | Visual Prompt Description |
 | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -134,10 +140,12 @@ The unshakeable foundation of daily generative communication. Derived from the c
 | 79 | **because** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.44; Fry top-500 | Arrow pointing back to a reason star |
 | 80 | **have** | Verb | Green | Stick Figure | Core Verbs | AoA 3.72; Fry top-50 | Stick figure holding object firmly in arms |
 | 81 | **at** | Preposition | Pink | Diagrammatic | Core Prepositions | AoA 4.04; Fry top-50 | Pointer dot landing on a target point |
+| 172 | **hurt** | Adjective | Red | Stick Figure | Core Regulators | CDI; ARASAAC; AoA 4.0 | Stick figure holding painful bruised elbow |
+| 179 | **sad** | Adjective | Blue | Stick Figure | Core Descriptors | CDI; ARASAAC; AoA 3.24 | Stick figure with downcast posture and single tear |
 
 ---
 
-## 3. Tier 2: Primary Fringe Categories (575 Words)
+## 3. Tier 2: Primary Fringe Categories (573 Words)
 
 ### 3.1 Food & Drink (55 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Nutrition taxonomy. Art archetype: Illustrated Object.*
@@ -200,7 +208,7 @@ The unshakeable foundation of daily generative communication. Derived from the c
 | 135 | **broccoli** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Vibrant green broccoli florets |
 | 136 | **corn** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Golden cob of sweet corn with husk |
 
-### 3.2 Body, Health & Hygiene (42 words)
+### 3.2 Body, Health & Hygiene (41 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Health taxonomy. Art archetype: Stick Figure (somatic/roles) & Illustrated Object (tools/organs).*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -240,7 +248,6 @@ The unshakeable foundation of daily generative communication. Derived from the c
 | 169 | **comb** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Clean fine-tooth comb running through hair |
 | 170 | **tissue** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Cardboard tissue box with soft tissue pulled |
 | 171 | **bandage** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Sterile adhesive strip with protective pad |
-| 172 | **hurt** | Adjective | Red | Stick Figure | CDI; ARASAAC | Stick figure holding painful bruised elbow |
 | 173 | **sick** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure lying down with forehead thermometer |
 | 174 | **pain** | Noun | Red | Diagrammatic | CDI; ARASAAC | Red radiating zig-zag starburst pain marker |
 | 175 | **fever** | Noun | Red | Illustrated Object | CDI; ARASAAC | Mercury glass thermometer with red temperature bar |
@@ -248,12 +255,11 @@ The unshakeable foundation of daily generative communication. Derived from the c
 | 177 | **medicine** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Liquid medicine bottle with measuring spoon |
 | 178 | **dentist** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Stick figure examining teeth with small mirror |
 
-### 3.3 Feelings, Emotions & Sensory States (35 words)
+### 3.3 Feelings, Emotions & Sensory States (34 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Emotional States. Art archetype: Stick Figure with Blue torso & somatic expression.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
 | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
-| 179 | **sad** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure with downcast posture and single tear |
 | 180 | **mad** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure with stomping feet and clenched fists |
 | 181 | **angry** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure with furrowed brow and red flushed aura |
 | 182 | **scared** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure trembling with hands raised defensively |

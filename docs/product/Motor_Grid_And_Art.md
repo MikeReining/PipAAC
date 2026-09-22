@@ -43,9 +43,9 @@ Named incumbents that must not be transcribed: AssistiveWare Proloquo / Crescend
 
 **DECIDED 2026-09-21** still holds for lexicon size: the relational graph keeps about 200 high-frequency generative anchors. The mentor range of about 50 to 100 words is the first primary set that receives motor-grid coordinates, not a cut in the graph.
 
-The initial compiled 656-word launch lexicon (81 Tier 1 Root Core + 575 Tier 2 Primary Fringe across 16 clinical categories) is cataloged in `docs/product/Initial_Vocabulary_600.md`.
+The initial compiled 656-word launch lexicon (83 Tier 1 Root Core + 573 Tier 2 Primary Fringe across 16 clinical categories) is cataloged in `docs/product/Initial_Vocabulary_600.md`.
 
-The coordinate pass is written down as `docs/product/Core_Coordinate_Map.md`. A table extracted from another app is not an acceptable source, even if the words themselves came from a paper.
+The coordinate pass is written down as `docs/product/Core_Coordinate_Map.md`; the rule that decides which words earn `grid60` cells is `docs/product/Core_Grid_Membership.md` §2. A table extracted from another app is not an acceptable source, even if the words themselves came from a paper.
 
 ### Two stability rules
 

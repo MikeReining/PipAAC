@@ -1,10 +1,11 @@
 /**
  * Phase 002 slice 1 Works Test — the coordinate table.
  *
- * Proves: grid90 carries each of the 81 root-core senses exactly once;
- * grid60 carries the 60 senses the map doc lists; sub-zone open and an
- * empty suggestion do not move the table (deep compare); the schema
- * rejects what the bans forbid.
+ * Proves: grid90 carries each of the 83 root-core senses exactly once;
+ * grid60 carries the 60 senses the map doc lists and obeys the membership
+ * rule (docs/product/Core_Grid_Membership.md §2 — UC36 + rule-0 gates);
+ * sub-zone open and an empty suggestion do not move the table (deep
+ * compare); the schema rejects what the bans forbid.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -27,21 +28,33 @@ const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
 
 const OFF_GRID60 = [
-  "mine", "look", "make", "open", "turn", "read", "feel", "tell", "think",
-  "find", "work", "away", "under", "over", "same", "different", "some",
-  "not", "where", "how", "when",
+  "mine", "we", "they", "see", "have", "read", "feel", "tell", "think",
+  "find", "work", "wait", "away", "under", "over", "same", "different",
+  "but", "or", "because", "why", "how", "when",
 ];
+
+/** Project Core Universal Core 36; `finished` is our `all done` cell. */
+const UC36 = [
+  "all", "can", "different", "do", "all done", "get", "go", "good", "he",
+  "help", "here", "I", "in", "it", "like", "look", "make", "more", "not",
+  "on", "open", "put", "same", "she", "some", "stop", "that", "turn", "up",
+  "want", "what", "when", "where", "who", "why", "you",
+];
+/** Named rule-1 waivers — Core_Grid_Membership.md §6. */
+const UC36_WAIVERS = ["same", "different", "when", "why"];
+/** Rule 0: the board can report that something is wrong without navigating. */
+const SELF_REPORT = ["hurt", "sad", "help", "stop", "no"];
 
 /** grid60 vertical sectors: column index -> the word set it must hold. */
 const SECTORS = {
   pronouns: {
     cols: [0, 1],
-    words: ["I", "you", "it", "me", "my", "he", "she", "we", "they", "this", "that", "who"],
+    words: ["I", "you", "me", "my", "he", "she", "this", "that", "it", "who", "what", "where"],
   },
   verbs: {
     cols: [2, 3, 4],
-    words: ["want", "like", "go", "come", "get", "do", "see", "put", "take",
-      "give", "help", "play", "eat", "drink", "can", "need", "have", "wait"],
+    words: ["want", "like", "go", "need", "look", "come", "get", "make", "do",
+      "put", "take", "give", "open", "turn", "play", "eat", "drink", "can"],
   },
   spatial: {
     cols: [5, 6],
@@ -49,12 +62,12 @@ const SECTORS = {
   },
   descriptors: {
     cols: [7, 8],
-    words: ["more", "all done", "big", "little", "good", "bad", "happy", "all",
-      "and", "but", "or", "because"],
+    words: ["more", "all done", "not", "and", "big", "little", "good", "bad",
+      "happy", "sad", "all", "some"],
   },
   edge: {
     cols: [9],
-    words: ["no", "yes", "stop", "please", "what", "why"],
+    words: ["yes", "no", "stop", "help", "hurt", "please"],
   },
 };
 
@@ -64,14 +77,12 @@ function openDb() {
   return db;
 }
 
-test("catalog generation: grid60 = 60 cells, grid90 = 81 cells + anchors", () => {
+test("catalog generation: grid60 = 60 cells, grid90 = 83 cells + anchors", () => {
   const g60 = catalog.coreCells.filter((c) => c.layout === "grid60");
   const g90 = catalog.coreCells.filter((c) => c.layout === "grid90");
   assert.equal(g60.length, 60);
-  assert.equal(g90.length, 81);
+  assert.equal(g90.length, 83);
   assert.deepEqual(catalog.layouts.grid90.anchors, [
-    { slot: 81, kind: "reserved" },
-    { slot: 82, kind: "reserved" },
     { slot: 83, kind: "reserved" },
     { slot: 84, kind: "reserved" },
     { slot: 85, kind: "reserved" },
@@ -80,7 +91,7 @@ test("catalog generation: grid60 = 60 cells, grid90 = 81 cells + anchors", () =>
     { slot: 88, kind: "reserved" },
     { slot: 89, kind: "groups" },
   ]);
-  // Every cell maps to a root-core sense; grid60 holds none of the 21 off-grid words.
+  // Every cell maps to a root-core sense; grid60 holds none of the 23 off-grid words.
   const senseById = new Map(catalog.senses.map((s) => [s.id, s]));
   const wordOf = (cell) =>
     catalog.labels.find((l) => l.sense_id === cell.sense_id && l.kind === "lemma").text;
@@ -93,6 +104,20 @@ test("catalog generation: grid60 = 60 cells, grid90 = 81 cells + anchors", () =>
   for (const w of OFF_GRID60) assert.ok(g90Words.has(w), `${w} must be in grid90`);
 });
 
+test("grid60 membership obeys the selection rule: UC36 and self-report gates", () => {
+  const wordOf = (cell) =>
+    catalog.labels.find((l) => l.sense_id === cell.sense_id && l.kind === "lemma").text;
+  const g60Words = new Set(catalog.coreCells.filter((c) => c.layout === "grid60").map(wordOf));
+  for (const w of UC36) {
+    if (UC36_WAIVERS.includes(w)) {
+      assert.ok(!g60Words.has(w), `${w} is waived — drop the waiver if it earns a cell`);
+    } else {
+      assert.ok(g60Words.has(w), `UC36 word ${w} needs a grid60 cell or a named waiver`);
+    }
+  }
+  for (const w of SELF_REPORT) assert.ok(g60Words.has(w), `rule 0: ${w} must be a grid60 cell`);
+});
+
 test("imported coordinate table matches the generated rows exactly", () => {
   const db = openDb();
   const rows = snapshotCoreCells(db);
@@ -100,11 +125,11 @@ test("imported coordinate table matches the generated rows exactly", () => {
     (a, b) => a.layout.localeCompare(b.layout) || a.slot_index - a.slot_index,
   );
   assert.deepEqual(rows, expected);
-  assert.equal(rows.filter((r) => r.layout === "grid90").length, 81);
+  assert.equal(rows.filter((r) => r.layout === "grid90").length, 83);
   assert.equal(rows.filter((r) => r.layout === "grid60").length, 60);
   // each root-core sense appears exactly once in grid90
   const g90SenseIds = rows.filter((r) => r.layout === "grid90").map((r) => r.sense_id);
-  assert.equal(new Set(g90SenseIds).size, 81);
+  assert.equal(new Set(g90SenseIds).size, 83);
   const rootCoreIds = catalog.senses.filter((s) => s.tier === "root_core").map((s) => s.id);
   assert.deepEqual(new Set(g90SenseIds), new Set(rootCoreIds));
 });
@@ -130,7 +155,7 @@ test("board read returns all 60 grid60 cells with label and color", () => {
     assert.ok(cell.slot_index >= 0 && cell.slot_index < 60);
   }
   assert.equal(board[0].label, "I");
-  assert.equal(board[59].label, "why");
+  assert.equal(board[59].label, "please");
 });
 
 test("grid60 lays out vertical syntactic sectors, left to right", () => {

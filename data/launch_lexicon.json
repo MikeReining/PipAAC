@@ -1543,12 +1543,12 @@
     },
     {
       "slot": 172,
-      "tier": 2,
+      "tier": 1,
       "spokenText": "hurt",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Red",
       "visualStyle": "Stick Figure",
-      "category": "Body, Health & Hygiene"
+      "category": null
     },
     {
       "slot": 173,
@@ -1606,12 +1606,12 @@
     },
     {
       "slot": 179,
-      "tier": 2,
+      "tier": 1,
       "spokenText": "sad",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Stick Figure",
-      "category": "Feelings, Emotions & Sensory States"
+      "category": null
     },
     {
       "slot": 180,

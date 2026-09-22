@@ -8,14 +8,14 @@ import { clipPayloadFromWbb, summarizeAudioResolution } from "./wbb_audio.mjs";
 import { localPathForAudioKey, r2GetArgs } from "./storage.mjs";
 import { repoRoot } from "./paths.mjs";
 
-test("parseLaunchLexiconMarkdown extracts 599 tier 1+2 words", () => {
+test("parseLaunchLexiconMarkdown extracts 656 tier 1+2 words", () => {
   const raw = readFileSync(join(repoRoot, "docs/product/Initial_Vocabulary_600.md"), "utf8");
   const parsed = parseLaunchLexiconMarkdown(raw);
-  assert.equal(parsed.entries.length, 599);
+  assert.equal(parsed.entries.length, 656);
   assert.equal(parsed.entries[0].spokenText, "I");
   assert.equal(parsed.entries[0].tier, 1);
   const tier1 = parsed.entries.filter((e) => e.tier === 1);
-  assert.equal(tier1.length, 75);
+  assert.equal(tier1.length, 83);
 });
 
 test("clipPayloadFromWbb maps manifest fields", () => {

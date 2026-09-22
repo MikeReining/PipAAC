@@ -17,14 +17,6 @@
       "rows": 9,
       "anchors": [
         {
-          "slot": 81,
-          "kind": "reserved"
-        },
-        {
-          "slot": 82,
-          "kind": "reserved"
-        },
-        {
           "slot": 83,
           "kind": "reserved"
         },
@@ -1257,8 +1249,8 @@
       "id": "sns_0172",
       "fitzgerald_role": "Red",
       "art_archetype": "Stick Figure",
-      "tier": "primary_fringe",
-      "category": "Body, Health & Hygiene"
+      "tier": "root_core",
+      "category": null
     },
     {
       "id": "sns_0173",
@@ -1306,8 +1298,8 @@
       "id": "sns_0179",
       "fitzgerald_role": "Blue",
       "art_archetype": "Stick Figure",
-      "tier": "primary_fringe",
-      "category": "Feelings, Emotions & Sensory States"
+      "tier": "root_core",
+      "category": null
     },
     {
       "id": "sns_0180",
@@ -24405,37 +24397,37 @@
     {
       "id": "cel_grid60_009",
       "layout": "grid60",
-      "sense_id": "sns_0072",
+      "sense_id": "sns_0073",
       "slot_index": 9
     },
     {
       "id": "cel_grid60_010",
       "layout": "grid60",
-      "sense_id": "sns_0008",
+      "sense_id": "sns_0003",
       "slot_index": 10
     },
     {
       "id": "cel_grid60_011",
       "layout": "grid60",
-      "sense_id": "sns_0003",
+      "sense_id": "sns_0004",
       "slot_index": 11
     },
     {
       "id": "cel_grid60_012",
       "layout": "grid60",
-      "sense_id": "sns_0016",
+      "sense_id": "sns_0034",
       "slot_index": 12
     },
     {
       "id": "cel_grid60_013",
       "layout": "grid60",
-      "sense_id": "sns_0017",
+      "sense_id": "sns_0021",
       "slot_index": 13
     },
     {
       "id": "cel_grid60_014",
       "layout": "grid60",
-      "sense_id": "sns_0019",
+      "sense_id": "sns_0016",
       "slot_index": 14
     },
     {
@@ -24453,49 +24445,49 @@
     {
       "id": "cel_grid60_017",
       "layout": "grid60",
-      "sense_id": "sns_0057",
+      "sense_id": "sns_0074",
       "slot_index": 17
     },
     {
       "id": "cel_grid60_018",
       "layout": "grid60",
-      "sense_id": "sns_0058",
+      "sense_id": "sns_0076",
       "slot_index": 18
     },
     {
       "id": "cel_grid60_019",
       "layout": "grid60",
-      "sense_id": "sns_0073",
+      "sense_id": "sns_0072",
       "slot_index": 19
     },
     {
       "id": "cel_grid60_020",
       "layout": "grid60",
-      "sense_id": "sns_0004",
+      "sense_id": "sns_0006",
       "slot_index": 20
     },
     {
       "id": "cel_grid60_021",
       "layout": "grid60",
-      "sense_id": "sns_0006",
+      "sense_id": "sns_0007",
       "slot_index": 21
     },
     {
       "id": "cel_grid60_022",
       "layout": "grid60",
-      "sense_id": "sns_0020",
+      "sense_id": "sns_0017",
       "slot_index": 22
     },
     {
       "id": "cel_grid60_023",
       "layout": "grid60",
-      "sense_id": "sns_0022",
+      "sense_id": "sns_0018",
       "slot_index": 23
     },
     {
       "id": "cel_grid60_024",
       "layout": "grid60",
-      "sense_id": "sns_0023",
+      "sense_id": "sns_0019",
       "slot_index": 24
     },
     {
@@ -24513,13 +24505,13 @@
     {
       "id": "cel_grid60_027",
       "layout": "grid60",
-      "sense_id": "sns_0059",
+      "sense_id": "sns_0057",
       "slot_index": 27
     },
     {
       "id": "cel_grid60_028",
       "layout": "grid60",
-      "sense_id": "sns_0060",
+      "sense_id": "sns_0058",
       "slot_index": 28
     },
     {
@@ -24531,31 +24523,31 @@
     {
       "id": "cel_grid60_030",
       "layout": "grid60",
-      "sense_id": "sns_0007",
+      "sense_id": "sns_0012",
       "slot_index": 30
     },
     {
       "id": "cel_grid60_031",
       "layout": "grid60",
-      "sense_id": "sns_0009",
+      "sense_id": "sns_0011",
       "slot_index": 31
     },
     {
       "id": "cel_grid60_032",
       "layout": "grid60",
-      "sense_id": "sns_0024",
+      "sense_id": "sns_0022",
       "slot_index": 32
     },
     {
       "id": "cel_grid60_033",
       "layout": "grid60",
-      "sense_id": "sns_0025",
+      "sense_id": "sns_0023",
       "slot_index": 33
     },
     {
       "id": "cel_grid60_034",
       "layout": "grid60",
-      "sense_id": "sns_0027",
+      "sense_id": "sns_0024",
       "slot_index": 34
     },
     {
@@ -24573,49 +24565,49 @@
     {
       "id": "cel_grid60_037",
       "layout": "grid60",
-      "sense_id": "sns_0061",
+      "sense_id": "sns_0059",
       "slot_index": 37
     },
     {
       "id": "cel_grid60_038",
       "layout": "grid60",
-      "sense_id": "sns_0065",
+      "sense_id": "sns_0060",
       "slot_index": 38
     },
     {
       "id": "cel_grid60_039",
       "layout": "grid60",
-      "sense_id": "sns_0075",
+      "sense_id": "sns_0025",
       "slot_index": 39
     },
     {
       "id": "cel_grid60_040",
       "layout": "grid60",
-      "sense_id": "sns_0010",
+      "sense_id": "sns_0008",
       "slot_index": 40
     },
     {
       "id": "cel_grid60_041",
       "layout": "grid60",
-      "sense_id": "sns_0012",
+      "sense_id": "sns_0068",
       "slot_index": 41
     },
     {
       "id": "cel_grid60_042",
       "layout": "grid60",
-      "sense_id": "sns_0028",
+      "sense_id": "sns_0030",
       "slot_index": 42
     },
     {
       "id": "cel_grid60_043",
       "layout": "grid60",
-      "sense_id": "sns_0029",
+      "sense_id": "sns_0031",
       "slot_index": 43
     },
     {
       "id": "cel_grid60_044",
       "layout": "grid60",
-      "sense_id": "sns_0033",
+      "sense_id": "sns_0027",
       "slot_index": 44
     },
     {
@@ -24633,49 +24625,49 @@
     {
       "id": "cel_grid60_047",
       "layout": "grid60",
-      "sense_id": "sns_0076",
+      "sense_id": "sns_0061",
       "slot_index": 47
     },
     {
       "id": "cel_grid60_048",
       "layout": "grid60",
-      "sense_id": "sns_0077",
+      "sense_id": "sns_0179",
       "slot_index": 48
     },
     {
       "id": "cel_grid60_049",
       "layout": "grid60",
-      "sense_id": "sns_0066",
+      "sense_id": "sns_0172",
       "slot_index": 49
     },
     {
       "id": "cel_grid60_050",
       "layout": "grid60",
-      "sense_id": "sns_0011",
+      "sense_id": "sns_0066",
       "slot_index": 50
     },
     {
       "id": "cel_grid60_051",
       "layout": "grid60",
-      "sense_id": "sns_0068",
+      "sense_id": "sns_0067",
       "slot_index": 51
     },
     {
       "id": "cel_grid60_052",
       "layout": "grid60",
-      "sense_id": "sns_0034",
+      "sense_id": "sns_0028",
       "slot_index": 52
     },
     {
       "id": "cel_grid60_053",
       "layout": "grid60",
-      "sense_id": "sns_0080",
+      "sense_id": "sns_0029",
       "slot_index": 53
     },
     {
       "id": "cel_grid60_054",
       "layout": "grid60",
-      "sense_id": "sns_0040",
+      "sense_id": "sns_0033",
       "slot_index": 54
     },
     {
@@ -24693,19 +24685,19 @@
     {
       "id": "cel_grid60_057",
       "layout": "grid60",
-      "sense_id": "sns_0078",
+      "sense_id": "sns_0065",
       "slot_index": 57
     },
     {
       "id": "cel_grid60_058",
       "layout": "grid60",
-      "sense_id": "sns_0079",
+      "sense_id": "sns_0064",
       "slot_index": 58
     },
     {
       "id": "cel_grid60_059",
       "layout": "grid60",
-      "sense_id": "sns_0069",
+      "sense_id": "sns_0075",
       "slot_index": 59
     },
     {
@@ -25095,104 +25087,116 @@
     {
       "id": "cel_grid90_064",
       "layout": "grid90",
-      "sense_id": "sns_0062",
+      "sense_id": "sns_0179",
       "slot_index": 64
     },
     {
       "id": "cel_grid90_065",
       "layout": "grid90",
-      "sense_id": "sns_0063",
+      "sense_id": "sns_0062",
       "slot_index": 65
     },
     {
       "id": "cel_grid90_066",
       "layout": "grid90",
-      "sense_id": "sns_0064",
+      "sense_id": "sns_0063",
       "slot_index": 66
     },
     {
       "id": "cel_grid90_067",
       "layout": "grid90",
-      "sense_id": "sns_0065",
+      "sense_id": "sns_0064",
       "slot_index": 67
     },
     {
       "id": "cel_grid90_068",
       "layout": "grid90",
-      "sense_id": "sns_0076",
+      "sense_id": "sns_0065",
       "slot_index": 68
     },
     {
       "id": "cel_grid90_069",
       "layout": "grid90",
-      "sense_id": "sns_0077",
+      "sense_id": "sns_0076",
       "slot_index": 69
     },
     {
       "id": "cel_grid90_070",
       "layout": "grid90",
-      "sense_id": "sns_0078",
+      "sense_id": "sns_0077",
       "slot_index": 70
     },
     {
       "id": "cel_grid90_071",
       "layout": "grid90",
-      "sense_id": "sns_0079",
+      "sense_id": "sns_0078",
       "slot_index": 71
     },
     {
       "id": "cel_grid90_072",
       "layout": "grid90",
-      "sense_id": "sns_0066",
+      "sense_id": "sns_0079",
       "slot_index": 72
     },
     {
       "id": "cel_grid90_073",
       "layout": "grid90",
-      "sense_id": "sns_0067",
+      "sense_id": "sns_0066",
       "slot_index": 73
     },
     {
       "id": "cel_grid90_074",
       "layout": "grid90",
-      "sense_id": "sns_0069",
+      "sense_id": "sns_0067",
       "slot_index": 74
     },
     {
       "id": "cel_grid90_075",
       "layout": "grid90",
-      "sense_id": "sns_0070",
+      "sense_id": "sns_0069",
       "slot_index": 75
     },
     {
       "id": "cel_grid90_076",
       "layout": "grid90",
-      "sense_id": "sns_0071",
+      "sense_id": "sns_0070",
       "slot_index": 76
     },
     {
       "id": "cel_grid90_077",
       "layout": "grid90",
-      "sense_id": "sns_0072",
+      "sense_id": "sns_0071",
       "slot_index": 77
     },
     {
       "id": "cel_grid90_078",
       "layout": "grid90",
-      "sense_id": "sns_0074",
+      "sense_id": "sns_0072",
       "slot_index": 78
     },
     {
       "id": "cel_grid90_079",
       "layout": "grid90",
-      "sense_id": "sns_0073",
+      "sense_id": "sns_0074",
       "slot_index": 79
     },
     {
       "id": "cel_grid90_080",
       "layout": "grid90",
-      "sense_id": "sns_0075",
+      "sense_id": "sns_0073",
       "slot_index": 80
+    },
+    {
+      "id": "cel_grid90_081",
+      "layout": "grid90",
+      "sense_id": "sns_0075",
+      "slot_index": 81
+    },
+    {
+      "id": "cel_grid90_082",
+      "layout": "grid90",
+      "sense_id": "sns_0172",
+      "slot_index": 82
     }
   ]
 }

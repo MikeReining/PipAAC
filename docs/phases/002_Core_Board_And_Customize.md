@@ -63,7 +63,7 @@ Truth owner: `docs/product/Core_Coordinate_Map.md` (assignments), `docs/product/
 
 Lie-prone layer: a renderer that stores a second copy of positions and reports the canonical map as unchanged.
 
-Works Test: Load the coordinate table. `grid90` contains each of the 81 root-core ids exactly once; `grid60` contains the 60 listed ids exactly once. Run the operations a later slice will be tempted to use (open a placeholder sub-zone, apply an empty suggestion). Deep-compare the table to the snapshot taken before those operations.
+Works Test: Load the coordinate table. `grid90` contains each of the 83 root-core ids exactly once; `grid60` contains the 60 listed ids exactly once. Run the operations a later slice will be tempted to use (open a placeholder sub-zone, apply an empty suggestion). Deep-compare the table to the snapshot taken before those operations.
 
 Proof command: `scripts/test.sh` on the test file this slice adds.
 
@@ -75,7 +75,7 @@ Done when: the compare passes, and a person can read the 60 words on the board i
 
 Goal: On the same iPad, an adult adds one personal entity — name, photo, save. The zone it was added from (or My Words) shows Cooper, and closing a sub-zone restores the same core cells. No account and no network. No clipart.
 
-Out of scope: the other 15 categories, the other 575 fringe words, photo or sentence classification, second device, QR pairing, Cloudflare, illustrations.
+Out of scope: the other 15 categories, the other 573 fringe words, photo or sentence classification, second device, QR pairing, Cloudflare, illustrations.
 
 Truth owner: `docs/product/Personal_Entities.md`
 
@@ -110,7 +110,7 @@ Done when: the compare and the candidate assertion pass, and a person can see Co
 ## Out of scope
 
 The illustrated launch library. **DECIDED 2026-09-22, amended same day.** Do
-not draw the 656 words until the slices pass — but the 575 fringe records
+not draw the 656 words until the slices pass — but the 573 fringe records
 *are* loaded on-device as labels (founder ruling: empty zones are a broken
 first-run experience; the gate was on illustrations, which labels don't
 need). The catalog in `docs/product/Initial_Vocabulary_600.md` remains the
