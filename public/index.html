@@ -85,23 +85,24 @@
         color: #a39c8a;
       }
       .pred.ghost .swatch { background: transparent; }
-      /* Utility anchors: one column each, always visible. */
+      /* Utility anchors: one column each, always visible. Same anatomy as
+         .pred — glyph left, label right — adapted to a 1-column tile. */
       .anchor {
         border-radius: 12px;
         border: 3px solid #5b5348;
         background: #e8e3d6;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 2px;
+        gap: 6px;
         font-weight: 700;
         font-size: clamp(10px, 1.7vmin, 14px);
         color: #3a352c;
         overflow: hidden;
-        padding: 0;
+        padding: 0 4px;
       }
-      .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; }
+      .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; flex: none; }
+      .anchor span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #grid { flex: 1; display: grid; gap: var(--gap); }
       /* Keyboard replaces the grid in place — same 10×6 geometry, same
          physical positions. Never a modal; the strip and bar stay put. */
@@ -236,11 +237,11 @@
     <div id="strip">
       <!-- 4 prediction slots (2 cols each) are rendered by board.js;
            the two utility anchors are permanent markup. -->
-      <button class="anchor" id="anchor-kb" title="Keyboard">
-        <span class="glyph">⌨</span><span>Keyboard</span>
-      </button>
       <button class="anchor" id="anchor-groups" title="Routines &amp; groups">
         <span class="glyph">🌅</span><span>Groups</span>
+      </button>
+      <button class="anchor" id="anchor-kb" title="Keyboard">
+        <span class="glyph">⌨</span><span>Keyboard</span>
       </button>
     </div>
     <div id="grid"></div>

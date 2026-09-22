@@ -171,7 +171,7 @@ function ghostCard() {
 async function renderStrip() {
   const strip = $("strip");
   strip.querySelectorAll(".pred").forEach((n) => n.remove());
-  const anchorKb = $("anchor-kb");
+  const firstAnchor = $("anchor-groups");
   let cards;
   if (kbText) {
     // mid-word: the strip switches from continuations to completions
@@ -205,7 +205,7 @@ async function renderStrip() {
   }
   for (let i = 0; i < 4; i++) {
     const el = cards[i] ? await predCard(cards[i]) : ghostCard();
-    strip.insertBefore(el, anchorKb);
+    strip.insertBefore(el, firstAnchor);
   }
 }
 
