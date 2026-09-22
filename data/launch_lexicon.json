@@ -679,6 +679,60 @@
     },
     {
       "slot": 76,
+      "tier": 1,
+      "spokenText": "and",
+      "partOfSpeech": "Conjunction",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
+    },
+    {
+      "slot": 77,
+      "tier": 1,
+      "spokenText": "but",
+      "partOfSpeech": "Conjunction",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
+    },
+    {
+      "slot": 78,
+      "tier": 1,
+      "spokenText": "or",
+      "partOfSpeech": "Conjunction",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
+    },
+    {
+      "slot": 79,
+      "tier": 1,
+      "spokenText": "because",
+      "partOfSpeech": "Conjunction",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
+    },
+    {
+      "slot": 80,
+      "tier": 1,
+      "spokenText": "have",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": null
+    },
+    {
+      "slot": 81,
+      "tier": 1,
+      "spokenText": "at",
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": null
+    },
+    {
+      "slot": 82,
       "tier": 2,
       "spokenText": "water",
       "partOfSpeech": "Noun",
@@ -687,7 +741,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 77,
+      "slot": 83,
       "tier": 2,
       "spokenText": "milk",
       "partOfSpeech": "Noun",
@@ -696,7 +750,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 78,
+      "slot": 84,
       "tier": 2,
       "spokenText": "juice",
       "partOfSpeech": "Noun",
@@ -705,7 +759,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 79,
+      "slot": 85,
       "tier": 2,
       "spokenText": "apple juice",
       "partOfSpeech": "Noun",
@@ -714,7 +768,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 80,
+      "slot": 86,
       "tier": 2,
       "spokenText": "chocolate milk",
       "partOfSpeech": "Noun",
@@ -723,7 +777,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 81,
+      "slot": 87,
       "tier": 2,
       "spokenText": "tea",
       "partOfSpeech": "Noun",
@@ -732,7 +786,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 82,
+      "slot": 88,
       "tier": 2,
       "spokenText": "smoothie",
       "partOfSpeech": "Noun",
@@ -741,7 +795,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 83,
+      "slot": 89,
       "tier": 2,
       "spokenText": "bread",
       "partOfSpeech": "Noun",
@@ -750,7 +804,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 84,
+      "slot": 90,
       "tier": 2,
       "spokenText": "toast",
       "partOfSpeech": "Noun",
@@ -759,7 +813,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 85,
+      "slot": 91,
       "tier": 2,
       "spokenText": "cereal",
       "partOfSpeech": "Noun",
@@ -768,7 +822,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 86,
+      "slot": 92,
       "tier": 2,
       "spokenText": "oatmeal",
       "partOfSpeech": "Noun",
@@ -777,7 +831,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 87,
+      "slot": 93,
       "tier": 2,
       "spokenText": "pancake",
       "partOfSpeech": "Noun",
@@ -786,7 +840,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 88,
+      "slot": 94,
       "tier": 2,
       "spokenText": "waffle",
       "partOfSpeech": "Noun",
@@ -795,7 +849,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 89,
+      "slot": 95,
       "tier": 2,
       "spokenText": "bagel",
       "partOfSpeech": "Noun",
@@ -804,7 +858,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 90,
+      "slot": 96,
       "tier": 2,
       "spokenText": "egg",
       "partOfSpeech": "Noun",
@@ -813,7 +867,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 91,
+      "slot": 97,
       "tier": 2,
       "spokenText": "butter",
       "partOfSpeech": "Noun",
@@ -822,7 +876,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 92,
+      "slot": 98,
       "tier": 2,
       "spokenText": "jam",
       "partOfSpeech": "Noun",
@@ -831,7 +885,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 93,
+      "slot": 99,
       "tier": 2,
       "spokenText": "syrup",
       "partOfSpeech": "Noun",
@@ -840,7 +894,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 94,
+      "slot": 100,
       "tier": 2,
       "spokenText": "pizza",
       "partOfSpeech": "Noun",
@@ -849,7 +903,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 95,
+      "slot": 101,
       "tier": 2,
       "spokenText": "pasta",
       "partOfSpeech": "Noun",
@@ -858,7 +912,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 96,
+      "slot": 102,
       "tier": 2,
       "spokenText": "macaroni",
       "partOfSpeech": "Noun",
@@ -867,7 +921,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 97,
+      "slot": 103,
       "tier": 2,
       "spokenText": "sandwich",
       "partOfSpeech": "Noun",
@@ -876,7 +930,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 98,
+      "slot": 104,
       "tier": 2,
       "spokenText": "chicken",
       "partOfSpeech": "Noun",
@@ -885,7 +939,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 99,
+      "slot": 105,
       "tier": 2,
       "spokenText": "nuggets",
       "partOfSpeech": "Noun",
@@ -894,7 +948,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 100,
+      "slot": 106,
       "tier": 2,
       "spokenText": "burger",
       "partOfSpeech": "Noun",
@@ -903,7 +957,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 101,
+      "slot": 107,
       "tier": 2,
       "spokenText": "hot dog",
       "partOfSpeech": "Noun",
@@ -912,7 +966,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 102,
+      "slot": 108,
       "tier": 2,
       "spokenText": "soup",
       "partOfSpeech": "Noun",
@@ -921,7 +975,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 103,
+      "slot": 109,
       "tier": 2,
       "spokenText": "rice",
       "partOfSpeech": "Noun",
@@ -930,7 +984,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 104,
+      "slot": 110,
       "tier": 2,
       "spokenText": "cheese",
       "partOfSpeech": "Noun",
@@ -939,7 +993,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 105,
+      "slot": 111,
       "tier": 2,
       "spokenText": "meat",
       "partOfSpeech": "Noun",
@@ -948,7 +1002,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 106,
+      "slot": 112,
       "tier": 2,
       "spokenText": "fish",
       "partOfSpeech": "Noun",
@@ -957,7 +1011,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 107,
+      "slot": 113,
       "tier": 2,
       "spokenText": "snack",
       "partOfSpeech": "Noun",
@@ -966,7 +1020,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 108,
+      "slot": 114,
       "tier": 2,
       "spokenText": "cracker",
       "partOfSpeech": "Noun",
@@ -975,7 +1029,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 109,
+      "slot": 115,
       "tier": 2,
       "spokenText": "cookie",
       "partOfSpeech": "Noun",
@@ -984,7 +1038,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 110,
+      "slot": 116,
       "tier": 2,
       "spokenText": "chips",
       "partOfSpeech": "Noun",
@@ -993,7 +1047,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 111,
+      "slot": 117,
       "tier": 2,
       "spokenText": "popcorn",
       "partOfSpeech": "Noun",
@@ -1002,7 +1056,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 112,
+      "slot": 118,
       "tier": 2,
       "spokenText": "pretzel",
       "partOfSpeech": "Noun",
@@ -1011,7 +1065,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 113,
+      "slot": 119,
       "tier": 2,
       "spokenText": "yogurt",
       "partOfSpeech": "Noun",
@@ -1020,7 +1074,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 114,
+      "slot": 120,
       "tier": 2,
       "spokenText": "fruit snack",
       "partOfSpeech": "Noun",
@@ -1029,7 +1083,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 115,
+      "slot": 121,
       "tier": 2,
       "spokenText": "ice cream",
       "partOfSpeech": "Noun",
@@ -1038,7 +1092,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 116,
+      "slot": 122,
       "tier": 2,
       "spokenText": "popsicle",
       "partOfSpeech": "Noun",
@@ -1047,7 +1101,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 117,
+      "slot": 123,
       "tier": 2,
       "spokenText": "candy",
       "partOfSpeech": "Noun",
@@ -1056,7 +1110,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 118,
+      "slot": 124,
       "tier": 2,
       "spokenText": "cake",
       "partOfSpeech": "Noun",
@@ -1065,7 +1119,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 119,
+      "slot": 125,
       "tier": 2,
       "spokenText": "muffin",
       "partOfSpeech": "Noun",
@@ -1074,7 +1128,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 120,
+      "slot": 126,
       "tier": 2,
       "spokenText": "donut",
       "partOfSpeech": "Noun",
@@ -1083,7 +1137,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 121,
+      "slot": 127,
       "tier": 2,
       "spokenText": "fruit",
       "partOfSpeech": "Noun",
@@ -1092,7 +1146,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 122,
+      "slot": 128,
       "tier": 2,
       "spokenText": "apple",
       "partOfSpeech": "Noun",
@@ -1101,7 +1155,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 123,
+      "slot": 129,
       "tier": 2,
       "spokenText": "banana",
       "partOfSpeech": "Noun",
@@ -1110,7 +1164,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 124,
+      "slot": 130,
       "tier": 2,
       "spokenText": "strawberry",
       "partOfSpeech": "Noun",
@@ -1119,7 +1173,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 125,
+      "slot": 131,
       "tier": 2,
       "spokenText": "orange",
       "partOfSpeech": "Noun",
@@ -1128,7 +1182,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 126,
+      "slot": 132,
       "tier": 2,
       "spokenText": "grapes",
       "partOfSpeech": "Noun",
@@ -1137,7 +1191,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 127,
+      "slot": 133,
       "tier": 2,
       "spokenText": "watermelon",
       "partOfSpeech": "Noun",
@@ -1146,7 +1200,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 128,
+      "slot": 134,
       "tier": 2,
       "spokenText": "carrot",
       "partOfSpeech": "Noun",
@@ -1155,7 +1209,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 129,
+      "slot": 135,
       "tier": 2,
       "spokenText": "broccoli",
       "partOfSpeech": "Noun",
@@ -1164,7 +1218,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 130,
+      "slot": 136,
       "tier": 2,
       "spokenText": "corn",
       "partOfSpeech": "Noun",
@@ -1173,7 +1227,7 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 131,
+      "slot": 137,
       "tier": 2,
       "spokenText": "body",
       "partOfSpeech": "Noun",
@@ -1182,7 +1236,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 132,
+      "slot": 138,
       "tier": 2,
       "spokenText": "head",
       "partOfSpeech": "Noun",
@@ -1191,7 +1245,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 133,
+      "slot": 139,
       "tier": 2,
       "spokenText": "face",
       "partOfSpeech": "Noun",
@@ -1200,7 +1254,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 134,
+      "slot": 140,
       "tier": 2,
       "spokenText": "hair",
       "partOfSpeech": "Noun",
@@ -1209,7 +1263,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 135,
+      "slot": 141,
       "tier": 2,
       "spokenText": "eye",
       "partOfSpeech": "Noun",
@@ -1218,7 +1272,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 136,
+      "slot": 142,
       "tier": 2,
       "spokenText": "ear",
       "partOfSpeech": "Noun",
@@ -1227,7 +1281,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 137,
+      "slot": 143,
       "tier": 2,
       "spokenText": "nose",
       "partOfSpeech": "Noun",
@@ -1236,7 +1290,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 138,
+      "slot": 144,
       "tier": 2,
       "spokenText": "mouth",
       "partOfSpeech": "Noun",
@@ -1245,7 +1299,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 139,
+      "slot": 145,
       "tier": 2,
       "spokenText": "teeth",
       "partOfSpeech": "Noun",
@@ -1254,7 +1308,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 140,
+      "slot": 146,
       "tier": 2,
       "spokenText": "tongue",
       "partOfSpeech": "Noun",
@@ -1263,7 +1317,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 141,
+      "slot": 147,
       "tier": 2,
       "spokenText": "neck",
       "partOfSpeech": "Noun",
@@ -1272,7 +1326,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 142,
+      "slot": 148,
       "tier": 2,
       "spokenText": "shoulder",
       "partOfSpeech": "Noun",
@@ -1281,7 +1335,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 143,
+      "slot": 149,
       "tier": 2,
       "spokenText": "arm",
       "partOfSpeech": "Noun",
@@ -1290,7 +1344,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 144,
+      "slot": 150,
       "tier": 2,
       "spokenText": "hand",
       "partOfSpeech": "Noun",
@@ -1299,7 +1353,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 145,
+      "slot": 151,
       "tier": 2,
       "spokenText": "fingers",
       "partOfSpeech": "Noun",
@@ -1308,7 +1362,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 146,
+      "slot": 152,
       "tier": 2,
       "spokenText": "tummy",
       "partOfSpeech": "Noun",
@@ -1317,7 +1371,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 147,
+      "slot": 153,
       "tier": 2,
       "spokenText": "back",
       "partOfSpeech": "Noun",
@@ -1326,7 +1380,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 148,
+      "slot": 154,
       "tier": 2,
       "spokenText": "leg",
       "partOfSpeech": "Noun",
@@ -1335,7 +1389,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 149,
+      "slot": 155,
       "tier": 2,
       "spokenText": "knee",
       "partOfSpeech": "Noun",
@@ -1344,7 +1398,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 150,
+      "slot": 156,
       "tier": 2,
       "spokenText": "foot",
       "partOfSpeech": "Noun",
@@ -1353,7 +1407,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 151,
+      "slot": 157,
       "tier": 2,
       "spokenText": "toes",
       "partOfSpeech": "Noun",
@@ -1362,7 +1416,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 152,
+      "slot": 158,
       "tier": 2,
       "spokenText": "bathroom",
       "partOfSpeech": "Noun",
@@ -1371,7 +1425,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 153,
+      "slot": 159,
       "tier": 2,
       "spokenText": "potty",
       "partOfSpeech": "Noun",
@@ -1380,7 +1434,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 154,
+      "slot": 160,
       "tier": 2,
       "spokenText": "toilet",
       "partOfSpeech": "Noun",
@@ -1389,7 +1443,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 155,
+      "slot": 161,
       "tier": 2,
       "spokenText": "diaper",
       "partOfSpeech": "Noun",
@@ -1398,7 +1452,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 156,
+      "slot": 162,
       "tier": 2,
       "spokenText": "wet wipe",
       "partOfSpeech": "Noun",
@@ -1407,7 +1461,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 157,
+      "slot": 163,
       "tier": 2,
       "spokenText": "bath",
       "partOfSpeech": "Noun",
@@ -1416,7 +1470,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 158,
+      "slot": 164,
       "tier": 2,
       "spokenText": "shower",
       "partOfSpeech": "Noun",
@@ -1425,7 +1479,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 159,
+      "slot": 165,
       "tier": 2,
       "spokenText": "soap",
       "partOfSpeech": "Noun",
@@ -1434,7 +1488,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 160,
+      "slot": 166,
       "tier": 2,
       "spokenText": "toothbrush",
       "partOfSpeech": "Noun",
@@ -1443,7 +1497,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 161,
+      "slot": 167,
       "tier": 2,
       "spokenText": "toothpaste",
       "partOfSpeech": "Noun",
@@ -1452,7 +1506,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 162,
+      "slot": 168,
       "tier": 2,
       "spokenText": "towel",
       "partOfSpeech": "Noun",
@@ -1461,7 +1515,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 163,
+      "slot": 169,
       "tier": 2,
       "spokenText": "comb",
       "partOfSpeech": "Noun",
@@ -1470,7 +1524,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 164,
+      "slot": 170,
       "tier": 2,
       "spokenText": "tissue",
       "partOfSpeech": "Noun",
@@ -1479,7 +1533,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 165,
+      "slot": 171,
       "tier": 2,
       "spokenText": "bandage",
       "partOfSpeech": "Noun",
@@ -1488,7 +1542,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 166,
+      "slot": 172,
       "tier": 2,
       "spokenText": "hurt",
       "partOfSpeech": "Adjective",
@@ -1497,7 +1551,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 167,
+      "slot": 173,
       "tier": 2,
       "spokenText": "sick",
       "partOfSpeech": "Adjective",
@@ -1506,7 +1560,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 168,
+      "slot": 174,
       "tier": 2,
       "spokenText": "pain",
       "partOfSpeech": "Noun",
@@ -1515,7 +1569,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 169,
+      "slot": 175,
       "tier": 2,
       "spokenText": "fever",
       "partOfSpeech": "Noun",
@@ -1524,7 +1578,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 170,
+      "slot": 176,
       "tier": 2,
       "spokenText": "cough",
       "partOfSpeech": "Verb",
@@ -1533,7 +1587,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 171,
+      "slot": 177,
       "tier": 2,
       "spokenText": "medicine",
       "partOfSpeech": "Noun",
@@ -1542,7 +1596,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 172,
+      "slot": 178,
       "tier": 2,
       "spokenText": "dentist",
       "partOfSpeech": "Noun",
@@ -1551,7 +1605,7 @@
       "category": "Body, Health & Hygiene"
     },
     {
-      "slot": 173,
+      "slot": 179,
       "tier": 2,
       "spokenText": "sad",
       "partOfSpeech": "Adjective",
@@ -1560,7 +1614,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 174,
+      "slot": 180,
       "tier": 2,
       "spokenText": "mad",
       "partOfSpeech": "Adjective",
@@ -1569,7 +1623,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 175,
+      "slot": 181,
       "tier": 2,
       "spokenText": "angry",
       "partOfSpeech": "Adjective",
@@ -1578,7 +1632,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 176,
+      "slot": 182,
       "tier": 2,
       "spokenText": "scared",
       "partOfSpeech": "Adjective",
@@ -1587,7 +1641,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 177,
+      "slot": 183,
       "tier": 2,
       "spokenText": "excited",
       "partOfSpeech": "Adjective",
@@ -1596,7 +1650,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 178,
+      "slot": 184,
       "tier": 2,
       "spokenText": "silly",
       "partOfSpeech": "Adjective",
@@ -1605,7 +1659,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 179,
+      "slot": 185,
       "tier": 2,
       "spokenText": "nervous",
       "partOfSpeech": "Adjective",
@@ -1614,7 +1668,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 180,
+      "slot": 186,
       "tier": 2,
       "spokenText": "calm",
       "partOfSpeech": "Adjective",
@@ -1623,7 +1677,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 181,
+      "slot": 187,
       "tier": 2,
       "spokenText": "frustrated",
       "partOfSpeech": "Adjective",
@@ -1632,7 +1686,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 182,
+      "slot": 188,
       "tier": 2,
       "spokenText": "proud",
       "partOfSpeech": "Adjective",
@@ -1641,7 +1695,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 183,
+      "slot": 189,
       "tier": 2,
       "spokenText": "shy",
       "partOfSpeech": "Adjective",
@@ -1650,7 +1704,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 184,
+      "slot": 190,
       "tier": 2,
       "spokenText": "surprised",
       "partOfSpeech": "Adjective",
@@ -1659,7 +1713,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 185,
+      "slot": 191,
       "tier": 2,
       "spokenText": "bored",
       "partOfSpeech": "Adjective",
@@ -1668,7 +1722,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 186,
+      "slot": 192,
       "tier": 2,
       "spokenText": "lonely",
       "partOfSpeech": "Adjective",
@@ -1677,7 +1731,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 187,
+      "slot": 193,
       "tier": 2,
       "spokenText": "hungry",
       "partOfSpeech": "Adjective",
@@ -1686,7 +1740,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 188,
+      "slot": 194,
       "tier": 2,
       "spokenText": "thirsty",
       "partOfSpeech": "Adjective",
@@ -1695,7 +1749,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 189,
+      "slot": 195,
       "tier": 2,
       "spokenText": "tired",
       "partOfSpeech": "Adjective",
@@ -1704,7 +1758,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 190,
+      "slot": 196,
       "tier": 2,
       "spokenText": "sleepy",
       "partOfSpeech": "Adjective",
@@ -1713,7 +1767,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 191,
+      "slot": 197,
       "tier": 2,
       "spokenText": "energetic",
       "partOfSpeech": "Adjective",
@@ -1722,7 +1776,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 192,
+      "slot": 198,
       "tier": 2,
       "spokenText": "hot",
       "partOfSpeech": "Adjective",
@@ -1731,7 +1785,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 193,
+      "slot": 199,
       "tier": 2,
       "spokenText": "cold",
       "partOfSpeech": "Adjective",
@@ -1740,7 +1794,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 194,
+      "slot": 200,
       "tier": 2,
       "spokenText": "warm",
       "partOfSpeech": "Adjective",
@@ -1749,7 +1803,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 195,
+      "slot": 201,
       "tier": 2,
       "spokenText": "loud",
       "partOfSpeech": "Adjective",
@@ -1758,7 +1812,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 196,
+      "slot": 202,
       "tier": 2,
       "spokenText": "quiet",
       "partOfSpeech": "Adjective",
@@ -1767,7 +1821,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 197,
+      "slot": 203,
       "tier": 2,
       "spokenText": "noisy",
       "partOfSpeech": "Adjective",
@@ -1776,7 +1830,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 198,
+      "slot": 204,
       "tier": 2,
       "spokenText": "bright",
       "partOfSpeech": "Adjective",
@@ -1785,7 +1839,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 199,
+      "slot": 205,
       "tier": 2,
       "spokenText": "dark",
       "partOfSpeech": "Adjective",
@@ -1794,7 +1848,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 200,
+      "slot": 206,
       "tier": 2,
       "spokenText": "soft",
       "partOfSpeech": "Adjective",
@@ -1803,7 +1857,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 201,
+      "slot": 207,
       "tier": 2,
       "spokenText": "rough",
       "partOfSpeech": "Adjective",
@@ -1812,7 +1866,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 202,
+      "slot": 208,
       "tier": 2,
       "spokenText": "sticky",
       "partOfSpeech": "Adjective",
@@ -1821,7 +1875,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 203,
+      "slot": 209,
       "tier": 2,
       "spokenText": "dizzy",
       "partOfSpeech": "Adjective",
@@ -1830,7 +1884,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 204,
+      "slot": 210,
       "tier": 2,
       "spokenText": "gross",
       "partOfSpeech": "Adjective",
@@ -1839,7 +1893,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 205,
+      "slot": 211,
       "tier": 2,
       "spokenText": "comfortable",
       "partOfSpeech": "Adjective",
@@ -1848,7 +1902,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 206,
+      "slot": 212,
       "tier": 2,
       "spokenText": "uncomfortable",
       "partOfSpeech": "Adjective",
@@ -1857,7 +1911,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 207,
+      "slot": 213,
       "tier": 2,
       "spokenText": "overwhelmed",
       "partOfSpeech": "Adjective",
@@ -1866,7 +1920,7 @@
       "category": "Feelings, Emotions & Sensory States"
     },
     {
-      "slot": 208,
+      "slot": 214,
       "tier": 2,
       "spokenText": "run",
       "partOfSpeech": "Verb",
@@ -1875,7 +1929,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 209,
+      "slot": 215,
       "tier": 2,
       "spokenText": "jump",
       "partOfSpeech": "Verb",
@@ -1884,7 +1938,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 210,
+      "slot": 216,
       "tier": 2,
       "spokenText": "walk",
       "partOfSpeech": "Verb",
@@ -1893,7 +1947,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 211,
+      "slot": 217,
       "tier": 2,
       "spokenText": "sit",
       "partOfSpeech": "Verb",
@@ -1902,7 +1956,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 212,
+      "slot": 218,
       "tier": 2,
       "spokenText": "stand",
       "partOfSpeech": "Verb",
@@ -1911,7 +1965,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 213,
+      "slot": 219,
       "tier": 2,
       "spokenText": "climb",
       "partOfSpeech": "Verb",
@@ -1920,7 +1974,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 214,
+      "slot": 220,
       "tier": 2,
       "spokenText": "dance",
       "partOfSpeech": "Verb",
@@ -1929,7 +1983,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 215,
+      "slot": 221,
       "tier": 2,
       "spokenText": "swim",
       "partOfSpeech": "Verb",
@@ -1938,7 +1992,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 216,
+      "slot": 222,
       "tier": 2,
       "spokenText": "ride",
       "partOfSpeech": "Verb",
@@ -1947,7 +2001,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 217,
+      "slot": 223,
       "tier": 2,
       "spokenText": "crawl",
       "partOfSpeech": "Verb",
@@ -1956,7 +2010,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 218,
+      "slot": 224,
       "tier": 2,
       "spokenText": "kick",
       "partOfSpeech": "Verb",
@@ -1965,7 +2019,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 219,
+      "slot": 225,
       "tier": 2,
       "spokenText": "throw",
       "partOfSpeech": "Verb",
@@ -1974,7 +2028,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 220,
+      "slot": 226,
       "tier": 2,
       "spokenText": "catch",
       "partOfSpeech": "Verb",
@@ -1983,7 +2037,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 221,
+      "slot": 227,
       "tier": 2,
       "spokenText": "push",
       "partOfSpeech": "Verb",
@@ -1992,7 +2046,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 222,
+      "slot": 228,
       "tier": 2,
       "spokenText": "pull",
       "partOfSpeech": "Verb",
@@ -2001,7 +2055,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 223,
+      "slot": 229,
       "tier": 2,
       "spokenText": "swing",
       "partOfSpeech": "Verb",
@@ -2010,7 +2064,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 224,
+      "slot": 230,
       "tier": 2,
       "spokenText": "slide",
       "partOfSpeech": "Verb",
@@ -2019,7 +2073,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 225,
+      "slot": 231,
       "tier": 2,
       "spokenText": "fall",
       "partOfSpeech": "Verb",
@@ -2028,7 +2082,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 226,
+      "slot": 232,
       "tier": 2,
       "spokenText": "carry",
       "partOfSpeech": "Verb",
@@ -2037,7 +2091,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 227,
+      "slot": 233,
       "tier": 2,
       "spokenText": "drop",
       "partOfSpeech": "Verb",
@@ -2046,7 +2100,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 228,
+      "slot": 234,
       "tier": 2,
       "spokenText": "write",
       "partOfSpeech": "Verb",
@@ -2055,7 +2109,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 229,
+      "slot": 235,
       "tier": 2,
       "spokenText": "draw",
       "partOfSpeech": "Verb",
@@ -2064,7 +2118,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 230,
+      "slot": 236,
       "tier": 2,
       "spokenText": "color",
       "partOfSpeech": "Verb",
@@ -2073,7 +2127,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 231,
+      "slot": 237,
       "tier": 2,
       "spokenText": "paint",
       "partOfSpeech": "Verb",
@@ -2082,7 +2136,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 232,
+      "slot": 238,
       "tier": 2,
       "spokenText": "cut",
       "partOfSpeech": "Verb",
@@ -2091,7 +2145,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 233,
+      "slot": 239,
       "tier": 2,
       "spokenText": "glue",
       "partOfSpeech": "Verb",
@@ -2100,7 +2154,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 234,
+      "slot": 240,
       "tier": 2,
       "spokenText": "listen",
       "partOfSpeech": "Verb",
@@ -2109,7 +2163,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 235,
+      "slot": 241,
       "tier": 2,
       "spokenText": "speak",
       "partOfSpeech": "Verb",
@@ -2118,7 +2172,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 236,
+      "slot": 242,
       "tier": 2,
       "spokenText": "talk",
       "partOfSpeech": "Verb",
@@ -2127,7 +2181,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 237,
+      "slot": 243,
       "tier": 2,
       "spokenText": "sing",
       "partOfSpeech": "Verb",
@@ -2136,7 +2190,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 238,
+      "slot": 244,
       "tier": 2,
       "spokenText": "count",
       "partOfSpeech": "Verb",
@@ -2145,7 +2199,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 239,
+      "slot": 245,
       "tier": 2,
       "spokenText": "share",
       "partOfSpeech": "Verb",
@@ -2154,7 +2208,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 240,
+      "slot": 246,
       "tier": 2,
       "spokenText": "clean up",
       "partOfSpeech": "Verb",
@@ -2163,7 +2217,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 241,
+      "slot": 247,
       "tier": 2,
       "spokenText": "wash",
       "partOfSpeech": "Verb",
@@ -2172,7 +2226,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 242,
+      "slot": 248,
       "tier": 2,
       "spokenText": "wipe action",
       "partOfSpeech": "Verb",
@@ -2181,7 +2235,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 243,
+      "slot": 249,
       "tier": 2,
       "spokenText": "cook",
       "partOfSpeech": "Verb",
@@ -2190,7 +2244,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 244,
+      "slot": 250,
       "tier": 2,
       "spokenText": "build",
       "partOfSpeech": "Verb",
@@ -2199,7 +2253,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 245,
+      "slot": 251,
       "tier": 2,
       "spokenText": "fix",
       "partOfSpeech": "Verb",
@@ -2208,7 +2262,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 246,
+      "slot": 252,
       "tier": 2,
       "spokenText": "hold",
       "partOfSpeech": "Verb",
@@ -2217,7 +2271,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 247,
+      "slot": 253,
       "tier": 2,
       "spokenText": "touch",
       "partOfSpeech": "Verb",
@@ -2226,7 +2280,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 248,
+      "slot": 254,
       "tier": 2,
       "spokenText": "know",
       "partOfSpeech": "Verb",
@@ -2235,7 +2289,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 249,
+      "slot": 255,
       "tier": 2,
       "spokenText": "remember",
       "partOfSpeech": "Verb",
@@ -2244,7 +2298,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 250,
+      "slot": 256,
       "tier": 2,
       "spokenText": "forget",
       "partOfSpeech": "Verb",
@@ -2253,7 +2307,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 251,
+      "slot": 257,
       "tier": 2,
       "spokenText": "choose",
       "partOfSpeech": "Verb",
@@ -2262,7 +2316,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 252,
+      "slot": 258,
       "tier": 2,
       "spokenText": "show",
       "partOfSpeech": "Verb",
@@ -2271,7 +2325,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 253,
+      "slot": 259,
       "tier": 2,
       "spokenText": "ask",
       "partOfSpeech": "Verb",
@@ -2280,7 +2334,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 254,
+      "slot": 260,
       "tier": 2,
       "spokenText": "hug",
       "partOfSpeech": "Verb",
@@ -2289,7 +2343,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 255,
+      "slot": 261,
       "tier": 2,
       "spokenText": "kiss",
       "partOfSpeech": "Verb",
@@ -2298,7 +2352,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 256,
+      "slot": 262,
       "tier": 2,
       "spokenText": "laugh",
       "partOfSpeech": "Verb",
@@ -2307,7 +2361,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 257,
+      "slot": 263,
       "tier": 2,
       "spokenText": "cry",
       "partOfSpeech": "Verb",
@@ -2316,7 +2370,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 258,
+      "slot": 264,
       "tier": 2,
       "spokenText": "sleep",
       "partOfSpeech": "Verb",
@@ -2325,7 +2379,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 259,
+      "slot": 265,
       "tier": 2,
       "spokenText": "wake up",
       "partOfSpeech": "Verb",
@@ -2334,7 +2388,7 @@
       "category": "Daily Actions & Activity Verbs"
     },
     {
-      "slot": 260,
+      "slot": 266,
       "tier": 2,
       "spokenText": "family",
       "partOfSpeech": "Noun",
@@ -2343,7 +2397,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 261,
+      "slot": 267,
       "tier": 2,
       "spokenText": "mom",
       "partOfSpeech": "Noun",
@@ -2352,7 +2406,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 262,
+      "slot": 268,
       "tier": 2,
       "spokenText": "dad",
       "partOfSpeech": "Noun",
@@ -2361,7 +2415,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 263,
+      "slot": 269,
       "tier": 2,
       "spokenText": "mama",
       "partOfSpeech": "Noun",
@@ -2370,7 +2424,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 264,
+      "slot": 270,
       "tier": 2,
       "spokenText": "dada",
       "partOfSpeech": "Noun",
@@ -2379,7 +2433,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 265,
+      "slot": 271,
       "tier": 2,
       "spokenText": "baby",
       "partOfSpeech": "Noun",
@@ -2388,7 +2442,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 266,
+      "slot": 272,
       "tier": 2,
       "spokenText": "brother",
       "partOfSpeech": "Noun",
@@ -2397,7 +2451,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 267,
+      "slot": 273,
       "tier": 2,
       "spokenText": "sister",
       "partOfSpeech": "Noun",
@@ -2406,7 +2460,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 268,
+      "slot": 274,
       "tier": 2,
       "spokenText": "grandma",
       "partOfSpeech": "Noun",
@@ -2415,7 +2469,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 269,
+      "slot": 275,
       "tier": 2,
       "spokenText": "grandpa",
       "partOfSpeech": "Noun",
@@ -2424,7 +2478,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 270,
+      "slot": 276,
       "tier": 2,
       "spokenText": "aunt",
       "partOfSpeech": "Noun",
@@ -2433,7 +2487,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 271,
+      "slot": 277,
       "tier": 2,
       "spokenText": "uncle",
       "partOfSpeech": "Noun",
@@ -2442,7 +2496,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 272,
+      "slot": 278,
       "tier": 2,
       "spokenText": "cousin",
       "partOfSpeech": "Noun",
@@ -2451,7 +2505,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 273,
+      "slot": 279,
       "tier": 2,
       "spokenText": "pet",
       "partOfSpeech": "Noun",
@@ -2460,7 +2514,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 274,
+      "slot": 280,
       "tier": 2,
       "spokenText": "teacher",
       "partOfSpeech": "Noun",
@@ -2469,7 +2523,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 275,
+      "slot": 281,
       "tier": 2,
       "spokenText": "therapist",
       "partOfSpeech": "Noun",
@@ -2478,7 +2532,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 276,
+      "slot": 282,
       "tier": 2,
       "spokenText": "aide",
       "partOfSpeech": "Noun",
@@ -2487,7 +2541,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 277,
+      "slot": 283,
       "tier": 2,
       "spokenText": "student",
       "partOfSpeech": "Noun",
@@ -2496,7 +2550,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 278,
+      "slot": 284,
       "tier": 2,
       "spokenText": "friend",
       "partOfSpeech": "Noun",
@@ -2505,7 +2559,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 279,
+      "slot": 285,
       "tier": 2,
       "spokenText": "class",
       "partOfSpeech": "Noun",
@@ -2514,7 +2568,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 280,
+      "slot": 286,
       "tier": 2,
       "spokenText": "firefighter",
       "partOfSpeech": "Noun",
@@ -2523,7 +2577,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 281,
+      "slot": 287,
       "tier": 2,
       "spokenText": "police officer",
       "partOfSpeech": "Noun",
@@ -2532,7 +2586,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 282,
+      "slot": 288,
       "tier": 2,
       "spokenText": "bus driver",
       "partOfSpeech": "Noun",
@@ -2541,7 +2595,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 283,
+      "slot": 289,
       "tier": 2,
       "spokenText": "neighbor",
       "partOfSpeech": "Noun",
@@ -2550,7 +2604,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 284,
+      "slot": 290,
       "tier": 2,
       "spokenText": "person",
       "partOfSpeech": "Noun",
@@ -2559,7 +2613,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 285,
+      "slot": 291,
       "tier": 2,
       "spokenText": "people",
       "partOfSpeech": "Noun",
@@ -2568,7 +2622,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 286,
+      "slot": 292,
       "tier": 2,
       "spokenText": "kids",
       "partOfSpeech": "Noun",
@@ -2577,7 +2631,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 287,
+      "slot": 293,
       "tier": 2,
       "spokenText": "doctor",
       "partOfSpeech": "Noun",
@@ -2586,7 +2640,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 288,
+      "slot": 294,
       "tier": 2,
       "spokenText": "nurse",
       "partOfSpeech": "Noun",
@@ -2595,7 +2649,7 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 289,
+      "slot": 295,
       "tier": 2,
       "spokenText": "babysitter",
       "partOfSpeech": "Noun",
@@ -2604,7 +2658,16 @@
       "category": "People, Family & Roles"
     },
     {
-      "slot": 290,
+      "slot": 296,
+      "tier": 2,
+      "spokenText": "name",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "People, Family & Roles"
+    },
+    {
+      "slot": 297,
       "tier": 2,
       "spokenText": "home",
       "partOfSpeech": "Noun",
@@ -2613,7 +2676,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 291,
+      "slot": 298,
       "tier": 2,
       "spokenText": "house",
       "partOfSpeech": "Noun",
@@ -2622,7 +2685,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 292,
+      "slot": 299,
       "tier": 2,
       "spokenText": "bedroom",
       "partOfSpeech": "Noun",
@@ -2631,7 +2694,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 293,
+      "slot": 300,
       "tier": 2,
       "spokenText": "living room",
       "partOfSpeech": "Noun",
@@ -2640,7 +2703,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 294,
+      "slot": 301,
       "tier": 2,
       "spokenText": "kitchen",
       "partOfSpeech": "Noun",
@@ -2649,7 +2712,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 295,
+      "slot": 302,
       "tier": 2,
       "spokenText": "basement",
       "partOfSpeech": "Noun",
@@ -2658,7 +2721,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 296,
+      "slot": 303,
       "tier": 2,
       "spokenText": "stairs",
       "partOfSpeech": "Noun",
@@ -2667,7 +2730,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 297,
+      "slot": 304,
       "tier": 2,
       "spokenText": "yard",
       "partOfSpeech": "Noun",
@@ -2676,7 +2739,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 298,
+      "slot": 305,
       "tier": 2,
       "spokenText": "school",
       "partOfSpeech": "Noun",
@@ -2685,7 +2748,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 299,
+      "slot": 306,
       "tier": 2,
       "spokenText": "classroom",
       "partOfSpeech": "Noun",
@@ -2694,7 +2757,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 300,
+      "slot": 307,
       "tier": 2,
       "spokenText": "playground",
       "partOfSpeech": "Noun",
@@ -2703,7 +2766,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 301,
+      "slot": 308,
       "tier": 2,
       "spokenText": "gym",
       "partOfSpeech": "Noun",
@@ -2712,7 +2775,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 302,
+      "slot": 309,
       "tier": 2,
       "spokenText": "cafeteria",
       "partOfSpeech": "Noun",
@@ -2721,7 +2784,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 303,
+      "slot": 310,
       "tier": 2,
       "spokenText": "library",
       "partOfSpeech": "Noun",
@@ -2730,7 +2793,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 304,
+      "slot": 311,
       "tier": 2,
       "spokenText": "hallway",
       "partOfSpeech": "Noun",
@@ -2739,7 +2802,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 305,
+      "slot": 312,
       "tier": 2,
       "spokenText": "desk",
       "partOfSpeech": "Noun",
@@ -2748,7 +2811,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 306,
+      "slot": 313,
       "tier": 2,
       "spokenText": "park",
       "partOfSpeech": "Noun",
@@ -2757,7 +2820,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 307,
+      "slot": 314,
       "tier": 2,
       "spokenText": "store",
       "partOfSpeech": "Noun",
@@ -2766,7 +2829,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 308,
+      "slot": 315,
       "tier": 2,
       "spokenText": "grocery store",
       "partOfSpeech": "Noun",
@@ -2775,7 +2838,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 309,
+      "slot": 316,
       "tier": 2,
       "spokenText": "restaurant",
       "partOfSpeech": "Noun",
@@ -2784,7 +2847,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 310,
+      "slot": 317,
       "tier": 2,
       "spokenText": "pool",
       "partOfSpeech": "Noun",
@@ -2793,7 +2856,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 311,
+      "slot": 318,
       "tier": 2,
       "spokenText": "beach",
       "partOfSpeech": "Noun",
@@ -2802,7 +2865,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 312,
+      "slot": 319,
       "tier": 2,
       "spokenText": "zoo",
       "partOfSpeech": "Noun",
@@ -2811,7 +2874,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 313,
+      "slot": 320,
       "tier": 2,
       "spokenText": "doctor office",
       "partOfSpeech": "Noun",
@@ -2820,7 +2883,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 314,
+      "slot": 321,
       "tier": 2,
       "spokenText": "hospital",
       "partOfSpeech": "Noun",
@@ -2829,7 +2892,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 315,
+      "slot": 322,
       "tier": 2,
       "spokenText": "museum",
       "partOfSpeech": "Noun",
@@ -2838,7 +2901,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 316,
+      "slot": 323,
       "tier": 2,
       "spokenText": "movie theater",
       "partOfSpeech": "Noun",
@@ -2847,7 +2910,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 317,
+      "slot": 324,
       "tier": 2,
       "spokenText": "mall",
       "partOfSpeech": "Noun",
@@ -2856,7 +2919,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 318,
+      "slot": 325,
       "tier": 2,
       "spokenText": "farm",
       "partOfSpeech": "Noun",
@@ -2865,7 +2928,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 319,
+      "slot": 326,
       "tier": 2,
       "spokenText": "airport",
       "partOfSpeech": "Noun",
@@ -2874,7 +2937,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 320,
+      "slot": 327,
       "tier": 2,
       "spokenText": "outside",
       "partOfSpeech": "Noun",
@@ -2883,7 +2946,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 321,
+      "slot": 328,
       "tier": 2,
       "spokenText": "inside",
       "partOfSpeech": "Noun",
@@ -2892,7 +2955,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 322,
+      "slot": 329,
       "tier": 2,
       "spokenText": "street",
       "partOfSpeech": "Noun",
@@ -2901,7 +2964,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 323,
+      "slot": 330,
       "tier": 2,
       "spokenText": "town",
       "partOfSpeech": "Noun",
@@ -2910,7 +2973,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 324,
+      "slot": 331,
       "tier": 2,
       "spokenText": "church",
       "partOfSpeech": "Noun",
@@ -2919,7 +2982,7 @@
       "category": "Places, Rooms & Community"
     },
     {
-      "slot": 325,
+      "slot": 332,
       "tier": 2,
       "spokenText": "toy",
       "partOfSpeech": "Noun",
@@ -2928,7 +2991,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 326,
+      "slot": 333,
       "tier": 2,
       "spokenText": "ball",
       "partOfSpeech": "Noun",
@@ -2937,7 +3000,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 327,
+      "slot": 334,
       "tier": 2,
       "spokenText": "blocks",
       "partOfSpeech": "Noun",
@@ -2946,7 +3009,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 328,
+      "slot": 335,
       "tier": 2,
       "spokenText": "puzzle",
       "partOfSpeech": "Noun",
@@ -2955,7 +3018,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 329,
+      "slot": 336,
       "tier": 2,
       "spokenText": "doll",
       "partOfSpeech": "Noun",
@@ -2964,7 +3027,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 330,
+      "slot": 337,
       "tier": 2,
       "spokenText": "action figure",
       "partOfSpeech": "Noun",
@@ -2973,7 +3036,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 331,
+      "slot": 338,
       "tier": 2,
       "spokenText": "bubbles",
       "partOfSpeech": "Noun",
@@ -2982,7 +3045,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 332,
+      "slot": 339,
       "tier": 2,
       "spokenText": "play dough",
       "partOfSpeech": "Noun",
@@ -2991,7 +3054,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 333,
+      "slot": 340,
       "tier": 2,
       "spokenText": "toy car",
       "partOfSpeech": "Noun",
@@ -3000,7 +3063,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 334,
+      "slot": 341,
       "tier": 2,
       "spokenText": "toy train",
       "partOfSpeech": "Noun",
@@ -3009,7 +3072,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 335,
+      "slot": 342,
       "tier": 2,
       "spokenText": "stuffed animal",
       "partOfSpeech": "Noun",
@@ -3018,7 +3081,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 336,
+      "slot": 343,
       "tier": 2,
       "spokenText": "dinosaur",
       "partOfSpeech": "Noun",
@@ -3027,7 +3090,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 337,
+      "slot": 344,
       "tier": 2,
       "spokenText": "robot",
       "partOfSpeech": "Noun",
@@ -3036,7 +3099,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 338,
+      "slot": 345,
       "tier": 2,
       "spokenText": "legos",
       "partOfSpeech": "Noun",
@@ -3045,7 +3108,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 339,
+      "slot": 346,
       "tier": 2,
       "spokenText": "board game",
       "partOfSpeech": "Noun",
@@ -3054,7 +3117,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 340,
+      "slot": 347,
       "tier": 2,
       "spokenText": "swing set",
       "partOfSpeech": "Noun",
@@ -3063,7 +3126,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 341,
+      "slot": 348,
       "tier": 2,
       "spokenText": "sandbox",
       "partOfSpeech": "Noun",
@@ -3072,7 +3135,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 342,
+      "slot": 349,
       "tier": 2,
       "spokenText": "bike",
       "partOfSpeech": "Noun",
@@ -3081,7 +3144,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 343,
+      "slot": 350,
       "tier": 2,
       "spokenText": "scooter",
       "partOfSpeech": "Noun",
@@ -3090,7 +3153,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 344,
+      "slot": 351,
       "tier": 2,
       "spokenText": "skateboard",
       "partOfSpeech": "Noun",
@@ -3099,7 +3162,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 345,
+      "slot": 352,
       "tier": 2,
       "spokenText": "wagon",
       "partOfSpeech": "Noun",
@@ -3108,7 +3171,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 346,
+      "slot": 353,
       "tier": 2,
       "spokenText": "chalk",
       "partOfSpeech": "Noun",
@@ -3117,7 +3180,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 347,
+      "slot": 354,
       "tier": 2,
       "spokenText": "jump rope",
       "partOfSpeech": "Noun",
@@ -3126,7 +3189,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 348,
+      "slot": 355,
       "tier": 2,
       "spokenText": "music",
       "partOfSpeech": "Noun",
@@ -3135,7 +3198,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 349,
+      "slot": 356,
       "tier": 2,
       "spokenText": "song",
       "partOfSpeech": "Noun",
@@ -3144,7 +3207,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 350,
+      "slot": 357,
       "tier": 2,
       "spokenText": "tablet",
       "partOfSpeech": "Noun",
@@ -3153,7 +3216,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 351,
+      "slot": 358,
       "tier": 2,
       "spokenText": "iPad",
       "partOfSpeech": "Noun",
@@ -3162,7 +3225,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 352,
+      "slot": 359,
       "tier": 2,
       "spokenText": "phone",
       "partOfSpeech": "Noun",
@@ -3171,7 +3234,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 353,
+      "slot": 360,
       "tier": 2,
       "spokenText": "TV",
       "partOfSpeech": "Noun",
@@ -3180,7 +3243,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 354,
+      "slot": 361,
       "tier": 2,
       "spokenText": "movie",
       "partOfSpeech": "Noun",
@@ -3189,7 +3252,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 355,
+      "slot": 362,
       "tier": 2,
       "spokenText": "video",
       "partOfSpeech": "Noun",
@@ -3198,7 +3261,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 356,
+      "slot": 363,
       "tier": 2,
       "spokenText": "headphones",
       "partOfSpeech": "Noun",
@@ -3207,7 +3270,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 357,
+      "slot": 364,
       "tier": 2,
       "spokenText": "computer",
       "partOfSpeech": "Noun",
@@ -3216,7 +3279,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 358,
+      "slot": 365,
       "tier": 2,
       "spokenText": "camera",
       "partOfSpeech": "Noun",
@@ -3225,7 +3288,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 359,
+      "slot": 366,
       "tier": 2,
       "spokenText": "paper",
       "partOfSpeech": "Noun",
@@ -3234,7 +3297,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 360,
+      "slot": 367,
       "tier": 2,
       "spokenText": "markers",
       "partOfSpeech": "Noun",
@@ -3243,7 +3306,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 361,
+      "slot": 368,
       "tier": 2,
       "spokenText": "crayons",
       "partOfSpeech": "Noun",
@@ -3252,7 +3315,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 362,
+      "slot": 369,
       "tier": 2,
       "spokenText": "book",
       "partOfSpeech": "Noun",
@@ -3261,7 +3324,7 @@
       "category": "Toys, Play, Media & Leisure"
     },
     {
-      "slot": 363,
+      "slot": 370,
       "tier": 2,
       "spokenText": "chair",
       "partOfSpeech": "Noun",
@@ -3270,7 +3333,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 364,
+      "slot": 371,
       "tier": 2,
       "spokenText": "couch",
       "partOfSpeech": "Noun",
@@ -3279,7 +3342,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 365,
+      "slot": 372,
       "tier": 2,
       "spokenText": "table",
       "partOfSpeech": "Noun",
@@ -3288,7 +3351,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 366,
+      "slot": 373,
       "tier": 2,
       "spokenText": "bed",
       "partOfSpeech": "Noun",
@@ -3297,7 +3360,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 367,
+      "slot": 374,
       "tier": 2,
       "spokenText": "door",
       "partOfSpeech": "Noun",
@@ -3306,7 +3369,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 368,
+      "slot": 375,
       "tier": 2,
       "spokenText": "window",
       "partOfSpeech": "Noun",
@@ -3315,7 +3378,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 369,
+      "slot": 376,
       "tier": 2,
       "spokenText": "lamp",
       "partOfSpeech": "Noun",
@@ -3324,7 +3387,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 370,
+      "slot": 377,
       "tier": 2,
       "spokenText": "clock",
       "partOfSpeech": "Noun",
@@ -3333,7 +3396,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 371,
+      "slot": 378,
       "tier": 2,
       "spokenText": "trash",
       "partOfSpeech": "Noun",
@@ -3342,7 +3405,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 372,
+      "slot": 379,
       "tier": 2,
       "spokenText": "sink",
       "partOfSpeech": "Noun",
@@ -3351,7 +3414,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 373,
+      "slot": 380,
       "tier": 2,
       "spokenText": "mirror",
       "partOfSpeech": "Noun",
@@ -3360,7 +3423,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 374,
+      "slot": 381,
       "tier": 2,
       "spokenText": "rug",
       "partOfSpeech": "Noun",
@@ -3369,7 +3432,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 375,
+      "slot": 382,
       "tier": 2,
       "spokenText": "plate",
       "partOfSpeech": "Noun",
@@ -3378,7 +3441,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 376,
+      "slot": 383,
       "tier": 2,
       "spokenText": "bowl",
       "partOfSpeech": "Noun",
@@ -3387,7 +3450,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 377,
+      "slot": 384,
       "tier": 2,
       "spokenText": "cup",
       "partOfSpeech": "Noun",
@@ -3396,7 +3459,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 378,
+      "slot": 385,
       "tier": 2,
       "spokenText": "fork",
       "partOfSpeech": "Noun",
@@ -3405,7 +3468,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 379,
+      "slot": 386,
       "tier": 2,
       "spokenText": "spoon",
       "partOfSpeech": "Noun",
@@ -3414,7 +3477,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 380,
+      "slot": 387,
       "tier": 2,
       "spokenText": "knife",
       "partOfSpeech": "Noun",
@@ -3423,7 +3486,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 381,
+      "slot": 388,
       "tier": 2,
       "spokenText": "napkin",
       "partOfSpeech": "Noun",
@@ -3432,7 +3495,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 382,
+      "slot": 389,
       "tier": 2,
       "spokenText": "bottle",
       "partOfSpeech": "Noun",
@@ -3441,7 +3504,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 383,
+      "slot": 390,
       "tier": 2,
       "spokenText": "straw",
       "partOfSpeech": "Noun",
@@ -3450,7 +3513,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 384,
+      "slot": 391,
       "tier": 2,
       "spokenText": "fridge",
       "partOfSpeech": "Noun",
@@ -3459,7 +3522,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 385,
+      "slot": 392,
       "tier": 2,
       "spokenText": "microwave",
       "partOfSpeech": "Noun",
@@ -3468,7 +3531,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 386,
+      "slot": 393,
       "tier": 2,
       "spokenText": "backpack",
       "partOfSpeech": "Noun",
@@ -3477,7 +3540,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 387,
+      "slot": 394,
       "tier": 2,
       "spokenText": "bag",
       "partOfSpeech": "Noun",
@@ -3486,7 +3549,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 388,
+      "slot": 395,
       "tier": 2,
       "spokenText": "keys",
       "partOfSpeech": "Noun",
@@ -3495,7 +3558,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 389,
+      "slot": 396,
       "tier": 2,
       "spokenText": "wallet",
       "partOfSpeech": "Noun",
@@ -3504,7 +3567,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 390,
+      "slot": 397,
       "tier": 2,
       "spokenText": "glasses",
       "partOfSpeech": "Noun",
@@ -3513,7 +3576,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 391,
+      "slot": 398,
       "tier": 2,
       "spokenText": "umbrella",
       "partOfSpeech": "Noun",
@@ -3522,7 +3585,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 392,
+      "slot": 399,
       "tier": 2,
       "spokenText": "blanket",
       "partOfSpeech": "Noun",
@@ -3531,7 +3594,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 393,
+      "slot": 400,
       "tier": 2,
       "spokenText": "pillow",
       "partOfSpeech": "Noun",
@@ -3540,7 +3603,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 394,
+      "slot": 401,
       "tier": 2,
       "spokenText": "fan",
       "partOfSpeech": "Noun",
@@ -3549,7 +3612,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 395,
+      "slot": 402,
       "tier": 2,
       "spokenText": "charger",
       "partOfSpeech": "Noun",
@@ -3558,7 +3621,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 396,
+      "slot": 403,
       "tier": 2,
       "spokenText": "box",
       "partOfSpeech": "Noun",
@@ -3567,7 +3630,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 397,
+      "slot": 404,
       "tier": 2,
       "spokenText": "battery",
       "partOfSpeech": "Noun",
@@ -3576,7 +3639,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 398,
+      "slot": 405,
       "tier": 2,
       "spokenText": "broom",
       "partOfSpeech": "Noun",
@@ -3585,7 +3648,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 399,
+      "slot": 406,
       "tier": 2,
       "spokenText": "vacuum",
       "partOfSpeech": "Noun",
@@ -3594,7 +3657,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 400,
+      "slot": 407,
       "tier": 2,
       "spokenText": "sponge",
       "partOfSpeech": "Noun",
@@ -3603,7 +3666,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 401,
+      "slot": 408,
       "tier": 2,
       "spokenText": "tape",
       "partOfSpeech": "Noun",
@@ -3612,7 +3675,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 402,
+      "slot": 409,
       "tier": 2,
       "spokenText": "flashlight",
       "partOfSpeech": "Noun",
@@ -3621,7 +3684,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 403,
+      "slot": 410,
       "tier": 2,
       "spokenText": "bucket",
       "partOfSpeech": "Noun",
@@ -3630,7 +3693,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 404,
+      "slot": 411,
       "tier": 2,
       "spokenText": "paper towel",
       "partOfSpeech": "Noun",
@@ -3639,7 +3702,7 @@
       "category": "Home, Household Objects & Daily Tools"
     },
     {
-      "slot": 405,
+      "slot": 412,
       "tier": 2,
       "spokenText": "shirt",
       "partOfSpeech": "Noun",
@@ -3648,7 +3711,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 406,
+      "slot": 413,
       "tier": 2,
       "spokenText": "pants",
       "partOfSpeech": "Noun",
@@ -3657,7 +3720,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 407,
+      "slot": 414,
       "tier": 2,
       "spokenText": "shorts",
       "partOfSpeech": "Noun",
@@ -3666,7 +3729,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 408,
+      "slot": 415,
       "tier": 2,
       "spokenText": "underwear",
       "partOfSpeech": "Noun",
@@ -3675,7 +3738,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 409,
+      "slot": 416,
       "tier": 2,
       "spokenText": "dress",
       "partOfSpeech": "Noun",
@@ -3684,7 +3747,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 410,
+      "slot": 417,
       "tier": 2,
       "spokenText": "skirt",
       "partOfSpeech": "Noun",
@@ -3693,7 +3756,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 411,
+      "slot": 418,
       "tier": 2,
       "spokenText": "sweater",
       "partOfSpeech": "Noun",
@@ -3702,7 +3765,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 412,
+      "slot": 419,
       "tier": 2,
       "spokenText": "sweatshirt",
       "partOfSpeech": "Noun",
@@ -3711,7 +3774,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 413,
+      "slot": 420,
       "tier": 2,
       "spokenText": "socks",
       "partOfSpeech": "Noun",
@@ -3720,7 +3783,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 414,
+      "slot": 421,
       "tier": 2,
       "spokenText": "shoes",
       "partOfSpeech": "Noun",
@@ -3729,7 +3792,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 415,
+      "slot": 422,
       "tier": 2,
       "spokenText": "pajamas",
       "partOfSpeech": "Noun",
@@ -3738,7 +3801,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 416,
+      "slot": 423,
       "tier": 2,
       "spokenText": "robe",
       "partOfSpeech": "Noun",
@@ -3747,7 +3810,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 417,
+      "slot": 424,
       "tier": 2,
       "spokenText": "slippers",
       "partOfSpeech": "Noun",
@@ -3756,7 +3819,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 418,
+      "slot": 425,
       "tier": 2,
       "spokenText": "jacket",
       "partOfSpeech": "Noun",
@@ -3765,7 +3828,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 419,
+      "slot": 426,
       "tier": 2,
       "spokenText": "coat",
       "partOfSpeech": "Noun",
@@ -3774,7 +3837,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 420,
+      "slot": 427,
       "tier": 2,
       "spokenText": "hat",
       "partOfSpeech": "Noun",
@@ -3783,7 +3846,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 421,
+      "slot": 428,
       "tier": 2,
       "spokenText": "mittens",
       "partOfSpeech": "Noun",
@@ -3792,7 +3855,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 422,
+      "slot": 429,
       "tier": 2,
       "spokenText": "gloves",
       "partOfSpeech": "Noun",
@@ -3801,7 +3864,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 423,
+      "slot": 430,
       "tier": 2,
       "spokenText": "scarf",
       "partOfSpeech": "Noun",
@@ -3810,7 +3873,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 424,
+      "slot": 431,
       "tier": 2,
       "spokenText": "boots",
       "partOfSpeech": "Noun",
@@ -3819,7 +3882,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 425,
+      "slot": 432,
       "tier": 2,
       "spokenText": "raincoat",
       "partOfSpeech": "Noun",
@@ -3828,7 +3891,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 426,
+      "slot": 433,
       "tier": 2,
       "spokenText": "swimsuit",
       "partOfSpeech": "Noun",
@@ -3837,7 +3900,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 427,
+      "slot": 434,
       "tier": 2,
       "spokenText": "sunglasses",
       "partOfSpeech": "Noun",
@@ -3846,7 +3909,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 428,
+      "slot": 435,
       "tier": 2,
       "spokenText": "zipper",
       "partOfSpeech": "Noun",
@@ -3855,7 +3918,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 429,
+      "slot": 436,
       "tier": 2,
       "spokenText": "button",
       "partOfSpeech": "Noun",
@@ -3864,7 +3927,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 430,
+      "slot": 437,
       "tier": 2,
       "spokenText": "belt",
       "partOfSpeech": "Noun",
@@ -3873,7 +3936,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 431,
+      "slot": 438,
       "tier": 2,
       "spokenText": "pocket",
       "partOfSpeech": "Noun",
@@ -3882,7 +3945,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 432,
+      "slot": 439,
       "tier": 2,
       "spokenText": "sandals",
       "partOfSpeech": "Noun",
@@ -3891,7 +3954,7 @@
       "category": "Clothing & Accessories"
     },
     {
-      "slot": 433,
+      "slot": 440,
       "tier": 2,
       "spokenText": "animal",
       "partOfSpeech": "Noun",
@@ -3900,7 +3963,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 434,
+      "slot": 441,
       "tier": 2,
       "spokenText": "dog",
       "partOfSpeech": "Noun",
@@ -3909,7 +3972,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 435,
+      "slot": 442,
       "tier": 2,
       "spokenText": "cat",
       "partOfSpeech": "Noun",
@@ -3918,7 +3981,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 436,
+      "slot": 443,
       "tier": 2,
       "spokenText": "puppy",
       "partOfSpeech": "Noun",
@@ -3927,7 +3990,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 437,
+      "slot": 444,
       "tier": 2,
       "spokenText": "kitten",
       "partOfSpeech": "Noun",
@@ -3936,7 +3999,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 438,
+      "slot": 445,
       "tier": 2,
       "spokenText": "bird",
       "partOfSpeech": "Noun",
@@ -3945,7 +4008,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 439,
+      "slot": 446,
       "tier": 2,
       "spokenText": "bunny",
       "partOfSpeech": "Noun",
@@ -3954,7 +4017,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 440,
+      "slot": 447,
       "tier": 2,
       "spokenText": "duck",
       "partOfSpeech": "Noun",
@@ -3963,7 +4026,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 441,
+      "slot": 448,
       "tier": 2,
       "spokenText": "hen",
       "partOfSpeech": "Noun",
@@ -3972,7 +4035,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 442,
+      "slot": 449,
       "tier": 2,
       "spokenText": "cow",
       "partOfSpeech": "Noun",
@@ -3981,7 +4044,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 443,
+      "slot": 450,
       "tier": 2,
       "spokenText": "horse",
       "partOfSpeech": "Noun",
@@ -3990,7 +4053,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 444,
+      "slot": 451,
       "tier": 2,
       "spokenText": "pig",
       "partOfSpeech": "Noun",
@@ -3999,7 +4062,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 445,
+      "slot": 452,
       "tier": 2,
       "spokenText": "sheep",
       "partOfSpeech": "Noun",
@@ -4008,7 +4071,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 446,
+      "slot": 453,
       "tier": 2,
       "spokenText": "goat",
       "partOfSpeech": "Noun",
@@ -4017,7 +4080,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 447,
+      "slot": 454,
       "tier": 2,
       "spokenText": "bear",
       "partOfSpeech": "Noun",
@@ -4026,7 +4089,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 448,
+      "slot": 455,
       "tier": 2,
       "spokenText": "lion",
       "partOfSpeech": "Noun",
@@ -4035,7 +4098,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 449,
+      "slot": 456,
       "tier": 2,
       "spokenText": "tiger",
       "partOfSpeech": "Noun",
@@ -4044,7 +4107,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 450,
+      "slot": 457,
       "tier": 2,
       "spokenText": "elephant",
       "partOfSpeech": "Noun",
@@ -4053,7 +4116,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 451,
+      "slot": 458,
       "tier": 2,
       "spokenText": "monkey",
       "partOfSpeech": "Noun",
@@ -4062,7 +4125,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 452,
+      "slot": 459,
       "tier": 2,
       "spokenText": "giraffe",
       "partOfSpeech": "Noun",
@@ -4071,7 +4134,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 453,
+      "slot": 460,
       "tier": 2,
       "spokenText": "zebra",
       "partOfSpeech": "Noun",
@@ -4080,7 +4143,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 454,
+      "slot": 461,
       "tier": 2,
       "spokenText": "hippo",
       "partOfSpeech": "Noun",
@@ -4089,7 +4152,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 455,
+      "slot": 462,
       "tier": 2,
       "spokenText": "penguin",
       "partOfSpeech": "Noun",
@@ -4098,7 +4161,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 456,
+      "slot": 463,
       "tier": 2,
       "spokenText": "dolphin",
       "partOfSpeech": "Noun",
@@ -4107,7 +4170,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 457,
+      "slot": 464,
       "tier": 2,
       "spokenText": "whale",
       "partOfSpeech": "Noun",
@@ -4116,7 +4179,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 458,
+      "slot": 465,
       "tier": 2,
       "spokenText": "snake",
       "partOfSpeech": "Noun",
@@ -4125,7 +4188,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 459,
+      "slot": 466,
       "tier": 2,
       "spokenText": "turtle",
       "partOfSpeech": "Noun",
@@ -4134,7 +4197,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 460,
+      "slot": 467,
       "tier": 2,
       "spokenText": "frog",
       "partOfSpeech": "Noun",
@@ -4143,7 +4206,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 461,
+      "slot": 468,
       "tier": 2,
       "spokenText": "bug",
       "partOfSpeech": "Noun",
@@ -4152,7 +4215,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 462,
+      "slot": 469,
       "tier": 2,
       "spokenText": "spider",
       "partOfSpeech": "Noun",
@@ -4161,7 +4224,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 463,
+      "slot": 470,
       "tier": 2,
       "spokenText": "butterfly",
       "partOfSpeech": "Noun",
@@ -4170,7 +4233,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 464,
+      "slot": 471,
       "tier": 2,
       "spokenText": "tree",
       "partOfSpeech": "Noun",
@@ -4179,7 +4242,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 465,
+      "slot": 472,
       "tier": 2,
       "spokenText": "grass",
       "partOfSpeech": "Noun",
@@ -4188,7 +4251,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 466,
+      "slot": 473,
       "tier": 2,
       "spokenText": "flower",
       "partOfSpeech": "Noun",
@@ -4197,7 +4260,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 467,
+      "slot": 474,
       "tier": 2,
       "spokenText": "sun",
       "partOfSpeech": "Noun",
@@ -4206,7 +4269,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 468,
+      "slot": 475,
       "tier": 2,
       "spokenText": "rain",
       "partOfSpeech": "Noun",
@@ -4215,7 +4278,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 469,
+      "slot": 476,
       "tier": 2,
       "spokenText": "snow",
       "partOfSpeech": "Noun",
@@ -4224,7 +4287,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 470,
+      "slot": 477,
       "tier": 2,
       "spokenText": "wind",
       "partOfSpeech": "Noun",
@@ -4233,7 +4296,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 471,
+      "slot": 478,
       "tier": 2,
       "spokenText": "cloud",
       "partOfSpeech": "Noun",
@@ -4242,7 +4305,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 472,
+      "slot": 479,
       "tier": 2,
       "spokenText": "moon",
       "partOfSpeech": "Noun",
@@ -4251,7 +4314,7 @@
       "category": "Animals & Nature"
     },
     {
-      "slot": 473,
+      "slot": 480,
       "tier": 2,
       "spokenText": "vehicle",
       "partOfSpeech": "Noun",
@@ -4260,7 +4323,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 474,
+      "slot": 481,
       "tier": 2,
       "spokenText": "car",
       "partOfSpeech": "Noun",
@@ -4269,7 +4332,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 475,
+      "slot": 482,
       "tier": 2,
       "spokenText": "bus",
       "partOfSpeech": "Noun",
@@ -4278,7 +4341,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 476,
+      "slot": 483,
       "tier": 2,
       "spokenText": "school bus",
       "partOfSpeech": "Noun",
@@ -4287,7 +4350,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 477,
+      "slot": 484,
       "tier": 2,
       "spokenText": "truck",
       "partOfSpeech": "Noun",
@@ -4296,7 +4359,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 478,
+      "slot": 485,
       "tier": 2,
       "spokenText": "fire truck",
       "partOfSpeech": "Noun",
@@ -4305,7 +4368,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 479,
+      "slot": 486,
       "tier": 2,
       "spokenText": "police car",
       "partOfSpeech": "Noun",
@@ -4314,7 +4377,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 480,
+      "slot": 487,
       "tier": 2,
       "spokenText": "ambulance",
       "partOfSpeech": "Noun",
@@ -4323,7 +4386,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 481,
+      "slot": 488,
       "tier": 2,
       "spokenText": "train",
       "partOfSpeech": "Noun",
@@ -4332,7 +4395,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 482,
+      "slot": 489,
       "tier": 2,
       "spokenText": "bicycle",
       "partOfSpeech": "Noun",
@@ -4341,7 +4404,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 483,
+      "slot": 490,
       "tier": 2,
       "spokenText": "motorcycle",
       "partOfSpeech": "Noun",
@@ -4350,7 +4413,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 484,
+      "slot": 491,
       "tier": 2,
       "spokenText": "van",
       "partOfSpeech": "Noun",
@@ -4359,7 +4422,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 485,
+      "slot": 492,
       "tier": 2,
       "spokenText": "tractor",
       "partOfSpeech": "Noun",
@@ -4368,7 +4431,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 486,
+      "slot": 493,
       "tier": 2,
       "spokenText": "stroller",
       "partOfSpeech": "Noun",
@@ -4377,7 +4440,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 487,
+      "slot": 494,
       "tier": 2,
       "spokenText": "airplane",
       "partOfSpeech": "Noun",
@@ -4386,7 +4449,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 488,
+      "slot": 495,
       "tier": 2,
       "spokenText": "helicopter",
       "partOfSpeech": "Noun",
@@ -4395,7 +4458,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 489,
+      "slot": 496,
       "tier": 2,
       "spokenText": "rocket",
       "partOfSpeech": "Noun",
@@ -4404,7 +4467,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 490,
+      "slot": 497,
       "tier": 2,
       "spokenText": "boat",
       "partOfSpeech": "Noun",
@@ -4413,7 +4476,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 491,
+      "slot": 498,
       "tier": 2,
       "spokenText": "ship",
       "partOfSpeech": "Noun",
@@ -4422,7 +4485,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 492,
+      "slot": 499,
       "tier": 2,
       "spokenText": "canoe",
       "partOfSpeech": "Noun",
@@ -4431,7 +4494,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 493,
+      "slot": 500,
       "tier": 2,
       "spokenText": "subway",
       "partOfSpeech": "Noun",
@@ -4440,7 +4503,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 494,
+      "slot": 501,
       "tier": 2,
       "spokenText": "road",
       "partOfSpeech": "Noun",
@@ -4449,7 +4512,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 495,
+      "slot": 502,
       "tier": 2,
       "spokenText": "track",
       "partOfSpeech": "Noun",
@@ -4458,7 +4521,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 496,
+      "slot": 503,
       "tier": 2,
       "spokenText": "stoplight",
       "partOfSpeech": "Noun",
@@ -4467,7 +4530,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 497,
+      "slot": 504,
       "tier": 2,
       "spokenText": "gas station",
       "partOfSpeech": "Noun",
@@ -4476,7 +4539,7 @@
       "category": "Vehicles & Transportation"
     },
     {
-      "slot": 498,
+      "slot": 505,
       "tier": 2,
       "spokenText": "red",
       "partOfSpeech": "Adjective",
@@ -4485,7 +4548,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 499,
+      "slot": 506,
       "tier": 2,
       "spokenText": "blue",
       "partOfSpeech": "Adjective",
@@ -4494,7 +4557,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 500,
+      "slot": 507,
       "tier": 2,
       "spokenText": "green",
       "partOfSpeech": "Adjective",
@@ -4503,7 +4566,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 501,
+      "slot": 508,
       "tier": 2,
       "spokenText": "yellow",
       "partOfSpeech": "Adjective",
@@ -4512,7 +4575,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 502,
+      "slot": 509,
       "tier": 2,
       "spokenText": "orange color",
       "partOfSpeech": "Adjective",
@@ -4521,7 +4584,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 503,
+      "slot": 510,
       "tier": 2,
       "spokenText": "purple",
       "partOfSpeech": "Adjective",
@@ -4530,7 +4593,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 504,
+      "slot": 511,
       "tier": 2,
       "spokenText": "pink color",
       "partOfSpeech": "Adjective",
@@ -4539,7 +4602,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 505,
+      "slot": 512,
       "tier": 2,
       "spokenText": "brown",
       "partOfSpeech": "Adjective",
@@ -4548,7 +4611,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 506,
+      "slot": 513,
       "tier": 2,
       "spokenText": "black",
       "partOfSpeech": "Adjective",
@@ -4557,7 +4620,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 507,
+      "slot": 514,
       "tier": 2,
       "spokenText": "white",
       "partOfSpeech": "Adjective",
@@ -4566,7 +4629,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 508,
+      "slot": 515,
       "tier": 2,
       "spokenText": "fast",
       "partOfSpeech": "Adjective",
@@ -4575,7 +4638,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 509,
+      "slot": 516,
       "tier": 2,
       "spokenText": "slow",
       "partOfSpeech": "Adjective",
@@ -4584,7 +4647,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 510,
+      "slot": 517,
       "tier": 2,
       "spokenText": "tall",
       "partOfSpeech": "Adjective",
@@ -4593,7 +4656,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 511,
+      "slot": 518,
       "tier": 2,
       "spokenText": "short",
       "partOfSpeech": "Adjective",
@@ -4602,7 +4665,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 512,
+      "slot": 519,
       "tier": 2,
       "spokenText": "long",
       "partOfSpeech": "Adjective",
@@ -4611,7 +4674,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 513,
+      "slot": 520,
       "tier": 2,
       "spokenText": "heavy",
       "partOfSpeech": "Adjective",
@@ -4620,7 +4683,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 514,
+      "slot": 521,
       "tier": 2,
       "spokenText": "light weight",
       "partOfSpeech": "Adjective",
@@ -4629,7 +4692,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 515,
+      "slot": 522,
       "tier": 2,
       "spokenText": "thick",
       "partOfSpeech": "Adjective",
@@ -4638,7 +4701,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 516,
+      "slot": 523,
       "tier": 2,
       "spokenText": "thin",
       "partOfSpeech": "Adjective",
@@ -4647,7 +4710,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 517,
+      "slot": 524,
       "tier": 2,
       "spokenText": "wide",
       "partOfSpeech": "Adjective",
@@ -4656,7 +4719,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 518,
+      "slot": 525,
       "tier": 2,
       "spokenText": "narrow",
       "partOfSpeech": "Adjective",
@@ -4665,7 +4728,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 519,
+      "slot": 526,
       "tier": 2,
       "spokenText": "hard",
       "partOfSpeech": "Adjective",
@@ -4674,7 +4737,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 520,
+      "slot": 527,
       "tier": 2,
       "spokenText": "wet",
       "partOfSpeech": "Adjective",
@@ -4683,7 +4746,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 521,
+      "slot": 528,
       "tier": 2,
       "spokenText": "dry",
       "partOfSpeech": "Adjective",
@@ -4692,7 +4755,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 522,
+      "slot": 529,
       "tier": 2,
       "spokenText": "clean item",
       "partOfSpeech": "Adjective",
@@ -4701,7 +4764,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 523,
+      "slot": 530,
       "tier": 2,
       "spokenText": "dirty",
       "partOfSpeech": "Adjective",
@@ -4710,7 +4773,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 524,
+      "slot": 531,
       "tier": 2,
       "spokenText": "smooth",
       "partOfSpeech": "Adjective",
@@ -4719,7 +4782,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 525,
+      "slot": 532,
       "tier": 2,
       "spokenText": "broken",
       "partOfSpeech": "Adjective",
@@ -4728,7 +4791,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 526,
+      "slot": 533,
       "tier": 2,
       "spokenText": "fixed",
       "partOfSpeech": "Adjective",
@@ -4737,7 +4800,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 527,
+      "slot": 534,
       "tier": 2,
       "spokenText": "empty",
       "partOfSpeech": "Adjective",
@@ -4746,7 +4809,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 528,
+      "slot": 535,
       "tier": 2,
       "spokenText": "full",
       "partOfSpeech": "Adjective",
@@ -4755,7 +4818,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 529,
+      "slot": 536,
       "tier": 2,
       "spokenText": "safe",
       "partOfSpeech": "Adjective",
@@ -4764,7 +4827,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 530,
+      "slot": 537,
       "tier": 2,
       "spokenText": "dangerous",
       "partOfSpeech": "Adjective",
@@ -4773,7 +4836,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 531,
+      "slot": 538,
       "tier": 2,
       "spokenText": "easy",
       "partOfSpeech": "Adjective",
@@ -4782,7 +4845,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 532,
+      "slot": 539,
       "tier": 2,
       "spokenText": "difficult",
       "partOfSpeech": "Adjective",
@@ -4791,7 +4854,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 533,
+      "slot": 540,
       "tier": 2,
       "spokenText": "right",
       "partOfSpeech": "Adjective",
@@ -4800,7 +4863,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 534,
+      "slot": 541,
       "tier": 2,
       "spokenText": "wrong",
       "partOfSpeech": "Adjective",
@@ -4809,7 +4872,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 535,
+      "slot": 542,
       "tier": 2,
       "spokenText": "new",
       "partOfSpeech": "Adjective",
@@ -4818,7 +4881,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 536,
+      "slot": 543,
       "tier": 2,
       "spokenText": "old",
       "partOfSpeech": "Adjective",
@@ -4827,7 +4890,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 537,
+      "slot": 544,
       "tier": 2,
       "spokenText": "pretty",
       "partOfSpeech": "Adjective",
@@ -4836,7 +4899,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 538,
+      "slot": 545,
       "tier": 2,
       "spokenText": "cool",
       "partOfSpeech": "Adjective",
@@ -4845,7 +4908,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 539,
+      "slot": 546,
       "tier": 2,
       "spokenText": "special",
       "partOfSpeech": "Adjective",
@@ -4854,7 +4917,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 540,
+      "slot": 547,
       "tier": 2,
       "spokenText": "ready",
       "partOfSpeech": "Adjective",
@@ -4863,7 +4926,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 541,
+      "slot": 548,
       "tier": 2,
       "spokenText": "favorite",
       "partOfSpeech": "Adjective",
@@ -4872,7 +4935,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 542,
+      "slot": 549,
       "tier": 2,
       "spokenText": "weird",
       "partOfSpeech": "Adjective",
@@ -4881,7 +4944,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 543,
+      "slot": 550,
       "tier": 2,
       "spokenText": "funny",
       "partOfSpeech": "Adjective",
@@ -4890,7 +4953,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 544,
+      "slot": 551,
       "tier": 2,
       "spokenText": "dark color",
       "partOfSpeech": "Adjective",
@@ -4899,7 +4962,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 545,
+      "slot": 552,
       "tier": 2,
       "spokenText": "light color",
       "partOfSpeech": "Adjective",
@@ -4908,7 +4971,7 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 546,
+      "slot": 553,
       "tier": 2,
       "spokenText": "morning",
       "partOfSpeech": "Noun",
@@ -4917,7 +4980,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 547,
+      "slot": 554,
       "tier": 2,
       "spokenText": "afternoon",
       "partOfSpeech": "Noun",
@@ -4926,7 +4989,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 548,
+      "slot": 555,
       "tier": 2,
       "spokenText": "evening",
       "partOfSpeech": "Noun",
@@ -4935,7 +4998,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 549,
+      "slot": 556,
       "tier": 2,
       "spokenText": "night",
       "partOfSpeech": "Noun",
@@ -4944,7 +5007,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 550,
+      "slot": 557,
       "tier": 2,
       "spokenText": "bedtime",
       "partOfSpeech": "Noun",
@@ -4953,7 +5016,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 551,
+      "slot": 558,
       "tier": 2,
       "spokenText": "naptime",
       "partOfSpeech": "Noun",
@@ -4962,7 +5025,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 552,
+      "slot": 559,
       "tier": 2,
       "spokenText": "now",
       "partOfSpeech": "Adverb",
@@ -4971,7 +5034,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 553,
+      "slot": 560,
       "tier": 2,
       "spokenText": "later",
       "partOfSpeech": "Adverb",
@@ -4980,7 +5043,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 554,
+      "slot": 561,
       "tier": 2,
       "spokenText": "soon",
       "partOfSpeech": "Adverb",
@@ -4989,7 +5052,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 555,
+      "slot": 562,
       "tier": 2,
       "spokenText": "today",
       "partOfSpeech": "Noun",
@@ -4998,7 +5061,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 556,
+      "slot": 563,
       "tier": 2,
       "spokenText": "tomorrow",
       "partOfSpeech": "Noun",
@@ -5007,7 +5070,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 557,
+      "slot": 564,
       "tier": 2,
       "spokenText": "yesterday",
       "partOfSpeech": "Noun",
@@ -5016,7 +5079,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 558,
+      "slot": 565,
       "tier": 2,
       "spokenText": "before",
       "partOfSpeech": "Preposition",
@@ -5025,7 +5088,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 559,
+      "slot": 566,
       "tier": 2,
       "spokenText": "after",
       "partOfSpeech": "Preposition",
@@ -5034,7 +5097,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 560,
+      "slot": 567,
       "tier": 2,
       "spokenText": "again",
       "partOfSpeech": "Adverb",
@@ -5043,7 +5106,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 561,
+      "slot": 568,
       "tier": 2,
       "spokenText": "always",
       "partOfSpeech": "Adverb",
@@ -5052,7 +5115,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 562,
+      "slot": 569,
       "tier": 2,
       "spokenText": "never",
       "partOfSpeech": "Adverb",
@@ -5061,7 +5124,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 563,
+      "slot": 570,
       "tier": 2,
       "spokenText": "sometimes",
       "partOfSpeech": "Adverb",
@@ -5070,7 +5133,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 564,
+      "slot": 571,
       "tier": 2,
       "spokenText": "first",
       "partOfSpeech": "Adverb",
@@ -5079,7 +5142,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 565,
+      "slot": 572,
       "tier": 2,
       "spokenText": "next",
       "partOfSpeech": "Adverb",
@@ -5088,7 +5151,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 566,
+      "slot": 573,
       "tier": 2,
       "spokenText": "then",
       "partOfSpeech": "Adverb",
@@ -5097,7 +5160,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 567,
+      "slot": 574,
       "tier": 2,
       "spokenText": "last",
       "partOfSpeech": "Adverb",
@@ -5106,7 +5169,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 568,
+      "slot": 575,
       "tier": 2,
       "spokenText": "minute",
       "partOfSpeech": "Noun",
@@ -5115,7 +5178,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 569,
+      "slot": 576,
       "tier": 2,
       "spokenText": "hour",
       "partOfSpeech": "Noun",
@@ -5124,7 +5187,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 570,
+      "slot": 577,
       "tier": 2,
       "spokenText": "1",
       "partOfSpeech": "Adjective",
@@ -5133,7 +5196,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 571,
+      "slot": 578,
       "tier": 2,
       "spokenText": "2",
       "partOfSpeech": "Adjective",
@@ -5142,7 +5205,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 572,
+      "slot": 579,
       "tier": 2,
       "spokenText": "3",
       "partOfSpeech": "Adjective",
@@ -5151,7 +5214,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 573,
+      "slot": 580,
       "tier": 2,
       "spokenText": "4",
       "partOfSpeech": "Adjective",
@@ -5160,7 +5223,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 574,
+      "slot": 581,
       "tier": 2,
       "spokenText": "5",
       "partOfSpeech": "Adjective",
@@ -5169,7 +5232,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 575,
+      "slot": 582,
       "tier": 2,
       "spokenText": "10",
       "partOfSpeech": "Adjective",
@@ -5178,7 +5241,7 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 576,
+      "slot": 583,
       "tier": 2,
       "spokenText": "hello",
       "partOfSpeech": "Interjection",
@@ -5187,7 +5250,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 577,
+      "slot": 584,
       "tier": 2,
       "spokenText": "hi",
       "partOfSpeech": "Interjection",
@@ -5196,7 +5259,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 578,
+      "slot": 585,
       "tier": 2,
       "spokenText": "goodbye",
       "partOfSpeech": "Interjection",
@@ -5205,7 +5268,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 579,
+      "slot": 586,
       "tier": 2,
       "spokenText": "bye",
       "partOfSpeech": "Interjection",
@@ -5214,7 +5277,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 580,
+      "slot": 587,
       "tier": 2,
       "spokenText": "thank you",
       "partOfSpeech": "Interjection",
@@ -5223,7 +5286,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 581,
+      "slot": 588,
       "tier": 2,
       "spokenText": "you're welcome",
       "partOfSpeech": "Interjection",
@@ -5232,7 +5295,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 582,
+      "slot": 589,
       "tier": 2,
       "spokenText": "sorry",
       "partOfSpeech": "Interjection",
@@ -5241,7 +5304,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 583,
+      "slot": 590,
       "tier": 2,
       "spokenText": "excuse me",
       "partOfSpeech": "Interjection",
@@ -5250,7 +5313,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 584,
+      "slot": 591,
       "tier": 2,
       "spokenText": "good morning",
       "partOfSpeech": "Interjection",
@@ -5259,7 +5322,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 585,
+      "slot": 592,
       "tier": 2,
       "spokenText": "good night",
       "partOfSpeech": "Interjection",
@@ -5268,7 +5331,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 586,
+      "slot": 593,
       "tier": 2,
       "spokenText": "okay",
       "partOfSpeech": "Interjection",
@@ -5277,7 +5340,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 587,
+      "slot": 594,
       "tier": 2,
       "spokenText": "ready to go",
       "partOfSpeech": "Interjection",
@@ -5286,7 +5349,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 588,
+      "slot": 595,
       "tier": 2,
       "spokenText": "wow",
       "partOfSpeech": "Interjection",
@@ -5295,7 +5358,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 589,
+      "slot": 596,
       "tier": 2,
       "spokenText": "really",
       "partOfSpeech": "Interjection",
@@ -5304,7 +5367,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 590,
+      "slot": 597,
       "tier": 2,
       "spokenText": "maybe",
       "partOfSpeech": "Interjection",
@@ -5313,7 +5376,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 591,
+      "slot": 598,
       "tier": 2,
       "spokenText": "I don't know",
       "partOfSpeech": "Interjection",
@@ -5322,7 +5385,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 592,
+      "slot": 599,
       "tier": 2,
       "spokenText": "look at this",
       "partOfSpeech": "Interjection",
@@ -5331,7 +5394,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 593,
+      "slot": 600,
       "tier": 2,
       "spokenText": "my turn",
       "partOfSpeech": "Interjection",
@@ -5340,7 +5403,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 594,
+      "slot": 601,
       "tier": 2,
       "spokenText": "your turn",
       "partOfSpeech": "Interjection",
@@ -5349,7 +5412,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 595,
+      "slot": 602,
       "tier": 2,
       "spokenText": "careful",
       "partOfSpeech": "Interjection",
@@ -5358,7 +5421,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 596,
+      "slot": 603,
       "tier": 2,
       "spokenText": "emergency",
       "partOfSpeech": "Interjection",
@@ -5367,7 +5430,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 597,
+      "slot": 604,
       "tier": 2,
       "spokenText": "no way",
       "partOfSpeech": "Interjection",
@@ -5376,7 +5439,7 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 598,
+      "slot": 605,
       "tier": 2,
       "spokenText": "don't",
       "partOfSpeech": "Interjection",
@@ -5385,13 +5448,463 @@
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
-      "slot": 599,
+      "slot": 606,
       "tier": 2,
       "spokenText": "bathroom urgent",
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "slot": 607,
+      "tier": 2,
+      "spokenText": "is",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 608,
+      "tier": 2,
+      "spokenText": "are",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 609,
+      "tier": 2,
+      "spokenText": "am",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 610,
+      "tier": 2,
+      "spokenText": "was",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 611,
+      "tier": 2,
+      "spokenText": "were",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 612,
+      "tier": 2,
+      "spokenText": "has",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 613,
+      "tier": 2,
+      "spokenText": "had",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 614,
+      "tier": 2,
+      "spokenText": "will",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 615,
+      "tier": 2,
+      "spokenText": "would",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 616,
+      "tier": 2,
+      "spokenText": "can't",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 617,
+      "tier": 2,
+      "spokenText": "won't",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 618,
+      "tier": 2,
+      "spokenText": "didn't",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 619,
+      "tier": 2,
+      "spokenText": "a",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 620,
+      "tier": 2,
+      "spokenText": "an",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 621,
+      "tier": 2,
+      "spokenText": "the",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 622,
+      "tier": 2,
+      "spokenText": "of",
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 623,
+      "tier": 2,
+      "spokenText": "every",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 624,
+      "tier": 2,
+      "spokenText": "each",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 625,
+      "tier": 2,
+      "spokenText": "another",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 626,
+      "tier": 2,
+      "spokenText": "other",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 627,
+      "tier": 2,
+      "spokenText": "so",
+      "partOfSpeech": "Conjunction",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 628,
+      "tier": 2,
+      "spokenText": "if",
+      "partOfSpeech": "Conjunction",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 629,
+      "tier": 2,
+      "spokenText": "him",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 630,
+      "tier": 2,
+      "spokenText": "her",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 631,
+      "tier": 2,
+      "spokenText": "us",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 632,
+      "tier": 2,
+      "spokenText": "them",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 633,
+      "tier": 2,
+      "spokenText": "his",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 634,
+      "tier": 2,
+      "spokenText": "your",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 635,
+      "tier": 2,
+      "spokenText": "our",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 636,
+      "tier": 2,
+      "spokenText": "their",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 637,
+      "tier": 2,
+      "spokenText": "something",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 638,
+      "tier": 2,
+      "spokenText": "someone",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 639,
+      "tier": 2,
+      "spokenText": "everyone",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 640,
+      "tier": 2,
+      "spokenText": "thing",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 641,
+      "tier": 2,
+      "spokenText": "very",
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 642,
+      "tier": 2,
+      "spokenText": "too",
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 643,
+      "tier": 2,
+      "spokenText": "just",
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 644,
+      "tier": 2,
+      "spokenText": "also",
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 645,
+      "tier": 2,
+      "spokenText": "only",
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 646,
+      "tier": 2,
+      "spokenText": "still",
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 647,
+      "tier": 2,
+      "spokenText": "one",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 648,
+      "tier": 2,
+      "spokenText": "two",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 649,
+      "tier": 2,
+      "spokenText": "three",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 650,
+      "tier": 2,
+      "spokenText": "four",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 651,
+      "tier": 2,
+      "spokenText": "five",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 652,
+      "tier": 2,
+      "spokenText": "six",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 653,
+      "tier": 2,
+      "spokenText": "seven",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 654,
+      "tier": 2,
+      "spokenText": "eight",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 655,
+      "tier": 2,
+      "spokenText": "nine",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
+    },
+    {
+      "slot": 656,
+      "tier": 2,
+      "spokenText": "ten",
+      "partOfSpeech": "Number",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Diagrammatic",
+      "category": "Numbers & Counting"
     }
   ]
 }

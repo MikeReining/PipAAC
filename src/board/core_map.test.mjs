@@ -1,7 +1,7 @@
 /**
  * Phase 002 slice 1 Works Test — the coordinate table.
  *
- * Proves: grid80 carries each of the 75 root-core senses exactly once;
+ * Proves: grid90 carries each of the 81 root-core senses exactly once;
  * grid60 carries the 60 senses the map doc lists; sub-zone open and an
  * empty suggestion do not move the table (deep compare); the schema
  * rejects what the bans forbid.
@@ -27,33 +27,34 @@ const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
 
 const OFF_GRID60 = [
-  "under", "over", "why", "how", "when", "work", "turn", "tell", "think",
-  "look", "read", "find", "wait", "yes", "who",
+  "mine", "look", "make", "open", "turn", "read", "feel", "tell", "think",
+  "find", "work", "away", "under", "over", "same", "different", "some",
+  "not", "where", "how", "when",
 ];
 
 /** grid60 vertical sectors: column index -> the word set it must hold. */
 const SECTORS = {
   pronouns: {
     cols: [0, 1],
-    words: ["I", "you", "me", "my", "mine", "he", "she", "it", "we", "they", "that", "this"],
+    words: ["I", "you", "it", "me", "my", "he", "she", "we", "they", "this", "that", "who"],
   },
   verbs: {
     cols: [2, 3, 4],
-    words: ["want", "like", "go", "come", "get", "make", "do", "see", "put", "take",
-      "give", "help", "play", "eat", "drink", "open", "can", "need"],
+    words: ["want", "like", "go", "come", "get", "do", "see", "put", "take",
+      "give", "help", "play", "eat", "drink", "can", "need", "have", "wait"],
   },
   spatial: {
     cols: [5, 6],
-    words: ["in", "out", "on", "off", "up", "down", "here", "there", "to", "for", "with", "away"],
+    words: ["in", "out", "on", "off", "up", "down", "here", "there", "to", "for", "with", "at"],
   },
   descriptors: {
     cols: [7, 8],
-    words: ["more", "all done", "big", "little", "good", "bad", "happy", "same",
-      "different", "some", "all", "feel"],
+    words: ["more", "all done", "big", "little", "good", "bad", "happy", "all",
+      "and", "but", "or", "because"],
   },
   edge: {
     cols: [9],
-    words: ["no", "not", "stop", "please", "what", "where"],
+    words: ["no", "yes", "stop", "please", "what", "why"],
   },
 };
 
@@ -63,45 +64,49 @@ function openDb() {
   return db;
 }
 
-test("catalog generation: grid60 = 60 cells, grid80 = 75 cells + anchors", () => {
+test("catalog generation: grid60 = 60 cells, grid90 = 81 cells + anchors", () => {
   const g60 = catalog.coreCells.filter((c) => c.layout === "grid60");
-  const g80 = catalog.coreCells.filter((c) => c.layout === "grid80");
+  const g90 = catalog.coreCells.filter((c) => c.layout === "grid90");
   assert.equal(g60.length, 60);
-  assert.equal(g80.length, 75);
-  assert.deepEqual(catalog.layouts.grid80.anchors, [
-    { slot: 75, kind: "reserved" },
-    { slot: 76, kind: "reserved" },
-    { slot: 77, kind: "reserved" },
-    { slot: 78, kind: "reserved" },
-    { slot: 79, kind: "groups" },
+  assert.equal(g90.length, 81);
+  assert.deepEqual(catalog.layouts.grid90.anchors, [
+    { slot: 81, kind: "reserved" },
+    { slot: 82, kind: "reserved" },
+    { slot: 83, kind: "reserved" },
+    { slot: 84, kind: "reserved" },
+    { slot: 85, kind: "reserved" },
+    { slot: 86, kind: "reserved" },
+    { slot: 87, kind: "reserved" },
+    { slot: 88, kind: "reserved" },
+    { slot: 89, kind: "groups" },
   ]);
-  // Every cell maps to a root-core sense; grid60 holds none of the 15 off-grid words.
+  // Every cell maps to a root-core sense; grid60 holds none of the 21 off-grid words.
   const senseById = new Map(catalog.senses.map((s) => [s.id, s]));
   const wordOf = (cell) =>
     catalog.labels.find((l) => l.sense_id === cell.sense_id && l.kind === "lemma").text;
-  for (const c of [...g60, ...g80]) {
+  for (const c of [...g60, ...g90]) {
     assert.equal(senseById.get(c.sense_id).tier, "root_core");
   }
   const g60Words = new Set(g60.map(wordOf));
   for (const w of OFF_GRID60) assert.ok(!g60Words.has(w), `${w} must not be in grid60`);
-  const g80Words = new Set(g80.map(wordOf));
-  for (const w of OFF_GRID60) assert.ok(g80Words.has(w), `${w} must be in grid80`);
+  const g90Words = new Set(g90.map(wordOf));
+  for (const w of OFF_GRID60) assert.ok(g90Words.has(w), `${w} must be in grid90`);
 });
 
 test("imported coordinate table matches the generated rows exactly", () => {
   const db = openDb();
   const rows = snapshotCoreCells(db);
   const expected = [...catalog.coreCells].sort(
-    (a, b) => a.layout.localeCompare(b.layout) || a.slot_index - b.slot_index,
+    (a, b) => a.layout.localeCompare(b.layout) || a.slot_index - a.slot_index,
   );
   assert.deepEqual(rows, expected);
-  assert.equal(rows.filter((r) => r.layout === "grid80").length, 75);
+  assert.equal(rows.filter((r) => r.layout === "grid90").length, 81);
   assert.equal(rows.filter((r) => r.layout === "grid60").length, 60);
-  // each root-core sense appears exactly once in grid80
-  const g80SenseIds = rows.filter((r) => r.layout === "grid80").map((r) => r.sense_id);
-  assert.equal(new Set(g80SenseIds).size, 75);
+  // each root-core sense appears exactly once in grid90
+  const g90SenseIds = rows.filter((r) => r.layout === "grid90").map((r) => r.sense_id);
+  assert.equal(new Set(g90SenseIds).size, 81);
   const rootCoreIds = catalog.senses.filter((s) => s.tier === "root_core").map((s) => s.id);
-  assert.deepEqual(new Set(g80SenseIds), new Set(rootCoreIds));
+  assert.deepEqual(new Set(g90SenseIds), new Set(rootCoreIds));
 });
 
 test("sub-zone open and empty suggestion leave the coordinate table untouched", () => {
@@ -125,7 +130,7 @@ test("board read returns all 60 grid60 cells with label and color", () => {
     assert.ok(cell.slot_index >= 0 && cell.slot_index < 60);
   }
   assert.equal(board[0].label, "I");
-  assert.equal(board[59].label, "where");
+  assert.equal(board[59].label, "why");
 });
 
 test("grid60 lays out vertical syntactic sectors, left to right", () => {
@@ -161,9 +166,9 @@ test("bans: fringe sense and duplicate slot cannot enter core_cell", () => {
   );
 });
 
-test("device import carries the full 599-sense lexicon (labels only — no art gate)", () => {
+test("device import carries the full 656-sense lexicon (labels only — no art gate)", () => {
   const db = openDb();
-  assert.equal(catalog.senses.length, 599);
+  assert.equal(catalog.senses.length, 656);
   const onDevice = db.prepare("SELECT COUNT(*) AS n FROM sense").get().n;
-  assert.equal(onDevice, 599);
+  assert.equal(onDevice, 656);
 });

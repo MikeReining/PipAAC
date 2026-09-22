@@ -3,7 +3,7 @@
 **Status:** Executing. Slices 1–3 built and proven on the dev board.
 
 **DECIDED 2026-09-22** (not built). Revised the same day. Prove that an adult
-can add Cooper before anyone draws the launch library. The 599-word catalog
+can add Cooper before anyone draws the launch library. The 656-word catalog
 stays the later lexicon. It is not a prerequisite for this proof, and none of
 it is illustrated in this phase.
 
@@ -22,7 +22,7 @@ when the add started there, otherwise in My Words. The core cells do not
 move. The strip can offer him. Words on screen are labels and Fitzgerald
 color. No clipart.
 
-If that add is clumsy, the illustrated 599-word library does not get built.
+If that add is clumsy, the illustrated 656-word library does not get built.
 
 ## Truth owners
 
@@ -46,7 +46,7 @@ Do not start a later slice to unblock an earlier one.
 2. **Add Cooper.** Name, photo, save. He is filed by context — Animals & Nature if the add started there, else My Words. This is the proof.
 3. **Strip offers Cooper.** Local only: the sentence so far and recency. He can be reached without opening a category.
 
-The rest of the 599-word catalog, and every illustration, waits until this
+The rest of the 656-word catalog, and every illustration, waits until this
 proof has passed. Drawing rules, for when that work starts, stay in
 `docs/product/Motor_Grid_And_Art.md`. Personal entities use a photo from the
 device.
@@ -63,7 +63,7 @@ Truth owner: `docs/product/Core_Coordinate_Map.md` (assignments), `docs/product/
 
 Lie-prone layer: a renderer that stores a second copy of positions and reports the canonical map as unchanged.
 
-Works Test: Load the coordinate table. `grid80` contains each of the 75 root-core ids exactly once; `grid60` contains the 60 listed ids exactly once. Run the operations a later slice will be tempted to use (open a placeholder sub-zone, apply an empty suggestion). Deep-compare the table to the snapshot taken before those operations.
+Works Test: Load the coordinate table. `grid90` contains each of the 81 root-core ids exactly once; `grid60` contains the 60 listed ids exactly once. Run the operations a later slice will be tempted to use (open a placeholder sub-zone, apply an empty suggestion). Deep-compare the table to the snapshot taken before those operations.
 
 Proof command: `scripts/test.sh` on the test file this slice adds.
 
@@ -75,7 +75,7 @@ Done when: the compare passes, and a person can read the 60 words on the board i
 
 Goal: On the same iPad, an adult adds one personal entity — name, photo, save. The zone it was added from (or My Words) shows Cooper, and closing a sub-zone restores the same core cells. No account and no network. No clipart.
 
-Out of scope: the other 13 categories, the other 524 fringe words, photo or sentence classification, second device, QR pairing, Cloudflare, illustrations.
+Out of scope: the other 15 categories, the other 575 fringe words, photo or sentence classification, second device, QR pairing, Cloudflare, illustrations.
 
 Truth owner: `docs/product/Personal_Entities.md`
 
@@ -110,7 +110,7 @@ Done when: the compare and the candidate assertion pass, and a person can see Co
 ## Out of scope
 
 The illustrated launch library. **DECIDED 2026-09-22, amended same day.** Do
-not draw the 599 words until the slices pass — but the 524 fringe records
+not draw the 656 words until the slices pass — but the 575 fringe records
 *are* loaded on-device as labels (founder ruling: empty zones are a broken
 first-run experience; the gate was on illustrations, which labels don't
 need). The catalog in `docs/product/Initial_Vocabulary_600.md` remains the
@@ -130,8 +130,8 @@ Live partner modeling, the context river, and visual scenes stay in `docs/strate
 
 **BUILT** (slice 1): the coordinate table exists and is proven immutable
 under the slice's placeholder ops. `scripts/catalog/build_catalog.mjs`
-generates `data/catalog/catalog.json` (599 senses/utterances/labels,
-135 `core_cell` rows, `grid80` anchors, embedded `schemaSql`) from the
+generates `data/catalog/catalog.json` (656 senses/utterances/labels,
+141 `core_cell` rows, `grid90` anchors, embedded `schemaSql`) from the
 lexicon and the map doc — both stay the source. `src/board/schema.sql` +
 `public/shared/import.mjs` create and import the on-device database
 (shared by `node:sqlite` in tests and sqlite-wasm in the page).

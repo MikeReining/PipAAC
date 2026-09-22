@@ -50,7 +50,7 @@ test("every grid60 cell resolves to a ready clip whose bytes ship in public/audi
 test("every imported sense resolves to a ready clip on disk", () => {
   const db = openDb();
   const senses = db.prepare("SELECT id FROM sense").all();
-  assert.equal(senses.length, 599);
+  assert.equal(senses.length, 656);
   for (const s of senses) {
     const key = resolveClipKey(db, s.id);
     assert.ok(key, `no ready clip for sense ${s.id}`);
@@ -67,5 +67,5 @@ test("clip rows carry utterance-matching recorded_text and a real sha256", () =>
     )
     .all();
   assert.deepEqual(bad, []);
-  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM clip").get().n, 599);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM clip").get().n, 656);
 });

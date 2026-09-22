@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS sense (
       'Vehicles & Transportation',
       'Descriptors, Adjectives & Opposites',
       'Time, Calendar & Sequencing',
-      'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+      'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
+      'Function Words & Grammar',
+      'Numbers & Counting'
     ))
   )
 );
@@ -50,7 +52,8 @@ CREATE TABLE IF NOT EXISTS label (
   normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),
   kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),
   part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (
-    'Adjective', 'Adverb', 'Interjection', 'Noun', 'Preposition', 'Pronoun', 'Verb'
+    'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',
+    'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'
   )),
   default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),
   status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))

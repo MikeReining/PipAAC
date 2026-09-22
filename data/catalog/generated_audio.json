@@ -15,7 +15,7 @@
       }
     },
     {
-      "slot": 99,
+      "slot": 105,
       "spokenText": "nuggets",
       "clip": {
         "key": "audio/nuggets/2460ff8e221d.mp3",
@@ -26,7 +26,7 @@
       }
     },
     {
-      "slot": 110,
+      "slot": 116,
       "spokenText": "chips",
       "clip": {
         "key": "audio/chips/a86de87ed6fb.mp3",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "slot": 114,
+      "slot": 120,
       "spokenText": "fruit snack",
       "clip": {
         "key": "audio/fruit_snack/1fceadc8f59c.mp3",
@@ -48,7 +48,7 @@
       }
     },
     {
-      "slot": 156,
+      "slot": 162,
       "spokenText": "wet wipe",
       "clip": {
         "key": "audio/wet_wipe/232599a5d0e1.mp3",
@@ -59,7 +59,7 @@
       }
     },
     {
-      "slot": 165,
+      "slot": 171,
       "spokenText": "bandage",
       "clip": {
         "key": "audio/bandage/cf6e17c14197.mp3",
@@ -70,7 +70,7 @@
       }
     },
     {
-      "slot": 169,
+      "slot": 175,
       "spokenText": "fever",
       "clip": {
         "key": "audio/fever/317b335364bb.mp3",
@@ -81,7 +81,7 @@
       }
     },
     {
-      "slot": 171,
+      "slot": 177,
       "spokenText": "medicine",
       "clip": {
         "key": "audio/medicine/8cf7b15f18da.mp3",
@@ -92,7 +92,7 @@
       }
     },
     {
-      "slot": 242,
+      "slot": 248,
       "spokenText": "wipe action",
       "clip": {
         "key": "audio/wipe_action/784959351696.mp3",
@@ -103,7 +103,7 @@
       }
     },
     {
-      "slot": 250,
+      "slot": 256,
       "spokenText": "forget",
       "clip": {
         "key": "audio/forget/c967d31cce83.mp3",
@@ -114,7 +114,7 @@
       }
     },
     {
-      "slot": 259,
+      "slot": 265,
       "spokenText": "wake up",
       "clip": {
         "key": "audio/wake_up/3824e203f3da.mp3",
@@ -125,7 +125,7 @@
       }
     },
     {
-      "slot": 263,
+      "slot": 269,
       "spokenText": "mama",
       "clip": {
         "key": "audio/mama/a2e4519504e1.mp3",
@@ -136,7 +136,7 @@
       }
     },
     {
-      "slot": 264,
+      "slot": 270,
       "spokenText": "dada",
       "clip": {
         "key": "audio/dada/672c1372f87c.mp3",
@@ -147,7 +147,7 @@
       }
     },
     {
-      "slot": 270,
+      "slot": 276,
       "spokenText": "aunt",
       "clip": {
         "key": "audio/aunt/4fe1a72c66ab.mp3",
@@ -158,7 +158,7 @@
       }
     },
     {
-      "slot": 272,
+      "slot": 278,
       "spokenText": "cousin",
       "clip": {
         "key": "audio/cousin/4e39920de3a2.mp3",
@@ -169,7 +169,7 @@
       }
     },
     {
-      "slot": 275,
+      "slot": 281,
       "spokenText": "therapist",
       "clip": {
         "key": "audio/therapist/4c3d68a13080.mp3",
@@ -180,7 +180,7 @@
       }
     },
     {
-      "slot": 276,
+      "slot": 282,
       "spokenText": "aide",
       "clip": {
         "key": "audio/aide/dcba342c5629.mp3",
@@ -191,7 +191,7 @@
       }
     },
     {
-      "slot": 282,
+      "slot": 288,
       "spokenText": "bus driver",
       "clip": {
         "key": "audio/bus_driver/9cc74ea1c63f.mp3",
@@ -202,7 +202,7 @@
       }
     },
     {
-      "slot": 283,
+      "slot": 289,
       "spokenText": "neighbor",
       "clip": {
         "key": "audio/neighbor/4d59efda7a8d.mp3",
@@ -213,7 +213,7 @@
       }
     },
     {
-      "slot": 289,
+      "slot": 295,
       "spokenText": "babysitter",
       "clip": {
         "key": "audio/babysitter/bc6a2f384390.mp3",
@@ -224,7 +224,7 @@
       }
     },
     {
-      "slot": 295,
+      "slot": 302,
       "spokenText": "basement",
       "clip": {
         "key": "audio/basement/78ed46beedde.mp3",
@@ -235,7 +235,7 @@
       }
     },
     {
-      "slot": 304,
+      "slot": 311,
       "spokenText": "hallway",
       "clip": {
         "key": "audio/hallway/2801bf11cf15.mp3",
@@ -246,7 +246,7 @@
       }
     },
     {
-      "slot": 308,
+      "slot": 315,
       "spokenText": "grocery store",
       "clip": {
         "key": "audio/grocery_store/b69567225256.mp3",
@@ -257,7 +257,7 @@
       }
     },
     {
-      "slot": 313,
+      "slot": 320,
       "spokenText": "doctor office",
       "clip": {
         "key": "audio/doctor_office/e056fddc4b35.mp3",
@@ -268,7 +268,7 @@
       }
     },
     {
-      "slot": 315,
+      "slot": 322,
       "spokenText": "museum",
       "clip": {
         "key": "audio/museum/a464f6fbed94.mp3",
@@ -279,7 +279,7 @@
       }
     },
     {
-      "slot": 316,
+      "slot": 323,
       "spokenText": "movie theater",
       "clip": {
         "key": "audio/movie_theater/32f3c69c37bd.mp3",
@@ -290,7 +290,7 @@
       }
     },
     {
-      "slot": 331,
+      "slot": 338,
       "spokenText": "bubbles",
       "clip": {
         "key": "audio/bubbles/dc3fae05e27d.mp3",
@@ -301,7 +301,7 @@
       }
     },
     {
-      "slot": 333,
+      "slot": 340,
       "spokenText": "toy car",
       "clip": {
         "key": "audio/toy_car/abce3b83a418.mp3",
@@ -312,7 +312,7 @@
       }
     },
     {
-      "slot": 334,
+      "slot": 341,
       "spokenText": "toy train",
       "clip": {
         "key": "audio/toy_train/917f02abdbef.mp3",
@@ -323,7 +323,7 @@
       }
     },
     {
-      "slot": 338,
+      "slot": 345,
       "spokenText": "legos",
       "clip": {
         "key": "audio/legos/e19e69b61b77.mp3",
@@ -334,7 +334,7 @@
       }
     },
     {
-      "slot": 340,
+      "slot": 347,
       "spokenText": "swing set",
       "clip": {
         "key": "audio/swing_set/8be71c79f646.mp3",
@@ -345,7 +345,7 @@
       }
     },
     {
-      "slot": 347,
+      "slot": 354,
       "spokenText": "jump rope",
       "clip": {
         "key": "audio/jump_rope/700f6fca948a.mp3",
@@ -356,7 +356,7 @@
       }
     },
     {
-      "slot": 351,
+      "slot": 358,
       "spokenText": "iPad",
       "clip": {
         "key": "audio/ipad/b8cd19c792ba.mp3",
@@ -367,7 +367,7 @@
       }
     },
     {
-      "slot": 353,
+      "slot": 360,
       "spokenText": "TV",
       "clip": {
         "key": "audio/tv/6173acb70c87.mp3",
@@ -378,7 +378,7 @@
       }
     },
     {
-      "slot": 355,
+      "slot": 362,
       "spokenText": "video",
       "clip": {
         "key": "audio/video/064b5e6dc4fc.mp3",
@@ -389,7 +389,7 @@
       }
     },
     {
-      "slot": 395,
+      "slot": 402,
       "spokenText": "charger",
       "clip": {
         "key": "audio/charger/91faa000b0b2.mp3",
@@ -400,7 +400,7 @@
       }
     },
     {
-      "slot": 397,
+      "slot": 404,
       "spokenText": "battery",
       "clip": {
         "key": "audio/battery/2e3f35604678.mp3",
@@ -411,7 +411,7 @@
       }
     },
     {
-      "slot": 412,
+      "slot": 419,
       "spokenText": "sweatshirt",
       "clip": {
         "key": "audio/sweatshirt/eab63a658ee6.mp3",
@@ -422,7 +422,7 @@
       }
     },
     {
-      "slot": 473,
+      "slot": 480,
       "spokenText": "vehicle",
       "clip": {
         "key": "audio/vehicle/134f72b5169a.mp3",
@@ -433,7 +433,7 @@
       }
     },
     {
-      "slot": 496,
+      "slot": 503,
       "spokenText": "stoplight",
       "clip": {
         "key": "audio/stoplight/0d1262d88371.mp3",
@@ -444,7 +444,7 @@
       }
     },
     {
-      "slot": 502,
+      "slot": 509,
       "spokenText": "orange color",
       "clip": {
         "key": "audio/orange_color/963093b56bf4.mp3",
@@ -455,7 +455,7 @@
       }
     },
     {
-      "slot": 504,
+      "slot": 511,
       "spokenText": "pink color",
       "clip": {
         "key": "audio/pink_color/79377b427f3c.mp3",
@@ -466,7 +466,7 @@
       }
     },
     {
-      "slot": 514,
+      "slot": 521,
       "spokenText": "light weight",
       "clip": {
         "key": "audio/light_weight/62273c1d94b3.mp3",
@@ -477,7 +477,7 @@
       }
     },
     {
-      "slot": 522,
+      "slot": 529,
       "spokenText": "clean item",
       "clip": {
         "key": "audio/clean_item/e632e0f26f6e.mp3",
@@ -488,7 +488,7 @@
       }
     },
     {
-      "slot": 526,
+      "slot": 533,
       "spokenText": "fixed",
       "clip": {
         "key": "audio/fixed/1dc03a31bd92.mp3",
@@ -499,7 +499,7 @@
       }
     },
     {
-      "slot": 544,
+      "slot": 551,
       "spokenText": "dark color",
       "clip": {
         "key": "audio/dark_color/26b45f5652ce.mp3",
@@ -510,7 +510,7 @@
       }
     },
     {
-      "slot": 545,
+      "slot": 552,
       "spokenText": "light color",
       "clip": {
         "key": "audio/light_color/aeeb461616d8.mp3",
@@ -521,7 +521,7 @@
       }
     },
     {
-      "slot": 547,
+      "slot": 554,
       "spokenText": "afternoon",
       "clip": {
         "key": "audio/afternoon/b0612501d925.mp3",
@@ -532,7 +532,7 @@
       }
     },
     {
-      "slot": 550,
+      "slot": 557,
       "spokenText": "bedtime",
       "clip": {
         "key": "audio/bedtime/e7684f8e797d.mp3",
@@ -543,7 +543,7 @@
       }
     },
     {
-      "slot": 551,
+      "slot": 558,
       "spokenText": "naptime",
       "clip": {
         "key": "audio/naptime/57f0adf36cc4.mp3",
@@ -554,7 +554,7 @@
       }
     },
     {
-      "slot": 557,
+      "slot": 564,
       "spokenText": "yesterday",
       "clip": {
         "key": "audio/yesterday/1304ea54abdb.mp3",
@@ -565,7 +565,7 @@
       }
     },
     {
-      "slot": 576,
+      "slot": 583,
       "spokenText": "hello",
       "clip": {
         "key": "audio/hello/474b4de9290f.mp3",
@@ -576,7 +576,7 @@
       }
     },
     {
-      "slot": 577,
+      "slot": 584,
       "spokenText": "hi",
       "clip": {
         "key": "audio/hi/80c79a72715f.mp3",
@@ -587,7 +587,7 @@
       }
     },
     {
-      "slot": 579,
+      "slot": 586,
       "spokenText": "bye",
       "clip": {
         "key": "audio/bye/2728a3bada4a.mp3",
@@ -598,7 +598,7 @@
       }
     },
     {
-      "slot": 582,
+      "slot": 589,
       "spokenText": "sorry",
       "clip": {
         "key": "audio/sorry/3bd9e0767527.mp3",
@@ -609,7 +609,7 @@
       }
     },
     {
-      "slot": 583,
+      "slot": 590,
       "spokenText": "excuse me",
       "clip": {
         "key": "audio/excuse_me/ecbd07bb0d2c.mp3",
@@ -620,7 +620,7 @@
       }
     },
     {
-      "slot": 584,
+      "slot": 591,
       "spokenText": "good morning",
       "clip": {
         "key": "audio/good_morning/a9334be182f4.mp3",
@@ -631,7 +631,7 @@
       }
     },
     {
-      "slot": 585,
+      "slot": 592,
       "spokenText": "good night",
       "clip": {
         "key": "audio/good_night/c809ee8676f3.mp3",
@@ -642,7 +642,7 @@
       }
     },
     {
-      "slot": 587,
+      "slot": 594,
       "spokenText": "ready to go",
       "clip": {
         "key": "audio/ready_to_go/e6f61c9f07ca.mp3",
@@ -653,7 +653,7 @@
       }
     },
     {
-      "slot": 588,
+      "slot": 595,
       "spokenText": "wow",
       "clip": {
         "key": "audio/wow/bcbf86fadec0.mp3",
@@ -664,7 +664,7 @@
       }
     },
     {
-      "slot": 592,
+      "slot": 599,
       "spokenText": "look at this",
       "clip": {
         "key": "audio/look_at_this/ae644942f36b.mp3",
@@ -675,7 +675,7 @@
       }
     },
     {
-      "slot": 593,
+      "slot": 600,
       "spokenText": "my turn",
       "clip": {
         "key": "audio/my_turn/27fbfaeac56a.mp3",
@@ -686,7 +686,7 @@
       }
     },
     {
-      "slot": 594,
+      "slot": 601,
       "spokenText": "your turn",
       "clip": {
         "key": "audio/your_turn/6938f48ce7f4.mp3",
@@ -697,7 +697,7 @@
       }
     },
     {
-      "slot": 595,
+      "slot": 602,
       "spokenText": "careful",
       "clip": {
         "key": "audio/careful/ffa1a1a34c5c.mp3",
@@ -708,7 +708,7 @@
       }
     },
     {
-      "slot": 596,
+      "slot": 603,
       "spokenText": "emergency",
       "clip": {
         "key": "audio/emergency/0191c217be53.mp3",
@@ -719,7 +719,7 @@
       }
     },
     {
-      "slot": 597,
+      "slot": 604,
       "spokenText": "no way",
       "clip": {
         "key": "audio/no_way/b9f1e58b73a0.mp3",
@@ -730,7 +730,7 @@
       }
     },
     {
-      "slot": 599,
+      "slot": 606,
       "spokenText": "bathroom urgent",
       "clip": {
         "key": "audio/bathroom_urgent/07a0ce9dbd4e.mp3",

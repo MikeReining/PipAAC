@@ -73,7 +73,7 @@ PipAAC/
 - `docs/strategy/Roadmap.md` — phase sequence map.
 - `docs/product/SSOT.md` — durable product facts map.
 - `docs/product/Motor_Grid_And_Art.md` — clean-room motor grid, Fitzgerald color, stick figure, object art, predictive-strip layout.
-- `docs/product/Core_Coordinate_Map.md` — slot assignments per named layout (`grid60`, `grid80`).
+- `docs/product/Core_Coordinate_Map.md` — slot assignments per named layout (`grid60`, `grid90`).
 - `docs/product/Personal_Entities.md` — personal entity records and the on-device add.
 - `docs/product/Language_And_Voice_Schema.md` — catalog/device schema, playback rules.
 - `scripts/test.sh` — protected test runner.

@@ -55,11 +55,66 @@ export async function bootDb() {
   // as the reconcile, so a DB persisted under an older catalog converges
   // (missing senses/labels/clips get inserted, existing rows untouched).
   d.exec("PRAGMA foreign_keys = ON");
+  migrateSchema(d, catalog.schemaSql);
   d.exec(catalog.schemaSql);
   importCatalog(d, catalog);
 
   handle = { db: d, catalog, persistent };
   return handle;
+}
+
+/**
+ * CHECK constraints are baked into CREATE TABLE — a persisted DB keeps the
+ * old list forever, and `INSERT OR IGNORE` then silently drops rows that
+ * violate it (observed: function-word senses rejected under the pre-2026-09-22
+ * part-of-speech list). Rebuild any catalog table whose stored DDL differs
+ * from the shipped schema. Table rebuild is the documented SQLite migration:
+ * rename, recreate, copy, drop. `legacy_alter_table` keeps child foreign keys
+ * pointing at the original name instead of following the rename; the table's
+ * triggers ride along to the old table, drop with it, and are recreated by
+ * the normal schema exec.
+ */
+function migrateSchema(d, schemaSql) {
+  const tables = ["sense", "utterance", "label", "image", "voice", "clip", "core_cell"];
+  const stale = tables.filter((t) => {
+    const row = d.all(
+      "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?",
+      [t],
+    )[0];
+    if (!row) return false;
+    const ddl = schemaSql.match(
+      new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`),
+    );
+    const canon = (s) =>
+      s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();
+    return ddl && canon(row.sql) !== canon(ddl[0]);
+  });
+  if (stale.length === 0) return;
+
+  d.exec("PRAGMA foreign_keys = OFF");
+  d.exec("PRAGMA legacy_alter_table = ON");
+  d.exec("BEGIN");
+  try {
+    for (const t of stale) {
+      const ddl = schemaSql.match(
+        new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`),
+      )[0];
+      d.exec(`ALTER TABLE ${t} RENAME TO ${t}_old`);
+      d.exec(ddl);
+      const cols = d.all(`PRAGMA table_info(${t})`).map((c) => c.name);
+      const oldCols = new Set(d.all(`PRAGMA table_info(${t}_old)`).map((c) => c.name));
+      const shared = cols.filter((c) => oldCols.has(c)).join(", ");
+      d.exec(`INSERT INTO ${t} (${shared}) SELECT ${shared} FROM ${t}_old`);
+      d.exec(`DROP TABLE ${t}_old`);
+    }
+    d.exec("COMMIT");
+  } catch (err) {
+    d.exec("ROLLBACK");
+    throw err;
+  } finally {
+    d.exec("PRAGMA legacy_alter_table = OFF");
+    d.exec("PRAGMA foreign_keys = ON");
+  }
 }
 
 /** Photos live as OPFS files keyed by entity id; the row stores the key. */

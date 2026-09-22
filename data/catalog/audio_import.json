@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-22T16:44:16.552Z",
+  "generatedAt": "2026-09-22T17:50:26.533Z",
   "workbookBenchRoot": "/Users/mike/Documents/GitHub/WorkbookBench",
   "workbookBenchManifest": "assets/catalog/manifest.json",
   "bundledVoiceId": "voi_pip_default",
   "elevenlabsVoiceId": null,
   "summary": {
-    "total": 599,
-    "hits": 532,
+    "total": 656,
+    "hits": 589,
     "misses": 67
   },
   "entries": [
@@ -1281,6 +1281,108 @@
     },
     {
       "slot": 76,
+      "tier": 1,
+      "spokenText": "and",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "and",
+      "reason": null,
+      "clip": {
+        "key": "audio/and/2834f0ddddd1.mp3",
+        "sha256": "2834f0ddddd1834cbaec7ea409bcf82354d39403f4431e5a6856eb7bda4d1e00",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_2834f0ddddd1",
+        "spokenText": "and"
+      }
+    },
+    {
+      "slot": 77,
+      "tier": 1,
+      "spokenText": "but",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "but",
+      "reason": null,
+      "clip": {
+        "key": "audio/but/39b8f6447b18.mp3",
+        "sha256": "39b8f6447b18032f2eea1a24cd2b16a69eed9808086eb28b7386d96e5f1ca767",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_39b8f6447b18",
+        "spokenText": "but"
+      }
+    },
+    {
+      "slot": 78,
+      "tier": 1,
+      "spokenText": "or",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "or",
+      "reason": null,
+      "clip": {
+        "key": "audio/or/cd83e9737f82.mp3",
+        "sha256": "cd83e9737f821576151738905c2f0950013cd7069abe2ffce1228e7968730aab",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_cd83e9737f82",
+        "spokenText": "or"
+      }
+    },
+    {
+      "slot": 79,
+      "tier": 1,
+      "spokenText": "because",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "because",
+      "reason": null,
+      "clip": {
+        "key": "audio/because/9e53d2223d7c.mp3",
+        "sha256": "9e53d2223d7ca4e5c7cba5840f3a6854f21c914de280b211c262ca1eb4466d36",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_9e53d2223d7c",
+        "spokenText": "because"
+      }
+    },
+    {
+      "slot": 80,
+      "tier": 1,
+      "spokenText": "have",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "have",
+      "reason": null,
+      "clip": {
+        "key": "audio/have/3726fd77428b.mp3",
+        "sha256": "3726fd77428ba481a4cfd36963be42c529a7a1d17360ec1895c17847ef6259d6",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_3726fd77428b",
+        "spokenText": "have"
+      }
+    },
+    {
+      "slot": 81,
+      "tier": 1,
+      "spokenText": "at",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "at",
+      "reason": null,
+      "clip": {
+        "key": "audio/at/47748797593c.mp3",
+        "sha256": "47748797593c8e00945cdf2381de5d6ad153641d1fb0de6aa736826dda01e7d5",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_47748797593c",
+        "spokenText": "at"
+      }
+    },
+    {
+      "slot": 82,
       "tier": 2,
       "spokenText": "water",
       "status": "hit",
@@ -1297,7 +1399,7 @@
       }
     },
     {
-      "slot": 77,
+      "slot": 83,
       "tier": 2,
       "spokenText": "milk",
       "status": "hit",
@@ -1314,7 +1416,7 @@
       }
     },
     {
-      "slot": 78,
+      "slot": 84,
       "tier": 2,
       "spokenText": "juice",
       "status": "hit",
@@ -1331,7 +1433,7 @@
       }
     },
     {
-      "slot": 79,
+      "slot": 85,
       "tier": 2,
       "spokenText": "apple juice",
       "status": "hit",
@@ -1348,7 +1450,7 @@
       }
     },
     {
-      "slot": 80,
+      "slot": 86,
       "tier": 2,
       "spokenText": "chocolate milk",
       "status": "hit",
@@ -1365,7 +1467,7 @@
       }
     },
     {
-      "slot": 81,
+      "slot": 87,
       "tier": 2,
       "spokenText": "tea",
       "status": "hit",
@@ -1382,7 +1484,7 @@
       }
     },
     {
-      "slot": 82,
+      "slot": 88,
       "tier": 2,
       "spokenText": "smoothie",
       "status": "hit",
@@ -1399,7 +1501,7 @@
       }
     },
     {
-      "slot": 83,
+      "slot": 89,
       "tier": 2,
       "spokenText": "bread",
       "status": "hit",
@@ -1416,7 +1518,7 @@
       }
     },
     {
-      "slot": 84,
+      "slot": 90,
       "tier": 2,
       "spokenText": "toast",
       "status": "hit",
@@ -1433,7 +1535,7 @@
       }
     },
     {
-      "slot": 85,
+      "slot": 91,
       "tier": 2,
       "spokenText": "cereal",
       "status": "hit",
@@ -1450,7 +1552,7 @@
       }
     },
     {
-      "slot": 86,
+      "slot": 92,
       "tier": 2,
       "spokenText": "oatmeal",
       "status": "hit",
@@ -1467,7 +1569,7 @@
       }
     },
     {
-      "slot": 87,
+      "slot": 93,
       "tier": 2,
       "spokenText": "pancake",
       "status": "hit",
@@ -1484,7 +1586,7 @@
       }
     },
     {
-      "slot": 88,
+      "slot": 94,
       "tier": 2,
       "spokenText": "waffle",
       "status": "hit",
@@ -1501,7 +1603,7 @@
       }
     },
     {
-      "slot": 89,
+      "slot": 95,
       "tier": 2,
       "spokenText": "bagel",
       "status": "hit",
@@ -1518,7 +1620,7 @@
       }
     },
     {
-      "slot": 90,
+      "slot": 96,
       "tier": 2,
       "spokenText": "egg",
       "status": "hit",
@@ -1535,7 +1637,7 @@
       }
     },
     {
-      "slot": 91,
+      "slot": 97,
       "tier": 2,
       "spokenText": "butter",
       "status": "hit",
@@ -1552,7 +1654,7 @@
       }
     },
     {
-      "slot": 92,
+      "slot": 98,
       "tier": 2,
       "spokenText": "jam",
       "status": "hit",
@@ -1569,7 +1671,7 @@
       }
     },
     {
-      "slot": 93,
+      "slot": 99,
       "tier": 2,
       "spokenText": "syrup",
       "status": "hit",
@@ -1586,7 +1688,7 @@
       }
     },
     {
-      "slot": 94,
+      "slot": 100,
       "tier": 2,
       "spokenText": "pizza",
       "status": "hit",
@@ -1603,7 +1705,7 @@
       }
     },
     {
-      "slot": 95,
+      "slot": 101,
       "tier": 2,
       "spokenText": "pasta",
       "status": "hit",
@@ -1620,7 +1722,7 @@
       }
     },
     {
-      "slot": 96,
+      "slot": 102,
       "tier": 2,
       "spokenText": "macaroni",
       "status": "hit",
@@ -1637,7 +1739,7 @@
       }
     },
     {
-      "slot": 97,
+      "slot": 103,
       "tier": 2,
       "spokenText": "sandwich",
       "status": "hit",
@@ -1654,7 +1756,7 @@
       }
     },
     {
-      "slot": 98,
+      "slot": 104,
       "tier": 2,
       "spokenText": "chicken",
       "status": "hit",
@@ -1671,7 +1773,7 @@
       }
     },
     {
-      "slot": 99,
+      "slot": 105,
       "tier": 2,
       "spokenText": "nuggets",
       "status": "miss",
@@ -1681,7 +1783,7 @@
       "clip": null
     },
     {
-      "slot": 100,
+      "slot": 106,
       "tier": 2,
       "spokenText": "burger",
       "status": "hit",
@@ -1698,7 +1800,7 @@
       }
     },
     {
-      "slot": 101,
+      "slot": 107,
       "tier": 2,
       "spokenText": "hot dog",
       "status": "hit",
@@ -1715,7 +1817,7 @@
       }
     },
     {
-      "slot": 102,
+      "slot": 108,
       "tier": 2,
       "spokenText": "soup",
       "status": "hit",
@@ -1732,7 +1834,7 @@
       }
     },
     {
-      "slot": 103,
+      "slot": 109,
       "tier": 2,
       "spokenText": "rice",
       "status": "hit",
@@ -1749,7 +1851,7 @@
       }
     },
     {
-      "slot": 104,
+      "slot": 110,
       "tier": 2,
       "spokenText": "cheese",
       "status": "hit",
@@ -1766,7 +1868,7 @@
       }
     },
     {
-      "slot": 105,
+      "slot": 111,
       "tier": 2,
       "spokenText": "meat",
       "status": "hit",
@@ -1783,7 +1885,7 @@
       }
     },
     {
-      "slot": 106,
+      "slot": 112,
       "tier": 2,
       "spokenText": "fish",
       "status": "hit",
@@ -1800,7 +1902,7 @@
       }
     },
     {
-      "slot": 107,
+      "slot": 113,
       "tier": 2,
       "spokenText": "snack",
       "status": "hit",
@@ -1817,7 +1919,7 @@
       }
     },
     {
-      "slot": 108,
+      "slot": 114,
       "tier": 2,
       "spokenText": "cracker",
       "status": "hit",
@@ -1834,7 +1936,7 @@
       }
     },
     {
-      "slot": 109,
+      "slot": 115,
       "tier": 2,
       "spokenText": "cookie",
       "status": "hit",
@@ -1851,7 +1953,7 @@
       }
     },
     {
-      "slot": 110,
+      "slot": 116,
       "tier": 2,
       "spokenText": "chips",
       "status": "miss",
@@ -1861,7 +1963,7 @@
       "clip": null
     },
     {
-      "slot": 111,
+      "slot": 117,
       "tier": 2,
       "spokenText": "popcorn",
       "status": "hit",
@@ -1878,7 +1980,7 @@
       }
     },
     {
-      "slot": 112,
+      "slot": 118,
       "tier": 2,
       "spokenText": "pretzel",
       "status": "hit",
@@ -1895,7 +1997,7 @@
       }
     },
     {
-      "slot": 113,
+      "slot": 119,
       "tier": 2,
       "spokenText": "yogurt",
       "status": "hit",
@@ -1912,7 +2014,7 @@
       }
     },
     {
-      "slot": 114,
+      "slot": 120,
       "tier": 2,
       "spokenText": "fruit snack",
       "status": "miss",
@@ -1922,7 +2024,7 @@
       "clip": null
     },
     {
-      "slot": 115,
+      "slot": 121,
       "tier": 2,
       "spokenText": "ice cream",
       "status": "hit",
@@ -1939,7 +2041,7 @@
       }
     },
     {
-      "slot": 116,
+      "slot": 122,
       "tier": 2,
       "spokenText": "popsicle",
       "status": "hit",
@@ -1956,7 +2058,7 @@
       }
     },
     {
-      "slot": 117,
+      "slot": 123,
       "tier": 2,
       "spokenText": "candy",
       "status": "hit",
@@ -1973,7 +2075,7 @@
       }
     },
     {
-      "slot": 118,
+      "slot": 124,
       "tier": 2,
       "spokenText": "cake",
       "status": "hit",
@@ -1990,7 +2092,7 @@
       }
     },
     {
-      "slot": 119,
+      "slot": 125,
       "tier": 2,
       "spokenText": "muffin",
       "status": "hit",
@@ -2007,7 +2109,7 @@
       }
     },
     {
-      "slot": 120,
+      "slot": 126,
       "tier": 2,
       "spokenText": "donut",
       "status": "hit",
@@ -2024,7 +2126,7 @@
       }
     },
     {
-      "slot": 121,
+      "slot": 127,
       "tier": 2,
       "spokenText": "fruit",
       "status": "hit",
@@ -2041,7 +2143,7 @@
       }
     },
     {
-      "slot": 122,
+      "slot": 128,
       "tier": 2,
       "spokenText": "apple",
       "status": "hit",
@@ -2058,7 +2160,7 @@
       }
     },
     {
-      "slot": 123,
+      "slot": 129,
       "tier": 2,
       "spokenText": "banana",
       "status": "hit",
@@ -2075,7 +2177,7 @@
       }
     },
     {
-      "slot": 124,
+      "slot": 130,
       "tier": 2,
       "spokenText": "strawberry",
       "status": "hit",
@@ -2092,7 +2194,7 @@
       }
     },
     {
-      "slot": 125,
+      "slot": 131,
       "tier": 2,
       "spokenText": "orange",
       "status": "hit",
@@ -2109,7 +2211,7 @@
       }
     },
     {
-      "slot": 126,
+      "slot": 132,
       "tier": 2,
       "spokenText": "grapes",
       "status": "hit",
@@ -2126,7 +2228,7 @@
       }
     },
     {
-      "slot": 127,
+      "slot": 133,
       "tier": 2,
       "spokenText": "watermelon",
       "status": "hit",
@@ -2143,7 +2245,7 @@
       }
     },
     {
-      "slot": 128,
+      "slot": 134,
       "tier": 2,
       "spokenText": "carrot",
       "status": "hit",
@@ -2160,7 +2262,7 @@
       }
     },
     {
-      "slot": 129,
+      "slot": 135,
       "tier": 2,
       "spokenText": "broccoli",
       "status": "hit",
@@ -2177,7 +2279,7 @@
       }
     },
     {
-      "slot": 130,
+      "slot": 136,
       "tier": 2,
       "spokenText": "corn",
       "status": "hit",
@@ -2194,7 +2296,7 @@
       }
     },
     {
-      "slot": 131,
+      "slot": 137,
       "tier": 2,
       "spokenText": "body",
       "status": "hit",
@@ -2211,7 +2313,7 @@
       }
     },
     {
-      "slot": 132,
+      "slot": 138,
       "tier": 2,
       "spokenText": "head",
       "status": "hit",
@@ -2228,7 +2330,7 @@
       }
     },
     {
-      "slot": 133,
+      "slot": 139,
       "tier": 2,
       "spokenText": "face",
       "status": "hit",
@@ -2245,7 +2347,7 @@
       }
     },
     {
-      "slot": 134,
+      "slot": 140,
       "tier": 2,
       "spokenText": "hair",
       "status": "hit",
@@ -2262,7 +2364,7 @@
       }
     },
     {
-      "slot": 135,
+      "slot": 141,
       "tier": 2,
       "spokenText": "eye",
       "status": "hit",
@@ -2279,7 +2381,7 @@
       }
     },
     {
-      "slot": 136,
+      "slot": 142,
       "tier": 2,
       "spokenText": "ear",
       "status": "hit",
@@ -2296,7 +2398,7 @@
       }
     },
     {
-      "slot": 137,
+      "slot": 143,
       "tier": 2,
       "spokenText": "nose",
       "status": "hit",
@@ -2313,7 +2415,7 @@
       }
     },
     {
-      "slot": 138,
+      "slot": 144,
       "tier": 2,
       "spokenText": "mouth",
       "status": "hit",
@@ -2330,7 +2432,7 @@
       }
     },
     {
-      "slot": 139,
+      "slot": 145,
       "tier": 2,
       "spokenText": "teeth",
       "status": "hit",
@@ -2347,7 +2449,7 @@
       }
     },
     {
-      "slot": 140,
+      "slot": 146,
       "tier": 2,
       "spokenText": "tongue",
       "status": "hit",
@@ -2364,7 +2466,7 @@
       }
     },
     {
-      "slot": 141,
+      "slot": 147,
       "tier": 2,
       "spokenText": "neck",
       "status": "hit",
@@ -2381,7 +2483,7 @@
       }
     },
     {
-      "slot": 142,
+      "slot": 148,
       "tier": 2,
       "spokenText": "shoulder",
       "status": "hit",
@@ -2398,7 +2500,7 @@
       }
     },
     {
-      "slot": 143,
+      "slot": 149,
       "tier": 2,
       "spokenText": "arm",
       "status": "hit",
@@ -2415,7 +2517,7 @@
       }
     },
     {
-      "slot": 144,
+      "slot": 150,
       "tier": 2,
       "spokenText": "hand",
       "status": "hit",
@@ -2432,7 +2534,7 @@
       }
     },
     {
-      "slot": 145,
+      "slot": 151,
       "tier": 2,
       "spokenText": "fingers",
       "status": "hit",
@@ -2449,7 +2551,7 @@
       }
     },
     {
-      "slot": 146,
+      "slot": 152,
       "tier": 2,
       "spokenText": "tummy",
       "status": "hit",
@@ -2466,7 +2568,7 @@
       }
     },
     {
-      "slot": 147,
+      "slot": 153,
       "tier": 2,
       "spokenText": "back",
       "status": "hit",
@@ -2483,7 +2585,7 @@
       }
     },
     {
-      "slot": 148,
+      "slot": 154,
       "tier": 2,
       "spokenText": "leg",
       "status": "hit",
@@ -2500,7 +2602,7 @@
       }
     },
     {
-      "slot": 149,
+      "slot": 155,
       "tier": 2,
       "spokenText": "knee",
       "status": "hit",
@@ -2517,7 +2619,7 @@
       }
     },
     {
-      "slot": 150,
+      "slot": 156,
       "tier": 2,
       "spokenText": "foot",
       "status": "hit",
@@ -2534,7 +2636,7 @@
       }
     },
     {
-      "slot": 151,
+      "slot": 157,
       "tier": 2,
       "spokenText": "toes",
       "status": "hit",
@@ -2551,7 +2653,7 @@
       }
     },
     {
-      "slot": 152,
+      "slot": 158,
       "tier": 2,
       "spokenText": "bathroom",
       "status": "hit",
@@ -2568,7 +2670,7 @@
       }
     },
     {
-      "slot": 153,
+      "slot": 159,
       "tier": 2,
       "spokenText": "potty",
       "status": "hit",
@@ -2585,7 +2687,7 @@
       }
     },
     {
-      "slot": 154,
+      "slot": 160,
       "tier": 2,
       "spokenText": "toilet",
       "status": "hit",
@@ -2602,7 +2704,7 @@
       }
     },
     {
-      "slot": 155,
+      "slot": 161,
       "tier": 2,
       "spokenText": "diaper",
       "status": "hit",
@@ -2619,7 +2721,7 @@
       }
     },
     {
-      "slot": 156,
+      "slot": 162,
       "tier": 2,
       "spokenText": "wet wipe",
       "status": "miss",
@@ -2629,7 +2731,7 @@
       "clip": null
     },
     {
-      "slot": 157,
+      "slot": 163,
       "tier": 2,
       "spokenText": "bath",
       "status": "hit",
@@ -2646,7 +2748,7 @@
       }
     },
     {
-      "slot": 158,
+      "slot": 164,
       "tier": 2,
       "spokenText": "shower",
       "status": "hit",
@@ -2663,7 +2765,7 @@
       }
     },
     {
-      "slot": 159,
+      "slot": 165,
       "tier": 2,
       "spokenText": "soap",
       "status": "hit",
@@ -2680,7 +2782,7 @@
       }
     },
     {
-      "slot": 160,
+      "slot": 166,
       "tier": 2,
       "spokenText": "toothbrush",
       "status": "hit",
@@ -2697,7 +2799,7 @@
       }
     },
     {
-      "slot": 161,
+      "slot": 167,
       "tier": 2,
       "spokenText": "toothpaste",
       "status": "hit",
@@ -2714,7 +2816,7 @@
       }
     },
     {
-      "slot": 162,
+      "slot": 168,
       "tier": 2,
       "spokenText": "towel",
       "status": "hit",
@@ -2731,7 +2833,7 @@
       }
     },
     {
-      "slot": 163,
+      "slot": 169,
       "tier": 2,
       "spokenText": "comb",
       "status": "hit",
@@ -2748,7 +2850,7 @@
       }
     },
     {
-      "slot": 164,
+      "slot": 170,
       "tier": 2,
       "spokenText": "tissue",
       "status": "hit",
@@ -2765,7 +2867,7 @@
       }
     },
     {
-      "slot": 165,
+      "slot": 171,
       "tier": 2,
       "spokenText": "bandage",
       "status": "miss",
@@ -2775,7 +2877,7 @@
       "clip": null
     },
     {
-      "slot": 166,
+      "slot": 172,
       "tier": 2,
       "spokenText": "hurt",
       "status": "hit",
@@ -2792,7 +2894,7 @@
       }
     },
     {
-      "slot": 167,
+      "slot": 173,
       "tier": 2,
       "spokenText": "sick",
       "status": "hit",
@@ -2809,7 +2911,7 @@
       }
     },
     {
-      "slot": 168,
+      "slot": 174,
       "tier": 2,
       "spokenText": "pain",
       "status": "hit",
@@ -2826,7 +2928,7 @@
       }
     },
     {
-      "slot": 169,
+      "slot": 175,
       "tier": 2,
       "spokenText": "fever",
       "status": "miss",
@@ -2836,7 +2938,7 @@
       "clip": null
     },
     {
-      "slot": 170,
+      "slot": 176,
       "tier": 2,
       "spokenText": "cough",
       "status": "hit",
@@ -2853,7 +2955,7 @@
       }
     },
     {
-      "slot": 171,
+      "slot": 177,
       "tier": 2,
       "spokenText": "medicine",
       "status": "miss",
@@ -2863,7 +2965,7 @@
       "clip": null
     },
     {
-      "slot": 172,
+      "slot": 178,
       "tier": 2,
       "spokenText": "dentist",
       "status": "hit",
@@ -2880,7 +2982,7 @@
       }
     },
     {
-      "slot": 173,
+      "slot": 179,
       "tier": 2,
       "spokenText": "sad",
       "status": "hit",
@@ -2897,7 +2999,7 @@
       }
     },
     {
-      "slot": 174,
+      "slot": 180,
       "tier": 2,
       "spokenText": "mad",
       "status": "hit",
@@ -2914,7 +3016,7 @@
       }
     },
     {
-      "slot": 175,
+      "slot": 181,
       "tier": 2,
       "spokenText": "angry",
       "status": "hit",
@@ -2931,7 +3033,7 @@
       }
     },
     {
-      "slot": 176,
+      "slot": 182,
       "tier": 2,
       "spokenText": "scared",
       "status": "hit",
@@ -2948,7 +3050,7 @@
       }
     },
     {
-      "slot": 177,
+      "slot": 183,
       "tier": 2,
       "spokenText": "excited",
       "status": "hit",
@@ -2965,7 +3067,7 @@
       }
     },
     {
-      "slot": 178,
+      "slot": 184,
       "tier": 2,
       "spokenText": "silly",
       "status": "hit",
@@ -2982,7 +3084,7 @@
       }
     },
     {
-      "slot": 179,
+      "slot": 185,
       "tier": 2,
       "spokenText": "nervous",
       "status": "hit",
@@ -2999,7 +3101,7 @@
       }
     },
     {
-      "slot": 180,
+      "slot": 186,
       "tier": 2,
       "spokenText": "calm",
       "status": "hit",
@@ -3016,7 +3118,7 @@
       }
     },
     {
-      "slot": 181,
+      "slot": 187,
       "tier": 2,
       "spokenText": "frustrated",
       "status": "hit",
@@ -3033,7 +3135,7 @@
       }
     },
     {
-      "slot": 182,
+      "slot": 188,
       "tier": 2,
       "spokenText": "proud",
       "status": "hit",
@@ -3050,7 +3152,7 @@
       }
     },
     {
-      "slot": 183,
+      "slot": 189,
       "tier": 2,
       "spokenText": "shy",
       "status": "hit",
@@ -3067,7 +3169,7 @@
       }
     },
     {
-      "slot": 184,
+      "slot": 190,
       "tier": 2,
       "spokenText": "surprised",
       "status": "hit",
@@ -3084,7 +3186,7 @@
       }
     },
     {
-      "slot": 185,
+      "slot": 191,
       "tier": 2,
       "spokenText": "bored",
       "status": "hit",
@@ -3101,7 +3203,7 @@
       }
     },
     {
-      "slot": 186,
+      "slot": 192,
       "tier": 2,
       "spokenText": "lonely",
       "status": "hit",
@@ -3118,7 +3220,7 @@
       }
     },
     {
-      "slot": 187,
+      "slot": 193,
       "tier": 2,
       "spokenText": "hungry",
       "status": "hit",
@@ -3135,7 +3237,7 @@
       }
     },
     {
-      "slot": 188,
+      "slot": 194,
       "tier": 2,
       "spokenText": "thirsty",
       "status": "hit",
@@ -3152,7 +3254,7 @@
       }
     },
     {
-      "slot": 189,
+      "slot": 195,
       "tier": 2,
       "spokenText": "tired",
       "status": "hit",
@@ -3169,7 +3271,7 @@
       }
     },
     {
-      "slot": 190,
+      "slot": 196,
       "tier": 2,
       "spokenText": "sleepy",
       "status": "hit",
@@ -3186,7 +3288,7 @@
       }
     },
     {
-      "slot": 191,
+      "slot": 197,
       "tier": 2,
       "spokenText": "energetic",
       "status": "hit",
@@ -3203,7 +3305,7 @@
       }
     },
     {
-      "slot": 192,
+      "slot": 198,
       "tier": 2,
       "spokenText": "hot",
       "status": "hit",
@@ -3220,7 +3322,7 @@
       }
     },
     {
-      "slot": 193,
+      "slot": 199,
       "tier": 2,
       "spokenText": "cold",
       "status": "hit",
@@ -3237,7 +3339,7 @@
       }
     },
     {
-      "slot": 194,
+      "slot": 200,
       "tier": 2,
       "spokenText": "warm",
       "status": "hit",
@@ -3254,7 +3356,7 @@
       }
     },
     {
-      "slot": 195,
+      "slot": 201,
       "tier": 2,
       "spokenText": "loud",
       "status": "hit",
@@ -3271,7 +3373,7 @@
       }
     },
     {
-      "slot": 196,
+      "slot": 202,
       "tier": 2,
       "spokenText": "quiet",
       "status": "hit",
@@ -3288,7 +3390,7 @@
       }
     },
     {
-      "slot": 197,
+      "slot": 203,
       "tier": 2,
       "spokenText": "noisy",
       "status": "hit",
@@ -3305,7 +3407,7 @@
       }
     },
     {
-      "slot": 198,
+      "slot": 204,
       "tier": 2,
       "spokenText": "bright",
       "status": "hit",
@@ -3322,7 +3424,7 @@
       }
     },
     {
-      "slot": 199,
+      "slot": 205,
       "tier": 2,
       "spokenText": "dark",
       "status": "hit",
@@ -3339,7 +3441,7 @@
       }
     },
     {
-      "slot": 200,
+      "slot": 206,
       "tier": 2,
       "spokenText": "soft",
       "status": "hit",
@@ -3356,7 +3458,7 @@
       }
     },
     {
-      "slot": 201,
+      "slot": 207,
       "tier": 2,
       "spokenText": "rough",
       "status": "hit",
@@ -3373,7 +3475,7 @@
       }
     },
     {
-      "slot": 202,
+      "slot": 208,
       "tier": 2,
       "spokenText": "sticky",
       "status": "hit",
@@ -3390,7 +3492,7 @@
       }
     },
     {
-      "slot": 203,
+      "slot": 209,
       "tier": 2,
       "spokenText": "dizzy",
       "status": "hit",
@@ -3407,7 +3509,7 @@
       }
     },
     {
-      "slot": 204,
+      "slot": 210,
       "tier": 2,
       "spokenText": "gross",
       "status": "hit",
@@ -3424,7 +3526,7 @@
       }
     },
     {
-      "slot": 205,
+      "slot": 211,
       "tier": 2,
       "spokenText": "comfortable",
       "status": "hit",
@@ -3441,7 +3543,7 @@
       }
     },
     {
-      "slot": 206,
+      "slot": 212,
       "tier": 2,
       "spokenText": "uncomfortable",
       "status": "hit",
@@ -3458,7 +3560,7 @@
       }
     },
     {
-      "slot": 207,
+      "slot": 213,
       "tier": 2,
       "spokenText": "overwhelmed",
       "status": "hit",
@@ -3475,7 +3577,7 @@
       }
     },
     {
-      "slot": 208,
+      "slot": 214,
       "tier": 2,
       "spokenText": "run",
       "status": "hit",
@@ -3492,7 +3594,7 @@
       }
     },
     {
-      "slot": 209,
+      "slot": 215,
       "tier": 2,
       "spokenText": "jump",
       "status": "hit",
@@ -3509,7 +3611,7 @@
       }
     },
     {
-      "slot": 210,
+      "slot": 216,
       "tier": 2,
       "spokenText": "walk",
       "status": "hit",
@@ -3526,7 +3628,7 @@
       }
     },
     {
-      "slot": 211,
+      "slot": 217,
       "tier": 2,
       "spokenText": "sit",
       "status": "hit",
@@ -3543,7 +3645,7 @@
       }
     },
     {
-      "slot": 212,
+      "slot": 218,
       "tier": 2,
       "spokenText": "stand",
       "status": "hit",
@@ -3560,7 +3662,7 @@
       }
     },
     {
-      "slot": 213,
+      "slot": 219,
       "tier": 2,
       "spokenText": "climb",
       "status": "hit",
@@ -3577,7 +3679,7 @@
       }
     },
     {
-      "slot": 214,
+      "slot": 220,
       "tier": 2,
       "spokenText": "dance",
       "status": "hit",
@@ -3594,7 +3696,7 @@
       }
     },
     {
-      "slot": 215,
+      "slot": 221,
       "tier": 2,
       "spokenText": "swim",
       "status": "hit",
@@ -3611,7 +3713,7 @@
       }
     },
     {
-      "slot": 216,
+      "slot": 222,
       "tier": 2,
       "spokenText": "ride",
       "status": "hit",
@@ -3628,7 +3730,7 @@
       }
     },
     {
-      "slot": 217,
+      "slot": 223,
       "tier": 2,
       "spokenText": "crawl",
       "status": "hit",
@@ -3645,7 +3747,7 @@
       }
     },
     {
-      "slot": 218,
+      "slot": 224,
       "tier": 2,
       "spokenText": "kick",
       "status": "hit",
@@ -3662,7 +3764,7 @@
       }
     },
     {
-      "slot": 219,
+      "slot": 225,
       "tier": 2,
       "spokenText": "throw",
       "status": "hit",
@@ -3679,7 +3781,7 @@
       }
     },
     {
-      "slot": 220,
+      "slot": 226,
       "tier": 2,
       "spokenText": "catch",
       "status": "hit",
@@ -3696,7 +3798,7 @@
       }
     },
     {
-      "slot": 221,
+      "slot": 227,
       "tier": 2,
       "spokenText": "push",
       "status": "hit",
@@ -3713,7 +3815,7 @@
       }
     },
     {
-      "slot": 222,
+      "slot": 228,
       "tier": 2,
       "spokenText": "pull",
       "status": "hit",
@@ -3730,7 +3832,7 @@
       }
     },
     {
-      "slot": 223,
+      "slot": 229,
       "tier": 2,
       "spokenText": "swing",
       "status": "hit",
@@ -3747,7 +3849,7 @@
       }
     },
     {
-      "slot": 224,
+      "slot": 230,
       "tier": 2,
       "spokenText": "slide",
       "status": "hit",
@@ -3764,7 +3866,7 @@
       }
     },
     {
-      "slot": 225,
+      "slot": 231,
       "tier": 2,
       "spokenText": "fall",
       "status": "hit",
@@ -3781,7 +3883,7 @@
       }
     },
     {
-      "slot": 226,
+      "slot": 232,
       "tier": 2,
       "spokenText": "carry",
       "status": "hit",
@@ -3798,7 +3900,7 @@
       }
     },
     {
-      "slot": 227,
+      "slot": 233,
       "tier": 2,
       "spokenText": "drop",
       "status": "hit",
@@ -3815,7 +3917,7 @@
       }
     },
     {
-      "slot": 228,
+      "slot": 234,
       "tier": 2,
       "spokenText": "write",
       "status": "hit",
@@ -3832,7 +3934,7 @@
       }
     },
     {
-      "slot": 229,
+      "slot": 235,
       "tier": 2,
       "spokenText": "draw",
       "status": "hit",
@@ -3849,7 +3951,7 @@
       }
     },
     {
-      "slot": 230,
+      "slot": 236,
       "tier": 2,
       "spokenText": "color",
       "status": "hit",
@@ -3866,7 +3968,7 @@
       }
     },
     {
-      "slot": 231,
+      "slot": 237,
       "tier": 2,
       "spokenText": "paint",
       "status": "hit",
@@ -3883,7 +3985,7 @@
       }
     },
     {
-      "slot": 232,
+      "slot": 238,
       "tier": 2,
       "spokenText": "cut",
       "status": "hit",
@@ -3900,7 +4002,7 @@
       }
     },
     {
-      "slot": 233,
+      "slot": 239,
       "tier": 2,
       "spokenText": "glue",
       "status": "hit",
@@ -3917,7 +4019,7 @@
       }
     },
     {
-      "slot": 234,
+      "slot": 240,
       "tier": 2,
       "spokenText": "listen",
       "status": "hit",
@@ -3934,7 +4036,7 @@
       }
     },
     {
-      "slot": 235,
+      "slot": 241,
       "tier": 2,
       "spokenText": "speak",
       "status": "hit",
@@ -3951,7 +4053,7 @@
       }
     },
     {
-      "slot": 236,
+      "slot": 242,
       "tier": 2,
       "spokenText": "talk",
       "status": "hit",
@@ -3968,7 +4070,7 @@
       }
     },
     {
-      "slot": 237,
+      "slot": 243,
       "tier": 2,
       "spokenText": "sing",
       "status": "hit",
@@ -3985,7 +4087,7 @@
       }
     },
     {
-      "slot": 238,
+      "slot": 244,
       "tier": 2,
       "spokenText": "count",
       "status": "hit",
@@ -4002,7 +4104,7 @@
       }
     },
     {
-      "slot": 239,
+      "slot": 245,
       "tier": 2,
       "spokenText": "share",
       "status": "hit",
@@ -4019,7 +4121,7 @@
       }
     },
     {
-      "slot": 240,
+      "slot": 246,
       "tier": 2,
       "spokenText": "clean up",
       "status": "hit",
@@ -4036,7 +4138,7 @@
       }
     },
     {
-      "slot": 241,
+      "slot": 247,
       "tier": 2,
       "spokenText": "wash",
       "status": "hit",
@@ -4053,7 +4155,7 @@
       }
     },
     {
-      "slot": 242,
+      "slot": 248,
       "tier": 2,
       "spokenText": "wipe action",
       "status": "miss",
@@ -4063,7 +4165,7 @@
       "clip": null
     },
     {
-      "slot": 243,
+      "slot": 249,
       "tier": 2,
       "spokenText": "cook",
       "status": "hit",
@@ -4080,7 +4182,7 @@
       }
     },
     {
-      "slot": 244,
+      "slot": 250,
       "tier": 2,
       "spokenText": "build",
       "status": "hit",
@@ -4097,7 +4199,7 @@
       }
     },
     {
-      "slot": 245,
+      "slot": 251,
       "tier": 2,
       "spokenText": "fix",
       "status": "hit",
@@ -4114,7 +4216,7 @@
       }
     },
     {
-      "slot": 246,
+      "slot": 252,
       "tier": 2,
       "spokenText": "hold",
       "status": "hit",
@@ -4131,7 +4233,7 @@
       }
     },
     {
-      "slot": 247,
+      "slot": 253,
       "tier": 2,
       "spokenText": "touch",
       "status": "hit",
@@ -4148,7 +4250,7 @@
       }
     },
     {
-      "slot": 248,
+      "slot": 254,
       "tier": 2,
       "spokenText": "know",
       "status": "hit",
@@ -4165,7 +4267,7 @@
       }
     },
     {
-      "slot": 249,
+      "slot": 255,
       "tier": 2,
       "spokenText": "remember",
       "status": "hit",
@@ -4182,7 +4284,7 @@
       }
     },
     {
-      "slot": 250,
+      "slot": 256,
       "tier": 2,
       "spokenText": "forget",
       "status": "miss",
@@ -4192,7 +4294,7 @@
       "clip": null
     },
     {
-      "slot": 251,
+      "slot": 257,
       "tier": 2,
       "spokenText": "choose",
       "status": "hit",
@@ -4209,7 +4311,7 @@
       }
     },
     {
-      "slot": 252,
+      "slot": 258,
       "tier": 2,
       "spokenText": "show",
       "status": "hit",
@@ -4226,7 +4328,7 @@
       }
     },
     {
-      "slot": 253,
+      "slot": 259,
       "tier": 2,
       "spokenText": "ask",
       "status": "hit",
@@ -4243,7 +4345,7 @@
       }
     },
     {
-      "slot": 254,
+      "slot": 260,
       "tier": 2,
       "spokenText": "hug",
       "status": "hit",
@@ -4260,7 +4362,7 @@
       }
     },
     {
-      "slot": 255,
+      "slot": 261,
       "tier": 2,
       "spokenText": "kiss",
       "status": "hit",
@@ -4277,7 +4379,7 @@
       }
     },
     {
-      "slot": 256,
+      "slot": 262,
       "tier": 2,
       "spokenText": "laugh",
       "status": "hit",
@@ -4294,7 +4396,7 @@
       }
     },
     {
-      "slot": 257,
+      "slot": 263,
       "tier": 2,
       "spokenText": "cry",
       "status": "hit",
@@ -4311,7 +4413,7 @@
       }
     },
     {
-      "slot": 258,
+      "slot": 264,
       "tier": 2,
       "spokenText": "sleep",
       "status": "hit",
@@ -4328,7 +4430,7 @@
       }
     },
     {
-      "slot": 259,
+      "slot": 265,
       "tier": 2,
       "spokenText": "wake up",
       "status": "miss",
@@ -4338,7 +4440,7 @@
       "clip": null
     },
     {
-      "slot": 260,
+      "slot": 266,
       "tier": 2,
       "spokenText": "family",
       "status": "hit",
@@ -4355,7 +4457,7 @@
       }
     },
     {
-      "slot": 261,
+      "slot": 267,
       "tier": 2,
       "spokenText": "mom",
       "status": "hit",
@@ -4372,7 +4474,7 @@
       }
     },
     {
-      "slot": 262,
+      "slot": 268,
       "tier": 2,
       "spokenText": "dad",
       "status": "hit",
@@ -4389,7 +4491,7 @@
       }
     },
     {
-      "slot": 263,
+      "slot": 269,
       "tier": 2,
       "spokenText": "mama",
       "status": "miss",
@@ -4399,7 +4501,7 @@
       "clip": null
     },
     {
-      "slot": 264,
+      "slot": 270,
       "tier": 2,
       "spokenText": "dada",
       "status": "miss",
@@ -4409,7 +4511,7 @@
       "clip": null
     },
     {
-      "slot": 265,
+      "slot": 271,
       "tier": 2,
       "spokenText": "baby",
       "status": "hit",
@@ -4426,7 +4528,7 @@
       }
     },
     {
-      "slot": 266,
+      "slot": 272,
       "tier": 2,
       "spokenText": "brother",
       "status": "hit",
@@ -4443,7 +4545,7 @@
       }
     },
     {
-      "slot": 267,
+      "slot": 273,
       "tier": 2,
       "spokenText": "sister",
       "status": "hit",
@@ -4460,7 +4562,7 @@
       }
     },
     {
-      "slot": 268,
+      "slot": 274,
       "tier": 2,
       "spokenText": "grandma",
       "status": "hit",
@@ -4477,7 +4579,7 @@
       }
     },
     {
-      "slot": 269,
+      "slot": 275,
       "tier": 2,
       "spokenText": "grandpa",
       "status": "hit",
@@ -4494,7 +4596,7 @@
       }
     },
     {
-      "slot": 270,
+      "slot": 276,
       "tier": 2,
       "spokenText": "aunt",
       "status": "miss",
@@ -4504,7 +4606,7 @@
       "clip": null
     },
     {
-      "slot": 271,
+      "slot": 277,
       "tier": 2,
       "spokenText": "uncle",
       "status": "hit",
@@ -4521,7 +4623,7 @@
       }
     },
     {
-      "slot": 272,
+      "slot": 278,
       "tier": 2,
       "spokenText": "cousin",
       "status": "miss",
@@ -4531,7 +4633,7 @@
       "clip": null
     },
     {
-      "slot": 273,
+      "slot": 279,
       "tier": 2,
       "spokenText": "pet",
       "status": "hit",
@@ -4548,7 +4650,7 @@
       }
     },
     {
-      "slot": 274,
+      "slot": 280,
       "tier": 2,
       "spokenText": "teacher",
       "status": "hit",
@@ -4565,7 +4667,7 @@
       }
     },
     {
-      "slot": 275,
+      "slot": 281,
       "tier": 2,
       "spokenText": "therapist",
       "status": "miss",
@@ -4575,7 +4677,7 @@
       "clip": null
     },
     {
-      "slot": 276,
+      "slot": 282,
       "tier": 2,
       "spokenText": "aide",
       "status": "miss",
@@ -4585,7 +4687,7 @@
       "clip": null
     },
     {
-      "slot": 277,
+      "slot": 283,
       "tier": 2,
       "spokenText": "student",
       "status": "hit",
@@ -4602,7 +4704,7 @@
       }
     },
     {
-      "slot": 278,
+      "slot": 284,
       "tier": 2,
       "spokenText": "friend",
       "status": "hit",
@@ -4619,7 +4721,7 @@
       }
     },
     {
-      "slot": 279,
+      "slot": 285,
       "tier": 2,
       "spokenText": "class",
       "status": "hit",
@@ -4636,7 +4738,7 @@
       }
     },
     {
-      "slot": 280,
+      "slot": 286,
       "tier": 2,
       "spokenText": "firefighter",
       "status": "hit",
@@ -4653,7 +4755,7 @@
       }
     },
     {
-      "slot": 281,
+      "slot": 287,
       "tier": 2,
       "spokenText": "police officer",
       "status": "hit",
@@ -4670,7 +4772,7 @@
       }
     },
     {
-      "slot": 282,
+      "slot": 288,
       "tier": 2,
       "spokenText": "bus driver",
       "status": "miss",
@@ -4680,7 +4782,7 @@
       "clip": null
     },
     {
-      "slot": 283,
+      "slot": 289,
       "tier": 2,
       "spokenText": "neighbor",
       "status": "miss",
@@ -4690,7 +4792,7 @@
       "clip": null
     },
     {
-      "slot": 284,
+      "slot": 290,
       "tier": 2,
       "spokenText": "person",
       "status": "hit",
@@ -4707,7 +4809,7 @@
       }
     },
     {
-      "slot": 285,
+      "slot": 291,
       "tier": 2,
       "spokenText": "people",
       "status": "hit",
@@ -4724,7 +4826,7 @@
       }
     },
     {
-      "slot": 286,
+      "slot": 292,
       "tier": 2,
       "spokenText": "kids",
       "status": "hit",
@@ -4741,7 +4843,7 @@
       }
     },
     {
-      "slot": 287,
+      "slot": 293,
       "tier": 2,
       "spokenText": "doctor",
       "status": "hit",
@@ -4758,7 +4860,7 @@
       }
     },
     {
-      "slot": 288,
+      "slot": 294,
       "tier": 2,
       "spokenText": "nurse",
       "status": "hit",
@@ -4775,7 +4877,7 @@
       }
     },
     {
-      "slot": 289,
+      "slot": 295,
       "tier": 2,
       "spokenText": "babysitter",
       "status": "miss",
@@ -4785,7 +4887,24 @@
       "clip": null
     },
     {
-      "slot": 290,
+      "slot": 296,
+      "tier": 2,
+      "spokenText": "name",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "name",
+      "reason": null,
+      "clip": {
+        "key": "audio/name/a7686db7d4ed.mp3",
+        "sha256": "a7686db7d4ed917b22e08bccd56f7ba75e86dc7378291b666a6d6cf5477b3099",
+        "source": "phonicsstudio-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_a7686db7d4ed",
+        "spokenText": "name"
+      }
+    },
+    {
+      "slot": 297,
       "tier": 2,
       "spokenText": "home",
       "status": "hit",
@@ -4802,7 +4921,7 @@
       }
     },
     {
-      "slot": 291,
+      "slot": 298,
       "tier": 2,
       "spokenText": "house",
       "status": "hit",
@@ -4819,7 +4938,7 @@
       }
     },
     {
-      "slot": 292,
+      "slot": 299,
       "tier": 2,
       "spokenText": "bedroom",
       "status": "hit",
@@ -4836,7 +4955,7 @@
       }
     },
     {
-      "slot": 293,
+      "slot": 300,
       "tier": 2,
       "spokenText": "living room",
       "status": "hit",
@@ -4853,7 +4972,7 @@
       }
     },
     {
-      "slot": 294,
+      "slot": 301,
       "tier": 2,
       "spokenText": "kitchen",
       "status": "hit",
@@ -4870,7 +4989,7 @@
       }
     },
     {
-      "slot": 295,
+      "slot": 302,
       "tier": 2,
       "spokenText": "basement",
       "status": "miss",
@@ -4880,7 +4999,7 @@
       "clip": null
     },
     {
-      "slot": 296,
+      "slot": 303,
       "tier": 2,
       "spokenText": "stairs",
       "status": "hit",
@@ -4897,7 +5016,7 @@
       }
     },
     {
-      "slot": 297,
+      "slot": 304,
       "tier": 2,
       "spokenText": "yard",
       "status": "hit",
@@ -4914,7 +5033,7 @@
       }
     },
     {
-      "slot": 298,
+      "slot": 305,
       "tier": 2,
       "spokenText": "school",
       "status": "hit",
@@ -4931,7 +5050,7 @@
       }
     },
     {
-      "slot": 299,
+      "slot": 306,
       "tier": 2,
       "spokenText": "classroom",
       "status": "hit",
@@ -4948,7 +5067,7 @@
       }
     },
     {
-      "slot": 300,
+      "slot": 307,
       "tier": 2,
       "spokenText": "playground",
       "status": "hit",
@@ -4965,7 +5084,7 @@
       }
     },
     {
-      "slot": 301,
+      "slot": 308,
       "tier": 2,
       "spokenText": "gym",
       "status": "hit",
@@ -4982,7 +5101,7 @@
       }
     },
     {
-      "slot": 302,
+      "slot": 309,
       "tier": 2,
       "spokenText": "cafeteria",
       "status": "hit",
@@ -4999,7 +5118,7 @@
       }
     },
     {
-      "slot": 303,
+      "slot": 310,
       "tier": 2,
       "spokenText": "library",
       "status": "hit",
@@ -5016,7 +5135,7 @@
       }
     },
     {
-      "slot": 304,
+      "slot": 311,
       "tier": 2,
       "spokenText": "hallway",
       "status": "miss",
@@ -5026,7 +5145,7 @@
       "clip": null
     },
     {
-      "slot": 305,
+      "slot": 312,
       "tier": 2,
       "spokenText": "desk",
       "status": "hit",
@@ -5043,7 +5162,7 @@
       }
     },
     {
-      "slot": 306,
+      "slot": 313,
       "tier": 2,
       "spokenText": "park",
       "status": "hit",
@@ -5060,7 +5179,7 @@
       }
     },
     {
-      "slot": 307,
+      "slot": 314,
       "tier": 2,
       "spokenText": "store",
       "status": "hit",
@@ -5077,7 +5196,7 @@
       }
     },
     {
-      "slot": 308,
+      "slot": 315,
       "tier": 2,
       "spokenText": "grocery store",
       "status": "miss",
@@ -5087,7 +5206,7 @@
       "clip": null
     },
     {
-      "slot": 309,
+      "slot": 316,
       "tier": 2,
       "spokenText": "restaurant",
       "status": "hit",
@@ -5104,7 +5223,7 @@
       }
     },
     {
-      "slot": 310,
+      "slot": 317,
       "tier": 2,
       "spokenText": "pool",
       "status": "hit",
@@ -5121,7 +5240,7 @@
       }
     },
     {
-      "slot": 311,
+      "slot": 318,
       "tier": 2,
       "spokenText": "beach",
       "status": "hit",
@@ -5138,7 +5257,7 @@
       }
     },
     {
-      "slot": 312,
+      "slot": 319,
       "tier": 2,
       "spokenText": "zoo",
       "status": "hit",
@@ -5155,7 +5274,7 @@
       }
     },
     {
-      "slot": 313,
+      "slot": 320,
       "tier": 2,
       "spokenText": "doctor office",
       "status": "miss",
@@ -5165,7 +5284,7 @@
       "clip": null
     },
     {
-      "slot": 314,
+      "slot": 321,
       "tier": 2,
       "spokenText": "hospital",
       "status": "hit",
@@ -5182,7 +5301,7 @@
       }
     },
     {
-      "slot": 315,
+      "slot": 322,
       "tier": 2,
       "spokenText": "museum",
       "status": "miss",
@@ -5192,7 +5311,7 @@
       "clip": null
     },
     {
-      "slot": 316,
+      "slot": 323,
       "tier": 2,
       "spokenText": "movie theater",
       "status": "miss",
@@ -5202,7 +5321,7 @@
       "clip": null
     },
     {
-      "slot": 317,
+      "slot": 324,
       "tier": 2,
       "spokenText": "mall",
       "status": "hit",
@@ -5219,7 +5338,7 @@
       }
     },
     {
-      "slot": 318,
+      "slot": 325,
       "tier": 2,
       "spokenText": "farm",
       "status": "hit",
@@ -5236,7 +5355,7 @@
       }
     },
     {
-      "slot": 319,
+      "slot": 326,
       "tier": 2,
       "spokenText": "airport",
       "status": "hit",
@@ -5253,7 +5372,7 @@
       }
     },
     {
-      "slot": 320,
+      "slot": 327,
       "tier": 2,
       "spokenText": "outside",
       "status": "hit",
@@ -5270,7 +5389,7 @@
       }
     },
     {
-      "slot": 321,
+      "slot": 328,
       "tier": 2,
       "spokenText": "inside",
       "status": "hit",
@@ -5287,7 +5406,7 @@
       }
     },
     {
-      "slot": 322,
+      "slot": 329,
       "tier": 2,
       "spokenText": "street",
       "status": "hit",
@@ -5304,7 +5423,7 @@
       }
     },
     {
-      "slot": 323,
+      "slot": 330,
       "tier": 2,
       "spokenText": "town",
       "status": "hit",
@@ -5321,7 +5440,7 @@
       }
     },
     {
-      "slot": 324,
+      "slot": 331,
       "tier": 2,
       "spokenText": "church",
       "status": "hit",
@@ -5338,7 +5457,7 @@
       }
     },
     {
-      "slot": 325,
+      "slot": 332,
       "tier": 2,
       "spokenText": "toy",
       "status": "hit",
@@ -5355,7 +5474,7 @@
       }
     },
     {
-      "slot": 326,
+      "slot": 333,
       "tier": 2,
       "spokenText": "ball",
       "status": "hit",
@@ -5372,7 +5491,7 @@
       }
     },
     {
-      "slot": 327,
+      "slot": 334,
       "tier": 2,
       "spokenText": "blocks",
       "status": "hit",
@@ -5389,7 +5508,7 @@
       }
     },
     {
-      "slot": 328,
+      "slot": 335,
       "tier": 2,
       "spokenText": "puzzle",
       "status": "hit",
@@ -5406,7 +5525,7 @@
       }
     },
     {
-      "slot": 329,
+      "slot": 336,
       "tier": 2,
       "spokenText": "doll",
       "status": "hit",
@@ -5423,7 +5542,7 @@
       }
     },
     {
-      "slot": 330,
+      "slot": 337,
       "tier": 2,
       "spokenText": "action figure",
       "status": "hit",
@@ -5440,7 +5559,7 @@
       }
     },
     {
-      "slot": 331,
+      "slot": 338,
       "tier": 2,
       "spokenText": "bubbles",
       "status": "miss",
@@ -5450,7 +5569,7 @@
       "clip": null
     },
     {
-      "slot": 332,
+      "slot": 339,
       "tier": 2,
       "spokenText": "play dough",
       "status": "hit",
@@ -5467,7 +5586,7 @@
       }
     },
     {
-      "slot": 333,
+      "slot": 340,
       "tier": 2,
       "spokenText": "toy car",
       "status": "miss",
@@ -5477,7 +5596,7 @@
       "clip": null
     },
     {
-      "slot": 334,
+      "slot": 341,
       "tier": 2,
       "spokenText": "toy train",
       "status": "miss",
@@ -5487,7 +5606,7 @@
       "clip": null
     },
     {
-      "slot": 335,
+      "slot": 342,
       "tier": 2,
       "spokenText": "stuffed animal",
       "status": "hit",
@@ -5504,7 +5623,7 @@
       }
     },
     {
-      "slot": 336,
+      "slot": 343,
       "tier": 2,
       "spokenText": "dinosaur",
       "status": "hit",
@@ -5521,7 +5640,7 @@
       }
     },
     {
-      "slot": 337,
+      "slot": 344,
       "tier": 2,
       "spokenText": "robot",
       "status": "hit",
@@ -5538,7 +5657,7 @@
       }
     },
     {
-      "slot": 338,
+      "slot": 345,
       "tier": 2,
       "spokenText": "legos",
       "status": "miss",
@@ -5548,7 +5667,7 @@
       "clip": null
     },
     {
-      "slot": 339,
+      "slot": 346,
       "tier": 2,
       "spokenText": "board game",
       "status": "hit",
@@ -5565,7 +5684,7 @@
       }
     },
     {
-      "slot": 340,
+      "slot": 347,
       "tier": 2,
       "spokenText": "swing set",
       "status": "miss",
@@ -5575,7 +5694,7 @@
       "clip": null
     },
     {
-      "slot": 341,
+      "slot": 348,
       "tier": 2,
       "spokenText": "sandbox",
       "status": "hit",
@@ -5592,7 +5711,7 @@
       }
     },
     {
-      "slot": 342,
+      "slot": 349,
       "tier": 2,
       "spokenText": "bike",
       "status": "hit",
@@ -5609,7 +5728,7 @@
       }
     },
     {
-      "slot": 343,
+      "slot": 350,
       "tier": 2,
       "spokenText": "scooter",
       "status": "hit",
@@ -5626,7 +5745,7 @@
       }
     },
     {
-      "slot": 344,
+      "slot": 351,
       "tier": 2,
       "spokenText": "skateboard",
       "status": "hit",
@@ -5643,7 +5762,7 @@
       }
     },
     {
-      "slot": 345,
+      "slot": 352,
       "tier": 2,
       "spokenText": "wagon",
       "status": "hit",
@@ -5660,7 +5779,7 @@
       }
     },
     {
-      "slot": 346,
+      "slot": 353,
       "tier": 2,
       "spokenText": "chalk",
       "status": "hit",
@@ -5677,7 +5796,7 @@
       }
     },
     {
-      "slot": 347,
+      "slot": 354,
       "tier": 2,
       "spokenText": "jump rope",
       "status": "miss",
@@ -5687,7 +5806,7 @@
       "clip": null
     },
     {
-      "slot": 348,
+      "slot": 355,
       "tier": 2,
       "spokenText": "music",
       "status": "hit",
@@ -5704,7 +5823,7 @@
       }
     },
     {
-      "slot": 349,
+      "slot": 356,
       "tier": 2,
       "spokenText": "song",
       "status": "hit",
@@ -5721,7 +5840,7 @@
       }
     },
     {
-      "slot": 350,
+      "slot": 357,
       "tier": 2,
       "spokenText": "tablet",
       "status": "hit",
@@ -5738,7 +5857,7 @@
       }
     },
     {
-      "slot": 351,
+      "slot": 358,
       "tier": 2,
       "spokenText": "iPad",
       "status": "miss",
@@ -5748,7 +5867,7 @@
       "clip": null
     },
     {
-      "slot": 352,
+      "slot": 359,
       "tier": 2,
       "spokenText": "phone",
       "status": "hit",
@@ -5765,7 +5884,7 @@
       }
     },
     {
-      "slot": 353,
+      "slot": 360,
       "tier": 2,
       "spokenText": "TV",
       "status": "miss",
@@ -5775,7 +5894,7 @@
       "clip": null
     },
     {
-      "slot": 354,
+      "slot": 361,
       "tier": 2,
       "spokenText": "movie",
       "status": "hit",
@@ -5792,7 +5911,7 @@
       }
     },
     {
-      "slot": 355,
+      "slot": 362,
       "tier": 2,
       "spokenText": "video",
       "status": "miss",
@@ -5802,7 +5921,7 @@
       "clip": null
     },
     {
-      "slot": 356,
+      "slot": 363,
       "tier": 2,
       "spokenText": "headphones",
       "status": "hit",
@@ -5819,7 +5938,7 @@
       }
     },
     {
-      "slot": 357,
+      "slot": 364,
       "tier": 2,
       "spokenText": "computer",
       "status": "hit",
@@ -5836,7 +5955,7 @@
       }
     },
     {
-      "slot": 358,
+      "slot": 365,
       "tier": 2,
       "spokenText": "camera",
       "status": "hit",
@@ -5853,7 +5972,7 @@
       }
     },
     {
-      "slot": 359,
+      "slot": 366,
       "tier": 2,
       "spokenText": "paper",
       "status": "hit",
@@ -5870,7 +5989,7 @@
       }
     },
     {
-      "slot": 360,
+      "slot": 367,
       "tier": 2,
       "spokenText": "markers",
       "status": "hit",
@@ -5887,7 +6006,7 @@
       }
     },
     {
-      "slot": 361,
+      "slot": 368,
       "tier": 2,
       "spokenText": "crayons",
       "status": "hit",
@@ -5904,7 +6023,7 @@
       }
     },
     {
-      "slot": 362,
+      "slot": 369,
       "tier": 2,
       "spokenText": "book",
       "status": "hit",
@@ -5921,7 +6040,7 @@
       }
     },
     {
-      "slot": 363,
+      "slot": 370,
       "tier": 2,
       "spokenText": "chair",
       "status": "hit",
@@ -5938,7 +6057,7 @@
       }
     },
     {
-      "slot": 364,
+      "slot": 371,
       "tier": 2,
       "spokenText": "couch",
       "status": "hit",
@@ -5955,7 +6074,7 @@
       }
     },
     {
-      "slot": 365,
+      "slot": 372,
       "tier": 2,
       "spokenText": "table",
       "status": "hit",
@@ -5972,7 +6091,7 @@
       }
     },
     {
-      "slot": 366,
+      "slot": 373,
       "tier": 2,
       "spokenText": "bed",
       "status": "hit",
@@ -5989,7 +6108,7 @@
       }
     },
     {
-      "slot": 367,
+      "slot": 374,
       "tier": 2,
       "spokenText": "door",
       "status": "hit",
@@ -6006,7 +6125,7 @@
       }
     },
     {
-      "slot": 368,
+      "slot": 375,
       "tier": 2,
       "spokenText": "window",
       "status": "hit",
@@ -6023,7 +6142,7 @@
       }
     },
     {
-      "slot": 369,
+      "slot": 376,
       "tier": 2,
       "spokenText": "lamp",
       "status": "hit",
@@ -6040,7 +6159,7 @@
       }
     },
     {
-      "slot": 370,
+      "slot": 377,
       "tier": 2,
       "spokenText": "clock",
       "status": "hit",
@@ -6057,7 +6176,7 @@
       }
     },
     {
-      "slot": 371,
+      "slot": 378,
       "tier": 2,
       "spokenText": "trash",
       "status": "hit",
@@ -6074,7 +6193,7 @@
       }
     },
     {
-      "slot": 372,
+      "slot": 379,
       "tier": 2,
       "spokenText": "sink",
       "status": "hit",
@@ -6091,7 +6210,7 @@
       }
     },
     {
-      "slot": 373,
+      "slot": 380,
       "tier": 2,
       "spokenText": "mirror",
       "status": "hit",
@@ -6108,7 +6227,7 @@
       }
     },
     {
-      "slot": 374,
+      "slot": 381,
       "tier": 2,
       "spokenText": "rug",
       "status": "hit",
@@ -6125,7 +6244,7 @@
       }
     },
     {
-      "slot": 375,
+      "slot": 382,
       "tier": 2,
       "spokenText": "plate",
       "status": "hit",
@@ -6142,7 +6261,7 @@
       }
     },
     {
-      "slot": 376,
+      "slot": 383,
       "tier": 2,
       "spokenText": "bowl",
       "status": "hit",
@@ -6159,7 +6278,7 @@
       }
     },
     {
-      "slot": 377,
+      "slot": 384,
       "tier": 2,
       "spokenText": "cup",
       "status": "hit",
@@ -6176,7 +6295,7 @@
       }
     },
     {
-      "slot": 378,
+      "slot": 385,
       "tier": 2,
       "spokenText": "fork",
       "status": "hit",
@@ -6193,7 +6312,7 @@
       }
     },
     {
-      "slot": 379,
+      "slot": 386,
       "tier": 2,
       "spokenText": "spoon",
       "status": "hit",
@@ -6210,7 +6329,7 @@
       }
     },
     {
-      "slot": 380,
+      "slot": 387,
       "tier": 2,
       "spokenText": "knife",
       "status": "hit",
@@ -6227,7 +6346,7 @@
       }
     },
     {
-      "slot": 381,
+      "slot": 388,
       "tier": 2,
       "spokenText": "napkin",
       "status": "hit",
@@ -6244,7 +6363,7 @@
       }
     },
     {
-      "slot": 382,
+      "slot": 389,
       "tier": 2,
       "spokenText": "bottle",
       "status": "hit",
@@ -6261,7 +6380,7 @@
       }
     },
     {
-      "slot": 383,
+      "slot": 390,
       "tier": 2,
       "spokenText": "straw",
       "status": "hit",
@@ -6278,7 +6397,7 @@
       }
     },
     {
-      "slot": 384,
+      "slot": 391,
       "tier": 2,
       "spokenText": "fridge",
       "status": "hit",
@@ -6295,7 +6414,7 @@
       }
     },
     {
-      "slot": 385,
+      "slot": 392,
       "tier": 2,
       "spokenText": "microwave",
       "status": "hit",
@@ -6312,7 +6431,7 @@
       }
     },
     {
-      "slot": 386,
+      "slot": 393,
       "tier": 2,
       "spokenText": "backpack",
       "status": "hit",
@@ -6329,7 +6448,7 @@
       }
     },
     {
-      "slot": 387,
+      "slot": 394,
       "tier": 2,
       "spokenText": "bag",
       "status": "hit",
@@ -6346,7 +6465,7 @@
       }
     },
     {
-      "slot": 388,
+      "slot": 395,
       "tier": 2,
       "spokenText": "keys",
       "status": "hit",
@@ -6363,7 +6482,7 @@
       }
     },
     {
-      "slot": 389,
+      "slot": 396,
       "tier": 2,
       "spokenText": "wallet",
       "status": "hit",
@@ -6380,7 +6499,7 @@
       }
     },
     {
-      "slot": 390,
+      "slot": 397,
       "tier": 2,
       "spokenText": "glasses",
       "status": "hit",
@@ -6397,7 +6516,7 @@
       }
     },
     {
-      "slot": 391,
+      "slot": 398,
       "tier": 2,
       "spokenText": "umbrella",
       "status": "hit",
@@ -6414,7 +6533,7 @@
       }
     },
     {
-      "slot": 392,
+      "slot": 399,
       "tier": 2,
       "spokenText": "blanket",
       "status": "hit",
@@ -6431,7 +6550,7 @@
       }
     },
     {
-      "slot": 393,
+      "slot": 400,
       "tier": 2,
       "spokenText": "pillow",
       "status": "hit",
@@ -6448,7 +6567,7 @@
       }
     },
     {
-      "slot": 394,
+      "slot": 401,
       "tier": 2,
       "spokenText": "fan",
       "status": "hit",
@@ -6465,7 +6584,7 @@
       }
     },
     {
-      "slot": 395,
+      "slot": 402,
       "tier": 2,
       "spokenText": "charger",
       "status": "miss",
@@ -6475,7 +6594,7 @@
       "clip": null
     },
     {
-      "slot": 396,
+      "slot": 403,
       "tier": 2,
       "spokenText": "box",
       "status": "hit",
@@ -6492,7 +6611,7 @@
       }
     },
     {
-      "slot": 397,
+      "slot": 404,
       "tier": 2,
       "spokenText": "battery",
       "status": "miss",
@@ -6502,7 +6621,7 @@
       "clip": null
     },
     {
-      "slot": 398,
+      "slot": 405,
       "tier": 2,
       "spokenText": "broom",
       "status": "hit",
@@ -6519,7 +6638,7 @@
       }
     },
     {
-      "slot": 399,
+      "slot": 406,
       "tier": 2,
       "spokenText": "vacuum",
       "status": "hit",
@@ -6536,7 +6655,7 @@
       }
     },
     {
-      "slot": 400,
+      "slot": 407,
       "tier": 2,
       "spokenText": "sponge",
       "status": "hit",
@@ -6553,7 +6672,7 @@
       }
     },
     {
-      "slot": 401,
+      "slot": 408,
       "tier": 2,
       "spokenText": "tape",
       "status": "hit",
@@ -6570,7 +6689,7 @@
       }
     },
     {
-      "slot": 402,
+      "slot": 409,
       "tier": 2,
       "spokenText": "flashlight",
       "status": "hit",
@@ -6587,7 +6706,7 @@
       }
     },
     {
-      "slot": 403,
+      "slot": 410,
       "tier": 2,
       "spokenText": "bucket",
       "status": "hit",
@@ -6604,7 +6723,7 @@
       }
     },
     {
-      "slot": 404,
+      "slot": 411,
       "tier": 2,
       "spokenText": "paper towel",
       "status": "hit",
@@ -6621,7 +6740,7 @@
       }
     },
     {
-      "slot": 405,
+      "slot": 412,
       "tier": 2,
       "spokenText": "shirt",
       "status": "hit",
@@ -6638,7 +6757,7 @@
       }
     },
     {
-      "slot": 406,
+      "slot": 413,
       "tier": 2,
       "spokenText": "pants",
       "status": "hit",
@@ -6655,7 +6774,7 @@
       }
     },
     {
-      "slot": 407,
+      "slot": 414,
       "tier": 2,
       "spokenText": "shorts",
       "status": "hit",
@@ -6672,7 +6791,7 @@
       }
     },
     {
-      "slot": 408,
+      "slot": 415,
       "tier": 2,
       "spokenText": "underwear",
       "status": "hit",
@@ -6689,7 +6808,7 @@
       }
     },
     {
-      "slot": 409,
+      "slot": 416,
       "tier": 2,
       "spokenText": "dress",
       "status": "hit",
@@ -6706,7 +6825,7 @@
       }
     },
     {
-      "slot": 410,
+      "slot": 417,
       "tier": 2,
       "spokenText": "skirt",
       "status": "hit",
@@ -6723,7 +6842,7 @@
       }
     },
     {
-      "slot": 411,
+      "slot": 418,
       "tier": 2,
       "spokenText": "sweater",
       "status": "hit",
@@ -6740,7 +6859,7 @@
       }
     },
     {
-      "slot": 412,
+      "slot": 419,
       "tier": 2,
       "spokenText": "sweatshirt",
       "status": "miss",
@@ -6750,7 +6869,7 @@
       "clip": null
     },
     {
-      "slot": 413,
+      "slot": 420,
       "tier": 2,
       "spokenText": "socks",
       "status": "hit",
@@ -6767,7 +6886,7 @@
       }
     },
     {
-      "slot": 414,
+      "slot": 421,
       "tier": 2,
       "spokenText": "shoes",
       "status": "hit",
@@ -6784,7 +6903,7 @@
       }
     },
     {
-      "slot": 415,
+      "slot": 422,
       "tier": 2,
       "spokenText": "pajamas",
       "status": "hit",
@@ -6801,7 +6920,7 @@
       }
     },
     {
-      "slot": 416,
+      "slot": 423,
       "tier": 2,
       "spokenText": "robe",
       "status": "hit",
@@ -6818,7 +6937,7 @@
       }
     },
     {
-      "slot": 417,
+      "slot": 424,
       "tier": 2,
       "spokenText": "slippers",
       "status": "hit",
@@ -6835,7 +6954,7 @@
       }
     },
     {
-      "slot": 418,
+      "slot": 425,
       "tier": 2,
       "spokenText": "jacket",
       "status": "hit",
@@ -6852,7 +6971,7 @@
       }
     },
     {
-      "slot": 419,
+      "slot": 426,
       "tier": 2,
       "spokenText": "coat",
       "status": "hit",
@@ -6869,7 +6988,7 @@
       }
     },
     {
-      "slot": 420,
+      "slot": 427,
       "tier": 2,
       "spokenText": "hat",
       "status": "hit",
@@ -6886,7 +7005,7 @@
       }
     },
     {
-      "slot": 421,
+      "slot": 428,
       "tier": 2,
       "spokenText": "mittens",
       "status": "hit",
@@ -6903,7 +7022,7 @@
       }
     },
     {
-      "slot": 422,
+      "slot": 429,
       "tier": 2,
       "spokenText": "gloves",
       "status": "hit",
@@ -6920,7 +7039,7 @@
       }
     },
     {
-      "slot": 423,
+      "slot": 430,
       "tier": 2,
       "spokenText": "scarf",
       "status": "hit",
@@ -6937,7 +7056,7 @@
       }
     },
     {
-      "slot": 424,
+      "slot": 431,
       "tier": 2,
       "spokenText": "boots",
       "status": "hit",
@@ -6954,7 +7073,7 @@
       }
     },
     {
-      "slot": 425,
+      "slot": 432,
       "tier": 2,
       "spokenText": "raincoat",
       "status": "hit",
@@ -6971,7 +7090,7 @@
       }
     },
     {
-      "slot": 426,
+      "slot": 433,
       "tier": 2,
       "spokenText": "swimsuit",
       "status": "hit",
@@ -6988,7 +7107,7 @@
       }
     },
     {
-      "slot": 427,
+      "slot": 434,
       "tier": 2,
       "spokenText": "sunglasses",
       "status": "hit",
@@ -7005,7 +7124,7 @@
       }
     },
     {
-      "slot": 428,
+      "slot": 435,
       "tier": 2,
       "spokenText": "zipper",
       "status": "hit",
@@ -7022,7 +7141,7 @@
       }
     },
     {
-      "slot": 429,
+      "slot": 436,
       "tier": 2,
       "spokenText": "button",
       "status": "hit",
@@ -7039,7 +7158,7 @@
       }
     },
     {
-      "slot": 430,
+      "slot": 437,
       "tier": 2,
       "spokenText": "belt",
       "status": "hit",
@@ -7056,7 +7175,7 @@
       }
     },
     {
-      "slot": 431,
+      "slot": 438,
       "tier": 2,
       "spokenText": "pocket",
       "status": "hit",
@@ -7073,7 +7192,7 @@
       }
     },
     {
-      "slot": 432,
+      "slot": 439,
       "tier": 2,
       "spokenText": "sandals",
       "status": "hit",
@@ -7090,7 +7209,7 @@
       }
     },
     {
-      "slot": 433,
+      "slot": 440,
       "tier": 2,
       "spokenText": "animal",
       "status": "hit",
@@ -7107,7 +7226,7 @@
       }
     },
     {
-      "slot": 434,
+      "slot": 441,
       "tier": 2,
       "spokenText": "dog",
       "status": "hit",
@@ -7124,7 +7243,7 @@
       }
     },
     {
-      "slot": 435,
+      "slot": 442,
       "tier": 2,
       "spokenText": "cat",
       "status": "hit",
@@ -7141,7 +7260,7 @@
       }
     },
     {
-      "slot": 436,
+      "slot": 443,
       "tier": 2,
       "spokenText": "puppy",
       "status": "hit",
@@ -7158,7 +7277,7 @@
       }
     },
     {
-      "slot": 437,
+      "slot": 444,
       "tier": 2,
       "spokenText": "kitten",
       "status": "hit",
@@ -7175,7 +7294,7 @@
       }
     },
     {
-      "slot": 438,
+      "slot": 445,
       "tier": 2,
       "spokenText": "bird",
       "status": "hit",
@@ -7192,7 +7311,7 @@
       }
     },
     {
-      "slot": 439,
+      "slot": 446,
       "tier": 2,
       "spokenText": "bunny",
       "status": "hit",
@@ -7209,7 +7328,7 @@
       }
     },
     {
-      "slot": 440,
+      "slot": 447,
       "tier": 2,
       "spokenText": "duck",
       "status": "hit",
@@ -7226,7 +7345,7 @@
       }
     },
     {
-      "slot": 441,
+      "slot": 448,
       "tier": 2,
       "spokenText": "hen",
       "status": "hit",
@@ -7243,7 +7362,7 @@
       }
     },
     {
-      "slot": 442,
+      "slot": 449,
       "tier": 2,
       "spokenText": "cow",
       "status": "hit",
@@ -7260,7 +7379,7 @@
       }
     },
     {
-      "slot": 443,
+      "slot": 450,
       "tier": 2,
       "spokenText": "horse",
       "status": "hit",
@@ -7277,7 +7396,7 @@
       }
     },
     {
-      "slot": 444,
+      "slot": 451,
       "tier": 2,
       "spokenText": "pig",
       "status": "hit",
@@ -7294,7 +7413,7 @@
       }
     },
     {
-      "slot": 445,
+      "slot": 452,
       "tier": 2,
       "spokenText": "sheep",
       "status": "hit",
@@ -7311,7 +7430,7 @@
       }
     },
     {
-      "slot": 446,
+      "slot": 453,
       "tier": 2,
       "spokenText": "goat",
       "status": "hit",
@@ -7328,7 +7447,7 @@
       }
     },
     {
-      "slot": 447,
+      "slot": 454,
       "tier": 2,
       "spokenText": "bear",
       "status": "hit",
@@ -7345,7 +7464,7 @@
       }
     },
     {
-      "slot": 448,
+      "slot": 455,
       "tier": 2,
       "spokenText": "lion",
       "status": "hit",
@@ -7362,7 +7481,7 @@
       }
     },
     {
-      "slot": 449,
+      "slot": 456,
       "tier": 2,
       "spokenText": "tiger",
       "status": "hit",
@@ -7379,7 +7498,7 @@
       }
     },
     {
-      "slot": 450,
+      "slot": 457,
       "tier": 2,
       "spokenText": "elephant",
       "status": "hit",
@@ -7396,7 +7515,7 @@
       }
     },
     {
-      "slot": 451,
+      "slot": 458,
       "tier": 2,
       "spokenText": "monkey",
       "status": "hit",
@@ -7413,7 +7532,7 @@
       }
     },
     {
-      "slot": 452,
+      "slot": 459,
       "tier": 2,
       "spokenText": "giraffe",
       "status": "hit",
@@ -7430,7 +7549,7 @@
       }
     },
     {
-      "slot": 453,
+      "slot": 460,
       "tier": 2,
       "spokenText": "zebra",
       "status": "hit",
@@ -7447,7 +7566,7 @@
       }
     },
     {
-      "slot": 454,
+      "slot": 461,
       "tier": 2,
       "spokenText": "hippo",
       "status": "hit",
@@ -7464,7 +7583,7 @@
       }
     },
     {
-      "slot": 455,
+      "slot": 462,
       "tier": 2,
       "spokenText": "penguin",
       "status": "hit",
@@ -7481,7 +7600,7 @@
       }
     },
     {
-      "slot": 456,
+      "slot": 463,
       "tier": 2,
       "spokenText": "dolphin",
       "status": "hit",
@@ -7498,7 +7617,7 @@
       }
     },
     {
-      "slot": 457,
+      "slot": 464,
       "tier": 2,
       "spokenText": "whale",
       "status": "hit",
@@ -7515,7 +7634,7 @@
       }
     },
     {
-      "slot": 458,
+      "slot": 465,
       "tier": 2,
       "spokenText": "snake",
       "status": "hit",
@@ -7532,7 +7651,7 @@
       }
     },
     {
-      "slot": 459,
+      "slot": 466,
       "tier": 2,
       "spokenText": "turtle",
       "status": "hit",
@@ -7549,7 +7668,7 @@
       }
     },
     {
-      "slot": 460,
+      "slot": 467,
       "tier": 2,
       "spokenText": "frog",
       "status": "hit",
@@ -7566,7 +7685,7 @@
       }
     },
     {
-      "slot": 461,
+      "slot": 468,
       "tier": 2,
       "spokenText": "bug",
       "status": "hit",
@@ -7583,7 +7702,7 @@
       }
     },
     {
-      "slot": 462,
+      "slot": 469,
       "tier": 2,
       "spokenText": "spider",
       "status": "hit",
@@ -7600,7 +7719,7 @@
       }
     },
     {
-      "slot": 463,
+      "slot": 470,
       "tier": 2,
       "spokenText": "butterfly",
       "status": "hit",
@@ -7617,7 +7736,7 @@
       }
     },
     {
-      "slot": 464,
+      "slot": 471,
       "tier": 2,
       "spokenText": "tree",
       "status": "hit",
@@ -7634,7 +7753,7 @@
       }
     },
     {
-      "slot": 465,
+      "slot": 472,
       "tier": 2,
       "spokenText": "grass",
       "status": "hit",
@@ -7651,7 +7770,7 @@
       }
     },
     {
-      "slot": 466,
+      "slot": 473,
       "tier": 2,
       "spokenText": "flower",
       "status": "hit",
@@ -7668,7 +7787,7 @@
       }
     },
     {
-      "slot": 467,
+      "slot": 474,
       "tier": 2,
       "spokenText": "sun",
       "status": "hit",
@@ -7685,7 +7804,7 @@
       }
     },
     {
-      "slot": 468,
+      "slot": 475,
       "tier": 2,
       "spokenText": "rain",
       "status": "hit",
@@ -7702,7 +7821,7 @@
       }
     },
     {
-      "slot": 469,
+      "slot": 476,
       "tier": 2,
       "spokenText": "snow",
       "status": "hit",
@@ -7719,7 +7838,7 @@
       }
     },
     {
-      "slot": 470,
+      "slot": 477,
       "tier": 2,
       "spokenText": "wind",
       "status": "hit",
@@ -7736,7 +7855,7 @@
       }
     },
     {
-      "slot": 471,
+      "slot": 478,
       "tier": 2,
       "spokenText": "cloud",
       "status": "hit",
@@ -7753,7 +7872,7 @@
       }
     },
     {
-      "slot": 472,
+      "slot": 479,
       "tier": 2,
       "spokenText": "moon",
       "status": "hit",
@@ -7770,7 +7889,7 @@
       }
     },
     {
-      "slot": 473,
+      "slot": 480,
       "tier": 2,
       "spokenText": "vehicle",
       "status": "miss",
@@ -7780,7 +7899,7 @@
       "clip": null
     },
     {
-      "slot": 474,
+      "slot": 481,
       "tier": 2,
       "spokenText": "car",
       "status": "hit",
@@ -7797,7 +7916,7 @@
       }
     },
     {
-      "slot": 475,
+      "slot": 482,
       "tier": 2,
       "spokenText": "bus",
       "status": "hit",
@@ -7814,7 +7933,7 @@
       }
     },
     {
-      "slot": 476,
+      "slot": 483,
       "tier": 2,
       "spokenText": "school bus",
       "status": "hit",
@@ -7831,7 +7950,7 @@
       }
     },
     {
-      "slot": 477,
+      "slot": 484,
       "tier": 2,
       "spokenText": "truck",
       "status": "hit",
@@ -7848,7 +7967,7 @@
       }
     },
     {
-      "slot": 478,
+      "slot": 485,
       "tier": 2,
       "spokenText": "fire truck",
       "status": "hit",
@@ -7865,7 +7984,7 @@
       }
     },
     {
-      "slot": 479,
+      "slot": 486,
       "tier": 2,
       "spokenText": "police car",
       "status": "hit",
@@ -7882,7 +8001,7 @@
       }
     },
     {
-      "slot": 480,
+      "slot": 487,
       "tier": 2,
       "spokenText": "ambulance",
       "status": "hit",
@@ -7899,7 +8018,7 @@
       }
     },
     {
-      "slot": 481,
+      "slot": 488,
       "tier": 2,
       "spokenText": "train",
       "status": "hit",
@@ -7916,7 +8035,7 @@
       }
     },
     {
-      "slot": 482,
+      "slot": 489,
       "tier": 2,
       "spokenText": "bicycle",
       "status": "hit",
@@ -7933,7 +8052,7 @@
       }
     },
     {
-      "slot": 483,
+      "slot": 490,
       "tier": 2,
       "spokenText": "motorcycle",
       "status": "hit",
@@ -7950,7 +8069,7 @@
       }
     },
     {
-      "slot": 484,
+      "slot": 491,
       "tier": 2,
       "spokenText": "van",
       "status": "hit",
@@ -7967,7 +8086,7 @@
       }
     },
     {
-      "slot": 485,
+      "slot": 492,
       "tier": 2,
       "spokenText": "tractor",
       "status": "hit",
@@ -7984,7 +8103,7 @@
       }
     },
     {
-      "slot": 486,
+      "slot": 493,
       "tier": 2,
       "spokenText": "stroller",
       "status": "hit",
@@ -8001,7 +8120,7 @@
       }
     },
     {
-      "slot": 487,
+      "slot": 494,
       "tier": 2,
       "spokenText": "airplane",
       "status": "hit",
@@ -8018,7 +8137,7 @@
       }
     },
     {
-      "slot": 488,
+      "slot": 495,
       "tier": 2,
       "spokenText": "helicopter",
       "status": "hit",
@@ -8035,7 +8154,7 @@
       }
     },
     {
-      "slot": 489,
+      "slot": 496,
       "tier": 2,
       "spokenText": "rocket",
       "status": "hit",
@@ -8052,7 +8171,7 @@
       }
     },
     {
-      "slot": 490,
+      "slot": 497,
       "tier": 2,
       "spokenText": "boat",
       "status": "hit",
@@ -8069,7 +8188,7 @@
       }
     },
     {
-      "slot": 491,
+      "slot": 498,
       "tier": 2,
       "spokenText": "ship",
       "status": "hit",
@@ -8086,7 +8205,7 @@
       }
     },
     {
-      "slot": 492,
+      "slot": 499,
       "tier": 2,
       "spokenText": "canoe",
       "status": "hit",
@@ -8103,7 +8222,7 @@
       }
     },
     {
-      "slot": 493,
+      "slot": 500,
       "tier": 2,
       "spokenText": "subway",
       "status": "hit",
@@ -8120,7 +8239,7 @@
       }
     },
     {
-      "slot": 494,
+      "slot": 501,
       "tier": 2,
       "spokenText": "road",
       "status": "hit",
@@ -8137,7 +8256,7 @@
       }
     },
     {
-      "slot": 495,
+      "slot": 502,
       "tier": 2,
       "spokenText": "track",
       "status": "hit",
@@ -8154,7 +8273,7 @@
       }
     },
     {
-      "slot": 496,
+      "slot": 503,
       "tier": 2,
       "spokenText": "stoplight",
       "status": "miss",
@@ -8164,7 +8283,7 @@
       "clip": null
     },
     {
-      "slot": 497,
+      "slot": 504,
       "tier": 2,
       "spokenText": "gas station",
       "status": "hit",
@@ -8181,7 +8300,7 @@
       }
     },
     {
-      "slot": 498,
+      "slot": 505,
       "tier": 2,
       "spokenText": "red",
       "status": "hit",
@@ -8198,7 +8317,7 @@
       }
     },
     {
-      "slot": 499,
+      "slot": 506,
       "tier": 2,
       "spokenText": "blue",
       "status": "hit",
@@ -8215,7 +8334,7 @@
       }
     },
     {
-      "slot": 500,
+      "slot": 507,
       "tier": 2,
       "spokenText": "green",
       "status": "hit",
@@ -8232,7 +8351,7 @@
       }
     },
     {
-      "slot": 501,
+      "slot": 508,
       "tier": 2,
       "spokenText": "yellow",
       "status": "hit",
@@ -8249,7 +8368,7 @@
       }
     },
     {
-      "slot": 502,
+      "slot": 509,
       "tier": 2,
       "spokenText": "orange color",
       "status": "miss",
@@ -8259,7 +8378,7 @@
       "clip": null
     },
     {
-      "slot": 503,
+      "slot": 510,
       "tier": 2,
       "spokenText": "purple",
       "status": "hit",
@@ -8276,7 +8395,7 @@
       }
     },
     {
-      "slot": 504,
+      "slot": 511,
       "tier": 2,
       "spokenText": "pink color",
       "status": "miss",
@@ -8286,7 +8405,7 @@
       "clip": null
     },
     {
-      "slot": 505,
+      "slot": 512,
       "tier": 2,
       "spokenText": "brown",
       "status": "hit",
@@ -8303,7 +8422,7 @@
       }
     },
     {
-      "slot": 506,
+      "slot": 513,
       "tier": 2,
       "spokenText": "black",
       "status": "hit",
@@ -8320,7 +8439,7 @@
       }
     },
     {
-      "slot": 507,
+      "slot": 514,
       "tier": 2,
       "spokenText": "white",
       "status": "hit",
@@ -8337,7 +8456,7 @@
       }
     },
     {
-      "slot": 508,
+      "slot": 515,
       "tier": 2,
       "spokenText": "fast",
       "status": "hit",
@@ -8354,7 +8473,7 @@
       }
     },
     {
-      "slot": 509,
+      "slot": 516,
       "tier": 2,
       "spokenText": "slow",
       "status": "hit",
@@ -8371,7 +8490,7 @@
       }
     },
     {
-      "slot": 510,
+      "slot": 517,
       "tier": 2,
       "spokenText": "tall",
       "status": "hit",
@@ -8388,7 +8507,7 @@
       }
     },
     {
-      "slot": 511,
+      "slot": 518,
       "tier": 2,
       "spokenText": "short",
       "status": "hit",
@@ -8405,7 +8524,7 @@
       }
     },
     {
-      "slot": 512,
+      "slot": 519,
       "tier": 2,
       "spokenText": "long",
       "status": "hit",
@@ -8422,7 +8541,7 @@
       }
     },
     {
-      "slot": 513,
+      "slot": 520,
       "tier": 2,
       "spokenText": "heavy",
       "status": "hit",
@@ -8439,7 +8558,7 @@
       }
     },
     {
-      "slot": 514,
+      "slot": 521,
       "tier": 2,
       "spokenText": "light weight",
       "status": "miss",
@@ -8449,7 +8568,7 @@
       "clip": null
     },
     {
-      "slot": 515,
+      "slot": 522,
       "tier": 2,
       "spokenText": "thick",
       "status": "hit",
@@ -8466,7 +8585,7 @@
       }
     },
     {
-      "slot": 516,
+      "slot": 523,
       "tier": 2,
       "spokenText": "thin",
       "status": "hit",
@@ -8483,7 +8602,7 @@
       }
     },
     {
-      "slot": 517,
+      "slot": 524,
       "tier": 2,
       "spokenText": "wide",
       "status": "hit",
@@ -8500,7 +8619,7 @@
       }
     },
     {
-      "slot": 518,
+      "slot": 525,
       "tier": 2,
       "spokenText": "narrow",
       "status": "hit",
@@ -8517,7 +8636,7 @@
       }
     },
     {
-      "slot": 519,
+      "slot": 526,
       "tier": 2,
       "spokenText": "hard",
       "status": "hit",
@@ -8534,7 +8653,7 @@
       }
     },
     {
-      "slot": 520,
+      "slot": 527,
       "tier": 2,
       "spokenText": "wet",
       "status": "hit",
@@ -8551,7 +8670,7 @@
       }
     },
     {
-      "slot": 521,
+      "slot": 528,
       "tier": 2,
       "spokenText": "dry",
       "status": "hit",
@@ -8568,7 +8687,7 @@
       }
     },
     {
-      "slot": 522,
+      "slot": 529,
       "tier": 2,
       "spokenText": "clean item",
       "status": "miss",
@@ -8578,7 +8697,7 @@
       "clip": null
     },
     {
-      "slot": 523,
+      "slot": 530,
       "tier": 2,
       "spokenText": "dirty",
       "status": "hit",
@@ -8595,7 +8714,7 @@
       }
     },
     {
-      "slot": 524,
+      "slot": 531,
       "tier": 2,
       "spokenText": "smooth",
       "status": "hit",
@@ -8612,7 +8731,7 @@
       }
     },
     {
-      "slot": 525,
+      "slot": 532,
       "tier": 2,
       "spokenText": "broken",
       "status": "hit",
@@ -8629,7 +8748,7 @@
       }
     },
     {
-      "slot": 526,
+      "slot": 533,
       "tier": 2,
       "spokenText": "fixed",
       "status": "miss",
@@ -8639,7 +8758,7 @@
       "clip": null
     },
     {
-      "slot": 527,
+      "slot": 534,
       "tier": 2,
       "spokenText": "empty",
       "status": "hit",
@@ -8656,7 +8775,7 @@
       }
     },
     {
-      "slot": 528,
+      "slot": 535,
       "tier": 2,
       "spokenText": "full",
       "status": "hit",
@@ -8673,7 +8792,7 @@
       }
     },
     {
-      "slot": 529,
+      "slot": 536,
       "tier": 2,
       "spokenText": "safe",
       "status": "hit",
@@ -8690,7 +8809,7 @@
       }
     },
     {
-      "slot": 530,
+      "slot": 537,
       "tier": 2,
       "spokenText": "dangerous",
       "status": "hit",
@@ -8707,7 +8826,7 @@
       }
     },
     {
-      "slot": 531,
+      "slot": 538,
       "tier": 2,
       "spokenText": "easy",
       "status": "hit",
@@ -8724,7 +8843,7 @@
       }
     },
     {
-      "slot": 532,
+      "slot": 539,
       "tier": 2,
       "spokenText": "difficult",
       "status": "hit",
@@ -8741,7 +8860,7 @@
       }
     },
     {
-      "slot": 533,
+      "slot": 540,
       "tier": 2,
       "spokenText": "right",
       "status": "hit",
@@ -8758,7 +8877,7 @@
       }
     },
     {
-      "slot": 534,
+      "slot": 541,
       "tier": 2,
       "spokenText": "wrong",
       "status": "hit",
@@ -8775,7 +8894,7 @@
       }
     },
     {
-      "slot": 535,
+      "slot": 542,
       "tier": 2,
       "spokenText": "new",
       "status": "hit",
@@ -8792,7 +8911,7 @@
       }
     },
     {
-      "slot": 536,
+      "slot": 543,
       "tier": 2,
       "spokenText": "old",
       "status": "hit",
@@ -8809,7 +8928,7 @@
       }
     },
     {
-      "slot": 537,
+      "slot": 544,
       "tier": 2,
       "spokenText": "pretty",
       "status": "hit",
@@ -8826,7 +8945,7 @@
       }
     },
     {
-      "slot": 538,
+      "slot": 545,
       "tier": 2,
       "spokenText": "cool",
       "status": "hit",
@@ -8843,7 +8962,7 @@
       }
     },
     {
-      "slot": 539,
+      "slot": 546,
       "tier": 2,
       "spokenText": "special",
       "status": "hit",
@@ -8860,7 +8979,7 @@
       }
     },
     {
-      "slot": 540,
+      "slot": 547,
       "tier": 2,
       "spokenText": "ready",
       "status": "hit",
@@ -8877,7 +8996,7 @@
       }
     },
     {
-      "slot": 541,
+      "slot": 548,
       "tier": 2,
       "spokenText": "favorite",
       "status": "hit",
@@ -8894,7 +9013,7 @@
       }
     },
     {
-      "slot": 542,
+      "slot": 549,
       "tier": 2,
       "spokenText": "weird",
       "status": "hit",
@@ -8911,7 +9030,7 @@
       }
     },
     {
-      "slot": 543,
+      "slot": 550,
       "tier": 2,
       "spokenText": "funny",
       "status": "hit",
@@ -8928,7 +9047,7 @@
       }
     },
     {
-      "slot": 544,
+      "slot": 551,
       "tier": 2,
       "spokenText": "dark color",
       "status": "miss",
@@ -8938,7 +9057,7 @@
       "clip": null
     },
     {
-      "slot": 545,
+      "slot": 552,
       "tier": 2,
       "spokenText": "light color",
       "status": "miss",
@@ -8948,7 +9067,7 @@
       "clip": null
     },
     {
-      "slot": 546,
+      "slot": 553,
       "tier": 2,
       "spokenText": "morning",
       "status": "hit",
@@ -8965,7 +9084,7 @@
       }
     },
     {
-      "slot": 547,
+      "slot": 554,
       "tier": 2,
       "spokenText": "afternoon",
       "status": "miss",
@@ -8975,7 +9094,7 @@
       "clip": null
     },
     {
-      "slot": 548,
+      "slot": 555,
       "tier": 2,
       "spokenText": "evening",
       "status": "hit",
@@ -8992,7 +9111,7 @@
       }
     },
     {
-      "slot": 549,
+      "slot": 556,
       "tier": 2,
       "spokenText": "night",
       "status": "hit",
@@ -9009,7 +9128,7 @@
       }
     },
     {
-      "slot": 550,
+      "slot": 557,
       "tier": 2,
       "spokenText": "bedtime",
       "status": "miss",
@@ -9019,7 +9138,7 @@
       "clip": null
     },
     {
-      "slot": 551,
+      "slot": 558,
       "tier": 2,
       "spokenText": "naptime",
       "status": "miss",
@@ -9029,7 +9148,7 @@
       "clip": null
     },
     {
-      "slot": 552,
+      "slot": 559,
       "tier": 2,
       "spokenText": "now",
       "status": "hit",
@@ -9046,7 +9165,7 @@
       }
     },
     {
-      "slot": 553,
+      "slot": 560,
       "tier": 2,
       "spokenText": "later",
       "status": "hit",
@@ -9063,7 +9182,7 @@
       }
     },
     {
-      "slot": 554,
+      "slot": 561,
       "tier": 2,
       "spokenText": "soon",
       "status": "hit",
@@ -9080,7 +9199,7 @@
       }
     },
     {
-      "slot": 555,
+      "slot": 562,
       "tier": 2,
       "spokenText": "today",
       "status": "hit",
@@ -9097,7 +9216,7 @@
       }
     },
     {
-      "slot": 556,
+      "slot": 563,
       "tier": 2,
       "spokenText": "tomorrow",
       "status": "hit",
@@ -9114,7 +9233,7 @@
       }
     },
     {
-      "slot": 557,
+      "slot": 564,
       "tier": 2,
       "spokenText": "yesterday",
       "status": "miss",
@@ -9124,7 +9243,7 @@
       "clip": null
     },
     {
-      "slot": 558,
+      "slot": 565,
       "tier": 2,
       "spokenText": "before",
       "status": "hit",
@@ -9141,7 +9260,7 @@
       }
     },
     {
-      "slot": 559,
+      "slot": 566,
       "tier": 2,
       "spokenText": "after",
       "status": "hit",
@@ -9158,7 +9277,7 @@
       }
     },
     {
-      "slot": 560,
+      "slot": 567,
       "tier": 2,
       "spokenText": "again",
       "status": "hit",
@@ -9175,7 +9294,7 @@
       }
     },
     {
-      "slot": 561,
+      "slot": 568,
       "tier": 2,
       "spokenText": "always",
       "status": "hit",
@@ -9192,7 +9311,7 @@
       }
     },
     {
-      "slot": 562,
+      "slot": 569,
       "tier": 2,
       "spokenText": "never",
       "status": "hit",
@@ -9209,7 +9328,7 @@
       }
     },
     {
-      "slot": 563,
+      "slot": 570,
       "tier": 2,
       "spokenText": "sometimes",
       "status": "hit",
@@ -9226,7 +9345,7 @@
       }
     },
     {
-      "slot": 564,
+      "slot": 571,
       "tier": 2,
       "spokenText": "first",
       "status": "hit",
@@ -9243,7 +9362,7 @@
       }
     },
     {
-      "slot": 565,
+      "slot": 572,
       "tier": 2,
       "spokenText": "next",
       "status": "hit",
@@ -9260,7 +9379,7 @@
       }
     },
     {
-      "slot": 566,
+      "slot": 573,
       "tier": 2,
       "spokenText": "then",
       "status": "hit",
@@ -9277,7 +9396,7 @@
       }
     },
     {
-      "slot": 567,
+      "slot": 574,
       "tier": 2,
       "spokenText": "last",
       "status": "hit",
@@ -9294,7 +9413,7 @@
       }
     },
     {
-      "slot": 568,
+      "slot": 575,
       "tier": 2,
       "spokenText": "minute",
       "status": "hit",
@@ -9311,7 +9430,7 @@
       }
     },
     {
-      "slot": 569,
+      "slot": 576,
       "tier": 2,
       "spokenText": "hour",
       "status": "hit",
@@ -9328,7 +9447,7 @@
       }
     },
     {
-      "slot": 570,
+      "slot": 577,
       "tier": 2,
       "spokenText": "1",
       "status": "hit",
@@ -9345,7 +9464,7 @@
       }
     },
     {
-      "slot": 571,
+      "slot": 578,
       "tier": 2,
       "spokenText": "2",
       "status": "hit",
@@ -9362,7 +9481,7 @@
       }
     },
     {
-      "slot": 572,
+      "slot": 579,
       "tier": 2,
       "spokenText": "3",
       "status": "hit",
@@ -9379,7 +9498,7 @@
       }
     },
     {
-      "slot": 573,
+      "slot": 580,
       "tier": 2,
       "spokenText": "4",
       "status": "hit",
@@ -9396,7 +9515,7 @@
       }
     },
     {
-      "slot": 574,
+      "slot": 581,
       "tier": 2,
       "spokenText": "5",
       "status": "hit",
@@ -9413,7 +9532,7 @@
       }
     },
     {
-      "slot": 575,
+      "slot": 582,
       "tier": 2,
       "spokenText": "10",
       "status": "hit",
@@ -9430,7 +9549,7 @@
       }
     },
     {
-      "slot": 576,
+      "slot": 583,
       "tier": 2,
       "spokenText": "hello",
       "status": "miss",
@@ -9440,7 +9559,7 @@
       "clip": null
     },
     {
-      "slot": 577,
+      "slot": 584,
       "tier": 2,
       "spokenText": "hi",
       "status": "miss",
@@ -9450,7 +9569,7 @@
       "clip": null
     },
     {
-      "slot": 578,
+      "slot": 585,
       "tier": 2,
       "spokenText": "goodbye",
       "status": "hit",
@@ -9467,7 +9586,7 @@
       }
     },
     {
-      "slot": 579,
+      "slot": 586,
       "tier": 2,
       "spokenText": "bye",
       "status": "miss",
@@ -9477,7 +9596,7 @@
       "clip": null
     },
     {
-      "slot": 580,
+      "slot": 587,
       "tier": 2,
       "spokenText": "thank you",
       "status": "hit",
@@ -9494,7 +9613,7 @@
       }
     },
     {
-      "slot": 581,
+      "slot": 588,
       "tier": 2,
       "spokenText": "you're welcome",
       "status": "hit",
@@ -9511,7 +9630,7 @@
       }
     },
     {
-      "slot": 582,
+      "slot": 589,
       "tier": 2,
       "spokenText": "sorry",
       "status": "miss",
@@ -9521,7 +9640,7 @@
       "clip": null
     },
     {
-      "slot": 583,
+      "slot": 590,
       "tier": 2,
       "spokenText": "excuse me",
       "status": "miss",
@@ -9531,7 +9650,7 @@
       "clip": null
     },
     {
-      "slot": 584,
+      "slot": 591,
       "tier": 2,
       "spokenText": "good morning",
       "status": "miss",
@@ -9541,7 +9660,7 @@
       "clip": null
     },
     {
-      "slot": 585,
+      "slot": 592,
       "tier": 2,
       "spokenText": "good night",
       "status": "miss",
@@ -9551,7 +9670,7 @@
       "clip": null
     },
     {
-      "slot": 586,
+      "slot": 593,
       "tier": 2,
       "spokenText": "okay",
       "status": "hit",
@@ -9568,7 +9687,7 @@
       }
     },
     {
-      "slot": 587,
+      "slot": 594,
       "tier": 2,
       "spokenText": "ready to go",
       "status": "miss",
@@ -9578,7 +9697,7 @@
       "clip": null
     },
     {
-      "slot": 588,
+      "slot": 595,
       "tier": 2,
       "spokenText": "wow",
       "status": "miss",
@@ -9588,7 +9707,7 @@
       "clip": null
     },
     {
-      "slot": 589,
+      "slot": 596,
       "tier": 2,
       "spokenText": "really",
       "status": "hit",
@@ -9605,7 +9724,7 @@
       }
     },
     {
-      "slot": 590,
+      "slot": 597,
       "tier": 2,
       "spokenText": "maybe",
       "status": "hit",
@@ -9622,7 +9741,7 @@
       }
     },
     {
-      "slot": 591,
+      "slot": 598,
       "tier": 2,
       "spokenText": "I don't know",
       "status": "hit",
@@ -9639,7 +9758,7 @@
       }
     },
     {
-      "slot": 592,
+      "slot": 599,
       "tier": 2,
       "spokenText": "look at this",
       "status": "miss",
@@ -9649,7 +9768,7 @@
       "clip": null
     },
     {
-      "slot": 593,
+      "slot": 600,
       "tier": 2,
       "spokenText": "my turn",
       "status": "miss",
@@ -9659,7 +9778,7 @@
       "clip": null
     },
     {
-      "slot": 594,
+      "slot": 601,
       "tier": 2,
       "spokenText": "your turn",
       "status": "miss",
@@ -9669,7 +9788,7 @@
       "clip": null
     },
     {
-      "slot": 595,
+      "slot": 602,
       "tier": 2,
       "spokenText": "careful",
       "status": "miss",
@@ -9679,7 +9798,7 @@
       "clip": null
     },
     {
-      "slot": 596,
+      "slot": 603,
       "tier": 2,
       "spokenText": "emergency",
       "status": "miss",
@@ -9689,7 +9808,7 @@
       "clip": null
     },
     {
-      "slot": 597,
+      "slot": 604,
       "tier": 2,
       "spokenText": "no way",
       "status": "miss",
@@ -9699,7 +9818,7 @@
       "clip": null
     },
     {
-      "slot": 598,
+      "slot": 605,
       "tier": 2,
       "spokenText": "don't",
       "status": "hit",
@@ -9716,7 +9835,7 @@
       }
     },
     {
-      "slot": 599,
+      "slot": 606,
       "tier": 2,
       "spokenText": "bathroom urgent",
       "status": "miss",
@@ -9724,6 +9843,856 @@
       "wbbSenseId": null,
       "reason": "no ready take in WorkbookBench catalog",
       "clip": null
+    },
+    {
+      "slot": 607,
+      "tier": 2,
+      "spokenText": "is",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "is",
+      "reason": null,
+      "clip": {
+        "key": "audio/is/902028d85190.mp3",
+        "sha256": "902028d85190f53f1fa492ff5b93685314c727babd555c32ec3c81ddad673e4b",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_902028d85190",
+        "spokenText": "is"
+      }
+    },
+    {
+      "slot": 608,
+      "tier": 2,
+      "spokenText": "are",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "are",
+      "reason": null,
+      "clip": {
+        "key": "audio/are/35b3843f9bc2.mp3",
+        "sha256": "35b3843f9bc2c8eabc51da09ef6ba5d2b692e4b8d95538da155b92cac03bff7f",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_35b3843f9bc2",
+        "spokenText": "are"
+      }
+    },
+    {
+      "slot": 609,
+      "tier": 2,
+      "spokenText": "am",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "am",
+      "reason": null,
+      "clip": {
+        "key": "audio/am/95a935e10d49.mp3",
+        "sha256": "95a935e10d49d8bcccbc297e729d72db74c2f7ddf6ec5f05643542f118296af9",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_95a935e10d49",
+        "spokenText": "am"
+      }
+    },
+    {
+      "slot": 610,
+      "tier": 2,
+      "spokenText": "was",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "was",
+      "reason": null,
+      "clip": {
+        "key": "audio/was/2c6208ce630d.mp3",
+        "sha256": "2c6208ce630dfdbcf6cd502c636e420521d7c61b1db3d54b6cf13842e4a40892",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_2c6208ce630d",
+        "spokenText": "was"
+      }
+    },
+    {
+      "slot": 611,
+      "tier": 2,
+      "spokenText": "were",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "were",
+      "reason": null,
+      "clip": {
+        "key": "audio/were/bd16d3425f64.mp3",
+        "sha256": "bd16d3425f6475ad466aff46e753de9c9c1e3bcd311f763a5cce2cb27659ab2b",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_bd16d3425f64",
+        "spokenText": "were"
+      }
+    },
+    {
+      "slot": 612,
+      "tier": 2,
+      "spokenText": "has",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "has",
+      "reason": null,
+      "clip": {
+        "key": "audio/has/c5a369b19082.mp3",
+        "sha256": "c5a369b19082d0e34aa8ef8346182f774da9fc44adf1d92eaaaa24c36ccd23c0",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_c5a369b19082",
+        "spokenText": "has"
+      }
+    },
+    {
+      "slot": 613,
+      "tier": 2,
+      "spokenText": "had",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "had",
+      "reason": null,
+      "clip": {
+        "key": "audio/had/9acc0229d54f.mp3",
+        "sha256": "9acc0229d54f89acbaf271582c52d9552bfb0b7ae17b9b868974846d91993b7d",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_9acc0229d54f",
+        "spokenText": "had"
+      }
+    },
+    {
+      "slot": 614,
+      "tier": 2,
+      "spokenText": "will",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "will",
+      "reason": null,
+      "clip": {
+        "key": "audio/will/4c4b24a8e0ed.mp3",
+        "sha256": "4c4b24a8e0ed732dc01655d951d500bbe78dcb270ed65f0edbe58a2eed819f09",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_4c4b24a8e0ed",
+        "spokenText": "will"
+      }
+    },
+    {
+      "slot": 615,
+      "tier": 2,
+      "spokenText": "would",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "would",
+      "reason": null,
+      "clip": {
+        "key": "audio/would/f824f8c1e003.mp3",
+        "sha256": "f824f8c1e00387718627005820d8583d055e7247bf72dc8b70ca6a274b6f1cec",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_f824f8c1e003",
+        "spokenText": "would"
+      }
+    },
+    {
+      "slot": 616,
+      "tier": 2,
+      "spokenText": "can't",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "can't",
+      "reason": null,
+      "clip": {
+        "key": "audio/can't/829bdc1fe8b3.mp3",
+        "sha256": "829bdc1fe8b34c95d24a2621e9efc0ff2eeba293cce24c8538459a85b4437097",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_829bdc1fe8b3",
+        "spokenText": "can't"
+      }
+    },
+    {
+      "slot": 617,
+      "tier": 2,
+      "spokenText": "won't",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "won't",
+      "reason": null,
+      "clip": {
+        "key": "audio/won't/a63b299b8147.mp3",
+        "sha256": "a63b299b8147ec238ca212795c1782660f300f423e0a8832969595ad77bbe986",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_a63b299b8147",
+        "spokenText": "won't"
+      }
+    },
+    {
+      "slot": 618,
+      "tier": 2,
+      "spokenText": "didn't",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "didn't",
+      "reason": null,
+      "clip": {
+        "key": "audio/didn't/bda2f90e5f67.mp3",
+        "sha256": "bda2f90e5f67d1b7ffd23b28e8bdb76f44446a050eb15b0838748d2e2051e114",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_bda2f90e5f67",
+        "spokenText": "didn't"
+      }
+    },
+    {
+      "slot": 619,
+      "tier": 2,
+      "spokenText": "a",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "a",
+      "reason": null,
+      "clip": {
+        "key": "audio/a/a27adf617027.mp3",
+        "sha256": "a27adf61702749f66ec64c2de3dc5182f8d89fe3f3a463c43939ffd6dcde1821",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_a27adf617027",
+        "spokenText": "a"
+      }
+    },
+    {
+      "slot": 620,
+      "tier": 2,
+      "spokenText": "an",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "an",
+      "reason": null,
+      "clip": {
+        "key": "audio/an/6eab67cdf635.mp3",
+        "sha256": "6eab67cdf63531569b46926ad32539014e23f7fe13bcb3992523c7aae2e17373",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_6eab67cdf635",
+        "spokenText": "an"
+      }
+    },
+    {
+      "slot": 621,
+      "tier": 2,
+      "spokenText": "the",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "the",
+      "reason": null,
+      "clip": {
+        "key": "audio/the/c127287e985d.mp3",
+        "sha256": "c127287e985d39fe245e03e691b27bf107c6e17d610a74b27cccc827163dc094",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_c127287e985d",
+        "spokenText": "the"
+      }
+    },
+    {
+      "slot": 622,
+      "tier": 2,
+      "spokenText": "of",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "of",
+      "reason": null,
+      "clip": {
+        "key": "audio/of/5dbf4da2787c.mp3",
+        "sha256": "5dbf4da2787cd949ec649b76a4c0158dbd8da994e11795e707b4572ed818d0df",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_5dbf4da2787c",
+        "spokenText": "of"
+      }
+    },
+    {
+      "slot": 623,
+      "tier": 2,
+      "spokenText": "every",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "every",
+      "reason": null,
+      "clip": {
+        "key": "audio/every/d192a9c5a1c8.mp3",
+        "sha256": "d192a9c5a1c81c3ac13ca02be9f70fa2f28c1345469b9a1ae6c4bec7ba9a6f4b",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_d192a9c5a1c8",
+        "spokenText": "every"
+      }
+    },
+    {
+      "slot": 624,
+      "tier": 2,
+      "spokenText": "each",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "each",
+      "reason": null,
+      "clip": {
+        "key": "audio/each/9cbb8618f2dd.mp3",
+        "sha256": "9cbb8618f2dd48577dc99adf37256bc09999a19cdf1e7de1c1ca6a3d58a37255",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_9cbb8618f2dd",
+        "spokenText": "each"
+      }
+    },
+    {
+      "slot": 625,
+      "tier": 2,
+      "spokenText": "another",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "another",
+      "reason": null,
+      "clip": {
+        "key": "audio/another/5e857a8b0cfc.mp3",
+        "sha256": "5e857a8b0cfc2b0a56a64edab72737a8d4260373bd2719512e7f0cbe5ea39005",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_5e857a8b0cfc",
+        "spokenText": "another"
+      }
+    },
+    {
+      "slot": 626,
+      "tier": 2,
+      "spokenText": "other",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "other",
+      "reason": null,
+      "clip": {
+        "key": "audio/other/02043fb9e85d.mp3",
+        "sha256": "02043fb9e85d537c3086ed043ada301f2fcb7450bb883547154f28344c132634",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_02043fb9e85d",
+        "spokenText": "other"
+      }
+    },
+    {
+      "slot": 627,
+      "tier": 2,
+      "spokenText": "so",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "so",
+      "reason": null,
+      "clip": {
+        "key": "audio/so/518f10beec5a.mp3",
+        "sha256": "518f10beec5a1874f34ac950f60669ae755d166d20c769a019e7ab61f93941be",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_518f10beec5a",
+        "spokenText": "so"
+      }
+    },
+    {
+      "slot": 628,
+      "tier": 2,
+      "spokenText": "if",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "if",
+      "reason": null,
+      "clip": {
+        "key": "audio/if/65e096121061.mp3",
+        "sha256": "65e096121061f9060b0ad63a71548f4c369308535efd67dc4993993a4762a41c",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_65e096121061",
+        "spokenText": "if"
+      }
+    },
+    {
+      "slot": 629,
+      "tier": 2,
+      "spokenText": "him",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "him",
+      "reason": null,
+      "clip": {
+        "key": "audio/him/6727093c27f9.mp3",
+        "sha256": "6727093c27f9bb15626ec9077217598fc95753298c834c0c1ebf512a097e5fbb",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_6727093c27f9",
+        "spokenText": "him"
+      }
+    },
+    {
+      "slot": 630,
+      "tier": 2,
+      "spokenText": "her",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "her",
+      "reason": null,
+      "clip": {
+        "key": "audio/her/27e09d3d31f9.mp3",
+        "sha256": "27e09d3d31f9c87a48af60bdb89ecd0bc40cccf9e9e6c0570216889c19c44549",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_27e09d3d31f9",
+        "spokenText": "her"
+      }
+    },
+    {
+      "slot": 631,
+      "tier": 2,
+      "spokenText": "us",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "us",
+      "reason": null,
+      "clip": {
+        "key": "audio/us/65ff685e8924.mp3",
+        "sha256": "65ff685e89245c4da48de007dd9516c4d220e8de3a86b09ce8e07ffc92783a70",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_65ff685e8924",
+        "spokenText": "us"
+      }
+    },
+    {
+      "slot": 632,
+      "tier": 2,
+      "spokenText": "them",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "them",
+      "reason": null,
+      "clip": {
+        "key": "audio/them/1b933cade2d6.mp3",
+        "sha256": "1b933cade2d67db193ddd01052a1d58544045cd96526beacf33842802a4fea8a",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_1b933cade2d6",
+        "spokenText": "them"
+      }
+    },
+    {
+      "slot": 633,
+      "tier": 2,
+      "spokenText": "his",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "his",
+      "reason": null,
+      "clip": {
+        "key": "audio/his/6e78e16332ad.mp3",
+        "sha256": "6e78e16332adfc93b66238d93eac12f9cf12ac69dd3b30bb584ae2c6cdcd24b6",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_6e78e16332ad",
+        "spokenText": "his"
+      }
+    },
+    {
+      "slot": 634,
+      "tier": 2,
+      "spokenText": "your",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "your",
+      "reason": null,
+      "clip": {
+        "key": "audio/your/adb6f5a847a6.mp3",
+        "sha256": "adb6f5a847a6fc6fb182e5a1e5976d9a0650c762f695a994a22d6cd1a899c8a8",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_adb6f5a847a6",
+        "spokenText": "your"
+      }
+    },
+    {
+      "slot": 635,
+      "tier": 2,
+      "spokenText": "our",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "our",
+      "reason": null,
+      "clip": {
+        "key": "audio/our/59e472db31f5.mp3",
+        "sha256": "59e472db31f584145d073768aee1c70aa33421ceced625959f05cdb0fbd7adf6",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_59e472db31f5",
+        "spokenText": "our"
+      }
+    },
+    {
+      "slot": 636,
+      "tier": 2,
+      "spokenText": "their",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "their",
+      "reason": null,
+      "clip": {
+        "key": "audio/their/9e808b012776.mp3",
+        "sha256": "9e808b0127760668d94351f42390594047334e8e3fc9c3507d21346cff49b0d7",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_9e808b012776",
+        "spokenText": "their"
+      }
+    },
+    {
+      "slot": 637,
+      "tier": 2,
+      "spokenText": "something",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "something",
+      "reason": null,
+      "clip": {
+        "key": "audio/something/1cb54e372916.mp3",
+        "sha256": "1cb54e372916d675ad43df47541a5f38cc26411610b345322d0e5374b364b209",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_1cb54e372916",
+        "spokenText": "something"
+      }
+    },
+    {
+      "slot": 638,
+      "tier": 2,
+      "spokenText": "someone",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "someone",
+      "reason": null,
+      "clip": {
+        "key": "audio/someone/ce29bafa2045.mp3",
+        "sha256": "ce29bafa2045c7dc9ffa5281446364804c932c361d0be61f05961ae72df3fd4f",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_ce29bafa2045",
+        "spokenText": "someone"
+      }
+    },
+    {
+      "slot": 639,
+      "tier": 2,
+      "spokenText": "everyone",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "everyone",
+      "reason": null,
+      "clip": {
+        "key": "audio/everyone/acee6a24d98d.mp3",
+        "sha256": "acee6a24d98d682cac7b3fcaddba7666f02c376e9fe174fd1fd9f6a2f70d5e1b",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_acee6a24d98d",
+        "spokenText": "everyone"
+      }
+    },
+    {
+      "slot": 640,
+      "tier": 2,
+      "spokenText": "thing",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "thing",
+      "reason": null,
+      "clip": {
+        "key": "audio/thing/516021ad3548.mp3",
+        "sha256": "516021ad354891483f35a47a28bdc258ad1aeb7cfc302fab42beda4e7307160a",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_516021ad3548",
+        "spokenText": "thing"
+      }
+    },
+    {
+      "slot": 641,
+      "tier": 2,
+      "spokenText": "very",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "very",
+      "reason": null,
+      "clip": {
+        "key": "audio/very/b78043c251df.mp3",
+        "sha256": "b78043c251dfcac6460b28ca5bd9a7deec4aa0ad759c1ecc85f205cc77da41f7",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_b78043c251df",
+        "spokenText": "very"
+      }
+    },
+    {
+      "slot": 642,
+      "tier": 2,
+      "spokenText": "too",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "too",
+      "reason": null,
+      "clip": {
+        "key": "audio/too/8a4c10e89daf.mp3",
+        "sha256": "8a4c10e89dafdc7ee3699f79a20e0896f5244eff8dffb65048753fe88909cc0e",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_8a4c10e89daf",
+        "spokenText": "too"
+      }
+    },
+    {
+      "slot": 643,
+      "tier": 2,
+      "spokenText": "just",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "just",
+      "reason": null,
+      "clip": {
+        "key": "audio/just/7fdecbd3f3dc.mp3",
+        "sha256": "7fdecbd3f3dcbcc05f7059c3a5d1c25a0a1dcd5b4d78d6307728f07cda8b82cf",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_7fdecbd3f3dc",
+        "spokenText": "just"
+      }
+    },
+    {
+      "slot": 644,
+      "tier": 2,
+      "spokenText": "also",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "also",
+      "reason": null,
+      "clip": {
+        "key": "audio/also/1969ac5975d0.mp3",
+        "sha256": "1969ac5975d03ff835b6a4b6d20615b178f5a58292444bc9568fbabc916f0b13",
+        "source": "archive-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_1969ac5975d0",
+        "spokenText": "also"
+      }
+    },
+    {
+      "slot": 645,
+      "tier": 2,
+      "spokenText": "only",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "only",
+      "reason": null,
+      "clip": {
+        "key": "audio/only/14764f4c7f2a.mp3",
+        "sha256": "14764f4c7f2a35364d3b5a78f3784ee4f1d6adbe5879bc730bf2ffae3275d571",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_14764f4c7f2a",
+        "spokenText": "only"
+      }
+    },
+    {
+      "slot": 646,
+      "tier": 2,
+      "spokenText": "still",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "still",
+      "reason": null,
+      "clip": {
+        "key": "audio/still/954d5264c0bf.mp3",
+        "sha256": "954d5264c0bf24f757501aa9003d0fde3a549cc1b33679cffabdb6c9095ddcfe",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_954d5264c0bf",
+        "spokenText": "still"
+      }
+    },
+    {
+      "slot": 647,
+      "tier": 2,
+      "spokenText": "one",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "1",
+      "reason": null,
+      "clip": {
+        "key": "audio/1/882d0ee59798.mp3",
+        "sha256": "882d0ee59798f8d7255f976c8ea00d0c45f22972509f710e176229bfedf8161b",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_882d0ee59798",
+        "spokenText": "1"
+      }
+    },
+    {
+      "slot": 648,
+      "tier": 2,
+      "spokenText": "two",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "2",
+      "reason": null,
+      "clip": {
+        "key": "audio/2/de5a8545afce.mp3",
+        "sha256": "de5a8545afce99b973fc09f567bdb8fea59511602dfd3d8e9be9854e90258206",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_de5a8545afce",
+        "spokenText": "2"
+      }
+    },
+    {
+      "slot": 649,
+      "tier": 2,
+      "spokenText": "three",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "3",
+      "reason": null,
+      "clip": {
+        "key": "audio/3/a6c1d59df8b7.mp3",
+        "sha256": "a6c1d59df8b7ed6c262113a038153fcd4286203296f3c8ef76f4131d5e52a3a7",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_a6c1d59df8b7",
+        "spokenText": "3"
+      }
+    },
+    {
+      "slot": 650,
+      "tier": 2,
+      "spokenText": "four",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "4",
+      "reason": null,
+      "clip": {
+        "key": "audio/4/56d42fb649f0.mp3",
+        "sha256": "56d42fb649f0e496ff64d7d15d568c897b78fe5b3c33b1f209691d2a8858bf21",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_56d42fb649f0",
+        "spokenText": "4"
+      }
+    },
+    {
+      "slot": 651,
+      "tier": 2,
+      "spokenText": "five",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "5",
+      "reason": null,
+      "clip": {
+        "key": "audio/5/cf1d2bdc779b.mp3",
+        "sha256": "cf1d2bdc779b0e8ee3f0eddca7138954f6768b669826b23dceedfc2d677607ae",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_cf1d2bdc779b",
+        "spokenText": "5"
+      }
+    },
+    {
+      "slot": 652,
+      "tier": 2,
+      "spokenText": "six",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "6",
+      "reason": null,
+      "clip": {
+        "key": "audio/6/77cf4e1cdf27.mp3",
+        "sha256": "77cf4e1cdf2775eb33b234fa324a8d6f416d8ced5fd7cbc33b76e0045088ae75",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_77cf4e1cdf27",
+        "spokenText": "6"
+      }
+    },
+    {
+      "slot": 653,
+      "tier": 2,
+      "spokenText": "seven",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "7",
+      "reason": null,
+      "clip": {
+        "key": "audio/7/c66507483b1a.mp3",
+        "sha256": "c66507483b1a5bbb9356336592c874135febd981e2b30020902a45fed65798f5",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_c66507483b1a",
+        "spokenText": "7"
+      }
+    },
+    {
+      "slot": 654,
+      "tier": 2,
+      "spokenText": "eight",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "8",
+      "reason": null,
+      "clip": {
+        "key": "audio/8/0ee70149537e.mp3",
+        "sha256": "0ee70149537eb18a4723004302ad1074aaf1c82bb53974b345d05d097e6a1ae3",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_0ee70149537e",
+        "spokenText": "8"
+      }
+    },
+    {
+      "slot": 655,
+      "tier": 2,
+      "spokenText": "nine",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "9",
+      "reason": null,
+      "clip": {
+        "key": "audio/9/18e5dc594557.mp3",
+        "sha256": "18e5dc594557d07d9812d6a634bb51bd362f40560c0a6d88cae8bb1704eada3a",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_18e5dc594557",
+        "spokenText": "9"
+      }
+    },
+    {
+      "slot": 656,
+      "tier": 2,
+      "spokenText": "ten",
+      "status": "hit",
+      "via": "lookup",
+      "wbbSenseId": "10",
+      "reason": null,
+      "clip": {
+        "key": "audio/10/9d03125f9609.mp3",
+        "sha256": "9d03125f96094e28579bf5cf94eb717eded5130497d6f21ba1fe774fe9c1121a",
+        "source": "bitsboard-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_9d03125f9609",
+        "spokenText": "10"
+      }
     }
   ]
 }

@@ -18,6 +18,7 @@ const CATEGORIES = [
   "Clothing & Accessories", "Animals & Nature", "Vehicles & Transportation",
   "Descriptors, Adjectives & Opposites", "Time, Calendar & Sequencing",
   "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+  "Function Words & Grammar", "Numbers & Counting",
 ];
 
 const { db } = await bootDb();

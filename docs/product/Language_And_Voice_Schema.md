@@ -216,7 +216,8 @@ CREATE TABLE label (
   normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),
   kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),
   part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (
-    'Adjective', 'Adverb', 'Interjection', 'Noun', 'Preposition', 'Pronoun', 'Verb'
+    'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',
+    'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'
   )),
   default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),
   status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))
@@ -231,7 +232,7 @@ is why clip does not carry a locale of its own.
 Launch lemmas have `text` equal to `utterance.spoken_text`. The columns
 are allowed to differ later, so a button can show `3` and speak the
 utterance `three` by pointing at that utterance. They must not differ by
-accident in the 599.
+accident in the 656.
 
 An alias speaks its own `utterance_id`. It does not fall through to the
 lemma. If two labels should play one recording, they store the same
@@ -333,8 +334,8 @@ CREATE TABLE core_cell (
 
 `layout` exists because density switching is a decided product feature: a
 sparser or denser board is a different map of the same senses, not a move
-within one map. Slice 1 writes the `grid60` rows (60) and the `grid80`
-rows (75) from `docs/product/Core_Coordinate_Map.md`.
+within one map. Slice 1 writes the `grid60` rows (60) and the `grid90`
+rows (81) from `docs/product/Core_Coordinate_Map.md`.
 
 The insert trigger rejects a sense whose tier is not `root_core`. A fringe
 word, a personal entity, and a strip tile do not get a row. One sense, one
@@ -792,13 +793,15 @@ with `spoken_text` equal to the whole sentence.
 ## 9. What the first build stores
 
 The lexicon file is named `Initial_Vocabulary_600.md`. The catalog inside
-it is 599 numbered rows: 75 root-core plus 524 fringe. 75 + 524 = 599.
-The filename rounds. No 600th word was removed.
+it is 656 numbered rows: 81 root-core plus 575 fringe. The filename
+rounds; the 2026-09-22 amendment added the function-word layer
+(auxiliaries, determiners, conjunctions, object pronouns, numerals) the
+original list lacked.
 
 The catalog generator emits:
 
-- 599 senses, 599 English utterances, and 599 approved English lemma labels, generated from that catalog. For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
-- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 75 for `grid80`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 599 senses — labels only, no art required. An empty zone was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
+- 656 senses, 656 English utterances, and 656 approved English lemma labels, generated from that catalog. For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
+- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 81 for `grid90`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 656 senses — labels only, no art required. An empty zone was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
 - One default bundled voice, locale `en`, and one clip per utterance: WorkbookBench recordings where the catalog has them, ElevenLabs (`eleven_v3`, the WorkbookBench voice id and settings) for misses.
 - One profile pointing at that voice.
 - No second locale, no alias rows, no voice picker, no override recorder.
