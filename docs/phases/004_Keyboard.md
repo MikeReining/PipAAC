@@ -532,9 +532,13 @@ Files: `docs/product/Initial_Vocabulary_600.md` (§ 3.14),
    assertion runs for it, so a market cannot launch with a silent partner
    key.
 3. **Audio.** Run the documented gap-fill
-   (`node scripts/catalog/generate_missing_audio.mjs`), which needs the
-   ElevenLabs key in `.env`. **High-risk stop:** if you do not have the
-   credential, stop and ask the founder. Do not create or borrow one.
+   (`node scripts/catalog/generate_missing_audio.mjs`). It reads
+   `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID` from the gitignored
+   `.env`, which is already set up. Generation is build-time only: the MP3s
+   ship bundled in the catalog, and the app never calls ElevenLabs. **The
+   key never goes into client code or the iOS app.** Any future runtime
+   generation goes device → Cloudflare Worker (key held as a Worker secret)
+   → ElevenLabs.
 4. **Render.** Partner keys resolve their label by sense id in the profile
    locale. The cell is 2 wide, shows the label (and art when available),
    and uses the sense's `fitzgerald_role` color class. A locale with no
