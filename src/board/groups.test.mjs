@@ -290,6 +290,52 @@ test("removal rules: built-in senses stay, orphaned entities land in My Words, b
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM board_group WHERE id = ?").all(gid)[0].n, 0);
 });
 
+test("slice 3 edit gestures: move a group, swap two items, remove an entity, delete a group", () => {
+  const db = openDb();
+  const before = snapshotCoreCells(db);
+  const assertCore = () => assert.deepEqual(snapshotCoreCells(db), before);
+
+  // lift Animals, tap empty slot 59 → moveGroup
+  const animalsWas = groupIndex(db).find((g) => g.id === "grp_animals").index_slot;
+  moveGroup(db, "grp_animals", 59);
+  assert.equal(groupIndex(db).find((g) => g.id === "grp_animals").index_slot, 59);
+  assertCore();
+
+  // lift bread, tap another occupied cell → swapItems
+  const [a, b] = groupPage(db, "grp_food", 0);
+  assert.equal(a.label, "bread");
+  swapItems(db, "grp_food", a, b);
+  const food = groupPage(db, "grp_food", 0);
+  assert.equal(food.find((r) => r.item_id === a.item_id).slot_index, b.slot_index);
+  assert.equal(food.find((r) => r.item_id === b.item_id).slot_index, a.slot_index);
+  assertCore();
+
+  // custom group holding an entity that also lives in My Words:
+  // Remove from the custom group leaves the My Words copy untouched
+  const { id: gid } = createGroup(db, { name: "School" });
+  db.prepare(
+    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_z', 'Ms. J', NULL, NULL, NULL)",
+  ).run();
+  placeItem(db, "grp_my_words", "entity", "ent_z");
+  placeItem(db, gid, "entity", "ent_z");
+  removeItem(db, gid, "entity", "ent_z");
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = ? AND item_id = 'ent_z'").all(gid)[0].n,
+    0,
+  );
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = 'grp_my_words' AND item_id = 'ent_z'").all()[0].n,
+    1,
+  );
+  assertCore();
+
+  // Delete group → the group row and its cells are gone
+  deleteGroup(db, gid);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM board_group WHERE id = ?").all(gid)[0].n, 0);
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = ?").all(gid)[0].n, 0);
+  assertCore();
+});
+
 test("the core coordinate map is untouched by every group operation", () => {
   const db = openDb();
   const before = snapshotCoreCells(db);

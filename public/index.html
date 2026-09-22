@@ -141,8 +141,13 @@
       .gcell.nav { border-color: #5b5348; background: #e8e3d6; font-size: clamp(13px, 2.2vmin, 20px); }
       .gcell.empty { border-style: dashed; border-color: #d8d4c8; background: transparent; }
       .gcell.empty:disabled { border-color: transparent; }
-      .gcell.arrange { border-style: dashed; border-color: #8a7fbf; }
-      .gcell.lifted { outline: 4px solid #2f6fd0; outline-offset: 2px; }
+      /* Edit mode: every liftable cell goes dashed; empty slots that can
+         take a drop go purple; the lifted cell gets the blue outline. */
+      body.editing #groupgrid .gcell:not(.nav):not(.empty),
+      body.editing #groupgrid .cell { border-style: dashed; }
+      body.editing #groupgrid .gcell.drop { border-color: #8a7fbf; cursor: pointer; }
+      .lifted { outline: 4px solid #2f6fd0; outline-offset: 2px; }
+      body.editing #corner { font-size: 15px; }
       .cell.entity { flex-direction: column; gap: 2px; font-size: clamp(11px, 1.9vmin, 17px); }
       .cell.entity img { width: 44%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
       /* Keyboard replaces the grid in place — same 10×6 geometry, same
@@ -227,6 +232,7 @@
         font-weight: 700;
       }
       .btn.secondary { background: #fff; color: #2f6fd0; }
+      .btn.danger { border-color: #c62828; background: #c62828; }
       .hint { color: #777; font-size: 14px; }
 
       /* On-screen keyboard styles live with the grid (#kb) — it is a board
@@ -272,6 +278,16 @@
         <div class="row">
           <button class="btn" id="group-save">Save</button>
           <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="delform">
+      <div class="sheet">
+        <h2 id="del-title">Delete group?</h2>
+        <div class="row">
+          <button class="btn danger" id="del-yes">Delete</button>
+          <button class="btn secondary" data-close>Keep</button>
         </div>
       </div>
     </div>

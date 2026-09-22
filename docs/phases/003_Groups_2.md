@@ -228,7 +228,7 @@ Files:
 - `public/db.js` (legacy migration; update `migrateSchema` table list)
 - `public/board.js` (render from the new tables; paging; delete `ZONE_SHORT`/`ZONE_GLYPH`)
 - `src/board/catalog.mjs` (`openSubZone` → `openGroup(db, groupId, page)` delegating to `groups.mjs`)
-- `groups.test.mjs` (new, in `src/board/`; replaces `src/board/zones.test.mjs`, which is deleted)
+- `groups.test.mjs` (new, in `src/board/`; replaces `zones.test.mjs`, which is deleted)
 - `src/board/core_map.test.mjs` (update the `openSubZone` call)
 - `docs/product/Language_And_Voice_Schema.md` §6.3b (rewrite to the new tables)
 
