@@ -108,26 +108,52 @@ One word keeps one color role across the core grid, sub-zones, and the predictiv
 
 ## 4. Symbol art
 
-**DECIDED 2026-09-22** (not built). Two drawing systems. Both are made in-house. Audio assets and layout stylesheets follow the same isolation rule: they are created for Pip AAC, not imported from an incumbent library.
+**DECIDED 2026-09-22**. Symbol art is created in-house using a frozen 3-image style reference bundle (`assets/style-refs/pip-v1/`) and a minimal prompt harness (`scripts/art/gen.mjs`). Audio assets and layout stylesheets follow the same isolation rule: they are created for Pip AAC, not imported from an incumbent library.
 
 ### 4.1 Stick character (people, pronouns, actions)
 
-One character, used everywhere a human figure carries the meaning.
+One character, used everywhere a human figure carries the meaning. Canonical style reference: `assets/style-refs/pip-v1/01-stick-persona.jpg`.
 
 - No hair, no gender markers, and no racial or ethnic cues.
-- Bold, uniform monoline stroke.
-- Rounded joint terminals.
-- A floating, solid circular head.
+- Bold, uniform monoline stroke with soft rounded joint curvature.
+- Blank, solid circular head with balanced outline weight. No facial expression noise (avoids visual clutter at 48×48px).
+- Soft rounded hand terminals capable of pointing and directional gestures.
+- Clean silhouette with zero motion lines, speed streaks, or dust puffs (prevents misinterpretation by autistic communicators).
 - Torso filled with the Fitzgerald color for that button's grammar role. A green torso marks an action such as *run*. A yellow torso marks a pronoun such as *I* or *we*.
-- Meaning comes from posture, action, and directional arrows. Faces stay simple. The character does not rely on a detailed expression to be understood.
+- Meaning comes from posture, action, and directional arrows.
 
 The same character is the person on pronoun buttons and the actor on verb buttons. Do not introduce a second human style for a demographic group.
 
 ### 4.2 Objects and other fringe icons
 
-Inanimate nouns (vehicles, food, household items, animals) use a warm illustrated style: soft rounded curves, solid fills, clean outlines. They do not use the stick body. An animal is drawn as that animal, not as the stick character in a costume.
+Inanimate nouns (vehicles, food, household items, animals) use a warm illustrated style: soft rounded curves, solid fills, clean outlines. Canonical style reference: `assets/style-refs/pip-v1/02-object.jpg`.
 
-Custom fringe entities (a family member, a pet, a place) may use a caregiver photo or an in-house icon. They still must not use a third-party symbol library.
+- Pure objects do not use the stick body. An animal is drawn as that animal, not as the stick character in a costume.
+- No background scenery: zero floors, walls, or rooms. Pure white background.
+- Custom fringe entities (a family member, a pet, a place) may use a caregiver photo or an in-house icon. They still must not use a third-party symbol library.
+
+### 4.3 Spatial diagrams & prepositions
+
+Relational and positional concepts (*in*, *out*, *on*, *under*, *up*, *down*) use minimalist diagrammatic glyphs. Canonical style reference: `assets/style-refs/pip-v1/03-diagram.jpg`.
+
+- Neutral solid container or surface with completely opaque sides (no transparent wireframes or clipping).
+- Directional arrow carrying the Fitzgerald key accent (pink for prepositions).
+- Opposites share identical geometry: *in* and *out* use the exact same container perspective, changing only the arrow trajectory.
+
+### 4.4 Generation Prompt Architecture
+
+Every symbol in Pip AAC is generated via `scripts/art/gen.mjs` using the locked 3-line base prompt:
+
+```text
+We are trying to teach a child the concept of: {word}.
+Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.
+Do not include any text in the image.
+```
+
+- **Plurals:** Automatically appends `Show more than one.`
+- **Grammar Color:** Appends `The stick figure's torso is solid {color}.`
+- **Abstract Concepts:** Appends a concise 5-to-10 word physical `sceneHint` rather than a full scene description. Rerolling across seeds is preferred over prompt bloating.
+
 
 ---
 
