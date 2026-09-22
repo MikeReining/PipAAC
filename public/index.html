@@ -218,6 +218,18 @@
         line-height: 1;
       }
       #bar .partial { color: #8a7fbf; }
+      /* Parent corner segmented controls — write on tap, no Save. */
+      .seg-row { margin-top: 14px; text-align: left; }
+      .seg-label { display: block; font-weight: 700; margin-bottom: 4px; }
+      .seg { display: flex; gap: 6px; }
+      .seg button {
+        flex: 1; padding: 10px 8px; border-radius: 10px;
+        border: 2px solid #8a8578; background: #fff; font-weight: 700;
+        font-size: 15px; cursor: pointer;
+      }
+      .seg button.on { border-color: #1a1a1a; background: #e8e3d6; }
+      .seg.disabled { opacity: 0.45; pointer-events: none; }
+      .seg-row .hint { font-size: 13px; color: #5b5348; margin: 6px 0 0; }
       .cell {
         border-radius: 12px;
         border: 3px solid;
@@ -334,6 +346,21 @@
         <h2>Parent corner</h2>
         <button class="btn" id="add-mywords">Add to My Words</button>
         <button class="btn secondary" id="edit-groups">Edit groups</button>
+        <div class="seg-row">
+          <span class="seg-label">Keyboard</span>
+          <div class="seg" id="kb-mode">
+            <button data-v="pip">Pip keys</button>
+            <button data-v="device">Device keyboard</button>
+          </div>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Letter order</span>
+          <div class="seg" id="kb-order">
+            <button data-v="standard" id="kb-order-standard">QWERTY</button>
+            <button data-v="abc">ABC</button>
+          </div>
+          <p class="hint">Pick one and keep it — changing it moves every letter.</p>
+        </div>
         <button class="btn secondary" data-close>Close</button>
       </div>
     </div>

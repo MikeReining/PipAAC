@@ -407,6 +407,57 @@ $("add-mywords").addEventListener("click", () => {
   openAddForm("grp_my_words");
 });
 
+/* Keyboard settings: two segmented controls in the Parent corner. Each
+ * writes its column on tap — no Save button. Letter order is disabled
+ * while Device keyboard is selected, and the first segment shows the
+ * locale's real layout name (QWERTY/QWERTZ/AZERTY), never "standard".
+ * `standard` is the locale's national layout, so a stored value stays
+ * correct across a locale change. */
+const kbProfile = ALL(
+  db,
+  "SELECT keyboard_mode, keyboard_order FROM learner_profile WHERE id = 'prf_local'",
+)[0] ?? {};
+let kbMode = kbProfile.keyboard_mode ?? "pip";
+let kbOrder = kbProfile.keyboard_order ?? "standard";
+
+function syncKbSettings() {
+  $("kb-order-standard").textContent = resolveKeymap(locale)?.standardName ?? "Standard";
+  for (const b of $("kb-mode").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === kbMode);
+  }
+  for (const b of $("kb-order").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === kbOrder);
+  }
+  $("kb-order").classList.toggle("disabled", kbMode === "device");
+}
+syncKbSettings();
+
+/** Rebuild the keyboard surface after a settings or locale change. */
+function rebuildKb() {
+  kbBuilt = false;
+  if (kbOpen) {
+    buildKb();
+    fitKbCaps();
+  }
+}
+
+$("kb-mode").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (!v || v === kbMode) return;
+  kbMode = v;
+  RUN(db, "UPDATE learner_profile SET keyboard_mode = ? WHERE id = 'prf_local'", [v]);
+  rebuildKb();
+  syncKbSettings();
+});
+$("kb-order").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (!v || v === kbOrder) return;
+  kbOrder = v;
+  RUN(db, "UPDATE learner_profile SET keyboard_order = ? WHERE id = 'prf_local'", [v]);
+  rebuildKb();
+  syncKbSettings();
+});
+
 /* --- permanent utility anchors --- */
 $("anchor-kb").addEventListener("click", () => {
   if (kbOpen) return closeKb(); // the same anchor that opened it closes it
@@ -422,7 +473,6 @@ $("anchor-groups").addEventListener("click", openGroupIndex);
 let kbOpen = false;
 let kbText = ""; // the buffer — the word in progress
 let kbBuilt = false;
-let kbOrder = "standard"; // slice 5 wires this to learner_profile.keyboard_order
 let kbPendingAccent = null; // dead key latched, waiting for its vowel
 let kbLead = null; // opening mark (¿ ¡) waiting for the next committed item
 let kbDeadEl = null; // the dead key's element, for the latched style
