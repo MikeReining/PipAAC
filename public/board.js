@@ -5,6 +5,7 @@
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
+import { keyMap } from "./shared/keyboard.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
@@ -399,17 +400,21 @@ $("add-mywords").addEventListener("click", () => {
 
 /* --- permanent utility anchors --- */
 $("anchor-kb").addEventListener("click", () => {
+  if (kbOpen) return closeKb(); // the same anchor that opened it closes it
   setView("board");
   openKb();
 });
 $("anchor-groups").addEventListener("click", openGroupIndex);
 
-/* --- keyboard: a board mode, not a modal. Letters replace the grid in
-   place (same 10×6 geometry). Typing feeds prefix completions into the
-   strip; space commits the word (and speaks it); Done commits + exits. */
+/* --- keyboard: a board mode, not a modal. The locale's key map renders
+   into the grid in place (same 10×6 geometry). Typing feeds prefix
+   completions into the strip; space commits the word (and speaks it);
+   the ⌨ anchor toggles — there is no Done key. */
 let kbOpen = false;
 let kbText = "";
 let kbBuilt = false;
+let kbOrder = "standard"; // slice 5 wires this to learner_profile.keyboard_order
+let kbPendingAccent = null; // dead key latched, waiting for its vowel
 
 /** Grid-area view swap: board | groupIndex | group render into
  *  #groupgrid, keyboard into #kb — same physical space, strip and bar
@@ -426,38 +431,111 @@ function openKb() {
   if (!kbBuilt) buildKb();
   kbOpen = true;
   document.body.classList.add("kb");
+  renderKbAnchor();
+  fitKbCaps();
   renderBar();
   renderStrip();
 }
 function closeKb() {
   kbOpen = false;
   document.body.classList.remove("kb");
+  renderKbAnchor();
 }
 
-function kbKey(label, cls, onTap) {
-  const b = document.createElement("button");
-  b.className = `kb-key${cls ? ` ${cls}` : ""}`;
-  b.textContent = label;
-  b.addEventListener("click", onTap);
-  return b;
+/** While the keyboard is open the anchor that opened it becomes the way
+ *  back — same element, same position, only its text changes. */
+function renderKbAnchor() {
+  const a = $("anchor-kb");
+  a.querySelector(".glyph").textContent = kbOpen ? "▦" : "⌨";
+  a.querySelector("span:last-child").textContent = kbOpen ? "Board" : "Keyboard";
+  a.title = kbOpen ? "Board" : "Keyboard";
 }
 
 function buildKb() {
   kbBuilt = true;
   const kb = $("kb");
-  for (const ch of "abcdefghij") kb.appendChild(kbKey(ch, "", () => kbType(ch)));
-  for (const ch of "klmnopqrst") kb.appendChild(kbKey(ch, "", () => kbType(ch)));
-  for (const ch of "uvwxyz.'?") kb.appendChild(kbKey(ch, "", () => kbType(ch)));
-  kb.appendChild(kbKey("⌫", "kb-util", () => {
-    kbText = kbText.slice(0, -1);
-    renderBar();
-    renderStrip();
-  }));
-  kb.appendChild(kbKey("space", "kb-util kb-space", commitKb));
-  kb.appendChild(kbKey("Done ✓", "kb-util kb-done", () => {
-    commitKb();
-    closeKb();
-  }));
+  kb.innerHTML = "";
+  const keys = keyMap(locale, kbOrder);
+  if (!keys) {
+    // A locale with no key map gets Device keyboard mode (slice 6) —
+    // never English keys (Profile_Presentation_Modes §4.1).
+    console.warn(`keyboard: no key map for locale "${locale}" — device keyboard`);
+    return;
+  }
+  for (const k of keys) {
+    const el = kbCell(k);
+    el.style.gridColumn = `${(k.slot % 10) + 1} / span ${k.span}`;
+    el.style.gridRow = `${Math.floor(k.slot / 10) + 1}`;
+    kb.appendChild(el);
+  }
+}
+
+/* Letter size is per-key, not per-row: a narrow "i" on a portrait key can
+ * stand taller than a wide "w" on the same key. measureText gives each
+ * cap's em width once Andika is ready; the cap then takes the largest
+ * size that fits ~78% of the key's height AND ~80% of its width. */
+const kbCapCtx = document.createElement("canvas").getContext("2d");
+
+function fitKbCaps() {
+  document.fonts.ready.then(() => {
+    for (const key of $("kb").querySelectorAll(".kb-key:not(.kb-util)")) {
+      const cap = key.querySelector(".kc");
+      const r = key.getBoundingClientRect();
+      if (!r.width || !r.height) continue;
+      kbCapCtx.font = '700 100px "Andika"';
+      const emWidth = kbCapCtx.measureText(cap.textContent).width / 100 || 0.5;
+      cap.style.fontSize = `${Math.min(r.height * 0.78, (r.width * 0.8) / emWidth)}px`;
+    }
+  });
+}
+window.addEventListener("resize", () => {
+  if (kbOpen) fitKbCaps();
+});
+
+/** One key of the Pip-keys map. Char keys are white with a big cap;
+ *  space, ⌫, and the dead key wear the utility colors. The partner row
+ *  renders as disabled blanks until slice 4 lands. */
+function kbCell(k) {
+  if (k.kind === "partner") {
+    const el = document.createElement("button");
+    el.className = "gcell empty";
+    el.disabled = true;
+    return el;
+  }
+  const el = document.createElement("button");
+  const cap = document.createElement("span");
+  cap.className = "kc";
+  el.appendChild(cap);
+  if (k.kind === "char") {
+    el.className = "kb-key";
+    cap.textContent = k.value;
+    el.addEventListener("click", () => kbType(k.value));
+  } else if (k.kind === "dead") {
+    el.className = "kb-key kb-util";
+    cap.textContent = k.value;
+    el.addEventListener("click", () => {
+      kbPendingAccent = kbPendingAccent ? null : k.value;
+      el.classList.toggle("latched", kbPendingAccent !== null);
+    });
+  } else if (k.kind === "space") {
+    el.className = "kb-key kb-util kb-spacekey";
+    cap.textContent = "␣";
+    const sub = document.createElement("span");
+    sub.className = "sub";
+    sub.textContent = "space";
+    el.appendChild(sub);
+    el.addEventListener("click", commitKb);
+  } else {
+    // backspace
+    el.className = "kb-key kb-util";
+    cap.textContent = "⌫";
+    el.addEventListener("click", () => {
+      kbText = kbText.slice(0, -1);
+      renderBar();
+      renderStrip();
+    });
+  }
+  return el;
 }
 
 function kbType(ch) {
@@ -905,3 +983,8 @@ $("add-save").addEventListener("click", async () => {
 
 renderGrid();
 renderStrip();
+
+// Console handle for works tests and founder debugging — read-only access
+// to the live db and resolved profile. Product truth still flows through
+// the functions above; this exposes, it does not own.
+window.pip = { db, catalog, locale };

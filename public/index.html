@@ -3,8 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="preload" href="/fonts/andika-bold.woff2" as="font" type="font/woff2" crossorigin />
     <title>Pip AAC</title>
     <style>
+      /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
+         Self-hosted; the app is offline-first, never a CDN. Keyboard
+         keycaps only. */
+      @font-face {
+        font-family: "Andika";
+        src: url("/fonts/andika-bold.woff2") format("woff2");
+        font-weight: 700;
+        font-display: block;
+      }
       :root { --gap: 6px; }
       * { box-sizing: border-box; margin: 0; }
       body {
@@ -172,21 +182,37 @@
       #kb { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
       body.kb #grid { display: none; }
       body.kb #kb { display: grid; }
+      /* Keycaps size their glyph from the key's own box
+         (container-type: size): letters fill the key instead of hitting a
+         px clamp. Char keys are white; space, ⌫, and the dead key wear
+         utility colors. */
       .kb-key {
+        container-type: size;
         border-radius: 12px;
         border: 3px solid #8a8578;
-        background: #f2efe6;
+        background: #fff;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        font-family: "Andika", -apple-system, "Helvetica Neue", sans-serif;
         font-weight: 700;
-        font-size: clamp(18px, 3.4vmin, 34px);
         color: #1a1a1a;
+        overflow: hidden;
+        padding: 0;
       }
+      .kb-key .kc { font-size: min(70cqh, 80cqw); line-height: 1; }
       .kb-key:active { filter: brightness(0.92); }
-      .kb-util { border-color: #5b5348; background: #e8e3d6; font-size: clamp(13px, 2.2vmin, 20px); }
-      .kb-space { grid-column: 1 / 8; grid-row: 4 / 7; }
-      .kb-done  { grid-column: 8 / 11; grid-row: 4 / 7; font-size: clamp(16px, 3vmin, 28px); }
+      .kb-util { border-color: #5b5348; background: #e8e3d6; }
+      .kb-util .kc { font-size: min(34cqh, 22cqw); }
+      .kb-key.latched { box-shadow: inset 0 0 0 3px #5b5348; background: #ddd6c4; }
+      .kb-spacekey .sub {
+        font-family: -apple-system, "Helvetica Neue", sans-serif;
+        font-size: min(16cqh, 12cqw);
+        font-weight: 600;
+        color: #5b5348;
+        line-height: 1;
+      }
       #bar .partial { color: #8a7fbf; }
       .cell {
         border-radius: 12px;
