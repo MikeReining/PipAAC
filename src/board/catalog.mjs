@@ -10,6 +10,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { importCatalog } from "../../public/shared/import.mjs";
+import { groupPage } from "../../public/shared/groups.mjs";
 
 const SCHEMA_PATH = join(dirname(fileURLToPath(import.meta.url)), "schema.sql");
 
@@ -49,20 +50,11 @@ export function loadBoard(db, layout) {
 }
 
 /**
- * Placeholder sub-zone open (slice 1 proves the op cannot move the map;
- * fringe rows are not on-device yet, so this returns an empty zone).
+ * Group page open (phase 003): items at their fixed (page, slot) inside
+ * one group, via the groups module. Read-only — writes nothing.
  */
-export function openSubZone(db, category) {
-  return db
-    .prepare(
-      `SELECT s.id AS sense_id, l.text AS label
-       FROM sense s
-       JOIN label l ON l.sense_id = s.id
-         AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
-       WHERE s.category = ?
-       ORDER BY l.text`,
-    )
-    .all(category);
+export function openGroup(db, groupId, page = 0) {
+  return groupPage(db, groupId, page);
 }
 
 /** Placeholder suggestion apply — slice 3 implements ranking. Never writes. */

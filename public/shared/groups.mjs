@@ -1,0 +1,360 @@
+/**
+ * Groups — the one container (docs/product/Motor_Grid_And_Art.md § Groups).
+ * board_group rows are the index coordinate map (slots 10–59); group_cell
+ * rows place items (catalog senses or personal entities) at fixed
+ * (page, slot_index) inside a group — slots 2–58, 57 per page. This module
+ * is the only code that writes those tables.
+ *
+ * Pure functions over the minimal db interface shared with import.mjs
+ * ({ exec, prepare(sql).run/all }) — one body of logic for node:sqlite
+ * tests and the sqlite-wasm browser adapter.
+ */
+
+export const ITEMS_PER_PAGE = 57; // page slots 2..58
+
+const FIRST_ITEM_SLOT = 2;
+const LAST_ITEM_SLOT = 58;
+const FIRST_INDEX_SLOT = 10;
+const LAST_INDEX_SLOT = 59;
+
+const all = (db, sql, params = []) => db.prepare(sql).all(...params);
+const one = (db, sql, params = []) => all(db, sql, params)[0];
+
+function hasTable(db, name) {
+  return all(
+    db,
+    "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?",
+    [name],
+  ).length > 0;
+}
+
+function lowestFreeIndexSlot(db) {
+  const used = new Set(
+    all(db, "SELECT index_slot FROM board_group").map((r) => r.index_slot),
+  );
+  for (let s = FIRST_INDEX_SLOT; s <= LAST_INDEX_SLOT; s++) {
+    if (!used.has(s)) return s;
+  }
+  return null;
+}
+
+function insertCell(db, groupId, kind, id, page, slot) {
+  db.prepare(
+    "INSERT INTO group_cell (group_id, item_kind, item_id, page, slot_index) VALUES (?, ?, ?, ?, ?)",
+  ).run(groupId, kind, id, page, slot);
+}
+
+/**
+ * Savepoint-scoped transaction: nests cleanly inside an outer savepoint
+ * (migrateLegacyGroups) where a bare second BEGIN would throw.
+ */
+function txn(db, fn) {
+  db.exec("SAVEPOINT groups_txn");
+  try {
+    const out = fn();
+    db.exec("RELEASE groups_txn");
+    return out;
+  } catch (err) {
+    db.exec("ROLLBACK TO groups_txn");
+    db.exec("RELEASE groups_txn");
+    throw err;
+  }
+}
+
+/**
+ * Seed built-in groups and their cells from the catalog. Also the
+ * reconcile: a caregiver's edits always win, and a seeded item is never
+ * dropped — when its seeded slot is taken it lands at nextFreeCell.
+ */
+export function seedGroups(db, catalog) {
+  txn(db, () => {
+    for (const g of catalog.groups ?? []) {
+      const exists = one(db, "SELECT id FROM board_group WHERE id = ?", [g.id]);
+      if (exists) continue;
+      const taken = one(db, "SELECT id FROM board_group WHERE index_slot = ?", [g.index_slot]);
+      const slot = taken ? lowestFreeIndexSlot(db) : g.index_slot;
+      if (slot === null) throw new Error(`group index full — cannot seed ${g.id}`);
+      db.prepare(
+        "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, ?, ?, NULL, ?)",
+      ).run(g.id, g.kind, g.name, g.glyph ?? null, slot);
+    }
+    for (const c of catalog.groupCells ?? []) {
+      const present = one(
+        db,
+        "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+        [c.group_id, c.item_kind, c.item_id],
+      );
+      if (present) continue;
+      const taken = one(
+        db,
+        "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
+        [c.group_id, c.page, c.slot_index],
+      );
+      const cell = taken ? nextFreeCell(db, c.group_id) : c;
+      insertCell(db, c.group_id, c.item_kind, c.item_id, cell.page, cell.slot_index);
+    }
+  });
+}
+
+/**
+ * One-time migration for a device DB persisted under the pre-groups
+ * schema. No-op when zone_slot is absent. Keeps a family's custom groups,
+ * their entities, and the caregiver's index arrangement.
+ */
+export function migrateLegacyGroups(db, catalog) {
+  if (!hasTable(db, "zone_slot")) return;
+  const groupForCategory = new Map(
+    (catalog.groups ?? []).filter((g) => g.category).map((g) => [g.category, g.id]),
+  );
+
+  txn(db, () => {
+    // Built-in (and My Words) positions: the legacy zone row's slot wins.
+    for (const r of all(db, "SELECT zone_key, slot_index FROM zone_slot ORDER BY slot_index")) {
+      if (r.zone_key.startsWith("grp_")) continue; // custom groups handled below
+      const gid = r.zone_key === "my_words" ? "grp_my_words" : groupForCategory.get(r.zone_key);
+      if (!gid) continue;
+      const row = one(db, "SELECT index_slot FROM board_group WHERE id = ?", [gid]);
+      if (!row || row.index_slot === r.slot_index) continue;
+      const occupant = one(db, "SELECT id FROM board_group WHERE index_slot = ?", [r.slot_index]);
+      if (occupant) swapGroups(db, gid, occupant.id);
+      else moveGroup(db, gid, r.slot_index);
+    }
+
+    // Custom groups: same id, name, photo; index slot from their zone row.
+    if (hasTable(db, "custom_group")) {
+      for (const g of all(db, "SELECT id, name, photo_key FROM custom_group")) {
+        if (one(db, "SELECT id FROM board_group WHERE id = ?", [g.id])) continue;
+        const legacy = one(db, "SELECT slot_index FROM zone_slot WHERE zone_key = ?", [g.id]);
+        let slot = legacy?.slot_index ?? null;
+        if (slot === null || one(db, "SELECT id FROM board_group WHERE index_slot = ?", [slot])) {
+          slot = lowestFreeIndexSlot(db);
+        }
+        if (slot === null) throw new Error(`group index full — cannot migrate ${g.id}`);
+        db.prepare(
+          "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, 'custom', ?, NULL, ?, ?)",
+        ).run(g.id, g.name, g.photo_key ?? null, slot);
+      }
+      for (const gi of all(db, "SELECT group_id, entity_id FROM group_item ORDER BY slot_index")) {
+        placeItem(db, gi.group_id, "entity", gi.entity_id);
+      }
+    }
+
+    // Entities: a recorded category files into the matching built-in group;
+    // a null-category entity in no custom group lands in My Words.
+    for (const e of all(db, "SELECT id, category FROM personal_entity")) {
+      if (e.category && groupForCategory.has(e.category)) {
+        placeItem(db, groupForCategory.get(e.category), "entity", e.id);
+      } else if (!e.category) {
+        const inCustom = one(
+          db,
+          `SELECT 1 AS x FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
+           WHERE gc.item_kind = 'entity' AND gc.item_id = ? AND g.kind = 'custom'`,
+          [e.id],
+        );
+        if (!inCustom) placeItem(db, "grp_my_words", "entity", e.id);
+      }
+    }
+
+    db.exec("DROP TABLE IF EXISTS group_item");
+    db.exec("DROP TABLE IF EXISTS custom_group");
+    db.exec("DROP TABLE IF EXISTS zone_slot");
+  });
+}
+
+/** The group index: every group at its coordinate, in slot order. */
+export function groupIndex(db) {
+  return all(
+    db,
+    "SELECT id, kind, name, glyph, photo_key, index_slot FROM board_group ORDER BY index_slot",
+  );
+}
+
+/**
+ * One page of a group: items at their stored slots, joined to label and
+ * Fitzgerald role. Entities carry photo_key; senses resolve their approved
+ * English lemma.
+ */
+export function groupPage(db, groupId, page = 0) {
+  return all(
+    db,
+    `SELECT gc.item_kind, gc.item_id, gc.slot_index,
+            COALESCE(l.text, e.spoken_name) AS label,
+            COALESCE(s.fitzgerald_role, 'Yellow') AS fitzgerald_role,
+            e.photo_key AS photo_key
+     FROM group_cell gc
+     LEFT JOIN sense s ON gc.item_kind = 'sense' AND s.id = gc.item_id
+     LEFT JOIN label l ON gc.item_kind = 'sense' AND l.sense_id = gc.item_id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+     LEFT JOIN personal_entity e ON gc.item_kind = 'entity' AND e.id = gc.item_id
+     WHERE gc.group_id = ? AND gc.page = ?
+     ORDER BY gc.slot_index`,
+    [groupId, page],
+  );
+}
+
+export function pageCount(db, groupId) {
+  const row = one(db, "SELECT MAX(page) AS m FROM group_cell WHERE group_id = ?", [groupId]);
+  return (row?.m ?? 0) + 1;
+}
+
+/** Lowest free (page, slot_index), page-major. Pages grow without bound. */
+export function nextFreeCell(db, groupId) {
+  const taken = new Set(
+    all(db, "SELECT page, slot_index FROM group_cell WHERE group_id = ?", [groupId]).map(
+      (r) => `${r.page}:${r.slot_index}`,
+    ),
+  );
+  for (let page = 0; ; page++) {
+    for (let slot = FIRST_ITEM_SLOT; slot <= LAST_ITEM_SLOT; slot++) {
+      if (!taken.has(`${page}:${slot}`)) return { page, slot_index: slot };
+    }
+  }
+}
+
+/** Append an item at the next free cell. No-op when already present. */
+export function placeItem(db, groupId, kind, id) {
+  const existing = one(
+    db,
+    "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupId, kind, id],
+  );
+  if (existing) return { page: existing.page, slot_index: existing.slot_index };
+  const cell = nextFreeCell(db, groupId);
+  insertCell(db, groupId, kind, id, cell.page, cell.slot_index);
+  return cell;
+}
+
+/** Move an item to a free slot on any page of the same group. */
+export function moveItem(db, groupId, kind, id, page, slot) {
+  const taken = one(
+    db,
+    "SELECT item_id FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
+    [groupId, page, slot],
+  );
+  if (taken) throw new Error(`group ${groupId} slot ${page}:${slot} is occupied`);
+  const row = one(
+    db,
+    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupId, kind, id],
+  );
+  if (!row) throw new Error(`item ${id} is not in group ${groupId}`);
+  db.prepare(
+    "UPDATE group_cell SET page = ?, slot_index = ? WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+  ).run(page, slot, groupId, kind, id);
+}
+
+/**
+ * Swap two items' cells. UNIQUE(group_id, page, slot_index) forbids the
+ * two-step UPDATE, so this deletes both rows and re-inserts them swapped,
+ * in one transaction.
+ */
+export function swapItems(db, groupId, a, b) {
+  txn(db, () => {
+    const cellOf = (it) =>
+      one(
+        db,
+        "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+        [groupId, it.item_kind, it.item_id],
+      );
+    const ca = cellOf(a);
+    const cb = cellOf(b);
+    if (!ca || !cb) throw new Error("swapItems: both items must be in the group");
+    db.prepare(
+      "DELETE FROM group_cell WHERE group_id = ? AND item_kind IN (?, ?) AND item_id IN (?, ?)",
+    ).run(groupId, a.item_kind, b.item_kind, a.item_id, b.item_id);
+    insertCell(db, groupId, a.item_kind, a.item_id, cb.page, cb.slot_index);
+    insertCell(db, groupId, b.item_kind, b.item_id, ca.page, ca.slot_index);
+  });
+}
+
+/**
+ * Remove an item from a group. A sense can leave a custom or My Words
+ * group, never a built-in — built-in contents are the findability
+ * guarantee (hiding is masking, docs/product/Vocabulary_Masking_And_Safety.md).
+ * An entity removed from its last group lands in My Words, never orphaned.
+ */
+export function removeItem(db, groupId, kind, id) {
+  const group = one(db, "SELECT kind FROM board_group WHERE id = ?", [groupId]);
+  if (!group) throw new Error(`no group ${groupId}`);
+  if (kind === "sense" && group.kind === "builtin") {
+    throw new Error("a sense cannot be removed from a built-in group");
+  }
+  db.prepare(
+    "DELETE FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+  ).run(groupId, kind, id);
+  if (kind === "entity") {
+    const left = one(
+      db,
+      "SELECT COUNT(*) AS n FROM group_cell WHERE item_kind = 'entity' AND item_id = ?",
+      [id],
+    ).n;
+    if (left === 0) placeItem(db, "grp_my_words", "entity", id);
+  }
+}
+
+/** Create a custom group at the lowest free index slot. */
+export function createGroup(db, { name, photoKey = null }) {
+  const slot = lowestFreeIndexSlot(db);
+  if (slot === null) throw new Error("group index is full");
+  const id = `grp_${crypto.randomUUID().replaceAll("-", "")}`;
+  db.prepare(
+    "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, 'custom', ?, NULL, ?, ?)",
+  ).run(id, name, photoKey, slot);
+  return { id, index_slot: slot };
+}
+
+/**
+ * Delete a custom group. Entities whose only group it was land in
+ * My Words — an entity is never orphaned.
+ */
+export function deleteGroup(db, groupId) {
+  const group = one(db, "SELECT kind FROM board_group WHERE id = ?", [groupId]);
+  if (!group) throw new Error(`no group ${groupId}`);
+  if (group.kind !== "custom") throw new Error("only custom groups can be deleted");
+  const orphans = all(
+    db,
+    "SELECT item_id FROM group_cell WHERE group_id = ? AND item_kind = 'entity'",
+    [groupId],
+  ).map((r) => r.item_id);
+  db.prepare("DELETE FROM group_cell WHERE group_id = ?").run(groupId);
+  db.prepare("DELETE FROM board_group WHERE id = ?").run(groupId);
+  for (const id of orphans) {
+    const left = one(
+      db,
+      "SELECT COUNT(*) AS n FROM group_cell WHERE item_kind = 'entity' AND item_id = ?",
+      [id],
+    ).n;
+    if (left === 0) placeItem(db, "grp_my_words", "entity", id);
+  }
+}
+
+/** Move a group to a free index slot. */
+export function moveGroup(db, groupId, slot) {
+  const occupant = one(db, "SELECT id FROM board_group WHERE index_slot = ?", [slot]);
+  if (occupant) throw new Error(`index slot ${slot} is occupied`);
+  const row = one(db, "SELECT id FROM board_group WHERE id = ?", [groupId]);
+  if (!row) throw new Error(`no group ${groupId}`);
+  db.prepare("UPDATE board_group SET index_slot = ? WHERE id = ?").run(slot, groupId);
+}
+
+/**
+ * Swap two groups' index slots. The UNIQUE index_slot constraint forbids
+ * the two-step UPDATE, so both rows are deleted and re-inserted swapped in
+ * one transaction; deferred FK enforcement keeps their group_cell rows
+ * valid through the gap.
+ */
+export function swapGroups(db, a, b) {
+  txn(db, () => {
+    db.exec("PRAGMA defer_foreign_keys = ON");
+    const ga = one(db, "SELECT * FROM board_group WHERE id = ?", [a]);
+    const gb = one(db, "SELECT * FROM board_group WHERE id = ?", [b]);
+    if (!ga || !gb) throw new Error("swapGroups: both groups must exist");
+    db.prepare("DELETE FROM board_group WHERE id IN (?, ?)").run(a, b);
+    db.prepare(
+      "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, ?, ?, ?, ?)",
+    ).run(ga.id, ga.kind, ga.name, ga.glyph, ga.photo_key, gb.index_slot);
+    db.prepare(
+      "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, ?, ?, ?, ?)",
+    ).run(gb.id, gb.kind, gb.name, gb.glyph, gb.photo_key, ga.index_slot);
+  });
+}

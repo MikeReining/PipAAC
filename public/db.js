@@ -6,6 +6,7 @@
  */
 import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
+import { migrateLegacyGroups } from "./shared/groups.mjs";
 
 let handle = null;
 
@@ -58,6 +59,10 @@ export async function bootDb() {
   migrateSchema(d, catalog.schemaSql);
   d.exec(catalog.schemaSql);
   importCatalog(d, catalog);
+  // A DB persisted under the pre-groups schema still has zone_slot:
+  // migrate it — keeping custom groups, entities, and the caregiver's
+  // arrangement — then drop the legacy tables. No-op on a fresh DB.
+  migrateLegacyGroups(d, catalog);
 
   handle = { db: d, catalog, persistent };
   return handle;
@@ -78,7 +83,7 @@ function migrateSchema(d, schemaSql) {
   const tables = [
     "sense", "utterance", "label", "image", "voice", "clip", "core_cell",
     "learner_profile", "personal_entity", "entity_enrichment",
-    "learner_event_log", "clip_override", "zone_slot", "custom_group", "group_item",
+    "learner_event_log", "clip_override", "board_group", "group_cell",
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();

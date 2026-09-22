@@ -25,10 +25,14 @@ import {
 
 const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
 const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
+const GROUP_SEED = join(repoRoot, "data/group_seed.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const DEFAULT_VOICE_ID = "voi_default_en";
 const CATALOG_SCHEMA_VERSION = 1;
+const ITEMS_PER_PAGE = 57; // group page slots 2..58
+
+const pad4 = (n) => String(n).padStart(4, "0");
 
 const MAP_SECTION_RE = /^## \d+\.\s+`?(grid\d+)`?/;
 const MAP_ROW_RE = /^\|\s*\d+\s*\|\s*(.+?)\s*\|$/;
@@ -70,8 +74,114 @@ export function parseCoordinateMapMarkdown(raw) {
   return layouts;
 }
 
+/**
+ * Emit board_group + group_cell seed rows from data/group_seed.json.
+ * File order is the default index order (slots 10..). Members are senses
+ * at fixed cells: member i → page floor(i/57), slot 2 + i % 57. Throws on
+ * any violation — the build is the gate that keeps every catalog word
+ * reachable in at least one built-in group.
+ */
+export function buildGroups(lexicon, seed) {
+  const byNorm = new Map();
+  for (const e of lexicon.entries) {
+    const n = normalizeV1(e.spokenText);
+    if (!byNorm.has(n)) byNorm.set(n, []);
+    byNorm.get(n).push(e);
+  }
+  const resolve = (word, ctx) => {
+    const hits = byNorm.get(normalizeV1(word)) ?? [];
+    if (hits.length !== 1) {
+      throw new Error(
+        `group seed ${ctx}: "${word}" resolves to ${hits.length} lexicon senses (want exactly 1)`,
+      );
+    }
+    return `sns_${pad4(hits[0].slot)}`;
+  };
+
+  const groups = [];
+  const groupCells = [];
+  const memberOf = new Map(); // sense_id -> Set(group key)
+  const excepted = []; // [{ key, word, senseId }]
+  const seenKeys = new Set();
+
+  seed.groups.forEach((g, gi) => {
+    if (!/^[a-z_]+$/.test(g.key)) {
+      throw new Error(`group seed: key "${g.key}" must match ^[a-z_]+$`);
+    }
+    if (seenKeys.has(g.key)) throw new Error(`group seed: duplicate key "${g.key}"`);
+    seenKeys.add(g.key);
+    if (g.category && g.words) {
+      throw new Error(`group seed ${g.key}: category and words are mutually exclusive`);
+    }
+    const id = `grp_${g.key}`;
+    groups.push({
+      id,
+      kind: g.key === "my_words" ? "my_words" : "builtin",
+      name: g.name,
+      glyph: g.glyph ?? null,
+      index_slot: 10 + gi,
+      category: g.category ?? null,
+    });
+
+    let memberIds = [];
+    if (g.category) {
+      const excluded = new Set(
+        (g.except ?? []).map((w) => {
+          const sid = resolve(w, `${g.key}.except`);
+          excepted.push({ key: g.key, word: w, senseId: sid });
+          return sid;
+        }),
+      );
+      memberIds = lexicon.entries
+        .filter((e) => e.category === g.category)
+        .sort((a, b) => a.slot - b.slot)
+        .map((e) => `sns_${pad4(e.slot)}`)
+        .filter((sid) => !excluded.has(sid));
+    } else if (g.words) {
+      memberIds = g.words.map((w) => resolve(w, `${g.key}.words`));
+    }
+    if (memberIds.length > ITEMS_PER_PAGE) {
+      throw new Error(
+        `group seed ${g.key}: ${memberIds.length} members exceeds one page (${ITEMS_PER_PAGE}) — split it`,
+      );
+    }
+    memberIds.forEach((sid, i) => {
+      groupCells.push({
+        group_id: id,
+        item_kind: "sense",
+        item_id: sid,
+        page: Math.floor(i / ITEMS_PER_PAGE),
+        slot_index: 2 + (i % ITEMS_PER_PAGE),
+      });
+      if (!memberOf.has(sid)) memberOf.set(sid, new Set());
+      memberOf.get(sid).add(g.key);
+    });
+  });
+
+  // Reachability gates: every categorized sense is in a built-in group,
+  // and every excepted word landed in some other group.
+  for (const e of lexicon.entries) {
+    if (e.category && !memberOf.has(`sns_${pad4(e.slot)}`)) {
+      throw new Error(
+        `group seed: "${e.spokenText}" (${e.category}) lands in no built-in group`,
+      );
+    }
+  }
+  for (const x of excepted) {
+    if (!memberOf.has(x.senseId)) {
+      throw new Error(`group seed: "${x.word}" is excepted from ${x.key} but lands in no other group`);
+    }
+  }
+
+  return { groups, groupCells };
+}
+
 /** Build the catalog JSON object from lexicon entries + parsed map layouts. */
-export function buildCatalog(lexicon, mapLayouts) {
+export function buildCatalog(
+  lexicon,
+  mapLayouts,
+  groupSeed = JSON.parse(readFileSync(GROUP_SEED, "utf8")),
+) {
   const tier1ByWord = new Map();
   for (const e of lexicon.entries) {
     if (e.tier !== 1) continue;
@@ -82,7 +192,6 @@ export function buildCatalog(lexicon, mapLayouts) {
     tier1ByWord.set(key, e);
   }
 
-  const pad4 = (n) => String(n).padStart(4, "0");
   const senses = lexicon.entries.map((e) => ({
     id: `sns_${pad4(e.slot)}`,
     fitzgerald_role: e.fitzgeraldColor,
@@ -151,12 +260,15 @@ export function buildCatalog(lexicon, mapLayouts) {
     }
   }
 
+  const { groups, groupCells } = buildGroups(lexicon, groupSeed);
+
   return {
     schemaVersion: CATALOG_SCHEMA_VERSION,
     source: {
       lexicon: "data/launch_lexicon.json",
       coordinateMap: "docs/product/Core_Coordinate_Map.md",
       schema: "src/board/schema.sql",
+      groupSeed: "data/group_seed.json",
     },
     // The bundle is the full device bootstrap: DDL plus rows, one fetch.
     schemaSql: readFileSync(SCHEMA_SQL, "utf8"),
@@ -178,6 +290,8 @@ export function buildCatalog(lexicon, mapLayouts) {
     ],
     clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm),
     coreCells,
+    groups,
+    groupCells,
   };
 }
 

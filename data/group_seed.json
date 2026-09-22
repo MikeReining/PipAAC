@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "groups": [
+    { "key": "my_words", "name": "My Words", "glyph": "⭐" },
+    {
+      "key": "food",
+      "name": "Food",
+      "glyph": "🍎",
+      "category": "Food & Drink",
+      "except": ["water", "milk", "juice", "apple juice", "chocolate milk", "tea", "smoothie"]
+    },
+    {
+      "key": "drinks",
+      "name": "Drinks",
+      "glyph": "🥤",
+      "words": ["water", "milk", "juice", "apple juice", "chocolate milk", "tea", "smoothie"]
+    },
+    { "key": "body", "name": "Body", "glyph": "🧍", "category": "Body, Health & Hygiene" },
+    { "key": "feelings", "name": "Feelings", "glyph": "😊", "category": "Feelings, Emotions & Sensory States" },
+    {
+      "key": "actions",
+      "name": "Actions",
+      "glyph": "🏃",
+      "category": "Daily Actions & Activity Verbs",
+      "except": ["run", "jump", "walk", "sit", "stand", "climb", "dance", "swim", "ride", "crawl", "kick", "throw", "catch", "push", "pull", "swing", "slide", "fall"]
+    },
+    {
+      "key": "moving",
+      "name": "Moving",
+      "glyph": "🤸",
+      "words": ["run", "jump", "walk", "sit", "stand", "climb", "dance", "swim", "ride", "crawl", "kick", "throw", "catch", "push", "pull", "swing", "slide", "fall"]
+    },
+    { "key": "people", "name": "People", "glyph": "👪", "category": "People, Family & Roles" },
+    { "key": "places", "name": "Places", "glyph": "🏠", "category": "Places, Rooms & Community" },
+    { "key": "play", "name": "Play", "glyph": "⚽", "category": "Toys, Play, Media & Leisure" },
+    { "key": "home", "name": "Home", "glyph": "🛋️", "category": "Home, Household Objects & Daily Tools" },
+    { "key": "clothes", "name": "Clothes", "glyph": "👕", "category": "Clothing & Accessories" },
+    { "key": "animals", "name": "Animals", "glyph": "🐶", "category": "Animals & Nature" },
+    { "key": "vehicles", "name": "Vehicles", "glyph": "🚗", "category": "Vehicles & Transportation" },
+    { "key": "describing", "name": "Describing", "glyph": "🎨", "category": "Descriptors, Adjectives & Opposites" },
+    { "key": "time", "name": "Time", "glyph": "🕐", "category": "Time, Calendar & Sequencing" },
+    { "key": "social", "name": "Social", "glyph": "💬", "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety" },
+    { "key": "little_words", "name": "Little words", "glyph": "🔤", "category": "Function Words & Grammar" },
+    { "key": "numbers", "name": "Numbers", "glyph": "🔢", "category": "Numbers & Counting" }
+  ]
+}

@@ -1,9 +1,9 @@
 /**
  * Phase 002 slice 2 Works Test — add Cooper, offline, one confirm.
  *
- * Proves: an entity saved from inside a sub-zone files into that zone; a
- * save with no zone context lands in My Words; the save changes neither
- * the sense count nor the coordinate table; it writes no edge/enrichment
+ * Proves: an entity saved with a home category records it; a save with
+ * no category records none (My Words); the save changes neither the
+ * sense count nor the coordinate table; it writes no edge/enrichment
  * rows and attempts no network call.
  */
 import { test } from "node:test";
@@ -26,7 +26,7 @@ function openDb() {
   return db;
 }
 
-test("offline save from a sub-zone files the entity there; parent corner files to My Words", () => {
+test("offline save records the home category; no category means My Words", () => {
   const db = openDb();
 
   // Network down: any fetch attempt would throw. The save must not need it.

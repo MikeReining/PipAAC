@@ -4,7 +4,7 @@
  * Proves: grid90 carries each of the 83 root-core senses exactly once;
  * grid60 carries the 60 senses the map doc lists and obeys the membership
  * rule (docs/product/Core_Grid_Membership.md §2 — UC36 + rule-0 gates);
- * sub-zone open and an empty suggestion do not move the table (deep
+ * group open and an empty suggestion do not move the table (deep
  * compare); the schema rejects what the bans forbid.
  */
 import { test } from "node:test";
@@ -17,7 +17,7 @@ import {
   createDatabase,
   importCatalog,
   loadBoard,
-  openSubZone,
+  openGroup,
   snapshotCoreCells,
 } from "./catalog.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
@@ -134,11 +134,11 @@ test("imported coordinate table matches the generated rows exactly", () => {
   assert.deepEqual(new Set(g90SenseIds), new Set(rootCoreIds));
 });
 
-test("sub-zone open and empty suggestion leave the coordinate table untouched", () => {
+test("group open and empty suggestion leave the coordinate table untouched", () => {
   const db = openDb();
   const before = snapshotCoreCells(db);
 
-  openSubZone(db, "Animals & Nature"); // placeholder op — returns rows, writes nothing
+  openGroup(db, "grp_animals"); // read path — returns rows, writes nothing
   applySuggestion(db); // placeholder op — returns [], writes nothing
   loadBoard(db, "grid60"); // the render path itself is read-only
 

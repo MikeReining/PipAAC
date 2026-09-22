@@ -1,32 +1,12 @@
 /**
  * Personal entities (docs/product/Personal_Entities.md).
  * The record is name + photo + optional hint. No type, no edges — filing
- * comes from the context the add started in (category) or stays null
- * (My Words). The save never touches the network.
+ * comes from the group the add started in (a group_cell row); category is
+ * the record's home category, a classifier input only. The save never
+ * touches the network.
  */
 
-const CATEGORIES = [
-  "Food & Drink",
-  "Body, Health & Hygiene",
-  "Feelings, Emotions & Sensory States",
-  "Daily Actions & Activity Verbs",
-  "People, Family & Roles",
-  "Places, Rooms & Community",
-  "Toys, Play, Media & Leisure",
-  "Home, Household Objects & Daily Tools",
-  "Clothing & Accessories",
-  "Animals & Nature",
-  "Vehicles & Transportation",
-  "Descriptors, Adjectives & Opposites",
-  "Time, Calendar & Sequencing",
-  "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-];
-
-export const MY_WORDS = null; // category null = the personal zone
-
-export function listZones() {
-  return CATEGORIES;
-}
+export const MY_WORDS = null; // category null = no home category recorded
 
 export function addPersonalEntity(db, { spokenName, photoKey = null, category = null, hint = null }) {
   const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
@@ -36,7 +16,8 @@ export function addPersonalEntity(db, { spokenName, photoKey = null, category = 
   return { id, spokenName, photoKey, category, hint };
 }
 
-/** Entities filed in one zone. `category === null` is My Words. */
+/** Entities recorded with one home category. `category === null` lists
+ *  entities with none (the My Words default). */
 export function listEntities(db, category) {
   if (category === null) {
     return db

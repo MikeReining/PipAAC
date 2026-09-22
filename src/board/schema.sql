@@ -8,9 +8,10 @@ CREATE TABLE IF NOT EXISTS sense (
   art_archetype TEXT NOT NULL
     CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),
   tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),
-  -- For primary_fringe, category is the sense's zone home. For root_core it is
-  -- a zone cross-listing: the word keeps its core cell and also appears when
-  -- browsing that zone (zones are views, not exclusive homes).
+  -- For primary_fringe, category seeds the sense's built-in group. For
+  -- root_core it is a group cross-listing: the word keeps its core cell
+  -- and also appears inside that group (groups are views, not exclusive
+  -- homes).
   category TEXT,
   default_image_id TEXT REFERENCES image(id),
   CHECK (
@@ -184,28 +185,28 @@ CREATE TABLE IF NOT EXISTS clip_override (
   CHECK ((utterance_id IS NULL) != (entity_id IS NULL))
 );
 
--- The zone index is a second coordinate map: navigation gets the same
--- motor-memory law as core_cell. zone_key is 'my_words', a catalog
--- category name, or a custom_group id. Slots 0–9 are pinned nav cells;
--- zones occupy 10–59. Positions only move via caregiver arrange mode.
-CREATE TABLE IF NOT EXISTS zone_slot (
-  zone_key TEXT PRIMARY KEY CHECK (length(zone_key) > 0),
-  slot_index INTEGER NOT NULL CHECK (slot_index >= 10 AND slot_index < 60)
-);
-
-CREATE TABLE IF NOT EXISTS custom_group (
+-- Groups: one kind of container. The index is a coordinate map (slots
+-- 10–59); items sit at fixed (page, slot) inside a group. Positions move
+-- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.
+CREATE TABLE IF NOT EXISTS board_group (
   id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),
+  kind TEXT NOT NULL CHECK (kind IN ('builtin', 'my_words', 'custom')),
   name TEXT NOT NULL CHECK (length(name) > 0),
-  photo_key TEXT
+  glyph TEXT,
+  photo_key TEXT,
+  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10 AND index_slot < 60)
 );
 
--- Custom groups hold personal entities in stable order (first-added =
--- first slot — mini motor memory inside the group).
-CREATE TABLE IF NOT EXISTS group_item (
-  group_id TEXT NOT NULL REFERENCES custom_group(id),
-  entity_id TEXT NOT NULL REFERENCES personal_entity(id),
-  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
-  PRIMARY KEY (group_id, entity_id)
+CREATE TABLE IF NOT EXISTS group_cell (
+  group_id TEXT NOT NULL REFERENCES board_group(id),
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL,
+  page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 2 AND slot_index <= 58),
+  PRIMARY KEY (group_id, item_kind, item_id),
+  UNIQUE (group_id, page, slot_index),
+  CHECK ((item_kind = 'sense' AND item_id GLOB 'sns_*')
+      OR (item_kind = 'entity' AND item_id GLOB 'ent_*'))
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text
@@ -416,4 +417,4 @@ BEGIN
   );
 END;
 
-PRAGMA user_version = 3;
+PRAGMA user_version = 4;

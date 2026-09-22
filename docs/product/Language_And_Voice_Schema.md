@@ -165,11 +165,11 @@ CREATE TABLE sense (
 Those role and archetype tokens are the lexicon's own words.
 `Yellow` is the yellow/orange Fitzgerald role, `Pink` is pink/magenta, and
 `Red` is the red or black-outline role
-(`docs/product/Motor_Grid_And_Art.md`). For `primary_fringe`, `category` is
-the sense's zone home. For `root_core` it is a zone *cross-listing*: the
-word keeps its core coordinate and also appears when browsing that zone —
-a zone is a view, not an exclusive home — so `hurt` sits on the board and
-inside Body, Health & Hygiene. Root-core sectors stay on the coordinate map
+(`docs/product/Motor_Grid_And_Art.md`). For `primary_fringe`, `category`
+seeds the sense's built-in group. For `root_core` it is a group
+*cross-listing*: the word keeps its core coordinate and also appears
+inside that group — a group is a view, not an exclusive home — so `hurt`
+sits on the board and inside Body, Health & Hygiene. Root-core sectors stay on the coordinate map
 (`docs/product/Core_Coordinate_Map.md`).
 
 Picture insert order, because each side points at the other:
@@ -250,7 +250,7 @@ rows: `orange` (fruit #131, color #509), `bathroom` (room #158, urgent
 interjection #606), and `light` (weight #521, color #552). Exactly one label
 per shared normalized text carries `default_for_text = 1` — the lowest
 catalog slot — which is the label lookups and typed-word completions resolve
-to. The non-default senses stay reachable through their zones and cells.
+to. The non-default senses stay reachable through their groups and cells.
 
 ### 5.4 Image
 
@@ -411,9 +411,10 @@ CREATE TABLE personal_entity (
 
 There is no `type` column, no `pronoun` column, and no edge table. The
 adult supplies facts a model cannot know — the name, the photo, an
-optional hint. Filing comes from context (a sub-zone open at add time) or
-from classification when the device is online; `category IS NULL` files
-the entity in the personal zone (`docs/product/Personal_Entities.md`).
+optional hint. Filing is a `group_cell` row in the group the add started
+in — the place is the picker — or a second row from classification when
+the device is online; an entity in no group sits in My Words
+(`docs/product/Personal_Entities.md` § Filing).
 Strip relevance is computed live: sentence position and recency
 on-device, the classifier when online. The only stored semantics are the
 enrichment rows below — cached model output with provenance, never an
@@ -511,41 +512,47 @@ The insert trigger enforces `recorded_text` matching the utterance's
 `spoken_text` or the entity's `spoken_name` at write time — the same
 invariant `clip` already enforces, not a read-time hope.
 
-### 6.3b Zone map
+### 6.3b Group map
 
 ```sql
-CREATE TABLE zone_slot (
-  zone_key TEXT PRIMARY KEY CHECK (length(zone_key) > 0),
-  slot_index INTEGER NOT NULL CHECK (slot_index >= 10 AND slot_index < 60)
-);
-```
-
-The zone index is a second coordinate map — navigation gets the same
-motor-memory law as `core_cell`. `zone_key` is `my_words`, a catalog
-category name, or a `custom_group` id. Slots 0–9 of the zone view are
-pinned nav cells (`← Board`, `+ Group`); zones occupy 10–59. Import seeds
-defaults (My Words first, then categories in catalog order) with
-`INSERT OR IGNORE` — a caregiver's arrange-mode move is never overwritten
-by a reconcile.
-
-```sql
-CREATE TABLE custom_group (
+CREATE TABLE board_group (
   id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),
+  kind TEXT NOT NULL CHECK (kind IN ('builtin', 'my_words', 'custom')),
   name TEXT NOT NULL CHECK (length(name) > 0),
-  photo_key TEXT
+  glyph TEXT,
+  photo_key TEXT,
+  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10 AND index_slot < 60)
 );
 
-CREATE TABLE group_item (
-  group_id TEXT NOT NULL REFERENCES custom_group(id),
-  entity_id TEXT NOT NULL REFERENCES personal_entity(id),
-  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
-  PRIMARY KEY (group_id, entity_id)
+CREATE TABLE group_cell (
+  group_id TEXT NOT NULL REFERENCES board_group(id),
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL,
+  page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 2 AND slot_index <= 58),
+  PRIMARY KEY (group_id, item_kind, item_id),
+  UNIQUE (group_id, page, slot_index),
+  CHECK ((item_kind = 'sense' AND item_id GLOB 'sns_*')
+      OR (item_kind = 'entity' AND item_id GLOB 'ent_*'))
 );
 ```
 
-Custom groups are caregiver-authored zones holding personal entities in
-stable order (first-added = first slot). `+ Group` on the zone index
-creates one and claims the first free zone slot.
+One container type: built-in groups (seeded from `data/group_seed.json`),
+My Words, and caregiver custom groups are all `board_group` rows; items —
+senses or entities — sit at fixed `(page, slot_index)` in `group_cell`.
+The group index is a second coordinate map: `index_slot` gets the same
+motor-memory law as `core_cell`. Index slots 0–9 are pinned nav cells;
+groups occupy 10–59. On a group page, slots 0, 1, and 59 are pinned
+(`← Groups`, the Edit-mode action, `Next ›`); items occupy 2–58 — 57 per
+page. All writes go through `public/shared/groups.mjs`; the import doubles
+as the reconcile, so a caregiver's moves are never overwritten and a
+seeded item is never dropped.
+
+**Change note (2026-09-22, phase 003):** these tables replace `zone_slot`,
+`custom_group`, and `group_item`. A device DB persisted under that schema
+is migrated by `migrateLegacyGroups` on boot — custom groups keep their
+id, name, photo, and index position; legacy `group_item` order becomes
+`group_cell` order; entities keep their groups.
 
 ### 6.4 Indexes
 
@@ -856,7 +863,7 @@ words (slots 657–684).
 The catalog generator emits:
 
 - 677 senses, 674 English utterances, and 677 approved English lemma labels, generated from that catalog — homograph senses share one utterance row (§ 5.3). For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
-- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 83 for `grid90`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 677 senses — labels only, no art required. An empty zone was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
+- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 83 for `grid90`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 677 senses — labels only, no art required. An empty groups surface was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
 - One default bundled voice, locale `en`, and one clip per utterance: WorkbookBench recordings where the catalog has them, ElevenLabs (`eleven_v3`, the WorkbookBench voice id and settings) for misses.
 - One profile pointing at that voice.
 - No second locale, no alias rows, no voice picker, no override recorder.

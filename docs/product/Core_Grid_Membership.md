@@ -17,7 +17,7 @@ Start from the user, not from word lists. A nonspeaking child or adult, one
 finger, often motor-impaired, looking at the home board. No adult has
 navigated to the right page. The home board is **what this person can say
 when nobody set anything up**. Everything else waits for the predictive strip
-or a zone.
+or a group.
 
 So the question for every cell is: *what must this person be able to say in
 one or two taps, with no navigation, all day long?* Ranked by what goes wrong
@@ -176,7 +176,7 @@ Off the board — the contested 23:
 | have | 3.72 | ≤30 | – | Grammar glue; strip covers |
 | wait | 4.30 | ≤410 | – | Adult-directed word; `stop` covers user protest of an action |
 | feel | 5.11 | ≤430 | – | `happy`/`sad`/`hurt` say the feeling directly |
-| read, tell, think, find, work | 4.11–5.86 | ≤100–≤170 | – | Later or narrower verbs; zone and strip |
+| read, tell, think, find, work | 4.11–5.86 | ≤100–≤170 | – | Later or narrower verbs; group and strip |
 | away, under, over | 5.07–5.89 | ≤110–≤230 | – | `in`/`out`/`on`/`off`/`up`/`down` carry the spatial load |
 | but, or, because | 4.60 / 4.14 / 4.44 | ≤40 / ≤30 / ≤170 | – | Literate-adult grammar; `and` stays |
 
@@ -229,7 +229,7 @@ strip-eligible:
 - **Greetings and manners**: `hi`, `bye`, `sorry`, `thank you` live in
   fringe (`Initial_Vocabulary_600.md` §3.14). The strip's idle state owns
   conversational starters (`Motor_Grid_And_Art.md` §2).
-- **Other feelings** (`mad`, `scared`, `tired`): Feelings zone and strip.
+- **Other feelings** (`mad`, `scared`, `tired`): Feelings group and strip.
   Two feelings plus `hurt` is the ceiling for the default board. More would
   take seats from request and refusal.
 
@@ -254,7 +254,7 @@ this ruling on, `grid60` is frozen for launch.
 ## 8. Vocabulary cleanup — landed 2026-09-22
 
 These items came from the v2 review. They amend `Initial_Vocabulary_600.md`,
-not the grid. **BUILT** (`scripts/catalog/catalog.test.mjs`, `src/board/zones.test.mjs`):
+not the grid. **BUILT** (`scripts/catalog/catalog.test.mjs`, `src/board/groups.test.mjs`):
 
 1. **Spoken-text junk — fixed.** Disambiguation suffixes no longer leak into
    speech: `wipe`, `clean`, `light`, `orange`, `pink`, `bathroom` speak the
@@ -273,14 +273,14 @@ not the grid. **BUILT** (`scripts/catalog/catalog.test.mjs`, `src/board/zones.te
    `did`, `ow`. (`don't` already existed at #605, Social/Urgent.) Their
    audio awaits the generation pipeline — `playback.test.mjs` scopes the
    clip gate to slots < 657 until it lands.
-4. **Zone cross-listing — built.** `sense.category` now also permits a
+4. **Group cross-listing — built.** `sense.category` now also permits a
    `root_core` value (schema CHECK, `user_version` 3); a Tier 1 Sub-Category
-   written `Core X → Zone` in the vocabulary doc cross-lists the sense into
-   that zone. Nineteen core senses cross-list — `happy`/`sad` → Feelings,
-   `hurt` → Body, `yes`/`no`/`stop`/`help`/`please` → Social, `eat`/`drink`/
-   `play`/`open`/`turn` → Daily Actions, `big`/`little`/`good`/`bad` →
-   Descriptors, `not`/`and` → Function Words — so rule-0 words are reachable
-   inside their zones, not only on the board. Zones remain views; a core
-   word's home is still its coordinate.
+   written `Core X → Group` in the vocabulary doc cross-lists the sense into
+   that built-in group. Nineteen core senses cross-list — `happy`/`sad` →
+   Feelings, `hurt` → Body, `yes`/`no`/`stop`/`help`/`please` → Social,
+   `eat`/`drink`/`play`/`open`/`turn` → Daily Actions,
+   `big`/`little`/`good`/`bad` → Descriptors, `not`/`and` → Function Words —
+   so rule-0 words are reachable inside their groups, not only on the board.
+   Groups remain views; a core word's home is still its coordinate.
 
 Lexicon: 677 senses = 83 root-core + 594 fringe.

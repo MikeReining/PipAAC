@@ -32,7 +32,7 @@ In human communication, vocabulary usage follows a steep Pareto distribution:
 
 ### Modified Fitzgerald Key Color Rules
 
-Every word receives an immutable color assignment across the core grid, category sub-zones, and the predictive strip:
+Every word receives an immutable color assignment across the core grid, groups, and the predictive strip:
 - **Yellow / Orange**: Pronouns, people, and fringe nouns.
 - **Green**: Verbs and activity actions.
 - **Blue**: Descriptors, adjectives, feelings, and sensory states.
@@ -57,10 +57,11 @@ default board can report pain and distress without navigation — rule 0 in
 `docs/product/Core_Grid_Membership.md` §2. They keep their original row
 numbers, so sense ids and bundled audio clips are unchanged.
 
-**Zone cross-listing convention.** A Sub-Category written `Core X → Zone Name`
-means the sense's home is the core board, and it is *also* listed in that zone
-— a zone is a view, not an exclusive home (`docs/product/Design_Invariants.md`
-§7). All other Tier 1 rows carry their `Core X` sub-category only.
+**Group cross-listing convention.** A Sub-Category written `Core X → Group Name`
+means the sense's home is the core board, and it is *also* listed in that
+built-in group — a group is a view, not an exclusive home
+(`docs/product/Design_Invariants.md` §7). All other Tier 1 rows carry their
+`Core X` sub-category only.
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Sub-Category | Clinical Source | Visual Prompt Description |
 | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |

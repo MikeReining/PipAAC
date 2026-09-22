@@ -8,6 +8,8 @@
  * the reconcile: a persisted DB from an older catalog (pre-fringe,
  * pre-audio) converges on re-run without a destructive reset.
  */
+import { seedGroups } from "./groups.mjs";
+
 export function importCatalog(db, catalog, { tiers = ["root_core", "primary_fringe"] } = {}) {
   const keep = new Set(tiers);
   const senses = catalog.senses.filter((s) => keep.has(s.tier));
@@ -88,18 +90,8 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
     ).run("prf_local", defaultVoice.locale, defaultVoice.id);
   }
 
-  // Zone coordinate defaults: My Words first, then fringe categories in
-  // catalog order. OR IGNORE keeps caregiver-arranged positions intact.
-  const insZone = db.prepare(
-    "INSERT OR IGNORE INTO zone_slot (zone_key, slot_index) VALUES (?, ?)",
-  );
-  insZone.run("my_words", 10);
-  const seeded = new Set();
-  let slot = 11;
-  for (const s of senses) {
-    if (s.tier === "primary_fringe" && s.category && !seeded.has(s.category)) {
-      seeded.add(s.category);
-      insZone.run(s.category, slot++);
-    }
-  }
+  // Groups: built-in groups and their seeded cells. The seed is the
+  // reconcile — caregiver edits always win, and a seeded item is never
+  // dropped (groups.mjs).
+  seedGroups(db, catalog);
 }

@@ -33,7 +33,7 @@ rows at ~75 pt is the compromise for power users who want every root-core
 word gridded.
 
 `grid90` slot 89 is the **`Groups` anchor**: it opens the in-place index of
-the category sub-zones. One anchor, not a dock row of category cells — the
+the built-in groups. One anchor, not a dock row of category cells — the
 incumbent pattern of spending a bottom row on folder buttons does not scale
 to 16 categories and spends prime real estate on navigation instead of
 language. Slots 83–88 are **reserved anchors**: documented here, rendered

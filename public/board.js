@@ -6,69 +6,28 @@
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
+import {
+  createGroup,
+  groupIndex,
+  groupPage,
+  moveGroup,
+  pageCount,
+  placeItem,
+  swapGroups,
+} from "./shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
 const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 
-const CATEGORIES = [
-  "Food & Drink", "Body, Health & Hygiene", "Feelings, Emotions & Sensory States",
-  "Daily Actions & Activity Verbs", "People, Family & Roles", "Places, Rooms & Community",
-  "Toys, Play, Media & Leisure", "Home, Household Objects & Daily Tools",
-  "Clothing & Accessories", "Animals & Nature", "Vehicles & Transportation",
-  "Descriptors, Adjectives & Opposites", "Time, Calendar & Sequencing",
-  "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-  "Function Words & Grammar", "Numbers & Counting",
-];
-
-const { db } = await bootDb();
+const { db, catalog } = await bootDb();
 const sentence = []; // [{kind, id, text}]
-let addTarget = null;  // {category} | {group} | null(My Words) — where the add form files
+let addTarget = null;  // board_group id the add form files into
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
-let groupKey = null;   // key of the open group page (category name or grp_ id)
+let groupKey = null;   // board_group id of the open group page
+let groupPageNo = 0;   // current page of the open group
 let arranging = false; // caregiver arrange mode on the group index
-let lifted = null;     // group key picked up in arrange mode
-
-// Short display names + glyphs for group cells — presentational only; the
-// durable group key stays the full catalog category name.
-const GROUP_SHORT = {
-  "my_words": "My Words",
-  "Food & Drink": "Food",
-  "Body, Health & Hygiene": "Body",
-  "Feelings, Emotions & Sensory States": "Feelings",
-  "Daily Actions & Activity Verbs": "Actions",
-  "People, Family & Roles": "People",
-  "Places, Rooms & Community": "Places",
-  "Toys, Play, Media & Leisure": "Play",
-  "Home, Household Objects & Daily Tools": "Home",
-  "Clothing & Accessories": "Clothes",
-  "Animals & Nature": "Animals",
-  "Vehicles & Transportation": "Vehicles",
-  "Descriptors, Adjectives & Opposites": "Describing",
-  "Time, Calendar & Sequencing": "Time",
-  "Social Etiquette, Pragmatic Interjections & Urgent/Safety": "Social",
-  "Function Words & Grammar": "Grammar",
-  "Numbers & Counting": "Numbers",
-};
-const GROUP_GLYPH = {
-  "my_words": "⭐",
-  "Food & Drink": "🍎",
-  "Body, Health & Hygiene": "🧍",
-  "Feelings, Emotions & Sensory States": "😊",
-  "Daily Actions & Activity Verbs": "🏃",
-  "People, Family & Roles": "👪",
-  "Places, Rooms & Community": "🏠",
-  "Toys, Play, Media & Leisure": "⚽",
-  "Home, Household Objects & Daily Tools": "🛋️",
-  "Clothing & Accessories": "👕",
-  "Animals & Nature": "🐶",
-  "Vehicles & Transportation": "🚗",
-  "Descriptors, Adjectives & Opposites": "🎨",
-  "Time, Calendar & Sequencing": "🕐",
-  "Social Etiquette, Pragmatic Interjections & Urgent/Safety": "💬",
-  "Function Words & Grammar": "➕",
-  "Numbers & Counting": "🔢",
-};
+let lifted = null;     // board_group id picked up in arrange mode
 
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
@@ -156,7 +115,7 @@ async function idleStarters() {
       onTap: () => tap(hello.label, "sense", hello.id) });
   }
   cards.push({ label: "Food", glyph: "🥞", role: "Pink",
-    onTap: () => openGroup("Food & Drink") });
+    onTap: () => openGroup("grp_food") });
   const top = ALL(
     db,
     `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
@@ -479,11 +438,11 @@ function kbCompletions() {
 /* --- groups: an in-place board mode, not a modal. The group index and
    each group page render into #groupgrid — the same physical space and
    cell size as the core grid. Slot 0 is always "back"; slot 1 is the
-   authoring action, rendered only in arrange mode so the child never sees
-   adult controls. Group positions persist in zone_slot — navigation gets
-   the same motor-memory law as core_cell: slots only move in caregiver
-   arrange mode (tap to lift, tap a slot to place; occupied slot swaps).
-   --- */
+   Edit-mode action, rendered only while arranging so the child never sees
+   adult controls. Group positions persist in board_group.index_slot and
+   items in group_cell — the same motor-memory law as core_cell: slots
+   only move in caregiver arrange mode (tap to lift, tap a slot to place;
+   occupied slot swaps). All writes go through shared/groups.mjs. --- */
 
 function navCell(label, onTap) {
   const el = document.createElement("button");
@@ -493,40 +452,43 @@ function navCell(label, onTap) {
   return el;
 }
 
-function groupCell(key, slot) {
-  const group = key.startsWith("grp_")
-    ? ALL(db, "SELECT * FROM custom_group WHERE id = ?", [key])[0]
-    : null;
-  const label = group ? group.name : GROUP_SHORT[key] ?? key;
-  const glyph = group ? "🗂️" : GROUP_GLYPH[key] ?? "📁";
+/** One group on the index. `row` is a board_group row; the label and
+ *  glyph come from the row — custom groups show their photo, else 🗂️. */
+function groupIndexCell(row) {
   const el = document.createElement("button");
   el.className = "gcell";
-  el.dataset.slot = slot;
-  el.dataset.group = key;
+  el.dataset.slot = row.index_slot;
+  el.dataset.group = row.id;
   const g = document.createElement("span");
   g.className = "glyph";
-  g.textContent = glyph;
+  g.textContent = row.glyph ?? "🗂️";
+  if (row.photo_key) {
+    loadPhotoURL(row.photo_key).then((url) => {
+      if (!url) return;
+      const img = document.createElement("img");
+      img.src = url;
+      g.replaceChildren(img);
+    });
+  }
   const lb = document.createElement("span");
   lb.className = "glabel";
-  lb.textContent = label;
+  lb.textContent = row.name;
   el.appendChild(g);
   el.appendChild(lb);
   el.addEventListener("click", () => {
-    if (!arranging) return openGroup(key);
+    if (!arranging) return openGroup(row.id);
     if (!lifted) {
-      lifted = key;
+      lifted = row.id;
       renderGroupIndex();
       return;
     }
-    if (lifted === key) {
+    if (lifted === row.id) {
       lifted = null;
       renderGroupIndex();
       return;
     }
     // occupied slot: swap coordinates
-    const other = ALL(db, "SELECT slot_index FROM zone_slot WHERE zone_key = ?", [lifted])[0];
-    RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [slot, lifted]);
-    RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [other.slot_index, key]);
+    swapGroups(db, lifted, row.id);
     lifted = null;
     renderGroupIndex();
   });
@@ -546,9 +508,7 @@ function editSlotCell(label, onTap) {
 function renderGroupIndex() {
   const zg = $("groupgrid");
   zg.innerHTML = "";
-  const placed = new Map(
-    ALL(db, "SELECT zone_key, slot_index FROM zone_slot").map((r) => [r.slot_index, r.zone_key]),
-  );
+  const placed = new Map(groupIndex(db).map((g) => [g.index_slot, g]));
   for (let slot = 0; slot < 60; slot++) {
     if (slot === 0) {
       zg.appendChild(
@@ -562,10 +522,10 @@ function renderGroupIndex() {
       zg.appendChild(editSlotCell(arranging && "+ Group", () => open("groupform")));
       continue;
     }
-    const key = placed.get(slot);
-    if (key) {
-      const el = groupCell(key, slot);
-      if (arranging) el.classList.add(key === lifted ? "lifted" : "arrange");
+    const row = placed.get(slot);
+    if (row) {
+      const el = groupIndexCell(row);
+      if (arranging) el.classList.add(row.id === lifted ? "lifted" : "arrange");
       zg.appendChild(el);
       continue;
     }
@@ -575,7 +535,7 @@ function renderGroupIndex() {
       empty.classList.add("arrange");
       empty.addEventListener("click", () => {
         if (!lifted) return;
-        RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [slot, lifted]);
+        moveGroup(db, lifted, slot);
         lifted = null;
         renderGroupIndex();
       });
@@ -592,8 +552,9 @@ function openGroupIndex() {
   setView("groupIndex");
 }
 
-async function openGroup(key) {
-  groupKey = key;
+async function openGroup(groupId) {
+  groupKey = groupId;
+  groupPageNo = 0;
   setView("group");
 }
 
@@ -621,44 +582,34 @@ async function entityCell(e) {
   return el;
 }
 
+/** One item on a group page — a catalog sense or a personal entity at its
+ *  stored slot. */
+async function itemCell(item) {
+  if (item.item_kind === "sense") {
+    return senseCell({
+      sense_id: item.item_id,
+      label: item.label,
+      fitzgerald_role: item.fitzgerald_role,
+    });
+  }
+  return entityCell({
+    id: item.item_id,
+    spoken_name: item.label,
+    photo_key: item.photo_key,
+  });
+}
+
 /** Group page: slot 0 = back to index, slot 1 = the Edit-mode add action,
- *  items from slot 2. Word taps speak and stay in the group — leaving is
- *  one learned gesture. */
+ *  items at their stored (page, slot_index) in 2–58, slot 59 = Next ›
+ *  when the group has a second page. Word taps speak and stay in the
+ *  group — leaving is one learned gesture. */
 async function renderGroupPage() {
   const zg = $("groupgrid");
   zg.innerHTML = "";
-  const key = groupKey;
-  const group = key?.startsWith("grp_") ? key : null;
-  const category = group || key === "my_words" ? null : key;
-
-  const items = [];
-  if (group) {
-    for (const r of ALL(
-      db,
-      `SELECT e.* FROM group_item gi JOIN personal_entity e ON e.id = gi.entity_id
-       WHERE gi.group_id = ? ORDER BY gi.slot_index`,
-      [group],
-    )) items.push({ kind: "entity", row: r });
-  } else {
-    for (const r of ALL(
-      db,
-      category === null
-        ? "SELECT * FROM personal_entity WHERE category IS NULL ORDER BY spoken_name"
-        : "SELECT * FROM personal_entity WHERE category = ? ORDER BY spoken_name",
-      category === null ? [] : [category],
-    )) items.push({ kind: "entity", row: r });
-    if (category) {
-      for (const r of ALL(
-        db,
-        `SELECT s.id AS sense_id, l.text AS label, s.fitzgerald_role
-         FROM sense s JOIN label l ON l.sense_id = s.id
-           AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
-         WHERE s.category = ? ORDER BY l.text`,
-        [category],
-      )) items.push({ kind: "sense", row: r });
-    }
-  }
-  if (items.length > 58) console.warn(`group ${key} has ${items.length} items; 58 fit — paging is unbuilt`);
+  const items = new Map(
+    groupPage(db, groupKey, groupPageNo).map((r) => [r.slot_index, r]),
+  );
+  const pages = pageCount(db, groupKey);
 
   for (let slot = 0; slot < 60; slot++) {
     if (slot === 0) {
@@ -667,19 +618,37 @@ async function renderGroupPage() {
     }
     if (slot === 1) {
       zg.appendChild(editSlotCell(arranging && "+ Add", () => {
-        addTarget = group ? { group } : { category };
+        addTarget = groupKey;
         open("addform");
       }));
       continue;
     }
-    const item = items[slot - 2];
+    if (slot === 59) {
+      if (pages > 1) {
+        const el = navCell("Next ›", () => {
+          groupPageNo = (groupPageNo + 1) % pages;
+          renderGroupPage();
+        });
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = `${groupPageNo + 1}/${pages}`;
+        el.appendChild(badge);
+        zg.appendChild(el);
+      } else {
+        const blank = document.createElement("div");
+        blank.className = "gcell empty";
+        zg.appendChild(blank);
+      }
+      continue;
+    }
+    const item = items.get(slot);
     if (!item) {
       const empty = document.createElement("div");
       empty.className = "gcell empty";
       zg.appendChild(empty);
       continue;
     }
-    zg.appendChild(item.kind === "sense" ? senseCell(item.row) : await entityCell(item.row));
+    zg.appendChild(await itemCell(item));
   }
 }
 
@@ -687,22 +656,17 @@ async function renderGroupPage() {
 $("group-save").addEventListener("click", async () => {
   const name = $("group-name").value.trim();
   if (!name) return;
-  const id = `grp_${crypto.randomUUID().replaceAll("-", "")}`;
   const file = $("group-photo").files[0];
-  const photoKey = file ? await savePhoto(id, file) : null;
-  RUN(db, "INSERT INTO custom_group (id, name, photo_key) VALUES (?, ?, ?)", [id, name, photoKey]);
-  const used = new Set(ALL(db, "SELECT slot_index FROM zone_slot").map((r) => r.slot_index));
-  let slot = 10;
-  while (used.has(slot)) slot++;
-  RUN(db, "INSERT INTO zone_slot (zone_key, slot_index) VALUES (?, ?)", [id, slot]);
+  const photoKey = file ? await savePhoto(crypto.randomUUID(), file) : null;
+  createGroup(db, { name, photoKey });
   $("group-name").value = "";
   $("group-photo").value = "";
   close("groupform");
   renderGroupIndex();
 });
 
-/* --- add flow: name, photo, save. Files into the open group: a catalog
-   category, a custom group, or My Words (null). --- */
+/* --- add flow: name, photo, save. Files into the open group at the next
+   free cell — the place is the picker. --- */
 $("add-save").addEventListener("click", async () => {
   const name = $("add-name").value.trim();
   if (!name) return;
@@ -710,17 +674,16 @@ $("add-save").addEventListener("click", async () => {
   const file = $("add-photo").files[0];
   const photoKey = file ? await savePhoto(id, file) : null;
   const hint = $("add-hint").value.trim() || null;
-  const category = addTarget?.category ?? null;
+  const target = addTarget ?? "grp_my_words";
+  // The record's home category — a classifier input, never displayed —
+  // is the seed category of a built-in target group, else null.
+  const category = catalog.groups.find((g) => g.id === target)?.category ?? null;
   RUN(
     db,
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES (?, ?, ?, ?, ?)",
     [id, name, photoKey, category, hint],
   );
-  if (addTarget?.group) {
-    const n = ALL(db, "SELECT COUNT(*) AS n FROM group_item WHERE group_id = ?", [addTarget.group])[0].n;
-    RUN(db, "INSERT INTO group_item (group_id, entity_id, slot_index) VALUES (?, ?, ?)",
-      [addTarget.group, id, n]);
-  }
+  placeItem(db, target, "entity", id);
   $("add-name").value = "";
   $("add-photo").value = "";
   $("add-hint").value = "";

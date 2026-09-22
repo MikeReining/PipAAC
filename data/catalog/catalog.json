@@ -3,9 +3,10 @@
   "source": {
     "lexicon": "data/launch_lexicon.json",
     "coordinateMap": "docs/product/Core_Coordinate_Map.md",
-    "schema": "src/board/schema.sql"
+    "schema": "src/board/schema.sql",
+    "groupSeed": "data/group_seed.json"
   },
-  "schemaSql": "-- Pip AAC schema v1 — docs/product/Language_And_Voice_Schema.md is the owner.\n-- Apply with PRAGMA foreign_keys = ON. Version carried in PRAGMA user_version.\n\nCREATE TABLE IF NOT EXISTS sense (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),\n  fitzgerald_role TEXT NOT NULL\n    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Red')),\n  art_archetype TEXT NOT NULL\n    CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),\n  tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),\n  -- For primary_fringe, category is the sense's zone home. For root_core it is\n  -- a zone cross-listing: the word keeps its core cell and also appears when\n  -- browsing that zone (zones are views, not exclusive homes).\n  category TEXT,\n  default_image_id TEXT REFERENCES image(id),\n  CHECK (\n    category IN (\n      'Food & Drink',\n      'Body, Health & Hygiene',\n      'Feelings, Emotions & Sensory States',\n      'Daily Actions & Activity Verbs',\n      'People, Family & Roles',\n      'Places, Rooms & Community',\n      'Toys, Play, Media & Leisure',\n      'Home, Household Objects & Daily Tools',\n      'Clothing & Accessories',\n      'Animals & Nature',\n      'Vehicles & Transportation',\n      'Descriptors, Adjectives & Opposites',\n      'Time, Calendar & Sequencing',\n      'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n      'Function Words & Grammar',\n      'Numbers & Counting'\n    )\n    OR (tier = 'root_core' AND category IS NULL)\n  )\n);\n\nCREATE TABLE IF NOT EXISTS utterance (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'utt_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  spoken_text TEXT NOT NULL CHECK (length(spoken_text) > 0),\n  normalized_spoken_text TEXT NOT NULL CHECK (length(normalized_spoken_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  UNIQUE (locale, normalized_spoken_text)\n);\n\nCREATE TABLE IF NOT EXISTS label (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'lbl_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  text TEXT NOT NULL CHECK (length(text) > 0),\n  normalized_text TEXT NOT NULL CHECK (length(normalized_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),\n  part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (\n    'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',\n    'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'\n  )),\n  default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))\n);\n\nCREATE TABLE IF NOT EXISTS image (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'img_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS voice (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'voi_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  display_name TEXT NOT NULL CHECK (length(display_name) > 0),\n  source TEXT NOT NULL CHECK (source IN ('bundled', 'device_tts')),\n  engine_id TEXT,\n  is_default INTEGER NOT NULL CHECK (is_default IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('active', 'retired')),\n  CHECK (source != 'device_tts' OR engine_id IS NOT NULL),\n  CHECK (source != 'bundled' OR engine_id IS NULL),\n  CHECK (status != 'retired' OR is_default = 0)\n);\n\nCREATE TABLE IF NOT EXISTS clip (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'clp_*'),\n  voice_id TEXT NOT NULL REFERENCES voice(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0),\n  source TEXT NOT NULL CHECK (length(source) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS core_cell (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'cel_*'),\n  layout TEXT NOT NULL CHECK (length(layout) > 0),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),\n  UNIQUE (layout, slot_index),\n  UNIQUE (layout, sense_id)\n);\n\nCREATE TABLE IF NOT EXISTS learner_profile (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'prf_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  preferred_voice_id TEXT NOT NULL REFERENCES voice(id)\n);\n\nCREATE TABLE IF NOT EXISTS personal_entity (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),\n  spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),\n  photo_key TEXT,\n  category TEXT CHECK (category IS NULL OR category IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  hint TEXT\n);\n\nCREATE TABLE IF NOT EXISTS entity_enrichment (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'enr_*'),\n  entity_id TEXT NOT NULL REFERENCES personal_entity(id),\n  description TEXT,\n  category_suggestion TEXT CHECK (category_suggestion IS NULL OR category_suggestion IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  associations TEXT,\n  model TEXT NOT NULL,\n  prompt_version TEXT NOT NULL,\n  status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))\n);\n\n-- Selection events feed the local funnel's recency and time-of-day\n-- histogram (Dual_Engine §5.2). Ids only — never the English string.\nCREATE TABLE IF NOT EXISTS learner_event_log (\n  id INTEGER PRIMARY KEY,\n  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),\n  item_id TEXT NOT NULL CHECK (length(item_id) > 0),\n  selected_at INTEGER NOT NULL CHECK (selected_at > 0)\n);\n\nCREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);\nCREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);\n\nCREATE TABLE IF NOT EXISTS clip_override (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),\n  utterance_id TEXT REFERENCES utterance(id),\n  entity_id TEXT REFERENCES personal_entity(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  CHECK ((utterance_id IS NULL) != (entity_id IS NULL))\n);\n\n-- The zone index is a second coordinate map: navigation gets the same\n-- motor-memory law as core_cell. zone_key is 'my_words', a catalog\n-- category name, or a custom_group id. Slots 0–9 are pinned nav cells;\n-- zones occupy 10–59. Positions only move via caregiver arrange mode.\nCREATE TABLE IF NOT EXISTS zone_slot (\n  zone_key TEXT PRIMARY KEY CHECK (length(zone_key) > 0),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 10 AND slot_index < 60)\n);\n\nCREATE TABLE IF NOT EXISTS custom_group (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),\n  name TEXT NOT NULL CHECK (length(name) > 0),\n  photo_key TEXT\n);\n\n-- Custom groups hold personal entities in stable order (first-added =\n-- first slot — mini motor memory inside the group).\nCREATE TABLE IF NOT EXISTS group_item (\n  group_id TEXT NOT NULL REFERENCES custom_group(id),\n  entity_id TEXT NOT NULL REFERENCES personal_entity(id),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),\n  PRIMARY KEY (group_id, entity_id)\n);\n\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text\n  ON label(sense_id, locale, normalized_text);\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_approved_lemma\n  ON label(sense_id, locale)\n  WHERE kind = 'lemma' AND status = 'approved';\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_default_text\n  ON label(locale, normalized_text)\n  WHERE status = 'approved' AND default_for_text = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS voice_one_active_default\n  ON voice(locale)\n  WHERE status = 'active' AND is_default = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS clip_one_ready\n  ON clip(voice_id, utterance_id)\n  WHERE status = 'ready';\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_utterance\n  ON clip_override(utterance_id)\n  WHERE status = 'ready' AND utterance_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_entity\n  ON clip_override(entity_id)\n  WHERE status = 'ready' AND entity_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS enrichment_one_ready\n  ON entity_enrichment(entity_id)\n  WHERE status = 'ready';\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance\nBEFORE INSERT ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance\nBEFORE INSERT ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS override_recorded_text_matches\nBEFORE INSERT ON clip_override\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'override recorded_text must equal utterance.spoken_text')\n  WHERE NEW.utterance_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\n  SELECT RAISE(ABORT, 'override recorded_text must equal entity spoken_name')\n  WHERE NEW.entity_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM personal_entity\n    WHERE personal_entity.id = NEW.entity_id\n      AND personal_entity.spoken_name = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS sense_default_image_same_sense\nBEFORE UPDATE OF default_image_id ON sense\nFOR EACH ROW\nWHEN NEW.default_image_id IS NOT NULL\nBEGIN\n  SELECT RAISE(ABORT, 'default image belongs to another sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM image\n    WHERE image.id = NEW.default_image_id\n      AND image.sense_id = NEW.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS core_cell_root_only\nBEFORE INSERT ON core_cell\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'core cell requires a root_core sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM sense\n    WHERE sense.id = NEW.sense_id AND sense.tier = 'root_core'\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale\nBEFORE INSERT ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS voice_retire_blocks_if_preferred\nBEFORE UPDATE OF status ON voice\nFOR EACH ROW\nWHEN NEW.status = 'retired' AND OLD.status != 'retired'\nBEGIN\n  SELECT RAISE(ABORT, 'repoint profiles before retiring this voice')\n  WHERE EXISTS (\n    SELECT 1 FROM learner_profile\n    WHERE preferred_voice_id = OLD.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS utterance_rename_supersedes_audio\nAFTER UPDATE OF spoken_text ON utterance\nFOR EACH ROW\nWHEN NEW.spoken_text != OLD.spoken_text\nBEGIN\n  UPDATE clip\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_rename_supersedes_override\nAFTER UPDATE OF spoken_name ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\nBEGIN\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_input_change_supersedes_enrichment\nAFTER UPDATE OF spoken_name, photo_key ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\n   OR NEW.photo_key IS NOT OLD.photo_key\nBEGIN\n  UPDATE entity_enrichment\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status IN ('ready', 'abstained');\nEND;\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance_on_update\nBEFORE UPDATE OF utterance_id, locale ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance_on_update\nBEFORE UPDATE OF voice_id, utterance_id, recorded_text ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale_on_update\nBEFORE UPDATE OF preferred_voice_id, locale ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nPRAGMA user_version = 3;\n",
+  "schemaSql": "-- Pip AAC schema v1 — docs/product/Language_And_Voice_Schema.md is the owner.\n-- Apply with PRAGMA foreign_keys = ON. Version carried in PRAGMA user_version.\n\nCREATE TABLE IF NOT EXISTS sense (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),\n  fitzgerald_role TEXT NOT NULL\n    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Red')),\n  art_archetype TEXT NOT NULL\n    CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),\n  tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),\n  -- For primary_fringe, category seeds the sense's built-in group. For\n  -- root_core it is a group cross-listing: the word keeps its core cell\n  -- and also appears inside that group (groups are views, not exclusive\n  -- homes).\n  category TEXT,\n  default_image_id TEXT REFERENCES image(id),\n  CHECK (\n    category IN (\n      'Food & Drink',\n      'Body, Health & Hygiene',\n      'Feelings, Emotions & Sensory States',\n      'Daily Actions & Activity Verbs',\n      'People, Family & Roles',\n      'Places, Rooms & Community',\n      'Toys, Play, Media & Leisure',\n      'Home, Household Objects & Daily Tools',\n      'Clothing & Accessories',\n      'Animals & Nature',\n      'Vehicles & Transportation',\n      'Descriptors, Adjectives & Opposites',\n      'Time, Calendar & Sequencing',\n      'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n      'Function Words & Grammar',\n      'Numbers & Counting'\n    )\n    OR (tier = 'root_core' AND category IS NULL)\n  )\n);\n\nCREATE TABLE IF NOT EXISTS utterance (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'utt_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  spoken_text TEXT NOT NULL CHECK (length(spoken_text) > 0),\n  normalized_spoken_text TEXT NOT NULL CHECK (length(normalized_spoken_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  UNIQUE (locale, normalized_spoken_text)\n);\n\nCREATE TABLE IF NOT EXISTS label (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'lbl_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  text TEXT NOT NULL CHECK (length(text) > 0),\n  normalized_text TEXT NOT NULL CHECK (length(normalized_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),\n  part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (\n    'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',\n    'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'\n  )),\n  default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))\n);\n\nCREATE TABLE IF NOT EXISTS image (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'img_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS voice (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'voi_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  display_name TEXT NOT NULL CHECK (length(display_name) > 0),\n  source TEXT NOT NULL CHECK (source IN ('bundled', 'device_tts')),\n  engine_id TEXT,\n  is_default INTEGER NOT NULL CHECK (is_default IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('active', 'retired')),\n  CHECK (source != 'device_tts' OR engine_id IS NOT NULL),\n  CHECK (source != 'bundled' OR engine_id IS NULL),\n  CHECK (status != 'retired' OR is_default = 0)\n);\n\nCREATE TABLE IF NOT EXISTS clip (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'clp_*'),\n  voice_id TEXT NOT NULL REFERENCES voice(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0),\n  source TEXT NOT NULL CHECK (length(source) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS core_cell (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'cel_*'),\n  layout TEXT NOT NULL CHECK (length(layout) > 0),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),\n  UNIQUE (layout, slot_index),\n  UNIQUE (layout, sense_id)\n);\n\nCREATE TABLE IF NOT EXISTS learner_profile (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'prf_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  preferred_voice_id TEXT NOT NULL REFERENCES voice(id)\n);\n\nCREATE TABLE IF NOT EXISTS personal_entity (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),\n  spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),\n  photo_key TEXT,\n  category TEXT CHECK (category IS NULL OR category IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  hint TEXT\n);\n\nCREATE TABLE IF NOT EXISTS entity_enrichment (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'enr_*'),\n  entity_id TEXT NOT NULL REFERENCES personal_entity(id),\n  description TEXT,\n  category_suggestion TEXT CHECK (category_suggestion IS NULL OR category_suggestion IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  associations TEXT,\n  model TEXT NOT NULL,\n  prompt_version TEXT NOT NULL,\n  status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))\n);\n\n-- Selection events feed the local funnel's recency and time-of-day\n-- histogram (Dual_Engine §5.2). Ids only — never the English string.\nCREATE TABLE IF NOT EXISTS learner_event_log (\n  id INTEGER PRIMARY KEY,\n  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),\n  item_id TEXT NOT NULL CHECK (length(item_id) > 0),\n  selected_at INTEGER NOT NULL CHECK (selected_at > 0)\n);\n\nCREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);\nCREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);\n\nCREATE TABLE IF NOT EXISTS clip_override (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),\n  utterance_id TEXT REFERENCES utterance(id),\n  entity_id TEXT REFERENCES personal_entity(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  CHECK ((utterance_id IS NULL) != (entity_id IS NULL))\n);\n\n-- Groups: one kind of container. The index is a coordinate map (slots\n-- 10–59); items sit at fixed (page, slot) inside a group. Positions move\n-- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.\nCREATE TABLE IF NOT EXISTS board_group (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),\n  kind TEXT NOT NULL CHECK (kind IN ('builtin', 'my_words', 'custom')),\n  name TEXT NOT NULL CHECK (length(name) > 0),\n  glyph TEXT,\n  photo_key TEXT,\n  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10 AND index_slot < 60)\n);\n\nCREATE TABLE IF NOT EXISTS group_cell (\n  group_id TEXT NOT NULL REFERENCES board_group(id),\n  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),\n  item_id TEXT NOT NULL,\n  page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 2 AND slot_index <= 58),\n  PRIMARY KEY (group_id, item_kind, item_id),\n  UNIQUE (group_id, page, slot_index),\n  CHECK ((item_kind = 'sense' AND item_id GLOB 'sns_*')\n      OR (item_kind = 'entity' AND item_id GLOB 'ent_*'))\n);\n\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text\n  ON label(sense_id, locale, normalized_text);\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_approved_lemma\n  ON label(sense_id, locale)\n  WHERE kind = 'lemma' AND status = 'approved';\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_default_text\n  ON label(locale, normalized_text)\n  WHERE status = 'approved' AND default_for_text = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS voice_one_active_default\n  ON voice(locale)\n  WHERE status = 'active' AND is_default = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS clip_one_ready\n  ON clip(voice_id, utterance_id)\n  WHERE status = 'ready';\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_utterance\n  ON clip_override(utterance_id)\n  WHERE status = 'ready' AND utterance_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_entity\n  ON clip_override(entity_id)\n  WHERE status = 'ready' AND entity_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS enrichment_one_ready\n  ON entity_enrichment(entity_id)\n  WHERE status = 'ready';\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance\nBEFORE INSERT ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance\nBEFORE INSERT ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS override_recorded_text_matches\nBEFORE INSERT ON clip_override\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'override recorded_text must equal utterance.spoken_text')\n  WHERE NEW.utterance_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\n  SELECT RAISE(ABORT, 'override recorded_text must equal entity spoken_name')\n  WHERE NEW.entity_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM personal_entity\n    WHERE personal_entity.id = NEW.entity_id\n      AND personal_entity.spoken_name = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS sense_default_image_same_sense\nBEFORE UPDATE OF default_image_id ON sense\nFOR EACH ROW\nWHEN NEW.default_image_id IS NOT NULL\nBEGIN\n  SELECT RAISE(ABORT, 'default image belongs to another sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM image\n    WHERE image.id = NEW.default_image_id\n      AND image.sense_id = NEW.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS core_cell_root_only\nBEFORE INSERT ON core_cell\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'core cell requires a root_core sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM sense\n    WHERE sense.id = NEW.sense_id AND sense.tier = 'root_core'\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale\nBEFORE INSERT ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS voice_retire_blocks_if_preferred\nBEFORE UPDATE OF status ON voice\nFOR EACH ROW\nWHEN NEW.status = 'retired' AND OLD.status != 'retired'\nBEGIN\n  SELECT RAISE(ABORT, 'repoint profiles before retiring this voice')\n  WHERE EXISTS (\n    SELECT 1 FROM learner_profile\n    WHERE preferred_voice_id = OLD.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS utterance_rename_supersedes_audio\nAFTER UPDATE OF spoken_text ON utterance\nFOR EACH ROW\nWHEN NEW.spoken_text != OLD.spoken_text\nBEGIN\n  UPDATE clip\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_rename_supersedes_override\nAFTER UPDATE OF spoken_name ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\nBEGIN\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_input_change_supersedes_enrichment\nAFTER UPDATE OF spoken_name, photo_key ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\n   OR NEW.photo_key IS NOT OLD.photo_key\nBEGIN\n  UPDATE entity_enrichment\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status IN ('ready', 'abstained');\nEND;\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance_on_update\nBEFORE UPDATE OF utterance_id, locale ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance_on_update\nBEFORE UPDATE OF voice_id, utterance_id, recorded_text ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale_on_update\nBEFORE UPDATE OF preferred_voice_id, locale ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nPRAGMA user_version = 4;\n",
   "layouts": {
     "grid60": {
       "cols": 10,
@@ -25643,6 +25644,4453 @@
       "layout": "grid90",
       "sense_id": "sns_0172",
       "slot_index": 82
+    }
+  ],
+  "groups": [
+    {
+      "id": "grp_my_words",
+      "kind": "my_words",
+      "name": "My Words",
+      "glyph": "⭐",
+      "index_slot": 10,
+      "category": null
+    },
+    {
+      "id": "grp_food",
+      "kind": "builtin",
+      "name": "Food",
+      "glyph": "🍎",
+      "index_slot": 11,
+      "category": "Food & Drink"
+    },
+    {
+      "id": "grp_drinks",
+      "kind": "builtin",
+      "name": "Drinks",
+      "glyph": "🥤",
+      "index_slot": 12,
+      "category": null
+    },
+    {
+      "id": "grp_body",
+      "kind": "builtin",
+      "name": "Body",
+      "glyph": "🧍",
+      "index_slot": 13,
+      "category": "Body, Health & Hygiene"
+    },
+    {
+      "id": "grp_feelings",
+      "kind": "builtin",
+      "name": "Feelings",
+      "glyph": "😊",
+      "index_slot": 14,
+      "category": "Feelings, Emotions & Sensory States"
+    },
+    {
+      "id": "grp_actions",
+      "kind": "builtin",
+      "name": "Actions",
+      "glyph": "🏃",
+      "index_slot": 15,
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "grp_moving",
+      "kind": "builtin",
+      "name": "Moving",
+      "glyph": "🤸",
+      "index_slot": 16,
+      "category": null
+    },
+    {
+      "id": "grp_people",
+      "kind": "builtin",
+      "name": "People",
+      "glyph": "👪",
+      "index_slot": 17,
+      "category": "People, Family & Roles"
+    },
+    {
+      "id": "grp_places",
+      "kind": "builtin",
+      "name": "Places",
+      "glyph": "🏠",
+      "index_slot": 18,
+      "category": "Places, Rooms & Community"
+    },
+    {
+      "id": "grp_play",
+      "kind": "builtin",
+      "name": "Play",
+      "glyph": "⚽",
+      "index_slot": 19,
+      "category": "Toys, Play, Media & Leisure"
+    },
+    {
+      "id": "grp_home",
+      "kind": "builtin",
+      "name": "Home",
+      "glyph": "🛋️",
+      "index_slot": 20,
+      "category": "Home, Household Objects & Daily Tools"
+    },
+    {
+      "id": "grp_clothes",
+      "kind": "builtin",
+      "name": "Clothes",
+      "glyph": "👕",
+      "index_slot": 21,
+      "category": "Clothing & Accessories"
+    },
+    {
+      "id": "grp_animals",
+      "kind": "builtin",
+      "name": "Animals",
+      "glyph": "🐶",
+      "index_slot": 22,
+      "category": "Animals & Nature"
+    },
+    {
+      "id": "grp_vehicles",
+      "kind": "builtin",
+      "name": "Vehicles",
+      "glyph": "🚗",
+      "index_slot": 23,
+      "category": "Vehicles & Transportation"
+    },
+    {
+      "id": "grp_describing",
+      "kind": "builtin",
+      "name": "Describing",
+      "glyph": "🎨",
+      "index_slot": 24,
+      "category": "Descriptors, Adjectives & Opposites"
+    },
+    {
+      "id": "grp_time",
+      "kind": "builtin",
+      "name": "Time",
+      "glyph": "🕐",
+      "index_slot": 25,
+      "category": "Time, Calendar & Sequencing"
+    },
+    {
+      "id": "grp_social",
+      "kind": "builtin",
+      "name": "Social",
+      "glyph": "💬",
+      "index_slot": 26,
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "id": "grp_little_words",
+      "kind": "builtin",
+      "name": "Little words",
+      "glyph": "🔤",
+      "index_slot": 27,
+      "category": "Function Words & Grammar"
+    },
+    {
+      "id": "grp_numbers",
+      "kind": "builtin",
+      "name": "Numbers",
+      "glyph": "🔢",
+      "index_slot": 28,
+      "category": "Numbers & Counting"
+    }
+  ],
+  "groupCells": [
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0089",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0090",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0091",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0092",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0093",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0094",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0095",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0096",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0097",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0098",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0099",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0100",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0101",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0102",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0103",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0104",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0105",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0106",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0107",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0108",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0109",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0110",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0111",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0112",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0113",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0114",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0115",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0116",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0117",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0118",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0119",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0120",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0121",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0122",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0123",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0124",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0125",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0126",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0127",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0128",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0129",
+      "page": 0,
+      "slot_index": 42
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0130",
+      "page": 0,
+      "slot_index": 43
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0131",
+      "page": 0,
+      "slot_index": 44
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0132",
+      "page": 0,
+      "slot_index": 45
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0133",
+      "page": 0,
+      "slot_index": 46
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0134",
+      "page": 0,
+      "slot_index": 47
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0135",
+      "page": 0,
+      "slot_index": 48
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0136",
+      "page": 0,
+      "slot_index": 49
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0657",
+      "page": 0,
+      "slot_index": 50
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0658",
+      "page": 0,
+      "slot_index": 51
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0659",
+      "page": 0,
+      "slot_index": 52
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0660",
+      "page": 0,
+      "slot_index": 53
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0661",
+      "page": 0,
+      "slot_index": 54
+    },
+    {
+      "group_id": "grp_food",
+      "item_kind": "sense",
+      "item_id": "sns_0662",
+      "page": 0,
+      "slot_index": 55
+    },
+    {
+      "group_id": "grp_drinks",
+      "item_kind": "sense",
+      "item_id": "sns_0082",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_drinks",
+      "item_kind": "sense",
+      "item_id": "sns_0083",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_drinks",
+      "item_kind": "sense",
+      "item_id": "sns_0084",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_drinks",
+      "item_kind": "sense",
+      "item_id": "sns_0085",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_drinks",
+      "item_kind": "sense",
+      "item_id": "sns_0086",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_drinks",
+      "item_kind": "sense",
+      "item_id": "sns_0087",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_drinks",
+      "item_kind": "sense",
+      "item_id": "sns_0088",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0137",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0138",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0139",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0140",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0141",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0142",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0143",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0144",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0145",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0146",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0147",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0148",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0149",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0150",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0151",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0152",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0153",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0154",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0155",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0156",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0157",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0158",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0159",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0160",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0161",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0162",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0163",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0164",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0165",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0166",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0167",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0168",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0169",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0170",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0171",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0172",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0173",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0174",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0175",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0176",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0177",
+      "page": 0,
+      "slot_index": 42
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0178",
+      "page": 0,
+      "slot_index": 43
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0663",
+      "page": 0,
+      "slot_index": 44
+    },
+    {
+      "group_id": "grp_body",
+      "item_kind": "sense",
+      "item_id": "sns_0664",
+      "page": 0,
+      "slot_index": 45
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0061",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0179",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0180",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0181",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0182",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0183",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0184",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0185",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0186",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0187",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0188",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0189",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0190",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0191",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0192",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0193",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0194",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0195",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0196",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0197",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0198",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0199",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0200",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0201",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0202",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0203",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0204",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0205",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0206",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0207",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0208",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0209",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0210",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0211",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0212",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_feelings",
+      "item_kind": "sense",
+      "item_id": "sns_0213",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0027",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0028",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0029",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0030",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0031",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0232",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0233",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0234",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0235",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0236",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0237",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0238",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0239",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0240",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0241",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0242",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0243",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0244",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0245",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0246",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0247",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0248",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0249",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0250",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0251",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0252",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0253",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0254",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0255",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0256",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0257",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0258",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0259",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0260",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0261",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0262",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0263",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0264",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0265",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0665",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0666",
+      "page": 0,
+      "slot_index": 42
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0667",
+      "page": 0,
+      "slot_index": 43
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0668",
+      "page": 0,
+      "slot_index": 44
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0669",
+      "page": 0,
+      "slot_index": 45
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0670",
+      "page": 0,
+      "slot_index": 46
+    },
+    {
+      "group_id": "grp_actions",
+      "item_kind": "sense",
+      "item_id": "sns_0671",
+      "page": 0,
+      "slot_index": 47
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0214",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0215",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0216",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0217",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0218",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0219",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0220",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0221",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0222",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0223",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0224",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0225",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0226",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0227",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0228",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0229",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0230",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_moving",
+      "item_kind": "sense",
+      "item_id": "sns_0231",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0266",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0267",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0268",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0269",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0270",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0271",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0272",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0273",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0274",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0275",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0276",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0277",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0278",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0279",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0280",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0281",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0282",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0283",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0284",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0285",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0286",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0287",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0288",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0289",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0290",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0291",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0292",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0293",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0294",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0295",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0296",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0672",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0673",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0674",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_people",
+      "item_kind": "sense",
+      "item_id": "sns_0675",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0297",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0298",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0299",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0300",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0301",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0302",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0303",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0304",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0305",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0306",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0307",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0308",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0309",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0310",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0311",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0312",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0313",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0314",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0315",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0316",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0317",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0318",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0319",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0320",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0321",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0322",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0323",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0324",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0325",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0326",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0327",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0328",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0329",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0330",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_places",
+      "item_kind": "sense",
+      "item_id": "sns_0331",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0332",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0333",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0334",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0335",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0336",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0337",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0338",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0339",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0340",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0341",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0342",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0343",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0344",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0345",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0346",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0347",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0348",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0349",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0350",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0351",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0352",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0353",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0354",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0355",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0356",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0357",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0358",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0359",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0360",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0361",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0362",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0363",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0364",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0365",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0366",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0367",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0368",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_play",
+      "item_kind": "sense",
+      "item_id": "sns_0369",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0370",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0371",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0372",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0373",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0374",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0375",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0376",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0377",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0378",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0379",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0380",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0381",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0382",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0383",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0384",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0385",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0386",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0387",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0388",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0389",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0390",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0391",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0392",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0393",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0394",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0395",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0396",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0397",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0398",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0399",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0400",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0401",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0402",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0403",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0404",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0405",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0406",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0407",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0408",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0409",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0410",
+      "page": 0,
+      "slot_index": 42
+    },
+    {
+      "group_id": "grp_home",
+      "item_kind": "sense",
+      "item_id": "sns_0411",
+      "page": 0,
+      "slot_index": 43
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0412",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0413",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0414",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0415",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0416",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0417",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0418",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0419",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0420",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0421",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0422",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0423",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0424",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0425",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0426",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0427",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0428",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0429",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0430",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0431",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0432",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0433",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0434",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0435",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0436",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0437",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0438",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_clothes",
+      "item_kind": "sense",
+      "item_id": "sns_0439",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0440",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0441",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0442",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0443",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0444",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0445",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0446",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0447",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0448",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0449",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0450",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0451",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0452",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0453",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0454",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0455",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0456",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0457",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0458",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0459",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0460",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0461",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0462",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0463",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0464",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0465",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0466",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0467",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0468",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0469",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0470",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0471",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0472",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0473",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0474",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0475",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0476",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0477",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0478",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_animals",
+      "item_kind": "sense",
+      "item_id": "sns_0479",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0480",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0481",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0482",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0483",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0484",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0485",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0486",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0487",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0488",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0489",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0490",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0491",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0492",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0493",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0494",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0495",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0496",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0497",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0498",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0499",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0500",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0501",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0502",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0503",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_vehicles",
+      "item_kind": "sense",
+      "item_id": "sns_0504",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0057",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0058",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0059",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0060",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0505",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0506",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0507",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0508",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0509",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0510",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0511",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0512",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0513",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0514",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0515",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0516",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0517",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0518",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0519",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0520",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0521",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0522",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0523",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0524",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0525",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0526",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0527",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0528",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0529",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0530",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0531",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0532",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0533",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0534",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0535",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0536",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0537",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0538",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0539",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0540",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0541",
+      "page": 0,
+      "slot_index": 42
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0542",
+      "page": 0,
+      "slot_index": 43
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0543",
+      "page": 0,
+      "slot_index": 44
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0544",
+      "page": 0,
+      "slot_index": 45
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0545",
+      "page": 0,
+      "slot_index": 46
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0546",
+      "page": 0,
+      "slot_index": 47
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0547",
+      "page": 0,
+      "slot_index": 48
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0548",
+      "page": 0,
+      "slot_index": 49
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0549",
+      "page": 0,
+      "slot_index": 50
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0550",
+      "page": 0,
+      "slot_index": 51
+    },
+    {
+      "group_id": "grp_describing",
+      "item_kind": "sense",
+      "item_id": "sns_0552",
+      "page": 0,
+      "slot_index": 52
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0553",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0554",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0555",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0556",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0557",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0558",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0559",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0560",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0561",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0562",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0563",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0564",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0565",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0566",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0567",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0568",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0569",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0570",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0571",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0572",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0573",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0574",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0575",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_time",
+      "item_kind": "sense",
+      "item_id": "sns_0576",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0025",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0026",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0072",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0073",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0075",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0583",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0584",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0585",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0586",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0587",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0588",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0589",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0590",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0591",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0592",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0593",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0594",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0595",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0596",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0597",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0598",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0599",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0600",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0601",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0602",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0603",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0604",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0605",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0606",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0676",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0677",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0678",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0074",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0076",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0607",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0608",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0609",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0610",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0611",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0612",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0613",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0614",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0615",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0616",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0617",
+      "page": 0,
+      "slot_index": 14
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0618",
+      "page": 0,
+      "slot_index": 15
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0619",
+      "page": 0,
+      "slot_index": 16
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0620",
+      "page": 0,
+      "slot_index": 17
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0621",
+      "page": 0,
+      "slot_index": 18
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0622",
+      "page": 0,
+      "slot_index": 19
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0623",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0624",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0625",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0626",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0627",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0628",
+      "page": 0,
+      "slot_index": 25
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0629",
+      "page": 0,
+      "slot_index": 26
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0630",
+      "page": 0,
+      "slot_index": 27
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0631",
+      "page": 0,
+      "slot_index": 28
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0632",
+      "page": 0,
+      "slot_index": 29
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0633",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0634",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0635",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0636",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0637",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0638",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0639",
+      "page": 0,
+      "slot_index": 36
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0640",
+      "page": 0,
+      "slot_index": 37
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0641",
+      "page": 0,
+      "slot_index": 38
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0642",
+      "page": 0,
+      "slot_index": 39
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0643",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0644",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0645",
+      "page": 0,
+      "slot_index": 42
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0646",
+      "page": 0,
+      "slot_index": 43
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0679",
+      "page": 0,
+      "slot_index": 44
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0680",
+      "page": 0,
+      "slot_index": 45
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0681",
+      "page": 0,
+      "slot_index": 46
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0682",
+      "page": 0,
+      "slot_index": 47
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0683",
+      "page": 0,
+      "slot_index": 48
+    },
+    {
+      "group_id": "grp_little_words",
+      "item_kind": "sense",
+      "item_id": "sns_0684",
+      "page": 0,
+      "slot_index": 49
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0647",
+      "page": 0,
+      "slot_index": 2
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0648",
+      "page": 0,
+      "slot_index": 3
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0649",
+      "page": 0,
+      "slot_index": 4
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0650",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0651",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0652",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0653",
+      "page": 0,
+      "slot_index": 8
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0654",
+      "page": 0,
+      "slot_index": 9
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0655",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_numbers",
+      "item_kind": "sense",
+      "item_id": "sns_0656",
+      "page": 0,
+      "slot_index": 11
     }
   ]
 }
