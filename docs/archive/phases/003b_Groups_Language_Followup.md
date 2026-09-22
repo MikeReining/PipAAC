@@ -1,6 +1,7 @@
 # Phase 003b — Groups 2.0 language follow-up
 
-**Status:** Ready to execute. Not started.
+**Status:** Complete 2026-09-22 — slices 1–3 landed as `f203693`,
+`cfcd0a9`, `5c971c4`; `npm run check` green at closeout.
 
 **DECIDED 2026-09-22** (founder: "Please do all of the updates above … we
 will fix the group section before working on the keyboard section", after

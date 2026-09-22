@@ -7,10 +7,11 @@ the same session; locale amendments approved the same day: "Please do all of
 the updates above"). This doc packs the whole phase for one developer to
 execute end to end. Every slice is self-contained. Do them in order.
 
-**Start after** `docs/phases/003b_Groups_Language_Followup.md` is done. That
-phase makes the runtime read the profile locale and voice. This phase builds
-on it and edits the same files (`public/board.js`, `public/index.html`,
-`src/board/schema.sql`). Rebase line references on that commit.
+**Start after** the 003b language follow-up — complete 2026-09-22
+(`docs/archive/phases/003b_Groups_Language_Followup.md`). That phase made the
+runtime read the profile locale and voice. This phase builds on it and edits
+the same files (`public/board.js`, `public/index.html`,
+`src/board/schema.sql`). Line references are rebased on `5c971c4`.
 
 **Built for every language, shipped in English.** Every rule here is keyed by
 the profile locale. English is the only locale the catalog ships today. The

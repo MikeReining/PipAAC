@@ -964,8 +964,8 @@ Accepted in founder review the day it was proposed. The amendments:
 
 Founder question: is the core built correctly for German, Spanish, and
 French? Answer: **the schema is; the runtime and a few seams are not yet.**
-Fixes are routed to `docs/phases/003b_Groups_Language_Followup.md` and
-`docs/phases/004_Keyboard.md`.
+Fixes are routed to `docs/archive/phases/003b_Groups_Language_Followup.md`
+(complete) and `docs/phases/004_Keyboard.md`.
 
 ### 13.1 What is already right
 
@@ -988,10 +988,10 @@ Fixes are routed to `docs/phases/003b_Groups_Language_Followup.md` and
 
 | Gap | Status | Fix |
 | --- | --- | --- |
-| Runtime never reads `learner_profile.locale`; label queries hard-code `'en'` and `clipKeyFor` hard-codes `voi_default_en` (`public/board.js` at `fb5a8d7`) | **DECIDED 2026-09-22** (not built) | 003b slice 2; a check-fast gate bans the literals |
-| `speak()` sets no `lang`; `<html lang="en">` is fixed | **DECIDED 2026-09-22** (not built) | 003b slice 2 |
-| Built-in group names stored as English text on the device (Groups 2.0 seed) | **DECIDED 2026-09-22** (not built) | 003b slice 1: `group_label` catalog table; `board_group.name` becomes the caregiver override |
-| Strip grammar matches the English text `"to"` | **DECIDED 2026-09-22** (not built) | 003b slice 3: per-locale rules, keyed by sense id |
+| Runtime reads `learner_profile.locale`; `resolveProfile` implements § 7.1 and every label query and `clipKeyFor` bind the profile locale/voice; a check-fast gate bans the literals | **BUILT** (cfcd0a9) | `public/shared/profile.mjs`, `scripts/check_locale_literals.mjs` |
+| `speak()` sets `u.lang` to the profile locale; `document.documentElement.lang` follows at boot | **BUILT** (cfcd0a9) | `public/board.js` |
+| Built-in group names come from the `group_label` catalog table per locale; `board_group.name` is the caregiver override (NULL for built-ins); stored seed names are NULLed by `migrateBuiltinGroupNames` | **BUILT** (f203693) | `data/group_seed.json`, `public/shared/groups.mjs` |
+| Strip grammar is per locale (`GRAMMAR` keyed by locale); the infinitival-*to* rule matches the tail's sense id, never the English text | **BUILT** (5c971c4) | `public/shared/funnel.mjs` |
 | Keyboard letters, punctuation, capitals, and spelling rules are English | **DECIDED 2026-09-22** (not built) | 004: per-locale key maps, accent-insensitive matching, per-locale sound keys and fixtures |
 | Digits have no language-neutral path to number senses | **DECIDED 2026-09-22** (not built) | 004 slice 2: digit **alias labels** per locale (below) |
 | No inflected forms (*wants*, *went*, *played* are missing) | **DECIDED 2026-09-22** (not built) | `docs/phases/005_Word_Forms.md` |
