@@ -14,7 +14,7 @@
 import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-import { normalizeV1 } from "../../src/board/normalize.mjs";
+import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
   DEFAULT_AUDIO_CACHE_ROOT,
   DEFAULT_AUDIO_IMPORT_PATH,

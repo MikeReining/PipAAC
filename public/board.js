@@ -5,6 +5,7 @@
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
+import { normalizeV1 } from "./shared/normalize.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -81,42 +82,125 @@ $("clear").addEventListener("click", () => {
   renderStrip();
 });
 
+const senseByLemma = (text) =>
+  ALL(
+    db,
+    `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
+     JOIN label l ON l.sense_id = s.id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+     WHERE l.normalized_text = ?`,
+    [normalizeV1(text)],
+  )[0];
+
+/** The four resting cards shown when the sentence bar is empty. */
+async function idleStarters() {
+  const cards = [];
+  const hello = senseByLemma("hello");
+  if (hello) {
+    cards.push({ label: "hello", glyph: "👋", role: hello.fitzgerald_role,
+      onTap: () => tap(hello.label, "sense", hello.id) });
+  }
+  cards.push({ label: "Food", glyph: "🥞", role: "Pink",
+    onTap: () => { renderZone("Food & Drink", "Food & Drink"); open("zone"); } });
+  const top = ALL(
+    db,
+    `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
+     LEFT JOIN learner_event_log l ON l.item_kind = 'entity' AND l.item_id = e.id
+     GROUP BY e.id ORDER BY COUNT(l.id) DESC, MAX(l.selected_at) DESC, e.rowid LIMIT 1`,
+  )[0];
+  if (top) cards.push({ entity: top });
+  const help = senseByLemma("help");
+  if (help) {
+    cards.push({ label: "help", glyph: "🆘", role: help.fitzgerald_role,
+      onTap: () => tap(help.label, "sense", help.id) });
+  }
+  return cards.slice(0, 4);
+}
+
+async function predCard(c) {
+  if (c.entity) {
+    const el = document.createElement("button");
+    el.className = "pred r-Yellow";
+    const sw = document.createElement("span");
+    sw.className = "swatch";
+    const url = await loadPhotoURL(c.entity.photo_key);
+    if (url) {
+      const img = document.createElement("img");
+      img.src = url;
+      sw.appendChild(img);
+    } else {
+      sw.textContent = c.entity.spoken_name[0].toUpperCase();
+    }
+    el.appendChild(sw);
+    const lb = document.createElement("span");
+    lb.className = "label";
+    lb.textContent = c.entity.spoken_name;
+    el.appendChild(lb);
+    el.addEventListener("click", () => tap(c.entity.spoken_name, "entity", c.entity.id));
+    return el;
+  }
+  const el = document.createElement("button");
+  el.className = `pred${c.role ? ` r-${c.role}` : ""}`;
+  const sw = document.createElement("span");
+  sw.className = "swatch";
+  sw.textContent = c.glyph ?? c.label[0].toUpperCase();
+  el.appendChild(sw);
+  const lb = document.createElement("span");
+  lb.className = "label";
+  lb.textContent = c.label;
+  el.appendChild(lb);
+  el.addEventListener("click", c.onTap ?? (() => {}));
+  return el;
+}
+
+function ghostCard() {
+  const el = document.createElement("div");
+  el.className = "pred ghost";
+  const sw = document.createElement("span");
+  sw.className = "swatch";
+  el.appendChild(sw);
+  const lb = document.createElement("span");
+  lb.className = "label";
+  lb.textContent = "···";
+  el.appendChild(lb);
+  return el;
+}
+
 async function renderStrip() {
   const strip = $("strip");
-  strip.innerHTML = "";
-  const items = stripCandidates(
-    db,
-    sentence.map((s) => ({ kind: s.kind, id: s.id })),
-  );
-  for (const c of items) {
-    if (c.kind === "entity") {
-      const e = ALL(db, "SELECT * FROM personal_entity WHERE id = ?", [c.id])[0];
-      const el = document.createElement("div");
-      el.className = "tile";
-      const url = await loadPhotoURL(e.photo_key);
-      if (url) {
-        const img = document.createElement("img");
-        img.src = url;
-        el.appendChild(img);
+  strip.querySelectorAll(".pred").forEach((n) => n.remove());
+  const anchorKb = $("anchor-kb");
+  let cards;
+  if (sentence.length === 0) {
+    cards = await idleStarters();
+  } else {
+    const items = stripCandidates(
+      db,
+      sentence.map((s) => ({ kind: s.kind, id: s.id })),
+    );
+    cards = [];
+    for (const c of items) {
+      if (c.kind === "entity") {
+        cards.push({
+          entity: ALL(db, "SELECT * FROM personal_entity WHERE id = ?", [c.id])[0],
+        });
+      } else {
+        const w = ALL(
+          db,
+          `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
+           JOIN label l ON l.sense_id = s.id
+             AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+           WHERE s.id = ?`,
+          [c.id],
+        )[0];
+        cards.push({ label: w.label, role: w.fitzgerald_role,
+          onTap: () => tap(w.label, "sense", w.id) });
       }
-      el.appendChild(document.createTextNode(e.spoken_name));
-      el.addEventListener("click", () => tap(e.spoken_name, "entity", e.id));
-      strip.appendChild(el);
-    } else {
-      const w = ALL(
-        db,
-        `SELECT s.id, l.text AS label, s.fitzgerald_role
-         FROM sense s JOIN label l ON l.sense_id = s.id
-           AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
-         WHERE s.id = ?`,
-        [c.id],
-      )[0];
-      const el = document.createElement("div");
-      el.className = `tile r-${w.fitzgerald_role}`;
-      el.textContent = w.label;
-      el.addEventListener("click", () => tap(w.label, "sense", w.id));
-      strip.appendChild(el);
     }
+  }
+  for (let i = 0; i < 4; i++) {
+    const el = cards[i] ? await predCard(cards[i]) : ghostCard();
+    strip.insertBefore(el, anchorKb);
   }
 }
 
@@ -169,6 +253,54 @@ $("add-mywords").addEventListener("click", () => {
   zoneContext = null;
   open("addform");
 });
+
+/* --- permanent utility anchors --- */
+$("anchor-kb").addEventListener("click", () => open("keyboard"));
+$("anchor-groups").addEventListener("click", () => {
+  renderZoneList();
+  open("zones");
+});
+
+/* --- keyboard overlay: letters -> echo -> Say it --- */
+let kbText = "";
+{
+  const keys = $("kb-keys");
+  for (const row of ["qwertyuiop", "asdfghjkl", "zxcvbnm"]) {
+    const r = document.createElement("div");
+    r.className = "kb-row";
+    for (const ch of row) {
+      const b = document.createElement("button");
+      b.className = "kb-key";
+      b.textContent = ch;
+      b.addEventListener("click", () => {
+        kbText += ch;
+        $("kb-echo").textContent = kbText;
+      });
+      r.appendChild(b);
+    }
+    keys.appendChild(r);
+  }
+  $("kb-space").addEventListener("click", () => {
+    kbText += " ";
+    $("kb-echo").textContent = kbText;
+  });
+  $("kb-back").addEventListener("click", () => {
+    kbText = kbText.slice(0, -1);
+    $("kb-echo").textContent = kbText;
+  });
+  $("kb-say").addEventListener("click", () => {
+    const t = kbText.trim();
+    kbText = "";
+    $("kb-echo").textContent = "";
+    close("keyboard");
+    if (!t) return;
+    // A typed word that matches the catalog speaks with the bundled voice;
+    // anything else is spoken by device TTS (schema §7.3 lane).
+    const hit = senseByLemma(t);
+    if (hit) tap(hit.label, "sense", hit.id);
+    else tap(t, "typed", null);
+  });
+}
 
 async function entityTile(e) {
   const el = document.createElement("button");

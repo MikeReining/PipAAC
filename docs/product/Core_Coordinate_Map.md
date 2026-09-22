@@ -1,6 +1,8 @@
 # Core coordinate map
 
-**DECIDED 2026-09-22** (not built).
+**DECIDED 2026-09-22, amended 2026-09-22** — `grid60` reorganized into
+vertical syntactic sectors (founder spec). Built as of the catalog
+regeneration that carries this table.
 Layout law and the two stability rules: `docs/product/Motor_Grid_And_Art.md`.
 Word list: `docs/product/Initial_Vocabulary_600.md` §2.
 Row storage: `docs/product/Language_And_Voice_Schema.md` (`core_cell`, with a
@@ -40,11 +42,25 @@ hour. The 15 off-grid senses are strip-eligible everywhere and reachable in
 
 ## 2. Sector order
 
-Reading order follows English sentence order: pronouns, verbs, spatial words,
-descriptors, questions. Protest and social words sit on an edge — protest
-must be reachable with zero scanning. Fitzgerald color (owner:
-`docs/product/Motor_Grid_And_Art.md` §3) does the disambiguation where a
-sector straddles a row boundary.
+`grid60` is organized into **vertical grammatical column sectors** that
+mirror natural English Subject → Verb → Spatial → Descriptor → Protest
+progression. Sentence-building reads left to right instead of zigzagging
+down stacked category rows. Within a sector, higher-frequency words sit
+higher; semantically paired opposites share a row where possible (in/out,
+on/off, up/down, big/little, good/bad, same/different, all/some).
+
+| Columns | Sector | Color |
+| --- | --- | --- |
+| 1–2 | Pronouns & subjects | Yellow |
+| 3–5 | Core verbs & actions | Green |
+| 6–7 | Prepositions & spatial words | Pink |
+| 8–9 | Descriptors & modifiers | Blue |
+| 10 | Urgent protests, social & questions | Red |
+
+Fitzgerald color (owner: `docs/product/Motor_Grid_And_Art.md` §3) is the
+word's own grammar role — a green verb that lives in the descriptor sector
+(`feel`, used by learners as a state word) keeps its color, and color does
+the disambiguation where sector and role diverge.
 
 ## 3. `grid60` — default
 
@@ -52,18 +68,18 @@ Rows top to bottom, slots left to right. `slot_index` is row-major, 0-based.
 
 | Row | Slots |
 | --- | --- |
-| 1 | I · you · me · my · mine · he · she · it · we · they |
-| 2 | that · this · want · like · go · come · get · make · do · see |
-| 3 | look · put · take · give · help · play · eat · drink · open · read |
-| 4 | can · need · feel · find · wait · in · out · on · off · up |
-| 5 | down · here · there · to · for · more · all done · big · little · good |
-| 6 | bad · happy · what · where · who · no · not · stop · yes · please |
+| 1 | I · me · want · come · help · in · out · more · happy · no |
+| 2 | you · my · like · get · put · on · off · all done · feel · not |
+| 3 | it · they · go · make · take · up · down · big · little · stop |
+| 4 | we · that · can · see · give · to · for · good · bad · please |
+| 5 | he · this · need · play · drink · here · there · same · different · what |
+| 6 | she · mine · do · eat · open · with · away · all · some · where |
 
-The 15 root-core senses with no `grid60` cell: under, over, away, with,
-same, different, some, all, why, how, when, work, turn, tell, think.
-They are the lowest-frequency or least motor-critical of the 75 — rare
-prepositions, relational descriptors, and wh-questions beyond what/where/who.
-Every one is a `grid80` cell.
+The 15 root-core senses with no `grid60` cell: under, over, why, how, when,
+work, turn, tell, think, look, read, find, wait, yes, who. Slot math forces
+choices: eighteen verb cells cannot hold twenty-three verbs, and the six
+protest/question cells cannot hold every wh-question. Every demoted sense is
+a `grid80` cell, lives in its fringe zone, and is strip-eligible.
 
 ## 4. `grid80` — dense
 
@@ -84,9 +100,8 @@ Both stability rules in `docs/product/Motor_Grid_And_Art.md` §1 apply per
 layout. Within a named layout, slot indexes are immutable: a category open, a
 strip offer, and a suggestion never write this map. Switching density is a
 layout change — sector membership is preserved between `grid60` and `grid80`
-(pronouns top-left, verbs mid-board, spatial left-center, descriptors right,
-questions lower-right, protests and social on the bottom edge) while absolute
-indexes may differ.
+(pronouns first, verbs next, then spatial, descriptors, and protest/question
+on the far edge) while absolute indexes may differ.
 
 ---
 

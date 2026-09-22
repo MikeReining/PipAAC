@@ -84,7 +84,7 @@ the map; it does not move a cell within one. Assignments:
 +------------------------------------------------------------------+
 | [Back]  Sentence bar: "I want to go..."              [Speak/Clr] |
 +------------------------------------------------------------------+
-| Predictive strip: at most 4 tiles, text + in-house icon          |
+| [prediction] [prediction] [prediction] [prediction]  |⌨ KB|🌅Grp|
 +------------------------------------------------------------------+
 | Fixed core grid: indices do not move while this view is open     |
 +------------------------------------------------------------------+
@@ -92,9 +92,11 @@ the map; it does not move a cell within one. Assignments:
 
 Layout rules:
 
-- The strip sits directly under the sentence bar and directly above the core grid.
+- The strip sits directly under the sentence bar and directly above the core grid. **It never collapses.** Its height is fixed and rendered on first paint; an empty prediction state shows ghost cards, not a zero-height bar. A strip update must never shift the core grid's physical position — layout shift breaks motor planning.
+- **8 + 2 geometry.** The strip spans the same 10 columns as the grid: columns 1–8 hold four prediction slots (2 columns each); columns 9–10 hold permanent utility anchors — `⌨ Keyboard` (type a word at any point) and `🌅 Groups` (zones/routines) — visible and tappable in every state.
 - It shows at most four candidate tiles. Three or four is the whole set. A longer row is a scanning tax.
-- Every tile shows the word and its stick or object icon. Text alone is not enough for emerging and non-literate communicators.
+- Every tile shows the word and its stick or object icon (a 1:1 square on the left, label on the right). Text alone is not enough for emerging and non-literate communicators. A sense with no art yet renders a Fitzgerald-tinted swatch; an entity renders its photo.
+- Idle state (empty sentence) shows conversational starters and routine anchors — greeting, food zone, the top personal entity, help — never a blank strip.
 - Tiles in the strip are not core cells. Selecting one speaks or inserts that candidate. It does not rearrange the grid underneath.
 - Core words that are already on the grid are emphasized in place (confidence halos). They are not copied into the strip. Ranking owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 

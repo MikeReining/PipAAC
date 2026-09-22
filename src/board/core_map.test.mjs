@@ -27,9 +27,35 @@ const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
 
 const OFF_GRID60 = [
-  "under", "over", "away", "with", "same", "different", "some", "all",
-  "why", "how", "when", "work", "turn", "tell", "think",
+  "under", "over", "why", "how", "when", "work", "turn", "tell", "think",
+  "look", "read", "find", "wait", "yes", "who",
 ];
+
+/** grid60 vertical sectors: column index -> the word set it must hold. */
+const SECTORS = {
+  pronouns: {
+    cols: [0, 1],
+    words: ["I", "you", "me", "my", "mine", "he", "she", "it", "we", "they", "that", "this"],
+  },
+  verbs: {
+    cols: [2, 3, 4],
+    words: ["want", "like", "go", "come", "get", "make", "do", "see", "put", "take",
+      "give", "help", "play", "eat", "drink", "open", "can", "need"],
+  },
+  spatial: {
+    cols: [5, 6],
+    words: ["in", "out", "on", "off", "up", "down", "here", "there", "to", "for", "with", "away"],
+  },
+  descriptors: {
+    cols: [7, 8],
+    words: ["more", "all done", "big", "little", "good", "bad", "happy", "same",
+      "different", "some", "all", "feel"],
+  },
+  edge: {
+    cols: [9],
+    words: ["no", "not", "stop", "please", "what", "where"],
+  },
+};
 
 function openDb() {
   const db = createDatabase(":memory:");
@@ -99,7 +125,22 @@ test("board read returns all 60 grid60 cells with label and color", () => {
     assert.ok(cell.slot_index >= 0 && cell.slot_index < 60);
   }
   assert.equal(board[0].label, "I");
-  assert.equal(board[59].label, "please");
+  assert.equal(board[59].label, "where");
+});
+
+test("grid60 lays out vertical syntactic sectors, left to right", () => {
+  const db = openDb();
+  const board = loadBoard(db, "grid60");
+  for (const [name, s] of Object.entries(SECTORS)) {
+    const cells = s.cols.flatMap((col) =>
+      [0, 1, 2, 3, 4, 5].map((row) => board[row * 10 + col].label),
+    );
+    assert.deepEqual(
+      [...cells].sort(),
+      [...s.words].sort(),
+      `${name} sector (cols ${s.cols.map((c) => c + 1).join("–")}) holds the wrong words`,
+    );
+  }
 });
 
 test("bans: fringe sense and duplicate slot cannot enter core_cell", () => {
