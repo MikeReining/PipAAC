@@ -316,15 +316,36 @@ let kbText = "";
 
 async function entityTile(e) {
   const el = document.createElement("button");
-  el.className = "zone-item";
+  el.className = "zone-item r-Yellow";
+  const sw = document.createElement("span");
+  sw.className = "swatch";
   const url = await loadPhotoURL(e.photo_key);
   if (url) {
     const img = document.createElement("img");
     img.src = url;
-    el.appendChild(img);
+    sw.appendChild(img);
+  } else {
+    sw.textContent = e.spoken_name[0].toUpperCase();
   }
-  el.appendChild(document.createTextNode(e.spoken_name));
+  el.appendChild(sw);
+  const lb = document.createElement("span");
+  lb.textContent = e.spoken_name;
+  el.appendChild(lb);
   el.addEventListener("click", () => tap(e.spoken_name, "entity", e.id));
+  return el;
+}
+
+function fringeTile(w) {
+  const el = document.createElement("button");
+  el.className = `zone-item r-${w.fitzgerald_role}`;
+  const sw = document.createElement("span");
+  sw.className = "swatch";
+  sw.textContent = w.label[0].toUpperCase();
+  el.appendChild(sw);
+  const lb = document.createElement("span");
+  lb.textContent = w.label;
+  el.appendChild(lb);
+  el.addEventListener("click", () => tap(w.label, "sense", w.sense_id));
   return el;
 }
 
@@ -346,7 +367,7 @@ function renderZoneList() {
       : ALL(db, "SELECT COUNT(*) AS n FROM sense WHERE category = ?", [cat])[0].n;
     const n = nEntities + nFringe;
     const el = document.createElement("button");
-    el.className = "zone-item";
+    el.className = "zone-item nav";
     el.textContent = `${z} (${n})`;
     el.addEventListener("click", () => {
       close("zones");
@@ -387,13 +408,7 @@ async function renderZone(title, category) {
     items.appendChild(empty);
   }
   for (const e of entities) items.appendChild(await entityTile(e));
-  for (const w of fringe) {
-    const el = document.createElement("button");
-    el.className = `zone-item r-${w.fitzgerald_role}`;
-    el.textContent = w.label;
-    el.addEventListener("click", () => tap(w.label, "sense", w.sense_id));
-    items.appendChild(el);
-  }
+  for (const w of fringe) items.appendChild(fringeTile(w));
   $("add-in-zone").onclick = () => {
     zoneContext = category;
     close("zone");
