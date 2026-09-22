@@ -121,8 +121,17 @@ The rules, same shape as the LocalFlyers classification cache:
 
 This is the only path that sends an adult-supplied name or photo off the
 device, and only while online, and only the entity's own fields. It is not
-the communication log — the zero-PII rule for learner history
-(`docs/strategy/Dual_Engine_Predictive_Intelligence.md`) is untouched.
+the communication log — learner history never leaves the device
+(`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 4.1).
+
+**DECIDED 2026-09-22** (not built). With Jev sharing on, an entity can
+appear in a Jev request as a candidate or in the sentence so far. It goes
+as an opaque key with its category and enrichment description ("family pet
+dog"), never its spoken name or photo
+(`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 3.2). Jev learns
+*what* Cooper is, which is what ranking needs, without learning his name.
+An unenriched entity goes with its category, or as "a personal word" when
+it has none.
 
 The record is what the offline ranker reads when the classifier cannot
 run: the cached judgment of a model that saw the picture.
@@ -158,4 +167,4 @@ These are the negative tests for the customization slice.
 | The add form asks the adult something a model can infer, or where to file | The form collects a name (catalog match or new), and for a new entity an optional photo and hint. No type, pronoun, edge, category, or folder UI. |
 | Enrichment gates or blocks a save | Enrichment is a deferred background job; the entity is fully usable with none. |
 | Enrichment silently rewrites the adult's facts | It never edits `spoken_name` or the photo; a rename or photo change supersedes it. |
-| Entity data leaves the device outside enrichment | The only off-device transmission is the enrichment call itself, online only, entity fields only. |
+| An entity's name or photo leaves the device outside enrichment | The only off-device transmission of `spoken_name`, hint, or photo is the enrichment call. A captured Jev request body contains the entity's key and description, not its `spoken_name`. |

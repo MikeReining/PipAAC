@@ -152,3 +152,7 @@ at 4 tiles, read-only against `core_cell`. The strip renders offers above
 the grid; every tap logs a selection event.
 Proof: `src/board/strip.test.mjs` (4 tests) + smoke run showed Cooper
 offered after tapping `play`.
+Known defect (found 2026-09-22): the same-hour term compares the local
+hour with the UTC hour of each logged pick (`funnel.mjs:80`), so outside
+UTC it favors the wrong time of day. Fix: `docs/phases/006_Prediction_Engine.md`
+slice 1.

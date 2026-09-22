@@ -673,6 +673,10 @@ Files: `public/shared/funnel.mjs`, `public/board.js` (`renderStrip`),
      (consecutive `learner_event_log` rows less than 20 s apart, keyed by
      the previous row's `item_kind:item_id`). Ids only, so this works in
      every language;
+     once `docs/phases/006_Prediction_Engine.md` slice 1 has landed, a
+     pair is two consecutive rows with the same `sentence_id` instead —
+     the 20 s rule links the end of one sentence to the start of the
+     next;
    - **grammar invitation**, from the per-locale `GRAMMAR` table
      (003b slice 3), extended to `root_core` senses (English: a pronoun
      tail invites core verbs such as *want*, *like*, *go*, *need*);

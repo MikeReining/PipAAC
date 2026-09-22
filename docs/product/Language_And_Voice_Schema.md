@@ -60,9 +60,10 @@ and a caregiver's recording stay on this iPad. Phase 002 already requires
 the add to work with the network off and without an account
 (`docs/product/Personal_Entities.md`).
 
-Partner-microphone audio stays out of this file. That rule is
-speech-to-text in memory
-(`docs/strategy/Dual_Engine_Predictive_Intelligence.md`). It does not
+Partner-microphone audio stays out of this file, and so does the text
+recognized from it. That rule is speech-to-text in memory; partner words
+live for one turn and are never written
+(`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 6). It does not
 describe the clips the device plays when a cell is tapped.
 
 `created_at` and `updated_at` wait. The database carries its version in
@@ -487,6 +488,105 @@ CREATE TABLE learner_event_log (
 CREATE INDEX event_log_item ON learner_event_log(item_kind, item_id, selected_at);
 CREATE INDEX event_log_time ON learner_event_log(selected_at);
 ```
+
+**BUILT** defect (`funnel.mjs:80`): the funnel buckets `selected_at` with
+`strftime(..., 'unixepoch')` (UTC) and compares it with the device's local
+hour. Outside UTC the time-of-day term favors the wrong hours. The
+amendment below stores the local offset per event so the hour is local and
+survives travel and daylight-saving changes.
+
+**Amendment — DECIDED 2026-09-22** (not built). Sentences, input path, and
+local time. Execution: `docs/phases/006_Prediction_Engine.md` slice 1.
+
+```sql
+-- One row per sentence the child builds. Ends when spoken or cleared;
+-- a cleared sentence is a restart (not a training example).
+CREATE TABLE sentence (
+  id INTEGER PRIMARY KEY,
+  started_at INTEGER NOT NULL CHECK (started_at > 0),
+  ended_at INTEGER CHECK (ended_at IS NULL OR ended_at >= started_at),
+  end_kind TEXT CHECK (end_kind IS NULL OR end_kind IN ('spoken', 'cleared')),
+  tz_offset_min INTEGER NOT NULL
+);
+
+ALTER TABLE learner_event_log ADD COLUMN sentence_id INTEGER REFERENCES sentence(id);
+ALTER TABLE learner_event_log ADD COLUMN position INTEGER CHECK (position IS NULL OR position >= 0);
+ALTER TABLE learner_event_log ADD COLUMN source TEXT
+  CHECK (source IS NULL OR source IN ('grid', 'strip', 'group', 'keyboard'));
+-- Minutes east of UTC at the moment of the tap. Local hour =
+-- strftime('%H', selected_at / 1000 + tz_offset_min * 60, 'unixepoch').
+ALTER TABLE learner_event_log ADD COLUMN tz_offset_min INTEGER;
+
+CREATE INDEX event_log_sentence ON learner_event_log(sentence_id, position);
+```
+
+Rows written before the amendment keep `sentence_id` NULL (they never
+count as pairs or phrases) and get `tz_offset_min` backfilled once with the
+device's offset at migration — best effort, stated as such.
+
+Delete, backspace, and form changes inside a sentence rewrite `position`
+so the log matches the sentence that was spoken.
+
+### 6.2d Strip impressions
+
+**DECIDED 2026-09-22** (not built). One row per strip moment: what the
+ranker had, what it showed, and what the child picked next. The training
+data for § 5.5 and the instrument for § 5.7 of
+`docs/strategy/Dual_Engine_Predictive_Intelligence.md`. Ids and numbers
+only; no label text, no partner words.
+
+```sql
+CREATE TABLE strip_impression (
+  id INTEGER PRIMARY KEY,
+  sentence_id INTEGER NOT NULL REFERENCES sentence(id),
+  position INTEGER NOT NULL CHECK (position >= 0),
+  shown_at INTEGER NOT NULL CHECK (shown_at > 0),
+  -- JSON array: [{"kind","id","x":{feature:value},"p"}] for the shortlist
+  candidates TEXT NOT NULL,
+  -- JSON array of the (kind:id) keys rendered as tiles, rank order, ≤ 4
+  shown TEXT NOT NULL,
+  p_none REAL NOT NULL CHECK (p_none >= 0 AND p_none <= 1),
+  weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
+  jev_model TEXT,             -- versioned id from the response; NULL = no call
+  jev_status TEXT NOT NULL CHECK (jev_status IN ('off', 'skipped', 'answered', 'late', 'error')),
+  chosen_kind TEXT CHECK (chosen_kind IS NULL OR chosen_kind IN ('sense', 'entity')),
+  chosen_id TEXT,
+  chosen_source TEXT CHECK (chosen_source IS NULL OR chosen_source IN ('grid', 'strip', 'group', 'keyboard'))
+);
+
+CREATE INDEX impression_sentence ON strip_impression(sentence_id, position);
+```
+
+`chosen_*` fills when the next item is picked. `jev_status = 'late'` means
+Jev answered after the 150 ms display window: logged, not shown.
+
+### 6.2e Prediction settings and learned weights
+
+**DECIDED 2026-09-22** (not built). Per profile.
+
+```sql
+ALTER TABLE learner_profile ADD COLUMN jev_sharing INTEGER NOT NULL DEFAULT 0
+  CHECK (jev_sharing IN (0, 1));           -- opt-in; 0 = never call Jev
+ALTER TABLE learner_profile ADD COLUMN listening INTEGER NOT NULL DEFAULT 0
+  CHECK (listening IN (0, 1));             -- 0 = no Listen key, no mic request
+
+CREATE TABLE prediction_weights (
+  profile_id TEXT NOT NULL REFERENCES learner_profile(id),
+  weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
+  weights TEXT NOT NULL,                   -- JSON {feature: θ, "none_bias": θ, ...}
+  defaults_version TEXT NOT NULL,          -- which shipped starting weights it drifts from
+  examples_seen INTEGER NOT NULL DEFAULT 0 CHECK (examples_seen >= 0),
+  updated_at INTEGER NOT NULL CHECK (updated_at > 0),
+  PRIMARY KEY (profile_id, weight_set)
+);
+```
+
+The shipped starting weights and thresholds are catalog data (same for
+every child), versioned; a new version resets nothing — the L2 pull simply
+targets the new defaults.
+
+Whether listening is *currently* on is runtime state, never stored: the
+setting only decides whether the Listen key exists.
 
 ### 6.3 Override
 
@@ -957,6 +1057,13 @@ Accepted in founder review the day it was proposed. The amendments:
    `IF NOT EXISTS` so boot is idempotent on an existing database;
    `PRAGMA user_version` still carries the schema version for future
    real migrations.
+8. Prediction amendment (founder review, 2026-09-22; not built):
+   `sentence`, event-log `sentence_id` / `position` / `source` /
+   `tz_offset_min`, `strip_impression`, `prediction_weights`, and the
+   profile's `jev_sharing` and `listening` settings (§ 6.2c–6.2e). The
+   `ALTER TABLE` columns are the first real migration, so this amendment
+   also ends the `IF NOT EXISTS`-only boot: `PRAGMA user_version` gates
+   the step. Partner words are never a column anywhere.
 
 ---
 

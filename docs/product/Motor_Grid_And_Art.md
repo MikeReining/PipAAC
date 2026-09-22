@@ -151,6 +151,18 @@ Layout rules:
 - Tiles in the strip are not core cells. Selecting one speaks or inserts that candidate. It does not rearrange the grid underneath.
 - Core words that are already on the grid are emphasized in place (confidence halos). They are not copied into the strip. Ranking owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 
+**Listen key. DECIDED 2026-09-22** (not built). When the profile's
+listening setting is on, a Listen key is on the board; when it is off, the
+key does not exist and the microphone is never requested. Tap starts
+listening, tap stops it. While listening, the key shows a live indicator
+that cannot be missed. The key takes no grid cell and no strip slot
+(`grid60` is frozen), and within a profile it sits in the same place in
+every state, so turning listening on or off mid-conversation shifts
+nothing. Changing the setting is an adult action in the Parent corner, like
+a density change. Position in the top bar: founder call in
+`docs/phases/008_Partner_Listening.md` slice 1. Behavior owner:
+`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 6.
+
 On the motor-grid view, the strip is where a suggestion may show a word that is not already a core cell. The Context River remains a separate situational surface. A specific food, place, person, or thing can show up in one tap instead of three or four folder levels.
 
 ---
