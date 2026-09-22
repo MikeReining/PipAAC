@@ -22,6 +22,7 @@ do not duplicate long policy in `AGENTS.md`.
 | **DECIDED 2026-09-22** (not built). Vocabulary masking: masked cells render blank; coordinates never shift; biometrics + PIN Parent Corner with "Retire, Never Delete" trash restore | `docs/product/Vocabulary_Masking_And_Safety.md` |
 | **DECIDED 2026-09-22** (not built). Profile presentation modes: Symbol+Label (default) vs. Label-Only (clean text mode for literate adults, ALS, aphasia) on identical coordinate map | `docs/product/Profile_Presentation_Modes.md` |
 | **DECIDED 2026-09-22** (not built). Voice cloning: 10–15s sample (ElevenLabs) generates local OPFS cached clips for 0ms offline speech (Mom's voice / SLP voice / ALS banking) | `docs/product/Voice_Cloning_And_Synthesis.md` |
+| **PROPOSED 2026-09-22** (not ratified). `grid60` v2 membership + the selection rule (UC36-first, AoA/Fry, functional coverage, paired opposites) | `docs/product/Core_Grid_Membership.md` |
 | **PROPOSED.** Primary domain `pippaac.org` (not registered in repo) | `docs/strategy/Vision.md` |
 | **BUILT** (`src/worker/index.js:12-14`). Harness Worker exposes `GET /health` | `docs/operations/TechStack.md` |
 | Dev harness (same family as LocalFlyers / WorkbookBench) | `docs/FOLDER_MAP.md`, `AGENTS.md` |

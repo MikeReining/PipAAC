@@ -117,3 +117,7 @@ on the far edge) while absolute indexes may differ.
 Editing a slot assignment is a product decision. It lands here first, tagged
 with a new DECIDED date, and the generated `core_cell` rows are regenerated
 from this file — never edited downstream.
+
+Pending: `grid60` v2 membership proposal lives in
+`docs/product/Core_Grid_Membership.md` (**PROPOSED 2026-09-22** — not yet
+ratified; §3 below is still the live map).
