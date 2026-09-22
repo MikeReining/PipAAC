@@ -957,3 +957,92 @@ Accepted in founder review the day it was proposed. The amendments:
    `IF NOT EXISTS` so boot is idempotent on an existing database;
    `PRAGMA user_version` still carries the schema version for future
    real migrations.
+
+---
+
+## 13. Locale readiness (review 2026-09-22)
+
+Founder question: is the core built correctly for German, Spanish, and
+French? Answer: **the schema is; the runtime and a few seams are not yet.**
+Fixes are routed to `docs/phases/003b_Groups_Language_Followup.md` and
+`docs/phases/004_Keyboard.md`.
+
+### 13.1 What is already right
+
+**BUILT** (schema at `fb5a8d7`, `src/board/schema.sql`):
+
+- `sense` has no text and no locale. Role, art, tier, and coordinates hang
+  on the sense, so *want* and *quiero* are one button in one place.
+- `utterance`, `label`, and `voice` carry `locale`. The triggers
+  `label_locale_matches_utterance`, `clip_matches_voice_and_utterance`,
+  and `profile_voice_is_active_same_locale` (plus their `_on_update`
+  twins) reject every cross-locale mix at write time.
+- `voice_one_active_default` allows one default voice per locale.
+- `learner_event_log` stores ids only, so usage history survives a locale
+  switch and works for bilingual profiles.
+- Pictures carry no readable text (§ 1), so art travels.
+- `core_cell.layout` is free text, so a per-locale layout can exist without
+  a schema change.
+
+### 13.2 Gaps and where they are fixed
+
+| Gap | Status | Fix |
+| --- | --- | --- |
+| Runtime never reads `learner_profile.locale`; label queries hard-code `'en'` and `clipKeyFor` hard-codes `voi_default_en` (`public/board.js` at `fb5a8d7`) | **DECIDED 2026-09-22** (not built) | 003b slice 2; a check-fast gate bans the literals |
+| `speak()` sets no `lang`; `<html lang="en">` is fixed | **DECIDED 2026-09-22** (not built) | 003b slice 2 |
+| Built-in group names stored as English text on the device (Groups 2.0 seed) | **DECIDED 2026-09-22** (not built) | 003b slice 1: `group_label` catalog table; `board_group.name` becomes the caregiver override |
+| Strip grammar matches the English text `"to"` | **DECIDED 2026-09-22** (not built) | 003b slice 3: per-locale rules, keyed by sense id |
+| Keyboard letters, punctuation, capitals, and spelling rules are English | **DECIDED 2026-09-22** (not built) | 004: per-locale key maps, accent-insensitive matching, per-locale sound keys and fixtures |
+| Digits have no language-neutral path to number senses | **DECIDED 2026-09-22** (not built) | 004 slice 2: digit **alias labels** per locale (below) |
+
+### 13.3 Amendment — digit aliases
+
+**DECIDED 2026-09-22** (not built). § 9 "no alias rows" is amended for one
+case: the build emits approved `alias` labels `1`–`10` per locale from
+`data/number_aliases.json`, on the matching `Number` sense and pointing at
+the lemma's utterance. Typing `3` then finds the *three* sense in any
+locale. No other alias rows are added by this amendment.
+
+### 13.4 Rules for every future language
+
+**DECIDED 2026-09-22** (not built):
+
+- **No English in code or device data.** Code references catalog content by
+  sense id. Display text comes from locale-keyed catalog rows or from the
+  caregiver. Build-time sources may use English lemmas as authoring keys
+  only if the build resolves each to exactly one sense and fails otherwise.
+- **`sense.category` is an internal key.** It is never displayed.
+- **Locale tags are BCP 47.** Market variants that differ in content use a
+  region subtag (`es-MX` *jugo* vs `es-ES` *zumo*; `de-CH` has no `ß`).
+  Resolvers try the exact tag, then the language subtag, and never another
+  language.
+- **A locale ships complete or not at all** for: partner-row senses,
+  built-in group names, digit aliases, and one active default voice. The
+  build fails otherwise.
+
+### 13.5 Open before the first second language
+
+**PROPOSED** — each needs a founder ruling or its own slice when the first
+non-English market starts:
+
+1. **Function words do not map one-to-one.** One sense per meaning works
+   for *ball* and *want*. It breaks for *the* (German
+   der/die/das/den/dem/des) and *to* (Spanish *a*/*para*). Proposed
+   ruling: content words (nouns, verbs, describing words) keep their
+   coordinates in every locale, so bilingual children keep their motor
+   plan; function-word slots use a per-locale layout (`grid60.de`), with
+   locale-only senses where no shared meaning exists.
+2. **Morphology is a launch requirement for de/es/fr.** Verb endings and
+   gender carry far more meaning than in English. The morphology flow in
+   `docs/strategy/Vision.md` (out of scope in § 10) must be scheduled
+   before those launches, not after.
+3. **Normalizer v2.** `normalize_v1` uses JS `toLowerCase`, which keeps
+   `ß` (full casefold gives `ss`). German uniqueness needs a `v2` fold, as
+   a new version per § 4, never a quiet edit of v1.
+4. **Split the lexicon source.** `Initial_Vocabulary_600.md` is both the
+   sense inventory and the English labels. A second locale needs a label
+   source per locale keyed by sense id (for example `data/labels/de.json`),
+   with the build failing on an unknown or duplicate id.
+5. **Bilingual profiles.** Switching `profile.locale` and its voice
+   together already works under the triggers. A one-tap language switch
+   for bilingual families is a product decision, not a schema change.
