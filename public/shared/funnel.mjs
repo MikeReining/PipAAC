@@ -135,3 +135,112 @@ function scoreRow(r, invited, now) {
       (r.last_selected ? Math.max(0, 10 - (now - r.last_selected) / 60000) : 0),
   };
 }
+
+/* --- Slice 7 (004): next-word continuations while typing -------------
+ * When the keyboard is open the grid is hidden, so the "core words never
+ * in the strip" rule stops applying — the strip offers the likely next
+ * word, core words included (Dual_Engine §5.2).
+ */
+
+const BIGRAM_WINDOW_MS = 20 * 1000;
+
+/**
+ * Candidates for the next word after the sentence's tail item, all by id:
+ *  - bigrams: items picked right after the tail before — consecutive
+ *    learner_event_log rows less than 20 s apart;
+ *  - grammar invitation: the per-locale GRAMMAR table, extended to
+ *    root_core senses (a pronoun tail invites core verbs);
+ *  - stripCandidates: entities and fringe with evidence, unchanged.
+ * Rank: bigram count, then invitation, then overall frequency, then
+ * recency. Dedupe by kind:id. Cap 4.
+ *
+ * @param {Array<{kind:string, id:string}>} sentence
+ * @returns {Array<{kind:'sense'|'entity', id:string}>}
+ */
+export function keyboardContinuations(db, sentence, locale, now = Date.now()) {
+  if (typeof locale !== "string" || locale.length === 0) {
+    throw new Error("locale is a required parameter");
+  }
+  const tail = sentence[sentence.length - 1];
+  if (!tail) return [];
+
+  const merged = new Map(); // "kind:id" -> {kind, id, bigrams, invited, freq, last}
+  const put = (kind, id, { bigrams = 0, invited = false } = {}) => {
+    const key = `${kind}:${id}`;
+    const r = merged.get(key) ?? { kind, id, bigrams: 0, invited: false, freq: 0, last: 0 };
+    r.bigrams += bigrams;
+    r.invited ||= invited;
+    merged.set(key, r);
+  };
+
+  // 1. bigrams — the row that followed each past selection of the tail
+  //    (consecutive ids, < 20 s apart). Ids only: language-free.
+  for (const b of db
+    .prepare(
+      `SELECT e2.item_kind AS kind, e2.item_id AS id, COUNT(*) AS cnt
+       FROM learner_event_log e1
+       JOIN learner_event_log e2
+         ON e2.id = (SELECT MIN(n.id) FROM learner_event_log n WHERE n.id > e1.id)
+       WHERE e1.item_kind = ? AND e1.item_id = ?
+         AND e2.selected_at - e1.selected_at < ?
+       GROUP BY e2.item_kind, e2.item_id`,
+    )
+    .all(tail.kind, tail.id, BIGRAM_WINDOW_MS)) {
+    put(b.kind, b.id, { bigrams: b.cnt });
+  }
+
+  // 2. grammar invitation — same rules as the board strip, but extended
+  //    to root_core senses (no evidence required: the suggestion itself
+  //    is the service).
+  const { pos, prevPos } = tailInfo(db, sentence, locale);
+  const ctx = { pos, prevPos, tailId: tail.kind === "sense" ? tail.id : null };
+  const rules = GRAMMAR[locale];
+  const invitesNoun = rules ? rules.invitesNoun(ctx) : false;
+  const invitesVerb = rules ? rules.invitesVerb(ctx) : false;
+  if (invitesNoun || invitesVerb) {
+    for (const r of db
+      .prepare(
+        `SELECT s.id, l.part_of_speech AS pos FROM sense s
+         JOIN label l ON l.sense_id = s.id
+           AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
+      )
+      .all(locale)) {
+      if ((invitesNoun && r.pos === "Noun") || (invitesVerb && r.pos === "Verb")) {
+        put("sense", r.id, { invited: true });
+      }
+    }
+    if (invitesNoun) {
+      for (const e of db.prepare("SELECT id FROM personal_entity").all()) {
+        put("entity", e.id, { invited: true });
+      }
+    }
+  }
+
+  // 3. the board strip's candidates, unchanged
+  for (const c of stripCandidates(db, sentence, now, locale)) {
+    put(c.kind, c.id, {});
+  }
+
+  // overall frequency + recency for every candidate
+  for (const r of merged.values()) {
+    const s = db
+      .prepare(
+        "SELECT COUNT(*) AS freq, MAX(selected_at) AS last FROM learner_event_log WHERE item_kind = ? AND item_id = ?",
+      )
+      .all(r.kind, r.id)[0];
+    r.freq = s.freq;
+    r.last = s.last ?? 0;
+  }
+
+  return [...merged.values()]
+    .sort(
+      (a, b) =>
+        b.bigrams - a.bigrams ||
+        Number(b.invited) - Number(a.invited) ||
+        b.freq - a.freq ||
+        b.last - a.last ||
+        a.id.localeCompare(b.id),
+    )
+    .slice(0, STRIP_CAP)
+    .map((r) => ({ kind: r.kind, id: r.id }));
+}

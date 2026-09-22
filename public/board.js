@@ -4,7 +4,7 @@
  * clips (schema §7); personal entities use device TTS.
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
-import { logSelection, stripCandidates } from "./shared/funnel.mjs";
+import { keyboardContinuations, logSelection, stripCandidates } from "./shared/funnel.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
 import { buildIndex, suggest } from "./shared/spelling.mjs";
@@ -213,12 +213,13 @@ async function renderStrip() {
   } else if (sentence.length === 0) {
     cards = await idleStarters();
   } else {
-    const items = stripCandidates(
-      db,
-      sentence.map((s) => ({ kind: s.kind, id: s.id })),
-      Date.now(),
-      locale,
-    );
+    // Keyboard open with an empty buffer: next-word continuations, core
+    // words included — the grid is hidden so the no-core rule doesn't
+    // apply (slice 7, Dual_Engine §5.2).
+    const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
+    const items = kbOpen
+      ? keyboardContinuations(db, sents, locale, Date.now())
+      : stripCandidates(db, sents, Date.now(), locale);
     cards = [];
     for (const c of items) {
       if (c.kind === "entity") {
