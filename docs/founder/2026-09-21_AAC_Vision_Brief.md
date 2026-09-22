@@ -46,3 +46,16 @@ Intake workflow: `docs/workflows/SSOT_Founder_Input_Workflow.md`.
 
 - **Next slice:**
   Update `docs/strategy/Vision.md` and `docs/product/SSOT.md`.
+
+---
+
+## 3. Pillar 2 Intake: Dual-Engine Predictive Intelligence & Privacy
+
+- **Founder thesis (2026-09-21):**
+  > *"The key, one of the keys that you mentioned is all of the predictive capabilities so that you can very quickly know what the next word is most likely going to be that the user wants to say. The key for that is classification, because you have a finite set of words and you need to assign the probability for which words which word comes next. There is a brand new AI model that is insanely fast and insanely cheap that just focused on solving this particular classification problem... https://docs.typesafe.ai/introduction"*
+  > *"The other thing the app should learn, and again it depends on privacy here. Maybe yes, maybe no. It could 100% stay locally on the device, that I think it should. But the app could also record what the user said in the past. And if the user usually says no to pancakes, that could potentially also be an input that JEV uses. Or maybe not JEV, maybe we have a local database where we keep track what the user has said and we combine these two."*
+
+- **Strategic Resolution:**
+  - Architecture: Dual-Engine system blending Cloud-Edge System One classification (TypeSafe Jev) with an on-device local database (SQLite/IndexedDB).
+  - Privacy policy: Zero audio recordings stored (on-device local speech-to-text in RAM only); all raw learner history stays 100% local and encrypted (FERPA/HIPAA/COPPA compliant).
+  - Specification: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.

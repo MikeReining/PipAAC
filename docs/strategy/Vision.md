@@ -155,6 +155,10 @@ Instead of forcing the learner into a single rigid grid:
 - **Offline-Always:** Communication is an essential lifeline. Pip AAC functions 100% offline with instant local storage, syncing state to Cloudflare edge Workers whenever connectivity is available.
 - **Zero Loss:** Profiles and language graphs are encrypted and backed up seamlessly. If an iPad drops and cracks, opening Pip AAC on a \$40 phone instantly restores the child's exact voice and vocabulary.
 
+### 4.5 Dual-Engine Predictive Intelligence
+- **The Intelligence Breakthrough:** Blending ultra-low-latency System One semantic classification (TypeSafe Jev) with private, on-device behavioral memory (SQLite/IndexedDB).
+- Full specification: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
+
 ---
 
 ## 5. Durable Claims & Technical Alignment
@@ -162,6 +166,7 @@ Instead of forcing the learner into a single rigid grid:
 - **DECIDED 2026-09-21** (founder brief intake):
   - Product identity: **Pip AAC** (repo: PipAAC).
   - Core architectural paradigm: Relational Language Graph decoupled from multiple surface views (Motor Grid, Context River, Visual Scene, Partner Co-Pilot).
+  - Predictive intelligence: Dual-Engine system (TypeSafe Jev edge classification + On-device encrypted SQLite store; see `docs/strategy/Dual_Engine_Predictive_Intelligence.md`).
   - Platform strategy: Local-first, offline-always web architecture (Cloudflare edge sync + client-side persistence).
   - Clinical adherence: Absolute compliance with ASHA standards, Janice Light's 4 communication purposes, core vocabulary research, motor planning automaticity, and aided language stimulation.
 - **PROPOSED**:
