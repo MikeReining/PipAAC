@@ -15,6 +15,7 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog, snapshotCoreCells } from "./catalog.mjs";
 import {
+  catalogMatches,
   createGroup,
   deleteGroup,
   groupIndex,
@@ -334,6 +335,69 @@ test("slice 3 edit gestures: move a group, swap two items, remove an entity, del
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM board_group WHERE id = ?").all(gid)[0].n, 0);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = ?").all(gid)[0].n, 0);
   assertCore();
+});
+
+test("slice 4 add flow: matches exclude senses already in the target group", () => {
+  const db = openDb();
+  const banana = senseIdByText(db, "banana");
+  // banana is seeded in Food; My Words lacks it → offered
+  const hits = catalogMatches(db, "ban", "grp_my_words");
+  assert.ok(hits.some((h) => h.id === banana && h.label === "banana"));
+  placeItem(db, "grp_my_words", "sense", banana);
+  assert.ok(!catalogMatches(db, "ban", "grp_my_words").some((h) => h.id === banana));
+
+  // water is seeded in Drinks → never offered there, but still offered
+  // to a group that lacks it
+  const water = senseIdByText(db, "water");
+  assert.ok(!catalogMatches(db, "wat", "grp_drinks").some((h) => h.id === water));
+  assert.ok(catalogMatches(db, "wat", "grp_my_words").some((h) => h.id === water));
+
+  // empty/garbage input returns nothing
+  assert.deepEqual(catalogMatches(db, "", "grp_my_words"), []);
+});
+
+test("slice 4: an entity placed in a custom group survives catalog re-import at its slot", () => {
+  const db = openDb();
+  const { id: gid } = createGroup(db, { name: "School" });
+  db.prepare(
+    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_s', 'Ms. T', NULL, NULL, NULL)",
+  ).run();
+  const cell = placeItem(db, gid, "entity", "ent_s");
+  importCatalog(db, catalog);
+  const after = db
+    .prepare("SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_id = 'ent_s'")
+    .all(gid);
+  assert.equal(after.length, 1);
+  assert.deepEqual(
+    { page: after[0].page, slot_index: after[0].slot_index },
+    { page: cell.page, slot_index: cell.slot_index },
+  );
+});
+
+test("slice 4 Cooper proof: a personal entity lands in the group it was added from", () => {
+  const db = openDb();
+  const before = snapshotCoreCells(db);
+  const senseCount = db.prepare("SELECT COUNT(*) AS n FROM sense").all()[0].n;
+  // Edit → Animals → + Add → "Cooper" → New → Save — same calls the
+  // sheet makes, minus the DOM. The target's seed category writes to the
+  // record (a classifier input, never displayed).
+  const category = catalog.groups.find((g) => g.id === "grp_animals").category;
+  db.prepare(
+    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_cooper', 'Cooper', NULL, ?, NULL)",
+  ).run(category);
+  placeItem(db, "grp_animals", "entity", "ent_cooper");
+
+  const row = db.prepare("SELECT * FROM personal_entity WHERE id = 'ent_cooper'").all()[0];
+  assert.equal(row.spoken_name, "Cooper");
+  assert.equal(row.category, "Animals & Nature");
+  assert.equal(
+    db.prepare(
+      "SELECT COUNT(*) AS n FROM group_cell WHERE group_id = 'grp_animals' AND item_kind = 'entity' AND item_id = 'ent_cooper'",
+    ).all()[0].n,
+    1,
+  );
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sense").all()[0].n, senseCount);
+  assert.deepEqual(snapshotCoreCells(db), before);
 });
 
 test("the core coordinate map is untouched by every group operation", () => {

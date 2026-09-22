@@ -7,6 +7,7 @@ import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import {
+  catalogMatches,
   createGroup,
   deleteGroup,
   groupIndex,
@@ -310,8 +311,7 @@ $("edit-groups").addEventListener("click", () => {
 });
 $("add-mywords").addEventListener("click", () => {
   close("menu");
-  addTarget = null;
-  open("addform");
+  openAddForm("grp_my_words");
 });
 
 /* --- permanent utility anchors --- */
@@ -683,8 +683,7 @@ async function renderGroupPage() {
         }));
       } else {
         zg.appendChild(editSlotCell(editing && !lifted && "+ Add", () => {
-          addTarget = groupKey;
-          open("addform");
+          openAddForm(groupKey);
         }));
       }
       continue;
@@ -745,8 +744,60 @@ $("group-save").addEventListener("click", async () => {
   renderGroupIndex();
 });
 
-/* --- add flow: name, photo, save. Files into the open group at the next
-   free cell — the place is the picker. --- */
+/* --- add flow: one field, type → match → place. A catalog match places
+   the real sense (its color, its voice); "New" makes a personal entity.
+   The adult never picks a folder — the group they are standing in is the
+   target. No type, pronoun, or category picker. --- */
+function openAddForm(groupId) {
+  addTarget = groupId;
+  const name = ALL(db, "SELECT name FROM board_group WHERE id = ?", [groupId])[0]?.name;
+  $("add-title").textContent = `Add to ${name ?? "My Words"}`;
+  $("add-name").value = "";
+  $("add-photo").value = "";
+  $("add-hint").value = "";
+  $("add-newfields").hidden = true;
+  $("add-matches").innerHTML = "";
+  $("add-new").hidden = true;
+  open("addform");
+}
+
+/** Re-render the match list and the always-present New row as the adult
+ *  types. Local query only — a save never touches the network. */
+function renderAddMatches() {
+  const text = $("add-name").value.trim();
+  const box = $("add-matches");
+  box.innerHTML = "";
+  const newBtn = $("add-new");
+  if (!text) {
+    newBtn.hidden = true;
+    $("add-newfields").hidden = true;
+    return;
+  }
+  newBtn.hidden = false;
+  newBtn.textContent = `New: '${text}'`;
+  for (const m of catalogMatches(db, text, addTarget)) {
+    const row = document.createElement("button");
+    row.className = "addmatch";
+    const sw = document.createElement("span");
+    sw.className = `swatch r-${m.fitzgerald_role}`;
+    const lb = document.createElement("span");
+    lb.textContent = m.label;
+    row.appendChild(sw);
+    row.appendChild(lb);
+    row.addEventListener("click", () => {
+      placeItem(db, addTarget, "sense", m.id);
+      close("addform");
+      rerenderView();
+      renderStrip();
+    });
+    box.appendChild(row);
+  }
+}
+$("add-name").addEventListener("input", renderAddMatches);
+$("add-new").addEventListener("click", () => {
+  $("add-newfields").hidden = false;
+});
+
 $("add-save").addEventListener("click", async () => {
   const name = $("add-name").value.trim();
   if (!name) return;
@@ -754,22 +805,17 @@ $("add-save").addEventListener("click", async () => {
   const file = $("add-photo").files[0];
   const photoKey = file ? await savePhoto(id, file) : null;
   const hint = $("add-hint").value.trim() || null;
-  const target = addTarget ?? "grp_my_words";
   // The record's home category — a classifier input, never displayed —
   // is the seed category of a built-in target group, else null.
-  const category = catalog.groups.find((g) => g.id === target)?.category ?? null;
+  const category = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
   RUN(
     db,
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES (?, ?, ?, ?, ?)",
     [id, name, photoKey, category, hint],
   );
-  placeItem(db, target, "entity", id);
-  $("add-name").value = "";
-  $("add-photo").value = "";
-  $("add-hint").value = "";
+  placeItem(db, addTarget, "entity", id);
   close("addform");
-  if (view === "group") await renderGroupPage();
-  else if (view === "groupIndex") renderGroupIndex();
+  rerenderView();
   renderStrip();
 });
 

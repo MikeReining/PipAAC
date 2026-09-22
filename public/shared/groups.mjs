@@ -10,6 +10,8 @@
  * tests and the sqlite-wasm browser adapter.
  */
 
+import { normalizeV1 } from "./normalize.mjs";
+
 export const ITEMS_PER_PAGE = 57; // page slots 2..58
 
 const FIRST_ITEM_SLOT = 2;
@@ -195,6 +197,34 @@ export function groupPage(db, groupId, page = 0) {
 export function pageCount(db, groupId) {
   const row = one(db, "SELECT MAX(page) AS m FROM group_cell WHERE group_id = ?", [groupId]);
   return (row?.m ?? 0) + 1;
+}
+
+/**
+ * Add-flow matches: up to 4 approved English lemmas whose normalized text
+ * starts with the typed prefix, excluding senses already in the target
+ * group (placing one there would silently no-op on the PK). Rank: exact
+ * match, then default_for_text, then lexicon slot (sense id order).
+ */
+export function catalogMatches(db, text, groupId) {
+  const prefix = normalizeV1(text);
+  if (!prefix) return [];
+  const like =
+    prefix.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_") + "%";
+  return all(
+    db,
+    `SELECT s.id, l.text AS label, s.fitzgerald_role,
+            (l.normalized_text = ?) AS exact
+     FROM label l JOIN sense s ON s.id = l.sense_id
+     WHERE l.normalized_text LIKE ? ESCAPE '\\'
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+       AND NOT EXISTS (
+         SELECT 1 FROM group_cell gc
+         WHERE gc.group_id = ? AND gc.item_kind = 'sense' AND gc.item_id = s.id
+       )
+     ORDER BY exact DESC, l.default_for_text DESC, s.id ASC
+     LIMIT 4`,
+    [prefix, like, groupId],
+  );
 }
 
 /** Lowest free (page, slot_index), page-major. Pages grow without bound. */
