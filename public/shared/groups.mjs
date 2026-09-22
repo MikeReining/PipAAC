@@ -57,6 +57,11 @@ function lowestFreeIndexSlot(db) {
   return null;
 }
 
+// 011 slice 1: every adult edit records an op (Sync_And_Web_Editing § 4).
+// Imported lazily-safe: ops.mjs imports this module for replay; the cycle
+// resolves because recordOp is only called inside function bodies.
+import { recordOp } from "./ops.mjs";
+
 function insertCell(db, groupId, kind, id, page, slot, addedAt = null) {
   db.prepare(
     "INSERT INTO group_cell (group_id, item_kind, item_id, page, slot_index, added_at) VALUES (?, ?, ?, ?, ?, ?)",
@@ -362,7 +367,7 @@ export function nextFreeCell(db, groupId) {
 /** Append an item at the next free cell — or at `cell` when the adult
  *  tapped an empty slot to add there (the slot is the picker). No-op when
  *  already present; an occupied target refuses. */
-export function placeItem(db, groupId, kind, id, cell = null) {
+export function placeItem(db, groupId, kind, id, cell = null, addedAt = null) {
   const existing = one(
     db,
     "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
@@ -378,7 +383,11 @@ export function placeItem(db, groupId, kind, id, cell = null) {
     if (taken) throw new Error(`group ${groupId} slot ${cell.page}:${cell.slot_index} is occupied`);
   }
   const target = cell ?? nextFreeCell(db, groupId);
-  insertCell(db, groupId, kind, id, target.page, target.slot_index, Date.now());
+  const at = addedAt ?? Date.now();
+  insertCell(db, groupId, kind, id, target.page, target.slot_index, at);
+  recordOp(db, "place_item", {
+    groupId, kind, id, page: target.page, slot_index: target.slot_index, added_at: at,
+  });
   return target;
 }
 
@@ -399,6 +408,7 @@ export function moveItem(db, groupId, kind, id, page, slot) {
   db.prepare(
     "UPDATE group_cell SET page = ?, slot_index = ? WHERE group_id = ? AND item_kind = ? AND item_id = ?",
   ).run(page, slot, groupId, kind, id);
+  recordOp(db, "move_item", { groupId, kind, id, page, slot_index: slot });
 }
 
 /**
@@ -422,6 +432,7 @@ export function swapItems(db, groupId, a, b) {
     ).run(groupId, a.item_kind, b.item_kind, a.item_id, b.item_id);
     insertCell(db, groupId, a.item_kind, a.item_id, cb.page, cb.slot_index, ca.added_at);
     insertCell(db, groupId, b.item_kind, b.item_id, ca.page, ca.slot_index, cb.added_at);
+    recordOp(db, "swap_items", { groupId, a, b });
   });
 }
 
@@ -431,23 +442,31 @@ export function swapItems(db, groupId, a, b) {
  * guarantee (hiding is masking, docs/product/Vocabulary_Masking_And_Safety.md).
  * An entity removed from its last group lands in My Words, never orphaned.
  */
-export function removeItem(db, groupId, kind, id) {
+export function removeItem(db, groupId, kind, id, { allowOrphan = false } = {}) {
   const group = one(db, "SELECT kind FROM board_group WHERE id = ?", [groupId]);
   if (!group) throw new Error(`no group ${groupId}`);
   if (kind === "sense" && group.kind === "builtin") {
     throw new Error("a sense cannot be removed from a built-in group");
   }
+  const removed = one(
+    db,
+    "SELECT added_at FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupId, kind, id],
+  );
   db.prepare(
     "DELETE FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
   ).run(groupId, kind, id);
-  if (kind === "entity") {
+  if (kind === "entity" && !allowOrphan) {
     const left = one(
       db,
       "SELECT COUNT(*) AS n FROM group_cell WHERE item_kind = 'entity' AND item_id = ?",
       [id],
     ).n;
-    if (left === 0) placeItem(db, "grp_my_words", "entity", id);
+    // The landing in My Words is the same add re-filed, not a new one —
+    // it keeps the removed placement's timestamp (and replay converges).
+    if (left === 0) placeItem(db, "grp_my_words", "entity", id, null, removed?.added_at);
   }
+  recordOp(db, "remove_item", { groupId, kind, id, allowOrphan });
 }
 
 /**
@@ -472,12 +491,18 @@ export function removeItemUndoable(db, groupId, kind, id) {
   return {
     removed,
     undo() {
+      // Both writes go through the write owners so each lands in the op
+      // log: drop the never-orphan landing (skips the catch-all it would
+      // re-trigger), then restore the exact cell with its added_at.
       if (kind === "entity" && !myWordsBefore) {
-        db.prepare(
-          "DELETE FROM group_cell WHERE group_id = 'grp_my_words' AND item_kind = 'entity' AND item_id = ?",
-        ).run(id);
+        const mw = one(
+          db,
+          "SELECT 1 AS x FROM group_cell WHERE group_id = 'grp_my_words' AND item_kind = 'entity' AND item_id = ?",
+          [id],
+        );
+        if (mw) removeItem(db, "grp_my_words", "entity", id, { allowOrphan: true });
       }
-      insertCell(db, groupId, kind, id, removed.page, removed.slot_index, removed.added_at);
+      placeItem(db, groupId, kind, id, removed, removed.added_at);
     },
   };
 }
@@ -490,23 +515,21 @@ export function removeItemUndoable(db, groupId, kind, id) {
 export function renameEntity(db, id, newName) {
   const name = newName.trim();
   if (!name) throw new Error("renameEntity: empty name");
-  txn(db, () => {
-    db.prepare("UPDATE personal_entity SET spoken_name = ? WHERE id = ?").run(name, id);
-    db.prepare(
-      "UPDATE clip_override SET status = 'superseded' WHERE entity_id = ? AND status = 'ready'",
-    ).run(id);
-    db.prepare(
-      "UPDATE entity_enrichment SET status = 'superseded' WHERE entity_id = ? AND status = 'ready'",
-    ).run(id);
-  });
+  // The supersede triggers (entity_rename_supersedes_override,
+  // entity_input_change_supersedes_enrichment) retire the ready override
+  // and enrichment on UPDATE — the old name cannot keep playing.
+  db.prepare("UPDATE personal_entity SET spoken_name = ? WHERE id = ?").run(name, id);
+  recordOp(db, "rename_entity", { id, name });
 }
 
 /** Retire, never delete: the entity renders nowhere until restored. */
 export function retireEntity(db, id) {
   db.prepare("UPDATE personal_entity SET status = 'retired' WHERE id = ?").run(id);
+  recordOp(db, "retire_entity", { id });
 }
 export function restoreEntity(db, id) {
   db.prepare("UPDATE personal_entity SET status = 'active' WHERE id = ?").run(id);
+  recordOp(db, "restore_entity", { id });
 }
 
 /** The groups an entity sits in, index order — the card's chips. */
@@ -540,14 +563,48 @@ export function senseGroups(db, senseId, locale) {
 }
 
 /** Create a custom group at the lowest free index slot. */
-export function createGroup(db, { name, photoKey = null }) {
-  const slot = lowestFreeIndexSlot(db);
+/** Create a personal entity (the + Add "New" path and op replay share
+ *  this). `id`/`addedAt` are set by replay so replicas match byte-for-byte;
+ *  a fresh save generates them. */
+export function createEntity(db, { id = null, name, photoKey = null, category = null, hint = null, addedAt = null }) {
+  const eid = id ?? `ent_${crypto.randomUUID().replaceAll("-", "")}`;
+  const at = addedAt ?? Date.now();
+  db.prepare(
+    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint, added_at) VALUES (?, ?, ?, ?, ?, ?)",
+  ).run(eid, name, photoKey, category, hint, at);
+  recordOp(db, "create_entity", { id: eid, name, photoKey, category, hint, addedAt: at });
+  return { id: eid, added_at: at };
+}
+
+/** The card's photo change — the picture is the entity's face. */
+export function setEntityPhoto(db, id, photoKey) {
+  db.prepare("UPDATE personal_entity SET photo_key = ? WHERE id = ?").run(photoKey, id);
+  recordOp(db, "set_entity_photo", { id, photoKey });
+}
+
+/** A synced profile setting (Sync_And_Web_Editing § 2). Allowlisted — an
+ *  op cannot reach an arbitrary column. */
+const SYNCED_SETTINGS = new Set([
+  "preferred_voice_id",
+  "keyboard_mode",
+  "keyboard_order",
+  "highlight_next",
+]);
+export function setSetting(db, key, value) {
+  if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);
+  db.prepare(`UPDATE learner_profile SET ${key} = ? WHERE id = 'prf_local'`).run(value);
+  recordOp(db, "set_setting", { key, value });
+}
+
+export function createGroup(db, { name, photoKey = null, id = null, indexSlot = null }) {
+  const slot = indexSlot ?? lowestFreeIndexSlot(db);
   if (slot === null) throw new Error("group index is full");
-  const id = `grp_${crypto.randomUUID().replaceAll("-", "")}`;
+  const gid = id ?? `grp_${crypto.randomUUID().replaceAll("-", "")}`;
   db.prepare(
     "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, 'custom', ?, NULL, ?, ?)",
-  ).run(id, name, photoKey, slot);
-  return { id, index_slot: slot };
+  ).run(gid, name, photoKey, slot);
+  recordOp(db, "create_group", { id: gid, name, photoKey, indexSlot: slot });
+  return { id: gid, index_slot: slot };
 }
 
 /**
@@ -560,19 +617,20 @@ export function deleteGroup(db, groupId) {
   if (group.kind !== "custom") throw new Error("only custom groups can be deleted");
   const orphans = all(
     db,
-    "SELECT item_id FROM group_cell WHERE group_id = ? AND item_kind = 'entity'",
+    "SELECT item_id, added_at FROM group_cell WHERE group_id = ? AND item_kind = 'entity'",
     [groupId],
-  ).map((r) => r.item_id);
+  );
   db.prepare("DELETE FROM group_cell WHERE group_id = ?").run(groupId);
   db.prepare("DELETE FROM board_group WHERE id = ?").run(groupId);
-  for (const id of orphans) {
+  for (const o of orphans) {
     const left = one(
       db,
       "SELECT COUNT(*) AS n FROM group_cell WHERE item_kind = 'entity' AND item_id = ?",
-      [id],
+      [o.item_id],
     ).n;
-    if (left === 0) placeItem(db, "grp_my_words", "entity", id);
+    if (left === 0) placeItem(db, "grp_my_words", "entity", o.item_id, null, o.added_at);
   }
+  recordOp(db, "delete_group", { groupId });
 }
 
 /**
@@ -612,6 +670,7 @@ export function moveGroup(db, groupId, slot) {
   const row = one(db, "SELECT id FROM board_group WHERE id = ?", [groupId]);
   if (!row) throw new Error(`no group ${groupId}`);
   db.prepare("UPDATE board_group SET index_slot = ? WHERE id = ?").run(slot, groupId);
+  recordOp(db, "move_group", { groupId, slot });
 }
 
 /**
@@ -633,5 +692,6 @@ export function swapGroups(db, a, b) {
     db.prepare(
       "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, ?, ?, ?, ?)",
     ).run(gb.id, gb.kind, gb.name, gb.glyph, gb.photo_key, ga.index_slot);
+    recordOp(db, "swap_groups", { a, b });
   });
 }

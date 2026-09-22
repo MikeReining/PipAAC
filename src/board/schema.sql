@@ -235,6 +235,19 @@ CREATE TABLE IF NOT EXISTS group_cell (
       OR (item_kind = 'entity' AND item_id GLOB 'ent_*'))
 );
 
+-- Every adult edit lands here as an op (docs/product/Sync_And_Web_Editing.md
+-- § 4, 011 slice 1). Ops carry intent (kind + JSON args); replaying them
+-- through the same write owners rebuilds the synced tables. device_id is
+-- the local placeholder until device keys land (011 slice 3).
+CREATE TABLE IF NOT EXISTS sync_op (
+  seq INTEGER PRIMARY KEY AUTOINCREMENT,
+  op_id TEXT NOT NULL UNIQUE CHECK (op_id GLOB 'op_*'),
+  device_id TEXT NOT NULL DEFAULT 'dev_local',
+  kind TEXT NOT NULL,
+  args TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+
 CREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text
   ON label(sense_id, locale, normalized_text);
 CREATE UNIQUE INDEX IF NOT EXISTS label_one_approved_lemma

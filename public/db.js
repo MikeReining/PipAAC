@@ -98,7 +98,7 @@ function migrateSchema(d, schemaSql) {
     "sense", "utterance", "label", "image", "voice", "clip", "core_cell",
     "learner_profile", "personal_entity", "entity_enrichment",
     "learner_event_log", "clip_override", "board_group", "group_cell",
-    "group_label",
+    "group_label", "sync_op",
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();

@@ -1,6 +1,7 @@
 # Phase 011 — Sync and web editing
 
-**Status:** Ready to execute after 009 slices 1–3. Not started. Rulings recorded (slice 0).
+**Status:** Executing. Slice 1 built and proven (see its Works Test note).
+Rulings recorded (slice 0).
 
 **Direction DECIDED 2026-09-22** (founder: "a user can create and edit
 things on a computer and then have them also on their iPad"). Rulings
@@ -55,6 +56,16 @@ Works Test: run a seeded random sequence of 500 edits across every edit
 path. Replay the recorded ops into a fresh database. The synced tables
 (§ 2) are byte-identical to the original. Run with a new seed in CI each
 time and print the seed on failure.
+
+**Works Test (proven 2026-09-23):** `src/board/sync_op.test.mjs` — a
+mulberry32-seeded 500-edit storm across all 14 edit paths, replayed into
+a fresh catalog baseline: `personal_entity`, `board_group`, `group_cell`,
+`clip_override`, `entity_enrichment`, and the synced profile columns are
+byte-identical. Rerun with `SYNC_SEED=<n>`; `SYNC_DEBUG=1` prints the
+first diverging rows. Passed 7 seeds at authoring. The storm caught one
+real bug: the never-orphan landing stamped a fresh `added_at`, so the
+landing now carries the removed placement's timestamp (it is the same
+add re-filed).
 
 ## Slice 2 — One order, same functions (merge)
 

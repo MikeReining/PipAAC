@@ -1274,9 +1274,13 @@ nowhere and `restoreEntity` brings it back with its placements.
 
 ### 14.6 Sync op log (011 slice 1)
 
-A device-local `sync_op` table records every adult edit as an op (see
-`docs/product/Sync_And_Web_Editing.md` § 4). It is added by that slice. The
-tables that sync and never sync are listed in that doc's § 2.
+**BUILT** — `sync_op(seq, op_id, device_id, kind, args, created_at)` in
+`src/board/schema.sql`. Every write owner in `public/shared/groups.mjs`
+records its call as an op (`recordOp` in `public/shared/ops.mjs`); ops
+carry intent — ids, slots and timestamps the write generated — so replay
+(`replayOps`) rebuilds the synced tables byte-identically. `device_id`
+holds `dev_local` until device keys land (slice 3). The tables that sync
+and never sync are listed in `docs/product/Sync_And_Web_Editing.md` § 2.
 
 ### 14.7 Same spelling, different sound (not scheduled)
 

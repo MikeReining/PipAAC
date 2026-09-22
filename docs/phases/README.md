@@ -15,7 +15,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Slice 1 — every adult edit is an op (unblocked: 009 slices 1–3 done). | `docs/phases/011_Sync_And_Web_Editing.md` |
+| **P1** | Slice 2 — one order, same functions (merge; local, no network). | `docs/phases/011_Sync_And_Web_Editing.md` |
 | **P2** | Slice 1 — local time and sentences (a fix to built code). | `docs/phases/006_Prediction_Engine.md` |
 
 ## Live index
@@ -30,7 +30,7 @@ Executing phases only. Each row names the **next** slice.
 | [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 4 — record my own (slices 4, 6–9 independent) |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
-| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | **P1.** Slice 1 — every adult edit is an op (gate cleared: 009 slices 1–3 shipped) |
+| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | **P1.** Slice 2 — one order, same functions (merge; local, no network) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

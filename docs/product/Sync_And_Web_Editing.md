@@ -90,15 +90,22 @@ already downloaded. That is stated honestly in the UI, not hidden.
 ## 4. What travels: an encrypted op log
 
 Every adult edit is already a function call on one write owner
-(`public/shared/groups.mjs` for groups; the entity save in
-`public/board.js`). Sync records each of those calls as an **op**:
+(`public/shared/groups.mjs` for groups, entities, placements and synced
+settings). **BUILT** (011 slice 1): each write owner records its call as
+an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
 
 ```text
-{ op_id, device_id, kind: "place_item" | "move_item" | "swap_items" |
-  "remove_item" | "create_group" | "rename_entity" | "set_photo" |
-  "set_override" | "set_setting" | …, args }
+{ op_id, device_id, kind: "create_entity" | "rename_entity" |
+  "retire_entity" | "restore_entity" | "set_entity_photo" |
+  "place_item" | "move_item" | "swap_items" | "remove_item" |
+  "create_group" | "delete_group" | "move_group" | "swap_groups" |
+  "set_setting" | "set_override" | …, args }
 ```
 
+- Ops carry intent — the ids, slots and timestamps the write generated —
+  and `applyOp` replays them through the same write owners, suppressing
+  re-recording. Placement ops land at their slot if free, else the next
+  free slot; an op never displaces an item already placed.
 - Ops are encrypted with the board key before they leave the device.
 - A photo or recording is a separate encrypted **blob**. The op carries
   its content hash, not its bytes.

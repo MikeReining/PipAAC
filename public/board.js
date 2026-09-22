@@ -19,6 +19,7 @@ import {
 } from "./shared/library.mjs";
 import {
   catalogMatches,
+  createEntity,
   entityMatches,
   createGroup,
   deleteGroup,
@@ -36,6 +37,8 @@ import {
   restoreEntity,
   retireEntity,
   senseGroups,
+  setEntityPhoto,
+  setSetting,
   swapGroups,
   swapItems,
 } from "./shared/groups.mjs";
@@ -649,7 +652,7 @@ $("kb-mode").addEventListener("click", (e) => {
   const v = e.target.closest("button")?.dataset.v;
   if (!v || v === kbMode) return;
   kbMode = v;
-  RUN(db, "UPDATE learner_profile SET keyboard_mode = ? WHERE id = 'prf_local'", [v]);
+  setSetting(db, "keyboard_mode", v);
   rebuildKb();
   syncKbSettings();
 });
@@ -657,7 +660,7 @@ $("kb-order").addEventListener("click", (e) => {
   const v = e.target.closest("button")?.dataset.v;
   if (!v || v === kbOrder) return;
   kbOrder = v;
-  RUN(db, "UPDATE learner_profile SET keyboard_order = ? WHERE id = 'prf_local'", [v]);
+  setSetting(db, "keyboard_order", v);
   rebuildKb();
   syncKbSettings();
 });
@@ -665,9 +668,7 @@ $("hl-next").addEventListener("click", (e) => {
   const v = e.target.closest("button")?.dataset.v;
   if (v === undefined) return;
   highlightNext = v === "1";
-  RUN(db, "UPDATE learner_profile SET highlight_next = ? WHERE id = 'prf_local'", [
-    highlightNext ? 1 : 0,
-  ]);
+  setSetting(db, "highlight_next", highlightNext ? 1 : 0);
   syncKbSettings();
   applyLikely();
 });
@@ -1614,11 +1615,7 @@ $("add-save").addEventListener("click", async () => {
   // The record's home category — a classifier input, never displayed —
   // is the seed category of a built-in target group, else null.
   const category = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
-  RUN(
-    db,
-    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint, added_at) VALUES (?, ?, ?, ?, ?, ?)",
-    [id, name, photoKey, category, hint, Date.now()],
-  );
+  createEntity(db, { id, name, photoKey, category, hint });
   placeItem(db, addTarget, "entity", id, addCell);
   kbIndex = null; // new entity joins the completion index
   close("addform");
@@ -1710,7 +1707,7 @@ $("wc-photo").addEventListener("change", async () => {
   const file = $("wc-photo").files[0];
   if (!file || !cardItem) return;
   const photoKey = await savePhoto(cardItem.item_id, file);
-  RUN(db, "UPDATE personal_entity SET photo_key = ? WHERE id = ?", [photoKey, cardItem.item_id]);
+  setEntityPhoto(db, cardItem.item_id, photoKey);
   entityPhoto.delete(cardItem.item_id);
   rerenderView();
 });
