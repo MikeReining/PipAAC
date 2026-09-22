@@ -116,9 +116,9 @@ One character, used everywhere a human figure carries the meaning. Canonical sty
 
 - No hair, no gender markers, and no racial or ethnic cues.
 - Bold, uniform monoline stroke with soft rounded joint curvature.
-- Blank, solid circular head with balanced outline weight. No facial expression noise (avoids visual clutter at 48×48px).
+- Friendly, warm circular head with simple dot eyes and a gentle smile (warmth and approachability for children; avoids the sterile, creepy look of a faceless mannequin).
 - Soft rounded hand terminals capable of pointing and directional gestures.
-- Clean silhouette with zero motion lines, speed streaks, or dust puffs (prevents misinterpretation by autistic communicators).
+- Clean silhouette with zero motion lines, speed streaks, or dust puffs (achieved through seed re-rolling, not prompt-policing).
 - Torso filled with the Fitzgerald color for that button's grammar role. A green torso marks an action such as *run*. A yellow torso marks a pronoun such as *I* or *we*.
 - Meaning comes from posture, action, and directional arrows.
 
@@ -140,7 +140,7 @@ Relational and positional concepts (*in*, *out*, *on*, *under*, *up*, *down*) us
 - Directional arrow carrying the Fitzgerald key accent (pink for prepositions).
 - Opposites share identical geometry: *in* and *out* use the exact same container perspective, changing only the arrow trajectory.
 
-### 4.4 Generation Prompt Architecture
+### 4.4 Generation Prompt Architecture & Lessons
 
 Every symbol in Pip AAC is generated via `scripts/art/gen.mjs` using the locked 3-line base prompt:
 
@@ -152,7 +152,9 @@ Do not include any text in the image.
 
 - **Plurals:** Automatically appends `Show more than one.`
 - **Grammar Color:** Appends `The stick figure's torso is solid {color}.`
-- **Abstract Concepts:** Appends a concise 5-to-10 word physical `sceneHint` rather than a full scene description. Rerolling across seeds is preferred over prompt bloating.
+- **Abstract Concepts:** Appends a concise 5-to-10 word physical `sceneHint` rather than a full scene description.
+- **The Re-roll Law:** Never police minor defects (stray lines, angle quirks) by bloating the prompt with negative rules or micro-constraints. The 3 reference images carry the hand; seed re-rolling is the lever. Full case study: `Art_Generation_Lessons.md`.
+
 
 
 ---
