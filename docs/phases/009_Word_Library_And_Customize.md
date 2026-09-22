@@ -1,7 +1,6 @@
 # Phase 009 — Word Library and customization
 
-**Status:** Ready to execute. Not started. Slice 1 is P1: it fixes a defect
-in built code.
+**Status:** Executing. Slice 1 built and proven (see its Works Test note).
 
 **DECIDED 2026-09-22** (founder: "if we nail customization and really make
 it dramatically better we can win a key area that's really hard and
@@ -83,6 +82,13 @@ Works Test:
 
 Done when: that passes and a person can put Cooper in two groups from the
 board without making a second Cooper.
+
+**BUILT 2026-09-22.** `entityMatches` + `catalogMatches` (seed-category
+rank) in `public/shared/groups.mjs`; picture rows in `renderAddMatches`.
+Proof: `src/board/library_add.test.mjs` (4 tests) + headless-Chrome drive
+of the live sheet (Cooper offered first in People, one record, both
+groups). Also fixed: `#add-newfields` ignored `hidden` (display:flex beat
+the attribute).
 
 ---
 

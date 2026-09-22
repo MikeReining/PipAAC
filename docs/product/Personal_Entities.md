@@ -72,10 +72,10 @@ category-and-My-Words filing written earlier the same day). **BUILT**
   the real word, with color, voice and picture, and creates no entity),
   ranked by the group the add started in. "New: '…'" is always offered and
   creates a personal entity: name, optional photo, optional hint. Two
-  entities may share a name (Max the dog, Max the cousin). **Amended
-  2026-09-22:** decided, not built. Today the sheet matches catalog words
-  only, so re-typing an entity's name silently creates a second record.
-  Rule and fix: `docs/product/Word_Library.md` § 5.1.
+  entities may share a name (Max the dog, Max the cousin). **BUILT**
+  (009 slice 1 — `entityMatches` + `catalogMatches` in
+  `public/shared/groups.mjs`; `renderAddMatches` in `public/board.js`).
+  Rule: `docs/product/Word_Library.md` § 5.1.
 - **Many groups, never none.** An entity can sit in several groups. Removing
   it from its last group returns it to My Words. Deleting a custom group
   moves its only-there entities to My Words.

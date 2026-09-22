@@ -512,16 +512,35 @@
         text-align: left;
         background: #fff;
       }
-      .addmatch .swatch {
-        width: 26px;
-        height: 26px;
+      /* Picture row: a photo or symbol square, else the role swatch
+         carrying the word's initial — every meaning shown as a picture. */
+      .addmatch .pic {
+        width: 32px;
+        height: 32px;
         border-radius: 6px;
-        border: 2px solid var(--rb);
-        background: var(--rf);
+        border: 2px solid var(--rb, var(--edge));
+        background: var(--rf, var(--press-f));
+        color: var(--ink-text);
         flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        overflow: hidden;
+      }
+      .addmatch .pic img { width: 100%; height: 100%; object-fit: contain; }
+      .addmatch .pic.photo img { object-fit: cover; }
+      .addmatch .txt { min-width: 0; display: flex; flex-direction: column; }
+      .addmatch .sub {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 400;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       #add-new { border-style: dashed; color: var(--neutral-text); }
-      #add-newfields { display: flex; flex-direction: column; gap: 12px; }
+      #add-newfields:not([hidden]) { display: flex; flex-direction: column; gap: 12px; }
       .hint { color: #777; font-size: 14px; }
     </style>
   </head>

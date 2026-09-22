@@ -125,7 +125,7 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   or "New: '…'" to create a personal entity with an optional photo.
   Picking an existing meaning places that same record here. One meaning,
   one record; the same spelling may repeat (`bat` 🦇 and `bat` ⚾).
-  **DECIDED 2026-09-22**, not built (`docs/product/Word_Library.md`
+  **DECIDED 2026-09-22; BUILT** (009 slice 1; `docs/product/Word_Library.md`
   § 5.1). The
   place is the picker; there is no folder picker. Filing rules for
   entities: `docs/product/Personal_Entities.md` § Filing.

@@ -12,6 +12,7 @@ import { normalizeV1 } from "./shared/normalize.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
   catalogMatches,
+  entityMatches,
   createGroup,
   deleteGroup,
   groupDisplayName,
@@ -1358,7 +1359,10 @@ function openAddForm(groupId) {
 }
 
 /** Re-render the match list and the always-present New row as the adult
- *  types. Local query only — a save never touches the network. */
+ *  types. Every existing meaning is a picture row — the family's own
+ *  entities first (with where they already are), then catalog senses.
+ *  Picking a row places that same record here; only New creates one.
+ *  Local query only — a save never touches the network. */
 function renderAddMatches() {
   const text = $("add-name").value.trim();
   const box = $("add-matches");
@@ -1371,21 +1375,69 @@ function renderAddMatches() {
   }
   newBtn.hidden = false;
   newBtn.textContent = `New: '${text}'`;
-  for (const m of catalogMatches(db, text, addTarget, locale)) {
+  const seed = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
+
+  const pic = (row, cls) => {
+    const el = document.createElement("span");
+    el.className = `pic ${cls}`;
+    return el;
+  };
+  const place = (kind, id) => () => {
+    placeItem(db, addTarget, kind, id);
+    close("addform");
+    rerenderView();
+    renderStrip();
+  };
+
+  for (const m of entityMatches(db, text, addTarget, locale, seed)) {
     const row = document.createElement("button");
     row.className = "addmatch";
-    const sw = document.createElement("span");
-    sw.className = `swatch r-${m.fitzgerald_role}`;
+    const p = pic(row, "r-Yellow");
+    if (m.photo_key) {
+      loadPhotoURL(m.photo_key).then((url) => {
+        if (!url) return;
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "";
+        p.replaceChildren(img);
+        p.classList.add("photo");
+      });
+    } else {
+      p.textContent = m.name[0].toUpperCase();
+    }
+    const txt = document.createElement("span");
+    txt.className = "txt";
+    const lb = document.createElement("span");
+    lb.textContent = m.name;
+    txt.appendChild(lb);
+    if (m.groups.length) {
+      const sub = document.createElement("span");
+      sub.className = "sub";
+      sub.textContent = `in ${m.groups.join(", ")}`;
+      txt.appendChild(sub);
+    }
+    row.append(p, txt);
+    row.addEventListener("click", place("entity", m.id));
+    box.appendChild(row);
+  }
+
+  for (const m of catalogMatches(db, text, addTarget, locale, seed)) {
+    const row = document.createElement("button");
+    row.className = "addmatch";
+    const p = pic(row, `r-${m.fitzgerald_role}`);
+    if (m.art) {
+      const img = document.createElement("img");
+      img.src = `/${m.art}`;
+      img.alt = "";
+      p.appendChild(img);
+    }
+    const txt = document.createElement("span");
+    txt.className = "txt";
     const lb = document.createElement("span");
     lb.textContent = m.label;
-    row.appendChild(sw);
-    row.appendChild(lb);
-    row.addEventListener("click", () => {
-      placeItem(db, addTarget, "sense", m.id);
-      close("addform");
-      rerenderView();
-      renderStrip();
-    });
+    txt.appendChild(lb);
+    row.append(p, txt);
+    row.addEventListener("click", place("sense", m.id));
     box.appendChild(row);
   }
 }

@@ -265,12 +265,59 @@ export function pageCount(db, groupId) {
 }
 
 /**
- * Add-flow matches: up to 4 approved English lemmas whose normalized text
+ * Add-flow matches: the family's own entities whose name starts with the
+ * typed prefix, excluding records already in the target group (placing
+ * one there would silently no-op on the PK). Each row carries the groups
+ * the entity already sits in — the "(in Animals)" subtitle. The target
+ * group's seed category ranks, never filters (Word_Library § 5.1).
+ */
+export function entityMatches(db, text, groupId, locale, seedCategory = null) {
+  requireLocale(locale);
+  const prefix = normalizeV1(text);
+  if (!prefix) return [];
+  const rows = all(
+    db,
+    `SELECT e.id, e.spoken_name, e.photo_key, e.category,
+            COALESCE(g.name, gl.text) AS gname
+     FROM personal_entity e
+     LEFT JOIN group_cell gc ON gc.item_kind = 'entity' AND gc.item_id = e.id
+     LEFT JOIN board_group g ON g.id = gc.group_id
+     LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
+     WHERE NOT EXISTS (
+       SELECT 1 FROM group_cell x
+       WHERE x.group_id = ? AND x.item_kind = 'entity' AND x.item_id = e.id
+     )
+     ORDER BY g.index_slot`,
+    [locale, groupId],
+  );
+  const byId = new Map();
+  for (const r of rows) {
+    if (!byId.has(r.id)) {
+      byId.set(r.id, {
+        id: r.id,
+        name: r.spoken_name,
+        photo_key: r.photo_key,
+        boost: seedCategory !== null && r.category === seedCategory ? 1 : 0,
+        exact: normalizeV1(r.spoken_name) === prefix ? 1 : 0,
+        groups: [],
+      });
+    }
+    if (r.gname) byId.get(r.id).groups.push(r.gname);
+  }
+  return [...byId.values()]
+    .filter((e) => normalizeV1(e.name).startsWith(prefix))
+    .sort((a, b) => b.exact - a.exact || b.boost - a.boost || a.name.localeCompare(b.name))
+    .slice(0, 4);
+}
+
+/**
+ * Add-flow matches: up to 4 approved lemmas whose normalized text
  * starts with the typed prefix, excluding senses already in the target
  * group (placing one there would silently no-op on the PK). Rank: exact
- * match, then default_for_text, then lexicon slot (sense id order).
+ * match, then the target group's seed category (the group ranks, never
+ * hides — Word_Library § 5.1), then default_for_text, then lexicon slot.
  */
-export function catalogMatches(db, text, groupId, locale) {
+export function catalogMatches(db, text, groupId, locale, seedCategory = null) {
   requireLocale(locale);
   const prefix = normalizeV1(text);
   if (!prefix) return [];
@@ -279,7 +326,8 @@ export function catalogMatches(db, text, groupId, locale) {
   return all(
     db,
     `SELECT s.id, l.text AS label, s.fitzgerald_role,
-            (l.normalized_text = ?) AS exact
+            (SELECT i.key FROM image i
+              WHERE i.id = s.default_image_id AND i.status = 'approved') AS art
      FROM label l JOIN sense s ON s.id = l.sense_id
      WHERE l.normalized_text LIKE ? ESCAPE '\\'
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
@@ -287,9 +335,11 @@ export function catalogMatches(db, text, groupId, locale) {
          SELECT 1 FROM group_cell gc
          WHERE gc.group_id = ? AND gc.item_kind = 'sense' AND gc.item_id = s.id
        )
-     ORDER BY exact DESC, l.default_for_text DESC, s.id ASC
+     ORDER BY (l.normalized_text = ?) DESC,
+              COALESCE(s.category = ?, 0) DESC,
+              l.default_for_text DESC, s.id ASC
      LIMIT 4`,
-    [prefix, like, locale, groupId],
+    [like, locale, groupId, prefix, seedCategory],
   );
 }
 

@@ -134,11 +134,11 @@ Inside Sports, ⚾ sorts first. Every meaning stays offered.
 
 **What is forbidden:** the same record twice in one group (the
 `group_cell` primary key already enforces it), and an add that silently
-creates a second record when the one the adult meant already exists. That
-is the bug today. The matcher searches catalog senses only
-(`catalogMatches` in `public/shared/groups.mjs`), so typing "Cooper" in a
-second group creates a second Cooper and never offers the first. Fix:
-009 slice 1 (P1).
+creates a second record when the one the adult meant already exists.
+**BUILT** (009 slice 1): `entityMatches` offers the family's own entities
+first, `catalogMatches` ranks by the target group's seed category, and
+picking a row places the same record (`public/shared/groups.mjs`,
+`renderAddMatches` in `public/board.js`; proof `src/board/library_add.test.mjs`).
 
 Pronunciation gap, recorded for later: words spelled the same but said
 differently (`lead` the metal, `lead` the verb) share one recording in
