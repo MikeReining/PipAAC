@@ -90,11 +90,14 @@ Pip AAC is grounded in decades of peer-reviewed clinical research and establishe
 - **Clinical Principle:** Across age, gender, and demographic groups, approximately 200 to 400 "core words" account for ~80% of all spoken communication. Core vocabulary consists predominantly of verbs, pronouns, prepositions, determiners, adverbs, and negation. Core words are generative and context-independent.
 - **The Fringe Complement:** "Fringe words" (specific nouns, unique names, specialized interests) provide the remaining ~20% of communication. While fringe words are essential for personal identity and topical specificity, they cannot produce syntax or novel utterances in isolation.
 - **Pip AAC Law:** Core words remain universally accessible across all views. They are never hidden, replaced, or displaced by fringe vocabulary.
+- **Pip AAC Law (Clean-room primary set):** **DECIDED 2026-09-22** (not built). The first words that receive motor-grid coordinates are compiled from open clinical lists — Banajee, DiCarlo, and Stricklin (2003), Center for Literacy and Disability Studies core-word studies, and the MacArthur-Bates CDI — and then placed on a coordinate map Pip AAC designs itself. About 50 to 100 of those words form the first primary motor set. That range does not shrink the ~200 anchors in the relational graph. Incumbent button maps are not a source. Owner: `docs/product/Motor_Grid_And_Art.md`.
 
 ### 2.4 Motor Planning & Automaticity (Ducharme, 2010; Halloran / LAMP)
 - **Clinical Principle:** Neurologically, human speech is largely motor-automatic. When speaking via an AAC system, if a communicator must visually search the screen for every button, cognitive bandwidth is drained by visual-perceptual navigation rather than semantic expression. Consistent motor pathways enable fast, fluent retrieval.
 - **The Failure of Legacy AAC:** Legacy systems attempt motor planning by freezing absolute `(x, y)` button coordinates. If a child changes grid density (e.g., moving from 15 buttons to 60 buttons), or if an app switches between portrait and landscape, the motor plan is destroyed.
 - **Pip AAC Law (Spatial Vector Anchoring):** Motor memory is preserved through relative spatial vectors (e.g., pronouns anchored top-left, core verbs in the center-left cluster, descriptors and spatial prepositions in consistent directional sectors). As the grid density expands or contracts across screen form factors, the spatial vector trajectories remain structurally invariant.
+- **Pip AAC Law (No motor disruption within a view):** **DECIDED 2026-09-22** (not built). Once a density and orientation are in use, core cells do not swap, hide, or shift to chase a prediction. Moving a target mid-session forces a visual search and is especially costly for communicators who reach or fixate with effort (apraxia, cerebral palsy, tremor). Layout owner: `docs/product/Motor_Grid_And_Art.md`.
+- **Pip AAC Law (Prediction must not coerce the grid):** **DECIDED 2026-09-22** (not built). Likely next words, especially fringe words that are not already on the core view, appear in a strip of at most four tiles above the grid. They do not rearrange the main board around what the model expects. Ranking owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 
 ### 2.5 Aided Language Stimulation & Partner Modeling (Goossens', 1989; Sennott et al., 2016; O'Neill, Light, & Pope, 2018)
 - **Clinical Principle:** Children learn spoken language because immersion surrounds them with speech for thousands of hours before they speak their first word. AAC communicators require identical immersion: communication partners (parents, SLPs, peers, educators) must model language *on the AAC system* while speaking naturally ("Aided Language Input").
@@ -112,6 +115,15 @@ Pip AAC is grounded in decades of peer-reviewed clinical research and establishe
   3. Device fragility and single-device lock-in.
   4. Social stigma of clunky, outdated software and hardware.
 - **Pip AAC Law:** Pip AAC attacks every single cause of abandonment through zero-friction capture, instant context-surfacing, universal hardware support, and modern design standards.
+
+### 2.8 Symbol Art and Grammar Color
+
+**DECIDED 2026-09-22** (not built). Full drawing rules: `docs/product/Motor_Grid_And_Art.md`.
+
+- **One stick character** carries people, pronouns, and actions. No hair, no gender markers, and no racial or ethnic cues. Posture and arrows carry the meaning. The torso is filled with the word's grammar color, not with clothing.
+- **Objects** (food, vehicles, household things, animals) use a separate warm illustrated style: rounded curves, solid fills, clean outlines.
+- **Modified Fitzgerald Key** assigns the colors: yellow/orange for pronouns, people, and nouns; green for verbs; blue for descriptors; pink/magenta for social phrases, prepositions, and conjunctions; red or a black outline for negation, stops, and emergency words.
+- **In-house assets only.** Images, audio, and layout styles are created for Pip AAC. Competitor symbol libraries are not a source.
 
 ---
 
@@ -144,7 +156,7 @@ In legacy apps, conjugating a verb requires holding a button down until a modal 
 
 ### 4.3 Multi-Surface Views (One Child, Many Contexts)
 Instead of forcing the learner into a single rigid grid:
-1. **Motor Anchor Grid:** The standard, high-speed daily driver for generative language.
+1. **Motor Anchor Grid:** The standard, high-speed daily driver for generative language. Under the sentence bar, a predictive strip of at most four icon-and-text tiles offers the likely next fringe word. The core cells underneath stay where they are. **DECIDED 2026-09-22** (not built). Spec: `docs/product/Motor_Grid_And_Art.md`.
 2. **Contextual River View:** What is happening right now? (Dinner table, art class, playground). Relevant fringe entities dock gently alongside the core grid without page flips.
 3. **Visual Scene & Story View:** Built-in photographic hotspot scenes (e.g., photo of the child's bedroom or playground), eliminating the need for fragmented companion apps like Pictello.
 4. **Caregiver Co-Pilot View:** Multi-device partner modeling, monitoring, and vocabulary enrichment.
@@ -169,6 +181,11 @@ Instead of forcing the learner into a single rigid grid:
   - Predictive intelligence: Dual-Engine system (TypeSafe Jev edge classification + On-device encrypted SQLite store; see `docs/strategy/Dual_Engine_Predictive_Intelligence.md`).
   - Platform strategy: Local-first, offline-always web architecture (Cloudflare edge sync + client-side persistence).
   - Clinical adherence: Absolute compliance with ASHA standards, Janice Light's 4 communication purposes, core vocabulary research, motor planning automaticity, and aided language stimulation.
+- **DECIDED 2026-09-22** (mentor intake; not built). Owners: `docs/product/Motor_Grid_And_Art.md` and `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
+  - Clean-room motor grid: independent coordinates; vocabulary seeded from open clinical lists; no transcription of incumbent boards or symbol libraries.
+  - Within a view, core indices do not move. Across densities, spatial-vector anchoring from 2026-09-21 still applies.
+  - Predictive strip: at most four text-and-icon tiles between the sentence bar and the core grid. Suggestions do not reorder the grid.
+  - Symbol art: one neutral stick character with Fitzgerald-colored torsos; illustrated objects for inanimate nouns; in-house assets only.
 - **PROPOSED**:
   - Primary production domain: `pippaac.org`.
   - Phase 1 execution slice: Relational Core Schema + Spatial Vector Engine + Responsive Motor Grid View proof.
@@ -193,3 +210,5 @@ Instead of forcing the learner into a single rigid grid:
 14. **O'Neill, T., Light, J., & Pope, L. (2018).** *Effects of interventions that include aided augmentative and alternative communication input on the communication of individuals with complex communication needs: A meta-analysis.* Journal of Speech, Language, and Hearing Research, 61(7), 1743–1765.
 15. **Rossetti, Z. (2014).** *Presuming Competence: A Blueprint for AAC.* Perspectives on Augmentative and Alternative Communication.
 16. **Sennott, S. C., Light, J. C., & McNaughton, D. (2016).** *AAC modeling intervention research review.* Communication Disorders Quarterly, 37(2), 105–115.
+17. **Fenson, L., Marchman, V. A., Thal, D. J., Dale, P. S., Reznick, J. S., & Bates, E. (2007).** *MacArthur-Bates Communicative Development Inventories: User's guide and technical manual* (2nd ed.). Brookes Publishing.
+18. **Center for Literacy and Disability Studies.** Core-word studies used as an open seeding source for the primary motor set. Named in `docs/product/Motor_Grid_And_Art.md`. Not a claim that a specific CLDS table has been transcribed into the product.

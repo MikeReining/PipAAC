@@ -15,7 +15,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Founder brief → SSOT + first executing phase doc | `docs/workflows/SSOT_Founder_Input_Workflow.md` |
+| **P1** | Open the first executing phase. Grid, art, and the predictive strip are specified and not built. | `docs/product/Motor_Grid_And_Art.md` |
 
 ## Live index
 
@@ -23,6 +23,6 @@ Executing phases only. Each row names the **next** slice.
 
 | Phase | Next slice |
 | --- | --- |
-| — | *None until founder brief lands (harness bootstrap slice 2)* |
+| — | *None. Vision, prediction, grid, and art contracts are decided. No executing phase doc yet.* |
 
 Archive index: [`docs/archive/phases/README.md`](../archive/phases/README.md)

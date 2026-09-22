@@ -38,9 +38,13 @@ Give agents tools and clear packets; do not bolt scoring/threshold harnesses on
 to compensate for vague instructions. Taste and judgment live in skills and
 packets, not hidden veto layers.
 
-## 6. Accessibility and media (product-specific, placeholder)
+## 6. Symbol art and the motor grid
 
-When PipAAC ships learning or sign-language content, captioning, motion, and
-child-safety claims need explicit owners in `docs/product/SSOT.md` — not ad hoc
-UI copy. Until **DECIDED**, do not assert compliance or pedagogical outcomes in
-code comments alone.
+Human figures, object icons, Fitzgerald color, and the motor-grid coordinate
+map have one owner: `docs/product/Motor_Grid_And_Art.md`. **DECIDED 2026-09-22**
+(not built). Do not copy an incumbent symbol library or button map into assets
+or fixtures.
+
+Captioning, motion, and child-safety claims still need an explicit owner in
+`docs/product/SSOT.md` before anyone asserts compliance. Until that owner
+exists, do not assert those outcomes in code comments alone.

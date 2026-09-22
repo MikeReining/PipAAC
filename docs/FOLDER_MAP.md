@@ -29,6 +29,7 @@ PipAAC/
     product/
       SSOT.md
       Design_Invariants.md
+      Motor_Grid_And_Art.md
     strategy/
       README.md
       Vision.md
@@ -67,6 +68,7 @@ PipAAC/
 - `docs/strategy/Vision.md` — product job (founder brief pending).
 - `docs/strategy/Roadmap.md` — phase sequence map.
 - `docs/product/SSOT.md` — durable product facts map.
+- `docs/product/Motor_Grid_And_Art.md` — clean-room motor grid, Fitzgerald color, stick figure, object art, predictive-strip layout.
 - `scripts/test.sh` — protected test runner.
 - `scripts/check.mjs` / `check_fast.mjs` — closeout and iteration gates.
 - `scripts/dev.mjs` — founder browse copy vs agent copies.

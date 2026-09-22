@@ -32,6 +32,7 @@ Transforming Augmentative and Alternative Communication (AAC) from an obsolete, 
 |  - Cloud Edge System One (TypeSafe Jev): sub-100ms semantic probabilities         |
 |  - Local-First Private Database (SQLite/IndexedDB): encrypted on-device history    |
 |  - Privacy-preserving multimodal partner input: on-device neural speech capture   |
+|  - Predictive strip: at most four fringe tiles; core cells never reorder         |
 |  - Clinical self-advocacy: proactive refusal, protest, and authentic preference   |
 |                                                                                   |
 +-----------------------------------------------------------------------------------+
@@ -56,7 +57,7 @@ AAC prediction has historically been crippled by a false dichotomy between two f
 | **Output Shape** | Flat alphabetical or frequency word lists | Free-form conversational text | **Calibrated probability distribution over candidate tiles** |
 | **Latency** | Instant (0ms) but semantically useless | High (500ms–2,000ms+ token stream) | **Ultra-Fast (<100ms cloud, <1ms local fallback)** |
 | **Economics** | Free (baked into offline app) | Prohibitive (\$15–\$50/month per child) | **Negligible (\$0.042/Mtok, output free; <\$0.50/yr/child)** |
-| **Motor Memory** | Jumps buttons around unpredictably | Incompatible with fixed grid layouts | **Stable spatial anchors with subtle confidence halos** |
+| **Motor Memory** | Jumps buttons around unpredictably | Incompatible with fixed grid layouts | **Core cells stay put. Halos mark words already on the grid. A strip of at most four tiles offers words that are not.** |
 | **Privacy / Safety** | Offline / Private | Requires sending student dialogue to LLM clouds | **Zero-PII. Raw logs stay 100% encrypted on device.** |
 
 ### The Core Mathematical Insight
@@ -134,9 +135,22 @@ The `state` payload sent to Jev is compact, structured, and entirely scrubbed of
 ### 3.3 Calibrated Confidence as a Protective UX Valve
 TypeSafe provides a mathematically calibrated `confidence` metric ($0.0$ to $1.0$) reflecting the spread of probabilities. Pip AAC uses this confidence to enforce **communicator autonomy**:
 
-- **High Confidence ($\ge 0.75$):** The top candidate tiles are gently highlighted with a soft, non-disruptive visual halo. They remain in their **exact, invariant motor positions**. Visual search time drops from seconds to milliseconds.
-- **Moderate Confidence ($0.40 - 0.74$):** The top candidates are softly primed in the auxiliary Context River drawer.
-- **Low Confidence ($< 0.40$):** **The system does nothing.** The grid remains in its neutral state. The system strictly obeys the clinical imperative: *Never guess or impose assumptions when the communicator's intent is uncertain.*
+- **High Confidence ($\ge 0.75$):** If the candidate is already a core cell, it is gently highlighted with a soft halo in that **exact motor position**. If it is not on the core view, it may appear in the predictive strip (section 3.4). Visual search time drops from seconds to milliseconds. The cell itself does not move.
+- **Moderate Confidence ($0.40 - 0.74$):** On the motor-grid view, an off-grid candidate may occupy the strip. On the Context River view, it is softly primed in that drawer. Core cells stay put in either case.
+- **Low Confidence ($< 0.40$):** **The system does nothing.** The grid stays neutral and the strip stays empty. The system strictly obeys the clinical imperative: *Never guess or impose assumptions when the communicator's intent is uncertain.*
+
+### 3.4 Predictive Strip: Where Dynamic Candidates Live
+
+**DECIDED 2026-09-22** (not built). Layout owner: `docs/product/Motor_Grid_And_Art.md`.
+
+The strip is the dynamic surface. The core grid is not.
+
+- After a core tap, the strip's first paint comes from the on-device ranker and resolves in under 50 ms, including the choice of which tiles to show. The local preference query itself is already specified at under 0.5 ms. The 50 ms figure is the strip's user-visible budget.
+- TypeSafe Jev may replace or reorder strip tiles when a cloud result arrives. It must not block the first paint, and it must not move core cells. If the network is down or slower than the existing 150 ms clamp, the strip stays on the local score ($\alpha \to 0$, $\beta \to 1$).
+- The strip shows at most four candidates. Each tile is a word plus its in-house icon. Putting a word in the strip does not swap a core cell.
+- High-confidence core words that already have a home on the grid are haloed in that home. They are not relocated into the strip.
+- The strip is allowed to bias toward: the tokens already in the sentence bar; time of day (morning favors breakfast words; evening favors sleep and clothing words); and fringe entities the caregiver has added (names, shows, snacks). Those inputs were already part of Engine 1 state and Engine 2 memory. The strip is where fringe results become visible.
+- Empty or low-confidence strip: show nothing. An empty strip is a valid state. Filling it with a guess is not.
 
 ---
 
@@ -261,6 +275,10 @@ Traditional AAC apps require families to spend 5 to 10 hours a week manually cre
   - Privacy policy: Zero audio recordings stored; raw utterance logs remain strictly local on device (FERPA/HIPAA compliant).
   - Prediction interaction model: Stable spatial vector anchors preserved; candidate elevation via calibrated confidence halos, never button-swapping.
   - Multi-modal partner input: On-device local neural transcription + multi-device Caregiver Co-Pilot sync.
+- **DECIDED 2026-09-22** (mentor intake; not built):
+  - On the motor-grid view, the predictive strip is where a suggestion may show a word that is not already a core cell. The Context River stays a separate situational surface. Maximum four strip tiles. Layout: `docs/product/Motor_Grid_And_Art.md`.
+  - Strip first paint is on-device and under 50 ms. Jev refines asynchronously and must not block that paint or reorder core indices.
+  - Strip bias inputs: sentence-bar tokens, time of day, and learner-added fringe entities.
 - **PROPOSED**:
   - Phase 1 Slice: Relational Language Graph schema + Local SQLite memory store stub + TypeSafe Jev proxy in `src/worker/index.js:12-14`.
   - Works Test: Automated benchmark testing classification latency ($<100\text{ms}$) and confidence-gated candidate selection against mock breakfast/recess state.
