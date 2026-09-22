@@ -60,8 +60,12 @@ Pip AAC establishes that **presentation is a display filter over a stable coordi
 
 ## 4. Keyboard Modes
 
-**DECIDED 2026-09-22** (founder, keyboard review; locale amendments approved
-the same day; not built). Execution: `docs/phases/004_Keyboard.md`.
+**BUILT** (004: key maps `26d4e52`, typing `7f87bee`, completions
+`70ff059`, partner row `9844275`, settings `0971935`, device keyboard
+`3210218`, continuations `9ca4653`; owners `public/shared/keymaps.mjs`,
+`public/shared/keyboard.mjs`, `public/shared/spelling.mjs`,
+`public/shared/funnel.mjs`). Decided 2026-09-22 (founder, keyboard review;
+locale amendments approved the same day).
 
 Whether someone can use a regular keyboard is a fact about that person, not
 a choice to make on every tap. So the keyboard is a per-profile display
@@ -137,8 +141,8 @@ English standard order, for example:
 | es | QWERTY | `ñ` after `l`; `´` accent key (tap `´`, then the vowel) | `¿ ? ¡ !` |
 | fr | AZERTY | `é è à ç` | `' , . ?` |
 
-The full cell-by-cell maps live in `docs/phases/004_Keyboard.md` § Geometry
-until built; after that the key-map data file is the owner. ABC order
+The cell-by-cell maps are built — the key-map data file
+(`public/shared/keymaps.mjs`, `26d4e52`) is the owner. ABC order
 changes only rows 2–4 and follows each language's alphabet (Spanish puts `ñ`
 after `n`; German and French add their extra letters after `z`).
 

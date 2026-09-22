@@ -1099,14 +1099,15 @@ Fixes are routed to `docs/archive/phases/003b_Groups_Language_Followup.md`
 | `speak()` sets `u.lang` to the profile locale; `document.documentElement.lang` follows at boot | **BUILT** (cfcd0a9) | `public/board.js` |
 | Built-in group names come from the `group_label` catalog table per locale; `board_group.name` is the caregiver override (NULL for built-ins); stored seed names are NULLed by `migrateBuiltinGroupNames` | **BUILT** (f203693) | `data/group_seed.json`, `public/shared/groups.mjs` |
 | Strip grammar is per locale (`GRAMMAR` keyed by locale); the infinitival-*to* rule matches the tail's sense id, never the English text | **BUILT** (5c971c4) | `public/shared/funnel.mjs` |
-| Keyboard letters, punctuation, capitals, and spelling rules are English | **DECIDED 2026-09-22** (not built) | 004: per-locale key maps, accent-insensitive matching, per-locale sound keys and fixtures |
-| Digits have no language-neutral path to number senses | **DECIDED 2026-09-22** (not built) | 004 slice 2: digit **alias labels** per locale (below) |
+| Keyboard letters, punctuation, capitals, and spelling rules are English | **BUILT** (004: `26d4e52`, `7f87bee`, `70ff059`, `9ca4653`) | per-locale key maps (`public/shared/keymaps.mjs`), accent-insensitive matching + en sound key (`public/shared/spelling.mjs`), en invented-spelling fixture (`src/board/fixtures/invented_spellings.en.json`), next-word continuations (`public/shared/funnel.mjs`) |
+| Digits have no language-neutral path to number senses | **BUILT** (`7f87bee`) | digit **alias labels** per locale from `data/number_aliases.json`, emitted by `scripts/catalog/build_catalog.mjs` |
 | No inflected forms (*wants*, *went*, *played* are missing) | **DECIDED 2026-09-22** (not built) | `docs/phases/005_Word_Forms.md` |
 | Audio file slugs keep only `a–z0-9` | **DECIDED 2026-09-22** (not built) | 005 slice 2 |
 
 ### 13.3 Amendment — digit aliases
 
-**DECIDED 2026-09-22** (not built). § 9 "no alias rows" is amended for one
+**BUILT** (`7f87bee`). Decided 2026-09-22. § 9 "no alias rows" is amended
+for one
 case: the build emits approved `alias` labels `1`–`10` per locale from
 `data/number_aliases.json`, on the matching `Number` sense and pointing at
 the lemma's utterance. Typing `3` then finds the *three* sense in any

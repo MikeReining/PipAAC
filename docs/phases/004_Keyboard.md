@@ -1,6 +1,9 @@
 # Phase 004 — Keyboard 2.0
 
-**Status:** Ready to execute. Not started.
+**Status:** Implemented — slices 1–7 landed (`26d4e52` … `9ca4653`),
+`npm run check` green. One open gate: the slice 6 works test requires a
+**real iPad** (system-keyboard size/resize can't be reproduced on desktop)
+and the doc forbids waiving it — founder runs it, then archive.
 
 **DECIDED 2026-09-22** (founder: "I fully agree", after the keyboard review in
 the same session; locale amendments approved the same day: "Please do all of
@@ -750,13 +753,31 @@ the closeout.
 
 ## Closeout checklist
 
-- [ ] Slices 1–7 done.
-- [ ] `npm run check` green.
-- [ ] `docs/product/Profile_Presentation_Modes.md` § 4 tags flipped from
+- [x] Slices 1–7 done — except the slice 6 real-iPad works test, which
+      stays open for the founder (the phase doc forbids waiving it).
+      Desktop-verifiable gates all pass (`3210218`).
+- [x] `npm run check` green (105 tests, all gates, `d3eefcb`).
+- [x] `docs/product/Profile_Presentation_Modes.md` § 4 tags flipped from
       DECIDED to BUILT, with citations.
-- [ ] `docs/product/Language_And_Voice_Schema.md` § 13 keyboard rows flipped
+- [x] `docs/product/Language_And_Voice_Schema.md` § 13 keyboard rows flipped
       to BUILT.
-- [ ] The measured letter/key ratio, the spelling recall %, and the
+- [x] The measured letter/key ratio, the spelling recall %, and the
       typing-simulation savings are recorded here.
 - [ ] Archive this doc per `docs/operations/Execution-Playbook.md` § Phase
-      Archive.
+      Archive — pending the slice 6 iPad check.
+
+## Measurements
+
+- **Letter/key ink ratio** (slice 1 works test, CDP canvas measurement):
+  `k` glyph fills 61% of key height landscape, 51% portrait (gate ≥ 50%);
+  `g` descender stays inside the key box; digits likewise ≥ 50%.
+- **Invented-spelling recall** (slice 3, `invented_spellings.en.json`,
+  64 pairs): **57/64 = 89.1%** top-4 recall; `suggest()` median
+  **0.161 ms** over the full catalog + 50 entities (gate < 5 ms).
+- **Typing-simulation savings** (slice 7, `typing_sentences.en.json`,
+  33 sentences / 122 words): A=495, B=308, C=203 taps —
+  **keystroke savings 59.0%** empty log and 59.0% with history;
+  C never worse than B, strictly better with history.
+- **Manual checks**: `elfnt` → elephant card + clip; `i` + space → strip
+  shows want/like/go/come; device mode commits `want juice` from the
+  field; ABC order persists across reload.
