@@ -34,6 +34,10 @@ PipAAC/
       Initial_Vocabulary_600.md
       Personal_Entities.md
       Language_And_Voice_Schema.md
+      Pricing_And_Packaging.md
+      Vocabulary_Masking_And_Safety.md
+      Profile_Presentation_Modes.md
+      Voice_Cloning_And_Synthesis.md
     strategy/
       README.md
       Vision.md
