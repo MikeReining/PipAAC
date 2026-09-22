@@ -1,4 +1,4 @@
-# Pip AAC — Comprehensive Launch Lexicon (656 Words)
+# Pip AAC — Comprehensive Launch Lexicon (677 Words)
 
 **DECIDED 2026-09-22, amended 2026-09-22** (not built). Clean-room vocabulary architecture for Pip AAC.
 Clinical lineage: Banajee, DiCarlo, & Stricklin (2003); Project Core (CLDS, UNC Chapel Hill); MacArthur-Bates CDI; ARASAAC Clinical Taxonomy.
@@ -25,8 +25,8 @@ In human communication, vocabulary usage follows a steep Pareto distribution:
 | Layer / Tier | Word Count | % of Spoken Daily Communication | Engineering Delivery Mode | Visual Archetype |
 | :--- | :---: | :---: | :--- | :--- |
 | **Tier 1: Root Core Grid** | **83 words** | ~75% – 80% | Pre-generated, bundled locally in app, permanent motor coordinates | Stick Figure (Verbs/Pronouns) + Diagrammatic (Prepositions/Grammar) |
-| **Tier 2: Primary Fringe Folders** | **573 words** | ~10% – 15% | Pre-generated, bundled locally, 1-tap category drill-down & predictive strip | Illustrated Object (Inanimate Nouns/Animals) + Stick Figure (Actions/States) |
-| **Total Launch MVP Bundle** | **656 words** | **~90% – 95%** | **100% Offline in iOS App Bundle (0 ms cold start, zero cloud latency)** | Clean-room in-house vector/asset set |
+| **Tier 2: Primary Fringe Folders** | **594 words** | ~10% – 15% | Pre-generated, bundled locally, 1-tap category drill-down & predictive strip | Illustrated Object (Inanimate Nouns/Animals) + Stick Figure (Actions/States) |
+| **Total Launch MVP Bundle** | **677 words** | **~90% – 95%** | **100% Offline in iOS App Bundle (0 ms cold start, zero cloud latency)** | Clean-room in-house vector/asset set |
 | *Tier 3: Secondary Fringe (Pipeline)* | *1,500 – 3,000* | *~5%* | Automated image generation pipeline with locked prompt templates | Automated Illustrated Object pipeline |
 | *Tier 4: Deep Personal Entities* | *Infinite* | *< 1%* | Caregiver camera roll / local photo picker fallback | Authentic personal photos & custom tiles |
 
@@ -57,6 +57,11 @@ default board can report pain and distress without navigation — rule 0 in
 `docs/product/Core_Grid_Membership.md` §2. They keep their original row
 numbers, so sense ids and bundled audio clips are unchanged.
 
+**Zone cross-listing convention.** A Sub-Category written `Core X → Zone Name`
+means the sense's home is the core board, and it is *also* listed in that zone
+— a zone is a view, not an exclusive home (`docs/product/Design_Invariants.md`
+§7). All other Tier 1 rows carry their `Core X` sub-category only.
+
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Sub-Category | Clinical Source | Visual Prompt Description |
 | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | **I** | Pronoun | Yellow | Stick Figure | Core Pronouns | Banajee; Project Core; CDI | Stick figure pointing to self (yellow torso) |
@@ -83,13 +88,13 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 22 | **put** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure placing block downward into container |
 | 23 | **take** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure lifting object out from container |
 | 24 | **give** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure handing object forward to another |
-| 25 | **help** | Verb | Green | Stick Figure | Core Verbs | Banajee; Project Core; CDI | Stick figure extending supportive hand to another |
-| 26 | **stop** | Verb | Red | Diagrammatic | Core Regulators | Banajee; Project Core; CDI | Red octagon with white raised palm |
-| 27 | **play** | Verb | Green | Stick Figure | Core Verbs | Banajee; Project Core; CDI | Stick figure tossing ball happily |
-| 28 | **eat** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure putting food item to mouth |
-| 29 | **drink** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure tipping cup to mouth |
-| 30 | **open** | Verb | Green | Diagrammatic | Core Verbs | Banajee; Project Core; CDI | Open hinged box with upward motion arrow |
-| 31 | **turn** | Verb | Green | Diagrammatic | Core Verbs | Banajee; Project Core; CDI | Curved circular rotational arrow |
+| 25 | **help** | Verb | Green | Stick Figure | Core Verbs → Social Etiquette, Pragmatic Interjections & Urgent/Safety | Banajee; Project Core; CDI | Stick figure extending supportive hand to another |
+| 26 | **stop** | Verb | Red | Diagrammatic | Core Regulators → Social Etiquette, Pragmatic Interjections & Urgent/Safety | Banajee; Project Core; CDI | Red octagon with white raised palm |
+| 27 | **play** | Verb | Green | Stick Figure | Core Verbs → Daily Actions & Activity Verbs | Banajee; Project Core; CDI | Stick figure tossing ball happily |
+| 28 | **eat** | Verb | Green | Stick Figure | Core Verbs → Daily Actions & Activity Verbs | Banajee; CDI | Stick figure putting food item to mouth |
+| 29 | **drink** | Verb | Green | Stick Figure | Core Verbs → Daily Actions & Activity Verbs | Banajee; CDI | Stick figure tipping cup to mouth |
+| 30 | **open** | Verb | Green | Diagrammatic | Core Verbs → Daily Actions & Activity Verbs | Banajee; Project Core; CDI | Open hinged box with upward motion arrow |
+| 31 | **turn** | Verb | Green | Diagrammatic | Core Verbs → Daily Actions & Activity Verbs | Banajee; Project Core; CDI | Curved circular rotational arrow |
 | 32 | **read** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure looking at open picture book |
 | 33 | **can** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure flexing arm muscle proudly |
 | 34 | **need** | Verb | Green | Stick Figure | Core Verbs | ARASAAC; CDI | Stick figure leaning forward with earnest gesture |
@@ -115,11 +120,11 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 54 | **for** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Wrapped gift with arrow to target |
 | 55 | **more** | Adjective | Blue | Diagrammatic | Core Descriptors | Banajee; Project Core; CDI | Plus sign (+) with an expanding stack |
 | 56 | **all done** | Adjective | Blue | Stick Figure | Core Descriptors | Banajee; CDI | Stick figure with both hands swept wide palms up |
-| 57 | **big** | Adjective | Blue | Diagrammatic | Core Descriptors | Banajee; Project Core; CDI | Prominent large circle contrasted with tiny one |
-| 58 | **little** | Adjective | Blue | Diagrammatic | Core Descriptors | Banajee; CDI | Tiny circle contrasted with large outline |
-| 59 | **good** | Adjective | Blue | Diagrammatic | Core Descriptors | Banajee; Project Core; CDI | Thumbs-up icon with positive blue glow |
-| 60 | **bad** | Adjective | Blue | Diagrammatic | Core Descriptors | CDI; ARASAAC | Thumbs-down icon with jagged accent |
-| 61 | **happy** | Adjective | Blue | Stick Figure | Core Descriptors | Banajee; CDI | Stick figure smiling broadly with upturned arms |
+| 57 | **big** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; Project Core; CDI | Prominent large circle contrasted with tiny one |
+| 58 | **little** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; CDI | Tiny circle contrasted with large outline |
+| 59 | **good** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; Project Core; CDI | Thumbs-up icon with positive blue glow |
+| 60 | **bad** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | CDI; ARASAAC | Thumbs-down icon with jagged accent |
+| 61 | **happy** | Adjective | Blue | Stick Figure | Core Descriptors → Feelings, Emotions & Sensory States | Banajee; CDI | Stick figure smiling broadly with upturned arms |
 | 62 | **same** | Adjective | Blue | Diagrammatic | Core Descriptors | ARASAAC; CDI | Two identical colored squares |
 | 63 | **different** | Adjective | Blue | Diagrammatic | Core Descriptors | ARASAAC; CDI | A colored square beside a contrasting triangle |
 | 64 | **some** | Adjective | Blue | Diagrammatic | Core Descriptors | ARASAAC; CDI | Cluster of three dots within a circle |
@@ -130,24 +135,34 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 69 | **why** | Adverb | Pink | Diagrammatic | Core Questions | Banajee; Project Core; CDI | Thought bubble containing question mark |
 | 70 | **how** | Adverb | Pink | Diagrammatic | Core Questions | Project Core; CDI | Meshing gears with question mark |
 | 71 | **when** | Adverb | Pink | Diagrammatic | Core Questions | CDI; ARASAAC | Clock face overlaid with question mark |
-| 72 | **no** | Interjection | Red | Diagrammatic | Core Protests | Banajee; Project Core; CDI | Red circle with diagonal strike prohibition |
-| 73 | **yes** | Interjection | Pink | Diagrammatic | Core Social | Banajee; CDI | Vibrant green/magenta checkmark |
-| 74 | **not** | Adverb | Red | Diagrammatic | Core Protests | Project Core; CDI | Bold red X over dashed box |
-| 75 | **please** | Interjection | Pink | Stick Figure | Core Social | CDI; ARASAAC | Stick figure rubbing flat hand on chest |
-| 76 | **and** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.57; Fry top-10 | Plus sign linking two joined blocks |
+| 72 | **no** | Interjection | Red | Diagrammatic | Core Protests → Social Etiquette, Pragmatic Interjections & Urgent/Safety | Banajee; Project Core; CDI | Red circle with diagonal strike prohibition |
+| 73 | **yes** | Interjection | Pink | Diagrammatic | Core Social → Social Etiquette, Pragmatic Interjections & Urgent/Safety | Banajee; CDI | Vibrant green/magenta checkmark |
+| 74 | **not** | Adverb | Red | Diagrammatic | Core Protests → Function Words & Grammar | Project Core; CDI | Bold red X over dashed box |
+| 75 | **please** | Interjection | Pink | Stick Figure | Core Social → Social Etiquette, Pragmatic Interjections & Urgent/Safety | CDI; ARASAAC | Stick figure rubbing flat hand on chest |
+| 76 | **and** | Conjunction | Pink | Diagrammatic | Core Connectors → Function Words & Grammar | AoA 4.57; Fry top-10 | Plus sign linking two joined blocks |
 | 77 | **but** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.6; Fry top-100 | Two diverging arrows at a fork |
 | 78 | **or** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.14; Fry top-100 | Two separated blocks with choice arrows |
 | 79 | **because** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.44; Fry top-500 | Arrow pointing back to a reason star |
 | 80 | **have** | Verb | Green | Stick Figure | Core Verbs | AoA 3.72; Fry top-50 | Stick figure holding object firmly in arms |
 | 81 | **at** | Preposition | Pink | Diagrammatic | Core Prepositions | AoA 4.04; Fry top-50 | Pointer dot landing on a target point |
-| 172 | **hurt** | Adjective | Red | Stick Figure | Core Regulators | CDI; ARASAAC; AoA 4.0 | Stick figure holding painful bruised elbow |
-| 179 | **sad** | Adjective | Blue | Stick Figure | Core Descriptors | CDI; ARASAAC; AoA 3.24 | Stick figure with downcast posture and single tear |
+| 172 | **hurt** | Adjective | Red | Stick Figure | Core Regulators → Body, Health & Hygiene | CDI; ARASAAC; AoA 4.0 | Stick figure holding painful bruised elbow |
+| 179 | **sad** | Adjective | Blue | Stick Figure | Core Descriptors → Feelings, Emotions & Sensory States | CDI; ARASAAC; AoA 3.24 | Stick figure with downcast posture and single tear |
 
 ---
 
-## 3. Tier 2: Primary Fringe Categories (573 Words)
+## 3. Tier 2: Primary Fringe Categories (594 Words)
 
-### 3.1 Food & Drink (55 words)
+**Amended 2026-09-22 (vocabulary cleanup).** Spoken texts cleaned of compound
+artifacts (`wipe action` → `wipe`, `clean item` → `clean`, `light weight` →
+`light`, `orange color` → `orange`, `pink color` → `pink`, `light color` →
+`light`, `bathroom urgent` → `bathroom`); `dark color` removed as a duplicate
+of `dark` (#205); the duplicate digit senses `1`–`5`/`10` (#577–582) removed —
+the canonical numeral set is the word forms `one`–`ten` in §3.16, which keep
+their ids and bundled audio; 28 everyday fringe words added at slots 657–684
+(meals and food staples, hygiene verbs, behavior words, people, social words,
+and grammar words).
+
+### 3.1 Food & Drink (61 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Nutrition taxonomy. Art archetype: Illustrated Object.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -207,8 +222,14 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 134 | **carrot** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Orange tapered carrot with leafy green top |
 | 135 | **broccoli** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Vibrant green broccoli florets |
 | 136 | **corn** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Golden cob of sweet corn with husk |
+| 657 | **breakfast** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Cereal bowl with spoon beside glass of juice |
+| 658 | **lunch** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Sandwich halves beside apple and juice box |
+| 659 | **dinner** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Dinner plate with fork and steaming serving |
+| 660 | **food** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Plate holding varied meal portions |
+| 661 | **ketchup** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Bright red ketchup bottle tilted mid-squeeze |
+| 662 | **fries** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Red carton filled with golden french fries |
 
-### 3.2 Body, Health & Hygiene (41 words)
+### 3.2 Body, Health & Hygiene (43 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Health taxonomy. Art archetype: Stick Figure (somatic/roles) & Illustrated Object (tools/organs).*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -254,6 +275,8 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 176 | **cough** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure coughing into crook of elbow |
 | 177 | **medicine** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Liquid medicine bottle with measuring spoon |
 | 178 | **dentist** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Stick figure examining teeth with small mirror |
+| 663 | **poop** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Brown coiled poop swirl beside toilet |
+| 664 | **pee** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Yellow droplets falling into toilet bowl |
 
 ### 3.3 Feelings, Emotions & Sensory States (34 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Emotional States. Art archetype: Stick Figure with Blue torso & somatic expression.*
@@ -295,7 +318,7 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 212 | **uncomfortable** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure shifting awkwardly on stiff stool |
 | 213 | **overwhelmed** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure holding head amid chaotic storm |
 
-### 3.4 Daily Actions & Activity Verbs (52 words)
+### 3.4 Daily Actions & Activity Verbs (59 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Verbs. Art archetype: Stick Figure with Green torso.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -334,7 +357,7 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 245 | **share** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure passing half of snack to peer |
 | 246 | **clean up** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure putting toys neatly into bin |
 | 247 | **wash** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure washing lathered hands under faucet |
-| 248 | **wipe action** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure gliding damp cloth across glass |
+| 248 | **wipe** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure gliding damp cloth across glass |
 | 249 | **cook** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure stirring pot on kitchen stove |
 | 250 | **build** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure stacking architectural toy blocks |
 | 251 | **fix** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure tightening loose toy bolt with wrench |
@@ -352,8 +375,15 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 263 | **cry** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure weeping with tears rolling down cheek |
 | 264 | **sleep** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure resting head peacefully on pillow |
 | 265 | **wake up** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure stretching arms upward in morning light |
+| 665 | **hit** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure striking tabletop with flat hand |
+| 666 | **bite** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure biting into large sandwich |
+| 667 | **break** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure snapping stick into two pieces |
+| 668 | **scratch** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure scratching its own forearm |
+| 669 | **close** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure pulling open door shut |
+| 670 | **shut** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure pressing box lid closed |
+| 671 | **tickle** | Verb | Green | Stick Figure | CDI; ARASAAC | Stick figure wiggling fingers at another's belly |
 
-### 3.5 People, Family & Roles (30 words)
+### 3.5 People, Family & Roles (34 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Social roles. Art archetype: Stick Figure with Yellow torso.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -389,6 +419,10 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 294 | **nurse** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Nurse in scrubs offering supportive care |
 | 295 | **babysitter** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Caregiver reading bedtime story to toddler |
 | 296 | **name** | Noun | Yellow | Diagrammatic | AoA 4.12; Fry top-200 | Name tag badge reading "Hello, my name is" |
+| 672 | **boy** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Short child-height stick figure standing beside adult |
+| 673 | **girl** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Short child-height stick figure with simple dress silhouette |
+| 674 | **man** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Tall adult stick figure standing centered |
+| 675 | **woman** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Tall adult stick figure with simple dress silhouette |
 
 ### 3.6 Places, Rooms & Community (35 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Environments. Art archetype: Illustrated Object.*
@@ -634,7 +668,7 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 503 | **stoplight** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Traffic signal post with red, yellow, green lights |
 | 504 | **gas station** | Noun | Yellow | Illustrated Object | CDI; ARASAAC | Fuel pump nozzle dispensing gas under awning |
 
-### 3.12 Descriptors, Adjectives & Opposites (48 words)
+### 3.12 Descriptors, Adjectives & Opposites (47 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Attributes. Art archetype: Diagrammatic & Illustrated Object with Blue fill.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -643,9 +677,9 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 506 | **blue** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of vibrant sky blue |
 | 507 | **green** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of lush emerald green |
 | 508 | **yellow** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of sunny bright yellow |
-| 509 | **orange color** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of warm citrus orange |
+| 509 | **orange** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of warm citrus orange |
 | 510 | **purple** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of royal violet purple |
-| 511 | **pink color** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of soft pastel pink |
+| 511 | **pink** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of soft pastel pink |
 | 512 | **brown** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of rich earthy brown |
 | 513 | **black** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of deep pure black |
 | 514 | **white** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Paint swatch patch of clean pure white |
@@ -655,7 +689,7 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 518 | **short** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Low garden shrub beside towering pine tree |
 | 519 | **long** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Extended horizontal line reaching across frame |
 | 520 | **heavy** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Massive iron barbell bending support platform |
-| 521 | **light weight** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Delicate white feather floating gently in breeze |
+| 521 | **light** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Delicate white feather floating gently in breeze |
 | 522 | **thick** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Chunky broad wooden plank cross-section |
 | 523 | **thin** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Slender wafer-thin paper sliver cross-section |
 | 524 | **wide** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Two outward pointing horizontal divergence arrows |
@@ -663,7 +697,7 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 526 | **hard** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Solid unyielding solid granite rock boulder |
 | 527 | **wet** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Dripping water droplets rolling off saturated leaf |
 | 528 | **dry** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Clean sun-dried cloth swaying on clothesline |
-| 529 | **clean item** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Sparkling shiny dish with twinkle star gleams |
+| 529 | **clean** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Sparkling shiny dish with twinkle star gleams |
 | 530 | **dirty** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Mud-splattered surface with brown dirt smears |
 | 531 | **smooth** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Polished glassy river pebble without ripples |
 | 532 | **broken** | Adjective | Blue | Illustrated Object | CDI; ARASAAC | Ceramic plate split into cracked fractured pieces |
@@ -685,10 +719,9 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 548 | **favorite** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Glowing golden heart with ribbon bookmark |
 | 549 | **weird** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Quirky asymmetrical spiral with playful eyes |
 | 550 | **funny** | Adjective | Blue | Stick Figure | CDI; ARASAAC | Stick figure laughing heartily slapping knee |
-| 551 | **dark color** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Deep midnight blue gradient fill swatch |
-| 552 | **light color** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Pale pastel yellow gradient fill swatch |
+| 552 | **light** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Pale pastel yellow gradient fill swatch |
 
-### 3.13 Time, Calendar & Sequencing (30 words)
+### 3.13 Time, Calendar & Sequencing (24 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Temporal structuring. Art archetype: Diagrammatic with Pink/Yellow/Blue styling.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -717,14 +750,8 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 574 | **last** | Adverb | Pink | Diagrammatic | CDI; ARASAAC | Tail end marker concluding a lineup queue |
 | 575 | **minute** | Noun | Yellow | Diagrammatic | CDI; ARASAAC | Small timer wedge sweeping sixty seconds |
 | 576 | **hour** | Noun | Yellow | Diagrammatic | CDI; ARASAAC | Full hour revolution highlighted on clock |
-| 577 | **1** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Clear bold Arabic numeral '1' with single dot |
-| 578 | **2** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Clear bold Arabic numeral '2' with two dots |
-| 579 | **3** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Clear bold Arabic numeral '3' with three dots |
-| 580 | **4** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Clear bold Arabic numeral '4' with four dots |
-| 581 | **5** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Clear bold Arabic numeral '5' with five dots |
-| 582 | **10** | Adjective | Blue | Diagrammatic | CDI; ARASAAC | Bold numeral '10' flanked by ten dot array |
 
-### 3.14 Social Etiquette, Pragmatic Interjections & Urgent/Safety (24 words)
+### 3.14 Social Etiquette, Pragmatic Interjections & Urgent/Safety (27 words)
 *Seeded from MacArthur-Bates CDI & Light (1988, 1989) Pragmatic Functions. Art archetype: Stick Figure & Diagrammatic.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -752,9 +779,12 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 603 | **emergency** | Interjection | Red | Diagrammatic | CDI; ARASAAC | Red flashing beacon emergency light |
 | 604 | **no way** | Interjection | Red | Stick Figure | CDI; ARASAAC | Stick figure shaking head vigorously arms crossed |
 | 605 | **don't** | Interjection | Red | Diagrammatic | CDI; ARASAAC | Raised open hand forbidding forward approach |
-| 606 | **bathroom urgent** | Interjection | Red | Diagrammatic | CDI; ARASAAC | Urgent flashing restroom accessibility symbol |
+| 606 | **bathroom** | Interjection | Red | Diagrammatic | CDI; ARASAAC | Urgent flashing restroom accessibility symbol |
+| 676 | **love** | Verb | Green | Stick Figure | CDI; ARASAAC | Two stick figures embracing with heart floating between |
+| 677 | **together** | Adverb | Blue | Stick Figure | CDI; ARASAAC | Two stick figures standing side by side hands joined |
+| 678 | **ow** | Interjection | Red | Stick Figure | CDI; ARASAAC | Stick figure wincing and clutching stubbed toe |
 
-### 3.15 Function Words & Grammar (40 words)
+### 3.15 Function Words & Grammar (46 words)
 *Added 2026-09-22 amendment — AoA/Fry gap fill. The closed-class words that turn word strings into sentences: auxiliaries, determiners, conjunctions, object & possessive pronouns, indefinite pronouns, and degree adverbs. Art archetype: Diagrammatic.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -799,6 +829,12 @@ numbers, so sense ids and bundled audio clips are unchanged.
 | 644 | **also** | Adverb | Blue | Diagrammatic | AoA 6.64; Fry top-300 | Plus sign adding a matching block |
 | 645 | **only** | Adverb | Blue | Diagrammatic | AoA 4.95; Fry top-200 | Single lit block among dimmed blocks |
 | 646 | **still** | Adverb | Blue | Diagrammatic | AoA 5.26; Fry top-200 | Motionless figure amid motion lines |
+| 679 | **yours** | Pronoun | Yellow | Stick Figure | CDI; Fry top-300 | Stick figure offering object toward the viewer |
+| 680 | **these** | Determiner | Pink | Diagrammatic | CDI; Fry top-200 | Two nearby objects circled together |
+| 681 | **those** | Determiner | Pink | Diagrammatic | CDI; Fry top-100 | Two distant objects indicated by long arrow |
+| 682 | **nothing** | Pronoun | Yellow | Diagrammatic | CDI; Fry top-100 | Empty dashed circle showing absence |
+| 683 | **behind** | Preposition | Pink | Diagrammatic | CDI; ARASAAC | Ball hidden behind solid box |
+| 684 | **did** | Verb | Green | Diagrammatic | Fry top-100 | Bold checkmark inside completed box |
 
 ### 3.16 Numbers & Counting (10 words)
 *Added 2026-09-22 amendment — quantifier gap fill. Cardinal numerals one through ten; "first" already lives in Time & Sequencing. Art archetype: Diagrammatic.*

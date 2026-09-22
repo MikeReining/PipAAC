@@ -191,9 +191,9 @@ test("bans: fringe sense and duplicate slot cannot enter core_cell", () => {
   );
 });
 
-test("device import carries the full 656-sense lexicon (labels only — no art gate)", () => {
+test("device import carries the full 677-sense lexicon (labels only — no art gate)", () => {
   const db = openDb();
-  assert.equal(catalog.senses.length, 656);
+  assert.equal(catalog.senses.length, 677);
   const onDevice = db.prepare("SELECT COUNT(*) AS n FROM sense").get().n;
-  assert.equal(onDevice, 656);
+  assert.equal(onDevice, 677);
 });

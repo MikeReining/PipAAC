@@ -139,8 +139,7 @@ CREATE TABLE sense (
   category TEXT,
   default_image_id TEXT REFERENCES image(id),
   CHECK (
-    (tier = 'root_core' AND category IS NULL)
-    OR (tier = 'primary_fringe' AND category IN (
+    category IN (
       'Food & Drink',
       'Body, Health & Hygiene',
       'Feelings, Emotions & Sensory States',
@@ -157,7 +156,8 @@ CREATE TABLE sense (
       'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
       'Function Words & Grammar',
       'Numbers & Counting'
-    ))
+    )
+    OR (tier = 'root_core' AND category IS NULL)
   )
 );
 ```
@@ -165,8 +165,11 @@ CREATE TABLE sense (
 Those role and archetype tokens are the lexicon's own words.
 `Yellow` is the yellow/orange Fitzgerald role, `Pink` is pink/magenta, and
 `Red` is the red or black-outline role
-(`docs/product/Motor_Grid_And_Art.md`). `category` is only the Tier 2
-sub-zone. Root-core sectors stay on the coordinate map
+(`docs/product/Motor_Grid_And_Art.md`). For `primary_fringe`, `category` is
+the sense's zone home. For `root_core` it is a zone *cross-listing*: the
+word keeps its core coordinate and also appears when browsing that zone —
+a zone is a view, not an exclusive home — so `hurt` sits on the board and
+inside Body, Health & Hygiene. Root-core sectors stay on the coordinate map
 (`docs/product/Core_Coordinate_Map.md`).
 
 Picture insert order, because each side points at the other:
@@ -234,12 +237,20 @@ is why clip does not carry a locale of its own.
 Launch lemmas have `text` equal to `utterance.spoken_text`. The columns
 are allowed to differ later, so a button can show `3` and speak the
 utterance `three` by pointing at that utterance. They must not differ by
-accident in the 656.
+accident in the 677.
 
 An alias speaks its own `utterance_id`. It does not fall through to the
 lemma. If two labels should play one recording, they store the same
 utterance id. A button that shows `couch` and says `sofa` is a wrong word.
 v1 has no alias rows. Cells display the approved lemma.
+
+Homograph senses share one utterance row — `utterance` is unique on
+`(locale, normalized_spoken_text)`. The launch catalog has three shared
+rows: `orange` (fruit #131, color #509), `bathroom` (room #158, urgent
+interjection #606), and `light` (weight #521, color #552). Exactly one label
+per shared normalized text carries `default_for_text = 1` — the lowest
+catalog slot — which is the label lookups and typed-word completions resolve
+to. The non-default senses stay reachable through their zones and cells.
 
 ### 5.4 Image
 
@@ -835,15 +846,17 @@ with `spoken_text` equal to the whole sentence.
 ## 9. What the first build stores
 
 The lexicon file is named `Initial_Vocabulary_600.md`. The catalog inside
-it is 656 numbered rows: 83 root-core plus 573 fringe. The filename
-rounds; the 2026-09-22 amendment added the function-word layer
+it is 677 numbered rows: 83 root-core plus 594 fringe. The filename
+rounds; the 2026-09-22 amendments added the function-word layer
 (auxiliaries, determiners, conjunctions, object pronouns, numerals) the
-original list lacked.
+original list lacked, then cleaned compound spoken texts, merged the split
+1–10 numerals into the word forms `one`–`ten`, and added 28 everyday fringe
+words (slots 657–684).
 
 The catalog generator emits:
 
-- 656 senses, 656 English utterances, and 656 approved English lemma labels, generated from that catalog. For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
-- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 83 for `grid90`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 656 senses — labels only, no art required. An empty zone was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
+- 677 senses, 674 English utterances, and 677 approved English lemma labels, generated from that catalog — homograph senses share one utterance row (§ 5.3). For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
+- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 83 for `grid90`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 677 senses — labels only, no art required. An empty zone was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
 - One default bundled voice, locale `en`, and one clip per utterance: WorkbookBench recordings where the catalog has them, ElevenLabs (`eleven_v3`, the WorkbookBench voice id and settings) for misses.
 - One profile pointing at that voice.
 - No second locale, no alias rows, no voice picker, no override recorder.

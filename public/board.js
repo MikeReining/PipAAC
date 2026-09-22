@@ -142,7 +142,8 @@ const senseByLemma = (text) =>
     `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
      JOIN label l ON l.sense_id = s.id
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
-     WHERE l.normalized_text = ?`,
+     WHERE l.normalized_text = ?
+     ORDER BY l.default_for_text DESC`,
     [normalizeV1(text)],
   )[0];
 
@@ -444,6 +445,7 @@ function kbCompletions() {
          WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
      FROM label l JOIN sense s ON s.id = l.sense_id
      WHERE l.normalized_text LIKE ? ESCAPE '\\'
+       AND l.default_for_text = 1
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'`,
     [prefix.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_") + "%"],
   ).map((w) => ({

@@ -90,24 +90,41 @@ export function buildCatalog(lexicon, mapLayouts) {
     tier: e.tier === 1 ? "root_core" : "primary_fringe",
     category: e.category,
   }));
-  const utterances = lexicon.entries.map((e) => ({
-    id: `utt_${pad4(e.slot)}`,
+
+  // Senses that share a spoken text (e.g. orange the fruit / orange the color)
+  // share one utterance row — utterance is UNIQUE on (locale, normalized text).
+  // The lowest-slot claimant owns the row id and the default_for_text label.
+  const entryBySlot = new Map(lexicon.entries.map((e) => [e.slot, e]));
+  const ownerSlotByNorm = new Map();
+  const slotsByNorm = new Map();
+  for (const e of lexicon.entries) {
+    const norm = normalizeV1(e.spokenText);
+    if (!ownerSlotByNorm.has(norm)) {
+      ownerSlotByNorm.set(norm, e.slot);
+      slotsByNorm.set(norm, []);
+    }
+    slotsByNorm.get(norm).push(e.slot);
+  }
+  const utteranceIdFor = (e) => `utt_${pad4(ownerSlotByNorm.get(normalizeV1(e.spokenText)))}`;
+
+  const utterances = [...ownerSlotByNorm.entries()].map(([norm, slot]) => ({
+    id: `utt_${pad4(slot)}`,
     locale: "en",
-    spoken_text: e.spokenText,
-    normalized_spoken_text: normalizeV1(e.spokenText),
+    spoken_text: entryBySlot.get(slot).spokenText,
+    normalized_spoken_text: norm,
     normalizer_version: "v1",
   }));
   const labels = lexicon.entries.map((e) => ({
     id: `lbl_${pad4(e.slot)}`,
     sense_id: `sns_${pad4(e.slot)}`,
-    utterance_id: `utt_${pad4(e.slot)}`,
+    utterance_id: utteranceIdFor(e),
     locale: "en",
     text: e.spokenText,
     normalized_text: normalizeV1(e.spokenText),
     normalizer_version: "v1",
     kind: "lemma",
     part_of_speech: e.partOfSpeech,
-    default_for_text: 1,
+    default_for_text: ownerSlotByNorm.get(normalizeV1(e.spokenText)) === e.slot ? 1 : 0,
     status: "approved",
   }));
 
@@ -159,7 +176,7 @@ export function buildCatalog(lexicon, mapLayouts) {
         status: "active",
       },
     ],
-    clips: buildClips(lexicon),
+    clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm),
     coreCells,
   };
 }
@@ -169,7 +186,7 @@ export function buildCatalog(lexicon, mapLayouts) {
  * lexicon slot. Materialized bytes are copied into public/audio/ so the
  * board can play them straight from the app shell.
  */
-function buildClips(lexicon) {
+function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm) {
   const clipBySlot = new Map();
   for (const path of [DEFAULT_AUDIO_IMPORT_PATH, DEFAULT_GENERATED_AUDIO_PATH]) {
     if (!existsSync(path)) continue;
@@ -180,7 +197,11 @@ function buildClips(lexicon) {
   }
 
   const clips = [];
-  for (const [slot, clip] of [...clipBySlot.entries()].sort((a, b) => a[0] - b[0])) {
+  for (const [norm, slots] of slotsByNorm) {
+    // One ready clip per shared utterance: first claimant slot with a plan hit.
+    const clipSlot = slots.find((s) => clipBySlot.has(s));
+    if (clipSlot === undefined) continue;
+    const clip = clipBySlot.get(clipSlot);
     const srcFile = join(DEFAULT_AUDIO_CACHE_ROOT, clip.key);
     if (!existsSync(srcFile)) {
       throw new Error(`audio plan references missing file: ${clip.key} — run materialize_audio.mjs`);
@@ -188,11 +209,12 @@ function buildClips(lexicon) {
     const dest = join(PUBLIC_AUDIO_ROOT, clip.key);
     mkdirSync(dirname(dest), { recursive: true });
     copyFileSync(srcFile, dest);
+    const ownerSlot = ownerSlotByNorm.get(norm);
     clips.push({
-      id: `clp_${String(slot).padStart(4, "0")}`,
+      id: `clp_${String(clipSlot).padStart(4, "0")}`,
       voice_id: DEFAULT_VOICE_ID,
-      utterance_id: `utt_${String(slot).padStart(4, "0")}`,
-      recorded_text: lexicon.entries.find((e) => e.slot === slot).spokenText,
+      utterance_id: `utt_${String(ownerSlot).padStart(4, "0")}`,
+      recorded_text: entryBySlot.get(ownerSlot).spokenText,
       key: clip.key,
       status: "ready",
       sha256: clip.sha256,

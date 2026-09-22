@@ -27,7 +27,7 @@ Pip AAC establishes a permanent architectural and business invariant:
 +-------------------------------------------------------------------------------+
 | 1. CORE TIER (Free Forever, Local-First)                                       |
 |    - 100% functional AAC communication (offline-always)                       |
-|    - Full 656-word core & primary fringe library                              |
+|    - Full 677-word core & primary fringe library                              |
 |    - Unlimited personal entity additions (Cooper proof)                       |
 |    - Device text-to-speech (OS synthesized voices)                            |
 |    - Full spatial-vector motor grid & predictive strip                        |
@@ -60,6 +60,6 @@ Pip AAC establishes a permanent architectural and business invariant:
 
 | Invariant | Enforcement |
 | --- | --- |
-| Core board speaks offline with zero payment | Works Test: fresh install speaks all 656 catalog words and personal entities without an account or network. |
+| Core board speaks offline with zero payment | Works Test: fresh install speaks all 677 catalog words and personal entities without an account or network. |
 | No time-bomb expiration | The app never disables speech or locks vocabulary after a 30-day trial period. |
 | Zero loss upon cloud disconnection | If cloud sync or credits expire, the local database remains 100% intact, readable, and speakable. |

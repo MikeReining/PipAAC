@@ -35,7 +35,7 @@ A person's voice is intimately tied to identity, comfort, and emotional connecti
                                        v
 +-------------------------------------------------------------------------------+
 | 3. CATALOG PRE-SYNTHESIS & LOCAL OPFS CACHING                                 |
-|    - Batch synthesis generates the 656 catalog words/utterances               |
+|    - Batch synthesis generates the 677 catalog words/utterances               |
 |    - Compressed audio (.opus / .mp3) downloads once into local SQLite/OPFS    |
 |    - Stored in the `clip` table linked to `voice_id`                          |
 +-------------------------------------------------------------------------------+
@@ -70,5 +70,5 @@ In accordance with [`docs/product/Language_And_Voice_Schema.md:36-44`](file:///U
 | Law | Rule |
 | --- | --- |
 | **Speaking is never gated** | If cloud voice generation is offline or pending, the device speaks immediately using built-in OS `speechSynthesis`. |
-| **One-time generation cost** | Batch-generating 656 short single-word utterances on modern neural engines costs pennies (~$0.30–$0.60 per voice library). It is packaged as an affordable one-time add-on or creator credit. |
+| **One-time generation cost** | Batch-generating 677 short single-word utterances on modern neural engines costs pennies (~$0.30–$0.60 per voice library). It is packaged as an affordable one-time add-on or creator credit. |
 | **Privacy & Consent** | Audio samples uploaded for voice cloning require explicit adult consent in the Parent Corner and are never shared with third parties or used for public model training. |

@@ -97,7 +97,7 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
   const seeded = new Set();
   let slot = 11;
   for (const s of senses) {
-    if (s.category && !seeded.has(s.category)) {
+    if (s.tier === "primary_fringe" && s.category && !seeded.has(s.category)) {
       seeded.add(s.category);
       insZone.run(s.category, slot++);
     }

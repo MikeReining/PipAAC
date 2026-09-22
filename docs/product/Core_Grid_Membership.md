@@ -251,24 +251,36 @@ then the test. It must beat §2 to land. Opinion alone does not move a seat.
 memory is never betrayed. With zero users the churn above cost nothing. From
 this ruling on, `grid60` is frozen for launch.
 
-## 8. Still open (not part of this ruling)
+## 8. Vocabulary cleanup — landed 2026-09-22
 
 These items came from the v2 review. They amend `Initial_Vocabulary_600.md`,
-not the grid. **PROPOSED.** They are confirmed against `data/launch_lexicon.json`:
+not the grid. **BUILT** (`scripts/catalog/catalog.test.mjs`, `src/board/zones.test.mjs`):
 
-1. **Spoken-text junk.** Disambiguation suffixes leak into speech: `wipe
-   action`, `orange color`, `pink color`, `light weight`, `clean item`,
-   `dark color`, `light color`, `bathroom urgent`. `spokenText` should be the
-   clean word; disambiguation belongs in category and part-of-speech fields.
-2. **Number split.** Digits `1,2,3,4,5,10` in Time duplicate words
-   `one`–`ten` in Numbers. Merge them into a single 1–10 set in Numbers &
-   Counting.
-3. **Fringe gaps.** Add `hit`, `bite`, `break`, `scratch`, `poop`, `pee`,
-   `close`, `shut`, `boy`, `girl`, `man`, `woman`, `breakfast`, `lunch`,
-   `dinner`, `food`, `ketchup`, `fries`, `love`, `tickle`, `together`,
-   `yours`, `these`, `those`, `nothing`, `behind`, `did`, `ow`.
-4. **Zones hide promoted core words.** Root-core senses carry no category
-   (`src/board/schema.sql` CHECK), so the Feelings zone shows neither `happy`
-   nor `sad`, and the Body zone loses `hurt`. The fix is a zone
-   cross-listing of core senses, not demotion. Found while applying this
-   ruling.
+1. **Spoken-text junk — fixed.** Disambiguation suffixes no longer leak into
+   speech: `wipe`, `clean`, `light`, `orange`, `pink`, `bathroom` speak the
+   clean word. `dark color` was a true duplicate of `dark` (#205) and was
+   removed. Senses that legitimately share a spoken word (`orange`
+   fruit/color, `bathroom` room/interjection, `light` weight/color) share
+   one `utterance` row; the lowest-slot label carries `default_for_text`.
+2. **Number split — merged.** The digit senses `1,2,3,4,5,10` (#577–582)
+   were removed; `one`–`ten` in Numbers & Counting are the single 1–10 set
+   and keep their ids and bundled audio (the digit slots shared the same
+   clip keys anyway).
+3. **Fringe gaps — filled.** Slots 657–684 added: `hit`, `bite`, `break`,
+   `scratch`, `poop`, `pee`, `close`, `shut`, `boy`, `girl`, `man`, `woman`,
+   `breakfast`, `lunch`, `dinner`, `food`, `ketchup`, `fries`, `love`,
+   `tickle`, `together`, `yours`, `these`, `those`, `nothing`, `behind`,
+   `did`, `ow`. (`don't` already existed at #605, Social/Urgent.) Their
+   audio awaits the generation pipeline — `playback.test.mjs` scopes the
+   clip gate to slots < 657 until it lands.
+4. **Zone cross-listing — built.** `sense.category` now also permits a
+   `root_core` value (schema CHECK, `user_version` 3); a Tier 1 Sub-Category
+   written `Core X → Zone` in the vocabulary doc cross-lists the sense into
+   that zone. Nineteen core senses cross-list — `happy`/`sad` → Feelings,
+   `hurt` → Body, `yes`/`no`/`stop`/`help`/`please` → Social, `eat`/`drink`/
+   `play`/`open`/`turn` → Daily Actions, `big`/`little`/`good`/`bad` →
+   Descriptors, `not`/`and` → Function Words — so rule-0 words are reachable
+   inside their zones, not only on the board. Zones remain views; a core
+   word's home is still its coordinate.
+
+Lexicon: 677 senses = 83 root-core + 594 fringe.

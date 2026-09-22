@@ -225,7 +225,7 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 26,
@@ -234,7 +234,7 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 27,
@@ -243,7 +243,7 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 28,
@@ -252,7 +252,7 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 29,
@@ -261,7 +261,7 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 30,
@@ -270,7 +270,7 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 31,
@@ -279,7 +279,7 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 32,
@@ -513,7 +513,7 @@
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 58,
@@ -522,7 +522,7 @@
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 59,
@@ -531,7 +531,7 @@
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 60,
@@ -540,7 +540,7 @@
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "slot": 61,
@@ -549,7 +549,7 @@
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 62,
@@ -648,7 +648,7 @@
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 73,
@@ -657,7 +657,7 @@
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Pink",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 74,
@@ -666,7 +666,7 @@
       "partOfSpeech": "Adverb",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Function Words & Grammar"
     },
     {
       "slot": 75,
@@ -675,7 +675,7 @@
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Pink",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "slot": 76,
@@ -684,7 +684,7 @@
       "partOfSpeech": "Conjunction",
       "fitzgeraldColor": "Pink",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Function Words & Grammar"
     },
     {
       "slot": 77,
@@ -1548,7 +1548,7 @@
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Red",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Body, Health & Hygiene"
     },
     {
       "slot": 173,
@@ -1611,7 +1611,7 @@
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "slot": 180,
@@ -2228,7 +2228,7 @@
     {
       "slot": 248,
       "tier": 2,
-      "spokenText": "wipe action",
+      "spokenText": "wipe",
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Stick Figure",
@@ -4577,7 +4577,7 @@
     {
       "slot": 509,
       "tier": 2,
-      "spokenText": "orange color",
+      "spokenText": "orange",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Illustrated Object",
@@ -4595,7 +4595,7 @@
     {
       "slot": 511,
       "tier": 2,
-      "spokenText": "pink color",
+      "spokenText": "pink",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Illustrated Object",
@@ -4685,7 +4685,7 @@
     {
       "slot": 521,
       "tier": 2,
-      "spokenText": "light weight",
+      "spokenText": "light",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
@@ -4757,7 +4757,7 @@
     {
       "slot": 529,
       "tier": 2,
-      "spokenText": "clean item",
+      "spokenText": "clean",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
@@ -4953,18 +4953,9 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "slot": 551,
-      "tier": 2,
-      "spokenText": "dark color",
-      "partOfSpeech": "Adjective",
-      "fitzgeraldColor": "Blue",
-      "visualStyle": "Diagrammatic",
-      "category": "Descriptors, Adjectives & Opposites"
-    },
-    {
       "slot": 552,
       "tier": 2,
-      "spokenText": "light color",
+      "spokenText": "light",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
@@ -5187,60 +5178,6 @@
       "category": "Time, Calendar & Sequencing"
     },
     {
-      "slot": 577,
-      "tier": 2,
-      "spokenText": "1",
-      "partOfSpeech": "Adjective",
-      "fitzgeraldColor": "Blue",
-      "visualStyle": "Diagrammatic",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "slot": 578,
-      "tier": 2,
-      "spokenText": "2",
-      "partOfSpeech": "Adjective",
-      "fitzgeraldColor": "Blue",
-      "visualStyle": "Diagrammatic",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "slot": 579,
-      "tier": 2,
-      "spokenText": "3",
-      "partOfSpeech": "Adjective",
-      "fitzgeraldColor": "Blue",
-      "visualStyle": "Diagrammatic",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "slot": 580,
-      "tier": 2,
-      "spokenText": "4",
-      "partOfSpeech": "Adjective",
-      "fitzgeraldColor": "Blue",
-      "visualStyle": "Diagrammatic",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "slot": 581,
-      "tier": 2,
-      "spokenText": "5",
-      "partOfSpeech": "Adjective",
-      "fitzgeraldColor": "Blue",
-      "visualStyle": "Diagrammatic",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "slot": 582,
-      "tier": 2,
-      "spokenText": "10",
-      "partOfSpeech": "Adjective",
-      "fitzgeraldColor": "Blue",
-      "visualStyle": "Diagrammatic",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
       "slot": 583,
       "tier": 2,
       "spokenText": "hello",
@@ -5450,7 +5387,7 @@
     {
       "slot": 606,
       "tier": 2,
-      "spokenText": "bathroom urgent",
+      "spokenText": "bathroom",
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
@@ -5905,6 +5842,258 @@
       "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
       "category": "Numbers & Counting"
+    },
+    {
+      "slot": 657,
+      "tier": 2,
+      "spokenText": "breakfast",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 658,
+      "tier": 2,
+      "spokenText": "lunch",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 659,
+      "tier": 2,
+      "spokenText": "dinner",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 660,
+      "tier": 2,
+      "spokenText": "food",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 661,
+      "tier": 2,
+      "spokenText": "ketchup",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 662,
+      "tier": 2,
+      "spokenText": "fries",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 663,
+      "tier": 2,
+      "spokenText": "poop",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
+    },
+    {
+      "slot": 664,
+      "tier": 2,
+      "spokenText": "pee",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Illustrated Object",
+      "category": "Body, Health & Hygiene"
+    },
+    {
+      "slot": 665,
+      "tier": 2,
+      "spokenText": "hit",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "slot": 666,
+      "tier": 2,
+      "spokenText": "bite",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "slot": 667,
+      "tier": 2,
+      "spokenText": "break",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "slot": 668,
+      "tier": 2,
+      "spokenText": "scratch",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "slot": 669,
+      "tier": 2,
+      "spokenText": "close",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "slot": 670,
+      "tier": 2,
+      "spokenText": "shut",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "slot": 671,
+      "tier": 2,
+      "spokenText": "tickle",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "slot": 672,
+      "tier": 2,
+      "spokenText": "boy",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
+    },
+    {
+      "slot": 673,
+      "tier": 2,
+      "spokenText": "girl",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
+    },
+    {
+      "slot": 674,
+      "tier": 2,
+      "spokenText": "man",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
+    },
+    {
+      "slot": 675,
+      "tier": 2,
+      "spokenText": "woman",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "People, Family & Roles"
+    },
+    {
+      "slot": 676,
+      "tier": 2,
+      "spokenText": "love",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "slot": 677,
+      "tier": 2,
+      "spokenText": "together",
+      "partOfSpeech": "Adverb",
+      "fitzgeraldColor": "Blue",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "slot": 678,
+      "tier": 2,
+      "spokenText": "ow",
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Red",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "slot": 679,
+      "tier": 2,
+      "spokenText": "yours",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Stick Figure",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 680,
+      "tier": 2,
+      "spokenText": "these",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 681,
+      "tier": 2,
+      "spokenText": "those",
+      "partOfSpeech": "Determiner",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 682,
+      "tier": 2,
+      "spokenText": "nothing",
+      "partOfSpeech": "Pronoun",
+      "fitzgeraldColor": "Yellow",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 683,
+      "tier": 2,
+      "spokenText": "behind",
+      "partOfSpeech": "Preposition",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 684,
+      "tier": 2,
+      "spokenText": "did",
+      "partOfSpeech": "Verb",
+      "fitzgeraldColor": "Green",
+      "visualStyle": "Diagrammatic",
+      "category": "Function Words & Grammar"
     }
   ]
 }

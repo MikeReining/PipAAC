@@ -8,11 +8,13 @@ CREATE TABLE IF NOT EXISTS sense (
   art_archetype TEXT NOT NULL
     CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),
   tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),
+  -- For primary_fringe, category is the sense's zone home. For root_core it is
+  -- a zone cross-listing: the word keeps its core cell and also appears when
+  -- browsing that zone (zones are views, not exclusive homes).
   category TEXT,
   default_image_id TEXT REFERENCES image(id),
   CHECK (
-    (tier = 'root_core' AND category IS NULL)
-    OR (tier = 'primary_fringe' AND category IN (
+    category IN (
       'Food & Drink',
       'Body, Health & Hygiene',
       'Feelings, Emotions & Sensory States',
@@ -29,7 +31,8 @@ CREATE TABLE IF NOT EXISTS sense (
       'Social Etiquette, Pragmatic Interjections & Urgent/Safety',
       'Function Words & Grammar',
       'Numbers & Counting'
-    ))
+    )
+    OR (tier = 'root_core' AND category IS NULL)
   )
 );
 
@@ -413,4 +416,4 @@ BEGIN
   );
 END;
 
-PRAGMA user_version = 2;
+PRAGMA user_version = 3;

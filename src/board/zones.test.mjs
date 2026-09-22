@@ -40,6 +40,48 @@ test("import seeds zone_slot: my_words at 10, all 16 categories after", () => {
   }
 });
 
+test("zone views list cross-listed core senses beside their fringe", () => {
+  const db = openDb();
+  const zone = (key) =>
+    db
+      .prepare(
+        `SELECT l.text AS label FROM sense s
+         JOIN label l ON l.sense_id = s.id
+           AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+         WHERE s.category = ?`,
+      )
+      .all(key)
+      .map((r) => r.label);
+
+  // Rule-0 words must be reachable inside their zones, not only on the board.
+  const feelings = zone("Feelings, Emotions & Sensory States");
+  for (const w of ["happy", "sad"]) assert.ok(feelings.includes(w), `Feelings missing ${w}`);
+  assert.ok(zone("Body, Health & Hygiene").includes("hurt"));
+  const social = zone("Social Etiquette, Pragmatic Interjections & Urgent/Safety");
+  for (const w of ["yes", "no", "stop", "help", "please"]) {
+    assert.ok(social.includes(w), `Social missing ${w}`);
+  }
+  const actions = zone("Daily Actions & Activity Verbs");
+  for (const w of ["eat", "drink", "play", "open", "turn"]) {
+    assert.ok(actions.includes(w), `Daily Actions missing ${w}`);
+  }
+  const descriptors = zone("Descriptors, Adjectives & Opposites");
+  for (const w of ["big", "little", "good", "bad"]) {
+    assert.ok(descriptors.includes(w), `Descriptors missing ${w}`);
+  }
+  const grammar = zone("Function Words & Grammar");
+  for (const w of ["not", "and"]) assert.ok(grammar.includes(w), `Function Words missing ${w}`);
+
+  // New fringe words land in their zones.
+  for (const w of ["hit", "bite", "break", "scratch", "close", "shut", "tickle"]) {
+    assert.ok(actions.includes(w), `Daily Actions missing new fringe ${w}`);
+  }
+  const food = zone("Food & Drink");
+  for (const w of ["breakfast", "lunch", "dinner", "food", "ketchup", "fries"]) {
+    assert.ok(food.includes(w), `Food missing new fringe ${w}`);
+  }
+});
+
 test("custom group claims a free zone slot and holds entities in order", () => {
   const db = openDb();
   db.prepare("INSERT INTO custom_group (id, name, photo_key) VALUES (?, ?, NULL)").run(

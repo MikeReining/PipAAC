@@ -5,7 +5,7 @@
     "coordinateMap": "docs/product/Core_Coordinate_Map.md",
     "schema": "src/board/schema.sql"
   },
-  "schemaSql": "-- Pip AAC schema v1 — docs/product/Language_And_Voice_Schema.md is the owner.\n-- Apply with PRAGMA foreign_keys = ON. Version carried in PRAGMA user_version.\n\nCREATE TABLE IF NOT EXISTS sense (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),\n  fitzgerald_role TEXT NOT NULL\n    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Red')),\n  art_archetype TEXT NOT NULL\n    CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),\n  tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),\n  category TEXT,\n  default_image_id TEXT REFERENCES image(id),\n  CHECK (\n    (tier = 'root_core' AND category IS NULL)\n    OR (tier = 'primary_fringe' AND category IN (\n      'Food & Drink',\n      'Body, Health & Hygiene',\n      'Feelings, Emotions & Sensory States',\n      'Daily Actions & Activity Verbs',\n      'People, Family & Roles',\n      'Places, Rooms & Community',\n      'Toys, Play, Media & Leisure',\n      'Home, Household Objects & Daily Tools',\n      'Clothing & Accessories',\n      'Animals & Nature',\n      'Vehicles & Transportation',\n      'Descriptors, Adjectives & Opposites',\n      'Time, Calendar & Sequencing',\n      'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n      'Function Words & Grammar',\n      'Numbers & Counting'\n    ))\n  )\n);\n\nCREATE TABLE IF NOT EXISTS utterance (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'utt_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  spoken_text TEXT NOT NULL CHECK (length(spoken_text) > 0),\n  normalized_spoken_text TEXT NOT NULL CHECK (length(normalized_spoken_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  UNIQUE (locale, normalized_spoken_text)\n);\n\nCREATE TABLE IF NOT EXISTS label (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'lbl_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  text TEXT NOT NULL CHECK (length(text) > 0),\n  normalized_text TEXT NOT NULL CHECK (length(normalized_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),\n  part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (\n    'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',\n    'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'\n  )),\n  default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))\n);\n\nCREATE TABLE IF NOT EXISTS image (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'img_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS voice (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'voi_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  display_name TEXT NOT NULL CHECK (length(display_name) > 0),\n  source TEXT NOT NULL CHECK (source IN ('bundled', 'device_tts')),\n  engine_id TEXT,\n  is_default INTEGER NOT NULL CHECK (is_default IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('active', 'retired')),\n  CHECK (source != 'device_tts' OR engine_id IS NOT NULL),\n  CHECK (source != 'bundled' OR engine_id IS NULL),\n  CHECK (status != 'retired' OR is_default = 0)\n);\n\nCREATE TABLE IF NOT EXISTS clip (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'clp_*'),\n  voice_id TEXT NOT NULL REFERENCES voice(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0),\n  source TEXT NOT NULL CHECK (length(source) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS core_cell (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'cel_*'),\n  layout TEXT NOT NULL CHECK (length(layout) > 0),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),\n  UNIQUE (layout, slot_index),\n  UNIQUE (layout, sense_id)\n);\n\nCREATE TABLE IF NOT EXISTS learner_profile (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'prf_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  preferred_voice_id TEXT NOT NULL REFERENCES voice(id)\n);\n\nCREATE TABLE IF NOT EXISTS personal_entity (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),\n  spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),\n  photo_key TEXT,\n  category TEXT CHECK (category IS NULL OR category IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  hint TEXT\n);\n\nCREATE TABLE IF NOT EXISTS entity_enrichment (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'enr_*'),\n  entity_id TEXT NOT NULL REFERENCES personal_entity(id),\n  description TEXT,\n  category_suggestion TEXT CHECK (category_suggestion IS NULL OR category_suggestion IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  associations TEXT,\n  model TEXT NOT NULL,\n  prompt_version TEXT NOT NULL,\n  status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))\n);\n\n-- Selection events feed the local funnel's recency and time-of-day\n-- histogram (Dual_Engine §5.2). Ids only — never the English string.\nCREATE TABLE IF NOT EXISTS learner_event_log (\n  id INTEGER PRIMARY KEY,\n  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),\n  item_id TEXT NOT NULL CHECK (length(item_id) > 0),\n  selected_at INTEGER NOT NULL CHECK (selected_at > 0)\n);\n\nCREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);\nCREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);\n\nCREATE TABLE IF NOT EXISTS clip_override (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),\n  utterance_id TEXT REFERENCES utterance(id),\n  entity_id TEXT REFERENCES personal_entity(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  CHECK ((utterance_id IS NULL) != (entity_id IS NULL))\n);\n\n-- The zone index is a second coordinate map: navigation gets the same\n-- motor-memory law as core_cell. zone_key is 'my_words', a catalog\n-- category name, or a custom_group id. Slots 0–9 are pinned nav cells;\n-- zones occupy 10–59. Positions only move via caregiver arrange mode.\nCREATE TABLE IF NOT EXISTS zone_slot (\n  zone_key TEXT PRIMARY KEY CHECK (length(zone_key) > 0),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 10 AND slot_index < 60)\n);\n\nCREATE TABLE IF NOT EXISTS custom_group (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),\n  name TEXT NOT NULL CHECK (length(name) > 0),\n  photo_key TEXT\n);\n\n-- Custom groups hold personal entities in stable order (first-added =\n-- first slot — mini motor memory inside the group).\nCREATE TABLE IF NOT EXISTS group_item (\n  group_id TEXT NOT NULL REFERENCES custom_group(id),\n  entity_id TEXT NOT NULL REFERENCES personal_entity(id),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),\n  PRIMARY KEY (group_id, entity_id)\n);\n\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text\n  ON label(sense_id, locale, normalized_text);\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_approved_lemma\n  ON label(sense_id, locale)\n  WHERE kind = 'lemma' AND status = 'approved';\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_default_text\n  ON label(locale, normalized_text)\n  WHERE status = 'approved' AND default_for_text = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS voice_one_active_default\n  ON voice(locale)\n  WHERE status = 'active' AND is_default = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS clip_one_ready\n  ON clip(voice_id, utterance_id)\n  WHERE status = 'ready';\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_utterance\n  ON clip_override(utterance_id)\n  WHERE status = 'ready' AND utterance_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_entity\n  ON clip_override(entity_id)\n  WHERE status = 'ready' AND entity_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS enrichment_one_ready\n  ON entity_enrichment(entity_id)\n  WHERE status = 'ready';\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance\nBEFORE INSERT ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance\nBEFORE INSERT ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS override_recorded_text_matches\nBEFORE INSERT ON clip_override\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'override recorded_text must equal utterance.spoken_text')\n  WHERE NEW.utterance_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\n  SELECT RAISE(ABORT, 'override recorded_text must equal entity spoken_name')\n  WHERE NEW.entity_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM personal_entity\n    WHERE personal_entity.id = NEW.entity_id\n      AND personal_entity.spoken_name = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS sense_default_image_same_sense\nBEFORE UPDATE OF default_image_id ON sense\nFOR EACH ROW\nWHEN NEW.default_image_id IS NOT NULL\nBEGIN\n  SELECT RAISE(ABORT, 'default image belongs to another sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM image\n    WHERE image.id = NEW.default_image_id\n      AND image.sense_id = NEW.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS core_cell_root_only\nBEFORE INSERT ON core_cell\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'core cell requires a root_core sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM sense\n    WHERE sense.id = NEW.sense_id AND sense.tier = 'root_core'\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale\nBEFORE INSERT ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS voice_retire_blocks_if_preferred\nBEFORE UPDATE OF status ON voice\nFOR EACH ROW\nWHEN NEW.status = 'retired' AND OLD.status != 'retired'\nBEGIN\n  SELECT RAISE(ABORT, 'repoint profiles before retiring this voice')\n  WHERE EXISTS (\n    SELECT 1 FROM learner_profile\n    WHERE preferred_voice_id = OLD.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS utterance_rename_supersedes_audio\nAFTER UPDATE OF spoken_text ON utterance\nFOR EACH ROW\nWHEN NEW.spoken_text != OLD.spoken_text\nBEGIN\n  UPDATE clip\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_rename_supersedes_override\nAFTER UPDATE OF spoken_name ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\nBEGIN\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_input_change_supersedes_enrichment\nAFTER UPDATE OF spoken_name, photo_key ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\n   OR NEW.photo_key IS NOT OLD.photo_key\nBEGIN\n  UPDATE entity_enrichment\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status IN ('ready', 'abstained');\nEND;\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance_on_update\nBEFORE UPDATE OF utterance_id, locale ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance_on_update\nBEFORE UPDATE OF voice_id, utterance_id, recorded_text ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale_on_update\nBEFORE UPDATE OF preferred_voice_id, locale ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nPRAGMA user_version = 2;\n",
+  "schemaSql": "-- Pip AAC schema v1 — docs/product/Language_And_Voice_Schema.md is the owner.\n-- Apply with PRAGMA foreign_keys = ON. Version carried in PRAGMA user_version.\n\nCREATE TABLE IF NOT EXISTS sense (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),\n  fitzgerald_role TEXT NOT NULL\n    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Red')),\n  art_archetype TEXT NOT NULL\n    CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),\n  tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),\n  -- For primary_fringe, category is the sense's zone home. For root_core it is\n  -- a zone cross-listing: the word keeps its core cell and also appears when\n  -- browsing that zone (zones are views, not exclusive homes).\n  category TEXT,\n  default_image_id TEXT REFERENCES image(id),\n  CHECK (\n    category IN (\n      'Food & Drink',\n      'Body, Health & Hygiene',\n      'Feelings, Emotions & Sensory States',\n      'Daily Actions & Activity Verbs',\n      'People, Family & Roles',\n      'Places, Rooms & Community',\n      'Toys, Play, Media & Leisure',\n      'Home, Household Objects & Daily Tools',\n      'Clothing & Accessories',\n      'Animals & Nature',\n      'Vehicles & Transportation',\n      'Descriptors, Adjectives & Opposites',\n      'Time, Calendar & Sequencing',\n      'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n      'Function Words & Grammar',\n      'Numbers & Counting'\n    )\n    OR (tier = 'root_core' AND category IS NULL)\n  )\n);\n\nCREATE TABLE IF NOT EXISTS utterance (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'utt_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  spoken_text TEXT NOT NULL CHECK (length(spoken_text) > 0),\n  normalized_spoken_text TEXT NOT NULL CHECK (length(normalized_spoken_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  UNIQUE (locale, normalized_spoken_text)\n);\n\nCREATE TABLE IF NOT EXISTS label (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'lbl_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  text TEXT NOT NULL CHECK (length(text) > 0),\n  normalized_text TEXT NOT NULL CHECK (length(normalized_text) > 0),\n  normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),\n  kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),\n  part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (\n    'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',\n    'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'\n  )),\n  default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))\n);\n\nCREATE TABLE IF NOT EXISTS image (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'img_*'),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS voice (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'voi_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  display_name TEXT NOT NULL CHECK (length(display_name) > 0),\n  source TEXT NOT NULL CHECK (source IN ('bundled', 'device_tts')),\n  engine_id TEXT,\n  is_default INTEGER NOT NULL CHECK (is_default IN (0, 1)),\n  status TEXT NOT NULL CHECK (status IN ('active', 'retired')),\n  CHECK (source != 'device_tts' OR engine_id IS NOT NULL),\n  CHECK (source != 'bundled' OR engine_id IS NULL),\n  CHECK (status != 'retired' OR is_default = 0)\n);\n\nCREATE TABLE IF NOT EXISTS clip (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'clp_*'),\n  voice_id TEXT NOT NULL REFERENCES voice(id),\n  utterance_id TEXT NOT NULL REFERENCES utterance(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  sha256 TEXT NOT NULL CHECK (length(sha256) > 0),\n  source TEXT NOT NULL CHECK (length(source) > 0)\n);\n\nCREATE TABLE IF NOT EXISTS core_cell (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'cel_*'),\n  layout TEXT NOT NULL CHECK (length(layout) > 0),\n  sense_id TEXT NOT NULL REFERENCES sense(id),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),\n  UNIQUE (layout, slot_index),\n  UNIQUE (layout, sense_id)\n);\n\nCREATE TABLE IF NOT EXISTS learner_profile (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'prf_*'),\n  locale TEXT NOT NULL CHECK (length(locale) > 0),\n  preferred_voice_id TEXT NOT NULL REFERENCES voice(id)\n);\n\nCREATE TABLE IF NOT EXISTS personal_entity (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),\n  spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),\n  photo_key TEXT,\n  category TEXT CHECK (category IS NULL OR category IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  hint TEXT\n);\n\nCREATE TABLE IF NOT EXISTS entity_enrichment (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'enr_*'),\n  entity_id TEXT NOT NULL REFERENCES personal_entity(id),\n  description TEXT,\n  category_suggestion TEXT CHECK (category_suggestion IS NULL OR category_suggestion IN (\n    'Food & Drink',\n    'Body, Health & Hygiene',\n    'Feelings, Emotions & Sensory States',\n    'Daily Actions & Activity Verbs',\n    'People, Family & Roles',\n    'Places, Rooms & Community',\n    'Toys, Play, Media & Leisure',\n    'Home, Household Objects & Daily Tools',\n    'Clothing & Accessories',\n    'Animals & Nature',\n    'Vehicles & Transportation',\n    'Descriptors, Adjectives & Opposites',\n    'Time, Calendar & Sequencing',\n    'Social Etiquette, Pragmatic Interjections & Urgent/Safety',\n    'Function Words & Grammar',\n    'Numbers & Counting'\n  )),\n  associations TEXT,\n  model TEXT NOT NULL,\n  prompt_version TEXT NOT NULL,\n  status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))\n);\n\n-- Selection events feed the local funnel's recency and time-of-day\n-- histogram (Dual_Engine §5.2). Ids only — never the English string.\nCREATE TABLE IF NOT EXISTS learner_event_log (\n  id INTEGER PRIMARY KEY,\n  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),\n  item_id TEXT NOT NULL CHECK (length(item_id) > 0),\n  selected_at INTEGER NOT NULL CHECK (selected_at > 0)\n);\n\nCREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);\nCREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);\n\nCREATE TABLE IF NOT EXISTS clip_override (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),\n  utterance_id TEXT REFERENCES utterance(id),\n  entity_id TEXT REFERENCES personal_entity(id),\n  recorded_text TEXT NOT NULL CHECK (length(recorded_text) > 0),\n  key TEXT NOT NULL CHECK (length(key) > 0),\n  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),\n  CHECK ((utterance_id IS NULL) != (entity_id IS NULL))\n);\n\n-- The zone index is a second coordinate map: navigation gets the same\n-- motor-memory law as core_cell. zone_key is 'my_words', a catalog\n-- category name, or a custom_group id. Slots 0–9 are pinned nav cells;\n-- zones occupy 10–59. Positions only move via caregiver arrange mode.\nCREATE TABLE IF NOT EXISTS zone_slot (\n  zone_key TEXT PRIMARY KEY CHECK (length(zone_key) > 0),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 10 AND slot_index < 60)\n);\n\nCREATE TABLE IF NOT EXISTS custom_group (\n  id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),\n  name TEXT NOT NULL CHECK (length(name) > 0),\n  photo_key TEXT\n);\n\n-- Custom groups hold personal entities in stable order (first-added =\n-- first slot — mini motor memory inside the group).\nCREATE TABLE IF NOT EXISTS group_item (\n  group_id TEXT NOT NULL REFERENCES custom_group(id),\n  entity_id TEXT NOT NULL REFERENCES personal_entity(id),\n  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),\n  PRIMARY KEY (group_id, entity_id)\n);\n\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text\n  ON label(sense_id, locale, normalized_text);\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_approved_lemma\n  ON label(sense_id, locale)\n  WHERE kind = 'lemma' AND status = 'approved';\nCREATE UNIQUE INDEX IF NOT EXISTS label_one_default_text\n  ON label(locale, normalized_text)\n  WHERE status = 'approved' AND default_for_text = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS voice_one_active_default\n  ON voice(locale)\n  WHERE status = 'active' AND is_default = 1;\nCREATE UNIQUE INDEX IF NOT EXISTS clip_one_ready\n  ON clip(voice_id, utterance_id)\n  WHERE status = 'ready';\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_utterance\n  ON clip_override(utterance_id)\n  WHERE status = 'ready' AND utterance_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_entity\n  ON clip_override(entity_id)\n  WHERE status = 'ready' AND entity_id IS NOT NULL;\nCREATE UNIQUE INDEX IF NOT EXISTS enrichment_one_ready\n  ON entity_enrichment(entity_id)\n  WHERE status = 'ready';\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance\nBEFORE INSERT ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance\nBEFORE INSERT ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS override_recorded_text_matches\nBEFORE INSERT ON clip_override\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'override recorded_text must equal utterance.spoken_text')\n  WHERE NEW.utterance_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\n  SELECT RAISE(ABORT, 'override recorded_text must equal entity spoken_name')\n  WHERE NEW.entity_id IS NOT NULL AND NOT EXISTS (\n    SELECT 1 FROM personal_entity\n    WHERE personal_entity.id = NEW.entity_id\n      AND personal_entity.spoken_name = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS sense_default_image_same_sense\nBEFORE UPDATE OF default_image_id ON sense\nFOR EACH ROW\nWHEN NEW.default_image_id IS NOT NULL\nBEGIN\n  SELECT RAISE(ABORT, 'default image belongs to another sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM image\n    WHERE image.id = NEW.default_image_id\n      AND image.sense_id = NEW.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS core_cell_root_only\nBEFORE INSERT ON core_cell\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'core cell requires a root_core sense')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM sense\n    WHERE sense.id = NEW.sense_id AND sense.tier = 'root_core'\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale\nBEFORE INSERT ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS voice_retire_blocks_if_preferred\nBEFORE UPDATE OF status ON voice\nFOR EACH ROW\nWHEN NEW.status = 'retired' AND OLD.status != 'retired'\nBEGIN\n  SELECT RAISE(ABORT, 'repoint profiles before retiring this voice')\n  WHERE EXISTS (\n    SELECT 1 FROM learner_profile\n    WHERE preferred_voice_id = OLD.id\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS utterance_rename_supersedes_audio\nAFTER UPDATE OF spoken_text ON utterance\nFOR EACH ROW\nWHEN NEW.spoken_text != OLD.spoken_text\nBEGIN\n  UPDATE clip\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE utterance_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_rename_supersedes_override\nAFTER UPDATE OF spoken_name ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\nBEGIN\n  UPDATE clip_override\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status = 'ready';\nEND;\n\nCREATE TRIGGER IF NOT EXISTS entity_input_change_supersedes_enrichment\nAFTER UPDATE OF spoken_name, photo_key ON personal_entity\nFOR EACH ROW\nWHEN NEW.spoken_name != OLD.spoken_name\n   OR NEW.photo_key IS NOT OLD.photo_key\nBEGIN\n  UPDATE entity_enrichment\n    SET status = 'superseded'\n    WHERE entity_id = NEW.id AND status IN ('ready', 'abstained');\nEND;\n\nCREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance_on_update\nBEFORE UPDATE OF utterance_id, locale ON label\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'label locale must match its utterance')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.locale = NEW.locale\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS clip_matches_voice_and_utterance_on_update\nBEFORE UPDATE OF voice_id, utterance_id, recorded_text ON clip\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'clip voice locale must match utterance locale')\n  WHERE (\n    SELECT voice.locale FROM voice WHERE voice.id = NEW.voice_id\n  ) IS NOT (\n    SELECT utterance.locale FROM utterance WHERE utterance.id = NEW.utterance_id\n  );\n  SELECT RAISE(ABORT, 'device_tts voice has no clips')\n  WHERE EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.voice_id AND voice.source = 'device_tts'\n  );\n  SELECT RAISE(ABORT, 'recorded_text must equal utterance.spoken_text')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM utterance\n    WHERE utterance.id = NEW.utterance_id\n      AND utterance.spoken_text = NEW.recorded_text\n  );\nEND;\n\nCREATE TRIGGER IF NOT EXISTS profile_voice_is_active_same_locale_on_update\nBEFORE UPDATE OF preferred_voice_id, locale ON learner_profile\nFOR EACH ROW\nBEGIN\n  SELECT RAISE(ABORT, 'preferred voice must be active and match profile locale')\n  WHERE NOT EXISTS (\n    SELECT 1 FROM voice\n    WHERE voice.id = NEW.preferred_voice_id\n      AND voice.status = 'active'\n      AND voice.locale = NEW.locale\n  );\nEND;\n\nPRAGMA user_version = 3;\n",
   "layouts": {
     "grid60": {
       "cols": 10,
@@ -221,49 +221,49 @@
       "fitzgerald_role": "Green",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "id": "sns_0026",
       "fitzgerald_role": "Red",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "id": "sns_0027",
       "fitzgerald_role": "Green",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "id": "sns_0028",
       "fitzgerald_role": "Green",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "id": "sns_0029",
       "fitzgerald_role": "Green",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "id": "sns_0030",
       "fitzgerald_role": "Green",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "id": "sns_0031",
       "fitzgerald_role": "Green",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "id": "sns_0032",
@@ -445,35 +445,35 @@
       "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "id": "sns_0058",
       "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "id": "sns_0059",
       "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "id": "sns_0060",
       "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Descriptors, Adjectives & Opposites"
     },
     {
       "id": "sns_0061",
       "fitzgerald_role": "Blue",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "id": "sns_0062",
@@ -550,35 +550,35 @@
       "fitzgerald_role": "Red",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "id": "sns_0073",
       "fitzgerald_role": "Pink",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "id": "sns_0074",
       "fitzgerald_role": "Red",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Function Words & Grammar"
     },
     {
       "id": "sns_0075",
       "fitzgerald_role": "Pink",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
     {
       "id": "sns_0076",
       "fitzgerald_role": "Pink",
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
-      "category": null
+      "category": "Function Words & Grammar"
     },
     {
       "id": "sns_0077",
@@ -1250,7 +1250,7 @@
       "fitzgerald_role": "Red",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Body, Health & Hygiene"
     },
     {
       "id": "sns_0173",
@@ -1299,7 +1299,7 @@
       "fitzgerald_role": "Blue",
       "art_archetype": "Stick Figure",
       "tier": "root_core",
-      "category": null
+      "category": "Feelings, Emotions & Sensory States"
     },
     {
       "id": "sns_0180",
@@ -3899,13 +3899,6 @@
       "category": "Descriptors, Adjectives & Opposites"
     },
     {
-      "id": "sns_0551",
-      "fitzgerald_role": "Blue",
-      "art_archetype": "Diagrammatic",
-      "tier": "primary_fringe",
-      "category": "Descriptors, Adjectives & Opposites"
-    },
-    {
       "id": "sns_0552",
       "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
@@ -4076,48 +4069,6 @@
     {
       "id": "sns_0576",
       "fitzgerald_role": "Yellow",
-      "art_archetype": "Diagrammatic",
-      "tier": "primary_fringe",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "id": "sns_0577",
-      "fitzgerald_role": "Blue",
-      "art_archetype": "Diagrammatic",
-      "tier": "primary_fringe",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "id": "sns_0578",
-      "fitzgerald_role": "Blue",
-      "art_archetype": "Diagrammatic",
-      "tier": "primary_fringe",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "id": "sns_0579",
-      "fitzgerald_role": "Blue",
-      "art_archetype": "Diagrammatic",
-      "tier": "primary_fringe",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "id": "sns_0580",
-      "fitzgerald_role": "Blue",
-      "art_archetype": "Diagrammatic",
-      "tier": "primary_fringe",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "id": "sns_0581",
-      "fitzgerald_role": "Blue",
-      "art_archetype": "Diagrammatic",
-      "tier": "primary_fringe",
-      "category": "Time, Calendar & Sequencing"
-    },
-    {
-      "id": "sns_0582",
-      "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing"
@@ -4639,6 +4590,202 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting"
+    },
+    {
+      "id": "sns_0657",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink"
+    },
+    {
+      "id": "sns_0658",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink"
+    },
+    {
+      "id": "sns_0659",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink"
+    },
+    {
+      "id": "sns_0660",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink"
+    },
+    {
+      "id": "sns_0661",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink"
+    },
+    {
+      "id": "sns_0662",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink"
+    },
+    {
+      "id": "sns_0663",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Body, Health & Hygiene"
+    },
+    {
+      "id": "sns_0664",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Body, Health & Hygiene"
+    },
+    {
+      "id": "sns_0665",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "sns_0666",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "sns_0667",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "sns_0668",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "sns_0669",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "sns_0670",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "sns_0671",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Daily Actions & Activity Verbs"
+    },
+    {
+      "id": "sns_0672",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "People, Family & Roles"
+    },
+    {
+      "id": "sns_0673",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "People, Family & Roles"
+    },
+    {
+      "id": "sns_0674",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "People, Family & Roles"
+    },
+    {
+      "id": "sns_0675",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "People, Family & Roles"
+    },
+    {
+      "id": "sns_0676",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "id": "sns_0677",
+      "fitzgerald_role": "Blue",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "id": "sns_0678",
+      "fitzgerald_role": "Red",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "id": "sns_0679",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "id": "sns_0680",
+      "fitzgerald_role": "Pink",
+      "art_archetype": "Diagrammatic",
+      "tier": "primary_fringe",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "id": "sns_0681",
+      "fitzgerald_role": "Pink",
+      "art_archetype": "Diagrammatic",
+      "tier": "primary_fringe",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "id": "sns_0682",
+      "fitzgerald_role": "Yellow",
+      "art_archetype": "Diagrammatic",
+      "tier": "primary_fringe",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "id": "sns_0683",
+      "fitzgerald_role": "Pink",
+      "art_archetype": "Diagrammatic",
+      "tier": "primary_fringe",
+      "category": "Function Words & Grammar"
+    },
+    {
+      "id": "sns_0684",
+      "fitzgerald_role": "Green",
+      "art_archetype": "Diagrammatic",
+      "tier": "primary_fringe",
+      "category": "Function Words & Grammar"
     }
   ],
   "utterances": [
@@ -6374,8 +6521,8 @@
     {
       "id": "utt_0248",
       "locale": "en",
-      "spoken_text": "wipe action",
-      "normalized_spoken_text": "wipe action",
+      "spoken_text": "wipe",
+      "normalized_spoken_text": "wipe",
       "normalizer_version": "v1"
     },
     {
@@ -8199,13 +8346,6 @@
       "normalizer_version": "v1"
     },
     {
-      "id": "utt_0509",
-      "locale": "en",
-      "spoken_text": "orange color",
-      "normalized_spoken_text": "orange color",
-      "normalizer_version": "v1"
-    },
-    {
       "id": "utt_0510",
       "locale": "en",
       "spoken_text": "purple",
@@ -8215,8 +8355,8 @@
     {
       "id": "utt_0511",
       "locale": "en",
-      "spoken_text": "pink color",
-      "normalized_spoken_text": "pink color",
+      "spoken_text": "pink",
+      "normalized_spoken_text": "pink",
       "normalizer_version": "v1"
     },
     {
@@ -8285,8 +8425,8 @@
     {
       "id": "utt_0521",
       "locale": "en",
-      "spoken_text": "light weight",
-      "normalized_spoken_text": "light weight",
+      "spoken_text": "light",
+      "normalized_spoken_text": "light",
       "normalizer_version": "v1"
     },
     {
@@ -8341,8 +8481,8 @@
     {
       "id": "utt_0529",
       "locale": "en",
-      "spoken_text": "clean item",
-      "normalized_spoken_text": "clean item",
+      "spoken_text": "clean",
+      "normalized_spoken_text": "clean",
       "normalizer_version": "v1"
     },
     {
@@ -8490,20 +8630,6 @@
       "locale": "en",
       "spoken_text": "funny",
       "normalized_spoken_text": "funny",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0551",
-      "locale": "en",
-      "spoken_text": "dark color",
-      "normalized_spoken_text": "dark color",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0552",
-      "locale": "en",
-      "spoken_text": "light color",
-      "normalized_spoken_text": "light color",
       "normalizer_version": "v1"
     },
     {
@@ -8675,48 +8801,6 @@
       "normalizer_version": "v1"
     },
     {
-      "id": "utt_0577",
-      "locale": "en",
-      "spoken_text": "1",
-      "normalized_spoken_text": "1",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0578",
-      "locale": "en",
-      "spoken_text": "2",
-      "normalized_spoken_text": "2",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0579",
-      "locale": "en",
-      "spoken_text": "3",
-      "normalized_spoken_text": "3",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0580",
-      "locale": "en",
-      "spoken_text": "4",
-      "normalized_spoken_text": "4",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0581",
-      "locale": "en",
-      "spoken_text": "5",
-      "normalized_spoken_text": "5",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0582",
-      "locale": "en",
-      "spoken_text": "10",
-      "normalized_spoken_text": "10",
-      "normalizer_version": "v1"
-    },
-    {
       "id": "utt_0583",
       "locale": "en",
       "spoken_text": "hello",
@@ -8875,13 +8959,6 @@
       "locale": "en",
       "spoken_text": "don't",
       "normalized_spoken_text": "don't",
-      "normalizer_version": "v1"
-    },
-    {
-      "id": "utt_0606",
-      "locale": "en",
-      "spoken_text": "bathroom urgent",
-      "normalized_spoken_text": "bathroom urgent",
       "normalizer_version": "v1"
     },
     {
@@ -9232,6 +9309,202 @@
       "locale": "en",
       "spoken_text": "ten",
       "normalized_spoken_text": "ten",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0657",
+      "locale": "en",
+      "spoken_text": "breakfast",
+      "normalized_spoken_text": "breakfast",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0658",
+      "locale": "en",
+      "spoken_text": "lunch",
+      "normalized_spoken_text": "lunch",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0659",
+      "locale": "en",
+      "spoken_text": "dinner",
+      "normalized_spoken_text": "dinner",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0660",
+      "locale": "en",
+      "spoken_text": "food",
+      "normalized_spoken_text": "food",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0661",
+      "locale": "en",
+      "spoken_text": "ketchup",
+      "normalized_spoken_text": "ketchup",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0662",
+      "locale": "en",
+      "spoken_text": "fries",
+      "normalized_spoken_text": "fries",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0663",
+      "locale": "en",
+      "spoken_text": "poop",
+      "normalized_spoken_text": "poop",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0664",
+      "locale": "en",
+      "spoken_text": "pee",
+      "normalized_spoken_text": "pee",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0665",
+      "locale": "en",
+      "spoken_text": "hit",
+      "normalized_spoken_text": "hit",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0666",
+      "locale": "en",
+      "spoken_text": "bite",
+      "normalized_spoken_text": "bite",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0667",
+      "locale": "en",
+      "spoken_text": "break",
+      "normalized_spoken_text": "break",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0668",
+      "locale": "en",
+      "spoken_text": "scratch",
+      "normalized_spoken_text": "scratch",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0669",
+      "locale": "en",
+      "spoken_text": "close",
+      "normalized_spoken_text": "close",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0670",
+      "locale": "en",
+      "spoken_text": "shut",
+      "normalized_spoken_text": "shut",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0671",
+      "locale": "en",
+      "spoken_text": "tickle",
+      "normalized_spoken_text": "tickle",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0672",
+      "locale": "en",
+      "spoken_text": "boy",
+      "normalized_spoken_text": "boy",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0673",
+      "locale": "en",
+      "spoken_text": "girl",
+      "normalized_spoken_text": "girl",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0674",
+      "locale": "en",
+      "spoken_text": "man",
+      "normalized_spoken_text": "man",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0675",
+      "locale": "en",
+      "spoken_text": "woman",
+      "normalized_spoken_text": "woman",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0676",
+      "locale": "en",
+      "spoken_text": "love",
+      "normalized_spoken_text": "love",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0677",
+      "locale": "en",
+      "spoken_text": "together",
+      "normalized_spoken_text": "together",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0678",
+      "locale": "en",
+      "spoken_text": "ow",
+      "normalized_spoken_text": "ow",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0679",
+      "locale": "en",
+      "spoken_text": "yours",
+      "normalized_spoken_text": "yours",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0680",
+      "locale": "en",
+      "spoken_text": "these",
+      "normalized_spoken_text": "these",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0681",
+      "locale": "en",
+      "spoken_text": "those",
+      "normalized_spoken_text": "those",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0682",
+      "locale": "en",
+      "spoken_text": "nothing",
+      "normalized_spoken_text": "nothing",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0683",
+      "locale": "en",
+      "spoken_text": "behind",
+      "normalized_spoken_text": "behind",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0684",
+      "locale": "en",
+      "spoken_text": "did",
+      "normalized_spoken_text": "did",
       "normalizer_version": "v1"
     }
   ],
@@ -12452,8 +12725,8 @@
       "sense_id": "sns_0248",
       "utterance_id": "utt_0248",
       "locale": "en",
-      "text": "wipe action",
-      "normalized_text": "wipe action",
+      "text": "wipe",
+      "normalized_text": "wipe",
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Verb",
@@ -15843,14 +16116,14 @@
     {
       "id": "lbl_0509",
       "sense_id": "sns_0509",
-      "utterance_id": "utt_0509",
+      "utterance_id": "utt_0131",
       "locale": "en",
-      "text": "orange color",
-      "normalized_text": "orange color",
+      "text": "orange",
+      "normalized_text": "orange",
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Adjective",
-      "default_for_text": 1,
+      "default_for_text": 0,
       "status": "approved"
     },
     {
@@ -15871,8 +16144,8 @@
       "sense_id": "sns_0511",
       "utterance_id": "utt_0511",
       "locale": "en",
-      "text": "pink color",
-      "normalized_text": "pink color",
+      "text": "pink",
+      "normalized_text": "pink",
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Adjective",
@@ -16001,8 +16274,8 @@
       "sense_id": "sns_0521",
       "utterance_id": "utt_0521",
       "locale": "en",
-      "text": "light weight",
-      "normalized_text": "light weight",
+      "text": "light",
+      "normalized_text": "light",
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Adjective",
@@ -16105,8 +16378,8 @@
       "sense_id": "sns_0529",
       "utterance_id": "utt_0529",
       "locale": "en",
-      "text": "clean item",
-      "normalized_text": "clean item",
+      "text": "clean",
+      "normalized_text": "clean",
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Adjective",
@@ -16387,29 +16660,16 @@
       "status": "approved"
     },
     {
-      "id": "lbl_0551",
-      "sense_id": "sns_0551",
-      "utterance_id": "utt_0551",
-      "locale": "en",
-      "text": "dark color",
-      "normalized_text": "dark color",
-      "normalizer_version": "v1",
-      "kind": "lemma",
-      "part_of_speech": "Adjective",
-      "default_for_text": 1,
-      "status": "approved"
-    },
-    {
       "id": "lbl_0552",
       "sense_id": "sns_0552",
-      "utterance_id": "utt_0552",
+      "utterance_id": "utt_0521",
       "locale": "en",
-      "text": "light color",
-      "normalized_text": "light color",
+      "text": "light",
+      "normalized_text": "light",
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Adjective",
-      "default_for_text": 1,
+      "default_for_text": 0,
       "status": "approved"
     },
     {
@@ -16725,84 +16985,6 @@
       "status": "approved"
     },
     {
-      "id": "lbl_0577",
-      "sense_id": "sns_0577",
-      "utterance_id": "utt_0577",
-      "locale": "en",
-      "text": "1",
-      "normalized_text": "1",
-      "normalizer_version": "v1",
-      "kind": "lemma",
-      "part_of_speech": "Adjective",
-      "default_for_text": 1,
-      "status": "approved"
-    },
-    {
-      "id": "lbl_0578",
-      "sense_id": "sns_0578",
-      "utterance_id": "utt_0578",
-      "locale": "en",
-      "text": "2",
-      "normalized_text": "2",
-      "normalizer_version": "v1",
-      "kind": "lemma",
-      "part_of_speech": "Adjective",
-      "default_for_text": 1,
-      "status": "approved"
-    },
-    {
-      "id": "lbl_0579",
-      "sense_id": "sns_0579",
-      "utterance_id": "utt_0579",
-      "locale": "en",
-      "text": "3",
-      "normalized_text": "3",
-      "normalizer_version": "v1",
-      "kind": "lemma",
-      "part_of_speech": "Adjective",
-      "default_for_text": 1,
-      "status": "approved"
-    },
-    {
-      "id": "lbl_0580",
-      "sense_id": "sns_0580",
-      "utterance_id": "utt_0580",
-      "locale": "en",
-      "text": "4",
-      "normalized_text": "4",
-      "normalizer_version": "v1",
-      "kind": "lemma",
-      "part_of_speech": "Adjective",
-      "default_for_text": 1,
-      "status": "approved"
-    },
-    {
-      "id": "lbl_0581",
-      "sense_id": "sns_0581",
-      "utterance_id": "utt_0581",
-      "locale": "en",
-      "text": "5",
-      "normalized_text": "5",
-      "normalizer_version": "v1",
-      "kind": "lemma",
-      "part_of_speech": "Adjective",
-      "default_for_text": 1,
-      "status": "approved"
-    },
-    {
-      "id": "lbl_0582",
-      "sense_id": "sns_0582",
-      "utterance_id": "utt_0582",
-      "locale": "en",
-      "text": "10",
-      "normalized_text": "10",
-      "normalizer_version": "v1",
-      "kind": "lemma",
-      "part_of_speech": "Adjective",
-      "default_for_text": 1,
-      "status": "approved"
-    },
-    {
       "id": "lbl_0583",
       "sense_id": "sns_0583",
       "utterance_id": "utt_0583",
@@ -17104,14 +17286,14 @@
     {
       "id": "lbl_0606",
       "sense_id": "sns_0606",
-      "utterance_id": "utt_0606",
+      "utterance_id": "utt_0158",
       "locale": "en",
-      "text": "bathroom urgent",
-      "normalized_text": "bathroom urgent",
+      "text": "bathroom",
+      "normalized_text": "bathroom",
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Interjection",
-      "default_for_text": 1,
+      "default_for_text": 0,
       "status": "approved"
     },
     {
@@ -17761,6 +17943,370 @@
       "normalizer_version": "v1",
       "kind": "lemma",
       "part_of_speech": "Number",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0657",
+      "sense_id": "sns_0657",
+      "utterance_id": "utt_0657",
+      "locale": "en",
+      "text": "breakfast",
+      "normalized_text": "breakfast",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0658",
+      "sense_id": "sns_0658",
+      "utterance_id": "utt_0658",
+      "locale": "en",
+      "text": "lunch",
+      "normalized_text": "lunch",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0659",
+      "sense_id": "sns_0659",
+      "utterance_id": "utt_0659",
+      "locale": "en",
+      "text": "dinner",
+      "normalized_text": "dinner",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0660",
+      "sense_id": "sns_0660",
+      "utterance_id": "utt_0660",
+      "locale": "en",
+      "text": "food",
+      "normalized_text": "food",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0661",
+      "sense_id": "sns_0661",
+      "utterance_id": "utt_0661",
+      "locale": "en",
+      "text": "ketchup",
+      "normalized_text": "ketchup",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0662",
+      "sense_id": "sns_0662",
+      "utterance_id": "utt_0662",
+      "locale": "en",
+      "text": "fries",
+      "normalized_text": "fries",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0663",
+      "sense_id": "sns_0663",
+      "utterance_id": "utt_0663",
+      "locale": "en",
+      "text": "poop",
+      "normalized_text": "poop",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0664",
+      "sense_id": "sns_0664",
+      "utterance_id": "utt_0664",
+      "locale": "en",
+      "text": "pee",
+      "normalized_text": "pee",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0665",
+      "sense_id": "sns_0665",
+      "utterance_id": "utt_0665",
+      "locale": "en",
+      "text": "hit",
+      "normalized_text": "hit",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0666",
+      "sense_id": "sns_0666",
+      "utterance_id": "utt_0666",
+      "locale": "en",
+      "text": "bite",
+      "normalized_text": "bite",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0667",
+      "sense_id": "sns_0667",
+      "utterance_id": "utt_0667",
+      "locale": "en",
+      "text": "break",
+      "normalized_text": "break",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0668",
+      "sense_id": "sns_0668",
+      "utterance_id": "utt_0668",
+      "locale": "en",
+      "text": "scratch",
+      "normalized_text": "scratch",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0669",
+      "sense_id": "sns_0669",
+      "utterance_id": "utt_0669",
+      "locale": "en",
+      "text": "close",
+      "normalized_text": "close",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0670",
+      "sense_id": "sns_0670",
+      "utterance_id": "utt_0670",
+      "locale": "en",
+      "text": "shut",
+      "normalized_text": "shut",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0671",
+      "sense_id": "sns_0671",
+      "utterance_id": "utt_0671",
+      "locale": "en",
+      "text": "tickle",
+      "normalized_text": "tickle",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0672",
+      "sense_id": "sns_0672",
+      "utterance_id": "utt_0672",
+      "locale": "en",
+      "text": "boy",
+      "normalized_text": "boy",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0673",
+      "sense_id": "sns_0673",
+      "utterance_id": "utt_0673",
+      "locale": "en",
+      "text": "girl",
+      "normalized_text": "girl",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0674",
+      "sense_id": "sns_0674",
+      "utterance_id": "utt_0674",
+      "locale": "en",
+      "text": "man",
+      "normalized_text": "man",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0675",
+      "sense_id": "sns_0675",
+      "utterance_id": "utt_0675",
+      "locale": "en",
+      "text": "woman",
+      "normalized_text": "woman",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0676",
+      "sense_id": "sns_0676",
+      "utterance_id": "utt_0676",
+      "locale": "en",
+      "text": "love",
+      "normalized_text": "love",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0677",
+      "sense_id": "sns_0677",
+      "utterance_id": "utt_0677",
+      "locale": "en",
+      "text": "together",
+      "normalized_text": "together",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Adverb",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0678",
+      "sense_id": "sns_0678",
+      "utterance_id": "utt_0678",
+      "locale": "en",
+      "text": "ow",
+      "normalized_text": "ow",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Interjection",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0679",
+      "sense_id": "sns_0679",
+      "utterance_id": "utt_0679",
+      "locale": "en",
+      "text": "yours",
+      "normalized_text": "yours",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Pronoun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0680",
+      "sense_id": "sns_0680",
+      "utterance_id": "utt_0680",
+      "locale": "en",
+      "text": "these",
+      "normalized_text": "these",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Determiner",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0681",
+      "sense_id": "sns_0681",
+      "utterance_id": "utt_0681",
+      "locale": "en",
+      "text": "those",
+      "normalized_text": "those",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Determiner",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0682",
+      "sense_id": "sns_0682",
+      "utterance_id": "utt_0682",
+      "locale": "en",
+      "text": "nothing",
+      "normalized_text": "nothing",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Pronoun",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0683",
+      "sense_id": "sns_0683",
+      "utterance_id": "utt_0683",
+      "locale": "en",
+      "text": "behind",
+      "normalized_text": "behind",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Preposition",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0684",
+      "sense_id": "sns_0684",
+      "utterance_id": "utt_0684",
+      "locale": "en",
+      "text": "did",
+      "normalized_text": "did",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Verb",
       "default_for_text": 1,
       "status": "approved"
     }
@@ -20252,7 +20798,7 @@
       "id": "clp_0248",
       "voice_id": "voi_default_en",
       "utterance_id": "utt_0248",
-      "recorded_text": "wipe action",
+      "recorded_text": "wipe",
       "key": "audio/wipe_action/784959351696.mp3",
       "status": "ready",
       "sha256": "78495935169631ad9cf263c052181efc4a014b092dffa8e14c1418494bbbd864",
@@ -22859,16 +23405,6 @@
       "source": "bitsboard-recorded"
     },
     {
-      "id": "clp_0509",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0509",
-      "recorded_text": "orange color",
-      "key": "audio/orange_color/963093b56bf4.mp3",
-      "status": "ready",
-      "sha256": "963093b56bf453f2c1efe105bdc5ab3f5a7ed7c640ea36e44c2e6745847e5a98",
-      "source": "elevenlabs"
-    },
-    {
       "id": "clp_0510",
       "voice_id": "voi_default_en",
       "utterance_id": "utt_0510",
@@ -22882,7 +23418,7 @@
       "id": "clp_0511",
       "voice_id": "voi_default_en",
       "utterance_id": "utt_0511",
-      "recorded_text": "pink color",
+      "recorded_text": "pink",
       "key": "audio/pink_color/79377b427f3c.mp3",
       "status": "ready",
       "sha256": "79377b427f3ca9aaa6e9626136616c837105594862f053cfc1ab8c7652ad5709",
@@ -22982,7 +23518,7 @@
       "id": "clp_0521",
       "voice_id": "voi_default_en",
       "utterance_id": "utt_0521",
-      "recorded_text": "light weight",
+      "recorded_text": "light",
       "key": "audio/light_weight/62273c1d94b3.mp3",
       "status": "ready",
       "sha256": "62273c1d94b3356600d83dfb5164b79c4975de950f9085ba56e89c7c66021c7b",
@@ -23062,7 +23598,7 @@
       "id": "clp_0529",
       "voice_id": "voi_default_en",
       "utterance_id": "utt_0529",
-      "recorded_text": "clean item",
+      "recorded_text": "clean",
       "key": "audio/clean_item/e632e0f26f6e.mp3",
       "status": "ready",
       "sha256": "e632e0f26f6e78cdc418c1d9f29ee7ebe50a7d47846c1d7e0db639a48ab662f5",
@@ -23277,26 +23813,6 @@
       "status": "ready",
       "sha256": "d6aecc60ef219b828541c60e31b8a65a955f27bccfdb370afb9a686c76329f3f",
       "source": "bitsboard-recorded"
-    },
-    {
-      "id": "clp_0551",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0551",
-      "recorded_text": "dark color",
-      "key": "audio/dark_color/26b45f5652ce.mp3",
-      "status": "ready",
-      "sha256": "26b45f5652cea5c19ab874bc99e7366d53f5cf861a09ab6e0b025f0879ec222b",
-      "source": "elevenlabs"
-    },
-    {
-      "id": "clp_0552",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0552",
-      "recorded_text": "light color",
-      "key": "audio/light_color/aeeb461616d8.mp3",
-      "status": "ready",
-      "sha256": "aeeb461616d875cf30593a82b81317828e233780a6caa4d97ebd5e123003f5a3",
-      "source": "elevenlabs"
     },
     {
       "id": "clp_0553",
@@ -23539,66 +24055,6 @@
       "source": "elevenlabs"
     },
     {
-      "id": "clp_0577",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0577",
-      "recorded_text": "1",
-      "key": "audio/1/882d0ee59798.mp3",
-      "status": "ready",
-      "sha256": "882d0ee59798f8d7255f976c8ea00d0c45f22972509f710e176229bfedf8161b",
-      "source": "bitsboard-recorded"
-    },
-    {
-      "id": "clp_0578",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0578",
-      "recorded_text": "2",
-      "key": "audio/2/de5a8545afce.mp3",
-      "status": "ready",
-      "sha256": "de5a8545afce99b973fc09f567bdb8fea59511602dfd3d8e9be9854e90258206",
-      "source": "bitsboard-recorded"
-    },
-    {
-      "id": "clp_0579",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0579",
-      "recorded_text": "3",
-      "key": "audio/3/a6c1d59df8b7.mp3",
-      "status": "ready",
-      "sha256": "a6c1d59df8b7ed6c262113a038153fcd4286203296f3c8ef76f4131d5e52a3a7",
-      "source": "bitsboard-recorded"
-    },
-    {
-      "id": "clp_0580",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0580",
-      "recorded_text": "4",
-      "key": "audio/4/56d42fb649f0.mp3",
-      "status": "ready",
-      "sha256": "56d42fb649f0e496ff64d7d15d568c897b78fe5b3c33b1f209691d2a8858bf21",
-      "source": "bitsboard-recorded"
-    },
-    {
-      "id": "clp_0581",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0581",
-      "recorded_text": "5",
-      "key": "audio/5/cf1d2bdc779b.mp3",
-      "status": "ready",
-      "sha256": "cf1d2bdc779b0e8ee3f0eddca7138954f6768b669826b23dceedfc2d677607ae",
-      "source": "bitsboard-recorded"
-    },
-    {
-      "id": "clp_0582",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0582",
-      "recorded_text": "10",
-      "key": "audio/10/9d03125f9609.mp3",
-      "status": "ready",
-      "sha256": "9d03125f96094e28579bf5cf94eb717eded5130497d6f21ba1fe774fe9c1121a",
-      "source": "bitsboard-recorded"
-    },
-    {
       "id": "clp_0583",
       "voice_id": "voi_default_en",
       "utterance_id": "utt_0583",
@@ -23827,16 +24283,6 @@
       "status": "ready",
       "sha256": "cc53f8d2245c2504aafa1ef6ab6073b2f8d0d3165727268aee7d0f46cfbf7c1a",
       "source": "bitsboard-recorded"
-    },
-    {
-      "id": "clp_0606",
-      "voice_id": "voi_default_en",
-      "utterance_id": "utt_0606",
-      "recorded_text": "bathroom urgent",
-      "key": "audio/bathroom_urgent/07a0ce9dbd4e.mp3",
-      "status": "ready",
-      "sha256": "07a0ce9dbd4e21a6464afd552516da81d985a2cbd32c5d37626e1caa0ce4db20",
-      "source": "elevenlabs"
     },
     {
       "id": "clp_0607",
