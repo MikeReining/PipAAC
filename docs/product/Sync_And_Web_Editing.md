@@ -1,8 +1,9 @@
 # Sync and web editing
 
 **Direction DECIDED 2026-09-22** (founder: "a user can create and edit
-things on a computer and then have them also on their iPad"). **The design
-below is PROPOSED** until the founder rules on § 11. Not built.
+things on a computer and then have them also on their iPad"). **Rulings
+DECIDED 2026-09-22** (§ 11). The mechanics in § 3–§ 6 are the proposed
+engineering design, confirmed or changed by the 011 slices. Not built.
 Intake: `docs/founder/2026-09-22_Customization_Library_Sync.md`.
 Execution: `docs/phases/011_Sync_And_Web_Editing.md`.
 Platforms: `docs/product/Platforms_iOS_And_Web.md`.
@@ -14,7 +15,7 @@ It keeps their principles: no account, a QR introduction, per-device keys,
 Cloudflare carries only ciphertext, and not iCloud.
 
 It touches credentials, privacy and user-data retention (`AGENTS.md`
-§ High-Risk Stops). Nothing here is built before the § 11 rulings.
+§ High-Risk Stops). The founder ruled on each of those in § 11.
 
 ---
 
@@ -27,7 +28,7 @@ It touches credentials, privacy and user-data retention (`AGENTS.md`
 2. **More than one adult.** Mom's phone, Dad's laptop and the school SLP
    edit the same board.
 3. **A broken iPad is not a lost voice.** A new device restores the board
-   (§ 9).
+   (§ 9). Backup and restore are free for every board (§ 11).
 
 Communication never depends on sync. With sync off, broken, or unpaid, the
 iPad speaks everything it has
@@ -47,8 +48,9 @@ adults authored for it.
 | `entity_enrichment` (so it is never re-asked, `docs/product/Personal_Entities.md` § Enrichment) | The catalog (each device has its own copy of the same version) |
 | Profile settings: voice, presentation mode, listening, Jev sharing, suggestions toggle | The Parent Corner PIN and biometrics (per device) |
 
-Open: whether history should sync between the family's own devices so the
-strip learns once (§ 11 Q3). The default is no.
+**DECIDED 2026-09-22:** history stays on the device. A restored or new
+device starts learning again. That is cheap, and it keeps the promise that
+what the child said never leaves the device.
 
 ## 3. No accounts: a board, devices and keys
 
@@ -149,10 +151,21 @@ What the server can see: board id, device public keys, op sizes and times,
 blob sizes. What it cannot see: any name, photo, recording, word, group
 name or setting.
 
-Retention: ops older than the latest snapshot are deleted after 30 days
-(starting value). A board with no device seen for 18 months is deleted
-after an in-app warning to any device that returns. Both are
-**PROPOSED** (§ 11 Q4).
+Retention, **DECIDED 2026-09-22** (founder: "customizing these things for
+people with special needs takes a ton of time"; § 11):
+
+- **A board is never deleted because of payment.** Pricing is a one-time
+  purchase, so no one "stops paying". Even a free board keeps its backup.
+- **Deleted on request.** The family deletes a board from the Parent
+  Corner, with a confirmation and a 30-day undo.
+- **Idle boards: 3 years.** A board with no linked device seen for 3 years
+  may be deleted. There are no accounts and no email, so the only warning
+  channel is the app: any device that returns in the final 6 months sees
+  a warning. The window is long because the warning is weak and storage is
+  cheap (a heavily customized board is roughly 50–200 MB, pennies a year).
+- **Ops fold into snapshots.** Ops older than the latest snapshot are
+  pruned after 30 days (starting value). That removes no data: the
+  snapshot holds the same state.
 
 ## 7. The web editor
 
@@ -182,18 +195,21 @@ device on each board, and the family can remove it.
 
 ## 9. Recovery: when every device is gone
 
-The old sketch said: if every linked device is lost, the board is gone.
-`docs/strategy/Vision.md` § 4.4 promises zero loss. Both cannot hold.
+**DECIDED 2026-09-22.** This keeps the "zero loss" promise in
+`docs/strategy/Vision.md` § 4.4 without accounts.
 
-**PROPOSED:** a **recovery key**. At first sync the Parent Corner shows a
-printable recovery sheet (a QR plus 24 words) that holds the board id and
-the board key. On a new device, **Restore from recovery sheet** downloads
-and decrypts the board. Without the sheet, and with no linked device, the
-board is gone. We cannot recover it, and the UI says so.
-
-On the iOS app, the iPad's own backup (iCloud or computer) also restores
-the app's data with the board key in the Keychain. That is Apple's
-backup, not our sync (§ 11 Q2).
+- **Recovery sheet, free for every board.** When backup is turned on, the
+  Parent Corner shows a printable recovery sheet (a QR plus 24 words) that
+  holds the board id and the board key. On a new device, **Restore from
+  recovery sheet** downloads and decrypts the board. The app reminds the
+  family to print or save it, and they can show it again from any linked
+  device.
+- **The iPad's own backup counts too.** On the iOS app, Apple's device
+  backup (iCloud or computer) restores the app's data and the Keychain
+  board key. That is Apple's backup, not our sync, and it is a second path.
+- Without the sheet, a linked device, or a device backup, the board is
+  gone. We cannot recover it, and the UI says so plainly when backup is
+  turned on.
 
 ## 10. Bans
 
@@ -208,16 +224,25 @@ backup, not our sync (§ 11 Q2).
 | An unallowed device reads or writes a board | A request signed by an unknown key is rejected, and a removed device's next write is rejected. |
 | Communication depends on sync | With the relay unreachable, every tap speaks and every edit saves locally. |
 
-## 11. Founder rulings needed before building
+## 11. Founder rulings (2026-09-22)
 
-1. **Recovery sheet (§ 9):** yes or no. Without it, "zero loss" in the
-   Vision must be removed.
-2. **iPad backup:** accept Apple's device backup as a second recovery
-   path on iOS?
-3. **History across the family's devices:** keep it on the device
-   (default), or sync it encrypted so prediction learns once?
-4. **Retention (§ 6):** 30-day op pruning and 18-month idle deletion, or
-   other numbers?
-5. **Pricing:** sync and web editing are in Pip Lifetime
-   (`docs/product/Pricing_And_Packaging.md` § 2). Does a free board get
-   any sync at all, for example a recovery sheet only?
+All five asked questions were answered ("all agreed"):
+
+1. **Recovery sheet:** yes (§ 9).
+2. **iPad backup:** accepted as a second recovery path (§ 9).
+3. **History across devices:** no. History stays on the device (§ 2).
+4. **Retention:** never deleted for payment; deleted on request; idle
+   boards after 3 years with in-app warnings (§ 6).
+5. **Free vs paid:**
+   - **Free for every board:** encrypted backup, the recovery sheet, and
+     restore. "A voice is not rented" includes the vocabulary
+     (`docs/product/Pricing_And_Packaging.md` § 1). A free board has one
+     linked device at a time; restoring onto a new device moves the board
+     there.
+   - **Pip Lifetime:** more than one linked device, the web editor, and
+     Draw it for me (`docs/product/Word_Library.md` § 6.1).
+
+On iOS, the Lifetime unlock is an in-app purchase (Apple requires it for
+digital unlocks). **UNVERIFIED:** how school and grant purchases (Apple
+School Manager volume purchase) interact with it. Check before pricing
+ships.

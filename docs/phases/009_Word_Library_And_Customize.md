@@ -1,7 +1,7 @@
 # Phase 009 — Word Library and customization
 
-**Status:** Ready to execute. Not started. Slice 1 fixes built code and can
-start any time.
+**Status:** Ready to execute. Not started. Slice 1 is P1: it fixes a defect
+in built code.
 
 **DECIDED 2026-09-22** (founder: "if we nail customization and really make
 it dramatically better we can win a key area that's really hard and
@@ -29,7 +29,7 @@ swap; `+ Add`, `Remove`, `+ Group`, `Delete group`), the one-field add with
 catalog matches, entity save with photo, never-orphan to My Words
 (`public/shared/groups.mjs`; Edit mode in `public/board.js`).
 
-**Missing:** own-word matching (duplicates), any way to edit an entity after
+**Missing:** own-word matching (silent second records), any way to edit an entity after
 saving, any place to find a word except by opening groups, recordings, the
 voice picker, picture overrides, bulk and multi-photo add, suggestions, and
 hiding.
@@ -39,6 +39,7 @@ hiding.
 | Use | Never use |
 | --- | --- |
 | Word Library, Library | word bank, vocabulary manager |
+| meaning (one record per meaning) | duplicate (for a repeated spelling) |
 | word card | properties, inspector, button editor |
 | Added / Suggested / All (Library tabs) | My Words (that is a group) |
 | Record my own, recording | voice memo, custom audio |
@@ -46,62 +47,90 @@ hiding.
 
 ---
 
-## Slice 1 — `+ Add` offers the family's own words first (defect fix)
+## Slice 1 — `+ Add` offers every meaning, as pictures (P1 defect fix)
 
-Goal: typing a name the family already has offers that record, and picking
-it places the same entity in this group.
+**P1** (founder 2026-09-22: "duplicate words should be fixed … that's
+already a core violation and bug").
+
+Goal: typing a word offers every existing meaning of it as a picture row
+(the family's own entities first, then catalog senses, ranked by the
+current group) plus New. Picking an existing meaning places that same
+record here. The same spelling may repeat; the same meaning may not be
+created twice by accident.
 
 Truth owner: `docs/product/Word_Library.md` § 5.1.
 
-Lie-prone layer: a UI list that shows Cooper but saves through the New path.
+Lie-prone layer: a UI list that shows Cooper but saves through the New
+path, or a "dedupe" that compares spellings and blocks the second `bat`.
 
-Files: `public/shared/groups.mjs` (a matcher over `personal_entity` next to
-`catalogMatches`, excluding entities already in the target group),
-`public/board.js` (`renderAddMatches`: entity rows first, with photo
-thumbnail and "in Animals" subtitle), `library_add.test.mjs` (new, in
-src/board).
+Files: `public/shared/groups.mjs` (a matcher over `personal_entity` next
+to `catalogMatches`, excluding records already in the target group; group
+context ranks, never filters), `public/board.js` (`renderAddMatches`:
+picture rows, entities first, "in Animals" subtitle),
+`library_add.test.mjs` (new, in src/board).
 
-Works Test: save Cooper from Animals. Open `+ Add` in People, type "Coo".
-The first match is the Cooper entity. Pick it. `personal_entity` has 1
-row. Cooper has `group_cell` rows in Animals and People. Typing "Coo" in
-People again offers no Cooper (already there). Core snapshot unchanged.
+Works Test:
+1. Save Cooper from Animals. Open `+ Add` in People, type "Coo". The first
+   row is the Cooper entity. Pick it. `personal_entity` has 1 row, and
+   Cooper has `group_cell` rows in Animals and People. Typing "Coo" in
+   People again offers no Cooper (already there).
+2. Fixture catalog with two `bat` senses (animal, sport). In Animals,
+   "bat" offers both, animal first. In a group seeded from the sport
+   category, sport first. Adding both to one custom group gives two cells.
+3. With an entity "Max", New "Max" is still offered and creates a second
+   entity.
+4. Core snapshot unchanged.
 
 Done when: that passes and a person can put Cooper in two groups from the
-board.
+board without making a second Cooper.
 
 ---
 
-## Slice 2 — The word card
+## Slice 2 — Home-screen Edit mode and the word card
 
-Goal: one screen to see and change a word: picture, name, sound, groups.
+Goal: Edit mode works like the iPhone home screen, except removal never
+reflows. Tapping an item opens its word card: picture, name, sound,
+groups.
 
-Truth owner: `docs/product/Word_Library.md` § 4.
+Truth owners: `docs/product/Motor_Grid_And_Art.md` § Groups (Edit mode,
+**DECIDED 2026-09-22**), `docs/product/Word_Library.md` § 4 (card).
 
-**Founder call before building (layout):** in Edit mode, a lifted item's
-slot 1 reads **Edit ›** and opens the card. **Remove from this group**
-moves into the card. Today slot 1 reads `Remove` while an item is lifted
-(`docs/product/Motor_Grid_And_Art.md` § Groups). Recommendation: accept,
-because one pinned action keeps adult controls in one place.
+Scope:
+- **Drag** to an empty slot moves; onto an item swaps. Replaces
+  tap-to-lift, tap-to-place (both work during the change; tap-to-lift is
+  removed when drag is proven on an iPad).
+- **Tap** an item: the word card.
+- **×** badge: remove from this group, Undo toast. The slot stays empty.
+- **Tap an empty slot**: `+ Add` into exactly that slot.
+- **Card:** picture and name change for entities (a rename supersedes the
+  override and the enrichment; `docs/product/Language_And_Voice_Schema.md`
+  § 6.2), ▶, group chips with × and **+ Add to group**, **Show on board**,
+  **Remove** (retire with Undo; schema § 14.5). Recording is slice 4. Hide
+  is slice 9.
 
-Scope: picture and name change for entities (rename supersedes override
-and enrichment; `docs/product/Language_And_Voice_Schema.md` § 6.2), ▶,
-group chips with × and **+ Add to group**, **Show on board**, **Remove**
-(retire with Undo). Sound recording is slice 4. Hide is slice 9.
-
-Lie-prone layer: a rename that updates the card label but leaves the old
-override playing. Assert on what playback resolves, not on the label.
+Lie-prone layers: a rename that updates the card label but leaves the old
+override playing (assert on what playback resolves), and a removal that
+quietly compacts the page (assert on every other row).
 
 Files: `public/board.js`, `public/index.html`, `public/shared/groups.mjs`
-(reuse `placeItem`/`removeItem`), `word_card.test.mjs` (new, in src/board).
+(`placeItem` gains an optional target slot; reuse `moveItem`, `swapItems`,
+`removeItem`), `word_card.test.mjs` and `edit_mode.test.mjs` (new, in
+src/board).
 
-Works Test: rename Cooper to "Coop" from the card. `spoken_name` is "Coop".
-The ready override and ready enrichment for Cooper are `superseded`. Both
-`group_cell` rows are unchanged. Add him to Home through the chip; remove
-him from Animals and People. He is in Home only. Remove Home. He is in My
-Words. Core snapshot unchanged.
+Works Test:
+1. Remove the item at slot 14 with ×. Every other `group_cell` row of that
+   group is byte-identical. Undo restores slot 14.
+2. Tap empty slot 14 and add `cup`: it lands at slot 14, nothing else
+   moves.
+3. Drag slot 20 onto slot 5: exactly those two rows swap.
+4. Rename Cooper to "Coop" from the card. `spoken_name` is "Coop". The
+   ready override and ready enrichment are `superseded`. His `group_cell`
+   rows are unchanged. Add him to Home through a chip, remove him from
+   Animals and People: he is in Home only. Remove Home: he is in My Words.
+5. Core snapshot unchanged throughout.
 
-Done when: that passes and a person can rename, re-photo and re-group
-Cooper from one screen.
+Done when: that passes and a person on an iPad can drag, remove, add into
+a gap, and rename Cooper without anything else moving.
 
 ---
 
@@ -162,20 +191,20 @@ and hear it on the board.
 
 ---
 
-## Slice 5 — Pick a voice
+## Slice 5 — Pick a voice (after launch)
+
+**DECIDED 2026-09-22** (founder: "we are starting with one default voice
+… we will rapidly add multiple voices after that"). Launch ships the
+default voice only. This slice is the first post-launch voice work, not a
+launch blocker.
 
 Goal: Parent Corner → Voice lists catalog voices with a sample; choosing
 one sets `preferred_voice_id` and downloads its clips.
 
-**Founder call before building:** which voices ship (recommendation: the
-default, an adult woman, an adult man, a young girl, a young boy), and
-whether extra voices are free (recommendation: yes; they are one-time
-generation cost, `docs/product/Pricing_And_Packaging.md`).
-
-Content dependency: each voice needs one clip per catalog utterance,
-generated with ElevenLabs like the default voice
-(`docs/product/Language_And_Voice_Schema.md` § 9). Extended-library clips
-follow in 010.
+Content dependency: each voice needs one clip per catalog and extended
+utterance, generated with ElevenLabs like the default voice
+(`docs/product/Language_And_Voice_Schema.md` § 9). Which voices and their
+price are decided when this slice starts.
 
 Lie-prone layer: a picker that changes the setting while playback still
 reads the old voice. Measure the played key.
@@ -185,8 +214,7 @@ clip key. A word with no clip in that voice is silence, not the default
 voice (existing ban, schema § 11). While clips download, taps on
 downloaded words play and the rest are silent. Nothing blocks speaking.
 
-Done when: that passes and a person can hear the board in a young girl's
-voice.
+Done when: that passes and a person can hear the board in a second voice.
 
 ---
 
@@ -306,11 +334,33 @@ in one tap.
 
 ---
 
+## Slice 11 — First-run setup: "Tell us about their world"
+
+Goal: after the board first draws, the Parent Corner offers four short,
+skippable steps: **People** (many photos, slice 8), **Pets**, **Favorite
+foods** (bulk entry answered by library pictures, slice 7), **Places**.
+Each step files into the matching built-in group.
+
+Truth owner: `docs/product/Word_Library.md` § 5.6.
+
+Works Test (automated): run the four steps with fixtures offline. Entities
+and senses land in People, Animals, Food and Places. A skipped step writes
+nothing. Core snapshot unchanged.
+
+Owner-visible proof: a stopwatch, not our own report. A parent adds the
+same 10 words (4 people with photos, 2 pets, 4 foods) in Pip and in
+Proloquo2Go. Record both times in this doc. Target: 30 personal words in
+about ten minutes.
+
+Done when: the test passes and the timed comparison is recorded here.
+
+---
+
 ## Order
 
-1 → 2 → 3 are the core fix and ship together as "find and edit any word".
-4, 6, 7, 8 and 9 are independent after 2. 5 waits on voice content. 10
-waits on 008 slice 3.
+1 is **P1** (`docs/phases/README.md` § Next). 1 → 2 → 3 ship together as
+"find and edit any word". 4, 6, 7, 8 and 9 are independent after 2. 11
+follows 7 and 8. 10 waits on 008 slice 3. 5 is post-launch.
 
 ## Out of scope
 

@@ -32,6 +32,8 @@ Pip AAC establishes a permanent architectural and business invariant:
 |    - Device text-to-speech (OS synthesized voices)                            |
 |    - Full spatial-vector motor grid & predictive strip                        |
 |    - Local storage (SQLite WASM / OPFS)                                       |
+|    - Encrypted backup, recovery sheet & restore (one linked device)          |
+|    - 5 "Draw it for me" drawings as a taste                                   |
 +-------------------------------------------------------------------------------+
                                        |
                                        v
@@ -39,10 +41,27 @@ Pip AAC establishes a permanent architectural and business invariant:
 | 2. PIP LIFETIME (One-Time Family / Individual License)                        |
 |    - Flat, single-purchase license (zero recurring fees)                       |
 |    - Medicaid, insurance, and state assistive-technology grant eligible       |
-|    - Encrypted multi-device Cloudflare edge sync & automated backup            |
+|    - Encrypted multi-device Cloudflare edge sync (backup itself is free)     |
 |    - Caregiver Co-Pilot real-time modeling surface                            |
 |    - Unlimited desktop/browser remote vocabulary editing                      |
+|    - "Draw it for me" in our house style (fair use)                           |
 +-------------------------------------------------------------------------------+
+
+**DECIDED 2026-09-22** (founder, "all agreed"). Amendments to the tiers
+above:
+
+- **Backup and restore are free for every board.** "A voice is not rented"
+  includes the vocabulary a family spent hours building. Pip Lifetime adds
+  more than one linked device and the web editor
+  (`docs/product/Sync_And_Web_Editing.md` § 11).
+- **A board is never deleted because of payment**
+  (`docs/product/Sync_And_Web_Editing.md` § 6).
+- **Draw it for me** is a Pip Lifetime feature with fair use (30 a day,
+  about 1,000 a year, starting values), shown only near a limit, never a
+  silent cutoff. More drawings past the yearly limit are an in-app
+  purchase, priced later. Free boards get 5
+  (`docs/product/Word_Library.md` § 6.1).
+- **iOS:** digital unlocks on the iOS app use Apple in-app purchase.
                                        |
                                        v
 +-------------------------------------------------------------------------------+
@@ -63,3 +82,4 @@ Pip AAC establishes a permanent architectural and business invariant:
 | Core board speaks offline with zero payment | Works Test: fresh install speaks all 677 catalog words and personal entities without an account or network. |
 | No time-bomb expiration | The app never disables speech or locks vocabulary after a 30-day trial period. |
 | Zero loss upon cloud disconnection | If cloud sync or credits expire, the local database remains 100% intact, readable, and speakable. |
+| No deletion for payment | A free board's backup is kept and restorable; only a family's request or 3 idle years deletes a board. |

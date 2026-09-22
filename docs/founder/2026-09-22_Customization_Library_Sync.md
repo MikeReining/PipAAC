@@ -96,14 +96,58 @@ below.
 | 010 — Extended picture library | `docs/phases/010_Extended_Picture_Library.md` |
 | 011 — Sync and web editing | `docs/phases/011_Sync_And_Web_Editing.md` |
 
+## Round 2 rulings (same day)
+
+The founder asked for a product-owner, first-principles pass ("think about
+our users, think about our goal of winning"), then accepted every
+recommendation ("all agreed").
+
+1. **Duplicates: one meaning, one record, while the spelling may repeat.**
+   Founder: "Bat. I might be talking about the flying animal. Bat. I might
+   be talking about baseball … that's not a violation." We adopt
+   WorkbookBench's rules: the context disambiguates, dedupe by meaning and
+   never by spelling, and alternatives are pictures, never a blocking
+   question. The silent second record is the bug, and fixing it is **P1**.
+   → `docs/product/Word_Library.md` § 5.1; 009 slice 1.
+2. **Retention.** Founder: keep data a long time, because customizing
+   takes a ton of time. Ruled: a board is never deleted because of
+   payment; deleted on request; idle boards after 3 years (longer than the
+   founder's 1–2, because with no accounts the app is the only warning
+   channel and storage costs pennies). → `docs/product/Sync_And_Web_Editing.md`
+   § 6.
+3. **Backup and the recovery sheet are free for every board.** Pip Lifetime
+   adds more devices and the web editor. History stays on the device. The
+   iPad's own backup is a second recovery path.
+   → `docs/product/Sync_And_Web_Editing.md` § 9, § 11;
+   `docs/product/Pricing_And_Packaging.md` § 2.
+4. **Voices.** Launch with one default voice; add more quickly after
+   launch. Record my own stays in 009. → `docs/product/Word_Library.md` § 7.
+5. **Extended library:** at least 2,000 words and 300 phrases; invest in
+   a fast review page. → `docs/phases/010_Extended_Picture_Library.md`.
+6. **Draw it for me** for Pip Lifetime owners (founder: "a really killer
+   idea"). The founder's first idea was a silent meter with a cutoff at
+   100–200. Ruled instead: fair use with a 30-a-day abuse limit and about
+   1,000 a year, shown only near a limit, never a silent cutoff; three
+   versions to pick from; word plus hint; a safety check; 5 free drawings
+   as a taste; a word drawn for 20 or more boards joins the library after
+   review; more drawings by in-app purchase, priced later.
+   → `docs/product/Word_Library.md` § 6.1; 010 slice 6.
+7. **Editing.** Founder: removing an item frees its slot and never
+   reshuffles; "remove and shuffle" is not a feature; drag to rearrange one
+   at a time. Ruled: the iPhone home-screen model (drag, tap for the card,
+   × to remove, tap an empty slot to add there), except removal never
+   reflows. → `docs/product/Motor_Grid_And_Art.md` § Groups; 009 slice 2.
+8. **First-run setup** "Tell us about their world" (People, Pets,
+   Favorite foods, Places), proven with a stopwatch against Proloquo2Go.
+   → `docs/product/Word_Library.md` § 5.6; 009 slice 11.
+
 ## Open questions for the founder
 
-1. Word card layout: a lifted item's slot 1 reads **Edit ›** instead of
-   **Remove** (009 slice 2).
-2. Which voices ship, and are extra voices free (009 slice 5)?
-3. Extended library size for the first pass (010 slice 0).
-4. Draw it for me: sends a typed word to our server on an explicit tap
-   (010 slice 6).
-5. The five sync rulings (`docs/product/Sync_And_Web_Editing.md` § 11).
-6. Should 009 slice 1 (the duplicate defect) take the P1 slot in
-   `docs/phases/README.md` § Next?
+All six questions from round 1 were answered in round 2. Still open, and
+decided when their slice starts:
+
+1. Which voices come after launch, and their price (009 slice 5).
+2. The in-app purchase price for drawings past fair use (010 slice 6).
+3. How Apple School Manager and grant purchases interact with the
+   Lifetime in-app purchase (`docs/product/Sync_And_Web_Editing.md` § 11).
+4. The iOS build approach (`docs/product/Platforms_iOS_And_Web.md` § 3).

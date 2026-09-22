@@ -1,7 +1,6 @@
 # Phase 010 — Extended picture library
 
-**Status:** Ready to execute after a founder call on size (slice 0). Not
-started.
+**Status:** Ready to execute. Not started. Size decided (slice 0).
 
 **DECIDED 2026-09-22** (founder: "a thousand images only cost us $10 …
 high leverage and high wow if we really build out our image library").
@@ -26,11 +25,11 @@ bigger the drawn library, the fewer adds need a photo.
 
 ---
 
-## Slice 0 — Founder call: size and phrases
+## Slice 0 — Size (decided)
 
-Recommendation: 1,300 words and 200 short phrases for the first pass
-(about 1,500 images, about $15 at the founder's estimate), then grow from
-the demand signal (slice 6).
+**DECIDED 2026-09-22** (founder: "yes at least"): first pass 2,000 words
+and 300 phrases. After that, growth comes from demand (slice 6 growth
+loop). Generation is cheap; review speed is the real limit (slice 2).
 
 ## Slice 1 — The word list
 
@@ -60,8 +59,12 @@ Re-roll, never police the prompt (`docs/product/Art_Generation_Lessons.md`
 
 Review gate: no readable text in an image (schema § 11 ban), one clear
 subject, Fitzgerald role color where the archetype calls for it. The
-review is a founder-and-agent pass on a contact sheet (same practice as
-the occasions review: side by side, decided together).
+review is a founder-and-agent pass (same practice as the occasions
+review: side by side, decided together).
+
+Build the review page first: a contact sheet of 50 images at a time,
+with one key or tap for approve, re-roll or reject. At 2,300 images, how
+fast this page is decides how fast the library ships.
 
 Works Test: the catalog build rejects a `secondary_fringe` sense with no
 approved image, and an approved image whose hash has no file.
@@ -105,17 +108,52 @@ Works Test: with the network off after first load, every extended word
 that was shown once still shows its picture. An extended word never shown
 shows its label and color, and the add still saves.
 
-## Slice 6 — Draw it for me (PROPOSED)
+## Slice 6 — Draw it for me
 
-**Founder call before building.** When nothing matches, **Draw it for me**
-sends only the typed word to our server. That is the only time it leaves
-the device. We draw it in the house style, and it comes back as that
-word's picture. Request counts, with no device id, rank what enters the
-library next.
+**DECIDED 2026-09-22** (founder: "a really killer idea … for people that
+make the full payment, we should absolutely enable it"). Product rules:
+`docs/product/Word_Library.md` § 6.1. Pricing:
+`docs/product/Pricing_And_Packaging.md` § 2.
 
-Privacy boundary: this is an explicit per-word tap by the adult, never
-automatic. An entity's spoken name is otherwise sent only to enrichment
-(`docs/product/Personal_Entities.md` § Enrichment).
+Goal: from `+ Add` (no match, or "another picture") and from the word
+card, **Draw it for me** sends the word and an optional hint, draws three
+versions in the house style, and the adult picks one.
+
+Parts:
+1. **Server endpoint** on the Worker: a safety check on word and hint,
+   three generations with `scripts/art/gen.mjs` settings, per-board limits
+   (30 a day, about 1,000 a year, starting values), and a count of each
+   word with no board id.
+2. **Entitlement:** Pip Lifetime, or the 5-drawing free taste. The
+   request carries the board id (already known to the relay, needed for
+   the limits) and a proof of entitlement, and no personal identity. The
+   limit counters are keyed by board. The word counts are stored apart
+   from them, with no board id.
+3. **UI:** three pictures, **Draw again**, pick one. The limit message
+   appears only within 10% of a limit and names the reset date.
+4. **Storage:** a pick becomes the entity's picture, or a picture
+   override for a catalog word (schema § 14.1). It syncs like a photo.
+5. **Growth loop:** a word drawn for 20 or more boards goes onto the
+   slice 2 review page as a candidate for the library.
+
+Lie-prone layers: a limit enforced only in the UI (enforce on the
+server), and a privacy claim checked by reading our own code (capture the
+request).
+
+Works Test:
+1. Capture the request body: it contains the word and the hint only. No
+   entity id, no spoken name of another entity, no photo, no history.
+2. The 31st request in a day for one board is refused by the server with
+   a reset time, even when the UI check is bypassed.
+3. A word on the safety block list is refused before any generation call
+   (the generation stub records zero calls).
+4. A free board's 6th drawing is refused. A Lifetime board's is not.
+5. Picking a version for a New word saves the entity with that picture
+   offline-first: the save works even if the network drops after the
+   pick.
+
+Done when: that passes and a person types "trampoline", taps Draw it for
+me, and puts our drawing on the board in under a minute.
 
 ## Out of scope
 

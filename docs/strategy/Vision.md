@@ -166,7 +166,7 @@ Instead of forcing the learner into a single rigid grid:
 - **DECIDED 2026-09-22** (not built). **Two apps, one board:** an iOS app in the App Store is the child's device, and a web app runs the same board in any browser and is where adults edit on a computer. Replaces "built as a PWA". Owner: `docs/product/Platforms_iOS_And_Web.md`.
 - **Runs Everywhere:** the web app runs on low-cost Android tablets, Amazon Fire tablets, Chromebooks, laptops, and smartphones.
 - **Offline-Always:** Communication is an essential lifeline. Pip AAC functions 100% offline with instant local storage, syncing state to Cloudflare edge Workers whenever connectivity is available.
-- **Zero Loss:** Profiles and language graphs are encrypted and backed up seamlessly. If an iPad drops and cracks, opening Pip AAC on a \$40 phone instantly restores the child's exact voice and vocabulary. **Not yet true without a ruling:** with no account, restore needs another linked device or a recovery sheet. `docs/product/Sync_And_Web_Editing.md` § 9 and § 11 Q1.
+- **Zero Loss:** Profiles and language graphs are encrypted and backed up seamlessly. If an iPad drops and cracks, opening Pip AAC on a \$40 phone instantly restores the child's exact voice and vocabulary. **DECIDED 2026-09-22** (not built): with no account, restore uses a free recovery sheet, another linked device, or the iPad's own backup (`docs/product/Sync_And_Web_Editing.md` § 9).
 
 ### 4.5 Dual-Engine Predictive Intelligence
 - **The Intelligence Breakthrough:** Blending ultra-low-latency System One semantic classification (TypeSafe Jev) with private, on-device behavioral memory (SQLite/IndexedDB).

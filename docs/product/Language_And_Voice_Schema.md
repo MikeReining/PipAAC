@@ -1268,3 +1268,14 @@ A device-local `sync_op` table records every adult edit as an op (see
 `docs/product/Sync_And_Web_Editing.md` § 4). It is added by that slice. The
 tables that sync and never sync are listed in that doc's § 2.
 
+### 14.7 Same spelling, different sound (not scheduled)
+
+Recorded 2026-09-22, not scheduled. Homograph senses share one utterance
+(§ 5.3), which is right for `bat` and `orange`. It is wrong for heteronyms
+(`lead` the metal and `lead` the verb, `bow`, `read`, `wind`), which then
+share one recording. WorkbookBench splits heteronym recordings by sense
+and marks unresolved ones for a person to decide rather than guessing.
+The launch catalog should be checked for heteronyms before extended
+library clips are generated (`docs/phases/010_Extended_Picture_Library.md`
+slice 4).
+

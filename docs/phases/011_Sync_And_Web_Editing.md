@@ -1,15 +1,17 @@
 # Phase 011 — Sync and web editing
 
-**Status:** Blocked on founder rulings (slice 0). Not started.
+**Status:** Ready to execute after 009 slices 1–3. Not started. Rulings recorded (slice 0).
 
 **Direction DECIDED 2026-09-22** (founder: "a user can create and edit
-things on a computer and then have them also on their iPad"). Design
-**PROPOSED** in `docs/product/Sync_And_Web_Editing.md`. Intake:
+things on a computer and then have them also on their iPad"). Rulings
+**DECIDED 2026-09-22**; engineering design proposed, in
+`docs/product/Sync_And_Web_Editing.md`. Intake:
 `docs/founder/2026-09-22_Customization_Library_Sync.md`.
 
 This phase touches credentials, privacy and data retention
-(`AGENTS.md` § High-Risk Stops). No slice after 0 starts before its
-rulings.
+(`AGENTS.md` § High-Risk Stops). The founder ruled on all of them
+(`docs/product/Sync_And_Web_Editing.md` § 11). Any change to those rulings
+stops the phase for a new founder call.
 
 | Topic | Owner |
 | --- | --- |
@@ -30,11 +32,12 @@ Needs 009 slices 1–3 (the Library is what the web editor shows).
 
 ---
 
-## Slice 0 — Founder rulings
+## Slice 0 — Founder rulings (done 2026-09-22)
 
-The five questions in `docs/product/Sync_And_Web_Editing.md` § 11:
-recovery sheet, iPad backup, history across devices, retention, and what a
-free board gets. Record each as DECIDED in that doc.
+Recorded in `docs/product/Sync_And_Web_Editing.md` § 11: recovery sheet
+yes; iPad backup accepted; history stays on the device; never deleted for
+payment, idle deletion after 3 years; backup and restore free, more than
+one device and the web editor in Pip Lifetime.
 
 ## Slice 1 — Every adult edit is an op
 
@@ -121,16 +124,35 @@ shows them in the same slots the laptop shows. Automated half: a headless
 browser client and a second client against the local relay. The same
 paste yields byte-identical `group_cell` rows on both.
 
-## Slice 8 — Recovery sheet (if ruled yes in slice 0)
+## Slice 8 — Recovery sheet
 
 Goal: print or save the recovery sheet. Restore on a fresh device from it.
+Free for every board.
 
 Works Test: build a board, sync it, destroy every client, restore from the
 sheet on a new client. Synced tables are byte-identical to before. History
 is absent (it never synced), and the UI says so.
 
+## Slice 9 — Free and Lifetime
+
+Goal: a free board has backup, restore and one linked device; Pip
+Lifetime allows more linked devices and the web editor. Retention rules
+run on the relay.
+
+Works Test:
+1. On a free board, pairing a second device is refused by the relay (not
+   only the UI), with a clear upgrade message. Restoring onto a new device
+   moves the board there and unlinks the old one.
+2. A Lifetime board pairs a second device.
+3. A board whose entitlement lapses or never existed keeps its snapshot and
+   blobs. The retention job deletes none of them.
+4. The retention job deletes only a board requested for deletion (after
+   the 30-day undo) or with no device seen for 3 years. A fixture board
+   seen 2 years 11 months ago survives. A device returning in the last 6
+   months gets the warning.
+
 ## Out of scope
 
 Multi-board SLP switching (PROPOSED, `docs/product/Sync_And_Web_Editing.md`
-§ 8). Real-time co-editing cursors. Syncing history (unless slice 0 rules
-otherwise). The iOS app shell (`docs/product/Platforms_iOS_And_Web.md` § 3).
+§ 8). Real-time co-editing cursors. Syncing history (ruled out
+2026-09-22). The iOS app shell (`docs/product/Platforms_iOS_And_Web.md` § 3).

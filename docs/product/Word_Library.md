@@ -75,7 +75,8 @@ Naming note: "My Words" is already the default group. The Library tab is
 
 **DECIDED 2026-09-22.** One screen answers where the word is, how it sounds,
 and what can change. It opens from the Library, from `+ Add` results, and
-from a lifted item in Edit mode.
+by tapping an item in Edit mode (`docs/product/Motor_Grid_And_Art.md`
+§ Groups, the home-screen model).
 
 | Row | Personal entity (Cooper) | Catalog word (`cup`) |
 | --- | --- | --- |
@@ -100,24 +101,49 @@ Rules:
 
 ## 5. Adding words
 
-**DECIDED 2026-09-22.** Five paths. They share one matcher and one save.
+**DECIDED 2026-09-22.** Five paths and a first-run setup. They share one matcher and one save.
 
-### 5.1 One field, own words first
+### 5.1 One field: every meaning, as pictures
+
+**DECIDED 2026-09-22** (founder: "there should be no duplicate words …
+Bat. I might be talking about the flying animal. Bat. I might be talking
+about baseball … that's not a violation").
+
+**The rule: one meaning, one record. The spelling may repeat.** The
+schema already separates meaning from spelling ("`bat` the animal and
+`bat` the sport are two senses",
+`docs/product/Language_And_Voice_Schema.md` § 1), and the launch catalog
+already has `orange` (fruit and color) and `light` (weight and color).
+WorkbookBench solved the same problem for pasted word lists with rules we
+adopt: the context disambiguates, items are deduplicated by meaning and
+never by spelling, and alternatives are offered as pictures, never as a
+question that interrupts.
 
 `+ Add` inside a group, and the Library's `+`, open one text field. As the
-adult types, matches appear in this order:
+adult types, every existing meaning of the text appears as a picture row:
 
-1. **The family's own words** (personal entities), with their photo and
-   the groups they are already in. Picking one places *the same record* in
-   this group. It creates nothing.
-2. **Library words** (launch catalog, then the extended library), each
-   with its picture.
-3. **New: "…"**, which creates a personal entity.
+1. **The family's own words** (personal entities) with that name, each
+   with its photo and where it already is: *Max 🐕 (in Animals)*.
+2. **Catalog senses** with that label (launch catalog, then the extended
+   library), each with its picture: `bat` 🦇 and `bat` ⚾.
+3. **New: "…"**, always present. Max the dog and Max the cousin are two
+   people, and both are allowed.
 
-**Current defect.** The matcher today searches catalog senses only
-(`catalogMatches` in `public/shared/groups.mjs`). Typing "Cooper"
-in a second group creates a second Cooper, so an entity cannot reach two
-groups from the UI even though the model allows it. Fix: 009 slice 1.
+**The group ranks, it never hides.** Inside Animals, 🦇 sorts above ⚾.
+Inside Sports, ⚾ sorts first. Every meaning stays offered.
+
+**What is forbidden:** the same record twice in one group (the
+`group_cell` primary key already enforces it), and an add that silently
+creates a second record when the one the adult meant already exists. That
+is the bug today. The matcher searches catalog senses only
+(`catalogMatches` in `public/shared/groups.mjs`), so typing "Cooper" in a
+second group creates a second Cooper and never offers the first. Fix:
+009 slice 1 (P1).
+
+Pronunciation gap, recorded for later: words spelled the same but said
+differently (`lead` the metal, `lead` the verb) share one recording in
+the schema. WorkbookBench splits those recordings. See
+`docs/product/Language_And_Voice_Schema.md` § 14.7.
 
 ### 5.2 Picture suggestions on add
 
@@ -154,6 +180,19 @@ the web editor on a computer (`docs/product/Sync_And_Web_Editing.md` § 7).
 
 One tap from the Suggested tab (§ 8).
 
+### 5.6 First-run setup: "Tell us about their world"
+
+**DECIDED 2026-09-22** (not built; 009 slice 11). Adoption is decided in
+the first ten minutes after install. After the board first draws, the
+Parent Corner offers a guided pass with four short steps: **People** (many
+photos at once), **Pets**, **Favorite foods** (bulk entry, answered by
+library pictures), and **Places**. Each step files into the matching
+built-in group, and any step can be skipped. Target: 30 personal words in
+about ten minutes.
+
+Proof is a stopwatch, not our own report. Time a parent adding the same
+10 words in Pip and in Proloquo2Go.
+
 **Rejected 2026-09-22:** "save from the sentence" (founder: the child does
 not type sentences). Also rejected: suggesting words the child typed on the
 keyboard.
@@ -164,7 +203,7 @@ keyboard.
 Execution: `docs/phases/010_Extended_Picture_Library.md`.
 
 - **Two tiers.** The launch catalog (677 words) is seeded into built-in
-  groups. The **extended library** (target 1,000–2,000 words and short
+  groups. The **extended library** (2,000 words and 300 short
   phrases such as "brush teeth" and "go potty") is drawn in the same house
   style, voiced in every catalog voice, and sits in the Library only. It is
   the "Tier 3: Secondary Fringe" the launch lexicon already names
@@ -181,12 +220,46 @@ Execution: `docs/phases/010_Extended_Picture_Library.md`.
 - **Phrases** are single utterances (the schema already speaks
   `apple juice` as one clip, `docs/product/Language_And_Voice_Schema.md`
   § 8). They are never stitched from word clips.
-- **Growth signal.** **PROPOSED.** When no picture matches, the adult may
-  tap **Draw it for me**. The word text goes to our server only on that
-  tap. We draw the word, and request counts decide which words enter the
-  extended library next. Typed names never leave the device silently: an
-  entity's spoken name is otherwise sent only to enrichment
-  (`docs/product/Personal_Entities.md` § Enrichment).
+- **Size.** **DECIDED 2026-09-22.** First pass: 2,000 words and 300
+  phrases. Generation is cheap. The real limit is review speed, so review
+  runs on a fast side-by-side contact-sheet page.
+
+### 6.1 Draw it for me
+
+**DECIDED 2026-09-22** (founder: "a really killer idea … for people that
+make the full payment, we should absolutely enable it").
+Execution: `docs/phases/010_Extended_Picture_Library.md` slice 6.
+
+When no picture matches (or the adult wants another), **Draw it for me**
+draws the word in our house style.
+
+- **Word plus an optional hint.** "Cooper: golden retriever" draws a
+  golden retriever. People are still best as photos.
+- **Three versions, the adult picks one.** This follows the art law:
+  re-roll instead of fixing a drawing with prompt rules
+  (`docs/product/Art_Generation_Lessons.md` § 1). **Draw again** gives
+  three more.
+- **Who gets it.** Pip Lifetime owners. A free board gets 5 drawings as a
+  taste (`docs/product/Pricing_And_Packaging.md` § 2).
+- **Fair use, no surprise cutoff.** At about 1¢ an image, cost is not the
+  constraint. Abuse is. A per-board limit of 30 drawings a day (starting
+  value), plus fair-use terms with a high yearly limit (about 1,000,
+  starting value). No counter is shown until a board is within 10% of a
+  limit, and then the message says exactly when it resets. Past the yearly
+  limit, an in-app purchase adds more (price decided later). No one is
+  cut off silently in the middle of a setup.
+- **Safety first.** The word and hint are checked before drawing, because
+  this is a children's app. A refused request says so plainly.
+- **What leaves the device.** Only the word and the hint, only on the
+  adult's tap. Never the entity id, a photo, or anything from the child's
+  history.
+- **Growth loop.** A word drawn for 20 or more boards (starting value)
+  enters the extended library after our review, with our own drawing.
+  Only the word text is counted. No board id is stored with the count, so
+  a single family's word (a name) never becomes public.
+- **Where the drawing lives.** A drawing for a New word is that entity's
+  picture. A drawing chosen for a catalog word is a picture override
+  (`docs/product/Language_And_Voice_Schema.md` § 14.1).
 
 ## 7. Voices and recordings
 
@@ -194,11 +267,14 @@ Execution: `docs/phases/010_Extended_Picture_Library.md`.
 `docs/product/Language_And_Voice_Schema.md` § 5.5, § 6.1, § 6.3, § 7.
 Scheduled in 009.
 
-- **Pick a voice.** Parent Corner → Voice. A list of catalog voices (our
-  default, an adult male, a young girl, a young boy …), each with a
-  sample. Every catalog and extended word has a clip in every voice. The
-  profile's `preferred_voice_id` chooses one. Clips for a voice download
-  when it is chosen. Which voices ship is a founder call (009 slice 5).
+- **Launch with one voice.** **DECIDED 2026-09-22** (founder: "we are
+  starting with one default voice … we will rapidly add multiple voices
+  after that"). The default voice ships. The picker is post-launch work.
+- **Pick a voice** (after launch). Parent Corner → Voice. A list of
+  catalog voices (our default, an adult male, a young girl, a young boy
+  …), each with a sample. Every catalog and extended word has a clip in
+  every voice. The profile's `preferred_voice_id` chooses one. Clips for a
+  voice download when it is chosen (009 slice 5).
 - **Record my own.** From the word card, the adult records the word.
   That recording is a `clip_override`. It wins over every voice for that
   word or name, until the adult taps **Use the voice again** (the override
@@ -245,7 +321,9 @@ What is stored, on the device only:
 
 | Ban | Negative test |
 | --- | --- |
-| `+ Add` creates a second entity with a name the family already has | Add Cooper in Animals; in People type "Coo" and pick the match. `personal_entity` count stays 1; Cooper has two `group_cell` rows. |
+| `+ Add` hides a meaning the family already has | Add Cooper in Animals; in People type "Coo" and pick the match. `personal_entity` count stays 1; Cooper has two `group_cell` rows. |
+| Same spelling is treated as a duplicate | In Animals type "bat": 🦇 and ⚾ are both offered, 🦇 first; in Sports ⚾ is first. Adding a New "Max" while an entity "Max" exists creates a second entity. |
+| Removing an item moves another item | Remove the item at slot 14. Every other `group_cell` row of that group is byte-identical. |
 | The add form asks where to file | Unchanged from `docs/product/Personal_Entities.md` § 4. |
 | An extended word appears on a page or in the strip before the family adds it | After import, no `group_cell` row points at an extended sense; the strip never offers an unplaced extended sense. |
 | A recording plays for the wrong word | The schema trigger holds: an override's `recorded_text` equals the spoken text. |

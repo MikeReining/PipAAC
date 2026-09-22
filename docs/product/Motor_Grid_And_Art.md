@@ -84,7 +84,7 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   tapped inside a group speaks and stays in the group.
 - **Fixed nav cells.** Slot 0 is always back (`← Board` / `← Groups`).
   Slot 1 is reserved for the Edit-mode action (`+ Group`, `+ Add`,
-  `Remove`, `Delete group`) and is blank in use mode, so adult controls
+  `Delete group`; `Remove` today, the × badge after 009 slice 2) and is blank in use mode, so adult controls
   are never shown to the child and no item shifts between modes. On a
   group page, slot 59 is reserved for `Next ›` paging; items sit in slots
   2–58 (57 per page). Index slots 2–9 are reserved; groups sit at 10–59.
@@ -101,20 +101,32 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   built-in group, because that is the findability guarantee; hiding a word
   is masking (`docs/product/Vocabulary_Masking_And_Safety.md`). An entity
   removed from its last group returns to My Words and is never orphaned.
-- **One Edit mode.** Parent Corner → `Edit groups`. The same gesture works
-  on the index and on every page: tap to lift, then tap an empty slot to
-  move or an occupied slot to swap. The corner button reads `✓ Done` while
-  editing. Built-in groups can be moved but not deleted or renamed.
-  **PROPOSED 2026-09-22** (founder call in
-  `docs/phases/009_Word_Library_And_Customize.md` slice 2): while an item
-  is lifted, slot 1 reads `Edit ›` and opens the word card, and Remove
-  moves into the card.
+- **One Edit mode.** Parent Corner → `Edit groups`. The corner button
+  reads `✓ Done` while editing. Built-in groups can be moved but not
+  deleted or renamed. **BUILT** today: tap to lift, then tap an empty slot
+  to move or an occupied slot to swap.
+  **DECIDED 2026-09-22** (founder, not built): Edit mode works like the
+  iPhone home screen, with one deliberate difference. Execution:
+  `docs/phases/009_Word_Library_And_Customize.md` slice 2.
+  - **Drag** an item to an empty slot to move it, or onto another item to
+    swap the two. Only the dragged item (and a swapped partner) moves.
+  - **Tap** an item to open its word card (`docs/product/Word_Library.md`
+    § 4).
+  - **×** badge on each removable item removes it from this group, with
+    an Undo toast.
+  - **Tap an empty slot** to add straight into that slot (the slot is the
+    picker, as the group is today).
+  - **The difference from the home screen: removal never reflows.** The
+    slot stays empty and no other item moves. "Remove and close the gap"
+    is not a feature (founder: "users have learned where words are").
 - **Add where you are.** `+ Add` inside a group opens one field. Typing
-  offers the family's own words first (placing the same record), then
-  catalog matches (adding the real word with its color, voice and
-  picture), or "New: '…'" to create a personal entity with an optional
-  photo. Own-word matching: **DECIDED 2026-09-22**, not built
-  (`docs/product/Word_Library.md` § 5.1). The
+  offers every existing meaning of what was typed as pictures (the
+  family's own words first, then catalog senses, ranked by this group),
+  or "New: '…'" to create a personal entity with an optional photo.
+  Picking an existing meaning places that same record here. One meaning,
+  one record; the same spelling may repeat (`bat` 🦇 and `bat` ⚾).
+  **DECIDED 2026-09-22**, not built (`docs/product/Word_Library.md`
+  § 5.1). The
   place is the picker; there is no folder picker. Filing rules for
   entities: `docs/product/Personal_Entities.md` § Filing.
 - **Show me where.** When a non-core word arrives through the strip or

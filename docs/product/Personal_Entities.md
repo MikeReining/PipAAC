@@ -65,15 +65,17 @@ category-and-My-Words filing written earlier the same day). **BUILT**
 - **Parent Corner "Add to My Words"** is the one add that starts outside a
   group. It files into My Words, and the button says so. Nothing is filed
   silently.
-- **One field, own words first.** The add sheet is one text field. As the
-  adult types, the family's own entities are offered first (picking one
-  places the same record here), then catalog words (picking one adds the
-  real word, with color, voice and picture, and creates no entity). Only
-  "New: '…'" creates a personal entity: name, optional photo, optional
-  hint. **Amended 2026-09-22:** own-word matching is decided, not built.
-  Today the sheet matches catalog words only, so re-typing an entity's
-  name creates a duplicate. Fix and the full order:
-  `docs/product/Word_Library.md` § 5.1.
+- **One field, every meaning as pictures.** The add sheet is one text
+  field. As the adult types, every existing meaning of the text is offered
+  as a picture: the family's own entities with that name first (picking
+  one places the same record here), then catalog senses (picking one adds
+  the real word, with color, voice and picture, and creates no entity),
+  ranked by the group the add started in. "New: '…'" is always offered and
+  creates a personal entity: name, optional photo, optional hint. Two
+  entities may share a name (Max the dog, Max the cousin). **Amended
+  2026-09-22:** decided, not built. Today the sheet matches catalog words
+  only, so re-typing an entity's name silently creates a second record.
+  Rule and fix: `docs/product/Word_Library.md` § 5.1.
 - **Many groups, never none.** An entity can sit in several groups. Removing
   it from its last group returns it to My Words. Deleting a custom group
   moves its only-there entities to My Words.
