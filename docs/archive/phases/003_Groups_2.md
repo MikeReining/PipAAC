@@ -16,7 +16,7 @@ Product truth this phase implements:
 | Table shapes (updated by slice 2) | `docs/product/Language_And_Voice_Schema.md` §6.3b |
 | Core slot assignments (never touched by this phase) | `docs/product/Core_Coordinate_Map.md` |
 
-Supersedes the zone wording in `docs/phases/002_Core_Board_And_Customize.md`
+Supersedes the zone wording in `docs/archive/phases/002_Core_Board_And_Customize.md`
 (slice 2 "filed by context"). The Cooper proof still has to pass after this
 phase, through the new add flow.
 

@@ -24,9 +24,8 @@ Executing phases only. Each row names the **next** slice.
 
 | Phase | Next slice |
 | --- | --- |
-| [002 — Core board and the Cooper proof](002_Core_Board_And_Customize.md) | Slice 1 — core board |
 | [005 — Word Forms](005_Word_Forms.md) | Slice 1 — forms in the catalog |
-| [006 — Prediction Engine](006_Prediction_Engine.md) | Slice 1 — local time and sentences (a fix to built code; land before 004 slice 7) |
+| [006 — Prediction Engine](006_Prediction_Engine.md) | **P2.** Slice 1 — local time and sentences (a fix to built code) |
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
 | [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | **P1.** Slice 1 — `+ Add` offers every meaning as pictures (fixes silent second records in built code) |

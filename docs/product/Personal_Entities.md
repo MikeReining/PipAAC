@@ -4,7 +4,7 @@
 Layout of the grid, the strip, and symbol art: `docs/product/Motor_Grid_And_Art.md`.
 Slot assignments: `docs/product/Core_Coordinate_Map.md`.
 The 599-word launch lexicon: `docs/product/Initial_Vocabulary_600.md`.
-Build order: `docs/phases/002_Core_Board_And_Customize.md`.
+Build order: `docs/phases/README.md` (phase 002 is complete and archived).
 Intake: `docs/founder/2026-09-22_Build_Order_Customize.md`.
 
 A personal name — a pet, a person, a place, a food, a toy — is a record. It

@@ -8,9 +8,10 @@ Sequence map only. Live execution scope is the phase doc, not this file.
 - Proof: `npm run check:fast` after `npm ci`.
 - Archive: `docs/archive/phases/001_Harness_Bootstrap.md`.
 
-## Phase 002 — Core board and the Cooper proof (executing)
+## Phase 002 — Core board and the Cooper proof (complete)
 
-**DECIDED 2026-09-22.** Revised the same day. Owner: `docs/phases/002_Core_Board_And_Customize.md`.
+**DECIDED 2026-09-22.** Revised the same day. All three slices built and
+proven; archived (`002_Core_Board_And_Customize.md` in `docs/archive/phases/`).
 
 Order, and it is the only order:
 
@@ -18,9 +19,8 @@ Order, and it is the only order:
 2. Add Cooper on the child's iPad — name, photo, one confirm; filed by context.
 3. A local strip that can offer him.
 
-The 599-word library, drawings included, waits until that proof has passed.
-
-Next slice: 1 — core board. See `docs/phases/README.md`.
+The proof passed. The 599-word library's drawings wait on the extended
+picture library (phase 010); the labels themselves already ship.
 
 ## Prediction track (decided 2026-09-22)
 

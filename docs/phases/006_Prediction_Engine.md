@@ -6,9 +6,9 @@
 please update all documents and create the new documents that we need").
 Intake: `docs/founder/2026-09-22_Prediction_Blend_Privacy_Listening.md`.
 
-**Order.** Slice 1 is a fix to built code and does not depend on anything;
-it should land before `docs/archive/phases/004_Keyboard.md` slice 7, which reads the
-same event log. Slices 2–5 run in order. Occasions
+**Order.** Slice 1 is a fix to built code and does not depend on anything
+(004 slice 7 — the other event-log reader — has already shipped; this fix
+applies retroactively). Slices 2–5 run in order. Occasions
 (`docs/phases/007_Occasions.md`) feed the `occasion` feature when they
 exist; this phase works without them. Partner words
 (`docs/phases/008_Partner_Listening.md`) feed `echo` and the Jev request

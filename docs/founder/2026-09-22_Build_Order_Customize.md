@@ -28,7 +28,7 @@ Documentation only. No board, lexicon runtime, or add flow is built in this inta
 | Topic | Owner |
 | --- | --- |
 | Entity record, parent corner, types, edges, bans | `docs/product/Personal_Entities.md` |
-| Slice order and Works Tests | `docs/phases/002_Core_Board_And_Customize.md` |
+| Slice order and Works Tests | `002_Core_Board_And_Customize.md` (archived) |
 | Core grid and strip layout, unchanged by this intake | `docs/product/Motor_Grid_And_Art.md` |
 | 599-word catalog, unchanged by this intake | `docs/product/Initial_Vocabulary_600.md` |
 

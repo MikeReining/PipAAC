@@ -9,7 +9,7 @@ Execution: `docs/phases/011_Sync_And_Web_Editing.md`.
 Platforms: `docs/product/Platforms_iOS_And_Web.md`.
 
 This file replaces the PROPOSED pairing sketch in
-`docs/phases/002_Core_Board_And_Customize.md` § Out of scope and the
+phase 002 § Out of scope (archived) and the
 "Phase 003 — Multi-Device Pairing" entry in `docs/strategy/Roadmap.md`.
 It keeps their principles: no account, a QR introduction, per-device keys,
 Cloudflare carries only ciphertext, and not iCloud.

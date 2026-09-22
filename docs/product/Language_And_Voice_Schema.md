@@ -2,8 +2,8 @@
 
 **DECIDED 2026-09-22.** Accepted the same day it was proposed, with the
 amendments in § 12. Playback in § 7 was confirmed in review the same day.
-Phase 002 stays the critical path
-(`docs/phases/002_Core_Board_And_Customize.md`).
+Phase 002 — the critical path when this schema was accepted — is complete
+and archived (`002_Core_Board_And_Customize.md` in `docs/archive/phases/`).
 
 Studied against WorkbookBench's global media catalog: one language-independent
 sense, localized labels, one shared picture, audio that does not cross

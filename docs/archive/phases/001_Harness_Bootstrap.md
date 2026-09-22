@@ -2,7 +2,7 @@
 
 **Status:** Complete (2026-09-22). Slice 1 on 2026-09-21. Slice 2 landed the first executing phase.
 
-**Successor:** `docs/phases/002_Core_Board_And_Customize.md`.
+**Successor:** `docs/archive/phases/002_Core_Board_And_Customize.md`.
 
 ## Goal
 
@@ -15,7 +15,7 @@ work can start with proof from day one.
 | Slice | Scope | Works Test |
 | --- | --- | --- |
 | 1 | Repo harness: `AGENTS.md`, `docs/`, `scripts/`, Worker health stub, `.cursor/` hooks, `.github/workflows/check.yml` | `npm run check:fast` green after `npm ci` + test guard install |
-| 2 | Founder brief → SSOT + first executing phase doc | `docs/phases/002_Core_Board_And_Customize.md` has § Slices and named Works Tests |
+| 2 | Founder brief → SSOT + first executing phase doc | `docs/archive/phases/002_Core_Board_And_Customize.md` has § Slices and named Works Tests |
 
 ## Notes
 
