@@ -79,6 +79,14 @@ function txn(db, fn) {
  */
 export function seedGroups(db, catalog) {
   txn(db, () => {
+    // Catalog-owned display names: replaced wholesale on every import so
+    // a renamed seed reaches existing devices — but only for groups whose
+    // board_group.name is still NULL (a caregiver's rename always wins).
+    for (const gl of catalog.groupLabels ?? []) {
+      db.prepare(
+        "INSERT OR REPLACE INTO group_label (group_id, locale, text) VALUES (?, ?, ?)",
+      ).run(gl.group_id, gl.locale, gl.text);
+    }
     for (const g of catalog.groups ?? []) {
       const exists = one(db, "SELECT id FROM board_group WHERE id = ?", [g.id]);
       if (exists) continue;
@@ -86,8 +94,8 @@ export function seedGroups(db, catalog) {
       const slot = taken ? lowestFreeIndexSlot(db) : g.index_slot;
       if (slot === null) throw new Error(`group index full — cannot seed ${g.id}`);
       db.prepare(
-        "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, ?, ?, NULL, ?)",
-      ).run(g.id, g.kind, g.name, g.glyph ?? null, slot);
+        "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, NULL, ?, NULL, ?)",
+      ).run(g.id, g.kind, g.glyph ?? null, slot);
     }
     for (const c of catalog.groupCells ?? []) {
       const present = one(
@@ -168,6 +176,44 @@ export function migrateLegacyGroups(db, catalog) {
     db.exec("DROP TABLE IF EXISTS custom_group");
     db.exec("DROP TABLE IF EXISTS zone_slot");
   });
+}
+
+/**
+ * One-time migration for devices seeded while built-in names were stored
+ * as English text in board_group.name: NULL out the name where it equals
+ * that group's en catalog label (it was the seed, not a caregiver
+ * choice). Any other value is a rename and is kept. Idempotent — the
+ * second run matches nothing.
+ */
+export function migrateBuiltinGroupNames(db, catalog) {
+  const enName = new Map(
+    (catalog.groupLabels ?? [])
+      .filter((gl) => gl.locale === "en")
+      .map((gl) => [gl.group_id, gl.text]),
+  );
+  txn(db, () => {
+    for (const row of all(
+      db,
+      "SELECT id, name FROM board_group WHERE kind IN ('builtin', 'my_words') AND name IS NOT NULL",
+    )) {
+      if (enName.get(row.id) === row.name) {
+        db.prepare("UPDATE board_group SET name = NULL WHERE id = ?").run(row.id);
+      }
+    }
+  });
+}
+
+/**
+ * The name a group shows: the caregiver's override when one is stored,
+ * else the catalog label for the profile locale, else "" — a miss renders
+ * glyph-only and never falls back to another locale (schema §7.2).
+ */
+export function groupDisplayName(db, row, locale) {
+  if (row.name) return row.name;
+  return (
+    one(db, "SELECT text FROM group_label WHERE group_id = ? AND locale = ?", [row.id, locale])
+      ?.text ?? ""
+  );
 }
 
 /** The group index: every group at its coordinate, in slot order. */

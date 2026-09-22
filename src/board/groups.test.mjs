@@ -18,9 +18,11 @@ import {
   catalogMatches,
   createGroup,
   deleteGroup,
+  groupDisplayName,
   placeFromEnrichment,
   groupIndex,
   groupPage,
+  migrateBuiltinGroupNames,
   migrateLegacyGroups,
   moveGroup,
   moveItem,
@@ -30,7 +32,7 @@ import {
   swapGroups,
   swapItems,
 } from "../../public/shared/groups.mjs";
-import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
+import { buildCatalog, buildGroups, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -440,6 +442,52 @@ test("slice 5 classifier placement: ready suggestion adds a copy, never moves", 
     2,
   );
   assert.deepEqual(snapshotCoreCells(db), before);
+});
+
+test("slice 1: group names resolve per locale — override wins, no cross-locale fallback", () => {
+  const db = openDb();
+  // seeded rows carry no name — it is the caregiver-override column
+  const row = () => db.prepare("SELECT id, name FROM board_group WHERE id = 'grp_food'").all()[0];
+  assert.equal(row().name, null);
+  assert.equal(groupDisplayName(db, row(), "en"), "Food");
+  // a test-only second locale
+  db.prepare("INSERT INTO group_label (group_id, locale, text) VALUES ('grp_food', 'de', 'Essen')").run();
+  assert.equal(groupDisplayName(db, row(), "de"), "Essen");
+  // no de → empty (glyph-only), never the English fallback
+  assert.equal(groupDisplayName(db, row(), "fr"), "");
+  // a caregiver rename wins in every locale
+  db.prepare("UPDATE board_group SET name = 'Snacks' WHERE id = 'grp_food'").run();
+  assert.equal(groupDisplayName(db, row(), "en"), "Snacks");
+  assert.equal(groupDisplayName(db, row(), "de"), "Snacks");
+});
+
+test("slice 1: seed-name migration NULLs stored seed names, keeps renames, idempotent", () => {
+  const db = openDb();
+  // simulate a device persisted under the pre-003b schema, which stored
+  // the English seed name in board_group.name
+  db.prepare("UPDATE board_group SET name = 'Food' WHERE id = 'grp_food'").run();
+  db.prepare("UPDATE board_group SET name = 'Yummy' WHERE id = 'grp_drinks'").run();
+  migrateBuiltinGroupNames(db, catalog);
+  const nameOf = (id) => db.prepare("SELECT name FROM board_group WHERE id = ?").all(id)[0].name;
+  assert.equal(nameOf("grp_food"), null);
+  assert.equal(nameOf("grp_drinks"), "Yummy"); // a caregiver rename, not the seed
+  migrateBuiltinGroupNames(db, catalog); // second run changes nothing
+  assert.equal(nameOf("grp_food"), null);
+  assert.equal(nameOf("grp_drinks"), "Yummy");
+  // and the nulled groups still display via group_label
+  const food = db.prepare("SELECT id, name FROM board_group WHERE id = 'grp_food'").all()[0];
+  assert.equal(groupDisplayName(db, food, "en"), "Food");
+});
+
+test("slice 1: the build rejects a group with no name for a shipped locale", () => {
+  assert.throws(
+    () => buildGroups(lexicon, { groups: [{ key: "x", names: { de: "X" }, words: [] }] }, ["en"]),
+    /no name for shipped locale "en"/,
+  );
+  assert.throws(
+    () => buildGroups(lexicon, { groups: [{ key: "x", words: [] }] }, ["en"]),
+    /per-locale map/,
+  );
 });
 
 test("the core coordinate map is untouched by every group operation", () => {

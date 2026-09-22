@@ -75,13 +75,16 @@ export function parseCoordinateMapMarkdown(raw) {
 }
 
 /**
- * Emit board_group + group_cell seed rows from data/group_seed.json.
- * File order is the default index order (slots 10..). Members are senses
- * at fixed cells: member i → page floor(i/57), slot 2 + i % 57. Throws on
- * any violation — the build is the gate that keeps every catalog word
- * reachable in at least one built-in group.
+ * Emit board_group + group_cell + group_label seed rows from
+ * data/group_seed.json. File order is the default index order (slots 10..).
+ * Members are senses at fixed cells: member i → page floor(i/57),
+ * slot 2 + i % 57. Group display names ship in `groupLabels` keyed by
+ * locale — board_group.name is the caregiver override, never the seed.
+ * Throws on any violation — the build is the gate that keeps every
+ * catalog word reachable in at least one built-in group, and every group
+ * named in every locale the catalog ships.
  */
-export function buildGroups(lexicon, seed) {
+export function buildGroups(lexicon, seed, locales = ["en"]) {
   const byNorm = new Map();
   for (const e of lexicon.entries) {
     const n = normalizeV1(e.spokenText);
@@ -100,6 +103,7 @@ export function buildGroups(lexicon, seed) {
 
   const groups = [];
   const groupCells = [];
+  const groupLabels = [];
   const memberOf = new Map(); // sense_id -> Set(group key)
   const excepted = []; // [{ key, word, senseId }]
   const seenKeys = new Set();
@@ -113,15 +117,25 @@ export function buildGroups(lexicon, seed) {
     if (g.category && g.words) {
       throw new Error(`group seed ${g.key}: category and words are mutually exclusive`);
     }
+    if (!g.names || typeof g.names !== "object") {
+      throw new Error(`group seed ${g.key}: names must be a per-locale map`);
+    }
+    for (const loc of locales) {
+      if (typeof g.names[loc] !== "string" || g.names[loc].length === 0) {
+        throw new Error(`group seed ${g.key}: no name for shipped locale "${loc}"`);
+      }
+    }
     const id = `grp_${g.key}`;
     groups.push({
       id,
       kind: g.key === "my_words" ? "my_words" : "builtin",
-      name: g.name,
       glyph: g.glyph ?? null,
       index_slot: 10 + gi,
       category: g.category ?? null,
     });
+    for (const loc of locales) {
+      groupLabels.push({ group_id: id, locale: loc, text: g.names[loc] });
+    }
 
     let memberIds = [];
     if (g.category) {
@@ -173,7 +187,7 @@ export function buildGroups(lexicon, seed) {
     }
   }
 
-  return { groups, groupCells };
+  return { groups, groupCells, groupLabels };
 }
 
 /** Build the catalog JSON object from lexicon entries + parsed map layouts. */
@@ -260,7 +274,8 @@ export function buildCatalog(
     }
   }
 
-  const { groups, groupCells } = buildGroups(lexicon, groupSeed);
+  const catalogLocales = [...new Set(labels.map((l) => l.locale))];
+  const { groups, groupCells, groupLabels } = buildGroups(lexicon, groupSeed, catalogLocales);
 
   return {
     schemaVersion: CATALOG_SCHEMA_VERSION,
@@ -292,6 +307,7 @@ export function buildCatalog(
     coreCells,
     groups,
     groupCells,
+    groupLabels,
   };
 }
 

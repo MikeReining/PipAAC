@@ -1,46 +1,212 @@
 {
   "version": 1,
   "groups": [
-    { "key": "my_words", "name": "My Words", "glyph": "⭐" },
+    {
+      "key": "my_words",
+      "glyph": "⭐",
+      "names": {
+        "en": "My Words"
+      }
+    },
     {
       "key": "food",
-      "name": "Food",
       "glyph": "🍎",
       "category": "Food & Drink",
-      "except": ["water", "milk", "juice", "apple juice", "chocolate milk", "tea", "smoothie"]
+      "except": [
+        "water",
+        "milk",
+        "juice",
+        "apple juice",
+        "chocolate milk",
+        "tea",
+        "smoothie"
+      ],
+      "names": {
+        "en": "Food"
+      }
     },
     {
       "key": "drinks",
-      "name": "Drinks",
       "glyph": "🥤",
-      "words": ["water", "milk", "juice", "apple juice", "chocolate milk", "tea", "smoothie"]
+      "words": [
+        "water",
+        "milk",
+        "juice",
+        "apple juice",
+        "chocolate milk",
+        "tea",
+        "smoothie"
+      ],
+      "names": {
+        "en": "Drinks"
+      }
     },
-    { "key": "body", "name": "Body", "glyph": "🧍", "category": "Body, Health & Hygiene" },
-    { "key": "feelings", "name": "Feelings", "glyph": "😊", "category": "Feelings, Emotions & Sensory States" },
+    {
+      "key": "body",
+      "glyph": "🧍",
+      "category": "Body, Health & Hygiene",
+      "names": {
+        "en": "Body"
+      }
+    },
+    {
+      "key": "feelings",
+      "glyph": "😊",
+      "category": "Feelings, Emotions & Sensory States",
+      "names": {
+        "en": "Feelings"
+      }
+    },
     {
       "key": "actions",
-      "name": "Actions",
       "glyph": "🏃",
       "category": "Daily Actions & Activity Verbs",
-      "except": ["run", "jump", "walk", "sit", "stand", "climb", "dance", "swim", "ride", "crawl", "kick", "throw", "catch", "push", "pull", "swing", "slide", "fall"]
+      "except": [
+        "run",
+        "jump",
+        "walk",
+        "sit",
+        "stand",
+        "climb",
+        "dance",
+        "swim",
+        "ride",
+        "crawl",
+        "kick",
+        "throw",
+        "catch",
+        "push",
+        "pull",
+        "swing",
+        "slide",
+        "fall"
+      ],
+      "names": {
+        "en": "Actions"
+      }
     },
     {
       "key": "moving",
-      "name": "Moving",
       "glyph": "🤸",
-      "words": ["run", "jump", "walk", "sit", "stand", "climb", "dance", "swim", "ride", "crawl", "kick", "throw", "catch", "push", "pull", "swing", "slide", "fall"]
+      "words": [
+        "run",
+        "jump",
+        "walk",
+        "sit",
+        "stand",
+        "climb",
+        "dance",
+        "swim",
+        "ride",
+        "crawl",
+        "kick",
+        "throw",
+        "catch",
+        "push",
+        "pull",
+        "swing",
+        "slide",
+        "fall"
+      ],
+      "names": {
+        "en": "Moving"
+      }
     },
-    { "key": "people", "name": "People", "glyph": "👪", "category": "People, Family & Roles" },
-    { "key": "places", "name": "Places", "glyph": "🏠", "category": "Places, Rooms & Community" },
-    { "key": "play", "name": "Play", "glyph": "⚽", "category": "Toys, Play, Media & Leisure" },
-    { "key": "home", "name": "Home", "glyph": "🛋️", "category": "Home, Household Objects & Daily Tools" },
-    { "key": "clothes", "name": "Clothes", "glyph": "👕", "category": "Clothing & Accessories" },
-    { "key": "animals", "name": "Animals", "glyph": "🐶", "category": "Animals & Nature" },
-    { "key": "vehicles", "name": "Vehicles", "glyph": "🚗", "category": "Vehicles & Transportation" },
-    { "key": "describing", "name": "Describing", "glyph": "🎨", "category": "Descriptors, Adjectives & Opposites" },
-    { "key": "time", "name": "Time", "glyph": "🕐", "category": "Time, Calendar & Sequencing" },
-    { "key": "social", "name": "Social", "glyph": "💬", "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety" },
-    { "key": "little_words", "name": "Little words", "glyph": "🔤", "category": "Function Words & Grammar" },
-    { "key": "numbers", "name": "Numbers", "glyph": "🔢", "category": "Numbers & Counting" }
+    {
+      "key": "people",
+      "glyph": "👪",
+      "category": "People, Family & Roles",
+      "names": {
+        "en": "People"
+      }
+    },
+    {
+      "key": "places",
+      "glyph": "🏠",
+      "category": "Places, Rooms & Community",
+      "names": {
+        "en": "Places"
+      }
+    },
+    {
+      "key": "play",
+      "glyph": "⚽",
+      "category": "Toys, Play, Media & Leisure",
+      "names": {
+        "en": "Play"
+      }
+    },
+    {
+      "key": "home",
+      "glyph": "🛋️",
+      "category": "Home, Household Objects & Daily Tools",
+      "names": {
+        "en": "Home"
+      }
+    },
+    {
+      "key": "clothes",
+      "glyph": "👕",
+      "category": "Clothing & Accessories",
+      "names": {
+        "en": "Clothes"
+      }
+    },
+    {
+      "key": "animals",
+      "glyph": "🐶",
+      "category": "Animals & Nature",
+      "names": {
+        "en": "Animals"
+      }
+    },
+    {
+      "key": "vehicles",
+      "glyph": "🚗",
+      "category": "Vehicles & Transportation",
+      "names": {
+        "en": "Vehicles"
+      }
+    },
+    {
+      "key": "describing",
+      "glyph": "🎨",
+      "category": "Descriptors, Adjectives & Opposites",
+      "names": {
+        "en": "Describing"
+      }
+    },
+    {
+      "key": "time",
+      "glyph": "🕐",
+      "category": "Time, Calendar & Sequencing",
+      "names": {
+        "en": "Time"
+      }
+    },
+    {
+      "key": "social",
+      "glyph": "💬",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "names": {
+        "en": "Social"
+      }
+    },
+    {
+      "key": "little_words",
+      "glyph": "🔤",
+      "category": "Function Words & Grammar",
+      "names": {
+        "en": "Little words"
+      }
+    },
+    {
+      "key": "numbers",
+      "glyph": "🔢",
+      "category": "Numbers & Counting",
+      "names": {
+        "en": "Numbers"
+      }
+    }
   ]
 }

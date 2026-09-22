@@ -10,6 +10,7 @@ import {
   catalogMatches,
   createGroup,
   deleteGroup,
+  groupDisplayName,
   groupIndex,
   groupPage,
   moveGroup,
@@ -248,21 +249,23 @@ function showGroupHint(kind, id) {
   if (kind === "sense") {
     // core words need no backup route — they are always on screen
     if (ALL(db, "SELECT 1 AS x FROM core_cell WHERE layout = 'grid60' AND sense_id = ?", [id]).length) return;
-    name = ALL(
+    const row = ALL(
       db,
-      `SELECT g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
+      `SELECT g.id, g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
        WHERE gc.item_kind = 'sense' AND gc.item_id = ? AND g.kind = 'builtin'
        ORDER BY g.index_slot`,
       [id],
-    )[0]?.name;
+    )[0];
+    if (row) name = groupDisplayName(db, row, "en");
   } else if (kind === "entity") {
-    name = ALL(
+    const row = ALL(
       db,
-      `SELECT g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
+      `SELECT g.id, g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
        WHERE gc.item_kind = 'entity' AND gc.item_id = ?
        ORDER BY g.index_slot`,
       [id],
-    )[0]?.name;
+    )[0];
+    if (row) name = groupDisplayName(db, row, "en");
   }
   if (!name) return;
   const anchor = $("anchor-groups");
@@ -545,7 +548,7 @@ function groupIndexCell(row) {
   }
   const lb = document.createElement("span");
   lb.className = "glabel";
-  lb.textContent = row.name;
+  lb.textContent = groupDisplayName(db, row, "en");
   el.appendChild(g);
   el.appendChild(lb);
   el.addEventListener("click", () => {
@@ -582,7 +585,7 @@ function editSlotCell(label, onTap) {
 /** Delete confirmation is an in-sheet two-button ask, never
  *  window.confirm — the learner can't be left inside a dialog. */
 function askDeleteGroup(row) {
-  $("del-title").textContent = `Delete ${row.name}?`;
+  $("del-title").textContent = `Delete ${groupDisplayName(db, row, "en")}?`;
   $("del-yes").onclick = () => {
     deleteGroup(db, row.id);
     lifted = null;
@@ -799,8 +802,9 @@ $("group-save").addEventListener("click", async () => {
    target. No type, pronoun, or category picker. --- */
 function openAddForm(groupId) {
   addTarget = groupId;
-  const name = ALL(db, "SELECT name FROM board_group WHERE id = ?", [groupId])[0]?.name;
-  $("add-title").textContent = `Add to ${name ?? "My Words"}`;
+  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [groupId])[0];
+  const name = row ? groupDisplayName(db, row, "en") : "";
+  $("add-title").textContent = name ? `Add to ${name}` : "Add";
   $("add-name").value = "";
   $("add-photo").value = "";
   $("add-hint").value = "";

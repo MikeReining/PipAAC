@@ -191,10 +191,22 @@ CREATE TABLE IF NOT EXISTS clip_override (
 CREATE TABLE IF NOT EXISTS board_group (
   id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),
   kind TEXT NOT NULL CHECK (kind IN ('builtin', 'my_words', 'custom')),
-  name TEXT NOT NULL CHECK (length(name) > 0),
+  name TEXT CHECK (name IS NULL OR length(name) > 0),
   glyph TEXT,
   photo_key TEXT,
-  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10 AND index_slot < 60)
+  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10 AND index_slot < 60),
+  CHECK (kind != 'custom' OR name IS NOT NULL)
+);
+
+-- Catalog table: the built-in groups' display names per locale. Shipped
+-- with the catalog, replaced on import, never edited on device. The
+-- board_group.name column stays NULL for built-ins and My Words until a
+-- caregiver renames one — a stored name is always the override.
+CREATE TABLE IF NOT EXISTS group_label (
+  group_id TEXT NOT NULL CHECK (group_id GLOB 'grp_*'),
+  locale TEXT NOT NULL CHECK (length(locale) > 0),
+  text TEXT NOT NULL CHECK (length(text) > 0),
+  PRIMARY KEY (group_id, locale)
 );
 
 CREATE TABLE IF NOT EXISTS group_cell (
