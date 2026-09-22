@@ -6,6 +6,7 @@
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
+import { buildIndex, suggest } from "./shared/spelling.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
@@ -425,6 +426,8 @@ let kbOrder = "standard"; // slice 5 wires this to learner_profile.keyboard_orde
 let kbPendingAccent = null; // dead key latched, waiting for its vowel
 let kbLead = null; // opening mark (¿ ¡) waiting for the next committed item
 let kbDeadEl = null; // the dead key's element, for the latched style
+let kbIndex = null; // completion index — built once when the keyboard opens,
+// rebuilt after an entity add or a locale change (Profile_Presentation_Modes §4.4)
 
 /** Grid-area view swap: board | groupIndex | group render into
  *  #groupgrid, keyboard into #kb — same physical space, strip and bar
@@ -439,6 +442,7 @@ function setView(v) {
 
 function openKb() {
   if (!kbBuilt) buildKb();
+  kbIndex ??= buildKbIndex();
   kbOpen = true;
   document.body.classList.add("kb");
   renderKbAnchor();
@@ -602,49 +606,61 @@ function commitKbItem(index) {
   }
 }
 
-/** Prefix completions for the strip while a word is in progress. */
-function kbCompletions() {
-  const prefix = normalizeV1(kbText);
-  if (!prefix) return [];
+/** Snapshot the catalog's approved labels (lemma + alias) and entities
+ *  into the pure matcher index. Freqs are learner_event_log counts
+ *  captured at build time — the keystroke path never touches SQL. */
+function buildKbIndex() {
   const senses = ALL(
     db,
     `SELECT s.id, l.text AS label, s.fitzgerald_role,
        (SELECT COUNT(*) FROM learner_event_log le
          WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
      FROM label l JOIN sense s ON s.id = l.sense_id
-     WHERE l.normalized_text LIKE ? ESCAPE '\\'
-       AND l.default_for_text = 1
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
-    [prefix.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_") + "%", locale],
+     WHERE l.status = 'approved' AND l.locale = ?`,
+    [locale],
   ).map((w) => ({
-    label: w.label,
-    role: w.fitzgerald_role,
+    kind: "sense",
+    id: w.id,
+    text: w.label,
     freq: w.freq,
-    onTap: () => {
-      kbText = "";
-      renderBar();
-      tap(w.label, "sense", w.id, { hint: true });
-    },
+    role: w.fitzgerald_role,
   }));
   const ents = ALL(
     db,
     `SELECT e.*,
        (SELECT COUNT(*) FROM learner_event_log le
          WHERE le.item_kind = 'entity' AND le.item_id = e.id) AS freq
-     FROM personal_entity e WHERE lower(e.spoken_name) LIKE ?`,
-    [`${prefix.toLowerCase().replaceAll("%", "")}%`],
-  ).map((e) => ({
-    entity: e,
-    freq: e.freq,
-    onTap: () => {
-      kbText = "";
-      renderBar();
-      tap(e.spoken_name, "entity", e.id, { hint: true });
-    },
-  }));
-  return [...ents, ...senses]
-    .sort((a, b) => b.freq - a.freq || (a.label ?? a.entity.spoken_name).length - (b.label ?? b.entity.spoken_name).length)
-    .slice(0, 4);
+     FROM personal_entity e`,
+  ).map((e) => ({ kind: "entity", id: e.id, text: e.spoken_name, freq: e.freq, entity: e }));
+  return buildIndex([...senses, ...ents], locale);
+}
+
+/** Forgiving completions for the strip while a word is in progress. */
+function kbCompletions() {
+  if (!kbText) return [];
+  if (!kbIndex) kbIndex = buildKbIndex();
+  return suggest(kbIndex, kbText, 4).map((e) =>
+    e.kind === "entity"
+      ? {
+          entity: e.entity,
+          freq: e.freq,
+          onTap: () => {
+            kbText = "";
+            renderBar();
+            tap(e.text, "entity", e.id, { hint: true });
+          },
+        }
+      : {
+          label: e.text,
+          role: e.role,
+          freq: e.freq,
+          onTap: () => {
+            kbText = "";
+            renderBar();
+            tap(e.text, "sense", e.id, { hint: true });
+          },
+        },
+  );
 }
 
 /* --- groups: an in-place board mode, not a modal. The group index and
@@ -1019,6 +1035,7 @@ $("add-save").addEventListener("click", async () => {
     [id, name, photoKey, category, hint],
   );
   placeItem(db, addTarget, "entity", id);
+  kbIndex = null; // new entity joins the completion index
   close("addform");
   rerenderView();
   renderStrip();
