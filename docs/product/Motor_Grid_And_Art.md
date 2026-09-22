@@ -58,26 +58,64 @@ These are both in force. They answer different questions.
 
 When a grid engine exists, a test must show that a suggestion model cannot reorder or swap primary core indices. That test is **PROPOSED**. It does not exist yet.
 
-Category folders open as an in-place sub-zone — a board mode, not a modal.
-**DECIDED 2026-09-22, amended same day.** The zone index and each zone page
-render in the same physical space and cell size as the core grid; the
-sentence bar and strip stay put, and a word tapped inside a zone speaks and
-stays in the zone. Slot 0 is always the back cell. Closing a sub-zone
-restores the same core indices as before.
+### Groups — the backup path to every word
 
-The zone index is itself a coordinate map (`zone_slot` table): navigation
-gets the same motor-memory law as `core_cell`. Zones occupy slots 10–59 and
-only move in caregiver arrange mode (tap to lift, tap a slot to place or
-swap). Custom groups (`custom_group` + `group_item`) are first-class cells
-on the same map, created from `+ Group` and holding personal entities in
-stable order.
+**DECIDED 2026-09-22** (founder review of the zones build; supersedes the
+"sub-zone" / "zone" wording and the `zone_slot` + `custom_group` model from
+earlier the same day). Not built yet. Execution: `docs/phases/003_Groups_2.md`.
 
-The folder entry point is one `Groups` anchor cell on the board, which opens
-the in-place index of the sub-zones. **DECIDED 2026-09-22** (not built). A
-dock row of category buttons is not the design: it does not scale past a
-dozen categories, and it spends prime motor real estate on navigation
-instead of language. The strip, not a folder tree, is the primary path to
-fringe words.
+The strip is the primary path to fringe words. Groups are the guaranteed
+path: **every catalog word is reachable in at least one group**, one level
+below the board.
+
+- **One concept, one name: Group.** Built-in groups ship with the app
+  (Food, Drinks, People, Animals…), **My Words** is the family's default
+  group, and families make **custom** groups ("School", "Grandma's").
+  They are all the same kind of container with the same rules. "Zone",
+  "sub-zone", and "folder" are not product words. `category` is a catalog
+  property (a word's home, the seed for built-in groups, the classifier's
+  target). It is never a container.
+- **In place, same geometry.** The group index and every group page render
+  in the core grid's space at the same 10×6 cell size. The sentence bar and
+  strip never move, and the strip keeps predicting inside a group. A word
+  tapped inside a group speaks and stays in the group.
+- **Fixed nav cells.** Slot 0 is always back (`← Board` / `← Groups`).
+  Slot 1 is reserved for the Edit-mode action (`+ Group`, `+ Add`,
+  `Remove`, `Delete group`) and is blank in use mode, so adult controls
+  are never shown to the child and no item shifts between modes. On a
+  group page, slot 59 is reserved for `Next ›` paging; items sit in slots
+  2–58 (57 per page). Index slots 2–9 are reserved; groups sit at 10–59.
+- **Motor-memory law inside groups too.** The index and every group page
+  are coordinate maps (`board_group.index_slot`, `group_cell (page,
+  slot_index)`). Built-in contents are seeded in vocabulary-doc order
+  (meaning-clustered), never alphabetical. New items take the next free
+  slot, and nothing shifts. A catalog update never moves or drops an item.
+- **One level deep.** A group never contains a group. A built-in group
+  that outgrows one page is split into sibling groups (Food → Food +
+  Drinks, Actions → Actions + Moving), not nested.
+- **Many-to-many.** An item can sit in several groups (`banana` in Food
+  and in "Snack time"). Seeded senses cannot be removed from their
+  built-in group, because that is the findability guarantee; hiding a word
+  is masking (`docs/product/Vocabulary_Masking_And_Safety.md`). An entity
+  removed from its last group returns to My Words and is never orphaned.
+- **One Edit mode.** Parent Corner → `Edit groups`. The same gesture works
+  on the index and on every page: tap to lift, then tap an empty slot to
+  move or an occupied slot to swap. The corner button reads `✓ Done` while
+  editing. Built-in groups can be moved but not deleted or renamed.
+- **Add where you are.** `+ Add` inside a group opens one field. Typing
+  offers catalog matches (adding the real word with its color and voice),
+  or "New: '…'" to create a personal entity with an optional photo. The
+  place is the picker; there is no folder picker. Filing rules for
+  entities: `docs/product/Personal_Entities.md` § Filing.
+- **Show me where.** When a non-core word arrives through the strip or
+  the keyboard, the Groups anchor briefly shows the path (`Groups › Food`)
+  with no layout shift. The shortcut teaches the motor plan of the backup
+  route.
+
+The entry point is one `🗂️ Groups` anchor in the strip's utility columns.
+A dock row of category buttons is not the design: it does not scale past a
+dozen groups, and it spends prime motor real estate on navigation instead
+of language.
 
 Each named layout (`grid60`, `grid90`) is its own map. Changing density swaps
 the map; it does not move a cell within one. Assignments:
@@ -97,7 +135,7 @@ the map; it does not move a cell within one. Assignments:
 +------------------------------------------------------------------+
 | [Back]  Sentence bar: "I want to go..."              [Speak/Clr] |
 +------------------------------------------------------------------+
-| [prediction] [prediction] [prediction] [prediction]  |⌨ KB|🌅Grp|
+| [prediction] [prediction] [prediction] [prediction]  |🗂️Grp|⌨ KB|
 +------------------------------------------------------------------+
 | Fixed core grid: indices do not move while this view is open     |
 +------------------------------------------------------------------+
@@ -106,10 +144,10 @@ the map; it does not move a cell within one. Assignments:
 Layout rules:
 
 - The strip sits directly under the sentence bar and directly above the core grid. **It never collapses.** Its height is fixed and rendered on first paint; an empty prediction state shows ghost cards, not a zero-height bar. A strip update must never shift the core grid's physical position — layout shift breaks motor planning.
-- **8 + 2 geometry.** The strip spans the same 10 columns as the grid: columns 1–8 hold four prediction slots (2 columns each); columns 9–10 hold permanent utility anchors — `⌨ Keyboard` (type a word at any point) and `🌅 Groups` (zones/routines) — visible and tappable in every state.
+- **8 + 2 geometry.** The strip spans the same 10 columns as the grid: columns 1–8 hold four prediction slots (2 columns each); columns 9–10 hold permanent utility anchors — `🗂️ Groups` (the group index, § Groups) and `⌨ Keyboard` (type a word at any point) — visible and tappable in every state.
 - It shows at most four candidate tiles. Three or four is the whole set. A longer row is a scanning tax.
 - Every tile shows the word and its stick or object icon (a 1:1 square on the left, label on the right). Text alone is not enough for emerging and non-literate communicators. A sense with no art yet renders a Fitzgerald-tinted swatch; an entity renders its photo.
-- Idle state (empty sentence) shows conversational starters and routine anchors — greeting, food zone, the top personal entity, help — never a blank strip.
+- Idle state (empty sentence) shows conversational starters and routine anchors — greeting, the Food group, the top personal entity, help — never a blank strip.
 - Tiles in the strip are not core cells. Selecting one speaks or inserts that candidate. It does not rearrange the grid underneath.
 - Core words that are already on the grid are emphasized in place (confidence halos). They are not copied into the strip. Ranking owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 
@@ -129,7 +167,7 @@ On the motor-grid view, the strip is where a suggestion may show a word that is 
 | Pink / magenta | Social phrases, prepositions, conjunctions |
 | Red, or a black outline | Negation, stops, emergency words |
 
-One word keeps one color role across the core grid, sub-zones, and the predictive strip.
+One word keeps one color role across the core grid, groups, and the predictive strip.
 
 ---
 

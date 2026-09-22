@@ -15,7 +15,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Slice 1 — core board. The `grid60` default layout on an original coordinate map. | `docs/phases/002_Core_Board_And_Customize.md` |
+| **P1** | Slice 1 — one name, fewer buttons (groups UI cleanup), then slice 2 — groups data model and paging (fixes unreachable Food/Actions words). | `docs/phases/003_Groups_2.md` |
 
 ## Live index
 
@@ -24,6 +24,7 @@ Executing phases only. Each row names the **next** slice.
 | Phase | Next slice |
 | --- | --- |
 | [002 — Core board and the Cooper proof](002_Core_Board_And_Customize.md) | Slice 1 — core board |
+| [003 — Groups 2.0](003_Groups_2.md) | Slice 1 — one name, fewer buttons |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

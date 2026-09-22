@@ -39,7 +39,8 @@ are out of the first build. Direction: `docs/phases/002_Core_Board_And_Customize
 | --- | --- |
 | Spoken name | What the device says. Required. |
 | Image | A photo from this device, or no photo. A missing photo shows the name and its Fitzgerald color. It does not borrow a competitor symbol. |
-| Category | Where the record is filed. Set by where the add started (§ Filing), or by classification when the device is online, or null — the personal zone. The adult is never asked to pick a folder. |
+| Groups | Where the child finds it: one or more `group_cell` rows (§ Filing). Set by the group the add started in; classification may add one more. The adult is never asked to pick a folder. |
+| Category | The record's home category, a classifier input only. Set when the add started in a built-in group seeded from a category, else null. Display never reads it. |
 | Hint | Optional free text ("our dog", "grandma", "his school"). Classification input only. Never required. |
 
 There is no type picker, no pronoun picker, and no edge editor. "Type" is
@@ -52,15 +53,32 @@ does not pick a color. Owner of the color roles: `docs/product/Motor_Grid_And_Ar
 
 ### Filing
 
-- An add started inside a category sub-zone files the record into that
-  category — the context already answered the question.
-- Any other add files the record into **My Words**, the personal zone
-  (`category IS NULL`).
-- When the device is online, one classifier call may file or re-file the
-  record into one of the 14 categories
-  (`docs/product/Initial_Vocabulary_600.md` §3). Classification is a
-  refinement, never a gate: an offline save never waits on it, and a
-  save never performs a network call.
+**DECIDED 2026-09-22** (amended by the groups review; replaces the
+category-and-My-Words filing written earlier the same day). Not built yet.
+Execution: `docs/phases/003_Groups_2.md` slices 2, 4, 5. Group model:
+`docs/product/Motor_Grid_And_Art.md` § Groups.
+
+- **The place is the picker.** An add starts inside a group, in Edit mode
+  via `+ Add`, and files the record into that group at the next free slot.
+  The context already answered the question, so the form never asks it.
+- **Parent Corner "Add to My Words"** is the one add that starts outside a
+  group. It files into My Words, and the button says so. Nothing is filed
+  silently.
+- **One field, catalog first.** The add sheet is one text field. As the
+  adult types, matching catalog words are offered; picking one adds the
+  real word (color, voice) to the group and creates no entity. Only
+  "New: '…'" creates a personal entity: name, optional photo, optional
+  hint.
+- **Many groups, never none.** An entity can sit in several groups. Removing
+  it from its last group returns it to My Words. Deleting a custom group
+  moves its only-there entities to My Words.
+- **Classification only adds.** When enrichment returns a
+  `category_suggestion`, the entity is *also* placed in the matching
+  built-in group (founder ruling 2026-09-22: "proceed" on the groups
+  review). It never moves or removes a placement the adult made, never
+  touches My Words or custom groups, and does nothing on abstain.
+  Classification is a refinement, never a gate: an offline save never
+  waits on it, and a save never performs a network call.
 
 ### Wiring — there is no edge table
 
@@ -73,7 +91,7 @@ sentence position, recency, routine/time-of-day, and enrichment associations
 once they exist (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`
 § 5.2). Online: the classifier reranks the shortlist against state in real
 time. A personal entity is reachable from the moment it is saved — through
-its zone, and through the strip's recency input — before any classification
+the group it was added in, and through the strip's recency input — before any classification
 exists.
 
 ### Enrichment — write-time, passive, never a gate
@@ -91,7 +109,7 @@ The rules, same shape as the LocalFlyers classification cache:
 - Deferred, never blocking. A save performs no network call; with the
   network off, enrichment queues and lands later.
 - Abstention is a valid outcome. A record the model cannot describe stays
-  unenriched and works anyway — filed in its zone, spoken by name,
+  unenriched and works anyway — in its group, spoken by name,
   strip-eligible by recency.
 - Enrichment annotates; it never rewrites. `spoken_name` and the photo
   are the adult's facts. A name or photo change supersedes the record.
@@ -115,8 +133,9 @@ run: the cached judgment of a model that saw the picture.
 
 **DECIDED 2026-09-22** (not built).
 
-- Open the entity's zone — its category sub-zone, or My Words. The entity is
-  there, photo and name. Closing the sub-zone restores the same core indices.
+- Open any group the entity is in (the one it was added in, My Words, or a
+  group classification added). The entity is there, photo and name, at a
+  fixed slot. Leaving the group restores the same core indices.
 - The predictive strip may offer the entity. Layout cap and stack order stay
   in `docs/product/Motor_Grid_And_Art.md`. The first strip is local: the
   sentence so far and recency. Cloud classification is not required to add or
@@ -132,9 +151,11 @@ These are the negative tests for the customization slice.
 | --- | --- |
 | An add writes the core coordinate map | Snapshot the map, save an entity, deep-compare. The map is unchanged. |
 | An add inserts a lexicon row | Sense count is unchanged by the save. |
-| A category open or a strip offer writes the core map | Same snapshot compare. |
+| A group open, an Edit-mode move, or a strip offer writes the core map | Same snapshot compare. |
+| An entity ends up in no group | Remove it from its last group, or delete that custom group; it is in My Words. |
+| Classification moves or removes an adult placement | After `placeFromEnrichment`, every prior `group_cell` of the entity is unchanged. |
 | The save path performs a network call | With the network unavailable the save succeeds; no request is attempted. |
-| The add form asks the adult something a model can infer | The form collects name, photo, and optional hint. No type, no pronoun, no edge UI. |
+| The add form asks the adult something a model can infer, or where to file | The form collects a name (catalog match or new), and for a new entity an optional photo and hint. No type, pronoun, edge, category, or folder UI. |
 | Enrichment gates or blocks a save | Enrichment is a deferred background job; the entity is fully usable with none. |
 | Enrichment silently rewrites the adult's facts | It never edits `spoken_name` or the photo; a rename or photo change supersedes it. |
 | Entity data leaves the device outside enrichment | The only off-device transmission is the enrichment call itself, online only, entity fields only. |
