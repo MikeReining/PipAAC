@@ -223,6 +223,25 @@ The record is cached with model and prompt version, abstention is a valid outcom
 
 **Privacy carve-out, stated plainly:** the enrichment call transmits the entity's own name, hint, and photo off-device (to OpenRouter), only while online, only once per entity. It is the sole exception to the zero-PII mandate — learner communication history still never leaves the device. The save itself performs no network call.
 
+### 5.2 The candidate funnel: retrieve locally, rank with Jev
+
+**DECIDED 2026-09-22** (not built). The strip never asks "which of ~600 words." Jev's `Choice` accepts up to 255 options, and we deliberately stay far below that: a shortlist of ~10–20 candidates is faster, cheaper, *and* more accurate than a long one. The funnel is the retrieve-then-rank split.
+
+Stage 1 — local retrieval (SQLite, sub-millisecond, always runs):
+
+- **Sentence position.** The grammar slot narrows the pool: after "I want", strip candidates are nouns and entities. Core continuations (`to`, `you`) are on the grid — they are haloed in place per § 3.4, never copied into the strip. The funnel produces both lists: fringe/entity tiles for the strip, core cells to halo.
+- **Partner-utterance echo.** Offered items in the partner's question ("pancakes or waffles?") are direct candidates — nearly free signal, no history needed.
+- **Routine / time-of-day histogram.** What this learner has chosen at this time of day before (`learner_event_log`, § 4.2).
+- **Recency.** Recently used entities and words — this is also how a just-added entity can surface before any enrichment exists.
+- **Enrichment associations.** Cached Muse Spark records (§ 5.1) bias matching contexts — the semantic layer that still works offline.
+
+Stage 2 — Jev rerank (online only; never blocks the local first paint):
+
+- One `Choice` question over the shortlist, always including an explicit `none` option so the model can abstain. Pragmatic-intent and other questions ride the same call — parallel questions cost ~nothing.
+- The confidence gate in § 3.4 applies unchanged: below threshold, the strip shows nothing.
+
+The funnel's local top-N **is** the offline strip. Jev is a reranker, not a dependency: the offline clamp (α → 0) is simply funnel-only mode, so the system degrades rather than going blind.
+
 ---
 
 ## 6. Privacy-Preserving Multimodal Partner Input
@@ -288,6 +307,7 @@ Traditional AAC apps require families to spend 5 to 10 hours a week manually cre
   - Strip first paint is on-device and under 50 ms. Jev refines asynchronously and must not block that paint or reorder core indices.
   - Strip bias inputs: sentence-bar tokens, time of day, and learner-added fringe entities.
   - Two-model division: Muse Spark (`meta/muse-spark-1.3-contributor` via OpenRouter) enriches each personal entity once at write time; Jev ranks candidates at read time. Enrichment output is a cached hint with provenance, not stored truth.
+  - Candidate funnel (§ 5.2): local retrieval (position, partner echo, routine/time histogram, recency, enrichment) builds a ~10–20 candidate shortlist; Jev reranks it with a `none` escape. The funnel alone is the offline strip.
 - **PROPOSED**:
   - Phase 1 Slice: Relational Language Graph schema + Local SQLite memory store stub + TypeSafe Jev proxy in `src/worker/index.js:12-14`.
   - Works Test: Automated benchmark testing classification latency ($<100\text{ms}$) and confidence-gated candidate selection against mock breakfast/recess state.

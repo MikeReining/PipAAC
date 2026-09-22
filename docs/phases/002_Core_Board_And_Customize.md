@@ -91,7 +91,7 @@ Done when: that test passes, and a person can perform the add from the parent co
 
 ### 3 — Strip offers Cooper
 
-Goal: After slice 2, Cooper can appear in the predictive strip without a coordinate. At most four tiles. Core cells stay put. Ranking is local: the sentence so far and recency.
+Goal: After slice 2, Cooper can appear in the predictive strip without a coordinate. At most four tiles. Core cells stay put. Ranking is local: sentence position, recency, and routine/time-of-day — the funnel in `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2, minus its online inputs.
 
 Out of scope: TypeSafe Jev, partner microphones, river view, visual scenes.
 

@@ -68,11 +68,13 @@ The adult never links words, and no authored table links them either.
 A lookup such as "animal → walk, eat, play" is determinism pretending to be
 semantics: a fish does not walk, and four rows cannot hold what a puppy is.
 
-Strip relevance is computed live instead. On-device: the sentence so far and
-recency. Online: the classifier evaluates candidates against state in real
-time (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`). A personal
-entity is reachable from the moment it is saved — through its zone, and
-through the strip's recency input — before any classification exists.
+Strip relevance is computed live instead. On-device: the candidate funnel —
+sentence position, recency, routine/time-of-day, and enrichment associations
+once they exist (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`
+§ 5.2). Online: the classifier reranks the shortlist against state in real
+time. A personal entity is reachable from the moment it is saved — through
+its zone, and through the strip's recency input — before any classification
+exists.
 
 ### Enrichment — write-time, passive, never a gate
 
