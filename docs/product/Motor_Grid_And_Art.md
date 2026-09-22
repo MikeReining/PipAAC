@@ -129,10 +129,17 @@ One character, used everywhere a human figure carries the meaning. Canonical sty
 - No hair, no gender markers, and no racial or ethnic cues.
 - Bold, uniform monoline stroke with soft rounded joint curvature.
 - Friendly, warm circular head with simple dot eyes and a gentle smile (warmth and approachability for children; avoids the sterile, creepy look of a faceless mannequin).
-- Soft rounded hand terminals capable of pointing and directional gestures.
+- **The Single-Finger Mitten Hand Standard:**
+  - *Resting Hand:* Simple, smooth neutral circle. Functions as a "visual null" so the child's visual processing focuses 100% on the active gesture rather than dividing attention. Avoids black pixel mud at 48×48px.
+  - *Active / Pointing Hand:* Exactly **one distinct index finger** extended from a curled fist. Never 5 realistic fingers (prevents spider-line noise).
+  - *Focal Scaling:* The active pointing hand is drawn slightly enlarged in perspective to establish immediate visual hierarchy on a motor grid tile.
 - Clean silhouette with zero motion lines, speed streaks, or dust puffs (achieved through seed re-rolling, not prompt-policing).
 - Torso filled with the Fitzgerald color for that button's grammar role. A green torso marks an action such as *run*. A yellow torso marks a pronoun such as *I* or *we*.
 - Meaning comes from posture, action, and directional arrows.
+
+Master symbol references:
+- Active motion: `assets/symbols/run.jpg` (green torso, running posture, clean silhouette)
+- Deictic pointing: `assets/symbols/you.png` (yellow torso, single-finger mitten, enlarged focal point)
 
 The same character is the person on pronoun buttons and the actor on verb buttons. Do not introduce a second human style for a demographic group.
 

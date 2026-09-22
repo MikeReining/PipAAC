@@ -12,7 +12,7 @@
  *   node scripts/art/gen.mjs --word help --print-prompt
  */
 
-import { writeFileSync, readFileSync, readdirSync, mkdirSync } from "node:fs";
+import { writeFileSync, readFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,6 +22,24 @@ export const MAX_STYLE_REFS = 3;
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const DEFAULT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/pip-v1");
+
+export function resolveApiKey() {
+  if (process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_API_KEY.trim()) {
+    return process.env.OPENROUTER_API_KEY.trim();
+  }
+  const envPath = join(repoRoot, ".env");
+  if (existsSync(envPath)) {
+    const lines = readFileSync(envPath, "utf8").split("\n");
+    for (const line of lines) {
+      const match = line.match(/^\s*OPENROUTER_API_KEY\s*=\s*(.*?)\s*$/);
+      if (match && match[1]) {
+        return match[1].replace(/^["']|["']$/g, "");
+      }
+    }
+  }
+  return null;
+}
+
 
 const styleRefCache = new Map();
 
@@ -139,11 +157,11 @@ export async function generateToFile({
   out = null,
   refDir = DEFAULT_STYLE_REF_DIR,
   fetchImpl = globalThis.fetch,
-  apiKey = process.env.OPENROUTER_API_KEY,
+  apiKey = resolveApiKey(),
 } = {}) {
   const text = prompt ?? buildPrompt({ word, torso, hint });
   if (!apiKey || !String(apiKey).trim()) {
-    throw new Error("OPENROUTER_API_KEY is not set. Please export it or add to your environment.");
+    throw new Error("OPENROUTER_API_KEY is not set. Please export it or add to .env.");
   }
 
   const dest = out ?? `/tmp/${(word ?? "image").replace(/[^a-zA-Z0-9]+/g, "-")}.png`;

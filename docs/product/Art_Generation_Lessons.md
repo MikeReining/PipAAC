@@ -65,8 +65,16 @@ A bold pink arrow pointing down into an open box.
 * **Warmth Over Sterility:** The character is not an emergency exit sign or a bathroom placard. It has a round head with a simple, friendly face (dot eyes, warm smile). A faceless head looks alienated and clinical.
 * **No Demographic Markers:** Zero hair, no gender cues, no clothing details beyond the solid grammar fill.
 * **Fitzgerald Torso Fill:** The torso is filled with the grammar role color (Green = action/verb, Yellow = person/pronoun, Blue = descriptor, Pink = social/question).
-* **Extremities:** Rounded mitten/nub hand terminals. No individual fingers or shoes (which become visual mud at 48×48px), but articulated enough to point, wave, and hold objects.
+* **The Single-Finger Mitten Standard (Hand Anatomy):**
+  * *The Deictic Problem:* A character with closed circle ball hands cannot communicate *you*, *me*, *there*, or *this*—a ball resting on a chest looks like a fist, and a ball extended outward looks like a punch. Pointing direction creates the word's semantic meaning.
+  * *The Resting Hand (Visual Null):* The non-gesturing hand is a clean, featureless circle. It carries zero information, preventing the child's brain from dividing attention across two hands and avoiding black pixel mud at 48×48px.
+  * *The Active Hand (Single-Finger Mitten):* When pointing, gesturing, or touching, exactly **one index finger extends from a curled fist**. Never draw five realistic fingers.
+  * *Focal Scaling:* The active hand is drawn slightly larger in perspective to establish immediate visual hierarchy on a crowded motor grid.
 * **Pose Over Speed Lines:** Action is communicated by the angle of the limbs and torso lean, never by speed dashes, wind puffs, or cartoon effects.
+
+Master symbol references:
+* Active motion: `assets/symbols/run.jpg`
+* Deictic gesture: `assets/symbols/you.png`
 
 ---
 
