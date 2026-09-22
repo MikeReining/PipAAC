@@ -6,6 +6,7 @@
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
+import { PARTNER_SENSES } from "./shared/keymaps.mjs";
 import { buildIndex, suggest } from "./shared/spelling.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
@@ -366,6 +367,17 @@ document.addEventListener("keydown", (e) => {
   if (document.querySelector(".overlay.open")) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const km = keyMap(locale, kbOrder);
+  const devField = $("kb-device");
+  if (kbOpen && devField) {
+    // Device mode with the field unfocused (e.g. after a partner tap):
+    // route the keystroke into the field model — a focused field handles
+    // its own keys via `input` (filtered above).
+    if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
+      e.preventDefault();
+      deviceFeed(e.key);
+    }
+    return;
+  }
   if (e.key === "Backspace" || e.key === " " || e.key === "Enter") {
     if (!kbOpen) return;
     e.preventDefault();
@@ -387,7 +399,8 @@ document.addEventListener("keydown", (e) => {
   const inMap = km ? km.some((k) => (k.kind === "char" || k.kind === "dead") && k.value === ch) : /[\p{L}\p{N}]/u.test(ch);
   if (!inMap && !isDigit) return;
   if (!kbOpen) openKb();
-  kbPress(e.key);
+  if ($("kb-device")) deviceFeed(e.key);
+  else kbPress(e.key);
 });
 $("corner").addEventListener("click", () => {
   if (editing) {
@@ -463,6 +476,9 @@ $("anchor-kb").addEventListener("click", () => {
   if (kbOpen) return closeKb(); // the same anchor that opened it closes it
   setView("board");
   openKb();
+  // iOS shows the system keyboard only for a focus inside the user
+  // gesture — synchronous, no await before it.
+  $("kb-device")?.focus();
 });
 $("anchor-groups").addEventListener("click", openGroupIndex);
 
@@ -502,6 +518,7 @@ function openKb() {
 }
 function closeKb() {
   kbOpen = false;
+  $("kb-device")?.blur();
   document.body.classList.remove("kb");
   renderKbAnchor();
 }
@@ -520,10 +537,13 @@ function buildKb() {
   const kb = $("kb");
   kb.innerHTML = "";
   const keys = keyMap(locale, kbOrder);
-  if (!keys) {
-    // A locale with no key map gets Device keyboard mode (slice 6) —
-    // never English keys (Profile_Presentation_Modes §4.1).
-    console.warn(`keyboard: no key map for locale "${locale}" — device keyboard`);
+  if (kbMode === "device" || !keys) {
+    if (!keys) {
+      // A locale with no key map gets Device keyboard mode — never
+      // English keys (Profile_Presentation_Modes §4.1).
+      console.warn(`keyboard: no key map for locale "${locale}" — device keyboard`);
+    }
+    buildKbDevice(kb);
     return;
   }
   for (const k of keys) {
@@ -605,6 +625,9 @@ function partnerCell(senseId) {
   cap.className = "kc";
   cap.textContent = s.label;
   el.appendChild(cap);
+  // Don't let the tap steal focus — in device mode that would dismiss the
+  // system keyboard the speller is typing on.
+  el.addEventListener("mousedown", (e) => e.preventDefault());
   el.addEventListener("click", async () => {
     el.classList.add("flash");
     setTimeout(() => el.classList.remove("flash"), 350);
@@ -736,6 +759,89 @@ function kbCompletions() {
           },
         },
   );
+}
+
+/** Device keyboard mode (slice 6): the partner row moves to the top
+ *  because the system keyboard covers the bottom of the screen; one
+ *  textarea holds the word in progress; rows 3–6 stay empty. `lang` makes
+ *  iOS autocorrect and spellcheck use the profile's language. */
+function buildKbDevice(kb) {
+  PARTNER_SENSES.forEach((id, i) => {
+    const el = partnerCell(id);
+    el.style.gridColumn = `${i * 2 + 1} / span 2`;
+    el.style.gridRow = "1";
+    kb.appendChild(el);
+  });
+  const ta = document.createElement("textarea");
+  ta.id = "kb-device";
+  ta.lang = locale;
+  ta.setAttribute("autocapitalize", "sentences");
+  ta.setAttribute("autocorrect", "on");
+  ta.setAttribute("spellcheck", "true");
+  ta.setAttribute("enterkeyhint", "go");
+  ta.rows = 1;
+  ta.style.gridColumn = "1 / -1";
+  ta.style.gridRow = "2";
+  kb.appendChild(ta);
+  ta.addEventListener("input", kbDeviceInput);
+  ta.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      deviceFeed("Enter");
+    }
+  });
+}
+
+/** Whitespace and sentence marks end a token; ¿¡ are leads. */
+const KB_DEV_TERM = /[\s.,!?¿¡]/;
+
+/** The field is the buffer. On input: completed tokens and marks run
+ *  through applyKey (autocorrect-safe — the field is authoritative, so
+ *  the buffer is cleared and the completed text replayed); the field then
+ *  holds only what is left. kbText mirrors the field, so strip
+ *  completions work unchanged. */
+function kbDeviceInput() {
+  const ta = $("kb-device");
+  const v = ta.value;
+  let last = -1;
+  for (let i = 0; i < v.length; i++) if (KB_DEV_TERM.test(v[i])) last = i;
+  kbPendingAccent = null; // the system keyboard produces accents itself
+  if (last < 0) {
+    kbText = v;
+    renderBar();
+    renderStrip();
+    return;
+  }
+  const done = v.slice(0, last + 1);
+  const rest = v.slice(last + 1);
+  kbText = "";
+  for (const ch of done) kbPress(ch);
+  ta.value = rest;
+  kbText = rest;
+  renderBar();
+  renderStrip();
+}
+
+/** Route a hardware keystroke into the device field when it is not the
+ *  event target (the field itself handles its own keys via input). */
+function deviceFeed(ch) {
+  const ta = $("kb-device");
+  if (ch === "Backspace") {
+    if (ta.value) {
+      ta.value = ta.value.slice(0, -1);
+      kbDeviceInput();
+    } else {
+      kbPress("Backspace"); // empty field: step back over the space
+    }
+    return;
+  }
+  if (ch === "Enter") {
+    kbPress("Enter"); // commits the buffer and speaks; field mirrors next
+    ta.value = "";
+    return;
+  }
+  ta.value += ch;
+  kbDeviceInput();
 }
 
 /* --- groups: an in-place board mode, not a modal. The group index and

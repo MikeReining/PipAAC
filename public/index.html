@@ -210,6 +210,21 @@
          phrase label, sized by fitKbCaps like any other cap. */
       .kb-partner .kc { padding: 0 6px; }
       .kb-partner.flash { filter: brightness(0.82); }
+      /* Device mode: the field holds the word in progress; the system
+         keyboard covers rows 3–6. */
+      #kb-device {
+        resize: none;
+        border: 3px solid #8a8578;
+        border-radius: 12px;
+        background: #fff;
+        font-family: "Andika", -apple-system, "Helvetica Neue", sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        padding: 0.4em 0.6em;
+        line-height: 1.2;
+        overflow: hidden;
+      }
       .kb-spacekey .sub {
         font-family: -apple-system, "Helvetica Neue", sans-serif;
         font-size: min(16cqh, 12cqw);
