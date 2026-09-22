@@ -242,6 +242,18 @@ const close = (id) => $(id).classList.remove("open");
 document.querySelectorAll("[data-close]").forEach((b) =>
   b.addEventListener("click", () => b.closest(".overlay").classList.remove("open")),
 );
+// Backdrop tap and Escape dismiss any open overlay — a modal that can't be
+// dismissed strands the learner.
+document.querySelectorAll(".overlay").forEach((o) =>
+  o.addEventListener("click", (e) => {
+    if (e.target === o) o.classList.remove("open");
+  }),
+);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".overlay.open").forEach((o) => o.classList.remove("open"));
+  }
+});
 $("corner").addEventListener("click", () => open("menu"));
 $("browse-zones").addEventListener("click", () => {
   close("menu");
