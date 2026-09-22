@@ -1,0 +1,24 @@
+{
+  "name": "pippaac",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20 <27"
+  },
+  "scripts": {
+    "test": "scripts/test.sh --all",
+    "check": "node scripts/check.mjs",
+    "check:fast": "node scripts/check_fast.mjs",
+    "lint:archive-links": "node scripts/check_archive_links.mjs",
+    "lint:phase-freshness": "node scripts/check_phase_doc_freshness.mjs",
+    "lint:doc-citations": "node scripts/check_doc_citations.mjs",
+    "lint:lockfile-sync": "node scripts/check_lockfile_sync.mjs",
+    "bootstrap:env": "node scripts/bootstrap_local_env.mjs",
+    "dev": "node scripts/dev.mjs browse",
+    "dev:agent": "node scripts/dev.mjs auto",
+    "dev:status": "node scripts/dev.mjs status"
+  },
+  "devDependencies": {
+    "wrangler": "^4.45.0"
+  }
+}

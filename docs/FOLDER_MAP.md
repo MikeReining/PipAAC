@@ -1,0 +1,74 @@
+# Folder Map
+
+## Current
+
+```txt
+PipAAC/
+  README.md
+  .gitignore
+  AGENTS.md
+  CLAUDE.md
+  wrangler.jsonc
+  docs/
+    WORKING_RULES.md
+    FOLDER_MAP.md
+    workflows/
+    operations/
+      Execution-Playbook.md
+      Debugger.md
+      Deslop.md
+      Testing.md
+      Code_Audit.md
+      code-maintainer/
+    phases/
+      README.md
+    backlog/
+      README.md
+    archive/
+      phases/
+    product/
+      SSOT.md
+      Design_Invariants.md
+    strategy/
+      README.md
+      Vision.md
+      Roadmap.md
+    founder/
+    handovers/
+  data/
+    README.md
+  scripts/
+    test.sh
+    check.mjs
+    check_fast.mjs
+    dev.mjs
+    install_dev_slot0.sh
+    commit_handoff_queue.py
+    health/
+  src/
+    worker/
+      index.js
+  .cursor/
+    cli.json
+    hooks.json
+    hooks/
+  .wmd/
+    commit-queue.jsonl
+  .github/
+    workflows/
+```
+
+## File roles
+
+- `AGENTS.md` — agent router, project laws, test rules.
+- `docs/operations/Execution-Playbook.md` — slice packets, lane routing, closeout.
+- `docs/operations/code-maintainer/SKILL.md` — maintenance skill (8 lenses).
+- `docs/phases/README.md` — live work index and § Next queue.
+- `docs/strategy/Vision.md` — product job (founder brief pending).
+- `docs/strategy/Roadmap.md` — phase sequence map.
+- `docs/product/SSOT.md` — durable product facts map.
+- `scripts/test.sh` — protected test runner.
+- `scripts/check.mjs` / `check_fast.mjs` — closeout and iteration gates.
+- `scripts/dev.mjs` — founder browse copy vs agent copies.
+- `scripts/install_dev_slot0.sh` — macOS LaunchAgent for the browse copy.
+- `src/worker/index.js` — Cloudflare Worker entrypoint (`/health` stub today).

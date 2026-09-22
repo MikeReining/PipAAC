@@ -1,0 +1,6 @@
+# wrangler dev secrets. Copy to .dev.vars and fill in. Never commit .dev.vars.
+#
+#   cp .dev.vars.example .dev.vars
+#
+# Production (once, per environment):
+#   npx wrangler secret put <SECRET_NAME>

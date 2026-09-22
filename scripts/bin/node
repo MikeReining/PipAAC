@@ -1,0 +1,167 @@
+#!/usr/bin/env bash
+# PATH shim for `node`, repo-scoped to Ikiro.Studio. Classifies argv and
+# either auto-routes a targeted `node --test <files>` into the protected
+# scripts/test.sh runner (lock, wedge detector, reaping), refuses a
+# breadth-unknown discovery run, or execs the real node untouched. Ported
+# shape from Allnighter/scripts/bin/swift (find_real_binary PATH walk) and
+# KansoBooks-fresh/scripts/agent_cargo_token.py (run_shim classify-then-exec)
+# — no HMAC token here: test.sh execs the real node directly, so nothing
+# needs to prove call origin. See
+# Docs/phases/118_Test_Infrastructure_Upgrade.md §7 (S118-S03).
+set -euo pipefail
+
+SHIM_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SHIM_DIR/../.." && pwd)"
+
+# NOTE: the recursion guard (IKIRO_NODE_SHIM_ACTIVE) lives further down, only
+# on the auto-route branch. Genuine recursion is only possible there — the
+# pass-through path below (the overwhelming majority of invocations,
+# including npm's own `#!/usr/bin/env node` re-invoking this shim to run a
+# script) nests arbitrarily deep and legitimately, and must never set or
+# check this marker. See the guard's own comment below for why.
+
+# find_real_node — resolve the real node binary by walking PATH past
+# $SHIM_DIR (same shape as Allnighter's scripts/bin/swift find_real_binary).
+find_real_node() {
+  local entry seen="" candidate=""
+  local -a parts
+  IFS=':' read -r -a parts <<< "$PATH"
+  for entry in ${parts[@]+"${parts[@]}"}; do
+    [[ -z "$entry" ]] && continue
+    [[ "$entry" == "$SHIM_DIR" ]] && continue
+    [[ "$entry" == */scripts/bin ]] && continue
+    [[ ":$seen:" == *":$entry:"* ]] && continue
+    seen="${seen:+$seen:}$entry"
+    if [[ -x "$entry/node" ]]; then
+      candidate="$entry/node"
+      break
+    fi
+  done
+  if [[ -z "$candidate" ]]; then
+    echo "scripts/bin/node: could not find real node on PATH past $SHIM_DIR" >&2
+    exit 127
+  fi
+  printf '%s' "$candidate"
+}
+
+REAL_NODE="$(find_real_node)"
+
+# CI must never be trapped by the shim. Only a truthy CI value disables the
+# guard (matches KansoBooks-fresh/scripts/agent_cargo_token.py shim_disabled()
+# semantics: "1"/"true"/"yes", case-insensitive) — CI=false / CI=0 / CI=no /
+# any other stray value leaves the guard active. `tr`, not bash ${var,,},
+# since macOS ships bash 3.2 where that expansion doesn't exist. Not
+# documented as an agent-usable escape — see §7.
+CI_NORMALIZED="$(printf '%s' "${CI:-}" | tr '[:upper:]' '[:lower:]')"
+case "$CI_NORMALIZED" in
+  1|true|yes)
+    exec "$REAL_NODE" "$@"
+    ;;
+esac
+
+# Repo-scoped: classify only when the CALLER's cwd is inside this repo. This
+# is what makes a global PATH entry (via ~/.zshenv) safe on a machine with
+# many other projects.
+CWD="$(pwd -P)"
+if [[ "$CWD" != "$REPO_ROOT" && "$CWD" != "$REPO_ROOT"/* ]]; then
+  exec "$REAL_NODE" "$@"
+fi
+
+# Refuse the breadth-unknown full-suite entry point regardless of how it's
+# invoked (relative, absolute, or as a bare basename match anywhere in argv)
+# — this is the "script arg is scripts/run_unit_tests.mjs" row, checked
+# before --test classification since this path never carries --test.
+for arg in "$@"; do
+  if [[ "$(basename -- "$arg" 2>/dev/null)" == "run_unit_tests.mjs" ]]; then
+    echo "scripts/bin/node: refusing direct '$arg' — breadth-unknown full-suite run." >&2
+    echo "scripts/bin/node: use scripts/test.sh --all instead." >&2
+    exit 1
+  fi
+done
+
+# --- classify argv ----------------------------------------------------------
+# Node/test-runner flags whose value is a SEPARATE argv token (not attached
+# via '='), so that value must not be misclassified as a file/dir target.
+# node also accepts --flag=value for all of these; that form is a single
+# token and needs no special handling.
+VALUE_FLAGS=(--import --require --loader --experimental-loader \
+  --test-concurrency --test-name-pattern --test-reporter \
+  --test-reporter-destination --test-shard --test-timeout)
+
+is_value_flag() {
+  local f="$1" v
+  for v in "${VALUE_FLAGS[@]}"; do
+    [[ "$f" == "$v" ]] && return 0
+  done
+  return 1
+}
+
+TEST_MODE=false
+SAW_DASHDASH=false
+skip_next=false
+declare -a FILES=()
+declare -a EXTRA_ARGS=()
+
+for arg in "$@"; do
+  if [[ "$skip_next" == true ]]; then
+    EXTRA_ARGS+=("$arg")
+    skip_next=false
+    continue
+  fi
+  if [[ "$SAW_DASHDASH" == true ]]; then
+    EXTRA_ARGS+=("$arg")
+    continue
+  fi
+  case "$arg" in
+    --)
+      # Everything after a literal -- passes through raw, unclassified —
+      # same as scripts/test.sh's own -- handling.
+      SAW_DASHDASH=true
+      ;;
+    --test)
+      TEST_MODE=true
+      ;;
+    -*)
+      EXTRA_ARGS+=("$arg")
+      is_value_flag "$arg" && skip_next=true
+      ;;
+    *)
+      FILES+=("$arg")
+      ;;
+  esac
+done
+
+if [[ "$TEST_MODE" == true ]]; then
+  if [[ "${#FILES[@]}" -eq 0 ]]; then
+    echo "scripts/bin/node: refusing 'node --test' with no file/dir arguments — breadth unknown." >&2
+    echo "scripts/bin/node: use scripts/test.sh --all instead." >&2
+    exit 1
+  fi
+
+  # --- recursion guard (auto-route only) -------------------------------
+  # test.sh resolves the real node by walking PATH past $SHIM_DIR, so it
+  # never execs an absolute path that could loop back through this shim.
+  # This marker is belt-and-braces only: if some future change ever makes
+  # test.sh (or anything it spawns) re-enter this shim on the auto-route
+  # path, fail loudly instead of fork-bombing. Scoped to this branch only
+  # — the pass-through path (below, and above via CI/out-of-repo/
+  # run_unit_tests.mjs) must never set or check it, since ordinary nesting
+  # like `npm run x` -> npm's own node shebang -> `node scripts/x.mjs` is
+  # legitimate and routine, not recursion.
+  if [[ -n "${IKIRO_NODE_SHIM_ACTIVE:-}" ]]; then
+    echo "scripts/bin/node: ERROR — shim invoked itself recursively (IKIRO_NODE_SHIM_ACTIVE already set)." >&2
+    echo "scripts/bin/node: this should be impossible — test.sh resolves the real node past $SHIM_DIR." >&2
+    exit 111
+  fi
+  export IKIRO_NODE_SHIM_ACTIVE=1
+
+  echo "scripts/bin/node: auto-routing targeted 'node --test' into scripts/test.sh (lock + wedge detector)." >&2
+  if [[ "${#EXTRA_ARGS[@]}" -gt 0 ]]; then
+    exec "$REPO_ROOT/scripts/test.sh" "${FILES[@]}" -- "${EXTRA_ARGS[@]}"
+  else
+    exec "$REPO_ROOT/scripts/test.sh" "${FILES[@]}"
+  fi
+fi
+
+# Anything else: exec the real node, original argv untouched.
+exec "$REAL_NODE" "$@"
