@@ -71,7 +71,15 @@ async function speakSentence() {
 }
 
 function renderBar() {
-  $("bar").textContent = sentence.map((s) => s.text).join(" ");
+  const bar = $("bar");
+  bar.innerHTML = "";
+  bar.appendChild(document.createTextNode(sentence.map((s) => s.text).join(" ")));
+  if (kbText) {
+    const p = document.createElement("span");
+    p.className = "partial";
+    p.textContent = (sentence.length ? " " : "") + kbText + "▌";
+    bar.appendChild(p);
+  }
 }
 $("bar").addEventListener("click", () => {
   if (sentence.length) speakSentence();
@@ -118,11 +126,13 @@ async function idleStarters() {
 }
 
 async function predCard(c) {
+  const el = document.createElement("button");
+  el.className = `pred${c.entity ? " r-Yellow" : c.role ? ` r-${c.role}` : ""}`;
+  const sw = document.createElement("span");
+  sw.className = "swatch";
+  const lb = document.createElement("span");
+  lb.className = "label";
   if (c.entity) {
-    const el = document.createElement("button");
-    el.className = "pred r-Yellow";
-    const sw = document.createElement("span");
-    sw.className = "swatch";
     const url = await loadPhotoURL(c.entity.photo_key);
     if (url) {
       const img = document.createElement("img");
@@ -131,25 +141,17 @@ async function predCard(c) {
     } else {
       sw.textContent = c.entity.spoken_name[0].toUpperCase();
     }
-    el.appendChild(sw);
-    const lb = document.createElement("span");
-    lb.className = "label";
     lb.textContent = c.entity.spoken_name;
-    el.appendChild(lb);
-    el.addEventListener("click", () => tap(c.entity.spoken_name, "entity", c.entity.id));
-    return el;
+  } else {
+    sw.textContent = c.glyph ?? c.label[0].toUpperCase();
+    lb.textContent = c.label;
   }
-  const el = document.createElement("button");
-  el.className = `pred${c.role ? ` r-${c.role}` : ""}`;
-  const sw = document.createElement("span");
-  sw.className = "swatch";
-  sw.textContent = c.glyph ?? c.label[0].toUpperCase();
   el.appendChild(sw);
-  const lb = document.createElement("span");
-  lb.className = "label";
-  lb.textContent = c.label;
   el.appendChild(lb);
-  el.addEventListener("click", c.onTap ?? (() => {}));
+  const onTap =
+    c.onTap ??
+    (c.entity ? () => tap(c.entity.spoken_name, "entity", c.entity.id) : () => {});
+  el.addEventListener("click", onTap);
   return el;
 }
 
@@ -171,7 +173,10 @@ async function renderStrip() {
   strip.querySelectorAll(".pred").forEach((n) => n.remove());
   const anchorKb = $("anchor-kb");
   let cards;
-  if (sentence.length === 0) {
+  if (kbText) {
+    // mid-word: the strip switches from continuations to completions
+    cards = kbCompletions();
+  } else if (sentence.length === 0) {
     cards = await idleStarters();
   } else {
     const items = stripCandidates(
@@ -252,6 +257,21 @@ document.querySelectorAll(".overlay").forEach((o) =>
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     document.querySelectorAll(".overlay.open").forEach((o) => o.classList.remove("open"));
+    if (kbOpen) closeKb();
+    return;
+  }
+  if (!kbOpen) return;
+  if (/^[a-z.'?]$/i.test(e.key)) kbType(e.key.toLowerCase());
+  else if (e.key === "Backspace") {
+    kbText = kbText.slice(0, -1);
+    renderBar();
+    renderStrip();
+  } else if (e.key === " ") {
+    e.preventDefault();
+    commitKb();
+  } else if (e.key === "Enter") {
+    commitKb();
+    closeKb();
   }
 });
 $("corner").addEventListener("click", () => open("menu"));
@@ -267,51 +287,120 @@ $("add-mywords").addEventListener("click", () => {
 });
 
 /* --- permanent utility anchors --- */
-$("anchor-kb").addEventListener("click", () => open("keyboard"));
+$("anchor-kb").addEventListener("click", openKb);
 $("anchor-groups").addEventListener("click", () => {
   renderZoneList();
   open("zones");
 });
 
-/* --- keyboard overlay: letters -> echo -> Say it --- */
+/* --- keyboard: a board mode, not a modal. Letters replace the grid in
+   place (same 10×6 geometry). Typing feeds prefix completions into the
+   strip; space commits the word (and speaks it); Done commits + exits. */
+let kbOpen = false;
 let kbText = "";
-{
-  const keys = $("kb-keys");
-  for (const row of ["qwertyuiop", "asdfghjkl", "zxcvbnm"]) {
-    const r = document.createElement("div");
-    r.className = "kb-row";
-    for (const ch of row) {
-      const b = document.createElement("button");
-      b.className = "kb-key";
-      b.textContent = ch;
-      b.addEventListener("click", () => {
-        kbText += ch;
-        $("kb-echo").textContent = kbText;
-      });
-      r.appendChild(b);
-    }
-    keys.appendChild(r);
-  }
-  $("kb-space").addEventListener("click", () => {
-    kbText += " ";
-    $("kb-echo").textContent = kbText;
-  });
-  $("kb-back").addEventListener("click", () => {
+let kbBuilt = false;
+
+function openKb() {
+  if (!kbBuilt) buildKb();
+  kbOpen = true;
+  document.body.classList.add("kb");
+  renderBar();
+  renderStrip();
+}
+function closeKb() {
+  kbOpen = false;
+  document.body.classList.remove("kb");
+}
+
+function kbKey(label, cls, onTap) {
+  const b = document.createElement("button");
+  b.className = `kb-key${cls ? ` ${cls}` : ""}`;
+  b.textContent = label;
+  b.addEventListener("click", onTap);
+  return b;
+}
+
+function buildKb() {
+  kbBuilt = true;
+  const kb = $("kb");
+  for (const ch of "abcdefghij") kb.appendChild(kbKey(ch, "", () => kbType(ch)));
+  for (const ch of "klmnopqrst") kb.appendChild(kbKey(ch, "", () => kbType(ch)));
+  for (const ch of "uvwxyz.'?") kb.appendChild(kbKey(ch, "", () => kbType(ch)));
+  kb.appendChild(kbKey("⌫", "kb-util", () => {
     kbText = kbText.slice(0, -1);
-    $("kb-echo").textContent = kbText;
-  });
-  $("kb-say").addEventListener("click", () => {
-    const t = kbText.trim();
-    kbText = "";
-    $("kb-echo").textContent = "";
-    close("keyboard");
-    if (!t) return;
-    // A typed word that matches the catalog speaks with the bundled voice;
-    // anything else is spoken by device TTS (schema §7.3 lane).
-    const hit = senseByLemma(t);
-    if (hit) tap(hit.label, "sense", hit.id);
-    else tap(t, "typed", null);
-  });
+    renderBar();
+    renderStrip();
+  }));
+  kb.appendChild(kbKey("space", "kb-util kb-space", commitKb));
+  kb.appendChild(kbKey("Done ✓", "kb-util kb-done", () => {
+    commitKb();
+    closeKb();
+  }));
+}
+
+function kbType(ch) {
+  kbText += ch;
+  renderBar();
+  renderStrip();
+}
+
+/** Commit the typed word: catalog hit speaks with the bundled voice, a
+ *  non-word speaks via device TTS (schema §7.3). Typing never speaks. */
+function commitKb() {
+  const t = kbText.trim();
+  kbText = "";
+  renderBar();
+  if (!t) {
+    renderStrip();
+    return;
+  }
+  const hit = senseByLemma(t);
+  if (hit) tap(hit.label, "sense", hit.id);
+  else tap(t, "typed", null);
+}
+
+/** Prefix completions for the strip while a word is in progress. */
+function kbCompletions() {
+  const prefix = normalizeV1(kbText);
+  if (!prefix) return [];
+  const senses = ALL(
+    db,
+    `SELECT s.id, l.text AS label, s.fitzgerald_role,
+       (SELECT COUNT(*) FROM learner_event_log le
+         WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
+     FROM label l JOIN sense s ON s.id = l.sense_id
+     WHERE l.normalized_text LIKE ? ESCAPE '\\'
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'`,
+    [prefix.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_") + "%"],
+  ).map((w) => ({
+    label: w.label,
+    role: w.fitzgerald_role,
+    freq: w.freq,
+    onTap: () => {
+      kbText = "";
+      renderBar();
+      tap(w.label, "sense", w.id);
+    },
+  }));
+  const ents = ALL(
+    db,
+    `SELECT e.*,
+       (SELECT COUNT(*) FROM learner_event_log le
+         WHERE le.item_kind = 'entity' AND le.item_id = e.id) AS freq
+     FROM personal_entity e WHERE lower(e.spoken_name) LIKE ?`,
+    [`${prefix.toLowerCase().replaceAll("%", "")}%`],
+  ).map((e) => ({
+    entity: e,
+    freq: e.freq,
+    onTap: () => {
+      kbText = "";
+      renderBar();
+      tap(e.spoken_name, "entity", e.id);
+    },
+  }));
+  return [...ents, ...senses]
+    .sort((a, b) => b.freq - a.freq || (a.label ?? a.entity.spoken_name).length - (b.label ?? b.entity.spoken_name).length)
+    .slice(0, 4);
 }
 
 async function entityTile(e) {
