@@ -45,6 +45,10 @@ map have one owner: `docs/product/Motor_Grid_And_Art.md`. **DECIDED 2026-09-22**
 (not built). Do not copy an incumbent symbol library or button map into assets
 or fixtures.
 
+Personal entity records and the on-device add have one owner:
+`docs/product/Personal_Entities.md`. **DECIDED 2026-09-22** (not built). An add
+does not write the coordinate map.
+
 Captioning, motion, and child-safety claims still need an explicit owner in
 `docs/product/SSOT.md` before anyone asserts compliance. Until that owner
 exists, do not assert those outcomes in code comments alone.

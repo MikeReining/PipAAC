@@ -7,7 +7,9 @@ Fact map: `docs/product/SSOT.md`.
 Intake record: `docs/founder/2026-09-22_Mentor_Grid_Prediction_Art.md`.
 
 This file owns the motor-grid layout contract, the color and symbol rules, and
-the visual contract of the predictive strip. It does not own ranking math.
+the visual contract of the predictive strip. It does not own ranking math, and
+it does not own slot assignments — which sense sits in which slot lives in
+`docs/product/Core_Coordinate_Map.md`.
 
 ---
 
@@ -43,7 +45,7 @@ Named incumbents that must not be transcribed: AssistiveWare Proloquo / Crescend
 
 The initial compiled 599-word launch lexicon (75 Tier 1 Root Core + 524 Tier 2 Primary Fringe across 14 clinical categories) is cataloged in `docs/product/Initial_Vocabulary_600.md`.
 
-The coordinate pass must be written down as Pip AAC's own map. A table extracted from another app is not an acceptable source, even if the words themselves came from a paper.
+The coordinate pass is written down as `docs/product/Core_Coordinate_Map.md`. A table extracted from another app is not an acceptable source, even if the words themselves came from a paper.
 
 ### Two stability rules
 
@@ -57,6 +59,16 @@ These are both in force. They answer different questions.
 When a grid engine exists, a test must show that a suggestion model cannot reorder or swap primary core indices. That test is **PROPOSED**. It does not exist yet.
 
 Category folders open as an in-place sub-zone. **DECIDED 2026-09-22** (not built). The sentence bar and navigation anchors stay put. Closing the sub-zone restores the same core indices as before.
+
+The folder entry point is one `Groups` anchor cell on the board, which opens
+the in-place index of the 14 sub-zones. **DECIDED 2026-09-22** (not built). A
+dock row of category buttons is not the design: it does not scale to 14
+categories, and it spends prime motor real estate on navigation instead of
+language. The strip, not a folder tree, is the primary path to fringe words.
+
+Each named layout (`grid60`, `grid80`) is its own map. Changing density swaps
+the map; it does not move a cell within one. Assignments:
+`docs/product/Core_Coordinate_Map.md`.
 
 ---
 
@@ -163,7 +175,7 @@ Do not include any text in the image.
 
 **PROPOSED.** Not scheduled. None of these exist in the repo.
 
-1. Compile the primary core list from the open sources in section 1 and write Pip AAC's own coordinate map.
+1. ~~Compile the primary core list~~ Done: `docs/product/Initial_Vocabulary_600.md` + `docs/product/Core_Coordinate_Map.md`.
 2. Lock character drawing rules and the Fitzgerald torso mapping before producing a symbol set.
 3. Scaffold the motor grid and the strip, with a test that suggestion output cannot reorder core indices.
 4. Feed the strip from the local ranker within the latency rule in the dual-engine doc.

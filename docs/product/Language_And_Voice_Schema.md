@@ -1,16 +1,9 @@
 # Language and voice schema
 
-**Status:** Proposed. For review. Not executing.
-
-**PROPOSED.** The tables are not a founder ruling and nothing here is built.
-Phase 002 stays the critical path (`docs/phases/002_Core_Board_And_Customize.md`).
-
-**Confirmed in review 2026-09-22.** Playback in § 7: the bundled voice stays
-silent where a clip is missing, a different speaker is heard only when the
-profile selects that voice for the whole library, and a caregiver override
-wins for that one item in every voice. This revision adds the locale miss,
-the sentence-bar pause, and the constraints that keep those rules true
-after slice 1 stores ids.
+**DECIDED 2026-09-22.** Accepted the same day it was proposed, with the
+amendments in § 12. Playback in § 7 was confirmed in review the same day.
+Phase 002 stays the critical path
+(`docs/phases/002_Core_Board_And_Customize.md`).
 
 Studied against WorkbookBench's global media catalog: one language-independent
 sense, localized labels, one shared picture, audio that does not cross
@@ -61,7 +54,7 @@ with `PRAGMA foreign_keys = ON` and inserts in the order in § 6. A file
 that violates a constraint does not ship. JSON has no partial indexes.
 SQLite is the enforcement.
 
-Device tables (profile, personal entity, edges, overrides) are created
+Device tables (profile, personal entity, overrides) are created
 empty on first launch. They are never in the shipped JSON. Cooper's name
 and a caregiver's recording stay on this iPad. Phase 002 already requires
 the add to work with the network off and without an account
@@ -72,15 +65,15 @@ speech-to-text in memory
 (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`). It does not
 describe the clips the device plays when a cell is tapped.
 
-`created_at`, `updated_at`, and a `schema_version` table wait. They are
-not needed to mint ids.
+`created_at` and `updated_at` wait. The database carries its version in
+`PRAGMA user_version`; a separate `schema_version` table is not needed to
+mint ids.
 
 ---
 
 ## 4. Ids and normalization
 
-**PROPOSED.** Prefixes are fixed now so a JSON id and a SQLite id name the
-same kind of row.
+Prefixes are fixed so a JSON id and a SQLite id name the same kind of row.
 
 | Prefix | Row |
 | --- | --- |
@@ -98,6 +91,12 @@ same kind of row.
 Every id is `GLOB '<prefix>*'` with at least one character after the
 prefix. `GLOB` is case-sensitive. SQLite `LIKE` is not, so `LIKE` is not
 the check.
+
+Catalog ids are minted deterministically by the generator — `sns_`,
+`utt_`, `lbl_` from the catalog slot number, `cel_` from layout and
+slot_index — so the same source always produces the same ids and the
+shipped JSON diffs cleanly. Device-row ids (`prf_`, `ent_`, `ovr_`) are
+minted on-device.
 
 ### Normalization `v1`
 
@@ -122,8 +121,6 @@ and the column is what the unique index actually enforces.
 ---
 
 ## 5. Catalog tables
-
-**PROPOSED.**
 
 ### 5.1 Sense
 
@@ -166,7 +163,8 @@ Those role and archetype tokens are the lexicon's own words.
 `Yellow` is the yellow/orange Fitzgerald role, `Pink` is pink/magenta, and
 `Red` is the red or black-outline role
 (`docs/product/Motor_Grid_And_Art.md`). `category` is only the Tier 2
-sub-zone. Root-core sectors stay on the coordinate map.
+sub-zone. Root-core sectors stay on the coordinate map
+(`docs/product/Core_Coordinate_Map.md`).
 
 Picture insert order, because each side points at the other:
 
@@ -277,14 +275,16 @@ transaction: clear `is_default` on the old row, set `is_default` on the
 replacement, repoint any profile that named the old id, then set the old
 row `retired`. The retire trigger aborts if a profile still points at it.
 
-The first catalog has one active default voice, locale `en`, source
+The shipped catalog has one active default voice, locale `en`, source
 `bundled`, display name `Default`. It may have zero clips when the board
 first draws. A missing clip under that voice is silence. The device does
 not fill the hole with another speaker.
 
-A `device_tts` voice has no clip rows. The clip-insert trigger rejects
-one. Choosing that voice speaks every utterance through `engine_id`. It
-never patches a gap inside the bundled voice.
+`voice` is a catalog table, but a `device_tts` row is minted on the device
+and is never shipped in the catalog JSON — the engine id is
+platform-specific. A `device_tts` voice has no clip rows. The clip-insert
+trigger rejects one. Choosing that voice speaks every utterance through
+`engine_id`. It never patches a gap inside the bundled voice.
 
 ### 5.6 Clip
 
@@ -313,30 +313,35 @@ strings remain.
 
 ### 5.7 Core cell
 
-The motor index for one root-core sense. Layout law stays in
-`docs/product/Motor_Grid_And_Art.md`: at a chosen density and orientation
-the index does not move, and absolute pixels may change when density or
-rotation changes. This table stores the index. It does not store pixels,
-and it does not decide which sense sits in which slot. Slice 1 writes the
-75 rows when that map exists.
+The motor index for one root-core sense in one named layout. Layout law
+stays in `docs/product/Motor_Grid_And_Art.md`; slot assignments live in
+`docs/product/Core_Coordinate_Map.md`. At a chosen density and orientation
+the index does not move. This table stores the index. It does not store
+pixels, and it does not decide which sense sits in which slot.
 
 ```sql
 CREATE TABLE core_cell (
   id TEXT PRIMARY KEY CHECK (id GLOB 'cel_*'),
-  sense_id TEXT NOT NULL UNIQUE REFERENCES sense(id),
-  slot_index INTEGER NOT NULL UNIQUE CHECK (slot_index >= 0)
+  layout TEXT NOT NULL CHECK (length(layout) > 0),
+  sense_id TEXT NOT NULL REFERENCES sense(id),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
+  UNIQUE (layout, slot_index),
+  UNIQUE (layout, sense_id)
 );
 ```
 
+`layout` exists because density switching is a decided product feature: a
+sparser or denser board is a different map of the same senses, not a move
+within one map. Slice 1 writes the `grid60` rows (60) and the `grid80`
+rows (75) from `docs/product/Core_Coordinate_Map.md`.
+
 The insert trigger rejects a sense whose tier is not `root_core`. A fringe
 word, a personal entity, and a strip tile do not get a row. One sense, one
-cell. Filling a slot does not move another.
+cell per layout. Filling a slot does not move another.
 
 ---
 
 ## 6. Device tables, indexes, triggers
-
-**PROPOSED.**
 
 ### 6.1 Profile
 
@@ -360,27 +365,40 @@ voice, and never a voice from another locale.
 ### 6.2 Personal entity
 
 The record in `docs/product/Personal_Entities.md` stays a record. It is
-not a sense and not a catalog image. Edges store sense ids.
+not a sense and not a catalog image.
 
 ```sql
 CREATE TABLE personal_entity (
   id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),
   spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),
-  type TEXT NOT NULL CHECK (type IN ('animal', 'person', 'place', 'food')),
-  pronoun TEXT,
   photo_key TEXT,
-  CHECK (
-    (type IN ('place', 'food') AND pronoun IS NULL)
-    OR (type IN ('animal', 'person') AND pronoun IN ('he', 'she', 'they'))
-  )
-);
-
-CREATE TABLE personal_entity_edge (
-  entity_id TEXT NOT NULL REFERENCES personal_entity(id),
-  sense_id TEXT NOT NULL REFERENCES sense(id),
-  PRIMARY KEY (entity_id, sense_id)
+  category TEXT CHECK (category IS NULL OR category IN (
+    'Food & Drink',
+    'Body, Health & Hygiene',
+    'Feelings, Emotions & Sensory States',
+    'Daily Actions & Activity Verbs',
+    'People, Family & Roles',
+    'Places, Rooms & Community',
+    'Toys, Play, Media & Leisure',
+    'Home, Household Objects & Daily Tools',
+    'Clothing & Accessories',
+    'Animals & Nature',
+    'Vehicles & Transportation',
+    'Descriptors, Adjectives & Opposites',
+    'Time, Calendar & Sequencing',
+    'Social Etiquette, Pragmatic Interjections & Urgent/Safety'
+  )),
+  hint TEXT
 );
 ```
+
+There is no `type` column, no `pronoun` column, and no edge table. The
+adult supplies facts a model cannot know — the name, the photo, an
+optional hint. Filing comes from context (a sub-zone open at add time) or
+from classification when the device is online; `category IS NULL` files
+the entity in the personal zone (`docs/product/Personal_Entities.md`).
+Strip relevance is computed live, never stored: sentence position and
+recency on-device, the classifier when online.
 
 Changing `spoken_name` supersedes that entity's ready override in the
 same write. The old recording spoke the old name.
@@ -405,6 +423,9 @@ CREATE TABLE clip_override (
 One ready row per utterance. One ready row per entity. A full custom
 voice of the library is not a table. The need on the table is a preferred
 person for the library, plus an occasional recording of a name or a word.
+The insert trigger enforces `recorded_text` matching the utterance's
+`spoken_text` or the entity's `spoken_name` at write time — the same
+invariant `clip` already enforces, not a read-time hope.
 
 ### 6.4 Indexes
 
@@ -472,6 +493,24 @@ BEGIN
     SELECT 1 FROM utterance
     WHERE utterance.id = NEW.utterance_id
       AND utterance.spoken_text = NEW.recorded_text
+  );
+END;
+
+CREATE TRIGGER override_recorded_text_matches
+BEFORE INSERT ON clip_override
+FOR EACH ROW
+BEGIN
+  SELECT RAISE(ABORT, 'override recorded_text must equal utterance.spoken_text')
+  WHERE NEW.utterance_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM utterance
+    WHERE utterance.id = NEW.utterance_id
+      AND utterance.spoken_text = NEW.recorded_text
+  );
+  SELECT RAISE(ABORT, 'override recorded_text must equal entity spoken_name')
+  WHERE NEW.entity_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM personal_entity
+    WHERE personal_entity.id = NEW.entity_id
+      AND personal_entity.spoken_name = NEW.recorded_text
   );
 END;
 
@@ -675,14 +714,22 @@ The lexicon file is named `Initial_Vocabulary_600.md`. The catalog inside
 it is 599 numbered rows: 75 root-core plus 524 fringe. 75 + 524 = 599.
 The filename rounds. No 600th word was removed.
 
-If this is accepted before slice 1 writes ids:
+The catalog generator emits:
 
-- 599 senses, 599 English utterances, and 599 approved English lemma labels, generated from that catalog. For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned at generation.
-- 75 `core_cell` rows once the coordinate pass in `docs/product/Motor_Grid_And_Art.md` exists. This document does not assign the slot indexes.
+- 599 senses, 599 English utterances, and 599 approved English lemma labels, generated from that catalog. For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
+- `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 75 for `grid80`, 60 for `grid60`. The device import applies a tier filter — only the 75 root-core senses land on-device until the illustrated library phase (`docs/phases/002_Core_Board_And_Customize.md` § Out of scope).
 - One default bundled voice, locale `en`, and zero clips until recordings exist.
 - One profile pointing at that voice.
-- No second locale, no alias rows, no voice picker, no override recorder, no device text-to-speech voice on screen.
-- Personal entities, when slice 3 arrives, use sense ids on their edges. Overrides wait until a recorder exists.
+- No second locale, no alias rows, no voice picker, no override recorder.
+
+One device-local `device_tts` voice (`engine_id` for the platform speech
+synthesizer) may be created on-device so the board can speak during the
+Cooper proof — without it, every tap including Cooper's name is silence.
+It is a device row, never a catalog row, and it never mixes with bundled
+clips (§ 5.5, § 7).
+
+Personal entities store name, optional photo, optional hint, and a
+nullable category (§ 6.2). There are no edge rows to write.
 
 The cell shows the English label and the Fitzgerald color from the sense.
 
@@ -701,7 +748,8 @@ entity id. This proposal does not otherwise redesign prediction.
 - Conjugations and the morphological flow in `docs/strategy/Vision.md`. A later inflected form is another label and, when it sounds different, another utterance.
 - Phrase attributes, captions, and workbook-style paste.
 - Accounts, sync, and a second device.
-- Timestamps and a schema-version table.
+- Timestamps and a `schema_version` table (`PRAGMA user_version` carries the version).
+- Semantic edge storage. Strip relevance is computed — sentence position and recency on-device, the classifier when online — never stored as rows.
 - Rewriting the prediction math.
 
 ---
@@ -710,7 +758,7 @@ entity id. This proposal does not otherwise redesign prediction.
 
 | Ban | Negative test |
 | --- | --- |
-| The English spelling is the primary key of a cell, an edge, or a history row | `core_cell.sense_id` and `personal_entity_edge.sense_id` are `sns_` ids. |
+| The English spelling is the primary key of a cell or a history row | `core_cell.sense_id` is an `sns_` id. |
 | A label column holds the one recording | `label` has no audio pointer. Two ready clips of one utterance differ by `voice_id`. |
 | Two ready clips share `(voice_id, utterance_id)` | `clip_one_ready` rejects the second. |
 | A clip's locale disagrees with its voice | `clip` has no locale column. The insert trigger aborts a voice/utterance locale mismatch. |
@@ -720,7 +768,9 @@ entity id. This proposal does not otherwise redesign prediction.
 | `apple juice` is assembled from `apple` and `juice` | The clip's utterance `spoken_text` is `apple juice`. |
 | An alias speaks the lemma unless it points at the lemma's utterance | An alias with its own utterance plays that utterance. |
 | A renamed utterance keeps playing the old bytes | The rename trigger sets those clips `superseded`. `recorded_text` no longer matches, so playback is silence. |
-| A personal name is inserted as a sense | Saving Cooper leaves the sense count at 599. |
+| A personal name is inserted as a sense | Saving Cooper leaves the sense count unchanged. |
+| The add form asks the adult what a model can infer | `personal_entity` has no `type`, no `pronoun`, and no edge table. |
+| An authored edge table decides strip relevance | No such table exists; ranking inputs are sentence position, recency, and live classification. |
 | An override is copied into the shipped catalog JSON | The import file has no `clip_override` rows and no Cooper audio. |
 | A profile names a Spanish voice while `locale` is `en` | The profile insert trigger aborts. |
 | A retired voice stays selected | The retire trigger aborts until profiles are repointed. |
@@ -730,9 +780,18 @@ entity id. This proposal does not otherwise redesign prediction.
 
 ---
 
-## 12. Where this stands
+## 12. Amendments on acceptance (2026-09-22)
 
-The playback rule is confirmed, including the locale miss and the 400 ms
-sentence-bar slot. The tables, indexes, and triggers are the proposal to
-accept before slice 1 stores a sense id. On accept, this contract moves to
-a product doc. It does not move the critical path.
+Accepted in founder review the day it was proposed. The amendments:
+
+1. `core_cell` gained `layout`. Density switching is a decided product
+   feature; one column now avoids a UNIQUE migration later.
+2. `personal_entity` lost `type`, `pronoun`, and the edge table. The add
+   form collects name, photo, and an optional hint; filing comes from
+   context or classification. Semantics are computed, not stored.
+3. `clip_override` gained the write-time `recorded_text` trigger that
+   `clip` already had.
+4. A device-local `device_tts` voice is allowed in the first build so the
+   proof board can speak. It remains a device row.
+5. Catalog ids are deterministic (§ 4); `PRAGMA user_version` carries the
+   schema version.

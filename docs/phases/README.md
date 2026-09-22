@@ -15,7 +15,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Open the first executing phase. Grid, art, and the predictive strip are specified and not built. | `docs/product/Motor_Grid_And_Art.md` |
+| **P1** | Slice 1 — core board. The `grid60` default layout on an original coordinate map. | `docs/phases/002_Core_Board_And_Customize.md` |
 
 ## Live index
 
@@ -23,6 +23,9 @@ Executing phases only. Each row names the **next** slice.
 
 | Phase | Next slice |
 | --- | --- |
-| — | *None. Vision, prediction, grid, and art contracts are decided. No executing phase doc yet.* |
+| [002 — Core board and the Cooper proof](002_Core_Board_And_Customize.md) | Slice 1 — core board |
+
+The language and voice schema was accepted 2026-09-22 and moved to
+`docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
 
 Archive index: [`docs/archive/phases/README.md`](../archive/phases/README.md)

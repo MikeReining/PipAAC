@@ -1,6 +1,6 @@
 # Roadmap
 
-**PROPOSED.** Sequence map only. The founder brief has landed in strategy and product docs. Dates stay off until an executing phase is opened.
+Sequence map only. Live execution scope is the phase doc, not this file.
 
 ## Phase 0 — Harness (complete)
 
@@ -8,16 +8,23 @@
 - Proof: `npm run check:fast` after `npm ci`.
 - Archive: `docs/archive/phases/001_Harness_Bootstrap.md`.
 
-## Phase 1 — Founder brief → executing phase
+## Phase 002 — Core board and the Cooper proof (executing)
 
-- Input: `docs/founder/` + `docs/workflows/SSOT_Founder_Input_Workflow.md`.
-- Landed in docs, not yet an executing phase:
-  - 2026-09-21 vision and dual-engine prediction (`docs/strategy/Vision.md`, `docs/strategy/Dual_Engine_Predictive_Intelligence.md`).
-  - 2026-09-22 motor grid, predictive strip, and symbol art (`docs/product/Motor_Grid_And_Art.md`).
-- Still required before build work: a live `docs/phases/00x_*.md` with § Slices and named Works Tests.
-- **PROPOSED** build order once that phase opens: independent core-word coordinate map, stick-figure and Fitzgerald asset rules, motor-grid plus strip scaffold, on-device strip ranker. None of these are scheduled.
+**DECIDED 2026-09-22.** Revised the same day. Owner: `docs/phases/002_Core_Board_And_Customize.md`.
 
-## Phase 2+ — TBD
+Order, and it is the only order:
 
-Product slices ship from the live phase doc created in Phase 1. Do not invent
-sequence here before **DECIDED** scope exists.
+1. Core board — the `grid60` default layout, labels and color (map: `docs/product/Core_Coordinate_Map.md`).
+2. Add Cooper on the child's iPad — name, photo, one confirm; filed by context.
+3. A local strip that can offer him.
+
+The 599-word library, drawings included, waits until that proof has passed.
+
+Next slice: 1 — core board. See `docs/phases/README.md`.
+
+## Later — not scheduled
+
+**PROPOSED.** A second device linked by a short-lived QR, with Cloudflare
+carrying ciphertext. Not iCloud. Not a slice of phase 002. Context river,
+visual scenes, and live partner modeling stay in `docs/strategy/Vision.md`
+until a later phase names them.

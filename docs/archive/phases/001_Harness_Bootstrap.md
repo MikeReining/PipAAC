@@ -1,10 +1,8 @@
 # Phase 001 — Harness Bootstrap
 
-**Status:** Slice 1 complete (2026-09-21). Slice 2 (founder brief → live phase) not started.
+**Status:** Complete (2026-09-22). Slice 1 on 2026-09-21. Slice 2 landed the first executing phase.
 
-**Successor (when slice 2 lands):** first executing phase doc under `docs/phases/`.
-
-**Next:** Founder brief → SSOT + first executing phase doc (see `docs/phases/README.md` § Next).
+**Successor:** `docs/phases/002_Core_Board_And_Customize.md`.
 
 ## Goal
 
@@ -17,7 +15,7 @@ work can start with proof from day one.
 | Slice | Scope | Works Test |
 | --- | --- | --- |
 | 1 | Repo harness: `AGENTS.md`, `docs/`, `scripts/`, Worker health stub, `.cursor/` hooks, `.github/workflows/check.yml` | `npm run check:fast` green after `npm ci` + test guard install |
-| 2 | Founder brief → SSOT + first executing phase doc | Phase doc exists with § Slices table and one named Works Test |
+| 2 | Founder brief → SSOT + first executing phase doc | `docs/phases/002_Core_Board_And_Customize.md` has § Slices and named Works Tests |
 
 ## Notes
 

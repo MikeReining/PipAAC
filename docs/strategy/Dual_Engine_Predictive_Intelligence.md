@@ -264,7 +264,7 @@ Research proves that children acquire AAC fluency only when adults model communi
 Traditional AAC apps require families to spend 5 to 10 hours a week manually creating buttons, editing templates, and downloading ClipArt. When families burn out, the device is abandoned.
 - Pip AAC's combination of the Relational World Graph and System One classification automatically wires new vocabulary into the child's world.
 - Enter a single fact: *"We got a new puppy named Cooper."*
-- Cooper is instantly classified, linked to `play`, `bark`, `soft`, `walk`, and contextually surfaced when animals or family pets are discussed.
+- Cooper is instantly classified and contextually surfaced when animals or family pets are relevant — the relationship is evaluated by the model at decision time, not stored as a hand-authored link.
 
 ---
 

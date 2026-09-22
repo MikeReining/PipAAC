@@ -30,6 +30,10 @@ PipAAC/
       SSOT.md
       Design_Invariants.md
       Motor_Grid_And_Art.md
+      Core_Coordinate_Map.md
+      Initial_Vocabulary_600.md
+      Personal_Entities.md
+      Language_And_Voice_Schema.md
     strategy/
       README.md
       Vision.md
@@ -69,6 +73,9 @@ PipAAC/
 - `docs/strategy/Roadmap.md` — phase sequence map.
 - `docs/product/SSOT.md` — durable product facts map.
 - `docs/product/Motor_Grid_And_Art.md` — clean-room motor grid, Fitzgerald color, stick figure, object art, predictive-strip layout.
+- `docs/product/Core_Coordinate_Map.md` — slot assignments per named layout (`grid60`, `grid80`).
+- `docs/product/Personal_Entities.md` — personal entity records and the on-device add.
+- `docs/product/Language_And_Voice_Schema.md` — catalog/device schema, playback rules.
 - `scripts/test.sh` — protected test runner.
 - `scripts/check.mjs` / `check_fast.mjs` — closeout and iteration gates.
 - `scripts/dev.mjs` — founder browse copy vs agent copies.
