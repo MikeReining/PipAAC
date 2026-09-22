@@ -11,14 +11,23 @@
  * cel_ from layout + slot_index. The shipped file contains catalog tables only
  * — never device rows.
  */
-import { readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 
 import { normalizeV1 } from "../../src/board/normalize.mjs";
-import { DEFAULT_LEXICON_PATH, repoRoot } from "./paths.mjs";
+import {
+  DEFAULT_AUDIO_CACHE_ROOT,
+  DEFAULT_AUDIO_IMPORT_PATH,
+  DEFAULT_GENERATED_AUDIO_PATH,
+  DEFAULT_LEXICON_PATH,
+  repoRoot,
+} from "./paths.mjs";
 
 const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
+const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
+const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
+const DEFAULT_VOICE_ID = "voi_default_en";
 const CATALOG_SCHEMA_VERSION = 1;
 
 const MAP_SECTION_RE = /^## \d+\.\s+`?(grid\d+)`?/;
@@ -130,7 +139,10 @@ export function buildCatalog(lexicon, mapLayouts) {
     source: {
       lexicon: "data/launch_lexicon.json",
       coordinateMap: "docs/product/Core_Coordinate_Map.md",
+      schema: "src/board/schema.sql",
     },
+    // The bundle is the full device bootstrap: DDL plus rows, one fetch.
+    schemaSql: readFileSync(SCHEMA_SQL, "utf8"),
     layouts,
     senses,
     utterances,
@@ -138,7 +150,7 @@ export function buildCatalog(lexicon, mapLayouts) {
     images: [],
     voices: [
       {
-        id: "voi_default_en",
+        id: DEFAULT_VOICE_ID,
         locale: "en",
         display_name: "Default",
         source: "bundled",
@@ -147,9 +159,47 @@ export function buildCatalog(lexicon, mapLayouts) {
         status: "active",
       },
     ],
-    clips: [],
+    clips: buildClips(lexicon),
     coreCells,
   };
+}
+
+/**
+ * Clip rows: WBB catalog hits + ElevenLabs-generated misses, keyed by
+ * lexicon slot. Materialized bytes are copied into public/audio/ so the
+ * board can play them straight from the app shell.
+ */
+function buildClips(lexicon) {
+  const clipBySlot = new Map();
+  for (const path of [DEFAULT_AUDIO_IMPORT_PATH, DEFAULT_GENERATED_AUDIO_PATH]) {
+    if (!existsSync(path)) continue;
+    const plan = JSON.parse(readFileSync(path, "utf8"));
+    for (const e of plan.entries) {
+      if (e.clip?.key) clipBySlot.set(e.slot, e.clip);
+    }
+  }
+
+  const clips = [];
+  for (const [slot, clip] of [...clipBySlot.entries()].sort((a, b) => a[0] - b[0])) {
+    const srcFile = join(DEFAULT_AUDIO_CACHE_ROOT, clip.key);
+    if (!existsSync(srcFile)) {
+      throw new Error(`audio plan references missing file: ${clip.key} — run materialize_audio.mjs`);
+    }
+    const dest = join(PUBLIC_AUDIO_ROOT, clip.key);
+    mkdirSync(dirname(dest), { recursive: true });
+    copyFileSync(srcFile, dest);
+    clips.push({
+      id: `clp_${String(slot).padStart(4, "0")}`,
+      voice_id: DEFAULT_VOICE_ID,
+      utterance_id: `utt_${String(slot).padStart(4, "0")}`,
+      recorded_text: lexicon.entries.find((e) => e.slot === slot).spokenText,
+      key: clip.key,
+      status: "ready",
+      sha256: clip.sha256,
+      source: clip.source,
+    });
+  }
+  return clips;
 }
 
 function main() {

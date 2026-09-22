@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-22T16:19:37.607Z",
+  "voice": "WWMMC6k9tdar0BthUenK",
+  "entries": [
+    {
+      "slot": 56,
+      "spokenText": "all done",
+      "clip": {
+        "key": "audio/all_done/caaa93646117.mp3",
+        "sha256": "caaa936461171d981190e0b35c9452e2ac7f7435ed7db39b077f8d84e6be9b6d",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "all done"
+      }
+    }
+  ]
+}

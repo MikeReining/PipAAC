@@ -8,6 +8,7 @@ export const repoRoot = resolve(here, "../..");
 export const DEFAULT_LEXICON_PATH = join(repoRoot, "data/launch_lexicon.json");
 export const DEFAULT_OVERRIDES_PATH = join(repoRoot, "data/wbb_audio_overrides.json");
 export const DEFAULT_AUDIO_IMPORT_PATH = join(repoRoot, "data/catalog/audio_import.json");
+export const DEFAULT_GENERATED_AUDIO_PATH = join(repoRoot, "data/catalog/generated_audio.json");
 export const DEFAULT_AUDIO_CACHE_ROOT = join(repoRoot, "assets/catalog");
 
 export const WBB_MANIFEST_REL = "assets/catalog/manifest.json";

@@ -23,16 +23,57 @@ const { db } = await bootDb();
 const sentence = []; // [{kind, id, text}]
 let zoneContext = null; // category the add form files into
 
+const SILENT_SLOT_MS = 400;
+const audio = new Audio();
+
+/** Resolve the ready clip for a sense under the bundled default voice (§7.2). */
+function clipKeyFor(senseId) {
+  const row = ALL(
+    db,
+    `SELECT c.key FROM clip c
+     JOIN label l ON l.utterance_id = c.utterance_id
+     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+       AND c.voice_id = 'voi_default_en' AND c.status = 'ready'`,
+    [senseId],
+  )[0];
+  return row?.key ?? null;
+}
+
 function speak(text) {
+  // device_tts lane — used for personal entities (§7.3)
   speechSynthesis.cancel();
   speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+}
+
+function playClip(key) {
+  return new Promise((resolve) => {
+    audio.src = `/${key}`;
+    audio.onended = resolve;
+    audio.onerror = resolve;
+    audio.play().catch(resolve);
+  });
+}
+
+/** Speak one tapped item: bundled clip for senses, device TTS for entities. */
+async function speakItem(item) {
+  if (item.kind === "sense") {
+    const key = clipKeyFor(item.id);
+    if (key) return playClip(key);
+    return new Promise((r) => setTimeout(r, SILENT_SLOT_MS)); // §7 silent slot
+  }
+  speak(item.text);
+}
+
+/** Sentence bar: one slot per item in order; misses hold 400 ms (§7.4). */
+async function speakSentence() {
+  for (const item of sentence) await speakItem(item);
 }
 
 function renderBar() {
   $("bar").textContent = sentence.map((s) => s.text).join(" ");
 }
 $("bar").addEventListener("click", () => {
-  if (sentence.length) speak(sentence.map((s) => s.text).join(" "));
+  if (sentence.length) speakSentence();
 });
 $("clear").addEventListener("click", () => {
   sentence.pop();
@@ -64,9 +105,10 @@ async function renderStrip() {
 }
 
 function tap(text, kind = "sense", id = null) {
-  sentence.push({ kind, id, text });
+  const item = { kind, id, text };
+  sentence.push(item);
   renderBar();
-  speak(text);
+  speakItem(item);
   if (id) logSelection(db, kind, id);
   renderStrip();
 }
