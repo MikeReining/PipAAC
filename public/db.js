@@ -57,6 +57,15 @@ export async function bootDb() {
   const hasCatalog = d.all("SELECT COUNT(*) AS n FROM core_cell")[0].n > 0;
   if (!hasCatalog) importCatalog(d, catalog);
 
+  // Reconcile clips: a DB imported before clips shipped has none. Clip ids
+  // are deterministic (clp_<slot>), so OR IGNORE converges without dupes.
+  const insClip = d.prepare(
+    "INSERT OR IGNORE INTO clip (id, voice_id, utterance_id, recorded_text, key, status, sha256, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+  );
+  for (const c of catalog.clips) {
+    insClip.run(c.id, c.voice_id, c.utterance_id, c.recorded_text, c.key, c.status, c.sha256, c.source);
+  }
+
   handle = { db: d, catalog, persistent };
   return handle;
 }
