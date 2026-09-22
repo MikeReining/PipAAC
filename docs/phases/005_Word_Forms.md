@@ -67,13 +67,16 @@ and contrast.
 
 ## Slice 1 — Forms in the catalog
 
-Goal: The catalog carries approved English forms as labels, with features,
-built from a hand-reviewed source.
+Goal: The catalog carries English forms as labels, with features. The forms
+are generated and cross-checked mechanically. **No person reviews forms or
+tags**; a gate against an independent source does.
 
 Files: `src/board/schema.sql`, `docs/product/Language_And_Voice_Schema.md`
-(§ 5.3 DDL), `data/forms/en.json` (new), `forms_draft.mjs`
-(new, in scripts/catalog), `scripts/catalog/build_catalog.mjs`,
-`scripts/catalog/catalog.test.mjs`.
+(§ 5.3 DDL), `data/forms/en_irregular.json` (new),
+`data/forms/en_countability.json` (new), `data/forms/en.json` (new,
+generated), `forms_generate.mjs` and `forms_oracle.mjs` (new, in
+scripts/catalog), `src/board/fixtures/forms_oracle.en.json` (new),
+`scripts/catalog/build_catalog.mjs`, `scripts/catalog/catalog.test.mjs`.
 
 1. **Schema** — `label`:
    ```sql
@@ -91,35 +94,44 @@ Files: `src/board/schema.sql`, `docs/product/Language_And_Voice_Schema.md`
      'approved';`
    Bump `PRAGMA user_version`. Update the § 5.3 DDL in the schema doc in the
    same commit.
-2. **Source** — `data/forms/en.json`, hand-reviewed and committed:
+2. **Where each part comes from** (Design Invariants § 7: code owns
+   structure, models own judgment):
+
+   | Part | Owner | How |
+   | --- | --- | --- |
+   | Which tags a word gets (`V;PST`, `N;PL`, …) | code | fixed by part of speech and the scope list below; never judged |
+   | Regular forms (`wants`, `played`, `dogs`, `bigger`) | code | spelling rules: `-s/-es/-ies`, `-ed/-d/-ied`, `-ing` with e-drop and consonant doubling, `-er/-est` |
+   | Irregular forms (`went`, `children`, `better`) | data | `data/forms/en_irregular.json`, written by the implementing agent: only the exceptions (a few dozen for this catalog) |
+   | Countable vs mass noun (`dogs` yes, `waters` no) | model | `data/forms/en_countability.json`: one model classification per fringe noun, stored with model id, prompt version, and date. Abstention allowed; an abstained noun gets no plural in v1 |
+
+   `forms_generate.mjs` combines these into `data/forms/en.json`
+   (generated output: never hand-edited; change a source and regenerate):
    ```json
-   {
-     "version": 1,
-     "locale": "en",
-     "tagSchema": "UniMorph",
-     "forms": [
-       { "lemma": "go", "features": "V;PRS;3;SG", "text": "goes" },
-       { "lemma": "go", "features": "V;PST", "text": "went" },
-       { "lemma": "go", "features": "V;V.PTCP;PRS", "text": "going" },
-       { "lemma": "dog", "features": "N;PL", "text": "dogs" },
-       { "lemma": "big", "features": "ADJ;CMPR", "text": "bigger" }
-     ]
-   }
+   { "version": 1, "locale": "en", "tagSchema": "UniMorph",
+     "forms": [ { "lemma": "go", "features": "V;PST", "text": "went" } ] }
    ```
    **English v1 scope:**
    - every Verb sense (29 root-core + 74 fringe at `2783d01`):
      `V;PRS;3;SG`, `V;PST`, `V;V.PTCP;PRS`. Modals take only what exists
      (`can` → `could` as `V;PST`);
    - gradable core adjectives `big`, `good`, `bad`, `happy`, `sad`:
-     `ADJ;CMPR`, `ADJ;SPRL` (`good` → `better`, `best`);
-   - every **countable** fringe Noun: `N;PL`. The author excludes mass nouns
-     (`water`, `milk`, `juice`, …).
-3. **Draft helper** — `forms_draft.mjs` writes a *draft*
-   (regular `-s/-es/-ies`, `-ed/-d/-ied`, `-ing` with e-drop and
-   consonant doubling, plus an irregular table) for a human to review and
-   edit. **The committed `en.json` is the source; the helper is never run
-   by the build.** A generated form is not truth until a person has
-   reviewed it.
+     `ADJ;CMPR`, `ADJ;SPRL`;
+   - fringe Nouns classified countable: `N;PL`.
+3. **The check that replaces human review — an independent oracle.**
+   `forms_oracle.mjs` asks a model (OpenRouter, `OPENROUTER_API_KEY` in
+   `.env`) for the form of every `(lemma, features)` pair in scope. The
+   model sees only the lemma, its part of speech, and the tag, never the
+   generator's answer. Answers are saved once to
+   `src/board/fixtures/forms_oracle.en.json` with model id, prompt version,
+   and date, so tests stay offline and repeatable. Run it **before**
+   writing the generator, so the generator cannot shape it.
+
+   Gate (`catalog.test.mjs`): every generated form equals the oracle's
+   answer. A mismatch fails the build unless it is listed in
+   `data/forms/en_disagreements.json` with the chosen form, a one-line
+   reason, and a dictionary URL. The implementing agent resolves
+   mismatches; the founder never does. The list is expected to be short,
+   since both sides would have to be wrong the same way to slip through.
 4. **Build** — `build_catalog.mjs` resolves each `lemma` to exactly one
    sense through the locale's approved lemma (fail otherwise), and emits:
    - a `form` label (`default_for_text = 0`, `status = 'approved'`,

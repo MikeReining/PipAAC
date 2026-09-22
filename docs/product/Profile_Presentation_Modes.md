@@ -177,5 +177,6 @@ spelling still finds the word (`elfnt` → *elephant*, `hws` → *house*).
 Correct spellers never lose a prefix match to a guess. Exact, prefix, and
 typo matching work in every language. Sound-alike rules are per locale and
 versioned ("pip sound key en v1"); a locale without them skips that tier.
-The gate for each locale is its own hand-authored invented-spelling
-fixture, not the matcher's own output.
+The gate for each locale is its own invented-spelling
+fixture, written before the matcher (by the implementing agent, not the
+founder), not the matcher's own output.

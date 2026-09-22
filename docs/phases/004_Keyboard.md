@@ -352,6 +352,7 @@ Files: `public/shared/spelling.mjs` (new), `public/board.js`
 `spelling.test.mjs` (new, in the src/board folder).
 
 **Write the fixture first, in its own commit, before any matcher code.**
+The implementing agent writes it; no founder review.
 The fixture is the instrument, and the matcher must not shape it. Each
 locale gets its own fixture file (`invented_spellings.<locale>.json`) when
 its sound rules are built.
@@ -362,7 +363,7 @@ its sound rules are built.
 {
   "version": 1,
   "locale": "en",
-  "source": "Hand-authored from emergent-spelling stage patterns (letter-name, consonant skeleton, vowel substitution, phonetic substitution, flap t→d, doubled/dropped letters). Every intended word is a catalog lemma.",
+  "source": "Written by the implementing agent from emergent-spelling stage patterns (letter-name, consonant skeleton, vowel substitution, phonetic substitution, flap t→d, doubled/dropped letters). Every intended word is a catalog lemma.",
   "pairs": [
     { "typed": "elfnt", "intended": "elephant" },
     { "typed": "lefnt", "intended": "elephant" },
