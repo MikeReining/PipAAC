@@ -1,8 +1,9 @@
 /**
- * On-device database: SQLite WASM + OPFS persistence (the local-first
- * runtime). Boots the shipped catalog bundle — schema DDL plus catalog
- * rows — into one database file. Falls back to in-memory when OPFS is
- * unavailable; the board still works, it just won't persist.
+ * On-device database: SQLite WASM persisted via kvvfs → localStorage
+ * (the local-first runtime). Boots the shipped catalog bundle — schema
+ * DDL plus catalog rows — into one database. Falls back to in-memory
+ * when storage is unavailable; the board still works, it just won't
+ * persist. Photos persist separately as OPFS files (savePhoto).
  */
 import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
@@ -43,12 +44,22 @@ export async function bootDb() {
 
   let db;
   let persistent = false;
-  if (sqlite3.oo1.OpfsDb && self.crossOriginIsolated) {
-    db = new sqlite3.oo1.OpfsDb("/pipaac.db", "c");
+  // kvvfs over localStorage — the only sqlite-wasm VFS that persists on
+  // the main thread. The "opfs" VFS refuses to install outside a worker
+  // (it needs Atomics.wait) and opfs-sahpool needs createSyncAccessHandle,
+  // which Chrome exposes only in workers — so OpfsDb never installed and
+  // the app silently ran in-memory. At ~650KB the catalog DB fits the
+  // 2–3MB kvvfs envelope comfortably.
+  // Caveats: no inter-tab locking (two tabs of one origin can interleave
+  // page writes), and localStorage blocked → kvvfs fabricates in-memory
+  // storage, so gate on the API before claiming persistence.
+  try {
+    if (!(localStorage instanceof Storage)) throw new Error("localStorage unavailable");
+    db = new sqlite3.oo1.JsStorageDb("local");
     persistent = true;
-  } else {
+  } catch (err) {
     db = new sqlite3.oo1.DB(":memory:");
-    console.warn("db: OPFS unavailable — running in-memory (entities won't persist)");
+    console.warn("db: persistent storage unavailable — running in-memory", err);
   }
   const d = adapt(db);
 
