@@ -407,12 +407,15 @@ CREATE TABLE personal_entity (
     'Numbers & Counting'
   )),
   hint TEXT,
-  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'retired'))
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'retired')),
+  added_at INTEGER
 );
 ```
 
 `status` is retirement (§ 14.5): `retired` renders nowhere and every read
 path filters on `'active'`; the row and its `group_cell` placements stay.
+`added_at` is the family's creation time and drives Word Library → Added
+order; `group_cell.added_at` does the same for placed catalog words.
 
 There is no `type` column, no `pronoun` column, and no edge table. The
 adult supplies facts a model cannot know — the name, the photo, an

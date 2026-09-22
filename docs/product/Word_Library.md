@@ -54,19 +54,22 @@ an album does not delete it. No one asks which folder a photo is in.
 
 ## 3. The Word Library
 
-**DECIDED 2026-09-22.** Parent Corner → **Words**. On the web editor it is
-the home screen (`docs/product/Sync_And_Web_Editing.md` § 7).
+**DECIDED 2026-09-22; BUILT** (009 slice 3 — `#library` in
+`public/index.html`, queries in `public/shared/library.mjs`). Parent
+Corner → **Words**. On the web editor it is the home screen
+(`docs/product/Sync_And_Web_Editing.md` § 7).
 
 Three tabs, one search field across all of them:
 
 | Tab | Holds |
 | --- | --- |
-| **Added** | Everything the family added or changed: personal entities, library words they placed, words with a recording or picture override. Newest first. |
-| **Suggested** | Words the device heard while listening and that the child does not have yet (§ 8). |
+| **Added** | Everything the family added or changed: personal entities, library words they placed in a custom group or My Words, words with a recording override. Newest first — `added_at` on `personal_entity` and `group_cell` carries the placement time. |
+| **Suggested** | Words the device heard while listening and that the child does not have yet (§ 8). Empty until listening lands (009 slice 10). |
 | **All** | Every word: the launch catalog, the extended picture library (§ 6), and the family's own. |
 
 Tapping any row opens its **word card**. Search matches labels and spoken
-names in the profile locale, prefix first.
+names in the profile locale, prefix first. Every Library query is a
+SELECT — the surface cannot write; edits happen on the card.
 
 Naming note: "My Words" is already the default group. The Library tab is
 **Added**, so the two never share a name.

@@ -123,6 +123,8 @@ CREATE TABLE IF NOT EXISTS personal_entity (
   -- and the entity renders nowhere until restored.
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'retired')),
   photo_key TEXT,
+  -- When the family created it — drives Word Library → Added order.
+  added_at INTEGER,
   category TEXT CHECK (category IS NULL OR category IN (
     'Food & Drink',
     'Body, Health & Hygiene',
@@ -224,6 +226,9 @@ CREATE TABLE IF NOT EXISTS group_cell (
   item_id TEXT NOT NULL,
   page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),
   slot_index INTEGER NOT NULL CHECK (slot_index >= 2 AND slot_index <= 58),
+  -- When this placement was made — drives Word Library → Added order.
+  -- Moves and swaps carry it over; only a fresh placement sets it.
+  added_at INTEGER,
   PRIMARY KEY (group_id, item_kind, item_id),
   UNIQUE (group_id, page, slot_index),
   CHECK ((item_kind = 'sense' AND item_id GLOB 'sns_*')

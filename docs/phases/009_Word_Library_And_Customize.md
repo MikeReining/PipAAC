@@ -1,6 +1,6 @@
 # Phase 009 — Word Library and customization
 
-**Status:** Executing. Slices 1–2 built and proven (see their Works Test
+**Status:** Executing. Slices 1–3 built and proven (see their Works Test
 notes).
 
 **DECIDED 2026-09-22** (founder: "if we nail customization and really make
@@ -175,6 +175,14 @@ queries run against a read-only connection, so the Library cannot write.
 
 Done when: that passes and a person can find any word they added without
 remembering its group.
+
+**Works Test (proven 2026-09-23):** `src/board/library.test.mjs` — 5/5
+(`swing` stands in for `trampoline`, not in the launch lexicon). Added
+order is driven by `added_at` on `personal_entity` and `group_cell`;
+read-only is proven under `PRAGMA query_only = ON`. Headless-Chrome drive:
+Words opens on Added newest-first, "gra" returns Grandma (entity) then
+grandma/grandpa/grapes/grass, a row tap opens the card, and Show on board
+renders Grandma's People cell flashed.
 
 ---
 

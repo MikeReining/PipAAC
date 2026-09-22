@@ -566,6 +566,16 @@
       /* "Show on board" marks the cell for a beat. */
       .flash { box-shadow: 0 0 0 5px var(--ink); z-index: 2; }
 
+      /* --- word library --- */
+      #lib-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        max-height: 50vh;
+        overflow-y: auto;
+      }
+      #lib-empty { color: var(--muted); font-size: 15px; padding: 12px 4px; }
+
       /* --- word card --- */
       .wc-top { display: flex; gap: 12px; align-items: center; }
       #wc-pic {
@@ -674,6 +684,7 @@
         <h2>Parent corner</h2>
         <button class="btn" id="add-mywords">Add to My Words</button>
         <button class="btn secondary" id="edit-groups">Edit groups</button>
+        <button class="btn secondary" id="open-library">Words</button>
         <div class="seg-row">
           <span class="seg-label">Highlight likely next words</span>
           <div class="seg" id="hl-next">
@@ -739,6 +750,22 @@
           <button class="btn" id="add-save">Save</button>
         </div>
         <button class="btn secondary" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <!-- The Word Library (Word_Library § 3): one search field across
+         three tabs; a row tap opens the word card. -->
+    <div class="overlay" id="library">
+      <div class="sheet">
+        <h2>Words</h2>
+        <div class="seg" id="lib-tabs">
+          <button data-t="added" class="on">Added</button>
+          <button data-t="suggested">Suggested</button>
+          <button data-t="all">All</button>
+        </div>
+        <input type="text" id="lib-q" placeholder="Search words" autocomplete="off" />
+        <div id="lib-list"></div>
+        <button class="btn secondary" data-close>Close</button>
       </div>
     </div>
 

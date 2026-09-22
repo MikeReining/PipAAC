@@ -57,10 +57,10 @@ function lowestFreeIndexSlot(db) {
   return null;
 }
 
-function insertCell(db, groupId, kind, id, page, slot) {
+function insertCell(db, groupId, kind, id, page, slot, addedAt = null) {
   db.prepare(
-    "INSERT INTO group_cell (group_id, item_kind, item_id, page, slot_index) VALUES (?, ?, ?, ?, ?)",
-  ).run(groupId, kind, id, page, slot);
+    "INSERT INTO group_cell (group_id, item_kind, item_id, page, slot_index, added_at) VALUES (?, ?, ?, ?, ?, ?)",
+  ).run(groupId, kind, id, page, slot, addedAt);
 }
 
 /**
@@ -378,7 +378,7 @@ export function placeItem(db, groupId, kind, id, cell = null) {
     if (taken) throw new Error(`group ${groupId} slot ${cell.page}:${cell.slot_index} is occupied`);
   }
   const target = cell ?? nextFreeCell(db, groupId);
-  insertCell(db, groupId, kind, id, target.page, target.slot_index);
+  insertCell(db, groupId, kind, id, target.page, target.slot_index, Date.now());
   return target;
 }
 
@@ -411,7 +411,7 @@ export function swapItems(db, groupId, a, b) {
     const cellOf = (it) =>
       one(
         db,
-        "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+        "SELECT page, slot_index, added_at FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
         [groupId, it.item_kind, it.item_id],
       );
     const ca = cellOf(a);
@@ -420,8 +420,8 @@ export function swapItems(db, groupId, a, b) {
     db.prepare(
       "DELETE FROM group_cell WHERE group_id = ? AND item_kind IN (?, ?) AND item_id IN (?, ?)",
     ).run(groupId, a.item_kind, b.item_kind, a.item_id, b.item_id);
-    insertCell(db, groupId, a.item_kind, a.item_id, cb.page, cb.slot_index);
-    insertCell(db, groupId, b.item_kind, b.item_id, ca.page, ca.slot_index);
+    insertCell(db, groupId, a.item_kind, a.item_id, cb.page, cb.slot_index, ca.added_at);
+    insertCell(db, groupId, b.item_kind, b.item_id, ca.page, ca.slot_index, cb.added_at);
   });
 }
 
@@ -458,7 +458,7 @@ export function removeItem(db, groupId, kind, id) {
 export function removeItemUndoable(db, groupId, kind, id) {
   const removed = one(
     db,
-    "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    "SELECT page, slot_index, added_at FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
     [groupId, kind, id],
   );
   if (!removed) throw new Error(`item ${id} is not in group ${groupId}`);
@@ -477,7 +477,7 @@ export function removeItemUndoable(db, groupId, kind, id) {
           "DELETE FROM group_cell WHERE group_id = 'grp_my_words' AND item_kind = 'entity' AND item_id = ?",
         ).run(id);
       }
-      insertCell(db, groupId, kind, id, removed.page, removed.slot_index);
+      insertCell(db, groupId, kind, id, removed.page, removed.slot_index, removed.added_at);
     },
   };
 }
