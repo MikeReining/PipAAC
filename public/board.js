@@ -6,6 +6,7 @@
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import { logSelection, stripCandidates } from "./shared/funnel.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
+import { resolveProfile } from "./shared/profile.mjs";
 import {
   catalogMatches,
   createGroup,
@@ -27,6 +28,11 @@ const ALL = (db, sql, p = []) => db.all(sql, p);
 const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 
 const { db, catalog } = await bootDb();
+// Profile locale and voice resolve once at boot (schema §7.1) and bind
+// into every label query and speech call — never a literal, never
+// another locale's voice.
+const { locale, voiceId } = resolveProfile(db);
+document.documentElement.lang = locale;
 const sentence = []; // [{kind, id, text}]
 let addTarget = null;  // board_group id the add form files into
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
@@ -38,23 +44,28 @@ let lifted = null;   // index: board_group id; page: {item_kind, item_id}
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
 
-/** Resolve the ready clip for a sense under the bundled default voice (§7.2). */
+/** Resolve the ready clip for a sense under the profile voice (§7.2).
+ *  No clip under that voice → silence, never another locale's clip. */
 function clipKeyFor(senseId) {
   const row = ALL(
     db,
     `SELECT c.key FROM clip c
      JOIN label l ON l.utterance_id = c.utterance_id
-     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
-       AND c.voice_id = 'voi_default_en' AND c.status = 'ready'`,
-    [senseId],
+     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+       AND c.voice_id = ? AND c.status = 'ready'`,
+    [senseId, locale, voiceId],
   )[0];
   return row?.key ?? null;
 }
 
 function speak(text) {
-  // device_tts lane — used for personal entities (§7.3)
+  // device_tts lane — used for personal entities (§7.3). The utterance
+  // carries the profile locale so names and typed words are spoken in
+  // the profile's language, not the device's.
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = locale;
   speechSynthesis.cancel();
-  speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  speechSynthesis.speak(u);
 }
 
 function playClip(key) {
@@ -106,22 +117,39 @@ const senseByLemma = (text) =>
     db,
     `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
      JOIN label l ON l.sense_id = s.id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
      WHERE l.normalized_text = ?
      ORDER BY l.default_for_text DESC`,
-    [normalizeV1(text)],
+    [locale, normalizeV1(text)],
   )[0];
+
+const senseById = (senseId) =>
+  ALL(
+    db,
+    `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
+     JOIN label l ON l.sense_id = s.id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+     WHERE s.id = ?`,
+    [locale, senseId],
+  )[0];
+
+// Idle-strip starters referenced by sense id — never by English text.
+const HELLO_SENSE_ID = "sns_0583"; // hello
+const HELP_SENSE_ID = "sns_0025";  // help
 
 /** The four resting cards shown when the sentence bar is empty. */
 async function idleStarters() {
   const cards = [];
-  const hello = senseByLemma("hello");
+  const hello = senseById(HELLO_SENSE_ID);
   if (hello) {
-    cards.push({ label: "hello", glyph: "👋", role: hello.fitzgerald_role,
+    cards.push({ label: hello.label, glyph: "👋", role: hello.fitzgerald_role,
       onTap: () => tap(hello.label, "sense", hello.id, { hint: true }) });
   }
-  cards.push({ label: "Food", glyph: "🥞", role: "Pink",
-    onTap: () => openGroup("grp_food") });
+  const foodRow = ALL(db, "SELECT id, name FROM board_group WHERE id = 'grp_food'")[0];
+  if (foodRow) {
+    cards.push({ label: groupDisplayName(db, foodRow, locale), glyph: "🥞", role: "Pink",
+      onTap: () => openGroup("grp_food") });
+  }
   const top = ALL(
     db,
     `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
@@ -129,9 +157,9 @@ async function idleStarters() {
      GROUP BY e.id ORDER BY COUNT(l.id) DESC, MAX(l.selected_at) DESC, e.rowid LIMIT 1`,
   )[0];
   if (top) cards.push({ entity: top });
-  const help = senseByLemma("help");
+  const help = senseById(HELP_SENSE_ID);
   if (help) {
-    cards.push({ label: "help", glyph: "🆘", role: help.fitzgerald_role,
+    cards.push({ label: help.label, glyph: "🆘", role: help.fitzgerald_role,
       onTap: () => tap(help.label, "sense", help.id, { hint: true }) });
   }
   return cards.slice(0, 4);
@@ -194,6 +222,8 @@ async function renderStrip() {
     const items = stripCandidates(
       db,
       sentence.map((s) => ({ kind: s.kind, id: s.id })),
+      Date.now(),
+      locale,
     );
     cards = [];
     for (const c of items) {
@@ -206,9 +236,9 @@ async function renderStrip() {
           db,
           `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
            JOIN label l ON l.sense_id = s.id
-             AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+             AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
            WHERE s.id = ?`,
-          [c.id],
+          [locale, c.id],
         )[0];
         cards.push({ label: w.label, role: w.fitzgerald_role,
           onTap: () => tap(w.label, "sense", w.id, { hint: true }) });
@@ -256,7 +286,7 @@ function showGroupHint(kind, id) {
        ORDER BY g.index_slot`,
       [id],
     )[0];
-    if (row) name = groupDisplayName(db, row, "en");
+    if (row) name = groupDisplayName(db, row, locale);
   } else if (kind === "entity") {
     const row = ALL(
       db,
@@ -265,7 +295,7 @@ function showGroupHint(kind, id) {
        ORDER BY g.index_slot`,
       [id],
     )[0];
-    if (row) name = groupDisplayName(db, row, "en");
+    if (row) name = groupDisplayName(db, row, locale);
   }
   if (!name) return;
   const anchor = $("anchor-groups");
@@ -288,9 +318,10 @@ function renderGrid() {
      FROM core_cell cc
      JOIN sense s ON s.id = cc.sense_id
      JOIN label l ON l.sense_id = cc.sense_id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
      WHERE cc.layout = 'grid60'
      ORDER BY cc.slot_index`,
+    [locale],
   );
   const grid = $("grid");
   grid.style.gridTemplateColumns = "repeat(10, 1fr)";
@@ -462,8 +493,8 @@ function kbCompletions() {
      FROM label l JOIN sense s ON s.id = l.sense_id
      WHERE l.normalized_text LIKE ? ESCAPE '\\'
        AND l.default_for_text = 1
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'`,
-    [prefix.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_") + "%"],
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
+    [prefix.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_") + "%", locale],
   ).map((w) => ({
     label: w.label,
     role: w.fitzgerald_role,
@@ -548,7 +579,7 @@ function groupIndexCell(row) {
   }
   const lb = document.createElement("span");
   lb.className = "glabel";
-  lb.textContent = groupDisplayName(db, row, "en");
+  lb.textContent = groupDisplayName(db, row, locale);
   el.appendChild(g);
   el.appendChild(lb);
   el.addEventListener("click", () => {
@@ -585,7 +616,7 @@ function editSlotCell(label, onTap) {
 /** Delete confirmation is an in-sheet two-button ask, never
  *  window.confirm — the learner can't be left inside a dialog. */
 function askDeleteGroup(row) {
-  $("del-title").textContent = `Delete ${groupDisplayName(db, row, "en")}?`;
+  $("del-title").textContent = `Delete ${groupDisplayName(db, row, locale)}?`;
   $("del-yes").onclick = () => {
     deleteGroup(db, row.id);
     lifted = null;
@@ -712,7 +743,7 @@ async function renderGroupPage() {
   const zg = $("groupgrid");
   zg.innerHTML = "";
   const items = new Map(
-    groupPage(db, groupKey, groupPageNo).map((r) => [r.slot_index, r]),
+    groupPage(db, groupKey, groupPageNo, locale).map((r) => [r.slot_index, r]),
   );
   const pages = pageCount(db, groupKey);
   const gKind = ALL(db, "SELECT kind FROM board_group WHERE id = ?", [groupKey])[0]?.kind;
@@ -803,7 +834,7 @@ $("group-save").addEventListener("click", async () => {
 function openAddForm(groupId) {
   addTarget = groupId;
   const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [groupId])[0];
-  const name = row ? groupDisplayName(db, row, "en") : "";
+  const name = row ? groupDisplayName(db, row, locale) : "";
   $("add-title").textContent = name ? `Add to ${name}` : "Add";
   $("add-name").value = "";
   $("add-photo").value = "";
@@ -828,7 +859,7 @@ function renderAddMatches() {
   }
   newBtn.hidden = false;
   newBtn.textContent = `New: '${text}'`;
-  for (const m of catalogMatches(db, text, addTarget)) {
+  for (const m of catalogMatches(db, text, addTarget, locale)) {
     const row = document.createElement("button");
     row.className = "addmatch";
     const sw = document.createElement("span");

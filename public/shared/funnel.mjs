@@ -18,7 +18,7 @@ export function logSelection(db, kind, id, at = Date.now()) {
 }
 
 /** Tail item's part of speech and text; entities are nominal. */
-function tailInfo(db, sentence) {
+function tailInfo(db, sentence, locale) {
   if (sentence.length === 0) return { pos: null, prevPos: null };
   const tail = sentence[sentence.length - 1];
   const prev = sentence.length > 1 ? sentence[sentence.length - 2] : null;
@@ -29,9 +29,9 @@ function tailInfo(db, sentence) {
       db
         .prepare(
           `SELECT l.part_of_speech AS pos FROM label l
-           WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'`,
+           WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
         )
-        .all(item.id)[0]?.pos ?? null
+        .all(item.id, locale)[0]?.pos ?? null
     );
   };
   return { pos: posOf(tail), prevPos: posOf(prev) };
@@ -50,10 +50,13 @@ function tailInfo(db, sentence) {
  *
  * @returns {Array<{kind:'sense'|'entity', id:string}>} capped at STRIP_CAP.
  */
-export function stripCandidates(db, sentence, now = Date.now()) {
-  const { pos, prevPos } = tailInfo(db, sentence);
+export function stripCandidates(db, sentence, now = Date.now(), locale) {
+  if (typeof locale !== "string" || locale.length === 0) {
+    throw new Error("locale is a required parameter");
+  }
+  const { pos, prevPos } = tailInfo(db, sentence, locale);
   const tail = sentence[sentence.length - 1];
-  const tailText = tail?.kind === "sense" ? tailTextOf(db, tail.id) : null;
+  const tailText = tail?.kind === "sense" ? tailTextOf(db, tail.id, locale) : null;
   const invitesNoun = pos === "Verb" || pos === "Preposition";
   const invitesVerb =
     pos === "Pronoun" || (pos === "Preposition" && tailText === "to" && prevPos === "Verb");
@@ -87,13 +90,13 @@ export function stripCandidates(db, sentence, now = Date.now()) {
          MAX(l.selected_at) AS last_selected
        FROM sense s
        JOIN label lb ON lb.sense_id = s.id
-         AND lb.kind = 'lemma' AND lb.status = 'approved' AND lb.locale = 'en'
+         AND lb.kind = 'lemma' AND lb.status = 'approved' AND lb.locale = ?
        LEFT JOIN learner_event_log l
          ON l.item_kind = 'sense' AND l.item_id = s.id
        WHERE s.tier = 'primary_fringe'
        GROUP BY s.id`,
     )
-    .all(recentCutoff, hour)
+    .all(recentCutoff, hour, locale)
     .filter(
       (r) =>
         (r.freq > 0 || r.recent === 1) &&
@@ -107,12 +110,12 @@ export function stripCandidates(db, sentence, now = Date.now()) {
     .map((r) => ({ kind: r.kind, id: r.id }));
 }
 
-function tailTextOf(db, senseId) {
+function tailTextOf(db, senseId, locale) {
   return db
     .prepare(
-      `SELECT text FROM label WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = 'en'`,
+      `SELECT text FROM label WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
     )
-    .all(senseId)[0]?.text ?? null;
+    .all(senseId, locale)[0]?.text ?? null;
 }
 
 function scoreRow(r, invited, now) {

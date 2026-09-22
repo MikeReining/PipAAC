@@ -85,12 +85,12 @@ test("reachability: every categorized sense sits in a built-in group, none past 
   assert.equal(index[0].index_slot, 10);
   for (const [i, g] of index.entries()) assert.equal(g.index_slot, 10 + i);
   assert.equal(pageCount(db, "grp_my_words"), 1); // empty at seed
-  assert.deepEqual(groupPage(db, "grp_my_words", 0), []);
+  assert.deepEqual(groupPage(db, "grp_my_words", 0, "en"), []);
 });
 
 test("stable order: grp_food opens with bread and slot order is lexicon order", () => {
   const db = openDb();
-  const rows = groupPage(db, "grp_food", 0);
+  const rows = groupPage(db, "grp_food", 0, "en");
   assert.equal(rows.length, 54);
   assert.equal(rows[0].label, "bread");
   assert.equal(rows[0].slot_index, 2);
@@ -173,7 +173,7 @@ test("seed never drops: a new catalog word whose seeded slot is taken lands at n
 
 test("caregiver edits survive re-import: swapped cells and swapped groups hold", () => {
   const db = openDb();
-  const [a, b] = groupPage(db, "grp_food", 0);
+  const [a, b] = groupPage(db, "grp_food", 0, "en");
   swapItems(
     db,
     "grp_food",
@@ -186,7 +186,7 @@ test("caregiver edits survive re-import: swapped cells and swapped groups hold",
 
   importCatalog(db, catalog); // reconcile re-run
 
-  const after = groupPage(db, "grp_food", 0);
+  const after = groupPage(db, "grp_food", 0, "en");
   assert.equal(after.find((r) => r.item_id === a.item_id).slot_index, b.slot_index);
   assert.equal(after.find((r) => r.item_id === b.item_id).slot_index, a.slot_index);
   const idx = groupIndex(db);
@@ -237,7 +237,7 @@ test("legacy migration keeps custom groups, entities, and the caregiver's arrang
   assert.equal(custom.name, "Sofia's snacks");
   assert.equal(custom.index_slot, 30);
 
-  const customCells = groupPage(db, "grp_custom1", 0);
+  const customCells = groupPage(db, "grp_custom1", 0, "en");
   assert.deepEqual(
     customCells.map((r) => [r.item_id, r.slot_index]),
     [
@@ -266,7 +266,7 @@ test("legacy migration keeps custom groups, entities, and the caregiver's arrang
 
 test("removal rules: built-in senses stay, orphaned entities land in My Words, built-ins can't delete", () => {
   const db = openDb();
-  const food = groupPage(db, "grp_food", 0)[0];
+  const food = groupPage(db, "grp_food", 0, "en")[0];
   assert.throws(() => removeItem(db, "grp_food", "sense", food.item_id), /built-in/);
   assert.throws(() => deleteGroup(db, "grp_food"), /custom/);
   assert.throws(() => deleteGroup(db, "grp_my_words"), /custom/);
@@ -306,10 +306,10 @@ test("slice 3 edit gestures: move a group, swap two items, remove an entity, del
   assertCore();
 
   // lift bread, tap another occupied cell → swapItems
-  const [a, b] = groupPage(db, "grp_food", 0);
+  const [a, b] = groupPage(db, "grp_food", 0, "en");
   assert.equal(a.label, "bread");
   swapItems(db, "grp_food", a, b);
-  const food = groupPage(db, "grp_food", 0);
+  const food = groupPage(db, "grp_food", 0, "en");
   assert.equal(food.find((r) => r.item_id === a.item_id).slot_index, b.slot_index);
   assert.equal(food.find((r) => r.item_id === b.item_id).slot_index, a.slot_index);
   assertCore();
@@ -344,19 +344,19 @@ test("slice 4 add flow: matches exclude senses already in the target group", () 
   const db = openDb();
   const banana = senseIdByText(db, "banana");
   // banana is seeded in Food; My Words lacks it → offered
-  const hits = catalogMatches(db, "ban", "grp_my_words");
+  const hits = catalogMatches(db, "ban", "grp_my_words", "en");
   assert.ok(hits.some((h) => h.id === banana && h.label === "banana"));
   placeItem(db, "grp_my_words", "sense", banana);
-  assert.ok(!catalogMatches(db, "ban", "grp_my_words").some((h) => h.id === banana));
+  assert.ok(!catalogMatches(db, "ban", "grp_my_words", "en").some((h) => h.id === banana));
 
   // water is seeded in Drinks → never offered there, but still offered
   // to a group that lacks it
   const water = senseIdByText(db, "water");
-  assert.ok(!catalogMatches(db, "wat", "grp_drinks").some((h) => h.id === water));
-  assert.ok(catalogMatches(db, "wat", "grp_my_words").some((h) => h.id === water));
+  assert.ok(!catalogMatches(db, "wat", "grp_drinks", "en").some((h) => h.id === water));
+  assert.ok(catalogMatches(db, "wat", "grp_my_words", "en").some((h) => h.id === water));
 
   // empty/garbage input returns nothing
-  assert.deepEqual(catalogMatches(db, "", "grp_my_words"), []);
+  assert.deepEqual(catalogMatches(db, "", "grp_my_words", "en"), []);
 });
 
 test("slice 4: an entity placed in a custom group survives catalog re-import at its slot", () => {
@@ -495,10 +495,10 @@ test("the core coordinate map is untouched by every group operation", () => {
   const before = snapshotCoreCells(db);
   const assertCore = () => assert.deepEqual(snapshotCoreCells(db), before);
 
-  const food = groupPage(db, "grp_food", 0)[0];
+  const food = groupPage(db, "grp_food", 0, "en")[0];
   moveItem(db, "grp_food", "sense", food.item_id, 0, 58);
   assertCore();
-  const [a, b] = groupPage(db, "grp_food", 0);
+  const [a, b] = groupPage(db, "grp_food", 0, "en");
   swapItems(db, "grp_food", a, b);
   assertCore();
   swapGroups(db, "grp_food", "grp_animals");

@@ -32,29 +32,29 @@ export function snapshotCoreCells(db) {
 }
 
 /**
- * The board surface: cells of one layout joined to their approved English
- * lemma label and Fitzgerald role. The renderer reads only this.
+ * The board surface: cells of one layout joined to their approved lemma
+ * label in `locale` and Fitzgerald role. The renderer reads only this.
  */
-export function loadBoard(db, layout) {
+export function loadBoard(db, layout, locale) {
   return db
     .prepare(
       `SELECT cc.slot_index, cc.sense_id, s.fitzgerald_role, l.text AS label
        FROM core_cell cc
        JOIN sense s ON s.id = cc.sense_id
        JOIN label l ON l.sense_id = cc.sense_id
-         AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+         AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
        WHERE cc.layout = ?
        ORDER BY cc.slot_index`,
     )
-    .all(layout);
+    .all(locale, layout);
 }
 
 /**
  * Group page open (phase 003): items at their fixed (page, slot) inside
  * one group, via the groups module. Read-only — writes nothing.
  */
-export function openGroup(db, groupId, page = 0) {
-  return groupPage(db, groupId, page);
+export function openGroup(db, groupId, page = 0, locale) {
+  return groupPage(db, groupId, page, locale);
 }
 
 /** Placeholder suggestion apply — slice 3 implements ranking. Never writes. */

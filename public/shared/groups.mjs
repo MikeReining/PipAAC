@@ -22,6 +22,14 @@ const LAST_INDEX_SLOT = 59;
 const all = (db, sql, params = []) => db.prepare(sql).all(...params);
 const one = (db, sql, params = []) => all(db, sql, params)[0];
 
+/** Locale is a required parameter everywhere it appears — a missed caller
+ *  fails loudly here instead of silently binding NULL on the wasm driver. */
+function requireLocale(locale) {
+  if (typeof locale !== "string" || locale.length === 0) {
+    throw new Error("locale is a required parameter");
+  }
+}
+
 function hasTable(db, name) {
   return all(
     db,
@@ -209,6 +217,7 @@ export function migrateBuiltinGroupNames(db, catalog) {
  * glyph-only and never falls back to another locale (schema §7.2).
  */
 export function groupDisplayName(db, row, locale) {
+  requireLocale(locale);
   if (row.name) return row.name;
   return (
     one(db, "SELECT text FROM group_label WHERE group_id = ? AND locale = ?", [row.id, locale])
@@ -229,7 +238,8 @@ export function groupIndex(db) {
  * Fitzgerald role. Entities carry photo_key; senses resolve their approved
  * English lemma.
  */
-export function groupPage(db, groupId, page = 0) {
+export function groupPage(db, groupId, page = 0, locale) {
+  requireLocale(locale);
   return all(
     db,
     `SELECT gc.item_kind, gc.item_id, gc.slot_index,
@@ -239,11 +249,11 @@ export function groupPage(db, groupId, page = 0) {
      FROM group_cell gc
      LEFT JOIN sense s ON gc.item_kind = 'sense' AND s.id = gc.item_id
      LEFT JOIN label l ON gc.item_kind = 'sense' AND l.sense_id = gc.item_id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
      LEFT JOIN personal_entity e ON gc.item_kind = 'entity' AND e.id = gc.item_id
      WHERE gc.group_id = ? AND gc.page = ?
      ORDER BY gc.slot_index`,
-    [groupId, page],
+    [locale, groupId, page],
   );
 }
 
@@ -258,7 +268,8 @@ export function pageCount(db, groupId) {
  * group (placing one there would silently no-op on the PK). Rank: exact
  * match, then default_for_text, then lexicon slot (sense id order).
  */
-export function catalogMatches(db, text, groupId) {
+export function catalogMatches(db, text, groupId, locale) {
+  requireLocale(locale);
   const prefix = normalizeV1(text);
   if (!prefix) return [];
   const like =
@@ -269,14 +280,14 @@ export function catalogMatches(db, text, groupId) {
             (l.normalized_text = ?) AS exact
      FROM label l JOIN sense s ON s.id = l.sense_id
      WHERE l.normalized_text LIKE ? ESCAPE '\\'
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
        AND NOT EXISTS (
          SELECT 1 FROM group_cell gc
          WHERE gc.group_id = ? AND gc.item_kind = 'sense' AND gc.item_id = s.id
        )
      ORDER BY exact DESC, l.default_for_text DESC, s.id ASC
      LIMIT 4`,
-    [prefix, like, groupId],
+    [prefix, like, locale, groupId],
   );
 }
 

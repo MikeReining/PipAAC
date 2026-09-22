@@ -138,16 +138,16 @@ test("group open and empty suggestion leave the coordinate table untouched", () 
   const db = openDb();
   const before = snapshotCoreCells(db);
 
-  openGroup(db, "grp_animals"); // read path — returns rows, writes nothing
+  openGroup(db, "grp_animals", 0, "en"); // read path — returns rows, writes nothing
   applySuggestion(db); // placeholder op — returns [], writes nothing
-  loadBoard(db, "grid60"); // the render path itself is read-only
+  loadBoard(db, "grid60", "en"); // the render path itself is read-only
 
   assert.deepEqual(snapshotCoreCells(db), before);
 });
 
 test("board read returns all 60 grid60 cells with label and color", () => {
   const db = openDb();
-  const board = loadBoard(db, "grid60");
+  const board = loadBoard(db, "grid60", "en");
   assert.equal(board.length, 60);
   for (const cell of board) {
     assert.ok(cell.label.length > 0);
@@ -160,7 +160,7 @@ test("board read returns all 60 grid60 cells with label and color", () => {
 
 test("grid60 lays out vertical syntactic sectors, left to right", () => {
   const db = openDb();
-  const board = loadBoard(db, "grid60");
+  const board = loadBoard(db, "grid60", "en");
   for (const [name, s] of Object.entries(SECTORS)) {
     const cells = s.cols.flatMap((col) =>
       [0, 1, 2, 3, 4, 5].map((row) => board[row * 10 + col].label),

@@ -45,7 +45,7 @@ test("sentence invites an entity: 'play with' offers Cooper", () => {
   });
   const before = snapshotCoreCells(db);
 
-  const candidates = stripCandidates(db, [S("play"), S("with")], NOW);
+  const candidates = stripCandidates(db, [S("play"), S("with")], NOW, "en");
   assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
   assert.ok(candidates.length <= STRIP_CAP);
   assert.deepEqual(snapshotCoreCells(db), before);
@@ -56,7 +56,7 @@ test("recent selection makes Cooper eligible even without a noun-inviting tail",
   const cooper = addPersonalEntity(db, { spokenName: "Cooper" });
   logSelection(db, "entity", cooper.id, NOW - 60_000);
 
-  const candidates = stripCandidates(db, [S("happy")], NOW); // adjective tail — nothing invited
+  const candidates = stripCandidates(db, [S("happy")], NOW, "en"); // adjective tail — nothing invited
   assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
 });
 
@@ -65,9 +65,9 @@ test("low-signal state renders no strip", () => {
   addPersonalEntity(db, { spokenName: "Cooper" });
 
   // empty sentence, never selected → nothing
-  assert.deepEqual(stripCandidates(db, [], NOW), []);
+  assert.deepEqual(stripCandidates(db, [], NOW, "en"), []);
   // adjective tail, never selected → nothing
-  assert.deepEqual(stripCandidates(db, [S("happy")], NOW), []);
+  assert.deepEqual(stripCandidates(db, [S("happy")], NOW, "en"), []);
 });
 
 test("cap and ordering: at most 4 tiles, invited+recent outranks stale", () => {
@@ -80,7 +80,7 @@ test("cap and ordering: at most 4 tiles, invited+recent outranks stale", () => {
   for (let i = 0; i < 5; i++) logSelection(db, "entity", cooper, NOW - 3 * 3600_000);
   logSelection(db, "entity", mom, NOW - 30_000);
 
-  const afterVerb = stripCandidates(db, [S("want")], NOW);
+  const afterVerb = stripCandidates(db, [S("want")], NOW, "en");
   assert.ok(afterVerb.length <= STRIP_CAP);
   assert.ok(afterVerb.some((c) => c.kind === "entity" && c.id === cooper));
   // all six are eligible by invitation; the cap keeps the strip at 4

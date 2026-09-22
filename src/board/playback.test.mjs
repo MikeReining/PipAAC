@@ -38,7 +38,7 @@ function resolveClipKey(db, senseId) {
 
 test("every grid60 cell resolves to a ready clip whose bytes ship in public/audio", () => {
   const db = openDb();
-  const board = loadBoard(db, "grid60");
+  const board = loadBoard(db, "grid60", "en");
   assert.equal(board.length, 60);
   for (const cell of board) {
     const key = resolveClipKey(db, cell.sense_id);
