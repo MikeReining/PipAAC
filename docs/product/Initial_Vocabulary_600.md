@@ -752,7 +752,7 @@ and grammar words).
 | 575 | **minute** | Noun | Yellow | Diagrammatic | CDI; ARASAAC | Small timer wedge sweeping sixty seconds |
 | 576 | **hour** | Noun | Yellow | Diagrammatic | CDI; ARASAAC | Full hour revolution highlighted on clock |
 
-### 3.14 Social Etiquette, Pragmatic Interjections & Urgent/Safety (27 words)
+### 3.14 Social Etiquette, Pragmatic Interjections & Urgent/Safety (30 words)
 *Seeded from MacArthur-Bates CDI & Light (1988, 1989) Pragmatic Functions. Art archetype: Stick Figure & Diagrammatic.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -784,6 +784,9 @@ and grammar words).
 | 676 | **love** | Verb | Green | Stick Figure | CDI; ARASAAC | Two stick figures embracing with heart floating between |
 | 677 | **together** | Adverb | Blue | Stick Figure | CDI; ARASAAC | Two stick figures standing side by side hands joined |
 | 678 | **ow** | Interjection | Red | Stick Figure | CDI; ARASAAC | Stick figure wincing and clutching stubbed toe |
+| 685 | **wait, I'm spelling** | Interjection | Pink | Stick Figure | Light (1989) Pragmatic Functions | Stick figure holding up palm while tapping letter keys |
+| 686 | **guess my word** | Interjection | Pink | Stick Figure | Light (1989) Pragmatic Functions | Stick figure tapping chin with a playful question-mark bubble |
+| 687 | **oops** | Interjection | Pink | Stick Figure | CDI; ARASAAC | Stick figure with hand over mouth and wide surprised eyes |
 
 ### 3.15 Function Words & Grammar (46 words)
 *Added 2026-09-22 amendment — AoA/Fry gap fill. The closed-class words that turn word strings into sentences: auxiliaries, determiners, conjunctions, object & possessive pronouns, indefinite pronouns, and degree adverbs. Art archetype: Diagrammatic.*

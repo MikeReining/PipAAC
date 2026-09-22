@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-22T16:45:55.830Z",
+  "generatedAt": "2026-09-22T21:57:39.417Z",
   "voice": "WWMMC6k9tdar0BthUenK",
   "entries": [
     {
@@ -738,6 +738,83 @@
         "source": "elevenlabs",
         "voice": "WWMMC6k9tdar0BthUenK",
         "spokenText": "bathroom urgent"
+      }
+    },
+    {
+      "slot": 663,
+      "spokenText": "poop",
+      "clip": {
+        "key": "audio/poop/8742c263dde1.mp3",
+        "sha256": "8742c263dde1636bbd0190fe2f90b8543cf3818a05b817fe2c443aaf8f1c8c64",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "poop"
+      }
+    },
+    {
+      "slot": 664,
+      "spokenText": "pee",
+      "clip": {
+        "key": "audio/pee/157eed9d0d1d.mp3",
+        "sha256": "157eed9d0d1d13d32a8cf1dd93f6695894790f02ff132576da59d1e9ad882547",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "pee"
+      }
+    },
+    {
+      "slot": 678,
+      "spokenText": "ow",
+      "clip": {
+        "key": "audio/ow/da0d4cde464d.mp3",
+        "sha256": "da0d4cde464dfb5e9e8711435660f00ad258a9c79b79f877d9959dbe88848bbd",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "ow"
+      }
+    },
+    {
+      "slot": 679,
+      "spokenText": "yours",
+      "clip": {
+        "key": "audio/yours/169cccf862ff.mp3",
+        "sha256": "169cccf862fffebb31fca292d642f576324170cc95810c88b4cd156eaa88968f",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "yours"
+      }
+    },
+    {
+      "slot": 685,
+      "spokenText": "wait, I'm spelling",
+      "clip": {
+        "key": "audio/wait_i_m_spelling/e7c052b27d09.mp3",
+        "sha256": "e7c052b27d09705f8a801799d2f07e45c93c4f91a0da89cbbf175de93689e3ff",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "wait, I'm spelling"
+      }
+    },
+    {
+      "slot": 686,
+      "spokenText": "guess my word",
+      "clip": {
+        "key": "audio/guess_my_word/9280a5d7599f.mp3",
+        "sha256": "9280a5d7599ff3a5126234c41b5053882e2ea2ff003f861188ef823b272c7e6e",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "guess my word"
+      }
+    },
+    {
+      "slot": 687,
+      "spokenText": "oops",
+      "clip": {
+        "key": "audio/oops/55d453f71860.mp3",
+        "sha256": "55d453f71860129c08014e774d656ea533612dd62f8d28e145b5e28cd15a00e4",
+        "source": "elevenlabs",
+        "voice": "WWMMC6k9tdar0BthUenK",
+        "spokenText": "oops"
       }
     }
   ]

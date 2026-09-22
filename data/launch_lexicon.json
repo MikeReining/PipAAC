@@ -6094,6 +6094,33 @@
       "fitzgeraldColor": "Green",
       "visualStyle": "Diagrammatic",
       "category": "Function Words & Grammar"
+    },
+    {
+      "slot": 685,
+      "tier": 2,
+      "spokenText": "wait, I'm spelling",
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "slot": 686,
+      "tier": 2,
+      "spokenText": "guess my word",
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "slot": 687,
+      "tier": 2,
+      "spokenText": "oops",
+      "partOfSpeech": "Interjection",
+      "fitzgeraldColor": "Pink",
+      "visualStyle": "Stick Figure",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     }
   ]
 }

@@ -507,15 +507,10 @@ window.addEventListener("resize", () => {
 });
 
 /** One key of the Pip-keys map. Char keys are white with a big cap;
- *  space, ⌫, and the dead key wear the utility colors. The partner row
- *  renders as disabled blanks until slice 4 lands. */
+ *  space, ⌫, and the dead key wear the utility colors. Partner cells are
+ *  built by partnerCell. */
 function kbCell(k) {
-  if (k.kind === "partner") {
-    const el = document.createElement("button");
-    el.className = "gcell empty";
-    el.disabled = true;
-    return el;
-  }
+  if (k.kind === "partner") return partnerCell(k.value);
   const el = document.createElement("button");
   const cap = document.createElement("span");
   cap.className = "kc";
@@ -540,6 +535,36 @@ function kbCell(k) {
     cap.textContent = "⌫";
   }
   el.addEventListener("click", () => kbPress(k.value));
+  return el;
+}
+
+/* Partner row (slice 4): the speller talks ABOUT the typing — yes/no and
+ * the spelling-negotiation phrases speak immediately and never touch the
+ * sentence or the buffer. A locale with no label for a partner sense
+ * renders the key disabled, never text from another language. */
+function partnerCell(senseId) {
+  const s = senseById(senseId);
+  const el = document.createElement("button");
+  if (!s) {
+    el.className = "gcell empty";
+    el.disabled = true;
+    return el;
+  }
+  el.className = `kb-key kb-partner r-${s.fitzgerald_role}`;
+  const cap = document.createElement("span");
+  cap.className = "kc";
+  cap.textContent = s.label;
+  el.appendChild(cap);
+  el.addEventListener("click", async () => {
+    el.classList.add("flash");
+    setTimeout(() => el.classList.remove("flash"), 350);
+    logSelection(db, "sense", s.id);
+    // Clip under the profile voice, else device TTS in the profile locale —
+    // partner keys never take the 400 ms silent slot.
+    const key = clipKeyFor(s.id);
+    if (key) await playClip(key);
+    else speak(s.label);
+  });
   return el;
 }
 

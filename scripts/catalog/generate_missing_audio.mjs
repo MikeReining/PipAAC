@@ -45,7 +45,20 @@ async function main() {
   if (!voiceId) throw new Error("ELEVENLABS_VOICE_ID is not set");
 
   const plan = JSON.parse(readFileSync(DEFAULT_AUDIO_IMPORT_PATH, "utf8"));
-  const misses = plan.entries.filter((e) => e.status === "miss");
+  // Gap-fill is idempotent: a slot already generated keeps its shipped
+  // clip — TTS output is not deterministic, so re-synthesizing a covered
+  // slot would churn the catalog with a new sha for no reason.
+  let done = new Set();
+  try {
+    done = new Set(
+      (JSON.parse(readFileSync(DEFAULT_GENERATED_AUDIO_PATH, "utf8")).entries ?? []).map(
+        (e) => e.slot,
+      ),
+    );
+  } catch {
+    // no generated_audio.json yet — every miss needs synthesis
+  }
+  const misses = plan.entries.filter((e) => e.status === "miss" && !done.has(e.slot));
   if (misses.length === 0) {
     console.log("generate_missing_audio: no misses");
   }

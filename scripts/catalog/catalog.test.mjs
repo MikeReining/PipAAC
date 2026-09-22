@@ -10,13 +10,14 @@ import {
   parseCoordinateMapMarkdown,
 } from "./build_catalog.mjs";
 import { clipPayloadFromWbb, summarizeAudioResolution } from "./wbb_audio.mjs";
+import { PARTNER_SENSES } from "../../public/shared/keymaps.mjs";
 import { localPathForAudioKey, r2GetArgs } from "./storage.mjs";
 import { repoRoot } from "./paths.mjs";
 
-test("parseLaunchLexiconMarkdown extracts 677 tier 1+2 words", () => {
+test("parseLaunchLexiconMarkdown extracts 680 tier 1+2 words", () => {
   const raw = readFileSync(join(repoRoot, "docs/product/Initial_Vocabulary_600.md"), "utf8");
   const parsed = parseLaunchLexiconMarkdown(raw);
-  assert.equal(parsed.entries.length, 677);
+  assert.equal(parsed.entries.length, 680);
   assert.equal(parsed.entries[0].spokenText, "I");
   assert.equal(parsed.entries[0].tier, 1);
   const tier1 = parsed.entries.filter((e) => e.tier === 1);
@@ -123,6 +124,33 @@ test("a digit alias resolving to zero or two senses fails the build", () => {
   // a non-Number homograph must not count
   const ok = buildDigitAliases(lexicon, { locales: { en: { "1": "one" } } });
   assert.equal(ok[0].sense_id, "sns_0001");
+});
+
+test("every PARTNER_SENSES id exists with an approved lemma per locale (004 slice 4)", () => {
+  const lexRaw = readFileSync(join(repoRoot, "docs/product/Initial_Vocabulary_600.md"), "utf8");
+  const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8");
+  const catalog = buildCatalog(
+    parseLaunchLexiconMarkdown(lexRaw),
+    parseCoordinateMapMarkdown(mapRaw),
+  );
+  const senseIds = new Set(catalog.senses.map((s) => s.id));
+  // When a second locale ships its labels, the same assertion runs for
+  // it — a market cannot launch with a silent partner key.
+  for (const locale of ["en"]) {
+    for (const id of PARTNER_SENSES) {
+      assert.ok(senseIds.has(id), `partner sense ${id} missing`);
+      assert.ok(
+        catalog.labels.some(
+          (l) =>
+            l.sense_id === id &&
+            l.locale === locale &&
+            l.kind === "lemma" &&
+            l.status === "approved",
+        ),
+        `partner sense ${id} has no approved ${locale} lemma`,
+      );
+    }
+  }
 });
 
 test("clipPayloadFromWbb maps manifest fields", () => {

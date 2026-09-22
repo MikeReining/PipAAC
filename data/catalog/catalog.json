@@ -4788,6 +4788,27 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar"
+    },
+    {
+      "id": "sns_0685",
+      "fitzgerald_role": "Pink",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "id": "sns_0686",
+      "fitzgerald_role": "Pink",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "id": "sns_0687",
+      "fitzgerald_role": "Pink",
+      "art_archetype": "Stick Figure",
+      "tier": "primary_fringe",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     }
   ],
   "utterances": [
@@ -9507,6 +9528,27 @@
       "locale": "en",
       "spoken_text": "did",
       "normalized_spoken_text": "did",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0685",
+      "locale": "en",
+      "spoken_text": "wait, I'm spelling",
+      "normalized_spoken_text": "wait, i'm spelling",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0686",
+      "locale": "en",
+      "spoken_text": "guess my word",
+      "normalized_spoken_text": "guess my word",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0687",
+      "locale": "en",
+      "spoken_text": "oops",
+      "normalized_spoken_text": "oops",
       "normalizer_version": "v1"
     }
   ],
@@ -18313,6 +18355,45 @@
       "status": "approved"
     },
     {
+      "id": "lbl_0685",
+      "sense_id": "sns_0685",
+      "utterance_id": "utt_0685",
+      "locale": "en",
+      "text": "wait, I'm spelling",
+      "normalized_text": "wait, i'm spelling",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Interjection",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0686",
+      "sense_id": "sns_0686",
+      "utterance_id": "utt_0686",
+      "locale": "en",
+      "text": "guess my word",
+      "normalized_text": "guess my word",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Interjection",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0687",
+      "sense_id": "sns_0687",
+      "utterance_id": "utt_0687",
+      "locale": "en",
+      "text": "oops",
+      "normalized_text": "oops",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Interjection",
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
       "id": "lbl_alias_en_1",
       "sense_id": "sns_0647",
       "utterance_id": "utt_0647",
@@ -24915,6 +24996,316 @@
       "status": "ready",
       "sha256": "9d03125f96094e28579bf5cf94eb717eded5130497d6f21ba1fe774fe9c1121a",
       "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0657",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0657",
+      "recorded_text": "breakfast",
+      "key": "audio/breakfast/251ddef4e275.mp3",
+      "status": "ready",
+      "sha256": "251ddef4e275f564ad079a4932f0675a741e9db206d095b888cc56629b9c290c",
+      "source": "phonicsstudio-recorded"
+    },
+    {
+      "id": "clp_0658",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0658",
+      "recorded_text": "lunch",
+      "key": "audio/lunch/88f72098ad16.mp3",
+      "status": "ready",
+      "sha256": "88f72098ad166548fa73fd07a47183ae7288fff4cf0bcf0309f926107e822045",
+      "source": "phonicsstudio-recorded"
+    },
+    {
+      "id": "clp_0659",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0659",
+      "recorded_text": "dinner",
+      "key": "audio/dinner/e8ae7b6418c5.mp3",
+      "status": "ready",
+      "sha256": "e8ae7b6418c54364c9f8784dce05db4bc9350733f06070730f512448a6d03ce0",
+      "source": "phonicsstudio-recorded"
+    },
+    {
+      "id": "clp_0660",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0660",
+      "recorded_text": "food",
+      "key": "audio/food/5ae23b768691.mp3",
+      "status": "ready",
+      "sha256": "5ae23b76869191109eeb95ecbdaacb0ac4141dc1c494187f0aa6c1f980499dc6",
+      "source": "phonicsstudio-recorded"
+    },
+    {
+      "id": "clp_0661",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0661",
+      "recorded_text": "ketchup",
+      "key": "audio/ketchup/94751e81d3b9.mp3",
+      "status": "ready",
+      "sha256": "94751e81d3b9dec9090b1e3670b6f79ea5f0917e55d54d90d691531ad16b884b",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0662",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0662",
+      "recorded_text": "fries",
+      "key": "audio/fries/140e1c543e94.mp3",
+      "status": "ready",
+      "sha256": "140e1c543e94452556c83adb1ac99f52c7b3cc30a980a0e5e73a9acc4c62285a",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0663",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0663",
+      "recorded_text": "poop",
+      "key": "audio/poop/8742c263dde1.mp3",
+      "status": "ready",
+      "sha256": "8742c263dde1636bbd0190fe2f90b8543cf3818a05b817fe2c443aaf8f1c8c64",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0664",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0664",
+      "recorded_text": "pee",
+      "key": "audio/pee/157eed9d0d1d.mp3",
+      "status": "ready",
+      "sha256": "157eed9d0d1d13d32a8cf1dd93f6695894790f02ff132576da59d1e9ad882547",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0665",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0665",
+      "recorded_text": "hit",
+      "key": "audio/hit/a545f14fd762.mp3",
+      "status": "ready",
+      "sha256": "a545f14fd7625a84336c71bc010af5c5d10d375463670c9e3dc62e200bb735be",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0666",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0666",
+      "recorded_text": "bite",
+      "key": "audio/bite/25b982f7e296.mp3",
+      "status": "ready",
+      "sha256": "25b982f7e296f2e8f5a2d73171a645424f7dbf02a03549c431eee865752adbbe",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0667",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0667",
+      "recorded_text": "break",
+      "key": "audio/break/b508335858df.mp3",
+      "status": "ready",
+      "sha256": "b508335858df08d58cae59b9216d28cc6ed830f1079cb193ef3331eeb4653d51",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0668",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0668",
+      "recorded_text": "scratch",
+      "key": "audio/scratch/ed09fc20b724.mp3",
+      "status": "ready",
+      "sha256": "ed09fc20b7246de788713678fadea1891d323de8a0f35736be6572b5b8c2df89",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0669",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0669",
+      "recorded_text": "close",
+      "key": "audio/close/da2e1b268602.mp3",
+      "status": "ready",
+      "sha256": "da2e1b26860252b22a580bfe5471c5cc34df80d5eccfb8036b80fd2f13056063",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0670",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0670",
+      "recorded_text": "shut",
+      "key": "audio/shut/c54d52f8500a.mp3",
+      "status": "ready",
+      "sha256": "c54d52f8500a618bb888157380888598d6e9c4055662f359ed219b6cbb999141",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0671",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0671",
+      "recorded_text": "tickle",
+      "key": "audio/tickle/00ca61d4e446.mp3",
+      "status": "ready",
+      "sha256": "00ca61d4e446a7adaa3385d07696a6e0c2491a2780693db83e49ef4a1d409f99",
+      "source": "phonicsstudio-recorded"
+    },
+    {
+      "id": "clp_0672",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0672",
+      "recorded_text": "boy",
+      "key": "audio/boy/3856874c93f3.mp3",
+      "status": "ready",
+      "sha256": "3856874c93f3d61e5bcd1696497c4dc0771d3600134bb83f6f9c8cc2fb1623f1",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0673",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0673",
+      "recorded_text": "girl",
+      "key": "audio/girl/3affaeaec7f3.mp3",
+      "status": "ready",
+      "sha256": "3affaeaec7f30db3b5371c2189dfaa342f03b371920146d636c3891d41bbba07",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0674",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0674",
+      "recorded_text": "man",
+      "key": "audio/man/08c4d7a040db.mp3",
+      "status": "ready",
+      "sha256": "08c4d7a040db6440d6bbcc4539e61e56137ba1d352ed013dbac7249a68071607",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0675",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0675",
+      "recorded_text": "woman",
+      "key": "audio/woman/81c5c09e58c3.mp3",
+      "status": "ready",
+      "sha256": "81c5c09e58c3d16dda907cddaf6a8976d2928d0d2879d275b3e6f438108feb29",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0676",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0676",
+      "recorded_text": "love",
+      "key": "audio/love/1ba7c12cdc65.mp3",
+      "status": "ready",
+      "sha256": "1ba7c12cdc65790b54cd9190585e7f6957a5405c78a1531b0ea9dc9e5f348018",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0677",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0677",
+      "recorded_text": "together",
+      "key": "audio/together/667d1a264385.mp3",
+      "status": "ready",
+      "sha256": "667d1a264385b0fed0f676e81d98b2ce2d16df2481600c529f6b4e801e9d1305",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0678",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0678",
+      "recorded_text": "ow",
+      "key": "audio/ow/da0d4cde464d.mp3",
+      "status": "ready",
+      "sha256": "da0d4cde464dfb5e9e8711435660f00ad258a9c79b79f877d9959dbe88848bbd",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0679",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0679",
+      "recorded_text": "yours",
+      "key": "audio/yours/169cccf862ff.mp3",
+      "status": "ready",
+      "sha256": "169cccf862fffebb31fca292d642f576324170cc95810c88b4cd156eaa88968f",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0680",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0680",
+      "recorded_text": "these",
+      "key": "audio/these/5acd034acbea.mp3",
+      "status": "ready",
+      "sha256": "5acd034acbead9878ed509f929311431d5f13f8dbcf637eac22922e2c87b7f05",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0681",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0681",
+      "recorded_text": "those",
+      "key": "audio/those/cc914a90af34.mp3",
+      "status": "ready",
+      "sha256": "cc914a90af34cbb165ddbaa59e6f43f415d9e92d959d69e05b1c7675cb9a31fa",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0682",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0682",
+      "recorded_text": "nothing",
+      "key": "audio/nothing/b43795177d48.mp3",
+      "status": "ready",
+      "sha256": "b43795177d4805280a8ad07bbc07130ee5e4387175d1108c567440bb7cb10eae",
+      "source": "archive-recorded"
+    },
+    {
+      "id": "clp_0683",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0683",
+      "recorded_text": "behind",
+      "key": "audio/behind/a46e30d78da5.mp3",
+      "status": "ready",
+      "sha256": "a46e30d78da5fe08d54b46fdceac9c6c8770b934c63c4aae15478f213083913c",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0684",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0684",
+      "recorded_text": "did",
+      "key": "audio/did/86e881aa67a1.mp3",
+      "status": "ready",
+      "sha256": "86e881aa67a14fbb9f964062425d648b9b515669cfa28baf280317328a345ad7",
+      "source": "bitsboard-recorded"
+    },
+    {
+      "id": "clp_0685",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0685",
+      "recorded_text": "wait, I'm spelling",
+      "key": "audio/wait_i_m_spelling/e7c052b27d09.mp3",
+      "status": "ready",
+      "sha256": "e7c052b27d09705f8a801799d2f07e45c93c4f91a0da89cbbf175de93689e3ff",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0686",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0686",
+      "recorded_text": "guess my word",
+      "key": "audio/guess_my_word/9280a5d7599f.mp3",
+      "status": "ready",
+      "sha256": "9280a5d7599ff3a5126234c41b5053882e2ea2ff003f861188ef823b272c7e6e",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0687",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0687",
+      "recorded_text": "oops",
+      "key": "audio/oops/55d453f71860.mp3",
+      "status": "ready",
+      "sha256": "55d453f71860129c08014e774d656ea533612dd62f8d28e145b5e28cd15a00e4",
+      "source": "elevenlabs"
     }
   ],
   "coreCells": [
@@ -29797,6 +30188,27 @@
       "item_id": "sns_0678",
       "page": 0,
       "slot_index": 33
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0685",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0686",
+      "page": 0,
+      "slot_index": 35
+    },
+    {
+      "group_id": "grp_social",
+      "item_kind": "sense",
+      "item_id": "sns_0687",
+      "page": 0,
+      "slot_index": 36
     },
     {
       "group_id": "grp_little_words",
