@@ -30,6 +30,15 @@ function hasTable(db, name) {
   ).length > 0;
 }
 
+/** Category name → built-in group id, from the seed. Split groups keep
+ *  the category on the larger half (Food, Actions), so e.g. 'Food &
+ *  Drink' resolves to grp_food. */
+function categoryGroupMap(catalog) {
+  return new Map(
+    (catalog.groups ?? []).filter((g) => g.category).map((g) => [g.category, g.id]),
+  );
+}
+
 function lowestFreeIndexSlot(db) {
   const used = new Set(
     all(db, "SELECT index_slot FROM board_group").map((r) => r.index_slot),
@@ -105,9 +114,7 @@ export function seedGroups(db, catalog) {
  */
 export function migrateLegacyGroups(db, catalog) {
   if (!hasTable(db, "zone_slot")) return;
-  const groupForCategory = new Map(
-    (catalog.groups ?? []).filter((g) => g.category).map((g) => [g.category, g.id]),
-  );
+  const groupForCategory = categoryGroupMap(catalog);
 
   txn(db, () => {
     // Built-in (and My Words) positions: the legacy zone row's slot wins.
@@ -356,6 +363,36 @@ export function deleteGroup(db, groupId) {
     ).n;
     if (left === 0) placeItem(db, "grp_my_words", "entity", id);
   }
+}
+
+/**
+ * Classifier placement (phase 003 slice 5): read the entity's latest
+ * ready entity_enrichment row; when its category_suggestion maps to a
+ * built-in group the entity is not already in, place a copy there.
+ * Additive only — never removes, never moves, never touches My Words or
+ * custom placements. abstained/superseded rows and unmappable categories
+ * do nothing. Returns the group id placed into, or null.
+ */
+export function placeFromEnrichment(db, entityId, catalog) {
+  const row = one(
+    db,
+    `SELECT category_suggestion FROM entity_enrichment
+     WHERE entity_id = ? AND status = 'ready'
+     ORDER BY rowid DESC`,
+    [entityId],
+  );
+  const gid = row?.category_suggestion
+    ? categoryGroupMap(catalog).get(row.category_suggestion)
+    : null;
+  if (!gid) return null;
+  const present = one(
+    db,
+    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = 'entity' AND item_id = ?",
+    [gid, entityId],
+  );
+  if (present) return null;
+  placeItem(db, gid, "entity", entityId);
+  return gid;
 }
 
 /** Move a group to a free index slot. */

@@ -18,6 +18,7 @@ import {
   catalogMatches,
   createGroup,
   deleteGroup,
+  placeFromEnrichment,
   groupIndex,
   groupPage,
   migrateLegacyGroups,
@@ -397,6 +398,47 @@ test("slice 4 Cooper proof: a personal entity lands in the group it was added fr
     1,
   );
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sense").all()[0].n, senseCount);
+  assert.deepEqual(snapshotCoreCells(db), before);
+});
+
+test("slice 5 classifier placement: ready suggestion adds a copy, never moves", () => {
+  const db = openDb();
+  const before = snapshotCoreCells(db);
+  db.prepare(
+    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_e', 'Rex', NULL, NULL, NULL)",
+  ).run();
+  const mwCell = placeItem(db, "grp_my_words", "entity", "ent_e");
+
+  // abstained → nothing
+  db.prepare(
+    "INSERT INTO entity_enrichment (id, entity_id, category_suggestion, model, prompt_version, status) VALUES ('enr_1', 'ent_e', 'Animals & Nature', 'm', 'p1', 'abstained')",
+  ).run();
+  assert.equal(placeFromEnrichment(db, "ent_e", catalog), null);
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE item_id = 'ent_e'").all()[0].n,
+    1,
+  );
+
+  // ready + suggestion → copy into grp_animals; My Words slot unchanged
+  db.prepare(
+    "INSERT INTO entity_enrichment (id, entity_id, category_suggestion, model, prompt_version, status) VALUES ('enr_2', 'ent_e', 'Animals & Nature', 'm', 'p1', 'ready')",
+  ).run();
+  assert.equal(placeFromEnrichment(db, "ent_e", catalog), "grp_animals");
+  const mwAfter = db
+    .prepare("SELECT page, slot_index FROM group_cell WHERE group_id = 'grp_my_words' AND item_id = 'ent_e'")
+    .all()[0];
+  assert.deepEqual({ page: mwAfter.page, slot_index: mwAfter.slot_index }, mwCell);
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = 'grp_animals' AND item_id = 'ent_e'").all()[0].n,
+    1,
+  );
+
+  // second call is a no-op
+  assert.equal(placeFromEnrichment(db, "ent_e", catalog), null);
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE item_id = 'ent_e'").all()[0].n,
+    2,
+  );
   assert.deepEqual(snapshotCoreCells(db), before);
 });
 
