@@ -24,18 +24,19 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const DEFAULT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/pip-v1");
 
 export function resolveApiKey() {
-  if (process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_API_KEY.trim()) {
-    return process.env.OPENROUTER_API_KEY.trim();
-  }
   const envPath = join(repoRoot, ".env");
   if (existsSync(envPath)) {
     const lines = readFileSync(envPath, "utf8").split("\n");
     for (const line of lines) {
       const match = line.match(/^\s*OPENROUTER_API_KEY\s*=\s*(.*?)\s*$/);
       if (match && match[1]) {
-        return match[1].replace(/^["']|["']$/g, "");
+        const val = match[1].replace(/^["']|["']$/g, "").trim();
+        if (val) return val;
       }
     }
+  }
+  if (process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_API_KEY.trim()) {
+    return process.env.OPENROUTER_API_KEY.trim();
   }
   return null;
 }

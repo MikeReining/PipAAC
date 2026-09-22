@@ -227,7 +227,29 @@ Do not include any text in the image.
 - **Abstract Concepts:** Appends a concise 5-to-10 word physical `sceneHint` rather than a full scene description.
 - **The Re-roll Law:** Never police minor defects (stray lines, angle quirks) by bloating the prompt with negative rules or micro-constraints. The 3 reference images carry the hand; seed re-rolling is the lever. Full case study: `Art_Generation_Lessons.md`.
 
+### 4.5 Pip the Bird — Canonical Mascot and System Poses
 
+**DECIDED 2026-09-22** (locked brand suite).
+Masters: `assets/brand/pip-sitting.png` (app icon mark / Pose 1) and the 6 system poses in `assets/brand/`.
+
+#### The Core Architectural Division of Labor
+- **The Stick Persona is Language:** Lives inside motor-grid tiles and on the sentence bar. Means words and actions (`you`, `run`, `help`). Speaks *for* the child.
+- **The Bird is the System:** Lives outside the grid. Never appears inside a tile or button. Appears in onboarding, empty prediction states, offline status, caregiver mode, and the app icon. Speaks *to* the child.
+- **Clinical Cognitive Anchor:** A child learns *"the bird talks to me, the figure talks for me."* This prevents confusion between app chrome / state indicators and AAC vocabulary targets.
+
+#### Visual Geometry and Palette
+- **Hand & Style:** Drawn by the same hand as the stick figure persona using the frozen style bundle (`assets/style-refs/pip-brand/`).
+- **Head & Body:** Clean circular head geometry echoing the stick figure's head; plump songbird silhouette with smooth curved wing and perked wedge tail.
+- **Color Palette:** Warm rich gold body (`#fdb826`), orange triangular beak cleanly fused with the head outline, solid black round dot eye matching the stick figure's eye weight, and black stick legs with orange three-toed feet. No green (avoids Duolingo / action-verb collision) and no cyan (avoids Twitter / descriptor collision).
+- **Zero Noise:** Pure white canvas, bold black monoline stroke, flat solid fills, zero shading, zero motion lines, zero text.
+
+#### The 6 System Poses (1024×1024 Master Suite)
+1. **Pose 1: Sitting / Primary Mark** (`assets/brand/pip-sitting.png`, alias `pip-01-sitting.png`): Facing forward / three-quarters, wing resting, feet planted, calm and steady. Used for the app icon, favicon, primary brand mark, and first launch.
+2. **Pose 2: Looking Up** (`assets/brand/pip-02-looking-up.png`): Seated/standing posture, head and body tilted back ~10°, eye directed upward toward the top of the frame. Curious and hopeful. Used for the empty prediction strip, empty sentence bar, and *"tap a word to start"*.
+3. **Pose 3: Resting** (`assets/brand/pip-03-resting.png`): Body settled lower, eye closed as a single clean sleeping line (`◡`), feet tucked underneath. Calm and peaceful. Used for offline mode (*"Pip works offline, nothing's wrong"*), idle state, and sleep mode.
+4. **Pose 4: Listening** (`assets/brand/pip-04-listening.png`): Facing three-quarters with head cocked ~15° to the side, one eye slightly higher than the other. Used for voice settings, voice preview, and caregiver modeling mode.
+5. **Pose 5: Wing Out / Welcome** (`assets/brand/pip-05-welcome.png`): Standing with one smooth curved wing opened out forward like an open arm in a warm welcoming gesture. Used for onboarding, the marketing hero, and *"welcome back"*.
+6. **Pose 6: Hopping In** (`assets/brand/pip-06-hopping.png`): Mid-hop with feet together lifted off the ground, small gap under the body, tail lifted, zero motion lines. Used for sync complete, *"new words added"*, and app update available.
 
 ---
 

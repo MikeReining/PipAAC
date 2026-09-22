@@ -95,3 +95,21 @@ The only architecture that scales:
 2. One frozen 3-image style bundle (`assets/style-refs/pip-v1/`).
 3. Clean, unpoliced 5-to-10 word descriptions for abstract words.
 4. Fast 3-roll generation passes where human/agent review selects the best seed.
+
+---
+
+## 6. Case Study: Pip the Bird Mascot & Brand Suite
+
+When designing the system mascot (Pip the Bird), the initial designer brief stuffed the prompt with negative constraints:
+> *"No feathers, no big eyes, no blush, no side-profile flying pose, no green, no blue, pure white body with black beak..."*
+
+### The Failure Mode
+The resulting image was an unmemorable, lifeless, albino "egg" that failed the squint test at 16px. Over-policing stripped out all character and warmth.
+
+### The Solution: Reference Anchoring + Warm Color + Minimal Positive Prompts
+1. **Style Bundle Reference:** Seeded `assets/style-refs/pip-brand/` with the stick persona (`assets/symbols/you.png`) and pencil to lock line weight and curve feel.
+2. **Warm Palette:** Shifted to a rich golden songbird body (`#fdb826`) with an orange triangular beak and orange three-toed feet, matching the warmth of the stick figure universe while avoiding Duolingo green and Twitter cyan.
+3. **Clean Positive Prompts:** Swapped paragraph-long negative briefs for short 8-to-12 word natural descriptions (e.g. *"A cheerful golden songbird named Pip mid-hop with feet together lifted off the ground, tail lifted up, round dot eye"*).
+4. **Seed Re-rolling:** In 2 to 3 rolls per pose, Muse delivered the full suite of 6 system poses with zero line artifacts and perfect stylistic coherence.
+5. **Locked Masters (1024×1024):** All 6 poses archived in `assets/brand/` (`pip-01-sitting.png` through `pip-06-hopping.png`).
+
