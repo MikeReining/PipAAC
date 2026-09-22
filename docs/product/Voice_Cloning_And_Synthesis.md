@@ -54,12 +54,9 @@ A person's voice is intimately tied to identity, comfort, and emotional connecti
 ## 3. Storage & Schema Integration
 
 In accordance with [`docs/product/Language_And_Voice_Schema.md:36-44`](file:///Users/mike/dev/PipAAC/docs/product/Language_And_Voice_Schema.md#L36-L44):
-* **One Voice per Profile:** A user profile selects one active `voice_id`.
-* **The `voice` Row:**
-  ```sql
-  INSERT INTO voice (voice_id, name, kind, locale, provider, provider_voice_id)
-  VALUES ('voi_mom_01', 'Mom (Cloned)', 'cloned', 'en-US', 'elevenlabs', '21m00Tcm4TlvDq8ikWAM');
-  ```
+* **One Voice per Profile:** A user profile selects one active voice (`learner_profile.preferred_voice_id`). A cloned voice is one more `voice` row, chosen in the same voice picker as the catalog voices (`docs/product/Word_Library.md` § 7; UI in `docs/phases/009_Word_Library_And_Customize.md` slice 5).
+* **The `voice` Row:** columns and rules are owned by `docs/product/Language_And_Voice_Schema.md` § 5.5. *Correction 2026-09-22:* an earlier example here used columns (`name`, `kind`, `provider`, `provider_voice_id`) that the schema does not have. A cloned voice plays from clips, so it is shaped like any clip-backed voice; any provider id it needs is an amendment to § 5.5 made when cloning is built, not a second definition here.
+* **Recording one word instead:** a caregiver recording of a single word or name is a `clip_override` (schema § 6.3), not a cloned voice. It wins in every voice for that word.
 * **The `clip` Rows:**
   Each utterance in `catalog.json` receives a corresponding binary audio clip stored in local OPFS storage (`/audio/{voice_id}/{utterance_id}.opus`), indexed in the `clip` table.
 
@@ -69,6 +66,6 @@ In accordance with [`docs/product/Language_And_Voice_Schema.md:36-44`](file:///U
 
 | Law | Rule |
 | --- | --- |
-| **Speaking is never gated** | If cloud voice generation is offline or pending, the device speaks immediately using built-in OS `speechSynthesis`. |
+| **Speaking is never gated** | While a cloned voice's clips are generating or downloading, the profile keeps its current voice; it switches when the clips are ready. *Correction 2026-09-22:* this replaces "fall back to OS `speechSynthesis`", which would mix two speakers inside one voice, banned by `docs/product/Language_And_Voice_Schema.md` § 5.5 and § 7. |
 | **One-time generation cost** | Batch-generating 677 short single-word utterances on modern neural engines costs pennies (~$0.30–$0.60 per voice library). It is packaged as an affordable one-time add-on or creator credit. |
 | **Privacy & Consent** | Audio samples uploaded for voice cloning require explicit adult consent in the Parent Corner and are never shared with third parties or used for public model training. |

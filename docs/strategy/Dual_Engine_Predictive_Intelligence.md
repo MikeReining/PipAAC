@@ -382,6 +382,12 @@ What is heard:
   They expire when the child speaks or clears the sentence, or after a
   short timeout. They are never written to the database; impressions keep
   only the 0/1 `echo` feature.
+- **Amended 2026-09-22** (founder: "single words only … local only, on
+  device only"). One exception: a single heard word that the child does
+  not have yet may be kept as a Library suggestion (word, count, day). The
+  sentence, the other words, the time and the speaker are not kept, and
+  suggestions never sync and never reach Jev. Filter and storage:
+  `docs/product/Word_Library.md` § 8.
 - Nothing heard means Jev works from the shortlist and the sentence alone.
 
 The Caregiver Co-Pilot (the partner speaks or types on their own phone,

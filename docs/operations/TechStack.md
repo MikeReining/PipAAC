@@ -9,6 +9,11 @@ stub until product routes land. Founder brief → live phase doc is next
 **PROPOSED.** PipAAC — see `docs/strategy/Vision.md`. No executing product phase
 yet; stack choices for media, curriculum, or APIs follow the founder brief.
 
+**DECIDED 2026-09-22** (not built). An iOS App Store app plus the web app in
+this repo, sharing one SQLite schema; the iOS build approach is open
+(`docs/product/Platforms_iOS_And_Web.md`). Sync relay on Cloudflare Workers,
+Durable Objects and R2 is PROPOSED (`docs/product/Sync_And_Web_Editing.md`).
+
 ## Current
 
 - Package manager: npm with `package-lock.json`

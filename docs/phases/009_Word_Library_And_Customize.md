@@ -1,0 +1,322 @@
+# Phase 009 — Word Library and customization
+
+**Status:** Ready to execute. Not started. Slice 1 fixes built code and can
+start any time.
+
+**DECIDED 2026-09-22** (founder: "if we nail customization and really make
+it dramatically better we can win a key area that's really hard and
+frustrating for users today"). Intake:
+`docs/founder/2026-09-22_Customization_Library_Sync.md`.
+
+| Topic | Owner |
+| --- | --- |
+| Library, word card, add paths, suggestions | `docs/product/Word_Library.md` |
+| Groups, Edit mode, pinned slots | `docs/product/Motor_Grid_And_Art.md` § Groups |
+| Entity record and filing | `docs/product/Personal_Entities.md` |
+| Tables, playback, overrides, voices | `docs/product/Language_And_Voice_Schema.md` (§ 6.3, § 7, § 14) |
+| Hide a word | `docs/product/Vocabulary_Masking_And_Safety.md` § 2 |
+
+Every slice keeps the standing customization bans: the core map snapshot
+is unchanged, and no save performs a network call
+(`docs/product/Personal_Entities.md` § 4).
+
+---
+
+## What exists (checked 2026-09-22)
+
+**BUILT:** groups (many-to-many), Edit mode (tap to lift, tap to move or
+swap; `+ Add`, `Remove`, `+ Group`, `Delete group`), the one-field add with
+catalog matches, entity save with photo, never-orphan to My Words
+(`public/shared/groups.mjs`; Edit mode in `public/board.js`).
+
+**Missing:** own-word matching (duplicates), any way to edit an entity after
+saving, any place to find a word except by opening groups, recordings, the
+voice picker, picture overrides, bulk and multi-photo add, suggestions, and
+hiding.
+
+## Vocabulary for code and docs
+
+| Use | Never use |
+| --- | --- |
+| Word Library, Library | word bank, vocabulary manager |
+| word card | properties, inspector, button editor |
+| Added / Suggested / All (Library tabs) | My Words (that is a group) |
+| Record my own, recording | voice memo, custom audio |
+| Hide | delete (for a catalog word) |
+
+---
+
+## Slice 1 — `+ Add` offers the family's own words first (defect fix)
+
+Goal: typing a name the family already has offers that record, and picking
+it places the same entity in this group.
+
+Truth owner: `docs/product/Word_Library.md` § 5.1.
+
+Lie-prone layer: a UI list that shows Cooper but saves through the New path.
+
+Files: `public/shared/groups.mjs` (a matcher over `personal_entity` next to
+`catalogMatches`, excluding entities already in the target group),
+`public/board.js` (`renderAddMatches`: entity rows first, with photo
+thumbnail and "in Animals" subtitle), `library_add.test.mjs` (new, in
+src/board).
+
+Works Test: save Cooper from Animals. Open `+ Add` in People, type "Coo".
+The first match is the Cooper entity. Pick it. `personal_entity` has 1
+row. Cooper has `group_cell` rows in Animals and People. Typing "Coo" in
+People again offers no Cooper (already there). Core snapshot unchanged.
+
+Done when: that passes and a person can put Cooper in two groups from the
+board.
+
+---
+
+## Slice 2 — The word card
+
+Goal: one screen to see and change a word: picture, name, sound, groups.
+
+Truth owner: `docs/product/Word_Library.md` § 4.
+
+**Founder call before building (layout):** in Edit mode, a lifted item's
+slot 1 reads **Edit ›** and opens the card. **Remove from this group**
+moves into the card. Today slot 1 reads `Remove` while an item is lifted
+(`docs/product/Motor_Grid_And_Art.md` § Groups). Recommendation: accept,
+because one pinned action keeps adult controls in one place.
+
+Scope: picture and name change for entities (rename supersedes override
+and enrichment; `docs/product/Language_And_Voice_Schema.md` § 6.2), ▶,
+group chips with × and **+ Add to group**, **Show on board**, **Remove**
+(retire with Undo). Sound recording is slice 4. Hide is slice 9.
+
+Lie-prone layer: a rename that updates the card label but leaves the old
+override playing. Assert on what playback resolves, not on the label.
+
+Files: `public/board.js`, `public/index.html`, `public/shared/groups.mjs`
+(reuse `placeItem`/`removeItem`), `word_card.test.mjs` (new, in src/board).
+
+Works Test: rename Cooper to "Coop" from the card. `spoken_name` is "Coop".
+The ready override and ready enrichment for Cooper are `superseded`. Both
+`group_cell` rows are unchanged. Add him to Home through the chip; remove
+him from Animals and People. He is in Home only. Remove Home. He is in My
+Words. Core snapshot unchanged.
+
+Done when: that passes and a person can rename, re-photo and re-group
+Cooper from one screen.
+
+---
+
+## Slice 3 — The Word Library
+
+Goal: Parent Corner → Words lists every word with search. **Added** (newest
+first), **Suggested** (empty until slice 10), **All**. Tapping a row opens
+the card.
+
+Truth owner: `docs/product/Word_Library.md` § 3.
+
+Scope: an Added query (entities, and senses placed in a custom group or
+My Words, plus words with an override), prefix search in the profile
+locale, the Show on board jump.
+
+Files: `public/shared/library.mjs` (new; read-only queries),
+`public/board.js`, `public/index.html`, `library.test.mjs` (new, in
+src/board).
+
+Works Test: with Cooper, Grandma (entity) and `trampoline` added to My
+Words, Added lists those three newest first. Search "gra" finds Grandma and
+`grapes`. Show on board opens Grandma's group with her cell marked. The
+queries run against a read-only connection, so the Library cannot write.
+
+Done when: that passes and a person can find any word they added without
+remembering its group.
+
+---
+
+## Slice 4 — Record my own
+
+Goal: from the card, record a word or name. The board plays that recording
+for that word in every voice, until **Use the voice again**.
+
+Truth owner: `docs/product/Language_And_Voice_Schema.md` § 6.3 and § 7
+(already decided; the table and triggers are **BUILT** in
+`src/board/schema.sql`).
+
+Scope: record, play back, save, re-record (the previous override becomes
+`superseded`; the bytes stay), revert. Audio stored like photos (OPFS in
+the browser). Any sound is allowed (a bark, a song): the adult is saying
+"this is what `dog` sounds like here".
+
+Lie-prone layer: a test that asserts the override row exists. Measure what
+the player is asked to play.
+
+Files: `public/board.js` (recorder UI), `public/db.js` (audio blob store),
+the playback resolver, `override.test.mjs` (new, in src/board).
+
+Works Test: with a stubbed audio player that records every key it is
+asked to play, tap `want` and get the voice clip key. Record an override
+for `want` (fixture audio). Tap `want`: the override key. Switch profile
+voice: still the override key. Revert: the new voice's clip key. Speak the
+sentence `I want juice`: three slots, the middle one the override.
+
+Done when: that passes and a person can record "Cooper" the family's way
+and hear it on the board.
+
+---
+
+## Slice 5 — Pick a voice
+
+Goal: Parent Corner → Voice lists catalog voices with a sample; choosing
+one sets `preferred_voice_id` and downloads its clips.
+
+**Founder call before building:** which voices ship (recommendation: the
+default, an adult woman, an adult man, a young girl, a young boy), and
+whether extra voices are free (recommendation: yes; they are one-time
+generation cost, `docs/product/Pricing_And_Packaging.md`).
+
+Content dependency: each voice needs one clip per catalog utterance,
+generated with ElevenLabs like the default voice
+(`docs/product/Language_And_Voice_Schema.md` § 9). Extended-library clips
+follow in 010.
+
+Lie-prone layer: a picker that changes the setting while playback still
+reads the old voice. Measure the played key.
+
+Works Test: switch to a second voice. Tapping `want` plays that voice's
+clip key. A word with no clip in that voice is silence, not the default
+voice (existing ban, schema § 11). While clips download, taps on
+downloaded words play and the rest are silent. Nothing blocks speaking.
+
+Done when: that passes and a person can hear the board in a young girl's
+voice.
+
+---
+
+## Slice 6 — Use my own picture for a catalog word
+
+Goal: from the card of a catalog word, choose a family photo (their cup)
+or another library picture. The board shows it everywhere that word
+appears.
+
+Truth owner: `docs/product/Language_And_Voice_Schema.md` § 14.1
+(`image_override`, **PROPOSED**, lands with this slice).
+
+Files: `src/board/schema.sql`, the cell renderer, `public/board.js`,
+`image_override.test.mjs` (new, in src/board).
+
+Works Test: set an override for `cup`. The core cell, every group page
+holding `cup`, and a strip tile for `cup` all render the override key. The
+core map is unchanged. **Use our picture** supersedes it and all three
+render the default image again.
+
+Done when: that passes and a person can put their child's own cup on the
+`cup` cell.
+
+---
+
+## Slice 7 — Bulk entry
+
+Goal: a paste box, one word or short phrase per row, resolved by the
+slice 1 matcher, previewed, then **Add all** into the current group (or My
+Words from the Library).
+
+Truth owner: `docs/product/Word_Library.md` § 5.4.
+
+Files: `public/shared/library.mjs` (a pure `resolveRows(text)` →
+own/library/new per row), `public/board.js`, `bulk_add.test.mjs` (new, in
+src/board).
+
+Works Test: paste `Cooper`, `apple`, `trampoline`, `Nana`, `apple`, and a
+blank line into Food. The preview shows Cooper (own word), apple (library),
+trampoline (library, or new with "needs a picture" when not drawn), Nana
+(new), and one `apple`. Add all: 1 new entity (Nana), no second Cooper, 4
+placements in Food, no blank row. Core snapshot unchanged.
+
+Done when: that passes and a person can add a list of 20 words in one
+paste.
+
+---
+
+## Slice 8 — Many photos at once
+
+Goal: pick several photos in one picker, get one draft row per photo, name
+them, save all into the current group.
+
+Truth owner: `docs/product/Word_Library.md` § 5.3.
+
+Files: `public/index.html` (`<input type=file multiple>`), `public/board.js`,
+`multi_photo.test.mjs` (new, in src/board).
+
+Works Test: offline, select 4 fixture photos in Family, name 3, leave 1
+blank. Save creates 3 entities with photos in Family. The blank row is
+not saved and is flagged. No network request is attempted.
+
+Done when: that passes and a person can add a family's worth of people in
+one pass.
+
+---
+
+## Slice 9 — Hide a word
+
+Goal: from the card of a catalog word, **Hide**. The cell renders as a
+blank ghost tile, cannot speak, and leaves the strip and keyboard
+completions. **Show** restores it.
+
+Truth owner: `docs/product/Vocabulary_Masking_And_Safety.md` § 2. The
+biometric gate (§ 3.1) and the trash (§ 3.2) are not this slice.
+
+Works Test: hide `stop`. Tapping its cell emits no audio and appends
+nothing to the sentence bar. The core map is byte-identical. `stop` is
+absent from strip candidates and keyboard completions. Show restores all
+three.
+
+Done when: that passes and a person can hide a word without moving any
+other cell.
+
+---
+
+## Slice 10 — Suggested words
+
+Starts after `docs/phases/008_Partner_Listening.md` slice 3.
+
+Goal: words heard while listening that the child does not have yet appear
+in Library → Suggested, one tap to add.
+
+Truth owner: `docs/product/Word_Library.md` § 8. Table:
+`docs/product/Language_And_Voice_Schema.md` § 14.3 (`heard_word`,
+**PROPOSED**, lands with this slice).
+
+Lie-prone layer: a filter that "keeps one word" while the sentence
+survives in a debug log or an impression's JSON. Measure the database
+file bytes.
+
+Files: `public/shared/listen.mjs` (the one call into the filter),
+`public/shared/suggest.mjs` (new; the filter and upsert),
+`src/board/schema.sql`, `public/board.js`, `suggest.test.mjs` (new, in
+src/board).
+
+Works Test: a stub engine hears "Are we going to the dentist today?"
+twice and "the dentist is nice" once. `heard_word` has one row: `dentist`,
+count 3. Read the raw database file bytes. They do not contain "going",
+"today", "nice" or the sentence. With `dentist` placed in a group, it
+leaves Suggested. Dismiss another word, hear it again, and it does not come
+back. With the suggestions toggle off, nothing is written. A captured Jev
+body contains no `heard_word` data.
+
+Done when: that passes and a person sees "dentist — heard 3×" and adds it
+in one tap.
+
+---
+
+## Order
+
+1 → 2 → 3 are the core fix and ship together as "find and edit any word".
+4, 6, 7, 8 and 9 are independent after 2. 5 waits on voice content. 10
+waits on 008 slice 3.
+
+## Out of scope
+
+Extended picture library (`docs/phases/010_Extended_Picture_Library.md`).
+Editing from a computer (`docs/phases/011_Sync_And_Web_Editing.md`). Save
+from the sentence and typed-word suggestions (rejected 2026-09-22). People
+names from the iOS Photos app (not available,
+`docs/product/Word_Library.md` § 5.3). Re-voicing recordings (PROPOSED,
+not scheduled). Biometric Parent Corner gate and the trash.

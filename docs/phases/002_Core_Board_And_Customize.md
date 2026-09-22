@@ -116,7 +116,7 @@ first-run experience; the gate was on illustrations, which labels don't
 need). The catalog in `docs/product/Initial_Vocabulary_600.md` remains the
 source for illustration work.
 
-**PROPOSED**, not this phase. A parent or teacher on their own phone, which will not share the child's Apple ID:
+**Superseded 2026-09-22** by `docs/product/Sync_And_Web_Editing.md` (execution `docs/phases/011_Sync_And_Web_Editing.md`), which keeps these principles and reverses the QR direction so a laptop can pair. The original sketch, not this phase. A parent or teacher on their own phone, which will not share the child's Apple ID:
 
 - The child's iPad shows a short-lived QR from the parent corner.
 - The adult scans it. The iPad asks for Allow. Until Allow, the scan does nothing.

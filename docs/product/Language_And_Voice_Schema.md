@@ -966,7 +966,7 @@ The catalog generator emits:
 - `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 83 for `grid90`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 677 senses — labels only, no art required. An empty groups surface was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
 - One default bundled voice, locale `en`, and one clip per utterance: WorkbookBench recordings where the catalog has them, ElevenLabs (`eleven_v3`, the WorkbookBench voice id and settings) for misses.
 - One profile pointing at that voice.
-- No second locale, no alias rows, no voice picker, no override recorder.
+- No second locale, no alias rows, no voice picker, no override recorder. (Amended 2026-09-22: the picker and recorder are scheduled in `docs/phases/009_Word_Library_And_Customize.md` slices 4–5; the tables above already hold them.)
 
 One device-local `device_tts` voice (`engine_id` for the platform speech
 synthesizer) may be created on-device so the board can speak during the
@@ -992,10 +992,10 @@ entity id. This proposal does not otherwise redesign prediction.
 
 ## 10. Out of scope
 
-- Building recordings, a voice picker, or a recorder.
+- Building recordings, a voice picker, or a recorder. **Amended 2026-09-22:** now scheduled in `docs/phases/009_Word_Library_And_Customize.md`; see § 14.
 - Conjugations and the morphological flow in `docs/strategy/Vision.md`. A later inflected form is another label and, when it sounds different, another utterance. **Amended 2026-09-22:** now scheduled; see § 13.5 item 2 and `docs/phases/005_Word_Forms.md`.
 - Phrase attributes, captions, and workbook-style paste.
-- Accounts, sync, and a second device.
+- Accounts, sync, and a second device. **Amended 2026-09-22:** still no accounts; sync of adult-authored tables is a decided direction with a proposed design in `docs/product/Sync_And_Web_Editing.md` (§ 14.6).
 - Timestamps and a `schema_version` table (`PRAGMA user_version` carries the version).
 - Semantic edge storage. Strip relevance is computed — sentence position and recency on-device, the classifier when online. `entity_enrichment` is a cached model judgment consumed as a hint, not an authored link table.
 - Rewriting the prediction math.
@@ -1183,3 +1183,88 @@ phase, built in English first: `docs/phases/005_Word_Forms.md`.
    the locale it was chosen in and plays in that locale. The two voices
    should be the **same speaker** (ElevenLabs multilingual voices allow
    this), which keeps the "one voice, one speaker" rule in § 2.
+
+---
+
+## 14. Customization amendments (2026-09-22)
+
+**PROPOSED.** Founder intake:
+`docs/founder/2026-09-22_Customization_Library_Sync.md`. Product owner:
+`docs/product/Word_Library.md`. Each table lands with the slice named
+below and becomes DECIDED then. Until then, the SQL is a sketch.
+
+Nothing here changes § 7 playback for the voice. The preferred voice
+(§ 6.1) and `clip_override` (§ 6.3) are already decided and built as
+tables. 009 builds their UI.
+
+### 14.1 Picture override (009 slice 6)
+
+A family picture (or another approved library picture) shown for one
+catalog sense everywhere that sense renders.
+
+```sql
+CREATE TABLE image_override (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'imo_*'),
+  sense_id TEXT NOT NULL REFERENCES sense(id),
+  photo_key TEXT,
+  image_id TEXT REFERENCES image(id),
+  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),
+  CHECK ((photo_key IS NULL) != (image_id IS NULL))
+);
+CREATE UNIQUE INDEX image_override_one_ready
+  ON image_override(sense_id) WHERE status = 'ready';
+```
+
+Render order: a ready override, else `sense.default_image_id`, else label
+and color. An `image_id` must belong to the same sense (same rule as
+`sense_default_image_same_sense`).
+
+### 14.2 Extended library tier (010 slice 3)
+
+`sense.tier` gains `secondary_fringe`. Such a sense has a category and an
+approved image. The seeding code never writes a `group_cell` for it, and
+the strip does not rank it until a `group_cell` exists
+(`docs/product/Word_Library.md` § 6).
+
+### 14.3 Heard words (009 slice 10)
+
+```sql
+CREATE TABLE heard_word (
+  normalized_text TEXT PRIMARY KEY CHECK (length(normalized_text) > 0),
+  sense_id TEXT REFERENCES sense(id),
+  heard_count INTEGER NOT NULL CHECK (heard_count > 0),
+  last_heard_day TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('suggested', 'dismissed', 'added'))
+);
+```
+
+One word per row: no neighbouring words, no time of day, no speaker. The
+day is a local calendar date, used only to drop stale rows. Device-only:
+never synced, never in a Jev request (`docs/product/Word_Library.md` § 8).
+The partner sentence is still never a column anywhere (§ 12 item 8).
+
+### 14.4 Hidden words (009 slice 9)
+
+```sql
+CREATE TABLE sense_mask (
+  sense_id TEXT PRIMARY KEY REFERENCES sense(id),
+  status TEXT NOT NULL CHECK (status IN ('hidden', 'shown'))
+);
+```
+
+A hidden sense keeps its `core_cell` and every `group_cell`; renderers draw
+a ghost tile (`docs/product/Vocabulary_Masking_And_Safety.md` § 2).
+
+### 14.5 Retired entities (009 slice 2)
+
+`personal_entity` gains `status TEXT NOT NULL DEFAULT 'active' CHECK
+(status IN ('active', 'retired'))`. Remove on the word card retires; the
+row, photo and recording stay (§ 1, "Retire, never delete"). A retired
+entity renders nowhere and is restorable.
+
+### 14.6 Sync op log (011 slice 1)
+
+A device-local `sync_op` table records every adult edit as an op (see
+`docs/product/Sync_And_Web_Editing.md` § 4). It is added by that slice. The
+tables that sync and never sync are listed in that doc's § 2.
+

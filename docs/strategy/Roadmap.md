@@ -31,6 +31,15 @@ Next slice: 1 — core board. See `docs/phases/README.md`.
 3. 008 — Partner listening: setting, Listen key, on-device speech, partner words for one turn (`docs/phases/008_Partner_Listening.md`).
 4. No phase yet: core-cell halos as a fading prompt and the SLP independence report (strategy doc § 7.4).
 
+## Customization track (decided 2026-09-22)
+
+**DECIDED 2026-09-22** (not built). Owners: `docs/product/Word_Library.md`, `docs/product/Sync_And_Web_Editing.md`, `docs/product/Platforms_iOS_And_Web.md`. Intake: `docs/founder/2026-09-22_Customization_Library_Sync.md`.
+
+1. 009 — Word Library and customization: own-word matching, the word card, the Library, Record my own, the voice picker, picture overrides, bulk paste, many photos, Hide, suggested words (`docs/phases/009_Word_Library_And_Customize.md`).
+2. 010 — Extended picture library: 1,000–2,000 drawn words and phrases, found on add (`docs/phases/010_Extended_Picture_Library.md`).
+3. 011 — Sync and web editing: edit on a computer, the iPad gets it; no accounts (`docs/phases/011_Sync_And_Web_Editing.md`).
+4. No phase yet: the iOS App Store app. The build approach is open (`docs/product/Platforms_iOS_And_Web.md` § 3).
+
 Phase numbers here follow `docs/phases/`; the "Later" list below predates them and reuses 003–005 for other work.
 
 ## Later — Phased sequence (proposed)
@@ -38,6 +47,7 @@ Phase numbers here follow `docs/phases/`; the "Later" list below predates them a
 **PROPOSED.** Detailed sequencing following completion of Phase 002:
 
 ### Phase 003 — Multi-Device Pairing, Cloudflare Backup & Desktop Web Remote Edit
+**Superseded 2026-09-22** by phase 011 above (`docs/product/Sync_And_Web_Editing.md`).
 - Linking a second device (parent/educator phone or Mac/PC browser) via short-lived QR.
 - Cloudflare Workers carrying encrypted ciphertext (zero-PII, zero-knowledge edge sync).
 - Immediate restoration on broken hardware (the "shattered iPad" solution).

@@ -28,6 +28,9 @@ Executing phases only. Each row names the **next** slice.
 | [006 — Prediction Engine](006_Prediction_Engine.md) | Slice 1 — local time and sentences (a fix to built code; land before 004 slice 7) |
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
 | [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
+| [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 1 — `+ Add` offers the family's own words first (fixes duplicate entities in built code) |
+| [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 0 — founder call on size, then slice 1 — the word list |
+| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Slice 0 — founder rulings (blocked; privacy and credentials) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

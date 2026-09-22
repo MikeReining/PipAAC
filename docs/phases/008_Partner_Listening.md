@@ -119,6 +119,10 @@ feature), `public/shared/jev.mjs` (`partner_said` field),
 4. Partner words expire when the child speaks or clears the sentence, or
    after a timeout (starting value 60 s, tuned by use).
 5. Never written to SQLite, OPFS, or any log; impressions keep only `echo`.
+   **Amended 2026-09-22:** the one exception is the single-word
+   suggestion filter (`docs/product/Word_Library.md` § 8), built in
+   `docs/phases/009_Word_Library_And_Customize.md` slice 10. This slice
+   leaves one call point for it and writes nothing itself.
 
 Lie-prone layer: text that is "not stored" but lands in an impression's
 JSON or a console log that is persisted.
@@ -156,4 +160,5 @@ Filled in by slice 2.
 ## Out of scope
 
 Caregiver Co-Pilot (partner on their own phone). Speaker identification.
-Always-on listening without a key. Partner words in any history.
+Always-on listening without a key. Partner words in any history (single
+suggested words are not history; see slice 3 rule 5).

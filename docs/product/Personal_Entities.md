@@ -25,9 +25,10 @@ parent corner on that device. A code chosen on first use stays on the device
 and gates the corner. There is no account, and the add works with the network
 off.
 
-A second device, a QR introduction, and Cloudflare sync are **PROPOSED**. They
-are out of the first build. Direction: `docs/phases/002_Core_Board_And_Customize.md`
-§ Out of scope.
+A second device, a QR introduction, and Cloudflare sync are out of the first
+build. **Amended 2026-09-22:** editing from a computer or a parent's phone is
+now a decided direction with a proposed design:
+`docs/product/Sync_And_Web_Editing.md`.
 
 ---
 
@@ -64,14 +65,24 @@ category-and-My-Words filing written earlier the same day). **BUILT**
 - **Parent Corner "Add to My Words"** is the one add that starts outside a
   group. It files into My Words, and the button says so. Nothing is filed
   silently.
-- **One field, catalog first.** The add sheet is one text field. As the
-  adult types, matching catalog words are offered; picking one adds the
-  real word (color, voice) to the group and creates no entity. Only
+- **One field, own words first.** The add sheet is one text field. As the
+  adult types, the family's own entities are offered first (picking one
+  places the same record here), then catalog words (picking one adds the
+  real word, with color, voice and picture, and creates no entity). Only
   "New: '…'" creates a personal entity: name, optional photo, optional
-  hint.
+  hint. **Amended 2026-09-22:** own-word matching is decided, not built.
+  Today the sheet matches catalog words only, so re-typing an entity's
+  name creates a duplicate. Fix and the full order:
+  `docs/product/Word_Library.md` § 5.1.
 - **Many groups, never none.** An entity can sit in several groups. Removing
   it from its last group returns it to My Words. Deleting a custom group
   moves its only-there entities to My Words.
+- **Find and change it later: the word card.** **DECIDED 2026-09-22**
+  (not built). Every entity is listed in the Word Library, and its card
+  shows its groups as chips, renames it, changes its photo, and records how
+  its name sounds. The card may list groups because the adult is
+  deliberately adding the word somewhere else, not filing a new add:
+  `docs/product/Word_Library.md` § 3–4.
 - **Classification only adds.** When enrichment returns a
   `category_suggestion`, the entity is *also* placed in the matching
   built-in group (founder ruling 2026-09-22: "proceed" on the groups

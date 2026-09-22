@@ -65,8 +65,11 @@ When a grid engine exists, a test must show that a suggestion model cannot reord
 earlier the same day). **BUILT** (fb5a8d7…0555aa9).
 
 The strip is the primary path to fringe words. Groups are the guaranteed
-path: **every catalog word is reachable in at least one group**, one level
-below the board.
+path: **every seeded catalog word is reachable in at least one group**, one
+level below the board. **Amended 2026-09-22:** the extended picture library
+(tier `secondary_fringe`) is found through `+ Add` and the Word Library,
+and is on no page until the family adds it (`docs/product/Word_Library.md`
+§ 6).
 
 - **One concept, one name: Group.** Built-in groups ship with the app
   (Food, Drinks, People, Animals…), **My Words** is the family's default
@@ -102,9 +105,16 @@ below the board.
   on the index and on every page: tap to lift, then tap an empty slot to
   move or an occupied slot to swap. The corner button reads `✓ Done` while
   editing. Built-in groups can be moved but not deleted or renamed.
+  **PROPOSED 2026-09-22** (founder call in
+  `docs/phases/009_Word_Library_And_Customize.md` slice 2): while an item
+  is lifted, slot 1 reads `Edit ›` and opens the word card, and Remove
+  moves into the card.
 - **Add where you are.** `+ Add` inside a group opens one field. Typing
-  offers catalog matches (adding the real word with its color and voice),
-  or "New: '…'" to create a personal entity with an optional photo. The
+  offers the family's own words first (placing the same record), then
+  catalog matches (adding the real word with its color, voice and
+  picture), or "New: '…'" to create a personal entity with an optional
+  photo. Own-word matching: **DECIDED 2026-09-22**, not built
+  (`docs/product/Word_Library.md` § 5.1). The
   place is the picker; there is no folder picker. Filing rules for
   entities: `docs/product/Personal_Entities.md` § Filing.
 - **Show me where.** When a non-core word arrives through the strip or

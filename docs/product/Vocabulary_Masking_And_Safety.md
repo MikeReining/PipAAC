@@ -43,6 +43,7 @@ Pip AAC rejects this paternalism:
 ### 3.1 Gating: Native Biometrics (WebAuthn) + PIN
 To prevent communicators (who frequently stim or rapidly tap the screen) from accidentally entering administrative settings:
 1. **Native Biometrics:** Uses the browser's standard WebAuthn API (`navigator.credentials.get()`) to offer instantaneous **Face ID / Touch ID** verification on supported devices (iPad, iPhone, Mac, Android, Windows Hello).
+   On the iOS app this is the platform's own Face ID / Touch ID (`docs/product/Platforms_iOS_And_Web.md` § 2); WebAuthn is the web path.
 2. **Fallback PIN:** A user-selected 4-digit PIN stored securely in the local SQLite database.
 3. **Zero Visual Clutter on Board:** The Parent Corner trigger is a discreet, subtle gear icon anchored in the top corner requiring a deliberate 2-second long-press before challenging for biometrics/PIN.
 

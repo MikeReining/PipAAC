@@ -79,6 +79,9 @@ PipAAC/
 - `docs/product/Motor_Grid_And_Art.md` — clean-room motor grid, Fitzgerald color, stick figure, object art, predictive-strip layout.
 - `docs/product/Core_Coordinate_Map.md` — slot assignments per named layout (`grid60`, `grid90`).
 - `docs/product/Personal_Entities.md` — personal entity records and the on-device add.
+- `docs/product/Word_Library.md` — Word Library, word card, add paths, voices and recordings, suggested words.
+- `docs/product/Platforms_iOS_And_Web.md` — the iOS app and the web app.
+- `docs/product/Sync_And_Web_Editing.md` — sync without accounts, web editing (design proposed).
 - `docs/product/Language_And_Voice_Schema.md` — catalog/device schema, playback rules.
 - `scripts/test.sh` — protected test runner.
 - `scripts/check.mjs` / `check_fast.mjs` — closeout and iteration gates.
