@@ -50,7 +50,7 @@ test("every grid60 cell resolves to a ready clip whose bytes ship in public/audi
 test("every imported sense resolves to a ready clip on disk", () => {
   const db = openDb();
   const senses = db.prepare("SELECT id FROM sense").all();
-  assert.equal(senses.length, 677);
+  assert.equal(senses.length, 680);
   const clipless = [];
   for (const s of senses) {
     const key = resolveClipKey(db, s.id);
