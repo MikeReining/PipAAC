@@ -1,6 +1,6 @@
 /**
  * Board runtime: renders grid60 from the on-device SQLite, sentence bar,
- * zones, and the name+photo add flow. Catalog senses speak via bundled
+ * groups, and the name+photo add flow. Catalog senses speak via bundled
  * clips (schema §7); personal entities use device TTS.
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
@@ -23,15 +23,15 @@ const CATEGORIES = [
 
 const { db } = await bootDb();
 const sentence = []; // [{kind, id, text}]
-let zoneContext = null; // {category} | {group} | null(My Words) — where the add form files
-let view = "board";    // 'board' | 'zoneIndex' | 'zone' — zones are a board mode, not a modal
-let zoneKey = null;    // zone_key of the open zone page
-let arranging = false; // caregiver arrange mode on the zone index
-let lifted = null;     // zone_key picked up in arrange mode
+let addTarget = null;  // {category} | {group} | null(My Words) — where the add form files
+let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
+let groupKey = null;   // key of the open group page (category name or grp_ id)
+let arranging = false; // caregiver arrange mode on the group index
+let lifted = null;     // group key picked up in arrange mode
 
-// Short display names + glyphs for zone cells — presentational only; the
-// durable zone key stays the full catalog category name.
-const ZONE_SHORT = {
+// Short display names + glyphs for group cells — presentational only; the
+// durable group key stays the full catalog category name.
+const GROUP_SHORT = {
   "my_words": "My Words",
   "Food & Drink": "Food",
   "Body, Health & Hygiene": "Body",
@@ -50,7 +50,7 @@ const ZONE_SHORT = {
   "Function Words & Grammar": "Grammar",
   "Numbers & Counting": "Numbers",
 };
-const ZONE_GLYPH = {
+const GROUP_GLYPH = {
   "my_words": "⭐",
   "Food & Drink": "🍎",
   "Body, Health & Hygiene": "🧍",
@@ -156,7 +156,7 @@ async function idleStarters() {
       onTap: () => tap(hello.label, "sense", hello.id) });
   }
   cards.push({ label: "Food", glyph: "🥞", role: "Pink",
-    onTap: () => openZone("Food & Drink") });
+    onTap: () => openGroup("Food & Drink") });
   const top = ALL(
     db,
     `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
@@ -311,11 +311,11 @@ document.addEventListener("keydown", (e) => {
     if (arranging) {
       arranging = false;
       lifted = null;
-      renderZoneIndex();
+      renderGroupIndex();
       return;
     }
-    if (view === "zone") return openZoneIndex();
-    if (view === "zoneIndex") return setView("board");
+    if (view === "group") return openGroupIndex();
+    if (view === "groupIndex") return setView("board");
     if (kbOpen) closeKb();
     return;
   }
@@ -334,20 +334,16 @@ document.addEventListener("keydown", (e) => {
   }
 });
 $("corner").addEventListener("click", () => open("menu"));
-$("browse-zones").addEventListener("click", () => {
+$("edit-groups").addEventListener("click", () => {
   close("menu");
-  openZoneIndex();
-});
-$("arrange-zones").addEventListener("click", () => {
-  close("menu");
-  openZoneIndex();
+  openGroupIndex();
   arranging = true;
   lifted = null;
-  renderZoneIndex();
+  renderGroupIndex();
 });
 $("add-mywords").addEventListener("click", () => {
   close("menu");
-  zoneContext = null;
+  addTarget = null;
   open("addform");
 });
 
@@ -356,7 +352,7 @@ $("anchor-kb").addEventListener("click", () => {
   setView("board");
   openKb();
 });
-$("anchor-groups").addEventListener("click", openZoneIndex);
+$("anchor-groups").addEventListener("click", openGroupIndex);
 
 /* --- keyboard: a board mode, not a modal. Letters replace the grid in
    place (same 10×6 geometry). Typing feeds prefix completions into the
@@ -365,14 +361,15 @@ let kbOpen = false;
 let kbText = "";
 let kbBuilt = false;
 
-/** Grid-area view swap: board | zoneIndex | zone render into #zonegrid,
- *  keyboard into #kb — same physical space, strip and bar never move. */
+/** Grid-area view swap: board | groupIndex | group render into
+ *  #groupgrid, keyboard into #kb — same physical space, strip and bar
+ *  never move. */
 function setView(v) {
   view = v;
   if (v !== "board" && kbOpen) closeKb();
-  document.body.classList.toggle("zones", v !== "board");
-  if (v === "zoneIndex") renderZoneIndex();
-  else if (v === "zone") renderZonePage();
+  document.body.classList.toggle("groups", v !== "board");
+  if (v === "groupIndex") renderGroupIndex();
+  else if (v === "group") renderGroupPage();
 }
 
 function openKb() {
@@ -479,49 +476,51 @@ function kbCompletions() {
     .slice(0, 4);
 }
 
-/* --- zones: an in-place board mode, not a modal. The zone index and each
-   zone page render into #zonegrid — the same physical space and cell size
-   as the core grid. Slot 0 is always "back"; slot 1 is the authoring
-   action. Zone positions persist in zone_slot — navigation gets the same
-   motor-memory law as core_cell: slots only move in caregiver arrange
-   mode (tap to lift, tap a slot to place; occupied slot swaps). --- */
+/* --- groups: an in-place board mode, not a modal. The group index and
+   each group page render into #groupgrid — the same physical space and
+   cell size as the core grid. Slot 0 is always "back"; slot 1 is the
+   authoring action, rendered only in arrange mode so the child never sees
+   adult controls. Group positions persist in zone_slot — navigation gets
+   the same motor-memory law as core_cell: slots only move in caregiver
+   arrange mode (tap to lift, tap a slot to place; occupied slot swaps).
+   --- */
 
 function navCell(label, onTap) {
   const el = document.createElement("button");
-  el.className = "zcell nav";
+  el.className = "gcell nav";
   el.textContent = label;
   el.addEventListener("click", onTap);
   return el;
 }
 
-function zoneCell(key, slot) {
+function groupCell(key, slot) {
   const group = key.startsWith("grp_")
     ? ALL(db, "SELECT * FROM custom_group WHERE id = ?", [key])[0]
     : null;
-  const label = group ? group.name : ZONE_SHORT[key] ?? key;
-  const glyph = group ? "🗂️" : ZONE_GLYPH[key] ?? "📁";
+  const label = group ? group.name : GROUP_SHORT[key] ?? key;
+  const glyph = group ? "🗂️" : GROUP_GLYPH[key] ?? "📁";
   const el = document.createElement("button");
-  el.className = "zcell";
+  el.className = "gcell";
   el.dataset.slot = slot;
-  el.dataset.zone = key;
+  el.dataset.group = key;
   const g = document.createElement("span");
   g.className = "glyph";
   g.textContent = glyph;
   const lb = document.createElement("span");
-  lb.className = "zlabel";
+  lb.className = "glabel";
   lb.textContent = label;
   el.appendChild(g);
   el.appendChild(lb);
   el.addEventListener("click", () => {
-    if (!arranging) return openZone(key);
+    if (!arranging) return openGroup(key);
     if (!lifted) {
       lifted = key;
-      renderZoneIndex();
+      renderGroupIndex();
       return;
     }
     if (lifted === key) {
       lifted = null;
-      renderZoneIndex();
+      renderGroupIndex();
       return;
     }
     // occupied slot: swap coordinates
@@ -529,13 +528,23 @@ function zoneCell(key, slot) {
     RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [slot, lifted]);
     RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [other.slot_index, key]);
     lifted = null;
-    renderZoneIndex();
+    renderGroupIndex();
   });
   return el;
 }
 
-function renderZoneIndex() {
-  const zg = $("zonegrid");
+/** Slot 1 is reserved in both modes: the Edit-mode action while
+ *  arranging, a disabled blank otherwise — items never shift. */
+function editSlotCell(label, onTap) {
+  if (label && onTap) return navCell(label, onTap);
+  const blank = document.createElement("button");
+  blank.className = "gcell empty";
+  blank.disabled = true;
+  return blank;
+}
+
+function renderGroupIndex() {
+  const zg = $("groupgrid");
   zg.innerHTML = "";
   const placed = new Map(
     ALL(db, "SELECT zone_key, slot_index FROM zone_slot").map((r) => [r.slot_index, r.zone_key]),
@@ -544,31 +553,31 @@ function renderZoneIndex() {
     if (slot === 0) {
       zg.appendChild(
         arranging
-          ? navCell("Done ✓", () => { arranging = false; lifted = null; renderZoneIndex(); })
+          ? navCell("Done ✓", () => { arranging = false; lifted = null; renderGroupIndex(); })
           : navCell("← Board", () => setView("board")),
       );
       continue;
     }
     if (slot === 1) {
-      zg.appendChild(navCell("+ Group", () => open("groupform")));
+      zg.appendChild(editSlotCell(arranging && "+ Group", () => open("groupform")));
       continue;
     }
     const key = placed.get(slot);
     if (key) {
-      const el = zoneCell(key, slot);
+      const el = groupCell(key, slot);
       if (arranging) el.classList.add(key === lifted ? "lifted" : "arrange");
       zg.appendChild(el);
       continue;
     }
     const empty = document.createElement("button");
-    empty.className = "zcell empty";
+    empty.className = "gcell empty";
     if (arranging && slot >= 10) {
       empty.classList.add("arrange");
       empty.addEventListener("click", () => {
         if (!lifted) return;
         RUN(db, "UPDATE zone_slot SET slot_index = ? WHERE zone_key = ?", [slot, lifted]);
         lifted = null;
-        renderZoneIndex();
+        renderGroupIndex();
       });
     } else {
       empty.disabled = true;
@@ -577,15 +586,15 @@ function renderZoneIndex() {
   }
 }
 
-function openZoneIndex() {
+function openGroupIndex() {
   arranging = false;
   lifted = null;
-  setView("zoneIndex");
+  setView("groupIndex");
 }
 
-async function openZone(key) {
-  zoneKey = key;
-  setView("zone");
+async function openGroup(key) {
+  groupKey = key;
+  setView("group");
 }
 
 function senseCell(w) {
@@ -612,12 +621,13 @@ async function entityCell(e) {
   return el;
 }
 
-/** Zone page: slot 0 = back to index, slot 1 = add here, items from slot 2.
- *  Word taps speak and stay in the zone — leaving is one learned gesture. */
-async function renderZonePage() {
-  const zg = $("zonegrid");
+/** Group page: slot 0 = back to index, slot 1 = the Edit-mode add action,
+ *  items from slot 2. Word taps speak and stay in the group — leaving is
+ *  one learned gesture. */
+async function renderGroupPage() {
+  const zg = $("groupgrid");
   zg.innerHTML = "";
-  const key = zoneKey;
+  const key = groupKey;
   const group = key?.startsWith("grp_") ? key : null;
   const category = group || key === "my_words" ? null : key;
 
@@ -648,16 +658,16 @@ async function renderZonePage() {
       )) items.push({ kind: "sense", row: r });
     }
   }
-  if (items.length > 58) console.warn(`zone ${key} has ${items.length} items; 58 fit — paging is unbuilt`);
+  if (items.length > 58) console.warn(`group ${key} has ${items.length} items; 58 fit — paging is unbuilt`);
 
   for (let slot = 0; slot < 60; slot++) {
     if (slot === 0) {
-      zg.appendChild(navCell("← Zones", openZoneIndex));
+      zg.appendChild(navCell("← Groups", openGroupIndex));
       continue;
     }
     if (slot === 1) {
-      zg.appendChild(navCell("+ Add", () => {
-        zoneContext = group ? { group } : { category };
+      zg.appendChild(editSlotCell(arranging && "+ Add", () => {
+        addTarget = group ? { group } : { category };
         open("addform");
       }));
       continue;
@@ -665,7 +675,7 @@ async function renderZonePage() {
     const item = items[slot - 2];
     if (!item) {
       const empty = document.createElement("div");
-      empty.className = "zcell empty";
+      empty.className = "gcell empty";
       zg.appendChild(empty);
       continue;
     }
@@ -673,7 +683,7 @@ async function renderZonePage() {
   }
 }
 
-/* --- custom groups: + Group on the zone index --- */
+/* --- custom groups: + Group on the group index --- */
 $("group-save").addEventListener("click", async () => {
   const name = $("group-name").value.trim();
   if (!name) return;
@@ -688,10 +698,10 @@ $("group-save").addEventListener("click", async () => {
   $("group-name").value = "";
   $("group-photo").value = "";
   close("groupform");
-  renderZoneIndex();
+  renderGroupIndex();
 });
 
-/* --- add flow: name, photo, save. Files into the open zone: a catalog
+/* --- add flow: name, photo, save. Files into the open group: a catalog
    category, a custom group, or My Words (null). --- */
 $("add-save").addEventListener("click", async () => {
   const name = $("add-name").value.trim();
@@ -700,23 +710,23 @@ $("add-save").addEventListener("click", async () => {
   const file = $("add-photo").files[0];
   const photoKey = file ? await savePhoto(id, file) : null;
   const hint = $("add-hint").value.trim() || null;
-  const category = zoneContext?.category ?? null;
+  const category = addTarget?.category ?? null;
   RUN(
     db,
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES (?, ?, ?, ?, ?)",
     [id, name, photoKey, category, hint],
   );
-  if (zoneContext?.group) {
-    const n = ALL(db, "SELECT COUNT(*) AS n FROM group_item WHERE group_id = ?", [zoneContext.group])[0].n;
+  if (addTarget?.group) {
+    const n = ALL(db, "SELECT COUNT(*) AS n FROM group_item WHERE group_id = ?", [addTarget.group])[0].n;
     RUN(db, "INSERT INTO group_item (group_id, entity_id, slot_index) VALUES (?, ?, ?)",
-      [zoneContext.group, id, n]);
+      [addTarget.group, id, n]);
   }
   $("add-name").value = "";
   $("add-photo").value = "";
   $("add-hint").value = "";
   close("addform");
-  if (view === "zone") await renderZonePage();
-  else if (view === "zoneIndex") renderZoneIndex();
+  if (view === "group") await renderGroupPage();
+  else if (view === "groupIndex") renderGroupIndex();
   renderStrip();
 });
 

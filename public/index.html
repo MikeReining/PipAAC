@@ -104,15 +104,15 @@
       .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; flex: none; }
       .anchor span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       #grid { flex: 1; display: grid; gap: var(--gap); }
-      /* Zone index and zone pages replace the grid in place — same 10×6
+      /* Group index and group pages replace the grid in place — same 10×6
          geometry, same physical positions. Navigation is a board mode,
          never a modal; the strip and bar stay put. */
-      #zonegrid { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
-      body.zones #grid { display: none; }
-      body.zones #zonegrid { display: grid; }
-      /* Zone cells: same footprint as .cell. Neutral navigation color —
-         zones are a map, not vocabulary, so no Fitzgerald role. */
-      .zcell {
+      #groupgrid { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
+      body.groups #grid { display: none; }
+      body.groups #groupgrid { display: grid; }
+      /* Group cells: same footprint as .cell. Neutral navigation color —
+         groups are a map, not vocabulary, so no Fitzgerald role. */
+      .gcell {
         border-radius: 12px;
         border: 3px solid #8a8578;
         background: #f2efe6;
@@ -128,14 +128,14 @@
         padding: 4px;
         text-align: center;
       }
-      .zcell .glyph { font-size: clamp(18px, 3.2vmin, 32px); line-height: 1; }
-      .zcell .zlabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .zcell:active { filter: brightness(0.92); }
-      .zcell.nav { border-color: #5b5348; background: #e8e3d6; font-size: clamp(13px, 2.2vmin, 20px); }
-      .zcell.empty { border-style: dashed; border-color: #d8d4c8; background: transparent; }
-      .zcell.empty:disabled { border-color: transparent; }
-      .zcell.arrange { border-style: dashed; border-color: #8a7fbf; }
-      .zcell.lifted { outline: 4px solid #2f6fd0; outline-offset: 2px; }
+      .gcell .glyph { font-size: clamp(18px, 3.2vmin, 32px); line-height: 1; }
+      .gcell .glabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .gcell:active { filter: brightness(0.92); }
+      .gcell.nav { border-color: #5b5348; background: #e8e3d6; font-size: clamp(13px, 2.2vmin, 20px); }
+      .gcell.empty { border-style: dashed; border-color: #d8d4c8; background: transparent; }
+      .gcell.empty:disabled { border-color: transparent; }
+      .gcell.arrange { border-style: dashed; border-color: #8a7fbf; }
+      .gcell.lifted { outline: 4px solid #2f6fd0; outline-offset: 2px; }
       .cell.entity { flex-direction: column; gap: 2px; font-size: clamp(11px, 1.9vmin, 17px); }
       .cell.entity img { width: 44%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
       /* Keyboard replaces the grid in place — same 10×6 geometry, same
@@ -235,23 +235,22 @@
     <div id="strip">
       <!-- 4 prediction slots (2 cols each) are rendered by board.js;
            the two utility anchors are permanent markup. -->
-      <button class="anchor" id="anchor-groups" title="Routines &amp; groups">
-        <span class="glyph">🌅</span><span>Groups</span>
+      <button class="anchor" id="anchor-groups" title="Groups">
+        <span class="glyph">🗂️</span><span>Groups</span>
       </button>
       <button class="anchor" id="anchor-kb" title="Keyboard">
         <span class="glyph">⌨</span><span>Keyboard</span>
       </button>
     </div>
     <div id="grid"></div>
-    <div id="zonegrid"></div>
+    <div id="groupgrid"></div>
     <div id="kb"></div>
 
     <div class="overlay" id="menu">
       <div class="sheet">
         <h2>Parent corner</h2>
-        <button class="btn" id="add-mywords">Add a word</button>
-        <button class="btn secondary" id="browse-zones">Zones</button>
-        <button class="btn secondary" id="arrange-zones">Arrange zones</button>
+        <button class="btn" id="add-mywords">Add to My Words</button>
+        <button class="btn secondary" id="edit-groups">Edit groups</button>
         <button class="btn secondary" data-close>Close</button>
       </div>
     </div>
