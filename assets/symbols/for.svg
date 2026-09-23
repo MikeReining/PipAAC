@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="for">
-<g stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
-<path d="M6,62 L40,62" fill="none" stroke="#111111" stroke-width="20.0"/>
-<path d="M6,62 L40,62" fill="none" stroke="#f16b93" stroke-width="11"/>
-<polygon points="58.0,62.0 38.0,75.0 38.0,49.0" fill="#f16b93"/>
-<path d="M63.9,71.4 C63.9,44.8 96.2,44.8 96.2,71.4 Z" fill="#fecc2a"/>
-<circle cx="80" cy="32.5" r="10.4" fill="#ffffff"/>
+<g transform="translate(50 50) scale(0.950) translate(-48.30 -48.60)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M12,62 L38,62" fill="none" stroke="#111111" stroke-width="20.0"/>
+<path d="M12,62 L38,62" fill="none" stroke="#f16b93" stroke-width="11"/>
+<polygon points="54.0,62.0 34.0,75.0 34.0,49.0" fill="#f16b93"/>
+<path d="M59.9,68.6 L59.9,53.4 C59.9,47.7 64.6,45.8 69.4,45.8 L72.2,45.8 L72.2,40.1 L79.8,40.1 L79.8,45.8 L82.6,45.8 C87.4,45.8 92.2,47.7 92.2,53.4 L92.2,68.6 Z" fill="#fecc2a"/>
+<circle cx="76" cy="32.5" r="10.4" fill="#ffffff"/>
 </g>
 </svg>

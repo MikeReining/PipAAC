@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="because">
-<g stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<g transform="translate(50 50) scale(0.948) translate(-50.00 -62.30)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
 <line x1="6" y1="88" x2="94" y2="88"/>
 <g transform="rotate(40 29 86)"><rect x="14" y="38" width="15" height="48" rx="3" fill="#f16b93"/><line x1="17" y1="62" x2="26" y2="62" stroke-width="3"/></g>
 <g transform="rotate(20 57 86)"><rect x="42" y="38" width="15" height="48" rx="3" fill="#dddad3"/><line x1="45" y1="62" x2="54" y2="62" stroke-width="3"/></g>

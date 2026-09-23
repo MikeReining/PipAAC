@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="or">
-<g stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
-<circle cx="84" cy="20" r="11" fill="#dddad3"/>
-<rect x="73" y="67" width="22" height="22" rx="3" fill="#dddad3"/>
-<path d="M8,50 L36,50 L58,28" fill="none" stroke="#111111" stroke-width="20.0"/>
+<g transform="translate(50 50) scale(0.963) translate(-49.70 -49.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="82" cy="20" r="11" fill="#dddad3"/>
+<rect x="71" y="67" width="22" height="22" rx="3" fill="#dddad3"/>
+<path d="M14,50 L36,50 L58,28" fill="none" stroke="#111111" stroke-width="20.0"/>
 <path d="M36,50 L58,72" fill="none" stroke="#111111" stroke-width="20.0"/>
-<path d="M8,50 L36,50 L58,28" fill="none" stroke="#f16b93" stroke-width="11"/>
+<path d="M14,50 L36,50 L58,28" fill="none" stroke="#f16b93" stroke-width="11"/>
 <path d="M36,50 L58,72" fill="none" stroke="#f16b93" stroke-width="11"/>
 <polygon points="70.0,16.0 65.8,37.2 48.8,20.2" fill="#f16b93"/>
 <polygon points="70.0,84.0 48.8,79.8 65.8,62.8" fill="#f16b93"/>

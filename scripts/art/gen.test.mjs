@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import sharp from "sharp";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -172,4 +173,30 @@ test("every glyph word is a lexicon word with a shipped, on-palette SVG", () => 
     }
   }
   assert.equal(loadGlyphWords().size, Object.keys(words).length);
+});
+
+test("every glyph renders centered and inside the safe margin", async () => {
+  // Measure the rendered pixels, not the SVG's own coordinates: an outline
+  // poking past the edge or a drawing parked high only shows up in ink.
+  const PX = 200; // 2 px per viewBox unit
+  const MARGIN = 5; // units; glyphs are drawn to 6, this allows anti-aliasing
+  const { words } = JSON.parse(readFileSync(GLYPH_WORDS_PATH, "utf8"));
+  for (const w of Object.keys(words)) {
+    const file = resolve(dirname(GLYPH_WORDS_PATH), `../../assets/symbols/${w}.svg`);
+    const { data } = await sharp(file, { density: 200 }).resize(PX, PX).ensureAlpha().raw()
+      .toBuffer({ resolveWithObject: true });
+    let x0 = PX, y0 = PX, x1 = -1, y1 = -1;
+    for (let y = 0; y < PX; y++) {
+      for (let x = 0; x < PX; x++) {
+        if (data[(y * PX + x) * 4 + 3] > 24) {
+          x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+        }
+      }
+    }
+    const u = (px) => px / 2;
+    assert.ok(u(x0) >= MARGIN && u(y0) >= MARGIN && u(x1 + 1) <= 100 - MARGIN && u(y1 + 1) <= 100 - MARGIN,
+      `${w}: ink ${u(x0)}..${u(x1 + 1)} x ${u(y0)}..${u(y1 + 1)} breaks the ${MARGIN}-unit margin`);
+    const cx = u(x0 + x1 + 1) / 2, cy = u(y0 + y1 + 1) / 2;
+    assert.ok(Math.abs(cx - 50) <= 1.5 && Math.abs(cy - 50) <= 1.5, `${w}: ink centered at ${cx},${cy}, not 50,50`);
+  }
 });

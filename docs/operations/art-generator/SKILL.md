@@ -61,7 +61,9 @@ Glyphs are a small visual language, so a child who learns one family can guess t
 | Same layout, different highlight | minimal pair | `because`/`so` (first vs last domino), `to`/`for` (dot vs person), `a`/`the` (spotlight) |
 
 - **Spellings of one word share one glyph** (`a` = `an`). Everything else passes the Board Collision check (§ 6, invariant 5).
-- **To change a glyph,** edit the SVG by hand and keep its `spec` line accurate; test at 40px before committing.
+- **Placement:** each glyph's ink (outlines included) is centered and stays 6 units inside the edge — BUILT: the pixel check in `scripts/art/gen.test.mjs` renders every glyph and fails on a breach or an off-center drawing.
+- **People** in glyphs are Pip's character: head on a neck, rounded shoulders (`assets/symbols/you.png`), never a floating avatar head.
+- **To change a glyph,** edit the SVG by hand, keep its `spec` line accurate, and look at it in a real tile at 48px before committing.
 
 ### 1.3 Pronouns vs people
 
