@@ -11,6 +11,10 @@ mentor's 20-item audit, reviewed line by line against the code on
 defect or a real gap. This doc turns them into steps a developer can
 execute. Where the review changed an item, the step says so.
 
+**The measure that matters: words per minute** (founder, 2026-09-23).
+Every step is judged by whether users say their message faster, and
+finding a word faster counts as much as tapping less.
+
 **The job, in one line:** make the predictor work correctly, give it
 knowledge of how people talk (the opening book), build an honest
 comparison, then improve it until the gain is visible, on users the
@@ -103,9 +107,10 @@ bench (step 13):
 
 1. **Day one is useful.** A new user gets sensible suggestions before any
    history exists (steps 23, 7).
-2. **It saves real effort.** Clearly fewer modeled actions than no
-   prediction, on users the system has never seen — reported as two
-   lifts: own data alone, and Jev on top (step 19).
+2. **Users say more per minute.** **Words per minute is the headline
+   number** (R12): clearly higher than with no prediction, on users the
+   system has never seen, reported as two lifts, own data alone and Jev
+   on top (step 19). Faster finding counts, not only fewer taps.
 3. **It keeps quiet when unsure.** Suggestions that cost more than they
    save are counted as harm and kept rare (steps 6, 16).
 4. **It never moves under a finger.** No tile is replaced while the user is
@@ -148,7 +153,10 @@ system. Jev is not the definition of success.
 | synthetic user, answer key, intended message | fake data, labels, ground truth file |
 | fit users (1–60), tune users (61–80), eval users (81–100) | train set, test set (ambiguous here) |
 | arm (one predictor setup in the bench) | variant, model config |
-| modeled actions (activations + inspection + correction) | taps (unless you mean only activations) |
+| words per minute (WPM): intended words ÷ modeled time — the headline | speed, rate (unqualified) |
+| modeled time (finding + motor + strip scan + correction) / modeled actions (activations) | taps (unless you mean only activations) |
+| word chain (the next 2–3 real word tiles shown in order) | message tile, phrase tile |
+| expert (one specialist model: book, history, time, partner, Jev) | feature soup, sub-model |
 | delivered (reached the screen before the next pick) / theoretical (ignoring timing) | Jev accuracy |
 | opening book (population next-word table, shipped as data) | corpus model, dictionary, AI prior |
 | retrieval miss (target not in shortlist) / no-fit (Jev: nothing here fits) | none (without saying which) |
@@ -163,7 +171,7 @@ before improving, and put the founder's view early.
 Step 0  founder rulings
 M1  Trustworthy plumbing   4 → 3 → 5 → 1 → 2
 M2  The instrument          11 → 12 → 16 → 13 → 15 → 18
-M3  Measured improvement    23 → 24 → 25 → 7 → 10 → 6 → 8 → 9 → 21 → 14 → 17
+M3  Measured improvement    23 → 7 → 10 → 27 → 21 → 22 → 24 → 25 → 6 → 8 → 9 → 14 → 17
 M4  Proof                   19 → 22
 F   The flywheel            26 (after 016 slice 6; parallel to M3)
 ```
@@ -180,6 +188,10 @@ Why this changes the audit's order:
 - Steps 21 and 22 are additions from this review (§ Additions). Step 23
   is the founder's opening-book insight.
 - Step 20 (a pilot with AAC users) is removed (step 0, R5).
+- M3 follows the second mentor review (2026-09-23): coverage before
+  tuning. Score every word (7), count the user's history (10), blend
+  specialist models (27), then first words (21) and word chains (22),
+  before partner words, classes, and the gate.
 
 ---
 
@@ -194,11 +206,14 @@ Why this changes the audit's order:
 | R3 | Occasions | Learned from the user's picks; no screen for adults to edit times. Kept only if it beats time-of-day alone (step 9). |
 | R4 | Jev spend | No cap. Jev is cheap. The question is only whether it improves predictions. |
 | R5 | Pilot with AAC users | Dropped. The simulation decides whether this is worth deploying; after launch, `predictionReport` measures real use. |
-| R6 | First-word predictions and whole-message tiles on screen (steps 21, 22) | Decide after the bench numbers. This phase only measures them. |
+| R6 | First-word predictions and word chains on screen (steps 21, 22) | Decide after the bench numbers and the replay screen. Both are measured first. |
 | R7 | The 150 ms Jev window | Removed ("we shouldn't set a gate"). A Jev answer is used whenever it arrives before the user's next pick, unless a finger is already reaching (step 2). Response times are recorded as data. |
 | R8 | Data licenses | Free sources only; no paid license (step 23). |
 | R9 | Ranking | By probability: the words the user is about to say, like a phone keyboard. Never by how far away a word is. |
 | R10 | The flywheel | On by default under the existing "Help improve Pip" switch; anonymous 1–3-word counts of built-in words (step 26). Amends Stats § 6.3's "no sequence of words". Turning it off stays free (recommended; founder floated charging for opt-out). |
+| R12 | Headline metric | **Words per minute.** Faster finding is a real gain, so the bench models time, not only taps (step 16). |
+| R13 | Whole messages | **No invented message tiles** (no symbol the user knows, and it skips the word's motor pattern). Instead, a **word chain**: the next 2–3 real word tiles, side by side, in order (step 22). |
+| R14 | Language judgments | **No hand-coded rules** (keyword detectors, grammar masks). Meaning questions go to Jev; everything else is a learned weight. The choice-question check is a Jev question (step 24). |
 | R11 | CHILDES | **Only with TalkBank's written permission** (see the CHILDES rule at the top). Founder emailed TalkBank 2026-09-23; answer pending. Until then, nothing CHILDES-derived in the repo, book, bench, or builds. A one-off measurement (step 23 § Real children) shows what it's worth: +11–16 points in top 4 over the best free book. When the answer arrives, record its date and exact scope here. |
 
 ---
@@ -478,11 +493,13 @@ dirty tree refuses.
 
 Done when: both pass.
 
-## Step 16 — Count actions through the real board
+## Step 16 — Model time and taps through the real board
 
 Goal: replace "every non-core word costs 3 taps" with the real path, and
-count the cost of looking at suggestions, so a suggestion can score as
-unhelpful or harmful.
+model **time**, since words per minute is the headline (R12): finding a
+word, reaching it, scanning the strip, and fixing mistakes. A suggestion
+can then score as unhelpful or harmful, and faster finding shows up as
+a gain.
 
 Files: `actions.mjs` (new, in scripts/prediction/bench) using the real
 layout functions (`public/shared/groups.mjs` page geometry, the user's
@@ -501,10 +518,25 @@ The action model, per intended word:
 | Mistaken strip pick | probability `slip` (default 2%) of taking a neighbor tile: + backspace + the correct path |
 | Repair in the answer key | its real cost |
 
-All constants live in one config, including `reach_ms` (how long before a
-pick the finger starts moving; step 2). **Every headline number is reported at
-three inspection costs (0.1, 0.25, 0.5)** so no conclusion depends on one
-guess.
+The time model, per intended word (all values are starting points in
+one config, not findings):
+
+| Part | Starting value | Notes |
+| --- | --- | --- |
+| Motor time per activation | 1.0 s | Reported at 0.6 / 1.0 / 2.0 s: AAC users vary widely |
+| Finding a home-grid word | 0.5 s once familiar, up to 2.0 s | Familiarity grows with the user's own count of that word |
+| Finding on a group page | 1.5 s per page scanned | Plus the group-index search |
+| Scanning a shown strip | 0.3 s per tile looked at | Paid whether or not the target is there |
+| Taking the next tile of a shown word chain | motor time only | The finding is already done: that's the chain's gain |
+| Correction | backspace + the correct path | For slips and answer-key repairs |
+
+**Words per minute** = intended words ÷ total modeled time. All
+constants live in one config, including `reach_ms` (how long before a
+pick the finger starts moving; step 2). **Every headline number is
+reported at the low, middle, and high setting of the motor and scan
+constants**, so no conclusion depends on one guess. The inspection cost
+in the table above is the scan time, expressed in actions for the
+action count.
 
 A shown strip is **harmful** at a moment if the target wasn't shown (the
 user looked and gained nothing), and **unhelpful** if the target was
@@ -517,9 +549,10 @@ Lie-prone layer: costing the target path with a hand-typed table instead
 of the real layout functions. The test uses a real seeded board.
 
 Works Test: on a seeded board, a word three pages deep in a group costs
-more than a word on page one. A strip that always shows four wrong tiles
-scores worse than no prediction. A strip that shows the target but also
-three decoys costs more at `inspect = 0.5` than at `0.1`.
+more time than a word on page one. A strip that always shows four wrong
+tiles scores lower WPM than no prediction. A strip that shows the target
+plus three decoys costs more at the high scan setting than at the low
+one. A familiar home-grid word is found faster than a rarely used one.
 
 Done when: those pass.
 
@@ -544,7 +577,8 @@ Arms:
 | A4 improved local + Jev, delivered | step 2's rule applied |
 | A4t same, theoretical | every answer used |
 | O1 perfect reranker | if the target is in A3's shortlist, show it first; else show nothing. The gap between A3 and O1 is ranking. The gap between O1 and O2 is retrieval. |
-| O2 perfect strip | every non-core target shown. This is the ceiling. |
+| O2 perfect strip | every non-core target shown. This is the ceiling for single words. |
+| W word chains | A3 plus word chains (step 22), both tap variants |
 
 Every arm runs **prequentially**: each user starts from the shipped
 defaults, each moment is scored before it is learned from, over 30 days.
@@ -553,8 +587,9 @@ Report, per arm (columns) and per cohort (routine-heavy, varied,
 novelty-heavy, schedule-change, unpredictable, and each synthetic
 persona pattern in eval):
 
-- modeled actions per message (headline), per word, and saving vs A0,
-  with 95% bootstrap intervals **over users**
+- **words per minute (headline)** and its gain vs A0, plus modeled
+  actions per message and per word, with 95% bootstrap intervals **over
+  users**
 - hit rate, shortlist recall, false-show rate, harmful-show rate
 - day 1 / week 1 / days 22–30 curves (cold start vs. learned)
 - split by position: first word / later words; core / non-core targets
@@ -880,6 +915,16 @@ Build, in order of how the partner's words reach the device:
 3. **The Listen key** (`docs/phases/008_Partner_Listening.md`), for
    families who turn it on.
 
+**Is it a choice? Jev decides, not a rule (R14).** When the partner's
+words exist, the Jev request adds a second question to the same call:
+"Is the partner offering the speaker a choice? Which of these words are
+the options?" TypeSafe allows several questions per request. The
+answer's probabilities become the partner expert's weights on the
+offered words. Without Jev (sharing off, offline, late), there is no
+choice detection at all: the partner's words count through learned echo
+alone. The bench's synthetic partners ask choice questions, and the
+report shows whether Jev's judgment adds WPM on top of plain echo.
+
 `echo` is 1 for a candidate the partner said in their last turn (decays
 over about two minutes), and the partner's words are a retrieval
 source. Its weight starts from the fit users and is learned per user,
@@ -933,9 +978,15 @@ drops below a comparable word never shown.
 Done when: those pass and the bench shows the lift, with no cohort
 regression.
 
-## Step 7 — Suggest words the user has never picked
+## Step 7 — Score every word; suggest words never picked
 
-Goal: any available word can appear on day one when context supports it.
+Goal: every available word gets a score at every moment, and any word
+can appear on day one when context supports it. With about 680 words
+there is no retrieval problem. Scoring all of them locally takes well
+under a millisecond once counts are pre-aggregated (step 17). The old
+shortlist and its filters (`funnel.mjs:273-278`) were a self-inflicted
+miss rate. Local recall is 100% by construction. A shortlist remains
+only for the Jev request (step 14).
 
 Files: `public/shared/funnel.mjs` (retrieval), new aggregate tables in
 `src/board/schema.sql` (step 17 constraint).
@@ -945,14 +996,14 @@ Build:
    and groups, plus active entities, minus hidden words (`sense_mask`),
    minus core cells on the current home layout (picture mode keeps the
    "core words are never strip tiles" rule).
-2. Retrieval sources, each giving up to N candidates into a budget (e.g.
-   64) before ranking cuts to the shortlist: the opening book (step 23),
-   history continuations, board and group context (step 8), occasion
-   (step 9), and grammar fit as a *score*.
-3. Remove the evidence requirement (`funnel.mjs:273-278`).
+2. No retrieval stage: every word in that pool is scored by the blend
+   (step 27). The top 16 by blended probability become the Jev
+   shortlist.
+3. Remove the evidence requirement and the grammar filter
+   (`funnel.mjs:273-278`).
 
-Lie-prone layer: flooding the shortlist so hit rate looks fine while
-harm rises. Watch harmful-show rate and latency with every change.
+Lie-prone layer: more candidates can raise hit rate while harm rises.
+Watch harmful-show rate, WPM, and latency with every change.
 
 Works Test: a brand-new user at 07:50 on a school day with *I want*:
 the strip offers breakfast-appropriate words that were never picked, and
@@ -960,27 +1011,85 @@ a hidden word never appears. Bench: A3 day-1 saving > 0 (today it is 0).
 
 Done when: both pass and step 17's latency budget still holds.
 
-## Step 10 — Real phrase memory; grammar as a hint
+## Step 10 — The user's own history, as counts
 
-Goal: "I want to" and "I need to" can rank differently. Short or
-non-standard sentences still get suggestions.
+Goal: the user's history is stored as plain counts, and predicts from
+them directly: "after *I want*, at breakfast, this user said *juice* 9
+times out of 10". This replaces `phrase`/`pair` (which were the same
+number) and works on the dozens of sentences a new user has.
 
 Build:
-1. Replace `phrase` and `pair` with three separate features: `ctx1`,
-   `ctx2`, `ctx3` — decayed counts of this word after exactly the last
-   1, 2, and 3 items in earlier sentences. Each counted once, in its own
-   slot.
-2. `invited` stays a feature and stops being a filter (`funnel.mjs:278`).
-   Adjective and other tails get candidates too; ranking decides.
-3. Refit defaults on fit users (`fit_defaults.mjs` reads synthetic users,
-   not the old fixtures). Bump `defaults.json` version.
+1. Count, per user and decayed over time: the word after exactly the
+   last 1, 2, and 3 items; the word by hour and day type; the word
+   overall. Maintained incrementally in `logSelection` (step 17's running
+   counts).
+2. The history expert turns these counts into a probability with
+   backoff (3 → 2 → 1 items), in the style of prediction by partial
+   matching. It needs no training and no weights.
+3. `invited` (grammar fit) stops being a filter (`funnel.mjs:278`). The
+   book (step 23) already carries grammar as probability; `invited` stays
+   only if the bench shows it still adds.
 
-Works Test: two histories that differ only at position −3 give different
-`ctx3` and a different order. After *red*, the strip can offer a noun.
-The feature-duplication check (the one in § 1) now reports zero
-identical columns.
+**Tested 2026-09-23 (scratch)** on the two simulated children,
+counts-only vs the current learned model:
 
-Done when: those pass and the bench shows no cohort regression.
+| | Routine child | Varied child |
+| --- | --- | --- |
+| No prediction | 1.864 taps/word | 1.941 taps/word |
+| Current learned model | hit 45.1%, 1.322 taps/word | hit 45.9%, 1.392 taps/word |
+| Counts only, strict backoff | hit 31.0%, 1.492 taps/word | **hit 54.1%, 1.294 taps/word** |
+
+Counts win for the varied child and lose for the routine child. Strict
+backoff lets "what followed *I want* before" override "it's breakfast
+now". So counts are the right way to hold history, but history must be
+blended with time of day, not placed above it. That blend is step 27.
+
+Works Test: two histories that differ only at position −3 give
+different predictions. After *red*, the strip can offer a noun. The
+feature-duplication check (§ 1) reports zero identical signals. After
+one day of use, the history expert alone reproduces the user's most
+common continuation for their most common two-word start.
+
+Done when: those pass.
+
+## Step 27 — Blend specialist models by situation
+
+Goal: each source of knowledge is its own model (an **expert**) giving a
+probability for every word, and how much each counts depends on the
+situation. One weight vector for all situations can't express "time
+wins at breakfast, phrases win mid-sentence, the partner wins right
+after a question".
+
+Experts: the opening book (23), the user's history (10), time and
+occasion (hour, day type, step 9), the partner's words (24), word
+classes and topic (25), and Jev (14) when it answered.
+
+Build:
+1. Each expert returns P(word | its evidence) over every word, or
+   abstains (Jev without an answer, partner with nothing said).
+2. **Blend:** P(word) = Σ over experts of weight(situation, expert) ×
+   P_expert(word). Situations to start with: first word, second word,
+   later word, just after a partner turn. The bench may split further
+   only if it pays.
+3. **Learning:** after each spoken sentence, weights move toward the
+   experts that gave the chosen word more probability (multiplicative
+   weights, per situation, per user), pulled toward the shipped starting
+   weights while data is thin. Starting weights come from fit users.
+4. The blended probability feeds the gate (step 6), the Jev shortlist
+   (step 7), and word chains (step 22). Because every expert is a real
+   probability, the blend stays calibrated.
+5. This replaces the 11-weight log-linear model in `scoreCandidates` and
+   the learner in `public/shared/learn.mjs`. Steps 3–5's plumbing
+   (both paths learn, stored evidence replays) applies to the blend
+   weights the same way.
+
+Works Test: on the two simulated children, the blend beats both the
+current model and counts-only on hit rate and WPM (the § step 10 table
+is the bar). After a week of use, the routine child's time-expert weight
+at first words is higher than the varied child's. A stored moment
+replays to the same blend (step 5).
+
+Done when: those pass and the bench shows no cohort regression vs A2.
 
 ## Step 6 — Separate "nothing here fits" from "the word isn't here"
 
@@ -993,10 +1102,9 @@ Files: `public/shared/funnel.mjs` (`scoreCandidates`, `applyJev`,
 `data/prediction/defaults.json`.
 
 Build:
-1. **Ranker:** softmax over the candidates only (no `none` term). Jev
-   enters as `log P_Jev(w)` renormalized over the candidates, excluding
-   Jev's `none`. (The offline fit already fits θ this way,
-   `fit_defaults.mjs:61-91`; inference should match.)
+1. **Ranker:** the blend from step 27 (no `none` term inside it). Jev
+   is one expert, its probabilities renormalized over the candidates,
+   excluding Jev's `none`.
 2. **Gate:** a separate small logistic model for "the target will be one
    of the tiles I'd show". Features: top shown probability, how often
    this user's next pick fell outside the shortlist after a similar tail
@@ -1083,14 +1191,16 @@ Done when: the comparison is in § Results and the keep/drop call is made.
 Why: 47 of 118 held-out picks in the routine fixture are sentence-first,
 and the strip shows fixed starters there. The first word is also where
 time and occasion say the most, because there is no sentence yet.
+Promoted ahead of steps 8 and 9 (second mentor review).
 
-Build: a bench arm only. At position 0, the strip offers predicted
-starters (the opening book's sentence-start words, plus history at this
-hour and occasion), using
-the same gate. Report the saving on first words separately.
+Build: at position 0, the blend (step 27, "first word" situation) scores
+every word, and the strip offers the likeliest ones, using the same
+gate. The history and time experts carry it: what this user says first,
+at this hour, on this kind of day, after their last message. Measured
+as a bench arm first (WPM on first words, reported separately). Then,
+with R6, it replaces the fixed idle starters.
 
-Done when: the number is in § Results. Changing the real idle strip is
-founder ruling R6.
+Done when: the number is in § Results and R6 is ruled.
 
 ## Step 14 — Real Jev on frozen requests
 
@@ -1181,8 +1291,9 @@ The `--final` report leads with:
 | Jev | A4 delivered vs A3 | What does Jev add on top? (Theoretical shown beside it.) |
 | vs. classic | A3 vs A1 (simple baseline) | Are we better than standard word prediction? |
 
-Each lift is modeled actions per message, with a 95% bootstrap interval
-over eval users, at all three inspection costs, for day 1, week 1, and
+Each lift is **words per minute** (with modeled actions beside it), with
+a 95% bootstrap interval over eval users, at the low, middle, and high
+time settings, for day 1, week 1, and
 days 22–30. Each is labeled **clear gain** (interval above zero), **no
 clear effect** (interval spans zero), or **clear loss** (interval below
 zero). Every cohort where a lift is a loss is listed.
@@ -1193,21 +1304,32 @@ so "how close to perfect" is visible.
 Done when: `npm run prediction:bench -- --final` has run once on a clean
 tree and its table is pasted under § Results with the commit.
 
-## Step 22 (addition) — The whole-message ceiling
+## Step 22 (addition) — Word chains
 
-Why: word-by-word prediction can save at most the non-core share (46% on
-the routine fixture). Families repeat whole messages ("I want juice" at
-07:50). A tile that completes the rest of a habitual message may be
-where "wow" lives.
+Why: families repeat whole messages ("I want juice" at 07:50), and
+single-word prediction only helps one word at a time. R13 rules out
+invented message tiles: they have no symbol the user knows and skip the
+word's motor pattern. Instead, the strip shows a **word chain**: the next
+2–3 **real word tiles**, side by side, in order (*want* → *juice*). The
+user recognizes every tile, can stop partway, and sees the path to the
+rest of the message instead of hunting for it. That shows up as faster
+finding, which words per minute counts (R12).
 
-Build: a bench arm only. When history strongly predicts the rest of the
-message, one strip tile offers the completion (e.g. after *I* at 07:50 →
-*want juice*). It uses the same gate and the same inspection cost. Report
-the saving vs A3 and the harmful-show rate.
+Build: when the blend (step 27) strongly predicts the next two or three
+words, the strip shows them as a chain of ordinary strip tiles, in
+sentence order, visually linked. Measured in two tap variants:
+1. **Tap each tile** (tap, tap): each tile enters its own word. Taps
+   saved = the non-core words in the chain; time saved = the finding of
+   every word in it.
+2. **One tap takes the chain**: the whole chain enters. It saves taps on
+   core words too, at the cost of a less direct motor pattern. Measured
+   so the founder can judge the trade on the replay screen.
 
-Done when: the number is in § Results. Showing message tiles on screen
-is founder ruling R6 and overlaps
-`docs/phases/014_Grid_Density_And_Fit.md` slice 6.
+Report both variants' WPM gain over A3 and their harmful-show rate
+(chains shown but not taken).
+
+Done when: both numbers and replay examples are in § Results. Showing
+chains on screen, and which variant, is ruling R6.
 
 ## Step 20 — Removed
 
@@ -1299,17 +1421,21 @@ strip should know. These additions go after the biggest gains:
 | 24 | The partner's words | 10–18% of real children's non-core words echo the adult's last turn; +1–4 points |
 | 25 | Word classes, slots, topic, fading | One example teaches a class; new entities are predicted on day one |
 | 26 | The flywheel | Every user improves the book; nobody else in AAC has this data |
-| 21 | Predict the first word (bench arm) | 40% of picks are sentence-first and get no prediction today |
-| 22 | Complete the whole message (bench arm) | Word-level savings are capped by core words (46% ceiling on the fixture) |
+| 21 | Predict the first word | 40% of picks are sentence-first and get no prediction today |
+| 22 | Word chains (real tiles in order) | Faster finding across a whole message; the only way past single-word limits |
+| 10 | The user's history as counts | Works on tiny data; fixes the duplicated phrase/pair signal |
+| 27 | Blend specialist models by situation | Time wins at breakfast, phrases mid-sentence, the partner after a question |
 
 Core-cell halos (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`
-§ 7.4) would help with the 57% of picks that are core words, but they
-save search time, not activations. They stay out of scope until the
-action model includes search time.
+§ 7.4) would help with the 57% of picks that are core words by making
+them faster to find. The time model (step 16) can now measure that, so
+a halo arm may be added to the bench. Building halos stays out of scope.
 
 ## Human stops
 
-None open; R1–R11 are ruled. Step 26 changes what leaves the device;
+None open; R1–R14 are ruled. Step 24's Jev choice question adds a
+question, not a field: the request body stays within § 3.2's whitelist
+(approved under R14). Step 26 changes what leaves the device;
 build it exactly to its whitelist. Any change to what Jev receives on a user's
 device (the § 3.2 whitelist) stops the phase for a founder call. Offline
 book-building calls send only our own vocabulary and synthetic contexts.
@@ -1331,4 +1457,5 @@ Step 19 records the one `--final` eval run.
 | 23 prototype | Imagine AAC train set only; held-out writers, non-core next word | — | top-4 50.9%, top-16 74.4% | — | — | scratch, 2026-09-23 |
 | 23 experiment | Caregiver-speech book vs adult AAC book, TinyDialogues held-out child turns (later words) | — | age 2: 33.5% vs 15.3%; age 5: 49.1% vs 28.2% | — | — | scratch, 2026-09-23 |
 | 24 experiment | Partner's last-turn words boosted (fixed +4 logit), caregiver book, TinyDialogues | — | age 2: 15.8% → 27.9%; age 5: 46.6% → 44.1% | — | — | scratch, 2026-09-23 |
+| 10 test | Counts only (strict backoff) vs current learned model, simulated children | — | routine 31.0% vs 45.1%; varied 54.1% vs 45.9% | — | — | scratch, 2026-09-23 |
 | 23/24 real children | CHILDES held-out transcripts, later words top 4: adult AAC → legal child book → CHILDES book (+partner on legal) | — | ~age 3: 26.8% → 37.0% (38.2%) → 49.2% | — | — | scratch, 2026-09-23 |
