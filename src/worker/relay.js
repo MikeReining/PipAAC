@@ -123,15 +123,43 @@ export class BoardRelay {
     const method = request.method;
 
     // The board creator registers itself at creation — the one call an
-    // unknown device may make.
+    // unknown device may make. It also leaves the recovery proof: the
+    // SHA-256 of the recovery root, which a restore presents in place
+    // of a device signature. The relay stores the proof, never the key.
     if (method === "POST" && route === "bootstrap") {
-      const { device_id, pubkey, dh_pub, wrapped_key } = await request.json().catch(() => ({}));
+      const { device_id, pubkey, dh_pub, wrapped_key, recovery_proof } =
+        await request.json().catch(() => ({}));
       if (!device_id || !pubkey) return bad("bad_bootstrap");
       this.ctx.storage.sql.exec(
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
          VALUES (?, ?, ?, ?, 1, ?)`,
         device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, Date.now());
+      if (recovery_proof) {
+        this.ctx.storage.sql.exec(
+          "INSERT OR REPLACE INTO meta (k, v) VALUES ('recovery_proof', ?)", recovery_proof);
+      }
       return json({ ok: true });
+    }
+
+    // Recovery sheet (§ 9): whoever presents the sheet's proof gets
+    // registered as a device at the current epoch, then drains the op
+    // log like any linked device. Bearer credential — the sheet is the
+    // family's last resort, so it opens the door it was printed for.
+    if (method === "POST" && route === "restore") {
+      const { device_id, pubkey, dh_pub, proof } = await request.json().catch(() => ({}));
+      const stored = this.ctx.storage.sql.exec(
+        "SELECT v FROM meta WHERE k = 'recovery_proof'").toArray()[0]?.v;
+      if (!device_id || !pubkey || !proof || !stored) return bad("forbidden", 403);
+      let a, b;
+      try { a = unb64u(proof); b = unb64u(stored); } catch { return bad("forbidden", 403); }
+      let diff = a.length === b.length ? 0 : 1;
+      for (let i = 0; i < Math.min(a.length, b.length); i++) diff |= a[i] ^ b[i];
+      if (diff) return bad("forbidden", 403);
+      this.ctx.storage.sql.exec(
+        `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
+         VALUES (?, ?, ?, NULL, ?, ?)`,
+        device_id, pubkey, dh_pub ?? null, this.epoch(), Date.now());
+      return json({ ok: true, epoch: this.epoch() });
     }
 
     // WebSocket upgrade — auth via query params.

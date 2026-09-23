@@ -279,7 +279,45 @@ device on each board, and the family can remove it.
   holds the board id and the board key. On a new device, **Restore from
   recovery sheet** downloads and decrypts the board. The app reminds the
   family to print or save it, and they can show it again from any linked
-  device.
+  device that holds the recovery root (see the amendment below).
+
+**BUILT 2026-09-23** (slice 8). The sheet is a `pip:recover:<boardId>:<24
+words>` QR plus a numbered word grid — Parent corner → Backup → Recovery
+sheet → Print (`public/index.html` `#recform`; `showRecoverySheet` in
+`public/board.js`). The 24 words encode a 256-bit **recovery root** —
+BIP-0039 English list + 8-bit checksum (`public/shared/recovery.mjs`,
+`public/shared/recovery_words.mjs` generated from
+`data/recovery/words_en.txt` by `scripts/recovery/build_words.mjs`).
+Every epoch's board key derives from the root by HKDF
+(`deriveEpochKey`, `public/shared/sync_crypto.mjs`), so a sheet printed
+at any time opens every epoch — including ops sealed after a device
+removal rotated the key.
+
+- The relay stores only `SHA-256(root ‖ "pip-recovery-v1")`, written at
+  board bootstrap. `POST /boards/:id/restore` is the one unsigned call
+  besides bootstrap: it trades the proof for device registration at the
+  current epoch, then the restored device drains the op log like any
+  linked device (`src/worker/relay.js`; `restoreDevice` in
+  `public/shared/sync_client.mjs`). The relay never sees a key.
+- Restore UI: Parent corner → Backup → Restore a board → paste the QR
+  text or `boardId + 24 words` (`restoreFlow` in `public/board.js`).
+  The success line says plainly that speech history never leaves a
+  device, and nothing in the sync path carries history tables.
+- **Amendment to "any linked device can show it":** only a device
+  holding the recovery root can print the sheet — the device that set
+  up sync, or a device restored from a sheet. If every paired device
+  held the root, it could re-derive every future epoch key and
+  removing a device would be cosmetic. A paired device sees an honest
+  "print it on the device that set up sync" instead.
+- Proof: `src/board/recovery.test.mjs` (wordlist integrity, words
+  round-trip, checksum/word rejection, proof, payload parse, a fresh
+  keystore holding only the root opening every epoch's ops);
+  `src/worker/recovery.heavy.test.mjs` (real relay: restore after a
+  rotation, synced tables byte-identical, history tables empty, wrong
+  proof → 403); live two-browser proof — device A linked, added a word,
+  spoke a sentence, showed the sheet; fresh-profile device C pasted the
+  payload, restored byte-identical synced tables with empty history
+  and the history notice on screen.
 - **The iPad's own backup counts too.** On the iOS app, Apple's device
   backup (iCloud or computer) restores the app's data and the Keychain
   board key. That is Apple's backup, not our sync, and it is a second path.

@@ -109,14 +109,43 @@ export async function getDeviceIdentity(store = openKeyStore()) {
  * Rotations (§ 3 revoke) mint a new key per epoch: epoch 1 lives at
  * "board_key", later epochs at "board_key_e<n>". Old keys stay so old
  * ops still open.
+ *
+ * Recovery (§ 9): the device that sets up sync also mints a recovery
+ * root — a 256-bit bearer secret stored raw under "recovery_root".
+ * When the root is present, every epoch key derives from it via HKDF,
+ * so a recovery sheet restores all epochs. Paired devices hold wrapped
+ * epoch keys, never the root — a device that could re-derive every key
+ * would make revoke cosmetic.
  */
 const boardKeyName = (epoch) => (epoch <= 1 ? "board_key" : `board_key_e${epoch}`);
+
+export async function ensureRecoveryRoot(store = openKeyStore()) {
+  let root = await store.get("recovery_root");
+  if (!root) {
+    root = globalThis.crypto.getRandomValues(new Uint8Array(32));
+    await store.put("recovery_root", root);
+  }
+  return root instanceof Uint8Array ? root : new Uint8Array(root);
+}
+/** Epoch key = HKDF(root, salt "pip-board-key", info "epoch:<n>"). */
+export async function deriveEpochKey(rootBytes, epoch) {
+  const hkdf = await subtle.importKey("raw", rootBytes, "HKDF", false, ["deriveKey"]);
+  return subtle.deriveKey(
+    { name: "HKDF", hash: "SHA-256", salt: te.encode("pip-board-key"),
+      info: te.encode(`epoch:${epoch}`) },
+    hkdf, { name: "AES-GCM", length: 256 }, true,
+    ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+}
+
 export async function getBoardKey(store = openKeyStore(), epoch = 1) {
   const name = boardKeyName(epoch);
   let key = await store.get(name);
   if (!key) {
-    key = await subtle.generateKey(
-      { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+    const root = await store.get("recovery_root");
+    key = root
+      ? await deriveEpochKey(root instanceof Uint8Array ? root : new Uint8Array(root), epoch)
+      : await subtle.generateKey({ name: "AES-GCM", length: 256 }, true,
+          ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
     await store.put(name, key);
   }
   return key;

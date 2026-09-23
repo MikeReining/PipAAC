@@ -34,7 +34,9 @@ export default {
       const stub = env.RELAY.get(env.RELAY.idFromName(boardId));
       const init = await stub.fetch(new Request(
         `https://relay/boards/${boardId}/bootstrap`,
-        { method: "POST", body: JSON.stringify({ device_id: body.device_id, pubkey: body.pubkey }) }));
+        { method: "POST", body: JSON.stringify({
+          device_id: body.device_id, pubkey: body.pubkey,
+          dh_pub: body.dh_pub, recovery_proof: body.recovery_proof }) }));
       if (!init.ok) return init;
       return json({ board_id: boardId });
     }

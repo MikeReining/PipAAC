@@ -57,17 +57,21 @@ import {
 import { applyPasteRows, nameFromFile, resolvePasteRows } from "./shared/bulk.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
 import {
+  ensureRecoveryRoot,
   exportDhPublic,
   exportPublicKey,
   getBoardKey,
   getDeviceIdentity,
-  newBoardKey,
   openKeyStore,
   putBoardKey,
   unwrapBoardKey,
   wrapBoardKey,
 } from "./shared/sync_crypto.mjs";
-import { pairClient, relayClient } from "./shared/sync_client.mjs";
+import {
+  keyToWords, parseRecoveryPayload, recoveryPayload, recoveryProof, wordsToKey,
+} from "./shared/recovery.mjs";
+import { RECOVERY_WORDS } from "./shared/recovery_words.mjs";
+import { pairClient, relayClient, restoreDevice } from "./shared/sync_client.mjs";
 import { initSync, setSyncConfig, syncConfig, syncUploadBlob } from "./shared/sync.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
@@ -1964,18 +1968,22 @@ pairOverlay.addEventListener("click", (e) => {
   if (e.target === pairOverlay || e.target.closest("[data-close]")) closePair();
 });
 
-/** First linked-device action on a board creates it on the relay. */
+/** First linked-device action on a board creates it on the relay. The
+ *  recovery root is minted here so the relay holds the sheet's proof
+ *  from the start — it stores the hash, never the key. */
 async function ensureBoard() {
   const cfg = syncConfig();
   if (cfg?.boardId) return cfg;
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
+  const root = await ensureRecoveryRoot(store);
   const res = await fetch(`${relayBase}/boards`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
       device_id: identity.deviceId,
       pubkey: await exportPublicKey(identity.verify),
       dh_pub: await exportDhPublic(identity.dh.publicKey),
+      recovery_proof: await recoveryProof(root),
     }),
   });
   if (!res.ok) throw new Error(`board create: ${res.status}`);
@@ -1983,6 +1991,7 @@ async function ensureBoard() {
   const next = { boardId: board_id, epoch: 1 };
   setSyncConfig(next);
   await initSync(db, location.origin, onSyncApplied);
+  toast("This board syncs now — print or save the recovery sheet: Parent corner → Backup");
   return next;
 }
 
@@ -2030,11 +2039,12 @@ async function removeDeviceFlow(client, store, identity, targetId) {
   await client.removeDevice(targetId);
   const remaining = devices.filter((d) => d.device_id !== targetId && d.dh_pub);
   const epoch = (syncConfig()?.epoch ?? 1) + 1;
-  const key = await newBoardKey();
+  // Root-derived when this device holds the recovery root, so a sheet
+  // printed before the removal still opens the new epoch.
+  const key = await getBoardKey(store, epoch);
   const wrapped = {};
   for (const d of remaining) wrapped[d.device_id] = await wrapBoardKey(key, d.dh_pub);
   await client.rotateKeys(epoch, wrapped);
-  await putBoardKey(store, key, epoch);
   setSyncConfig({ ...syncConfig(), epoch });
   await renderDevices();
 }
@@ -2136,6 +2146,141 @@ $("dev-add").onclick = () => addDeviceFlow().catch((e) => {
   pairBody.innerHTML = `<p class="hint">Could not reach the relay: ${e.message}</p>`;
 });
 $("corner").addEventListener("click", renderDevices);
+
+/* ------------------------------------------------------------------ *
+ * Recovery sheet (§ 9) — the last-resort credential: QR + board id +
+ * 24 words carrying the recovery root. Only a device holding the root
+ * can show it — the device that set up sync, or one restored from a
+ * sheet. A merely-paired device cannot re-derive the root, so removing
+ * it stays a real removal.
+ * ------------------------------------------------------------------ */
+
+const recOverlay = $("recform");
+const recBody = $("rec-body");
+const recGo = $("rec-go");
+const recPrint = $("rec-print");
+
+function openRec(title) {
+  $("rec-title").textContent = title;
+  recBody.innerHTML = "";
+  recGo.hidden = true;
+  recPrint.hidden = true;
+  recOverlay.classList.add("open");
+}
+recOverlay.addEventListener("click", (e) => {
+  if (e.target === recOverlay || e.target.closest("[data-close]")) {
+    recOverlay.classList.remove("open");
+  }
+});
+
+async function showRecoverySheet() {
+  const cfg = syncConfig();
+  if (!cfg?.boardId) {
+    openRec("Recovery sheet");
+    recBody.innerHTML =
+      '<p class="hint">Link this board first — the sheet backs up a synced board.</p>';
+    return;
+  }
+  const root = await openKeyStore().get("recovery_root");
+  if (!root) {
+    openRec("Recovery sheet");
+    recBody.innerHTML =
+      '<p class="hint">This device was linked by another device and cannot show the sheet — '
+      + "print it on the device that set up sync.</p>";
+    return;
+  }
+  const words = await keyToWords(root, RECOVERY_WORDS);
+  openRec("Recovery sheet");
+  const qr = document.createElement("div");
+  qr.className = "pair-qr";
+  const q = qrcode(0, "M");
+  q.addData(recoveryPayload(cfg.boardId, words));
+  q.make();
+  qr.innerHTML = q.createSvgTag({ cellSize: 3, margin: 8, scalable: true });
+  const bid = document.createElement("p");
+  bid.className = "rec-boardid";
+  bid.textContent = `Board ${cfg.boardId}`;
+  const grid = document.createElement("div");
+  grid.className = "rec-words";
+  words.split(" ").forEach((w, i) => {
+    const s = document.createElement("span");
+    const n = document.createElement("b");
+    n.textContent = `${i + 1}.`;
+    s.append(n, w);
+    grid.append(s);
+  });
+  const warn = document.createElement("p");
+  warn.className = "hint";
+  warn.textContent = "Anyone holding this sheet can restore the whole board — keep it "
+    + "private. What the child says is not on it: speech history never leaves a device.";
+  recBody.append(qr, bid, grid, warn);
+  recPrint.hidden = false;
+  recPrint.onclick = () => window.print();
+}
+
+/** Fresh device: paste the sheet's QR text, or the board id + 24 words. */
+function restoreFlow() {
+  if (syncConfig()?.boardId) {
+    openRec("Restore a board");
+    recBody.innerHTML =
+      '<p class="hint">This device is already linked to a board.</p>';
+    return;
+  }
+  openRec("Restore a board");
+  const hint = document.createElement("p");
+  hint.className = "hint";
+  hint.textContent = "Paste the text from the sheet's QR code, or the board id "
+    + "followed by the 24 words.";
+  const ta = document.createElement("textarea");
+  ta.id = "rec-paste";
+  ta.placeholder = "pip:recover:… or <board id> word word …";
+  const status = document.createElement("p");
+  status.className = "hint";
+  recBody.append(hint, ta, status);
+  recGo.hidden = false;
+  recGo.textContent = "Restore";
+  recGo.onclick = async () => {
+    const parsed = parseRecoveryPayload(ta.value);
+    if (!parsed) {
+      status.textContent = "That doesn't look like a recovery sheet — paste the QR "
+        + "text or the board id with its 24 words.";
+      return;
+    }
+    recGo.hidden = true;
+    status.textContent = "Checking the sheet…";
+    try {
+      const root = await wordsToKey(parsed.phrase, RECOVERY_WORDS);
+      const store = openKeyStore();
+      const identity = await getDeviceIdentity(store);
+      const r = await restoreDevice(relayBase, parsed.boardId, {
+        proof: await recoveryProof(root),
+        device_id: identity.deviceId,
+        pubkey: await exportPublicKey(identity.verify),
+        dh_pub: await exportDhPublic(identity.dh.publicKey),
+      });
+      await store.put("recovery_root", root);
+      await getBoardKey(store, r.epoch); // derive + store the current epoch key
+      setSyncConfig({ boardId: parsed.boardId, epoch: r.epoch });
+      status.textContent = "Restoring the board…";
+      await initSync(db, location.origin, onSyncApplied);
+      status.textContent = "Restored. What was said stays on the device that said it — "
+        + "speech history never leaves a device.";
+      await renderDevices();
+    } catch (e) {
+      recGo.hidden = false;
+      status.textContent = /checksum|word/i.test(e.message)
+        ? e.message
+        : "That sheet doesn't open this board — check the words, or print a fresh "
+          + "sheet on a linked device.";
+    }
+  };
+}
+
+$("dev-sheet").onclick = () => showRecoverySheet().catch((e) => {
+  openRec("Recovery sheet");
+  recBody.innerHTML = `<p class="hint">Could not build the sheet: ${e.message}</p>`;
+});
+$("dev-restore").onclick = () => restoreFlow();
 
 /* --- the web editor (Sync_And_Web_Editing § 7): on a wide screen the
    app opens here — Library left, the real 10×6 group grid in the middle

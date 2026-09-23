@@ -90,6 +90,17 @@ export function relayClient({ boardId, baseUrl, identity, boardKey }) {
   };
 }
 
+/** Recovery-sheet restore (§ 9): unsigned — the proof stands in for a
+ *  device signature. Registers the device at the current epoch. */
+export async function restoreDevice(baseUrl, boardId, { proof, device_id, pubkey, dh_pub }) {
+  const res = await fetch(`${baseUrl}/boards/${boardId}/restore`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ device_id, pubkey, dh_pub, proof }),
+  });
+  if (!res.ok) throw new Error(`restore: ${res.status}`);
+  return res.json(); // { ok, epoch }
+}
+
 /**
  * The pairing lobby (§ 3) — board-less routes. The new device posts a
  * request; the linked device reads it and writes the grant; the new

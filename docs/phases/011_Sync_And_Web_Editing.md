@@ -233,6 +233,18 @@ Works Test: build a board, sync it, destroy every client, restore from the
 sheet on a new client. Synced tables are byte-identical to before. History
 is absent (it never synced), and the UI says so.
 
+**DONE** — mechanism and proof in `docs/product/Sync_And_Web_Editing.md`
+§ 9 (BUILT 2026-09-23). The sheet carries the board id + 24 words encoding
+a recovery root; every epoch key derives from it, so a sheet survives
+device-removal rotations. The relay stores only the root's proof and
+trades it for device registration at `POST /boards/:id/restore`. Live
+proof: browser A linked, added a word, spoke a sentence, showed the
+sheet; fresh-profile browser C pasted the payload and restored —
+synced tables byte-identical, history tables empty, and the restore
+confirmation says speech history never leaves a device. Wrong proof →
+403. One spec amendment recorded in § 9: only root-holding devices can
+re-print the sheet.
+
 ## Slice 9 — Free and Lifetime
 
 Goal: a free board has backup, restore and one linked device; Pip
