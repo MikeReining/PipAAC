@@ -15,6 +15,7 @@ import { createDatabase, importCatalog, snapshotCoreCells } from "./catalog.mjs"
 import { addPersonalEntity } from "./entities.mjs";
 import { logSelection, stripCandidates, STRIP_CAP } from "../../public/shared/funnel.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
+import { TEST_MODEL } from "./test_model.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -45,7 +46,7 @@ test("sentence invites an entity: 'play with' offers Cooper", () => {
   });
   const before = snapshotCoreCells(db);
 
-  const candidates = stripCandidates(db, [S("play"), S("with")], NOW, "en");
+  const candidates = stripCandidates(db, [S("play"), S("with")], NOW, "en", TEST_MODEL);
   assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
   assert.ok(candidates.length <= STRIP_CAP);
   assert.deepEqual(snapshotCoreCells(db), before);
@@ -56,7 +57,7 @@ test("recent selection makes Cooper eligible even without a noun-inviting tail",
   const cooper = addPersonalEntity(db, { spokenName: "Cooper" });
   logSelection(db, "entity", cooper.id, NOW - 60_000);
 
-  const candidates = stripCandidates(db, [S("happy")], NOW, "en"); // adjective tail — nothing invited
+  const candidates = stripCandidates(db, [S("happy")], NOW, "en", TEST_MODEL); // adjective tail — nothing invited
   assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
 });
 
@@ -65,9 +66,9 @@ test("low-signal state renders no strip", () => {
   addPersonalEntity(db, { spokenName: "Cooper" });
 
   // empty sentence, never selected → nothing
-  assert.deepEqual(stripCandidates(db, [], NOW, "en"), []);
+  assert.deepEqual(stripCandidates(db, [], NOW, "en", TEST_MODEL), []);
   // adjective tail, never selected → nothing
-  assert.deepEqual(stripCandidates(db, [S("happy")], NOW, "en"), []);
+  assert.deepEqual(stripCandidates(db, [S("happy")], NOW, "en", TEST_MODEL), []);
 });
 
 test("a locale with no GRAMMAR entry gets no invitations — recency only (003b slice 3)", () => {
@@ -76,15 +77,15 @@ test("a locale with no GRAMMAR entry gets no invitations — recency only (003b 
   // tail, invisible under de — the de tail is not English grammar
   const dog = S("dog");
   for (let i = 0; i < 3; i++) logSelection(db, "sense", dog.id, NOW - 3600_000);
-  const en = stripCandidates(db, [S("want")], NOW, "en");
+  const en = stripCandidates(db, [S("want")], NOW, "en", TEST_MODEL);
   assert.ok(en.some((c) => c.id === dog.id));
-  const de = stripCandidates(db, [S("want")], NOW, "de");
+  const de = stripCandidates(db, [S("want")], NOW, "de", TEST_MODEL);
   assert.ok(!de.some((c) => c.id === dog.id));
   // recency is locale-independent: a recently tapped entity still ranks
   const ent = addPersonalEntity(db, { spokenName: "Cooper" });
   logSelection(db, "entity", ent.id, NOW - 60_000);
   assert.ok(
-    stripCandidates(db, [S("want")], NOW, "de").some((c) => c.kind === "entity" && c.id === ent.id),
+    stripCandidates(db, [S("want")], NOW, "de", TEST_MODEL).some((c) => c.kind === "entity" && c.id === ent.id),
   );
 });
 
@@ -98,7 +99,7 @@ test("cap and ordering: at most 4 tiles, invited+recent outranks stale", () => {
   for (let i = 0; i < 5; i++) logSelection(db, "entity", cooper, NOW - 3 * 3600_000);
   logSelection(db, "entity", mom, NOW - 30_000);
 
-  const afterVerb = stripCandidates(db, [S("want")], NOW, "en");
+  const afterVerb = stripCandidates(db, [S("want")], NOW, "en", TEST_MODEL);
   assert.ok(afterVerb.length <= STRIP_CAP);
   assert.ok(afterVerb.some((c) => c.kind === "entity" && c.id === cooper));
   // all six are eligible by invitation; the cap keeps the strip at 4

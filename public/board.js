@@ -14,6 +14,7 @@ import {
   openSentence,
   STRIP_CAP,
   stripScored,
+  showGate,
 } from "./shared/funnel.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
@@ -113,7 +114,7 @@ const ensureSentence = () => (sentenceId ??= openSentence(db));
  * the next pick's position — one row per distinct offer, deduped by
  * (sentence, position, shown). The next logged pick fills chosen_*. */
 let lastImpressionKey = null;
-function maybeImpression(candidates, shown) {
+function maybeImpression(candidates, shown, pNone = 0) {
   if (sentenceId === null) return;
   const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
   const key = `${sentenceId}:${sentencePicks}:${shownKeys.join()}`;
@@ -122,7 +123,7 @@ function maybeImpression(candidates, shown) {
   logImpression(db, {
     sentenceId, position: sentencePicks,
     candidates: candidates.map((c) => ({ kind: c.kind, id: c.id, x: c.x ?? {} })),
-    shown: shownKeys,
+    shown: shownKeys, pNone,
   });
 }
 let addTarget = null;  // board_group id the add form files into
@@ -414,11 +415,19 @@ async function renderStrip() {
     // words included — the grid is hidden so the no-core rule doesn't
     // apply (slice 7, Dual_Engine §5.2).
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-    const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale);
+    // Jev is never wired yet — the strip always runs the local_only set
+    // (Dual_Engine §5.3); the impression records which set ran.
+    const model = { weights: catalog.prediction.weights.local_only,
+                    tau: catalog.prediction.tau };
+    const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbOpen
-      ? keyboardContinuations(db, sents, locale, Date.now())
-      : scored.slice(0, STRIP_CAP).map((r) => ({ kind: r.kind, id: r.id }));
-    maybeImpression(scored ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })), items);
+      ? keyboardContinuations(db, sents, locale, Date.now(), model)
+      : showGate(scored.candidates, scored.pNone, model.tau)
+          .map((r) => ({ kind: r.kind, id: r.id }));
+    maybeImpression(
+      scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
+      items, scored?.pNone ?? 0,
+    );
     cards = [];
     for (const c of items) {
       if (c.kind === "entity") {

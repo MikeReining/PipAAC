@@ -170,6 +170,32 @@ pick (`chosen_source='grid'`), the last left NULL.
 
 ## Slice 3 — The local model: features, log-linear score, show gate
 
+**BUILT 2026-09-23** (`18a6c56`). `features()` computes the § 5.3
+vector per candidate — decayed counts (30-day half-life) enter as
+`log(1+count)`, `recency` is a 0–1 ramp over 15 minutes, `invited`/
+`fresh`/`echo` 0/1; `occasion`/`echo`/`jev` stay 0 until 007/008/Jev
+exist. `scoreCandidates` softmaxes over the shortlist ∪ `none`;
+`showGate` returns tiles with `P ≥ τ_tile`, nothing when
+`P(none) ≥ τ_none`. `stripScored` caps the shortlist at 16 (§ 5.2) and
+takes one resolved weight set; `board.js` runs `local_only` (no Jev
+yet). `data/prediction/defaults.json` ships the fitted starting weights
+(`006-s3.*`), embedded as `catalog.prediction` by the catalog build.
+`scripts/prediction/fit_defaults.mjs` replays fixture days 1–10,
+fits θ on in-shortlist rows + calibrates `none_bias` on all rows, and
+sweeps τ. Days 11–14 stay held out. Works Test
+(`prediction_sim.test.mjs`): hit 25.4% vs baseline 23.7%, false-show
+7.6% vs 36.4%, taps/word 1.356 vs 1.39 — all green, plus the
+unscripted-show-rate and zeroed-ranker controls.
+
+Measured (held-out days 11–14, vs slice-2 baseline):
+
+| metric | slice 2 baseline | slice 3 model |
+| --- | --- | --- |
+| hit rate | 23.7% | 25.4% |
+| false-show | 36.4% | 7.6% |
+| taps/word | 1.39 | 1.356 |
+| shortlist recall | 28.0% | 27.1% |
+
 Goal: replace `scoreRow` with the model in
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.3–5.4 using the
 `local_only` weights, and beat the slice 2 baseline.

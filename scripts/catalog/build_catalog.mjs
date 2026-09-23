@@ -27,6 +27,7 @@ const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
 const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
 const GROUP_SEED = join(repoRoot, "data/group_seed.json");
 const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
+const PREDICTION_DEFAULTS = join(repoRoot, "data/prediction/defaults.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const DEFAULT_VOICE_ID = "voi_default_en";
@@ -329,7 +330,13 @@ export function buildCatalog(
       schema: "src/board/schema.sql",
       groupSeed: "data/group_seed.json",
       numberAliases: "data/number_aliases.json",
+      predictionDefaults: "data/prediction/defaults.json",
     },
+    // Slice-3 starting weights + show-gate τ (Dual_Engine §5.3–5.4),
+    // fitted on the simulation fixture by scripts/prediction/fit_defaults.mjs.
+    prediction: existsSync(PREDICTION_DEFAULTS)
+      ? JSON.parse(readFileSync(PREDICTION_DEFAULTS, "utf8"))
+      : null,
     // The bundle is the full device bootstrap: DDL plus rows, one fetch.
     schemaSql: readFileSync(SCHEMA_SQL, "utf8"),
     layouts,

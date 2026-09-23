@@ -22,6 +22,7 @@ import {
   stripCandidates,
 } from "../../public/shared/funnel.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
+import { TEST_MODEL } from "./test_model.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -77,7 +78,7 @@ test("the hour term is the child's local hour in every timezone", () => {
       )
       .all()[0];
     const ranked = stripCandidates(
-      db, [{ kind: "sense", id: verb.id }], localTime(0, 8), "en",
+      db, [{ kind: "sense", id: verb.id }], localTime(0, 8), "en", TEST_MODEL,
     );
     const mi = ranked.findIndex((c) => c.id === morning.id);
     const ai = ranked.findIndex((c) => c.id === afternoon.id);

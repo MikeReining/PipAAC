@@ -15,7 +15,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Slice 3 — the local model: features, log-linear score, show gate. | `docs/phases/006_Prediction_Engine.md` |
+| **P1** | Slice 4 — learning on the device: per-child weights after Speak. | `docs/phases/006_Prediction_Engine.md` |
 | **P2** | Slice 7 — the web editor. | `docs/phases/011_Sync_And_Web_Editing.md` |
 
 ## Live index
@@ -25,7 +25,7 @@ Executing phases only. Each row names the **next** slice.
 | Phase | Next slice |
 | --- | --- |
 | [005 — Word Forms](005_Word_Forms.md) | Slice 1 — forms in the catalog |
-| [006 — Prediction Engine](006_Prediction_Engine.md) | **P1.** Slice 3 — the local model (features, log-linear score, show gate) |
+| [006 — Prediction Engine](006_Prediction_Engine.md) | **P1.** Slice 4 — learning on the device (per-child weights after Speak) |
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
 | [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 4 — record my own (slices 4, 6–9 independent) |

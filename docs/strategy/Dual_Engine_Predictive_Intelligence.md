@@ -299,9 +299,17 @@ offline; Jev late) and **`with_jev`** (re-rank when Jev answers in time).
 Offline is not "Jev removed" but its own tuned model.
 
 Starting weights are the same for every child: tuned on the simulation
-fixtures in 006 and shipped as catalog data.
+fixtures in 006 and shipped as catalog data. **BUILT** (006 slice 3):
+`features()` + `scoreCandidates()` in `public/shared/funnel.mjs`; weights
+in `data/prediction/defaults.json` → `catalog.prediction`, fitted offline
+by `scripts/prediction/fit_defaults.mjs` on fixture days 1–10. The
+`with_jev` set starts identical to `local_only` until an impression
+carries a real `jev` feature.
 
 ### 5.4 The show gate
+
+**BUILT** (006 slice 3): `showGate()` in `public/shared/funnel.mjs` —
+τ live in `catalog.prediction.tau`, fitted with the weights.
 
 - Show up to four tiles in rank order, each with `P(w) ≥ τ_tile`.
 - If `P(none) ≥ τ_none`, show nothing (ghost cards).

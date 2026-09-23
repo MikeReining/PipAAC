@@ -27,6 +27,7 @@ import {
 } from "../../public/shared/groups.mjs";
 import { stripCandidates, keyboardContinuations, logSelection } from "../../public/shared/funnel.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
+import { TEST_MODEL } from "./test_model.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -115,14 +116,14 @@ test("retired entities render nowhere and restore cleanly", () => {
   const sentence = [{ kind: "sense", id: wantId }]; // a verb tail invites entities
 
   assert.ok(groupPage(db, "grp_animals", 0, "en").some((r) => r.item_id === "ent_cooper"));
-  assert.ok(stripCandidates(db, sentence, Date.now(), "en").some((c) => c.id === "ent_cooper"));
-  assert.ok(keyboardContinuations(db, sentence, "en").some((c) => c.id === "ent_cooper"));
+  assert.ok(stripCandidates(db, sentence, Date.now(), "en", TEST_MODEL).some((c) => c.id === "ent_cooper"));
+  assert.ok(keyboardContinuations(db, sentence, "en", Date.now(), TEST_MODEL).some((c) => c.id === "ent_cooper"));
   assert.ok(entityMatches(db, "Coo", "grp_people", "en").some((h) => h.id === "ent_cooper"));
 
   retireEntity(db, "ent_cooper");
   assert.ok(!groupPage(db, "grp_animals", 0, "en").some((r) => r.item_id === "ent_cooper"));
-  assert.ok(!stripCandidates(db, sentence, Date.now(), "en").some((c) => c.id === "ent_cooper"));
-  assert.ok(!keyboardContinuations(db, sentence, "en").some((c) => c.id === "ent_cooper"));
+  assert.ok(!stripCandidates(db, sentence, Date.now(), "en", TEST_MODEL).some((c) => c.id === "ent_cooper"));
+  assert.ok(!keyboardContinuations(db, sentence, "en", Date.now(), TEST_MODEL).some((c) => c.id === "ent_cooper"));
   assert.ok(!entityMatches(db, "Coo", "grp_people", "en").some((h) => h.id === "ent_cooper"));
   // the row, photo and placements stay — restorable
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM personal_entity WHERE id='ent_cooper'").all()[0].n, 1);

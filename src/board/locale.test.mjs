@@ -15,6 +15,7 @@ import { stripCandidates } from "../../public/shared/funnel.mjs";
 import { resolveProfile } from "../../public/shared/profile.mjs";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
+import { TEST_MODEL } from "./test_model.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -115,10 +116,10 @@ test("strip reads the profile locale: a de-unlabeled verb tail invites nothing",
   ).run();
   // 'eat' has no de label → tailInfo sees pos NULL → no noun invitation,
   // and the never-selected entity stays off the strip.
-  assert.deepEqual(stripCandidates(db, [{ kind: "sense", id: "sns_0028" }], NOW, "de"), []);
+  assert.deepEqual(stripCandidates(db, [{ kind: "sense", id: "sns_0028" }], NOW, "de", TEST_MODEL), []);
   // the same tail under en invites nouns — the entity is eligible
   assert.ok(
-    stripCandidates(db, [{ kind: "sense", id: "sns_0028" }], NOW, "en").some(
+    stripCandidates(db, [{ kind: "sense", id: "sns_0028" }], NOW, "en", TEST_MODEL).some(
       (c) => c.kind === "entity" && c.id === "ent_de",
     ),
   );
