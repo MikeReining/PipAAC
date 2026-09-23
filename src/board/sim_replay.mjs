@@ -84,7 +84,10 @@ export function replayDays(db, catalog, fixture, entities, { offer, measureFrom,
   };
 
   const day0 = new Date(); day0.setHours(0, 0, 0, 0);
-  const dayBase = day0.getTime() - 14 * 86400000; // fixture day 1 = 14 days ago
+  // Fixture day 1 must be a Monday: the fixture's school/weekend kinds
+  // follow a Mon–Sun week, and features() buckets events by the real
+  // weekday — a "14 days ago" anchor rotates the kinds off the calendar.
+  const dayBase = day0.getTime() - (((day0.getDay() + 6) % 7) + 14) * 86400000;
   const atFor = (day, hhmm) => {
     const [h, m] = hhmm.split(":").map(Number);
     const d = new Date(dayBase + (day - 1) * 86400000);

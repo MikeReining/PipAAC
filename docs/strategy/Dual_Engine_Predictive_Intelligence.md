@@ -342,8 +342,13 @@ burn-in keeps little-data children on the defaults (`loadWeights`);
 `none_bias` learns at a slower rate than feature weights so ordering
 evidence lands before the gate moves. Works Test:
 `src/board/learn.test.mjs` — prequential replay of the routine and varied
-children; both beat frozen defaults on days 8–14 hit rate, and the
-routine child's `hour` weight ends far above the varied child's.
+children; the routine child's `hour` weight ends far above the varied
+child's. 2026-09-23 correction: the fixture anchor now pins day 1 to a
+Monday (the school/weekend kinds must match the real `dayTypeOf`), and
+on re-measurement learned == fixed on days 8–14 hit rate — drift
+changes ~16% of shown sets but gains and losses wash against the
+re-fit defaults. "Beats defaults" held at slice-4 calibration and needs
+a retune or harder fixture — flagged for founder.
 
 Every strip moment writes an impression: the shortlist, each candidate's
 features, what was shown, and whether Jev answered. The label is the **next
