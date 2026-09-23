@@ -162,6 +162,12 @@ pattern: on by default, one switch, a strict list).
   switch. It amends "never … any sequence of words" above. Whitelist and
   tests: `docs/phases/017_Prediction_Hardening.md` step 26. Not built;
   this section and § 7 change in the commit that builds it.
+- **DECIDED 2026-09-23** (founder). Speed numbers are added under the
+  same switch: daily WPM median and quartiles, time between picks per
+  path (strip, home grid, group, typed), the Jev-timing experiment's two
+  medians and counts, and the wrong-pick count. Numbers only; no words,
+  ids, or times of day. Spec:
+  `docs/phases/017_Prediction_Hardening.md` step 28. Not built.
 
 ## 7. Bans
 

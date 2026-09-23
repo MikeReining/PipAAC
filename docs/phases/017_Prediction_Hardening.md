@@ -111,6 +111,11 @@ bench (step 13):
    number** (R12): clearly higher than with no prediction, on users the
    system has never seen, reported as two lifts, own data alone and Jev
    on top (step 19). Faster finding counts, not only fewer taps.
+   Context: our working baseline without prediction is **about 10 words
+   per minute** (founder, 2026-09-23). At that pace most time goes to
+   finding, recalling, and tapping, which is exactly what prediction
+   cuts, so 10 → 14 (+40%) is a realistic scale of gain. Not a target
+   (R1).
 3. **It keeps quiet when unsure.** Suggestions that cost more than they
    save are counted as harm and kept rare (steps 6, 16).
 4. **It never moves under a finger.** No tile is replaced while the user is
@@ -174,6 +179,7 @@ M2  The instrument          11 → 12 → 16 → 13 → 15 → 18
 M3  Measured improvement    23 → 7 → 10 → 27 → 21 → 22 → 24 → 25 → 6 → 8 → 9 → 14 → 17
 M4  Proof                   19 → 22
 F   The flywheel            26 (after 016 slice 6; parallel to M3)
+R   Real speed              28 (the on-device part can start with M1; sending waits for 016 slice 6)
 ```
 
 Step 23 (the opening book) needs none of M1 to start: building and
@@ -211,7 +217,8 @@ Why this changes the audit's order:
 | R8 | Data licenses | Free sources only; no paid license (step 23). |
 | R9 | Ranking | By probability: the words the user is about to say, like a phone keyboard. Never by how far away a word is. |
 | R10 | The flywheel | On by default under the existing "Help improve Pip" switch; anonymous 1–3-word counts of built-in words (step 26). Amends Stats § 6.3's "no sequence of words". Turning it off stays free (recommended; founder floated charging for opt-out). |
-| R12 | Headline metric | **Words per minute.** Faster finding is a real gain, so the bench models time, not only taps (step 16). |
+| R12 | Headline metric | **Words per minute.** Faster finding is a real gain, so the bench models time, not only taps (step 16). Working baseline without prediction: about 10 WPM. Prediction can also cut thinking time: recognizing a shown word is faster than recalling it (step 16). |
+| R15 | Real speed | Measure real WPM, time between picks by path, and the Jev-timing natural experiment on the device; send those numbers (no words) under "Help improve Pip"; use them to replace the simulation's timing guesses (step 28). |
 | R13 | Whole messages | **No invented message tiles** (no symbol the user knows, and it skips the word's motor pattern). Instead, a **word chain**: the next 2–3 real word tiles, side by side, in order (step 22). |
 | R14 | Language judgments | **No hand-coded rules** (keyword detectors, grammar masks). Meaning questions go to Jev; everything else is a learned weight. The choice-question check is a Jev question (step 24). |
 | R11 | CHILDES | **Only with TalkBank's written permission** (see the CHILDES rule at the top). Founder emailed TalkBank 2026-09-23; answer pending. Until then, nothing CHILDES-derived in the repo, book, bench, or builds. A one-off measurement (step 23 § Real children) shows what it's worth: +11–16 points in top 4 over the best free book. When the answer arrives, record its date and exact scope here. |
@@ -436,7 +443,9 @@ Build:
    (about 3%) are not on any board and must be typed, to exercise the
    keyboard path.
 5. Output per user: every message with its day, time, intended words,
-   gaps between picks, and repairs. The manifest stores a SHA-256 per
+   a deciding pause before the message (drawn per persona), and repairs.
+   Finding, recall, and motor time are not in the answer key: the step 16
+   time model computes them, because they depend on what the strip shows. The manifest stores a SHA-256 per
    user file. The bench regenerates and **refuses to run on a hash
    mismatch**, so a changed answer key is always a deliberate, reviewed
    commit.
@@ -529,8 +538,25 @@ one config, not findings):
 | Scanning a shown strip | 0.3 s per tile looked at | Paid whether or not the target is there |
 | Taking the next tile of a shown word chain | motor time only | The finding is already done: that's the chain's gain |
 | Correction | backspace + the correct path | For slips and answer-key repairs |
+| **Deciding** what to say | per message, from the answer key | Untouched by prediction |
+| **Recalling** the word | per word; longer for words this user rarely says | **Cut when the word is on screen** (by `recall_saving`); a shown chain cuts it for every word in the chain |
 
-**Words per minute** = intended words ÷ total modeled time. All
+**Thinking time is split in two.** Part is deciding what to say, which
+prediction doesn't change. Part is recalling the word, and remembering
+where it lives. Seeing the word on screen turns recall into recognition,
+which is faster, especially for users with word-finding difficulty. How
+much is saved is unknown until real data exists (step 28), so every
+headline is reported at `recall_saving` = 0% (prediction saves no
+thinking), 50%, and 90%.
+
+**Calibration:** the middle setting is tuned so that A0 (no
+prediction) runs at about 10 WPM on the fit users, our working baseline
+(R12). The earlier scratch estimate (17–23 WPM) counted finding and
+tapping only, with no thinking time. Step 28's real timings replace all
+of these values once users exist.
+
+**Words per minute** = intended words ÷ total modeled time, including
+deciding and recalling. All
 constants live in one config, including `reach_ms` (how long before a
 pick the finger starts moving; step 2). **Every headline number is
 reported at the low, middle, and high setting of the motor and scan
@@ -553,6 +579,9 @@ more time than a word on page one. A strip that always shows four wrong
 tiles scores lower WPM than no prediction. A strip that shows the target
 plus three decoys costs more at the high scan setting than at the low
 one. A familiar home-grid word is found faster than a rarely used one.
+A0 lands near 10 WPM at the middle setting. With `recall_saving` = 0, a
+shown word saves only finding and motor time; at 90%, it also saves most
+of the recall time.
 
 Done when: those pass.
 
@@ -1293,7 +1322,7 @@ The `--final` report leads with:
 
 Each lift is **words per minute** (with modeled actions beside it), with
 a 95% bootstrap interval over eval users, at the low, middle, and high
-time settings, for day 1, week 1, and
+time settings and at `recall_saving` 0% / 50% / 90%, for day 1, week 1, and
 days 22–30. Each is labeled **clear gain** (interval above zero), **no
 clear effect** (interval spans zero), or **clear loss** (interval below
 zero). Every cohort where a lift is a loss is listed.
@@ -1335,6 +1364,74 @@ chains on screen, and which variant, is ruling R6.
 
 Removed 2026-09-23 (R5): no pilot. The simulation decides whether this is
 worth deploying; after launch, `predictionReport` measures real use.
+
+# R — Real speed (parallel track, starts with M1)
+
+## Step 28 — Measure real words per minute, and what prediction saves
+
+Goal: the app measures how fast users actually speak, and how much
+prediction saves them. Those real numbers then replace the simulation's
+timing guesses (step 16). This is how the algorithm keeps improving
+after launch: every change is judged by real words per minute.
+
+The raw material already exists. Every pick is timestamped
+(`learner_event_log.selected_at`), sentences record their start and how
+they ended (schema § 6.2c), and each strip moment records when it was
+painted and what was picked next (`strip_impression.shown_at`,
+`chosen_*`; § 6.2d).
+
+Files: `public/shared/funnel.mjs` (`predictionReport` gains the speed
+metrics), a new pure module for the daily speed totals (proposed
+`public/shared/speed.mjs`), the 016 anonymous-totals sender,
+`docs/product/Stats_And_Progress.md` § 6.3.
+
+Build:
+1. **Real WPM on the device:** words in spoken sentences ÷ time from the
+   first pick to Speak, per sentence. Report daily median and quartiles.
+   The same definition feeds 016's stats, so there is one definition of
+   WPM, not two.
+2. **Time between picks, by path:** strip, home grid, group, typed. The
+   pause before a pick plus the tap. This shows directly whether picking
+   from the strip is faster than finding the word yourself.
+3. **The natural experiment (Jev timing).** A Jev answer sometimes
+   arrives in time and sometimes too late, depending on network speed,
+   not on the moment. So "Jev's reranked word was on screen" versus "it
+   arrived too late" is close to a coin flip. For moments where Jev's
+   rerank would have shown the word the user then picked, compare the
+   time to pick when it was shown vs when it arrived late. The
+   difference is the thinking and finding time prediction really saves,
+   with no pilot and no suggestions withheld on purpose. Check that
+   lateness doesn't track shortlist size or sentence position (stratify
+   by both). If it does, report the result as confounded.
+4. **Wrong picks:** strip picks removed with backspace within a few
+   seconds. These count against prediction, so faster doesn't hide
+   "put words in the user's mouth".
+5. **Sent (amends Stats § 6.3, R15):** per day, numbers only: WPM median
+   and quartiles; time-between-picks median and quartiles per path; the
+   natural experiment's two medians and counts; wrong-pick count. Under
+   the same "Help improve Pip" switch. No words, no word ids, no
+   sequences, no times of day.
+6. **Calibration:** once enough users exist, the step 16 time model's
+   motor, finding, deciding, and recall values are fitted from these
+   totals, and the bench reports against real timing. The replay screen
+   (step 18) shows real vs modeled time side by side.
+
+Truth owner: `docs/product/Stats_And_Progress.md` (WPM definition,
+what's sent); this doc for the experiment.
+
+Lie-prone layer: WPM computed from the ranker's own report (e.g.
+counting "strip picks" from the offer instead of the pick). Every number
+comes from timestamps of real picks and the painted strip.
+
+Works Test: a scripted session with known pick times gives the
+hand-computed WPM and per-path medians exactly. In a replay where Jev's
+lateness is randomized and shown words are picked 1 s faster, the
+experiment recovers about 1 s. With no real effect, it recovers about
+0. The capture test from step 26 shows the payload has only the listed
+numbers.
+
+Done when: those pass, and a live device shows the day's WPM and
+per-path times in `predictionReport`.
 
 # F — The flywheel (parallel track)
 
@@ -1421,6 +1518,7 @@ strip should know. These additions go after the biggest gains:
 | 24 | The partner's words | 10–18% of real children's non-core words echo the adult's last turn; +1–4 points |
 | 25 | Word classes, slots, topic, fading | One example teaches a class; new entities are predicted on day one |
 | 26 | The flywheel | Every user improves the book; nobody else in AAC has this data |
+| 28 | Real words per minute + the Jev-timing experiment | Measures what prediction really saves, including thinking time, and calibrates the simulation |
 | 21 | Predict the first word | 40% of picks are sentence-first and get no prediction today |
 | 22 | Word chains (real tiles in order) | Faster finding across a whole message; the only way past single-word limits |
 | 10 | The user's history as counts | Works on tiny data; fixes the duplicated phrase/pair signal |
@@ -1433,7 +1531,7 @@ a halo arm may be added to the bench. Building halos stays out of scope.
 
 ## Human stops
 
-None open; R1–R14 are ruled. Step 24's Jev choice question adds a
+None open; R1–R15 are ruled. Step 24's Jev choice question adds a
 question, not a field: the request body stays within § 3.2's whitelist
 (approved under R14). Step 26 changes what leaves the device;
 build it exactly to its whitelist. Any change to what Jev receives on a user's
@@ -1458,4 +1556,5 @@ Step 19 records the one `--final` eval run.
 | 23 experiment | Caregiver-speech book vs adult AAC book, TinyDialogues held-out child turns (later words) | — | age 2: 33.5% vs 15.3%; age 5: 49.1% vs 28.2% | — | — | scratch, 2026-09-23 |
 | 24 experiment | Partner's last-turn words boosted (fixed +4 logit), caregiver book, TinyDialogues | — | age 2: 15.8% → 27.9%; age 5: 46.6% → 44.1% | — | — | scratch, 2026-09-23 |
 | 10 test | Counts only (strict backoff) vs current learned model, simulated children | — | routine 31.0% vs 45.1%; varied 54.1% vs 45.9% | — | — | scratch, 2026-09-23 |
+| Speed estimate | Current strip vs none, simulated children, finding + tapping only (no thinking time) | — | +35–37% WPM at fast, middle, and slow settings (taps −28–29%) | — | — | scratch, 2026-09-23 |
 | 23/24 real children | CHILDES held-out transcripts, later words top 4: adult AAC → legal child book → CHILDES book (+partner on legal) | — | ~age 3: 26.8% → 37.0% (38.2%) → 49.2% | — | — | scratch, 2026-09-23 |
