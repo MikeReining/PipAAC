@@ -3,10 +3,15 @@
 Fetch customer reviews for iOS apps from all App Store storefronts worldwide
 and store them in a local SQLite database.
 
-Target apps:
+Target competitor apps:
   - Proloquo2Go AAC (308368164)
   - Proloquo (1521978238)
   - Proloquo Coach (1488458662)
+  - TouchChat HD w/ WordPower (412351574)
+  - TouchChat HD - AAC (398860728)
+  - LAMP Words For Life (551215116)
+  - TD Snap (1072799231)
+  - TD Snap Legacy (1257753762)
 """
 
 import argparse
@@ -39,6 +44,42 @@ DEFAULT_APPS = [
         "name": "Proloquo Coach",
         "url": "https://apps.apple.com/app/proloquo-coach/id1488458662",
         "supports_xml": False,
+    },
+    {
+        "id": "412351574",
+        "name": "TouchChat HD w/ WordPower",
+        "url": "https://apps.apple.com/app/touchchat-hd-aac-w-wordpower/id412351574",
+        "supports_xml": True,
+    },
+    {
+        "id": "398860728",
+        "name": "TouchChat HD - AAC",
+        "url": "https://apps.apple.com/app/touchchat-hd-aac/id398860728",
+        "supports_xml": True,
+    },
+    {
+        "id": "551215116",
+        "name": "LAMP Words For Life",
+        "url": "https://apps.apple.com/app/lamp-words-for-life/id551215116",
+        "supports_xml": True,
+    },
+    {
+        "id": "1072799231",
+        "name": "TD Snap",
+        "url": "https://apps.apple.com/app/td-snap/id1072799231",
+        "supports_xml": True,
+    },
+    {
+        "id": "1257753762",
+        "name": "TD Snap Legacy",
+        "url": "https://apps.apple.com/app/td-snap-legacy/id1257753762",
+        "supports_xml": True,
+    },
+    {
+        "id": "1021384570",
+        "name": "CoughDrop",
+        "url": "https://apps.apple.com/app/coughdrop/id1021384570",
+        "supports_xml": True,
     },
 ]
 
@@ -224,18 +265,19 @@ def fetch_url(url: str, timeout: float = 8.0):
     return None
 
 
-def fetch_country_reviews_for_app(app_info: dict, country: str):
+def fetch_country_reviews_for_app(app_info: dict, country: str, delay: float = 0.3):
     app_id = app_info["id"]
     app_name = app_info["name"]
     supports_xml = app_info.get("supports_xml", False)
     reviews_found = []
     seen_ids = set()
 
-    # XML format for legacy-supported apps (e.g. Proloquo2Go)
+    # 1. XML format for apps supporting it
     if supports_xml:
         for sort_type in ["mostRecent", "mostHelpful"]:
             for page in range(1, 11):
                 url = f"https://itunes.apple.com/{country}/rss/customerreviews/page={page}/id={app_id}/sortBy={sort_type}/xml"
+                time.sleep(delay)
                 raw = fetch_url(url)
                 if not raw:
                     break
@@ -256,8 +298,7 @@ def fetch_country_reviews_for_app(app_info: dict, country: str):
                 except Exception:
                     break
 
-    # JSON endpoints (both unpaginated and paginated variants)
-    # Unpaginated URLs are required for newer apps where Apple returns 403 on page=1
+    # 2. Unpaginated JSON endpoints
     unpaginated_urls = [
         (f"https://itunes.apple.com/{country}/rss/customerreviews/id={app_id}/sortBy=mostRecent/json", "json-unpaginated-recent"),
         (f"https://itunes.apple.com/{country}/rss/customerreviews/id={app_id}/json", "json-unpaginated-default"),
@@ -265,6 +306,7 @@ def fetch_country_reviews_for_app(app_info: dict, country: str):
     ]
 
     for url, sort_label in unpaginated_urls:
+        time.sleep(delay)
         raw = fetch_url(url)
         if not raw:
             continue
@@ -281,42 +323,44 @@ def fetch_country_reviews_for_app(app_info: dict, country: str):
         except Exception:
             pass
 
-    # Paginated JSON (pages 1 to 10)
-    json_paged_variants = [
-        (lambda p: f"https://itunes.apple.com/{country}/rss/customerreviews/page={p}/id={app_id}/json", "json-default"),
-        (lambda p: f"https://itunes.apple.com/{country}/rss/customerreviews/page={p}/id={app_id}/sortBy=mostRecent/json", "json-recent"),
-        (lambda p: f"https://itunes.apple.com/{country}/rss/customerreviews/page={p}/id={app_id}/sortBy=mostHelpful/json", "json-helpful"),
-    ]
+    # 3. Paginated JSON (if more reviews exist)
+    if len(reviews_found) >= 40:
+        json_paged_variants = [
+            (lambda p: f"https://itunes.apple.com/{country}/rss/customerreviews/page={p}/id={app_id}/json", "json-default"),
+            (lambda p: f"https://itunes.apple.com/{country}/rss/customerreviews/page={p}/id={app_id}/sortBy=mostRecent/json", "json-recent"),
+            (lambda p: f"https://itunes.apple.com/{country}/rss/customerreviews/page={p}/id={app_id}/sortBy=mostHelpful/json", "json-helpful"),
+        ]
 
-    for url_fn, sort_label in json_paged_variants:
-        for page in range(1, 11):
-            url = url_fn(page)
-            raw = fetch_url(url)
-            if not raw:
-                break
-            try:
-                data = json.loads(raw.decode("utf-8"))
-                raw_entries = data.get("feed", {}).get("entry", [])
-                if isinstance(raw_entries, dict):
-                    raw_entries = [raw_entries]
-                if not raw_entries:
+        for url_fn, sort_label in json_paged_variants:
+            for page in range(2, 11):
+                url = url_fn(page)
+                time.sleep(delay)
+                raw = fetch_url(url)
+                if not raw:
                     break
-                new_on_page = 0
-                for e in raw_entries:
-                    rev = parse_json_entry(e, country, app_id, app_name, f"{sort_label}-p{page}")
-                    if rev and rev["review_id"] not in seen_ids:
-                        seen_ids.add(rev["review_id"])
-                        reviews_found.append(rev)
-                        new_on_page += 1
-                if new_on_page == 0 or len(raw_entries) < 50:
+                try:
+                    data = json.loads(raw.decode("utf-8"))
+                    raw_entries = data.get("feed", {}).get("entry", [])
+                    if isinstance(raw_entries, dict):
+                        raw_entries = [raw_entries]
+                    if not raw_entries:
+                        break
+                    new_on_page = 0
+                    for e in raw_entries:
+                        rev = parse_json_entry(e, country, app_id, app_name, f"{sort_label}-p{page}")
+                        if rev and rev["review_id"] not in seen_ids:
+                            seen_ids.add(rev["review_id"])
+                            reviews_found.append(rev)
+                            new_on_page += 1
+                    if new_on_page == 0 or len(raw_entries) < 50:
+                        break
+                except Exception:
                     break
-            except Exception:
-                break
 
     return country, reviews_found
 
 
-def run_pipeline(db_path: str, apps: list, countries: list, max_workers: int = 8):
+def run_pipeline(db_path: str, apps: list, countries: list, max_workers: int = 3, delay: float = 0.35):
     conn = init_db(db_path)
     cur = conn.cursor()
 
@@ -331,11 +375,11 @@ def run_pipeline(db_path: str, apps: list, countries: list, max_workers: int = 8
     db_lock = threading.Lock()
 
     print("=" * 70)
-    print("Starting Apple Store Reviews Ingestion")
+    print("Starting Gradual Apple Store Reviews Ingestion")
     print(f"Database: {db_path}")
     print(f"Target apps ({len(apps)}): {', '.join(a['name'] for a in apps)}")
     print(f"Countries to scan: {len(countries)}")
-    print(f"Worker concurrency: {max_workers}")
+    print(f"Worker concurrency: {max_workers} (Pacing delay: {delay}s per request)")
     print("=" * 70)
 
     for app in apps:
@@ -348,7 +392,7 @@ def run_pipeline(db_path: str, apps: list, countries: list, max_workers: int = 8
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_country = {
-                executor.submit(fetch_country_reviews_for_app, app, c): c
+                executor.submit(fetch_country_reviews_for_app, app, c, delay): c
                 for c in countries
             }
 
@@ -406,26 +450,34 @@ def print_stats(db_path: str):
     ORDER BY cnt DESC
     """)
     for row in cur.fetchall():
-        print(f"• {row[0]} (ID: {row[1]}): {row[2]} reviews | Avg Rating: {row[3]}★ | From: {row[4][:10] if row[4] else 'N/A'} to {row[5][:10] if row[5] else 'N/A'}")
+        print(f"• {row[0]:<30} (ID: {row[1]}): {row[2]:>4} reviews | Avg Rating: {row[3]:>4}★ | Range: {row[4][:10] if row[4] else 'N/A'} → {row[5][:10] if row[5] else 'N/A'}")
 
-    print("\n--- RATING BREAKDOWN ---")
+    print("\n--- RATING BREAKDOWN PER APP ---")
     cur.execute("""
     SELECT app_name, rating, COUNT(*) as cnt
     FROM reviews
     GROUP BY app_name, rating
     ORDER BY app_name, rating DESC
     """)
-    for row in cur.fetchall():
-        print(f"  {row[0]}: {row[1]}★ -> {row[2]}")
+    rows = cur.fetchall()
+    app_ratings = {}
+    for app_name, rating, count in rows:
+        app_ratings.setdefault(app_name, {})[rating] = count
 
-    print("\n--- TOP COUNTRIES BY REVIEW COUNT ---")
+    for app_name, ratings in app_ratings.items():
+        total = sum(ratings.values())
+        r1 = ratings.get(1, 0)
+        r5 = ratings.get(5, 0)
+        print(f"• {app_name:<30}: Total={total:>4} | 5★={r5:>3} ({r5*100//total if total else 0:>2}%) | 1★={r1:>3} ({r1*100//total if total else 0:>2}%)")
+
+    print("\n--- TOP COUNTRIES OVERALL ---")
     cur.execute("""
     SELECT country, COUNT(*) as cnt,
            ROUND(AVG(rating), 2) as avg_rating
     FROM reviews
     GROUP BY country
     ORDER BY cnt DESC
-    LIMIT 15
+    LIMIT 10
     """)
     for row in cur.fetchall():
         print(f"  {row[0]}: {row[1]} reviews (Avg: {row[2]}★)")
@@ -466,9 +518,15 @@ def search_reviews(db_path: str, query: str, limit: int = 10):
 
 def main():
     parser = argparse.ArgumentParser(description="Fetch iOS app reviews from all App Store storefronts into SQLite")
-    parser.add_argument("--db", default="data/proloquo_reviews.db", help="Path to SQLite database")
-    parser.add_argument("--app", choices=["all", "proloquo2go", "proloquo", "coach"], default="all", help="App to fetch")
-    parser.add_argument("--workers", type=int, default=8, help="Number of concurrent worker threads")
+    parser.add_argument("--db", default="data/competitor_reviews.db", help="Path to SQLite database")
+    parser.add_argument(
+        "--app",
+        choices=["all", "new_competitors", "proloquo2go", "proloquo", "coach", "touchchat", "lamp", "tdsnap", "coughdrop"],
+        default="new_competitors",
+        help="App group to fetch"
+    )
+    parser.add_argument("--workers", type=int, default=3, help="Number of concurrent worker threads (gentle=3)")
+    parser.add_argument("--delay", type=float, default=0.35, help="Polite delay in seconds per request")
     parser.add_argument("--stats", action="store_true", help="Print summary statistics of the database")
     parser.add_argument("--search", type=str, help="Search reviews by keyword in title or content")
     args = parser.parse_args()
@@ -481,16 +539,26 @@ def main():
         search_reviews(args.db, args.search)
         return
 
-    if args.app == "proloquo2go":
-        apps_to_fetch = [DEFAULT_APPS[0]]
-    elif args.app == "proloquo":
-        apps_to_fetch = [DEFAULT_APPS[1]]
-    elif args.app == "coach":
-        apps_to_fetch = [DEFAULT_APPS[2]]
-    else:
-        apps_to_fetch = DEFAULT_APPS
+    app_map = {
+        "proloquo2go": [DEFAULT_APPS[0]],
+        "proloquo": [DEFAULT_APPS[1]],
+        "coach": [DEFAULT_APPS[2]],
+        "touchchat": [DEFAULT_APPS[3], DEFAULT_APPS[4]],
+        "lamp": [DEFAULT_APPS[5]],
+        "tdsnap": [DEFAULT_APPS[6], DEFAULT_APPS[7]],
+        "coughdrop": [DEFAULT_APPS[8]],
+        "new_competitors": [
+            DEFAULT_APPS[3], # TouchChat HD w/ WordPower
+            DEFAULT_APPS[4], # TouchChat HD
+            DEFAULT_APPS[5], # LAMP Words For Life
+            DEFAULT_APPS[6], # TD Snap
+            DEFAULT_APPS[7], # TD Snap Legacy
+        ],
+        "all": DEFAULT_APPS,
+    }
 
-    run_pipeline(args.db, apps_to_fetch, COUNTRIES, max_workers=args.workers)
+    apps_to_fetch = app_map[args.app]
+    run_pipeline(args.db, apps_to_fetch, COUNTRIES, max_workers=args.workers, delay=args.delay)
     print_stats(args.db)
 
 
