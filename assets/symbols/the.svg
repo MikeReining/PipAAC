@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="the">
-<g transform="translate(50 50) scale(0.969) translate(-50.00 -47.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<g transform="translate(50 50) scale(0.991) translate(-50.00 -44.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
 <polygon points="43.0,16.0 57.0,16.0 76.0,64.0 24.0,64.0" fill="#fcd6e2" stroke="none"/>
 <rect x="38" y="6" width="24" height="11" rx="4" fill="#111111"/>
-<rect x="7" y="62" width="26" height="26" rx="3" fill="#dddad3"/>
-<rect x="37" y="62" width="26" height="26" rx="3" fill="#f16b93"/>
-<rect x="67" y="62" width="26" height="26" rx="3" fill="#dddad3"/>
+<rect x="8" y="62" width="20" height="20" rx="3" fill="#dddad3"/>
+<rect x="40" y="62" width="20" height="20" rx="3" fill="#f16b93"/>
+<rect x="72" y="62" width="20" height="20" rx="3" fill="#dddad3"/>
 </g>
 </svg>

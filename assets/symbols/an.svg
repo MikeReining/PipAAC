@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="an">
-<g transform="translate(50 50) scale(0.969) translate(-50.00 -49.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
-<rect x="7" y="36" width="26" height="26" rx="3" fill="#dddad3"/>
-<rect x="37" y="36" width="26" height="26" rx="3" fill="#f16b93"/>
-<rect x="67" y="36" width="26" height="26" rx="3" fill="#dddad3"/>
+<g transform="translate(50 50) scale(0.991) translate(-50.00 -46.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="8" y="36" width="20" height="20" rx="3" fill="#dddad3"/>
+<rect x="40" y="36" width="20" height="20" rx="3" fill="#f16b93"/>
+<rect x="72" y="36" width="20" height="20" rx="3" fill="#dddad3"/>
 </g>
 </svg>

@@ -1,18 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="can">
-<g transform="translate(50 50) scale(1.000) translate(-50.50 -50.30)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
-<rect x="10" y="12" width="36" height="40" rx="12" fill="#ffffff"/>
-<rect x="11" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<rect x="20" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<rect x="29" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<rect x="38" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<path d="M12,40 C18,31 34,31 40,36" fill="none" stroke-width="3.5"/>
-<rect x="54" y="12" width="36" height="40" rx="12" fill="#ffffff"/>
-<rect x="55" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<rect x="64" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<rect x="73" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<rect x="82" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
-<path d="M56,40 C62,31 78,31 84,36" fill="none" stroke-width="3.5"/>
-<polygon points="23.0,58.0 33.0,58.0 33.0,72.0 40.0,72.0 28.0,90.0 16.0,72.0 23.0,72.0" fill="#31a44b"/>
-<polygon points="67.0,58.0 77.0,58.0 77.0,72.0 84.0,72.0 72.0,90.0 60.0,72.0 67.0,72.0" fill="#31a44b"/>
+<g transform="translate(50 50) scale(0.959) translate(-50.50 -50.30)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="7" y="12" width="36" height="40" rx="12" fill="#ffffff"/>
+<rect x="8" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="17" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="26" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="35" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<path d="M9,40 C15,31 31,31 37,36" fill="none" stroke-width="3.5"/>
+<rect x="57" y="12" width="36" height="40" rx="12" fill="#ffffff"/>
+<rect x="58" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="67" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="76" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="85" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<path d="M59,40 C65,31 81,31 87,36" fill="none" stroke-width="3.5"/>
+<polygon points="20.0,64.0 30.0,64.0 30.0,76.0 37.0,76.0 25.0,90.0 13.0,76.0 20.0,76.0" fill="#31a44b"/>
+<polygon points="70.0,64.0 80.0,64.0 80.0,76.0 87.0,76.0 75.0,90.0 63.0,76.0 70.0,76.0" fill="#31a44b"/>
 </g>
 </svg>

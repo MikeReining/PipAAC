@@ -175,7 +175,7 @@ test("every glyph word is a lexicon word with a shipped, on-palette SVG", () => 
   assert.equal(loadGlyphWords().size, Object.keys(words).length);
 });
 
-test("every glyph renders centered and inside the safe margin", async () => {
+test("every glyph renders centered, inside the safe margin, with its parts apart", async () => {
   // Measure the rendered pixels, not the SVG's own coordinates: an outline
   // poking past the edge or a drawing parked high only shows up in ink.
   const PX = 200; // 2 px per viewBox unit
@@ -198,5 +198,44 @@ test("every glyph renders centered and inside the safe margin", async () => {
       `${w}: ink ${u(x0)}..${u(x1 + 1)} x ${u(y0)}..${u(y1 + 1)} breaks the ${MARGIN}-unit margin`);
     const cx = u(x0 + x1 + 1) / 2, cy = u(y0 + y1 + 1) / 2;
     assert.ok(Math.abs(cx - 50) <= 1.5 && Math.abs(cy - 50) <= 1.5, `${w}: ink centered at ${cx},${cy}, not 50,50`);
+    if (words[w].parts) {
+      const found = partsWithGap(data, PX, 6 * 2);
+      assert.equal(found, words[w].parts, `${w}: ${found} separate parts at a 6-unit gap, want ${words[w].parts} — pieces touching?`);
+    }
   }
 });
+
+/** Count ink pieces after growing each by half the gap: two pieces closer
+ *  than `gapPx` merge, so a count below the expected one means touching. */
+function partsWithGap(rgba, px, gapPx) {
+  const r = gapPx / 2;
+  const ink = new Uint8Array(px * px);
+  for (let i = 0; i < px * px; i++) ink[i] = rgba[i * 4 + 3] > 24 ? 1 : 0;
+  const grown = new Uint8Array(px * px);
+  for (let y = 0; y < px; y++) {
+    for (let x = 0; x < px; x++) {
+      if (!ink[y * px + x]) continue;
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          const X = x + dx, Y = y + dy;
+          if (dx * dx + dy * dy <= r * r && X >= 0 && Y >= 0 && X < px && Y < px) grown[Y * px + X] = 1;
+        }
+      }
+    }
+  }
+  let n = 0;
+  const seen = new Uint8Array(px * px);
+  for (let i = 0; i < px * px; i++) {
+    if (!grown[i] || seen[i]) continue;
+    n++;
+    const stack = [i];
+    seen[i] = 1;
+    while (stack.length) {
+      const j = stack.pop(), x = j % px, y = (j - x) / px;
+      for (const k of [x > 0 ? j - 1 : -1, x < px - 1 ? j + 1 : -1, y > 0 ? j - px : -1, y < px - 1 ? j + px : -1]) {
+        if (k >= 0 && grown[k] && !seen[k]) { seen[k] = 1; stack.push(k); }
+      }
+    }
+  }
+  return n;
+}

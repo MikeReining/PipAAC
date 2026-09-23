@@ -1,33 +1,40 @@
 {
-  "_doc": "Opaque function words: no picture can show them. They get a hand-drawn SVG glyph at assets/symbols/<word>.svg, never an AI-generated picture; scripts/art/gen.mjs refuses these words. Owner: docs/operations/art-generator/SKILL.md § 1.2. source: asl = drawn from the ASL sign; symbol = a symbol the child meets anyway; diagram = arrow/dot/block geometry.",
+  "_doc": "Opaque function words: no picture can show them. They get a hand-drawn SVG glyph at assets/symbols/<word>.svg, never an AI-generated picture; scripts/art/gen.mjs refuses these words. Owner: docs/operations/art-generator/SKILL.md § 1.2. source: asl = drawn from the ASL sign; symbol = a symbol the child meets anyway; diagram = arrow/dot/block geometry. parts: how many separate pieces the glyph has; separate pieces keep a clear gap (checked by scripts/art/gen.test.mjs). Omitted where pieces overlap by design (the spotlight, the dashed outline).",
   "words": {
     "can": {
       "source": "asl",
-      "spec": "Two fists (ASL S-hands) with green arrows moving down: the ASL sign CAN."
+      "spec": "Two fists (ASL S-hands) with green arrows moving down: the ASL sign CAN.",
+      "parts": 4
     },
     "is": {
       "source": "symbol",
-      "spec": "One grey ball, then a green equals sign: one thing is."
+      "spec": "One grey ball, then a green equals sign: one thing is.",
+      "parts": 3
     },
     "are": {
       "source": "symbol",
-      "spec": "Three grey balls, then a green equals sign: many things are."
+      "spec": "Three grey balls, then a green equals sign: many things are.",
+      "parts": 3
     },
     "am": {
       "source": "symbol",
-      "spec": "A small yellow person (me), then a green equals sign: I am."
+      "spec": "A small yellow person (me), then a green equals sign: I am.",
+      "parts": 3
     },
     "was": {
       "source": "symbol",
-      "spec": "The 'is' glyph with the past badge (rewind ◀◀) above."
+      "spec": "The 'is' glyph with the past badge (rewind ◀◀) above.",
+      "parts": 4
     },
     "were": {
       "source": "symbol",
-      "spec": "The 'are' glyph with the past badge (rewind ◀◀) above."
+      "spec": "The 'are' glyph with the past badge (rewind ◀◀) above.",
+      "parts": 4
     },
     "will": {
       "source": "symbol",
-      "spec": "Green fast-forward (▶▶): it is going to happen."
+      "spec": "Green fast-forward (▶▶): it is going to happen.",
+      "parts": 1
     },
     "would": {
       "source": "symbol",
@@ -35,51 +42,63 @@
     },
     "and": {
       "source": "symbol",
-      "spec": "Grey ball + grey block with a bold pink plus between: this and that."
+      "spec": "Grey ball + grey block with a bold pink plus between: this and that.",
+      "parts": 3
     },
     "or": {
       "source": "diagram",
-      "spec": "Pink fork: one path splits to a grey ball or a grey block. Pick one."
+      "spec": "Pink fork: one path splits to a grey ball or a grey block. Pick one.",
+      "parts": 3
     },
     "but": {
       "source": "diagram",
-      "spec": "Pink U-turn arrow: going one way, then turning back."
+      "spec": "Pink U-turn arrow: going one way, then turning back.",
+      "parts": 1
     },
     "because": {
       "source": "diagram",
-      "spec": "Three falling dominoes; the first (the reason) is pink."
+      "spec": "Three falling dominoes; the first (the reason) is pink.",
+      "parts": 1
     },
     "so": {
       "source": "diagram",
-      "spec": "Three falling dominoes; the last (the result) is pink."
+      "spec": "Three falling dominoes; the last (the result) is pink.",
+      "parts": 1
     },
     "if": {
       "source": "diagram",
-      "spec": "Pink decision diamond with a path in and two paths out."
+      "spec": "Pink decision diamond with a path in and two paths out.",
+      "parts": 1
     },
     "to": {
       "source": "diagram",
-      "spec": "Pink arrow ending at a black dot: toward a place or thing."
+      "spec": "Pink arrow ending at a black dot: toward a place or thing.",
+      "parts": 2
     },
     "for": {
       "source": "diagram",
-      "spec": "Pink arrow ending at a yellow person: for someone."
+      "spec": "Pink arrow ending at a yellow person: for someone.",
+      "parts": 2
     },
     "at": {
       "source": "symbol",
-      "spec": "Pink dot inside camera-focus corners: right at this spot."
+      "spec": "Pink dot inside camera-focus corners: right at this spot.",
+      "parts": 5
     },
     "of": {
       "source": "diagram",
-      "spec": "Grey pie with one pink slice pulled out: a piece of the whole."
+      "spec": "Grey pie with one pink slice pulled out: a piece of the whole.",
+      "parts": 2
     },
     "a": {
       "source": "diagram",
-      "spec": "Row of three blocks, one pink: any one of them."
+      "spec": "Row of three blocks, one pink: any one of them.",
+      "parts": 3
     },
     "an": {
       "source": "diagram",
-      "spec": "Same glyph as 'a' (same word, different spelling)."
+      "spec": "Same glyph as 'a' (same word, different spelling).",
+      "parts": 3
     },
     "the": {
       "source": "diagram",
