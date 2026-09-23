@@ -30,7 +30,6 @@ import { displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
   createEntity,
-  entityGroups,
   groupDisplayName,
   groupIndex,
   groupPage,
@@ -41,13 +40,6 @@ import {
   posAtVisual,
   placeItem,
   removeItem,
-  removeItemUndoable,
-  renameEntity,
-  restoreEntity,
-  retireEntity,
-  senseGroups,
-  setEntityPhoto,
-  setMask,
   setSetting,
 } from "./shared/groups.mjs";
 import { applyPasteRows, nameFromFile, resolvePasteRows } from "./shared/bulk.mjs";
@@ -82,11 +74,8 @@ import {
   addUser, listUsers, migrateLegacy, openUserStore, putUser,
   removeUser, resolveActiveUser, setHome, touchOpened,
 } from "./shared/users.mjs";
-import { clearOverride, overrideFor, resolveSlot, setOverride } from "./shared/voice.mjs";
-import {
-  SENSE_ART_SQL, clearImageOverride, imageOverrideFor,
-  libraryImagesFor, setImageOverride,
-} from "./shared/images.mjs";
+import { resolveSlot } from "./shared/voice.mjs";
+import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { buildJevRequest, jevDeliverable, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
 import { coreCells, moveCore } from "./shared/coremove.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
@@ -96,6 +85,7 @@ import { mountKeyboard } from "./board/keyboard-ui.js";
 import { mountGroups } from "./board/groups-ui.js";
 import { mountAddFlow } from "./board/add-flow.js";
 import { mountLibrary } from "./board/library-ui.js";
+import { mountWordCard } from "./board/word-card.js";
 import {
   family as familyRow, familyItems,
 } from "./shared/families.mjs";
@@ -1252,7 +1242,7 @@ function renderGrid() {
       // empty slot moves; anchors and reserved slots refuse. A tap opens
       // the word card, same as group pages.
       editPointer(el, {
-        onTap: () => openWordCard({ item_kind: "sense", item_id: c.sense_id, label: c.label }),
+        onTap: () => wordCard.openWordCard({ item_kind: "sense", item_id: c.sense_id, label: c.label }),
         onDrop: (to) => {
           const mv = moveCore(db, geom.name, c.sense_id, to, { anchors: new Set(geom.anchors.keys()) });
           if (!mv) return;
@@ -1412,6 +1402,7 @@ jevSharing = (kbProfile.jev_sharing ?? 1) === 1;
 let groupsUi;
 let addUi;
 let libUi;
+let wordCard;
 const kbUi = mountKeyboard({
   db, locale, profile: kbProfile, all: ALL,
   sentence, getSentenceId: () => sentenceId, ensureSentence,
@@ -1594,7 +1585,7 @@ groupsUi = mountGroups({
   setView: (v) => kbUi.setView(v), open, close, toast, wordTile, layerMark, fitLabels, tap,
   navCell, editPointer, xBadge,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
-  openWordCard,
+  openWordCard: (item) => wordCard.openWordCard(item),
   loadPhotoURL, savePhoto, syncUploadBlob,
 });
 
@@ -1608,333 +1599,22 @@ addUi = mountAddFlow({
 
 /* Word library — public/board/library-ui.js */
 libUi = mountLibrary({
-  db, locale, open, loadPhotoURL, artInto, openWordCard,
+  db, locale, open, loadPhotoURL, artInto,
+  openWordCard: (item) => wordCard.openWordCard(item),
 });
 
-/* --- the word card (Word_Library § 4): where the word is, how it
-   sounds, what can change. Entities rename/photo/retire; catalog words
-   are read-only here — masking is the Hide slice. --- */
-let cardItem = null; // { item_kind, item_id, label } currently shown
-
-function cardGroups() {
-  return cardItem.item_kind === "entity"
-    ? entityGroups(db, cardItem.item_id, locale)
-    : senseGroups(db, cardItem.item_id, locale);
-}
-
-function renderCardGroups() {
-  const box = $("wc-groups");
-  box.innerHTML = "";
-  for (const g of cardGroups()) {
-    const chip = document.createElement("span");
-    chip.className = "wchip";
-    chip.textContent = g.name;
-    const removable =
-      cardItem.item_kind === "entity"
-        ? g.id !== "grp_my_words" // last cell is My Words — Remove retires
-        : g.kind !== "builtin"; // senses never leave built-ins
-    if (removable) {
-      chip.appendChild(xBadge(() => {
-        const undo = removeItemUndoable(db, g.id, cardItem.item_kind, cardItem.item_id);
-        renderCardGroups();
-        rerenderView();
-        toast(`Removed from ${g.name}`, () => { undo.undo(); renderCardGroups(); rerenderView(); });
-      }));
-    }
-    box.appendChild(chip);
-  }
-}
-
-function openWordCard(item) {
-  cardItem = { item_kind: item.item_kind, item_id: item.item_id, label: item.label };
-  const isEnt = item.item_kind === "entity";
-  const meta = isEnt ? { role: "Yellow" } : metaFor(item.item_id);
-  const pic = $("wc-pic");
-  pic.className = `pic r-${meta.role ?? "None"}`;
-  pic.replaceChildren();
-  $("wc-name").value = item.label;
-  $("wc-name").disabled = !isEnt; // a catalog word is renamed by a new copy, not here
-  $("wc-role").textContent = isEnt ? "personal word" : "catalog word";
-  $("wc-photolabel").hidden = !isEnt;
-  $("wc-photo").value = "";
-  $("wc-ownpiclabel").hidden = isEnt;
-  $("wc-ownpic").value = "";
-  $("wc-remove").hidden = !isEnt;
-  // Hide word (Masking § 2): catalog words only — entities retire instead.
-  if (isEnt) {
-    $("wc-hide").hidden = true;
-  } else {
-    const hidden = maskedSenseIds(db).has(item.item_id);
-    $("wc-hide").hidden = false;
-    $("wc-hide").textContent = hidden ? "Show word" : "Hide word";
-  }
-  $("wc-grouplist").hidden = true;
-  if (isEnt && item.photo_key) {
-    loadPhotoURL(item.photo_key).then((url) => {
-      if (!url) return;
-      const img = document.createElement("img");
-      img.src = url;
-      img.alt = "";
-      pic.replaceChildren(img);
-      pic.classList.add("photo");
-    });
-  } else if (!isEnt && meta.art) {
-    const img = document.createElement("img");
-    img.alt = "";
-    if (artInto(img, meta.art)) pic.classList.add("photo");
-    pic.appendChild(img);
-  } else {
-    pic.textContent = item.label[0].toUpperCase();
-  }
-  renderCardGroups();
-  updateRecUI();
-  updatePicUI();
-  open("wordcard");
-}
-
-$("wc-name").addEventListener("change", () => {
-  if (!cardItem || cardItem.item_kind !== "entity") return;
-  const name = $("wc-name").value.trim();
-  if (!name || name === cardItem.label) { $("wc-name").value = cardItem.label; return; }
-  renameEntity(db, cardItem.item_id, name);
-  cardItem.label = name;
-  kbUi.invalidateIndex(); // completions index the old spelling
-  rerenderView();
-  renderStrip();
-});
-
-$("wc-photo").addEventListener("change", async () => {
-  const file = $("wc-photo").files[0];
-  if (!file || !cardItem) return;
-  const photo = await savePhoto(file);
-  syncUploadBlob(photo.bytes).catch(() => {});
-  setEntityPhoto(db, cardItem.item_id, photo.key);
-  entityPhoto.delete(cardItem.item_id);
-  rerenderView();
-});
-
-/* Use my own picture (009 slice 6): a catalog word's photo override, or
- * another approved library picture, drawn everywhere the sense renders
- * until "Use our picture". The core map never changes — only the art. */
-function updatePicUI() {
-  const isEnt = cardItem?.item_kind === "entity";
-  const ovr = !isEnt && cardItem ? imageOverrideFor(db, cardItem.item_id) : null;
-  $("wc-ourpic").hidden = !ovr;
-  const pics = !isEnt && cardItem ? libraryImagesFor(db, cardItem.item_id) : [];
-  const box = $("wc-libpics");
-  box.replaceChildren();
-  // Another library picture is a choice only when one exists.
-  box.hidden = pics.length < 2;
-  for (const p of pics) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.classList.toggle("sel", ovr?.image_id === p.id);
-    const img = document.createElement("img");
-    img.src = `/${p.key}`;
-    img.alt = "";
-    b.appendChild(img);
-    b.addEventListener("click", () => {
-      setImageOverride(db, { senseId: cardItem.item_id, imageId: p.id });
-      afterPicChange();
-    });
-    box.appendChild(b);
-  }
-}
-
-function afterPicChange() {
-  senseMeta.delete(cardItem.item_id);
-  const meta = metaFor(cardItem.item_id);
-  const pic = $("wc-pic");
-  pic.className = `pic r-${meta.role ?? "None"}`;
-  pic.replaceChildren();
-  if (meta.art) {
-    const img = document.createElement("img");
-    img.alt = "";
-    if (artInto(img, meta.art)) pic.classList.add("photo");
-    pic.appendChild(img);
-  } else {
-    pic.textContent = cardItem.label[0].toUpperCase();
-  }
-  updatePicUI();
-  renderGrid();
-  renderStrip();
-  rerenderView();
-}
-
-$("wc-ownpic").addEventListener("change", async () => {
-  const file = $("wc-ownpic").files[0];
-  $("wc-ownpic").value = "";
-  if (!file || !cardItem || cardItem.item_kind !== "sense") return;
-  const photo = await savePhoto(file);
-  syncUploadBlob(photo.bytes).catch(() => {});
-  setImageOverride(db, { senseId: cardItem.item_id, photoKey: photo.key });
-  afterPicChange();
-});
-
-$("wc-ourpic").addEventListener("click", () => {
-  if (!cardItem || cardItem.item_kind !== "sense") return;
-  clearImageOverride(db, cardItem.item_id);
-  afterPicChange();
-});
-
-$("wc-play").addEventListener("click", () => {
-  if (!cardItem) return;
-  speakItem({ kind: cardItem.item_kind, id: cardItem.item_id });
-});
-
-/* Record my own (009 slice 4): MediaRecorder → content-addressed blob
- * → clip_override. The override wins over every voice until "Use the
- * voice again"; re-recording supersedes the previous row (bytes stay). */
-let recorder = null;
-let recChunks = [];
-
-/** What the card's recording binds to — an entity's id + spoken_name,
- *  or the locale lemma's utterance + spoken_text for a catalog word. */
-function overrideTarget() {
-  if (!cardItem) return null;
-  if (cardItem.item_kind === "entity") {
-    const e = ALL(db, "SELECT spoken_name FROM personal_entity WHERE id = ?",
-      [cardItem.item_id])[0];
-    return e ? { itemKind: "entity", itemId: cardItem.item_id, text: e.spoken_name } : null;
-  }
-  const l = ALL(db,
-    `SELECT l.utterance_id, u.spoken_text FROM label l
-     JOIN utterance u ON u.id = l.utterance_id
-     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
-    [cardItem.item_id, locale])[0];
-  return l ? { itemKind: "utterance", itemId: l.utterance_id, text: l.spoken_text } : null;
-}
-
-function updateRecUI() {
-  $("wc-record").textContent = recorder?.state === "recording" ? "Stop" : "Record it";
-  const t = overrideTarget();
-  $("wc-revert").hidden = !t || !overrideFor(db, t.itemKind, t.itemId);
-}
-
-$("wc-record").addEventListener("click", async () => {
-  if (recorder?.state === "recording") { recorder.stop(); return; }
-  const target = overrideTarget();
-  if (!target) return;
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    recorder = new MediaRecorder(stream);
-    recChunks = [];
-    recorder.ondataavailable = (e) => { if (e.data.size) recChunks.push(e.data); };
-    recorder.onstop = async () => {
-      stream.getTracks().forEach((t) => t.stop());
-      updateRecUI();
-      const blob = new Blob(recChunks, { type: recorder.mimeType });
-      if (!blob.size) return;
-      const { key, bytes } = await savePhoto(blob);
-      syncUploadBlob(bytes).catch(() => {});
-      setOverride(db, {
-        itemKind: target.itemKind, itemId: target.itemId,
-        key, recordedText: target.text,
-      });
-      updateRecUI();
-      toast(`Recorded — "${target.text}" plays your recording`);
-    };
-    recorder.start();
-    updateRecUI();
-  } catch {
-    $("wc-rechint").hidden = false;
-    $("wc-rechint").textContent = "No microphone — the browser did not allow it.";
-  }
-});
-
-$("wc-revert").addEventListener("click", () => {
-  const t = overrideTarget();
-  if (!t) return;
-  clearOverride(db, t.itemKind, t.itemId);
-  updateRecUI();
-  toast("Back to the app's voice");
-});
-
-/** Groups the item is not yet in — one tap places it at the next free
- *  cell of that group. */
-$("wc-addgroup").addEventListener("click", () => {
-  const list = $("wc-grouplist");
-  list.hidden = !list.hidden;
-  if (list.hidden) return;
-  list.innerHTML = "";
-  const member = new Set(cardGroups().map((g) => g.id));
-  for (const g of groupIndex(db)) {
-    if (member.has(g.id)) continue;
-    const chip = document.createElement("button");
-    chip.className = "wchip";
-    chip.textContent = groupDisplayName(db, g, locale);
-    chip.addEventListener("click", () => {
-      placeItem(db, g.id, cardItem.item_kind, cardItem.item_id);
-      renderCardGroups();
-      list.hidden = true;
-      rerenderView();
-    });
-    list.appendChild(chip);
-  }
-});
-
-/** Show on board: jump to where the word lives and mark its cell for a
- *  beat. An entity or custom-group sense flashes in the group we opened
- *  the card from (else its first group); a built-in sense flashes on the
- *  core board. */
-$("wc-show").addEventListener("click", () => {
-  const it = cardItem;
-  close("wordcard");
-  const onBoard = it.item_kind === "sense" &&
-    ALL(db, "SELECT 1 AS x FROM core_cell WHERE sense_id = ?", [it.item_id])[0];
-  if (onBoard) {
-    kbUi.setView("board");
-    flashCell(cellEls.get(it.item_id));
-    return;
-  }
-  const homes = cardItem.item_kind === "entity"
-    ? entityGroups(db, it.item_id, locale)
-    : senseGroups(db, it.item_id, locale);
-  const target = homes.find((g) => g.id === groupsUi.getGroupKey()) ?? homes[0];
-  if (!target) { kbUi.setView("board"); return; }
-  const cell = ALL(
-    db,
-    "SELECT page FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-    [target.id, it.item_kind, it.item_id],
-  )[0];
-  groupsUi.setGroup(target.id, cell?.page ?? 0);
-  kbUi.setView("group");
-  // Render is async; flash once the cells exist.
-  requestAnimationFrame(() =>
-    flashCell($("groupgrid").querySelector(`[data-item="${it.item_kind}:${it.item_id}"]`)),
-  );
-});
-
-/** Remove = retire (never delete). The row, photo, and placements stay;
- *  Undo restores it. */
-/** Hide word (009 slice 9): the sense keeps every cell but renders as a
- *  ghost — unspoken, out of the strip and completions — until Show. */
-$("wc-hide").addEventListener("click", () => {
-  const it = cardItem;
-  if (!it || it.item_kind !== "sense") return;
-  const hidden = !maskedSenseIds(db).has(it.item_id);
-  setMask(db, it.item_id, hidden);
-  close("wordcard");
-  kbUi.invalidateIndex(); // completions must drop/restore the word
-  rerenderView();
-  renderGrid();
-  renderStrip();
-  toast(hidden ? `Hid ${it.label}` : `Showing ${it.label}`);
-});
-
-$("wc-remove").addEventListener("click", () => {
-  const it = cardItem;
-  retireEntity(db, it.item_id);
-  close("wordcard");
-  kbUi.invalidateIndex();
-  rerenderView();
-  renderStrip();
-  toast(`Removed ${it.label}`, () => {
-    restoreEntity(db, it.item_id);
-    kbUi.invalidateIndex();
-    rerenderView();
-    renderStrip();
-  });
+/* Word card — public/board/word-card.js */
+wordCard = mountWordCard({
+  db, locale, all: ALL, open, close, toast,
+  metaFor, artInto, loadPhotoURL, savePhoto, syncUploadBlob, speakItem, xBadge,
+  invalidateIndex: () => kbUi.invalidateIndex(),
+  setView: (v) => kbUi.setView(v),
+  rerenderView, renderStrip, renderGrid, flashCell,
+  getCell: (id) => cellEls.get(id),
+  getGroupKey: () => groupsUi.getGroupKey(),
+  setGroup: (id, page) => groupsUi.setGroup(id, page),
+  dropEntityPhoto: (id) => entityPhoto.delete(id),
+  dropSenseMeta: (id) => senseMeta.delete(id),
 });
 
 /* ------------------------------------------------------------------ *
