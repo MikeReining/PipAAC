@@ -103,10 +103,24 @@ const IRREGULAR_PLURALS = new Set([
   "clothes",
 ]);
 
+export const NON_PLURALS_ENDING_IN_S = new Set([
+  "yes",
+  "this",
+  "his",
+  "us",
+  "gas",
+  "bus",
+  "plus",
+  "always",
+  "sometimes",
+  "perhaps",
+]);
+
 export function isPluralWord(word) {
   const w = String(word ?? "").trim().toLowerCase();
   if (!w) return false;
   if (IRREGULAR_PLURALS.has(w)) return true;
+  if (NON_PLURALS_ENDING_IN_S.has(w)) return false;
   if (!w.endsWith("s")) return false;
   if (w.endsWith("ss") || w.endsWith("us") || w.endsWith("is") || w.endsWith("ics")) return false;
   return true;

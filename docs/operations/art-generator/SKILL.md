@@ -87,6 +87,12 @@ All generation runs through `scripts/art/gen.mjs` against the frozen style bundl
 * **No negative prompt laundry lists:** Negative prompt-stuffing forces the model into latent edge cases and produces sterile, creepy mannequins.
 * **The 3 reference images carry the style, line weight, and character identity.**
 
+### Color Discipline & Sensory Over-Stimulation Law
+* **Ban on "Colorful":** Never use the word "colorful" or "multi-colored" in prompts unless explicitly teaching color concepts (e.g. `colors`, `rainbow`, `paint`). Saying "colorful" triggers diffusion models to splash a 6-hue rainbow confetti across the tile, causing sensory overload and visual fatigue for autistic and neurodivergent learners.
+* **Preserve Semantic Grammar Coding:** In Pip AAC, color is functional grammar code (Yellow = people/pronouns, Green = verbs, Blue = descriptors, Pink = prepositions/social, Red = negation/emergency). Spattering arbitrary rainbow colors across objects destroys the child's subconscious grammar cueing.
+* **Unified Palettes When Color Is Secondary:** When color is secondary to the concept (e.g. quantity in `more`, size in `big`/`little`, height in `tall`/`short`), objects must share a single unified, calm color (e.g. natural wood, plain blue, or monochrome). This directs 100% of visual attention to the geometric contrast and directional vector.
+* **Natural Object Color Is Allowed:** Natural objects can have their real-world color (an apple is red, a banana is yellow, a tree is green). But secondary props must never compete with primary semantic focus or grammar vectors.
+
 ---
 
 ## 6. The Strict Image Judge Protocol (Hard Invariants Only)

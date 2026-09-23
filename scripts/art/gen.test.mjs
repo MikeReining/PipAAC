@@ -21,6 +21,8 @@ test("isPluralWord identifies regular and irregular plurals", () => {
   assert.equal(isPluralWord("glass"), false); // ends in ss
   assert.equal(isPluralWord("bus"), false);   // ends in us
   assert.equal(isPluralWord("physics"), false); // ends in ics
+  assert.equal(isPluralWord("yes"), false); // non-plural ending in s
+  assert.equal(isPluralWord("this"), false); // non-plural ending in s
 });
 
 test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
