@@ -214,9 +214,13 @@ On the motor-grid view, the strip is where a suggestion may show a word that is 
 
 ### 2.1 Smart bar contract
 
-**DECIDED 2026-09-22** (founder; not built). Renamed from "predictive
+**DECIDED 2026-09-22** (founder). Renamed from "predictive
 strip": prediction is one of its jobs, not the only one. Code and older docs
-still say *strip*; it is the same surface.
+still say *strip*; it is the same surface. **BUILT** (014 slice 7) for the
+Expand mode: `bar_family`/`bar_family_item` hold fixed-order tiles; family
+anchors (`?` on grid15) open them in the bar via `families.mjs` +
+`renderExpand` in `public/board.js`; Parent Corner → Smart bar edits the
+order. Forms and Partner modes land with their own phases.
 
 **The grid never changes. The Smart bar is the one place that does.** Every
 flexible behavior that would otherwise move a cell lands here instead.

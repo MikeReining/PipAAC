@@ -318,6 +318,27 @@ CREATE TABLE IF NOT EXISTS move_mark (
   until INTEGER NOT NULL
 );
 
+-- Smart bar families (014 § 5, Motor_Grid § 2.1 Expand mode): a family
+-- tile opens its fixed-order item row in the bar. position is the whole
+-- truth — families are never ranked or trimmed by context; only an
+-- adult's edit changes the order, and that change is synced like any
+-- other. An item may name another family (one level of chaining —
+-- Pain → how much → where); the renderer caps the depth.
+CREATE TABLE IF NOT EXISTS bar_family (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'bf_*'),
+  name TEXT NOT NULL,
+  glyph TEXT,
+  speaks TEXT,
+  builtin INTEGER NOT NULL DEFAULT 0 CHECK (builtin IN (0, 1))
+);
+CREATE TABLE IF NOT EXISTS bar_family_item (
+  family_id TEXT NOT NULL REFERENCES bar_family(id),
+  position INTEGER NOT NULL CHECK (position >= 0),
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity', 'family')),
+  item_id TEXT NOT NULL,
+  PRIMARY KEY (family_id, position)
+);
+
 -- Groups: one kind of container. The index is a coordinate map (slots
 -- 10–59); items sit at fixed (page, slot) inside a group. Positions move
 -- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.

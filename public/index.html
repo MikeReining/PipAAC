@@ -383,6 +383,11 @@
       #cells-moved { max-height: 160px; overflow-y: auto; margin: 8px 0; }
       #cells-moved .mv-row { display: flex; justify-content: space-between; font-size: 14px; padding: 3px 0; }
       #cells-moved .mv-cls { color: var(--muted); }
+      /* Smart bar family editor */
+      #fam-list .fam-chip { display: inline-flex; align-items: center; gap: 6px; margin: 2px 6px 2px 0; padding: 6px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-soft, #f6f2ea); }
+      #fam-items .fi-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+      #fam-items .fi-row .fi-label { flex: 1; }
+      #fam-items .fi-row button { padding: 2px 8px; }
       .spot-list-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
       .spot-list-row .spot-list-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .spot-list-row button { flex: none; padding: 5px 10px; font-size: 13px; }
@@ -910,6 +915,11 @@
           <p class="hint">How many cells the board shows. Changing it shows what moves before anything does.</p>
         </div>
         <div class="seg-row">
+          <span class="seg-label">Smart bar</span>
+          <div id="fam-list"></div>
+          <p class="hint">Families open in the bar when their tile is tapped. Tiles always sit in the same order — this list is the order.</p>
+        </div>
+        <div class="seg-row">
           <span class="seg-label">Keyboard</span>
           <div class="seg" id="kb-mode">
             <button data-v="pip">Pip keys</button>
@@ -1034,6 +1044,21 @@
         <div id="cells-moved"></div>
         <div class="row">
           <button class="btn" id="cells-apply">Apply</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="familyform">
+      <div class="sheet">
+        <h2 id="fam-title">Family</h2>
+        <div id="fam-items"></div>
+        <div class="row">
+          <input id="fam-add" placeholder="Add a word…" autocomplete="off">
+          <button class="btn secondary" id="fam-add-btn">Add</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="fam-save">Save</button>
           <button class="btn secondary" data-close>Cancel</button>
         </div>
       </div>

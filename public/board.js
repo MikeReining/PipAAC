@@ -93,6 +93,9 @@ import {
 import { buildJevRequest, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
 import { coreCells, moveCore } from "./shared/coremove.mjs";
 import { bindLayouts, moveCost, moveMarks, setBoardLayout } from "./shared/movecost.mjs";
+import {
+  families, family as familyRow, familyItems, setFamilyItems,
+} from "./shared/families.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -472,17 +475,60 @@ function stripCards(items) {
 }
 
 /** Paint the strip's slots — the only path that touches the tray. */
-async function paintStrip(cards) {
+async function paintStrip(cards, slots = stripSlots(boardGeom().cols)) {
   const tray = $("tray");
+  tray.style.gridTemplateColumns = `repeat(${slots}, 1fr)`;
   tray.querySelectorAll(".pred").forEach((n) => n.remove());
-  for (let i = 0; i < stripSlots(boardGeom().cols); i++) {
+  for (let i = 0; i < slots; i++) {
     tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
   }
   fitLabels(tray);
   applyLikely();
 }
 
+/** Expand mode (014 § 5): the family's fixed-order tiles, one column
+ *  wide; a family longer than the bar ends in a fixed `more ›` tile
+ *  that pages it. A pick returns the bar to Predict. */
+async function renderExpand() {
+  const fam = familyRow(db, expand.familyId);
+  if (!fam) { expand = null; return renderStrip(); }
+  const items = familyItems(db, expand.familyId, locale, maskedSenseIds(db));
+  const cap = expandCap(boardGeom().cols);
+  // `more ›` only costs a slot when the family is longer than the bar.
+  const pages = items.length > cap ? Math.ceil(items.length / (cap - 1)) : 1;
+  const pageSize = pages > 1 ? cap - 1 : cap;
+  expand.page = Math.min(expand.page, pages - 1);
+  const shown = items.slice(expand.page * pageSize, expand.page * pageSize + pageSize);
+  const cards = shown.map((it) => {
+    if (it.kind === "family") {
+      return {
+        label: it.label, glyph: it.glyph,
+        onTap: () => {
+          // One level of chaining (Pain → how much → where), no deeper.
+          if (it.speaks) speak(it.speaks);
+          if (expand.depth < 1) openExpand(it.nextFamily, expand.depth + 1);
+        },
+      };
+    }
+    return {
+      label: it.label, role: it.role,
+      onTap: () => {
+        expand = null;
+        tap(it.label, it.kind, it.id, { hint: true, source: "strip" });
+      },
+    };
+  });
+  if (pages > 1) {
+    cards.push({
+      label: "more ›",
+      onTap: () => { expand.page = (expand.page + 1) % pages; renderStrip(); },
+    });
+  }
+  await paintStrip(cards, cap);
+}
+
 async function renderStrip() {
+  if (expand) return renderExpand();
   const cap = stripSlots(boardGeom().cols);
   let cards, jevCall = null;
   if (kbText) {
@@ -589,6 +635,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     return;
   }
   const item = { kind, id, text };
+  expand = null; // any pick returns the bar to Predict (014 § 5)
   sentence.push(item);
   renderBar();
   speakItem(item);
@@ -728,7 +775,7 @@ function boardGeom() {
     cols: layout.cols,
     rows: layout.rows,
     cells: layout.cols * layout.rows,
-    anchors: new Map((layout.anchors ?? []).map((a) => [a.slot, a.kind])),
+    anchors: new Map((layout.anchors ?? []).map((a) => [a.slot, a])),
   };
 }
 /** Prediction slots in the strip at this width (014 slice 1): four on a
@@ -737,6 +784,18 @@ function boardGeom() {
 function stripSlots(cols) {
   return Math.min(4, Math.max(2, Math.floor((cols - 2) / 2)));
 }
+
+/* --- Expand mode (014 § 5, Motor_Grid § 2.1): a family tile opens its
+ *  family in the bar — fixed order, one-column tiles, never ranked,
+ *  never trimmed. A pick returns the bar to Predict; a family item may
+ *  chain one level deeper (Pain → how much → where), no more. --- */
+let expand = null; // { familyId, page, depth } — null means Predict mode
+const expandCap = (cols) => Math.max(4, cols - 2); // one-wide tiles
+function openExpand(familyId, depth = 0) {
+  expand = { familyId, page: 0, depth };
+  renderStrip();
+}
+function closeExpand() { expand = null; renderStrip(); }
 
 /* --- the attention layer (013 § 2): a running spotlight glows its
  *  target words and dims the rest — every cell stays tappable and
@@ -834,11 +893,27 @@ function renderGrid() {
   // collapsed gap — the coordinate map is the motor plan.
   for (let slot = 0; slot < geom.cells; slot++) {
     const anchor = geom.anchors.get(slot);
-    if (anchor === "groups") {
+    if (anchor?.kind === "groups") {
       const el = document.createElement("button");
       el.className = "cell anchor-cell";
       el.innerHTML = `<span class="glyph">🗂️</span>`;
       el.addEventListener("click", openGroupIndex);
+      grid.appendChild(el);
+      continue;
+    }
+    if (anchor?.kind === "family") {
+      // A Smart bar family tile (014 § 5): speaks its label if it has
+      // one ("Pain" → "I'm in pain"; `?` opens silently), then opens the
+      // family in the bar. Never a sentence pick, never a drop target.
+      const f = familyRow(db, anchor.family);
+      const el = document.createElement("button");
+      el.className = "cell anchor-cell family-cell";
+      el.innerHTML = `<span class="glyph">${f?.glyph ?? "▸"}</span><span class="lbl">${f?.name ?? "?"}</span>`;
+      el.addEventListener("click", () => {
+        if (picking) return;
+        if (f?.speaks) speak(f.speaks);
+        openExpand(anchor.family);
+      });
       grid.appendChild(el);
       continue;
     }
@@ -1246,6 +1321,77 @@ $("cells-apply").addEventListener("click", () => {
 });
 $("corner").addEventListener("click", renderCellsSeg);
 renderCellsSeg();
+
+/* --- Smart bar family editor (014 § 5): fixed order is the whole
+   truth; edits write through setFamilyItems so they sync. --- */
+let famEdit = null; // { id, items: [{kind, id, label}] }
+function renderFamList() {
+  const box = $("fam-list");
+  box.innerHTML = "";
+  for (const f of families(db)) {
+    const chip = document.createElement("button");
+    chip.className = "fam-chip";
+    chip.textContent = `${f.glyph ?? ""} ${f.name}`.trim();
+    chip.addEventListener("click", () => openFamForm(f.id));
+    box.appendChild(chip);
+  }
+}
+function openFamForm(id) {
+  const f = familyRow(db, id);
+  famEdit = {
+    id,
+    items: familyItems(db, id, locale)
+      .map((i) => ({ kind: i.kind, id: i.id, label: i.label })),
+  };
+  $("fam-title").textContent = `${f.name} — fixed order`;
+  $("fam-add").value = "";
+  renderFamItems();
+  open("familyform");
+}
+function renderFamItems() {
+  const box = $("fam-items");
+  box.innerHTML = "";
+  famEdit.items.forEach((it, i) => {
+    const row = document.createElement("div");
+    row.className = "fi-row";
+    const label = document.createElement("span");
+    label.className = "fi-label";
+    label.textContent = it.kind === "family" ? `${it.label} ▸` : it.label;
+    const mk = (txt, fn, dis) => {
+      const b = document.createElement("button");
+      b.textContent = txt; b.disabled = dis;
+      b.addEventListener("click", fn);
+      return b;
+    };
+    row.append(label,
+      mk("‹", () => {
+        [famEdit.items[i - 1], famEdit.items[i]] = [famEdit.items[i], famEdit.items[i - 1]];
+        renderFamItems();
+      }, i === 0),
+      mk("›", () => {
+        [famEdit.items[i + 1], famEdit.items[i]] = [famEdit.items[i], famEdit.items[i + 1]];
+        renderFamItems();
+      }, i === famEdit.items.length - 1),
+      mk("✕", () => { famEdit.items.splice(i, 1); renderFamItems(); }, false));
+    box.appendChild(row);
+  });
+}
+$("fam-add-btn").addEventListener("click", () => {
+  const hit = resolveTyped($("fam-add").value);
+  if (!hit || hit.kind === "typed") { toast("No such word"); return; }
+  famEdit.items.push({ kind: hit.kind, id: hit.id, label: hit.display });
+  $("fam-add").value = "";
+  renderFamItems();
+});
+$("fam-save").addEventListener("click", () => {
+  if (!famEdit) return;
+  setFamilyItems(db, famEdit.id,
+    famEdit.items.map((i) => ({ kind: i.kind, id: i.id })));
+  close("familyform");
+  toast("Family saved");
+});
+$("corner").addEventListener("click", renderFamList);
+renderFamList();
 
 /* --- permanent utility anchors --- */
 $("anchor-kb").addEventListener("click", () => {

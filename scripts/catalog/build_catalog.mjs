@@ -26,6 +26,7 @@ import {
 const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
 const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
 const GROUP_SEED = join(repoRoot, "data/group_seed.json");
+const FAMILY_SEED = join(repoRoot, "data/family_seed.json");
 const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
 const PREDICTION_DEFAULTS = join(repoRoot, "data/prediction/defaults.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
@@ -74,6 +75,13 @@ export function parseCoordinateMapMarkdown(raw) {
       const slot = layouts[current].cells.length + layouts[current].anchors.length;
       if (token in ANCHOR_KINDS) {
         layouts[current].anchors.push({ slot, kind: ANCHOR_KINDS[token] });
+      } else if (token === "?" || token.endsWith("▸")) {
+        // A family tile (014 § 5): `?` or a named `X ▸` tile opens its
+        // Smart bar family. The ref resolves to a family_seed key at
+        // build time — the map never carries an id.
+        layouts[current].anchors.push({
+          slot, kind: "family", ref: token === "?" ? "?" : token.replace(/▸\s*$/, "").trim(),
+        });
       } else {
         layouts[current].cells.push({ slot, word: token });
       }
@@ -254,12 +262,61 @@ export function buildDigitAliases(lexicon, numberAliases) {
   return out;
 }
 
+/** Smart bar families (014 § 5): seed → catalog rows, and the map's
+ *  family anchors (`?`, `X ▸`) resolve to family ids here. An anchor
+ *  naming no seeded family fails the build — a dead tile is a lie on
+ *  the coordinate map. */
+function buildFamilies(lexicon, seed, mapLayouts) {
+  const senseIdByWord = new Map();
+  for (const e of lexicon.entries) {
+    if (e.tier === 1) senseIdByWord.set(normalizeV1(e.spokenText), `sns_${pad4(e.slot)}`);
+  }
+  const families = [];
+  const familyItems = [];
+  const byToken = new Map();
+  const byKey = new Map();
+  for (const f of seed.families ?? []) {
+    if (byKey.has(f.key)) throw new Error(`family seed: duplicate key "${f.key}"`);
+    byKey.set(f.key, f);
+    if (f.token) byToken.set(f.token, `bf_${f.key}`);
+  }
+  for (const f of seed.families ?? []) {
+    const id = `bf_${f.key}`;
+    families.push({
+      id, name: f.names?.en ?? f.glyph ?? f.key,
+      glyph: f.glyph ?? null, speaks: f.speaks ?? null,
+    });
+    (f.items ?? []).forEach((it, i) => {
+      if (it.kind === "family") {
+        if (!byKey.has(it.key)) throw new Error(`family ${f.key}: unknown chained family ${it.key}`);
+        familyItems.push({ family_id: id, position: i, item_kind: "family", item_id: `bf_${it.key}` });
+        return;
+      }
+      const sid = it.kind === "entity" ? it.id : senseIdByWord.get(normalizeV1(it.word));
+      if (!sid) throw new Error(`family ${f.key} item ${i}: "${it.word ?? it.id}" resolves to nothing`);
+      familyItems.push({ family_id: id, position: i, item_kind: it.kind, item_id: sid });
+    });
+  }
+  // Map tokens → family ids on the anchors the parser emitted.
+  for (const parsed of Object.values(mapLayouts)) {
+    for (const a of parsed.anchors) {
+      if (a.kind !== "family") continue;
+      const fid = byToken.get(a.ref);
+      if (!fid) throw new Error(`map family tile "${a.ref}": no seeded family has that token`);
+      a.family = fid;
+      delete a.ref;
+    }
+  }
+  return { families, familyItems };
+}
+
 /** Build the catalog JSON object from lexicon entries + parsed map layouts. */
 export function buildCatalog(
   lexicon,
   mapLayouts,
   groupSeed = JSON.parse(readFileSync(GROUP_SEED, "utf8")),
   numberAliases = JSON.parse(readFileSync(NUMBER_ALIASES, "utf8")),
+  familySeed = JSON.parse(readFileSync(FAMILY_SEED, "utf8")),
 ) {
   const tier1ByWord = new Map();
   for (const e of lexicon.entries) {
@@ -345,6 +402,7 @@ export function buildCatalog(
 
   const catalogLocales = [...new Set(labels.map((l) => l.locale))];
   const { groups, groupCells, groupLabels } = buildGroups(lexicon, groupSeed, catalogLocales, mapLayouts);
+  const { families, familyItems } = buildFamilies(lexicon, familySeed, mapLayouts);
 
   return {
     schemaVersion: CATALOG_SCHEMA_VERSION,
@@ -384,6 +442,8 @@ export function buildCatalog(
     groups,
     groupCells,
     groupLabels,
+    families,
+    familyItems,
   };
 }
 

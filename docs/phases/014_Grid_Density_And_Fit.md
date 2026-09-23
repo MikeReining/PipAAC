@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slices 1–5 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` rebuilt on `grid60`'s column sectors). Next: slice 6 — message tiles (depends on 010's phrase list). Rulings and starters below are **DECIDED
+**Status:** Slices 1–5 and 7 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` on `grid60`'s column sectors; Smart bar families). Remaining: slice 6 — message tiles (waits on 010's phrase list); slice 8 — keyguard specs (later). Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -362,4 +362,25 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    chained family; Parent Corner editor). Works test: tap `?` — the bar
    shows why · when · where · who in that order in slots 1–4, on every
    launch, whatever the prediction state.
+
+   **DONE.** `bar_family` + `bar_family_item` are the synced store —
+   `position` is the whole truth, written only through
+   `setFamilyItems`/`createFamily` (ops `set_family_items`,
+   `create_family`). The map doc carries family anchors (`?`, `X ▸`)
+   that resolve to seed families at build; grid15 slot 13 is `?` →
+   `bf_q` (why · when · where · who, `data/family_seed.json`). Expand
+   mode in the bar: one-column tiles (`cap = max(4, cols−2)` — the
+   § 2.1 widths), fixed order, `more ›` only when the family outgrows
+   the bar, any pick returns to Predict, masked words never render, a
+   `family` item chains one level deep. A family tile speaks its label
+   (`speaks`) then opens — never a sentence pick, never a drop target.
+   Parent Corner → Smart bar lists families; the editor reorders,
+   removes, and adds words, and the bar shows exactly that order.
+   Works Tests: `src/board/family.test.mjs` (seed order, caregiver
+   edits survive regen, mask exclusion, replay convergence, chaining)
+   and `scripts/probes/family_probe.mjs` (tap `?` on Core 15 →
+   why·when·where·who live, pick joins the sentence, editor reorder
+   sticks across reload). Deferred: placing a *new* family tile on the
+   board (needs a non-sense cell surface — the Pain/Hot-cold/Call
+   tiles arrive with slice 6's message tiles anyway).
 8. **Keyguard specifications** (later).

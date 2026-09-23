@@ -94,4 +94,27 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
   // reconcile — caregiver edits always win, and a seeded item is never
   // dropped (groups.mjs).
   seedGroups(db, catalog);
+
+  // Smart bar families (014 § 5): same reconcile rule — a family's
+  // seeded rows land once; the adult's reorder/remove owns the rows.
+  for (const f of catalog.families ?? []) {
+    db.prepare(
+      "INSERT OR IGNORE INTO bar_family (id, name, glyph, speaks, builtin) VALUES (?, ?, ?, ?, 1)",
+    ).run(f.id, f.name, f.glyph ?? null, f.speaks ?? null);
+  }
+  const seededFamilies = new Set();
+  for (const it of catalog.familyItems ?? []) {
+    // Position is caregiver-owned once any row exists — seeding only an
+    // empty family is what keeps a regen from re-appending moved words.
+    if (!seededFamilies.has(it.family_id)) {
+      const has = db.prepare(
+        "SELECT 1 AS x FROM bar_family_item WHERE family_id = ? LIMIT 1",
+      ).all(it.family_id)[0];
+      if (has) continue;
+      seededFamilies.add(it.family_id);
+    }
+    db.prepare(
+      "INSERT OR IGNORE INTO bar_family_item (family_id, position, item_kind, item_id) VALUES (?, ?, ?, ?)",
+    ).run(it.family_id, it.position, it.item_kind, it.item_id);
+  }
 }

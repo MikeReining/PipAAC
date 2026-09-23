@@ -109,11 +109,13 @@ test("grid90 renders its anchors — Groups cell + six reserved", () => {
  * cells." Measured against the generated `core_cell` rows joined back
  * to their labels — the same rows the renderer draws.
  */
-test("grid15 is § 5.1's board: 14 words + the reserved ? slot, in place", () => {
+test("grid15 is § 5.1's board: 14 words + the ? family slot, in place", () => {
   const layout = catalog.layouts.grid15;
   assert.deepEqual({ cols: layout.cols, rows: layout.rows }, { cols: 5, rows: 3 });
-  const anchors = new Map(layout.anchors.map((a) => [a.slot, a.kind]));
-  assert.equal(anchors.get(13), "reserved", "the ? family slot is reserved until slice 7");
+  const anchors = new Map(layout.anchors.map((a) => [a.slot, a]));
+  assert.deepEqual(anchors.get(13),
+    { slot: 13, kind: "family", family: "bf_q" },
+    "slot 13 is the ? family tile (014 slice 7)");
 
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);

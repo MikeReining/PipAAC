@@ -142,11 +142,10 @@ something is wrong without navigating.
 | --- | --- |
 | 1 | I · want · more · yes · stop |
 | 2 | you · like · not · no · help |
-| 3 | what · go · all done · reserved · hurt |
+| 3 | what · go · all done · ? · hurt |
 
-Slot 13 is the `?` family tile (why · when · where · who) — `reserved`
-until the Smart-bar family mechanism lands (014 slice 7). It renders as an
-empty cell, never a dead word.
+Slot 13 is the `?` family tile — it opens the Smart bar's `?` family
+(why · when · where · who, fixed order — 014 slice 7).
 
 
 Editing a slot assignment is a product decision. It lands here first, tagged

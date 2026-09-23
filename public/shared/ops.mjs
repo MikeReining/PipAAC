@@ -35,6 +35,7 @@ import {
 } from "./spotlight.mjs";
 import { moveCore } from "./coremove.mjs";
 import { setBoardLayout } from "./movecost.mjs";
+import { createFamily, setFamilyItems } from "./families.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -224,6 +225,14 @@ export function applyOp(db, op) {
       case "set_layout":
         setBoardLayout(db, a.layout);
         break;
+      case "create_family":
+        if (!exists(db, "bar_family", a.id)) createFamily(db, a);
+        break;
+      case "set_family_items":
+        if (exists(db, "bar_family", a.familyId)) {
+          setFamilyItems(db, a.familyId, a.items);
+        }
+        break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -251,7 +260,7 @@ const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
   "clip_override", "image_override", "entity_enrichment", "group_cell",
   "sense_mask", "spotlight_list", "spotlight_item", "spotlight_session",
-  "core_override", "move_mark",
+  "core_override", "move_mark", "bar_family", "bar_family_item",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */

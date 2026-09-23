@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "families": [
+    {
+      "key": "q",
+      "glyph": "?",
+      "token": "?",
+      "speaks": null,
+      "names": { "en": "?" },
+      "items": [
+        { "kind": "sense", "word": "why" },
+        { "kind": "sense", "word": "when" },
+        { "kind": "sense", "word": "where" },
+        { "kind": "sense", "word": "who" }
+      ]
+    }
+  ]
+}
