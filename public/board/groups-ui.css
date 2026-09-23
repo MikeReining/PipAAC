@@ -1,0 +1,40 @@
+/* Groups: an in-place board mode, same geometry as the core grid. */
+#groupgrid { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
+body.groups #grid { display: none; }
+body.groups #groupgrid { display: grid; }
+/* Group cells: same footprint as .cell. Neutral navigation color —
+   groups are a map, not vocabulary, so no Fitzgerald role. */
+.gcell {
+  border-radius: 12px;
+  border: 3px solid var(--edge);
+  background: var(--press-f);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-weight: 700;
+  font-size: clamp(11px, 1.9vmin, 17px);
+  color: var(--ink-text);
+  overflow: hidden;
+  padding: 4px;
+  text-align: center;
+}
+.gcell .glyph { font-size: clamp(18px, 3.2vmin, 32px); line-height: 1; }
+.gcell .glyph img { width: 70%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+.gcell .badge {
+  font-size: clamp(9px, 1.4vmin, 12px);
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1;
+}
+.gcell .glabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gcell:active { filter: brightness(0.92); }
+.gcell.nav { border-color: var(--muted); background: var(--tray); font-size: clamp(13px, 2.2vmin, 20px); }
+.gcell.empty { border-style: dashed; border-color: var(--line); background: transparent; }
+.gcell.empty:disabled { border-color: transparent; }
+/* Edit mode: every movable cell goes dashed; empty slots are drop
+   targets and tap-to-add. */
+body.editing #groupgrid .gcell:not(.nav):not(.empty),
+body.editing #groupgrid .cell { border-style: dashed; }
+body.editing #groupgrid .gcell.empty:not(:disabled) { cursor: pointer; }

@@ -40,18 +40,12 @@ import {
   catalogMatches,
   createEntity,
   entityMatches,
-  createGroup,
-  deleteGroup,
   entityGroups,
   groupDisplayName,
   groupIndex,
   groupPage,
-  moveGroup,
-  moveItem,
   pageCount,
   canonCell,
-  indexSlotAt,
-  indexVisual,
   maskedSenseIds,
   pageGeom,
   posAtVisual,
@@ -65,8 +59,6 @@ import {
   setEntityPhoto,
   setMask,
   setSetting,
-  swapGroups,
-  swapItems,
 } from "./shared/groups.mjs";
 import { applyPasteRows, applyPhotoDrafts, nameFromFile, resolvePasteRows } from "./shared/bulk.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
@@ -111,6 +103,7 @@ import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
 import { mountCellsSheet } from "./board/cells-sheet.js";
 import { mountSpotlightSheet } from "./board/spotlight-sheet.js";
 import { mountKeyboard } from "./board/keyboard-ui.js";
+import { mountGroups } from "./board/groups-ui.js";
 import {
   family as familyRow, familyItems,
 } from "./shared/families.mjs";
@@ -290,8 +283,6 @@ function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
 let addTarget = null;  // board_group id the add form files into
 let addCell = null;    // {page, slot_index} when + came from tapping an empty slot
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
-let groupKey = null;   // board_group id of the open group page
-let groupPageNo = 0;   // current page of the open group
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 
 const SILENT_SLOT_MS = 400;
@@ -506,7 +497,7 @@ async function idleStarters() {
   const foodRow = ALL(db, "SELECT id, name FROM board_group WHERE id = 'grp_food'")[0];
   if (foodRow) {
     cards.push({ label: groupDisplayName(db, foodRow, locale), glyph: "🥞", role: "Pink",
-      onTap: () => openGroup("grp_food") });
+      onTap: () => groupsUi.openGroup("grp_food") });
   }
   const help = masked.has(HELP_SENSE_ID) ? null : senseById(HELP_SENSE_ID);
   if (help) {
@@ -1225,7 +1216,7 @@ function renderGrid() {
       const el = document.createElement("button");
       el.className = "cell anchor-cell";
       el.innerHTML = `<span class="glyph">🗂️</span>`;
-      el.addEventListener("click", openGroupIndex);
+      el.addEventListener("click", groupsUi.openGroupIndex);
       grid.appendChild(el);
       continue;
     }
@@ -1353,7 +1344,7 @@ document.addEventListener("keydown", (e) => {
       rerenderView();
       return;
     }
-    if (view === "group") return openGroupIndex();
+    if (view === "group") return groupsUi.openGroupIndex();
     if (view === "groupIndex") return kbUi.setView("board");
     if (kbUi.isOpen()) kbUi.closeKb();
     return;
@@ -1412,7 +1403,7 @@ $("corner").addEventListener("click", () => {
 $("edit-groups").addEventListener("click", () => {
   close("menu");
   setEditing(true);
-  openGroupIndex();
+  groupsUi.openGroupIndex();
 });
 $("add-mywords").addEventListener("click", () => {
   close("menu");
@@ -1428,6 +1419,7 @@ const kbProfile = ALL(
 )[0] ?? {};
 highlightNext = (kbProfile.highlight_next ?? 0) === 1;
 jevSharing = (kbProfile.jev_sharing ?? 1) === 1;
+let groupsUi;
 const kbUi = mountKeyboard({
   db, locale, profile: kbProfile, all: ALL,
   sentence, getSentenceId: () => sentenceId, ensureSentence,
@@ -1439,7 +1431,9 @@ const kbUi = mountKeyboard({
   getJevSharing: () => jevSharing,
   getView: () => view,
   setViewName: (v) => { view = v; },
-  renderGroupIndex, renderGroupPage, renderEditor,
+  renderGroupIndex: () => groupsUi.renderGroupIndex(),
+  renderGroupPage: () => groupsUi.renderGroupPage(),
+  renderEditor,
 });
 
 $("hl-next").addEventListener("click", (e) => {
@@ -1484,21 +1478,16 @@ $("anchor-kb").addEventListener("click", () => {
   // gesture — synchronous, no await before it.
   $("kb-device")?.focus();
 });
-$("anchor-groups").addEventListener("click", openGroupIndex);
+$("anchor-groups").addEventListener("click", () => groupsUi.openGroupIndex());
 $("spot-chip").addEventListener("click", () => {
   endSession(db);
   renderGrid();
   rerenderView();
 });
 
-/* --- groups: an in-place board mode, not a modal. The group index and
-   each group page render into #groupgrid — the same physical space and
-   cell size as the core grid. Slot 0 is always "back"; slot 1 is the
-   Edit-mode action, rendered only while editing so the child never sees
-   adult controls. Group positions persist in board_group.index_slot and
-   items in group_cell — the same motor-memory law as core_cell: slots
-   only move in Edit mode (drag to move/swap, tap opens the card or the
-   group, × removes with Undo). All writes go through shared/groups.mjs. --- */
+/* Edit mode and the undo toast are shared by the groups pages, the
+   library, and the word card. The groups pages themselves live in
+   public/board/groups-ui.js. */
 
 /** One mode everywhere: entering Edit marks the body (dashed borders)
  *  and turns the corner button into ✓ Done. */
@@ -1513,8 +1502,8 @@ function setEditing(on) {
 
 /** Re-render whatever view is on screen after a mode change or write. */
 function rerenderView() {
-  if (view === "groupIndex") renderGroupIndex();
-  else if (view === "group") renderGroupPage();
+  if (view === "groupIndex") groupsUi.renderGroupIndex();
+  else if (view === "group") groupsUi.renderGroupPage();
   else if (view === "editor") renderEditor();
   if ($("library").classList.contains("open")) renderLibrary();
 }
@@ -1607,321 +1596,12 @@ function flashCell(el) {
   setTimeout(() => el.classList.remove("flash"), 1600);
 }
 
-/** One group on the index. `row` is a board_group row; `vslot` is its
- *  visual slot on the current index page (drag targets are visual). */
-function groupIndexCell(row, vslot, spot = null) {
-  const el = document.createElement("button");
-  el.className = "gcell";
-  if (spot) el.classList.add(spot);
-  el.dataset.slot = vslot;
-  el.dataset.group = row.id;
-  const g = document.createElement("span");
-  g.className = "glyph";
-  g.textContent = row.glyph ?? "🗂️";
-  if (row.photo_key) {
-    loadPhotoURL(row.photo_key).then((url) => {
-      if (!url) return;
-      const img = document.createElement("img");
-      img.src = url;
-      g.replaceChildren(img);
-    });
-  }
-  const lb = document.createElement("span");
-  lb.className = "glabel";
-  lb.textContent = groupDisplayName(db, row, locale);
-  el.appendChild(g);
-  el.appendChild(lb);
-  if (!editing) {
-    el.addEventListener("click", () => openGroup(row.id));
-    return el;
-  }
-  // Edit mode: tap opens the group, drag moves/swaps index slots, ×
-  // deletes a custom group (confirmed — its items land in My Words).
-  if (row.kind === "custom") {
-    el.appendChild(xBadge(() => askDeleteGroup(row)));
-  }
-  editPointer(el, {
-    onTap: () => openGroup(row.id),
-    onDrop: (slot) => {
-      // Visual slot on this index page → canonical index coordinate.
-      const indexSlot = indexSlotAt(indexPageNo, slot, boardGeom().cells);
-      if (indexSlot < 10) return;
-      const other = groupIndex(db).find((g) => g.index_slot === indexSlot);
-      if (other) swapGroups(db, row.id, other.id);
-      else moveGroup(db, row.id, indexSlot);
-      renderGroupIndex();
-    },
-  });
-  return el;
-}
-
-/** Slot 1 is reserved in both modes: the Edit-mode action while
- *  editing, a disabled blank otherwise — items never shift. */
-function editSlotCell(label, onTap) {
-  if (label && onTap) return navCell(label, onTap);
-  const blank = document.createElement("button");
-  blank.className = "gcell empty";
-  blank.disabled = true;
-  return blank;
-}
-
-/** Delete confirmation is an in-sheet two-button ask, never
- *  window.confirm — the learner can't be left inside a dialog. */
-function askDeleteGroup(row) {
-  $("del-title").textContent = `Delete ${groupDisplayName(db, row, locale)}?`;
-  $("del-yes").onclick = () => {
-    deleteGroup(db, row.id);
-    close("delform");
-    renderGroupIndex();
-  };
-  open("delform");
-}
-
-let indexPageNo = 0;
-
-function renderGroupIndex() {
-  const zg = $("groupgrid");
-  zg.innerHTML = "";
-  const { cols, rows: nRows, cells } = boardGeom();
-  const geom = pageGeom(cells);
-  zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-  zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
-  // Canonical index slots → this page's visual slots (014 § 3: the index
-  // pages like a group page once N is smaller than the index).
-  const placed = new Map();
-  let indexPages = 1;
-  for (const g of groupIndex(db)) {
-    const v = indexVisual(g.index_slot, cells);
-    indexPages = Math.max(indexPages, v.page + 1);
-    if (v.page === indexPageNo) placed.set(v.slot, g);
-  }
-  // Route walk (013 § 3): group tiles holding a target glow; the rest
-  // dim. A live-modeled word glows its containing group the same way.
-  const spotGroups = spotlight()
-    ? spotlightGroups(db, spotlight().targets) : null;
-  const modelGroups = !spotGroups && modelGlow.size
-    ? spotlightGroups(db, new Set(modelGlow.keys())) : null;
-  if (indexPageNo >= indexPages) indexPageNo = indexPages - 1;
-  for (let slot = 0; slot < cells; slot++) {
-    if (slot === 0) {
-      zg.appendChild(navCell("← Board", () => kbUi.setView("board")));
-      continue;
-    }
-    if (slot === 1) {
-      zg.appendChild(editSlotCell(editing && "+ Group", () => open("groupform")));
-      continue;
-    }
-    if (slot === geom.next) {
-      if (indexPages > 1) {
-        const el = navCell("Next ›", () => {
-          indexPageNo = (indexPageNo + 1) % indexPages;
-          renderGroupIndex();
-        });
-        const badge = document.createElement("span");
-        badge.className = "badge";
-        badge.textContent = `${indexPageNo + 1}/${indexPages}`;
-        el.appendChild(badge);
-        zg.appendChild(el);
-      } else {
-        const blank = document.createElement("div");
-        blank.className = "gcell empty";
-        zg.appendChild(blank);
-      }
-      continue;
-    }
-    const row = placed.get(slot);
-    if (row) {
-      zg.appendChild(groupIndexCell(
-        row, slot, spotGroups ? (spotGroups.has(row.id) ? "glow" : "dimmed")
-          : (modelGroups?.has(row.id) ? "glow" : null)));
-      continue;
-    }
-    const empty = document.createElement("button");
-    empty.className = "gcell empty";
-    empty.dataset.slot = slot; // visual drag target for group moves
-    empty.disabled = true;
-    zg.appendChild(empty);
-  }
-}
-
-function openGroupIndex() {
-  kbUi.setView("groupIndex");
-}
-
-async function openGroup(groupId) {
-  groupKey = groupId;
-  groupPageNo = 0;
-  kbUi.setView("group");
-}
-
-function senseCell(w, onTap) {
-  const el = wordTile({ label: w.label, role: w.fitzgerald_role, art: w.art ?? null });
-  el.addEventListener("click", onTap);
-  return el;
-}
-
-async function entityCell(e, onTap) {
-  const el = wordTile({ label: e.spoken_name, role: "Yellow" });
-  const url = await loadPhotoURL(e.photo_key);
-  if (url) {
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = "";
-    el.querySelector(".tart").appendChild(img);
-    el.classList.add("photo");
-  }
-  el.addEventListener("click", onTap);
-  return el;
-}
-
-/** One item on a group page — a catalog sense or a personal entity at its
- *  stored slot. In Edit mode a tap opens the word card, a drag moves or
- *  swaps it, and × removes it from this group (Undo brings it back). */
-async function itemCell(item, gKind, ctx = {}) {
-  // Speak taps exist only outside Edit — inside it the pointer owns the
-  // cell (tap = card, drag = move/swap, × = remove). The web editor passes
-  // a ctx that keeps the gestures on without touching the child's flag.
-  const {
-    gestures = editing,
-    group = groupKey,
-    page = groupPageNo,
-    cells = boardGeom().cells,
-    onChange = renderGroupPage,
-  } = ctx;
-  const onSpeak = gestures
-    ? () => {}
-    : () => tap(item.label, item.item_kind, item.item_id, { source: "group" });
-  // A hidden word's group cell is a ghost too — inert for the child;
-  // in Edit mode a tap still opens its card so the caregiver can unhide.
-  if (item.item_kind === "sense" && maskedSenseIds(db).has(item.item_id)) {
-    const ghost = senseCell(
-      { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
-      gestures ? () => openWordCard(item) : () => {},
-    );
-    ghost.classList.add("masked");
-    ghost.style.pointerEvents = gestures ? "auto" : "none"; // Edit mode can open the card to unhide
-    return ghost;
-  }
-  const el = item.item_kind === "sense"
-    ? senseCell(
-        { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
-        onSpeak,
-      )
-    : await entityCell(
-        { spoken_name: item.label, photo_key: item.photo_key },
-        onSpeak,
-      );
-  layerMark(el, `${item.item_kind}:${item.item_id}`);
-  el.dataset.slot = item.vslot ?? item.slot_index;
-  el.dataset.item = `${item.item_kind}:${item.item_id}`;
-  if (!gestures) return el;
-
-  // Removal is only offered where it can succeed: a sense never leaves a
-  // built-in group (the findability guarantee), and an entity's last cell
-  // is My Words, so it has no × there — the card's Remove retires it.
-  const removable =
-    item.item_kind === "entity" ? group !== "grp_my_words" : gKind !== "builtin";
-  if (removable) {
-    el.appendChild(xBadge(() => {
-      const undo = removeItemUndoable(db, group, item.item_kind, item.item_id);
-      onChange();
-      toast(`Removed ${item.label}`, () => { undo.undo(); onChange(); });
-    }));
-  }
-  editPointer(el, {
-    onTap: () => openWordCard(item),
-    onDrop: (slot) => {
-      // slot/page are visual; storage is canonical 60-space.
-      const target = groupPage(db, group, page, locale, cells)
-        .find((r) => r.vslot === slot);
-      if (target) {
-        swapItems(db, group, item, { item_kind: target.item_kind, item_id: target.item_id });
-      } else {
-        const c = canonCell(posAtVisual(page, slot, cells));
-        moveItem(db, group, item.item_kind, item.item_id, c.page, c.slot_index);
-      }
-      onChange();
-    },
-  });
-  return el;
-}
-
-/** Group page at the profile's cell count N (014 § 3): slot 0 = back to
- *  index, slot 1 = `+ Add` while editing, items land by their canonical
- *  coordinates re-wrapped into pages of N-3, slot N-1 = Next › when the
- *  group has another page. Tapping an empty slot while editing opens
- *  + Add aimed there — the slot is the picker. Word taps speak and stay
- *  in the group — leaving is one learned gesture. */
-async function renderGroupPage() {
-  const zg = $("groupgrid");
-  zg.innerHTML = "";
-  const cells = boardGeom().cells;
-  const geom = pageGeom(cells);
-  zg.style.gridTemplateColumns = `repeat(${boardGeom().cols}, 1fr)`;
-  zg.style.gridTemplateRows = `repeat(${boardGeom().rows}, 1fr)`;
-  const items = new Map(
-    groupPage(db, groupKey, groupPageNo, locale, cells).map((r) => [r.vslot, r]),
-  );
-  const pages = pageCount(db, groupKey, cells);
-  const gKind = ALL(db, "SELECT kind FROM board_group WHERE id = ?", [groupKey])[0]?.kind;
-
-  for (let slot = 0; slot < cells; slot++) {
-    if (slot === 0) {
-      zg.appendChild(navCell("← Groups", openGroupIndex));
-      continue;
-    }
-    if (slot === 1) {
-      zg.appendChild(editSlotCell(editing && "+ Add", () => openAddForm(groupKey)));
-      continue;
-    }
-    if (slot === geom.next) {
-      if (pages > 1) {
-        const el = navCell("Next ›", () => {
-          groupPageNo = (groupPageNo + 1) % pages;
-          renderGroupPage();
-        });
-        const badge = document.createElement("span");
-        badge.className = "badge";
-        badge.textContent = `${groupPageNo + 1}/${pages}`;
-        el.appendChild(badge);
-        zg.appendChild(el);
-      } else {
-        const blank = document.createElement("div");
-        blank.className = "gcell empty";
-        zg.appendChild(blank);
-      }
-      continue;
-    }
-    const item = items.get(slot);
-    if (!item) {
-      const empty = document.createElement("div");
-      empty.className = "gcell empty";
-      if (editing) {
-        empty.dataset.slot = slot; // visual drag target
-        empty.addEventListener("click", () => {
-          openAddForm(groupKey, canonCell(posAtVisual(groupPageNo, slot, cells)));
-        });
-      }
-      zg.appendChild(empty);
-      continue;
-    }
-    zg.appendChild(await itemCell(item, gKind));
-  }
-  fitLabels(zg);
-}
-
-/* --- custom groups: + Group on the group index --- */
-$("group-save").addEventListener("click", async () => {
-  const name = $("group-name").value.trim();
-  if (!name) return;
-  const file = $("group-photo").files[0];
-  const photo = file ? await savePhoto(file) : null;
-  if (photo) syncUploadBlob(photo.bytes).catch(() => {});
-  createGroup(db, { name, photoKey: photo?.key ?? null });
-  $("group-name").value = "";
-  $("group-photo").value = "";
-  close("groupform");
-  renderGroupIndex();
+/* Groups board mode — public/board/groups-ui.js */
+groupsUi = mountGroups({
+  db, locale, all: ALL, boardGeom, getEditing: () => editing, getModelGlow: () => modelGlow,
+  setView: (v) => kbUi.setView(v), open, close, toast, wordTile, layerMark, fitLabels, tap,
+  navCell, editPointer, xBadge, openAddForm, openWordCard,
+  loadPhotoURL, savePhoto, syncUploadBlob,
 });
 
 /* --- add flow: one field, type → match → place. A catalog match places
@@ -2544,15 +2224,14 @@ $("wc-show").addEventListener("click", () => {
   const homes = cardItem.item_kind === "entity"
     ? entityGroups(db, it.item_id, locale)
     : senseGroups(db, it.item_id, locale);
-  const target = homes.find((g) => g.id === groupKey) ?? homes[0];
+  const target = homes.find((g) => g.id === groupsUi.getGroupKey()) ?? homes[0];
   if (!target) { kbUi.setView("board"); return; }
-  groupKey = target.id;
   const cell = ALL(
     db,
     "SELECT page FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-    [groupKey, it.item_kind, it.item_id],
+    [target.id, it.item_kind, it.item_id],
   )[0];
-  groupPageNo = cell?.page ?? 0;
+  groupsUi.setGroup(target.id, cell?.page ?? 0);
   kbUi.setView("group");
   // Render is async; flash once the cells exist.
   requestAnimationFrame(() =>
