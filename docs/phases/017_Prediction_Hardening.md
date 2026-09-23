@@ -723,7 +723,7 @@ Child conversation is the main source; adult text is background.
 | Tatoeba ([downloads](https://tatoeba.org/en/downloads)) | Short everyday sentences, human-written | CC BY 2.0 FR (part CC0) | Short, simple |
 | Google Books Ngram ([datasets](https://storage.googleapis.com/books/ngrams/books/datasetsv3.html)) | 1- to 5-gram counts from books | CC BY 3.0 | Frequency backbone |
 | Our own table | Jev or an LLM asked offline which of our words follow each common context | Ours | Fills thin contexts |
-| Childlike dialogues (`data/prediction/sources/childlike_en.jsonl`) | ~540k utterances we generate: authored frames in real child-speech shapes, slot-filled from our own vocabulary weighted by AoA (`scripts/prediction/book/gen_childlike.mjs`) | Ours | Second child source; +3–5 pts over TinyDialogues alone (§ Steered synth) |
+| Childlike dialogues (`data/prediction/sources/childlike_en.jsonl`) | ~705k utterances we generate: ~2,000 authored frames × routine/place, time-of-day, occasion and language-stage packs, slot-filled from our own vocabulary weighted by AoA (`scripts/prediction/book/gen_childlike.mjs`) | Ours | Second child source; 30% mix adds +3–6 pts over TinyDialogues alone, and its start distribution beats TD on first words (§ Steered synth) |
 | The flywheel (step 26) | Anonymous word-to-word counts from Pip users | Ours | Real AAC use; grows every month |
 
 Excluded:
@@ -881,28 +881,66 @@ What real children say:
 - **First words stay hard** (4–22%). Step 21 and occasions (step 9)
   aim here.
 
-### Steered synth (2026-09-23, our corpus)
+### Steered synth (scaled, 2026-09-23, our corpus)
 
 If TalkBank declines the derived-counts ask (R11), the fallback is to write
-our own child-register text: `gen_childlike.mjs` authors dialogue frames in
-the shapes real children use (from aggregate research patterns — no
-transcript text or counts), expands them over our 680-word vocabulary
-weighted by age-of-acquisition, and emits one dialogue corpus per language
-stage. Same held-out CHILDES measurement as above:
+our own child-register text. `gen_childlike.mjs` (~2,000 authored lines)
+composes four context dimensions per dialogue:
+
+- **Language stage** — toddler / preschool / older band frames, each with
+  its own grammar territory (telegraphic naming and "more X" → "i want a
+  X" and questions → past tense, modals, fairness and school talk).
+- **Routine / place** — 34 scenario packs (meals, bath, park, bedtime,
+  store, doctor, plus teeth, diaper, leaving/arriving, screen time,
+  waiting, injury, frustration, sharing, word-modeling, pet care…).
+- **Time of day** — 5 packs (morning / midday / afternoon / evening /
+  night), band-weighted.
+- **Occasion** — 15 packs (birthday, doctor, sick day, babysitter,
+  grandparents', playdate, school day, haircut, rain, snow, restaurant,
+  zoo, pool/beach, visitor, holiday meal), band-weighted.
+
+Plus two child-directed turn shapes the first version lacked: caregiver
+expansion of the child's own word ("milk" → "you said milk") and adult
+step-narration during routines. Slot fillers come from our 680-word
+vocabulary weighted by age-of-acquisition; a tiny out-of-vocabulary pool
+keeps post-OOV contexts honest. Output: 42k dialogues / ~705k utterances,
+deterministic (seed 7), regenerated as `childlike_en.jsonl`.
+
+Same held-out CHILDES measurement as above. Later words / first words,
+top-4 non-core:
 
 | Book | MLU < 2 | MLU 2–3.5 | MLU > 3.5 |
 | --- | --- | --- | --- |
-| TinyDialogues age-band book (this harness) | 20.4% | 31.3% | 33.2% |
-| childlike synth alone | 21.9% | 27.2% | 29.0% |
-| **synth + TinyDialogues mix** | **25.4%** | **34.4%** | **36.4%** |
+| TinyDialogues age-band book | 20.4% / 4.7% | 31.3% / 17.2% | 33.2% / 24.2% |
+| steered synth alone | 22.2% / 11.2% | 29.5% / 19.0% | 29.8% / 27.9% |
+| **30% synth + 70% TinyDialogues** | **26.0%** / 11.0% | **34.2%** / 13.7% | **36.2%** / 22.9% |
+| 50% synth + 50% TinyDialogues | 25.6% / 11.0% | 34.2% / 19.0% | 35.5% / 27.9% |
+| 70% synth + 30% TinyDialogues | 24.6% / 11.2% | 33.4% / 19.0% | 34.4% / 27.9% |
+| CHILDES child speech (ceiling, unlicensed) | 42.2% / 10.4% | 51.0% / 13.4% | 51.1% / 19.6% |
 
-What it means: the authored corpus is weaker alone — ~200 frames can't
-match GPT-4's 130k varied dialogues — but it adds +3–5 points as a second
-source because it fills the high-frequency child contexts TinyDialogues
-misses. It ships either way; if TalkBank says yes, CHILDES counts join as
-one more weighted source in the same build (step 23 item 4), not a
-replacement. Scratch harness, not committed; numbers use this doc's
-protocol (80/20 transcripts, 2,500 sampled predictions per band).
+What it means:
+
+- **Alone, the scaled synth nearly matches TinyDialogues** (29.5/29.8 vs
+  31.3/33.2 at the two older bands, up from 27.2/29.0) and **beats it on
+  first words at every band** (11.2/19.0/27.9 vs 4.7/17.2/24.2) — the
+  time/occasion/routine packs did exactly what they were for. First-word
+  suggestions are what a user sees *before* tapping anything; this is the
+  part of the book that shortens the hunt for the first tile.
+- **Best mid-sentence mix is 30/70: +3–6 points over TinyDialogues
+  alone** at all three bands. The authored corpus stays complementary,
+  not a replacement.
+- **For first words, prefer the synth start distribution** (or mix
+  lightly) — TinyDialogues' opener distribution is thin, and mixing it in
+  heavily drags first-word hit rate back down.
+- These top-4 numbers are the *input* to this phase's headline measure,
+  words per minute (§ The measure that matters): every correct
+  suggestion is a word the user did not have to go find. The simulated
+  timing model (step 28) converts hit rate into predicted WPM; real
+  on-device WPM (step 15) is the proof.
+- It ships either way; if TalkBank says yes, CHILDES counts join as one
+  more weighted source in the same build (step 23 item 4), not a
+  replacement. Scratch harness, not committed; numbers use this doc's
+  protocol (80/20 transcripts, 2,500 sampled predictions per band).
 
 Truth owner: this doc until closeout, then
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2–5.3.
