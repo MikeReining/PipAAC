@@ -30,10 +30,10 @@ Executing phases only. Each row names the **next** slice.
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 10 — suggested words (blocked on 008 slice 3); slice 5 is post-launch |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
-| [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later) |
+| [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7, 9 built. Next: slice 10 — adults put any word or person in a home cell, plus the setup question "Who do they call for?"; then slice 11 — the family's person stands in for the catalog word (Mama for `mom`) (§ 7a, decided 2026-09-23). Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later) |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | **P1.** Slice 4 — supporter accounts (slices 1–3 built: rename, many users per device, the QR card; slices 6–7 relay legs built: cap, restore-move, retention, dev license) |
 | [016 — Stats and progress](016_Stats_And_Progress.md) | **P2.** Slice 1 — the stats engine (015 slice 2 built) |
-| [017 — Prediction you can prove](017_Prediction_Hardening.md) | M1 plumbing (steps 4, 3, 5, 1, 2) and step 23, the opening book, in parallel (rulings recorded) |
+| [017 — Prediction you can prove](017_Prediction_Hardening.md) | M1 plumbing (steps 4, 3, 5, 1, 2) and step 23, the opening book, in parallel (rulings recorded; CHILDES permitted 2026-09-23, R11) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
