@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="can">
+<g stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="10" y="12" width="36" height="40" rx="12" fill="#ffffff"/>
+<rect x="11" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="20" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="29" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="38" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<path d="M12,40 C18,31 34,31 40,36" fill="none" stroke-width="3.5"/>
+<rect x="54" y="12" width="36" height="40" rx="12" fill="#ffffff"/>
+<rect x="55" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="64" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="73" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<rect x="82" y="10" width="9.5" height="22" rx="4.5" fill="#ffffff" stroke-width="3.5"/>
+<path d="M56,40 C62,31 78,31 84,36" fill="none" stroke-width="3.5"/>
+<polygon points="23.0,58.0 33.0,58.0 33.0,72.0 40.0,72.0 28.0,90.0 16.0,72.0 23.0,72.0" fill="#31a44b"/>
+<polygon points="67.0,58.0 77.0,58.0 77.0,72.0 84.0,72.0 72.0,90.0 60.0,72.0 67.0,72.0" fill="#31a44b"/>
+</g>
+</svg>

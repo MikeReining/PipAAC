@@ -97,7 +97,7 @@ built-in group — a group is a view, not an exclusive home
 | 30 | **open** | Verb | Green | Diagrammatic | Core Verbs → Daily Actions & Activity Verbs | Banajee; Project Core; CDI | Open hinged box with upward motion arrow |
 | 31 | **turn** | Verb | Green | Diagrammatic | Core Verbs → Daily Actions & Activity Verbs | Banajee; Project Core; CDI | Curved circular rotational arrow |
 | 32 | **read** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure looking at open picture book |
-| 33 | **can** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Glyph (hand-drawn): two fists moving down, ASL CAN |
+| 33 | **can** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Glyph (hand-drawn): Two fists (ASL S-hands) with green arrows moving down: the ASL sign CAN. |
 | 34 | **need** | Verb | Green | Stick Figure | Core Verbs | ARASAAC; CDI | Stick figure leaning forward with earnest gesture |
 | 35 | **feel** | Verb | Green | Stick Figure | Core Verbs | ARASAAC; CDI | Stick figure touching hand gently to chest |
 | 36 | **tell** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure with speech bubble emerging |
@@ -117,8 +117,8 @@ built-in group — a group is a view, not an exclusive home
 | 50 | **with** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC; CDI | Two interlocking puzzle pieces |
 | 51 | **under** | Preposition | Pink | Diagrammatic | Core Prepositions | CDI; ARASAAC | Ball positioned below horizontal shelf |
 | 52 | **over** | Preposition | Pink | Diagrammatic | Core Prepositions | CDI; ARASAAC | Curved arc leaping over a wall |
-| 53 | **to** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Glyph (hand-drawn): straight arrow ending at a filled dot |
-| 54 | **for** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Wrapped gift with arrow to target |
+| 53 | **to** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Glyph (hand-drawn): Pink arrow ending at a black dot: toward a place or thing. |
+| 54 | **for** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Glyph (hand-drawn): Pink arrow ending at a yellow person: for someone. |
 | 55 | **more** | Adjective | Blue | Diagrammatic | Core Descriptors | Banajee; Project Core; CDI | Contrast: tall stack filled blue beside a short pale grey stack |
 | 56 | **all done** | Adjective | Blue | Stick Figure | Core Descriptors | Banajee; CDI | Stick figure with both hands swept wide palms up |
 | 57 | **big** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; Project Core; CDI | Contrast: large ball filled blue beside a tiny pale grey ball, no arrow |
@@ -140,12 +140,12 @@ built-in group — a group is a view, not an exclusive home
 | 73 | **yes** | Interjection | Pink | Diagrammatic | Core Social → Social Etiquette, Pragmatic Interjections & Urgent/Safety | Banajee; CDI | Vibrant green/magenta checkmark |
 | 74 | **not** | Adverb | Red | Diagrammatic | Core Protests → Function Words & Grammar | Project Core; CDI | Bold red X over dashed box |
 | 75 | **please** | Interjection | Pink | Stick Figure | Core Social → Social Etiquette, Pragmatic Interjections & Urgent/Safety | CDI; ARASAAC | Stick figure rubbing flat hand on chest |
-| 76 | **and** | Conjunction | Pink | Diagrammatic | Core Connectors → Function Words & Grammar | AoA 4.57; Fry top-10 | Glyph (hand-drawn): bold plus sign |
-| 77 | **but** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.6; Fry top-100 | Two diverging arrows at a fork |
-| 78 | **or** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.14; Fry top-100 | Two separated blocks with choice arrows |
-| 79 | **because** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.44; Fry top-500 | Arrow pointing back to a reason star |
+| 76 | **and** | Conjunction | Pink | Diagrammatic | Core Connectors → Function Words & Grammar | AoA 4.57; Fry top-10 | Glyph (hand-drawn): Grey ball + grey block with a bold pink plus between: this and that. |
+| 77 | **but** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.6; Fry top-100 | Glyph (hand-drawn): Pink U-turn arrow: going one way, then turning back. |
+| 78 | **or** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.14; Fry top-100 | Glyph (hand-drawn): Pink fork: one path splits to a grey ball or a grey block. Pick one. |
+| 79 | **because** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.44; Fry top-500 | Glyph (hand-drawn): Three falling dominoes; the first (the reason) is pink. |
 | 80 | **have** | Verb | Green | Stick Figure | Core Verbs | AoA 3.72; Fry top-50 | Stick figure holding object firmly in arms |
-| 81 | **at** | Preposition | Pink | Diagrammatic | Core Prepositions | AoA 4.04; Fry top-50 | Pointer dot landing on a target point |
+| 81 | **at** | Preposition | Pink | Diagrammatic | Core Prepositions | AoA 4.04; Fry top-50 | Glyph (hand-drawn): Pink dot inside camera-focus corners: right at this spot. |
 | 172 | **hurt** | Adjective | Red | Stick Figure | Core Regulators → Body, Health & Hygiene | CDI; ARASAAC; AoA 4.0 | Stick figure holding painful bruised elbow |
 | 179 | **sad** | Adjective | Blue | Stick Figure | Core Descriptors → Feelings, Emotions & Sensory States | CDI; ARASAAC; AoA 3.24 | Stick figure with downcast posture and single tear |
 
@@ -792,28 +792,28 @@ and grammar words).
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
 | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
-| 607 | **is** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-10 | Glyph (hand-drawn): bold equals sign |
-| 608 | **are** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-50 | Equals sign between three matching blocks |
-| 609 | **am** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-100 | Stick figure beside an equals sign |
-| 610 | **was** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-50 | Equals sign inside a faded past-time bubble |
-| 611 | **were** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-100 | Equals signs inside a faded past-time bubble |
+| 607 | **is** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-10 | Glyph (hand-drawn): One grey ball, then a green equals sign: one thing is. |
+| 608 | **are** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-50 | Glyph (hand-drawn): Three grey balls, then a green equals sign: many things are. |
+| 609 | **am** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-100 | Glyph (hand-drawn): A small yellow person (me), then a green equals sign: I am. |
+| 610 | **was** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-50 | Glyph (hand-drawn): The 'is' glyph with the past badge (rewind ◀◀) above. |
+| 611 | **were** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-100 | Glyph (hand-drawn): The 'are' glyph with the past badge (rewind ◀◀) above. |
 | 612 | **has** | Verb | Green | Stick Figure | AoA 4.83; Fry top-50 | Stick figure holding single object close |
 | 613 | **had** | Verb | Green | Stick Figure | AoA 4.83; Fry top-100 | Stick figure looking back at held object |
-| 614 | **will** | Verb | Green | Diagrammatic | AoA 7.53; Fry top-50 | Forward arrow over a future dotted line |
-| 615 | **would** | Verb | Green | Diagrammatic | AoA 5.28; Fry top-50 | Forked arrow offering a gentle choice |
-| 616 | **can't** | Verb | Red | Diagrammatic | Negation family (don't); Fry top-100 | Slashed circle over a flexed arm |
-| 617 | **won't** | Verb | Red | Diagrammatic | Negation family (don't); Fry top-200 | Slashed circle over a forward arrow |
+| 614 | **will** | Verb | Green | Diagrammatic | AoA 7.53; Fry top-50 | Glyph (hand-drawn): Green fast-forward (▶▶): it is going to happen. |
+| 615 | **would** | Verb | Green | Diagrammatic | AoA 5.28; Fry top-50 | Glyph (hand-drawn): The 'will' fast-forward, pale fill and dashed outline: maybe it will. |
+| 616 | **can't** | Verb | Red | Diagrammatic | Negation family (don't); Fry top-100 | Glyph family: red slashed circle over the 'can' glyph |
+| 617 | **won't** | Verb | Red | Diagrammatic | Negation family (don't); Fry top-200 | Glyph family: red slashed circle over the 'will' glyph |
 | 618 | **didn't** | Verb | Red | Diagrammatic | Negation family (don't); Fry top-200 | Slashed circle over a past-time bubble |
-| 619 | **a** | Determiner | Pink | Diagrammatic | AoA 2.89; Fry top-10 | Single outlined block |
-| 620 | **an** | Determiner | Pink | Diagrammatic | AoA 4.0; Fry top-200 | Single outlined block with small spark |
-| 621 | **the** | Determiner | Pink | Diagrammatic | Fry rank 1; AoA 3.29 | Pointing finger at one specific block |
-| 622 | **of** | Preposition | Pink | Diagrammatic | AoA 4.55; Fry top-10 | Small block nested inside larger block |
+| 619 | **a** | Determiner | Pink | Diagrammatic | AoA 2.89; Fry top-10 | Glyph (hand-drawn): Row of three blocks, one pink: any one of them. |
+| 620 | **an** | Determiner | Pink | Diagrammatic | AoA 4.0; Fry top-200 | Glyph (hand-drawn): Same glyph as 'a' (same word, different spelling). |
+| 621 | **the** | Determiner | Pink | Diagrammatic | Fry rank 1; AoA 3.29 | Glyph (hand-drawn): The 'a' row with a spotlight on the pink block: that specific one. |
+| 622 | **of** | Preposition | Pink | Diagrammatic | AoA 4.55; Fry top-10 | Glyph (hand-drawn): Grey pie with one pink slice pulled out: a piece of the whole. |
 | 623 | **every** | Determiner | Pink | Diagrammatic | AoA 4.2; Fry top-200 | Row of identical fully-checked blocks |
 | 624 | **each** | Determiner | Pink | Diagrammatic | AoA 4.95; Fry top-300 | Arrow visiting each block in a row |
 | 625 | **another** | Determiner | Pink | Diagrammatic | AoA 5.05; Fry top-300 | Arrow jumping to a second identical block |
 | 626 | **other** | Determiner | Pink | Diagrammatic | AoA 5.33; Fry top-100 | Arrow pointing to the unlike block in a pair |
-| 627 | **so** | Conjunction | Pink | Diagrammatic | AoA 5.15; Fry top-100 | Cause arrow flowing into result star |
-| 628 | **if** | Conjunction | Pink | Diagrammatic | AoA 5.36; Fry top-100 | Question mark opening two path branches |
+| 627 | **so** | Conjunction | Pink | Diagrammatic | AoA 5.15; Fry top-100 | Glyph (hand-drawn): Three falling dominoes; the last (the result) is pink. |
+| 628 | **if** | Conjunction | Pink | Diagrammatic | AoA 5.36; Fry top-100 | Glyph (hand-drawn): Pink decision diamond with a path in and two paths out. |
 | 629 | **him** | Pronoun | Yellow | Stick Figure | AoA 3.43; Fry top-100 | Stick figure receiving an object |
 | 630 | **her** | Pronoun | Yellow | Stick Figure | AoA 5.09; Fry top-100 | Stick figure receiving an object |
 | 631 | **us** | Pronoun | Yellow | Stick Figure | AoA 4.19; Fry top-200 | Two stick figures receiving an object together |

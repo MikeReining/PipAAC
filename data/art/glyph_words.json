@@ -1,26 +1,89 @@
 {
-  "_doc": "Opaque function words: no picture can show them. They get a hand-drawn SVG glyph, never an AI-generated picture. scripts/art/gen.mjs refuses these words. Owner: docs/operations/art-generator/SKILL.md § 1.2. source: asl = drawn from the ASL sign; symbol = a symbol the child meets anyway; diagram = arrow/dot geometry; null = glyph not designed yet.",
+  "_doc": "Opaque function words: no picture can show them. They get a hand-drawn SVG glyph at assets/symbols/<word>.svg, never an AI-generated picture; scripts/art/gen.mjs refuses these words. Owner: docs/operations/art-generator/SKILL.md § 1.2. source: asl = drawn from the ASL sign; symbol = a symbol the child meets anyway; diagram = arrow/dot/block geometry.",
   "words": {
-    "can": { "source": "asl", "spec": "Two fists side by side, knuckles forward, each with a short downward motion mark (ASL CAN)." },
-    "and": { "source": "symbol", "spec": "Bold plus sign (+)." },
-    "to": { "source": "diagram", "spec": "Straight arrow ending at a filled dot." },
-    "is": { "source": "symbol", "spec": "Bold equals sign (=)." },
-    "but": { "source": null, "spec": null },
-    "or": { "source": null, "spec": null },
-    "because": { "source": null, "spec": null },
-    "so": { "source": null, "spec": null },
-    "if": { "source": null, "spec": null },
-    "for": { "source": null, "spec": null },
-    "at": { "source": null, "spec": null },
-    "of": { "source": null, "spec": null },
-    "a": { "source": null, "spec": null },
-    "an": { "source": null, "spec": null },
-    "the": { "source": null, "spec": null },
-    "are": { "source": null, "spec": null },
-    "am": { "source": null, "spec": null },
-    "was": { "source": null, "spec": null },
-    "were": { "source": null, "spec": null },
-    "will": { "source": null, "spec": null },
-    "would": { "source": null, "spec": null }
+    "can": {
+      "source": "asl",
+      "spec": "Two fists (ASL S-hands) with green arrows moving down: the ASL sign CAN."
+    },
+    "is": {
+      "source": "symbol",
+      "spec": "One grey ball, then a green equals sign: one thing is."
+    },
+    "are": {
+      "source": "symbol",
+      "spec": "Three grey balls, then a green equals sign: many things are."
+    },
+    "am": {
+      "source": "symbol",
+      "spec": "A small yellow person (me), then a green equals sign: I am."
+    },
+    "was": {
+      "source": "symbol",
+      "spec": "The 'is' glyph with the past badge (rewind ◀◀) above."
+    },
+    "were": {
+      "source": "symbol",
+      "spec": "The 'are' glyph with the past badge (rewind ◀◀) above."
+    },
+    "will": {
+      "source": "symbol",
+      "spec": "Green fast-forward (▶▶): it is going to happen."
+    },
+    "would": {
+      "source": "symbol",
+      "spec": "The 'will' fast-forward, pale fill and dashed outline: maybe it will."
+    },
+    "and": {
+      "source": "symbol",
+      "spec": "Grey ball + grey block with a bold pink plus between: this and that."
+    },
+    "or": {
+      "source": "diagram",
+      "spec": "Pink fork: one path splits to a grey ball or a grey block. Pick one."
+    },
+    "but": {
+      "source": "diagram",
+      "spec": "Pink U-turn arrow: going one way, then turning back."
+    },
+    "because": {
+      "source": "diagram",
+      "spec": "Three falling dominoes; the first (the reason) is pink."
+    },
+    "so": {
+      "source": "diagram",
+      "spec": "Three falling dominoes; the last (the result) is pink."
+    },
+    "if": {
+      "source": "diagram",
+      "spec": "Pink decision diamond with a path in and two paths out."
+    },
+    "to": {
+      "source": "diagram",
+      "spec": "Pink arrow ending at a black dot: toward a place or thing."
+    },
+    "for": {
+      "source": "diagram",
+      "spec": "Pink arrow ending at a yellow person: for someone."
+    },
+    "at": {
+      "source": "symbol",
+      "spec": "Pink dot inside camera-focus corners: right at this spot."
+    },
+    "of": {
+      "source": "diagram",
+      "spec": "Grey pie with one pink slice pulled out: a piece of the whole."
+    },
+    "a": {
+      "source": "diagram",
+      "spec": "Row of three blocks, one pink: any one of them."
+    },
+    "an": {
+      "source": "diagram",
+      "spec": "Same glyph as 'a' (same word, different spelling)."
+    },
+    "the": {
+      "source": "diagram",
+      "spec": "The 'a' row with a spotlight on the pink block: that specific one."
+    }
   }
 }

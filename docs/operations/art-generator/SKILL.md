@@ -44,6 +44,25 @@ Symbols are transparent (guessed on sight: `apple`, `eat`), translucent (learned
 - **Glyphs are hand-drawn SVG**, ink outline plus role color, from a small closed set. Not generated: a wrong ASL handshape is worse than no picture.
 - **Glyph source order:** (1) a symbol the child will meet anyway (`and` = `+`, `is` = `=`); (2) the ASL sign, where one exists, so adults can sign while tapping (`can` = two fists moving down); (3) arrow-and-dot geometry (`to` = arrow ending at a dot). ASL has no signs for `the`, `a`, or `is`, so it cannot be the only source.
 
+#### Glyph grammar
+
+**DECIDED 2026-09-23** (founder). BUILT: 21 glyphs at `assets/symbols/<word>.svg`, one spec line each in `data/art/glyph_words.json`; palette and file presence are checked by `scripts/art/gen.test.mjs`.
+
+Glyphs are a small visual language, so a child who learns one family can guess the next. They use one canvas (`viewBox 0 0 100 100`), ink `#111111` at stroke 4.5 with round joins, and the art palette: green `#31a44b`, pink `#f16b93`, person yellow `#fecc2a`, reference grey `#dddad3`, plus the role's pale tint.
+
+| Convention | Meaning | Words |
+| --- | --- | --- |
+| Role color = the word; grey = context (§ 1.1) | The filled part is what the word adds | all |
+| Subject + green `=` | a form of *be*; the subject shows who: one ball, three balls, yellow person | `is`, `are`, `am` |
+| Rewind badge ◀◀ in a white pill | past tense of the glyph under it | `was`, `were` |
+| Fast-forward ▶▶ | future | `will` |
+| Dashed outline, pale fill | maybe, not certain | `would` |
+| Red slashed circle over the glyph | negative contraction | `can't`, `won't` |
+| Same layout, different highlight | minimal pair | `because`/`so` (first vs last domino), `to`/`for` (dot vs person), `a`/`the` (spotlight) |
+
+- **Spellings of one word share one glyph** (`a` = `an`). Everything else passes the Board Collision check (§ 6, invariant 5).
+- **To change a glyph,** edit the SVG by hand and keep its `spec` line accurate; test at 40px before committing.
+
 ### 1.3 Pronouns vs people
 
 **DECIDED 2026-09-23** (founder).

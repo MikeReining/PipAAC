@@ -151,14 +151,25 @@ test("generateToFile refuses glyph words before any network call", async () => {
   assert.equal(called, false);
 });
 
-test("every glyph word is a lexicon word with a known glyph source", () => {
+test("every glyph word is a lexicon word with a shipped, on-palette SVG", () => {
   const lexicon = JSON.parse(readFileSync(resolve(dirname(GLYPH_WORDS_PATH), "../launch_lexicon.json"), "utf8"));
-  const known = new Set(lexicon.entries.map((e) => e.spokenText.toLowerCase()));
+  const roleOf = new Map(lexicon.entries.map((e) => [e.spokenText.toLowerCase(), e.fitzgeraldColor]));
   const { words } = JSON.parse(readFileSync(GLYPH_WORDS_PATH, "utf8"));
+  // Hue means grammar: ink, white, grey context, the person's yellow, and
+  // the word's own role color (+ its pale tint). Nothing else.
+  const role = { Green: ["#31a44b", "#cdebd3"], Pink: ["#f16b93", "#fcd6e2"] };
+  const neutral = ["#111111", "#ffffff", "#dddad3", "#fecc2a", "none"];
   for (const [w, g] of Object.entries(words)) {
-    assert.ok(known.has(w), `${w} is not in data/launch_lexicon.json`);
-    assert.ok([null, "asl", "symbol", "diagram"].includes(g.source), `${w}: bad source ${g.source}`);
-    assert.equal(g.source === null, g.spec === null, `${w}: source and spec are set together`);
+    assert.ok(roleOf.has(w), `${w} is not in data/launch_lexicon.json`);
+    assert.ok(["asl", "symbol", "diagram"].includes(g.source), `${w}: bad source ${g.source}`);
+    assert.ok(g.spec, `${w}: no spec`);
+    const svg = readFileSync(resolve(dirname(GLYPH_WORDS_PATH), `../../assets/symbols/${w}.svg`), "utf8");
+    assert.match(svg, /viewBox="0 0 100 100"/, `${w}: viewBox`);
+    assert.match(svg, new RegExp(`aria-label="${w}"`), `${w}: aria-label`);
+    const allowed = new Set([...neutral, ...(role[roleOf.get(w)] ?? [])]);
+    for (const [, c] of svg.matchAll(/(?:fill|stroke)="([^"]+)"/g)) {
+      assert.ok(allowed.has(c), `${w}: off-palette color ${c}`);
+    }
   }
   assert.equal(loadGlyphWords().size, Object.keys(words).length);
 });
