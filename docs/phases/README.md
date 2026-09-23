@@ -18,6 +18,7 @@ One critical path. Replace this table when the literal next slice changes — do
 | **P1** | Slice 7 — bulk entry (iPad paste box; the web editor already covers it on wide screens). | `docs/phases/009_Word_Library_And_Customize.md` |
 | **P2** | Slices 8–9 — many photos at once, hide a word. | `docs/phases/009_Word_Library_And_Customize.md` |
 | **P3** | 014 slice 1 — renderer of any shape (removes the ten-column assumption; unblocks the 15-cell starters). | `docs/phases/014_Grid_Density_And_Fit.md` |
+| **P4** | 013 slice 1 — the attention layer (glow, dim, never mute; route walk into groups). Also serves 014's upgrade highlight. | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
 | blocked | 011 slice 9 — free and lifetime (billing + retention delete — needs founder ruling on entitlement) | `docs/phases/011_Sync_And_Web_Editing.md` |
 | blocked | 006 slice 5 — Jev reranker (needs founder's `TYPESAFE_API_KEY`) | `docs/phases/006_Prediction_Engine.md` |
 
@@ -34,6 +35,7 @@ Executing phases only. Each row names the **next** slice.
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | **P1.** Slice 7 — bulk entry (slices 7–9 independent; 5 is post-launch) |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Blocked. Slice 9 — free and lifetime (needs founder ruling on entitlement) |
+| [013 — Spotlight and partner modeling](013_Spotlight_And_Partner_Modeling.md) | **P4.** Slice 1 — the attention layer |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | **P3.** Slice 1 — renderer of any shape; then slice 2 — starter maps |
 
 The language and voice schema was accepted 2026-09-22 and moved to

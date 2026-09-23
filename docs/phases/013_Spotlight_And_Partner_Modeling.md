@@ -1,7 +1,7 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Preliminary. The design below is **DECIDED 2026-09-22**
-(founder; not built). Slices are **PROPOSED**.
+**Status:** Ready for slice 1 (the layer). The design below is **DECIDED
+2026-09-22** (founder; not built). Slices are **PROPOSED**.
 
 Founder intake: `docs/founder/2026-09-22_Spotlight_Partner_Modeling.md`.
 Renamed from "Spotlight Practice Mode" the same day, when live partner

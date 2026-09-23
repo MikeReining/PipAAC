@@ -34,5 +34,5 @@ Nothing in this file is the truth owner. Routed claims live in
 
 ## Next
 
-013 is not yet in the execution queue. Its first slice (the layer) also
-serves 014's upgrade highlight.
+Queued 2026-09-22 (`docs/phases/README.md`, P4): slice 1, the layer. It
+also serves 014's upgrade highlight.

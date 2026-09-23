@@ -36,4 +36,4 @@ live docs may link here when a backlog doc still holds a durable ruling.
 
 | Doc | State | Why |
 | --- | --- | --- |
-| *(empty)* | — | Add ideas here until the founder promotes them to `docs/phases/`. |
+| [012 — Playground (Canvas Mode)](012_Playground_Canvas_Mode.md) | Held (founder, 2026-09-22) | Weak clinical fit as written; see its HOLD banner for what would unhold it. |

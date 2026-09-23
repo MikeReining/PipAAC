@@ -2,6 +2,16 @@
 
 **Status:** Preliminary (PROPOSED). Not yet implementation-ready; architectural and clinical framing.
 
+> **HOLD — founder, 2026-09-22.** Parked in the backlog; not work. Why:
+> gestalt language processors communicate in whole phrases and scripts,
+> not word clusters, so they need phrase tiles rather than a canvas;
+> "Speak Idea" has a model write and speak a sentence for the child, an
+> authorship problem SLPs will reject unless the child confirms it;
+> freeform dragging excludes the switch and eye-gaze users 014 serves.
+> Unhold when: it is reframed (for example as the Visual Scene view in
+> `docs/strategy/Vision.md` § 4.3) with an accessible input model and
+> child-confirmed output.
+
 **PROPOSED 2026-09-22** (founder direction on AssistiveWare Thinking Space comparison, relational language graph, and occasion-aware surface expansion).
 
 Product truth this phase explores:
