@@ -1,0 +1,26 @@
+{
+  "_doc": "Opaque function words: no picture can show them. They get a hand-drawn SVG glyph, never an AI-generated picture. scripts/art/gen.mjs refuses these words. Owner: docs/operations/art-generator/SKILL.md § 1.2. source: asl = drawn from the ASL sign; symbol = a symbol the child meets anyway; diagram = arrow/dot geometry; null = glyph not designed yet.",
+  "words": {
+    "can": { "source": "asl", "spec": "Two fists side by side, knuckles forward, each with a short downward motion mark (ASL CAN)." },
+    "and": { "source": "symbol", "spec": "Bold plus sign (+)." },
+    "to": { "source": "diagram", "spec": "Straight arrow ending at a filled dot." },
+    "is": { "source": "symbol", "spec": "Bold equals sign (=)." },
+    "but": { "source": null, "spec": null },
+    "or": { "source": null, "spec": null },
+    "because": { "source": null, "spec": null },
+    "so": { "source": null, "spec": null },
+    "if": { "source": null, "spec": null },
+    "for": { "source": null, "spec": null },
+    "at": { "source": null, "spec": null },
+    "of": { "source": null, "spec": null },
+    "a": { "source": null, "spec": null },
+    "an": { "source": null, "spec": null },
+    "the": { "source": null, "spec": null },
+    "are": { "source": null, "spec": null },
+    "am": { "source": null, "spec": null },
+    "was": { "source": null, "spec": null },
+    "were": { "source": null, "spec": null },
+    "will": { "source": null, "spec": null },
+    "would": { "source": null, "spec": null }
+  }
+}

@@ -9,7 +9,7 @@ The Art Generator workflow produces high-clarity, vector-grade clipart icons for
 
 ---
 
-## 1. The 5 Semantic Framing Lenses
+## 1. The 6 Semantic Framing Lenses
 
 Every word must pass through the **Framing Lens** before prompt generation. A common failure mode in AAC iconography is drawing a full-body stick figure for every concept; on a 60-tile iPad grid (where cells are ~48×48px to ~60×60px), a full-body stick figure shrinks facial features to a 2-pixel blur and wastes 60% of the canvas on stick legs.
 
@@ -20,6 +20,39 @@ Every word must pass through the **Framing Lens** before prompt generation. A co
 | **Full** | `--framing full` | Gross-motor locomotion (`run`, `jump`, `walk`, `sit`, `stand`, `dance`, `fall`), multi-person social (`help`, `come`, `go`) | Complete stick figure with torso, limbs, and stance. | Semantic meaning requires leg stride, jump elevation, or ground contact. |
 | **Diagram** | `--framing diagram` | Spatial prepositions & relations (`in`, `out`, `on`, `off`, `up`, `down`, `under`) | Minimalist container/surface geometry with bold Fitzgerald pink directional arrow. No human figures. | Eliminates human distraction; opposite pairs (`in`/`out`) share identical box perspective. |
 | **Object** | `--framing object` | Inanimate nouns (`apple`, `ball`, `car`) and universal regulators (`stop`, `yes`, `no`) | Standalone object or sign with bold monoline outline and solid fill. No human figures, no background. | Unambiguous icon recognition; pre-literate universal symbols (e.g. red octagon with white palm for `stop`). |
+| **Contrast** | `--framing contrast --torso <role>` | Words that mean a relation between a target and a reference (`big`, `little`, `tall`, `short`, `more`, `some`, `all`, `this`, `that`, `first`, `last`) | Two of the same thing. The target is filled with the tile's grammar color; the reference has the same outline and a pale grey fill. No arrow. | Color is seen before shape (pre-attentive pop-out), so the eye lands on the target without tracing an arrow. See § 1.1. |
+
+Opaque function words take no lens: they get a hand-drawn glyph (§ 1.2).
+
+### 1.1 Contrast: fill the target, ghost the reference
+
+**DECIDED 2026-09-23** (founder). BUILT: `buildPrompt` contrast clause, `scripts/art/gen.mjs:189`.
+
+- **Target** is filled with the tile's own grammar color (`--torso`), not always blue. `big` is blue because it is a descriptor; `this`/`that` take yellow.
+- **Reference** keeps the same shape and black outline with a pale neutral grey fill. Never hollow: a hollow ball reads as a ring, a hole, or zero. Grey still separates from the fill on a black-and-white print.
+- **No arrow.** Fill and size already point; a pink arrow on a blue tile also breaks "hue means grammar." Arrows stay for motion and direction (`in`, `out`, `go`, `come`).
+- **Pairs are minimal pairs.** `big` and `little` use identical composition; only the fill swaps. The child learns one contrast, not two pictures.
+
+### 1.2 Opaque words: a glyph, not a picture, not a blank
+
+**DECIDED 2026-09-23** (founder). BUILT: registry `data/art/glyph_words.json`; `generateToFile` refuses these words (`scripts/art/gen.mjs:362`).
+
+Symbols are transparent (guessed on sight: `apple`, `eat`), translucent (learned once: `help`, `all done`), or opaque (any picture is arbitrary: `can`, `to`, `and`, `the`). Children learn opaque core words from adults modeling them at a fixed grid location, not from the picture. An opaque tile's art therefore has two jobs: be a distinct, stable landmark, and never teach a wrong literal meaning.
+
+- **Never** a homonym (tin can for `can`, eye for `I`, bee for `be`) or a metaphor that another word owns (bicep = `strong`, checkmark = `yes`, thumb = `good`/`like`).
+- **Never text-only.** The label strip already prints the word on every tile, so text-only is just an empty art box — and a column of blank tiles is indistinguishable to a pre-reader.
+- **Glyphs are hand-drawn SVG**, ink outline plus role color, from a small closed set. Not generated: a wrong ASL handshape is worse than no picture.
+- **Glyph source order:** (1) a symbol the child will meet anyway (`and` = `+`, `is` = `=`); (2) the ASL sign, where one exists, so adults can sign while tapping (`can` = two fists moving down); (3) arrow-and-dot geometry (`to` = arrow ending at a dot). ASL has no signs for `the`, `a`, or `is`, so it cannot be the only source.
+
+### 1.3 Pronouns vs people
+
+**DECIDED 2026-09-23** (founder).
+
+- **Noun = a person. Pronoun = the same person + a pointing hand** (`pointing_mitten`, entering from the tile edge). `he`/`she`/`it` are deictic, like `I` and `you`; in ASL, he/she/it *is* a point toward the referent. `it` points at a neutral object.
+- **Gender cue lives in the head silhouette only**, and only on words whose meaning is gender (`he`, `she`, `boy`, `girl`, `man`, `woman`): `she` / `girl` / `woman` have hair that breaks outside the head outline (ponytail or shoulder-length); `he` / `boy` / `man` have short hair inside it. Interior details (pigtail bands, lashes) vanish at 48px.
+- **No dress or skirt.** Bust framing crops it out, full framing is rejected at 48px, and it encodes a stereotype.
+- **Child vs adult** is proportion: children have a bigger head relative to the body; adults are taller.
+- A parent or SLP may replace the referent with a photo of a real person (sibling, teacher).
 
 ---
 
@@ -30,7 +63,7 @@ Hands must never be drawn as realistic 5-finger spider hands (visual noise at 48
 | Hand Mode | Flag (`--hand`) | Posture & Appearance | Target Actions / Concepts |
 | :--- | :--- | :--- | :--- |
 | **`resting_ball`** | `--hand resting_ball` | Featureless smooth white circle ("visual null") | Passive arms at sides, swinging stride in locomotion (`run`, `walk`). |
-| **`pointing_mitten`** | `--hand pointing_mitten` | Curled fist + single extended index pointer finger | Deictics & pointing (`I`, `you`, `that`, `look`). |
+| **`pointing_mitten`** | `--hand pointing_mitten` | Curled fist + single extended index pointer finger | Deictics & pointing (`I`, `you`, `he`, `she`, `it`, `look`). |
 | **`grip_mitten`** | `--hand grip_mitten` | Thumb opposed to curled mitten palm wrapping around object | Grasping toys or tools (`play` car, `drink` cup, `hold`). |
 | **`pincer_grasp`** | `--hand pincer_grasp` | Thumb tip meeting index fingertip | Precision fine motor (`pinch`, `pick`, `small`, `coin`). |
 | **`open_palm_up`** | `--hand open_palm_up` | Two cupped palms extended forward/upward | Receptive gestures (`need`, `give`, `help`, `want`). |
@@ -58,7 +91,7 @@ Abstract verbs fail when represented solely by stick figure posture. Naked postu
 ## 4. TypeSafe Jev Pre-Classification Pipeline
 
 In both production (`Word_Library.md`) and CLI development, **TypeSafe Jev** (`https://api.typesafe.ai/v1/systemone` using `TYPESAFE_API_KEY`) pre-classifies any new word across four axes:
-1. `framing`: `face` | `bust` | `full` | `diagram` | `object`
+1. `framing`: `face` | `bust` | `full` | `diagram` | `object` | `contrast`
 2. `social_scale`: `zero` (diagram/object) | `solo` (1 actor) | `pair` (2 actors: 1-on-1 handoff/deictic) | `group` (3+ actors: collective/plural)
 3. `hand_mode`: `resting_ball` | `pointing_mitten` | `grip_mitten` | `pincer_grasp` | `open_palm_up` | `press_down`
 4. `proloquo_anchor`: `directional_arrow` | `action_button` | `interlocking_blocks` | `shelf_retrieval` | `receiving_palms` | `none`
@@ -76,7 +109,7 @@ All generation runs through `scripts/art/gen.mjs` against the frozen style bundl
 1. **Teaching Framing:** `We are trying to teach a child the concept of: {word}.`
 2. **Locked Style Clause:** `Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.`
 3. **Constraint:** `Do not include any text in the image.`
-4. **Framing Injection:** Derived automatically from `--framing <face|bust|full|diagram|object>`.
+4. **Framing Injection:** Derived automatically from `--framing <face|bust|full|diagram|object|contrast>`. For `contrast`, `--torso` is the target's fill color.
 5. **Fitzgerald Torso:** Derived automatically from `--torso <green|yellow|blue|pink|red>` (omitted for `face`, `diagram`, and `object`).
 6. **Hand Mode Injection:** Derived automatically from `--hand <mode>`.
 7. **Physical Anchor / Hint:** Explicit physical crutch or scene description.
@@ -90,14 +123,14 @@ All generation runs through `scripts/art/gen.mjs` against the frozen style bundl
 ### Color Discipline & Sensory Over-Stimulation Law
 * **Ban on "Colorful":** Never use the word "colorful" or "multi-colored" in prompts unless explicitly teaching color concepts (e.g. `colors`, `rainbow`, `paint`). Saying "colorful" triggers diffusion models to splash a 6-hue rainbow confetti across the tile, causing sensory overload and visual fatigue for autistic and neurodivergent learners.
 * **Preserve Semantic Grammar Coding:** In Pip AAC, color is functional grammar code (Yellow = people/pronouns, Green = verbs, Blue = descriptors, Pink = prepositions/social, Red = negation/emergency). Spattering arbitrary rainbow colors across objects destroys the child's subconscious grammar cueing.
-* **Unified Palettes When Color Is Secondary:** When color is secondary to the concept (e.g. quantity in `more`, size in `big`/`little`, height in `tall`/`short`), objects must share a single unified, calm color (e.g. natural wood, plain blue, or monochrome). This directs 100% of visual attention to the geometric contrast and directional vector.
+* **Contrast Words Use Target Fill:** Size, amount, and near/far words (`big`/`little`, `more`, `tall`/`short`, `some`/`all`, `this`/`that`) use the Contrast lens (§ 1.1): target in the role color, reference in pale grey. Never multiple hues.
 * **Natural Object Color Is Allowed:** Natural objects can have their real-world color (an apple is red, a banana is yellow, a tree is green). But secondary props must never compete with primary semantic focus or grammar vectors.
 
 ---
 
 ## 6. The Strict Image Judge Protocol (Hard Invariants Only)
 
-Automated judging must NEVER police subjective warmth, charm, smile shape, or whimsical tilt. It must strictly check **4 Hard Invariants**:
+Automated judging must NEVER police subjective warmth, charm, smile shape, or whimsical tilt. It must strictly check **5 Hard Invariants**:
 
 1. **Topological Limb Count & Bilateral Shoulder Origin:**
    * `bust` (solo): Strictly 2 arms. **Bilateral origin is mandatory:** exactly one arm must anchor to the left shoulder, and exactly one arm must anchor to the right shoulder. Two arms sprouting from the same shoulder is an automatic failure. Zero extra strokes descending from collar, neck, or chest (the `play` defect).
@@ -113,6 +146,9 @@ Automated judging must NEVER police subjective warmth, charm, smile shape, or wh
 4. **Semantic Singularity:**
    * Does not depict an opposing or ambiguous action (e.g., `come` must not look like goodbye; `get` must not look like dribbling a ball; `need` must not look like praying; `take` must not look like `put`).
 
+5. **Board Collision:**
+   * The main image or metaphor is not already another word's on the board (a flexed bicep is `strong`, not `can`; a checkmark is `yes`, not `did`).
+
 ---
 
 ## 7. Cadence: Strictly ONE Image at a Time
@@ -121,7 +157,7 @@ To maintain clinical economics and prevent runaway re-rolling:
 1. **Pre-Classify:** Query TypeSafe Jev (or cite established classification).
 2. **Formulate Prompt:** Combine framing lens, hand lens, and Proloquo physical anchor.
 3. **Generate Image:** Run exactly **ONE** roll (`scripts/art/gen.mjs`).
-4. **Judge Audit:** Review the generated image against the 4 Hard Invariants.
+4. **Judge Audit:** Review the generated image against the 5 Hard Invariants.
 5. **Report to Founder:** Present the image, state the Judge's verdict (Pass/Fail + Why), state whether the agent agrees, and recommend the next step (Accept into `assets/symbols/` or make a specific targeted tweak).
 6. **Wait for Approval:** Do NOT re-roll or proceed to the next word without founder feedback.
 
@@ -140,6 +176,9 @@ node scripts/art/gen.mjs --word look --torso green --framing bust --hand pointin
 # Abstract Actions with Proloquo Physical Anchors
 node scripts/art/gen.mjs --word do --torso green --framing bust --hand press_down --hint "pressing a large round green pushbutton action switch" --out assets/symbols/do.png
 node scripts/art/gen.mjs --word come --torso green --framing full --hand resting_ball --hint "walking toward the viewer with a bold green arrival arrow" --out assets/symbols/come.png
+
+# Contrast pairs (target fill in the role color, reference pale grey)
+node scripts/art/gen.mjs --word big --framing contrast --torso blue --hint "two balls, one huge and one tiny; the huge one is the target" --out assets/symbols/big.png
 
 # Automated Pre-Classification via TypeSafe Jev
 node scripts/art/gen.mjs --word come --classify --torso green --hint "walking toward the viewer with green arrival arrow" --out /tmp/come.png

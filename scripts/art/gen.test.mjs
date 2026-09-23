@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,6 +10,9 @@ import {
   loadStyleRefs,
   sniffImageMime,
   parseArgs,
+  generateToFile,
+  loadGlyphWords,
+  GLYPH_WORDS_PATH,
   DEFAULT_STYLE_REF_DIR,
   MAX_STYLE_REFS,
 } from "./gen.mjs";
@@ -127,3 +131,34 @@ test("buildPrompt applies social scale correctly", () => {
   assert.ok(zeroPrompt.includes("No human figures in the image."));
 });
 
+
+test("contrast framing fills the target, ghosts the reference, and drops arrows", () => {
+  const p = buildPrompt({ word: "big", torso: "blue", framing: "contrast", hand: "pointing_mitten" });
+  assert.ok(p.includes("Only the one this word is about is filled solid blue"));
+  assert.ok(p.includes("pale light grey fill. No arrows."));
+  assert.ok(!p.includes("torso"));
+  assert.ok(!p.includes("mitten"));
+  assert.throws(() => buildPrompt({ word: "big", framing: "contrast" }), /needs --torso/);
+});
+
+test("generateToFile refuses glyph words before any network call", async () => {
+  let called = false;
+  const fetchImpl = async () => { called = true; throw new Error("network"); };
+  await assert.rejects(
+    generateToFile({ word: "Can", apiKey: "k", fetchImpl }),
+    /opaque word/,
+  );
+  assert.equal(called, false);
+});
+
+test("every glyph word is a lexicon word with a known glyph source", () => {
+  const lexicon = JSON.parse(readFileSync(resolve(dirname(GLYPH_WORDS_PATH), "../launch_lexicon.json"), "utf8"));
+  const known = new Set(lexicon.entries.map((e) => e.spokenText.toLowerCase()));
+  const { words } = JSON.parse(readFileSync(GLYPH_WORDS_PATH, "utf8"));
+  for (const [w, g] of Object.entries(words)) {
+    assert.ok(known.has(w), `${w} is not in data/launch_lexicon.json`);
+    assert.ok([null, "asl", "symbol", "diagram"].includes(g.source), `${w}: bad source ${g.source}`);
+    assert.equal(g.source === null, g.spec === null, `${w}: source and spec are set together`);
+  }
+  assert.equal(loadGlyphWords().size, Object.keys(words).length);
+});

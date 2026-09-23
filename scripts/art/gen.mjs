@@ -22,6 +22,12 @@ export const MAX_STYLE_REFS = 3;
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const DEFAULT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/pip-v1");
+export const GLYPH_WORDS_PATH = join(repoRoot, "data/art/glyph_words.json");
+
+/** Opaque words that get a hand-drawn glyph, never a generated picture. */
+export function loadGlyphWords(path = GLYPH_WORDS_PATH) {
+  return new Set(Object.keys(JSON.parse(readFileSync(path, "utf8")).words));
+}
 
 export function resolveApiKey(keyName = "OPENROUTER_API_KEY") {
   const envPath = join(repoRoot, ".env");
@@ -126,7 +132,7 @@ export function isPluralWord(word) {
   return true;
 }
 
-export const VALID_FRAMINGS = new Set(["face", "bust", "full", "diagram", "object"]);
+export const VALID_FRAMINGS = new Set(["face", "bust", "full", "diagram", "object", "contrast"]);
 export const VALID_SOCIAL_SCALES = new Set(["zero", "solo", "pair", "group"]);
 
 export const VALID_HAND_MODES = new Set([
@@ -164,7 +170,7 @@ export function formatHandMode(mode) {
  * 2. Locked style clause
  * 3. No text constraint
  * 4. Plural rule (if applicable)
- * 5. Framing lens clause (face, bust, full, diagram, object) based on social scale
+ * 5. Framing lens clause (face, bust, full, diagram, object, contrast) based on social scale
  * 6. Fitzgerald torso rule (for stick figures with torso visible)
  * 7. Hand mode clause (for stick figures with hands visible)
  * 8. Scene hint (for abstract/preposition concepts)
@@ -180,7 +186,13 @@ export function buildPrompt({ word, torso = null, hint = null, framing = null, h
     lines.push("Show more than one.");
   }
 
-  if (social_scale === "pair") {
+  if (framing === "contrast") {
+    // Target filled, reference ghosted: the fill does the pointing, so no arrow.
+    if (!torso) throw new Error("contrast framing needs --torso <target colour>");
+    lines.push(
+      `Two of the same thing side by side. Only the one this word is about is filled solid ${torso}; the other has the same black outline and a pale light grey fill. No arrows.`,
+    );
+  } else if (social_scale === "pair") {
     if (framing === "bust") {
       lines.push("Close-up shot of two stick figures from the chest up. Upper bodies and hands only, no legs.");
     } else if (framing === "full") {
@@ -214,7 +226,7 @@ export function buildPrompt({ word, torso = null, hint = null, framing = null, h
     }
   }
 
-  if (torso && social_scale !== "zero" && framing !== "face" && framing !== "diagram" && framing !== "object") {
+  if (torso && social_scale !== "zero" && framing !== "face" && framing !== "diagram" && framing !== "object" && framing !== "contrast") {
     if (social_scale === "pair" || social_scale === "group") {
       if (!hint) {
         lines.push(`The primary stick figure's torso is solid ${torso}.`);
@@ -224,7 +236,7 @@ export function buildPrompt({ word, torso = null, hint = null, framing = null, h
     }
   }
 
-  if (hand && social_scale !== "zero" && framing !== "face" && framing !== "diagram" && framing !== "object") {
+  if (hand && social_scale !== "zero" && framing !== "face" && framing !== "diagram" && framing !== "object" && framing !== "contrast") {
     const handClause = formatHandMode(hand);
     if (handClause) lines.push(handClause);
   }
@@ -268,6 +280,7 @@ export async function classifyWithJev({
           full: "Full body stick figure with complete legs (locomotion, posture, walking)",
           diagram: "Graphic spatial diagram with box and arrow, no humans (prepositions)",
           object: "Standalone inanimate object or universal sign (nouns, stop sign)",
+          contrast: "Two of the same thing, the target filled in colour and the reference pale grey (size, amount, near/far: big, little, more, some, all, this, that)",
         },
       },
       hand_mode: {
@@ -344,7 +357,11 @@ export async function generateToFile({
   refDir = DEFAULT_STYLE_REF_DIR,
   fetchImpl = globalThis.fetch,
   apiKey = resolveApiKey("OPENROUTER_API_KEY"),
+  glyphWords = loadGlyphWords(),
 } = {}) {
+  if (word && glyphWords.has(String(word).trim().toLowerCase())) {
+    throw new Error(`"${word}" is an opaque word: it gets a hand-drawn glyph (data/art/glyph_words.json), not a generated picture.`);
+  }
   const text = prompt ?? buildPrompt({ word, torso, hint, framing, hand, social_scale });
   if (!apiKey || !String(apiKey).trim()) {
     throw new Error("OPENROUTER_API_KEY is not set. Please export it or add to .env.");
@@ -433,7 +450,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
 
   if (!args.word && !args.prompt) {
-    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object>] [--hand <mode>] [--social-scale <zero|solo|pair|group>] [--hint <hint>] [--out <dest>] [--classify]");
+    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object|contrast>] [--hand <mode>] [--social-scale <zero|solo|pair|group>] [--hint <hint>] [--out <dest>] [--classify]");
     process.exit(1);
   }
 

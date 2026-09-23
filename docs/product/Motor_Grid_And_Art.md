@@ -282,7 +282,7 @@ One word keeps one color role across the core grid, groups, and the predictive s
 
 One character, used everywhere a human figure carries the meaning. Canonical style reference: `assets/style-refs/pip-v1/01-stick-persona.jpg`.
 
-- No hair, no gender markers, and no racial or ethnic cues.
+- No hair, no gender markers, and no racial or ethnic cues. **Exception (DECIDED 2026-09-23):** words whose meaning is gender (*he*, *she*, *boy*, *girl*, *man*, *woman*) carry a hair-silhouette cue only, never a dress (`docs/operations/art-generator/SKILL.md` § 1.3).
 - Bold, uniform monoline stroke with soft rounded joint curvature.
 - Friendly, warm circular head with simple dot eyes and a gentle smile (warmth and approachability for children; avoids the sterile, creepy look of a faceless mannequin).
 - **The Single-Finger Mitten Hand Standard:**
@@ -324,6 +324,9 @@ Relational and positional concepts (*in*, *out*, *on*, *under*, *up*, *down*) us
 3. **Full (`--framing full`):** Gross-motor locomotion (`run`, `jump`, `walk`, `sit`, `stand`) and multi-person social actions (`help`, `play`, `hug`). Complete stick figure with torso, limbs, and stance where leg stride or elevation carries the meaning.
 4. **Diagram (`--framing diagram`):** Spatial prepositions and relationships (`in`, `out`, `on`, `off`, `up`, `down`). Minimalist container/surface with bold Fitzgerald pink vector arrow, zero human figures.
 5. **Object (`--framing object`):** Inanimate nouns (`apple`, `car`) and universal regulators (`stop`, `yes`, `no`). Standalone object or sign with bold monoline outline and solid fill, zero human figures.
+6. **Contrast (`--framing contrast`):** Relation words (`big`, `little`, `more`, `some`, `all`, `this`, `that`). Two of the same thing: target filled in the role color, reference pale grey, no arrow. **DECIDED 2026-09-23.**
+
+Opaque function words (`can`, `to`, `and`, `the`) get no lens and no generated picture: a hand-drawn glyph from a closed set (`data/art/glyph_words.json`). Pronouns are the person plus a pointing hand. **DECIDED 2026-09-23**; rules in the skill guide § 1.1–1.3.
 
 Operational skill guide: `docs/operations/art-generator/SKILL.md`.
 

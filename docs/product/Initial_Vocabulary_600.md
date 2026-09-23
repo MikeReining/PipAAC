@@ -41,7 +41,7 @@ Every word receives an immutable color assignment across the core grid, groups, 
 
 ### Visual Art Systems
 
-- **Stick Figure**: Monoline uniform stroke, round joint terminals, solid circular head, no hair, no gender cues, no racial/ethnic markers. The torso is filled with the word's Modified Fitzgerald color (e.g. green torso for *run*, yellow torso for *I*). Used for people, pronouns, action verbs, and somatic/emotive states.
+- **Stick Figure**: Monoline uniform stroke, round joint terminals, solid circular head, no hair, no gender cues, no racial/ethnic markers — except words whose meaning is gender (*he*, *she*, *boy*, *girl*, *man*, *woman*), which carry a hair-silhouette cue only (`docs/operations/art-generator/SKILL.md` § 1.3). The torso is filled with the word's Modified Fitzgerald color (e.g. green torso for *run*, yellow torso for *I*). Used for people, pronouns, action verbs, and somatic/emotive states.
 - **Illustrated Object**: Warm illustrated style with soft rounded curves, clean solid fills, and crisp outlines. Used for inanimate objects, food, vehicles, household items, tools, clothing, and animals.
 - **Diagrammatic / Metaphor**: Clean abstract symbols, directional vector arrows, and geometric framing. Used for prepositions, spatial vectors, questions, numerals, negation, and regulatory symbols.
 
@@ -70,13 +70,13 @@ built-in group — a group is a view, not an exclusive home
 | 3 | **me** | Pronoun | Yellow | Stick Figure | Core Pronouns | Banajee; CDI | Stick figure with hand placed on chest |
 | 4 | **my** | Pronoun | Yellow | Stick Figure | Core Pronouns | Banajee; CDI | Stick figure holding object close to chest |
 | 5 | **mine** | Pronoun | Yellow | Stick Figure | Core Pronouns | Banajee; CDI | Stick figure clutching prized block to chest |
-| 6 | **he** | Pronoun | Yellow | Stick Figure | Core Pronouns | Project Core; CDI | Single stick figure designated with pointer |
-| 7 | **she** | Pronoun | Yellow | Stick Figure | Core Pronouns | Project Core; CDI | Single stick figure designated with pointer |
-| 8 | **it** | Pronoun | Yellow | Stick Figure | Core Pronouns | Banajee; Project Core; CDI | Stick figure pointing to neutral geometric object |
+| 6 | **he** | Pronoun | Yellow | Stick Figure | Core Pronouns | Project Core; CDI | Short-haired stick figure (hair inside head outline) with a pointing hand entering from the tile edge |
+| 7 | **she** | Pronoun | Yellow | Stick Figure | Core Pronouns | Project Core; CDI | Stick figure with hair breaking outside the head outline (ponytail or shoulder-length) and a pointing hand entering from the tile edge |
+| 8 | **it** | Pronoun | Yellow | Stick Figure | Core Pronouns | Banajee; Project Core; CDI | Pointing hand entering from the tile edge toward a neutral geometric object |
 | 9 | **we** | Pronoun | Yellow | Stick Figure | Core Pronouns | CDI; ARASAAC | Two stick figures standing arm-in-arm |
 | 10 | **they** | Pronoun | Yellow | Stick Figure | Core Pronouns | ARASAAC; Project Core | Two stick figures positioned across room |
-| 11 | **that** | Pronoun | Yellow | Diagrammatic | Core Demonstratives | Banajee; Project Core; CDI | Pointing hand toward distant object |
-| 12 | **this** | Pronoun | Yellow | Diagrammatic | Core Demonstratives | Banajee; Project Core; CDI | Pointing hand toward immediate nearby object |
+| 11 | **that** | Pronoun | Yellow | Diagrammatic | Core Demonstratives | Banajee; Project Core; CDI | Contrast: far object filled yellow, near object pale grey; pointing hand toward the far one |
+| 12 | **this** | Pronoun | Yellow | Diagrammatic | Core Demonstratives | Banajee; Project Core; CDI | Contrast: near object filled yellow, far object pale grey; pointing hand toward the near one |
 | 13 | **want** | Verb | Green | Stick Figure | Core Verbs | Banajee; Project Core; CDI | Stick figure reaching both arms out yearningly |
 | 14 | **like** | Verb | Green | Stick Figure | Core Verbs | Banajee; Project Core; CDI | Stick figure smiling with thumbs up and small heart |
 | 15 | **go** | Verb | Green | Stick Figure | Core Verbs | Banajee; Project Core; CDI | Stick figure stepping forward with motion arrow |
@@ -97,7 +97,7 @@ built-in group — a group is a view, not an exclusive home
 | 30 | **open** | Verb | Green | Diagrammatic | Core Verbs → Daily Actions & Activity Verbs | Banajee; Project Core; CDI | Open hinged box with upward motion arrow |
 | 31 | **turn** | Verb | Green | Diagrammatic | Core Verbs → Daily Actions & Activity Verbs | Banajee; Project Core; CDI | Curved circular rotational arrow |
 | 32 | **read** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure looking at open picture book |
-| 33 | **can** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure flexing arm muscle proudly |
+| 33 | **can** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Glyph (hand-drawn): two fists moving down, ASL CAN |
 | 34 | **need** | Verb | Green | Stick Figure | Core Verbs | ARASAAC; CDI | Stick figure leaning forward with earnest gesture |
 | 35 | **feel** | Verb | Green | Stick Figure | Core Verbs | ARASAAC; CDI | Stick figure touching hand gently to chest |
 | 36 | **tell** | Verb | Green | Stick Figure | Core Verbs | Banajee; CDI | Stick figure with speech bubble emerging |
@@ -117,19 +117,19 @@ built-in group — a group is a view, not an exclusive home
 | 50 | **with** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC; CDI | Two interlocking puzzle pieces |
 | 51 | **under** | Preposition | Pink | Diagrammatic | Core Prepositions | CDI; ARASAAC | Ball positioned below horizontal shelf |
 | 52 | **over** | Preposition | Pink | Diagrammatic | Core Prepositions | CDI; ARASAAC | Curved arc leaping over a wall |
-| 53 | **to** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Direct straight arrow pointing to goal |
+| 53 | **to** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Glyph (hand-drawn): straight arrow ending at a filled dot |
 | 54 | **for** | Preposition | Pink | Diagrammatic | Core Prepositions | ARASAAC | Wrapped gift with arrow to target |
-| 55 | **more** | Adjective | Blue | Diagrammatic | Core Descriptors | Banajee; Project Core; CDI | Plus sign (+) with an expanding stack |
+| 55 | **more** | Adjective | Blue | Diagrammatic | Core Descriptors | Banajee; Project Core; CDI | Contrast: tall stack filled blue beside a short pale grey stack |
 | 56 | **all done** | Adjective | Blue | Stick Figure | Core Descriptors | Banajee; CDI | Stick figure with both hands swept wide palms up |
-| 57 | **big** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; Project Core; CDI | Prominent large circle contrasted with tiny one |
-| 58 | **little** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; CDI | Tiny circle contrasted with large outline |
+| 57 | **big** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; Project Core; CDI | Contrast: large ball filled blue beside a tiny pale grey ball, no arrow |
+| 58 | **little** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; CDI | Contrast: tiny ball filled blue beside a large pale grey ball, no arrow |
 | 59 | **good** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | Banajee; Project Core; CDI | Thumbs-up icon with positive blue glow |
 | 60 | **bad** | Adjective | Blue | Diagrammatic | Core Descriptors → Descriptors, Adjectives & Opposites | CDI; ARASAAC | Thumbs-down icon with jagged accent |
 | 61 | **happy** | Adjective | Blue | Stick Figure | Core Descriptors → Feelings, Emotions & Sensory States | Banajee; CDI | Stick figure smiling broadly with upturned arms |
 | 62 | **same** | Adjective | Blue | Diagrammatic | Core Descriptors | ARASAAC; CDI | Two identical colored squares |
 | 63 | **different** | Adjective | Blue | Diagrammatic | Core Descriptors | ARASAAC; CDI | A colored square beside a contrasting triangle |
-| 64 | **some** | Adjective | Blue | Diagrammatic | Core Descriptors | ARASAAC; CDI | Cluster of three dots within a circle |
-| 65 | **all** | Adjective | Blue | Diagrammatic | Core Descriptors | Project Core; CDI | Circle packed completely with dots |
+| 64 | **some** | Adjective | Blue | Diagrammatic | Core Descriptors | ARASAAC; CDI | Contrast: two dots filled blue in a cluster of pale grey dots |
+| 65 | **all** | Adjective | Blue | Diagrammatic | Core Descriptors | Project Core; CDI | Contrast: every dot in the cluster filled blue |
 | 66 | **what** | Pronoun | Pink | Diagrammatic | Core Questions | Banajee; Project Core; CDI | Bold question mark (?) in speech burst |
 | 67 | **where** | Adverb | Pink | Diagrammatic | Core Questions | Banajee; Project Core; CDI | Map pin icon with question mark inside |
 | 68 | **who** | Pronoun | Pink | Stick Figure | Core Questions | Banajee; Project Core; CDI | Stick figure silhouette with question mark on head |
@@ -140,7 +140,7 @@ built-in group — a group is a view, not an exclusive home
 | 73 | **yes** | Interjection | Pink | Diagrammatic | Core Social → Social Etiquette, Pragmatic Interjections & Urgent/Safety | Banajee; CDI | Vibrant green/magenta checkmark |
 | 74 | **not** | Adverb | Red | Diagrammatic | Core Protests → Function Words & Grammar | Project Core; CDI | Bold red X over dashed box |
 | 75 | **please** | Interjection | Pink | Stick Figure | Core Social → Social Etiquette, Pragmatic Interjections & Urgent/Safety | CDI; ARASAAC | Stick figure rubbing flat hand on chest |
-| 76 | **and** | Conjunction | Pink | Diagrammatic | Core Connectors → Function Words & Grammar | AoA 4.57; Fry top-10 | Plus sign linking two joined blocks |
+| 76 | **and** | Conjunction | Pink | Diagrammatic | Core Connectors → Function Words & Grammar | AoA 4.57; Fry top-10 | Glyph (hand-drawn): bold plus sign |
 | 77 | **but** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.6; Fry top-100 | Two diverging arrows at a fork |
 | 78 | **or** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.14; Fry top-100 | Two separated blocks with choice arrows |
 | 79 | **because** | Conjunction | Pink | Diagrammatic | Core Connectors | AoA 4.44; Fry top-500 | Arrow pointing back to a reason star |
@@ -420,11 +420,10 @@ and grammar words).
 | 294 | **nurse** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Nurse in scrubs offering supportive care |
 | 295 | **babysitter** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Caregiver reading bedtime story to toddler |
 | 296 | **name** | Noun | Yellow | Diagrammatic | AoA 4.12; Fry top-200 | Name tag badge reading "Hello, my name is" |
-| 672 | **boy** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Short child-height stick figure standing beside adult |
-| 673 | **girl** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Short child-height stick figure with simple dress silhouette |
-| 674 | **man** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Tall adult stick figure standing centered |
-| 675 | **woman** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Tall adult stick figure with simple dress silhouette |
-
+| 672 | **boy** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Short child-proportion stick figure (big head), hair inside head outline |
+| 673 | **girl** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Short child-proportion stick figure (big head), hair breaking outside head outline |
+| 674 | **man** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Tall adult-proportion stick figure, hair inside head outline |
+| 675 | **woman** | Noun | Yellow | Stick Figure | CDI; ARASAAC | Tall adult-proportion stick figure, hair breaking outside head outline |
 ### 3.6 Places, Rooms & Community (35 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Environments. Art archetype: Illustrated Object.*
 
@@ -793,7 +792,7 @@ and grammar words).
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
 | :---: | :--- | :--- | :--- | :--- | :--- | :--- |
-| 607 | **is** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-10 | Equals sign between two matching blocks |
+| 607 | **is** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-10 | Glyph (hand-drawn): bold equals sign |
 | 608 | **are** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-50 | Equals sign between three matching blocks |
 | 609 | **am** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-100 | Stick figure beside an equals sign |
 | 610 | **was** | Verb | Green | Diagrammatic | AoA 5.53; Fry top-50 | Equals sign inside a faded past-time bubble |
