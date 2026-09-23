@@ -23,23 +23,24 @@ export const MAX_STYLE_REFS = 3;
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const DEFAULT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/pip-v1");
 
-export function resolveApiKey() {
+export function resolveApiKey(keyName = "OPENROUTER_API_KEY") {
   const envPath = join(repoRoot, ".env");
   if (existsSync(envPath)) {
     const lines = readFileSync(envPath, "utf8").split("\n");
     for (const line of lines) {
-      const match = line.match(/^\s*OPENROUTER_API_KEY\s*=\s*(.*?)\s*$/);
+      const match = line.match(new RegExp(`^\\s*${keyName}\\s*=\\s*(.*?)\\s*$`));
       if (match && match[1]) {
         const val = match[1].replace(/^["']|["']$/g, "").trim();
         if (val) return val;
       }
     }
   }
-  if (process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_API_KEY.trim()) {
-    return process.env.OPENROUTER_API_KEY.trim();
+  if (process.env[keyName] && process.env[keyName].trim()) {
+    return process.env[keyName].trim();
   }
   return null;
 }
+
 
 
 const styleRefCache = new Map();
@@ -113,6 +114,34 @@ export function isPluralWord(word) {
 
 export const VALID_FRAMINGS = new Set(["face", "bust", "full", "diagram", "object"]);
 
+export const VALID_HAND_MODES = new Set([
+  "resting_ball",
+  "pointing_mitten",
+  "grip_mitten",
+  "pincer_grasp",
+  "open_palm_up",
+  "press_down",
+]);
+
+export function formatHandMode(mode) {
+  switch (mode) {
+    case "resting_ball":
+      return "The stick figure's hands are simple featureless circles with no fingers.";
+    case "pointing_mitten":
+      return "One hand is in a pointing mitten pose with a single extended pointer finger.";
+    case "grip_mitten":
+      return "The hands are mitten-shaped grips holding the object.";
+    case "pincer_grasp":
+      return "The hand shows a pincer grasp with thumb and index finger touching.";
+    case "open_palm_up":
+      return "Both hands are open cupped palms facing upward to receive.";
+    case "press_down":
+      return "The hand has an open flat palm pressing downward.";
+    default:
+      return null;
+  }
+}
+
 /**
  * Builds the canonical Pip AAC icon prompt.
  * 
@@ -122,9 +151,10 @@ export const VALID_FRAMINGS = new Set(["face", "bust", "full", "diagram", "objec
  * 4. Plural rule (if applicable)
  * 5. Framing lens clause (face, bust, full, diagram, object)
  * 6. Fitzgerald torso rule (for stick figures with torso visible)
- * 7. Scene hint (for abstract/preposition concepts)
+ * 7. Hand mode clause (for stick figures with hands visible)
+ * 8. Scene hint (for abstract/preposition concepts)
  */
-export function buildPrompt({ word, torso = null, hint = null, framing = null }) {
+export function buildPrompt({ word, torso = null, hint = null, framing = null, hand = null }) {
   const lines = [
     `We are trying to teach a child the concept of: ${word}.`,
     "Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.",
@@ -151,12 +181,18 @@ export function buildPrompt({ word, torso = null, hint = null, framing = null })
     lines.push(`The stick figure's torso is solid ${torso}.`);
   }
 
+  if (hand && framing !== "face" && framing !== "diagram" && framing !== "object") {
+    const handClause = formatHandMode(hand);
+    if (handClause) lines.push(handClause);
+  }
+
   if (hint) {
     lines.push(hint);
   }
 
   return lines.join("\n");
 }
+
 
 export function extractImage(payload) {
   const b64 = payload?.data?.[0]?.b64_json;
@@ -165,18 +201,96 @@ export function extractImage(payload) {
   throw new Error(`no image in response: ${text}`);
 }
 
+export const TYPESAFE_ENDPOINT = "https://api.typesafe.ai/v1/systemone";
+
+export async function classifyWithJev({
+  word,
+  apiKey = resolveApiKey("TYPESAFE_API_KEY"),
+  fetchImpl = globalThis.fetch,
+} = {}) {
+  if (!apiKey || !String(apiKey).trim()) {
+    throw new Error("TYPESAFE_API_KEY is not set. Please export it or add to .env.");
+  }
+
+  const body = {
+    state: `Word to illustrate: "${word}". Context: Core AAC communication board symbol for a non-verbal child. Needs high legibility at 48x48px on an iPad grid.`,
+    model: "jev-latest",
+    questions: {
+      framing: {
+        type: "choice",
+        instructions: "Best visual framing lens for this AAC word",
+        criteria: {
+          face: "Extreme close-up of facial expression only (emotions, feelings)",
+          bust: "Upper chest, head, hands (fine motor, manual action, chest gestures)",
+          full: "Full body stick figure with complete legs (locomotion, posture, walking)",
+          diagram: "Graphic spatial diagram with box and arrow, no humans (prepositions)",
+          object: "Standalone inanimate object or universal sign (nouns, stop sign)",
+        },
+      },
+      hand_mode: {
+        type: "choice",
+        instructions: "Optimal hand depiction for this action",
+        criteria: {
+          resting_ball: "Featureless smooth circle (passive, swinging, no fine fingers)",
+          pointing_mitten: "Fist with single extended pointer finger (pointing, deictic)",
+          grip_mitten: "Thumb and curled fingers grasping a physical prop",
+          pincer_grasp: "Thumb and index finger touching to hold tiny item",
+          open_palm_up: "Two open cupped palms facing upward to receive/beg/plead",
+          press_down: "Flat palm or finger pressing downward onto a surface/button",
+        },
+      },
+      proloquo_anchor: {
+        type: "choice",
+        instructions: "What physical anchor or visual crutch is needed to prevent semantic ambiguity?",
+        criteria: {
+          directional_arrow: "A bold directional arrow indicating movement direction (e.g. green arrival arrow for come, forward arrow for go)",
+          action_button: "A large round pushbutton or checkmark switch being pressed (for abstract actions like do)",
+          interlocking_blocks: "Two distinct toy blocks snapping together with mating studs (for make/build)",
+          shelf_retrieval: "Reaching up to take an object off a shelf or surface with retrieval arrow (for get/take)",
+          receiving_palms: "Open cupped palms held outward to receive an item (for need/want)",
+          none: "No extra physical anchor needed; human posture or face is sufficient",
+        },
+      },
+    },
+  };
+
+  const res = await fetchImpl(TYPESAFE_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`TypeSafe Jev HTTP ${res.status}: ${errText.slice(0, 500)}`);
+  }
+
+  const data = await res.json();
+  return {
+    model: data.model,
+    framing: data?.answers?.framing?.choice ?? "full",
+    hand_mode: data?.answers?.hand_mode?.choice ?? "resting_ball",
+    anchor: data?.answers?.proloquo_anchor?.choice ?? "none",
+    raw: data,
+  };
+}
+
 export async function generateToFile({
   word,
   torso = null,
   hint = null,
   framing = null,
+  hand = null,
   prompt = null,
   out = null,
   refDir = DEFAULT_STYLE_REF_DIR,
   fetchImpl = globalThis.fetch,
-  apiKey = resolveApiKey(),
+  apiKey = resolveApiKey("OPENROUTER_API_KEY"),
 } = {}) {
-  const text = prompt ?? buildPrompt({ word, torso, hint, framing });
+  const text = prompt ?? buildPrompt({ word, torso, hint, framing, hand });
   if (!apiKey || !String(apiKey).trim()) {
     throw new Error("OPENROUTER_API_KEY is not set. Please export it or add to .env.");
   }
@@ -216,9 +330,11 @@ export function parseArgs(argv) {
     torso: null,
     hint: null,
     framing: null,
+    hand: null,
     out: null,
     prompt: null,
     print: false,
+    classify: false,
     refDir: DEFAULT_STYLE_REF_DIR,
   };
   for (let i = 0; i < argv.length; i += 1) {
@@ -233,10 +349,18 @@ export function parseArgs(argv) {
       }
       out.framing = f;
     }
+    else if (a === "--hand") {
+      const h = argv[++i];
+      if (!VALID_HAND_MODES.has(h)) {
+        throw new Error(`invalid hand mode: ${h}. Must be one of: ${[...VALID_HAND_MODES].join(", ")}`);
+      }
+      out.hand = h;
+    }
     else if (a === "--out") out.out = argv[++i];
     else if (a === "--prompt") out.prompt = argv[++i];
     else if (a === "--ref-dir") out.refDir = argv[++i];
     else if (a === "--print-prompt") out.print = true;
+    else if (a === "--classify") out.classify = true;
     else throw new Error(`unknown flag: ${a}`);
   }
   return out;
@@ -244,12 +368,30 @@ export function parseArgs(argv) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const prompt = args.prompt ?? buildPrompt({ word: args.word, torso: args.torso, hint: args.hint, framing: args.framing });
 
   if (!args.word && !args.prompt) {
-    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object>] [--hint <hint>] [--out <dest>]");
+    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object>] [--hand <mode>] [--hint <hint>] [--out <dest>] [--classify]");
     process.exit(1);
   }
+
+  if (args.classify && args.word) {
+    console.log(`Classifying "${args.word}" with TypeSafe Jev...`);
+    const cls = await classifyWithJev({ word: args.word });
+    console.log(`Jev classification (${cls.model}):`);
+    console.log(`  Framing: ${cls.framing}`);
+    console.log(`  Hand mode: ${cls.hand_mode}`);
+    console.log(`  Anchor: ${cls.anchor}`);
+    if (!args.framing) args.framing = cls.framing;
+    if (!args.hand) args.hand = cls.hand_mode;
+  }
+
+  const prompt = args.prompt ?? buildPrompt({
+    word: args.word,
+    torso: args.torso,
+    hint: args.hint,
+    framing: args.framing,
+    hand: args.hand,
+  });
 
   console.log("--- prompt ---");
   console.log(prompt);
@@ -262,6 +404,7 @@ async function main() {
     torso: args.torso,
     hint: args.hint,
     framing: args.framing,
+    hand: args.hand,
     prompt: args.prompt,
     out: args.out,
     refDir: args.refDir,
@@ -275,4 +418,5 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     process.exit(1);
   });
 }
+
 

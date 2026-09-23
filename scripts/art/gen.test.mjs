@@ -55,6 +55,9 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
 
   const diagram = buildPrompt({ word: "in", framing: "diagram" });
   assert.ok(diagram.includes("A clean graphic diagram with no human figures."));
+
+  const handTest = buildPrompt({ word: "look", torso: "green", framing: "bust", hand: "pointing_mitten" });
+  assert.ok(handTest.includes("One hand is in a pointing mitten pose with a single extended pointer finger."));
 });
 
 test("loadStyleRefs loads exactly 3 style references from assets/style-refs/pip-v1", () => {
@@ -71,15 +74,19 @@ test("parseArgs parses flags correctly", () => {
     "--word", "run",
     "--torso", "green",
     "--framing", "full",
+    "--hand", "resting_ball",
     "--hint", "running forward",
     "--out", "/tmp/run.png",
+    "--classify",
     "--print-prompt",
   ]);
   assert.equal(parsed.word, "run");
   assert.equal(parsed.torso, "green");
   assert.equal(parsed.framing, "full");
+  assert.equal(parsed.hand, "resting_ball");
   assert.equal(parsed.hint, "running forward");
   assert.equal(parsed.out, "/tmp/run.png");
+  assert.equal(parsed.classify, true);
   assert.equal(parsed.print, true);
 });
 
@@ -89,3 +96,11 @@ test("parseArgs rejects invalid framing", () => {
     /invalid framing: wide_angle/,
   );
 });
+
+test("parseArgs rejects invalid hand mode", () => {
+  assert.throws(
+    () => parseArgs(["--word", "run", "--hand", "lobster_claws"]),
+    /invalid hand mode: lobster_claws/,
+  );
+});
+

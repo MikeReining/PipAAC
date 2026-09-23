@@ -1,11 +1,11 @@
 ---
 name: art-generator
-description: Canonical workflow, framing lenses, prompt architecture, and quality audit for Pip AAC tile clipart generation.
+description: Canonical workflow, framing lenses, hand taxonomy, Proloquo physical anchors, TypeSafe Jev pre-classification, and quality judge for Pip AAC tile clipart generation.
 ---
 
 # Art Generator
 
-The Art Generator workflow produces high-clarity, vector-grade clipart icons for Pip AAC motor-grid tiles and system screens. It enforces clinical legibility at 48×48px iPad grid densities through explicit **Framing Lenses**, a frozen style bundle (`assets/style-refs/pip-v1/`), and an autonomous 2-re-roll quality gate.
+The Art Generator workflow produces high-clarity, vector-grade clipart icons for Pip AAC motor-grid tiles and system screens. It enforces clinical legibility at 48×48px iPad grid densities through explicit **Framing Lenses**, a discrete **Hand Lens**, **Proloquo Physical Anchors**, pre-classification via **TypeSafe Jev**, and a strict **Image Judge** protocol that checks hard invariants without over-policing artistic charm.
 
 ---
 
@@ -16,34 +16,57 @@ Every word must pass through the **Framing Lens** before prompt generation. A co
 | Framing Lens | Flag (`--framing`) | Target Concepts | What Is Drawn | Clinical / 48px Rationale |
 | :--- | :--- | :--- | :--- | :--- |
 | **Face** | `--framing face` | Emotions & feelings (`happy`, `sad`, `mad`, `hurt`, `tired`), sensory/head states (`sleepy`, `sick`) | Close-up circular head filling 80%+ of the frame. Head only; no body, no legs. | Facial expression is 5× larger; smile, frown, tears, or eye shape are instantly recognizable across the room. |
-| **Bust** | `--framing bust` | Oral & fine-motor manual actions (`eat`, `drink`, `taste`, `brush`, `think`, `say`, `read`, `give`, `take`, `put`), deictic chest gestures (`I`, `me`) | Head, hands, and upper torso collar with Fitzgerald color fill. Upper body only; no legs. | Focuses 100% of visual resolution on the interaction between hands, face, and chest while preserving grammar torso color. |
-| **Full** | `--framing full` | Gross-motor locomotion (`run`, `jump`, `walk`, `sit`, `stand`, `dance`, `fall`), multi-person social (`help`, `play`, `hug`) | Complete stick figure with torso, limbs, and stance. | Semantic meaning requires leg stride, jump elevation, or ground contact. |
+| **Bust** | `--framing bust` | Oral & fine-motor manual actions (`eat`, `drink`, `taste`, `brush`, `think`, `say`, `read`, `give`, `take`, `put`), deictic chest gestures (`I`, `me`), object interactions (`play`, `make`) | Head, hands, and upper torso collar with Fitzgerald color fill. Upper body only; no legs. | Focuses 100% of visual resolution on the interaction between hands, face, and chest while preserving grammar torso color. |
+| **Full** | `--framing full` | Gross-motor locomotion (`run`, `jump`, `walk`, `sit`, `stand`, `dance`, `fall`), multi-person social (`help`, `come`, `go`) | Complete stick figure with torso, limbs, and stance. | Semantic meaning requires leg stride, jump elevation, or ground contact. |
 | **Diagram** | `--framing diagram` | Spatial prepositions & relations (`in`, `out`, `on`, `off`, `up`, `down`, `under`) | Minimalist container/surface geometry with bold Fitzgerald pink directional arrow. No human figures. | Eliminates human distraction; opposite pairs (`in`/`out`) share identical box perspective. |
 | **Object** | `--framing object` | Inanimate nouns (`apple`, `ball`, `car`) and universal regulators (`stop`, `yes`, `no`) | Standalone object or sign with bold monoline outline and solid fill. No human figures, no background. | Unambiguous icon recognition; pre-literate universal symbols (e.g. red octagon with white palm for `stop`). |
 
 ---
 
-## 2. Decision Tree for New Words
+## 2. The Hand Lens (Discrete Hand Taxonomy)
 
-```text
-Is the word an inanimate noun, vehicle, food, or universal sign?
- ├── YES → Use --framing object (e.g., apple, car, stop)
- └── NO  → Does the word communicate a spatial relationship?
-            ├── YES → Use --framing diagram (e.g., in, out, on, off)
-            └── NO  → Does the word represent an emotion or facial state?
-                       ├── YES → Use --framing face (e.g., happy, sad, hurt)
-                       └── NO  → Does the action center on hands, mouth, or chest?
-                                  ├── YES → Use --framing bust (e.g., eat, drink, think, I)
-                                  └── NO  → Use --framing full (e.g., run, jump, help, play)
-```
+Hands must never be drawn as realistic 5-finger spider hands (visual noise at 48px), nor should they be glued-on featureless meatballs when interacting with objects. Use explicit hand modes:
 
-> [!NOTE]
-> **Runtime Pre-Classification via TypeSafe Jev:**
-> In the user-facing "Draw it for me" feature (`docs/product/Word_Library.md` § 6.1), TypeSafe Jev automates this decision tree on the backend: it pre-classifies the word and optional hint into one of the 5 framing lenses to dispatch a single, high-fidelity roll to Muse Image. Because image generation is an explicitly requested cloud service, Jev pre-classification is a mandatory cloud pipeline step (parents cannot disable Jev for Draw it for me). Offline developer scripts and batch generation use this decision tree directly or explicit CLI flags.
+| Hand Mode | Flag (`--hand`) | Posture & Appearance | Target Actions / Concepts |
+| :--- | :--- | :--- | :--- |
+| **`resting_ball`** | `--hand resting_ball` | Featureless smooth white circle ("visual null") | Passive arms at sides, swinging stride in locomotion (`run`, `walk`). |
+| **`pointing_mitten`** | `--hand pointing_mitten` | Curled fist + single extended index pointer finger | Deictics & pointing (`I`, `you`, `that`, `look`). |
+| **`grip_mitten`** | `--hand grip_mitten` | Thumb opposed to curled mitten palm wrapping around object | Grasping toys or tools (`play` car, `drink` cup, `hold`). |
+| **`pincer_grasp`** | `--hand pincer_grasp` | Thumb tip meeting index fingertip | Precision fine motor (`pinch`, `pick`, `small`, `coin`). |
+| **`open_palm_up`** | `--hand open_palm_up` | Two cupped palms extended forward/upward | Receptive gestures (`need`, `give`, `help`, `want`). |
+| **`press_down`** | `--hand press_down` | Flat palm or pointer finger pressing downward | Direct activation (`stop`, `do` button, `push`, `squish`). |
 
 ---
 
-## 3. Prompt Architecture & Generation Laws
+## 3. Reverse-Engineering Proloquo: Physical Anchors for Abstract Verbs
+
+Abstract verbs fail when represented solely by stick figure posture. Naked posture leads to ambiguous gestures (e.g. waving hello for `come`) or static poses (hands on hips for `do`). Proloquo and industry-standard AAC solve this using **Physical Anchors / Crutches**:
+
+1. **Directional Vector (`directional_arrow`):**
+   * *`come` vs `go`:* `go` is walking to the right with a forward arrow. `come` is walking toward the viewer/home with an inward arrival arrow. Naked waving is prohibited.
+2. **Action Switch (`action_button`):**
+   * *`do`:* Hand pressing a prominent round green pushbutton (the universal action trigger) or a finger ticking a checkmark. Hands on hips is prohibited.
+3. **Retrieval Anchor (`shelf_retrieval`):**
+   * *`get`:* Reaching onto an elevated surface or shelf to retrieve an object with an inward green retrieval vector. Dribbling a ball on the floor is prohibited.
+4. **Mechanical Mating (`interlocking_blocks`):**
+   * *`make` / `build`:* Two distinct toy blocks snapping together with geometrically matching studs and sockets. Flat-to-socket misfits are prohibited.
+5. **Receptive Cupping (`receiving_palms`):**
+   * *`need`:* Two cupped palms held outward to receive. Vertical prayer hands are prohibited.
+
+---
+
+## 4. TypeSafe Jev Pre-Classification Pipeline
+
+In both production (`Word_Library.md`) and CLI development, **TypeSafe Jev** (`https://api.typesafe.ai/v1/systemone` using `TYPESAFE_API_KEY`) pre-classifies any new word across three axes:
+1. `framing`: `face` | `bust` | `full` | `diagram` | `object`
+2. `hand_mode`: `resting_ball` | `pointing_mitten` | `grip_mitten` | `pincer_grasp` | `open_palm_up` | `press_down`
+3. `proloquo_anchor`: `directional_arrow` | `action_button` | `interlocking_blocks` | `shelf_retrieval` | `receiving_palms` | `none`
+
+This eliminates blind trial-and-error before the first pixel is drawn.
+
+---
+
+## 5. Prompt Architecture & Generation Laws
 
 All generation runs through `scripts/art/gen.mjs` against the frozen style bundle (`assets/style-refs/pip-v1/`).
 
@@ -53,68 +76,63 @@ All generation runs through `scripts/art/gen.mjs` against the frozen style bundl
 3. **Constraint:** `Do not include any text in the image.`
 4. **Framing Injection:** Derived automatically from `--framing <face|bust|full|diagram|object>`.
 5. **Fitzgerald Torso:** Derived automatically from `--torso <green|yellow|blue|pink|red>` (omitted for `face`, `diagram`, and `object`).
-6. **Plural Rule:** Derived automatically for plural nouns (`Show more than one.`).
-7. **Optional Natural Hint:** Concise 4-to-8 word physical description if needed (e.g. `eating an apple`).
+6. **Hand Mode Injection:** Derived automatically from `--hand <mode>`.
+7. **Physical Anchor / Hint:** Explicit physical crutch or scene description.
 
-### The Cardinal Law: Re-Roll Over Prompt-Policing
-* **Never add negative laundry lists** (`no feathers, no big eyes, no blush, no speed lines, no text`). Negative prompt-stuffing forces the model into latent edge cases and produces sterile, creepy mannequins.
+### The Cardinal Law: Give It a Clear, Simple Prompt and Get Out of the Way
+* **Over-prompting is the enemy of anatomy:** Stacking micro-anatomical directives (e.g., commanding a specific finger curl, wrist rotation, and palm orientation while simultaneously describing a complex prop interaction) overwhelms the diffusion model. The model contorts itself trying to satisfy contradictory micro-constraints, resulting in catastrophic defects like sprouting two arms from the same shoulder.
+* **Trust the model with a single, crisp action:** State the concept, the framing lens, the torso color, and **one concise natural action sentence**. Let the action naturally dictate the pose and grip.
+* **No negative prompt laundry lists:** Negative prompt-stuffing forces the model into latent edge cases and produces sterile, creepy mannequins.
 * **The 3 reference images carry the style, line weight, and character identity.**
-* If an image is 85% correct but has a minor artifact, **re-roll the seed**.
 
 ---
 
-## 4. The 5-Point Quality Audit Checklist
+## 6. The Strict Image Judge Protocol (Hard Invariants Only)
 
-Every generated roll is audited against five objective criteria before being presented to the user:
+Automated judging must NEVER police subjective warmth, charm, smile shape, or whimsical tilt. It must strictly check **4 Hard Invariants**:
 
-1. **WorkbookBench Stroke:** Bold, uniform monoline black outline with soft rounded joints; round head geometry matching `assets/style-refs/pip-v1/`.
-2. **Hand Anatomy Standard:**
-   * *Active gesture (pointing, touching, holding):* Clean single-finger mitten (curled fist with one extended pointer finger). Never 5 realistic spider fingers.
-   * *Resting hand:* Smooth, featureless neutral circle ("visual null").
-3. **Grammar Fill (Fitzgerald Key):**
-   * Green: Action verbs (`eat`, `run`, `want`).
-   * Yellow: Pronouns & people (`I`, `you`, `he`).
-   * Blue: Descriptors & feelings (`happy`, `sad`, `big`).
-   * Pink: Spatial arrows (`in`, `out`) and conjunctions.
-   * Red: Regulators & urgency (`stop`, `no`, `not`).
-4. **Zero Visual Noise:** Pure white canvas, zero background scenery, zero motion lines/speed streaks, zero text/letters.
-5. **The 48px Squint Test:** Shrink the image or squint; the semantic concept must read unmistakably at tile resolution.
+1. **Topological Limb Count & Bilateral Shoulder Origin:**
+   * `bust`: Strictly 2 arms. **Bilateral origin is mandatory:** exactly one arm must anchor to the left shoulder, and exactly one arm must anchor to the right shoulder. Two arms sprouting from the same shoulder is an automatic failure. Zero extra strokes descending from collar, neck, or chest (the `play` defect).
+   * `full`: Strictly 2 arms, 2 legs. Bilaterally anchored to shoulders and pelvis.
+   * `face`, `diagram`, `object`: Strictly 0 human limbs.
+2. **Mechanical & Physical Plausibility:**
+   * Interlocking items must actually mate (e.g. Lego studs fit sockets; hands grip handles rather than float detached).
+3. **Visual Noise & Artifacts:**
+   * Exactly 0 text characters or letters.
+   * Zero speed lines, motion streaks, speech bubbles, or floating debris.
 
----
-
-## 5. Autonomous Audit Protocol (Max 2 Re-rolls)
-
-To maintain high agent autonomy and respect user time:
-1. Agent generates **Roll 1** using the correct `--framing` and `--torso`.
-2. Agent audits Roll 1 against the 5-point checklist.
-3. If Roll 1 passes: Resize to 1024×1024 master, archive in `assets/symbols/<word>.png`, copy to brain directory, and present to user.
-4. If Roll 1 fails (e.g. wrong posture, motion streaks, extra fingers): Agent adjusts seed or adds a minimal 3-word posture hint and re-rolls (**Roll 2**).
-5. If Roll 2 still has an artifact: Agent performs one final re-roll (**Roll 3**).
-6. Agent presents the best candidate to the user with an explicit audit note explaining the roll history.
+4. **Semantic Singularity:**
+   * Does not depict an opposing or ambiguous action (e.g., `come` must not look like goodbye; `get` must not look like dribbling a ball; `need` must not look like praying).
 
 ---
 
-## 6. CLI Usage Reference
+## 7. Cadence: Strictly ONE Image at a Time
+
+To maintain clinical economics and prevent runaway re-rolling:
+1. **Pre-Classify:** Query TypeSafe Jev (or cite established classification).
+2. **Formulate Prompt:** Combine framing lens, hand lens, and Proloquo physical anchor.
+3. **Generate Image:** Run exactly **ONE** roll (`scripts/art/gen.mjs`).
+4. **Judge Audit:** Review the generated image against the 4 Hard Invariants.
+5. **Report to Founder:** Present the image, state the Judge's verdict (Pass/Fail + Why), state whether the agent agrees, and recommend the next step (Accept into `assets/symbols/` or make a specific targeted tweak).
+6. **Wait for Approval:** Do NOT re-roll or proceed to the next word without founder feedback.
+
+---
+
+## 8. CLI Usage Reference
 
 ```bash
 # Emotions / Feelings (Face Only)
 node scripts/art/gen.mjs --word happy --framing face --out assets/symbols/happy.png
-node scripts/art/gen.mjs --word sad --framing face --out assets/symbols/sad.png
 
-# Manual / Oral Actions (Upper Body / Bust)
-node scripts/art/gen.mjs --word eat --torso green --framing bust --hint "eating an apple" --out assets/symbols/eat.png
-node scripts/art/gen.mjs --word think --torso green --framing bust --hint "finger to temple" --out assets/symbols/think.png
+# Manual Actions with Hand Lens (Upper Body / Bust)
+node scripts/art/gen.mjs --word eat --torso green --framing bust --hand grip_mitten --hint "holding red apple to mouth" --out assets/symbols/eat.png
+node scripts/art/gen.mjs --word look --torso green --framing bust --hand pointing_mitten --hint "hand shading eyes like a visor brow" --out assets/symbols/look.png
 
-# Gross Motor Actions (Full Body)
-node scripts/art/gen.mjs --word run --torso green --framing full --out assets/symbols/run.png
-node scripts/art/gen.mjs --word jump --torso green --framing full --out assets/symbols/jump.png
+# Abstract Actions with Proloquo Physical Anchors
+node scripts/art/gen.mjs --word do --torso green --framing bust --hand press_down --hint "pressing a large round green pushbutton action switch" --out assets/symbols/do.png
+node scripts/art/gen.mjs --word come --torso green --framing full --hand resting_ball --hint "walking toward the viewer with a bold green arrival arrow" --out assets/symbols/come.png
 
-# Spatial Diagrams
-node scripts/art/gen.mjs --word out --framing diagram --hint "bold pink arrow coming out of an open box" --out assets/symbols/out.png
-
-# Standalone Objects & Universal Signs
-node scripts/art/gen.mjs --word stop --framing object --hint "bold red octagonal stop sign with white hand" --out assets/symbols/stop.png
-
-# Print prompt without generating (dry run)
-node scripts/art/gen.mjs --word drink --torso green --framing bust --print-prompt
+# Automated Pre-Classification via TypeSafe Jev
+node scripts/art/gen.mjs --word come --classify --torso green --hint "walking toward the viewer with green arrival arrow" --out /tmp/come.png
 ```
+
