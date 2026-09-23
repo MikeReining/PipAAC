@@ -266,6 +266,17 @@ leaves the row byte-identical.
 Done when: both tests pass, and the repair migration turns a
 hand-corrupted row back into the defaults.
 
+**Status (BUILT 2026-09-23, `507294c`).** `strip_impression.mode`
+(`picture`|`keyboard`) ships in schema v8→9; `learnFromSentence` filters
+`mode = 'picture'`, skips non-finite candidate features, and refuses a
+non-finite weight write; `repairCorruptWeights` runs at db boot and
+resets corrupted `prediction_weights` rows to shipped defaults with
+`examples_seen = 0`. Proof: `src/board/learn.test.mjs` (keyboard row
+byte-identical, non-finite candidate skipped, repair resets a
+hand-corrupted row) and `scripts/probes/learn_integrity_probe.mjs`
+through the real board — picture/keyboard/picture, weights finite,
+keyboard sentence changed nothing.
+
 ## Step 3 — Both learning paths train, and stay separate
 
 Goal: after every eligible spoken sentence, `local_only` and `with_jev`
@@ -301,6 +312,16 @@ answer. `local_only.weights.jev` is absent. With sharing off,
 picks (same local rankings → same update).
 
 Done when: that passes through the real Speak path.
+
+**Status (BUILT 2026-09-23, `cf1249c`).** `speakSentence` trains both
+weight sets. `local_only` drops `jev` from its feature list
+(`LOCAL_FEATURES`), never sees `jev_probs`; `with_jev` trains on every
+labeled moment with stored `jev_probs` — answered or late — rebuilding
+`x.jev` from `jp` and folding `P_Jev(none)` into the `none` term the
+same way `scoreCandidates` does. Proof: `scripts/probes/
+learn_paths_probe.mjs` stubs Jev at the fetch boundary (in-time and
+late answers); both rows exist, `with_jev.examples_seen` = moments with
+an answer, `local_only` weight for `jev` never moves off 0.
 
 ## Step 5 — Stored evidence matches what was on screen
 
@@ -340,6 +361,18 @@ offer unchanged still carry `jev_probs`.
 
 Done when: that passes, and a live browser check shows `shown_final`
 matching the painted tiles after a Jev repaint.
+
+**Status (BUILT 2026-09-23, `cf1249c`).** One row per strip moment:
+`logImpression` stores local candidates (`x`, `s`, `p`), `weights_local`
+(`w`, `tau`, defaults `ver`, `seen`), `shortlist_cap`, `mode`, and
+`shown_local`; `updateImpressionJev` merges the answer in place —
+`jev_probs`, `jev_latency_ms`, `jev_prompt_version`, `weights_jev`,
+`p_none_jev`, and per-candidate `jp`/`wp`; `stampShownFinal` is called
+only by `paintStrip`. `replayImpression` recomputes both rankings and
+the gates and diffs every stored field. Late answers store probs but
+never paint. Proof: `learn.test.mjs` replay test + `learn_paths_probe`
+— every stored row replays with zero diffs, including the late and
+unchanged-offer moments.
 
 ## Step 1 — One clock, one walker
 
