@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/board/library-ui.css" />
     <link rel="stylesheet" href="/board/word-card.css" />
     <link rel="stylesheet" href="/board/devices-ui.css" />
+    <link rel="stylesheet" href="/board/recovery-ui.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -451,26 +452,6 @@
         z-index: 10;
       }
       .overlay.open { display: flex; }
-      /* QR card */
-      .rec-code {
-        font-size: 15px; text-align: center; font-family: ui-monospace, monospace;
-        word-break: break-all; margin: 10px 0 4px; letter-spacing: 1px;
-      }
-      .rec-video { width: 100%; border-radius: 8px; margin-bottom: 8px; }
-      #rec-paste {
-        width: 100%; min-height: 110px; resize: vertical; font-size: 14px;
-        padding: 8px; border: 1px solid var(--line, #ddd); border-radius: 8px;
-        box-sizing: border-box; font-family: inherit;
-      }
-      @media print {
-        body * { visibility: hidden; }
-        #recform.open, #recform.open * { visibility: visible; }
-        #recform.open {
-          position: absolute; inset: 0; display: block; background: #fff;
-        }
-        #recform.open .sheet { width: auto; max-height: none; box-shadow: none; }
-        #recform.open .row { display: none; }
-      }
       .sheet {
         background: #fff;
         border-radius: 16px;
