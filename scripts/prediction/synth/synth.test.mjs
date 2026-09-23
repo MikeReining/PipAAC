@@ -74,7 +74,9 @@ test("answer key: 30 days, resolvable words, repairs, partner, typed", () => {
         for (const w of m.words) {
           words++;
           if (m.typed?.includes(w)) { typed++; continue; }
-          assert.ok(LEMMAS.has(w) || ents.has(w), `unresolved word "${w}"`);
+          assert.ok(
+            LEMMAS.has(w.toLowerCase()) || ents.has(w),
+            `unresolved word "${w}"`);
         }
       }
     }

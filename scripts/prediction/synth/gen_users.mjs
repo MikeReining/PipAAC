@@ -39,6 +39,10 @@ for (const e of NONCORE) {
   BY_CATEGORY.get(c).push(e.spokenText.toLowerCase());
 }
 const ALL_NONCORE = NONCORE.map((e) => e.spokenText.toLowerCase());
+// Lemma text is the board's truth — "I" and "iPad" keep their case.
+const LEMMA_TEXT = new Map(
+  lexicon.entries.map((e) => [e.spokenText.toLowerCase(), e.spokenText]));
+const canon = (w) => LEMMA_TEXT.get(w) ?? w;
 
 export function loadBanks(dir = BANKS_DIR) {
   return readdirSync(dir).filter((f) => f.endsWith(".json"))
@@ -124,12 +128,12 @@ function fillScript(r, p, vocab, script, day, slotState) {
   const fills = [];
   for (const tok of script) {
     const m = /^\{(.+)\}$/.exec(tok);
-    if (!m) { words.push(tok); continue; }
+    if (!m) { words.push(canon(tok)); continue; }
     const pool = slotState[m[1]] ?? [];
     const known = pool.filter((w) => vocab.introduced.get(w) <= day);
     const src = known.length ? known : pool;
     const w = src[zipfPick(r, src, p.zipf)] ?? tok;
-    words.push(w);
+    words.push(canon(w));
     fills.push(w);
   }
   return { words, fills };
@@ -208,7 +212,7 @@ export function generateUser(id, banks) {
         if (partner && r() < p.echoRate) {
           const echoWord = fills[0] ?? partner.find((w) => w.length > 2);
           if (echoWord && !words.includes(echoWord)) {
-            words[Math.max(0, words.length - 1)] = echoWord;
+            words[Math.max(0, words.length - 1)] = canon(echoWord);
           }
         }
 
@@ -219,8 +223,8 @@ export function generateUser(id, banks) {
           const off = ALL_NONCORE.filter(
             (w) => !vocab.introduced.has(w) && !entNames.has(w));
           const tw = pick(r, off);
-          words.push(tw);
-          typed.push(tw);
+          words.push(canon(tw));
+          typed.push(canon(tw));
         }
 
         // Repair: a wrong pick, then backspace, then the right one.
