@@ -157,7 +157,7 @@ In legacy apps, conjugating a verb requires holding a button down until a modal 
 
 ### 4.3 Multi-Surface Views (One Child, Many Contexts)
 Instead of forcing the learner into a single rigid grid:
-1. **Motor Anchor Grid:** The standard, high-speed daily driver for generative language. Under the sentence bar, a predictive strip of at most four icon-and-text tiles offers the likely next fringe word. The core cells underneath stay where they are. **DECIDED 2026-09-22** (not built). Spec: `docs/product/Motor_Grid_And_Art.md`.
+1. **Motor Anchor Grid:** The standard, high-speed daily driver for generative language. Under the sentence bar, a predictive strip of at most four icon-and-text tiles offers the likely next fringe word. **Amended 2026-09-22:** the strip is now the Smart bar — the one surface that changes so the grid never has to (`docs/product/Motor_Grid_And_Art.md` § 2.1). The core cells underneath stay where they are. **DECIDED 2026-09-22** (not built). Spec: `docs/product/Motor_Grid_And_Art.md`.
 2. **Contextual River View:** What is happening right now? (Dinner table, art class, playground). Relevant fringe entities dock gently alongside the core grid without page flips.
 3. **Visual Scene & Story View:** Built-in photographic hotspot scenes (e.g., photo of the child's bedroom or playground), eliminating the need for fragmented companion apps like Pictello.
 4. **Caregiver Co-Pilot View:** Multi-device partner modeling, monitoring, and vocabulary enrichment.

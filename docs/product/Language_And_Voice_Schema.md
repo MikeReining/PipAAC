@@ -662,7 +662,11 @@ The group index is a second coordinate map: `index_slot` gets the same
 motor-memory law as `core_cell`. Index slots 0–9 are pinned nav cells;
 groups occupy 10–59. On a group page, slots 0, 1, and 59 are pinned
 (`← Groups`, the Edit-mode action, `Next ›`); items occupy 2–58 — 57 per
-page. All writes go through `public/shared/groups.mjs`; the import doubles
+page. Those numbers are the `grid60` geometry; at any other Cells
+setting the pinned roles are the same (first two slots, last slot) and
+items keep their saved order (**DECIDED 2026-09-22**, not built; storage
+shape settled in `docs/phases/014_Grid_Density_And_Fit.md` slice 1).
+All writes go through `public/shared/groups.mjs`; the import doubles
 as the reconcile, so a caregiver's moves are never overwritten and a
 seeded item is never dropped.
 

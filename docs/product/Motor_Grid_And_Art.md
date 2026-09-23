@@ -80,15 +80,24 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   property (a word's home, the seed for built-in groups, the classifier's
   target). It is never a container.
 - **In place, same geometry.** The group index and every group page render
-  in the core grid's space at the same 10×6 cell size. The sentence bar and
+  in the core grid's space at the profile's one Cells setting — the same
+  cell size as the home board. A group has no size of its own; a big group
+  pages. **Amended 2026-09-22** (founder; not built beyond 10×6 —
+  `docs/phases/014_Grid_Density_And_Fit.md` § 3). The sentence bar and
   strip never move, and the strip keeps predicting inside a group. A word
   tapped inside a group speaks and stays in the group.
 - **Fixed nav cells.** Slot 0 is always back (`← Board` / `← Groups`).
   Slot 1 is reserved for the Edit-mode action (`+ Group`, `+ Add`,
   `Delete group`; `Remove` today, the × badge after 009 slice 2) and is blank in use mode, so adult controls
   are never shown to the child and no item shifts between modes. On a
-  group page, slot 59 is reserved for `Next ›` paging; items sit in slots
-  2–58 (57 per page). Index slots 2–9 are reserved; groups sit at 10–59.
+  group page, the last slot is reserved for `Next ›` paging and items fill
+  the slots between. At `grid60`: slot 59 is `Next ›`, items sit in slots
+  2–58 (57 per page), index slots 2–9 are reserved, and groups sit at
+  10–59. At 15 cells: 12 items per page.
+- **When Cells changes,** group items keep their saved order and are laid
+  out again at the new size; moved items join the move-cost preview
+  (`docs/phases/014_Grid_Density_And_Fit.md` § 4). **DECIDED 2026-09-22**
+  (not built).
 - **Motor-memory law inside groups too.** The index and every group page
   are coordinate maps (`board_group.index_slot`, `group_cell (page,
   slot_index)`). Built-in contents are seeded in vocabulary-doc order

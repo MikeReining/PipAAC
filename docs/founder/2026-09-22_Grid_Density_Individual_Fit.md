@@ -72,7 +72,11 @@ owner doc with a DECIDED date and marked not built.
    defaults. Owner: `docs/product/Motor_Grid_And_Art.md` § 2.1.
 8. **Big buttons:** quarter pages dropped; agent recommendation adopted
    (`docs/phases/014_Grid_Density_And_Fit.md` § 3.1).
-9. Founder delegated the remaining calls: "Lead with recommendations. No
+9. **One Cells setting per profile.** A group has no size of its own; the
+   board, every group page, and the Smart bar follow the profile's Cells
+   setting. Owners: `docs/product/Motor_Grid_And_Art.md` § Groups,
+   `docs/phases/014_Grid_Density_And_Fit.md` § 3.
+10. Founder delegated the remaining calls: "Lead with recommendations. No
    more questions."
 
 ## Next

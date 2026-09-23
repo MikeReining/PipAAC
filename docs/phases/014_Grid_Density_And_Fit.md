@@ -80,7 +80,7 @@ all three.
 | **Vocabulary** | Which words exist? | A starter set that grows, up to the full catalog. Not-yet-introduced cells render as ghosts (masking owner). |
 | **Content** | Single words or whole messages? | Core words (default) or message tiles ("I'm in pain"). Phrase catalog: `docs/phases/010_Extended_Picture_Library.md`. |
 
-**One Cells setting per profile** (**PROPOSED**). Cells follow the person's
+**One Cells setting per profile** (**DECIDED 2026-09-22**, founder). Cells follow the person's
 hands and eyes, not the content, so the home board, every group page, and
 the Smart bar all use the profile's one setting. A group has no size of its
 own; a big group pages (`Next ›`). Group items keep their saved order; when

@@ -243,8 +243,9 @@ The same web app, laid out for a computer when the screen is wide:
 - **Bulk paste** (`docs/product/Word_Library.md` § 5.4) and
   **drag-and-drop** photos: drop 12 files and each becomes a draft word
   named from the file name, ready to correct.
-- **Groups editor** showing the real 10×6 page, so drag-to-move shows
-  exactly the coordinates the child will see.
+- **Groups editor** showing the child's real group page at the profile's
+  Cells setting (10×6 today), so drag-to-move shows exactly the
+  coordinates the child will see.
 - **Record my own** from the laptop microphone.
 - **Live.** With the iPad online, an edit reaches it in seconds. With the
   iPad offline, it arrives on the next connect.
