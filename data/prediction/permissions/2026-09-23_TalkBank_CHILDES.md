@@ -4,10 +4,10 @@
 **From:** Brian MacWhinney `<macw@andrew.cmu.edu>` — Teresa Heinz Professor of
 Cognitive Psychology, Language Technologies and Modern Languages, CMU;
 director of TalkBank / CHILDES.
-**In reply to:** the founder's request of 2026-09-23 ("Dear Professor
+**In reply to:** the founder's request of 2026-09-23 (§ The request; "Dear Professor
 MacWhinney, I'm building Pip, an AAC app for nonspeaking children. The core
 app is free so families aren't blocked by the $250–350 price of the m…" —
-truncated in the screenshot; full text to be added below).
+truncated in the screenshot).
 
 **Evidence:** `2026-09-23_TalkBank_CHILDES_reply.png` (screenshot of the
 thread; SHA-256 `97804ee3be85fc49cdab9ac1c2564a0def76db08d37c8a9b8cd5a15e4d73c288`).
@@ -44,6 +44,23 @@ corpora used) wherever the derived table is credited.
 Open offer: publish the table as a "derived measure" on the CHILDES site.
 Not an obligation; founder's call.
 
-## Full request as sent
+## The request (the question the reply answers)
 
-_(Founder to paste the full outgoing email here.)_
+From the founder's outgoing email, as supplied by the founder on
+2026-09-23 (the opening paragraph is in the screenshot, truncated):
+
+> My question: may we also ship a small derived lookup table — next-word
+> probabilities over a fixed list of ~680 common words, computed from
+> aggregate CHILDES counts (child and caregiver utterances)? It would
+> contain no utterances, no speaker IDs, no transcript text — only counts
+> over that closed vocabulary, not reconstructable into original lines.
+
+So "the next-word prediction table" in the reply means that table:
+next-word probabilities over Pip's closed vocabulary, from aggregate child
+and caregiver counts, with no utterances, speaker IDs, or transcript text.
+The founder reads the reply as granting both uses: local use and shipping
+that table.
+
+If the vocabulary grows well past ~680 words (e.g. the extended picture
+library), the table grows past what was described. Tell TalkBank before
+shipping that version.
