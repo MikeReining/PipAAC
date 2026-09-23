@@ -24,6 +24,7 @@ No incumbent board was consulted for coordinates.
 | --- | --- | --- | --- |
 | `grid60` | 10 columns × 6 rows | 60 | Default density. The words a learner builds every sentence out of. |
 | `grid90` | 10 columns × 9 rows | 90 | Dense. All 83 root-core cells, one `Groups` anchor, 6 reserved anchors. |
+| `grid15` | 5 columns × 3 rows | 15 | Core 15 starter (014 § 5.1): early language and motor/visual access. The whole vocabulary stays reachable through the Groups anchor and the keyboard. |
 
 Ten columns keeps tiles near or above ~100 pt on an 11-inch iPad in
 landscape — large enough for the motor-impaired hands this board exists for.
@@ -125,9 +126,24 @@ on the far edge) while absolute indexes may differ. **Known gap:** § 4 is
 laid out in row bands, not `grid60`'s column sectors; it is to be rebuilt on
 column sectors (`docs/phases/014_Grid_Density_And_Fit.md` § 2).
 
----
+## 6. `grid15` — Core 15 starter (5 × 3)
 
-## Change control
+The smallest board is the clinician's pick (014 § 2 ruling 4): 15 cells,
+full vocabulary behind the Groups anchor and the keyboard. Column bands
+follow § 5.1 of the phase doc: people · doing · how much · answer and ask ·
+stop, help, hurt. Rule 0 holds — `help`, `stop`, `no`, `hurt` report that
+something is wrong without navigating.
+
+| Row | Slots |
+| --- | --- |
+| 1 | I · want · more · yes · stop |
+| 2 | you · like · not · no · help |
+| 3 | what · go · all done · reserved · hurt |
+
+Slot 13 is the `?` family tile (why · when · where · who) — `reserved`
+until the Smart-bar family mechanism lands (014 slice 7). It renders as an
+empty cell, never a dead word.
+
 
 Editing a slot assignment is a product decision. It lands here first, tagged
 with a new DECIDED date, and the generated `core_cell` rows are regenerated

@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slice 1 built (renderer of any shape). Next: slice 2 — starter maps. Rulings and starters below are **DECIDED
+**Status:** Slices 1–2 built (renderer of any shape; `grid15` Core 15 starter map — Urgent needs awaits message tiles in slice 6). Next: slice 3 — adult moves. Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -276,6 +276,21 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    `docs/product/Core_Coordinate_Map.md` as named layouts; regenerate
    `core_cell` rows. Works test: each starter renders on a fresh profile
    with § 5's words in § 5's cells.
+
+   **DONE (Core 15).** `grid15` (5 × 3) is a named layout in
+   `Core_Coordinate_Map.md` § 6 — § 5.1's board verbatim, slot 13
+   `reserved` as the `?` family slot until slice 7. A layout header may
+   now carry its shape (`(5 × 3)`); the builder parses it and validates
+   slots = cols × rows. Regenerated catalog: `catalog.layouts.grid15`
+   + 14 `core_cell` rows. Works Tests:
+   `src/board/layout.test.mjs` ("grid15 is § 5.1's board" — every spec
+   slot measured against generated `core_cell` rows joined to labels,
+   same senses as `grid60`) and a live leg: `board_layout='grid15'`
+   renders I·want·more·yes·stop / you·like·not·no·help /
+   what·go·all·done·_·hurt and survives a reload.
+   **Deferred:** Urgent needs (§ 5.2) is a *messages* board — its cells
+   are phrases, not senses, so it cannot be a `core_cell` layout; it
+   lands with message tiles (slice 6, on 010's phrase list).
 3. **Adult moves core words.** Per-profile layout on top of the default map;
    Edit mode on the core board, drag to move or swap, never reflow; a
    catalog update never overwrites an adult move. Works test: move `stop`,

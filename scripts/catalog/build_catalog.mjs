@@ -36,7 +36,9 @@ const ITEMS_PER_PAGE = 57; // group page slots 2..58
 
 const pad4 = (n) => String(n).padStart(4, "0");
 
-const MAP_SECTION_RE = /^## \d+\.\s+`?(grid\d+)`?/;
+// A layout header may carry its shape — `## 6. `grid15` — Core 15
+// starter (5 × 3)`; without it the layout is ten columns (grid60/90).
+const MAP_SECTION_RE = /^## \d+\.\s+`?(grid\d+)`?[^\n]*?\((\d+)\s*×\s*(\d+)\)|^## \d+\.\s+`?(grid\d+)`?/;
 const MAP_ROW_RE = /^\|\s*\d+\s*\|\s*(.+?)\s*\|$/;
 const ANCHOR_KINDS = { reserved: "reserved", Groups: "groups" };
 
@@ -52,8 +54,12 @@ export function parseCoordinateMapMarkdown(raw) {
   for (const line of raw.split("\n")) {
     const section = MAP_SECTION_RE.exec(line);
     if (section) {
-      current = section[1];
-      layouts[current] = { cells: [], anchors: [] };
+      current = section[1] ?? section[4];
+      layouts[current] = {
+        cells: [], anchors: [],
+        cols: section[2] ? Number(section[2]) : 10,
+        rows: section[3] ? Number(section[3]) : null,
+      };
       continue;
     }
     if (line.startsWith("## ")) {
@@ -299,12 +305,15 @@ export function buildCatalog(
   const coreCells = [];
   const layouts = {};
   for (const [layout, parsed] of Object.entries(mapLayouts)) {
-    const cols = 10;
+    const cols = parsed.cols;
     const slots = parsed.cells.length + parsed.anchors.length;
-    layouts[layout] = { cols, rows: slots / cols, anchors: parsed.anchors };
     if (!Number.isInteger(slots / cols)) {
       throw new Error(`${layout}: ${slots} slots is not a multiple of ${cols} columns`);
     }
+    if (parsed.rows !== null && slots !== cols * parsed.rows) {
+      throw new Error(`${layout}: header says ${cols}×${parsed.rows} but the table has ${slots} slots`);
+    }
+    layouts[layout] = { cols, rows: slots / cols, anchors: parsed.anchors };
     for (const cell of parsed.cells) {
       const sense = tier1ByWord.get(normalizeV1(cell.word));
       if (!sense) {
