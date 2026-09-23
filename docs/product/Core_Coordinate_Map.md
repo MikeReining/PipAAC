@@ -109,12 +109,17 @@ reserved anchors 81–82.
 
 ## 5. Stability
 
-Both stability rules in `docs/product/Motor_Grid_And_Art.md` §1 apply per
-layout. Within a named layout, slot indexes are immutable: a category open, a
-strip offer, and a suggestion never write this map. Switching density is a
+The stability rules in `docs/product/Motor_Grid_And_Art.md` §1 apply per
+layout. Within a named layout, slot indexes are immutable to the app: a
+category open, a strip offer, and a suggestion never write this map.
+**DECIDED 2026-09-22** (not built): this file holds the **defaults**. A
+parent or SLP may move words on one child's board; that move is profile
+data, never an edit to this map, and a regeneration never overwrites it. Switching density is a
 layout change — sector membership is preserved between `grid60` and `grid90`
 (pronouns first, verbs next, then spatial, descriptors, and protest/question
-on the far edge) while absolute indexes may differ.
+on the far edge) while absolute indexes may differ. **Known gap:** § 4 is
+laid out in row bands, not `grid60`'s column sectors; it is to be rebuilt on
+column sectors (`docs/phases/014_Grid_Density_And_Fit.md` § 2).
 
 ---
 
