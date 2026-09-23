@@ -37,9 +37,7 @@ import {
   librarySuggested,
 } from "./shared/library.mjs";
 import {
-  catalogMatches,
   createEntity,
-  entityMatches,
   entityGroups,
   groupDisplayName,
   groupIndex,
@@ -60,7 +58,7 @@ import {
   setMask,
   setSetting,
 } from "./shared/groups.mjs";
-import { applyPasteRows, applyPhotoDrafts, nameFromFile, resolvePasteRows } from "./shared/bulk.mjs";
+import { applyPasteRows, nameFromFile, resolvePasteRows } from "./shared/bulk.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
 import {
   deriveEpochKey,
@@ -104,6 +102,7 @@ import { mountCellsSheet } from "./board/cells-sheet.js";
 import { mountSpotlightSheet } from "./board/spotlight-sheet.js";
 import { mountKeyboard } from "./board/keyboard-ui.js";
 import { mountGroups } from "./board/groups-ui.js";
+import { mountAddFlow } from "./board/add-flow.js";
 import {
   family as familyRow, familyItems,
 } from "./shared/families.mjs";
@@ -280,8 +279,6 @@ function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
   });
   return true;
 }
-let addTarget = null;  // board_group id the add form files into
-let addCell = null;    // {page, slot_index} when + came from tapping an empty slot
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 
@@ -1407,7 +1404,7 @@ $("edit-groups").addEventListener("click", () => {
 });
 $("add-mywords").addEventListener("click", () => {
   close("menu");
-  openAddForm("grp_my_words");
+  addUi.openAddForm("grp_my_words");
 });
 
 /* Keyboard — public/board/keyboard-ui.js. Highlight and Jev sharing
@@ -1420,6 +1417,7 @@ const kbProfile = ALL(
 highlightNext = (kbProfile.highlight_next ?? 0) === 1;
 jevSharing = (kbProfile.jev_sharing ?? 1) === 1;
 let groupsUi;
+let addUi;
 const kbUi = mountKeyboard({
   db, locale, profile: kbProfile, all: ALL,
   sentence, getSentenceId: () => sentenceId, ensureSentence,
@@ -1600,244 +1598,18 @@ function flashCell(el) {
 groupsUi = mountGroups({
   db, locale, all: ALL, boardGeom, getEditing: () => editing, getModelGlow: () => modelGlow,
   setView: (v) => kbUi.setView(v), open, close, toast, wordTile, layerMark, fitLabels, tap,
-  navCell, editPointer, xBadge, openAddForm, openWordCard,
+  navCell, editPointer, xBadge,
+  openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
+  openWordCard,
   loadPhotoURL, savePhoto, syncUploadBlob,
 });
 
-/* --- add flow: one field, type → match → place. A catalog match places
-   the real sense (its color, its voice); "New" makes a personal entity.
-   The adult never picks a folder — the group they are standing in is the
-   target. No type, pronoun, or category picker. --- */
-function openAddForm(groupId, cell = null) {
-  addTarget = groupId;
-  addCell = cell;
-  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [groupId])[0];
-  const name = row ? groupDisplayName(db, row, locale) : "";
-  $("add-title").textContent = name ? `Add to ${name}` : "Add";
-  $("add-name").value = "";
-  $("add-photo").value = "";
-  $("add-hint").value = "";
-  $("add-newfields").hidden = true;
-  $("add-matches").innerHTML = "";
-  $("add-new").hidden = true;
-  open("addform");
-}
-
-/* --- bulk paste on the iPad (Word_Library § 5.4): the same
-   resolvePasteRows/applyPasteRows the web editor uses, in a small sheet
-   filed into the group it was opened from (My Words from the Library). */
-let bulkTarget = null;
-let bulkRows = [];
-function openBulkForm(groupId) {
-  bulkTarget = groupId ?? "grp_my_words";
-  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [bulkTarget])[0];
-  const name = row ? groupDisplayName(db, row, locale) : "";
-  $("bulk-title").textContent = name ? `Add a list to ${name}` : "Add a list";
-  $("bulk-paste").value = "";
-  renderBulkPreview();
-  open("bulkform");
-}
-function renderBulkPreview() {
-  bulkRows = resolvePasteRows(db, $("bulk-paste").value, { groupId: bulkTarget, locale });
-  const box = $("bulk-preview");
-  box.innerHTML = "";
-  for (const r of bulkRows) {
-    const row = document.createElement("div");
-    row.className = "ed-prow" + (r.already ? " over" : "");
-    const tag = document.createElement("span");
-    tag.className = "tag" + (r.kind === "new" ? " new" : r.already ? " already" : "");
-    tag.textContent = r.already ? "already" : r.kind === "new" ? "new — needs a picture" : r.kind;
-    const lb = document.createElement("span");
-    lb.textContent = r.label;
-    row.append(tag, lb);
-    box.appendChild(row);
-  }
-  const pending = bulkRows.filter((r) => !r.already).length;
-  const add = $("bulk-add");
-  add.disabled = pending === 0;
-  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [bulkTarget])[0];
-  const name = row ? groupDisplayName(db, row, locale) : "My Words";
-  add.textContent = pending ? `Add ${pending} to ${name}` : "Add all";
-}
-$("bulk-paste").addEventListener("input", renderBulkPreview);
-$("bulk-add").addEventListener("click", () => {
-  const res = applyPasteRows(db, bulkRows, {
-    groupId: bulkTarget,
-    category: catalog.groups.find((g) => g.id === bulkTarget)?.category ?? null,
-  });
-  close("bulkform");
-  kbUi.invalidateIndex(); // new entities join the completion index
-  rerenderView();
-  renderStrip();
-  renderLibrary();
-  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [bulkTarget])[0];
-  const name = row ? groupDisplayName(db, row, locale) : "My Words";
-  toast(`Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : ""));
-});
-$("add-bulk").addEventListener("click", () => openBulkForm(addTarget));
-$("lib-bulk").addEventListener("click", () => openBulkForm("grp_my_words"));
-
-/* Many photos at once (Word_Library § 5.3): the picker hands back files;
- * each becomes a draft row — thumb + name, prefilled from the file name.
- * Bytes and records are written only on Save, and only for named rows;
- * a blanked name is flagged and skipped. All writes are local — the
- * sealed photo upload rides the same sync path as a single add. */
-let photoDrafts = []; // { file, url, input }
-$("add-photos").addEventListener("click", () => $("add-photos-input").click());
-$("add-photos-input").addEventListener("change", (e) => {
-  const files = [...e.target.files].filter((f) => f.type.startsWith("image/"));
-  e.target.value = "";
-  if (!files.length) return;
-  photoDrafts = files.map((file) => ({
-    file, url: URL.createObjectURL(file), name: nameFromFile(file.name),
-  }));
-  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [addTarget])[0];
-  const name = row ? groupDisplayName(db, row, locale) : "My Words";
-  $("photo-title").textContent = `Add photos to ${name}`;
-  renderPhotoDrafts();
-  close("addform");
-  open("photoform");
-});
-function renderPhotoDrafts() {
-  const box = $("photo-rows");
-  box.innerHTML = "";
-  for (const d of photoDrafts) {
-    const row = document.createElement("div");
-    row.className = "prow" + (d.name ? "" : " blank");
-    const img = document.createElement("img");
-    img.className = "thumb"; img.alt = ""; img.src = d.url;
-    const input = document.createElement("input");
-    input.type = "text"; input.value = d.name;
-    input.placeholder = "Name this one";
-    const tag = document.createElement("span");
-    tag.className = "tag";
-    tag.textContent = d.name ? "" : "needs a name";
-    input.addEventListener("input", () => {
-      d.name = input.value.trim();
-      row.classList.toggle("blank", !d.name);
-      tag.textContent = d.name ? "" : "needs a name";
-      refreshPhotoSave();
-    });
-    row.append(img, input, tag);
-    box.appendChild(row);
-  }
-  refreshPhotoSave();
-  function refreshPhotoSave() {
-    const n = photoDrafts.filter((d) => d.name).length;
-    $("photo-save").disabled = n === 0;
-    $("photo-save").textContent = n ? `Save ${n}` : "Save";
-  }
-}
-$("photo-save").addEventListener("click", async () => {
-  const gid = addTarget ?? "grp_my_words";
-  const drafts = [];
-  for (const d of photoDrafts) {
-    if (!d.name) { drafts.push({ name: "" }); continue; } // flagged, not saved
-    const photo = await savePhoto(d.file);
-    if (photo) syncUploadBlob(photo.bytes).catch(() => {});
-    drafts.push({ name: d.name, photoKey: photo?.key ?? null });
-  }
-  const res = applyPhotoDrafts(db, drafts, {
-    groupId: gid,
-    category: catalog.groups.find((g) => g.id === gid)?.category ?? null,
-    cell: addCell,
-  });
-  for (const d of photoDrafts) URL.revokeObjectURL(d.url);
-  photoDrafts = [];
-  close("photoform");
-  kbUi.invalidateIndex();
-  rerenderView();
-  renderStrip();
-  renderLibrary();
-  toast(`Added ${res.saved} photo${res.saved === 1 ? "" : "s"}`);
-});
-
-/** Re-render the match list and the always-present New row as the adult
- *  types. Every existing meaning is a picture row — the family's own
- *  entities first (with where they already are), then catalog senses.
- *  Picking a row places that same record here; only New creates one.
- *  Local query only — a save never touches the network. */
-function renderAddMatches() {
-  const text = $("add-name").value.trim();
-  const box = $("add-matches");
-  box.innerHTML = "";
-  const newBtn = $("add-new");
-  if (!text) {
-    newBtn.hidden = true;
-    $("add-newfields").hidden = true;
-    return;
-  }
-  newBtn.hidden = false;
-  newBtn.textContent = `New: '${text}'`;
-  const seed = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
-
-  const pic = (row, cls) => {
-    const el = document.createElement("span");
-    el.className = `pic ${cls}`;
-    return el;
-  };
-  const place = (kind, id) => () => {
-    placeItem(db, addTarget, kind, id, addCell);
-    close("addform");
-    rerenderView();
-    renderStrip();
-  };
-
-  for (const m of entityMatches(db, text, addTarget, locale, seed)) {
-    const row = document.createElement("button");
-    row.className = "addmatch";
-    const p = pic(row, "r-Yellow");
-    if (m.photo_key) {
-      loadPhotoURL(m.photo_key).then((url) => {
-        if (!url) return;
-        const img = document.createElement("img");
-        img.src = url;
-        img.alt = "";
-        p.replaceChildren(img);
-        p.classList.add("photo");
-      });
-    } else {
-      p.textContent = m.name[0].toUpperCase();
-    }
-    const txt = document.createElement("span");
-    txt.className = "txt";
-    const lb = document.createElement("span");
-    lb.textContent = m.name;
-    txt.appendChild(lb);
-    if (m.groups.length) {
-      const sub = document.createElement("span");
-      sub.className = "sub";
-      sub.textContent = `in ${m.groups.join(", ")}`;
-      txt.appendChild(sub);
-    }
-    row.append(p, txt);
-    row.addEventListener("click", place("entity", m.id));
-    box.appendChild(row);
-  }
-
-  for (const m of catalogMatches(db, text, addTarget, locale, seed)) {
-    const row = document.createElement("button");
-    row.className = "addmatch";
-    const p = pic(row, `r-${m.fitzgerald_role}`);
-    if (m.art) {
-      const img = document.createElement("img");
-      img.alt = "";
-      if (artInto(img, m.art)) p.classList.add("photo");
-      p.appendChild(img);
-    }
-    const txt = document.createElement("span");
-    txt.className = "txt";
-    const lb = document.createElement("span");
-    lb.textContent = m.label;
-    txt.appendChild(lb);
-    row.append(p, txt);
-    row.addEventListener("click", place("sense", m.id));
-    box.appendChild(row);
-  }
-}
-$("add-name").addEventListener("input", renderAddMatches);
-$("add-new").addEventListener("click", () => {
-  $("add-newfields").hidden = false;
+/* Add a word — public/board/add-flow.js */
+addUi = mountAddFlow({
+  db, locale, all: ALL, catalog, open, close, toast,
+  savePhoto, syncUploadBlob, loadPhotoURL, artInto,
+  invalidateIndex: () => kbUi.invalidateIndex(),
+  rerenderView, renderStrip, renderLibrary,
 });
 
 /* --- the Word Library (Word_Library § 3): Parent Corner → Words. Three
@@ -1923,26 +1695,6 @@ $("open-library").addEventListener("click", () => {
   $("lib-q").value = "";
   renderLibrary();
   open("library");
-});
-
-$("add-save").addEventListener("click", async () => {
-  const name = $("add-name").value.trim();
-  if (!name) return;
-  const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
-  const file = $("add-photo").files[0];
-  const photo = file ? await savePhoto(file) : null;
-  if (photo) syncUploadBlob(photo.bytes).catch(() => {});
-  const photoKey = photo?.key ?? null;
-  const hint = $("add-hint").value.trim() || null;
-  // The record's home category — a classifier input, never displayed —
-  // is the seed category of a built-in target group, else null.
-  const category = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
-  createEntity(db, { id, name, photoKey, category, hint });
-  placeItem(db, addTarget, "entity", id, addCell);
-  kbUi.invalidateIndex(); // new entity joins the completion index
-  close("addform");
-  rerenderView();
-  renderStrip();
 });
 
 /* --- the word card (Word_Library § 4): where the word is, how it
@@ -3164,7 +2916,7 @@ async function renderEditorGrid() {
       continue;
     }
     if (slot === 1) {
-      zg.appendChild(navCell("+ Add", () => openAddForm(gid)));
+      zg.appendChild(navCell("+ Add", () => addUi.openAddForm(gid)));
       continue;
     }
     if (slot === geom.next) {
@@ -3191,7 +2943,7 @@ async function renderEditorGrid() {
       empty.className = "gcell empty";
       empty.dataset.slot = slot;
       empty.addEventListener("click", () => {
-        openAddForm(gid, canonCell(posAtVisual(edPage, slot, cells)));
+        addUi.openAddForm(gid, canonCell(posAtVisual(edPage, slot, cells)));
       });
       zg.appendChild(empty);
       continue;
