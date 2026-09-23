@@ -1,7 +1,8 @@
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
 import { BoardRelay } from "./relay.js";
+import { PairingLobby } from "./lobby.js";
 
-export { BoardRelay };
+export { BoardRelay, PairingLobby };
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -40,6 +41,29 @@ export default {
     const boardMatch = env?.RELAY && path.match(/^\/boards\/([^/]+)(\/.*)?$/);
     if (boardMatch) {
       const stub = env.RELAY.get(env.RELAY.idFromName(boardMatch[1]));
+      return stub.fetch(request);
+    }
+
+    // Pairing lobby (§ 3): a short-lived code stands up a lobby; the new
+    // device polls it; the linked device writes the wrapped-key grant.
+    if (path === "/pair" && request.method === "POST" && env?.PAIR) {
+      const body = await request.json().catch(() => null);
+      if (!body?.device_id || !body?.sig_pub || !body?.dh_pub) {
+        return json({ error: "bad_request" }, { status: 400 });
+      }
+      // 8-char code, unambiguous alphabet — the adult types this.
+      const ABC = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      const bytes = crypto.getRandomValues(new Uint8Array(8));
+      const code = [...bytes].map((b) => ABC[b % ABC.length]).join("");
+      const stub = env.PAIR.get(env.PAIR.idFromName(code));
+      const init = await stub.fetch(new Request(`https://lobby/pair/${code}/init`, {
+        method: "POST", body: JSON.stringify(body) }));
+      if (!init.ok) return init;
+      return json({ pair: code });
+    }
+    const pairMatch = env?.PAIR && path.match(/^\/pair\/([A-Z0-9]{8})(\/.*)?$/);
+    if (pairMatch) {
+      const stub = env.PAIR.get(env.PAIR.idFromName(pairMatch[1]));
       return stub.fetch(request);
     }
 

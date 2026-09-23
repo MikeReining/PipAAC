@@ -43,7 +43,20 @@ import {
   swapItems,
 } from "./shared/groups.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
-import { getDeviceIdentity } from "./shared/sync_crypto.mjs";
+import {
+  exportDhPublic,
+  exportPublicKey,
+  getBoardKey,
+  getDeviceIdentity,
+  newBoardKey,
+  openKeyStore,
+  putBoardKey,
+  unwrapBoardKey,
+  wrapBoardKey,
+} from "./shared/sync_crypto.mjs";
+import { pairClient, relayClient } from "./shared/sync_client.mjs";
+import { initSync, setSyncConfig, syncConfig } from "./shared/sync.mjs";
+import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -55,6 +68,9 @@ const { db, catalog } = await bootDb();
 // log keeps 'dev_local'; ops written after carry the real device id.
 getDeviceIdentity().then(({ deviceId }) => setDeviceId(deviceId))
   .catch((err) => console.warn("sync: device identity unavailable", err));
+// If this board is already linked, start the sync loop (§ 5): catch up,
+// flush pending ops, listen for the relay's fan-out.
+initSync(db).catch((err) => console.warn("sync unavailable", err));
 // Profile locale and voice resolve once at boot (schema §7.1) and bind
 // into every label query and speech call — never a literal, never
 // another locale's voice.
@@ -1800,6 +1816,208 @@ $("wc-remove").addEventListener("click", () => {
     renderStrip();
   });
 });
+
+/* ------------------------------------------------------------------ *
+ * Linked devices + pairing (sync § 3). The new device shows an 8-char
+ * code (and QR); a linked device types or scans it, taps Allow, and the
+ * board key travels wrapped to the new device's dh key through the
+ * pairing lobby — the relay never sees it.
+ * ------------------------------------------------------------------ */
+
+const relayBase = location.origin;
+const pairOverlay = $("pairform");
+const pairBody = $("pair-body");
+const pairTitle = $("pair-title");
+const pairGo = $("pair-go");
+let pairPoll = null;
+
+const openPair = (title) => {
+  pairTitle.textContent = title;
+  pairBody.innerHTML = "";
+  pairGo.hidden = true;
+  pairOverlay.classList.add("open");
+};
+const closePair = () => {
+  clearInterval(pairPoll);
+  pairPoll = null;
+  pairOverlay.classList.remove("open");
+};
+pairOverlay.addEventListener("click", (e) => {
+  if (e.target === pairOverlay || e.target.closest("[data-close]")) closePair();
+});
+
+/** First linked-device action on a board creates it on the relay. */
+async function ensureBoard() {
+  const cfg = syncConfig();
+  if (cfg?.boardId) return cfg;
+  const store = openKeyStore();
+  const identity = await getDeviceIdentity(store);
+  const res = await fetch(`${relayBase}/boards`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      device_id: identity.deviceId,
+      pubkey: await exportPublicKey(identity.verify),
+      dh_pub: await exportDhPublic(identity.dh.publicKey),
+    }),
+  });
+  if (!res.ok) throw new Error(`board create: ${res.status}`);
+  const { board_id } = await res.json();
+  const next = { boardId: board_id, epoch: 1 };
+  setSyncConfig(next);
+  await initSync(db);
+  return next;
+}
+
+async function renderDevices() {
+  const list = $("dev-list");
+  const cfg = syncConfig();
+  if (!cfg?.boardId) {
+    list.innerHTML = '<p class="hint">This board is only on this device.</p>';
+    return;
+  }
+  try {
+    const store = openKeyStore();
+    const identity = await getDeviceIdentity(store);
+    const boardKey = await getBoardKey(store, cfg.epoch ?? 1);
+    const client = relayClient({ boardId: cfg.boardId, baseUrl: relayBase, identity, boardKey });
+    const { devices } = await client.listDevices();
+    list.innerHTML = "";
+    for (const d of devices) {
+      const row = document.createElement("div");
+      row.className = "dev-row";
+      const name = document.createElement("span");
+      name.className = "dev-id";
+      name.textContent = d.device_id === identity.deviceId
+        ? `${d.device_id} (this device)` : d.device_id;
+      row.append(name);
+      if (d.device_id !== identity.deviceId) {
+        const rm = document.createElement("button");
+        rm.className = "btn secondary";
+        rm.textContent = "Remove";
+        rm.onclick = () => removeDeviceFlow(client, store, identity, d.device_id);
+        row.append(rm);
+      }
+      list.append(row);
+    }
+  } catch (err) {
+    list.innerHTML = '<p class="hint">Relay unreachable — devices cannot be listed.</p>';
+  }
+}
+
+/** Remove locks the door; rotating the board key means the removed
+ *  device cannot read anything written after. */
+async function removeDeviceFlow(client, store, identity, targetId) {
+  if (!confirm(`Remove ${targetId}? It keeps what it already saw.`)) return;
+  const { devices } = await client.listDevices();
+  await client.removeDevice(targetId);
+  const remaining = devices.filter((d) => d.device_id !== targetId && d.dh_pub);
+  const epoch = (syncConfig()?.epoch ?? 1) + 1;
+  const key = await newBoardKey();
+  const wrapped = {};
+  for (const d of remaining) wrapped[d.device_id] = await wrapBoardKey(key, d.dh_pub);
+  await client.rotateKeys(epoch, wrapped);
+  await putBoardKey(store, key, epoch);
+  setSyncConfig({ ...syncConfig(), epoch });
+  await renderDevices();
+}
+
+/** This device is the NEW device: post keys, show code + QR, poll. */
+async function linkThisDevice() {
+  const store = openKeyStore();
+  const identity = await getDeviceIdentity(store);
+  const { pair } = await pairClient(relayBase).request(
+    identity.deviceId,
+    await exportPublicKey(identity.verify),
+    await exportDhPublic(identity.dh.publicKey),
+  );
+  openPair("Link this device");
+  const code = document.createElement("div");
+  code.className = "pair-code";
+  code.textContent = pair;
+  pairBody.append(code);
+  const qr = document.createElement("div");
+  qr.className = "pair-qr";
+  const q = qrcode(0, "M");
+  q.addData(JSON.stringify({ pair }));
+  q.make();
+  qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 8, scalable: true });
+  pairBody.append(qr);
+  const hint = document.createElement("p");
+  hint.className = "hint";
+  hint.textContent = "On the other device: Parent corner → Add a device → type this code → Allow.";
+  pairBody.append(hint);
+  const status = document.createElement("p");
+  status.className = "hint";
+  status.textContent = "Waiting for Allow…";
+  pairBody.append(status);
+
+  pairPoll = setInterval(async () => {
+    try {
+      const st = await pairClient(relayBase).status(pair);
+      if (st.status !== "granted") return;
+      clearInterval(pairPoll);
+      pairPoll = null;
+      const key = await unwrapBoardKey(identity.dh.privateKey, st.grant);
+      await putBoardKey(store, key, 1);
+      setSyncConfig({ boardId: st.grant.board_id, epoch: 1 });
+      status.textContent = "Linked — syncing…";
+      await initSync(db);
+      status.textContent = "Linked. This board now syncs to this device.";
+      await renderDevices();
+    } catch { /* expired or relay hiccup — poll again */ }
+  }, 2000);
+}
+
+/** This device is the LINKED device: type the code the new one shows. */
+async function addDeviceFlow() {
+  await ensureBoard();
+  openPair("Add a device");
+  pairBody.innerHTML = `
+    <p class="hint">Type the 8-letter code the new device is showing.</p>
+    <input type="text" id="pair-code" maxlength="8" autocomplete="off"
+      style="text-transform:uppercase; letter-spacing:4px; font-size:22px; text-align:center;" />`;
+  const input = pairBody.querySelector("#pair-code");
+  input.focus();
+  let pending = null;
+  input.addEventListener("input", async () => {
+    const code = input.value.trim().toUpperCase();
+    if (code.length !== 8) return;
+    try {
+      const req = await pairClient(relayBase).status(code);
+      pending = { code, req };
+      pairBody.querySelector(".hint").textContent =
+        `Allow ${req.device_id.slice(0, 12)}… to edit this board?`;
+      pairGo.hidden = false;
+      pairGo.textContent = "Allow";
+    } catch {
+      pairBody.querySelector(".hint").textContent = "That code is not open — check it and retry.";
+    }
+  });
+  pairGo.onclick = async () => {
+    if (!pending) return;
+    const cfg = syncConfig();
+    const store = openKeyStore();
+    const identity = await getDeviceIdentity(store);
+    const boardKey = await getBoardKey(store, cfg.epoch ?? 1);
+    const client = relayClient({ boardId: cfg.boardId, baseUrl: relayBase, identity, boardKey });
+    const wrapped = await wrapBoardKey(boardKey, pending.req.dh_pub);
+    await client.addDevice(pending.req.device_id, pending.req.sig_pub, { dh_pub: pending.req.dh_pub });
+    await pairClient(relayBase).grant(pending.code, {
+      board_id: cfg.boardId, by_device: identity.deviceId, ...wrapped });
+    closePair();
+    await renderDevices();
+  };
+}
+
+$("dev-link").onclick = () => linkThisDevice().catch((e) => {
+  openPair("Link this device");
+  pairBody.innerHTML = `<p class="hint">Could not reach the relay: ${e.message}</p>`;
+});
+$("dev-add").onclick = () => addDeviceFlow().catch((e) => {
+  openPair("Add a device");
+  pairBody.innerHTML = `<p class="hint">Could not reach the relay: ${e.message}</p>`;
+});
+$("corner").addEventListener("click", renderDevices);
 
 renderGrid();
 renderBar();

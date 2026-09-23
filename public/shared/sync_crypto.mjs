@@ -104,16 +104,27 @@ export async function getDeviceIdentity(store = openKeyStore()) {
   };
 }
 
-/** The board's AES-256-GCM key — one per board, created on first use. */
-export async function getBoardKey(store = openKeyStore()) {
-  let key = await store.get("board_key");
+/**
+ * The board's AES-256-GCM key — one per board, created on first use.
+ * Rotations (§ 3 revoke) mint a new key per epoch: epoch 1 lives at
+ * "board_key", later epochs at "board_key_e<n>". Old keys stay so old
+ * ops still open.
+ */
+const boardKeyName = (epoch) => (epoch <= 1 ? "board_key" : `board_key_e${epoch}`);
+export async function getBoardKey(store = openKeyStore(), epoch = 1) {
+  const name = boardKeyName(epoch);
+  let key = await store.get(name);
   if (!key) {
     key = await subtle.generateKey(
       { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
-    await store.put("board_key", key);
+    await store.put(name, key);
   }
   return key;
 }
+export const putBoardKey = (store, key, epoch = 1) => store.put(boardKeyName(epoch), key);
+export const newBoardKey = () =>
+  subtle.generateKey({ name: "AES-GCM", length: 256 }, true,
+    ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
 
 /* ------------------------------------------------------------------ *
  * Sealing
@@ -167,4 +178,40 @@ export async function verifyPayload(verifyKey, bytes, sig) {
   return subtle.verify(
     { name: "ECDSA", hash: "SHA-256" }, verifyKey, unb64u(sig),
     bytes instanceof Uint8Array ? bytes : te.encode(String(bytes)));
+}
+
+/* ------------------------------------------------------------------ *
+ * Board-key transport (pairing + rotation, § 3). The granter makes an
+ * ephemeral ECDH pair, derives an AES-GCM wrap key against the target
+ * device's long-term dh public key, and wraps the board key. The grant
+ * carries the ephemeral public key; the target derives the same secret
+ * with its private dh key.
+ * ------------------------------------------------------------------ */
+
+export const exportDhPublic = async (publicKey) =>
+  b64u(await subtle.exportKey("raw", publicKey));
+const importDhPublic = (b64) =>
+  subtle.importKey("raw", unb64u(b64),
+    { name: "ECDH", namedCurve: "P-256" }, true, []);
+
+const wrapKeyFrom = (priv, pub) =>
+  subtle.deriveKey({ name: "ECDH", public: pub }, priv,
+    { name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
+
+/** → { eph, wrapped } — send both to the target device. */
+export async function wrapBoardKey(boardKey, theirDhPubB64) {
+  const eph = await subtle.generateKey(
+    { name: "ECDH", namedCurve: "P-256" }, false, ["deriveKey"]);
+  const wk = await wrapKeyFrom(eph.privateKey, await importDhPublic(theirDhPubB64));
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+  const wrapped = await subtle.wrapKey("raw", boardKey, wk, { name: "AES-GCM", iv });
+  return { eph: await exportDhPublic(eph.publicKey), iv: b64u(iv), wrapped: b64u(wrapped) };
+}
+
+/** → board CryptoKey. Throws if the grant is not for this device. */
+export async function unwrapBoardKey(myDhPriv, grant) {
+  const wk = await wrapKeyFrom(myDhPriv, await importDhPublic(grant.eph));
+  return subtle.unwrapKey("raw", unb64u(grant.wrapped), wk,
+    { name: "AES-GCM", iv: unb64u(grant.iv) },
+    { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
 }

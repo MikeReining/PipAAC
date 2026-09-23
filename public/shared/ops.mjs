@@ -36,12 +36,18 @@ let replaying = false;
 let deviceId = "dev_local";
 export function setDeviceId(id) { deviceId = id; }
 
+// The sync loop registers here; every recorded op schedules a flush.
+// Never awaited — sync is best-effort off the write path.
+let opSink = null;
+export function setOpSink(fn) { opSink = fn; }
+
 export function recordOp(db, kind, args) {
   if (replaying) return;
   db.prepare(
     "INSERT INTO sync_op (op_id, device_id, kind, args, created_at) VALUES (?, ?, ?, ?, ?)",
   ).run(`op_${crypto.randomUUID().replaceAll("-", "")}`, deviceId,
     kind, JSON.stringify(args), Date.now());
+  try { opSink?.(); } catch { /* the sink must never break an edit */ }
 }
 
 const exists = (db, table, id) =>
@@ -235,7 +241,7 @@ export function ensureBaseline(db) {
  * pending ops on top — a rebase (§ 5). Foreign ops join the local log
  * so the stream is recorded; echoes of our own ops just take their seq.
  */
-export function drainOps(db, confirmedOps) {
+export function drainOps(db, confirmedOps = []) {
   const ordered = [...confirmedOps].sort((x, y) => x.relay_seq - y.relay_seq);
   const mark = db.prepare("UPDATE sync_op SET relay_seq = ? WHERE op_id = ?");
   const logForeign = db.prepare(
@@ -250,10 +256,24 @@ export function drainOps(db, confirmedOps) {
   const pending = db.prepare(
     "SELECT op_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
   ).all();
+  // Apply the whole confirmed stream — newly arrived ops are only the
+  // tail; the log holds the rest.
+  const confirmed = db.prepare(
+    "SELECT op_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NOT NULL ORDER BY relay_seq",
+  ).all();
   const base = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
   if (!base) throw new Error("drainOps: no baseline — ensureBaseline must run at boot");
   restoreSynced(db, JSON.parse(base.tables));
-  for (const op of ordered) applyOp(db, op);
+  for (const op of confirmed) applyOp(db, op);
   saveBaseline(db);
   for (const op of pending) applyOp(db, op);
+}
+
+/**
+ * Mark our own ops confirmed by their assigned seqs — no rebase needed,
+ * they are already applied; foreign ops arrive via drainOps.
+ */
+export function confirmOps(db, assigned) {
+  const mark = db.prepare("UPDATE sync_op SET relay_seq = ? WHERE op_id = ?");
+  for (const { op_id, relay_seq } of assigned) mark.run(relay_seq, op_id);
 }

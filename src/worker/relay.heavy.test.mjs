@@ -53,13 +53,6 @@ before(async () => {
 
 after(() => { wrangler?.kill("SIGTERM"); });
 
-const mkDevice = async () => {
-  const store = memoryKeyStore();
-  const identity = await getDeviceIdentity(store);
-  const boardKey = await getBoardKey(store); // same key in both stores? no —
-  return { store, identity, boardKey };
-};
-
 test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   // Two devices. One board key — in the real flow pairing delivers it
   // (slice 5); here we hand B the same CryptoKey directly.

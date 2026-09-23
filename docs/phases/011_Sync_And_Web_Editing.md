@@ -151,6 +151,22 @@ the new device can read nothing. After Allow it syncs. Remove it, and its
 next write is rejected. Ops after removal are encrypted with a key it
 never received.
 
+**Works Test (proven 2026-09-23):**
+`src/worker/pairing.heavy.test.mjs` drives the relay+lobby path — code
+request, pending status, Allow (device register + wrapped-key grant),
+unwrap-and-sync, Remove → 403 on reads and writes, epoch-2 rotation where
+the removed device's key opens nothing. The browser proof was two
+headless-Chrome devices on a live `wrangler dev` copy: the new device
+showed an 8-char code and QR through the real Parent-corner UI, the
+linked device typed the code and tapped Allow, an adult edit made on A
+(`Add to My Words → New → Syncproof`) appeared in B's `group_cell` within
+seconds, Remove rotated the epoch to 2 and B's post-removal edit never
+reached A. UI: Parent corner → Linked devices (`Add a device` /
+`Link this device`); pairing code + QR in `#pairform`;
+`public/shared/sync.mjs` is the device loop (catch-up, debounced flush
+via the `recordOp` sink, WebSocket drain, epoch pickup). QR encoder is
+vendored at `public/vendor/qrcode.mjs`.
+
 ## Slice 6 — Photos and recordings
 
 Goal: blobs upload encrypted, download lazily, and are verified by content

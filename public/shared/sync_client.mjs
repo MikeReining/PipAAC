@@ -38,7 +38,16 @@ export function relayClient({ boardId, baseUrl, identity, boardKey }) {
 
   return {
     /** Register another device (signed by an allowed one). */
-    addDevice: (device_id, pubkey) => call("POST", "/devices", { device_id, pubkey }),
+    addDevice: (device_id, pubkey, extra = {}) =>
+      call("POST", "/devices", { device_id, pubkey, ...extra }),
+    /** The board's device list (device_id, epoch, added_at). */
+    listDevices: () => call("GET", "/devices"),
+    /** The calling device's own row — wrapped board key + epoch. */
+    selfKey: () => call("GET", "/devices/self"),
+    /** Remove a device (signed). Rotate keys after — it keeps old ops. */
+    removeDevice: (device_id) => call("DELETE", `/devices/${device_id}`),
+    /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
+    rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
     /** Seal and submit pending ops; returns their relay_seqs. */
     async submit(ops) {
       const sealed = [];
@@ -77,6 +86,37 @@ export function relayClient({ boardId, baseUrl, identity, boardKey }) {
       u.search = `?device=${identity.deviceId}&ts=${ts}&sig=${sig}`;
       u.protocol = u.protocol === "https:" ? "wss:" : "ws:";
       return u.toString();
+    },
+  };
+}
+
+/**
+ * The pairing lobby (§ 3) — board-less routes. The new device posts a
+ * request; the linked device reads it and writes the grant; the new
+ * device polls status until granted or expired.
+ */
+export function pairClient(baseUrl) {
+  return {
+    request: async (device_id, sig_pub, dh_pub) => {
+      const res = await fetch(`${baseUrl}/pair`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ device_id, sig_pub, dh_pub }),
+      });
+      if (!res.ok) throw new Error(`pair request: ${res.status}`);
+      return res.json(); // { pair: "ABCD2345" }
+    },
+    status: async (code) => {
+      const res = await fetch(`${baseUrl}/pair/${code}`);
+      if (!res.ok) throw new Error(`pair status: ${res.status}`);
+      return res.json();
+    },
+    grant: async (code, g) => {
+      const res = await fetch(`${baseUrl}/pair/${code}/grant`, {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify(g),
+      });
+      if (!res.ok) throw new Error(`pair grant: ${res.status}`);
+      return res.json();
     },
   };
 }

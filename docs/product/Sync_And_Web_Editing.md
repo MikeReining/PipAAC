@@ -67,17 +67,24 @@ what the child said never leaves the device.
 - The server knows board ids and device public keys. It never holds the
   board key, a name, a photo or a recording in the clear.
 
-### Pairing (adding a device)
+### Pairing (adding a device) — **BUILT** (011 slice 5)
 
 1. The new device (a laptop browser, say) opens Pip and chooses **Link to
    a board**. It shows a QR code and an 8-character code. Both carry only
-   its public key and a short-lived pairing id.
+   its public key and a short-lived pairing id. **BUILT**: the code is the
+   `PairingLobby` DO name (`POST /pair` stores the new device's
+   `device_id`, signing pubkey, and dh pubkey for 10 minutes); the QR
+   encodes `{pair}` and renders via `public/vendor/qrcode.mjs`.
 2. On an already-linked device, in the Parent Corner, the adult scans
-   the QR or types the code. The linked device shows **"Allow Chrome on
-   MacBook to edit Ava's board?"** Nothing happens until Allow.
+   the QR or types the code. The linked device shows **"Allow … to edit
+   this board?"** Nothing happens until Allow.
 3. On Allow, the linked device encrypts the board key to the new device's
    public key and sends it through the relay. The new device downloads
-   the snapshot and the log (§ 5).
+   the snapshot and the log (§ 5). **BUILT**: `wrapBoardKey` (ephemeral
+   ECDH → AES-GCM wrap) → `POST /pair/:code/grant` + `POST
+   /boards/:id/devices`; the new device polls `GET /pair/:code`, unwraps
+   with `unwrapBoardKey`, stores the key, and `initSync` drains the
+   confirmed log.
 
 The QR never contains the board key, so a photo of the screen is useless
 after the pairing window closes (starting value: 10 minutes). The
@@ -85,13 +92,20 @@ direction is reversed from the old sketch (the linked device scans, the new
 device shows) because a laptop has no camera to scan with, and the iPad
 does.
 
-### Linked devices and revoke
+### Linked devices and revoke — **BUILT** (011 slice 5)
 
 Parent Corner → **Linked devices** lists each device's name and when it was
 last seen. **Remove** makes the relay reject that device, and rotates the
 board key: a remaining device makes a new key, encrypts it to each
 remaining device, and new ops use it. A removed device keeps what it had
 already downloaded. That is stated honestly in the UI, not hidden.
+
+**BUILT**: `DELETE /boards/:id/devices/:id` + `POST /keys {epoch,
+wrapped:{device:grant}}` bumps `key_epoch` and stores a wrapped key per
+remaining device; each op carries the epoch it was sealed under, and a
+device seeing a higher epoch picks up its new wrapped key via
+`GET /devices/self`. Board keys live per-epoch in the keystore
+(`board_key`, `board_key_e2`, …).
 
 ## 4. What travels: an encrypted op log
 

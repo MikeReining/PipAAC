@@ -460,6 +460,15 @@
         z-index: 10;
       }
       .overlay.open { display: flex; }
+      /* Pairing sheet */
+      .pair-code {
+        font-size: 34px; letter-spacing: 8px; font-weight: 800;
+        text-align: center; padding: 14px 0 4px; font-variant-numeric: tabular-nums;
+      }
+      .pair-qr { display: flex; justify-content: center; padding: 8px 0; }
+      .dev-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+      .dev-row .dev-id { flex: 1; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+      .dev-row button { flex: none; padding: 4px 10px; font-size: 13px; }
       .sheet {
         background: #fff;
         border-radius: 16px;
@@ -708,6 +717,15 @@
           </div>
           <p class="hint">Pick one and keep it — changing it moves every letter.</p>
         </div>
+        <div class="seg-row">
+          <span class="seg-label">Linked devices</span>
+          <div id="dev-list"><p class="hint">This board is only on this device.</p></div>
+          <div class="row">
+            <button class="btn secondary" id="dev-add">Add a device</button>
+            <button class="btn secondary" id="dev-link">Link this device</button>
+          </div>
+          <p class="hint">A linked device sees and edits the whole board. Removing it locks it out and re-keys the board.</p>
+        </div>
         <button class="btn secondary" data-close>Close</button>
       </div>
     </div>
@@ -732,6 +750,17 @@
         <div class="row">
           <button class="btn danger" id="del-yes">Delete</button>
           <button class="btn secondary" data-close>Keep</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="pairform">
+      <div class="sheet">
+        <h2 id="pair-title">Link this device</h2>
+        <div id="pair-body"></div>
+        <div class="row">
+          <button class="btn" id="pair-go" hidden>Allow</button>
+          <button class="btn secondary" data-close>Close</button>
         </div>
       </div>
     </div>
