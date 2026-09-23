@@ -71,12 +71,31 @@ const DESCS = byCat["Descriptors, Adjectives & Opposites"].filter((w) => !COLORS
 const BODY = only("Body, Health & Hygiene",
   ["head", "face", "hair", "eye", "ear", "nose", "mouth", "teeth", "tongue", "hand", "finger",
    "arm", "leg", "foot", "toe", "stomach", "back", "knee", "elbow", "tummy"]);
+const HYGIENE = only("Body, Health & Hygiene",
+  ["bath", "shower", "soap", "toothbrush", "toothpaste", "towel", "comb", "tissue",
+   "diaper", "potty", "toilet", "bandage", "medicine"]);
 const PEOPLE = only("People, Family & Roles",
   ["mom", "dad", "mama", "dada", "baby", "brother", "sister", "grandma", "grandpa",
    "friend", "teacher", "boy", "girl"]);
 const KIN = only("People, Family & Roles", ["mom", "dad", "mama", "dada", "grandma", "grandpa", "baby"]);
+const RELATIVES = only("People, Family & Roles", ["grandma", "grandpa", "aunt", "uncle", "cousin"]);
+const STAFF = only("People, Family & Roles", ["teacher", "therapist", "aide", "doctor", "nurse", "babysitter"]);
 const ACTIONS = byCat["Daily Actions & Activity Verbs"].filter((w) => !w.includes(" "));
-const TIMES = byCat["Time, Calendar & Sequencing"];
+const TIMES_WORDS = byCat["Time, Calendar & Sequencing"];
+const NATURE = only("Animals & Nature",
+  ["tree", "grass", "flower", "sun", "rain", "snow", "wind", "cloud", "moon"]);
+const ANIMALS = byCat["Animals & Nature"].filter((w) => !NATURE.includes(w));
+const WEATHER = only("Animals & Nature", ["rain", "snow", "sun", "wind", "cloud"]);
+const UTENSIL = only("Home, Household Objects & Daily Tools",
+  ["plate", "bowl", "cup", "fork", "spoon", "knife", "napkin", "bottle", "straw"]);
+const MEDIA = only("Toys, Play, Media & Leisure",
+  ["music", "song", "tablet", "ipad", "phone", "tv", "movie", "video", "computer", "camera", "book"]);
+const ROOMS = only("Places, Rooms & Community",
+  ["home", "house", "bedroom", "living room", "kitchen", "basement", "stairs", "yard"]);
+const MEALS = only("Food & Drink", ["breakfast", "lunch", "dinner", "snack"]);
+// real children say out-of-vocabulary words too — a tiny pool keeps the
+// post-OOV contexts honest (OOV breaks context in the book, as in tests)
+const OOV = ["teddy", "elmo", "thomas", "bluey", "peppa", "minnie", "spiderman"];
 const ANIMAL_SOUNDS = { dog: "woof woof", cat: "meow", cow: "moo", duck: "quack quack",
   sheep: "baa", horse: "neigh", pig: "oink", lion: "roar", bird: "tweet tweet",
   frog: "ribbit", bee: "buzz", snake: "hiss", chicken: "cluck cluck" };
@@ -88,12 +107,18 @@ function pool(words) {
 }
 const P = {
   food: pool(FOODS), snack: pool(SNACKS.length ? SNACKS : FOODS), drink: pool(DRINKS),
-  animal: pool(byCat["Animals & Nature"]), toy: pool(byCat["Toys, Play, Media & Leisure"]),
+  animal: pool(ANIMALS), toy: pool(byCat["Toys, Play, Media & Leisure"]),
   thing: pool(byCat["Home, Household Objects & Daily Tools"]), cloth: pool(byCat["Clothing & Accessories"]),
   body: pool(BODY.length ? BODY : byCat["Body, Health & Hygiene"]), person: pool(PEOPLE), kin: pool(KIN),
-  place: pool(byCat["Places, Rooms & Community"]), vehicle: pool(byCat["Vehicles & Transportation"]),
+  relative: pool(RELATIVES.length ? RELATIVES : KIN), staff: pool(STAFF.length ? STAFF : PEOPLE),
+  place: pool(byCat["Places, Rooms & Community"]), room: pool(ROOMS),
+  vehicle: pool(byCat["Vehicles & Transportation"]),
   color: pool(COLORS), desc: pool(DESCS), feel: pool(byCat["Feelings, Emotions & Sensory States"]),
-  action: pool(ACTIONS), num: pool(byCat["Numbers & Counting"]), time: pool(TIMES),
+  action: pool(ACTIONS), num: pool(byCat["Numbers & Counting"]), time: pool(TIMES_WORDS),
+  nature: pool(NATURE), weather: pool(WEATHER.length ? WEATHER : NATURE),
+  utensil: pool(UTENSIL), media: pool(MEDIA), hygiene: pool(HYGIENE),
+  meal: pool(MEALS.length ? MEALS : FOODS), oov: pool(OOV),
+  friend: pool(only("People, Family & Roles", ["friend", "brother", "sister", "cousin", "boy", "girl"])),
 };
 // flat common pools for single-word utterances
 const ONEWORD = pool([
@@ -383,6 +408,271 @@ const CHILD_DET = {
 };
 for (const b of Object.keys(CHILD_DET)) CHILD[b] = CHILD[b].concat(CHILD_DET[b]);
 
+// Second expansion: new grammatical territory — telegraphic action/person
+// frames at the youngest stage; past/future/modal auxiliaries, comparisons,
+// quantifiers, temporal and connective frames, cognition verbs, presence/
+// absence, fairness and conflict language, school and growth talk at the
+// older stages. Irregularities ("i eated it") are left in on purpose —
+// children over-regularize.
+const CHILD_MORE = {
+  toddler: [
+    ["{person} {action}", 2], ["{animal} {action}", 2], ["{person} go", 1.5],
+    ["{person} come", 1], ["{person} bye bye", 1],
+    ["see {animal}", 1.5], ["see {thing}", 1.5], ["got it", 1.5], ["got {thing}", 1],
+    ["have it", 1], ["take it", 1], ["carry me", 1.5], ["hold me", 1.5], ["hold it", 1.2],
+    ["push it", 1.5], ["pull it", 1.2], ["throw it", 1.2], ["catch it", 1.2],
+    ["kick it", 1], ["get it", 1.5], ["get {thing}", 1.2], ["get {food}", 1],
+    ["{thing} please", 2], ["please {thing}", 1.5], ["please {food}", 1.5], ["{person} please", 1],
+    ["no {cloth}", 1.5], ["no {place}", 1], ["off {thing}", 1], ["out of {thing}", 1],
+    ["{food} good", 1.2], ["yummy {food}", 1.2], ["{food} yummy", 1.2], ["{drink} please", 1.5],
+    ["uh oh {thing}", 1.2], ["oh no {thing}", 1.2], ["poor {animal}", 1], ["poor {person}", 0.8],
+    ["my {body}", 1.5], ["{body} hurt", 1.2], ["hurt {body}", 1], ["ow {body}", 1],
+    ["{cloth} on", 1.2], ["{cloth} off", 1.5], ["put {cloth}", 1],
+    ["go to {place}", 1.5], ["in {place}", 1], ["at {place}", 1],
+    ["night night {animal}", 1], ["bye {animal}", 1], ["hi {animal}", 1.2],
+    ["what's in {thing}", 1], ["who's in {thing}", 0.8], ["what's on {thing}", 0.8],
+    ["{num} {animal}", 1.5], ["{color} {animal}", 1.5], ["{color} {toy}", 1.5],
+    ["big {vehicle}", 1.5], ["little {animal}", 1.5], ["baby {animal}", 1.5],
+    ["the {animal}", 2], ["a {animal}", 2.5], ["my {animal}", 1.5], ["your {thing}", 1],
+    ["want {person}", 1.5], ["need {thing}", 1.5], ["need {person}", 1.2], ["need {drink}", 1.2],
+    ["hug", 1.5], ["kiss", 1.2], ["tickle", 1], ["hug {person}", 1.2], ["kiss {person}", 1],
+    ["more {action}", 1.5], ["do {action}", 1.2], ["me {action}", 1.2], ["{person} do it", 1],
+    ["{animal} {sound}", 1.5], ["{animal} says {sound}", 1], ["says {sound}", 0.8],
+    ["eat {food}", 1.5], ["eat it", 1.5], ["drink {drink}", 1.5], ["drink it", 1.2], ["eat more", 1],
+    ["sit down", 1.5], ["lie down", 1.2], ["sit {thing}", 1], ["down please", 1], ["get down", 1.2],
+    ["turn it", 1], ["push {thing}", 1], ["pull {thing}", 1],
+    ["i see {thing}", 1.5], ["i got {thing}", 1.2], ["i have {thing}", 1.2], ["i want {thing}", 1.5],
+    ["not {food}", 1.5], ["not {thing}", 1.2], ["not that", 1.5], ["not mine", 1.2], ["not yet", 1],
+    ["again {action}", 1.5], ["do it again", 1.5], ["one more", 2], ["one more {thing}", 1.5],
+    ["no {person}", 1.2], ["yes {person}", 1], ["okay {person}", 1], ["{person} no", 0.8],
+    ["{food} now", 1.2], ["{thing} now", 1.2], ["now {food}", 1], ["want {thing} now", 1],
+    ["too {desc}", 1.5], ["very {desc}", 1.2], ["so {desc}", 1],
+    ["{desc} {animal}", 1.5], ["{desc} {food}", 1.2], ["{desc} {person}", 1],
+    ["where {person} go", 1], ["where {thing} go", 1.2], ["what {thing}", 1.2],
+    ["loud {thing}", 1], ["shh {animal}", 0.6], ["quiet", 0.8],
+    ["potty", 1.5], ["poop", 1], ["pee", 1], ["diaper", 0.8],
+    ["more {person}", 1.2], ["more {animal}", 1.5], ["more {thing}", 1.5],
+    ["{animal} mine", 1], ["{thing} mine", 1.2], ["mine {thing}", 1.2],
+    ["bye {place}", 0.8], ["hi {place}", 0.8],
+    ["it's {thing}", 1.5], ["it's {animal}", 1.5], ["it's {person}", 1.2], ["it {animal}", 1],
+    ["this {thing}", 1.5], ["there {animal}", 1.2], ["there {thing}", 1.2],
+    ["here {thing}", 1.5], ["here {animal}", 1.2], ["{person} here", 1],
+    ["up there", 1.2], ["down there", 1.2], ["in here", 1], ["out there", 1],
+    ["watch {animal}", 1.2], ["watch {person}", 1], ["watch it", 1.2], ["see it", 1.2],
+    ["that's {thing}", 1.5], ["that's {animal}", 1.5], ["that's {person}", 1],
+    ["some {food}", 1.5], ["some {drink}", 1.2],
+    ["pretty {thing}", 1], ["pretty {animal}", 1], ["nice {thing}", 1.2], ["funny {animal}", 1],
+    ["silly {person}", 1], ["silly {animal}", 1], ["bad {thing}", 1], ["good {thing}", 1.2],
+    ["good {food}", 1], ["new {toy}", 1.2], ["old {thing}", 0.8],
+    ["i {action}", 1.5], ["me {action}", 1.2], ["i'm {feel}", 1.2],
+    ["{media}", 1.2], ["my {media}", 1], ["watch {media}", 1],
+    ["{utensil}", 1], ["my {utensil}", 1], ["{hygiene}", 1],
+    ["{oov}", 0.5], ["my {oov}", 0.4], ["want {oov}", 0.3],
+  ],
+  preschool: [
+    // past / auxiliaries
+    ["i {action}ed it", 2.5], ["{person} {action}ed it", 1.5], ["it {action}ed", 1.5],
+    ["the {thing} {action}ed", 1.5], ["i {action}ed the {thing}", 1.5],
+    ["{person} {action}ed my {thing}", 1.2], ["did {action}", 1.5], ["i did {action}", 1.5],
+    ["{person} did it", 1.2], ["i just {action}ed", 1.2], ["we {action}ed", 1.2],
+    ["will {action}", 1.2], ["i'll {action}", 1.5], ["i will {action}", 1.2],
+    ["{person} will {action}", 1], ["we'll {action}", 1], ["it will {action}", 0.8],
+    ["was {desc}", 1.5], ["it was {desc}", 1.5], ["i was {desc}", 1.2], ["that was {desc}", 1.5],
+    ["{person} was {action}ing", 1.2],
+    ["had {food}", 1.5], ["had a {thing}", 1.2], ["i had {food}", 1.2], ["we had {food}", 1],
+    ["have to {action}", 2], ["has to {action}", 1.2], ["i have to go {place}", 1.5],
+    ["{person} has to {action}", 1],
+    ["am {action}ing", 1], ["i'm {action}ing it", 1.5], ["{person} is {action}ing", 1.2],
+    ["are you {action}ing", 1.2], ["is it {action}ing", 1],
+    ["might {action}", 1], ["would {action}", 0.8], ["i could {action}", 0.8],
+    // comparisons
+    ["bigger", 1.5], ["bigger than {thing}", 1.2], ["more {desc}", 1.5], ["the biggest", 1],
+    ["the best", 1.2], ["the best {thing}", 1], ["too {desc} to {action}", 1],
+    ["{desc} enough", 1], ["faster", 1], ["slower", 0.8], ["higher", 1.2],
+    ["the same", 1.2], ["different", 1.2], ["the same {thing}", 1], ["a different {thing}", 1],
+    // quantifiers
+    ["some {food}", 1.5], ["all the {food}", 1.2], ["every {animal}", 1], ["no {food}", 1.2],
+    ["a lot of {food}", 1.2], ["lots of {animal}", 1], ["both {thing}", 0.8], ["each one", 0.8],
+    ["the other {thing}", 1.2], ["another {thing}", 1.5], ["some more {food}", 1.5],
+    ["any {food}", 0.8], ["more {thing}", 1.5], ["all the {thing}", 1],
+    // pronouns / obliques
+    ["for him", 1], ["for her", 1], ["for them", 1], ["with it", 1.2], ["to me", 1.2],
+    ["at me", 1.2], ["like me", 1.2], ["it's him", 0.8], ["that's her {thing}", 1],
+    ["his {thing}", 1.2], ["their {thing}", 0.8], ["for us", 1], ["with them", 1],
+    // temporal
+    ["yesterday", 1.5], ["tomorrow", 1.5], ["this morning", 1.2], ["after {time}", 1.5],
+    ["before {time}", 1.2], ["last night", 1.2], ["later", 1.5], ["right now", 1.5],
+    ["in a minute", 1.2], ["a long time", 1], ["all day", 1], ["every day", 0.8],
+    ["next {time}", 1], ["on {time}", 0.8],
+    // connectives
+    ["and then {action}", 1.5], ["and then we {action}", 1.2], ["so i {action}", 1],
+    ["but i {action}", 1.2], ["if i {action}", 1], ["when i {action}", 1.2],
+    ["because {person} {action}ed", 1], ["or {thing}", 1.2], ["but not {food}", 1],
+    // cognition / communication
+    ["i think {thing}", 1], ["i think it's {desc}", 1.2], ["i forgot {thing}", 1],
+    ["i forgot to {action}", 1.2], ["i remember {thing}", 1], ["i know how", 1.2],
+    ["i know how to {action}", 1.2], ["show me how", 1.5], ["teach me", 0.8],
+    ["tell me why", 1], ["i don't understand", 1], ["i know that", 1.2],
+    ["it's time to {action}", 1.5], ["time to {action}", 1.5], ["ready to {action}", 1.2],
+    ["ready to go {place}", 1.2], ["about to {action}", 0.8], ["time for {time}", 1.5],
+    // verb chains
+    ["let's not {action}", 1], ["don't {action} yet", 1], ["stop {action}ing", 1.2],
+    ["start {action}ing", 0.8], ["keep {action}ing", 0.8], ["try to {action}", 1.5],
+    ["want to {action}", 1.5], ["need to {action}", 1.5], ["like to {action}", 1.2],
+    ["love to {action}", 0.8], ["going to {action}", 1.5],
+    ["i'm trying", 1.5], ["i'm trying to {action}", 1.2], ["it's hard", 1.5],
+    ["too hard", 1.2], ["i can't reach the {thing}", 1], ["help me {action}", 1.5],
+    ["help me with {thing}", 1.2], ["i'm done {action}ing", 1], ["i finished", 1.2],
+    // indirect requests
+    ["can you get me {thing}", 1.5], ["can you get the {thing}", 1.5], ["will you {action}", 1],
+    ["you can {action} it", 1.2], ["you have to {action}", 1.2], ["i'll give you {thing}", 1],
+    ["give it to {person}", 1.2], ["give {person} a {thing}", 0.8],
+    // presence / absence
+    ["there's a {animal}", 1.5], ["there is a {animal}", 1.2], ["there's no {thing}", 1],
+    ["it's not here", 1.2], ["it's right here", 1.2], ["here it is", 1.5], ["there it is", 1.5],
+    ["i found it", 1.5], ["i found a {thing}", 1.2], ["i lost my {thing}", 1.2],
+    ["it's missing", 1], ["where'd it go", 1.5], ["it's gone", 1.2],
+    ["somebody {action}ed it", 0.8], ["someone took it", 1], ["nothing", 1.5], ["everything", 0.8],
+    ["the {desc} one", 1.5], ["that {desc} one", 1.5], ["the other one", 1.5],
+    ["a different one", 1.2], ["the same one", 1.2],
+    // possession
+    ["that's {person}'s", 1.2], ["it's {person}'s {thing}", 1.2], ["{person}'s {thing}", 1.5],
+    ["your {thing}", 1.5], ["our {thing}", 0.8], ["{person}'s house", 1.2],
+    // talk / school / media / hygiene / body
+    ["i wish", 1], ["i hope", 1], ["guess what", 1.5], ["you know what", 1.5],
+    ["can we keep it", 1], ["take it home", 1.2], ["bring it", 1], ["bring me {thing}", 1.2],
+    ["which {thing}", 1.2], ["which one", 1.5], ["whose {thing}", 0.8],
+    ["is it {time} yet", 1.2], ["what {time} is it", 1],
+    ["i feel {feel}", 1.5], ["i feel like {food}", 0.8], ["i'm feeling {feel}", 1],
+    ["{animal}s {action}", 1], ["{person} and {person}", 1], ["{person} or {person}", 0.8],
+    ["i'm a {animal}", 1.5], ["i'm {person}", 1.2], ["you're a {animal}", 0.8],
+    ["like a {animal}", 1], ["it's like a {animal}", 1],
+    ["do we have to go {place}", 1.2], ["are we going {place}", 1.2], ["we're going {place}", 1.2],
+    ["go to {person}'s house", 1.2], ["{relative}'s house", 1.5], ["at {person}'s house", 1],
+    ["in the {room}", 1.5], ["to the {room}", 1.2], ["my {room}", 1.5], ["in my {room}", 1.5],
+    ["watch {media}", 1.5], ["my {media}", 1.2], ["i want {media}", 1.2], ["one more {media}", 1.5],
+    ["use the {utensil}", 1.2], ["my {utensil}", 1.5], ["with a {utensil}", 1], ["no {utensil}", 1],
+    ["my {hygiene}", 1.2], ["use the {hygiene}", 0.8], ["wash my {body}", 1.2],
+    ["my hands are dirty", 1.2], ["my hands are sticky", 1], ["wipe my {body}", 0.8],
+    ["blow my nose", 0.8], ["my nose", 0.8],
+    ["the {nature}", 1], ["look at the {nature}", 1.2], ["it's {nature}ing", 0.5],
+    ["{weather} is out", 0.6],
+    ["{staff} said", 0.8], ["my {staff}", 1], ["my {friend}", 1.5], ["{friend} took it", 1],
+    ["i'm {num}", 1.2], ["i'm {num} years old", 0.8],
+    ["{oov}", 0.5], ["my {oov}", 0.4], ["want {oov}", 0.3], ["i want {oov}", 0.3],
+  ],
+  older: [
+    // wh/how questions, embedded
+    ["i don't understand", 2], ["i don't get it", 1.5], ["what does {thing} mean", 1.5],
+    ["what's that mean", 1.5], ["how does it work", 1.5], ["how do you {action}", 1.5],
+    ["how did that happen", 1.2], ["how did you do that", 1.2], ["what are those", 1.5],
+    ["who made this", 1], ["why is it {desc}", 1.5], ["why is the {thing} {desc}", 1.2],
+    ["why do i have to {action}", 1.5], ["why can't we {action}", 1.5],
+    ["when can we {action}", 1.5], ["when do we {action}", 1.2], ["when is {time}", 1.2],
+    ["when will {person} {action}", 1], ["how long", 1.5], ["how long until {time}", 1],
+    ["how far", 1], ["how much", 1.2], ["how old are you", 1.2], ["how old am i", 0.8],
+    ["what if", 1.5], ["what if i {action}", 1.2], ["what if it {action}s", 1],
+    ["so what", 1], ["and then what", 1.2], ["now what", 1.2], ["then what", 1],
+    ["what kind of {thing}", 1.2], ["which {thing} is mine", 1],
+    // fairness / conflict / repair
+    ["it's not fair", 2], ["that's not fair", 2], ["no fair", 1.5], ["that's cheating", 1],
+    ["he started it", 1.2], ["i didn't do it", 1.5], ["it wasn't me", 1.5],
+    ["i didn't mean to", 1.5], ["it was an accident", 1.5], ["i'm sorry", 1.5],
+    ["i didn't mean it", 1.2], ["i didn't know", 1.2], ["he won't share", 1.2],
+    ["she took my {thing}", 1.2], ["{friend} took my {thing}", 1.2], ["i'm telling", 1],
+    ["i'm telling {person}", 0.8],
+    // aspect / frequency / growth
+    ["i already did", 1.5], ["i already {action}ed", 1.2], ["i still want {thing}", 1.2],
+    ["i still need {thing}", 1], ["i really like {thing}", 1.5], ["i really want to {action}", 1.5],
+    ["my favorite {thing}", 1.5], ["my favorite is {thing}", 1.2], ["it's my favorite {thing}", 1.2],
+    ["i'm allowed to {action}", 1.2], ["you're not allowed", 1.2], ["that's the rule", 1],
+    ["i'm first", 1.2], ["i was here first", 1.2], ["my turn next", 1.2],
+    ["it's not your turn", 1.2], ["wait your turn", 1.2], ["i get to {action}", 1.2],
+    ["you get to {action}", 1], ["i don't get to {action}", 1],
+    ["let me tell you", 1.2], ["i'll tell you", 1.2], ["i told you", 1.2], ["i told {person}", 1],
+    ["tell {person} i {action}ed", 0.8], ["can i tell you something", 1.2],
+    ["{person} said i can't", 0.8], ["{person} said yes", 1], ["{person} said no", 1],
+    ["i promise", 1], ["i bet", 1], ["i hope so", 1.2], ["i hope we {action}", 1],
+    ["i wish i could {action}", 1.2], ["i wish we had {thing}", 1],
+    ["maybe we can {action}", 1.2], ["maybe later", 1.5], ["maybe tomorrow", 1.2],
+    ["maybe {person} can", 0.8],
+    ["i don't care", 1.2], ["i don't mind", 1], ["i give up", 1], ["forget it", 1.2],
+    ["never mind", 1.5], ["it doesn't matter", 1.2], ["it doesn't work", 1.2],
+    ["it's not working", 1.5],
+    ["can i bring my {toy}", 1.2], ["can i take my {toy}", 1.2], ["can i keep it", 1.5],
+    ["can we keep the {animal}", 1], ["i want to keep it", 1.2], ["i want to take it home", 1],
+    ["it's too {desc} to {action}", 1.2], ["it's {desc} enough", 1], ["it's almost {desc}", 1],
+    ["it's almost {time}", 1.2], ["almost {time}", 1.2], ["it's getting {desc}", 1.2],
+    ["it's getting late", 1], ["it's too late", 1],
+    ["the {thing} with {desc}", 1], ["the one that {action}s", 1], ["the one i want", 1.2],
+    ["the one i like", 1.2], ["the same {thing}", 1], ["a different {thing}", 1],
+    ["the wrong {thing}", 1], ["the right {thing}", 1], ["the {thing} i wanted", 1],
+    ["i'm good at {action}ing", 1], ["i'm bad at {action}", 0.8], ["it's easy", 1.5],
+    ["it's too easy", 0.8], ["it's hard to {action}", 1.2], ["it's fun to {action}", 1.2],
+    ["it's fun", 1.5], ["that was fun", 1.5], ["that was easy", 1], ["that was hard", 0.8],
+    ["i'll be the {person}", 1.2], ["you be {person}", 1.2], ["pretend the {thing} is {desc}", 1],
+    ["i'm the {person}", 1.2], ["i'm {person}", 1.2], ["i'm not {person}", 1],
+    ["pretend i'm {person}", 1],
+    ["can i watch {media}", 1.5], ["one more {media}", 1.5], ["it's my show", 1],
+    ["my favorite show", 1], ["can i play {media}", 1], ["i want my {media}", 1.2],
+    ["{media} time", 1],
+    ["i don't feel good", 1.5], ["i feel {feel}", 1.5], ["i feel like {food}", 1],
+    ["i'm feeling {feel}", 1.2], ["it feels {desc}", 1], ["it feels like {thing}", 0.8],
+    ["tell me a story about {animal}", 1], ["tell me about {thing}", 1.2],
+    ["read me the {thing}", 1.2], ["sing me a song", 1], ["my favorite song", 1],
+    ["i learned about {animal}", 0.8], ["{staff} said {thing}", 0.8],
+    ["at school we {action}ed", 1.2], ["{friend} was there", 1], ["my best friend", 1.2],
+    ["{friend} is my friend", 1.2], ["{friend} and me", 1],
+    ["when i grow up", 1.2], ["when i'm big", 1.2], ["when i was little", 1.2],
+    ["when i was a baby", 1.2], ["i'm a big kid now", 1.2], ["i'm not a baby", 1.2],
+    ["babies can't {action}", 0.8], ["big kids {action}", 1],
+    ["i used to {action}", 1], ["i always {action}", 1.2], ["i never {action}", 1.2],
+    ["i sometimes {action}", 1], ["i usually {action}", 0.8], ["every time", 1],
+    ["every day", 1.2], ["all the time", 1.2],
+    ["that's why", 1.2], ["that's why i {action}", 1], ["that's what i said", 1],
+    ["that's what i want", 1.2], ["that's what i mean", 1], ["that's how you {action}", 1],
+    ["this is how you {action}", 0.8], ["watch how i {action}", 1],
+    ["my {thing} and {thing}", 1], ["{thing} and {thing}", 1.2], ["{food} and {food}", 1.5],
+    ["{person} and {person}", 1.2], ["{animal} and {animal}", 1.2],
+    ["i want to be a {person}", 1], ["i want to be a {animal}", 0.8],
+    ["the {thing} in the {place}", 1.2], ["the {thing} on the {thing}", 1.2],
+    ["the {thing} under the {thing}", 1], ["the {thing} behind the {thing}", 0.8],
+    ["the {animal} at the {place}", 1], ["the {person} at the {place}", 1],
+    ["the {person} in the {room}", 1], ["the {food} in the {thing}", 1],
+    ["my {thing} at {place}", 1], ["the {thing} at {place}", 1],
+    ["a little bit of {food}", 1.2], ["a piece of {food}", 1], ["a cup of {drink}", 1],
+    ["some {food} please", 1.2],
+    ["what do you mean", 1.5], ["what does that mean", 1.5], ["can i ask you something", 1.2],
+    ["i have a question", 1], ["tell me about it", 1],
+    ["it's raining", 1.5], ["it's snowing", 1.2], ["it's sunny", 1], ["it's cloudy", 0.8],
+    ["it's windy", 0.8], ["it's hot out", 1], ["it's cold out", 1.2],
+    ["look at the {nature}", 1.2], ["the {nature} is out", 1], ["the {nature} is {desc}", 1],
+    ["i'm going to {person}'s", 1.2], ["we're going to {place}", 1.5], ["we went to {place}", 1.5],
+    ["we're at {place}", 1.2], ["we're at the {place}", 1.2], ["go to {person}'s house", 1.2],
+    ["{relative}'s house", 1.5], ["{relative} is here", 1], ["{relative} is coming", 1],
+    ["in the {vehicle}", 1.2], ["on the {vehicle}", 1.2], ["the {vehicle} is {desc}", 1],
+    ["a big {vehicle}", 1.2], ["my {vehicle}", 1],
+    ["with my {cloth}", 1], ["my {cloth} is {desc}", 1.2], ["i need my {cloth}", 1.2],
+    ["where's my {cloth}", 1.5], ["i can't find my {cloth}", 1.2], ["put on my {cloth}", 1.2],
+    ["take off my {cloth}", 1.2],
+    ["with a {utensil}", 1.2], ["use a {utensil}", 1.2], ["my {utensil}", 1.2],
+    ["i need a {utensil}", 1], ["no {utensil}", 0.8],
+    ["brush my teeth", 1.2], ["comb my hair", 1], ["wash my {body}", 1], ["wash my hands", 1.5],
+    ["my hands are dirty", 1.2], ["my hands are sticky", 1.2], ["wipe my {body}", 0.8],
+    ["blow my nose", 1], ["use the potty", 1.2], ["i need the potty", 1.5], ["i have to pee", 1.2],
+    ["i have to poop", 1], ["i went potty", 1], ["i used the potty", 0.8],
+    ["i'm {num}", 1.2], ["i'm {num} years old", 1.2], ["{friend} is {num}", 0.8],
+    ["i'm bigger", 1], ["i'm older", 1],
+    ["tomorrow we {action}", 1.2], ["yesterday we {action}ed", 1.2], ["today we {action}", 1],
+    ["on {time} we {action}", 0.8], ["last {time}", 1], ["next {time}", 1], ["this {time}", 0.8],
+    ["the whole {thing}", 1], ["half of it", 0.8], ["the rest", 0.8], ["the rest of {food}", 1],
+    ["all of it", 1], ["most of it", 0.8],
+    ["it's mine not yours", 1], ["yours not mine", 0.8],
+    ["{oov}", 0.4], ["my {oov}", 0.3], ["i want {oov}", 0.3],
+  ],
+};
+for (const b of Object.keys(CHILD_MORE)) CHILD[b] = CHILD[b].concat(CHILD_MORE[b]);
+
 // ---------- caregiver templates ----------
 const ADULT_SHORT = [
   ["yeah", 5], ["yes", 4], ["no", 5], ["okay", 6], ["right", 4], ["mhm", 2], ["hm", 1],
@@ -584,6 +874,291 @@ const SCENARIOS = [
     adult: ["say bye bye", "wave bye", "{person} is going", "see you later",
       "give {person} a hug", "bye bye", "{person} will be back"],
     child: ["bye", "bye bye", "no go", "bye {person}", "come back", "stay"] },
+  // second batch of routines — hygiene, transitions, screens, waiting,
+  // conflict, modeling (adult deliberately naming words, as AAC partners do)
+  { name: "teeth_brushing",
+    adult: ["brush your teeth", "open wide", "back teeth too", "a little more",
+      "spit it out", "all clean", "let me help", "top and bottom", "toothbrush time",
+      "minty fresh", "two minutes", "good brushing"],
+    child: ["no", "i do it", "my toothbrush", "minty", "all done", "yucky", "spit",
+      "i brushed them", "teeth", "toothpaste", "no toothpaste", "i want to do it"] },
+  { name: "diaper_potty",
+    adult: ["diaper change", "lie down", "hold still", "almost done", "stinky",
+      "all clean", "new diaper", "wipe first", "stay still", "fresh diaper",
+      "do you need the potty", "try the potty", "tell me when you need to go"],
+    child: ["no", "stinky", "all done", "wet", "poop", "diaper", "i'm wet", "yucky",
+      "potty", "i need the potty", "i have to pee", "i have to poop", "i went potty"] },
+  { name: "leaving_house",
+    adult: ["time to go", "get your {cloth}", "shoes on", "car seat", "we're leaving",
+      "say bye bye", "last one", "hurry up", "we're late", "where's your {cloth}",
+      "coat on", "let's go go go", "grab your {thing}", "we have to go now"],
+    child: ["no", "i don't want to go", "stay", "one more", "five more minutes",
+      "i'm playing", "my {toy}", "i want to stay", "not yet", "bye bye", "car",
+      "i'm coming", "my {cloth}", "wait for me"] },
+  { name: "arriving_home",
+    adult: ["we're home", "we're here", "take off your {cloth}", "shoes off",
+      "wash your hands", "go play", "put your {thing} away", "hang up your {cloth}",
+      "welcome home", "did you have fun"],
+    child: ["home", "we're home", "my {toy}", "hi {animal}", "i'm back", "inside",
+      "my room", "yay", "i'm home", "hi {person}", "where's my {toy}"] },
+  { name: "screen_time",
+    adult: ["five more minutes", "that's enough {media}", "time to turn it off",
+      "all done {media}", "one more show", "eyes need a break", "{media} later",
+      "it turns off now", "you watched a lot", "after {time}", "pick one show"],
+    child: ["one more", "one more show", "i want {media}", "my show", "no",
+      "i'm watching it", "more {media}", "i want my {media}", "not done",
+      "five more minutes", "can i watch {media}", "my favorite show"] },
+  { name: "waiting_turns",
+    adult: ["wait", "wait your turn", "it's {person}'s turn", "almost your turn",
+      "be patient", "in a minute", "you're next", "good waiting", "not yet",
+      "when it's your turn", "everyone gets a turn", "{friend} is using it"],
+    child: ["my turn", "i want a turn", "is it my turn", "now", "me", "i'm next",
+      "how long", "i've been waiting", "not fair", "hurry", "my turn next",
+      "it's my turn", "when is it my turn"] },
+  { name: "bump_injury",
+    adult: ["ouch", "are you okay", "let me see", "it's okay", "just a scratch",
+      "kiss it better", "you're okay", "that was a big fall", "be careful",
+      "does it still hurt", "want a bandage", "all better"],
+    child: ["ow", "ouch", "i fell", "my {body}", "it hurts", "{body} hurts",
+      "i fell down", "hurt", "kiss it", "bandage", "i'm okay", "i bumped my {body}",
+      "i'm not okay"] },
+  { name: "frustration",
+    adult: ["i know you're {feel}", "it's okay to be {feel}", "use your words",
+      "calm down", "take a breath", "i hear you", "we don't hit", "no hitting",
+      "gentle hands", "tell me what's wrong", "big feelings", "it's hard",
+      "it's okay to be mad"],
+    child: ["no", "no no no", "mine", "i don't want to", "i want it", "it's mine",
+      "stop", "go away", "i'm {feel}", "i hate it", "not fair", "i said no",
+      "i want {thing}", "leave me alone", "i'm mad", "don't touch it"] },
+  { name: "sharing_conflict",
+    adult: ["share", "take turns", "{friend} had it first", "you can have it after",
+      "find another one", "there's enough", "we share", "it's {friend}'s turn",
+      "trade", "you can both play", "give it back please"],
+    child: ["mine", "my turn", "i had it first", "no", "it's mine",
+      "{friend} took it", "i want it back", "give it back", "that's mine",
+      "my {thing}", "he took it", "she has my {toy}"] },
+  { name: "word_modeling",
+    adult: ["look, a {animal}", "that's a {animal}", "this is {food}",
+      "say {oneword}", "can you say {oneword}", "the word is {oneword}",
+      "{oneword}. you say it", "watch: {oneword}", "it's called a {thing}",
+      "show me {oneword}", "your word for it is {oneword}", "{oneword}, say it"],
+    child: ["{oneword}", "{oneword}!", "i can't say it", "{oneword} please",
+      "more {oneword}", "no", "{animal}", "{food}"] },
+  { name: "music_songs",
+    adult: ["sing with me", "the {animal} goes {sound}", "clap your hands", "dance",
+      "spin around", "louder", "do you know this song", "la la la",
+      "your favorite song", "let's sing {animal} song"],
+    child: ["sing", "dance", "again", "my song", "louder", "la la", "{sound}",
+      "more music", "clap", "the {animal} song", "my favorite song"] },
+  { name: "pet_care",
+    adult: ["feed the {animal}", "be gentle with the {animal}", "the {animal} is hungry",
+      "pet the {animal} softly", "don't pull the tail", "the {animal} needs water",
+      "the {animal} loves you", "gentle hands"],
+    child: ["{animal}", "my {animal}", "feed {animal}", "{animal} hungry", "soft",
+      "gentle", "{animal} ate", "i love {animal}", "the {animal} likes me",
+      "{animal} is {desc}"] },
+  { name: "going_for_walk",
+    adult: ["hold my hand", "stay on the sidewalk", "look both ways",
+      "stop at the corner", "watch for {vehicle}", "almost there", "keep walking",
+      "nice day out", "stroller or walk"],
+    child: ["hold me", "i'm tired", "carry me", "{vehicle}", "look a {animal}",
+      "far", "my legs hurt", "stroller", "i want the stroller", "i see a {animal}"] },
+  { name: "weather_look",
+    adult: ["it's {desc} out", "look at the {nature}", "it's {desc} today",
+      "the {nature} is out", "feel the {weather}", "{desc} day"],
+    child: ["{nature}", "it's {desc}", "look at the {nature}", "{nature} out",
+      "{desc} out", "i see {nature}", "the {nature} is {desc}"] },
+];
+
+// ---------- times of day ----------
+// each dialogue gets a time of day; w = per-band weight (toddlers have more
+// mornings/middays, older kids more evenings/afternoons)
+const TIMES_OF_DAY = [
+  { name: "morning", w: { toddler: 1.2, preschool: 1.2, older: 1 },
+    adult: ["good morning", "time to get up", "did you sleep good", "rise and shine",
+      "breakfast is ready", "what do you want for breakfast", "let's get dressed",
+      "hurry up", "we're running late", "did you have good dreams", "time to wake up",
+      "good morning sunshine", "up up up", "let's start the day",
+      "first we eat, then we play", "pajamas off", "morning snuggles"],
+    child: ["good morning", "i'm tired", "i'm sleepy", "five more minutes",
+      "i'm hungry", "i want {food}", "no get up", "i don't want to get up",
+      "my {cloth}", "where's my {toy}", "i had a dream", "is it morning",
+      "wake up", "morning", "breakfast", "i'm awake", "hold me", "carry me"] },
+  { name: "midday", w: { toddler: 1.2, preschool: 1, older: 0.8 },
+    adult: ["lunch time", "time for lunch", "what do you want for lunch",
+      "nap time", "time for your nap", "after lunch we nap", "quiet time",
+      "let's rest a little", "you need a nap", "lie down for a bit",
+      "what should we do this afternoon", "snack after nap"],
+    child: ["i'm not tired", "no nap", "i don't want to nap", "i'm not sleepy",
+      "i want to play", "lunch", "i'm hungry", "no quiet time", "i want {snack}",
+      "just a little more", "five more minutes", "after nap", "not yet"] },
+  { name: "afternoon", w: { toddler: 1, preschool: 1.2, older: 1.2 },
+    adult: ["snack time", "want a snack", "good nap", "did you sleep good",
+      "let's go outside", "park time", "time to play outside", "pick up time soon",
+      "{person} will be home soon", "almost dinner time", "what do you want to do",
+      "let's go for a walk", "outside time", "so sunny out"],
+    child: ["i'm hungry", "i want {snack}", "can i have {snack}",
+      "i want to go outside", "park", "i want to go to the park",
+      "is {person} coming", "when is {person} coming", "i want to play",
+      "outside", "snack", "where's {person}"] },
+  { name: "evening", w: { toddler: 1.2, preschool: 1.2, older: 1.2 },
+    adult: ["dinner time", "time for dinner", "dinner is ready", "wash your hands",
+      "bath after dinner", "bath time soon", "almost bedtime", "it's getting late",
+      "{person} is home", "say hi to {person}", "what did you do today",
+      "did you have fun today", "it's dark out", "time to wind down"],
+    child: ["i'm hungry", "i want {food}", "i don't want dinner", "bath",
+      "no bath", "i'm not tired", "one more {toy}", "{person} is home",
+      "i missed you", "look what i made", "i played {toy}", "we went to {place}",
+      "it's dark", "five more minutes"] },
+  { name: "night", w: { toddler: 1.2, preschool: 1.2, older: 1 },
+    adult: ["it's bedtime", "time for bed", "brush your teeth", "pajamas on",
+      "one book", "which book", "lie down", "close your eyes", "night night",
+      "i love you", "sweet dreams", "see you in the morning", "stay in bed",
+      "it's sleep time", "the moon is out", "everyone is sleeping"],
+    child: ["i'm not tired", "no bed", "i don't want to sleep", "one more book",
+      "read it", "i'm scared", "it's dark", "i hear something", "i want water",
+      "i want {drink}", "stay with me", "don't go", "i need {person}",
+      "my {toy}", "where's my {toy}", "i can't sleep", "i had a bad dream",
+      "night night", "i love you"] },
+];
+
+// ---------- occasions ----------
+const OCCASIONS = [
+  { name: "birthday", w: { toddler: 0.8, preschool: 1.2, older: 1.5 },
+    adult: ["it's your birthday", "happy birthday", "you're {num} now",
+      "blow them out", "make a wish", "cake time", "want some cake",
+      "open your {toy}", "who's here", "look at all the {toy}", "say thank you",
+      "it's {friend}'s birthday", "birthday party today"],
+    child: ["my birthday", "cake", "i want cake", "more cake", "my {toy}",
+      "thank you", "it's mine", "i'm {num}", "happy birthday", "more {toy}",
+      "balloon", "blow it", "my turn", "i'm {num} now"] },
+  { name: "doctor_visit", w: { toddler: 1, preschool: 1.2, older: 1 },
+    adult: ["the doctor will see you", "it won't hurt", "just a little poke",
+      "all done soon", "be brave", "the doctor helps you", "say ah", "open wide",
+      "you're so brave", "almost done", "you get a {toy} after",
+      "it might pinch a little", "the nurse is nice"],
+    child: ["no", "i don't want to", "it hurts", "scared", "i'm scared",
+      "i want {person}", "go home", "all done", "ow", "is it done", "my {body}",
+      "i was brave", "bandage", "the doctor", "no medicine"] },
+  { name: "sick_day", w: { toddler: 1, preschool: 1.2, older: 1 },
+    adult: ["poor baby", "you're sick", "does it hurt", "let me see",
+      "some {drink}", "lie down", "rest now", "you'll feel better",
+      "medicine time", "it's yucky but it helps", "stay home today",
+      "no school today", "snuggle up", "my poor {person}"],
+    child: ["my {body} hurts", "i don't feel good", "my tummy hurts", "it hurts",
+      "no medicine", "yucky", "i'm sick", "i feel {feel}", "i want {person}",
+      "more {drink}", "ow", "hot", "cold", "i'm cold", "i'm hot",
+      "my head hurts"] },
+  { name: "babysitter", w: { toddler: 1, preschool: 1.2, older: 0.8 },
+    adult: ["{staff} is watching you", "mom and dad will be back",
+      "be good for {staff}", "we'll have fun", "{staff} is in charge",
+      "mommy will be back soon", "we can play", "what do you want to do",
+      "i'll be right back", "{staff} knows what to do"],
+    child: ["where's {person}", "i want {person}", "when is {person} coming",
+      "you're not my {person}", "no", "i want to go home",
+      "will {person} come back", "{person} left", "bye {person}",
+      "i want {kin}", "come back"] },
+  { name: "grandparents_house", w: { toddler: 1, preschool: 1.5, older: 1.2 },
+    adult: ["we're at {relative}'s house", "say hi to {relative}",
+      "{relative} made {food}", "be good at {relative}'s", "{relative} loves you",
+      "we're staying at {relative}'s", "look what {relative} has",
+      "{relative} has {food} for you", "sleepover at {relative}'s"],
+    child: ["{relative}!", "{relative}'s house", "i love {relative}",
+      "{relative} has {food}", "can i have {food}", "sleepover", "i want to stay",
+      "{relative}'s {thing}", "my {relative}", "yummy {food}", "{relative} is here"] },
+  { name: "playdate", w: { toddler: 1, preschool: 1.8, older: 1.5 },
+    adult: ["{friend} is here", "play with {friend}", "share with {friend}",
+      "{friend} wants to play too", "take turns", "be nice to {friend}",
+      "{friend} brought {toy}", "say hi to {friend}", "play nicely",
+      "both of you", "{friend} goes home soon"],
+    child: ["my {toy}", "{friend} took it", "i want it", "that's mine",
+      "no mine", "{friend} has it", "my turn", "i don't want to share",
+      "can i have the {toy}", "{friend} is {desc}", "we're playing {toy}",
+      "he took my {thing}", "{friend} is my friend", "me and {friend}"] },
+  { name: "school_day", w: { toddler: 0.5, preschool: 1.8, older: 2 },
+    adult: ["time for school", "school today", "pack your bag",
+      "{staff} is waiting", "have a good day", "pick you up later",
+      "i'll be back after school", "did you have fun at school",
+      "what did you do at school", "your {staff} said hi",
+      "the school bus is coming", "did you play with {friend}"],
+    child: ["no school", "i don't want to go", "i want to stay home", "school",
+      "my {staff}", "my {friend}", "we played {toy}", "i like school",
+      "i don't like school", "{friend} was there", "i made a {thing}",
+      "i did {action}", "at school we {action}ed", "the school bus"] },
+  { name: "haircut", w: { toddler: 0.6, preschool: 0.8, older: 0.8 },
+    adult: ["just a little trim", "sit still", "it doesn't hurt",
+      "look in the mirror", "almost done", "you look so nice", "hold still",
+      "it tickles", "you'll look so nice", "all done soon"],
+    child: ["no", "it tickles", "i don't want to", "all done", "scared",
+      "i want down", "ow", "hair", "my hair", "done"] },
+  { name: "rainy_day", w: { toddler: 1, preschool: 1.2, older: 1 },
+    adult: ["it's raining", "can't go outside", "rainy day", "we'll play inside",
+      "look at the rain", "it's pouring", "maybe tomorrow", "raincoat and boots",
+      "the rain is loud", "puddle jumping"],
+    child: ["rain", "it's raining", "i want to go outside", "no rain",
+      "can we go out", "rainy", "wet", "puddles", "i like rain", "boots",
+      "umbrella", "i want to splash", "my umbrella"] },
+  { name: "snow_day", w: { toddler: 0.8, preschool: 1, older: 1 },
+    adult: ["it's snowing", "look at the snow", "snow day", "no school today",
+      "let's build a snowman", "it's cold out", "bundle up", "warm clothes",
+      "want to play in the snow", "hot chocolate milk after"],
+    child: ["snow", "it's snowing", "i want to play in it", "cold", "snowman",
+      "my hands are cold", "i love snow", "chocolate milk", "can we go out",
+      "snow day", "wet", "my {cloth} is wet", "snowball"] },
+  { name: "restaurant", w: { toddler: 0.8, preschool: 1.2, older: 1.5 },
+    adult: ["sit in your chair", "we're at a restaurant", "use your inside voice",
+      "what do you want", "the food is coming", "be patient",
+      "color while we wait", "good waiting", "here comes the food",
+      "say thank you", "menu time", "what looks good"],
+    child: ["i want {food}", "i'm hungry", "where's my food", "i want to go",
+      "done", "i don't want to sit", "down", "i want {drink}", "yucky",
+      "i don't like it", "can i have {snack}", "i want {food} please"] },
+  { name: "zoo_trip", w: { toddler: 1.2, preschool: 1.5, older: 1.2 },
+    adult: ["look at the {animal}", "the {animal} is {desc}", "see the {animal}",
+      "what's the {animal} doing", "the {animal} says {sound}", "we're at the zoo",
+      "which {animal} next", "your favorite {animal}", "the {animal} is {action}ing"],
+    child: ["a {animal}", "{animal}!", "big {animal}", "i see the {animal}",
+      "my favorite", "the {animal} is {desc}", "more {animal}",
+      "i want to see the {animal}", "{animal} {sound}", "zoo", "the {animal} is {action}ing"] },
+  { name: "pool_beach", w: { toddler: 1, preschool: 1.5, older: 1.2 },
+    adult: ["the water is {desc}", "hold my hand", "stay close", "don't go deep",
+      "splash", "kick your feet", "wear your {cloth}", "sunscreen on",
+      "it's slippery", "one more dip", "water wings on"],
+    child: ["water", "splash", "i want to swim", "the water is {desc}", "cold",
+      "wet", "my {cloth}", "again", "i'm swimming", "look at me", "i can swim",
+      "the pool", "beach", "too cold"] },
+  { name: "visitor_over", w: { toddler: 1, preschool: 1.2, older: 1 },
+    adult: ["we have a visitor", "say hi", "{person} is here", "be polite",
+      "{person} came to see you", "show {person} your {toy}",
+      "{person} brought {food}", "company is here", "{relative} is here"],
+    child: ["hi", "hello", "who's that", "{person}", "my {toy}", "look",
+      "come see", "{person} is here", "stay", "don't go", "i like {person}",
+      "hi {relative}"] },
+  { name: "holiday_meal", w: { toddler: 0.8, preschool: 1, older: 1.2 },
+    adult: ["it's a special dinner", "the whole family is here", "everyone is here",
+      "say hi to {person}", "{relative} is here", "we're eating together",
+      "more {food}", "save room for {food}", "it's a big meal",
+      "{relative} cooked it", "all the {person} are here"],
+    child: ["{person}!", "everyone", "i want {food}", "cake", "more {food}",
+      "i'm full", "i don't want it", "can i have {food}", "yummy",
+      "lots of people", "{relative} is here", "special {food}"] },
+];
+
+// caregiver recast/expansion after a child turn — the most common shape of
+// child-directed speech: child says a noun, adult expands it. {offer} here is
+// the child's own word.
+const EXPANSIONS = [
+  "a {offer}", "yes, a {offer}", "{offer}!", "that's right, a {offer}",
+  "a {desc} {offer}", "yes! a {desc} {offer}", "{offer}, good", "the {offer} is {desc}",
+  "you said {offer}", "yes, the {offer}", "{offer}? it's a {offer}",
+  "i see the {offer}", "you want the {offer}", "{offer}. a {desc} {offer}",
+];
+
+// adult narrating a routine in steps
+const NARRATION = [
+  "first we {action}", "then we {action}", "now we {action}", "next we {action}",
+  "and then {action}", "after that we {action}", "first {action}, then {action}",
+  "now the {thing}", "next the {thing}",
 ];
 
 // ---------- dialogue assembly ----------
@@ -603,7 +1178,9 @@ const SPECIAL = {
   },
 };
 
-function expand(template, echo) {
+// track: "adult" records an offered word for child echo; "child" records the
+// child's own content word for caregiver expansion.
+function expand(template, echo, track = "adult") {
   return template.replace(/\{(\w+)\}/g, (m, k) => {
     if (k === "sound") return SPECIAL.sound(echo);
     if (k === "oneword") return SPECIAL.oneword();
@@ -611,9 +1188,9 @@ function expand(template, echo) {
     const p = P[k];
     if (!p) return m;
     const w = wpick(p);
-    if (/^(food|snack|drink|animal|toy|thing|cloth|vehicle|body|place)$/.test(k)) {
+    if (/^(food|snack|drink|animal|toy|thing|cloth|vehicle|body|place|media|utensil|hygiene|nature|room)$/.test(k)) {
       if (echo) {
-        echo.word = w;
+        if (track === "adult") echo.word = w; else echo.childWord = w;
         if (k === "animal") echo.animal = w;
       }
     }
@@ -627,12 +1204,18 @@ function pickWeighted(list, scenarioBoost) {
   return wpick(items);
 }
 
-function childTurn(band, scenario, echo) {
+// band-weighted pick over context objects that carry per-band `w`
+function pickContext(list, band) {
+  return wpick(list.map((c) => [c, c.w?.[band] ?? 1]));
+}
+
+function childTurn(band, ctx, echo) {
   const b = BANDS[band];
   // partner echo: repeat part of the adult's last offer
   if (echo?.word && rng() < b.echoP) {
     const w = echo.word;
     echo.word = null;
+    echo.childWord = w;
     const forms = {
       toddler: [w, `${w}!`, `want ${w}`, `more ${w}`, `my ${w}`, `${w} please`, `yeah ${w}`, `the ${w}`],
       preschool: [w, `want ${w}`, `more ${w}`, `my ${w}`, `i want ${w}`, `the ${w}`, `yeah ${w}`, `no ${w}`],
@@ -640,35 +1223,51 @@ function childTurn(band, scenario, echo) {
     };
     return pick(forms[band]);
   }
-  if (rng() < b.shortP) return expand(wpick(CHILD_SHORT), echo);
-  const t = pickWeighted(CHILD[band], scenario?.child);
-  return expand(t, echo);
+  // context-specific child lines (time of day / occasion / routine)
+  if (ctx.childExtra.length && rng() < 0.22) return expand(pick(ctx.childExtra), echo, "child");
+  if (rng() < b.shortP) return expand(wpick(CHILD_SHORT), echo, "child");
+  const t = pickWeighted(CHILD[band], ctx.scenario?.child);
+  return expand(t, echo, "child");
 }
 
-function adultTurn(scenario, echo) {
+function adultTurn(ctx, echo) {
   const r = rng();
   let t;
-  if (scenario && r < 0.18 && scenario.adult?.length) t = pick(scenario.adult);
-  else if (r < 0.52) t = wpick(ADULT_SHORT);
-  else if (r < 0.82) t = wpick(ADULT_QUESTIONS);
+  if (ctx.adultExtra.length && r < 0.28) t = pick(ctx.adultExtra);
+  else if (r < 0.55) t = wpick(ADULT_SHORT);
+  else if (r < 0.85) t = wpick(ADULT_QUESTIONS);
   else t = wpick(ADULT_UTTERANCES);
   return expand(t, echo);
 }
 
 function dialogue(band) {
   const b = BANDS[band];
-  const scenario = rng() < 0.65 ? pick(SCENARIOS) : null;
+  const scenario = rng() < 0.6 ? pick(SCENARIOS) : null;
+  const time = pickContext(TIMES_OF_DAY, band);
+  const occasion = rng() < 0.35 ? pickContext(OCCASIONS, band) : null;
+  const ctx = {
+    scenario,
+    adultExtra: [scenario, time, occasion].filter(Boolean).flatMap((c) => c.adult ?? []),
+    childExtra: [scenario, time, occasion].filter(Boolean).flatMap((c) => c.child ?? []),
+  };
   const n = b.minEx + Math.floor(rng() * (b.maxEx - b.minEx + 1));
   const turns = [];
-  const echo = { word: null, animal: null };
+  const echo = { word: null, animal: null, childWord: null };
   let childFirst = rng() < 0.2;
   for (let i = 0; i < n; i++) {
     if (!childFirst || i > 0) {
-      turns.push({ s: "a", t: adultTurn(scenario, echo) });
+      turns.push({ s: "a", t: adultTurn(ctx, echo) });
+      // occasional adult narration second turn during routines
+      if (rng() < 0.1) turns.push({ s: "a", t: expand(pick(NARRATION), echo) });
     }
     childFirst = false;
-    turns.push({ s: "c", t: childTurn(band, scenario, echo) });
-    if (rng() < 0.18) turns.push({ s: "c", t: expand(wpick(CHILD_SHORT), echo) }); // double child turn
+    turns.push({ s: "c", t: childTurn(band, ctx, echo) });
+    // caregiver expansion of the child's own content word
+    if (echo.childWord && rng() < 0.3) {
+      turns.push({ s: "a", t: expand(pick(EXPANSIONS), { word: echo.childWord }) });
+      echo.childWord = null;
+    }
+    if (rng() < 0.18) turns.push({ s: "c", t: expand(wpick(CHILD_SHORT), echo, "child") }); // double child turn
   }
   return { band, turns };
 }
