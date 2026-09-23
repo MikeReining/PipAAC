@@ -87,6 +87,7 @@ Hands must never be drawn as realistic 5-finger spider hands (visual noise at 48
 | :--- | :--- | :--- | :--- |
 | **`resting_ball`** | `--hand resting_ball` | Featureless smooth white circle ("visual null") | Passive arms at sides, swinging stride in locomotion (`run`, `walk`). |
 | **`pointing_mitten`** | `--hand pointing_mitten` | Curled fist + single extended index pointer finger | Deictics & pointing (`I`, `you`, `he`, `she`, `it`, `look`). |
+| **`asl_v`** | `--hand asl_v` | Two extended fingers in a clear 'V' shape (ASL V / peace sign) | Visual perception, directed eye gaze (`see`). Clinically grounded; avoids collision with single-finger deictics. |
 | **`grip_mitten`** | `--hand grip_mitten` | Thumb opposed to curled mitten palm wrapping around object | Grasping toys or tools (`play` car, `drink` cup, `hold`). |
 | **`pincer_grasp`** | `--hand pincer_grasp` | Thumb tip meeting index fingertip | Precision fine motor (`pinch`, `pick`, `small`, `coin`). |
 | **`open_palm_up`** | `--hand open_palm_up` | Two cupped palms extended forward/upward | Receptive gestures (`need`, `give`, `help`, `want`). |
@@ -94,9 +95,9 @@ Hands must never be drawn as realistic 5-finger spider hands (visual noise at 48
 
 ---
 
-## 3. Reverse-Engineering Proloquo: Physical Anchors for Abstract Verbs
+## 3. Reverse-Engineering Proloquo: Physical Anchors & Creative Visual Metaphors
 
-Abstract verbs fail when represented solely by stick figure posture. Naked posture leads to ambiguous gestures (e.g. waving hello for `come`) or static poses (hands on hips for `do`). Proloquo and industry-standard AAC solve this using **Physical Anchors / Crutches**:
+Abstract verbs fail when represented solely by stick figure posture. Naked posture leads to ambiguous gestures (e.g. waving hello for `come`) or static poses (hands on hips for `do`). Proloquo and industry-standard AAC solve this using **Physical Anchors, Familiar Props, and Creative Visual Metaphors**:
 
 1. **Directional Vector (`directional_arrow`):**
    * *`come` vs `go`:* `go` is walking to the right with a forward arrow. `come` is walking toward the viewer/home with an inward arrival arrow. Naked waving is prohibited.
@@ -108,6 +109,12 @@ Abstract verbs fail when represented solely by stick figure posture. Naked postu
    * *`make` / `build`:* Two distinct toy blocks snapping together with geometrically matching studs and sockets. Flat-to-socket misfits are prohibited.
 5. **Receptive Cupping (`receiving_palms`):**
    * *`need`:* Two cupped palms held outward to receive. Vertical prayer hands are prohibited.
+6. **Cognitive / Mental Cloud (`thought_cloud`):**
+   * *`think`:* A classic puffy thought cloud / bubble floating overhead above the figure. Completely eliminates gesture collisions with temple/ear/face touches. Instant recognition at 48×48px.
+7. **Relatable Everyday Reward Anchors (`relatable_target`):**
+   * *`want` / `get`:* Highly relatable, child-centric goal objects (e.g. cookies on a plate, cookie jar). Children understand wanting/getting real treats instantly; abstract reaching in a vacuum is ambiguous.
+8. **ASL as a First-Principles Disambiguation Anchor:**
+   * When two related verbs or gestures threaten to collide at 48×48px (e.g. `see` vs `look`, or `tell` vs `sing`), consult American Sign Language (ASL). In ASL, `see` uses a two-finger 'V' handshape pointing at or from the eyes. This provides real clinical grounding, avoids artificial poses, aids signing therapists/parents, and creates an unmistakable silhouette distinct from `look` (visor brow).
 
 ---
 
@@ -140,6 +147,8 @@ All generation runs through `scripts/art/gen.mjs` against the frozen style bundl
 ### The Cardinal Law: Give It a Clear, Simple Prompt and Get Out of the Way
 * **Over-prompting is the enemy of anatomy:** Stacking micro-anatomical directives (e.g., commanding a specific finger curl, wrist rotation, and palm orientation while simultaneously describing a complex prop interaction) overwhelms the diffusion model. The model contorts itself trying to satisfy contradictory micro-constraints, resulting in catastrophic defects like sprouting two arms from the same shoulder.
 * **Trust the model with a single, crisp action:** State the concept, the framing lens, the torso color, and **one concise natural action sentence**. Let the action naturally dictate the pose and grip.
+* **Creative Visual Metaphor Beats Strained Posture:** When simple stick figure posture alone is ambiguous, difficult to render cleanly, or collides with an existing neighbor on the board, use a clean visual metaphor (a thought cloud above the head, cookies on a plate, or an established ASL handshape). These are instantly decoded by children and keep the prompt short and crisp.
+* **Feedback ≠ Prompt Bloat:** Giving feedback on what felt wrong does *not* mean dumping all that critique into the prompt. Keep the prompt minimal and clean; re-rolling a clean prompt beats over-specifying every time.
 * **No negative prompt laundry lists:** Negative prompt-stuffing forces the model into latent edge cases and produces sterile, creepy mannequins.
 * **The 3 reference images carry the style, line weight, and character identity.**
 

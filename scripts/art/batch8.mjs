@@ -9,7 +9,7 @@ const BATCH = [
       "We are trying to teach a child the concept of: see.",
       "Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.",
       "Do not include any text in the image.",
-      "Close-up shot of a stick figure from the chest up with a solid green torso. The stick figure has clear open eyes and is raising one hand with a single extended index pointer finger pointing directly at its eye.",
+      "Close-up shot of a stick figure from the chest up with a solid green torso. The stick figure is raising one hand in a two-finger V shape pointing at its eyes.",
     ].join("\n"),
   },
   {
@@ -45,7 +45,7 @@ const BATCH = [
       "We are trying to teach a child the concept of: think.",
       "Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.",
       "Do not include any text in the image.",
-      "Close-up shot of a stick figure from the chest up with a solid green torso. The stick figure has a thoughtful, curious facial expression with one index finger resting thoughtfully against its temple.",
+      "Close-up shot of a stick figure from the chest up with a solid green torso. The stick figure is looking up thoughtfully at a puffy thought bubble cloud floating above its head.",
     ].join("\n"),
   },
   {

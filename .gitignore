@@ -87,7 +87,7 @@ temp/
 cache/
 out/
 people/
-assets/catalog/audio/**/*.mp3
+assets/catalog/audio/
 *.wav
 *.mp4
 *.webm

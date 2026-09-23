@@ -65,6 +65,9 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
 
   const handTest = buildPrompt({ word: "look", torso: "green", framing: "bust", hand: "pointing_mitten" });
   assert.ok(handTest.includes("One hand is in a pointing mitten pose with a single extended pointer finger."));
+
+  const aslVTest = buildPrompt({ word: "see", torso: "green", framing: "bust", hand: "asl_v" });
+  assert.ok(aslVTest.includes("One hand has two extended fingers in a clear V shape (ASL V sign) pointing toward the eyes."));
 });
 
 test("loadStyleRefs loads exactly 3 style references from assets/style-refs/pip-v1", () => {

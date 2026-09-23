@@ -138,6 +138,7 @@ export const VALID_SOCIAL_SCALES = new Set(["zero", "solo", "pair", "group"]);
 export const VALID_HAND_MODES = new Set([
   "resting_ball",
   "pointing_mitten",
+  "asl_v",
   "grip_mitten",
   "pincer_grasp",
   "open_palm_up",
@@ -150,6 +151,8 @@ export function formatHandMode(mode) {
       return "The stick figure's hands are simple featureless circles with no fingers.";
     case "pointing_mitten":
       return "One hand is in a pointing mitten pose with a single extended pointer finger.";
+    case "asl_v":
+      return "One hand has two extended fingers in a clear V shape (ASL V sign) pointing toward the eyes.";
     case "grip_mitten":
       return "The hands are mitten-shaped grips holding the object.";
     case "pincer_grasp":
