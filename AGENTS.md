@@ -20,7 +20,6 @@ files touched, proof state, and next action.
 | --- | --- |
 | New feature, product idea, rough spec | `docs/workflows/SSOT_Founder_Input_Workflow.md` + `docs/workflows/SSOT_Feature_Workflow.md` + `docs/product/Design_Invariants.md` |
 | Sprint or phase execution | `docs/phases/README.md` (§ Next + live index) + `docs/operations/Execution-Playbook.md` |
-| Completed phase archive or stale phase docs | `docs/operations/Execution-Playbook.md` § Phase Archive + `docs/archive/phases/README.md` |
 | Bug report or broken workflow | `docs/operations/Debugger.md` |
 | Running tests, proof selection, the full wall | `docs/operations/Testing.md` |
 | Code cleanup, maintainability, file hygiene | `docs/operations/code-maintainer/SKILL.md` |
@@ -33,22 +32,17 @@ files touched, proof state, and next action.
 | Stack, commands, local setup | `docs/operations/TechStack.md` |
 | Repo conventions | `docs/operations/Contributing.md` |
 | Commits, Codex handoff queue, Cursor git automation | `docs/operations/Execution-Playbook.md` § Commits & Codex Commit Handoff |
-| Doc claim trustworthiness, BUILT/DECIDED/PROPOSED tags | `docs/operations/Doc_Claim_Taxonomy.md` |
 | Repo layout | `docs/FOLDER_MAP.md` |
-| Working rules and doc archive boundary | `docs/WORKING_RULES.md` |
+| Working rules | `docs/WORKING_RULES.md` |
 | Local preview / wrangler / localhost | `docs/operations/TechStack.md` § Local preview |
 
-## Doc claims
+## Docs
 
-Untagged prose that asserts how the system works is **untrusted by default**. Tag
-durable claims **BUILT** (true now + `file:line` or commit sha), **DECIDED**
-(founder ruling + date; may be unbuilt), or **PROPOSED** (idea only). Full
-taxonomy: `docs/operations/Doc_Claim_Taxonomy.md`.
+Code is the truth for how the system works. Docs hold intent, decisions, and
+the to-do list. Git history is the archive: delete done docs, don't move them.
 
 **Never assert system behavior from a grep count or a code comment. Trace from an
 entrypoint and cite the call path.**
-
-Citation lint: **BUILT** `scripts/check_doc_citations.mjs` (wired into `npm run check`).
 
 ## Codex Commit Handoff
 

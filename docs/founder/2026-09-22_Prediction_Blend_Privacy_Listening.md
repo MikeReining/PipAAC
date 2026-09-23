@@ -47,7 +47,7 @@ below.
   tap (`strftime(..., 'unixepoch')` in the same file). Measured on
   2026-09-22: an 8:20 tap reads as hour 8 in UTC, 13 in Chicago, 6 in
   Berlin. Outside UTC the signal boosts the wrong time of day. Fix routed
-  to `docs/archive/phases/006_Prediction_Engine.md` slice 1.
+  to phase 006 (in git history) slice 1.
 - The event log has no sentence boundary, and the strip logs no
   impressions, so nothing can be learned or measured yet.
 - The old blend (`0.55·P_Jev + 0.35·P_local`) adds numbers on different
@@ -77,7 +77,7 @@ below.
 
 | Phase | Doc |
 | --- | --- |
-| 006 — Prediction engine (time fix, logging, blend, learning, Jev) | `docs/archive/phases/006_Prediction_Engine.md` |
+| 006 — Prediction engine (time fix, logging, blend, learning, Jev) | phase 006 (in git history) |
 | 007 — Occasions (breakfast experiment, then the occasion prior) | `docs/phases/007_Occasions.md` |
 | 008 — Partner listening (settings, Listen key, on-device speech) | `docs/phases/008_Partner_Listening.md` |
 

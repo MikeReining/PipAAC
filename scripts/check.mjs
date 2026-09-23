@@ -9,9 +9,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 
 const GATES = [
   { name: "test", cmd: "npm", args: ["test"] },
-  { name: "lint:archive-links", cmd: "npm", args: ["run", "lint:archive-links"] },
   { name: "lint:phase-freshness", cmd: "npm", args: ["run", "lint:phase-freshness"] },
-  { name: "lint:doc-citations", cmd: "npm", args: ["run", "lint:doc-citations"] },
   { name: "lint:lockfile-sync", cmd: "npm", args: ["run", "lint:lockfile-sync"] },
   { name: "regression_law_meta_gate", cmd: process.execPath, args: ["scripts/regression_law_meta_gate.mjs"] },
   { name: "churn_report", cmd: process.execPath, args: ["scripts/churn_report.mjs"] },

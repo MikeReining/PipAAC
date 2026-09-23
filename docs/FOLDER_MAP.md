@@ -25,8 +25,6 @@ PipAAC/
       README.md
     backlog/
       README.md
-    archive/
-      phases/
     product/
       SSOT.md
       Design_Invariants.md

@@ -34,12 +34,8 @@ Not allowed as invariants:
 
 Full policy: `docs/product/Design_Invariants.md`.
 
-## Doc archive boundary
+## Done docs
 
-`docs/archive/` holds closed phases and retired plans. Live execution only in
-`docs/phases/`. Do not leave tombstones in the live index.
-
-## Claim hygiene
-
-Tag durable claims per `docs/operations/Doc_Claim_Taxonomy.md`. Untagged
-assertions about how the system works are untrusted by default.
+Git history is the archive. Delete closed phases and retired plans; do not
+move them. Live execution only in `docs/phases/`. Do not leave tombstones in
+the live index.

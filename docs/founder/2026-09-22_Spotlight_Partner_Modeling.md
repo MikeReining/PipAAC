@@ -5,7 +5,7 @@ Source: founder review of preliminary phase 013 in a working session with
 an agent, 2026-09-22.
 Intake workflow: `docs/workflows/SSOT_Founder_Input_Workflow.md`.
 Nothing in this file is the truth owner. The phase built all slices and
-archived to `docs/archive/phases/013_Spotlight_And_Partner_Modeling.md`;
+archived to phase 013 (in git history);
 living claims live in `docs/product/Design_System.md` § Attention layer.
 
 ---

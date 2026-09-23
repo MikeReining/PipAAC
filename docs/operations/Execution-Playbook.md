@@ -248,50 +248,39 @@ Two findings, worth more than the tool that produced them:
 Deslop's existing rule — *"fix dead code introduced by the slice"* — stands
 unchanged and needs no instrument.
 
-## Phase Archive
+## Phase Closeout
 
-`docs/phases/` is **live work only**. History has exactly one home:
-[`docs/archive/phases/README.md`](../archive/phases/README.md).
+`docs/phases/` is **live work only**. Git history is the archive: a finished
+phase doc is deleted, not moved.
 
 ### Do this on closeout (required)
 
-When a phase reaches `Status: Complete` (or Superseded / Archived), finish
-closeout in this order:
+When a phase reaches `Status: Complete` (or Superseded), finish closeout in
+this order:
 
 1. Confirm exit gates are checked or explicitly waived in the phase closeout.
 2. **Extract** durable product truth into `docs/product/SSOT.md` or the owning
-   product contract (code is not a home for invariants).
+   product contract.
 3. **Sever** every live inbound link to the phase file — repoint at the living
-   owner, or demote to plain text (`104 (archived)`). After this step, no live
-   doc under `docs/` (except the archive tree and the live phases README’s
-   single link to the archive **index**) points at the file being archived.
-4. `git mv` the completed phase doc to `docs/archive/phases/<same filename>`.
-5. **Add one row** to [`docs/archive/phases/README.md`](../archive/phases/README.md)
-   with: phase link, archive date, final status, proof, successor owner.
-6. **Remove** the phase’s row from the live index in `docs/phases/README.md`.
+   owner, or demote to plain text (`phase 104, in git history`).
+4. `git rm` the phase doc. The closeout commit message names the phase, final
+   status, and proof, so `git log -- docs/phases/<file>` finds it.
+5. **Remove** the phase's row from the live index in `docs/phases/README.md`.
    If § Next named it as the critical path, replace that cell with the new
-   next slice — do not leave a “done” narrative behind.
-7. Run `rg "docs/phases/<archived file>"` and confirm no stale live route
-   remains, or name the explicit reason in closeout.
-8. Run `npm run lint:archive-links` and `npm run lint:phase-freshness`.
+   next slice — do not leave a "done" narrative behind.
+6. Run `rg "docs/phases/<deleted file>"` and confirm no stale live route
+   remains.
+7. Run `npm run lint:phase-freshness`.
 
 ### Do not do this (common agent failure)
 
-- **Do not** add an “Archived / Superseded”, “What shipped”, or closeout essay
+- **Do not** add an "Archived / Superseded", "What shipped", or closeout essay
   to `docs/phases/README.md`. That file is a queue + thin live index, not a
   changelog.
 - **Do not** leave a completed phase doc in `docs/phases/` with a pointer /
-  tombstone / “see archive” stub.
+  tombstone stub.
 - **Do not** paste session cold-start narratives into the live README when a
-  phase finishes — update § Next in place (replace), and put history in the
-  archive table row.
-- **Do not** maintain a second archive table anywhere under `docs/phases/`.
-
-If you are unsure where a completed phase goes: **archive README row**, never
-the live phases README.
-
-Full link-sever rules: `docs/WORKING_RULES.md` § Documentation Archive
-Boundary.
+  phase finishes — update § Next in place (replace); history lives in git.
 
 ## Advisor Stops
 

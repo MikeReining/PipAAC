@@ -4,13 +4,12 @@
 // Root cause of doc pile-up (2026-07-11 audit): archival was coupled to phase
 // "closeout" events that kept getting deferred, so DONE work lingered in
 // docs/phases/ for weeks (e.g. 56/57 sat "subsumed by 62" long after 62 shipped).
-// lint:archive-links only checks link *direction*; nothing caught the drift.
+// Nothing caught the drift.
 //
 // This gate fails `npm run check` when a doc in docs/phases/ has a DONE Status
 // (Complete / Superseded / Shipped / Archived) but still lives there. Fix by
-// archiving it (extract -> sever -> move; docs/WORKING_RULES.md § Documentation
-// Archive Boundary), OR — if it must stay because it still owns a live spec —
-// add a `Keep-in-phases: <reason>` line to the doc to justify the retention.
+// deleting it (git history is the archive), OR — if it must stay because it
+// still owns a live spec — add a `Keep-in-phases: <reason>` line to the doc.
 //
 // Run: npm run lint:phase-freshness  (wired into `npm run check`).
 
@@ -46,9 +45,8 @@ if (offenders.length) {
   );
   for (const o of offenders) console.error(`  ${o.name} — Status: "${o.lead}"`);
   console.error(
-    `\nArchive it (extract -> sever -> move; docs/WORKING_RULES.md § Documentation` +
-      ` Archive Boundary), or add a "Keep-in-phases: <reason>" line if it must stay` +
-      ` (e.g. it still owns a live spec).\n`,
+    `\nDelete it (git history is the archive), or add a "Keep-in-phases: <reason>"` +
+      ` line if it must stay (e.g. it still owns a live spec).\n`,
   );
   process.exit(1);
 }

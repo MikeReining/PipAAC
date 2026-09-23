@@ -110,7 +110,7 @@ Grammar roles (border / label-strip fill):
 
 **BUILT** (`public/board.js` `layerMark`; state in
 `public/shared/spotlight.mjs`; phase:
-`docs/archive/phases/013_Spotlight_And_Partner_Modeling.md`).
+phase 013 (in git history)).
 
 "Brighten some words, dim the rest, disable nothing" is one layer — one
 mark pass every use paints through:

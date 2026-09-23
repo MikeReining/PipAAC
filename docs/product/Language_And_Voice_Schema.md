@@ -3,7 +3,7 @@
 **DECIDED 2026-09-22.** Accepted the same day it was proposed, with the
 amendments in § 12. Playback in § 7 was confirmed in review the same day.
 Phase 002 — the critical path when this schema was accepted — is complete
-and archived (`002_Core_Board_And_Customize.md` in `docs/archive/phases/`).
+and archived (phase 002, in git history).
 
 Studied against WorkbookBench's global media catalog: one language-independent
 sense, localized labels, one shared picture, audio that does not cross
@@ -1106,8 +1106,7 @@ Accepted in founder review the day it was proposed. The amendments:
 
 Founder question: is the core built correctly for German, Spanish, and
 French? Answer: **the schema is; the runtime and a few seams are not yet.**
-Fixes are routed to `docs/archive/phases/003b_Groups_Language_Followup.md`
-(complete) and `docs/archive/phases/004_Keyboard.md` (complete).
+Fixes were routed to phases 003b and 004 (both complete, in git history).
 
 ### 13.1 What is already right
 

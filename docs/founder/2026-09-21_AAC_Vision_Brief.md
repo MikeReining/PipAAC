@@ -39,7 +39,7 @@ Intake workflow: `docs/workflows/SSOT_Founder_Input_Workflow.md`.
   - Engineering invariants: `docs/product/Design_Invariants.md`
 
 - **Proof scenario:**
-  Verification that `docs/strategy/Vision.md` comprehensively details the scientific, clinical, and architectural model, passes citation lint (`scripts/check_doc_citations.mjs`), and is reflected in `docs/product/SSOT.md`.
+  Verification that `docs/strategy/Vision.md` comprehensively details the scientific, clinical, and architectural model, and is reflected in `docs/product/SSOT.md`.
 
 - **Blocking questions:**
   None. The core thesis and clinical requirements are well-defined.

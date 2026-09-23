@@ -8,10 +8,8 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const GATES = [
-  { name: "lint:archive-links", cmd: process.execPath, args: ["scripts/check_archive_links.mjs"] },
   { name: "lint:phase-freshness", cmd: process.execPath, args: ["scripts/check_phase_doc_freshness.mjs"] },
   { name: "lint:lockfile-sync", cmd: process.execPath, args: ["scripts/check_lockfile_sync.mjs"] },
-  { name: "lint:doc-citations", cmd: process.execPath, args: ["scripts/check_doc_citations.mjs"] },
   { name: "lint:locale-literals", cmd: process.execPath, args: ["scripts/check_locale_literals.mjs"] },
   { name: "regression_law_meta_gate", cmd: process.execPath, args: ["scripts/regression_law_meta_gate.mjs"] },
   { name: "guard-liveness", cmd: "bash", args: ["scripts/check-test-guard-liveness.sh"] },

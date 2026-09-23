@@ -20,7 +20,7 @@ Every phase doc answers two questions, in order.
 | Question | Destination | Meaning |
 | --- | --- | --- |
 | Ready to execute? No — never decided, or decided and held | **`docs/backlog/`** (here) | Parked. Not work. |
-| Decided, and **discharged**? Yes | `docs/archive/phases/` | Built, or explicitly dropped. |
+| Decided, and **discharged**? Yes | Deleted (git history) | Built, or explicitly dropped. |
 | Decided, executing | `docs/phases/` | Live. Its README row names the literal next slice. |
 
 Founder rule: **a phase is done when its decided work is built or explicitly
@@ -28,9 +28,9 @@ dropped.** Deferred and optional items never hold a doc open.
 
 ## Backlog is not the archive
 
-Archive is a **link-sink**: live docs must not depend on archived docs for truth
-(`npm run lint:archive-links`). Backlog is **not** a link-sink — `AGENTS.md` and
-live docs may link here when a backlog doc still holds a durable ruling.
+Discharged docs are deleted; git history is the archive. Backlog docs stay —
+`AGENTS.md` and live docs may link here when a backlog doc still holds a
+durable ruling.
 
 ## What's here
 

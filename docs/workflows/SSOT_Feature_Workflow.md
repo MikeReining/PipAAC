@@ -55,7 +55,7 @@ the surface is automated.
 
 | Surface | Truth owner | CI gate |
 | --- | --- | --- |
-| Agent router | `AGENTS.md` | `lint:doc-citations` + human review |
+| Agent router | `AGENTS.md` | human review |
 | Product vocabulary | `docs/product/SSOT.md` | human review + `scripts/health/doc_drift_scan.mjs` |
 | Repo conventions | `docs/operations/Contributing.md` | human review |
 | Phase / slice scope | owning `docs/phases/*.md` | `lint:phase-freshness` |
@@ -84,7 +84,7 @@ the rule is known.
 | Slice touches | Required before merge |
 | --- | --- |
 | User-facing copy / onboarding | Truth-owner unit test + surface guard when automated |
-| `AGENTS.md` routing | `lint:doc-citations` + `doc_drift_scan.mjs` on routed docs |
+| `AGENTS.md` routing | `doc_drift_scan.mjs` on routed docs |
 | Phase “Complete” | Exit gates include CI commands — **not prose alone** |
 | Harness / scripts | `npm test` + `npm run check:fast` during iteration; `npm run check` at closeout |
 
@@ -201,8 +201,7 @@ The ban should be specific enough to become a test or lint rule.
    policy in phase archives.
 2. **`doc_drift_scan.mjs`** — fails on missing repo paths and `npm run` scripts cited in docs.
 3. **Truth owner tests** — extend the pattern for new copy owners.
-4. **Archive honestly** — move superseded phase prose to `docs/archive/`; link only via
-   `docs/archive/phases/README.md`.
+4. **Delete honestly** — delete superseded phase prose; git history is the archive.
 
 When dogfood finds lying copy: fix the **truth owner and CI gate first**, then update routed
 docs. Never “document the workaround” without deleting the lie.

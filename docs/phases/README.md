@@ -4,7 +4,8 @@ Live product work only. Every phase doc lands in exactly one place:
 
 | Question | Destination |
 | --- | --- |
-| Not executing (never decided, on hold, or discharged) | [`docs/backlog/`](../backlog/README.md) or [`docs/archive/phases/`](../archive/phases/README.md) |
+| Not executing (never decided or on hold) | [`docs/backlog/`](../backlog/README.md) |
+| Discharged (built or dropped) | Deleted — git history is the archive |
 | Executing | **here** — named in § Next or the live index below |
 
 **This README is a queue, not an encyclopedia.** Status detail lives in each phase doc's banner. Sequence map: `docs/strategy/Roadmap.md`.
@@ -37,5 +38,3 @@ Executing phases only. Each row names the **next** slice.
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
-
-Archive index: [`docs/archive/phases/README.md`](../archive/phases/README.md)

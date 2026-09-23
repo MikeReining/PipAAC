@@ -1,7 +1,7 @@
 # Phase 008 — Partner Listening
 
 **Status:** Ready to execute. Not started. Start after
-`docs/archive/phases/006_Prediction_Engine.md` slice 3 (the `echo` feature exists
+phase 006 (in git history) slice 3 (the `echo` feature exists
 there with value 0).
 
 **DECIDED 2026-09-22** (founder: "the device is not always listening …

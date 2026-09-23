@@ -7,7 +7,7 @@ Owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 Foundational vision: `docs/strategy/Vision.md`.
 Durable facts map: `docs/product/SSOT.md`.
 Design invariants: `docs/product/Design_Invariants.md`.
-Execution: `docs/archive/phases/006_Prediction_Engine.md`, `docs/phases/007_Occasions.md`,
+Execution: phase 006 (in git history), `docs/phases/007_Occasions.md`,
 `docs/phases/008_Partner_Listening.md`.
 
 ---
@@ -256,7 +256,7 @@ before any network call.
 **DECIDED 2026-09-22** (not built). Replaces the 2026-09-21 weighted sum
 (`0.55·P_Jev + 0.35·P_local + 0.10·grammar`), which added numbers on
 different scales and could not let either engine veto. Execution:
-`docs/archive/phases/006_Prediction_Engine.md`.
+phase 006 (in git history).
 
 ### 5.1 Separate evidence, multiplied
 
@@ -290,10 +290,10 @@ most specific first:
 
 Shortlist size starts at 16 and is measured, not assumed: TypeSafe advises
 longer option lists are fine (Choice accepts up to 255), the 2026-09-22
-spec assumed shorter is better. `docs/archive/phases/006_Prediction_Engine.md`
+spec assumed shorter is better. phase 006 (in git history)
 slice 5 runs 8 / 16 / 32 on the simulation.
 
-**Keyboard-mode exception.** **BUILT** (`9ca4653`). Decided 2026-09-22. While the keyboard is open the grid is hidden, so there is nothing to halo. In keyboard mode only, after a committed word, core continuations may take strip slots, ranked with learner pairs (ids only). Cap stays 4. Spec: `docs/archive/phases/004_Keyboard.md` slice 7.
+**Keyboard-mode exception.** **BUILT** (`9ca4653`). Decided 2026-09-22. While the keyboard is open the grid is hidden, so there is nothing to halo. In keyboard mode only, after a committed word, core continuations may take strip slots, ranked with learner pairs (ids only). Cap stays 4. Spec: phase 004 (in git history) slice 7.
 
 Stage 2 — Jev rerank (sharing on, online, and something to judge): § 3.
 

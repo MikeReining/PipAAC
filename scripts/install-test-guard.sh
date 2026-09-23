@@ -2,7 +2,7 @@
 # Idempotent installer for the repo-scoped test-guard PATH shim. Appends the
 # same guarded block to every zsh startup file that can re-prepend PATH
 # ahead of it, because on this machine .zshenv alone was proven insufficient
-# (docs/archive/phases/118_Test_Infrastructure_Upgrade.md §7 follow-up, S118-S03):
+# (S118-S03 follow-up):
 #
 #   .zshenv   sourced by EVERY zsh invocation (interactive or not, login or
 #             not) — covers the baseline case.

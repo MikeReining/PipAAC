@@ -6,12 +6,12 @@ Sequence map only. Live execution scope is the phase doc, not this file.
 
 - Shared Ikiro dev harness, health Worker stub, CI green wall.
 - Proof: `npm run check:fast` after `npm ci`.
-- Archive: `docs/archive/phases/001_Harness_Bootstrap.md`.
+- Phase 001 is in git history.
 
 ## Phase 002 — Core board and the Cooper proof (complete)
 
 **DECIDED 2026-09-22.** Revised the same day. All three slices built and
-proven; archived (`002_Core_Board_And_Customize.md` in `docs/archive/phases/`).
+proven; archived (phase 002, in git history).
 
 Order, and it is the only order:
 
@@ -26,7 +26,7 @@ picture library (phase 010); the labels themselves already ship.
 
 **DECIDED 2026-09-22** (not built). Owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 
-1. 006 — Prediction engine: fix local time, track sentences, log impressions and measure, the learned local model, on-device learning, then Jev behind the sharing setting (on by default) (`docs/archive/phases/006_Prediction_Engine.md`).
+1. 006 — Prediction engine: fix local time, track sentences, log impressions and measure, the learned local model, on-device learning, then Jev behind the sharing setting (on by default) (phase 006, in git history).
 2. 007 — Occasions: breakfast experiment (LLM vs. Jev), then an occasion prior and each child's own windows (`docs/phases/007_Occasions.md`).
 3. 008 — Partner listening: setting, Listen key, on-device speech, partner words for one turn (`docs/phases/008_Partner_Listening.md`).
 4. No phase yet: core-cell halos as a fading prompt and the SLP independence report (strategy doc § 7.4).

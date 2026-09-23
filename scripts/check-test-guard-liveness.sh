@@ -9,7 +9,7 @@
 # shell where the guard never actually bound. That is green test theater by
 # this project's own law (AGENTS.md). This version must be able to fail for
 # the real reason: red in a shell without scripts/bin on PATH, green with
-# it. See docs/archive/phases/118_Test_Infrastructure_Upgrade.md §2.
+# it.
 set -euo pipefail
 
 # Physical path on BOTH sides: macOS volumes are case-insensitive, so the

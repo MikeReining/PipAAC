@@ -58,7 +58,7 @@ untouched; the user can still say anything.
 | Tables and columns | `docs/product/Language_And_Voice_Schema.md` § 6.2c–6.2e |
 | Strip layout, cap, no layout shift | `docs/product/Motor_Grid_And_Art.md` § 2 |
 | Occasion data | `docs/phases/007_Occasions.md` (step 9 runs it) |
-| Previous prediction phase (history, baselines) | `docs/archive/phases/006_Prediction_Engine.md` |
+| Previous prediction phase (history, baselines) | phase 006 (in git history) |
 
 At closeout, update the owners above to match what was built. This phase
 doc is not the long-term owner.

@@ -18,7 +18,7 @@ EXIT_LOCKED=75
 
 # Backstop ceiling — the wedge detector below fires far sooner on a genuine
 # deadlock. 900s comfortably exceeds the measured 556s full-suite wall
-# (docs/archive/phases/118_Test_Infrastructure_Upgrade.md §3) so --all never trips it
+# so --all never trips it
 # under normal conditions.
 TIMEOUT_SECONDS="${TEST_TIMEOUT_SECONDS:-900}"
 

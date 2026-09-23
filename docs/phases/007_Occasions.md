@@ -109,7 +109,7 @@ dressed, school, lunch, snack, play, bath, dinner, bedtime, car.
 Works Test: after import, 006's `occasion` feature is non-zero for
 breakfast words at 08:00 and zero at 20:00, and the simulation's **day-1**
 hit rate (no history) is recorded next to the slice-3 baseline in
-`docs/archive/phases/006_Prediction_Engine.md`.
+phase 006 (in git history).
 
 Done when: that passes and regenerating from the script reproduces the
 committed JSON byte for byte.

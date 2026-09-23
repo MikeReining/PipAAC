@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Drives the S118-S00 Works Tests for scripts/test.sh in seconds, using
 # IKIRO_TEST_CMD_OVERRIDE / short constants so no test actually takes
-# minutes. See docs/archive/phases/118_Test_Infrastructure_Upgrade.md §6.
+# minutes.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -13,14 +13,14 @@ KILL_STALE="$ROOT/scripts/kill-stale-tests.sh"
 LOCK_FILE="$ROOT/.ikiro-test.lock"
 FIXTURE="packages/hosting/admin-slug-service.test.mjs"
 
-# S118-S03 additions: the node shim + liveness check (docs/archive/phases/118_Test_Infrastructure_Upgrade.md §7).
+# S118-S03 additions: the node shim + liveness check.
 NODE_SHIM_DIR="$ROOT/scripts/bin"
 NODE_SHIM="$NODE_SHIM_DIR/node"
 LIVENESS_CHECK="$ROOT/scripts/check-test-guard-liveness.sh"
 BUNDLE_VALIDATOR_FIXTURE="packages/hosting/bundle-validator.test.mjs"
 
 # S118-S03 follow-up: the installer's --check must prove resolution, not
-# presence (docs/archive/phases/118_Test_Infrastructure_Upgrade.md §7 follow-up).
+# presence.
 INSTALL_SCRIPT="$ROOT/scripts/install-test-guard.sh"
 
 # guarded_path — echoes PATH with $NODE_SHIM_DIR prepended, for a subshell
@@ -324,7 +324,7 @@ test_7_hosting_fast() {
 # --- Works Test 8: preview-cold-serves.test.mjs does not false-wedge -------
 # renderer-cache.test.mjs (~10s) was structurally incapable of exceeding the
 # 30s wedge window, so this test could never fail — it proved nothing
-# (docs/archive/phases/118_Test_Infrastructure_Upgrade.md S118-S03 Task 1). Swapped
+# (S118-S03 Task 1). Swapped
 # to preview-cold-serves.test.mjs: boots real servers, can sit flat, and
 # measures ~36s through the wrapper — long enough to actually exercise the
 # window.
@@ -464,18 +464,18 @@ test_12_shim_passthrough_guarded() {
   eout="$(PATH="$guarded" node -e 'console.log("wt12")' 2>&1)"
   [[ "$eout" == "wt12" ]] || { ok=false; echo "  [12b] node -e unexpected output: $eout" >&2; }
 
-  # check_doc_citations.mjs may legitimately exit non-zero on real, unrelated
+  # check_lockfile_sync.mjs may legitimately exit non-zero on real, unrelated
   # content issues — assert only that the shim let it run untouched, not
   # that its lint content is clean.
   local cout
-  cout="$(PATH="$guarded" node scripts/check_doc_citations.mjs 2>&1)"
+  cout="$(PATH="$guarded" node scripts/check_lockfile_sync.mjs 2>&1)"
   if echo "$cout" | grep -q "scripts/bin/node: refus\|scripts/bin/node: auto-routing"; then
-    ok=false; echo "  [12c] check_doc_citations.mjs was intercepted by the shim, expected pass-through" >&2
+    ok=false; echo "  [12c] check_lockfile_sync.mjs was intercepted by the shim, expected pass-through" >&2
   fi
   [[ -f "$LOCK_FILE" ]] && { ok=false; echo "  [12c] lock file created for a plain node script run" >&2; }
 
   if [[ "$ok" == true ]]; then
-    report_pass "works-test-12 (node --version, node -e, node scripts/check_doc_citations.mjs all pass through)"
+    report_pass "works-test-12 (node --version, node -e, node scripts/check_lockfile_sync.mjs all pass through)"
   else
     report_fail "works-test-12" "one or more pass-through sub-checks failed (see messages above)"
   fi
@@ -677,11 +677,11 @@ test_19_npm_run_guarded_passthrough() {
   force_clear_state
   local guarded="$NODE_SHIM_DIR:$(strip_shim_from_path)"
   local out status
-  out="$(cd "$ROOT" && PATH="$guarded" npm run --silent lint:archive-links 2>&1)"
+  out="$(cd "$ROOT" && PATH="$guarded" npm run --silent lint:lockfile-sync 2>&1)"
   status=$?
 
   if [[ "$status" -eq 0 ]] && ! echo "$out" | grep -q "recursively\|IKIRO_NODE_SHIM_ACTIVE already set"; then
-    report_pass "works-test-19 (npm run lint:archive-links succeeds in a guarded shell, no recursion error)"
+    report_pass "works-test-19 (npm run lint:lockfile-sync succeeds in a guarded shell, no recursion error)"
   else
     report_fail "works-test-19" "status=$status out=[$out]"
   fi
@@ -716,7 +716,7 @@ test_21_deep_nested_passthrough() {
   local out status
   out="$(cd "$ROOT" && PATH="$guarded" node -e '
     const { execFileSync } = require("node:child_process");
-    process.stdout.write(execFileSync("npm", ["run", "--silent", "lint:archive-links"], { encoding: "utf8" }));
+    process.stdout.write(execFileSync("npm", ["run", "--silent", "lint:lockfile-sync"], { encoding: "utf8" }));
   ' 2>&1)"
   status=$?
 
