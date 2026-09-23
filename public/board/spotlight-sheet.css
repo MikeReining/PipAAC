@@ -1,0 +1,8 @@
+/* Spotlight saved-list rows and per-word tip editor. */
+.spot-list-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.spot-list-row .spot-list-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spot-list-row button { flex: none; padding: 5px 10px; font-size: 13px; }
+.spot-tip-row { display: flex; align-items: center; gap: 8px; padding: 3px 0 3px 16px; }
+.spot-tip-row .spot-tip-word { width: 90px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spot-tip-row input { flex: 1; padding: 4px 8px; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; }
+.spot-tip-row input::placeholder { color: var(--muted); }

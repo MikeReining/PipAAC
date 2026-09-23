@@ -12,6 +12,7 @@
     <title>Pip AAC</title>
     <link rel="stylesheet" href="/board/family-editor.css" />
     <link rel="stylesheet" href="/board/cells-sheet.css" />
+    <link rel="stylesheet" href="/board/spotlight-sheet.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -381,9 +382,6 @@
          ring for the window — quieter than the spotlight's outer glow,
          and it dims nothing. */
       .cell.moved { box-shadow: inset 0 0 0 3px var(--glow); }
-      .spot-list-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
-      .spot-list-row .spot-list-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .spot-list-row button { flex: none; padding: 5px 10px; font-size: 13px; }
       /* The end chip: only while a spotlight runs; one tap ends it. */
       #spot-chip {
         border: 2px solid var(--glow);
@@ -414,10 +412,6 @@
         border: 0; background: none; color: var(--muted); font-size: 13px;
         padding: 0 2px; cursor: pointer;
       }
-      .spot-tip-row { display: flex; align-items: center; gap: 8px; padding: 3px 0 3px 16px; }
-      .spot-tip-row .spot-tip-word { width: 90px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .spot-tip-row input { flex: 1; padding: 4px 8px; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; }
-      .spot-tip-row input::placeholder { color: var(--muted); }
       /* Empty cell — reserved space, never collapses. */
       .cell.empty {
         border-style: dashed;
