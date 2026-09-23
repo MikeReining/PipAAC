@@ -142,7 +142,8 @@ export async function signInAccount({ acctId, email, linkChallenge }) {
  *  wraps to the account public key; the profile (name + photo) seals
  *  under the user's own key, so the relay still reads nothing. */
 export async function shareUserToAccount({
-  acctId, session, keyStore, userId, epochs, name = "", photo = null, getUserKey,
+  acctId, session, keyStore, userId, epochs, name = "", photo = null,
+  getUserKey, joinTokens = [],
 }) {
   const pub = await accountPub(acctId);
   const keys = [];
@@ -154,14 +155,16 @@ export async function shareUserToAccount({
     await getUserKey(keyStore, userId, epochs[0]),
     te.encode(JSON.stringify({ name, photo })), epochs[0]);
   await post(`/accounts/${acctId}/users`, {
-    session, user_id: userId, keys, sealed_profile });
+    session, user_id: userId, keys, sealed_profile, join_tokens: joinTokens });
 }
 
 /** Pull every user the account supports into this device's registry.
  *  Each wrapped key unwraps with the unsealed account private key;
  *  without it (no-PRF authenticator) the row lands locked — its keys
  *  arrive later by Allow or QR card. */
-export async function importAccountUsers({ bundle, priv, keyStore, userStore, putUserKey, addUser }) {
+export async function importAccountUsers({
+  bundle, priv, keyStore, userStore, putUserKey, addUser, joinDevice = null,
+}) {
   const out = [];
   for (const u of bundle.users ?? []) {
     const epochs = [];
@@ -179,15 +182,29 @@ export async function importAccountUsers({ bundle, priv, keyStore, userStore, pu
         } catch { /* a grant this account can't open stays locked */ }
       }
     }
-    const sync = epochs.length
-      ? { userId: u.user_id, epoch: Math.max(...epochs), cursor: 0 }
+    // sync.userId is set from the grants even when none unwrapped —
+    // renderUsers marks such a user locked ("needs an Allow or QR
+    // card") and hides the Switch button until keys arrive.
+    const grantEpochs = (u.keys ?? []).map((k) => k.epoch);
+    const sync = grantEpochs.length
+      ? { userId: u.user_id, epoch: Math.max(...grantEpochs), cursor: 0 }
       : null;
     await addUser(userStore, {
       id: u.user_id,
       name: profile?.name ?? "",
       photo: profile?.photo ?? null,
       sync, role: "partner" });
-    out.push({ id: u.user_id, unlocked: epochs.length > 0 });
+    // Keys are not enough — this device must also register on the user's
+    // relay before ops will pull. Single-use join tokens carried in the
+    // bundle open that door; try each until one redeems.
+    let joined = false;
+    if (epochs.length && joinDevice) {
+      for (const t of u.join_tokens ?? []) {
+        try { await joinDevice(u.user_id, t); joined = true; break; }
+        catch { /* consumed or expired — try the next */ }
+      }
+    }
+    out.push({ id: u.user_id, unlocked: epochs.length > 0, joined });
   }
   return out;
 }

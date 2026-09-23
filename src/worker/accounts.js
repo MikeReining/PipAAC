@@ -84,14 +84,17 @@ export class SupporterAccounts {
           user_id TEXT PRIMARY KEY,
           keys TEXT NOT NULL,
           sealed_profile TEXT,
+          join_tokens TEXT,
           added_at INTEGER NOT NULL
         );
       `);
       // Existing dev objects predate the auth flag — add it if absent.
-      try {
-        ctx.storage.sql.exec(
-          "ALTER TABLE challenge ADD COLUMN auth INTEGER NOT NULL DEFAULT 0");
-      } catch { /* column already there */ }
+      for (const alter of [
+        "ALTER TABLE challenge ADD COLUMN auth INTEGER NOT NULL DEFAULT 0",
+        "ALTER TABLE acct_user ADD COLUMN join_tokens TEXT",
+      ]) {
+        try { ctx.storage.sql.exec(alter); } catch { /* already there */ }
+      }
     });
   }
 
@@ -238,18 +241,21 @@ export class SupporterAccounts {
     if (path === "/acct/users" && request.method === "POST") {
       if (!body?.user_id || !Array.isArray(body?.keys)) return bad("bad_request");
       sql.exec(
-        "INSERT OR REPLACE INTO acct_user (user_id, keys, sealed_profile, added_at) VALUES (?, ?, ?, ?)",
+        "INSERT OR REPLACE INTO acct_user (user_id, keys, sealed_profile, join_tokens, added_at) VALUES (?, ?, ?, ?, ?)",
         body.user_id, JSON.stringify(body.keys),
-        body.sealed_profile ? JSON.stringify(body.sealed_profile) : null, now);
+        body.sealed_profile ? JSON.stringify(body.sealed_profile) : null,
+        Array.isArray(body.join_tokens) ? JSON.stringify(body.join_tokens) : null,
+        now);
       return json({ ok: true });
     }
 
     if (path === "/acct/bundle" && request.method === "GET") {
       const a = one("SELECT sealed_priv FROM acct LIMIT 1");
-      const users = sql.exec("SELECT user_id, keys, sealed_profile FROM acct_user")
+      const users = sql.exec("SELECT user_id, keys, sealed_profile, join_tokens FROM acct_user")
         .toArray()
         .map((r) => ({ user_id: r.user_id, keys: JSON.parse(r.keys),
-          sealed_profile: r.sealed_profile ? JSON.parse(r.sealed_profile) : null }));
+          sealed_profile: r.sealed_profile ? JSON.parse(r.sealed_profile) : null,
+          join_tokens: r.join_tokens ? JSON.parse(r.join_tokens) : [] }));
       const creds = sql.exec("SELECT id FROM credential").toArray();
       return json({ sealed_priv: a?.sealed_priv ? JSON.parse(a.sealed_priv) : null,
         users, credentials: creds });

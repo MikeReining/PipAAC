@@ -25,6 +25,9 @@ const unb64u = (s) => {
   for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
   return out;
 };
+const b64u = (buf) =>
+  btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
 const hex = (buf) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 
@@ -73,6 +76,10 @@ export class UserRelay {
         CREATE TABLE IF NOT EXISTS meta (
           k TEXT PRIMARY KEY,
           v TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS join_token (
+          token_hash TEXT PRIMARY KEY,
+          expires INTEGER NOT NULL
         );
       `);
       // Persisted dev DOs from before slice 5 lack the new columns.
@@ -224,6 +231,42 @@ export class UserRelay {
 
     // Everything else: buffered body (ops are capped small), signed.
     const bodyBytes = method === "GET" ? null : new Uint8Array(await request.arrayBuffer());
+
+    // Account join token (§ 12.3): a supporter's fresh device presents a
+    // single-use bearer token a linked device minted into the account
+    // bundle. Registers like a Lifetime restore — never removes anyone.
+    if (method === "POST" && route === "devices") {
+      let peek = null;
+      try { peek = JSON.parse(td.decode(bodyBytes)); }
+      catch { /* malformed — falls through to the signed path */ }
+      if (peek?.join_token) {
+        const { device_id, pubkey, dh_pub } = peek;
+        if (!device_id || !pubkey) return bad("bad_device");
+        const hash = b64u(await crypto.subtle.digest(
+          "SHA-256", te.encode(peek.join_token)));
+        const row = this.ctx.storage.sql.exec(
+          "SELECT token_hash, expires FROM join_token WHERE token_hash = ?",
+          hash).toArray()[0];
+        if (!row || row.expires < Date.now()) return bad("forbidden", 403);
+        this.ctx.storage.sql.exec(
+          "DELETE FROM join_token WHERE token_hash = ?", hash);
+        if (this.entitlement() !== "lifetime") {
+          const known = this.ctx.storage.sql.exec(
+            "SELECT COUNT(*) AS n FROM device").toArray()[0].n;
+          const present = this.devicePubkey(device_id) !== null;
+          if (!present && known >= 1) {
+            return json({ error: "upgrade_required",
+              message: "Pip Lifetime unlocks more than one linked device." }, { status: 403 });
+          }
+        }
+        this.ctx.storage.sql.exec(
+          `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
+           VALUES (?, ?, ?, NULL, ?, ?)`,
+          device_id, pubkey, dh_pub ?? null, this.epoch(), Date.now());
+        return json({ ok: true });
+      }
+    }
+
     const device = await this.verify(request, bodyBytes);
     if (!device) return bad("forbidden", 403);
     // last_seen BEFORE this request — a long-absent device refreshing it
@@ -255,6 +298,27 @@ export class UserRelay {
          VALUES (?, ?, ?, ?, ?, ?)`,
         device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, epoch, Date.now());
       return json({ ok: true });
+    }
+
+    // A linked device mints single-use join tokens for its account
+    // bundle (§ 12.3): a supporter's fresh device redeems one above to
+    // register itself. The relay stores only the SHA-256.
+    if (method === "POST" && route === "join_tokens") {
+      let n = 1;
+      try {
+        n = Math.min(Math.max(
+          Number(JSON.parse(td.decode(bodyBytes)).n ?? 1), 1), 8);
+      } catch { /* malformed body mints one */ }
+      const expires = Date.now() + 30 * 86400000;
+      const tokens = [];
+      for (let i = 0; i < n; i++) {
+        const t = b64u(crypto.getRandomValues(new Uint8Array(24)));
+        const h = b64u(await crypto.subtle.digest("SHA-256", te.encode(t)));
+        this.ctx.storage.sql.exec(
+          "INSERT INTO join_token (token_hash, expires) VALUES (?, ?)", h, expires);
+        tokens.push(t);
+      }
+      return json({ tokens });
     }
 
     // The calling device's own row — this is how a device picks up the

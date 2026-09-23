@@ -53,6 +53,8 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
     selfKey: () => call("GET", "/devices/self"),
     /** Remove a device (signed). Rotate keys after — it keeps old ops. */
     removeDevice: (device_id) => call("DELETE", `/devices/${device_id}`),
+    /** Mint n single-use join tokens for the account bundle (§ 12.3). */
+    mintJoinTokens: (n = 4) => call("POST", "/join_tokens", { n }),
     /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
     /** Activate Pip Lifetime with a user-bound license key (dev path). */
@@ -115,6 +117,18 @@ export async function restoreDevice(baseUrl, userId, { proof, device_id, pubkey,
   });
   if (!res.ok) throw new Error(`restore: ${res.status}`);
   return res.json(); // { ok, epoch }
+}
+
+/** Account sign-in (§ 12.3): unsigned — the single-use join token a
+ *  linked device minted stands in for a device signature. Registers
+ *  non-destructively like a Lifetime restore. */
+export async function joinDeviceWithToken(baseUrl, userId, { token, device_id, pubkey, dh_pub }) {
+  const res = await fetch(`${baseUrl}/users/${userId}/devices`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ device_id, pubkey, dh_pub, join_token: token }),
+  });
+  if (!res.ok) throw new Error(`join: ${res.status}`);
+  return res.json();
 }
 
 /**

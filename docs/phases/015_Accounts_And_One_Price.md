@@ -1,10 +1,9 @@
 # Phase 015 — Accounts and one price
 
-**Status:** Executing. Slices 0–3 done (rulings 2026-09-23; user rename
-and many-users-on-one-device 2026-09-24; the QR card 2026-09-25). Slice 4
-in flight — relay, crypto, WebAuthn verify, client module, and Parent
-Corner UI built and proven at protocol level; the browser Works Test is
-written but still being stabilized (see slice 4 note).
+**Status:** Executing. Slices 0–4 done (rulings 2026-09-23; user rename
+and many-users-on-one-device 2026-09-24; the QR card and supporter
+accounts 2026-09-25). Next: slice 5 — supporters on a user (invite,
+Allow, remove + key rotation).
 
 **Direction DECIDED 2026-09-23** (founder: "all approved, lock it in").
 Intake: `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
@@ -341,7 +340,7 @@ name, photo bytes, user key or account private key in the clear. A
 virtual authenticator without PRF signs in and sees Maya locked until an
 Allow from A.
 
-**PROGRESS NOTE (2026-09-25, mid-slice — not yet DONE).** Built:
+**DONE 2026-09-25.** Built:
 
 - `src/worker/accounts.js` — `SupporterAccounts` DO: a `dir` object
   (email→account, link tokens, challenges, sessions, dev mailbox) and
@@ -357,6 +356,14 @@ Allow from A.
   user presence, ES256 DER→P1363). Email sending via lazy
   `cloudflare:email` import with the dev mailbox as the local path.
 - `wrangler.jsonc` — `ACCOUNTS` binding + `v4` migration.
+- `src/worker/relay.js` + `public/shared/sync_client.mjs` — **join
+  tokens**: keys alone don't pull ops — a fresh device must also
+  register on the user's relay. A linked device mints up to 8
+  single-use bearer tokens (`POST /join_tokens`, signed; relay stores
+  only SHA-256 + 30-day expiry); the account bundle carries them;
+  `POST /users/:id/devices` with `join_token` redeems one
+  non-destructively (like a Lifetime restore — never removes anyone)
+  and the free-user one-device cap still applies.
 - `public/shared/sync_crypto.mjs` — `genAccountKeys`,
   `sealAccountPriv`/`openAccountPriv` (HKDF over the passkey PRF output
   → AES-GCM KEK); user keys wrap to `acct_pub` with the existing ECDH
@@ -371,25 +378,36 @@ Allow from A.
   child never sees a sign-in), `?signin=` landing flow, locked-user
   "needs an Allow or QR card" in the user list.
 
-Proof so far: `src/worker/webauthn.test.mjs` (2 — verify + each failure
-mode), `src/board/sync_crypto.test.mjs` account test (PRF seal/open +
-wrapped-key round-trip), and `src/worker/accounts.heavy.test.mjs`
-(wrangler dev end-to-end: link → claim → register → wrapped user key →
+Proof: `src/worker/webauthn.test.mjs` (verify + each failure mode),
+`src/board/sync_crypto.test.mjs` account test (PRF seal/open +
+wrapped-key round-trip), `src/worker/accounts.heavy.test.mjs` (wrangler
+dev end-to-end: link → claim → register → wrapped user key →
 simulated-authenticator assert → unseal → open a real op; forged
 signature 403, self-minted-challenge register/credential 403,
 re-register 409, link-authorized credential-add preserves account
-identity and signs in, link replay 403, no key bytes in payloads).
+identity, link replay 403, no key bytes in payloads),
+`src/worker/relay.heavy.test.mjs` join-token leg (mint → redeem →
+pulls work; bogus and replayed tokens 403; free-user cap applies).
 
-**Open:** the browser Works Test above is written
-(`scripts/probes/account_probe.mjs` — two Chrome profiles + CDP virtual
-authenticators, hasPrf on/off) but not yet green — the harness fights
-CDP flakiness (dead-but-open ws, eval replay double-firing the
-reload-ending `usr-add` handler, virtual-authenticator timing). The
-relay/protocol path is proven by the heavy test; the browser probe
-still needs stabilizing before this slice can be called DONE. Also
-fixed en route: `/dir/claim` now returns the email from `acct_map`
-(previously `claim.email` was null → register `bad_request`), and
-`sealed_priv` is nullable so a no-PRF passkey can still register.
+**Works Test green** (`scripts/probes/account_probe.mjs`, two Chrome
+profiles + CDP virtual authenticators): A creates Maya + Cooper with a
+photo, links, Lifetime, signs in by email link → passkey registers →
+share-back. B (same authenticator, app state wiped — the synced
+passkey): Maya lands named, with keys; her device registers via a join
+token and pulls ops — Cooper's cell speaks and his photo renders as a
+blob URL. C (authenticator without PRF): Maya lands locked — the user
+list shows "needs an Allow or QR card" and no Switch. The child's own
+device (home + synced user, not signed in) hides the account row; a
+partner device shows it. Every captured POST body on both browsers was
+scanned: no name, photo bytes, or key material in the clear.
+
+Real bugs the probe caught: locked imports wrote `sync: null` so the
+lock label could never render (import now sets `sync.userId` from grant
+epochs); account sign-in never registered the device on the user's
+relay so nothing could pull (join tokens); the DO dropped
+`join_tokens` on the floor; `/dir/claim` returned no email so first
+registration failed; and "Opens first" left the sign-in row visible
+until the next corner render.
 
 ## Slice 5 — Supporters on a user
 

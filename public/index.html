@@ -972,6 +972,15 @@
           </div>
           <p class="hint">Each user keeps its own board, words, and sync. Switching opens that user — the other one keeps everything it had.</p>
         </div>
+        <div class="seg-row" id="acct-row" hidden>
+          <span class="seg-label">Supporter account</span>
+          <div id="acct-state"><p class="hint">Not signed in.</p></div>
+          <div class="row" id="acct-form">
+            <input type="email" id="acct-email" placeholder="you@example.com" autocomplete="email" style="flex:1" />
+            <button class="btn secondary" id="acct-send">Send sign-in link</button>
+          </div>
+          <p class="hint">Sign in with an email link and your passkey — every user you support appears with its keys. The child's device never asks for this.</p>
+        </div>
         <div class="seg-row">
           <span class="seg-label">Linked devices</span>
           <div id="dev-list"><p class="hint">This user is only on this device.</p></div>

@@ -489,6 +489,29 @@ never shares a sibling.
   removes that account's access and nothing else: the user, its words,
   its license, its QR card and its devices are untouched. The user owns
   the license, whoever paid (founder, 2026-09-23).
+- **BUILT** (015 slice 4, 2026-09-25): the account service is a
+  `SupporterAccounts` Durable Object — a `dir` object (email→account,
+  link tokens, challenges, sessions, dev mailbox) plus `acct:<id>`
+  objects (passkey credentials, `acct_pub`, `sealed_priv`, account-wide
+  PRF salt, wrapped user keys + sealed profiles) — behind
+  `/accounts/*` routes (`src/worker/accounts.js`, `src/worker/index.js`).
+  ES256 WebAuthn assertions verify server-side — challenge, origin, RP
+  id, user presence, signature (`src/worker/webauthn.mjs`). Register and
+  credential-add require the challenge a claimed email link minted;
+  register is insert-only so account keys can't be overwritten. The
+  account private key seals under HKDF(passkey PRF) on the device —
+  `sealAccountPriv`/`openAccountPriv` (`public/shared/sync_crypto.mjs`);
+  the relay never sees it. Client: `public/shared/account.mjs`; Parent
+  Corner "Supporter account" row — hidden on a device whose active user
+  is a synced home user (`public/board.js` `renderAccount`). A device
+  that signs in joins each unlocked user's relay with a single-use
+  **join token** a linked device minted (`POST /join_tokens` →
+  `POST /users/:id/devices` with `join_token`; relay stores SHA-256
+  only; `src/worker/relay.js`). Locked imports carry `sync.userId` but
+  no key — the user list marks them "needs an Allow or QR card" with no
+  Switch. Live-proven: `scripts/probes/account_probe.mjs` (virtual
+  authenticators, real wrangler dev — restore-with-keys, no-PRF lock,
+  payload scan).
 
 ### 12.4 Many users on one device and one account
 

@@ -92,7 +92,7 @@ import {
   cardPayload, recoverFromText, recoveryProof,
 } from "./shared/recovery.mjs";
 import { RECOVERY_WORDS } from "./shared/recovery_words.mjs";
-import { pairClient, relayClient, restoreDevice } from "./shared/sync_client.mjs";
+import { pairClient, relayClient, restoreDevice, joinDeviceWithToken } from "./shared/sync_client.mjs";
 import { initSync, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import {
   accountState, saveAccountState, requestLink, claimToken,
@@ -3490,6 +3490,7 @@ async function renderUsers() {
         await setHome(userStore, u.id);
         if (u.id === me.id) me.home = true;
         await renderUsers();
+        renderAccount(); // the sign-in row hides on the child's device
       };
       row.append(home);
     }
@@ -3552,7 +3553,16 @@ async function accountLanding(token) {
       say("Opening your users…");
       const imported = await importAccountUsers({
         bundle: r.bundle, priv, keyStore: openKeyStore(), userStore,
-        putUserKey, addUser });
+        putUserKey, addUser,
+        // Keys alone don't pull ops — this device also registers on
+        // each unlocked user's relay with a bundle join token.
+        joinDevice: async (userId, token) => {
+          const identity = await getDeviceIdentity(openKeyStore());
+          return joinDeviceWithToken(relayBase, userId, {
+            token, device_id: identity.deviceId,
+            pubkey: await exportPublicKey(identity.verify),
+            dh_pub: await exportDhPublic(identity.dh.publicKey) });
+        } });
       const locked = imported.filter((u) => !u.unlocked).length;
       say(locked
         ? `${imported.length} user(s) added — ${locked} locked until an Allow or QR card brings their keys.`
@@ -3580,9 +3590,18 @@ async function accountLanding(token) {
         if (await ks.get(`user/${u.id}/key_e${e}`)) epochs.push(e);
       }
       if (!epochs.length) continue;
+      // Mint a small pool of join tokens so devices that sign in through
+      // the account can register on this user's relay (§ 12.3).
+      let joinTokens = [];
+      try {
+        const identity = await getDeviceIdentity(ks);
+        const client = relayClient({ userId: u.id, baseUrl: relayBase,
+          identity, userKey: await getUserKey(ks, u.id, u.sync.epoch ?? 1) });
+        joinTokens = (await client.mintJoinTokens(4)).tokens ?? [];
+      } catch { /* a device not yet on this relay mints nothing */ }
       await shareUserToAccount({
         acctId: claim.account_id, session, keyStore: ks, userId: u.id,
-        epochs, name: u.name, photo: u.photo, getUserKey });
+        epochs, name: u.name, photo: u.photo, getUserKey, joinTokens });
     }
     say("Done — your users are on this device.");
     await renderUsers();

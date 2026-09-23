@@ -29,7 +29,7 @@ import {
   openBlob,
 } from "../../public/shared/sync_crypto.mjs";
 import { licenseFor } from "./license.mjs";
-import { relayClient } from "../../public/shared/sync_client.mjs";
+import { relayClient, joinDeviceWithToken } from "../../public/shared/sync_client.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const PORT = 8877;
@@ -148,4 +148,60 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   const envBack = await clientB.getBlob(blob.sha);
   assert.deepEqual(await openBlob(userKey, { sha: blob.sha, env: envBack }),
     await openBlob(userKey, blob));
+});
+
+test("join tokens: a linked device mints, a fresh device redeems once", async () => {
+  // 015 slice 4 — the supporter-account path: B has the user's key via
+  // the account but isn't a relay device. A linked device mints
+  // single-use join tokens into the account bundle; one redeems.
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const userKey = await getUserKey(aStore, userId);
+  const cStore = memoryKeyStore();
+  const c = await getDeviceIdentity(cStore);
+  await putUserKey(cStore, userId, userKey, 1);
+
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: userId,
+      device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
+  });
+  const clientA = relayClient({ userId, baseUrl: BASE, identity: a, userKey });
+  await makeLifetime(clientA, userId);
+  const clientC = relayClient({ userId, baseUrl: BASE, identity: c, userKey });
+
+  // Unknown device: pulls 403; a bogus token gets 403 too.
+  await assert.rejects(clientC.fetchOps(0), (e) => e.status === 403);
+  await assert.rejects(joinDeviceWithToken(BASE, userId, {
+    token: "bogus", device_id: c.deviceId,
+    pubkey: await exportPublicKey(c.verify) }));
+
+  const { tokens } = await clientA.mintJoinTokens(2);
+  assert.equal(tokens.length, 2);
+  await joinDeviceWithToken(BASE, userId, {
+    token: tokens[0], device_id: c.deviceId,
+    pubkey: await exportPublicKey(c.verify) });
+  assert.equal((await clientC.fetchOps(0)).latest, 0);
+
+  // Single-use — the same token does not open the door twice.
+  const d = await getDeviceIdentity(memoryKeyStore());
+  await assert.rejects(joinDeviceWithToken(BASE, userId, {
+    token: tokens[0], device_id: d.deviceId,
+    pubkey: await exportPublicKey(d.verify) }));
+
+  // A free user still carries one device — the token path respects it.
+  const freeId = crypto.randomUUID();
+  const freeKey = await getUserKey(aStore, freeId);
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: freeId,
+      device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
+  });
+  const clientFree = relayClient({ userId: freeId, baseUrl: BASE, identity: a, userKey: freeKey });
+  const { tokens: freeTokens } = await clientFree.mintJoinTokens(1);
+  await assert.rejects(joinDeviceWithToken(BASE, freeId, {
+    token: freeTokens[0], device_id: d.deviceId,
+    pubkey: await exportPublicKey(d.verify) }),
+    (e) => e.message.includes("403"));
 });
