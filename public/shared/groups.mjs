@@ -642,6 +642,9 @@ const SYNCED_SETTINGS = new Set([
   "highlight_next",
   "jev_sharing",
   "board_layout",
+  "spot_dim",
+  "spot_pulse",
+  "spot_minutes",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);

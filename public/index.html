@@ -351,6 +351,33 @@
         z-index: 1;
       }
       .cell.dimmed, .gcell.dimmed { opacity: var(--dim-o); }
+      /* Optional pulse (013 § 4 glow-style setting): gentle, ~2s, no
+         flashing — the steady ring stays, the halo breathes. */
+      @keyframes spot-pulse {
+        0%, 100% { box-shadow: 0 0 0 4px var(--glow), 0 0 10px rgba(232, 162, 0, 0.35); }
+        50% { box-shadow: 0 0 0 4px var(--glow), 0 0 24px rgba(232, 162, 0, 0.7); }
+      }
+      .cell.glow.pulse, .gcell.glow.pulse { animation: spot-pulse 2s ease-in-out infinite; }
+      /* Pick mode: tapping a word adds it to the list instead of
+         speaking. Picked cells get the glow outline; the bar counts. */
+      body.picking .cell, body.picking .gcell { cursor: copy; }
+      .cell.picked, .gcell.picked { box-shadow: 0 0 0 4px var(--glow); }
+      #spot-pickbar {
+        position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
+        background: var(--ink-text); color: #fff; border-radius: 14px;
+        padding: 10px 14px; display: flex; gap: 10px; align-items: center;
+        z-index: 11; font-size: 15px;
+      }
+      #spot-pickbar[hidden] { display: none; }
+      #spot-pickbar button {
+        border: 0; border-radius: 9px; padding: 7px 12px;
+        font-weight: 700; font-size: 14px; cursor: pointer;
+      }
+      #spot-pickbar .pick-start { background: var(--glow); }
+      #spot-pickbar .pick-quiet { background: #4a4539; color: #fff; }
+      .spot-list-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+      .spot-list-row .spot-list-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .spot-list-row button { flex: none; padding: 5px 10px; font-size: 13px; }
       /* The end chip: only while a spotlight runs; one tap ends it. */
       #spot-chip {
         border: 2px solid var(--glow);
@@ -863,6 +890,13 @@
           <p class="hint">Sends only the words being offered and the sentence so far to our ranking service — never history, names, or photos.</p>
         </div>
         <div class="seg-row">
+          <span class="seg-label">Spotlight</span>
+          <div class="row">
+            <button class="btn secondary" id="open-spot">🔦 Spotlight…</button>
+          </div>
+          <p class="hint">Glow the words you want to point at; everything else dims but still speaks.</p>
+        </div>
+        <div class="seg-row">
           <span class="seg-label">Keyboard</span>
           <div class="seg" id="kb-mode">
             <button data-v="pip">Pip keys</button>
@@ -914,6 +948,70 @@
         </div>
         <button class="btn secondary" data-close>Close</button>
       </div>
+    </div>
+
+    <div class="overlay" id="spotform">
+      <div class="sheet">
+        <h2>Spotlight</h2>
+        <div id="spot-running" hidden>
+          <p id="spot-running-label"></p>
+          <div class="row">
+            <button class="btn secondary" id="spot-end">End spotlight</button>
+          </div>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Saved lists</span>
+          <div id="spot-lists"><p class="hint">No saved lists yet.</p></div>
+          <div class="row">
+            <button class="btn secondary" id="spot-pick">Pick words…</button>
+          </div>
+          <p class="hint">Tap words on the board — or inside a group — to choose the targets, then Start or Save.</p>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Session length</span>
+          <div class="seg" id="spot-minutes">
+            <button data-v="0">Until ended</button>
+            <button data-v="15">15 min</button>
+            <button data-v="30">30 min</button>
+            <button data-v="60">1 hour</button>
+          </div>
+          <p class="hint">A session always ends by midnight.</p>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Glow</span>
+          <div class="seg" id="spot-pulse">
+            <button data-v="0">Steady</button>
+            <button data-v="1">Pulse</button>
+          </div>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Dim the other words</span>
+          <div class="seg" id="spot-dim">
+            <button data-v="30">A little</button>
+            <button data-v="45">Medium</button>
+            <button data-v="60">A lot</button>
+          </div>
+        </div>
+        <button class="btn secondary" data-close>Close</button>
+      </div>
+    </div>
+
+    <div class="overlay" id="spotname">
+      <div class="sheet">
+        <h2>Save list</h2>
+        <input type="text" id="spot-list-name" placeholder="List name, e.g. Brown Bear" autocomplete="off" />
+        <div class="row">
+          <button class="btn" id="spot-name-save">Save</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="spot-pickbar" hidden>
+      <span id="spot-pick-count">0 picked</span>
+      <button class="pick-start" id="spot-pick-start">Start</button>
+      <button class="pick-quiet" id="spot-pick-save">Save…</button>
+      <button class="pick-quiet" id="spot-pick-cancel">Cancel</button>
     </div>
 
     <div class="overlay" id="groupform">

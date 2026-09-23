@@ -120,7 +120,13 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- One Cells setting per profile (014 § 3): the layout the home board,
   -- every group page, and the strip all draw at. Names a coordinate-map
   -- layout (catalog.layouts); anything unknown renders as grid60.
-  board_layout TEXT NOT NULL DEFAULT 'grid60'
+  board_layout TEXT NOT NULL DEFAULT 'grid60',
+  -- Spotlight settings (013 § 4), synced: non-target dim percent, glow
+  -- style (0 steady / 1 pulse), default session length in minutes
+  -- (0 = until ended; midnight is always the latest bound).
+  spot_dim INTEGER NOT NULL DEFAULT 45 CHECK (spot_dim BETWEEN 10 AND 90),
+  spot_pulse INTEGER NOT NULL DEFAULT 0 CHECK (spot_pulse IN (0, 1)),
+  spot_minutes INTEGER NOT NULL DEFAULT 0 CHECK (spot_minutes >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (
@@ -266,6 +272,33 @@ CREATE TABLE IF NOT EXISTS image_override (
 CREATE TABLE IF NOT EXISTS sense_mask (
   sense_id TEXT PRIMARY KEY REFERENCES sense(id),
   status TEXT NOT NULL CHECK (status IN ('hidden', 'shown'))
+);
+
+-- Spotlight (013 §§ 3–4): a spotlight is a saved list of target words;
+-- a session is a running glow — name, resolved targets, and the hard
+-- end (timer or local midnight, whichever comes first). All synced so
+-- either device can start or end it.
+CREATE TABLE IF NOT EXISTS spotlight_list (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'spl_*'),
+  name TEXT NOT NULL CHECK (length(name) > 0),
+  created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS spotlight_item (
+  list_id TEXT NOT NULL REFERENCES spotlight_list(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL CHECK (kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL,
+  PRIMARY KEY (list_id, kind, item_id)
+);
+
+CREATE TABLE IF NOT EXISTS spotlight_session (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  name TEXT NOT NULL,
+  -- JSON array of "kind:id" resolved at start — deleting the list
+  -- mid-session does not change the running glow.
+  targets TEXT NOT NULL,
+  started_at INTEGER NOT NULL,
+  ends_at INTEGER NOT NULL
 );
 
 -- Groups: one kind of container. The index is a coordinate map (slots

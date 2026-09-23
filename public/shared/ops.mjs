@@ -30,6 +30,9 @@ import {
 } from "./groups.mjs";
 import { clearOverride, setOverride } from "./voice.mjs";
 import { clearImageOverride, setImageOverride } from "./images.mjs";
+import {
+  deleteSpotList, saveSpotList, endSession, spotSession, startSession,
+} from "./spotlight.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -195,6 +198,18 @@ export function applyOp(db, op) {
         }
         break;
       }
+      case "spot_list_save":
+        saveSpotList(db, a.id, a.name, a.targets, a.created_at);
+        break;
+      case "spot_list_del":
+        if (exists(db, "spotlight_list", a.id)) deleteSpotList(db, a.id);
+        break;
+      case "spot_start":
+        startSession(db, a);
+        break;
+      case "spot_end":
+        if (spotSession(db)) endSession(db);
+        break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -221,7 +236,7 @@ export function listOps(db) {
 const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
   "clip_override", "image_override", "entity_enrichment", "group_cell",
-  "sense_mask",
+  "sense_mask", "spotlight_list", "spotlight_item", "spotlight_session",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */

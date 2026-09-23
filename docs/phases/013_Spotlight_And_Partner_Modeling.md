@@ -1,8 +1,9 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Slice 1 built (the layer). Next: slice 2 — Spotlight on one
-device. The design below is **DECIDED
-2026-09-22** (founder; not built). Slices are **PROPOSED**.
+**Status:** Slices 1–2 built (the layer; one-device lists, sessions,
+timer). Next: slice 3 — Spotlight on the adult's device. The design
+below is **DECIDED 2026-09-22** (founder; not built). Slices are
+**PROPOSED**.
 
 Founder intake: `docs/founder/2026-09-22_Spotlight_Partner_Modeling.md`.
 Renamed from "Spotlight Practice Mode" the same day, when live partner
@@ -209,6 +210,29 @@ offers that routine's saved list.
 2. **Spotlight on one device.** Saved lists, quick pick, session with timer
    and midnight end, the chip. Works test: start, restart the app — still
    on; pass midnight — off.
+
+   **DONE.** Saved lists are `spotlight_list` + `spotlight_item`; the
+   running session is one `spotlight_session` row holding name, resolved
+   targets, `started_at`, and `ends_at = min(start + minutes, local
+   midnight)` — all synced tables (`SYNCED_TABLES`), so a session started
+   or ended on either side lands through `spot_start`/`spot_end` ops.
+   `public/shared/spotlight.mjs` owns the lifecycle: `saveSpotList`,
+   `deleteSpotList`, `spotLists`, `startSession`, `endSession`,
+   `resumeSession` — the last reconciles the layer with the synced row
+   at boot and after every sync drain: a live row relights the glow
+   (restart survival), an expired row ends it (midnight or timer passed
+   while away), no row means off. Parent Corner → Spotlight opens the
+   sheet: saved lists (Start/Delete), **Pick words…** pick mode (taps
+   choose targets on the board and inside groups, never speak —
+   `picking` intercepts `tap`), and the synced settings segs:
+   session length (until ended / 15 / 30 / 60), glow (steady / pulse —
+   `spot_pulse`), dim (`spot_dim` → `--dim-o`). The chip ends the
+   session row, not just the in-memory layer. Works Tests:
+   `src/board/spot_session.test.mjs` (list CRUD through synced rows,
+   midnight bound, timer math, resume/expiry, cross-db op replay) and
+   `scripts/probes/spot_session_probe.mjs` (real UI: pick 2 → save →
+   start from list → reload → still glowing → expire → reload → off;
+   picks never append to the sentence).
 3. **Adult device.** The board mirror, lists and settings from a linked
    device, start and end from either side. Works test: end on the phone,
    the iPad's glow clears.

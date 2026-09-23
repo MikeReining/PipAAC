@@ -18,7 +18,9 @@ import {
 } from "./shared/funnel.mjs";
 import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
 import {
-  endSpotlight, needsRouteWalk, spotlight, spotlightGroups, startSpotlight,
+  deleteSpotList, endSession, endSpotlight, listTargets, needsRouteWalk,
+  resumeSession, saveSpotList, spotLists, spotlight, spotlightGroups,
+  spotSession, startSession, startSpotlight,
 } from "./shared/spotlight.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
@@ -119,6 +121,8 @@ function onSyncApplied() {
     kbOrder = p.keyboard_order ?? kbOrder;
     highlightNext = (p.highlight_next ?? 0) === 1;
     jevSharing = (p.jev_sharing ?? 1) === 1;
+    bindSpotSettings();  // spotlight settings sync too
+    resumeSession(db);   // a session started/ended elsewhere lands here
     renderGrid();
     renderStrip();
     rerenderView();
@@ -569,6 +573,17 @@ function markJev(status, model, sid = sentenceId, pos = sentencePicks) {
 }
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
+  if (picking) {
+    // Pick mode: a tap chooses a target, never speaks or appends.
+    if (id) {
+      const key = `${kind}:${id}`;
+      picking.has(key) ? picking.delete(key) : picking.add(key);
+      updatePickBar();
+      renderGrid();
+      rerenderView();
+    }
+    return;
+  }
   const item = { kind, id, text };
   sentence.push(item);
   renderBar();
@@ -724,11 +739,51 @@ function stripSlots(cols) {
  *  speaks; masked cells are skipped entirely (never unmask). Slice 2
  *  owns lists/sessions; this is the layer itself. --- */
 
-/** Mark a word cell under the spotlight: target → glow, else dim. */
+/** Mark a word cell under the spotlight: target → glow, else dim.
+ *  Pulse rides the synced glow-style setting (013 § 4). */
+let spotPulse = false;
 function spotMark(el, key) {
   const s = spotlight();
   if (!s) return;
-  el.classList.add(s.targets.has(key) ? "glow" : "dimmed");
+  if (s.targets.has(key)) {
+    el.classList.add("glow");
+    if (spotPulse) el.classList.add("pulse");
+  } else {
+    el.classList.add("dimmed");
+  }
+}
+
+/** Read the spotlight settings and apply the dim token — called at boot
+ *  and after a sync drain so a setting changed on the other device
+ *  lands here. Returns the default session minutes. */
+function bindSpotSettings() {
+  const p = ALL(db,
+    "SELECT spot_dim, spot_pulse, spot_minutes FROM learner_profile WHERE id = 'prf_local'",
+  )[0] ?? {};
+  document.documentElement.style.setProperty("--dim-o", (p.spot_dim ?? 45) / 100);
+  spotPulse = (p.spot_pulse ?? 0) === 1;
+  return p.spot_minutes ?? 0;
+}
+
+/* --- pick mode (013 slice 2): an adult taps words on the board or in
+ *  groups to choose targets; taps never speak while picking. `picking`
+ *  is the Set of "kind:id" being chosen, or null when off. --- */
+let picking = null;
+function pickMark(el, key) {
+  if (picking) el.classList.toggle("picked", picking.has(key));
+}
+function updatePickBar() {
+  $("spot-pick-count").textContent = `${picking?.size ?? 0} picked`;
+  $("spot-pick-start").disabled = !picking?.size;
+  $("spot-pick-save").disabled = !picking?.size;
+}
+function setPicking(on) {
+  picking = on ? new Set() : null;
+  document.body.classList.toggle("picking", on);
+  $("spot-pickbar").hidden = !on;
+  if (on) updatePickBar();
+  renderGrid();
+  rerenderView();
 }
 
 /** The sense ids the home grid rendered — `spotChrome` walks routes
@@ -809,6 +864,7 @@ function renderGrid() {
     const el = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
     el.addEventListener("click", () => tap(c.label, "sense", c.sense_id));
     spotMark(el, `sense:${c.sense_id}`);
+    pickMark(el, `sense:${c.sense_id}`);
     cellEls.set(c.sense_id, el);
     grid.appendChild(el);
   }
@@ -854,6 +910,10 @@ document.addEventListener("keydown", (e) => {
     const anyOverlay = document.querySelector(".overlay.open");
     if (anyOverlay) {
       document.querySelectorAll(".overlay.open").forEach((o) => o.classList.remove("open"));
+      return;
+    }
+    if (picking) {
+      setPicking(false);
       return;
     }
     if (editing) {
@@ -1001,6 +1061,110 @@ $("jev-share").addEventListener("click", (e) => {
   syncKbSettings();
 });
 
+/* --- Spotlight (013): Parent Corner → 🔦 opens the sheet — saved
+   lists, pick mode, and the synced session settings. Picking happens on
+   the board itself: taps choose targets, never speak. --- */
+let spotMinutes = bindSpotSettings();
+
+function renderSpotForm() {
+  const s = spotSession(db);
+  $("spot-running").hidden = !s;
+  if (s) {
+    $("spot-running-label").textContent =
+      `🔦 ${s.name} — ends ${new Date(s.ends_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  }
+  const lists = spotLists(db);
+  const box = $("spot-lists");
+  box.innerHTML = "";
+  if (!lists.length) {
+    box.innerHTML = '<p class="hint">No saved lists yet.</p>';
+  }
+  for (const l of lists) {
+    const row = document.createElement("div");
+    row.className = "spot-list-row";
+    const name = document.createElement("span");
+    name.className = "spot-list-name";
+    name.textContent = `${l.name} (${l.n} word${l.n === 1 ? "" : "s"})`;
+    const start = document.createElement("button");
+    start.className = "btn secondary";
+    start.textContent = "Start";
+    start.addEventListener("click", () => {
+      startSession(db, { name: l.name, targets: listTargets(db, l.id), minutes: spotMinutes });
+      close("spotform");
+      renderGrid();
+      rerenderView();
+    });
+    const del = document.createElement("button");
+    del.className = "btn secondary";
+    del.textContent = "Delete";
+    del.addEventListener("click", () => { deleteSpotList(db, l.id); renderSpotForm(); });
+    row.append(name, start, del);
+    box.appendChild(row);
+  }
+  const dim = ALL(db,
+    "SELECT spot_dim FROM learner_profile WHERE id = 'prf_local'")[0]?.spot_dim ?? 45;
+  for (const b of $("spot-minutes").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === String(spotMinutes));
+  }
+  for (const b of $("spot-pulse").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === (spotPulse ? "1" : "0"));
+  }
+  for (const b of $("spot-dim").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === String(dim));
+  }
+}
+
+$("open-spot").addEventListener("click", () => {
+  renderSpotForm();
+  open("spotform");
+});
+$("spot-end").addEventListener("click", () => {
+  endSession(db);
+  renderSpotForm();
+  renderGrid();
+  rerenderView();
+});
+$("spot-pick").addEventListener("click", () => {
+  close("spotform");
+  setPicking(true);
+});
+$("spot-pick-cancel").addEventListener("click", () => setPicking(false));
+$("spot-pick-start").addEventListener("click", () => {
+  if (!picking?.size) return;
+  const targets = new Set(picking);
+  setPicking(false);
+  startSession(db, { name: "Spotlight", targets, minutes: spotMinutes });
+  renderGrid();
+  rerenderView();
+});
+$("spot-pick-save").addEventListener("click", () => {
+  if (!picking?.size) return;
+  $("spot-list-name").value = "";
+  open("spotname");
+});
+$("spot-name-save").addEventListener("click", () => {
+  const name = $("spot-list-name").value.trim();
+  if (!name || !picking?.size) return;
+  saveSpotList(db, `spl_${crypto.randomUUID().replaceAll("-", "")}`, name, picking);
+  close("spotname");
+  setPicking(false);
+  renderSpotForm();
+  open("spotform");
+});
+// Session length, glow style, and dim are synced settings (§ 4) — each
+// writes its profile column on tap, like the keyboard segs.
+for (const seg of ["spot-minutes", "spot-pulse", "spot-dim"]) {
+  $(seg).addEventListener("click", (e) => {
+    const v = e.target.closest("button")?.dataset.v;
+    if (v === undefined) return;
+    setSetting(db, seg.replaceAll("-", "_"), Number(v));
+    spotMinutes = bindSpotSettings();
+    renderSpotForm();
+    renderGrid();
+    rerenderView();
+  });
+}
+
 /* --- permanent utility anchors --- */
 $("anchor-kb").addEventListener("click", () => {
   if (kbOpen) return closeKb(); // the same anchor that opened it closes it
@@ -1012,7 +1176,7 @@ $("anchor-kb").addEventListener("click", () => {
 });
 $("anchor-groups").addEventListener("click", openGroupIndex);
 $("spot-chip").addEventListener("click", () => {
-  endSpotlight();
+  endSession(db);
   renderGrid();
   rerenderView();
 });
@@ -1723,6 +1887,7 @@ async function itemCell(item, gKind, ctx = {}) {
         onSpeak,
       );
   spotMark(el, `${item.item_kind}:${item.item_id}`);
+  pickMark(el, `${item.item_kind}:${item.item_id}`);
   el.dataset.slot = item.vslot ?? item.slot_index;
   el.dataset.item = `${item.item_kind}:${item.item_id}`;
   if (!gestures) return el;
@@ -3135,9 +3300,23 @@ $("menu-editor").addEventListener("click", () => {
   setView("editor");
 });
 
+// A session survives a restart (013 § 4): the synced row lights the
+// glow again — unless its timer or midnight passed while away.
+resumeSession(db);
 renderGrid();
 renderBar();
 renderStrip();
+
+// Timer/midnight expiry: the row's ends_at is the truth; the layer
+// checks it on a slow tick (and on every sync drain) and ends itself.
+setInterval(() => {
+  const was = !!spotlight();
+  resumeSession(db);
+  if (was !== !!spotlight()) {
+    renderGrid();
+    rerenderView();
+  }
+}, 30000);
 
 // On a wide screen the app opens to the editor (Sync § 7): the Library
 // and word card overlays move into the editor panes — same nodes, same
@@ -3167,6 +3346,20 @@ window.pip = {
     },
     end() { endSpotlight(); renderGrid(); rerenderView(); },
     get active() { return spotlight(); },
+    startSession(opts) {
+      const r = startSession(db, opts);
+      renderGrid(); rerenderView();
+      return r;
+    },
+    endSession() { endSession(db); renderGrid(); rerenderView(); },
+    resume() { const r = resumeSession(db); renderGrid(); rerenderView(); return r; },
+    get session() { return spotSession(db); },
+    lists: () => spotLists(db),
+    listTargets: (id) => [...listTargets(db, id)],
+    saveList: (name, targets) =>
+      saveSpotList(db, `spl_${crypto.randomUUID().replaceAll("-", "")}`, name, targets),
+    deleteList: (id) => { deleteSpotList(db, id); },
+    get picking() { return picking ? [...picking] : null; },
   },
   get sentence() {
     return sentence.map((i) => ({ ...i }));
