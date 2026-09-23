@@ -3,6 +3,9 @@
 **Status:** Ready to execute. Not started. Slice 1 can run any time; it
 touches no app code.
 
+**Runs inside 017 step 9** (`docs/phases/017_Prediction_Hardening.md`):
+slices 1, 3, 4, plus occasion times an adult can edit (017 ruling R3).
+
 **DECIDED 2026-09-22** (founder: "brilliant idea … I don't know if JEV
 should classify our words or if an LLM should reason over it. I think we
 should test it"). Intake:

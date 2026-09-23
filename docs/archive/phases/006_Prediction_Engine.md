@@ -412,6 +412,12 @@ log `late`. Day-1 cold start: both arms 0% hit rate (no history → empty
 shortlists; Jev skipped or agreed — nothing to rerank). Cap made no
 measurable difference on this fixture; 16 stays the shipped default.
 
+**Correction 2026-09-23:** the cap-32 row is really a cap-16 run.
+`stripScored` cuts the shortlist to 16 before the smoke's cap applies
+(`public/shared/funnel.mjs:283`), and the smoke ran on the wall clock
+with no 150 ms rule. Superseded by `docs/phases/017_Prediction_Hardening.md`
+steps 1, 2, and 14.
+
 ## Out of scope
 
 Occasions data (007). Listening and partner words (008). Core-cell halos

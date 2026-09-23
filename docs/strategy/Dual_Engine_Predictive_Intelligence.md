@@ -379,6 +379,11 @@ habit; a varied talker toward Jev. Nothing is configured by an adult.
 Both sets learn: `with_jev` on impressions where Jev answered; `local_only`
 on every impression (Jev terms dropped).
 
+**Audit 2026-09-23:** not yet true in code. Only `local_only` trains, it
+also trains on the `jev` feature, and one keyboard-mode sentence resets
+every weight to `null`. Fix: `docs/phases/017_Prediction_Hardening.md`
+steps 3–4.
+
 Feedback-loop guard: the strip can train toward what it already shows.
 Labels come from every input path, and the independence report (§ 7.4)
 tracks how much of each word's use comes through the strip.
