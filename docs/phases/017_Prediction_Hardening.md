@@ -583,6 +583,19 @@ dirty tree refuses.
 
 Done when: both pass.
 
+**Status (BUILT 2026-09-23, `cc2016b`).** `scripts/prediction/synth/splits.mjs`
+owns the split: `loadSynthUsers` throws naming the sealed user when a
+fit/tune purpose asks for ids 81–100, and re-hashes every file against
+`manifest.json` at load — drift fails there, not only at `--check`.
+`requireFinal` demands the flag plus a clean `git status --porcelain`
+(injectable runner for tests); `recordFinalRun` appends to
+`data/prediction/final_runs.jsonl`. `fit_defaults.mjs --users=<spec>`
+collects rows over `userToFixture` synth users through the same guard.
+Proof in `scripts/prediction/synth/splits.test.mjs`: split boundaries,
+eval rejection for fit/tune, hash-mismatch rejection on a tampered
+file, `--final` flag + dirty-tree refusals, and a spawned
+`fit_defaults --users=81` exiting nonzero with `eval` in stderr.
+
 ## Step 16 — Model time and taps through the real board
 
 Goal: replace "every non-core word costs 3 taps" with the real path, and
