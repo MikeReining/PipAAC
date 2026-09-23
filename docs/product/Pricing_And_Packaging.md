@@ -133,7 +133,11 @@ subscription before a child can speak
   20 is a starting value, to be tested with real families.
 - **One live device.** Restoring on a new device *moves* the user there:
   the old device keeps speaking everything it has and stops getting
-  changes. The relay enforces this, not only the UI.
+  changes. The relay enforces this, not only the UI. **BUILT**
+  (2026-09-23): `POST /devices` refuses a second registration with
+  `upgrade_required`; `POST /restore` replaces the device set on a free
+  board (`src/worker/relay.js`). The lifetime flag is currently the
+  dev-license path; verified purchases write the same flag in 015/6.
 - **Drawings** are the one cost that recurs (about 1¢ each). 300 are
   included once, not per year; top-ups are an in-app purchase priced near
   cost. This replaces the 2026-09-22 fair use of 30 a day / 1,000 a year.

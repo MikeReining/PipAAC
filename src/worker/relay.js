@@ -15,6 +15,7 @@
  * Plain class (not extends DurableObject) so Node unit tests can import
  * the worker graph without cloudflare:workers.
  */
+import { checkLicense } from "./license.mjs";
 
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -36,6 +37,16 @@ const bad = (error, status = 400) => json({ error }, { status });
 
 const TS_WINDOW_MS = 10 * 60 * 1000;
 const MAX_OP_BYTES = 64 * 1024;
+
+// Retention (§ 6/§ 11): a board is never deleted for payment. Deletion
+// happens only on family request (30-day undo) or after 3 idle years;
+// a device returning in the final 6 months gets a warning.
+const DAY_MS = 24 * 60 * 60 * 1000;
+const DELETE_GRACE_MS = 30 * DAY_MS;
+const IDLE_DELETE_MS = 3 * 365 * DAY_MS;
+const IDLE_WARN_MS = IDLE_DELETE_MS - 183 * DAY_MS;
+const OP_PRUNE_MS = 30 * DAY_MS;
+const ALARM_PERIOD_MS = DAY_MS;
 
 export class BoardRelay {
   constructor(ctx, env) {
@@ -76,9 +87,28 @@ export class BoardRelay {
     });
   }
 
+  metaGet(k) {
+    return this.ctx.storage.sql.exec(
+      "SELECT v FROM meta WHERE k = ?", k).toArray()[0]?.v ?? null;
+  }
+
+  metaSet(k, v) {
+    this.ctx.storage.sql.exec(
+      "INSERT OR REPLACE INTO meta (k, v) VALUES (?, ?)", k, String(v));
+  }
+
   epoch() {
-    return Number(this.ctx.storage.sql.exec(
-      "SELECT v FROM meta WHERE k = 'key_epoch'").toArray()[0]?.v ?? 1);
+    return Number(this.metaGet("key_epoch") ?? 1);
+  }
+
+  /** 'free' | 'lifetime' — relay-held truth; the client only asks. */
+  entitlement() {
+    return this.metaGet("entitlement") ?? "free";
+  }
+
+  /** Any signed request counts as the board being alive (§ 11). */
+  touchSeen() {
+    this.metaSet("last_seen", Date.now());
   }
 
   devicePubkey(deviceId) {
@@ -134,10 +164,11 @@ export class BoardRelay {
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
          VALUES (?, ?, ?, ?, 1, ?)`,
         device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, Date.now());
-      if (recovery_proof) {
-        this.ctx.storage.sql.exec(
-          "INSERT OR REPLACE INTO meta (k, v) VALUES ('recovery_proof', ?)", recovery_proof);
-      }
+      if (recovery_proof) this.metaSet("recovery_proof", recovery_proof);
+      // Retention bookkeeping starts at birth: the alarm sweeps daily.
+      this.metaSet("board_id", url.pathname.split("/")[2]);
+      this.metaSet("last_seen", Date.now());
+      this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
       return json({ ok: true });
     }
 
@@ -155,6 +186,12 @@ export class BoardRelay {
       let diff = a.length === b.length ? 0 : 1;
       for (let i = 0; i < Math.min(a.length, b.length); i++) diff |= a[i] ^ b[i];
       if (diff) return bad("forbidden", 403);
+      // Restore moves the board (§ 11): on a free board the sheet's new
+      // device replaces the old set — the old device is unlinked, not
+      // added to. Lifetime keeps every linked device.
+      if (this.entitlement() !== "lifetime") {
+        this.ctx.storage.sql.exec("DELETE FROM device");
+      }
       this.ctx.storage.sql.exec(
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
          VALUES (?, ?, ?, NULL, ?, ?)`,
@@ -166,6 +203,7 @@ export class BoardRelay {
     if (method === "GET" && route === "ws") {
       if (request.headers.get("Upgrade") !== "websocket") return bad("expected_websocket", 426);
       if (!(await this.verify(request, null))) return bad("forbidden", 403);
+      this.touchSeen();
       const pair = new WebSocketPair();
       this.ctx.acceptWebSocket(pair[1]);
       return new Response(null, { status: 101, webSocket: pair[0] });
@@ -175,10 +213,29 @@ export class BoardRelay {
     const bodyBytes = method === "GET" ? null : new Uint8Array(await request.arrayBuffer());
     const device = await this.verify(request, bodyBytes);
     if (!device) return bad("forbidden", 403);
+    // last_seen BEFORE this request — a long-absent device refreshing it
+    // now must still get its "nearly deleted" warning this once.
+    const prevSeen = Number(this.metaGet("last_seen") ?? Date.now());
+    this.touchSeen();
+    if (!(await this.ctx.storage.getAlarm())) {
+      this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
+    }
 
+    // Free boards carry one linked device at a time (§ 11). The relay —
+    // not the UI — refuses a second registration; pairing surfaces the
+    // upgrade message from this response.
     if (method === "POST" && route === "devices") {
       const { device_id, pubkey, dh_pub, wrapped_key } = JSON.parse(td.decode(bodyBytes));
       if (!device_id || !pubkey) return bad("bad_device");
+      if (this.entitlement() !== "lifetime") {
+        const known = this.ctx.storage.sql.exec(
+          "SELECT COUNT(*) AS n FROM device").toArray()[0].n;
+        const present = this.devicePubkey(device_id) !== null;
+        if (!present && known >= 1) {
+          return json({ error: "upgrade_required",
+            message: "Pip Lifetime unlocks more than one linked device." }, { status: 403 });
+        }
+      }
       const epoch = this.epoch();
       this.ctx.storage.sql.exec(
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
@@ -188,12 +245,47 @@ export class BoardRelay {
     }
 
     // The calling device's own row — this is how a device picks up the
-    // wrapped board key after pairing, and after a rotation.
+    // wrapped board key after pairing, and after a rotation. Entitlement
+    // and pending-deletion state ride along so the app can warn.
     if (method === "GET" && route === "devices/self") {
       const row = this.ctx.storage.sql.exec(
         "SELECT device_id, dh_pub, wrapped_key, epoch FROM device WHERE device_id = ?",
         device).toArray()[0];
-      return json({ ...row, current_epoch: this.epoch() });
+      const idleAt = prevSeen + IDLE_DELETE_MS;
+      return json({
+        ...row, current_epoch: this.epoch(),
+        entitlement: this.entitlement(),
+        ...(this.metaGet("delete_at") ? { delete_at: Number(this.metaGet("delete_at")) } : {}),
+        ...(idleAt - Date.now() <= IDLE_DELETE_MS - IDLE_WARN_MS ? { idle_delete_at: idleAt } : {}),
+      });
+    }
+
+    // Dev-path activation (011/9): a signed device presents a license
+    // minted against PIP_LICENSE_SECRET. Real purchases mint the same
+    // token when the payments slice lands — this seam stays.
+    if (method === "POST" && route === "entitlement") {
+      const { license } = JSON.parse(td.decode(bodyBytes));
+      const boardId = this.metaGet("board_id") ?? url.pathname.split("/")[2];
+      if (!this.env.PIP_LICENSE_SECRET) return bad("licenses_unavailable", 503);
+      if (!(await checkLicense(this.env.PIP_LICENSE_SECRET, boardId, license))) {
+        return bad("bad_license", 403);
+      }
+      this.metaSet("entitlement", "lifetime");
+      return json({ ok: true, entitlement: "lifetime" });
+    }
+
+    // Family-requested deletion (§ 11): a signed device schedules the
+    // board for deletion after the 30-day undo window. The board keeps
+    // working until then; undelete cancels outright.
+    if (method === "DELETE" && route === "") {
+      const deleteAt = Date.now() + DELETE_GRACE_MS;
+      this.metaSet("delete_at", deleteAt);
+      return json({ ok: true, delete_at: deleteAt });
+    }
+
+    if (method === "POST" && route === "undelete") {
+      this.ctx.storage.sql.exec("DELETE FROM meta WHERE k = 'delete_at'");
+      return json({ ok: true });
     }
 
     if (method === "GET" && route === "devices") {
@@ -286,8 +378,11 @@ export class BoardRelay {
       const boardId = url.pathname.split("/")[2];
       if (method === "PUT") {
         await this.env.BLOBS.put(`s/${boardId}`, bodyBytes);
-        this.ctx.storage.sql.exec(
-          "INSERT OR REPLACE INTO meta (k, v) VALUES ('snapshot_at', ?)", String(Date.now()));
+        this.metaSet("snapshot_at", Date.now());
+        // ?seq=N marks how much of the op log the snapshot covers —
+        // the retention sweep prunes only ops it has folded away.
+        const seq = Number(url.searchParams.get("seq") ?? 0);
+        if (seq > 0) this.metaSet("snapshot_seq", seq);
         return json({ ok: true });
       }
       if (method === "GET") {
@@ -298,6 +393,53 @@ export class BoardRelay {
     }
 
     return bad("not_found", 404);
+  }
+
+  /** Physical deletion: every blob + snapshot under the board prefix,
+   *  then the DO's own storage. Only retentionSweep reaches here —
+   *  nothing about entitlement ever deletes data. */
+  async destroy() {
+    const boardId = this.metaGet("board_id");
+    if (boardId) {
+      let cursor;
+      do {
+        const listing = await this.env.BLOBS.list({ prefix: `b/${boardId}/`, cursor });
+        for (const obj of listing.objects ?? []) await this.env.BLOBS.delete(obj.key);
+        cursor = listing.truncated ? listing.cursor : undefined;
+      } while (cursor);
+      await this.env.BLOBS.delete(`s/${boardId}`);
+    }
+    await this.ctx.storage.deleteAll();
+    await this.ctx.storage.deleteAlarm();
+  }
+
+  /** The daily sweep (§ 11). Callable directly with an injected `now`
+   *  so tests can place a board at any age. Returns what it did. */
+  async retentionSweep(now) {
+    const deleteAt = Number(this.metaGet("delete_at") ?? 0);
+    const lastSeen = Number(this.metaGet("last_seen") ?? now);
+    const done = { destroyed: false, warned: false, pruned: 0 };
+    if ((deleteAt && deleteAt <= now) || now - lastSeen >= IDLE_DELETE_MS) {
+      await this.destroy();
+      done.destroyed = true;
+      return done;
+    }
+    if (now - lastSeen >= IDLE_WARN_MS) done.warned = true; // surfaced via devices/self
+    const snapSeq = Number(this.metaGet("snapshot_seq") ?? 0);
+    if (snapSeq > 0) {
+      done.pruned = this.ctx.storage.sql.exec(
+        "SELECT COUNT(*) AS n FROM op WHERE relay_seq <= ? AND created_at < ?",
+        snapSeq, now - OP_PRUNE_MS).toArray()[0].n;
+      this.ctx.storage.sql.exec(
+        "DELETE FROM op WHERE relay_seq <= ? AND created_at < ?",
+        snapSeq, now - OP_PRUNE_MS);
+    }
+    return done;
+  }
+
+  async alarm() {
+    await this.retentionSweep(Date.now());
+    this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
   }
 
   webSocketMessage() { /* clients never send — ops go through POST */ }

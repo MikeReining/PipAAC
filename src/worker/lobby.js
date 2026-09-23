@@ -41,9 +41,11 @@ export class PairingLobby {
           iv TEXT NOT NULL,
           wrapped TEXT NOT NULL,
           by_device TEXT NOT NULL,
+          refused TEXT,
           created_at INTEGER NOT NULL
         );
       `);
+      try { ctx.storage.sql.exec("ALTER TABLE grant ADD COLUMN refused TEXT"); } catch { /* there */ }
     });
   }
 
@@ -68,27 +70,33 @@ export class PairingLobby {
       if (!req) return bad("not_found", 404);
       if (expired) return bad("expired", 410);
       return json({
-        status: grant ? "granted" : "pending",
+        status: grant ? (grant.refused ? "refused" : "granted") : "pending",
         device_id: req.device_id, sig_pub: req.sig_pub, dh_pub: req.dh_pub,
         ...(grant ? { grant: {
           board_id: grant.board_id, eph: grant.eph, iv: grant.iv,
           wrapped: grant.wrapped, by_device: grant.by_device,
+          ...(grant.refused ? { refused: grant.refused } : {}),
         } } : {}),
       });
     }
 
+    // The linked device either grants (wrapped board key) or refuses
+    // (e.g. the relay rejected a second device on a free board) — the
+    // new device deserves an answer either way.
     if (request.method === "POST" && tail === "grant") {
       if (!req) return bad("not_found", 404);
       if (expired) return bad("expired", 410);
       if (grant) return bad("already_granted", 409);
       const g = await request.json().catch(() => ({}));
-      if (!g.board_id || !g.eph || !g.iv || !g.wrapped || !g.by_device) {
+      const refused = typeof g.refused === "string" && g.refused;
+      if (!refused && (!g.board_id || !g.eph || !g.iv || !g.wrapped || !g.by_device)) {
         return bad("bad_request");
       }
       this.ctx.storage.sql.exec(
-        `INSERT INTO grant (id, board_id, eph, iv, wrapped, by_device, created_at)
-         VALUES (1, ?, ?, ?, ?, ?, ?)`,
-        g.board_id, g.eph, g.iv, g.wrapped, g.by_device, Date.now());
+        `INSERT INTO grant (id, board_id, eph, iv, wrapped, by_device, refused, created_at)
+         VALUES (1, ?, ?, ?, ?, ?, ?, ?)`,
+        g.board_id ?? "", g.eph ?? "", g.iv ?? "", g.wrapped ?? "",
+        g.by_device ?? "", refused || null, Date.now());
       return json({ ok: true });
     }
 

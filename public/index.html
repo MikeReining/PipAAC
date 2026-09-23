@@ -886,6 +886,15 @@
           </div>
           <p class="hint">A linked device sees and edits the whole board. Removing it locks it out and re-keys the board.</p>
         </div>
+        <div class="seg-row" id="dev-lifetime-row" hidden>
+          <span class="seg-label">Pip Lifetime</span>
+          <div id="dev-lifetime"><p class="hint">Checking…</p></div>
+          <div class="row" id="dev-license-row">
+            <input type="text" id="dev-license" placeholder="License key" autocomplete="off" style="flex:1" />
+            <button class="btn secondary" id="dev-activate">Activate</button>
+          </div>
+          <p class="hint">Lifetime links more than one device and unlocks the web editor.</p>
+        </div>
         <div class="seg-row">
           <span class="seg-label">Backup</span>
           <div class="row">
@@ -893,6 +902,15 @@
             <button class="btn secondary" id="dev-restore">Restore a board</button>
           </div>
           <p class="hint">The sheet is the last resort — print it and keep it somewhere safe. Without the sheet, a linked device, or a device backup, a lost board is gone for good.</p>
+        </div>
+        <div class="seg-row" id="dev-delete-row" hidden>
+          <span class="seg-label">Delete</span>
+          <div id="dev-delete-state"></div>
+          <div class="row">
+            <button class="btn secondary" id="dev-delete">Delete this board</button>
+            <button class="btn secondary" id="dev-undelete" hidden>Undo deletion</button>
+          </div>
+          <p class="hint">Deletes the board from the relay after 30 days. Undo any time before then. This does not erase this device's copy.</p>
         </div>
         <button class="btn secondary" data-close>Close</button>
       </div>

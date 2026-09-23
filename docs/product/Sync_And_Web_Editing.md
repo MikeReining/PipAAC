@@ -224,6 +224,17 @@ Auth: ECDSA P-256 signature over `method\npath\nts\nsha256(body)` in
 `x-pip-*` headers, 10-minute freshness window, verified against the
 allowed-device list in DO storage. Client: `public/shared/sync_client.mjs`.
 
+**BUILT** (015 slices 6–7 relay legs, 2026-09-23): `POST /entitlement`
+activates a board-bound license (`src/worker/license.mjs`, HMAC over
+`pip-lifetime:<boardId>` against `PIP_LICENSE_SECRET` — the dev path;
+verified Stripe/Apple purchases mint the same seam when slice 6 lands
+its billing half). `POST /devices` on a free board with a linked device
+answers `403 upgrade_required`; `POST /restore` on a free board replaces
+the device set (the sheet moves the board; on Lifetime it adds).
+`DELETE /boards/:id` schedules deletion at +30 days, `POST /undelete`
+cancels; `GET /devices/self` carries `entitlement`, `delete_at`, and
+`idle_delete_at`.
+
 What the server can see: board id, device public keys, op sizes and times,
 blob sizes. What it cannot see: any name, photo, recording, word, group
 name or setting.
@@ -243,6 +254,20 @@ people with special needs takes a ton of time"; § 11):
 - **Ops fold into snapshots.** Ops older than the latest snapshot are
   pruned after 30 days (starting value). That removes no data: the
   snapshot holds the same state.
+
+**BUILT** (2026-09-23): all four rules run on the relay. `last_seen` is
+stamped on every signed request; a daily Durable-Object alarm runs
+`retentionSweep(now)`, which destroys a board only for the two causes
+above (`destroy()` deletes the R2 `b/<board>/*` + `s/<board>` objects
+and the DO's own storage — nothing about entitlement ever reaches it).
+The warning rides `GET /devices/self` as `idle_delete_at`, computed from
+the previous `last_seen` so a returning device still sees it once.
+Pruning applies only to ops covered by `snapshot_seq` and older than 30
+days — with no snapshot nothing is pruned. Supporter-email warnings
+remain for the accounts slices (§ 12). Proofs:
+`src/worker/entitlement.test.mjs` (cap, move, boundaries, undo, prune),
+`scripts/probes/entitlement_probe.mjs` (Parent Corner activate/delete/
+undo against the live relay).
 
 ## 7. The web editor
 
@@ -363,14 +388,16 @@ All five asked questions were answered ("all agreed"):
 2. **iPad backup:** accepted as a second recovery path (§ 9).
 3. **History across devices:** no. History stays on the device (§ 2).
 4. **Retention:** never deleted for payment; deleted on request; idle
-   boards after 3 years with in-app warnings (§ 6).
+   boards after 3 years with in-app warnings (§ 6). **BUILT** on the
+   relay (2026-09-23, § 6 note).
 5. **Free vs paid:** *(superseded 2026-09-23 by
    `docs/product/Pricing_And_Packaging.md` § 4)*
    - **Free for every board:** encrypted backup, the recovery sheet, and
      restore. "A voice is not rented" includes the vocabulary
      (`docs/product/Pricing_And_Packaging.md` § 1). A free board has one
      linked device at a time; restoring onto a new device moves the board
-     there.
+     there. **BUILT** (2026-09-23): the cap and the move are enforced by
+     the relay, not the UI (§ 6).
    - **Pip Lifetime:** more than one linked device, the web editor, and
      Draw it for me (`docs/product/Word_Library.md` § 6.1).
 

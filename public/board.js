@@ -126,6 +126,17 @@ function onSyncApplied() {
 }
 
 initSync(db, location.origin, onSyncApplied)
+  .then(async (sync) => {
+    if (!sync) return;
+    // § 11 warning channel: a linked device returning inside the final
+    // window (or while a deletion is pending) hears about it once.
+    const self = await sync.client.selfKey().catch(() => null);
+    if (self?.delete_at) {
+      toast(`This board is scheduled for deletion on ${new Date(self.delete_at).toLocaleDateString()} — Parent corner → Delete to undo.`);
+    } else if (self?.idle_delete_at) {
+      toast(`This board has not synced in a long time and may be removed on ${new Date(self.idle_delete_at).toLocaleDateString()}.`);
+    }
+  })
   .catch((err) => console.warn("sync unavailable", err));
 // Profile locale and voice resolve once at boot (schema §7.1) and bind
 // into every label query and speech call — never a literal, never
@@ -2551,6 +2562,8 @@ async function ensureBoard() {
 async function renderDevices() {
   const list = $("dev-list");
   const cfg = syncConfig();
+  $("dev-lifetime-row").hidden = !cfg?.boardId;
+  $("dev-delete-row").hidden = !cfg?.boardId;
   if (!cfg?.boardId) {
     list.innerHTML = '<p class="hint">This board is only on this device.</p>';
     return;
@@ -2560,7 +2573,7 @@ async function renderDevices() {
     const identity = await getDeviceIdentity(store);
     const boardKey = await getBoardKey(store, cfg.epoch ?? 1);
     const client = relayClient({ boardId: cfg.boardId, baseUrl: relayBase, identity, boardKey });
-    const { devices } = await client.listDevices();
+    const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
     list.innerHTML = "";
     for (const d of devices) {
       const row = document.createElement("div");
@@ -2579,8 +2592,31 @@ async function renderDevices() {
       }
       list.append(row);
     }
+    renderEntitlement(self);
   } catch (err) {
     list.innerHTML = '<p class="hint">Relay unreachable — devices cannot be listed.</p>';
+  }
+}
+
+/** Entitlement + pending-deletion state in the corner rows. selfKey is
+ *  the relay's own answer — nothing here is a client guess. */
+function renderEntitlement(self) {
+  const life = self?.entitlement === "lifetime";
+  $("dev-lifetime").innerHTML = `<p class="hint">${
+    life ? "Pip Lifetime — unlimited linked devices." : "Free — one linked device."}</p>`;
+  $("dev-license-row").hidden = life;
+  const state = $("dev-delete-state");
+  if (self?.delete_at) {
+    const when = new Date(self.delete_at).toLocaleDateString();
+    state.innerHTML = `<p class="hint"><b>This board is scheduled for deletion on ${when}.</b></p>`;
+    $("dev-delete").hidden = true;
+    $("dev-undelete").hidden = false;
+  } else {
+    state.innerHTML = self?.idle_delete_at
+      ? `<p class="hint"><b>Warning:</b> no linked device has synced in over two years. This board will be removed on ${new Date(self.idle_delete_at).toLocaleDateString()} unless a device syncs.</p>`
+      : "";
+    $("dev-delete").hidden = false;
+    $("dev-undelete").hidden = true;
   }
 }
 
@@ -2635,6 +2671,12 @@ async function linkThisDevice() {
   pairPoll = setInterval(async () => {
     try {
       const st = await pairClient(relayBase).status(pair);
+      if (st.status === "refused") {
+        clearInterval(pairPoll);
+        pairPoll = null;
+        status.textContent = st.grant?.refused ?? "The other device declined.";
+        return;
+      }
       if (st.status !== "granted") return;
       clearInterval(pairPoll);
       pairPoll = null;
@@ -2647,6 +2689,18 @@ async function linkThisDevice() {
       await renderDevices();
     } catch { /* expired or relay hiccup — poll again */ }
   }, 2000);
+}
+
+/** Signed relay client for this board — shared by device management,
+ *  entitlement, and deletion calls. */
+async function boardClient() {
+  const cfg = syncConfig();
+  if (!cfg?.boardId) throw new Error("no linked board");
+  const store = openKeyStore();
+  const identity = await getDeviceIdentity(store);
+  const boardKey = await getBoardKey(store, cfg.epoch ?? 1);
+  return { client: relayClient({ boardId: cfg.boardId, baseUrl: relayBase, identity, boardKey }),
+    store, identity, boardKey };
 }
 
 /** This device is the LINKED device: type the code the new one shows. */
@@ -2677,12 +2731,20 @@ async function addDeviceFlow() {
   pairGo.onclick = async () => {
     if (!pending) return;
     const cfg = syncConfig();
-    const store = openKeyStore();
-    const identity = await getDeviceIdentity(store);
-    const boardKey = await getBoardKey(store, cfg.epoch ?? 1);
-    const client = relayClient({ boardId: cfg.boardId, baseUrl: relayBase, identity, boardKey });
+    const { client, identity, boardKey } = await boardClient();
     const wrapped = await wrapBoardKey(boardKey, pending.req.dh_pub);
-    await client.addDevice(pending.req.device_id, pending.req.sig_pub, { dh_pub: pending.req.dh_pub });
+    try {
+      await client.addDevice(pending.req.device_id, pending.req.sig_pub, { dh_pub: pending.req.dh_pub });
+    } catch (e) {
+      // The relay refused — a free board allows one linked device. The
+      // new device gets a real answer, not a silent timeout.
+      const msg = e.message === "upgrade_required"
+        ? "This board allows one linked device. Pip Lifetime unlocks more."
+        : `The relay refused: ${e.message}`;
+      pairBody.querySelector(".hint").textContent = msg;
+      await pairClient(relayBase).grant(pending.code, { refused: msg });
+      return;
+    }
     await pairClient(relayBase).grant(pending.code, {
       board_id: cfg.boardId, by_device: identity.deviceId, ...wrapped });
     closePair();
@@ -2699,6 +2761,55 @@ $("dev-add").onclick = () => addDeviceFlow().catch((e) => {
   pairBody.innerHTML = `<p class="hint">Could not reach the relay: ${e.message}</p>`;
 });
 $("corner").addEventListener("click", renderDevices);
+
+/* Pip Lifetime (dev path, 011/9): a minted license activates on the
+ * relay — the client only transports it. Payments wire into the same
+ * seam later. */
+$("dev-activate").onclick = async () => {
+  const key = $("dev-license").value.trim();
+  if (!key) return;
+  try {
+    const { client } = await boardClient();
+    await client.setEntitlement(key);
+    $("dev-license").value = "";
+    await renderDevices();
+  } catch (e) {
+    $("dev-lifetime").innerHTML =
+      `<p class="hint">That key did not verify for this board.</p>`;
+  }
+};
+
+/* Board deletion (§ 11): confirm → the relay schedules deletion in 30
+ * days; Undo cancels. The device keeps its own copy either way. */
+$("dev-delete").onclick = () => {
+  openPair("Delete this board?");
+  pairBody.innerHTML = `<p class="hint">The board and its backups will be
+    deleted from the relay in 30 days. Any linked device can undo it
+    before then. This device keeps its local copy.</p>`;
+  pairGo.hidden = false;
+  pairGo.textContent = "Delete";
+  pairGo.onclick = async () => {
+    try {
+      const { client } = await boardClient();
+      const { delete_at } = await client.deleteBoard();
+      closePair();
+      toast(`Board scheduled for deletion on ${new Date(delete_at).toLocaleDateString()}`);
+      await renderDevices();
+    } catch (e) {
+      pairBody.querySelector(".hint").textContent = `Could not reach the relay: ${e.message}`;
+    }
+  };
+};
+$("dev-undelete").onclick = async () => {
+  try {
+    const { client } = await boardClient();
+    await client.undeleteBoard();
+    toast("Deletion cancelled — this board stays.");
+    await renderDevices();
+  } catch (e) {
+    toast(`Could not reach the relay: ${e.message}`);
+  }
+};
 
 /* ------------------------------------------------------------------ *
  * Recovery sheet (§ 9) — the last-resort credential: QR + board id +

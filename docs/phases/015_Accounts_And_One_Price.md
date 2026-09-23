@@ -238,6 +238,17 @@ get 403 and ops after removal are sealed under a key S never received.
 
 ## Slice 6 — Pip Lifetime and the free limits
 
+**Partially BUILT 2026-09-23** (relay legs, dev-license path): the
+one-live-device cap is enforced by `BoardRelay` (`403 upgrade_required`
+on a second `POST /devices`), restore on a free board replaces the
+device set, and `POST /entitlement` activates a board-bound HMAC license
+(`src/worker/license.mjs` + `scripts/entitlement/mint.mjs`,
+`PIP_LICENSE_SECRET` dev var — founder ruling: payments are their own
+slice, dev flag for now). Still owed by this slice: user-scoped license
+records (needs slice 4), Stripe/Apple confirmations, the 20-word and
+5-drawing counters, the web-editor gate, license codes, and the
+server-signed offline license statement.
+
 Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 
 **Payments DECIDED 2026-09-23:**
@@ -280,6 +291,17 @@ Works Test:
 4. A forged license statement is rejected on the device.
 
 ## Slice 7 — Retention and email
+
+**Partially BUILT 2026-09-23** (everything but email): the BoardRelay
+stamps `last_seen` on every signed request; a daily DO alarm runs
+`retentionSweep(now)` — destruction only on `delete_at` expiry (30-day
+undo via `DELETE`/`undelete`) or 3 idle years; a fixture at 2y11m
+survives and is flagged; a returning device sees `idle_delete_at` on
+`GET /devices/self` plus a boot toast and a Parent Corner warning; ops
+covered by `snapshot_seq` prune after 30 days. Still owed: supporter
+email (needs slice 4) and the user-level vocabulary once slice 1 lands.
+Proof: `src/worker/entitlement.test.mjs`,
+`scripts/probes/entitlement_probe.mjs`.
 
 Goal: 011 slice 9's retention rules, with email as the warning channel.
 

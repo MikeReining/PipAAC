@@ -32,7 +32,14 @@ export function relayClient({ boardId, baseUrl, identity, boardKey }) {
                  ...(await signedHeaders(identity, method, signedPath, bytes)) },
       body: bytes,
     });
-    if (!res.ok) throw new Error(`relay ${method}${suffix}: ${res.status}`);
+    if (!res.ok) {
+      // The relay answers {error} — carry the code so callers can tell
+      // "upgrade_required" from a dead relay.
+      const body = await res.json().catch(() => null);
+      const err = new Error(body?.error ?? `relay ${method}${suffix}: ${res.status}`);
+      err.status = res.status;
+      throw err;
+    }
     return res.json();
   };
 
@@ -48,6 +55,11 @@ export function relayClient({ boardId, baseUrl, identity, boardKey }) {
     removeDevice: (device_id) => call("DELETE", `/devices/${device_id}`),
     /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
+    /** Activate Pip Lifetime with a board-bound license key (dev path). */
+    setEntitlement: (license) => call("POST", "/entitlement", { license }),
+    /** Schedule board deletion — 30-day undo; undelete cancels. */
+    deleteBoard: () => call("DELETE", ""),
+    undeleteBoard: () => call("POST", "/undelete"),
     /** Seal and submit pending ops; returns their relay_seqs. */
     async submit(ops) {
       const sealed = [];

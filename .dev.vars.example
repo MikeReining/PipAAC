@@ -6,3 +6,5 @@
 #   npx wrangler secret put <SECRET_NAME>
 # 006 slice 5 — Jev reranker: Worker-side TypeSafe key (never on the device).
 TYPESAFE_API_KEY=
+# 011 slice 9 — Pip Lifetime license minting (dev path; any random string).
+PIP_LICENSE_SECRET=
