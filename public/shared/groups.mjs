@@ -61,6 +61,7 @@ export function lowestFreeIndexSlot(db) {
 // Imported lazily-safe: ops.mjs imports this module for replay; the cycle
 // resolves because recordOp is only called inside function bodies.
 import { recordOp } from "./ops.mjs";
+import { SENSE_ART_SQL } from "./images.mjs";
 
 function insertCell(db, groupId, kind, id, page, slot, addedAt = null) {
   db.prepare(
@@ -251,8 +252,7 @@ export function groupPage(db, groupId, page = 0, locale) {
             COALESCE(l.text, e.spoken_name) AS label,
             COALESCE(s.fitzgerald_role, 'Yellow') AS fitzgerald_role,
             e.photo_key AS photo_key,
-            (SELECT i.key FROM image i
-              WHERE i.id = s.default_image_id AND i.status = 'approved') AS art
+            ${SENSE_ART_SQL} AS art
      FROM group_cell gc
      LEFT JOIN sense s ON gc.item_kind = 'sense' AND s.id = gc.item_id
      LEFT JOIN label l ON gc.item_kind = 'sense' AND l.sense_id = gc.item_id
@@ -333,8 +333,7 @@ export function catalogMatches(db, text, groupId, locale, seedCategory = null) {
   return all(
     db,
     `SELECT s.id, l.text AS label, s.fitzgerald_role,
-            (SELECT i.key FROM image i
-              WHERE i.id = s.default_image_id AND i.status = 'approved') AS art
+            ${SENSE_ART_SQL} AS art
      FROM label l JOIN sense s ON s.id = l.sense_id
      WHERE l.normalized_text LIKE ? ESCAPE '\\'
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?

@@ -74,6 +74,10 @@ import { RECOVERY_WORDS } from "./shared/recovery_words.mjs";
 import { pairClient, relayClient, restoreDevice } from "./shared/sync_client.mjs";
 import { initSync, setSyncConfig, syncConfig, syncUploadBlob } from "./shared/sync.mjs";
 import { clearOverride, overrideFor, resolveSlot, setOverride } from "./shared/voice.mjs";
+import {
+  SENSE_ART_SQL, clearImageOverride, imageOverrideFor,
+  libraryImagesFor, setImageOverride,
+} from "./shared/images.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -95,6 +99,7 @@ function onSyncApplied() {
   clearTimeout(syncRepaintTimer);
   syncRepaintTimer = setTimeout(() => {
     entityPhoto.clear(); // photo_key may have changed
+    senseMeta.clear();   // image overrides may have landed
     renderGrid();
     renderStrip();
     rerenderView();
@@ -205,8 +210,7 @@ function metaFor(senseId) {
       senseId,
       ALL(
         db,
-        `SELECT s.fitzgerald_role AS role,
-           (SELECT i.key FROM image i WHERE i.id = s.default_image_id AND i.status = 'approved') AS art
+        `SELECT s.fitzgerald_role AS role, ${SENSE_ART_SQL} AS art
          FROM sense s WHERE s.id = ?`,
         [senseId],
       )[0] ?? { role: null, art: null },
@@ -255,8 +259,8 @@ function renderBar() {
       const art = metaFor(item.id).art;
       if (art) {
         const img = document.createElement("img");
-        img.src = `/${art}`;
         img.alt = "";
+        if (artInto(img, art)) chip.classList.add("photo");
         ar.appendChild(img);
       }
     } else if (item.kind === "entity") {
@@ -381,8 +385,8 @@ async function predCard(c) {
     const art = c.id ? metaFor(c.id).art : null;
     if (art) {
       const img = document.createElement("img");
-      img.src = `/${art}`;
       img.alt = "";
+      if (artInto(img, art)) el.classList.add("photo");
       part.appendChild(img);
     } else {
       part.textContent = c.glyph ?? c.label[0].toUpperCase();
@@ -527,6 +531,19 @@ function showGroupHint(kind, id) {
 }
 document.addEventListener("pointerdown", clearGroupHint, { capture: true });
 
+/** Set an <img> to a sense's art key: catalog keys are shipped asset
+ *  paths; `blob:` keys are family photos in OPFS, resolved through the
+ *  blob loader (which lazy-fetches a sealed copy). Returns true when the
+ *  art is a photo — the caller adds the cover-fit `.photo` class. */
+function artInto(img, art) {
+  if (art.startsWith("blob:")) {
+    loadPhotoURL(art).then((url) => { if (url) img.src = url; });
+    return true;
+  }
+  img.src = `/${art}`;
+  return false;
+}
+
 /** One word tile (Design_System § Tiles): role-tinted label strip on
  *  top, art on white below. Photos fill the art area edge to edge. */
 function wordTile({ label, role, art = null, photoURL = null }) {
@@ -539,10 +556,14 @@ function wordTile({ label, role, art = null, photoURL = null }) {
   ar.className = "tart";
   if (art || photoURL) {
     const img = document.createElement("img");
-    img.src = photoURL ?? `/${art}`;
     img.alt = "";
     ar.appendChild(img);
-    if (photoURL) el.classList.add("photo");
+    if (photoURL) {
+      img.src = photoURL;
+      el.classList.add("photo");
+    } else if (artInto(img, art)) {
+      el.classList.add("photo");
+    }
   }
   el.append(lb, ar);
   return el;
@@ -1637,8 +1658,8 @@ function renderAddMatches() {
     const p = pic(row, `r-${m.fitzgerald_role}`);
     if (m.art) {
       const img = document.createElement("img");
-      img.src = `/${m.art}`;
       img.alt = "";
+      if (artInto(img, m.art)) p.classList.add("photo");
       p.appendChild(img);
     }
     const txt = document.createElement("span");
@@ -1675,8 +1696,8 @@ function libRowPic(r) {
     });
   } else if (r.art) {
     const img = document.createElement("img");
-    img.src = `/${r.art}`;
     img.alt = "";
+    if (artInto(img, r.art)) p.classList.add("photo");
     p.appendChild(img);
   } else {
     p.textContent = r.label[0].toUpperCase();
@@ -1807,6 +1828,8 @@ function openWordCard(item) {
   $("wc-role").textContent = isEnt ? "personal word" : "catalog word";
   $("wc-photolabel").hidden = !isEnt;
   $("wc-photo").value = "";
+  $("wc-ownpiclabel").hidden = isEnt;
+  $("wc-ownpic").value = "";
   $("wc-remove").hidden = !isEnt;
   $("wc-grouplist").hidden = true;
   if (isEnt && item.photo_key) {
@@ -1820,14 +1843,15 @@ function openWordCard(item) {
     });
   } else if (!isEnt && meta.art) {
     const img = document.createElement("img");
-    img.src = `/${meta.art}`;
     img.alt = "";
+    if (artInto(img, meta.art)) pic.classList.add("photo");
     pic.appendChild(img);
   } else {
     pic.textContent = item.label[0].toUpperCase();
   }
   renderCardGroups();
   updateRecUI();
+  updatePicUI();
   open("wordcard");
 }
 
@@ -1850,6 +1874,70 @@ $("wc-photo").addEventListener("change", async () => {
   setEntityPhoto(db, cardItem.item_id, photo.key);
   entityPhoto.delete(cardItem.item_id);
   rerenderView();
+});
+
+/* Use my own picture (009 slice 6): a catalog word's photo override, or
+ * another approved library picture, drawn everywhere the sense renders
+ * until "Use our picture". The core map never changes — only the art. */
+function updatePicUI() {
+  const isEnt = cardItem?.item_kind === "entity";
+  const ovr = !isEnt && cardItem ? imageOverrideFor(db, cardItem.item_id) : null;
+  $("wc-ourpic").hidden = !ovr;
+  const pics = !isEnt && cardItem ? libraryImagesFor(db, cardItem.item_id) : [];
+  const box = $("wc-libpics");
+  box.replaceChildren();
+  // Another library picture is a choice only when one exists.
+  box.hidden = pics.length < 2;
+  for (const p of pics) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.classList.toggle("sel", ovr?.image_id === p.id);
+    const img = document.createElement("img");
+    img.src = `/${p.key}`;
+    img.alt = "";
+    b.appendChild(img);
+    b.addEventListener("click", () => {
+      setImageOverride(db, { senseId: cardItem.item_id, imageId: p.id });
+      afterPicChange();
+    });
+    box.appendChild(b);
+  }
+}
+
+function afterPicChange() {
+  senseMeta.delete(cardItem.item_id);
+  const meta = metaFor(cardItem.item_id);
+  const pic = $("wc-pic");
+  pic.className = `pic r-${meta.role ?? "None"}`;
+  pic.replaceChildren();
+  if (meta.art) {
+    const img = document.createElement("img");
+    img.alt = "";
+    if (artInto(img, meta.art)) pic.classList.add("photo");
+    pic.appendChild(img);
+  } else {
+    pic.textContent = cardItem.label[0].toUpperCase();
+  }
+  updatePicUI();
+  renderGrid();
+  renderStrip();
+  rerenderView();
+}
+
+$("wc-ownpic").addEventListener("change", async () => {
+  const file = $("wc-ownpic").files[0];
+  $("wc-ownpic").value = "";
+  if (!file || !cardItem || cardItem.item_kind !== "sense") return;
+  const photo = await savePhoto(file);
+  syncUploadBlob(photo.bytes).catch(() => {});
+  setImageOverride(db, { senseId: cardItem.item_id, photoKey: photo.key });
+  afterPicChange();
+});
+
+$("wc-ourpic").addEventListener("click", () => {
+  if (!cardItem || cardItem.item_kind !== "sense") return;
+  clearImageOverride(db, cardItem.item_id);
+  afterPicChange();
 });
 
 $("wc-play").addEventListener("click", () => {

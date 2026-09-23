@@ -84,7 +84,7 @@ are scheduled with those slices.
 
 | Row | Personal entity (Cooper) | Catalog word (`cup`) |
 | --- | --- | --- |
-| Picture | Photo, or change it — **BUILT** (file input → `savePhoto`) | Our art — **BUILT** (approved `image` key). "Use my own picture" is § 5's slice |
+| Picture | Photo, or change it — **BUILT** (file input → `savePhoto`) | **BUILT** — **Use my own picture** (a photo) or another approved library image sets `image_override`; **Use our picture** restores (`public/shared/images.mjs`) |
 | Name | Editable — **BUILT**. A rename supersedes the ready recording and enrichment (schema § 6.2; `renameEntity`) | Read-only — **BUILT**. For another word, add it as a new word |
 | Sound | ▶ plays what the board plays — **BUILT** (`resolveSlot` in `public/shared/voice.mjs`: override → voice clip → TTS → silent slot). **Record it** / **Use the voice again** — **BUILT** (`MediaRecorder` → `blob:` key → `set_override` op) |
 | In groups | Chips, one per group — **BUILT** (`entityGroups`/`senseGroups`). × removes with Undo — **BUILT**. **+ Add to group** lists groups — **BUILT** | Same. A seeded word cannot leave its built-in group; use Hide |

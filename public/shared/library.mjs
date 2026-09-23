@@ -7,6 +7,8 @@
  * — enough to draw a picture row and to open the word card.
  */
 
+import { SENSE_ART_SQL } from "./images.mjs";
+
 const all = (db, sql, params = []) => db.prepare(sql).all(...params);
 
 const LEMMA = "l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?";
@@ -14,9 +16,10 @@ const LEMMA = "l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?";
 /**
  * Added — everything the family added or changed, newest first:
  * active entities (by creation), catalog senses placed in a custom group
- * or My Words (by earliest such placement), and senses with a recording
- * override (by override row order). `added_at` may be null on rows from
- * before the column; rowid order stands in for them.
+ * or My Words (by earliest such placement), senses with a recording
+ * override, and senses with a picture override (by override row order).
+ * `added_at` may be null on rows from before the column; rowid order
+ * stands in for them.
  */
 export function libraryAdded(db, locale) {
   return all(
@@ -29,7 +32,7 @@ export function libraryAdded(db, locale) {
        WHERE e.status = 'active'
        UNION ALL
        SELECT 'sense', s.id, l.text, s.fitzgerald_role, NULL,
-              (SELECT i.key FROM image i WHERE i.id = s.default_image_id AND i.status = 'approved'),
+              ${SENSE_ART_SQL},
               MIN(COALESCE(gc.added_at, gc.rowid))
        FROM group_cell gc
        JOIN board_group g ON g.id = gc.group_id AND g.kind IN ('custom', 'my_words')
@@ -38,15 +41,23 @@ export function libraryAdded(db, locale) {
        GROUP BY s.id
        UNION ALL
        SELECT 'sense', s.id, l.text, s.fitzgerald_role, NULL,
-              (SELECT i.key FROM image i WHERE i.id = s.default_image_id AND i.status = 'approved'),
+              ${SENSE_ART_SQL},
               MIN(o.rowid)
        FROM clip_override o
        JOIN label l ON l.utterance_id = o.utterance_id AND ${LEMMA}
        JOIN sense s ON s.id = l.sense_id
        GROUP BY s.id
+       UNION ALL
+       SELECT 'sense', s.id, l.text, s.fitzgerald_role, NULL,
+              ${SENSE_ART_SQL},
+              MIN(o.rowid)
+       FROM image_override o
+       JOIN sense s ON s.id = o.sense_id
+       JOIN label l ON l.sense_id = s.id AND ${LEMMA}
+       GROUP BY s.id
      )
      ORDER BY ord DESC`,
-    [locale, locale],
+    [locale, locale, locale],
   );
 }
 
@@ -65,7 +76,7 @@ export function libraryAll(db, locale) {
        WHERE e.status = 'active'
        UNION ALL
        SELECT 'sense', s.id, l.text, s.fitzgerald_role, NULL,
-              (SELECT i.key FROM image i WHERE i.id = s.default_image_id AND i.status = 'approved')
+              ${SENSE_ART_SQL}
        FROM sense s
        JOIN label l ON l.sense_id = s.id AND ${LEMMA}
      )
@@ -99,7 +110,7 @@ export function librarySearch(db, text, locale, normalize) {
        WHERE e.status = 'active'
        UNION ALL
        SELECT 'sense', s.id, l.text, s.fitzgerald_role, NULL,
-              (SELECT i.key FROM image i WHERE i.id = s.default_image_id AND i.status = 'approved'),
+              ${SENSE_ART_SQL},
               l.normalized_text
        FROM sense s
        JOIN label l ON l.sense_id = s.id AND l.status = 'approved' AND l.locale = ?

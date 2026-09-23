@@ -29,6 +29,7 @@ import {
   swapItems,
 } from "./groups.mjs";
 import { clearOverride, setOverride } from "./voice.mjs";
+import { clearImageOverride, setImageOverride } from "./images.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -170,6 +171,20 @@ export function applyOp(db, op) {
       case "clear_override":
         clearOverride(db, a.itemKind, a.itemId);
         break;
+      case "set_image_override":
+        // A library-image override only means something if that image is
+        // still an approved image of this sense here (catalogs drift);
+        // a photo_key is device content and always applies.
+        if (a.imageId === null
+            || !!db.prepare(
+                 "SELECT 1 AS x FROM image WHERE id = ? AND sense_id = ? AND status = 'approved'",
+               ).all(a.imageId, a.senseId)[0]) {
+          setImageOverride(db, a);
+        }
+        break;
+      case "clear_image_override":
+        clearImageOverride(db, a.senseId);
+        break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -195,7 +210,7 @@ export function listOps(db) {
  */
 const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
-  "clip_override", "entity_enrichment", "group_cell",
+  "clip_override", "image_override", "entity_enrichment", "group_cell",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */

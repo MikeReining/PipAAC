@@ -642,6 +642,13 @@
       #wc-name:disabled { color: var(--ink-text); border-bottom-color: transparent; background: none; }
       #wc-play { height: 44px; }
       #wc-groups, #wc-grouplist { display: flex; flex-wrap: wrap; gap: 8px; }
+      #wc-libpics { display: flex; flex-wrap: wrap; gap: 6px; }
+      #wc-libpics button {
+        width: 44px; height: 44px; padding: 2px;
+        border: 2px solid var(--line); border-radius: 8px; background: #fff;
+      }
+      #wc-libpics button.sel { border-color: var(--ink-text); }
+      #wc-libpics img { width: 100%; height: 100%; object-fit: contain; display: block; }
       .wchip {
         display: inline-flex;
         align-items: center;
@@ -934,6 +941,11 @@
         <label class="hint" id="wc-photolabel">Change photo
           <input type="file" id="wc-photo" accept="image/*" />
         </label>
+        <label class="hint" id="wc-ownpiclabel" hidden>Use my own picture
+          <input type="file" id="wc-ownpic" accept="image/*" />
+        </label>
+        <div id="wc-libpics" hidden></div>
+        <button class="btn secondary" id="wc-ourpic" hidden>Use our picture</button>
         <div class="row">
           <button class="btn secondary" id="wc-record">Record it</button>
           <button class="btn secondary" id="wc-revert" hidden>Use the voice again</button>

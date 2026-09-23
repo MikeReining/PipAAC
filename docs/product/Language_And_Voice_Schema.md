@@ -1230,6 +1230,14 @@ tables. 009 builds their UI.
 
 ### 14.1 Picture override (009 slice 6)
 
+**BUILT** — `image_override` in `src/board/schema.sql`; write owners and
+the shared render-order expression `SENSE_ART_SQL` in
+`public/shared/images.mjs`; ops `set_image_override` /
+`clear_image_override` in `public/shared/ops.mjs`. The `same-sense` rule
+below is enforced by the `image_override_same_sense` trigger, and an
+`image_id` must additionally be `approved` (stricter than the default's
+rule — a pending drawing is never an override target).
+
 A family picture (or another approved library picture) shown for one
 catalog sense everywhere that sense renders.
 

@@ -239,6 +239,18 @@ CREATE TABLE IF NOT EXISTS clip_override (
   CHECK ((utterance_id IS NULL) != (entity_id IS NULL))
 );
 
+-- Picture override (schema § 14.1): a family photo or another approved
+-- library image shown for one catalog sense everywhere it renders.
+-- Exactly one of photo_key / image_id is set; one ready row per sense.
+CREATE TABLE IF NOT EXISTS image_override (
+  id TEXT PRIMARY KEY CHECK (id GLOB 'imo_*'),
+  sense_id TEXT NOT NULL REFERENCES sense(id),
+  photo_key TEXT,
+  image_id TEXT REFERENCES image(id),
+  status TEXT NOT NULL CHECK (status IN ('ready', 'superseded')),
+  CHECK ((photo_key IS NULL) != (image_id IS NULL))
+);
+
 -- Groups: one kind of container. The index is a coordinate map (slots
 -- 10–59); items sit at fixed (page, slot) inside a group. Positions move
 -- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.
@@ -326,6 +338,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS override_one_ready_entity
 CREATE UNIQUE INDEX IF NOT EXISTS enrichment_one_ready
   ON entity_enrichment(entity_id)
   WHERE status = 'ready';
+CREATE UNIQUE INDEX IF NOT EXISTS image_override_one_ready
+  ON image_override(sense_id)
+  WHERE status = 'ready';
 
 CREATE TRIGGER IF NOT EXISTS label_locale_matches_utterance
 BEFORE INSERT ON label
@@ -390,6 +405,20 @@ BEGIN
     SELECT 1 FROM image
     WHERE image.id = NEW.default_image_id
       AND image.sense_id = NEW.id
+  );
+END;
+
+CREATE TRIGGER IF NOT EXISTS image_override_same_sense
+BEFORE INSERT ON image_override
+FOR EACH ROW
+WHEN NEW.image_id IS NOT NULL
+BEGIN
+  SELECT RAISE(ABORT, 'override image belongs to another sense')
+  WHERE NOT EXISTS (
+    SELECT 1 FROM image
+    WHERE image.id = NEW.image_id
+      AND image.sense_id = NEW.sense_id
+      AND image.status = 'approved'
   );
 END;
 

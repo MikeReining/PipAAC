@@ -281,6 +281,27 @@ render the default image again.
 Done when: that passes and a person can put their child's own cup on the
 `cup` cell.
 
+**DONE.** `image_override` landed in `src/board/schema.sql` (one ready
+row per sense; an `image_id` must be an approved image of that sense —
+the `image_override_same_sense` trigger). `public/shared/images.mjs`
+owns the writes (`setImageOverride` / `clearImageOverride` /
+`imageOverrideFor` / `libraryImagesFor`) and exports `SENSE_ART_SQL`,
+the § 14.1 render-order expression every read site embeds: `metaFor`
+(board cell, strip tile, bar chip), `groupPage`, `catalogMatches`, and
+all four library queries. `blob:` art keys resolve through the photo
+loader (`artInto`), so a family photo lazy-fetches its sealed copy like
+an entity photo; it renders cover-fit (`.photo`). The card offers **Use
+my own picture** (file → `savePhoto` → `syncUploadBlob` → `photo_key`
+override), a thumbnail strip of the sense's other approved images, and
+**Use our picture**. `set_image_override` / `clear_image_override` ops
+sync; `image_override` joined the synced baseline tables. Proofs:
+`image_override.test.mjs` measures what each surface's query resolves
+(default → photo key → library key → default; core map byte-identical;
+cross-sense `image_id` rejected by the trigger; replay byte-identical;
+a replica missing the referenced image writes nothing). Headless-Chrome
+drive: the card shows the uploaded photo's pixels, `cup`'s Home cell
+renders the blob's pixels, Use our picture returns it to label+color.
+
 ---
 
 ## Slice 7 — Bulk entry
