@@ -10,5 +10,16 @@
   },
   "vars": {
     "ENVIRONMENT": "development"
-  }
+  },
+  "durable_objects": {
+    "bindings": [
+      { "name": "RELAY", "class_name": "BoardRelay" }
+    ]
+  },
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["BoardRelay"] }
+  ],
+  "r2_buckets": [
+    { "binding": "BLOBS", "bucket_name": "pippaac-sync" }
+  ]
 }

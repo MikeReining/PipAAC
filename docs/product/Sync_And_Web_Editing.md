@@ -175,6 +175,18 @@ device loads the latest snapshot, then the ops after it.
 | Durable Object per board | Sequence counter, the allowed device list, recent ciphertext ops, live fan-out over WebSocket |
 | R2 | Encrypted snapshots and blobs (photos, recordings) |
 
+**BUILT** (011 slice 4): `src/worker/relay.js` — `BoardRelay` DO
+(`RELAY` binding, `new_sqlite_classes`), R2 `BLOBS` bucket. Routes under
+`/boards/...`: `POST /boards` creates a board and registers the creator's
+device; `POST /devices` adds a device (signed by an allowed one);
+`POST /ops` assigns `relay_seq`, stores the sealed envelope, fans it out
+over the WebSocket (`GET /ws`, signed via query params — browsers cannot
+set WS headers); `GET /ops?after=N` is the offline catch-up; `PUT/GET
+/blobs/:sha` and `PUT/GET /snapshot` stream sealed bytes to/from R2.
+Auth: ECDSA P-256 signature over `method\npath\nts\nsha256(body)` in
+`x-pip-*` headers, 10-minute freshness window, verified against the
+allowed-device list in DO storage. Client: `public/shared/sync_client.mjs`.
+
 What the server can see: board id, device public keys, op sizes and times,
 blob sizes. What it cannot see: any name, photo, recording, word, group
 name or setting.

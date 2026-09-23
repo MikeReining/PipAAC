@@ -130,6 +130,16 @@ edits and client B receives the op within 2 s. A request signed by an
 unknown key gets 403. Client B goes offline, A edits 20 times, and B
 reconnects and matches A.
 
+**Works Test (proven 2026-09-23):** `src/worker/relay.heavy.test.mjs` —
+spawns real `wrangler dev` (isolated `--persist-to`), two device clients
+with real key pairs. A creates the board, allows B; B is 403 until then.
+A submits a Cooper op → B's WebSocket receives it inside 2 s, and the
+envelope decrypts to the real op only under the board key. Unsigned and
+unknown-device requests get 403. B disconnects, A submits 40 more ops,
+B's `fetchOps` catch-up returns all 41 in `relay_seq` order. A sealed
+8 KB blob round-trips through local R2 and opens byte-identical.
+Heavy: named explicitly or via `scripts/test.sh --heavy`.
+
 ## Slice 5 — Pairing, linked devices, revoke
 
 Goal: the new device shows a QR and a code; a linked device scans or

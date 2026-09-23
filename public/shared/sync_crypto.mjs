@@ -32,6 +32,13 @@ const unb64u = (s) => {
 const hex = (buf) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 
+/** SPKI base64url — the form the relay stores for a device. */
+export const exportPublicKey = async (publicKey) =>
+  b64u(await subtle.exportKey("spki", publicKey));
+export const importPublicKey = (b64) =>
+  subtle.importKey("spki", unb64u(b64),
+    { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+
 /* ------------------------------------------------------------------ *
  * Key store — IndexedDB holds CryptoKey objects (structured-cloneable,
  * private keys stay non-extractable). Tests pass a Map-backed store.
