@@ -240,14 +240,19 @@ get 403 and ops after removal are sealed under a key S never received.
 
 Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 
-**Payments DECIDED 2026-09-23:** Stripe. On the web, Stripe Checkout
-takes cards, Apple Pay and Google Pay. Inside the iOS app, Apple requires
-its own in-app purchase for a digital unlock, so the iOS app sells
-through Apple; our server records either purchase against the user.
-**UNVERIFIED** (research before code, not a founder question): which
-in-app purchase type App Review accepts for a permanent unlock of one user
-among many, and whether the iOS app may link US buyers to the Stripe
-checkout.
+**Payments DECIDED 2026-09-23:**
+- **Web:** Stripe Checkout (cards, Apple Pay, Google Pay); a Stripe
+  webhook confirms the payment to the relay.
+- **iOS app:** Apple's native in-app purchase only. No link out to the
+  web checkout (founder: "just use Apple's native payments"). App Store
+  Server Notifications confirm the payment to the relay.
+- Either confirmation writes the same license record on the user. From
+  then on the user is like any other: the QR card restores it, with its
+  license, on any device (iPad, Android, a browser).
+- **UNVERIFIED** (research before code, not a founder question): which
+  in-app purchase type App Review accepts for a permanent unlock of one
+  user among many; whether the App Store Small Business Program (15%
+  instead of 30%) applies to us.
 
 **PROPOSED:** a free demo user per SLP account for evaluations (full
 features, cannot be moved to another device or shared).

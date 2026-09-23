@@ -164,9 +164,11 @@ subscription before a child can speak
 - **Payments: Stripe** (DECIDED 2026-09-23). **Web:** Stripe Checkout
   (cards, Apple Pay, Google Pay), attached to the user through a
   supporter account.
-- **iOS:** inside the iOS app, Apple requires its in-app purchase for a
-  digital unlock; our server records it against the user. The license
-  belongs to the user, whoever paid.
+- **iOS:** Apple's native in-app purchase only, no link out to the web
+  (DECIDED 2026-09-23). Apple's server notification confirms it and our
+  server records the license on the user. The license belongs to the
+  user, whoever paid, and travels with the user to any device through
+  the QR card or a supporter's sign-in.
   **UNVERIFIED:** which in-app purchase type App Review accepts for a
   permanent unlock of one user among many.
 - **Schools, grants, SLPs buying ahead:** license codes, each redeemable
