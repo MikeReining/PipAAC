@@ -14,7 +14,8 @@ import {
   logSelection,
   openSentence,
   stripScored,
-  showGate,
+  spotGate,
+  spotWeights,
 } from "./shared/funnel.mjs";
 import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
 import {
@@ -636,7 +637,7 @@ async function renderStrip() {
     const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbOpen
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
-      : showGate(scored.candidates, scored.pNone, model.tau, cap)
+      : spotGate(scored.candidates, scored.pNone, model.tau, cap)
           .map((r) => ({ kind: r.kind, id: r.id }));
     maybeImpression(
       scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
@@ -678,11 +679,11 @@ async function maybeJev(scored, sents, paintedAt) {
     if (moved || Date.now() - paintedAt > JEV_WINDOW_MS)
       return markJev("late", res.model, sid, pos);
     const wj = {
-      weights: loadWeights(db, catalog.prediction, "with_jev").weights,
+      weights: spotWeights(db, loadWeights(db, catalog.prediction, "with_jev").weights),
       tau: catalog.prediction.tau,
     };
     const reranked = applyJev(scored.candidates, probs, wj.weights);
-    const items = showGate(reranked.candidates, reranked.pNone, wj.tau,
+    const items = spotGate(reranked.candidates, reranked.pNone, wj.tau,
       stripSlots(boardGeom().cols))
       .map((r) => ({ kind: r.kind, id: r.id }));
     // An identical offer dedupes inside maybeImpression — markJev then
@@ -1350,8 +1351,8 @@ function renderSpotForm() {
     row.append(name, start, del);
     box.appendChild(row);
   }
-  const dim = ALL(db,
-    "SELECT spot_dim FROM learner_profile WHERE id = 'prf_local'")[0]?.spot_dim ?? 45;
+  const { spot_dim: dim = 45, spot_boost: boost = 1 } = ALL(db,
+    "SELECT spot_dim, spot_boost FROM learner_profile WHERE id = 'prf_local'")[0] ?? {};
   for (const b of $("spot-minutes").querySelectorAll("button")) {
     b.classList.toggle("on", b.dataset.v === String(spotMinutes));
   }
@@ -1363,6 +1364,9 @@ function renderSpotForm() {
   }
   for (const b of $("model-speaks").querySelectorAll("button")) {
     b.classList.toggle("on", b.dataset.v === (modelSpeaks ? "1" : "0"));
+  }
+  for (const b of $("spot-boost").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === String(boost));
   }
 }
 
@@ -1410,7 +1414,7 @@ $("spot-name-save").addEventListener("click", () => {
 });
 // Session length, glow style, and dim are synced settings (§ 4) — each
 // writes its profile column on tap, like the keyboard segs.
-for (const seg of ["spot-minutes", "spot-pulse", "spot-dim", "model-speaks"]) {
+for (const seg of ["spot-minutes", "spot-pulse", "spot-dim", "spot-boost", "model-speaks"]) {
   $(seg).addEventListener("click", (e) => {
     const v = e.target.closest("button")?.dataset.v;
     if (v === undefined) return;
@@ -1418,6 +1422,7 @@ for (const seg of ["spot-minutes", "spot-pulse", "spot-dim", "model-speaks"]) {
     spotMinutes = bindSpotSettings();
     renderSpotForm();
     renderGrid();
+    renderStrip();
     rerenderView();
   });
 }

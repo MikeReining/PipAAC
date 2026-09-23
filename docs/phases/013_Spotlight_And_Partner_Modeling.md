@@ -1,8 +1,8 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Slices 1–4 built (the layer; one-device lists, sessions,
-timer; the adult's device — mirror, remote start/end; live modeling).
-Next: slice 5 — Smart bar boost for target words. The design below is
+**Status:** Slices 1–5 built (the layer; one-device lists, sessions,
+timer; the adult's device — mirror, remote start/end; live modeling;
+Smart bar boost). Next: slice 6 — Coach view. The design below is
 **DECIDED 2026-09-22** (founder; not built). Slices are **PROPOSED**.
 
 Founder intake: `docs/founder/2026-09-22_Spotlight_Partner_Modeling.md`.
@@ -279,6 +279,26 @@ offers that routine's saved list.
    speech while silent).
 5. **Smart bar boost** for target words in Predict, never taking over the
    bar.
+
+   **DONE.** While a session runs, the funnel flags target candidates
+   `x.spot` (a recorded feature — impressions capture the flag, a fitted
+   `spot` weight can replace the default later) and, when the synced
+   `spot_boost` profile setting is on (default), scores them with
+   `SPOT_BOOST = 1.5` — phrase-level, so evidence still outranks a
+   boosted zero-evidence target (`public/shared/funnel.mjs`,
+   `spotBoostOn`/`spotWeights`). The boost also lifts the evidence
+   requirement: a never-picked fringe target becomes a candidate (tier,
+   label, and mask rules still apply); core targets stay on the glowing
+   grid and never enter the strip. `spotGate` replaces `showGate` at the
+   strip and in the Jev rerank: at most half the slots (floor, minimum
+   one) can be target tiles — the bar is never taken over. The toggle is
+   a seg in the Spotlight sheet (`spot_boost`, `SYNCED_SETTINGS`);
+   off means the strip ignores the session entirely. Works Tests:
+   `src/board/spot_boost.test.mjs` (eligibility, ordering, cap,
+   setting off, session end) and
+   `scripts/probes/spot_boost_probe.mjs` (real board: tap "want" →
+   rendered tray shows ≤ 2 of 4 targets, none before/after, setting
+   honored, `core_cell` untouched).
 6. **Coach view** (§ 5a): today's words, per-word tips, the basics, the
    adult's tally. Works test: open the mirror during a Spotlight — the
    list's words are at the top, and the child's device shows no coach

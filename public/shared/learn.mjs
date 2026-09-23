@@ -43,7 +43,7 @@ export function loadWeights(db, catalogModel, weightSet = "local_only") {
 }
 
 const logit = (x, w) =>
-  MODEL_FEATURES.reduce((t, f) => t + (w[f] ?? 0) * x[f], 0);
+  MODEL_FEATURES.reduce((t, f) => t + (w[f] ?? 0) * (x[f] ?? 0), 0);
 
 /**
  * Learn from one closed sentence. Returns the number of impressions
@@ -89,7 +89,7 @@ export function learnFromSentence(
     for (const f of MODEL_FEATURES) {
       let g = 0;
       cands.forEach((c, i) => {
-        g += (Math.exp(logits[i]) / Z - (i === label ? 1 : 0)) * c.x[f];
+        g += (Math.exp(logits[i]) / Z - (i === label ? 1 : 0)) * (c.x[f] ?? 0);
       });
       cur[f] = (cur[f] ?? 0) - LR * (g + L2 * ((cur[f] ?? 0) - (defaults[f] ?? 0)));
     }

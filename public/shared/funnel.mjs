@@ -99,7 +99,7 @@ const SHORTLIST_CAP = 16;                      // § 5.2: measured, not assumed
 
 export const MODEL_FEATURES = [
   "phrase", "pair", "occasion", "hour", "recency",
-  "freq", "invited", "echo", "fresh", "jev",
+  "freq", "invited", "echo", "fresh", "jev", "spot",
 ];
 
 const decayW = (at, now) => Math.pow(0.5, Math.max(0, now - at) / HALF_LIFE_MS);
@@ -118,8 +118,11 @@ const sameItem = (a, b) => a && b && a.k === b.kind && a.i === b.id;
  * invited/echo/fresh are 0/1. `occasion`, `echo` and `jev` stay 0 until
  * 007 occasions, 008 listening, and a Jev answer exist — the feature
  * slot is recorded now so impressions from today fit tomorrow's model.
+ * `spot` is the running session's target Set (or null): `x.spot` records
+ * "was a spotlight target at offer time" — instrument truth, independent
+ * of whether the § 4 boost setting scored it.
  */
-export function features(db, item, sentence, now, locale) {
+export function features(db, item, sentence, now, locale, spot = null) {
   const tzNow = -new Date(now).getTimezoneOffset();
   const nowHour = localDate(now, tzNow).getUTCHours();
   const nowDay = dayTypeOf(now, tzNow);
@@ -184,6 +187,7 @@ export function features(db, item, sentence, now, locale) {
     echo: 0,
     fresh: addedAt && now - addedAt < FRESH_MS ? 1 : 0,
     jev: 0,
+    spot: spot?.has(`${item.kind}:${item.id}`) ? 1 : 0,
   };
 }
 
@@ -192,7 +196,7 @@ export function features(db, item, sentence, now, locale) {
  *  when a Jev answer supplied it. Returns candidates sorted by p. */
 export function scoreCandidates(rows, weights, jevNone = null) {
   const logit = (x) =>
-    MODEL_FEATURES.reduce((t, f) => t + (weights[f] ?? 0) * x[f], 0);
+    MODEL_FEATURES.reduce((t, f) => t + (weights[f] ?? 0) * (x[f] ?? 0), 0);
   const scored = rows.map((r) => ({ ...r, s: logit(r.x) }));
   const eNone = Math.exp(
     (weights.none_bias ?? 0) + (jevNone === null ? 0 : (weights.jev ?? 0) * jevNone));
@@ -223,6 +227,51 @@ export function showGate(candidates, pNone, tau, cap = STRIP_CAP) {
   return candidates.filter((c) => c.p >= tau.tile).slice(0, cap);
 }
 
+/* --- 013 § 4 Smart bar boost: the running session's target words get a
+ *  gentle Predict lift — a nudge into practice, never a takeover. --- */
+
+/** The session's target keys, or null. Read from the synced row, not the
+ *  layer: what a fresh boot would see is the truth the strip scores. */
+function spotTargets(db) {
+  const row = db
+    .prepare("SELECT targets FROM spotlight_session WHERE id = 1")
+    .all()[0];
+  return row ? new Set(JSON.parse(row.targets)) : null;
+}
+
+/** The boost applies only while a session runs AND the synced setting is
+ *  on — off means the strip ignores the spotlight entirely. */
+function spotBoostOn(db, spot) {
+  if (!spot?.size) return false;
+  return (db
+    .prepare("SELECT spot_boost FROM learner_profile WHERE id = 'prf_local'")
+    .all()[0]?.spot_boost ?? 1) === 1;
+}
+
+/** The product default for the `spot` weight — phrase-level (the fitted
+ *  phrase weight is ~1.55), so evidence still decides real favorites. A
+ *  fitted `spot` weight wins over the default once the model learns one. */
+const SPOT_BOOST = 1.5;
+
+/** Scoring weights with the boost folded in: while a session runs and
+ *  the synced `spot_boost` setting is on, `spot` carries SPOT_BOOST (or
+ *  the fitted weight). No session or the setting off → weights unchanged. */
+export function spotWeights(db, weights) {
+  if (!spotBoostOn(db, spotTargets(db))) return weights;
+  return { ...weights, spot: weights.spot ?? SPOT_BOOST };
+}
+
+/** The show gate with the § 4 bound: target tiles may not take over the
+ *  bar — at most half the slots (floor, minimum one) can go to `x.spot`
+ *  candidates; the rest always belong to plain prediction. */
+export function spotGate(candidates, pNone, tau, cap = STRIP_CAP) {
+  if (pNone >= tau.none) return [];
+  const ok = candidates.filter((c) => c.p >= tau.tile);
+  const spotCap = Math.max(1, Math.floor(cap / 2));
+  let n = 0;
+  return ok.filter((c) => !c.x?.spot || ++n <= spotCap).slice(0, cap);
+}
+
 /**
  * Rank strip candidates. Sentence position decides what the tail invites:
  * a Verb or Preposition tail invites noun-ish candidates (entities +
@@ -238,7 +287,7 @@ export function showGate(candidates, pNone, tau, cap = STRIP_CAP) {
  */
 export function stripCandidates(db, sentence, now = Date.now(), locale, model, cap = STRIP_CAP) {
   const { candidates, pNone } = stripScored(db, sentence, now, locale, model);
-  return showGate(candidates, pNone, model.tau, cap).map((r) => ({ kind: r.kind, id: r.id }));
+  return spotGate(candidates, pNone, model.tau, cap).map((r) => ({ kind: r.kind, id: r.id }));
 }
 
 /**
@@ -255,13 +304,29 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
   if (!model?.weights || !model?.tau) {
     throw new Error("model is a required parameter");
   }
+  const spot = spotTargets(db);
+  const boostOn = spotBoostOn(db, spot);
+  const weights = boostOn
+    ? { ...model.weights, spot: model.weights.spot ?? SPOT_BOOST }
+    : model.weights;
   const rows = [];
   for (const e of db
     .prepare("SELECT id FROM personal_entity WHERE status = 'active'")
     .all()) {
-    const x = features(db, { kind: "entity", id: e.id }, sentence, now, locale);
-    if (x.invited || x.recency > 0) rows.push({ kind: "entity", id: e.id, x });
+    const x = features(db, { kind: "entity", id: e.id }, sentence, now, locale, spot);
+    if (x.invited || x.recency > 0 || (x.spot && boostOn)) {
+      rows.push({ kind: "entity", id: e.id, x });
+    }
   }
+  // A never-picked target is still a candidate (§ 4: the strip offers the
+  // practice words) — the evidence requirement lifts for target senses
+  // only; tier, label, and mask rules still apply.
+  const spotSenses = boostOn
+    ? [...spot].filter((k) => k.startsWith("sense:")).map((k) => k.slice(6))
+    : [];
+  const spotIn = spotSenses.length
+    ? ` OR s.id IN (${spotSenses.map(() => "?").join(",")})`
+    : "";
   for (const f of db
     .prepare(
       `SELECT s.id FROM sense s
@@ -270,16 +335,16 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
                      AND lb.kind = 'lemma' AND lb.status = 'approved' AND lb.locale = ?)
          AND NOT EXISTS (SELECT 1 FROM sense_mask m
                          WHERE m.sense_id = s.id AND m.status = 'hidden')
-         AND EXISTS (SELECT 1 FROM learner_event_log l
-                     WHERE l.item_kind = 'sense' AND l.item_id = s.id)`,
+         AND (EXISTS (SELECT 1 FROM learner_event_log l
+                     WHERE l.item_kind = 'sense' AND l.item_id = s.id)${spotIn})`,
     )
-    .all(locale)) {
-    const x = features(db, { kind: "sense", id: f.id }, sentence, now, locale);
-    if ((x.freq > 0 || x.recency > 0) && x.invited) {
+    .all(locale, ...spotSenses)) {
+    const x = features(db, { kind: "sense", id: f.id }, sentence, now, locale, spot);
+    if (((x.freq > 0 || x.recency > 0) && x.invited) || (x.spot && boostOn)) {
       rows.push({ kind: "sense", id: f.id, x });
     }
   }
-  const { candidates, pNone } = scoreCandidates(rows, model.weights);
+  const { candidates, pNone } = scoreCandidates(rows, weights);
   return { candidates: candidates.slice(0, SHORTLIST_CAP), pNone };
 }
 

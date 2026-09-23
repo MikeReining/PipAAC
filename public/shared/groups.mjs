@@ -645,6 +645,7 @@ const SYNCED_SETTINGS = new Set([
   "spot_dim",
   "spot_pulse",
   "spot_minutes",
+  "spot_boost",
   "model_speaks",
 ]);
 export function setSetting(db, key, value) {

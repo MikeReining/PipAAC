@@ -257,7 +257,11 @@ much → where); no deeper.
 **Who may put what there.**
 
 - **Predict:** the ranking engine only, choosing from words this profile
-  has. A word an adult hid never appears.
+  has. A word an adult hid never appears. **BUILT** (013 slice 5): a
+  running Spotlight session gives its target words a bounded lift in the
+  ranking — `spotGate` in `public/shared/funnel.mjs` caps target tiles
+  at half the slots; the `spot_boost` synced setting (default on) turns
+  the lift off entirely.
 - **Expand:** families. Pip ships defaults; a parent, SLP, or teacher may
   add, remove, or reorder a family's tiles and make a family tile from any
   word (Parent Corner → Smart bar).

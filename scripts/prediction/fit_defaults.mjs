@@ -76,14 +76,14 @@ for (let epoch = 0; epoch < EPOCHS; epoch++) {
   const g = Object.fromEntries(MODEL_FEATURES.map((f) => [f, 0]));
   let loss = 0;
   for (const { xs, label } of ranked) {
-    const s = xs.map((x) => MODEL_FEATURES.reduce((t, f) => t + theta[f] * x[f], 0));
+    const s = xs.map((x) => MODEL_FEATURES.reduce((t, f) => t + theta[f] * (x[f] ?? 0), 0));
     const exps = s.map(Math.exp);
     const Z = exps.reduce((a, b) => a + b, 0);
     const ps = exps.map((e) => e / Z);
     loss += -Math.log(ps[label]);
     xs.forEach((x, i) => {
       const d = ps[i] - (i === label ? 1 : 0);
-      for (const f of MODEL_FEATURES) g[f] += d * x[f];
+      for (const f of MODEL_FEATURES) g[f] += d * (x[f] ?? 0);
     });
   }
   for (const f of MODEL_FEATURES) theta[f] -= LR * (g[f] / ranked.length + L2 * theta[f]);
@@ -98,7 +98,7 @@ for (let epoch = 0; epoch < EPOCHS; epoch++) {
   let gb = 0, loss = 0;
   for (const { xs, label } of train) {
     const logits = xs.map((x) =>
-      MODEL_FEATURES.reduce((t, f) => t + theta[f] * x[f], 0));
+      MODEL_FEATURES.reduce((t, f) => t + theta[f] * (x[f] ?? 0), 0));
     const m = Math.max(...logits, 0);
     const lse = m + Math.log(logits.reduce((a, s) => a + Math.exp(s - m), 0));
     const pN = 1 / (1 + Math.exp(lse - bias));
