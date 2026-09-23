@@ -19,6 +19,9 @@ import { createDatabase, importCatalog } from "../../src/board/catalog.mjs";
 import { addPersonalEntity } from "../../src/board/entities.mjs";
 import { loadSimFixture, replayDays } from "../../src/board/sim_replay.mjs";
 import {
+  loadSynthUsers, parseUserSpec, userToFixture,
+} from "./synth/splits.mjs";
+import {
   MODEL_FEATURES,
   scoreCandidates,
   showGate,
@@ -53,7 +56,16 @@ const collect = async (fx) => {
   // mid-sentence only, so there is no impression to fit on.
   return picks.filter((p) => p.day <= 5 && p.candidates.length > 0);
 };
-const train = [...await collect(fixture), ...await collect(varied)].map((p) => {
+// --users <spec> adds synthetic fit-pool users (017-12): the guard
+// seals eval users 81–100 — asking for one throws before a row is read.
+const userArg = process.argv.find((a) => a.startsWith("--users="));
+let synthRows = [];
+if (userArg) {
+  const ids = parseUserSpec(userArg.slice("--users=".length));
+  const users = loadSynthUsers(ids, { purpose: "fit" });
+  for (const u of users) synthRows.push(...await collect(userToFixture(u)));
+}
+const train = [...await collect(fixture), ...await collect(varied), ...synthRows].map((p) => {
   const keys = p.candidates.map((c) => `${c.kind}:${c.id}`);
   return { xs: p.candidates.map((c) => c.x), label: keys.indexOf(p.label) };
 });
