@@ -1,7 +1,9 @@
 # Phase 015 — Accounts and one price
 
-**Status:** Executing. Slices 0–2 done (rulings 2026-09-23; user rename
-and many-users-on-one-device 2026-09-24). Next: slice 3 — the QR card.
+**Status:** Executing. Slices 0–3 done (rulings 2026-09-23; user rename
+and many-users-on-one-device 2026-09-24; the QR card 2026-09-25). Next:
+slice 4 — supporter accounts (deferred: 013 slice 3 spotlight mirror is
+the queue's next critical-path item).
 
 **Direction DECIDED 2026-09-23** (founder: "all approved, lock it in").
 Intake: `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
@@ -253,10 +255,48 @@ and leg 5's iPad switch timing (no device).
 Goal: scan a QR card to restore; print it, save it as an image, email it.
 The 24 words leave the UI.
 
-Current state (**BUILT**): the sheet is a `pip:recover:<id>:<24 words>`
-QR plus a word grid (`showRecoverySheet` in `public/board.js`); restore
-is paste-only (`restoreFlow`); the root encodes via BIP-0039 words
+Current state (**BUILT**): the card is a `pip:recover:<id>:<b64u32>` QR
+plus a 43-character code (`showCard` in `public/board.js`); restore is
+camera scan, photo pick, or pasted code (`restoreFlow`,
+`recoverFromText`); pre-card 24-word payloads still parse
 (`public/shared/recovery.mjs`).
+
+**DONE 2026-09-25** — card replaces the sheet end to end:
+
+- Card payload carries the root itself as 43 base64url characters —
+  `cardPayload`/`recoverFromText` (`public/shared/recovery.mjs`);
+  `pip:recover:<id>:<24 words>` and bare `id + 24 words` still restore.
+- Card UI (`public/board.js` `showCard`, `public/index.html` `#recform`):
+  QR + grouped code, **Print**, **Save image** (PNG via `cardPngBlob`),
+  **Share** (`navigator.share` with clipboard fallback — covers email),
+  **Replace card…**. The 24 words left the UI.
+- Restore UI (`restoreFlow`, `scanBitmap`): **Scan the card** via
+  `getUserMedia` + `BarcodeDetector` where present, **Choose a photo**
+  for card-less cameras, paste fallback everywhere; the dialog warns
+  that a free-user restore unlinks the other devices.
+- Replace card (`replaceCard` → signed `POST /users/:id/recovery`):
+  new root, new proof — the old card's restore is 403 at once; the
+  replacer seals every epoch key it holds into a **recovery bundle**
+  (`sealEpochBundle`, keyed by `HKDF(newRoot, "recovery-bundle")`) the
+  relay stores blind; a restore unpacks it (`openEpochBundle`) so the
+  whole backlog stays readable. Retired roots persist
+  (`user/<id>/roots`) so repeated replacement covers every era; old
+  epochs stay readable where a device holds their keys.
+- Free-user move stays honest: the relay returns `moved` on restore;
+  the restored device shows "the other devices were unlinked" on first
+  boot (`pip_restore_moved` → toast).
+- Proof: `src/board/recovery.test.mjs` (card round-trips, grouping,
+  legacy words, rejects); `src/worker/recovery.heavy.test.mjs` (real
+  relay — card restore byte-identical + history empty + wrong proof
+  403; replace — old proof 403, new card restores the full backlog at
+  epoch 2); `scripts/probes/qrcard_probe.mjs` live two-profile run —
+  card UI (QR + code, no words, all actions), destroyed client → fresh
+  profile restores via pasted code with synced rows back, history
+  empty, move notice on screen; Replace mints a new code at epoch 2,
+  old proof 403, new proof restores.
+- Waiver: camera scanning and photo picking are feature-gated on
+  `BarcodeDetector` (absent in headless Chrome) — unproven live; the
+  pasted code runs the identical `recoverFromText` a scan decodes to.
 
 Scope:
 - Card: QR + a short text code for devices without a camera; **Print**,

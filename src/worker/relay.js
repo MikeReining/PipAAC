@@ -192,17 +192,21 @@ export class UserRelay {
       let diff = a.length === b.length ? 0 : 1;
       for (let i = 0; i < Math.min(a.length, b.length); i++) diff |= a[i] ^ b[i];
       if (diff) return bad("forbidden", 403);
-      // Restore moves the user (§ 11): on a free user the sheet's new
+      // Restore moves the user (§ 11): on a free user the card's new
       // device replaces the old set — the old device is unlinked, not
       // added to. Lifetime keeps every linked device.
-      if (this.entitlement() !== "lifetime") {
+      const moved = this.entitlement() !== "lifetime";
+      if (moved) {
         this.ctx.storage.sql.exec("DELETE FROM device");
       }
       this.ctx.storage.sql.exec(
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
          VALUES (?, ?, ?, NULL, ?, ?)`,
         device_id, pubkey, dh_pub ?? null, this.epoch(), Date.now());
-      return json({ ok: true, epoch: this.epoch() });
+      return json({ ok: true, epoch: this.epoch(), moved,
+        // 015 slice 3: keys sealed to the card's root cover epochs from
+        // before the card was replaced — the restore unpacks them.
+        recovery_bundle: this.metaGet("recovery_bundle") ?? null });
     }
 
     // WebSocket upgrade — auth via query params.
@@ -264,6 +268,17 @@ export class UserRelay {
         ...(this.metaGet("delete_at") ? { delete_at: Number(this.metaGet("delete_at")) } : {}),
         ...(idleAt - Date.now() <= IDLE_DELETE_MS - IDLE_WARN_MS ? { idle_delete_at: idleAt } : {}),
       });
+    }
+
+    // Replace the QR card (015 slice 3): a linked device posts the new
+    // root's proof plus the epoch-key bundle sealed to that root; the
+    // old card's restore stops working at once.
+    if (method === "POST" && route === "recovery") {
+      const { recovery_proof, recovery_bundle } = JSON.parse(td.decode(bodyBytes));
+      if (!recovery_proof) return bad("bad_recovery");
+      this.metaSet("recovery_proof", recovery_proof);
+      if (recovery_bundle) this.metaSet("recovery_bundle", recovery_bundle);
+      return json({ ok: true });
     }
 
     // Dev-path activation (011/9): a signed device presents a license

@@ -159,6 +159,74 @@ export const newUserKey = () =>
     ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
 
 /* ------------------------------------------------------------------ *
+ * Recovery bundle (015 slice 3) — replacing the QR card mints a new
+ * root, so ops sealed under retired roots would be unreadable to a
+ * new-card restore. The replacer seals every epoch key it can reach
+ * into a bundle keyed to the NEW root; the relay stores it blind and
+ * hands it to a restore, which unpacks the whole backlog. Retired
+ * roots stay in the keystore (`user/<id>/roots`, [{from, upto, root}])
+ * so a second replacement still covers the first era.
+ * ------------------------------------------------------------------ */
+
+export const retiredRootsName = (userId) => `user/${userId}/roots`;
+
+/** HKDF(root, info "recovery-bundle") — only a card holder opens it. */
+async function deriveBundleKey(rootBytes) {
+  const hkdf = await subtle.importKey("raw", rootBytes, "HKDF", false, ["deriveKey"]);
+  return subtle.deriveKey(
+    { name: "HKDF", hash: "SHA-256", salt: te.encode("pip-board-key"),
+      info: te.encode("recovery-bundle") },
+    hkdf, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+
+const importRaw = (b64) =>
+  subtle.importKey("raw", unb64u(b64), { name: "AES-GCM", length: 256 }, true,
+    ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
+
+/** Retire the outgoing root into the coverage list before replacing it. */
+export async function retireRoot(store, userId, oldRootBytes, uptoEpoch) {
+  const retired = JSON.parse((await store.get(retiredRootsName(userId))) ?? "[]");
+  const from = retired.length ? retired[retired.length - 1].upto + 1 : 1;
+  retired.push({ from, upto: uptoEpoch, root: b64u(oldRootBytes) });
+  await store.put(retiredRootsName(userId), JSON.stringify(retired));
+}
+
+/** epoch → key map for 1..uptoEpoch, sealed to `newRoot`. A stored key
+ *  wins — it is whatever this device could actually read (derived at
+ *  open time, or a wrapped grant from pairing). Derivation fills the
+ *  gaps only where a covering root is on hand: a retired root for its
+ *  era, the outgoing one for everything after. */
+export async function sealEpochBundle(store, userId, newRootBytes, uptoEpoch) {
+  const retired = JSON.parse((await store.get(retiredRootsName(userId))) ?? "[]");
+  const last = retired[retired.length - 1];
+  const current = await store.get(userRootName(userId));
+  const map = {};
+  for (let e = 1; e <= uptoEpoch; e++) {
+    let key = await store.get(userKeyName(userId, e));
+    if (!key) {
+      const cov = retired.find((r) => e >= r.from && e <= r.upto);
+      const root = cov ? unb64u(cov.root)
+        : (current && e > (last?.upto ?? 0)
+          ? (current instanceof Uint8Array ? current : new Uint8Array(current))
+          : null);
+      if (root) key = await deriveEpochKey(root, e);
+    }
+    if (key) map[e] = b64u(await subtle.exportKey("raw", key));
+  }
+  return JSON.stringify(
+    await sealData(await deriveBundleKey(newRootBytes), te.encode(JSON.stringify(map))));
+}
+
+/** A restore unpacks its card's bundle → { epoch: CryptoKey }. */
+export async function openEpochBundle(rootBytes, json) {
+  const map = JSON.parse(td.decode(
+    await openData(await deriveBundleKey(rootBytes), JSON.parse(json))));
+  const out = {};
+  for (const [e, raw] of Object.entries(map)) out[Number(e)] = await importRaw(raw);
+  return out;
+}
+
+/* ------------------------------------------------------------------ *
  * Sealing
  * ------------------------------------------------------------------ */
 

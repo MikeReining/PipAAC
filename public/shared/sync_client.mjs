@@ -57,6 +57,10 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
     /** Activate Pip Lifetime with a user-bound license key (dev path). */
     setEntitlement: (license) => call("POST", "/entitlement", { license }),
+    /** Replace the QR card: new proof + the epoch-key bundle sealed to
+     *  the new root — old cards stop restoring (015/3). */
+    replaceRecovery: (proof, bundle) =>
+      call("POST", "/recovery", { recovery_proof: proof, recovery_bundle: bundle }),
     /** Schedule user deletion — 30-day undo; undelete cancels. */
     deleteUser: () => call("DELETE", ""),
     undeleteUser: () => call("POST", "/undelete"),

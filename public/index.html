@@ -540,17 +540,12 @@
       .dev-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
       .dev-row .dev-id { flex: 1; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
       .dev-row button { flex: none; padding: 4px 10px; font-size: 13px; }
-      /* Recovery sheet */
-      .rec-userid {
-        font-size: 12px; color: var(--muted); text-align: center;
-        word-break: break-all; font-variant-numeric: tabular-nums;
+      /* QR card */
+      .rec-code {
+        font-size: 15px; text-align: center; font-family: ui-monospace, monospace;
+        word-break: break-all; margin: 10px 0 4px; letter-spacing: 1px;
       }
-      .rec-words {
-        display: grid; grid-template-columns: repeat(3, 1fr);
-        gap: 4px 12px; margin: 12px 0; font-size: 14px;
-      }
-      .rec-words span { font-variant-numeric: tabular-nums; }
-      .rec-words b { color: var(--muted); font-weight: 600; margin-right: 6px; }
+      .rec-video { width: 100%; border-radius: 8px; margin-bottom: 8px; }
       #rec-paste {
         width: 100%; min-height: 110px; resize: vertical; font-size: 14px;
         padding: 8px; border: 1px solid var(--line, #ddd); border-radius: 8px;
@@ -963,10 +958,10 @@
         <div class="seg-row">
           <span class="seg-label">Backup</span>
           <div class="row">
-            <button class="btn secondary" id="dev-sheet">Recovery sheet</button>
+            <button class="btn secondary" id="dev-sheet">QR card</button>
             <button class="btn secondary" id="dev-restore">Restore a user</button>
           </div>
-          <p class="hint">The sheet is the last resort — print it and keep it somewhere safe. Without the sheet, a linked device, or a device backup, a lost user is gone for good.</p>
+          <p class="hint">The QR card is the last resort — print it and keep it somewhere safe. Without the card, a linked device, or a device backup, a lost user is gone for good.</p>
         </div>
         <div class="seg-row" id="dev-delete-row" hidden>
           <span class="seg-label">Delete</span>
@@ -1109,7 +1104,7 @@
 
     <div class="overlay" id="recform">
       <div class="sheet" id="rec-sheet">
-        <h2 id="rec-title">Recovery sheet</h2>
+        <h2 id="rec-title">QR card</h2>
         <div id="rec-body"></div>
         <div class="row">
           <button class="btn" id="rec-go" hidden>Restore</button>

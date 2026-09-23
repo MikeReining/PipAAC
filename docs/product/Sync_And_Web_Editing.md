@@ -317,54 +317,77 @@ card (§ 12.3). The recovery root and its derivation stay.*
 **DECIDED 2026-09-22.** This keeps the "zero loss" promise in
 `docs/strategy/Vision.md` § 4.4 without accounts.
 
-- **Recovery sheet, free for every board.** When backup is turned on, the
-  Parent Corner shows a printable recovery sheet (a QR plus 24 words) that
-  holds the board id and the board key. On a new device, **Restore a
-  user** downloads and decrypts the user. The app reminds the
-  family to print or save it, and they can show it again from any linked
-  device that holds the recovery root (see the amendment below).
+- **QR card, free for every user.** When backup is turned on, the
+  Parent Corner shows a printable QR card that holds the user id and
+  the recovery root. On a new device, **Restore a user** downloads and
+  decrypts the user. The app reminds the family to print or save it,
+  and they can show it again from any linked device that holds the
+  recovery root (see the amendment below).
 
-**BUILT 2026-09-23** (slice 8). The sheet is a `pip:recover:<userId>:<24
-words>` QR plus a numbered word grid — Parent corner → Backup → Recovery
-sheet → Print (`public/index.html` `#recform`; `showRecoverySheet` in
-`public/board.js`). The 24 words encode a 256-bit **recovery root** —
-BIP-0039 English list + 8-bit checksum (`public/shared/recovery.mjs`,
-`public/shared/recovery_words.mjs` generated from
-`data/recovery/words_en.txt` by `scripts/recovery/build_words.mjs`).
-Every epoch's board key derives from the root by HKDF
-(`deriveEpochKey`, `public/shared/sync_crypto.mjs`), so a sheet printed
-at any time opens every epoch — including ops sealed after a device
-removal rotated the key.
+**BUILT 2026-09-25** (015 slice 3, amends the slice-8 sheet). The card
+is a `pip:recover:<userId>:<b64u32>` QR plus the same 43-character
+base64url code printed beneath it for camera-less devices — Parent
+corner → Backup → QR card → **Print**, **Save image** (a PNG of the
+card), **Share** (the system sheet covers email), **Replace card…**
+(`public/index.html` `#recform`; `showCard`, `cardPngBlob`,
+`replaceCard` in `public/board.js`). The payload carries the 256-bit
+**recovery root** itself (`cardPayload`, `public/shared/recovery.mjs`).
+Every epoch's user key derives from the root by HKDF
+(`deriveEpochKey`, `public/shared/sync_crypto.mjs`), so a card printed
+at any time opens every epoch of its era — including ops sealed after
+a device removal rotated the key. Pre-card sheets
+(`pip:recover:<id>:<24 words>` and bare `id + 24 words`) still parse —
+the words encode the same root (`recoverFromText`).
 
 - The relay stores only `SHA-256(root ‖ "pip-recovery-v1")`, written at
-  board bootstrap. `POST /users/:id/restore` is the one unsigned call
+  user bootstrap. `POST /users/:id/restore` is the one unsigned call
   besides bootstrap: it trades the proof for device registration at the
-  current epoch, then the restored device drains the op log like any
-  linked device (`src/worker/relay.js`; `restoreDevice` in
+  current epoch, returns `moved` (a free user's other devices were
+  unlinked — the restored device says so on first boot) and
+  `recovery_bundle`, then the restored device drains the op log like
+  any linked device (`src/worker/relay.js`; `restoreDevice` in
   `public/shared/sync_client.mjs`). The relay never sees a key.
-- Restore UI: Parent corner → Backup → Restore a user → paste the QR
-  text or `userId + 24 words` (`restoreFlow` in `public/board.js`).
-  The success line says plainly that speech history never leaves a
-  device, and nothing in the sync path carries history tables.
+- Restore UI: Parent corner → Backup → Restore a user → **Scan the
+  card** (camera, `BarcodeDetector`), **Choose a photo** of the card,
+  or paste the code (`restoreFlow`, `scanBitmap` in `public/board.js`).
+  The dialog warns that a free-user restore unlinks the other devices.
+- **Replace card:** a linked device posts the new root's proof plus an
+  epoch-key **bundle** — every epoch key it can reach, sealed under
+  `HKDF(root, "recovery-bundle")` — via signed `POST /users/:id/recovery`
+  (`sealEpochBundle`/`openEpochBundle`, `retireRoot` in
+  `public/shared/sync_crypto.mjs`; `replaceRecovery` in
+  `public/shared/sync_client.mjs`). The old proof dies at once;
+  remaining devices get the new epoch's key wrapped to them, and a
+  restore unpacks the bundle so the whole backlog stays readable.
+  Retired roots stay in the keystore (`user/<id>/roots`) so repeated
+  replacements cover every era. Old epochs stay readable where a
+  device holds their keys.
 - **Amendment to "any linked device can show it":** only a device
-  holding the recovery root can print the sheet — the device that set
-  up sync, or a device restored from a sheet. If every paired device
+  holding the recovery root can print the card — the device that set
+  up sync, or a device restored from a card. If every paired device
   held the root, it could re-derive every future epoch key and
   removing a device would be cosmetic. A paired device sees an honest
   "print it on the device that set up sync" instead.
-- Proof: `src/board/recovery.test.mjs` (wordlist integrity, words
-  round-trip, checksum/word rejection, proof, payload parse, a fresh
-  keystore holding only the root opening every epoch's ops);
-  `src/worker/recovery.heavy.test.mjs` (real relay: restore after a
-  rotation, synced tables byte-identical, history tables empty, wrong
-  proof → 403); live two-browser proof — device A linked, added a word,
-  spoke a sentence, showed the sheet; fresh-profile device C pasted the
-  payload, restored byte-identical synced tables with empty history
-  and the history notice on screen.
+- Proof: `src/board/recovery.test.mjs` (card payload round-trips the
+  root as a 43-char code — scanned, bare, and grouped forms; pre-card
+  word payloads still parse; wordlist integrity, checksum/word
+  rejection, proof stability, a fresh keystore holding only the root
+  opening every epoch's ops); `src/worker/recovery.heavy.test.mjs`
+  (real relay: card restore after a rotation — synced tables
+  byte-identical, history tables empty, wrong proof → 403; replace
+  card — old proof → 403, new card restores epoch 2 with the bundle
+  and reads the full backlog); `scripts/probes/qrcard_probe.mjs`
+  (live two-profile proof: card shows QR + code with no words;
+  destroyed client, fresh profile restores from the pasted code —
+  synced rows back, history empty, the free-user move notice on
+  screen; Replace card mints a new code at epoch 2, old proof 403,
+  new proof restores). Camera/photo scanning is feature-gated on
+  `BarcodeDetector` and unproven headless — the pasted code runs the
+  same `recoverFromText` a scan decodes to (waiver).
 - **The iPad's own backup counts too.** On the iOS app, Apple's device
   backup (iCloud or computer) restores the app's data and the Keychain
-  board key. That is Apple's backup, not our sync, and it is a second path.
-- Without the sheet, a linked device, or a device backup, the board is
+  user key. That is Apple's backup, not our sync, and it is a second path.
+- Without the card, a linked device, or a device backup, the user is
   gone. We cannot recover it, and the UI says so plainly when backup is
   turned on.
 
@@ -385,7 +408,7 @@ removal rotated the key.
 
 All five asked questions were answered ("all agreed"):
 
-1. **Recovery sheet:** yes (§ 9).
+1. **Recovery (the QR card):** yes (§ 9).
 2. **iPad backup:** accepted as a second recovery path (§ 9).
 3. **History across devices:** no. History stays on the device (§ 2).
 4. **Retention:** never deleted for payment; deleted on request; idle
@@ -393,7 +416,7 @@ All five asked questions were answered ("all agreed"):
    relay (2026-09-23, § 6 note).
 5. **Free vs paid:** *(superseded 2026-09-23 by
    `docs/product/Pricing_And_Packaging.md` § 4)*
-   - **Free for every board:** encrypted backup, the recovery sheet, and
+   - **Free for every user:** encrypted backup, the QR card, and
      restore. "A voice is not rented" includes the vocabulary
      (`docs/product/Pricing_And_Packaging.md` § 1). A free board has one
      linked device at a time; restoring onto a new device moves the board
@@ -505,6 +528,11 @@ never shares a sibling.
   working.
 - The recovery root and its per-epoch derivation (§ 9) stay; only the
   encoding and the restore gesture change.
+
+**BUILT 2026-09-25** (015 slice 3) — the card, scan/photo/paste
+restore, save/share/print, and Replace card with the epoch-key bundle
+are in § 9's BUILT block. Camera scanning is gated on
+`BarcodeDetector`; camera-less devices paste the code.
 
 ### 12.6 Free vs paid
 

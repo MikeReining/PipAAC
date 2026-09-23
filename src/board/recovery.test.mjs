@@ -1,13 +1,15 @@
 /**
- * Recovery sheet (011 slice 8, Sync_And_Web_Editing § 9) — the 24 words
- * carry the recovery root; every epoch key derives from it, so a fresh
- * device holding only the words opens every op the board ever sealed.
+ * The QR card (015 slice 3; 011 slice 8, Sync_And_Web_Editing § 9) — the
+ * card carries the recovery root as a short code; every epoch key derives
+ * from it, so a fresh device holding only the card opens every op the
+ * user ever sealed. Pre-card 24-word sheets still restore.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
-  keyToWords, parseRecoveryPayload, recoveryPayload, recoveryProof, wordsToKey,
+  cardPayload, keyToWords, parseRecoveryPayload, recoverFromText,
+  recoveryPayload, recoveryProof, wordsToKey,
 } from "../../public/shared/recovery.mjs";
 import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
@@ -57,6 +59,40 @@ test("the proof is stable and root-specific", async () => {
   assert.notEqual(await recoveryProof(a), await recoveryProof(b));
 });
 
+test("the card payload round-trips the root as a 43-char code", async () => {
+  const userId = "11111111-2222-3333-4444-555555555555";
+  const root = randRoot();
+  const payload = cardPayload(userId, root);
+  const code = payload.split(":").pop();
+  assert.match(payload, /^pip:recover:[0-9a-f-]{36}:[A-Za-z0-9_-]{43}$/);
+  assert.equal(code.length, 43);
+  for (const text of [
+    payload,                       // scanned QR
+    `${userId} ${code}`,           // code typed bare
+    `${userId} ${code.match(/.{1,4}/g).join(" ")}`, // display grouping retyped
+  ]) {
+    const found = await recoverFromText(text, RECOVERY_WORDS);
+    assert.equal(found.userId, userId);
+    assert.deepEqual(found.root, root);
+  }
+  assert.equal(await recoverFromText("not a card", RECOVERY_WORDS), null);
+  assert.equal(await recoverFromText(`${userId} ${code.slice(0, 30)}`, RECOVERY_WORDS), null);
+});
+
+test("pre-card sheets still restore: word payloads and bare words", async () => {
+  const userId = "11111111-2222-3333-4444-555555555555";
+  const root = randRoot();
+  const phrase = await keyToWords(root, RECOVERY_WORDS);
+  for (const text of [
+    recoveryPayload(userId, phrase),
+    `${userId} ${phrase}`,
+  ]) {
+    const found = await recoverFromText(text, RECOVERY_WORDS);
+    assert.equal(found.userId, userId);
+    assert.deepEqual(found.root, root);
+  }
+});
+
 test("payload parse: pip:recover URI and bare user-id + words", async () => {
   const userId = "11111111-2222-3333-4444-555555555555";
   const phrase = await keyToWords(randRoot(), RECOVERY_WORDS);
@@ -79,7 +115,7 @@ test("a fresh keystore holding only the root opens every epoch's ops", async () 
   const env1 = await sealOp(await getUserKey(storeA, "u-a", 1), op1);
   const env2 = await sealOp(await getUserKey(storeA, "u-a", 3), op2); // after rotations
 
-  // Device B restores from the sheet — it has the root under the
+  // Device B restores from the card — it has the root under the
   // restored user's scope, nothing else.
   const storeB = memoryKeyStore();
   await storeB.put(userRootName("u-a"),
