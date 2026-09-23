@@ -42,6 +42,19 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
 
   const plural = buildPrompt({ word: "apples" });
   assert.ok(plural.includes("Show more than one."));
+
+  const face = buildPrompt({ word: "happy", framing: "face" });
+  assert.ok(face.includes("Close-up shot of a stick figure face filling the frame. Head only, no body, no legs."));
+
+  const bust = buildPrompt({ word: "eat", torso: "green", framing: "bust" });
+  assert.ok(bust.includes("Close-up shot of the stick figure from the chest up. Upper body and hands only, no legs."));
+  assert.ok(bust.includes("The stick figure's torso is solid green."));
+
+  const full = buildPrompt({ word: "run", torso: "green", framing: "full" });
+  assert.ok(full.includes("Full body stick figure with complete posture and legs."));
+
+  const diagram = buildPrompt({ word: "in", framing: "diagram" });
+  assert.ok(diagram.includes("A clean graphic diagram with no human figures."));
 });
 
 test("loadStyleRefs loads exactly 3 style references from assets/style-refs/pip-v1", () => {
@@ -57,13 +70,22 @@ test("parseArgs parses flags correctly", () => {
   const parsed = parseArgs([
     "--word", "run",
     "--torso", "green",
+    "--framing", "full",
     "--hint", "running forward",
     "--out", "/tmp/run.png",
     "--print-prompt",
   ]);
   assert.equal(parsed.word, "run");
   assert.equal(parsed.torso, "green");
+  assert.equal(parsed.framing, "full");
   assert.equal(parsed.hint, "running forward");
   assert.equal(parsed.out, "/tmp/run.png");
   assert.equal(parsed.print, true);
+});
+
+test("parseArgs rejects invalid framing", () => {
+  assert.throws(
+    () => parseArgs(["--word", "run", "--framing", "wide_angle"]),
+    /invalid framing: wide_angle/,
+  );
 });

@@ -111,6 +111,8 @@ export function isPluralWord(word) {
   return true;
 }
 
+export const VALID_FRAMINGS = new Set(["face", "bust", "full", "diagram", "object"]);
+
 /**
  * Builds the canonical Pip AAC icon prompt.
  * 
@@ -118,10 +120,11 @@ export function isPluralWord(word) {
  * 2. Locked style clause
  * 3. No text constraint
  * 4. Plural rule (if applicable)
- * 5. Fitzgerald torso rule (for stick figures)
- * 6. Scene hint (for abstract/preposition concepts)
+ * 5. Framing lens clause (face, bust, full, diagram, object)
+ * 6. Fitzgerald torso rule (for stick figures with torso visible)
+ * 7. Scene hint (for abstract/preposition concepts)
  */
-export function buildPrompt({ word, torso = null, hint = null }) {
+export function buildPrompt({ word, torso = null, hint = null, framing = null }) {
   const lines = [
     `We are trying to teach a child the concept of: ${word}.`,
     "Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.",
@@ -132,7 +135,19 @@ export function buildPrompt({ word, torso = null, hint = null }) {
     lines.push("Show more than one.");
   }
 
-  if (torso) {
+  if (framing === "face") {
+    lines.push("Close-up shot of a stick figure face filling the frame. Head only, no body, no legs.");
+  } else if (framing === "bust") {
+    lines.push("Close-up shot of the stick figure from the chest up. Upper body and hands only, no legs.");
+  } else if (framing === "full") {
+    lines.push("Full body stick figure with complete posture and legs.");
+  } else if (framing === "diagram") {
+    lines.push("A clean graphic diagram with no human figures.");
+  } else if (framing === "object") {
+    lines.push("A clean standalone object with no human figures.");
+  }
+
+  if (torso && framing !== "face" && framing !== "diagram" && framing !== "object") {
     lines.push(`The stick figure's torso is solid ${torso}.`);
   }
 
@@ -154,13 +169,14 @@ export async function generateToFile({
   word,
   torso = null,
   hint = null,
+  framing = null,
   prompt = null,
   out = null,
   refDir = DEFAULT_STYLE_REF_DIR,
   fetchImpl = globalThis.fetch,
   apiKey = resolveApiKey(),
 } = {}) {
-  const text = prompt ?? buildPrompt({ word, torso, hint });
+  const text = prompt ?? buildPrompt({ word, torso, hint, framing });
   if (!apiKey || !String(apiKey).trim()) {
     throw new Error("OPENROUTER_API_KEY is not set. Please export it or add to .env.");
   }
@@ -199,6 +215,7 @@ export function parseArgs(argv) {
     word: null,
     torso: null,
     hint: null,
+    framing: null,
     out: null,
     prompt: null,
     print: false,
@@ -209,6 +226,13 @@ export function parseArgs(argv) {
     if (a === "--word") out.word = argv[++i];
     else if (a === "--torso") out.torso = argv[++i];
     else if (a === "--hint") out.hint = argv[++i];
+    else if (a === "--framing") {
+      const f = argv[++i];
+      if (!VALID_FRAMINGS.has(f)) {
+        throw new Error(`invalid framing: ${f}. Must be one of: ${[...VALID_FRAMINGS].join(", ")}`);
+      }
+      out.framing = f;
+    }
     else if (a === "--out") out.out = argv[++i];
     else if (a === "--prompt") out.prompt = argv[++i];
     else if (a === "--ref-dir") out.refDir = argv[++i];
@@ -220,10 +244,10 @@ export function parseArgs(argv) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const prompt = args.prompt ?? buildPrompt({ word: args.word, torso: args.torso, hint: args.hint });
+  const prompt = args.prompt ?? buildPrompt({ word: args.word, torso: args.torso, hint: args.hint, framing: args.framing });
 
   if (!args.word && !args.prompt) {
-    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--hint <hint>] [--out <dest>]");
+    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object>] [--hint <hint>] [--out <dest>]");
     process.exit(1);
   }
 
@@ -237,6 +261,7 @@ async function main() {
     word: args.word,
     torso: args.torso,
     hint: args.hint,
+    framing: args.framing,
     prompt: args.prompt,
     out: args.out,
     refDir: args.refDir,
@@ -250,3 +275,4 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
     process.exit(1);
   });
 }
+

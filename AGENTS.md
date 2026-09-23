@@ -28,6 +28,7 @@ files touched, proof state, and next action.
 | Hunk-level cleanup after product work | `docs/operations/Deslop.md` |
 | Product vocabulary and durable truths | `docs/product/SSOT.md` |
 | Visual design: tokens, tiles, brand marks | `docs/product/Design_System.md` |
+| Clipart, tile symbols, framing lenses | `docs/operations/art-generator/SKILL.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |
 | Repo conventions | `docs/operations/Contributing.md` |

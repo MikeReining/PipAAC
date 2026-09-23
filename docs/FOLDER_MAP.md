@@ -20,6 +20,7 @@ PipAAC/
       Testing.md
       Code_Audit.md
       code-maintainer/
+      art-generator/
     phases/
       README.md
     backlog/

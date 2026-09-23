@@ -302,7 +302,19 @@ Relational and positional concepts (*in*, *out*, *on*, *under*, *up*, *down*) us
 - Directional arrow carrying the Fitzgerald key accent (pink for prepositions).
 - Opposites share identical geometry: *in* and *out* use the exact same container perspective, changing only the arrow trajectory.
 
-### 4.4 Generation Prompt Architecture & Lessons
+### 4.4 Semantic Framing Lenses (The 48px Grid Legibility Law)
+
+**DECIDED 2026-09-22**. On an iPad grid with 60 tiles, buttons render between 48×48px and 60×60px. A full-body stick figure for emotions (`happy`, `sad`) or oral/fine-motor actions (`eat`, `think`) fails clinically: the face or action shrinks to a 2-pixel blur while 60% of the tile is wasted on stick legs. Every symbol is assigned a framing lens before generation:
+
+1. **Face (`--framing face`):** Emotions, sensory states, and facial expressions (`happy`, `sad`, `hurt`, `tired`, `sleepy`). Close-up circular head filling 80%+ of the frame. Head only; no body, no legs. Facial expression is 5× larger and immediately recognizable.
+2. **Bust (`--framing bust`):** Oral actions, fine-motor manual actions, and deictic chest gestures (`eat`, `drink`, `taste`, `think`, `say`, `I`, `me`). Upper body, head, hands, and Fitzgerald torso collar. Eliminates dead leg space while preserving grammar torso color.
+3. **Full (`--framing full`):** Gross-motor locomotion (`run`, `jump`, `walk`, `sit`, `stand`) and multi-person social actions (`help`, `play`, `hug`). Complete stick figure with torso, limbs, and stance where leg stride or elevation carries the meaning.
+4. **Diagram (`--framing diagram`):** Spatial prepositions and relationships (`in`, `out`, `on`, `off`, `up`, `down`). Minimalist container/surface with bold Fitzgerald pink vector arrow, zero human figures.
+5. **Object (`--framing object`):** Inanimate nouns (`apple`, `car`) and universal regulators (`stop`, `yes`, `no`). Standalone object or sign with bold monoline outline and solid fill, zero human figures.
+
+Operational skill guide: `docs/operations/art-generator/SKILL.md`.
+
+### 4.5 Generation Prompt Architecture & Lessons
 
 Every symbol in Pip AAC is generated via `scripts/art/gen.mjs` using the locked 3-line base prompt:
 
@@ -317,7 +329,7 @@ Do not include any text in the image.
 - **Abstract Concepts:** Appends a concise 5-to-10 word physical `sceneHint` rather than a full scene description.
 - **The Re-roll Law:** Never police minor defects (stray lines, angle quirks) by bloating the prompt with negative rules or micro-constraints. The 3 reference images carry the hand; seed re-rolling is the lever. Full case study: `Art_Generation_Lessons.md`.
 
-### 4.5 Pip the Bird — Canonical Mascot and System Poses
+### 4.6 Pip the Bird — Canonical Mascot and System Poses
 
 **DECIDED 2026-09-22** (locked brand suite).
 Masters: `assets/brand/pip-sitting.png` (app icon mark / Pose 1) and the 6 system poses in `assets/brand/`.
