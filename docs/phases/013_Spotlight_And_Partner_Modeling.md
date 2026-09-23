@@ -1,9 +1,9 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Slices 1–3 built (the layer; one-device lists, sessions,
-timer; the adult's device — mirror, remote start/end). Next: slice 4 —
-live modeling. The design below is **DECIDED 2026-09-22** (founder; not
-built). Slices are **PROPOSED**.
+**Status:** Slices 1–4 built (the layer; one-device lists, sessions,
+timer; the adult's device — mirror, remote start/end; live modeling).
+Next: slice 5 — Smart bar boost for target words. The design below is
+**DECIDED 2026-09-22** (founder; not built). Slices are **PROPOSED**.
 
 Founder intake: `docs/founder/2026-09-22_Spotlight_Partner_Modeling.md`.
 Renamed from "Spotlight Practice Mode" the same day, when live partner
@@ -258,6 +258,25 @@ offers that routine's saved list.
 4. **Live modeling.** Model mode on the mirror; transient relay messages.
    Works test: a tap on the phone glows the word on the iPad and fades; the
    sync log has no new row.
+
+   **DONE.** Spotlight → **Model — tap board words** puts the partner's
+   board in Model mode (`#modelbar`, `setModeling`): taps send, never
+   speak or append. The message is a `sealOp` envelope under the current
+   epoch key sent up the authenticated ws (`sendModel` in
+   `public/shared/sync.mjs`); the relay's `webSocketMessage` rebroadcasts
+   it to the user's other sockets stamped `from` the sender's device —
+   transient, never stored (`src/worker/relay.js`). The child's board
+   opens it (`onModel`): the word's cell glows 4 s (`modelGlow`,
+   `MODEL_FADE_MS`), the route walk lights for in-group words (Groups
+   anchor + containing group tile), a child tap ends the glow early, and
+   `model_speaks` (synced learner_profile column, Spotlight sheet seg —
+   silent default per § 4) optionally speaks the word. Works Tests:
+   `src/worker/model.test.mjs` (broadcast excludes sender, `from` stamped
+   not forged, malformed dropped, nothing stored) and
+   `scripts/probes/spot_model_probe.mjs` (paired phone taps `stop` →
+   iPad glows and fades; `juice` inside Drinks lights the route walk;
+   `sync_op` and `learner_event_log` unchanged on both devices; no
+   speech while silent).
 5. **Smart bar boost** for target words in Predict, never taking over the
    bar.
 6. **Coach view** (§ 5a): today's words, per-word tips, the basics, the

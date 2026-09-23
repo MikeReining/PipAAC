@@ -225,6 +225,13 @@ Auth: ECDSA P-256 signature over `method\npath\nts\nsha256(body)` in
 `x-pip-*` headers, 10-minute freshness window, verified against the
 allowed-device list in DO storage. Client: `public/shared/sync_client.mjs`.
 
+**BUILT** (013 slice 4): the ws also carries live modeling — a sealed
+`{t:"model"}` message a linked device sends upstream, which the DO
+rebroadcasts to the user's other sockets stamped `from` the sender's
+device id (`src/worker/relay.js` `webSocketMessage`). It is transient:
+never stored, never in the op log. Client send/receive:
+`sendModel`/`onModel` in `public/shared/sync.mjs`.
+
 **BUILT** (015 slices 6–7 relay legs, 2026-09-23): `POST /entitlement`
 activates a user-bound license (`src/worker/license.mjs`, HMAC over
 `pip-lifetime:<userId>` against `PIP_LICENSE_SECRET` — the dev path;

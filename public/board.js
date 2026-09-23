@@ -89,7 +89,7 @@ import {
 } from "./shared/recovery.mjs";
 import { RECOVERY_WORDS } from "./shared/recovery_words.mjs";
 import { pairClient, relayClient, restoreDevice } from "./shared/sync_client.mjs";
-import { initSync, syncUploadBlob } from "./shared/sync.mjs";
+import { initSync, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import {
   addUser, listUsers, migrateLegacy, openUserStore, putUser,
   removeUser, resolveActiveUser, setHome, touchOpened,
@@ -216,7 +216,7 @@ function onSyncApplied() {
   }, 150);
 }
 
-initSync(db, me, saveUser, location.origin, onSyncApplied)
+initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
   .then(async (sync) => {
     if (!sync) return;
     // § 11 warning channel: a linked device returning inside the final
@@ -721,6 +721,25 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     }
     return;
   }
+  if (modeling) {
+    // Model mode: a tap glows the word on linked boards — never speaks
+    // or appends here; the adult's voice is the audio (013 § 4).
+    if (id) {
+      const key = `${kind}:${id}`;
+      syncSendModel(key, text);
+      modelSent.add(key);
+      renderGrid();
+      rerenderView();
+      setTimeout(() => {
+        modelSent.delete(key);
+        renderGrid();
+        rerenderView();
+      }, 700);
+    }
+    return;
+  }
+  // The child tapping a word the partner just modeled ends its glow.
+  clearModel(id ? `${kind}:${id}` : null);
   const item = { kind, id, text };
   expand = null; // any pick returns the bar to Predict (014 § 5)
   sentence.push(item);
@@ -908,10 +927,11 @@ function spotMark(el, key) {
  *  lands here. Returns the default session minutes. */
 function bindSpotSettings() {
   const p = ALL(db,
-    "SELECT spot_dim, spot_pulse, spot_minutes FROM learner_profile WHERE id = 'prf_local'",
+    "SELECT spot_dim, spot_pulse, spot_minutes, model_speaks FROM learner_profile WHERE id = 'prf_local'",
   )[0] ?? {};
   document.documentElement.style.setProperty("--dim-o", (p.spot_dim ?? 45) / 100);
   spotPulse = (p.spot_pulse ?? 0) === 1;
+  modelSpeaks = (p.model_speaks ?? 0) === 1;
   return p.spot_minutes ?? 0;
 }
 
@@ -936,6 +956,51 @@ function setPicking(on) {
   rerenderView();
 }
 
+/* --- live modeling (013 slice 4, § 4): a tap on the partner's device
+ *  rides the ws to the child's board, glows the word a few seconds,
+ *  then fades — or ends the moment the child taps it. Never saved,
+ *  never in the sync log; the glow is silent unless the family turns
+ *  on Speak (model_speaks). --- */
+let modeling = false;
+let modelSpeaks = false;
+const modelGlow = new Map(); // "kind:id" → fade timer
+const modelSent = new Set(); // local echo on the partner's device
+const MODEL_FADE_MS = 4000;
+
+function modelMark(el, key) {
+  if (modelGlow.has(key) || modelSent.has(key)) el.classList.add("glow");
+}
+
+function clearModel(key) {
+  const t = key ? modelGlow.get(key) : undefined;
+  if (t === undefined) return;
+  clearTimeout(t);
+  modelGlow.delete(key);
+  renderGrid();
+  rerenderView();
+}
+
+function setModeling(on) {
+  modeling = on;
+  document.body.classList.toggle("modeling", on);
+  $("modelbar").hidden = !on;
+}
+
+/** A modeled word arrived from the partner's device (ws, transient). */
+function onModel(m) {
+  if (m?.k !== "model" || typeof m.t !== "string") return;
+  clearTimeout(modelGlow.get(m.t));
+  modelGlow.set(m.t, setTimeout(() => {
+    modelGlow.delete(m.t);
+    renderGrid();
+    rerenderView();
+  }, MODEL_FADE_MS));
+  const [kind, id] = m.t.split(":");
+  if (modelSpeaks && m.w) speakItem({ kind, id, text: m.w });
+  renderGrid();
+  rerenderView();
+}
+
 /** The sense ids the home grid rendered — `spotChrome` walks routes
  *  against it from any view. */
 let boardSenseIds = new Set();
@@ -944,7 +1009,8 @@ let boardSenseIds = new Set();
  *  a target needs the route walk, and the end chip shows while running. */
 function spotChrome() {
   const s = spotlight();
-  const walk = !!s && needsRouteWalk(s.targets, boardSenseIds);
+  const walk = (!!s && needsRouteWalk(s.targets, boardSenseIds)) ||
+    (modelGlow.size > 0 && needsRouteWalk(new Set(modelGlow.keys()), boardSenseIds));
   $("anchor-groups").classList.toggle("glow", walk);
   const chip = $("spot-chip");
   chip.hidden = !s;
@@ -1046,6 +1112,7 @@ function renderGrid() {
     }
     spotMark(el, `sense:${c.sense_id}`);
     pickMark(el, `sense:${c.sense_id}`);
+    modelMark(el, `sense:${c.sense_id}`);
     if (movedSet.has(c.sense_id)) el.classList.add("moved");
     cellEls.set(c.sense_id, el);
     grid.appendChild(el);
@@ -1294,12 +1361,20 @@ function renderSpotForm() {
   for (const b of $("spot-dim").querySelectorAll("button")) {
     b.classList.toggle("on", b.dataset.v === String(dim));
   }
+  for (const b of $("model-speaks").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === (modelSpeaks ? "1" : "0"));
+  }
 }
 
 $("open-spot").addEventListener("click", () => {
   renderSpotForm();
   open("spotform");
 });
+$("spot-model").addEventListener("click", () => {
+  setModeling(true);
+  close("spotform");
+});
+$("model-done").addEventListener("click", () => setModeling(false));
 $("spot-end").addEventListener("click", () => {
   endSession(db);
   renderSpotForm();
@@ -1335,7 +1410,7 @@ $("spot-name-save").addEventListener("click", () => {
 });
 // Session length, glow style, and dim are synced settings (§ 4) — each
 // writes its profile column on tap, like the keyboard segs.
-for (const seg of ["spot-minutes", "spot-pulse", "spot-dim"]) {
+for (const seg of ["spot-minutes", "spot-pulse", "spot-dim", "model-speaks"]) {
   $(seg).addEventListener("click", (e) => {
     const v = e.target.closest("button")?.dataset.v;
     if (v === undefined) return;
@@ -2090,9 +2165,12 @@ function renderGroupIndex() {
     indexPages = Math.max(indexPages, v.page + 1);
     if (v.page === indexPageNo) placed.set(v.slot, g);
   }
-  // Route walk (013 § 3): group tiles holding a target glow; the rest dim.
+  // Route walk (013 § 3): group tiles holding a target glow; the rest
+  // dim. A live-modeled word glows its containing group the same way.
   const spotGroups = spotlight()
     ? spotlightGroups(db, spotlight().targets) : null;
+  const modelGroups = !spotGroups && modelGlow.size
+    ? spotlightGroups(db, new Set(modelGlow.keys())) : null;
   if (indexPageNo >= indexPages) indexPageNo = indexPages - 1;
   for (let slot = 0; slot < cells; slot++) {
     if (slot === 0) {
@@ -2124,7 +2202,8 @@ function renderGroupIndex() {
     const row = placed.get(slot);
     if (row) {
       zg.appendChild(groupIndexCell(
-        row, slot, spotGroups ? (spotGroups.has(row.id) ? "glow" : "dimmed") : null));
+        row, slot, spotGroups ? (spotGroups.has(row.id) ? "glow" : "dimmed")
+          : (modelGroups?.has(row.id) ? "glow" : null)));
       continue;
     }
     const empty = document.createElement("button");
@@ -2204,6 +2283,7 @@ async function itemCell(item, gKind, ctx = {}) {
       );
   spotMark(el, `${item.item_kind}:${item.item_id}`);
   pickMark(el, `${item.item_kind}:${item.item_id}`);
+  modelMark(el, `${item.item_kind}:${item.item_id}`);
   el.dataset.slot = item.vslot ?? item.slot_index;
   el.dataset.item = `${item.item_kind}:${item.item_id}`;
   if (!gestures) return el;
@@ -3036,7 +3116,7 @@ async function ensureUser() {
   const { user_id } = await res.json();
   const next = { userId: user_id, epoch: 1, cursor: 0 };
   await saveUser({ sync: next });
-  await initSync(db, me, saveUser, location.origin, onSyncApplied);
+  await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel);
   toast("This user syncs now — print or save the QR card: Parent corner → Backup");
   return next;
 }
@@ -3945,6 +4025,8 @@ window.pip = {
       saveSpotList(db, `spl_${crypto.randomUUID().replaceAll("-", "")}`, name, targets),
     deleteList: (id) => { deleteSpotList(db, id); },
     get picking() { return picking ? [...picking] : null; },
+    get modeling() { return modeling; },
+    get modelGlow() { return [...modelGlow.keys()]; },
   },
   get sentence() {
     return sentence.map((i) => ({ ...i }));

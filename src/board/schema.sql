@@ -126,7 +126,10 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- (0 = until ended; midnight is always the latest bound).
   spot_dim INTEGER NOT NULL DEFAULT 45 CHECK (spot_dim BETWEEN 10 AND 90),
   spot_pulse INTEGER NOT NULL DEFAULT 0 CHECK (spot_pulse IN (0, 1)),
-  spot_minutes INTEGER NOT NULL DEFAULT 0 CHECK (spot_minutes >= 0)
+  spot_minutes INTEGER NOT NULL DEFAULT 0 CHECK (spot_minutes >= 0),
+  -- Live modeling (013 § 4): silent by default — the adult's voice is
+  -- the audio. 1 speaks the modeled word on the child's board too.
+  model_speaks INTEGER NOT NULL DEFAULT 0 CHECK (model_speaks IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

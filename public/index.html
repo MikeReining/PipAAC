@@ -362,19 +362,19 @@
          speaking. Picked cells get the glow outline; the bar counts. */
       body.picking .cell, body.picking .gcell { cursor: copy; }
       .cell.picked, .gcell.picked { box-shadow: 0 0 0 4px var(--glow); }
-      #spot-pickbar {
+      #spot-pickbar, #modelbar {
         position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
         background: var(--ink-text); color: #fff; border-radius: 14px;
         padding: 10px 14px; display: flex; gap: 10px; align-items: center;
         z-index: 11; font-size: 15px;
       }
-      #spot-pickbar[hidden] { display: none; }
-      #spot-pickbar button {
+      #spot-pickbar[hidden], #modelbar[hidden] { display: none; }
+      #spot-pickbar button, #modelbar button {
         border: 0; border-radius: 9px; padding: 7px 12px;
         font-weight: 700; font-size: 14px; cursor: pointer;
       }
       #spot-pickbar .pick-start { background: var(--glow); }
-      #spot-pickbar .pick-quiet { background: #4a4539; color: #fff; }
+      #spot-pickbar .pick-quiet, #modelbar .pick-quiet { background: #4a4539; color: #fff; }
       /* Transition highlight (014 § 4): a moved word keeps a soft inner
          ring for the window — quieter than the spotlight's outer glow,
          and it dims nothing. */
@@ -1018,6 +1018,17 @@
             <button data-v="60">A lot</button>
           </div>
         </div>
+        <div class="seg-row">
+          <span class="seg-label">Live modeling</span>
+          <div class="row">
+            <button class="btn secondary" id="spot-model">Model — tap board words</button>
+          </div>
+          <p class="hint">Your taps glow the word on linked boards for a few seconds. Say the word aloud while you point — the glow is silent by default.</p>
+          <div class="seg" id="model-speaks">
+            <button data-v="0">Silent</button>
+            <button data-v="1">Speak on this board</button>
+          </div>
+        </div>
         <button class="btn secondary" data-close>Close</button>
       </div>
     </div>
@@ -1038,6 +1049,10 @@
       <button class="pick-start" id="spot-pick-start">Start</button>
       <button class="pick-quiet" id="spot-pick-save">Save…</button>
       <button class="pick-quiet" id="spot-pick-cancel">Cancel</button>
+    </div>
+    <div id="modelbar" hidden>
+      <span>🔦 Modeling — taps glow linked boards</span>
+      <button class="pick-quiet" id="model-done">Done</button>
     </div>
 
     <div class="overlay" id="cellsform">

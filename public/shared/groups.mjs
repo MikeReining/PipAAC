@@ -645,6 +645,7 @@ const SYNCED_SETTINGS = new Set([
   "spot_dim",
   "spot_pulse",
   "spot_minutes",
+  "model_speaks",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);

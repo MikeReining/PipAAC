@@ -140,9 +140,10 @@ export class UserRelay {
     return ok ? device : null;
   }
 
-  broadcast(msg) {
+  broadcast(msg, except = null) {
     const text = JSON.stringify(msg);
     for (const ws of this.ctx.getWebSockets()) {
+      if (ws === except) continue;
       try { ws.send(text); } catch { /* socket closing */ }
     }
   }
@@ -212,10 +213,12 @@ export class UserRelay {
     // WebSocket upgrade — auth via query params.
     if (method === "GET" && route === "ws") {
       if (request.headers.get("Upgrade") !== "websocket") return bad("expected_websocket", 426);
-      if (!(await this.verify(request, null))) return bad("forbidden", 403);
+      const wsDevice = await this.verify(request, null);
+      if (!wsDevice) return bad("forbidden", 403);
       this.touchSeen();
       const pair = new WebSocketPair();
       this.ctx.acceptWebSocket(pair[1]);
+      pair[1].serializeAttachment({ d: wsDevice.device_id });
       return new Response(null, { status: 101, webSocket: pair[0] });
     }
 
@@ -464,7 +467,18 @@ export class UserRelay {
     this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
   }
 
-  webSocketMessage() { /* clients never send — ops go through POST */ }
+  webSocketMessage(ws, msg) {
+    // Live modeling (013 § 4): a tap on the partner's device rides the
+    // authenticated ws to the user's other devices — sealed, transient,
+    // never stored. The relay stamps `from` itself; clients cannot
+    // forge it.
+    let m;
+    try { m = JSON.parse(msg); } catch { return; }
+    if (m?.t !== "model" || typeof m.env !== "object" || !m.env ||
+        JSON.stringify(m.env).length > 4096) return;
+    this.broadcast({ t: "model", e: m.e ?? 1, env: m.env,
+      from: ws.deserializeAttachment()?.d ?? null }, ws);
+  }
   webSocketClose() { /* hibernation reaps the socket itself */ }
   webSocketError() {}
 }

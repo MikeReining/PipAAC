@@ -15,7 +15,7 @@
 import { confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
 import { setBlobFetcher } from "../db.js";
 import {
-  getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey,
+  getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey, sealOp,
   sealBlob, unwrapUserKey,
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
@@ -25,16 +25,16 @@ let running = null;
  * `user` is the registry row (id, sync). `saveUser(patch)` persists
  * sync-state changes back to the row (epoch bumps on rotation).
  */
-export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}) {
+export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}, onModel = null) {
   if (running) return running;
   const cfg = user?.sync;
   if (!cfg?.userId) return null;
-  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied)
+  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel)
     .catch((err) => { running = null; throw err; });
   return running;
 }
 
-async function startSync(db, baseUrl, user, cfg, saveUser, onApplied) {
+async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
   setDeviceId(identity.deviceId);
@@ -115,19 +115,42 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied) {
   await ingest((await client.fetchOps(cfg.cursor ?? 0)).ops);
   await flush();
 
+  let live = null;
   const connect = () => {
     client.wsUrl().then((url) => {
       const ws = new WebSocket(url);
+      live = ws;
       ws.onmessage = (ev) => {
         const msg = JSON.parse(ev.data);
         if (msg.t === "ops") ingest(msg.ops).then(scheduleFlush).catch(() => {});
+        // Live modeling (013 slice 4): transient, sealed, never logged —
+        // the sender's own socket is relay-excluded and we ignore echoes.
+        if (msg.t === "model" && msg.from !== identity.deviceId) {
+          keyFor(msg.e ?? 1).then((k) => openOp(k, msg.env))
+            .then((plain) => onModel?.(plain)).catch(() => {});
+        }
       };
-      ws.onclose = () => setTimeout(connect, 2000);
+      ws.onclose = () => { if (live === ws) live = null; setTimeout(connect, 2000); };
       ws.onerror = () => ws.close();
     }).catch(() => setTimeout(connect, 5000));
   };
   connect();
-  return { client, identity, getEpoch: () => epoch, uploadBlob };
+
+  /** A live-model tap (013 § 4): sealed under the current epoch key and
+   *  sent up the ws — the relay broadcasts it, nothing is stored. */
+  const sendModel = async (target, word) => {
+    if (!live || live.readyState !== WebSocket.OPEN) return false;
+    const env = await sealOp(await keyFor(epoch), { k: "model", t: target, w: word });
+    live.send(JSON.stringify({ t: "model", e: epoch, env }));
+    return true;
+  };
+  return { client, identity, getEpoch: () => epoch, uploadBlob, sendModel };
+}
+
+/** A live-model tap for the running sync — false when unlinked/offline. */
+export async function syncSendModel(target, word) {
+  const handle = running ? await running.catch(() => null) : null;
+  return handle?.sendModel(target, word) ?? false;
 }
 
 /** Upload a photo/recording blob if the user is linked. Callers don't
