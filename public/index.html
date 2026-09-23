@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="/board/word-card.css" />
     <link rel="stylesheet" href="/board/devices-ui.css" />
     <link rel="stylesheet" href="/board/recovery-ui.css" />
+    <link rel="stylesheet" href="/board/editor-ui.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -543,82 +544,6 @@
       }
       .hint { color: #777; font-size: 14px; }
 
-      /* --- web editor (Sync_And_Web_Editing § 7): the same app laid
-         out for a computer. On a wide screen the board hides and the
-         editor is the landing view — Library on the left, the real
-         10×6 group grid in the middle, the word card docked right. */
-      #editor { display: none; }
-      body.editor #grid, body.editor #groupgrid, body.editor #strip,
-      body.editor #kb { display: none; }
-      body.editor #editor { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-      #ed-head {
-        display: flex; align-items: center; gap: 12px;
-        padding: 8px 16px;
-        font-family: var(--word-font);
-      }
-      #ed-head strong { font-size: 18px; }
-      #ed-head .hint { margin: 0; }
-      #ed-head #ed-board { margin-left: auto; width: auto; padding: 8px 18px; font-size: 15px; }
-      #ed-main {
-        flex: 1; min-height: 0;
-        display: grid;
-        grid-template-columns: 340px 1fr 380px;
-        gap: 14px;
-        padding: 0 16px 16px;
-      }
-      #ed-left, #ed-right {
-        display: flex; flex-direction: column; gap: 10px;
-        min-height: 0; overflow-y: auto;
-      }
-      #ed-mid { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-      /* Reparented overlays become panes: no backdrop, always laid out. */
-      body.editor #ed-left > .overlay,
-      body.editor #ed-right > .overlay {
-        position: static; background: none; z-index: 0;
-      }
-      body.editor #ed-left > .overlay.open,
-      body.editor #ed-right > .overlay.open { display: flex; }
-      body.editor #ed-left .sheet, body.editor #ed-right .sheet {
-        width: auto; max-height: none; padding: 12px; gap: 8px;
-        border: 2px solid var(--line); border-radius: 14px;
-      }
-      body.editor #ed-left .sheet [data-close],
-      body.editor #ed-right .sheet [data-close],
-      body.editor #ed-left .sheet h2,
-      body.editor #lib-bulk { display: none; }
-      body.editor #ed-left #lib-list { max-height: none; flex: 1; }
-      #ed-paste, #bulk-paste {
-        min-height: 90px; resize: vertical;
-        font: inherit; font-size: 15px;
-        border: 2px solid var(--line); border-radius: 10px; padding: 8px 10px;
-      }
-      #bulk-paste { min-height: 140px; }
-      #ed-paste-preview { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
-      .ed-prow { display: flex; align-items: center; gap: 8px; }
-      .ed-prow .tag {
-        font-size: 12px; font-weight: 700; border-radius: 6px;
-        padding: 1px 8px; border: 1.5px solid var(--edge);
-        background: var(--tray); color: var(--neutral-text); flex: none;
-      }
-      .ed-prow .tag.new { border-style: dashed; }
-      .ed-prow .tag.already { color: var(--muted); }
-      .ed-prow.over { text-decoration: line-through; color: var(--muted); }
-      #ed-groups { display: flex; flex-wrap: wrap; gap: 8px; }
-      #ed-groups .wchip { cursor: pointer; background: #fff; }
-      #ed-groups .wchip.on { border-color: var(--ink); background: var(--tray); }
-      #ed-grid {
-        flex: 1; min-height: 0;
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        grid-template-rows: repeat(6, 1fr);
-        gap: var(--gap, 8px);
-        align-content: stretch;
-      }
-      #ed-grid .gcell { min-height: 0; height: auto; }
-      #ed-right > .ed-hint { padding: 20px 8px; }
-      body.editor #toast { z-index: 60; }
-      /* Drop target affordance while a file is over the editor. */
-      body.editor.dragover #ed-left { outline: 3px dashed var(--ink); outline-offset: -6px; border-radius: 14px; }
     </style>
   </head>
   <body>
