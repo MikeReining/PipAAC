@@ -22,12 +22,15 @@ system has never seen.
 words makes sense. Today the strip knows nothing about English: only this
 user's own past picks plus two grammar rules, which is why day one is
 empty. Step 23 ships an **opening book**: for every common context, the
-likely next words, built from free text about how people talk. A 2026-09-23
-prototype from 5,000 free AAC-style messages put the right non-core next
-word in the top 4 **51%** of the time for writers it had never seen, with
-no personal history (step 23 § Prototype). The layers, general to
-personal: **opening book → the user's own history → Jev live.** The grid
-is untouched; the user can still say anything.
+likely next words, built from free text about how people talk,
+especially how adults and children talk to each other. On held-out child
+turns, a book built from speech addressed to children put the right
+non-core next word in the top 4 **34% (age 2) and 49% (age 5)** of the
+time, with no personal history. That is twice what adult text scores
+(step 23 § Experiments). The layers, general to personal: **opening
+book → what the partner just said → the user's own history → Jev live**,
+and every user feeds the book back (step 26, the flywheel). The grid is
+untouched; the user can still say anything.
 
 | Topic | Owner |
 | --- | --- |
@@ -149,8 +152,9 @@ before improving, and put the founder's view early.
 Step 0  founder rulings
 M1  Trustworthy plumbing   4 → 3 → 5 → 1 → 2
 M2  The instrument          11 → 12 → 16 → 13 → 15 → 18
-M3  Measured improvement    23 → 7 → 10 → 6 → 8 → 9 → 21 → 14 → 17
+M3  Measured improvement    23 → 24 → 25 → 7 → 10 → 6 → 8 → 9 → 21 → 14 → 17
 M4  Proof                   19 → 22
+F   The flywheel            26 (after 016 slice 6; parallel to M3)
 ```
 
 Step 23 (the opening book) needs none of M1 to start: building and
@@ -182,6 +186,9 @@ Why this changes the audit's order:
 | R6 | First-word predictions and whole-message tiles on screen (steps 21, 22) | Decide after the bench numbers. This phase only measures them. |
 | R7 | The 150 ms Jev window | Removed ("we shouldn't set a gate"). A Jev answer is used whenever it arrives before the user's next pick, unless a finger is already reaching (step 2). Response times are recorded as data. |
 | R8 | Data licenses | Free sources only; no paid license (step 23). |
+| R9 | Ranking | By probability: the words the user is about to say, like a phone keyboard. Never by how far away a word is. |
+| R10 | The flywheel | On by default under the existing "Help improve Pip" switch; anonymous 1–3-word counts of built-in words (step 26). Amends Stats § 6.3's "no sequence of words". Turning it off stays free (recommended; founder floated charging for opt-out). |
+| R11 | CHILDES | Not in the shipped book (non-commercial license; Pip sells Pip Lifetime). Ask TalkBank for permission to use it as a test set only. |
 
 ---
 
@@ -410,7 +417,10 @@ Build:
 6. The persona generator's occasion schedule is its own. The app's
    occasion data (step 9) is built from the catalog by 007's method,
    never from these banks, or the test grades its own homework.
-7. **No shared text with the opening book.** Message banks are never
+7. **Partner turns.** Messages that answer a partner carry the partner's
+   words, at a per-persona echo rate (10–70%), fixed in the answer key
+   (step 24).
+8. **No shared text with the opening book.** Message banks are never
    drawn from any step 23 source, and the book never reads the banks.
    If both use an LLM, they use different prompts, and the bench reports
    the book's lift separately on `template` and `llm` banks. The human
@@ -621,20 +631,41 @@ strip learns English before it learns the user.
 
 ### Sources (licenses checked 2026-09-23)
 
-| Source | What it is | License | Fit |
-| --- | --- | --- | --- |
-| Imagine AAC messages ([aactext.org/imagine](https://www.aactext.org/imagine/), Vertanen & Kristensson, EMNLP 2011) | 5,890 messages people wrote as if speaking through an AAC device | CC BY 4.0 (two small test files excepted; we don't use them) | Best style match; adult writers |
-| Imagine AAC language models (same page) | 2- to 4-gram models from Twitter, blog, and Usenet sentences chosen to resemble AAC messages; 14–635 MB | CC BY 4.0 | Wide coverage; adult; build-time only |
-| TinyStories ([Hugging Face](https://huggingface.co/datasets/roneneldan/TinyStories)) | 2.1M very simple children's stories, written by an LLM | CDLA-Sharing-1.0: counts and models computed from it are unrestricted (§ 3.5) | Child vocabulary; stories, not conversation |
-| SODA ([Hugging Face](https://huggingface.co/datasets/allenai/soda)) | 1.5M everyday social dialogues, written by an LLM | CC BY 4.0 | Conversation |
-| Tatoeba ([downloads](https://tatoeba.org/en/downloads)) | Short everyday sentences, human-written | CC BY 2.0 FR (part CC0) | Short and simple |
-| Google Books Ngram ([datasets](https://storage.googleapis.com/books/ngrams/books/datasetsv3.html)) | 1- to 5-gram counts from books | CC BY 3.0 | Frequency backbone; book language |
-| Our own table | Jev or an LLM asked offline, for each common context, which of our 680 words come next | We own it | Can aim at children's AAC style and our exact words |
+**The main finding: talk addressed to children beats adult text by about
+2×.** On held-out child turns (§ Experiments below), a book built from
+caregiver speech put the child's next non-core word in the top 4 34% of
+the time at age 2 and 49% at age 5. The adult AAC book scored 15% and 28%.
+Child conversation is the main source; adult text is background.
 
-Excluded: CHILDES/TalkBank (CC BY-NC-SA, no commercial use), OpenSubtitles
-via OPUS (CC BY-NC-SA), the Santa Barbara Corpus (CC BY-ND, no
-derivatives), wordfreq's data files (CC BY-SA, share-alike), and anything
-paid (Switchboard, COCA, Web 1T).
+| Source | What it is | License | Role |
+| --- | --- | --- | --- |
+| **TinyDialogues** ([Hugging Face](https://huggingface.co/datasets/styfeng/TinyDialogues), Feng, Goodman & Frank, EMNLP 2024) | ~130k conversations with a child aged 2, 5, 10, or 15 at the center (with mom, dad, teacher, sibling…), written by GPT-4 | MIT | **Main source.** One book per age band (step 23 item 9). Both the adults' and the children's turns. |
+| Wordbank ([data](https://langcog.github.io/wordbank-datapage/)) | Which words real toddlers say, by age (MacArthur-Bates CDI) | CC BY 4.0 (skip any dataset marked NC in its license column) | Stage prior for young users (item 10) |
+| Imagine AAC messages ([aactext.org/imagine](https://www.aactext.org/imagine/), Vertanen & Kristensson, EMNLP 2011) | 5,890 messages written as if speaking through an AAC device | CC BY 4.0 (two test files excepted) | Background; the AAC message style; the older-user book |
+| Imagine AAC language models (same page) | 2- to 4-gram models from AAC-like Twitter, blog, and Usenet sentences | CC BY 4.0 | Background; wide coverage |
+| TinyStories ([Hugging Face](https://huggingface.co/datasets/roneneldan/TinyStories)) | 2.1M very simple children's stories, written by an LLM | CDLA-Sharing-1.0: computed counts unrestricted (§ 3.5) | Child vocabulary; stories |
+| SODA ([Hugging Face](https://huggingface.co/datasets/allenai/soda)) | 1.5M everyday social dialogues, written by an LLM | CC BY 4.0 | Conversation, older users |
+| Tatoeba ([downloads](https://tatoeba.org/en/downloads)) | Short everyday sentences, human-written | CC BY 2.0 FR (part CC0) | Short, simple |
+| Google Books Ngram ([datasets](https://storage.googleapis.com/books/ngrams/books/datasetsv3.html)) | 1- to 5-gram counts from books | CC BY 3.0 | Frequency backbone |
+| Our own table | Jev or an LLM asked offline which of our words follow each common context | Ours | Fills thin contexts |
+| The flywheel (step 26) | Anonymous word-to-word counts from Pip users | Ours | Real AAC use; grows every month |
+
+Excluded:
+- **CHILDES/TalkBank:** CC BY-NC-SA 4.0. TalkBank's rules say the license
+  "precludes the incorporation of the data in commercial products".
+  Pip sells Pip Lifetime, so Pip is a commercial product even though the
+  core app is free. CHILDES is never in the shipped book. Using it as a
+  **test set only** needs TalkBank's written permission (R11).
+- **BabyLM:** it bundles CHILDES and OpenSubtitles, both non-commercial.
+- OpenSubtitles via OPUS (CC BY-NC-SA); the Santa Barbara Corpus (CC
+  BY-ND); wordfreq's data (CC BY-SA); anything paid (Switchboard, COCA,
+  Web 1T).
+- "OpenAAC usage logs": no public dataset was found. CoughDrop has
+  opt-in research data, but it isn't public.
+
+The Kuperman AoA file already in the repo (`data/reference/aoa.csv`)
+carries no stated license. Use it only as a number per word, and credit
+it.
 
 ### Build
 
@@ -653,7 +684,7 @@ license, credit), `data/prediction/opening_book.en.json` (generated),
    vocabulary breaks the context, so no count spans it.
 3. Count 1-, 2-, and 3-grams per source, inside sentences, with a
    sentence-start token (this feeds step 21).
-4. Combine sources with weights chosen on the held-out writers (below).
+4. Combine sources with weights chosen on the held-out checks (below).
    A source that doesn't help gets weight 0. Smooth with backoff; pick
    the method (e.g. interpolated Kneser–Ney vs. simple backoff) by the
    held-out score.
@@ -672,34 +703,66 @@ license, credit), `data/prediction/opening_book.en.json` (generated),
    offline as a source (our own table, especially where the corpora are
    thin), and live, reranking the shortlist the book and history produce
    (step 14).
+9. **Age-band books.** Build one book per TinyDialogues age band (2, 5,
+   10, 15), mixed with background sources, and pick weights per band on
+   held-out child turns. A user starts on the band closest to the age a
+   supporter gives at setup (default: 5). The learned weights then move
+   toward the band whose book predicts this user's own picks best. This
+   is how age enters prediction. A penalty per word did not work (§
+   Experiments).
+10. **AoA and Wordbank as stage signals, not rankers.** They inform the
+    starting band, and break day-one ties among equally likely words.
+    They also feed modeling and fading, deciding which words to teach
+    next (`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 7.4).
+    They never filter a word out.
 
-### Held-out writers: the independent check
+### Held-out checks: the independent tests
 
-The Imagine AAC dev and test sets come from writers whose messages are
-never used to build the book. `score_book.mjs` reports top-4 and top-16
-hit rates for the non-core next word. It is human-written text, so it
-also guards against LLM-written sources (TinyStories, SODA, our own
-table) flattering an LLM (Jev). `build_book.mjs` refuses to read these
-files; a test checks it.
+- **Held-out child turns:** TinyDialogues' own validation split, per
+  age band. The book never reads it.
+- **Held-out adult AAC writers:** the Imagine AAC dev and test sets. They
+  are human-written, so they guard against LLM-written sources
+  flattering an LLM (Jev).
+- **Real children (if permitted, R11):** CHILDES child utterances, used
+  as a test set only, never read by the build.
 
-### Prototype (2026-09-23)
+`build_book.mjs` refuses to read any held-out file; a test checks it.
+`score_book.mjs` reports top-4 and top-16 for the non-core next word,
+split into first words and later words.
 
-A scratch script, not committed: the Imagine AAC train set only (5,019
-messages), rough lemma mapping, 1–3-gram backoff, no smoothing, no other
-source.
+### Experiments (2026-09-23, scratch scripts, not committed)
 
-- 76% of the words in those messages exist in our vocabulary; 30% of the
-  messages can be said entirely with it.
-- On 557 messages from held-out writers, for 878 non-core next words:
-  **top 4 = 50.9%, top 16 = 74.4%**. Always showing the 4 most common
-  words scores 24.5%.
-- After *I*: am, need, want, love, would, have, will, feel. Sentence
-  start: I, can, what, how, please, you.
+Rough lemma mapping, simple interpolated 1–3-grams, no tuning beyond
+what's stated. Metric: the child's next non-core word in the top 4.
+Test: TinyDialogues validation child turns (age 2: 483 later words and
+568 first words; age 5: 2,161 later and 489 first).
 
-Limits: the writers are adults typing, not children using symbols, and
-"non-core" here includes words like *the* and *a* that aren't on our
-home board. The prototype shows the idea works; the bench decides how
-much it saves.
+| Book | Age 2 later / first | Age 5 later / first |
+| --- | --- | --- |
+| Random 4 | 0.2% / 1.2% | 0.7% / 1.2% |
+| AoA only (earliest-learned words) | 1.0% / 0.5% | 0.7% / 0.6% |
+| Adult AAC (Imagine train) | 15.3% / 0.5% | 28.2% / 13.1% |
+| Adult AAC + AoA penalty (strength tuned on train) | 16.6% / 1.1% | 28.2% / 13.1% (tuned to zero) |
+| Adult AAC, AoA as the fallback | 12.6% / 0% | 24.9% / 10.0% |
+| **Caregiver speech (adult turns, train dialogues)** | **33.5%** / 1.1% | **49.1% / 32.5%** |
+| Child turns (train dialogues; same generator, optimistic) | 51.6% / 13.7% | 56.1% / 51.1% |
+
+Also measured: the adult AAC book on held-out adult writers scored top 4
+= 50.9% and top 16 = 74.4%. 76% of those writers' words are in our
+vocabulary.
+
+What it means:
+- **Domain matters most.** Child conversation roughly doubles adult
+  text.
+- **AoA barely helps next-word ranking** (+1.3 points at age 2, none at
+  age 5). Our 680 words were already chosen by AoA
+  (`data/reference/aoa-README.md`: "age is the filter"), so that signal
+  is spent. AoA says which words a child knows, not which comes next.
+- **Partner words:** see step 24.
+
+Limits: GPT-4 wrote TinyDialogues, both the source and the test. These
+are directions, not proof, until tested on real children (R11) and on
+the flywheel's data.
 
 Truth owner: this doc until closeout, then
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2–5.3.
@@ -708,11 +771,89 @@ Lie-prone layer: building and scoring on the same text. Held-out writers
 are scoring-only, enforced by a test.
 
 Works Test: regenerating is byte-identical. The full build beats the
-prototype on held-out writers (top 4 above 50.9%). The license test
+scratch results above on every held-out check (e.g. above 33.5% later
+words at age 2, above 50.9% on adult AAC writers). The license test
 passes. Bench arm B (book only, no history) shows a day-1 saving above
 zero on synthetic users.
 
 Done when: those pass, and the numbers are in § Results.
+
+## Step 24 — The partner's words
+
+Goal: when an adult has just said or modeled words, the strip already
+holds the ones the user is likely to answer with. "Juice or milk?" → the
+strip shows *juice* and *milk*.
+
+Why: in the age-2 test dialogues, **70% of the toddlers' non-core words
+had just been said by the adult** in the previous turn. Boosting them
+took top-4 from 15.8% to 27.9%. At age 5, 26% echoed, and a fixed boost
+slightly hurt (46.6% → 44.1%), so the weight must be learned per user,
+never fixed. Children echo their partners, a lot when young.
+
+Files: `public/shared/funnel.mjs` (`echo` feature, retrieval source),
+`public/board.js`, the 013 Spotlight modules, `src/board/strip.test.mjs`.
+
+Build, in order of how the partner's words reach the device:
+1. **Partner modeling on the device.** Taps an adult makes while
+   modeling (013 partner modeling) become the partner's turn for the
+   next strip moment. No microphone.
+2. **The active Spotlight list.** An open Spotlight session's words are
+   a retrieval source and a small `echo` boost for the session.
+3. **The Listen key** (`docs/phases/008_Partner_Listening.md`), for
+   families who turn it on.
+
+`echo` is 1 for a candidate the partner said in their last turn (decays
+over about two minutes), and the partner's words are a retrieval
+source. Its weight starts from the fit users and is learned per user,
+so a child who rarely echoes loses the boost. The partner's words stay
+on the device; the Jev request gets them only as § 3.2 already allows
+(`partner_said`, when listening).
+
+Bench: synthetic users get partner turns (step 11). Messages that answer
+a partner carry the partner's words, at an echo rate set per persona
+(10–70%), written into the answer key before any prediction. Report the
+lift with and without partner turns.
+
+Works Test: an adult models *juice* and *milk* → the next strip shows
+both. A user whose history shows no echoing gets a learned `echo` weight
+near zero after 50 moments. No partner word is persisted in
+`learner_event_log` as the child's pick (013's rule: modeling taps
+aren't the child's).
+
+Done when: those pass and the lift is in § Results.
+
+## Step 25 — Word classes, slots, and topic
+
+Goal: one example teaches a whole class. After *eat cookie*, other
+foods rise after *eat*. *Cooper* is predicted after *play with* on the
+day he's added. Suggestions a user keeps passing over fade.
+
+Build:
+1. **Classes.** Each word's class is its catalog group (Food, Animals,
+   People…); each entity's class is its category. The book stores counts
+   at both levels: word → word, and word → class ("I want [Food]",
+   "play with [Toy]", "where is [Person]"). A candidate's `book_class`
+   feature = log P(class | context) + log P(word | class, user). Personal
+   history counts the same way, so the user's own "eat → [Food]" habit
+   generalizes to foods they haven't said yet.
+2. **Slots for personal entities.** An entity inherits its category's
+   slot predictions immediately (step 23's source data has no names; the
+   class does the work).
+3. **Topic.** `topic` feature: the candidate's class appeared in this
+   user's last three sentences (decays over ~10 minutes). After
+   *dinosaur*, animals and toys rise.
+4. **Ignored suggestions fade.** `ignored` feature: how many times this
+   word was shown to this user in a similar context and not picked
+   (decayed). Learned weight, so it can't bury a word the user still
+   picks.
+
+Works Test: after one *eat cookie*, *cracker* ranks higher after *eat*
+than before. A fresh entity in "Animals & Nature" appears after *play
+with* on day one. A word shown 10 times in a context and never picked
+drops below a comparable word never shown.
+
+Done when: those pass and the bench shows the lift, with no cohort
+regression.
 
 ## Step 7 — Suggest words the user has never picked
 
@@ -784,9 +925,10 @@ Build:
    (learned count), how often the next pick after this tail was a core
    word, shortlist size, first-word flag, and Jev's `P(no-fit)` as **its
    own feature** with its own weight (starts at 0, learned).
-3. **Show only when it pays:** show if `P(hit) × saving > inspect`, with
-   saving and inspect from step 16. This replaces the fixed thresholds.
-4. Refit on fit users; tune thresholds on tune users.
+3. **Show by likelihood (R9):** show the most likely words when
+   `P(hit)` clears a threshold tuned on tune users. Tiles are ordered by
+   probability, never by how far away a word is.
+4. Refit on fit users; tune the threshold on tune users.
 
 Truth owner: § 5.3–5.4 (rewritten at closeout).
 
@@ -994,6 +1136,78 @@ is founder ruling R6 and overlaps
 Removed 2026-09-23 (R5): no pilot. The simulation decides whether this is
 worth deploying; after launch, `predictionReport` measures real use.
 
+# F — The flywheel (parallel track)
+
+## Step 26 — Every user makes prediction better for everyone
+
+**DECIDED 2026-09-23** (founder: "our flywheel should be on … that data
+flow must be in our specs"). Anonymous word-to-word counts from every
+Pip user flow back into the opening book. Legacy AAC runs offline with
+static boards, so no competitor has this. The book improves every
+month, measured against real AAC use instead of adult text.
+
+**Amends** `docs/product/Stats_And_Progress.md` § 6.3, which today
+never sends "sentences or any sequence of words". The amendment (R10):
+short word-to-word counts of built-in words may be sent; whole
+sentences, own words, names, and times still never leave the device.
+Update § 6.3 and its § 7 ban test in the same commit that builds this
+step.
+
+**The setting:** the existing "Help improve Pip" switch (§ 6.3), on by
+default. One switch, not a second one. Off means nothing is sent, ever.
+Turning it off stays free for everyone (R10).
+
+**Sent (once a day, whitelist only):**
+
+| Field | What |
+| --- | --- |
+| `book_version`, `app_version`, `locale`, `layout` | as named |
+| `age_band` | the band the user's prediction currently runs on (2 / 5 / 10 / 15) |
+| `ngrams` | counts of 1-, 2-, and 3-word sequences **inside spoken sentences**, built-in catalog ids only, plus a start token. Personal entities become their category token (e.g. `<Animals & Nature>`); own words become `<own>`. Nothing longer than 3. |
+| `strip` | per built-in word id: times shown, times picked from the strip, times picked elsewhere while shown |
+| `partner` | counts of (partner word id → next child word id) when step 24 had partner words, ids only |
+
+**Never sent:** sentences as spoken, any sequence longer than 3, names,
+own words, entity ids, photos, times of day, tap times, the user id, a
+device id, or the research id. The upload carries no identifier at all.
+The Worker stores the counts and logs no body and no IP.
+
+**Server side:** daily uploads are summed. An n-gram enters the book
+only after it has appeared in at least K separate uploads (start K =
+50), so no rare family phrase can be traced back. A monthly rebuild adds
+the flywheel as a book source (step 23), with its weight chosen on the
+held-out checks like any other source. The new book ships with the
+catalog update.
+
+Files: `flywheel.mjs` (new, in public/shared: builds the daily payload
+from the local log, pure), the 016 anonymous-totals sender (same
+schedule, same switch), a Worker route, `docs/product/Stats_And_Progress.md`
+§ 6.3 and § 7.
+
+Depends on: 016 slice 6 (anonymous totals) for the sender and the
+switch.
+
+Truth owner: `docs/product/Stats_And_Progress.md` § 6.3 (after the
+amendment).
+
+Lie-prone layer: a payload builder test that passes while the real
+request sends more. Capture at the network boundary, like
+`src/board/jev.test.mjs`.
+
+Works Test: capture every request during a scripted week of taps with
+the switch on. Every payload's keys equal the whitelist exactly. No
+payload contains a sequence longer than 3, an entity name or id, an own
+word, a time, or any identifier. Switch off → no request at all. On the
+server, an n-gram seen in K − 1 uploads is absent from the rebuilt book.
+
+Done when: those pass, § 6.3 is amended, and a rebuilt book with the
+flywheel source scores on the held-out checks.
+
+Note: `docs/product/Clipart_Pipeline_And_Catalog_Growth.md` § 6 still says
+utterances have "zero cloud transmission". That was already untrue
+under Jev sharing, and this step changes it again. Reconcile that table
+at closeout.
+
 ---
 
 ## Additions from this review
@@ -1003,7 +1217,10 @@ strip should know. These additions go after the biggest gains:
 
 | Step | Idea | Why |
 | --- | --- | --- |
-| 23 | The opening book | The strip knows nothing about English today; a quick prototype hit 51% top-4 for held-out writers with no history |
+| 23 | The opening book, from child conversation | The strip knows nothing about English today; caregiver speech doubles adult text on held-out child turns |
+| 24 | The partner's words | 70% of toddlers' non-core words echo the adult's last turn (test dialogues) |
+| 25 | Word classes, slots, topic, fading | One example teaches a class; new entities are predicted on day one |
+| 26 | The flywheel | Every user improves the book; nobody else in AAC has this data |
 | 21 | Predict the first word (bench arm) | 40% of picks are sentence-first and get no prediction today |
 | 22 | Complete the whole message (bench arm) | Word-level savings are capped by core words (46% ceiling on the fixture) |
 
@@ -1014,7 +1231,8 @@ action model includes search time.
 
 ## Human stops
 
-None open; R1–R8 are ruled. Any change to what Jev receives on a user's
+None open; R1–R11 are ruled. Step 26 changes what leaves the device;
+build it exactly to its whitelist. Any change to what Jev receives on a user's
 device (the § 3.2 whitelist) stops the phase for a founder call. Offline
 book-building calls send only our own vocabulary and synthetic contexts.
 
@@ -1033,3 +1251,5 @@ Step 19 records the one `--final` eval run.
 | Step | Arm / change | Saving vs A0 | Hit | Harmful show | Day-1 saving | Commit |
 | --- | --- | --- | --- | --- | --- | --- |
 | 23 prototype | Imagine AAC train set only; held-out writers, non-core next word | — | top-4 50.9%, top-16 74.4% | — | — | scratch, 2026-09-23 |
+| 23 experiment | Caregiver-speech book vs adult AAC book, TinyDialogues held-out child turns (later words) | — | age 2: 33.5% vs 15.3%; age 5: 49.1% vs 28.2% | — | — | scratch, 2026-09-23 |
+| 24 experiment | Partner's last-turn words boosted (fixed +4 logit), caregiver book | — | age 2: 15.8% → 27.9%; age 5: 46.6% → 44.1% | — | — | scratch, 2026-09-23 |

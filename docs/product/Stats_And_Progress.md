@@ -156,6 +156,12 @@ pattern: on by default, one switch, a strict list).
   typed.
 - **Used for:** the grid, the catalog and prediction; and published
   claims such as "new words in the first 90 days", only as measured.
+- **DECIDED 2026-09-23** (founder: "our flywheel should be on"). The
+  prediction flywheel adds anonymous 1–3-word counts of built-in words
+  from spoken sentences, with no identifier at all, under this same
+  switch. It amends "never … any sequence of words" above. Whitelist and
+  tests: `docs/phases/017_Prediction_Hardening.md` step 26. Not built;
+  this section and § 7 change in the commit that builds it.
 
 ## 7. Bans
 
