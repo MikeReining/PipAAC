@@ -1,9 +1,9 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Slices 1–6 built (the layer; one-device lists, sessions,
+**Status:** All 7 slices built (the layer; one-device lists, sessions,
 timer; the adult's device — mirror, remote start/end; live modeling;
-Smart bar boost; Coach view). Next: slice 7 — shared uses (the 014
-upgrade highlight and prediction halos through the same layer). The
+Smart bar boost; Coach view; shared uses — 014 move marks and
+prediction halos render through the same `layerMark` pass). The
 design below is **DECIDED 2026-09-22** (founder; not built). Slices are
 **PROPOSED**.
 
@@ -330,3 +330,21 @@ offers that routine's saved list.
    basics on B only, `coach_event` 1 on B / 0 on A, `sync_op` unchanged).
 7. **Shared uses.** The 014 upgrade highlight and the prediction halos
    render through the same layer.
+
+   **DONE.** `layerMark(el, key, { board })` in `public/board.js` is the
+   layer's one mark pass: spotlight targets, live-model glows, the
+   picker's chosen words, and — board cells only — the 014 `.moved`
+   ring and the `.likely` prediction halos all paint through it; no
+   renderer sets an attention class on its own. Marks compose (one cell
+   can carry `glow` + `moved` + `likely`), the visual language stays
+   distinct per meaning, and every law holds — dimmed cells still tap
+   and speak, nothing moves, masked stays masked. `applyLikely` now
+   owns `likelySet` state so halos ride `layerMark` on every render —
+   previously a grid repaint dropped them until the next strip paint —
+   and passes the local model `keyboardContinuations` requires, which
+   it never did: the seg had thrown on every call, so halos had never
+   rendered at all. Works Test:
+   `scripts/probes/layer_shared_probe.mjs` (seeded history → 3 halos
+   survive a repaint; `want` carries `glow`+`moved`+`likely`; 59 dimmed
+   all tappable; session end clears only spotlight marks). DOM-bound
+   change — the live probe is the focused proof.

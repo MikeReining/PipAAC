@@ -15,16 +15,21 @@ import { createDatabase, importCatalog } from "./catalog.mjs";
 import { createEntity, placeItem, setEntityPhoto } from "../../public/shared/groups.mjs";
 import { listOps, setDeviceId } from "../../public/shared/ops.mjs";
 import {
+  genAccountKeys,
   getUserKey,
   getDeviceIdentity,
   memoryKeyStore,
+  openAccountPriv,
   openBlob,
   openOp,
+  sealAccountPriv,
   sealBlob,
   sealOp,
   sha256Hex,
   signPayload,
+  unwrapUserKey,
   verifyPayload,
+  wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
 import { listUsers, memoryUserStore, migrateLegacy } from "../../public/shared/users.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
@@ -185,4 +190,28 @@ test("015 slice 2: legacy flat keys scope under the migrated user", async () => 
   const u2key = await getUserKey(keyStore, "u2", 1);
   assert.ok(await keyStore.get("user/u2/key_e1"));
   await assert.rejects(openOp(u2key, env1));
+});
+
+test("account keys: PRF seals the private key; wrapped user keys round-trip", async () => {
+  const prf = globalThis.crypto.getRandomValues(new Uint8Array(32));
+  const acct = await genAccountKeys();
+
+  // The relay only ever holds the sealed private key.
+  const sealed = await sealAccountPriv(acct.priv, prf);
+  assert.ok(sealed.iv && sealed.sealed);
+  const priv = await openAccountPriv(sealed, prf);
+
+  // A user key wraps to the account public key exactly as it wraps to a
+  // device (Sync § 3); the unsealed account private key unwraps it.
+  const keyStore = memoryKeyStore();
+  const userKey = await getUserKey(keyStore, "u1", 2);
+  const grant = await wrapUserKey(userKey, acct.pub);
+  const unwrapped = await unwrapUserKey(priv, grant);
+  const op = { kind: "set_setting", args: { key: "board_layout", value: "grid60" } };
+  const env = await sealOp(userKey, op);
+  assert.deepEqual(await openOp(unwrapped, env), op);
+
+  // A wrong PRF output opens nothing — the sealed key is opaque.
+  const wrong = globalThis.crypto.getRandomValues(new Uint8Array(32));
+  await assert.rejects(openAccountPriv(sealed, wrong));
 });

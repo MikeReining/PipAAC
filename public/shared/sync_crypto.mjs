@@ -321,3 +321,51 @@ export async function unwrapUserKey(myDhPriv, grant) {
     { name: "AES-GCM", iv: unb64u(grant.iv) },
     { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
 }
+
+/* ------------------------------------------------------------------ *
+ * Supporter accounts (Sync § 12.3, 015 slice 4). The account's private
+ * key never leaves the device in the clear: it is sealed under an
+ * AES-GCM key derived from the passkey's WebAuthn PRF output. The
+ * relay stores only the sealed key — a stolen relay dump gives nothing.
+ * User keys wrap to the account's public key with the same ephemeral-
+ * ECDH grant as device pairing (wrapUserKey / unwrapUserKey above).
+ * ------------------------------------------------------------------ */
+
+const ACCOUNT_KDF_INFO = "pip-account-v1";
+
+/** → { pub, priv } — pub is the account public key (b64, like a dh pub);
+ *  priv is the PKCS8 bytes to seal and hand the relay. */
+export async function genAccountKeys() {
+  const kp = await subtle.generateKey(
+    { name: "ECDH", namedCurve: "P-256" }, true, ["deriveKey"]);
+  return { pub: await exportDhPublic(kp.publicKey),
+           priv: new Uint8Array(await subtle.exportKey("pkcs8", kp.privateKey)) };
+}
+
+// The PRF output is a raw 32-byte secret — it is the HKDF input key.
+const accountKek = async (prfBytes) =>
+  subtle.deriveKey(
+    { name: "HKDF", hash: "SHA-256",
+      salt: te.encode("pip account kek"),
+      info: te.encode(ACCOUNT_KDF_INFO) },
+    await subtle.importKey("raw", prfBytes, "HKDF", false, ["deriveKey"]),
+    { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+
+/** Seal the account private key under the passkey's PRF output.
+ *  → { iv, sealed } — safe for the relay to hold. */
+export async function sealAccountPriv(privPkcs8, prfBytes) {
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+  const kek = await accountKek(prfBytes);
+  const sealed = await subtle.encrypt({ name: "AES-GCM", iv }, kek, privPkcs8);
+  return { iv: b64u(iv), sealed: b64u(new Uint8Array(sealed)) };
+}
+
+/** → account private CryptoKey (ECDH) — unwraps every user-key grant
+ *  the relay hands this account. Throws if the PRF output is wrong. */
+export async function openAccountPriv({ iv, sealed }, prfBytes) {
+  const kek = await accountKek(prfBytes);
+  const pkcs8 = await subtle.decrypt(
+    { name: "AES-GCM", iv: unb64u(iv) }, kek, unb64u(sealed));
+  return subtle.importKey("pkcs8", pkcs8,
+    { name: "ECDH", namedCurve: "P-256" }, true, ["deriveKey"]);
+}

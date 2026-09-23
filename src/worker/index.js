@@ -1,8 +1,10 @@
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
 import { UserRelay } from "./relay.js";
 import { PairingLobby } from "./lobby.js";
+import { SupporterAccounts } from "./accounts.js";
+import { verifyAssertion } from "./webauthn.mjs";
 
-export { UserRelay, PairingLobby };
+export { UserRelay, PairingLobby, SupporterAccounts };
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -96,6 +98,156 @@ export default {
     if (pairMatch) {
       const stub = env.PAIR.get(env.PAIR.idFromName(pairMatch[1]));
       return stub.fetch(request);
+    }
+
+    /* --- Supporter accounts (Sync § 12.3, 015 slice 4) ---
+     * Email + passkey sign-in. The relay stores sealed keys only: the
+     * account private key arrives sealed under the passkey's PRF output,
+     * user keys arrive wrapped to the account public key. */
+    const acctDir = () =>
+      env.ACCOUNTS.get(env.ACCOUNTS.idFromName("dir"));
+    const acctStub = (id) =>
+      env.ACCOUNTS.get(env.ACCOUNTS.idFromName(`acct:${id}`));
+
+    if (path === "/accounts/link" && request.method === "POST" && env?.ACCOUNTS) {
+      const body = await request.json().catch(() => null);
+      const email = String(body?.email ?? "").trim().toLowerCase();
+      if (!email.includes("@")) return json({ error: "bad_email" }, { status: 400 });
+      const r = await acctDir().fetch(new Request(
+        `https://accounts/dir/link?origin=${encodeURIComponent(url.origin)}`,
+        { method: "POST", body: JSON.stringify({ email }) }));
+      if (!r.ok) return r;
+      const { link } = await r.json();
+      // Cloudflare Email Service when bound (needs a verified sender);
+      // wrangler dev has none — the DO's dev mailbox holds the link and
+      // GET /accounts/dev/mailbox returns it in development only.
+      let sent = false;
+      if (env?.EMAIL) {
+        try {
+          const { EmailMessage } = await import("cloudflare:email");
+          const raw = [
+            `From: Pip <accounts@pipaac.app>`,
+            `To: ${email}`,
+            `Subject: Your Pip sign-in link`,
+            `Content-Type: text/plain; charset=utf-8`,
+            ``,
+            `Open this link on the device you want to sign in:`,
+            link,
+            ``,
+            `It works once and expires in 15 minutes.`,
+          ].join("\r\n");
+          await env.EMAIL.send(new EmailMessage("accounts@pipaac.app", email, raw));
+          sent = true;
+        } catch { sent = false; }
+      }
+      return json({ ok: true, sent,
+        ...(env.ENVIRONMENT === "development" ? { dev_link: link } : {}) });
+    }
+
+    if (path === "/accounts/dev/mailbox" && request.method === "GET" && env?.ACCOUNTS) {
+      if (env.ENVIRONMENT !== "development") return json({ error: "not_found" }, { status: 404 });
+      const email = url.searchParams.get("email") ?? "";
+      return acctDir().fetch(new Request(
+        `https://accounts/dir/mailbox?email=${encodeURIComponent(email)}`));
+    }
+
+    if (path === "/accounts/claim" && request.method === "POST" && env?.ACCOUNTS) {
+      const body = await request.json().catch(() => null);
+      const claim = await acctDir().fetch(new Request(
+        "https://accounts/dir/claim", { method: "POST", body: JSON.stringify(body) }));
+      if (!claim.ok) return claim;
+      const { acct_id, challenge, email } = await claim.json();
+      const state = await (await acctStub(acct_id).fetch(
+        new Request("https://accounts/acct/state"))).json();
+      return json({ ok: true, account_id: acct_id, challenge,
+        has_credentials: state.has_credentials, email });
+    }
+
+    const acctMatch = env?.ACCOUNTS && path.match(/^\/accounts\/(acct_[0-9a-f]+)\/([a-z]+)$/);
+    if (acctMatch) {
+      const [, acctId, op] = acctMatch;
+      // Sign-in pre-flight: credential ids + the account PRF salt are
+      // the inputs navigator.credentials.get needs. Ids are not secrets.
+      if (op === "credentials" && request.method === "GET") {
+        return acctStub(acctId).fetch(new Request("https://accounts/acct/credentials"));
+      }
+      if (op === "state" && request.method === "GET") {
+        return acctStub(acctId).fetch(new Request("https://accounts/acct/state"));
+      }
+      const body = await request.json().catch(() => null);
+      if (op === "register") {
+        const chk = await acctDir().fetch(new Request(
+          "https://accounts/dir/challenge/check", { method: "POST",
+            body: JSON.stringify({ nonce: body?.challenge, acct_id: acctId }) }));
+        if (!chk.ok) return chk;
+        // Registering (or adding a credential below) needs the challenge
+        // a claimed email link minted — a self-minted nonce proves
+        // nothing about who controls the address.
+        if (!(await chk.json()).auth) {
+          return json({ error: "link_required" }, { status: 403 });
+        }
+        const reg = await acctStub(acctId).fetch(new Request(
+          "https://accounts/acct/register", { method: "POST",
+            body: JSON.stringify({ ...body, acct_id: acctId }) }));
+        if (!reg.ok) return reg;
+        const sess = await acctDir().fetch(new Request(
+          "https://accounts/dir/session", { method: "POST",
+            body: JSON.stringify({ acct_id: acctId }) }));
+        return json({ ok: true, session: (await sess.json()).session });
+      }
+      if (op === "challenge") {
+        return acctDir().fetch(new Request(
+          "https://accounts/dir/challenge", { method: "POST",
+            body: JSON.stringify({ acct_id: acctId }) }));
+      }
+      if (op === "credential") {
+        // Adding a passkey to an existing account: the claimed email
+        // link is the authorization — never rewrites acct_pub, the
+        // sealed private key, or the PRF salt.
+        const chk = await acctDir().fetch(new Request(
+          "https://accounts/dir/challenge/check", { method: "POST",
+            body: JSON.stringify({ nonce: body?.challenge, acct_id: acctId }) }));
+        if (!chk.ok) return chk;
+        if (!(await chk.json()).auth) {
+          return json({ error: "link_required" }, { status: 403 });
+        }
+        return acctStub(acctId).fetch(new Request(
+          "https://accounts/acct/credential", { method: "POST", body: JSON.stringify(body) }));
+      }
+      if (op === "assert") {
+        const chk = await acctDir().fetch(new Request(
+          "https://accounts/dir/challenge/check", { method: "POST",
+            body: JSON.stringify({ nonce: body?.challenge, acct_id: acctId }) }));
+        if (!chk.ok) return chk;
+        const cred = await acctStub(acctId).fetch(new Request(
+          `https://accounts/acct/credential?id=${encodeURIComponent(body?.credential_id ?? "")}`));
+        if (!cred.ok) return cred;
+        try {
+          await verifyAssertion(await cred.json(), body, {
+            challenge: body.challenge,
+            rpId: url.hostname,
+            origins: [url.origin],
+          });
+        } catch (e) {
+          return json({ error: "assertion_failed", detail: String(e.message ?? e) },
+            { status: 403 });
+        }
+        const bundle = await (await acctStub(acctId).fetch(
+          new Request("https://accounts/acct/bundle"))).json();
+        const sess = await acctDir().fetch(new Request(
+          "https://accounts/dir/session", { method: "POST",
+            body: JSON.stringify({ acct_id: acctId }) }));
+        return json({ ok: true, session: (await sess.json()).session, ...bundle });
+      }
+      if (op === "users") {
+        const chk = await acctDir().fetch(new Request(
+          "https://accounts/dir/session/check", { method: "POST",
+            body: JSON.stringify({ session: body?.session, acct_id: acctId }) }));
+        if (!chk.ok) return chk;
+        return acctStub(acctId).fetch(new Request(
+          "https://accounts/acct/users", { method: "POST", body: JSON.stringify(body) }));
+      }
+      return json({ error: "not_found" }, { status: 404 });
     }
 
     // Static shell. COOP/COEP make the page cross-origin isolated so the

@@ -1,9 +1,10 @@
 # Phase 015 — Accounts and one price
 
 **Status:** Executing. Slices 0–3 done (rulings 2026-09-23; user rename
-and many-users-on-one-device 2026-09-24; the QR card 2026-09-25). Next:
-slice 4 — supporter accounts (deferred: 013 slice 3 spotlight mirror is
-the queue's next critical-path item).
+and many-users-on-one-device 2026-09-24; the QR card 2026-09-25). Slice 4
+in flight — relay, crypto, WebAuthn verify, client module, and Parent
+Corner UI built and proven at protocol level; the browser Works Test is
+written but still being stabilized (see slice 4 note).
 
 **Direction DECIDED 2026-09-23** (founder: "all approved, lock it in").
 Intake: `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
@@ -339,6 +340,56 @@ speaks, the photo renders. Every captured relay payload is scanned: no
 name, photo bytes, user key or account private key in the clear. A
 virtual authenticator without PRF signs in and sees Maya locked until an
 Allow from A.
+
+**PROGRESS NOTE (2026-09-25, mid-slice — not yet DONE).** Built:
+
+- `src/worker/accounts.js` — `SupporterAccounts` DO: a `dir` object
+  (email→account, link tokens, challenges, sessions, dev mailbox) and
+  `acct:<id>` objects (credentials, `acct_pub`, `sealed_priv`, PRF salt
+  at account level, wrapped user keys + sealed profiles).
+- `src/worker/index.js` — `/accounts/link|claim|dev/mailbox` +
+  `/accounts/:id/{state,credentials,challenge,register,credential,assert,users}`.
+  Register and credential-add require the challenge a **claimed email
+  link** minted (self-minted nonces get `link_required` 403); register
+  is insert-only so `acct_pub`/`sealed_priv` can never be overwritten;
+  `users` is session-gated; assert verifies the WebAuthn signature
+  server-side (`src/worker/webauthn.mjs` — challenge, origin, RP id,
+  user presence, ES256 DER→P1363). Email sending via lazy
+  `cloudflare:email` import with the dev mailbox as the local path.
+- `wrangler.jsonc` — `ACCOUNTS` binding + `v4` migration.
+- `public/shared/sync_crypto.mjs` — `genAccountKeys`,
+  `sealAccountPriv`/`openAccountPriv` (HKDF over the passkey PRF output
+  → AES-GCM KEK); user keys wrap to `acct_pub` with the existing ECDH
+  grant — the relay never sees a private key or name in the clear.
+- `public/shared/account.mjs` — client: link request/claim, passkey
+  create/get with the PRF extension, register, sign-in (get →
+  email-authorized credential-add when the passkey isn't on this
+  authenticator → assert), share-back of synced users, import
+  (unlocked with PRF, locked without).
+- `public/board.js` + `public/index.html` — Parent Corner "Supporter
+  account" row (hidden on the child's own synced-home device — the
+  child never sees a sign-in), `?signin=` landing flow, locked-user
+  "needs an Allow or QR card" in the user list.
+
+Proof so far: `src/worker/webauthn.test.mjs` (2 — verify + each failure
+mode), `src/board/sync_crypto.test.mjs` account test (PRF seal/open +
+wrapped-key round-trip), and `src/worker/accounts.heavy.test.mjs`
+(wrangler dev end-to-end: link → claim → register → wrapped user key →
+simulated-authenticator assert → unseal → open a real op; forged
+signature 403, self-minted-challenge register/credential 403,
+re-register 409, link-authorized credential-add preserves account
+identity and signs in, link replay 403, no key bytes in payloads).
+
+**Open:** the browser Works Test above is written
+(`scripts/probes/account_probe.mjs` — two Chrome profiles + CDP virtual
+authenticators, hasPrf on/off) but not yet green — the harness fights
+CDP flakiness (dead-but-open ws, eval replay double-firing the
+reload-ending `usr-add` handler, virtual-authenticator timing). The
+relay/protocol path is proven by the heavy test; the browser probe
+still needs stabilizing before this slice can be called DONE. Also
+fixed en route: `/dir/claim` now returns the email from `acct_map`
+(previously `claim.email` was null → register `bad_request`), and
+`sealed_priv` is nullable so a no-PRF passkey can still register.
 
 ## Slice 5 — Supporters on a user
 
