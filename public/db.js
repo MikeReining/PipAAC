@@ -8,6 +8,7 @@
 import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
 import { migrateLegacyGroups, migrateBuiltinGroupNames } from "./shared/groups.mjs";
+import { ensureBaseline } from "./shared/ops.mjs";
 
 let handle = null;
 
@@ -77,6 +78,9 @@ export async function bootDb() {
   // Devices seeded while built-in names were stored as English text get
   // those seed values NULLed (caregiver renames survive) — idempotent.
   migrateBuiltinGroupNames(d, catalog);
+  // The rebase point for § 5 merging: snapshot the synced tables before
+  // the first local edit. Idempotent — a stored baseline is kept.
+  ensureBaseline(d);
 
   handle = { db: d, catalog, persistent };
   return handle;
@@ -98,7 +102,7 @@ function migrateSchema(d, schemaSql) {
     "sense", "utterance", "label", "image", "voice", "clip", "core_cell",
     "learner_profile", "personal_entity", "entity_enrichment",
     "learner_event_log", "clip_override", "board_group", "group_cell",
-    "group_label", "sync_op",
+    "group_label", "sync_op", "sync_baseline",
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();

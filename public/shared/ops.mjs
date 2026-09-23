@@ -14,6 +14,7 @@ import {
   createEntity,
   createGroup,
   deleteGroup,
+  lowestFreeIndexSlot,
   moveGroup,
   moveItem,
   nextFreeCell,
@@ -37,11 +38,27 @@ export function recordOp(db, kind, args) {
   ).run(`op_${crypto.randomUUID().replaceAll("-", "")}`, kind, JSON.stringify(args), Date.now());
 }
 
+const exists = (db, table, id) =>
+  !!db.prepare(`SELECT 1 AS x FROM ${table} WHERE id = ?`).all(id)[0];
+const inGroup = (db, groupId, kind, id) =>
+  !!db.prepare(
+    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+  ).all(groupId, kind, id)[0];
+const slotFree = (db, groupId, page, slot) =>
+  !db.prepare(
+    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
+  ).all(groupId, page, slot)[0];
+const indexFree = (db, slot) =>
+  !db.prepare("SELECT 1 AS x FROM board_group WHERE index_slot = ?").all(slot)[0];
+
 /**
- * Apply one op through the same write owner that recorded it. Placement
- * ops land at their slot if free, else the next free slot — an op never
- * displaces an item already placed (§ 5). Missing kinds throw: a silent
- * no-op would fork the replicas.
+ * Apply one op through the same write owner that recorded it — intent,
+ * not results (§ 5). A placement lands at its slot if free, else the
+ * next free slot; an op never displaces an item already placed. Under
+ * merge an op's target may be gone (its group was deleted, the entity
+ * was never created here): the op degrades to the nearest honest
+ * intent — an entity keeps a home in My Words; sense writes into a
+ * dead group skip. Missing kinds still throw: silence forks replicas.
  */
 export function applyOp(db, op) {
   const a = typeof op.args === "string" ? JSON.parse(op.args) : op.args;
@@ -49,65 +66,80 @@ export function applyOp(db, op) {
   try {
     switch (op.kind) {
       case "create_entity":
-        createEntity(db, a);
+        if (!exists(db, "personal_entity", a.id)) createEntity(db, a);
         break;
       case "rename_entity":
-        renameEntity(db, a.id, a.name);
+        if (exists(db, "personal_entity", a.id)) renameEntity(db, a.id, a.name);
         break;
       case "retire_entity":
-        retireEntity(db, a.id);
+        if (exists(db, "personal_entity", a.id)) retireEntity(db, a.id);
         break;
       case "restore_entity":
-        restoreEntity(db, a.id);
+        if (exists(db, "personal_entity", a.id)) restoreEntity(db, a.id);
         break;
       case "set_entity_photo":
-        setEntityPhoto(db, a.id, a.photoKey);
+        if (exists(db, "personal_entity", a.id)) setEntityPhoto(db, a.id, a.photoKey);
         break;
       case "create_group":
-        createGroup(db, a);
+        if (!exists(db, "board_group", a.id)) {
+          createGroup(db, {
+            ...a,
+            indexSlot: indexFree(db, a.indexSlot) ? a.indexSlot : null,
+          });
+        }
         break;
       case "delete_group":
-        deleteGroup(db, a.groupId);
+        if (exists(db, "board_group", a.groupId)) deleteGroup(db, a.groupId);
         break;
       case "move_group":
-        moveGroup(db, a.groupId, a.slot);
+        if (exists(db, "board_group", a.groupId)) {
+          const slot = indexFree(db, a.slot) ? a.slot : lowestFreeIndexSlot(db);
+          if (slot !== null) moveGroup(db, a.groupId, slot);
+        }
         break;
       case "swap_groups":
-        swapGroups(db, a.a, a.b);
+        if (exists(db, "board_group", a.a) && exists(db, "board_group", a.b)) {
+          swapGroups(db, a.a, a.b);
+        }
         break;
       case "place_item": {
-        const taken = db
-          .prepare(
-            "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
-          )
-          .all(a.groupId, a.page, a.slot_index)[0];
-        if (taken) {
-          placeItem(db, a.groupId, a.kind, a.id);
+        let gid = a.groupId;
+        if (!exists(db, "board_group", gid)) {
+          // Its group was deleted by an earlier op — an entity keeps a
+          // home in My Words; a sense write has nothing to land in.
+          if (a.kind === "sense") break;
+          gid = "grp_my_words";
+        }
+        if (a.kind === "entity" && !exists(db, "personal_entity", a.id)) break;
+        if (slotFree(db, gid, a.page, a.slot_index)) {
+          placeItem(db, gid, a.kind, a.id, { page: a.page, slot_index: a.slot_index }, a.added_at);
         } else {
-          placeItem(db, a.groupId, a.kind, a.id,
-            { page: a.page, slot_index: a.slot_index }, a.added_at);
+          // Slot taken by an earlier op — next free, but the op's own
+          // added_at still applies (the add happened once, on the origin).
+          placeItem(db, gid, a.kind, a.id, null, a.added_at);
         }
         break;
       }
       case "move_item": {
-        const taken = db
-          .prepare(
-            "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
-          )
-          .all(a.groupId, a.page, a.slot_index)[0];
-        if (taken) {
+        if (!inGroup(db, a.groupId, a.kind, a.id)) break;
+        if (slotFree(db, a.groupId, a.page, a.slot_index)) {
+          moveItem(db, a.groupId, a.kind, a.id, a.page, a.slot_index);
+        } else {
           const cell = nextFreeCell(db, a.groupId);
           if (cell) moveItem(db, a.groupId, a.kind, a.id, cell.page, cell.slot_index);
-        } else {
-          moveItem(db, a.groupId, a.kind, a.id, a.page, a.slot_index);
         }
         break;
       }
       case "swap_items":
-        swapItems(db, a.groupId, a.a, a.b);
+        if (inGroup(db, a.groupId, a.a.item_kind, a.a.item_id)
+            && inGroup(db, a.groupId, a.b.item_kind, a.b.item_id)) {
+          swapItems(db, a.groupId, a.a, a.b);
+        }
         break;
       case "remove_item":
-        removeItem(db, a.groupId, a.kind, a.id, { allowOrphan: a.allowOrphan });
+        if (inGroup(db, a.groupId, a.kind, a.id)) {
+          removeItem(db, a.groupId, a.kind, a.id, { allowOrphan: a.allowOrphan });
+        }
         break;
       case "set_setting":
         setSetting(db, a.key, a.value);
@@ -127,5 +159,95 @@ export function replayOps(db, ops) {
 
 /** The log, oldest first. */
 export function listOps(db) {
-  return db.prepare("SELECT seq, op_id, kind, args, created_at FROM sync_op ORDER BY seq").all();
+  return db.prepare("SELECT seq, op_id, kind, args, created_at, relay_seq FROM sync_op ORDER BY seq").all();
+}
+
+/**
+ * § 5 — one order, same functions. The synced tables, parents first for
+ * baseline restore. child history, prediction weights, the catalog and
+ * sync_op itself are device-local and never enter a baseline.
+ */
+const SYNCED_TABLES = [
+  "learner_profile", "personal_entity", "board_group", "group_label",
+  "clip_override", "entity_enrichment", "group_cell",
+];
+
+/** Every synced table's rows, with rowids, oldest first. */
+function snapshotSynced(db) {
+  const snap = {};
+  for (const t of SYNCED_TABLES) {
+    snap[t] = db.prepare(`SELECT rowid AS _r, * FROM ${t} ORDER BY rowid`).all();
+  }
+  return snap;
+}
+
+/** Wipe the synced tables and restore a snapshot exactly, rowids included. */
+function restoreSynced(db, snap) {
+  db.exec("PRAGMA foreign_keys = OFF");
+  db.exec("BEGIN");
+  try {
+    for (const t of [...SYNCED_TABLES].reverse()) db.exec(`DELETE FROM ${t}`);
+    for (const t of SYNCED_TABLES) {
+      for (const row of snap[t]) {
+        const { _r, ...cols } = row;
+        const names = Object.keys(cols);
+        db.prepare(
+          `INSERT INTO ${t} (rowid, ${names.join(",")}) VALUES (${["?", ...names.map(() => "?")].join(",")})`,
+        ).run(_r, ...names.map((n) => cols[n]));
+      }
+    }
+    db.exec("COMMIT");
+  } catch (err) {
+    db.exec("ROLLBACK");
+    throw err;
+  } finally {
+    db.exec("PRAGMA foreign_keys = ON");
+  }
+}
+
+/** Persist the snapshot as the last-confirmed baseline. */
+function saveBaseline(db) {
+  db.prepare("INSERT OR REPLACE INTO sync_baseline (id, tables) VALUES (1, ?)")
+    .run(JSON.stringify(snapshotSynced(db)));
+}
+
+/**
+ * The rebase point is the state before the device's first local edit —
+ * right after catalog import. Call once at boot; a stored baseline is
+ * kept, never reset.
+ */
+export function ensureBaseline(db) {
+  if (!db.prepare("SELECT 1 AS x FROM sync_baseline WHERE id = 1").all()[0]) {
+    saveBaseline(db);
+  }
+}
+
+/**
+ * Confirmed ops arrive with relay_seq, ordered by it. The device undoes
+ * its pending ops by restoring the baseline, applies the confirmed
+ * stream in relay order (the new baseline), then re-applies its still-
+ * pending ops on top — a rebase (§ 5). Foreign ops join the local log
+ * so the stream is recorded; echoes of our own ops just take their seq.
+ */
+export function drainOps(db, confirmedOps) {
+  const ordered = [...confirmedOps].sort((x, y) => x.relay_seq - y.relay_seq);
+  const mark = db.prepare("UPDATE sync_op SET relay_seq = ? WHERE op_id = ?");
+  const logForeign = db.prepare(
+    "INSERT OR IGNORE INTO sync_op (op_id, device_id, kind, args, created_at, relay_seq) VALUES (?, ?, ?, ?, ?, ?)",
+  );
+  for (const op of ordered) {
+    mark.run(op.relay_seq, op.op_id);
+    logForeign.run(op.op_id, op.device_id ?? "dev_remote", op.kind,
+      typeof op.args === "string" ? op.args : JSON.stringify(op.args),
+      op.created_at ?? Date.now(), op.relay_seq);
+  }
+  const pending = db.prepare(
+    "SELECT op_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
+  ).all();
+  const base = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
+  if (!base) throw new Error("drainOps: no baseline — ensureBaseline must run at boot");
+  restoreSynced(db, JSON.parse(base.tables));
+  for (const op of ordered) applyOp(db, op);
+  saveBaseline(db);
+  for (const op of pending) applyOp(db, op);
 }

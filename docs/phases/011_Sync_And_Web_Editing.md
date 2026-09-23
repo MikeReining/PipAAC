@@ -81,6 +81,20 @@ relay in random orders. After both drain: synced tables byte-identical, no
 orphan entity, no item that was already placed moved, core snapshot
 unchanged.
 
+**Works Test (proven 2026-09-23):** `src/board/sync_merge.test.mjs` —
+two replicas, forced collisions (same cell slot, same entity renamed on
+both, `grp_doomed` deleted on one while the other places into it, the
+same index slot claimed twice) plus a 120-edit storm each. A fake relay
+merges the streams preserving per-device order and assigns `relay_seq`;
+`drainOps` rebases: restore the `sync_baseline` snapshot, apply the
+confirmed stream in relay order, re-apply pending ops. All seven synced
+tables are byte-identical across replicas, no orphan entity, built-in
+membership and `core_cell` unchanged; a second drain of the same stream
+is idempotent. Passed 7 seeds at authoring (`SYNC_SEED=<n>` to rerun,
+`SYNC_DEBUG=1` prints diverging rows). The merge storm caught the same
+class of bug slice 1 did: the taken-slot `place_item` fallback stamped a
+fresh `added_at` — it now carries the op's own timestamp.
+
 ## Slice 3 — Keys and encryption
 
 Goal: device key pairs in the platform secure store, a board key, ops and

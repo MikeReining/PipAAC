@@ -116,19 +116,30 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
 
 **The rule:** every device applies the same ops, in the same order,
 through the same functions. Identical input gives identical state, so the
-devices converge by construction, not by a merge heuristic.
+devices converge by construction, not by a merge heuristic. **BUILT**
+(011 slice 2) as a local mechanism in `public/shared/ops.mjs`; the relay
+itself is still PROPOSED.
 
 - **The relay orders.** A Cloudflare Durable Object per board gives each
   op it accepts the next sequence number. It cannot read the ops. It only
-  orders and stores ciphertext.
-- **Local edits apply at once** (optimistic) and are marked pending.
+  orders and stores ciphertext. **PROPOSED** — slice 4.
+- **Local edits apply at once** (optimistic) and are marked pending:
+  **BUILT** — `sync_op.relay_seq` stays NULL until the relay confirms.
 - **When confirmed ops arrive**, the device undoes its pending ops,
   applies the confirmed ones in sequence order, then re-applies its
-  pending ops on top (a rebase), and sends them.
+  pending ops on top (a rebase), and sends them. **BUILT** —
+  `drainOps` restores the `sync_baseline` snapshot (captured at boot by
+  `ensureBaseline`, before the first local edit), applies the confirmed
+  stream in `relay_seq` order, saves that as the new baseline, then
+  re-applies the still-pending local ops.
 - **Ops carry intent, not results.** "Place Cooper in People" means "the
   next free slot when applied". "Move `cup` to page 0 slot 12" means
   "slot 12 if free; if another item took it, the next free slot". An
-  op never displaces an item another device already placed.
+  op never displaces an item another device already placed. **BUILT** —
+  `applyOp` resolves each op against live state; a target gone under
+  merge (deleted group, never-created entity) degrades to the nearest
+  honest intent — an entity keeps a home in My Words; a sense write into
+  a dead group skips.
 - **Invariants hold after every op**, because every op runs through the
   same write owner that enforces them today: no orphan entity (My Words
   catch-all), a seeded word never leaves its built-in group, one item per

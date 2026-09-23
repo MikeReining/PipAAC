@@ -1272,15 +1272,21 @@ word card retires (`retireEntity`); the row, photo and recording stay
 typed-word resolution, idle starters — so a retired entity renders
 nowhere and `restoreEntity` brings it back with its placements.
 
-### 14.6 Sync op log (011 slice 1)
+### 14.6 Sync op log and baseline (011 slices 1–2)
 
-**BUILT** — `sync_op(seq, op_id, device_id, kind, args, created_at)` in
-`src/board/schema.sql`. Every write owner in `public/shared/groups.mjs`
-records its call as an op (`recordOp` in `public/shared/ops.mjs`); ops
-carry intent — ids, slots and timestamps the write generated — so replay
-(`replayOps`) rebuilds the synced tables byte-identically. `device_id`
-holds `dev_local` until device keys land (slice 3). The tables that sync
-and never sync are listed in `docs/product/Sync_And_Web_Editing.md` § 2.
+**BUILT** — `sync_op(seq, op_id, device_id, kind, args, created_at,
+relay_seq)` and `sync_baseline(id, tables)` in `src/board/schema.sql`.
+Every write owner in `public/shared/groups.mjs` records its call as an op
+(`recordOp` in `public/shared/ops.mjs`); ops carry intent — ids, slots
+and timestamps the write generated — so replay (`replayOps`) rebuilds the
+synced tables byte-identically. `relay_seq` is NULL while the op is
+pending; when the relay confirms a stream, `drainOps` restores the
+`sync_baseline` snapshot (the whole synced-table state captured at boot
+by `ensureBaseline`), applies the confirmed ops in `relay_seq` order,
+saves the new baseline, and re-applies the still-pending local ops.
+`device_id` holds `dev_local` until device keys land (slice 3). The
+tables that sync and never sync are listed in
+`docs/product/Sync_And_Web_Editing.md` § 2.
 
 ### 14.7 Same spelling, different sound (not scheduled)
 

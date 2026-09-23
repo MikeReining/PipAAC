@@ -47,7 +47,7 @@ function categoryGroupMap(catalog) {
   );
 }
 
-function lowestFreeIndexSlot(db) {
+export function lowestFreeIndexSlot(db) {
   const used = new Set(
     all(db, "SELECT index_slot FROM board_group").map((r) => r.index_slot),
   );

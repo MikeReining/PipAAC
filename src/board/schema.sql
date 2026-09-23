@@ -245,7 +245,19 @@ CREATE TABLE IF NOT EXISTS sync_op (
   device_id TEXT NOT NULL DEFAULT 'dev_local',
   kind TEXT NOT NULL,
   args TEXT NOT NULL,
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  -- The relay's sequence number (§ 5). NULL = pending: applied locally,
+  -- not yet confirmed. On drain the device rebases — restores the last
+  -- confirmed baseline, applies confirmed ops in relay order, re-applies
+  -- its pending ops on top.
+  relay_seq INTEGER
+);
+
+-- The synced tables' last confirmed state, one JSON row — the rebase
+-- point drainOps restores before replaying the ordered stream.
+CREATE TABLE IF NOT EXISTS sync_baseline (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  tables TEXT NOT NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS label_one_row_per_sense_text
