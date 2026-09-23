@@ -1,7 +1,8 @@
 # Phase 017 — Prediction you can prove
 
-**Status:** Ready to execute. Not started. Step 0 (founder rulings) comes
-first; steps 4, 3, 5, 1, 2 can start right away.
+**Status:** Ready to execute. Not started. Founder rulings recorded
+(step 0, 2026-09-23). Start with M1 (steps 4, 3, 5, 1, 2); the opening
+book (step 23) can start in parallel.
 
 **DECIDED 2026-09-23** (founder: "If we nail prediction … we can create a
 category killer. I don't think we are there yet."). Source: an independent
@@ -10,9 +11,23 @@ mentor's 20-item audit, reviewed line by line against the code on
 defect or a real gap. This doc turns them into steps a developer can
 execute. Where the review changed an item, the step says so.
 
-**The job, in one line:** make the predictor work correctly, build an
-honest comparison, then improve it until the gain is visible, on users the
+**The job, in one line:** make the predictor work correctly, give it
+knowledge of how people talk (the opening book), build an honest
+comparison, then improve it until the gain is visible, on users the
 system has never seen.
+
+**The breakthrough this phase is built around (founder, 2026-09-23):**
+"This is like chess. Predict the next move." Our vocabulary is finite
+(680 English lemmas). For any sentence so far, only a narrow set of next
+words makes sense. Today the strip knows nothing about English: only this
+user's own past picks plus two grammar rules, which is why day one is
+empty. Step 23 ships an **opening book**: for every common context, the
+likely next words, built from free text about how people talk. A 2026-09-23
+prototype from 5,000 free AAC-style messages put the right non-core next
+word in the top 4 **51%** of the time for writers it had never seen, with
+no personal history (step 23 § Prototype). The layers, general to
+personal: **opening book → the user's own history → Jev live.** The grid
+is untouched; the user can still say anything.
 
 | Topic | Owner |
 | --- | --- |
@@ -45,7 +60,7 @@ so its rows also name the function.
 | **The ranker never sees the open board or group.** | `stripScored(db, sentence, now, locale, model)`, `public/shared/funnel.mjs:251`. |
 | **Occasion is a constant zero.** | `public/shared/funnel.mjs:179`. |
 | **Jev's "none" means something else, but it is folded into the same term.** Jev's `none` = "no word here fits". The local `none` = "the next pick is not in the shortlist". The code adds them into one score. | `public/shared/jev.mjs:49`; `public/shared/funnel.mjs:197-198`. |
-| **The Jev smoke run uses the wall clock**, so breakfast and bedtime look the same, and it applies every Jev answer, however late. | `scripts/prediction/jev_smoke.mjs:97`, `jev_smoke.mjs:102`, `jev_smoke.mjs:112`; answers applied at `jev_smoke.mjs:61` with no 150 ms rule. |
+| **The Jev smoke run uses the wall clock**, so breakfast and bedtime look the same, and it applies every Jev answer, even one that arrives after the user's next pick. | `scripts/prediction/jev_smoke.mjs:97`, `jev_smoke.mjs:102`, `jev_smoke.mjs:112`; answers applied at `jev_smoke.mjs:61` with no timing check. |
 | **The recorded "cap 32" result is really cap 16.** The shortlist is cut to 16 before the smoke's cap applies. The median shortlist has 5 words anyway, so the cap almost never matters. | `public/shared/funnel.mjs:283`, `jev_smoke.mjs:44`. |
 | **Stored evidence can't replay a decision.** Rows drop each candidate's score, Jev's probabilities, and the weights used. When Jev leaves the offer unchanged, only a status label is stored. | `public/board.js:178` (`maybeImpression`), `public/board.js:608` (`maybeJev`). |
 | **The defaults were fitted on the two children the tests measure.** No result is on an unseen user. | `data/prediction/defaults.json` `fittedOn`; `scripts/prediction/fit_defaults.mjs:56`. |
@@ -73,9 +88,10 @@ Four things a parent or SLP would notice, each checked by a number in the
 bench (step 13):
 
 1. **Day one is useful.** A new user gets sensible suggestions before any
-   history exists (steps 7, 9).
-2. **It saves real effort.** At least 20% fewer modeled actions than no
-   prediction, on users the system has never seen (step 19).
+   history exists (steps 23, 7).
+2. **It saves real effort.** Clearly fewer modeled actions than no
+   prediction, on users the system has never seen — reported as two
+   lifts: own data alone, and Jev on top (step 19).
 3. **It keeps quiet when unsure.** Suggestions that cost more than they
    save are counted as harm and kept rare (steps 6, 16).
 4. **It never moves under a finger.** No tile is replaced while the user is
@@ -100,8 +116,14 @@ system. Jev is not the definition of success.
 - **Each improvement is a bench arm first.** It ships only if it beats the
   previous arm on the tuning users with no regression in any group of
   users.
-- **Never weaken the comparator to pass.** If a target is missed, the
-  report says missed.
+- **Never weaken the comparator.** The report states the lift and its
+  uncertainty, whatever they are.
+- **Free data only.** Every opening-book source allows commercial use
+  without paying (founder, 2026-09-23: "we're not gonna pay for any
+  license"). Non-commercial, no-derivatives, and paid sources are out.
+  Attribution is kept in one sources file that ships with the app.
+- **The book and the test users never share a source.** Otherwise the
+  test grades its own answer key (step 11, step 23).
 - **Every local step stays inside the local latency budget** (step 17).
   Measure as you go; don't discover it at the end.
 
@@ -113,7 +135,8 @@ system. Jev is not the definition of success.
 | fit users (1–60), tune users (61–80), eval users (81–100) | train set, test set (ambiguous here) |
 | arm (one predictor setup in the bench) | variant, model config |
 | modeled actions (activations + inspection + correction) | taps (unless you mean only activations) |
-| delivered (reached the screen in time) / theoretical (ignoring timing) | Jev accuracy |
+| delivered (reached the screen before the next pick) / theoretical (ignoring timing) | Jev accuracy |
+| opening book (population next-word table, shipped as data) | corpus model, dictionary, AI prior |
 | retrieval miss (target not in shortlist) / no-fit (Jev: nothing here fits) | none (without saying which) |
 
 ## Build order
@@ -126,9 +149,12 @@ before improving, and put the founder's view early.
 Step 0  founder rulings
 M1  Trustworthy plumbing   4 → 3 → 5 → 1 → 2
 M2  The instrument          11 → 12 → 16 → 13 → 15 → 18
-M3  Measured improvement    6 → 7 → 10 → 8 → 9 → 21 → 14 → 17
-M4  Proof                   19 → 22 → 20
+M3  Measured improvement    23 → 7 → 10 → 6 → 8 → 9 → 21 → 14 → 17
+M4  Proof                   19 → 22
 ```
+
+Step 23 (the opening book) needs none of M1 to start: building and
+checking the book is offline data work. It joins the ranker in M3.
 
 Why this changes the audit's order:
 
@@ -136,23 +162,26 @@ Why this changes the audit's order:
   change needs the bench to show it doesn't regress.
 - Step 18 (the replay screen) moves up so the founder can see every
   improvement as it lands, not only at the end.
-- Steps 21 and 22 are additions from this review (§ Additions).
+- Steps 21 and 22 are additions from this review (§ Additions). Step 23
+  is the founder's opening-book insight.
+- Step 20 (a pilot with AAC users) is removed (step 0, R5).
 
 ---
 
 ## Step 0 — Founder rulings
 
-Recommended defaults are listed so work isn't blocked. Record each ruling
-here with a date.
+**DECIDED 2026-09-23** (founder).
 
-| # | Question | Recommendation |
+| # | Question | Ruling |
 | --- | --- | --- |
-| R1 | Advancement targets (step 19) | Accept: 20% fewer modeled actions than no prediction; 5% further from Jev over the same improved local system; both on eval users, under delivery rules. |
-| R2 | Latency target | p95 below 50 ms from pick to painted strip, on the lowest-spec device we support (founder names the device). |
-| R3 | Adults can edit occasion times (step 9) | Yes. Shipped defaults, adult override (matches "individual first"). |
-| R4 | Jev spend cap for step 14 | Founder sets a dollar cap; the bench stops at the cap. |
-| R5 | Pilot with AAC users (step 20) | Decide at step 20. It is a human stop. |
+| R1 | Targets | No pass/fail targets up front ("we will see what the data reveals"). The bench reports two lifts: own data alone vs no prediction, and Jev on top of that. Simulation alone should already show a lift. |
+| R2 | Speed device | The iPad. Speed is checked on the real app, not in the simulation. |
+| R3 | Occasions | Learned from the user's picks; no screen for adults to edit times. Kept only if it beats time-of-day alone (step 9). |
+| R4 | Jev spend | No cap. Jev is cheap. The question is only whether it improves predictions. |
+| R5 | Pilot with AAC users | Dropped. The simulation decides whether this is worth deploying; after launch, `predictionReport` measures real use. |
 | R6 | First-word predictions and whole-message tiles on screen (steps 21, 22) | Decide after the bench numbers. This phase only measures them. |
+| R7 | The 150 ms Jev window | Removed ("we shouldn't set a gate"). A Jev answer is used whenever it arrives before the user's next pick, unless a finger is already reaching (step 2). Response times are recorded as data. |
+| R8 | Data licenses | Free sources only; no paid license (step 23). |
 
 ---
 
@@ -307,28 +336,39 @@ Done when: that passes, and `jev_smoke.mjs` has no `Date.now()`.
 ## Step 2 — The simulation obeys the app's timing rules
 
 Goal: the bench reports Jev's **theoretical** result (every answer used)
-and its **delivered** result (only answers the app would show).
+and its **delivered** result (only answers the app would show). There is
+no fixed time window (R7): the only real limits are that an answer after
+the next pick can't help that pick, and a tile must not change under a
+finger.
 
 Files: `public/shared/jev.mjs` (new pure function `jevDeliverable`),
 `public/board.js` (`maybeJev` calls it), `src/board/sim_replay.mjs`.
 
 Build:
-1. Pull the display rule out of `maybeJev` (`public/board.js:591`) into one pure function
-   used by both the app and the bench:
-   `jevDeliverable({ paintedAt, answeredAt, touchedAt, moved }) → bool`
-   — true only if the answer came within 150 ms of paint, the sentence
-   position hasn't moved, and no touch happened since paint (step 17).
-2. The bench uses each answer's recorded latency (step 14 cache) and the
-   user's next-pick time from the answer key.
+1. Delete the 150 ms window (`JEV_WINDOW_MS` in `public/board.js`) and
+   pull the display rule out of `maybeJev` (`public/board.js:591`) into
+   one pure function used by both the app and the bench:
+   `jevDeliverable({ answeredAt, reachStartedAt, moved }) → bool` — true
+   when the sentence position hasn't moved and no reach has started
+   (no pointer-down on the board since paint; step 17).
+2. In the bench, a reach starts `reach_ms` before each pick (one
+   constant in the step 16 config, default 600 ms; reported at 300 and
+   1,000 too). The pick time comes from the answer key; each answer's
+   latency comes from the step 14 cache.
+3. Every run reports Jev latency: median, p90, max, and the share of
+   answers that arrived in time.
 
-Truth owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 3.4.
+Truth owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 3.4
+(amended 2026-09-23, R7).
 
 Lie-prone layer: two copies of the rule drifting apart. `board.js` must
 import the function, never re-implement it.
 
 Works Test: a stub Jev that is always right (puts the target first) but
-answers at 400 ms: theoretical gain > 0, delivered gain = 0 exactly. The
-same stub at 50 ms: delivered = theoretical.
+answers after the next pick: theoretical gain > 0, delivered gain = 0
+exactly. The same stub answering at 400 ms with picks 3 s apart:
+delivered = theoretical (no 150 ms cutoff). A pointer-down before the
+answer: no repaint in the app.
 
 Done when: that passes, and `board.js` has no inline copy of the rule.
 
@@ -370,6 +410,11 @@ Build:
 6. The persona generator's occasion schedule is its own. The app's
    occasion data (step 9) is built from the catalog by 007's method,
    never from these banks, or the test grades its own homework.
+7. **No shared text with the opening book.** Message banks are never
+   drawn from any step 23 source, and the book never reads the banks.
+   If both use an LLM, they use different prompts, and the bench reports
+   the book's lift separately on `template` and `llm` banks. The human
+   check is step 23's held-out writers, which no synthetic user touches.
 
 **Review addition — LLM-written text favors an LLM.** If message banks are
 drafted with an LLM, Jev (also a language model) may find them unusually
@@ -435,7 +480,8 @@ The action model, per intended word:
 | Mistaken strip pick | probability `slip` (default 2%) of taking a neighbor tile: + backspace + the correct path |
 | Repair in the answer key | its real cost |
 
-All constants live in one config. **Every headline number is reported at
+All constants live in one config, including `reach_ms` (how long before a
+pick the finger starts moving; step 2). **Every headline number is reported at
 three inspection costs (0.1, 0.25, 0.5)** so no conclusion depends on one
 guess.
 
@@ -471,6 +517,7 @@ Arms:
 | --- | --- |
 | A0 no prediction | the strip is empty |
 | A1 simple baseline | every enabled non-core word + entities; score by backoff over this user's past sentences (last 3 → 2 → 1 items → same hour → overall count); always show the top slots. This is classic AAC word prediction. The new system must beat it. |
+| B book only | the opening book (step 23), no personal history, no Jev. The lift from knowing English alone. |
 | A2 current local | a frozen copy of the ranker and learner as of this phase's start (copied into the bench's arms folder, never edited) |
 | A3 improved local | the working tree |
 | A4 improved local + Jev, delivered | step 2's rule applied |
@@ -562,6 +609,160 @@ Each step lands as a change to arm A3 (or A4), is run on fit + tune users,
 and is kept only if the bench shows a gain with no cohort regression. For
 each step, record before/after under § Results.
 
+## Step 23 — The opening book
+
+Goal: for any sentence so far, a ranked list of the likely next words
+from our vocabulary, built from free text about how people talk. It ships
+as data, answers instantly, and works offline and on day one.
+
+This is the founder's chess insight: we have 680 words, and for any
+position only a narrow set of next moves makes sense. The book is how the
+strip learns English before it learns the user.
+
+### Sources (licenses checked 2026-09-23)
+
+| Source | What it is | License | Fit |
+| --- | --- | --- | --- |
+| Imagine AAC messages ([aactext.org/imagine](https://www.aactext.org/imagine/), Vertanen & Kristensson, EMNLP 2011) | 5,890 messages people wrote as if speaking through an AAC device | CC BY 4.0 (two small test files excepted; we don't use them) | Best style match; adult writers |
+| Imagine AAC language models (same page) | 2- to 4-gram models from Twitter, blog, and Usenet sentences chosen to resemble AAC messages; 14–635 MB | CC BY 4.0 | Wide coverage; adult; build-time only |
+| TinyStories ([Hugging Face](https://huggingface.co/datasets/roneneldan/TinyStories)) | 2.1M very simple children's stories, written by an LLM | CDLA-Sharing-1.0: counts and models computed from it are unrestricted (§ 3.5) | Child vocabulary; stories, not conversation |
+| SODA ([Hugging Face](https://huggingface.co/datasets/allenai/soda)) | 1.5M everyday social dialogues, written by an LLM | CC BY 4.0 | Conversation |
+| Tatoeba ([downloads](https://tatoeba.org/en/downloads)) | Short everyday sentences, human-written | CC BY 2.0 FR (part CC0) | Short and simple |
+| Google Books Ngram ([datasets](https://storage.googleapis.com/books/ngrams/books/datasetsv3.html)) | 1- to 5-gram counts from books | CC BY 3.0 | Frequency backbone; book language |
+| Our own table | Jev or an LLM asked offline, for each common context, which of our 680 words come next | We own it | Can aim at children's AAC style and our exact words |
+
+Excluded: CHILDES/TalkBank (CC BY-NC-SA, no commercial use), OpenSubtitles
+via OPUS (CC BY-NC-SA), the Santa Barbara Corpus (CC BY-ND, no
+derivatives), wordfreq's data files (CC BY-SA, share-alike), and anything
+paid (Switchboard, COCA, Web 1T).
+
+### Build
+
+Files: `build_book.mjs` and `score_book.mjs` (new, in scripts/prediction/book),
+`data/prediction/book_sources.json` (source manifest: URL, SHA-256,
+license, credit), `data/prediction/opening_book.en.json` (generated),
+`data/prediction/SOURCES.md` (credits), `public/shared/funnel.mjs`
+(`book` feature and retrieval).
+
+1. Download each source into a gitignored cache, pinned by URL and
+   SHA-256 in the manifest. A test fails if any manifest license is not
+   on the allow list (CC0, CC BY, CDLA-Sharing results, our own).
+2. Tokenize and map to our lemmas: multi-word lemmas first (*all done*,
+   *good night*), then word forms to their lemma (simple suffix rules
+   until `docs/phases/005_Word_Forms.md` lands). A word outside our
+   vocabulary breaks the context, so no count spans it.
+3. Count 1-, 2-, and 3-grams per source, inside sentences, with a
+   sentence-start token (this feeds step 21).
+4. Combine sources with weights chosen on the held-out writers (below).
+   A source that doesn't help gets weight 0. Smooth with backoff; pick
+   the method (e.g. interpolated Kneser–Ney vs. simple backoff) by the
+   held-out score.
+5. Prune to the top 32 next words per context, with probabilities.
+   Budget: about 2 MB for English. Regenerating reproduces the file byte
+   for byte.
+6. On the device: feature `book` = log P(word | last two items), backing
+   off to one item, then to sentence start. Retrieval source: the book's
+   top words for this context, minus core cells, hidden words, and words
+   already on screen (steps 7, 8). The user's own history (step 10) sits
+   on top, and per-user learned weights decide the mix, so a user's own
+   habits win as they build up.
+7. Credits: `SOURCES.md` lists every source, license, and required
+   attribution; the app's About screen shows it.
+8. Jev has two possible roles, and the bench decides which earn a place:
+   offline as a source (our own table, especially where the corpora are
+   thin), and live, reranking the shortlist the book and history produce
+   (step 14).
+
+### Held-out writers: the independent check
+
+The Imagine AAC dev and test sets come from writers whose messages are
+never used to build the book. `score_book.mjs` reports top-4 and top-16
+hit rates for the non-core next word. It is human-written text, so it
+also guards against LLM-written sources (TinyStories, SODA, our own
+table) flattering an LLM (Jev). `build_book.mjs` refuses to read these
+files; a test checks it.
+
+### Prototype (2026-09-23)
+
+A scratch script, not committed: the Imagine AAC train set only (5,019
+messages), rough lemma mapping, 1–3-gram backoff, no smoothing, no other
+source.
+
+- 76% of the words in those messages exist in our vocabulary; 30% of the
+  messages can be said entirely with it.
+- On 557 messages from held-out writers, for 878 non-core next words:
+  **top 4 = 50.9%, top 16 = 74.4%**. Always showing the 4 most common
+  words scores 24.5%.
+- After *I*: am, need, want, love, would, have, will, feel. Sentence
+  start: I, can, what, how, please, you.
+
+Limits: the writers are adults typing, not children using symbols, and
+"non-core" here includes words like *the* and *a* that aren't on our
+home board. The prototype shows the idea works; the bench decides how
+much it saves.
+
+Truth owner: this doc until closeout, then
+`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2–5.3.
+
+Lie-prone layer: building and scoring on the same text. Held-out writers
+are scoring-only, enforced by a test.
+
+Works Test: regenerating is byte-identical. The full build beats the
+prototype on held-out writers (top 4 above 50.9%). The license test
+passes. Bench arm B (book only, no history) shows a day-1 saving above
+zero on synthetic users.
+
+Done when: those pass, and the numbers are in § Results.
+
+## Step 7 — Suggest words the user has never picked
+
+Goal: any available word can appear on day one when context supports it.
+
+Files: `public/shared/funnel.mjs` (retrieval), new aggregate tables in
+`src/board/schema.sql` (step 17 constraint).
+
+Build:
+1. Retrieval pool: every non-core word reachable on this user's boards
+   and groups, plus active entities, minus hidden words (`sense_mask`),
+   minus core cells on the current home layout (picture mode keeps the
+   "core words are never strip tiles" rule).
+2. Retrieval sources, each giving up to N candidates into a budget (e.g.
+   64) before ranking cuts to the shortlist: the opening book (step 23),
+   history continuations, board and group context (step 8), occasion
+   (step 9), and grammar fit as a *score*.
+3. Remove the evidence requirement (`funnel.mjs:273-278`).
+
+Lie-prone layer: flooding the shortlist so hit rate looks fine while
+harm rises. Watch harmful-show rate and latency with every change.
+
+Works Test: a brand-new user at 07:50 on a school day with *I want*:
+the strip offers breakfast-appropriate words that were never picked, and
+a hidden word never appears. Bench: A3 day-1 saving > 0 (today it is 0).
+
+Done when: both pass and step 17's latency budget still holds.
+
+## Step 10 — Real phrase memory; grammar as a hint
+
+Goal: "I want to" and "I need to" can rank differently. Short or
+non-standard sentences still get suggestions.
+
+Build:
+1. Replace `phrase` and `pair` with three separate features: `ctx1`,
+   `ctx2`, `ctx3` — decayed counts of this word after exactly the last
+   1, 2, and 3 items in earlier sentences. Each counted once, in its own
+   slot.
+2. `invited` stays a feature and stops being a filter (`funnel.mjs:278`).
+   Adjective and other tails get candidates too; ranking decides.
+3. Refit defaults on fit users (`fit_defaults.mjs` reads synthetic users,
+   not the old fixtures). Bump `defaults.json` version.
+
+Works Test: two histories that differ only at position −3 give different
+`ctx3` and a different order. After *red*, the strip can offer a noun.
+The feature-duplication check (the one in § 1) now reports zero
+identical columns.
+
+Done when: those pass and the bench shows no cohort regression.
+
 ## Step 6 — Separate "nothing here fits" from "the word isn't here"
 
 Goal: two different questions get two different answers. Plausible
@@ -601,57 +802,6 @@ saving.
 
 Done when: both pass.
 
-## Step 7 — Suggest words the user has never picked
-
-Goal: any available word can appear on day one when context supports it.
-
-Files: `public/shared/funnel.mjs` (retrieval), new aggregate tables in
-`src/board/schema.sql` (step 17 constraint), `data/prediction/`
-(a shipped per-word prior, versioned data).
-
-Build:
-1. Retrieval pool: every non-core word reachable on this user's boards
-   and groups, plus active entities, minus hidden words (`sense_mask`),
-   minus core cells on the current home layout (picture mode keeps the
-   "core words are never strip tiles" rule).
-2. Retrieval sources, each giving up to N candidates into a budget (e.g.
-   64) before ranking cuts to the shortlist: history continuations, board
-   and group context (step 8), occasion (step 9), a shipped per-word
-   prior (how common the word is for young AAC users; built offline,
-   source approved by founder), and grammar fit as a *score*.
-3. Remove the evidence requirement (`funnel.mjs:273-278`).
-
-Lie-prone layer: flooding the shortlist so hit rate looks fine while
-harm rises. Watch harmful-show rate and latency with every change.
-
-Works Test: a brand-new user at 07:50 on a school day with *I want*:
-the strip offers breakfast-appropriate words that were never picked, and
-a hidden word never appears. Bench: A3 day-1 saving > 0 (today it is 0).
-
-Done when: both pass and step 17's latency budget still holds.
-
-## Step 10 — Real phrase memory; grammar as a hint
-
-Goal: "I want to" and "I need to" can rank differently. Short or
-non-standard sentences still get suggestions.
-
-Build:
-1. Replace `phrase` and `pair` with three separate features: `ctx1`,
-   `ctx2`, `ctx3` — decayed counts of this word after exactly the last
-   1, 2, and 3 items in earlier sentences. Each counted once, in its own
-   slot.
-2. `invited` stays a feature and stops being a filter (`funnel.mjs:278`).
-   Adjective and other tails get candidates too; ranking decides.
-3. Refit defaults on fit users (`fit_defaults.mjs` reads synthetic users,
-   not the old fixtures). Bump `defaults.json` version.
-
-Works Test: two histories that differ only at position −3 give different
-`ctx3` and a different order. After *red*, the strip can offer a noun.
-The feature-duplication check (the one in § 1) now reports zero
-identical columns.
-
-Done when: those pass and the bench shows no cohort regression.
-
 ## Step 8 — The open board and group are local context
 
 Goal: the same sentence and history can give different, useful
@@ -678,23 +828,35 @@ Done when: those pass.
 ## Step 9 — Occasions as a soft local signal
 
 Goal: at breakfast, breakfast words are easier to reach — without
-blocking *blanket*, *stop*, or anything unexpected.
+blocking *blanket*, *stop*, or anything unexpected — and only if
+occasions beat what time of day already does.
 
-Build: run `docs/phases/007_Occasions.md` slices 1, 3, and 4 (slice 2
-optional), with two changes from this review:
+Why they might not: the `hour` feature already learns "juice around
+07:50 on school days" from the user's own picks. Occasions can only add
+value in three places: **day one** (no history yet), **grouping**
+(breakfast words belong together even if one was never said at 07:52),
+and **schedule changes** (breakfast at 06:30 on weekdays, 09:30 on
+Saturday, a school holiday).
 
-1. **Editable times (R3):** an adult can edit each occasion's time window
-   per user in the Parent corner. Defaults ship; learned shifts apply on
-   top; an adult edit wins.
-2. The `occasion` feature is a score and a retrieval source only, never
-   a filter. Start with breakfast, school, play, bath, bedtime.
+Build (R3): run `docs/phases/007_Occasions.md` slices 1, 3, and 4 (slice 2
+optional):
+
+1. Ship default time windows by day type, and a per-word occasion score
+   (breakfast, school, play, bath, bedtime to start).
+2. The user's own picks move the windows (007 slice 4). No screen for
+   adults to edit times.
+3. The `occasion` feature is a score and a retrieval source only, never
+   a filter.
 
 Works Test (from the audit): at breakfast the occasion helps retrieve
 breakfast words; a non-breakfast word the user picks still ranks as it
 would without occasions (within one slot). Plus 007's own Works Tests.
 
-Done when: those pass and the bench shows gains in the routine-heavy
-cohort without loss in the unpredictable cohort.
+Bench: arm "hour only" vs "hour + occasions". **Keep occasions only if
+they win on day one and in the schedule-change cohort, with no loss in
+the unpredictable cohort.** Otherwise record the result and drop them.
+
+Done when: the comparison is in § Results and the keep/drop call is made.
 
 ## Step 21 (addition) — Predict the first word
 
@@ -703,7 +865,8 @@ and the strip shows fixed starters there. The first word is also where
 time and occasion say the most, because there is no sentence yet.
 
 Build: a bench arm only. At position 0, the strip offers predicted
-starters (history at this hour and occasion, plus the step 7 prior), using
+starters (the opening book's sentence-start words, plus history at this
+hour and occasion), using
 the same gate. Report the saving on first words separately.
 
 Done when: the number is in § Results. Changing the real idle strip is
@@ -725,15 +888,17 @@ Build:
 2. `JEV_PROMPT_VERSION` next to `JEV_MODEL`; the request records it.
 3. Cache key = hash of the exact request body + model + prompt version.
    Each entry stores the response, measured latency, and date. Bench
-   modes: `--jev live` (spend cap R4), `--jev cache` (default; misses are
-   reported, not called), `--jev off`.
+   modes: `--jev live` (no spend cap, R4), `--jev cache` (default;
+   misses are reported, not called), `--jev off`.
 4. Run caps 8 / 16 / 32. The report prints the **actual** list-size
    distribution per cap (if most lists have 5 words, say so), calls,
-   failures, cost, and the incremental gain A4 − A3, delivered and
-   theoretical.
+   failures, latency, and the gain A4 − A3, delivered and theoretical.
+5. Offline Jev as an opening-book source (step 23, item 8): the same
+   cache, run over the book's common contexts. The bench compares "book
+   with the Jev source" vs "book without it".
 
-Human stop: first live run uses `TYPESAFE_API_KEY` on synthetic data.
-Confirm the spend cap with the founder before running.
+Live runs use `TYPESAFE_API_KEY` from `.dev.vars` (local Worker) and
+synthetic data only.
 
 Works Test: a cache run twice gives byte-identical Jev results. The cap
 32 run shows lists longer than 16 where retrieval had more. The captured
@@ -742,7 +907,7 @@ request body still equals the § 3.2 whitelist exactly
 
 Done when: those pass and the cap table is in § Results.
 
-## Step 17 — Speed and stability on a real device
+## Step 17 — Speed and stability on the iPad
 
 Goal: local prediction paints within budget with months of history, and
 a late answer can never replace a tile during a reach.
@@ -754,12 +919,12 @@ Build:
    will not scale. Keep running counts, updated in `logSelection`, per
    (context → word), (hour, day type → word), (occasion → word), and
    read them at render.
-2. **Stability.** `jevDeliverable` (step 2) also requires no pointer-down
-   on the board since paint. When a repaint happens, tiles that stay keep
-   their slots.
+2. **Stability.** `jevDeliverable` (step 2) blocks a repaint once a
+   pointer-down has happened on the board since paint. When a repaint
+   happens, tiles that stay keep their slots.
 3. **Measure.** A browser probe (pattern `scripts/probes/jev_probe.mjs`)
-   loads the heaviest eval persona × 6 months of history on the device
-   named in R2, taps 200 picks, and records pick → painted-strip time
+   loads the heaviest eval persona × 6 months of history on an iPad (R2),
+   taps 200 picks, and records pick → painted-strip time
    (`performance.mark` around `renderStrip` through the next animation
    frame).
 
@@ -767,38 +932,43 @@ For scale: in Node, with 2,430 events (84 routine days), `stripScored`
 takes 3.5 ms median today. That is not the device, and the pool is tiny.
 Measure the real thing.
 
-Works Test: p95 below the R2 target on the named device. Stub Jev
-answering at 120 ms with a pointer-down at 100 ms → no repaint. Answer
-at 120 ms with no touch → repaint, and the unchanged tiles keep their
+This is a check on the real app only; the simulation has no device.
+
+Works Test: p95 below 50 ms on the iPad (the local-paint target in
+`docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 3.4). Stub Jev
+answering at 400 ms with a pointer-down at 300 ms → no repaint. Answer
+at 400 ms with no touch → repaint, and the unchanged tiles keep their
 slots.
 
-Done when: those pass on the device, not just in Node.
+Done when: those pass on the iPad, not just in Node.
 
 ---
 
 # M4 — Proof
 
-## Step 19 — Explicit advancement criteria
+## Step 19 — Report the lifts
 
-Goal: the report states **achieved**, **missed**, or **inconclusive** —
-nothing softer.
+Goal: one plain answer to the founder's two questions, on users the
+system has never seen: **how much does our own data save, and how much
+more does Jev add?** No pass/fail targets (R1).
 
-Targets (PROPOSED until R1):
+The `--final` report leads with:
 
-1. A3 (improved local) uses **≥ 20% fewer modeled actions per message
-   than A0**, on eval users, at `inspect = 0.25`.
-2. A4 delivered uses **≥ 5% fewer modeled actions than A3**.
-3. No cohort in eval is worse than A1 (simple baseline).
+| Lift | Comparison | Question it answers |
+| --- | --- | --- |
+| Language | B (book only) vs A0 (no prediction) | What does knowing English alone save, on day one? |
+| Own data | A3 (book + history + context) vs A0 | What does everything local save? |
+| Jev | A4 delivered vs A3 | What does Jev add on top? (Theoretical shown beside it.) |
+| vs. classic | A3 vs A1 (simple baseline) | Are we better than standard word prediction? |
 
-Decision rule, per target, from the 95% bootstrap interval over eval
-users: **achieved** if the lower bound meets the target; **missed** if
-the upper bound falls short; otherwise **inconclusive**. Report the
-result at all three inspection costs.
+Each lift is modeled actions per message, with a 95% bootstrap interval
+over eval users, at all three inspection costs, for day 1, week 1, and
+days 22–30. Each is labeled **clear gain** (interval above zero), **no
+clear effect** (interval spans zero), or **clear loss** (interval below
+zero). Every cohort where a lift is a loss is listed.
 
-Sanity check against the ceiling: if O2 on eval users saves less than
-about 30%, a 20% target needs two-thirds of the ceiling. The report
-states the ratio so the founder can re-rule. The comparator never
-changes to meet a target.
+The report also shows the ceiling (O2) and each lift as a share of it,
+so "how close to perfect" is visible.
 
 Done when: `npm run prediction:bench -- --final` has run once on a clean
 tree and its table is pasted under § Results with the commit.
@@ -819,43 +989,23 @@ Done when: the number is in § Results. Showing message tiles on screen
 is founder ruling R6 and overlaps
 `docs/phases/014_Grid_Density_And_Fit.md` slice 6.
 
-## Step 20 — People feel the difference
+## Step 20 — Removed
 
-Goal: show that AAC users express what they meant faster or more easily,
-not just that accuracy went up.
-
-**Human stop.** This involves real participants, possibly children, and
-their data. Before any contact the founder rules on: who participates,
-consent (and guardian consent), what is recorded and where it is stored,
-and what we may claim afterward. No clinical claims come from this pilot.
-
-Protocol outline (the founder and an SLP adjust it):
-
-- 6–10 participants who use AAC, each with their own intended messages
-  (prepared with their SLP or a partner beforehand).
-- Three conditions on the participant's own device, counterbalanced in
-  order: no prediction · local · local + Jev. A hidden dev setting
-  selects the arm; the participant isn't told which.
-- Measure per message: completion time, corrections, suggestions shown
-  but ignored, and which condition the participant (or their partner)
-  preferred.
-- Data stays on the device; results are exported as totals only.
-
-Done when: a short results note shows whether participants expressed
-their own messages faster or with fewer corrections, per condition,
-including participants for whom prediction didn't help.
+Removed 2026-09-23 (R5): no pilot. The simulation decides whether this is
+worth deploying; after launch, `predictionReport` measures real use.
 
 ---
 
 ## Additions from this review
 
-The audit covered the word-level strip well. Two things it didn't
-measure could matter more for "wow", so they are bench arms, not builds:
+The audit fixed and measured the strip we have. It never asked what the
+strip should know. These additions go after the biggest gains:
 
 | Step | Idea | Why |
 | --- | --- | --- |
-| 21 | Predict the first word | 40% of picks are sentence-first and get no prediction today |
-| 22 | Complete the whole message | Word-level savings are capped by core words (46% ceiling on the fixture) |
+| 23 | The opening book | The strip knows nothing about English today; a quick prototype hit 51% top-4 for held-out writers with no history |
+| 21 | Predict the first word (bench arm) | 40% of picks are sentence-first and get no prediction today |
+| 22 | Complete the whole message (bench arm) | Word-level savings are capped by core words (46% ceiling on the fixture) |
 
 Core-cell halos (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`
 § 7.4) would help with the 57% of picks that are core words, but they
@@ -864,9 +1014,9 @@ action model includes search time.
 
 ## Human stops
 
-- Step 0: rulings R1–R4 before M3 closes.
-- Step 14: first live Jev spend (credentials, cost).
-- Step 20: any contact with participants (privacy, consent, claims).
+None open; R1–R8 are ruled. Any change to what Jev receives on a user's
+device (the § 3.2 whitelist) stops the phase for a founder call. Offline
+book-building calls send only our own vocabulary and synthetic contexts.
 
 ## Out of scope
 
@@ -882,3 +1032,4 @@ Step 19 records the one `--final` eval run.
 
 | Step | Arm / change | Saving vs A0 | Hit | Harmful show | Day-1 saving | Commit |
 | --- | --- | --- | --- | --- | --- | --- |
+| 23 prototype | Imagine AAC train set only; held-out writers, non-core next word | — | top-4 50.9%, top-16 74.4% | — | — | scratch, 2026-09-23 |

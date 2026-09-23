@@ -4,7 +4,9 @@
 touches no app code.
 
 **Runs inside 017 step 9** (`docs/phases/017_Prediction_Hardening.md`):
-slices 1, 3, 4, plus occasion times an adult can edit (017 ruling R3).
+slices 1, 3, 4. Times are learned from the user's picks, with no adult
+editing, and occasions are kept only if they beat time of day alone
+(017 ruling R3).
 
 **DECIDED 2026-09-22** (founder: "brilliant idea … I don't know if JEV
 should classify our words or if an LLM should reason over it. I think we

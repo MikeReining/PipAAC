@@ -34,7 +34,7 @@ Executing phases only. Each row names the **next** slice.
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later) |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | **P2.** Slice 2 — many users on one device (slice 1 rename built; slices 6–7 relay legs built: cap, restore-move, retention, dev license) |
 | [016 — Stats and progress](016_Stats_And_Progress.md) | Slice 1 — the stats engine (after 015 slice 2) |
-| [017 — Prediction you can prove](017_Prediction_Hardening.md) | Step 0 — founder rulings; M1 plumbing (steps 4, 3, 5, 1, 2) can start now |
+| [017 — Prediction you can prove](017_Prediction_Hardening.md) | M1 plumbing (steps 4, 3, 5, 1, 2) and step 23, the opening book, in parallel (rulings recorded) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

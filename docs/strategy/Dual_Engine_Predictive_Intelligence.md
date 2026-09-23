@@ -191,10 +191,17 @@ after the pick stamp `late` on the impression and are never shown. Live
 measurement: median answer ~120–139 ms, p90 ~150–205 ms — about half land
 inside the window (006 § Baselines).
 
+**DECIDED 2026-09-23** (founder: "The 150 millisecond requirement … we
+shouldn't set a gate"). The 150 ms window was never a founder ruling and
+is removed: a Jev answer may repaint whenever it arrives before the next
+pick, unless a pointer-down has happened since paint; response times are
+recorded as data. Not yet built: `docs/phases/017_Prediction_Hardening.md`
+step 2.
+
 The strip is the dynamic surface. The core grid is not.
 
 - After a core tap, the strip's first paint comes from the on-device ranker and resolves in under 50 ms, including the choice of which tiles to show.
-- Jev may re-rank strip tiles when its answer arrives within 150 ms of first paint. Later answers are logged for learning and not shown, so tiles never reshuffle under a reaching hand. Jev never moves core cells.
+- Jev may re-rank strip tiles when its answer arrives before the next pick and no finger has touched the board since paint (2026-09-23 ruling above; the built code still uses 150 ms until 017 step 2). Answers that arrive too late are logged for learning and not shown, so tiles never reshuffle under a reaching hand. Jev never moves core cells.
 - The strip shows at most four candidates. Each tile is a word plus its in-house icon. Putting a word in the strip does not swap a core cell.
 - High-probability core words that already have a home on the grid are haloed in that home (§ 7.4). They are not relocated into the strip.
 - Time of day, occasion, habit and recency bias the strip through the local engine only.
