@@ -15,8 +15,9 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Slice 9 — free and lifetime (relay-side entitlement + retention). | `docs/phases/011_Sync_And_Web_Editing.md` |
-| **P2** | Slice 4 — record my own. | `docs/phases/009_Word_Library_And_Customize.md` |
+| **P1** | Slice 6 — use my own picture for a catalog word. | `docs/phases/009_Word_Library_And_Customize.md` |
+| **P2** | Slices 7–9 — bulk entry, many photos, hide a word (the web editor already covers bulk/photo-drop on wide screens). | `docs/phases/009_Word_Library_And_Customize.md` |
+| blocked | 011 slice 9 — free and lifetime (billing + retention delete — needs founder ruling on entitlement) | `docs/phases/011_Sync_And_Web_Editing.md` |
 | blocked | 006 slice 5 — Jev reranker (needs founder's `TYPESAFE_API_KEY`) | `docs/phases/006_Prediction_Engine.md` |
 
 ## Live index
@@ -29,9 +30,9 @@ Executing phases only. Each row names the **next** slice.
 | [006 — Prediction Engine](006_Prediction_Engine.md) | Slice 5 — Jev reranker (blocked: founder's `TYPESAFE_API_KEY`) |
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
 | [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
-| [009 — Word Library and customization](009_Word_Library_And_Customize.md) | **P2.** Slice 4 — record my own (slices 4, 6–9 independent) |
+| [009 — Word Library and customization](009_Word_Library_And_Customize.md) | **P1.** Slice 6 — use my own picture (slices 6–9 independent; 5 is post-launch) |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
-| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | **P1.** Slice 9 — free and lifetime |
+| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Blocked. Slice 9 — free and lifetime (needs founder ruling on entitlement) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

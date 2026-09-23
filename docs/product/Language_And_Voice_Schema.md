@@ -940,6 +940,14 @@ the same steps. It does not substitute the lemma.
 2. Else if the resolved voice is `device_tts`: synthesize `spoken_name`.
 3. Else silence. The bundled library does not contain Cooper.
 
+**BUILT with an amendment** (`public/shared/voice.mjs` `resolveSlot`):
+step 3 is unreachable in the shipped board — an entity with no override
+synthesizes `spoken_name` through device speech under every resolved
+voice. A bundled voice can never carry a clip for a family's name, so the
+letter of step 3 would silence every personal word at launch. If the
+founder wants strict step 3, that is a behavior change to rule on, not a
+bug fix.
+
 ### 7.4 Sentence bar
 
 Each selected item is one slot, in order. Voiced slots play their result.

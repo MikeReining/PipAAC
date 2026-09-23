@@ -28,6 +28,7 @@ import {
   swapGroups,
   swapItems,
 } from "./groups.mjs";
+import { clearOverride, setOverride } from "./voice.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -155,6 +156,19 @@ export function applyOp(db, op) {
         break;
       case "set_setting":
         setSetting(db, a.key, a.value);
+        break;
+      case "set_override": {
+        // The recorded text must still equal the target's spoken
+        // text/name here — a rename that landed first already retired
+        // the recording's reason to exist.
+        const target = a.itemKind === "entity"
+          ? db.prepare("SELECT spoken_name AS t FROM personal_entity WHERE id = ?").all(a.itemId)[0]?.t
+          : db.prepare("SELECT spoken_text AS t FROM utterance WHERE id = ?").all(a.itemId)[0]?.t;
+        if (target && target === a.recordedText) setOverride(db, a);
+        break;
+      }
+      case "clear_override":
+        clearOverride(db, a.itemKind, a.itemId);
         break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);

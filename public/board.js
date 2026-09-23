@@ -73,6 +73,7 @@ import {
 import { RECOVERY_WORDS } from "./shared/recovery_words.mjs";
 import { pairClient, relayClient, restoreDevice } from "./shared/sync_client.mjs";
 import { initSync, setSyncConfig, syncConfig, syncUploadBlob } from "./shared/sync.mjs";
+import { clearOverride, overrideFor, resolveSlot, setOverride } from "./shared/voice.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -142,20 +143,6 @@ let editing = false; // caregiver Edit mode — same gesture on index and pages
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
 
-/** Resolve the ready clip for a sense under the profile voice (§7.2).
- *  No clip under that voice → silence, never another locale's clip. */
-function clipKeyFor(senseId) {
-  const row = ALL(
-    db,
-    `SELECT c.key FROM clip c
-     JOIN label l ON l.utterance_id = c.utterance_id
-     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-       AND c.voice_id = ? AND c.status = 'ready'`,
-    [senseId, locale, voiceId],
-  )[0];
-  return row?.key ?? null;
-}
-
 function speak(text) {
   // device_tts lane — used for personal entities (§7.3). The utterance
   // carries the profile locale so names and typed words are spoken in
@@ -166,23 +153,30 @@ function speak(text) {
   speechSynthesis.speak(u);
 }
 
-function playClip(key) {
+/** Play a clip: catalog keys are shipped files; `blob:` keys are
+ *  content-addressed bytes in OPFS (recorded overrides, synced photos)
+ *  resolved through the blob loader, which lazy-fetches a sealed copy. */
+async function playClip(key) {
+  let src = `/${key}`;
+  if (key.startsWith("blob:")) {
+    src = await loadPhotoURL(key);
+    if (!src) return;
+  }
   return new Promise((resolve) => {
-    audio.src = `/${key}`;
+    audio.src = src;
     audio.onended = resolve;
     audio.onerror = resolve;
     audio.play().catch(resolve);
   });
 }
 
-/** Speak one tapped item: bundled clip for senses, device TTS for entities. */
+/** Speak one tapped item — §7.2/7.3 resolution: override, voice clip,
+ *  TTS, or a held 400 ms silent slot. */
 async function speakItem(item) {
-  if (item.kind === "sense") {
-    const key = clipKeyFor(item.id);
-    if (key) return playClip(key);
-    return new Promise((r) => setTimeout(r, SILENT_SLOT_MS)); // §7 silent slot
-  }
-  speak(item.text);
+  const slot = resolveSlot(db, item, locale, voiceId);
+  if (slot.type === "clip") return playClip(slot.key);
+  if (slot.type === "tts") return speak(slot.text);
+  return new Promise((r) => setTimeout(r, SILENT_SLOT_MS));
 }
 
 /** Sentence bar: one slot per item in order; misses hold 400 ms (§7.4).
@@ -1833,6 +1827,7 @@ function openWordCard(item) {
     pic.textContent = item.label[0].toUpperCase();
   }
   renderCardGroups();
+  updateRecUI();
   open("wordcard");
 }
 
@@ -1859,11 +1854,75 @@ $("wc-photo").addEventListener("change", async () => {
 
 $("wc-play").addEventListener("click", () => {
   if (!cardItem) return;
-  if (cardItem.item_kind === "sense") {
-    const key = clipKeyFor(cardItem.item_id);
-    if (key) return playClip(key);
+  speakItem({ kind: cardItem.item_kind, id: cardItem.item_id });
+});
+
+/* Record my own (009 slice 4): MediaRecorder → content-addressed blob
+ * → clip_override. The override wins over every voice until "Use the
+ * voice again"; re-recording supersedes the previous row (bytes stay). */
+let recorder = null;
+let recChunks = [];
+
+/** What the card's recording binds to — an entity's id + spoken_name,
+ *  or the locale lemma's utterance + spoken_text for a catalog word. */
+function overrideTarget() {
+  if (!cardItem) return null;
+  if (cardItem.item_kind === "entity") {
+    const e = ALL(db, "SELECT spoken_name FROM personal_entity WHERE id = ?",
+      [cardItem.item_id])[0];
+    return e ? { itemKind: "entity", itemId: cardItem.item_id, text: e.spoken_name } : null;
   }
-  speak(cardItem.label);
+  const l = ALL(db,
+    `SELECT l.utterance_id, u.spoken_text FROM label l
+     JOIN utterance u ON u.id = l.utterance_id
+     WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?`,
+    [cardItem.item_id, locale])[0];
+  return l ? { itemKind: "utterance", itemId: l.utterance_id, text: l.spoken_text } : null;
+}
+
+function updateRecUI() {
+  $("wc-record").textContent = recorder?.state === "recording" ? "Stop" : "Record it";
+  const t = overrideTarget();
+  $("wc-revert").hidden = !t || !overrideFor(db, t.itemKind, t.itemId);
+}
+
+$("wc-record").addEventListener("click", async () => {
+  if (recorder?.state === "recording") { recorder.stop(); return; }
+  const target = overrideTarget();
+  if (!target) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recorder = new MediaRecorder(stream);
+    recChunks = [];
+    recorder.ondataavailable = (e) => { if (e.data.size) recChunks.push(e.data); };
+    recorder.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop());
+      updateRecUI();
+      const blob = new Blob(recChunks, { type: recorder.mimeType });
+      if (!blob.size) return;
+      const { key, bytes } = await savePhoto(blob);
+      syncUploadBlob(bytes).catch(() => {});
+      setOverride(db, {
+        itemKind: target.itemKind, itemId: target.itemId,
+        key, recordedText: target.text,
+      });
+      updateRecUI();
+      toast(`Recorded — "${target.text}" plays your recording`);
+    };
+    recorder.start();
+    updateRecUI();
+  } catch {
+    $("wc-rechint").hidden = false;
+    $("wc-rechint").textContent = "No microphone — the browser did not allow it.";
+  }
+});
+
+$("wc-revert").addEventListener("click", () => {
+  const t = overrideTarget();
+  if (!t) return;
+  clearOverride(db, t.itemKind, t.itemId);
+  updateRecUI();
+  toast("Back to the app's voice");
 });
 
 /** Groups the item is not yet in — one tap places it at the next free

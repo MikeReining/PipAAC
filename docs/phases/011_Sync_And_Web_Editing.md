@@ -1,6 +1,9 @@
 # Phase 011 — Sync and web editing
 
-**Status:** Executing. Slice 1 built and proven (see its Works Test note).
+**Status:** Executing. Slices 1–8 built and proven (see their Works Test
+notes). Slice 9 is blocked: it implements billing entitlement plus a
+retention job that deletes boards — a high-risk stop needing a founder
+ruling on how a board becomes Lifetime before any code is written.
 Rulings recorded (slice 0).
 
 **Direction DECIDED 2026-09-22** (founder: "a user can create and edit

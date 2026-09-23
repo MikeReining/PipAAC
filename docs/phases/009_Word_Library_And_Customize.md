@@ -1,6 +1,6 @@
 # Phase 009 — Word Library and customization
 
-**Status:** Executing. Slices 1–3 built and proven (see their Works Test
+**Status:** Executing. Slices 1–4 built and proven (see their Works Test
 notes).
 
 **DECIDED 2026-09-22** (founder: "if we nail customization and really make
@@ -214,6 +214,23 @@ sentence `I want juice`: three slots, the middle one the override.
 
 Done when: that passes and a person can record "Cooper" the family's way
 and hear it on the board.
+
+**DONE.** `public/shared/voice.mjs` holds the write owners
+(`setOverride`, `clearOverride`, `overrideFor`) and the § 7 slot resolver
+(`resolveSlot`): sense → lemma utterance → ready override → the resolved
+voice's ready clip → TTS when the voice is `device_tts` → silence;
+entity → ready override → `spoken_name` synthesized; a `typed` item that
+resolved to nothing synthesizes the typed text. The card's **Record it**
+row uses `MediaRecorder`; on stop the bytes go through `savePhoto`
+(content-addressed `blob:` key in OPFS) plus `syncUploadBlob`, and
+`setOverride` records a `set_override` op. Re-record supersedes; **Use
+the voice again** records `clear_override`. Proofs: `override.test.mjs`
+measures the resolved key — override wins every voice, revert returns to
+the voice, the sentence bar's middle slot plays the override, entity
+rename supersedes, ops replay byte-identical. Headless-Chrome drive with
+fake media: tap `want` plays `audio/want/….mp3`, Record → Stop saves a
+9754-byte OPFS blob, the next tap plays `blob:` bytes, Use the voice
+again restores the catalog clip.
 
 ---
 
