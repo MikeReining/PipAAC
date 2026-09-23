@@ -32,6 +32,7 @@ if they can't:
 | Ask | The user can't start a topic | `what` · `where` · `who` |
 | Social control | Conversation is always adult-led | `yes` · `please` · `my`·`turn` · `you` |
 | Talk about people | Only "I" exists | `I` · `you` · `me` · `my` · `he` · `she` |
+| Call a specific person | The child can't summon the person they need | No core cell: the family's own people, via setup, the empty-sentence Smart bar, and adult placement (**DECIDED 2026-09-23**, `docs/phases/014_Grid_Density_And_Fit.md` § 7a) |
 
 Evidence corpora (research lists and age-of-acquisition data) then decide
 *which* words cover each function. They do not decide what the functions are.

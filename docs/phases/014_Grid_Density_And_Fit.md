@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slices 1–5 and 7 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` on `grid60`'s column sectors; Smart bar families). Remaining: slice 6 — message tiles (waits on 010's phrase list); slice 8 — keyguard specs (later). Rulings and starters below are **DECIDED
+**Status:** Slices 1–5 and 7 built; slices 9–11 added 2026-09-23 (§ 7a) (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` on `grid60`'s column sectors; Smart bar families). Remaining: slice 6 — message tiles (waits on 010's phrase list); slice 8 — keyguard specs (later). Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -239,6 +239,67 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
 4. **Orientation** is locked per profile (landscape default), so rotation
    never moves a word.
 
+## 7a. Amendment 2026-09-23 — calling a person, and the family's word first
+
+**DECIDED 2026-09-23** (founder; not built unless tagged).
+
+**The gap.** A young child's most common word is a call to a specific
+person. In Wordbank's CDI production data, *mommy* and *daddy* are among
+the earliest words children say
+([Wordbank](https://wordbank.stanford.edu/); Frank, Braginsky, Yurovsky &
+Marchman 2017, CC BY). CHILDES agrees: "mom!" was the most-missed opening
+word in 017's held-out check (`docs/phases/017_Prediction_Hardening.md` §
+Steered synth). Nothing on the home board does this job, and the
+function table in `docs/product/Core_Grid_Membership.md` § 1 had no row
+for it.
+
+**Rejected.**
+
+- **Generic `mom` / `dad` core cells.** The person called is specific
+  (Mama, Abuela, two moms, a foster dad), and a person's name is a
+  record, not a cell (`docs/product/Personal_Entities.md`). A fixed "mom"
+  tile is wrong for many families and useless to adult users.
+- **A "First Words" starter of nouns** (ball, juice, book). Ruling 4
+  merged First words into Core 15 on 2026-09-22. Which nouns matter
+  differs per child, which is the family's call, not ours. Banajee's
+  toddler core, used across every setting, has no nouns.
+
+**Rulings.**
+
+1. **Setup asks "Who do they call for?"** and adds 1–3 people (a name and
+   an optional photo) as personal entities.
+2. **The person comes first in the empty-sentence Smart bar:**
+   person · hello · Food · help. Today the order is hello · Food ·
+   person · help (**BUILT**, `public/board.js:471`), and the Core 15 bar
+   holds two cards (`public/board.js:898`), so a Core 15 child never sees
+   the person. `help` goes last because it is a cell on every home board
+   (rule 0).
+3. **Adults may put any word or person in any home cell,** not only move
+   or swap core words. The replaced word stays reachable (Groups, Smart
+   bar, keyboard), and the replacement shows in the move-cost preview
+   (§ 4). The app never does this on its own (ruling 1). The families
+   and SLPs decide the home board, not us.
+4. **The family's additions beat our defaults everywhere.** Their
+   recording, photo, or name wins over ours on the board, in groups, and
+   in the Smart bar, including predictions.
+   - **BUILT:** a family recording of a catalog word wins over every
+     voice (`public/shared/voice.mjs:80`); a family photo or picked image
+     wins over the default picture (`public/shared/images.mjs:22`); a
+     person's recording wins over the synthesized name
+     (`public/shared/voice.mjs:103`).
+   - **Gap:** a family person is not linked to the catalog word it stands
+     for. When the book predicts `mom`, the bar shows our stick figure,
+     not the family's Mama. Fix (**PROPOSED**): enrichment derives which
+     catalog word, if any, the person stands for (a Jev judgment, not a
+     string rule — 017 R14; the adult is never asked —
+     `Personal_Entities.md` § 2). The bar then shows the person in that
+     word's place, with the word's prediction score.
+5. **"Call a person" joins the function table** in
+   `Core_Grid_Membership.md` § 1, owned by rulings 1–3, not by a core
+   cell.
+
+Slices: 9–11 in § 9.
+
 ## 8. Vocabulary for code and docs
 
 | Use | Never use |
@@ -385,3 +446,14 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    board (needs a non-sense cell surface — the Pain/Hot-cold/Call
    tiles arrive with slice 6's message tiles anyway).
 8. **Keyguard specifications** (later).
+9. **Person first in the empty bar** (§ 7a ruling 2). Works test: a fresh
+   Core 15 profile with one person added shows that person as the first
+   card when the sentence is empty; `grid60` still shows all four cards.
+10. **Adults put any word or person in a home cell** (§ 7a ruling 3),
+    plus the setup question (ruling 1). Works test: put a person on a
+    Core 15 cell, restart, update the catalog — the person is still
+    there, and the replaced core word is still reachable from Groups.
+11. **The family's person stands in for the catalog word** (§ 7a ruling
+    4). Works test: a family adds "Mama" with a photo; after "I want",
+    when the book ranks `mom` in the bar, the bar shows Mama's photo and
+    speaks her recording.
