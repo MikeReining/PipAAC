@@ -488,8 +488,9 @@ never shares a sibling.
   for a device with no camera. Print it, save it as an image, or email it
   to yourself or anyone.
 - **Scan to restore.** A new device scans the card and the user syncs
-  down. On a free user this moves the user (one live device,
-  `docs/product/Pricing_And_Packaging.md` § 4.2).
+  down. On a free user, a device that is not signed in as a supporter
+  becomes the user's own device and replaces the old one; the one free
+  supporter stays (`docs/product/Pricing_And_Packaging.md` § 4.2).
 - **The card is a house key.** Whoever holds it has full access to that
   user; sharing the card is sharing access. The founder accepted this
   (2026-09-23). **Replace card** issues a new one and the old card stops
@@ -500,5 +501,6 @@ never shares a sibling.
 ### 12.6 Free vs paid
 
 Owned by `docs/product/Pricing_And_Packaging.md` § 4: \$49 once per user,
-every supporter free, 20 words of your own free, one live device free,
+every supporter free once paid, a free user gets its own device + one
+supporter + 20 words of its own,
 backup and QR restore always free.

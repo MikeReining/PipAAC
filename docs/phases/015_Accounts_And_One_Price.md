@@ -238,7 +238,8 @@ get 403 and ops after removal are sealed under a key S never received.
 
 ## Slice 6 — Pip Lifetime and the free limits
 
-**Partially BUILT 2026-09-23** (relay legs, dev-license path): the
+**Partially BUILT 2026-09-23** (relay legs, dev-license path; the cap
+predates the one-supporter ruling and is owed a change, see Scope): the
 one-live-device cap is enforced by `BoardRelay` (`403 upgrade_required`
 on a second `POST /devices`), restore on a free board replaces the
 device set, and `POST /entitlement` activates a board-bound HMAC license
@@ -273,29 +274,40 @@ Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
   Guideline 3.1.3(b), multiplatform). School codes bought by purchase
   order fall under 3.1.3(c) (enterprise).
 
-**PROPOSED:** a free demo user per SLP account for evaluations (full
-features, cannot be moved to another device or shared).
+**DECIDED 2026-09-23:** a free demo user per supporter account for
+evaluations (full features, cannot be moved to another device or
+shared). **Paid, design next:** progress stats (founder, 2026-09-23).
 
 Scope:
 - Relay: a license record per user, written only by a verified Stripe
   or Apple purchase or a code redemption; a server-signed license
   statement the device verifies offline. The license belongs to the
   user, not to the supporter who paid.
-- Free limits: 20 live own words (counter from the first add), one live
-  device (relay refuses a second link; restore moves the user), 5
-  drawings; web editor opens for Lifetime users only.
+- Free limits: 20 live own words (counter from the first add); **the
+  user's own device + one supporter** (DECIDED 2026-09-23). Each device
+  registers with a role: `own` (not signed in as a supporter) or
+  `supporter:<account>`. The relay allows one `own` device (a QR restore
+  replaces it) and devices of one supporter account; a second supporter
+  gets `upgrade_required` with **Replace**; a supporter unseen for 60
+  days frees the spot. Replaces the built one-device cap. The web editor
+  opens for the free supporter and for every supporter of a Lifetime
+  user. 5 drawings.
 - License codes: generate, redeem on one user; 50% off 20+ for schools.
 - Speaking never waits on any of it.
 
 Works Test:
 1. A free user's 21st own word is refused with the offer; the 20 keep
    speaking offline with the relay down.
-2. A free user linking a second device is refused **by the relay**, not
-   only the UI. Restoring from the card on a new device moves the user;
-   the old device still speaks and stops receiving.
+2. **The SLP story.** SLP account S builds free user Maya on a laptop and
+   emails the QR card. The parent scans it on an iPad that is not signed
+   in: the iPad becomes Maya's own device and S stays her supporter. S
+   edits on the laptop and on a phone (same account): both allowed, and
+   the iPad receives. Parent account P tries to join: refused **by the
+   relay** with the offer and **Replace S**. Restoring the card on a new
+   iPad replaces the old iPad; S is untouched.
 3. Buying on the web for Maya (test mode): Maya's iPad, offline at
-   purchase time, unlocks on next connect; every supporter of Maya gets
-   the web editor; her sibling Luna stays free.
+   purchase time, unlocks on next connect; P joins; every supporter of
+   Maya gets the web editor; her sibling Luna stays free.
 4. A forged license statement is rejected on the device.
 
 ## Slice 7 — Retention and email

@@ -6,4 +6,5 @@ Founder-owned direction for PipAAC.
 - Dual-Engine Predictive Intelligence: `Dual_Engine_Predictive_Intelligence.md`
 - Motor grid, strip layout, and symbol art: `../product/Motor_Grid_And_Art.md`
 - Roadmap: `Roadmap.md`
+- SLPs as the first distribution channel: `SLP_Channel.md`
 - Durable facts map: `../product/SSOT.md`

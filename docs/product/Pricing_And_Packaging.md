@@ -38,7 +38,7 @@ Pip AAC establishes a permanent architectural and business invariant:
 |    - Device text-to-speech (OS synthesized voices)                            |
 |    - Full spatial-vector motor grid & predictive strip                        |
 |    - Local storage (SQLite WASM / OPFS)                                       |
-|    - Encrypted backup, QR card restore (one live device)                     |
+|    - Encrypted backup, QR card restore (own device + one supporter)          |
 |    - 5 "Draw it for me" drawings as a taste                                   |
 +-------------------------------------------------------------------------------+
                                        |
@@ -122,8 +122,9 @@ subscription before a child can speak
 | --- | --- |
 | Every built-in word speaks | |
 | **20 words of your own** (people, pets, places, with your photos) | Unlimited words of your own |
-| One live device | More live devices (a second iPad, a parent's phone, the SLP's laptop) |
-| | The web editor |
+| **The user's own device + one supporter** (all of that supporter's devices: laptop, phone, tablet) | **Every supporter** (both parents, grandparents, the SLP, teachers) |
+| The web editor, for that supporter | The web editor, for every supporter |
+| | Progress stats (DECIDED 2026-09-23 as paid; design next) |
 | 5 drawings (Draw it for me) | 300 drawings, then top-up packs near cost |
 | All voices, prediction, groups, hiding words, Record my own | (same) |
 | Backup, QR card restore, moving to a new device | (same) |
@@ -131,13 +132,23 @@ subscription before a child can speak
 - **A word of your own** is a live `personal_entity`. Retiring one frees a
   slot; changing a built-in word's picture or recording does not count.
   20 is a starting value, to be tested with real families.
-- **One live device.** Restoring on a new device *moves* the user there:
-  the old device keeps speaking everything it has and stops getting
-  changes. The relay enforces this, not only the UI. **BUILT**
-  (2026-09-23): `POST /devices` refuses a second registration with
-  `upgrade_required`; `POST /restore` replaces the device set on a free
-  board (`src/worker/relay.js`). The lifetime flag is currently the
-  dev-license path; verified purchases write the same flag in 015/6.
+- **One supporter free** (DECIDED 2026-09-23, replaces "one live
+  device"). A free user has its own device (the child's iPad) and one
+  supporter, on as many of that supporter's devices as they like. Editing
+  on the user's own device is always free. A second supporter is the
+  \$49 moment. When the supporter spot is taken, the app offers
+  "Replace [name, last seen …]?" or Pip Lifetime; a spot unused for 60
+  days (starting value) frees itself.
+- **The user's own device moves.** Scanning the QR card on a device that
+  is not signed in as a supporter makes it the user's own device; the old
+  one keeps speaking everything it has and stops getting changes. The
+  supporter stays. The relay enforces this, not only the UI.
+- **Code still runs the older rule.** **BUILT** (2026-09-23): `POST
+  /devices` refuses any second registration with `upgrade_required`, and
+  `POST /restore` replaces the whole device set on a free board
+  (`src/worker/relay.js`). 015 slice 6 changes this to own device + one
+  supporter, using the supporter identity from slice 4. The lifetime
+  flag is the dev-license path; verified purchases write the same flag.
 - **Drawings** are the one cost that recurs (about 1¢ each). 300 are
   included once, not per year; top-ups are an in-app purchase priced near
   cost. This replaces the 2026-09-22 fair use of 30 a day / 1,000 a year.
@@ -146,8 +157,8 @@ subscription before a child can speak
 
 ### 4.3 No surprise
 
-- App Store listing and first run: "Free: every word speaks, plus 20 of
-  your own. \$49 once: unlimited, for the whole team."
+- App Store listing and first run: "Free: every word speaks, 20 of your
+  own, and one supporter. \$49 once: unlimited, for the whole team."
 - The add flow shows "14 of 20 free words" from the first add.
 - At the limit the adult sees the offer; the child never sees a paywall
   and speaking never waits on it.
@@ -162,6 +173,9 @@ subscription before a child can speak
 | Prediction that turns off after X days | A time bomb (§ 3); the child learns to rely on it |
 | Per-supporter license covering all their users | SLPs are the channel and each brings many users; per user is how every funder counts |
 | Discount for additional users | Unfair to the first client; confusing |
+| One free laptop (by hardware id) | Browsers expose no hardware id, by design; a website cannot reliably tell a laptop from an iPad in landscape |
+| An SLP's first client free, later clients paid | Needs verifying who is an SLP; makes family #2 pay because of someone else's caseload |
+| Referral payments to SLPs | Founder: "100% not"; complicated, and likely an ethics conflict for SLPs. We win by the best product |
 
 ### 4.5 Who can buy, and how
 

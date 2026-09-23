@@ -65,11 +65,15 @@ below.
 | 4 | QR card replaces the 24 words; printable, emailable, shareable | § 12 |
 | 5 | **$49 once per user.** Every supporter free. SLPs free. No extra-user discount. Schools 50% on 20+ | `docs/product/Pricing_And_Packaging.md` § 4 |
 | 6 | Free forever: every built-in word, **20 words of your own**, all voices, prediction, groups, backup, QR restore, moving to a new device, 5 drawings | § 4 of the pricing doc |
-| 7 | The $49 unlocks: unlimited own words, more than one live device, the web editor, 300 drawings then top-ups at near cost | § 4 of the pricing doc; `docs/product/Word_Library.md` § 6.1 |
+| 7 | The $49 unlocks: unlimited own words, every supporter, 300 drawings then top-ups at near cost, progress stats | § 4 of the pricing doc; `docs/product/Word_Library.md` § 6.1 |
 | 8 | The limit is visible from day one (listing, first run, "14 of 20" counter) | § 4 of the pricing doc |
 | 9 | Payments: Stripe on the web (with Apple Pay); inside the iOS app, Apple's native in-app purchase only, no link out. Either writes the same license on the user, which works on any device | § 4.5 of the pricing doc |
 | 10 | A supporter is only a supporter: deleting a supporter account never affects the user; the user owns the license | `docs/product/Sync_And_Web_Editing.md` § 12.3 |
 | 11 | 015 runs right after 013 slice 2 and 014 slice 2 (core infrastructure) | `docs/phases/README.md` |
+| 12 | **One supporter free**: a free user has its own device plus one supporter on all their devices, including the web editor. Replaces "one live device" ("I love it because it's so simple") | § 4.2 of the pricing doc |
+| 13 | SLPs are the number-one distribution channel; a free demo user per supporter account | `docs/strategy/SLP_Channel.md` |
+| 14 | Progress stats and the progress report are paid; design is the next session | § 4.2 of the pricing doc |
+| 15 | No referral payments, ever | § 4.4 of the pricing doc |
 
 ## Product value
 
