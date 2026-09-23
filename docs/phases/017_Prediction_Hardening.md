@@ -755,6 +755,19 @@ license, credit), `data/prediction/opening_book.en.json` (generated),
 `data/prediction/SOURCES.md` (credits), `public/shared/funnel.mjs`
 (`book` feature and retrieval).
 
+**Status (BUILT 2026-09-23, `fa244be`).** The first book source is built
+and measured: `gen_childlike.mjs` + `childlike_en.jsonl` (§ Steered
+synth). The scratch harness measured the decisions this spec needed —
+recorded below as amendments to items 3, 4, and 9. Build order for the
+rest: (a) `book_sources.json` + fetch/pin + license-allowlist test;
+(b) `build_book.mjs` — port the scratch builder and lemma map to mjs,
+proof = it reproduces the scratch TD-validation scores; (c)
+`score_book.mjs` + `book.test.mjs` — TD-val + Imagine held-outs,
+threshold asserts, byte-identical regen, no-held-out-reads test;
+(d) `funnel.mjs` `book` feature + catalog embed; (e) `SOURCES.md`.
+Open question for (b): interpolated λ = .55/.30/.15 vs. Kneser–Ney —
+one cheap sweep on `score_book.mjs` before the format locks.
+
 1. Download each source into a gitignored cache, pinned by URL and
    SHA-256 in the manifest. A test fails if any manifest license is not
    on the allow list (CC0, CC BY, CDLA-Sharing results, our own).
@@ -763,11 +776,21 @@ license, credit), `data/prediction/opening_book.en.json` (generated),
    until `docs/phases/005_Word_Forms.md` lands). A word outside our
    vocabulary breaks the context, so no count spans it.
 3. Count 1-, 2-, and 3-grams per source, inside sentences, with a
-   sentence-start token (this feeds step 21).
+   sentence-start token (this feeds step 21). **DECIDED 2026-09-23
+   (measured, § Steered synth):** the sentence-start table is weighted
+   differently from the n-grams — the steered synth corpus carries the
+   openers (its start distribution beats TinyDialogues' on held-out
+   first words at every band, 11.2/19.0/27.9 vs 4.7/17.2/24.2), so
+   `start` mixes synth-heavy regardless of the n-gram weight.
 4. Combine sources with weights chosen on the held-out checks (below).
    A source that doesn't help gets weight 0. Smooth with backoff; pick
    the method (e.g. interpolated Kneser–Ney vs. simple backoff) by the
-   held-out score.
+   held-out score. **DECIDED 2026-09-23 (measured):** the steered synth
+   corpus earns weight ~0.5–0.7 next to TinyDialogues (best mix
+   +3–7 pts on held-out CHILDES later words); TinyDialogues stays —
+   its 130k dialogues cover long-tail contexts authored frames can't.
+   Final per-band weights are re-picked on the repo held-outs once
+   `score_book.mjs` exists.
 5. Prune to the top 32 next words per context, with probabilities.
    Budget: about 2 MB for English. Regenerating reproduces the file byte
    for byte.
@@ -785,7 +808,11 @@ license, credit), `data/prediction/opening_book.en.json` (generated),
    (step 14).
 9. **Age-band books.** Build one book per TinyDialogues age band (2, 5,
    10, 15), mixed with background sources, and pick weights per band on
-   held-out child turns. A user starts on the band closest to the age a
+   held-out child turns. The synth corpus has three bands
+   (toddler/preschool/older ≈ ages 2/3/4+); today only the TinyDialogues
+   age-2 and age-5 files are needed (each ~33–35 MB — pinned download
+   into the cache, never committed; ages 10/15 when older books ship).
+   A user starts on the band closest to the age a
    supporter gives at setup (default: 5). The learned weights then move
    toward the band whose book predicts this user's own picks best. This
    is how age enters prediction. A penalty per word did not work (§
@@ -805,6 +832,13 @@ license, credit), `data/prediction/opening_book.en.json` (generated),
   flattering an LLM (Jev).
 - **Real children (if permitted, R11):** CHILDES child utterances, used
   as a test set only, never read by the build.
+- **The repo harness is the honest gate; CHILDES is the calibration
+  ruler.** The scratch CHILDES pipeline (parse → band → held-out score
+  → coverage diff) stays outside the repo permanently — it produced the
+  numbers in § Steered synth and reruns against any future corpus or
+  book. Committed artifacts prove themselves on TinyDialogues
+  validation + Imagine AAC; the scratch ruler says whether that
+  improvement is real on children.
 
 `build_book.mjs` refuses to read any held-out file; a test checks it.
 `score_book.mjs` reports top-4 and top-16 for the non-core next word,
