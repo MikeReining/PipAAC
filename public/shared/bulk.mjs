@@ -94,3 +94,18 @@ export function applyPasteRows(db, rows, { groupId, category = null }) {
   }
   return { placed, created, skipped };
 }
+
+/** Photo-drop drafts (§ 5.3): one entity per named draft — photo bytes
+ *  are already stored by the caller (`photoKey`); a blank name means the
+ *  adult skipped the row, so it is not saved. No I/O, no network. */
+export function applyPhotoDrafts(db, drafts, { groupId, category = null, cell = null }) {
+  let saved = 0, blank = 0;
+  for (const d of drafts) {
+    if (!d.name?.trim()) { blank++; continue; }
+    const { id } = createEntity(db, {
+      name: d.name.trim(), photoKey: d.photoKey ?? null, category });
+    placeItem(db, groupId, "entity", id, cell);
+    saved++;
+  }
+  return { saved, blank };
+}

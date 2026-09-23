@@ -160,6 +160,12 @@ clipart comes first. A real-photo suggestion is not a default
 
 ### 5.3 Many photos at once
 
+**BUILT** (009 slice 8): "Add photos" in the add form opens a multi-select
+picker; each file becomes a draft row (thumb + name prefilled from the file
+name). Save writes only named rows — a blank name is flagged "needs a name"
+and skipped. `applyPhotoDrafts` in `public/shared/bulk.mjs` owns the writes
+(`createEntity` + `placeItem` — ops sync like any add).
+
 Pick several photos in one system picker, get one draft row per photo, type
 names, save all into the current group. Enrichment may later suggest a name
 for a generic object. It never names a person

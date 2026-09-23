@@ -749,6 +749,14 @@
       #bulk-paste { min-height: 140px; }
       #bulk-preview { display: flex; flex-direction: column; gap: 4px; font-size: 14px;
         max-height: 40vh; overflow: auto; }
+      #photo-rows { display: flex; flex-direction: column; gap: 10px;
+        max-height: 55vh; overflow: auto; }
+      .prow { display: flex; align-items: center; gap: 10px; }
+      .prow .thumb { width: 56px; height: 56px; border-radius: 10px;
+        object-fit: cover; background: var(--tray); border: 1.5px solid var(--line); }
+      .prow input { flex: 1; }
+      .prow .tag { font-size: 12px; font-weight: 700; color: var(--muted); flex: none; }
+      .prow.blank input { border-color: var(--edge); border-style: dashed; }
       #ed-paste-preview { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
       .ed-prow { display: flex; align-items: center; gap: 8px; }
       .ed-prow .tag {
@@ -919,7 +927,23 @@
           <button class="btn" id="add-save">Save</button>
         </div>
         <button class="btn secondary" id="add-bulk">Paste a list</button>
+        <button class="btn secondary" id="add-photos">Add photos</button>
+        <input type="file" id="add-photos-input" accept="image/*" multiple hidden />
         <button class="btn secondary" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <!-- Many photos at once (Word_Library § 5.3): one draft row per
+         picked photo — a thumb and a name field, prefilled from the file
+         name. Blank names are flagged and skipped on save. -->
+    <div class="overlay" id="photoform">
+      <div class="sheet">
+        <h2 id="photo-title">Add photos</h2>
+        <div id="photo-rows"></div>
+        <div class="row">
+          <button class="btn" id="photo-save" disabled>Save</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
       </div>
     </div>
 

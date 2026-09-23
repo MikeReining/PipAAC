@@ -55,7 +55,7 @@ import {
   swapGroups,
   swapItems,
 } from "./shared/groups.mjs";
-import { applyPasteRows, nameFromFile, resolvePasteRows } from "./shared/bulk.mjs";
+import { applyPasteRows, applyPhotoDrafts, nameFromFile, resolvePasteRows } from "./shared/bulk.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
 import {
   ensureRecoveryRoot,
@@ -1732,6 +1732,81 @@ $("bulk-add").addEventListener("click", () => {
 });
 $("add-bulk").addEventListener("click", () => openBulkForm(addTarget));
 $("lib-bulk").addEventListener("click", () => openBulkForm("grp_my_words"));
+
+/* Many photos at once (Word_Library § 5.3): the picker hands back files;
+ * each becomes a draft row — thumb + name, prefilled from the file name.
+ * Bytes and records are written only on Save, and only for named rows;
+ * a blanked name is flagged and skipped. All writes are local — the
+ * sealed photo upload rides the same sync path as a single add. */
+let photoDrafts = []; // { file, url, input }
+$("add-photos").addEventListener("click", () => $("add-photos-input").click());
+$("add-photos-input").addEventListener("change", (e) => {
+  const files = [...e.target.files].filter((f) => f.type.startsWith("image/"));
+  e.target.value = "";
+  if (!files.length) return;
+  photoDrafts = files.map((file) => ({
+    file, url: URL.createObjectURL(file), name: nameFromFile(file.name),
+  }));
+  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [addTarget])[0];
+  const name = row ? groupDisplayName(db, row, locale) : "My Words";
+  $("photo-title").textContent = `Add photos to ${name}`;
+  renderPhotoDrafts();
+  close("addform");
+  open("photoform");
+});
+function renderPhotoDrafts() {
+  const box = $("photo-rows");
+  box.innerHTML = "";
+  for (const d of photoDrafts) {
+    const row = document.createElement("div");
+    row.className = "prow" + (d.name ? "" : " blank");
+    const img = document.createElement("img");
+    img.className = "thumb"; img.alt = ""; img.src = d.url;
+    const input = document.createElement("input");
+    input.type = "text"; input.value = d.name;
+    input.placeholder = "Name this one";
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = d.name ? "" : "needs a name";
+    input.addEventListener("input", () => {
+      d.name = input.value.trim();
+      row.classList.toggle("blank", !d.name);
+      tag.textContent = d.name ? "" : "needs a name";
+      refreshPhotoSave();
+    });
+    row.append(img, input, tag);
+    box.appendChild(row);
+  }
+  refreshPhotoSave();
+  function refreshPhotoSave() {
+    const n = photoDrafts.filter((d) => d.name).length;
+    $("photo-save").disabled = n === 0;
+    $("photo-save").textContent = n ? `Save ${n}` : "Save";
+  }
+}
+$("photo-save").addEventListener("click", async () => {
+  const gid = addTarget ?? "grp_my_words";
+  const drafts = [];
+  for (const d of photoDrafts) {
+    if (!d.name) { drafts.push({ name: "" }); continue; } // flagged, not saved
+    const photo = await savePhoto(d.file);
+    if (photo) syncUploadBlob(photo.bytes).catch(() => {});
+    drafts.push({ name: d.name, photoKey: photo?.key ?? null });
+  }
+  const res = applyPhotoDrafts(db, drafts, {
+    groupId: gid,
+    category: catalog.groups.find((g) => g.id === gid)?.category ?? null,
+    cell: addCell,
+  });
+  for (const d of photoDrafts) URL.revokeObjectURL(d.url);
+  photoDrafts = [];
+  close("photoform");
+  kbIndex = null;
+  rerenderView();
+  renderStrip();
+  renderLibrary();
+  toast(`Added ${res.saved} photo${res.saved === 1 ? "" : "s"}`);
+});
 
 /** Re-render the match list and the always-present New row as the adult
  *  types. Every existing meaning is a picture row — the family's own
