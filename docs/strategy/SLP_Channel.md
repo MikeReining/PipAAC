@@ -56,7 +56,7 @@ whole caseload** (`docs/product/Sync_And_Web_Editing.md` § 12.4).
 
 | Play | Status |
 | --- | --- |
-| "This week's words": the SLP sends a Spotlight list to the family; the parent models from a phone and the iPad lights the route (`docs/phases/013_Spotlight_And_Partner_Modeling.md`) | **PROPOSED** |
+| "This week's words": the SLP sends a Spotlight list to the family; the parent models from a phone and the iPad lights the route (`docs/product/Design_System.md` § Attention layer) | **PROPOSED** |
 | Free printable core boards in our art and positions, each with a "Try this board free in Pip" QR | **PROPOSED** |
 | Progress stats: free weekly win card; full dashboard, goal words and the IEP report with Pip Lifetime; daily totals reach the SLP's laptop | **DECIDED 2026-09-23**: `docs/product/Stats_And_Progress.md`; build `docs/phases/016_Stats_And_Progress.md` |
 | SLPs sharing word sets with each other | Parked: founder expects SLPs to share QR cards with families, not word sets with each other |

@@ -912,18 +912,29 @@ function closeExpand() { expand = null; renderStrip(); }
  *  speaks; masked cells are skipped entirely (never unmask). Slice 2
  *  owns lists/sessions; this is the layer itself. --- */
 
-/** Mark a word cell under the spotlight: target → glow, else dim.
- *  Pulse rides the synced glow-style setting (013 § 4). */
+/** Pulse rides the synced glow-style setting (013 § 4). */
 let spotPulse = false;
-function spotMark(el, key) {
+
+/* --- The attention layer's one mark pass (013 § 2, slice 7): every
+ *  use of "brighten some words, dim the rest" applies here — spotlight
+ *  targets, live-model glows, the picker's chosen words, and (board
+ *  cells only) the 014 move marks and the prediction halos. No renderer
+ *  sets these classes on its own. --- */
+function layerMark(el, key, { board = false } = {}) {
+  const [kind, id] = key.split(":");
   const s = spotlight();
-  if (!s) return;
-  if (s.targets.has(key)) {
-    el.classList.add("glow");
-    if (spotPulse) el.classList.add("pulse");
-  } else {
-    el.classList.add("dimmed");
+  if (s) {
+    if (s.targets.has(key)) {
+      el.classList.add("glow");
+      if (spotPulse) el.classList.add("pulse");
+    } else {
+      el.classList.add("dimmed");
+    }
   }
+  if (picking) el.classList.toggle("picked", picking.has(key));
+  if (modelGlow.has(key) || modelSent.has(key)) el.classList.add("glow");
+  if (board && kind === "sense" && movedSet.has(id)) el.classList.add("moved");
+  if (board && kind === "sense" && likelySet.has(id)) el.classList.add("likely");
 }
 
 /** Read the spotlight settings and apply the dim token — called at boot
@@ -943,9 +954,6 @@ function bindSpotSettings() {
  *  groups to choose targets; taps never speak while picking. `picking`
  *  is the Set of "kind:id" being chosen, or null when off. --- */
 let picking = null;
-function pickMark(el, key) {
-  if (picking) el.classList.toggle("picked", picking.has(key));
-}
 function updatePickBar() {
   $("spot-pick-count").textContent = `${picking?.size ?? 0} picked`;
   $("spot-pick-start").disabled = !picking?.size;
@@ -970,10 +978,6 @@ let modelSpeaks = false;
 const modelGlow = new Map(); // "kind:id" → fade timer
 const modelSent = new Set(); // local echo on the partner's device
 const MODEL_FADE_MS = 4000;
-
-function modelMark(el, key) {
-  if (modelGlow.has(key) || modelSent.has(key)) el.classList.add("glow");
-}
 
 function clearModel(key) {
   const t = key ? modelGlow.get(key) : undefined;
@@ -1194,10 +1198,7 @@ function renderGrid() {
     } else {
       el.addEventListener("click", () => tap(c.label, "sense", c.sense_id));
     }
-    spotMark(el, `sense:${c.sense_id}`);
-    pickMark(el, `sense:${c.sense_id}`);
-    modelMark(el, `sense:${c.sense_id}`);
-    if (movedSet.has(c.sense_id)) el.classList.add("moved");
+    layerMark(el, `sense:${c.sense_id}`, { board: true });
     cellEls.set(c.sense_id, el);
     grid.appendChild(el);
   }
@@ -1209,20 +1210,31 @@ function renderGrid() {
 /** "Highlight likely next words" (Parent Corner, default OFF): up to
  *  three core cells the ranker invites next get a thicker inner border
  *  in their own role color. Grid only — never while editing, in a
- *  group, or with the keyboard open (the grid isn't visible). */
+ *  group, or with the keyboard open (the grid isn't visible).
+ *
+ *  `likelySet` is the layer's halo state (013 § 2, Dual Engine § 7.4):
+ *  it rides `layerMark` on every render, so halos survive a grid
+ *  repaint instead of vanishing until the next strip paint. */
 let highlightNext = false;
+let likelySet = new Set();
 function applyLikely() {
-  for (const el of cellEls.values()) el.classList.remove("likely");
-  if (!highlightNext || editing || view !== "board" || kbOpen || !sentence.length) return;
-  const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-  let marked = 0;
-  for (const c of keyboardContinuations(db, sents, locale, Date.now())) {
-    if (c.kind !== "sense") continue;
-    const el = cellEls.get(c.id);
-    if (!el) continue;
-    el.classList.add("likely");
-    if (++marked === 3) break;
+  const next = new Set();
+  if (highlightNext && !editing && view === "board" && !kbOpen && sentence.length) {
+    const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
+    // Same local model the strip paints with (§ 3.4: never waits on Jev).
+    const model = { weights: loadWeights(db, catalog.prediction).weights,
+                    tau: catalog.prediction.tau };
+    for (const c of keyboardContinuations(db, sents, locale, Date.now(), model)) {
+      if (c.kind !== "sense" || !cellEls.has(c.id)) continue;
+      next.add(c.id);
+      if (next.size === 3) break;
+    }
   }
+  for (const id of new Set([...likelySet, ...next])) {
+    const el = cellEls.get(id);
+    if (el) el.classList.toggle("likely", next.has(id));
+  }
+  likelySet = next;
 }
 
 /* --- overlays --- */
@@ -2410,9 +2422,7 @@ async function itemCell(item, gKind, ctx = {}) {
         { spoken_name: item.label, photo_key: item.photo_key },
         onSpeak,
       );
-  spotMark(el, `${item.item_kind}:${item.item_id}`);
-  pickMark(el, `${item.item_kind}:${item.item_id}`);
-  modelMark(el, `${item.item_kind}:${item.item_id}`);
+  layerMark(el, `${item.item_kind}:${item.item_id}`);
   el.dataset.slot = item.vslot ?? item.slot_index;
   el.dataset.item = `${item.item_kind}:${item.item_id}`;
   if (!gestures) return el;

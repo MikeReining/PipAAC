@@ -15,7 +15,7 @@ framing was withdrawn (§ 6).
 | Default maps (`grid60`, `grid90`, new starters) | `docs/product/Core_Coordinate_Map.md` |
 | Clinical framing | `docs/strategy/Vision.md` § 2.4 |
 | Ghost cells, hiding | `docs/product/Vocabulary_Masking_And_Safety.md` |
-| Soft highlight used after a move | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
+| Soft highlight used after a move | `docs/product/Design_System.md` § Attention layer |
 
 ---
 
@@ -103,7 +103,7 @@ the Smart bar all use the profile's one setting. A group has no size of its
 own; a big group pages (`Next ›`). Group items keep their saved order; when
 Cells changes, groups are laid out again in that order and their moved
 items join the move-cost preview (§ 4). Showing fewer choices for an
-activity is Spotlight's job (`docs/phases/013_Spotlight_And_Partner_Modeling.md`),
+activity is Spotlight's job (`docs/product/Design_System.md` § Attention layer),
 not a bigger or smaller group. **Settled in slice 1:** at 15 cells a group
 page keeps back, the reserved Edit slot, and `Next ›`, leaving 12 items —
 and the group index pages the same way.
@@ -148,7 +148,8 @@ The adult sees old and new side by side with moved words marked and the
 count ("7 of the 20 words Maya uses most will move"), then accepts or edits.
 A profile with no history gets the unweighted count.
 
-After accepting, moved words get the soft highlight from 013 in their new
+After accepting, moved words get the layer's soft highlight
+(`docs/product/Design_System.md` § Attention layer) in their new
 cell for a window the adult sets (default: two weeks), then fade.
 
 ## 5. Starters

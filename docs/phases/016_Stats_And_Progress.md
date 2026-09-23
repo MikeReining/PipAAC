@@ -19,7 +19,7 @@ founder call.
 | What stays on the device | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 4.1 |
 | Sync and the user key | `docs/product/Sync_And_Web_Editing.md` § 2, § 12 |
 | The Lifetime gate | `docs/product/Pricing_And_Packaging.md` § 4.2 |
-| Goal lists | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
+| Goal lists | `docs/product/Design_System.md` § Attention layer |
 
 ## Depends on
 

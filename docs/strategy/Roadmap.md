@@ -73,4 +73,4 @@ second language. Harder than translation: a bilingual child switches
 languages mid-conversation, so two languages are active at once. The schema
 already carries a locale on every label (`docs/product/Language_And_Voice_Schema.md`).
 
-Context river and visual scenes stay in `docs/strategy/Vision.md` until later phases name them. Live partner modeling is `docs/phases/013_Spotlight_And_Partner_Modeling.md`.
+Context river and visual scenes stay in `docs/strategy/Vision.md` until later phases name them. Live partner modeling is `docs/product/Design_System.md` § Attention layer.

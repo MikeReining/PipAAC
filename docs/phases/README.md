@@ -15,8 +15,8 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | 013 slice 7 — shared uses (014 upgrade highlight + prediction halos through the layer); slice 6, Coach view, built. | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
-| **P2** | 015 slice 4 — supporter accounts (slices 1–3 built: user rename, many users on one device, the QR card). | `docs/phases/015_Accounts_And_One_Price.md` |
+| **P1** | 015 slice 4 — supporter accounts (slices 1–3 built: user rename, many users on one device, the QR card). | `docs/phases/015_Accounts_And_One_Price.md` |
+| **P2** | 016 slice 1 — the stats engine (unblocked: 015 slice 2 built). | `docs/phases/016_Stats_And_Progress.md` |
 
 ## Live index
 
@@ -30,10 +30,9 @@ Executing phases only. Each row names the **next** slice.
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 10 — suggested words (blocked on 008 slice 3); slice 5 is post-launch |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
-| [013 — Spotlight and partner modeling](013_Spotlight_And_Partner_Modeling.md) | **P1.** Slice 7 — shared uses (layer, sessions, mirror, live modeling, Smart bar boost, and Coach view built) |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later) |
-| [015 — Accounts and one price](015_Accounts_And_One_Price.md) | **P2.** Slice 4 — supporter accounts (slices 1–3 built: rename, many users per device, the QR card; slices 6–7 relay legs built: cap, restore-move, retention, dev license) |
-| [016 — Stats and progress](016_Stats_And_Progress.md) | Slice 1 — the stats engine (after 015 slice 2) |
+| [015 — Accounts and one price](015_Accounts_And_One_Price.md) | **P1.** Slice 4 — supporter accounts (slices 1–3 built: rename, many users per device, the QR card; slices 6–7 relay legs built: cap, restore-move, retention, dev license) |
+| [016 — Stats and progress](016_Stats_And_Progress.md) | **P2.** Slice 1 — the stats engine (015 slice 2 built) |
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | M1 plumbing (steps 4, 3, 5, 1, 2) and step 23, the opening book, in parallel (rulings recorded) |
 
 The language and voice schema was accepted 2026-09-22 and moved to

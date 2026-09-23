@@ -111,7 +111,7 @@ For a Lifetime user, every supporter sees the full dashboard:
 
 ## 5. Goals are Spotlight lists
 
-A supporter marks a Spotlight list (`docs/phases/013_Spotlight_And_Partner_Modeling.md`)
+A supporter marks a Spotlight list (`docs/product/Design_System.md` § Attention layer)
 as a **goal**. The dashboard then shows each target word used on the
 child's own vs with the glow, week by week. "Uses *more* on their own 5
 times a day" becomes a number the app produces, not a tally sheet.

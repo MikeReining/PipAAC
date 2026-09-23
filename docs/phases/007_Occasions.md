@@ -47,7 +47,7 @@ score per word), regenerated from source, consumed as one weighted feature
 familiar word in early education (morning circle, snack, bedtime) and the
 same concept. Code and docs keep *occasion*; what adults see may say
 *routine*. A routine can carry a saved Spotlight list for the Coach view
-(`docs/phases/013_Spotlight_And_Partner_Modeling.md` § 5a).
+(`docs/product/Design_System.md` § Attention layer).
 
 --- | --- |
 | occasion (breakfast, bath, bedtime …) — in user-facing copy, **routine** | routine group, scene, context folder |

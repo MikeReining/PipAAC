@@ -84,21 +84,66 @@ Grammar roles (border / label-strip fill):
   (`box-shadow: inset`), tile size unchanged, no animation.
 - **Switch / keyboard / eye-gaze focus** — outer double ring: 4px cream +
   5px ink (`:focus-visible`, so touch never shows it).
-- **Modeling** — **DECIDED** (brief outer ring in the tile's own role
-  color); **not built** — no caregiver modeling mode exists yet.
+- **Modeling** — live partner modeling rides the same layer: a tap on
+  the linked adult device glows the word on the child's board for a few
+  seconds (steady `--glow` ring), then fades — or ends the moment the
+  child taps it. Silent unless the family turns on Speak
+  (`model_speaks`). Never saved, never in the sync log.
 - **Arrange / lifted** — Parent Corner edit mode: dashed ink border +
   shadow.
 - **Masked** — border `#cfc9bb`, fill `#efeadf`, label `#a39c8a`, art at
   ~18% opacity, space preserved, untappable. The `.masked` style is
   shipped; the masking feature is built (009 slice 9,
   `docs/product/Vocabulary_Masking_And_Safety.md` § 2).
-- **Spotlight** — the attention layer (013 slice 1): target words get a
+- **Spotlight** — the attention layer: target words get a
   steady glow (`--glow` ring + halo), every other word dims to
   `--dim-o`, nothing is disabled and nothing moves. A masked cell is
   never glowed. The `🔦 name · End` chip sits in the top bar while a
   spotlight runs.
+- **Moved (upgrade highlight)** — a word that changed home after a Cells
+  change keeps a soft 3px inner `--glow` ring (`.cell.moved`) for 14
+  days; quieter than the spotlight's outer glow, dims nothing.
 - **Empty cell** — dashed `#d8d4c8`, transparent, never collapses. The
   grid renders all 60 slots; a gap is a placeholder, not a layout shift.
+
+## Attention layer
+
+**BUILT** (`public/board.js` `layerMark`; state in
+`public/shared/spotlight.mjs`; phase:
+`docs/archive/phases/013_Spotlight_And_Partner_Modeling.md`).
+
+"Brighten some words, dim the rest, disable nothing" is one layer — one
+mark pass every use paints through:
+
+| Use | Trigger | Mark |
+| --- | --- | --- |
+| Spotlight | an adult starts a list of target words | `.glow` on targets, `.dimmed` on the rest |
+| Live modeling | an adult taps a word on their linked device | `.glow`, fades in seconds |
+| Pick mode | an adult choosing targets | `.picked` ring |
+| Upgrade highlight | a Cells change moved the word | `.moved` inner ring |
+| Prediction halo | the ranker invites a core word | `.likely` inner ring in the role color |
+
+Marks compose — one cell can carry several at once. Laws (013 § 2.1,
+all hold in the shared pass):
+
+1. **Never a muzzle.** A dimmed word stays 100% tappable, speaks, and
+   joins the sentence. The layer changes how words look, never what the
+   child can say.
+2. **Never moves.** No cell moves, grows, or shrinks.
+3. **Never changes the board.** No layer write touches the coordinate
+   map, groups, or words.
+4. **Never unmasks.** A masked word stays masked.
+5. **Gentle.** Steady glow by default; pulse is optional; no flashing,
+   strobing, or sound cues.
+
+Durable mechanics: a spotlight is a **list of words, not a board** — if
+a target sits inside a group, the glow walks the route through the
+Groups anchor, the group tile, and the word; the session row syncs so
+the adult's device mirrors the child's board and can start/end it;
+live-model taps are transient relay messages — rebroadcast, never
+stored, never in `sync_op`; the partner mirror carries the **Coach
+view** (target chips, tips, today's tally, rotating basics) which never
+renders on the child's device.
 
 ## Prediction strip
 
