@@ -27,10 +27,48 @@ export const GRAMMAR = {
   },
 };
 
-export function logSelection(db, kind, id, at = Date.now()) {
+/**
+ * Sentence lifecycle (schema §6.2c): a sentence opens on the first pick
+ * of a bar and ends spoken or cleared. The log records which sentence
+ * each pick belonged to and its position, so pairs and phrases never
+ * cross a Speak or Clear.
+ */
+export function openSentence(db, at = Date.now()) {
+  db.prepare("INSERT INTO sentence (started_at, tz_offset_min) VALUES (?, ?)").run(
+    at,
+    -new Date(at).getTimezoneOffset(),
+  );
+  return db.prepare("SELECT last_insert_rowid() AS id").all()[0].id;
+}
+
+export function closeSentence(db, id, at = Date.now(), kind) {
   db.prepare(
-    "INSERT INTO learner_event_log (item_kind, item_id, selected_at) VALUES (?, ?, ?)",
-  ).run(kind, id, at);
+    "UPDATE sentence SET ended_at = ?, end_kind = ? WHERE id = ? AND end_kind IS NULL",
+  ).run(at, kind, id);
+}
+
+/** A pick left the sentence (backspace reopened it): its event stays as
+ *  usage evidence but is no longer a sentence member, and the rest of
+ *  the sentence shifts down one position. */
+export function detachEvent(db, sentenceId, position) {
+  db.prepare(
+    "UPDATE learner_event_log SET sentence_id = NULL, position = NULL WHERE sentence_id = ? AND position = ?",
+  ).run(sentenceId, position);
+  db.prepare(
+    "UPDATE learner_event_log SET position = position - 1 WHERE sentence_id = ? AND position > ?",
+  ).run(sentenceId, position);
+}
+
+export function logSelection(db, kind, id, at = Date.now(), ctx = {}) {
+  db.prepare(
+    `INSERT INTO learner_event_log
+       (item_kind, item_id, selected_at, sentence_id, position, source, tz_offset_min)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    kind, id, at,
+    ctx.sentenceId ?? null, ctx.position ?? null, ctx.source ?? null,
+    -new Date(at).getTimezoneOffset(),
+  );
 }
 
 /** Tail item's part of speech and text; entities are nominal. */
@@ -78,12 +116,16 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
   const invitesVerb = rules ? rules.invitesVerb(ctx) : false;
   const recentCutoff = now - RECENT_WINDOW_MS;
   const hour = new Date(now).getHours();
+  // Events carry their tap-time offset (schema §6.2c) — a family's hour
+  // survives travel and DST. Rows from before the column existed were
+  // backfilled at migration; COALESCE covers any straggler.
+  const tzNow = -new Date(now).getTimezoneOffset();
 
   const entityRows = db
     .prepare(
       `SELECT e.id,
          MAX(CASE WHEN l.selected_at > ? THEN 1 ELSE 0 END) AS recent,
-         SUM(CASE WHEN CAST(strftime('%H', l.selected_at / 1000, 'unixepoch') AS INTEGER) = ?
+         SUM(CASE WHEN CAST(strftime('%H', l.selected_at / 1000 + COALESCE(l.tz_offset_min, ?) * 60, 'unixepoch') AS INTEGER) = ?
               THEN 1 ELSE 0 END) AS same_hour,
          COUNT(l.id) AS freq,
          MAX(l.selected_at) AS last_selected
@@ -93,7 +135,7 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
        WHERE e.status = 'active'
        GROUP BY e.id`,
     )
-    .all(recentCutoff, hour)
+    .all(recentCutoff, tzNow, hour)
     .filter((r) => invitesNoun || r.recent === 1)
     .map((r) => ({ kind: "entity", id: r.id, ...scoreRow(r, invitesNoun, now) }));
 
@@ -101,7 +143,7 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
     .prepare(
       `SELECT s.id, lb.part_of_speech AS pos,
          MAX(CASE WHEN l.selected_at > ? THEN 1 ELSE 0 END) AS recent,
-         SUM(CASE WHEN CAST(strftime('%H', l.selected_at / 1000, 'unixepoch') AS INTEGER) = ?
+         SUM(CASE WHEN CAST(strftime('%H', l.selected_at / 1000 + COALESCE(l.tz_offset_min, ?) * 60, 'unixepoch') AS INTEGER) = ?
               THEN 1 ELSE 0 END) AS same_hour,
          COUNT(l.id) AS freq,
          MAX(l.selected_at) AS last_selected
@@ -113,7 +155,7 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
        WHERE s.tier = 'primary_fringe'
        GROUP BY s.id`,
     )
-    .all(recentCutoff, hour, locale)
+    .all(recentCutoff, tzNow, hour, locale)
     .filter(
       (r) =>
         (r.freq > 0 || r.recent === 1) &&

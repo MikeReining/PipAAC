@@ -102,7 +102,7 @@ function migrateSchema(d, schemaSql) {
     "sense", "utterance", "label", "image", "voice", "clip", "core_cell",
     "learner_profile", "personal_entity", "entity_enrichment",
     "learner_event_log", "clip_override", "board_group", "group_cell",
-    "group_label", "sync_op", "sync_baseline",
+    "group_label", "sync_op", "sync_baseline", "sentence",
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();
@@ -129,6 +129,14 @@ function migrateSchema(d, schemaSql) {
       d.exec(`INSERT INTO ${t}_new (${shared}) SELECT ${shared} FROM ${t}`);
       d.exec(`DROP TABLE ${t}`);
       d.exec(`ALTER TABLE ${t}_new RENAME TO ${t}`);
+    }
+    // Pre-sentence events get the device's current offset once — best
+    // effort, stated as such in schema §6.2c. Their sentence_id stays
+    // NULL: they never count as pairs or phrases.
+    if (stale.includes("learner_event_log")) {
+      d.prepare(
+        "UPDATE learner_event_log SET tz_offset_min = ? WHERE tz_offset_min IS NULL",
+      ).run(-new Date().getTimezoneOffset());
     }
     d.exec("COMMIT");
   } catch (err) {

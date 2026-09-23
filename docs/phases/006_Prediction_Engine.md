@@ -94,6 +94,19 @@ Done when: the three tests pass, the first was seen failing before the fix,
 and a person can tap a sentence, speak it, and see one `sentence` row with
 `end_kind = 'spoken'`.
 
+**DONE.** `sentence` table + event-log `sentence_id` / `position` /
+`source` / `tz_offset_min` (`user_version` 5; pre-existing rows get the
+device's offset backfilled once). `logSelection` records sentence,
+position, source, and `-new Date(at).getTimezoneOffset()`; the hour term
+buckets by `selected_at + tz_offset_min` — local hour that survives
+travel and DST. `board.js` opens a sentence on the first pick, closes
+`spoken` on Speak and `cleared` on Clear (the bar may keep its words
+after Speak — the next pick opens a new row), and ⌫ detaches a popped
+pick's event. Proof: `src/board/sentences.test.mjs` — the TZ sweep was
+seen failing on the UTC-only hour term, and live in a browser: taps →
+one `sentence` row `end_kind='spoken'`, events with positions 0/1 and
+`tz_offset_min=-420`, Clear → `'cleared'`.
+
 ---
 
 ## Slice 2 — The instrument: impressions, metrics, simulation

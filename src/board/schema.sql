@@ -174,17 +174,36 @@ CREATE TABLE IF NOT EXISTS entity_enrichment (
   status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))
 );
 
+-- One row per sentence the child builds. Ends when spoken or cleared;
+-- a cleared sentence is a restart (not a training example).
+CREATE TABLE IF NOT EXISTS sentence (
+  id INTEGER PRIMARY KEY,
+  started_at INTEGER NOT NULL CHECK (started_at > 0),
+  ended_at INTEGER CHECK (ended_at IS NULL OR ended_at >= started_at),
+  end_kind TEXT CHECK (end_kind IS NULL OR end_kind IN ('spoken', 'cleared')),
+  tz_offset_min INTEGER NOT NULL
+);
+
 -- Selection events feed the local funnel's recency and time-of-day
 -- histogram (Dual_Engine §5.2). Ids only — never the English string.
+-- sentence_id/position bind the pick to its sentence; source is the
+-- input path; tz_offset_min is minutes east of UTC at the moment of the
+-- tap, so the local hour = strftime('%H', selected_at/1000 +
+-- tz_offset_min*60, 'unixepoch') survives travel and DST.
 CREATE TABLE IF NOT EXISTS learner_event_log (
   id INTEGER PRIMARY KEY,
   item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
   item_id TEXT NOT NULL CHECK (length(item_id) > 0),
-  selected_at INTEGER NOT NULL CHECK (selected_at > 0)
+  selected_at INTEGER NOT NULL CHECK (selected_at > 0),
+  sentence_id INTEGER REFERENCES sentence(id),
+  position INTEGER CHECK (position IS NULL OR position >= 0),
+  source TEXT CHECK (source IS NULL OR source IN ('grid', 'strip', 'group', 'keyboard')),
+  tz_offset_min INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);
 CREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);
+CREATE INDEX IF NOT EXISTS event_log_sentence ON learner_event_log(sentence_id, position);
 
 CREATE TABLE IF NOT EXISTS clip_override (
   id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),
@@ -468,4 +487,4 @@ BEGIN
   );
 END;
 
-PRAGMA user_version = 4;
+PRAGMA user_version = 5;

@@ -4,7 +4,14 @@
  * clips (schema §7); personal entities use device TTS.
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
-import { keyboardContinuations, logSelection, stripCandidates } from "./shared/funnel.mjs";
+import {
+  closeSentence,
+  detachEvent,
+  keyboardContinuations,
+  logSelection,
+  openSentence,
+  stripCandidates,
+} from "./shared/funnel.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
 import { buildIndex, suggest } from "./shared/spelling.mjs";
@@ -91,6 +98,14 @@ initSync(db, location.origin, onSyncApplied)
 const { locale, voiceId } = resolveProfile(db);
 document.documentElement.lang = locale;
 const sentence = []; // [{kind, id, text}]
+
+/* Sentence tracking (schema §6.2c): one `sentence` row per bar the
+ * child builds. Speak closes it 'spoken', Clear closes it 'cleared';
+ * the bar may keep its words after Speak, but the next pick opens a
+ * new sentence — pairs never cross a Speak or Clear. */
+let sentenceId = null;
+let sentencePicks = 0; // member events so far — the next pick's position
+const ensureSentence = () => (sentenceId ??= openSentence(db));
 let addTarget = null;  // board_group id the add form files into
 let addCell = null;    // {page, slot_index} when + came from tapping an empty slot
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
@@ -144,9 +159,16 @@ async function speakItem(item) {
   speak(item.text);
 }
 
-/** Sentence bar: one slot per item in order; misses hold 400 ms (§7.4). */
+/** Sentence bar: one slot per item in order; misses hold 400 ms (§7.4).
+ *  Speaking ends the logged sentence — the bar keeps its words, but the
+ *  next pick opens a new sentence row. */
 async function speakSentence() {
   for (const item of sentence) await speakItem(item);
+  if (sentenceId !== null) {
+    closeSentence(db, sentenceId, Date.now(), "spoken");
+    sentenceId = null;
+    sentencePicks = 0;
+  }
 }
 
 /** Cache: sense id → { role, art } — the label-strip color and the
@@ -249,6 +271,11 @@ $("bar").addEventListener("click", () => {
   if (sentence.length) speakSentence();
 });
 $("clear").addEventListener("click", () => {
+  if (sentenceId !== null) {
+    closeSentence(db, sentenceId, Date.now(), "cleared");
+    sentenceId = null;
+    sentencePicks = 0;
+  }
   sentence.length = 0;
   kbText = "";
   renderBar();
@@ -278,7 +305,7 @@ async function idleStarters() {
   const hello = senseById(HELLO_SENSE_ID);
   if (hello) {
     cards.push({ id: hello.id, label: hello.label, glyph: "👋", role: hello.fitzgerald_role,
-      onTap: () => tap(hello.label, "sense", hello.id, { hint: true }) });
+      onTap: () => tap(hello.label, "sense", hello.id, { hint: true, source: "strip" }) });
   }
   const foodRow = ALL(db, "SELECT id, name FROM board_group WHERE id = 'grp_food'")[0];
   if (foodRow) {
@@ -296,7 +323,7 @@ async function idleStarters() {
   const help = senseById(HELP_SENSE_ID);
   if (help) {
     cards.push({ id: help.id, label: help.label, glyph: "🆘", role: help.fitzgerald_role,
-      onTap: () => tap(help.label, "sense", help.id, { hint: true }) });
+      onTap: () => tap(help.label, "sense", help.id, { hint: true, source: "strip" }) });
   }
   return cards.slice(0, 4);
 }
@@ -339,7 +366,7 @@ async function predCard(c) {
   el.append(part, lb);
   const onTap =
     c.onTap ??
-    (c.entity ? () => tap(c.entity.spoken_name, "entity", c.entity.id, { hint: true }) : () => {});
+    (c.entity ? () => tap(c.entity.spoken_name, "entity", c.entity.id, { hint: true, source: "strip" }) : () => {});
   el.addEventListener("click", onTap);
   return el;
 }
@@ -385,7 +412,7 @@ async function renderStrip() {
           [locale, c.id],
         )[0];
         cards.push({ id: w.id, label: w.label, role: w.fitzgerald_role,
-          onTap: () => tap(w.label, "sense", w.id, { hint: true }) });
+          onTap: () => tap(w.label, "sense", w.id, { hint: true, source: "strip" }) });
       }
     }
   }
@@ -396,12 +423,17 @@ async function renderStrip() {
   applyLikely();
 }
 
-function tap(text, kind = "sense", id = null, { hint = false } = {}) {
+function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
   const item = { kind, id, text };
   sentence.push(item);
   renderBar();
   speakItem(item);
-  if (id) logSelection(db, kind, id);
+  if (id) {
+    ensureSentence();
+    logSelection(db, kind, id, Date.now(), {
+      sentenceId, position: sentencePicks++, source,
+    });
+  }
   if (hint && id) showGroupHint(kind, id);
   renderStrip();
 }
@@ -876,7 +908,11 @@ function partnerCell(senseId) {
   el.addEventListener("click", async () => {
     el.classList.add("flash");
     setTimeout(() => el.classList.remove("flash"), 350);
-    logSelection(db, "sense", s.id);
+    // Partner talk about the typing — never a sentence member, but it
+    // did happen while a sentence may have been open.
+    logSelection(db, "sense", s.id, Date.now(), {
+      sentenceId, position: null, source: "keyboard",
+    });
     // Clip under the profile voice, else device TTS in the profile locale —
     // partner keys never take the 400 ms silent slot.
     const key = clipKeyFor(s.id);
@@ -890,6 +926,7 @@ function partnerCell(senseId) {
  *  buffer/marks/items, then this does the side effects — resolve each
  *  committed word, speak it, log it, re-render. */
 function kbPress(key) {
+  const prevLast = sentence[sentence.length - 1];
   const res = applyKey(
     { buffer: kbText, pendingAccent: kbPendingAccent, lead: kbLead, items: sentence },
     key,
@@ -898,6 +935,13 @@ function kbPress(key) {
   kbText = res.state.buffer;
   kbPendingAccent = res.state.pendingAccent;
   kbLead = res.state.lead;
+  // ⌫ pops the last bar item into the buffer — if it was a logged pick,
+  // detach its event and shift the rest of the sentence down (§6.2c).
+  if (key === "Backspace" && res.state.items.length < sentence.length &&
+      prevLast?.id && sentenceId !== null) {
+    detachEvent(db, sentenceId, sentencePicks - 1);
+    sentencePicks--;
+  }
   sentence.splice(0, sentence.length, ...res.state.items);
   for (const e of res.effects) {
     if (e.type === "commit") commitKbItem(e.index);
@@ -944,7 +988,10 @@ function commitKbItem(index) {
   sentence[index] = item;
   speakItem(item);
   if (item.id) {
-    logSelection(db, item.kind, item.id);
+    ensureSentence();
+    logSelection(db, item.kind, item.id, Date.now(), {
+      sentenceId, position: sentencePicks++, source: "keyboard",
+    });
     showGroupHint(item.kind, item.id);
   }
 }
@@ -991,7 +1038,7 @@ function kbCompletions() {
           onTap: () => {
             kbText = "";
             renderBar();
-            tap(e.text, "entity", e.id, { hint: true });
+            tap(e.text, "entity", e.id, { hint: true, source: "keyboard" });
           },
         }
       : {
@@ -1002,7 +1049,7 @@ function kbCompletions() {
           onTap: () => {
             kbText = "";
             renderBar();
-            tap(e.text, "sense", e.id, { hint: true });
+            tap(e.text, "sense", e.id, { hint: true, source: "keyboard" });
           },
         },
   );
@@ -1336,7 +1383,7 @@ async function itemCell(item, gKind) {
   // cell (tap = card, drag = move/swap, × = remove).
   const onSpeak = editing
     ? () => {}
-    : () => tap(item.label, item.item_kind, item.item_id);
+    : () => tap(item.label, item.item_kind, item.item_id, { source: "group" });
   const el = item.item_kind === "sense"
     ? senseCell(
         { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },

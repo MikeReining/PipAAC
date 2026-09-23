@@ -502,8 +502,14 @@ hour. Outside UTC the time-of-day term favors the wrong hours. The
 amendment below stores the local offset per event so the hour is local and
 survives travel and daylight-saving changes.
 
-**Amendment — DECIDED 2026-09-22** (not built). Sentences, input path, and
-local time. Execution: `docs/phases/006_Prediction_Engine.md` slice 1.
+**Amendment — DECIDED 2026-09-22, BUILT** (006 slice 1). Sentences, input
+path, and local time. The defect above is fixed: `logSelection` stores
+`-new Date(at).getTimezoneOffset()` per event and the funnel's hour term
+reads `strftime('%H', selected_at / 1000 + tz_offset_min * 60,
+'unixepoch')` (`public/shared/funnel.mjs`). `openSentence` /
+`closeSentence` / `detachEvent` live there too; `board.js` opens a row on
+the first pick of a bar, closes `spoken` on Speak and `cleared` on Clear,
+and detaches a logged pick when ⌫ pops it back into the keyboard buffer.
 
 ```sql
 -- One row per sentence the child builds. Ends when spoken or cleared;
@@ -532,7 +538,10 @@ count as pairs or phrases) and get `tz_offset_min` backfilled once with the
 device's offset at migration — best effort, stated as such.
 
 Delete, backspace, and form changes inside a sentence rewrite `position`
-so the log matches the sentence that was spoken.
+so the log matches the sentence that was spoken. **BUILT**: ⌫ detaches
+the popped pick's event (`sentence_id`/`position` → NULL — it stays as
+usage evidence) and shifts the remaining members down via `detachEvent`.
+Closed sentences are never rewritten — history stays as spoken.
 
 ### 6.2d Strip impressions
 
@@ -1064,13 +1073,13 @@ Accepted in founder review the day it was proposed. The amendments:
    `IF NOT EXISTS` so boot is idempotent on an existing database;
    `PRAGMA user_version` still carries the schema version for future
    real migrations.
-8. Prediction amendment (founder review, 2026-09-22; not built):
-   `sentence`, event-log `sentence_id` / `position` / `source` /
-   `tz_offset_min`, `strip_impression`, `prediction_weights`, and the
-   profile's `jev_sharing` and `listening` settings (§ 6.2c–6.2e). The
-   `ALTER TABLE` columns are the first real migration, so this amendment
-   also ends the `IF NOT EXISTS`-only boot: `PRAGMA user_version` gates
-   the step. Partner words are never a column anywhere.
+8. Prediction amendment (founder review, 2026-09-22): `sentence` and the
+   event-log `sentence_id` / `position` / `source` / `tz_offset_min`
+   columns are **BUILT** (006 slice 1; `PRAGMA user_version` 5, pre-
+   amendment rows backfilled with the device's offset once). Still
+   pending for later slices: `strip_impression`, `prediction_weights`,
+   and the profile's `jev_sharing` and `listening` settings (§ 6.2d–e).
+   Partner words are never a column anywhere.
 
 ---
 
