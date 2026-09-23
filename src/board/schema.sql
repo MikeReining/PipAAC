@@ -255,6 +255,15 @@ CREATE TABLE IF NOT EXISTS image_override (
   CHECK ((photo_key IS NULL) != (image_id IS NULL))
 );
 
+-- Hidden words (Language_And_Voice_Schema § 14.4, Masking § 2): a hidden
+-- sense keeps its core_cell and every group_cell — renderers draw a
+-- ghost tile that cannot speak, and the word leaves strip candidates
+-- and keyboard completions. Synced like every other caregiver edit.
+CREATE TABLE IF NOT EXISTS sense_mask (
+  sense_id TEXT PRIMARY KEY REFERENCES sense(id),
+  status TEXT NOT NULL CHECK (status IN ('hidden', 'shown'))
+);
+
 -- Groups: one kind of container. The index is a coordinate map (slots
 -- 10–59); items sit at fixed (page, slot) inside a group. Positions move
 -- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.

@@ -43,6 +43,7 @@ import {
   moveGroup,
   moveItem,
   pageCount,
+  maskedSenseIds,
   placeItem,
   removeItem,
   removeItemUndoable,
@@ -51,6 +52,7 @@ import {
   retireEntity,
   senseGroups,
   setEntityPhoto,
+  setMask,
   setSetting,
   swapGroups,
   swapItems,
@@ -102,6 +104,7 @@ function onSyncApplied() {
   syncRepaintTimer = setTimeout(() => {
     entityPhoto.clear(); // photo_key may have changed
     senseMeta.clear();   // image overrides may have landed
+    kbIndex = null;      // masks and renames may have landed
     const p = ALL(db,
       "SELECT keyboard_mode, keyboard_order, highlight_next, jev_sharing FROM learner_profile WHERE id = 'prf_local'",
     )[0] ?? {};
@@ -345,7 +348,8 @@ const HELP_SENSE_ID = "sns_0025";  // help
 /** The four resting cards shown when the sentence bar is empty. */
 async function idleStarters() {
   const cards = [];
-  const hello = senseById(HELLO_SENSE_ID);
+  const masked = maskedSenseIds(db);
+  const hello = masked.has(HELLO_SENSE_ID) ? null : senseById(HELLO_SENSE_ID);
   if (hello) {
     cards.push({ id: hello.id, label: hello.label, glyph: "👋", role: hello.fitzgerald_role,
       onTap: () => tap(hello.label, "sense", hello.id, { hint: true, source: "strip" }) });
@@ -363,7 +367,7 @@ async function idleStarters() {
      GROUP BY e.id ORDER BY COUNT(l.id) DESC, MAX(l.selected_at) DESC, e.rowid LIMIT 1`,
   )[0];
   if (top) cards.push({ entity: top });
-  const help = senseById(HELP_SENSE_ID);
+  const help = masked.has(HELP_SENSE_ID) ? null : senseById(HELP_SENSE_ID);
   if (help) {
     cards.push({ id: help.id, label: help.label, glyph: "🆘", role: help.fitzgerald_role,
       onTap: () => tap(help.label, "sense", help.id, { hint: true, source: "strip" }) });
@@ -684,6 +688,7 @@ function renderGrid() {
     [locale],
   );
   const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
+  const masked = maskedSenseIds(db);
   const grid = $("grid");
   grid.style.gridTemplateColumns = "repeat(10, 1fr)";
   grid.style.gridTemplateRows = "repeat(6, 1fr)";
@@ -698,6 +703,16 @@ function renderGrid() {
       empty.className = "cell empty";
       empty.setAttribute("aria-hidden", "true");
       grid.appendChild(empty);
+      continue;
+    }
+    // A hidden word keeps its slot as a ghost tile (Design_System mask
+    // tokens — faded, never tappable or spoken); nothing moves into the
+    // space (Masking § 2).
+    if (masked.has(c.sense_id)) {
+      const ghost = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
+      ghost.classList.add("masked");
+      ghost.disabled = true;
+      grid.appendChild(ghost);
       continue;
     }
     const el = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
@@ -1159,7 +1174,9 @@ function buildKbIndex() {
        (SELECT COUNT(*) FROM learner_event_log le
          WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
      FROM label l JOIN sense s ON s.id = l.sense_id
-     WHERE l.status = 'approved' AND l.locale = ?`,
+     WHERE l.status = 'approved' AND l.locale = ?
+       AND NOT EXISTS (SELECT 1 FROM sense_mask m
+                       WHERE m.sense_id = s.id AND m.status = 'hidden')`,
     [locale],
   ).map((w) => ({
     kind: "sense",
@@ -1546,6 +1563,17 @@ async function itemCell(item, gKind, ctx = {}) {
   const onSpeak = gestures
     ? () => {}
     : () => tap(item.label, item.item_kind, item.item_id, { source: "group" });
+  // A hidden word's group cell is a ghost too — inert for the child;
+  // in Edit mode a tap still opens its card so the caregiver can unhide.
+  if (item.item_kind === "sense" && maskedSenseIds(db).has(item.item_id)) {
+    const ghost = senseCell(
+      { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
+      gestures ? () => openWordCard(item) : () => {},
+    );
+    ghost.classList.add("masked");
+    ghost.style.pointerEvents = gestures ? "auto" : "none"; // Edit mode can open the card to unhide
+    return ghost;
+  }
   const el = item.item_kind === "sense"
     ? senseCell(
         { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
@@ -2050,6 +2078,14 @@ function openWordCard(item) {
   $("wc-ownpiclabel").hidden = isEnt;
   $("wc-ownpic").value = "";
   $("wc-remove").hidden = !isEnt;
+  // Hide word (Masking § 2): catalog words only — entities retire instead.
+  if (isEnt) {
+    $("wc-hide").hidden = true;
+  } else {
+    const hidden = maskedSenseIds(db).has(item.item_id);
+    $("wc-hide").hidden = false;
+    $("wc-hide").textContent = hidden ? "Show word" : "Hide word";
+  }
   $("wc-grouplist").hidden = true;
   if (isEnt && item.photo_key) {
     loadPhotoURL(item.photo_key).then((url) => {
@@ -2290,6 +2326,21 @@ $("wc-show").addEventListener("click", () => {
 
 /** Remove = retire (never delete). The row, photo, and placements stay;
  *  Undo restores it. */
+/** Hide word (009 slice 9): the sense keeps every cell but renders as a
+ *  ghost — unspoken, out of the strip and completions — until Show. */
+$("wc-hide").addEventListener("click", () => {
+  const it = cardItem;
+  if (!it || it.item_kind !== "sense") return;
+  const hidden = !maskedSenseIds(db).has(it.item_id);
+  setMask(db, it.item_id, hidden);
+  close("wordcard");
+  kbIndex = null; // completions must drop/restore the word
+  rerenderView();
+  renderGrid();
+  renderStrip();
+  toast(hidden ? `Hid ${it.label}` : `Showing ${it.label}`);
+});
+
 $("wc-remove").addEventListener("click", () => {
   const it = cardItem;
   retireEntity(db, it.item_id);

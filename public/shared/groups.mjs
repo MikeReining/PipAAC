@@ -596,6 +596,25 @@ export function setSetting(db, key, value) {
   recordOp(db, "set_setting", { key, value });
 }
 
+/** Hide or show a catalog word (Masking § 2): a sense_mask row, synced
+ *  like every other caregiver edit. The word keeps its core_cell and
+ *  group_cells — only the render and the funnel change. */
+export function setMask(db, senseId, hidden) {
+  db.prepare(
+    `INSERT INTO sense_mask (sense_id, status) VALUES (?, ?)
+     ON CONFLICT(sense_id) DO UPDATE SET status = excluded.status`,
+  ).run(senseId, hidden ? "hidden" : "shown");
+  recordOp(db, "set_mask", { senseId, hidden });
+}
+
+/** The hidden sense ids — renderers and the funnel consult this. */
+export function maskedSenseIds(db) {
+  return new Set(
+    db.prepare("SELECT sense_id FROM sense_mask WHERE status = 'hidden'").all()
+      .map((r) => r.sense_id),
+  );
+}
+
 export function createGroup(db, { name, photoKey = null, id = null, indexSlot = null }) {
   const slot = indexSlot ?? lowestFreeIndexSlot(db);
   if (slot === null) throw new Error("group index is full");

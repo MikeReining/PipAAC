@@ -267,6 +267,8 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
        WHERE s.tier = 'primary_fringe'
          AND EXISTS (SELECT 1 FROM label lb WHERE lb.sense_id = s.id
                      AND lb.kind = 'lemma' AND lb.status = 'approved' AND lb.locale = ?)
+         AND NOT EXISTS (SELECT 1 FROM sense_mask m
+                         WHERE m.sense_id = s.id AND m.status = 'hidden')
          AND EXISTS (SELECT 1 FROM learner_event_log l
                      WHERE l.item_kind = 'sense' AND l.item_id = s.id)`,
     )
@@ -377,8 +379,15 @@ export function keyboardContinuations(db, sentence, locale, now = Date.now(), mo
   const tail = sentence[sentence.length - 1];
   if (!tail) return [];
 
+  // Hidden words leave the strip and completions (Masking § 2).
+  const masked = new Set(
+    db.prepare("SELECT sense_id FROM sense_mask WHERE status = 'hidden'").all()
+      .map((r) => r.sense_id),
+  );
+
   const merged = new Map(); // "kind:id" -> {kind, id, bigrams, invited, freq, last}
   const put = (kind, id, { bigrams = 0, invited = false } = {}) => {
+    if (kind === "sense" && masked.has(id)) return;
     const key = `${kind}:${id}`;
     const r = merged.get(key) ?? { kind, id, bigrams: 0, invited: false, freq: 0, last: 0 };
     r.bigrams += bigrams;

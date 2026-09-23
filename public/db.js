@@ -101,8 +101,8 @@ function migrateSchema(d, schemaSql) {
   const tables = [
     "sense", "utterance", "label", "image", "voice", "clip", "core_cell",
     "learner_profile", "personal_entity", "entity_enrichment",
-    "learner_event_log", "clip_override", "image_override", "board_group",
-    "group_cell",
+    "learner_event_log", "clip_override", "image_override", "sense_mask",
+    "board_group", "group_cell",
     "group_label", "sync_op", "sync_baseline", "sentence",
     "strip_impression",
   ];

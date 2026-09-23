@@ -374,6 +374,20 @@ three.
 Done when: that passes and a person can hide a word without moving any
 other cell.
 
+**DONE.** `sense_mask` (`src/board/schema.sql`, sync op `set_mask` in
+`public/shared/ops.mjs`); `setMask`/`maskedSenseIds` in
+`public/shared/groups.mjs`. The grid and group pages draw a `.cell.masked`
+ghost (design tokens `--mask-*`; Edit-mode taps still open the card so a
+caregiver can unhide in place). `stripScored`, `keyboardContinuations`,
+`buildKbIndex`, and the idle starters all filter hidden senses. Card
+control: `wc-hide`, catalog words only — entities keep retire/restore.
+Works Tests: `src/board/mask.test.mjs` (byte-identical `core_cell` +
+`group_cell`, funnel exclusion and restore, op replay) and
+`scripts/probes/mask_probe.mjs` (hide → ghost → tap logs zero events and
+appends nothing → Show restores). Note: core words are never strip
+candidates (no-core rule), so the funnel leg proves itself on the fringe
+word `juice`.
+
 ---
 
 ## Slice 10 — Suggested words

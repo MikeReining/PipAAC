@@ -18,7 +18,11 @@ Pip AAC rejects this paternalism:
 
 ## 2. Vocabulary Masking (Cell Blanking)
 
-**DECIDED 2026-09-22** (not built).
+**BUILT** (009 slice 9) — `sense_mask` (`docs/product/Language_And_Voice_Schema.md`
+§ 14.4); ghost cells in `public/board.js` `renderGrid`/`itemCell`; funnel
+exclusions in `public/shared/funnel.mjs` `stripScored`/`keyboardContinuations`;
+the word card's Hide/Show (`wc-hide`). Works Test: `src/board/mask.test.mjs`
++ `scripts/probes/mask_probe.mjs`.
 
 ```text
 +------------------------------------+       +------------------------------------+

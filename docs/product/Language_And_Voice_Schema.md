@@ -1284,6 +1284,10 @@ The partner sentence is still never a column anywhere (§ 12 item 8).
 
 ### 14.4 Hidden words (009 slice 9)
 
+**BUILT** — `src/board/schema.sql`; writes via `setMask`/`maskedSenseIds` in
+`public/shared/groups.mjs`; syncs as the `set_mask` op in
+`public/shared/ops.mjs` (`SYNCED_TABLES`).
+
 ```sql
 CREATE TABLE sense_mask (
   sense_id TEXT PRIMARY KEY REFERENCES sense(id),

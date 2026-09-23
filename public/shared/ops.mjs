@@ -185,6 +185,16 @@ export function applyOp(db, op) {
       case "clear_image_override":
         clearImageOverride(db, a.senseId);
         break;
+      case "set_mask": {
+        // The row only means something while the sense exists here.
+        if (db.prepare("SELECT 1 AS x FROM sense WHERE id = ?").all(a.senseId)[0]) {
+          db.prepare(
+            `INSERT INTO sense_mask (sense_id, status) VALUES (?, ?)
+             ON CONFLICT(sense_id) DO UPDATE SET status = excluded.status`,
+          ).run(a.senseId, a.hidden ? "hidden" : "shown");
+        }
+        break;
+      }
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -211,6 +221,7 @@ export function listOps(db) {
 const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
   "clip_override", "image_override", "entity_enrichment", "group_cell",
+  "sense_mask",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */
