@@ -1,6 +1,7 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Ready for slice 1 (the layer). The design below is **DECIDED
+**Status:** Slice 1 built (the layer). Next: slice 2 — Spotlight on one
+device. The design below is **DECIDED
 2026-09-22** (founder; not built). Slices are **PROPOSED**.
 
 Founder intake: `docs/founder/2026-09-22_Spotlight_Partner_Modeling.md`.
@@ -189,6 +190,22 @@ offers that routine's saved list.
    through groups. Works test: with a spotlight on, tap every dimmed cell —
    each speaks and joins the sentence; the coordinate map is byte-identical
    before and after.
+
+   **DONE.** `public/shared/spotlight.mjs` owns the layer: a spotlight is
+   a Set of `kind:id` targets, in-memory session state (lists and sync
+   are slices 2–3); `startSpotlight` reports masked targets as skipped
+   and refuses an all-masked list. `spotMark` glows/dims cells in
+   `renderGrid`, `itemCell`, and `groupIndexCell`; `spotChrome` glows the
+   `🗂️ Groups` anchor when a target needs the route walk
+   (`needsRouteWalk` — any target in a group but off the board) and shows
+   the `🔦 name · End` chip, whose one tap ends it. Tokens `--glow` /
+   `--dim-o` in `public/index.html`. `window.pip.spotlight` is the
+   start/end API slices 2–5 drive. Works Tests:
+   `src/board/spotlight.test.mjs` (masked skipped, route groups found,
+   maps untouched) and `scripts/probes/spotlight_probe.mjs` (1 glow + 59
+   dimmed, a dimmed tap speaks and appends, index glows the containing
+   groups, `juice` glows inside its group, chip clears all, map
+   byte-identical).
 2. **Spotlight on one device.** Saved lists, quick pick, session with timer
    and midnight end, the chip. Works test: start, restart the app — still
    on; pass midnight — off.

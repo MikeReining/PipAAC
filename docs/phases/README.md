@@ -15,8 +15,8 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | 014 slice 1 — renderer of any shape (removes the ten-column assumption; unblocks the 15-cell starters). | `docs/phases/014_Grid_Density_And_Fit.md` |
-| **P2** | 013 slice 1 — the attention layer (glow, dim, never mute; route walk into groups). Also serves 014's upgrade highlight. | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
+| **P1** | 013 slice 2 — Spotlight on one device (saved lists, quick pick, session timer, the chip's full lifecycle). | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
+| **P2** | 014 slice 2 — starter maps (Core 15, Urgent needs) in the coordinate map doc; the renderer already draws them. | `docs/phases/014_Grid_Density_And_Fit.md` |
 | blocked | 011 slice 9 — free and lifetime (billing + retention delete — needs founder ruling on entitlement) | `docs/phases/011_Sync_And_Web_Editing.md` |
 
 ## Live index
@@ -31,8 +31,8 @@ Executing phases only. Each row names the **next** slice.
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 10 — suggested words (blocked on 008 slice 3); slice 5 is post-launch |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Blocked. Slice 9 — free and lifetime (needs founder ruling on entitlement) |
-| [013 — Spotlight and partner modeling](013_Spotlight_And_Partner_Modeling.md) | **P2.** Slice 1 — the attention layer |
-| [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | **P1.** Slice 1 — renderer of any shape; then slice 2 — starter maps |
+| [013 — Spotlight and partner modeling](013_Spotlight_And_Partner_Modeling.md) | **P1.** Slice 2 — Spotlight on one device (the layer is built) |
+| [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | **P2.** Slice 2 — starter maps (the renderer is built) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

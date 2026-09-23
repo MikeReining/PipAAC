@@ -89,9 +89,14 @@ Grammar roles (border / label-strip fill):
 - **Arrange / lifted** — Parent Corner edit mode: dashed ink border +
   shadow.
 - **Masked** — border `#cfc9bb`, fill `#efeadf`, label `#a39c8a`, art at
-  ~18% opacity, space preserved. The `.masked` style is shipped; the
-  masking feature itself is `docs/product/Vocabulary_Masking_And_Safety.md`
-  (not built).
+  ~18% opacity, space preserved, untappable. The `.masked` style is
+  shipped; the masking feature is built (009 slice 9,
+  `docs/product/Vocabulary_Masking_And_Safety.md` § 2).
+- **Spotlight** — the attention layer (013 slice 1): target words get a
+  steady glow (`--glow` ring + halo), every other word dims to
+  `--dim-o`, nothing is disabled and nothing moves. A masked cell is
+  never glowed. The `🔦 name · End` chip sits in the top bar while a
+  spotlight runs.
 - **Empty cell** — dashed `#d8d4c8`, transparent, never collapses. The
   grid renders all 60 slots; a gap is a placeholder, not a layout shift.
 

@@ -40,6 +40,8 @@
         --mask-f: #efeadf;       /* masked/disabled fill */
         --mask-t: #a39c8a;       /* masked text */
         --press-f: #f2efe6;      /* pressed tile art area */
+      --glow: #e8a200;         /* attention layer — target word glow */
+      --dim-o: 0.45;           /* attention layer — non-target dim */
         --word-font: "Andika", -apple-system, "Helvetica Neue", sans-serif;
       }
       /* Grammar roles: --rb border, --rf label-strip fill. One pair per
@@ -341,6 +343,25 @@
       .cell.masked { border-color: var(--mask-b); background: var(--mask-f); pointer-events: none; }
       .cell.masked .tlabel { background: var(--mask-f); color: var(--mask-t); }
       .cell.masked .tart img { opacity: 0.18; }
+      /* Attention layer (013): glow the targets, dim the rest — every
+         cell stays 100% tappable and speaks; nothing moves, nothing is
+         disabled (§ 2.1). Steady glow; no pulse unless a setting asks. */
+      .cell.glow, .gcell.glow, .anchor.glow {
+        box-shadow: 0 0 0 4px var(--glow), 0 0 18px rgba(232, 162, 0, 0.55);
+        z-index: 1;
+      }
+      .cell.dimmed, .gcell.dimmed { opacity: var(--dim-o); }
+      /* The end chip: only while a spotlight runs; one tap ends it. */
+      #spot-chip {
+        border: 2px solid var(--glow);
+        background: var(--cream);
+        color: var(--ink-text);
+        border-radius: 999px;
+        font-weight: 700;
+        padding: 0 12px;
+        white-space: nowrap;
+      }
+      #spot-chip[hidden] { display: none; }
       /* Empty cell — reserved space, never collapses. */
       .cell.empty {
         border-style: dashed;
@@ -800,6 +821,7 @@
       <div id="bar" title="Sentence"></div>
       <button id="clear" class="bar-btn" title="Clear" disabled>Clear</button>
       <button id="speak" class="bar-btn primary" title="Speak" disabled>Speak</button>
+      <button id="spot-chip" hidden>🔦 Spotlight · End</button>
       <button id="corner" class="corner-btn" title="Parent corner">✚</button>
     </div>
     <div id="strip">

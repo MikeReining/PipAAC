@@ -17,6 +17,9 @@ import {
   showGate,
 } from "./shared/funnel.mjs";
 import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
+import {
+  endSpotlight, needsRouteWalk, spotlight, spotlightGroups, startSpotlight,
+} from "./shared/spotlight.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
 import { buildIndex, suggest } from "./shared/spelling.mjs";
@@ -705,6 +708,33 @@ function stripSlots(cols) {
   return Math.min(4, Math.max(2, Math.floor((cols - 2) / 2)));
 }
 
+/* --- the attention layer (013 § 2): a running spotlight glows its
+ *  target words and dims the rest — every cell stays tappable and
+ *  speaks; masked cells are skipped entirely (never unmask). Slice 2
+ *  owns lists/sessions; this is the layer itself. --- */
+
+/** Mark a word cell under the spotlight: target → glow, else dim. */
+function spotMark(el, key) {
+  const s = spotlight();
+  if (!s) return;
+  el.classList.add(s.targets.has(key) ? "glow" : "dimmed");
+}
+
+/** The sense ids the home grid rendered — `spotChrome` walks routes
+ *  against it from any view. */
+let boardSenseIds = new Set();
+
+/** Chrome the layer owns outside the cells: the Groups anchor glows when
+ *  a target needs the route walk, and the end chip shows while running. */
+function spotChrome() {
+  const s = spotlight();
+  const walk = !!s && needsRouteWalk(s.targets, boardSenseIds);
+  $("anchor-groups").classList.toggle("glow", walk);
+  const chip = $("spot-chip");
+  chip.hidden = !s;
+  if (s) chip.textContent = `🔦 ${s.name} · End`;
+}
+
 /** The strip spans the board's columns; the tray holds the prediction
  *  slots and the two anchors keep a column each. */
 function sizeStrip(cols) {
@@ -767,9 +797,12 @@ function renderGrid() {
     }
     const el = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
     el.addEventListener("click", () => tap(c.label, "sense", c.sense_id));
+    spotMark(el, `sense:${c.sense_id}`);
     cellEls.set(c.sense_id, el);
     grid.appendChild(el);
   }
+  boardSenseIds = new Set(cells.map((c) => c.sense_id));
+  spotChrome();
   fitLabels(grid);
 }
 
@@ -967,6 +1000,11 @@ $("anchor-kb").addEventListener("click", () => {
   $("kb-device")?.focus();
 });
 $("anchor-groups").addEventListener("click", openGroupIndex);
+$("spot-chip").addEventListener("click", () => {
+  endSpotlight();
+  renderGrid();
+  rerenderView();
+});
 
 /* --- keyboard: a board mode, not a modal. The locale's key map renders
    into the grid in place (same 10×6 geometry). Typing feeds prefix
@@ -1475,9 +1513,10 @@ function flashCell(el) {
 
 /** One group on the index. `row` is a board_group row; `vslot` is its
  *  visual slot on the current index page (drag targets are visual). */
-function groupIndexCell(row, vslot) {
+function groupIndexCell(row, vslot, spot = null) {
   const el = document.createElement("button");
   el.className = "gcell";
+  if (spot) el.classList.add(spot);
   el.dataset.slot = vslot;
   el.dataset.group = row.id;
   const g = document.createElement("span");
@@ -1560,6 +1599,9 @@ function renderGroupIndex() {
     indexPages = Math.max(indexPages, v.page + 1);
     if (v.page === indexPageNo) placed.set(v.slot, g);
   }
+  // Route walk (013 § 3): group tiles holding a target glow; the rest dim.
+  const spotGroups = spotlight()
+    ? spotlightGroups(db, spotlight().targets) : null;
   if (indexPageNo >= indexPages) indexPageNo = indexPages - 1;
   for (let slot = 0; slot < cells; slot++) {
     if (slot === 0) {
@@ -1590,7 +1632,8 @@ function renderGroupIndex() {
     }
     const row = placed.get(slot);
     if (row) {
-      zg.appendChild(groupIndexCell(row, slot));
+      zg.appendChild(groupIndexCell(
+        row, slot, spotGroups ? (spotGroups.has(row.id) ? "glow" : "dimmed") : null));
       continue;
     }
     const empty = document.createElement("button");
@@ -1668,6 +1711,7 @@ async function itemCell(item, gKind, ctx = {}) {
         { spoken_name: item.label, photo_key: item.photo_key },
         onSpeak,
       );
+  spotMark(el, `${item.item_kind}:${item.item_id}`);
   el.dataset.slot = item.vslot ?? item.slot_index;
   el.dataset.item = `${item.item_kind}:${item.item_id}`;
   if (!gestures) return el;
@@ -3004,6 +3048,15 @@ window.pip = {
   locale,
   audio,
   repaint() { renderGrid(); renderStrip(); rerenderView(); },
+  spotlight: {
+    start(targets, name) {
+      const r = startSpotlight(db, targets, name);
+      renderGrid(); rerenderView();
+      return r;
+    },
+    end() { endSpotlight(); renderGrid(); rerenderView(); },
+    get active() { return spotlight(); },
+  },
   get sentence() {
     return sentence.map((i) => ({ ...i }));
   },
