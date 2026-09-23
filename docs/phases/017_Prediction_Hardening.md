@@ -539,6 +539,28 @@ parameter (so a founder can see the users really differ).
 
 Done when: those pass and the manifest is committed.
 
+**Status (BUILT 2026-09-23, `ef70a29`).** `personas.mjs` draws one
+mulberry32 stream per user id — routine, vocab 30–300, Zipf skew,
+repetition, weekly novelty (words are introduced on later days, not all
+at once), jitter, weekend shift, a mid-month schedule change, 2–8
+entities, echo rate 10–70%, timezone, deciding-pause lognormal. Eval
+users 81–100 each carry a pattern absent from 1–80 (night shift,
+vacation week, new sibling mid-month, comment-heavy). `gen_users.mjs`
+builds 30 days (Monday-anchored like the sim) from the two committed
+banks — `core_templates` (177 lines) and `llm_varied` (128), every
+token verified a catalog lemma — filling slots Zipf-weighted from
+category pools plus persona entities. Output: 100 users × 30 days,
+58.7k messages, 2.8% off-board typed words, ~1.9k repairs
+(`{position, wrong}`), ~20k partner turns, every message tagged
+`template`/`llm` for the per-bank Jev report. `manifest.json` pins
+seed, generator version, and a SHA-256 per bank and user file;
+`--check` regenerates and refuses on drift (proven by tampering a
+bank → exit 1 naming the drifted files). Proof in
+`scripts/prediction/synth/synth.test.mjs`: byte-identical regen,
+different ids differ, persona spread, 30 days + resolvable words +
+repairs + partner turns + typed rate, the no-predictor-import grep,
+and manifest verification.
+
 ## Step 12 — Keep evaluation users unseen
 
 Goal: users 81–100 cannot influence any weight, prompt, or threshold
