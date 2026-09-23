@@ -3196,7 +3196,7 @@ async function renderEditorGrid() {
       zg.appendChild(empty);
       continue;
     }
-    zg.appendChild(await itemCell(item, gKind, ctx));
+    zg.appendChild(await groupsUi.itemCell(item, gKind, ctx));
   }
   fitLabels(zg);
 }

@@ -320,5 +320,8 @@ export function mountGroups({
       groupKey = id;
       groupPageNo = page;
     },
+    // The web editor paints the same cells. It stays in board.js until
+    // that surface moves; this is the painter it already called.
+    itemCell,
   };
 }
