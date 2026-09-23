@@ -578,7 +578,9 @@ Jev answered after the 150 ms display window: logged, not shown.
 
 ### 6.2e Prediction settings and learned weights
 
-**DECIDED 2026-09-22** (not built). Per profile.
+`prediction_weights` is **BUILT** (006 slice 4, `user_version` 7). The
+`learner_profile` columns below remain **DECIDED 2026-09-22** (not built —
+Jev sharing lands with 006 slice 5, `listening` with 008). Per profile.
 
 ```sql
 ALTER TABLE learner_profile ADD COLUMN jev_sharing INTEGER NOT NULL DEFAULT 1

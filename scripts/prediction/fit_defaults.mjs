@@ -2,7 +2,7 @@
 /**
  * 006 slice 3 — fit the shipped starting weights (Dual_Engine §5.3).
  *
- * Replays fixture days 1–10 through the real feature path, collecting
+ * Replays fixture days 1–5 through the real feature path, collecting
  * one softmax training row per pick: the candidate feature vectors the
  * ranker saw and the pick that resolved them ('none' when the pick was
  * outside the shortlist). Gradient descent fits θ + none_bias on
@@ -12,7 +12,7 @@
  *
  * Run: node scripts/prediction/fit_defaults.mjs
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 import { createDatabase, importCatalog } from "../../src/board/catalog.mjs";
@@ -28,22 +28,32 @@ import {
 const repoRoot = join(import.meta.dirname, "../..");
 const OUT = join(repoRoot, "data/prediction/defaults.json");
 const { catalog, fixture } = loadSimFixture(repoRoot);
-
-// Collect training rows on days 1–10. The zero model only needs the
-// candidate set + features — eligibility is weight-independent.
+const varied = JSON.parse(
+  readFileSync(join(repoRoot, "src/board/fixtures/routine_days_varied.en.json"), "utf8"));
+// Collect training rows on days 1–5 of BOTH simulated children — the
+// shipped defaults are a deliberately weak prior ("every child"), so each
+// child's on-device learning has headroom (§5.5): a routine child pulls
+// `hour` up, a varied child pulls it down.
+// The zero model only needs the candidate set + features — eligibility
+// is weight-independent.
 const ZERO = { weights: {}, tau: { tile: 0, none: Infinity } };
-const db = createDatabase(":memory:");
-importCatalog(db, catalog);
-const entities = fixture.entities.map((e) =>
-  addPersonalEntity(db, { spokenName: e.name, category: e.category }));
-const { picks } = replayDays(db, catalog, fixture, entities, {
-  measureFrom: 11,
-  offer: (d, sents, at) => {
-    const { candidates, pNone } = stripScored(d, sents, at, "en", ZERO);
-    return { candidates, shown: candidates.slice(0, 4), pNone };
-  },
-});
-const train = picks.filter((p) => p.day <= 10).map((p) => {
+const collect = (fx) => {
+  const db = createDatabase(":memory:");
+  importCatalog(db, catalog);
+  const entities = fx.entities.map((e) =>
+    addPersonalEntity(db, { spokenName: e.name, category: e.category }));
+  const { picks } = replayDays(db, catalog, fx, entities, {
+    measureFrom: 11,
+    offer: (d, sents, at) => {
+      const { candidates, pNone } = stripScored(d, sents, at, "en", ZERO);
+      return { candidates, shown: candidates.slice(0, 4), pNone };
+    },
+  });
+  // Position-0 picks are not strip moments — the strip renders
+  // mid-sentence only, so there is no impression to fit on.
+  return picks.filter((p) => p.day <= 5 && p.candidates.length > 0);
+};
+const train = [...collect(fixture), ...collect(varied)].map((p) => {
   const keys = p.candidates.map((c) => `${c.kind}:${c.id}`);
   return { xs: p.candidates.map((c) => c.x), label: keys.indexOf(p.label) };
 });
@@ -54,7 +64,10 @@ const train = picks.filter((p) => p.day <= 10).map((p) => {
 // P(label ∉ shortlist) on all rows given θ. Fitting θ jointly with a
 // 78%-'none' label set just teaches every feature to suppress.
 const theta = Object.fromEntries(MODEL_FEATURES.map((f) => [f, 0]));
-const LR = 0.4, L2 = 0.002, EPOCHS = 600;
+// Deliberately underfit: shipped defaults are a conservative starting
+// point every child drifts from (§5.5) — early-stopped and stronger L2
+// so each child's own evidence has room to add.
+const LR = 0.4, L2 = 0.02, EPOCHS = 120;
 // Warm start at the slice-2 heuristic's ordering — the fit refines from
 // a sane point instead of wandering to an all-suppress optimum.
 Object.assign(theta, { invited: 2, phrase: 1.5, pair: 1.5, hour: 1.5, recency: 1, freq: 0.8 });
@@ -96,13 +109,14 @@ for (let epoch = 0; epoch < EPOCHS; epoch++) {
   if (epoch % 150 === 0) console.log(`epoch ${epoch} none loss ${(loss / train.length).toFixed(3)}`);
 }
 
-// τ sweep on the same days. A hit saves the child two taps (group walk
-// → strip tile); a false show costs a glance, not a tap — so hits count
-// triple what a false show does.
+// τ sweep on the same days. Objective prices the strip in taps: a hit
+// saves two taps (group walk → strip tile); a false show costs a glance —
+// a fraction of a tap — so the gate trades a little noise for real tap
+// savings, never the reverse.
 const weights = { ...theta, none_bias: bias };
 let best = null;
 for (const tile of [0, 0.02, 0.05, 0.08, 0.12, 0.16, 0.2]) {
-  for (const none of [0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1]) {
+  for (const none of [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1]) {
     let hit = 0, falseShow = 0;
     for (const { xs, label } of train) {
       const rows = xs.map((x, i) => ({ i, x, id: String(i) }));
@@ -113,14 +127,14 @@ for (const tile of [0, 0.02, 0.05, 0.08, 0.12, 0.16, 0.2]) {
       else if (shown.length > 0) falseShow++;
     }
     const hitRate = hit / train.length, falseShowRate = falseShow / train.length;
-    const score = 3 * hitRate - falseShowRate;
+    const score = 2 * hitRate - 0.5 * falseShowRate;
     if (!best || score > best.score) best = { tile, none, hitRate, falseShowRate, score };
   }
 }
 
 const defaults = {
   version: `006-s3.${new Date().toISOString().slice(0, 10)}`,
-  fittedOn: "src/board/fixtures/routine_days.en.json days 1–10",
+  fittedOn: "routine_days.en.json + routine_days_varied.en.json, days 1–5 (weak prior)",
   weights: {
     local_only: Object.fromEntries(
       Object.entries(weights).map(([k, v]) => [k, +v.toFixed(4)])),
@@ -137,4 +151,4 @@ writeFileSync(OUT, JSON.stringify(defaults, null, 2) + "\n");
 console.log(`wrote ${OUT}`);
 console.log(`train rows ${train.length}; θ ${JSON.stringify(defaults.weights.local_only)}`);
 console.log(`τ tile=${best.tile} none=${best.none} — hit ${(best.hitRate * 100).toFixed(1)}% ` +
-  `falseShow ${(best.falseShowRate * 100).toFixed(1)}% on days 1–10`);
+  `falseShow ${(best.falseShowRate * 100).toFixed(1)}% on days 1–5`);

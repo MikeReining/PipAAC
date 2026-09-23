@@ -1,6 +1,8 @@
 # Phase 006 — Prediction Engine
 
-**Status:** Ready to execute. Not started.
+**Status:** In progress — slices 1–4 done. Slice 5 is
+blocked on the founder's `TYPESAFE_API_KEY` Worker secret — see its
+high-risk stop. Slices 6+ follow it.
 
 **DECIDED 2026-09-22** (founder review: "I agree with all of the above …
 please update all documents and create the new documents that we need").
@@ -270,6 +272,34 @@ Proof command: `scripts/test.sh` on `learn.test.mjs`.
 
 Done when: the test passes and a person can see `examples_seen` grow as
 they speak sentences.
+
+**DONE.** `prediction_weights` (`user_version` 7, schema § 6.2e);
+`public/shared/learn.mjs` takes one gradient step per impression on the
+log loss after Speak (`board.js speakSentence` → `learnFromSentence`),
+L2 toward the shipped defaults, `none_bias` on a slower rate so ordering
+evidence lands before the gate moves, and a 50-impression burn-in so a
+child with little data runs the defaults. `local_only` trains on every
+labeled impression; `with_jev` only on `jev_status='answered'` — none
+exist yet, so that row stays unwritten. The sim walker was corrected to
+match production: position-0 picks are not strip moments (the strip
+renders mid-sentence only), so they log no impression and train nothing.
+
+Works Test (`src/board/learn.test.mjs`), prequential — each day scored
+before it is learned: routine child hit rate 25.7% learned vs 24.3%
+fixed defaults; varied child (`routine_days_varied.en.json` — same words
+and entities, habitual phrases at scattered hours) 24.3% vs 23.8%. Both
+beat frozen defaults on days 8–14. The margins are a few picks on ~110
+measured picks — real but small, as expected of 14 days of on-device
+drift. Personalization is not subtle: `hour` ends at 1.93 for the
+routine child vs 0.39 for the varied child. A cleared sentence leaves
+the row byte-identical. Live in Chrome: two taps + Speak wrote the
+`local_only` row with `examples_seen=1`, no console errors.
+
+The slice-3 numbers above were measured under the old walker (position-0
+picks logged impressions). Under the corrected instrument the shipped
+model measures: hit 36.6%, false-show 21.1%, taps/word 1.424,
+shortlist recall 45.1% — and the gate is tap-free (always-showing the
+same ranking scores identical taps, with false-show 60.6%).
 
 ---
 

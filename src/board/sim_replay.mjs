@@ -17,6 +17,7 @@ import {
   showGate,
   stripScored,
 } from "../../public/shared/funnel.mjs";
+import { loadWeights } from "../../public/shared/learn.mjs";
 
 export function loadSimFixture(repoRoot) {
   const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -47,6 +48,18 @@ export const modelOffer = (catalogModel) => (db, sents, at) => {
   return { candidates, shown, pNone };
 };
 
+/** What the board actually runs (slice 4): the child's learned weights
+ *  when prediction_weights has a row, else the shipped defaults. */
+export const liveOffer = (catalogModel) => (db, sents, at) => {
+  const model = {
+    weights: loadWeights(db, catalogModel).weights,
+    tau: catalogModel.tau,
+  };
+  const { candidates, pNone } = stripScored(db, sents, at, "en", model);
+  const shown = showGate(candidates, pNone, model.tau);
+  return { candidates, shown, pNone };
+};
+
 /**
  * Replay the fixture. For every pick the strip's offer is recorded as an
  * impression, then the pick lands — the child takes a shown tile when the
@@ -57,7 +70,7 @@ export const modelOffer = (catalogModel) => (db, sents, at) => {
  * purpose (negative control). Every pick is also pushed onto `picks`
  * with its candidate features — the fit script trains on those.
  */
-export function replayDays(db, catalog, fixture, entities, { offer, measureFrom } = {}) {
+export function replayDays(db, catalog, fixture, entities, { offer, measureFrom, days } = {}) {
   const senseId = new Map();
   for (const l of catalog.labels.filter((l) => l.kind === "lemma" && l.locale === "en")) {
     senseId.set(l.text, l.sense_id);
@@ -83,28 +96,36 @@ export function replayDays(db, catalog, fixture, entities, { offer, measureFrom 
   let taps = 0, words = 0;
   let mTaps = 0, mWords = 0; // measured days only
   const picks = [];
+  const sents = [];          // {id, day, endKind} — slice 4 learns per sentence
   for (const day of fixture.days) {
+    if (days && !days.includes(day.day)) continue;
     const routine = day.kind === "school" ? fixture.schoolDay : fixture.weekendDay;
     const extras = fixture.unscripted[String(day.day)] ?? [];
-    const sents = [...routine.sentences, ...extras].sort((a, b) =>
+    const daySents = [...routine.sentences, ...extras].sort((a, b) =>
       a.at.localeCompare(b.at));
-    for (const s of sents) {
+    for (const s of daySents) {
       const sid = openSentence(db, atFor(day.day, s.at));
       let members = [];
       s.words.forEach((w, i) => {
         const at = atFor(day.day, s.at) + i * 1500; // 1.5 s between picks
         const sentsState = members.map((m) => ({ kind: m.kind, id: m.id }));
-        const { candidates, shown, pNone } = offer(db, sentsState, at);
+        // The strip only renders mid-sentence — a sentence's first pick
+        // shows idle starters, never a strip moment (board.js renderStrip).
+        const { candidates, shown, pNone } = sentsState.length
+          ? offer(db, sentsState, at)
+          : { candidates: [], shown: [], pNone: 0 };
         const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
         const pick = resolve(w);
         const pickKey = `${pick.kind}:${pick.id}`;
         const source = shownKeys.includes(pickKey) ? "strip"
           : isCore(db, pick.kind, pick.id) ? "grid" : "group";
-        logImpression(db, {
-          sentenceId: sid, position: i, shownAt: at,
-          candidates: candidates.map((c) => ({ kind: c.kind, id: c.id, x: c.x ?? {} })),
-          shown: shownKeys, pNone,
-        });
+        if (sentsState.length) {
+          logImpression(db, {
+            sentenceId: sid, position: i, shownAt: at,
+            candidates: candidates.map((c) => ({ kind: c.kind, id: c.id, x: c.x ?? {} })),
+            shown: shownKeys, pNone,
+          });
+        }
         fillChosen(db, sid, { kind: pick.kind, id: pick.id, source });
         logSelection(db, pick.kind, pick.id, at,
           { sentenceId: sid, position: i, source });
@@ -115,7 +136,8 @@ export function replayDays(db, catalog, fixture, entities, { offer, measureFrom 
         if (at >= measureStart) { mWords++; mTaps += cost; }
       });
       closeSentence(db, sid, atFor(day.day, s.at) + s.words.length * 1500, "spoken");
+      sents.push({ id: sid, day: day.day, endKind: "spoken" });
     }
   }
-  return { taps, words, mTaps, mWords, measureStart, picks };
+  return { taps, words, mTaps, mWords, measureStart, picks, sents };
 }

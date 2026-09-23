@@ -511,4 +511,17 @@ BEGIN
   );
 END;
 
-PRAGMA user_version = 6;
+/* Learned per-child weights (schema §6.2e). One row per weight set;
+ * weights drift from the shipped defaults after each spoken sentence.
+ * Never leaves the device. */
+CREATE TABLE IF NOT EXISTS prediction_weights (
+  profile_id TEXT NOT NULL REFERENCES learner_profile(id),
+  weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
+  weights TEXT NOT NULL,                   -- JSON {feature: θ, "none_bias": θ}
+  defaults_version TEXT NOT NULL,          -- the shipped weights it drifts from
+  examples_seen INTEGER NOT NULL DEFAULT 0 CHECK (examples_seen >= 0),
+  updated_at INTEGER NOT NULL CHECK (updated_at > 0),
+  PRIMARY KEY (profile_id, weight_set)
+);
+
+PRAGMA user_version = 7;

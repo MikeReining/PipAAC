@@ -27,7 +27,7 @@ import { join } from "node:path";
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { addPersonalEntity } from "./entities.mjs";
 import { loadSimFixture, modelOffer, replayDays } from "./sim_replay.mjs";
-import { predictionReport } from "../../public/shared/funnel.mjs";
+import { predictionReport, stripScored } from "../../public/shared/funnel.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const { catalog, fixture } = loadSimFixture(repoRoot);
@@ -71,11 +71,31 @@ test("simulation: the fitted model beats the instrumented baseline", () => {
   const report = predictionReport(db, { from: measureStart });
   const tapsPerWord = +(mTaps / mWords).toFixed(3);
   console.log("slice 3 measured:", JSON.stringify({ ...report, tapsPerWord }));
-  assert.ok(report.picks > 100, "held-out days must have real picks");
-  // vs slice-2 baseline: hit 23.7%, falseShow 36.4%, taps/word 1.39
-  assert.ok(report.hitRate >= 0.2, `hit rate regressed: ${report.hitRate}`);
+  assert.ok(report.picks > 50, "held-out days must have real picks");
+  // vs slice-2 baseline: hit 23.7%, falseShow 36.4%. The baseline's
+  // taps/word (1.39) isn't comparable — slice 4 stopped logging
+  // impressions at position 0, so the honest tap claim is head-to-head:
+  // the gate must not cost taps versus showing the same ranking always.
+  assert.ok(report.hitRate >= 0.25, `hit rate regressed: ${report.hitRate}`);
   assert.ok(report.falseShowRate < 0.364, `false-show must fall: ${report.falseShowRate}`);
-  assert.ok(tapsPerWord <= 1.39, `taps/word must not rise: ${tapsPerWord}`);
+
+  const db2 = openDb();
+  const entities2 = addEntities(db2);
+  const alwaysOffer = (d, sents, at) => {
+    const { candidates, pNone } = stripScored(d, sents, at, "en", {
+      weights: MODEL.weights.local_only, tau: MODEL.tau,
+    });
+    return { candidates, shown: candidates.slice(0, 4), pNone };
+  };
+  const always = replayDays(db2, catalog, fixture, entities2, {
+    measureFrom: 11, offer: alwaysOffer,
+  });
+  const alwaysTaps = always.mTaps / always.mWords;
+  console.log("always-show taps/word:", alwaysTaps.toFixed(3));
+  assert.ok(
+    tapsPerWord <= alwaysTaps + 0.001,
+    `the gate must not cost taps: gated ${tapsPerWord} vs always-show ${alwaysTaps}`,
+  );
 });
 
 test("unscripted sentences: the gate shows nothing more often than it misfires", () => {

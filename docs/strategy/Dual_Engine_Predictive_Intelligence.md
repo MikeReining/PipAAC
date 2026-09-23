@@ -302,7 +302,9 @@ Starting weights are the same for every child: tuned on the simulation
 fixtures in 006 and shipped as catalog data. **BUILT** (006 slice 3):
 `features()` + `scoreCandidates()` in `public/shared/funnel.mjs`; weights
 in `data/prediction/defaults.json` → `catalog.prediction`, fitted offline
-by `scripts/prediction/fit_defaults.mjs` on fixture days 1–10. The
+by `scripts/prediction/fit_defaults.mjs` on fixture days 1–5 pooled across
+the routine and varied children — deliberately a weak prior so each
+child's on-device learning has headroom (§ 5.5). The
 `with_jev` set starts identical to `local_only` until an impression
 carries a real `jev` feature.
 
@@ -318,6 +320,16 @@ carries a real `jev` feature.
   is.
 
 ### 5.5 Learning from the child
+
+**BUILT** (006 slice 4): `public/shared/learn.mjs` —
+`learnFromSentence` runs after Speak (`public/board.js` `speakSentence`);
+`prediction_weights` is schema § 6.2e (`user_version` 7); a 50-impression
+burn-in keeps little-data children on the defaults (`loadWeights`);
+`none_bias` learns at a slower rate than feature weights so ordering
+evidence lands before the gate moves. Works Test:
+`src/board/learn.test.mjs` — prequential replay of the routine and varied
+children; both beat frozen defaults on days 8–14 hit rate, and the
+routine child's `hour` weight ends far above the varied child's.
 
 Every strip moment writes an impression: the shortlist, each candidate's
 features, what was shown, and whether Jev answered. The label is the **next

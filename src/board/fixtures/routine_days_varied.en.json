@@ -1,0 +1,1201 @@
+{
+  "comment": "Varied child (006 slice 4): same words and entities as routine_days; habitual phrases recur but at scattered hours \u2014 pair/phrase carry real signal, hour/occasion carry none. Generated deterministically (seed 42) from the routine fixture's vocabulary.",
+  "entities": [
+    {
+      "name": "Cooper",
+      "category": "Toys, Play, Media & Leisure"
+    },
+    {
+      "name": "Grandma",
+      "category": "People, Family & Roles"
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "kind": "school"
+    },
+    {
+      "day": 2,
+      "kind": "school"
+    },
+    {
+      "day": 3,
+      "kind": "school"
+    },
+    {
+      "day": 4,
+      "kind": "school"
+    },
+    {
+      "day": 5,
+      "kind": "school"
+    },
+    {
+      "day": 6,
+      "kind": "weekend"
+    },
+    {
+      "day": 7,
+      "kind": "weekend"
+    },
+    {
+      "day": 8,
+      "kind": "school"
+    },
+    {
+      "day": 9,
+      "kind": "school"
+    },
+    {
+      "day": 10,
+      "kind": "school"
+    },
+    {
+      "day": 11,
+      "kind": "school"
+    },
+    {
+      "day": 12,
+      "kind": "school"
+    },
+    {
+      "day": 13,
+      "kind": "weekend"
+    },
+    {
+      "day": 14,
+      "kind": "weekend"
+    }
+  ],
+  "schoolDay": {
+    "sentences": []
+  },
+  "weekendDay": {
+    "sentences": []
+  },
+  "unscripted": {
+    "1": [
+      {
+        "at": "06:36",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "09:13",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "11:14",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "14:09",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "16:33",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "18:24",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "19:27",
+        "words": [
+          "I",
+          "want",
+          "Grandma"
+        ]
+      },
+      {
+        "at": "20:15",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "20:18",
+        "words": [
+          "good night"
+        ]
+      }
+    ],
+    "2": [
+      {
+        "at": "07:41",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "07:50",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "09:46",
+        "words": [
+          "I",
+          "want",
+          "music"
+        ]
+      },
+      {
+        "at": "11:30",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "12:40",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "12:57",
+        "words": [
+          "all done"
+        ]
+      },
+      {
+        "at": "15:55",
+        "words": [
+          "look",
+          "bird"
+        ]
+      },
+      {
+        "at": "16:21",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "17:03",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "17:13",
+        "words": [
+          "read",
+          "book"
+        ]
+      },
+      {
+        "at": "18:31",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "20:39",
+        "words": [
+          "go",
+          "swim",
+          "pool"
+        ]
+      }
+    ],
+    "3": [
+      {
+        "at": "07:43",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "10:04",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "11:03",
+        "words": [
+          "draw",
+          "book"
+        ]
+      },
+      {
+        "at": "12:33",
+        "words": [
+          "hurt",
+          "knee"
+        ]
+      },
+      {
+        "at": "16:53",
+        "words": [
+          "I",
+          "want",
+          "hug"
+        ]
+      },
+      {
+        "at": "17:33",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "17:56",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "18:09",
+        "words": [
+          "I",
+          "feel",
+          "happy"
+        ]
+      },
+      {
+        "at": "18:28",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      }
+    ],
+    "4": [
+      {
+        "at": "07:02",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "07:37",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "10:06",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "11:04",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "11:53",
+        "words": [
+          "cat",
+          "sleep"
+        ]
+      },
+      {
+        "at": "13:20",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "16:10",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "18:45",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "20:14",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "20:31",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      }
+    ],
+    "5": [
+      {
+        "at": "07:18",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "08:03",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "08:22",
+        "words": [
+          "I",
+          "see",
+          "butterfly"
+        ]
+      },
+      {
+        "at": "08:51",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "09:06",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "10:14",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "12:40",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "14:55",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "15:11",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "17:12",
+        "words": [
+          "I",
+          "want",
+          "pancake"
+        ]
+      },
+      {
+        "at": "19:23",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      }
+    ],
+    "6": [
+      {
+        "at": "08:24",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "11:03",
+        "words": [
+          "good night"
+        ]
+      },
+      {
+        "at": "11:30",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "12:18",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "13:55",
+        "words": [
+          "I",
+          "want",
+          "hug"
+        ]
+      },
+      {
+        "at": "15:39",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "17:26",
+        "words": [
+          "go",
+          "swim",
+          "pool"
+        ]
+      },
+      {
+        "at": "18:08",
+        "words": [
+          "hurt",
+          "knee"
+        ]
+      },
+      {
+        "at": "19:18",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "19:37",
+        "words": [
+          "I",
+          "want",
+          "Grandma"
+        ]
+      }
+    ],
+    "7": [
+      {
+        "at": "06:30",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "09:06",
+        "words": [
+          "I",
+          "want",
+          "music"
+        ]
+      },
+      {
+        "at": "09:15",
+        "words": [
+          "where",
+          "is",
+          "dinosaur"
+        ]
+      },
+      {
+        "at": "09:53",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "12:52",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "15:33",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "15:42",
+        "words": [
+          "ice cream",
+          "please"
+        ]
+      },
+      {
+        "at": "16:53",
+        "words": [
+          "I",
+          "want",
+          "hug"
+        ]
+      },
+      {
+        "at": "19:30",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "19:47",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      }
+    ],
+    "8": [
+      {
+        "at": "08:38",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "08:41",
+        "words": [
+          "I",
+          "want",
+          "more",
+          "milk"
+        ]
+      },
+      {
+        "at": "09:19",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "11:01",
+        "words": [
+          "draw",
+          "book"
+        ]
+      },
+      {
+        "at": "14:36",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "15:30",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "15:35",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "15:52",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "17:45",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "19:28",
+        "words": [
+          "read",
+          "book"
+        ]
+      },
+      {
+        "at": "19:34",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      }
+    ],
+    "9": [
+      {
+        "at": "06:37",
+        "words": [
+          "tired"
+        ]
+      },
+      {
+        "at": "06:51",
+        "words": [
+          "I",
+          "want",
+          "cookie"
+        ]
+      },
+      {
+        "at": "07:30",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "07:39",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "07:42",
+        "words": [
+          "I",
+          "want",
+          "Grandma"
+        ]
+      },
+      {
+        "at": "10:15",
+        "words": [
+          "read",
+          "book"
+        ]
+      },
+      {
+        "at": "10:24",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "10:25",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "15:57",
+        "words": [
+          "red",
+          "ball"
+        ]
+      },
+      {
+        "at": "16:32",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "17:16",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "18:34",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      }
+    ],
+    "10": [
+      {
+        "at": "08:06",
+        "words": [
+          "hurt",
+          "knee"
+        ]
+      },
+      {
+        "at": "08:09",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "09:44",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "13:26",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "13:51",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "14:34",
+        "words": [
+          "play",
+          "outside"
+        ]
+      },
+      {
+        "at": "17:44",
+        "words": [
+          "I",
+          "want",
+          "cookie"
+        ]
+      },
+      {
+        "at": "19:53",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "20:16",
+        "words": [
+          "go",
+          "park"
+        ]
+      }
+    ],
+    "11": [
+      {
+        "at": "07:47",
+        "words": [
+          "good night"
+        ]
+      },
+      {
+        "at": "08:53",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "09:37",
+        "words": [
+          "read",
+          "book"
+        ]
+      },
+      {
+        "at": "10:45",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "11:15",
+        "words": [
+          "draw",
+          "book"
+        ]
+      },
+      {
+        "at": "13:42",
+        "words": [
+          "all done"
+        ]
+      },
+      {
+        "at": "14:03",
+        "words": [
+          "read",
+          "book"
+        ]
+      },
+      {
+        "at": "14:09",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      },
+      {
+        "at": "14:23",
+        "words": [
+          "hurt",
+          "knee"
+        ]
+      },
+      {
+        "at": "15:53",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "20:17",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      }
+    ],
+    "12": [
+      {
+        "at": "06:32",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "07:30",
+        "words": [
+          "I",
+          "want",
+          "hug"
+        ]
+      },
+      {
+        "at": "09:18",
+        "words": [
+          "I",
+          "feel",
+          "happy"
+        ]
+      },
+      {
+        "at": "11:01",
+        "words": [
+          "go",
+          "swim",
+          "pool"
+        ]
+      },
+      {
+        "at": "12:58",
+        "words": [
+          "I",
+          "want",
+          "cookie"
+        ]
+      },
+      {
+        "at": "13:09",
+        "words": [
+          "look",
+          "bird"
+        ]
+      },
+      {
+        "at": "13:20",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "19:52",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "19:53",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      }
+    ],
+    "13": [
+      {
+        "at": "07:21",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "07:28",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "07:40",
+        "words": [
+          "read",
+          "book"
+        ]
+      },
+      {
+        "at": "07:52",
+        "words": [
+          "dog",
+          "is",
+          "loud"
+        ]
+      },
+      {
+        "at": "09:11",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "09:40",
+        "words": [
+          "go",
+          "park"
+        ]
+      },
+      {
+        "at": "14:38",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "15:04",
+        "words": [
+          "I",
+          "want",
+          "iPad"
+        ]
+      },
+      {
+        "at": "15:10",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "15:33",
+        "words": [
+          "good night"
+        ]
+      },
+      {
+        "at": "16:28",
+        "words": [
+          "I",
+          "want",
+          "cereal"
+        ]
+      },
+      {
+        "at": "16:39",
+        "words": [
+          "I",
+          "want",
+          "bubbles"
+        ]
+      }
+    ],
+    "14": [
+      {
+        "at": "09:59",
+        "words": [
+          "play",
+          "Cooper"
+        ]
+      },
+      {
+        "at": "10:34",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "10:57",
+        "words": [
+          "I",
+          "want",
+          "snack"
+        ]
+      },
+      {
+        "at": "11:01",
+        "words": [
+          "I",
+          "see",
+          "butterfly"
+        ]
+      },
+      {
+        "at": "11:51",
+        "words": [
+          "I",
+          "want",
+          "bath"
+        ]
+      },
+      {
+        "at": "11:53",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      },
+      {
+        "at": "15:25",
+        "words": [
+          "I",
+          "want",
+          "pizza"
+        ]
+      },
+      {
+        "at": "17:55",
+        "words": [
+          "good night"
+        ]
+      },
+      {
+        "at": "18:43",
+        "words": [
+          "I",
+          "want",
+          "swing"
+        ]
+      }
+    ]
+  }
+}

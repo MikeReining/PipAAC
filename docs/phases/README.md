@@ -15,8 +15,9 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | Slice 4 — learning on the device: per-child weights after Speak. | `docs/phases/006_Prediction_Engine.md` |
-| **P2** | Slice 7 — the web editor. | `docs/phases/011_Sync_And_Web_Editing.md` |
+| **P1** | Slice 7 — the web editor. | `docs/phases/011_Sync_And_Web_Editing.md` |
+| **P2** | Slice 4 — record my own. | `docs/phases/009_Word_Library_And_Customize.md` |
+| blocked | 006 slice 5 — Jev reranker (needs founder's `TYPESAFE_API_KEY`) | `docs/phases/006_Prediction_Engine.md` |
 
 ## Live index
 
@@ -25,12 +26,12 @@ Executing phases only. Each row names the **next** slice.
 | Phase | Next slice |
 | --- | --- |
 | [005 — Word Forms](005_Word_Forms.md) | Slice 1 — forms in the catalog |
-| [006 — Prediction Engine](006_Prediction_Engine.md) | **P1.** Slice 4 — learning on the device (per-child weights after Speak) |
+| [006 — Prediction Engine](006_Prediction_Engine.md) | Slice 5 — Jev reranker (blocked: founder's `TYPESAFE_API_KEY`) |
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
 | [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
-| [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 4 — record my own (slices 4, 6–9 independent) |
+| [009 — Word Library and customization](009_Word_Library_And_Customize.md) | **P2.** Slice 4 — record my own (slices 4, 6–9 independent) |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
-| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | **P2.** Slice 7 — the web editor |
+| [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | **P1.** Slice 7 — the web editor |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

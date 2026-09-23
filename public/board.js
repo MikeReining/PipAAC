@@ -16,6 +16,7 @@ import {
   stripScored,
   showGate,
 } from "./shared/funnel.mjs";
+import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
 import { buildIndex, suggest } from "./shared/spelling.mjs";
@@ -185,7 +186,11 @@ async function speakItem(item) {
 async function speakSentence() {
   for (const item of sentence) await speakItem(item);
   if (sentenceId !== null) {
-    closeSentence(db, sentenceId, Date.now(), "spoken");
+    const sid = sentenceId;
+    closeSentence(db, sid, Date.now(), "spoken");
+    // §5.5: the child's weights take one gradient step per impression —
+    // only for a spoken sentence; a cleared bar is metrics only.
+    learnFromSentence(db, sid, catalog.prediction);
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
@@ -416,8 +421,10 @@ async function renderStrip() {
     // apply (slice 7, Dual_Engine §5.2).
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
     // Jev is never wired yet — the strip always runs the local_only set
-    // (Dual_Engine §5.3); the impression records which set ran.
-    const model = { weights: catalog.prediction.weights.local_only,
+    // (Dual_Engine §5.3); the impression records which set ran. The
+    // child's learned weights win over the shipped defaults once Speak
+    // has trained them (§5.5).
+    const model = { weights: loadWeights(db, catalog.prediction).weights,
                     tau: catalog.prediction.tau };
     const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbOpen
