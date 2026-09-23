@@ -29,6 +29,7 @@ const GROUP_SEED = join(repoRoot, "data/group_seed.json");
 const FAMILY_SEED = join(repoRoot, "data/family_seed.json");
 const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
 const PREDICTION_DEFAULTS = join(repoRoot, "data/prediction/defaults.json");
+const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const DEFAULT_VOICE_ID = "voi_default_en";
@@ -419,6 +420,14 @@ export function buildCatalog(
     prediction: existsSync(PREDICTION_DEFAULTS)
       ? JSON.parse(readFileSync(PREDICTION_DEFAULTS, "utf8"))
       : null,
+    // 013 § 5a coach view: shipped one-line modeling tips by sense id;
+    // a list item's SLP-edited tip overrides them.
+    coachTips: existsSync(COACH_TIPS)
+      ? Object.fromEntries(
+          Object.entries(JSON.parse(readFileSync(COACH_TIPS, "utf8")))
+            .filter(([k]) => !k.startsWith("_")),
+        )
+      : {},
     // The bundle is the full device bootstrap: DDL plus rows, one fetch.
     schemaSql: readFileSync(SCHEMA_SQL, "utf8"),
     layouts,

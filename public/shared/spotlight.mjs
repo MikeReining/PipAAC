@@ -87,20 +87,43 @@ export function listTargets(db, id) {
   );
 }
 
-/** Save (or overwrite) a named list of "kind:id" targets. */
+/** A list's items with their coach tips (013 § 5a), in stable order. */
+export function listItems(db, id) {
+  return db.prepare(
+    "SELECT kind, item_id, tip FROM spotlight_item WHERE list_id = ? ORDER BY kind, item_id",
+  ).all(id);
+}
+
+/** Save (or overwrite) a named list of "kind:id" targets. Re-saving a
+ *  list keeps each item's coach tip — adding a word must not wipe the
+ *  tips an SLP wrote for the others. */
 export function saveSpotList(db, id, name, targets, createdAt = Date.now()) {
   db.prepare(
     `INSERT INTO spotlight_list (id, name, created_at) VALUES (?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET name = excluded.name`,
   ).run(id, name, createdAt);
+  const tips = new Map(
+    db.prepare(
+      "SELECT kind, item_id, tip FROM spotlight_item WHERE list_id = ? AND tip IS NOT NULL",
+    ).all(id).map((r) => [`${r.kind}:${r.item_id}`, r.tip]),
+  );
   db.prepare("DELETE FROM spotlight_item WHERE list_id = ?").run(id);
   for (const key of targets) {
     const [kind, item_id] = key.split(":");
     db.prepare(
-      "INSERT OR IGNORE INTO spotlight_item (list_id, kind, item_id) VALUES (?, ?, ?)",
-    ).run(id, kind, item_id);
+      "INSERT OR IGNORE INTO spotlight_item (list_id, kind, item_id, tip) VALUES (?, ?, ?, ?)",
+    ).run(id, kind, item_id, tips.get(key) ?? null);
   }
   recordOp(db, "spot_list_save", { id, name, targets: [...targets], created_at: createdAt });
+}
+
+/** An SLP's one-line tip for one item of one list (013 § 5a) — synced
+ *  like every other caregiver edit. */
+export function setItemTip(db, listId, kind, itemId, tip) {
+  db.prepare(
+    "UPDATE spotlight_item SET tip = ? WHERE list_id = ? AND kind = ? AND item_id = ?",
+  ).run(tip?.trim() || null, listId, kind, itemId);
+  recordOp(db, "spot_item_tip", { list_id: listId, kind, item_id: itemId, tip: tip?.trim() || null });
 }
 
 export function deleteSpotList(db, id) {
@@ -112,6 +135,34 @@ export function deleteSpotList(db, id) {
 /** The running session row, or null. */
 export function spotSession(db) {
   return db.prepare("SELECT * FROM spotlight_session WHERE id = 1").all()[0] ?? null;
+}
+
+/* --- Coach view (013 § 5a): the partner's tips and tally. --- */
+
+/** One live-model tap by the adult — device-local, never synced. */
+export function coachTap(db, kind, id, at = Date.now()) {
+  db.prepare(
+    "INSERT INTO coach_event (item_kind, item_id, modeled_at) VALUES (?, ?, ?)",
+  ).run(kind, id, at);
+}
+
+/** How many distinct words the adult modeled today on this device. */
+export function coachTally(db, now = Date.now()) {
+  const d = new Date(now);
+  d.setHours(0, 0, 0, 0);
+  return db.prepare(
+    "SELECT COUNT(DISTINCT item_kind || ':' || item_id) AS n FROM coach_event WHERE modeled_at >= ?",
+  ).all(d.getTime())[0].n;
+}
+
+/** The tip a target shows in the coach bar: a list item's SLP edit wins,
+ *  then the shipped catalog default, else null (caller falls back). */
+export function tipFor(db, catalog, kind, id) {
+  const edited = db.prepare(
+    "SELECT tip FROM spotlight_item WHERE kind = ? AND item_id = ? AND tip IS NOT NULL LIMIT 1",
+  ).all(kind, id)[0]?.tip;
+  if (edited) return edited;
+  return catalog?.coachTips?.[id] ?? null;
 }
 
 /** Local midnight after `now` — a session's latest possible end (§ 4). */

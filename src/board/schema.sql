@@ -294,6 +294,9 @@ CREATE TABLE IF NOT EXISTS spotlight_item (
   list_id TEXT NOT NULL REFERENCES spotlight_list(id) ON DELETE CASCADE,
   kind TEXT NOT NULL CHECK (kind IN ('sense', 'entity')),
   item_id TEXT NOT NULL,
+  -- Coach view (013 § 5a): a one-line modeling tip an SLP may edit per
+  -- list; NULL falls back to the shipped catalog.coachTips entry.
+  tip TEXT,
   PRIMARY KEY (list_id, kind, item_id)
 );
 
@@ -306,6 +309,17 @@ CREATE TABLE IF NOT EXISTS spotlight_session (
   started_at INTEGER NOT NULL,
   ends_at INTEGER NOT NULL
 );
+
+-- Coach tally (013 § 5a): one row per live-model tap the adult makes on
+-- THIS device. Device-local by design — it is not in SYNCED_TABLES, so
+-- the partner's tally never reaches the child's board.
+CREATE TABLE IF NOT EXISTS coach_event (
+  id INTEGER PRIMARY KEY,
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL,
+  modeled_at INTEGER NOT NULL CHECK (modeled_at > 0)
+);
+CREATE INDEX IF NOT EXISTS coach_event_time ON coach_event(modeled_at);
 
 -- Adult moves (014 § 2 ruling 1): a per-profile slot override layered
 -- on the catalog's core_cell rows, which are never rewritten — a

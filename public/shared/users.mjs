@@ -74,20 +74,20 @@ export const delDbBytes = (store, id) => store.del(DB_PREFIX + id);
  * Create a registry row. The id is the future relay id — a 128-bit
  * random UUID. `home` marks this device's user; only one row is home.
  */
-export async function addUser(store, { id, name = "", photo = null, home = false, sync = null } = {}) {
+export async function addUser(store, { id, name = "", photo = null, home = false, sync = null, role = null } = {}) {
   // Linking an already-known user (re-pair after removal) refreshes its
   // sync state rather than failing on the existing row.
   const existing = id ? await getUser(store, id) : null;
   if (existing) {
     const merged = { ...existing, name: name || existing.name, photo: photo ?? existing.photo,
-      sync: sync ?? existing.sync, lastOpened: Date.now() };
+      sync: sync ?? existing.sync, role: role ?? existing.role, lastOpened: Date.now() };
     await putUser(store, merged);
     if (home) await setHome(store, id); // after putUser — it rewrites flags
     return merged;
   }
   const row = {
     id: id ?? crypto.randomUUID(),
-    name, photo, home,
+    name, photo, home, role,
     lastOpened: Date.now(),
     sync,
   };

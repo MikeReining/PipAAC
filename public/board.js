@@ -19,9 +19,10 @@ import {
 } from "./shared/funnel.mjs";
 import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
 import {
-  deleteSpotList, endSession, endSpotlight, listTargets, needsRouteWalk,
-  resumeSession, saveSpotList, spotLists, spotlight, spotlightGroups,
-  spotSession, startSession, startSpotlight,
+  coachTap, coachTally, deleteSpotList, endSession, endSpotlight,
+  listItems, listTargets, needsRouteWalk,
+  resumeSession, saveSpotList, setItemTip, spotLists, spotlight,
+  spotlightGroups, spotSession, startSession, startSpotlight, tipFor,
 } from "./shared/spotlight.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
@@ -728,6 +729,8 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     if (id) {
       const key = `${kind}:${id}`;
       syncSendModel(key, text);
+      coachTap(db, kind, id); // the partner's tally — device-local (§ 5a)
+      renderCoachTally();
       modelSent.add(key);
       renderGrid();
       rerenderView();
@@ -1016,6 +1019,86 @@ function spotChrome() {
   const chip = $("spot-chip");
   chip.hidden = !s;
   if (s) chip.textContent = `🔦 ${s.name} · End`;
+  renderCoach();
+}
+
+/* --- Coach view (013 § 5a): on a partner device — the registry row a
+ *  link creates carries role 'partner' — the running session's words
+ *  sit at the top of the mirror. One tap models the word live on the
+ *  child's board and shows its tip. The child's device renders none of
+ *  this: its user row has no role. --- */
+const COACH_BASICS = [
+  "Point while you talk — your voice does the teaching.",
+  "Model without expecting a response.",
+  "Wait — silently count to five before helping.",
+  "Model one step above their level, not a whole sentence.",
+  "Come back to it tomorrow — repetition is the lesson.",
+];
+const coachSeen = new Set(
+  JSON.parse(localStorage.getItem("coach_basics_seen") ?? "[]"),
+);
+
+function coachLabel(kind, id) {
+  if (kind === "entity") {
+    return ALL(db, "SELECT spoken_name AS t FROM personal_entity WHERE id = ?",
+      [id])[0]?.t ?? id;
+  }
+  return ALL(db,
+    `SELECT text AS t FROM label
+     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
+    [id, locale])[0]?.t ?? id;
+}
+
+function renderCoach() {
+  const bar = $("coachbar");
+  const s = spotlight();
+  const on = me?.role === "partner" && !!s;
+  bar.hidden = !on;
+  if (!on) return;
+  const box = $("coach-targets");
+  box.innerHTML = "";
+  for (const key of s.targets) {
+    const [kind, id] = key.split(":");
+    const label = coachLabel(kind, id);
+    const b = document.createElement("button");
+    b.className = "coach-word";
+    b.textContent = label;
+    b.addEventListener("click", () => {
+      // The same transient path as Model mode — the word glows on the
+      // child's board; the tally stays here, measuring the partner.
+      syncSendModel(key, label);
+      coachTap(db, kind, id);
+      b.classList.add("sent");
+      setTimeout(() => b.classList.remove("sent"), 700);
+      const tip = tipFor(db, catalog, kind, id)
+        ?? `"${label}" — tap it while you say it, then wait.`;
+      const tipEl = $("coach-tip");
+      tipEl.textContent = tip;
+      tipEl.hidden = false;
+      renderCoachTally();
+    });
+    box.appendChild(b);
+  }
+  // The basics, one line at a time — each shows once, then it's out of
+  // the way. Seen state is device-local: it coaches this partner.
+  const idx = COACH_BASICS.findIndex((_, i) => !coachSeen.has(i));
+  $("coach-basic").hidden = idx < 0;
+  if (idx >= 0) {
+    $("coach-basic-text").textContent = COACH_BASICS[idx];
+    $("coach-basic-x").onclick = () => {
+      coachSeen.add(idx);
+      localStorage.setItem("coach_basics_seen", JSON.stringify([...coachSeen]));
+      renderCoach();
+    };
+  }
+  renderCoachTally();
+}
+
+function renderCoachTally() {
+  const n = coachTally(db);
+  $("coach-tally").textContent = n
+    ? `You modeled ${n} word${n === 1 ? "" : "s"} today`
+    : "Tap a word — it glows on their board.";
 }
 
 /** The strip spans the board's columns; the tray holds the prediction
@@ -1348,7 +1431,48 @@ function renderSpotForm() {
     del.className = "btn secondary";
     del.textContent = "Delete";
     del.addEventListener("click", () => { deleteSpotList(db, l.id); renderSpotForm(); });
-    row.append(name, start, del);
+    const tipsBtn = document.createElement("button");
+    tipsBtn.className = "btn secondary";
+    tipsBtn.textContent = "Tips";
+    // An SLP edits a list's tips here (013 § 5a): each word gets one
+    // line; the shipped default sits as the placeholder, an empty field
+    // falls back to it. Writes are synced set_setting-style ops.
+    tipsBtn.addEventListener("click", () => {
+      const next = row.nextSibling;
+      if (next?.classList?.contains("spot-tips")) { next.remove(); return; }
+      const items = listItems(db, l.id);
+      const editor = document.createElement("div");
+      editor.className = "spot-tips";
+      for (const it of items) {
+        const r = document.createElement("div");
+        r.className = "spot-tip-row";
+        const w = document.createElement("span");
+        w.className = "spot-tip-word";
+        w.textContent = coachLabel(it.kind, it.item_id);
+        const input = document.createElement("input");
+        input.value = it.tip ?? "";
+        input.placeholder = catalog.coachTips?.[it.item_id]
+          ?? "One-line tip, e.g. use it at snack time";
+        input.dataset.key = `${it.kind}:${it.item_id}`;
+        r.append(w, input);
+        editor.appendChild(r);
+      }
+      const save = document.createElement("button");
+      save.className = "btn secondary";
+      save.textContent = "Save tips";
+      save.addEventListener("click", () => {
+        for (const inp of editor.querySelectorAll("input")) {
+          const [kind, id] = inp.dataset.key.split(":");
+          const it = items.find((x) => x.kind === kind && x.item_id === id);
+          const v = inp.value.trim() || null;
+          if (v !== (it?.tip ?? null)) setItemTip(db, l.id, kind, id, v);
+        }
+        renderSpotForm();
+      });
+      editor.appendChild(save);
+      row.after(editor);
+    });
+    row.append(name, start, tipsBtn, del);
     box.appendChild(row);
   }
   const { spot_dim: dim = 45, spot_boost: boost = 1 } = ALL(db,
@@ -3328,10 +3452,13 @@ async function linkThisDevice() {
       const epoch = st.grant.epoch ?? 1;
       await putUserKey(store, st.grant.user_id, key, epoch);
       // 015 slice 2: the linked user joins this device's registry — the
-      // relay id is the registry id — and the app opens it.
+      // relay id is the registry id — and the app opens it. A user that
+      // joins by link is the partner device (013 § 5a: the coach view
+      // renders only for role 'partner').
       const linked = await addUser(userStore, {
         id: st.grant.user_id,
         sync: { userId: st.grant.user_id, epoch, cursor: 0 },
+        role: "partner",
       });
       status.textContent = "Linked — syncing…";
       sessionStorage.setItem("pip_active_user", linked.id);

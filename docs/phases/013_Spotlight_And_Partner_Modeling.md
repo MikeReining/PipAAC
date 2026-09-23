@@ -1,9 +1,11 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Slices 1–5 built (the layer; one-device lists, sessions,
+**Status:** Slices 1–6 built (the layer; one-device lists, sessions,
 timer; the adult's device — mirror, remote start/end; live modeling;
-Smart bar boost). Next: slice 6 — Coach view. The design below is
-**DECIDED 2026-09-22** (founder; not built). Slices are **PROPOSED**.
+Smart bar boost; Coach view). Next: slice 7 — shared uses (the 014
+upgrade highlight and prediction halos through the same layer). The
+design below is **DECIDED 2026-09-22** (founder; not built). Slices are
+**PROPOSED**.
 
 Founder intake: `docs/founder/2026-09-22_Spotlight_Partner_Modeling.md`.
 Renamed from "Spotlight Practice Mode" the same day, when live partner
@@ -303,5 +305,28 @@ offers that routine's saved list.
    adult's tally. Works test: open the mirror during a Spotlight — the
    list's words are at the top, and the child's device shows no coach
    content.
+
+   **DONE.** A registry user that joins by link carries `role:
+   "partner"` (`users.mjs`, `linkThisDevice`) — the partner device.
+   During a session its board gains `#coachbar` under the topbar
+   (`renderCoach`, called from `spotChrome`): the session's words as
+   chips, one tap → the same transient `syncSendModel` path as Model
+   mode, so the word glows on the child's board. A tapped word shows its
+   tip — `spotlight_item.tip` (an SLP's per-list edit, synced op
+   `spot_item_tip`) wins, then `catalog.coachTips` (47 shipped lines,
+   `data/coach_tips.json`), then a generic line; the sheet's **Tips**
+   button edits a list's tips and re-saving a list preserves them.
+   The basics rotate through five one-liners, each dismissed once per
+   device (`coach_basics_seen`, localStorage). The tally counts distinct
+   words modeled today in `coach_event` — deliberately **not** in
+   `SYNCED_TABLES`, so it measures the partner and never reaches the
+   child's board; Model-mode taps count too. The child's device renders
+   none of it (its user row has no role; restored devices get no role —
+   a board by default). Routines stay deferred to 007. Works Tests:
+   `src/board/coach.test.mjs` (tip sync/replay, re-save preservation,
+   tally boundary, drain survival, resolution order) and
+   `scripts/probes/spot_coach_probe.mjs` (paired phone shows 2 chips at
+   the top, coach tap glows the route walk on the iPad, tip + tally +
+   basics on B only, `coach_event` 1 on B / 0 on A, `sync_op` unchanged).
 7. **Shared uses.** The 014 upgrade highlight and the prediction halos
    render through the same layer.

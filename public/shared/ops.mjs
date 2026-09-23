@@ -32,6 +32,7 @@ import { clearOverride, setOverride } from "./voice.mjs";
 import { clearImageOverride, setImageOverride } from "./images.mjs";
 import {
   deleteSpotList, saveSpotList, endSession, spotSession, startSession,
+  setItemTip,
 } from "./spotlight.mjs";
 import { moveCore } from "./coremove.mjs";
 import { setBoardLayout } from "./movecost.mjs";
@@ -209,6 +210,9 @@ export function applyOp(db, op) {
         break;
       case "spot_list_del":
         if (exists(db, "spotlight_list", a.id)) deleteSpotList(db, a.id);
+        break;
+      case "spot_item_tip":
+        setItemTip(db, a.list_id, a.kind, a.item_id, a.tip);
         break;
       case "spot_start":
         startSession(db, a);

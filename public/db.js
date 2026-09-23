@@ -147,7 +147,7 @@ function migrateSchema(d, schemaSql) {
     "board_group", "group_cell",
     "group_label", "sync_op", "sync_baseline", "sentence",
     "strip_impression", "spotlight_list", "spotlight_item",
-    "spotlight_session", "core_override", "move_mark",
+    "spotlight_session", "coach_event", "core_override", "move_mark",
     "bar_family", "bar_family_item",
   ];
   const canon = (s) =>

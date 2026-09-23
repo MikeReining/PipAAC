@@ -402,6 +402,29 @@
         white-space: nowrap;
       }
       #spot-chip[hidden] { display: none; }
+      /* Coach view (013 § 5a) — partner devices only: the session's
+         words at the top of the mirror, one tap to model live. */
+      #coachbar {
+        display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
+        padding: 6px 10px; margin: 4px 8px 0;
+        border: 1.5px solid var(--line); border-radius: 12px;
+        background: var(--cream);
+      }
+      #coachbar[hidden] { display: none; }
+      .coach-word {
+        padding: 5px 12px; border-radius: 999px; font-weight: 700;
+        border: 1.5px solid var(--glow); background: #fff; color: var(--ink-text);
+      }
+      .coach-word.sent { background: var(--glow); }
+      .coach-line { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+      .coach-line .coach-x {
+        border: 0; background: none; color: var(--muted); font-size: 13px;
+        padding: 0 2px; cursor: pointer;
+      }
+      .spot-tip-row { display: flex; align-items: center; gap: 8px; padding: 3px 0 3px 16px; }
+      .spot-tip-row .spot-tip-word { width: 90px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .spot-tip-row input { flex: 1; padding: 4px 8px; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; }
+      .spot-tip-row input::placeholder { color: var(--muted); }
       /* Empty cell — reserved space, never collapses. */
       .cell.empty {
         border-style: dashed;
@@ -858,6 +881,18 @@
       <button id="speak" class="bar-btn primary" title="Speak" disabled>Speak</button>
       <button id="spot-chip" hidden>🔦 Spotlight · End</button>
       <button id="corner" class="corner-btn" title="Parent corner">✚</button>
+    </div>
+    <!-- Coach view (013 § 5a): partner devices only — the session's
+         words, one tap to model live; tips, a rotating basic, today's
+         tally. The child's device never renders this bar. -->
+    <div id="coachbar" hidden>
+      <div id="coach-targets" class="coach-targets"></div>
+      <p class="coach-line" id="coach-tip" hidden></p>
+      <p class="coach-line" id="coach-basic">
+        <span id="coach-basic-text"></span>
+        <button class="coach-x" id="coach-basic-x" aria-label="Got it — hide this tip">✕</button>
+      </p>
+      <p class="coach-line" id="coach-tally"></p>
     </div>
     <div id="strip">
       <!-- The tray holds the four prediction cards; the two utility
