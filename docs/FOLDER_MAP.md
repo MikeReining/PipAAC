@@ -40,6 +40,7 @@ PipAAC/
       Vocabulary_Masking_And_Safety.md
       Profile_Presentation_Modes.md
       Voice_Cloning_And_Synthesis.md
+      Clipart_Pipeline_And_Catalog_Growth.md
     strategy/
       README.md
       Vision.md

@@ -111,23 +111,26 @@ shows its label and color, and the add still saves.
 ## Slice 6 — Draw it for me
 
 **DECIDED 2026-09-22** (founder: "a really killer idea … for people that
-make the full payment, we should absolutely enable it"). Product rules:
-`docs/product/Word_Library.md` § 6.1. Pricing:
-`docs/product/Pricing_And_Packaging.md` § 2.
+make the full payment, we should absolutely enable it").
+Architecture & growth pipeline: `docs/product/Clipart_Pipeline_And_Catalog_Growth.md`.
+Product rules: `docs/product/Word_Library.md` § 6.1.
+Pricing: `docs/product/Pricing_And_Packaging.md` § 2.
 
 Goal: from `+ Add` (no match, or "another picture") and from the word
 card, **Draw it for me** sends the word and an optional hint, uses TypeSafe
-Jev to pre-classify the semantic framing lens (`face`, `bust`, `full`,
-`diagram`, `object`), generates one version in the house style via Muse
-Image, and the adult accepts, re-rolls, or refines with a hint.
+Jev to pre-classify entity scope (`personal` vs `catalog_candidate`) and
+the semantic framing lens (`face`, `bust`, `full`, `diagram`, `object`),
+generates one version in the house style via Muse Image, archives the asset
+in Cloudflare R2, and the adult accepts, re-rolls, or refines with a hint.
 
 Parts:
 1. **Server endpoint** on the Worker: a safety check on word and hint,
-   a mandatory Jev classification step into the 5 framing lenses
-   (`docs/operations/art-generator/SKILL.md`) and Fitzgerald torso color,
-   one generation with `scripts/art/gen.mjs` settings via Muse Image
-   (cutting generation cost by 66%), per-board limits (30 a day, about 1,000
-   a year, starting values), and a count of each word with no board id.
+   a mandatory two-stage Jev classification step (scope filtering and 5 framing lenses
+   from `docs/operations/art-generator/SKILL.md`), one generation with
+   `scripts/art/gen.mjs` settings via Muse Image (cutting generation cost by 66%),
+   immediate PNG archival in Cloudflare R2 (`symbols/drawings/{hash}.png`),
+   per-board limits (30 a day, about 1,000 a year, starting values), and an
+   anonymous demand counter of each word with no board id.
    Parents cannot disable Jev for Draw it for me: requesting image generation
    explicitly invokes this cloud generation pipeline.
 2. **Entitlement:** Pip Lifetime, or the 5-drawing free taste. The
@@ -139,8 +142,9 @@ Parts:
    The limit message appears only within 10% of a limit and names the reset date.
 4. **Storage:** an accepted drawing becomes the entity's picture, or a picture
    override for a catalog word (schema § 14.1). It syncs like a photo.
-5. **Growth loop:** a word drawn for 20 or more boards goes onto the
-   slice 2 review page as a candidate for the library.
+5. **Growth loop ($k \ge 20$):** common concepts (`scope: catalog_candidate`)
+   drawn or requested for 20 or more boards go onto the slice 2 review page
+   as candidates for the extended library (`docs/product/Clipart_Pipeline_And_Catalog_Growth.md` § 4).
 
 Lie-prone layers: a limit enforced only in the UI (enforce on the
 server), and a privacy claim checked by reading our own code (capture the

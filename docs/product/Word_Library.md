@@ -238,6 +238,7 @@ Execution: `docs/phases/010_Extended_Picture_Library.md`.
 
 **DECIDED 2026-09-22** (founder: "a really killer idea … for people that
 make the full payment, we should absolutely enable it").
+Architecture & growth pipeline: `docs/product/Clipart_Pipeline_And_Catalog_Growth.md`.
 Execution: `docs/phases/010_Extended_Picture_Library.md` slice 6.
 
 When no picture matches (or the adult wants another), **Draw it for me**
@@ -245,11 +246,15 @@ draws the word in our house style.
 
 - **Word plus an optional hint.** "Cooper: golden retriever" draws a
   golden retriever. People are still best as photos.
-- **Jev semantic pre-classification (mandatory backend pipeline step).**
-  Before image generation, TypeSafe Jev classifies the concept into one of our
-  5 semantic framing lenses (`face`, `bust`, `full`, `diagram`, `object`)
-  defined in `docs/operations/art-generator/SKILL.md`, and selects the
-  Fitzgerald Key role color (for verb/pronoun torsos) or plural rule.
+- **Two-stage Jev pre-classification (mandatory backend pipeline step).**
+  Before image generation, TypeSafe Jev performs two checks:
+  1. *Entity Scope:* Identifies if the term is a personal entity (person/pet name,
+     private location) or a general communicative concept. Personal drawings are
+     quarantined from the public catalog review queue.
+  2. *Framing Lens:* Classifies into one of our 5 semantic framing lenses
+     (`face`, `bust`, `full`, `diagram`, `object`) defined in
+     `docs/operations/art-generator/SKILL.md`, and selects the Fitzgerald Key
+     role color or plural rule.
   Because the user explicitly requested cloud image generation, Jev runs
   as an internal cloud pipeline stage; **parents cannot disable Jev
   for Draw it for me** (unlike conversational prediction sharing, which is
@@ -261,6 +266,9 @@ draws the word in our house style.
 - **Re-roll & Hint on demand.** If the single image has an artifact or
   the user wants an alternative, the UI offers **Re-roll** (single tap)
   or the ability to add/edit a descriptive hint.
+- **Worker asset archival.** The Cloudflare Worker directly archives the
+  generated image in Cloudflare R2 storage alongside the prompt and metadata,
+  enabling perpetual zero-marginal-cost reusability across all users.
 - **Who gets it.** Pip Lifetime owners. A free board gets 5 drawings as a
   taste (`docs/product/Pricing_And_Packaging.md` § 2).
 - **Fair use, no surprise cutoff.** At about 1¢ an image, cost is not the
@@ -275,8 +283,9 @@ draws the word in our house style.
 - **What leaves the device.** Only the word and the hint, only on the
   adult's tap. Never the entity id, a photo, or anything from the child's
   history.
-- **Growth loop.** A word drawn for 20 or more boards (starting value)
-  enters the extended library after our review, with our own drawing.
+- **Growth loop ($k \ge 20$).** A common word (`scope: catalog_candidate`)
+  drawn or requested for 20 or more boards enters the review queue for the
+  extended library (`docs/product/Clipart_Pipeline_And_Catalog_Growth.md` § 4).
   Only the word text is counted. No board id is stored with the count, so
   a single family's word (a name) never becomes public.
 - **Where the drawing lives.** A drawing for a New word is that entity's
