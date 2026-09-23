@@ -113,6 +113,7 @@ export function isPluralWord(word) {
 }
 
 export const VALID_FRAMINGS = new Set(["face", "bust", "full", "diagram", "object"]);
+export const VALID_SOCIAL_SCALES = new Set(["zero", "solo", "pair", "group"]);
 
 export const VALID_HAND_MODES = new Set([
   "resting_ball",
@@ -149,12 +150,12 @@ export function formatHandMode(mode) {
  * 2. Locked style clause
  * 3. No text constraint
  * 4. Plural rule (if applicable)
- * 5. Framing lens clause (face, bust, full, diagram, object)
+ * 5. Framing lens clause (face, bust, full, diagram, object) based on social scale
  * 6. Fitzgerald torso rule (for stick figures with torso visible)
  * 7. Hand mode clause (for stick figures with hands visible)
  * 8. Scene hint (for abstract/preposition concepts)
  */
-export function buildPrompt({ word, torso = null, hint = null, framing = null, hand = null }) {
+export function buildPrompt({ word, torso = null, hint = null, framing = null, hand = null, social_scale = null }) {
   const lines = [
     `We are trying to teach a child the concept of: ${word}.`,
     "Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.",
@@ -165,23 +166,51 @@ export function buildPrompt({ word, torso = null, hint = null, framing = null, h
     lines.push("Show more than one.");
   }
 
-  if (framing === "face") {
-    lines.push("Close-up shot of a stick figure face filling the frame. Head only, no body, no legs.");
-  } else if (framing === "bust") {
-    lines.push("Close-up shot of the stick figure from the chest up. Upper body and hands only, no legs.");
-  } else if (framing === "full") {
-    lines.push("Full body stick figure with complete posture and legs.");
-  } else if (framing === "diagram") {
-    lines.push("A clean graphic diagram with no human figures.");
-  } else if (framing === "object") {
-    lines.push("A clean standalone object with no human figures.");
+  if (social_scale === "pair") {
+    if (framing === "bust") {
+      lines.push("Close-up shot of two stick figures from the chest up. Upper bodies and hands only, no legs.");
+    } else if (framing === "full") {
+      lines.push("Two full body stick figures side-by-side.");
+    }
+  } else if (social_scale === "group") {
+    if (framing === "bust") {
+      lines.push("Close-up shot of three stick figures from the chest up. Upper bodies and hands only, no legs.");
+    } else if (framing === "full") {
+      lines.push("Three full body stick figures standing together.");
+    }
+  } else if (social_scale === "zero") {
+    if (framing === "diagram") {
+      lines.push("A clean graphic diagram with no human figures.");
+    } else if (framing === "object") {
+      lines.push("A clean standalone object with no human figures.");
+    } else {
+      lines.push("No human figures in the image.");
+    }
+  } else {
+    if (framing === "face") {
+      lines.push("Close-up shot of a stick figure face filling the frame. Head only, no body, no legs.");
+    } else if (framing === "bust") {
+      lines.push("Close-up shot of the stick figure from the chest up. Upper body and hands only, no legs.");
+    } else if (framing === "full") {
+      lines.push("Full body stick figure with complete posture and legs.");
+    } else if (framing === "diagram") {
+      lines.push("A clean graphic diagram with no human figures.");
+    } else if (framing === "object") {
+      lines.push("A clean standalone object with no human figures.");
+    }
   }
 
-  if (torso && framing !== "face" && framing !== "diagram" && framing !== "object") {
-    lines.push(`The stick figure's torso is solid ${torso}.`);
+  if (torso && social_scale !== "zero" && framing !== "face" && framing !== "diagram" && framing !== "object") {
+    if (social_scale === "pair" || social_scale === "group") {
+      if (!hint) {
+        lines.push(`The primary stick figure's torso is solid ${torso}.`);
+      }
+    } else {
+      lines.push(`The stick figure's torso is solid ${torso}.`);
+    }
   }
 
-  if (hand && framing !== "face" && framing !== "diagram" && framing !== "object") {
+  if (hand && social_scale !== "zero" && framing !== "face" && framing !== "diagram" && framing !== "object") {
     const handClause = formatHandMode(hand);
     if (handClause) lines.push(handClause);
   }
@@ -251,6 +280,16 @@ export async function classifyWithJev({
           none: "No extra physical anchor needed; human posture or face is sufficient",
         },
       },
+      social_scale: {
+        type: "choice",
+        instructions: "What is the optimal social scale / number of human actors for this AAC concept?",
+        criteria: {
+          zero: "No humans (diagrams, inanimate objects, universal signs like stop, in, on, off)",
+          solo: "Exactly 1 person (individual action, private emotion, or self-reference like eat, drink, happy, I)",
+          pair: "Exactly 2 people (1-on-1 social transaction, hand-off, or partner reference like you, give, help)",
+          group: "3 or more people (collective concept, plural pronoun like we, they, group, all)",
+        },
+      },
     },
   };
 
@@ -274,6 +313,7 @@ export async function classifyWithJev({
     framing: data?.answers?.framing?.choice ?? "full",
     hand_mode: data?.answers?.hand_mode?.choice ?? "resting_ball",
     anchor: data?.answers?.proloquo_anchor?.choice ?? "none",
+    social_scale: data?.answers?.social_scale?.choice ?? "solo",
     raw: data,
   };
 }
@@ -284,13 +324,14 @@ export async function generateToFile({
   hint = null,
   framing = null,
   hand = null,
+  social_scale = null,
   prompt = null,
   out = null,
   refDir = DEFAULT_STYLE_REF_DIR,
   fetchImpl = globalThis.fetch,
   apiKey = resolveApiKey("OPENROUTER_API_KEY"),
 } = {}) {
-  const text = prompt ?? buildPrompt({ word, torso, hint, framing, hand });
+  const text = prompt ?? buildPrompt({ word, torso, hint, framing, hand, social_scale });
   if (!apiKey || !String(apiKey).trim()) {
     throw new Error("OPENROUTER_API_KEY is not set. Please export it or add to .env.");
   }
@@ -331,6 +372,7 @@ export function parseArgs(argv) {
     hint: null,
     framing: null,
     hand: null,
+    social_scale: null,
     out: null,
     prompt: null,
     print: false,
@@ -356,10 +398,17 @@ export function parseArgs(argv) {
       }
       out.hand = h;
     }
+    else if (a === "--social-scale") {
+      const s = argv[++i];
+      if (!VALID_SOCIAL_SCALES.has(s)) {
+        throw new Error(`invalid social scale: ${s}. Must be one of: ${[...VALID_SOCIAL_SCALES].join(", ")}`);
+      }
+      out.social_scale = s;
+    }
     else if (a === "--out") out.out = argv[++i];
     else if (a === "--prompt") out.prompt = argv[++i];
     else if (a === "--ref-dir") out.refDir = argv[++i];
-    else if (a === "--print-prompt") out.print = true;
+    else if (a === "--print-prompt" || a === "--print") out.print = true;
     else if (a === "--classify") out.classify = true;
     else throw new Error(`unknown flag: ${a}`);
   }
@@ -370,7 +419,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
 
   if (!args.word && !args.prompt) {
-    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object>] [--hand <mode>] [--hint <hint>] [--out <dest>] [--classify]");
+    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object>] [--hand <mode>] [--social-scale <zero|solo|pair|group>] [--hint <hint>] [--out <dest>] [--classify]");
     process.exit(1);
   }
 
@@ -381,8 +430,10 @@ async function main() {
     console.log(`  Framing: ${cls.framing}`);
     console.log(`  Hand mode: ${cls.hand_mode}`);
     console.log(`  Anchor: ${cls.anchor}`);
+    console.log(`  Social scale: ${cls.social_scale}`);
     if (!args.framing) args.framing = cls.framing;
     if (!args.hand) args.hand = cls.hand_mode;
+    if (!args.social_scale) args.social_scale = cls.social_scale;
   }
 
   const prompt = args.prompt ?? buildPrompt({
@@ -391,6 +442,7 @@ async function main() {
     hint: args.hint,
     framing: args.framing,
     hand: args.hand,
+    social_scale: args.social_scale,
   });
 
   console.log("--- prompt ---");
@@ -405,6 +457,7 @@ async function main() {
     hint: args.hint,
     framing: args.framing,
     hand: args.hand,
+    social_scale: args.social_scale,
     prompt: args.prompt,
     out: args.out,
     refDir: args.refDir,

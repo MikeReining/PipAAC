@@ -57,10 +57,12 @@ Abstract verbs fail when represented solely by stick figure posture. Naked postu
 
 ## 4. TypeSafe Jev Pre-Classification Pipeline
 
-In both production (`Word_Library.md`) and CLI development, **TypeSafe Jev** (`https://api.typesafe.ai/v1/systemone` using `TYPESAFE_API_KEY`) pre-classifies any new word across three axes:
+In both production (`Word_Library.md`) and CLI development, **TypeSafe Jev** (`https://api.typesafe.ai/v1/systemone` using `TYPESAFE_API_KEY`) pre-classifies any new word across four axes:
 1. `framing`: `face` | `bust` | `full` | `diagram` | `object`
-2. `hand_mode`: `resting_ball` | `pointing_mitten` | `grip_mitten` | `pincer_grasp` | `open_palm_up` | `press_down`
-3. `proloquo_anchor`: `directional_arrow` | `action_button` | `interlocking_blocks` | `shelf_retrieval` | `receiving_palms` | `none`
+2. `social_scale`: `zero` (diagram/object) | `solo` (1 actor) | `pair` (2 actors: 1-on-1 handoff/deictic) | `group` (3+ actors: collective/plural)
+3. `hand_mode`: `resting_ball` | `pointing_mitten` | `grip_mitten` | `pincer_grasp` | `open_palm_up` | `press_down`
+4. `proloquo_anchor`: `directional_arrow` | `action_button` | `interlocking_blocks` | `shelf_retrieval` | `receiving_palms` | `none`
+
 
 This eliminates blind trial-and-error before the first pixel is drawn.
 
@@ -92,9 +94,10 @@ All generation runs through `scripts/art/gen.mjs` against the frozen style bundl
 Automated judging must NEVER police subjective warmth, charm, smile shape, or whimsical tilt. It must strictly check **4 Hard Invariants**:
 
 1. **Topological Limb Count & Bilateral Shoulder Origin:**
-   * `bust`: Strictly 2 arms. **Bilateral origin is mandatory:** exactly one arm must anchor to the left shoulder, and exactly one arm must anchor to the right shoulder. Two arms sprouting from the same shoulder is an automatic failure. Zero extra strokes descending from collar, neck, or chest (the `play` defect).
+   * `bust` (solo): Strictly 2 arms. **Bilateral origin is mandatory:** exactly one arm must anchor to the left shoulder, and exactly one arm must anchor to the right shoulder. Two arms sprouting from the same shoulder is an automatic failure. Zero extra strokes descending from collar, neck, or chest (the `play` defect).
+   * `bust` (pair): Strictly 2 stick figures side-by-side or in 2D profile. Exactly 4 arms total, each figure having bilateral shoulder attachments (1 arm per shoulder).
    * `full`: Strictly 2 arms, 2 legs. Bilaterally anchored to shoulders and pelvis.
-   * `face`, `diagram`, `object`: Strictly 0 human limbs.
+   * `face`, `diagram`, `object` (`zero`): Strictly 0 human limbs.
 2. **Mechanical & Physical Plausibility:**
    * Interlocking items must actually mate (e.g. Lego studs fit sockets; hands grip handles rather than float detached).
 3. **Visual Noise & Artifacts:**
@@ -102,7 +105,7 @@ Automated judging must NEVER police subjective warmth, charm, smile shape, or wh
    * Zero speed lines, motion streaks, speech bubbles, or floating debris.
 
 4. **Semantic Singularity:**
-   * Does not depict an opposing or ambiguous action (e.g., `come` must not look like goodbye; `get` must not look like dribbling a ball; `need` must not look like praying).
+   * Does not depict an opposing or ambiguous action (e.g., `come` must not look like goodbye; `get` must not look like dribbling a ball; `need` must not look like praying; `take` must not look like `put`).
 
 ---
 

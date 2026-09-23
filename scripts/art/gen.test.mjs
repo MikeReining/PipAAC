@@ -104,3 +104,24 @@ test("parseArgs rejects invalid hand mode", () => {
   );
 });
 
+test("parseArgs handles and validates social scale", () => {
+  const parsed = parseArgs(["--word", "give", "--social-scale", "pair"]);
+  assert.equal(parsed.social_scale, "pair");
+
+  assert.throws(
+    () => parseArgs(["--word", "give", "--social-scale", "crowd"]),
+    /invalid social scale: crowd/,
+  );
+});
+
+test("buildPrompt applies social scale correctly", () => {
+  const pairPrompt = buildPrompt({ word: "give", framing: "bust", social_scale: "pair" });
+  assert.ok(pairPrompt.includes("Close-up shot of two stick figures from the chest up."));
+
+  const groupPrompt = buildPrompt({ word: "we", framing: "bust", social_scale: "group" });
+  assert.ok(groupPrompt.includes("Close-up shot of three stick figures from the chest up."));
+
+  const zeroPrompt = buildPrompt({ word: "stop", social_scale: "zero" });
+  assert.ok(zeroPrompt.includes("No human figures in the image."));
+});
+
