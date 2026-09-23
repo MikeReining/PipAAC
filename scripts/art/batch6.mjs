@@ -29,15 +29,15 @@ const BATCH = [
   },
   {
     word: "all",
-    framing: "contrast",
-    torso: "blue",
-    hint: "Four identical round balls in a group. All four balls are filled solid blue with bold black outlines.",
+    framing: "object",
+    social_scale: "zero",
+    hint: "A clean graphic cluster of four identical round balls grouped closely together in a 2x2 square formation. All four balls are filled solid blue with bold black outlines. Pure white background, no boxes, no other shapes, no arrows.",
   },
   {
     word: "some",
-    framing: "contrast",
-    torso: "blue",
-    hint: "Four identical round balls in a group. Two balls are filled solid blue, and the other two balls have a pale light grey fill with the same black outline.",
+    framing: "object",
+    social_scale: "zero",
+    hint: "Programmatic clone of all.png with bottom two circles flood-filled to #dddad3 pale grey.",
   },
   {
     word: "with",
@@ -71,9 +71,10 @@ const BATCH = [
   },
   {
     word: "when",
-    framing: "diagram",
-    social_scale: "zero",
-    hint: "A clean minimalist clock face with bold black hour markings and solid pink clock hands pointing at time.",
+    framing: "bust",
+    torso: "pink",
+    social_scale: "solo",
+    hint: "The stick figure holds its left arm across its chest with a simple round watch on its wrist. Its other hand is pointing with a single index finger directly at the watch face. The stick figure has a questioning tilted head looking down at the watch.",
   },
 ];
 
