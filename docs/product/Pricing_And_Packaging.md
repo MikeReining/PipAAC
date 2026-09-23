@@ -124,7 +124,7 @@ subscription before a child can speak
 | **20 words of your own** (people, pets, places, with your photos) | Unlimited words of your own |
 | **The user's own device + one supporter** (all of that supporter's devices: laptop, phone, tablet) | **Every supporter** (both parents, grandparents, the SLP, teachers) |
 | The web editor, for that supporter | The web editor, for every supporter |
-| | Progress stats (DECIDED 2026-09-23 as paid; design next) |
+| The weekly win card (a preview of the stats) | The full stats dashboard and the progress report (`docs/product/Stats_And_Progress.md` § 4) |
 | 5 drawings (Draw it for me) | 300 drawings, then top-up packs near cost |
 | All voices, prediction, groups, hiding words, Record my own | (same) |
 | Backup, QR card restore, moving to a new device | (same) |

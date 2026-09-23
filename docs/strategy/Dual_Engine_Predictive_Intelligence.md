@@ -217,6 +217,14 @@ ever leave:
 
 Partner audio never leaves and is never stored (§ 6).
 
+**Amended 2026-09-23** (founder; not built): two derived, count-only
+records may also leave, and nothing above changes. **Daily totals**
+(counts per word, sentence lengths, rate, sources) sealed with the user
+key to the user's supporters, and **anonymous daily totals** to Pip with
+"Help improve Pip" on, from a strict whitelist. No sentence, word
+sequence or tap time leaves in either
+(`docs/product/Stats_And_Progress.md` § 6).
+
 ### 4.2 Local schema
 
 Owner: `docs/product/Language_And_Voice_Schema.md` § 6.2c–6.2e — event log

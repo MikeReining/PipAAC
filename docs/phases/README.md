@@ -34,6 +34,7 @@ Executing phases only. Each row names the **next** slice.
 | [013 — Spotlight and partner modeling](013_Spotlight_And_Partner_Modeling.md) | **P3.** Slice 3 — Spotlight on the adult's device (layer + one-device sessions built) |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | **P1.** Slice 7 — Smart bar families (slices 1–5 built; slice 6 waits on 010's phrase list) |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | **P2.** Slice 1 — one word: user (slices 6–7 relay legs already built: cap, restore-move, retention, dev license) |
+| [016 — Stats and progress](016_Stats_And_Progress.md) | Slice 1 — the stats engine (after 015 slice 2) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

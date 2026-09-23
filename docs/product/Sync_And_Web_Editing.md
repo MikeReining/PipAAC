@@ -54,6 +54,7 @@ adults authored for it.
 | Picture overrides and masking (hidden words) | Partner words (never stored at all) |
 | `entity_enrichment` (so it is never re-asked, `docs/product/Personal_Entities.md` § Enrichment) | The catalog (each device has its own copy of the same version) |
 | Profile settings: voice, presentation mode, listening, Jev sharing, suggestions toggle | The Parent Corner PIN and biometrics (per device) |
+| Daily stats totals, counts only (DECIDED 2026-09-23, `docs/product/Stats_And_Progress.md` § 6.2) | |
 
 **DECIDED 2026-09-22:** history stays on the device. A restored or new
 device starts learning again. That is cheap, and it keeps the promise that

@@ -74,6 +74,10 @@ below.
 | 13 | SLPs are the number-one distribution channel; a free demo user per supporter account | `docs/strategy/SLP_Channel.md` |
 | 14 | Progress stats and the progress report are paid; design is the next session | § 4.2 of the pricing doc |
 | 15 | No referral payments, ever | § 4.4 of the pricing doc |
+| 16 | Stats reach the SLP's laptop: daily totals (counts only) sealed to the user's supporters ("they are on the support team") | `docs/product/Stats_And_Progress.md` § 6.2 |
+| 17 | Anonymous totals to Pip, on by default, strict whitelist; never names, own words, photos, recordings or sentences | § 6.3 of the same doc |
+| 18 | A free weekly win card is the dashboard's preview; the full dashboard and report are Pip Lifetime | § 4 of the same doc |
+| 19 | Words per minute is measured and shown (it leads for literate adults); claims only from measured data | § 3 of the same doc |
 
 ## Product value
 
