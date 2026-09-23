@@ -30,7 +30,7 @@ const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
 const OFF_GRID60 = [
   "mine", "we", "they", "see", "have", "read", "feel", "tell", "think",
   "find", "work", "wait", "away", "under", "over", "same", "different",
-  "but", "or", "because", "why", "how", "when",
+  "but", "or", "because", "how", "this", "who",
 ];
 
 /** Project Core Universal Core 36; `finished` is our `all done` cell. */
@@ -41,7 +41,7 @@ const UC36 = [
   "want", "what", "when", "where", "who", "why", "you",
 ];
 /** Named rule-1 waivers — Core_Grid_Membership.md §6. */
-const UC36_WAIVERS = ["same", "different", "when", "why"];
+const UC36_WAIVERS = ["same", "different", "who"];
 /** Rule 0: the board can report that something is wrong without navigating. */
 const SELF_REPORT = ["hurt", "sad", "help", "stop", "no"];
 
@@ -49,7 +49,7 @@ const SELF_REPORT = ["hurt", "sad", "help", "stop", "no"];
 const SECTORS = {
   pronouns: {
     cols: [0, 1],
-    words: ["I", "you", "me", "my", "he", "she", "this", "that", "it", "who", "what", "where"],
+    words: ["I", "you", "me", "my", "he", "she", "it", "that", "why", "when", "what", "where"],
   },
   verbs: {
     cols: [2, 3, 4],

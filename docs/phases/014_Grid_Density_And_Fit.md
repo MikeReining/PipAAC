@@ -1,8 +1,9 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Preliminary. Rulings below are **DECIDED 2026-09-22** (not
-built); everything else is **PROPOSED**. Slice 1 waits on the joint review of
-the starter word lists.
+**Status:** Ready for slice 1. Rulings and starters below are **DECIDED
+2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
+`why`/`when` change is **BUILT** (catalog regenerated; gate
+`src/board/core_map.test.mjs`).
 
 Founder intake: `docs/founder/2026-09-22_Grid_Density_Individual_Fit.md`.
 Renamed from "Harmonic Grid Densities" the same day; the harmonic-ladder
@@ -59,6 +60,14 @@ That is the exclusion to avoid.
    § 1, chosen at setup ("who is this for?") and editable.
 5. **Starters do not promise that positions carry up.** Where it is free,
    they follow `grid60` sector order so growing is natural.
+6. **`why` and `when` are on `grid60`** (`this` and `who` leave). Owner:
+   `docs/product/Core_Grid_Membership.md` § 8.
+7. **The Smart bar carries the flexibility.** Family tiles open fixed-order
+   families in the bar; the grid never changes. Contract:
+   `docs/product/Motor_Grid_And_Art.md` § 2.1.
+8. **Setup asks two questions:** who is this for (picks a starter) and how
+   do they reach the screen (touch, switch, eye gaze). Every dial stays
+   editable afterward.
 
 ## 3. Three dials
 
@@ -67,7 +76,7 @@ all three.
 
 | Dial | Question | Values |
 | --- | --- | --- |
-| **Cells** | How many cells show at once? | Presets 15 (5×3), 30, 60 (10×6), 90 (10×9); any size an adult picks within renderer limits. Shape of 30 is open (§ 7). |
+| **Cells** | How many cells show at once? | Presets 15 (5×3), 30 (6×5), 60 (10×6), 90 (10×9); any size an adult picks within renderer limits. |
 | **Vocabulary** | Which words exist? | A starter set that grows, up to the full catalog. Not-yet-introduced cells render as ghosts (masking owner). |
 | **Content** | Single words or whole messages? | Core words (default) or message tiles ("I'm in pain"). Phrase catalog: `docs/phases/010_Extended_Picture_Library.md`. |
 
@@ -75,16 +84,28 @@ Examples: a CP child — 15 cells, full vocabulary, words. A stroke survivor —
 15 cells, starter messages, messages. A toddler — 15 cells, first words,
 words.
 
-### 3.1 Big buttons, full vocabulary (PROPOSED)
+### 3.1 Big buttons, full vocabulary
 
-When cells are fewer than the vocabulary, the board pages. The candidate
-mapping: `grid60` splits into four 5×3 quadrants, and each page is one
-quadrant, so every word sits in the same place within its page as within
-`grid60`. A child whose motor access improves moves to `grid60` with zero
-position change. Cost to check with SLPs: most sentences cross from the left
-pages (pronouns, verbs) to the right pages (spatial, descriptors,
-regulators). Alternative: pages by sector. Decide in slice 4 with a
-side-by-side.
+Every selection is expensive for these users — time, effort, fatigue,
+errors — and a page turn is one more selection. The words that matter most
+must never cost one.
+
+- **Home page = the First words 15** (§ 5.1). Big buttons and First words
+  share one home page and differ only in the Vocabulary dial.
+- **The rest of `grid60`** is four built-in groups by grammar — More
+  people, More doing, More where, More describing — opened through the
+  `🗂️ Groups` anchor like any group. No new mechanism.
+- **Speak on tap** is the default; a separate Speak press is one more
+  selection.
+- **The Smart bar works harder:** two Predict tiles; families at one cell
+  wide.
+- **Access method sets the motor plan:** touch → place in space; switch →
+  scan timing (column-first, left to right, following sentence order);
+  eye gaze → spacing and dwell.
+
+Moving up to `grid60` is not zero-move; the move cost is shown (§ 4).
+Quadrant pages were withdrawn: they put `yes`, `no`, `stop`, and `help` on
+page 2.
 
 ## 4. Move cost
 
@@ -103,20 +124,56 @@ A profile with no history gets the unweighted count.
 After accepting, moved words get the soft highlight from 013 in their new
 cell for a window the adult sets (default: two weeks), then fade.
 
-## 5. Starters (draft, pending joint review)
+## 5. Starters
 
-Draft 15-cell lists and their sources are on the review page (founder and
-agent decide together). Sources used for the drafts:
+Each is a 5×3 home board. Families list their tiles in fixed order.
 
-- **First words:** Universal Core (CLDS/Project Core). Project Core starts
-  with `go`, `not`, `like`, and publishes the same vocabulary as 36-, 9-,
-  6-, and 4-location books — respected open practice already uses several
-  sizes.
-- **Urgent needs:** hospital and aphasia boards (Lingraphica, Aphasia
-  Library) and ICU studies; families of nonvocal ICU patients reported
-  repositioning, medication, bathroom, questions about care, and "I love
-  you" as the messages that mattered (VidaTalk study, PMC10833611).
-- **Big buttons:** no new list; it is the full vocabulary, paged (§ 3.1).
+### 5.1 First words
+
+| | 1 | 2 | 3 | 4 | 5 |
+| --- | --- | --- | --- | --- | --- |
+| row 1 | I | want | more | yes | stop |
+| row 2 | you | like | not | no | help |
+| row 3 | what | go | all done | `?` | hurt |
+
+Columns: people · doing · how much · answer and ask · stop, help, hurt.
+
+- `?` family: **why · when · where · who**.
+- Rule 0 from `docs/product/Core_Grid_Membership.md` applies here too: the
+  board can report that something is wrong without navigating (`help`,
+  `stop`, `no`, `hurt`). `yes` pairs with `no` and is the earliest word on
+  the list (AoA 2.31).
+- The cost: no place words (`in`, `on`, `up`) on the home page; they are in
+  the Predict bar and the More where group.
+- 11 of the 15 are Universal Core words, including Project Core's first
+  three (`go`, `not`, `like`).
+
+### 5.2 Urgent needs (messages)
+
+| | 1 | 2 | 3 | 4 | 5 |
+| --- | --- | --- | --- | --- | --- |
+| row 1 | Yes | Pain ▸ | Water | What's happening? | I'm scared |
+| row 2 | No | I can't breathe | Bathroom | Call ▸ | Thank you |
+| row 3 | I don't know | Move me | Hot / cold ▸ | Tired | I love you |
+
+Families:
+
+- **Pain ▸** speaks "I'm in pain", then *how much*: `0 · 2 · 4 · 6 · 8 ·
+  10` where the bar holds six tiles; on a 4-tile bar, `a little · medium ·
+  a lot · worst`. Then *where*: `head · chest · belly · back · arm · leg`.
+  Numbers or our own drawn faces only; the Wong-Baker FACES scale is
+  licensed.
+- **Hot / cold ▸:** `too hot · too cold · fan · blanket`.
+- **Call ▸:** `nurse · family · doctor`.
+
+Sources: hospital and aphasia boards (Lingraphica, Aphasia Library);
+families of nonvocal ICU patients named repositioning, medication,
+bathroom, questions about care, and "I love you" as the messages that
+mattered (VidaTalk study, PMC10833611).
+
+### 5.3 Big buttons
+
+Home page = § 5.1; the rest per § 3.1.
 
 ## 6. Withdrawn from the earlier draft
 
@@ -130,16 +187,19 @@ agent decide together). Sources used for the drafts:
   primary driver of abandonment): unsourced. Abandonment research names fit,
   setup burden, and partner support. Do not use in copy until verified.
 
-## 7. Open questions
+## 7. Defaults still to validate
 
-1. **Shape of 30.** 6×5 gives near-square cells; 5×6 keeps one column per
-   sector. Decide in slice 1 with a side-by-side.
-2. **Switch scanning order.** Proposed: column-first, left to right, matching
-   sentence order. Needs SLP input.
-3. **Keyguards.** Cell spacing must stay fixed per preset so plastic
-   keyguards fit. Publishing keyguard files is a later slice.
-4. **Portrait.** The renderer must handle rotation per preset; movement on
-   rotation counts as a move (§ 4) or is locked per profile.
+Recommended defaults (**PROPOSED**; adjustable per profile):
+
+1. **30 is 6×5.** Near-square cells on a landscape iPad (5×6 would be twice
+   as wide as tall), and six columns give questions their own column:
+   people · questions · doing · where · describing · regulate.
+2. **Switch scanning** is column-first, left to right, following sentence
+   order. Validate with an SLP before launch.
+3. **Keyguards.** Cell spacing is fixed per preset so plastic keyguards fit.
+   Keyguard files are a later slice.
+4. **Orientation** is locked per profile (landscape default), so rotation
+   never moves a word.
 
 ## 8. Vocabulary for code and docs
 
@@ -149,13 +209,14 @@ agent decide together). Sources used for the drafts:
 | Starter (First words, Big buttons, Urgent needs) | Low-cognition layout |
 | Move cost, moved words | Motor guarantee |
 | Adult move | Reflow (no reflow ever happens) |
+| Smart bar, family tile, family | Prediction bar (for the whole surface), folder, popup |
 
 ## 9. Slices (proposed)
 
-1. **Starter lists.** Joint review; write the three 15-cell default maps
-   into `docs/product/Core_Coordinate_Map.md`; regenerate `core_cell` rows.
-   Works test: each starter renders on a fresh profile with the reviewed
-   words in the reviewed cells.
+1. **Starter maps.** Write the § 5 boards into
+   `docs/product/Core_Coordinate_Map.md` as named layouts; regenerate
+   `core_cell` rows. Works test: each starter renders on a fresh profile
+   with § 5's words in § 5's cells.
 2. **Renderer of any shape.** Remove the ten-column assumption; cells scale
    to the viewport; strip geometry scales with width (5 columns: two
    prediction slots + Groups). Works test: 15, 60, and 90 render with the
@@ -165,11 +226,15 @@ agent decide together). Sources used for the drafts:
    catalog update never overwrites an adult move. Works test: move `stop`,
    restart, update the catalog — `stop` is still where the adult put it.
 4. **Cells picker, move cost, transition highlight.** Parent Corner picker
-   with the § 4 preview; paging for big buttons (§ 3.1). Works test: a
+   with the § 4 preview; the four core groups for Big buttons (§ 3.1). Works test: a
    profile with a known selection log previews exactly the words the two
    maps disagree on.
 5. **`grid90` rebuild** on column sectors, with its move cost from `grid60`
    shown in the change record.
 6. **Message tiles** for the Urgent needs starter (depends on 010's phrase
    list).
-7. **Keyguard specifications** (later).
+7. **Smart bar families** (Expand mode, fixed order, one-cell tiles, one
+   chained family; Parent Corner editor). Works test: tap `?` — the bar
+   shows why · when · where · who in that order in slots 1–4, on every
+   launch, whatever the prediction state.
+8. **Keyguard specifications** (later).

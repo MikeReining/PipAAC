@@ -86,8 +86,8 @@ live in `Core_Coordinate_Map.md` §3, which the catalog build parses.
 | 1 | I · you | want · like · go | in · out | more · all done | yes |
 | 2 | me · my | need · look · come | on · off | not · and | no |
 | 3 | he · she | get · make · do | up · down | big · little | stop |
-| 4 | this · that | put · take · give | here · there | good · bad | help |
-| 5 | it · who | open · turn · play | to · for | happy · sad | hurt |
+| 4 | it · that | put · take · give | here · there | good · bad | help |
+| 5 | why · when | open · turn · play | to · for | happy · sad | hurt |
 | 6 | what · where | eat · drink · can | with · at | all · some | please |
 
 How the layout reads:
@@ -97,20 +97,21 @@ How the layout reads:
   to find with a flailing or scanning hand. It holds no questions and no
   grammar.
 - **Questions** cluster in the bottom-left of the starter columns
-  (`who` · `what` · `where`), where a question starts an utterance.
+  (`why` · `when` · `what` · `where`, one 2×2 block), where a question
+  starts an utterance. Amended 2026-09-22 (§ 8).
 - **Feelings** pair on one row (`happy` · `sad`) next to `hurt` in the
   regulator column, so the emotion-and-pain words form one visual patch.
 - **Quantity** pairs (`all` · `some`) sit under `more` in the same sector.
 
-Coverage: **32 of 36 Universal Core** words are cells (waived: `same`,
-`different`, `when`, `why` — §6). **19 of 23 Banajee toddler words**
+Coverage: **33 of 36 Universal Core** words are cells (waived: `same`,
+`different`, `who` — §6, § 8). **19 of 23 Banajee toddler words**
 (Banajee, DiCarlo & Stricklin 2003; waived: `the`, `a`, `is`, `mine`).
 All five rule-0 words are cells.
 
 Utterances that must stay at or under three taps, with no navigation:
 `I·want·more`, `I·need·help`, `it·hurt`, `I·sad`, `not·like·it`,
 `all done`, `my·turn`, `help·me`, `look·at·that`, `go·out`, `put·in·here`,
-`what·that`, `where·go`, `who·that`, `you·do·it`, `open·it`, `more·please`,
+`what·that`, `where·go`, `why·not`, `when·go`, `you·do·it`, `open·it`, `more·please`,
 `I·like·that`, `give·me`, `stop·that`.
 
 ## 4. Evidence
@@ -166,8 +167,8 @@ Off the board — the contested 23:
 | --- | --- | --- | --- | --- |
 | same | 5.62 | ≤140 | ✓ | Latest-acquired UC36 word; comparison, not expression |
 | different | 5.50 | ≤180 | ✓ | Same reason; lost its seat to `sad` under rule 0 |
-| why | 3.97 | ≤170 | ✓ | `who` is earlier and more frequent; one-word "why?" protest is covered by `no`/`stop` |
-| when | 4.24 | ≤40 | ✓ | Time questions develop late; no concrete answer on a board |
+| who | 3.81 | ≤90 | ✓ | Asked least of the five questions; `?` family and strip (§ 8) |
+| this | 4.93 | ≤30 | – | `that` covers pointing; not UC36 (§ 8) |
 | how | 5.36 | ≤50 | – | Latest-developing question |
 | we | 5.04 | ≤40 | – | Latest-acquired pronoun on the list; `you`+`me` carry joint action |
 | they | 4.88 | ≤20 | – | Plural third person; strip covers |
@@ -210,7 +211,7 @@ stays one tap away in the strip.
 **DECIDED 2026-09-22.**
 
 UC36 waivers (rule 1 exceptions): `same`, `different` (academic comparison;
-the latest-acquired UC36 words), `when`, `why` (§4 reasons).
+the latest-acquired UC36 words), `who` (§ 8).
 
 Banajee waivers: `the`, `a` (articles are not core cells; no core list
 includes them), `is` (copula; telegraphic output is the design), `mine`
@@ -219,13 +220,13 @@ includes them), `is` (copula; telegraphic output is the design), `mine`
 Deliberately off `grid60` — every one stays root core, a `grid90` cell, and
 strip-eligible:
 
-- **Pronouns**: `we`, `they`, `mine`.
+- **Pronouns**: `we`, `they`, `mine`, `this`.
 - **Verbs**: `see`, `have`, `wait`, `feel`, `read`, `tell`, `think`,
   `find`, `work`.
 - **Spatial**: `away`, `under`, `over`.
 - **Descriptors**: `same`, `different`.
 - **Connectors**: `but`, `or`, `because`.
-- **Questions**: `why`, `how`, `when`.
+- **Questions**: `who`, `how`.
 - **Greetings and manners**: `hi`, `bye`, `sorry`, `thank you` live in
   fringe (`Initial_Vocabulary_600.md` §3.14). The strip's idle state owns
   conversational starters (`Motor_Grid_And_Art.md` §2).
@@ -284,3 +285,26 @@ not the grid. **BUILT** (`scripts/catalog/catalog.test.mjs`, `src/board/groups.t
    Groups remain views; a core word's home is still its coordinate.
 
 Lexicon: 677 senses = 83 root-core + 594 fringe.
+
+## 8. Amendment — `why` and `when` in
+
+**DECIDED 2026-09-22** (founder; supersedes the `why`/`when` waivers and the
+`please` vs `why` call in § 5).
+
+`why` and `when` take cells; `this` and `who` leave; `it` moves up one row.
+The earlier reasons do not hold:
+
+- "`why?` protest is covered by `no`/`stop`" — `why` is mostly curiosity,
+  asking for information (Light's second purpose), not protest.
+- "`when`: no concrete answer on a board" — the partner answers out loud;
+  the board never holds the answer.
+- Age of acquisition measures when a word is learned, not how much it is
+  used once learned. Children ask why constantly, and people ask when
+  ("not now" — "when?"). By our own source, `why` (3.97) is acquired
+  before `on` (4.01).
+
+Cuts: `this` is not UC36 and `that` covers pointing. `who` is the question
+asked least of the five and stays in the `?` family on small boards
+(`docs/phases/014_Grid_Density_And_Fit.md` § 5), in `grid90`, and in the
+Smart bar.
+

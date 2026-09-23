@@ -79,13 +79,17 @@ Rows top to bottom, slots left to right. `slot_index` is row-major, 0-based.
 | 1 | I · you · want · like · go · in · out · more · all done · yes |
 | 2 | me · my · need · look · come · on · off · not · and · no |
 | 3 | he · she · get · make · do · up · down · big · little · stop |
-| 4 | this · that · put · take · give · here · there · good · bad · help |
-| 5 | it · who · open · turn · play · to · for · happy · sad · hurt |
+| 4 | it · that · put · take · give · here · there · good · bad · help |
+| 5 | why · when · open · turn · play · to · for · happy · sad · hurt |
 | 6 | what · where · eat · drink · can · with · at · all · some · please |
 
 The 23 root-core senses with no `grid60` cell: mine, we, they, see, have,
 read, feel, tell, think, find, work, wait, away, under, over, same,
-different, but, or, because, why, how, when. Each is off by a named reason
+different, but, or, because, how, this, who.
+
+**Amended 2026-09-22** (founder): `why` and `when` take cells; `this` and
+`who` leave; `it` moves up one row so the four questions form one block
+(rows 5–6, cols 1–2). Rationale: `docs/product/Core_Grid_Membership.md` § 8. Each is off by a named reason
 in `docs/product/Core_Grid_Membership.md` §6; every one is a `grid90` cell
 and strip-eligible.
 

@@ -148,7 +148,7 @@ Assignments: `docs/product/Core_Coordinate_Map.md`.
 
 ---
 
-## 2. Predictive strip (layout only)
+## 2. Smart bar (formerly the predictive strip)
 
 **DECIDED 2026-09-22** (not built). On the motor-grid view the stack is:
 
@@ -189,6 +189,56 @@ a density change. Position in the top bar: founder call in
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 6.
 
 On the motor-grid view, the strip is where a suggestion may show a word that is not already a core cell. The Context River remains a separate situational surface. A specific food, place, person, or thing can show up in one tap instead of three or four folder levels.
+
+### 2.1 Smart bar contract
+
+**DECIDED 2026-09-22** (founder; not built). Renamed from "predictive
+strip": prediction is one of its jobs, not the only one. Code and older docs
+still say *strip*; it is the same surface.
+
+**The grid never changes. The Smart bar is the one place that does.** Every
+flexible behavior that would otherwise move a cell lands here instead.
+
+**Modes.** One mode at a time, always caused by a visible action; after a
+pick, the bar returns to Predict.
+
+| Mode | Caused by | Shows | Order | Owner |
+| --- | --- | --- | --- | --- |
+| Predict | default | likely next words | ranked | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` |
+| Expand | tapping a family tile (`?`, Pain, Hot/cold, Call) | that tile's family | **fixed** | this section; defaults in `docs/phases/014_Grid_Density_And_Fit.md` § 5 |
+| Forms | the Forms key | forms of the last word | ranked by context | `docs/phases/005_Word_Forms.md` |
+| Partner | the Listen key | the partner's words, one turn | as heard | `docs/phases/008_Partner_Listening.md` |
+
+**Fixed-order rule.** A family's tiles always sit in the same slots on a
+given profile, so "`?` then slot 2" becomes a motor plan the way a cell
+does. Families are never ranked, reordered by a model, or trimmed by
+context. Only an adult changes a family, and that change is shown like any
+other move (`docs/phases/014_Grid_Density_And_Fit.md` § 4).
+
+**Tile widths.** Predict tiles are two columns wide and at most four (a
+ranked row is a scanning tax). Expand tiles are one column wide — never
+smaller than a board cell on that profile — so a 5-column board shows 4 and
+a 10-column board shows 8; fixed order means the child does not scan them.
+A family longer than the bar ends in a fixed `more ›` tile that pages it.
+The utility anchors (`🗂️ Groups`, `⌨ Keyboard`) stay put in every mode.
+
+**Family tiles.** A family tile is a cell that opens its family in the bar
+and speaks its own label (`Pain` speaks "I'm in pain"). Each family tile
+the child taps speaks at once, so a partner hears the message build even if
+the child stops partway. A family may lead to one more family (Pain → how
+much → where); no deeper.
+
+**Who may put what there.**
+
+- **Predict:** the ranking engine only, choosing from words this profile
+  has. A word an adult hid never appears.
+- **Expand:** families. Pip ships defaults; a parent, SLP, or teacher may
+  add, remove, or reorder a family's tiles and make a family tile from any
+  word (Parent Corner → Smart bar).
+- **Forms:** the catalog's word forms.
+- **Partner:** listening, for one turn, only while the Listen key is on.
+- **Nobody else.** No tips, prompts, promotions, notifications, or app
+  messages ever appear in the bar.
 
 ---
 

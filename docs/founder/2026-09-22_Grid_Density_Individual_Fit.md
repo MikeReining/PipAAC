@@ -61,7 +61,20 @@ can change them. Consistency across upgrades is a goal, not dogma.
 Documentation only. Citation lint passes; each adopted rule appears in one
 owner doc with a DECIDED date and marked not built.
 
+## Later the same day
+
+6. **`why` and `when` on `grid60` and on First words.** Children ask why
+   constantly; people ask when. `this` may leave. Agent recommendation
+   adopted: `who` leaves too (`docs/product/Core_Grid_Membership.md` § 8).
+7. **Smart bar.** The predictive strip becomes a Smart bar: a question tile
+   opens all the question words in the bar; Pain opens the numbers. Fixed
+   order agreed. Adults (SLPs, teachers) can customize it; Pip ships
+   defaults. Owner: `docs/product/Motor_Grid_And_Art.md` § 2.1.
+8. **Big buttons:** quarter pages dropped; agent recommendation adopted
+   (`docs/phases/014_Grid_Density_And_Fit.md` § 3.1).
+9. Founder delegated the remaining calls: "Lead with recommendations. No
+   more questions."
+
 ## Next
 
-Joint review of the draft 15-cell starter lists (review page), then 014
-slice 1.
+014 slice 1 — starter maps.

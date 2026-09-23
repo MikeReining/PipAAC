@@ -25529,7 +25529,7 @@
     {
       "id": "cel_grid60_030",
       "layout": "grid60",
-      "sense_id": "sns_0012",
+      "sense_id": "sns_0008",
       "slot_index": 30
     },
     {
@@ -25589,13 +25589,13 @@
     {
       "id": "cel_grid60_040",
       "layout": "grid60",
-      "sense_id": "sns_0008",
+      "sense_id": "sns_0069",
       "slot_index": 40
     },
     {
       "id": "cel_grid60_041",
       "layout": "grid60",
-      "sense_id": "sns_0068",
+      "sense_id": "sns_0071",
       "slot_index": 41
     },
     {
