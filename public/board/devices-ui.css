@@ -1,0 +1,9 @@
+/* Pairing sheet and the device/user rows in Parent Corner. */
+.pair-code {
+  font-size: 34px; letter-spacing: 8px; font-weight: 800;
+  text-align: center; padding: 14px 0 4px; font-variant-numeric: tabular-nums;
+}
+.pair-qr { display: flex; justify-content: center; padding: 8px 0; }
+.dev-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+.dev-row .dev-id { flex: 1; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+.dev-row button { flex: none; padding: 4px 10px; font-size: 13px; }
