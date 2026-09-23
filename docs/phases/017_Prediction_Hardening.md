@@ -659,6 +659,7 @@ Child conversation is the main source; adult text is background.
 | Tatoeba ([downloads](https://tatoeba.org/en/downloads)) | Short everyday sentences, human-written | CC BY 2.0 FR (part CC0) | Short, simple |
 | Google Books Ngram ([datasets](https://storage.googleapis.com/books/ngrams/books/datasetsv3.html)) | 1- to 5-gram counts from books | CC BY 3.0 | Frequency backbone |
 | Our own table | Jev or an LLM asked offline which of our words follow each common context | Ours | Fills thin contexts |
+| Childlike dialogues (`data/prediction/sources/childlike_en.jsonl`) | ~540k utterances we generate: authored frames in real child-speech shapes, slot-filled from our own vocabulary weighted by AoA (`scripts/prediction/book/gen_childlike.mjs`) | Ours | Second child source; +3–5 pts over TinyDialogues alone (§ Steered synth) |
 | The flywheel (step 26) | Anonymous word-to-word counts from Pip users | Ours | Real AAC use; grows every month |
 
 Excluded:
@@ -815,6 +816,29 @@ What real children say:
   so the bench measures it per user and the weight is learned.
 - **First words stay hard** (4–22%). Step 21 and occasions (step 9)
   aim here.
+
+### Steered synth (2026-09-23, our corpus)
+
+If TalkBank declines the derived-counts ask (R11), the fallback is to write
+our own child-register text: `gen_childlike.mjs` authors dialogue frames in
+the shapes real children use (from aggregate research patterns — no
+transcript text or counts), expands them over our 680-word vocabulary
+weighted by age-of-acquisition, and emits one dialogue corpus per language
+stage. Same held-out CHILDES measurement as above:
+
+| Book | MLU < 2 | MLU 2–3.5 | MLU > 3.5 |
+| --- | --- | --- | --- |
+| TinyDialogues age-band book (this harness) | 20.4% | 31.3% | 33.2% |
+| childlike synth alone | 21.9% | 27.2% | 29.0% |
+| **synth + TinyDialogues mix** | **25.4%** | **34.4%** | **36.4%** |
+
+What it means: the authored corpus is weaker alone — ~200 frames can't
+match GPT-4's 130k varied dialogues — but it adds +3–5 points as a second
+source because it fills the high-frequency child contexts TinyDialogues
+misses. It ships either way; if TalkBank says yes, CHILDES counts join as
+one more weighted source in the same build (step 23 item 4), not a
+replacement. Scratch harness, not committed; numbers use this doc's
+protocol (80/20 transcripts, 2,500 sampled predictions per band).
 
 Truth owner: this doc until closeout, then
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2–5.3.
