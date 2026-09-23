@@ -225,25 +225,40 @@ CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_i
 CREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);
 CREATE INDEX IF NOT EXISTS event_log_sentence ON learner_event_log(sentence_id, position);
 
--- One row per strip moment: what the ranker had, what it showed, and
--- what the child picked next (chosen_* fills on the next pick). The
--- training data for §5.5 and the instrument for §5.7. Ids and numbers
--- only; no label text, no partner words.
+-- One row per strip moment (017-5): what the ranker had, what it
+-- showed, and what the child picked next (chosen_* fills on the next
+-- pick). A Jev answer updates the row in place — both rankings live on
+-- one row so the moment replays exactly. The training data for §5.5
+-- and the instrument for §5.7. Ids and numbers only; no label text, no
+-- partner words.
 CREATE TABLE IF NOT EXISTS strip_impression (
   id INTEGER PRIMARY KEY,
   sentence_id INTEGER NOT NULL REFERENCES sentence(id),
   position INTEGER NOT NULL CHECK (position >= 0),
   shown_at INTEGER NOT NULL CHECK (shown_at > 0),
-  -- JSON array: [{"kind","id","x":{feature:value},"p"}] for the shortlist
+  -- JSON array: [{"kind","id","x":{feature:value},"s","p"}] in local
+  -- rank order; a Jev answer merges "jp" (Jev's raw P) and "wp"
+  -- (with-Jev p) onto each entry
   candidates TEXT NOT NULL,
-  -- JSON array of the (kind:id) keys rendered as tiles, rank order, ≤ 4
-  shown TEXT NOT NULL,
-  p_none REAL NOT NULL CHECK (p_none >= 0 AND p_none <= 1),
+  -- JSON array of the (kind:id) keys the local ranking painted, ≤ cap
+  shown_local TEXT NOT NULL,
+  -- JSON array of the keys actually on screen when the next pick
+  -- happened — written by the painter, not the ranker; NULL until then
+  shown_final TEXT,
+  p_none REAL NOT NULL CHECK (p_none >= 0 AND p_none <= 1),  -- local
+  p_none_jev REAL CHECK (p_none_jev IS NULL OR (p_none_jev >= 0 AND p_none_jev <= 1)),
   weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
   -- picture | keyboard. Keyboard rows are metrics only: the keyboard
   -- ranker has no feature vector, so the learner must skip them (017-4).
   mode TEXT NOT NULL DEFAULT 'picture' CHECK (mode IN ('picture', 'keyboard')),
+  -- the exact weight vectors used: JSON {"w":{...},"tau":{...},"ver","seen"}
+  weights_local TEXT,
+  weights_jev TEXT,
+  shortlist_cap INTEGER CHECK (shortlist_cap IS NULL OR shortlist_cap > 0),
+  jev_probs TEXT,             -- raw probabilities incl. "none"; NULL = no answer
   jev_model TEXT,             -- versioned id from the response; NULL = no call
+  jev_prompt_version TEXT,
+  jev_latency_ms INTEGER CHECK (jev_latency_ms IS NULL OR jev_latency_ms >= 0),
   jev_status TEXT NOT NULL CHECK (jev_status IN ('off', 'skipped', 'answered', 'late', 'error')),
   chosen_kind TEXT CHECK (chosen_kind IS NULL OR chosen_kind IN ('sense', 'entity')),
   chosen_id TEXT,
@@ -664,4 +679,4 @@ CREATE TABLE IF NOT EXISTS prediction_weights (
   PRIMARY KEY (profile_id, weight_set)
 );
 
-PRAGMA user_version = 8;
+PRAGMA user_version = 9;

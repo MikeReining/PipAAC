@@ -42,8 +42,13 @@ export function loadWeights(db, catalogModel, weightSet = "local_only") {
   };
 }
 
-const logit = (x, w) =>
-  MODEL_FEATURES.reduce((t, f) => t + (w[f] ?? 0) * (x[f] ?? 0), 0);
+const logit = (x, w, feats = MODEL_FEATURES) =>
+  feats.reduce((t, f) => t + (w[f] ?? 0) * (x[f] ?? 0), 0);
+
+/** 017-3: the local model's feature list — `jev` is left out entirely,
+ *  not just zeroed, so a Jev-shaped offer can't leak into local
+ *  learning. */
+const LOCAL_FEATURES = MODEL_FEATURES.filter((f) => f !== "jev");
 
 /**
  * Learn from one closed sentence. Returns the number of impressions
@@ -58,20 +63,22 @@ export function learnFromSentence(
     .all(sentenceId)[0]?.end_kind;
   if (end !== "spoken") return 0;
 
-  // local_only trains on every impression; with_jev only where Jev
-  // actually answered — re-ranked impressions are its only evidence.
+  // local_only trains on every impression; with_jev trains on every
+  // moment where Jev returned probabilities — answered in time or late
+  // (017-3: a late answer is still valid evidence about the word).
   // Keyboard-mode rows are metrics only: the keyboard ranker has no
   // feature vector, so training on them once wrote NaN weights (017-4).
   const imps = db
     .prepare(
-      `SELECT candidates, chosen_kind, chosen_id FROM strip_impression
+      `SELECT candidates, jev_probs, chosen_kind, chosen_id FROM strip_impression
        WHERE sentence_id = ? AND chosen_id IS NOT NULL AND mode = 'picture'
-         AND (? = 'local_only' OR jev_status = 'answered')
+         AND (? != 'with_jev' OR jev_probs IS NOT NULL)
        ORDER BY id`,
     )
     .all(sentenceId, weightSet);
   if (!imps.length) return 0;
 
+  const feats = weightSet === "local_only" ? LOCAL_FEATURES : MODEL_FEATURES;
   const defaults = catalogModel.weights[weightSet];
   const row = db
     .prepare(
@@ -84,15 +91,28 @@ export function learnFromSentence(
   for (const imp of imps) {
     // A candidate whose features are not all finite numbers is dropped
     // from the softmax — a pick of it trains `none`, never NaN (017-4).
+    // with_jev rebuilds x.jev from the stored Jev probability (017-5's
+    // merged row keeps local x clean).
     const cands = JSON.parse(imp.candidates).filter((c) =>
       Object.values(c.x ?? {}).every(
         (v) => typeof v === "number" && Number.isFinite(v)));
+    // The none term gets the same fold scoreCandidates applies: Jev's
+    // P(none) enters through the jev weight (017-3/017-5).
+    let jevNone = null;
+    if (weightSet === "with_jev") {
+      const probs = imp.jev_probs ? JSON.parse(imp.jev_probs) : {};
+      jevNone = Math.log(Math.max(probs.none ?? 0, 1e-9));
+      for (const c of cands) {
+        c.x = { ...c.x, jev: Math.log(Math.max(c.jp ?? 0, 1e-9)) };
+      }
+    }
     const label = cands.findIndex(
       (c) => c.kind === imp.chosen_kind && c.id === imp.chosen_id);
-    const logits = cands.map((c) => logit(c.x, cur));
-    const eN = Math.exp(cur.none_bias ?? 0);
+    const logits = cands.map((c) => logit(c.x, cur, feats));
+    const eN = Math.exp((cur.none_bias ?? 0)
+      + (jevNone === null ? 0 : (cur.jev ?? 0) * jevNone));
     const Z = logits.reduce((a, s) => a + Math.exp(s), eN);
-    for (const f of MODEL_FEATURES) {
+    for (const f of feats) {
       let g = 0;
       cands.forEach((c, i) => {
         g += (Math.exp(logits[i]) / Z - (i === label ? 1 : 0)) * (c.x[f] ?? 0);

@@ -213,3 +213,110 @@ test("repairCorruptWeights resets a corrupted row to the shipped defaults", () =
   // idempotent — a clean row is untouched
   assert.equal(repairCorruptWeights(db, MODEL), 0);
 });
+
+/* 017 steps 3 + 5 — both paths train separately; a stored moment
+ * replays exactly. */
+import {
+  applyJev,
+  replayImpression,
+  scoreCandidates,
+  spotGate,
+  stampShownFinal,
+  updateImpressionJev,
+} from "../../public/shared/funnel.mjs";
+
+test("017 step 3 — local_only drops jev; with_jev trains on answered and late", () => {
+  const db = openDb();
+  const s = openSentence(db, Date.now());
+  const cands = [
+    { kind: "sense", id: "sns_0001", x: { freq: 2 }, s: 0, p: 0.5 },
+    { kind: "sense", id: "sns_0002", x: { freq: 1 }, s: 0, p: 0.5 },
+  ];
+  const imp = (pos, chosen) => {
+    const id = logImpression(db, {
+      sentenceId: s, position: pos, candidates: cands,
+      shown: ["sense:sns_0001", "sense:sns_0002"],
+    });
+    fillChosen(db, s, { kind: "sense", id: chosen, source: "grid" });
+    return id;
+  };
+  imp(0, "sns_0001"); // jev off
+  const i2 = imp(1, "sns_0002");
+  updateImpressionJev(db, i2, {
+    status: "answered", model: "jev-test", latencyMs: 80,
+    probs: { c1: 0.9, c2: 0.05, none: 0.05 },
+    candidates: cands.map((c, i) => ({
+      ...c, jp: [0.9, 0.05][i], wp: [0.85, 0.1][i] })),
+  });
+  const i3 = imp(2, "sns_0001");
+  updateImpressionJev(db, i3, {
+    status: "late", model: "jev-test", latencyMs: 900,
+    probs: { c1: 0.7, c2: 0.2, none: 0.1 },
+    candidates: cands.map((c, i) => ({
+      ...c, jp: [0.7, 0.2][i], wp: [0.65, 0.25][i] })),
+  });
+  closeSentence(db, s, Date.now() + 4000, "spoken");
+
+  assert.equal(learnFromSentence(db, s, MODEL), 3);
+  assert.equal(
+    learnFromSentence(db, s, MODEL, { weightSet: "with_jev" }), 2,
+    "with_jev trains on answered + late, not on the jev-off moment");
+  const wl = JSON.parse(db.prepare(
+    "SELECT weights FROM prediction_weights WHERE weight_set = 'local_only'")
+    .all()[0].weights);
+  assert.equal(wl.jev, MODEL.weights.local_only.jev,
+    "local_only never trains the jev feature");
+  const wj = JSON.parse(db.prepare(
+    "SELECT weights FROM prediction_weights WHERE weight_set = 'with_jev'")
+    .all()[0].weights);
+  assert.ok(Object.values(wj).every(Number.isFinite));
+  const drift = Math.abs(wj.jev - MODEL.weights.with_jev.jev);
+  assert.ok(drift > 0, "with_jev's jev weight moved on answered evidence");
+});
+
+test("017 step 5 — a stored moment replays exactly, local and with-Jev", () => {
+  const db = openDb();
+  const wl = { w: { ...MODEL.weights.local_only }, tau: MODEL.tau,
+    ver: MODEL.version, seen: 3 };
+  const raw = [
+    { kind: "sense", id: "sns_0001", x: { freq: 2, recency: 0.5 } },
+    { kind: "sense", id: "sns_0002", x: { freq: 1 } },
+    { kind: "sense", id: "sns_0003", x: { hour: 1 } },
+  ];
+  const { candidates: scored, pNone } = scoreCandidates(raw, wl.w);
+  const shown = spotGate(scored, pNone, wl.tau, 4)
+    .map((r) => `${r.kind}:${r.id}`);
+  const s = openSentence(db, Date.now());
+  const id = logImpression(db, {
+    sentenceId: s, position: 0,
+    candidates: scored.map((c) => ({ kind: c.kind, id: c.id, x: c.x, s: c.s, p: c.p })),
+    shown, pNone, weightsLocal: wl, shortlistCap: 4,
+  });
+  stampShownFinal(db, id, shown);
+  let row = db.prepare("SELECT * FROM strip_impression WHERE id = ?").all(id)[0];
+  let rep = replayImpression(row);
+  assert.ok(rep.ok, `local replay: ${rep.diffs.join("; ")}`);
+
+  // Jev answers and repaints: merged jp/wp + shown_final must replay.
+  const wj = { w: { ...MODEL.weights.with_jev }, tau: MODEL.tau,
+    ver: MODEL.version, seen: 3 };
+  const probs = { c1: 0.05, c2: 0.8, c3: 0.1, none: 0.05 };
+  const reranked = applyJev(scored, probs, wj.w);
+  const jevShown = spotGate(reranked.candidates, reranked.pNone, wj.tau, 4)
+    .map((r) => `${r.kind}:${r.id}`);
+  updateImpressionJev(db, id, {
+    status: "answered", model: "jev-test", latencyMs: 90,
+    probs, weightsJev: wj, pNoneJev: reranked.pNone,
+    candidates: scored.map((c, i) => ({
+      kind: c.kind, id: c.id, x: c.x, s: c.s, p: c.p,
+      jp: probs[`c${i + 1}`] ?? 0,
+      wp: reranked.candidates.find(
+        (r) => r.kind === c.kind && r.id === c.id)?.p ?? 0,
+    })),
+  });
+  stampShownFinal(db, id, jevShown);
+  row = db.prepare("SELECT * FROM strip_impression WHERE id = ?").all(id)[0];
+  rep = replayImpression(row);
+  assert.ok(rep.ok, `with-Jev replay: ${rep.diffs.join("; ")}`);
+  assert.deepEqual(rep.finalShown, jevShown);
+});

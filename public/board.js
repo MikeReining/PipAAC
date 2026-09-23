@@ -13,9 +13,11 @@ import {
   logImpression,
   logSelection,
   openSentence,
+  stampShownFinal,
   stripScored,
   spotGate,
   spotWeights,
+  updateImpressionJev,
 } from "./shared/funnel.mjs";
 import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
 import {
@@ -260,20 +262,26 @@ const ensureSentence = () => (sentenceId ??= openSentence(db));
  * the next pick's position — one row per distinct offer, deduped by
  * (sentence, position, shown). The next logged pick fills chosen_*. */
 let lastImpressionKey = null;
+/* 017-5: the open strip moment — one row per moment, updated in place
+ * when Jev answers; the painter stamps shown_final on it. */
+let openImpressionId = null;
 function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
   if (sentenceId === null) return false;
   const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
   const key = `${sentenceId}:${sentencePicks}:${shownKeys.join()}`;
   if (key === lastImpressionKey) return false;
   lastImpressionKey = key;
-  logImpression(db, {
+  openImpressionId = logImpression(db, {
     sentenceId, position: sentencePicks,
-    candidates: candidates.map((c) => ({ kind: c.kind, id: c.id, x: c.x ?? {} })),
+    candidates: candidates.map((c) => ({
+      kind: c.kind, id: c.id, x: c.x ?? {}, s: c.s, p: c.p })),
     shown: shownKeys, pNone,
     weightSet: jev.weightSet ?? "local_only",
     jevStatus: jev.jevStatus ?? "off",
     jevModel: jev.jevModel ?? null,
     mode: jev.mode ?? "picture",
+    weightsLocal: jev.weightsLocal ?? null,
+    shortlistCap: jev.cap ?? null,
   });
   return true;
 }
@@ -333,10 +341,14 @@ async function speakSentence() {
     closeSentence(db, sid, Date.now(), "spoken");
     // §5.5: the child's weights take one gradient step per impression —
     // only for a spoken sentence; a cleared bar is metrics only.
+    // 017-3: both paths train — local_only on its own evidence, with_jev
+    // on every moment Jev returned probabilities (late answers count).
     learnFromSentence(db, sid, catalog.prediction);
+    learnFromSentence(db, sid, catalog.prediction, { weightSet: "with_jev" });
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
+    openImpressionId = null;
   }
 }
 
@@ -444,6 +456,7 @@ $("clear").addEventListener("click", () => {
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
+    openImpressionId = null;
   }
   sentence.length = 0;
   kbText = "";
@@ -571,13 +584,19 @@ function stripCards(items) {
   });
 }
 
-/** Paint the strip's slots — the only path that touches the tray. */
+/** Paint the strip's slots — the only path that touches the tray.
+ *  Stamps shown_final on the open strip moment: what was painted is
+ *  the truth the stored row must replay (017-5). */
 async function paintStrip(cards, slots = stripSlots(boardGeom().cols)) {
   const tray = $("tray");
   tray.style.gridTemplateColumns = `repeat(${slots}, 1fr)`;
   tray.querySelectorAll(".pred").forEach((n) => n.remove());
   for (let i = 0; i < slots; i++) {
     tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
+  }
+  if (openImpressionId !== null) {
+    stampShownFinal(db, openImpressionId, cards.slice(0, slots).map((c) =>
+      c.entity ? `entity:${c.entity.id}` : `sense:${c.id}`));
   }
   fitLabels(tray);
   applyLikely();
@@ -641,8 +660,8 @@ async function renderStrip() {
     // First paint is always the local model (§ 3.4: <50 ms, never waits
     // on the network). The child's learned weights win over the shipped
     // defaults once Speak has trained them (§5.5).
-    const model = { weights: loadWeights(db, catalog.prediction).weights,
-                    tau: catalog.prediction.tau };
+    const lw = loadWeights(db, catalog.prediction);
+    const model = { weights: lw.weights, tau: catalog.prediction.tau };
     const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbOpen
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
@@ -653,7 +672,13 @@ async function renderStrip() {
     // wrote NaN into every learned weight.
     maybeImpression(
       scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
-      items, scored?.pNone ?? 0, { mode: kbOpen ? "keyboard" : "picture" },
+      items, scored?.pNone ?? 0, {
+        mode: kbOpen ? "keyboard" : "picture", cap,
+        weightsLocal: scored ? {
+          w: model.weights, tau: model.tau,
+          ver: catalog.prediction.version, seen: lw.examplesSeen,
+        } : null,
+      },
     );
     cards = stripCards(items);
     // Jev may re-rank inside the paint window (§ 3.4) — fired after the
@@ -684,42 +709,74 @@ async function maybeJev(scored, sents, paintedAt) {
   try {
     const res = await jevRank(req);
     const probs = jevProbabilities(res);
+    const latencyMs = Date.now() - paintedAt;
     // The strip moment this answered may have already closed — the row
     // still records what came back (late), it just can't repaint.
     const moved = sid !== sentenceId || pos !== sentencePicks;
     if (!probs) return markJev("error", res?.model, sid, pos);
-    if (moved || Date.now() - paintedAt > JEV_WINDOW_MS)
-      return markJev("late", res.model, sid, pos);
+    const lw = loadWeights(db, catalog.prediction, "with_jev");
     const wj = {
-      weights: spotWeights(db, loadWeights(db, catalog.prediction, "with_jev").weights),
+      weights: spotWeights(db, lw.weights),
       tau: catalog.prediction.tau,
     };
     const reranked = applyJev(scored.candidates, probs, wj.weights);
     const items = spotGate(reranked.candidates, reranked.pNone, wj.tau,
       stripSlots(boardGeom().cols))
       .map((r) => ({ kind: r.kind, id: r.id }));
-    // An identical offer dedupes inside maybeImpression — markJev then
-    // stamps the answer on the existing row. A changed offer repaints
-    // and logs a with_jev impression, the rows with_jev learns from.
-    const changed = maybeImpression(reranked.candidates, items, reranked.pNone, {
-      weightSet: "with_jev", jevStatus: "answered", jevModel: res.model,
+    // One row per moment (017-5): the answer merges in place — raw
+    // probabilities, latency, the with-Jev weights, and per-candidate
+    // jp/wp — whether or not it can still paint. Late answers are
+    // with_jev evidence too (017-3).
+    const row = jevRow(sid, pos);
+    if (!row) return markJev("error", res.model, sid, pos);
+    const deliverable = !moved && latencyMs <= JEV_WINDOW_MS;
+    updateImpressionJev(db, row.id, {
+      status: deliverable ? "answered" : "late",
+      model: res.model, probs, latencyMs,
+      weightsJev: {
+        w: wj.weights, tau: wj.tau,
+        ver: catalog.prediction.version, seen: lw.examplesSeen,
+      },
+      pNoneJev: reranked.pNone,
+      candidates: scored.candidates.map((c, i) => ({
+        kind: c.kind, id: c.id, x: c.x, s: c.s, p: c.p,
+        jp: probs[`c${i + 1}`] ?? 0,
+        wp: reranked.candidates.find(
+          (r) => r.kind === c.kind && r.id === c.id)?.p ?? 0,
+      })),
     });
-    if (changed) await paintStrip(stripCards(items));
-    else markJev("answered", res.model);
+    if (!deliverable) return;
+    // Repaint only when the offer actually changed; the painter stamps
+    // shown_final on the same row.
+    const localKeys = JSON.parse(row.shown_local);
+    if (JSON.stringify(items.map((c) => `${c.kind}:${c.id}`))
+        !== JSON.stringify(localKeys)) {
+      await paintStrip(stripCards(items));
+    }
   } catch {
     markJev("error", null, sid, pos);
   }
 }
 
+/** The strip-moment row for (sentence, position) — open row when it is
+ *  still the current moment, else the stored one. */
+function jevRow(sid, pos) {
+  if (sid === sentenceId && pos === sentencePicks && openImpressionId !== null) {
+    return db.prepare(
+      "SELECT id, shown_local FROM strip_impression WHERE id = ?")
+      .all(openImpressionId)[0];
+  }
+  return db.prepare(
+    `SELECT id, shown_local FROM strip_impression
+     WHERE sentence_id = ? AND position = ? ORDER BY id DESC LIMIT 1`)
+    .all(sid, pos)[0];
+}
+
 /** Stamp the Jev outcome on the impression for that position — late and
- *  error answers are evidence too (with_jev learns only on 'answered'). */
+ *  error answers are evidence too (with_jev learns on any probs). */
 function markJev(status, model, sid = sentenceId, pos = sentencePicks) {
-  db.prepare(
-    `UPDATE strip_impression SET jev_status = ?, jev_model = ?
-     WHERE id = (SELECT id FROM strip_impression
-                 WHERE sentence_id = ? AND position = ? AND jev_status = 'off'
-                 ORDER BY id DESC LIMIT 1)`,
-  ).run(status, model, sid, pos);
+  const row = jevRow(sid, pos);
+  if (row) updateImpressionJev(db, row.id, { status, model });
 }
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {

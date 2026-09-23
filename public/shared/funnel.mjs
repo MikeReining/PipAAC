@@ -359,19 +359,131 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
 export function logImpression(db, {
   sentenceId, position, shownAt = Date.now(), candidates, shown,
   weightSet = "local_only", jevStatus = "off", jevModel = null, pNone = 0,
-  mode = "picture",
+  mode = "picture", weightsLocal = null, shortlistCap = null,
 }) {
   db.prepare(
     `INSERT INTO strip_impression
-       (sentence_id, position, shown_at, candidates, shown, p_none,
-        weight_set, jev_status, jev_model, mode)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (sentence_id, position, shown_at, candidates, shown_local, p_none,
+        weight_set, jev_status, jev_model, mode, weights_local, shortlist_cap)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     sentenceId, position, shownAt,
     JSON.stringify(candidates), JSON.stringify(shown), pNone,
     weightSet, jevStatus, jevModel, mode,
+    weightsLocal ? JSON.stringify(weightsLocal) : null, shortlistCap,
   );
   return db.prepare("SELECT last_insert_rowid() AS id").all()[0].id;
+}
+
+/** 017-5: a Jev answer updates the moment's row in place — raw answer,
+ *  timing, the with-Jev weights used, and the merged candidates
+ *  (per-entry jp/wp). `status` is 'answered' or 'late'; late answers
+ *  are evidence too — they just never painted. */
+export function updateImpressionJev(db, impressionId, {
+  status, model = null, probs = null, latencyMs = null,
+  promptVersion = null, weightsJev = null, pNoneJev = null,
+  candidates = null,
+}) {
+  db.prepare(
+    `UPDATE strip_impression SET jev_status = ?, jev_model = ?,
+       jev_probs = COALESCE(?, jev_probs),
+       jev_prompt_version = COALESCE(?, jev_prompt_version),
+       jev_latency_ms = COALESCE(?, jev_latency_ms),
+       weights_jev = COALESCE(?, weights_jev),
+       p_none_jev = COALESCE(?, p_none_jev),
+       candidates = COALESCE(?, candidates)
+     WHERE id = ?`,
+  ).run(
+    status, model,
+    probs ? JSON.stringify(probs) : null,
+    promptVersion, latencyMs,
+    weightsJev ? JSON.stringify(weightsJev) : null,
+    pNoneJev,
+    candidates ? JSON.stringify(candidates) : null,
+    impressionId,
+  );
+}
+
+/** What was actually painted — written by the painter, never the
+ *  ranker, so a stored moment replays what was on screen (017-5). */
+export function stampShownFinal(db, impressionId, shownKeys) {
+  db.prepare(
+    "UPDATE strip_impression SET shown_final = ? WHERE id = ?",
+  ).run(JSON.stringify(shownKeys), impressionId);
+}
+
+const logitOf = (x, w) =>
+  MODEL_FEATURES.reduce((t, f) => t + (w[f] ?? 0) * (x[f] ?? 0), 0);
+
+/**
+ * Replay a stored strip moment (017-5): recompute the local softmax
+ * from the stored features and weights, the with-Jev ranking from the
+ * stored probabilities, and the gate decisions — then compare against
+ * what the row says was painted. Returns {ok, diffs} where diffs lists
+ * every mismatch (empty when the row replays exactly).
+ */
+export function replayImpression(row, { gate = spotGate } = {}) {
+  const diffs = [];
+  const cands = JSON.parse(row.candidates);
+  const wl = row.weights_local ? JSON.parse(row.weights_local) : null;
+  const cap = row.shortlist_cap ?? STRIP_CAP;
+  const key = (c) => `${c.kind}:${c.id}`;
+  if (!wl) return { ok: false, diffs: ["no weights_local stored"] };
+
+  // Local ranking: recompute s and p from x · w, compare to stored.
+  const s = cands.map((c) => logitOf(c.x, wl.w));
+  const eN = Math.exp(wl.w.none_bias ?? 0);
+  const Z = s.reduce((a, v) => a + Math.exp(v), eN);
+  const order = cands
+    .map((c, i) => ({ c, p: Math.exp(s[i]) / Z }))
+    .sort((a, b) => b.p - a.p || a.c.id.localeCompare(b.c.id));
+  for (const c of cands) {
+    const re = order.find((o) => key(o.c) === key(c));
+    if (c.s !== undefined && Math.abs(c.s - logitOf(c.x, wl.w)) > 1e-9)
+      diffs.push(`${key(c)}: stored s ${c.s} != ${logitOf(c.x, wl.w)}`);
+    if (c.p !== undefined && Math.abs(c.p - re.p) > 1e-9)
+      diffs.push(`${key(c)}: stored p ${c.p} != ${re.p}`);
+  }
+  const pNone = eN / Z;
+  if (Math.abs(pNone - row.p_none) > 1e-9)
+    diffs.push(`p_none ${row.p_none} != ${pNone}`);
+  const localShown = gate(
+    order.map((o) => ({ ...o.c, p: o.p })), pNone, wl.tau, cap)
+    .map((r) => `${r.kind}:${r.id}`);
+  const storedLocal = JSON.parse(row.shown_local);
+  if (JSON.stringify(localShown) !== JSON.stringify(storedLocal))
+    diffs.push(`shown_local ${JSON.stringify(storedLocal)} != ${JSON.stringify(localShown)}`);
+
+  // With-Jev ranking when an answer is stored: jp/wp must match a fresh
+  // applyJev over the same shortlist. The painted set follows it only
+  // when the answer was delivered — a late answer never repainted.
+  let finalShown = localShown;
+  const probs = row.jev_probs ? JSON.parse(row.jev_probs) : null;
+  const wj = row.weights_jev ? JSON.parse(row.weights_jev) : null;
+  if (probs && wj) {
+    const reranked = applyJev(
+      cands.map((c) => ({ kind: c.kind, id: c.id, x: c.x })),
+      probs, wj.w);
+    for (const c of cands) {
+      if (c.wp === undefined) continue;
+      const i = cands.indexOf(c);
+      const re = reranked.candidates.find((r) => `${r.kind}:${r.id}` === key(c));
+      if (Math.abs(c.jp - (probs[`c${i + 1}`] ?? 0)) > 1e-9)
+        diffs.push(`${key(c)}: stored jp ${c.jp} != ${probs[`c${i + 1}`]}`);
+      if (re && Math.abs(c.wp - re.p) > 1e-9)
+        diffs.push(`${key(c)}: stored wp ${c.wp} != ${re.p}`);
+    }
+    const jevShown = gate(reranked.candidates, reranked.pNone, wj.tau, cap)
+      .map((r) => `${r.kind}:${r.id}`);
+    if (row.jev_status === "answered"
+        && JSON.stringify(jevShown) !== JSON.stringify(localShown))
+      finalShown = jevShown;
+  }
+  const storedFinal = row.shown_final ? JSON.parse(row.shown_final) : null;
+  if (storedFinal && JSON.stringify(finalShown) !== JSON.stringify(storedFinal))
+    diffs.push(`shown_final ${JSON.stringify(storedFinal)} != ${JSON.stringify(finalShown)}`);
+
+  return { ok: diffs.length === 0, diffs, localShown, finalShown };
 }
 
 /** The child's next pick is the label for the strip moment before it. */
@@ -393,7 +505,8 @@ export function fillChosen(db, sentenceId, { kind, id, source }) {
 export function predictionReport(db, { from = 0, to = Number.MAX_SAFE_INTEGER } = {}) {
   const rows = db
     .prepare(
-      `SELECT candidates, shown, chosen_kind, chosen_id, chosen_source
+      `SELECT candidates, COALESCE(shown_final, shown_local) AS shown,
+         chosen_kind, chosen_id, chosen_source
        FROM strip_impression
        WHERE shown_at >= ? AND shown_at < ? AND chosen_id IS NOT NULL`,
     )
