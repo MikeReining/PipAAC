@@ -2,9 +2,9 @@
  * Keys and encryption (docs/product/Sync_And_Web_Editing.md §§ 3–4).
  *
  * One device identity per install: an ECDSA pair (ops and requests are
- * signed) and an ECDH pair (board-key transport in pairing, slice 5).
+ * signed) and an ECDH pair (user-key transport in pairing, slice 5).
  * Private keys are non-extractable and live in the platform store —
- * IndexedDB in the browser; tests inject an in-memory store. The board
+ * IndexedDB in the browser; tests inject an in-memory store. The user
  * key is AES-256-GCM, kept extractable so pairing can wrap it to a new
  * device; it is never exported in the clear by this module.
  *
@@ -76,7 +76,7 @@ export function openKeyStore() {
 }
 
 /* ------------------------------------------------------------------ *
- * Device identity + board key
+ * Device identity + user key
  * ------------------------------------------------------------------ */
 
 /**
@@ -105,9 +105,9 @@ export async function getDeviceIdentity(store = openKeyStore()) {
 }
 
 /**
- * The board's AES-256-GCM key — one per board, created on first use.
+ * The user's AES-256-GCM key — one per user, created on first use.
  * Rotations (§ 3 revoke) mint a new key per epoch: epoch 1 lives at
- * "board_key", later epochs at "board_key_e<n>". Old keys stay so old
+ * "user_key", later epochs at "user_key_e<n>". Old keys stay so old
  * ops still open.
  *
  * Recovery (§ 9): the device that sets up sync also mints a recovery
@@ -117,7 +117,11 @@ export async function getDeviceIdentity(store = openKeyStore()) {
  * epoch keys, never the root — a device that could re-derive every key
  * would make revoke cosmetic.
  */
-const boardKeyName = (epoch) => (epoch <= 1 ? "board_key" : `board_key_e${epoch}`);
+const userKeyName = (epoch) => (epoch <= 1 ? "user_key" : `user_key_e${epoch}`);
+// 015 slice 1: keystores written before the board→user rename still
+// hold board_key*; reads fall back and copy forward, so a linked
+// device keeps syncing without re-pairing.
+const legacyKeyName = (epoch) => (epoch <= 1 ? "board_key" : `board_key_e${epoch}`);
 
 export async function ensureRecoveryRoot(store = openKeyStore()) {
   let root = await store.get("recovery_root");
@@ -137,9 +141,18 @@ export async function deriveEpochKey(rootBytes, epoch) {
     ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
 }
 
-export async function getBoardKey(store = openKeyStore(), epoch = 1) {
-  const name = boardKeyName(epoch);
+export async function getUserKey(store = openKeyStore(), epoch = 1) {
+  const name = userKeyName(epoch);
   let key = await store.get(name);
+  if (!key) {
+    const legacy = legacyKeyName(epoch);
+    const old = await store.get(legacy);
+    if (old) {
+      await store.put(name, old);
+      await store.del(legacy);
+      key = old;
+    }
+  }
   if (!key) {
     const root = await store.get("recovery_root");
     key = root
@@ -150,8 +163,8 @@ export async function getBoardKey(store = openKeyStore(), epoch = 1) {
   }
   return key;
 }
-export const putBoardKey = (store, key, epoch = 1) => store.put(boardKeyName(epoch), key);
-export const newBoardKey = () =>
+export const putUserKey = (store, key, epoch = 1) => store.put(userKeyName(epoch), key);
+export const newUserKey = () =>
   subtle.generateKey({ name: "AES-GCM", length: 256 }, true,
     ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
 
@@ -176,7 +189,7 @@ export const openOp = async (key, env) => JSON.parse(td.decode(await openData(ke
 
 /**
  * Blob envelope: { sha, env } — env carries `e`, the key epoch it was
- * sealed under, so a replica picks the right board key after rotation.
+ * sealed under, so a replica picks the right user key after rotation.
  * The op carries sha; the bytes travel sealed.
  */
 export async function sealBlob(key, bytes, epoch = 1) {
@@ -216,9 +229,9 @@ export async function verifyPayload(verifyKey, bytes, sig) {
 }
 
 /* ------------------------------------------------------------------ *
- * Board-key transport (pairing + rotation, § 3). The granter makes an
+ * User-key transport (pairing + rotation, § 3). The granter makes an
  * ephemeral ECDH pair, derives an AES-GCM wrap key against the target
- * device's long-term dh public key, and wraps the board key. The grant
+ * device's long-term dh public key, and wraps the user key. The grant
  * carries the ephemeral public key; the target derives the same secret
  * with its private dh key.
  * ------------------------------------------------------------------ */
@@ -234,17 +247,17 @@ const wrapKeyFrom = (priv, pub) =>
     { name: "AES-GCM", length: 256 }, false, ["wrapKey", "unwrapKey"]);
 
 /** → { eph, wrapped } — send both to the target device. */
-export async function wrapBoardKey(boardKey, theirDhPubB64) {
+export async function wrapUserKey(userKey, theirDhPubB64) {
   const eph = await subtle.generateKey(
     { name: "ECDH", namedCurve: "P-256" }, false, ["deriveKey"]);
   const wk = await wrapKeyFrom(eph.privateKey, await importDhPublic(theirDhPubB64));
   const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
-  const wrapped = await subtle.wrapKey("raw", boardKey, wk, { name: "AES-GCM", iv });
+  const wrapped = await subtle.wrapKey("raw", userKey, wk, { name: "AES-GCM", iv });
   return { eph: await exportDhPublic(eph.publicKey), iv: b64u(iv), wrapped: b64u(wrapped) };
 }
 
-/** → board CryptoKey. Throws if the grant is not for this device. */
-export async function unwrapBoardKey(myDhPriv, grant) {
+/** → user CryptoKey. Throws if the grant is not for this device. */
+export async function unwrapUserKey(myDhPriv, grant) {
   const wk = await wrapKeyFrom(myDhPriv, await importDhPublic(grant.eph));
   return subtle.unwrapKey("raw", unb64u(grant.wrapped), wk,
     { name: "AES-GCM", iv: unb64u(grant.iv) },

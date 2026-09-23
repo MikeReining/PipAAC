@@ -2,9 +2,9 @@
  * 011 slice 8 Works Test — the recovery sheet (heavy: spawns
  * `wrangler dev`).
  *
- * A builds a board, syncs it, and rotates the key once (post-revoke
+ * A builds a user, syncs it, and rotates the key once (post-revoke
  * state). Every client is then "destroyed" — C is a fresh keystore and
- * database holding only what the printed sheet carries: the board id
+ * database holding only what the printed sheet carries: the user id
  * and the 24 words. The relay never saw a key, only the proof. C
  * restores, drains the log, and every synced table is byte-identical.
  * What the child said never left the device — C's history tables are
@@ -28,14 +28,26 @@ import {
 import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
   deriveEpochKey, ensureRecoveryRoot, exportDhPublic, exportPublicKey,
-  getBoardKey, getDeviceIdentity, memoryKeyStore, openOp, wrapBoardKey,
+  getUserKey, getDeviceIdentity, memoryKeyStore, openOp, wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
+import { licenseFor } from "./license.mjs";
 import { relayClient, restoreDevice } from "../../public/shared/sync_client.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
-const PORT = 8879;
+const PORT = 8880;
 const BASE = `http://127.0.0.1:${PORT}`;
+
 const repoRoot = join(import.meta.dirname, "../..");
+
+// 015 s6–7: a free user carries one device — these tests pair a
+// second, so they activate Lifetime with a dev-minted license.
+const licenseSecret = Object.fromEntries(
+  readFileSync(join(repoRoot, ".dev.vars"), "utf8").split("\n")
+    .map((l) => l.match(/^\s*([A-Z_]+)\s*=\s*(.+?)\s*$/))
+    .filter(Boolean).map((m) => [m[1], m[2]])).PIP_LICENSE_SECRET;
+const makeLifetime = async (client, userId) =>
+  client.setEntitlement(await licenseFor(licenseSecret, userId));
+
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")));
 
@@ -70,15 +82,15 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
   const aStore = memoryKeyStore();
   const a = await getDeviceIdentity(aStore);
   const root = await ensureRecoveryRoot(aStore);
-  const key1 = await getBoardKey(aStore, 1);
+  const key1 = await getUserKey(aStore, 1);
 
   const dbA = createDatabase(":memory:");
   importCatalog(dbA, catalog);
   ensureBaseline(dbA);
 
-  // The sheet is just the board id + 24 words. A creates the board and
+  // The sheet is just the user id + 24 words. A creates the user and
   // leaves only the proof — the relay never sees the key.
-  const board = await fetch(`${BASE}/boards`, {
+  const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
       device_id: a.deviceId,
@@ -87,7 +99,8 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
       recovery_proof: await recoveryProof(root),
     }),
   }).then((r) => r.json());
-  const clientA = relayClient({ boardId: board.board_id, baseUrl: BASE, identity: a, boardKey: key1 });
+  const clientA = relayClient({ userId: user.user_id, baseUrl: BASE, identity: a, userKey: key1 });
+  await makeLifetime(clientA, user.user_id);
 
   // Edits at epoch 1, plus history that must never leave the device.
   const cooper = createEntity(dbA, { name: "Cooper" }).id;
@@ -102,16 +115,16 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
   // the sheet still opens because every epoch derives from the root.
   const key2 = await deriveEpochKey(root, 2);
   await clientA.rotateKeys(2, {
-    [a.deviceId]: await wrapBoardKey(key2, await exportDhPublic(a.dh.publicKey)),
+    [a.deviceId]: await wrapUserKey(key2, await exportDhPublic(a.dh.publicKey)),
   });
   createEntity(dbA, { name: "After removal" });
-  await relayClient({ boardId: board.board_id, baseUrl: BASE, identity: a, boardKey: key2 })
+  await relayClient({ userId: user.user_id, baseUrl: BASE, identity: a, userKey: key2 })
     .submit(listOps(dbA).filter((o) => o.relay_seq === null));
 
   // A wrong sheet gets nothing.
   const badStore = memoryKeyStore();
   const bad = await getDeviceIdentity(badStore);
-  await assert.rejects(restoreDevice(BASE, board.board_id, {
+  await assert.rejects(restoreDevice(BASE, user.user_id, {
     proof: await recoveryProof(crypto.getRandomValues(new Uint8Array(32))),
     device_id: bad.deviceId,
     pubkey: await exportPublicKey(bad.verify),
@@ -124,7 +137,7 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
 
   const cStore = memoryKeyStore();
   const c = await getDeviceIdentity(cStore);
-  const reg = await restoreDevice(BASE, board.board_id, {
+  const reg = await restoreDevice(BASE, user.user_id, {
     proof: await recoveryProof(restoredRoot),
     device_id: c.deviceId,
     pubkey: await exportPublicKey(c.verify),
@@ -138,14 +151,14 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
   ensureBaseline(dbC);
 
   const clientC = relayClient({
-    boardId: board.board_id, baseUrl: BASE, identity: c,
-    boardKey: await getBoardKey(cStore, reg.epoch),
+    userId: user.user_id, baseUrl: BASE, identity: c,
+    userKey: await getUserKey(cStore, reg.epoch),
   });
   const fetched = await clientC.fetchOps(0);
   assert.equal(fetched.ops.length, 3); // create_entity, rename_entity, create_entity
   const plain = [];
   for (const r of fetched.ops) {
-    plain.push({ ...(await openOp(await getBoardKey(cStore, r.epoch ?? 1), r.env)),
+    plain.push({ ...(await openOp(await getUserKey(cStore, r.epoch ?? 1), r.env)),
       relay_seq: r.relay_seq });
   }
   drainOps(dbC, plain);

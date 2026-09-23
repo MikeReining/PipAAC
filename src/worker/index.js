@@ -1,8 +1,8 @@
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
-import { BoardRelay } from "./relay.js";
+import { UserRelay } from "./relay.js";
 import { PairingLobby } from "./lobby.js";
 
-export { BoardRelay, PairingLobby };
+export { UserRelay, PairingLobby };
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -23,26 +23,26 @@ export default {
       return json(catalog);
     }
 
-    // Sync relay (Sync_And_Web_Editing § 6): one Durable Object per board
+    // Sync relay (Sync_And_Web_Editing § 6): one Durable Object per user
     // orders ops and fans them out. The relay stores ciphertext only.
-    if (path === "/boards" && request.method === "POST" && env?.RELAY) {
+    if (path === "/users" && request.method === "POST" && env?.RELAY) {
       const body = await request.json().catch(() => null);
       if (!body?.device_id || !body?.pubkey) {
         return json({ error: "bad_request" }, { status: 400 });
       }
-      const boardId = crypto.randomUUID();
-      const stub = env.RELAY.get(env.RELAY.idFromName(boardId));
+      const userId = crypto.randomUUID();
+      const stub = env.RELAY.get(env.RELAY.idFromName(userId));
       const init = await stub.fetch(new Request(
-        `https://relay/boards/${boardId}/bootstrap`,
+        `https://relay/users/${userId}/bootstrap`,
         { method: "POST", body: JSON.stringify({
           device_id: body.device_id, pubkey: body.pubkey,
           dh_pub: body.dh_pub, recovery_proof: body.recovery_proof }) }));
       if (!init.ok) return init;
-      return json({ board_id: boardId });
+      return json({ user_id: userId });
     }
-    const boardMatch = env?.RELAY && path.match(/^\/boards\/([^/]+)(\/.*)?$/);
-    if (boardMatch) {
-      const stub = env.RELAY.get(env.RELAY.idFromName(boardMatch[1]));
+    const userMatch = env?.RELAY && path.match(/^\/users\/([^/]+)(\/.*)?$/);
+    if (userMatch) {
+      const stub = env.RELAY.get(env.RELAY.idFromName(userMatch[1]));
       return stub.fetch(request);
     }
 

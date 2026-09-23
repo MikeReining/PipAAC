@@ -13,13 +13,14 @@
   },
   "durable_objects": {
     "bindings": [
-      { "name": "RELAY", "class_name": "BoardRelay" },
+      { "name": "RELAY", "class_name": "UserRelay" },
       { "name": "PAIR", "class_name": "PairingLobby" }
     ]
   },
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["BoardRelay"] },
-    { "tag": "v2", "new_sqlite_classes": ["PairingLobby"] }
+    { "tag": "v2", "new_sqlite_classes": ["PairingLobby"] },
+    { "tag": "v3", "renamed_classes": [{ "from": "BoardRelay", "to": "UserRelay" }] }
   ],
   "r2_buckets": [
     { "binding": "BLOBS", "bucket_name": "pippaac-sync" }

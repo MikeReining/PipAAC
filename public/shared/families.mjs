@@ -28,7 +28,7 @@ export function family(db, id) {
  *  { position, kind, id, label, glyph, speaks, nextFamily }.
  *  Masked senses are dropped — a hidden word never appears in the bar
  *  (Predict law applies to Expand too). */
-export function familyItems(db, familyId, locale = "en", masked = new Set()) {
+export function familyItems(db, familyId, locale, masked = new Set()) {
   const rows = db.prepare(
     `SELECT position, item_kind, item_id FROM bar_family_item
      WHERE family_id = ? ORDER BY position`,

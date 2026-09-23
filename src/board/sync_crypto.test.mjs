@@ -4,7 +4,7 @@
  * Capture every outgoing payload in a scripted session that adds Cooper
  * with a photo and a recording: no payload may contain "Cooper", a group
  * name, or bytes hashing to the original photo or recording. Decrypting
- * with the board key must return the ops — and nothing else may.
+ * with the user key must return the ops — and nothing else may.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -15,7 +15,7 @@ import { createDatabase, importCatalog } from "./catalog.mjs";
 import { createEntity, placeItem, setEntityPhoto } from "../../public/shared/groups.mjs";
 import { listOps, setDeviceId } from "../../public/shared/ops.mjs";
 import {
-  getBoardKey,
+  getUserKey,
   getDeviceIdentity,
   memoryKeyStore,
   openBlob,
@@ -53,7 +53,7 @@ test("device identity: one pair, non-extractable private keys", async () => {
 
 test("scripted session: no outgoing payload leaks plaintext", async () => {
   const store = memoryKeyStore();
-  const boardKey = await getBoardKey(store);
+  const userKey = await getUserKey(store);
   const db = openDb();
 
   // The scripted session: add Cooper, place him in People, set a photo,
@@ -62,13 +62,13 @@ test("scripted session: no outgoing payload leaks plaintext", async () => {
   placeItem(db, "grp_people", "entity", id);
   const photo = globalThis.crypto.getRandomValues(new Uint8Array(2048));
   const recording = globalThis.crypto.getRandomValues(new Uint8Array(4096));
-  const photoSeal = await sealBlob(boardKey, photo);
-  const recSeal = await sealBlob(boardKey, recording);
+  const photoSeal = await sealBlob(userKey, photo);
+  const recSeal = await sealBlob(userKey, recording);
   setEntityPhoto(db, id, `opfs:photos/${id}`);
 
   // Every outgoing payload: sealed ops + sealed blob envelopes.
   const payloads = [];
-  for (const op of listOps(db)) payloads.push(await sealOp(boardKey, op));
+  for (const op of listOps(db)) payloads.push(await sealOp(userKey, op));
   payloads.push(photoSeal.env, recSeal.env);
 
   const photoSha = await sha256Hex(photo);
@@ -94,24 +94,24 @@ test("scripted session: no outgoing payload leaks plaintext", async () => {
   // Decrypting with the board key returns the ops, verbatim.
   const ops = listOps(db);
   const back = [];
-  for (const env of payloads.slice(0, ops.length)) back.push(await openOp(boardKey, env));
+  for (const env of payloads.slice(0, ops.length)) back.push(await openOp(userKey, env));
   assert.deepEqual(back, ops.map((o) => JSON.parse(JSON.stringify(o))));
-  assert.deepEqual(await openBlob(boardKey, photoSeal), photo);
-  assert.deepEqual(await openBlob(boardKey, recSeal), recording);
+  assert.deepEqual(await openBlob(userKey, photoSeal), photo);
+  assert.deepEqual(await openBlob(userKey, recSeal), recording);
 });
 
-test("a different board key opens nothing; tampering is detected", async () => {
+test("a different user key opens nothing; tampering is detected", async () => {
   const store = memoryKeyStore();
-  const boardKey = await getBoardKey(store);
-  const wrongKey = await getBoardKey(memoryKeyStore());
-  const env = await sealOp(boardKey, { kind: "rename_entity", args: { id: "ent_x", name: "Cooper" } });
+  const userKey = await getUserKey(store);
+  const wrongKey = await getUserKey(memoryKeyStore());
+  const env = await sealOp(userKey, { kind: "rename_entity", args: { id: "ent_x", name: "Cooper" } });
 
   await assert.rejects(openOp(wrongKey, env));
-  await assert.rejects(openOp(boardKey, { ...env, ct: env.ct.slice(0, -4) + "AAAA" }));
-  await assert.rejects(openOp(boardKey, { ...env, iv: "AAAAAAAAAAAAAAAA" }));
+  await assert.rejects(openOp(userKey, { ...env, ct: env.ct.slice(0, -4) + "AAAA" }));
+  await assert.rejects(openOp(userKey, { ...env, iv: "AAAAAAAAAAAAAAAA" }));
 
-  const blob = await sealBlob(boardKey, new Uint8Array([1, 2, 3]));
-  await assert.rejects(openBlob(boardKey, { sha: "00".repeat(32), env: blob.env }));
+  const blob = await sealBlob(userKey, new Uint8Array([1, 2, 3]));
+  await assert.rejects(openBlob(userKey, { sha: "00".repeat(32), env: blob.env }));
 });
 
 test("recorded ops carry the device fingerprint", async () => {
@@ -131,4 +131,27 @@ test("device signatures verify under the device key only", async () => {
   assert.equal(await verifyPayload(verify, "op_abc relay_seq 7", sig), true);
   assert.equal(await verifyPayload(verify, "op_abc relay_seq 8", sig), false);
   assert.equal(await verifyPayload(other.verify, "op_abc relay_seq 7", sig), false);
+});
+
+test("015 slice 1: a pre-rename keystore still opens its ops", async () => {
+  // A device linked before the board→user rename holds board_key /
+  // board_key_e2 in its store. getUserKey must find them, copy them
+  // forward, and drop the old names.
+  const store = memoryKeyStore();
+  const epoch1 = await crypto.subtle.generateKey(
+    { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+  const epoch2 = await crypto.subtle.generateKey(
+    { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+  await store.put("board_key", epoch1);
+  await store.put("board_key_e2", epoch2);
+  const op = { kind: "set_setting", args: { key: "board_layout", value: "grid60" } };
+  const env1 = await sealOp(epoch1, op);
+  const env2 = await sealOp(epoch2, op);
+
+  assert.deepEqual(await openOp(await getUserKey(store, 1), env1), op);
+  assert.deepEqual(await openOp(await getUserKey(store, 2), env2), op);
+  assert.equal(await store.get("board_key"), undefined, "legacy name left behind");
+  assert.equal(await store.get("board_key_e2"), undefined);
+  assert.ok(await store.get("user_key"), "migrated name missing");
+  assert.ok(await store.get("user_key_e2"), "migrated name missing");
 });

@@ -11,7 +11,7 @@ import {
 } from "../../public/shared/recovery.mjs";
 import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
-  deriveEpochKey, ensureRecoveryRoot, getBoardKey, memoryKeyStore, openOp, sealOp,
+  deriveEpochKey, ensureRecoveryRoot, getUserKey, memoryKeyStore, openOp, sealOp,
 } from "../../public/shared/sync_crypto.mjs";
 
 const FILE_WORDS = readFileSync(
@@ -56,16 +56,16 @@ test("the proof is stable and root-specific", async () => {
   assert.notEqual(await recoveryProof(a), await recoveryProof(b));
 });
 
-test("payload parse: pip:recover URI and bare board-id + words", async () => {
-  const boardId = "11111111-2222-3333-4444-555555555555";
+test("payload parse: pip:recover URI and bare user-id + words", async () => {
+  const userId = "11111111-2222-3333-4444-555555555555";
   const phrase = await keyToWords(randRoot(), RECOVERY_WORDS);
-  const fromUri = parseRecoveryPayload(recoveryPayload(boardId, phrase));
-  assert.equal(fromUri.boardId, boardId);
+  const fromUri = parseRecoveryPayload(recoveryPayload(userId, phrase));
+  assert.equal(fromUri.userId, userId);
   assert.equal(fromUri.phrase, phrase);
-  const bare = parseRecoveryPayload(`${boardId} ${phrase}`);
-  assert.equal(bare.boardId, boardId);
+  const bare = parseRecoveryPayload(`${userId} ${phrase}`);
+  assert.equal(bare.userId, userId);
   assert.equal(parseRecoveryPayload("not a sheet"), null);
-  assert.equal(parseRecoveryPayload(`${boardId} ${phrase.split(" ").slice(0, 5).join(" ")}`), null);
+  assert.equal(parseRecoveryPayload(`${userId} ${phrase.split(" ").slice(0, 5).join(" ")}`), null);
 });
 
 test("a fresh keystore holding only the root opens every epoch's ops", async () => {
@@ -74,21 +74,21 @@ test("a fresh keystore holding only the root opens every epoch's ops", async () 
   const root = await ensureRecoveryRoot(storeA);
   const op1 = { op_id: "op_1", kind: "add_item", entity_id: "ent_x", slot: 0 };
   const op2 = { op_id: "op_2", kind: "rename_entity", entity_id: "ent_x", name: "x" };
-  const env1 = await sealOp(await getBoardKey(storeA, 1), op1);
-  const env2 = await sealOp(await getBoardKey(storeA, 3), op2); // after rotations
+  const env1 = await sealOp(await getUserKey(storeA, 1), op1);
+  const env2 = await sealOp(await getUserKey(storeA, 3), op2); // after rotations
 
   // Device B restores from the sheet — it has the root, nothing else.
   const storeB = memoryKeyStore();
   await storeB.put("recovery_root", await wordsToKey(await keyToWords(root, RECOVERY_WORDS), RECOVERY_WORDS));
-  assert.deepEqual(await openOp(await getBoardKey(storeB, 1), env1), op1);
-  assert.deepEqual(await openOp(await getBoardKey(storeB, 3), env2), op2);
+  assert.deepEqual(await openOp(await getUserKey(storeB, 1), env1), op1);
+  assert.deepEqual(await openOp(await getUserKey(storeB, 3), env2), op2);
 
   // A paired device with a wrapped epoch key but no root cannot mint
-  // other epochs — getBoardKey falls back to a fresh random key that
+  // other epochs — getUserKey falls back to a fresh random key that
   // cannot open epoch-1 envelopes.
   const storeC = memoryKeyStore();
   await assert.rejects(
-    () => getBoardKey(storeC, 1).then((k) => openOp(k, env1)));
+    () => getUserKey(storeC, 1).then((k) => openOp(k, env1)));
 });
 
 test("epoch keys differ by epoch and match across stores", async () => {

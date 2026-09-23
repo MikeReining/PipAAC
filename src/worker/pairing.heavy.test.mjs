@@ -5,7 +5,7 @@
  * The real flow: the new device posts its public keys under an 8-char
  * code and polls; the linked device reads them, taps Allow (registers
  * the device + writes the wrapped-key grant); the new device unwraps the
- * board key and syncs. Before Allow it reads nothing. After Remove its
+ * user key and syncs. Before Allow it reads nothing. After Remove its
  * next write is rejected and post-rotation ops are sealed under a key it
  * never received.
  *
@@ -24,21 +24,33 @@ import { listOps } from "../../public/shared/ops.mjs";
 import {
   exportDhPublic,
   exportPublicKey,
-  getBoardKey,
+  getUserKey,
   getDeviceIdentity,
   memoryKeyStore,
-  newBoardKey,
+  newUserKey,
   openOp,
-  putBoardKey,
-  unwrapBoardKey,
-  wrapBoardKey,
+  putUserKey,
+  unwrapUserKey,
+  wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
+import { licenseFor } from "./license.mjs";
 import { pairClient, relayClient } from "../../public/shared/sync_client.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const PORT = 8878;
 const BASE = `http://127.0.0.1:${PORT}`;
+
 const repoRoot = join(import.meta.dirname, "../..");
+
+// 015 s6–7: a free user carries one device — these tests pair a
+// second, so they activate Lifetime with a dev-minted license.
+const licenseSecret = Object.fromEntries(
+  readFileSync(join(repoRoot, ".dev.vars"), "utf8").split("\n")
+    .map((l) => l.match(/^\s*([A-Z_]+)\s*=\s*(.+?)\s*$/))
+    .filter(Boolean).map((m) => [m[1], m[2]])).PIP_LICENSE_SECRET;
+const makeLifetime = async (client, userId) =>
+  client.setEntitlement(await licenseFor(licenseSecret, userId));
+
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")));
 
@@ -59,19 +71,19 @@ before(async () => {
 after(() => { wrangler?.kill("SIGTERM"); });
 
 test("pair through the real flow; revoke locks out and rotates", async () => {
-  // A — the linked device, board creator.
+  // A — the linked device, user creator.
   const aStore = memoryKeyStore();
   const a = await getDeviceIdentity(aStore);
-  const boardKey = await getBoardKey(aStore);
-  // B — the new device. It does NOT have the board key.
+  const userKey = await getUserKey(aStore);
+  // B — the new device. It does NOT have the user key.
   const bStore = memoryKeyStore();
   const b = await getDeviceIdentity(bStore);
 
   const dbA = createDatabase(":memory:");
   importCatalog(dbA, catalog);
 
-  // A creates the board (with its dh pub so later rotations can wrap to it).
-  const board = await fetch(`${BASE}/boards`, {
+  // A creates the user (with its dh pub so later rotations can wrap to it).
+  const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
       device_id: a.deviceId,
@@ -79,7 +91,8 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
       dh_pub: await exportDhPublic(a.dh.publicKey),
     }),
   }).then((r) => r.json());
-  const clientA = relayClient({ boardId: board.board_id, baseUrl: BASE, identity: a, boardKey });
+  const clientA = relayClient({ userId: user.user_id, baseUrl: BASE, identity: a, userKey });
+  await makeLifetime(clientA, user.user_id);
   const lobby = pairClient(BASE);
 
   // B shows a code (the QR payload is these fields + the code).
@@ -87,25 +100,25 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
     await exportPublicKey(b.verify), await exportDhPublic(b.dh.publicKey));
   assert.match(pair, /^[A-Z0-9]{8}$/);
 
-  // Before Allow: B reads nothing on the board.
-  const blindB = relayClient({ boardId: board.board_id, baseUrl: BASE, identity: b, boardKey });
-  await assert.rejects(blindB.fetchOps(0), /403/);
+  // Before Allow: B reads nothing on the user.
+  const blindB = relayClient({ userId: user.user_id, baseUrl: BASE, identity: b, userKey });
+  await assert.rejects(blindB.fetchOps(0), (e) => e.status === 403);
   assert.equal((await lobby.status(pair)).status, "pending");
 
-  // A types the code → sees B's keys → Allow: register B on the board
+  // A types the code → sees B's keys → Allow: register B on the user
   // and write the wrapped-key grant.
   const req = await lobby.status(pair);
   assert.equal(req.device_id, b.deviceId);
-  const wrapped = await wrapBoardKey(boardKey, req.dh_pub);
+  const wrapped = await wrapUserKey(userKey, req.dh_pub);
   await clientA.addDevice(b.deviceId, req.sig_pub, { dh_pub: req.dh_pub });
-  await lobby.grant(pair, { board_id: board.board_id, by_device: a.deviceId, ...wrapped });
+  await lobby.grant(pair, { user_id: user.user_id, by_device: a.deviceId, ...wrapped });
 
   // B polls → granted → unwraps → now it can read and write.
   const st = await lobby.status(pair);
   assert.equal(st.status, "granted");
-  const bKey = await unwrapBoardKey(b.dh.privateKey, st.grant);
-  await putBoardKey(bStore, bKey, 1);
-  const clientB = relayClient({ boardId: board.board_id, baseUrl: BASE, identity: b, boardKey: bKey });
+  const bKey = await unwrapUserKey(b.dh.privateKey, st.grant);
+  await putUserKey(bStore, bKey, 1);
+  const clientB = relayClient({ userId: user.user_id, baseUrl: BASE, identity: b, userKey: bKey });
   assert.equal((await clientB.fetchOps(0)).latest, 0);
 
   // Syncs both ways.
@@ -122,27 +135,27 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
 
   // Remove B → its next write and read are rejected.
   await clientA.removeDevice(b.deviceId);
-  await assert.rejects(clientB.fetchOps(0), /403/);
+  await assert.rejects(clientB.fetchOps(0), (e) => e.status === 403);
   createEntity(dbB, { name: "sneaky" });
-  await assert.rejects(clientB.submit(listOps(dbB).slice(1)), /403/);
+  await assert.rejects(clientB.submit(listOps(dbB).slice(1)), (e) => e.status === 403);
 
-  // Rotation: a new board key, wrapped to each remaining device (A only).
-  const key2 = await newBoardKey();
+  // Rotation: a new user key, wrapped to each remaining device (A only).
+  const key2 = await newUserKey();
   await clientA.rotateKeys(2, {
-    [a.deviceId]: await wrapBoardKey(key2, await exportDhPublic(a.dh.publicKey)),
+    [a.deviceId]: await wrapUserKey(key2, await exportDhPublic(a.dh.publicKey)),
   });
   const self = await clientA.selfKey();
   assert.equal(self.current_epoch, 2);
-  const aKey2 = await unwrapBoardKey(a.dh.privateKey, JSON.parse(self.wrapped_key));
-  await putBoardKey(aStore, aKey2, 2);
+  const aKey2 = await unwrapUserKey(a.dh.privateKey, JSON.parse(self.wrapped_key));
+  await putUserKey(aStore, aKey2, 2);
 
   // A's post-removal op is sealed under the epoch-2 key — B never got it.
   createEntity(dbA, { name: "After" });
   const { ops: seqs } = await relayClient(
-    { boardId: board.board_id, baseUrl: BASE, identity: a, boardKey: aKey2 },
+    { userId: user.user_id, baseUrl: BASE, identity: a, userKey: aKey2 },
   ).submit(listOps(dbA).slice(1));
   assert.equal(seqs[0].epoch, 2);
   const fetched = (await clientA.fetchOps(2)).ops[0];
-  await assert.rejects(openOp(boardKey, fetched.env)); // B's key opens nothing
+  await assert.rejects(openOp(userKey, fetched.env)); // B's key opens nothing
   assert.equal((await openOp(aKey2, fetched.env)).kind, "create_entity");
 });

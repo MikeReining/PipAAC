@@ -541,7 +541,7 @@
       .dev-row .dev-id { flex: 1; font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
       .dev-row button { flex: none; padding: 4px 10px; font-size: 13px; }
       /* Recovery sheet */
-      .rec-boardid {
+      .rec-userid {
         font-size: 12px; color: var(--muted); text-align: center;
         word-break: break-all; font-variant-numeric: tabular-nums;
       }
@@ -936,12 +936,12 @@
         </div>
         <div class="seg-row">
           <span class="seg-label">Linked devices</span>
-          <div id="dev-list"><p class="hint">This board is only on this device.</p></div>
+          <div id="dev-list"><p class="hint">This user is only on this device.</p></div>
           <div class="row">
             <button class="btn secondary" id="dev-add">Add a device</button>
             <button class="btn secondary" id="dev-link">Link this device</button>
           </div>
-          <p class="hint">A linked device sees and edits the whole board. Removing it locks it out and re-keys the board.</p>
+          <p class="hint">A linked device sees and edits the whole user. Removing it locks it out and re-keys the user.</p>
         </div>
         <div class="seg-row" id="dev-lifetime-row" hidden>
           <span class="seg-label">Pip Lifetime</span>
@@ -956,18 +956,18 @@
           <span class="seg-label">Backup</span>
           <div class="row">
             <button class="btn secondary" id="dev-sheet">Recovery sheet</button>
-            <button class="btn secondary" id="dev-restore">Restore a board</button>
+            <button class="btn secondary" id="dev-restore">Restore a user</button>
           </div>
-          <p class="hint">The sheet is the last resort — print it and keep it somewhere safe. Without the sheet, a linked device, or a device backup, a lost board is gone for good.</p>
+          <p class="hint">The sheet is the last resort — print it and keep it somewhere safe. Without the sheet, a linked device, or a device backup, a lost user is gone for good.</p>
         </div>
         <div class="seg-row" id="dev-delete-row" hidden>
           <span class="seg-label">Delete</span>
           <div id="dev-delete-state"></div>
           <div class="row">
-            <button class="btn secondary" id="dev-delete">Delete this board</button>
+            <button class="btn secondary" id="dev-delete">Delete this user</button>
             <button class="btn secondary" id="dev-undelete" hidden>Undo deletion</button>
           </div>
-          <p class="hint">Deletes the board from the relay after 30 days. Undo any time before then. This does not erase this device's copy.</p>
+          <p class="hint">Deletes the user from the relay after 30 days. Undo any time before then. This does not erase this device's copy.</p>
         </div>
         <button class="btn secondary" data-close>Close</button>
       </div>

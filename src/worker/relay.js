@@ -1,8 +1,8 @@
 /**
- * BoardRelay — one Durable Object per board (Sync_And_Web_Editing § 6).
+ * UserRelay — one Durable Object per user (Sync_And_Web_Editing § 6).
  *
  * The relay is blind: it stores and orders ciphertext envelopes, never
- * plaintext. What it knows: board id, allowed device public keys, op
+ * plaintext. What it knows: user id, allowed device public keys, op
  * sizes and times. Each request is signed by an allowed device key —
  * signature over `${method}\n${path}\n${sha256(body)}` in
  * x-pip-device / x-pip-sig / x-pip-ts (10-minute freshness window).
@@ -38,7 +38,7 @@ const bad = (error, status = 400) => json({ error }, { status });
 const TS_WINDOW_MS = 10 * 60 * 1000;
 const MAX_OP_BYTES = 64 * 1024;
 
-// Retention (§ 6/§ 11): a board is never deleted for payment. Deletion
+// Retention (§ 6/§ 11): a user is never deleted for payment. Deletion
 // happens only on family request (30-day undo) or after 3 idle years;
 // a device returning in the final 6 months gets a warning.
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -48,7 +48,7 @@ const IDLE_WARN_MS = IDLE_DELETE_MS - 183 * DAY_MS;
 const OP_PRUNE_MS = 30 * DAY_MS;
 const ALARM_PERIOD_MS = DAY_MS;
 
-export class BoardRelay {
+export class UserRelay {
   constructor(ctx, env) {
     this.ctx = ctx;
     this.env = env;
@@ -106,7 +106,7 @@ export class BoardRelay {
     return this.metaGet("entitlement") ?? "free";
   }
 
-  /** Any signed request counts as the board being alive (§ 11). */
+  /** Any signed request counts as the user being alive (§ 11). */
   touchSeen() {
     this.metaSet("last_seen", Date.now());
   }
@@ -149,10 +149,10 @@ export class BoardRelay {
 
   async fetch(request) {
     const url = new URL(request.url);
-    const route = url.pathname.split("/").slice(3).join("/"); // after /boards/:id
+    const route = url.pathname.split("/").slice(3).join("/"); // after /users/:id
     const method = request.method;
 
-    // The board creator registers itself at creation — the one call an
+    // The user creator registers itself at creation — the one call an
     // unknown device may make. It also leaves the recovery proof: the
     // SHA-256 of the recovery root, which a restore presents in place
     // of a device signature. The relay stores the proof, never the key.
@@ -166,7 +166,7 @@ export class BoardRelay {
         device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, Date.now());
       if (recovery_proof) this.metaSet("recovery_proof", recovery_proof);
       // Retention bookkeeping starts at birth: the alarm sweeps daily.
-      this.metaSet("board_id", url.pathname.split("/")[2]);
+      this.metaSet("user_id", url.pathname.split("/")[2]);
       this.metaSet("last_seen", Date.now());
       this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
       return json({ ok: true });
@@ -186,7 +186,7 @@ export class BoardRelay {
       let diff = a.length === b.length ? 0 : 1;
       for (let i = 0; i < Math.min(a.length, b.length); i++) diff |= a[i] ^ b[i];
       if (diff) return bad("forbidden", 403);
-      // Restore moves the board (§ 11): on a free board the sheet's new
+      // Restore moves the user (§ 11): on a free user the sheet's new
       // device replaces the old set — the old device is unlinked, not
       // added to. Lifetime keeps every linked device.
       if (this.entitlement() !== "lifetime") {
@@ -221,7 +221,7 @@ export class BoardRelay {
       this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
     }
 
-    // Free boards carry one linked device at a time (§ 11). The relay —
+    // Free users carry one linked device at a time (§ 11). The relay —
     // not the UI — refuses a second registration; pairing surfaces the
     // upgrade message from this response.
     if (method === "POST" && route === "devices") {
@@ -245,7 +245,7 @@ export class BoardRelay {
     }
 
     // The calling device's own row — this is how a device picks up the
-    // wrapped board key after pairing, and after a rotation. Entitlement
+    // wrapped user key after pairing, and after a rotation. Entitlement
     // and pending-deletion state ride along so the app can warn.
     if (method === "GET" && route === "devices/self") {
       const row = this.ctx.storage.sql.exec(
@@ -265,9 +265,10 @@ export class BoardRelay {
     // token when the payments slice lands — this seam stays.
     if (method === "POST" && route === "entitlement") {
       const { license } = JSON.parse(td.decode(bodyBytes));
-      const boardId = this.metaGet("board_id") ?? url.pathname.split("/")[2];
+      const userId = this.metaGet("user_id") ?? this.metaGet("board_id")
+        ?? url.pathname.split("/")[2];
       if (!this.env.PIP_LICENSE_SECRET) return bad("licenses_unavailable", 503);
-      if (!(await checkLicense(this.env.PIP_LICENSE_SECRET, boardId, license))) {
+      if (!(await checkLicense(this.env.PIP_LICENSE_SECRET, userId, license))) {
         return bad("bad_license", 403);
       }
       this.metaSet("entitlement", "lifetime");
@@ -275,7 +276,7 @@ export class BoardRelay {
     }
 
     // Family-requested deletion (§ 11): a signed device schedules the
-    // board for deletion after the 30-day undo window. The board keeps
+    // user for deletion after the 30-day undo window. The user keeps
     // working until then; undelete cancels outright.
     if (method === "DELETE" && route === "") {
       const deleteAt = Date.now() + DELETE_GRACE_MS;
@@ -375,9 +376,9 @@ export class BoardRelay {
     }
 
     if (route === "snapshot") {
-      const boardId = url.pathname.split("/")[2];
+      const userId = url.pathname.split("/")[2];
       if (method === "PUT") {
-        await this.env.BLOBS.put(`s/${boardId}`, bodyBytes);
+        await this.env.BLOBS.put(`s/${userId}`, bodyBytes);
         this.metaSet("snapshot_at", Date.now());
         // ?seq=N marks how much of the op log the snapshot covers —
         // the retention sweep prunes only ops it has folded away.
@@ -386,7 +387,7 @@ export class BoardRelay {
         return json({ ok: true });
       }
       if (method === "GET") {
-        const obj = await this.env.BLOBS.get(`s/${boardId}`);
+        const obj = await this.env.BLOBS.get(`s/${userId}`);
         if (!obj) return bad("not_found", 404);
         return new Response(obj.body, { headers: { "content-type": "application/octet-stream" } });
       }
@@ -395,26 +396,26 @@ export class BoardRelay {
     return bad("not_found", 404);
   }
 
-  /** Physical deletion: every blob + snapshot under the board prefix,
+  /** Physical deletion: every blob + snapshot under the user prefix,
    *  then the DO's own storage. Only retentionSweep reaches here —
    *  nothing about entitlement ever deletes data. */
   async destroy() {
-    const boardId = this.metaGet("board_id");
-    if (boardId) {
+    const userId = this.metaGet("user_id") ?? this.metaGet("board_id");
+    if (userId) {
       let cursor;
       do {
-        const listing = await this.env.BLOBS.list({ prefix: `b/${boardId}/`, cursor });
+        const listing = await this.env.BLOBS.list({ prefix: `b/${userId}/`, cursor });
         for (const obj of listing.objects ?? []) await this.env.BLOBS.delete(obj.key);
         cursor = listing.truncated ? listing.cursor : undefined;
       } while (cursor);
-      await this.env.BLOBS.delete(`s/${boardId}`);
+      await this.env.BLOBS.delete(`s/${userId}`);
     }
     await this.ctx.storage.deleteAll();
     await this.ctx.storage.deleteAlarm();
   }
 
   /** The daily sweep (§ 11). Callable directly with an injected `now`
-   *  so tests can place a board at any age. Returns what it did. */
+   *  so tests can place a user at any age. Returns what it did. */
   async retentionSweep(now) {
     const deleteAt = Number(this.metaGet("delete_at") ?? 0);
     const lastSeen = Number(this.metaGet("last_seen") ?? now);

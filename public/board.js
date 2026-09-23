@@ -72,12 +72,12 @@ import {
   ensureRecoveryRoot,
   exportDhPublic,
   exportPublicKey,
-  getBoardKey,
+  getUserKey,
   getDeviceIdentity,
   openKeyStore,
-  putBoardKey,
-  unwrapBoardKey,
-  wrapBoardKey,
+  putUserKey,
+  unwrapUserKey,
+  wrapUserKey,
 } from "./shared/sync_crypto.mjs";
 import {
   keyToWords, parseRecoveryPayload, recoveryPayload, recoveryProof, wordsToKey,
@@ -109,7 +109,7 @@ bindLayouts(catalog.layouts); // move-cost sectors need the column counts
 // log keeps 'dev_local'; ops written after carry the real device id.
 getDeviceIdentity().then(({ deviceId }) => setDeviceId(deviceId))
   .catch((err) => console.warn("sync: device identity unavailable", err));
-// If this board is already linked, start the sync loop (§ 5): catch up,
+// If this user is already linked, start the sync loop (§ 5): catch up,
 // flush pending ops, listen for the relay's fan-out.
 /** Synced edits land in the DB via drainOps — repaint whatever's on
  *  screen. Debounced: a drain batch is one repaint, not one per op. */
@@ -143,9 +143,9 @@ initSync(db, location.origin, onSyncApplied)
     // window (or while a deletion is pending) hears about it once.
     const self = await sync.client.selfKey().catch(() => null);
     if (self?.delete_at) {
-      toast(`This board is scheduled for deletion on ${new Date(self.delete_at).toLocaleDateString()} — Parent corner → Delete to undo.`);
+      toast(`This user is scheduled for deletion on ${new Date(self.delete_at).toLocaleDateString()} — Parent corner → Delete to undo.`);
     } else if (self?.idle_delete_at) {
-      toast(`This board has not synced in a long time and may be removed on ${new Date(self.idle_delete_at).toLocaleDateString()}.`);
+      toast(`This user has not synced in a long time and may be removed on ${new Date(self.idle_delete_at).toLocaleDateString()}.`);
     }
   })
   .catch((err) => console.warn("sync unavailable", err));
@@ -2900,7 +2900,7 @@ $("wc-remove").addEventListener("click", () => {
 /* ------------------------------------------------------------------ *
  * Linked devices + pairing (sync § 3). The new device shows an 8-char
  * code (and QR); a linked device types or scans it, taps Allow, and the
- * board key travels wrapped to the new device's dh key through the
+ * user key travels wrapped to the new device's dh key through the
  * pairing lobby — the relay never sees it.
  * ------------------------------------------------------------------ */
 
@@ -2926,16 +2926,16 @@ pairOverlay.addEventListener("click", (e) => {
   if (e.target === pairOverlay || e.target.closest("[data-close]")) closePair();
 });
 
-/** First linked-device action on a board creates it on the relay. The
+/** First linked-device action on a user creates it on the relay. The
  *  recovery root is minted here so the relay holds the sheet's proof
  *  from the start — it stores the hash, never the key. */
-async function ensureBoard() {
+async function ensureUser() {
   const cfg = syncConfig();
-  if (cfg?.boardId) return cfg;
+  if (cfg?.userId) return cfg;
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
   const root = await ensureRecoveryRoot(store);
-  const res = await fetch(`${relayBase}/boards`, {
+  const res = await fetch(`${relayBase}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
       device_id: identity.deviceId,
@@ -2944,29 +2944,29 @@ async function ensureBoard() {
       recovery_proof: await recoveryProof(root),
     }),
   });
-  if (!res.ok) throw new Error(`board create: ${res.status}`);
-  const { board_id } = await res.json();
-  const next = { boardId: board_id, epoch: 1 };
+  if (!res.ok) throw new Error(`user create: ${res.status}`);
+  const { user_id } = await res.json();
+  const next = { userId: user_id, epoch: 1 };
   setSyncConfig(next);
   await initSync(db, location.origin, onSyncApplied);
-  toast("This board syncs now — print or save the recovery sheet: Parent corner → Backup");
+  toast("This user syncs now — print or save the recovery sheet: Parent corner → Backup");
   return next;
 }
 
 async function renderDevices() {
   const list = $("dev-list");
   const cfg = syncConfig();
-  $("dev-lifetime-row").hidden = !cfg?.boardId;
-  $("dev-delete-row").hidden = !cfg?.boardId;
-  if (!cfg?.boardId) {
-    list.innerHTML = '<p class="hint">This board is only on this device.</p>';
+  $("dev-lifetime-row").hidden = !cfg?.userId;
+  $("dev-delete-row").hidden = !cfg?.userId;
+  if (!cfg?.userId) {
+    list.innerHTML = '<p class="hint">This user is only on this device.</p>';
     return;
   }
   try {
     const store = openKeyStore();
     const identity = await getDeviceIdentity(store);
-    const boardKey = await getBoardKey(store, cfg.epoch ?? 1);
-    const client = relayClient({ boardId: cfg.boardId, baseUrl: relayBase, identity, boardKey });
+    const userKey = await getUserKey(store, cfg.epoch ?? 1);
+    const client = relayClient({ userId: cfg.userId, baseUrl: relayBase, identity, userKey });
     const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
     list.innerHTML = "";
     for (const d of devices) {
@@ -3002,19 +3002,19 @@ function renderEntitlement(self) {
   const state = $("dev-delete-state");
   if (self?.delete_at) {
     const when = new Date(self.delete_at).toLocaleDateString();
-    state.innerHTML = `<p class="hint"><b>This board is scheduled for deletion on ${when}.</b></p>`;
+    state.innerHTML = `<p class="hint"><b>This user is scheduled for deletion on ${when}.</b></p>`;
     $("dev-delete").hidden = true;
     $("dev-undelete").hidden = false;
   } else {
     state.innerHTML = self?.idle_delete_at
-      ? `<p class="hint"><b>Warning:</b> no linked device has synced in over two years. This board will be removed on ${new Date(self.idle_delete_at).toLocaleDateString()} unless a device syncs.</p>`
+      ? `<p class="hint"><b>Warning:</b> no linked device has synced in over two years. This user will be removed on ${new Date(self.idle_delete_at).toLocaleDateString()} unless a device syncs.</p>`
       : "";
     $("dev-delete").hidden = false;
     $("dev-undelete").hidden = true;
   }
 }
 
-/** Remove locks the door; rotating the board key means the removed
+/** Remove locks the door; rotating the user key means the removed
  *  device cannot read anything written after. */
 async function removeDeviceFlow(client, store, identity, targetId) {
   if (!confirm(`Remove ${targetId}? It keeps what it already saw.`)) return;
@@ -3024,9 +3024,9 @@ async function removeDeviceFlow(client, store, identity, targetId) {
   const epoch = (syncConfig()?.epoch ?? 1) + 1;
   // Root-derived when this device holds the recovery root, so a sheet
   // printed before the removal still opens the new epoch.
-  const key = await getBoardKey(store, epoch);
+  const key = await getUserKey(store, epoch);
   const wrapped = {};
-  for (const d of remaining) wrapped[d.device_id] = await wrapBoardKey(key, d.dh_pub);
+  for (const d of remaining) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
   await client.rotateKeys(epoch, wrapped);
   setSyncConfig({ ...syncConfig(), epoch });
   await renderDevices();
@@ -3074,32 +3074,32 @@ async function linkThisDevice() {
       if (st.status !== "granted") return;
       clearInterval(pairPoll);
       pairPoll = null;
-      const key = await unwrapBoardKey(identity.dh.privateKey, st.grant);
-      await putBoardKey(store, key, 1);
-      setSyncConfig({ boardId: st.grant.board_id, epoch: 1 });
+      const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
+      await putUserKey(store, key, 1);
+      setSyncConfig({ userId: st.grant.user_id, epoch: 1 });
       status.textContent = "Linked — syncing…";
       await initSync(db, location.origin, onSyncApplied);
-      status.textContent = "Linked. This board now syncs to this device.";
+      status.textContent = "Linked. This user now syncs to this device.";
       await renderDevices();
     } catch { /* expired or relay hiccup — poll again */ }
   }, 2000);
 }
 
-/** Signed relay client for this board — shared by device management,
+/** Signed relay client for this user — shared by device management,
  *  entitlement, and deletion calls. */
-async function boardClient() {
+async function userClient() {
   const cfg = syncConfig();
-  if (!cfg?.boardId) throw new Error("no linked board");
+  if (!cfg?.userId) throw new Error("no linked user");
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
-  const boardKey = await getBoardKey(store, cfg.epoch ?? 1);
-  return { client: relayClient({ boardId: cfg.boardId, baseUrl: relayBase, identity, boardKey }),
-    store, identity, boardKey };
+  const userKey = await getUserKey(store, cfg.epoch ?? 1);
+  return { client: relayClient({ userId: cfg.userId, baseUrl: relayBase, identity, userKey }),
+    store, identity, userKey };
 }
 
 /** This device is the LINKED device: type the code the new one shows. */
 async function addDeviceFlow() {
-  await ensureBoard();
+  await ensureUser();
   openPair("Add a device");
   pairBody.innerHTML = `
     <p class="hint">Type the 8-letter code the new device is showing.</p>
@@ -3115,7 +3115,7 @@ async function addDeviceFlow() {
       const req = await pairClient(relayBase).status(code);
       pending = { code, req };
       pairBody.querySelector(".hint").textContent =
-        `Allow ${req.device_id.slice(0, 12)}… to edit this board?`;
+        `Allow ${req.device_id.slice(0, 12)}… to edit this user?`;
       pairGo.hidden = false;
       pairGo.textContent = "Allow";
     } catch {
@@ -3125,22 +3125,22 @@ async function addDeviceFlow() {
   pairGo.onclick = async () => {
     if (!pending) return;
     const cfg = syncConfig();
-    const { client, identity, boardKey } = await boardClient();
-    const wrapped = await wrapBoardKey(boardKey, pending.req.dh_pub);
+    const { client, identity, userKey } = await userClient();
+    const wrapped = await wrapUserKey(userKey, pending.req.dh_pub);
     try {
       await client.addDevice(pending.req.device_id, pending.req.sig_pub, { dh_pub: pending.req.dh_pub });
     } catch (e) {
-      // The relay refused — a free board allows one linked device. The
+      // The relay refused — a free user allows one linked device. The
       // new device gets a real answer, not a silent timeout.
       const msg = e.message === "upgrade_required"
-        ? "This board allows one linked device. Pip Lifetime unlocks more."
+        ? "A free user allows one linked device. Pip Lifetime unlocks more."
         : `The relay refused: ${e.message}`;
       pairBody.querySelector(".hint").textContent = msg;
       await pairClient(relayBase).grant(pending.code, { refused: msg });
       return;
     }
     await pairClient(relayBase).grant(pending.code, {
-      board_id: cfg.boardId, by_device: identity.deviceId, ...wrapped });
+      user_id: cfg.userId, by_device: identity.deviceId, ...wrapped });
     closePair();
     await renderDevices();
   };
@@ -3163,31 +3163,31 @@ $("dev-activate").onclick = async () => {
   const key = $("dev-license").value.trim();
   if (!key) return;
   try {
-    const { client } = await boardClient();
+    const { client } = await userClient();
     await client.setEntitlement(key);
     $("dev-license").value = "";
     await renderDevices();
   } catch (e) {
     $("dev-lifetime").innerHTML =
-      `<p class="hint">That key did not verify for this board.</p>`;
+      `<p class="hint">That key did not verify for this user.</p>`;
   }
 };
 
-/* Board deletion (§ 11): confirm → the relay schedules deletion in 30
+/* User deletion (§ 11): confirm → the relay schedules deletion in 30
  * days; Undo cancels. The device keeps its own copy either way. */
 $("dev-delete").onclick = () => {
-  openPair("Delete this board?");
-  pairBody.innerHTML = `<p class="hint">The board and its backups will be
+  openPair("Delete this user?");
+  pairBody.innerHTML = `<p class="hint">The user and its backups will be
     deleted from the relay in 30 days. Any linked device can undo it
     before then. This device keeps its local copy.</p>`;
   pairGo.hidden = false;
   pairGo.textContent = "Delete";
   pairGo.onclick = async () => {
     try {
-      const { client } = await boardClient();
-      const { delete_at } = await client.deleteBoard();
+      const { client } = await userClient();
+      const { delete_at } = await client.deleteUser();
       closePair();
-      toast(`Board scheduled for deletion on ${new Date(delete_at).toLocaleDateString()}`);
+      toast(`User scheduled for deletion on ${new Date(delete_at).toLocaleDateString()}`);
       await renderDevices();
     } catch (e) {
       pairBody.querySelector(".hint").textContent = `Could not reach the relay: ${e.message}`;
@@ -3196,9 +3196,9 @@ $("dev-delete").onclick = () => {
 };
 $("dev-undelete").onclick = async () => {
   try {
-    const { client } = await boardClient();
-    await client.undeleteBoard();
-    toast("Deletion cancelled — this board stays.");
+    const { client } = await userClient();
+    await client.undeleteUser();
+    toast("Deletion cancelled — this user stays.");
     await renderDevices();
   } catch (e) {
     toast(`Could not reach the relay: ${e.message}`);
@@ -3206,7 +3206,7 @@ $("dev-undelete").onclick = async () => {
 };
 
 /* ------------------------------------------------------------------ *
- * Recovery sheet (§ 9) — the last-resort credential: QR + board id +
+ * Recovery sheet (§ 9) — the last-resort credential: QR + user id +
  * 24 words carrying the recovery root. Only a device holding the root
  * can show it — the device that set up sync, or one restored from a
  * sheet. A merely-paired device cannot re-derive the root, so removing
@@ -3233,10 +3233,10 @@ recOverlay.addEventListener("click", (e) => {
 
 async function showRecoverySheet() {
   const cfg = syncConfig();
-  if (!cfg?.boardId) {
+  if (!cfg?.userId) {
     openRec("Recovery sheet");
     recBody.innerHTML =
-      '<p class="hint">Link this board first — the sheet backs up a synced board.</p>';
+      '<p class="hint">Link this user first — the sheet backs up a synced user.</p>';
     return;
   }
   const root = await openKeyStore().get("recovery_root");
@@ -3252,12 +3252,12 @@ async function showRecoverySheet() {
   const qr = document.createElement("div");
   qr.className = "pair-qr";
   const q = qrcode(0, "M");
-  q.addData(recoveryPayload(cfg.boardId, words));
+  q.addData(recoveryPayload(cfg.userId, words));
   q.make();
   qr.innerHTML = q.createSvgTag({ cellSize: 3, margin: 8, scalable: true });
   const bid = document.createElement("p");
-  bid.className = "rec-boardid";
-  bid.textContent = `Board ${cfg.boardId}`;
+  bid.className = "rec-userid";
+  bid.textContent = `User ${cfg.userId}`;
   const grid = document.createElement("div");
   grid.className = "rec-words";
   words.split(" ").forEach((w, i) => {
@@ -3269,29 +3269,29 @@ async function showRecoverySheet() {
   });
   const warn = document.createElement("p");
   warn.className = "hint";
-  warn.textContent = "Anyone holding this sheet can restore the whole board — keep it "
+  warn.textContent = "Anyone holding this sheet can restore the whole user — keep it "
     + "private. What the child says is not on it: speech history never leaves a device.";
   recBody.append(qr, bid, grid, warn);
   recPrint.hidden = false;
   recPrint.onclick = () => window.print();
 }
 
-/** Fresh device: paste the sheet's QR text, or the board id + 24 words. */
+/** Fresh device: paste the sheet's QR text, or the user id + 24 words. */
 function restoreFlow() {
-  if (syncConfig()?.boardId) {
-    openRec("Restore a board");
+  if (syncConfig()?.userId) {
+    openRec("Restore a user");
     recBody.innerHTML =
-      '<p class="hint">This device is already linked to a board.</p>';
+      '<p class="hint">This device is already linked to a user.</p>';
     return;
   }
-  openRec("Restore a board");
+  openRec("Restore a user");
   const hint = document.createElement("p");
   hint.className = "hint";
-  hint.textContent = "Paste the text from the sheet's QR code, or the board id "
+  hint.textContent = "Paste the text from the sheet's QR code, or the user id "
     + "followed by the 24 words.";
   const ta = document.createElement("textarea");
   ta.id = "rec-paste";
-  ta.placeholder = "pip:recover:… or <board id> word word …";
+  ta.placeholder = "pip:recover:… or <user id> word word …";
   const status = document.createElement("p");
   status.className = "hint";
   recBody.append(hint, ta, status);
@@ -3301,7 +3301,7 @@ function restoreFlow() {
     const parsed = parseRecoveryPayload(ta.value);
     if (!parsed) {
       status.textContent = "That doesn't look like a recovery sheet — paste the QR "
-        + "text or the board id with its 24 words.";
+        + "text or the user id with its 24 words.";
       return;
     }
     recGo.hidden = true;
@@ -3310,16 +3310,16 @@ function restoreFlow() {
       const root = await wordsToKey(parsed.phrase, RECOVERY_WORDS);
       const store = openKeyStore();
       const identity = await getDeviceIdentity(store);
-      const r = await restoreDevice(relayBase, parsed.boardId, {
+      const r = await restoreDevice(relayBase, parsed.userId, {
         proof: await recoveryProof(root),
         device_id: identity.deviceId,
         pubkey: await exportPublicKey(identity.verify),
         dh_pub: await exportDhPublic(identity.dh.publicKey),
       });
       await store.put("recovery_root", root);
-      await getBoardKey(store, r.epoch); // derive + store the current epoch key
-      setSyncConfig({ boardId: parsed.boardId, epoch: r.epoch });
-      status.textContent = "Restoring the board…";
+      await getUserKey(store, r.epoch); // derive + store the current epoch key
+      setSyncConfig({ userId: parsed.userId, epoch: r.epoch });
+      status.textContent = "Restoring the user…";
       await initSync(db, location.origin, onSyncApplied);
       status.textContent = "Restored. What was said stays on the device that said it — "
         + "speech history never leaves a device.";
@@ -3328,7 +3328,7 @@ function restoreFlow() {
       recGo.hidden = false;
       status.textContent = /checksum|word/i.test(e.message)
         ? e.message
-        : "That sheet doesn't open this board — check the words, or print a fresh "
+        : "That sheet doesn't open this user — check the words, or print a fresh "
           + "sheet on a linked device.";
     }
   };

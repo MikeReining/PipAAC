@@ -1,6 +1,6 @@
 /**
  * 011 slice 9 Works Test — free vs Lifetime, restore-move, retention.
- * BoardRelay is a plain class: this file drives it directly against a
+ * UserRelay is a plain class: this file drives it directly against a
  * real SQLite (node:sqlite) and a fake R2, so the cap, the move, the
  * license check, and the sweep are the relay's own code — no mocks of
  * the logic under test.
@@ -11,7 +11,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 
-import { BoardRelay } from "./relay.js";
+import { UserRelay } from "./relay.js";
 import { licenseFor } from "./license.mjs";
 import { recoveryProof } from "../../public/shared/recovery.mjs";
 import {
@@ -98,29 +98,29 @@ const signed = async (identity, method, path, body) => {
   });
 };
 
-async function boardAt(boardId) {
+async function userAt(userId) {
   const ctx = fakeCtx();
   const env = fakeEnv();
-  const relay = new BoardRelay(ctx, env);
+  const relay = new UserRelay(ctx, env);
   const dev = await newDevice();
   const root = await ensureRecoveryRoot(dev.store);
   const proof = await recoveryProof(root);
-  const res = await relay.fetch(new Request(`https://relay/boards/${boardId}/bootstrap`, {
+  const res = await relay.fetch(new Request(`https://relay/users/${userId}/bootstrap`, {
     method: "POST",
     body: JSON.stringify({ device_id: dev.device_id, pubkey: dev.pubkey,
       dh_pub: dev.dh_pub, recovery_proof: proof }),
   }));
   assert.equal(res.status, 200);
-  return { relay, ctx, env, dev, proof, boardId };
+  return { relay, ctx, env, dev, proof, userId };
 }
 
-test("free board: the relay refuses a second device; lifetime allows it", async () => {
-  const boardId = "board-cap";
-  const { relay, dev, proof } = await boardAt(boardId);
-  const p = `/boards/${boardId}`;
+test("free user: the relay refuses a second device; lifetime allows it", async () => {
+  const userId = "user-cap";
+  const { relay, dev, proof } = await userAt(userId);
+  const p = `/users/${userId}`;
   const other = await newDevice();
 
-  // Second device on a free board — refused by the relay, not the UI.
+  // Second device on a free user — refused by the relay, not the UI.
   let res = await relay.fetch(await signed(dev.identity, "POST", `${p}/devices`, {
     device_id: other.device_id, pubkey: other.pubkey, dh_pub: other.dh_pub }));
   assert.equal(res.status, 403);
@@ -137,7 +137,7 @@ test("free board: the relay refuses a second device; lifetime allows it", async 
   assert.equal(res.status, 403);
 
   // The real license does — and now the second device registers.
-  const license = await licenseFor(SECRET, boardId);
+  const license = await licenseFor(SECRET, userId);
   res = await relay.fetch(await signed(dev.identity, "POST", `${p}/entitlement`, { license }));
   assert.equal((await res.json()).entitlement, "lifetime");
   res = await relay.fetch(await signed(dev.identity, "POST", `${p}/devices`, {
@@ -145,62 +145,62 @@ test("free board: the relay refuses a second device; lifetime allows it", async 
   assert.equal(res.status, 200);
 });
 
-test("restore on a free board moves the board; lifetime keeps every device", async () => {
+test("restore on a free user moves the user; lifetime keeps every device", async () => {
   // Free: the restoring device replaces the whole set.
-  let boardId = "board-free-move";
-  let { relay, dev, proof } = await boardAt(boardId);
+  let userId = "user-free-move";
+  let { relay, dev, proof } = await userAt(userId);
   let newcomer = await newDevice();
-  let res = await relay.fetch(new Request(`https://relay/boards/${boardId}/restore`, {
+  let res = await relay.fetch(new Request(`https://relay/users/${userId}/restore`, {
     method: "POST",
     body: JSON.stringify({ device_id: newcomer.device_id, pubkey: newcomer.pubkey,
       dh_pub: newcomer.dh_pub, proof }),
   }));
   assert.equal(res.status, 200);
   let self = await relay.fetch(await signed(
-    newcomer.identity, "GET", `/boards/${boardId}/devices`, undefined));
+    newcomer.identity, "GET", `/users/${userId}/devices`, undefined));
   assert.deepEqual((await self.json()).devices.map((d) => d.device_id),
     [newcomer.device_id], "free restore must unlink the old device");
 
   // Lifetime: restore adds, it does not evict.
-  boardId = "board-life-move";
-  ({ relay, dev, proof } = await boardAt(boardId));
-  const license = await licenseFor(SECRET, boardId);
-  await relay.fetch(await signed(dev.identity, "POST", `/boards/${boardId}/entitlement`, { license }));
+  userId = "user-life-move";
+  ({ relay, dev, proof } = await userAt(userId));
+  const license = await licenseFor(SECRET, userId);
+  await relay.fetch(await signed(dev.identity, "POST", `/users/${userId}/entitlement`, { license }));
   newcomer = await newDevice();
-  await relay.fetch(new Request(`https://relay/boards/${boardId}/restore`, {
+  await relay.fetch(new Request(`https://relay/users/${userId}/restore`, {
     method: "POST",
     body: JSON.stringify({ device_id: newcomer.device_id, pubkey: newcomer.pubkey,
       dh_pub: newcomer.dh_pub, proof }),
   }));
   res = await relay.fetch(await signed(
-    dev.identity, "GET", `/boards/${boardId}/devices`, undefined));
+    dev.identity, "GET", `/users/${userId}/devices`, undefined));
   assert.equal((await res.json()).devices.length, 2);
 });
 
-test("retention: nothing deletes a board but the two § 11 causes", async () => {
-  const boardId = "board-retention";
-  const { relay, ctx, env, dev } = await boardAt(boardId);
+test("retention: nothing deletes a user but the two § 11 causes", async () => {
+  const userId = "user-retention";
+  const { relay, ctx, env, dev } = await userAt(userId);
   const setSeen = (msAgo) => ctx._db.prepare(
     "UPDATE meta SET v = ? WHERE k = 'last_seen'").run(String(Date.now() - msAgo));
   const boardRows = () =>
     ctx._db.prepare("SELECT COUNT(*) AS n FROM device").get().n +
     ctx._db.prepare("SELECT COUNT(*) AS n FROM meta").get().n;
 
-  // A board whose entitlement never existed keeps its blobs — the sweep
+  // A user whose entitlement never existed keeps its blobs — the sweep
   // only looks at timestamps, never at payment.
-  await env.BLOBS.put(`b/${boardId}/abc`, te.encode("x"));
-  await env.BLOBS.put(`s/${boardId}`, te.encode("snap"));
+  await env.BLOBS.put(`b/${userId}/abc`, te.encode("x"));
+  await env.BLOBS.put(`s/${userId}`, te.encode("snap"));
 
   // 2 years 11 months: survives — inside the warning window.
   setSeen(2 * 365 * DAY + 11 * 30 * DAY);
   let out = await relay.retentionSweep(Date.now());
-  assert.equal(out.destroyed, false, "2y11m board deleted");
+  assert.equal(out.destroyed, false, "2y11m user deleted");
   assert.equal(out.warned, true, "returning device not warned");
   assert.ok(boardRows() > 0);
 
   // A returning device sees the deadline on its own row.
   let res = await relay.fetch(await signed(
-    dev.identity, "GET", `/boards/${boardId}/devices/self`, undefined));
+    dev.identity, "GET", `/users/${userId}/devices/self`, undefined));
   let self = await res.json();
   assert.ok(self.idle_delete_at > Date.now(), "no idle warning on self");
 
@@ -211,18 +211,18 @@ test("retention: nothing deletes a board but the two § 11 causes", async () => 
   // 3 years + a day: gone — storage and blobs together.
   setSeen(3 * 365 * DAY + DAY);
   out = await relay.retentionSweep(Date.now());
-  assert.equal(out.destroyed, true, "3y board survived");
+  assert.equal(out.destroyed, true, "3y user survived");
   assert.equal(boardRows(), 0);
-  assert.equal(env._blobs.has(`b/${boardId}/abc`), false);
-  assert.equal(env._blobs.has(`s/${boardId}`), false);
+  assert.equal(env._blobs.has(`b/${userId}/abc`), false);
+  assert.equal(env._blobs.has(`s/${userId}`), false);
 });
 
 test("requested deletion: 30-day undo window, then gone", async () => {
-  const boardId = "board-delete";
-  const { relay, ctx, dev } = await boardAt(boardId);
-  const p = `/boards/${boardId}`;
+  const userId = "user-delete";
+  const { relay, ctx, dev } = await userAt(userId);
+  const p = `/users/${userId}`;
 
-  // Request → scheduled; board still works.
+  // Request → scheduled; user still works.
   let res = await relay.fetch(await signed(dev.identity, "DELETE", p, undefined));
   const { delete_at } = await res.json();
   assert.ok(delete_at > Date.now());
@@ -245,9 +245,9 @@ test("requested deletion: 30-day undo window, then gone", async () => {
 });
 
 test("op pruning follows the snapshot, never entitlement", async () => {
-  const boardId = "board-prune";
-  const { relay, ctx, dev } = await boardAt(boardId);
-  const p = `/boards/${boardId}`;
+  const userId = "user-prune";
+  const { relay, ctx, dev } = await userAt(userId);
+  const p = `/users/${userId}`;
   const old = Date.now() - 31 * DAY;
   // Three ops; backdate them all.
   for (const id of ["a", "b", "c"]) {

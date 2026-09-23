@@ -91,10 +91,10 @@ pairing below stay.*
    this board?"** Nothing happens until Allow.
 3. On Allow, the linked device encrypts the board key to the new device's
    public key and sends it through the relay. The new device downloads
-   the snapshot and the log (§ 5). **BUILT**: `wrapBoardKey` (ephemeral
+   the snapshot and the log (§ 5). **BUILT**: `wrapUserKey` (ephemeral
    ECDH → AES-GCM wrap) → `POST /pair/:code/grant` + `POST
-   /boards/:id/devices`; the new device polls `GET /pair/:code`, unwraps
-   with `unwrapBoardKey`, stores the key, and `initSync` drains the
+   /users/:id/devices`; the new device polls `GET /pair/:code`, unwraps
+   with `unwrapUserKey`, stores the key, and `initSync` drains the
    confirmed log.
 
 The QR never contains the board key, so a photo of the screen is useless
@@ -111,12 +111,13 @@ board key: a remaining device makes a new key, encrypts it to each
 remaining device, and new ops use it. A removed device keeps what it had
 already downloaded. That is stated honestly in the UI, not hidden.
 
-**BUILT**: `DELETE /boards/:id/devices/:id` + `POST /keys {epoch,
+**BUILT**: `DELETE /users/:id/devices/:id` + `POST /keys {epoch,
 wrapped:{device:grant}}` bumps `key_epoch` and stores a wrapped key per
 remaining device; each op carries the epoch it was sealed under, and a
 device seeing a higher epoch picks up its new wrapped key via
-`GET /devices/self`. Board keys live per-epoch in the keystore
-(`board_key`, `board_key_e2`, …).
+`GET /devices/self`. User keys live per-epoch in the keystore
+(`user_key`, `user_key_e2`, …); pre-rename `board_key*` entries
+migrate forward on first read (015 slice 1).
 
 ## 4. What travels: an encrypted op log
 
@@ -213,9 +214,9 @@ device loads the latest snapshot, then the ops after it.
 | Durable Object per board | Sequence counter, the allowed device list, recent ciphertext ops, live fan-out over WebSocket |
 | R2 | Encrypted snapshots and blobs (photos, recordings) |
 
-**BUILT** (011 slice 4): `src/worker/relay.js` — `BoardRelay` DO
+**BUILT** (011 slice 4): `src/worker/relay.js` — `UserRelay` DO
 (`RELAY` binding, `new_sqlite_classes`), R2 `BLOBS` bucket. Routes under
-`/boards/...`: `POST /boards` creates a board and registers the creator's
+`/users/...`: `POST /users` creates a user and registers the creator's
 device; `POST /devices` adds a device (signed by an allowed one);
 `POST /ops` assigns `relay_seq`, stores the sealed envelope, fans it out
 over the WebSocket (`GET /ws`, signed via query params — browsers cannot
@@ -226,13 +227,13 @@ Auth: ECDSA P-256 signature over `method\npath\nts\nsha256(body)` in
 allowed-device list in DO storage. Client: `public/shared/sync_client.mjs`.
 
 **BUILT** (015 slices 6–7 relay legs, 2026-09-23): `POST /entitlement`
-activates a board-bound license (`src/worker/license.mjs`, HMAC over
-`pip-lifetime:<boardId>` against `PIP_LICENSE_SECRET` — the dev path;
+activates a user-bound license (`src/worker/license.mjs`, HMAC over
+`pip-lifetime:<userId>` against `PIP_LICENSE_SECRET` — the dev path;
 verified Stripe/Apple purchases mint the same seam when slice 6 lands
-its billing half). `POST /devices` on a free board with a linked device
-answers `403 upgrade_required`; `POST /restore` on a free board replaces
-the device set (the sheet moves the board; on Lifetime it adds).
-`DELETE /boards/:id` schedules deletion at +30 days, `POST /undelete`
+its billing half). `POST /devices` on a free user with a linked device
+answers `403 upgrade_required`; `POST /restore` on a free user replaces
+the device set (the sheet moves the user; on Lifetime it adds).
+`DELETE /users/:id` schedules deletion at +30 days, `POST /undelete`
 cancels; `GET /devices/self` carries `entitlement`, `delete_at`, and
 `idle_delete_at`.
 
@@ -259,7 +260,7 @@ people with special needs takes a ton of time"; § 11):
 **BUILT** (2026-09-23): all four rules run on the relay. `last_seen` is
 stamped on every signed request; a daily Durable-Object alarm runs
 `retentionSweep(now)`, which destroys a board only for the two causes
-above (`destroy()` deletes the R2 `b/<board>/*` + `s/<board>` objects
+above (`destroy()` deletes the R2 `b/<user>/*` + `s/<user>` objects
 and the DO's own storage — nothing about entitlement ever reaches it).
 The warning rides `GET /devices/self` as `idle_delete_at`, computed from
 the previous `last_seen` so a returning device still sees it once.
@@ -319,12 +320,12 @@ card (§ 12.3). The recovery root and its derivation stay.*
 
 - **Recovery sheet, free for every board.** When backup is turned on, the
   Parent Corner shows a printable recovery sheet (a QR plus 24 words) that
-  holds the board id and the board key. On a new device, **Restore from
-  recovery sheet** downloads and decrypts the board. The app reminds the
+  holds the board id and the board key. On a new device, **Restore a
+  user** downloads and decrypts the user. The app reminds the
   family to print or save it, and they can show it again from any linked
   device that holds the recovery root (see the amendment below).
 
-**BUILT 2026-09-23** (slice 8). The sheet is a `pip:recover:<boardId>:<24
+**BUILT 2026-09-23** (slice 8). The sheet is a `pip:recover:<userId>:<24
 words>` QR plus a numbered word grid — Parent corner → Backup → Recovery
 sheet → Print (`public/index.html` `#recform`; `showRecoverySheet` in
 `public/board.js`). The 24 words encode a 256-bit **recovery root** —
@@ -337,13 +338,13 @@ at any time opens every epoch — including ops sealed after a device
 removal rotated the key.
 
 - The relay stores only `SHA-256(root ‖ "pip-recovery-v1")`, written at
-  board bootstrap. `POST /boards/:id/restore` is the one unsigned call
+  board bootstrap. `POST /users/:id/restore` is the one unsigned call
   besides bootstrap: it trades the proof for device registration at the
   current epoch, then the restored device drains the op log like any
   linked device (`src/worker/relay.js`; `restoreDevice` in
   `public/shared/sync_client.mjs`). The relay never sees a key.
-- Restore UI: Parent corner → Backup → Restore a board → paste the QR
-  text or `boardId + 24 words` (`restoreFlow` in `public/board.js`).
+- Restore UI: Parent corner → Backup → Restore a user → paste the QR
+  text or `userId + 24 words` (`restoreFlow` in `public/board.js`).
   The success line says plainly that speech history never leaves a
   device, and nothing in the sync path carries history tables.
 - **Amendment to "any linked device can show it":** only a device

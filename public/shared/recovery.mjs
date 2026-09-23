@@ -1,16 +1,16 @@
 /**
  * The recovery sheet (Sync_And_Web_Editing § 9).
  *
- * The sheet carries two things: the board id and the recovery root, a
- * 256-bit bearer secret from which every epoch's board key derives
- * (HKDF). Whoever holds the sheet can restore the board — print it,
+ * The sheet carries two things: the user id and the recovery root, a
+ * 256-bit bearer secret from which every epoch's user key derives
+ * (HKDF). Whoever holds the sheet can restore the user — print it,
  * keep it safe, keep it private.
  *
  * Words: the 32-byte root plus an 8-bit SHA-256 checksum becomes 264
  * bits = 24 words of 11 bits over the BIP-0039 English list. A typo'd
  * word almost always fails the checksum before it can restore wrong.
  *
- * QR payload: `pip:recover:<boardId>:<w1> <w2> … <w24>` — plain text,
+ * QR payload: `pip:recover:<userId>:<w1> <w2> … <w24>` — plain text,
  * so a scan pasted anywhere round-trips.
  *
  * Relay trust: the relay stores only a proof —
@@ -80,18 +80,18 @@ export async function recoveryProof(rootBytes) {
  * Sheet payload — the QR's text, and the paste-box format
  * ------------------------------------------------------------------ */
 
-export const recoveryPayload = (boardId, words) =>
-  `pip:recover:${boardId}:${words}`;
+export const recoveryPayload = (userId, words) =>
+  `pip:recover:${userId}:${words}`;
 
-/** Accepts a `pip:recover:` payload, or bare `<boardId> <24 words>`.
- *  → { boardId, phrase } or null. */
+/** Accepts a `pip:recover:` payload, or bare `<userId> <24 words>`.
+ *  → { userId, phrase } or null. */
 export function parseRecoveryPayload(text) {
   const t = text.trim();
   const m = t.match(/^pip:recover:([0-9a-f-]{36}):(.+)$/is);
-  if (m) return { boardId: m[1], phrase: m[2].trim() };
+  if (m) return { userId: m[1], phrase: m[2].trim() };
   const bare = t.split(/\s+/);
   if (bare.length === 25 && /^[0-9a-f-]{36}$/i.test(bare[0])) {
-    return { boardId: bare[0], phrase: bare.slice(1).join(" ") };
+    return { userId: bare[0], phrase: bare.slice(1).join(" ") };
   }
   return null;
 }

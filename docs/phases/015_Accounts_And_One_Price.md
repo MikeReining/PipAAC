@@ -1,8 +1,7 @@
 # Phase 015 — Accounts and one price
 
-**Status:** Executing. Slice 0 (rulings) done 2026-09-23. Next: slice 1,
-after 013 slice 2 and 014 slice 2 (founder: core infrastructure, right
-after Spotlight and the grid work).
+**Status:** Executing. Slice 0 (rulings) done 2026-09-23; slice 1 (one
+word: user) done 2026-09-24. Next: slice 2 — many users on one device.
 
 **Direction DECIDED 2026-09-23** (founder: "all approved, lock it in").
 Intake: `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
@@ -80,6 +79,38 @@ unchanged in assertions. A copy scan finds no user-facing string that
 uses "board" for the sync unit, and a device linked before the rename
 still syncs after it.
 
+**DONE 2026-09-24.** The sync unit is `user` on every surface a person
+or the wire sees; the grid page stays a board.
+
+- Wire: `POST /users` + `/users/:id/...` (`src/worker/index.js`,
+  `relayClient` in `public/shared/sync_client.mjs`); wire JSON carries
+  `user_id`. `BoardRelay` → `UserRelay` with a wrangler
+  `renamed_classes` migration (`wrangler.jsonc` v3) — existing DO
+  storage survives.
+- Keys: `getUserKey`/`putUserKey`/`wrapUserKey`/`unwrapUserKey` in
+  `sync_crypto.mjs`. A store holding `board_key`/`board_key_e<n>` reads
+  the legacy name, copies it forward to `user_key*`, and drops the old
+  name — a pre-rename linked device keeps syncing without re-pairing.
+- Config: `pip_sync` written before the rename carries `boardId`;
+  `loadCfg` maps it to `userId` on read (`public/shared/sync.mjs`).
+  The lobby `grant.board_id` column renames to `user_id` via
+  `ALTER TABLE … RENAME COLUMN` guarded for both fresh and persisted
+  DOs; relay `meta.board_id` reads fall back for pre-rename DOs.
+- Crypto constants unchanged: HKDF salt `pip-board-key`, recovery suffix
+  `pip-recovery-v1`, QR prefix `pip:recover:`, R2 prefixes `b/`/`s/` —
+  printed sheets and derived keys keep working.
+- Copy: "Restore a user", "Allow … to edit this user?", "This user
+  syncs now", deletion/backup hints — all user wording; board/grid
+  uses (`board_group`, `board_layout`, view "board") untouched.
+
+Works Test, measured: sync + recovery + entitlement unit tests 18/18;
+all four heavy files green against real wrangler (`relay`, `pairing`,
+`blob`, `recovery` — run serially; `test.sh --heavy` now passes
+`--test-concurrency=1` and collects `src`, which its stale root list
+had missed). A keystore-migration leg proves a pre-rename store opens
+its ops. Copy scan: no user-facing string calls the sync unit a board.
+License mints still verify — the HMAC input is the same UUID, renamed.
+
 ## Slice 2 — Many users on one device
 
 Goal: one device holds many users. An SLP's laptop holds every client; a
@@ -95,7 +126,7 @@ sign-in that brings the same list to a new device.
 - One profile row with the fixed id `prf_local`
   (`public/shared/groups.mjs:648`, `public/board.js:116`; 14 references across code and tests).
 - One sync config, the localStorage key `pip_sync`
-  (`public/shared/sync.mjs:22`), and one set of keys (`board_key*`,
+  (`public/shared/sync.mjs:22`), and one set of keys (`user_key*`,
   `recovery_root`) in IndexedDB `pip-keys`
   (`public/shared/sync_crypto.mjs:120`).
 
@@ -137,7 +168,7 @@ push even one user past kvvfs's envelope, so this move is needed anyway.
    (`blob:<sha256>` in OPFS), so two users with the same photo store it
    once. Deleting a user leaves blobs another user still references.
 8. **Migration.** On first boot of the new version, today's kvvfs
-   `local` database, `pip_sync` and `board_key*`/`recovery_root` become
+   `local` database, `pip_sync` and `user_key*`/`recovery_root` become
    user #1, the home user. Then the kvvfs copy is cleared.
 
 ### Screens
@@ -240,7 +271,7 @@ get 403 and ops after removal are sealed under a key S never received.
 
 **Partially BUILT 2026-09-23** (relay legs, dev-license path; the cap
 predates the one-supporter ruling and is owed a change, see Scope): the
-one-live-device cap is enforced by `BoardRelay` (`403 upgrade_required`
+one-live-device cap is enforced by `UserRelay` (`403 upgrade_required`
 on a second `POST /devices`), restore on a free board replaces the
 device set, and `POST /entitlement` activates a board-bound HMAC license
 (`src/worker/license.mjs` + `scripts/entitlement/mint.mjs`,
@@ -312,7 +343,7 @@ Works Test:
 
 ## Slice 7 — Retention and email
 
-**Partially BUILT 2026-09-23** (everything but email): the BoardRelay
+**Partially BUILT 2026-09-23** (everything but email): the UserRelay
 stamps `last_seen` on every signed request; a daily DO alarm runs
 `retentionSweep(now)` — destruction only on `delete_at` expiry (30-day
 undo via `DELETE`/`undelete`) or 3 idle years; a fixture at 2y11m

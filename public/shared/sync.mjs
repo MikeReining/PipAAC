@@ -1,10 +1,10 @@
 /**
  * The device-side sync loop (Sync_And_Web_Editing §§ 4–6).
  *
- * initSync(db) is a no-op until the board is linked (pairing writes
- * localStorage pip_sync {boardId, epoch}). Once linked it: catches up on
+ * initSync(db) is a no-op until the user is linked (pairing writes
+ * localStorage pip_sync {userId, epoch}). Once linked it: catches up on
  * missed confirmed ops, flushes pending local ops, and keeps a WebSocket
- * open — incoming ops are decrypted with the board key for their epoch
+ * open — incoming ops are decrypted with the user key for their epoch
  * and drained through the same rebase the merge test exercises.
  *
  * recordOp calls the registered sink after every adult edit; sync.mjs
@@ -13,14 +13,18 @@
 import { confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
 import { setBlobFetcher } from "../db.js";
 import {
-  getBoardKey, getDeviceIdentity, openBlob, openKeyStore, openOp, putBoardKey,
-  sealBlob, unwrapBoardKey,
+  getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey,
+  sealBlob, unwrapUserKey,
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
 
 const loadCfg = () => {
-  try { return JSON.parse(localStorage.getItem("pip_sync") ?? "null"); }
-  catch { return null; }
+  try {
+    const cfg = JSON.parse(localStorage.getItem("pip_sync") ?? "null");
+    // 015 slice 1: configs written before the rename carry boardId.
+    if (cfg?.boardId && !cfg.userId) return { ...cfg, userId: cfg.boardId };
+    return cfg;
+  } catch { return null; }
 };
 const saveCfg = (cfg) => localStorage.setItem("pip_sync", JSON.stringify(cfg));
 export const syncConfig = loadCfg;
@@ -30,7 +34,7 @@ let running = null;
 export async function initSync(db, baseUrl = location.origin, onApplied = () => {}) {
   if (running) return running;
   const cfg = loadCfg();
-  if (!cfg?.boardId) return null;
+  if (!cfg?.userId) return null;
   running = startSync(db, baseUrl, cfg, onApplied).catch((err) => { running = null; throw err; });
   return running;
 }
@@ -40,21 +44,21 @@ async function startSync(db, baseUrl, cfg, onApplied) {
   const identity = await getDeviceIdentity(store);
   setDeviceId(identity.deviceId);
   let epoch = cfg.epoch ?? 1;
-  let boardKey = await getBoardKey(store, epoch);
-  const client = relayClient({ boardId: cfg.boardId, baseUrl, identity, boardKey });
+  let userKey = await getUserKey(store, epoch);
+  const client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
 
   /** Key for an op's epoch — a higher epoch means a rotation happened:
    *  pick up the wrapped key the granter left for us. */
   const keyFor = async (e) => {
-    if (e <= epoch) return getBoardKey(store, e);
+    if (e <= epoch) return getUserKey(store, e);
     const self = await client.selfKey();
     if (!self.wrapped_key || self.current_epoch < e) {
       throw new Error(`sync: no wrapped key for epoch ${e}`);
     }
-    const k = await unwrapBoardKey(identity.dh.privateKey, JSON.parse(self.wrapped_key));
-    await putBoardKey(store, k, self.current_epoch);
+    const k = await unwrapUserKey(identity.dh.privateKey, JSON.parse(self.wrapped_key));
+    await putUserKey(store, k, self.current_epoch);
     epoch = self.current_epoch;
-    boardKey = k;
+    userKey = k;
     cfg.epoch = epoch;
     saveCfg(cfg);
     return k;
@@ -125,7 +129,7 @@ async function startSync(db, baseUrl, cfg, onApplied) {
   return { client, identity, getEpoch: () => epoch, uploadBlob };
 }
 
-/** Upload a photo/recording blob if the board is linked. Callers don't
+/** Upload a photo/recording blob if the user is linked. Callers don't
  *  await — the blob rides behind the op that references its sha. */
 export async function syncUploadBlob(bytes) {
   const handle = running ? await running.catch(() => null) : null;

@@ -1,17 +1,17 @@
 /**
- * Mint a Pip Lifetime license for a board (dev path — 011 slice 9).
+ * Mint a Pip Lifetime license for a user (dev path — 011 slice 9).
  * Reads PIP_LICENSE_SECRET from .dev.vars; prints the key to paste in
  * Parent corner → Pip Lifetime.
  *
- *   node scripts/entitlement/mint.mjs <boardId>
+ *   node scripts/entitlement/mint.mjs <userId>
  */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { licenseFor } from "../../src/worker/license.mjs";
 
-const boardId = process.argv[2];
-if (!boardId) {
-  console.error("usage: node scripts/entitlement/mint.mjs <boardId>");
+const userId = process.argv[2];
+if (!userId) {
+  console.error("usage: node scripts/entitlement/mint.mjs <userId>");
   process.exit(1);
 }
 
@@ -25,4 +25,4 @@ if (!vars.PIP_LICENSE_SECRET) {
   process.exit(1);
 }
 
-console.log(await licenseFor(vars.PIP_LICENSE_SECRET, boardId));
+console.log(await licenseFor(vars.PIP_LICENSE_SECRET, userId));

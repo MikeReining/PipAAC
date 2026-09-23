@@ -1,7 +1,7 @@
 /**
  * 011 slice 9 live proof (owner-visible): Parent corner on a linked
- * board — a minted license flips the board to Pip Lifetime; "Delete
- * this board" schedules deletion with a visible undo; Undo clears it.
+ * user — a minted license flips the user to Pip Lifetime; "Delete
+ * this user" schedules deletion with a visible undo; Undo clears it.
  * Measured on the DOM and the relay's own answers — not the toast.
  *   node scripts/probes/entitlement_probe.mjs
  */
@@ -44,11 +44,11 @@ await sleep(4000);
 const out = {};
 const fail = (msg) => { console.log("FAIL", msg); console.log(out); chrome.kill(); process.exit(1); };
 
-// Link the board: Parent corner → Add a device creates it on the relay.
+// Link the user: Parent corner → Add a device creates it on the relay.
 await evalJs(`document.querySelector('#corner').click()`); await sleep(400);
 await evalJs(`document.querySelector('#dev-add').click()`); await sleep(2500);
-out.boardId = await evalJs(`JSON.parse(localStorage.getItem('pip_sync') || '{}').boardId`);
-if (!out.boardId) fail("board did not link");
+out.userId = await evalJs(`JSON.parse(localStorage.getItem('pip_sync') || '{}').userId`);
+if (!out.userId) fail("user did not link");
 await evalJs(`document.querySelector('#pairform [data-close]')?.click()
   || document.querySelector('#pairform').click()`); await sleep(300);
 await evalJs(`document.querySelector('#corner').click()`); await sleep(800);
@@ -59,7 +59,7 @@ if (!/one linked device/.test(out.freeLabel)) fail("free label missing");
 
 // Activate a minted license — the relay verifies, the row flips.
 const license = execSync(
-  `node scripts/entitlement/mint.mjs ${out.boardId}`, { encoding: "utf8" }).trim();
+  `node scripts/entitlement/mint.mjs ${out.userId}`, { encoding: "utf8" }).trim();
 out.license = license.slice(0, 20) + "…";
 await evalJs(`(() => { const i = document.querySelector('#dev-license');
   i.value = ${JSON.stringify(license)}; })()`);

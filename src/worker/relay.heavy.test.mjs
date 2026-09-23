@@ -1,7 +1,7 @@
 /**
  * 011 slice 4 Works Test — the relay (heavy: spawns `wrangler dev`).
  *
- * Two device clients against a real local relay. A creates the board and
+ * Two device clients against a real local relay. A creates the user and
  * allows B. A edits → B's socket receives the op within 2 s. A request
  * signed by an unknown key gets 403. B goes offline, A edits 20 times,
  * B reconnects and catches up. A sealed blob round-trips through R2.
@@ -20,19 +20,31 @@ import { createEntity, placeItem } from "../../public/shared/groups.mjs";
 import { listOps } from "../../public/shared/ops.mjs";
 import {
   exportPublicKey,
-  getBoardKey,
+  getUserKey,
   getDeviceIdentity,
   memoryKeyStore,
   openOp,
   sealBlob,
   openBlob,
 } from "../../public/shared/sync_crypto.mjs";
+import { licenseFor } from "./license.mjs";
 import { relayClient } from "../../public/shared/sync_client.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const PORT = 8877;
 const BASE = `http://127.0.0.1:${PORT}`;
+
 const repoRoot = join(import.meta.dirname, "../..");
+
+// 015 s6–7: a free user carries one device — these tests pair a
+// second, so they activate Lifetime with a dev-minted license.
+const licenseSecret = Object.fromEntries(
+  readFileSync(join(repoRoot, ".dev.vars"), "utf8").split("\n")
+    .map((l) => l.match(/^\s*([A-Z_]+)\s*=\s*(.+?)\s*$/))
+    .filter(Boolean).map((m) => [m[1], m[2]])).PIP_LICENSE_SECRET;
+const makeLifetime = async (client, userId) =>
+  client.setEntitlement(await licenseFor(licenseSecret, userId));
+
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")));
 
@@ -54,14 +66,14 @@ before(async () => {
 after(() => { wrangler?.kill("SIGTERM"); });
 
 test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
-  // Two devices. One board key — in the real flow pairing delivers it
+  // Two devices. One user key — in the real flow pairing delivers it
   // (slice 5); here we hand B the same CryptoKey directly.
   const aStore = memoryKeyStore();
   const a = await getDeviceIdentity(aStore);
-  const boardKey = await getBoardKey(aStore);
+  const userKey = await getUserKey(aStore);
   const bStore = memoryKeyStore();
   const b = await getDeviceIdentity(bStore);
-  await bStore.put("board_key", boardKey);
+  await bStore.put("user_key", userKey);
 
   const openDb = () => {
     const db = createDatabase(":memory:");
@@ -69,18 +81,19 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
     return db;
   };
 
-  // A creates the board (bootstrap registers its device).
-  const board = await fetch(`${BASE}/boards`, {
+  // A creates the user (bootstrap registers its device).
+  const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
   }).then((r) => r.json());
-  assert.ok(board.board_id, "no board_id");
+  assert.ok(user.user_id, "no user_id");
 
-  const clientA = relayClient({ boardId: board.board_id, baseUrl: BASE, identity: a, boardKey });
-  const clientB = relayClient({ boardId: board.board_id, baseUrl: BASE, identity: b, boardKey });
+  const clientA = relayClient({ userId: user.user_id, baseUrl: BASE, identity: a, userKey });
+  await makeLifetime(clientA, user.user_id);
+  const clientB = relayClient({ userId: user.user_id, baseUrl: BASE, identity: b, userKey });
 
   // B is unknown until A allows it.
-  await assert.rejects(clientB.fetchOps(0), /403/);
+  await assert.rejects(clientB.fetchOps(0), (e) => e.status === 403);
   await clientA.addDevice(b.deviceId, await exportPublicKey(b.verify));
   assert.equal((await clientB.fetchOps(0)).latest, 0);
 
@@ -99,17 +112,17 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   const deadline = Date.now() + 2000;
   while (Date.now() < deadline && !received.length) await sleep(50);
   assert.ok(received.length, "B did not receive the op within 2 s");
-  const decrypted = await openOp(boardKey, received[0].ops[0].env);
+  const decrypted = await openOp(userKey, received[0].ops[0].env);
   assert.equal(decrypted.op_id, opsA[0].op_id);
-  assert.match(decrypted.args, /Cooper/); // readable only after board-key decrypt
+  assert.match(decrypted.args, /Cooper/); // readable only after user-key decrypt
 
   // An unsigned and an unknown-device request both get 403.
-  assert.equal((await fetch(`${BASE}/boards/${board.board_id}/ops?after=0`)).status, 403);
+  assert.equal((await fetch(`${BASE}/users/${user.user_id}/ops?after=0`)).status, 403);
   const stranger = relayClient({
-    boardId: board.board_id, baseUrl: BASE,
-    identity: await getDeviceIdentity(memoryKeyStore()), boardKey,
+    userId: user.user_id, baseUrl: BASE,
+    identity: await getDeviceIdentity(memoryKeyStore()), userKey,
   });
-  await assert.rejects(stranger.fetchOps(0), /403/);
+  await assert.rejects(stranger.fetchOps(0), (e) => e.status === 403);
 
   // B goes offline; A edits 20 times; B catches up and matches.
   ws.close();
@@ -127,9 +140,9 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   assert.equal(ids.size, listOps(dbA).length); // every local op confirmed
 
   // Blob round-trip: sealed bytes up, envelope back, opens identical.
-  const blob = await sealBlob(boardKey, globalThis.crypto.getRandomValues(new Uint8Array(8192)));
+  const blob = await sealBlob(userKey, globalThis.crypto.getRandomValues(new Uint8Array(8192)));
   await clientA.putBlob(blob);
   const envBack = await clientB.getBlob(blob.sha);
-  assert.deepEqual(await openBlob(boardKey, { sha: blob.sha, env: envBack }),
-    await openBlob(boardKey, blob));
+  assert.deepEqual(await openBlob(userKey, { sha: blob.sha, env: envBack }),
+    await openBlob(userKey, blob));
 });

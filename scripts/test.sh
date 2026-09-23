@@ -183,7 +183,7 @@ collect_targets() {
 # HEAVY_TEST_ROOTS — same roots scripts/run_unit_tests.mjs collects from,
 # duplicated here (bash, not node) so --heavy needs no node subprocess just
 # to build a file list.
-HEAVY_TEST_ROOTS=(packages apps workers scripts/health scripts/eval scripts/s89_7)
+HEAVY_TEST_ROOTS=(scripts scripts/health src)
 
 # collect_heavy_targets — populates FILES with every *.heavy.test.mjs under
 # HEAVY_TEST_ROOTS. This is the execution owner for files collect_targets
@@ -490,7 +490,10 @@ if [[ "$ALL_FLAG" == true ]]; then
 elif [[ "$HEAVY_FLAG" == true ]]; then
   declare -a FILES=()
   collect_heavy_targets
-  RUN_CMD=("$REAL_NODE" "--import" "$ROOT/scripts/test_bootstrap.mjs" "--test" "${FILES[@]}" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}")
+  # Heavy files each spawn a full wrangler dev; run serially — parallel
+  # spawns exhaust a loaded dev machine and collide on shared ports.
+  RUN_CMD=("$REAL_NODE" "--import" "$ROOT/scripts/test_bootstrap.mjs" "--test"
+    "--test-concurrency=1" "${FILES[@]}" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}")
 else
   declare -a FILES=()
   collect_targets

@@ -3,12 +3,12 @@
  *
  * The new device posts its public keys under a short-lived 8-char code.
  * The linked device reads them (scan or type the code), and on Allow
- * writes the grant: the board key wrapped to the new device's dh key.
+ * writes the grant: the user key wrapped to the new device's dh key.
  * The new device polls until granted or the window (10 min) lapses.
  *
  * The lobby is blind like the relay: it holds public keys and wrapped
- * ciphertext. The grant cannot be verified here (the board's device list
- * lives in the board's DO) — a forged grant just fails to unwrap on the
+ * ciphertext. The grant cannot be verified here (the user's device list
+ * lives in the user's DO) — a forged grant just fails to unwrap on the
  * new device. Grants are write-once; first one wins.
  */
 
@@ -36,7 +36,7 @@ export class PairingLobby {
         );
         CREATE TABLE IF NOT EXISTS grant (
           id INTEGER PRIMARY KEY CHECK (id = 1),
-          board_id TEXT NOT NULL,
+          user_id TEXT NOT NULL,
           eph TEXT NOT NULL,
           iv TEXT NOT NULL,
           wrapped TEXT NOT NULL,
@@ -46,6 +46,8 @@ export class PairingLobby {
         );
       `);
       try { ctx.storage.sql.exec("ALTER TABLE grant ADD COLUMN refused TEXT"); } catch { /* there */ }
+      // 015 slice 1 rename: lobbies persisted from before it hold board_id.
+      try { ctx.storage.sql.exec("ALTER TABLE grant RENAME COLUMN board_id TO user_id"); } catch { /* new column or absent */ }
     });
   }
 
@@ -73,15 +75,15 @@ export class PairingLobby {
         status: grant ? (grant.refused ? "refused" : "granted") : "pending",
         device_id: req.device_id, sig_pub: req.sig_pub, dh_pub: req.dh_pub,
         ...(grant ? { grant: {
-          board_id: grant.board_id, eph: grant.eph, iv: grant.iv,
+          user_id: grant.user_id, eph: grant.eph, iv: grant.iv,
           wrapped: grant.wrapped, by_device: grant.by_device,
           ...(grant.refused ? { refused: grant.refused } : {}),
         } } : {}),
       });
     }
 
-    // The linked device either grants (wrapped board key) or refuses
-    // (e.g. the relay rejected a second device on a free board) — the
+    // The linked device either grants (wrapped user key) or refuses
+    // (e.g. the relay rejected a second device on a free user) — the
     // new device deserves an answer either way.
     if (request.method === "POST" && tail === "grant") {
       if (!req) return bad("not_found", 404);
@@ -89,13 +91,13 @@ export class PairingLobby {
       if (grant) return bad("already_granted", 409);
       const g = await request.json().catch(() => ({}));
       const refused = typeof g.refused === "string" && g.refused;
-      if (!refused && (!g.board_id || !g.eph || !g.iv || !g.wrapped || !g.by_device)) {
+      if (!refused && (!g.user_id || !g.eph || !g.iv || !g.wrapped || !g.by_device)) {
         return bad("bad_request");
       }
       this.ctx.storage.sql.exec(
-        `INSERT INTO grant (id, board_id, eph, iv, wrapped, by_device, refused, created_at)
+        `INSERT INTO grant (id, user_id, eph, iv, wrapped, by_device, refused, created_at)
          VALUES (1, ?, ?, ?, ?, ?, ?, ?)`,
-        g.board_id ?? "", g.eph ?? "", g.iv ?? "", g.wrapped ?? "",
+        g.user_id ?? "", g.eph ?? "", g.iv ?? "", g.wrapped ?? "",
         g.by_device ?? "", refused || null, Date.now());
       return json({ ok: true });
     }

@@ -1,6 +1,6 @@
 /**
  * Relay client (Sync_And_Web_Editing §§ 5–6). Knows how to sign a
- * request with the device key, seal ops with the board key, submit them,
+ * request with the device key, seal ops with the user key, submit them,
  * catch up on missed ops, and listen on the WebSocket for new ones.
  * The relay sees ciphertext only; openOps happen on this side.
  */
@@ -19,10 +19,10 @@ async function signedHeaders(identity, method, path, body) {
 }
 
 /**
- * client = { boardId, baseUrl, identity: {deviceId,sign,verify}, boardKey }
+ * client = { userId, baseUrl, identity: {deviceId,sign,verify}, userKey }
  */
-export function relayClient({ boardId, baseUrl, identity, boardKey }) {
-  const path = (suffix) => `/boards/${boardId}${suffix}`;
+export function relayClient({ userId, baseUrl, identity, userKey }) {
+  const path = (suffix) => `/users/${userId}${suffix}`;
   const call = async (method, suffix, body) => {
     const bytes = body === undefined ? undefined : te.encode(JSON.stringify(body));
     const signedPath = path(suffix).split("?")[0]; // the DO signs pathname only
@@ -47,28 +47,28 @@ export function relayClient({ boardId, baseUrl, identity, boardKey }) {
     /** Register another device (signed by an allowed one). */
     addDevice: (device_id, pubkey, extra = {}) =>
       call("POST", "/devices", { device_id, pubkey, ...extra }),
-    /** The board's device list (device_id, epoch, added_at). */
+    /** The user's device list (device_id, epoch, added_at). */
     listDevices: () => call("GET", "/devices"),
-    /** The calling device's own row — wrapped board key + epoch. */
+    /** The calling device's own row — wrapped user key + epoch. */
     selfKey: () => call("GET", "/devices/self"),
     /** Remove a device (signed). Rotate keys after — it keeps old ops. */
     removeDevice: (device_id) => call("DELETE", `/devices/${device_id}`),
     /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
-    /** Activate Pip Lifetime with a board-bound license key (dev path). */
+    /** Activate Pip Lifetime with a user-bound license key (dev path). */
     setEntitlement: (license) => call("POST", "/entitlement", { license }),
-    /** Schedule board deletion — 30-day undo; undelete cancels. */
-    deleteBoard: () => call("DELETE", ""),
-    undeleteBoard: () => call("POST", "/undelete"),
+    /** Schedule user deletion — 30-day undo; undelete cancels. */
+    deleteUser: () => call("DELETE", ""),
+    undeleteUser: () => call("POST", "/undelete"),
     /** Seal and submit pending ops; returns their relay_seqs. */
     async submit(ops) {
       const sealed = [];
-      for (const op of ops) sealed.push({ op_id: op.op_id, env: await sealOp(boardKey, op) });
+      for (const op of ops) sealed.push({ op_id: op.op_id, env: await sealOp(userKey, op) });
       return call("POST", "/ops", { ops: sealed });
     },
     /** Catch-up: ops after a relay_seq. Envelopes stay sealed — caller decrypts. */
     fetchOps: (after) => call("GET", `/ops?after=${after}`),
-    openOp: (env) => openOp(boardKey, env),
+    openOp: (env) => openOp(userKey, env),
     /** Blob transport — the envelope's sha is the address. */
     async putBlob(sealed) {
       const p = path(`/blobs/${sealed.sha}`);
@@ -104,8 +104,8 @@ export function relayClient({ boardId, baseUrl, identity, boardKey }) {
 
 /** Recovery-sheet restore (§ 9): unsigned — the proof stands in for a
  *  device signature. Registers the device at the current epoch. */
-export async function restoreDevice(baseUrl, boardId, { proof, device_id, pubkey, dh_pub }) {
-  const res = await fetch(`${baseUrl}/boards/${boardId}/restore`, {
+export async function restoreDevice(baseUrl, userId, { proof, device_id, pubkey, dh_pub }) {
+  const res = await fetch(`${baseUrl}/users/${userId}/restore`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ device_id, pubkey, dh_pub, proof }),
   });
@@ -114,7 +114,7 @@ export async function restoreDevice(baseUrl, boardId, { proof, device_id, pubkey
 }
 
 /**
- * The pairing lobby (§ 3) — board-less routes. The new device posts a
+ * The pairing lobby (§ 3) — user-less routes. The new device posts a
  * request; the linked device reads it and writes the grant; the new
  * device polls status until granted or expired.
  */
