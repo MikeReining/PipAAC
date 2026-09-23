@@ -91,6 +91,7 @@ import {
   libraryImagesFor, setImageOverride,
 } from "./shared/images.mjs";
 import { buildJevRequest, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
+import { coreCells, moveCore } from "./shared/coremove.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -812,17 +813,7 @@ function sizeStrip(cols) {
 
 function renderGrid() {
   const geom = boardGeom();
-  const cells = ALL(
-    db,
-    `SELECT cc.slot_index, cc.sense_id, l.text AS label, s.fitzgerald_role
-     FROM core_cell cc
-     JOIN sense s ON s.id = cc.sense_id
-     JOIN label l ON l.sense_id = cc.sense_id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-     WHERE cc.layout = ?
-     ORDER BY cc.slot_index`,
-    [locale, geom.name],
-  );
+  const cells = coreCells(db, geom.name, locale);
   const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
   const masked = maskedSenseIds(db);
   const grid = $("grid");
@@ -847,6 +838,7 @@ function renderGrid() {
     if (!c) {
       const empty = document.createElement("div");
       empty.className = "cell empty";
+      empty.dataset.slot = slot; // a legal drop target in Edit mode
       empty.setAttribute("aria-hidden", "true");
       grid.appendChild(empty);
       continue;
@@ -862,7 +854,26 @@ function renderGrid() {
       continue;
     }
     const el = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
-    el.addEventListener("click", () => tap(c.label, "sense", c.sense_id));
+    el.dataset.slot = slot;
+    if (editing) {
+      // Adult move (014 § 2 ruling 1): drag onto a word swaps, onto an
+      // empty slot moves; anchors and reserved slots refuse. A tap opens
+      // the word card, same as group pages.
+      editPointer(el, {
+        onTap: () => openWordCard({ item_kind: "sense", item_id: c.sense_id, label: c.label }),
+        onDrop: (to) => {
+          const mv = moveCore(db, geom.name, c.sense_id, to, { anchors: new Set(geom.anchors.keys()) });
+          if (!mv) return;
+          renderGrid();
+          toast(`Moved ${c.label}`, () => {
+            moveCore(db, geom.name, c.sense_id, mv.from);
+            renderGrid();
+          });
+        },
+      });
+    } else {
+      el.addEventListener("click", () => tap(c.label, "sense", c.sense_id));
+    }
     spotMark(el, `sense:${c.sense_id}`);
     pickMark(el, `sense:${c.sense_id}`);
     cellEls.set(c.sense_id, el);
@@ -1587,6 +1598,7 @@ function setEditing(on) {
   document.body.classList.toggle("editing", on);
   $("corner").textContent = on ? "✓ Done" : "✚";
   $("corner").title = on ? "Done editing" : "Parent corner";
+  renderGrid(); // the home grid takes edit gestures too (014 slice 3)
   applyLikely();
 }
 

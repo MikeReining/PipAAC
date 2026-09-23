@@ -105,7 +105,7 @@ function migrateSchema(d, schemaSql) {
     "board_group", "group_cell",
     "group_label", "sync_op", "sync_baseline", "sentence",
     "strip_impression", "spotlight_list", "spotlight_item",
-    "spotlight_session",
+    "spotlight_session", "core_override",
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();

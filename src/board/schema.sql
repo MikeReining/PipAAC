@@ -301,6 +301,16 @@ CREATE TABLE IF NOT EXISTS spotlight_session (
   ends_at INTEGER NOT NULL
 );
 
+-- Adult moves (014 § 2 ruling 1): a per-profile slot override layered
+-- on the catalog's core_cell rows, which are never rewritten — a
+-- catalog regeneration can never overwrite the adult's placement.
+CREATE TABLE IF NOT EXISTS core_override (
+  layout TEXT NOT NULL,
+  sense_id TEXT NOT NULL REFERENCES sense(id),
+  slot_index INTEGER NOT NULL,
+  PRIMARY KEY (layout, sense_id)
+);
+
 -- Groups: one kind of container. The index is a coordinate map (slots
 -- 10–59); items sit at fixed (page, slot) inside a group. Positions move
 -- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.

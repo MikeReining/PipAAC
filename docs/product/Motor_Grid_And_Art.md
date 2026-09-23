@@ -55,7 +55,7 @@ These are both in force. They answer different questions.
 | --- | --- | --- |
 | Did this cell move during the session because prediction, a pragmatic lens, or a folder changed? | No. At a chosen density and orientation, core indices are immutable. | **DECIDED 2026-09-22** (not built) |
 | Did the child change density, or rotate the device? | Sectors stay stable (pronouns, verbs, descriptors, spatial words) by default. Absolute pixels may change. Copying one frozen incumbent template is not the method. Amended 2026-09-22: a default design goal, not a law — the move cost is measured and shown, and the adult decides (`docs/phases/014_Grid_Density_And_Fit.md` § 4). | **DECIDED 2026-09-21**, amended **2026-09-22** |
-| Did a parent or SLP move a core word on their child's board? | Allowed, per profile, in Edit mode: move or swap, never reflow. The app, prediction, lenses, and catalog updates never move a cell and never overwrite an adult move. | **DECIDED 2026-09-22** (founder; reverses "immutable to everyone"; not built) |
+| Did a parent or SLP move a core word on their child's board? | Allowed, per profile, in Edit mode: move or swap, never reflow. The app, prediction, lenses, and catalog updates never move a cell and never overwrite an adult move. | **BUILT** — `public/shared/coremove.mjs` (`move_core` op, `core_override` profile table shadows `core_cell`; regen-safe) |
 
 When a grid engine exists, a test must show that a suggestion model cannot reorder or swap primary core indices. That test is **PROPOSED**. It does not exist yet.
 

@@ -33,6 +33,7 @@ import { clearImageOverride, setImageOverride } from "./images.mjs";
 import {
   deleteSpotList, saveSpotList, endSession, spotSession, startSession,
 } from "./spotlight.mjs";
+import { moveCore } from "./coremove.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -210,6 +211,12 @@ export function applyOp(db, op) {
       case "spot_end":
         if (spotSession(db)) endSession(db);
         break;
+      case "move_core":
+        if (db.prepare("SELECT 1 AS x FROM core_cell WHERE layout = ? AND sense_id = ?")
+          .all(a.layout, a.senseId)[0]) {
+          moveCore(db, a.layout, a.senseId, a.toSlot);
+        }
+        break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -237,6 +244,7 @@ const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
   "clip_override", "image_override", "entity_enrichment", "group_cell",
   "sense_mask", "spotlight_list", "spotlight_item", "spotlight_session",
+  "core_override",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */

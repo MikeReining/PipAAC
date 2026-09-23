@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slices 1–2 built (renderer of any shape; `grid15` Core 15 starter map — Urgent needs awaits message tiles in slice 6). Next: slice 3 — adult moves. Rulings and starters below are **DECIDED
+**Status:** Slices 1–3 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`). Next: slice 4 — Cells picker + move cost. Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -295,6 +295,25 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    Edit mode on the core board, drag to move or swap, never reflow; a
    catalog update never overwrites an adult move. Works test: move `stop`,
    restart, update the catalog — `stop` is still where the adult put it.
+
+   **DONE.** `core_override (layout, sense_id, slot_index)` is the synced
+   profile layer; `core_cell` is never rewritten, so regeneration cannot
+   touch an adult move. `public/shared/coremove.mjs` owns it:
+   `coreCells` resolves the effective map (override shadows catalog; a
+   displaced row without its own override takes the mover's vacated
+   cell — deterministic, replay-safe), `moveCore` moves or swaps and
+   refuses anchor/reserved slots, `coreSlot`/`occupant` answer position.
+   Back at the catalog slot the override row drops — canonical is the
+   default. `renderGrid` reads `coreCells`; in Edit mode every word cell
+   carries `data-slot` and `editPointer` (drag → `moveCore`, tap → word
+   card); empty cells are legal targets. Synced via `move_core`
+   (intent recomputed on replay — the swap's other half derives from
+   local occupancy, so replicas converge). Works Tests:
+   `src/board/core_move.test.mjs` (swap, catalog regen with the source
+   map changed under it, return-to-default drops the row, anchor
+   refusal, cross-db replay) and `scripts/probes/core_move_probe.mjs`
+   (real pointer drag stop→want, cells trade, reload persists, catalog
+   row untouched).
 4. **Cells picker, move cost, transition highlight.** Parent Corner picker
    with the § 4 preview; the four core groups behind Core 15 (§ 3.1). Works test: a
    profile with a known selection log previews exactly the words the two
