@@ -28,7 +28,7 @@ import {
 import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
   deriveEpochKey, ensureRecoveryRoot, exportDhPublic, exportPublicKey,
-  getUserKey, getDeviceIdentity, memoryKeyStore, openOp, wrapUserKey,
+  getUserKey, getDeviceIdentity, memoryKeyStore, openOp, userRootName, wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
 import { licenseFor } from "./license.mjs";
 import { relayClient, restoreDevice } from "../../public/shared/sync_client.mjs";
@@ -81,8 +81,9 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
   // A — the device that sets up sync. Root minted, epoch-1 key derived.
   const aStore = memoryKeyStore();
   const a = await getDeviceIdentity(aStore);
-  const root = await ensureRecoveryRoot(aStore);
-  const key1 = await getUserKey(aStore, 1);
+  const userId = crypto.randomUUID(); // client-chosen (015 slice 2)
+  const root = await ensureRecoveryRoot(aStore, userId);
+  const key1 = await getUserKey(aStore, userId, 1);
 
   const dbA = createDatabase(":memory:");
   importCatalog(dbA, catalog);
@@ -93,6 +94,7 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
   const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
+      user_id: userId,
       device_id: a.deviceId,
       pubkey: await exportPublicKey(a.verify),
       dh_pub: await exportDhPublic(a.dh.publicKey),
@@ -144,7 +146,7 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
     dh_pub: await exportDhPublic(c.dh.publicKey),
   });
   assert.equal(reg.epoch, 2);
-  await cStore.put("recovery_root", restoredRoot);
+  await cStore.put(userRootName(user.user_id), restoredRoot);
 
   const dbC = createDatabase(":memory:");
   importCatalog(dbC, catalog);
@@ -152,13 +154,13 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
 
   const clientC = relayClient({
     userId: user.user_id, baseUrl: BASE, identity: c,
-    userKey: await getUserKey(cStore, reg.epoch),
+    userKey: await getUserKey(cStore, user.user_id, reg.epoch),
   });
   const fetched = await clientC.fetchOps(0);
   assert.equal(fetched.ops.length, 3); // create_entity, rename_entity, create_entity
   const plain = [];
   for (const r of fetched.ops) {
-    plain.push({ ...(await openOp(await getUserKey(cStore, r.epoch ?? 1), r.env)),
+    plain.push({ ...(await openOp(await getUserKey(cStore, user.user_id, r.epoch ?? 1), r.env)),
       relay_seq: r.relay_seq });
   }
   drainOps(dbC, plain);

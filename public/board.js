@@ -3,7 +3,7 @@
  * groups, and the name+photo add flow. Catalog senses speak via bundled
  * clips (schema §7); personal entities use device TTS.
  */
-import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
+import { bootDb, exportLegacyKvvfsDb, savePhoto, loadPhotoURL } from "./db.js";
 import {
   applyJev,
   closeSentence,
@@ -77,6 +77,7 @@ import {
   openKeyStore,
   putUserKey,
   unwrapUserKey,
+  userRootName,
   wrapUserKey,
 } from "./shared/sync_crypto.mjs";
 import {
@@ -84,7 +85,11 @@ import {
 } from "./shared/recovery.mjs";
 import { RECOVERY_WORDS } from "./shared/recovery_words.mjs";
 import { pairClient, relayClient, restoreDevice } from "./shared/sync_client.mjs";
-import { initSync, setSyncConfig, syncConfig, syncUploadBlob } from "./shared/sync.mjs";
+import { initSync, syncUploadBlob } from "./shared/sync.mjs";
+import {
+  addUser, listUsers, migrateLegacy, openUserStore, putUser,
+  removeUser, resolveActiveUser, setHome, touchOpened,
+} from "./shared/users.mjs";
 import { clearOverride, overrideFor, resolveSlot, setOverride } from "./shared/voice.mjs";
 import {
   SENSE_ART_SQL, clearImageOverride, imageOverrideFor,
@@ -102,7 +107,78 @@ const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
 const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 
-const { db, catalog } = await bootDb();
+/* ------------------------------------------------------------------ *
+ * Which user is this (015 slice 2): the registry holds one row per
+ * user; this device's home user opens by default, a lone user opens
+ * directly, and a shared device with no home user asks. A tab-level
+ * override lets Parent Corner → Switch open another user without
+ * changing the home flag.
+ * ------------------------------------------------------------------ */
+const userStore = openUserStore();
+
+/** Shared device, no home user: ask who is playing. A plain full-screen
+ * list — the child's page never carries a settings chrome. */
+function pickUser(rows) {
+  return new Promise((resolve) => {
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "position:fixed;inset:0;background:var(--cream);"
+      + "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:99";
+    const h = document.createElement("p");
+    h.className = "hint";
+    h.textContent = "Who is playing?";
+    wrap.append(h);
+    for (const u of rows) {
+      const b = document.createElement("button");
+      b.className = "btn";
+      b.textContent = u.name || "This user";
+      b.onclick = () => { wrap.remove(); resolve(u); };
+      wrap.append(b);
+    }
+    document.body.append(wrap);
+  });
+}
+
+await migrateLegacy({
+  storage: localStorage,
+  exportLegacyDb: exportLegacyKvvfsDb,
+  keyStore: openKeyStore(),
+  userStore,
+});
+let users = await listUsers(userStore);
+let me = users.find((u) => u.id === sessionStorage.getItem("pip_active_user"))
+  ?? resolveActiveUser(users);
+if (!me && users.length === 0) {
+  // First boot: a child's device opens straight to its board — the
+  // first user is the home user, named later in Parent corner → Users.
+  me = await addUser(userStore, { home: true });
+}
+if (!me) me = await pickUser(users); // shared device, no home — ask
+sessionStorage.setItem("pip_active_user", me.id);
+await touchOpened(userStore, me.id);
+const saveUser = async (patch) => {
+  Object.assign(me, patch);
+  await putUser(userStore, me);
+};
+
+// One writer per user (§ 12.2): a second tab on the same user is told,
+// not allowed to write over it.
+if (navigator.locks?.request) {
+  const locked = await new Promise((res) => {
+    navigator.locks.request(`pip-user-${me.id}`, { ifAvailable: true }, (lock) => {
+      if (!lock) return res(false);
+      res(true);
+      return new Promise(() => {}); // hold for the session
+    });
+  });
+  if (!locked) {
+    document.body.innerHTML = '<p class="hint" style="padding:40px;text-align:center">'
+      + "This user is open in another tab — pick another user or close it there.</p>";
+    throw new Error("user locked by another tab");
+  }
+}
+navigator.storage?.persist?.().catch(() => {});
+
+const { db, catalog, flush: flushDb } = await bootDb(userStore, me.id);
 bindLayouts(catalog.layouts); // move-cost sectors need the column counts
 // Device identity for the op log (sync § 4): the signing key's
 // fingerprint, resolved from the platform keystore. Until it lands the
@@ -136,7 +212,7 @@ function onSyncApplied() {
   }, 150);
 }
 
-initSync(db, location.origin, onSyncApplied)
+initSync(db, me, saveUser, location.origin, onSyncApplied)
   .then(async (sync) => {
     if (!sync) return;
     // § 11 warning channel: a linked device returning inside the final
@@ -2930,14 +3006,15 @@ pairOverlay.addEventListener("click", (e) => {
  *  recovery root is minted here so the relay holds the sheet's proof
  *  from the start — it stores the hash, never the key. */
 async function ensureUser() {
-  const cfg = syncConfig();
-  if (cfg?.userId) return cfg;
+  if (me.sync?.userId) return me.sync;
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
-  const root = await ensureRecoveryRoot(store);
+  const root = await ensureRecoveryRoot(store, me.id);
   const res = await fetch(`${relayBase}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
+      // The registry id becomes the relay id (015 slice 2).
+      user_id: me.id,
       device_id: identity.deviceId,
       pubkey: await exportPublicKey(identity.verify),
       dh_pub: await exportDhPublic(identity.dh.publicKey),
@@ -2946,16 +3023,16 @@ async function ensureUser() {
   });
   if (!res.ok) throw new Error(`user create: ${res.status}`);
   const { user_id } = await res.json();
-  const next = { userId: user_id, epoch: 1 };
-  setSyncConfig(next);
-  await initSync(db, location.origin, onSyncApplied);
+  const next = { userId: user_id, epoch: 1, cursor: 0 };
+  await saveUser({ sync: next });
+  await initSync(db, me, saveUser, location.origin, onSyncApplied);
   toast("This user syncs now — print or save the recovery sheet: Parent corner → Backup");
   return next;
 }
 
 async function renderDevices() {
   const list = $("dev-list");
-  const cfg = syncConfig();
+  const cfg = me.sync;
   $("dev-lifetime-row").hidden = !cfg?.userId;
   $("dev-delete-row").hidden = !cfg?.userId;
   if (!cfg?.userId) {
@@ -2965,7 +3042,7 @@ async function renderDevices() {
   try {
     const store = openKeyStore();
     const identity = await getDeviceIdentity(store);
-    const userKey = await getUserKey(store, cfg.epoch ?? 1);
+    const userKey = await getUserKey(store, me.id, cfg.epoch ?? 1);
     const client = relayClient({ userId: cfg.userId, baseUrl: relayBase, identity, userKey });
     const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
     list.innerHTML = "";
@@ -3021,16 +3098,91 @@ async function removeDeviceFlow(client, store, identity, targetId) {
   const { devices } = await client.listDevices();
   await client.removeDevice(targetId);
   const remaining = devices.filter((d) => d.device_id !== targetId && d.dh_pub);
-  const epoch = (syncConfig()?.epoch ?? 1) + 1;
+  const epoch = (me.sync?.epoch ?? 1) + 1;
   // Root-derived when this device holds the recovery root, so a sheet
   // printed before the removal still opens the new epoch.
-  const key = await getUserKey(store, epoch);
+  const key = await getUserKey(store, me.id, epoch);
   const wrapped = {};
   for (const d of remaining) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
   await client.rotateKeys(epoch, wrapped);
-  setSyncConfig({ ...syncConfig(), epoch });
+  await saveUser({ sync: { ...me.sync, epoch } });
   await renderDevices();
 }
+
+/** Users on this device (015 slice 2): the registry rendered in Parent
+ *  corner — switch, name, pick who opens first, add. The active user's
+ *  DB flushes before the tab reloads into the other user. */
+async function renderUsers() {
+  const list = $("usr-list");
+  const rows = await listUsers(userStore);
+  list.innerHTML = "";
+  for (const u of rows) {
+    const row = document.createElement("div");
+    row.className = "dev-row";
+    const name = document.createElement("span");
+    name.className = "dev-id";
+    name.textContent = (u.id === me.id ? "● " : "")
+      + (u.name || "This user") + (u.home ? " — opens first" : "");
+    row.append(name);
+    if (u.id !== me.id) {
+      const sw = document.createElement("button");
+      sw.className = "btn secondary";
+      sw.textContent = "Switch";
+      sw.onclick = async () => {
+        sessionStorage.setItem("pip_active_user", u.id);
+        await flushDb();
+        location.reload();
+      };
+      row.append(sw);
+      // Remove from this device only — the user stays on the relay and
+      // other devices. Warn when this device may hold the only copy.
+      const rm = document.createElement("button");
+      rm.className = "btn secondary";
+      rm.textContent = "Remove";
+      rm.onclick = async () => {
+        const label = u.name || "this user";
+        const warn = u.sync?.userId
+          ? `Remove ${label} from this device? The user stays on the relay and its other devices.`
+          : `Remove ${label} from this device? It is not linked anywhere — its words will be gone unless a recovery sheet exists.`;
+        if (!confirm(warn)) return;
+        await removeUser(userStore, u.id);
+        await renderUsers();
+      };
+      row.append(rm);
+    }
+    const edit = document.createElement("button");
+    edit.className = "btn secondary";
+    edit.textContent = "Name";
+    edit.onclick = async () => {
+      const n = prompt("Name this user", u.name || "");
+      if (n === null) return;
+      if (u.id === me.id) await saveUser({ name: n.trim() });
+      else await putUser(userStore, { ...u, name: n.trim() });
+      await renderUsers();
+    };
+    row.append(edit);
+    if (!u.home) {
+      const home = document.createElement("button");
+      home.className = "btn secondary";
+      home.textContent = "Opens first";
+      home.onclick = async () => {
+        await setHome(userStore, u.id);
+        if (u.id === me.id) me.home = true;
+        await renderUsers();
+      };
+      row.append(home);
+    }
+    list.append(row);
+  }
+}
+
+$("usr-add").onclick = async () => {
+  const name = prompt("Name this user", "") ?? "";
+  const added = await addUser(userStore, { name: name.trim() });
+  sessionStorage.setItem("pip_active_user", added.id);
+  await flushDb();
+  location.reload();
+};
 
 /** This device is the NEW device: post keys, show code + QR, poll. */
 async function linkThisDevice() {
@@ -3075,12 +3227,20 @@ async function linkThisDevice() {
       clearInterval(pairPoll);
       pairPoll = null;
       const key = await unwrapUserKey(identity.dh.privateKey, st.grant);
-      await putUserKey(store, key, 1);
-      setSyncConfig({ userId: st.grant.user_id, epoch: 1 });
+      // The granter wrapped its CURRENT-epoch key — the grant carries
+      // which one; storing it as e1 would break post-rotation ops.
+      const epoch = st.grant.epoch ?? 1;
+      await putUserKey(store, st.grant.user_id, key, epoch);
+      // 015 slice 2: the linked user joins this device's registry — the
+      // relay id is the registry id — and the app opens it.
+      const linked = await addUser(userStore, {
+        id: st.grant.user_id,
+        sync: { userId: st.grant.user_id, epoch, cursor: 0 },
+      });
       status.textContent = "Linked — syncing…";
-      await initSync(db, location.origin, onSyncApplied);
-      status.textContent = "Linked. This user now syncs to this device.";
-      await renderDevices();
+      sessionStorage.setItem("pip_active_user", linked.id);
+      await flushDb();
+      location.reload();
     } catch { /* expired or relay hiccup — poll again */ }
   }, 2000);
 }
@@ -3088,11 +3248,11 @@ async function linkThisDevice() {
 /** Signed relay client for this user — shared by device management,
  *  entitlement, and deletion calls. */
 async function userClient() {
-  const cfg = syncConfig();
+  const cfg = me.sync;
   if (!cfg?.userId) throw new Error("no linked user");
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
-  const userKey = await getUserKey(store, cfg.epoch ?? 1);
+  const userKey = await getUserKey(store, me.id, cfg.epoch ?? 1);
   return { client: relayClient({ userId: cfg.userId, baseUrl: relayBase, identity, userKey }),
     store, identity, userKey };
 }
@@ -3124,7 +3284,6 @@ async function addDeviceFlow() {
   });
   pairGo.onclick = async () => {
     if (!pending) return;
-    const cfg = syncConfig();
     const { client, identity, userKey } = await userClient();
     const wrapped = await wrapUserKey(userKey, pending.req.dh_pub);
     try {
@@ -3140,7 +3299,8 @@ async function addDeviceFlow() {
       return;
     }
     await pairClient(relayBase).grant(pending.code, {
-      user_id: cfg.userId, by_device: identity.deviceId, ...wrapped });
+      user_id: me.sync.userId, by_device: identity.deviceId,
+      epoch: me.sync.epoch ?? 1, ...wrapped });
     closePair();
     await renderDevices();
   };
@@ -3155,6 +3315,7 @@ $("dev-add").onclick = () => addDeviceFlow().catch((e) => {
   pairBody.innerHTML = `<p class="hint">Could not reach the relay: ${e.message}</p>`;
 });
 $("corner").addEventListener("click", renderDevices);
+$("corner").addEventListener("click", renderUsers);
 
 /* Pip Lifetime (dev path, 011/9): a minted license activates on the
  * relay — the client only transports it. Payments wire into the same
@@ -3232,14 +3393,14 @@ recOverlay.addEventListener("click", (e) => {
 });
 
 async function showRecoverySheet() {
-  const cfg = syncConfig();
+  const cfg = me.sync;
   if (!cfg?.userId) {
     openRec("Recovery sheet");
     recBody.innerHTML =
       '<p class="hint">Link this user first — the sheet backs up a synced user.</p>';
     return;
   }
-  const root = await openKeyStore().get("recovery_root");
+  const root = await openKeyStore().get(userRootName(me.id));
   if (!root) {
     openRec("Recovery sheet");
     recBody.innerHTML =
@@ -3278,7 +3439,7 @@ async function showRecoverySheet() {
 
 /** Fresh device: paste the sheet's QR text, or the user id + 24 words. */
 function restoreFlow() {
-  if (syncConfig()?.userId) {
+  if (me.sync?.userId) {
     openRec("Restore a user");
     recBody.innerHTML =
       '<p class="hint">This device is already linked to a user.</p>';
@@ -3316,14 +3477,18 @@ function restoreFlow() {
         pubkey: await exportPublicKey(identity.verify),
         dh_pub: await exportDhPublic(identity.dh.publicKey),
       });
-      await store.put("recovery_root", root);
-      await getUserKey(store, r.epoch); // derive + store the current epoch key
-      setSyncConfig({ userId: parsed.userId, epoch: r.epoch });
+      // 015 slice 2: the restored user joins this device's registry —
+      // keys and root scope under its id — and the app opens it.
+      await store.put(userRootName(parsed.userId), root);
+      await getUserKey(store, parsed.userId, r.epoch); // derive + store the current epoch key
+      const restored = await addUser(userStore, {
+        id: parsed.userId,
+        sync: { userId: parsed.userId, epoch: r.epoch, cursor: 0 },
+      });
       status.textContent = "Restoring the user…";
-      await initSync(db, location.origin, onSyncApplied);
-      status.textContent = "Restored. What was said stays on the device that said it — "
-        + "speech history never leaves a device.";
-      await renderDevices();
+      sessionStorage.setItem("pip_active_user", restored.id);
+      await flushDb();
+      location.reload();
     } catch (e) {
       recGo.hidden = false;
       status.textContent = /checksum|word/i.test(e.message)
@@ -3566,6 +3731,9 @@ window.pip = {
   catalog,
   locale,
   audio,
+  get user() { return me; },
+  users: () => listUsers(userStore),
+  flushDb,
   repaint() { renderGrid(); renderStrip(); rerenderView(); },
   spotlight: {
     start(targets, name) {

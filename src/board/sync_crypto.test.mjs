@@ -26,6 +26,7 @@ import {
   signPayload,
   verifyPayload,
 } from "../../public/shared/sync_crypto.mjs";
+import { listUsers, memoryUserStore, migrateLegacy } from "../../public/shared/users.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
@@ -53,7 +54,7 @@ test("device identity: one pair, non-extractable private keys", async () => {
 
 test("scripted session: no outgoing payload leaks plaintext", async () => {
   const store = memoryKeyStore();
-  const userKey = await getUserKey(store);
+  const userKey = await getUserKey(store, "u1");
   const db = openDb();
 
   // The scripted session: add Cooper, place him in People, set a photo,
@@ -102,8 +103,8 @@ test("scripted session: no outgoing payload leaks plaintext", async () => {
 
 test("a different user key opens nothing; tampering is detected", async () => {
   const store = memoryKeyStore();
-  const userKey = await getUserKey(store);
-  const wrongKey = await getUserKey(memoryKeyStore());
+  const userKey = await getUserKey(store, "u1");
+  const wrongKey = await getUserKey(memoryKeyStore(), "u1");
   const env = await sealOp(userKey, { kind: "rename_entity", args: { id: "ent_x", name: "Cooper" } });
 
   await assert.rejects(openOp(wrongKey, env));
@@ -133,25 +134,55 @@ test("device signatures verify under the device key only", async () => {
   assert.equal(await verifyPayload(other.verify, "op_abc relay_seq 7", sig), false);
 });
 
-test("015 slice 1: a pre-rename keystore still opens its ops", async () => {
-  // A device linked before the board→user rename holds board_key /
-  // board_key_e2 in its store. getUserKey must find them, copy them
-  // forward, and drop the old names.
-  const store = memoryKeyStore();
+test("015 slice 2: legacy flat keys scope under the migrated user", async () => {
+  // A pre-multi-user device holds board_key / board_key_e2 (or
+  // user_key* after the slice-1 rename) plus a flat recovery_root.
+  // migrateLegacy moves them under user/<id>/… — eagerly, so a second
+  // user can never fall through to user A's key.
+  const keyStore = memoryKeyStore();
   const epoch1 = await crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
   const epoch2 = await crypto.subtle.generateKey(
     { name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
-  await store.put("board_key", epoch1);
-  await store.put("board_key_e2", epoch2);
+  const root = globalThis.crypto.getRandomValues(new Uint8Array(32));
+  await keyStore.put("board_key", epoch1);
+  await keyStore.put("board_key_e2", epoch2);
+  await keyStore.put("recovery_root", root);
+  const storage = new Map();
+  storage.set("pip_sync", JSON.stringify({ boardId: "u-old", epoch: 2 }));
+  const legacy = {
+    getItem: (k) => storage.get(k) ?? null,
+    removeItem: (k) => storage.delete(k),
+    key: (i) => [...storage.keys()][i],
+    get length() { return storage.size; },
+  };
+  const userStore = memoryUserStore();
+
+  const id = await migrateLegacy({ storage: legacy, exportLegacyDb: async () => null, keyStore, userStore });
+  assert.equal(id, "u-old");
+
   const op = { kind: "set_setting", args: { key: "board_layout", value: "grid60" } };
   const env1 = await sealOp(epoch1, op);
   const env2 = await sealOp(epoch2, op);
+  assert.deepEqual(await openOp(await getUserKey(keyStore, "u-old", 1), env1), op);
+  assert.deepEqual(await openOp(await getUserKey(keyStore, "u-old", 2), env2), op);
+  assert.equal(await keyStore.get("board_key"), undefined, "legacy name left behind");
+  assert.equal(await keyStore.get("board_key_e2"), undefined);
+  assert.equal(await keyStore.get("recovery_root"), undefined);
+  assert.ok(await keyStore.get("user/u-old/key_e1"), "scoped key missing");
+  assert.ok(await keyStore.get("user/u-old/key_e2"), "scoped key missing");
+  assert.ok(await keyStore.get("user/u-old/root"), "scoped root missing");
 
-  assert.deepEqual(await openOp(await getUserKey(store, 1), env1), op);
-  assert.deepEqual(await openOp(await getUserKey(store, 2), env2), op);
-  assert.equal(await store.get("board_key"), undefined, "legacy name left behind");
-  assert.equal(await store.get("board_key_e2"), undefined);
-  assert.ok(await store.get("user_key"), "migrated name missing");
-  assert.ok(await store.get("user_key_e2"), "migrated name missing");
+  // The sync config moved into the registry row; pip_sync is gone.
+  const row = (await listUsers(userStore))[0];
+  assert.equal(row.id, "u-old");
+  assert.equal(row.home, true);
+  assert.deepEqual(row.sync, { userId: "u-old", epoch: 2, cursor: 0 });
+  assert.equal(storage.has("pip_sync"), false);
+
+  // A second user's key read can never land on u-old's key: scoped
+  // names only — no flat fallback exists anymore.
+  const u2key = await getUserKey(keyStore, "u2", 1);
+  assert.ok(await keyStore.get("user/u2/key_e1"));
+  await assert.rejects(openOp(u2key, env1));
 });

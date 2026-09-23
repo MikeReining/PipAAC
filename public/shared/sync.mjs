@@ -1,11 +1,13 @@
 /**
  * The device-side sync loop (Sync_And_Web_Editing §§ 4–6).
  *
- * initSync(db) is a no-op until the user is linked (pairing writes
- * localStorage pip_sync {userId, epoch}). Once linked it: catches up on
- * missed confirmed ops, flushes pending local ops, and keeps a WebSocket
- * open — incoming ops are decrypted with the user key for their epoch
- * and drained through the same rebase the merge test exercises.
+ * initSync(db, user) is a no-op until the user is linked — the registry
+ * row carries sync state ({userId, epoch, cursor}) written by pairing
+ * (015 slice 2: the registry replaced localStorage pip_sync). Once
+ * linked it: catches up on missed confirmed ops, flushes pending local
+ * ops, and keeps a WebSocket open — incoming ops are decrypted with the
+ * user key for their epoch and drained through the same rebase the
+ * merge test exercises.
  *
  * recordOp calls the registered sink after every adult edit; sync.mjs
  * debounces a submit so edits reach the relay without the UI knowing.
@@ -18,49 +20,42 @@ import {
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
 
-const loadCfg = () => {
-  try {
-    const cfg = JSON.parse(localStorage.getItem("pip_sync") ?? "null");
-    // 015 slice 1: configs written before the rename carry boardId.
-    if (cfg?.boardId && !cfg.userId) return { ...cfg, userId: cfg.boardId };
-    return cfg;
-  } catch { return null; }
-};
-const saveCfg = (cfg) => localStorage.setItem("pip_sync", JSON.stringify(cfg));
-export const syncConfig = loadCfg;
-export const setSyncConfig = saveCfg;
-
 let running = null;
-export async function initSync(db, baseUrl = location.origin, onApplied = () => {}) {
+/**
+ * `user` is the registry row (id, sync). `saveUser(patch)` persists
+ * sync-state changes back to the row (epoch bumps on rotation).
+ */
+export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}) {
   if (running) return running;
-  const cfg = loadCfg();
+  const cfg = user?.sync;
   if (!cfg?.userId) return null;
-  running = startSync(db, baseUrl, cfg, onApplied).catch((err) => { running = null; throw err; });
+  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied)
+    .catch((err) => { running = null; throw err; });
   return running;
 }
 
-async function startSync(db, baseUrl, cfg, onApplied) {
+async function startSync(db, baseUrl, user, cfg, saveUser, onApplied) {
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
   setDeviceId(identity.deviceId);
   let epoch = cfg.epoch ?? 1;
-  let userKey = await getUserKey(store, epoch);
+  let userKey = await getUserKey(store, user.id, epoch);
   const client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
 
   /** Key for an op's epoch — a higher epoch means a rotation happened:
    *  pick up the wrapped key the granter left for us. */
   const keyFor = async (e) => {
-    if (e <= epoch) return getUserKey(store, e);
+    if (e <= epoch) return getUserKey(store, user.id, e);
     const self = await client.selfKey();
     if (!self.wrapped_key || self.current_epoch < e) {
       throw new Error(`sync: no wrapped key for epoch ${e}`);
     }
     const k = await unwrapUserKey(identity.dh.privateKey, JSON.parse(self.wrapped_key));
-    await putUserKey(store, k, self.current_epoch);
+    await putUserKey(store, user.id, k, self.current_epoch);
     epoch = self.current_epoch;
     userKey = k;
     cfg.epoch = epoch;
-    saveCfg(cfg);
+    await saveUser({ sync: cfg });
     return k;
   };
 
@@ -105,13 +100,19 @@ async function startSync(db, baseUrl, cfg, onApplied) {
 
   const ingest = async (rows) => {
     const plain = [];
+    let cursor = cfg.cursor ?? 0;
     for (const r of rows) {
       plain.push({ ...(await openOp(await keyFor(r.epoch ?? 1), r.env)), relay_seq: r.relay_seq });
+      if (r.relay_seq > cursor) cursor = r.relay_seq;
+    }
+    if (cursor !== (cfg.cursor ?? 0)) {
+      cfg.cursor = cursor;
+      await saveUser({ sync: cfg });
     }
     if (plain.length) { drainOps(db, plain); onApplied(); }
   };
 
-  await ingest((await client.fetchOps(0)).ops);
+  await ingest((await client.fetchOps(cfg.cursor ?? 0)).ops);
   await flush();
 
   const connect = () => {

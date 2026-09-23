@@ -66,14 +66,16 @@ after(() => { wrangler?.kill("SIGTERM"); });
 test("a photo on A shows on B; a corrupted blob is rejected", async () => {
   const aStore = memoryKeyStore();
   const a = await getDeviceIdentity(aStore);
-  const userKey = await getUserKey(aStore);
+  const userId = crypto.randomUUID(); // client-chosen (015 slice 2)
+  const userKey = await getUserKey(aStore, userId);
   const bStore = memoryKeyStore();
   const b = await getDeviceIdentity(bStore);
-  await putUserKey(bStore, userKey, 1);
+  await putUserKey(bStore, userId, userKey, 1);
 
   const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
+      user_id: userId,
       device_id: a.deviceId, pubkey: await exportPublicKey(a.verify),
       dh_pub: await exportDhPublic(a.dh.publicKey),
     }),

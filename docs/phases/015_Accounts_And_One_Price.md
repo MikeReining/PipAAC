@@ -1,7 +1,7 @@
 # Phase 015 — Accounts and one price
 
-**Status:** Executing. Slice 0 (rulings) done 2026-09-23; slice 1 (one
-word: user) done 2026-09-24. Next: slice 2 — many users on one device.
+**Status:** Executing. Slices 0–2 done (rulings 2026-09-23; user rename
+and many-users-on-one-device 2026-09-24). Next: slice 3 — the QR card.
 
 **Direction DECIDED 2026-09-23** (founder: "all approved, lock it in").
 Intake: `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
@@ -118,7 +118,7 @@ parent's phone holds every child; a child's iPad opens to that child.
 This is the core of accounts on the device side; slice 4 adds the
 sign-in that brings the same list to a new device.
 
-### Current state (**BUILT**, the gap)
+### Current state before this slice (**BUILT** at 2026-09-23, the gap)
 
 - One local database: kvvfs in localStorage under the name `local`
   (`public/db.js:59`). kvvfs has only two names (`local`, `session`), so
@@ -201,6 +201,52 @@ push even one user past kvvfs's envelope, so this move is needed anyway.
 5. **Scale, measured.** 10 users of 200 own words each: record total
    IndexedDB bytes and the time to switch users on a real iPad in § 12.4
    (target: switch under 1 s).
+
+**DONE 2026-09-24.** One device holds many users; each has its own
+database, keys, and sync state.
+
+- Registry: `public/shared/users.mjs` — IndexedDB `pip-users` (store
+  `kv`): `user/<id>` rows (id, name, photo, home flag, lastOpened, sync
+  `{userId, epoch, cursor}`) + `db/<id>` serialized databases. The id is
+  minted at Add user and becomes the relay id.
+- Per-user DB: `public/db.js` — in-memory SQLite loaded via
+  `sqlite3_deserialize`, exported to `db/<id>` on a 300 ms write
+  debounce with `pagehide`/`visibilitychange` flushes; `bootDb` returns
+  a `flush` handle. kvvfs is gone.
+- Scoped keys: `user/<id>/key_e<n>` + `user/<id>/root`
+  (`sync_crypto.mjs`). The flat-name fallback is gone — `getUserKey`
+  reads only the scoped name, so user B can never land on user A's key.
+- Sync state lives on the registry row (`sync.mjs`); the relay cursor
+  advances as ops arrive, so catch-up fetches only new ops.
+- Boot: `public/board.js` — migrate → resolve (session override → home
+  → single → "Who is playing?" picker) → Web Lock `pip-user-<id>`
+  (`ifAvailable`; a second tab is told, not allowed) → `bootDb`.
+- Parent Corner → Users on this device: Switch, Name, Opens first
+  (home), Remove-from-device (with the only-copy warning), Add a user.
+- Link/restore join the registry: `linkThisDevice` and `restoreFlow`
+  add a row keyed by the relay id, store the scoped key/root, then
+  reload into it. The pairing grant now carries the granter's epoch.
+- Worker: `POST /users` accepts a client-chosen UUID
+  (`src/worker/index.js`); `bootstrap` refuses an already-initialized
+  user with 409 (`src/worker/relay.js`) — a caller cannot graft a
+  device onto someone else's user.
+- Migration: `migrateLegacy` carries kvvfs `local` bytes, `pip_sync`
+  (incl. pre-rename `boardId`), flat `user_key*`/`board_key*`/`recovery_root`
+  into user #1 (home), then clears the legacy stores.
+
+Works Test, measured: registry + migration units 7/7
+(`src/board/users.test.mjs`); scoped-key isolation + eager migration
+5/5 (`sync_crypto.test.mjs`); bootstrap-refusal leg in
+`entitlement.test.mjs`; all four heavy files green with scoped keys
+and client-chosen ids. Live probe `scripts/probes/users_probe.mjs`:
+home user boots, Add user opens a clean second database, a write in A
+survives the round trip through B and B's write never appears in A, a
+second tab on the same user is refused by the Web Lock, and a real
+kvvfs + `pip_sync` install migrates into the home user with its rows
+intact and the legacy stores cleared. Waived: Works Test leg 2's
+two-client-per-user pairing (each user's relay id and key scope make
+cross-talk impossible by construction; pairing itself is heavy-proven)
+and leg 5's iPad switch timing (no device).
 
 ## Slice 3 — The QR card
 

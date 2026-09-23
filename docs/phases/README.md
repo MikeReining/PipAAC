@@ -15,7 +15,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | 015 slice 2 — many users on one device (one db per user; 015 slice 1 rename done). | `docs/phases/015_Accounts_And_One_Price.md` |
+| **P1** | 015 slice 3 — the QR card (slices 1–2 built: user rename, many users on one device). | `docs/phases/015_Accounts_And_One_Price.md` |
 | **P2** | 013 slice 3 — Spotlight on the adult's device (board mirror, remote start/end; the session row already syncs). | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
 
 ## Live index
@@ -32,7 +32,7 @@ Executing phases only. Each row names the **next** slice.
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
 | [013 — Spotlight and partner modeling](013_Spotlight_And_Partner_Modeling.md) | **P3.** Slice 3 — Spotlight on the adult's device (layer + one-device sessions built) |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later) |
-| [015 — Accounts and one price](015_Accounts_And_One_Price.md) | **P2.** Slice 2 — many users on one device (slice 1 rename built; slices 6–7 relay legs built: cap, restore-move, retention, dev license) |
+| [015 — Accounts and one price](015_Accounts_And_One_Price.md) | **P2.** Slice 3 — the QR card (slices 1–2 built: rename, many users per device; slices 6–7 relay legs built: cap, restore-move, retention, dev license) |
 | [016 — Stats and progress](016_Stats_And_Progress.md) | Slice 1 — the stats engine (after 015 slice 2) |
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | M1 plumbing (steps 4, 3, 5, 1, 2) and step 23, the opening book, in parallel (rulings recorded) |
 

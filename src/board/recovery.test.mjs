@@ -12,6 +12,7 @@ import {
 import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
   deriveEpochKey, ensureRecoveryRoot, getUserKey, memoryKeyStore, openOp, sealOp,
+  userRootName,
 } from "../../public/shared/sync_crypto.mjs";
 
 const FILE_WORDS = readFileSync(
@@ -69,26 +70,29 @@ test("payload parse: pip:recover URI and bare user-id + words", async () => {
 });
 
 test("a fresh keystore holding only the root opens every epoch's ops", async () => {
-  // Device A sets up sync: root minted, epoch keys derived.
+  // Device A sets up sync: root minted, epoch keys derived. 015 slice
+  // 2 scopes both under the user's id.
   const storeA = memoryKeyStore();
-  const root = await ensureRecoveryRoot(storeA);
+  const root = await ensureRecoveryRoot(storeA, "u-a");
   const op1 = { op_id: "op_1", kind: "add_item", entity_id: "ent_x", slot: 0 };
   const op2 = { op_id: "op_2", kind: "rename_entity", entity_id: "ent_x", name: "x" };
-  const env1 = await sealOp(await getUserKey(storeA, 1), op1);
-  const env2 = await sealOp(await getUserKey(storeA, 3), op2); // after rotations
+  const env1 = await sealOp(await getUserKey(storeA, "u-a", 1), op1);
+  const env2 = await sealOp(await getUserKey(storeA, "u-a", 3), op2); // after rotations
 
-  // Device B restores from the sheet — it has the root, nothing else.
+  // Device B restores from the sheet — it has the root under the
+  // restored user's scope, nothing else.
   const storeB = memoryKeyStore();
-  await storeB.put("recovery_root", await wordsToKey(await keyToWords(root, RECOVERY_WORDS), RECOVERY_WORDS));
-  assert.deepEqual(await openOp(await getUserKey(storeB, 1), env1), op1);
-  assert.deepEqual(await openOp(await getUserKey(storeB, 3), env2), op2);
+  await storeB.put(userRootName("u-a"),
+    await wordsToKey(await keyToWords(root, RECOVERY_WORDS), RECOVERY_WORDS));
+  assert.deepEqual(await openOp(await getUserKey(storeB, "u-a", 1), env1), op1);
+  assert.deepEqual(await openOp(await getUserKey(storeB, "u-a", 3), env2), op2);
 
   // A paired device with a wrapped epoch key but no root cannot mint
   // other epochs — getUserKey falls back to a fresh random key that
   // cannot open epoch-1 envelopes.
   const storeC = memoryKeyStore();
   await assert.rejects(
-    () => getUserKey(storeC, 1).then((k) => openOp(k, env1)));
+    () => getUserKey(storeC, "u-a", 1).then((k) => openOp(k, env1)));
 });
 
 test("epoch keys differ by epoch and match across stores", async () => {

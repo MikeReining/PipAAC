@@ -24,6 +24,7 @@ import {
   getDeviceIdentity,
   memoryKeyStore,
   openOp,
+  putUserKey,
   sealBlob,
   openBlob,
 } from "../../public/shared/sync_crypto.mjs";
@@ -70,10 +71,11 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   // (slice 5); here we hand B the same CryptoKey directly.
   const aStore = memoryKeyStore();
   const a = await getDeviceIdentity(aStore);
-  const userKey = await getUserKey(aStore);
+  const userId = crypto.randomUUID(); // client-chosen (015 slice 2)
+  const userKey = await getUserKey(aStore, userId);
   const bStore = memoryKeyStore();
   const b = await getDeviceIdentity(bStore);
-  await bStore.put("user_key", userKey);
+  await putUserKey(bStore, userId, userKey, 1);
 
   const openDb = () => {
     const db = createDatabase(":memory:");
@@ -84,9 +86,10 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   // A creates the user (bootstrap registers its device).
   const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
-    body: JSON.stringify({ device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
+    body: JSON.stringify({ user_id: userId,
+      device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
   }).then((r) => r.json());
-  assert.ok(user.user_id, "no user_id");
+  assert.equal(user.user_id, userId, "relay did not keep the client-chosen id");
 
   const clientA = relayClient({ userId: user.user_id, baseUrl: BASE, identity: a, userKey });
   await makeLifetime(clientA, user.user_id);

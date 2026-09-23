@@ -157,6 +157,12 @@ export class UserRelay {
     // SHA-256 of the recovery root, which a restore presents in place
     // of a device signature. The relay stores the proof, never the key.
     if (method === "POST" && route === "bootstrap") {
+      // 015 slice 2: clients choose the user id (their registry id), so
+      // a DO may already be initialized — refuse rather than graft a
+      // stranger's device onto someone else's user.
+      if (this.metaGet("user_id") ?? this.metaGet("board_id")) {
+        return bad("conflict", 409);
+      }
       const { device_id, pubkey, dh_pub, wrapped_key, recovery_proof } =
         await request.json().catch(() => ({}));
       if (!device_id || !pubkey) return bad("bad_bootstrap");

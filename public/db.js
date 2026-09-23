@@ -1,20 +1,23 @@
 /**
- * On-device database: SQLite WASM persisted via kvvfs → localStorage
- * (the local-first runtime). Boots the shipped catalog bundle — schema
- * DDL plus catalog rows — into one database. Falls back to in-memory
- * when storage is unavailable; the board still works, it just won't
- * persist. Photos persist separately as OPFS files (savePhoto).
+ * On-device database: SQLite WASM. 015 slice 2 — one in-memory
+ * database per user, exported to IndexedDB `pip-users` after each
+ * write (300 ms debounce; pagehide/visibilitychange flush) and
+ * reloaded with sqlite3_deserialize on open. Falls back to unsaved
+ * in-memory when storage is unavailable; the board still works, it
+ * just won't persist. Photos persist separately as OPFS files
+ * (savePhoto).
  */
 import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
 import { migrateLegacyGroups, migrateBuiltinGroupNames } from "./shared/groups.mjs";
 import { ensureBaseline } from "./shared/ops.mjs";
+import { getDbBytes, putDbBytes } from "./shared/users.mjs";
 
 let handle = null;
 
-function adapt(db) {
+function adapt(db, onWrite) {
   return {
-    exec: (sql) => db.exec(sql),
+    exec: (sql) => { const r = db.exec(sql); onWrite(); return r; },
     prepare: (sql) => ({
       run: (...params) => {
         const st = db.prepare(sql);
@@ -26,6 +29,7 @@ function adapt(db) {
         } finally {
           st.finalize();
         }
+        onWrite();
       },
       all: (...params) =>
         db.exec({ sql, bind: params, rowMode: "object", returnValue: "resultRows" }),
@@ -35,34 +39,55 @@ function adapt(db) {
   };
 }
 
-export async function bootDb() {
+/**
+ * Boot one user's database. `userStore` is the pip-users registry
+ * store; `userId` picks whose bytes load. Persistence writes through
+ * the store — when IndexedDB is unavailable the store is a Map and the
+ * DB silently runs in-memory (the board still works, it won't persist).
+ */
+export async function bootDb(userStore, userId) {
   if (handle) return handle;
 
-  const [sqlite3, catalog] = await Promise.all([
+  const [sqlite3, catalog, saved] = await Promise.all([
     sqlite3InitModule(),
     fetch("/catalog.json").then((r) => r.json()),
+    getDbBytes(userStore, userId).catch(() => null),
   ]);
 
   let db;
-  let persistent = false;
-  // kvvfs over localStorage — the only sqlite-wasm VFS that persists on
-  // the main thread. The "opfs" VFS refuses to install outside a worker
-  // (it needs Atomics.wait) and opfs-sahpool needs createSyncAccessHandle,
-  // which Chrome exposes only in workers — so OpfsDb never installed and
-  // the app silently ran in-memory. At ~650KB the catalog DB fits the
-  // 2–3MB kvvfs envelope comfortably.
-  // Caveats: no inter-tab locking (two tabs of one origin can interleave
-  // page writes), and localStorage blocked → kvvfs fabricates in-memory
-  // storage, so gate on the API before claiming persistence.
-  try {
-    if (!(localStorage instanceof Storage)) throw new Error("localStorage unavailable");
-    db = new sqlite3.oo1.JsStorageDb("local");
-    persistent = true;
-  } catch (err) {
+  if (saved?.length) {
     db = new sqlite3.oo1.DB(":memory:");
-    console.warn("db: persistent storage unavailable — running in-memory", err);
+    const bytes = saved instanceof Uint8Array ? saved : new Uint8Array(saved);
+    const p = sqlite3.wasm.allocFromTypedArray(bytes);
+    // FREEONCLOSE | RESIZEABLE — sqlite owns the wasm buffer now.
+    sqlite3.capi.sqlite3_deserialize(
+      db.pointer, "main", p, bytes.byteLength, bytes.byteLength, 1 | 2);
+  } else {
+    db = new sqlite3.oo1.DB(":memory:");
   }
-  const d = adapt(db);
+
+  let saveTimer = null;
+  const flush = () => {
+    clearTimeout(saveTimer); saveTimer = null;
+    const bytes = sqlite3.capi.sqlite3_js_db_export(db.pointer);
+    return putDbBytes(userStore, userId, bytes).catch(
+      (err) => console.warn("db: save failed", err));
+  };
+  const scheduleSave = () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(flush, 300);
+  };
+  // Flush on the way out — debounce alone can lose the last writes.
+  if (typeof document !== "undefined") {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flush();
+    });
+  }
+  if (typeof window !== "undefined") {
+    window.addEventListener("pagehide", () => flush());
+  }
+
+  const d = adapt(db, scheduleSave);
 
   // Schema application and import are both idempotent: the import doubles
   // as the reconcile, so a DB persisted under an older catalog converges
@@ -82,8 +107,25 @@ export async function bootDb() {
   // the first local edit. Idempotent — a stored baseline is kept.
   ensureBaseline(d);
 
-  handle = { db: d, catalog, persistent };
+  handle = { db: d, catalog, flush };
   return handle;
+}
+
+/**
+ * One-shot export of the pre-015 kvvfs `local` database (015 slice 2
+ * migration). Returns its bytes, or null when it can't be opened —
+ * callers treat null as "nothing to carry".
+ */
+export async function exportLegacyKvvfsDb() {
+  try {
+    const sqlite3 = await sqlite3InitModule();
+    const db = new sqlite3.oo1.JsStorageDb("local");
+    const bytes = sqlite3.capi.sqlite3_js_db_export(db.pointer);
+    db.close();
+    return bytes;
+  } catch {
+    return null;
+  }
 }
 
 /**

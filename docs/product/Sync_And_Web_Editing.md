@@ -115,9 +115,8 @@ already downloaded. That is stated honestly in the UI, not hidden.
 wrapped:{device:grant}}` bumps `key_epoch` and stores a wrapped key per
 remaining device; each op carries the epoch it was sealed under, and a
 device seeing a higher epoch picks up its new wrapped key via
-`GET /devices/self`. User keys live per-epoch in the keystore
-(`user_key`, `user_key_e2`, …); pre-rename `board_key*` entries
-migrate forward on first read (015 slice 1).
+`GET /devices/self`. User keys live per-user per-epoch in the keystore
+(`user/<id>/key_e<n>`; 015 slice 2).
 
 ## 4. What travels: an encrypted op log
 
@@ -470,19 +469,26 @@ never shares a sibling.
   sibling's layout breaks motor planning.
 - History, prediction weights and suggestions stay per user and per
   device (§ 2); nothing crosses users.
-- **BUILT** today (the gap): one device holds one user. The sync config is
-  a single `pip_sync` entry (`public/shared/sync.mjs:22`), the profile row
-  is the fixed id `prf_local` (`public/shared/groups.mjs:648`,
-  `public/board.js:116`), and the local database is one kvvfs store in
-  localStorage (`public/db.js:59`); kvvfs cannot name a second database.
+- **BUILT** (015 slice 2, 2026-09-24): one device holds many users. A
+  registry in IndexedDB `pip-users` (`public/shared/users.mjs`) keeps
+  one `user/<id>` row each — id, name, photo, this device's home flag,
+  last-opened, sync state (`{userId, epoch, cursor}`) — plus `db/<id>`
+  serialized databases. The open user's database runs in memory and
+  exports to `db/<id>` on a 300 ms write debounce with
+  `pagehide`/`visibilitychange` flushes (`public/db.js`). Keys scope
+  per user: `user/<id>/key_e<n>` and `user/<id>/root`
+  (`public/shared/sync_crypto.mjs`). Boot resolves session override →
+  home → single → picker, then takes a `pip-user-<id>` Web Lock — a
+  second tab on the same user is told, not allowed
+  (`public/board.js`). Parent Corner → Users switches, names, sets the
+  home user, removes a local copy, and adds users. The registry id is
+  the relay id: `POST /users` accepts it and bootstrap refuses an
+  already-initialized user (`src/worker/relay.js`). `pip_sync`, kvvfs
+  and flat key names migrate into the first registry row on first boot.
 - **Measured 2026-09-23:** one user's database is about 1.0 MB (999,424
   bytes with 680 senses); export and reload each take under 1 ms.
-- **PROPOSED** (015 slice 2): one database per user, run in memory and
-  saved to IndexedDB after each write (debounced) and on page hide; a
-  user registry replaces `pip_sync`; keys named per user; the open user
-  syncs live and others catch up when opened; a Web Lock per user keeps
-  one writing tab. Full design and proof:
-  `docs/phases/015_Accounts_And_One_Price.md` § Slice 2.
+  Per-user isolation, switching, the Web Lock and the kvvfs migration
+  are live-proven (`scripts/probes/users_probe.mjs`).
 
 ### 12.5 The QR card
 

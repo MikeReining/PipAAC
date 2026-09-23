@@ -30,7 +30,13 @@ export default {
       if (!body?.device_id || !body?.pubkey) {
         return json({ error: "bad_request" }, { status: 400 });
       }
-      const userId = crypto.randomUUID();
+      // 015 slice 2: the client's registry id becomes the relay id, so
+      // a user knows its own name before it links. A supplied id that
+      // collides with an initialized user gets 409 from bootstrap —
+      // the id is claimed, not hijackable.
+      const userId = typeof body.user_id === "string"
+        && /^[0-9a-f-]{36}$/i.test(body.user_id)
+        ? body.user_id : crypto.randomUUID();
       const stub = env.RELAY.get(env.RELAY.idFromName(userId));
       const init = await stub.fetch(new Request(
         `https://relay/users/${userId}/bootstrap`,

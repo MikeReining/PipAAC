@@ -106,28 +106,26 @@ export async function getDeviceIdentity(store = openKeyStore()) {
 
 /**
  * The user's AES-256-GCM key — one per user, created on first use.
- * Rotations (§ 3 revoke) mint a new key per epoch: epoch 1 lives at
- * "user_key", later epochs at "user_key_e<n>". Old keys stay so old
- * ops still open.
+ * Rotations (§ 3 revoke) mint a new key per epoch. 015 slice 2: keys
+ * scope per user — "user/<id>/key_e<n>" and "user/<id>/root" — so one
+ * device holds many users. Old keys stay so old ops still open.
  *
  * Recovery (§ 9): the device that sets up sync also mints a recovery
- * root — a 256-bit bearer secret stored raw under "recovery_root".
+ * root — a 256-bit bearer secret stored raw under the user's scope.
  * When the root is present, every epoch key derives from it via HKDF,
  * so a recovery sheet restores all epochs. Paired devices hold wrapped
  * epoch keys, never the root — a device that could re-derive every key
  * would make revoke cosmetic.
  */
-const userKeyName = (epoch) => (epoch <= 1 ? "user_key" : `user_key_e${epoch}`);
-// 015 slice 1: keystores written before the board→user rename still
-// hold board_key*; reads fall back and copy forward, so a linked
-// device keeps syncing without re-pairing.
-const legacyKeyName = (epoch) => (epoch <= 1 ? "board_key" : `board_key_e${epoch}`);
+export const userKeyName = (userId, epoch) => `user/${userId}/key_e${epoch}`;
+export const userRootName = (userId) => `user/${userId}/root`;
 
-export async function ensureRecoveryRoot(store = openKeyStore()) {
-  let root = await store.get("recovery_root");
+export async function ensureRecoveryRoot(store = openKeyStore(), userId) {
+  const name = userRootName(userId);
+  let root = await store.get(name);
   if (!root) {
     root = globalThis.crypto.getRandomValues(new Uint8Array(32));
-    await store.put("recovery_root", root);
+    await store.put(name, root);
   }
   return root instanceof Uint8Array ? root : new Uint8Array(root);
 }
@@ -141,20 +139,11 @@ export async function deriveEpochKey(rootBytes, epoch) {
     ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);
 }
 
-export async function getUserKey(store = openKeyStore(), epoch = 1) {
-  const name = userKeyName(epoch);
+export async function getUserKey(store = openKeyStore(), userId, epoch = 1) {
+  const name = userKeyName(userId, epoch);
   let key = await store.get(name);
   if (!key) {
-    const legacy = legacyKeyName(epoch);
-    const old = await store.get(legacy);
-    if (old) {
-      await store.put(name, old);
-      await store.del(legacy);
-      key = old;
-    }
-  }
-  if (!key) {
-    const root = await store.get("recovery_root");
+    const root = await store.get(userRootName(userId));
     key = root
       ? await deriveEpochKey(root instanceof Uint8Array ? root : new Uint8Array(root), epoch)
       : await subtle.generateKey({ name: "AES-GCM", length: 256 }, true,
@@ -163,7 +152,8 @@ export async function getUserKey(store = openKeyStore(), epoch = 1) {
   }
   return key;
 }
-export const putUserKey = (store, key, epoch = 1) => store.put(userKeyName(epoch), key);
+export const putUserKey = (store, userId, key, epoch = 1) =>
+  store.put(userKeyName(userId, epoch), key);
 export const newUserKey = () =>
   subtle.generateKey({ name: "AES-GCM", length: 256 }, true,
     ["encrypt", "decrypt", "wrapKey", "unwrapKey"]);

@@ -103,7 +103,7 @@ async function userAt(userId) {
   const env = fakeEnv();
   const relay = new UserRelay(ctx, env);
   const dev = await newDevice();
-  const root = await ensureRecoveryRoot(dev.store);
+  const root = await ensureRecoveryRoot(dev.store, userId);
   const proof = await recoveryProof(root);
   const res = await relay.fetch(new Request(`https://relay/users/${userId}/bootstrap`, {
     method: "POST",
@@ -113,6 +113,22 @@ async function userAt(userId) {
   assert.equal(res.status, 200);
   return { relay, ctx, env, dev, proof, userId };
 }
+
+test("bootstrap refuses an already-initialized user (015 slice 2)", async () => {
+  // POST /users accepts a client-chosen id (the registry id), so the
+  // relay must not let a caller re-bootstrap an existing user — that
+  // would graft a stranger's device onto it.
+  const userId = "user-hijack";
+  const { relay } = await userAt(userId);
+  const stranger = await newDevice();
+  const res = await relay.fetch(new Request(`https://relay/users/${userId}/bootstrap`, {
+    method: "POST",
+    body: JSON.stringify({ device_id: stranger.device_id, pubkey: stranger.pubkey,
+      dh_pub: stranger.dh_pub, recovery_proof: "forged" }),
+  }));
+  assert.equal(res.status, 409);
+  assert.equal((await res.json()).error, "conflict");
+});
 
 test("free user: the relay refuses a second device; lifetime allows it", async () => {
   const userId = "user-cap";

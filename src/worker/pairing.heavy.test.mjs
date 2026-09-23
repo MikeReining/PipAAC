@@ -74,7 +74,8 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   // A — the linked device, user creator.
   const aStore = memoryKeyStore();
   const a = await getDeviceIdentity(aStore);
-  const userKey = await getUserKey(aStore);
+  const userId = crypto.randomUUID(); // client-chosen (015 slice 2)
+  const userKey = await getUserKey(aStore, userId);
   // B — the new device. It does NOT have the user key.
   const bStore = memoryKeyStore();
   const b = await getDeviceIdentity(bStore);
@@ -86,6 +87,7 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({
+      user_id: userId,
       device_id: a.deviceId,
       pubkey: await exportPublicKey(a.verify),
       dh_pub: await exportDhPublic(a.dh.publicKey),
@@ -117,7 +119,7 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   const st = await lobby.status(pair);
   assert.equal(st.status, "granted");
   const bKey = await unwrapUserKey(b.dh.privateKey, st.grant);
-  await putUserKey(bStore, bKey, 1);
+  await putUserKey(bStore, userId, bKey, 1);
   const clientB = relayClient({ userId: user.user_id, baseUrl: BASE, identity: b, userKey: bKey });
   assert.equal((await clientB.fetchOps(0)).latest, 0);
 
@@ -147,7 +149,7 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   const self = await clientA.selfKey();
   assert.equal(self.current_epoch, 2);
   const aKey2 = await unwrapUserKey(a.dh.privateKey, JSON.parse(self.wrapped_key));
-  await putUserKey(aStore, aKey2, 2);
+  await putUserKey(aStore, userId, aKey2, 2);
 
   // A's post-removal op is sealed under the epoch-2 key — B never got it.
   createEntity(dbA, { name: "After" });
