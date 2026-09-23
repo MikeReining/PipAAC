@@ -11,9 +11,10 @@
  * debounces a submit so edits reach the relay without the UI knowing.
  */
 import { confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
+import { setBlobFetcher } from "../db.js";
 import {
-  getBoardKey, getDeviceIdentity, openKeyStore, openOp, putBoardKey,
-  unwrapBoardKey,
+  getBoardKey, getDeviceIdentity, openBlob, openKeyStore, openOp, putBoardKey,
+  sealBlob, unwrapBoardKey,
 } from "./sync_crypto.mjs";
 import { relayClient } from "./sync_client.mjs";
 
@@ -26,15 +27,15 @@ export const syncConfig = loadCfg;
 export const setSyncConfig = saveCfg;
 
 let running = null;
-export async function initSync(db, baseUrl = location.origin) {
+export async function initSync(db, baseUrl = location.origin, onApplied = () => {}) {
   if (running) return running;
   const cfg = loadCfg();
   if (!cfg?.boardId) return null;
-  running = startSync(db, baseUrl, cfg).catch((err) => { running = null; throw err; });
+  running = startSync(db, baseUrl, cfg, onApplied).catch((err) => { running = null; throw err; });
   return running;
 }
 
-async function startSync(db, baseUrl, cfg) {
+async function startSync(db, baseUrl, cfg, onApplied) {
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
   setDeviceId(identity.deviceId);
@@ -59,6 +60,31 @@ async function startSync(db, baseUrl, cfg) {
     return k;
   };
 
+  /** Lazy blob pull for loadPhotoURL: fetch the sealed envelope, open it
+   *  under the key for its epoch (hash verified on open), return bytes.
+   *  A miss may just be the upload losing the race with its op — retry
+   *  once via a repaint, then the tile keeps name + color. */
+  const retried = new Set();
+  setBlobFetcher(async (sha) => {
+    try {
+      const env = await client.getBlob(sha);
+      return await openBlob(await keyFor(env.e ?? 1), { sha, env });
+    } catch {
+      if (!retried.has(sha)) {
+        retried.add(sha);
+        setTimeout(onApplied, 1500);
+      }
+      return null; // corrupt or unreachable — the tile shows name + color
+    }
+  });
+
+  /** Seal + upload a photo/recording blob; no-op when unlinked. */
+  const uploadBlob = async (bytes) => {
+    const sealed = await sealBlob(await keyFor(epoch), bytes, epoch);
+    await client.putBlob(sealed);
+    return sealed.sha;
+  };
+
   const pendingOps = () => listOps(db).filter((o) => o.relay_seq === null);
   const flush = async () => {
     const ops = pendingOps();
@@ -78,7 +104,7 @@ async function startSync(db, baseUrl, cfg) {
     for (const r of rows) {
       plain.push({ ...(await openOp(await keyFor(r.epoch ?? 1), r.env)), relay_seq: r.relay_seq });
     }
-    if (plain.length) drainOps(db, plain);
+    if (plain.length) { drainOps(db, plain); onApplied(); }
   };
 
   await ingest((await client.fetchOps(0)).ops);
@@ -96,5 +122,12 @@ async function startSync(db, baseUrl, cfg) {
     }).catch(() => setTimeout(connect, 5000));
   };
   connect();
-  return { client, identity, getEpoch: () => epoch };
+  return { client, identity, getEpoch: () => epoch, uploadBlob };
+}
+
+/** Upload a photo/recording blob if the board is linked. Callers don't
+ *  await — the blob rides behind the op that references its sha. */
+export async function syncUploadBlob(bytes) {
+  const handle = running ? await running.catch(() => null) : null;
+  return handle?.uploadBlob(bytes) ?? null;
 }

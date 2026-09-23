@@ -175,6 +175,20 @@ hash.
 Works Test: a photo added on A shows on B. Corrupt one byte of the stored
 blob, and B rejects it and shows the name and color, not a broken image.
 
+**DONE.** `savePhoto` is content-addressed (`blob:<sha256>` in OPFS
+`blobs/`; legacy `opfs:photos/` keys still read); `loadPhotoURL` lazy-
+fetches a miss through the registered fetcher — `GET /blobs/:sha`,
+`openBlob` under the envelope's epoch, SHA-256 verified on open — and
+returns no URL when bytes are missing or corrupt, so the tile keeps its
+name and color. Uploads seal under the current epoch and ride behind
+their op. `src/worker/blob.heavy.test.mjs` (real wrangler dev + local
+R2): A's PNG round-trips to B byte-identical, the stored envelope is
+ciphertext, a tampered byte or forged hash rejects, an unknown sha 404s,
+and epoch-1 blobs still open after rotation while new blobs seal at
+epoch 2. Live proof: two paired headless-Chrome devices on a real agent
+copy — a photo file through A's add form landed on B with the same
+`blob:<sha>` key and rendered as real pixels in the tile.
+
 ## Slice 7 — The web editor
 
 Goal: on a wide screen the web app opens to the Library with the side-panel

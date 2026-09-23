@@ -55,7 +55,7 @@ import {
   wrapBoardKey,
 } from "./shared/sync_crypto.mjs";
 import { pairClient, relayClient } from "./shared/sync_client.mjs";
-import { initSync, setSyncConfig, syncConfig } from "./shared/sync.mjs";
+import { initSync, setSyncConfig, syncConfig, syncUploadBlob } from "./shared/sync.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -70,7 +70,21 @@ getDeviceIdentity().then(({ deviceId }) => setDeviceId(deviceId))
   .catch((err) => console.warn("sync: device identity unavailable", err));
 // If this board is already linked, start the sync loop (§ 5): catch up,
 // flush pending ops, listen for the relay's fan-out.
-initSync(db).catch((err) => console.warn("sync unavailable", err));
+/** Synced edits land in the DB via drainOps — repaint whatever's on
+ *  screen. Debounced: a drain batch is one repaint, not one per op. */
+let syncRepaintTimer = null;
+function onSyncApplied() {
+  clearTimeout(syncRepaintTimer);
+  syncRepaintTimer = setTimeout(() => {
+    entityPhoto.clear(); // photo_key may have changed
+    renderGrid();
+    renderStrip();
+    rerenderView();
+  }, 150);
+}
+
+initSync(db, location.origin, onSyncApplied)
+  .catch((err) => console.warn("sync unavailable", err));
 // Profile locale and voice resolve once at boot (schema §7.1) and bind
 // into every label query and speech call — never a literal, never
 // another locale's voice.
@@ -1428,8 +1442,9 @@ $("group-save").addEventListener("click", async () => {
   const name = $("group-name").value.trim();
   if (!name) return;
   const file = $("group-photo").files[0];
-  const photoKey = file ? await savePhoto(crypto.randomUUID(), file) : null;
-  createGroup(db, { name, photoKey });
+  const photo = file ? await savePhoto(file) : null;
+  if (photo) syncUploadBlob(photo.bytes).catch(() => {});
+  createGroup(db, { name, photoKey: photo?.key ?? null });
   $("group-name").value = "";
   $("group-photo").value = "";
   close("groupform");
@@ -1633,7 +1648,9 @@ $("add-save").addEventListener("click", async () => {
   if (!name) return;
   const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
   const file = $("add-photo").files[0];
-  const photoKey = file ? await savePhoto(id, file) : null;
+  const photo = file ? await savePhoto(file) : null;
+  if (photo) syncUploadBlob(photo.bytes).catch(() => {});
+  const photoKey = photo?.key ?? null;
   const hint = $("add-hint").value.trim() || null;
   // The record's home category — a classifier input, never displayed —
   // is the seed category of a built-in target group, else null.
@@ -1729,8 +1746,9 @@ $("wc-name").addEventListener("change", () => {
 $("wc-photo").addEventListener("change", async () => {
   const file = $("wc-photo").files[0];
   if (!file || !cardItem) return;
-  const photoKey = await savePhoto(cardItem.item_id, file);
-  setEntityPhoto(db, cardItem.item_id, photoKey);
+  const photo = await savePhoto(file);
+  syncUploadBlob(photo.bytes).catch(() => {});
+  setEntityPhoto(db, cardItem.item_id, photo.key);
   entityPhoto.delete(cardItem.item_id);
   rerenderView();
 });
@@ -1864,7 +1882,7 @@ async function ensureBoard() {
   const { board_id } = await res.json();
   const next = { boardId: board_id, epoch: 1 };
   setSyncConfig(next);
-  await initSync(db);
+  await initSync(db, location.origin, onSyncApplied);
   return next;
 }
 
@@ -1961,7 +1979,7 @@ async function linkThisDevice() {
       await putBoardKey(store, key, 1);
       setSyncConfig({ boardId: st.grant.board_id, epoch: 1 });
       status.textContent = "Linked — syncing…";
-      await initSync(db);
+      await initSync(db, location.origin, onSyncApplied);
       status.textContent = "Linked. This board now syncs to this device.";
       await renderDevices();
     } catch { /* expired or relay hiccup — poll again */ }

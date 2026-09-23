@@ -131,8 +131,21 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
   wire format `{v:1, alg:"A256GCM", iv, ct}` base64url.
 - A photo or recording is a separate encrypted **blob**. The op carries
   its content hash, not its bytes. **BUILT**: `sealBlob`/`openBlob` —
-  same envelope plus `sha`, the plaintext SHA-256; `openBlob` verifies
-  the hash after decrypt and fails closed.
+  same envelope plus `sha`, the plaintext SHA-256, and `e`, the epoch
+  the bytes were sealed under; `openBlob` verifies the hash after
+  decrypt and fails closed (011 slice 6). Photos are content-addressed
+  end to end: `savePhoto` stores bytes under `blob:<sha256>` in OPFS
+  `blobs/` and the row's `photo_key` is that key (`public/db.js`), so
+  the same bytes land under the same name on every device.
+  `loadPhotoURL` hits the local cache first; on a miss it calls the
+  fetcher `sync.mjs` registers — `GET /blobs/:sha`, `openBlob` under the
+  epoch's key, hash-verified — then caches the verified bytes under the
+  same name. A blob that is missing, corrupt, or sealed under a key the
+  device does not hold resolves to no image: the tile keeps its name
+  and role color and never shows a broken picture. Uploads ride behind
+  their op (`syncUploadBlob`, sealed under the current epoch); a fetch
+  miss retries once on the next repaint in case the upload lost the
+  race. Legacy `opfs:photos/<id>` keys still read.
 - Retire, never delete, fits: a removal is an op, and the retired row
   keeps its bytes (`docs/product/Vocabulary_Masking_And_Safety.md` § 3.2).
 

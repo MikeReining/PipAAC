@@ -145,10 +145,16 @@ export async function openData(key, env) {
 export const sealOp = (key, op) => sealData(key, te.encode(JSON.stringify(op)));
 export const openOp = async (key, env) => JSON.parse(td.decode(await openData(key, env)));
 
-/** Blob envelope: { sha, env }. The op carries sha; the bytes travel sealed. */
-export async function sealBlob(key, bytes) {
+/**
+ * Blob envelope: { sha, env } — env carries `e`, the key epoch it was
+ * sealed under, so a replica picks the right board key after rotation.
+ * The op carries sha; the bytes travel sealed.
+ */
+export async function sealBlob(key, bytes, epoch = 1) {
   const buf = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-  return { sha: hex(await subtle.digest("SHA-256", buf)), env: await sealData(key, buf) };
+  const env = await sealData(key, buf);
+  env.e = epoch;
+  return { sha: hex(await subtle.digest("SHA-256", buf)), env };
 }
 
 /** Open a blob envelope; the hash is part of the deal — verify it. */

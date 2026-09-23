@@ -139,24 +139,57 @@ function migrateSchema(d, schemaSql) {
   }
 }
 
-/** Photos live as OPFS files keyed by entity id; the row stores the key. */
-export async function savePhoto(entityId, file) {
+/**
+ * Photos are content-addressed: `blob:<sha256>` in OPFS `blobs/`. The
+ * key is the same on every device, so a `set_entity_photo` op means the
+ * same bytes everywhere — the replica fetches the sealed blob lazily
+ * (sync § 4) via the registered fetcher, verifies the hash on open, and
+ * caches it under the same name. `opfs:photos/<id>` keys written before
+ * slice 6 keep working.
+ */
+let blobFetcher = null;
+export function setBlobFetcher(fn) { blobFetcher = fn; }
+
+export async function savePhoto(file) {
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const sha = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
   const root = await navigator.storage.getDirectory();
-  const dir = await root.getDirectoryHandle("photos", { create: true });
-  const fh = await dir.getFileHandle(entityId, { create: true });
+  const dir = await root.getDirectoryHandle("blobs", { create: true });
+  const fh = await dir.getFileHandle(sha, { create: true });
   const w = await fh.createWritable();
-  await w.write(await file.arrayBuffer());
+  await w.write(bytes);
   await w.close();
-  return `opfs:photos/${entityId}`;
+  return { key: `blob:${sha}`, bytes };
 }
 
 export async function loadPhotoURL(photoKey) {
-  if (!photoKey?.startsWith("opfs:photos/")) return null;
   try {
     const root = await navigator.storage.getDirectory();
-    const dir = await root.getDirectoryHandle("photos");
-    const fh = await dir.getFileHandle(photoKey.slice("opfs:photos/".length));
-    return URL.createObjectURL(await fh.getFile());
+    if (photoKey?.startsWith("blob:")) {
+      const sha = photoKey.slice(5);
+      const dir = await root.getDirectoryHandle("blobs", { create: true });
+      try {
+        const fh = await dir.getFileHandle(sha);
+        return URL.createObjectURL(await fh.getFile());
+      } catch {
+        // Not cached — pull the sealed blob, verify on open, cache it.
+        if (!blobFetcher) return null;
+        const bytes = await blobFetcher(sha);
+        if (!bytes) return null;
+        const fh = await dir.getFileHandle(sha, { create: true });
+        const w = await fh.createWritable();
+        await w.write(bytes);
+        await w.close();
+        return URL.createObjectURL(new Blob([bytes]));
+      }
+    }
+    if (photoKey?.startsWith("opfs:photos/")) {
+      const dir = await root.getDirectoryHandle("photos");
+      const fh = await dir.getFileHandle(photoKey.slice("opfs:photos/".length));
+      return URL.createObjectURL(await fh.getFile());
+    }
+    return null;
   } catch {
     return null;
   }
