@@ -37,6 +37,10 @@ Is the word an inanimate noun, vehicle, food, or universal sign?
                                   └── NO  → Use --framing full (e.g., run, jump, help, play)
 ```
 
+> [!NOTE]
+> **Runtime Pre-Classification via TypeSafe Jev:**
+> In the user-facing "Draw it for me" feature (`docs/product/Word_Library.md` § 6.1), TypeSafe Jev automates this decision tree on the backend: it pre-classifies the word and optional hint into one of the 5 framing lenses to dispatch a single, high-fidelity roll to Muse Image. Because image generation is an explicitly requested cloud service, Jev pre-classification is a mandatory cloud pipeline step (parents cannot disable Jev for Draw it for me). Offline developer scripts and batch generation use this decision tree directly or explicit CLI flags.
+
 ---
 
 ## 3. Prompt Architecture & Generation Laws

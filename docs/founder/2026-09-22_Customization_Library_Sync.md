@@ -127,10 +127,15 @@ recommendation ("all agreed").
 6. **Draw it for me** for Pip Lifetime owners (founder: "a really killer
    idea"). The founder's first idea was a silent meter with a cutoff at
    100–200. Ruled instead: fair use with a 30-a-day abuse limit and about
-   1,000 a year, shown only near a limit, never a silent cutoff; three
-   versions to pick from; word plus hint; a safety check; 5 free drawings
-   as a taste; a word drawn for 20 or more boards joins the library after
-   review; more drawings by in-app purchase, priced later.
+   1,000 a year, shown only near a limit, never a silent cutoff; word plus hint;
+   a safety check; 5 free drawings as a taste; a word drawn for 20 or more
+   boards joins the library after review; more drawings by in-app purchase,
+   priced later.
+   **Updated 2026-09-22:** Pre-classify with TypeSafe Jev into the 5 framing
+   lenses (`face`, `bust`, `full`, `diagram`, `object`) to generate 1 targeted
+   image (Muse Image) instead of 3, cutting generation API cost by 66%. Users
+   re-roll or add a hint if needed. Disabling Jev does not apply here because
+   the user explicitly requested cloud image generation.
    → `docs/product/Word_Library.md` § 6.1; 010 slice 6.
 7. **Editing.** Founder: removing an item frees its slot and never
    reshuffles; "remove and shuffle" is not a feature; drag to rearrange one

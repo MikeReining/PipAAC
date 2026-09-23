@@ -116,22 +116,28 @@ make the full payment, we should absolutely enable it"). Product rules:
 `docs/product/Pricing_And_Packaging.md` § 2.
 
 Goal: from `+ Add` (no match, or "another picture") and from the word
-card, **Draw it for me** sends the word and an optional hint, draws three
-versions in the house style, and the adult picks one.
+card, **Draw it for me** sends the word and an optional hint, uses TypeSafe
+Jev to pre-classify the semantic framing lens (`face`, `bust`, `full`,
+`diagram`, `object`), generates one version in the house style via Muse
+Image, and the adult accepts, re-rolls, or refines with a hint.
 
 Parts:
 1. **Server endpoint** on the Worker: a safety check on word and hint,
-   three generations with `scripts/art/gen.mjs` settings, per-board limits
-   (30 a day, about 1,000 a year, starting values), and a count of each
-   word with no board id.
+   a mandatory Jev classification step into the 5 framing lenses
+   (`docs/operations/art-generator/SKILL.md`) and Fitzgerald torso color,
+   one generation with `scripts/art/gen.mjs` settings via Muse Image
+   (cutting generation cost by 66%), per-board limits (30 a day, about 1,000
+   a year, starting values), and a count of each word with no board id.
+   Parents cannot disable Jev for Draw it for me: requesting image generation
+   explicitly invokes this cloud generation pipeline.
 2. **Entitlement:** Pip Lifetime, or the 5-drawing free taste. The
    request carries the board id (already known to the relay, needed for
    the limits) and a proof of entitlement, and no personal identity. The
    limit counters are keyed by board. The word counts are stored apart
    from them, with no board id.
-3. **UI:** three pictures, **Draw again**, pick one. The limit message
-   appears only within 10% of a limit and names the reset date.
-4. **Storage:** a pick becomes the entity's picture, or a picture
+3. **UI:** one picture, **Accept**, **Re-roll**, and **Add/Edit hint**.
+   The limit message appears only within 10% of a limit and names the reset date.
+4. **Storage:** an accepted drawing becomes the entity's picture, or a picture
    override for a catalog word (schema § 14.1). It syncs like a photo.
 5. **Growth loop:** a word drawn for 20 or more boards goes onto the
    slice 2 review page as a candidate for the library.
@@ -148,9 +154,9 @@ Works Test:
 3. A word on the safety block list is refused before any generation call
    (the generation stub records zero calls).
 4. A free board's 6th drawing is refused. A Lifetime board's is not.
-5. Picking a version for a New word saves the entity with that picture
+5. Accepting a drawing for a New word saves the entity with that picture
    offline-first: the save works even if the network drops after the
-   pick.
+   acceptance.
 
 Done when: that passes and a person types "trampoline", taps Draw it for
 me, and puts our drawing on the board in under a minute.

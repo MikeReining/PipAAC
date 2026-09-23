@@ -245,10 +245,22 @@ draws the word in our house style.
 
 - **Word plus an optional hint.** "Cooper: golden retriever" draws a
   golden retriever. People are still best as photos.
-- **Three versions, the adult picks one.** This follows the art law:
-  re-roll instead of fixing a drawing with prompt rules
-  (`docs/product/Art_Generation_Lessons.md` § 1). **Draw again** gives
-  three more.
+- **Jev semantic pre-classification (mandatory backend pipeline step).**
+  Before image generation, TypeSafe Jev classifies the concept into one of our
+  5 semantic framing lenses (`face`, `bust`, `full`, `diagram`, `object`)
+  defined in `docs/operations/art-generator/SKILL.md`, and selects the
+  Fitzgerald Key role color (for verb/pronoun torsos) or plural rule.
+  Because the user explicitly requested cloud image generation, Jev runs
+  as an internal cloud pipeline stage; **parents cannot disable Jev
+  for Draw it for me** (unlike conversational prediction sharing, which is
+  toggleable).
+- **Single image generation (66% cost savings).** With Jev pre-classifying
+  framing and prompt constraints, Muse Image generates **one** clinical-grade
+  vector icon instead of three. This cuts image generation API costs by
+  two-thirds while reducing generation latency.
+- **Re-roll & Hint on demand.** If the single image has an artifact or
+  the user wants an alternative, the UI offers **Re-roll** (single tap)
+  or the ability to add/edit a descriptive hint.
 - **Who gets it.** Pip Lifetime owners. A free board gets 5 drawings as a
   taste (`docs/product/Pricing_And_Packaging.md` § 2).
 - **Fair use, no surprise cutoff.** At about 1¢ an image, cost is not the
