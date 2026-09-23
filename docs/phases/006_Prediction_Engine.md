@@ -153,6 +153,19 @@ simulation is the instrument until then.
 Done when: baselines are recorded below, and a person can use the board
 and see impression rows accumulate.
 
+**DONE.** `strip_impression` (user_version 6); `stripScored` is the
+feature-bearing shortlist `stripCandidates` now delegates to; `renderStrip`
+logs one impression per distinct offer (deduped on sentence+position+shown);
+the next logged pick fills `chosen_*` via `fillChosen`; `predictionReport`
+computes recall / hit rate / false-show / strip share from impressions
+only. `src/board/fixtures/routine_days.en.json` is the hand-written
+14-day child (school/weekend routines + ~20% unscripted);
+`prediction_sim.test.mjs` replays it through the real logging path —
+days 1–10 train, 11–14 measure. Negative control proven: an empty
+ranker scores 0% hit rate and pays the full group-path taps. Live check
+in Chrome: three taps wrote three impressions, two labeled by the next
+pick (`chosen_source='grid'`), the last left NULL.
+
 ---
 
 ## Slice 3 — The local model: features, log-linear score, show gate
@@ -298,7 +311,7 @@ Filled in by slices 2–5. Numbers only, with the commit that produced them.
 
 | Slice | Shortlist recall | Strip hit rate | False-show rate | Taps per word | Commit |
 | --- | --- | --- | --- | --- | --- |
-| 2 (current ranker) | — | — | — | — | — |
+| 2 (current ranker) | 28.0% | 23.7% | 36.4% | 1.39 | 006/2 sim, held-out days 11–14 |
 
 ## Out of scope
 

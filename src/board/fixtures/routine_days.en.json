@@ -1,0 +1,65 @@
+{
+  "_comment": "006 slice 2 — a simulated child over 14 days. Days 1–5 and 8–12 are school days (same routine, same hours); days 6–7 and 13–14 are weekend days with a shifted routine. ~20% of sentences are unscripted — written by hand before any ranker change; do not edit to suit a ranker. Words are catalog lemmas; names resolve to fixture entities.",
+  "entities": [
+    { "name": "Cooper", "category": "Toys, Play, Media & Leisure" },
+    { "name": "Grandma", "category": "People, Family & Roles" }
+  ],
+  "schoolDay": {
+    "sentences": [
+      { "at": "07:50", "words": ["I", "want", "juice"] },
+      { "at": "07:55", "words": ["I", "want", "cereal"] },
+      { "at": "08:05", "words": ["all done"] },
+      { "at": "08:10", "words": ["I", "want", "more", "milk"] },
+      { "at": "15:35", "words": ["I", "want", "snack"] },
+      { "at": "15:40", "words": ["play", "outside"] },
+      { "at": "16:30", "words": ["I", "want", "iPad"] },
+      { "at": "19:00", "words": ["I", "want", "bath"] },
+      { "at": "19:10", "words": ["I", "want", "bubbles"] },
+      { "at": "19:45", "words": ["read", "book"] },
+      { "at": "19:50", "words": ["I", "want", "Cooper"] },
+      { "at": "19:55", "words": ["good night"] }
+    ]
+  },
+  "weekendDay": {
+    "sentences": [
+      { "at": "08:45", "words": ["I", "want", "pancake"] },
+      { "at": "08:50", "words": ["I", "want", "juice"] },
+      { "at": "10:30", "words": ["go", "park"] },
+      { "at": "10:45", "words": ["I", "want", "swing"] },
+      { "at": "12:30", "words": ["I", "want", "pizza"] },
+      { "at": "15:00", "words": ["play", "Cooper"] },
+      { "at": "17:30", "words": ["I", "want", "Grandma"] },
+      { "at": "19:45", "words": ["read", "book"] },
+      { "at": "19:55", "words": ["good night"] }
+    ]
+  },
+  "unscripted": {
+    "1": [{ "at": "14:20", "words": ["dog", "is", "loud"] }, { "at": "17:05", "words": ["I", "feel", "happy"] }],
+    "2": [{ "at": "11:15", "words": ["look", "bird"] }],
+    "3": [{ "at": "16:50", "words": ["hurt", "knee"] }, { "at": "20:10", "words": ["I", "want", "hug"] }],
+    "5": [{ "at": "09:40", "words": ["where", "is", "dinosaur"] }],
+    "6": [{ "at": "13:20", "words": ["I", "see", "butterfly"] }, { "at": "16:00", "words": ["red", "ball"] }],
+    "7": [{ "at": "14:45", "words": ["ice cream", "please"] }],
+    "9": [{ "at": "10:55", "words": ["cat", "sleep"] }, { "at": "18:20", "words": ["I", "want", "cookie"] }],
+    "10": [{ "at": "12:10", "words": ["bug", "scared"] }],
+    "11": [{ "at": "15:55", "words": ["I", "want", "music"] }, { "at": "20:30", "words": ["tired"] }],
+    "13": [{ "at": "11:40", "words": ["go", "swim", "pool"] }],
+    "14": [{ "at": "13:05", "words": ["draw", "book"] }, { "at": "17:15", "words": ["I", "want", "hug"] }]
+  },
+  "days": [
+    { "day": 1, "kind": "school" },
+    { "day": 2, "kind": "school" },
+    { "day": 3, "kind": "school" },
+    { "day": 4, "kind": "school" },
+    { "day": 5, "kind": "school" },
+    { "day": 6, "kind": "weekend" },
+    { "day": 7, "kind": "weekend" },
+    { "day": 8, "kind": "school" },
+    { "day": 9, "kind": "school" },
+    { "day": 10, "kind": "school" },
+    { "day": 11, "kind": "school" },
+    { "day": 12, "kind": "school" },
+    { "day": 13, "kind": "weekend" },
+    { "day": 14, "kind": "weekend" }
+  ]
+}

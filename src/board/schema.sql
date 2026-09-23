@@ -205,6 +205,30 @@ CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_i
 CREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);
 CREATE INDEX IF NOT EXISTS event_log_sentence ON learner_event_log(sentence_id, position);
 
+-- One row per strip moment: what the ranker had, what it showed, and
+-- what the child picked next (chosen_* fills on the next pick). The
+-- training data for §5.5 and the instrument for §5.7. Ids and numbers
+-- only; no label text, no partner words.
+CREATE TABLE IF NOT EXISTS strip_impression (
+  id INTEGER PRIMARY KEY,
+  sentence_id INTEGER NOT NULL REFERENCES sentence(id),
+  position INTEGER NOT NULL CHECK (position >= 0),
+  shown_at INTEGER NOT NULL CHECK (shown_at > 0),
+  -- JSON array: [{"kind","id","x":{feature:value},"p"}] for the shortlist
+  candidates TEXT NOT NULL,
+  -- JSON array of the (kind:id) keys rendered as tiles, rank order, ≤ 4
+  shown TEXT NOT NULL,
+  p_none REAL NOT NULL CHECK (p_none >= 0 AND p_none <= 1),
+  weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
+  jev_model TEXT,             -- versioned id from the response; NULL = no call
+  jev_status TEXT NOT NULL CHECK (jev_status IN ('off', 'skipped', 'answered', 'late', 'error')),
+  chosen_kind TEXT CHECK (chosen_kind IS NULL OR chosen_kind IN ('sense', 'entity')),
+  chosen_id TEXT,
+  chosen_source TEXT CHECK (chosen_source IS NULL OR chosen_source IN ('grid', 'strip', 'group', 'keyboard'))
+);
+
+CREATE INDEX IF NOT EXISTS impression_sentence ON strip_impression(sentence_id, position);
+
 CREATE TABLE IF NOT EXISTS clip_override (
   id TEXT PRIMARY KEY CHECK (id GLOB 'ovr_*'),
   utterance_id TEXT REFERENCES utterance(id),
@@ -487,4 +511,4 @@ BEGIN
   );
 END;
 
-PRAGMA user_version = 5;
+PRAGMA user_version = 6;

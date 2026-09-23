@@ -7,10 +7,13 @@ import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import {
   closeSentence,
   detachEvent,
+  fillChosen,
   keyboardContinuations,
+  logImpression,
   logSelection,
   openSentence,
-  stripCandidates,
+  STRIP_CAP,
+  stripScored,
 } from "./shared/funnel.mjs";
 import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { PARTNER_SENSES } from "./shared/keymaps.mjs";
@@ -106,6 +109,22 @@ const sentence = []; // [{kind, id, text}]
 let sentenceId = null;
 let sentencePicks = 0; // member events so far — the next pick's position
 const ensureSentence = () => (sentenceId ??= openSentence(db));
+/* Strip impressions (§ 5.7): renderStrip logs what the strip offered at
+ * the next pick's position — one row per distinct offer, deduped by
+ * (sentence, position, shown). The next logged pick fills chosen_*. */
+let lastImpressionKey = null;
+function maybeImpression(candidates, shown) {
+  if (sentenceId === null) return;
+  const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
+  const key = `${sentenceId}:${sentencePicks}:${shownKeys.join()}`;
+  if (key === lastImpressionKey) return;
+  lastImpressionKey = key;
+  logImpression(db, {
+    sentenceId, position: sentencePicks,
+    candidates: candidates.map((c) => ({ kind: c.kind, id: c.id, x: c.x ?? {} })),
+    shown: shownKeys,
+  });
+}
 let addTarget = null;  // board_group id the add form files into
 let addCell = null;    // {page, slot_index} when + came from tapping an empty slot
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
@@ -168,6 +187,7 @@ async function speakSentence() {
     closeSentence(db, sentenceId, Date.now(), "spoken");
     sentenceId = null;
     sentencePicks = 0;
+    lastImpressionKey = null;
   }
 }
 
@@ -275,6 +295,7 @@ $("clear").addEventListener("click", () => {
     closeSentence(db, sentenceId, Date.now(), "cleared");
     sentenceId = null;
     sentencePicks = 0;
+    lastImpressionKey = null;
   }
   sentence.length = 0;
   kbText = "";
@@ -393,9 +414,11 @@ async function renderStrip() {
     // words included — the grid is hidden so the no-core rule doesn't
     // apply (slice 7, Dual_Engine §5.2).
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
+    const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale);
     const items = kbOpen
       ? keyboardContinuations(db, sents, locale, Date.now())
-      : stripCandidates(db, sents, Date.now(), locale);
+      : scored.slice(0, STRIP_CAP).map((r) => ({ kind: r.kind, id: r.id }));
+    maybeImpression(scored ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })), items);
     cards = [];
     for (const c of items) {
       if (c.kind === "entity") {
@@ -430,6 +453,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
   speakItem(item);
   if (id) {
     ensureSentence();
+    fillChosen(db, sentenceId, { kind, id, source });
     logSelection(db, kind, id, Date.now(), {
       sentenceId, position: sentencePicks++, source,
     });
@@ -989,6 +1013,7 @@ function commitKbItem(index) {
   speakItem(item);
   if (item.id) {
     ensureSentence();
+    fillChosen(db, sentenceId, { kind: item.kind, id: item.id, source: "keyboard" });
     logSelection(db, item.kind, item.id, Date.now(), {
       sentenceId, position: sentencePicks++, source: "keyboard",
     });

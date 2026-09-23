@@ -545,7 +545,7 @@ Closed sentences are never rewritten — history stays as spoken.
 
 ### 6.2d Strip impressions
 
-**DECIDED 2026-09-22** (not built). One row per strip moment: what the
+**DECIDED 2026-09-22, BUILT** (006 slice 2). One row per strip moment: what the
 ranker had, what it showed, and what the child picked next. The training
 data for § 5.5 and the instrument for § 5.7 of
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md`. Ids and numbers
@@ -1077,8 +1077,9 @@ Accepted in founder review the day it was proposed. The amendments:
    event-log `sentence_id` / `position` / `source` / `tz_offset_min`
    columns are **BUILT** (006 slice 1; `PRAGMA user_version` 5, pre-
    amendment rows backfilled with the device's offset once). Still
-   pending for later slices: `strip_impression`, `prediction_weights`,
-   and the profile's `jev_sharing` and `listening` settings (§ 6.2d–e).
+   pending for later slices: `strip_impression` is **BUILT** (006 slice
+   2; `user_version` 6); `prediction_weights` and the profile's
+   `jev_sharing` and `listening` settings remain (§ 6.2e).
    Partner words are never a column anywhere.
 
 ---

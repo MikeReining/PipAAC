@@ -105,6 +105,28 @@ function tailInfo(db, sentence, locale) {
  * @returns {Array<{kind:'sense'|'entity', id:string}>} capped at STRIP_CAP.
  */
 export function stripCandidates(db, sentence, now = Date.now(), locale) {
+  return stripScored(db, sentence, now, locale)
+    .slice(0, STRIP_CAP)
+    .map((r) => ({ kind: r.kind, id: r.id }));
+}
+
+function scoreRow(r, invited, now) {
+  return {
+    last: r.last_selected ?? 0,
+    score:
+      (invited ? 100 : 0) + (r.recent ? 20 : 0) + (r.same_hour ?? 0) * 5 +
+      (r.freq ?? 0) * 2 +
+      (r.last_selected ? Math.max(0, 10 - (now - r.last_selected) / 60000) : 0),
+  };
+}
+
+/**
+ * The shortlist with its features — what the strip moment records on
+ * the impression (schema §6.2d). Same ranking as stripCandidates, but
+ * the rows keep the evidence the score was built from. `p` stays absent
+ * until slice 3's softmax — there is no probability yet.
+ */
+export function stripScored(db, sentence, now = Date.now(), locale) {
   if (typeof locale !== "string" || locale.length === 0) {
     throw new Error("locale is a required parameter");
   }
@@ -116,10 +138,19 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
   const invitesVerb = rules ? rules.invitesVerb(ctx) : false;
   const recentCutoff = now - RECENT_WINDOW_MS;
   const hour = new Date(now).getHours();
-  // Events carry their tap-time offset (schema §6.2c) — a family's hour
-  // survives travel and DST. Rows from before the column existed were
-  // backfilled at migration; COALESCE covers any straggler.
   const tzNow = -new Date(now).getTimezoneOffset();
+
+  const pack = (r, invited) => ({
+    kind: r.kind, id: r.id,
+    x: {
+      invited: invited ? 1 : 0,
+      recent: r.recent ?? 0,
+      same_hour: r.same_hour ?? 0,
+      freq: r.freq ?? 0,
+    },
+    last: r.last_selected ?? 0,
+    score: scoreRow(r, invited, now).score,
+  });
 
   const entityRows = db
     .prepare(
@@ -137,7 +168,7 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
     )
     .all(recentCutoff, tzNow, hour)
     .filter((r) => invitesNoun || r.recent === 1)
-    .map((r) => ({ kind: "entity", id: r.id, ...scoreRow(r, invitesNoun, now) }));
+    .map((r) => pack({ ...r, kind: "entity" }, invitesNoun));
 
   const fringeRows = db
     .prepare(
@@ -161,21 +192,78 @@ export function stripCandidates(db, sentence, now = Date.now(), locale) {
         (r.freq > 0 || r.recent === 1) &&
         ((invitesNoun && r.pos === "Noun") || (invitesVerb && r.pos === "Verb")),
     )
-    .map((r) => ({ kind: "sense", id: r.id, ...scoreRow(r, invitesNoun || invitesVerb, now) }));
+    .map((r) => pack({ ...r, kind: "sense" }, invitesNoun || invitesVerb));
 
   return [...entityRows, ...fringeRows]
-    .sort((a, b) => b.score - a.score || b.last - a.last || a.id.localeCompare(b.id))
-    .slice(0, STRIP_CAP)
-    .map((r) => ({ kind: r.kind, id: r.id }));
+    .sort((a, b) => b.score - a.score || b.last - a.last || a.id.localeCompare(b.id));
 }
 
-function scoreRow(r, invited, now) {
+/* --- The instrument (§ 5.7): strip_impression ------------------------ */
+
+/**
+ * One strip moment: the shortlist the ranker had and the tiles it showed.
+ * Called when the strip's offer changes mid-sentence; `chosen_*` stays
+ * NULL until the next pick (fillChosen) — a sentence that ends cleared
+ * leaves them NULL: metrics only, never a training example.
+ */
+export function logImpression(db, {
+  sentenceId, position, shownAt = Date.now(), candidates, shown,
+  weightSet = "local_only", jevStatus = "off", jevModel = null, pNone = 0,
+}) {
+  db.prepare(
+    `INSERT INTO strip_impression
+       (sentence_id, position, shown_at, candidates, shown, p_none,
+        weight_set, jev_status, jev_model)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    sentenceId, position, shownAt,
+    JSON.stringify(candidates), JSON.stringify(shown), pNone,
+    weightSet, jevStatus, jevModel,
+  );
+  return db.prepare("SELECT last_insert_rowid() AS id").all()[0].id;
+}
+
+/** The child's next pick is the label for the strip moment before it. */
+export function fillChosen(db, sentenceId, { kind, id, source }) {
+  db.prepare(
+    `UPDATE strip_impression SET chosen_kind = ?, chosen_id = ?, chosen_source = ?
+     WHERE id = (
+       SELECT id FROM strip_impression
+       WHERE sentence_id = ? AND chosen_id IS NULL
+       ORDER BY position DESC, id DESC LIMIT 1)`,
+  ).run(kind, id, source, sentenceId);
+}
+
+/**
+ * What the strip is worth (§ 5.7), measured on what was picked — never
+ * on the ranker's own report. Only impressions that got a next pick
+ * count toward the denominators.
+ */
+export function predictionReport(db, { from = 0, to = Number.MAX_SAFE_INTEGER } = {}) {
+  const rows = db
+    .prepare(
+      `SELECT candidates, shown, chosen_kind, chosen_id, chosen_source
+       FROM strip_impression
+       WHERE shown_at >= ? AND shown_at < ? AND chosen_id IS NOT NULL`,
+    )
+    .all(from, to);
+  const picks = rows.length;
+  let recall = 0, hits = 0, falseShows = 0, stripPicks = 0;
+  for (const r of rows) {
+    const cands = JSON.parse(r.candidates).map((c) => `${c.kind}:${c.id}`);
+    const shown = JSON.parse(r.shown);
+    const key = `${r.chosen_kind}:${r.chosen_id}`;
+    if (cands.includes(key)) recall++;
+    if (shown.includes(key)) hits++;
+    if (shown.length && !shown.includes(key)) falseShows++;
+    if (r.chosen_source === "strip") stripPicks++;
+  }
   return {
-    last: r.last_selected ?? 0,
-    score:
-      (invited ? 100 : 0) + (r.recent ? 20 : 0) + (r.same_hour ?? 0) * 5 +
-      (r.freq ?? 0) * 2 +
-      (r.last_selected ? Math.max(0, 10 - (now - r.last_selected) / 60000) : 0),
+    picks,
+    shortlistRecall: picks ? recall / picks : 0,
+    hitRate: picks ? hits / picks : 0,
+    falseShowRate: picks ? falseShows / picks : 0,
+    stripShare: picks ? stripPicks / picks : 0,
   };
 }
 
