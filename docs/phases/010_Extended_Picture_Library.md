@@ -129,7 +129,8 @@ Parts:
    from `docs/operations/art-generator/SKILL.md`), one generation with
    `scripts/art/gen.mjs` settings via Muse Image (cutting generation cost by 66%),
    immediate PNG archival in Cloudflare R2 (`symbols/drawings/{hash}.png`),
-   per-board limits (30 a day, about 1,000 a year, starting values), and an
+   per-user limits (30 a day; 300 included with Pip Lifetime, then top-ups —
+   `docs/product/Pricing_And_Packaging.md` § 4.2, DECIDED 2026-09-23), and an
    anonymous demand counter of each word with no board id.
    Parents cannot disable Jev for Draw it for me: requesting image generation
    explicitly invokes this cloud generation pipeline.
@@ -157,7 +158,8 @@ Works Test:
    a reset time, even when the UI check is bypassed.
 3. A word on the safety block list is refused before any generation call
    (the generation stub records zero calls).
-4. A free board's 6th drawing is refused. A Lifetime board's is not.
+4. A free user's 6th drawing is refused. A Lifetime user's is not; its
+   301st offers a top-up.
 5. Accepting a drawing for a New word saves the entity with that picture
    offline-first: the save works even if the network drops after the
    acceptance.

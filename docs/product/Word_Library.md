@@ -277,15 +277,16 @@ draws the word in our house style.
 - **Worker asset archival.** The Cloudflare Worker directly archives the
   generated image in Cloudflare R2 storage alongside the prompt and metadata,
   enabling perpetual zero-marginal-cost reusability across all users.
-- **Who gets it.** Pip Lifetime owners. A free board gets 5 drawings as a
-  taste (`docs/product/Pricing_And_Packaging.md` § 2).
-- **Fair use, no surprise cutoff.** At about 1¢ an image, cost is not the
-  constraint. Abuse is. A per-board limit of 30 drawings a day (starting
-  value), plus fair-use terms with a high yearly limit (about 1,000,
-  starting value). No counter is shown until a board is within 10% of a
-  limit, and then the message says exactly when it resets. Past the yearly
-  limit, an in-app purchase adds more (price decided later). No one is
-  cut off silently in the middle of a setup.
+- **Who gets it.** **DECIDED 2026-09-23** (amends the 2026-09-22 fair use):
+  a free user gets 5 drawings as a taste; Pip Lifetime (\$49 once, per
+  user) includes 300, once, not per year. Past that, top-up packs are an
+  in-app purchase priced near cost
+  (`docs/product/Pricing_And_Packaging.md` § 4.2).
+- **No surprise cutoff.** At about 1¢ an image, a lifetime price cannot
+  carry an unlimited yearly allowance. The remaining count shows once a
+  user is within 10% of the allowance, the message offers a top-up, and no
+  one is cut off silently in the middle of a setup. A per-user limit of 30
+  a day (starting value) stays as an abuse guard.
 - **Safety first.** The word and hint are checked before drawing, because
   this is a children's app. A refused request says so plainly.
 - **What leaves the device.** Only the word and the hint, only on the

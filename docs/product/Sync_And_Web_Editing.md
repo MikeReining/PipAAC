@@ -6,6 +6,13 @@ DECIDED 2026-09-22** (§ 11). The mechanics in § 3–§ 6 are the proposed
 engineering design, confirmed or changed by the 011 slices. Not built.
 Intake: `docs/founder/2026-09-22_Customization_Library_Sync.md`.
 Execution: `docs/phases/011_Sync_And_Web_Editing.md`.
+
+**Amended 2026-09-23 (§ 12):** supporter accounts, many users per device,
+the QR card instead of 24 words, one price per user. The sync unit this
+doc calls a **board** is a **user** (the person who speaks); "boards" in
+product copy means pages again. Where § 12 disagrees with an earlier
+section, § 12 wins. Intake: `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
+Execution: `docs/phases/015_Accounts_And_One_Price.md`.
 Platforms: `docs/product/Platforms_iOS_And_Web.md`.
 
 This file replaces the PROPOSED pairing sketch in
@@ -52,7 +59,10 @@ adults authored for it.
 device starts learning again. That is cheap, and it keeps the promise that
 what the child said never leaves the device.
 
-## 3. No accounts: a board, devices and keys
+## 3. A board, devices and keys
+
+*No-accounts framing superseded 2026-09-23 by § 12; the keys and
+pairing below stay.*
 
 - A **board** has a random id and a random **board key** (256-bit,
   symmetric). The board key encrypts everything that leaves a device.
@@ -266,11 +276,17 @@ is lost, the adult links the browser again. Nothing on the board is lost.
 
 ## 8. Many boards (SLPs)
 
+*Superseded 2026-09-23: DECIDED, § 12.4.*
+
 **PROPOSED, later.** An SLP's laptop links to many boards and switches
 between them. Each board has its own key. The SLP's device is one allowed
 device on each board, and the family can remove it.
 
 ## 9. Recovery: when every device is gone
+
+*Amended 2026-09-23: the 24 words leave the UI; the QR card is the
+restore path (§ 12.5), and a supporter account restores without any
+card (§ 12.3). The recovery root and its derivation stay.*
 
 **DECIDED 2026-09-22.** This keeps the "zero loss" promise in
 `docs/strategy/Vision.md` § 4.4 without accounts.
@@ -348,7 +364,8 @@ All five asked questions were answered ("all agreed"):
 3. **History across devices:** no. History stays on the device (§ 2).
 4. **Retention:** never deleted for payment; deleted on request; idle
    boards after 3 years with in-app warnings (§ 6).
-5. **Free vs paid:**
+5. **Free vs paid:** *(superseded 2026-09-23 by
+   `docs/product/Pricing_And_Packaging.md` § 4)*
    - **Free for every board:** encrypted backup, the recovery sheet, and
      restore. "A voice is not rented" includes the vocabulary
      (`docs/product/Pricing_And_Packaging.md` § 1). A free board has one
@@ -361,3 +378,90 @@ On iOS, the Lifetime unlock is an in-app purchase (Apple requires it for
 digital unlocks). **UNVERIFIED:** how school and grant purchases (Apple
 School Manager volume purchase) interact with it. Check before pricing
 ships.
+
+## 12. Accounts, users and the QR card (2026-09-23)
+
+**DECIDED 2026-09-23** (not built; founder: "all approved"). Intake:
+`docs/founder/2026-09-23_Accounts_And_Pricing.md`. Execution:
+`docs/phases/015_Accounts_And_One_Price.md`. The engineering in § 12.3–
+§ 12.5 is the proposed design, confirmed or changed by the 015 slices.
+
+### 12.1 Words
+
+| Use | Means | Was |
+| --- | --- | --- |
+| **user** | the person who speaks with Pip ("Add user"); the unit of sync, backup and price | board |
+| **supporter** | an adult who helps a user: parent, grandparent, SLP, teacher | adult, linked device owner |
+| **boards / groups** | pages inside one user | (unchanged) |
+| **user key** | the key that locks one user's words, photos and recordings | board key |
+| **QR card** | the printable, emailable QR that restores or shares one user | recovery sheet |
+
+### 12.2 What stays
+
+§ 2 (what syncs; history never leaves the device), § 4–§ 7 (op log,
+merge, relay, web editor), the pairing and Allow flow (§ 3) and § 10's
+bans. The server still never reads a name, photo, recording, word or
+group name. Each user has its own key, so sharing one child with an SLP
+never shares a sibling.
+
+### 12.3 Supporter accounts
+
+- A supporter signs in with **email and a passkey** (Face ID, Touch ID,
+  Windows Hello). The child's device never signs in, and speaking never
+  waits on an account or a network.
+- An account holds: the email, passkeys, the users it supports, an
+  **account key pair**, and purchases.
+- **Keys stay end to end.** The account's private key is sealed under a
+  key the passkey produces on the device (WebAuthn PRF); the server stores
+  only the sealed key. Each user's key is wrapped to each supporting
+  account's public key, the way it is wrapped to devices today (§ 3). On a
+  new laptop: sign in, Face ID, and every user appears with its keys.
+- **Without PRF** (some authenticators lack it): email sign-in still
+  shows the users and purchases; the keys arrive by an Allow on another
+  device (§ 3) or by scanning a QR card.
+- **Email is the contact channel** for receipts and the idle-deletion
+  warning (§ 6), which today can only be shown in the app.
+- **Removing a supporter** from a user rotates the user key, as removing a
+  device does (§ 3), and re-wraps it to the remaining accounts and devices.
+- **No WorkOS.** The passkey unlock has to run in our own code; sign-in
+  email goes through Cloudflare. A district asking for single sign-on or
+  rostering reopens this.
+- Adult emails are the only new personal data the server holds. A
+  supporter deletes their account from settings.
+
+### 12.4 Many users on one device and one account
+
+- An SLP signs in once and sees a list of clients; a parent sees each
+  child. Tap a user to see that user's boards. Nobody logs out.
+- A child's device opens straight to its own user. A user switcher lives
+  in the Parent Corner, never on the child's screen: landing on a
+  sibling's layout breaks motor planning.
+- History, prediction weights and suggestions stay per user and per
+  device (§ 2); nothing crosses users.
+- **BUILT** today (the gap): one device holds one user. The sync config is
+  a single `pip_sync` entry (`public/shared/sync.mjs:22`), the profile row
+  is the fixed id `prf_local` (`public/shared/groups.mjs:648`,
+  `public/board.js:116`), and the local database is one kvvfs store in
+  localStorage (`public/db.js:59`) sized for one catalog copy, so many
+  users need a storage decision (015 slice 2).
+
+### 12.5 The QR card
+
+- Replaces the 24-word sheet. The card is a QR plus a short text code
+  for a device with no camera. Print it, save it as an image, or email it
+  to yourself or anyone.
+- **Scan to restore.** A new device scans the card and the user syncs
+  down. On a free user this moves the user (one live device,
+  `docs/product/Pricing_And_Packaging.md` § 4.2).
+- **The card is a house key.** Whoever holds it has full access to that
+  user; sharing the card is sharing access. The founder accepted this
+  (2026-09-23). **Replace card** issues a new one and the old card stops
+  working.
+- The recovery root and its per-epoch derivation (§ 9) stay; only the
+  encoding and the restore gesture change.
+
+### 12.6 Free vs paid
+
+Owned by `docs/product/Pricing_And_Packaging.md` § 4: \$49 once per user,
+every supporter free, 20 words of your own free, one live device free,
+backup and QR restore always free.

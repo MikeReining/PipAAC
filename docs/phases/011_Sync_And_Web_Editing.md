@@ -1,10 +1,9 @@
 # Phase 011 — Sync and web editing
 
-**Status:** Executing. Slices 1–8 built and proven (see their Works Test
-notes). Slice 9 is blocked: it implements billing entitlement plus a
-retention job that deletes boards — a high-risk stop needing a founder
-ruling on how a board becomes Lifetime before any code is written.
-Rulings recorded (slice 0).
+**Status:** Code-complete. Slices 1–8 built and proven (see their Works
+Test notes). Slice 9 moved to `docs/phases/015_Accounts_And_One_Price.md`
+slices 6–7 after the 2026-09-23 rulings (accounts, one price per user).
+Archive once 015 no longer cites this doc's Works Tests.
 
 **Direction DECIDED 2026-09-22** (founder: "a user can create and edit
 things on a computer and then have them also on their iPad"). Rulings
@@ -27,6 +26,10 @@ stops the phase for a new founder call.
 Needs 009 slices 1–3 (the Library is what the web editor shows).
 
 ## Vocabulary for code and docs
+
+*Superseded 2026-09-23: "board" for the sync unit is now "user", and
+supporters have accounts (`docs/phases/015_Accounts_And_One_Price.md`
+§ Vocabulary). The table below is kept as history.*
 
 | Use | Never use |
 | --- | --- |
@@ -250,6 +253,10 @@ re-print the sheet.
 
 ## Slice 9 — Free and Lifetime
 
+*Moved 2026-09-23 to `docs/phases/015_Accounts_And_One_Price.md` slices
+6–7, under the new price (`docs/product/Pricing_And_Packaging.md` § 4).
+Kept as history.*
+
 Goal: a free board has backup, restore and one linked device; Pip
 Lifetime allows more linked devices and the web editor. Retention rules
 run on the relay.
@@ -268,6 +275,5 @@ Works Test:
 
 ## Out of scope
 
-Multi-board SLP switching (PROPOSED, `docs/product/Sync_And_Web_Editing.md`
-§ 8). Real-time co-editing cursors. Syncing history (ruled out
+Multi-board SLP switching (now DECIDED, 015 slice 2). Real-time co-editing cursors. Syncing history (ruled out
 2026-09-22). The iOS app shell (`docs/product/Platforms_iOS_And_Web.md` § 3).
