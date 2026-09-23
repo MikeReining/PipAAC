@@ -171,7 +171,7 @@ trust with SLPs. Pip should say it in onboarding and marketing.
 | Phone layouts, orientation, tile sizes | `docs/product/Motor_Grid_And_Art.md` + `docs/product/Core_Coordinate_Map.md` |
 | iPhone as a platform | `docs/product/Platforms_iOS_And_Web.md` |
 | Phone as a paired device, live modeling | `docs/product/Sync_And_Web_Editing.md` |
-| Location signal in prediction | `docs/phases/006_Prediction_Engine.md` |
+| Location signal in prediction | `docs/archive/phases/006_Prediction_Engine.md` |
 | Occasions in pocket mode | `docs/phases/007_Occasions.md` |
 
 ## Next slice

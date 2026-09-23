@@ -138,10 +138,14 @@ const defaults = {
   weights: {
     local_only: Object.fromEntries(
       Object.entries(weights).map(([k, v]) => [k, +v.toFixed(4)])),
-    // Until any impression carries a real jev feature, with_jev starts
-    // identical to local_only — the jev weight learns on-device (§ 5.5).
+    // with_jev seeds jev=1.0 as a prior — the feature is log P_Jev(w)
+    // (≤0), so 0.5 gives a confident answer about ±1 logit of pull without
+    // drowning local evidence. It MUST start nonzero: only impressions
+    // logged after a changed offer carry real jev features, so a zero
+    // prior could never bootstrap itself. Learned on-device from
+    // 'answered' rows thereafter (§ 5.5).
     with_jev: Object.fromEntries(
-      Object.entries(weights).map(([k, v]) => [k, +v.toFixed(4)])),
+      Object.entries({ ...weights, jev: 0.5 }).map(([k, v]) => [k, +v.toFixed(4)])),
   },
   tau: { tile: best.tile, none: best.none },
 };

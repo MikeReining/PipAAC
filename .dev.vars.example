@@ -4,3 +4,5 @@
 #
 # Production (once, per environment):
 #   npx wrangler secret put <SECRET_NAME>
+# 006 slice 5 — Jev reranker: Worker-side TypeSafe key (never on the device).
+TYPESAFE_API_KEY=

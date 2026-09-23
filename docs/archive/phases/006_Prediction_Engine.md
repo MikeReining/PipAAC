@@ -1,8 +1,8 @@
 # Phase 006 — Prediction Engine
 
-**Status:** In progress — slices 1–4 done. Slice 5 is
-blocked on the founder's `TYPESAFE_API_KEY` Worker secret — see its
-high-risk stop. Slices 6+ follow it.
+**Status:** Complete — all five slices done; archived 2026-09-23.
+Durable truth lives in `docs/strategy/Dual_Engine_Predictive_Intelligence.md`
+and `docs/product/SSOT.md`.
 
 **DECIDED 2026-09-22** (founder review: "I agree with all of the above …
 please update all documents and create the new documents that we need").
@@ -359,6 +359,39 @@ Done when: the contract test passes, the toggle is in the Parent corner and
 on by default, and with sharing on a person sees the strip re-rank on a
 real device.
 
+**DONE.** `POST /jev/rank` on the Worker forwards the sanitized body
+verbatim to `https://api.typesafe.ai/v1/systemone` with
+`TYPESAFE_API_KEY` (`.dev.vars` locally; `wrangler secret put` in prod) —
+the key is never in the repo, on the device, or in a response
+(`src/worker/index.js`). `public/shared/jev.mjs` owns
+`buildJevRequest`/`jevTerm`/`jevRank`/`jevProbabilities`: the body is
+exactly the § 3.2 whitelist (`model`, `state`, `questions`), entities
+ride as `category: description` (never `spoken_name`), no clock digits,
+history, or counts. Model pinned `jev-1.13.0`. `learner_profile.
+jev_sharing` defaults on and syncs via `set_setting`; Parent Corner →
+"Smarter suggestions" toggles it — off means no fetch ever.
+`board.js renderStrip` paints local first, then fires Jev after the
+paint resolves: an answer within 150 ms re-ranks under `with_jev` and
+repaints only if the shown set changed; later answers stamp `late`,
+empty shortlists `skipped`, sharing-off `off` — all on the impression
+row (`markJev`), with `jev_model` from the response.
+
+Found while fitting: `with_jev.jev` seeded at 0 could never bootstrap —
+only post-answer impressions carry real jev features. Seeded prior 0.5:
+at 1.0 Jev's always-low `none` probability opened the gate and tripled
+false-shows (0.69 vs 0.30 on days 11–14); 0.5 is neutral-to-better
+(0.282 vs 0.296) until on-device learning takes over.
+
+Works Test: `src/board/jev.test.mjs` captures bodies at a stubbed
+network boundary — sharing off → no request; empty context → no
+request; *I want* + Cooper → whitelist-exact body, `Animals & Nature:
+family pet dog` present, `Cooper` absent, no dates/history/counts.
+`src/worker/index.test.mjs`: key added server-side, absent from the
+response; 503 without it; non-POST → 404. Live proof
+(`scripts/probes/jev_probe.mjs`): real taps → `late` + `jev-1.13.0` on
+the impression; toggle → `jev_sharing=0` → next row `off`.
+Live smoke + cap comparison: § Baselines.
+
 ---
 
 ## Baselines
@@ -368,6 +401,16 @@ Filled in by slices 2–5. Numbers only, with the commit that produced them.
 | Slice | Shortlist recall | Strip hit rate | False-show rate | Taps per word | Commit |
 | --- | --- | --- | --- | --- | --- |
 | 2 (current ranker) | 28.0% | 23.7% | 36.4% | 1.39 | 006/2 sim, held-out days 11–14 |
+| 5 local_only (days 11–14) | — | 28.2% | 29.6% | 1.525 | jev_smoke.mjs, same instrument |
+| 5 with_jev cap 8 | — | 28.2% | 26.8% | 1.525 | live, 71 calls, jev-1.13.0 |
+| 5 with_jev cap 16 | — | 26.8% | 28.2% | 1.542 | live, jev=0.5 prior |
+| 5 with_jev cap 32 | — | 26.8% | 28.2% | 1.542 | live |
+
+Live Jev latency (days 11–14 runs): median 120–139 ms, p90 151–205 ms —
+roughly half of answers land inside the 150 ms repaint window; the rest
+log `late`. Day-1 cold start: both arms 0% hit rate (no history → empty
+shortlists; Jev skipped or agreed — nothing to rerank). Cap made no
+measurable difference on this fixture; 16 stays the shipped default.
 
 ## Out of scope
 

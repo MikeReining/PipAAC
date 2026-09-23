@@ -187,17 +187,32 @@ export function features(db, item, sentence, now, locale) {
   };
 }
 
-/** Softmax over the shortlist ∪ {none} (§ 5.3). `none` carries only its
- *  learned bias until Jev answers. Returns candidates sorted by p. */
-export function scoreCandidates(rows, weights) {
+/** Softmax over the shortlist ∪ {none} (§ 5.3). `none` carries its
+ *  learned bias plus `log P_Jev(none)` — weighted by the jev weight —
+ *  when a Jev answer supplied it. Returns candidates sorted by p. */
+export function scoreCandidates(rows, weights, jevNone = null) {
   const logit = (x) =>
     MODEL_FEATURES.reduce((t, f) => t + (weights[f] ?? 0) * x[f], 0);
   const scored = rows.map((r) => ({ ...r, s: logit(r.x) }));
-  const eNone = Math.exp(weights.none_bias ?? 0);
+  const eNone = Math.exp(
+    (weights.none_bias ?? 0) + (jevNone === null ? 0 : (weights.jev ?? 0) * jevNone));
   const Z = scored.reduce((t, r) => t + Math.exp(r.s), eNone);
   for (const r of scored) r.p = Math.exp(r.s) / Z;
   scored.sort((a, b) => b.p - a.p || a.id.localeCompare(b.id));
   return { candidates: scored, pNone: eNone / Z };
+}
+
+/** § 5.1 — fold a Jev answer into the local shortlist: criterion `cN`
+ *  maps to shortlist position N; each candidate's `jev` feature becomes
+ *  `log P_Jev(w)` and `none` folds in the same way. Re-scores under the
+ *  `with_jev` weights and returns a fresh sorted result. */
+export function applyJev(rows, probabilities, weights) {
+  const logp = (p) => Math.log(Math.max(p ?? 0, 1e-9));
+  const withJev = rows.map((r, i) => ({
+    ...r,
+    x: { ...r.x, jev: logp(probabilities[`c${i + 1}`]) },
+  }));
+  return scoreCandidates(withJev, weights, logp(probabilities.none));
 }
 
 /** The show gate (§ 5.4): nothing when P(none) ≥ τ_none; else the tiles

@@ -588,6 +588,7 @@ const SYNCED_SETTINGS = new Set([
   "keyboard_mode",
   "keyboard_order",
   "highlight_next",
+  "jev_sharing",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);

@@ -46,6 +46,29 @@ export default {
       return stub.fetch(request);
     }
 
+    // Jev rerank (Dual_Engine § 3.2): the device never holds the key —
+    // the body is forwarded verbatim, the secret is added here, and
+    // nothing about the request or response contents is logged.
+    if (path === "/jev/rank" && request.method === "POST") {
+      if (!env?.TYPESAFE_API_KEY) {
+        return json({ error: "jev_unavailable" }, { status: 503 });
+      }
+      const body = await request.text();
+      const upstream = await fetch("https://api.typesafe.ai/v1/systemone", {
+        method: "POST",
+        headers: {
+          "authorization": `Bearer ${env.TYPESAFE_API_KEY}`,
+          "content-type": "application/json",
+        },
+        body,
+      });
+      const text = await upstream.text();
+      return new Response(text, {
+        status: upstream.status,
+        headers: { "content-type": "application/json; charset=utf-8" },
+      });
+    }
+
     // Pairing lobby (§ 3): a short-lived code stands up a lobby; the new
     // device polls it; the linked device writes the wrapped-key grant.
     if (path === "/pair" && request.method === "POST" && env?.PAIR) {

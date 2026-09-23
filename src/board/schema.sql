@@ -112,7 +112,11 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   keyboard_order TEXT NOT NULL DEFAULT 'standard' CHECK (keyboard_order IN ('standard', 'abc')),
   -- Parent Corner: "Highlight likely next words" — halo up to 3 grid cells
   -- the ranker predicts. Default OFF (docs/product/Design_System.md § States).
-  highlight_next INTEGER NOT NULL DEFAULT 0 CHECK (highlight_next IN (0, 1))
+  highlight_next INTEGER NOT NULL DEFAULT 0 CHECK (highlight_next IN (0, 1)),
+  -- Parent Corner: Jev sharing — the strip's shortlist and the sentence
+  -- being built may be reranked by TypeSafe Jev through the Worker
+  -- (Dual_Engine § 3.2). Default ON; off means no Jev call, ever.
+  jev_sharing INTEGER NOT NULL DEFAULT 1 CHECK (jev_sharing IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

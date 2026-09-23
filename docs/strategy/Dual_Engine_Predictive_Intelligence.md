@@ -7,7 +7,7 @@ Owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
 Foundational vision: `docs/strategy/Vision.md`.
 Durable facts map: `docs/product/SSOT.md`.
 Design invariants: `docs/product/Design_Invariants.md`.
-Execution: `docs/phases/006_Prediction_Engine.md`, `docs/phases/007_Occasions.md`,
+Execution: `docs/archive/phases/006_Prediction_Engine.md`, `docs/phases/007_Occasions.md`,
 `docs/phases/008_Partner_Listening.md`.
 
 ---
@@ -102,6 +102,14 @@ all arithmetic and time logic in code.
 
 ### 3.2 What Jev receives — and never receives
 
+**BUILT** (006 slice 5): `learner_profile.jev_sharing` defaults on and
+syncs; Parent Corner → "Smarter suggestions" toggles it; off means the
+device never calls (`public/board.js maybeJev`, `public/shared/jev.mjs`).
+The Worker passthrough `POST /jev/rank` adds `TYPESAFE_API_KEY`
+server-side and logs nothing (`src/worker/index.js`). The request builder
+is whitelist-exact — verified at a stubbed network boundary in
+`src/board/jev.test.mjs`, including the entity-name leak check.
+
 Jev sharing is a per-profile setting, **on by default**; a parent can turn
 it off in the Parent corner. Off means no Jev call, ever; the strip runs on the
 local engine alone. No zero-retention contract is assumed; the request is
@@ -175,7 +183,13 @@ not the gate. The gate is computed on the blended probabilities (§ 5.4).
 
 ### 3.4 Predictive Strip: Where Dynamic Candidates Live
 
-**DECIDED 2026-09-22** (not built). Layout owner: `docs/product/Motor_Grid_And_Art.md`.
+**DECIDED 2026-09-22; strip + Jev leg BUILT** (006 slices 2–5; layout
+owner: `docs/product/Motor_Grid_And_Art.md`). First paint is always the
+local model; Jev is fired after paint and may repaint only inside 150 ms
+(`JEV_WINDOW_MS`, `public/board.js maybeJev`); answers past the window or
+after the pick stamp `late` on the impression and are never shown. Live
+measurement: median answer ~120–139 ms, p90 ~150–205 ms — about half land
+inside the window (006 § Baselines).
 
 The strip is the dynamic surface. The core grid is not.
 
@@ -227,7 +241,7 @@ before any network call.
 **DECIDED 2026-09-22** (not built). Replaces the 2026-09-21 weighted sum
 (`0.55·P_Jev + 0.35·P_local + 0.10·grammar`), which added numbers on
 different scales and could not let either engine veto. Execution:
-`docs/phases/006_Prediction_Engine.md`.
+`docs/archive/phases/006_Prediction_Engine.md`.
 
 ### 5.1 Separate evidence, multiplied
 
@@ -261,7 +275,7 @@ most specific first:
 
 Shortlist size starts at 16 and is measured, not assumed: TypeSafe advises
 longer option lists are fine (Choice accepts up to 255), the 2026-09-22
-spec assumed shorter is better. `docs/phases/006_Prediction_Engine.md`
+spec assumed shorter is better. `docs/archive/phases/006_Prediction_Engine.md`
 slice 5 runs 8 / 16 / 32 on the simulation.
 
 **Keyboard-mode exception.** **BUILT** (`9ca4653`). Decided 2026-09-22. While the keyboard is open the grid is hidden, so there is nothing to halo. In keyboard mode only, after a committed word, core continuations may take strip slots, ranked with learner pairs (ids only). Cap stays 4. Spec: `docs/archive/phases/004_Keyboard.md` slice 7.

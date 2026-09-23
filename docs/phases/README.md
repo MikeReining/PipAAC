@@ -20,7 +20,6 @@ One critical path. Replace this table when the literal next slice changes — do
 | **P3** | 014 slice 1 — renderer of any shape (removes the ten-column assumption; unblocks the 15-cell starters). | `docs/phases/014_Grid_Density_And_Fit.md` |
 | **P4** | 013 slice 1 — the attention layer (glow, dim, never mute; route walk into groups). Also serves 014's upgrade highlight. | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
 | blocked | 011 slice 9 — free and lifetime (billing + retention delete — needs founder ruling on entitlement) | `docs/phases/011_Sync_And_Web_Editing.md` |
-| blocked | 006 slice 5 — Jev reranker (needs founder's `TYPESAFE_API_KEY`) | `docs/phases/006_Prediction_Engine.md` |
 
 ## Live index
 
@@ -29,7 +28,6 @@ Executing phases only. Each row names the **next** slice.
 | Phase | Next slice |
 | --- | --- |
 | [005 — Word Forms](005_Word_Forms.md) | Slice 1 — forms in the catalog |
-| [006 — Prediction Engine](006_Prediction_Engine.md) | Slice 5 — Jev reranker (blocked: founder's `TYPESAFE_API_KEY`) |
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
 | [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | **P1.** Slice 7 — bulk entry (slices 7–9 independent; 5 is post-launch) |

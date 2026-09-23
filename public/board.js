@@ -5,6 +5,7 @@
  */
 import { bootDb, savePhoto, loadPhotoURL } from "./db.js";
 import {
+  applyJev,
   closeSentence,
   detachEvent,
   fillChosen,
@@ -78,6 +79,7 @@ import {
   SENSE_ART_SQL, clearImageOverride, imageOverrideFor,
   libraryImagesFor, setImageOverride,
 } from "./shared/images.mjs";
+import { buildJevRequest, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -100,6 +102,13 @@ function onSyncApplied() {
   syncRepaintTimer = setTimeout(() => {
     entityPhoto.clear(); // photo_key may have changed
     senseMeta.clear();   // image overrides may have landed
+    const p = ALL(db,
+      "SELECT keyboard_mode, keyboard_order, highlight_next, jev_sharing FROM learner_profile WHERE id = 'prf_local'",
+    )[0] ?? {};
+    kbMode = p.keyboard_mode ?? kbMode;
+    kbOrder = p.keyboard_order ?? kbOrder;
+    highlightNext = (p.highlight_next ?? 0) === 1;
+    jevSharing = (p.jev_sharing ?? 1) === 1;
     renderGrid();
     renderStrip();
     rerenderView();
@@ -126,17 +135,21 @@ const ensureSentence = () => (sentenceId ??= openSentence(db));
  * the next pick's position — one row per distinct offer, deduped by
  * (sentence, position, shown). The next logged pick fills chosen_*. */
 let lastImpressionKey = null;
-function maybeImpression(candidates, shown, pNone = 0) {
-  if (sentenceId === null) return;
+function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
+  if (sentenceId === null) return false;
   const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
   const key = `${sentenceId}:${sentencePicks}:${shownKeys.join()}`;
-  if (key === lastImpressionKey) return;
+  if (key === lastImpressionKey) return false;
   lastImpressionKey = key;
   logImpression(db, {
     sentenceId, position: sentencePicks,
     candidates: candidates.map((c) => ({ kind: c.kind, id: c.id, x: c.x ?? {} })),
     shown: shownKeys, pNone,
+    weightSet: jev.weightSet ?? "local_only",
+    jevStatus: jev.jevStatus ?? "off",
+    jevModel: jev.jevModel ?? null,
   });
+  return true;
 }
 let addTarget = null;  // board_group id the add form files into
 let addCell = null;    // {page, slot_index} when + came from tapping an empty slot
@@ -409,10 +422,38 @@ function ghostCard() {
   return el;
 }
 
-async function renderStrip() {
+/** Strip items → card descriptors (entity tile or sense tile). */
+function stripCards(items) {
+  return items.map((c) => {
+    if (c.kind === "entity") {
+      return { entity: ALL(db, "SELECT * FROM personal_entity WHERE id = ?", [c.id])[0] };
+    }
+    const w = ALL(
+      db,
+      `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
+       JOIN label l ON l.sense_id = s.id
+         AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+       WHERE s.id = ?`,
+      [locale, c.id],
+    )[0];
+    return { id: w.id, label: w.label, role: w.fitzgerald_role,
+      onTap: () => tap(w.label, "sense", w.id, { hint: true, source: "strip" }) };
+  });
+}
+
+/** Paint the four strip slots — the only path that touches the tray. */
+async function paintStrip(cards) {
   const tray = $("tray");
   tray.querySelectorAll(".pred").forEach((n) => n.remove());
-  let cards;
+  for (let i = 0; i < 4; i++) {
+    tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
+  }
+  fitLabels(tray);
+  applyLikely();
+}
+
+async function renderStrip() {
+  let cards, jevCall = null;
   if (kbText) {
     // mid-word: the strip switches from continuations to completions
     cards = kbCompletions();
@@ -423,10 +464,9 @@ async function renderStrip() {
     // words included — the grid is hidden so the no-core rule doesn't
     // apply (slice 7, Dual_Engine §5.2).
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-    // Jev is never wired yet — the strip always runs the local_only set
-    // (Dual_Engine §5.3); the impression records which set ran. The
-    // child's learned weights win over the shipped defaults once Speak
-    // has trained them (§5.5).
+    // First paint is always the local model (§ 3.4: <50 ms, never waits
+    // on the network). The child's learned weights win over the shipped
+    // defaults once Speak has trained them (§5.5).
     const model = { weights: loadWeights(db, catalog.prediction).weights,
                     tau: catalog.prediction.tau };
     const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale, model);
@@ -438,31 +478,70 @@ async function renderStrip() {
       scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
       items, scored?.pNone ?? 0,
     );
-    cards = [];
-    for (const c of items) {
-      if (c.kind === "entity") {
-        cards.push({
-          entity: ALL(db, "SELECT * FROM personal_entity WHERE id = ?", [c.id])[0],
-        });
-      } else {
-        const w = ALL(
-          db,
-          `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
-           JOIN label l ON l.sense_id = s.id
-             AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-           WHERE s.id = ?`,
-          [locale, c.id],
-        )[0];
-        cards.push({ id: w.id, label: w.label, role: w.fitzgerald_role,
-          onTap: () => tap(w.label, "sense", w.id, { hint: true, source: "strip" }) });
-      }
-    }
+    cards = stripCards(items);
+    // Jev may re-rank inside the paint window (§ 3.4) — fired after the
+    // local paint resolves, so the strip never waits on the network and
+    // the 150 ms window is measured from the real first paint.
+    if (scored) jevCall = { scored, sents };
   }
-  for (let i = 0; i < 4; i++) {
-    tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
+  await paintStrip(cards);
+  if (jevCall) maybeJev(jevCall.scored, jevCall.sents, Date.now());
+}
+
+/* Jev rerank (§ 3): with sharing on, the shortlist's labels and the
+ * sentence's labels go to the Worker, which adds the TypeSafe key. An
+ * answer inside JEV_WINDOW_MS of first paint re-ranks under the
+ * with_jev weights; a later answer is logged 'late', never shown — the
+ * strip never reshuffles under a reaching hand. */
+const JEV_WINDOW_MS = 150;
+let jevSharing = true; // bound from learner_profile at boot
+
+async function maybeJev(scored, sents, paintedAt) {
+  if (!jevSharing) return; // the row stays 'off' — sharing is disabled
+  if (!scored.candidates.length) return markJev("skipped", null);
+  const candTerms = scored.candidates.map((c) => jevTerm(db, c, locale));
+  const sentTerms = sents.map((c) => jevTerm(db, c, locale)).filter(Boolean);
+  const req = buildJevRequest(candTerms, sentTerms, null, { sharing: jevSharing });
+  if (!req) return markJev("skipped", null);
+  const sid = sentenceId, pos = sentencePicks;
+  try {
+    const res = await jevRank(req);
+    const probs = jevProbabilities(res);
+    // The strip moment this answered may have already closed — the row
+    // still records what came back (late), it just can't repaint.
+    const moved = sid !== sentenceId || pos !== sentencePicks;
+    if (!probs) return markJev("error", res?.model, sid, pos);
+    if (moved || Date.now() - paintedAt > JEV_WINDOW_MS)
+      return markJev("late", res.model, sid, pos);
+    const wj = {
+      weights: loadWeights(db, catalog.prediction, "with_jev").weights,
+      tau: catalog.prediction.tau,
+    };
+    const reranked = applyJev(scored.candidates, probs, wj.weights);
+    const items = showGate(reranked.candidates, reranked.pNone, wj.tau)
+      .map((r) => ({ kind: r.kind, id: r.id }));
+    // An identical offer dedupes inside maybeImpression — markJev then
+    // stamps the answer on the existing row. A changed offer repaints
+    // and logs a with_jev impression, the rows with_jev learns from.
+    const changed = maybeImpression(reranked.candidates, items, reranked.pNone, {
+      weightSet: "with_jev", jevStatus: "answered", jevModel: res.model,
+    });
+    if (changed) await paintStrip(stripCards(items));
+    else markJev("answered", res.model);
+  } catch {
+    markJev("error", null, sid, pos);
   }
-  fitLabels(tray);
-  applyLikely();
+}
+
+/** Stamp the Jev outcome on the impression for that position — late and
+ *  error answers are evidence too (with_jev learns only on 'answered'). */
+function markJev(status, model, sid = sentenceId, pos = sentencePicks) {
+  db.prepare(
+    `UPDATE strip_impression SET jev_status = ?, jev_model = ?
+     WHERE id = (SELECT id FROM strip_impression
+                 WHERE sentence_id = ? AND position = ? AND jev_status = 'off'
+                 ORDER BY id DESC LIMIT 1)`,
+  ).run(status, model, sid, pos);
 }
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
@@ -747,11 +826,12 @@ $("add-mywords").addEventListener("click", () => {
  * correct across a locale change. */
 const kbProfile = ALL(
   db,
-  "SELECT keyboard_mode, keyboard_order, highlight_next FROM learner_profile WHERE id = 'prf_local'",
+  "SELECT keyboard_mode, keyboard_order, highlight_next, jev_sharing FROM learner_profile WHERE id = 'prf_local'",
 )[0] ?? {};
 let kbMode = kbProfile.keyboard_mode ?? "pip";
 let kbOrder = kbProfile.keyboard_order ?? "standard";
 highlightNext = (kbProfile.highlight_next ?? 0) === 1;
+jevSharing = (kbProfile.jev_sharing ?? 1) === 1;
 
 function syncKbSettings() {
   $("kb-order-standard").textContent = resolveKeymap(locale)?.standardName ?? "Standard";
@@ -764,6 +844,9 @@ function syncKbSettings() {
   $("kb-order").classList.toggle("disabled", kbMode === "device");
   for (const b of $("hl-next").querySelectorAll("button")) {
     b.classList.toggle("on", b.dataset.v === (highlightNext ? "1" : "0"));
+  }
+  for (const b of $("jev-share").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === (jevSharing ? "1" : "0"));
   }
 }
 syncKbSettings();
@@ -800,6 +883,13 @@ $("hl-next").addEventListener("click", (e) => {
   setSetting(db, "highlight_next", highlightNext ? 1 : 0);
   syncKbSettings();
   applyLikely();
+});
+$("jev-share").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v === undefined) return;
+  jevSharing = v === "1";
+  setSetting(db, "jev_sharing", jevSharing ? 1 : 0);
+  syncKbSettings();
 });
 
 /* --- permanent utility anchors --- */
