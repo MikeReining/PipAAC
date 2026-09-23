@@ -32,6 +32,17 @@ book → what the partner just said → the user's own history → Jev live**,
 and every user feeds the book back (step 26, the flywheel). The grid is
 untouched; the user can still say anything.
 
+> **CHILDES rule (DECIDED 2026-09-23, founder).** CHILDES data, or
+> anything computed from it, goes into Pip **only if TalkBank gives us
+> written permission.** The founder emailed TalkBank on 2026-09-23. Until
+> a written yes arrives: no CHILDES file, count, table, or model in the
+> repo, the opening book, the bench, or any shipped build. The free
+> sources carry the plan on their own. If permission arrives, it is
+> stored in the repo, its exact scope (test set only, or also the book)
+> is recorded in R11, and the book build may then add CHILDES within
+> that scope. If the answer is no, CHILDES stays out for good, and the
+> 2026-09-23 measurement remains the only use.
+
 | Topic | Owner |
 | --- | --- |
 | Blend, features, show gate, learning, metrics | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5 |
@@ -188,7 +199,7 @@ Why this changes the audit's order:
 | R8 | Data licenses | Free sources only; no paid license (step 23). |
 | R9 | Ranking | By probability: the words the user is about to say, like a phone keyboard. Never by how far away a word is. |
 | R10 | The flywheel | On by default under the existing "Help improve Pip" switch; anonymous 1–3-word counts of built-in words (step 26). Amends Stats § 6.3's "no sequence of words". Turning it off stays free (recommended; founder floated charging for opt-out). |
-| R11 | CHILDES | Founder is asking TalkBank for permission (2026-09-23). Until a written answer: not in the shipped book or the repo. A one-off measurement (step 23 § Real children) shows what it's worth: +11–16 points in top 4 over the best legal book. |
+| R11 | CHILDES | **Only with TalkBank's written permission** (see the CHILDES rule at the top). Founder emailed TalkBank 2026-09-23; answer pending. Until then, nothing CHILDES-derived in the repo, book, bench, or builds. A one-off measurement (step 23 § Real children) shows what it's worth: +11–16 points in top 4 over the best free book. When the answer arrives, record its date and exact scope here. |
 
 ---
 
@@ -654,8 +665,12 @@ Excluded:
 - **CHILDES/TalkBank:** CC BY-NC-SA 4.0. TalkBank's rules say the license
   "precludes the incorporation of the data in commercial products".
   Pip sells Pip Lifetime, so Pip is a commercial product even though the
-  core app is free. CHILDES is never in the shipped book. Using it as a
-  **test set only** needs TalkBank's written permission (R11).
+  core app is free. CHILDES is used **only if TalkBank gives written
+  permission**, and only within the scope they grant (test set only, or
+  also the book). Enforced: `book_sources.json` may list CHILDES only
+  with a `permission` field pointing to the stored permission letter
+  (`data/prediction/permissions/`); the license test fails otherwise
+  (R11).
 - **BabyLM:** it bundles CHILDES and OpenSubtitles, both non-commercial.
 - OpenSubtitles via OPUS (CC BY-NC-SA); the Santa Barbara Corpus (CC
   BY-ND); wordfreq's data (CC BY-SA); anything paid (Switchboard, COCA,
