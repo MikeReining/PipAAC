@@ -26,9 +26,7 @@ import {
   resumeSession, saveSpotList, spotLists, spotlight,
   spotlightGroups, spotSession, startSession, startSpotlight, tipFor,
 } from "./shared/spotlight.mjs";
-import { applyKey, displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
-import { PARTNER_SENSES } from "./shared/keymaps.mjs";
-import { buildIndex, suggest } from "./shared/spelling.mjs";
+import { displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
@@ -112,6 +110,7 @@ import { coreCells, moveCore } from "./shared/coremove.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
 import { mountCellsSheet } from "./board/cells-sheet.js";
 import { mountSpotlightSheet } from "./board/spotlight-sheet.js";
+import { mountKeyboard } from "./board/keyboard-ui.js";
 import {
   family as familyRow, familyItems,
 } from "./shared/families.mjs";
@@ -210,12 +209,12 @@ function onSyncApplied() {
   syncRepaintTimer = setTimeout(() => {
     entityPhoto.clear(); // photo_key may have changed
     senseMeta.clear();   // image overrides may have landed
-    kbIndex = null;      // masks and renames may have landed
+    kbUi.invalidateIndex();      // masks and renames may have landed
     const p = ALL(db,
       "SELECT keyboard_mode, keyboard_order, highlight_next, jev_sharing FROM learner_profile WHERE id = 'prf_local'",
     )[0] ?? {};
-    kbMode = p.keyboard_mode ?? kbMode;
-    kbOrder = p.keyboard_order ?? kbOrder;
+    kbUi.mode = p.keyboard_mode ?? kbUi.mode;
+    kbUi.order = p.keyboard_order ?? kbUi.order;
     highlightNext = (p.highlight_next ?? 0) === 1;
     jevSharing = (p.jev_sharing ?? 1) === 1;
     bindSpotSettings();  // spotlight settings sync too
@@ -429,13 +428,13 @@ function renderBar() {
     }
     bar.appendChild(chip);
   });
-  if (kbText) {
+  if (kbUi.text) {
     const p = document.createElement("span");
     p.className = "partial";
-    p.textContent = kbText + "▌";
+    p.textContent = kbUi.text + "▌";
     bar.appendChild(p);
   }
-  if (!sentence.length && !kbText) {
+  if (!sentence.length && !kbUi.text) {
     // The ink bird (never the gold one near the grid) holds the empty bar.
     const img = document.createElement("img");
     img.className = "pip-ink";
@@ -446,7 +445,7 @@ function renderBar() {
     note.textContent = "Tap a word to start.";
     bar.append(img, note);
   }
-  $("clear").disabled = !sentence.length && !kbText;
+  $("clear").disabled = !sentence.length && !kbUi.text;
   $("speak").disabled = !sentence.length;
   fitLabels(bar);
 }
@@ -462,7 +461,7 @@ $("clear").addEventListener("click", () => {
     openImpressionId = null;
   }
   sentence.length = 0;
-  kbText = "";
+  kbUi.text = "";
   renderBar();
   renderStrip();
 });
@@ -650,9 +649,9 @@ async function renderStrip() {
   if (expand) return renderExpand();
   const cap = stripSlots(boardGeom().cols);
   let cards, jevCall = null;
-  if (kbText) {
+  if (kbUi.text) {
     // mid-word: the strip switches from continuations to completions
-    cards = kbCompletions();
+    cards = kbUi.completions();
   } else if (sentence.length === 0) {
     cards = (await idleStarters()).slice(0, cap);
   } else {
@@ -665,8 +664,8 @@ async function renderStrip() {
     // defaults once Speak has trained them (§5.5).
     const lw = loadWeights(db, catalog.prediction);
     const model = { weights: lw.weights, tau: catalog.prediction.tau };
-    const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale, model);
-    const items = kbOpen
+    const scored = kbUi.isOpen() ? null : stripScored(db, sents, Date.now(), locale, model);
+    const items = kbUi.isOpen()
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
       : spotGate(scored.candidates, scored.pNone, model.tau, cap)
           .map((r) => ({ kind: r.kind, id: r.id }));
@@ -676,7 +675,7 @@ async function renderStrip() {
     maybeImpression(
       scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
       items, scored?.pNone ?? 0, {
-        mode: kbOpen ? "keyboard" : "picture", cap,
+        mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
         weightsLocal: scored ? {
           w: model.weights, tau: model.tau,
           ver: catalog.prediction.version, seen: lw.examplesSeen,
@@ -1307,7 +1306,7 @@ let highlightNext = false;
 let likelySet = new Set();
 function applyLikely() {
   const next = new Set();
-  if (highlightNext && !editing && view === "board" && !kbOpen && sentence.length) {
+  if (highlightNext && !editing && view === "board" && !kbUi.isOpen() && sentence.length) {
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
     // Same local model the strip paints with (§ 3.4: never waits on Jev).
     const model = { weights: loadWeights(db, catalog.prediction).weights,
@@ -1355,8 +1354,8 @@ document.addEventListener("keydown", (e) => {
       return;
     }
     if (view === "group") return openGroupIndex();
-    if (view === "groupIndex") return setView("board");
-    if (kbOpen) closeKb();
+    if (view === "groupIndex") return kbUi.setView("board");
+    if (kbUi.isOpen()) kbUi.closeKb();
     return;
   }
   // Hardware keys work in any mode: a letter or digit opens the keyboard
@@ -1366,30 +1365,30 @@ document.addEventListener("keydown", (e) => {
   if (t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement) return;
   if (document.querySelector(".overlay.open")) return;
   if (e.metaKey || e.ctrlKey || e.altKey) return;
-  const km = keyMap(locale, kbOrder);
+  const km = keyMap(locale, kbUi.order);
   const devField = $("kb-device");
-  if (kbOpen && devField) {
+  if (kbUi.isOpen() && devField) {
     // Device mode with the field unfocused (e.g. after a partner tap):
     // route the keystroke into the field model — a focused field handles
     // its own keys via `input` (filtered above).
     if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
       e.preventDefault();
-      deviceFeed(e.key);
+      kbUi.feed(e.key);
     }
     return;
   }
   if (e.key === "Backspace" || e.key === " " || e.key === "Enter") {
-    if (!kbOpen) return;
+    if (!kbUi.isOpen()) return;
     e.preventDefault();
-    kbPress(e.key);
+    kbUi.press(e.key);
     return;
   }
   if (e.key === "Dead") {
     // a real QWERTZ/AZERTY/Spanish keyboard's dead key arrives as "Dead"
     const dead = resolveKeymap(locale)?.dead;
     if (dead) {
-      if (!kbOpen) openKb();
-      kbPress(dead);
+      if (!kbUi.isOpen()) kbUi.openKb();
+      kbUi.press(dead);
     }
     return;
   }
@@ -1398,9 +1397,9 @@ document.addEventListener("keydown", (e) => {
   const isDigit = ch >= "0" && ch <= "9";
   const inMap = km ? km.some((k) => (k.kind === "char" || k.kind === "dead") && k.value === ch) : /[\p{L}\p{N}]/u.test(ch);
   if (!inMap && !isDigit) return;
-  if (!kbOpen) openKb();
-  if ($("kb-device")) deviceFeed(e.key);
-  else kbPress(e.key);
+  if (!kbUi.isOpen()) kbUi.openKb();
+  if ($("kb-device")) kbUi.feed(e.key);
+  else kbUi.press(e.key);
 });
 $("corner").addEventListener("click", () => {
   if (editing) {
@@ -1420,70 +1419,35 @@ $("add-mywords").addEventListener("click", () => {
   openAddForm("grp_my_words");
 });
 
-/* Keyboard settings: two segmented controls in the Parent corner. Each
- * writes its column on tap — no Save button. Letter order is disabled
- * while Device keyboard is selected, and the first segment shows the
- * locale's real layout name (QWERTY/QWERTZ/AZERTY), never "standard".
- * `standard` is the locale's national layout, so a stored value stays
- * correct across a locale change. */
+/* Keyboard — public/board/keyboard-ui.js. Highlight and Jev sharing
+ * stay here: they are board settings that share the corner's segmented
+ * controls, so this block still paints them through syncSettings. */
 const kbProfile = ALL(
   db,
   "SELECT keyboard_mode, keyboard_order, highlight_next, jev_sharing FROM learner_profile WHERE id = 'prf_local'",
 )[0] ?? {};
-let kbMode = kbProfile.keyboard_mode ?? "pip";
-let kbOrder = kbProfile.keyboard_order ?? "standard";
 highlightNext = (kbProfile.highlight_next ?? 0) === 1;
 jevSharing = (kbProfile.jev_sharing ?? 1) === 1;
-
-function syncKbSettings() {
-  $("kb-order-standard").textContent = resolveKeymap(locale)?.standardName ?? "Standard";
-  for (const b of $("kb-mode").querySelectorAll("button")) {
-    b.classList.toggle("on", b.dataset.v === kbMode);
-  }
-  for (const b of $("kb-order").querySelectorAll("button")) {
-    b.classList.toggle("on", b.dataset.v === kbOrder);
-  }
-  $("kb-order").classList.toggle("disabled", kbMode === "device");
-  for (const b of $("hl-next").querySelectorAll("button")) {
-    b.classList.toggle("on", b.dataset.v === (highlightNext ? "1" : "0"));
-  }
-  for (const b of $("jev-share").querySelectorAll("button")) {
-    b.classList.toggle("on", b.dataset.v === (jevSharing ? "1" : "0"));
-  }
-}
-syncKbSettings();
-
-/** Rebuild the keyboard surface after a settings or locale change. */
-function rebuildKb() {
-  kbBuilt = false;
-  if (kbOpen) {
-    buildKb();
-    fitKbCaps();
-  }
-}
-
-$("kb-mode").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (!v || v === kbMode) return;
-  kbMode = v;
-  setSetting(db, "keyboard_mode", v);
-  rebuildKb();
-  syncKbSettings();
+const kbUi = mountKeyboard({
+  db, locale, profile: kbProfile, all: ALL,
+  sentence, getSentenceId: () => sentenceId, ensureSentence,
+  getSentencePicks: () => sentencePicks,
+  setSentencePicks: (n) => { sentencePicks = n; },
+  speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
+  showGroupHint, applyLikely, fitLabels, senseById,
+  getHighlightNext: () => highlightNext,
+  getJevSharing: () => jevSharing,
+  getView: () => view,
+  setViewName: (v) => { view = v; },
+  renderGroupIndex, renderGroupPage, renderEditor,
 });
-$("kb-order").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (!v || v === kbOrder) return;
-  kbOrder = v;
-  setSetting(db, "keyboard_order", v);
-  rebuildKb();
-  syncKbSettings();
-});
+
 $("hl-next").addEventListener("click", (e) => {
   const v = e.target.closest("button")?.dataset.v;
   if (v === undefined) return;
   highlightNext = v === "1";
   setSetting(db, "highlight_next", highlightNext ? 1 : 0);
-  syncKbSettings();
+  kbUi.syncSettings();
   applyLikely();
 });
 $("jev-share").addEventListener("click", (e) => {
@@ -1491,7 +1455,7 @@ $("jev-share").addEventListener("click", (e) => {
   if (v === undefined) return;
   jevSharing = v === "1";
   setSetting(db, "jev_sharing", jevSharing ? 1 : 0);
-  syncKbSettings();
+  kbUi.syncSettings();
 });
 
 /* Spotlight sheet — public/board/spotlight-sheet.js */
@@ -1509,13 +1473,13 @@ const renderCellsSeg = mountCellsSheet({
 });
 
 /* Smart bar family editor — public/board/family-editor.js */
-mountFamilyEditor({ db, locale, open, close, toast, resolveTyped });
+mountFamilyEditor({ db, locale, open, close, toast, resolveTyped: kbUi.resolveTyped });
 
 /* --- permanent utility anchors --- */
 $("anchor-kb").addEventListener("click", () => {
-  if (kbOpen) return closeKb(); // the same anchor that opened it closes it
-  setView("board");
-  openKb();
+  if (kbUi.isOpen()) return kbUi.closeKb(); // the same anchor that opened it closes it
+  kbUi.setView("board");
+  kbUi.openKb();
   // iOS shows the system keyboard only for a focus inside the user
   // gesture — synchronous, no await before it.
   $("kb-device")?.focus();
@@ -1526,396 +1490,6 @@ $("spot-chip").addEventListener("click", () => {
   renderGrid();
   rerenderView();
 });
-
-/* --- keyboard: a board mode, not a modal. The locale's key map renders
-   into the grid in place (same 10×6 geometry). Typing feeds prefix
-   completions into the strip; space commits the word (and speaks it);
-   the ⌨ anchor toggles — there is no Done key. */
-let kbOpen = false;
-let kbText = ""; // the buffer — the word in progress
-let kbBuilt = false;
-let kbPendingAccent = null; // dead key latched, waiting for its vowel
-let kbLead = null; // opening mark (¿ ¡) waiting for the next committed item
-let kbDeadEl = null; // the dead key's element, for the latched style
-let kbIndex = null; // completion index — built once when the keyboard opens,
-// rebuilt after an entity add or a locale change (Profile_Presentation_Modes §4.4)
-
-/** Grid-area view swap: board | groupIndex | group render into
- *  #groupgrid, keyboard into #kb — same physical space, strip and bar
- *  never move. */
-function setView(v) {
-  view = v;
-  if (v !== "board" && kbOpen) closeKb();
-  document.body.classList.toggle("groups", v === "groupIndex" || v === "group");
-  document.body.classList.toggle("editor", v === "editor");
-  if (v === "groupIndex") renderGroupIndex();
-  else if (v === "group") renderGroupPage();
-  else if (v === "editor") renderEditor();
-  applyLikely();
-}
-
-function openKb() {
-  if (!kbBuilt) buildKb();
-  kbIndex ??= buildKbIndex();
-  kbOpen = true;
-  document.body.classList.add("kb");
-  renderKbAnchor();
-  fitKbCaps();
-  renderBar();
-  renderStrip();
-}
-function closeKb() {
-  kbOpen = false;
-  $("kb-device")?.blur();
-  document.body.classList.remove("kb");
-  renderKbAnchor();
-  applyLikely();
-}
-
-/** While the keyboard is open the anchor that opened it becomes the way
- *  back — same element, same position, only its text changes. */
-function renderKbAnchor() {
-  const a = $("anchor-kb");
-  a.querySelector(".glyph").textContent = kbOpen ? "▦" : "⌨";
-  a.querySelector("span:last-child").textContent = kbOpen ? "Board" : "Keyboard";
-  a.title = kbOpen ? "Board" : "Keyboard";
-}
-
-function buildKb() {
-  kbBuilt = true;
-  const kb = $("kb");
-  kb.innerHTML = "";
-  const keys = keyMap(locale, kbOrder);
-  if (kbMode === "device" || !keys) {
-    if (!keys) {
-      // A locale with no key map gets Device keyboard mode — never
-      // English keys (Profile_Presentation_Modes §4.1).
-      console.warn(`keyboard: no key map for locale "${locale}" — device keyboard`);
-    }
-    buildKbDevice(kb);
-    return;
-  }
-  for (const k of keys) {
-    const el = kbCell(k);
-    el.style.gridColumn = `${(k.slot % 10) + 1} / span ${k.span}`;
-    el.style.gridRow = `${Math.floor(k.slot / 10) + 1}`;
-    kb.appendChild(el);
-  }
-}
-
-/* Letter size is per-key, not per-row: a narrow "i" on a portrait key can
- * stand taller than a wide "w" on the same key. measureText gives each
- * cap's em width once Andika is ready; the cap then takes the largest
- * size that fits ~78% of the key's height AND ~80% of its width. */
-const kbCapCtx = document.createElement("canvas").getContext("2d");
-
-function fitKbCaps() {
-  document.fonts.ready.then(() => {
-    for (const key of $("kb").querySelectorAll(".kb-key:not(.kb-util)")) {
-      const cap = key.querySelector(".kc");
-      const r = key.getBoundingClientRect();
-      if (!r.width || !r.height) continue;
-      kbCapCtx.font = '700 100px "Andika"';
-      const emWidth = kbCapCtx.measureText(cap.textContent).width / 100 || 0.5;
-      cap.style.fontSize = `${Math.min(r.height * 0.78, (r.width * 0.8) / emWidth)}px`;
-    }
-  });
-}
-window.addEventListener("resize", () => {
-  if (kbOpen) fitKbCaps();
-  fitLabels($("grid"));
-  fitLabels($("tray"));
-  fitLabels($("bar"));
-  if (view !== "board") fitLabels($("groupgrid"));
-});
-
-/** One key of the Pip-keys map. Char keys are white with a big cap;
- *  space, ⌫, and the dead key wear the utility colors. Partner cells are
- *  built by partnerCell. */
-function kbCell(k) {
-  if (k.kind === "partner") return partnerCell(k.value);
-  const el = document.createElement("button");
-  const cap = document.createElement("span");
-  cap.className = "kc";
-  el.appendChild(cap);
-  if (k.kind === "char") {
-    el.className = "kb-key";
-    cap.textContent = k.value;
-  } else if (k.kind === "dead") {
-    el.className = "kb-key kb-util";
-    cap.textContent = k.value;
-    kbDeadEl = el;
-  } else if (k.kind === "space") {
-    el.className = "kb-key kb-util kb-spacekey";
-    cap.textContent = "␣";
-    const sub = document.createElement("span");
-    sub.className = "sub";
-    sub.textContent = "space";
-    el.appendChild(sub);
-  } else {
-    // backspace
-    el.className = "kb-key kb-util";
-    cap.textContent = "⌫";
-  }
-  el.addEventListener("click", () => kbPress(k.value));
-  return el;
-}
-
-/* Partner row (slice 4): the speller talks ABOUT the typing — yes/no and
- * the spelling-negotiation phrases speak immediately and never touch the
- * sentence or the buffer. A locale with no label for a partner sense
- * renders the key disabled, never text from another language. */
-function partnerCell(senseId) {
-  const s = senseById(senseId);
-  const el = document.createElement("button");
-  if (!s) {
-    el.className = "gcell empty";
-    el.disabled = true;
-    return el;
-  }
-  el.className = `kb-key kb-partner r-${s.fitzgerald_role}`;
-  const cap = document.createElement("span");
-  cap.className = "kc";
-  cap.textContent = s.label;
-  el.appendChild(cap);
-  // Don't let the tap steal focus — in device mode that would dismiss the
-  // system keyboard the speller is typing on.
-  el.addEventListener("mousedown", (e) => e.preventDefault());
-  el.addEventListener("click", async () => {
-    el.classList.add("flash");
-    setTimeout(() => el.classList.remove("flash"), 350);
-    // Partner talk about the typing — never a sentence member, but it
-    // did happen while a sentence may have been open.
-    logSelection(db, "sense", s.id, Date.now(), {
-      sentenceId, position: null, source: "keyboard",
-    });
-    // Clip under the profile voice, else device TTS in the profile locale —
-    // partner keys never take the 400 ms silent slot.
-    const key = clipKeyFor(s.id);
-    if (key) await playClip(key);
-    else speak(s.label);
-  });
-  return el;
-}
-
-/** One keystroke, from screen or hardware: the pure reducer updates
- *  buffer/marks/items, then this does the side effects — resolve each
- *  committed word, speak it, log it, re-render. */
-function kbPress(key) {
-  const prevLast = sentence[sentence.length - 1];
-  const res = applyKey(
-    { buffer: kbText, pendingAccent: kbPendingAccent, lead: kbLead, items: sentence },
-    key,
-    locale,
-  );
-  kbText = res.state.buffer;
-  kbPendingAccent = res.state.pendingAccent;
-  kbLead = res.state.lead;
-  // ⌫ pops the last bar item into the buffer — if it was a logged pick,
-  // detach its event and shift the rest of the sentence down (§6.2c).
-  if (key === "Backspace" && res.state.items.length < sentence.length &&
-      prevLast?.id && sentenceId !== null) {
-    detachEvent(db, sentenceId, sentencePicks - 1);
-    sentencePicks--;
-  }
-  sentence.splice(0, sentence.length, ...res.state.items);
-  for (const e of res.effects) {
-    if (e.type === "commit") commitKbItem(e.index);
-    else if (e.type === "speak") speakSentence();
-  }
-  if (kbDeadEl) kbDeadEl.classList.toggle("latched", kbPendingAccent !== null);
-  renderBar();
-  renderStrip();
-}
-
-/**
- * Commit resolution (slice 2 rule 4), on the normalized buffer in the
- * profile locale: an approved label (lemma or alias) → an exact entity
- * spoken_name → the typed string through device TTS. An alias hit keeps
- * the typed text in the bar, so `3` stays `3` while the *three* clip
- * plays. Never replaces what was typed with a guess.
- */
-function resolveTyped(text) {
-  const norm = normalizeV1(text);
-  const hit = ALL(
-    db,
-    `SELECT s.id, l.text AS label, l.kind
-     FROM label l JOIN sense s ON s.id = l.sense_id
-     WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
-     ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC`,
-    [norm, locale],
-  )[0];
-  if (hit) return { kind: "sense", id: hit.id, display: hit.kind === "lemma" ? hit.label : text };
-  const ent = ALL(db, "SELECT id, spoken_name FROM personal_entity WHERE status = 'active'").find(
-    (e) => normalizeV1(e.spoken_name) === norm,
-  );
-  if (ent) return { kind: "entity", id: ent.id, display: ent.spoken_name };
-  return { kind: "typed", id: null, display: text };
-}
-
-/** Replace the placeholder item applyKey committed with the resolved
- *  item, then speak/log it — the same side effects as a grid tap. */
-function commitKbItem(index) {
-  const raw = sentence[index];
-  const hit = resolveTyped(raw.text);
-  const item = { kind: hit.kind, id: hit.id, text: hit.display };
-  if (raw.punct) item.punct = raw.punct;
-  if (raw.lead) item.lead = raw.lead;
-  sentence[index] = item;
-  speakItem(item);
-  if (item.id) {
-    ensureSentence();
-    fillChosen(db, sentenceId, { kind: item.kind, id: item.id, source: "keyboard" });
-    logSelection(db, item.kind, item.id, Date.now(), {
-      sentenceId, position: sentencePicks++, source: "keyboard",
-    });
-    showGroupHint(item.kind, item.id);
-  }
-}
-
-/** Snapshot the catalog's approved labels (lemma + alias) and entities
- *  into the pure matcher index. Freqs are learner_event_log counts
- *  captured at build time — the keystroke path never touches SQL. */
-function buildKbIndex() {
-  const senses = ALL(
-    db,
-    `SELECT s.id, l.text AS label, s.fitzgerald_role,
-       (SELECT COUNT(*) FROM learner_event_log le
-         WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
-     FROM label l JOIN sense s ON s.id = l.sense_id
-     WHERE l.status = 'approved' AND l.locale = ?
-       AND NOT EXISTS (SELECT 1 FROM sense_mask m
-                       WHERE m.sense_id = s.id AND m.status = 'hidden')`,
-    [locale],
-  ).map((w) => ({
-    kind: "sense",
-    id: w.id,
-    text: w.label,
-    freq: w.freq,
-    role: w.fitzgerald_role,
-  }));
-  const ents = ALL(
-    db,
-    `SELECT e.*,
-       (SELECT COUNT(*) FROM learner_event_log le
-         WHERE le.item_kind = 'entity' AND le.item_id = e.id) AS freq
-     FROM personal_entity e
-     WHERE e.status = 'active'`,
-  ).map((e) => ({ kind: "entity", id: e.id, text: e.spoken_name, freq: e.freq, entity: e }));
-  return buildIndex([...senses, ...ents], locale);
-}
-
-/** Forgiving completions for the strip while a word is in progress. */
-function kbCompletions() {
-  if (!kbText) return [];
-  if (!kbIndex) kbIndex = buildKbIndex();
-  return suggest(kbIndex, kbText, 4).map((e) =>
-    e.kind === "entity"
-      ? {
-          entity: e.entity,
-          freq: e.freq,
-          onTap: () => {
-            kbText = "";
-            renderBar();
-            tap(e.text, "entity", e.id, { hint: true, source: "keyboard" });
-          },
-        }
-      : {
-          id: e.id,
-          label: e.text,
-          role: e.role,
-          freq: e.freq,
-          onTap: () => {
-            kbText = "";
-            renderBar();
-            tap(e.text, "sense", e.id, { hint: true, source: "keyboard" });
-          },
-        },
-  );
-}
-
-/** Device keyboard mode (slice 6): the partner row moves to the top
- *  because the system keyboard covers the bottom of the screen; one
- *  textarea holds the word in progress; rows 3–6 stay empty. `lang` makes
- *  iOS autocorrect and spellcheck use the profile's language. */
-function buildKbDevice(kb) {
-  PARTNER_SENSES.forEach((id, i) => {
-    const el = partnerCell(id);
-    el.style.gridColumn = `${i * 2 + 1} / span 2`;
-    el.style.gridRow = "1";
-    kb.appendChild(el);
-  });
-  const ta = document.createElement("textarea");
-  ta.id = "kb-device";
-  ta.lang = locale;
-  ta.setAttribute("autocapitalize", "sentences");
-  ta.setAttribute("autocorrect", "on");
-  ta.setAttribute("spellcheck", "true");
-  ta.setAttribute("enterkeyhint", "go");
-  ta.rows = 1;
-  ta.style.gridColumn = "1 / -1";
-  ta.style.gridRow = "2";
-  kb.appendChild(ta);
-  ta.addEventListener("input", kbDeviceInput);
-  ta.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      deviceFeed("Enter");
-    }
-  });
-}
-
-/** Whitespace and sentence marks end a token; ¿¡ are leads. */
-const KB_DEV_TERM = /[\s.,!?¿¡]/;
-
-/** The field is the buffer. On input: completed tokens and marks run
- *  through applyKey (autocorrect-safe — the field is authoritative, so
- *  the buffer is cleared and the completed text replayed); the field then
- *  holds only what is left. kbText mirrors the field, so strip
- *  completions work unchanged. */
-function kbDeviceInput() {
-  const ta = $("kb-device");
-  const v = ta.value;
-  let last = -1;
-  for (let i = 0; i < v.length; i++) if (KB_DEV_TERM.test(v[i])) last = i;
-  kbPendingAccent = null; // the system keyboard produces accents itself
-  if (last < 0) {
-    kbText = v;
-    renderBar();
-    renderStrip();
-    return;
-  }
-  const done = v.slice(0, last + 1);
-  const rest = v.slice(last + 1);
-  kbText = "";
-  for (const ch of done) kbPress(ch);
-  ta.value = rest;
-  kbText = rest;
-  renderBar();
-  renderStrip();
-}
-
-/** Route a hardware keystroke into the device field when it is not the
- *  event target (the field itself handles its own keys via input). */
-function deviceFeed(ch) {
-  const ta = $("kb-device");
-  if (ch === "Backspace") {
-    if (ta.value) {
-      ta.value = ta.value.slice(0, -1);
-      kbDeviceInput();
-    } else {
-      kbPress("Backspace"); // empty field: step back over the space
-    }
-    return;
-  }
-  if (ch === "Enter") {
-    kbPress("Enter"); // commits the buffer and speaks; field mirrors next
-    ta.value = "";
-    return;
-  }
-  ta.value += ch;
-  kbDeviceInput();
-}
 
 /* --- groups: an in-place board mode, not a modal. The group index and
    each group page render into #groupgrid — the same physical space and
@@ -2130,7 +1704,7 @@ function renderGroupIndex() {
   if (indexPageNo >= indexPages) indexPageNo = indexPages - 1;
   for (let slot = 0; slot < cells; slot++) {
     if (slot === 0) {
-      zg.appendChild(navCell("← Board", () => setView("board")));
+      zg.appendChild(navCell("← Board", () => kbUi.setView("board")));
       continue;
     }
     if (slot === 1) {
@@ -2171,13 +1745,13 @@ function renderGroupIndex() {
 }
 
 function openGroupIndex() {
-  setView("groupIndex");
+  kbUi.setView("groupIndex");
 }
 
 async function openGroup(groupId) {
   groupKey = groupId;
   groupPageNo = 0;
-  setView("group");
+  kbUi.setView("group");
 }
 
 function senseCell(w, onTap) {
@@ -2412,7 +1986,7 @@ $("bulk-add").addEventListener("click", () => {
     category: catalog.groups.find((g) => g.id === bulkTarget)?.category ?? null,
   });
   close("bulkform");
-  kbIndex = null; // new entities join the completion index
+  kbUi.invalidateIndex(); // new entities join the completion index
   rerenderView();
   renderStrip();
   renderLibrary();
@@ -2491,7 +2065,7 @@ $("photo-save").addEventListener("click", async () => {
   for (const d of photoDrafts) URL.revokeObjectURL(d.url);
   photoDrafts = [];
   close("photoform");
-  kbIndex = null;
+  kbUi.invalidateIndex();
   rerenderView();
   renderStrip();
   renderLibrary();
@@ -2685,7 +2259,7 @@ $("add-save").addEventListener("click", async () => {
   const category = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
   createEntity(db, { id, name, photoKey, category, hint });
   placeItem(db, addTarget, "entity", id, addCell);
-  kbIndex = null; // new entity joins the completion index
+  kbUi.invalidateIndex(); // new entity joins the completion index
   close("addform");
   rerenderView();
   renderStrip();
@@ -2778,7 +2352,7 @@ $("wc-name").addEventListener("change", () => {
   if (!name || name === cardItem.label) { $("wc-name").value = cardItem.label; return; }
   renameEntity(db, cardItem.item_id, name);
   cardItem.label = name;
-  kbIndex = null; // completions index the old spelling
+  kbUi.invalidateIndex(); // completions index the old spelling
   rerenderView();
   renderStrip();
 });
@@ -2963,7 +2537,7 @@ $("wc-show").addEventListener("click", () => {
   const onBoard = it.item_kind === "sense" &&
     ALL(db, "SELECT 1 AS x FROM core_cell WHERE sense_id = ?", [it.item_id])[0];
   if (onBoard) {
-    setView("board");
+    kbUi.setView("board");
     flashCell(cellEls.get(it.item_id));
     return;
   }
@@ -2971,7 +2545,7 @@ $("wc-show").addEventListener("click", () => {
     ? entityGroups(db, it.item_id, locale)
     : senseGroups(db, it.item_id, locale);
   const target = homes.find((g) => g.id === groupKey) ?? homes[0];
-  if (!target) { setView("board"); return; }
+  if (!target) { kbUi.setView("board"); return; }
   groupKey = target.id;
   const cell = ALL(
     db,
@@ -2979,7 +2553,7 @@ $("wc-show").addEventListener("click", () => {
     [groupKey, it.item_kind, it.item_id],
   )[0];
   groupPageNo = cell?.page ?? 0;
-  setView("group");
+  kbUi.setView("group");
   // Render is async; flash once the cells exist.
   requestAnimationFrame(() =>
     flashCell($("groupgrid").querySelector(`[data-item="${it.item_kind}:${it.item_id}"]`)),
@@ -2996,7 +2570,7 @@ $("wc-hide").addEventListener("click", () => {
   const hidden = !maskedSenseIds(db).has(it.item_id);
   setMask(db, it.item_id, hidden);
   close("wordcard");
-  kbIndex = null; // completions must drop/restore the word
+  kbUi.invalidateIndex(); // completions must drop/restore the word
   rerenderView();
   renderGrid();
   renderStrip();
@@ -3007,12 +2581,12 @@ $("wc-remove").addEventListener("click", () => {
   const it = cardItem;
   retireEntity(db, it.item_id);
   close("wordcard");
-  kbIndex = null;
+  kbUi.invalidateIndex();
   rerenderView();
   renderStrip();
   toast(`Removed ${it.label}`, () => {
     restoreEntity(db, it.item_id);
-    kbIndex = null;
+    kbUi.invalidateIndex();
     rerenderView();
     renderStrip();
   });
@@ -3983,7 +3557,7 @@ $("ed-paste-add").addEventListener("click", () => {
   renderPastePreview();
   renderEditorGrid();
   renderLibrary();
-  kbIndex = null; // new entities join the completion index
+  kbUi.invalidateIndex(); // new entities join the completion index
   toast(
     `Added ${res.placed} to ${edGroupName(gid)}` +
       (res.skipped ? ` (${res.skipped} already there)` : ""),
@@ -4034,10 +3608,10 @@ function renderEditor() {
   renderLibrary();
   renderPastePreview();
 }
-$("ed-board").addEventListener("click", () => setView("board"));
+$("ed-board").addEventListener("click", () => kbUi.setView("board"));
 $("menu-editor").addEventListener("click", () => {
   close("menu");
-  setView("editor");
+  kbUi.setView("editor");
 });
 
 // A session survives a restart (013 § 4): the synced row lights the
@@ -4066,7 +3640,7 @@ if (matchMedia("(min-width: 1100px)").matches) {
   $("ed-right").prepend($("wordcard"));
   $("menu-editor").hidden = false;
   open("library");
-  setView("editor");
+  kbUi.setView("editor");
 }
 
 // Console handle for works tests and founder debugging — read-only access
@@ -4110,9 +3684,9 @@ window.pip = {
     return sentence.map((i) => ({ ...i }));
   },
   get kbText() {
-    return kbText;
+    return kbUi.text;
   },
   get kbOpen() {
-    return kbOpen;
+    return kbUi.isOpen();
   },
 };
