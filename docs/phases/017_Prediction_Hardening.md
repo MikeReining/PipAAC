@@ -36,16 +36,15 @@ book → what the partner just said → the user's own history → Jev live**,
 and every user feeds the book back (step 26, the flywheel). The grid is
 untouched; the user can still say anything.
 
-> **CHILDES rule (DECIDED 2026-09-23, founder).** CHILDES data, or
-> anything computed from it, goes into Pip **only if TalkBank gives us
-> written permission.** The founder emailed TalkBank on 2026-09-23. Until
-> a written yes arrives: no CHILDES file, count, table, or model in the
-> repo, the opening book, the bench, or any shipped build. The free
-> sources carry the plan on their own. If permission arrives, it is
-> stored in the repo, its exact scope (test set only, or also the book)
-> is recorded in R11, and the book build may then add CHILDES within
-> that scope. If the answer is no, CHILDES stays out for good, and the
-> 2026-09-23 measurement remains the only use.
+> **CHILDES rule (DECIDED 2026-09-23, founder; permission received the
+> same day).** TalkBank (Brian MacWhinney) replied in writing on
+> 2026-09-23: local use is fine, and shipping the next-word prediction
+> table is fine. Record and scope:
+> `data/prediction/permissions/2026-09-23_TalkBank_CHILDES.md`. So
+> CHILDES may be used locally (measurement, bench, test set, gap
+> analysis, book build), and CHILDES-derived word-to-word counts may ship
+> in the opening book. Raw transcripts and utterances still stay out of
+> git and out of every shipped build. Details: R11.
 
 | Topic | Owner |
 | --- | --- |
@@ -221,7 +220,7 @@ Why this changes the audit's order:
 | R15 | Real speed | Measure real WPM, time between picks by path, and the Jev-timing natural experiment on the device; send those numbers (no words) under "Help improve Pip"; use them to replace the simulation's timing guesses (step 28). |
 | R13 | Whole messages | **No invented message tiles** (no symbol the user knows, and it skips the word's motor pattern). Instead, a **word chain**: the next 2–3 real word tiles, side by side, in order (step 22). |
 | R14 | Language judgments | **No hand-coded rules** (keyword detectors, grammar masks). Meaning questions go to Jev; everything else is a learned weight. The choice-question check is a Jev question (step 24). |
-| R11 | CHILDES | **Only with TalkBank's written permission** (see the CHILDES rule at the top). Founder emailed TalkBank 2026-09-23; answer pending. Until then, nothing CHILDES-derived in the repo, book, bench, or builds. A one-off measurement (step 23 § Real children) shows what it's worth: +11–16 points in top 4 over the best free book. When the answer arrives, record its date and exact scope here. |
+| R11 | CHILDES | **Permitted in writing, 2026-09-23** (Brian MacWhinney, TalkBank; `data/prediction/permissions/2026-09-23_TalkBank_CHILDES.md`). Scope: (1) local use — measurement, bench, held-out test set, gap analysis, book build; (2) shipping the next-word prediction table (derived counts) in the opening book. Not covered: committing or shipping transcripts or utterances; they stay local, outside git. Credit per TalkBank's citation rules wherever the table is credited. Offered, not required: publishing the table as a CHILDES "derived measure". Measured value: +11–16 points in top 4 over the best free book (step 23 § Real children). |
 
 ---
 
@@ -726,16 +725,18 @@ Child conversation is the main source; adult text is background.
 | Childlike dialogues (`data/prediction/sources/childlike_en.jsonl`) | ~700k utterances we generate: ~2,400 authored frames × routine/place, time-of-day, occasion and language-stage packs, slot-filled from our own vocabulary weighted by AoA (`scripts/prediction/book/gen_childlike.mjs`) | Ours | Second child source; beats TinyDialogues alone at 2 of 3 bands and on first words; 50–70% mix adds +3–7 pts (§ Steered synth) |
 | The flywheel (step 26) | Anonymous word-to-word counts from Pip users | Ours | Real AAC use; grows every month |
 
-Excluded:
+By permission:
 - **CHILDES/TalkBank:** CC BY-NC-SA 4.0. TalkBank's rules say the license
-  "precludes the incorporation of the data in commercial products".
-  Pip sells Pip Lifetime, so Pip is a commercial product even though the
-  core app is free. CHILDES is used **only if TalkBank gives written
-  permission**, and only within the scope they grant (test set only, or
-  also the book). Enforced: `book_sources.json` may list CHILDES only
-  with a `permission` field pointing to the stored permission letter
-  (`data/prediction/permissions/`); the license test fails otherwise
-  (R11).
+  "precludes the incorporation of the data in commercial products", and
+  Pip sells Pip Lifetime. TalkBank granted written permission on
+  2026-09-23 for local use and for shipping the derived next-word table
+  (R11; `data/prediction/permissions/2026-09-23_TalkBank_CHILDES.md`).
+  Transcripts stay local, outside git. **PROPOSED, not built:**
+  `book_sources.json` may list CHILDES only with a `permission` field
+  pointing to that record, and the license test fails otherwise. Neither
+  the file nor the test exists yet.
+
+Excluded:
 - **BabyLM:** it bundles CHILDES and OpenSubtitles, both non-commercial.
 - OpenSubtitles via OPUS (CC BY-NC-SA); the Santa Barbara Corpus (CC
   BY-ND); wordfreq's data (CC BY-SA); anything paid (Switchboard, COCA,
@@ -830,8 +831,9 @@ one cheap sweep on `score_book.mjs` before the format locks.
 - **Held-out adult AAC writers:** the Imagine AAC dev and test sets. They
   are human-written, so they guard against LLM-written sources
   flattering an LLM (Jev).
-- **Real children (if permitted, R11):** CHILDES child utterances, used
-  as a test set only, never read by the build.
+- **Real children (permitted 2026-09-23, R11):** held-out CHILDES
+  transcripts, never read by the build. The book may train on the other
+  CHILDES transcripts; the split is by transcript.
 - **The repo harness is the honest gate; CHILDES is the calibration
   ruler.** The scratch CHILDES pipeline (parse → band → held-out score
   → coverage diff) stays outside the repo permanently — it produced the
@@ -996,7 +998,7 @@ What it means:
   suggestion is a word the user did not have to go find. The simulated
   timing model (step 28) converts hit rate into predicted WPM; real
   on-device WPM (step 15) is the proof.
-- It ships either way; if TalkBank says yes, CHILDES counts join as one
+- It ships either way; TalkBank said yes (R11), so CHILDES counts join as one
   more weighted source in the same build (step 23 item 4), not a
   replacement. Scratch harness, not committed; numbers use this doc's
   protocol (80/20 transcripts, 2,500 sampled predictions per band).
