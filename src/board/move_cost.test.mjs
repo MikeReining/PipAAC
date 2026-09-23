@@ -150,3 +150,15 @@ test("real catalog: grid60 → grid90 cost is complete and deterministic", async
     + a.totals.gone + a.totals.new, n);
   assert.ok(n > 40); // the 60-cell board plus grid90's new words
 });
+
+test("014 slice 5: every shared word keeps its sector grid60 → grid90", async () => {
+  const db = fresh();
+  bindLayouts(catalog.layouts);
+  const mc = moveCost(db, "grid60", "grid90", "en");
+  // The ruling's promise (map doc § 5): sector membership is preserved —
+  // nothing is "moved" across bands and nothing leaves the home board.
+  assert.equal(mc.totals.moved, 0);
+  assert.equal(mc.totals.gone, 0);
+  assert.equal(mc.totals.sector + mc.totals.same, 60); // all of grid60
+  assert.equal(mc.totals.new, 23);                     // the dense-only words
+});

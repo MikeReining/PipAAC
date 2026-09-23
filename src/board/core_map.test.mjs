@@ -82,12 +82,14 @@ test("catalog generation: grid60 = 60 cells, grid90 = 83 cells + anchors", () =>
   const g90 = catalog.coreCells.filter((c) => c.layout === "grid90");
   assert.equal(g60.length, 60);
   assert.equal(g90.length, 83);
+  // 014 slice 5: reserved cells sit at each sector band's tail; the
+  // Groups anchor keeps slot 89.
   assert.deepEqual(catalog.layouts.grid90.anchors, [
-    { slot: 83, kind: "reserved" },
-    { slot: 84, kind: "reserved" },
+    { slot: 69, kind: "reserved" },
+    { slot: 76, kind: "reserved" },
+    { slot: 79, kind: "reserved" },
     { slot: 85, kind: "reserved" },
     { slot: 86, kind: "reserved" },
-    { slot: 87, kind: "reserved" },
     { slot: 88, kind: "reserved" },
     { slot: 89, kind: "groups" },
   ]);

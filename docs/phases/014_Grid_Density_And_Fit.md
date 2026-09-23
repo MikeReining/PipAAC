@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slices 1–4 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + the four grammar groups). Next: slice 5 — `grid90` sector rebuild. Rulings and starters below are **DECIDED
+**Status:** Slices 1–5 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` rebuilt on `grid60`'s column sectors). Next: slice 6 — message tiles (depends on 010's phrase list). Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -345,6 +345,17 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    the adult's move is still there).
 5. **`grid90` rebuild** on column sectors, with its move cost from `grid60`
    shown in the change record.
+
+   **DONE.** `Core_Coordinate_Map.md` § 4 relaid on `grid60`'s five column
+   bands, nine rows tall: people 18, doing 27, where 15, describing 17
+   (connectors included), regulate 6 — all 83 root-core words, reserved
+   cells at each band's tail, `Groups` anchor still at 89. **Every one of
+   the 60 shared words keeps its sector** — `moveCost` reports zero
+   `moved`/`gone` on 60→90, all sector holds; `SECTORS.grid90` in
+   `movecost.mjs` names the same bands so the preview says "moved
+   nearby", never "scrambled". Works Test: `move_cost.test.mjs` — the
+   60→90 preview shows `moved: 0, gone: 0, sector+same: 60, new: 23`;
+   live probe `cells_probe.mjs` re-passed on the new map.
 6. **Message tiles** for the Urgent needs starter (depends on 010's phrase
    list).
 7. **Smart bar families** (Expand mode, fixed order, one-cell tiles, one

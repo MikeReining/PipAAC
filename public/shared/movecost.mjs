@@ -8,10 +8,10 @@
  * window (default two weeks), then it fades.
  *
  * Sectors are the column bands each layout documents in the map doc
- * (§ 2 for grid60, § 6 for grid15), named with one canonical
- * vocabulary so "same sector" means the same band across layouts.
- * `grid90` is row-banded today (its sector rebuild is slice 5), so it
- * carries no sector map — words only classify same/moved/gone.
+ * (§ 2 for grid60, § 4 for grid90, § 6 for grid15), named with one
+ * canonical vocabulary so "same sector" means the same band across
+ * layouts — grid90 was rebuilt on grid60's bands (014 slice 5), so a
+ * 60→90 move reports sector holds, not scrambles.
  */
 
 import { recordOp } from "./ops.mjs";
@@ -24,6 +24,8 @@ export const MARK_DAYS = 14;
 const SECTORS = {
   // Map doc § 2: pronouns+questions · verbs · spatial · descriptors · regulators.
   grid60: [[0, 1, "people"], [2, 4, "doing"], [5, 6, "where"], [7, 8, "describing"], [9, 9, "regulate"]],
+  // Map doc § 4: the same five bands, nine rows tall (014 slice 5).
+  grid90: [[0, 1, "people"], [2, 4, "doing"], [5, 6, "where"], [7, 8, "describing"], [9, 9, "regulate"]],
   // Map doc § 6: people · doing · how much · answer and ask · stop/help/hurt.
   grid15: [[0, 0, "people"], [1, 1, "doing"], [2, 2, "describing"], [3, 3, "answers"], [4, 4, "regulate"]],
 };

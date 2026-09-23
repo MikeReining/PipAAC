@@ -94,23 +94,27 @@ different, but, or, because, how, this, who.
 in `docs/product/Core_Grid_Membership.md` §6; every one is a `grid90` cell
 and strip-eligible.
 
-## 4. `grid90` — dense
+## 4. `grid90` — dense (10 × 9)
+
+Rebuilt 2026-09-24 on `grid60`'s column sectors (014 § 2 ruling 3): the
+same bands — people · doing · where · describing · regulate — hold the
+same words, nine rows tall instead of six. Every `grid60` cell keeps its
+sector; the 23 dense-only words extend their own bands (pronouns and
+questions with people, verbs with doing, spatial with where, connectors
+with describing). Reserved cells sit at each band's tail — room to grow
+in-sector — and the `Groups` anchor keeps slot 89.
 
 | Row | Slots |
 | --- | --- |
-| 1 | I · you · me · my · mine · he · she · it · we · they |
-| 2 | that · this · who · want · like · go · come · get · make · do |
-| 3 | see · look · put · take · give · help · play · eat · drink · open |
-| 4 | turn · read · can · need · feel · tell · think · find · work · wait |
-| 5 | have · stop · in · out · on · off · up · down · away · here |
-| 6 | there · with · under · over · to · for · at · more · all done · big |
-| 7 | little · good · bad · happy · sad · same · different · some · all · and |
-| 8 | but · or · because · what · where · why · how · when · no · not |
-| 9 | yes · please · hurt · reserved · reserved · reserved · reserved · reserved · reserved · Groups |
-
-Rows 1–6 are unchanged from the pre-ruling map; `sad` and `hurt` were
-inserted at their sector neighbors and the tail shifted two slots, consuming
-reserved anchors 81–82.
+| 1 | I · you · want · like · go · in · out · more · all done · yes |
+| 2 | me · my · need · look · come · on · off · not · and · no |
+| 3 | mine · he · get · make · do · up · down · big · little · stop |
+| 4 | she · it · put · take · give · here · there · good · bad · help |
+| 5 | we · they · open · turn · play · to · for · happy · sad · hurt |
+| 6 | this · that · eat · drink · can · with · at · all · some · please |
+| 7 | who · what · see · read · feel · away · under · same · different · reserved |
+| 8 | where · why · tell · think · find · over · reserved · but · or · reserved |
+| 9 | when · how · work · wait · have · reserved · reserved · because · reserved · Groups |
 
 ## 5. Stability
 
@@ -122,9 +126,9 @@ parent or SLP may move words on one child's board; that move is profile
 data, never an edit to this map, and a regeneration never overwrites it. Switching density is a
 layout change — sector membership is preserved between `grid60` and `grid90`
 (pronouns first, verbs next, then spatial, descriptors, and protest/question
-on the far edge) while absolute indexes may differ. **Known gap:** § 4 is
-laid out in row bands, not `grid60`'s column sectors; it is to be rebuilt on
-column sectors (`docs/phases/014_Grid_Density_And_Fit.md` § 2).
+on the far edge) while absolute indexes may differ. **BUILT** (014 slice 5):
+§ 4 is laid out on `grid60`'s column sectors — every `grid60` word keeps its
+band on `grid90`, so a Cells change shows sector moves, not scrambles.
 
 ## 6. `grid15` — Core 15 starter (5 × 3)
 
