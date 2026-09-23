@@ -21,10 +21,10 @@ import {
 } from "./shared/funnel.mjs";
 import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
 import {
-  coachTap, coachTally, deleteSpotList, endSession, endSpotlight,
+  coachTap, deleteSpotList, endSession, endSpotlight,
   listTargets, needsRouteWalk,
   resumeSession, saveSpotList, spotLists, spotlight,
-  spotlightGroups, spotSession, startSession, startSpotlight, tipFor,
+  spotlightGroups, spotSession, startSession, startSpotlight,
 } from "./shared/spotlight.mjs";
 import { displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
@@ -57,6 +57,7 @@ import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
 import { mountEditor } from "./board/editor-ui.js";
+import { mountCoach } from "./board/coach-ui.js";
 import {
   family as familyRow, familyItems,
 } from "./shared/families.mjs";
@@ -759,7 +760,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
       const key = `${kind}:${id}`;
       syncSendModel(key, text);
       coachTap(db, kind, id); // the partner's tally — device-local (§ 5a)
-      renderCoachTally();
+      coachUi.renderCoachTally();
       modelSent.add(key);
       renderGrid();
       rerenderView();
@@ -1052,87 +1053,13 @@ function spotChrome() {
   const chip = $("spot-chip");
   chip.hidden = !s;
   if (s) chip.textContent = `🔦 ${s.name} · End`;
-  renderCoach();
+  coachUi.renderCoach();
 }
 
-/* --- Coach view (013 § 5a): on a partner device — the registry row a
- *  link creates carries role 'partner' — the running session's words
- *  sit at the top of the mirror. One tap models the word live on the
- *  child's board and shows its tip. The child's device renders none of
- *  this: its user row has no role. --- */
-const COACH_BASICS = [
-  "Point while you talk — your voice does the teaching.",
-  "Model without expecting a response.",
-  "Wait — silently count to five before helping.",
-  "Model one step above their level, not a whole sentence.",
-  "Come back to it tomorrow — repetition is the lesson.",
-];
-const coachSeen = new Set(
-  JSON.parse(localStorage.getItem("coach_basics_seen") ?? "[]"),
-);
-
-function coachLabel(kind, id) {
-  if (kind === "entity") {
-    return ALL(db, "SELECT spoken_name AS t FROM personal_entity WHERE id = ?",
-      [id])[0]?.t ?? id;
-  }
-  return ALL(db,
-    `SELECT text AS t FROM label
-     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
-    [id, locale])[0]?.t ?? id;
-}
-
-function renderCoach() {
-  const bar = $("coachbar");
-  const s = spotlight();
-  const on = me?.role === "partner" && !!s;
-  bar.hidden = !on;
-  if (!on) return;
-  const box = $("coach-targets");
-  box.innerHTML = "";
-  for (const key of s.targets) {
-    const [kind, id] = key.split(":");
-    const label = coachLabel(kind, id);
-    const b = document.createElement("button");
-    b.className = "coach-word";
-    b.textContent = label;
-    b.addEventListener("click", () => {
-      // The same transient path as Model mode — the word glows on the
-      // child's board; the tally stays here, measuring the partner.
-      syncSendModel(key, label);
-      coachTap(db, kind, id);
-      b.classList.add("sent");
-      setTimeout(() => b.classList.remove("sent"), 700);
-      const tip = tipFor(db, catalog, kind, id)
-        ?? `"${label}" — tap it while you say it, then wait.`;
-      const tipEl = $("coach-tip");
-      tipEl.textContent = tip;
-      tipEl.hidden = false;
-      renderCoachTally();
-    });
-    box.appendChild(b);
-  }
-  // The basics, one line at a time — each shows once, then it's out of
-  // the way. Seen state is device-local: it coaches this partner.
-  const idx = COACH_BASICS.findIndex((_, i) => !coachSeen.has(i));
-  $("coach-basic").hidden = idx < 0;
-  if (idx >= 0) {
-    $("coach-basic-text").textContent = COACH_BASICS[idx];
-    $("coach-basic-x").onclick = () => {
-      coachSeen.add(idx);
-      localStorage.setItem("coach_basics_seen", JSON.stringify([...coachSeen]));
-      renderCoach();
-    };
-  }
-  renderCoachTally();
-}
-
-function renderCoachTally() {
-  const n = coachTally(db);
-  $("coach-tally").textContent = n
-    ? `You modeled ${n} word${n === 1 ? "" : "s"} today`
-    : "Tap a word — it glows on their board.";
-}
+/* Coach bar — public/board/coach-ui.js. Partner devices only. */
+const coachUi = mountCoach({
+  db, locale, all: ALL, catalog, me, syncSendModel,
+});
 
 /** The strip spans the board's columns; the tray holds the prediction
  *  slots and the two anchors keep a column each. */
@@ -1409,7 +1336,9 @@ $("jev-share").addEventListener("click", (e) => {
 
 /* Spotlight sheet — public/board/spotlight-sheet.js */
 mountSpotlightSheet({
-  db, catalog, open, close, all: ALL, coachLabel, bindSpotSettings,
+  db, catalog, open, close, all: ALL,
+  coachLabel: (kind, id) => coachUi.coachLabel(kind, id),
+  bindSpotSettings,
   renderGrid, renderStrip, rerenderView, setModeling, setPicking,
   getPicking: () => picking,
   getSpotPulse: () => spotPulse,

@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/board/devices-ui.css" />
     <link rel="stylesheet" href="/board/recovery-ui.css" />
     <link rel="stylesheet" href="/board/editor-ui.css" />
+    <link rel="stylesheet" href="/board/coach-ui.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -401,25 +402,6 @@
         white-space: nowrap;
       }
       #spot-chip[hidden] { display: none; }
-      /* Coach view (013 § 5a) — partner devices only: the session's
-         words at the top of the mirror, one tap to model live. */
-      #coachbar {
-        display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
-        padding: 6px 10px; margin: 4px 8px 0;
-        border: 1.5px solid var(--line); border-radius: 12px;
-        background: var(--cream);
-      }
-      #coachbar[hidden] { display: none; }
-      .coach-word {
-        padding: 5px 12px; border-radius: 999px; font-weight: 700;
-        border: 1.5px solid var(--glow); background: #fff; color: var(--ink-text);
-      }
-      .coach-word.sent { background: var(--glow); }
-      .coach-line { flex-basis: 100%; margin: 2px 0 0; font-size: 13px; color: var(--muted); }
-      .coach-line .coach-x {
-        border: 0; background: none; color: var(--muted); font-size: 13px;
-        padding: 0 2px; cursor: pointer;
-      }
       /* Empty cell — reserved space, never collapses. */
       .cell.empty {
         border-style: dashed;
