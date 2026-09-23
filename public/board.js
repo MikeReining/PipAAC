@@ -42,12 +42,19 @@ import {
   swapGroups,
   swapItems,
 } from "./shared/groups.mjs";
+import { setDeviceId } from "./shared/ops.mjs";
+import { getDeviceIdentity } from "./shared/sync_crypto.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
 const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 
 const { db, catalog } = await bootDb();
+// Device identity for the op log (sync § 4): the signing key's
+// fingerprint, resolved from the platform keystore. Until it lands the
+// log keeps 'dev_local'; ops written after carry the real device id.
+getDeviceIdentity().then(({ deviceId }) => setDeviceId(deviceId))
+  .catch((err) => console.warn("sync: device identity unavailable", err));
 // Profile locale and voice resolve once at boot (schema §7.1) and bind
 // into every label query and speech call — never a literal, never
 // another locale's voice.

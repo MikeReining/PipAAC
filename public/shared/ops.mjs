@@ -30,12 +30,18 @@ import {
 } from "./groups.mjs";
 
 let replaying = false;
+// The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
+// boot once the keystore resolves. 'dev_local' marks ops recorded before
+// then — tests and pre-key devices.
+let deviceId = "dev_local";
+export function setDeviceId(id) { deviceId = id; }
 
 export function recordOp(db, kind, args) {
   if (replaying) return;
   db.prepare(
-    "INSERT INTO sync_op (op_id, kind, args, created_at) VALUES (?, ?, ?, ?)",
-  ).run(`op_${crypto.randomUUID().replaceAll("-", "")}`, kind, JSON.stringify(args), Date.now());
+    "INSERT INTO sync_op (op_id, device_id, kind, args, created_at) VALUES (?, ?, ?, ?, ?)",
+  ).run(`op_${crypto.randomUUID().replaceAll("-", "")}`, deviceId,
+    kind, JSON.stringify(args), Date.now());
 }
 
 const exists = (db, table, id) =>
@@ -159,7 +165,7 @@ export function replayOps(db, ops) {
 
 /** The log, oldest first. */
 export function listOps(db) {
-  return db.prepare("SELECT seq, op_id, kind, args, created_at, relay_seq FROM sync_op ORDER BY seq").all();
+  return db.prepare("SELECT seq, op_id, device_id, kind, args, created_at, relay_seq FROM sync_op ORDER BY seq").all();
 }
 
 /**

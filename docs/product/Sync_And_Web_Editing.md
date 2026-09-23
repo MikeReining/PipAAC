@@ -56,8 +56,14 @@ what the child said never leaves the device.
 
 - A **board** has a random id and a random **board key** (256-bit,
   symmetric). The board key encrypts everything that leaves a device.
+  **BUILT** (011 slice 3): AES-256-GCM via `getBoardKey` in
+  `public/shared/sync_crypto.mjs`, created once and kept in the keystore.
 - Each **device** has its own key pair, kept in the platform's secure
   store (iOS Keychain; a non-extractable WebCrypto key in the browser).
+  **BUILT**: an ECDSA pair (signs ops/requests) and an ECDH pair (board-
+  key transport in pairing) in IndexedDB `pip-keys`; private keys are
+  non-extractable. `device_id` = SHA-256 fingerprint of the signing
+  public key, recorded on every op via `setDeviceId`/`recordOp`.
 - The server knows board ids and device public keys. It never holds the
   board key, a name, a photo or a recording in the clear.
 
@@ -107,8 +113,12 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
   re-recording. Placement ops land at their slot if free, else the next
   free slot; an op never displaces an item already placed.
 - Ops are encrypted with the board key before they leave the device.
+  **BUILT**: `sealOp`/`openOp` — AES-256-GCM, random 12-byte IV per op,
+  wire format `{v:1, alg:"A256GCM", iv, ct}` base64url.
 - A photo or recording is a separate encrypted **blob**. The op carries
-  its content hash, not its bytes.
+  its content hash, not its bytes. **BUILT**: `sealBlob`/`openBlob` —
+  same envelope plus `sha`, the plaintext SHA-256; `openBlob` verifies
+  the hash after decrypt and fails closed.
 - Retire, never delete, fits: a removal is an op, and the retired row
   keeps its bytes (`docs/product/Vocabulary_Masking_And_Safety.md` § 3.2).
 

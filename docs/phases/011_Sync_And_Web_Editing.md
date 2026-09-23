@@ -105,6 +105,18 @@ adds Cooper with a photo and a recording. No payload contains "Cooper", a
 group name, or bytes hashing to the original photo or recording.
 Decrypting with the board key returns the ops.
 
+**Works Test (proven 2026-09-23):** `src/board/sync_crypto.test.mjs` —
+a scripted session adds Cooper, places him, sets a photo and a recording;
+every sealed payload (op envelopes + blob envelopes) is scanned for
+"Cooper", group names, the blob SHA-256s, and the raw blob bytes — none
+leak. `openOp`/`openBlob` with the board key return the ops and bytes
+verbatim; a different board key, a truncated ciphertext, a wrong IV, and
+a forged blob hash all fail closed. Device identity: one ECDSA + ECDH
+pair per install in the platform keystore (IndexedDB `pip-keys`), private
+keys non-extractable, `device_id` = SHA-256 fingerprint of the signing
+public key — recorded on every op. Live browser probe confirmed the app
+boots clean and the device record persists with non-extractable keys.
+
 ## Slice 4 — The relay
 
 Goal: a Cloudflare Worker, a Durable Object per board (sequence, allowed
