@@ -116,7 +116,11 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- Parent Corner: Jev sharing — the strip's shortlist and the sentence
   -- being built may be reranked by TypeSafe Jev through the Worker
   -- (Dual_Engine § 3.2). Default ON; off means no Jev call, ever.
-  jev_sharing INTEGER NOT NULL DEFAULT 1 CHECK (jev_sharing IN (0, 1))
+  jev_sharing INTEGER NOT NULL DEFAULT 1 CHECK (jev_sharing IN (0, 1)),
+  -- One Cells setting per profile (014 § 3): the layout the home board,
+  -- every group page, and the strip all draw at. Names a coordinate-map
+  -- layout (catalog.layouts); anything unknown renders as grid60.
+  board_layout TEXT NOT NULL DEFAULT 'grid60'
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Ready for slice 1 (renderer of any shape). Rulings and starters below are **DECIDED
+**Status:** Slice 1 built (renderer of any shape). Next: slice 2 — starter maps. Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -104,8 +104,9 @@ own; a big group pages (`Next ›`). Group items keep their saved order; when
 Cells changes, groups are laid out again in that order and their moved
 items join the move-cost preview (§ 4). Showing fewer choices for an
 activity is Spotlight's job (`docs/phases/013_Spotlight_And_Partner_Modeling.md`),
-not a bigger or smaller group. To settle in slice 1: at 15 cells a group
-page keeps back, the reserved Edit slot, and `Next ›`, leaving 12 items.
+not a bigger or smaller group. **Settled in slice 1:** at 15 cells a group
+page keeps back, the reserved Edit slot, and `Next ›`, leaving 12 items —
+and the group index pages the same way.
 
 Examples: a toddler and a CP child — both Core 15 (15 cells, full
 vocabulary, words), with different access settings. A stroke survivor —
@@ -253,6 +254,24 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    to the viewport; strip geometry scales with width (5 columns: two
    prediction slots + Groups). Works test: 15, 60, and 90 render with the
    bar and strip in place and no cell under the minimum size.
+
+   **DONE.** `learner_profile.board_layout` (synced via `set_setting`)
+   names a `catalog.layouts` entry; `boardGeom()` resolves name → cols ×
+   rows + anchors, falling back to `grid60`. The grid, group pages, the
+   group index, and the web editor all draw at that size; the strip spans
+   the board's columns (`sizeStrip`) with `stripSlots` prediction slots
+   (4 at 10 columns, 2 at 5) and Groups/Keyboard always one column each.
+   Storage stays canonical: `group_cell` and `board_group.index_slot`
+   keep their 60-space coordinates and renderers re-wrap the linear order
+   (`visualCell`/`canonCell`/`indexVisual`/`indexSlotAt` in
+   `public/shared/groups.mjs`) — a Cells change moves no rows, and the
+   index pages like a group page once N < the index. `showGate` takes
+   the strip's cap. Works Tests: `src/board/layout.test.mjs` (identity at
+   60, 12-per-page at 15, drop-at-visual writes the canonical cell,
+   grid90 anchors) and `scripts/probes/layout_probe.mjs` (measured
+   pixels: 60 → 75 px cells, 90 → 75 px with the Groups cell at slot 89,
+   15 → 157 px, index pages with Next ›, Food shows 12 items + "1/3").
+   `window.pip.repaint` exposes a repaint for probes.
 2. **Starter maps.** Write the § 5 boards into
    `docs/product/Core_Coordinate_Map.md` as named layouts; regenerate
    `core_cell` rows. Works test: each starter renders on a fresh profile

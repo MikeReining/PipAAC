@@ -96,8 +96,12 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   10–59. At 15 cells: 12 items per page.
 - **When Cells changes,** group items keep their saved order and are laid
   out again at the new size; moved items join the move-cost preview
-  (`docs/phases/014_Grid_Density_And_Fit.md` § 4). **DECIDED 2026-09-22**
-  (not built).
+  (`docs/phases/014_Grid_Density_And_Fit.md` § 4). **BUILT** (014 slice 1):
+  `group_cell` and `board_group.index_slot` stay in canonical 60-space;
+  renderers re-wrap the linear order into pages of N−3
+  (`visualCell`/`posAtVisual`/`indexVisual` in `public/shared/groups.mjs`)
+  — no row moves when Cells changes. The move-cost preview lands with the
+  Cells picker (slice 4).
 - **Motor-memory law inside groups too.** The index and every group page
   are coordinate maps (`board_group.index_slot`, `group_cell (page,
   slot_index)`). Built-in contents are seeded in vocabulary-doc order
@@ -178,7 +182,7 @@ Assignments: `docs/product/Core_Coordinate_Map.md`.
 Layout rules:
 
 - The strip sits directly under the sentence bar and directly above the core grid. **It never collapses.** Its height is fixed and rendered on first paint; an empty prediction state shows ghost cards, not a zero-height bar. A strip update must never shift the core grid's physical position — layout shift breaks motor planning.
-- **8 + 2 geometry.** The strip spans the same 10 columns as the grid: columns 1–8 hold four prediction slots (2 columns each); columns 9–10 hold permanent utility anchors — `🗂️ Groups` (the group index, § Groups) and `⌨ Keyboard` (type a word at any point; while the keyboard is open it reads `Board` and closes it — keyboard modes and key map: `docs/product/Profile_Presentation_Modes.md` § 4) — visible and tappable in every state.
+- **8 + 2 geometry, scaled to the board.** The strip spans the same columns as the grid. At ten columns: columns 1–8 hold four prediction slots (2 columns each); columns 9–10 hold permanent utility anchors — `🗂️ Groups` (the group index, § Groups) and `⌨ Keyboard` (type a word at any point; while the keyboard is open it reads `Board` and closes it — keyboard modes and key map: `docs/product/Profile_Presentation_Modes.md` § 4) — visible and tappable in every state. At five columns the strip holds two prediction slots and the same two anchors (**BUILT** 014 slice 1 — `stripSlots`/`sizeStrip` in `public/board.js`); a layout may also declare an in-grid `Groups` cell (grid90 slot 89).
 - It shows at most four candidate tiles. Three or four is the whole set. A longer row is a scanning tax.
 - Every tile shows the word and its stick or object icon (a 1:1 square on the left, label on the right). Text alone is not enough for emerging and non-literate communicators. A sense with no art yet renders a Fitzgerald-tinted swatch; an entity renders its photo.
 - Idle state (empty sentence) shows conversational starters and routine anchors — greeting, the Food group, the top personal entity, help — never a blank strip.

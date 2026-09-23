@@ -13,7 +13,6 @@ import {
   logImpression,
   logSelection,
   openSentence,
-  STRIP_CAP,
   stripScored,
   showGate,
 } from "./shared/funnel.mjs";
@@ -43,7 +42,12 @@ import {
   moveGroup,
   moveItem,
   pageCount,
+  canonCell,
+  indexSlotAt,
+  indexVisual,
   maskedSenseIds,
+  pageGeom,
+  posAtVisual,
   placeItem,
   removeItem,
   removeItemUndoable,
@@ -445,11 +449,11 @@ function stripCards(items) {
   });
 }
 
-/** Paint the four strip slots — the only path that touches the tray. */
+/** Paint the strip's slots — the only path that touches the tray. */
 async function paintStrip(cards) {
   const tray = $("tray");
   tray.querySelectorAll(".pred").forEach((n) => n.remove());
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < stripSlots(boardGeom().cols); i++) {
     tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
   }
   fitLabels(tray);
@@ -457,12 +461,13 @@ async function paintStrip(cards) {
 }
 
 async function renderStrip() {
+  const cap = stripSlots(boardGeom().cols);
   let cards, jevCall = null;
   if (kbText) {
     // mid-word: the strip switches from continuations to completions
     cards = kbCompletions();
   } else if (sentence.length === 0) {
-    cards = await idleStarters();
+    cards = (await idleStarters()).slice(0, cap);
   } else {
     // Keyboard open with an empty buffer: next-word continuations, core
     // words included — the grid is hidden so the no-core rule doesn't
@@ -476,7 +481,7 @@ async function renderStrip() {
     const scored = kbOpen ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbOpen
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
-      : showGate(scored.candidates, scored.pNone, model.tau)
+      : showGate(scored.candidates, scored.pNone, model.tau, cap)
           .map((r) => ({ kind: r.kind, id: r.id }));
     maybeImpression(
       scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
@@ -522,7 +527,8 @@ async function maybeJev(scored, sents, paintedAt) {
       tau: catalog.prediction.tau,
     };
     const reranked = applyJev(scored.candidates, probs, wj.weights);
-    const items = showGate(reranked.candidates, reranked.pNone, wj.tau)
+    const items = showGate(reranked.candidates, reranked.pNone, wj.tau,
+      stripSlots(boardGeom().cols))
       .map((r) => ({ kind: r.kind, id: r.id }));
     // An identical offer dedupes inside maybeImpression — markJev then
     // stamps the answer on the existing row. A changed offer repaints
@@ -581,7 +587,7 @@ function showGroupHint(kind, id) {
   let name = null;
   if (kind === "sense") {
     // core words need no backup route — they are always on screen
-    if (ALL(db, "SELECT 1 AS x FROM core_cell WHERE layout = 'grid60' AND sense_id = ?", [id]).length) return;
+    if (ALL(db, "SELECT 1 AS x FROM core_cell WHERE layout = ? AND sense_id = ?", [boardGeom().name, id]).length) return;
     const row = ALL(
       db,
       `SELECT g.id, g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
@@ -675,7 +681,41 @@ function fitLabels(root) {
 /** sense_id → its grid element, for the likely-next halo pass. */
 const cellEls = new Map();
 
+/** The profile's one Cells setting (014 § 3): which coordinate-map
+ *  layout the board, group pages, and strip all draw at. Anything the
+ *  catalog doesn't define falls back to grid60. */
+function boardGeom() {
+  const name = ALL(
+    db, "SELECT board_layout AS l FROM learner_profile WHERE id = 'prf_local'",
+  )[0]?.l ?? "grid60";
+  const layout = catalog.layouts?.[name] ?? catalog.layouts?.grid60
+    ?? { cols: 10, rows: 6, anchors: [] };
+  return {
+    name: catalog.layouts?.[name] ? name : "grid60",
+    cols: layout.cols,
+    rows: layout.rows,
+    cells: layout.cols * layout.rows,
+    anchors: new Map((layout.anchors ?? []).map((a) => [a.slot, a.kind])),
+  };
+}
+/** Prediction slots in the strip at this width (014 slice 1): four on a
+ *  ten-column board, two on five — the Groups and Keyboard anchors keep
+ *  one column each so the whole vocabulary stays reachable. */
+function stripSlots(cols) {
+  return Math.min(4, Math.max(2, Math.floor((cols - 2) / 2)));
+}
+
+/** The strip spans the board's columns; the tray holds the prediction
+ *  slots and the two anchors keep a column each. */
+function sizeStrip(cols) {
+  $("strip").style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  const tray = $("tray");
+  tray.style.gridColumn = `span ${cols - 2}`;
+  tray.style.gridTemplateColumns = `repeat(${stripSlots(cols)}, 1fr)`;
+}
+
 function renderGrid() {
+  const geom = boardGeom();
   const cells = ALL(
     db,
     `SELECT cc.slot_index, cc.sense_id, l.text AS label, s.fitzgerald_role
@@ -683,20 +723,30 @@ function renderGrid() {
      JOIN sense s ON s.id = cc.sense_id
      JOIN label l ON l.sense_id = cc.sense_id
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-     WHERE cc.layout = 'grid60'
+     WHERE cc.layout = ?
      ORDER BY cc.slot_index`,
-    [locale],
+    [locale, geom.name],
   );
   const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
   const masked = maskedSenseIds(db);
   const grid = $("grid");
-  grid.style.gridTemplateColumns = "repeat(10, 1fr)";
-  grid.style.gridTemplateRows = "repeat(6, 1fr)";
+  grid.style.gridTemplateColumns = `repeat(${geom.cols}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${geom.rows}, 1fr)`;
+  sizeStrip(geom.cols);
   grid.innerHTML = "";
   cellEls.clear();
   // Every slot renders: a missing cell is a dashed placeholder, never a
   // collapsed gap — the coordinate map is the motor plan.
-  for (let slot = 0; slot < 60; slot++) {
+  for (let slot = 0; slot < geom.cells; slot++) {
+    const anchor = geom.anchors.get(slot);
+    if (anchor === "groups") {
+      const el = document.createElement("button");
+      el.className = "cell anchor-cell";
+      el.innerHTML = `<span class="glyph">🗂️</span>`;
+      el.addEventListener("click", openGroupIndex);
+      grid.appendChild(el);
+      continue;
+    }
     const c = bySlot.get(slot);
     if (!c) {
       const empty = document.createElement("div");
@@ -1423,12 +1473,12 @@ function flashCell(el) {
   setTimeout(() => el.classList.remove("flash"), 1600);
 }
 
-/** One group on the index. `row` is a board_group row; the label and
- *  glyph come from the row — custom groups show their photo, else 🗂️. */
-function groupIndexCell(row) {
+/** One group on the index. `row` is a board_group row; `vslot` is its
+ *  visual slot on the current index page (drag targets are visual). */
+function groupIndexCell(row, vslot) {
   const el = document.createElement("button");
   el.className = "gcell";
-  el.dataset.slot = row.index_slot;
+  el.dataset.slot = vslot;
   el.dataset.group = row.id;
   const g = document.createElement("span");
   g.className = "glyph";
@@ -1458,10 +1508,12 @@ function groupIndexCell(row) {
   editPointer(el, {
     onTap: () => openGroup(row.id),
     onDrop: (slot) => {
-      if (slot < 10) return;
-      const other = groupIndex(db).find((g) => g.index_slot === slot);
+      // Visual slot on this index page → canonical index coordinate.
+      const indexSlot = indexSlotAt(indexPageNo, slot, boardGeom().cells);
+      if (indexSlot < 10) return;
+      const other = groupIndex(db).find((g) => g.index_slot === indexSlot);
       if (other) swapGroups(db, row.id, other.id);
-      else moveGroup(db, row.id, slot);
+      else moveGroup(db, row.id, indexSlot);
       renderGroupIndex();
     },
   });
@@ -1490,12 +1542,26 @@ function askDeleteGroup(row) {
   open("delform");
 }
 
+let indexPageNo = 0;
+
 function renderGroupIndex() {
   const zg = $("groupgrid");
   zg.innerHTML = "";
-  const rows = groupIndex(db);
-  const placed = new Map(rows.map((g) => [g.index_slot, g]));
-  for (let slot = 0; slot < 60; slot++) {
+  const { cols, rows: nRows, cells } = boardGeom();
+  const geom = pageGeom(cells);
+  zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
+  // Canonical index slots → this page's visual slots (014 § 3: the index
+  // pages like a group page once N is smaller than the index).
+  const placed = new Map();
+  let indexPages = 1;
+  for (const g of groupIndex(db)) {
+    const v = indexVisual(g.index_slot, cells);
+    indexPages = Math.max(indexPages, v.page + 1);
+    if (v.page === indexPageNo) placed.set(v.slot, g);
+  }
+  if (indexPageNo >= indexPages) indexPageNo = indexPages - 1;
+  for (let slot = 0; slot < cells; slot++) {
     if (slot === 0) {
       zg.appendChild(navCell("← Board", () => setView("board")));
       continue;
@@ -1504,14 +1570,32 @@ function renderGroupIndex() {
       zg.appendChild(editSlotCell(editing && "+ Group", () => open("groupform")));
       continue;
     }
+    if (slot === geom.next) {
+      if (indexPages > 1) {
+        const el = navCell("Next ›", () => {
+          indexPageNo = (indexPageNo + 1) % indexPages;
+          renderGroupIndex();
+        });
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = `${indexPageNo + 1}/${indexPages}`;
+        el.appendChild(badge);
+        zg.appendChild(el);
+      } else {
+        const blank = document.createElement("div");
+        blank.className = "gcell empty";
+        zg.appendChild(blank);
+      }
+      continue;
+    }
     const row = placed.get(slot);
     if (row) {
-      zg.appendChild(groupIndexCell(row));
+      zg.appendChild(groupIndexCell(row, slot));
       continue;
     }
     const empty = document.createElement("button");
     empty.className = "gcell empty";
-    empty.dataset.slot = slot; // drag target for group moves
+    empty.dataset.slot = slot; // visual drag target for group moves
     empty.disabled = true;
     zg.appendChild(empty);
   }
@@ -1558,6 +1642,7 @@ async function itemCell(item, gKind, ctx = {}) {
     gestures = editing,
     group = groupKey,
     page = groupPageNo,
+    cells = boardGeom().cells,
     onChange = renderGroupPage,
   } = ctx;
   const onSpeak = gestures
@@ -1583,7 +1668,7 @@ async function itemCell(item, gKind, ctx = {}) {
         { spoken_name: item.label, photo_key: item.photo_key },
         onSpeak,
       );
-  el.dataset.slot = item.slot_index;
+  el.dataset.slot = item.vslot ?? item.slot_index;
   el.dataset.item = `${item.item_kind}:${item.item_id}`;
   if (!gestures) return el;
 
@@ -1602,12 +1687,14 @@ async function itemCell(item, gKind, ctx = {}) {
   editPointer(el, {
     onTap: () => openWordCard(item),
     onDrop: (slot) => {
-      const target = groupPage(db, group, page, locale)
-        .find((r) => r.slot_index === slot);
+      // slot/page are visual; storage is canonical 60-space.
+      const target = groupPage(db, group, page, locale, cells)
+        .find((r) => r.vslot === slot);
       if (target) {
         swapItems(db, group, item, { item_kind: target.item_kind, item_id: target.item_id });
       } else {
-        moveItem(db, group, item.item_kind, item.item_id, page, slot);
+        const c = canonCell(posAtVisual(page, slot, cells));
+        moveItem(db, group, item.item_kind, item.item_id, c.page, c.slot_index);
       }
       onChange();
     },
@@ -1615,21 +1702,26 @@ async function itemCell(item, gKind, ctx = {}) {
   return el;
 }
 
-/** Group page: slot 0 = back to index, slot 1 = `+ Add` while editing,
- *  items at their stored (page, slot_index) in 2–58, slot 59 = Next ›
- *  when the group has a second page. Tapping an empty slot while editing
- *  opens + Add aimed at that slot — the slot is the picker. Word taps
- *  speak and stay in the group — leaving is one learned gesture. */
+/** Group page at the profile's cell count N (014 § 3): slot 0 = back to
+ *  index, slot 1 = `+ Add` while editing, items land by their canonical
+ *  coordinates re-wrapped into pages of N-3, slot N-1 = Next › when the
+ *  group has another page. Tapping an empty slot while editing opens
+ *  + Add aimed there — the slot is the picker. Word taps speak and stay
+ *  in the group — leaving is one learned gesture. */
 async function renderGroupPage() {
   const zg = $("groupgrid");
   zg.innerHTML = "";
+  const cells = boardGeom().cells;
+  const geom = pageGeom(cells);
+  zg.style.gridTemplateColumns = `repeat(${boardGeom().cols}, 1fr)`;
+  zg.style.gridTemplateRows = `repeat(${boardGeom().rows}, 1fr)`;
   const items = new Map(
-    groupPage(db, groupKey, groupPageNo, locale).map((r) => [r.slot_index, r]),
+    groupPage(db, groupKey, groupPageNo, locale, cells).map((r) => [r.vslot, r]),
   );
-  const pages = pageCount(db, groupKey);
+  const pages = pageCount(db, groupKey, cells);
   const gKind = ALL(db, "SELECT kind FROM board_group WHERE id = ?", [groupKey])[0]?.kind;
 
-  for (let slot = 0; slot < 60; slot++) {
+  for (let slot = 0; slot < cells; slot++) {
     if (slot === 0) {
       zg.appendChild(navCell("← Groups", openGroupIndex));
       continue;
@@ -1638,7 +1730,7 @@ async function renderGroupPage() {
       zg.appendChild(editSlotCell(editing && "+ Add", () => openAddForm(groupKey)));
       continue;
     }
-    if (slot === 59) {
+    if (slot === geom.next) {
       if (pages > 1) {
         const el = navCell("Next ›", () => {
           groupPageNo = (groupPageNo + 1) % pages;
@@ -1661,9 +1753,9 @@ async function renderGroupPage() {
       const empty = document.createElement("div");
       empty.className = "gcell empty";
       if (editing) {
-        empty.dataset.slot = slot; // drag target
+        empty.dataset.slot = slot; // visual drag target
         empty.addEventListener("click", () => {
-          openAddForm(groupKey, { page: groupPageNo, slot_index: slot });
+          openAddForm(groupKey, canonCell(posAtVisual(groupPageNo, slot, cells)));
         });
       }
       zg.appendChild(empty);
@@ -2733,20 +2825,25 @@ function renderEditorGroups() {
   }
 }
 
-/** The real page: slots 2–58 at their stored coordinates so a drag shows
- *  the adult exactly what the child will see. Slot 0 shows the group
- *  name; slot 1 is + Add; slot 59 pages when the group overflows. */
+/** The real page at the profile's cell count: items land where the
+ *  child sees them (canonical coordinates re-wrapped into pages of
+ *  N-3). Slot 0 shows the group name; slot 1 is + Add; the last slot
+ *  pages when the group overflows. */
 async function renderEditorGrid() {
   const zg = $("ed-grid");
   zg.innerHTML = "";
+  const { cols, rows: nRows, cells } = boardGeom();
+  const geom = pageGeom(cells);
+  zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
   const gid = edTarget();
   const items = new Map(
-    groupPage(db, gid, edPage, locale).map((r) => [r.slot_index, r]),
+    groupPage(db, gid, edPage, locale, cells).map((r) => [r.vslot, r]),
   );
-  const pages = pageCount(db, gid);
+  const pages = pageCount(db, gid, cells);
   const gKind = ALL(db, "SELECT kind FROM board_group WHERE id = ?", [gid])[0]?.kind;
-  const ctx = { gestures: true, group: gid, page: edPage, onChange: renderEditorGrid };
-  for (let slot = 0; slot < 60; slot++) {
+  const ctx = { gestures: true, group: gid, page: edPage, cells, onChange: renderEditorGrid };
+  for (let slot = 0; slot < cells; slot++) {
     if (slot === 0) {
       const el = navCell(edGroupName(gid), () => {});
       el.disabled = true;
@@ -2757,7 +2854,7 @@ async function renderEditorGrid() {
       zg.appendChild(navCell("+ Add", () => openAddForm(gid)));
       continue;
     }
-    if (slot === 59) {
+    if (slot === geom.next) {
       if (pages > 1) {
         const el = navCell("Next ›", () => {
           edPage = (edPage + 1) % pages;
@@ -2781,7 +2878,7 @@ async function renderEditorGrid() {
       empty.className = "gcell empty";
       empty.dataset.slot = slot;
       empty.addEventListener("click", () => {
-        openAddForm(gid, { page: edPage, slot_index: slot });
+        openAddForm(gid, canonCell(posAtVisual(edPage, slot, cells)));
       });
       zg.appendChild(empty);
       continue;
@@ -2906,6 +3003,7 @@ window.pip = {
   catalog,
   locale,
   audio,
+  repaint() { renderGrid(); renderStrip(); rerenderView(); },
   get sentence() {
     return sentence.map((i) => ({ ...i }));
   },

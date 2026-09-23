@@ -251,6 +251,16 @@
       /* "Show me where": a 1.5s ink halo on the Groups anchor plus a
          fixed-position caption — out of flow, so zero layout shift, and
          pointer-events: none so it never eats a tap. */
+      /* A map-declared anchor drawn inside the grid (grid90's Groups
+         cell) — same quiet surface as the strip anchors. */
+      .cell.anchor-cell {
+        border-color: var(--muted);
+        background: var(--tray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cell.anchor-cell .glyph { font-size: clamp(18px, 4vmin, 40px); }
       .anchor.halo {
         outline: 4px solid var(--ink);
         outline-offset: 2px;

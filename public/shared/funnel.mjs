@@ -216,10 +216,11 @@ export function applyJev(rows, probabilities, weights) {
 }
 
 /** The show gate (§ 5.4): nothing when P(none) ≥ τ_none; else the tiles
- *  that clear τ_tile, in rank order, capped at four. */
-export function showGate(candidates, pNone, tau) {
+ *  that clear τ_tile, in rank order, capped at the strip's slot count
+ *  (four on a ten-column board; the strip scales with the layout). */
+export function showGate(candidates, pNone, tau, cap = STRIP_CAP) {
   if (pNone >= tau.none) return [];
-  return candidates.filter((c) => c.p >= tau.tile).slice(0, STRIP_CAP);
+  return candidates.filter((c) => c.p >= tau.tile).slice(0, cap);
 }
 
 /**
@@ -235,9 +236,9 @@ export function showGate(candidates, pNone, tau) {
  *
  * @returns {Array<{kind:'sense'|'entity', id:string}>} the gated tiles.
  */
-export function stripCandidates(db, sentence, now = Date.now(), locale, model) {
+export function stripCandidates(db, sentence, now = Date.now(), locale, model, cap = STRIP_CAP) {
   const { candidates, pNone } = stripScored(db, sentence, now, locale, model);
-  return showGate(candidates, pNone, model.tau).map((r) => ({ kind: r.kind, id: r.id }));
+  return showGate(candidates, pNone, model.tau, cap).map((r) => ({ kind: r.kind, id: r.id }));
 }
 
 /**

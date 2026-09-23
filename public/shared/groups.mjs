@@ -12,12 +12,51 @@
 
 import { normalizeV1 } from "./normalize.mjs";
 
-export const ITEMS_PER_PAGE = 57; // page slots 2..58
+export const ITEMS_PER_PAGE = 57; // canonical page slots 2..58 (60-cell space)
 
 const FIRST_ITEM_SLOT = 2;
 const LAST_ITEM_SLOT = 58;
 const FIRST_INDEX_SLOT = 10;
 const LAST_INDEX_SLOT = 59;
+
+/* --- any-shape geometry (014 slice 1) ---
+ * Storage stays canonical: group_cell holds (page, slot_index) in the
+ * 60-cell space (57 items per page) and board_group.index_slot is a
+ * 60-space slot. The profile's cell count N only changes how those
+ * coordinates are drawn: linear position is preserved, then re-wrapped
+ * into pages of N-3 item slots (slot 0 = back, 1 = edit, N-1 = Next).
+ * No rows are rewritten when Cells changes — the map is pure. */
+export function pageGeom(cells) {
+  return { first: FIRST_ITEM_SLOT, last: cells - 2, next: cells - 1, per: cells - 3 };
+}
+/** Stored (page, slot_index) → linear position in the canonical strip. */
+export function canonPos(page, slotIndex) {
+  return page * ITEMS_PER_PAGE + (slotIndex - FIRST_ITEM_SLOT);
+}
+/** Linear position → stored (page, slot_index). Inverse of canonPos. */
+export function canonCell(pos) {
+  return { page: Math.floor(pos / ITEMS_PER_PAGE), slot_index: FIRST_ITEM_SLOT + (pos % ITEMS_PER_PAGE) };
+}
+/** Linear position → where it lands on a `cells`-cell surface. */
+export function visualCell(pos, cells) {
+  const per = cells - 3;
+  return { page: Math.floor(pos / per), slot: FIRST_ITEM_SLOT + (pos % per) };
+}
+/** Visual (page, slot) on a `cells`-cell surface → linear position.
+ *  Inverse of visualCell. */
+export function posAtVisual(page, slot, cells) {
+  return page * (cells - 3) + (slot - FIRST_ITEM_SLOT);
+}
+/** Index coordinate → (page, slot) on a `cells`-cell index surface.
+ *  The index keeps its canonical slots (10–59 seeded); at 60 cells this
+ *  is the identity for every slot below the Next cell. */
+export function indexVisual(indexSlot, cells) {
+  return visualCell(indexSlot - FIRST_ITEM_SLOT, cells);
+}
+/** Visual (page, slot) on the index → the canonical index_slot to store. */
+export function indexSlotAt(page, slot, cells) {
+  return posAtVisual(page, slot, cells) + FIRST_ITEM_SLOT;
+}
 
 const all = (db, sql, params = []) => db.prepare(sql).all(...params);
 const one = (db, sql, params = []) => all(db, sql, params)[0];
@@ -240,15 +279,17 @@ export function groupIndex(db) {
 }
 
 /**
- * One page of a group: items at their stored slots, joined to label and
- * Fitzgerald role. Entities carry photo_key; senses resolve their approved
- * English lemma and their approved symbol key (art, null until art ships).
+ * One visual page of a group at `cells` cells: rows carry their stored
+ * canonical (page, slot_index) plus `vpage`/`vslot` — where the cell
+ * lands on the current surface. Renderers place by `vslot`; edit calls
+ * keep using the canonical coordinates. Entities carry photo_key;
+ * senses resolve their approved lemma and symbol key (art).
  */
-export function groupPage(db, groupId, page = 0, locale) {
+export function groupPage(db, groupId, page = 0, locale, cells = 60) {
   requireLocale(locale);
-  return all(
+  const rows = all(
     db,
-    `SELECT gc.item_kind, gc.item_id, gc.slot_index,
+    `SELECT gc.item_kind, gc.item_id, gc.page, gc.slot_index,
             COALESCE(l.text, e.spoken_name) AS label,
             COALESCE(s.fitzgerald_role, 'Yellow') AS fitzgerald_role,
             e.photo_key AS photo_key,
@@ -258,16 +299,27 @@ export function groupPage(db, groupId, page = 0, locale) {
      LEFT JOIN label l ON gc.item_kind = 'sense' AND l.sense_id = gc.item_id
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
      LEFT JOIN personal_entity e ON gc.item_kind = 'entity' AND e.id = gc.item_id
-     WHERE gc.group_id = ? AND gc.page = ?
+     WHERE gc.group_id = ?
        AND (gc.item_kind = 'sense' OR e.status = 'active')
-     ORDER BY gc.slot_index`,
-    [locale, groupId, page],
+     ORDER BY gc.page, gc.slot_index`,
+    [locale, groupId],
   );
+  for (const r of rows) {
+    const v = visualCell(canonPos(r.page, r.slot_index), cells);
+    r.vpage = v.page;
+    r.vslot = v.slot;
+  }
+  return rows.filter((r) => r.vpage === page);
 }
 
-export function pageCount(db, groupId) {
-  const row = one(db, "SELECT MAX(page) AS m FROM group_cell WHERE group_id = ?", [groupId]);
-  return (row?.m ?? 0) + 1;
+export function pageCount(db, groupId, cells = 60) {
+  const row = one(
+    db,
+    "SELECT MAX(page * ? + slot_index) AS m FROM group_cell WHERE group_id = ?",
+    [ITEMS_PER_PAGE, groupId],
+  );
+  if (row?.m == null) return 1;
+  return Math.floor(canonPos(0, row.m) / (cells - 3)) + 1;
 }
 
 /**
@@ -589,6 +641,7 @@ const SYNCED_SETTINGS = new Set([
   "keyboard_order",
   "highlight_next",
   "jev_sharing",
+  "board_layout",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);
