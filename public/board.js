@@ -1679,6 +1679,60 @@ function openAddForm(groupId, cell = null) {
   open("addform");
 }
 
+/* --- bulk paste on the iPad (Word_Library § 5.4): the same
+   resolvePasteRows/applyPasteRows the web editor uses, in a small sheet
+   filed into the group it was opened from (My Words from the Library). */
+let bulkTarget = null;
+let bulkRows = [];
+function openBulkForm(groupId) {
+  bulkTarget = groupId ?? "grp_my_words";
+  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [bulkTarget])[0];
+  const name = row ? groupDisplayName(db, row, locale) : "";
+  $("bulk-title").textContent = name ? `Add a list to ${name}` : "Add a list";
+  $("bulk-paste").value = "";
+  renderBulkPreview();
+  open("bulkform");
+}
+function renderBulkPreview() {
+  bulkRows = resolvePasteRows(db, $("bulk-paste").value, { groupId: bulkTarget, locale });
+  const box = $("bulk-preview");
+  box.innerHTML = "";
+  for (const r of bulkRows) {
+    const row = document.createElement("div");
+    row.className = "ed-prow" + (r.already ? " over" : "");
+    const tag = document.createElement("span");
+    tag.className = "tag" + (r.kind === "new" ? " new" : r.already ? " already" : "");
+    tag.textContent = r.already ? "already" : r.kind === "new" ? "new — needs a picture" : r.kind;
+    const lb = document.createElement("span");
+    lb.textContent = r.label;
+    row.append(tag, lb);
+    box.appendChild(row);
+  }
+  const pending = bulkRows.filter((r) => !r.already).length;
+  const add = $("bulk-add");
+  add.disabled = pending === 0;
+  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [bulkTarget])[0];
+  const name = row ? groupDisplayName(db, row, locale) : "My Words";
+  add.textContent = pending ? `Add ${pending} to ${name}` : "Add all";
+}
+$("bulk-paste").addEventListener("input", renderBulkPreview);
+$("bulk-add").addEventListener("click", () => {
+  const res = applyPasteRows(db, bulkRows, {
+    groupId: bulkTarget,
+    category: catalog.groups.find((g) => g.id === bulkTarget)?.category ?? null,
+  });
+  close("bulkform");
+  kbIndex = null; // new entities join the completion index
+  rerenderView();
+  renderStrip();
+  renderLibrary();
+  const row = ALL(db, "SELECT id, name FROM board_group WHERE id = ?", [bulkTarget])[0];
+  const name = row ? groupDisplayName(db, row, locale) : "My Words";
+  toast(`Added ${res.placed} to ${name}` + (res.skipped ? ` (${res.skipped} already there)` : ""));
+});
+$("add-bulk").addEventListener("click", () => openBulkForm(addTarget));
+$("lib-bulk").addEventListener("click", () => openBulkForm("grp_my_words"));
+
 /** Re-render the match list and the always-present New row as the adult
  *  types. Every existing meaning is a picture row — the family's own
  *  entities first (with where they already are), then catalog senses.

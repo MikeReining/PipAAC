@@ -738,13 +738,17 @@
       }
       body.editor #ed-left .sheet [data-close],
       body.editor #ed-right .sheet [data-close],
-      body.editor #ed-left .sheet h2 { display: none; }
+      body.editor #ed-left .sheet h2,
+      body.editor #lib-bulk { display: none; }
       body.editor #ed-left #lib-list { max-height: none; flex: 1; }
-      #ed-paste {
+      #ed-paste, #bulk-paste {
         min-height: 90px; resize: vertical;
         font: inherit; font-size: 15px;
         border: 2px solid var(--line); border-radius: 10px; padding: 8px 10px;
       }
+      #bulk-paste { min-height: 140px; }
+      #bulk-preview { display: flex; flex-direction: column; gap: 4px; font-size: 14px;
+        max-height: 40vh; overflow: auto; }
       #ed-paste-preview { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
       .ed-prow { display: flex; align-items: center; gap: 8px; }
       .ed-prow .tag {
@@ -914,7 +918,23 @@
           <input type="text" id="add-hint" placeholder="Hint (optional), e.g. our dog" autocomplete="off" />
           <button class="btn" id="add-save">Save</button>
         </div>
+        <button class="btn secondary" id="add-bulk">Paste a list</button>
         <button class="btn secondary" data-close>Cancel</button>
+      </div>
+    </div>
+
+    <!-- Bulk entry (Word_Library § 5.4): the iPad-side paste box — one
+         word or short phrase per row, previewed, Add all into the group
+         it was opened from (or My Words from the Library). -->
+    <div class="overlay" id="bulkform">
+      <div class="sheet">
+        <h2 id="bulk-title">Add a list</h2>
+        <textarea id="bulk-paste" placeholder="One word or short phrase per line" spellcheck="false"></textarea>
+        <div id="bulk-preview"></div>
+        <div class="row">
+          <button class="btn" id="bulk-add" disabled>Add all</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
       </div>
     </div>
 
@@ -923,6 +943,7 @@
     <div class="overlay" id="library">
       <div class="sheet">
         <h2>Words</h2>
+        <button class="btn secondary" id="lib-bulk">Add a list</button>
         <div class="seg" id="lib-tabs">
           <button data-t="added" class="on">Added</button>
           <button data-t="suggested">Suggested</button>

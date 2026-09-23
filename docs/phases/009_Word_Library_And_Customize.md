@@ -325,6 +325,17 @@ placements in Food, no blank row. Core snapshot unchanged.
 Done when: that passes and a person can add a list of 20 words in one
 paste.
 
+**DONE.** The iPad-side paste box (`#bulkform`) reuses the shared
+`resolvePasteRows`/`applyPasteRows` — reachable from the add form
+("Paste a list", files into the group the form targets) and from the
+Library ("Add a list", files into My Words). Preview rows show
+own/sense/new tags live; **Add N** places through the real owners and
+clears the completion index. `src/board/bulk_add.test.mjs` measures the
+spec's scenario end to end (paste → preview → apply: 2 created, 4
+placed, dup + blank dropped, core map byte-identical); live probe
+`scripts/probes/bulk_probe.mjs` drove the real sheet — preview resolved
+correctly, "Add 3 to My Words" landed 2 entities + 1 sense placement.
+
 ---
 
 ## Slice 8 — Many photos at once
