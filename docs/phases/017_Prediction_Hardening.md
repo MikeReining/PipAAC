@@ -1,8 +1,13 @@
 # Phase 017 — Prediction you can prove
 
-**Status:** Ready to execute. Not started. Founder rulings recorded
-(step 0, 2026-09-23). Start with M1 (steps 4, 3, 5, 1, 2); the opening
-book (step 23) can start in parallel.
+**Status:** Executing. M1 complete (steps 4, 3, 5, 1, 2 — all BUILT).
+M2 in progress: steps 11 (synth users + frozen answer key), 12 (eval
+sealed), 16 (real-board time model) BUILT. Next: step 13 — one
+comparison command (`bench.mjs`/`arms.mjs`/`report.mjs` wiring the arms
+to `replayArms` + `actions.mjs`); then step 15 (sabotage controls) and
+step 18 (replay screen). Steered-synth book work for step 23 is
+measured in scratch (`fa244be`, `6398078`) — the repo `build_book.mjs`
+pipeline is the pending part.
 
 **DECIDED 2026-09-23** (founder: "If we nail prediction … we can create a
 category killer. I don't think we are there yet."). Source: an independent
@@ -678,6 +683,29 @@ shown word saves only finding and motor time; at 90%, it also saves most
 of the recall time.
 
 Done when: those pass.
+
+**Status (BUILT 2026-09-25, `a8ed607`).**
+`scripts/prediction/bench/actions.mjs` prices each intended word from
+the real board: Groups anchor + index page flips + group tile + group
+page flips + item, computed from `group_cell`/`board_group` through the
+canonical→visual geometry (`groups.mjs`), min over every placement.
+Off-board words are spelled through the real forgiving-completions
+matcher (`spelling.mjs` `buildIndex`/`suggest`) — letters until the
+word is in the completions row, +1. `seedUserBoard` deletes only the
+answer-key typed words' cells, so "not on any board" is literal.
+Time: find lerps 0.4→1.5 s by own-use count, group pages cost a 1.2 s
+scan each (index included), strip tiles 0.3 s per look, recall 1.2→3.5 s
+by count and cut by `recall_saving` when shown, slip applied in
+expectation, repairs at real cost, deciding from the key. All constants
+in `ACTION_DEFAULTS` + `SETTINGS` low/mid/high sweep. Strip verdicts:
+`hit` | `harmful` (shown, target absent) | `unhelpful` (hit that cost
+more than it saved — a real cost comparison, not a label).
+Proof in `scripts/prediction/bench/actions.test.mjs`: a filler-built
+deep group page costs more than page one, wrong-strip > no-strip,
+decoys cost more at high scan, familiar < rare finding, **A0 = 9.4 WPM
+mid** on u001 (calibration band), recall_saving 0 vs 0.9 brackets.
+Note: the step-11 answer key now emits canonical lemma case ("I",
+"iPad") so words resolve against catalog text (`a07c56c`).
 
 ## Step 13 — One comparison command
 
