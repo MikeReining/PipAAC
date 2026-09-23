@@ -249,6 +249,15 @@ The same web app, laid out for a computer when the screen is wide:
 - **Live.** With the iPad online, an edit reaches it in seconds. With the
   iPad offline, it arrives on the next connect.
 
+**BUILT** (011 slice 7): at `min-width: 1100px` the app opens to the
+editor view (`body.editor` in `public/board.js`) — Library and word card
+reparented into the left/right panes, the real 10×6 group grid in the
+middle with adult gestures always on (`itemCell` ctx), bulk paste and
+photo drop in `public/shared/bulk.mjs` writing through the same owners
+as single adds. Live sync rides the op log built in slices 1–6. Record
+my own from the laptop lands with 009 slice 4 (the recorder). The iPad's
+own paste box and multi-photo picker remain with 009 slices 7–8.
+
 In the browser, the synced copy on the relay is the durable one. The
 browser's local database is a cache that can be rebuilt from snapshot plus
 log, because browsers may evict site storage. If the browser's device key

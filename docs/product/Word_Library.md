@@ -181,6 +181,11 @@ them in the current group, or My Words from the Library. Duplicate rows
 collapse to one. The box works on the iPad. It is the headline feature of
 the web editor on a computer (`docs/product/Sync_And_Web_Editing.md` § 7).
 
+**BUILT on the web editor** (011 slice 7): `resolvePasteRows` /
+`applyPasteRows` in `public/shared/bulk.mjs` — auto-resolution is
+exact-match only, duplicates collapse, rows already in the group skip.
+The iPad-side paste box remains with 009 slice 7.
+
 ### 5.5 Suggested words
 
 One tap from the Suggested tab (§ 8).

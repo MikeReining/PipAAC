@@ -201,6 +201,29 @@ shows them in the same slots the laptop shows. Automated half: a headless
 browser client and a second client against the local relay. The same
 paste yields byte-identical `group_cell` rows on both.
 
+**DONE.** On `min-width: 1100px` the app opens to the editor
+(`body.editor`, `setView("editor")`): the Library overlay and the word
+card overlay are reparented into the editor's left and right panes — same
+nodes, same listeners — and the middle pane renders the real 10×6 group
+grid with Edit-mode gestures always on (drag move/swap, × remove, tap
+opens the card; `itemCell` takes a `ctx` so the editor drives the same
+gestures without touching the child's Edit flag). Bulk paste and photo
+drop live in `public/shared/bulk.mjs`: `resolvePasteRows` resolves each
+line exactly (own entity, catalog sense, or `new — needs a picture`;
+fuzzy misses never place), collapses duplicate rows, and marks rows
+already in the target group; `applyPasteRows` writes through
+`createEntity`/`placeItem`, so every pasted row is a normal op. Dropped
+image files become draft entities named from the file (`nameFromFile`),
+photo bytes through `savePhoto` → `blob:<sha>` → `syncUploadBlob`.
+Unit proof: `src/board/web_editor.test.mjs` — resolution, dedupe,
+already-placed skip, op counts, and byte-identical `group_cell` after op
+replay on a second replica. Live proof: a 1400px headless Chrome opened
+the editor, paired through the real UI with an 820px board client, pasted
+10 lines into Food (6 placed — 4 were already seeded) and dropped 3 PNGs
+into People; the iPad-side client's `group_cell` rows were byte-identical
+and all three photo tiles rendered real `<img>`s. The iPad paste box and
+multi-photo picker remain with 009 slices 7–8.
+
 ## Slice 8 — Recovery sheet
 
 Goal: print or save the recovery sheet. Restore on a fresh device from it.
