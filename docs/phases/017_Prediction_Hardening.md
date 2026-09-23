@@ -188,7 +188,7 @@ Why this changes the audit's order:
 | R8 | Data licenses | Free sources only; no paid license (step 23). |
 | R9 | Ranking | By probability: the words the user is about to say, like a phone keyboard. Never by how far away a word is. |
 | R10 | The flywheel | On by default under the existing "Help improve Pip" switch; anonymous 1–3-word counts of built-in words (step 26). Amends Stats § 6.3's "no sequence of words". Turning it off stays free (recommended; founder floated charging for opt-out). |
-| R11 | CHILDES | Not in the shipped book (non-commercial license; Pip sells Pip Lifetime). Ask TalkBank for permission to use it as a test set only. |
+| R11 | CHILDES | Founder is asking TalkBank for permission (2026-09-23). Until a written answer: not in the shipped book or the repo. A one-off measurement (step 23 § Real children) shows what it's worth: +11–16 points in top 4 over the best legal book. |
 
 ---
 
@@ -760,9 +760,46 @@ What it means:
   is spent. AoA says which words a child knows, not which comes next.
 - **Partner words:** see step 24.
 
-Limits: GPT-4 wrote TinyDialogues, both the source and the test. These
-are directions, not proof, until tested on real children (R11) and on
-the flywheel's data.
+Limits: GPT-4 wrote TinyDialogues, both the source and the test. The
+real-children run below corrects the size of both effects.
+
+### Real children (CHILDES, 2026-09-23, measurement only)
+
+At the founder's direction, a one-off measurement on CHILDES transcripts:
+a public Hugging Face mirror of 10,828 English transcripts, 4.2M
+utterances with speaker tags, and no ages. The data was kept in scratch
+space outside the repo and is not in any shipped file (R11). Transcripts
+were split 80/20. Test: 1,743 held-out transcripts, with 2,500 sampled
+predictions per stage. Stage = the child's mean utterance length (MLU),
+the standard language-stage measure. Metric: the child's next non-core
+word in the top 4, later words / first words. "+ partner" = words from
+the adult's previous turn get a fixed +2 boost.
+
+| Book | MLU < 2 (~age 2) | MLU 2–3.5 (~age 3) | MLU > 3.5 (~age 4+) |
+| --- | --- | --- | --- |
+| Adult AAC (Imagine) | 20.6% / 3.4% | 26.8% / 7.1% | 27.8% / 9.9% |
+| TinyDialogues caregiver + child (**legal**) | 24.9% / 3.6% | **37.0%** / 9.8% | **36.5%** / 18.7% |
+| + partner words | 29.1% / 6.1% | 38.2% / 13.0% | 38.7% / 20.0% |
+| CHILDES caregiver speech (not licensed) | 40.7% / 4.7% | 48.2% / 11.6% | 47.4% / 14.3% |
+| CHILDES child speech (not licensed) | 43.5% / 16.5% | 49.2% / 22.5% | 49.7% / 22.3% |
+
+Share of the child's non-core words that the adult said in the previous
+turn: **18.4% (MLU < 2), 12.8%, 10.3%**.
+
+What real children say:
+- **The legal child book beats adult text on real children:** about +9
+  points at ages 3–4+ (+35% relative), +4 at age 2.
+- **Real child speech is worth another 11–16 points.** That is what
+  permission to use CHILDES-derived counts would buy, and what the
+  flywheel (step 26) must earn from real AAC use. It is optimistic:
+  longitudinal corpora put the same child in train and test sessions,
+  which acts partly like personal history.
+- **Partner echo is real but modest in natural play:** 10–18% of words,
+  +1 to +4 points in top 4. GPT-4's toddlers (70%) overstated it. It may
+  run higher in AAC, where partners offer choices ("juice or milk?"),
+  so the bench measures it per user and the weight is learned.
+- **First words stay hard** (4–22%). Step 21 and occasions (step 9)
+  aim here.
 
 Truth owner: this doc until closeout, then
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 5.2–5.3.
@@ -784,11 +821,13 @@ Goal: when an adult has just said or modeled words, the strip already
 holds the ones the user is likely to answer with. "Juice or milk?" → the
 strip shows *juice* and *milk*.
 
-Why: in the age-2 test dialogues, **70% of the toddlers' non-core words
-had just been said by the adult** in the previous turn. Boosting them
-took top-4 from 15.8% to 27.9%. At age 5, 26% echoed, and a fixed boost
-slightly hurt (46.6% → 44.1%), so the weight must be learned per user,
-never fixed. Children echo their partners, a lot when young.
+Why: in real children's speech (CHILDES, step 23 § Real children),
+10–18% of a child's non-core words were just said by the adult, the most
+at the youngest stage. Boosting them adds +1 to +4 points in top 4 in
+natural play. That is smaller than GPT-4's dialogues suggested (70%), but
+it is free, and it should be larger when an adult offers choices, which
+is exactly what modeling on an AAC device does. The weight is learned
+per user.
 
 Files: `public/shared/funnel.mjs` (`echo` feature, retrieval source),
 `public/board.js`, the 013 Spotlight modules, `src/board/strip.test.mjs`.
@@ -1218,7 +1257,7 @@ strip should know. These additions go after the biggest gains:
 | Step | Idea | Why |
 | --- | --- | --- |
 | 23 | The opening book, from child conversation | The strip knows nothing about English today; caregiver speech doubles adult text on held-out child turns |
-| 24 | The partner's words | 70% of toddlers' non-core words echo the adult's last turn (test dialogues) |
+| 24 | The partner's words | 10–18% of real children's non-core words echo the adult's last turn; +1–4 points |
 | 25 | Word classes, slots, topic, fading | One example teaches a class; new entities are predicted on day one |
 | 26 | The flywheel | Every user improves the book; nobody else in AAC has this data |
 | 21 | Predict the first word (bench arm) | 40% of picks are sentence-first and get no prediction today |
@@ -1252,4 +1291,5 @@ Step 19 records the one `--final` eval run.
 | --- | --- | --- | --- | --- | --- | --- |
 | 23 prototype | Imagine AAC train set only; held-out writers, non-core next word | — | top-4 50.9%, top-16 74.4% | — | — | scratch, 2026-09-23 |
 | 23 experiment | Caregiver-speech book vs adult AAC book, TinyDialogues held-out child turns (later words) | — | age 2: 33.5% vs 15.3%; age 5: 49.1% vs 28.2% | — | — | scratch, 2026-09-23 |
-| 24 experiment | Partner's last-turn words boosted (fixed +4 logit), caregiver book | — | age 2: 15.8% → 27.9%; age 5: 46.6% → 44.1% | — | — | scratch, 2026-09-23 |
+| 24 experiment | Partner's last-turn words boosted (fixed +4 logit), caregiver book, TinyDialogues | — | age 2: 15.8% → 27.9%; age 5: 46.6% → 44.1% | — | — | scratch, 2026-09-23 |
+| 23/24 real children | CHILDES held-out transcripts, later words top 4: adult AAC → legal child book → CHILDES book (+partner on legal) | — | ~age 3: 26.8% → 37.0% (38.2%) → 49.2% | — | — | scratch, 2026-09-23 |
