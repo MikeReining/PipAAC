@@ -42,8 +42,14 @@ below.
   app. The route into that system is a later device partner, priced per
   user by nature.
 - Schools buy through Apple School Manager; a developer may offer 50% off
-  20+ copies. **UNVERIFIED:** that discount applies to a paid app's price;
-  whether it can cover an in-app license at all.
+  20+ copies of a paid app. That discount does not cover an in-app
+  purchase, so schools buy license codes.
+- **Apple product type (founder research):** a per-user one-time unlock
+  must be a **consumable**. An Apple ID cannot buy the same
+  non-consumable twice ("You've already purchased this"), so a second
+  user could never be bought. Consumables need server-side validation
+  (App Store Server API), binding to the user in our database, and App
+  Review notes explaining the permanent unlock and how it restores.
 - Passkeys can unlock end-to-end keys on the device (WebAuthn PRF): iCloud
   Keychain (Safari 18+, iOS 18.4+), Google Password Manager, Windows 11
   25H2. Not on every authenticator, so it is an enhancement with a

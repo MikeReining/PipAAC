@@ -260,10 +260,18 @@ Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 - Either confirmation writes the same license record on the user. From
   then on the user is like any other: the QR card restores it, with its
   license, on any device (iPad, Android, a browser).
-- **UNVERIFIED** (research before code, not a founder question): which
-  in-app purchase type App Review accepts for a permanent unlock of one
-  user among many; whether the App Store Small Business Program (15%
-  instead of 30%) applies to us.
+- **Apple product type (researched 2026-09-23):** a **consumable**, not a
+  non-consumable. An Apple ID can buy a non-consumable only once, so a
+  second user's license could never be bought. Consumables do not
+  restore through Apple, so the relay validates the signed transaction
+  (App Store Server API), binds it to one user, and is the record. The
+  App Review notes explain that each credit permanently unlocks one user
+  in our account system, restored by sign-in or the QR card. Model
+  Apple's cut at 30%.
+- **Bought elsewhere, used on iOS:** a license bought on the web works in
+  the iOS app because the same unlock is also sold in the app (App Review
+  Guideline 3.1.3(b), multiplatform). School codes bought by purchase
+  order fall under 3.1.3(c) (enterprise).
 
 **PROPOSED:** a free demo user per SLP account for evaluations (full
 features, cannot be moved to another device or shared).

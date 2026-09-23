@@ -173,11 +173,20 @@ subscription before a child can speak
   server records the license on the user. The license belongs to the
   user, whoever paid, and travels with the user to any device through
   the QR card or a supporter's sign-in.
-  **UNVERIFIED:** which in-app purchase type App Review accepts for a
-  permanent unlock of one user among many.
+  The product is a **consumable** ("Pip Lifetime for one user"),
+  researched 2026-09-23: Apple lets an Apple ID buy a non-consumable only
+  once, so a parent or SLP could never buy a second user's license. A
+  consumable can be bought again and again. Apple does not restore
+  consumables, so our server is the record: it validates the signed
+  transaction with the App Store Server API, binds it to one user, and
+  keeps the license. The App Review notes say that each credit
+  permanently unlocks one user in our account system and is restored by
+  sign-in or the QR card. Model Apple's cut at 30%.
 - **Schools, grants, SLPs buying ahead:** license codes, each redeemable
-  on one user. 50% off 20 or more. **UNVERIFIED:** whether Apple School
-  Manager volume pricing can apply to an in-app license; codes are the
-  path that works regardless.
+  on one user. 50% off 20 or more, bought on the web or by purchase
+  order. Apple School Manager's volume discount covers a paid app's
+  price, not an in-app purchase, so codes are the school path. A code
+  bought outside the app works in the iOS app because the same unlock is
+  sold in the app (App Review Guideline 3.1.3(b); schools 3.1.3(c)).
 - **Medicaid / insurance:** later, through a device partner that ships a
   dedicated device with a Pip Lifetime user. Not built, not scheduled.

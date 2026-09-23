@@ -402,9 +402,8 @@ All five asked questions were answered ("all agreed"):
      Draw it for me (`docs/product/Word_Library.md` § 6.1).
 
 On iOS, the Lifetime unlock is an in-app purchase (Apple requires it for
-digital unlocks). **UNVERIFIED:** how school and grant purchases (Apple
-School Manager volume purchase) interact with it. Check before pricing
-ships.
+digital unlocks). *Resolved 2026-09-23:* a consumable per user, schools
+through license codes (`docs/product/Pricing_And_Packaging.md` § 4.5).
 
 ## 12. Accounts, users and the QR card (2026-09-23)
 
