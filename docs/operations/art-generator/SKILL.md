@@ -29,7 +29,8 @@ Opaque function words take no lens: they get a hand-drawn glyph (§ 1.2).
 **DECIDED 2026-09-23** (founder). BUILT: `buildPrompt` contrast clause, `scripts/art/gen.mjs:189`.
 
 - **Target** is filled with the tile's own grammar color (`--torso`), not always blue. `big` is blue because it is a descriptor; `this`/`that` take yellow.
-- **Reference** keeps the same shape and black outline with a pale neutral grey fill. Never hollow: a hollow ball reads as a ring, a hole, or zero. Grey still separates from the fill on a black-and-white print.
+- **Reference** keeps the same shape and black outline with a pale neutral grey fill (`#dddad3`). Never hollow: a hollow ball reads as a ring, a hole, or zero. Grey still separates from the fill on a black-and-white print.
+- **Colorblind & CVI Accessibility (3:1 Luminance Ratio):** Contrast must never depend on hue alone. Target and reference must maintain at least a **3:1 relative luminance ratio** (WCAG AAA value contrast): saturated roles (blue `#2f6fd0`, green `#31a44b`, red `#e3242b`) pair with pale grey (`#dddad3`); high-luminance light roles (like yellow `#fecc2a`) pair with dark charcoal grey (`#555555`). This ensures the target pops out instantaneously even in pure monochrome/achromatopsia or photocopied printouts.
 - **No arrow.** Fill and size already point; a pink arrow on a blue tile also breaks "hue means grammar." Arrows stay for motion and direction (`in`, `out`, `go`, `come`).
 - **Pairs are minimal pairs.** `big` and `little` use identical composition; only the fill swaps. The child learns one contrast, not two pictures.
 

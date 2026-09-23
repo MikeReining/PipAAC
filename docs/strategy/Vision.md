@@ -191,8 +191,9 @@ Instead of forcing the learner into a single rigid grid:
   - Within a view, core indices do not move on their own; a parent or SLP may move them (amended 2026-09-22). Across densities, spatial-vector anchoring is a default goal with a shown move cost (amended 2026-09-22).
   - Predictive strip: at most four text-and-icon tiles between the sentence bar and the core grid. Suggestions do not reorder the grid.
   - Symbol art: one neutral stick character with Fitzgerald-colored torsos; illustrated objects for inanimate nouns; in-house assets only.
-- **PROPOSED**:
+- **DECIDED 2026-09-23** (founder):
   - Primary production domain: `pippaac.org`.
+- **PROPOSED**:
   - Phase 1 execution slice: Relational Core Schema + Spatial Vector Engine + Responsive Motor Grid View proof.
 
 ---
