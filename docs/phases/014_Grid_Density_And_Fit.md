@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slices 1–3 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`). Next: slice 4 — Cells picker + move cost. Rulings and starters below are **DECIDED
+**Status:** Slices 1–4 built (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + the four grammar groups). Next: slice 5 — `grid90` sector rebuild. Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -318,6 +318,31 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    with the § 4 preview; the four core groups behind Core 15 (§ 3.1). Works test: a
    profile with a known selection log previews exactly the words the two
    maps disagree on.
+
+   **DONE.** Parent Corner → "Cells" seg lists every `catalog.layouts`
+   shape (15 / 60 / 90). Picking another opens `#cellsform` — the § 4
+   preview BEFORE anything changes: `moveCost` (`public/shared/
+   movecost.mjs`) classifies each word same / sector / moved / gone /
+   new against both coordinate maps (sectors per the map doc's column
+   bands; `grid90` is row-banded until slice 5), weighted by the real
+   `learner_event_log` — no history → the whole board, unweighted.
+   Apply → `setBoardLayout` writes `learner_profile.board_layout` via
+   the synced setting, records `set_layout`, and stamps `move_mark`
+   rows on the words that changed place: they render a soft
+   `.cell.moved` ring for 14 days, then the marks prune on read.
+   Overrides are per-layout, so an adult's grid60 move survives a
+   switch and lands again on switch-back. The four grammar groups —
+   `grp_more_people` (9), `more_doing` (15), `more_where` (12),
+   `more_describing` (10) — derive from the grid60 column sectors
+   minus words already on grid15 (`sector` seed in group_seed.json,
+   not a hand-copied list). Works Tests: `src/board/
+   move_cost.test.mjs` (exact same/sector/moved/gone/new classification
+   on synthetic maps, selection-log weighting, marks only on moved
+   cells, override survives, `set_layout` replay converges) and
+   `scripts/probes/cells_probe.mjs` (seg → preview shows "57 of 83
+   words will move" with the profile untouched → Apply → 90 cells and
+   57 `.moved` rings → all four groups on the index → switch back and
+   the adult's move is still there).
 5. **`grid90` rebuild** on column sectors, with its move cost from `grid60`
    shown in the change record.
 6. **Message tiles** for the Urgent needs starter (depends on 010's phrase

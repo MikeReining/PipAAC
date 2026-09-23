@@ -311,6 +311,13 @@ CREATE TABLE IF NOT EXISTS core_override (
   PRIMARY KEY (layout, sense_id)
 );
 
+-- Transition highlight (014 § 4): after an accepted Cells change, the
+-- words that moved glow softly until `until`, then the mark fades.
+CREATE TABLE IF NOT EXISTS move_mark (
+  sense_id TEXT PRIMARY KEY REFERENCES sense(id),
+  until INTEGER NOT NULL
+);
+
 -- Groups: one kind of container. The index is a coordinate map (slots
 -- 10–59); items sit at fixed (page, slot) inside a group. Positions move
 -- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.

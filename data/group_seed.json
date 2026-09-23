@@ -207,6 +207,66 @@
       "names": {
         "en": "Numbers"
       }
+    },
+    {
+      "key": "more_people",
+      "glyph": "👥",
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          0,
+          1
+        ],
+        "excludeLayout": "grid15"
+      },
+      "names": {
+        "en": "More people"
+      }
+    },
+    {
+      "key": "more_doing",
+      "glyph": "🏃",
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          2,
+          4
+        ],
+        "excludeLayout": "grid15"
+      },
+      "names": {
+        "en": "More doing"
+      }
+    },
+    {
+      "key": "more_where",
+      "glyph": "🧭",
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          5,
+          6
+        ],
+        "excludeLayout": "grid15"
+      },
+      "names": {
+        "en": "More where"
+      }
+    },
+    {
+      "key": "more_describing",
+      "glyph": "🎨",
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          7,
+          9
+        ],
+        "excludeLayout": "grid15"
+      },
+      "names": {
+        "en": "More describing"
+      }
     }
   ]
 }

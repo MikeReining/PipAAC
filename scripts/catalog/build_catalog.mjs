@@ -92,7 +92,7 @@ export function parseCoordinateMapMarkdown(raw) {
  * catalog word reachable in at least one built-in group, and every group
  * named in every locale the catalog ships.
  */
-export function buildGroups(lexicon, seed, locales = ["en"]) {
+export function buildGroups(lexicon, seed, locales = ["en"], mapLayouts = {}) {
   const byNorm = new Map();
   for (const e of lexicon.entries) {
     const n = normalizeV1(e.spokenText);
@@ -122,8 +122,8 @@ export function buildGroups(lexicon, seed, locales = ["en"]) {
     }
     if (seenKeys.has(g.key)) throw new Error(`group seed: duplicate key "${g.key}"`);
     seenKeys.add(g.key);
-    if (g.category && g.words) {
-      throw new Error(`group seed ${g.key}: category and words are mutually exclusive`);
+    if ([g.category, g.words, g.sector].filter(Boolean).length > 1) {
+      throw new Error(`group seed ${g.key}: category, words and sector are mutually exclusive`);
     }
     if (!g.names || typeof g.names !== "object") {
       throw new Error(`group seed ${g.key}: names must be a per-locale map`);
@@ -161,6 +161,21 @@ export function buildGroups(lexicon, seed, locales = ["en"]) {
         .filter((sid) => !excluded.has(sid));
     } else if (g.words) {
       memberIds = g.words.map((w) => resolve(w, `${g.key}.words`));
+    } else if (g.sector) {
+      // The § 3.1 grammar groups: every `grid60` cell in these column
+      // bands that the starter (`excludeLayout`) doesn't already hold —
+      // derived from the coordinate map, never a hand-copied list.
+      const lay = mapLayouts[g.sector.layout];
+      const excl = new Set(
+        (mapLayouts[g.sector.excludeLayout]?.cells ?? []).map((c) => normalizeV1(c.word)),
+      );
+      if (!lay) throw new Error(`group seed ${g.key}: unknown sector layout ${g.sector.layout}`);
+      memberIds = lay.cells
+        .filter((c) => c.slot % lay.cols >= g.sector.cols[0]
+          && c.slot % lay.cols <= g.sector.cols[1]
+          && !excl.has(normalizeV1(c.word)))
+        .sort((a, b) => a.slot - b.slot)
+        .map((c) => resolve(c.word, `${g.key}.sector`));
     }
     if (memberIds.length > ITEMS_PER_PAGE) {
       throw new Error(
@@ -329,7 +344,7 @@ export function buildCatalog(
   }
 
   const catalogLocales = [...new Set(labels.map((l) => l.locale))];
-  const { groups, groupCells, groupLabels } = buildGroups(lexicon, groupSeed, catalogLocales);
+  const { groups, groupCells, groupLabels } = buildGroups(lexicon, groupSeed, catalogLocales, mapLayouts);
 
   return {
     schemaVersion: CATALOG_SCHEMA_VERSION,

@@ -80,7 +80,7 @@ test("reachability: every categorized sense sits in a built-in group, none past 
   assert.deepEqual(offPage, []);
 
   const index = groupIndex(db);
-  assert.equal(index.length, 19);
+  assert.equal(index.length, 23); // 19 seeded + the four grammar groups (014 § 3.1)
   assert.equal(index[0].id, "grp_my_words");
   assert.equal(index[0].index_slot, 10);
   for (const [i, g] of index.entries()) assert.equal(g.index_slot, 10 + i);
@@ -235,7 +235,10 @@ test("legacy migration keeps custom groups, entities, and the caregiver's arrang
   const custom = idx.find((g) => g.id === "grp_custom1");
   assert.equal(custom.kind, "custom");
   assert.equal(custom.name, "Sofia's snacks");
-  assert.equal(custom.index_slot, 30);
+  // The legacy slot (30) is now a built-in's — grp_more_doing (014
+  // slice 4). Placement law: a taken slot degrades to the lowest free
+  // one — 22, which Animals vacated when its zone row moved it to 40.
+  assert.equal(custom.index_slot, 22);
 
   const customCells = groupPage(db, "grp_custom1", 0, "en");
   assert.deepEqual(

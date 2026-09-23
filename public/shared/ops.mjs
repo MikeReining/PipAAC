@@ -34,6 +34,7 @@ import {
   deleteSpotList, saveSpotList, endSession, spotSession, startSession,
 } from "./spotlight.mjs";
 import { moveCore } from "./coremove.mjs";
+import { setBoardLayout } from "./movecost.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -160,7 +161,10 @@ export function applyOp(db, op) {
         }
         break;
       case "set_setting":
-        setSetting(db, a.key, a.value);
+        // A layout change always goes through the write owner so the
+        // transition marks stamp on every replica (014 § 4).
+        if (a.key === "board_layout") setBoardLayout(db, a.value);
+        else setSetting(db, a.key, a.value);
         break;
       case "set_override": {
         // The recorded text must still equal the target's spoken
@@ -217,6 +221,9 @@ export function applyOp(db, op) {
           moveCore(db, a.layout, a.senseId, a.toSlot);
         }
         break;
+      case "set_layout":
+        setBoardLayout(db, a.layout);
+        break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -244,7 +251,7 @@ const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
   "clip_override", "image_override", "entity_enrichment", "group_cell",
   "sense_mask", "spotlight_list", "spotlight_item", "spotlight_session",
-  "core_override",
+  "core_override", "move_mark",
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */

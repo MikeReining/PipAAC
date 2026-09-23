@@ -100,8 +100,17 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   `group_cell` and `board_group.index_slot` stay in canonical 60-space;
   renderers re-wrap the linear order into pages of N−3
   (`visualCell`/`posAtVisual`/`indexVisual` in `public/shared/groups.mjs`)
-  — no row moves when Cells changes. The move-cost preview lands with the
-  Cells picker (slice 4).
+  — no row moves when Cells changes.
+- **The Cells change is never silent** (014 § 4). **BUILT** (014 slice 4):
+  the Parent Corner Cells seg previews the move cost before anything
+  changes — `moveCost` in `public/shared/movecost.mjs` classifies every
+  pooled word same / sector / moved / gone / new against both coordinate
+  maps, weighted by the real `learner_event_log` (no history → the whole
+  board, unweighted). Apply → `setBoardLayout` writes the synced
+  `board_layout` setting and stamps `move_mark` rows on the words that
+  changed place; they render a soft `.cell.moved` ring for 14 days.
+  `core_override` rows are per-layout, so adult moves survive a Cells
+  change and land again if the adult switches back.
 - **Motor-memory law inside groups too.** The index and every group page
   are coordinate maps (`board_group.index_slot`, `group_cell (page,
   slot_index)`). Built-in contents are seeded in vocabulary-doc order

@@ -375,6 +375,14 @@
       }
       #spot-pickbar .pick-start { background: var(--glow); }
       #spot-pickbar .pick-quiet { background: #4a4539; color: #fff; }
+      /* Transition highlight (014 § 4): a moved word keeps a soft inner
+         ring for the window — quieter than the spotlight's outer glow,
+         and it dims nothing. */
+      .cell.moved { box-shadow: inset 0 0 0 3px var(--glow); }
+      /* Cells preview sheet */
+      #cells-moved { max-height: 160px; overflow-y: auto; margin: 8px 0; }
+      #cells-moved .mv-row { display: flex; justify-content: space-between; font-size: 14px; padding: 3px 0; }
+      #cells-moved .mv-cls { color: var(--muted); }
       .spot-list-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
       .spot-list-row .spot-list-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .spot-list-row button { flex: none; padding: 5px 10px; font-size: 13px; }
@@ -897,6 +905,11 @@
           <p class="hint">Glow the words you want to point at; everything else dims but still speaks.</p>
         </div>
         <div class="seg-row">
+          <span class="seg-label">Cells</span>
+          <div class="seg" id="cells-seg"></div>
+          <p class="hint">How many cells the board shows. Changing it shows what moves before anything does.</p>
+        </div>
+        <div class="seg-row">
           <span class="seg-label">Keyboard</span>
           <div class="seg" id="kb-mode">
             <button data-v="pip">Pip keys</button>
@@ -1012,6 +1025,18 @@
       <button class="pick-start" id="spot-pick-start">Start</button>
       <button class="pick-quiet" id="spot-pick-save">Save…</button>
       <button class="pick-quiet" id="spot-pick-cancel">Cancel</button>
+    </div>
+
+    <div class="overlay" id="cellsform">
+      <div class="sheet">
+        <h2 id="cells-title">Change the board?</h2>
+        <p id="cells-summary" class="hint"></p>
+        <div id="cells-moved"></div>
+        <div class="row">
+          <button class="btn" id="cells-apply">Apply</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
     </div>
 
     <div class="overlay" id="groupform">
