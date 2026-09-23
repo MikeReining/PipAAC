@@ -13,30 +13,32 @@
     "fittedOn": "routine_days.en.json + routine_days_varied.en.json, days 1–5 (weak prior)",
     "weights": {
       "local_only": {
-        "phrase": 1.5496,
-        "pair": 1.5496,
+        "phrase": 1.4787,
+        "pair": 1.4787,
         "occasion": 0,
-        "hour": 1.4102,
-        "recency": -0.5635,
-        "freq": -2.0293,
+        "hour": 1.6302,
+        "recency": -0.6677,
+        "freq": -2.1408,
         "invited": 0.7628,
         "echo": 0,
         "fresh": 0,
         "jev": 0,
-        "none_bias": 2.8786
+        "spot": 0,
+        "none_bias": 2.9174
       },
       "with_jev": {
-        "phrase": 1.5496,
-        "pair": 1.5496,
+        "phrase": 1.4787,
+        "pair": 1.4787,
         "occasion": 0,
-        "hour": 1.4102,
-        "recency": -0.5635,
-        "freq": -2.0293,
+        "hour": 1.6302,
+        "recency": -0.6677,
+        "freq": -2.1408,
         "invited": 0.7628,
         "echo": 0,
         "fresh": 0,
         "jev": 0.5,
-        "none_bias": 2.8786
+        "spot": 0,
+        "none_bias": 2.9174
       }
     },
     "tau": {

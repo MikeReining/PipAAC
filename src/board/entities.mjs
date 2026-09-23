@@ -8,12 +8,12 @@
 
 export const MY_WORDS = null; // category null = no home category recorded
 
-export function addPersonalEntity(db, { spokenName, photoKey = null, category = null, hint = null }) {
-  const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
+export function addPersonalEntity(db, { spokenName, photoKey = null, category = null, hint = null, id = null }) {
+  const eid = id ?? `ent_${crypto.randomUUID().replaceAll("-", "")}`;
   db.prepare(
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES (?, ?, ?, ?, ?)",
-  ).run(id, spokenName, photoKey, category, hint);
-  return { id, spokenName, photoKey, category, hint };
+  ).run(eid, spokenName, photoKey, category, hint);
+  return { id: eid, spokenName, photoKey, category, hint };
 }
 
 /** Entities recorded with one home category. `category === null` lists

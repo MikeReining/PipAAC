@@ -26,8 +26,10 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { addPersonalEntity } from "./entities.mjs";
-import { loadSimFixture, modelOffer, replayDays } from "./sim_replay.mjs";
-import { predictionReport, stripScored } from "../../public/shared/funnel.mjs";
+import {
+  loadSimFixture, modelOffer, replayArms, replayDays, simTime,
+} from "./sim_replay.mjs";
+import { predictionReport, stripScored, logSelection } from "../../public/shared/funnel.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const { catalog, fixture } = loadSimFixture(repoRoot);
@@ -62,10 +64,10 @@ test("the fixture's words all resolve — the fixture, not the ranker, is checke
   assert.deepEqual(missing, []);
 });
 
-test("simulation: the fitted model beats the instrumented baseline", () => {
+test("simulation: the fitted model beats the instrumented baseline", async () => {
   const db = openDb();
   const entities = addEntities(db);
-  const { mTaps, mWords, measureStart } = replayDays(db, catalog, fixture, entities, {
+  const { mTaps, mWords, measureStart } = await replayDays(db, catalog, fixture, entities, {
     measureFrom: 11, offer: modelOffer(MODEL),
   });
   const report = predictionReport(db, { from: measureStart });
@@ -87,7 +89,7 @@ test("simulation: the fitted model beats the instrumented baseline", () => {
     });
     return { candidates, shown: candidates.slice(0, 4), pNone };
   };
-  const always = replayDays(db2, catalog, fixture, entities2, {
+  const always = await replayDays(db2, catalog, fixture, entities2, {
     measureFrom: 11, offer: alwaysOffer,
   });
   const alwaysTaps = always.mTaps / always.mWords;
@@ -98,10 +100,10 @@ test("simulation: the fitted model beats the instrumented baseline", () => {
   );
 });
 
-test("unscripted sentences: the gate shows nothing more often than it misfires", () => {
+test("unscripted sentences: the gate shows nothing more often than it misfires", async () => {
   const db = openDb();
   const entities = addEntities(db);
-  const { picks } = replayDays(db, catalog, fixture, entities, {
+  const { picks } = await replayDays(db, catalog, fixture, entities, {
     measureFrom: 11, offer: modelOffer(MODEL),
   });
   // An unscripted pick belongs to a sentence whose start matches an
@@ -124,10 +126,10 @@ test("unscripted sentences: the gate shows nothing more often than it misfires",
   );
 });
 
-test("negative control: a ranker that shows nothing scores zero", () => {
+test("negative control: a ranker that shows nothing scores zero", async () => {
   const db = openDb();
   const entities = addEntities(db);
-  const { mTaps, mWords, measureStart } = replayDays(db, catalog, fixture, entities, {
+  const { mTaps, mWords, measureStart } = await replayDays(db, catalog, fixture, entities, {
     measureFrom: 11, offer: NO_OFFER,
   });
   const report = predictionReport(db, { from: measureStart });
@@ -141,4 +143,70 @@ test("negative control: a ranker that shows nothing scores zero", () => {
      WHERE l.item_kind = 'sense' AND l.selected_at >= ?`,
   ).all(measureStart)[0].n;
   assert.equal(mTaps, corePicks + (mWords - corePicks) * 3);
+});
+
+/* 017 step 1 — one clock, one walker. The walker reads only the frozen
+ * schedule; stubbing Date.now to throw must not stop a replay, and the
+ * same replay on any real date must produce identical events. */
+test("one clock: the walker never reads the wall clock (017-1)", async () => {
+  const db = openDb();
+  const entities = addEntities(db);
+  const realNow = Date.now;
+  Date.now = () => { throw new Error("wall clock read during replay"); };
+  try {
+    const r = await replayDays(db, catalog, fixture, entities, {
+      measureFrom: 11, offer: modelOffer(MODEL),
+    });
+    assert.ok(r.words > 50, "replay completed under a dead wall clock");
+    assert.ok(r.picks.every((p) => p.at >= simTime(1, "00:00")
+      && p.at <= simTime(15, "00:00")),
+      "every pick landed on the frozen 2026-01-05 anchor week");
+  } finally {
+    Date.now = realNow;
+  }
+});
+
+test("one clock: 07:50 and 19:50 give different hour features and offers", async () => {
+  const db = openDb();
+  addEntities(db);
+  // A word the child picks every evening vs one picked every morning —
+  // hour bucketing must rank them differently inside their windows.
+  const lemma = (text) => catalog.labels.find(
+    (l) => l.kind === "lemma" && l.locale === "en" && l.text === text)?.sense_id;
+  const juice = lemma("juice"), milk = lemma("milk"), want = lemma("want");
+  assert.ok(juice && milk && want, "fixture lemmas must exist in the catalog");
+  for (let d = 1; d <= 5; d++) {
+    logSelection(db, "sense", juice, simTime(d, "19:50"), {});
+    logSelection(db, "sense", milk, simTime(d, "07:50"), {});
+  }
+  const model = { weights: MODEL.weights.local_only, tau: MODEL.tau };
+  const sents = [{ kind: "sense", id: want }];
+  const am = stripScored(db, sents, simTime(8, "07:50"), "en", model);
+  const pm = stripScored(db, sents, simTime(8, "19:50"), "en", model);
+  const hourOf = (sc, id) => sc.candidates.find((c) => c.id === id)?.x.hour;
+  assert.notEqual(hourOf(am, juice), hourOf(pm, juice),
+    "the same history must light the hour feature differently by time of day");
+  const rank = (sc, id) => sc.candidates.findIndex((c) => c.id === id);
+  assert.ok(rank(am, milk) < rank(am, juice), "morning word outranks at 07:50");
+  assert.ok(rank(pm, juice) < rank(pm, milk), "evening word outranks at 19:50");
+});
+
+test("one clock: every arm replays identical picks and times, byte-identical across runs", async () => {
+  const arm = (tag) => {
+    const db = openDb();
+    const entities = fixture.entities.map((e, i) =>
+      addPersonalEntity(db, { id: `ent_sim_${i}`, spokenName: e.name, category: e.category }));
+    return { name: tag, db, entities, offer: modelOffer(MODEL) };
+  };
+  const a = await replayArms(catalog, fixture, [arm("x"), arm("y")], { measureFrom: 11 });
+  assert.deepEqual(
+    a.x.picks.map((p) => [p.at, p.position, p.label]),
+    a.y.picks.map((p) => [p.at, p.position, p.label]),
+    "arms saw the same frozen event stream");
+  // A second run on another real moment is byte-identical — the bench
+  // cannot drift with the calendar.
+  const b = await replayArms(catalog, fixture, [arm("x"), arm("y")], { measureFrom: 11 });
+  assert.equal(JSON.stringify(a.x.picks), JSON.stringify(b.x.picks));
+  assert.equal(a.x.mTaps, b.x.mTaps);
+  assert.equal(a.x.mWords, b.x.mWords);
 });

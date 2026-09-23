@@ -56,7 +56,7 @@ const LOCAL_FEATURES = MODEL_FEATURES.filter((f) => f !== "jev");
  * impressions — nothing was written).
  */
 export function learnFromSentence(
-  db, sentenceId, catalogModel, { weightSet = "local_only" } = {},
+  db, sentenceId, catalogModel, { weightSet = "local_only", at = Date.now() } = {},
 ) {
   const end = db
     .prepare("SELECT end_kind FROM sentence WHERE id = ?")
@@ -143,7 +143,7 @@ export function learnFromSentence(
        updated_at = excluded.updated_at`,
   ).run(
     weightSet, JSON.stringify(cur), catalogModel.version,
-    (row?.examples_seen ?? 0) + imps.length, Date.now(),
+    (row?.examples_seen ?? 0) + imps.length, at,
   );
   return imps.length;
 }

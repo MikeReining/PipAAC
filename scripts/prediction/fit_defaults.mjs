@@ -37,12 +37,12 @@ const varied = JSON.parse(
 // The zero model only needs the candidate set + features — eligibility
 // is weight-independent.
 const ZERO = { weights: {}, tau: { tile: 0, none: Infinity } };
-const collect = (fx) => {
+const collect = async (fx) => {
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);
   const entities = fx.entities.map((e) =>
     addPersonalEntity(db, { spokenName: e.name, category: e.category }));
-  const { picks } = replayDays(db, catalog, fx, entities, {
+  const { picks } = await replayDays(db, catalog, fx, entities, {
     measureFrom: 11,
     offer: (d, sents, at) => {
       const { candidates, pNone } = stripScored(d, sents, at, "en", ZERO);
@@ -53,7 +53,7 @@ const collect = (fx) => {
   // mid-sentence only, so there is no impression to fit on.
   return picks.filter((p) => p.day <= 5 && p.candidates.length > 0);
 };
-const train = [...collect(fixture), ...collect(varied)].map((p) => {
+const train = [...await collect(fixture), ...await collect(varied)].map((p) => {
   const keys = p.candidates.map((c) => `${c.kind}:${c.id}`);
   return { xs: p.candidates.map((c) => c.x), label: keys.indexOf(p.label) };
 });

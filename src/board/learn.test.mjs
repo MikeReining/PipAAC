@@ -61,12 +61,12 @@ const addEntities = (db, fx) =>
  * the day is scored, its spoken sentences train the weights when
  * `learn` is on. Returns the day-8–14 hit rate.
  */
-function runChild(fx, { learn }) {
+async function runChild(fx, { learn }) {
   const db = openDb();
   const ents = addEntities(db, fx);
   let hits = 0, picks8 = 0;
   for (const day of fx.days) {
-    const r = replayDays(db, catalog, fx, ents, {
+    const r = await replayDays(db, catalog, fx, ents, {
       days: [day.day], offer: liveOffer(MODEL),
     });
     for (const p of r.picks) {
@@ -74,16 +74,18 @@ function runChild(fx, { learn }) {
       picks8++;
       if (p.shownKeys.includes(p.label)) hits++;
     }
-    if (learn) for (const s of r.sents) learnFromSentence(db, s.id, MODEL);
+    if (learn) for (const s of r.sents) {
+      learnFromSentence(db, s.id, MODEL, { at: s.closeAt });
+    }
   }
   return { db, hitRate: hits / picks8, picks: picks8 };
 }
 
-test("learning never loses to frozen defaults and measurably diverges", () => {
-  const routineLearn = runChild(fixture, { learn: true });
-  const routineFixed = runChild(fixture, { learn: false });
-  const variedLearn = runChild(varied, { learn: true });
-  const variedFixed = runChild(varied, { learn: false });
+test("learning never loses to frozen defaults and measurably diverges", async () => {
+  const routineLearn = await runChild(fixture, { learn: true });
+  const routineFixed = await runChild(fixture, { learn: false });
+  const variedLearn = await runChild(varied, { learn: true });
+  const variedFixed = await runChild(varied, { learn: false });
   console.log("routine: learned", routineLearn.hitRate.toFixed(3),
     "vs fixed", routineFixed.hitRate.toFixed(3));
   console.log("varied:  learned", variedLearn.hitRate.toFixed(3),
@@ -104,9 +106,9 @@ test("learning never loses to frozen defaults and measurably diverges", () => {
   }
 });
 
-test("the routine child's hour weight ends higher than the varied child's", () => {
-  const routine = runChild(fixture, { learn: true });
-  const variedChild = runChild(varied, { learn: true });
+test("the routine child's hour weight ends higher than the varied child's", async () => {
+  const routine = await runChild(fixture, { learn: true });
+  const variedChild = await runChild(varied, { learn: true });
   const wR = loadWeights(routine.db, MODEL).weights;
   const wV = loadWeights(variedChild.db, MODEL).weights;
   console.log("hour:", wR.hour.toFixed(3), "vs", wV.hour.toFixed(3),
