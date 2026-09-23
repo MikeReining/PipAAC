@@ -240,6 +240,9 @@ CREATE TABLE IF NOT EXISTS strip_impression (
   shown TEXT NOT NULL,
   p_none REAL NOT NULL CHECK (p_none >= 0 AND p_none <= 1),
   weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
+  -- picture | keyboard. Keyboard rows are metrics only: the keyboard
+  -- ranker has no feature vector, so the learner must skip them (017-4).
+  mode TEXT NOT NULL DEFAULT 'picture' CHECK (mode IN ('picture', 'keyboard')),
   jev_model TEXT,             -- versioned id from the response; NULL = no call
   jev_status TEXT NOT NULL CHECK (jev_status IN ('off', 'skipped', 'answered', 'late', 'error')),
   chosen_kind TEXT CHECK (chosen_kind IS NULL OR chosen_kind IN ('sense', 'entity')),
@@ -661,4 +664,4 @@ CREATE TABLE IF NOT EXISTS prediction_weights (
   PRIMARY KEY (profile_id, weight_set)
 );
 
-PRAGMA user_version = 7;
+PRAGMA user_version = 8;

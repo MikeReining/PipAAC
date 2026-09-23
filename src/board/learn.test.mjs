@@ -143,3 +143,73 @@ test("a cleared sentence leaves the weights byte-identical — metrics only", ()
   assert.equal(learnFromSentence(db, s2, MODEL), 0);
   assert.deepEqual(db.prepare("SELECT * FROM prediction_weights").all(), before);
 });
+
+/* 017 step 4 — keyboard mode must not corrupt learned weights. */
+import { repairCorruptWeights } from "../../public/shared/learn.mjs";
+
+test("a keyboard-mode impression never trains (017 step 4)", () => {
+  const db = openDb();
+  const [mom] = addEntities(db, { entities: [{ name: "Mom", category: "People, Family & Roles" }] });
+  // one picture-mode sentence creates the weights row
+  const s1 = openSentence(db, Date.now());
+  logImpression(db, { sentenceId: s1, position: 0, candidates: [], shown: [] });
+  fillChosen(db, s1, { kind: "entity", id: mom.id, source: "grid" });
+  closeSentence(db, s1, Date.now() + 1500, "spoken");
+  assert.equal(learnFromSentence(db, s1, MODEL), 1);
+  const before = db.prepare("SELECT * FROM prediction_weights").all();
+
+  // the exact impression renderStrip's keyboard branch writes:
+  // candidates with empty feature vectors, mode 'keyboard'
+  const s2 = openSentence(db, Date.now() + 3000);
+  logImpression(db, {
+    sentenceId: s2, position: 0, mode: "keyboard",
+    candidates: [{ kind: "sense", id: "sns_0001", x: {} }],
+    shown: ["sense:sns_0001"],
+  });
+  fillChosen(db, s2, { kind: "sense", id: "sns_0001", source: "keyboard" });
+  closeSentence(db, s2, Date.now() + 4500, "spoken");
+  assert.equal(learnFromSentence(db, s2, MODEL), 0);
+  assert.deepEqual(db.prepare("SELECT * FROM prediction_weights").all(), before);
+});
+
+test("a candidate with a non-finite feature is skipped, not learned as NaN", () => {
+  const db = openDb();
+  const s = openSentence(db, Date.now());
+  // JSON.stringify(NaN) lands as null — the corruption shape a pre-fix
+  // keyboard row carried.
+  logImpression(db, {
+    sentenceId: s, position: 0,
+    candidates: [
+      { kind: "sense", id: "sns_0001", x: { freq: null } },
+      { kind: "sense", id: "sns_0002", x: { freq: 3, recency: 1 } },
+    ],
+    shown: ["sense:sns_0001", "sense:sns_0002"],
+  });
+  fillChosen(db, s, { kind: "sense", id: "sns_0001", source: "grid" });
+  closeSentence(db, s, Date.now() + 1500, "spoken");
+  assert.equal(learnFromSentence(db, s, MODEL), 1);
+  const w = JSON.parse(
+    db.prepare("SELECT weights FROM prediction_weights").all()[0].weights);
+  assert.ok(Object.values(w).every((v) => Number.isFinite(v)),
+    `non-finite weight persisted: ${JSON.stringify(w)}`);
+});
+
+test("repairCorruptWeights resets a corrupted row to the shipped defaults", () => {
+  const db = openDb();
+  const [mom] = addEntities(db, { entities: [{ name: "Mom", category: "People, Family & Roles" }] });
+  const s = openSentence(db, Date.now());
+  logImpression(db, { sentenceId: s, position: 0, candidates: [], shown: [] });
+  fillChosen(db, s, { kind: "entity", id: mom.id, source: "grid" });
+  closeSentence(db, s, Date.now() + 1500, "spoken");
+  assert.equal(learnFromSentence(db, s, MODEL), 1);
+
+  // hand-corrupt the row the way the old keyboard write did
+  db.prepare("UPDATE prediction_weights SET weights = ?")
+    .run('{"phrase":null,"pair":null,"none_bias":null}');
+  assert.equal(repairCorruptWeights(db, MODEL), 1);
+  const row = db.prepare("SELECT * FROM prediction_weights").all()[0];
+  assert.equal(row.examples_seen, 0);
+  assert.deepEqual(JSON.parse(row.weights), MODEL.weights.local_only);
+  // idempotent — a clean row is untouched
+  assert.equal(repairCorruptWeights(db, MODEL), 0);
+});

@@ -11,6 +11,7 @@ import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
 import { migrateLegacyGroups, migrateBuiltinGroupNames } from "./shared/groups.mjs";
 import { ensureBaseline } from "./shared/ops.mjs";
+import { repairCorruptWeights } from "./shared/learn.mjs";
 import { getDbBytes, putDbBytes } from "./shared/users.mjs";
 
 let handle = null;
@@ -96,6 +97,9 @@ export async function bootDb(userStore, userId) {
   migrateSchema(d, catalog.schemaSql);
   d.exec(catalog.schemaSql);
   importCatalog(d, catalog);
+  // 017 step 4: rows a pre-fix keyboard impression corrupted (NaN →
+  // null → zeroed weights) are reset to the shipped defaults once.
+  repairCorruptWeights(d, catalog.prediction);
   // A DB persisted under the pre-groups schema still has zone_slot:
   // migrate it — keeping custom groups, entities, and the caregiver's
   // arrangement — then drop the legacy tables. No-op on a fresh DB.

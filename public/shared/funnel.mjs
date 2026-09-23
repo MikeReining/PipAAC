@@ -359,16 +359,17 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
 export function logImpression(db, {
   sentenceId, position, shownAt = Date.now(), candidates, shown,
   weightSet = "local_only", jevStatus = "off", jevModel = null, pNone = 0,
+  mode = "picture",
 }) {
   db.prepare(
     `INSERT INTO strip_impression
        (sentence_id, position, shown_at, candidates, shown, p_none,
-        weight_set, jev_status, jev_model)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        weight_set, jev_status, jev_model, mode)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     sentenceId, position, shownAt,
     JSON.stringify(candidates), JSON.stringify(shown), pNone,
-    weightSet, jevStatus, jevModel,
+    weightSet, jevStatus, jevModel, mode,
   );
   return db.prepare("SELECT last_insert_rowid() AS id").all()[0].id;
 }

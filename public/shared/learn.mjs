@@ -60,10 +60,12 @@ export function learnFromSentence(
 
   // local_only trains on every impression; with_jev only where Jev
   // actually answered — re-ranked impressions are its only evidence.
+  // Keyboard-mode rows are metrics only: the keyboard ranker has no
+  // feature vector, so training on them once wrote NaN weights (017-4).
   const imps = db
     .prepare(
       `SELECT candidates, chosen_kind, chosen_id FROM strip_impression
-       WHERE sentence_id = ? AND chosen_id IS NOT NULL
+       WHERE sentence_id = ? AND chosen_id IS NOT NULL AND mode = 'picture'
          AND (? = 'local_only' OR jev_status = 'answered')
        ORDER BY id`,
     )
@@ -80,7 +82,11 @@ export function learnFromSentence(
   const cur = row ? JSON.parse(row.weights) : { ...defaults };
 
   for (const imp of imps) {
-    const cands = JSON.parse(imp.candidates);
+    // A candidate whose features are not all finite numbers is dropped
+    // from the softmax — a pick of it trains `none`, never NaN (017-4).
+    const cands = JSON.parse(imp.candidates).filter((c) =>
+      Object.values(c.x ?? {}).every(
+        (v) => typeof v === "number" && Number.isFinite(v)));
     const label = cands.findIndex(
       (c) => c.kind === imp.chosen_kind && c.id === imp.chosen_id);
     const logits = cands.map((c) => logit(c.x, cur));
@@ -99,6 +105,13 @@ export function learnFromSentence(
               + L2 * ((cur.none_bias ?? 0) - (defaults.none_bias ?? 0)));
   }
 
+  // A non-finite weight must never be persisted — JSON.stringify(NaN)
+  // lands as null and reads back as 0, silently zeroing the row (017-4).
+  if (!Object.values(cur).every((v) => Number.isFinite(v))) {
+    console.warn("learn: non-finite weights — row left unchanged");
+    return 0;
+  }
+
   db.prepare(
     `INSERT INTO prediction_weights
        (profile_id, weight_set, weights, defaults_version, examples_seen, updated_at)
@@ -113,4 +126,35 @@ export function learnFromSentence(
     (row?.examples_seen ?? 0) + imps.length, Date.now(),
   );
   return imps.length;
+}
+
+/**
+ * 017 step 4 one-time repair: a persisted weights row a pre-fix
+ * keyboard impression corrupted (NaN → null on read) is reset to the
+ * shipped defaults with `examples_seen = 0`. Idempotent — a clean row
+ * is untouched. Called once at open from `public/db.js`; returns the
+ * number of rows repaired.
+ */
+export function repairCorruptWeights(db, catalogModel) {
+  const upd = db.prepare(
+    `UPDATE prediction_weights SET weights = ?, defaults_version = ?,
+       examples_seen = 0, updated_at = ?
+     WHERE profile_id = ? AND weight_set = ?`,
+  );
+  let n = 0;
+  for (const r of db
+    .prepare("SELECT profile_id, weight_set, weights FROM prediction_weights")
+    .all()) {
+    let w;
+    try { w = JSON.parse(r.weights); } catch { w = null; }
+    const bad = !w || typeof w !== "object"
+      || Object.values(w).some(
+        (v) => typeof v !== "number" || !Number.isFinite(v));
+    const defaults = catalogModel?.weights?.[r.weight_set];
+    if (!bad || !defaults) continue;
+    upd.run(JSON.stringify({ ...defaults }), catalogModel.version,
+      Date.now(), r.profile_id, r.weight_set);
+    n++;
+  }
+  return n;
 }

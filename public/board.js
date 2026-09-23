@@ -93,6 +93,10 @@ import { RECOVERY_WORDS } from "./shared/recovery_words.mjs";
 import { pairClient, relayClient, restoreDevice } from "./shared/sync_client.mjs";
 import { initSync, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import {
+  accountState, saveAccountState, requestLink, claimToken,
+  registerAccount, signInAccount, importAccountUsers, shareUserToAccount,
+} from "./shared/account.mjs";
+import {
   addUser, listUsers, migrateLegacy, openUserStore, putUser,
   removeUser, resolveActiveUser, setHome, touchOpened,
 } from "./shared/users.mjs";
@@ -269,6 +273,7 @@ function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
     weightSet: jev.weightSet ?? "local_only",
     jevStatus: jev.jevStatus ?? "off",
     jevModel: jev.jevModel ?? null,
+    mode: jev.mode ?? "picture",
   });
   return true;
 }
@@ -643,9 +648,12 @@ async function renderStrip() {
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
       : spotGate(scored.candidates, scored.pNone, model.tau, cap)
           .map((r) => ({ kind: r.kind, id: r.id }));
+    // Keyboard-mode impressions are metrics only (017-4): the keyboard
+    // ranker has no feature vector, and one trained on `x: {}` rows once
+    // wrote NaN into every learned weight.
     maybeImpression(
       scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
-      items, scored?.pNone ?? 0,
+      items, scored?.pNone ?? 0, { mode: kbOpen ? "keyboard" : "picture" },
     );
     cards = stripCards(items);
     // Jev may re-rank inside the paint window (§ 3.4) — fired after the
@@ -3348,16 +3356,22 @@ async function removeDeviceFlow(client, store, identity, targetId) {
 async function renderUsers() {
   const list = $("usr-list");
   const rows = await listUsers(userStore);
+  const ks = openKeyStore();
   list.innerHTML = "";
   for (const u of rows) {
     const row = document.createElement("div");
     row.className = "dev-row";
     const name = document.createElement("span");
     name.className = "dev-id";
+    // Locked (015 slice 4): the account brought this user but not its
+    // keys — they arrive by an Allow on another device or a QR card.
+    const locked = u.sync?.userId
+      && !(await ks.get(`user/${u.id}/key_e${u.sync.epoch ?? 1}`));
     name.textContent = (u.id === me.id ? "● " : "")
-      + (u.name || "This user") + (u.home ? " — opens first" : "");
+      + (u.name || "This user") + (u.home ? " — opens first" : "")
+      + (locked ? " 🔒 needs an Allow or QR card" : "");
     row.append(name);
-    if (u.id !== me.id) {
+    if (u.id !== me.id && !locked) {
       const sw = document.createElement("button");
       sw.className = "btn secondary";
       sw.textContent = "Switch";
@@ -3416,6 +3430,101 @@ $("usr-add").onclick = async () => {
   await flushDb();
   location.reload();
 };
+
+/* --- Supporter account (Sync § 12.3, 015 slice 4): email link +
+ *  passkey. Lives in Parent Corner only — the child's board never
+ *  asks for a sign-in. --- */
+function renderAccount() {
+  // Supporters only (§ 12.3): a partner device or a device not yet
+  // carrying a synced home user gets the sign-in row; the child's own
+  // board device never does.
+  const st = accountState();
+  $("acct-row").hidden = !st
+    && !!(me.home && me.sync?.userId && me.role !== "partner");
+  $("acct-state").innerHTML = st
+    ? `<p class="hint">Signed in as <b>${st.email}</b> — this device's users are on the account.</p>`
+    : `<p class="hint">Not signed in.</p>`;
+  $("acct-form").hidden = !!st;
+}
+$("acct-send").onclick = async () => {
+  const email = $("acct-email").value.trim();
+  if (!email.includes("@")) return toast("Enter an email address first");
+  try {
+    await requestLink(email);
+    toast("Link sent — open it on the device you want to sign in.");
+  } catch (e) {
+    toast(`Could not send the link (${e.message})`);
+  }
+};
+
+/** The emailed link lands here: claim it, run the passkey ceremony,
+ *  pull every supported user into the registry (keys unsealed by the
+ *  passkey's PRF output), then share this device's own synced users
+ *  back to the account. */
+async function accountLanding(token) {
+  openPair("Supporter sign-in");
+  const body = $("pair-body");
+  const say = (t) => { body.innerHTML = `<p class="hint">${t}</p>`; };
+  try {
+    say("Checking the link…");
+    const claim = await claimToken(token);
+    let session, priv = null;
+    if (claim.has_credentials) {
+      say("Sign in with your passkey…");
+      const r = await signInAccount({ acctId: claim.account_id,
+        email: claim.email, linkChallenge: claim.challenge });
+      session = r.session;
+      priv = r.priv;
+      say("Opening your users…");
+      const imported = await importAccountUsers({
+        bundle: r.bundle, priv, keyStore: openKeyStore(), userStore,
+        putUserKey, addUser });
+      const locked = imported.filter((u) => !u.unlocked).length;
+      say(locked
+        ? `${imported.length} user(s) added — ${locked} locked until an Allow or QR card brings their keys.`
+        : `${imported.length} user(s) added.`);
+    } else {
+      say("Create your passkey…");
+      const r = await registerAccount({
+        acctId: claim.account_id, challenge: claim.challenge, email: claim.email });
+      session = r.session;
+      if (!r.prfOk) {
+        say("Signed in — this passkey has no PRF, so keys arrive by an Allow or QR card.");
+      } else {
+        say("Signed in.");
+      }
+    }
+    saveAccountState({ acct_id: claim.account_id, email: claim.email, session });
+    // Share back: every synced user this device holds joins the account
+    // — wrapped to the account public key, profile sealed to the user's
+    // own key. The relay still reads nothing.
+    const ks = openKeyStore();
+    for (const u of await listUsers(userStore)) {
+      if (!u.sync?.userId) continue;
+      const epochs = [];
+      for (let e = 1; e <= (u.sync.epoch ?? 1); e++) {
+        if (await ks.get(`user/${u.id}/key_e${e}`)) epochs.push(e);
+      }
+      if (!epochs.length) continue;
+      await shareUserToAccount({
+        acctId: claim.account_id, session, keyStore: ks, userId: u.id,
+        epochs, name: u.name, photo: u.photo, getUserKey });
+    }
+    say("Done — your users are on this device.");
+    await renderUsers();
+    renderAccount();
+  } catch (e) {
+    say(`Sign-in failed — ${e.message}. Ask for a fresh link and try again.`);
+  }
+}
+
+// An emailed sign-in link: strip the query so a reload never replays,
+// then run the ceremony once boot is up.
+const signinToken = new URLSearchParams(location.search).get("signin");
+if (signinToken) {
+  history.replaceState({}, "", location.pathname);
+  accountLanding(signinToken).catch(() => {});
+}
 
 /** This device is the NEW device: post keys, show code + QR, poll. */
 async function linkThisDevice() {
@@ -3556,6 +3665,7 @@ $("dev-add").onclick = () => addDeviceFlow().catch((e) => {
 });
 $("corner").addEventListener("click", renderDevices);
 $("corner").addEventListener("click", renderUsers);
+$("corner").addEventListener("click", renderAccount);
 
 /* Pip Lifetime (dev path, 011/9): a minted license activates on the
  * relay — the client only transports it. Payments wire into the same
