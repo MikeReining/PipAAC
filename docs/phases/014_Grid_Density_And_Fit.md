@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Ready for slice 1. Rulings and starters below are **DECIDED
+**Status:** Ready for slice 1 (renderer of any shape). Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -79,6 +79,16 @@ all three.
 | **Cells** | How many cells show at once? | Presets 15 (5×3), 30 (6×5), 60 (10×6), 90 (10×9); any size an adult picks within renderer limits. |
 | **Vocabulary** | Which words exist? | A starter set that grows, up to the full catalog. Not-yet-introduced cells render as ghosts (masking owner). |
 | **Content** | Single words or whole messages? | Core words (default) or message tiles ("I'm in pain"). Phrase catalog: `docs/phases/010_Extended_Picture_Library.md`. |
+
+**One Cells setting per profile** (**PROPOSED**). Cells follow the person's
+hands and eyes, not the content, so the home board, every group page, and
+the Smart bar all use the profile's one setting. A group has no size of its
+own; a big group pages (`Next ›`). Group items keep their saved order; when
+Cells changes, groups are laid out again in that order and their moved
+items join the move-cost preview (§ 4). Showing fewer choices for an
+activity is Spotlight's job (`docs/phases/013_Spotlight_Practice_Mode.md`),
+not a bigger or smaller group. To settle in slice 1: at 15 cells a group
+page keeps back, the reserved Edit slot, and `Next ›`, leaving 12 items.
 
 Examples: a CP child — 15 cells, full vocabulary, words. A stroke survivor —
 15 cells, starter messages, messages. A toddler — 15 cells, first words,
@@ -213,14 +223,14 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
 
 ## 9. Slices (proposed)
 
-1. **Starter maps.** Write the § 5 boards into
-   `docs/product/Core_Coordinate_Map.md` as named layouts; regenerate
-   `core_cell` rows. Works test: each starter renders on a fresh profile
-   with § 5's words in § 5's cells.
-2. **Renderer of any shape.** Remove the ten-column assumption; cells scale
+1. **Renderer of any shape.** Remove the ten-column assumption; cells scale
    to the viewport; strip geometry scales with width (5 columns: two
    prediction slots + Groups). Works test: 15, 60, and 90 render with the
    bar and strip in place and no cell under the minimum size.
+2. **Starter maps.** Write the § 5 boards into
+   `docs/product/Core_Coordinate_Map.md` as named layouts; regenerate
+   `core_cell` rows. Works test: each starter renders on a fresh profile
+   with § 5's words in § 5's cells.
 3. **Adult moves core words.** Per-profile layout on top of the default map;
    Edit mode on the core board, drag to move or swap, never reflow; a
    catalog update never overwrites an adult move. Works test: move `stop`,
