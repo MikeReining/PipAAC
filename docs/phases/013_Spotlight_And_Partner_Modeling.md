@@ -1,9 +1,9 @@
 # Phase 013 — Spotlight and Partner Modeling
 
-**Status:** Slices 1–2 built (the layer; one-device lists, sessions,
-timer). Next: slice 3 — Spotlight on the adult's device. The design
-below is **DECIDED 2026-09-22** (founder; not built). Slices are
-**PROPOSED**.
+**Status:** Slices 1–3 built (the layer; one-device lists, sessions,
+timer; the adult's device — mirror, remote start/end). Next: slice 4 —
+live modeling. The design below is **DECIDED 2026-09-22** (founder; not
+built). Slices are **PROPOSED**.
 
 Founder intake: `docs/founder/2026-09-22_Spotlight_Partner_Modeling.md`.
 Renamed from "Spotlight Practice Mode" the same day, when live partner
@@ -236,6 +236,25 @@ offers that routine's saved list.
 3. **Adult device.** The board mirror, lists and settings from a linked
    device, start and end from either side. Works test: end on the phone,
    the iPad's glow clears.
+
+   **DONE.** The mirror is the same renderer on the linked device: a
+   paired phone shows the synced board, the glow, and the `🔦 name ·
+   End` chip — no second component (Edit/Model gestures are slices 4+).
+   Saved lists, settings, and the session row were already synced
+   profile data (slice 2), so the gap this slice closed was the wire:
+   `spot_start`/`spot_end` ops broadcast over ws land through
+   `drainOps` → `onSyncApplied` → `resumeSession` + repaint on the
+   other device (`public/board.js:197`). The probe surfaced one real
+   bug: reopening Add a device mid-status-check let the detached
+   input's late reply revive Allow bound to the new form's empty
+   `pending` — guarded with `input.isConnected`
+   (`public/board.js:3289`). Works Test:
+   `scripts/probes/spot_mirror_probe.mjs` — two Chrome profiles pair
+   over the real relay (Lifetime on the granter — free users are
+   single-device); the phone starts the synced list from its own
+   Spotlight sheet and the iPad shows 2 glow + 58 dimmed + the chip;
+   the phone's chip tap clears the iPad; the reverse leg (iPad start,
+   phone glow, iPad end, phone clears) passes too.
 4. **Live modeling.** Model mode on the mirror; transient relay messages.
    Works test: a tap on the phone glows the word on the iPad and fades; the
    sync log has no new row.

@@ -3284,6 +3284,10 @@ async function addDeviceFlow() {
     if (code.length !== 8) return;
     try {
       const req = await pairClient(relayBase).status(code);
+      // A reopened form rebuilds pair-body and detaches this input — a
+      // late status() reply must not revive Allow on the new form's
+      // empty pending.
+      if (!input.isConnected) return;
       pending = { code, req };
       pairBody.querySelector(".hint").textContent =
         `Allow ${req.device_id.slice(0, 12)}… to edit this user?`;
