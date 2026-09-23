@@ -61,6 +61,9 @@ below.
 | 6 | Free forever: every built-in word, **20 words of your own**, all voices, prediction, groups, backup, QR restore, moving to a new device, 5 drawings | § 4 of the pricing doc |
 | 7 | The $49 unlocks: unlimited own words, more than one live device, the web editor, 300 drawings then top-ups at near cost | § 4 of the pricing doc; `docs/product/Word_Library.md` § 6.1 |
 | 8 | The limit is visible from day one (listing, first run, "14 of 20" counter) | § 4 of the pricing doc |
+| 9 | Payments: Stripe (web, with Apple Pay); Apple in-app purchase inside the iOS app | § 4.5 of the pricing doc |
+| 10 | A supporter is only a supporter: deleting a supporter account never affects the user; the user owns the license | `docs/product/Sync_And_Web_Editing.md` § 12.3 |
+| 11 | 015 runs right after 013 slice 2 and 014 slice 2 (core infrastructure) | `docs/phases/README.md` |
 
 ## Product value
 

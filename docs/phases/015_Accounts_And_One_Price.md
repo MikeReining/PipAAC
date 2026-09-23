@@ -1,14 +1,16 @@
 # Phase 015 — Accounts and one price
 
-**Status:** Executing. Slice 0 (rulings) done 2026-09-23. Next: slice 1.
+**Status:** Executing. Slice 0 (rulings) done 2026-09-23. Next: slice 1,
+after 013 slice 2 and 014 slice 2 (founder: core infrastructure, right
+after Spotlight and the grid work).
 
 **Direction DECIDED 2026-09-23** (founder: "all approved, lock it in").
 Intake: `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
 
 This phase touches credentials, privacy, billing and user-data retention
 (`AGENTS.md` § High-Risk Stops). The founder ruled on accounts, the QR
-card and the price. Slices 6 and 7 carry their own blocking questions
-(payment processor, account deletion); stop there for a ruling.
+card, the price, Stripe, and what deleting a supporter does (2026-09-23).
+Any change to those stops the phase for a new founder call.
 
 | Topic | Owner |
 | --- | --- |
@@ -80,30 +82,94 @@ still syncs after it.
 
 ## Slice 2 — Many users on one device
 
-Goal: one device holds many users; the Parent Corner switches between
-them; the child's device opens to its own user.
+Goal: one device holds many users. An SLP's laptop holds every client; a
+parent's phone holds every child; a child's iPad opens to that child.
+This is the core of accounts on the device side; slice 4 adds the
+sign-in that brings the same list to a new device.
 
-Current state (**BUILT**, the gap): one `pip_sync` config
-(`public/shared/sync.mjs:22`), one profile row `prf_local`
-(`public/shared/groups.mjs:648`, `public/board.js:116`), one kvvfs
-database in localStorage (`public/db.js:59`) holding the ~650 KB catalog.
+### Current state (**BUILT**, the gap)
 
-Decision inside the slice (engineering, not founder): per-user
-databases vs one database with the catalog shared and user tables scoped
-by user id. A 10-user SLP laptop must fit the browser's storage; kvvfs's
-localStorage envelope likely does not, so this probably moves the
-database to OPFS in a worker. Record the choice in § 12.4 with its
-measurement.
+- One local database: kvvfs in localStorage under the name `local`
+  (`public/db.js:59`). kvvfs has only two names (`local`, `session`), so
+  it cannot hold a second user at all.
+- One profile row with the fixed id `prf_local`
+  (`public/shared/groups.mjs:648`, `public/board.js:116`; 14 references across code and tests).
+- One sync config, the localStorage key `pip_sync`
+  (`public/shared/sync.mjs:22`), and one set of keys (`board_key*`,
+  `recovery_root`) in IndexedDB `pip-keys`
+  (`public/shared/sync_crypto.mjs:120`).
 
-Scope: user list and **Add user** in the Parent Corner; switcher behind
-the Parent Corner lock; sync config, keys and baseline per user; the
-child's screen never shows a switcher.
+**Measured 2026-09-23:** one user's database with today's catalog (680
+senses) exports to 999,424 bytes; export and reload each take under 1 ms
+(Node, `@sqlite.org/sqlite-wasm`). Ten users is about 10 MB, over the
+~5 MB localStorage allows per site. Phase 010's 2,000-word library will
+push even one user past kvvfs's envelope, so this move is needed anyway.
 
-Works Test: on one browser, create users A and B. Add Cooper to A and
-Luna to B, speak a sentence on each, reload. Switching shows only that
-user's words; A's sentence history never appears under B. Link A to a
-second client and B to a third: each receives only its own user's ops.
-Measure storage with 10 users of 200 own words each and record it.
+### Design (**PROPOSED**; confirmed or changed by this slice's proof)
+
+1. **One database per user.** Every existing query keeps working
+   unchanged, because each user's database looks exactly like today's
+   single one (including `prf_local` inside it). History, prediction
+   weights and suggestions live in that user's database, so nothing can
+   cross users by construction.
+2. **In memory, saved to IndexedDB.** The open user's database runs in
+   memory on the main thread (sqlite stays synchronous, no worker
+   rewrite). After each write, a debounced save (300 ms, starting value)
+   exports it (`sqlite3_js_db_export`) to IndexedDB `pip-users`, one
+   record per user; `pagehide` and `visibilitychange` flush at once.
+   Opening a user reloads it with `sqlite3_deserialize`. The site asks
+   for persistent storage (`navigator.storage.persist()`). IndexedDB
+   works in Safari, Chrome and an iOS web view alike.
+3. **A user registry** (IndexedDB `pip-users`, store `users`): user id
+   (random, 128-bit, made at **Add user**, used later as the relay id),
+   the display name, which user is this device's **home user**, last
+   opened, and that user's sync state (epoch, relay cursor). It replaces
+   `pip_sync`.
+4. **Keys per user.** Key names become `user/<id>/key_e<n>` and
+   `user/<id>/root`. The device key pair stays one per device.
+5. **One user syncs live**: the open one. Others catch up from the relay
+   (`GET /ops?after=N`) when opened. A child's iPad has one user, so it is
+   always live.
+6. **Two tabs, one writer.** A Web Lock per user (`navigator.locks`) makes
+   one tab the writer; a second tab on the same user says "Open in another
+   tab" instead of writing over it.
+7. **Photos stay shared.** Blobs are already content-addressed
+   (`blob:<sha256>` in OPFS), so two users with the same photo store it
+   once. Deleting a user leaves blobs another user still references.
+8. **Migration.** On first boot of the new version, today's kvvfs
+   `local` database, `pip_sync` and `board_key*`/`recovery_root` become
+   user #1, the home user. Then the kvvfs copy is cleared.
+
+### Screens
+
+- **Parent Corner → Users:** the list (name, photo, last opened),
+  **Add user**, **Switch**, **Set as this device's user**, **Remove from
+  this device** (the user keeps existing on the relay and on other
+  devices; the device warns if it is the only copy and no QR card was
+  saved).
+- **Add user:** a name and an optional photo, then the user's first
+  board opens. Free limits (20 own words) count per user.
+- **The child's screen never shows a switcher.** The device opens to its
+  home user; switching needs the Parent Corner lock. A laptop with no
+  home user opens to the list.
+
+### Works Test
+
+1. **Isolation.** On one browser, add users A and B. Add Cooper to A and
+   Luna to B; speak a sentence on each; reload. Switching shows only that
+   user's words, and A's history rows never appear in B's database.
+2. **Sync per user.** Link A to a second client and B to a third, each
+   through the real pairing flow: each client receives only its own
+   user's ops, and a sealed op for A never opens under B's key.
+3. **Durability.** Edit A, kill the tab 1 s later (after the debounce),
+   reopen: the edit is there. Two tabs on A: the second cannot write.
+4. **Migration.** A browser holding a pre-015 kvvfs database with Cooper,
+   a linked relay, and a recovery root boots the new version: Cooper
+   speaks, sync continues without re-pairing, the old recovery card still
+   restores.
+5. **Scale, measured.** 10 users of 200 own words each: record total
+   IndexedDB bytes and the time to switch users on a real iPad in § 12.4
+   (target: switch under 1 s).
 
 ## Slice 3 — The QR card
 
@@ -174,15 +240,23 @@ get 403 and ops after removal are sealed under a key S never received.
 
 Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 
-**Blocking questions (billing, a high-risk stop):** the web payment
-processor (Stripe proposed); the iOS in-app purchase type App Review
-accepts for a permanent per-user unlock (UNVERIFIED); whether the SLP
-demo user (free, full features, cannot be moved or shared) ships here.
+**Payments DECIDED 2026-09-23:** Stripe. On the web, Stripe Checkout
+takes cards, Apple Pay and Google Pay. Inside the iOS app, Apple requires
+its own in-app purchase for a digital unlock, so the iOS app sells
+through Apple; our server records either purchase against the user.
+**UNVERIFIED** (research before code, not a founder question): which
+in-app purchase type App Review accepts for a permanent unlock of one user
+among many, and whether the iOS app may link US buyers to the Stripe
+checkout.
+
+**PROPOSED:** a free demo user per SLP account for evaluations (full
+features, cannot be moved to another device or shared).
 
 Scope:
-- Relay: a license record per user, written only by a verified purchase
-  or code redemption; a server-signed license statement the device
-  verifies offline.
+- Relay: a license record per user, written only by a verified Stripe
+  or Apple purchase or a code redemption; a server-signed license
+  statement the device verifies offline. The license belongs to the
+  user, not to the supporter who paid.
 - Free limits: 20 live own words (counter from the first add), one live
   device (relay refuses a second link; restore moves the user), 5
   drawings; web editor opens for Lifetime users only.
@@ -204,8 +278,9 @@ Works Test:
 
 Goal: 011 slice 9's retention rules, with email as the warning channel.
 
-**Blocking question (retention):** what deleting a supporter account does
-to users only that account supports.
+**DECIDED 2026-09-23:** a supporter is only a supporter. Deleting a
+supporter account removes that account's access and nothing else: the
+user, its words, its license, its QR card and its devices are untouched.
 
 Works Test (from 011 slice 9, reworded):
 1. A user whose purchase never existed keeps its snapshot and blobs; the
@@ -215,6 +290,9 @@ Works Test (from 011 slice 9, reworded):
    years 11 months ago survives.
 3. In the final 6 months, supporters get an email and a returning device
    sees the warning.
+4. An SLP deletes their account: the client's iPad keeps syncing with
+   the family's devices, the family's supporters still see the user, the
+   license holds, and the QR card still restores.
 
 ## Out of scope
 

@@ -428,6 +428,10 @@ never shares a sibling.
   rostering reopens this.
 - Adult emails are the only new personal data the server holds. A
   supporter deletes their account from settings.
+- **A supporter is only a supporter.** Deleting a supporter account
+  removes that account's access and nothing else: the user, its words,
+  its license, its QR card and its devices are untouched. The user owns
+  the license, whoever paid (founder, 2026-09-23).
 
 ### 12.4 Many users on one device and one account
 
@@ -442,8 +446,15 @@ never shares a sibling.
   a single `pip_sync` entry (`public/shared/sync.mjs:22`), the profile row
   is the fixed id `prf_local` (`public/shared/groups.mjs:648`,
   `public/board.js:116`), and the local database is one kvvfs store in
-  localStorage (`public/db.js:59`) sized for one catalog copy, so many
-  users need a storage decision (015 slice 2).
+  localStorage (`public/db.js:59`); kvvfs cannot name a second database.
+- **Measured 2026-09-23:** one user's database is about 1.0 MB (999,424
+  bytes with 680 senses); export and reload each take under 1 ms.
+- **PROPOSED** (015 slice 2): one database per user, run in memory and
+  saved to IndexedDB after each write (debounced) and on page hide; a
+  user registry replaces `pip_sync`; keys named per user; the open user
+  syncs live and others catch up when opened; a Web Lock per user keeps
+  one writing tab. Full design and proof:
+  `docs/phases/015_Accounts_And_One_Price.md` § Slice 2.
 
 ### 12.5 The QR card
 
