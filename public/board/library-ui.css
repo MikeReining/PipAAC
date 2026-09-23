@@ -1,0 +1,9 @@
+/* Word library list. */
+#lib-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+#lib-empty { color: var(--muted); font-size: 15px; padding: 12px 4px; }

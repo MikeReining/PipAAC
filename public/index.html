@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/board/keyboard-ui.css" />
     <link rel="stylesheet" href="/board/groups-ui.css" />
     <link rel="stylesheet" href="/board/add-flow.css" />
+    <link rel="stylesheet" href="/board/library-ui.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -540,16 +541,6 @@
       .drop-hint { outline: 3px dashed var(--ink); outline-offset: 2px; }
       /* "Show on board" marks the cell for a beat. */
       .flash { box-shadow: 0 0 0 5px var(--ink); z-index: 2; }
-
-      /* --- word library --- */
-      #lib-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        max-height: 50vh;
-        overflow-y: auto;
-      }
-      #lib-empty { color: var(--muted); font-size: 15px; padding: 12px 4px; }
 
       /* --- word card --- */
       .wc-top { display: flex; gap: 12px; align-items: center; }
