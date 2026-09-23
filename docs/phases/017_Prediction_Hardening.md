@@ -723,7 +723,7 @@ Child conversation is the main source; adult text is background.
 | Tatoeba ([downloads](https://tatoeba.org/en/downloads)) | Short everyday sentences, human-written | CC BY 2.0 FR (part CC0) | Short, simple |
 | Google Books Ngram ([datasets](https://storage.googleapis.com/books/ngrams/books/datasetsv3.html)) | 1- to 5-gram counts from books | CC BY 3.0 | Frequency backbone |
 | Our own table | Jev or an LLM asked offline which of our words follow each common context | Ours | Fills thin contexts |
-| Childlike dialogues (`data/prediction/sources/childlike_en.jsonl`) | ~705k utterances we generate: ~2,000 authored frames × routine/place, time-of-day, occasion and language-stage packs, slot-filled from our own vocabulary weighted by AoA (`scripts/prediction/book/gen_childlike.mjs`) | Ours | Second child source; 30% mix adds +3–6 pts over TinyDialogues alone, and its start distribution beats TD on first words (§ Steered synth) |
+| Childlike dialogues (`data/prediction/sources/childlike_en.jsonl`) | ~700k utterances we generate: ~2,400 authored frames × routine/place, time-of-day, occasion and language-stage packs, slot-filled from our own vocabulary weighted by AoA (`scripts/prediction/book/gen_childlike.mjs`) | Ours | Second child source; beats TinyDialogues alone at 2 of 3 bands and on first words; 50–70% mix adds +3–7 pts (§ Steered synth) |
 | The flywheel (step 26) | Anonymous word-to-word counts from Pip users | Ours | Real AAC use; grows every month |
 
 Excluded:
@@ -884,7 +884,7 @@ What real children say:
 ### Steered synth (scaled, 2026-09-23, our corpus)
 
 If TalkBank declines the derived-counts ask (R11), the fallback is to write
-our own child-register text. `gen_childlike.mjs` (~2,000 authored lines)
+our own child-register text. `gen_childlike.mjs` (~2,400 authored lines)
 composes four context dimensions per dialogue:
 
 - **Language stage** — toddler / preschool / older band frames, each with
@@ -903,8 +903,29 @@ Plus two child-directed turn shapes the first version lacked: caregiver
 expansion of the child's own word ("milk" → "you said milk") and adult
 step-narration during routines. Slot fillers come from our 680-word
 vocabulary weighted by age-of-acquisition; a tiny out-of-vocabulary pool
-keeps post-OOV contexts honest. Output: 42k dialogues / ~705k utterances,
+keeps post-OOV contexts honest. Output: 42k dialogues / ~700k utterances,
 deterministic (seed 7), regenerated as `childlike_en.jsonl`.
+
+**Coverage-driven iteration (2026-09-23).** Rather than guessing contexts,
+a scratch gap analysis (`stats/gap_report.txt`, CHILDES-derived — scratch
+only) grouped real child speech by band × vocabulary × bigram frames ×
+utterance openers × theme (vocab-category sets per utterance), grouped our
+corpus the same way, and diffed; then grouped *held-out misses* by context
+word and target. What it found and what was added:
+
+- **Glue, not content.** Real child speech is saturated with "and…"
+  chains (9% of older openers), vocatives ("mom!" was the single most
+  missed opener), pronouns (these/those/them/his/her), auxiliaries
+  (didn't/will/just/still/have to), determiner frames (get a / put it /
+  the other), and be-openers (is it / is that / are you). ~430 authored
+  glue lines added.
+- **Naming games.** Counting runs ("three four"), color naming, vehicle
+  bursts, body-part naming — four scenario packs added.
+- **Pool misses.** Real vocab words never emitted: man/baby/people/
+  kids/class/pet/name, "thing", "someone", "together" — pools fixed.
+- **Miss-driven frames.** Top missed context→target pairs (after 'get'
+  →'a', after 'where' →'the', '<start>' →'mom') added as templates.
+  After the pass, misses on target 'a' fell ~60%.
 
 Same held-out CHILDES measurement as above. Later words / first words,
 top-4 non-core:
@@ -912,26 +933,30 @@ top-4 non-core:
 | Book | MLU < 2 | MLU 2–3.5 | MLU > 3.5 |
 | --- | --- | --- | --- |
 | TinyDialogues age-band book | 20.4% / 4.7% | 31.3% / 17.2% | 33.2% / 24.2% |
-| steered synth alone | 22.2% / 11.2% | 29.5% / 19.0% | 29.8% / 27.9% |
-| **30% synth + 70% TinyDialogues** | **26.0%** / 11.0% | **34.2%** / 13.7% | **36.2%** / 22.9% |
-| 50% synth + 50% TinyDialogues | 25.6% / 11.0% | 34.2% / 19.0% | 35.5% / 27.9% |
-| 70% synth + 30% TinyDialogues | 24.6% / 11.2% | 33.4% / 19.0% | 34.4% / 27.9% |
+| steered synth alone | **25.6%** / 11.2% | **32.5%** / 19.0% | 32.8% / **27.9%** |
+| **50% synth + 50% TinyDialogues** | **27.8%** / 11.0% | 35.0% / 19.0% | **36.0%** / 23.1% |
+| 70% synth + 30% TinyDialogues | 27.3% / 11.2% | **35.6%** / 19.0% | 35.3% / 27.9% |
+| 30% synth + 70% TinyDialogues | 27.2% / 11.0% | 35.2% / 13.7% | 35.6% / 18.0% |
 | CHILDES child speech (ceiling, unlicensed) | 42.2% / 10.4% | 51.0% / 13.4% | 51.1% / 19.6% |
 
 What it means:
 
-- **Alone, the scaled synth nearly matches TinyDialogues** (29.5/29.8 vs
-  31.3/33.2 at the two older bands, up from 27.2/29.0) and **beats it on
-  first words at every band** (11.2/19.0/27.9 vs 4.7/17.2/24.2) — the
-  time/occasion/routine packs did exactly what they were for. First-word
-  suggestions are what a user sees *before* tapping anything; this is the
-  part of the book that shortens the hunt for the first tile.
-- **Best mid-sentence mix is 30/70: +3–6 points over TinyDialogues
-  alone** at all three bands. The authored corpus stays complementary,
-  not a replacement.
-- **For first words, prefer the synth start distribution** (or mix
-  lightly) — TinyDialogues' opener distribution is thin, and mixing it in
-  heavily drags first-word hit rate back down.
+- **Alone, the steered synth now beats TinyDialogues at two of three
+  bands** (25.6 vs 20.4, 32.5 vs 31.3) and ties at the oldest (32.8 vs
+  33.2) — up from 22.2/29.5/29.8 before the gap pass. It also **beats TD
+  on first words at every band** (11.2/19.0/27.9 vs 4.7/17.2/24.2).
+  First-word suggestions are what a user sees *before* tapping anything;
+  this is the part of the book that shortens the hunt for the first tile.
+- **Best mix is now 50–70% synth: +3–7 points over TinyDialogues alone**
+  at all three bands (27.8/35.6/36.0 peak). TD remains complementary —
+  its 130k varied dialogues cover long-tail contexts authored frames
+  can't.
+- **For first words, prefer the synth start distribution** — TinyDialogues'
+  opener distribution is thin, and heavy TD mixing drags first-word hits
+  down.
+- **The iterate loop is the durable asset**: measure → diff coverage →
+  author → re-measure. The gap report stays in scratch (it contains
+  CHILDES counts); only the authored frames ship.
 - These top-4 numbers are the *input* to this phase's headline measure,
   words per minute (§ The measure that matters): every correct
   suggestion is a word the user did not have to go find. The simulated
