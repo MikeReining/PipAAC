@@ -38,8 +38,14 @@ score per word), regenerated from source, consumed as one weighted feature
 ## Vocabulary for code and docs
 
 | Use | Never use |
-| --- | --- |
-| occasion (breakfast, bath, bedtime …) | routine group, scene, context folder |
+| **Routine = occasion. DECIDED 2026-09-22** (founder). "Routine" is the
+familiar word in early education (morning circle, snack, bedtime) and the
+same concept. Code and docs keep *occasion*; what adults see may say
+*routine*. A routine can carry a saved Spotlight list for the Coach view
+(`docs/phases/013_Spotlight_And_Partner_Modeling.md` § 5a).
+
+--- | --- |
+| occasion (breakfast, bath, bedtime …) — in user-facing copy, **routine** | routine group, scene, context folder |
 | occasion prior (shipped, per word, 0–1) | occasion membership, occasion list |
 | occasion window (time range, per child) | schedule |
 

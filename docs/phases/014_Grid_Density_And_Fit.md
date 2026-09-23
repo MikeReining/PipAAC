@@ -42,6 +42,10 @@ things:
 One "density" number bundling all three would cap the CP child's language.
 That is the exclusion to avoid.
 
+The first two rows need the same home board with the whole vocabulary
+behind it, so they share one starter, **Core 15**; the access question at
+setup handles what differs. Urgent needs is its own starter (§ 5).
+
 ## 2. Rulings
 
 **DECIDED 2026-09-22** (founder; not built).
@@ -56,8 +60,9 @@ That is the exclusion to avoid.
    sentence order and Fitzgerald color carry; words land in roughly the same
    region; exact slots may change. Its users can absorb a planned move.
 4. **The smallest board is the clinician's pick.** Pip leads with an
-   opinionated, researched 15-cell default for each of the three reasons in
-   § 1, chosen at setup ("who is this for?") and editable.
+   opinionated, researched 15-cell default, chosen at setup ("who is this
+   for?") and editable. **Amended 2026-09-22:** two starters, Core 15 and
+   Urgent needs (First words and Big buttons merged).
 5. **Starters do not promise that positions carry up.** Where it is free,
    they follow `grid60` sector order so growing is natural.
 6. **`why` and `when` are on `grid60`** (`this` and `who` leave). Owner:
@@ -65,9 +70,21 @@ That is the exclusion to avoid.
 7. **The Smart bar carries the flexibility.** Family tiles open fixed-order
    families in the bar; the grid never changes. Contract:
    `docs/product/Motor_Grid_And_Art.md` § 2.1.
-8. **Setup asks two questions:** who is this for (picks a starter) and how
-   do they reach the screen (touch, switch, eye gaze). Every dial stays
-   editable afterward.
+8. **Setup asks two questions:** who is this for (Core 15 or Urgent needs)
+   and how do they reach the screen (touch, switch, eye gaze). Every dial
+   stays editable afterward.
+9. **Full access by default.** Every starter has the whole vocabulary
+   reachable through Groups, the Smart bar, and the keyboard; the starter
+   only decides the home page. Holding words back (ghost cells revealed
+   over time) is an adult option, not a default, and Pip makes no teaching
+   claim for it. Masking stays a family-values and safety tool
+   (`docs/product/Vocabulary_Masking_And_Safety.md`). Why: the evidence
+   that restricting access helps is thin either way, so Vision § 2.1
+   (presume competence) decides.
+10. **Starter messages are co-authored.** Urgent needs ships defaults so the
+    person has a voice on day one; setup, or the first quiet moment, asks
+    the adult to review them with the person — personalize, cut, add. Each
+    message stays marked *default* until the person confirms it.
 
 ## 3. Three dials
 
@@ -77,7 +94,7 @@ all three.
 | Dial | Question | Values |
 | --- | --- | --- |
 | **Cells** | How many cells show at once? | Presets 15 (5×3), 30 (6×5), 60 (10×6), 90 (10×9); any size an adult picks within renderer limits. |
-| **Vocabulary** | Which words exist? | A starter set that grows, up to the full catalog. Not-yet-introduced cells render as ghosts (masking owner). |
+| **Vocabulary** | Which words are reachable? | Everything, by default. An adult may hold words back and reveal them over time (ghost cells; masking owner). |
 | **Content** | Single words or whole messages? | Core words (default) or message tiles ("I'm in pain"). Phrase catalog: `docs/phases/010_Extended_Picture_Library.md`. |
 
 **One Cells setting per profile** (**DECIDED 2026-09-22**, founder). Cells follow the person's
@@ -90,18 +107,17 @@ activity is Spotlight's job (`docs/phases/013_Spotlight_And_Partner_Modeling.md`
 not a bigger or smaller group. To settle in slice 1: at 15 cells a group
 page keeps back, the reserved Edit slot, and `Next ›`, leaving 12 items.
 
-Examples: a CP child — 15 cells, full vocabulary, words. A stroke survivor —
-15 cells, starter messages, messages. A toddler — 15 cells, first words,
-words.
+Examples: a toddler and a CP child — both Core 15 (15 cells, full
+vocabulary, words), with different access settings. A stroke survivor —
+Urgent needs (15 cells, messages).
 
-### 3.1 Big buttons, full vocabulary
+### 3.1 Core 15 for motor and visual access
 
 Every selection is expensive for these users — time, effort, fatigue,
 errors — and a page turn is one more selection. The words that matter most
 must never cost one.
 
-- **Home page = the First words 15** (§ 5.1). Big buttons and First words
-  share one home page and differ only in the Vocabulary dial.
+- **Home page = Core 15** (§ 5.1), the same board a toddler starts on.
 - **The rest of `grid60`** is four built-in groups by grammar — More
   people, More doing, More where, More describing — opened through the
   `🗂️ Groups` anchor like any group. No new mechanism.
@@ -138,7 +154,10 @@ cell for a window the adult sets (default: two weeks), then fade.
 
 Each is a 5×3 home board. Families list their tiles in fixed order.
 
-### 5.1 First words
+### 5.1 Core 15
+
+For early language and for motor or visual access alike (§ 1). The rest of
+the vocabulary is one step away (§ 3.1).
 
 | | 1 | 2 | 3 | 4 | 5 |
 | --- | --- | --- | --- | --- | --- |
@@ -159,6 +178,9 @@ Columns: people · doing · how much · answer and ask · stop, help, hurt.
   three (`go`, `not`, `like`).
 
 ### 5.2 Urgent needs (messages)
+
+Defaults for day one, co-authored afterward (ruling 10): "I love you"
+becomes "I love you, Maria"; the person cuts what they would never say.
 
 | | 1 | 2 | 3 | 4 | 5 |
 | --- | --- | --- | --- | --- | --- |
@@ -181,9 +203,10 @@ families of nonvocal ICU patients named repositioning, medication,
 bathroom, questions about care, and "I love you" as the messages that
 mattered (VidaTalk study, PMC10833611).
 
-### 5.3 Big buttons
+### 5.3 Big buttons (merged)
 
-Home page = § 5.1; the rest per § 3.1.
+Merged into Core 15 on 2026-09-22: it had the same home page and, once
+full access became the default, the same vocabulary.
 
 ## 6. Withdrawn from the earlier draft
 
@@ -193,6 +216,9 @@ Home page = § 5.1; the rest per § 3.1.
 - "Mathematically invariant" and "law" language for spatial vectors: a
   design bet, not established science. Evidence for fixed-position
   superiority is mostly case studies.
+- Competitor doctrine as evidence. AssistiveWare's published guidance
+  defends its own decision to give every child the same layout; treat it
+  as positioning, not science, unless it cites studies.
 - Competitor claims ("uniquely equipped", "parental outrage", reflow as the
   primary driver of abandonment): unsourced. Abandonment research names fit,
   setup burden, and partner support. Do not use in copy until verified.
@@ -216,7 +242,7 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
 | Use | Never use |
 | --- | --- |
 | Cells, cell count, `grid15` / `grid60` / `grid90` | Harmonic density, ladder |
-| Starter (First words, Big buttons, Urgent needs) | Low-cognition layout |
+| Starter (Core 15, Urgent needs) | Low-cognition layout, First words / Big buttons (merged) |
 | Move cost, moved words | Motor guarantee |
 | Adult move | Reflow (no reflow ever happens) |
 | Smart bar, family tile, family | Prediction bar (for the whole surface), folder, popup |
@@ -236,7 +262,7 @@ Recommended defaults (**PROPOSED**; adjustable per profile):
    catalog update never overwrites an adult move. Works test: move `stop`,
    restart, update the catalog — `stop` is still where the adult put it.
 4. **Cells picker, move cost, transition highlight.** Parent Corner picker
-   with the § 4 preview; the four core groups for Big buttons (§ 3.1). Works test: a
+   with the § 4 preview; the four core groups behind Core 15 (§ 3.1). Works test: a
    profile with a known selection log previews exactly the words the two
    maps disagree on.
 5. **`grid90` rebuild** on column sectors, with its move cost from `grid60`

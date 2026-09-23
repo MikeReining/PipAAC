@@ -65,4 +65,11 @@ Phase numbers here follow `docs/phases/`; the "Later" list below predates them a
 - Multilingual localized label/utterance expansion (Spanish, French, regional dialects) on the language-independent sense graph.
 - Owners: `docs/product/Voice_Cloning_And_Synthesis.md`, `docs/product/Language_And_Voice_Schema.md`.
 
-Context river, visual scenes, and live partner modeling stay in `docs/strategy/Vision.md` until later phases name them.
+## Bilingual (later)
+
+**DECIDED 2026-09-22** (founder; not built). Its own phase, when Pip adds a
+second language. Harder than translation: a bilingual child switches
+languages mid-conversation, so two languages are active at once. The schema
+already carries a locale on every label (`docs/product/Language_And_Voice_Schema.md`).
+
+Context river and visual scenes stay in `docs/strategy/Vision.md` until later phases name them. Live partner modeling is `docs/phases/013_Spotlight_And_Partner_Modeling.md`.

@@ -76,7 +76,14 @@ owner doc with a DECIDED date and marked not built.
    board, every group page, and the Smart bar follow the profile's Cells
    setting. Owners: `docs/product/Motor_Grid_And_Art.md` § Groups,
    `docs/phases/014_Grid_Density_And_Fit.md` § 3.
-10. Founder delegated the remaining calls: "Lead with recommendations. No
+10. **After the AssistiveWare transcript review:** full vocabulary reachable
+    by default (holding words back is an adult option); First words and
+    Big buttons merge into **Core 15**; Urgent needs messages are
+    co-authored with the person. AssistiveWare's guidance defends its own
+    one-layout-for-everyone stance; treat it as positioning, not science.
+    Coach view added to 013, free. Routine = occasion (007). Bilingual is a
+    later phase, when a second language is added (Roadmap).
+11. Founder delegated the remaining calls: "Lead with recommendations. No
    more questions."
 
 ## Next

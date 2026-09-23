@@ -126,6 +126,30 @@ so they are separate modes with separate entry points.
 They share one component: the board mirror on the adult's device (same
 renderer, different gestures).
 
+## 5a. Coach view (partner device)
+
+**DECIDED 2026-09-22** (founder; not built). **Free — part of the product,
+never a paid add-on.** Adults are the bottleneck in AAC: a child learns
+from seeing words modeled, and most partners are unsure how. The partner's
+board mirror becomes a quiet coach, for the adult only; nothing here shows
+on the child's device.
+
+- **Today's words to model.** The running Spotlight list (or the current
+  routine's list, below) sits at the top of the mirror, each word one tap
+  to model live.
+- **One short tip per word, in plain language,** shown when the adult picks
+  it: when to use it and a sample line ("`more` — pause mid-snack, then
+  model *more crackers*"). Pip ships defaults; an SLP can edit a list's
+  tips.
+- **The basics, one line at a time:** point while you talk, model without
+  expecting a response, wait. Shown once each, then out of the way.
+- **The adult's own tally:** words the adult modeled today. It measures the
+  partner, not the child, and stays on the partner's device.
+
+**Routines** carry their own list: when a routine is on (morning circle,
+snack, bedtime — occasions, `docs/phases/007_Occasions.md`), the Coach view
+offers that routine's saved list.
+
 ## 6. Flows
 
 1. **Prepare.** On a laptop: Spotlight → New list → tap words on the mirror
@@ -176,5 +200,9 @@ renderer, different gestures).
    sync log has no new row.
 5. **Smart bar boost** for target words in Predict, never taking over the
    bar.
-6. **Shared uses.** The 014 upgrade highlight and the prediction halos
+6. **Coach view** (§ 5a): today's words, per-word tips, the basics, the
+   adult's tally. Works test: open the mirror during a Spotlight — the
+   list's words are at the top, and the child's device shows no coach
+   content.
+7. **Shared uses.** The 014 upgrade highlight and the prediction halos
    render through the same layer.
