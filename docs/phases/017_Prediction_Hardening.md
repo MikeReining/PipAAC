@@ -457,6 +457,20 @@ answer: no repaint in the app.
 
 Done when: that passes, and `board.js` has no inline copy of the rule.
 
+**Status (BUILT 2026-09-23, `114966a`).** `jevDeliverable`
+(`public/shared/jev.mjs`) is the single rule — open moment plus no
+finger down on `#grid`/`#tray`; `JEV_WINDOW_MS` is deleted and
+`board.js` imports the function. The walker applies it per pick with
+`reachMs` (default 600) against the next pick or close, and offers may
+return a `jev` side-channel so `shownKeys` (delivered) and
+`altShownKeys` (theoretical) both land on the pick record. A
+`trained_jev` flag (schema v10) makes with-Jev evidence train exactly
+once — an answer landing after Speak is still picked up. Proof:
+`prediction_sim.test.mjs` timing tests (always-right-but-late →
+theoretical 100%, delivered = local; 400 ms answers under 1.5 s picks
+all deliver) and `learn_paths_probe` (post-Speak late answer trains
+`with_jev`).
+
 ---
 
 # M2 — The instrument
