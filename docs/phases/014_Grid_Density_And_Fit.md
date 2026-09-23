@@ -15,7 +15,7 @@ framing was withdrawn (§ 6).
 | Default maps (`grid60`, `grid90`, new starters) | `docs/product/Core_Coordinate_Map.md` |
 | Clinical framing | `docs/strategy/Vision.md` § 2.4 |
 | Ghost cells, hiding | `docs/product/Vocabulary_Masking_And_Safety.md` |
-| Soft highlight used after a move | `docs/phases/013_Spotlight_Practice_Mode.md` |
+| Soft highlight used after a move | `docs/phases/013_Spotlight_And_Partner_Modeling.md` |
 
 ---
 
@@ -86,7 +86,7 @@ the Smart bar all use the profile's one setting. A group has no size of its
 own; a big group pages (`Next ›`). Group items keep their saved order; when
 Cells changes, groups are laid out again in that order and their moved
 items join the move-cost preview (§ 4). Showing fewer choices for an
-activity is Spotlight's job (`docs/phases/013_Spotlight_Practice_Mode.md`),
+activity is Spotlight's job (`docs/phases/013_Spotlight_And_Partner_Modeling.md`),
 not a bigger or smaller group. To settle in slice 1: at 15 cells a group
 page keeps back, the reserved Edit slot, and `Next ›`, leaving 12 items.
 
