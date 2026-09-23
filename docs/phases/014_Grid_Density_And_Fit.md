@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slices 1–5 and 7 built; slices 9–11 added 2026-09-23 (§ 7a) (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` on `grid60`'s column sectors; Smart bar families). Remaining: slice 6 — message tiles (waits on 010's phrase list); slice 8 — keyguard specs (later). Rulings and starters below are **DECIDED
+**Status:** Slices 1–5 and 7 built; slice 9 built and slices 10–11 added 2026-09-23 (§ 7a) (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` on `grid60`'s column sectors; Smart bar families). Remaining: slice 6 — message tiles (waits on 010's phrase list); slice 8 — keyguard specs (later). Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -269,11 +269,11 @@ for it.
 1. **Setup asks "Who do they call for?"** and adds 1–3 people (a name and
    an optional photo) as personal entities.
 2. **The person comes first in the empty-sentence Smart bar:**
-   person · hello · Food · help. Today the order is hello · Food ·
-   person · help (**BUILT**, `public/board.js:471`), and the Core 15 bar
-   holds two cards (`public/board.js:898`), so a Core 15 child never sees
-   the person. `help` goes last because it is a cell on every home board
-   (rule 0).
+   person · hello · Food · help. The old order was hello · Food ·
+   person · help, and the Core 15 bar holds two cards
+   (`public/board.js:898`), so a Core 15 child never saw the person.
+   `help` goes last because it is a cell on every home board (rule 0).
+   **BUILT** (slice 9).
 3. **Adults may put any word or person in any home cell,** not only move
    or swap core words. The replaced word stays reachable (Groups, Smart
    bar, keyboard), and the replacement shows in the move-cost preview
@@ -449,6 +449,13 @@ Slices: 9–11 in § 9.
 9. **Person first in the empty bar** (§ 7a ruling 2). Works test: a fresh
    Core 15 profile with one person added shows that person as the first
    card when the sentence is empty; `grid60` still shows all four cards.
+
+   **DONE.** `idleStarters` (`public/board.js`) now builds person ·
+   hello · Food · help; the narrow bar keeps the front. Works Test:
+   `scripts/probes/idle_person_probe.mjs` reads the rendered tray —
+   Core 15 before a person: hello · Food; after adding "Mama": Mama ·
+   hello; `grid60`: Mama · hello · Food · help; survives a reload. The
+   same probe fails on the old order (checked 2026-09-23).
 10. **Adults put any word or person in a home cell** (§ 7a ruling 3),
     plus the setup question (ruling 1). Works test: put a person on a
     Core 15 cell, restart, update the catalog — the person is still

@@ -463,10 +463,21 @@ const senseById = (senseId) =>
 const HELLO_SENSE_ID = "sns_0583"; // hello
 const HELP_SENSE_ID = "sns_0025";  // help
 
-/** The four resting cards shown when the sentence bar is empty. */
+/** The four resting cards shown when the sentence bar is empty, in
+ *  priority order: the child's top person first (a call to a person is a
+ *  young child's most common word — 014 § 7a), `help` last (it is a cell
+ *  on every home board). A narrow bar keeps the front of the list. */
 async function idleStarters() {
   const cards = [];
   const masked = maskedSenseIds(db);
+  const top = ALL(
+    db,
+    `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
+     LEFT JOIN learner_event_log l ON l.item_kind = 'entity' AND l.item_id = e.id
+     WHERE e.status = 'active'
+     GROUP BY e.id ORDER BY COUNT(l.id) DESC, MAX(l.selected_at) DESC, e.rowid LIMIT 1`,
+  )[0];
+  if (top) cards.push({ entity: top });
   const hello = masked.has(HELLO_SENSE_ID) ? null : senseById(HELLO_SENSE_ID);
   if (hello) {
     cards.push({ id: hello.id, label: hello.label, glyph: "👋", role: hello.fitzgerald_role,
@@ -477,14 +488,6 @@ async function idleStarters() {
     cards.push({ label: groupDisplayName(db, foodRow, locale), glyph: "🥞", role: "Pink",
       onTap: () => openGroup("grp_food") });
   }
-  const top = ALL(
-    db,
-    `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
-     LEFT JOIN learner_event_log l ON l.item_kind = 'entity' AND l.item_id = e.id
-     WHERE e.status = 'active'
-     GROUP BY e.id ORDER BY COUNT(l.id) DESC, MAX(l.selected_at) DESC, e.rowid LIMIT 1`,
-  )[0];
-  if (top) cards.push({ entity: top });
   const help = masked.has(HELP_SENSE_ID) ? null : senseById(HELP_SENSE_ID);
   if (help) {
     cards.push({ id: help.id, label: help.label, glyph: "🆘", role: help.fitzgerald_role,
