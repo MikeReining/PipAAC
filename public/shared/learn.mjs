@@ -65,14 +65,17 @@ export function learnFromSentence(
 
   // local_only trains on every impression; with_jev trains on every
   // moment where Jev returned probabilities — answered in time or late
-  // (017-3: a late answer is still valid evidence about the word).
+  // (017-3: a late answer is still valid evidence about the word). The
+  // trained_jev flag makes a moment's evidence train exactly once: an
+  // answer landing after Speak is picked up by a later call instead of
+  // being lost or double-counted.
   // Keyboard-mode rows are metrics only: the keyboard ranker has no
   // feature vector, so training on them once wrote NaN weights (017-4).
   const imps = db
     .prepare(
-      `SELECT candidates, jev_probs, chosen_kind, chosen_id FROM strip_impression
+      `SELECT id, candidates, jev_probs, chosen_kind, chosen_id FROM strip_impression
        WHERE sentence_id = ? AND chosen_id IS NOT NULL AND mode = 'picture'
-         AND (? != 'with_jev' OR jev_probs IS NOT NULL)
+         AND (? != 'with_jev' OR (jev_probs IS NOT NULL AND trained_jev = 0))
        ORDER BY id`,
     )
     .all(sentenceId, weightSet);
@@ -145,6 +148,11 @@ export function learnFromSentence(
     weightSet, JSON.stringify(cur), catalogModel.version,
     (row?.examples_seen ?? 0) + imps.length, at,
   );
+  if (weightSet === "with_jev") {
+    const mark = db.prepare(
+      "UPDATE strip_impression SET trained_jev = 1 WHERE id = ?");
+    for (const imp of imps) mark.run(imp.id);
+  }
   return imps.length;
 }
 

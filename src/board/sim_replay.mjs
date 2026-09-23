@@ -21,8 +21,11 @@ import {
   logSelection,
   openSentence,
   showGate,
+  stampShownFinal,
   stripScored,
+  updateImpressionJev,
 } from "../../public/shared/funnel.mjs";
+import { jevDeliverable } from "../../public/shared/jev.mjs";
 import { loadWeights } from "../../public/shared/learn.mjs";
 
 export function loadSimFixture(repoRoot) {
@@ -117,14 +120,22 @@ export function buildSchedule(fixture, { measureFrom, days } = {}) {
  * child takes a shown tile when the strip offers the word, else taps
  * the grid or walks the group path.
  *
- * `offer(db, sents, at)` → {candidates, shown, pNone, wl?} — may be
- * async; pass a stub returning {candidates: [], shown: [], pNone: 0} to
- * break the strip on purpose (negative control). `wl` is stored on the
- * impression as weights_local so the moment replays (017-5).
+ * `offer(db, sents, at)` → {candidates, shown, pNone, wl?, jev?} — may
+ * be async; pass a stub returning {candidates: [], shown: [], pNone: 0}
+ * to break the strip on purpose (negative control). `wl` is stored on
+ * the impression as weights_local so the moment replays (017-5).
  * `afterSentence(db, sent)` runs after each close — an arm's learning
  * step goes here, at the sentence's sim-close time.
+ *
+ * Jev timing (017-2): an offer that models a Jev answer returns it on
+ * `jev` — {answeredAt (sim ms), candidates, shown, pNone, probs,
+ * model, latencyMs}. The walk applies the app's rule: the moment's
+ * deadline is the next pick (or sentence close); a reach occupies the
+ * last `reachMs` (default 600) before it. `jevDeliverable` decides
+ * whether the reranked tiles painted — the pick record keeps both
+ * `shownKeys` (delivered) and `altShownKeys` (theoretical).
  */
-export async function replayDays(db, catalog, fixture, entities, { offer, measureFrom, days, schedule, afterSentence } = {}) {
+export async function replayDays(db, catalog, fixture, entities, { offer, measureFrom, days, schedule, afterSentence, reachMs = 600 } = {}) {
   const senseId = new Map();
   for (const l of catalog.labels.filter((l) => l.kind === "lemma" && l.locale === "en")) {
     senseId.set(l.text, l.sense_id);
@@ -154,27 +165,58 @@ export async function replayDays(db, catalog, fixture, entities, { offer, measur
       const o = sentsState.length
         ? await offer(db, sentsState, p.at)
         : { candidates: [], shown: [], pNone: 0 };
-      const { candidates, shown, pNone } = o;
-      const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
+      const { candidates, pNone } = o;
+      // 017-2: the answer's deadline is the next pick (or the close);
+      // the last reachMs before it is a reach — jevDeliverable is the
+      // only rule, shared with board.js.
+      const deadline = item.words[p.position + 1]?.at ?? item.closeAt;
+      const jev = o.jev;
+      const deliverable = jev && jevDeliverable({
+        answeredAt: jev.answeredAt,
+        reachStartedAt: deadline - reachMs,
+        moved: jev.answeredAt > deadline,
+      });
+      const finalShown = deliverable ? jev.shown : o.shown;
+      const shownKeys = finalShown.map((c) => `${c.kind}:${c.id}`);
+      const altShownKeys = jev && !deliverable
+        ? jev.shown.map((c) => `${c.kind}:${c.id}`) : null;
       const pick = resolve(p.w);
       const pickKey = `${pick.kind}:${pick.id}`;
       const source = shownKeys.includes(pickKey) ? "strip"
         : isCore(db, pick.kind, pick.id) ? "grid" : "group";
       if (sentsState.length) {
-        logImpression(db, {
+        const impId = logImpression(db, {
           sentenceId: sid, position: p.position, shownAt: p.at,
           candidates: candidates.map((c) => ({
             kind: c.kind, id: c.id, x: c.x ?? {}, s: c.s, p: c.p })),
-          shown: shownKeys, pNone,
+          shown: o.shown.map((c) => `${c.kind}:${c.id}`), pNone,
           weightsLocal: o.wl ?? null,
         });
+        if (jev) {
+          updateImpressionJev(db, impId, {
+            status: deliverable ? "answered" : "late",
+            model: jev.model ?? null, probs: jev.probs ?? null,
+            latencyMs: jev.latencyMs ?? null,
+            pNoneJev: jev.pNone ?? null,
+            weightsJev: jev.wl ?? null,
+            candidates: candidates.map((c, i) => ({
+              kind: c.kind, id: c.id, x: c.x ?? {}, s: c.s, p: c.p,
+              jp: jev.probs?.[`c${i + 1}`] ?? 0,
+              wp: jev.candidates?.find(
+                (r) => r.kind === c.kind && r.id === c.id)?.p ?? 0,
+            })),
+          });
+        }
+        // What painted is the walker's truth — local paint, or the Jev
+        // repaint when the answer was deliverable.
+        stampShownFinal(db, impId, shownKeys);
       }
       fillChosen(db, sid, { kind: pick.kind, id: pick.id, source });
       logSelection(db, pick.kind, pick.id, p.at,
         { sentenceId: sid, position: p.position, source });
       members.push(pick);
       picks.push({ at: p.at, day: item.day, position: p.position,
-        candidates, shownKeys, label: pickKey });
+        candidates, shownKeys, altShownKeys, label: pickKey });
       const cost = source === "group" ? 3 : 1;
       words++; taps += cost;
       if (p.at >= measureStart) { mWords++; mTaps += cost; }

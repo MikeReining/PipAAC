@@ -405,6 +405,19 @@ reports.
 
 Done when: that passes, and `jev_smoke.mjs` has no `Date.now()`.
 
+**Status (BUILT 2026-09-23, `ea4222d`).** `buildSchedule` produces one
+frozen event stream anchored to Monday 2026-01-05; `replayDays` walks
+it (async offers, per-pick `gaps` when a sentence carries them, else
+1.5 s), and `replayArms` runs the same schedule for every arm, each
+with its own database. `learnFromSentence` accepts the sentence's
+sim-close time. `jev_smoke.mjs` is now a thin `replayArms` caller —
+zero `Date.now`. Shipped defaults were re-fitted under the anchor (the
+old fit floated with the run date). Proof in
+`src/board/prediction_sim.test.mjs`: replay completes with `Date.now`
+stubbed to throw; 07:50 vs 19:50 gives different hour features and
+offers; two arms see identical picks/times and repeat runs are
+byte-identical.
+
 ## Step 2 — The simulation obeys the app's timing rules
 
 Goal: the bench reports Jev's **theoretical** result (every answer used)

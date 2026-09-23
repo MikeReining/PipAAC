@@ -274,6 +274,19 @@ test("017 step 3 — local_only drops jev; with_jev trains on answered and late"
   assert.ok(Object.values(wj).every(Number.isFinite));
   const drift = Math.abs(wj.jev - MODEL.weights.with_jev.jev);
   assert.ok(drift > 0, "with_jev's jev weight moved on answered evidence");
+  // trained_jev makes the evidence train exactly once: a repeat call is
+  // a no-op, and a late answer landing after Speak still gets picked up.
+  assert.equal(learnFromSentence(db, s, MODEL, { weightSet: "with_jev" }), 0,
+    "already-trained prob'd moments don't double-count");
+  const i4 = imp(3, "sns_0002");
+  updateImpressionJev(db, i4, {
+    status: "late", model: "jev-test", latencyMs: 2100,
+    probs: { c1: 0.6, c2: 0.3, none: 0.1 },
+    candidates: cands.map((c, i) => ({
+      ...c, jp: [0.6, 0.3][i], wp: [0.55, 0.35][i] })),
+  });
+  assert.equal(learnFromSentence(db, s, MODEL, { weightSet: "with_jev" }), 1,
+    "a prob'd moment arriving after the first train still counts");
 });
 
 test("017 step 5 — a stored moment replays exactly, local and with-Jev", () => {

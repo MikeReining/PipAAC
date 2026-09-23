@@ -260,6 +260,10 @@ CREATE TABLE IF NOT EXISTS strip_impression (
   jev_prompt_version TEXT,
   jev_latency_ms INTEGER CHECK (jev_latency_ms IS NULL OR jev_latency_ms >= 0),
   jev_status TEXT NOT NULL CHECK (jev_status IN ('off', 'skipped', 'answered', 'late', 'error')),
+  -- with_jev trains each prob'd moment exactly once (017-3): an answer
+  -- that lands after Speak still counts — the flag, not the sentence,
+  -- is the idempotency boundary.
+  trained_jev INTEGER NOT NULL DEFAULT 0,
   chosen_kind TEXT CHECK (chosen_kind IS NULL OR chosen_kind IN ('sense', 'entity')),
   chosen_id TEXT,
   chosen_source TEXT CHECK (chosen_source IS NULL OR chosen_source IN ('grid', 'strip', 'group', 'keyboard'))
@@ -679,4 +683,4 @@ CREATE TABLE IF NOT EXISTS prediction_weights (
   PRIMARY KEY (profile_id, weight_set)
 );
 
-PRAGMA user_version = 9;
+PRAGMA user_version = 10;

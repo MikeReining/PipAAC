@@ -56,8 +56,10 @@ await send("Emulation.setDeviceMetricsOverride",
 await loadApp();
 
 /* Stub /jev/rank at the fetch boundary: odd calls answer ~instantly,
- * even calls take 400 ms (past the 150 ms paint window). Probabilities
- * are shaped to the request's own criteria count. */
+ * even calls take 2 s (past the ~650 ms inter-tap gap, so they land
+ * after the next pick — 'late', evidence but no repaint; 017-2 has no
+ * fixed window, so a mid-gap answer would legitimately deliver).
+ * Probabilities are shaped to the request's own criteria count. */
 await evalJs(`(() => {
   let n = 0;
   const orig = window.fetch;
@@ -75,7 +77,7 @@ await evalJs(`(() => {
     return new Promise((res) => setTimeout(() => res(new Response(
       JSON.stringify({ model: 'jev-stub', answers: { next_word: { probabilities } } }),
       { status: 200, headers: { 'content-type': 'application/json' } })),
-      slow ? 400 : 10));
+      slow ? 2000 : 10));
   };
   window.__jevCalls = () => n;
   return 1;

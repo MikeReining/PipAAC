@@ -18,7 +18,7 @@ import {
   buildSchedule, loadSimFixture, replayArms,
 } from "../../src/board/sim_replay.mjs";
 import {
-  applyJev, scoreCandidates, showGate, stripScored,
+  applyJev, showGate, stripScored,
 } from "../../public/shared/funnel.mjs";
 import { buildJevRequest, jevProbabilities, jevRank, jevTerm } from "../../public/shared/jev.mjs";
 
@@ -40,36 +40,40 @@ const localOffer = async (db, sents, at) => {
   return { candidates, shown: showGate(candidates, pNone, model.tau), pNone };
 };
 
-/** A Jev offer: local shortlist (capped) → sanitized request → live
- *  Worker → applyJev under with_jev weights → gate. History days fall
- *  back to the local offer so both arms build identical priors (and no
- *  calls are wasted). */
+/** A Jev offer: first paint is always local (local_only, § 3.4); the
+ *  answer goes on the `jev` side-channel — capped shortlist → sanitized
+ *  request → live Worker → applyJev under with_jev weights → gate. The
+ *  walker decides delivery (017-2). History days are local-only so both
+ *  arms build identical priors and no calls are wasted. */
 const jevOffer = (stats) => async (db, sents, at) => {
-  if (at < measureStart) return localOffer(db, sents, at);
-  const model = { weights: MODEL.weights.with_jev, tau: MODEL.tau };
-  let { candidates, pNone } = stripScored(db, sents, at, LOCALE, model);
-  candidates = candidates.slice(0, CAP);
-  ({ candidates, pNone } = scoreCandidates(candidates, model.weights));
+  const base = await localOffer(db, sents, at);
+  if (at < measureStart) return base;
+  const wjModel = { weights: MODEL.weights.with_jev, tau: MODEL.tau };
+  const capped = base.candidates.slice(0, CAP);
   const req = buildJevRequest(
-    candidates.map((c) => jevTerm(db, c, LOCALE)),
+    capped.map((c) => jevTerm(db, c, LOCALE)),
     sents.map((c) => jevTerm(db, c, LOCALE)).filter(Boolean),
     null,
   );
-  if (!req) {
-    stats.skipped++;
-    return { candidates, shown: showGate(candidates, pNone, model.tau), pNone };
-  }
+  if (!req) { stats.skipped++; return base; }
   const t0 = performance.now();
   try {
     const res = await jevRank(req, { origin: ORIGIN });
-    stats.calls++; stats.ms.push(performance.now() - t0); stats.model = res.model;
+    const ms = performance.now() - t0;
+    stats.calls++; stats.ms.push(ms); stats.model = res.model;
     const probs = jevProbabilities(res);
-    if (!probs) { stats.errors++; return { candidates, shown: showGate(candidates, pNone, model.tau), pNone }; }
-    const rr = applyJev(candidates, probs, model.weights);
-    return { candidates: rr.candidates, shown: showGate(rr.candidates, rr.pNone, model.tau), pNone: rr.pNone };
+    if (!probs) { stats.errors++; return base; }
+    const rr = applyJev(capped, probs, wjModel.weights);
+    return { ...base, jev: {
+      answeredAt: at + ms, latencyMs: ms, probs, model: res.model,
+      candidates: rr.candidates,
+      shown: showGate(rr.candidates, rr.pNone, wjModel.tau),
+      pNone: rr.pNone,
+      wl: { w: wjModel.weights, tau: wjModel.tau },
+    }};
   } catch {
     stats.errors++;
-    return { candidates, shown: showGate(candidates, pNone, model.tau), pNone };
+    return base;
   }
 };
 
@@ -79,10 +83,14 @@ const isCore = (db, kind, id) =>
 
 /** Measured strip moments → offer/hit/false-show + taps per word, all
  *  from the walker's recorded picks (a pick is a strip moment when
- *  position > 0 — the first tile shows idle starters). */
+ *  position > 0 — the first tile shows idle starters). Delivered counts
+ *  what painted; theoretical counts what Jev would have shown if every
+ *  answer landed (altShownKeys, 017-2). */
 const measure = (db, result) => {
   const mid = result.picks.filter((p) => p.at >= measureStart && p.position > 0);
   const hits = mid.filter((p) => p.shownKeys.includes(p.label)).length;
+  const theoHits = mid.filter(
+    (p) => (p.altShownKeys ?? p.shownKeys).includes(p.label)).length;
   const falseShows = mid.filter(
     (p) => p.shownKeys.length && !p.shownKeys.includes(p.label)).length;
   let taps = 0, words = 0;
@@ -94,6 +102,7 @@ const measure = (db, result) => {
   return {
     offers: mid.length, hits,
     hitRate: mid.length ? +(hits / mid.length).toFixed(3) : 0,
+    theoreticalHitRate: mid.length ? +(theoHits / mid.length).toFixed(3) : 0,
     falseShowRate: mid.length ? +(falseShows / mid.length).toFixed(3) : 0,
     taps, words, tapsPerWord: words ? +(taps / words).toFixed(3) : 0,
   };

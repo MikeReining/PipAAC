@@ -67,6 +67,24 @@ export function buildJevRequest(candidates, sentenceTerms, partnerWords = null, 
   };
 }
 
+/**
+ * The one display rule for a Jev answer (Dual_Engine § 3.4 amended
+ * 2026-09-23, R7 — no fixed time window). An answer may repaint only
+ * when both hold:
+ *   - the strip moment it answered is still open (`moved` false — the
+ *     sentence position hasn't advanced past it), and
+ *   - no reach is underway (`reachStartedAt` null, or the answer
+ *     arrived before the finger went down) — a tile must never change
+ *     under a reaching hand.
+ * Everything else is evidence either way: a non-deliverable answer
+ * still trains with_jev (017-3). Shared by the app and the bench —
+ * never re-implement the rule at a call site.
+ */
+export function jevDeliverable({ answeredAt, reachStartedAt = null, moved = false }) {
+  if (moved) return false;
+  return reachStartedAt == null || answeredAt <= reachStartedAt;
+}
+
 /** POST the request to the Worker's /jev/rank passthrough. */
 export async function jevRank(request, { fetchImpl = globalThis.fetch, origin = "" } = {}) {
   const res = await fetchImpl(`${origin}/jev/rank`, {

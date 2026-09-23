@@ -107,7 +107,7 @@ import {
   SENSE_ART_SQL, clearImageOverride, imageOverrideFor,
   libraryImagesFor, setImageOverride,
 } from "./shared/images.mjs";
-import { buildJevRequest, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
+import { buildJevRequest, jevDeliverable, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
 import { coreCells, moveCore } from "./shared/coremove.mjs";
 import { bindLayouts, moveCost, moveMarks, setBoardLayout } from "./shared/movecost.mjs";
 import {
@@ -692,11 +692,16 @@ async function renderStrip() {
 
 /* Jev rerank (§ 3): with sharing on, the shortlist's labels and the
  * sentence's labels go to the Worker, which adds the TypeSafe key. An
- * answer inside JEV_WINDOW_MS of first paint re-ranks under the
- * with_jev weights; a later answer is logged 'late', never shown — the
- * strip never reshuffles under a reaching hand. */
-const JEV_WINDOW_MS = 150;
+ * answer re-ranks under the with_jev weights only while it is still
+ * deliverable — jevDeliverable is the single rule (017-2): the moment
+ * must be open and no finger may be down on the board or strip; a tile
+ * never changes under a reaching hand. */
 let jevSharing = true; // bound from learner_profile at boot
+let lastBoardPointerDown = 0; // last pointerdown on the word surface
+for (const sel of ["#grid", "#tray"]) {
+  document.querySelector(sel)?.addEventListener(
+    "pointerdown", () => { lastBoardPointerDown = Date.now(); }, true);
+}
 
 async function maybeJev(scored, sents, paintedAt) {
   if (!jevSharing) return; // the row stays 'off' — sharing is disabled
@@ -709,11 +714,19 @@ async function maybeJev(scored, sents, paintedAt) {
   try {
     const res = await jevRank(req);
     const probs = jevProbabilities(res);
-    const latencyMs = Date.now() - paintedAt;
+    const answeredAt = Date.now();
+    const latencyMs = answeredAt - paintedAt;
     // The strip moment this answered may have already closed — the row
     // still records what came back (late), it just can't repaint.
     const moved = sid !== sentenceId || pos !== sentencePicks;
     if (!probs) return markJev("error", res?.model, sid, pos);
+    // 017-2: the single deliverability rule lives in jev.mjs — open
+    // moment, and no finger down on the word surface since paint.
+    const deliverable = jevDeliverable({
+      answeredAt, moved,
+      reachStartedAt: lastBoardPointerDown > paintedAt
+        ? lastBoardPointerDown : null,
+    });
     const lw = loadWeights(db, catalog.prediction, "with_jev");
     const wj = {
       weights: spotWeights(db, lw.weights),
@@ -729,7 +742,6 @@ async function maybeJev(scored, sents, paintedAt) {
     // with_jev evidence too (017-3).
     const row = jevRow(sid, pos);
     if (!row) return markJev("error", res.model, sid, pos);
-    const deliverable = !moved && latencyMs <= JEV_WINDOW_MS;
     updateImpressionJev(db, row.id, {
       status: deliverable ? "answered" : "late",
       model: res.model, probs, latencyMs,
@@ -745,7 +757,12 @@ async function maybeJev(scored, sents, paintedAt) {
           (r) => r.kind === c.kind && r.id === c.id)?.p ?? 0,
       })),
     });
-    if (!deliverable) return;
+    if (!deliverable) {
+      // The answer may have landed after Speak — the trained_jev flag
+      // makes the catch-up train idempotent (017-3).
+      learnFromSentence(db, sid, catalog.prediction, { weightSet: "with_jev" });
+      return;
+    }
     // Repaint only when the offer actually changed; the painter stamps
     // shown_final on the same row.
     const localKeys = JSON.parse(row.shown_local);

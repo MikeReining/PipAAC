@@ -27,9 +27,10 @@ import { join } from "node:path";
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { addPersonalEntity } from "./entities.mjs";
 import {
-  loadSimFixture, modelOffer, replayArms, replayDays, simTime,
+  buildSchedule, loadSimFixture, modelOffer, replayArms, replayDays, simTime,
 } from "./sim_replay.mjs";
 import { predictionReport, stripScored, logSelection } from "../../public/shared/funnel.mjs";
+import { jevDeliverable } from "../../public/shared/jev.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const { catalog, fixture } = loadSimFixture(repoRoot);
@@ -209,4 +210,92 @@ test("one clock: every arm replays identical picks and times, byte-identical acr
   assert.equal(JSON.stringify(a.x.picks), JSON.stringify(b.x.picks));
   assert.equal(a.x.mTaps, b.x.mTaps);
   assert.equal(a.x.mWords, b.x.mWords);
+});
+
+/* 017 step 2 — the app and the bench share one deliverability rule:
+ * no fixed window; an answer that arrives after the moment's deadline
+ * (the next pick / sentence close) or while a reach is underway never
+ * repaints — but it is still evidence. */
+test("jevDeliverable: the single timing rule (017-2)", () => {
+  assert.equal(jevDeliverable({ answeredAt: 800, reachStartedAt: 900 }), true);
+  assert.equal(jevDeliverable({ answeredAt: 1000, reachStartedAt: 900 }), false,
+    "a tile must never change under a reaching hand");
+  assert.equal(jevDeliverable({ answeredAt: 30_000, reachStartedAt: null }), true,
+    "no fixed window — a slow answer to an open moment still delivers");
+  assert.equal(jevDeliverable({ answeredAt: 800, reachStartedAt: null, moved: true }), false,
+    "an answer after the moment closed can't help that pick");
+});
+
+/** A stub Jev arm that is always right (shows the upcoming pick) and
+ *  answers `latencyMs` after the moment opened. */
+const alwaysRightJev = (catalog, fixture, latencyMs) => {
+  const sched = buildSchedule(fixture, { measureFrom: 11 });
+  const wordAt = new Map();
+  for (const item of sched.sents) {
+    for (const p of item.words) wordAt.set(p.at, p.w);
+  }
+  return (db, sents, at, resolve, base) => {
+    const pick = resolve(wordAt.get(at));
+    return { ...base, jev: {
+      answeredAt: at + latencyMs, latencyMs, probs: { c1: 0.9, none: 0.1 },
+      model: "stub", candidates: base.candidates,
+      shown: [{ kind: pick.kind, id: pick.id }], pNone: 0,
+    }};
+  };
+};
+
+test("timing: a late-but-right Jev gains theoretically, delivers nothing (017-2)", async () => {
+  const senseId = new Map(
+    catalog.labels.filter((l) => l.kind === "lemma" && l.locale === "en")
+      .map((l) => [l.text, l.sense_id]));
+  const mkArm = (name, latencyMs) => {
+    const db = openDb();
+    const entities = fixture.entities.map((e, i) =>
+      addPersonalEntity(db, { id: `ent_sim_${i}`, spokenName: e.name, category: e.category }));
+    const entId = new Map(entities.map((e) => [e.spokenName, e.id]));
+    const resolve = (w) => entId.has(w)
+      ? { kind: "entity", id: entId.get(w) }
+      : { kind: "sense", id: senseId.get(w) };
+    const stub = alwaysRightJev(catalog, fixture, latencyMs);
+    const offer = async (d, sents, at) => {
+      const base = modelOffer(MODEL)(d, sents, at);
+      return stub(d, sents, at, resolve, base);
+    };
+    return { name, db, entities, offer };
+  };
+  // Answers arrive 5 s out — past every 1.5 s pick gap, so moved.
+  const late = await replayArms(catalog, fixture,
+    [mkArm("late", 5000)], { measureFrom: 11 });
+  // Answers arrive at 400 ms — before the 900 ms reach boundary of the
+  // next pick; no cutoff kills them.
+  const early = await replayArms(catalog, fixture,
+    [mkArm("early", 400)], { measureFrom: 11 });
+
+  const stats = (r) => {
+    const mid = r.picks.filter((p) => p.position > 0 && p.altShownKeys !== null
+      ? p.at >= r.measureStart : false);
+    const all = r.picks.filter((p) => p.at >= r.measureStart && p.position > 0);
+    const hits = (keys) => all.filter((p) =>
+      (keys === "theo" ? p.altShownKeys ?? p.shownKeys : p.shownKeys)
+        .includes(p.label)).length;
+    return { all: all.length, delivered: hits("delivered"), theoretical: hits("theo") };
+  };
+  const L = stats(late.late), E = stats(early.early);
+  assert.ok(L.all > 20 && E.all > 20, "enough measured strip moments");
+  // Late: every answer was theoretically perfect but none painted.
+  assert.equal(L.theoretical, L.all, "always-right stub: 100% theoretical");
+  const dbLocal = openDb();
+  const entsLocal = fixture.entities.map((e, i) =>
+    addPersonalEntity(dbLocal, { id: `ent_sim_${i}`, spokenName: e.name, category: e.category }));
+  const localOnly = await replayDays(dbLocal, catalog, fixture, entsLocal,
+    { measureFrom: 11, offer: modelOffer(MODEL) });
+  const localHits = localOnly.picks.filter(
+    (p) => p.at >= localOnly.measureStart && p.position > 0
+      && p.shownKeys.includes(p.label)).length;
+  assert.equal(L.delivered, localHits,
+    "delivered = the local offer exactly — nothing arrived in time");
+  // Early: everything delivered, so delivered = theoretical.
+  assert.equal(E.delivered, E.all,
+    "a 400 ms answer with 1.5 s picks always delivers (no 150 ms cutoff)");
+  assert.equal(E.delivered, E.theoretical);
 });
