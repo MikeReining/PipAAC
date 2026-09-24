@@ -1,10 +1,8 @@
 {
-  "version": "006-s3.2026-09-23",
-  "fittedOn": "routine_days.en.json + routine_days_varied.en.json, days 1–5 (weak prior)",
+  "version": "006-s3.2026-09-24",
+  "fittedOn": "routine_days.en.json + routine_days_varied.en.json, days 1-5 (weak prior); 2026-09-24: phrase/pair -> hist (017-10), book added (017-23) — feature seeds, pending refit",
   "weights": {
     "local_only": {
-      "phrase": 1.4787,
-      "pair": 1.4787,
       "occasion": 0,
       "hour": 1.6302,
       "recency": -0.6677,
@@ -14,12 +12,11 @@
       "fresh": 0,
       "jev": 0,
       "spot": 0,
-      "book": 1.0,
-      "none_bias": 2.9174
+      "book": 20,
+      "none_bias": 2.9174,
+      "hist": 15
     },
     "with_jev": {
-      "phrase": 1.4787,
-      "pair": 1.4787,
       "occasion": 0,
       "hour": 1.6302,
       "recency": -0.6677,
@@ -29,8 +26,9 @@
       "fresh": 0,
       "jev": 0.5,
       "spot": 0,
-      "book": 1.0,
-      "none_bias": 2.9174
+      "book": 20,
+      "none_bias": 2.9174,
+      "hist": 15
     }
   },
   "tau": {

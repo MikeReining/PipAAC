@@ -623,8 +623,6 @@ async function renderStrip() {
   if (kbUi.text) {
     // mid-word: the strip switches from continuations to completions
     cards = kbUi.completions();
-  } else if (sentence.length === 0) {
-    cards = (await idleStarters()).slice(0, cap);
   } else {
     // Keyboard open with an empty buffer: next-word continuations, core
     // words included — the grid is hidden so the no-core rule doesn't
@@ -640,24 +638,36 @@ async function renderStrip() {
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
       : spotGate(scored.candidates, scored.pNone, model.tau, cap)
           .map((r) => ({ kind: r.kind, id: r.id }));
-    // Keyboard-mode impressions are metrics only (017-4): the keyboard
-    // ranker has no feature vector, and one trained on `x: {}` rows once
-    // wrote NaN into every learned weight.
-    maybeImpression(
-      scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
-      items, scored?.pNone ?? 0, {
-        mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
-        weightsLocal: scored ? {
-          w: model.weights, tau: model.tau,
-          ver: catalog.prediction.version, seen: lw.examplesSeen,
-        } : null,
-      },
-    );
-    cards = stripCards(items);
+    if (sentence.length === 0 && !items.length) {
+      // Nothing has support at position 0 — the resting cards still fill
+      // the bar (person, hello, food, help). Once the book or history
+      // supports an opener (017 step 21), the scored offer wins instead.
+      cards = (await idleStarters()).slice(0, cap);
+    } else {
+      // Position-0 offers are real moments too (017-21): open the
+      // sentence so the impression row can exist. A row with no picks
+      // stays invisible to stats (end_kind IS NULL).
+      if (scored) ensureSentence();
+      // Keyboard-mode impressions are metrics only (017-4): the keyboard
+      // ranker has no feature vector, and one trained on `x: {}` rows once
+      // wrote NaN into every learned weight.
+      maybeImpression(
+        scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
+        items, scored?.pNone ?? 0, {
+          mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
+          weightsLocal: scored ? {
+            w: model.weights, tau: model.tau,
+            ver: catalog.prediction.version, seen: lw.examplesSeen,
+          } : null,
+        },
+      );
+      cards = stripCards(items);
+    }
     // Jev may re-rank inside the paint window (§ 3.4) — fired after the
     // local paint resolves, so the strip never waits on the network and
-    // the 150 ms window is measured from the real first paint.
-    if (scored) jevCall = { scored, sents };
+    // the 150 ms window is measured from the real first paint. Position-0
+    // stays local: the Jev prompt is built for continuations.
+    if (scored && sentence.length) jevCall = { scored, sents };
   }
   await paintStrip(cards);
   if (jevCall) maybeJev(jevCall.scored, jevCall.sents, Date.now());

@@ -207,7 +207,7 @@ test("repairCorruptWeights resets a corrupted row to the shipped defaults", () =
 
   // hand-corrupt the row the way the old keyboard write did
   db.prepare("UPDATE prediction_weights SET weights = ?")
-    .run('{"phrase":null,"pair":null,"none_bias":null}');
+    .run('{"hist":null,"book":null,"none_bias":null}');
   assert.equal(repairCorruptWeights(db, MODEL), 1);
   const row = db.prepare("SELECT * FROM prediction_weights").all()[0];
   assert.equal(row.examples_seen, 0);

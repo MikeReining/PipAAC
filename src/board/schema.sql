@@ -245,6 +245,20 @@ CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_i
 CREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);
 CREATE INDEX IF NOT EXISTS event_log_sentence ON learner_event_log(sentence_id, position);
 
+-- The user's own history as decayed running counts (017-10): what
+-- followed the last 1, 2, and 3 items, plus overall ('' ctx). Maintained
+-- incrementally in logSelection — no per-event scans at feature time.
+-- n is a decayed count (30-day half-life, decayed on read AND on write);
+-- last_at is the count's last update. ctx is 'kind:id' joined by ','.
+CREATE TABLE IF NOT EXISTS history_count (
+  ctx TEXT NOT NULL,
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL CHECK (length(item_id) > 0),
+  n REAL NOT NULL CHECK (n > 0),
+  last_at INTEGER NOT NULL CHECK (last_at > 0),
+  PRIMARY KEY (ctx, item_kind, item_id)
+);
+
 -- One row per strip moment (017-5): what the ranker had, what it
 -- showed, and what the child picked next (chosen_* fills on the next
 -- pick). A Jev answer updates the row in place — both rankings live on

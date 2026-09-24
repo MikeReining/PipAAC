@@ -34,7 +34,12 @@ export function loadWeights(db, catalogModel, weightSet = "local_only") {
     )
     .all(weightSet)[0];
   if (row && row.examples_seen >= BURN_IN) {
-    return { weights: JSON.parse(row.weights), examplesSeen: row.examples_seen };
+    // Merge over the shipped defaults: a row trained before a feature
+    // existed (e.g. `hist`) inherits its default instead of running at 0.
+    return {
+      weights: { ...catalogModel.weights[weightSet], ...JSON.parse(row.weights) },
+      examplesSeen: row.examples_seen,
+    };
   }
   return {
     weights: { ...catalogModel.weights[weightSet] },
@@ -89,7 +94,7 @@ export function learnFromSentence(
        WHERE profile_id = 'prf_local' AND weight_set = ?`,
     )
     .all(weightSet)[0];
-  const cur = row ? JSON.parse(row.weights) : { ...defaults };
+  const cur = { ...defaults, ...(row ? JSON.parse(row.weights) : {}) };
 
   for (const imp of imps) {
     // A candidate whose features are not all finite numbers is dropped
@@ -114,7 +119,9 @@ export function learnFromSentence(
     const logits = cands.map((c) => logit(c.x, cur, feats));
     const eN = Math.exp((cur.none_bias ?? 0)
       + (jevNone === null ? 0 : (cur.jev ?? 0) * jevNone));
-    const Z = logits.reduce((a, s) => a + Math.exp(s), eN);
+    // Same supported-only mass rule as scoreCandidates: candidates the
+    // blend scored ≤ 0 don't compete with `none`.
+    const Z = logits.reduce((a, s) => a + (s > 0 ? Math.exp(s) : 0), eN);
     for (const f of feats) {
       let g = 0;
       cands.forEach((c, i) => {

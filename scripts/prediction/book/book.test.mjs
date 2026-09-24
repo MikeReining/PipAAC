@@ -19,7 +19,7 @@ import { buildBook, serialize, BOOK_PATH, manifest, streamsFor } from './build_b
 import { createDatabase, importCatalog } from '../../../src/board/catalog.mjs';
 import catalog from '../../../data/catalog/catalog.json' with { type: 'json' };
 import { setSetting } from '../../../public/shared/groups.mjs';
-import { bookBand, features } from '../../../public/shared/funnel.mjs';
+import { bookBand, features, featureEnv } from '../../../public/shared/funnel.mjs';
 
 const LICENSES = new Set(['ours', 'MIT', 'CC0', 'CC0-1.0', 'CC BY 4.0', 'CDLA-Sharing-1.0']);
 const sha = (p) => createHash('sha256').update(readFileSync(p)).digest('hex');
@@ -138,22 +138,22 @@ test('(d) bookTop/bookScores/bookLogP mirror the scorer interpolation', () => {
   assert.ok(bookScores(book, 'mlu_2_35', ['i', 'want']).get('cookie') === 0.51);
 });
 
-test('(d) funnel book feature: senses get logP, entities stay neutral', () => {
+test('(d) funnel book feature: senses get P, entities stay neutral', () => {
   const db = createDatabase(':memory:');
   importCatalog(db, catalog);
   assert.equal(bookBand(db), 'mlu_2_35');
   setSetting(db, 'book_band', 'mlu_lt2');
   assert.equal(bookBand(db), 'mlu_lt2');
   const book = { version: 2, bands: { mlu_lt2: { tri: {}, bi: { i: { want: 0.4 } }, uni: { want: 0.1 }, start: { i: 0.5 } } } };
-  const ctx = { book, band: 'mlu_lt2', ctx: ['i'] };
-  const sense = db.prepare("SELECT id FROM sense WHERE tier = 'primary_fringe' LIMIT 1").all()[0];
-  const lemma = db
-    .prepare("SELECT normalized_text AS t FROM label WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = 'en'")
-    .all(sense.id)[0]?.t;
-  const x = features(db, { kind: 'sense', id: sense.id }, [], Date.now(), 'en', null, ctx);
-  assert.ok(Number.isFinite(x.book), 'book feature missing');
-  assert.equal(x.book, bookLogP(book, 'mlu_lt2', ['i'], lemma));
-  const e = features(db, { kind: 'entity', id: 'ent_x' }, [], Date.now(), 'en', null, ctx);
+  const byLemma = (w) => db
+    .prepare("SELECT sense_id AS id FROM label WHERE normalized_text = ? AND kind = 'lemma' AND status = 'approved' AND locale = 'en'")
+    .all(w)[0]?.id;
+  const sentence = [{ kind: 'sense', id: byLemma('i') }];
+  const env = featureEnv(db, sentence, Date.now(), 'en', null, book);
+  const want = byLemma('want');
+  const x = features(db, { kind: 'sense', id: want }, env);
+  assert.equal(x.book, 0.30 * 0.4 + 0.15 * 0.1, 'book feature is interpolated P(word|ctx)');
+  const e = features(db, { kind: 'entity', id: 'ent_x' }, env);
   assert.equal(e.book, 0, 'entity should be book-neutral');
 });
 

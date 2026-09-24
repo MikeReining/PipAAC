@@ -8,7 +8,7 @@
  * the grid. Read-only against core_cell; ranking never writes the map.
  */
 
-import { bookLogP } from "./opening_book.mjs";
+import { bookScores } from "./opening_book.mjs";
 
 const RECENT_WINDOW_MS = 15 * 60 * 1000;
 export const STRIP_CAP = 4;
@@ -32,7 +32,7 @@ export const GRAMMAR = {
 /**
  * Sentence lifecycle (schema §6.2c): a sentence opens on the first pick
  * of a bar and ends spoken or cleared. The log records which sentence
- * each pick belonged to and its position, so pairs and phrases never
+ * each pick belonged to and its position, so history contexts never
  * cross a Speak or Clear.
  */
 export function openSentence(db, at = Date.now()) {
@@ -71,6 +71,31 @@ export function logSelection(db, kind, id, at = Date.now(), ctx = {}) {
     ctx.sentenceId ?? null, ctx.position ?? null, ctx.source ?? null,
     -new Date(at).getTimezoneOffset(), ctx.spotlit ? 1 : 0,
   );
+  // 017-10: the user's own history as decayed running counts — what
+  // followed the last 1, 2, and 3 items, plus overall (''). The n stored
+  // is decayed to `at` on every write; readers decay again to their now.
+  const preds = ctx.sentenceId == null ? [] : db
+    .prepare(
+      `SELECT item_kind AS k, item_id AS i FROM learner_event_log
+       WHERE sentence_id = ? AND position < ? AND position IS NOT NULL
+       ORDER BY position`,
+    )
+    .all(ctx.sentenceId, ctx.position ?? Number.MAX_SAFE_INTEGER);
+  const key = (its) => its.map((x) => `${x.k}:${x.i}`).join(",");
+  const ctxs = new Set([""]);
+  for (const n of [1, 2, 3]) if (preds.length >= n) ctxs.add(key(preds.slice(-n)));
+  const get = db.prepare(
+    "SELECT n, last_at FROM history_count WHERE ctx = ? AND item_kind = ? AND item_id = ?");
+  const put = db.prepare(
+    `INSERT INTO history_count (ctx, item_kind, item_id, n, last_at)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT (ctx, item_kind, item_id) DO UPDATE SET
+       n = excluded.n, last_at = excluded.last_at`);
+  for (const c of ctxs) {
+    const row = get.all(c, kind, id)[0];
+    const n = row ? row.n * decayW(row.last_at, at) + 1 : 1;
+    put.run(c, kind, id, n, at);
+  }
 }
 
 /** Tail item's part of speech and text; entities are nominal. */
@@ -100,7 +125,7 @@ const FRESH_MS = 24 * 60 * 60 * 1000;          // a new entity is fresh for a da
 const SHORTLIST_CAP = 16;                      // § 5.2: measured, not assumed
 
 export const MODEL_FEATURES = [
-  "phrase", "pair", "occasion", "hour", "recency",
+  "hist", "occasion", "hour", "recency",
   "freq", "invited", "echo", "fresh", "jev", "spot", "book",
 ];
 
@@ -112,7 +137,53 @@ const hourDelta = (a, b) => {
   const d = Math.abs(a - b);
   return Math.min(d, 24 - d);
 };
-const sameItem = (a, b) => a && b && a.k === b.kind && a.i === b.id;
+/** The opening book's band for this profile (017 item 9): the band whose
+ *  book predicts best, seeded by supporter age — default mid (≈age 5). */
+export function bookBand(db) {
+  return (
+    db.prepare("SELECT book_band AS b FROM learner_profile WHERE id = 'prf_local'").all()[0]?.b
+    ?? "mlu_2_35"
+  );
+}
+
+/** Per-strip-paint context (017 step 7): everything `features` needs that
+ *  depends on the sentence, the clock, or the book — computed once, shared
+ *  by every candidate (~700 of them), instead of re-queried per word. */
+export function featureEnv(db, sentence, now, locale, spot = null, book = null) {
+  const tzNow = -new Date(now).getTimezoneOffset();
+  const labelStmt = db.prepare(
+    `SELECT part_of_speech AS p, normalized_text AS t FROM label
+     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
+  );
+  // The book's context: last-2 in-vocab lemmas; an entity or a word with
+  // no lemma label breaks the run, like OOV in the scorer.
+  const ctx = [];
+  for (let i = sentence.length - 1; i >= 0 && ctx.length < 2; i--) {
+    const it = sentence[i];
+    const t = it?.kind === "sense" ? labelStmt.all(it.id, locale)[0]?.t ?? null : null;
+    if (t === null) break;
+    ctx.unshift(t);
+  }
+  const { pos, prevPos } = tailInfo(db, sentence, locale);
+  const tail = sentence.at(-1);
+  return {
+    sentence, now, locale, spot,
+    tzNow,
+    nowHour: localDate(now, tzNow).getUTCHours(),
+    nowDay: dayTypeOf(now, tzNow),
+    tailCtx: { pos, prevPos, tailId: tail?.kind === "sense" ? tail.id : null },
+    bookScores: book ? bookScores(book, bookBand(db), ctx) : null,
+    histStmt: db.prepare(
+      `SELECT item_kind, item_id, n, last_at FROM history_count WHERE ctx = ?`,
+    ),
+    labelStmt,
+    eventStmt: db.prepare(
+      `SELECT selected_at, tz_offset_min, sentence_id, position
+       FROM learner_event_log WHERE item_kind = ? AND item_id = ?`,
+    ),
+    addedStmt: db.prepare("SELECT added_at FROM personal_entity WHERE id = ?"),
+  };
+}
 
 /**
  * One candidate's feature vector (§ 5.3): decayed counts enter as
@@ -123,49 +194,14 @@ const sameItem = (a, b) => a && b && a.k === b.kind && a.i === b.id;
  * `spot` is the running session's target Set (or null): `x.spot` records
  * "was a spotlight target at offer time" — instrument truth, independent
  * of whether the § 4 boost setting scored it.
+ * `book` is the book's interpolated P(word | context), 0–1 — a
+ * probability, not a logP, because the softmax gate needs bounded
+ * positive mass: a raw logP could never beat `none_bias`.
  */
-/** The opening book's band for this profile (017 item 9): the band whose
- *  book predicts best, seeded by supporter age — default mid (≈age 5). */
-export function bookBand(db) {
-  return (
-    db.prepare("SELECT book_band AS b FROM learner_profile WHERE id = 'prf_local'").all()[0]?.b
-    ?? "mlu_2_35"
-  );
-}
-
-/** Last-2 in-vocab lemmas of the sentence — the book's context. An entity
- *  or a word with no lemma label breaks the run, like OOV in the scorer. */
-function bookCtxLemmas(db, sentence, locale) {
-  const stmt = db.prepare(
-    `SELECT normalized_text AS t FROM label
-     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
-  );
-  const ctx = [];
-  for (let i = sentence.length - 1; i >= 0 && ctx.length < 2; i--) {
-    const it = sentence[i];
-    const t = it?.kind === "sense" ? stmt.all(it.id, locale)[0]?.t ?? null : null;
-    if (t === null) break;
-    ctx.unshift(t);
-  }
-  return ctx;
-}
-
-export function features(db, item, sentence, now, locale, spot = null, bookCtx = null) {
-  const tzNow = -new Date(now).getTimezoneOffset();
-  const nowHour = localDate(now, tzNow).getUTCHours();
-  const nowDay = dayTypeOf(now, tzNow);
-  const rows = db
-    .prepare(
-      `SELECT selected_at, tz_offset_min, sentence_id, position
-       FROM learner_event_log WHERE item_kind = ? AND item_id = ?`,
-    )
-    .all(item.kind, item.id);
-  const predsStmt = db.prepare(
-    `SELECT item_kind AS k, item_id AS i FROM learner_event_log
-     WHERE sentence_id = ? AND position < ? AND position IS NOT NULL
-     ORDER BY position`,
-  );
-  let freq = 0, hour = 0, pair = 0, phrase = 0, last = 0;
+export function features(db, item, env) {
+  const { sentence, now, locale, tzNow, nowHour, nowDay, tailCtx } = env;
+  const rows = env.eventStmt.all(item.kind, item.id);
+  let freq = 0, hour = 0, last = 0;
   for (const e of rows) {
     const w = decayW(e.selected_at, now);
     freq += w;
@@ -175,39 +211,41 @@ export function features(db, item, sentence, now, locale, spot = null, bookCtx =
         hourDelta(localDate(e.selected_at, tz).getUTCHours(), nowHour) <= 1) {
       hour += w;
     }
-    if (e.sentence_id == null || e.position == null || !sentence.length) continue;
-    const preds = predsStmt.all(e.sentence_id, e.position);
-    if (sameItem(preds.at(-1), sentence.at(-1))) pair += w;
-    for (const n of [3, 2, 1]) {
-      if (sentence.length < n || preds.length < n) continue;
-      if (preds.slice(-n).every((p, i) => sameItem(p, sentence[sentence.length - n + i]))) {
-        phrase += w;
-        break; // longest match wins
-      }
-    }
   }
-  const { pos, prevPos } = tailInfo(db, sentence, locale);
+  // 017-10 — the history expert: P(next | last n items) from the running
+  // counts, per-item backoff 3 → 2 → 1 → overall. Counts decay to `now`
+  // before normalizing so an old run can't outweigh a fresh one.
+  const ctxKey = (n) =>
+    sentence.slice(-n).map((s) => `${s.kind}:${s.id}`).join(",");
+  let hist = 0;
+  for (const n of [3, 2, 1]) {
+    if (sentence.length < n) continue;
+    const rows2 = env.histStmt.all(ctxKey(n));
+    const tot = rows2.reduce((t, r) => t + r.n * decayW(r.last_at, now), 0);
+    if (!tot) continue;
+    const mine = rows2.find((r) => r.item_kind === item.kind && r.item_id === item.id);
+    const p = mine ? (mine.n * decayW(mine.last_at, now)) / tot : 0;
+    if (p > 0) { hist = p; break; }
+  }
+  if (!hist) {
+    const rows2 = env.histStmt.all("");
+    const tot = rows2.reduce((t, r) => t + r.n * decayW(r.last_at, now), 0);
+    const mine = tot && rows2.find((r) => r.item_kind === item.kind && r.item_id === item.id);
+    if (mine) hist = (mine.n * decayW(mine.last_at, now)) / tot;
+  }
   const rules = GRAMMAR[locale];
-  const tail = sentence.at(-1);
-  const ctx = { pos, prevPos, tailId: tail?.kind === "sense" ? tail.id : null };
   const label2 = item.kind === "entity"
     ? { p: "Noun", t: null }
-    : db
-        .prepare(
-          `SELECT part_of_speech AS p, normalized_text AS t FROM label
-           WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
-        )
-        .all(item.id, locale)[0] ?? { p: null, t: null };
+    : env.labelStmt.all(item.id, locale)[0] ?? { p: null, t: null };
   const pos2 = label2.p;
   const invited = rules &&
-    ((rules.invitesNoun(ctx) && pos2 === "Noun") ||
-     (rules.invitesVerb(ctx) && pos2 === "Verb"));
+    ((rules.invitesNoun(tailCtx) && pos2 === "Noun") ||
+     (rules.invitesVerb(tailCtx) && pos2 === "Verb"));
   const addedAt = item.kind === "entity"
-    ? db.prepare("SELECT added_at FROM personal_entity WHERE id = ?").all(item.id)[0]?.added_at
+    ? env.addedStmt.all(item.id)[0]?.added_at
     : null;
   return {
-    phrase: Math.log1p(phrase),
-    pair: Math.log1p(pair),
+    hist,
     occasion: 0,
     hour: Math.log1p(hour),
     recency: last ? Math.max(0, 1 - (now - last) / RECENT_WINDOW_MS) : 0,
@@ -216,21 +254,24 @@ export function features(db, item, sentence, now, locale, spot = null, bookCtx =
     echo: 0,
     fresh: addedAt && now >= addedAt && now - addedAt < FRESH_MS ? 1 : 0,
     jev: 0,
-    spot: spot?.has(`${item.kind}:${item.id}`) ? 1 : 0,
-    book: bookCtx && label2.t ? bookLogP(bookCtx.book, bookCtx.band, bookCtx.ctx, label2.t) : 0,
+    spot: env.spot?.has(`${item.kind}:${item.id}`) ? 1 : 0,
+    book: env.bookScores?.get(label2.t) ?? 0,
   };
 }
 
 /** Softmax over the shortlist ∪ {none} (§ 5.3). `none` carries its
  *  learned bias plus `log P_Jev(none)` — weighted by the jev weight —
- *  when a Jev answer supplied it. Returns candidates sorted by p. */
+ *  when a Jev answer supplied it. Candidates with no positive support
+ *  (logit ≤ 0) never enter the mass `none` competes against — with every
+ *  word scored (step 7), counting e^0 ~700 times would make pNone a lie.
+ *  Returns candidates sorted by p. */
 export function scoreCandidates(rows, weights, jevNone = null) {
   const logit = (x) =>
     MODEL_FEATURES.reduce((t, f) => t + (weights[f] ?? 0) * (x[f] ?? 0), 0);
   const scored = rows.map((r) => ({ ...r, s: logit(r.x) }));
   const eNone = Math.exp(
     (weights.none_bias ?? 0) + (jevNone === null ? 0 : (weights.jev ?? 0) * jevNone));
-  const Z = scored.reduce((t, r) => t + Math.exp(r.s), eNone);
+  const Z = scored.reduce((t, r) => t + (r.s > 0 ? Math.exp(r.s) : 0), eNone);
   for (const r of scored) r.p = Math.exp(r.s) / Z;
   scored.sort((a, b) => b.p - a.p || a.id.localeCompare(b.id));
   return { candidates: scored, pNone: eNone / Z };
@@ -250,11 +291,12 @@ export function applyJev(rows, probabilities, weights) {
 }
 
 /** The show gate (§ 5.4): nothing when P(none) ≥ τ_none; else the tiles
- *  that clear τ_tile, in rank order, capped at the strip's slot count
- *  (four on a ten-column board; the strip scales with the layout). */
+ *  that clear τ_tile AND carry support (s > 0 — a word with no positive
+ *  feature is never offered), in rank order, capped at the strip's slot
+ *  count (four on a ten-column board; the strip scales with the layout). */
 export function showGate(candidates, pNone, tau, cap = STRIP_CAP) {
   if (pNone >= tau.none) return [];
-  return candidates.filter((c) => c.p >= tau.tile).slice(0, cap);
+  return candidates.filter((c) => c.s > 0 && c.p >= tau.tile).slice(0, cap);
 }
 
 /* --- 013 § 4 Smart bar boost: the running session's target words get a
@@ -278,8 +320,8 @@ function spotBoostOn(db, spot) {
     .all()[0]?.spot_boost ?? 1) === 1;
 }
 
-/** The product default for the `spot` weight — phrase-level (the fitted
- *  phrase weight is ~1.55), so evidence still decides real favorites. A
+/** The product default for the `spot` weight — evidence-level (a strong
+ *  learned pattern still outranks it), so evidence decides favorites. A
  *  fitted `spot` weight wins over the default once the model learns one. */
 const SPOT_BOOST = 1.5;
 
@@ -296,22 +338,18 @@ export function spotWeights(db, weights) {
  *  candidates; the rest always belong to plain prediction. */
 export function spotGate(candidates, pNone, tau, cap = STRIP_CAP) {
   if (pNone >= tau.none) return [];
-  const ok = candidates.filter((c) => c.p >= tau.tile);
+  const ok = candidates.filter((c) => c.s > 0 && c.p >= tau.tile);
   const spotCap = Math.max(1, Math.floor(cap / 2));
   let n = 0;
   return ok.filter((c) => !c.x?.spot || ++n <= spotCap).slice(0, cap);
 }
 
 /**
- * Rank strip candidates. Sentence position decides what the tail invites:
- * a Verb or Preposition tail invites noun-ish candidates (entities +
- * fringe nouns); a Pronoun tail or an infinitival "to" after a verb
- * invites fringe verbs.
- *
- * Eligibility differs by kind: personal entities surface on invitation or
- * recency alone (few, high-value — a fresh add must be reachable);
- * fringe senses additionally need evidence (ever picked or recent) plus
- * an invitation, so the strip doesn't fill with arbitrary unused words.
+ * Rank strip candidates. Every offerable word — every non-core sense
+ * with a lemma, not hidden, plus every active entity — is scored by the
+ * blend (017 step 7: no retrieval stage). The opening book drives a
+ * brand-new user's strip; history, recency, and grammar fit compete as
+ * features once the user has them.
  *
  * @returns {Array<{kind:'sense'|'entity', id:string}>} the gated tiles.
  */
@@ -339,27 +377,19 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
   const weights = boostOn
     ? { ...model.weights, spot: model.weights.spot ?? SPOT_BOOST }
     : model.weights;
-  const bookCtx = model.book
-    ? { book: model.book, band: bookBand(db), ctx: bookCtxLemmas(db, sentence, locale) }
-    : null;
+  const env = featureEnv(db, sentence, now, locale, spot, model.book ?? null);
   const rows = [];
+  // 017 step 7 — no retrieval stage: every offerable word is scored and
+  // the blend picks the shortlist. The pool is every non-core sense with
+  // a lemma (the book and the grammar rule both read it) that isn't
+  // hidden, plus every active entity. Ever-picked, recency, and grammar
+  // are features in the blend now — not gates — so a brand-new user's
+  // strip is driven by the opening book.
   for (const e of db
     .prepare("SELECT id FROM personal_entity WHERE status = 'active'")
     .all()) {
-    const x = features(db, { kind: "entity", id: e.id }, sentence, now, locale, spot, bookCtx);
-    if (x.invited || x.recency > 0 || (x.spot && boostOn)) {
-      rows.push({ kind: "entity", id: e.id, x });
-    }
+    rows.push({ kind: "entity", id: e.id, x: features(db, { kind: "entity", id: e.id }, env) });
   }
-  // A never-picked target is still a candidate (§ 4: the strip offers the
-  // practice words) — the evidence requirement lifts for target senses
-  // only; tier, label, and mask rules still apply.
-  const spotSenses = boostOn
-    ? [...spot].filter((k) => k.startsWith("sense:")).map((k) => k.slice(6))
-    : [];
-  const spotIn = spotSenses.length
-    ? ` OR s.id IN (${spotSenses.map(() => "?").join(",")})`
-    : "";
   for (const f of db
     .prepare(
       `SELECT s.id FROM sense s
@@ -367,15 +397,10 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
          AND EXISTS (SELECT 1 FROM label lb WHERE lb.sense_id = s.id
                      AND lb.kind = 'lemma' AND lb.status = 'approved' AND lb.locale = ?)
          AND NOT EXISTS (SELECT 1 FROM sense_mask m
-                         WHERE m.sense_id = s.id AND m.status = 'hidden')
-         AND (EXISTS (SELECT 1 FROM learner_event_log l
-                     WHERE l.item_kind = 'sense' AND l.item_id = s.id)${spotIn})`,
+                         WHERE m.sense_id = s.id AND m.status = 'hidden')`,
     )
-    .all(locale, ...spotSenses)) {
-    const x = features(db, { kind: "sense", id: f.id }, sentence, now, locale, spot, bookCtx);
-    if (((x.freq > 0 || x.recency > 0) && x.invited) || (x.spot && boostOn)) {
-      rows.push({ kind: "sense", id: f.id, x });
-    }
+    .all(locale)) {
+    rows.push({ kind: "sense", id: f.id, x: features(db, { kind: "sense", id: f.id }, env) });
   }
   const { candidates, pNone } = scoreCandidates(rows, weights);
   return { candidates: candidates.slice(0, SHORTLIST_CAP), pNone };
@@ -464,9 +489,11 @@ export function replayImpression(row, { gate = spotGate } = {}) {
   if (!wl) return { ok: false, diffs: ["no weights_local stored"] };
 
   // Local ranking: recompute s and p from x · w, compare to stored.
+  // Z counts only supported candidates (s > 0) — same rule as
+  // scoreCandidates, or p_none drifts whenever the pool has dead mass.
   const s = cands.map((c) => logitOf(c.x, wl.w));
   const eN = Math.exp(wl.w.none_bias ?? 0);
-  const Z = s.reduce((a, v) => a + Math.exp(v), eN);
+  const Z = s.reduce((a, v) => a + (v > 0 ? Math.exp(v) : 0), eN);
   const order = cands
     .map((c, i) => ({ c, p: Math.exp(s[i]) / Z }))
     .sort((a, b) => b.p - a.p || a.c.id.localeCompare(b.c.id));
@@ -481,7 +508,8 @@ export function replayImpression(row, { gate = spotGate } = {}) {
   if (Math.abs(pNone - row.p_none) > 1e-9)
     diffs.push(`p_none ${row.p_none} != ${pNone}`);
   const localShown = gate(
-    order.map((o) => ({ ...o.c, p: o.p })), pNone, wl.tau, cap)
+    order.map((o) => ({ ...o.c, p: o.p, s: logitOf(o.c.x, wl.w) })),
+    pNone, wl.tau, cap)
     .map((r) => `${r.kind}:${r.id}`);
   const storedLocal = JSON.parse(row.shown_local);
   if (JSON.stringify(localShown) !== JSON.stringify(storedLocal))

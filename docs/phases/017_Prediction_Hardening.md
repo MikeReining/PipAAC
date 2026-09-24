@@ -2,9 +2,11 @@
 
 **Status:** Executing. **Re-planned 2026-09-24 (founder, R16–R19):**
 the scoreboard is real children (held-out CHILDES), not synthetic
-users; steps 15 and 18 are parked. Current-order items 1 and 2 DONE —
-the repo scorer is the baseline and the shipped opening book beats or
-matches it in every cell. Next: item 3 (book + history in the strip).
+users; steps 15 and 18 are parked. Current-order items 1–3 DONE —
+the repo scorer is the baseline, the shipped opening book beats or
+matches it in every cell, and the strip now scores every offerable
+word (book + history counts, day one and position 0). Next: item 6
+(smart bar order, R21 — ordered before item 4).
 M1 complete (steps 4, 3, 5, 1, 2 — all BUILT). Built on the
 synthetic bench: steps 11, 12, 16, 13.
 
@@ -189,6 +191,10 @@ M2/M3 order below until the book is in the strip.
 3. Book + the user's own history in the strip: continue and start
    (R17; steps 7, 10, 21). Proof: item-1 scorer, and on-device check
    that the strip shows what the scorer scored.
+   **Status: DONE 2026-09-24** — every offerable word scores (step 7),
+   history is decayed counts + backed-off `hist` (step 10), position 0
+   runs the scored path (step 21). Day-one strip = the scorer's book:
+   `strip_book.test.mjs` / `strip_history.test.mjs`.
 4. Respond: words an adult just tapped while modeling get a one-turn
    boost (step 24 item 1; R17, R20). Never stored.
 5. Random holdback + path timings on the device (R18, step 28).
@@ -1382,11 +1388,29 @@ Build:
 Lie-prone layer: more candidates can raise hit rate while harm rises.
 Watch harmful-show rate, WPM, and latency with every change.
 
+**Status: BUILT 2026-09-24 (item 3).** No retrieval stage: every
+`primary_fringe` sense with a lemma, unhidden, plus every active entity
+is scored by the blend; the top 16 are the Jev shortlist, the gate caps
+the strip at 4. The evidence requirement and the `invited` filter are
+gone — book and history are support, not gates. The `book` feature is
+the interpolated P(word | ctx) (0–1): a raw logP could never beat
+`none_bias`, so the softmax needed bounded positive mass. Candidates
+with no support (logit ≤ 0) stay out of Z and can't be offered, so a
+no-signal moment still renders no strip. Sim measured: hit 32.4% (was
+23.7%), false-show 67.6% — reported, not gated; R18 settles whether
+showing pays. Latency: ~6 ms for the full pool in node:sqlite
+(`strip_book.test.mjs`). Per-sentence work (tail, clock, book scores,
+statements) is computed once in `featureEnv`, not per candidate.
+
 Works Test: a brand-new user at 07:50 on a school day with *I want*:
 the strip offers breakfast-appropriate words that were never picked, and
 a hidden word never appears. Bench: A3 day-1 saving > 0 (today it is 0).
+`strip_book.test.mjs` proves the day-one legs against the shipped book
+(book-strong contexts lead, start table fills, hidden never shows);
+A3's day-1 saving is measurable now that the pool is open.
 
-Done when: both pass and step 17's latency budget still holds.
+Done when: both pass and step 17's latency budget still holds. ✅ —
+5.6–6.3 ms per paint, far inside the budget.
 
 ## Step 10 — The user's own history, as counts
 
@@ -1427,7 +1451,20 @@ feature-duplication check (§ 1) reports zero identical signals. After
 one day of use, the history expert alone reproduces the user's most
 common continuation for their most common two-word start.
 
-Done when: those pass.
+**Status: BUILT 2026-09-24 (item 3).** `history_count` holds decayed
+running counts — what followed the last 1/2/3 items plus overall —
+maintained incrementally in `logSelection` (no per-event scans). The
+`hist` feature is the backed-off probability: per-item, longest context
+first (3 → 2 → 1 → overall), counts decayed to `now` before
+normalizing. It replaces `phrase`/`pair` (which were the same number —
+dropped from `MODEL_FEATURES`). `invited` stays a feature, no longer a
+filter. `loadWeights`/`learnFromSentence` merge missing keys over the
+shipped defaults so a stored row can't strand a new feature at 0.
+`strip_history.test.mjs`: the −3 leg, the *red* → noun leg, the
+most-common-continuation leg, decay, and the no-duplicate-features
+check — all pass.
+
+Done when: those pass. ✅
 
 ## Step 27 — Blend specialist models by situation
 
@@ -1577,7 +1614,18 @@ at this hour, on this kind of day, after their last message. Measured
 as a bench arm first (WPM on first words, reported separately). Then,
 with R6, it replaces the fixed idle starters.
 
-Done when: the number is in § Results and R6 is ruled.
+**Status: BUILT 2026-09-24 (item 3, R17).** Position 0 runs the same
+scored path as continuations: the book's start table + the user's own
+openers (`hist` overall) + time of day (`hour`). When nothing has
+support the resting cards still fill the bar (`idleStarters` fallback);
+position-0 offers are logged as real impressions so the model can learn
+first words — Jev stays out (its prompt is a continuation prompt). R17
+ruled the start situation is shown, which supersedes R6's "decide after
+the bench" for the mechanism; the bench arm and § Results number remain
+open for the record.
+
+Done when: the number is in § Results and R6 is ruled. — mechanism
+built and shown; bench arm open.
 
 ## Step 14 — Real Jev on frozen requests
 
