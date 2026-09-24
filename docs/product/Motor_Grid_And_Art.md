@@ -326,8 +326,20 @@ or SLP decides — `docs/product/SSOT.md` individual fit):
 | --- | --- | --- |
 | **Show board words** | On | A child working on grid motor patterns: core words then only glow in place |
 | **Keep "no" in the last spot** | On | Rarely changed; it's what keeps "no" predictable |
-| **Sentence help:** *Their words* / *One step up* | Their words | *One step up* leans on how adults talk to children, so the bar offers the small words a fuller sentence needs (*I* → *want*; *I want* → *a*, *some*, *to*). *Their words* leans on the child's own history and how children talk |
+| **Sentence help:** *One step up* / *Their words* | **One step up** (founder, 2026-09-24) | *One step up* keeps the real-children book strong against the child's own history, so the small words a fuller sentence needs stay in the bar (*I* → *want*; *I want* → *to*, *a*, *some*). The finger barely moves: after *I want*, the next words are already there. *Their words* lets the child's own history take over as it builds. An AAC child who skips small words then gets a bar that learns the shorthand; for families who want pure speed |
 | **Highlight next** (built) | Off | Glows likely next tiles on the grid, in addition to the bar |
+
+**Evidence for the Sentence help default (CHILDES, 2026-09-24, scratch).**
+Right after *I want*, *I have*, *I need*, *I got*, *can I have*,
+*give me*, and *where is*, 58–76% of what real children say next is a
+small word (*to*, *a*, *some*, *it*, *the*…), filling 3–4 of the top 4
+slots; children use them about as much as adults do. After *I want to*
+they drop to 1% (then *do*, *go*, *play*). The small word also makes the
+next word easier to predict (held-out, content word in the top 4): *I
+want* 21% → *I want a/to* 31%; *I need* 4 → 21%; *I have* 7 → 17%; *I
+got* 4 → 19%. Many of these small words are core (*to*, *some*, *my*,
+*it*, *this*, *that*), so they reach the bar only with Show board words
+on.
 
 Why settings, not proof: some SLPs will call bar use a failure of grid
 motor planning, whatever the numbers say. It is a values choice, so the
