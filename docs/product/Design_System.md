@@ -22,7 +22,7 @@ One bird, drawn at the sizes it's used:
 
 ## Palette
 
-> **Pending 2026-09-24 (`docs/phases/018_Core_Board_V2_And_Groups.md` slice 1):** a sixth role, **Purple**, for
+> **Amended 2026-09-24 (`docs/phases/018_Core_Board_V2_And_Groups.md` slice 1):** a sixth role, **Purple**, for
 > questions; group doors use the neutral no-role pair with a folder-tab
 > edge.
 
@@ -45,8 +45,9 @@ Grammar roles (border / label-strip fill):
 | Yellow | `#b07f00` | `#fdf0c8` | Nouns, pronouns (tuned from `#d9a410` for 3:1 against cream) |
 | Green | `#2e8b3a` | `#dcf0dd` | Verbs |
 | Blue | `#2f6fd0` | `#dcecfd` | Descriptors — never buttons or selection |
-| Pink | `#d0438c` | `#fbdfee` | Social, prepositions |
-| Red | `#c62828` | `#fbdcdc` | Negation |
+| Pink | `#d0438c` | `#fbdfee` | Social, little words, joining words |
+| Purple | `#6f55b0` | `#ebe5f7` | Questions — the sixth role (018 D2) |
+| Red | `#c62828` | `#fbdcdc` | Negation, safety & urgent |
 
 **Rules (DECIDED 2026-09-22, designer board; BUILT in the app):**
 

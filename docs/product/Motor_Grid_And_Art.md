@@ -366,7 +366,7 @@ family and SLP choose. Pip ships its default.
 
 ## 3. Modified Fitzgerald Key
 
-> **Amended 2026-09-24 (founder; `docs/phases/018_Core_Board_V2_And_Groups.md` D2, D7), rebuild pending.**
+> **Amended 2026-09-24 (founder; `docs/phases/018_Core_Board_V2_And_Groups.md` D2, D7), BUILT 018 slice 1.**
 > One column band, one color, one kind of word. Questions get their own
 > **purple** role. The last column is the **safety column**, red
 > whatever the grammar (*yes*, *no*, *not*, *stop*, *help*, *hurt*).
@@ -384,8 +384,9 @@ The hex values, tile anatomy, and states are **BUILT** and owned by
 | Yellow / orange | Pronouns, people, nouns |
 | Green | Verbs, actions |
 | Blue | Descriptors, adjectives, adverbs |
-| Pink / magenta | Social phrases, prepositions, conjunctions |
-| Red, or a black outline | Negation, stops, emergency words |
+| Pink / magenta | Social phrases, little words, conjunctions |
+| Purple | Questions, interrogatives |
+| Red, or a black outline | Negation, stops, emergency & safety words |
 
 One word keeps one color role across the core grid, groups, and the predictive strip.
 

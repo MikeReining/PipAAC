@@ -91,16 +91,16 @@ test("a group re-wraps without a single row moving", () => {
   assert.equal(back.vslot, 5, "the item lands exactly where the adult dropped it");
 });
 
-test("grid90 renders its anchors — Groups cell + six reserved", () => {
+test("grid90 renders its anchors — Groups cell + eleven reserved", () => {
   const layout = catalog.layouts.grid90;
   assert.equal(layout.cols * layout.rows, 90);
   const anchors = new Map(layout.anchors.map((a) => [a.slot, a.kind]));
   assert.equal(anchors.get(89), "groups");
-  assert.equal([...anchors.values()].filter((k) => k === "reserved").length, 6);
+  assert.equal([...anchors.values()].filter((k) => k === "reserved").length, 11);
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);
   const cells = db.prepare("SELECT COUNT(*) AS n FROM core_cell WHERE layout = 'grid90'").all()[0].n;
-  assert.equal(cells, 83); // 83 words + 7 anchors = all 90 slots
+  assert.equal(cells, 78); // 78 words + 12 anchors = all 90 slots
 });
 
 /**

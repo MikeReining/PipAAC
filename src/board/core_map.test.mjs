@@ -1,10 +1,11 @@
 /**
- * Phase 002 slice 1 Works Test — the coordinate table.
+ * Phase 002 slice 1 / 018 slice 1 Works Test — the coordinate table.
  *
- * Proves: grid90 carries each of the 83 root-core senses exactly once;
- * grid60 carries the 60 senses the map doc lists and obeys the membership
- * rule (docs/product/Core_Grid_Membership.md §2 — UC36 + rule-0 gates);
- * group open and an empty suggestion do not move the table (deep
+ * Proves: grid90 carries each of the 78 root-core senses exactly once;
+ * grid60 carries the 60 senses the map doc lists, obeys the membership
+ * rule (docs/product/Core_Grid_Membership.md §2 — UC36 + rule-0 gates),
+ * and paints the D2 band colors (questions Purple, the safety column
+ * Red); group open and an empty suggestion do not move the table (deep
  * compare); the schema rejects what the bans forbid.
  */
 import { test } from "node:test";
@@ -28,9 +29,9 @@ const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
 
 const OFF_GRID60 = [
-  "mine", "we", "they", "see", "have", "read", "feel", "tell", "think",
-  "find", "work", "wait", "away", "under", "over", "same", "different",
-  "but", "or", "because", "how", "this", "who",
+  "mine", "they", "see", "read", "feel", "tell", "think", "find", "work",
+  "wait", "away", "under", "over", "same", "different", "but", "or",
+  "because",
 ];
 
 /** Project Core Universal Core 36; `finished` is our `all done` cell. */
@@ -41,33 +42,42 @@ const UC36 = [
   "want", "what", "when", "where", "who", "why", "you",
 ];
 /** Named rule-1 waivers — Core_Grid_Membership.md §6. */
-const UC36_WAIVERS = ["same", "different", "who"];
+const UC36_WAIVERS = ["same", "different"];
 /** Rule 0: the board can report that something is wrong without navigating. */
 const SELF_REPORT = ["hurt", "sad", "help", "stop", "no"];
 
-/** grid60 vertical sectors: column index -> the word set it must hold. */
-const SECTORS = {
-  pronouns: {
+/** grid60 color bands (018 D2): column index -> { color, word set }. */
+const BANDS = {
+  people: {
     cols: [0, 1],
-    words: ["I", "you", "me", "my", "he", "she", "it", "that", "why", "when", "what", "where"],
+    color: "Yellow",
+    words: ["I", "you", "me", "my", "he", "she", "mom", "dad", "this", "that", "it", "we"],
   },
-  verbs: {
+  actions: {
     cols: [2, 3, 4],
+    color: "Green",
     words: ["want", "like", "go", "need", "look", "come", "get", "make", "do",
-      "put", "take", "give", "open", "turn", "play", "eat", "drink", "can"],
+      "is", "have", "can", "put", "open", "turn", "eat", "drink", "play"],
   },
-  spatial: {
+  littleWords: {
     cols: [5, 6],
-    words: ["in", "out", "on", "off", "up", "down", "here", "there", "to", "for", "with", "at"],
+    color: "Pink",
+    words: ["in", "out", "on", "off", "up", "down", "here", "there", "to", "for", "with", "and"],
   },
-  descriptors: {
-    cols: [7, 8],
-    words: ["more", "all done", "not", "and", "big", "little", "good", "bad",
-      "happy", "sad", "all", "some"],
+  describing: {
+    cols: [7],
+    color: "Blue",
+    words: ["more", "all", "some", "good", "sad", "all done"],
   },
-  edge: {
+  questions: {
+    cols: [8],
+    color: "Purple",
+    words: ["what", "where", "who", "why", "when", "how"],
+  },
+  safety: {
     cols: [9],
-    words: ["yes", "no", "stop", "help", "hurt", "please"],
+    color: "Red",
+    words: ["yes", "no", "not", "stop", "help", "hurt"],
   },
 };
 
@@ -77,23 +87,28 @@ function openDb() {
   return db;
 }
 
-test("catalog generation: grid60 = 60 cells, grid90 = 83 cells + anchors", () => {
+test("catalog generation: grid60 = 60 cells, grid90 = 78 cells + anchors", () => {
   const g60 = catalog.coreCells.filter((c) => c.layout === "grid60");
   const g90 = catalog.coreCells.filter((c) => c.layout === "grid90");
   assert.equal(g60.length, 60);
-  assert.equal(g90.length, 83);
-  // 014 slice 5: reserved cells sit at each sector band's tail; the
+  assert.equal(g90.length, 78);
+  // 018 slice 1: reserved cells sit at each band's tail; the
   // Groups anchor keeps slot 89.
   assert.deepEqual(catalog.layouts.grid90.anchors, [
+    { slot: 68, kind: "reserved" },
     { slot: 69, kind: "reserved" },
-    { slot: 76, kind: "reserved" },
+    { slot: 70, kind: "reserved" },
+    { slot: 71, kind: "reserved" },
+    { slot: 78, kind: "reserved" },
     { slot: 79, kind: "reserved" },
-    { slot: 85, kind: "reserved" },
-    { slot: 86, kind: "reserved" },
+    { slot: 80, kind: "reserved" },
+    { slot: 81, kind: "reserved" },
+    { slot: 84, kind: "reserved" },
+    { slot: 87, kind: "reserved" },
     { slot: 88, kind: "reserved" },
     { slot: 89, kind: "groups" },
   ]);
-  // Every cell maps to a root-core sense; grid60 holds none of the 23 off-grid words.
+  // Every cell maps to a root-core sense; grid60 holds none of the 18 off-grid words.
   const senseById = new Map(catalog.senses.map((s) => [s.id, s]));
   const wordOf = (cell) =>
     catalog.labels.find((l) => l.sense_id === cell.sense_id && l.kind === "lemma").text;
@@ -127,11 +142,11 @@ test("imported coordinate table matches the generated rows exactly", () => {
     (a, b) => a.layout.localeCompare(b.layout) || a.slot_index - a.slot_index,
   );
   assert.deepEqual(rows, expected);
-  assert.equal(rows.filter((r) => r.layout === "grid90").length, 83);
+  assert.equal(rows.filter((r) => r.layout === "grid90").length, 78);
   assert.equal(rows.filter((r) => r.layout === "grid60").length, 60);
   // each root-core sense appears exactly once in grid90
   const g90SenseIds = rows.filter((r) => r.layout === "grid90").map((r) => r.sense_id);
-  assert.equal(new Set(g90SenseIds).size, 83);
+  assert.equal(new Set(g90SenseIds).size, 78);
   const rootCoreIds = catalog.senses.filter((s) => s.tier === "root_core").map((s) => s.id);
   assert.deepEqual(new Set(g90SenseIds), new Set(rootCoreIds));
 });
@@ -153,25 +168,31 @@ test("board read returns all 60 grid60 cells with label and color", () => {
   assert.equal(board.length, 60);
   for (const cell of board) {
     assert.ok(cell.label.length > 0);
-    assert.ok(["Yellow", "Green", "Blue", "Pink", "Red"].includes(cell.fitzgerald_role));
+    assert.ok(["Yellow", "Green", "Blue", "Pink", "Purple", "Red"].includes(cell.fitzgerald_role));
     assert.ok(cell.slot_index >= 0 && cell.slot_index < 60);
   }
   assert.equal(board[0].label, "I");
-  assert.equal(board[59].label, "please");
+  assert.equal(board[59].label, "hurt");
 });
 
-test("grid60 lays out vertical syntactic sectors, left to right", () => {
+test("grid60 lays out the D2 color bands, left to right", () => {
   const db = openDb();
   const board = loadBoard(db, "grid60", "en");
-  for (const [name, s] of Object.entries(SECTORS)) {
+  for (const [name, s] of Object.entries(BANDS)) {
     const cells = s.cols.flatMap((col) =>
-      [0, 1, 2, 3, 4, 5].map((row) => board[row * 10 + col].label),
+      [0, 1, 2, 3, 4, 5].map((row) => board[row * 10 + col]),
     );
     assert.deepEqual(
-      [...cells].sort(),
+      cells.map((c) => c.label).sort(),
       [...s.words].sort(),
-      `${name} sector (cols ${s.cols.map((c) => c + 1).join("–")}) holds the wrong words`,
+      `${name} band (cols ${s.cols.map((c) => c + 1).join("–")}) holds the wrong words`,
     );
+    for (const c of cells) {
+      assert.equal(
+        c.fitzgerald_role, s.color,
+        `${c.label} must be ${s.color} in the ${name} band`,
+      );
+    }
   }
 });
 

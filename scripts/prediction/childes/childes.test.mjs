@@ -95,8 +95,12 @@ test('band edges and split semantics', () => {
 // 2026-09-24b: re-baselined after the contraction fix — be/will tails
 // split into Pip words (i'm -> i am), so ~80k held-out tokens stop being
 // OOV context-breakers. Every number rose; these are the measured values.
+// 2026-09-24c: re-baselined for core board v2 (018) — is/mom/dad are
+// root core now, so the non-core metric loses ~41k high-frequency
+// events (the copula was the easiest target on the board). The
+// all-words and 'no' cells already counted them; they don't move.
 const BASELINE = {
-  'CHILDES child speech': { mlu_lt2: [50.8, 19.4, 19.7], mlu_2_35: [57.6, 25.2, 25.6], mlu_gt35: [56.0, 27.9, 30.0] },
+  'CHILDES child speech': { mlu_lt2: [42.6, 12.6, 14.5], mlu_2_35: [51.5, 21.8, 23.7], mlu_gt35: [48.7, 26.1, 28.0] },
 };
 // R21 (item 6): all-words and 'no'-word cells, slot on vs off — same
 // repo-measured basis as the table above.
@@ -111,7 +115,7 @@ test('real-children scorer: events + books reproduce the repo baseline', { skip:
   assert.equal(testIdx.size, 2165);
   const events = S.buildEvents(trs, testIdx);
   assert.equal(events.length, 938609); // deterministic port invariant
-  assert.equal(events.filter((e) => !C.CORE.has(e.target)).length, 393182);
+  assert.equal(events.filter((e) => !C.CORE.has(e.target)).length, 352018);
   const childBook = build([[1.0, (function* () {
     for (const i of [...train].sort((a, b) => a - b))
       for (const [s, w] of trs[i]) if (C.CHILD_TAGS.has(s)) yield w;

@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS sense (
   id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),
   fitzgerald_role TEXT NOT NULL
-    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Red')),
+    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Purple', 'Red')),
   art_archetype TEXT NOT NULL
     CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),
   tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   presentation_mode TEXT NOT NULL DEFAULT 'symbol'
     CHECK (presentation_mode IN ('symbol', 'label')),
   -- The opening-book band this profile reads (017 item 9): supporter age
-  -- picks it at setup; the learned mix keeps whichever band wins. Default
+  -- picks it at setup — the learned mix keeps whichever band wins. Default
   -- mid (≈ age 5) when nobody has said.
   book_band TEXT NOT NULL DEFAULT 'mlu_2_35'
     CHECK (book_band IN ('mlu_lt2', 'mlu_2_35', 'mlu_gt35')),
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   show_board_words INTEGER NOT NULL DEFAULT 1 CHECK (show_board_words IN (0, 1)),
   no_last_slot INTEGER NOT NULL DEFAULT 1 CHECK (no_last_slot IN (0, 1)),
   -- Sentence help (R21): 'one_step_up' keeps the opening book's weight
-  -- up against the child's own history so small grammar words survive;
+  -- up against the child's own history so small grammar words survive —
   -- 'their_words' lets history take over as it grows.
   sentence_help TEXT NOT NULL DEFAULT 'one_step_up'
     CHECK (sentence_help IN ('one_step_up', 'their_words'))
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS personal_entity (
   id TEXT PRIMARY KEY CHECK (id GLOB 'ent_*'),
   spoken_name TEXT NOT NULL CHECK (length(spoken_name) > 0),
   -- Retire, never delete (schema § 14.5): Remove on the word card flips
-  -- this to 'retired'; the row, photo, recording and placements stay,
+  -- this to 'retired' — the row, photo, recording and placements stay,
   -- and the entity renders nowhere until restored.
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'retired')),
   photo_key TEXT,
@@ -283,13 +283,13 @@ CREATE TABLE IF NOT EXISTS strip_impression (
   position INTEGER NOT NULL CHECK (position >= 0),
   shown_at INTEGER NOT NULL CHECK (shown_at > 0),
   -- JSON array: [{"kind","id","x":{feature:value},"s","p"}] in local
-  -- rank order; a Jev answer merges "jp" (Jev's raw P) and "wp"
+  -- rank order — a Jev answer merges "jp" (Jev's raw P) and "wp"
   -- (with-Jev p) onto each entry
   candidates TEXT NOT NULL,
   -- JSON array of the (kind:id) keys the local ranking painted, ≤ cap
   shown_local TEXT NOT NULL,
   -- JSON array of the keys actually on screen when the next pick
-  -- happened — written by the painter, not the ranker; NULL until then
+  -- happened — written by the painter, not the ranker — NULL until then
   shown_final TEXT,
   p_none REAL NOT NULL CHECK (p_none >= 0 AND p_none <= 1),  -- local
   p_none_jev REAL CHECK (p_none_jev IS NULL OR (p_none_jev >= 0 AND p_none_jev <= 1)),
@@ -301,8 +301,8 @@ CREATE TABLE IF NOT EXISTS strip_impression (
   weights_local TEXT,
   weights_jev TEXT,
   shortlist_cap INTEGER CHECK (shortlist_cap IS NULL OR shortlist_cap > 0),
-  jev_probs TEXT,             -- raw probabilities incl. "none"; NULL = no answer
-  jev_model TEXT,             -- versioned id from the response; NULL = no call
+  jev_probs TEXT,             -- raw probabilities incl. "none" — NULL = no answer
+  jev_model TEXT,             -- versioned id from the response — NULL = no call
   jev_prompt_version TEXT,
   jev_latency_ms INTEGER CHECK (jev_latency_ms IS NULL OR jev_latency_ms >= 0),
   jev_status TEXT NOT NULL CHECK (jev_status IN ('off', 'skipped', 'answered', 'late', 'error')),
@@ -465,7 +465,7 @@ CREATE TABLE IF NOT EXISTS group_cell (
   page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),
   slot_index INTEGER NOT NULL CHECK (slot_index >= 2 AND slot_index <= 58),
   -- When this placement was made — drives Word Library → Added order.
-  -- Moves and swaps carry it over; only a fresh placement sets it.
+  -- Moves and swaps carry it over — only a fresh placement sets it.
   added_at INTEGER,
   PRIMARY KEY (group_id, item_kind, item_id),
   UNIQUE (group_id, page, slot_index),

@@ -21,7 +21,7 @@ test("parseLaunchLexiconMarkdown extracts 680 tier 1+2 words", () => {
   assert.equal(parsed.entries[0].spokenText, "I");
   assert.equal(parsed.entries[0].tier, 1);
   const tier1 = parsed.entries.filter((e) => e.tier === 1);
-  assert.equal(tier1.length, 83);
+  assert.equal(tier1.length, 78);
 });
 
 test("lexicon spoken texts are clean — no compound artifact words", () => {
@@ -48,11 +48,12 @@ test("cross-listed Tier 1 senses carry a valid zone category", () => {
   const raw = readFileSync(join(repoRoot, "docs/product/Initial_Vocabulary_600.md"), "utf8");
   const parsed = parseLaunchLexiconMarkdown(raw);
   const cross = parsed.entries.filter((e) => e.tier === 1 && e.category);
-  assert.equal(cross.length, 19);
+  assert.equal(cross.length, 16);
   const zones = new Set(parsed.entries.filter((e) => e.tier === 2).map((e) => e.category));
   for (const e of cross) assert.ok(zones.has(e.category), `unknown zone: ${e.category}`);
   const byWord = new Map(cross.map((e) => [e.spokenText, e.category]));
-  assert.equal(byWord.get("happy"), "Feelings, Emotions & Sensory States");
+  assert.equal(byWord.get("mom"), "People, Family & Roles");
+  assert.equal(byWord.get("dad"), "People, Family & Roles");
   assert.equal(byWord.get("sad"), "Feelings, Emotions & Sensory States");
   assert.equal(byWord.get("hurt"), "Body, Health & Hygiene");
   assert.equal(byWord.get("help"), "Social Etiquette, Pragmatic Interjections & Urgent/Safety");

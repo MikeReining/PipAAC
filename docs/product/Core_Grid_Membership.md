@@ -27,12 +27,12 @@ if they can't:
 | --- | --- | --- |
 | Report that something is wrong | Pain and distress go unreported; behavior becomes the message | `hurt` · `sad` · `help` · `stop` · `no` |
 | Refuse and protest | The only refusal left is physical | `no` · `not` · `stop` · `all done` |
-| Request | Adults guess at wants | `want` · `more` · `need` · `get` · `give` · `open` · `help` |
-| Direct attention and comment | The user can only ask, never share | `look` · `that` · `this` · `like` · `good` · `bad` · `big` · `little` |
-| Ask | The user can't start a topic | `what` · `where` · `who` |
-| Social control | Conversation is always adult-led | `yes` · `please` · `my`·`turn` · `you` |
-| Talk about people | Only "I" exists | `I` · `you` · `me` · `my` · `he` · `she` |
-| Call a specific person | The child can't summon the person they need | No core cell: the family's own people, via setup, the empty-sentence Smart bar, and adult placement — setup asks "Who do they call for?", and an adult may put any person in any home cell (**BUILT** 014 slices 9–10, `placeOnBoard` in `public/shared/coremove.mjs`) |
+| Request | Adults guess at wants | `want` · `more` · `need` · `get` · `open` · `help` |
+| Direct attention and comment | The user can only ask, never share | `look` · `that` · `this` · `like` · `good` |
+| Ask | The user can't start a topic | `what` · `where` · `who` · `why` · `when` · `how` |
+| Social control | Conversation is always adult-led | `yes` · `you` · `my` |
+| Talk about people | Only "I" exists | `I` · `you` · `me` · `my` · `he` · `she` · `we` |
+| Call a specific person | The child can't summon the person they need | `mom` · `dad` are default cells (018 D1, rule 3); the family's own people join via setup, the empty-sentence Smart bar, and adult placement — setup asks "Who do they call for?", and an adult may put any person in any home cell (**BUILT** 014 slices 9–10, `placeOnBoard` in `public/shared/coremove.mjs`) |
 
 Evidence corpora (research lists and age-of-acquisition data) then decide
 *which* words cover each function. They do not decide what the functions are.
@@ -83,43 +83,47 @@ Standing layout laws (`docs/product/Motor_Grid_And_Art.md` §1) still apply:
 fixed slot indexes within a named layout; sector membership preserved across
 densities.
 
-## 3. The master list — final `grid60`
+## 3. The master list — `grid60`
 
-**DECIDED 2026-09-22.** Slot index is row-major and 0-based. The same rows
-live in `Core_Coordinate_Map.md` §3, which the catalog build parses.
+**DECIDED 2026-09-24 (018 D1–D3).** Slot index is row-major and 0-based.
+The same rows live in `Core_Coordinate_Map.md` §3, which the catalog
+build parses.
 
-| Row | Cols 1–2 Starters | Cols 3–5 Actions | Cols 6–7 Spatial | Cols 8–9 Descriptors | Col 10 Regulators |
-| :---: | :--- | :--- | :--- | :--- | :--- |
-| 1 | I · you | want · like · go | in · out | more · all done | yes |
-| 2 | me · my | need · look · come | on · off | not · and | no |
-| 3 | he · she | get · make · do | up · down | big · little | stop |
-| 4 | it · that | put · take · give | here · there | good · bad | help |
-| 5 | why · when | open · turn · play | to · for | happy · sad | hurt |
-| 6 | what · where | eat · drink · can | with · at | all · some | please |
+| Row | Cols 1–2 People | Cols 3–5 Actions | Cols 6–7 Little words | Col 8 Describing | Col 9 Questions | Col 10 Safety |
+| :---: | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | I · you | want · like · go | in · out | more | what | yes |
+| 2 | me · my | need · look · come | on · off | all | where | no |
+| 3 | he · she | get · make · do | up · down | some | who | not |
+| 4 | mom · dad | is · have · can | here · there | good | why | stop |
+| 5 | this · that | put · open · turn | to · for | sad | when | help |
+| 6 | it · we | eat · drink · play | with · and | all done | how | hurt |
 
 How the layout reads:
 
-- **Regulator column (col 10)** is the "listen to me now" column: yes, no,
-  stop, help, hurt, please. It sits on the outside edge, the easiest place
-  to find with a flailing or scanning hand. It holds no questions and no
-  grammar.
-- **Questions** cluster in the bottom-left of the starter columns
-  (`why` · `when` · `what` · `where`, one 2×2 block), where a question
-  starts an utterance. Amended 2026-09-22 (§ 8).
-- **Feelings** pair on one row (`happy` · `sad`) next to `hurt` in the
-  regulator column, so the emotion-and-pain words form one visual patch.
-- **Quantity** pairs (`all` · `some`) sit under `more` in the same sector.
+- **Safety column (col 10)** is the "listen to me now" column: yes, no,
+  not, stop, help, hurt — Red regardless of dictionary POS. It sits on
+  the outside edge, the easiest place to find with a flailing or
+  scanning hand.
+- **Questions own a column (col 9)**, Purple — one band, one color; a
+  question starts an utterance, so all six live in one place.
+- **People** holds the child's own people (`mom` · `dad`, rule 3)
+  beside the pronouns and deictics.
+- **Actions** carries the copula (`is`) and `have`/`can` beside the
+  core verbs — rule 2's real-children frequency promoted them.
+- Opposites share a row (in/out, on/off, up/down, here/there,
+  this/that); `yes`/`no` sit on the safety edge of rows 1–2.
 
-Coverage: **33 of 36 Universal Core** words are cells (waived: `same`,
-`different`, `who` — §6, § 8). **19 of 23 Banajee toddler words**
-(Banajee, DiCarlo & Stricklin 2003; waived: `the`, `a`, `is`, `mine`).
+Coverage: **34 of 36 Universal Core** words are cells (waived: `same`,
+`different` — §6). **20 of 23 Banajee toddler words**
+(Banajee, DiCarlo & Stricklin 2003; waived: `the`, `a`, `mine`).
 All five rule-0 words are cells.
 
 Utterances that must stay at or under three taps, with no navigation:
-`I·want·more`, `I·need·help`, `it·hurt`, `I·sad`, `not·like·it`,
-`all done`, `my·turn`, `help·me`, `look·at·that`, `go·out`, `put·in·here`,
-`what·that`, `where·go`, `why·not`, `when·go`, `you·do·it`, `open·it`, `more·please`,
-`I·like·that`, `give·me`, `stop·that`.
+`I·want·more`, `I·need·help`, `it·hurt`, `I·sad`, `I·am·sad`,
+`not·like·it`, `all done`, `help·me`, `go·out`, `put·in·here`,
+`what·that`, `who·that`, `where·go`, `why·not`, `when·go`, `you·do·it`,
+`open·it`, `I·like·that`, `stop·that`, `mom·come`, `I·can·go`,
+`this·is·good`, `I·have·it`.
 
 ## 4. Evidence
 
@@ -137,56 +141,55 @@ On the board — the sixty:
 
 | Word | AoA | Fry | UC36 | Word | AoA | Fry | UC36 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| I | 2.79 | ≤20 | ✓ | in | 3.69 | ≤10 | ✓ |
-| you | 4.35 | ≤10 | ✓ | out | 3.28 | ≤60 | – |
-| me | 3.28 | ≤120 | – | on | 4.01 | ≤20 | ✓ |
-| my | 2.72 | ≤90 | – | off | 3.83 | ≤190 | – |
-| he | 3.81 | ≤20 | ✓ | up | 2.92 | ≤60 | ✓ |
-| she | 3.57 | ≤50 | ✓ | down | 4.93 | ≤100 | – |
-| this | 4.93 | ≤30 | – | here | 3.74 | ≤170 | ✓ |
-| that | 5.53 | ≤10 | ✓ | there | 5.25 | ≤50 | – |
-| it | 4.40 | ≤10 | ✓ | to | 3.95 | ≤10 | – |
-| who | 3.81 | ≤90 | ✓ | for | 4.39 | ≤20 | – |
-| what | 3.86 | ≤40 | ✓ | with | 4.44 | ≤20 | – |
-| where | 4.09 | ≤130 | ✓ | at | 4.04 | ≤30 | – |
-| want | 4.16 | ≤150 | ✓ | more | 3.78 | ≤80 | ✓ |
-| like | 3.69 | ≤70 | ✓ | all done | 6.09 | – | ✓ |
-| go | 3.37 | ≤80 | ✓ | not | 3.89 | ≤40 | ✓ |
-| need | 3.56 | ≤170 | – | and | 4.57 | ≤10 | – |
-| look | 4.05 | ≤70 | ✓ | big | 2.89 | ≤160 | – |
-| come | 3.32 | ≤100 | – | little | 3.95 | ≤110 | – |
-| get | 3.17 | ≤100 | ✓ | good | 3.55 | ≤130 | ✓ |
-| make | 4.68 | ≤70 | ✓ | bad | 2.79 | ≤730 | – |
-| do | 3.60 | ≤50 | ✓ | happy | 2.72 | ≤580 | – |
-| put | 3.72 | ≤160 | ✓ | sad | 3.24 | – | – |
-| take | 4.37 | ≤110 | – | all | 4.24 | ≤40 | ✓ |
-| give | 4.28 | ≤120 | – | some | 4.85 | ≤70 | ✓ |
-| open | 5.00 | ≤240 | ✓ | yes | 2.31 | ≤480 | – |
-| turn | 4.11 | ≤170 | ✓ | no | 2.72 | ≤80 | – |
-| play | 4.10 | ≤190 | – | stop | 2.89 | ≤280 | ✓ |
-| eat | 2.78 | ≤280 | – | help | 3.65 | ≤130 | ✓ |
-| drink | 3.47 | – | – | hurt | 4.00 | – | – |
-| can | 4.32 | ≤40 | ✓ | please | 3.48 | ≤780 | – |
+| I | 2.79 | ≤20 | ✓ | want | 4.16 | ≤150 | ✓ |
+| you | 4.35 | ≤10 | ✓ | like | 3.69 | ≤70 | ✓ |
+| me | 3.28 | ≤120 | – | go | 3.37 | ≤80 | ✓ |
+| my | 2.72 | ≤90 | – | need | 3.56 | ≤170 | – |
+| he | 3.81 | ≤20 | ✓ | look | 4.05 | ≤70 | ✓ |
+| she | 3.57 | ≤50 | ✓ | come | 3.32 | ≤100 | – |
+| mom | 2.22 | – | – | get | 3.17 | ≤100 | ✓ |
+| dad | 2.58 | – | – | make | 4.68 | ≤70 | ✓ |
+| this | 4.93 | ≤30 | – | do | 3.60 | ≤50 | ✓ |
+| that | 5.53 | ≤10 | ✓ | is | 5.53 | ≤10 | – |
+| it | 4.40 | ≤10 | ✓ | have | 3.72 | ≤30 | – |
+| we | 5.04 | ≤40 | – | can | 4.32 | ≤40 | ✓ |
+| in | 3.69 | ≤10 | ✓ | put | 3.72 | ≤160 | ✓ |
+| out | 3.28 | ≤60 | – | open | 5.00 | ≤240 | ✓ |
+| on | 4.01 | ≤20 | ✓ | turn | 4.11 | ≤170 | ✓ |
+| off | 3.83 | ≤190 | – | eat | 2.78 | ≤280 | – |
+| up | 2.92 | ≤60 | ✓ | drink | 3.47 | – | – |
+| down | 4.93 | ≤100 | – | play | 4.10 | ≤190 | – |
+| here | 3.74 | ≤170 | ✓ | more | 3.78 | ≤80 | ✓ |
+| there | 5.25 | ≤50 | – | all | 4.24 | ≤40 | ✓ |
+| to | 3.95 | ≤10 | – | some | 4.85 | ≤70 | ✓ |
+| for | 4.39 | ≤20 | – | good | 3.55 | ≤130 | ✓ |
+| with | 4.44 | ≤20 | – | sad | 3.24 | – | – |
+| and | 4.57 | ≤10 | – | all done | 6.09 | – | ✓ |
+| what | 3.86 | ≤40 | ✓ | yes | 2.31 | ≤480 | – |
+| where | 4.09 | ≤130 | ✓ | no | 2.72 | ≤80 | – |
+| who | 3.81 | ≤90 | ✓ | not | 3.89 | ≤40 | ✓ |
+| why | 3.97 | ≤170 | ✓ | stop | 2.89 | ≤280 | ✓ |
+| when | 4.24 | ≤50 | ✓ | help | 3.65 | ≤130 | ✓ |
+| how | 5.36 | ≤50 | – | hurt | 4.00 | – | – |
 
-Off the board — the contested 23:
+Off the board — the 18 root-core senses with no `grid60` cell:
 
 | Word | AoA | Fry | UC36 | Why it is off (§6) |
 | --- | --- | --- | --- | --- |
 | same | 5.62 | ≤140 | ✓ | Latest-acquired UC36 word; comparison, not expression |
-| different | 5.50 | ≤180 | ✓ | Same reason; lost its seat to `sad` under rule 0 |
-| who | 3.81 | ≤90 | ✓ | Asked least of the five questions; `?` family and strip (§ 8) |
-| this | 4.93 | ≤30 | – | `that` covers pointing; not UC36 (§ 8) |
-| how | 5.36 | ≤50 | – | Latest-developing question |
-| we | 5.04 | ≤40 | – | Latest-acquired pronoun on the list; `you`+`me` carry joint action |
+| different | 5.50 | ≤180 | ✓ | Same reason |
 | they | 4.88 | ≤20 | – | Plural third person; strip covers |
 | mine | 4.24 | ≤810 | – | `my` covers possession |
 | see | 3.06 | ≤80 | – | `look` covers visual attention and is UC36 |
-| have | 3.72 | ≤30 | – | Grammar glue; strip covers |
 | wait | 4.30 | ≤410 | – | Adult-directed word; `stop` covers user protest of an action |
-| feel | 5.11 | ≤430 | – | `happy`/`sad`/`hurt` say the feeling directly |
+| feel | 5.11 | ≤430 | – | `sad`/`good`/`hurt` say the feeling directly |
 | read, tell, think, find, work | 4.11–5.86 | ≤100–≤170 | – | Later or narrower verbs; group and strip |
 | away, under, over | 5.07–5.89 | ≤110–≤230 | – | `in`/`out`/`on`/`off`/`up`/`down` carry the spatial load |
 | but, or, because | 4.60 / 4.14 / 4.44 | ≤40 / ≤30 / ≤170 | – | Literate-adult grammar; `and` stays |
+
+Left root core entirely (Tier 2 — a group and the strip, no `grid90`
+cell): `take` · `give` (Actions), `big` · `little` · `bad` (Describing),
+`happy` (Feelings), `please` (Social), `at` (Little words).
 
 ## 5. How we got here
 
@@ -196,6 +199,7 @@ Off the board — the contested 23:
 | Review draft | Fixed UC36 coverage but kept `see` (redundant with `look`), `same` (latest-acquired), `why` over `who`; dropped `need`. |
 | v2 proposal (`5c4f4de`) | Right rule, one blind spot: every seat was judged against research lists, and none of them measures a person's need to say *it hurts*. `happy` had no opposite; `who` sat in the regulator column only because a slot was free. |
 | **Final (this file)** | Adds rule 0 and applies it: `hurt` and `sad` in; `we` and `different` out; `who` joins the other questions in the starter columns, so the regulator column is pure. |
+| **Core board v2 (018)** | The 2026-09-22 board was right on membership but wrong on shape: sector colors didn't match word roles, questions hid in the people band, the child's own people had no cells, and `is` — the most frequent word children say — was waived. Rebuilt on six color bands; `is`/`mom`/`dad`/`this`/`have`/`we`/`how`/`who` in, eight Tier-1 seats released. |
 
 Final vs v2, cell by cell:
 
@@ -215,39 +219,44 @@ stays one tap away in the strip.
 
 ## 6. Named waivers and deliberate off-boards
 
-**DECIDED 2026-09-22.**
+**DECIDED 2026-09-22; amended 2026-09-24 (018 D1–D3).**
 
 UC36 waivers (rule 1 exceptions): `same`, `different` (academic comparison;
-the latest-acquired UC36 words), `who` (§ 8).
+the latest-acquired UC36 words).
 
 Banajee waivers: `the`, `a` (articles are not core cells; no core list
-includes them), `is` (copula; telegraphic output is the design), `mine`
-(`my` covers possession).
+includes them), `mine` (`my` covers possession). `is` is no longer
+waived — CHILDES frequency made it the top missed word.
 
 Deliberately off `grid60` — every one stays root core, a `grid90` cell, and
 strip-eligible:
 
-- **Pronouns**: `we`, `they`, `mine`, `this`.
-- **Verbs**: `see`, `have`, `wait`, `feel`, `read`, `tell`, `think`,
-  `find`, `work`.
+- **Pronouns**: `they`, `mine`.
+- **Verbs**: `see`, `wait`, `feel`, `read`, `tell`, `think`, `find`,
+  `work`.
 - **Spatial**: `away`, `under`, `over`.
 - **Descriptors**: `same`, `different`.
 - **Connectors**: `but`, `or`, `because`.
-- **Questions**: `who`, `how`.
+- **Demoted to Tier 2** (group + strip, no grid90 cell): `take`, `give`,
+  `big`, `little`, `bad`, `happy`, `please`, `at`. The v2 board needed
+  seats for `is`, `mom`, `dad`, `this`, `have`, `we`, `how`, `who`; these
+  eight earn their keep best one tap or one offer away.
 - **Greetings and manners**: `hi`, `bye`, `sorry`, `thank you` live in
   fringe (`Initial_Vocabulary_600.md` §3.14). The strip's idle state owns
   conversational starters (`Motor_Grid_And_Art.md` §2).
 - **Other feelings** (`mad`, `scared`, `tired`): Feelings group and strip.
-  Two feelings plus `hurt` is the ceiling for the default board. More would
+  `sad` plus `hurt` is the ceiling for the default board. More would
   take seats from request and refusal.
 
 ## 7. Enforcement
 
 **BUILT** (`src/board/core_map.test.mjs`) — the membership gate:
 
-- `OFF_GRID60` lists the 23 off-board senses; each must be absent from
+- `OFF_GRID60` lists the 18 off-board senses; each must be absent from
   `grid60` and present in `grid90`.
-- `SECTORS` pins each column band to its word set.
+- `BANDS` pins each color band to its word set **and** its role color
+  (people Yellow, actions Green, little words Pink, describing Blue,
+  questions Purple, safety Red).
 - **UC36 gate**: every Universal Core word is a `grid60` cell unless it is in
   the named-waiver list. **Rule-0 gate**: `hurt`, `sad`, `help`, `stop`, `no`
   are `grid60` cells.
@@ -291,7 +300,7 @@ not the grid. **BUILT** (`scripts/catalog/catalog.test.mjs`, `src/board/groups.t
    so rule-0 words are reachable inside their groups, not only on the board.
    Groups remain views; a core word's home is still its coordinate.
 
-Lexicon: 677 senses = 83 root-core + 594 fringe.
+Lexicon: 680 senses = 78 root-core + 602 fringe.
 
 ## 8. Amendment — `why` and `when` in
 

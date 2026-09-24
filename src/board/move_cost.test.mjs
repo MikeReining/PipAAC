@@ -87,13 +87,17 @@ test("moveCost weights words by real selection history", async () => {
 test("setBoardLayout writes the setting, marks only moved words, keeps overrides", async () => {
   const db = fresh();
   bindLayouts(catalog.layouts);
+  // An adult override on the CURRENT layout must survive the change.
+  // (018 v2: grid60's cells sit unchanged in grid90 — a catalog move is
+  // the only thing the cost sees as moved, so the override goes first.)
+  const movable = db.prepare(
+    "SELECT sense_id AS id FROM core_cell WHERE layout = 'grid60' AND slot_index = 0",
+  ).all()[0].id;
+  moveCore(db, "grid60", movable, 50);
   const before = moveCost(db, "grid60", "grid90", "en");
   const movedIds = new Set(before.words
     .filter((w) => w.cls === "sector" || w.cls === "moved")
     .map((w) => w.sense_id));
-  // An adult override on the CURRENT layout must survive the change.
-  const movable = before.words.find((w) => w.cls === "moved" || w.cls === "sector");
-  moveCore(db, "grid60", movable.sense_id, 50);
   const r = setBoardLayout(db, "grid90");
   assert.equal(db.prepare("SELECT board_layout AS l FROM learner_profile WHERE id = 'prf_local'")
     .get().l, "grid90");
@@ -102,12 +106,12 @@ test("setBoardLayout writes the setting, marks only moved words, keeps overrides
   // and 'new' words carry no highlight (they never changed place).
   const marks = moveMarks(db);
   for (const id of marks) assert.ok(movedIds.has(id));
-  assert.ok(marks.has(movable.sense_id));
+  assert.ok(marks.has(movable));
   assert.equal(marks.size, movedIds.size);
   // The grid60 override row is still there — adult choices don't erase.
   assert.ok(db.prepare(
     "SELECT 1 AS x FROM core_override WHERE layout = 'grid60' AND item_id = ?")
-    .get(movable.sense_id));
+    .get(movable));
   // …and the intent is a replayable op.
   assert.ok(db.prepare("SELECT 1 AS x FROM sync_op WHERE kind = 'set_layout'").get());
 });
@@ -151,14 +155,15 @@ test("real catalog: grid60 → grid90 cost is complete and deterministic", async
   assert.ok(n > 40); // the 60-cell board plus grid90's new words
 });
 
-test("014 slice 5: every shared word keeps its sector grid60 → grid90", async () => {
+test("018 slice 1: every grid60 word keeps its slot on grid90", async () => {
   const db = fresh();
   bindLayouts(catalog.layouts);
   const mc = moveCost(db, "grid60", "grid90", "en");
-  // The ruling's promise (map doc § 5): sector membership is preserved —
-  // nothing is "moved" across bands and nothing leaves the home board.
+  // The ruling's promise (map doc § 5): rows 1–6 are identical — nothing
+  // is "moved" across bands and nothing leaves the home board.
   assert.equal(mc.totals.moved, 0);
   assert.equal(mc.totals.gone, 0);
   assert.equal(mc.totals.sector + mc.totals.same, 60); // all of grid60
-  assert.equal(mc.totals.new, 23);                     // the dense-only words
+  assert.equal(mc.totals.same, 60);                    // same slot, not just band
+  assert.equal(mc.totals.new, 18);                     // the dense-only words
 });

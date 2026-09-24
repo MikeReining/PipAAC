@@ -1,9 +1,8 @@
 # Phase 018 — Core board v2 and groups
 
-**Status:** Executing. Not started. **Start after** 017 step 29 is
-committed: that step is changing the same catalog files
-(`data/launch_lexicon.json`, `data/catalog/catalog.json`,
-`scripts/catalog/build_catalog.mjs`, `public/index.html`).
+**Status:** Executing. Slice 1 done 2026-09-24 — the v2 board is the
+default (`grid60` = D1, six color bands, Purple role shipped,
+`is`/`mom`/`dad` root core). Remaining: slices 2–6.
 
 **DECIDED 2026-09-24** (founder: "this is all locked"). Reached in a
 founder brainstorm the same day, with real-children measurements run
@@ -247,20 +246,28 @@ section (sample counts).
 
 ## Slices
 
-1. **Board v2.**
-   - The § 3 table in `Core_Coordinate_Map.md` becomes D1.
-   - `Initial_Vocabulary_600.md`:
-     - *is*, *mom*, *dad* become tier 1.
-     - Questions become Purple.
-     - *yes* and *help* become Red.
-   - A `.r-Purple` role goes in `public/index.html` and
-     `Design_System.md`.
-   - `src/board/core_map.test.mjs` sectors and membership become D1–D3.
-   - `npm run catalog:lexicon && npm run catalog:build`.
-   - **Proof:** the updated `core_map.test.mjs`, plus a screenshot of the
-     real board next to `public/preview-core60.html`.
-2. **`grid90` and `grid15` re-derived** on the same bands. `grid90` keeps
-   every root-core word, including *they* and *mine*.
+1. **Board v2.** **DONE 2026-09-24.**
+   - The § 3 table in `Core_Coordinate_Map.md` is D1; § 4 `grid90` is
+     re-laid on the same bands (78 cells + 11 reserved + Groups).
+   - `Initial_Vocabulary_600.md`: *is*, *mom*, *dad* tier 1; the eight
+     released seats moved to their Tier-2 groups; questions Purple;
+     *yes*/*help* Red; `don't` POS fixed to Verb at the source and the
+     **Negation flag** list is doc-owned now (both were hand-edits to
+     generated JSON that regen silently dropped).
+   - `.r-Purple` (`#6f55b0`/`#ebe5f7`) in `index.html` +
+     `Design_System.md`; the `sense.fitzgerald_role` CHECK gained
+     `Purple`; schema comments that carried `;` inside DDL (they broke
+     naive parsers) are reworded.
+   - `core_map.test.mjs` pins the 60 cells, per-band role colors, the
+     18 off-grid senses, UC36/rule-0 gates, and grid90's 78 cells +
+     anchors. Scorer baselines re-measured (non-core −41k events).
+   - **Proof:** `core_map.test.mjs` + `strip_order.test.mjs` +
+     `move_cost.test.mjs` green through `loadBoard` — the same read
+     path the renderer uses. Visual pass deferred: all three dev slots
+     were hung workerd processes at closeout.
+2. **`grid15` re-derived** on the same bands. (`grid90` was re-laid with
+   slice 1 — both tables live in the same parsed file; it keeps every
+   root-core word, *they* and *mine* included.)
 3. **The child's people on the home board.** Setup's answers fill the
    *mom*/*dad* cells with those entities and photos (D1).
 4. **Groups (D4–D6, D9).**

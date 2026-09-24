@@ -202,28 +202,28 @@
     },
     {
       "slot": 23,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "take",
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 24,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "give",
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Stick Figure",
-      "category": null
+      "category": "Daily Actions & Activity Verbs"
     },
     {
       "slot": 25,
       "tier": 1,
       "spokenText": "help",
       "partOfSpeech": "Verb",
-      "fitzgeraldColor": "Green",
+      "fitzgeraldColor": "Red",
       "visualStyle": "Stick Figure",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
@@ -508,7 +508,7 @@
     },
     {
       "slot": 57,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "big",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
@@ -517,7 +517,7 @@
     },
     {
       "slot": 58,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "little",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
@@ -535,7 +535,7 @@
     },
     {
       "slot": 60,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "bad",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
@@ -544,7 +544,7 @@
     },
     {
       "slot": 61,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "happy",
       "partOfSpeech": "Adjective",
       "fitzgeraldColor": "Blue",
@@ -592,7 +592,7 @@
       "tier": 1,
       "spokenText": "what",
       "partOfSpeech": "Pronoun",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Purple",
       "visualStyle": "Diagrammatic",
       "category": null
     },
@@ -601,7 +601,7 @@
       "tier": 1,
       "spokenText": "where",
       "partOfSpeech": "Adverb",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Purple",
       "visualStyle": "Diagrammatic",
       "category": null
     },
@@ -610,7 +610,7 @@
       "tier": 1,
       "spokenText": "who",
       "partOfSpeech": "Pronoun",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Purple",
       "visualStyle": "Stick Figure",
       "category": null
     },
@@ -619,7 +619,7 @@
       "tier": 1,
       "spokenText": "why",
       "partOfSpeech": "Adverb",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Purple",
       "visualStyle": "Diagrammatic",
       "category": null
     },
@@ -628,7 +628,7 @@
       "tier": 1,
       "spokenText": "how",
       "partOfSpeech": "Adverb",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Purple",
       "visualStyle": "Diagrammatic",
       "category": null
     },
@@ -637,7 +637,7 @@
       "tier": 1,
       "spokenText": "when",
       "partOfSpeech": "Adverb",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Purple",
       "visualStyle": "Diagrammatic",
       "category": null
     },
@@ -656,7 +656,7 @@
       "tier": 1,
       "spokenText": "yes",
       "partOfSpeech": "Interjection",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
     },
@@ -672,7 +672,7 @@
     },
     {
       "slot": 75,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "please",
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Pink",
@@ -726,12 +726,12 @@
     },
     {
       "slot": 81,
-      "tier": 1,
+      "tier": 2,
       "spokenText": "at",
       "partOfSpeech": "Preposition",
       "fitzgeraldColor": "Pink",
       "visualStyle": "Diagrammatic",
-      "category": null
+      "category": "Function Words & Grammar"
     },
     {
       "slot": 82,
@@ -2400,7 +2400,7 @@
     },
     {
       "slot": 267,
-      "tier": 2,
+      "tier": 1,
       "spokenText": "mom",
       "partOfSpeech": "Noun",
       "fitzgeraldColor": "Yellow",
@@ -2409,7 +2409,7 @@
     },
     {
       "slot": 268,
-      "tier": 2,
+      "tier": 1,
       "spokenText": "dad",
       "partOfSpeech": "Noun",
       "fitzgeraldColor": "Yellow",
@@ -5399,12 +5399,12 @@
     },
     {
       "slot": 607,
-      "tier": 2,
+      "tier": 1,
       "spokenText": "is",
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Green",
       "visualStyle": "Diagrammatic",
-      "category": "Function Words & Grammar"
+      "category": null
     },
     {
       "slot": 608,

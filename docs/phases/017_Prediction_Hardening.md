@@ -1007,13 +1007,18 @@ band-splitting buys up to +2.8 where data is sparse. The shipped file is
 
 | Band | later / first / after-adult | Baseline | Δ |
 | --- | --- | --- | --- |
-| MLU < 2 | 52.6% / 19.6% / 20.7% | 50.8% / 19.4% / 19.7% | +1.8 / +0.2 / +1.0 |
-| MLU 2–3.5 | 57.8% / 25.2% / 25.6% | 57.6% / 25.2% / 25.6% | +0.2 / 0 / 0 |
-| MLU > 3.5 | 56.2% / 27.9% / 30.0% | 56.0% / 27.9% / 30.0% | +0.2 / 0 / 0 |
+| MLU < 2 | 43.6% / 16.7% / 15.4% | 42.6% / 12.6% / 14.5% | +1.0 / +4.1 / +0.9 |
+| MLU 2–3.5 | 51.3% / 21.8% / 23.7% | 51.5% / 21.8% / 23.7% | −0.2 / 0 / 0 |
+| MLU > 3.5 | 49.2% / 26.1% / 28.0% | 48.7% / 26.1% / 28.0% | +0.5 / 0 / 0 |
 
-TinyDialogues validation (never read): age-2 26.3% / 4.7%, age-5
-45.2% / 18.4% (later / first). Imagine dev: 45.7% / 21.1%. The file
-tracks its own unpruned in-memory book within 0.7pt everywhere
+*Re-baselined 2026-09-24 (018): `is`/`mom`/`dad` are root core now, so
+the non-core metric loses ~41k events — the copula was the easiest
+target on the board. The all-words and 'no' cells already counted
+those words and don't move.*
+
+TinyDialogues validation (never read): age-2 25.3% / 3.6%, age-5
+42.1% / 33.2% (later / first). Imagine dev: 41.6% / 20.1%. The file
+tracks its own unpruned in-memory book within a point everywhere
 (MLU < 2 pays the most for pruning).
 
 **Superseded 2026-09-24:** item 3's "start mixes synth-heavy" — under the
@@ -1154,11 +1159,15 @@ Cells are later / first / right-after-adult-turn hit rate; random is
 
 | Book | MLU < 2 (~age 2) | MLU 2–3.5 (~age 3) | MLU > 3.5 (~age 4+) |
 | --- | --- | --- | --- |
-| Adult AAC (Imagine) | 31.8% / 4.1% / 4.3% | 41.2% / 9.8% / 10.5% | 38.0% / 18.8% / 18.4% |
-| TinyDialogues caregiver + child (**legal**) | 33.5% / 4.6% / 5.8% | 41.4% / 11.1% / 10.9% | 40.1% / 16.8% / 17.7% |
-| + partner words | **41.4%** / 17.7% / 22.7% | **42.7%** / 19.8% / 23.3% | 39.3% / 20.0% / 23.2% |
-| CHILDES caregiver speech (not licensed) | 45.0% / 11.9% / 12.5% | 55.9% / 19.7% / 19.9% | 54.4% / 25.1% / 25.7% |
-| CHILDES child speech (not licensed) | 50.8% / 19.4% / 19.7% | 57.6% / 25.2% / 25.6% | 56.0% / 27.9% / 30.0% |
+| Adult AAC (Imagine) | 21.6% / 4.6% / 6.3% | 31.0% / 10.0% / 9.1% | 28.7% / 16.1% / 16.8% |
+| TinyDialogues caregiver + child (**legal**) † | 33.5% / 4.6% / 5.8% | 41.4% / 11.1% / 10.9% | 40.1% / 16.8% / 17.7% |
+| + partner words † | **41.4%** / 17.7% / 22.7% | **42.7%** / 19.8% / 23.3% | 39.3% / 20.0% / 23.2% |
+| CHILDES caregiver speech (not licensed) | 39.6% / 11.7% / 12.5% | 49.4% / 19.0% / 20.0% | 47.0% / 24.1% / 26.0% |
+| CHILDES child speech (not licensed) | 42.6% / 12.6% / 14.5% | 51.5% / 21.8% / 23.7% | 48.7% / 26.1% / 28.0% |
+
+*† TinyDialogues and +partner rows are pre-v2 measures — the non-core
+metric re-baselined under 018 (`is`/`mom`/`dad` left the target set);
+those two rows would drop similarly if re-run.*
 
 Numbers under the corrected lemmatizer, 2026-09-24: surface lemmas win
 over the irregular map (am/is/are are Pip words, "be" is not), bare
@@ -1168,7 +1177,8 @@ done"), every irregular-map target must be an offerable lemma
 be/will/have contractions split into their Pip parts ("i'm" → "i am",
 "it's" → "it is") — "i" → "am" is 14.4% of real child speech, the #1
 continuation, which the contraction bug had buried at ~1.3%.
-938,609 events, 393,182 non-core.
+938,609 events, 352,018 non-core (018: `is`/`mom`/`dad` joined root
+core, so the non-core target set lost ~41k high-frequency events).
 
 Share of the child's non-core words that the adult said in the previous
 turn: **11.8% (MLU < 2), 8.7%, 5.7%**.
@@ -2021,11 +2031,13 @@ Done when: those pass and the scorer's with/without numbers are in
 
 **Status: DONE 2026-09-24** (item 6 of the current order). What shipped:
 
-- `sense.negation` is a catalog column sourced from
-  `data/launch_lexicon.json` `negation: true` on the seven senses
-  (*no*, *not*, *never*, *don't*, *can't*, *won't*, *didn't*) —
-  `data/catalog/catalog.json` regenerated; the funnel reads
-  `s.negation` on its pool query, never a word list.
+- `sense.negation` is a catalog column sourced from the
+  **Negation flag** line in `Initial_Vocabulary_600.md` (the seven
+  senses *no*, *not*, *never*, *don't*, *can't*, *won't*, *didn't*),
+  extracted into `data/launch_lexicon.json` — the funnel reads
+  `s.negation` on its pool query, never a word list. (Amended 018
+  slice 1: the flag used to be a hand-edit to the generated JSON and
+  silently died on regen; the doc is the source now.)
 - The pool: `stripScored` scores `root_core` senses alongside fringe
   when `show_board_words` is on (default); off, the pool stays
   fringe-only and `applyLikely`/`keyboardContinuations` still glow

@@ -987,7 +987,7 @@ with `spoken_text` equal to the whole sentence.
 ## 9. What the first build stores
 
 The lexicon file is named `Initial_Vocabulary_600.md`. The catalog inside
-it is 677 numbered rows: 83 root-core plus 594 fringe. The filename
+it is 680 numbered rows: 78 root-core plus 602 fringe. The filename
 rounds; the 2026-09-22 amendments added the function-word layer
 (auxiliaries, determiners, conjunctions, object pronouns, numerals) the
 original list lacked, then cleaned compound spoken texts, merged the split

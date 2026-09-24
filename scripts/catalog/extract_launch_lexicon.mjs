@@ -15,6 +15,7 @@ import { DEFAULT_LEXICON_PATH, repoRoot } from "./paths.mjs";
 const LEXICON_MD = join(repoRoot, "docs/product/Initial_Vocabulary_600.md");
 const ROW_RE = /^\|\s*(\d+)\s*\|\s*\*\*([^*]+)\*\*\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|/;
 const CATEGORY_RE = /^### 3\.\d+ (.+?) \(\d+ words\)/;
+const NEGATION_RE = /^\*\*Negation flag\*\*.*?:\s*(.+?)\.?\s*$/;
 
 /** @returns {{ schemaVersion: number, source: string, entries: object[] }} */
 export function parseLaunchLexiconMarkdown(raw) {
@@ -25,8 +26,15 @@ export function parseLaunchLexiconMarkdown(raw) {
   const zoneNames = new Set();
   /** @type {Map<number, string>} slot -> cross-listed zone for Tier 1 rows */
   const crossListed = new Map();
+  /** @type {Set<string>} the doc's negation-flag words (sense.negation) */
+  const negWords = new Set();
 
   for (const line of raw.split("\n")) {
+    const neg = NEGATION_RE.exec(line);
+    if (neg) {
+      for (const w of neg[1].split(",")) negWords.add(w.trim());
+      continue;
+    }
     if (line.startsWith("## 2. Tier 1")) tier = 1;
     else if (line.startsWith("## 3. Tier 2")) tier = 2;
     else if (line.startsWith("## 4.")) tier = 0;
@@ -59,12 +67,18 @@ export function parseLaunchLexiconMarkdown(raw) {
       fitzgeraldColor: m[4].trim(),
       visualStyle: m[5].trim(),
       category: entryCategory,
+      negation: negWords.has(m[2].trim()) || undefined,
     });
   }
 
   for (const [slot, zone] of crossListed) {
     if (!zoneNames.has(zone)) {
       throw new Error(`slot ${slot} cross-lists into unknown zone "${zone}"`);
+    }
+  }
+  for (const w of negWords) {
+    if (![...bySlot.values()].some((e) => e.spokenText === w)) {
+      throw new Error(`negation-flag word "${w}" matches no lexicon row`);
     }
   }
 
