@@ -20,6 +20,26 @@ export const MUSE_MODEL = "meta/muse-image";
 export const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/images";
 export const MAX_STYLE_REFS = 3;
 
+export const OPENROUTER_APP_HOST = "artgen.pipaac.local";
+export const OPENROUTER_APP_TITLE = "PipAAC art gen";
+
+/**
+ * OpenRouter app attribution (openrouter.ai/docs/app-attribution): the App
+ * column in activity logs is keyed on HTTP-Referer, and apps group by origin —
+ * so a per-lane subdomain gives each batch lane its own App row instead of
+ * "Unknown". The host is an identifier only; it never receives traffic.
+ */
+export function appHeaders(lane = null) {
+  const slug = lane ? String(lane).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") : "";
+  const host = slug ? `${slug}.${OPENROUTER_APP_HOST}` : OPENROUTER_APP_HOST;
+  return {
+    "HTTP-Referer": `https://${host}`,
+    "X-OpenRouter-Title": slug ? `${OPENROUTER_APP_TITLE} · ${slug}` : OPENROUTER_APP_TITLE,
+    "X-OpenRouter-Categories": "image-gen",
+    "X-OpenRouter-App-Visibility": "hidden",
+  };
+}
+
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const DEFAULT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/pip-v1");
 export const GLYPH_WORDS_PATH = join(repoRoot, "data/art/glyph_words.json");
@@ -358,6 +378,7 @@ export async function generateToFile({
   prompt = null,
   out = null,
   refDir = DEFAULT_STYLE_REF_DIR,
+  lane = null,
   fetchImpl = globalThis.fetch,
   apiKey = resolveApiKey("OPENROUTER_API_KEY"),
   glyphWords = loadGlyphWords(),
@@ -384,7 +405,7 @@ export async function generateToFile({
 
   const res = await fetchImpl(OPENROUTER_ENDPOINT, {
     method: "POST",
-    headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
+    headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}`, ...appHeaders(lane) },
     body: JSON.stringify(body),
   });
 
@@ -412,6 +433,7 @@ export function parseArgs(argv) {
     print: false,
     classify: false,
     refDir: DEFAULT_STYLE_REF_DIR,
+    lane: null,
   };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
@@ -442,6 +464,7 @@ export function parseArgs(argv) {
     else if (a === "--out") out.out = argv[++i];
     else if (a === "--prompt") out.prompt = argv[++i];
     else if (a === "--ref-dir") out.refDir = argv[++i];
+    else if (a === "--lane") out.lane = argv[++i];
     else if (a === "--print-prompt" || a === "--print") out.print = true;
     else if (a === "--classify") out.classify = true;
     else throw new Error(`unknown flag: ${a}`);
@@ -453,7 +476,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
 
   if (!args.word && !args.prompt) {
-    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object|contrast>] [--hand <mode>] [--social-scale <zero|solo|pair|group>] [--hint <hint>] [--out <dest>] [--classify]");
+    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object|contrast>] [--hand <mode>] [--social-scale <zero|solo|pair|group>] [--hint <hint>] [--out <dest>] [--lane <slug>] [--classify]");
     process.exit(1);
   }
 
@@ -495,6 +518,7 @@ async function main() {
     prompt: args.prompt,
     out: args.out,
     refDir: args.refDir,
+    lane: args.lane,
   });
   console.log(`wrote ${dest}  ${(bytes.length / 1024).toFixed(0)}KB  ${((Date.now() - started) / 1000).toFixed(1)}s`);
 }
