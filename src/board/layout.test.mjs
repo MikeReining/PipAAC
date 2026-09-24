@@ -113,9 +113,9 @@ test("grid15 is § 5.1's board: 14 words + the ? family slot, in place", () => {
   const layout = catalog.layouts.grid15;
   assert.deepEqual({ cols: layout.cols, rows: layout.rows }, { cols: 5, rows: 3 });
   const anchors = new Map(layout.anchors.map((a) => [a.slot, a]));
-  assert.deepEqual(anchors.get(13),
-    { slot: 13, kind: "family", family: "bf_q" },
-    "slot 13 is the ? family tile (014 slice 7)");
+  assert.deepEqual(anchors.get(12),
+    { slot: 12, kind: "family", family: "bf_q" },
+    "slot 12 (row 3 col 3) is the ? family tile (014 slice 7)");
 
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);
@@ -125,11 +125,12 @@ test("grid15 is § 5.1's board: 14 words + the ? family slot, in place", () => {
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
      WHERE cc.layout = 'grid15' ORDER BY cc.slot_index`,
   ).all();
-  // § 5.1, row by row — slot 13 skipped (reserved).
+  // § 5.1 as amended 2026-09-24 (018 slice 2, v2 bands), row by row —
+  // slot 13 skipped (reserved).
   const spec = [
     ["I", "want", "more", "yes", "stop"],
-    ["you", "like", "not", "no", "help"],
-    ["what", "go", "all done", null, "hurt"],
+    ["you", "like", "all done", "no", "help"],
+    ["what", "go", null, "not", "hurt"],
   ].flat();
   for (const [i, word] of spec.entries()) {
     if (word === null) continue;

@@ -161,7 +161,7 @@
       "rows": 3,
       "anchors": [
         {
-          "slot": 13,
+          "slot": 12,
           "kind": "family",
           "family": "bf_q"
         }
@@ -26981,7 +26981,7 @@
     {
       "id": "cel_grid15_007",
       "layout": "grid15",
-      "sense_id": "sns_0074",
+      "sense_id": "sns_0056",
       "slot_index": 7
     },
     {
@@ -27009,10 +27009,10 @@
       "slot_index": 11
     },
     {
-      "id": "cel_grid15_012",
+      "id": "cel_grid15_013",
       "layout": "grid15",
-      "sense_id": "sns_0056",
-      "slot_index": 12
+      "sense_id": "sns_0074",
+      "slot_index": 13
     },
     {
       "id": "cel_grid15_014",

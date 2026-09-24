@@ -267,7 +267,13 @@ section (sample counts).
      were hung workerd processes at closeout.
 2. **`grid15` re-derived** on the same bands. (`grid90` was re-laid with
    slice 1 — both tables live in the same parsed file; it keeps every
-   root-core word, *they* and *mine* included.)
+   root-core word, *they* and *mine* included.) **DONE 2026-09-24** —
+   columns re-derived as people & ask · doing · describing & ask ·
+   answers · safety: *not* joins the red answers column (*yes*/*no*),
+   *all done* and the `?` door shift up; membership unchanged. Map § 6
+   and 014 § 5.1 amended; `?` anchor now slot 12.
+   **Proof:** `layout.test.mjs` (§ 5.1 board + anchor), `family`,
+   `core_move`, `core_place` green.
 3. **The child's people on the home board.** Setup's answers fill the
    *mom*/*dad* cells with those entities and photos (D1).
 4. **Groups (D4–D6, D9).**

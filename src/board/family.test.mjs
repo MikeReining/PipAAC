@@ -40,9 +40,9 @@ test("the ? family seeds why · when · where · who in fixed order", () => {
   assert.deepEqual(labelsOf(db, "bf_q"), ["why", "when", "where", "who"]);
 });
 
-test("grid15 slot 13 is the ? family tile in the catalog anchors", () => {
-  const a = catalog.layouts.grid15.anchors.find((x) => x.slot === 13);
-  assert.deepEqual(a, { slot: 13, kind: "family", family: "bf_q" });
+test("grid15 slot 12 is the ? family tile in the catalog anchors", () => {
+  const a = catalog.layouts.grid15.anchors.find((x) => x.slot === 12);
+  assert.deepEqual(a, { slot: 12, kind: "family", family: "bf_q" });
 });
 
 test("an adult's reorder owns the rows — regen never rewrites them", () => {

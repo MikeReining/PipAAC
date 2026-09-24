@@ -100,8 +100,8 @@ test("move back to the catalog slot drops the override row", () => {
 test("anchors and reserved slots refuse the drop", () => {
   const db = fresh();
   const stop = senseOf(db, "stop");
-  // grid15 slot 13 is the reserved ? family slot; grid90 slot 89 is Groups.
-  assert.equal(moveCore(db, "grid15", stop, 13, { anchors: new Set([13]) }), null);
+  // grid15 slot 12 is the reserved ? family slot; grid90 slot 89 is Groups.
+  assert.equal(moveCore(db, "grid15", stop, 12, { anchors: new Set([12]) }), null);
   assert.equal(moveCore(db, "grid90", stop, 89, { anchors: new Set([89]) }), null);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM core_override").all()[0].n, 0);
 });

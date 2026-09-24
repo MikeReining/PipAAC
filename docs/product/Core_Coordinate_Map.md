@@ -136,19 +136,22 @@ slot on `grid90`, so a Cells change shows band moves, not scrambles.
 ## 6. `grid15` — Core 15 starter (5 × 3)
 
 The smallest board is the clinician's pick (014 § 2 ruling 4): 15 cells,
-full vocabulary behind the Groups anchor and the keyboard. Column bands
-follow § 5.1 of the phase doc: people · doing · how much · answer and ask ·
-stop, help, hurt. Rule 0 holds — `help`, `stop`, `no`, `hurt` report that
-something is wrong without navigating.
+full vocabulary behind the Groups anchor and the keyboard. **Re-derived
+2026-09-24 (018 slice 2)** on the D2 bands: people & ask · doing ·
+describing & ask · answers · stop, help, hurt. Red needs two columns —
+answers (*yes* · *no* · *not*, all Red) apart from safety. Rule 0 holds —
+`help`, `stop`, `no`, `hurt` report that something is wrong without
+navigating.
 
 | Row | Slots |
 | --- | --- |
 | 1 | I · want · more · yes · stop |
-| 2 | you · like · not · no · help |
-| 3 | what · go · all done · ? · hurt |
+| 2 | you · like · all done · no · help |
+| 3 | what · go · ? · not · hurt |
 
 Slot 13 is the `?` family tile — it opens the Smart bar's `?` family
-(why · when · where · who, fixed order — 014 slice 7).
+(why · when · where · who, fixed order — 014 slice 7). `what` and `?`
+are the board's two Purple cells; the other columns are color-pure.
 
 
 Editing a slot assignment is a product decision. It lands here first, tagged

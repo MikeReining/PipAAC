@@ -164,10 +164,13 @@ the vocabulary is one step away (§ 3.1).
 | | 1 | 2 | 3 | 4 | 5 |
 | --- | --- | --- | --- | --- | --- |
 | row 1 | I | want | more | yes | stop |
-| row 2 | you | like | not | no | help |
-| row 3 | what | go | all done | `?` | hurt |
+| row 2 | you | like | all done | no | help |
+| row 3 | what | go | `?` | not | hurt |
 
-Columns: people · doing · how much · answer and ask · stop, help, hurt.
+Columns: people & ask · doing · describing & ask · answers · stop, help,
+hurt. **Amended 2026-09-24 (018 slice 2):** re-derived on the v2 color
+bands — `not` joins the red answers column with *yes*/*no*, and `all
+done`/`?` shift up; membership is unchanged.
 
 - `?` family: **why · when · where · who**.
 - Rule 0 from `docs/product/Core_Grid_Membership.md` applies here too: the

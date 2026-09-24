@@ -36,12 +36,12 @@ const at = (db, slot, layout = "grid15") =>
   coreCells(db, layout, "en").find((c) => c.slot_index === slot);
 
 // A real Core 15 word that lives in a group — the spec's reachability
-// leg needs one — away from the reserved ? family slot (13).
+// leg needs one — away from the reserved ? family slot (12).
 const victim = (db) =>
   db.prepare(
     `SELECT cc.sense_id, cc.slot_index, l.text AS label FROM core_cell cc
      JOIN label l ON l.sense_id = cc.sense_id AND l.kind = 'lemma' AND l.locale = 'en'
-     WHERE cc.layout = 'grid15' AND cc.slot_index != 13
+     WHERE cc.layout = 'grid15' AND cc.slot_index != 12
        AND EXISTS (SELECT 1 FROM group_cell gc
          WHERE gc.item_kind = 'sense' AND gc.item_id = cc.sense_id)
      LIMIT 1`,
@@ -52,7 +52,7 @@ test("a person takes a Core 15 cell; the word leaves the board but not Groups", 
   const v = victim(db);
   const { id: maya } = createEntity(db, { name: "Maya" });
 
-  const mv = placeOnBoard(db, "grid15", "entity", maya, v.slot_index, { anchors: new Set([13]) });
+  const mv = placeOnBoard(db, "grid15", "entity", maya, v.slot_index, { anchors: new Set([12]) });
   assert.ok(mv, "the placement happened");
   assert.equal(mv.from, null, "the person came from off-board");
 
@@ -121,8 +121,8 @@ test("clearing a cell frees it; anchors refuse any item", () => {
   placeOnBoard(db, "grid15", "entity", maya, null);
   assert.equal(at(db, v.slot_index)?.sense_id, v.sense_id, "the word is back home");
 
-  assert.equal(placeOnBoard(db, "grid15", "entity", maya, 13, { anchors: new Set([13]) }), null);
-  assert.equal(at(db, 13), undefined, "the reserved slot took nothing");
+  assert.equal(placeOnBoard(db, "grid15", "entity", maya, 12, { anchors: new Set([12]) }), null);
+  assert.equal(at(db, 12), undefined, "the reserved slot took nothing");
 });
 
 test("nothing places itself: a fresh board has no override rows", () => {
