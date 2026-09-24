@@ -4,13 +4,15 @@
  */
 import {
   ensureRecoveryRoot, exportDhPublic, exportPublicKey, getDeviceIdentity,
-  getUserKey, openKeyStore, putUserKey, unwrapUserKey, wrapUserKey,
+  getUserKey, openKeyStore, putUserKey, sealBlob, unwrapUserKey, wrapUserKey,
 } from "../shared/sync_crypto.mjs";
 import { recoveryProof } from "../shared/recovery.mjs";
 import { joinDeviceWithToken, pairClient, relayClient } from "../shared/sync_client.mjs";
 import {
-  accountState, claimToken, importAccountUsers, registerAccount,
-  requestLink, saveAccountState, shareUserToAccount, signInAccount,
+  accountPub, accountState, claimInvite, claimToken, createInvite,
+  declineInvite, grantInvite, importAccountUsers, inviteStatus, listInvites,
+  openInvite, registerAccount, requestLink, revokeInvite, saveAccountState,
+  shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
 import { addUser, listUsers, putUser, removeUser, setHome } from "../shared/users.mjs";
 
@@ -19,6 +21,9 @@ const $ = (id) => document.getElementById(id);
 export function mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
   initSync, onSyncApplied, onModel, qrcode,
+  // Re-seals the running sync client after a key rotation (015 s5) —
+  // injected so this module stays free of the sqlite-backed db graph.
+  syncRekey = async () => null,
 }) {
   /* ------------------------------------------------------------------ *
    * Linked devices + pairing (sync § 3). The new device shows an 8-char
@@ -28,6 +33,7 @@ export function mountDevices({
    * ------------------------------------------------------------------ */
 
   const relayBase = location.origin;
+  const te = new TextEncoder();
   const pairOverlay = $("pairform");
   const pairBody = $("pair-body");
   const pairTitle = $("pair-title");
@@ -98,8 +104,9 @@ export function mountDevices({
         row.className = "dev-row";
         const name = document.createElement("span");
         name.className = "dev-id";
-        name.textContent = d.device_id === identity.deviceId
-          ? `${d.device_id} (this device)` : d.device_id;
+        name.textContent = (d.device_id === identity.deviceId
+          ? `${d.device_id} (this device)` : d.device_id)
+          + (d.via_acct ? " — supporter device" : "");
         row.append(name);
         if (d.device_id !== identity.deviceId) {
           const rm = document.createElement("button");
@@ -153,6 +160,10 @@ export function mountDevices({
     for (const d of remaining) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
     await client.rotateKeys(epoch, wrapped);
     await saveUser({ sync: { ...me.sync, epoch } });
+    // The running sync client still seals under the old epoch until it
+    // sees an incoming e2 op — tell it now so the next edit is sealed
+    // under a key the removed device never received.
+    await syncRekey(epoch);
     await renderDevices();
   }
 
@@ -288,13 +299,7 @@ export function mountDevices({
           putUserKey, addUser,
           // Keys alone don't pull ops — this device also registers on
           // each unlocked user's relay with a bundle join token.
-          joinDevice: async (userId, token) => {
-            const identity = await getDeviceIdentity(openKeyStore());
-            return joinDeviceWithToken(relayBase, userId, {
-              token, device_id: identity.deviceId,
-              pubkey: await exportPublicKey(identity.verify),
-              dh_pub: await exportDhPublic(identity.dh.publicKey) });
-          } });
+          joinDevice: joinWithToken });
         const locked = imported.filter((u) => !u.unlocked).length;
         say(locked
           ? `${imported.length} user(s) added — ${locked} locked until an Allow or QR card brings their keys.`
@@ -304,6 +309,7 @@ export function mountDevices({
         const r = await registerAccount({
           acctId: claim.account_id, challenge: claim.challenge, email: claim.email });
         session = r.session;
+        priv = r.priv;
         if (!r.prfOk) {
           say("Signed in — this passkey has no PRF, so keys arrive by an Allow or QR card.");
         } else {
@@ -338,9 +344,21 @@ export function mountDevices({
       say("Done — your users are on this device.");
       await renderUsers();
       renderAccount();
+      return { session, priv, acct_id: claim.account_id, email: claim.email };
     } catch (e) {
       say(`Sign-in failed — ${e.message}. Ask for a fresh link and try again.`);
+      return null;
     }
+  }
+
+  /** This device joins a user's relay with a bundle join token — the
+   *  shared step in account sign-in and invite acceptance. */
+  async function joinWithToken(userId, token) {
+    const identity = await getDeviceIdentity(openKeyStore());
+    return joinDeviceWithToken(relayBase, userId, {
+      token, device_id: identity.deviceId,
+      pubkey: await exportPublicKey(identity.verify),
+      dh_pub: await exportDhPublic(identity.dh.publicKey) });
   }
 
   // An emailed sign-in link: strip the query so a reload never replays,
@@ -349,6 +367,222 @@ export function mountDevices({
   if (signinToken) {
     history.replaceState({}, "", location.pathname);
     accountLanding(signinToken).catch(() => {});
+  }
+
+  /* --- Supporters on this user (015 slice 5) ---
+   * The owner invites by email; the invitee's link lands on ?invite=,
+   * runs the normal sign-in, then waits. Nothing reaches the supporter
+   * until a device that already has the user taps Allow — that tap
+   * registers the account on the user's relay and grants wrapped keys.
+   * Remove cascades on the relay, revokes the account-side grant, and
+   * rotates the user key so post-removal ops stay sealed from them. */
+
+  /** Everything a supporter account needs: every epoch key this device
+   *  holds wrapped to their account public key, the sealed profile, and
+   *  join tokens tagged so removing them cascades to future devices. */
+  async function buildUserGrant(ks, u, toPub, forAcct) {
+    const keys = [];
+    for (let e = 1; e <= (u.sync?.epoch ?? 1); e++) {
+      const key = await ks.get(`user/${u.id}/key_e${e}`);
+      if (key) keys.push({ epoch: e, grant: await wrapUserKey(key, toPub) });
+    }
+    let joinTokens = [];
+    try {
+      const { client } = await userClient();
+      joinTokens = (await client.mintJoinTokens(4, forAcct)).tokens ?? [];
+    } catch { /* not on this relay yet — no tokens to mint */ }
+    const epoch = u.sync?.epoch ?? 1;
+    const sealed_profile = keys.length
+      ? await sealBlob(await getUserKey(ks, u.id, epoch),
+          te.encode(JSON.stringify({ name: u.name ?? "", photo: u.photo ?? null })),
+          epoch)
+      : null;
+    return { keys, sealed_profile, join_tokens: joinTokens };
+  }
+
+  async function renderSupporters() {
+    const cfg = me.sync;
+    $("sup-row").hidden = !cfg?.userId;
+    if (!cfg?.userId) return;
+    const list = $("sup-list");
+    const st = accountState();
+    $("sup-form").hidden = !st;
+    let supporters = [], invites = [];
+    try {
+      const { client } = await userClient();
+      ({ supporters } = await client.listSupporters());
+    } catch { /* relay unreachable — invites may still render */ }
+    if (st) {
+      try {
+        ({ invites } = await listInvites(st.acct_id, st.session));
+      } catch { /* session expired */ }
+    }
+    invites = (invites ?? []).filter((i) => i.user_id === me.id
+      && ["pending_claim", "pending_allow", "granted"].includes(i.status));
+    list.innerHTML = "";
+    const mkRow = (label, btnText, onClick) => {
+      const row = document.createElement("div");
+      row.className = "dev-row";
+      const name = document.createElement("span");
+      name.className = "dev-id";
+      name.textContent = label;
+      row.append(name);
+      const b = document.createElement("button");
+      b.className = "btn secondary";
+      b.textContent = btnText;
+      b.onclick = onClick;
+      row.append(b);
+      list.append(row);
+    };
+    for (const inv of invites) {
+      if (inv.status === "granted") {
+        mkRow(`${inv.email} — can edit`, "Remove", () =>
+          removeSupporterFlow({ acct_id: inv.to_acct, email: inv.email, token: inv.token }));
+      } else if (inv.status === "pending_allow") {
+        mkRow(`${inv.email} — waiting for your Allow`, "Allow", () => allowInvite(inv));
+      } else {
+        mkRow(`${inv.email} — invited`, "Cancel", async () => {
+          await declineInvite(inv.token, st.session).catch(() => {});
+          await renderSupporters();
+        });
+      }
+    }
+    // Relay supporters without a visible invite (e.g. shared from
+    // another signed-in device) still list and still remove.
+    for (const s of supporters) {
+      if (invites.some((i) => i.status === "granted" && i.to_acct === s.acct_id)) continue;
+      mkRow(`${s.email ?? s.acct_id} — can edit`, "Remove", () =>
+        removeSupporterFlow({ acct_id: s.acct_id, email: s.email }));
+    }
+    if (!list.children.length) {
+      list.innerHTML = '<p class="hint">No supporters yet.</p>';
+    }
+  }
+
+  /** Allow = register the supporter account on the relay, then hand it
+   *  the wrapped keys + join tokens through the invite grant. */
+  async function allowInvite(inv) {
+    const st = accountState();
+    if (!st) return;
+    try {
+      const { client } = await userClient();
+      await client.addSupporter(inv.to_acct, inv.email);
+      // to_acct_pub binds at claim; a late-registering invitee may have
+      // claimed before its account pub existed — fetch it live.
+      const toPub = inv.to_acct_pub ?? await accountPub(inv.to_acct);
+      const grant = await buildUserGrant(openKeyStore(), me, toPub, inv.to_acct);
+      await grantInvite(inv.token, st.session, grant);
+      toast(`Allowed — ${inv.email} gets ${me.name || "this user"}.`);
+      await renderSupporters();
+    } catch (e) {
+      toast(`Allow failed: ${e.message}`);
+    }
+  }
+
+  /** Remove: relay cascade first (their devices + tokens die), then the
+   *  account-side grant revoke, then rotate the user key so every op
+   *  written after is sealed under an epoch they never received.
+   *  Remaining devices and supporters get the new epoch re-wrapped. */
+  async function removeSupporterFlow(sup) {
+    const label = sup.email ?? "this supporter";
+    if (!confirm(`Remove ${label}? They keep what they already saw — nothing new reaches them.`)) return;
+    const st = accountState();
+    try {
+      const { client, store } = await userClient();
+      await client.removeSupporter(sup.acct_id);
+      if (sup.token && st) await revokeInvite(sup.token, st.session);
+      const { devices } = await client.listDevices();
+      const { supporters } = await client.listSupporters();
+      const epoch = (me.sync?.epoch ?? 1) + 1;
+      const key = await getUserKey(store, me.id, epoch);
+      const wrapped = {};
+      for (const d of devices) {
+        if (d.dh_pub) wrapped[d.device_id] = await wrapUserKey(key, d.dh_pub);
+      }
+      await client.rotateKeys(epoch, wrapped);
+      await saveUser({ sync: { ...me.sync, epoch } });
+      await syncRekey(epoch); // running client seals under the new epoch now
+      // Regrant remaining supporters so their next sign-in unwraps the
+      // new epoch — their bundle rows replace wholesale.
+      if (st) {
+        const { invites } = await listInvites(st.acct_id, st.session)
+          .catch(() => ({ invites: [] }));
+        for (const s of supporters) {
+          const inv = (invites ?? []).find((i) => i.to_acct === s.acct_id
+            && i.status === "granted" && i.to_acct_pub);
+          if (!inv) continue;
+          const grant = await buildUserGrant(store, me, inv.to_acct_pub, s.acct_id);
+          await grantInvite(inv.token, st.session, grant);
+        }
+      }
+      toast(`Removed ${label} — this user re-keyed.`);
+      await renderSupporters();
+      await renderDevices();
+    } catch (e) {
+      toast(`Remove failed: ${e.message}`);
+    }
+  }
+
+  $("sup-invite").onclick = async () => {
+    const st = accountState();
+    const email = $("sup-email").value.trim();
+    if (!st) return toast("Sign in first — supporter invites go through your account.");
+    if (!email.includes("@")) return toast("Enter the supporter's email first.");
+    try {
+      await ensureUser();
+      await createInvite(st.acct_id, st.session, email, me.id);
+      $("sup-email").value = "";
+      toast(`Invite sent to ${email} — nothing syncs until you Allow it.`);
+      await renderSupporters();
+    } catch (e) {
+      toast(`Invite failed: ${e.message}`);
+    }
+  };
+
+  /** The invitee's side: the emailed link opens here, runs the normal
+   *  account sign-in, claims the invite, then waits for the family's
+   *  Allow — the grant arrives as a wrapped-keys bundle and imports
+   *  exactly like an account user. */
+  async function inviteLanding(token) {
+    openPair("Supporter invite");
+    const body = $("pair-body");
+    const say = (t) => { body.innerHTML = `<p class="hint">${t}</p>`; };
+    try {
+      say("Opening the invite…");
+      const { link_token } = await openInvite(token);
+      const r = await accountLanding(link_token);
+      if (!r) return;
+      say("Signed in — waiting for the family to Allow this share…");
+      await claimInvite(token, r.session);
+      pairPoll = setInterval(async () => {
+        try {
+          const st = await inviteStatus(token, r.session);
+          if (st.status === "granted" && st.grant) {
+            clearInterval(pairPoll);
+            pairPoll = null;
+            say("Allowed — bringing the user over…");
+            await importAccountUsers({
+              bundle: { users: [st.grant] }, priv: r.priv,
+              keyStore: openKeyStore(), userStore, putUserKey, addUser,
+              joinDevice: joinWithToken });
+            say("Done — the user is on this device.");
+            await renderUsers();
+          } else if (st.status === "declined" || st.status === "revoked") {
+            clearInterval(pairPoll);
+            pairPoll = null;
+            say("The family did not approve this share.");
+          }
+        } catch { /* relay hiccup — poll again */ }
+      }, 2500);
+    } catch (e) {
+      say(`Invite failed — ${e.message}.`);
+    }
+  }
+
+  const inviteToken = new URLSearchParams(location.search).get("invite");
+  if (inviteToken) {
+    history.replaceState({}, "", location.pathname);
+    inviteLanding(inviteToken).catch(() => {});
   }
 
   /** This device is the NEW device: post keys, show code + QR, poll. */
@@ -491,6 +725,7 @@ export function mountDevices({
   $("corner").addEventListener("click", renderDevices);
   $("corner").addEventListener("click", renderUsers);
   $("corner").addEventListener("click", renderAccount);
+  $("corner").addEventListener("click", renderSupporters);
 
   /* Pip Lifetime (dev path, 011/9): a minted license activates on the
    * relay — the client only transports it. Payments wire into the same

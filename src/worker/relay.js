@@ -79,7 +79,13 @@ export class UserRelay {
         );
         CREATE TABLE IF NOT EXISTS join_token (
           token_hash TEXT PRIMARY KEY,
-          expires INTEGER NOT NULL
+          expires INTEGER NOT NULL,
+          for_acct TEXT
+        );
+        CREATE TABLE IF NOT EXISTS supporter (
+          acct_id TEXT PRIMARY KEY,
+          email TEXT,
+          added_at INTEGER NOT NULL
         );
       `);
       // Persisted dev DOs from before slice 5 lack the new columns.
@@ -87,6 +93,8 @@ export class UserRelay {
         "ALTER TABLE device ADD COLUMN dh_pub TEXT",
         "ALTER TABLE device ADD COLUMN wrapped_key TEXT",
         "ALTER TABLE device ADD COLUMN epoch INTEGER NOT NULL DEFAULT 1",
+        "ALTER TABLE device ADD COLUMN via_acct TEXT",
+        "ALTER TABLE join_token ADD COLUMN for_acct TEXT",
         "ALTER TABLE op ADD COLUMN epoch INTEGER NOT NULL DEFAULT 1",
       ]) {
         try { ctx.storage.sql.exec(alter); } catch { /* column already there */ }
@@ -245,7 +253,7 @@ export class UserRelay {
         const hash = b64u(await crypto.subtle.digest(
           "SHA-256", te.encode(peek.join_token)));
         const row = this.ctx.storage.sql.exec(
-          "SELECT token_hash, expires FROM join_token WHERE token_hash = ?",
+          "SELECT token_hash, expires, for_acct FROM join_token WHERE token_hash = ?",
           hash).toArray()[0];
         if (!row || row.expires < Date.now()) return bad("forbidden", 403);
         this.ctx.storage.sql.exec(
@@ -260,9 +268,10 @@ export class UserRelay {
           }
         }
         this.ctx.storage.sql.exec(
-          `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
-           VALUES (?, ?, ?, NULL, ?, ?)`,
-          device_id, pubkey, dh_pub ?? null, this.epoch(), Date.now());
+          `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at, via_acct)
+           VALUES (?, ?, ?, NULL, ?, ?, ?)`,
+          device_id, pubkey, dh_pub ?? null, this.epoch(), Date.now(),
+          row.for_acct ?? null);
         return json({ ok: true });
       }
     }
@@ -304,21 +313,53 @@ export class UserRelay {
     // bundle (§ 12.3): a supporter's fresh device redeems one above to
     // register itself. The relay stores only the SHA-256.
     if (method === "POST" && route === "join_tokens") {
-      let n = 1;
+      let n = 1, forAcct = null;
       try {
-        n = Math.min(Math.max(
-          Number(JSON.parse(td.decode(bodyBytes)).n ?? 1), 1), 8);
-      } catch { /* malformed body mints one */ }
+        const b = JSON.parse(td.decode(bodyBytes));
+        n = Math.min(Math.max(Number(b.n ?? 1), 1), 8);
+        forAcct = b.for_acct ? String(b.for_acct) : null;
+      } catch { /* malformed body mints one untagged */ }
       const expires = Date.now() + 30 * 86400000;
       const tokens = [];
       for (let i = 0; i < n; i++) {
         const t = b64u(crypto.getRandomValues(new Uint8Array(24)));
         const h = b64u(await crypto.subtle.digest("SHA-256", te.encode(t)));
         this.ctx.storage.sql.exec(
-          "INSERT INTO join_token (token_hash, expires) VALUES (?, ?)", h, expires);
+          "INSERT INTO join_token (token_hash, expires, for_acct) VALUES (?, ?, ?)",
+          h, expires, forAcct);
         tokens.push(t);
       }
       return json({ tokens });
+    }
+
+    // Supporters on this user (015 slice 5): the accounts that may see
+    // it. Removal cascades — every device that joined through that
+    // account and every unredeemed token minted for it die together.
+    if (method === "GET" && route === "supporters") {
+      const rows = this.ctx.storage.sql.exec(
+        "SELECT acct_id, email, added_at FROM supporter ORDER BY added_at")
+        .toArray();
+      return json({ supporters: rows });
+    }
+    if (method === "POST" && route === "supporters") {
+      let parsed = null;
+      try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
+      const { acct_id, email } = parsed ?? {};
+      if (!acct_id) return bad("bad_supporter");
+      this.ctx.storage.sql.exec(
+        "INSERT OR IGNORE INTO supporter (acct_id, email, added_at) VALUES (?, ?, ?)",
+        String(acct_id), email ? String(email) : null, Date.now());
+      return json({ ok: true });
+    }
+    if (method === "DELETE" && route.startsWith("supporters/")) {
+      const target = route.slice("supporters/".length);
+      this.ctx.storage.sql.exec(
+        "DELETE FROM supporter WHERE acct_id = ?", target);
+      this.ctx.storage.sql.exec(
+        "DELETE FROM device WHERE via_acct = ?", target);
+      this.ctx.storage.sql.exec(
+        "DELETE FROM join_token WHERE for_acct = ?", target);
+      return json({ ok: true });
     }
 
     // The calling device's own row — this is how a device picks up the
@@ -379,7 +420,7 @@ export class UserRelay {
 
     if (method === "GET" && route === "devices") {
       const rows = this.ctx.storage.sql.exec(
-        "SELECT device_id, dh_pub, epoch, added_at FROM device ORDER BY added_at").toArray();
+        "SELECT device_id, dh_pub, epoch, added_at, via_acct FROM device ORDER BY added_at").toArray();
       return json({ devices: rows, current_epoch: this.epoch() });
     }
 

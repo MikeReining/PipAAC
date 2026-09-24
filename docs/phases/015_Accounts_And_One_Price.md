@@ -422,6 +422,70 @@ Works Test: parent account P invites SLP account S. S sees Maya and
 edits; P's device receives the edit. P removes S: S's next read and write
 get 403 and ops after removal are sealed under a key S never received.
 
+**DONE 2026-09-23.** Built:
+
+- `src/worker/relay.js` — a `supporter` table per user plus
+  `via_acct`/`for_acct` tagging: join tokens mint with a supporter
+  account tag and devices that redeem them are tagged back. Signed
+  routes `GET/POST /users/:id/supporters` and `DELETE
+  /users/:id/supporters/:acct` — removal cascades: the supporter row,
+  every device that joined through that account, and every unredeemed
+  token minted for it die together. `GET /devices` returns `via_acct`.
+- `src/worker/accounts.js` + `src/worker/index.js` — the invite
+  lifecycle on the `dir` object: `pending_claim → pending_allow
+  (invitee signed in) → granted | declined | revoked`. Create
+  (`POST /accounts/:id/invites`, session-gated, emails `?invite=`),
+  bearer open (mints a normal sign-in link token for the invited
+  email), claim (binds the invitee's account + public key), status
+  (grant payload only to the invitee, only when granted), grant
+  (also regrant — upserts the wrapped-keys row into the invitee's
+  account user table), decline, revoke (drops the user row from the
+  invitee's account). Invitee can't grant; strangers get 403.
+- `public/shared/account.mjs` — invite calls +
+  `registerAccount` now returns the minted private key so a first
+  sign-in on a fresh account can unwrap grants.
+- `public/shared/sync.mjs` — two fixes the probe caught: a synced
+  user with no stored key and no recovery root no longer starts sync
+  (it would mint a fresh key and seal ops nobody could read); and
+  `rekey`/`syncRekey` re-seal the running client under a rotated
+  epoch — before this, post-removal ops kept sealing under the old
+  key until an incoming higher-epoch op arrived (same hole existed on
+  device removal; both flows now call it).
+- `public/board/devices-ui.js` + `public/index.html` — the
+  "Supporters of this user" row: invite by email, pending requests
+  with **Allow** (registers the account on the user's relay, wraps
+  every held epoch key to its public key, mints tagged join tokens,
+  grants), granted rows with **Remove** (relay cascade → invite
+  revoke → epoch rotation re-wrapped to remaining devices, then
+  regrant to remaining supporter accounts), invited rows with Cancel.
+  `?invite=` landing runs open → sign-in → claim → polls for Allow →
+  imports the grant like an account user. Tagged devices show
+  "supporter device" in the device list.
+
+Proof: `src/worker/accounts.heavy.test.mjs` invite leg (create → open
+→ claim → pending_allow with pub bound → invitee can't grant → grant
+lands in the bundle → unwraps to the real key → revoke empties the
+account → declined invites can't open); `src/worker/relay.heavy.test.mjs`
+supporter leg (tagged join, S edits reach A, remove → read **and**
+write 403 + dead leftover token, epoch-2 ops don't open under the old
+key, untagged devices survive).
+
+**Works Test green** (`scripts/probes/supporters_probe.mjs`, two Chrome
+profiles + virtual authenticators): P signs in, invites the SLP by
+email; S's link runs the real passkey sign-in, claims, and waits at
+"waiting for the family to Allow"; P's corner shows the request, Allow
+grants; S imports Maya unlocked (`sRegistered: ok` — a real relay read
+before removal, so the later 403s mean something), adds Zebra, and P's
+database receives it. P removes S: read and write from S's real device
+both get 403, the supporters list empties, the user re-keys to epoch 2,
+and the post-removal op opens under e2 but stays sealed under the e1
+key S still holds. Payload scan on both browsers: no names or op
+content in the clear.
+
+The QR-card leg of "invite by QR card or email" is the existing card
+restore (slice 3) — it lands a device directly; the email invite is the
+account-level share this slice adds.
+
 ## Slice 6 — Pip Lifetime and the free limits
 
 **Partially BUILT 2026-09-23** (relay legs, dev-license path; the cap

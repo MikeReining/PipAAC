@@ -53,8 +53,20 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
     selfKey: () => call("GET", "/devices/self"),
     /** Remove a device (signed). Rotate keys after — it keeps old ops. */
     removeDevice: (device_id) => call("DELETE", `/devices/${device_id}`),
-    /** Mint n single-use join tokens for the account bundle (§ 12.3). */
-    mintJoinTokens: (n = 4) => call("POST", "/join_tokens", { n }),
+    /** Mint n single-use join tokens for the account bundle (§ 12.3).
+     *  for_acct tags them to a supporter account so removing that
+     *  supporter cascades to its unused tokens too (015 slice 5). */
+    mintJoinTokens: (n = 4, for_acct = null) =>
+      call("POST", "/join_tokens", { n, for_acct }),
+    /** Supporters on this user (015 slice 5): accounts the owner Allowed. */
+    listSupporters: () => call("GET", "/supporters"),
+    /** Register a supporter account — done when the owner taps Allow. */
+    addSupporter: (for_acct, email = "") =>
+      call("POST", "/supporters", { acct_id: for_acct, email }),
+    /** Remove a supporter: cascades to its devices and join tokens;
+     *  rotate keys after — it keeps what it already saw. */
+    removeSupporter: (for_acct) =>
+      call("DELETE", `/supporters/${encodeURIComponent(for_acct)}`),
     /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
     /** Activate Pip Lifetime with a user-bound license key (dev path). */

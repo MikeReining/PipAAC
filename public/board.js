@@ -37,7 +37,7 @@ import {
 } from "./shared/groups.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
 import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
-import { initSync, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
+import { initSync, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import {
   addUser, listUsers, migrateLegacy, openUserStore, putUser,
   resolveActiveUser, touchOpened,
@@ -1521,7 +1521,7 @@ wordCard = mountWordCard({
 /* Devices, users, and supporter sign-in — public/board/devices-ui.js */
 const devicesUi = mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
-  initSync, onSyncApplied, onModel, qrcode,
+  initSync, onSyncApplied, onModel, qrcode, syncRekey,
 });
 
 /* QR card — public/board/recovery-ui.js */

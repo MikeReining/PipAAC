@@ -13,8 +13,8 @@
  * QR card.
  */
 import {
-  genAccountKeys, openAccountPriv, sealAccountPriv, sealBlob, openBlob,
-  wrapUserKey, unwrapUserKey,
+  genAccountKeys, importAccountPriv, openAccountPriv, sealAccountPriv,
+  sealBlob, openBlob, wrapUserKey, unwrapUserKey,
 } from "./sync_crypto.mjs";
 
 const te = new TextEncoder();
@@ -104,7 +104,10 @@ export async function registerAccount({ acctId, challenge, email }) {
   const r = await post(`/accounts/${acctId}/register`, {
     challenge, credential_id: cred.id, jwk: cred.jwk, acct_pub: acct.pub,
     sealed_priv: sealed, prf_salt: prfSalt, email });
-  return { session: r.session, acctPub: acct.pub, prfOk: !!cred.prf };
+  // The private key was minted here — hand it back so a first sign-in
+  // can unwrap grants too (invites land on fresh accounts, 015 s5).
+  return { session: r.session, acctPub: acct.pub, prfOk: !!cred.prf,
+    priv: await importAccountPriv(acct.priv) };
 }
 
 /** Returning sign-in: pre-flight credentials + PRF salt, one get()
@@ -208,3 +211,25 @@ export async function importAccountUsers({
   }
   return out;
 }
+
+/* --- supporter invites (015 slice 5) ---
+ * P's device creates an invite for S's email; S's emailed link lands on
+ * ?invite=, opens a normal sign-in, then claims. The invite sits at
+ * pending_allow until P's device wraps Maya's keys to S's account pub
+ * and grants. Remove = revoke + the relay cascade + a key rotation. */
+export const createInvite = (acctId, session, email, userId) =>
+  post(`/accounts/${acctId}/invites`, { session, email, user_id: userId });
+export const listInvites = (acctId, session) =>
+  get(`/accounts/${acctId}/invites?session=${encodeURIComponent(session)}`);
+export const openInvite = (token) =>
+  post(`/accounts/invites/${token}`, { action: "open" });
+export const claimInvite = (token, session) =>
+  post(`/accounts/invites/${token}`, { action: "claim", session });
+export const inviteStatus = (token, session) =>
+  get(`/accounts/invites/${token}?session=${encodeURIComponent(session)}`);
+export const grantInvite = (token, session, grant) =>
+  post(`/accounts/invites/${token}`, { action: "grant", session, ...grant });
+export const declineInvite = (token, session) =>
+  post(`/accounts/invites/${token}`, { action: "decline", session });
+export const revokeInvite = (token, session) =>
+  post(`/accounts/invites/${token}`, { action: "revoke", session });

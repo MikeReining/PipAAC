@@ -245,3 +245,137 @@ test("sign in by email + passkey; keys stay sealed end to end", async () => {
   const replay = await post("/accounts/claim", { token });
   assert.equal(replay.status, 403);
 });
+
+test("supporter invites: claim → Allow → grant → revoke", async () => {
+  // 015 slice 5 — P owns Maya and invites SLP S by email. The invite
+  // sits pending until P's device Allows; the grant lands wrapped in
+  // S's account; revoke pulls it back out.
+  const registerViaLink = async (email) => {
+    const link = await post("/accounts/link", { email });
+    const token = new URL(link.body.dev_link).searchParams.get("signin");
+    const claim = await post("/accounts/claim", { token });
+    const cred = await crypto.subtle.generateKey(
+      { name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+    const acct = await genAccountKeys();
+    const reg = await post(`/accounts/${claim.body.account_id}/register`, {
+      challenge: claim.body.challenge,
+      credential_id: `cred-${claim.body.account_id}`,
+      jwk: await crypto.subtle.exportKey("jwk", cred.publicKey),
+      acct_pub: acct.pub,
+      sealed_priv: await sealAccountPriv(acct.priv,
+        crypto.getRandomValues(new Uint8Array(32))),
+      prf_salt: b64u(crypto.getRandomValues(new Uint8Array(32))),
+      email,
+    });
+    assert.equal(reg.status, 200);
+    return { acctId: claim.body.account_id, session: reg.body.session,
+      acct, cred };
+  };
+  const p = await registerViaLink("p@example.com");
+  const s = await registerViaLink("s@example.com");
+
+  // P invites S for user u-maya — dev mode returns the emailed link.
+  const inv = await post(`/accounts/${p.acctId}/invites`, {
+    session: p.session, email: "s@example.com", user_id: "u-maya" });
+  assert.equal(inv.status, 200);
+  const invToken = new URL(inv.body.dev_link).searchParams.get("invite");
+  assert.ok(invToken);
+
+  // The emailed link opens: the invited email gets a sign-in link token.
+  const opened = await post(`/accounts/invites/${invToken}`, { action: "open" });
+  assert.equal(opened.status, 200);
+  assert.equal(opened.body.email, "s@example.com");
+  const claimS = await post("/accounts/claim", { token: opened.body.link_token });
+  assert.equal(claimS.body.account_id, s.acctId, "invite opened a different account");
+
+  // S signs in (assertion) then claims the invite → pending_allow; the
+  // directory binds S's account public key for P's Allow wrap.
+  const ch = await post(`/accounts/${s.acctId}/challenge`, {});
+  const sign = await post(`/accounts/${s.acctId}/assert`, {
+    challenge: ch.body.challenge, credential_id: `cred-${s.acctId}`,
+    ...(await makeAssertion(s.cred, ch.body.challenge)) });
+  assert.equal(sign.status, 200);
+  const claimed = await post(`/accounts/invites/${invToken}`, {
+    action: "claim", session: sign.body.session });
+  assert.equal(claimed.status, 200);
+  assert.equal(claimed.body.status, "pending_allow");
+
+  // S's status poll shows pending — no grant yet.
+  const statusUrl = (t, sess) =>
+    `${BASE}/accounts/invites/${t}?session=${encodeURIComponent(sess)}`;
+  const pending = await fetch(statusUrl(invToken, sign.body.session)).then((r) => r.json());
+  assert.equal(pending.status, "pending_allow");
+  assert.equal(pending.grant, undefined);
+
+  // P sees the request on its invites list with S's account pub bound.
+  const list = await fetch(
+    `${BASE}/accounts/${p.acctId}/invites?session=${encodeURIComponent(p.session)}`)
+    .then((r) => r.json());
+  const row = list.invites.find((i) => i.token === invToken);
+  assert.equal(row.status, "pending_allow");
+  assert.equal(row.to_acct_pub, s.acct.pub);
+
+  // S cannot grant its own invite; a stranger cannot read the status.
+  const sGrant = await post(`/accounts/invites/${invToken}`, {
+    action: "grant", session: sign.body.session, keys: [] });
+  assert.equal(sGrant.status, 403);
+  const stranger = await fetch(statusUrl(invToken, "bogus")).then((r) => r.status);
+  assert.equal(stranger, 403);
+
+  // P Allows: wrap Maya's epoch-2 key to S's account pub + mint join
+  // tokens — the grant payload mirrors an account user row.
+  const keyStore = memoryKeyStore();
+  const mayaKey = await getUserKey(keyStore, "u-maya", 2);
+  const grant = {
+    keys: [{ epoch: 2, grant: await wrapUserKey(mayaKey, s.acct.pub) }],
+    sealed_profile: { sha: "x", env: { iv: "x", data: "y" } },
+    join_tokens: ["jt-1", "jt-2"],
+  };
+  const granted = await post(`/accounts/invites/${invToken}`, {
+    action: "grant", session: p.session, ...grant });
+  assert.equal(granted.status, 200);
+
+  // The grant landed in S's account bundle — a fresh sign-in gets it.
+  const ch2 = await post(`/accounts/${s.acctId}/challenge`, {});
+  const sign2 = await post(`/accounts/${s.acctId}/assert`, {
+    challenge: ch2.body.challenge, credential_id: `cred-${s.acctId}`,
+    ...(await makeAssertion(s.cred, ch2.body.challenge)) });
+  assert.equal(sign2.body.users[0].user_id, "u-maya");
+  assert.equal(sign2.body.users[0].keys[0].epoch, 2);
+
+  // S's status poll now carries the grant; the wrapped key unwraps to
+  // the same CryptoKey bytes Maya's devices hold.
+  const done = await fetch(statusUrl(invToken, sign.body.session)).then((r) => r.json());
+  assert.equal(done.status, "granted");
+  assert.deepEqual(done.grant.join_tokens, ["jt-1", "jt-2"]);
+  const sPriv = await crypto.subtle.importKey("pkcs8", s.acct.priv,
+    { name: "ECDH", namedCurve: "P-256" }, true, ["deriveKey"]);
+  const sKey = await unwrapUserKey(sPriv, done.grant.keys[0].grant);
+  assert.deepEqual(
+    new Uint8Array(await crypto.subtle.exportKey("raw", sKey)),
+    new Uint8Array(await crypto.subtle.exportKey("raw", mayaKey)));
+
+  // P removes S: the invite revokes and the user row leaves S's
+  // account — the next sign-in sees nothing.
+  const revoked = await post(`/accounts/invites/${invToken}`, {
+    action: "revoke", session: p.session });
+  assert.equal(revoked.status, 200);
+  const ch3 = await post(`/accounts/${s.acctId}/challenge`, {});
+  const sign3 = await post(`/accounts/${s.acctId}/assert`, {
+    challenge: ch3.body.challenge, credential_id: `cred-${s.acctId}`,
+    ...(await makeAssertion(s.cred, ch3.body.challenge)) });
+  assert.deepEqual(sign3.body.users, []);
+  const after = await fetch(statusUrl(invToken, sign.body.session)).then((r) => r.json());
+  assert.equal(after.status, "revoked");
+  assert.equal(after.grant, undefined);
+
+  // Decline: a second invite P declines never grants.
+  const inv2 = await post(`/accounts/${p.acctId}/invites`, {
+    session: p.session, email: "s@example.com", user_id: "u-maya" });
+  const t2 = new URL(inv2.body.dev_link).searchParams.get("invite");
+  const dec = await post(`/accounts/invites/${t2}`, {
+    action: "decline", session: p.session });
+  assert.equal(dec.status, 200);
+  const badOpen = await post(`/accounts/invites/${t2}`, { action: "open" });
+  assert.equal(badOpen.status, 403, "declined invite still opens");
+});

@@ -503,7 +503,7 @@ never shares a sibling.
   `sealAccountPriv`/`openAccountPriv` (`public/shared/sync_crypto.mjs`);
   the relay never sees it. Client: `public/shared/account.mjs`; Parent
   Corner "Supporter account" row — hidden on a device whose active user
-  is a synced home user (`public/board.js` `renderAccount`). A device
+  is a synced home user (`public/board/devices-ui.js` `renderAccount`). A device
   that signs in joins each unlocked user's relay with a single-use
   **join token** a linked device minted (`POST /join_tokens` →
   `POST /users/:id/devices` with `join_token`; relay stores SHA-256
@@ -512,6 +512,24 @@ never shares a sibling.
   Switch. Live-proven: `scripts/probes/account_probe.mjs` (virtual
   authenticators, real wrangler dev — restore-with-keys, no-PRF lock,
   payload scan).
+- **BUILT** (015 slice 5, 2026-09-23): supporters **on a user**. The
+  owner invites by email (`POST /accounts/:id/invites`); the invitee's
+  link runs the normal sign-in then waits — nothing reaches them until
+  a device that has the user taps **Allow**, which registers their
+  account on the user's relay (`POST /users/:id/supporters`), wraps the
+  held epoch keys to its public key, and grants tagged join tokens.
+  The supporters list per user lives in Parent Corner
+  (`public/board/devices-ui.js` `renderSupporters`); the invite table
+  and lifecycle live on the `dir` object (`src/worker/accounts.js`).
+  **Remove** cascades on the relay — `via_acct`/`for_acct` tags delete
+  the supporter's devices and unused join tokens — revokes the
+  account-side grant, then rotates the user key re-wrapped to remaining
+  devices and regranted to remaining supporter accounts
+  (`syncRekey` re-seals the running client under the new epoch;
+  `public/shared/sync.mjs`). Live-proven:
+  `scripts/probes/supporters_probe.mjs` — S edits reach P; after
+  removal S's real-device read and write get 403 and epoch-2 ops stay
+  sealed under the key S never received.
 
 ### 12.4 Many users on one device and one account
 

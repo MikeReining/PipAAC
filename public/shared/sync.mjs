@@ -39,8 +39,27 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
   const identity = await getDeviceIdentity(store);
   setDeviceId(identity.deviceId);
   let epoch = cfg.epoch ?? 1;
+  // A synced user whose key never arrived (a locked import — 015 s5)
+  // must not mint a fresh key here: its ops would seal under a key no
+  // other device holds. Owners always have the stored key or the
+  // recovery root; neither present means locked — no sync.
+  const keyOrRoot = await store.get(`user/${user.id}/key_e${epoch}`)
+    ?? await store.get(`user/${user.id}/root`);
+  if (!keyOrRoot) return null;
   let userKey = await getUserKey(store, user.id, epoch);
-  const client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
+  let client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
+
+  /** Re-seal under a newer epoch after this device rotated the user
+   *  key (015 s5): without it the running client keeps sealing under
+   *  the old epoch and removed supporters keep reading new ops. */
+  const rekey = async (toEpoch) => {
+    if (!(toEpoch > epoch)) return epoch;
+    epoch = toEpoch;
+    cfg.epoch = epoch;
+    userKey = await getUserKey(store, user.id, epoch);
+    client = relayClient({ userId: cfg.userId, baseUrl, identity, userKey });
+    return epoch;
+  };
 
   /** Key for an op's epoch — a higher epoch means a rotation happened:
    *  pick up the wrapped key the granter left for us. */
@@ -144,7 +163,14 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
     live.send(JSON.stringify({ t: "model", e: epoch, env }));
     return true;
   };
-  return { client, identity, getEpoch: () => epoch, uploadBlob, sendModel };
+  return { get client() { return client; }, identity,
+    getEpoch: () => epoch, uploadBlob, sendModel, rekey };
+}
+
+/** Tell the running sync to re-seal under a rotated epoch (015 s5). */
+export async function syncRekey(epoch) {
+  const handle = running ? await running.catch(() => null) : null;
+  return handle?.rekey(epoch) ?? null;
 }
 
 /** A live-model tap for the running sync — false when unlinked/offline. */

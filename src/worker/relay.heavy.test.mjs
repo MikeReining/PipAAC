@@ -19,6 +19,7 @@ import { createDatabase, importCatalog } from "../board/catalog.mjs";
 import { createEntity, placeItem } from "../../public/shared/groups.mjs";
 import { listOps } from "../../public/shared/ops.mjs";
 import {
+  exportDhPublic,
   exportPublicKey,
   getUserKey,
   getDeviceIdentity,
@@ -27,6 +28,7 @@ import {
   putUserKey,
   sealBlob,
   openBlob,
+  wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
 import { licenseFor } from "./license.mjs";
 import { relayClient, joinDeviceWithToken } from "../../public/shared/sync_client.mjs";
@@ -204,4 +206,85 @@ test("join tokens: a linked device mints, a fresh device redeems once", async ()
     token: freeTokens[0], device_id: d.deviceId,
     pubkey: await exportPublicKey(d.verify) }),
     (e) => e.message.includes("403"));
+});
+
+test("supporters: tagged join, cascade removal, rotation locks them out", async () => {
+  // 015 slice 5 — A owns the user; acct_slp is a supporter account whose
+  // device joins on a for_acct join token. Removing the supporter
+  // cascades to its devices and unused tokens; the epoch-2 rotation
+  // seals new ops under a key S never received.
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const userKey1 = await getUserKey(aStore, userId, 1);
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: userId,
+      device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
+  });
+  const clientA = relayClient({ userId, baseUrl: BASE, identity: a, userKey: userKey1 });
+  await makeLifetime(clientA, userId);
+
+  // The family's second device — untagged, must survive the cascade.
+  const p2Store = memoryKeyStore();
+  const p2 = await getDeviceIdentity(p2Store);
+  await putUserKey(p2Store, userId, userKey1, 1);
+  await clientA.addDevice(p2.deviceId, await exportPublicKey(p2.verify),
+    { dh_pub: await exportDhPublic(p2.dh.publicKey) });
+
+  // S's device joins on a tagged join token → via_acct = acct_slp.
+  await clientA.addSupporter("acct_slp", "s@example.com");
+  const { tokens } = await clientA.mintJoinTokens(2, "acct_slp");
+  const sStore = memoryKeyStore();
+  const s = await getDeviceIdentity(sStore);
+  await putUserKey(sStore, userId, userKey1, 1);
+  await joinDeviceWithToken(BASE, userId, {
+    token: tokens[0], device_id: s.deviceId,
+    pubkey: await exportPublicKey(s.verify) });
+  const clientS = relayClient({ userId, baseUrl: BASE, identity: s, userKey: userKey1 });
+
+  // The supporters list and the tagged device row both show.
+  const { supporters } = await clientA.listSupporters();
+  assert.equal(supporters[0].acct_id, "acct_slp");
+  const { devices } = await clientA.listDevices();
+  assert.equal(devices.find((d) => d.device_id === s.deviceId).via_acct, "acct_slp");
+  assert.equal(devices.find((d) => d.device_id === p2.deviceId).via_acct, null);
+
+  // S edits; A receives the op — the two-way share works.
+  const sDb = createDatabase(":memory:");
+  importCatalog(sDb, catalog);
+  createEntity(sDb, { name: "FromSLP" });
+  await clientS.submit(listOps(sDb));
+  const aOps = await clientA.fetchOps(0);
+  assert.match((await clientA.openOp(aOps.ops.at(-1).env)).args, /FromSLP/);
+
+  // P removes S: the next read AND write from S's device get 403, and
+  // the leftover tagged token can never register a second S device.
+  await clientA.removeSupporter("acct_slp");
+  await assert.rejects(clientS.fetchOps(0), (e) => e.status === 403);
+  await assert.rejects(clientS.submit(listOps(sDb)), (e) => e.status === 403);
+  const s2 = await getDeviceIdentity(memoryKeyStore());
+  await assert.rejects(joinDeviceWithToken(BASE, userId, {
+    token: tokens[1], device_id: s2.deviceId,
+    pubkey: await exportPublicKey(s2.verify) }));
+  assert.equal((await clientA.listSupporters()).supporters.length, 0);
+
+  // Rotation: epoch 2 wraps to remaining devices only. Ops sealed under
+  // e2 do not open under the e1 key S still holds; P's devices are fine.
+  const userKey2 = await getUserKey(aStore, userId, 2);
+  await clientA.rotateKeys(2, {
+    [a.deviceId]: await wrapUserKey(userKey2, await exportDhPublic(a.dh.publicKey)),
+    [p2.deviceId]: await wrapUserKey(userKey2, await exportDhPublic(p2.dh.publicKey)),
+  });
+  const clientA2 = relayClient({ userId, baseUrl: BASE, identity: a, userKey: userKey2 });
+  const e2op = { op_id: `op_${crypto.randomUUID()}`, kind: "set_setting",
+    args: JSON.stringify({ key: "post_removal", value: 1 }) };
+  await clientA2.submit([e2op]);
+  const after = await clientA2.fetchOps(0);
+  const lastEnv = after.ops.at(-1).env;
+  await assert.rejects(openOp(userKey1, lastEnv),
+    undefined, "old-epoch key opened a post-removal op");
+  const clientP2 = relayClient({ userId, baseUrl: BASE, identity: p2, userKey: userKey2 });
+  assert.deepEqual(await clientP2.openOp(lastEnv), e2op);
+  await assert.rejects(clientS.fetchOps(0), (e) => e.status === 403);
 });

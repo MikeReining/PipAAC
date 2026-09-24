@@ -362,10 +362,14 @@ export async function sealAccountPriv(privPkcs8, prfBytes) {
 
 /** → account private CryptoKey (ECDH) — unwraps every user-key grant
  *  the relay hands this account. Throws if the PRF output is wrong. */
+export const importAccountPriv = (pkcs8) =>
+  subtle.importKey("pkcs8",
+    typeof pkcs8 === "string" ? unb64u(pkcs8) : pkcs8,
+    { name: "ECDH", namedCurve: "P-256" }, true, ["deriveKey"]);
+
 export async function openAccountPriv({ iv, sealed }, prfBytes) {
   const kek = await accountKek(prfBytes);
   const pkcs8 = await subtle.decrypt(
     { name: "AES-GCM", iv: unb64u(iv) }, kek, unb64u(sealed));
-  return subtle.importKey("pkcs8", pkcs8,
-    { name: "ECDH", namedCurve: "P-256" }, true, ["deriveKey"]);
+  return importAccountPriv(pkcs8);
 }

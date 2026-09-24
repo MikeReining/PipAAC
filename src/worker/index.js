@@ -163,6 +163,44 @@ export default {
         has_credentials: state.has_credentials, email });
     }
 
+    /* --- supporter invites (015 slice 5) ---
+     * P creates an invite for S's email → the emailed link opens into a
+     * normal sign-in → S claims → the invite waits for P's Allow → P's
+     * device grants wrapped keys → S reads them at status. */
+    const inviteMatch = env?.ACCOUNTS && path.match(/^\/accounts\/invites\/([A-Za-z0-9_-]+)$/);
+    if (inviteMatch && request.method === "POST") {
+      const token = inviteMatch[1];
+      const body = await request.json().catch(() => null);
+      const dirPost = (p, b) => acctDir().fetch(new Request(
+        `https://accounts/dir/invite${p}`, { method: "POST", body: JSON.stringify(b) }));
+      if (body?.action === "open") {
+        return dirPost("/open", { token });
+      }
+      if (body?.action === "claim") {
+        const r = await dirPost("/claim", { token, session: body?.session });
+        if (!r.ok) return r;
+        const { to_acct } = await r.json();
+        const state = await (await acctStub(to_acct).fetch(
+          new Request("https://accounts/acct/state"))).json();
+        if (state.acct_pub) {
+          await dirPost("/bind", { token, to_acct_pub: state.acct_pub });
+        }
+        return json({ ok: true, status: "pending_allow", to_acct });
+      }
+      if (body?.action === "grant" || body?.action === "decline"
+        || body?.action === "revoke") {
+        return dirPost(`/${body.action}`, { token, ...body });
+      }
+      return json({ error: "bad_action" }, { status: 400 });
+    }
+    if (inviteMatch && request.method === "GET") {
+      const token = inviteMatch[1];
+      const session = url.searchParams.get("session") ?? "";
+      return acctDir().fetch(new Request(
+        "https://accounts/dir/invite/status", { method: "POST",
+          body: JSON.stringify({ token, session }) }));
+    }
+
     const acctMatch = env?.ACCOUNTS && path.match(/^\/accounts\/(acct_[0-9a-f]+)\/([a-z]+)$/);
     if (acctMatch) {
       const [, acctId, op] = acctMatch;
@@ -246,6 +284,50 @@ export default {
         if (!chk.ok) return chk;
         return acctStub(acctId).fetch(new Request(
           "https://accounts/acct/users", { method: "POST", body: JSON.stringify(body) }));
+      }
+      if (op === "invites") {
+        if (request.method === "POST") {
+          const chk = await acctDir().fetch(new Request(
+            "https://accounts/dir/session/check", { method: "POST",
+              body: JSON.stringify({ session: body?.session, acct_id: acctId }) }));
+          if (!chk.ok) return chk;
+          const r = await acctDir().fetch(new Request(
+            `https://accounts/dir/invite?origin=${encodeURIComponent(url.origin)}`,
+            { method: "POST", body: JSON.stringify(body) }));
+          if (!r.ok) return r;
+          const { link } = await r.json();
+          let sent = false;
+          if (env?.EMAIL && body?.email) {
+            try {
+              const { EmailMessage } = await import("cloudflare:email");
+              const raw = [
+                `From: Pip <accounts@pipaac.app>`,
+                `To: ${body.email}`,
+                `Subject: You've been invited to support a Pip user`,
+                `Content-Type: text/plain; charset=utf-8`,
+                ``,
+                `Open this link to accept:`,
+                link,
+                ``,
+                `The family approves the share on their device before anything syncs.`,
+              ].join("\r\n");
+              await env.EMAIL.send(new EmailMessage("accounts@pipaac.app", body.email, raw));
+              sent = true;
+            } catch { sent = false; }
+          }
+          return json({ ok: true, sent,
+            ...(env.ENVIRONMENT === "development" ? { dev_link: link } : {}) });
+        }
+        if (request.method === "GET") {
+          const session = url.searchParams.get("session") ?? "";
+          const chk = await acctDir().fetch(new Request(
+            "https://accounts/dir/session/check", { method: "POST",
+              body: JSON.stringify({ session, acct_id: acctId }) }));
+          if (!chk.ok) return chk;
+          return acctDir().fetch(new Request(
+            "https://accounts/dir/invites", { method: "POST",
+              body: JSON.stringify({ session }) }));
+        }
       }
       return json({ error: "not_found" }, { status: 404 });
     }

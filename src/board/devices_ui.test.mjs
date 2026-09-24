@@ -26,6 +26,7 @@ test("the account row says when nobody is signed in", () => {
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
     "dev-link", "dev-add", "corner", "dev-activate", "dev-license",
     "dev-delete", "dev-undelete",
+    "sup-row", "sup-list", "sup-form", "sup-email", "sup-invite",
   ];
   const nodes = { "acct-state": state };
   for (const id of ids) nodes[id] = el();

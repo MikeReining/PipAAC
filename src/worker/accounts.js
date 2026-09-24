@@ -68,6 +68,19 @@ export class SupporterAccounts {
           link TEXT NOT NULL,
           sent_at INTEGER NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS invite (
+          token TEXT PRIMARY KEY,
+          from_acct TEXT NOT NULL,
+          user_id TEXT NOT NULL,
+          email TEXT NOT NULL,
+          to_acct TEXT,
+          to_acct_pub TEXT,
+          status TEXT NOT NULL DEFAULT 'pending_claim',
+          keys TEXT,
+          sealed_profile TEXT,
+          join_tokens TEXT,
+          created_at INTEGER NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS acct (
           id TEXT PRIMARY KEY,
           email TEXT NOT NULL,
@@ -163,6 +176,154 @@ export class SupporterAccounts {
       return json({ ok: true, auth: !!c.auth });
     }
 
+    /* --- supporter invites (015 slice 5) ---
+     * pending_claim → pending_allow (invitee signed in) → granted
+     * (inviter's device wrapped the keys) | declined. The grant is a
+     * mailbox: the inviter's session writes it, the invitee's reads it. */
+    const sessionAcct = async () => {
+      const s = one("SELECT acct_id, exp FROM session WHERE hash = ?",
+        await sha(String(body?.session ?? "")));
+      return s && s.exp >= now ? s.acct_id : null;
+    };
+
+    if (path === "/dir/invite" && request.method === "POST") {
+      const from = await sessionAcct();
+      const email = normEmail(body?.email);
+      const userId = String(body?.user_id ?? "");
+      if (!from || !email || !email.includes("@") || !userId) {
+        return bad("bad_invite", 403);
+      }
+      const token = rand();
+      sql.exec(
+        `INSERT INTO invite (token, from_acct, user_id, email, created_at)
+         VALUES (?, ?, ?, ?, ?)`, token, from, userId, email, now);
+      const link = `${url.searchParams.get("origin") ?? ""}/?invite=${encodeURIComponent(token)}`;
+      sql.exec("INSERT OR REPLACE INTO mailbox (email, link, sent_at) VALUES (?, ?, ?)",
+        email, link, now);
+      return json({ ok: true, token, link });
+    }
+
+    // Bearer open — the emailed link is the authority. Mints a sign-in
+    // link token for the invited email; the client then runs the usual
+    // claim → passkey ceremony.
+    if (path === "/dir/invite/open" && request.method === "POST") {
+      const inv = one("SELECT * FROM invite WHERE token = ?",
+        String(body?.token ?? ""));
+      if (!inv || inv.status === "declined") return bad("bad_invite", 403);
+      const row = one("SELECT acct_id FROM acct_map WHERE email = ?", inv.email);
+      const acctId = row?.acct_id ?? `acct_${crypto.randomUUID().replaceAll("-", "")}`;
+      if (!row) {
+        sql.exec("INSERT INTO acct_map (email, acct_id, created_at) VALUES (?, ?, ?)",
+          inv.email, acctId, now);
+      }
+      const lt = rand();
+      sql.exec("INSERT INTO token (hash, acct_id, exp) VALUES (?, ?, ?)",
+        await sha(lt), acctId, now + LINK_TTL_MS);
+      return json({ ok: true, email: inv.email, link_token: lt });
+    }
+
+    if (path === "/dir/invite/claim" && request.method === "POST") {
+      const acct = await sessionAcct();
+      const inv = one("SELECT * FROM invite WHERE token = ?",
+        String(body?.token ?? ""));
+      if (!acct || !inv) return bad("bad_invite", 403);
+      if (inv.status === "pending_claim") {
+        sql.exec("UPDATE invite SET to_acct = ?, status = 'pending_allow' WHERE token = ?",
+          acct, inv.token);
+      }
+      return json({ ok: true, to_acct: inv.to_acct ?? acct,
+        status: inv.status === "pending_claim" ? "pending_allow" : inv.status });
+    }
+
+    // index.js fills to_acct_pub from the invitee's account record —
+    // dir objects cannot read each other's account rows.
+    if (path === "/dir/invite/bind" && request.method === "POST") {
+      sql.exec("UPDATE invite SET to_acct_pub = ? WHERE token = ?",
+        String(body?.to_acct_pub ?? ""), String(body?.token ?? ""));
+      return json({ ok: true });
+    }
+
+    if (path === "/dir/invite/status" && request.method === "POST") {
+      const acct = await sessionAcct();
+      const inv = one("SELECT * FROM invite WHERE token = ?",
+        String(body?.token ?? ""));
+      if (!acct || !inv || (acct !== inv.from_acct && acct !== inv.to_acct)) {
+        return bad("bad_invite", 403);
+      }
+      const out = { ok: true, status: inv.status, user_id: inv.user_id,
+        email: inv.email, to_acct: inv.to_acct };
+      if (inv.status === "granted" && acct === inv.to_acct) {
+        out.grant = {
+          user_id: inv.user_id,
+          keys: inv.keys ? JSON.parse(inv.keys) : [],
+          sealed_profile: inv.sealed_profile ? JSON.parse(inv.sealed_profile) : null,
+          join_tokens: inv.join_tokens ? JSON.parse(inv.join_tokens) : [],
+        };
+      }
+      return json(out);
+    }
+
+    // pending_allow → granted; granted → granted is a regrant (the owner
+    // rotated the user key and is handing every remaining supporter the
+    // new epoch). Either way the wrapped set lands in the invitee's
+    // account user table so a fresh sign-in gets the current key.
+    if (path === "/dir/invite/grant" && request.method === "POST") {
+      const acct = await sessionAcct();
+      const inv = one("SELECT * FROM invite WHERE token = ?",
+        String(body?.token ?? ""));
+      if (!acct || !inv || inv.from_acct !== acct) return bad("bad_invite", 403);
+      if (inv.status !== "pending_allow" && inv.status !== "granted") {
+        return bad("not_ready", 409);
+      }
+      const keys = JSON.stringify(body?.keys ?? []);
+      const profile = body?.sealed_profile ? JSON.stringify(body.sealed_profile) : null;
+      const tokens = JSON.stringify(body?.join_tokens ?? []);
+      sql.exec(
+        `UPDATE invite SET status = 'granted', keys = ?, sealed_profile = ?, join_tokens = ?
+         WHERE token = ?`, keys, profile, tokens, inv.token);
+      if (inv.to_acct) {
+        await this.env.ACCOUNTS.get(this.env.ACCOUNTS.idFromName(`acct:${inv.to_acct}`))
+          .fetch(new Request("https://accounts/acct/users", {
+            method: "POST",
+            body: JSON.stringify({ user_id: inv.user_id,
+              keys: body?.keys ?? [], sealed_profile: body?.sealed_profile ?? null,
+              join_tokens: body?.join_tokens ?? [] }) }));
+      }
+      return json({ ok: true });
+    }
+
+    if (path === "/dir/invite/revoke" && request.method === "POST") {
+      const acct = await sessionAcct();
+      const inv = one("SELECT * FROM invite WHERE token = ?",
+        String(body?.token ?? ""));
+      if (!acct || !inv || inv.from_acct !== acct) return bad("bad_invite", 403);
+      sql.exec("UPDATE invite SET status = 'revoked' WHERE token = ?", inv.token);
+      if (inv.to_acct) {
+        await this.env.ACCOUNTS.get(this.env.ACCOUNTS.idFromName(`acct:${inv.to_acct}`))
+          .fetch(new Request("https://accounts/acct/users/delete", {
+            method: "POST", body: JSON.stringify({ user_id: inv.user_id }) }));
+      }
+      return json({ ok: true });
+    }
+
+    if (path === "/dir/invite/decline" && request.method === "POST") {
+      const acct = await sessionAcct();
+      const inv = one("SELECT * FROM invite WHERE token = ?",
+        String(body?.token ?? ""));
+      if (!acct || !inv || inv.from_acct !== acct) return bad("bad_invite", 403);
+      sql.exec("UPDATE invite SET status = 'declined' WHERE token = ?", inv.token);
+      return json({ ok: true });
+    }
+
+    if (path === "/dir/invites" && request.method === "POST") {
+      const acct = await sessionAcct();
+      if (!acct) return bad("bad_session", 403);
+      const rows = sql.exec(
+        `SELECT token, user_id, email, to_acct, to_acct_pub, status, created_at
+         FROM invite WHERE from_acct = ? ORDER BY created_at DESC`, acct).toArray();
+      return json({ ok: true, invites: rows });
+    }
+
     if (path === "/dir/session" && request.method === "POST") {
       const s = rand();
       sql.exec("INSERT INTO session (hash, acct_id, exp) VALUES (?, ?, ?)",
@@ -246,6 +407,11 @@ export class SupporterAccounts {
         body.sealed_profile ? JSON.stringify(body.sealed_profile) : null,
         Array.isArray(body.join_tokens) ? JSON.stringify(body.join_tokens) : null,
         now);
+      return json({ ok: true });
+    }
+
+    if (path === "/acct/users/delete" && request.method === "POST") {
+      sql.exec("DELETE FROM acct_user WHERE user_id = ?", String(body?.user_id ?? ""));
       return json({ ok: true });
     }
 
