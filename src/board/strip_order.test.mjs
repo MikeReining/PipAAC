@@ -15,7 +15,7 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import {
-  stripCandidates, openSentence, logSelection,
+  stripCandidates, stripScored, openSentence, logSelection,
 } from "../../public/shared/funnel.mjs";
 import { setSetting, setMask } from "../../public/shared/groups.mjs";
 import { loadWeights } from "../../public/shared/learn.mjs";
@@ -55,18 +55,19 @@ function say(db, words, at) {
     logSelection(db, "sense", senseId(db, w), at + i, { sentenceId: s, position: i }));
 }
 
-test("'i': core words rank in the bar, a no-word pins the last slot", () => {
+test("'i': core words rank in the bar, 'don't' pins the last slot", () => {
   const db = fresh();
   const s = shown(db, ["i"]);
-  // The book's top 'i' continuations are all grid words — they lead.
-  assert.equal(s[0], "want");
-  assert.ok(s.includes("get") || s.includes("can"),
-    `expected core words alongside 'want' — got ${s.join(", ")}`);
-  // A negation inside the top 8 ('can't' or 'don't') takes the last slot.
-  const last = s.at(-1);
-  const neg = catalog.senses.find(
-    (x) => x.negation && lemmaOf(db, x.id) === last);
-  assert.ok(neg, `last slot should be a negation word — got '${last}'`);
+  // 'am' is the #1 real-child continuation of 'i' (~14%) — a board word.
+  assert.equal(s[0], "am");
+  assert.ok(s.includes("want") && s.includes("have"),
+    `expected book continuations alongside 'am' — got ${s.join(", ")}`);
+  // 'don't' is the book's #4 word after 'i' (a negation inside the top
+  // 8) — it takes the last slot. It used to lose to 'can't' because the
+  // lexicon tagged it Interjection, not Verb, so the pronoun->verb
+  // grammar invitation never fired for it (founder review 2026-09-24).
+  assert.equal(s.at(-1), "don't",
+    `expected 'don't' pinned last — got ${s.join(", ")}`);
 });
 
 test("'i am': 'not' takes the last slot", () => {
@@ -85,19 +86,28 @@ test("'i want': no negation is likely — nothing is forced", () => {
 });
 
 test("Keep \"no\" off: plain probability order, nothing pinned", () => {
-  const negLemmas = (db) => new Set(
-    catalog.senses.filter((x) => x.negation).map((x) => lemmaOf(db, x.id)));
-  // 'i': a negation sits inside the top 8 but outside the top 4 — the
-  // slot rule pulls it in; with the rule off the bar is plain order.
-  const on = shown(fresh(), ["i"]);
-  assert.ok(negLemmas(fresh()).has(on.at(-1)),
-    `slot-on sanity check: '${on.at(-1)}' should be a no-word`);
+  // 'i am': 'not' ranks #2 by score but the slot rule pins it last; with
+  // the rule off the bar is plain score order — 'not' sits at its
+  // natural rank instead of being moved to slot 4.
+  const on = shown(fresh(), ["i", "am"]);
+  assert.equal(on.at(-1), "not",
+    `slot-on sanity check: 'not' should be pinned last — got ${on.join(", ")}`);
   const db = fresh();
   setSetting(db, "no_last_slot", 0);
-  const off = shown(db, ["i"]);
-  assert.ok(!off.some((w) => negLemmas(db).has(w)),
-    `a no-word appeared with the slot rule off: ${off.join(", ")}`);
+  const off = shown(db, ["i", "am"]);
+  assert.equal(off[1], "not",
+    `with the rule off 'not' should sit at its natural rank #2 — got ${off.join(", ")}`);
   assert.notDeepEqual(off, on, "the setting must change the painted order");
+  // Off means the painted order IS the raw score order: same ids the
+  // scorer returned, same sequence, just gated by τ.
+  const { candidates, pNone } = stripScored(
+    db, items(db, ["i", "am"]), NOW, "en", model(db));
+  const plain = candidates
+    .filter((c) => c.s > 0 && c.p >= defaults.tau.tile)
+    .slice(0, 4)
+    .map((c) => lemmaOf(db, c.id));
+  assert.deepEqual(off, plain,
+    "with the slot off the bar must be plain score order");
 });
 
 test("Show board words off: core words leave the bar", () => {

@@ -18102,7 +18102,7 @@
       "normalized_text": "don't",
       "normalizer_version": "v1",
       "kind": "lemma",
-      "part_of_speech": "Interjection",
+      "part_of_speech": "Verb",
       "default_for_text": 1,
       "status": "approved"
     },

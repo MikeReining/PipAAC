@@ -1003,18 +1003,18 @@ MLU < 2 = band-filtered CHILDES child speech; MLU 2–3.5 = full CHILDES +
 0.5 band tilt; MLU > 3.5 = full CHILDES. Caregiver speech, TinyDialogues,
 Imagine, and synth lose every cell — child speech is the ceiling, and
 band-splitting buys up to +2.8 where data is sparse. The shipped file is
-2.60 MB. Shipped file vs the CHILDES-child baseline (§ Real children):
+2.71 MB. Shipped file vs the CHILDES-child baseline (§ Real children):
 
 | Band | later / first / after-adult | Baseline | Δ |
 | --- | --- | --- | --- |
-| MLU < 2 | 44.1% / 19.6% / 20.9% | 41.3% / 18.2% / 19.2% | +2.8 / +1.4 / +1.7 |
-| MLU 2–3.5 | 49.0% / 26.6% / 27.2% | 48.8% / 26.6% / 27.2% | +0.2 / 0 / 0 |
-| MLU > 3.5 | 49.4% / 30.0% / 30.3% | 49.4% / 30.0% / 30.3% | 0 / 0 / 0 |
+| MLU < 2 | 52.6% / 19.6% / 20.7% | 50.8% / 19.4% / 19.7% | +1.8 / +0.2 / +1.0 |
+| MLU 2–3.5 | 57.8% / 25.2% / 25.6% | 57.6% / 25.2% / 25.6% | +0.2 / 0 / 0 |
+| MLU > 3.5 | 56.2% / 27.9% / 30.0% | 56.0% / 27.9% / 30.0% | +0.2 / 0 / 0 |
 
-TinyDialogues validation (never read): age-2 26.4% / 4.9%, age-5
-37.2% / 20.4% (later / first). Imagine dev: 35.8% / 23.5%. The file
-tracks its own unpruned in-memory book within 0.5pt everywhere except
-MLU < 2 (0.5pt pruning cost).
+TinyDialogues validation (never read): age-2 26.3% / 4.7%, age-5
+45.2% / 18.4% (later / first). Imagine dev: 45.7% / 21.1%. The file
+tracks its own unpruned in-memory book within 0.7pt everywhere
+(MLU < 2 pays the most for pruning).
 
 **Superseded 2026-09-24:** item 3's "start mixes synth-heavy" — under the
 corrected lemmatizer each band's own CHILDES start table already beats
@@ -1154,37 +1154,42 @@ Cells are later / first / right-after-adult-turn hit rate; random is
 
 | Book | MLU < 2 (~age 2) | MLU 2–3.5 (~age 3) | MLU > 3.5 (~age 4+) |
 | --- | --- | --- | --- |
-| Adult AAC (Imagine) | 17.6% / 4.9% / 5.0% | 26.7% / 14.0% / 15.0% | 28.3% / 19.5% / 16.6% |
-| TinyDialogues caregiver + child (**legal**) | 20.3% / 4.8% / 5.8% | 29.9% / 21.7% / 21.9% | **32.1%** / 27.7% / 28.1% |
-| + partner words | **30.5%** / 18.3% / 25.0% | **34.3%** / 24.5% / 26.6% | 32.1% / 26.3% / 26.6% |
-| CHILDES caregiver speech (not licensed) | 36.1% / 12.8% / 13.1% | 46.8% / 22.0% / 23.1% | 45.8% / 26.3% / 25.4% |
-| CHILDES child speech (not licensed) | 41.3% / 18.2% / 19.2% | 48.8% / 26.6% / 27.2% | 49.4% / 30.0% / 30.3% |
+| Adult AAC (Imagine) | 31.8% / 4.1% / 4.3% | 41.2% / 9.8% / 10.5% | 38.0% / 18.8% / 18.4% |
+| TinyDialogues caregiver + child (**legal**) | 33.5% / 4.6% / 5.8% | 41.4% / 11.1% / 10.9% | 40.1% / 16.8% / 17.7% |
+| + partner words | **41.4%** / 17.7% / 22.7% | **42.7%** / 19.8% / 23.3% | 39.3% / 20.0% / 23.2% |
+| CHILDES caregiver speech (not licensed) | 45.0% / 11.9% / 12.5% | 55.9% / 19.7% / 19.9% | 54.4% / 25.1% / 25.7% |
+| CHILDES child speech (not licensed) | 50.8% / 19.4% / 19.7% | 57.6% / 25.2% / 25.6% | 56.0% / 27.9% / 30.0% |
 
 Numbers under the corrected lemmatizer, 2026-09-24: surface lemmas win
 over the irregular map (am/is/are are Pip words, "be" is not), bare
 pieces of multiword lemmas resolve to the parent tile ("done" → "all
-done"), and every irregular-map target must be an offerable lemma
-("said" is OOV — Pip has no "say" tile). 855,359 events, 355,805
-non-core.
+done"), every irregular-map target must be an offerable lemma
+("said" is OOV — Pip has no "say" tile), and pronoun/wh-word +
+be/will/have contractions split into their Pip parts ("i'm" → "i am",
+"it's" → "it is") — "i" → "am" is 14.4% of real child speech, the #1
+continuation, which the contraction bug had buried at ~1.3%.
+938,609 events, 393,182 non-core.
 
 Share of the child's non-core words that the adult said in the previous
-turn: **15.2% (MLU < 2), 11.2%, 6.5%**.
+turn: **11.8% (MLU < 2), 8.7%, 5.7%**.
 
 What real children say:
-- **The legal child book beats adult text on real children:** +5–6
-  points at ages 3–4+ later words (30.2 vs 25.6, 31.8 vs 25.8), +1.4
-  at age 2.
-- **Real child speech is worth another 17–21 points.** That is what
+- **The legal child book roughly ties adult text on real children**
+  under the corrected lemmatizer: +1.7 at age 2, +0.2 at 3, +2.1 at 4+
+  later words (33.5/41.4/40.1 vs 31.8/41.2/38.0). Contraction-heavy
+  child text gained the most from the fix, narrowing what child
+  synthesis buys — CHILDES child speech is still worth +9–16.
+- **Real child speech is worth another 9–16 points.** That is what
   permission to use CHILDES-derived counts would buy, and what the
   flywheel (step 26) must earn from real AAC use. It is optimistic:
   longitudinal corpora put the same child in train and test sessions,
   which acts partly like personal history.
-- **Partner echo is real but modest in natural play:** 7–15% of words,
-  +1 to +10 points in top 4 (largest at MLU < 2). GPT-4's toddlers (70%)
-  overstated it. It may run higher in AAC, where partners offer choices
-  ("juice or milk?"), so the bench measures it per user and the weight
-  is learned.
-- **First words are the weak spot** (5–29%). Step 21 and occasions
+- **Partner echo is real but modest in natural play:** 6–12% of words;
+  the +partner arm adds ~+8 later at MLU < 2 and +12–17 right after an
+  adult turn. GPT-4's toddlers (70%) overstated it. It may run higher
+  in AAC, where partners offer choices ("juice or milk?"), so the bench
+  measures it per user and the weight is learned.
+- **First words are the weak spot** (5–28%). Step 21 and occasions
   (step 9) aim here.
 
 **Fixes on the way in (2026-09-24):**
@@ -1192,6 +1197,13 @@ What real children say:
   not "be", so the surface lemma now wins over IRREG. Pre-fix these
   collapsed into a ghost "be" target that wasted top-4 slots and hid
   #1-after-"I" words.
+- Contraction bug fixed (same class, one layer deeper): "i'm" ghost-mapped
+  to the "wait, i'm spelling" phrase tile, "you're" to "you're welcome",
+  and "it's"/"that's"/"he's"/"what's"/"there's"/"i'll" went OOV — 130k+
+  held-out tokens breaking context. Now pronoun/wh-word + be/will/have
+  tails split into Pip parts, negative-contraction lemmas stay whole,
+  and apostrophe pieces can never ghost-map. "i" → "am" measures 14.4%
+  (real rate ~14%), the #1 continuation.
 - Transcripts live in gitignored `data/prediction/childes/` (R11);
   `scripts/check_childes_git.mjs` (a check:fast gate) blocks transcript
   text from git. Only aggregate scores may commit.
@@ -1303,9 +1315,9 @@ holds the ones the user is likely to answer with. "Juice or milk?" → the
 strip shows *juice* and *milk*.
 
 Why: in real children's speech (CHILDES, step 23 § Real children),
-10–18% of a child's non-core words were just said by the adult, the most
-at the youngest stage. Boosting them adds +1 to +4 points in top 4 in
-natural play. That is smaller than GPT-4's dialogues suggested (70%), but
+6–12% of a child's non-core words were just said by the adult, the most
+at the youngest stage. Boosting them adds up to ~+8 later and +12–17
+right after an adult turn in top 4 in natural play. That is smaller than GPT-4's dialogues suggested (70%), but
 it is free, and it should be larger when an adult offers choices, which
 is exactly what modeling on an AAC device does. The weight is learned
 per user.
@@ -1941,7 +1953,7 @@ strip should know. These additions go after the biggest gains:
 | Step | Idea | Why |
 | --- | --- | --- |
 | 23 | The opening book, from child conversation | The strip knows nothing about English today; caregiver speech doubles adult text on held-out child turns |
-| 24 | The partner's words | 10–18% of real children's non-core words echo the adult's last turn; +1–4 points |
+| 24 | The partner's words | 6–12% of real children's non-core words echo the adult's last turn; up to ~+8 later, +12–17 after an adult turn |
 | 25 | Word classes, slots, topic, fading | One example teaches a class; new entities are predicted on day one |
 | 26 | The flywheel | Every user improves the book; nobody else in AAC has this data |
 | 28 | Real words per minute + the Jev-timing experiment | Measures what prediction really saves, including thinking time, and calibrates the simulation |

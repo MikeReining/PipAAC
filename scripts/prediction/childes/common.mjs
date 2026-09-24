@@ -45,7 +45,8 @@ const IRREG = {
   had: 'have', has: 'have', "'ve": 'have', "'d": 'have', "'ll": 'will',
   would: 'will', could: 'can', should: 'will', wanna: 'want',
   gonna: 'go', gimme: 'give',
-  "n't": 'not', cannot: 'can', "y'all": 'you', "ma'am": 'mom',
+  "n't": 'not', "'m": 'am', "'re": 'are', "'s": 'is',
+  cannot: 'can', "y'all": 'you', "ma'am": 'mom',
   mommy: 'mom', momma: 'mom', mama: 'mom', mum: 'mom', mummy: 'mom',
   daddy: 'dad', dada: 'dad', papa: 'dad', nana: 'grandma',
   granny: 'grandma', doggy: 'dog', kitty: 'cat', birdie: 'bird',
@@ -67,7 +68,9 @@ for (const w of LEMMAS) if (!w.includes(' ')) surface[w] = w;
 for (const w of LEMMAS.filter((x) => x.includes(' ')).sort((a, b) => a.length - b.length || a.localeCompare(b))) {
   for (const piece of w.split(' ')) {
     const p = piece.match(/[a-zA-Z']+/g)?.join('');
-    if (p && !(p in surface)) surface[p] = w;
+    // Apostrophe pieces never ghost-map: "i'm" must reach the
+    // contraction splitter, not the "wait, i'm spelling" tile.
+    if (p && !p.includes("'") && !(p in surface)) surface[p] = w;
   }
 }
 
@@ -98,8 +101,33 @@ export function toLemma(tok) {
   return null;
 }
 
+// A pronoun/wh-word + be/will/have contraction splits into its parts
+// when BOTH parts are Pip words (i'm -> i am, it's -> it is,
+// that's -> that is, i'll -> i will). Real children say "i'm" ~14% of
+// the time after "i" — sending the whole token to null (or worse, to a
+// ghost phrase tile) both lost the #1 word and broke the context
+// around it. Negative contractions that are lemmas (don't, can't)
+// stay whole — the surface check catches them first.
+const TAIL = { "'m": 'am', "'re": 'are', "'s": 'is', "'ll": 'will', "'ve": 'have', "'d": 'have' };
+function expandContraction(t) {
+  if (!t.includes("'") || t in surface || t in IRREG) return [t];
+  for (const tail of Object.keys(TAIL)) {
+    if (t.endsWith(tail) && t.length > tail.length) {
+      const stem = t.slice(0, -tail.length);
+      if (toLemma(stem) && toLemma(TAIL[tail])) return [stem, TAIL[tail]];
+    }
+  }
+  // Xn't -> stem + not (isn't -> is not; the stem lemmatizes later).
+  if (t.endsWith("n't") && t.length > 3) {
+    const stem = t.slice(0, -3);
+    if (toLemma(stem)) return [stem, "n't"];
+  }
+  return [t];
+}
+
 export function lemmatize(words) {
-  const lw = words.map((w) => w.toLowerCase());
+  const lw = [];
+  for (const w of words) lw.push(...expandContraction(w.toLowerCase()));
   const out = [];
   let i = 0;
   while (i < lw.length) {
