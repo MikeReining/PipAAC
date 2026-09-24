@@ -1,12 +1,12 @@
 # Phase 017 — Prediction you can prove
 
-**Status:** Executing. M1 complete (steps 4, 3, 5, 1, 2 — all BUILT).
-M2 in progress: steps 11 (synth users + frozen answer key), 12 (eval
-sealed), 16 (real-board time model), 13 (one comparison command —
-`npm run prediction:bench`, `--jobs=N` for parallel shards) BUILT.
-Next: step 15 (sabotage controls), then step 18 (replay screen). Steered-synth book work for step 23 is
-measured in scratch (`fa244be`, `6398078`) — the repo `build_book.mjs`
-pipeline is the pending part.
+**Status:** Executing. **Re-planned 2026-09-24 (founder, R16–R19):**
+the scoreboard is real children (held-out CHILDES), not synthetic
+users; steps 15 and 18 are parked. Next: § Build order "Current order"
+item 1. M1 complete (steps 4, 3, 5, 1, 2 — all BUILT). Built on the
+synthetic bench: steps 11, 12, 16, 13. Steered-synth book work for
+step 23 is measured in scratch (`fa244be`, `6398078`) — the repo
+`build_book.mjs` pipeline is the pending part.
 
 **DECIDED 2026-09-23** (founder: "If we nail prediction … we can create a
 category killer. I don't think we are there yet."). Source: an independent
@@ -171,6 +171,35 @@ system. Jev is not the definition of success.
 
 ## Build order
 
+**Current order (DECIDED 2026-09-24, R16–R19).** This replaces the
+M2/M3 order below until the book is in the strip.
+
+```text
+1. Real-children scorer in the repo (R16). Proof: reproduces the
+   § Real children table within rounding on the same 80/20 split.
+   Transcripts stay in a gitignored cache; only scores are committed.
+2. Step 23 book build, items (a)–(d), with CHILDES counts as a source (R11).
+   Proof: beats the scratch numbers on the item-1 scorer.
+3. Book + the user's own history in the strip: continue and start
+   (R17; steps 7, 10, 21). Proof: item-1 scorer, and on-device check
+   that the strip shows what the scorer scored.
+4. Respond: the partner's words (step 24), scored on CHILDES adult turns.
+5. Random holdback + path timings on the device (R18, step 28).
+Parked: steps 15 and 18 (R19).
+```
+
+Why (founder, 2026-09-24): the synthetic users come from our own
+templates, so scoring on them mostly measures our own generator; its
+timing numbers are guesses. Held-out real children are the real
+thing we have before launch. On them, the book already puts the next
+word in the top 4 about 44–50% of the time after the first word and
+17–23% for the first word, against 0.6% at random (4 of 680) —
+slightly optimistic, since the same child can appear in train and test
+sessions. The
+strip today scores ~10% because that knowledge isn't wired in.
+
+The original order, kept for step traceability:
+
 The mentor's numbers are kept as step IDs so each step traces back to the
 audit. The build order is different from the audit's order: measure
 before improving, and put the founder's view early.
@@ -225,6 +254,10 @@ Why this changes the audit's order:
 | R13 | Whole messages | **No invented message tiles** (no symbol the user knows, and it skips the word's motor pattern). Instead, a **word chain**: the next 2–3 real word tiles, side by side, in order (step 22). |
 | R14 | Language judgments | **No hand-coded rules** (keyword detectors, grammar masks). Meaning questions go to Jev; everything else is a learned weight. The choice-question check is a Jev question (step 24). |
 | R11 | CHILDES | **Permitted in writing, 2026-09-23** (Brian MacWhinney, TalkBank; `data/prediction/permissions/2026-09-23_TalkBank_CHILDES.md`). Scope: (1) local use — measurement, bench, held-out test set, gap analysis, book build; (2) shipping the next-word prediction table in the opening book — as asked: next-word probabilities over our closed ~680-word vocabulary from aggregate child and caregiver counts, no utterances, speaker IDs, or transcript text. Tell TalkBank before shipping it over a much larger vocabulary. Not covered: committing or shipping transcripts or utterances; they stay local, outside git. Credit per TalkBank's citation rules wherever the table is credited. Offered, not required: publishing the table as a CHILDES "derived measure". Measured value: +11–16 points in top 4 over the best free book (step 23 § Real children). |
+| R16 | The scoreboard (2026-09-24) | **Real children, not synthetic users.** The headline for prediction quality is the held-out CHILDES score: the child's next non-core word in the top 4, split into first words, later words, and words right after an adult turn, each shown next to random (4 of 680 ≈ 0.6%). The synthetic-user bench (steps 11–13, 16) stays as built but is not the headline. Its users come from our own templates, and its timing numbers are guesses, not findings. The scratch CHILDES scorer moves into the repo. Transcripts stay in a gitignored local cache, and only scores are committed (R11). This reverses step 23's "the scratch CHILDES pipeline stays outside the repo". |
+| R17 | Three situations (2026-09-24) | **Continue** (one or more words in the sentence): the opening book + the user's own history. **Respond** (a partner just spoke): the partner's words + the book (step 24). It is scored on CHILDES adult turns now, and needs 008 listening on the device. **Start** (nothing said or heard): the book's openers + the user's own openers, shown, not blanked. A hit rate is not a pass/fail line; whether showing pays is settled by R18. Time of day is not in the first build: CHILDES has no clock times, so it can't be scored on real children. |
+| R18 | Does showing pay (2026-09-24) | Showing pays when hit rate × time saved on a hit > time lost looking. Both inputs are unknown. Time saved includes recall and the whole grid search (anchor, page flips, scanning), so it is large for words off the home grid. Measure both on real use with a **random holdback**: at a small share of moments where the strip would show, show nothing. Then compare time-to-pick for the same words, suggested vs. held back, and grid-word picks under a wrong strip vs. an empty one. Path timings only, no words, under "Help improve Pip" (R15, step 28). The holdback share is a starting value in the spec, not a ruling. |
+| R19 | Parked (2026-09-24) | Steps 15 (sabotage controls) and 18 (replay screen) are parked: both add tooling to the synthetic bench. Revisit after the book is in the strip. |
 
 ---
 
@@ -683,7 +716,7 @@ of the recall time.
 
 Done when: those pass.
 
-**Status (BUILT 2026-09-25, `a8ed607`).**
+**Status (BUILT 2026-09-23, `a8ed607`).**
 `scripts/prediction/bench/actions.mjs` prices each intended word from
 the real board: Groups anchor + index page flips + group tile + group
 page flips + item, computed from `group_cell`/`board_group` through the
@@ -708,7 +741,7 @@ Note: the step-11 answer key now emits canonical lemma case ("I",
 
 ## Step 13 — One comparison command
 
-**Status (BUILT 2026-09-25).** `npm run prediction:bench` runs every arm
+**Status (BUILT 2026-09-23, `8a09bda`).** `npm run prediction:bench` runs every arm
 prequentially over the frozen schedule and writes
 `out/prediction/<run>/report.{md,json}` — WPM + Δ vs A0 with 95%
 bootstrap CIs over users, hit/recall/false-show/harmful, d1/wk1/d22+
@@ -717,8 +750,8 @@ cohort regressions vs A1. Arms live in `scripts/prediction/bench/arms.mjs`
 (A0/A1/A2-frozen/A3/O1/O2; A4/A4t register when `--jev` lands with step
 14; W needs step 22). `--jobs=N` fans users across N child processes and
 merges shard `report.json` results — 8 users in 66 s at jobs=8 on this
-machine, so the 80 fit+tune users print in under 10 minutes at
-`--jobs=10`. Works Test: `scripts/prediction/bench/bench.test.mjs`
+machine. The "80 fit+tune users under 10 minutes" done-when is
+extrapolated from that run, not measured. Works Test: `scripts/prediction/bench/bench.test.mjs`
 (A0 zero hits/zero saving; O2 the ceiling with zero harm; oracles really
 see the answer key; A2 reproduces 006's fixture numbers within
 rounding). Jev columns appear when the A4 arms run.
@@ -776,6 +809,8 @@ minutes without Jev (with `--jev cache` once step 14 exists).
 
 ## Step 15 — Show the bench can catch failure
 
+**PARKED 2026-09-24 (R19).**
+
 Goal: each deliberate sabotage removes exactly the benefit it should
 remove. If it doesn't, the bench is lying.
 
@@ -793,6 +828,8 @@ control on a small user subset and asserts the direction above.
 Done when: all five pass. Any control that fails blocks M3.
 
 ## Step 18 — A replay screen the founder can inspect
+
+**PARKED 2026-09-24 (R19).**
 
 Goal: someone can look at 20 simulated moments side by side and see why
 each arm won or lost, without reading logs.
@@ -972,7 +1009,8 @@ one cheap sweep on `score_book.mjs` before the format locks.
   transcripts, never read by the build. The book may train on the other
   CHILDES transcripts; the split is by transcript.
 - **The repo harness is the honest gate; CHILDES is the calibration
-  ruler.** The scratch CHILDES pipeline (parse → band → held-out score
+  ruler.** **Reversed 2026-09-24 (R16): the held-out scorer moves into
+  the repo and becomes the scoreboard.** The scratch CHILDES pipeline (parse → band → held-out score
   → coverage diff) stays outside the repo permanently — it produced the
   numbers in § Steered synth and reruns against any future corpus or
   book. Committed artifacts prove themselves on TinyDialogues
