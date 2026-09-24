@@ -26,8 +26,41 @@ export function migrateSchema(d, schemaSql) {
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();
-  const ddlFor = (t) =>
-    schemaSql.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
+  // A semicolon inside a `--` comment (learner_profile's book-band note)
+  // must not end the statement. Stopping there hides every later column,
+  // so an old database never grows them and the board dies on boot.
+  const ddlFor = (t) => {
+    const marker = `CREATE TABLE IF NOT EXISTS ${t}`;
+    const start = schemaSql.indexOf(marker);
+    if (start < 0) return undefined;
+    let i = schemaSql.indexOf("(", start);
+    if (i < 0) return undefined;
+    let depth = 0;
+    let mode = "code";
+    for (; i < schemaSql.length; i++) {
+      const c = schemaSql[i];
+      if (mode === "line") {
+        if (c === "\n") mode = "code";
+        continue;
+      }
+      if (mode === "str") {
+        if (c === "'" && schemaSql[i + 1] === "'") { i++; continue; }
+        if (c === "'") mode = "code";
+        continue;
+      }
+      if (c === "-" && schemaSql[i + 1] === "-") { mode = "line"; i++; continue; }
+      if (c === "'") { mode = "str"; continue; }
+      if (c === "(") depth++;
+      else if (c === ")") {
+        depth--;
+        if (depth === 0) {
+          const end = schemaSql.indexOf(";", i);
+          return end < 0 ? undefined : schemaSql.slice(start, end + 1);
+        }
+      }
+    }
+    return undefined;
+  };
   const stale = tables.filter((t) => {
     const row = d.all(
       "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?",
@@ -41,6 +74,17 @@ export function migrateSchema(d, schemaSql) {
   d.exec("PRAGMA foreign_keys = OFF");
   d.exec("BEGIN");
   try {
+    // A trigger on another table that names a table we are about to drop
+    // is recompiled by ALTER RENAME and fails while that name is missing
+    // (entity_input_change_supersedes_enrichment → entity_enrichment).
+    // The shipped schema exec right after this recreates every trigger.
+    const triggers = d.all(
+      "SELECT name, sql FROM sqlite_master WHERE type = 'trigger' AND sql IS NOT NULL",
+    );
+    for (const tr of triggers) {
+      if (!stale.some((t) => new RegExp(`\\b${t}\\b`).test(tr.sql))) continue;
+      d.exec(`DROP TRIGGER IF EXISTS "${String(tr.name).replaceAll('"', '""')}"`);
+    }
     for (const t of stale) {
       d.exec(ddlFor(t).replace(`TABLE IF NOT EXISTS ${t}`, `TABLE ${t}_new`));
       const cols = d.all(`PRAGMA table_info(${t}_new)`).map((c) => c.name);

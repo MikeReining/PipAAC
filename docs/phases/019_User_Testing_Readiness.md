@@ -23,15 +23,20 @@ works after a reload.
   bytes in `public/symbols/` — every home-board cell paints a picture except
   `mom`/`dad` (setup fills them with the child's own people).
   Proof: `src/board/symbol_art.test.mjs`.
+- A board saved before the v2 map opens onto the shipped grid (2026-09-24,
+  agent slot 8795): 60 cells, 58 pictures loaded, tap on **want** played
+  `audio/want/de5c5fd03583.mp3` to `ended`, Speak played it again, and a
+  reload restored the grid plus that tap in `learner_event_log`.
+  Proof: `src/board/core_place.test.mjs` (stale tier + stale slot) and that
+  browser pass.
 
 ## Open blockers
 
 | # | Blocker | Notes |
 | --- | --- | --- |
 | 1 | **No deploy** — the app only exists on localhost; nothing is published to a URL a tester can open | `wrangler.jsonc` bindings exist (DO/R2/AE) but `wrangler deploy` has never run; needs account/domain decisions — **stop/ask: publishing** |
-| 2 | **First-run path unverified** — setup → board has never been walked end-to-end in a clean browser/profile | needs a manual pass on a live server once dev infra is healthy |
-| 3 | **Dev-server hygiene** — multiple hung workerd processes squatted agent slots; slot-0 (8787, founder's copy) was hung and untouched | stale processes gave false "listening" signals |
-| 4 | **Persistence unverified end-to-end** — IndexedDB save/restore across reload is coded but not browser-proven | part of the blocker-2 pass |
+| 2 | **First-run setup** — the automatic first user is created without `needsSetup`, so "Who do they call for?" never appears and mom/dad stay picture-less | adding a user from Parent Corner does arm it (`devices_ui.test.mjs`) |
+| 3 | **Dev-server hygiene** — slot-0 (8787, founder's copy) still accepts TCP and never answers HTTP (workerd pid 19014, 2026-09-24). `npm run dev` treats that as already running | a working copy is on 8795 |
 
 ## Landed slices
 
@@ -41,3 +46,8 @@ works after a reload.
   to `public/symbols/`. Sources committed so `catalog:build --check`
   reproduces on a clean checkout. `symbol_art.test.mjs` proves rows → files →
   `SENSE_ART_SQL` → home-board coverage.
+- **Saved boards open on the shipped map (2026-09-24):** `importCatalog`
+  refreshes catalog-owned sense fields and replaces `core_cell` for each
+  shipped layout. Adult placements stay in `core_override`. Without this,
+  a device saved before a word joined root core aborted import
+  (`core cell requires a root_core sense`) and the grid never painted.

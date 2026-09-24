@@ -101,6 +101,64 @@ test("restart + catalog regen: the person is still there", () => {
   db.close();
 });
 
+test("a device saved before a word joined the core board opens on the shipped map", () => {
+  const db = fresh();
+  const anchors = new Set((catalog.layouts.grid60.anchors ?? []).map((a) => a.slot));
+  const cell = db.prepare(
+    `SELECT cc.id, cc.sense_id, cc.slot_index
+     FROM core_cell cc WHERE cc.layout = 'grid60' LIMIT 1`,
+  ).all()[0];
+  const hold = db.prepare(
+    `SELECT slot_index FROM core_cell
+     WHERE layout = 'grid60' AND slot_index != ? LIMIT 1`,
+  ).all(cell.slot_index)[0];
+  const stranger = db.prepare(
+    `SELECT sense_id FROM core_cell WHERE layout = 'grid90'
+     AND sense_id NOT IN (SELECT sense_id FROM core_cell WHERE layout = 'grid60')
+     LIMIT 1`,
+  ).all()[0];
+  assert.ok(stranger, "grid90 has a word that is not on grid60");
+  assert.ok(!anchors.has(hold.slot_index));
+
+  const role = db.prepare(
+    "SELECT fitzgerald_role AS r FROM sense WHERE id = ?",
+  ).all(cell.sense_id)[0].r;
+  // Pre-v2 device: the word was still fringe, its color was stale, and
+  // its slot held a row the shipped map no longer has.
+  db.prepare(
+    `UPDATE sense SET tier = 'primary_fringe', category = 'Food & Drink',
+       fitzgerald_role = ? WHERE id = ?`,
+  ).run(role === "Yellow" ? "Green" : "Yellow", cell.sense_id);
+  db.prepare("DELETE FROM core_cell WHERE id = ?").run(cell.id);
+  db.prepare(
+    "INSERT INTO core_cell (id, layout, sense_id, slot_index) VALUES ('cel_stale_grid60', 'grid60', ?, ?)",
+  ).run(stranger.sense_id, cell.slot_index);
+
+  const { id: maya } = createEntity(db, { name: "Maya" });
+  placeOnBoard(db, "grid60", "entity", maya, hold.slot_index, { anchors });
+
+  importCatalog(db, catalog);
+
+  assert.equal(
+    db.prepare("SELECT tier FROM sense WHERE id = ?").all(cell.sense_id)[0].tier,
+    "root_core",
+  );
+  assert.equal(
+    db.prepare("SELECT fitzgerald_role AS r FROM sense WHERE id = ?").all(cell.sense_id)[0].r,
+    role,
+  );
+  assert.equal(
+    db.prepare("SELECT sense_id FROM core_cell WHERE layout = 'grid60' AND slot_index = ?")
+      .all(cell.slot_index)[0].sense_id,
+    cell.sense_id,
+  );
+  assert.equal(
+    db.prepare("SELECT id FROM core_cell WHERE id = 'cel_stale_grid60'").all().length,
+    0,
+  );
+  assert.equal(at(db, hold.slot_index, "grid60")?.entity_id, maya, "the adult's placement still wins");
+});
+
 test("the placement replays onto a second device through the op log", () => {
   const a = fresh();
   const b = fresh();

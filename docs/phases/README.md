@@ -16,7 +16,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | User-testing readiness — a shareable build a tester can open and use; symbols shipped, deploy + first-run pass are next | `docs/phases/019_User_Testing_Readiness.md` |
+| **P1** | User-testing readiness — local board paints and speaks; next is a shareable URL (deploy, stop/ask) and the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
 | **P2** | 010 slice 1 — the word list (2,000 words + 300 phrases) — unblocks 014 slice 6 message tiles | `docs/phases/010_Extended_Picture_Library.md` |
 
 ## Live index
@@ -35,7 +35,7 @@ Executing phases only. Each row names the **next** slice.
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 payments **deferred** (founder, 2026-09-23) — the phase stays live until billing lands or is discharged |
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Items 1–4 and 6 done; step-28 items 1–4 built (WPM quartiles, per-path timings, Jev-timing experiment, wrong-pick count — `predictionReport.speed`, whitelisted payload fields). Holdback **deferred — not authorized** (founder, 2026-09-24); step-28 item 6 (calibration) waits on real totals; steps 15 and 18 parked. Open: step 26 flywheel (decided, unbuilt) |
 | [018 — Core board v2 and groups](018_Core_Board_V2_And_Groups.md) | All six decided slices done — v2 `grid60` + Purple, `grid90`/`grid15` re-laid, setup's people seated, groups re-ordered + doors + glow + banded layout, kind-colored personal words, home-board edit (📊 counts + placement sheet). Open items only |
-| [019 — User-testing readiness](019_User_Testing_Readiness.md) | Symbols shipped (197 image rows, home board paints). Next: deploy/share path, then a clean-profile first-run pass |
+| [019 — User-testing readiness](019_User_Testing_Readiness.md) | Local board paints and speaks, including a board saved before the v2 map. Next: deploy (stop/ask), then the first-open people question |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

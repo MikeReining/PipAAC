@@ -26,7 +26,12 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
     const insSense = db.prepare(
       `INSERT INTO sense (id, fitzgerald_role, art_archetype, tier, category, default_image_id, negation)
        VALUES (?, ?, ?, ?, ?, NULL, ?)
-       ON CONFLICT(id) DO UPDATE SET negation = excluded.negation`,
+       ON CONFLICT(id) DO UPDATE SET
+         fitzgerald_role = excluded.fitzgerald_role,
+         art_archetype = excluded.art_archetype,
+         tier = excluded.tier,
+         category = excluded.category,
+         negation = excluded.negation`,
     );
     for (const s of senses) {
       insSense.run(s.id, s.fitzgerald_role, s.art_archetype, s.tier, s.category, s.negation ?? 0);
@@ -74,8 +79,16 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
       insClip.run(c.id, c.voice_id, c.utterance_id, c.recorded_text, c.key, c.status, c.sha256, c.source);
     }
 
+    // The shipped coordinate map. Adult placements live in core_override
+    // and are not touched. INSERT OR IGNORE cannot move a slot an older
+    // map already holds, and a sense whose stored tier is still fringe
+    // aborts the whole import (core_cell_root_only) — a device saved
+    // before that word joined the core board never opens.
+    const layouts = [...new Set(cells.map((c) => c.layout))];
+    const clearLayout = db.prepare("DELETE FROM core_cell WHERE layout = ?");
+    for (const layout of layouts) clearLayout.run(layout);
     const insCell = db.prepare(
-      "INSERT OR IGNORE INTO core_cell (id, layout, sense_id, slot_index) VALUES (?, ?, ?, ?)",
+      "INSERT INTO core_cell (id, layout, sense_id, slot_index) VALUES (?, ?, ?, ?)",
     );
     for (const c of cells) insCell.run(c.id, c.layout, c.sense_id, c.slot_index);
 
