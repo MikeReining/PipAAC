@@ -16,8 +16,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | 017 step 28 items 3–4 — Jev-timing natural experiment + wrong-pick count (items 1–2 built; the random holdback is deferred — not authorized, founder 2026-09-24) | `docs/phases/017_Prediction_Hardening.md` |
-| **P2** | 010 slice 1 — the word list (2,000 words + 300 phrases) — unblocks 014 slice 6 message tiles | `docs/phases/010_Extended_Picture_Library.md` |
+| **P1** | 010 slice 1 — the word list (2,000 words + 300 phrases) — unblocks 014 slice 6 message tiles | `docs/phases/010_Extended_Picture_Library.md` |
 
 ## Live index
 
@@ -33,7 +32,7 @@ Executing phases only. Each row names the **next** slice.
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7, 9–11 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later). Nothing unblocked — the phase idles until 010 slice 1 lands |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 payments **deferred** (founder, 2026-09-23) — the phase stays live until billing lands or is discharged |
-| [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Items 1–4 and 6 done; step-28 items 1–2 built (real WPM quartiles, per-path timings, `predictionReport.speed`, whitelisted `path_ms`). Holdback **deferred — not authorized** (founder, 2026-09-24). Next: step-28 items 3–4 (Jev-timing experiment, wrong-pick count). Steps 15 and 18 parked |
+| [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Items 1–4 and 6 done; step-28 items 1–4 built (WPM quartiles, per-path timings, Jev-timing experiment, wrong-pick count — `predictionReport.speed`, whitelisted payload fields). Holdback **deferred — not authorized** (founder, 2026-09-24); step-28 item 6 (calibration) waits on real totals; steps 15 and 18 parked. Open: step 26 flywheel (decided, unbuilt) |
 | [018 — Core board v2 and groups](018_Core_Board_V2_And_Groups.md) | All six decided slices done — v2 `grid60` + Purple, `grid90`/`grid15` re-laid, setup's people seated, groups re-ordered + doors + glow + banded layout, kind-colored personal words, home-board edit (📊 counts + placement sheet). Open items only |
 
 The language and voice schema was accepted 2026-09-22 and moved to

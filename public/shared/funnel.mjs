@@ -9,7 +9,7 @@
  */
 
 import { bookScores } from "./opening_book.mjs";
-import { pathTimes, wpmStats } from "./stats.mjs";
+import { jevTiming, pathTimes, wpmStats, wrongPicks } from "./stats.mjs";
 
 const RECENT_WINDOW_MS = 15 * 60 * 1000;
 /** 017-24 / R20: a partner turn is the words an adult tapped while
@@ -55,11 +55,12 @@ export function closeSentence(db, id, at = Date.now(), kind) {
 
 /** A pick left the sentence (backspace reopened it): its event stays as
  *  usage evidence but is no longer a sentence member, and the rest of
- *  the sentence shifts down one position. */
-export function detachEvent(db, sentenceId, position) {
+ *  the sentence shifts down one position. `detached_at` stamps when it
+ *  left — a fast strip-pick removal is a wrong pick (017-28). */
+export function detachEvent(db, sentenceId, position, at = Date.now()) {
   db.prepare(
-    "UPDATE learner_event_log SET sentence_id = NULL, position = NULL WHERE sentence_id = ? AND position = ?",
-  ).run(sentenceId, position);
+    "UPDATE learner_event_log SET sentence_id = NULL, position = NULL, detached_at = ? WHERE sentence_id = ? AND position = ?",
+  ).run(at, sentenceId, position);
   db.prepare(
     "UPDATE learner_event_log SET position = position - 1 WHERE sentence_id = ? AND position > ?",
   ).run(sentenceId, position);
@@ -526,7 +527,7 @@ export function logImpression(db, {
 export function updateImpressionJev(db, impressionId, {
   status, model = null, probs = null, latencyMs = null,
   promptVersion = null, weightsJev = null, pNoneJev = null,
-  candidates = null,
+  candidates = null, shownJev = null,
 }) {
   db.prepare(
     `UPDATE strip_impression SET jev_status = ?, jev_model = ?,
@@ -535,7 +536,8 @@ export function updateImpressionJev(db, impressionId, {
        jev_latency_ms = COALESCE(?, jev_latency_ms),
        weights_jev = COALESCE(?, weights_jev),
        p_none_jev = COALESCE(?, p_none_jev),
-       candidates = COALESCE(?, candidates)
+       candidates = COALESCE(?, candidates),
+       shown_jev = COALESCE(?, shown_jev)
      WHERE id = ?`,
   ).run(
     status, model,
@@ -544,6 +546,7 @@ export function updateImpressionJev(db, impressionId, {
     weightsJev ? JSON.stringify(weightsJev) : null,
     pNoneJev,
     candidates ? JSON.stringify(candidates) : null,
+    shownJev ? JSON.stringify(shownJev) : null,
     impressionId,
   );
 }
@@ -696,7 +699,13 @@ export function predictionReport(db, { from = 0, to = Number.MAX_SAFE_INTEGER } 
     speed: {
       wpm: { median: w.wpm_median, q1: w.wpm_q1, q3: w.wpm_q3, n: w.wpm_samples },
       paths: pathTimes(db, { from, to }),
+      // The natural experiment (017-28 item 3): shown vs late gaps for
+      // Jev-endorsed picks, with the lateness confound check.
+      jev: jevTiming(db, { from, to }),
     },
+    // Wrong picks (017-28 item 4): strip picks backspaced within a few
+    // seconds — they count against prediction.
+    wrongPicks: wrongPicks(db, { from, to }),
   };
 }
 

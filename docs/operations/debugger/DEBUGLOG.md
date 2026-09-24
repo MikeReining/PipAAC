@@ -27,7 +27,7 @@ Pattern candidate: a DDL scanner that stops at `;` cannot see columns written af
 Tier: T2
 Truth owner: `public/shared/funnel.mjs` — `logSelection` writes `history_count` since 017 step 10
 Lie-prone layer: `statsOnlyDb`'s comment promised "ONLY the tables the module may read" — true for `stats.mjs`, but the same fixture feeds `logSelection`, whose write surface grew without the fixture noticing
-Proof: `node --test src/board/stats.test.mjs` failed on clean HEAD (`no such table: history_count`); green after adding the table
+Proof: node --test src/board/stats.test.mjs — failed on clean HEAD (`no such table: history_count`); green after adding the table
 Pattern candidate: a minimal-table fixture must enumerate what the exercised code writes, not just what the module under test reads — a writer that gains a table breaks every fixture that whitelists only the reader's surface
 
 ## Template

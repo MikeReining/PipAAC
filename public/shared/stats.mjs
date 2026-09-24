@@ -2,10 +2,11 @@
  * The stats engine (docs/product/Stats_And_Progress.md § 3, § 6).
  *
  * Every number has one definition, computed the same way on every
- * device, from two device-local tables: learner_event_log (taps) and
- * sentence (spoken/cleared bars) — plus core_cell to split core from
- * fringe. The module reads nothing else: the Works Test runs it against
- * a database holding only those tables.
+ * device, from three device-local tables: learner_event_log (taps),
+ * sentence (spoken/cleared bars), and strip_impression (painted
+ * moments) — plus core_cell to split core from fringe. The module
+ * reads nothing else: the Works Test runs it against a database
+ * holding only those tables.
  *
  * Output is counts only. One `stats_day` row per local day: counts per
  * word (by id, never text), sentence-length counts, words-per-minute
@@ -138,6 +139,95 @@ export function pathTimes(db, { day = null, from = 0, to = Number.MAX_SAFE_INTEG
   return out;
 }
 
+/** A strip pick the family removed within a few seconds is a wrong
+ *  pick (017 step 28 item 4): faster must not hide "put words in the
+ *  user's mouth". `detached_at` is stamped by detachEvent; the only
+ *  removal path is the keyboard's ⌫ key. */
+export const WRONG_PICK_MS = 10_000;
+
+export function wrongPicks(db, { day = null, from = 0, to = Number.MAX_SAFE_INTEGER } = {}) {
+  const where = day == null
+    ? "selected_at >= ? AND selected_at < ?"
+    : `${dayKeySql("selected_at", "COALESCE(tz_offset_min, 0)")} = ?`;
+  return db.prepare(
+    `SELECT COUNT(*) AS n FROM learner_event_log
+     WHERE source = 'strip' AND detached_at IS NOT NULL
+       AND detached_at - selected_at <= ? AND ${where}`,
+  ).all(WRONG_PICK_MS, ...(day == null ? [from, to] : [day]))[0].n;
+}
+
+/** The Jev-timing natural experiment (017 step 28 item 3): for strip
+ *  moments where Jev's rerank would have shown the word the user then
+ *  picked (the chosen key is in `shown_jev`, the stored would-paint
+ *  set), compare the pick-to-pick gap when the word was on screen vs
+ *  when the answer arrived too late to paint. Lateness is a network
+ *  coin flip, so the difference is the thinking-and-finding time the
+ *  rerank really saves — nothing is withheld on purpose.
+ *
+ *  A moment counts only when its endorsement is recorded (`shown_jev`
+ *  non-NULL) and the pick kept its sentence seat — a detached pick is
+ *  a wrong pick, not a timing sample. Position-0 moments have no
+ *  in-sentence pause and never count.
+ *
+ *  Lateness must not track shortlist size or sentence position: the
+ *  strata are reported, and `confounded` flags when a populated
+ *  stratum (≥10 moments) departs from the overall late share by more
+ *  than 25 points — a heuristic flag, not a statistic. */
+export function jevTiming(db, { day = null, from = 0, to = Number.MAX_SAFE_INTEGER } = {}) {
+  const where = day == null
+    ? "i.shown_at >= ? AND i.shown_at < ?"
+    : `${dayKeySql("e.selected_at", "COALESCE(e.tz_offset_min, 0)")} = ?`;
+  const rows = db.prepare(
+    `SELECT i.shortlist_cap AS cap, i.position AS pos, i.jev_status AS status,
+            i.shown_jev AS jset,
+            COALESCE(i.shown_final, i.shown_local) AS shown,
+            i.chosen_kind || ':' || i.chosen_id AS chosen,
+            e.selected_at - (
+              SELECT p.selected_at FROM learner_event_log p
+              WHERE p.sentence_id = e.sentence_id AND p.position = e.position - 1
+            ) AS gap
+     FROM strip_impression i
+     JOIN learner_event_log e
+       ON e.sentence_id = i.sentence_id AND e.position = i.position
+     WHERE i.chosen_id IS NOT NULL AND i.mode = 'picture'
+       AND i.jev_status IN ('answered','late') AND i.position > 0 AND ${where}`,
+  ).all(...(day == null ? [from, to] : [day]));
+  const shownGaps = [], lateGaps = [];
+  const strata = { byCap: {}, byPos: {} };
+  const bump = (m, key, isLate) => {
+    const s = (m[key] ??= { n: 0, late: 0 });
+    s.n++; if (isLate) s.late++;
+  };
+  let endorsed = 0;
+  for (const r of rows) {
+    if (!(r.gap > 0) || !r.jset) continue;
+    if (!JSON.parse(r.jset).includes(r.chosen)) continue; // not Jev-endorsed
+    const onScreen = JSON.parse(r.shown).includes(r.chosen);
+    const isLate = !onScreen && r.status === "late";
+    if (!onScreen && !isLate) continue; // endorsed but absent for another reason
+    endorsed++;
+    (isLate ? lateGaps : shownGaps).push(r.gap);
+    bump(strata.byCap, r.cap ?? "?", isLate);
+    bump(strata.byPos, r.pos, isLate);
+  }
+  shownGaps.sort((a, b) => a - b);
+  lateGaps.sort((a, b) => a - b);
+  const qs = quartiles(shownGaps), ql = quartiles(lateGaps);
+  const lateShare = endorsed ? lateGaps.length / endorsed : null;
+  const confounded = lateShare != null && [strata.byCap, strata.byPos]
+    .flatMap((m) => Object.values(m))
+    .some((s) => s.n >= 10 && Math.abs(s.late / s.n - lateShare) > 0.25);
+  return {
+    shown: { ...qs, n: shownGaps.length },
+    late: { ...ql, n: lateGaps.length },
+    effectMs: qs.median != null && ql.median != null ? ql.median - qs.median : null,
+    lateShare,
+    confounded,
+    byCap: strata.byCap,
+    byPos: strata.byPos,
+  };
+}
+
 /** One `stats_day` row for `day` — every § 3 number, counts only. */
 export function dailyTotals(db, day, computedAt = Date.now()) {
   const taps = tapsOnDay(db, day);
@@ -196,6 +286,8 @@ export function dailyTotals(db, day, computedAt = Date.now()) {
     wpm_q3,
     wpm_samples,
     path_times: pathTimes(db, { day }),
+    jev_timing: jevTiming(db, { day }),
+    wrong_picks: wrongPicks(db, { day }),
     core,
     fringe,
     own,

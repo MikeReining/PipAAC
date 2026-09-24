@@ -67,6 +67,8 @@ test("flush sends whitelisted counts — no identifier survives", async () => {
       grid: { q1: 1200, median: 2000, q3: 3100, n: 9 },
       strip: { q1: 800, median: 1500, q3: 2200, n: 4 },
     },
+    jev_timing: { shown: { median: 900, n: 6 }, late: { median: 2100, n: 3 } },
+    wrong_picks: 2,
     sources: { grid: 9, strip: 4 }, hours: (() => { const h = Array(24).fill(0); h[9] = 13; return h; })(),
     lengths: { 2: 3, 3: 1 },
     per_word: {
@@ -108,6 +110,9 @@ test("flush sends whitelisted counts — no identifier survives", async () => {
     grid: { q1: 1200, median: 2000, q3: 3100, n: 9 },
     strip: { q1: 800, median: 1500, q3: 2200, n: 4 },
   });
+  // The experiment's two medians and counts, and the wrong-pick count.
+  assert.deepEqual(d0.jev_ms, { shown: { median: 900, n: 6 }, late: { median: 2100, n: 3 } });
+  assert.equal(d0.wrong_n, 2);
   assert.equal(d0.strip_share, 4 / 13);
   assert.equal(d0.age_days, 0);            // first stats day
   assert.equal(sent.find((s) => s.body.day === 14001).body.age_days, 1);
@@ -165,6 +170,13 @@ test("the Worker accepts the real payload and rejects anything extra", () => {
   assert.equal(validateResearch({ ...good, path_ms: { pocket: pt.grid } }), null);
   assert.equal(validateResearch({ ...good, path_ms: { grid: { q1: 1, median: 2, q3: 3 } } }), null);
   assert.equal(validateResearch({ ...good, path_ms: { grid: { ...pt.grid, median: -1 } } }), null);
+  // jev_ms: exactly {shown, late} × {median, n}.
+  const jm = { shown: { median: 900, n: 6 }, late: { median: null, n: 0 } };
+  assert.ok(validateResearch({ ...good, jev_ms: jm }));
+  assert.equal(validateResearch({ ...good, jev_ms: { shown: jm.shown } }), null);
+  assert.equal(validateResearch({ ...good, jev_ms: { shown: jm.shown, late: { median: -5, n: 1 } } }), null);
+  assert.equal(validateResearch({ ...good, jev_ms: { shown: jm.shown, late: { median: 1 } } }), null);
+  assert.equal(validateResearch({ ...good, wrong_n: -1 }), null);
   assert.equal(validateResearch("nope"), null);
 });
 

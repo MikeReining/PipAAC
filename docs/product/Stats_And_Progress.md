@@ -210,12 +210,13 @@ days once — dedup on `(rid, day)` at query time.
   medians and counts, and the wrong-pick count. Numbers only; no words,
   ids, or times of day. Spec:
   `docs/phases/017_Prediction_Hardening.md` step 28.
-  **BUILT 2026-09-24** for WPM quartiles and per-path timings:
-  `pathTimes` + `wpmStats` in `public/shared/stats.mjs` (payload keys
-  `wpm_q1`/`wpm_q3`/`path_ms`), the `speed` block in `predictionReport`,
-  and the worker whitelist in lockstep
-  (`src/board/speed.test.mjs`). The Jev-timing experiment and the
-  wrong-pick count are not built.
+  **BUILT 2026-09-24** for WPM quartiles, per-path timings, the
+  Jev-timing experiment, and the wrong-pick count: `wpmStats`,
+  `pathTimes`, `jevTiming`, `wrongPicks` in `public/shared/stats.mjs`
+  (payload keys `wpm_q1`/`wpm_q3`/`path_ms`/`jev_ms`/`wrong_n`), the
+  `speed` block and `wrongPicks` in `predictionReport`, and the worker
+  whitelist in lockstep (`src/board/speed.test.mjs`). Calibration
+  (item 6) waits on real totals.
 
 ## 7. Bans
 

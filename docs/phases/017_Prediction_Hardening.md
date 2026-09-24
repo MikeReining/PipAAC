@@ -212,16 +212,18 @@ M2/M3 order below until the book is in the strip.
    partner rows are logged, and 50 ignored echoes take the learned
    weight negative.
 5. Random holdback + path timings on the device (R18, step 28).
-   **Status: SPLIT 2026-09-24** — path timings (step-28 items 1–2)
-   **BUILT**: `wpmStats` quartiles + `pathTimes` in
-   `public/shared/stats.mjs` (the 016 home — one WPM definition), the
-   `speed` block in `predictionReport`, `wpm_q1`/`wpm_q3`/`path_ms` in
-   the research whitelist both ends. `speed.test.mjs` proves every
-   number against hand-computed values. The random holdback itself is
-   **deferred — not authorized** (founder, 2026-09-24: "I'm not
-   authorizing the random holdback … that could come in a future
-   version"). Step-28 items 3–4 (Jev-timing experiment, wrong picks)
-   remain unbuilt.
+   **Status: SPLIT 2026-09-24** — path timings (step-28 items 1–2) and
+   the Jev-timing experiment + wrong-pick count (items 3–4) **BUILT**:
+   `wpmStats`, `pathTimes`, `jevTiming`, `wrongPicks` in
+   `public/shared/stats.mjs`; `speed` + `wrongPicks` in
+   `predictionReport`; `wpm_q1`/`wpm_q3`/`path_ms`/`jev_ms`/`wrong_n`
+   in the research whitelist both ends; `learner_event_log.detached_at`
+   + `strip_impression.shown_jev` record the raw material.
+   `speed.test.mjs` proves every number against hand-computed values
+   and the replay recovers the injected effect. Item 6 (calibration)
+   waits on real totals. The random holdback itself is **deferred —
+   not authorized** (founder, 2026-09-24: "I'm not authorizing the
+   random holdback … that could come in a future version").
 6. Smart bar order: board words, the "no" slot, and the four settings
    (R21, step 29). Build right after item 3, before item 4.
    **Status: DONE 2026-09-24** — root_core joins the scored pool when
@@ -1845,16 +1847,23 @@ spec's proposed `speed.mjs` folded into the module that already owns
 the WPM definition), the 016 anonymous-totals sender,
 `docs/product/Stats_And_Progress.md` § 6.3.
 
-**Status: items 1–2 BUILT 2026-09-24.** `wpmStats` returns median +
+**Status: items 1–4 BUILT 2026-09-24.** `wpmStats` returns median +
 quartiles; `pathTimes` buckets pick-to-pick ms by the second pick's
 source from `learner_event_log` timestamps; `dailyTotals` stores both
 (`path_times`); `predictionReport` exposes the same numbers as `speed`;
 `dayPayload` + `validateResearch` carry `wpm_q1`, `wpm_q3`, `path_ms`.
+For item 3, `strip_impression.shown_jev` stores the set Jev's rerank
+would have painted — `jevTiming` compares pick gaps shown-vs-late for
+endorsed words and reports the lateness confound by shortlist cap and
+position. For item 4, `learner_event_log.detached_at` stamps the
+backspace; a strip pick removed inside `WRONG_PICK_MS` (10 s) is a
+wrong pick. `jev_ms`/`wrong_n` ride the same whitelist.
 Works Test `src/board/speed.test.mjs` — scripted session, every number
-hand-computed, plus the cleared-sentence and detached-pick legs.
-Items 3–4 (natural experiment, wrong picks) and item 6 (calibration)
-unbuilt; the random holdback (R18) is deferred — not authorized
-(founder, 2026-09-24).
+hand-computed, plus the exclusion legs and the deterministic replay
+(recovers the injected 1 s effect, ~0 with none, confounded when
+lateness tracks the shortlist).
+Item 6 (calibration) waits on real totals; the random holdback (R18)
+is deferred — not authorized (founder, 2026-09-24).
 
 Build:
 1. **Real WPM on the device:** words in spoken sentences ÷ time from the

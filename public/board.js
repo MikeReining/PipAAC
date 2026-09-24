@@ -766,6 +766,9 @@ async function maybeJev(scored, sents, paintedAt) {
         ver: catalog.prediction.version, seen: lw.examplesSeen,
       },
       pNoneJev: reranked.pNone,
+      // What the rerank would have painted — stored on late answers
+      // too, so the step-28 timing experiment reads recorded truth.
+      shownJev: items.map((c) => `${c.kind}:${c.id}`),
       candidates: scored.candidates.map((c, i) => ({
         kind: c.kind, id: c.id, x: c.x, s: c.s, p: c.p,
         jp: probs[`c${i + 1}`] ?? 0,

@@ -5,10 +5,10 @@
  * including a cleared sentence, a backspace (detached pick), Smart bar
  * picks, a glow window, and a single-word sentence — is written into a
  * database holding ONLY the tables the module may read:
- * learner_event_log, sentence, core_cell, stats_day. If stats.mjs
- * queries anything else, the test fails at SQLite — the module cannot
- * grade its own homework. Every expected value below is computed by
- * hand in this file, not by the module.
+ * learner_event_log, sentence, core_cell, stats_day, strip_impression.
+ * If stats.mjs queries anything else, the test fails at SQLite — the
+ * module cannot grade its own homework. Every expected value below is
+ * computed by hand in this file, not by the module.
  *
  * Fixture (tz offset T = the machine's offset; local hours are literal):
  *
@@ -58,7 +58,7 @@ function statsOnlyDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = OFF"); // core_cell's sense ref is absent by design
   for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op",
-    "history_count"]) {
+    "history_count", "strip_impression"]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     assert.ok(ddl, `schema for ${t}`);
     db.exec(ddl);
@@ -154,15 +154,20 @@ test("dailyTotals: every number equals the hand-computed value", () => {
   const r0 = dailyTotals(db, d0, 999);
   assert.deepEqual(
     { ...r0, computed_at: 0, per_word: 0, hours: 0, lengths: 0, sources: 0,
-      wpm_median: 0, wpm_q1: 0, wpm_q3: 0, path_times: 0 },
+      wpm_median: 0, wpm_q1: 0, wpm_q3: 0, path_times: 0, jev_timing: 0 },
     {
       day: d0, computed_at: 0, words: 8, different: 8, new: 8,
       sentences: 2, words_per_sentence: 2.5, longest_sentence: 3,
       wpm_median: 0, wpm_q1: 0, wpm_q3: 0, wpm_samples: 2, path_times: 0,
+      jev_timing: 0, wrong_picks: 0,
       core: 3, fringe: 4, own: 1, spotlit: 1,
       sources: 0, hours: 0, lengths: 0, per_word: 0,
     },
   );
+  // No impressions in this fixture — the experiment reads zeros.
+  assert.equal(r0.jev_timing.shown.n, 0);
+  assert.equal(r0.jev_timing.late.n, 0);
+  assert.equal(r0.jev_timing.effectMs, null);
   // wpm: s1 3 words / 50 s = 3.6, s3 2 / 25 s = 4.8 → median 4.2
   assert.ok(Math.abs(r0.wpm_median - 4.2) < 1e-9, `wpm ${r0.wpm_median}`);
   assert.ok(Math.abs(r0.wpm_q1 - 3.9) < 1e-9, `wpm_q1 ${r0.wpm_q1}`);

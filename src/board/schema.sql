@@ -255,7 +255,10 @@ CREATE TABLE IF NOT EXISTS learner_event_log (
   tz_offset_min INTEGER,
   -- 016: a Spotlight target glowed when tapped (§ 5 goals measure
   -- "on their own" vs "with the glow"). Device-local, never synced.
-  spotlit INTEGER NOT NULL DEFAULT 0 CHECK (spotlit IN (0, 1))
+  spotlit INTEGER NOT NULL DEFAULT 0 CHECK (spotlit IN (0, 1)),
+  -- 017-28: when a backspace pulled this pick out of its sentence
+  -- (NULL = still seated). A fast strip-pick removal is a wrong pick.
+  detached_at INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);
@@ -317,7 +320,11 @@ CREATE TABLE IF NOT EXISTS strip_impression (
   trained_jev INTEGER NOT NULL DEFAULT 0,
   chosen_kind TEXT CHECK (chosen_kind IS NULL OR chosen_kind IN ('sense', 'entity')),
   chosen_id TEXT,
-  chosen_source TEXT CHECK (chosen_source IS NULL OR chosen_source IN ('grid', 'strip', 'group', 'keyboard'))
+  chosen_source TEXT CHECK (chosen_source IS NULL OR chosen_source IN ('grid', 'strip', 'group', 'keyboard')),
+  -- 017-28: keys Jev's rerank would have painted — stored for 'late'
+  -- answers too, so the timing experiment reads recorded truth instead
+  -- of reconstructing an offer. NULL = no answer or a pre-column row.
+  shown_jev TEXT
 );
 
 CREATE INDEX IF NOT EXISTS impression_sentence ON strip_impression(sentence_id, position);
