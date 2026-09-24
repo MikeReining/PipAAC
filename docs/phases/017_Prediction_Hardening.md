@@ -189,6 +189,8 @@ M2/M3 order below until the book is in the strip.
 4. Respond: words an adult just tapped while modeling get a one-turn
    boost (step 24 item 1; R17, R20). Never stored.
 5. Random holdback + path timings on the device (R18, step 28).
+6. Smart bar order: board words, the "no" slot, and the four settings
+   (R21, step 29). Build right after item 3, before item 4.
 Parked: steps 15 and 18 (R19).
 ```
 
@@ -263,6 +265,7 @@ Why this changes the audit's order:
 | R18 | Does showing pay (2026-09-24) | Showing pays when hit rate × time saved on a hit > time lost looking. Both inputs are unknown. Time saved includes recall and the whole grid search (anchor, page flips, scanning), so it is large for words off the home grid. Measure both on real use with a **random holdback**: at a small share of moments where the strip would show, show nothing. Then compare time-to-pick for the same words, suggested vs. held back, and grid-word picks under a wrong strip vs. an empty one. Path timings only, no words, under "Help improve Pip" (R15, step 28). The holdback share is a starting value in the spec, not a ruling. |
 | R19 | Parked (2026-09-24) | Steps 15 (sabotage controls) and 18 (replay screen) are parked: both add tooling to the synthetic bench. Revisit after the book is in the strip. |
 | R20 | No listening (2026-09-24) | **Pip does not listen for prediction, and never stores what an adult said or tapped.** Why (founder): nobody presses a record button before talking to their child; the device can't tell who is being addressed; and remembering what a parent says is creepy. Phase 008 is held (`docs/backlog/008_Partner_Listening.md`). Step 24 keeps item 1 only (modeling taps, one turn, never stored). On real children the adult's previous words were worth +1 to +4 points; the big win is continue. |
+| R21 | Smart bar order (2026-09-24) | **Core words may appear in the bar, and a "no" word takes the last slot when it's likely.** Reverses step 23 item 6's "minus core cells" and the 2026-09-22 Smart bar rule that core words are "not copied into the strip". Four settings: Show board words (on), Keep "no" in the last spot (on), Sentence help: Their words / One step up (Their words), Highlight next (built, off). Product owner, evidence, and settings: `docs/product/Motor_Grid_And_Art.md` § 2.2. Build: step 29. The item-1 scorer also reports an all-words score (core included) next to the non-core one, since the bar now offers both. |
 
 ---
 
@@ -977,7 +980,8 @@ one cheap sweep on `score_book.mjs` before the format locks.
 6. On the device: feature `book` = log P(word | last two items), backing
    off to one item, then to sentence start. Retrieval source: the book's
    top words for this context, minus core cells, hidden words, and words
-   already on screen (steps 7, 8). The user's own history (step 10) sits
+   already on screen (steps 7, 8). **Amended 2026-09-24 (R21):** core
+   cells are included unless Show board words is off (step 29). The user's own history (step 10) sits
    on top, and per-user learned weights decide the mix, so a user's own
    habits win as they build up.
 7. Credits: `SOURCES.md` lists every source, license, and required
@@ -1824,6 +1828,53 @@ Core-cell halos (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`
 § 7.4) would help with the 57% of picks that are core words by making
 them faster to find. The time model (step 16) can now measure that, so
 a halo arm may be added to the bench. Building halos stays out of scope.
+
+## Step 29 — Smart bar order: board words, the "no" slot, settings
+
+**DECIDED 2026-09-24** (founder, R21). Product truth:
+`docs/product/Motor_Grid_And_Art.md` § 2.2 (rules, evidence, settings).
+Build after item 3 of the current order (the book in the bar), because
+both changes act on the book's ranking.
+
+Goal: the bar holds the likely next word, core or not, in a stable
+order, with "no" always in the same place.
+
+Build:
+1. Retrieval and ranking include core words when **Show board words**
+   is on (the default). When it is off, core words drop out of the bar
+   and only glow in place, as today.
+2. A `negation` label on senses in the catalog source, initial set
+   *not*, *no*, *don't*, *can't*, *won't*, *didn't*, *never*.
+   Regenerate the catalog; no hand-written list in `funnel.mjs`.
+3. The "no" slot: after ranking, if a negation word is within the top 8
+   (a starting value in one config), it takes the last Predict slot; the
+   others keep probability order. At most one. Ties are always broken
+   the same way (catalog order).
+4. Settings (Parent Corner → Smart bar), synced `learner_profile`
+   columns (`docs/product/Language_And_Voice_Schema.md` § 6.2e): Show
+   board words (on), Keep "no" in the last spot (on), Sentence help
+   (`their_words` | `one_step_up`, default `their_words`). Highlight
+   next already exists.
+5. Sentence help: `one_step_up` raises the weight of the book built
+   from how adults talk to children, relative to the child-speech book
+   and the child's own history. No grammar rules (R14). The weight
+   values are starting values chosen on the item-1 scorer.
+6. The item-1 scorer reports hit rates for all words (core included) and
+   for "no" words, with the "no" slot on and off.
+
+Lie-prone layer: the scorer applying the "no" slot while the device
+doesn't, or the reverse. Both call one shared function for the final
+slot order.
+
+Works Test: on a real board with the book loaded, type *I* → the bar
+shows core words (e.g. *am*, *want*) and *don't* in the last slot;
+*I am* → *not* in the last slot; *I want* → no "no" word. With Show
+board words off, *want* is absent from the bar and glows on the grid.
+With Keep "no" in the last spot off, the order is plain probability.
+The same sentence start twice gives the same slots.
+
+Done when: those pass and the scorer's with/without numbers are in
+§ Results.
 
 ## Human stops
 

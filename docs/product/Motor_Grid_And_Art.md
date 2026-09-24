@@ -196,7 +196,11 @@ Layout rules:
 - Every tile shows the word and its stick or object icon (a 1:1 square on the left, label on the right). Text alone is not enough for emerging and non-literate communicators. A sense with no art yet renders a Fitzgerald-tinted swatch; an entity renders its photo.
 - Idle state (empty sentence) shows conversational starters and routine anchors in priority order — the top personal entity, greeting, the Food group, help — never a blank strip. A narrow bar (two slots on Core 15) keeps the front of the list, so the child's person is always shown (`docs/phases/014_Grid_Density_And_Fit.md` § 7a).
 - Tiles in the strip are not core cells. Selecting one speaks or inserts that candidate. It does not rearrange the grid underneath.
-- Core words that are already on the grid are emphasized in place (confidence halos). They are not copied into the strip. Ranking owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
+- **Amended 2026-09-24 (founder; § 2.2):** core words are shown in the bar too, when they are the likely next words (*I* → *am*, *want*, *have*, *don't*). The grid tile stays where it is; the bar shows it a second time. Setting **Show board words** (default on) turns this off, and then core words are only emphasized in place (confidence halos), as before. Ranking owner: `docs/strategy/Dual_Engine_Predictive_Intelligence.md`.
+
+**Listen key — HELD 2026-09-24** (founder, 017 R20: no listening for
+prediction; `docs/backlog/008_Partner_Listening.md`). The rules below
+stay as the held design; nothing is built.
 
 **Listen key. DECIDED 2026-09-22** (not built). When the profile's
 listening setting is on, a Listen key is on the board; when it is off, the
@@ -233,7 +237,7 @@ pick, the bar returns to Predict.
 | Predict | default | likely next words | ranked | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` |
 | Expand | tapping a family tile (`?`, Pain, Hot/cold, Call) | that tile's family | **fixed** | this section; defaults in `docs/phases/014_Grid_Density_And_Fit.md` § 5 |
 | Forms | the Forms key | forms of the last word | ranked by context | `docs/phases/005_Word_Forms.md` |
-| Partner | the Listen key | the partner's words, one turn | as heard | `docs/backlog/008_Partner_Listening.md` |
+| ~~Partner~~ | — | dropped 2026-09-24 (017 R20: no listening) | — | `docs/backlog/008_Partner_Listening.md` |
 
 **Fixed-order rule.** A family's tiles always sit in the same slots on a
 given profile, so "`?` then slot 2" becomes a motor plan the way a cell
@@ -266,9 +270,68 @@ much → where); no deeper.
   add, remove, or reorder a family's tiles and make a family tile from any
   word (Parent Corner → Smart bar).
 - **Forms:** the catalog's word forms.
-- **Partner:** listening, for one turn, only while the Listen key is on.
+- ~~**Partner**~~: dropped 2026-09-24 (017 R20). Words an adult taps
+  while modeling boost the next Predict row for one turn and are never
+  stored (017 step 24 item 1).
 - **Nobody else.** No tips, prompts, promotions, notifications, or app
   messages ever appear in the bar.
+
+### 2.2 Predict order: board words, the "no" slot, and settings
+
+**DECIDED 2026-09-24** (founder). Not built; build step: 017 step 29.
+
+Why: the bar should hold the next word the user is most likely to say,
+like a phone keyboard (017 R9). Leaving out core words made it
+unpredictable: the most likely next words were never there. A bar that
+reliably holds the next word gets looked at by habit, so each look costs
+less. That look cost decides whether prediction pays at all (017 R18).
+
+**Rules for the Predict row.**
+
+1. **Board words count.** Core words are ranked with everything else
+   and may appear in the bar. The grid never changes.
+2. **The "no" word takes the last slot.** If a "no" word is among the
+   likely next words, it goes in the last Predict slot even if it ranked
+   lower, so "no" is always in the same place. At most one "no" word.
+   It is never forced in: after *I want*, "no" is almost never next, so
+   the rule doesn't fire. "Likely" = within the top 8 (a starting value,
+   not a ruling).
+3. **"No" words are a catalog label**, like a word's color or part of
+   speech, not a rule about sentences (017 R14). Initial set, from the
+   680: *not*, *no*, *don't*, *can't*, *won't*, *didn't*, *never*. An
+   adult can't edit the set; changing it is a catalog change.
+4. **Stable order.** The other slots are in probability order, with ties
+   always broken the same way, so the same sentence start puts the same
+   words in the same slots.
+5. **Two-slot bars** (Core 15): the "no" slot would take half the bar.
+   Open: how likely "no" must be before it does. Measure before
+   choosing.
+
+**Evidence (real children, CHILDES, measured 2026-09-24, scratch script).**
+What follows *I*: *am* 14%, *want* 8–18%, *don't* 8–9%, *have* 3–5%.
+The same four are the next word about 1 time in 3, and the top 8 about
+half the time. A "no" word right after: *you are* 13% (#1), *she is* 7%
+(#1), *I am* 11% (#2), *it is* 10% (#2), *I do* 10% (#2), *he is* 5%
+(#4). After *I can* / *I will* / *I want*: under 1% (rank 26 or lower),
+because children fuse it earlier (*I can't*, *I won't*). Rule 2 on
+held-out transcripts (all words, 4 slots): overall hit rate 38.7 →
+38.4% (~age 2), 41.2 → 41.0% (~3), 38.6 → 38.5% (4+); "no" words
+found 58 → 59%, 45 → 49%, 44 → 47%; it fires at 15–18% of moments.
+It costs almost nothing in accuracy, and the payoff is predictability.
+
+**Settings** (Parent Corner → Smart bar; synced per profile; a parent
+or SLP decides — `docs/product/SSOT.md` individual fit):
+
+| Setting | Default | Off / other value is for |
+| --- | --- | --- |
+| **Show board words** | On | A child working on grid motor patterns: core words then only glow in place |
+| **Keep "no" in the last spot** | On | Rarely changed; it's what keeps "no" predictable |
+| **Sentence help:** *Their words* / *One step up* | Their words | *One step up* leans on how adults talk to children, so the bar offers the small words a fuller sentence needs (*I* → *want*; *I want* → *a*, *some*, *to*). *Their words* leans on the child's own history and how children talk |
+| **Highlight next** (built) | Off | Glows likely next tiles on the grid, in addition to the bar |
+
+Why settings, not proof: some SLPs will call bar use a failure of grid
+motor planning, whatever the numbers say. It is a values choice, so the
+family and SLP choose. Pip ships its default.
 
 ---
 
