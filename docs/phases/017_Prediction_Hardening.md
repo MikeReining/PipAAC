@@ -212,6 +212,16 @@ M2/M3 order below until the book is in the strip.
    partner rows are logged, and 50 ignored echoes take the learned
    weight negative.
 5. Random holdback + path timings on the device (R18, step 28).
+   **Status: SPLIT 2026-09-24** — path timings (step-28 items 1–2)
+   **BUILT**: `wpmStats` quartiles + `pathTimes` in
+   `public/shared/stats.mjs` (the 016 home — one WPM definition), the
+   `speed` block in `predictionReport`, `wpm_q1`/`wpm_q3`/`path_ms` in
+   the research whitelist both ends. `speed.test.mjs` proves every
+   number against hand-computed values. The random holdback itself is
+   **deferred — not authorized** (founder, 2026-09-24: "I'm not
+   authorizing the random holdback … that could come in a future
+   version"). Step-28 items 3–4 (Jev-timing experiment, wrong picks)
+   remain unbuilt.
 6. Smart bar order: board words, the "no" slot, and the four settings
    (R21, step 29). Build right after item 3, before item 4.
    **Status: DONE 2026-09-24** — root_core joins the scored pool when
@@ -1830,9 +1840,21 @@ painted and what was picked next (`strip_impression.shown_at`,
 `chosen_*`; § 6.2d).
 
 Files: `public/shared/funnel.mjs` (`predictionReport` gains the speed
-metrics), a new pure module for the daily speed totals (proposed
-`public/shared/speed.mjs`), the 016 anonymous-totals sender,
+metrics), `public/shared/stats.mjs` (the daily speed totals — the
+spec's proposed `speed.mjs` folded into the module that already owns
+the WPM definition), the 016 anonymous-totals sender,
 `docs/product/Stats_And_Progress.md` § 6.3.
+
+**Status: items 1–2 BUILT 2026-09-24.** `wpmStats` returns median +
+quartiles; `pathTimes` buckets pick-to-pick ms by the second pick's
+source from `learner_event_log` timestamps; `dailyTotals` stores both
+(`path_times`); `predictionReport` exposes the same numbers as `speed`;
+`dayPayload` + `validateResearch` carry `wpm_q1`, `wpm_q3`, `path_ms`.
+Works Test `src/board/speed.test.mjs` — scripted session, every number
+hand-computed, plus the cleared-sentence and detached-pick legs.
+Items 3–4 (natural experiment, wrong picks) and item 6 (calibration)
+unbuilt; the random holdback (R18) is deferred — not authorized
+(founder, 2026-09-24).
 
 Build:
 1. **Real WPM on the device:** words in spoken sentences ÷ time from the

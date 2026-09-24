@@ -61,7 +61,8 @@ Every number has one definition, computed the same way on every device.
 | **Different words** | Distinct words (built-in or own) tapped in the period |
 | **New words** | Words tapped for the first time ever in the period |
 | **Words per sentence** | Mean words in sentences that ended `spoken`; plus the longest |
-| **Words per minute** | Words ÷ minutes from first tap to Speak, over spoken sentences of 2+ words; the weekly median |
+| **Words per minute** | Words ÷ minutes from first tap to Speak, over spoken sentences of 2+ words; the daily median and quartiles |
+| **Time between picks** | Pick-to-pick ms inside a sentence, by the second pick's path (Smart bar, home grid, group, typed); daily median and quartiles per path |
 | **Core / fringe / own** | Share of taps on root-core words, other built-in words, and the family's own words |
 | **Smart bar help** | Share of taps with source `strip` |
 | **Goal words** | For each word on a goal list (a Spotlight list, § 5): taps **on their own** (no glow) vs **with the glow** |
@@ -177,7 +178,8 @@ pattern: on by default, one switch, a strict list).
   Off means nothing is sent, ever.
 - **Sent (daily, whitelist only):** built-in word ids with counts; the
   count of own-word taps (a number, never which words); sentence-length
-  counts; words per minute; Smart bar share; layout, Cells setting and
+  counts; words per minute (median and quartiles); time between picks
+  per path (median and quartiles); Smart bar share; layout, Cells setting and
   presentation mode; days since the user started; app version; a random
   **research id** per user (not the user id, not a device id), so
   progress over time can be measured.
@@ -207,7 +209,13 @@ days once — dedup on `(rid, day)` at query time.
   path (strip, home grid, group, typed), the Jev-timing experiment's two
   medians and counts, and the wrong-pick count. Numbers only; no words,
   ids, or times of day. Spec:
-  `docs/phases/017_Prediction_Hardening.md` step 28. Not built.
+  `docs/phases/017_Prediction_Hardening.md` step 28.
+  **BUILT 2026-09-24** for WPM quartiles and per-path timings:
+  `pathTimes` + `wpmStats` in `public/shared/stats.mjs` (payload keys
+  `wpm_q1`/`wpm_q3`/`path_ms`), the `speed` block in `predictionReport`,
+  and the worker whitelist in lockstep
+  (`src/board/speed.test.mjs`). The Jev-timing experiment and the
+  wrong-pick count are not built.
 
 ## 7. Bans
 

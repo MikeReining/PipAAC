@@ -23,7 +23,8 @@ export const APP_VERSION = "2026-09-25";
  *  list — keep them in lockstep (src/worker/research.js). */
 export const RESEARCH_FIELDS = [
   "v", "rid", "day", "words", "own_taps", "sent_lengths",
-  "wpm", "wpm_n", "strip_share", "layout", "mode", "age_days", "ver",
+  "wpm", "wpm_n", "wpm_q1", "wpm_q3", "path_ms",
+  "strip_share", "layout", "mode", "age_days", "ver",
 ];
 
 const profile = (db) =>
@@ -62,6 +63,11 @@ export function dayPayload(db, dayRow, { rid, firstDay }) {
     sent_lengths: p.lengths ?? {},
     wpm: p.wpm_median,
     wpm_n: p.wpm_samples,
+    wpm_q1: p.wpm_q1 ?? null,
+    wpm_q3: p.wpm_q3 ?? null,
+    // Per-path pick-to-pick ms (017 step 28): median/quartiles + n per
+    // source. Numbers only — no times of day, no sequences.
+    path_ms: p.path_times ?? {},
     strip_share: p.words ? (p.sources?.strip ?? 0) / p.words : 0,
     layout: prf.board_layout ?? "grid60",
     mode: prf.presentation_mode ?? "symbol",

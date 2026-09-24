@@ -79,20 +79,63 @@ export function classifyTaps(db, taps) {
   return out;
 }
 
+/** Interpolated percentile over a sorted array — index p·(n−1). */
+function pct(sorted, p) {
+  if (!sorted.length) return null;
+  const i = (sorted.length - 1) * p;
+  const lo = Math.floor(i);
+  const hi = Math.ceil(i);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo);
+}
+
+/** Median and quartiles of a sorted sample. */
+function quartiles(sorted) {
+  return { q1: pct(sorted, 0.25), median: pct(sorted, 0.5), q3: pct(sorted, 0.75) };
+}
+
 /** Words per minute, § 3: words ÷ (first tap → Speak) over spoken
- *  sentences of 2+ words; the day's median and its sample count. A
- *  zero-duration sample is a clock artifact, not a rate — skipped. */
+ *  sentences of 2+ words; the day's median, quartiles, and sample
+ *  count. A zero-duration sample is a clock artifact, not a rate —
+ *  skipped. */
 export function wpmStats(spoken) {
   const rates = spoken
     .filter((s) => s.words >= 2 && s.ended_at > s.started_at)
     .map((s) => s.words / ((s.ended_at - s.started_at) / 60000))
     .sort((a, b) => a - b);
-  const median = rates.length
-    ? rates.length % 2
-      ? rates[(rates.length - 1) / 2]
-      : (rates[rates.length / 2 - 1] + rates[rates.length / 2]) / 2
-    : null;
-  return { wpm_median: median, wpm_samples: rates.length };
+  const q = quartiles(rates);
+  return { wpm_median: q.median, wpm_q1: q.q1, wpm_q3: q.q3, wpm_samples: rates.length };
+}
+
+/** Time between picks inside a sentence, bucketed by the second pick's
+ *  source (§ 3.1, 017 step 28): the pause before the pick plus the tap.
+ *  The sentence's first pick has no in-sentence pause and never counts.
+ *  A non-positive gap is a clock artifact — skipped. Per-path median,
+ *  quartiles, and sample count. `day` buckets each pick by its own
+ *  stored offset; `from`/`to` take a raw ms window. */
+export function pathTimes(db, { day = null, from = 0, to = Number.MAX_SAFE_INTEGER } = {}) {
+  const where = day == null
+    ? "e.selected_at >= ? AND e.selected_at < ?"
+    : `${dayKeySql("e.selected_at", "COALESCE(e.tz_offset_min, 0)")} = ?`;
+  const rows = db.prepare(
+    `SELECT e.source,
+            e.selected_at - (
+              SELECT p.selected_at FROM learner_event_log p
+              WHERE p.sentence_id = e.sentence_id AND p.position = e.position - 1
+            ) AS gap
+     FROM learner_event_log e
+     WHERE e.sentence_id IS NOT NULL AND e.position > 0 AND ${where}`,
+  ).all(...(day == null ? [from, to] : [day]));
+  const bySource = {};
+  for (const r of rows) {
+    if (!(r.gap > 0) || !r.source) continue;
+    (bySource[r.source] ??= []).push(r.gap);
+  }
+  const out = {};
+  for (const [src, gaps] of Object.entries(bySource)) {
+    gaps.sort((a, b) => a - b);
+    out[src] = { ...quartiles(gaps), n: gaps.length };
+  }
+  return out;
 }
 
 /** One `stats_day` row for `day` — every § 3 number, counts only. */
@@ -131,7 +174,7 @@ export function dailyTotals(db, day, computedAt = Date.now()) {
   }
 
   const { core, fringe, own } = classifyTaps(db, taps);
-  const { wpm_median, wpm_samples } = wpmStats(spoken);
+  const { wpm_median, wpm_q1, wpm_q3, wpm_samples } = wpmStats(spoken);
   const totalWords = spoken.reduce((n, s) => n + s.words, 0);
   // First-ever taps get a flag on the word's entry — the win card names
   // them without re-reading the log.
@@ -149,7 +192,10 @@ export function dailyTotals(db, day, computedAt = Date.now()) {
     words_per_sentence: spoken.length ? totalWords / spoken.length : null,
     longest_sentence: spoken.length ? Math.max(...spoken.map((s) => s.words)) : 0,
     wpm_median,
+    wpm_q1,
+    wpm_q3,
     wpm_samples,
+    path_times: pathTimes(db, { day }),
     core,
     fringe,
     own,

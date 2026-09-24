@@ -57,7 +57,8 @@ const B = Math.floor(Date.now() / DAY); // "today" under tz 0 arithmetic below
 function statsOnlyDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = OFF"); // core_cell's sense ref is absent by design
-  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op"]) {
+  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op",
+    "history_count"]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     assert.ok(ddl, `schema for ${t}`);
     db.exec(ddl);
@@ -152,17 +153,27 @@ test("dailyTotals: every number equals the hand-computed value", () => {
 
   const r0 = dailyTotals(db, d0, 999);
   assert.deepEqual(
-    { ...r0, computed_at: 0, per_word: 0, hours: 0, lengths: 0, sources: 0, wpm_median: 0 },
+    { ...r0, computed_at: 0, per_word: 0, hours: 0, lengths: 0, sources: 0,
+      wpm_median: 0, wpm_q1: 0, wpm_q3: 0, path_times: 0 },
     {
       day: d0, computed_at: 0, words: 8, different: 8, new: 8,
       sentences: 2, words_per_sentence: 2.5, longest_sentence: 3,
-      wpm_median: 0, wpm_samples: 2,
+      wpm_median: 0, wpm_q1: 0, wpm_q3: 0, wpm_samples: 2, path_times: 0,
       core: 3, fringe: 4, own: 1, spotlit: 1,
       sources: 0, hours: 0, lengths: 0, per_word: 0,
     },
   );
   // wpm: s1 3 words / 50 s = 3.6, s3 2 / 25 s = 4.8 → median 4.2
   assert.ok(Math.abs(r0.wpm_median - 4.2) < 1e-9, `wpm ${r0.wpm_median}`);
+  assert.ok(Math.abs(r0.wpm_q1 - 3.9) < 1e-9, `wpm_q1 ${r0.wpm_q1}`);
+  assert.ok(Math.abs(r0.wpm_q3 - 4.5) < 1e-9, `wpm_q3 ${r0.wpm_q3}`);
+  // Path gaps (017-28): s1 juice+milk 20s+20s grid; s2 more 10s strip
+  // (cleared bars still measure the pause); s3 drink 20s grid spanning
+  // the detached cookie.
+  assert.deepEqual(r0.path_times, {
+    grid: { q1: 20000, median: 20000, q3: 20000, n: 3 },
+    strip: { q1: 10000, median: 10000, q3: 10000, n: 1 },
+  });
   assert.deepEqual(r0.sources, { grid: 7, strip: 1, group: 0, keyboard: 0 });
   assert.deepEqual(r0.lengths, { 2: 1, 3: 1 });
   assert.equal(r0.hours[9], 3); assert.equal(r0.hours[10], 2);
@@ -176,6 +187,8 @@ test("dailyTotals: every number equals the hand-computed value", () => {
   assert.equal(r1.new, 1); // cooper's first-ever tap
   assert.equal(r1.sentences, 0); assert.equal(r1.words_per_sentence, null);
   assert.equal(r1.wpm_median, null); assert.equal(r1.wpm_samples, 0);
+  assert.equal(r1.wpm_q1, null); assert.equal(r1.wpm_q3, null);
+  assert.deepEqual(r1.path_times, {}); // no sentence picks that day
   assert.equal(r1.core, 2); assert.equal(r1.own, 1); assert.equal(r1.fringe, 0);
   assert.equal(r1.hours[8], 2); assert.equal(r1.hours[15], 1);
 
@@ -185,7 +198,14 @@ test("dailyTotals: every number equals the hand-computed value", () => {
   assert.equal(r2.sentences, 2); assert.equal(r2.words_per_sentence, 2.5);
   assert.equal(r2.longest_sentence, 3);
   assert.ok(Math.abs(r2.wpm_median - 4.0) < 1e-9, `wpm ${r2.wpm_median}`);
+  assert.ok(Math.abs(r2.wpm_q1 - 4.0) < 1e-9, `wpm_q1 ${r2.wpm_q1}`);
+  assert.ok(Math.abs(r2.wpm_q3 - 4.0) < 1e-9, `wpm_q3 ${r2.wpm_q3}`);
   assert.equal(r2.wpm_samples, 2);
+  // Path gaps: s5 cookie 15s strip + more 15s grid; s6 home 20s grid.
+  assert.deepEqual(r2.path_times, {
+    grid: { q1: 16250, median: 17500, q3: 18750, n: 2 },
+    strip: { q1: 15000, median: 15000, q3: 15000, n: 1 },
+  });
   assert.equal(r2.core, 3); assert.equal(r2.fringe, 1); assert.equal(r2.own, 2);
   assert.equal(r2.spotlit, 1);
   assert.deepEqual(r2.sources, { grid: 3, strip: 1, group: 1, keyboard: 1 });

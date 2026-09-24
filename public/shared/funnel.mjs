@@ -9,6 +9,7 @@
  */
 
 import { bookScores } from "./opening_book.mjs";
+import { pathTimes, wpmStats } from "./stats.mjs";
 
 const RECENT_WINDOW_MS = 15 * 60 * 1000;
 /** 017-24 / R20: a partner turn is the words an adult tapped while
@@ -674,12 +675,28 @@ export function predictionReport(db, { from = 0, to = Number.MAX_SAFE_INTEGER } 
     if (shown.length && !shown.includes(key)) falseShows++;
     if (r.chosen_source === "strip") stripPicks++;
   }
+  // Passive timings (017 step 28): real WPM and the pause before each
+  // pick by path, both from timestamped rows — never the ranker's report.
+  const spoken = db
+    .prepare(
+      `SELECT s.id, s.started_at, s.ended_at,
+              (SELECT COUNT(*) FROM learner_event_log e
+                WHERE e.sentence_id = s.id) AS words
+       FROM sentence s
+       WHERE s.end_kind = 'spoken' AND s.ended_at >= ? AND s.ended_at < ?`,
+    )
+    .all(from, to);
+  const w = wpmStats(spoken);
   return {
     picks,
     shortlistRecall: picks ? recall / picks : 0,
     hitRate: picks ? hits / picks : 0,
     falseShowRate: picks ? falseShows / picks : 0,
     stripShare: picks ? stripPicks / picks : 0,
+    speed: {
+      wpm: { median: w.wpm_median, q1: w.wpm_q1, q3: w.wpm_q3, n: w.wpm_samples },
+      paths: pathTimes(db, { from, to }),
+    },
   };
 }
 

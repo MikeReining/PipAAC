@@ -62,6 +62,11 @@ test("flush sends whitelisted counts — no identifier survives", async () => {
   const db = fixture();
   putDay(db, 14000, "dev_local", {
     words: 13, sentences: 4, wpm_median: 5, wpm_samples: 4,
+    wpm_q1: 3, wpm_q3: 7,
+    path_times: {
+      grid: { q1: 1200, median: 2000, q3: 3100, n: 9 },
+      strip: { q1: 800, median: 1500, q3: 2200, n: 4 },
+    },
     sources: { grid: 9, strip: 4 }, hours: (() => { const h = Array(24).fill(0); h[9] = 13; return h; })(),
     lengths: { 2: 3, 3: 1 },
     per_word: {
@@ -97,6 +102,12 @@ test("flush sends whitelisted counts — no identifier survives", async () => {
   const d0 = sent.find((s) => s.body.day === 14000).body;
   assert.equal(d0.words.sns_want, 8);
   assert.equal(d0.own_taps, 3);            // Cooper's taps: a number, never "Cooper"
+  assert.equal(d0.wpm_q1, 3); assert.equal(d0.wpm_q3, 7);
+  // Path timings leave as bare ms numbers — no times of day, no sequences.
+  assert.deepEqual(d0.path_ms, {
+    grid: { q1: 1200, median: 2000, q3: 3100, n: 9 },
+    strip: { q1: 800, median: 1500, q3: 2200, n: 4 },
+  });
   assert.equal(d0.strip_share, 4 / 13);
   assert.equal(d0.age_days, 0);            // first stats day
   assert.equal(sent.find((s) => s.body.day === 14001).body.age_days, 1);
@@ -147,6 +158,13 @@ test("the Worker accepts the real payload and rejects anything extra", () => {
   assert.equal(validateResearch({ ...good, rid: "usr_abc" }), null);
   assert.equal(validateResearch({ ...good, strip_share: 2 }), null);
   assert.equal(validateResearch({ ...good, words: { sns_a: "three" } }), null);
+  assert.equal(validateResearch({ ...good, wpm_q1: "fast" }), null);
+  // path_ms: unknown path, missing field, and non-numeric all reject.
+  const pt = { grid: { q1: 1, median: 2, q3: 3, n: 4 } };
+  assert.ok(validateResearch({ ...good, path_ms: pt }));
+  assert.equal(validateResearch({ ...good, path_ms: { pocket: pt.grid } }), null);
+  assert.equal(validateResearch({ ...good, path_ms: { grid: { q1: 1, median: 2, q3: 3 } } }), null);
+  assert.equal(validateResearch({ ...good, path_ms: { grid: { ...pt.grid, median: -1 } } }), null);
   assert.equal(validateResearch("nope"), null);
 });
 

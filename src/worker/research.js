@@ -18,13 +18,16 @@ const RE = {
 
 const int = (v, max) => Number.isInteger(v) && v >= 0 && v <= max;
 
+const PATHS = new Set(["grid", "strip", "group", "keyboard"]);
+
 /** Returns a clean payload or null. Extra keys reject the whole POST —
  *  a client that sends anything else is not this app. */
 export function validateResearch(body) {
   if (!body || typeof body !== "object" || Array.isArray(body)) return null;
   const allowed = new Set([
     "v", "rid", "day", "words", "own_taps", "sent_lengths",
-    "wpm", "wpm_n", "strip_share", "layout", "mode", "age_days", "ver",
+    "wpm", "wpm_n", "wpm_q1", "wpm_q3", "path_ms",
+    "strip_share", "layout", "mode", "age_days", "ver",
   ]);
   for (const k of Object.keys(body)) if (!allowed.has(k)) return null;
 
@@ -56,6 +59,28 @@ export function validateResearch(body) {
     return null;
   }
   if (!int(body.wpm_n, 100000)) return null;
+  for (const k of ["wpm_q1", "wpm_q3"]) {
+    if (body[k] !== null && (typeof body[k] !== "number" || body[k] < 0 || body[k] > 500)) {
+      return null;
+    }
+  }
+
+  // Per-path pick-to-pick ms (017 step 28): only the four known paths,
+  // each {q1, median, q3, n} — no other keys, no times of day.
+  if (body.path_ms == null || typeof body.path_ms !== "object"
+      || Array.isArray(body.path_ms)) return null;
+  const pathMs = {};
+  for (const [k, v] of Object.entries(body.path_ms)) {
+    if (!PATHS.has(k) || !v || typeof v !== "object" || Array.isArray(v)) return null;
+    const fields = Object.keys(v).sort().join(",");
+    if (fields !== "median,n,q1,q3") return null;
+    for (const f of ["q1", "median", "q3"]) {
+      if (typeof v[f] !== "number" || !(v[f] >= 0) || v[f] > 3600000) return null;
+    }
+    if (!int(v.n, 100000)) return null;
+    pathMs[k] = { q1: v.q1, median: v.median, q3: v.q3, n: v.n };
+  }
+  if (Object.keys(pathMs).length > 4) return null;
   if (typeof body.strip_share !== "number" || body.strip_share < 0 || body.strip_share > 1) {
     return null;
   }
@@ -65,7 +90,8 @@ export function validateResearch(body) {
   return {
     v: 1, rid: body.rid, day: body.day,
     words, own_taps: body.own_taps, sent_lengths: sentLengths,
-    wpm: body.wpm, wpm_n: body.wpm_n, strip_share: body.strip_share,
+    wpm: body.wpm, wpm_n: body.wpm_n, wpm_q1: body.wpm_q1, wpm_q3: body.wpm_q3,
+    path_ms: pathMs, strip_share: body.strip_share,
     layout: body.layout, mode: body.mode, age_days: body.age_days, ver: body.ver,
   };
 }
@@ -82,11 +108,13 @@ export async function handleResearch(request, env) {
     blobs: [
       JSON.stringify(clean.words),
       JSON.stringify(clean.sent_lengths),
+      JSON.stringify(clean.path_ms),
       clean.layout, clean.mode, clean.ver,
     ],
     doubles: [
       clean.day, clean.age_days, clean.own_taps,
       clean.wpm ?? -1, clean.wpm_n, clean.strip_share,
+      clean.wpm_q1 ?? -1, clean.wpm_q3 ?? -1,
     ],
     indexes: [clean.rid],
   });
