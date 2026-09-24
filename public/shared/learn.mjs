@@ -24,6 +24,27 @@ const BURN_IN = 50;  // "a child with little data behaves like the default":
                      // the row accumulates from day one, but the strip runs
                      // defaults until ~50 impressions back the drift.
 
+/** R21 sentence help: 'one_step_up' keeps the opening book strong
+ *  against the child's own history so small grammar words survive —
+ *  the book weight is doubled at serve time (starting value, pending
+ *  the R18 holdback's evidence). 'their_words' serves the raw weights.
+ *  Applied here — the single load point — so the stored weights_local
+ *  on a strip moment IS what painted, and replay can't drift. Learning
+ *  runs in the same scaled units (the gradient must evaluate the model
+ *  the child actually saw); stored weights stay raw and loadWeights
+ *  re-scales under whatever mode the profile runs then. */
+const SENTENCE_HELP_BOOK_MULT = 2;
+function sentenceHelp(db) {
+  return db
+    .prepare("SELECT sentence_help AS h FROM learner_profile WHERE id = 'prf_local'")
+    .all()[0]?.h ?? "one_step_up";
+}
+function sentenceHelpWeights(db, weights) {
+  return sentenceHelp(db) === "one_step_up"
+    ? { ...weights, book: (weights.book ?? 0) * SENTENCE_HELP_BOOK_MULT }
+    : weights;
+}
+
 /** The weights the strip should run now: the child's row if it exists,
  *  else the shipped defaults (not yet written — first Speak creates it). */
 export function loadWeights(db, catalogModel, weightSet = "local_only") {
@@ -37,12 +58,15 @@ export function loadWeights(db, catalogModel, weightSet = "local_only") {
     // Merge over the shipped defaults: a row trained before a feature
     // existed (e.g. `hist`) inherits its default instead of running at 0.
     return {
-      weights: { ...catalogModel.weights[weightSet], ...JSON.parse(row.weights) },
+      weights: sentenceHelpWeights(db, {
+        ...catalogModel.weights[weightSet],
+        ...JSON.parse(row.weights),
+      }),
       examplesSeen: row.examples_seen,
     };
   }
   return {
-    weights: { ...catalogModel.weights[weightSet] },
+    weights: sentenceHelpWeights(db, { ...catalogModel.weights[weightSet] }),
     examplesSeen: row?.examples_seen ?? 0,
   };
 }
@@ -87,14 +111,20 @@ export function learnFromSentence(
   if (!imps.length) return 0;
 
   const feats = weightSet === "local_only" ? LOCAL_FEATURES : MODEL_FEATURES;
-  const defaults = catalogModel.weights[weightSet];
+  // Train in serve units: the defaults AND the carried row are scaled by
+  // sentence help the same way loadWeights scales them, so the softmax
+  // below prices each moment at the weights that painted it.
+  const defaults = sentenceHelpWeights(db, catalogModel.weights[weightSet]);
   const row = db
     .prepare(
       `SELECT weights, examples_seen FROM prediction_weights
        WHERE profile_id = 'prf_local' AND weight_set = ?`,
     )
     .all(weightSet)[0];
-  const cur = { ...defaults, ...(row ? JSON.parse(row.weights) : {}) };
+  const cur = sentenceHelpWeights(db, {
+    ...catalogModel.weights[weightSet],
+    ...(row ? JSON.parse(row.weights) : {}),
+  });
 
   for (const imp of imps) {
     // A candidate whose features are not all finite numbers is dropped
@@ -141,6 +171,12 @@ export function learnFromSentence(
     console.warn("learn: non-finite weights — row left unchanged");
     return 0;
   }
+  // Store raw: undo the serve-time book scale so the row stays in
+  // catalog units; loadWeights re-applies the profile's current mode.
+  const store = { ...cur };
+  if (sentenceHelp(db) === "one_step_up" && store.book !== undefined) {
+    store.book /= SENTENCE_HELP_BOOK_MULT;
+  }
 
   db.prepare(
     `INSERT INTO prediction_weights
@@ -152,7 +188,7 @@ export function learnFromSentence(
        examples_seen = excluded.examples_seen,
        updated_at = excluded.updated_at`,
   ).run(
-    weightSet, JSON.stringify(cur), catalogModel.version,
+    weightSet, JSON.stringify(store), catalogModel.version,
     (row?.examples_seen ?? 0) + imps.length, at,
   );
   if (weightSet === "with_jev") {

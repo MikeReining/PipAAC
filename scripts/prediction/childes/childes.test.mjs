@@ -73,6 +73,11 @@ test('band edges and split semantics', () => {
 const BASELINE = {
   'CHILDES child speech': { mlu_lt2: [41.3, 18.2, 19.2], mlu_2_35: [48.8, 26.6, 27.2], mlu_gt35: [49.4, 30.0, 30.3] },
 };
+// R21 (item 6): all-words and 'no'-word cells, slot on vs off — same
+// repo-measured basis as the table above.
+const BASELINE_R21 = {
+  mlu_lt2: [24.4, 86.8, 86.6], mlu_2_35: [36.1, 64.8, 62.9], mlu_gt35: [36.3, 59.3, 55.3],
+};
 
 test('real-children scorer: events + books reproduce the repo baseline', { skip: !existsSync(C.TRANSCRIPTS) && 'no CHILDES cache' }, () => {
   const trs = C.loadTranscripts();
@@ -97,5 +102,11 @@ test('real-children scorer: events + books reproduce the repo baseline', { skip:
     assert.ok(Math.abs(l - el) <= 0.2, `later ${l} vs baseline ${el}`);
     assert.ok(Math.abs(f - ef) <= 0.2, `first ${f} vs baseline ${ef}`);
     assert.ok(Math.abs(a - ea) <= 0.2, `afterAdult ${a} vs baseline ${ea}`);
+    const [eAll, eNo, eNoOff] = BASELINE_R21[b];
+    const [al, no, noOff] = [pct(out[b + '|all']), pct(out[b + '|noSlot']), pct(out[b + '|noPlain'])];
+    console.log(`           all ${al}%  'no' ${no}% (off ${noOff}%)`);
+    assert.ok(Math.abs(al - eAll) <= 0.2, `all ${al} vs baseline ${eAll}`);
+    assert.ok(Math.abs(no - eNo) <= 0.2, `noSlot ${no} vs baseline ${eNo}`);
+    assert.ok(Math.abs(noOff - eNoOff) <= 0.2, `noPlain ${noOff} vs baseline ${eNoOff}`);
   }
 });

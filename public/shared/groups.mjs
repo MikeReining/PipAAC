@@ -651,6 +651,9 @@ const SYNCED_SETTINGS = new Set([
   "research_id",
   "presentation_mode",
   "book_band",
+  "show_board_words",
+  "no_last_slot",
+  "sentence_help",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);

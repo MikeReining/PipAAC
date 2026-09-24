@@ -648,7 +648,8 @@
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "negation": true
     },
     {
       "slot": 73,
@@ -666,7 +667,8 @@
       "partOfSpeech": "Adverb",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": "Function Words & Grammar"
+      "category": "Function Words & Grammar",
+      "negation": true
     },
     {
       "slot": 75,
@@ -5112,7 +5114,8 @@
       "partOfSpeech": "Adverb",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": "Time, Calendar & Sequencing"
+      "category": "Time, Calendar & Sequencing",
+      "negation": true
     },
     {
       "slot": 570,
@@ -5382,7 +5385,8 @@
       "partOfSpeech": "Interjection",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "negation": true
     },
     {
       "slot": 606,
@@ -5481,7 +5485,8 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": "Function Words & Grammar"
+      "category": "Function Words & Grammar",
+      "negation": true
     },
     {
       "slot": 617,
@@ -5490,7 +5495,8 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": "Function Words & Grammar"
+      "category": "Function Words & Grammar",
+      "negation": true
     },
     {
       "slot": 618,
@@ -5499,7 +5505,8 @@
       "partOfSpeech": "Verb",
       "fitzgeraldColor": "Red",
       "visualStyle": "Diagrammatic",
-      "category": "Function Words & Grammar"
+      "category": "Function Words & Grammar",
+      "negation": true
     },
     {
       "slot": 619,

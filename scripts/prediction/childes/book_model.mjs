@@ -72,7 +72,7 @@ export function build(streams) {
 
 export const sortedDesc = (m) => [...m.entries()].sort((a, b) => b[1] - a[1]);
 
-export function topWords(book, ctx, n = 4, partner = null) {
+export function topWords(book, ctx, n = 4, partner = null, { core = false } = {}) {
   const { uni, bi, tri, start } = book;
   const scores = new Map();
   if (!ctx.length) {
@@ -97,10 +97,13 @@ export function topWords(book, ctx, n = 4, partner = null) {
     for (const w of [...scores.keys()]) scores.set(w, scores.get(w) + LAM1 * (uni.get(w) ?? 0) / uniTot);
   }
   if (partner) for (const w of partner) scores.set(w, (scores.get(w) ?? 0) + 2);
-  const ranked = sortedDesc(scores).map(([w]) => w).filter((w) => !C.CORE.has(w)).slice(0, n);
+  // R21: `core` returns board words too — the default metric stays
+  // non-core-only (the bar was fringe-only before item 6).
+  const offer = (w) => core || !C.CORE.has(w);
+  const ranked = sortedDesc(scores).map(([w]) => w).filter(offer).slice(0, n);
   if (ranked.length < n)
     for (const [w] of sortedDesc(start)) {
-      if (!C.CORE.has(w) && !ranked.includes(w)) ranked.push(w);
+      if (offer(w) && !ranked.includes(w)) ranked.push(w);
       if (ranked.length >= n) break;
     }
   return ranked.slice(0, n);

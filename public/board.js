@@ -14,8 +14,9 @@ import {
   logSelection,
   openSentence,
   stampShownFinal,
+  stripOrder,
   stripScored,
-  spotGate,
+  stripSettings,
   spotWeights,
   updateImpressionJev,
 } from "./shared/funnel.mjs";
@@ -625,8 +626,8 @@ async function renderStrip() {
     cards = kbUi.completions();
   } else {
     // Keyboard open with an empty buffer: next-word continuations, core
-    // words included — the grid is hidden so the no-core rule doesn't
-    // apply (slice 7, Dual_Engine §5.2).
+    // words included — the grid is hidden so board words belong in the
+    // bar regardless of Show board words (R21).
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
     // First paint is always the local model (§ 3.4: <50 ms, never waits
     // on the network). The child's learned weights win over the shipped
@@ -636,7 +637,7 @@ async function renderStrip() {
     const scored = kbUi.isOpen() ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbUi.isOpen()
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
-      : spotGate(scored.candidates, scored.pNone, model.tau, cap)
+      : stripOrder(db, scored.candidates, scored.pNone, model.tau, cap)
           .map((r) => ({ kind: r.kind, id: r.id }));
     if (sentence.length === 0 && !items.length) {
       // Nothing has support at position 0 — the resting cards still fill
@@ -658,6 +659,7 @@ async function renderStrip() {
           weightsLocal: scored ? {
             w: model.weights, tau: model.tau,
             ver: catalog.prediction.version, seen: lw.examplesSeen,
+            noLast: stripSettings(db).noLast ? 1 : 0,
           } : null,
         },
       );
@@ -717,7 +719,7 @@ async function maybeJev(scored, sents, paintedAt) {
       book,
     };
     const reranked = applyJev(scored.candidates, probs, wj.weights);
-    const items = spotGate(reranked.candidates, reranked.pNone, wj.tau,
+    const items = stripOrder(db, reranked.candidates, reranked.pNone, wj.tau,
       stripSlots(boardGeom().cols))
       .map((r) => ({ kind: r.kind, id: r.id }));
     // One row per moment (017-5): the answer merges in place — raw
@@ -1423,6 +1425,38 @@ $("jev-share").addEventListener("click", (e) => {
   setSetting(db, "jev_sharing", jevSharing ? 1 : 0);
   kbUi.syncSettings();
 });
+/* Smart bar order (R21 / Motor_Grid § 2.2): board words in the pool,
+ * the "no" slot, and sentence help — all synced per profile. A change
+ * repaints the strip so the parent sees the effect immediately. */
+const syncSbSegs = () => {
+  const p = ALL(db,
+    "SELECT show_board_words AS b, no_last_slot AS n, sentence_help AS h FROM learner_profile WHERE id = 'prf_local'",
+  )[0] ?? {};
+  for (const b of $("sb-board").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === String(p.b ?? 1));
+  }
+  for (const b of $("sb-nolast").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === String(p.n ?? 1));
+  }
+  for (const b of $("sb-help").querySelectorAll("button")) {
+    b.classList.toggle("on", b.dataset.v === (p.h ?? "one_step_up"));
+  }
+};
+for (const [seg, key, numeric] of [
+  ["sb-board", "show_board_words", true],
+  ["sb-nolast", "no_last_slot", true],
+  ["sb-help", "sentence_help", false],
+]) {
+  $(seg).addEventListener("click", (e) => {
+    const v = e.target.closest("button")?.dataset.v;
+    if (v === undefined) return;
+    setSetting(db, key, numeric ? Number(v) : v);
+    syncSbSegs();
+    renderStrip();
+    applyLikely();
+  });
+}
+syncSbSegs();
 /* "Help improve Pip" (016 slice 6) — the research-totals switch. Same
  * synced-setting mechanics as the seg above. */
 const syncShareSeg = () => {

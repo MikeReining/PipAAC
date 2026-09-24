@@ -11,9 +11,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as C from '../childes/common.mjs';
-import { buildEvents, scoreEvents } from '../childes/score.mjs';
+import { buildEvents, scoreEvents, scoreOrder } from '../childes/score.mjs';
 import { tokenize } from '../childes/book_model.mjs';
 import { bookTop } from '../../../public/shared/opening_book.mjs';
+import { NO_WINDOW } from '../../../public/shared/funnel.mjs';
 import { BOOK_PATH } from './build_book.mjs';
 
 // val events from a TinyDialogues file: child-speaker turns only.
@@ -69,11 +70,12 @@ function imagineEvents(file) {
 const pct = (x) => (x * 100).toFixed(1) + '%';
 
 function printTable(label, out) {
-  console.log(`\n== ${label} ==   (random ${pct(C.RANDOM_HIT)})`);
+  console.log(`\n== ${label} ==   (random ${pct(C.RANDOM_HIT)} non-core / ${pct(4 / C.LEMMAS.length)} all-words)`);
   for (const b of C.BANDS)
     console.log(
       `  ${C.BAND_LABEL[b].padEnd(10)} later ${pct(out[b + '|later'] ?? 0)}   ` +
-      `first ${pct(out[b + '|first'] ?? 0)}   after-adult ${pct(out[b + '|afterAdult'] ?? 0)}`,
+      `first ${pct(out[b + '|first'] ?? 0)}   after-adult ${pct(out[b + '|afterAdult'] ?? 0)}   ` +
+      `all ${pct(out[b + '|all'] ?? 0)}   'no' ${pct(out[b + '|noSlot'] ?? 0)} (off ${pct(out[b + '|noPlain'] ?? 0)})`,
     );
 }
 
@@ -86,7 +88,12 @@ async function main() {
   const trs = C.loadTranscripts();
   const { test } = C.splitIdx(trs.length);
   const events = buildEvents(trs, test);
-  printTable(`opening book — CHILDES held-out (${path.basename(bookFile)})`, scoreEvents(events, predict));
+  printTable(`opening book — CHILDES held-out (${path.basename(bookFile)})`, {
+    ...scoreEvents(events, predict),
+    // R21: the file's own ranking, core words included, through the same
+    // noSlotOrder the strip paints with.
+    ...scoreOrder(events, (e) => bookTop(book, e.band, e.ctx, NO_WINDOW)),
+  });
 
   for (const [band, file] of [['mlu_lt2', C.TD_VAL('2')], ['mlu_2_35', C.TD_VAL('5')]]) {
     if (!existsSync(file)) continue;

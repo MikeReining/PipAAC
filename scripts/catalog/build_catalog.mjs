@@ -335,6 +335,9 @@ export function buildCatalog(
     art_archetype: e.visualStyle,
     tier: e.tier === 1 ? "root_core" : "primary_fringe",
     category: e.category,
+    // R21 / Motor_Grid §2.2 rule 3: "no" words are a catalog attribute —
+    // the Predict "no" slot reads this flag, never a hand-kept list.
+    negation: e.negation ? 1 : 0,
   }));
 
   // Senses that share a spoken text (e.g. orange the fruit / orange the color)

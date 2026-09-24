@@ -24,10 +24,12 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
   db.exec("BEGIN");
   try {
     const insSense = db.prepare(
-      "INSERT OR IGNORE INTO sense (id, fitzgerald_role, art_archetype, tier, category, default_image_id) VALUES (?, ?, ?, ?, ?, NULL)",
+      `INSERT INTO sense (id, fitzgerald_role, art_archetype, tier, category, default_image_id, negation)
+       VALUES (?, ?, ?, ?, ?, NULL, ?)
+       ON CONFLICT(id) DO UPDATE SET negation = excluded.negation`,
     );
     for (const s of senses) {
-      insSense.run(s.id, s.fitzgerald_role, s.art_archetype, s.tier, s.category);
+      insSense.run(s.id, s.fitzgerald_role, s.art_archetype, s.tier, s.category, s.negation ?? 0);
     }
 
     const insImage = db.prepare(

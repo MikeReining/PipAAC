@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS sense (
   -- homes).
   category TEXT,
   default_image_id TEXT REFERENCES image(id),
+  -- R21: catalog-owned "no" word flag for the Predict last-slot rule.
+  negation INTEGER NOT NULL DEFAULT 0 CHECK (negation IN (0, 1)),
   CHECK (
     category IN (
       'Food & Drink',
@@ -148,7 +150,17 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- picks it at setup; the learned mix keeps whichever band wins. Default
   -- mid (≈ age 5) when nobody has said.
   book_band TEXT NOT NULL DEFAULT 'mlu_2_35'
-    CHECK (book_band IN ('mlu_lt2', 'mlu_2_35', 'mlu_gt35'))
+    CHECK (book_band IN ('mlu_lt2', 'mlu_2_35', 'mlu_gt35')),
+  -- Smart bar order (R21, Motor_Grid §2.2): whether Predict may offer a
+  -- word that already has a grid cell, and whether a likely negation
+  -- word pins to the last Predict slot. Both default ON.
+  show_board_words INTEGER NOT NULL DEFAULT 1 CHECK (show_board_words IN (0, 1)),
+  no_last_slot INTEGER NOT NULL DEFAULT 1 CHECK (no_last_slot IN (0, 1)),
+  -- Sentence help (R21): 'one_step_up' keeps the opening book's weight
+  -- up against the child's own history so small grammar words survive;
+  -- 'their_words' lets history take over as it grows.
+  sentence_help TEXT NOT NULL DEFAULT 'one_step_up'
+    CHECK (sentence_help IN ('one_step_up', 'their_words'))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

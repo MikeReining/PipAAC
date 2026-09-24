@@ -17,7 +17,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
-import { stripScored, stripCandidates, bookBand } from "../../public/shared/funnel.mjs";
+import { stripScored, stripCandidates, bookBand, noSlotOrder } from "../../public/shared/funnel.mjs";
 import { bookScores } from "../../public/shared/opening_book.mjs";
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
 import defaults from "../../data/prediction/defaults.json" with { type: "json" };
@@ -45,27 +45,29 @@ const anySenseOf = (db, lemma) =>
      WHERE lb.normalized_text = ? AND lb.kind = 'lemma'
        AND lb.status = 'approved' AND lb.locale = 'en'`,
   ).all(lemma)[0]?.id;
-const senseOf = (db, lemma) =>
-  db.prepare(
-    `SELECT lb.sense_id AS id FROM label lb
-     JOIN sense s ON s.id = lb.sense_id AND s.tier = 'primary_fringe'
-     WHERE lb.normalized_text = ? AND lb.kind = 'lemma'
-       AND lb.status = 'approved' AND lb.locale = 'en'`,
-  ).all(lemma)[0]?.id;
 const ctxItems = (db, words) =>
   words.map((w) => ({ kind: "sense", id: anySenseOf(db, w) }));
 
-/** The book's top-N continuations this db can offer: a lemma with a
- *  primary_fringe sense that isn't hidden. */
+/** The catalog's negation lemmas (R21) — same derivation the device
+ *  reads via sense.negation, never a hand-kept list. */
+const lemmaById = Object.fromEntries(
+  catalog.labels.filter((l) => l.kind === "lemma").map((l) => [l.sense_id, l.normalized_text]));
+const NEG = new Set(
+  catalog.senses.filter((s) => s.negation).map((s) => lemmaById[s.id]).filter(Boolean));
+
+/** The book's top-N continuations this db can offer under the shipped
+ *  defaults: any sense (core words included — Show board words is on),
+ *  not hidden, ordered by the book then through the same noSlotOrder
+ *  the strip paints with. */
 function expectedOffer(db, ctx, n = 4) {
   const hidden = new Set(
     db.prepare("SELECT sense_id AS id FROM sense_mask WHERE status = 'hidden'")
       .all().map((r) => lemmaOf(db, r.id)));
-  return [...bookScores(BOOK, bookBand(db), ctx).entries()]
-    .filter(([w]) => !hidden.has(w) && senseOf(db, w))
+  const ranked = [...bookScores(BOOK, bookBand(db), ctx).entries()]
+    .filter(([w]) => !hidden.has(w) && anySenseOf(db, w))
     .sort((a, b) => b[1] - a[1])
-    .slice(0, n)
     .map(([w]) => w);
+  return noSlotOrder(ranked, n, (w) => NEG.has(w));
 }
 
 test("day one: book-strong contexts lead the strip ('i need' → a, the)", () => {
@@ -93,7 +95,7 @@ test("a hidden word never appears, even when the book backs it", () => {
   const target = expectedOffer(db, ctx)[0];
   db.prepare(
     "INSERT INTO sense_mask (sense_id, status) VALUES (?, 'hidden')")
-    .run(senseOf(db, target));
+    .run(anySenseOf(db, target));
   const shown = stripCandidates(db, ctxItems(db, ctx), NOW, "en", MODEL)
     .map((c) => lemmaOf(db, c.id));
   assert.ok(!shown.includes(target), `hidden word '${target}' showed`);

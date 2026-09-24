@@ -29,6 +29,10 @@ export const CORE = new Set(
 export const MULTIWORD = LEMMAS.filter((w) => w.includes(' ')).sort((a, b) => b.length - a.length);
 export const NONCORE_VOCAB = LEMMAS.filter((w) => !CORE.has(w)).length;
 export const RANDOM_HIT = 4 / NONCORE_VOCAB; // top-4 over the non-core vocab
+// R21: the "no" set is catalog truth (lexicon `negation` flag →
+// sense.negation). The scorer reads it here; the device reads
+// sense.negation — one source, no hand-kept list anywhere.
+export const NEG = new Set(lex.filter((e) => e.negation).map((e) => e.spokenText.toLowerCase()));
 
 // Every target must be an offerable lemma — a mapping to a word Pip
 // cannot offer (say, be, grandmother) mints a ghost lemma the scorer

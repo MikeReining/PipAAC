@@ -13,6 +13,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as C from './common.mjs';
 import { build, topWords, childlike, tinydialogues, imagine, childesTrain } from './book_model.mjs';
+// R21 / step 29: the scorer orders through the SAME function the strip
+// paints with — no parallel implementation to drift.
+import { noSlotOrder, NO_WINDOW } from '../../../public/shared/funnel.mjs';
 
 const SAMPLE = 2500;
 const BAND2AGE = { mlu_lt2: '2', mlu_2_35: '5', mlu_gt35: '5' };
@@ -76,20 +79,53 @@ export function scoreEvents(events, predict) {
   return out;
 }
 
+// R21 order metrics: with board words back in the ranking pool, core
+// targets count too (all-words), and the catalog's negation words get
+// their own cell — hit@4 through the shared noSlotOrder vs plain top-4.
+export function scoreOrder(events, predict8) {
+  const rng = new C.PyRandom(42);
+  const out = {};
+  const isNeg = (w) => C.NEG.has(w);
+  for (const b of C.BANDS) {
+    const band = events.filter((e) => e.band === b);
+    const all = rng.shuffle([...band]).slice(0, SAMPLE);
+    out[b + '|all'] = all.length
+      ? all.filter((e) => predict8(e).slice(0, 4).includes(e.target)).length / all.length
+      : 0;
+    const noEvs = rng.shuffle([...band.filter((e) => C.NEG.has(e.target))]).slice(0, SAMPLE);
+    let slotHits = 0, plainHits = 0;
+    for (const e of noEvs) {
+      const r = predict8(e);
+      if (noSlotOrder(r, 4, isNeg).includes(e.target)) slotHits++;
+      if (r.slice(0, 4).includes(e.target)) plainHits++;
+    }
+    out[b + '|noSlot'] = noEvs.length ? slotHits / noEvs.length : 0;
+    out[b + '|noPlain'] = noEvs.length ? plainHits / noEvs.length : 0;
+  }
+  return out;
+}
+
 export function score(book, events, { partnerBoost = false } = {}) {
-  return scoreEvents(events, (e) =>
-    topWords(book, e.ctx, 4, partnerBoost ? new Set(e.prevAdult) : null));
+  return {
+    ...scoreEvents(events, (e) =>
+      topWords(book, e.ctx, 4, partnerBoost ? new Set(e.prevAdult) : null)),
+    ...scoreOrder(events, (e) =>
+      topWords(book, e.ctx, NO_WINDOW, partnerBoost ? new Set(e.prevAdult) : null,
+        { core: true })),
+  };
 }
 
 const pct = (x) => (x * 100).toFixed(1) + '%';
 const rPct = (C.RANDOM_HIT * 100).toFixed(1) + '%';
+const rPctAll = ((4 / C.LEMMAS.length) * 100).toFixed(1) + '%';
 
 function report(label, out) {
-  console.log(`\n== ${label} ==   (random ${rPct})`);
+  console.log(`\n== ${label} ==   (random ${rPct} non-core / ${rPctAll} all-words)`);
   for (const b of C.BANDS)
     console.log(
       `  ${C.BAND_LABEL[b].padEnd(10)} later ${pct(out[b + '|later'] ?? 0)}   ` +
-      `first ${pct(out[b + '|first'] ?? 0)}   after-adult ${pct(out[b + '|afterAdult'] ?? 0)}`,
+      `first ${pct(out[b + '|first'] ?? 0)}   after-adult ${pct(out[b + '|afterAdult'] ?? 0)}   ` +
+      `all ${pct(out[b + '|all'] ?? 0)}   'no' ${pct(out[b + '|noSlot'] ?? 0)} (off ${pct(out[b + '|noPlain'] ?? 0)})`,
     );
 }
 

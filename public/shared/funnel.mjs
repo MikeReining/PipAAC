@@ -344,6 +344,62 @@ export function spotGate(candidates, pNone, tau, cap = STRIP_CAP) {
   return ok.filter((c) => !c.x?.spot || ++n <= spotCap).slice(0, cap);
 }
 
+/* --- R21 / Motor_Grid § 2.2: the "no" slot ------------------------------
+ *  When a negation word (sense.negation — a catalog attribute, never a
+ *  hand-kept list) ranks inside the top NO_WINDOW of likely candidates,
+ *  it takes the LAST Predict slot; the others keep probability order.
+ *  One shared function orders device strip and scorer alike — the
+ *  lie-prone layer is a divergent copy. */
+
+export const NO_WINDOW = 8;
+
+/** The "no" rule on an already-eligible ranked list (pure — device and
+ *  scorer share it verbatim). `isNeg` reads `c.neg` by default; the
+ *  scorer passes a lemma-set predicate. Two-slot bars skip the rule —
+ *  how likely "no" must be there is an open measurement question
+ *  (§ 2.2), so a small bar stays plain probability order. */
+export function noSlotOrder(ranked, cap, isNeg = (c) => !!c?.neg) {
+  if (cap < 3) return ranked.slice(0, cap);
+  const win = ranked.slice(0, NO_WINDOW).find(isNeg);
+  if (!win) return ranked.slice(0, cap);
+  return [...ranked.filter((c) => c !== win).slice(0, cap - 1), win];
+}
+
+/** The strip's final order: support gate → spotlight cap → the "no"
+ *  slot. `noLast` is the paint-time setting — replay reads the stored
+ *  flag on the impression, never the profile's current value. */
+export function finalStrip(candidates, pNone, tau, cap = STRIP_CAP, { noLast = true } = {}) {
+  if (pNone >= tau.none) return [];
+  const ok = candidates.filter((c) => c.s > 0 && c.p >= tau.tile);
+  const spotCap = Math.max(1, Math.floor(cap / 2));
+  let n = 0;
+  const allowed = ok.filter((c) => !c.x?.spot || ++n <= spotCap);
+  return noLast ? noSlotOrder(allowed, cap) : allowed.slice(0, cap);
+}
+
+/** The profile's strip-order settings (all synced, § 6.2e): board words
+ *  in the pool, the "no" slot, and sentence help. Defaults match the
+ *  shipped column defaults so a fresh or partial row behaves the same. */
+export function stripSettings(db) {
+  const r = db
+    .prepare(
+      `SELECT show_board_words AS b, no_last_slot AS n, sentence_help AS h
+       FROM learner_profile WHERE id = 'prf_local'`,
+    )
+    .all()[0] ?? {};
+  return {
+    boardWords: (r.b ?? 1) === 1,
+    noLast: (r.n ?? 1) === 1,
+    sentenceHelp: r.h ?? "one_step_up",
+  };
+}
+
+/** Final strip order with the profile's live settings — the device call
+ *  sites and stripCandidates share it so paint and replay can't drift. */
+export function stripOrder(db, candidates, pNone, tau, cap = STRIP_CAP) {
+  return finalStrip(candidates, pNone, tau, cap, { noLast: stripSettings(db).noLast });
+}
+
 /**
  * Rank strip candidates. Every offerable word — every non-core sense
  * with a lemma, not hidden, plus every active entity — is scored by the
@@ -355,7 +411,7 @@ export function spotGate(candidates, pNone, tau, cap = STRIP_CAP) {
  */
 export function stripCandidates(db, sentence, now = Date.now(), locale, model, cap = STRIP_CAP) {
   const { candidates, pNone } = stripScored(db, sentence, now, locale, model);
-  return spotGate(candidates, pNone, model.tau, cap).map((r) => ({ kind: r.kind, id: r.id }));
+  return stripOrder(db, candidates, pNone, model.tau, cap).map((r) => ({ kind: r.kind, id: r.id }));
 }
 
 /**
@@ -380,11 +436,16 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
   const env = featureEnv(db, sentence, now, locale, spot, model.book ?? null);
   const rows = [];
   // 017 step 7 — no retrieval stage: every offerable word is scored and
-  // the blend picks the shortlist. The pool is every non-core sense with
-  // a lemma (the book and the grammar rule both read it) that isn't
-  // hidden, plus every active entity. Ever-picked, recency, and grammar
-  // are features in the blend now — not gates — so a brand-new user's
-  // strip is driven by the opening book.
+  // the blend picks the shortlist. The pool is every sense with a lemma
+  // (the book and the grammar rule both read it) that isn't hidden, plus
+  // every active entity. R21: root_core joins the pool when the profile's
+  // Show board words is on — off, the bar stays fringe-only and core
+  // words only glow in place. Ever-picked, recency, and grammar are
+  // features in the blend now — not gates — so a brand-new user's strip
+  // is driven by the opening book.
+  const tiers = stripSettings(db).boardWords
+    ? "('primary_fringe', 'root_core')"
+    : "('primary_fringe')";
   for (const e of db
     .prepare("SELECT id FROM personal_entity WHERE status = 'active'")
     .all()) {
@@ -392,15 +453,15 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
   }
   for (const f of db
     .prepare(
-      `SELECT s.id FROM sense s
-       WHERE s.tier = 'primary_fringe'
+      `SELECT s.id, s.negation AS neg FROM sense s
+       WHERE s.tier IN ${tiers}
          AND EXISTS (SELECT 1 FROM label lb WHERE lb.sense_id = s.id
                      AND lb.kind = 'lemma' AND lb.status = 'approved' AND lb.locale = ?)
          AND NOT EXISTS (SELECT 1 FROM sense_mask m
                          WHERE m.sense_id = s.id AND m.status = 'hidden')`,
     )
     .all(locale)) {
-    rows.push({ kind: "sense", id: f.id, x: features(db, { kind: "sense", id: f.id }, env) });
+    rows.push({ kind: "sense", id: f.id, neg: !!f.neg, x: features(db, { kind: "sense", id: f.id }, env) });
   }
   const { candidates, pNone } = scoreCandidates(rows, weights);
   return { candidates: candidates.slice(0, SHORTLIST_CAP), pNone };
@@ -480,13 +541,19 @@ const logitOf = (x, w) =>
  * what the row says was painted. Returns {ok, diffs} where diffs lists
  * every mismatch (empty when the row replays exactly).
  */
-export function replayImpression(row, { gate = spotGate } = {}) {
+export function replayImpression(row, { gate } = {}) {
   const diffs = [];
   const cands = JSON.parse(row.candidates);
   const wl = row.weights_local ? JSON.parse(row.weights_local) : null;
   const cap = row.shortlist_cap ?? STRIP_CAP;
   const key = (c) => `${c.kind}:${c.id}`;
   if (!wl) return { ok: false, diffs: ["no weights_local stored"] };
+  // R21: the "no" slot's paint-time state is stored on the moment
+  // (weights_local.noLast) — replay applies the rule the painter used,
+  // never the profile's current value. Pre-R21 rows default on, matching
+  // the shipped setting.
+  const noLast = (wl.noLast ?? 1) === 1;
+  const gateFn = gate ?? ((cs, p, t, c) => finalStrip(cs, p, t, c, { noLast }));
 
   // Local ranking: recompute s and p from x · w, compare to stored.
   // Z counts only supported candidates (s > 0) — same rule as
@@ -507,7 +574,7 @@ export function replayImpression(row, { gate = spotGate } = {}) {
   const pNone = eN / Z;
   if (Math.abs(pNone - row.p_none) > 1e-9)
     diffs.push(`p_none ${row.p_none} != ${pNone}`);
-  const localShown = gate(
+  const localShown = gateFn(
     order.map((o) => ({ ...o.c, p: o.p, s: logitOf(o.c.x, wl.w) })),
     pNone, wl.tau, cap)
     .map((r) => `${r.kind}:${r.id}`);
@@ -534,7 +601,7 @@ export function replayImpression(row, { gate = spotGate } = {}) {
       if (re && Math.abs(c.wp - re.p) > 1e-9)
         diffs.push(`${key(c)}: stored wp ${c.wp} != ${re.p}`);
     }
-    const jevShown = gate(reranked.candidates, reranked.pNone, wj.tau, cap)
+    const jevShown = gateFn(reranked.candidates, reranked.pNone, wj.tau, cap)
       .map((r) => `${r.kind}:${r.id}`);
     if (row.jev_status === "answered"
         && JSON.stringify(jevShown) !== JSON.stringify(localShown))

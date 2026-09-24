@@ -2,11 +2,13 @@
 
 **Status:** Executing. **Re-planned 2026-09-24 (founder, R16–R19):**
 the scoreboard is real children (held-out CHILDES), not synthetic
-users; steps 15 and 18 are parked. Current-order items 1–3 DONE —
+users; steps 15 and 18 are parked. Current-order items 1–3 and 6 DONE —
 the repo scorer is the baseline, the shipped opening book beats or
-matches it in every cell, and the strip now scores every offerable
-word (book + history counts, day one and position 0). Next: item 6
-(smart bar order, R21 — ordered before item 4).
+matches it in every cell, the strip scores every offerable word
+(book + history counts, day one and position 0), and Smart bar order
+lands R21: board words rank in the bar, a likely "no" pins the last
+slot, and all three settings are synced per profile. Next: item 4
+(respond — the one-turn adult-model boost).
 M1 complete (steps 4, 3, 5, 1, 2 — all BUILT). Built on the
 synthetic bench: steps 11, 12, 16, 13.
 
@@ -200,6 +202,15 @@ M2/M3 order below until the book is in the strip.
 5. Random holdback + path timings on the device (R18, step 28).
 6. Smart bar order: board words, the "no" slot, and the four settings
    (R21, step 29). Build right after item 3, before item 4.
+   **Status: DONE 2026-09-24** — root_core joins the scored pool when
+   Show board words is on; `sense.negation` is the catalog-owned "no"
+   flag (no, not, never, don't, can't, won't, didn't); the shared
+   `noSlotOrder`/`finalStrip` orders device bar and item-1 scorer alike;
+   `no_last_slot`, `show_board_words`, `sentence_help` are synced
+   learner-profile settings with Parent Corner UI. Scorer report gained
+   all-words and 'no' (slot on/off) cells — the slot lifts 'no' hits
+   +0.2 to +4pt on the child book, up to +39pt on the caregiver book.
+   `strip_order.test.mjs` covers every § 2.2 scenario.
 Parked: steps 15 and 18 (R19).
 ```
 
@@ -1976,6 +1987,38 @@ The same sentence start twice gives the same slots.
 Done when: those pass and the scorer's with/without numbers are in
 § Results.
 
+**Status: DONE 2026-09-24** (item 6 of the current order). What shipped:
+
+- `sense.negation` is a catalog column sourced from
+  `data/launch_lexicon.json` `negation: true` on the seven senses
+  (*no*, *not*, *never*, *don't*, *can't*, *won't*, *didn't*) —
+  `data/catalog/catalog.json` regenerated; the funnel reads
+  `s.negation` on its pool query, never a word list.
+- The pool: `stripScored` scores `root_core` senses alongside fringe
+  when `show_board_words` is on (default); off, the pool stays
+  fringe-only and `applyLikely`/`keyboardContinuations` still glow
+  board words in place.
+- One shared order: `noSlotOrder` (pure, top-8 window → last slot,
+  skipped under cap 3 — the two-slot question stays open) inside
+  `finalStrip` (support gate → spotlight cap → "no" slot). The device
+  calls `stripOrder` (live setting); the scorer calls `noSlotOrder`
+  on the same ranked lists; replay reads the paint-time flag stored
+  on the moment (`weights_local.noLast`).
+- Settings: `show_board_words`, `no_last_slot`, `sentence_help` are
+  synced `learner_profile` columns in `SYNCED_SETTINGS`, with Parent
+  Corner → Smart bar segs in `index.html`.
+- Sentence help: `one_step_up` doubles the `book` weight at
+  `loadWeights` — the single load point, so `weights_local` is what
+  painted and `learnFromSentence` trains in the same scaled units
+  (stored rows stay raw). `their_words` serves raw weights. ×2 is a
+  starting value pending R18's holdback evidence.
+- Scorer (`score.mjs`): report gained `all` (core targets count;
+  `topWords` got a `core` option) and `'no'` slot on/off per band —
+  `childes.test.mjs` pins them in `BASELINE_R21`.
+- Works Tests: `src/board/strip_order.test.mjs` (8 tests — every
+  § 2.2 scenario incl. hidden-negation masking); `strip_book.test.mjs`
+  updated to the R21 pool.
+
 ## Human stops
 
 None open; R1–R15 are ruled. Step 24's Jev choice question adds a
@@ -2005,3 +2048,4 @@ Step 19 records the one `--final` eval run.
 | 10 test | Counts only (strict backoff) vs current learned model, simulated children | — | routine 31.0% vs 45.1%; varied 54.1% vs 45.9% | — | — | scratch, 2026-09-23 |
 | Speed estimate | Current strip vs none, simulated children, finding + tapping only (no thinking time) | — | +35–37% WPM at fast, middle, and slow settings (taps −28–29%) | — | — | scratch, 2026-09-23 |
 | 23/24 real children | CHILDES held-out transcripts, later words top 4: adult AAC → legal child book → CHILDES book (+partner on legal) | — | ~age 3: 26.8% → 37.0% (38.2%) → 49.2% | — | — | scratch, 2026-09-23 |
+| 29 real children | CHILDES held-out, shipped `opening_book.en.json`: all-words top 4; 'no' words with the slot on vs off | — | all: 28.9% / 36.0% / 36.4% (lt2/mid/gt35); 'no': 87.3% vs 86.8%, 64.7% vs 62.9%, 59.4% vs 55.3% | — | — | `score_book.mjs`, 2026-09-24 |
