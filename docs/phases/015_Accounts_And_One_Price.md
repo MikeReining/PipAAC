@@ -488,6 +488,13 @@ account-level share this slice adds.
 
 ## Slice 6 — Pip Lifetime and the free limits
 
+**DEFERRED 2026-09-23** (founder): payments integration waits — "not
+launching, nobody's using it right now." The dev-license path stays the
+entitlement mechanism until Stripe/Apple land. Owed when resumed:
+Stripe Checkout + webhook, iOS consumable IAP + App Store Server
+Notifications, license codes, server-signed offline license statement,
+and the 20-word / 5-drawing / web-editor / free-supporter gates below.
+
 **Partially BUILT 2026-09-23** (relay legs, dev-license path; the cap
 predates the one-supporter ruling and is owed a change, see Scope): the
 one-live-device cap is enforced by `UserRelay` (`403 upgrade_required`
