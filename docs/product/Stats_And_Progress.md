@@ -124,6 +124,12 @@ The event log, sentences and strip impressions stay on the device. They
 never sync and are never sent (`docs/strategy/Dual_Engine_Predictive_Intelligence.md`
 § 4.1).
 
+**BUILT 2026-09-25** — the on-device engine: `learner_event_log` (with
+`spotlit`), `sentence`, and `core_cell` feed `public/shared/stats.mjs`
+→ one `stats_day` JSON row per local day, recomputed for today and
+yesterday on boot and after each spoken sentence
+(`src/board/stats.test.mjs`).
+
 ### 6.2 Daily totals to the support team
 
 **DECIDED 2026-09-23** (founder: "they are on the support team; they got

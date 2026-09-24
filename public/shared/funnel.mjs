@@ -62,12 +62,12 @@ export function detachEvent(db, sentenceId, position) {
 export function logSelection(db, kind, id, at = Date.now(), ctx = {}) {
   db.prepare(
     `INSERT INTO learner_event_log
-       (item_kind, item_id, selected_at, sentence_id, position, source, tz_offset_min)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+       (item_kind, item_id, selected_at, sentence_id, position, source, tz_offset_min, spotlit)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     kind, id, at,
     ctx.sentenceId ?? null, ctx.position ?? null, ctx.source ?? null,
-    -new Date(at).getTimezoneOffset(),
+    -new Date(at).getTimezoneOffset(), ctx.spotlit ? 1 : 0,
   );
 }
 

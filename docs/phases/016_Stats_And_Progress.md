@@ -72,6 +72,39 @@ by hand in the test file, not by the module. A stat that reads anything
 but the log and sentences fails a grep-free check: the module is called
 with a database holding only those tables.
 
+**DONE 2026-09-25.** Built:
+
+- `src/board/schema.sql` — `learner_event_log.spotlit` (0/1, default 0;
+  `migrateSchema` rebuilds persisted DBs onto it) and `stats_day`
+  (`day`, `computed_at`, `payload` JSON — counts only). `user_version` 11.
+- `public/shared/funnel.mjs` — `logSelection` takes `ctx.spotlit`.
+  `public/board.js` and `public/board/keyboard-ui.js` pass it from the
+  live spotlight session (`spotlight().targets.has("kind:id")`) on every
+  pick path — grid, strip, group, keyboard.
+- `public/shared/stats.mjs` — one function per § 3 definition:
+  `tapsOnDay`, `sentencesOnDay`, `newItemsOnDay`, `classifyTaps`
+  (core/fringe/own via `core_cell`), `wpmStats` (median over spoken 2+
+  word sentences; zero-duration samples skipped), `dailyTotals` → the
+  day row (per-word counts keyed by `kind:id` — never text — with the
+  spotlit split, sentence-length histogram, source counts, 24-hour
+  buckets), `upsertStatsDay`, `refreshStatsDays`. Each event buckets
+  into its **own** local day (`selected_at + tz_offset_min`), so travel
+  and DST never move a tap.
+- `public/board.js` — `refreshStatsDays(db)` on boot and a 2 s-debounced
+  refresh after each spoken sentence; older days are never rewritten.
+
+Works Test: `src/board/stats.test.mjs` — 6 tests against a database
+holding ONLY `learner_event_log`, `sentence`, `core_cell`, `stats_day`
+(the grep-free check: a read of any other table fails at SQLite). Three
+scripted days with a cleared sentence, a detached (backspaced) pick,
+strip/group/keyboard sources, a glow window, a single-word sentence,
+and a travel tap under a different stored offset. Every assertion is a
+hand-computed literal; the fixture caught a hand-arithmetic error in the
+test itself (a first-seen word counted as "not new"). `check:fast` green.
+
+Not built here (slices 2–6): the win card, supporter sync of
+`stats_day`, the dashboard, goal lists, anonymous totals.
+
 ## Slice 2 — The weekly win card (free)
 
 Goal: every user gets a weekly card of wins on the device.

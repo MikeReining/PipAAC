@@ -8,6 +8,7 @@ import { PARTNER_SENSES } from "../shared/keymaps.mjs";
 import { buildIndex, suggest } from "../shared/spelling.mjs";
 import { normalizeV1 } from "../shared/normalize.mjs";
 import { detachEvent, fillChosen, logSelection } from "../shared/funnel.mjs";
+import { spotlight } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -156,6 +157,7 @@ export function mountKeyboard({
       setTimeout(() => el.classList.remove("flash"), 350);
       logSelection(db, "sense", s.id, Date.now(), {
         sentenceId: getSentenceId(), position: null, source: "keyboard",
+        spotlit: !!spotlight()?.targets.has(`sense:${s.id}`),
       });
       const key = clipKeyFor(s.id);
       if (key) await playClip(key);
@@ -222,6 +224,7 @@ export function mountKeyboard({
       fillChosen(db, getSentenceId(), { kind: item.kind, id: item.id, source: "keyboard" });
       logSelection(db, item.kind, item.id, Date.now(), {
         sentenceId: getSentenceId(), position, source: "keyboard",
+        spotlit: !!spotlight()?.targets.has(`${item.kind}:${item.id}`),
       });
       showGroupHint(item.kind, item.id);
     }

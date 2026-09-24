@@ -16,7 +16,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | 016 slice 1 — the stats engine (unblocked: 015 slice 2 built). | `docs/phases/016_Stats_And_Progress.md` |
+| **P1** | 016 slice 2 — the weekly win card (slice 1, the stats engine, is built). | `docs/phases/016_Stats_And_Progress.md` |
 | **P2** | 015 slice 7's last leg — supporter email warnings (accounts built in slice 4). | `docs/phases/015_Accounts_And_One_Price.md` |
 
 ## Live index
@@ -33,7 +33,7 @@ Executing phases only. Each row names the **next** slice.
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7, 9 built. Next: slice 10 — adults put any word or person in a home cell, plus the setup question "Who do they call for?"; then slice 11 — the family's person stands in for the catalog word (Mama for `mom`) (§ 7a, decided 2026-09-23). Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later) |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 built (rename, many users, QR card, supporter accounts, supporters on a user). Slice 6 payments **deferred** (founder, 2026-09-23); slice 7 owes only supporter email |
-| [016 — Stats and progress](016_Stats_And_Progress.md) | **P2.** Slice 1 — the stats engine (015 slice 2 built) |
+| [016 — Stats and progress](016_Stats_And_Progress.md) | **P1.** Slice 2 — the weekly win card (slice 1, stats engine, built) |
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | M1 plumbing (steps 4, 3, 5, 1, 2) and step 23, the opening book, in parallel (rulings recorded; CHILDES permitted 2026-09-23, R11) |
 
 The language and voice schema was accepted 2026-09-22 and moved to

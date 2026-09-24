@@ -218,7 +218,10 @@ CREATE TABLE IF NOT EXISTS learner_event_log (
   sentence_id INTEGER REFERENCES sentence(id),
   position INTEGER CHECK (position IS NULL OR position >= 0),
   source TEXT CHECK (source IS NULL OR source IN ('grid', 'strip', 'group', 'keyboard')),
-  tz_offset_min INTEGER
+  tz_offset_min INTEGER,
+  -- 016: a Spotlight target glowed when tapped (§ 5 goals measure
+  -- "on their own" vs "with the glow"). Device-local, never synced.
+  spotlit INTEGER NOT NULL DEFAULT 0 CHECK (spotlit IN (0, 1))
 );
 
 CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);
@@ -683,4 +686,15 @@ CREATE TABLE IF NOT EXISTS prediction_weights (
   PRIMARY KEY (profile_id, weight_set)
 );
 
-PRAGMA user_version = 10;
+-- Daily totals (016 § 6.2): one row per local day, computed on the
+-- device from learner_event_log + sentence. Counts only — payload is
+-- JSON of numbers keyed by item id (never label text). The row is the
+-- unit that syncs to supporters while the raw log never leaves the
+-- device.
+CREATE TABLE IF NOT EXISTS stats_day (
+  day INTEGER PRIMARY KEY,
+  computed_at INTEGER NOT NULL CHECK (computed_at > 0),
+  payload TEXT NOT NULL CHECK (json_valid(payload))
+);
+
+PRAGMA user_version = 11;

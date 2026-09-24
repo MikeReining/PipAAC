@@ -38,6 +38,7 @@ import {
 import { setDeviceId } from "./shared/ops.mjs";
 import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
 import { initSync, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
+import { refreshStatsDays } from "./shared/stats.mjs";
 import {
   addUser, listUsers, migrateLegacy, openUserStore, putUser,
   resolveActiveUser, touchOpened,
@@ -193,6 +194,14 @@ initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
     }
   })
   .catch((err) => console.warn("sync unavailable", err));
+// 016 slice 1: today's and yesterday's totals recompute on boot; older
+// days are fixed. A spoken sentence schedules the same refresh.
+refreshStatsDays(db);
+let statsTimer = null;
+const scheduleStatsRefresh = () => {
+  clearTimeout(statsTimer);
+  statsTimer = setTimeout(() => refreshStatsDays(db), 2000);
+};
 // Profile locale and voice resolve once at boot (schema §7.1) and bind
 // into every label query and speech call — never a literal, never
 // another locale's voice.
@@ -290,6 +299,7 @@ async function speakSentence() {
     // on every moment Jev returned probabilities (late answers count).
     learnFromSentence(db, sid, catalog.prediction);
     learnFromSentence(db, sid, catalog.prediction, { weightSet: "with_jev" });
+    scheduleStatsRefresh();
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
@@ -784,6 +794,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     fillChosen(db, sentenceId, { kind, id, source });
     logSelection(db, kind, id, Date.now(), {
       sentenceId, position: sentencePicks++, source,
+      spotlit: !!spotlight()?.targets.has(`${kind}:${id}`),
     });
   }
   if (hint && id) showGroupHint(kind, id);
