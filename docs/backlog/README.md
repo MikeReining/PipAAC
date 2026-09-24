@@ -36,4 +36,5 @@ durable ruling.
 
 | Doc | State | Why |
 | --- | --- | --- |
+| [008 — Partner Listening](008_Partner_Listening.md) | Held (founder, 2026-09-24) | No listening for prediction; see its HOLD banner. |
 | [012 — Playground (Canvas Mode)](012_Playground_Canvas_Mode.md) | Held (founder, 2026-09-22) | Weak clinical fit as written; see its HOLD banner for what would unhold it. |

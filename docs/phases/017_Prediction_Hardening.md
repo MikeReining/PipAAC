@@ -183,7 +183,8 @@ M2/M3 order below until the book is in the strip.
 3. Book + the user's own history in the strip: continue and start
    (R17; steps 7, 10, 21). Proof: item-1 scorer, and on-device check
    that the strip shows what the scorer scored.
-4. Respond: the partner's words (step 24), scored on CHILDES adult turns.
+4. Respond: words an adult just tapped while modeling get a one-turn
+   boost (step 24 item 1; R17, R20). Never stored.
 5. Random holdback + path timings on the device (R18, step 28).
 Parked: steps 15 and 18 (R19).
 ```
@@ -255,9 +256,10 @@ Why this changes the audit's order:
 | R14 | Language judgments | **No hand-coded rules** (keyword detectors, grammar masks). Meaning questions go to Jev; everything else is a learned weight. The choice-question check is a Jev question (step 24). |
 | R11 | CHILDES | **Permitted in writing, 2026-09-23** (Brian MacWhinney, TalkBank; `data/prediction/permissions/2026-09-23_TalkBank_CHILDES.md`). Scope: (1) local use — measurement, bench, held-out test set, gap analysis, book build; (2) shipping the next-word prediction table in the opening book — as asked: next-word probabilities over our closed ~680-word vocabulary from aggregate child and caregiver counts, no utterances, speaker IDs, or transcript text. Tell TalkBank before shipping it over a much larger vocabulary. Not covered: committing or shipping transcripts or utterances; they stay local, outside git. Credit per TalkBank's citation rules wherever the table is credited. Offered, not required: publishing the table as a CHILDES "derived measure". Measured value: +11–16 points in top 4 over the best free book (step 23 § Real children). |
 | R16 | The scoreboard (2026-09-24) | **Real children, not synthetic users.** The headline for prediction quality is the held-out CHILDES score: the child's next non-core word in the top 4, split into first words, later words, and words right after an adult turn, each shown next to random (4 of 680 ≈ 0.6%). The synthetic-user bench (steps 11–13, 16) stays as built but is not the headline. Its users come from our own templates, and its timing numbers are guesses, not findings. The scratch CHILDES scorer moves into the repo. Transcripts stay in a gitignored local cache, and only scores are committed (R11). This reverses step 23's "the scratch CHILDES pipeline stays outside the repo". |
-| R17 | Three situations (2026-09-24) | **Continue** (one or more words in the sentence): the opening book + the user's own history. **Respond** (a partner just spoke): the partner's words + the book (step 24). It is scored on CHILDES adult turns now, and needs 008 listening on the device. **Start** (nothing said or heard): the book's openers + the user's own openers, shown, not blanked. A hit rate is not a pass/fail line; whether showing pays is settled by R18. Time of day is not in the first build: CHILDES has no clock times, so it can't be scored on real children. |
+| R17 | Three situations (2026-09-24; amended the same day by R20) | **Continue** (one or more words in the sentence): the opening book + the child's own history. **Start** (nothing said yet): the book's openers + the child's own openers by time of day. Parents ask the same questions at the same times of day, so the child's answers repeat there too. Shown, not blanked. **Respond** (an adult just tapped words on the child's device while modeling): those words get a boost for one turn (step 24 item 1). A hit rate is not a pass/fail line; whether showing pays is settled by R18. Time of day can't be scored on CHILDES (no clock times), so it is measured on real use (R18). |
 | R18 | Does showing pay (2026-09-24) | Showing pays when hit rate × time saved on a hit > time lost looking. Both inputs are unknown. Time saved includes recall and the whole grid search (anchor, page flips, scanning), so it is large for words off the home grid. Measure both on real use with a **random holdback**: at a small share of moments where the strip would show, show nothing. Then compare time-to-pick for the same words, suggested vs. held back, and grid-word picks under a wrong strip vs. an empty one. Path timings only, no words, under "Help improve Pip" (R15, step 28). The holdback share is a starting value in the spec, not a ruling. |
 | R19 | Parked (2026-09-24) | Steps 15 (sabotage controls) and 18 (replay screen) are parked: both add tooling to the synthetic bench. Revisit after the book is in the strip. |
+| R20 | No listening (2026-09-24) | **Pip does not listen for prediction, and never stores what an adult said or tapped.** Why (founder): nobody presses a record button before talking to their child; the device can't tell who is being addressed; and remembering what a parent says is creepy. Phase 008 is held (`docs/backlog/008_Partner_Listening.md`). Step 24 keeps item 1 only (modeling taps, one turn, never stored). On real children the adult's previous words were worth +1 to +4 points; the big win is continue. |
 
 ---
 
@@ -1215,8 +1217,7 @@ Build, in order of how the partner's words reach the device:
    next strip moment. No microphone.
 2. **The active Spotlight list.** An open Spotlight session's words are
    a retrieval source and a small `echo` boost for the session.
-3. **The Listen key** (`docs/phases/008_Partner_Listening.md`), for
-   families who turn it on.
+3. ~~**The Listen key**~~ — dropped 2026-09-24 (R20); 008 is held.
 
 **Is it a choice? Jev decides, not a rule (R14).** When the partner's
 words exist, the Jev request adds a second question to the same call:
@@ -1813,7 +1814,7 @@ book-building calls send only our own vocabulary and synthetic contexts.
 
 ## Out of scope
 
-Partner listening and `echo` (`docs/phases/008_Partner_Listening.md`).
+Partner listening and `echo` (`docs/backlog/008_Partner_Listening.md`).
 Entity enrichment (§ 5.6). A feature vector for the keyboard ranker.
 Screen changes for steps 21 and 22 (R6). Rate limits. Core-cell halos.
 

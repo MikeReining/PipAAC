@@ -4,6 +4,16 @@
 phase 006 (in git history) slice 3 (the `echo` feature exists
 there with value 0).
 
+> **HOLD — founder, 2026-09-24.** Parked in the backlog; not work. Why:
+> nobody presses a listen button before talking to their child; the
+> device can't tell whether an adult is talking to this child or a
+> sibling, or whether it was a question; and a device that remembers
+> what parents say is creepy. On real children the adult's previous
+> words added only +1 to +4 points in top 4 (017 § Real children).
+> Prediction gets the repeated-question signal another way: the child's
+> own openers by time of day, and words an adult taps while modeling
+> (017 R17, R20). Unhold when: the founder reopens listening.
+
 **DECIDED 2026-09-22** (founder: "the device is not always listening …
 sometimes you want the device to be listening, other times you don't …
 some users never want the device to be listening"). Intake:
@@ -86,7 +96,7 @@ device. The Web Speech API may send audio to a vendor server on some
 browsers; a Whisper-class model in WebGPU/WASM runs locally but costs a
 download. The spike decides with measurements, not documentation.
 
-Files: `docs/phases/008_Partner_Listening.md` (§ Spike result),
+Files: `docs/backlog/008_Partner_Listening.md` (§ Spike result),
 `public/shared/listen.mjs` (new).
 
 Measure per candidate engine: network requests during recognition

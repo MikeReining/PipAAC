@@ -392,7 +392,7 @@ word `juice`.
 
 ## Slice 10 — Suggested words
 
-Starts after `docs/phases/008_Partner_Listening.md` slice 3.
+Starts after `docs/backlog/008_Partner_Listening.md` slice 3.
 
 Goal: words heard while listening that the child does not have yet appear
 in Library → Suggested, one tap to add.

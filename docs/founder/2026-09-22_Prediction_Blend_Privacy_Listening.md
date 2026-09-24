@@ -79,7 +79,7 @@ below.
 | --- | --- |
 | 006 — Prediction engine (time fix, logging, blend, learning, Jev) | phase 006 (in git history) |
 | 007 — Occasions (breakfast experiment, then the occasion prior) | `docs/phases/007_Occasions.md` |
-| 008 — Partner listening (settings, Listen key, on-device speech) | `docs/phases/008_Partner_Listening.md` |
+| 008 — Partner listening (settings, Listen key, on-device speech) | `docs/backlog/008_Partner_Listening.md` |
 
 ## Blocking questions
 

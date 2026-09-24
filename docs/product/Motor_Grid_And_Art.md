@@ -207,7 +207,7 @@ that cannot be missed. The key takes no grid cell and no strip slot
 every state, so turning listening on or off mid-conversation shifts
 nothing. Changing the setting is an adult action in the Parent corner, like
 a density change. Position in the top bar: founder call in
-`docs/phases/008_Partner_Listening.md` slice 1. Behavior owner:
+`docs/backlog/008_Partner_Listening.md` slice 1. Behavior owner:
 `docs/strategy/Dual_Engine_Predictive_Intelligence.md` § 6.
 
 On the motor-grid view, the strip is where a suggestion may show a word that is not already a core cell. The Context River remains a separate situational surface. A specific food, place, person, or thing can show up in one tap instead of three or four folder levels.
@@ -233,7 +233,7 @@ pick, the bar returns to Predict.
 | Predict | default | likely next words | ranked | `docs/strategy/Dual_Engine_Predictive_Intelligence.md` |
 | Expand | tapping a family tile (`?`, Pain, Hot/cold, Call) | that tile's family | **fixed** | this section; defaults in `docs/phases/014_Grid_Density_And_Fit.md` § 5 |
 | Forms | the Forms key | forms of the last word | ranked by context | `docs/phases/005_Word_Forms.md` |
-| Partner | the Listen key | the partner's words, one turn | as heard | `docs/phases/008_Partner_Listening.md` |
+| Partner | the Listen key | the partner's words, one turn | as heard | `docs/backlog/008_Partner_Listening.md` |
 
 **Fixed-order rule.** A family's tiles always sit in the same slots on a
 given profile, so "`?` then slot 2" becomes a motor plan the way a cell

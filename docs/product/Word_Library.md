@@ -327,7 +327,7 @@ Scheduled in 009.
 ## 8. Suggested words from listening
 
 **DECIDED 2026-09-22** (founder: "single words only … local only, on
-device only"). Needs `docs/phases/008_Partner_Listening.md` slice 3. Built
+device only"). Needs `docs/backlog/008_Partner_Listening.md` slice 3. Built
 in 009.
 
 When listening is on, the on-device speech text of each partner turn passes

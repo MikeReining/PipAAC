@@ -8,7 +8,7 @@ Foundational vision: `docs/strategy/Vision.md`.
 Durable facts map: `docs/product/SSOT.md`.
 Design invariants: `docs/product/Design_Invariants.md`.
 Execution: phase 006 (in git history), `docs/phases/007_Occasions.md`,
-`docs/phases/008_Partner_Listening.md`.
+`docs/backlog/008_Partner_Listening.md`.
 
 ---
 
@@ -417,7 +417,7 @@ The instrument is the child's own picks, not the ranker's report of itself:
 ## 6. Partner Listening
 
 **DECIDED 2026-09-22** (not built). Replaces the four 2026-09-21 input
-modes. Execution: `docs/phases/008_Partner_Listening.md`.
+modes. Execution: `docs/backlog/008_Partner_Listening.md`.
 
 The device is not always listening. The family decides:
 
