@@ -24,6 +24,7 @@ import {
   restoreEntity,
   retireEntity,
   setEntityPhoto,
+  setEntityRole,
   setSetting,
   swapGroups,
   swapItems,
@@ -102,6 +103,9 @@ export function applyOp(db, op) {
         break;
       case "set_entity_photo":
         if (exists(db, "personal_entity", a.id)) setEntityPhoto(db, a.id, a.photoKey);
+        break;
+      case "set_entity_role":
+        if (exists(db, "personal_entity", a.id)) setEntityRole(db, a.id, a.role);
         break;
       case "create_group":
         if (!exists(db, "board_group", a.id)) {

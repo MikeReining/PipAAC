@@ -6,7 +6,7 @@
 import {
   entityGroups, groupDisplayName, groupIndex, maskedSenseIds, placeItem,
   removeItemUndoable, renameEntity, restoreEntity, retireEntity, senseGroups,
-  setEntityPhoto, setMask,
+  setEntityPhoto, setEntityRole, setMask,
 } from "../shared/groups.mjs";
 import {
   clearImageOverride, imageOverrideFor, libraryImagesFor, setImageOverride,
@@ -19,7 +19,7 @@ export function mountWordCard({
   db, locale, all, open, close, toast,
   metaFor, artInto, loadPhotoURL, savePhoto, syncUploadBlob, speakItem, xBadge,
   invalidateIndex, setView, rerenderView, renderStrip, renderGrid, flashCell,
-  getCell, getGroupKey, setGroup, dropEntityPhoto, dropSenseMeta,
+  getCell, getGroupKey, setGroup, dropEntityPhoto, dropEntityRole, dropSenseMeta,
 }) {
   let cardItem = null; // { item_kind, item_id, label } currently shown
   let recorder = null;
@@ -57,13 +57,21 @@ export function mountWordCard({
   function openWordCard(item) {
     cardItem = { item_kind: item.item_kind, item_id: item.item_id, label: item.label };
     const isEnt = item.item_kind === "entity";
-    const meta = isEnt ? { role: "Yellow" } : metaFor(item.item_id);
+    const meta = isEnt
+      ? { role: all(db,
+          "SELECT fitzgerald_role AS r FROM personal_entity WHERE id = ?",
+          [item.item_id])[0]?.r ?? "Yellow" }
+      : metaFor(item.item_id);
     const pic = $("wc-pic");
     pic.className = `pic r-${meta.role ?? "None"}`;
     pic.replaceChildren();
     $("wc-name").value = item.label;
     $("wc-name").disabled = !isEnt; // a catalog word is renamed by a new copy, not here
     $("wc-role").textContent = isEnt ? "personal word" : "catalog word";
+    // 018 D7: a personal word's kind is the family's pick — changeable
+    // here, never a color picker.
+    $("wc-kindlabel").hidden = !isEnt;
+    if (isEnt) $("wc-kind").value = meta.role;
     $("wc-photolabel").hidden = !isEnt;
     $("wc-photo").value = "";
     $("wc-ownpiclabel").hidden = isEnt;
@@ -176,6 +184,15 @@ export function mountWordCard({
     renameEntity(db, cardItem.item_id, name);
     cardItem.label = name;
     invalidateIndex(); // completions index the old spelling
+    rerenderView();
+    renderStrip();
+  });
+
+  $("wc-kind").addEventListener("change", () => {
+    if (!cardItem || cardItem.item_kind !== "entity") return;
+    setEntityRole(db, cardItem.item_id, $("wc-kind").value);
+    dropEntityRole(cardItem.item_id);
+    $("wc-pic").className = `pic r-${$("wc-kind").value}`;
     rerenderView();
     renderStrip();
   });

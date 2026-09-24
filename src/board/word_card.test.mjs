@@ -35,6 +35,7 @@ test("a personal word opens with its name", () => {
   const role = el();
   const ids = [
     "wc-pic", "wc-photolabel", "wc-photo", "wc-ownpiclabel", "wc-ownpic",
+    "wc-kind", "wc-kindlabel",
     "wc-remove", "wc-hide", "wc-grouplist", "wc-groups", "wc-ourpic", "wc-libpics",
     "wc-record", "wc-revert", "wc-play", "wc-rechint", "wc-addgroup", "wc-show",
   ];
@@ -70,6 +71,7 @@ test("a personal word opens with its name", () => {
     getGroupKey() { return null; },
     setGroup() {},
     dropEntityPhoto() {},
+    dropEntityRole() {},
     dropSenseMeta() {},
   });
 

@@ -969,6 +969,16 @@
         <div id="add-matches"></div>
         <button class="addmatch" id="add-new" hidden>New</button>
         <div id="add-newfields" hidden>
+          <label class="hint">What kind of word is it?
+            <select id="add-kind">
+              <option value="Yellow">A person or thing</option>
+              <option value="Green">An action</option>
+              <option value="Pink">A little word (in, on, the…)</option>
+              <option value="Blue">A describing word</option>
+              <option value="Purple">A question word</option>
+              <option value="Red">A safety word (stop, help…)</option>
+            </select>
+          </label>
           <label class="hint">Photo (optional)
             <input type="file" id="add-photo" accept="image/*" />
           </label>
@@ -1040,6 +1050,16 @@
           </div>
           <button id="wc-play" class="bar-btn" title="Play">▶</button>
         </div>
+        <label class="hint" id="wc-kindlabel" hidden>What kind of word is it?
+          <select id="wc-kind">
+            <option value="Yellow">A person or thing</option>
+            <option value="Green">An action</option>
+            <option value="Pink">A little word (in, on, the…)</option>
+            <option value="Blue">A describing word</option>
+            <option value="Purple">A question word</option>
+            <option value="Red">A safety word (stop, help…)</option>
+          </select>
+        </label>
         <label class="hint" id="wc-photolabel">Change photo
           <input type="file" id="wc-photo" accept="image/*" />
         </label>

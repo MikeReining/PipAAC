@@ -52,8 +52,13 @@ jargon a parent or SLP should never meet; the earlier design that asked the
 adult to confirm word relationships made the add harder than the incumbents'
 and was removed 2026-09-22.
 
-Color is derived from the Fitzgerald role for nouns (yellow / orange). The adult
-does not pick a color. Owner of the color roles: `docs/product/Motor_Grid_And_Art.md`.
+Color comes from the kind of word, never a color picker (018 D7). The add form
+asks "what kind of word is it?" in plain words — a person or thing, an action,
+a little word, a describing word, a question, a safety word — and stores the
+Fitzgerald role on `personal_entity.fitzgerald_role`. Sharing on, Jev suggests
+the kind once when the word is added; the family's choice wins, and the word
+card can change it later. Unpicked words render Yellow (person or thing).
+Owner of the color roles: `docs/product/Motor_Grid_And_Art.md`.
 
 ### Filing
 

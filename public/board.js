@@ -53,7 +53,10 @@ import {
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
-import { buildJevRequest, jevDeliverable, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
+import {
+  buildJevRequest, buildKindRequest, jevDeliverable, jevKind,
+  jevProbabilities, jevRank, jevTerm,
+} from "./shared/jev.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
 import { mountCellsSheet } from "./board/cells-sheet.js";
@@ -165,6 +168,7 @@ function onSyncApplied() {
   clearTimeout(syncRepaintTimer);
   syncRepaintTimer = setTimeout(() => {
     entityPhoto.clear(); // photo_key may have changed
+    entityRole.clear();  // kind picks may have landed
     senseMeta.clear();   // image overrides may have landed
     kbUi.invalidateIndex();      // masks and renames may have landed
     const p = ALL(db,
@@ -343,6 +347,20 @@ function metaFor(senseId) {
   return senseMeta.get(senseId);
 }
 
+/** Cache: entity id → fitzgerald_role — the family's kind pick (018 D7),
+ *  Yellow until classified. */
+const entityRole = new Map();
+function roleForEntity(entityId) {
+  if (!entityRole.has(entityId)) {
+    entityRole.set(
+      entityId,
+      ALL(db, "SELECT fitzgerald_role AS r FROM personal_entity WHERE id = ?",
+        [entityId])[0]?.r ?? "Yellow",
+    );
+  }
+  return entityRole.get(entityId);
+}
+
 /** Cache: entity id → photo_key (entities are few; the row rarely changes). */
 const entityPhoto = new Map();
 function photoFor(entityId) {
@@ -367,7 +385,7 @@ function renderBar() {
   sentence.forEach((item, i) => {
     const role =
       item.kind === "entity"
-        ? "Yellow"
+        ? roleForEntity(item.id)
         : item.kind === "sense"
           ? metaFor(item.id).role
           : null;
@@ -494,7 +512,7 @@ async function idleStarters() {
  *  glyph or the label's initial. */
 async function predCard(c) {
   const el = document.createElement("button");
-  el.className = `pred${c.entity ? " r-Yellow" : c.role ? ` r-${c.role}` : ""}`;
+  el.className = `pred${c.entity ? ` r-${roleForEntity(c.entity.id)}` : c.role ? ` r-${c.role}` : ""}`;
   const part = document.createElement("span");
   part.className = "part";
   const lb = document.createElement("span");
@@ -1200,9 +1218,9 @@ function renderGrid() {
       continue;
     }
     if (c.kind === "entity") {
-      // A person in a home cell (014 § 9): Yellow like every person
-      // tile, photo when the family added one, speaks their name.
-      const el = wordTile({ label: c.label, role: "Yellow" });
+      // A person in a home cell (014 § 9): the family's kind color
+      // (018 D7 — Yellow until classified), photo when added.
+      const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "Yellow" });
       el.dataset.slot = slot;
       loadPhotoURL(photoFor(c.entity_id)).then((url) => {
         if (!url) return;
@@ -1670,6 +1688,15 @@ addUi = mountAddFlow({
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
   invalidateIndex: () => kbUi.invalidateIndex(),
   rerenderView, renderStrip, renderLibrary: () => libUi.renderLibrary(),
+  // 018 D7: Jev's one-shot kind pick. The word alone leaves the device;
+  // the answer only prefills the family's picker, never saves.
+  classifyKind: jevSharing
+    ? async (name) => {
+        const req = buildKindRequest(name, { sharing: jevSharing });
+        if (!req) return null;
+        try { return jevKind(await jevRank(req)); } catch { return null; }
+      }
+    : null,
 });
 
 /* Word library — public/board/library-ui.js */
@@ -1689,6 +1716,7 @@ wordCard = mountWordCard({
   getGroupKey: () => groupsUi.getGroupKey(),
   setGroup: (id, page) => groupsUi.setGroup(id, page),
   dropEntityPhoto: (id) => entityPhoto.delete(id),
+  dropEntityRole: (id) => entityRole.delete(id),
   dropSenseMeta: (id) => senseMeta.delete(id),
 });
 

@@ -40,6 +40,41 @@ export function jevTerm(db, item, locale) {
  * for senses — resolve terms with jevTerm first (the caller owns the
  * db; this builder stays pure over the resolved terms).
  */
+/** One-shot word-kind classification (018 D7): when the family adds a
+ *  word and sharing is on, Jev suggests which color the tile paints.
+ *  The word itself is all that leaves the device — never who it names.
+ *  The answer is a starting pick; the family's choice wins. */
+export function buildKindRequest(term, { sharing = true } = {}) {
+  if (!sharing || !term) return null;
+  return {
+    model: JEV_MODEL,
+    state: {
+      word: term,
+      note: "A word a family is adding to a child's picture board.",
+    },
+    questions: {
+      word_kind: {
+        type: "choice",
+        instructions: "What kind of word is this? Pick the closest kind.",
+        criteria: {
+          Yellow: "a person or a thing",
+          Green: "an action",
+          Pink: "a little word like in, on, or the",
+          Blue: "a describing word",
+          Purple: "a question word",
+          Red: "a safety word like stop or help",
+        },
+      },
+    },
+  };
+}
+/** The top-probability kind from a buildKindRequest response, or null. */
+export function jevKind(response) {
+  const probs = response?.answers?.word_kind?.probabilities;
+  if (!probs || typeof probs !== "object") return null;
+  return Object.entries(probs).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+}
+
 export function buildJevRequest(candidates, sentenceTerms, partnerWords = null, { sharing = true } = {}) {
   if (!sharing) return null;
   if (!sentenceTerms.length && !partnerWords) return null;

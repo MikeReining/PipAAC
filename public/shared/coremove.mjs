@@ -63,7 +63,8 @@ function slotMap(db, layout) {
 /** The effective home board. Row shape: sense cells carry
  *  { kind:'sense', slot_index, sense_id, label, fitzgerald_role },
  *  entity cells { kind:'entity', slot_index, entity_id, label,
- *  fitzgerald_role:'Yellow' }. */
+ *  fitzgerald_role } — the family's kind pick (018 D7), Yellow when
+ *  unclassified. */
 export function coreCells(db, layout, locale) {
   const slots = slotMap(db, layout);
   const out = [];
@@ -79,12 +80,12 @@ export function coreCells(db, layout, locale) {
       if (s) out.push({ kind, slot_index: slot, sense_id: id, ...s });
     } else {
       const e = db.prepare(
-        "SELECT id, spoken_name FROM personal_entity WHERE id = ? AND status = 'active'",
+        "SELECT id, spoken_name, fitzgerald_role FROM personal_entity WHERE id = ? AND status = 'active'",
       ).all(id)[0];
       if (e) {
         out.push({
           kind, slot_index: slot, entity_id: e.id,
-          label: e.spoken_name, fitzgerald_role: "Yellow",
+          label: e.spoken_name, fitzgerald_role: e.fitzgerald_role ?? "Yellow",
         });
       }
     }

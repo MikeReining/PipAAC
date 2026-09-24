@@ -25,7 +25,7 @@ export function libraryAdded(db, locale) {
   return all(
     db,
     `SELECT * FROM (
-       SELECT 'entity' AS kind, e.id, e.spoken_name AS label, 'Yellow' AS role,
+       SELECT 'entity' AS kind, e.id, e.spoken_name AS label, COALESCE(e.fitzgerald_role, 'Yellow') AS role,
               e.photo_key, NULL AS art,
               COALESCE(e.added_at, e.rowid) AS ord
        FROM personal_entity e
@@ -70,7 +70,7 @@ export function libraryAll(db, locale) {
   return all(
     db,
     `SELECT * FROM (
-       SELECT 'entity' AS kind, e.id, e.spoken_name AS label, 'Yellow' AS role,
+       SELECT 'entity' AS kind, e.id, e.spoken_name AS label, COALESCE(e.fitzgerald_role, 'Yellow') AS role,
               e.photo_key, NULL AS art
        FROM personal_entity e
        WHERE e.status = 'active'
@@ -104,7 +104,7 @@ export function librarySearch(db, text, locale, normalize) {
   return all(
     db,
     `SELECT * FROM (
-       SELECT 'entity' AS kind, e.id, e.spoken_name AS label, 'Yellow' AS role,
+       SELECT 'entity' AS kind, e.id, e.spoken_name AS label, COALESCE(e.fitzgerald_role, 'Yellow') AS role,
               e.photo_key, NULL AS art, e.spoken_name AS hay
        FROM personal_entity e
        WHERE e.status = 'active'

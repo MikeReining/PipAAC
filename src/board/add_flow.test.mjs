@@ -33,7 +33,7 @@ test("add form titles itself with the target group", () => {
   ).run();
   const title = el();
   const ids = [
-    "add-name", "add-photo", "add-hint", "add-newfields", "add-matches", "add-new",
+    "add-name", "add-photo", "add-hint", "add-kind", "add-newfields", "add-matches", "add-new",
     "bulk-paste", "bulk-preview", "bulk-add", "bulk-title", "add-bulk", "lib-bulk",
     "add-photos", "add-photos-input", "photo-title", "photo-rows", "photo-save", "add-save",
   ];

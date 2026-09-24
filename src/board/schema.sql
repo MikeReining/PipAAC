@@ -191,6 +191,11 @@ CREATE TABLE IF NOT EXISTS personal_entity (
     'Function Words & Grammar',
     'Numbers & Counting'
   )),
+  -- 018 D7: the family's plain-words kind choice, stored as the role it
+  -- paints. NULL renders Yellow (person or thing), the add form's
+  -- offline default.
+  fitzgerald_role TEXT CHECK (fitzgerald_role IS NULL OR fitzgerald_role IN
+    ('Yellow', 'Green', 'Blue', 'Pink', 'Purple', 'Red')),
   hint TEXT
 );
 

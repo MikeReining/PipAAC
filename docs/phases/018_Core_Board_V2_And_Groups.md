@@ -1,9 +1,10 @@
 # Phase 018 — Core board v2 and groups
 
-**Status:** Executing. Slices 1–4 done 2026-09-24 — the v2 board is the
+**Status:** Executing. Slices 1–5 done 2026-09-24 — the v2 board is the
 default (`grid60` = D1, six color bands, Purple role shipped,
 `is`/`mom`/`dad` root core, `grid15` re-derived, setup's people seated,
-groups re-ordered and banded). Remaining: slices 5–6.
+groups re-ordered and banded, personal words color by kind). Remaining:
+slice 6.
 
 **DECIDED 2026-09-24** (founder: "this is all locked"). Reached in a
 founder brainstorm the same day, with real-children measurements run
@@ -303,8 +304,19 @@ section (sample counts).
    - **Proof:** `groups.test.mjs` (D5 banded layout + migration seats),
      `strip_order.test.mjs` (D9 likely-group), `layout.test.mjs`. Speak-
      home is a one-line UI path; visual pass deferred with slice 1's.
-5. **Color from kind (D7).** A plain-words kind picker when adding a
-   word, and a one-time Jev classification.
+5. **Color from kind (D7).** **DONE 2026-09-24** — `personal_entity
+   .fitzgerald_role` stores the family's pick; the add form offers the
+   six kinds in plain words (person or thing · action · little word ·
+   describing · question · safety), and with sharing on Jev's one-shot
+   `buildKindRequest`/`jevKind` prefills it — the word alone leaves the
+   device, the answer only lands while the form is open and untouched,
+   and the family's choice always wins. The word card edits the kind
+   (`set_entity_role` op, syncs). Every reader paints the stored role:
+   `coreCells`, `groupPage`, banded placement, entity matches, the
+   strip, the sentence bar, the word card, and the Library queries.
+   NULL renders Yellow — the offline default and every pre-D7 row.
+   **Proof:** `entity_kind.test.mjs` — board/group/band reads, op replay
+   onto a second DB, migrate grafts the column and rejects bad values.
 6. **Edit the home board (D10).** 📊 counts, the placement sheet (tile +
    count + ✎, 🔍, most-used list), tap-to-place with Undo. **Proof:** on
    the real board, 📊 shows the child's own 30-day counts (a modeling

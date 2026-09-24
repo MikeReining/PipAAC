@@ -291,7 +291,7 @@ export function groupPage(db, groupId, page = 0, locale, cells = 60) {
     db,
     `SELECT gc.item_kind, gc.item_id, gc.page, gc.slot_index,
             COALESCE(l.text, e.spoken_name) AS label,
-            COALESCE(s.fitzgerald_role, 'Yellow') AS fitzgerald_role,
+            COALESCE(s.fitzgerald_role, e.fitzgerald_role, 'Yellow') AS fitzgerald_role,
             e.photo_key AS photo_key,
             ${SENSE_ART_SQL} AS art
      FROM group_cell gc
@@ -335,7 +335,7 @@ export function entityMatches(db, text, groupId, locale, seedCategory = null) {
   if (!prefix) return [];
   const rows = all(
     db,
-    `SELECT e.id, e.spoken_name, e.photo_key, e.category,
+    `SELECT e.id, e.spoken_name, e.photo_key, e.category, e.fitzgerald_role,
             COALESCE(g.name, gl.text) AS gname
      FROM personal_entity e
      LEFT JOIN group_cell gc ON gc.item_kind = 'entity' AND gc.item_id = e.id
@@ -356,6 +356,7 @@ export function entityMatches(db, text, groupId, locale, seedCategory = null) {
         id: r.id,
         name: r.spoken_name,
         photo_key: r.photo_key,
+        fitzgerald_role: r.fitzgerald_role,
         boost: seedCategory !== null && r.category === seedCategory ? 1 : 0,
         exact: normalizeV1(r.spoken_name) === prefix ? 1 : 0,
         groups: [],
@@ -426,8 +427,8 @@ const colSlots = (col) => {
 };
 
 function itemBand(db, kind, id) {
-  if (kind !== "sense") return "Yellow"; // entities color as people
-  return one(db, "SELECT fitzgerald_role AS r FROM sense WHERE id = ?", [id])?.r ?? "Yellow";
+  const table = kind === "sense" ? "sense" : "personal_entity";
+  return one(db, `SELECT fitzgerald_role AS r FROM ${table} WHERE id = ?`, [id])?.r ?? "Yellow";
 }
 
 /** The next free spot in the item's band area (D5). Falls back to a
@@ -437,9 +438,10 @@ function bandedFreeCell(db, groupId, kind, id) {
   const rows = all(
     db,
     `SELECT gc.page, gc.slot_index,
-            COALESCE(s.fitzgerald_role, 'Yellow') AS band
+            COALESCE(s.fitzgerald_role, e.fitzgerald_role, 'Yellow') AS band
      FROM group_cell gc
      LEFT JOIN sense s ON gc.item_kind = 'sense' AND s.id = gc.item_id
+     LEFT JOIN personal_entity e ON gc.item_kind = 'entity' AND e.id = gc.item_id
      WHERE gc.group_id = ?`,
     [groupId],
   );
@@ -656,6 +658,13 @@ export function renameEntity(db, id, newName) {
   recordOp(db, "rename_entity", { id, name });
 }
 
+/** The family's kind pick (018 D7) — the tile repaints in the new band
+ *  everywhere the word surfaces. null keeps the Yellow default. */
+export function setEntityRole(db, id, role) {
+  db.prepare("UPDATE personal_entity SET fitzgerald_role = ? WHERE id = ?").run(role, id);
+  recordOp(db, "set_entity_role", { id, role });
+}
+
 /** Retire, never delete: the entity renders nowhere until restored. */
 export function retireEntity(db, id) {
   db.prepare("UPDATE personal_entity SET status = 'retired' WHERE id = ?").run(id);
@@ -700,13 +709,13 @@ export function senseGroups(db, senseId, locale) {
 /** Create a personal entity (the + Add "New" path and op replay share
  *  this). `id`/`addedAt` are set by replay so replicas match byte-for-byte;
  *  a fresh save generates them. */
-export function createEntity(db, { id = null, name, photoKey = null, category = null, hint = null, addedAt = null }) {
+export function createEntity(db, { id = null, name, photoKey = null, category = null, hint = null, addedAt = null, role = null }) {
   const eid = id ?? `ent_${crypto.randomUUID().replaceAll("-", "")}`;
   const at = addedAt ?? Date.now();
   db.prepare(
-    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint, added_at) VALUES (?, ?, ?, ?, ?, ?)",
-  ).run(eid, name, photoKey, category, hint, at);
-  recordOp(db, "create_entity", { id: eid, name, photoKey, category, hint, addedAt: at });
+    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint, added_at, fitzgerald_role) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  ).run(eid, name, photoKey, category, hint, at, role);
+  recordOp(db, "create_entity", { id: eid, name, photoKey, category, hint, addedAt: at, role });
   return { id: eid, added_at: at };
 }
 
