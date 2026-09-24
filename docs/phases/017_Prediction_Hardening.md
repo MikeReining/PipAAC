@@ -182,8 +182,8 @@ M1  Trustworthy plumbing   4 → 3 → 5 → 1 → 2
 M2  The instrument          11 → 12 → 16 → 13 → 15 → 18
 M3  Measured improvement    23 → 7 → 10 → 27 → 21 → 22 → 24 → 25 → 6 → 8 → 9 → 14 → 17
 M4  Proof                   19 → 22
-F   The flywheel            26 (after 016 slice 6; parallel to M3)
-R   Real speed              28 (the on-device part can start with M1; sending waits for 016 slice 6)
+F   The flywheel            26 (the anonymous-totals sender is built — Stats_And_Progress § 6.3; parallel to M3)
+R   Real speed              28 (the on-device part can start with M1; sending rides the built § 6.3 sender)
 ```
 
 Step 23 (the opening book) needs none of M1 to start: building and
@@ -1703,8 +1703,7 @@ from the local log, pure), the 016 anonymous-totals sender (same
 schedule, same switch), a Worker route, `docs/product/Stats_And_Progress.md`
 § 6.3 and § 7.
 
-Depends on: 016 slice 6 (anonymous totals) for the sender and the
-switch.
+Depends on: the anonymous-totals sender and switch (Stats_And_Progress § 6.3, built).
 
 Truth owner: `docs/product/Stats_And_Progress.md` § 6.3 (after the
 amendment).

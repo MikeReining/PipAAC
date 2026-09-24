@@ -44,9 +44,9 @@ the `source` of a tap the child made.
   (`openSentence` `public/shared/funnel.mjs:36`, `closeSentence`
   `public/shared/funnel.mjs:44`).
 
-**Missing** (016 slice 1): whether a Spotlight glow was on when the tap
-happened. The session row is overwritten per session, so the tap has to
-carry it.
+The tap also carries `spotlit` (1 while the Spotlight glow was active)
+— stamped at write time, since the session row is overwritten per
+session.
 
 Adults who model from their own phone (013's partner modeling) never
 touch the child's log, so modeling cannot inflate the child's numbers.
