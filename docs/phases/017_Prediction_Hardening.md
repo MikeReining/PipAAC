@@ -178,6 +178,9 @@ M2/M3 order below until the book is in the strip.
 1. Real-children scorer in the repo (R16). Proof: reproduces the
    § Real children table within rounding on the same 80/20 split.
    Transcripts stay in a gitignored cache; only scores are committed.
+   **Status: machinery landed (scripts/prediction/childes/), but the
+   table does NOT reproduce — see the gap note under § Real children.
+   Paused for founder ruling.**
 2. Step 23 book build, items (a)–(d), with CHILDES counts as a source (R11).
    Proof: beats the scratch numbers on the item-1 scorer.
 3. Book + the user's own history in the strip: continue and start
@@ -1078,6 +1081,23 @@ the adult's previous turn get a fixed +2 boost.
 
 Share of the child's non-core words that the adult said in the previous
 turn: **18.4% (MLU < 2), 12.8%, 10.3%**.
+
+**Reproduction status (2026-09-24, item 1 — GAP, founder call needed).**
+`scripts/prediction/childes/` ports the scratch pipeline faithfully:
+same split (seed 20260923, 2,165 held-out transcripts), same 2,500-sample
+buckets (a bit-exact CPython RNG port), same lemmatizer — verified by
+identical event counts vs the current scratch code (857,746). But the
+table above predates every scratch file (doc commit 5399d37 at 10:13am;
+the parquet was first downloaded 10:49am) — its generating code/data is
+unrecoverable. Measured vs documented, CHILDES child book: later
+43.3/50.2/50.7 vs 43.5/49.2/49.7 (within ~1pt); first 18.9/28.7/29.5 vs
+16.5/22.5/22.3 (systematically +2 to +7pt). Even the book-independent
+adult-overlap stat can't be reproduced (15.4/11.6/7.1 measured vs
+18.4/12.8/10.3 documented), so the doc-era event stream itself differed.
+Not tuned; awaiting ruling on whether the measured numbers become the
+baseline. Transcripts live in gitignored `data/prediction/childes/`;
+`scripts/check_childes_git.mjs` (a check:fast gate) blocks transcript
+text from git.
 
 What real children say:
 - **The legal child book beats adult text on real children:** about +9

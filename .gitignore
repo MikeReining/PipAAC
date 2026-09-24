@@ -83,6 +83,9 @@ temp/
 .test.lock
 *.test.lock
 
+# CHILDES transcript cache — local only, never committed (017 R11)
+data/prediction/childes/
+
 # Product runtime artifacts (see data/README.md)
 cache/
 out/
