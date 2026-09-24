@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="to">
+<g transform="translate(50 50) scale(0.963) translate(-51.70 -50.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<path d="M16,50 L46,50" fill="none" stroke="#111111" stroke-width="20.0"/>
+<path d="M16,50 L46,50" fill="none" stroke="#f16b93" stroke-width="11"/>
+<polygon points="62.0,50.0 42.0,63.0 42.0,37.0" fill="#f16b93"/>
+<circle cx="85" cy="50" r="10" fill="#111111"/>
+</g>
+</svg>

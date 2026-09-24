@@ -3,6 +3,7 @@
  * Regenerate data/catalog/catalog.json from:
  *   - data/launch_lexicon.json   (derived from docs/product/Initial_Vocabulary_600.md)
  *   - docs/product/Core_Coordinate_Map.md  (truth owner for slot assignments)
+ *   - assets/symbols/            (approved clipart → image rows + public/symbols/)
  *
  *   node scripts/catalog/build_catalog.mjs
  *   node scripts/catalog/build_catalog.mjs --check
@@ -11,7 +12,8 @@
  * cel_ from layout + slot_index. The shipped file contains catalog tables only
  * — never device rows.
  */
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
@@ -32,6 +34,9 @@ const PREDICTION_DEFAULTS = join(repoRoot, "data/prediction/defaults.json");
 const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
+const SYMBOLS_ROOT = join(repoRoot, "assets/symbols");
+const PUBLIC_SYMBOLS_ROOT = join(repoRoot, "public/symbols");
+const SYMBOL_EXT_PREF = [".png", ".svg", ".jpg", ".jpeg"];
 const DEFAULT_VOICE_ID = "voi_default_en";
 const CATALOG_SCHEMA_VERSION = 1;
 const ITEMS_PER_PAGE = 57; // group page slots 2..58
@@ -329,12 +334,16 @@ export function buildCatalog(
     tier1ByWord.set(key, e);
   }
 
+  const images = buildImages(lexicon);
+  const imageBySense = new Map(images.map((i) => [i.sense_id, i.id]));
+
   const senses = lexicon.entries.map((e) => ({
     id: `sns_${pad4(e.slot)}`,
     fitzgerald_role: e.fitzgeraldColor,
     art_archetype: e.visualStyle,
     tier: e.tier === 1 ? "root_core" : "primary_fringe",
     category: e.category,
+    default_image_id: imageBySense.get(`sns_${pad4(e.slot)}`) ?? null,
     // R21 / Motor_Grid §2.2 rule 3: "no" words are a catalog attribute —
     // the Predict "no" slot reads this flag, never a hand-kept list.
     negation: e.negation ? 1 : 0,
@@ -437,7 +446,7 @@ export function buildCatalog(
     senses,
     utterances,
     labels,
-    images: [],
+    images,
     voices: [
       {
         id: DEFAULT_VOICE_ID,
@@ -500,6 +509,51 @@ function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm) {
     });
   }
   return clips;
+}
+
+/**
+ * Image rows: approved clipart lives in assets/symbols/<word>.<ext> —
+ * the art-generator contract (SKILL §7) lands a file there only when it
+ * is approved, so every canonical file ships as status 'approved'.
+ * `_rollN` files are review alternates and never ship. Matching is on
+ * spoken text with underscores read as spaces (wet_wipe → "wet wipe");
+ * when several extensions exist for one word, the first in
+ * SYMBOL_EXT_PREF wins. Referenced files are copied into
+ * public/symbols/ so image.key serves from the app shell — the same
+ * shape as clips → public/audio/.
+ */
+function buildImages(lexicon) {
+  const images = [];
+  if (!existsSync(SYMBOLS_ROOT)) return images;
+  const fileByWord = new Map(); // spokenText -> filename (preferred ext wins)
+  for (const file of readdirSync(SYMBOLS_ROOT)) {
+    if (/_roll\d*\./.test(file)) continue;
+    const ext = file.slice(file.lastIndexOf("."));
+    if (!SYMBOL_EXT_PREF.includes(ext)) continue;
+    const word = file.slice(0, -ext.length).replace(/_/g, " ");
+    const prev = fileByWord.get(word);
+    const prevPref = prev
+      ? SYMBOL_EXT_PREF.indexOf(prev.slice(prev.lastIndexOf(".")))
+      : -1;
+    if (!prev || SYMBOL_EXT_PREF.indexOf(ext) < prevPref) {
+      fileByWord.set(word, file);
+    }
+  }
+  mkdirSync(PUBLIC_SYMBOLS_ROOT, { recursive: true });
+  for (const e of lexicon.entries) {
+    const file = fileByWord.get(e.spokenText);
+    if (!file) continue;
+    const bytes = readFileSync(join(SYMBOLS_ROOT, file));
+    images.push({
+      id: `img_${pad4(e.slot)}`,
+      sense_id: `sns_${pad4(e.slot)}`,
+      key: `symbols/${file}`,
+      status: "approved",
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+    });
+    copyFileSync(join(SYMBOLS_ROOT, file), join(PUBLIC_SYMBOLS_ROOT, file));
+  }
+  return images;
 }
 
 function main() {

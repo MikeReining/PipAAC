@@ -175,6 +175,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0001",
       "negation": 0
     },
     {
@@ -183,6 +184,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0002",
       "negation": 0
     },
     {
@@ -191,6 +193,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0003",
       "negation": 0
     },
     {
@@ -199,6 +202,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0004",
       "negation": 0
     },
     {
@@ -207,6 +211,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0005",
       "negation": 0
     },
     {
@@ -215,6 +220,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0006",
       "negation": 0
     },
     {
@@ -223,6 +229,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0007",
       "negation": 0
     },
     {
@@ -231,6 +238,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0008",
       "negation": 0
     },
     {
@@ -239,6 +247,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0009",
       "negation": 0
     },
     {
@@ -247,6 +256,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0010",
       "negation": 0
     },
     {
@@ -255,6 +265,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0011",
       "negation": 0
     },
     {
@@ -263,6 +274,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0012",
       "negation": 0
     },
     {
@@ -271,6 +283,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0013",
       "negation": 0
     },
     {
@@ -279,6 +292,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0014",
       "negation": 0
     },
     {
@@ -287,6 +301,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0015",
       "negation": 0
     },
     {
@@ -295,6 +310,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0016",
       "negation": 0
     },
     {
@@ -303,6 +319,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0017",
       "negation": 0
     },
     {
@@ -311,6 +328,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0018",
       "negation": 0
     },
     {
@@ -319,6 +337,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0019",
       "negation": 0
     },
     {
@@ -327,6 +346,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0020",
       "negation": 0
     },
     {
@@ -335,6 +355,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0021",
       "negation": 0
     },
     {
@@ -343,6 +364,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0022",
       "negation": 0
     },
     {
@@ -351,6 +373,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0023",
       "negation": 0
     },
     {
@@ -359,6 +382,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0024",
       "negation": 0
     },
     {
@@ -367,6 +391,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": "img_0025",
       "negation": 0
     },
     {
@@ -375,6 +400,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": "img_0026",
       "negation": 0
     },
     {
@@ -383,6 +409,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0027",
       "negation": 0
     },
     {
@@ -391,6 +418,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0028",
       "negation": 0
     },
     {
@@ -399,6 +427,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0029",
       "negation": 0
     },
     {
@@ -407,6 +436,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0030",
       "negation": 0
     },
     {
@@ -415,6 +445,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0031",
       "negation": 0
     },
     {
@@ -423,6 +454,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0032",
       "negation": 0
     },
     {
@@ -431,6 +463,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0033",
       "negation": 0
     },
     {
@@ -439,6 +472,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0034",
       "negation": 0
     },
     {
@@ -447,6 +481,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0035",
       "negation": 0
     },
     {
@@ -455,6 +490,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0036",
       "negation": 0
     },
     {
@@ -463,6 +499,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0037",
       "negation": 0
     },
     {
@@ -471,6 +508,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0038",
       "negation": 0
     },
     {
@@ -479,6 +517,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0039",
       "negation": 0
     },
     {
@@ -487,6 +526,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0040",
       "negation": 0
     },
     {
@@ -495,6 +535,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0041",
       "negation": 0
     },
     {
@@ -503,6 +544,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0042",
       "negation": 0
     },
     {
@@ -511,6 +553,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0043",
       "negation": 0
     },
     {
@@ -519,6 +562,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0044",
       "negation": 0
     },
     {
@@ -527,6 +571,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0045",
       "negation": 0
     },
     {
@@ -535,6 +580,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0046",
       "negation": 0
     },
     {
@@ -543,6 +589,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0047",
       "negation": 0
     },
     {
@@ -551,6 +598,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0048",
       "negation": 0
     },
     {
@@ -559,6 +607,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0049",
       "negation": 0
     },
     {
@@ -567,6 +616,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0050",
       "negation": 0
     },
     {
@@ -575,6 +625,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0051",
       "negation": 0
     },
     {
@@ -583,6 +634,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0052",
       "negation": 0
     },
     {
@@ -591,6 +643,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0053",
       "negation": 0
     },
     {
@@ -599,6 +652,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0054",
       "negation": 0
     },
     {
@@ -607,6 +661,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0055",
       "negation": 0
     },
     {
@@ -615,6 +670,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0056",
       "negation": 0
     },
     {
@@ -623,6 +679,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": "img_0057",
       "negation": 0
     },
     {
@@ -631,6 +688,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": "img_0058",
       "negation": 0
     },
     {
@@ -639,6 +697,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": "img_0059",
       "negation": 0
     },
     {
@@ -647,6 +706,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": "img_0060",
       "negation": 0
     },
     {
@@ -655,6 +715,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": "img_0061",
       "negation": 0
     },
     {
@@ -663,6 +724,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0062",
       "negation": 0
     },
     {
@@ -671,6 +733,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0063",
       "negation": 0
     },
     {
@@ -679,6 +742,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0064",
       "negation": 0
     },
     {
@@ -687,6 +751,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0065",
       "negation": 0
     },
     {
@@ -695,6 +760,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0066",
       "negation": 0
     },
     {
@@ -703,6 +769,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0067",
       "negation": 0
     },
     {
@@ -711,6 +778,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0068",
       "negation": 0
     },
     {
@@ -719,6 +787,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0069",
       "negation": 0
     },
     {
@@ -727,6 +796,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0070",
       "negation": 0
     },
     {
@@ -735,6 +805,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0071",
       "negation": 0
     },
     {
@@ -743,6 +814,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": "img_0072",
       "negation": 1
     },
     {
@@ -751,6 +823,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": "img_0073",
       "negation": 0
     },
     {
@@ -759,6 +832,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0074",
       "negation": 1
     },
     {
@@ -767,6 +841,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": "img_0075",
       "negation": 0
     },
     {
@@ -775,6 +850,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0076",
       "negation": 0
     },
     {
@@ -783,6 +859,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0077",
       "negation": 0
     },
     {
@@ -791,6 +868,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0078",
       "negation": 0
     },
     {
@@ -799,6 +877,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0079",
       "negation": 0
     },
     {
@@ -807,6 +886,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0080",
       "negation": 0
     },
     {
@@ -815,6 +895,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0081",
       "negation": 0
     },
     {
@@ -823,6 +904,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0082",
       "negation": 0
     },
     {
@@ -831,6 +913,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0083",
       "negation": 0
     },
     {
@@ -839,6 +922,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0084",
       "negation": 0
     },
     {
@@ -847,6 +931,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0085",
       "negation": 0
     },
     {
@@ -855,6 +940,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0086",
       "negation": 0
     },
     {
@@ -863,6 +949,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0087",
       "negation": 0
     },
     {
@@ -871,6 +958,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0088",
       "negation": 0
     },
     {
@@ -879,6 +967,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0089",
       "negation": 0
     },
     {
@@ -887,6 +976,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0090",
       "negation": 0
     },
     {
@@ -895,6 +985,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0091",
       "negation": 0
     },
     {
@@ -903,6 +994,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0092",
       "negation": 0
     },
     {
@@ -911,6 +1003,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0093",
       "negation": 0
     },
     {
@@ -919,6 +1012,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0094",
       "negation": 0
     },
     {
@@ -927,6 +1021,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0095",
       "negation": 0
     },
     {
@@ -935,6 +1030,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0096",
       "negation": 0
     },
     {
@@ -943,6 +1039,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0097",
       "negation": 0
     },
     {
@@ -951,6 +1048,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0098",
       "negation": 0
     },
     {
@@ -959,6 +1057,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0099",
       "negation": 0
     },
     {
@@ -967,6 +1066,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0100",
       "negation": 0
     },
     {
@@ -975,6 +1075,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0101",
       "negation": 0
     },
     {
@@ -983,6 +1084,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0102",
       "negation": 0
     },
     {
@@ -991,6 +1093,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0103",
       "negation": 0
     },
     {
@@ -999,6 +1102,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0104",
       "negation": 0
     },
     {
@@ -1007,6 +1111,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0105",
       "negation": 0
     },
     {
@@ -1015,6 +1120,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0106",
       "negation": 0
     },
     {
@@ -1023,6 +1129,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0107",
       "negation": 0
     },
     {
@@ -1031,6 +1138,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0108",
       "negation": 0
     },
     {
@@ -1039,6 +1147,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0109",
       "negation": 0
     },
     {
@@ -1047,6 +1156,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0110",
       "negation": 0
     },
     {
@@ -1055,6 +1165,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0111",
       "negation": 0
     },
     {
@@ -1063,6 +1174,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0112",
       "negation": 0
     },
     {
@@ -1071,6 +1183,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0113",
       "negation": 0
     },
     {
@@ -1079,6 +1192,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0114",
       "negation": 0
     },
     {
@@ -1087,6 +1201,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0115",
       "negation": 0
     },
     {
@@ -1095,6 +1210,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0116",
       "negation": 0
     },
     {
@@ -1103,6 +1219,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0117",
       "negation": 0
     },
     {
@@ -1111,6 +1228,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0118",
       "negation": 0
     },
     {
@@ -1119,6 +1237,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0119",
       "negation": 0
     },
     {
@@ -1127,6 +1246,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0120",
       "negation": 0
     },
     {
@@ -1135,6 +1255,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0121",
       "negation": 0
     },
     {
@@ -1143,6 +1264,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0122",
       "negation": 0
     },
     {
@@ -1151,6 +1273,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0123",
       "negation": 0
     },
     {
@@ -1159,6 +1282,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0124",
       "negation": 0
     },
     {
@@ -1167,6 +1291,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0125",
       "negation": 0
     },
     {
@@ -1175,6 +1300,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0126",
       "negation": 0
     },
     {
@@ -1183,6 +1309,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0127",
       "negation": 0
     },
     {
@@ -1191,6 +1318,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0128",
       "negation": 0
     },
     {
@@ -1199,6 +1327,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0129",
       "negation": 0
     },
     {
@@ -1207,6 +1336,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0130",
       "negation": 0
     },
     {
@@ -1215,6 +1345,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0131",
       "negation": 0
     },
     {
@@ -1223,6 +1354,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0132",
       "negation": 0
     },
     {
@@ -1231,6 +1363,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0133",
       "negation": 0
     },
     {
@@ -1239,6 +1372,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0134",
       "negation": 0
     },
     {
@@ -1247,6 +1381,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0135",
       "negation": 0
     },
     {
@@ -1255,6 +1390,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": "img_0136",
       "negation": 0
     },
     {
@@ -1263,6 +1399,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0137",
       "negation": 0
     },
     {
@@ -1271,6 +1408,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0138",
       "negation": 0
     },
     {
@@ -1279,6 +1417,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0139",
       "negation": 0
     },
     {
@@ -1287,6 +1426,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0140",
       "negation": 0
     },
     {
@@ -1295,6 +1435,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0141",
       "negation": 0
     },
     {
@@ -1303,6 +1444,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0142",
       "negation": 0
     },
     {
@@ -1311,6 +1453,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0143",
       "negation": 0
     },
     {
@@ -1319,6 +1462,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0144",
       "negation": 0
     },
     {
@@ -1327,6 +1471,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0145",
       "negation": 0
     },
     {
@@ -1335,6 +1480,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0146",
       "negation": 0
     },
     {
@@ -1343,6 +1489,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0147",
       "negation": 0
     },
     {
@@ -1351,6 +1498,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0148",
       "negation": 0
     },
     {
@@ -1359,6 +1507,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0149",
       "negation": 0
     },
     {
@@ -1367,6 +1516,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0150",
       "negation": 0
     },
     {
@@ -1375,6 +1525,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0151",
       "negation": 0
     },
     {
@@ -1383,6 +1534,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0152",
       "negation": 0
     },
     {
@@ -1391,6 +1543,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0153",
       "negation": 0
     },
     {
@@ -1399,6 +1552,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0154",
       "negation": 0
     },
     {
@@ -1407,6 +1561,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0155",
       "negation": 0
     },
     {
@@ -1415,6 +1570,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0156",
       "negation": 0
     },
     {
@@ -1423,6 +1579,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0157",
       "negation": 0
     },
     {
@@ -1431,6 +1588,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0158",
       "negation": 0
     },
     {
@@ -1439,6 +1597,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0159",
       "negation": 0
     },
     {
@@ -1447,6 +1606,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0160",
       "negation": 0
     },
     {
@@ -1455,6 +1615,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0161",
       "negation": 0
     },
     {
@@ -1463,6 +1624,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0162",
       "negation": 0
     },
     {
@@ -1471,6 +1633,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0163",
       "negation": 0
     },
     {
@@ -1479,6 +1642,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0164",
       "negation": 0
     },
     {
@@ -1487,6 +1651,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0165",
       "negation": 0
     },
     {
@@ -1495,6 +1660,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0166",
       "negation": 0
     },
     {
@@ -1503,6 +1669,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0167",
       "negation": 0
     },
     {
@@ -1511,6 +1678,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0168",
       "negation": 0
     },
     {
@@ -1519,6 +1687,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0169",
       "negation": 0
     },
     {
@@ -1527,6 +1696,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0170",
       "negation": 0
     },
     {
@@ -1535,6 +1705,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0171",
       "negation": 0
     },
     {
@@ -1543,6 +1714,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0172",
       "negation": 0
     },
     {
@@ -1551,6 +1723,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0173",
       "negation": 0
     },
     {
@@ -1559,6 +1732,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0174",
       "negation": 0
     },
     {
@@ -1567,6 +1741,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0175",
       "negation": 0
     },
     {
@@ -1575,6 +1750,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0176",
       "negation": 0
     },
     {
@@ -1583,6 +1759,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0177",
       "negation": 0
     },
     {
@@ -1591,6 +1768,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": "img_0178",
       "negation": 0
     },
     {
@@ -1599,6 +1777,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": "img_0179",
       "negation": 0
     },
     {
@@ -1607,6 +1786,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": "img_0180",
       "negation": 0
     },
     {
@@ -1615,6 +1795,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": "img_0181",
       "negation": 0
     },
     {
@@ -1623,6 +1804,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1631,6 +1813,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1639,6 +1822,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1647,6 +1831,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1655,6 +1840,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1663,6 +1849,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1671,6 +1858,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1679,6 +1867,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1687,6 +1876,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1695,6 +1885,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1703,6 +1894,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1711,6 +1903,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1719,6 +1912,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1727,6 +1921,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1735,6 +1930,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1743,6 +1939,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1751,6 +1948,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1759,6 +1957,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1767,6 +1966,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1775,6 +1975,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1783,6 +1984,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1791,6 +1993,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1799,6 +2002,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1807,6 +2011,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1815,6 +2020,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1823,6 +2029,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1831,6 +2038,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1839,6 +2047,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1847,6 +2056,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1855,6 +2065,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1863,6 +2074,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1871,6 +2083,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1879,6 +2092,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": "img_0214",
       "negation": 0
     },
     {
@@ -1887,6 +2101,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1895,6 +2110,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1903,6 +2119,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1911,6 +2128,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1919,6 +2137,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1927,6 +2146,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1935,6 +2155,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1943,6 +2164,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1951,6 +2173,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1959,6 +2182,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1967,6 +2191,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1975,6 +2200,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1983,6 +2209,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1991,6 +2218,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -1999,6 +2227,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2007,6 +2236,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2015,6 +2245,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2023,6 +2254,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2031,6 +2263,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2039,6 +2272,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2047,6 +2281,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2055,6 +2290,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2063,6 +2299,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2071,6 +2308,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2079,6 +2317,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2087,6 +2326,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2095,6 +2335,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2103,6 +2344,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2111,6 +2353,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2119,6 +2362,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2127,6 +2371,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2135,6 +2380,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2143,6 +2389,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2151,6 +2398,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2159,6 +2407,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2167,6 +2416,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2175,6 +2425,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2183,6 +2434,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2191,6 +2443,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2199,6 +2452,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2207,6 +2461,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2215,6 +2470,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2223,6 +2479,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2231,6 +2488,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2239,6 +2497,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2247,6 +2506,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2255,6 +2515,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2263,6 +2524,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2271,6 +2533,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2279,6 +2542,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2287,6 +2551,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2295,6 +2560,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2303,6 +2569,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2311,6 +2578,7 @@
       "art_archetype": "Stick Figure",
       "tier": "root_core",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2319,6 +2587,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2327,6 +2596,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2335,6 +2605,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2343,6 +2614,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2351,6 +2623,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2359,6 +2632,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2367,6 +2641,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2375,6 +2650,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2383,6 +2659,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2391,6 +2668,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2399,6 +2677,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2407,6 +2686,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2415,6 +2695,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2423,6 +2704,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2431,6 +2713,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2439,6 +2722,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2447,6 +2731,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2455,6 +2740,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2463,6 +2749,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2471,6 +2758,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2479,6 +2767,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2487,6 +2776,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2495,6 +2785,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2503,6 +2794,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2511,6 +2803,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2519,6 +2812,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2527,6 +2821,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2535,6 +2830,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2543,6 +2839,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2551,6 +2848,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2559,6 +2857,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2567,6 +2866,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2575,6 +2875,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2583,6 +2884,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2591,6 +2893,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2599,6 +2902,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2607,6 +2911,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2615,6 +2920,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2623,6 +2929,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2631,6 +2938,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2639,6 +2947,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2647,6 +2956,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2655,6 +2965,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2663,6 +2974,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2671,6 +2983,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2679,6 +2992,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2687,6 +3001,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2695,6 +3010,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2703,6 +3019,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2711,6 +3028,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2719,6 +3037,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2727,6 +3046,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2735,6 +3055,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2743,6 +3064,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2751,6 +3073,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2759,6 +3082,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2767,6 +3091,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2775,6 +3100,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2783,6 +3109,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2791,6 +3118,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2799,6 +3127,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2807,6 +3136,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2815,6 +3145,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Places, Rooms & Community",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2823,6 +3154,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2831,6 +3163,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2839,6 +3172,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2847,6 +3181,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2855,6 +3190,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2863,6 +3199,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2871,6 +3208,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2879,6 +3217,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2887,6 +3226,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2895,6 +3235,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2903,6 +3244,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2911,6 +3253,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2919,6 +3262,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2927,6 +3271,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2935,6 +3280,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2943,6 +3289,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2951,6 +3298,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2959,6 +3307,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2967,6 +3316,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2975,6 +3325,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2983,6 +3334,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2991,6 +3343,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -2999,6 +3352,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3007,6 +3361,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3015,6 +3370,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3023,6 +3379,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3031,6 +3388,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3039,6 +3397,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3047,6 +3406,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3055,6 +3415,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3063,6 +3424,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3071,6 +3433,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3079,6 +3442,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3087,6 +3451,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3095,6 +3460,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3103,6 +3469,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3111,6 +3478,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3119,6 +3487,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3127,6 +3496,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3135,6 +3505,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3143,6 +3514,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3151,6 +3523,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3159,6 +3532,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3167,6 +3541,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3175,6 +3550,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3183,6 +3559,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3191,6 +3568,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3199,6 +3577,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3207,6 +3586,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3215,6 +3595,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3223,6 +3604,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3231,6 +3613,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3239,6 +3622,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3247,6 +3631,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3255,6 +3640,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3263,6 +3649,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3271,6 +3658,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3279,6 +3667,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3287,6 +3676,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3295,6 +3685,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3303,6 +3694,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3311,6 +3703,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3319,6 +3712,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3327,6 +3721,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3335,6 +3730,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3343,6 +3739,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3351,6 +3748,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3359,6 +3757,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3367,6 +3766,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3375,6 +3775,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3383,6 +3784,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3391,6 +3793,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3399,6 +3802,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3407,6 +3811,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3415,6 +3820,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3423,6 +3829,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3431,6 +3838,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3439,6 +3847,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3447,6 +3856,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3455,6 +3865,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3463,6 +3874,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3471,6 +3883,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3479,6 +3892,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3487,6 +3901,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3495,6 +3910,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3503,6 +3919,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3511,6 +3928,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3519,6 +3937,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3527,6 +3946,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3535,6 +3955,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3543,6 +3964,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3551,6 +3973,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3559,6 +3982,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3567,6 +3991,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3575,6 +4000,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3583,6 +4009,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3591,6 +4018,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3599,6 +4027,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3607,6 +4036,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3615,6 +4045,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3623,6 +4054,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3631,6 +4063,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3639,6 +4072,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3647,6 +4081,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3655,6 +4090,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3663,6 +4099,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3671,6 +4108,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3679,6 +4117,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Clothing & Accessories",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3687,6 +4126,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3695,6 +4135,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3703,6 +4144,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3711,6 +4153,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3719,6 +4162,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3727,6 +4171,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3735,6 +4180,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3743,6 +4189,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3751,6 +4198,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3759,6 +4207,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3767,6 +4216,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3775,6 +4225,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3783,6 +4234,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3791,6 +4243,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3799,6 +4252,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3807,6 +4261,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3815,6 +4270,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3823,6 +4279,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3831,6 +4288,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3839,6 +4297,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3847,6 +4306,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3855,6 +4315,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3863,6 +4324,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3871,6 +4333,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3879,6 +4342,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3887,6 +4351,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3895,6 +4360,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3903,6 +4369,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3911,6 +4378,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3919,6 +4387,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3927,6 +4396,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3935,6 +4405,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3943,6 +4414,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3951,6 +4423,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3959,6 +4432,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3967,6 +4441,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3975,6 +4450,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3983,6 +4459,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3991,6 +4468,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -3999,6 +4477,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Animals & Nature",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4007,6 +4486,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4015,6 +4495,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4023,6 +4504,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4031,6 +4513,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4039,6 +4522,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4047,6 +4531,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4055,6 +4540,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4063,6 +4549,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4071,6 +4558,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4079,6 +4567,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4087,6 +4576,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4095,6 +4585,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4103,6 +4594,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4111,6 +4603,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4119,6 +4612,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4127,6 +4621,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4135,6 +4630,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4143,6 +4639,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4151,6 +4648,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4159,6 +4657,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4167,6 +4666,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4175,6 +4675,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4183,6 +4684,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4191,6 +4693,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4199,6 +4702,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4207,6 +4711,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4215,6 +4720,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4223,6 +4729,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4231,6 +4738,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4239,6 +4747,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": "img_0509",
       "negation": 0
     },
     {
@@ -4247,6 +4756,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4255,6 +4765,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4263,6 +4774,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4271,6 +4783,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4279,6 +4792,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4287,6 +4801,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4295,6 +4810,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4303,6 +4819,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4311,6 +4828,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4319,6 +4837,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4327,6 +4846,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4335,6 +4855,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4343,6 +4864,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4351,6 +4873,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4359,6 +4882,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4367,6 +4891,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4375,6 +4900,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4383,6 +4909,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4391,6 +4918,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4399,6 +4927,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4407,6 +4936,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4415,6 +4945,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4423,6 +4954,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4431,6 +4963,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4439,6 +4972,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4447,6 +4981,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4455,6 +4990,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4463,6 +4999,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4471,6 +5008,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4479,6 +5017,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4487,6 +5026,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4495,6 +5035,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4503,6 +5044,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4511,6 +5053,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4519,6 +5062,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4527,6 +5071,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4535,6 +5080,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4543,6 +5089,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4551,6 +5098,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4559,6 +5107,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4567,6 +5116,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4575,6 +5125,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4583,6 +5134,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4591,6 +5143,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4599,6 +5152,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4607,6 +5161,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4615,6 +5170,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4623,6 +5179,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4631,6 +5188,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4639,6 +5197,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4647,6 +5206,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4655,6 +5215,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4663,6 +5224,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4671,6 +5233,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4679,6 +5242,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4687,6 +5251,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4695,6 +5260,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4703,6 +5269,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4711,6 +5278,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 1
     },
     {
@@ -4719,6 +5287,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4727,6 +5296,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4735,6 +5305,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4743,6 +5314,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4751,6 +5323,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4759,6 +5332,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4767,6 +5341,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Time, Calendar & Sequencing",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4775,6 +5350,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4783,6 +5359,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4791,6 +5368,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4799,6 +5377,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4807,6 +5386,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4815,6 +5395,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4823,6 +5404,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4831,6 +5413,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4839,6 +5422,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4847,6 +5431,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4855,6 +5440,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4863,6 +5449,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4871,6 +5458,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4879,6 +5467,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4887,6 +5476,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4895,6 +5485,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4903,6 +5494,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4911,6 +5503,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4919,6 +5512,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4927,6 +5521,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4935,6 +5530,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4943,6 +5539,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -4951,6 +5548,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 1
     },
     {
@@ -4959,6 +5557,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": "img_0606",
       "negation": 0
     },
     {
@@ -4967,6 +5566,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "root_core",
       "category": null,
+      "default_image_id": "img_0607",
       "negation": 0
     },
     {
@@ -4975,6 +5575,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0608",
       "negation": 0
     },
     {
@@ -4983,6 +5584,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0609",
       "negation": 0
     },
     {
@@ -4991,6 +5593,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0610",
       "negation": 0
     },
     {
@@ -4999,6 +5602,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0611",
       "negation": 0
     },
     {
@@ -5007,6 +5611,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5015,6 +5620,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5023,6 +5629,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0614",
       "negation": 0
     },
     {
@@ -5031,6 +5638,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0615",
       "negation": 0
     },
     {
@@ -5039,6 +5647,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 1
     },
     {
@@ -5047,6 +5656,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 1
     },
     {
@@ -5055,6 +5665,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 1
     },
     {
@@ -5063,6 +5674,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0619",
       "negation": 0
     },
     {
@@ -5071,6 +5683,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0620",
       "negation": 0
     },
     {
@@ -5079,6 +5692,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0621",
       "negation": 0
     },
     {
@@ -5087,6 +5701,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0622",
       "negation": 0
     },
     {
@@ -5095,6 +5710,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5103,6 +5719,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5111,6 +5728,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5119,6 +5737,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5127,6 +5746,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0627",
       "negation": 0
     },
     {
@@ -5135,6 +5755,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": "img_0628",
       "negation": 0
     },
     {
@@ -5143,6 +5764,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5151,6 +5773,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5159,6 +5782,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5167,6 +5791,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5175,6 +5800,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5183,6 +5809,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5191,6 +5818,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5199,6 +5827,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5207,6 +5836,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5215,6 +5845,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5223,6 +5854,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5231,6 +5863,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5239,6 +5872,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5247,6 +5881,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5255,6 +5890,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5263,6 +5899,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5271,6 +5908,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5279,6 +5917,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5287,6 +5926,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5295,6 +5935,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5303,6 +5944,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5311,6 +5953,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5319,6 +5962,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5327,6 +5971,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5335,6 +5980,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5343,6 +5989,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5351,6 +5998,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5359,6 +6007,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5367,6 +6016,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5375,6 +6025,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5383,6 +6034,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5391,6 +6043,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5399,6 +6052,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5407,6 +6061,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5415,6 +6070,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5423,6 +6079,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5431,6 +6088,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5439,6 +6097,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5447,6 +6106,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5455,6 +6115,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5463,6 +6124,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5471,6 +6133,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5479,6 +6142,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5487,6 +6151,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5495,6 +6160,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5503,6 +6169,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5511,6 +6178,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "People, Family & Roles",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5519,6 +6187,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5527,6 +6196,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5535,6 +6205,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5543,6 +6214,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5551,6 +6223,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5559,6 +6232,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5567,6 +6241,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5575,6 +6250,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5583,6 +6259,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5591,6 +6268,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5599,6 +6277,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     },
     {
@@ -5607,6 +6286,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
       "negation": 0
     }
   ],
@@ -19323,7 +20003,1387 @@
       "status": "approved"
     }
   ],
-  "images": [],
+  "images": [
+    {
+      "id": "img_0001",
+      "sense_id": "sns_0001",
+      "key": "symbols/I.png",
+      "status": "approved",
+      "sha256": "6291366c60616fd698d46bf72cc32f73a7a9d9a4cb7600bfd8cbe33bae7651ba"
+    },
+    {
+      "id": "img_0002",
+      "sense_id": "sns_0002",
+      "key": "symbols/you.png",
+      "status": "approved",
+      "sha256": "31473777f12877aeb66e21cb8a39171808732b96ca46b9fce6df154300249fb5"
+    },
+    {
+      "id": "img_0003",
+      "sense_id": "sns_0003",
+      "key": "symbols/me.png",
+      "status": "approved",
+      "sha256": "1f00f5b9407ed1dbd543c104966eecf505b5a61cff4120b91fca6ce211e25511"
+    },
+    {
+      "id": "img_0004",
+      "sense_id": "sns_0004",
+      "key": "symbols/my.png",
+      "status": "approved",
+      "sha256": "6172655b743e64ac80712cbfdb4a314f6f418d7aac166e0ff091b9d6785f50a1"
+    },
+    {
+      "id": "img_0005",
+      "sense_id": "sns_0005",
+      "key": "symbols/mine.png",
+      "status": "approved",
+      "sha256": "29d65db39bff47c35e33e656a5bb30f5ef6e9d1e3f6b2f1654399c580dec6495"
+    },
+    {
+      "id": "img_0006",
+      "sense_id": "sns_0006",
+      "key": "symbols/he.png",
+      "status": "approved",
+      "sha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4"
+    },
+    {
+      "id": "img_0007",
+      "sense_id": "sns_0007",
+      "key": "symbols/she.png",
+      "status": "approved",
+      "sha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe"
+    },
+    {
+      "id": "img_0008",
+      "sense_id": "sns_0008",
+      "key": "symbols/it.png",
+      "status": "approved",
+      "sha256": "cb7973f6497e489c153db78fbcede870b0f2777a1b2064ebcccba54b06c4d09e"
+    },
+    {
+      "id": "img_0009",
+      "sense_id": "sns_0009",
+      "key": "symbols/we.png",
+      "status": "approved",
+      "sha256": "80ce2025c7ab586e72368632b414e0f4114e78ba5a6c1bba1cab8193a082a8c8"
+    },
+    {
+      "id": "img_0010",
+      "sense_id": "sns_0010",
+      "key": "symbols/they.png",
+      "status": "approved",
+      "sha256": "4cde51bbf44211e4c938b6f8d765dcb076b6bf51fabbe8a3891d1d6e00a992ec"
+    },
+    {
+      "id": "img_0011",
+      "sense_id": "sns_0011",
+      "key": "symbols/that.png",
+      "status": "approved",
+      "sha256": "6a9d80c1263d1568da4a511302a00528d421e9c32b1f02703d51afd01107b309"
+    },
+    {
+      "id": "img_0012",
+      "sense_id": "sns_0012",
+      "key": "symbols/this.png",
+      "status": "approved",
+      "sha256": "99150273558d606fc4f01dbfa371e8cbd0a55a74994142ec7571fee86fb32e18"
+    },
+    {
+      "id": "img_0013",
+      "sense_id": "sns_0013",
+      "key": "symbols/want.png",
+      "status": "approved",
+      "sha256": "de21f393788c8af39e260a0e64bf16f18fc2a0ba9e4c13c137557cd7de7ca68d"
+    },
+    {
+      "id": "img_0014",
+      "sense_id": "sns_0014",
+      "key": "symbols/like.png",
+      "status": "approved",
+      "sha256": "f848d1cc377a5b9ab59dcd5cbaaf8f255aefff8c64baaa65b975e0a624454b0d"
+    },
+    {
+      "id": "img_0015",
+      "sense_id": "sns_0015",
+      "key": "symbols/go.png",
+      "status": "approved",
+      "sha256": "3e3a5dbf22cb43ac73953ca598f8cf1acd29a8613f91f7d0927d8cd84beaca7a"
+    },
+    {
+      "id": "img_0016",
+      "sense_id": "sns_0016",
+      "key": "symbols/come.png",
+      "status": "approved",
+      "sha256": "c6e9b89b806681f939b94466093a0cd846c61b1bc9c26c38ea853c0b3f30bf10"
+    },
+    {
+      "id": "img_0017",
+      "sense_id": "sns_0017",
+      "key": "symbols/get.png",
+      "status": "approved",
+      "sha256": "ff384b85aaab892238d2eefd8aa31a772b7b5ae2e4105a57ef946852edbbf92a"
+    },
+    {
+      "id": "img_0018",
+      "sense_id": "sns_0018",
+      "key": "symbols/make.png",
+      "status": "approved",
+      "sha256": "52249dac8747b6e5b7fc92f1f117eb9153f5d05edd18ad2e3d97fd863215f8c6"
+    },
+    {
+      "id": "img_0019",
+      "sense_id": "sns_0019",
+      "key": "symbols/do.png",
+      "status": "approved",
+      "sha256": "9a3aa175a28d2b4fbd501e44acc9a61ccf2defb268aa63d7938d4cd2a32757ad"
+    },
+    {
+      "id": "img_0020",
+      "sense_id": "sns_0020",
+      "key": "symbols/see.png",
+      "status": "approved",
+      "sha256": "182531def9ee1bdc602d73b102023b95c044a22ab76bc7e69b2b5418db7b4d4e"
+    },
+    {
+      "id": "img_0021",
+      "sense_id": "sns_0021",
+      "key": "symbols/look.png",
+      "status": "approved",
+      "sha256": "4cad68918db215a6207c9e399f71ac7a8306f6e6aa4e780675b4abda3b9df4e1"
+    },
+    {
+      "id": "img_0022",
+      "sense_id": "sns_0022",
+      "key": "symbols/put.png",
+      "status": "approved",
+      "sha256": "72215ea133240636d7c315321390d455bd8a0a7907d8e8baec0b5dc5325dcca6"
+    },
+    {
+      "id": "img_0023",
+      "sense_id": "sns_0023",
+      "key": "symbols/take.png",
+      "status": "approved",
+      "sha256": "33a43af5e19aa345fde29fb4a0ae471ae19a3291a429f04ca6daa3cda5057c2a"
+    },
+    {
+      "id": "img_0024",
+      "sense_id": "sns_0024",
+      "key": "symbols/give.png",
+      "status": "approved",
+      "sha256": "76c61d0e4b277e5d5e6eea839ae9d439c74fd9957babfe2a152e3893c7732ace"
+    },
+    {
+      "id": "img_0025",
+      "sense_id": "sns_0025",
+      "key": "symbols/help.png",
+      "status": "approved",
+      "sha256": "0910b3cff2c72996f6a9c4d1265c0f26c9de5ca4ba71e4ad0ccfaf7fa4845dbd"
+    },
+    {
+      "id": "img_0026",
+      "sense_id": "sns_0026",
+      "key": "symbols/stop.png",
+      "status": "approved",
+      "sha256": "a585d0c69033635c93483d7703ca144d15da50e7ed8cc7f2581b4bdc69294746"
+    },
+    {
+      "id": "img_0027",
+      "sense_id": "sns_0027",
+      "key": "symbols/play.png",
+      "status": "approved",
+      "sha256": "3e2eb2e9deb63f31af71f58f49fc5b2f2300f78dd6a0e23343d7b13ba6badc4c"
+    },
+    {
+      "id": "img_0028",
+      "sense_id": "sns_0028",
+      "key": "symbols/eat.png",
+      "status": "approved",
+      "sha256": "78ff69af31953dc917ef08c352c2175920aa473d75a5ebcf5609d4f3aed83139"
+    },
+    {
+      "id": "img_0029",
+      "sense_id": "sns_0029",
+      "key": "symbols/drink.png",
+      "status": "approved",
+      "sha256": "b7d74b7729cbeed64465f8b2f74e9ff6c2bc35c86a03e816adaa18f497b8aec7"
+    },
+    {
+      "id": "img_0030",
+      "sense_id": "sns_0030",
+      "key": "symbols/open.png",
+      "status": "approved",
+      "sha256": "d2594d13fd26fc96f148559c4277dd09181b6f907190ec806603b50bc6f4d925"
+    },
+    {
+      "id": "img_0031",
+      "sense_id": "sns_0031",
+      "key": "symbols/turn.png",
+      "status": "approved",
+      "sha256": "0a59051b5fd652ff293544f32d07a519894a18e72c32e84fc5a40969820cb46f"
+    },
+    {
+      "id": "img_0032",
+      "sense_id": "sns_0032",
+      "key": "symbols/read.png",
+      "status": "approved",
+      "sha256": "fa93f722d744d2914b136f5a0a23725baa113f67e0ee0b43c3252d445b83d76a"
+    },
+    {
+      "id": "img_0033",
+      "sense_id": "sns_0033",
+      "key": "symbols/can.svg",
+      "status": "approved",
+      "sha256": "22af04f4e4c8af8388b4d6159d4142c1272f4d4d5cfabe1a8d9d211da09e79ce"
+    },
+    {
+      "id": "img_0034",
+      "sense_id": "sns_0034",
+      "key": "symbols/need.png",
+      "status": "approved",
+      "sha256": "7892193282e6fdf882d8ce1a792c31550efd8e62d145c3169bcb12f827760b99"
+    },
+    {
+      "id": "img_0035",
+      "sense_id": "sns_0035",
+      "key": "symbols/feel.png",
+      "status": "approved",
+      "sha256": "759abacefb2e0f468a81bdaac5fda30715c248e2432eeb506de1d61787b9119c"
+    },
+    {
+      "id": "img_0036",
+      "sense_id": "sns_0036",
+      "key": "symbols/tell.png",
+      "status": "approved",
+      "sha256": "bfe659c2ae55f672a77fc235178ee8c5f8a384823c9a3285234da3ba0776d5aa"
+    },
+    {
+      "id": "img_0037",
+      "sense_id": "sns_0037",
+      "key": "symbols/think.png",
+      "status": "approved",
+      "sha256": "85f6a1382e149b04b549c85c34cf99fc1207c285ff1ef4f5bf9f9ebafe4336ce"
+    },
+    {
+      "id": "img_0038",
+      "sense_id": "sns_0038",
+      "key": "symbols/find.png",
+      "status": "approved",
+      "sha256": "221a63a40f491d2ccd58616265718ae35b3d50aea3c98c43f325f40941b02b0f"
+    },
+    {
+      "id": "img_0039",
+      "sense_id": "sns_0039",
+      "key": "symbols/work.png",
+      "status": "approved",
+      "sha256": "48fa8cbc6f4efce1f5be0cefbe21086cd662c7ce9cc2681c4e027faca633fd5b"
+    },
+    {
+      "id": "img_0040",
+      "sense_id": "sns_0040",
+      "key": "symbols/wait.png",
+      "status": "approved",
+      "sha256": "4c9bd78c210b163c930f20402f7ffde8759ec560070e06075ab1ad92c99563bc"
+    },
+    {
+      "id": "img_0041",
+      "sense_id": "sns_0041",
+      "key": "symbols/in.png",
+      "status": "approved",
+      "sha256": "07bad3bf866a979e275c21f129dc71befebbe2cd0fefacc9807b36342177483c"
+    },
+    {
+      "id": "img_0042",
+      "sense_id": "sns_0042",
+      "key": "symbols/out.png",
+      "status": "approved",
+      "sha256": "38ed278a8f117cc6de2ae3a953a82ec7ab0020b7dddae3bf364086aa08dffdc9"
+    },
+    {
+      "id": "img_0043",
+      "sense_id": "sns_0043",
+      "key": "symbols/on.png",
+      "status": "approved",
+      "sha256": "e6599d5f341759816230c75a95c0fd48e7cc4f6ffd73f446bef499596bee6971"
+    },
+    {
+      "id": "img_0044",
+      "sense_id": "sns_0044",
+      "key": "symbols/off.png",
+      "status": "approved",
+      "sha256": "034d9799e89c2caa6bec2c2274b85147c90338d98c83b1d24dde51f5530ffcde"
+    },
+    {
+      "id": "img_0045",
+      "sense_id": "sns_0045",
+      "key": "symbols/up.png",
+      "status": "approved",
+      "sha256": "b9eb374bfb7c15402ab278e9a0676c98ae4ebd51adf3c6601f53a0512db465e8"
+    },
+    {
+      "id": "img_0046",
+      "sense_id": "sns_0046",
+      "key": "symbols/down.png",
+      "status": "approved",
+      "sha256": "6b84442aeb04cb74af1a1c4c62e8c52cee6f202fb652785fe9f021ba9a614a41"
+    },
+    {
+      "id": "img_0047",
+      "sense_id": "sns_0047",
+      "key": "symbols/away.png",
+      "status": "approved",
+      "sha256": "3d0a731fe89087dc97279b9e77d9ec3f4b59dd220391670a99151e1843509e12"
+    },
+    {
+      "id": "img_0048",
+      "sense_id": "sns_0048",
+      "key": "symbols/here.png",
+      "status": "approved",
+      "sha256": "801854d59e4cced17be983f22baff3a28524ddc9689be0e96fc1e3ace33c1ccd"
+    },
+    {
+      "id": "img_0049",
+      "sense_id": "sns_0049",
+      "key": "symbols/there.png",
+      "status": "approved",
+      "sha256": "cbe3f13bfc25d262e94ecf8ed0302ceb16def1abc80101cfadc10ae8bc5994fc"
+    },
+    {
+      "id": "img_0050",
+      "sense_id": "sns_0050",
+      "key": "symbols/with.png",
+      "status": "approved",
+      "sha256": "d056cfa9bb2dba6ebe07e650e2ae4bf7c095e34052107ece90352488f2cdc144"
+    },
+    {
+      "id": "img_0051",
+      "sense_id": "sns_0051",
+      "key": "symbols/under.png",
+      "status": "approved",
+      "sha256": "12c67f8a6aab0939cd6e4f1e81c9503bbe5b58af0bb9f2b338015e19a90036c7"
+    },
+    {
+      "id": "img_0052",
+      "sense_id": "sns_0052",
+      "key": "symbols/over.png",
+      "status": "approved",
+      "sha256": "7250b84b379c02c24add9474db40599b36e1bf42d87e98a5f03e5ee0a9d25a50"
+    },
+    {
+      "id": "img_0053",
+      "sense_id": "sns_0053",
+      "key": "symbols/to.svg",
+      "status": "approved",
+      "sha256": "52c6c955d5b9af094e640aafe39f3fd9f3fa01267d7788d8de728e47c9b284c1"
+    },
+    {
+      "id": "img_0054",
+      "sense_id": "sns_0054",
+      "key": "symbols/for.svg",
+      "status": "approved",
+      "sha256": "ff212c70b8e7dc5e4089b69c4d1c50cb9ad91c30bd25610d6062831727ffb07c"
+    },
+    {
+      "id": "img_0055",
+      "sense_id": "sns_0055",
+      "key": "symbols/more.png",
+      "status": "approved",
+      "sha256": "5a8a0a713df34ba64872e156da05bfe4950d44d0aee77a974558ecf588cfd8a4"
+    },
+    {
+      "id": "img_0056",
+      "sense_id": "sns_0056",
+      "key": "symbols/all done.png",
+      "status": "approved",
+      "sha256": "6378ac2f2e9ec90e06e34e85323368acbc5ce927b4ab2389166cd1962ab0926a"
+    },
+    {
+      "id": "img_0057",
+      "sense_id": "sns_0057",
+      "key": "symbols/big.png",
+      "status": "approved",
+      "sha256": "1912d2a39b604a9c42f6b20fa701110b97b025078ccc526910bf5c28a949c27b"
+    },
+    {
+      "id": "img_0058",
+      "sense_id": "sns_0058",
+      "key": "symbols/little.png",
+      "status": "approved",
+      "sha256": "7113e7432824923b1cee477d474c3f58c4b40e48d1574c1950d1176be35f16b4"
+    },
+    {
+      "id": "img_0059",
+      "sense_id": "sns_0059",
+      "key": "symbols/good.png",
+      "status": "approved",
+      "sha256": "fc649456cd2d823999ffc3fef2cd5c4a51da4d659b237114ff7feea902eb6117"
+    },
+    {
+      "id": "img_0060",
+      "sense_id": "sns_0060",
+      "key": "symbols/bad.png",
+      "status": "approved",
+      "sha256": "ed2cec8f8fdfb7d854c77d9428ae44055ec66575969363be2c7e4c646f14952a"
+    },
+    {
+      "id": "img_0061",
+      "sense_id": "sns_0061",
+      "key": "symbols/happy.png",
+      "status": "approved",
+      "sha256": "982bdcef23ad6fe2fc802dc8d487e60200d067bd64665bb721eccd78c1550a33"
+    },
+    {
+      "id": "img_0062",
+      "sense_id": "sns_0062",
+      "key": "symbols/same.png",
+      "status": "approved",
+      "sha256": "0638a1b4589ac69c127e01a2302a7900b920a233e6e220284f26e145402de829"
+    },
+    {
+      "id": "img_0063",
+      "sense_id": "sns_0063",
+      "key": "symbols/different.png",
+      "status": "approved",
+      "sha256": "e2f0c79782d3d2eebe360cb131b630fc4468831dfdc5ae7dce7a0b948f00a3fc"
+    },
+    {
+      "id": "img_0064",
+      "sense_id": "sns_0064",
+      "key": "symbols/some.png",
+      "status": "approved",
+      "sha256": "20eb1d947f8ff1d72d7f004ba709a5e78bb4d647f58da3ca75dfcef093b09461"
+    },
+    {
+      "id": "img_0065",
+      "sense_id": "sns_0065",
+      "key": "symbols/all.png",
+      "status": "approved",
+      "sha256": "f28d53a0c4654b1b84d26031519c76771371be84f66159466d0c38cb04751480"
+    },
+    {
+      "id": "img_0066",
+      "sense_id": "sns_0066",
+      "key": "symbols/what.png",
+      "status": "approved",
+      "sha256": "c45bd68729d67fc8a428e8aa1343af793501bb4f83396b301259d70e6c228389"
+    },
+    {
+      "id": "img_0067",
+      "sense_id": "sns_0067",
+      "key": "symbols/where.png",
+      "status": "approved",
+      "sha256": "c9a33c97932b0ae3f464f4626c8891c8c6b12ba58ff03ec0fbebf66020bcb528"
+    },
+    {
+      "id": "img_0068",
+      "sense_id": "sns_0068",
+      "key": "symbols/who.png",
+      "status": "approved",
+      "sha256": "659357d156cbd1a9396b13ab4f675458589603822b01c2723a9e3ff2ff092a2c"
+    },
+    {
+      "id": "img_0069",
+      "sense_id": "sns_0069",
+      "key": "symbols/why.png",
+      "status": "approved",
+      "sha256": "8b34a6d61591789d11e11d5423c0616b060fd5b0c86b85fd8dcca6bec4a7e787"
+    },
+    {
+      "id": "img_0070",
+      "sense_id": "sns_0070",
+      "key": "symbols/how.png",
+      "status": "approved",
+      "sha256": "dc2ddc35f16518687d363f54985c39239d0a58fe5ad62d8e714aa7cdc68d6063"
+    },
+    {
+      "id": "img_0071",
+      "sense_id": "sns_0071",
+      "key": "symbols/when.png",
+      "status": "approved",
+      "sha256": "7ec5384c29247a1a25c60589aaa417eeafb27f5b9df2840a0143a0949fea0d3f"
+    },
+    {
+      "id": "img_0072",
+      "sense_id": "sns_0072",
+      "key": "symbols/no.png",
+      "status": "approved",
+      "sha256": "5e4a60669c6e245ffc228ea9eeb5ff12b7e55613a22d4790a3b7e58162b54c3e"
+    },
+    {
+      "id": "img_0073",
+      "sense_id": "sns_0073",
+      "key": "symbols/yes.png",
+      "status": "approved",
+      "sha256": "81a7390665c6317e72b0e3070cbacb649589db1e101b6f317666744b8690d848"
+    },
+    {
+      "id": "img_0074",
+      "sense_id": "sns_0074",
+      "key": "symbols/not.png",
+      "status": "approved",
+      "sha256": "afeee54c9619379bdce27a9abed99752da536a7b1d5562a7c0fe5d48d07d4249"
+    },
+    {
+      "id": "img_0075",
+      "sense_id": "sns_0075",
+      "key": "symbols/please.png",
+      "status": "approved",
+      "sha256": "e5baeb3e4babafd4932235a88d809dc0658181c884ff93dca9e4990ebf36e358"
+    },
+    {
+      "id": "img_0076",
+      "sense_id": "sns_0076",
+      "key": "symbols/and.svg",
+      "status": "approved",
+      "sha256": "4e23d668a89237fb3a43a56cb244d343bfaafa2f5664c79772cedfcd54f8b92d"
+    },
+    {
+      "id": "img_0077",
+      "sense_id": "sns_0077",
+      "key": "symbols/but.svg",
+      "status": "approved",
+      "sha256": "c1902ae6589dbec0a1947d99718e87dfc51213b6e508034df67b6182c54b8bfe"
+    },
+    {
+      "id": "img_0078",
+      "sense_id": "sns_0078",
+      "key": "symbols/or.svg",
+      "status": "approved",
+      "sha256": "44dcdc95ad1ee08c869ea6421c3c3ea2b7e9f986fe358b99f16e0420f8ce7dcb"
+    },
+    {
+      "id": "img_0079",
+      "sense_id": "sns_0079",
+      "key": "symbols/because.svg",
+      "status": "approved",
+      "sha256": "6a40760509515eedd87dc1222cda81225f271a6ff8abd6ad9d25eb5cdee1c0d9"
+    },
+    {
+      "id": "img_0080",
+      "sense_id": "sns_0080",
+      "key": "symbols/have.png",
+      "status": "approved",
+      "sha256": "52eba9c7436d79e0b98895a8f8e99112e6263ff9653b25d88834c519ee55e8c4"
+    },
+    {
+      "id": "img_0081",
+      "sense_id": "sns_0081",
+      "key": "symbols/at.svg",
+      "status": "approved",
+      "sha256": "5a275469940de9728539ce7169505939cc26fb255756ee0945af0b8c489c47e3"
+    },
+    {
+      "id": "img_0082",
+      "sense_id": "sns_0082",
+      "key": "symbols/water.png",
+      "status": "approved",
+      "sha256": "a0220933fc51a44df15ecb219a27f8a64aadb4a5c96edf0e4423372da93da05c"
+    },
+    {
+      "id": "img_0083",
+      "sense_id": "sns_0083",
+      "key": "symbols/milk.png",
+      "status": "approved",
+      "sha256": "abd62f412fc1b20eff6773e47f837cb1e748bef34f9cda1f653464430e2ff50a"
+    },
+    {
+      "id": "img_0084",
+      "sense_id": "sns_0084",
+      "key": "symbols/juice.png",
+      "status": "approved",
+      "sha256": "f05f52aa86e0275dc12c2a6e54af3fbf162d9a0cd32ba4feaacffe1738992745"
+    },
+    {
+      "id": "img_0085",
+      "sense_id": "sns_0085",
+      "key": "symbols/apple juice.png",
+      "status": "approved",
+      "sha256": "abf616b7eb3508d1363aa7a0541af1d4da27daafeb530112d082b60c042b1b3b"
+    },
+    {
+      "id": "img_0086",
+      "sense_id": "sns_0086",
+      "key": "symbols/chocolate milk.png",
+      "status": "approved",
+      "sha256": "56c6dc3a933b23020275e38c875291f94f686cc691b1f1d3b4f5c372f35d697f"
+    },
+    {
+      "id": "img_0087",
+      "sense_id": "sns_0087",
+      "key": "symbols/tea.png",
+      "status": "approved",
+      "sha256": "a52760109b90c26ab7c8dde203a8dba24f4bb65443e86dae84ad3436f4e4a4da"
+    },
+    {
+      "id": "img_0088",
+      "sense_id": "sns_0088",
+      "key": "symbols/smoothie.png",
+      "status": "approved",
+      "sha256": "90d93775c31d12a734bad2aaec447c78c6e6b1119efb947a2cc1bedfe7556f31"
+    },
+    {
+      "id": "img_0089",
+      "sense_id": "sns_0089",
+      "key": "symbols/bread.png",
+      "status": "approved",
+      "sha256": "8466285249a96310860ef0f96e7cdb32766e53cfb248cd6cd2c279b17f9866dc"
+    },
+    {
+      "id": "img_0090",
+      "sense_id": "sns_0090",
+      "key": "symbols/toast.png",
+      "status": "approved",
+      "sha256": "74aa5b846987bbce2c200ec1dda4308ae9fd5c413d4c1c424071663c3de9329e"
+    },
+    {
+      "id": "img_0091",
+      "sense_id": "sns_0091",
+      "key": "symbols/cereal.png",
+      "status": "approved",
+      "sha256": "fa0f26461ca2a42be9b461d9d855f7edff0f9746fa39e270261ade06c88b2c64"
+    },
+    {
+      "id": "img_0092",
+      "sense_id": "sns_0092",
+      "key": "symbols/oatmeal.png",
+      "status": "approved",
+      "sha256": "c4de35933498c553e4c69ac2bba2c52068b29a8ac84b7d1761d2b2a48eb0902e"
+    },
+    {
+      "id": "img_0093",
+      "sense_id": "sns_0093",
+      "key": "symbols/pancake.png",
+      "status": "approved",
+      "sha256": "ccea1144855cebfd8031b354f58ba35142b97f4a92a6bdab0c41bee5cc56caa5"
+    },
+    {
+      "id": "img_0094",
+      "sense_id": "sns_0094",
+      "key": "symbols/waffle.png",
+      "status": "approved",
+      "sha256": "0b9260501bbfd6a0e8be9363798774462447c4198bc09f71da745092c6d4e9d4"
+    },
+    {
+      "id": "img_0095",
+      "sense_id": "sns_0095",
+      "key": "symbols/bagel.png",
+      "status": "approved",
+      "sha256": "70ab531ecf1ed080f16b9f5a18fb19fe0a810e83925141adc2950d8ae2959540"
+    },
+    {
+      "id": "img_0096",
+      "sense_id": "sns_0096",
+      "key": "symbols/egg.png",
+      "status": "approved",
+      "sha256": "f62a86172ea6d060c32e2b0cf0774f9ed2d510b34fa026f30ed20cb2f699113a"
+    },
+    {
+      "id": "img_0097",
+      "sense_id": "sns_0097",
+      "key": "symbols/butter.png",
+      "status": "approved",
+      "sha256": "c7efa7a31074b377c038308ba66ad5a33e415e5bcd1fa5bc31caecbef51292ab"
+    },
+    {
+      "id": "img_0098",
+      "sense_id": "sns_0098",
+      "key": "symbols/jam.png",
+      "status": "approved",
+      "sha256": "e4bec8e1341610e5b9c16714950d396dad10628c7cbaa82de9682af7782d79d9"
+    },
+    {
+      "id": "img_0099",
+      "sense_id": "sns_0099",
+      "key": "symbols/syrup.png",
+      "status": "approved",
+      "sha256": "46dd411f3c3fb5df5f509f48d865c94a5ede5822c611909ab08a107643cc6821"
+    },
+    {
+      "id": "img_0100",
+      "sense_id": "sns_0100",
+      "key": "symbols/pizza.png",
+      "status": "approved",
+      "sha256": "973e8bbde84b4ee56768d87dec0149dad49f2a990739f0dd85ee6b4f0b3ba4e3"
+    },
+    {
+      "id": "img_0101",
+      "sense_id": "sns_0101",
+      "key": "symbols/pasta.png",
+      "status": "approved",
+      "sha256": "2b49371282e877e56a3ea73acc8d9e76327ff96ea12f0c8f4f5c93f2d8a34605"
+    },
+    {
+      "id": "img_0102",
+      "sense_id": "sns_0102",
+      "key": "symbols/macaroni.png",
+      "status": "approved",
+      "sha256": "9dddc10c9e101e88ef5e4500791c5c30b2f92efddd0ba3e01b43eef88b5af622"
+    },
+    {
+      "id": "img_0103",
+      "sense_id": "sns_0103",
+      "key": "symbols/sandwich.png",
+      "status": "approved",
+      "sha256": "adfbfbfcc20f8ab233e13f3b9688e12ad9fa51a48425746e427fde1552048f37"
+    },
+    {
+      "id": "img_0104",
+      "sense_id": "sns_0104",
+      "key": "symbols/chicken.png",
+      "status": "approved",
+      "sha256": "57e86964657799013e3c58c5eafafc6183004339e4290e03e5d50482f1a02be8"
+    },
+    {
+      "id": "img_0105",
+      "sense_id": "sns_0105",
+      "key": "symbols/nuggets.png",
+      "status": "approved",
+      "sha256": "b7f88382a2e8ff51f974228a16601d71c26ebbc02ac391a20c1b5f4c86e52296"
+    },
+    {
+      "id": "img_0106",
+      "sense_id": "sns_0106",
+      "key": "symbols/burger.png",
+      "status": "approved",
+      "sha256": "b5f361bf400fb7d2a76db1210f5368cdfc06f6d6c30a950e7d276899bf317b5e"
+    },
+    {
+      "id": "img_0107",
+      "sense_id": "sns_0107",
+      "key": "symbols/hot_dog.png",
+      "status": "approved",
+      "sha256": "ec6e9eb712fccdaa2e7a727e982ef1e0c3041fb339ad5f151bdb30d0d3902012"
+    },
+    {
+      "id": "img_0108",
+      "sense_id": "sns_0108",
+      "key": "symbols/soup.png",
+      "status": "approved",
+      "sha256": "6500ec4744ea4d079757eedd2fac491bf79afff7da73e7baaecb6ef19bd3433d"
+    },
+    {
+      "id": "img_0109",
+      "sense_id": "sns_0109",
+      "key": "symbols/rice.png",
+      "status": "approved",
+      "sha256": "67d553aad5412f0b23b0178c62723e29a34b6bed219ebbd6bae963c313aa816e"
+    },
+    {
+      "id": "img_0110",
+      "sense_id": "sns_0110",
+      "key": "symbols/cheese.png",
+      "status": "approved",
+      "sha256": "5063ef655ff3fd92bca204ad30e86a71aa6254035f85ddc6eedbebbc70b6fcb6"
+    },
+    {
+      "id": "img_0111",
+      "sense_id": "sns_0111",
+      "key": "symbols/meat.png",
+      "status": "approved",
+      "sha256": "1247092002d978e893c5dd6fa18bd033b52f03be125a72aeced10211ec642d0b"
+    },
+    {
+      "id": "img_0112",
+      "sense_id": "sns_0112",
+      "key": "symbols/fish.png",
+      "status": "approved",
+      "sha256": "dcae2983031f880cd20580cea3be5bbbb8ea3cbe5f493902e10658585688b0a3"
+    },
+    {
+      "id": "img_0113",
+      "sense_id": "sns_0113",
+      "key": "symbols/snack.png",
+      "status": "approved",
+      "sha256": "d95b0ccae741ed342eb615c89f7c94e2b452797fc30bfd43a0fdd6382128efda"
+    },
+    {
+      "id": "img_0114",
+      "sense_id": "sns_0114",
+      "key": "symbols/cracker.png",
+      "status": "approved",
+      "sha256": "5cd3a63eb33e3982048dff108bfc6629493969d6f6ae86bc246cdbb009d8a234"
+    },
+    {
+      "id": "img_0115",
+      "sense_id": "sns_0115",
+      "key": "symbols/cookie.png",
+      "status": "approved",
+      "sha256": "9d6dc5558e945d28d03e257eb945f315c4950535f9f32e939aaacc7173039ab4"
+    },
+    {
+      "id": "img_0116",
+      "sense_id": "sns_0116",
+      "key": "symbols/chips.png",
+      "status": "approved",
+      "sha256": "d3db60f119ad020ca90b2833f328c97aef87f7f61c7664384d4caac370f3c9fd"
+    },
+    {
+      "id": "img_0117",
+      "sense_id": "sns_0117",
+      "key": "symbols/popcorn.png",
+      "status": "approved",
+      "sha256": "6cb2cf8ce2b7ec12a0d18c7f240d8615d72cd5b2c3ff26b51f8519d862320a1a"
+    },
+    {
+      "id": "img_0118",
+      "sense_id": "sns_0118",
+      "key": "symbols/pretzel.png",
+      "status": "approved",
+      "sha256": "26967cb503e5a125fd9569792ca8ccf645c46da0034dde07f85590149fdcf6b8"
+    },
+    {
+      "id": "img_0119",
+      "sense_id": "sns_0119",
+      "key": "symbols/yogurt.png",
+      "status": "approved",
+      "sha256": "ba2cfa88453f6746029659d2d61e9fcdb035cbfcbea77b936bfef5fb8af532e0"
+    },
+    {
+      "id": "img_0120",
+      "sense_id": "sns_0120",
+      "key": "symbols/fruit_snack.png",
+      "status": "approved",
+      "sha256": "fea384b973bc2d27735da3eb4e77540d4cf299c26932470161b50193ddb88942"
+    },
+    {
+      "id": "img_0121",
+      "sense_id": "sns_0121",
+      "key": "symbols/ice_cream.png",
+      "status": "approved",
+      "sha256": "652c50ca084eac8a5bb1b94fa40fa78bdf0db652eb57dd4d9895c309b147f136"
+    },
+    {
+      "id": "img_0122",
+      "sense_id": "sns_0122",
+      "key": "symbols/popsicle.png",
+      "status": "approved",
+      "sha256": "addf320a97e330423aab776321c27d79006568d79ba17655bb020e06c9206ccc"
+    },
+    {
+      "id": "img_0123",
+      "sense_id": "sns_0123",
+      "key": "symbols/candy.png",
+      "status": "approved",
+      "sha256": "3ccf9e952c98cda9e5b3b1e28b7092d0078e9979afa62a0ef235b3ab63599859"
+    },
+    {
+      "id": "img_0124",
+      "sense_id": "sns_0124",
+      "key": "symbols/cake.png",
+      "status": "approved",
+      "sha256": "a6004e5f959e634c81dc959680048820f3570209abf34f0f01a71bdcc079c662"
+    },
+    {
+      "id": "img_0125",
+      "sense_id": "sns_0125",
+      "key": "symbols/muffin.png",
+      "status": "approved",
+      "sha256": "0956764ea2cf7a435eaf42a4c19288a0fbbefe10fcfc6cb65fe00d2103ee5a55"
+    },
+    {
+      "id": "img_0126",
+      "sense_id": "sns_0126",
+      "key": "symbols/donut.png",
+      "status": "approved",
+      "sha256": "cdd15cafa5b47726f9df47aa4225793421ca6a3555d54a85910e9477ab6e4005"
+    },
+    {
+      "id": "img_0127",
+      "sense_id": "sns_0127",
+      "key": "symbols/fruit.png",
+      "status": "approved",
+      "sha256": "6044bd4b1927cb61915ebc39882443f2d382291aa7a1d957f29c29e8c9f0d00b"
+    },
+    {
+      "id": "img_0128",
+      "sense_id": "sns_0128",
+      "key": "symbols/apple.png",
+      "status": "approved",
+      "sha256": "26c9eddbb55b801219962025a1895fb50e8749aac3e602dc1e19c90f98c8d1de"
+    },
+    {
+      "id": "img_0129",
+      "sense_id": "sns_0129",
+      "key": "symbols/banana.png",
+      "status": "approved",
+      "sha256": "f9a1d6a8a6660d435f60197312a38d94c45e06470661576a414ea383826cd0d3"
+    },
+    {
+      "id": "img_0130",
+      "sense_id": "sns_0130",
+      "key": "symbols/strawberry.png",
+      "status": "approved",
+      "sha256": "3eb80b1b1fc6f6b1ddbc4b8106ddf8fe00657d153e1107baec6cfbb5ef51013a"
+    },
+    {
+      "id": "img_0131",
+      "sense_id": "sns_0131",
+      "key": "symbols/orange.png",
+      "status": "approved",
+      "sha256": "d4ee7ce107853015468c883b3ab575608309dbe6e51c198da288641dd82c4089"
+    },
+    {
+      "id": "img_0132",
+      "sense_id": "sns_0132",
+      "key": "symbols/grapes.png",
+      "status": "approved",
+      "sha256": "cb81b342fe8d9ff04af4ea43348217e0581e41f1911347a13ac99fe3cfe16b4d"
+    },
+    {
+      "id": "img_0133",
+      "sense_id": "sns_0133",
+      "key": "symbols/watermelon.png",
+      "status": "approved",
+      "sha256": "2ec49ef3af556d391860c8407502202f2d8d70f312972970a19bd707a1ae117d"
+    },
+    {
+      "id": "img_0134",
+      "sense_id": "sns_0134",
+      "key": "symbols/carrot.png",
+      "status": "approved",
+      "sha256": "5744638ddef2e4fa21636c6429b39811859cb797dc814c646689ab28c644c7a8"
+    },
+    {
+      "id": "img_0135",
+      "sense_id": "sns_0135",
+      "key": "symbols/broccoli.png",
+      "status": "approved",
+      "sha256": "5e6d829901d3dc011617966bbe2cbbee9f42cc609da7b92dc361ba9cff7e8d85"
+    },
+    {
+      "id": "img_0136",
+      "sense_id": "sns_0136",
+      "key": "symbols/corn.png",
+      "status": "approved",
+      "sha256": "4623c4e2c1861c96d9e760400a81da03a8b2a35de51fecb3cc8c5cf30e0a1dd4"
+    },
+    {
+      "id": "img_0137",
+      "sense_id": "sns_0137",
+      "key": "symbols/body.png",
+      "status": "approved",
+      "sha256": "b8f48b5177505a49ccae6a8181bdaf1e53a706fd2213ff5a22456baaf1e60d5f"
+    },
+    {
+      "id": "img_0138",
+      "sense_id": "sns_0138",
+      "key": "symbols/head.png",
+      "status": "approved",
+      "sha256": "8b16d0200f6f3a943343fb6d8152834bd24e252ba79063b74e66651ce0fabf10"
+    },
+    {
+      "id": "img_0139",
+      "sense_id": "sns_0139",
+      "key": "symbols/face.png",
+      "status": "approved",
+      "sha256": "057cbee3fc73b43f17b2b774d8483f3f13ec4409eb3f576e39b85c9c017926d6"
+    },
+    {
+      "id": "img_0140",
+      "sense_id": "sns_0140",
+      "key": "symbols/hair.png",
+      "status": "approved",
+      "sha256": "ca4c8465afd3ddfa91e43de3b971dca09e925645a72855d4485b19cc6b590569"
+    },
+    {
+      "id": "img_0141",
+      "sense_id": "sns_0141",
+      "key": "symbols/eye.png",
+      "status": "approved",
+      "sha256": "99c2169d790461fe6fed50b9b20118a27eb5d8cbaed2891a9afc0ca378a6bd2d"
+    },
+    {
+      "id": "img_0142",
+      "sense_id": "sns_0142",
+      "key": "symbols/ear.png",
+      "status": "approved",
+      "sha256": "d86f4c1e0ddb9712794f6e1e3a86f5b235a679be01604a123dfe83cf93409fb8"
+    },
+    {
+      "id": "img_0143",
+      "sense_id": "sns_0143",
+      "key": "symbols/nose.png",
+      "status": "approved",
+      "sha256": "f8d4a3af512e180098d20741e9f501c2a7330c1cfbe9c3289c76ca4b338a2163"
+    },
+    {
+      "id": "img_0144",
+      "sense_id": "sns_0144",
+      "key": "symbols/mouth.png",
+      "status": "approved",
+      "sha256": "c7bc8a1cf21b981b65e3e46d6b6d48445bc77192b5ce25f700b0d9a526479924"
+    },
+    {
+      "id": "img_0145",
+      "sense_id": "sns_0145",
+      "key": "symbols/teeth.png",
+      "status": "approved",
+      "sha256": "7a1b824e1620c4d3906d413e6b3cd0980aa2cc9aa6123fb53fa2220e45ed18f3"
+    },
+    {
+      "id": "img_0146",
+      "sense_id": "sns_0146",
+      "key": "symbols/tongue.png",
+      "status": "approved",
+      "sha256": "b31c86819f8dcf061745eaf572af1d4aeb86a34b20f81a674f1be0b2ef9842ec"
+    },
+    {
+      "id": "img_0147",
+      "sense_id": "sns_0147",
+      "key": "symbols/neck.png",
+      "status": "approved",
+      "sha256": "fa0b0477cf0ad0ae38f2a1273879186768fbcda5fad7745630cfbcb1ce582a23"
+    },
+    {
+      "id": "img_0148",
+      "sense_id": "sns_0148",
+      "key": "symbols/shoulder.png",
+      "status": "approved",
+      "sha256": "85adce1136e94da3626471bbb24b0749607c6c287ef3b30333e8796e2f4743ce"
+    },
+    {
+      "id": "img_0149",
+      "sense_id": "sns_0149",
+      "key": "symbols/arm.png",
+      "status": "approved",
+      "sha256": "2b84cd5c95beb44db106f67f137c83441262870e67ee24ae2264711afe5f9f8e"
+    },
+    {
+      "id": "img_0150",
+      "sense_id": "sns_0150",
+      "key": "symbols/hand.png",
+      "status": "approved",
+      "sha256": "97f9dba3502d037c644f66383c598d83a328795bd67ed6ceec4474c257dcfc52"
+    },
+    {
+      "id": "img_0151",
+      "sense_id": "sns_0151",
+      "key": "symbols/fingers.png",
+      "status": "approved",
+      "sha256": "bad4c99504788a1f51c956d28769d0a1fe05eacf4018ea4554977cd891ca5cb5"
+    },
+    {
+      "id": "img_0152",
+      "sense_id": "sns_0152",
+      "key": "symbols/tummy.png",
+      "status": "approved",
+      "sha256": "239b7a0a26088cb92e944e04ec1a37c5cd50ec8f46ab010dd544c113513186c8"
+    },
+    {
+      "id": "img_0153",
+      "sense_id": "sns_0153",
+      "key": "symbols/back.png",
+      "status": "approved",
+      "sha256": "32e99698d80c8c31e70c2eabf6e2db174c3c3cd6f94dcd90ac4313b83692d2a3"
+    },
+    {
+      "id": "img_0154",
+      "sense_id": "sns_0154",
+      "key": "symbols/leg.png",
+      "status": "approved",
+      "sha256": "6df4372821b1e4d250777d99a1677e2f052da8e68a45c95494a2766a9c2968d2"
+    },
+    {
+      "id": "img_0155",
+      "sense_id": "sns_0155",
+      "key": "symbols/knee.png",
+      "status": "approved",
+      "sha256": "cf246fde5884a00c2f0da680d876b7485a8b617d2c2ded11a23b5323a4d7ba8e"
+    },
+    {
+      "id": "img_0156",
+      "sense_id": "sns_0156",
+      "key": "symbols/foot.png",
+      "status": "approved",
+      "sha256": "21ec5353f479ed92a8f71835a24252b15105a444599b6b7f92bc93a039cf7ecf"
+    },
+    {
+      "id": "img_0157",
+      "sense_id": "sns_0157",
+      "key": "symbols/toes.png",
+      "status": "approved",
+      "sha256": "765c84b55829a4f77013d76c392a8025ad770cd16db33623986dfcd323bec71d"
+    },
+    {
+      "id": "img_0158",
+      "sense_id": "sns_0158",
+      "key": "symbols/bathroom.png",
+      "status": "approved",
+      "sha256": "5ff5bb588be18c87bde2ab33ce6ff1398f5cdf29a49aa58ec4df6f00c0d46846"
+    },
+    {
+      "id": "img_0159",
+      "sense_id": "sns_0159",
+      "key": "symbols/potty.png",
+      "status": "approved",
+      "sha256": "678b870d86aff0120f2c483212bfe2835188a03a27cf47812cab6a6c18594e41"
+    },
+    {
+      "id": "img_0160",
+      "sense_id": "sns_0160",
+      "key": "symbols/toilet.png",
+      "status": "approved",
+      "sha256": "b26d6b144270962218434a4c825ab3e166f09cc7c4153ca427acfcf5219eec76"
+    },
+    {
+      "id": "img_0161",
+      "sense_id": "sns_0161",
+      "key": "symbols/diaper.png",
+      "status": "approved",
+      "sha256": "f627b8fd49317d15ba090186fa9f521a2ae2d22b5a1fde0048a67624a66adf8d"
+    },
+    {
+      "id": "img_0162",
+      "sense_id": "sns_0162",
+      "key": "symbols/wet_wipe.png",
+      "status": "approved",
+      "sha256": "a33130d4e9893a49dbed849d0c18f72fc8aca9e2d4140333cf78eaf7e86f71fb"
+    },
+    {
+      "id": "img_0163",
+      "sense_id": "sns_0163",
+      "key": "symbols/bath.png",
+      "status": "approved",
+      "sha256": "cd6ffb84246c764e42f4951a106b9e7171f1f782e3a849d0c40afcd7a5fdc398"
+    },
+    {
+      "id": "img_0164",
+      "sense_id": "sns_0164",
+      "key": "symbols/shower.png",
+      "status": "approved",
+      "sha256": "cbe94146d72359297fef3cf9d83b68be9b3c8c47a6ccf69bc8296fbc4a7a9f51"
+    },
+    {
+      "id": "img_0165",
+      "sense_id": "sns_0165",
+      "key": "symbols/soap.png",
+      "status": "approved",
+      "sha256": "08d263be98d85a36e8cf8cf2ccc54495589bfdbf21e29ee7e791b57eca284493"
+    },
+    {
+      "id": "img_0166",
+      "sense_id": "sns_0166",
+      "key": "symbols/toothbrush.png",
+      "status": "approved",
+      "sha256": "59a00230cc3664bb3dc1efc795065012e4de1de736464e6274d28ac9f6b358b2"
+    },
+    {
+      "id": "img_0167",
+      "sense_id": "sns_0167",
+      "key": "symbols/toothpaste.png",
+      "status": "approved",
+      "sha256": "728d4180df86da41b3f3f7643b006c38c212b09cfdcab3ee450f3089b64420e1"
+    },
+    {
+      "id": "img_0168",
+      "sense_id": "sns_0168",
+      "key": "symbols/towel.png",
+      "status": "approved",
+      "sha256": "e5cd314f4f40e120da37e13321d617e458c162614a1b3d46d9c7c92d287b1f3f"
+    },
+    {
+      "id": "img_0169",
+      "sense_id": "sns_0169",
+      "key": "symbols/comb.png",
+      "status": "approved",
+      "sha256": "66aa233856a3ce00d16b854549183774ce3f374d76217457c96edfd50bc92087"
+    },
+    {
+      "id": "img_0170",
+      "sense_id": "sns_0170",
+      "key": "symbols/tissue.png",
+      "status": "approved",
+      "sha256": "caf734761cffe6bd63d99c865269a94d9f469f2b5cee6e71e475be09e62e0f55"
+    },
+    {
+      "id": "img_0171",
+      "sense_id": "sns_0171",
+      "key": "symbols/bandage.png",
+      "status": "approved",
+      "sha256": "e98a0be651bc6dda8ba1b44f146a0a0b20ae145f769d3b6fa62fc244b612536b"
+    },
+    {
+      "id": "img_0172",
+      "sense_id": "sns_0172",
+      "key": "symbols/hurt.png",
+      "status": "approved",
+      "sha256": "67d8abf523ed056506f6ccf95c365b74dea5b8704fe32e907b82b7b7cfd03d0a"
+    },
+    {
+      "id": "img_0173",
+      "sense_id": "sns_0173",
+      "key": "symbols/sick.png",
+      "status": "approved",
+      "sha256": "ebdf8a2b5f8253e17331c49727ae9c504d4f9f00046e5dbec411b7f4b47d5e36"
+    },
+    {
+      "id": "img_0174",
+      "sense_id": "sns_0174",
+      "key": "symbols/pain.png",
+      "status": "approved",
+      "sha256": "1540c8c76fc9a9c0ac8d96de2e64bbfe8a8eed640edc18f1d4ff80694f0d3562"
+    },
+    {
+      "id": "img_0175",
+      "sense_id": "sns_0175",
+      "key": "symbols/fever.png",
+      "status": "approved",
+      "sha256": "2c5d20f2e29e77529d9356e1c2cb6534c223c673eed717b06ecde53623353209"
+    },
+    {
+      "id": "img_0176",
+      "sense_id": "sns_0176",
+      "key": "symbols/cough.png",
+      "status": "approved",
+      "sha256": "a9875217aa238b57323fb79afc11262b0689978aa636d7d2df66dbad29a806a0"
+    },
+    {
+      "id": "img_0177",
+      "sense_id": "sns_0177",
+      "key": "symbols/medicine.png",
+      "status": "approved",
+      "sha256": "1bc7701115a7e34914d929d8d29e0c7ef5b945c46f18f369c0df90795cbf5e68"
+    },
+    {
+      "id": "img_0178",
+      "sense_id": "sns_0178",
+      "key": "symbols/dentist.png",
+      "status": "approved",
+      "sha256": "b5b613a398d51b03754f8c4fadf90fb5b0aed4c1dd49cb108c62b6c21e7c703a"
+    },
+    {
+      "id": "img_0179",
+      "sense_id": "sns_0179",
+      "key": "symbols/sad.png",
+      "status": "approved",
+      "sha256": "13e2f1ba05860ed73049712e1cfd252ee864275bc5fd84d648103cbba3f8c2e4"
+    },
+    {
+      "id": "img_0180",
+      "sense_id": "sns_0180",
+      "key": "symbols/mad.png",
+      "status": "approved",
+      "sha256": "dce5686274de8dee1f8ef208b6aacb1cf45da4dc09e49afe318b359e9ee489e4"
+    },
+    {
+      "id": "img_0181",
+      "sense_id": "sns_0181",
+      "key": "symbols/angry.png",
+      "status": "approved",
+      "sha256": "23c8bc9ca9914ab759331d81a4a7d3055fefcef6141682b37d0aadff17475391"
+    },
+    {
+      "id": "img_0214",
+      "sense_id": "sns_0214",
+      "key": "symbols/run.jpg",
+      "status": "approved",
+      "sha256": "3ff4bd722efb6a1ff87ab79a776615bd98e418e87e1fbeeec1410d16fbd360c5"
+    },
+    {
+      "id": "img_0509",
+      "sense_id": "sns_0509",
+      "key": "symbols/orange.png",
+      "status": "approved",
+      "sha256": "d4ee7ce107853015468c883b3ab575608309dbe6e51c198da288641dd82c4089"
+    },
+    {
+      "id": "img_0606",
+      "sense_id": "sns_0606",
+      "key": "symbols/bathroom.png",
+      "status": "approved",
+      "sha256": "5ff5bb588be18c87bde2ab33ce6ff1398f5cdf29a49aa58ec4df6f00c0d46846"
+    },
+    {
+      "id": "img_0607",
+      "sense_id": "sns_0607",
+      "key": "symbols/is.svg",
+      "status": "approved",
+      "sha256": "38487aec342070b0737ea5a5c064048af23ded2f3b1a6fcfa5d19325d139df29"
+    },
+    {
+      "id": "img_0608",
+      "sense_id": "sns_0608",
+      "key": "symbols/are.svg",
+      "status": "approved",
+      "sha256": "1df437c458d7ae5171f631be8e7485801923b16c7a64b64bb8b2748e4b7bc576"
+    },
+    {
+      "id": "img_0609",
+      "sense_id": "sns_0609",
+      "key": "symbols/am.svg",
+      "status": "approved",
+      "sha256": "93eb11e6a34b0babb29560464e48d8f2b230a4530cfc19b25c9216d2f838d7ce"
+    },
+    {
+      "id": "img_0610",
+      "sense_id": "sns_0610",
+      "key": "symbols/was.svg",
+      "status": "approved",
+      "sha256": "e675da5d5a93803ddb91267f5721beed5462c1beb1ca5d92be08b775748467da"
+    },
+    {
+      "id": "img_0611",
+      "sense_id": "sns_0611",
+      "key": "symbols/were.svg",
+      "status": "approved",
+      "sha256": "da9932d56f690755257b95185b94526dd84d4029d62eb9c568e2e18387d5cd1d"
+    },
+    {
+      "id": "img_0614",
+      "sense_id": "sns_0614",
+      "key": "symbols/will.svg",
+      "status": "approved",
+      "sha256": "15a909a5b75df97bb3d4077dd2439f1b8da2e219a74440361e2bd2e4282d4049"
+    },
+    {
+      "id": "img_0615",
+      "sense_id": "sns_0615",
+      "key": "symbols/would.svg",
+      "status": "approved",
+      "sha256": "c1ad0e60605d34f1a430cf1b4a8252f2311c872dc644d45f7d66f491f45545eb"
+    },
+    {
+      "id": "img_0619",
+      "sense_id": "sns_0619",
+      "key": "symbols/a.svg",
+      "status": "approved",
+      "sha256": "cfc3df203e2a84ca1e27eb8937605d80cb7020ece0182cdd50e27ad6c0bbbccc"
+    },
+    {
+      "id": "img_0620",
+      "sense_id": "sns_0620",
+      "key": "symbols/an.svg",
+      "status": "approved",
+      "sha256": "7d1ee83d0b97205c8de2dbeb059f300edfec6cf919bbb002034382c9ab29f7f8"
+    },
+    {
+      "id": "img_0621",
+      "sense_id": "sns_0621",
+      "key": "symbols/the.svg",
+      "status": "approved",
+      "sha256": "b4fdb3fef65bc56254ce2b1d62938c3a37270c0cbf48772c356a35bd485338f6"
+    },
+    {
+      "id": "img_0622",
+      "sense_id": "sns_0622",
+      "key": "symbols/of.svg",
+      "status": "approved",
+      "sha256": "dd0e529213011cccc11de8772e5a6fa272cdb9881279ef00ff547a00a9d12c97"
+    },
+    {
+      "id": "img_0627",
+      "sense_id": "sns_0627",
+      "key": "symbols/so.svg",
+      "status": "approved",
+      "sha256": "f9625ec7923cb6451e267c5fb7f0b429374014997d20a794471b454ce2b5533a"
+    },
+    {
+      "id": "img_0628",
+      "sense_id": "sns_0628",
+      "key": "symbols/if.svg",
+      "status": "approved",
+      "sha256": "036e64601985b8e16a7b2db1454bf4dda7f5969b7414eb258ed75824ca90c690"
+    }
+  ],
   "voices": [
     {
       "id": "voi_default_en",
