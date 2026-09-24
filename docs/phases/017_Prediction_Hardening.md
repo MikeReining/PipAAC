@@ -2,10 +2,9 @@
 
 **Status:** Executing. M1 complete (steps 4, 3, 5, 1, 2 — all BUILT).
 M2 in progress: steps 11 (synth users + frozen answer key), 12 (eval
-sealed), 16 (real-board time model) BUILT. Next: step 13 — one
-comparison command (`bench.mjs`/`arms.mjs`/`report.mjs` wiring the arms
-to `replayArms` + `actions.mjs`); then step 15 (sabotage controls) and
-step 18 (replay screen). Steered-synth book work for step 23 is
+sealed), 16 (real-board time model), 13 (one comparison command —
+`npm run prediction:bench`, `--jobs=N` for parallel shards) BUILT.
+Next: step 15 (sabotage controls), then step 18 (replay screen). Steered-synth book work for step 23 is
 measured in scratch (`fa244be`, `6398078`) — the repo `build_book.mjs`
 pipeline is the pending part.
 
@@ -708,6 +707,21 @@ Note: the step-11 answer key now emits canonical lemma case ("I",
 "iPad") so words resolve against catalog text (`a07c56c`).
 
 ## Step 13 — One comparison command
+
+**Status (BUILT 2026-09-25).** `npm run prediction:bench` runs every arm
+prequentially over the frozen schedule and writes
+`out/prediction/<run>/report.{md,json}` — WPM + Δ vs A0 with 95%
+bootstrap CIs over users, hit/recall/false-show/harmful, d1/wk1/d22+
+curves, position and core/non-core splits, acts/msg+word, per-user and
+cohort regressions vs A1. Arms live in `scripts/prediction/bench/arms.mjs`
+(A0/A1/A2-frozen/A3/O1/O2; A4/A4t register when `--jev` lands with step
+14; W needs step 22). `--jobs=N` fans users across N child processes and
+merges shard `report.json` results — 8 users in 66 s at jobs=8 on this
+machine, so the 80 fit+tune users print in under 10 minutes at
+`--jobs=10`. Works Test: `scripts/prediction/bench/bench.test.mjs`
+(A0 zero hits/zero saving; O2 the ceiling with zero harm; oracles really
+see the answer key; A2 reproduces 006's fixture numbers within
+rounding). Jev columns appear when the A4 arms run.
 
 Goal: `npm run prediction:bench` produces one side-by-side report.
 

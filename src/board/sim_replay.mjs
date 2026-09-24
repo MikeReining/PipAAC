@@ -160,10 +160,14 @@ export async function replayDays(db, catalog, fixture, entities, { offer, measur
     const members = [];
     for (const p of item.words) {
       const sentsState = members.map((m) => ({ kind: m.kind, id: m.id }));
+      const pick = resolve(p.w);
+      const pickKey = `${pick.kind}:${pick.id}`;
       // The strip only renders mid-sentence — a sentence's first pick
       // shows idle starters, never a strip moment (board.js renderStrip).
+      // ctx.target is the frozen answer key's word — oracle bench arms
+      // (O1/O2) read it; predictor arms must ignore it.
       const o = sentsState.length
-        ? await offer(db, sentsState, p.at)
+        ? await offer(db, sentsState, p.at, { target: pickKey })
         : { candidates: [], shown: [], pNone: 0 };
       const { candidates, pNone } = o;
       // 017-2: the answer's deadline is the next pick (or the close);
@@ -180,8 +184,6 @@ export async function replayDays(db, catalog, fixture, entities, { offer, measur
       const shownKeys = finalShown.map((c) => `${c.kind}:${c.id}`);
       const altShownKeys = jev && !deliverable
         ? jev.shown.map((c) => `${c.kind}:${c.id}`) : null;
-      const pick = resolve(p.w);
-      const pickKey = `${pick.kind}:${pick.id}`;
       const source = shownKeys.includes(pickKey) ? "strip"
         : isCore(db, pick.kind, pick.id) ? "grid" : "group";
       if (sentsState.length) {
