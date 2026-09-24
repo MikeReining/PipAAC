@@ -70,8 +70,10 @@ function candForms(base) {
 
 export function toLemma(tok) {
   const t = tok.toLowerCase().trim();
-  if (t in IRREG) return IRREG[t];
+  // surface first: Pip's vocab has am/is/are as words — mapping them to
+  // 'be' (not a lemma) made the #1 word after "I" OOV and broke context
   if (t in surface) return surface[t];
+  if (t in IRREG) return IRREG[t];
   for (const c of candForms(t)) {
     if (c in surface) return surface[c];
     if (c in IRREG) return IRREG[c];

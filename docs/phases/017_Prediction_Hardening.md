@@ -178,9 +178,9 @@ M2/M3 order below until the book is in the strip.
 1. Real-children scorer in the repo (R16). Proof: reproduces the
    § Real children table within rounding on the same 80/20 split.
    Transcripts stay in a gitignored cache; only scores are committed.
-   **Status: machinery landed (scripts/prediction/childes/), but the
-   table does NOT reproduce — see the gap note under § Real children.
-   Paused for founder ruling.**
+   **Status: DONE 2026-09-24** — scripts/prediction/childes/ ported and
+   baseline re-measured (founder ruling: repo numbers are the baseline;
+   the old table was approximate — it predates the corpus download).
 2. Step 23 book build, items (a)–(d), with CHILDES counts as a source (R11).
    Proof: beats the scratch numbers on the item-1 scorer.
 3. Book + the user's own history in the strip: continue and start
@@ -1062,57 +1062,59 @@ real-children run below corrects the size of both effects.
 ### Real children (CHILDES, 2026-09-23, measurement only)
 
 At the founder's direction, a one-off measurement on CHILDES transcripts:
-a public Hugging Face mirror of 10,828 English transcripts, 4.2M
+a public Hugging Face mirror of 10,828 English transcripts, 6.9M
 utterances with speaker tags, and no ages. The data was kept in scratch
 space outside the repo and is not in any shipped file (R11). Transcripts
-were split 80/20. Test: 1,743 held-out transcripts, with 2,500 sampled
-predictions per stage. Stage = the child's mean utterance length (MLU),
+were split 80/20. Test: 2,165 held-out transcripts (1,719 with ≥5 child
+utterances), 2,500 sampled predictions per stage. Stage = the child's mean utterance length (MLU),
 the standard language-stage measure. Metric: the child's next non-core
 word in the top 4, later words / first words. "+ partner" = words from
 the adult's previous turn get a fixed +2 boost.
 
+**Baseline, 2026-09-24 (founder ruling): the repo scorer's numbers are
+the baseline.** The original table was written before the scratch files
+that produced it existed, so it is approximate; the numbers below are
+what `scripts/prediction/childes/score.mjs` measures on the same 80/20
+split (10,828 transcripts, 2,165 held out, 2,500 sampled per bucket).
+Cells are later / first / right-after-adult-turn hit rate; random is
+0.7% (4 of 597 non-core vocab words).
+
 | Book | MLU < 2 (~age 2) | MLU 2–3.5 (~age 3) | MLU > 3.5 (~age 4+) |
 | --- | --- | --- | --- |
-| Adult AAC (Imagine) | 20.6% / 3.4% | 26.8% / 7.1% | 27.8% / 9.9% |
-| TinyDialogues caregiver + child (**legal**) | 24.9% / 3.6% | **37.0%** / 9.8% | **36.5%** / 18.7% |
-| + partner words | 29.1% / 6.1% | 38.2% / 13.0% | 38.7% / 20.0% |
-| CHILDES caregiver speech (not licensed) | 40.7% / 4.7% | 48.2% / 11.6% | 47.4% / 14.3% |
-| CHILDES child speech (not licensed) | 43.5% / 16.5% | 49.2% / 22.5% | 49.7% / 22.3% |
+| Adult AAC (Imagine) | 19.1% / 5.3% / 4.7% | 25.6% / 15.0% / 15.1% | 25.8% / 21.0% / 19.6% |
+| TinyDialogues caregiver + child (**legal**) | 20.5% / 5.2% / 4.7% | **30.2%** / 21.9% / 20.9% | **31.8%** / 25.6% / 27.9% |
+| + partner words | 30.0% / 17.8% / 23.2% | 33.1% / 24.2% / 25.0% | 32.7% / 25.0% / 26.1% |
+| CHILDES caregiver speech (not licensed) | 36.5% / 13.6% / 12.8% | 47.0% / 22.0% / 22.9% | 45.5% / 25.4% / 25.7% |
+| CHILDES child speech (not licensed) | 41.6% / 19.5% / 18.2% | 49.6% / 26.8% / 26.7% | 48.7% / 29.4% / 29.5% |
 
 Share of the child's non-core words that the adult said in the previous
-turn: **18.4% (MLU < 2), 12.8%, 10.3%**.
-
-**Reproduction status (2026-09-24, item 1 — GAP, founder call needed).**
-`scripts/prediction/childes/` ports the scratch pipeline faithfully:
-same split (seed 20260923, 2,165 held-out transcripts), same 2,500-sample
-buckets (a bit-exact CPython RNG port), same lemmatizer — verified by
-identical event counts vs the current scratch code (857,746). But the
-table above predates every scratch file (doc commit 5399d37 at 10:13am;
-the parquet was first downloaded 10:49am) — its generating code/data is
-unrecoverable. Measured vs documented, CHILDES child book: later
-43.3/50.2/50.7 vs 43.5/49.2/49.7 (within ~1pt); first 18.9/28.7/29.5 vs
-16.5/22.5/22.3 (systematically +2 to +7pt). Even the book-independent
-adult-overlap stat can't be reproduced (15.4/11.6/7.1 measured vs
-18.4/12.8/10.3 documented), so the doc-era event stream itself differed.
-Not tuned; awaiting ruling on whether the measured numbers become the
-baseline. Transcripts live in gitignored `data/prediction/childes/`;
-`scripts/check_childes_git.mjs` (a check:fast gate) blocks transcript
-text from git.
+turn: **15.1% (MLU < 2), 11.1%, 6.5%**.
 
 What real children say:
-- **The legal child book beats adult text on real children:** about +9
-  points at ages 3–4+ (+35% relative), +4 at age 2.
-- **Real child speech is worth another 11–16 points.** That is what
+- **The legal child book beats adult text on real children:** +5–6
+  points at ages 3–4+ later words (30.2 vs 25.6, 31.8 vs 25.8), +1.4
+  at age 2.
+- **Real child speech is worth another 17–21 points.** That is what
   permission to use CHILDES-derived counts would buy, and what the
   flywheel (step 26) must earn from real AAC use. It is optimistic:
   longitudinal corpora put the same child in train and test sessions,
   which acts partly like personal history.
-- **Partner echo is real but modest in natural play:** 10–18% of words,
-  +1 to +4 points in top 4. GPT-4's toddlers (70%) overstated it. It may
-  run higher in AAC, where partners offer choices ("juice or milk?"),
-  so the bench measures it per user and the weight is learned.
-- **First words stay hard** (4–22%). Step 21 and occasions (step 9)
-  aim here.
+- **Partner echo is real but modest in natural play:** 7–15% of words,
+  +1 to +10 points in top 4 (largest at MLU < 2). GPT-4's toddlers (70%)
+  overstated it. It may run higher in AAC, where partners offer choices
+  ("juice or milk?"), so the bench measures it per user and the weight
+  is learned.
+- **First words are the weak spot** (5–29%). Step 21 and occasions
+  (step 9) aim here.
+
+**Fixes on the way in (2026-09-24):**
+- `am/is/are → be` mapping bug fixed: Pip's vocab has am/is/are/was/were,
+  not "be", so the surface lemma now wins over IRREG. Pre-fix these
+  collapsed into a ghost "be" target that wasted top-4 slots and hid
+  #1-after-"I" words.
+- Transcripts live in gitignored `data/prediction/childes/` (R11);
+  `scripts/check_childes_git.mjs` (a check:fast gate) blocks transcript
+  text from git. Only aggregate scores may commit.
 
 ### Steered synth (scaled, 2026-09-23, our corpus)
 
