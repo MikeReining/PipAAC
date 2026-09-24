@@ -61,6 +61,13 @@ When a grid engine exists, a test must show that a suggestion model cannot reord
 
 ### Groups — the backup path to every word
 
+> **Amended 2026-09-24 (founder; `docs/phases/018_Core_Board_V2_And_Groups.md` D4–D6, D8).** Groups keep
+> opening full screen with the Smart bar above. New rules: after Speak,
+> the board returns home. Group tiles are neutral doors with a folder
+> tab. Mixed groups lay words out in the home board's band order. The
+> default group order is set once, then frozen (supporters drag). There
+> are no default group doors on the home board.
+
 **DECIDED 2026-09-22** (founder review of the zones build; supersedes the
 "sub-zone" / "zone" wording and the `zone_slot` + `custom_group` model from
 earlier the same day). **BUILT** (fb5a8d7…0555aa9).
@@ -348,6 +355,14 @@ family and SLP choose. Pip ships its default.
 ---
 
 ## 3. Modified Fitzgerald Key
+
+> **Amended 2026-09-24 (founder; `docs/phases/018_Core_Board_V2_And_Groups.md` D2, D7), rebuild pending.**
+> One column band, one color, one kind of word. Questions get their own
+> **purple** role. The last column is the **safety column**, red
+> whatever the grammar (*yes*, *no*, *not*, *stop*, *help*, *hurt*).
+> Nouns stay yellow (people & things). A new word's color comes from its
+> kind (a plain-words choice, or Jev once at add time), never from a
+> color picker.
 
 **DECIDED 2026-09-22** (not built). Button fields and stick-figure torsos use these roles. The torso is a grammar cue, not clothing.
 

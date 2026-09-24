@@ -22,6 +22,10 @@ One bird, drawn at the sizes it's used:
 
 ## Palette
 
+> **Pending 2026-09-24 (`docs/phases/018_Core_Board_V2_And_Groups.md` slice 1):** a sixth role, **Purple**, for
+> questions; group doors use the neutral no-role pair with a folder-tab
+> edge.
+
 **BUILT** (`public/index.html` `:root` + `.r-*`).
 
 | Token | Hex | Use |

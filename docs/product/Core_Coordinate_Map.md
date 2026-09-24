@@ -14,7 +14,9 @@ Row storage: `docs/product/Language_And_Voice_Schema.md` (`core_cell`, with a
 This file is the truth owner for **which sense sits in which slot** in each
 named layout. It is original work: the words came from the published lists
 named in the vocabulary doc, and the placement below is Pip AAC's own pass.
-No incumbent board was consulted for coordinates.
+No incumbent board was consulted for coordinates. **Amended 2026-09-24:**
+incumbent boards were looked at for the v2 board and deliberately
+differed from; the derivation is recorded in `docs/phases/018_Core_Board_V2_And_Groups.md` D3.
 
 ---
 
@@ -72,6 +74,10 @@ the regulator column. Color does the disambiguation where sector and role
 diverge.
 
 ## 3. `grid60` — default
+
+> **DECIDED 2026-09-24 — replaced, rebuild pending** (founder). The new
+> board, colors, and provenance are in `docs/phases/018_Core_Board_V2_And_Groups.md` D1–D3. The table
+> below is what the build reads today; slice 1 of 018 swaps it.
 
 Rows top to bottom, slots left to right. `slot_index` is row-major, 0-based.
 
