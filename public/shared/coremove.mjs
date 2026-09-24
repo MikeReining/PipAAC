@@ -11,6 +11,7 @@
  */
 
 import { recordOp } from "./ops.mjs";
+import { placeItem } from "./groups.mjs";
 
 const KINDS = new Set(["sense", "entity"]);
 const keyOf = (kind, id) => `${kind}:${id}`;
@@ -159,6 +160,13 @@ export function placeOnBoard(db, layout, kind, id, toSlot, { anchors = new Set()
       putOverride(db, layout, other.kind, other.id, from);
     } else {
       deleteOverride(db, layout, other.kind, other.id);
+      // D10: the displaced word goes back to its group. An uncategorized
+      // core word has none — My Words is the catch-all (no-op when a
+      // group already holds it).
+      const grouped = db.prepare(
+        "SELECT 1 AS x FROM group_cell WHERE item_kind = ? AND item_id = ? LIMIT 1",
+      ).all(other.kind, other.id)[0];
+      if (!grouped) placeItem(db, "grp_my_words", other.kind, other.id);
     }
   }
   recordOp(db, op, { layout, kind, id, toSlot });

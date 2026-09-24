@@ -58,6 +58,7 @@ import {
   jevProbabilities, jevRank, jevTerm,
 } from "./shared/jev.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
+import { useCounts } from "./shared/usecounts.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
 import { mountCellsSheet } from "./board/cells-sheet.js";
 import { mountSpotlightSheet } from "./board/spotlight-sheet.js";
@@ -264,6 +265,8 @@ function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
 }
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
+let countsOn = false; // 018 D10: the 📊 badge — the child's own 30-day taps
+const getCounts = () => useCounts(db);
 
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
@@ -1166,6 +1169,16 @@ function renderGrid() {
   const cells = coreCells(db, geom.name, locale);
   const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
   const masked = maskedSenseIds(db);
+  // 018 D10 📊: one query per repaint, a badge on every tile.
+  const counts = editing && countsOn ? getCounts() : null;
+  const withCount = (el, kind, id) => {
+    if (!counts) return el;
+    const n = document.createElement("span");
+    n.className = "ucount";
+    n.textContent = String(counts.get(`${kind}:${id}`) ?? 0);
+    el.appendChild(n);
+    return el;
+  };
   const grid = $("grid");
   grid.style.gridTemplateColumns = `repeat(${geom.cols}, 1fr)`;
   grid.style.gridTemplateRows = `repeat(${geom.rows}, 1fr)`;
@@ -1231,10 +1244,12 @@ function renderGrid() {
         el.classList.add("photo");
       });
       if (editing) {
+        // D10: tap asks "what goes here" — the placement sheet. Drag
+        // still moves; the ✎ inside the sheet opens the word card.
         editPointer(el, {
-          onTap: () => wordCard.openWordCard(
-            { item_kind: "entity", item_id: c.entity_id, label: c.label },
-          ),
+          onTap: () => placeUi.openPicker(slot,
+            { kind: "entity", id: c.entity_id, label: c.label,
+              role: c.fitzgerald_role }),
           onDrop: (to) => {
             const mv = placeOnBoard(db, geom.name, "entity", c.entity_id, to, {
               anchors: new Set(geom.anchors.keys()),
@@ -1252,7 +1267,7 @@ function renderGrid() {
       }
       layerMark(el, `entity:${c.entity_id}`, { board: true });
       cellEls.set(c.entity_id, el);
-      grid.appendChild(el);
+      grid.appendChild(withCount(el, "entity", c.entity_id));
       continue;
     }
     // A hidden word keeps its slot as a ghost tile (Design_System mask
@@ -1262,17 +1277,19 @@ function renderGrid() {
       const ghost = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
       ghost.classList.add("masked");
       ghost.disabled = true;
-      grid.appendChild(ghost);
+      grid.appendChild(withCount(ghost, "sense", c.sense_id));
       continue;
     }
     const el = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
     el.dataset.slot = slot;
     if (editing) {
       // Adult move (014 § 2 ruling 1): drag onto a word swaps, onto an
-      // empty slot moves; anchors and reserved slots refuse. A tap opens
-      // the word card, same as group pages.
+      // empty slot moves; anchors and reserved slots refuse. D10: a tap
+      // opens the placement sheet — ✎ inside it opens the word card.
       editPointer(el, {
-        onTap: () => wordCard.openWordCard({ item_kind: "sense", item_id: c.sense_id, label: c.label }),
+        onTap: () => placeUi.openPicker(slot,
+          { kind: "sense", id: c.sense_id, label: c.label,
+            role: c.fitzgerald_role }),
         onDrop: (to) => {
           const mv = moveCore(db, geom.name, c.sense_id, to, { anchors: new Set(geom.anchors.keys()) });
           if (!mv) return;
@@ -1288,7 +1305,7 @@ function renderGrid() {
     }
     layerMark(el, `sense:${c.sense_id}`, { board: true });
     cellEls.set(c.sense_id, el);
-    grid.appendChild(el);
+    grid.appendChild(withCount(el, "sense", c.sense_id));
   }
   boardSenseIds = new Set(cells.map((c) => c.sense_id));
   spotChrome();
@@ -1413,6 +1430,12 @@ $("corner").addEventListener("click", () => {
     return;
   }
   open("menu");
+});
+// 018 D10: 📊 puts the child's own 30-day taps on every tile.
+$("edit-counts").addEventListener("click", () => {
+  countsOn = !countsOn;
+  $("edit-counts").classList.toggle("on", countsOn);
+  renderGrid();
 });
 $("edit-groups").addEventListener("click", () => {
   close("menu");
@@ -1563,7 +1586,10 @@ $("spot-chip").addEventListener("click", () => {
  *  and turns the corner button into ✓ Done. */
 function setEditing(on) {
   editing = on;
+  countsOn = countsOn && on; // 📊 leaves with Edit mode
   document.body.classList.toggle("editing", on);
+  $("edit-counts").hidden = !on;
+  $("edit-counts").classList.toggle("on", countsOn);
   $("corner").textContent = on ? "✓ Done" : "✚";
   $("corner").title = on ? "Done editing" : "Parent corner";
   renderGrid(); // the home grid takes edit gestures too (014 slice 3)
@@ -1738,11 +1764,20 @@ const relayEntitlement = async () =>
 mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement });
 mountProgress({ db, me, toast, open, nameOf: statNameOf, entitlement: relayEntitlement });
 
-/* The place picker (014 § 9): Edit mode, tap an empty cell — people
- * first, then the whole word library. The pick writes a placement with
- * an undo toast, same as a drag. */
+/* The placement sheet (018 D10): Edit mode, tap any tile or an empty
+ * cell — the off-board list ranks by the child's own counts, the book's
+ * unigram on day one. The pick writes a placement with an undo toast,
+ * same as a drag; ✎ in the head row opens the word card. */
 const placeUi = mountPlacePicker({
   db, locale,
+  getLayout: () => boardGeom().name,
+  getCounts,
+  getUni: () => {
+    const band = ALL(db,
+      "SELECT book_band AS b FROM learner_profile WHERE id = 'prf_local'",
+    )[0]?.b ?? "mlu_2_35";
+    return book?.bands?.[band]?.uni ?? {};
+  },
   onPick: (slot, kind, id, label) => {
     const mv = placeOnBoard(db, boardGeom().name, kind, id, slot, {
       anchors: new Set(boardGeom().anchors.keys()),
@@ -1754,6 +1789,10 @@ const placeUi = mountPlacePicker({
       placeOnBoard(db, boardGeom().name, kind, id, mv.from);
       renderGrid();
     });
+  },
+  onEdit: (item) => {
+    close("placeform");
+    wordCard.openWordCard({ item_kind: item.kind, item_id: item.id, label: item.label });
   },
 });
 

@@ -1,10 +1,10 @@
 # Phase 018 — Core board v2 and groups
 
-**Status:** Executing. Slices 1–5 done 2026-09-24 — the v2 board is the
+**Status:** All six decided slices done 2026-09-24 — the v2 board is the
 default (`grid60` = D1, six color bands, Purple role shipped,
 `is`/`mom`/`dad` root core, `grid15` re-derived, setup's people seated,
-groups re-ordered and banded, personal words color by kind). Remaining:
-slice 6.
+groups re-ordered and banded, personal words color by kind, the home
+board edits by placement). Open items under D8–D10 stay open.
 
 **DECIDED 2026-09-24** (founder: "this is all locked"). Reached in a
 founder brainstorm the same day, with real-children measurements run
@@ -317,11 +317,22 @@ section (sample counts).
    NULL renders Yellow — the offline default and every pre-D7 row.
    **Proof:** `entity_kind.test.mjs` — board/group/band reads, op replay
    onto a second DB, migrate grafts the column and rejects bad values.
-6. **Edit the home board (D10).** 📊 counts, the placement sheet (tile +
-   count + ✎, 🔍, most-used list), tap-to-place with Undo. **Proof:** on
-   the real board, 📊 shows the child's own 30-day counts (a modeling
-   tap doesn't change them); tapping *this* and picking *cookie* puts
-   *cookie* in that spot and *this* back in its group; Undo restores it.
+6. **Edit the home board (D10).** **DONE 2026-09-24**
+   - 📊 toggle beside ✓ Done — `.ucount` shows the child's own 30-day
+     taps on every tile (`useCounts` reads `learner_event_log`;
+     modeling taps write no event, so they never count).
+   - Tap a tile → the placement sheet: the tile, its count, a ✎ to the
+     word card, one 🔍 field, and `offBoardItems` — every word and
+     person with no home cell, most-tapped first, the book's unigram
+     on day one. A row tap is `placeOnBoard` + an Undo toast; drag
+     still moves or swaps.
+   - Truth owner added: `usecounts.mjs`. `placeOnBoard` now files a
+     displaced word with no group into `grp_my_words` — an uncategorized
+     core word (e.g. *I*) can no longer be stranded off every list.
+   - **Proof:** `placement.test.mjs` — counts group the child's events,
+     on-board words never list, the book orders day one, a tap places
+     and Undo restores; `place-ui.js` + `index.html` paint it. Visual
+     pass deferred with slice 1's (dev slots).
 
 Each slice is proved on the real board (`npm run dev:agent`), not only
 in unit tests.

@@ -178,6 +178,9 @@
         background: #fff;
         font-size: 22px;
       }
+      /* The 📊 toggle's on state (018 D10): pressed chrome, same rule as
+         the seg buttons. */
+      .corner-btn.on { border-color: var(--ink-text); background: var(--tray); }
 
       /* --- prediction strip: a neutral tray holding four word tiles --- */
       /* Permanent strip: fixed height, always rendered. The 60-cell grid
@@ -527,6 +530,47 @@
       /* "Show on board" marks the cell for a beat. */
       .flash { box-shadow: 0 0 0 5px var(--ink); z-index: 2; }
 
+      /* 018 D10: the 📊 count — the child's own taps in 30 days, quiet
+         in the tile's corner. The numbers are the explanation. */
+      .ucount {
+        position: absolute;
+        right: 6px;
+        bottom: 4px;
+        font-size: clamp(11px, 1.2vw, 15px);
+        font-weight: 700;
+        color: var(--muted, #777);
+        z-index: 3;
+      }
+      /* The placement sheet: tapped tile chip + count + ✎, then rows. */
+      .ptile {
+        flex: 1;
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-weight: 700;
+        background: var(--rf, #f2efe6);
+        border: 2px solid var(--rb, #8a8578);
+      }
+      #place-head { align-items: center; gap: 10px; }
+      .place-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 10px 8px;
+        border: 0;
+        border-bottom: 1px solid #efece5;
+        background: none;
+        font-size: 17px;
+        cursor: pointer;
+        text-align: left;
+      }
+      .place-row .prole {
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 8px;
+        background: var(--rf, transparent);
+      }
+
       /* --- undo toast --- */
       #toast {
         position: fixed;
@@ -562,6 +606,7 @@
       <button id="clear" class="bar-btn" title="Clear" disabled>Clear</button>
       <button id="speak" class="bar-btn primary" title="Speak" disabled>Speak</button>
       <button id="spot-chip" hidden>🔦 Spotlight · End</button>
+      <button id="edit-counts" class="corner-btn" hidden title="Show counts">📊</button>
       <button id="corner" class="corner-btn" title="Parent corner">✚</button>
     </div>
     <!-- Coach view (013 § 5a): partner devices only — the session's
@@ -888,10 +933,17 @@
       </div>
     </div>
 
+    <!-- The placement sheet (018 D10): the tapped tile, its count, an
+         edit pen, one search field, and the off-board list — most-tapped
+         first. No labels or headers; the numbers are the explanation. -->
     <div class="overlay" id="placeform">
       <div class="sheet">
-        <h2>Put a word or person here</h2>
-        <input id="place-q" placeholder="Search…" autocomplete="off" />
+        <div class="row" id="place-head" hidden>
+          <span id="place-tile" class="ptile"></span>
+          <span id="place-count" class="hint"></span>
+          <button id="place-edit" class="bar-btn" title="Edit this word">✎</button>
+        </div>
+        <input id="place-q" placeholder="🔍" autocomplete="off" />
         <div id="place-list"></div>
         <div class="row">
           <button class="btn secondary" data-close>Cancel</button>

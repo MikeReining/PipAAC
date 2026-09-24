@@ -182,6 +182,13 @@ of every word the learner sees: tile labels, strip cards, sentence chips,
 keycaps, anchors. Parent Corner sheets stay on the system font — adult
 chrome.
 
+## Adult-facing copy
+
+**DECIDED 2026-09-24** (018 D10, moved here at closeout). Edit-mode
+chrome follows one rule: icons, one field, one list, numbers. No
+explaining sentences, and no user's name in the copy. A screen that
+needs a sentence isn't finished.
+
 ## Open items (designer's "next" list)
 
 **PROPOSED**, unscheduled: custom "Pip" wordmark (Andika Bold is the

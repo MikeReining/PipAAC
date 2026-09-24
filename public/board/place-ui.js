@@ -1,14 +1,13 @@
 /**
- * The place picker (014 § 9): in Edit mode an empty cell or a drag onto
- * a word is a swap — but an adult may also pick ANY word or person for
- * a home cell. This sheet is that picker: the family's people first,
- * then the whole word library behind one search field (the same
- * librarySearch Parent Corner → Words uses). Choosing calls back into
- * board.js, which writes the placement — this module only draws the
- * list.
+ * The placement sheet (018 D10): Edit mode, tap any tile or an empty
+ * cell — "what goes here". The head row shows the tapped tile, its
+ * 30-day count, and a ✎ that opens the word card. One search field,
+ * then the list: every word and person with no home cell, most-tapped
+ * first (the child's own counts — day one orders by the opening book).
+ * Choosing calls back into board.js, which writes the placement — this
+ * module only draws the sheet.
  */
-import { librarySearch } from "../shared/library.mjs";
-import { normalizeV1 } from "../shared/normalize.mjs";
+import { offBoardItems } from "../shared/usecounts.mjs";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -18,35 +17,48 @@ const el = (tag, cls, text) => {
   return n;
 };
 
-export function mountPlacePicker({ db, locale, onPick }) {
+export function mountPlacePicker({ db, locale, getLayout, getCounts, getUni, onPick, onEdit }) {
   let slot = null;
+  let occupant = null; // { kind, id, label, role } — the tapped tile, if any
 
   function paint() {
+    const counts = getCounts();
+    const rows = offBoardItems(db, getLayout(), locale, {
+      counts, uni: getUni(), q: $("place-q").value,
+    });
     const list = $("place-list");
     list.replaceChildren();
-    const q = $("place-q").value.trim();
-    const rows = q
-      ? librarySearch(db, q, locale, normalizeV1)
-      : db.prepare(
-        "SELECT id, spoken_name AS label FROM personal_entity WHERE status = 'active' ORDER BY spoken_name",
-      ).all().map((e) => ({ kind: "entity", id: e.id, label: e.label }));
     if (!rows.length) {
-      list.appendChild(el("p", "hint", q ? "Nothing matches." : "No people yet — search for a word, or add people in Parent Corner → Words."));
+      list.appendChild(el("p", "hint", "Nothing matches."));
       return;
     }
     for (const r of rows.slice(0, 30)) {
-      const b = el("button", "btn secondary place-row", r.label);
+      const b = el("button", "place-row");
       b.type = "button";
-      b.appendChild(el("span", "hint", r.kind === "entity" ? "person" : (r.role ?? "word")));
+      b.append(el("span", `prole r-${r.role ?? "None"}`, r.label),
+               el("span", "hint", String(r.count)));
       b.addEventListener("click", () => onPick(slot, r.kind, r.id, r.label));
       list.appendChild(b);
     }
   }
 
   $("place-q").addEventListener("input", paint);
+  $("place-edit").addEventListener("click", () => {
+    if (occupant) onEdit(occupant);
+  });
+
   return {
-    openPicker(s) {
+    openPicker(s, occ = null) {
       slot = s;
+      occupant = occ;
+      $("place-head").hidden = !occ;
+      if (occ) {
+        const tile = $("place-tile");
+        tile.textContent = occ.label;
+        tile.className = `ptile r-${occ.role ?? "None"}`;
+        $("place-count").textContent =
+          String(getCounts().get(`${occ.kind}:${occ.id}`) ?? 0);
+      }
       $("place-q").value = "";
       paint();
       document.getElementById("placeform").classList.add("open");
