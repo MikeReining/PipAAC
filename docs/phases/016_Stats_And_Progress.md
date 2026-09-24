@@ -207,6 +207,43 @@ Works Test:
 3. With the license missing and the relay down, every word still speaks.
 4. No screen shows another user's data or a norm.
 
+**DONE 2026-09-25.** Built:
+
+- `public/shared/dashboard.mjs` — pure aggregation over `stats_day`
+  only: `rangeTotals` merges per-device rows into one totals object
+  (per-word taps, first-seen keys, sources, hours, day-of-week, weekly
+  buckets, weighted wpm), `headlines` picks the three lead numbers by
+  presentation mode (Label-Only → wpm; otherwise different words and
+  words per sentence), `dashboard` resolves names and goal splits.
+- `public/shared/report.mjs` — a dependency-free PDF writer
+  (`linesToPdf` ~40 lines of PDF syntax with proper text escaping) plus
+  `reportLines`/`reportPdf`: the date range, headline counts, weekly
+  trends, top/new words, core/fringe/own, Smart bar share, and goal
+  lines.
+- `public/board/progress-ui.js` — the Progress overlay in Parent
+  Corner: range seg (week / month / 90 days), a headline-mode toggle a
+  supporter can change (persisted per user), and **Share report** via
+  `navigator.share` of a PDF `File`, falling back to a download. All
+  names go in via textContent — no HTML injection.
+- `public/index.html` — the overlay markup and styles; a Progress
+  button in Parent Corner.
+- `public/board.js` — mount wiring only; the label/entity name resolver
+  and the relay entitlement lookup are shared with the win card.
+
+Gate: `entitlement()` (the relay's `self.entitlement`) decides —
+`"lifetime"` renders the dashboard and Share report; anything else
+(including a relay that never answers) renders the win card and the
+offer. Nothing in this path touches speaking.
+
+Works Test: `src/board/dashboard.test.mjs` — a hand-authored fixture
+month; every aggregate asserted against values computed by hand in the
+test (per-device merge, day-of-week bucketing, weighted wpm, week
+boundaries); both headline orders; the report contains the
+hand-computed numbers and parses as a valid PDF (escaping proven with a
+paren-containing name); the gate test mounts the real UI module on a
+DOM stub: free → card + offer, lifetime → dashboard. `check:fast`
+green.
+
 ## Slice 5 — Goal words
 
 Goal: a Spotlight list can be marked as a goal; the dashboard shows each

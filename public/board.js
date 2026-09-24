@@ -40,6 +40,7 @@ import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
 import { initSync, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import { refreshStatsDays } from "./shared/stats.mjs";
 import { mountWincard } from "./board/wincard-ui.js";
+import { mountProgress } from "./board/progress-ui.js";
 import {
   addUser, listUsers, migrateLegacy, openUserStore, putUser,
   resolveActiveUser, touchOpened,
@@ -1536,18 +1537,17 @@ const devicesUi = mountDevices({
   initSync, onSyncApplied, onModel, qrcode, syncRekey,
 });
 
-/* The weekly win card — public/board/wincard-ui.js (016 slice 2). Item
- * ids resolve to names here so the shared modules stay off the label
- * and entity tables. */
-mountWincard({
-  db, me, toast,
-  nameOf: (kind, id) => kind === "entity"
-    ? ALL(db, "SELECT spoken_name AS t FROM personal_entity WHERE id = ?", [id])[0]?.t
-    : ALL(db, `SELECT text AS t FROM label WHERE sense_id = ?
-        AND kind = 'lemma' AND status = 'approved' AND locale = ?`, [id, locale])[0]?.t,
-  entitlement: async () =>
-    (await devicesUi.userClient().then((u) => u?.client?.selfKey()))?.entitlement,
-});
+/* The weekly win card and progress dashboard — public/board/wincard-ui.js
+ * and progress-ui.js (016 slices 2 and 4). Item ids resolve to names
+ * here so the shared modules stay off the label and entity tables. */
+const statNameOf = (kind, id) => kind === "entity"
+  ? ALL(db, "SELECT spoken_name AS t FROM personal_entity WHERE id = ?", [id])[0]?.t
+  : ALL(db, `SELECT text AS t FROM label WHERE sense_id = ?
+      AND kind = 'lemma' AND status = 'approved' AND locale = ?`, [id, locale])[0]?.t;
+const relayEntitlement = async () =>
+  (await devicesUi.userClient().then((u) => u?.client?.selfKey()))?.entitlement;
+mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement });
+mountProgress({ db, me, toast, open, nameOf: statNameOf, entitlement: relayEntitlement });
 
 /* QR card — public/board/recovery-ui.js */
 mountRecovery({

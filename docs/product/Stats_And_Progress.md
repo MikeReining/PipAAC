@@ -105,6 +105,15 @@ For a Lifetime user, every supporter sees the full dashboard:
   meeting: the numbers, the trends, goal words, and the date range.
   Shared from the device, through the system share sheet.
 
+BUILT: Parent Corner → Progress (`public/board/progress-ui.js` +
+`public/shared/dashboard.mjs` + `report.mjs`). Aggregation reads
+`stats_day` only — the raw tap log and sentence table are never
+opened. The headline toggle is a supporter preference stored per user
+(`pip_dash_mode:<user>`), separate from the child's presentation mode.
+Share report produces a real PDF via `navigator.share` with a download
+fallback. A missing or unreachable relay resolves to the free view —
+the win card and the offer — and never touches the board.
+
 ### 4.3 Never
 
 - Never a comparison with other children, a percentile, or a "behind"
