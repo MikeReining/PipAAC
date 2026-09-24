@@ -276,6 +276,27 @@ export class UserRelay {
       }
     }
 
+    // Worker-internal cascade (015 slice 7): deleting an account removes
+    // its supporter row, every device that joined through it, and its
+    // pending join tokens — the same cascade as DELETE /supporters/:id,
+    // called by index.js when the account itself goes away. Auth is the
+    // operator secret, which only the worker holds.
+    if (method === "POST" && route === "internal/remove_supporter") {
+      const secret = this.env.PIP_INTERNAL_SECRET ?? this.env.PIP_LICENSE_SECRET;
+      if (!secret) return bad("internal_unavailable", 503);
+      if (request.headers.get("x-pip-internal") !== secret) {
+        return bad("forbidden", 403);
+      }
+      let parsed = null;
+      try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
+      const acct = parsed?.acct_id ? String(parsed.acct_id) : null;
+      if (!acct) return bad("bad_request");
+      this.ctx.storage.sql.exec("DELETE FROM supporter WHERE acct_id = ?", acct);
+      this.ctx.storage.sql.exec("DELETE FROM device WHERE via_acct = ?", acct);
+      this.ctx.storage.sql.exec("DELETE FROM join_token WHERE for_acct = ?", acct);
+      return json({ ok: true });
+    }
+
     const device = await this.verify(request, bodyBytes);
     if (!device) return bad("forbidden", 403);
     // last_seen BEFORE this request — a long-absent device refreshing it
@@ -543,18 +564,64 @@ export class UserRelay {
     await this.ctx.storage.deleteAlarm();
   }
 
+  /** One warning email per supporter per idle streak (015 slice 7).
+   *  `warned_for_seen` remembers which last_seen we warned about, so a
+   *  daily alarm never re-mails the same streak — but a returning
+   *  device bumps last_seen, and a later idle streak warns again. */
+  async warnSupporters(now, lastSeen) {
+    if (String(this.metaGet("warned_for_seen") ?? "") === String(lastSeen)) return 0;
+    const emails = this.ctx.storage.sql.exec(
+      "SELECT email FROM supporter WHERE email IS NOT NULL").toArray()
+      .map((r) => r.email);
+    const days = Math.max(1, Math.round(
+      (lastSeen + IDLE_DELETE_MS - now) / DAY_MS));
+    let sent = 0;
+    for (const email of emails) {
+      try {
+        const raw = [
+          `From: Pip <accounts@pipaac.app>`,
+          `To: ${email}`,
+          `Subject: A Pip board you support will be deleted soon`,
+          `Content-Type: text/plain; charset=utf-8`,
+          ``,
+          `A Pip AAC user you support has not been opened in a long time.`,
+          `Their board and words will be deleted in about ${days} days.`,
+          `Open Pip on their device to keep everything.`,
+        ].join("\r\n");
+        let msg = raw;
+        try {
+          const { EmailMessage } = await import("cloudflare:email");
+          msg = new EmailMessage("accounts@pipaac.app", email, raw);
+        } catch { /* no cf module (tests) — the binding takes the raw */ }
+        await this.env.EMAIL?.send?.(msg);
+        sent++;
+      } catch { /* a bad address must not stop the others */ }
+    }
+    // A streak with zero supporters stays un-marked — one added later
+    // in the window still gets warned.
+    if (emails.length) this.metaSet("warned_for_seen", String(lastSeen));
+    // Dev visibility (the dev-mailbox pattern): the outbox is inspectable
+    // even where no EMAIL binding exists.
+    this.metaSet("warn_outbox", JSON.stringify(
+      emails.map((email) => ({ email, at: now }))));
+    return sent;
+  }
+
   /** The daily sweep (§ 11). Callable directly with an injected `now`
    *  so tests can place a user at any age. Returns what it did. */
   async retentionSweep(now) {
     const deleteAt = Number(this.metaGet("delete_at") ?? 0);
     const lastSeen = Number(this.metaGet("last_seen") ?? now);
-    const done = { destroyed: false, warned: false, pruned: 0 };
+    const done = { destroyed: false, warned: false, pruned: 0, emailed: 0 };
     if ((deleteAt && deleteAt <= now) || now - lastSeen >= IDLE_DELETE_MS) {
       await this.destroy();
       done.destroyed = true;
       return done;
     }
-    if (now - lastSeen >= IDLE_WARN_MS) done.warned = true; // surfaced via devices/self
+    if (now - lastSeen >= IDLE_WARN_MS) {
+      done.warned = true; // surfaced via devices/self
+      done.emailed = await this.warnSupporters(now, lastSeen);
+    }
     const snapSeq = Number(this.metaGet("snapshot_seq") ?? 0);
     if (snapSeq > 0) {
       done.pruned = this.ctx.storage.sql.exec(

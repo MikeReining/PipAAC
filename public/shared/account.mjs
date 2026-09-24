@@ -51,6 +51,18 @@ export const saveAccountState = (s) =>
   s ? localStorage.setItem(LS_KEY, JSON.stringify(s))
     : localStorage.removeItem(LS_KEY);
 
+/** Delete the account (015 slice 7): removes this account's access on
+ *  every user's relay, then the account itself. The users, their
+ *  devices, license and QR cards are untouched. */
+export const deleteAccount = async (acctId, session) => {
+  const r = await fetch(
+    `/accounts/${acctId}?session=${encodeURIComponent(session)}`,
+    { method: "DELETE" });
+  const j = await r.json().catch(() => null);
+  if (!r.ok) throw new Error(j?.error ?? `http ${r.status}`);
+  return j;
+};
+
 /* --- the magic link --- */
 export const requestLink = (email) => post("/accounts/link", { email });
 export const claimToken = (token) => post("/accounts/claim", { token });

@@ -569,16 +569,36 @@ Works Test:
 
 ## Slice 7 — Retention and email
 
-**Partially BUILT 2026-09-23** (everything but email): the UserRelay
-stamps `last_seen` on every signed request; a daily DO alarm runs
-`retentionSweep(now)` — destruction only on `delete_at` expiry (30-day
-undo via `DELETE`/`undelete`) or 3 idle years; a fixture at 2y11m
-survives and is flagged; a returning device sees `idle_delete_at` on
-`GET /devices/self` plus a boot toast and a Parent Corner warning; ops
-covered by `snapshot_seq` prune after 30 days. Still owed: supporter
-email (needs slice 4) and the user-level vocabulary once slice 1 lands.
-Proof: `src/worker/entitlement.test.mjs`,
-`scripts/probes/entitlement_probe.mjs`.
+**DONE 2026-09-25.** The 2026-09-23 build covered everything but email
+(UserRelay `last_seen`, the daily `retentionSweep`, `idle_delete_at`
+on `devices/self` plus boot toast and Parent Corner warning, snapshot
+op pruning). This leg added:
+
+- `src/worker/relay.js` — `warnSupporters` mails every supporter of a
+  user inside the 6-month window, once per idle streak
+  (`warned_for_seen` makes the daily alarm idempotent; a returning
+  device resets it). Sends via the `EMAIL` binding (raw-MIME fallback
+  for tests), records `warn_outbox` for dev/probe visibility. Also
+  `POST internal/remove_supporter` — the account-deletion cascade,
+  guarded by `x-pip-internal` = `PIP_INTERNAL_SECRET`
+  (`PIP_LICENSE_SECRET` fallback).
+- `src/worker/index.js` + `accounts.js` — `DELETE /accounts/:id`
+  (session-gated): enumerates the account's `acct_user` rows, cascades
+  each user relay (supporter row, tagged devices, pending tokens),
+  then `/acct/destroy` clears the account's own rows and
+  `/dir/acct/deleted` scrubs map/session/mailbox and revokes its
+  pending invites. Cascade failure aborts the delete (502) — a dead
+  account never keeps live access.
+- `public/shared/account.mjs` + `devices-ui.js` + `index.html` —
+  `deleteAccount` and a "Delete account…" control under the signed-in
+  state, with a confirm that says exactly what survives.
+
+Works Test: `src/worker/entitlement.test.mjs` — two supporters emailed
+once per streak, no daily re-mail, a new streak re-warns.
+`src/worker/accounts.heavy.test.mjs` — the full delete on the live
+worker: wrong session 403, S's device 403s after, supporter row and
+tokens gone, account state empty, P still syncs, license holds, the QR
+card restores a fresh device. `check:fast` green.
 
 Goal: 011 slice 9's retention rules, with email as the warning channel.
 

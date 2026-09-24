@@ -61,8 +61,11 @@ function fakeCtx() {
 
 function fakeEnv() {
   const blobs = new Map();
+  const sentMail = [];
   return {
     PIP_LICENSE_SECRET: SECRET,
+    EMAIL: { send: async (msg) => void sentMail.push(msg) },
+    _sentMail: sentMail,
     BLOBS: {
       put: async (k, v) => void blobs.set(k, v),
       get: async (k) => (blobs.has(k) ? { body: blobs.get(k) } : null),
@@ -223,6 +226,34 @@ test("retention: nothing deletes a user but the two § 11 causes", async () => {
   // The refresh itself pushed the deadline out — sweep again, quiet.
   out = await relay.retentionSweep(Date.now());
   assert.equal(out.warned, false);
+
+  // Slice 7: inside the window the supporters get one email per idle
+  // streak — two supporters here, none earlier in this test.
+  ctx._db.prepare(
+    "INSERT INTO supporter (acct_id, email, added_at) VALUES ('a1', 's@example.com', 1)",
+  ).run();
+  ctx._db.prepare(
+    "INSERT INTO supporter (acct_id, email, added_at) VALUES ('a2', 't@example.com', 1)",
+  ).run();
+  setSeen(2 * 365 * DAY + 11 * 30 * DAY);
+  out = await relay.retentionSweep(Date.now());
+  assert.equal(out.emailed, 2, "supporters not emailed");
+  assert.equal(env._sentMail.length, 2);
+  assert.ok(String(env._sentMail[0]).includes("s@example.com"));
+  assert.ok(String(env._sentMail[0]).includes("days"));
+
+  // The daily alarm does not re-mail the same streak.
+  out = await relay.retentionSweep(Date.now() + DAY);
+  assert.equal(out.emailed, 0, "same streak mailed twice");
+  assert.equal(env._sentMail.length, 2);
+
+  // A returning device ends the streak; the next one warns again.
+  await relay.fetch(await signed(
+    dev.identity, "GET", `/users/${userId}/devices/self`, undefined));
+  setSeen(2 * 365 * DAY + 11 * 30 * DAY);
+  out = await relay.retentionSweep(Date.now());
+  assert.equal(out.emailed, 2, "a new idle streak did not re-warn");
+  assert.equal(env._sentMail.length, 4);
 
   // 3 years + a day: gone — storage and blobs together.
   setSeen(3 * 365 * DAY + DAY);

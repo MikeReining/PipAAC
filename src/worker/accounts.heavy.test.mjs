@@ -23,16 +23,30 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import {
-  genAccountKeys, getUserKey, memoryKeyStore, openAccountPriv, openOp,
-  sealAccountPriv, sealOp, unwrapUserKey, wrapUserKey,
+  genAccountKeys, getDeviceIdentity, getUserKey, memoryKeyStore,
+  openAccountPriv, openOp, sealAccountPriv, sealOp, unwrapUserKey,
+  wrapUserKey, exportPublicKey, ensureRecoveryRoot,
 } from "../../public/shared/sync_crypto.mjs";
 import { b64u, unb64u } from "./webauthn.mjs";
+import { readFileSync } from "node:fs";
+import {
+  joinDeviceWithToken, relayClient,
+} from "../../public/shared/sync_client.mjs";
+import { licenseFor } from "./license.mjs";
+import { recoveryProof } from "../../public/shared/recovery.mjs";
 
 const PORT = 8881;
 const BASE = `http://127.0.0.1:${PORT}`;
 const ORIGIN = BASE;
 const RP_ID = "127.0.0.1";
 const repoRoot = join(import.meta.dirname, "../..");
+
+// The cascade leg mints a Lifetime license (a supporter's second device
+// exceeds the free cap) — same dev-secret path the relay tests use.
+const licenseSecret = Object.fromEntries(
+  readFileSync(join(repoRoot, ".dev.vars"), "utf8").split("\n")
+    .map((l) => l.match(/^\s*([A-Z_]+)\s*=\s*(.+?)\s*$/))
+    .filter(Boolean).map((m) => [m[1], m[2]])).PIP_LICENSE_SECRET;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let wrangler;
@@ -395,3 +409,99 @@ test("research intake: whitelist enforced on the live worker", async () => {
   const get = await fetch(`${BASE}/research`);
   assert.equal(get.status, 405);
 });
+
+// 015 slice 7, Works Test 4 — an SLP deletes their account: only that
+// account's access dies. The user, its devices, its license and its QR
+// card are untouched (the DECIDED block).
+test("deleting a supporter account removes only its access", async () => {
+  // The user: one relay, device P linked, Lifetime (a supporter device
+  // would exceed the free cap).
+  const pStore = memoryKeyStore();
+  const pDev = await getDeviceIdentity(pStore);
+  const userId = crypto.randomUUID();
+  const userKey = await getUserKey(pStore, userId);
+  const root = await ensureRecoveryRoot(pStore, userId);
+  const proof = await recoveryProof(root);
+  const mk = await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: userId,
+      device_id: pDev.deviceId, pubkey: await exportPublicKey(pDev.verify),
+      recovery_proof: proof }),
+  }).then((r) => r.json());
+  const clientP = relayClient({ userId: mk.user_id, baseUrl: BASE, identity: pDev, userKey });
+  await clientP.setEntitlement(await licenseFor(licenseSecret, mk.user_id));
+
+  // S registers an account (link → passkey → session), P Allows S on
+  // the user, S's device joins via a tagged token.
+  const link = await post("/accounts/link", { email: "slp@example.com" });
+  const token = new URL(link.body.dev_link).searchParams.get("signin");
+  const claim = await post("/accounts/claim", { token });
+  const sAcct = claim.body.account_id;
+  const cred = await crypto.subtle.generateKey(
+    { name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+  const acct = await genAccountKeys();
+  const prf = crypto.getRandomValues(new Uint8Array(32));
+  const reg = await post(`/accounts/${sAcct}/register`, {
+    challenge: claim.body.challenge, credential_id: "cred-slp",
+    jwk: await crypto.subtle.exportKey("jwk", cred.publicKey),
+    acct_pub: acct.pub, sealed_priv: await sealAccountPriv(acct.priv, prf),
+    prf_salt: b64u(crypto.getRandomValues(new Uint8Array(32))),
+    email: "slp@example.com",
+  });
+  const sSession = reg.body.session;
+
+  // The Allow pushed Maya's wrapped keys into S's account — that row is
+  // what the delete cascade enumerates.
+  const grant = await post(`/accounts/${sAcct}/users`, {
+    session: sSession, user_id: mk.user_id,
+    keys: [{ epoch: 1, grant: await wrapUserKey(userKey, acct.pub) }],
+  });
+  assert.equal(grant.status, 200);
+  await clientP.addSupporter(sAcct, "slp@example.com");
+  const { tokens } = await clientP.mintJoinTokens(1, sAcct);
+  const sDev = await getDeviceIdentity(memoryKeyStore());
+  const join = await joinDeviceWithToken(BASE, mk.user_id, {
+    token: tokens[0], device_id: sDev.deviceId,
+    pubkey: await exportPublicKey(sDev.verify) });
+  assert.equal(join.ok, true);
+  const clientS = relayClient({ userId: mk.user_id, baseUrl: BASE, identity: sDev, userKey });
+  await clientS.fetchOps(0); // S genuinely had access
+
+  // The delete: wrong session → 403; right session → cascade then gone.
+  const badDel = await fetch(`${BASE}/accounts/${sAcct}?session=nope`, { method: "DELETE" });
+  assert.equal(badDel.status, 403);
+  const del = await fetch(
+    `${BASE}/accounts/${sAcct}?session=${sSession}`, { method: "DELETE" });
+  assert.equal(del.status, 200);
+
+  // S's access is gone — device, supporter row, leftover tokens.
+  await assert.rejects(clientS.fetchOps(0), (e) => e.status === 403);
+  const sups = await clientP.listSupporters();
+  assert.equal(sups.supporters.length, 0);
+
+  // The account itself is gone: state empty, sign-in impossible.
+  const st = await fetch(`${BASE}/accounts/${sAcct}/state`).then((r) => r.json());
+  assert.equal(st.has_credentials, false);
+  assert.equal(st.email, null);
+  const deadSession = await post(`/accounts/${sAcct}/users`,
+    { session: sSession, user_id: "x", keys: [] });
+  assert.equal(deadSession.status, 403);
+
+  // The user's side is untouched: P still syncs, license holds, and the
+  // QR card still registers a fresh device (restore is a bearer proof —
+  // the account's death can't touch it).
+  assert.equal((await clientP.fetchOps(0)).latest >= 0, true);
+  const self = await clientP.selfKey();
+  assert.equal(self.entitlement, "lifetime");
+  const newDev = await getDeviceIdentity(memoryKeyStore());
+  const restore = await fetch(`${BASE}/users/${mk.user_id}/restore`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ device_id: newDev.deviceId,
+      pubkey: await exportPublicKey(newDev.verify), proof }),
+  });
+  assert.equal(restore.status, 200, "QR card stopped restoring");
+  const clientNew = relayClient({ userId: mk.user_id, baseUrl: BASE,
+    identity: newDev, userKey });
+  assert.equal((await clientNew.fetchOps(0)).latest >= 0, true);
+});
+

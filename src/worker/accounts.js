@@ -347,6 +347,23 @@ export class SupporterAccounts {
       return json(m);
     }
 
+    /* A deleted account's dir-side rows (015 slice 7): email mapping,
+     * live sessions, mailbox, and its invites — pending ones revoke so
+     * a dead account can never grant. */
+    if (path === "/dir/acct/deleted" && request.method === "POST") {
+      const acctId = String(body?.acct_id ?? "");
+      const m = one("SELECT email FROM acct_map WHERE acct_id = ?", acctId);
+      if (m) sql.exec("DELETE FROM mailbox WHERE email = ?", m.email);
+      sql.exec("DELETE FROM acct_map WHERE acct_id = ?", acctId);
+      sql.exec("DELETE FROM session WHERE acct_id = ?", acctId);
+      sql.exec(
+        `UPDATE invite SET status = 'revoked'
+         WHERE (from_acct = ? OR to_acct = ?)
+           AND status IN ('pending_claim', 'pending_allow')`,
+        acctId, acctId);
+      return json({ ok: true });
+    }
+
     /* --- one account --- */
 
     if (path === "/acct/state" && request.method === "GET") {
@@ -412,6 +429,22 @@ export class SupporterAccounts {
 
     if (path === "/acct/users/delete" && request.method === "POST") {
       sql.exec("DELETE FROM acct_user WHERE user_id = ?", String(body?.user_id ?? ""));
+      return json({ ok: true });
+    }
+
+    // Account deletion (015 slice 7, DECIDED 2026-09-23): the account's
+    // own rows die here; index.js cascades each user relay first, then
+    // the dir scrubs map/session/invite/mailbox rows.
+    if (path === "/acct/users/list" && request.method === "GET") {
+      return json({ user_ids: sql.exec("SELECT user_id FROM acct_user").toArray()
+        .map((r) => r.user_id) });
+    }
+    if (path === "/acct/destroy" && request.method === "POST") {
+      // Rows, not the schema — a warm DO must still answer /acct/state
+      // (has_credentials: false) rather than erroring on missing tables.
+      sql.exec("DELETE FROM acct");
+      sql.exec("DELETE FROM credential");
+      sql.exec("DELETE FROM acct_user");
       return json({ ok: true });
     }
 

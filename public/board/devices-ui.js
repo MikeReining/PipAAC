@@ -10,9 +10,9 @@ import { recoveryProof } from "../shared/recovery.mjs";
 import { joinDeviceWithToken, pairClient, relayClient } from "../shared/sync_client.mjs";
 import {
   accountPub, accountState, claimInvite, claimToken, createInvite,
-  declineInvite, grantInvite, importAccountUsers, inviteStatus, listInvites,
-  openInvite, registerAccount, requestLink, revokeInvite, saveAccountState,
-  shareUserToAccount, signInAccount,
+  declineInvite, deleteAccount, grantInvite, importAccountUsers, inviteStatus,
+  listInvites, openInvite, registerAccount, requestLink, revokeInvite,
+  saveAccountState, shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
 import { addUser, listUsers, putUser, removeUser, setHome } from "../shared/users.mjs";
 
@@ -263,7 +263,26 @@ export function mountDevices({
       ? `<p class="hint">Signed in as <b>${st.email}</b> — this device's users are on the account.</p>`
       : `<p class="hint">Not signed in.</p>`;
     $("acct-form").hidden = !!st;
+    $("acct-danger").hidden = !st;
   }
+  // 015 slice 7: deleting the account removes this account's access on
+  // every user's relay, then the account — the users' boards, devices,
+  // licenses and QR cards are untouched.
+  $("acct-delete").onclick = async () => {
+    const st = accountState();
+    if (!st) return;
+    if (!confirm(
+      `Delete the account ${st.email}? Its sign-in and its supporter access end. ` +
+      `The users you support keep everything — boards, devices, license, QR cards.`)) return;
+    try {
+      await deleteAccount(st.acct_id, st.session);
+      saveAccountState(null);
+      renderAccount();
+      toast("Account deleted.");
+    } catch (e) {
+      toast(`Could not delete (${e.message})`);
+    }
+  };
   $("acct-send").onclick = async () => {
     const email = $("acct-email").value.trim();
     if (!email.includes("@")) return toast("Enter an email address first");

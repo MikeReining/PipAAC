@@ -8,3 +8,6 @@
 TYPESAFE_API_KEY=
 # 011 slice 9 — Pip Lifetime license minting (dev path; any random string).
 PIP_LICENSE_SECRET=
+# 015 slice 7 — worker-internal calls (account-deletion cascade to user
+# relays). Optional: falls back to PIP_LICENSE_SECRET when unset.
+PIP_INTERNAL_SECRET=

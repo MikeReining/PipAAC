@@ -208,6 +208,42 @@ export default {
           body: JSON.stringify({ token, session }) }));
     }
 
+    // Account deletion (015 slice 7, DECIDED 2026-09-23): a supporter
+    // is only a supporter — deleting the account removes ITS access on
+    // every user's relay, then the account itself. The cascade runs
+    // first; a failed leg aborts the delete rather than stranding
+    // access for a dead account.
+    const acctDel = env?.ACCOUNTS
+      && path.match(/^\/accounts\/(acct_[0-9a-f]+)$/);
+    if (acctDel && request.method === "DELETE") {
+      const acctId = acctDel[1];
+      const session = url.searchParams.get("session") ?? "";
+      const chk = await acctDir().fetch(new Request(
+        "https://accounts/dir/session/check", { method: "POST",
+          body: JSON.stringify({ session, acct_id: acctId }) }));
+      if (!chk.ok) return chk;
+      const internal = env.PIP_INTERNAL_SECRET ?? env.PIP_LICENSE_SECRET;
+      const { user_ids } = await (await acctStub(acctId).fetch(
+        new Request("https://accounts/acct/users/list"))).json();
+      if (env?.RELAY && internal) {
+        for (const uid of user_ids ?? []) {
+          const r = await env.RELAY.get(env.RELAY.idFromName(uid)).fetch(
+            new Request(`https://relay/users/${uid}/internal/remove_supporter`, {
+              method: "POST",
+              headers: { "x-pip-internal": internal },
+              body: JSON.stringify({ acct_id: acctId }),
+            }));
+          if (!r.ok) return json({ error: "cascade_failed" }, { status: 502 });
+        }
+      }
+      await acctStub(acctId).fetch(new Request(
+        "https://accounts/acct/destroy", { method: "POST" }));
+      await acctDir().fetch(new Request(
+        "https://accounts/dir/acct/deleted", { method: "POST",
+          body: JSON.stringify({ acct_id: acctId }) }));
+      return json({ ok: true });
+    }
+
     const acctMatch = env?.ACCOUNTS && path.match(/^\/accounts\/(acct_[0-9a-f]+)\/([a-z]+)$/);
     if (acctMatch) {
       const [, acctId, op] = acctMatch;
