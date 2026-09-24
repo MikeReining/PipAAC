@@ -86,6 +86,10 @@ words, 38 different, longest sentence 4 words", "First time: *help*".
 - The card ends with the way in: "See all of Maya's progress with Pip
   Lifetime."
 
+**BUILT 2026-09-25** — `public/shared/wincard.mjs` (rules) +
+`public/board/wincard-ui.js` (Parent Corner card + once-a-week note).
+Wins are absolute-only by construction — no rule compares weeks.
+
 ### 4.2 The dashboard and the report (Pip Lifetime)
 
 For a Lifetime user, every supporter sees the full dashboard:

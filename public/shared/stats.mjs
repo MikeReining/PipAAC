@@ -131,6 +131,11 @@ export function dailyTotals(db, day, computedAt = Date.now()) {
   const { core, fringe, own } = classifyTaps(db, taps);
   const { wpm_median, wpm_samples } = wpmStats(spoken);
   const totalWords = spoken.reduce((n, s) => n + s.words, 0);
+  // First-ever taps get a flag on the word's entry — the win card names
+  // them without re-reading the log.
+  for (const key of newItemsOnDay(db, day)) {
+    if (perWord[key]) perWord[key].first = 1;
+  }
 
   return {
     day,

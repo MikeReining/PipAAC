@@ -425,6 +425,17 @@
       .seg.disabled { opacity: 0.45; pointer-events: none; }
       .seg-row .hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
 
+      /* The weekly win card (016 § 4.1) — wins only, warm, no numbers
+         that compare weeks. */
+      .wincard {
+        margin: 10px 0 14px; padding: 12px 14px; text-align: left;
+        border: 2px solid var(--edge); border-radius: 14px;
+        background: var(--tray);
+      }
+      .wincard-sum { font-weight: 800; margin: 0 0 6px; }
+      .wincard-win { margin: 4px 0; }
+      .wincard .hint { font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+
       .overlay {
         position: fixed;
         inset: 0;
@@ -566,6 +577,7 @@
     <div class="overlay" id="menu">
       <div class="sheet">
         <h2>Parent corner</h2>
+        <div id="wincard" class="wincard" hidden></div>
         <button class="btn" id="add-mywords">Add to My Words</button>
         <button class="btn secondary" id="edit-groups">Edit groups</button>
         <button class="btn secondary" id="open-library">Words</button>

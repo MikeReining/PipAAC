@@ -119,6 +119,35 @@ Works Test: 12 fixture weeks, including falling ones. Every card shows
 time". Owner-visible: on a real iPad after a week of use, the card shows
 numbers that match slice 1's totals.
 
+**DONE 2026-09-25.** Built:
+
+- `public/shared/wincard.mjs` — `ensureStatsDays` (INSERT-only backfill;
+  a written day is never rewritten), `weekAggregate` (per-word counts
+  add across days, `first` flags collected), `streakOf` (measured back
+  from the newest active day — a quiet today doesn't erase it),
+  `pickWins` (≤ 3 wins: "First time: …", "Longest sentence: …", "N days
+  in a row", "Favorite this week: …" — no rule compares weeks, so no
+  card can state a drop), `weeklyCard` (rolling 7 local days; an empty
+  week returns `empty` and the UI hides the card).
+- `public/shared/stats.mjs` — day rows now flag first-ever words
+  (`per_word[k].first`) so the card names them without re-reading the
+  log.
+- `public/board/wincard-ui.js` + `public/index.html` — the card at the
+  top of Parent Corner and a once-a-week toast on boot (per user, keyed
+  `pip_wincard:<id>`); the Lifetime line shows only for free users.
+- `public/board.js` — mounts the card with a `nameOf` resolver over
+  `label`/`personal_entity`, so the shared modules never touch those
+  tables.
+
+Works Test: `src/board/wincard.test.mjs` — 12 fixture weeks authored as
+raw `stats_day` payloads (not written through stats.mjs, so the rules
+are graded on data they never produced): falling, empty, single-tap,
+glow-heavy, and streak-boundary weeks. Every card: 1–3 wins, no
+decrease wording (regex-checked), "First time" verified verbatim, the
+empty week hides. `check:fast` green. Owner-visible iPad leg deferred
+to real use — the card reads only slice-1 rows, which the engine test
+proves against the log.
+
 ## Slice 3 — Daily totals to supporters
 
 Goal: the SLP's laptop and every supporter's device show the same
