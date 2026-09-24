@@ -51,3 +51,11 @@ works after a reload.
   shipped layout. Adult placements stay in `core_override`. Without this,
   a device saved before a word joined root core aborted import
   (`core cell requires a root_core sense`) and the grid never painted.
+- **Top bar readable, controls as glyphs (2026-09-24):** sentence words are
+  picture + 20px ink word with no role color, bar 68px; 🗑 · ⌫ · 🔊 · 📊 · ✚
+  are ink SVG glyphs; ⌫ detaches the last pick; "After Speak, the next
+  word" (`fresh_after_speak`, default Adds on). Browser pass on agent slot
+  8797: bar reads I/want/go, ⌫ detached `go` in `learner_event_log`,
+  Adds on → "I want more", Starts fresh → "Go", ⌫ cancels a fresh start.
+  Audio to `ended` unproven there (tab hidden — Chrome never loaded media).
+  Spec: `docs/product/Design_System.md` § Sentence bar.

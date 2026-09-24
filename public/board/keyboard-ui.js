@@ -17,6 +17,7 @@ const KB_DEV_TERM = /[\s.,!?¿¡]/;
 export function mountKeyboard({
   db, locale, profile, all,
   sentence, getSentenceId, ensureSentence, getSentencePicks, setSentencePicks,
+  startFresh,
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
   showGroupHint, applyLikely, fitLabels, senseById,
   getHighlightNext, getJevSharing,
@@ -167,6 +168,7 @@ export function mountKeyboard({
   }
 
   function kbPress(key) {
+    if (key !== "Enter") startFresh(key === "Backspace"); // ⌫ edits the spoken bar
     const prevLast = sentence[sentence.length - 1];
     const res = applyKey(
       { buffer: kbText, pendingAccent: kbPendingAccent, lead: kbLead, items: sentence },
@@ -317,6 +319,7 @@ export function mountKeyboard({
   function kbDeviceInput() {
     const ta = $("kb-device");
     const v = ta.value;
+    if (v) startFresh();
     let last = -1;
     for (let i = 0; i < v.length; i++) if (KB_DEV_TERM.test(v[i])) last = i;
     kbPendingAccent = null;

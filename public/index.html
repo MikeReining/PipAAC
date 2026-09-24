@@ -57,8 +57,8 @@
         --word-font: "Andika", -apple-system, "Helvetica Neue", sans-serif;
       }
       /* Grammar roles: --rb border, --rf label-strip fill. One pair per
-         role; every surface (grid tile, strip card, sentence chip,
-         swatch) reads the same two vars. */
+         role; every surface (grid tile, strip card, swatch) reads the
+         same two vars. The sentence bar carries no role color. */
       .r-Yellow { --rb: #b07f00; --rf: #fdf0c8; }
       .r-Green  { --rb: #2e8b3a; --rf: #dcf0dd; }
       .r-Blue   { --rb: #2f6fd0; --rf: #dcecfd; }
@@ -90,8 +90,10 @@
         z-index: 2;
       }
 
-      /* --- top bar: sentence chips + Clear / Speak + Parent corner --- */
-      #topbar { display: flex; gap: var(--gap); height: 52px; }
+      /* --- top bar: Clear, sentence, Backspace / Speak, Parent corner.
+         Controls are ink line glyphs, never clipart — art means a word,
+         a glyph means a control. Clear sits apart from Speak. --- */
+      #topbar { display: flex; gap: var(--gap); height: 68px; }
       #bar {
         flex: 1;
         min-width: 0;
@@ -100,8 +102,8 @@
         background: #fff;
         display: flex;
         align-items: center;
-        padding: 4px 6px;
-        gap: 5px;
+        padding: 3px 8px;
+        gap: 12px;
         overflow-x: auto;
       }
       /* The ink bird (never the gold one — gold stays off the grid)
@@ -114,45 +116,36 @@
         font-size: 17px;
         white-space: nowrap;
       }
-      /* Sentence chip: a miniature word tile — role border, role-tinted
-         label strip on top, art below. Typed words carry no role. */
+      /* Sentence chip: the picture with its word underneath in ink. No
+         role color and no frame — the word was already found on the
+         grid; here it only has to read, for the user and the partner. */
       .chip {
         height: 100%;
-        aspect-ratio: 1.15;
         flex: none;
-        border: 2px solid var(--rb, var(--edge));
-        border-radius: 8px;
-        background: #fff;
-        overflow: hidden;
+        min-width: 36px;
         display: flex;
         flex-direction: column;
+        align-items: center;
       }
+      .chip .cart {
+        height: calc(100% - 24px);
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chip .cart img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+      .chip.photo .cart img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
       .chip .clabel {
         flex: none;
-        height: 34%;
-        background: var(--rf);
+        height: 24px;
         color: var(--ink-text);
         font-family: var(--word-font);
         font-weight: 700;
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        font-size: 20px;
+        line-height: 24px;
         white-space: nowrap;
-        overflow: hidden;
-        padding: 0 2px;
       }
-      .chip .cart {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2px;
-      }
-      .chip .cart img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
-      .chip.photo .cart { padding: 0; }
-      .chip.photo .cart img { width: 100%; height: 100%; object-fit: cover; }
       #bar .partial { color: var(--muted); font-weight: 700; font-size: 20px; white-space: nowrap; }
       .bar-btn {
         height: 100%;
@@ -166,18 +159,35 @@
         padding: 0 16px;
       }
       .bar-btn.primary { background: var(--ink); color: var(--cream); }
+      .bar-btn.glyph {
+        flex: none;
+        width: 68px;
+        padding: 0;
+        display: grid;
+        place-items: center;
+      }
+      .bar-btn.glyph.primary { width: 88px; }
+      .bar-btn.glyph svg { width: 34px; height: 34px; }
       .bar-btn:disabled {
         border-color: var(--mask-b);
         background: var(--mask-f);
         color: var(--mask-t);
       }
       .corner-btn {
-        min-width: 52px;
+        flex: none;
+        width: 56px;
         border: 2px solid var(--line);
         border-radius: 10px;
         background: #fff;
-        font-size: 22px;
+        color: var(--ink);
+        padding: 0;
+        display: grid;
+        place-items: center;
       }
+      .corner-btn svg { width: 26px; height: 26px; }
+      .corner-btn[hidden] { display: none; }
+      #corner .g-done, body.editing #corner .g-open { display: none; }
+      body.editing #corner .g-done { display: block; }
       /* The 📊 toggle's on state (018 D10): pressed chrome, same rule as
          the seg buttons. */
       .corner-btn.on { border-color: var(--ink-text); background: var(--tray); }
@@ -625,12 +635,24 @@
   </head>
   <body>
     <div id="topbar">
+      <button id="clear" class="bar-btn glyph" title="Clear" aria-label="Clear" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 3.5h4M6 7l1 13h10l1-13M10 11v5.5M14 11v5.5"/></svg>
+      </button>
       <div id="bar" title="Sentence"></div>
-      <button id="clear" class="bar-btn" title="Clear" disabled>Clear</button>
-      <button id="speak" class="bar-btn primary" title="Speak" disabled>Speak</button>
+      <button id="backspace" class="bar-btn glyph" title="Backspace" aria-label="Backspace" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h11v14H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>
+      </button>
+      <button id="speak" class="bar-btn glyph primary" title="Speak" aria-label="Speak" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+      </button>
       <button id="spot-chip" hidden>🔦 Spotlight · End</button>
-      <button id="edit-counts" class="corner-btn" hidden title="Show counts">📊</button>
-      <button id="corner" class="corner-btn" title="Parent corner">✚</button>
+      <button id="edit-counts" class="corner-btn" hidden title="Show counts" aria-label="Show counts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-5"/></svg>
+      </button>
+      <button id="corner" class="corner-btn" title="Parent corner" aria-label="Parent corner">
+        <svg class="g-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v15M4.5 12h15"/></svg>
+        <svg class="g-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+      </button>
     </div>
     <!-- Coach view (013 § 5a): partner devices only — the session's
          words, one tap to model live; tips, a rotating basic, today's
@@ -675,6 +697,13 @@
             <button data-v="1">On</button>
           </div>
           <p class="hint">Up to three grid words get a thicker inner border in their own color.</p>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">After Speak, the next word</span>
+          <div class="seg" id="fresh-speak">
+            <button data-v="0">Adds on</button>
+            <button data-v="1">Starts fresh</button>
+          </div>
         </div>
         <div class="seg-row">
           <span class="seg-label">Smarter suggestions</span>

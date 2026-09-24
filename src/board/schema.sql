@@ -160,7 +160,12 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- up against the child's own history so small grammar words survive —
   -- 'their_words' lets history take over as it grows.
   sentence_help TEXT NOT NULL DEFAULT 'one_step_up'
-    CHECK (sentence_help IN ('one_step_up', 'their_words'))
+    CHECK (sentence_help IN ('one_step_up', 'their_words')),
+  -- After Speak (Design_System § Sentence bar): 0 keeps the spoken words
+  -- and the next pick adds on, 1 lets the next pick start a fresh bar.
+  -- Either way the words stay up for a repeat until that next pick.
+  -- No semicolons in comments here: DDL readers stop at the first one.
+  fresh_after_speak INTEGER NOT NULL DEFAULT 0 CHECK (fresh_after_speak IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

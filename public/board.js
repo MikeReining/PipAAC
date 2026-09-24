@@ -179,6 +179,7 @@ function onSyncApplied() {
     kbUi.order = p.keyboard_order ?? kbUi.order;
     highlightNext = (p.highlight_next ?? 0) === 1;
     jevSharing = (p.jev_sharing ?? 1) === 1;
+    syncFreshSeg();
     bindSpotSettings();  // spotlight settings sync too
     resumeSession(db);   // a session started/ended elsewhere lands here
     renderCellsSeg();    // a Cells change may have landed
@@ -236,6 +237,16 @@ const sentence = []; // [{kind, id, text}]
 let sentenceId = null;
 let sentencePicks = 0; // member events so far — the next pick's position
 const ensureSentence = () => (sentenceId ??= openSentence(db));
+/* After Speak (fresh_after_speak): the spoken words stay up for a
+ * repeat either way. With the setting on, the next new word empties
+ * the bar first; Backspace or Clear means the user is editing, so the
+ * pending fresh start is dropped. */
+let freshAfterSpeak = false;
+let freshNext = false;
+const startFresh = (editing = false) => {
+  if (freshNext && !editing) sentence.length = 0;
+  freshNext = false;
+};
 /* Strip impressions (§ 5.7): renderStrip logs what the strip offered at
  * the next pick's position — one row per distinct offer, deduped by
  * (sentence, position, shown). The next logged pick fills chosen_*. */
@@ -311,7 +322,8 @@ async function speakItem(item) {
  *  Speaking ends the logged sentence — the bar keeps its words, but the
  *  next pick opens a new sentence row. */
 async function speakSentence() {
-  for (const item of sentence) await speakItem(item);
+  freshNext = freshAfterSpeak;
+  for (const item of [...sentence]) await speakItem(item);
   if (sentenceId !== null) {
     const sid = sentenceId;
     closeSentence(db, sid, Date.now(), "spoken");
@@ -382,24 +394,18 @@ function renderBar() {
   bar.innerHTML = "";
   // Display-only: capitalization and ¿¡/?! marks live on the items as
   // lead/punct; item.text and spoken text are unchanged (slice 2 rule 7).
-  // Each item renders as a miniature word tile — role border and a
-  // role-tinted label strip, art underneath (Design_System § Tiles).
+  // Each item renders as its picture with the word underneath in ink —
+  // no role color (Design_System § Sentence bar).
   const texts = displaySentence(sentence, locale);
   sentence.forEach((item, i) => {
-    const role =
-      item.kind === "entity"
-        ? roleForEntity(item.id)
-        : item.kind === "sense"
-          ? metaFor(item.id).role
-          : null;
     const chip = document.createElement("span");
-    chip.className = `chip r-${role ?? "None"}`;
+    chip.className = "chip";
     const lb = document.createElement("span");
     lb.className = "clabel";
     lb.textContent = texts[i];
     const ar = document.createElement("span");
     ar.className = "cart";
-    chip.append(lb, ar);
+    chip.append(ar, lb);
     if (item.kind === "sense") {
       const art = metaFor(item.id).art;
       if (art) {
@@ -438,13 +444,15 @@ function renderBar() {
     bar.append(img, note);
   }
   $("clear").disabled = !sentence.length && !kbUi.text;
+  $("backspace").disabled = !sentence.length && !kbUi.text;
   $("speak").disabled = !sentence.length;
-  fitLabels(bar);
+  bar.scrollLeft = bar.scrollWidth; // the newest word stays in view
 }
 $("bar").addEventListener("click", () => {
   if (sentence.length) speakSentence();
 });
 $("clear").addEventListener("click", () => {
+  startFresh(true);
   if (sentenceId !== null) {
     closeSentence(db, sentenceId, Date.now(), "cleared");
     partnerTurn = null; // 017-24: turn closed without an answer
@@ -460,6 +468,25 @@ $("clear").addEventListener("click", () => {
 });
 $("speak").addEventListener("click", () => {
   if (sentence.length) speakSentence();
+});
+/* Backspace takes the last whole word (or the word being typed). A
+ * logged pick leaves the open sentence the same way the keyboard's ⌫
+ * detaches it — its event stays as usage evidence (funnel detachEvent). */
+$("backspace").addEventListener("click", () => {
+  startFresh(true);
+  if (kbUi.text) {
+    kbUi.text = "";
+    const dev = $("kb-device");
+    if (dev) dev.value = "";
+  } else {
+    const last = sentence.pop();
+    if (last?.id && sentenceId !== null && sentencePicks > 0) {
+      detachEvent(db, sentenceId, sentencePicks - 1);
+      sentencePicks--;
+    }
+  }
+  renderBar();
+  renderStrip();
 });
 
 const senseById = (senseId) =>
@@ -852,6 +879,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
   clearModel(id ? `${kind}:${id}` : null);
   const item = { kind, id, text };
   expand = null; // any pick returns the bar to Predict (014 § 5)
+  startFresh();
   sentence.push(item);
   renderBar();
   speakItem(item);
@@ -960,7 +988,7 @@ function wordTile({ label, role, art = null, photoURL = null }) {
  *  labels may wrap between words. */
 function fitLabels(root) {
   document.fonts.ready.then(() => {
-    for (const lb of root.querySelectorAll(".tlabel, .plabel, .clabel")) {
+    for (const lb of root.querySelectorAll(".tlabel, .plabel")) {
       const maxW = lb.clientWidth;
       const maxH = lb.clientHeight;
       if (!maxW || !maxH) continue;
@@ -1467,6 +1495,7 @@ let editorUi;
 const kbUi = mountKeyboard({
   db, locale, profile: kbProfile, all: ALL,
   sentence, getSentenceId: () => sentenceId, ensureSentence,
+  startFresh,
   getSentencePicks: () => sentencePicks,
   setSentencePicks: (n) => { sentencePicks = n; },
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
@@ -1527,6 +1556,23 @@ for (const [seg, key, numeric] of [
   });
 }
 syncSbSegs();
+/* After Speak — whether the next word adds on or starts a fresh bar. */
+function syncFreshSeg() {
+  freshAfterSpeak = (ALL(db,
+    "SELECT fresh_after_speak AS f FROM learner_profile WHERE id = 'prf_local'",
+  )[0]?.f ?? 0) === 1;
+  if (!freshAfterSpeak) freshNext = false;
+  for (const b of $("fresh-speak").querySelectorAll("button")) {
+    b.classList.toggle("on", (b.dataset.v === "1") === freshAfterSpeak);
+  }
+}
+$("fresh-speak").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v === undefined) return;
+  setSetting(db, "fresh_after_speak", Number(v));
+  syncFreshSeg();
+});
+syncFreshSeg();
 /* "Help improve Pip" (016 slice 6) — the research-totals switch. Same
  * synced-setting mechanics as the seg above. */
 const syncShareSeg = () => {
@@ -1586,15 +1632,16 @@ $("spot-chip").addEventListener("click", () => {
    public/board/groups-ui.js. */
 
 /** One mode everywhere: entering Edit marks the body (dashed borders)
- *  and turns the corner button into ✓ Done. */
+ *  and turns the corner button into ✓ Done (its glyph swaps on
+ *  body.editing). */
 function setEditing(on) {
   editing = on;
   countsOn = countsOn && on; // 📊 leaves with Edit mode
   document.body.classList.toggle("editing", on);
   $("edit-counts").hidden = !on;
   $("edit-counts").classList.toggle("on", countsOn);
-  $("corner").textContent = on ? "✓ Done" : "✚";
   $("corner").title = on ? "Done editing" : "Parent corner";
+  $("corner").setAttribute("aria-label", $("corner").title);
   renderGrid(); // the home grid takes edit gestures too (014 slice 3)
   applyLikely();
 }

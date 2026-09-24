@@ -164,21 +164,30 @@ renders on the child's device.
 
 ## Sentence bar
 
-**BUILT** (`public/index.html` `#bar` / `.chip`, `public/board.js`
-`renderBar`):
+**BUILT** (`public/index.html` `#topbar` / `.chip`, `public/board.js`
+`renderBar`), decided with the founder 2026-09-24:
 
-- Each committed item is a miniature word tile: role border, role-tinted
-  label strip on top, art below. Typed words with no catalog role are
-  neutral (`r-None`).
-- Empty bar: the ink bird + "Tap a word to start."
-- `Clear` (ink outline) empties the bar and the in-progress word;
-  `Speak` (solid ink) plays the sentence. Both render disabled —
-  `#cfc9bb` / `#efeadf` / `#a39c8a` — while the bar is empty.
+- Order: 🗑 Clear · sentence · ⌫ Backspace · 🔊 Speak · 📊 / ✚. Clear
+  sits at the far end from Speak so a mis-tap can't wipe a sentence.
+- Bar is 68px. Each item is its picture with the word under it in ink
+  (Andika Bold 20px) — no role color, no frame. Color helps *find* a word
+  on the grid; in the bar the word is already found and only has to read.
+- Controls are ink line glyphs (inline SVG, `currentColor`), never
+  clipart — art means a word, a glyph means a control. Each keeps its
+  `title` / `aria-label`. ✚ turns into ✓ on `body.editing`.
+- ⌫ removes the last whole word (or the word being typed); a logged pick
+  is detached, same as the keyboard's ⌫. 🗑 empties the bar.
+- 🔊, or a tap on the bar, speaks the sentence. The words stay for a
+  repeat. Parent Corner "After Speak, the next word": **Adds on**
+  (default) or **Starts fresh** (`fresh_after_speak`) — the next new
+  word empties the bar first. ⌫ or 🗑 cancels a pending fresh start.
+- Empty bar: the ink bird + "Tap a word to start." All three controls
+  render disabled — `#cfc9bb` / `#efeadf` / `#a39c8a`.
 
 ## Typography
 
 **BUILT.** Andika Bold (SIL OFL, self-hosted `public/fonts/`) is the face
-of every word the learner sees: tile labels, strip cards, sentence chips,
+of every word the learner sees: tile labels, strip cards, sentence words,
 keycaps, anchors. Parent Corner sheets stay on the system font — adult
 chrome.
 
@@ -193,8 +202,8 @@ needs a sentence isn't finished.
 
 **PROPOSED**, unscheduled: custom "Pip" wordmark (Andika Bold is the
 placeholder), poses 2–6 as drawn vectors, Mode C high contrast
-(`docs/product/Profile_Presentation_Modes.md` §2.3), system icon set,
-color-blindness simulation of roles + amber, squint test on a cheap
+(`docs/product/Profile_Presentation_Modes.md` §2.3), system icon set
+(top bar done 2026-09-24), color-blindness simulation of roles + amber, squint test on a cheap
 tablet.
 
 ## Asset homes

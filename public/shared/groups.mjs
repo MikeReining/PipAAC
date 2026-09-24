@@ -746,6 +746,7 @@ const SYNCED_SETTINGS = new Set([
   "show_board_words",
   "no_last_slot",
   "sentence_help",
+  "fresh_after_speak",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);
