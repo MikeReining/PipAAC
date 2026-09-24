@@ -74,7 +74,7 @@ export function needsRouteWalk(targets, onBoard) {
 
 export function spotLists(db) {
   return db.prepare(
-    `SELECT l.id, l.name, COUNT(i.item_id) AS n
+    `SELECT l.id, l.name, l.is_goal, COUNT(i.item_id) AS n
      FROM spotlight_list l LEFT JOIN spotlight_item i ON i.list_id = l.id
      GROUP BY l.id ORDER BY l.name`,
   ).all();
@@ -130,6 +130,51 @@ export function deleteSpotList(db, id) {
   db.prepare("DELETE FROM spotlight_item WHERE list_id = ?").run(id);
   db.prepare("DELETE FROM spotlight_list WHERE id = ?").run(id);
   recordOp(db, "spot_list_del", { id });
+}
+
+/** Mark a list as a goal (016 § 5) — its targets then appear in the
+ *  dashboard's goal-words rows, own taps vs glowed taps, by week. */
+export function setListGoal(db, id, goal) {
+  db.prepare("UPDATE spotlight_list SET is_goal = ? WHERE id = ?")
+    .run(goal ? 1 : 0, id);
+  recordOp(db, "spot_list_goal", { id, goal: goal ? 1 : 0 });
+}
+
+/** Goal progress (016 § 5): for every goal list, each target's taps
+ *  split on-their-own vs with-the-glow, bucketed by week. Reads
+ *  stats_day only — a goal never re-opens the tap log. A word in two
+ *  goal lists counts toward both. Returns
+ *  [{ list_id, name, weeks: { weekIdx: { "kind:id": {own, glow} } } }]. */
+export function goalWords(db, fromDay, toDay) {
+  const lists = db.prepare(
+    `SELECT l.id AS list_id, l.name, i.kind, i.item_id
+     FROM spotlight_list l JOIN spotlight_item i ON i.list_id = l.id
+     WHERE l.is_goal = 1 ORDER BY l.name`,
+  ).all();
+  const goals = new Map();
+  const keyToLists = new Map();
+  for (const r of lists) {
+    const g = goals.get(r.list_id) ?? { list_id: r.list_id, name: r.name, weeks: {} };
+    goals.set(r.list_id, g);
+    const key = `${r.kind}:${r.item_id}`;
+    (keyToLists.get(key) ?? keyToLists.set(key, []).get(key)).push(r.list_id);
+  }
+  if (!goals.size) return [];
+  for (const r of db.prepare(
+    "SELECT day, payload FROM stats_day WHERE day BETWEEN ? AND ?",
+  ).all(fromDay, toDay)) {
+    const week = Math.floor(r.day / 7);
+    const perWord = JSON.parse(r.payload).per_word ?? {};
+    for (const [key, e] of Object.entries(perWord)) {
+      for (const listId of keyToLists.get(key) ?? []) {
+        const g = goals.get(listId);
+        const t = ((g.weeks[week] ??= {})[key] ??= { own: 0, glow: 0 });
+        t.own += e.taps - (e.spotlit ?? 0);
+        t.glow += e.spotlit ?? 0;
+      }
+    }
+  }
+  return [...goals.values()];
 }
 
 /** The running session row, or null. */

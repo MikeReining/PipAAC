@@ -5,7 +5,7 @@
  */
 import {
   deleteSpotList, endSession, listItems, listTargets,
-  saveSpotList, spotLists, spotSession, startSession, setItemTip,
+  saveSpotList, spotLists, spotSession, startSession, setItemTip, setListGoal,
 } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
 
@@ -45,6 +45,16 @@ export function mountSpotlightSheet({
         close("spotform");
         renderGrid();
         rerenderView();
+      });
+      // 016 § 5: a list marked as a goal is tracked in the weekly
+      // stats — target words on their own vs with the glow.
+      const goal = document.createElement("button");
+      goal.className = "btn secondary";
+      goal.textContent = l.is_goal ? "✓ Goal" : "Goal";
+      goal.title = "Track this list's words in the progress stats";
+      goal.addEventListener("click", () => {
+        setListGoal(db, l.id, !l.is_goal);
+        renderSpotForm();
       });
       const del = document.createElement("button");
       del.className = "btn secondary";
@@ -91,7 +101,7 @@ export function mountSpotlightSheet({
         editor.appendChild(save);
         row.after(editor);
       });
-      row.append(name, start, tipsBtn, del);
+      row.append(name, start, tipsBtn, goal, del);
       box.appendChild(row);
     }
     const { spot_dim: dim = 45, spot_boost: boost = 1 } = all(db,

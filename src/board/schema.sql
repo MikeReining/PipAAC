@@ -312,7 +312,10 @@ CREATE TABLE IF NOT EXISTS sense_mask (
 CREATE TABLE IF NOT EXISTS spotlight_list (
   id TEXT PRIMARY KEY CHECK (id GLOB 'spl_*'),
   name TEXT NOT NULL CHECK (length(name) > 0),
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  -- 016 § 5: a goal list's targets are tracked in stats_day — taps on
+  -- their own vs with the glow, by week.
+  is_goal INTEGER NOT NULL DEFAULT 0 CHECK (is_goal IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS spotlight_item (
@@ -320,7 +323,7 @@ CREATE TABLE IF NOT EXISTS spotlight_item (
   kind TEXT NOT NULL CHECK (kind IN ('sense', 'entity')),
   item_id TEXT NOT NULL,
   -- Coach view (013 § 5a): a one-line modeling tip an SLP may edit per
-  -- list; NULL falls back to the shipped catalog.coachTips entry.
+  -- list — NULL falls back to the shipped catalog.coachTips entry.
   tip TEXT,
   PRIMARY KEY (list_id, kind, item_id)
 );
@@ -699,4 +702,4 @@ CREATE TABLE IF NOT EXISTS stats_day (
   PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 12;
+PRAGMA user_version = 13;

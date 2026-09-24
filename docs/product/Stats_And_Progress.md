@@ -120,6 +120,11 @@ as a **goal**. The dashboard then shows each target word used on the
 child's own vs with the glow, week by week. "Uses *more* on their own 5
 times a day" becomes a number the app produces, not a tally sheet.
 
+**BUILT 2026-09-25** — `spotlight_list.is_goal` (Goal toggle in the
+Spotlight sheet, synced via `spot_list_goal`) + `goalWords(db, from,
+to)` in `public/shared/spotlight.mjs`: per-target `{own, glow}` per
+week from `stats_day`. The dashboard surface itself is slice 4.
+
 ## 6. Where the data lives
 
 ### 6.1 On the child's device

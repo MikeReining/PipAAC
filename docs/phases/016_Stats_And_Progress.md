@@ -217,6 +217,26 @@ glow on Monday and none after: Monday's taps count as "with the glow",
 the rest as "on their own", matching hand-computed values. Taps a
 partner makes on a linked phone add nothing.
 
+**DONE 2026-09-25.** Built:
+
+- `src/board/schema.sql` — `spotlight_list.is_goal` (0/1, default 0;
+  drift rebuild carries it). `user_version` 13. Also removed a latent
+  landmine: a `;` inside `spotlight_item`'s DDL comment broke the
+  `ddlFor` regex both here and in `public/db.js`'s migrator.
+- `public/shared/spotlight.mjs` — `setListGoal` (synced op
+  `spot_list_goal`) and `goalWords(db, fromDay, toDay)`: for every goal
+  list, each target's `{own, glow}` per week, read from `stats_day`
+  only — a goal never re-opens the tap log, and coach events can never
+  inflate it. A word in two goal lists counts toward both.
+- `public/shared/ops.mjs` — `applyOp` case `spot_list_goal`.
+- `public/board/spotlight-sheet.js` — a Goal toggle on each saved list.
+
+Works Test: `src/board/goals.test.mjs` — real taps → `upsertStatsDay`
+→ `goalWords`; the scripted Monday-glow week matches hand-computed
+`{own, glow}` per target; five partner `coach_event` rows add nothing;
+a second own-device day row adds in; the goal op replays and skips
+unsynced lists. `check:fast` green.
+
 ## Slice 6 — Anonymous totals to Pip
 
 Goal: "Help improve Pip", on by default, sends the whitelisted daily
