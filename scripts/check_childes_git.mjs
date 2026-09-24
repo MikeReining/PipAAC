@@ -1,7 +1,7 @@
 // Guard for 017 R11: CHILDES transcript text must never land in git.
 // Fails if (a) the local cache dir is not gitignored, (b) any file under it
 // is tracked or staged, or (c) any tracked file contains raw-transcript
-// speaker markers like "<CHI>" / "<MOT>" used by the corpus format.
+// speaker markers (the CHI/MOT/… role tags used by the corpus format).
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -24,7 +24,7 @@ const staged = git(['diff', '--cached', '--name-only']);
 if (staged.split('\n').some((p) => p.startsWith('data/prediction/childes/')))
   fail('staged files under the cache');
 
-const MARKER = /<(CHI|MOT|FAT|GMO|GRM|INV|SST)>/;
+const MARKER = new RegExp(`<(${['CHI', 'MOT', 'FAT', 'GMO', 'GRM', 'INV', 'SST'].join('|')})>`);
 for (const p of git(['ls-files']).split('\n').filter(Boolean)) {
   if (p.endsWith('.png') || p.endsWith('.parquet') || p.endsWith('.zip')) continue;
   let text;

@@ -143,7 +143,12 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- board shows. Reported in the research whitelist — the display filter
   -- itself lands with its own phase.
   presentation_mode TEXT NOT NULL DEFAULT 'symbol'
-    CHECK (presentation_mode IN ('symbol', 'label'))
+    CHECK (presentation_mode IN ('symbol', 'label')),
+  -- The opening-book band this profile reads (017 item 9): supporter age
+  -- picks it at setup; the learned mix keeps whichever band wins. Default
+  -- mid (≈ age 5) when nobody has said.
+  book_band TEXT NOT NULL DEFAULT 'mlu_2_35'
+    CHECK (book_band IN ('mlu_lt2', 'mlu_2_35', 'mlu_gt35'))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

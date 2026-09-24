@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import { existsSync } from 'node:fs';
 import * as C from './common.mjs';
 import * as S from './score.mjs';
+import { build } from './book_model.mjs';
 
 test('PyRandom reproduces CPython shuffle/randbelow', () => {
   assert.deepEqual(
@@ -32,7 +33,27 @@ test('am/is/are are vocabulary words, not the ghost lemma be', () => {
   // surface lemmas win over IRREG: Pip has am/is/are tiles, not "be"
   assert.deepEqual(C.lemmatize(['i', 'am', 'happy']), ['i', 'am', 'happy']);
   for (const w of ['am', 'is', 'are', 'was', 'were']) assert.equal(C.toLemma(w), w);
-  assert.equal(C.toLemma('been'), 'be'); // non-lemma forms still regularize
+  // no lemmatizer path may produce 'be' — Pip has no such tile
+  for (const w of ['been', 'being', 'be']) assert.equal(C.toLemma(w), null);
+});
+
+test('multiword pieces resolve to the parent lemma, never a ghost', () => {
+  // a bare "done" is the "all done" tile; "way" -> "no way"
+  assert.equal(C.toLemma('done'), 'all done');
+  assert.equal(C.toLemma('ice'), 'ice cream');
+  assert.equal(C.toLemma('way'), 'no way');
+  // a piece that is itself a lemma keeps its own lemma
+  assert.equal(C.toLemma('all'), 'all');
+  assert.equal(C.toLemma('my'), 'my');
+  // every lemmatized token is either null or an offerable lemma —
+  // no ghost lemmas anywhere in the pipeline
+  const vocab = new Set(C.LEMMAS);
+  for (const w of ['done', 'ice', 'way', 'wake', 'police', 'been', 'cookies',
+                   'said', 'brought', 'gotta', 'lemme', 'nana', 'tummy',
+                   'binky', 'veggies', 'pic']) {
+    const l = C.toLemma(w);
+    assert.ok(l === null || vocab.has(l), `${w} -> ${l} not offerable`);
+  }
 });
 
 test('band edges and split semantics', () => {
@@ -50,7 +71,7 @@ test('band edges and split semantics', () => {
 // 2026-09-24: the repo's numbers are the baseline; the 5399d37 table was
 // produced by a scratch iteration that predates the corpus download).
 const BASELINE = {
-  'CHILDES child speech': { mlu_lt2: [41.6, 19.5, 18.2], mlu_2_35: [49.6, 26.8, 26.7], mlu_gt35: [48.7, 29.4, 29.5] },
+  'CHILDES child speech': { mlu_lt2: [41.3, 18.2, 19.2], mlu_2_35: [48.8, 26.6, 27.2], mlu_gt35: [49.4, 30.0, 30.3] },
 };
 
 test('real-children scorer: events + books reproduce the repo baseline', { skip: !existsSync(C.TRANSCRIPTS) && 'no CHILDES cache' }, () => {
@@ -59,9 +80,9 @@ test('real-children scorer: events + books reproduce the repo baseline', { skip:
   assert.equal(trs.length, 10828);
   assert.equal(testIdx.size, 2165);
   const events = S.buildEvents(trs, testIdx);
-  assert.equal(events.length, 857746); // deterministic port invariant
-  assert.equal(events.filter((e) => !C.CORE.has(e.target)).length, 358913);
-  const childBook = S.build([[1.0, (function* () {
+  assert.equal(events.length, 855359); // deterministic port invariant
+  assert.equal(events.filter((e) => !C.CORE.has(e.target)).length, 355805);
+  const childBook = build([[1.0, (function* () {
     for (const i of [...train].sort((a, b) => a - b))
       for (const [s, w] of trs[i]) if (C.CHILD_TAGS.has(s)) yield w;
   })()]]);

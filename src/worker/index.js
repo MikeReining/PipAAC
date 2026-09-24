@@ -1,4 +1,5 @@
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
+import openingBook from "../../data/prediction/opening_book.en.json" with { type: "json" };
 import { UserRelay } from "./relay.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
@@ -24,6 +25,12 @@ export default {
 
     if (path === "/catalog.json") {
       return json(catalog);
+    }
+
+    // The opening book (017 step 23): aggregate next-word probabilities
+    // over the closed vocabulary — counts only, never source text.
+    if (path === "/opening_book.en.json") {
+      return json(openingBook);
     }
 
     // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted

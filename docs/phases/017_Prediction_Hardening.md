@@ -2,11 +2,11 @@
 
 **Status:** Executing. **Re-planned 2026-09-24 (founder, R16–R19):**
 the scoreboard is real children (held-out CHILDES), not synthetic
-users; steps 15 and 18 are parked. Next: § Build order "Current order"
-item 1. M1 complete (steps 4, 3, 5, 1, 2 — all BUILT). Built on the
-synthetic bench: steps 11, 12, 16, 13. Steered-synth book work for
-step 23 is measured in scratch (`fa244be`, `6398078`) — the repo
-`build_book.mjs` pipeline is the pending part.
+users; steps 15 and 18 are parked. Current-order items 1 and 2 DONE —
+the repo scorer is the baseline and the shipped opening book beats or
+matches it in every cell. Next: item 3 (book + history in the strip).
+M1 complete (steps 4, 3, 5, 1, 2 — all BUILT). Built on the
+synthetic bench: steps 11, 12, 16, 13.
 
 **DECIDED 2026-09-23** (founder: "If we nail prediction … we can create a
 category killer. I don't think we are there yet."). Source: an independent
@@ -183,6 +183,9 @@ M2/M3 order below until the book is in the strip.
    the old table was approximate — it predates the corpus download).
 2. Step 23 book build, items (a)–(d), with CHILDES counts as a source (R11).
    Proof: beats the scratch numbers on the item-1 scorer.
+   **Status: DONE 2026-09-24** — opening_book.en.json (2.60 MB) scores
+   +2.8 / +0.2 / 0.0 later words over the CHILDES-child baseline per
+   band (step 23 § Build); CHILDES is the only weighted source.
 3. Book + the user's own history in the strip: continue and start
    (R17; steps 7, 10, 21). Proof: item-1 scorer, and on-device check
    that the strip shows what the scorer scored.
@@ -938,18 +941,55 @@ license, credit), `data/prediction/opening_book.en.json` (generated),
 `data/prediction/SOURCES.md` (credits), `public/shared/funnel.mjs`
 (`book` feature and retrieval).
 
-**Status (BUILT 2026-09-23, `fa244be`).** The first book source is built
+**Status (BUILT 2026-09-23, `fa244be`; items a–d done 2026-09-24).**
+The first book source is built
 and measured: `gen_childlike.mjs` + `childlike_en.jsonl` (§ Steered
 synth). The scratch harness measured the decisions this spec needed —
-recorded below as amendments to items 3, 4, and 9. Build order for the
-rest: (a) `book_sources.json` + fetch/pin + license-allowlist test;
-(b) `build_book.mjs` — port the scratch builder and lemma map to mjs,
-proof = it reproduces the scratch TD-validation scores; (c)
-`score_book.mjs` + `book.test.mjs` — TD-val + Imagine held-outs,
-threshold asserts, byte-identical regen, no-held-out-reads test;
-(d) `funnel.mjs` `book` feature + catalog embed; (e) `SOURCES.md`.
-Open question for (b): interpolated λ = .55/.30/.15 vs. Kneser–Ney —
-one cheap sweep on `score_book.mjs` before the format locks.
+recorded below as amendments to items 3, 4, and 9.
+
+**Items (a)–(d) built and measured 2026-09-24** on the corrected
+lemmatizer (item-1 rulings: no ghost lemmas — `am/is/are`, multiword
+pieces, and every IRREG target resolve to offerable lemmas or OOV):
+
+- (a) `data/prediction/book_sources.json` — URL/SHA-256/license/role per
+  source; the license allowlist is enforced in `book.test.mjs` (CHILDES
+  enters via the written permission record, R11).
+- (b) `build_book.mjs` — interpolated 1–3-grams (λ .55/.30/.15),
+  multi-word lemmas first, OOV breaks context, per-band weighted
+  streams, per-band prune, deterministic bytes. The Kneser–Ney question
+  is deferred: interpolation already beats the baseline; if a future
+  sweep wants it, the file format is versioned.
+- (c) `score_book.mjs` scores the shipped file through the device lookup
+  (`opening_book.mjs`) on all three held-outs; `book.test.mjs` proves
+  determinism, train-only reads, closed-vocab output, hash pins, and
+  file-vs-memory parity.
+- (d) `book` is a funnel feature (`log P(word | last two lemmas)` with
+  back-off to start); `learner_profile.book_band` is a synced setting
+  (default `mlu_2_35`); the worker serves the file at
+  `/opening_book.en.json` and `bootDb` fetches it alongside the catalog.
+
+Winning mix (sweep.mjs, identical event stream + sample per arm —
+measured-and-rejected sources stay in the manifest at weight 0):
+MLU < 2 = band-filtered CHILDES child speech; MLU 2–3.5 = full CHILDES +
+0.5 band tilt; MLU > 3.5 = full CHILDES. Caregiver speech, TinyDialogues,
+Imagine, and synth lose every cell — child speech is the ceiling, and
+band-splitting buys up to +2.8 where data is sparse. The shipped file is
+2.60 MB. Shipped file vs the CHILDES-child baseline (§ Real children):
+
+| Band | later / first / after-adult | Baseline | Δ |
+| --- | --- | --- | --- |
+| MLU < 2 | 44.1% / 19.6% / 20.9% | 41.3% / 18.2% / 19.2% | +2.8 / +1.4 / +1.7 |
+| MLU 2–3.5 | 49.0% / 26.6% / 27.2% | 48.8% / 26.6% / 27.2% | +0.2 / 0 / 0 |
+| MLU > 3.5 | 49.4% / 30.0% / 30.3% | 49.4% / 30.0% / 30.3% | 0 / 0 / 0 |
+
+TinyDialogues validation (never read): age-2 26.4% / 4.9%, age-5
+37.2% / 20.4% (later / first). Imagine dev: 35.8% / 23.5%. The file
+tracks its own unpruned in-memory book within 0.5pt everywhere except
+MLU < 2 (0.5pt pruning cost).
+
+**Superseded 2026-09-24:** item 3's "start mixes synth-heavy" — under the
+corrected lemmatizer each band's own CHILDES start table already beats
+baseline first-word cells; synth stays at weight 0.
 
 1. Download each source into a gitignored cache, pinned by URL and
    SHA-256 in the manifest. A test fails if any manifest license is not
@@ -1085,14 +1125,21 @@ Cells are later / first / right-after-adult-turn hit rate; random is
 
 | Book | MLU < 2 (~age 2) | MLU 2–3.5 (~age 3) | MLU > 3.5 (~age 4+) |
 | --- | --- | --- | --- |
-| Adult AAC (Imagine) | 19.1% / 5.3% / 4.7% | 25.6% / 15.0% / 15.1% | 25.8% / 21.0% / 19.6% |
-| TinyDialogues caregiver + child (**legal**) | 20.5% / 5.2% / 4.7% | **30.2%** / 21.9% / 20.9% | **31.8%** / 25.6% / 27.9% |
-| + partner words | 30.0% / 17.8% / 23.2% | 33.1% / 24.2% / 25.0% | 32.7% / 25.0% / 26.1% |
-| CHILDES caregiver speech (not licensed) | 36.5% / 13.6% / 12.8% | 47.0% / 22.0% / 22.9% | 45.5% / 25.4% / 25.7% |
-| CHILDES child speech (not licensed) | 41.6% / 19.5% / 18.2% | 49.6% / 26.8% / 26.7% | 48.7% / 29.4% / 29.5% |
+| Adult AAC (Imagine) | 17.6% / 4.9% / 5.0% | 26.7% / 14.0% / 15.0% | 28.3% / 19.5% / 16.6% |
+| TinyDialogues caregiver + child (**legal**) | 20.3% / 4.8% / 5.8% | 29.9% / 21.7% / 21.9% | **32.1%** / 27.7% / 28.1% |
+| + partner words | **30.5%** / 18.3% / 25.0% | **34.3%** / 24.5% / 26.6% | 32.1% / 26.3% / 26.6% |
+| CHILDES caregiver speech (not licensed) | 36.1% / 12.8% / 13.1% | 46.8% / 22.0% / 23.1% | 45.8% / 26.3% / 25.4% |
+| CHILDES child speech (not licensed) | 41.3% / 18.2% / 19.2% | 48.8% / 26.6% / 27.2% | 49.4% / 30.0% / 30.3% |
+
+Numbers under the corrected lemmatizer, 2026-09-24: surface lemmas win
+over the irregular map (am/is/are are Pip words, "be" is not), bare
+pieces of multiword lemmas resolve to the parent tile ("done" → "all
+done"), and every irregular-map target must be an offerable lemma
+("said" is OOV — Pip has no "say" tile). 855,359 events, 355,805
+non-core.
 
 Share of the child's non-core words that the adult said in the previous
-turn: **15.1% (MLU < 2), 11.1%, 6.5%**.
+turn: **15.2% (MLU < 2), 11.2%, 6.5%**.
 
 What real children say:
 - **The legal child book beats adult text on real children:** +5–6

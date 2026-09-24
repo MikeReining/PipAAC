@@ -16,7 +16,7 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | 017 re-plan item 1 — CHILDES scorer is in the repo but the documented table does not reproduce (gap note under § Real children); paused for founder ruling, then item 2 (opening book) | `docs/phases/017_Prediction_Hardening.md` |
+| **P1** | 017 item 3 — book + the user's own history in the strip (continue and start). Items 1–2 done: repo scorer is the baseline; opening_book.en.json beats or matches it in every cell. Item 5 (random holdback) needs founder sign-off on the spec first | `docs/phases/017_Prediction_Hardening.md` |
 | **P2** | 010 slice 1 — the word list (2,000 words + 300 phrases) — unblocks 014 slice 6 message tiles | `docs/phases/010_Extended_Picture_Library.md` |
 
 ## Live index
@@ -33,7 +33,7 @@ Executing phases only. Each row names the **next** slice.
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7, 9–11 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later). Nothing unblocked — the phase idles until 010 slice 1 lands |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 payments **deferred** (founder, 2026-09-23) — the phase stays live until billing lands or is discharged |
-| [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Item 1 scorer ported (scripts/prediction/childes/) but the documented table does not reproduce — paused for founder ruling. Steps 15 and 18 parked |
+| [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Item 1 scorer + item 2 opening book done — shipped book beats or matches the CHILDES baseline in every cell. Steps 15 and 18 parked |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

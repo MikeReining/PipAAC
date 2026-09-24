@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "note": "Opening-book sources (017 step 23). Trained files live in the gitignored data/prediction/childes/ cache; only counts derived from them ship. license must be on the allow list (ours, MIT, CC0, CC BY, CDLA-Sharing) or carry a permission file (CHILDES, R11).",
+  "sources": {
+    "childlike": {
+      "kind": "dialogues_jsonl",
+      "path": "data/prediction/sources/childlike_en.jsonl",
+      "sha256": "93ef16793f24d9503cbbd3ebd4e0b2e84002d994b1957d2ab68bc18ce726baab",
+      "license": "ours",
+      "credit": "Pip — authored frames, slot-filled from the launch vocabulary (scripts/prediction/book/gen_childlike.mjs)"
+    },
+    "td_age2": {
+      "kind": "tinydialogues",
+      "url": "https://huggingface.co/datasets/styfeng/TinyDialogues",
+      "cache": "tinydialogue_age-2_train.txt",
+      "sha256": "444c803703f2f7c61272218e625c382519f8109dad48aa75df73033c9d1d5ab6",
+      "license": "MIT",
+      "credit": "TinyDialogues — Feng, Goodman & Frank, EMNLP 2024"
+    },
+    "td_age5": {
+      "kind": "tinydialogues",
+      "url": "https://huggingface.co/datasets/styfeng/TinyDialogues",
+      "cache": "tinydialogue_age-5_train.txt",
+      "sha256": "fe0529056f153d8b6eb2c76d56459a9137a5a33344ec49eb21f9a7d4f5d41cef",
+      "license": "MIT",
+      "credit": "TinyDialogues — Feng, Goodman & Frank, EMNLP 2024"
+    },
+    "imagine": {
+      "kind": "lines",
+      "url": "https://aactext.org/imagine/aac_comm/sent_train_aac.txt",
+      "cache": "imagine_train.txt",
+      "sha256": "ddc0ad61652cec5f4a8b76f1dd63f92fa9d5c1197e0a65f7a13d71873aed91bd",
+      "license": "CC BY 4.0",
+      "credit": "Imagine AAC — Vertanen & Kristensson, EMNLP 2011"
+    },
+    "childes": {
+      "kind": "childes",
+      "cache": "transcripts.jsonl",
+      "sha256": "527664d08bfffdefbcb0ada19ad3dc259f98a2914f0e0539d6a19bfd0be9b2fb",
+      "license": "CC BY-NC-SA 4.0",
+      "permission": "data/prediction/permissions/2026-09-23_TalkBank_CHILDES.md",
+      "credit": "CHILDES / TalkBank — Brian MacWhinney, CMU. Derived aggregate counts only; written permission 2026-09-23."
+    }
+  },
+  "bands": {
+    "mlu_lt2": { "childes_chi": 1.0 },
+    "mlu_2_35": { "childes_chi_all": 1.0, "childes_chi": 0.5 },
+    "mlu_gt35": { "childes_chi_all": 1.0 }
+  },
+  "bandsNote": "Weight keys: childes_chi/childes_ad (band-filtered CHILDES train), childes_chi_all/childes_ad_all (all CHILDES train), childlike, td_age2/td_age5, imagine. Sweep (scripts/prediction/book/sweep.mjs, 2026-09-24, final lemmatizer) on the item-1 scorer, identical event stream + sample per arm: band-filtered child speech wins MLU<2; MLU 2-3.5 wants the full corpus with a 0.5 band tilt; MLU>3.5 wants the full corpus unbanded. Caregiver speech and synth mixes trade first-word cells away everywhere — listed for provenance, measured-and-rejected at weight 0.",
+  "build": {
+    "lambdas": [0.55, 0.30, 0.15],
+    "prune": {
+      "mlu_lt2": { "triTop": 12, "triMin": 16, "biTop": 32, "biMin": 2 },
+      "mlu_2_35": { "triTop": 10, "triMin": 32, "biTop": 32, "biMin": 2 },
+      "mlu_gt35": { "triTop": 14, "triMin": 12, "biTop": 32, "biMin": 2 }
+    }
+  }
+}

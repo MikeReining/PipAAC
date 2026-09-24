@@ -8,6 +8,8 @@
  * the grid. Read-only against core_cell; ranking never writes the map.
  */
 
+import { bookLogP } from "./opening_book.mjs";
+
 const RECENT_WINDOW_MS = 15 * 60 * 1000;
 export const STRIP_CAP = 4;
 
@@ -99,7 +101,7 @@ const SHORTLIST_CAP = 16;                      // § 5.2: measured, not assumed
 
 export const MODEL_FEATURES = [
   "phrase", "pair", "occasion", "hour", "recency",
-  "freq", "invited", "echo", "fresh", "jev", "spot",
+  "freq", "invited", "echo", "fresh", "jev", "spot", "book",
 ];
 
 const decayW = (at, now) => Math.pow(0.5, Math.max(0, now - at) / HALF_LIFE_MS);
@@ -122,7 +124,33 @@ const sameItem = (a, b) => a && b && a.k === b.kind && a.i === b.id;
  * "was a spotlight target at offer time" — instrument truth, independent
  * of whether the § 4 boost setting scored it.
  */
-export function features(db, item, sentence, now, locale, spot = null) {
+/** The opening book's band for this profile (017 item 9): the band whose
+ *  book predicts best, seeded by supporter age — default mid (≈age 5). */
+export function bookBand(db) {
+  return (
+    db.prepare("SELECT book_band AS b FROM learner_profile WHERE id = 'prf_local'").all()[0]?.b
+    ?? "mlu_2_35"
+  );
+}
+
+/** Last-2 in-vocab lemmas of the sentence — the book's context. An entity
+ *  or a word with no lemma label breaks the run, like OOV in the scorer. */
+function bookCtxLemmas(db, sentence, locale) {
+  const stmt = db.prepare(
+    `SELECT normalized_text AS t FROM label
+     WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
+  );
+  const ctx = [];
+  for (let i = sentence.length - 1; i >= 0 && ctx.length < 2; i--) {
+    const it = sentence[i];
+    const t = it?.kind === "sense" ? stmt.all(it.id, locale)[0]?.t ?? null : null;
+    if (t === null) break;
+    ctx.unshift(t);
+  }
+  return ctx;
+}
+
+export function features(db, item, sentence, now, locale, spot = null, bookCtx = null) {
   const tzNow = -new Date(now).getTimezoneOffset();
   const nowHour = localDate(now, tzNow).getUTCHours();
   const nowDay = dayTypeOf(now, tzNow);
@@ -162,14 +190,15 @@ export function features(db, item, sentence, now, locale, spot = null) {
   const rules = GRAMMAR[locale];
   const tail = sentence.at(-1);
   const ctx = { pos, prevPos, tailId: tail?.kind === "sense" ? tail.id : null };
-  const pos2 = item.kind === "entity"
-    ? "Noun"
+  const label2 = item.kind === "entity"
+    ? { p: "Noun", t: null }
     : db
         .prepare(
-          `SELECT part_of_speech AS p FROM label
+          `SELECT part_of_speech AS p, normalized_text AS t FROM label
            WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
         )
-        .all(item.id, locale)[0]?.p ?? null;
+        .all(item.id, locale)[0] ?? { p: null, t: null };
+  const pos2 = label2.p;
   const invited = rules &&
     ((rules.invitesNoun(ctx) && pos2 === "Noun") ||
      (rules.invitesVerb(ctx) && pos2 === "Verb"));
@@ -185,9 +214,10 @@ export function features(db, item, sentence, now, locale, spot = null) {
     freq: Math.log1p(freq),
     invited: invited ? 1 : 0,
     echo: 0,
-    fresh: addedAt && now - addedAt < FRESH_MS ? 1 : 0,
+    fresh: addedAt && now >= addedAt && now - addedAt < FRESH_MS ? 1 : 0,
     jev: 0,
     spot: spot?.has(`${item.kind}:${item.id}`) ? 1 : 0,
+    book: bookCtx && label2.t ? bookLogP(bookCtx.book, bookCtx.band, bookCtx.ctx, label2.t) : 0,
   };
 }
 
@@ -309,11 +339,14 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
   const weights = boostOn
     ? { ...model.weights, spot: model.weights.spot ?? SPOT_BOOST }
     : model.weights;
+  const bookCtx = model.book
+    ? { book: model.book, band: bookBand(db), ctx: bookCtxLemmas(db, sentence, locale) }
+    : null;
   const rows = [];
   for (const e of db
     .prepare("SELECT id FROM personal_entity WHERE status = 'active'")
     .all()) {
-    const x = features(db, { kind: "entity", id: e.id }, sentence, now, locale, spot);
+    const x = features(db, { kind: "entity", id: e.id }, sentence, now, locale, spot, bookCtx);
     if (x.invited || x.recency > 0 || (x.spot && boostOn)) {
       rows.push({ kind: "entity", id: e.id, x });
     }
@@ -339,7 +372,7 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
                      WHERE l.item_kind = 'sense' AND l.item_id = s.id)${spotIn})`,
     )
     .all(locale, ...spotSenses)) {
-    const x = features(db, { kind: "sense", id: f.id }, sentence, now, locale, spot);
+    const x = features(db, { kind: "sense", id: f.id }, sentence, now, locale, spot, bookCtx);
     if (((x.freq > 0 || x.recency > 0) && x.invited) || (x.spot && boostOn)) {
       rows.push({ kind: "sense", id: f.id, x });
     }

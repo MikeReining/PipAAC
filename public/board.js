@@ -146,7 +146,7 @@ if (navigator.locks?.request) {
 }
 navigator.storage?.persist?.().catch(() => {});
 
-const { db, catalog, flush: flushDb } = await bootDb(userStore, me.id);
+const { db, catalog, book, flush: flushDb } = await bootDb(userStore, me.id);
 bindLayouts(catalog.layouts); // move-cost sectors need the column counts
 // Device identity for the op log (sync § 4): the signing key's
 // fingerprint, resolved from the platform keystore. Until it lands the
@@ -634,7 +634,7 @@ async function renderStrip() {
     // on the network). The child's learned weights win over the shipped
     // defaults once Speak has trained them (§5.5).
     const lw = loadWeights(db, catalog.prediction);
-    const model = { weights: lw.weights, tau: catalog.prediction.tau };
+    const model = { weights: lw.weights, tau: catalog.prediction.tau, book };
     const scored = kbUi.isOpen() ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbUi.isOpen()
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
@@ -704,6 +704,7 @@ async function maybeJev(scored, sents, paintedAt) {
     const wj = {
       weights: spotWeights(db, lw.weights),
       tau: catalog.prediction.tau,
+      book,
     };
     const reranked = applyJev(scored.candidates, probs, wj.weights);
     const items = spotGate(reranked.candidates, reranked.pNone, wj.tau,
@@ -1254,7 +1255,7 @@ function applyLikely() {
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
     // Same local model the strip paints with (§ 3.4: never waits on Jev).
     const model = { weights: loadWeights(db, catalog.prediction).weights,
-                    tau: catalog.prediction.tau };
+                    tau: catalog.prediction.tau, book };
     for (const c of keyboardContinuations(db, sents, locale, Date.now(), model)) {
       if (c.kind !== "sense") continue;
       // A stand-in person on the board takes the word's halo too —

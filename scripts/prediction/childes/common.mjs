@@ -12,6 +12,7 @@ export const CACHE = path.join(REPO, 'data/prediction/childes');
 export const TRANSCRIPTS = path.join(CACHE, 'transcripts.jsonl');
 export const IMAGINE_TRAIN = path.join(CACHE, 'imagine_train.txt');
 export const TD = (age) => path.join(CACHE, `tinydialogue_age-${age}_train.txt`);
+export const TD_VAL = (age) => path.join(CACHE, `tinydialogue_age-${age}_val.txt`);
 export const CHILDLIKE = path.join(REPO, 'data/prediction/sources/childlike_en.jsonl');
 
 // ---------- vocab (from repo data; same derivation as scratch vocab.json) ----------
@@ -29,30 +30,42 @@ export const MULTIWORD = LEMMAS.filter((w) => w.includes(' ')).sort((a, b) => b.
 export const NONCORE_VOCAB = LEMMAS.filter((w) => !CORE.has(w)).length;
 export const RANDOM_HIT = 4 / NONCORE_VOCAB; // top-4 over the non-core vocab
 
+// Every target must be an offerable lemma — a mapping to a word Pip
+// cannot offer (say, be, grandmother) mints a ghost lemma the scorer
+// counts but the board cannot show.
 const IRREG = {
   went: 'go', got: 'get', gotten: 'get', gave: 'give', saw: 'see',
-  ate: 'eat', took: 'take', made: 'make', said: 'say', came: 'come',
-  ran: 'run', fell: 'fall', sat: 'sit', broke: 'break', brought: 'bring',
-  did: 'do', done: 'do', was: 'be', were: 'be', is: 'be', are: 'be',
-  am: 'be', "'m": 'be', "'re": 'be', "'s": 'be', been: 'be', being: 'be',
+  ate: 'eat', took: 'take', made: 'make', came: 'come',
+  ran: 'run', fell: 'fall', sat: 'sit', broke: 'break',
+  did: 'do',
   had: 'have', has: 'have', "'ve": 'have', "'d": 'have', "'ll": 'will',
   would: 'will', could: 'can', should: 'will', wanna: 'want',
-  gonna: 'go', gotta: 'have to', lemme: 'let', gimme: 'give',
+  gonna: 'go', gimme: 'give',
   "n't": 'not', cannot: 'can', "y'all": 'you', "ma'am": 'mom',
   mommy: 'mom', momma: 'mom', mama: 'mom', mum: 'mom', mummy: 'mom',
-  daddy: 'dad', dada: 'dad', papa: 'dad', grandma: 'grandmother',
-  grandpa: 'grandfather', nana: 'grandmother', granny: 'grandmother',
-  tummy: 'stomach', doggy: 'dog', kitty: 'cat', birdie: 'bird',
+  daddy: 'dad', dada: 'dad', papa: 'dad', nana: 'grandma',
+  granny: 'grandma', doggy: 'dog', kitty: 'cat', birdie: 'bird',
   ducky: 'duck', horsie: 'horse', potty: 'toilet', blankie: 'blanket',
-  binky: 'pacifier', paci: 'pacifier', jammies: 'pajamas', pjs: 'pajamas',
-  veggies: 'vegetable', telly: 'tv', television: 'tv', pic: 'picture',
+  jammies: 'pajamas', pjs: 'pajamas',
+  telly: 'tv', television: 'tv',
   undies: 'underwear', sippy: 'cup', woof: 'dog', meow: 'cat',
   'night-night': 'good night', nite: 'night', 'nite nite': 'good night',
 };
 
 const surface = {};
-for (const w of LEMMAS) for (const piece of w.split(' ')) if (!(piece in surface)) surface[piece] = piece;
+// Standalone lemmas first — a piece that is also a real word ("all",
+// "my") stays itself. Then bare pieces of multiword lemmas map to the
+// parent lemma (shortest, then alphabetical): a child's "done" is the
+// "all done" tile. Mapping pieces to themselves minted ghost lemmas —
+// offerable in the scorer, absent on the board (same class as the
+// am/is/are -> be bug).
 for (const w of LEMMAS) if (!w.includes(' ')) surface[w] = w;
+for (const w of LEMMAS.filter((x) => x.includes(' ')).sort((a, b) => a.length - b.length || a.localeCompare(b))) {
+  for (const piece of w.split(' ')) {
+    const p = piece.match(/[a-zA-Z']+/g)?.join('');
+    if (p && !(p in surface)) surface[p] = w;
+  }
+}
 
 function candForms(base) {
   const out = [base];

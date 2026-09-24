@@ -14,6 +14,7 @@
       "fresh": 0,
       "jev": 0,
       "spot": 0,
+      "book": 1.0,
       "none_bias": 2.9174
     },
     "with_jev": {
@@ -28,6 +29,7 @@
       "fresh": 0,
       "jev": 0.5,
       "spot": 0,
+      "book": 1.0,
       "none_bias": 2.9174
     }
   },

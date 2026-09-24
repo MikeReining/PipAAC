@@ -50,9 +50,10 @@ function adapt(db, onWrite) {
 export async function bootDb(userStore, userId) {
   if (handle) return handle;
 
-  const [sqlite3, catalog, saved] = await Promise.all([
+  const [sqlite3, catalog, book, saved] = await Promise.all([
     sqlite3InitModule(),
     fetch("/catalog.json").then((r) => r.json()),
+    fetch("/opening_book.en.json").then((r) => r.json()).catch(() => null),
     getDbBytes(userStore, userId).catch(() => null),
   ]);
 
@@ -112,7 +113,7 @@ export async function bootDb(userStore, userId) {
   // the first local edit. Idempotent — a stored baseline is kept.
   ensureBaseline(d);
 
-  handle = { db: d, catalog, flush };
+  handle = { db: d, catalog, book, flush };
   return handle;
 }
 
