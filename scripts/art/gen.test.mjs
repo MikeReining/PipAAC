@@ -15,6 +15,7 @@ import {
   loadGlyphWords,
   GLYPH_WORDS_PATH,
   DEFAULT_STYLE_REF_DIR,
+  OBJECT_STYLE_REF_DIR,
   MAX_STYLE_REFS,
 } from "./gen.mjs";
 
@@ -36,7 +37,7 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
     base,
     [
       "We are trying to teach a child the concept of: apple.",
-      "Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.",
+      "Draw it in exactly the same style as the reference images on a pure white background.",
       "Do not include any text in the image.",
     ].join("\n"),
   );
@@ -68,12 +69,51 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
 
   const aslVTest = buildPrompt({ word: "see", torso: "green", framing: "bust", hand: "asl_v" });
   assert.ok(aslVTest.includes("One hand has two extended fingers in a clear V shape (ASL V sign) pointing toward the eyes."));
+
+  const objectTest = buildPrompt({ word: "apple", framing: "object" });
+  assert.equal(
+    objectTest,
+    [
+      "We are trying to teach a child the concept of: apple.",
+      "Draw it in exactly the same style as the reference images on a pure white background.",
+      "Do not include any text in the image.",
+    ].join("\n"),
+  );
+
+  const packshot = buildPrompt({ word: "fruit snack", entity_mode: "category_packshot", packaging: "pouch" });
+  assert.ok(packshot.includes("A product photo of a fruit snack pouch, isolated on a plain white background"));
+  assert.ok(packshot.includes("no text of any kind on the packaging, no letters, no words"));
+
+  const cpg = buildPrompt({ word: "7 up", entity_mode: "cpg_brand", packaging: "can" });
+  assert.ok(cpg.includes("A product photo of 7 up can, isolated on a plain white background"));
+  assert.ok(cpg.includes("faithful reproduction of authentic product packaging, brand logo, and typography"));
+
+  const anatomyRel = buildPrompt({
+    word: "hair",
+    entity_mode: "anatomy_relational",
+    hint: "A simplified face with black hair on top and a bold black arrow pointing to the hair.",
+  });
+  assert.ok(anatomyRel.includes("We are trying to teach a child the concept of: hair."));
+  assert.ok(anatomyRel.includes("A simplified face with black hair on top and a bold black arrow pointing to the hair."));
+
+  const aslHeadTest = buildPrompt({ word: "head", torso: "yellow", framing: "bust", hand: "asl_head" });
+  assert.ok(aslHeadTest.includes("One open flat hand is placed against the side of the head and temple in the ASL head gesture."));
+
+  const aslBodyTest = buildPrompt({ word: "body", torso: "yellow", framing: "full", hand: "asl_body" });
+  assert.ok(aslBodyTest.includes("Both open flat hands are resting against the chest and torso in the ASL body gesture."));
 });
 
-test("loadStyleRefs loads exactly 3 style references from assets/style-refs/pip-v1", () => {
+test("loadStyleRefs loads exactly 3 style references from assets/style-refs/pip-v1 and object-v1", () => {
   const refs = loadStyleRefs(DEFAULT_STYLE_REF_DIR);
   assert.equal(refs.length, MAX_STYLE_REFS);
   for (const ref of refs) {
+    assert.ok(ref.file.length > 0);
+    assert.ok(ref.dataUri.startsWith("data:image/jpeg;base64,") || ref.dataUri.startsWith("data:image/png;base64,"));
+  }
+
+  const objRefs = loadStyleRefs(OBJECT_STYLE_REF_DIR);
+  assert.equal(objRefs.length, MAX_STYLE_REFS);
+  for (const ref of objRefs) {
     assert.ok(ref.file.length > 0);
     assert.ok(ref.dataUri.startsWith("data:image/jpeg;base64,") || ref.dataUri.startsWith("data:image/png;base64,"));
   }
@@ -98,6 +138,15 @@ test("parseArgs parses flags correctly", () => {
   assert.equal(parsed.out, "/tmp/run.png");
   assert.equal(parsed.classify, true);
   assert.equal(parsed.print, true);
+
+  const packParsed = parseArgs(["--word", "fruit snack", "--packshot", "--packaging", "pouch"]);
+  assert.equal(packParsed.entity_mode, "category_packshot");
+  assert.equal(packParsed.packaging, "pouch");
+
+  const cpgParsed = parseArgs(["--word", "7 up", "--cpg", "--brand", "Dr Pepper", "--packaging", "can"]);
+  assert.equal(cpgParsed.entity_mode, "cpg_brand");
+  assert.equal(cpgParsed.brand, "Dr Pepper");
+  assert.equal(cpgParsed.packaging, "can");
 });
 
 test("parseArgs rejects invalid framing", () => {
