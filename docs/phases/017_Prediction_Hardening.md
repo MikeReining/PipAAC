@@ -2,13 +2,14 @@
 
 **Status:** Executing. **Re-planned 2026-09-24 (founder, R16–R19):**
 the scoreboard is real children (held-out CHILDES), not synthetic
-users; steps 15 and 18 are parked. Current-order items 1–3 and 6 DONE —
+users; steps 15 and 18 are parked. Current-order items 1–4 and 6 DONE —
 the repo scorer is the baseline, the shipped opening book beats or
 matches it in every cell, the strip scores every offerable word
-(book + history counts, day one and position 0), and Smart bar order
-lands R21: board words rank in the bar, a likely "no" pins the last
-slot, and all three settings are synced per profile. Next: item 4
-(respond — the one-turn adult-model boost).
+(book + history counts, day one and position 0), Smart bar order
+lands R21, and respond (R17/R20): an adult's modeling taps boost the
+modeled words for one turn, memory only. Next: item 5 — the random
+holdback spec goes to the founder before anything is built (it
+withholds help from real users).
 M1 complete (steps 4, 3, 5, 1, 2 — all BUILT). Built on the
 synthetic bench: steps 11, 12, 16, 13.
 
@@ -199,6 +200,17 @@ M2/M3 order below until the book is in the strip.
    `strip_book.test.mjs` / `strip_history.test.mjs`.
 4. Respond: words an adult just tapped while modeling get a one-turn
    boost (step 24 item 1; R17, R20). Never stored.
+   **Status: DONE 2026-09-24** — modeling taps (local `modeling` mode
+   and remote `model` ws messages alike) collect into `partnerTurn`, a
+   memory-only `{ items, at }` on the board. While the turn is live
+   (~2 min from the last tap, cleared when the child's sentence closes
+   or is cleared) its words carry `echo: 1`, seeded weight 8 — the
+   boost wins the bar on its own and decays per user once Speak has
+   trained past burn-in. Nothing is written to `learner_event_log` or
+   `history_count`. `strip_respond.test.mjs`: "juice or milk?" shows
+   both, echo alone is support, an expired turn boosts nothing, zero
+   partner rows are logged, and 50 ignored echoes take the learned
+   weight negative.
 5. Random holdback + path timings on the device (R18, step 28).
 6. Smart bar order: board words, the "no" slot, and the four settings
    (R21, step 29). Build right after item 3, before item 4.
@@ -1305,8 +1317,16 @@ Build, in order of how the partner's words reach the device:
 1. **Partner modeling on the device.** Taps an adult makes while
    modeling (013 partner modeling) become the partner's turn for the
    next strip moment. No microphone.
+   **Status: DONE 2026-09-24** — see current-order item 4. Local and
+   remote model taps both feed `partnerTurn` (memory only); the `echo`
+   feature is 1 for its words while the turn is live. "Retrieval
+   source" is moot after step 7 — every word scores, so `echo` is a
+   positive feature, not a gate.
 2. **The active Spotlight list.** An open Spotlight session's words are
    a retrieval source and a small `echo` boost for the session.
+   **Status: not built** — Spotlight today feeds the separate `spot`
+   feature (boost session only). Feeding it into `echo` is a later
+   order item.
 3. ~~**The Listen key**~~ — dropped 2026-09-24 (R20); 008 is held.
 
 **Is it a choice? Jev decides, not a rule (R14).** When the partner's

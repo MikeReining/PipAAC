@@ -11,6 +11,9 @@
 import { bookScores } from "./opening_book.mjs";
 
 const RECENT_WINDOW_MS = 15 * 60 * 1000;
+/** 017-24 / R20: a partner turn is the words an adult tapped while
+ *  modeling — one turn, ~2 minutes, memory only (never stored). */
+export const ECHO_WINDOW_MS = 2 * 60 * 1000;
 export const STRIP_CAP = 4;
 
 const TO_SENSE_ID = "sns_0053"; // infinitival "to" — matched by sense id, never by English text
@@ -149,7 +152,7 @@ export function bookBand(db) {
 /** Per-strip-paint context (017 step 7): everything `features` needs that
  *  depends on the sentence, the clock, or the book — computed once, shared
  *  by every candidate (~700 of them), instead of re-queried per word. */
-export function featureEnv(db, sentence, now, locale, spot = null, book = null) {
+export function featureEnv(db, sentence, now, locale, spot = null, book = null, partner = null) {
   const tzNow = -new Date(now).getTimezoneOffset();
   const labelStmt = db.prepare(
     `SELECT part_of_speech AS p, normalized_text AS t FROM label
@@ -171,6 +174,10 @@ export function featureEnv(db, sentence, now, locale, spot = null, book = null) 
     tzNow,
     nowHour: localDate(now, tzNow).getUTCHours(),
     nowDay: dayTypeOf(now, tzNow),
+    // 017-24: the partner's last turn — a Set of 'kind:id' while it's
+    // live, null when expired or absent. Lives only in the caller's
+    // memory (R20): nothing about it touches a table.
+    echoSet: partner && now - partner.at <= ECHO_WINDOW_MS ? partner.items : null,
     tailCtx: { pos, prevPos, tailId: tail?.kind === "sense" ? tail.id : null },
     bookScores: book ? bookScores(book, bookBand(db), ctx) : null,
     histStmt: db.prepare(
@@ -188,8 +195,9 @@ export function featureEnv(db, sentence, now, locale, spot = null, book = null) 
 /**
  * One candidate's feature vector (§ 5.3): decayed counts enter as
  * log(1+count); recency is a 0–1 ramp over the 15-minute window;
- * invited/echo/fresh are 0/1. `occasion`, `echo` and `jev` stay 0 until
- * 007 occasions, 008 listening, and a Jev answer exist — the feature
+ * invited/echo/fresh are 0/1. `occasion` and `jev` stay 0 until 007
+ * occasions and a Jev answer exist; `echo` is 1 for words in the
+ * partner's live modeling turn (017-24, memory only — R20). The feature
  * slot is recorded now so impressions from today fit tomorrow's model.
  * `spot` is the running session's target Set (or null): `x.spot` records
  * "was a spotlight target at offer time" — instrument truth, independent
@@ -251,7 +259,7 @@ export function features(db, item, env) {
     recency: last ? Math.max(0, 1 - (now - last) / RECENT_WINDOW_MS) : 0,
     freq: Math.log1p(freq),
     invited: invited ? 1 : 0,
-    echo: 0,
+    echo: env.echoSet?.has(`${item.kind}:${item.id}`) ? 1 : 0,
     fresh: addedAt && now >= addedAt && now - addedAt < FRESH_MS ? 1 : 0,
     jev: 0,
     spot: env.spot?.has(`${item.kind}:${item.id}`) ? 1 : 0,
@@ -433,7 +441,8 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
   const weights = boostOn
     ? { ...model.weights, spot: model.weights.spot ?? SPOT_BOOST }
     : model.weights;
-  const env = featureEnv(db, sentence, now, locale, spot, model.book ?? null);
+  const env = featureEnv(
+    db, sentence, now, locale, spot, model.book ?? null, model.partner ?? null);
   const rows = [];
   // 017 step 7 — no retrieval stage: every offerable word is scored and
   // the blend picks the shortlist. The pool is every sense with a lemma

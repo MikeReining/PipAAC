@@ -10,7 +10,7 @@
   },
   "prediction": {
     "version": "006-s3.2026-09-24",
-    "fittedOn": "routine_days.en.json + routine_days_varied.en.json, days 1-5 (weak prior); 2026-09-24: phrase/pair -> hist (017-10), book added (017-23) — feature seeds, pending refit",
+    "fittedOn": "routine_days.en.json + routine_days_varied.en.json, days 1-5 (weak prior); 2026-09-24: phrase/pair -> hist (017-10), book added (017-23), echo seeded 8 (017-24 partner modeling — starting value, learned per user after burn-in) — feature seeds, pending refit",
     "weights": {
       "local_only": {
         "occasion": 0,
@@ -18,7 +18,7 @@
         "recency": -0.6677,
         "freq": -2.1408,
         "invited": 0.7628,
-        "echo": 0,
+        "echo": 8,
         "fresh": 0,
         "jev": 0,
         "spot": 0,
@@ -32,7 +32,7 @@
         "recency": -0.6677,
         "freq": -2.1408,
         "invited": 0.7628,
-        "echo": 0,
+        "echo": 8,
         "fresh": 0,
         "jev": 0.5,
         "spot": 0,

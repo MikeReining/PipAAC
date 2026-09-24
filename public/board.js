@@ -8,6 +8,7 @@ import {
   applyJev,
   closeSentence,
   detachEvent,
+  ECHO_WINDOW_MS,
   fillChosen,
   keyboardContinuations,
   logImpression,
@@ -313,6 +314,7 @@ async function speakSentence() {
     learnFromSentence(db, sid, catalog.prediction);
     learnFromSentence(db, sid, catalog.prediction, { weightSet: "with_jev" });
     scheduleStatsRefresh();
+    partnerTurn = null; // 017-24: the child's turn answered — one turn only
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
@@ -421,6 +423,7 @@ $("bar").addEventListener("click", () => {
 $("clear").addEventListener("click", () => {
   if (sentenceId !== null) {
     closeSentence(db, sentenceId, Date.now(), "cleared");
+    partnerTurn = null; // 017-24: turn closed without an answer
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
@@ -633,7 +636,10 @@ async function renderStrip() {
     // on the network). The child's learned weights win over the shipped
     // defaults once Speak has trained them (§5.5).
     const lw = loadWeights(db, catalog.prediction);
-    const model = { weights: lw.weights, tau: catalog.prediction.tau, book };
+    const model = {
+      weights: lw.weights, tau: catalog.prediction.tau, book,
+      partner: partnerTurn,
+    };
     const scored = kbUi.isOpen() ? null : stripScored(db, sents, Date.now(), locale, model);
     const items = kbUi.isOpen()
       ? keyboardContinuations(db, sents, locale, Date.now(), model)
@@ -800,6 +806,8 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     if (id) {
       const key = `${kind}:${id}`;
       syncSendModel(key, text);
+      partnerTap(key); // 017-24: the word joins the partner's turn (memory only)
+      renderStrip(); // ...so the boosted words land on the next strip moment
       coachTap(db, kind, id); // the partner's tally — device-local (§ 5a)
       coachUi.renderCoachTally();
       modelSent.add(key);
@@ -1050,6 +1058,19 @@ let modelSpeaks = false;
 const modelGlow = new Map(); // "kind:id" → fade timer
 const modelSent = new Set(); // local echo on the partner's device
 const MODEL_FADE_MS = 4000;
+/** 017-24 / R20: the partner's last modeling turn — the 'kind:id' keys
+ *  an adult tapped while modeling, held in memory only. They ride the
+ *  strip's `echo` feature for one turn (≈2 min, or until the child's
+ *  sentence closes); nothing about them is ever written to a table. */
+let partnerTurn = null; // { items: Set<string>, at: number }
+function partnerTap(key) {
+  const now = Date.now();
+  if (!partnerTurn || now - partnerTurn.at > ECHO_WINDOW_MS) {
+    partnerTurn = { items: new Set(), at: now };
+  }
+  partnerTurn.items.add(key);
+  partnerTurn.at = now;
+}
 
 function clearModel(key) {
   const t = key ? modelGlow.get(key) : undefined;
@@ -1076,6 +1097,8 @@ function onModel(m) {
     rerenderView();
   }, MODEL_FADE_MS));
   const [kind, id] = m.t.split(":");
+  partnerTap(m.t); // 017-24: remote modeling taps echo too (memory only)
+  renderStrip(); // ...so the boosted words land on the next strip moment
   if (modelSpeaks && m.w) speakItem({ kind, id, text: m.w });
   renderGrid();
   rerenderView();
