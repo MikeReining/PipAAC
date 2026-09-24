@@ -15,9 +15,13 @@
 import { writeFileSync, readFileSync, readdirSync, mkdirSync, existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 export const MUSE_MODEL = "meta/muse-image";
 export const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/images";
+export const META_API_ENDPOINT = "https://api.meta.ai/v1/images/edits";
+export const META_GEN_ENDPOINT = "https://api.meta.ai/v1/images/generations";
+export const META_MUSE_MODEL = "muse-image-1.0";
 export const MAX_STYLE_REFS = 3;
 
 export const OPENROUTER_APP_HOST = "artgen.pipaac.local";
@@ -42,6 +46,7 @@ export function appHeaders(lane = null) {
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const DEFAULT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/pip-v1");
+export const OBJECT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/object-v1");
 export const GLYPH_WORDS_PATH = join(repoRoot, "data/art/glyph_words.json");
 
 /** Opaque words that get a hand-drawn glyph, never a generated picture. */
@@ -155,6 +160,27 @@ export function isPluralWord(word) {
 export const VALID_FRAMINGS = new Set(["face", "bust", "full", "diagram", "object", "contrast"]);
 export const VALID_SOCIAL_SCALES = new Set(["zero", "solo", "pair", "group"]);
 
+export const VALID_ENTITY_MODES = new Set([
+  "concept_action",
+  "organic_noun",
+  "category_packshot",
+  "cpg_brand",
+  "anatomy_relational",
+]);
+
+export const VALID_PACKAGING = new Set([
+  "pouch",
+  "jar",
+  "can",
+  "box",
+  "bottle",
+  "tub",
+  "bar",
+  "carton",
+  "bag",
+  "none",
+]);
+
 export const VALID_HAND_MODES = new Set([
   "resting_ball",
   "pointing_mitten",
@@ -163,6 +189,9 @@ export const VALID_HAND_MODES = new Set([
   "pincer_grasp",
   "open_palm_up",
   "press_down",
+  "asl_head",
+  "asl_body",
+  "touch_cheeks",
 ]);
 
 export function formatHandMode(mode) {
@@ -181,6 +210,12 @@ export function formatHandMode(mode) {
       return "Both hands are open cupped palms facing upward to receive.";
     case "press_down":
       return "The hand has an open flat palm pressing downward.";
+    case "asl_head":
+      return "One open flat hand is placed against the side of the head and temple in the ASL head gesture.";
+    case "asl_body":
+      return "Both open flat hands are resting against the chest and torso in the ASL body gesture.";
+    case "touch_cheeks":
+      return "Both open hands are cupping the cheeks to frame the face.";
     default:
       return null;
   }
@@ -198,10 +233,49 @@ export function formatHandMode(mode) {
  * 7. Hand mode clause (for stick figures with hands visible)
  * 8. Scene hint (for abstract/preposition concepts)
  */
-export function buildPrompt({ word, torso = null, hint = null, framing = null, hand = null, social_scale = null }) {
+export function buildPrompt({
+  word,
+  torso = null,
+  hint = null,
+  framing = null,
+  hand = null,
+  social_scale = null,
+  entity_mode = null,
+  packaging = null,
+  brand = null,
+}) {
+  if (entity_mode === "category_packshot") {
+    const pack = packaging && packaging !== "none" ? packaging : "package";
+    const subject = `a ${word} ${pack}`;
+    const graphicClause = hint ? hint : `with a clean ${word} illustration on the front`;
+    return [
+      `A product photo of ${subject}, isolated on a plain white background, the product centred in frame, product photography as used on a supermarket website, no price stickers, no promotional text, no award badges, no dietary or health claims, no certification or callout badges, no text of any kind on the packaging, no letters, no words, ${graphicClause}.`,
+    ].join("\n");
+  }
+
+  if (entity_mode === "cpg_brand") {
+    const brandPrefix = brand ? `${brand} ` : "";
+    const packSuffix = packaging && packaging !== "none" ? ` ${packaging}` : "";
+    const subject = `${brandPrefix}${word}${packSuffix}`;
+    const hintClause = hint ? `, ${hint}` : "";
+    return [
+      `A product photo of ${subject}, isolated on a plain white background, the product centred in frame, product photography as used on a supermarket website, faithful reproduction of authentic product packaging, brand logo, and typography, no price stickers, no promotional text${hintClause}.`,
+    ].join("\n");
+  }
+
+  if (entity_mode === "anatomy_relational") {
+    const hintClause = hint ? hint : `A simplified human body context with a bold clean black arrow pointing directly to the ${word}.`;
+    return [
+      `We are trying to teach a child the concept of: ${word}.`,
+      "Draw it in exactly the same style as the reference images on a pure white background.",
+      "Do not include any text in the image.",
+      hintClause,
+    ].join("\n");
+  }
+
   const lines = [
     `We are trying to teach a child the concept of: ${word}.`,
-    "Draw it in exactly the same style as the reference images: pure white background, bold black outline, flat solid colour, no shading.",
+    "Draw it in exactly the same style as the reference images on a pure white background.",
     "Do not include any text in the image.",
   ];
 
@@ -230,9 +304,7 @@ export function buildPrompt({ word, torso = null, hint = null, framing = null, h
   } else if (social_scale === "zero") {
     if (framing === "diagram") {
       lines.push("A clean graphic diagram with no human figures.");
-    } else if (framing === "object") {
-      lines.push("A clean standalone object with no human figures.");
-    } else {
+    } else if (framing !== "object") {
       lines.push("No human figures in the image.");
     }
   } else {
@@ -244,8 +316,6 @@ export function buildPrompt({ word, torso = null, hint = null, framing = null, h
       lines.push("Full body stick figure with complete posture and legs.");
     } else if (framing === "diagram") {
       lines.push("A clean graphic diagram with no human figures.");
-    } else if (framing === "object") {
-      lines.push("A clean standalone object with no human figures.");
     }
   }
 
@@ -294,6 +364,31 @@ export async function classifyWithJev({
     state: `Word to illustrate: "${word}". Context: Core AAC communication board symbol for a non-verbal child. Needs high legibility at 48x48px on an iPad grid.`,
     model: "jev-latest",
     questions: {
+      entity_mode: {
+        type: "choice",
+        instructions: "What visual modality should be used to illustrate this word/concept?",
+        criteria: {
+          concept_action: "Stick figure, person, action, macro body posture (body, head, face), emotion, gesture, or abstract relation (e.g. run, eat, happy, big, under)",
+          organic_noun: "Standalone organic noun, animal, natural fresh food, hand tool, or standalone iconic organ (e.g. apple, dog, pizza, bread, eye, ear, mouth, hand, foot)",
+          anatomy_relational: "Relational or dependent body part requiring a context silhouette and a directional pointer arrow (e.g. hair, neck, tummy, back, elbow, knee, toes, finger)",
+          category_packshot: "Generic commodity food, pantry item, or product that only exists in packaging or is formless/messy without it (e.g. peanut butter, fruit snack, yogurt tub, jam, mayonnaise, cereal)",
+          cpg_brand: "Specific commercial branded consumer packaged good (e.g. 7 Up, Frosted Flakes, Oreo, Cheerios, Coca-Cola)",
+        },
+      },
+      packaging: {
+        type: "choice",
+        instructions: "If this is a packaged item, what is the canonical packaging container?",
+        criteria: {
+          pouch: "Flexible foil or plastic snack pouch/packet (e.g. fruit snack, gummy pouch)",
+          jar: "Glass or plastic jar with screw lid (e.g. peanut butter, jam, mayonnaise)",
+          can: "Metal beverage can or food tin (e.g. soda, soup, tuna)",
+          box: "Cardboard cereal or snack box (e.g. cereal, crackers)",
+          bottle: "Glass or plastic bottle with cap (e.g. ketchup, syrup, salad dressing)",
+          tub: "Plastic tub with peel lid (e.g. yogurt, butter spread)",
+          bar: "Wrapped candy or energy bar",
+          none: "Not a packaged item",
+        },
+      },
       framing: {
         type: "choice",
         instructions: "Best visual framing lens for this AAC word",
@@ -316,6 +411,9 @@ export async function classifyWithJev({
           pincer_grasp: "Thumb and index finger touching to hold tiny item",
           open_palm_up: "Two open cupped palms facing upward to receive/beg/plead",
           press_down: "Flat palm or finger pressing downward onto a surface/button",
+          asl_head: "One open flat hand touching the temple or side of the head (ASL head sign)",
+          asl_body: "Both open flat hands resting flat against the chest or torso (ASL body sign)",
+          touch_cheeks: "Both open hands cupping the cheeks to frame the face",
         },
       },
       proloquo_anchor: {
@@ -360,6 +458,8 @@ export async function classifyWithJev({
   const data = await res.json();
   return {
     model: data.model,
+    entity_mode: data?.answers?.entity_mode?.choice ?? "concept_action",
+    packaging: data?.answers?.packaging?.choice ?? "none",
     framing: data?.answers?.framing?.choice ?? "full",
     hand_mode: data?.answers?.hand_mode?.choice ?? "resting_ball",
     anchor: data?.answers?.proloquo_anchor?.choice ?? "none",
@@ -375,6 +475,9 @@ export async function generateToFile({
   framing = null,
   hand = null,
   social_scale = null,
+  entity_mode = null,
+  packaging = null,
+  brand = null,
   prompt = null,
   out = null,
   refDir = DEFAULT_STYLE_REF_DIR,
@@ -386,22 +489,83 @@ export async function generateToFile({
   if (word && glyphWords.has(String(word).trim().toLowerCase())) {
     throw new Error(`"${word}" is an opaque word: it gets a hand-drawn glyph (data/art/glyph_words.json), not a generated picture.`);
   }
-  const text = prompt ?? buildPrompt({ word, torso, hint, framing, hand, social_scale });
-  if (!apiKey || !String(apiKey).trim()) {
-    throw new Error("OPENROUTER_API_KEY is not set. Please export it or add to .env.");
+  const text = prompt ?? buildPrompt({
+    word,
+    torso,
+    hint,
+    framing,
+    hand,
+    social_scale,
+    entity_mode,
+    packaging,
+    brand,
+  });
+  const dest = out ?? `/tmp/${(word ?? "image").replace(/[^a-zA-Z0-9]+/g, "-")}.png`;
+  const isPackshot = entity_mode === "category_packshot" || entity_mode === "cpg_brand";
+
+  const metaApiKey = resolveApiKey("META_API_KEY");
+  if (metaApiKey) {
+    let endpoint = META_API_ENDPOINT;
+    const body = {
+      model: META_MUSE_MODEL,
+      prompt: text,
+      n: 1,
+    };
+    if (isPackshot) {
+      endpoint = META_GEN_ENDPOINT;
+    } else {
+      const effectiveRefDir =
+        refDir === DEFAULT_STYLE_REF_DIR && (framing === "object" || entity_mode === "organic_noun")
+          ? OBJECT_STYLE_REF_DIR
+          : refDir;
+      body.images = loadStyleRefs(effectiveRefDir).map((r) => ({
+        image_url: r.dataUri,
+      }));
+    }
+
+    const res = await fetchImpl(endpoint, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${metaApiKey}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(`HTTP ${res.status}\n${errText.slice(0, 1200)}`);
+    }
+
+    const rawBytes = extractImage(await res.json());
+    const bytes = await sharp(rawBytes).png().toBuffer();
+    mkdirSync(dirname(dest), { recursive: true });
+    writeFileSync(dest, bytes);
+    return { dest, bytes, prompt: text };
   }
 
-  const dest = out ?? `/tmp/${(word ?? "image").replace(/[^a-zA-Z0-9]+/g, "-")}.png`;
+  if (!apiKey || !String(apiKey).trim()) {
+    throw new Error("Neither META_API_KEY nor OPENROUTER_API_KEY is set. Please export one or add to .env.");
+  }
+
   const body = {
     model: MUSE_MODEL,
     prompt: text,
     aspect_ratio: "1:1",
     output_format: "png",
-    input_references: loadStyleRefs(refDir).map((r) => ({
+  };
+
+  if (!isPackshot) {
+    const effectiveRefDir =
+      refDir === DEFAULT_STYLE_REF_DIR && (framing === "object" || entity_mode === "organic_noun")
+        ? OBJECT_STYLE_REF_DIR
+        : refDir;
+
+    body.input_references = loadStyleRefs(effectiveRefDir).map((r) => ({
       type: "image_url",
       image_url: { url: r.dataUri },
-    })),
-  };
+    }));
+  }
 
   const res = await fetchImpl(OPENROUTER_ENDPOINT, {
     method: "POST",
@@ -428,6 +592,9 @@ export function parseArgs(argv) {
     framing: null,
     hand: null,
     social_scale: null,
+    entity_mode: null,
+    packaging: null,
+    brand: null,
     out: null,
     prompt: null,
     print: false,
@@ -440,6 +607,23 @@ export function parseArgs(argv) {
     if (a === "--word") out.word = argv[++i];
     else if (a === "--torso") out.torso = argv[++i];
     else if (a === "--hint") out.hint = argv[++i];
+    else if (a === "--mode" || a === "--entity-mode") {
+      const m = argv[++i];
+      if (!VALID_ENTITY_MODES.has(m)) {
+        throw new Error(`invalid entity mode: ${m}. Must be one of: ${[...VALID_ENTITY_MODES].join(", ")}`);
+      }
+      out.entity_mode = m;
+    }
+    else if (a === "--packshot") out.entity_mode = "category_packshot";
+    else if (a === "--cpg") out.entity_mode = "cpg_brand";
+    else if (a === "--packaging") {
+      const p = argv[++i];
+      if (!VALID_PACKAGING.has(p)) {
+        throw new Error(`invalid packaging: ${p}. Must be one of: ${[...VALID_PACKAGING].join(", ")}`);
+      }
+      out.packaging = p;
+    }
+    else if (a === "--brand") out.brand = argv[++i];
     else if (a === "--framing") {
       const f = argv[++i];
       if (!VALID_FRAMINGS.has(f)) {
@@ -476,7 +660,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
 
   if (!args.word && !args.prompt) {
-    console.error("Usage: node scripts/art/gen.mjs --word <word> [--torso <color>] [--framing <face|bust|full|diagram|object|contrast>] [--hand <mode>] [--social-scale <zero|solo|pair|group>] [--hint <hint>] [--out <dest>] [--lane <slug>] [--classify]");
+    console.error("Usage: node scripts/art/gen.mjs --word <word> [--mode <concept_action|organic_noun|category_packshot|cpg_brand>] [--packaging <pouch|jar|can|box|bottle|tub|bar>] [--brand <brand>] [--torso <color>] [--framing <face|bust|full|diagram|object|contrast>] [--hand <mode>] [--social-scale <zero|solo|pair|group>] [--hint <hint>] [--out <dest>] [--lane <slug>] [--classify]");
     process.exit(1);
   }
 
@@ -484,10 +668,14 @@ async function main() {
     console.log(`Classifying "${args.word}" with TypeSafe Jev...`);
     const cls = await classifyWithJev({ word: args.word });
     console.log(`Jev classification (${cls.model}):`);
+    console.log(`  Entity mode: ${cls.entity_mode}`);
+    console.log(`  Packaging: ${cls.packaging}`);
     console.log(`  Framing: ${cls.framing}`);
     console.log(`  Hand mode: ${cls.hand_mode}`);
     console.log(`  Anchor: ${cls.anchor}`);
     console.log(`  Social scale: ${cls.social_scale}`);
+    if (!args.entity_mode) args.entity_mode = cls.entity_mode;
+    if (!args.packaging && cls.packaging !== "none") args.packaging = cls.packaging;
     if (!args.framing) args.framing = cls.framing;
     if (!args.hand) args.hand = cls.hand_mode;
     if (!args.social_scale) args.social_scale = cls.social_scale;
@@ -500,6 +688,9 @@ async function main() {
     framing: args.framing,
     hand: args.hand,
     social_scale: args.social_scale,
+    entity_mode: args.entity_mode,
+    packaging: args.packaging,
+    brand: args.brand,
   });
 
   console.log("--- prompt ---");
@@ -515,6 +706,9 @@ async function main() {
     framing: args.framing,
     hand: args.hand,
     social_scale: args.social_scale,
+    entity_mode: args.entity_mode,
+    packaging: args.packaging,
+    brand: args.brand,
     prompt: args.prompt,
     out: args.out,
     refDir: args.refDir,
