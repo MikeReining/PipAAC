@@ -171,3 +171,30 @@ export function moveCore(db, layout, senseId, toSlot, opts = {}) {
   if (!mv) return null;
   return { from: mv.from, swapped: mv.displaced?.kind === "sense" ? mv.displaced.id : null };
 }
+
+/** 018 slice 3 (D1): seat the child's people. The first entity takes
+ *  `mom`'s cell, the second `dad`'s — on every layout that has those
+ *  cells (grid60, grid90; grid15 has neither). Further entities stay
+ *  off-board, reachable through their group. Returns the seatings. */
+export function seatSetupPeople(db, entityIds, locale) {
+  const seats = db.prepare(
+    `SELECT cc.layout, cc.slot_index FROM core_cell cc
+     JOIN label l ON l.sense_id = cc.sense_id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+     WHERE l.text IN ('mom', 'dad') ORDER BY cc.layout, cc.slot_index`,
+  ).all(locale);
+  const byLayout = new Map();
+  for (const s of seats) {
+    if (!byLayout.has(s.layout)) byLayout.set(s.layout, []);
+    byLayout.get(s.layout).push(s.slot_index);
+  }
+  const placed = [];
+  entityIds.forEach((id, i) => {
+    for (const [layout, slots] of byLayout) {
+      if (i >= slots.length) continue;
+      const mv = placeOnBoard(db, layout, "entity", id, slots[i]);
+      if (mv) placed.push({ id, layout, slot: slots[i] });
+    }
+  });
+  return placed;
+}

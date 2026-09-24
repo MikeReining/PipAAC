@@ -1,8 +1,9 @@
 # Phase 018 — Core board v2 and groups
 
-**Status:** Executing. Slice 1 done 2026-09-24 — the v2 board is the
+**Status:** Executing. Slices 1–3 done 2026-09-24 — the v2 board is the
 default (`grid60` = D1, six color bands, Purple role shipped,
-`is`/`mom`/`dad` root core). Remaining: slices 2–6.
+`is`/`mom`/`dad` root core, `grid15` re-derived, setup's people seated).
+Remaining: slices 4–6.
 
 **DECIDED 2026-09-24** (founder: "this is all locked"). Reached in a
 founder brainstorm the same day, with real-children measurements run
@@ -276,6 +277,13 @@ section (sample counts).
    `core_move`, `core_place` green.
 3. **The child's people on the home board.** Setup's answers fill the
    *mom*/*dad* cells with those entities and photos (D1).
+   **DONE 2026-09-24** — `seatSetupPeople` in `coremove.mjs` seats the
+   first two setup names on the *mom*/*dad* cells of every layout that
+   has them (grid60 + grid90; grid15 has neither). The third name stays
+   an entity in My Words; *mom*/*dad* words remain reachable in their
+   group. Photos unchanged — they attach from each person's card.
+   **Proof:** `core_place.test.mjs` — seats land on both layouts,
+   displaced words keep group cells, op replay lands identical.
 4. **Groups (D4–D6, D9).**
    - Return home after Speak.
    - The likely group glows in the group list (D9).

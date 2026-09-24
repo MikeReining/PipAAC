@@ -17,7 +17,7 @@ import { tmpdir } from "node:os";
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { applyOp, listOps } from "../../public/shared/ops.mjs";
 import { createEntity } from "../../public/shared/groups.mjs";
-import { cellSlot, coreCells, placeOnBoard } from "../../public/shared/coremove.mjs";
+import { cellSlot, coreCells, placeOnBoard, seatSetupPeople } from "../../public/shared/coremove.mjs";
 import { migrateSchema } from "../../public/shared/migrate.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
@@ -157,4 +157,51 @@ test("a pre-polymorphic override migrates: the adult's move is kept", () => {
   assert.equal(row.item_id, v[1].sense_id);
   assert.equal(row.slot_index, 0);
   assert.equal(at(db, 0, "grid60")?.sense_id, v[1].sense_id, "the move still shows");
+});
+
+test("018 slice 3: setup's people take the mom/dad cells on every layout that has them", () => {
+  const db = fresh();
+  const mom = db.prepare(
+    `SELECT sense_id FROM label WHERE text = 'mom' AND kind = 'lemma'
+       AND status = 'approved' AND locale = 'en'`).all()[0].sense_id;
+  const dad = db.prepare(
+    `SELECT sense_id FROM label WHERE text = 'dad' AND kind = 'lemma'
+       AND status = 'approved' AND locale = 'en'`).all()[0].sense_id;
+
+  // Three names — the third stays an entity, seated nowhere.
+  const ids = ["Maria", "Tom", "Grandma"].map((n) => createEntity(db, { name: n }).id);
+  const placed = seatSetupPeople(db, ids, "en");
+
+  // Both seats land on grid60 AND grid90 — the people follow the child
+  // when density changes. grid15 has no mom/dad cells: untouched.
+  assert.deepEqual(
+    placed.map((p) => [p.id, p.layout, p.slot]),
+    [[ids[0], "grid60", 30], [ids[0], "grid90", 30],
+     [ids[1], "grid60", 31], [ids[1], "grid90", 31]]);
+  assert.equal(db.prepare(
+    "SELECT COUNT(*) AS n FROM core_override WHERE layout = 'grid15'").all()[0].n, 0);
+
+  for (const layout of ["grid60", "grid90"]) {
+    const cells = coreCells(db, layout, "en");
+    assert.equal(cells.find((c) => c.slot_index === 30)?.entity_id, ids[0]);
+    assert.equal(cells.find((c) => c.slot_index === 31)?.entity_id, ids[1]);
+    // The mom/dad words left the board — but not their group.
+    assert.equal(cellSlot(db, layout, "sense", mom), null);
+    assert.equal(cellSlot(db, layout, "sense", dad), null);
+    for (const sid of [mom, dad]) {
+      assert.ok(db.prepare(
+        "SELECT 1 AS x FROM group_cell WHERE item_kind = 'sense' AND item_id = ?")
+        .all(sid)[0], "the displaced word stays reachable in Groups");
+    }
+  }
+  assert.equal(db.prepare(
+    "SELECT COUNT(*) AS n FROM core_override WHERE item_id = ?").all(ids[2])[0].n, 0,
+    "the third person has no seat");
+
+  // The seating replays onto a second device through the op log.
+  const b = fresh();
+  for (const op of listOps(db)) applyOp(b, op);
+  const cells = coreCells(b, "grid60", "en");
+  assert.equal(cells.find((c) => c.slot_index === 30)?.entity_id, ids[0]);
+  assert.equal(cells.find((c) => c.slot_index === 31)?.entity_id, ids[1]);
 });
