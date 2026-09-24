@@ -692,9 +692,11 @@ CREATE TABLE IF NOT EXISTS prediction_weights (
 -- unit that syncs to supporters while the raw log never leaves the
 -- device.
 CREATE TABLE IF NOT EXISTS stats_day (
-  day INTEGER PRIMARY KEY,
+  day INTEGER NOT NULL,
+  device_id TEXT NOT NULL,
   computed_at INTEGER NOT NULL CHECK (computed_at > 0),
-  payload TEXT NOT NULL CHECK (json_valid(payload))
+  payload TEXT NOT NULL CHECK (json_valid(payload)),
+  PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 11;
+PRAGMA user_version = 12;

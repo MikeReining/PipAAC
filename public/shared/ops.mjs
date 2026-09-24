@@ -37,6 +37,7 @@ import {
 import { moveCore } from "./coremove.mjs";
 import { setBoardLayout } from "./movecost.mjs";
 import { createFamily, setFamilyItems } from "./families.mjs";
+import { writeStatsDay } from "./stats.mjs";
 
 let replaying = false;
 // The signing key's fingerprint (sync_crypto.getDeviceIdentity); set at
@@ -44,6 +45,7 @@ let replaying = false;
 // then — tests and pre-key devices.
 let deviceId = "dev_local";
 export function setDeviceId(id) { deviceId = id; }
+export function getDeviceId() { return deviceId; }
 
 // The sync loop registers here; every recorded op schedules a flush.
 // Never awaited — sync is best-effort off the write path.
@@ -237,6 +239,11 @@ export function applyOp(db, op) {
           setFamilyItems(db, a.familyId, a.items);
         }
         break;
+      case "put_stats_day":
+        // Last write wins per (day, device) — the row lands under the
+        // ORIGINATING device so several devices' totals add up.
+        writeStatsDay(db, a.day, op.device_id ?? "dev_remote", a.computed_at, a.payload);
+        break;
       default:
         throw new Error(`applyOp: unknown op kind ${op.kind}`);
     }
@@ -337,12 +344,12 @@ export function drainOps(db, confirmedOps = []) {
       op.created_at ?? Date.now(), op.relay_seq);
   }
   const pending = db.prepare(
-    "SELECT op_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
+    "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NULL ORDER BY seq",
   ).all();
   // Apply the whole confirmed stream — newly arrived ops are only the
   // tail; the log holds the rest.
   const confirmed = db.prepare(
-    "SELECT op_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NOT NULL ORDER BY relay_seq",
+    "SELECT op_id, device_id, kind, args, created_at FROM sync_op WHERE relay_seq IS NOT NULL ORDER BY relay_seq",
   ).all();
   const base = db.prepare("SELECT tables FROM sync_baseline WHERE id = 1").all()[0];
   if (!base) throw new Error("drainOps: no baseline — ensureBaseline must run at boot");

@@ -39,10 +39,10 @@ export function weekAggregate(db, fromDay, toDay) {
   const perWord = {};
   const firstKeys = [];
   let words = 0, sentences = 0, longest = 0, spotlit = 0;
-  const days = [];
+  const byDay = new Map(); // rows are (day, device) — merge to per-day words
   for (const r of rows) {
     const p = JSON.parse(r.payload);
-    days.push({ day: r.day, words: p.words });
+    byDay.set(r.day, (byDay.get(r.day) ?? 0) + p.words);
     words += p.words;
     sentences += p.sentences;
     longest = Math.max(longest, p.longest_sentence);
@@ -55,7 +55,9 @@ export function weekAggregate(db, fromDay, toDay) {
     }
   }
   return {
-    days, words, sentences, longest, spotlit, perWord, firstKeys,
+    days: [...byDay.entries()].sort((a, b) => a[0] - b[0])
+      .map(([day, w]) => ({ day, words: w })),
+    words, sentences, longest, spotlit, perWord, firstKeys,
     different: Object.keys(perWord).length,
   };
 }

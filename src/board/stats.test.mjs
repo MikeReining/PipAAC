@@ -52,11 +52,12 @@ const TZ = -new Date().getTimezoneOffset(); // fixture rows carry the machine of
 const DAY = 86_400_000;
 const B = Math.floor(Date.now() / DAY); // "today" under tz 0 arithmetic below
 
-/** Only the tables stats.mjs may read — nothing else exists. */
+/** Only the tables stats.mjs may read — plus sync_op, which the writer
+ *  records into (write-only; the module never reads it). */
 function statsOnlyDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = OFF"); // core_cell's sense ref is absent by design
-  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day"]) {
+  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op"]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     assert.ok(ddl, `schema for ${t}`);
     db.exec(ddl);
@@ -207,6 +208,13 @@ test("upsertStatsDay persists one row; refresh rewrites only today+yesterday", (
   upsertStatsDay(db, d0, 111);
   upsertStatsDay(db, d0, 222); // replace, not duplicate
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM stats_day").all()[0].n, 1);
+  // An unchanged recompute records no second op — quiet days stay quiet.
+  const opsAfterFirst = db.prepare(
+    "SELECT COUNT(*) AS n FROM sync_op WHERE kind = 'put_stats_day'").all()[0].n;
+  upsertStatsDay(db, d0, 333);
+  assert.equal(db.prepare(
+    "SELECT COUNT(*) AS n FROM sync_op WHERE kind = 'put_stats_day'").all()[0].n,
+    opsAfterFirst);
   const row = db.prepare("SELECT payload FROM stats_day WHERE day = ?").all(d0)[0];
   assert.equal(JSON.parse(row.payload).words, 8);
 

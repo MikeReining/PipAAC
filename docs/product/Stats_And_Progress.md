@@ -148,6 +148,12 @@ exactly.
 No sentence, no sequence of words and no tap time leave the device;
 daily totals carry counts only.
 
+**BUILT 2026-09-25** — `stats_day` rows are `(day, device_id)` and sync
+via the `put_stats_day` op (emitted only on change; replay lands under
+the originating device). Heavy proof: `relay.heavy.test.mjs` slice-3
+leg — sealed in transit, counts only after decrypt, per-device totals
+add up.
+
 ### 6.3 Anonymous totals to Pip
 
 **DECIDED 2026-09-23** (founder: agreed, following the Jev sharing

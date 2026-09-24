@@ -16,6 +16,8 @@
  * bucketed by calendar day, so travel and DST never move a tap.
  */
 
+import { getDeviceId, recordOp } from "./ops.mjs";
+
 const DAY_MS = 86_400_000;
 
 /** Local-day index for one event under its own stored offset. */
@@ -159,14 +161,31 @@ export function dailyTotals(db, day, computedAt = Date.now()) {
   };
 }
 
-/** Write (or replace) the `stats_day` row for `day`. */
+/** Raw (day, device) row write — the op-replay path writes under the
+ *  ORIGINATING device, so totals from several devices add up (§ 6.2). */
+export function writeStatsDay(db, day, deviceId, computedAt, payload) {
+  db.prepare(
+    `INSERT INTO stats_day (day, device_id, computed_at, payload) VALUES (?, ?, ?, ?)
+     ON CONFLICT(day, device_id) DO UPDATE SET computed_at = excluded.computed_at,
+       payload = excluded.payload`,
+  ).run(day, deviceId, computedAt,
+    typeof payload === "string" ? payload : JSON.stringify(payload));
+}
+
+/** Compute and write this device's `stats_day` row for `day`, emitting
+ *  a `put_stats_day` op so supporters see the same row. A recompute
+ *  that changes nothing records no op — quiet days stay quiet. */
 export function upsertStatsDay(db, day, computedAt = Date.now()) {
   const row = dailyTotals(db, day, computedAt);
-  db.prepare(
-    `INSERT INTO stats_day (day, computed_at, payload) VALUES (?, ?, ?)
-     ON CONFLICT(day) DO UPDATE SET computed_at = excluded.computed_at,
-       payload = excluded.payload`,
-  ).run(day, computedAt, JSON.stringify(row));
+  const deviceId = getDeviceId();
+  const prev = db
+    .prepare("SELECT payload FROM stats_day WHERE day = ? AND device_id = ?")
+    .all(day, deviceId)[0]?.payload;
+  const strip = (p) => JSON.stringify({ ...JSON.parse(p), computed_at: 0 });
+  if (!prev || strip(prev) !== strip(JSON.stringify(row))) {
+    writeStatsDay(db, day, deviceId, computedAt, row);
+    recordOp(db, "put_stats_day", { day, computed_at: computedAt, payload: row });
+  }
   return row;
 }
 

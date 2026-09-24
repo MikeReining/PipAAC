@@ -165,6 +165,30 @@ captured relay payload is scanned: none decrypts to a word sequence, a
 tap time, or a `sentence` / `learner_event_log` row, and the relay
 stores only sealed bytes.
 
+**DONE 2026-09-25.** Built:
+
+- `src/board/schema.sql` — `stats_day` keyed `(day, device_id)`: several
+  of the user's own devices each write their own row, and totals add
+  up per word (§ 6.2). `user_version` 12.
+- `public/shared/stats.mjs` — `writeStatsDay` (raw per-device upsert,
+  the replay path) and `upsertStatsDay` now emits a `put_stats_day` op
+  **only when the day changed** — recomputing identical totals records
+  nothing. Emission rides the existing op log, so sealing, ordering,
+  and relay fan-out are the same path every edit already takes.
+- `public/shared/ops.mjs` — `applyOp` case `put_stats_day` writes under
+  the op's `device_id` (the originating device, not the local one).
+  Fixed a real plumbing bug this exposed: `drainOps`' apply SELECTs
+  dropped `device_id`, so every replayed op arrived as `dev_remote` —
+  harmless until the first op needed attribution.
+- `public/shared/wincard.mjs` — `weekAggregate` merges (day, device)
+  rows into per-day words before streaking.
+
+Works Test: `relay.heavy.test.mjs` leg 4 — A computes a day row from
+real taps, submits, B drains to an identical row under A's device id;
+B's row for the same day flows back; both coexist and add to the sum.
+Scans: no item ids in the sealed relay stream; decrypted args carry no
+`selected_at`, `sentence_id`, `ended_at`, `tz_offset`, or names.
+
 ## Slice 4 — The dashboard and the report (Pip Lifetime)
 
 Goal: the full dashboard for every supporter of a Lifetime user, and a

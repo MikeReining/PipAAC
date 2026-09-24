@@ -30,7 +30,7 @@ const TODAY = Math.floor(Date.now() / DAY);
 function statsDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = OFF");
-  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day"]) {
+  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op"]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     db.exec(ddl);
   }
@@ -49,7 +49,7 @@ function putDay(db, day, { words = 0, per_word = {}, sentences = 0, longest = 0,
     sources: { grid: words, strip: 0, group: 0, keyboard: 0 },
     hours: Array(24).fill(0), lengths: {}, per_word,
   };
-  db.prepare("INSERT OR REPLACE INTO stats_day (day, computed_at, payload) VALUES (?, 1, ?)")
+  db.prepare("INSERT OR REPLACE INTO stats_day (day, device_id, computed_at, payload) VALUES (?, 'dev_test', 1, ?)")
     .run(day, JSON.stringify(payload));
 }
 

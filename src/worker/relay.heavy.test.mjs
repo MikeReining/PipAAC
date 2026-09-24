@@ -17,7 +17,8 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "../board/catalog.mjs";
 import { createEntity, placeItem } from "../../public/shared/groups.mjs";
-import { listOps } from "../../public/shared/ops.mjs";
+import { drainOps, ensureBaseline, listOps, setDeviceId } from "../../public/shared/ops.mjs";
+import { upsertStatsDay } from "../../public/shared/stats.mjs";
 import {
   exportDhPublic,
   exportPublicKey,
@@ -287,4 +288,93 @@ test("supporters: tagged join, cascade removal, rotation locks them out", async 
   const clientP2 = relayClient({ userId, baseUrl: BASE, identity: p2, userKey: userKey2 });
   assert.deepEqual(await clientP2.openOp(lastEnv), e2op);
   await assert.rejects(clientS.fetchOps(0), (e) => e.status === 403);
+});
+
+test("016 slice 3: stats_day rows sync sealed and add up per device", async () => {
+  // A computes a real day row from its tap log → a put_stats_day op →
+  // B drains it into an identical row under A's device id. B's own row
+  // for the same day flows back: both rows coexist and totals add up.
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const userKey = await getUserKey(aStore, userId);
+  const bStore = memoryKeyStore();
+  const b = await getDeviceIdentity(bStore);
+  await putUserKey(bStore, userId, userKey, 1);
+
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: userId,
+      device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
+  });
+  const clientA = relayClient({ userId, baseUrl: BASE, identity: a, userKey });
+  await makeLifetime(clientA, userId);
+  const clientB = relayClient({ userId, baseUrl: BASE, identity: b, userKey });
+  await clientA.addDevice(b.deviceId, await exportPublicKey(b.verify));
+
+  const openDb = () => {
+    const db = createDatabase(":memory:");
+    importCatalog(db, catalog);
+    ensureBaseline(db);
+    return db;
+  };
+  const dbA = openDb();
+  const dbB = openDb();
+
+  // A scripted day: three taps on opaque ids → one real stats_day row.
+  const day = Math.floor(Date.now() / 86400000);
+  const t0 = day * 86400000 + 12 * 3600 * 1000;
+  const tap = (db, id, ts) => db.prepare(
+    `INSERT INTO learner_event_log
+       (item_kind, item_id, selected_at, source, tz_offset_min, spotlit)
+     VALUES ('sense', ?, ?, 'grid', 0, 0)`,
+  ).run(id, ts);
+  tap(dbA, "s_w1", t0); tap(dbA, "s_w2", t0 + 1000); tap(dbA, "s_w2", t0 + 2000);
+  setDeviceId(a.deviceId);
+  const computed = upsertStatsDay(dbA, day, t0);
+  assert.equal(computed.words, 3);
+  const statsOps = listOps(dbA).filter((o) => o.kind === "put_stats_day");
+  assert.equal(statsOps.length, 1);
+  await clientA.submit(statsOps);
+
+  // B drains → the row lands under A's device id, identical payload.
+  const got = await clientB.fetchOps(0);
+  const plain = [];
+  for (const r of got.ops)
+    plain.push({ ...(await clientB.openOp(r.env)), relay_seq: r.relay_seq });
+  drainOps(dbB, plain);
+  const rowB = dbB.prepare(
+    "SELECT device_id, payload FROM stats_day WHERE day = ?").all(day);
+  assert.equal(rowB.length, 1);
+  assert.equal(rowB[0].device_id, a.deviceId);
+  const pB = JSON.parse(rowB[0].payload);
+  assert.equal(pB.words, 3);
+  assert.equal(pB.different, 2);
+
+  // Payload scan: the sealed stream contains no item ids; decrypted args
+  // carry counts only — no tap times, no sentence or event-log fields.
+  assert.ok(!JSON.stringify(got.ops).includes("s_w"), "relay saw item ids in the clear");
+  for (const op of plain) {
+    if (op.kind !== "put_stats_day") continue;
+    const args = typeof op.args === "string" ? op.args : JSON.stringify(op.args);
+    for (const bad of ["selected_at", "sentence_id", "ended_at", "tz_offset", "spoken_name"])
+      assert.ok(!args.includes(bad), `stats op leaked ${bad}`);
+  }
+
+  // B's own row for the same day flows back; both rows coexist and the
+  // totals add up per word across devices (§ 6.2).
+  setDeviceId(b.deviceId);
+  tap(dbB, "s_w1", t0 + 3000);
+  upsertStatsDay(dbB, day, t0 + 1);
+  await clientB.submit(listOps(dbB).filter((o) => o.kind === "put_stats_day"));
+  const gotA = await clientA.fetchOps(0);
+  const plainA = [];
+  for (const r of gotA.ops)
+    plainA.push({ ...(await clientA.openOp(r.env)), relay_seq: r.relay_seq });
+  drainOps(dbA, plainA);
+  const rows = dbA.prepare(
+    "SELECT device_id, payload FROM stats_day WHERE day = ? ORDER BY device_id").all(day);
+  assert.deepEqual(rows.map((r) => r.device_id), [a.deviceId, b.deviceId].sort());
+  assert.equal(
+    rows.reduce((n, r) => n + JSON.parse(r.payload).words, 0), 4);
 });
