@@ -449,6 +449,8 @@
       .prog-goal-name { font-weight: 700; margin: 8px 0 2px; }
       #prog-body p { margin: 4px 0; }
       #prog-body .seg-label { margin-top: 14px; }
+      .place-row { display: flex; justify-content: space-between; width: 100%; margin-top: 6px; }
+      #setup-names input { display: block; width: 100%; margin-top: 8px; }
 
       .overlay {
         position: fixed;
@@ -857,6 +859,33 @@
         <div class="row">
           <button class="btn" id="fam-save">Save</button>
           <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="placeform">
+      <div class="sheet">
+        <h2>Put a word or person here</h2>
+        <input id="place-q" placeholder="Search…" autocomplete="off" />
+        <div id="place-list"></div>
+        <div class="row">
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay" id="setupform">
+      <div class="sheet">
+        <h2 id="setup-title">Who do they call for?</h2>
+        <p class="hint">Up to three people — a name each, a photo can come later.</p>
+        <div id="setup-names">
+          <input class="setup-name" placeholder="Mom" autocomplete="off" />
+          <input class="setup-name" placeholder="Dad" autocomplete="off" />
+          <input class="setup-name" placeholder="" autocomplete="off" />
+        </div>
+        <div class="row">
+          <button class="btn" id="setup-save">Save</button>
+          <button class="btn secondary" id="setup-skip">Not now</button>
         </div>
       </div>
     </div>

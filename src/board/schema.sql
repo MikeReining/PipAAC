@@ -360,14 +360,18 @@ CREATE TABLE IF NOT EXISTS coach_event (
 );
 CREATE INDEX IF NOT EXISTS coach_event_time ON coach_event(modeled_at);
 
--- Adult moves (014 § 2 ruling 1): a per-profile slot override layered
--- on the catalog's core_cell rows, which are never rewritten — a
--- catalog regeneration can never overwrite the adult's placement.
+-- Adult placements (014 § 2 ruling 1 and § 9): a per-profile slot
+-- override layered on the catalog's core_cell rows, which are never
+-- rewritten — a catalog regeneration can never overwrite the adult's
+-- placement. Polymorphic like group_cell: item_id is a sense for a
+-- word, a personal_entity for a person. No FK — entities outlive the
+-- sense table's reach.
 CREATE TABLE IF NOT EXISTS core_override (
   layout TEXT NOT NULL,
-  sense_id TEXT NOT NULL REFERENCES sense(id),
+  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
+  item_id TEXT NOT NULL CHECK (length(item_id) > 0),
   slot_index INTEGER NOT NULL,
-  PRIMARY KEY (layout, sense_id)
+  PRIMARY KEY (layout, item_kind, item_id)
 );
 
 -- Transition highlight (014 § 4): after an accepted Cells change, the
@@ -716,4 +720,4 @@ CREATE TABLE IF NOT EXISTS stats_day (
   PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 14;
+PRAGMA user_version = 15;

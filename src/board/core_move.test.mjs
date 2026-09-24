@@ -91,7 +91,7 @@ test("move back to the catalog slot drops the override row", () => {
   moveCore(db, "grid60", stop, wantAt);
   moveCore(db, "grid60", stop, home);
   assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM core_override WHERE sense_id = ?").all(stop)[0].n,
+    db.prepare("SELECT COUNT(*) AS n FROM core_override WHERE item_id = ?").all(stop)[0].n,
     0, "back at the catalog slot is canonical — no row",
   );
   assert.equal(at(db, home), "stop");

@@ -106,7 +106,7 @@ test("setBoardLayout writes the setting, marks only moved words, keeps overrides
   assert.equal(marks.size, movedIds.size);
   // The grid60 override row is still there — adult choices don't erase.
   assert.ok(db.prepare(
-    "SELECT 1 AS x FROM core_override WHERE layout = 'grid60' AND sense_id = ?")
+    "SELECT 1 AS x FROM core_override WHERE layout = 'grid60' AND item_id = ?")
     .get(movable.sense_id));
   // …and the intent is a replayable op.
   assert.ok(db.prepare("SELECT 1 AS x FROM sync_op WHERE kind = 'set_layout'").get());

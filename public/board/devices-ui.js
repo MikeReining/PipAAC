@@ -244,6 +244,10 @@ export function mountDevices({
   $("usr-add").onclick = async () => {
     const name = prompt("Name this user", "") ?? "";
     const added = await addUser(userStore, { name: name.trim() });
+    // 014 § 9 ruling 1: a new profile gets the setup question on first
+    // open — "Who do they call for?" — so the family's people can sit
+    // in home cells from day one.
+    await putUser(userStore, { ...added, needsSetup: true });
     sessionStorage.setItem("pip_active_user", added.id);
     await flushDb();
     location.reload();

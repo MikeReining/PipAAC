@@ -29,6 +29,7 @@ import {
 import { displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
+  createEntity,
   groupDisplayName,
   groupIndex,
   maskedSenseIds,
@@ -49,7 +50,7 @@ import {
 import { resolveSlot } from "./shared/voice.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { buildJevRequest, jevDeliverable, jevProbabilities, jevRank, jevTerm } from "./shared/jev.mjs";
-import { coreCells, moveCore } from "./shared/coremove.mjs";
+import { coreCells, moveCore, placeOnBoard } from "./shared/coremove.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
 import { mountCellsSheet } from "./board/cells-sheet.js";
 import { mountSpotlightSheet } from "./board/spotlight-sheet.js";
@@ -59,6 +60,7 @@ import { mountAddFlow } from "./board/add-flow.js";
 import { mountLibrary } from "./board/library-ui.js";
 import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
+import { mountPlacePicker } from "./board/place-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
 import { mountEditor } from "./board/editor-ui.js";
 import { mountCoach } from "./board/coach-ui.js";
@@ -1139,8 +1141,54 @@ function renderGrid() {
       const empty = document.createElement("div");
       empty.className = "cell empty";
       empty.dataset.slot = slot; // a legal drop target in Edit mode
-      empty.setAttribute("aria-hidden", "true");
+      if (editing) {
+        // 014 § 9: an empty cell takes whatever the adult picks — a word
+        // or a person — via the place picker.
+        empty.setAttribute("role", "button");
+        empty.setAttribute("aria-label", "Place a word or person here");
+        empty.addEventListener("click", () => placeUi.openPicker(slot));
+      } else {
+        empty.setAttribute("aria-hidden", "true");
+      }
       grid.appendChild(empty);
+      continue;
+    }
+    if (c.kind === "entity") {
+      // A person in a home cell (014 § 9): Yellow like every person
+      // tile, photo when the family added one, speaks their name.
+      const el = wordTile({ label: c.label, role: "Yellow" });
+      el.dataset.slot = slot;
+      loadPhotoURL(photoFor(c.entity_id)).then((url) => {
+        if (!url) return;
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "";
+        el.querySelector(".tart").appendChild(img);
+        el.classList.add("photo");
+      });
+      if (editing) {
+        editPointer(el, {
+          onTap: () => wordCard.openWordCard(
+            { item_kind: "entity", item_id: c.entity_id, label: c.label },
+          ),
+          onDrop: (to) => {
+            const mv = placeOnBoard(db, geom.name, "entity", c.entity_id, to, {
+              anchors: new Set(geom.anchors.keys()),
+            });
+            if (!mv) return;
+            renderGrid();
+            toast(`Moved ${c.label}`, () => {
+              placeOnBoard(db, geom.name, "entity", c.entity_id, mv.from);
+              renderGrid();
+            });
+          },
+        });
+      } else {
+        el.addEventListener("click", () => tap(c.label, "entity", c.entity_id));
+      }
+      layerMark(el, `entity:${c.entity_id}`, { board: true });
+      cellEls.set(c.entity_id, el);
+      grid.appendChild(el);
       continue;
     }
     // A hidden word keeps its slot as a ghost tile (Design_System mask
@@ -1573,6 +1621,45 @@ const relayEntitlement = async () =>
   (await devicesUi.userClient().then((u) => u?.client?.selfKey()))?.entitlement;
 mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement });
 mountProgress({ db, me, toast, open, nameOf: statNameOf, entitlement: relayEntitlement });
+
+/* The place picker (014 § 9): Edit mode, tap an empty cell — people
+ * first, then the whole word library. The pick writes a placement with
+ * an undo toast, same as a drag. */
+const placeUi = mountPlacePicker({
+  db, locale,
+  onPick: (slot, kind, id, label) => {
+    const mv = placeOnBoard(db, boardGeom().name, kind, id, slot, {
+      anchors: new Set(boardGeom().anchors.keys()),
+    });
+    close("placeform");
+    if (!mv) return;
+    renderGrid();
+    toast(`Placed ${label}`, () => {
+      placeOnBoard(db, boardGeom().name, kind, id, mv.from);
+      renderGrid();
+    });
+  },
+});
+
+/* First-open setup (014 § 9 ruling 1): a new user is asked "Who do
+ * they call for?" once — up to three people, names now, photos later
+ * from each person's card. The entities sync like any other. */
+if (me.needsSetup) {
+  $("setup-title").textContent = `Who does ${me.name || "your child"} call for?`;
+  open("setupform");
+}
+$("setup-save").addEventListener("click", async () => {
+  const names = [...document.querySelectorAll(".setup-name")]
+    .map((i) => i.value.trim()).filter(Boolean).slice(0, 3);
+  for (const name of names) createEntity(db, { name });
+  if (names.length) await flushDb();
+  await saveUser({ needsSetup: false });
+  close("setupform");
+});
+$("setup-skip").addEventListener("click", async () => {
+  await saveUser({ needsSetup: false });
+  close("setupform");
+});
 
 /* QR card — public/board/recovery-ui.js */
 mountRecovery({

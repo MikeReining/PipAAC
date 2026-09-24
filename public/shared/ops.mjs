@@ -34,7 +34,7 @@ import {
   deleteSpotList, saveSpotList, endSession, spotSession, startSession,
   setItemTip, setListGoal,
 } from "./spotlight.mjs";
-import { moveCore } from "./coremove.mjs";
+import { moveCore, placeOnBoard } from "./coremove.mjs";
 import { setBoardLayout } from "./movecost.mjs";
 import { createFamily, setFamilyItems } from "./families.mjs";
 import { writeStatsDay } from "./stats.mjs";
@@ -225,12 +225,20 @@ export function applyOp(db, op) {
       case "spot_end":
         if (spotSession(db)) endSession(db);
         break;
+      // Old move_core ops carry {senseId}; both ops are placements now —
+      // place_cell also handles toSlot null (a cell cleared).
       case "move_core":
-        if (db.prepare("SELECT 1 AS x FROM core_cell WHERE layout = ? AND sense_id = ?")
-          .all(a.layout, a.senseId)[0]) {
-          moveCore(db, a.layout, a.senseId, a.toSlot);
-        }
+      case "place_cell": {
+        const kind = a.kind ?? "sense";
+        const id = a.id ?? a.senseId;
+        const ok = kind === "sense"
+          ? db.prepare("SELECT 1 AS x FROM sense WHERE id = ?").all(id)[0]
+          : db.prepare(
+            "SELECT 1 AS x FROM personal_entity WHERE id = ? AND status = 'active'",
+          ).all(id)[0];
+        if (ok) placeOnBoard(db, a.layout, kind, id, a.toSlot);
         break;
+      }
       case "set_layout":
         setBoardLayout(db, a.layout);
         break;

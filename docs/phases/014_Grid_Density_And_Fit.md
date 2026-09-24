@@ -268,6 +268,9 @@ for it.
 
 1. **Setup asks "Who do they call for?"** and adds 1–3 people (a name and
    an optional photo) as personal entities.
+   **BUILT** (slice 10): `usr-add` flags `needsSetup`; first open shows the
+   question, names become `personal_entity` rows via `createEntity`
+   (synced like any other). Photos attach later from each person's card.
 2. **The person comes first in the empty-sentence Smart bar:**
    person · hello · Food · help. The old order was hello · Food ·
    person · help, and the Core 15 bar holds two cards
@@ -279,6 +282,10 @@ for it.
    bar, keyboard), and the replacement shows in the move-cost preview
    (§ 4). The app never does this on its own (ruling 1). The families
    and SLPs decide the home board, not us.
+   **BUILT** (slice 10): `core_override` is polymorphic
+   (`item_kind`/`item_id`, like `group_cell`); `placeOnBoard` in
+   `public/shared/coremove.mjs` is the write owner; Edit mode taps an
+   empty cell for the place picker (`public/board/place-ui.js`).
 4. **The family's additions beat our defaults everywhere.** Their
    recording, photo, or name wins over ours on the board, in groups, and
    in the Smart bar, including predictions.
@@ -460,6 +467,32 @@ Slices: 9–11 in § 9.
     plus the setup question (ruling 1). Works test: put a person on a
     Core 15 cell, restart, update the catalog — the person is still
     there, and the replaced core word is still reachable from Groups.
+
+    **DONE.** Truth owner `public/shared/coremove.mjs`: `core_override`
+    is now polymorphic (`layout, item_kind, item_id, slot_index`) — a
+    sense or a `personal_entity` may hold any non-anchor home cell.
+    `placeOnBoard` writes the placement and, when the item came from
+    off-board, evicts the occupant back to its own default (a catalog
+    word returns to its `core_cell` slot or leaves the board; it never
+    takes a slot the app chose). `coreCells` overlays entities like
+    senses; a retired entity's placement stops claiming the cell.
+    `moveCore` keeps its call shape and `move_core` op for old logs.
+    UI: Edit mode, tap an empty cell → the place picker
+    (`public/board/place-ui.js`): the family's people first, then the
+    whole word library behind one search. An entity cell renders Yellow
+    with its photo, taps/speaks/drags like a word. Setup: `usr-add`
+    flags `needsSetup`; first open asks "Who does {name} call for?"
+    (≤3 names → `createEntity`). Synced via the `place_cell` op
+    (`toSlot: null` clears a cell); replay recomputes intent.
+    Move-cost: `cellSlot` reports the *effective* slot, so an evicted
+    word previews as `gone`, not as sitting under the person.
+    Migrator moved to `public/shared/migrate.mjs` (pure — tests drive
+    it with node:sqlite); it carries old `sense_id` override rows into
+    the new shape. Works Tests: `src/board/core_place.test.mjs`
+    (person on a Core 15 cell; file-db reopen; catalog regen; the word
+    stays in `group_cell`; op replay; clear-cell and anchor refusal;
+    no auto-placement; old-shape migration keeps the move) and the
+    `needsSetup` leg in `src/board/devices_ui.test.mjs`.
 11. **The family's person stands in for the catalog word** (§ 7a ruling
     4). Works test: a family adds "Mama" with a photo; after "I want",
     when the book ranks `mom` in the bar, the bar shows Mama's photo and
