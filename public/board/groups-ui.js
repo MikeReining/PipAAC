@@ -14,7 +14,7 @@ import {
 const $ = (id) => document.getElementById(id);
 
 export function mountGroups({
-  db, locale, all, boardGeom, getEditing, getModelGlow,
+  db, locale, all, boardGeom, getEditing, getModelGlow, getLikelyGroups,
   setView, open, close, toast, wordTile, layerMark, fitLabels, tap,
   navCell, editPointer, xBadge, openAddForm, openWordCard,
   loadPhotoURL, savePhoto, syncUploadBlob,
@@ -26,7 +26,8 @@ export function mountGroups({
   function groupIndexCell(row, vslot, spot = null) {
     const editing = getEditing();
     const el = document.createElement("button");
-    el.className = "gcell";
+    // 018 D5: a group tile is a door — neutral gray with a folder tab.
+    el.className = "gcell door";
     if (spot) el.classList.add(spot);
     el.dataset.slot = vslot;
     el.dataset.group = row.id;
@@ -104,6 +105,9 @@ export function mountGroups({
     const modelGlow = getModelGlow();
     const modelGroups = !spotGroups && modelGlow.size
       ? spotlightGroups(db, new Set(modelGlow.keys())) : null;
+    // 018 D9: no spotlight or modeling glow — the likely group glows
+    // instead (sentence so far, time of day, this child's history).
+    const likely = !spotGroups && !modelGroups ? getLikelyGroups() : null;
     if (indexPageNo >= indexPages) indexPageNo = indexPages - 1;
     for (let slot = 0; slot < cells; slot++) {
       if (slot === 0) {
@@ -136,7 +140,7 @@ export function mountGroups({
       if (row) {
         zg.appendChild(groupIndexCell(
           row, slot, spotGroups ? (spotGroups.has(row.id) ? "glow" : "dimmed")
-            : (modelGroups?.has(row.id) ? "glow" : null)));
+            : ((modelGroups?.has(row.id) || likely?.has(row.id)) ? "glow" : null)));
         continue;
       }
       const empty = document.createElement("button");

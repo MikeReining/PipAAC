@@ -54,6 +54,7 @@ test("groups index paints a stored group by name", () => {
     boardGeom: () => ({ name: "grid60", cols: 10, rows: 6, cells: 60 }),
     getEditing: () => false,
     getModelGlow: () => new Set(),
+    getLikelyGroups: () => new Set(),
     setView() {},
     open() {},
     close() {},

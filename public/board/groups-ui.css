@@ -29,6 +29,20 @@ body.groups #groupgrid { display: grid; }
   line-height: 1;
 }
 .gcell .glabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 018 D5: the folder-tab edge — the shape says "this opens" while the
+   gray says "this isn't a word". */
+.gcell.door::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 8%;
+  width: 36%;
+  height: 9px;
+  background: var(--press-f);
+  border: 3px solid var(--edge);
+  border-bottom: none;
+  border-radius: 7px 7px 0 0;
+}
 .gcell:active { filter: brightness(0.92); }
 .gcell.nav { border-color: var(--muted); background: var(--tray); font-size: clamp(13px, 2.2vmin, 20px); }
 .gcell.empty { border-style: dashed; border-color: var(--line); background: transparent; }

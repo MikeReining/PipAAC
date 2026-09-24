@@ -9,6 +9,14 @@
       }
     },
     {
+      "key": "people",
+      "glyph": "👪",
+      "category": "People, Family & Roles",
+      "names": {
+        "en": "People"
+      }
+    },
+    {
       "key": "food",
       "glyph": "🍎",
       "category": "Food & Drink",
@@ -42,6 +50,38 @@
       }
     },
     {
+      "key": "play",
+      "glyph": "⚽",
+      "category": "Toys, Play, Media & Leisure",
+      "names": {
+        "en": "Play"
+      }
+    },
+    {
+      "key": "animals",
+      "glyph": "🐶",
+      "category": "Animals & Nature",
+      "names": {
+        "en": "Animals"
+      }
+    },
+    {
+      "key": "places",
+      "glyph": "🏠",
+      "category": "Places, Rooms & Community",
+      "names": {
+        "en": "Places"
+      }
+    },
+    {
+      "key": "home",
+      "glyph": "🛋️",
+      "category": "Home, Household Objects & Daily Tools",
+      "names": {
+        "en": "Home"
+      }
+    },
+    {
       "key": "body",
       "glyph": "🧍",
       "category": "Body, Health & Hygiene",
@@ -55,6 +95,46 @@
       "category": "Feelings, Emotions & Sensory States",
       "names": {
         "en": "Feelings"
+      }
+    },
+    {
+      "key": "clothes",
+      "glyph": "👕",
+      "category": "Clothing & Accessories",
+      "names": {
+        "en": "Clothes"
+      }
+    },
+    {
+      "key": "vehicles",
+      "glyph": "🚗",
+      "category": "Vehicles & Transportation",
+      "names": {
+        "en": "Vehicles"
+      }
+    },
+    {
+      "key": "time",
+      "glyph": "🕐",
+      "category": "Time, Calendar & Sequencing",
+      "names": {
+        "en": "Time"
+      }
+    },
+    {
+      "key": "numbers",
+      "glyph": "🔢",
+      "category": "Numbers & Counting",
+      "names": {
+        "en": "Numbers"
+      }
+    },
+    {
+      "key": "social",
+      "glyph": "💬",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "names": {
+        "en": "Social"
       }
     },
     {
@@ -113,62 +193,6 @@
       }
     },
     {
-      "key": "people",
-      "glyph": "👪",
-      "category": "People, Family & Roles",
-      "names": {
-        "en": "People"
-      }
-    },
-    {
-      "key": "places",
-      "glyph": "🏠",
-      "category": "Places, Rooms & Community",
-      "names": {
-        "en": "Places"
-      }
-    },
-    {
-      "key": "play",
-      "glyph": "⚽",
-      "category": "Toys, Play, Media & Leisure",
-      "names": {
-        "en": "Play"
-      }
-    },
-    {
-      "key": "home",
-      "glyph": "🛋️",
-      "category": "Home, Household Objects & Daily Tools",
-      "names": {
-        "en": "Home"
-      }
-    },
-    {
-      "key": "clothes",
-      "glyph": "👕",
-      "category": "Clothing & Accessories",
-      "names": {
-        "en": "Clothes"
-      }
-    },
-    {
-      "key": "animals",
-      "glyph": "🐶",
-      "category": "Animals & Nature",
-      "names": {
-        "en": "Animals"
-      }
-    },
-    {
-      "key": "vehicles",
-      "glyph": "🚗",
-      "category": "Vehicles & Transportation",
-      "names": {
-        "en": "Vehicles"
-      }
-    },
-    {
       "key": "describing",
       "glyph": "🎨",
       "category": "Descriptors, Adjectives & Opposites",
@@ -177,35 +201,11 @@
       }
     },
     {
-      "key": "time",
-      "glyph": "🕐",
-      "category": "Time, Calendar & Sequencing",
-      "names": {
-        "en": "Time"
-      }
-    },
-    {
-      "key": "social",
-      "glyph": "💬",
-      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "names": {
-        "en": "Social"
-      }
-    },
-    {
       "key": "little_words",
       "glyph": "🔤",
       "category": "Function Words & Grammar",
       "names": {
         "en": "Little words"
-      }
-    },
-    {
-      "key": "numbers",
-      "glyph": "🔢",
-      "category": "Numbers & Counting",
-      "names": {
-        "en": "Numbers"
       }
     },
     {

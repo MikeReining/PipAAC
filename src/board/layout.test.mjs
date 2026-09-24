@@ -52,11 +52,13 @@ test("a group re-wraps without a single row moving", () => {
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);
   // 15 items in My Words → canonical page 0 holds them all (slots 2–16).
+  // Explicit cells: this is a geometry test — the banded fill rule
+  // (018 D5) has its own proof in groups.test.mjs.
   for (let i = 0; i < 15; i++) {
     db.prepare(
       "INSERT INTO personal_entity (id, spoken_name) VALUES (?, ?)",
     ).run(`ent_t${i}`, `thing ${i}`);
-    placeItem(db, "grp_my_words", "entity", `ent_t${i}`);
+    placeItem(db, "grp_my_words", "entity", `ent_t${i}`, canonCell(i));
   }
   const stored = db.prepare(
     "SELECT item_id, page, slot_index FROM group_cell WHERE group_id = 'grp_my_words' ORDER BY page, slot_index",

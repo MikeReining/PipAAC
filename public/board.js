@@ -12,6 +12,7 @@ import {
   fillChosen,
   keyboardContinuations,
   logImpression,
+  likelyGroups,
   logSelection,
   openSentence,
   stampShownFinal,
@@ -319,6 +320,8 @@ async function speakSentence() {
     sentencePicks = 0;
     lastImpressionKey = null;
     openImpressionId = null;
+    // 018 D4: the sentence is done — the next one starts at home.
+    if (view !== "board") kbUi.setView("board");
   }
 }
 
@@ -1648,6 +1651,12 @@ function flashCell(el) {
 /* Groups board mode — public/board/groups-ui.js */
 groupsUi = mountGroups({
   db, locale, all: ALL, boardGeom, getEditing: () => editing, getModelGlow: () => modelGlow,
+  getLikelyGroups: () => {
+    const lw = loadWeights(db, catalog.prediction);
+    return likelyGroups(db, sentence.map((s) => ({ kind: s.kind, id: s.id })),
+      Date.now(), locale,
+      { weights: lw.weights, tau: catalog.prediction.tau, book, partner: partnerTurn });
+  },
   setView: (v) => kbUi.setView(v), open, close, toast, wordTile, layerMark, fitLabels, tap,
   navCell, editPointer, xBadge,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),

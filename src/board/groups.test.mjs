@@ -237,15 +237,18 @@ test("legacy migration keeps custom groups, entities, and the caregiver's arrang
   assert.equal(custom.name, "Sofia's snacks");
   // The legacy slot (30) is now a built-in's — grp_more_doing (014
   // slice 4). Placement law: a taken slot degrades to the lowest free
-  // one — 22, which Animals vacated when its zone row moved it to 40.
-  assert.equal(custom.index_slot, 22);
+  // one — 15, which Animals vacated when its zone row moved it to 40
+  // (018 D6 re-seed: Animals sits at 15 by default).
+  assert.equal(custom.index_slot, 15);
 
   const customCells = groupPage(db, "grp_custom1", 0, "en");
   assert.deepEqual(
     customCells.map((r) => [r.item_id, r.slot_index]),
     [
       ["ent_a", 2],
-      ["ent_b", 3],
+      // 018 D5: a kind fills its column top to bottom — the second
+      // person stacks under the first, not beside it.
+      ["ent_b", 12],
     ],
   );
   assert.ok(
@@ -527,3 +530,28 @@ function nextFreeIndexSlot(db) {
   for (let s = 10; s < 60; s++) if (!used.has(s)) return s;
   throw new Error("no free index slot");
 }
+
+test("018 D5: a mixed group lays out in band order — fresh column per kind, filled top to bottom", () => {
+  const db = openDb();
+  const gid = createGroup(db, { name: "Breakfast" }).id;
+  const [cookie, milk, bread, eat, no, more] =
+    ["cookie", "milk", "bread", "eat", "no", "more"].map((w) => senseIdByText(db, w));
+
+  placeItem(db, gid, "sense", cookie); // Yellow claims the first column
+  placeItem(db, gid, "sense", milk);   // Yellow fills it top to bottom
+  placeItem(db, gid, "sense", eat);    // Green starts a fresh column
+  placeItem(db, gid, "sense", no);     // Red starts its own column
+  placeItem(db, gid, "sense", bread);  // Yellow goes to ITS area's next
+                                       // free spot — nothing else moves
+  placeItem(db, gid, "sense", more);   // Blue lands between Green and Red
+
+  const page = groupPage(db, gid, 0, "en");
+  const at = (id) => page.find((r) => r.item_id === id)?.slot_index;
+  assert.deepEqual(
+    [cookie, milk, eat, no, bread, more].map(at),
+    // Yellow · Green · Red · Blue — Red claimed col 4 before Blue
+    // arrived, and stored cells never move (D5: stability over order).
+    [2, 12, 3, 4, 22, 5],
+    "each kind columnar in band order; late kinds don't shift earlier claims",
+  );
+});

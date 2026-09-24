@@ -1,9 +1,9 @@
 # Phase 018 — Core board v2 and groups
 
-**Status:** Executing. Slices 1–3 done 2026-09-24 — the v2 board is the
+**Status:** Executing. Slices 1–4 done 2026-09-24 — the v2 board is the
 default (`grid60` = D1, six color bands, Purple role shipped,
-`is`/`mom`/`dad` root core, `grid15` re-derived, setup's people seated).
-Remaining: slices 4–6.
+`is`/`mom`/`dad` root core, `grid15` re-derived, setup's people seated,
+groups re-ordered and banded). Remaining: slices 5–6.
 
 **DECIDED 2026-09-24** (founder: "this is all locked"). Reached in a
 founder brainstorm the same day, with real-children measurements run
@@ -284,12 +284,25 @@ section (sample counts).
    group. Photos unchanged — they attach from each person's card.
    **Proof:** `core_place.test.mjs` — seats land on both layouts,
    displaced words keep group cells, op replay lands identical.
-4. **Groups (D4–D6, D9).**
-   - Return home after Speak.
-   - The likely group glows in the group list (D9).
-   - Group doors are neutral with a folder tab.
-   - Re-seed the default `index_slot` order.
-   - Mixed groups use the banded layout.
+4. **Groups (D4–D6, D9).** **DONE 2026-09-24**
+   - Return home after Speak — `speakSentence` calls `setView("board")`.
+   - The likely group glows in the group list (D9) — `likelyGroups`
+     (funnel.mjs) glows the group of the strip's top-scored candidate,
+     behind spotlight and modeling glows.
+   - Group doors are neutral with a folder tab — `.gcell.door` paints a
+     tab edge over the existing no-role gray.
+   - Re-seed the default `index_slot` order — `group_seed.json` reordered
+     to the D6 list; new devices get it (adult order on existing devices
+     is untouched — it lives in `board_group`, not the seed).
+   - Mixed groups use the banded layout — `bandedFreeCell` in
+     `placeItem`'s default path: kinds claim columns in band order,
+     filled top to bottom; stored cells never move, so a late
+     earlier-band kind lands after later kinds (stability over order).
+   - **Deferred to slice 6:** D8's "a family may place a group door in a
+     home cell" — `placeOnBoard` only takes `sense`/`entity` kinds today.
+   - **Proof:** `groups.test.mjs` (D5 banded layout + migration seats),
+     `strip_order.test.mjs` (D9 likely-group), `layout.test.mjs`. Speak-
+     home is a one-line UI path; visual pass deferred with slice 1's.
 5. **Color from kind (D7).** A plain-words kind picker when adding a
    word, and a one-time Jev classification.
 6. **Edit the home board (D10).** 📊 counts, the placement sheet (tile +

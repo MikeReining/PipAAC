@@ -476,6 +476,21 @@ export function stripScored(db, sentence, now = Date.now(), locale, model) {
   return { candidates: candidates.slice(0, SHORTLIST_CAP), pNone };
 }
 
+/** 018 D9: the likely group for the group list's glow — the group the
+ *  top-scored candidate lives in. Reads the same blend the strip uses,
+ *  so the glow means "the next word probably lives here". Returns an
+ *  empty Set when nothing has support or the top item is homeless. */
+export function likelyGroups(db, sentence, now, locale, model) {
+  const { candidates } = stripScored(db, sentence, now, locale, model);
+  const top = candidates[0];
+  if (!top) return new Set();
+  return new Set(
+    db.prepare(
+      "SELECT group_id FROM group_cell WHERE item_kind = ? AND item_id = ?",
+    ).all(top.kind, top.id).map((r) => r.group_id),
+  );
+}
+
 /* --- The instrument (§ 5.7): strip_impression ------------------------ */
 
 /**

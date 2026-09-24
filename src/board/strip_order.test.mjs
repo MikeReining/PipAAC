@@ -15,7 +15,7 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import {
-  stripCandidates, stripScored, openSentence, logSelection,
+  likelyGroups, stripCandidates, stripScored, openSentence, logSelection,
 } from "../../public/shared/funnel.mjs";
 import { setSetting, setMask } from "../../public/shared/groups.mjs";
 import { loadWeights } from "../../public/shared/learn.mjs";
@@ -152,4 +152,22 @@ test("a hidden negation word is never pinned to the last slot", () => {
   setMask(db, notId, true);
   const s = shown(db, ["i", "am"]);
   assert.ok(!s.includes("not"), "a hidden word reached the bar");
+});
+
+test("018 D9: the likely group is the group of the top-scored word", () => {
+  const db = fresh();
+  // After 'i want' the book's top continuation is a content word — the
+  // group it lives in is the one that glows in the group list.
+  const groups = likelyGroups(db, items(db, ["i", "want"]), NOW, "en", model(db));
+  const top = stripScored(db, items(db, ["i", "want"]), NOW, "en", model(db))
+    .candidates[0];
+  const expected = db.prepare(
+    "SELECT group_id FROM group_cell WHERE item_kind = ? AND item_id = ?",
+  ).all(top.kind, top.id).map((r) => r.group_id);
+  assert.deepEqual([...groups].sort(), expected.sort(),
+    `the glow tracks the top candidate (${lemmaOf(db, top.id) ?? top.id})`);
+  assert.ok(groups.size, "a real group glows, not an empty set");
+  // Spotlight/modeling glows take precedence — when the sentence is
+  // empty and nothing has support, no group pretends to be likely.
+  assert.ok(groups.size <= 2, "at most the word's own groups glow");
 });

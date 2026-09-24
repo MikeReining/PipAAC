@@ -401,6 +401,88 @@ export function catalogMatches(db, text, groupId, locale, seedCategory = null) {
   );
 }
 
+/* --- 018 D5: banded placement ---
+ * A group's page lays out in the home board's band order: each kind of
+ * word starts a fresh column and fills it top to bottom. A family's
+ * addition takes the next free spot in its kind's area — the earliest
+ * claimed column with room, else the next unclaimed column after the
+ * kind's last. A kind new to the page claims the first unclaimed column
+ * after the last earlier-band kind's area. Stored cells never move, so
+ * a late-arriving earlier-band kind lands after later kinds rather than
+ * shifting them — stability wins over strict order. */
+const BAND_ORDER = ["Yellow", "Green", "Pink", "Blue", "Purple", "Red"];
+const bandRank = (b) => Math.max(0, BAND_ORDER.indexOf(b));
+/* Columns in claim order: their first usable slot, left to right — the
+ * row-0 item cells (cols 2–9) come before the cols 0–1 columns that
+ * start at row 1. */
+const COL_PREF = [2, 3, 4, 5, 6, 7, 8, 9, 0, 1];
+const colOf = (slot) => slot % 10;
+const colSlots = (col) => {
+  const out = [];
+  for (let s = col; s <= LAST_ITEM_SLOT; s += 10) {
+    if (s >= FIRST_ITEM_SLOT) out.push(s);
+  }
+  return out;
+};
+
+function itemBand(db, kind, id) {
+  if (kind !== "sense") return "Yellow"; // entities color as people
+  return one(db, "SELECT fitzgerald_role AS r FROM sense WHERE id = ?", [id])?.r ?? "Yellow";
+}
+
+/** The next free spot in the item's band area (D5). Falls back to a
+ *  fresh page when every existing page leaves the kind no column. */
+function bandedFreeCell(db, groupId, kind, id) {
+  const rank = bandRank(itemBand(db, kind, id));
+  const rows = all(
+    db,
+    `SELECT gc.page, gc.slot_index,
+            COALESCE(s.fitzgerald_role, 'Yellow') AS band
+     FROM group_cell gc
+     LEFT JOIN sense s ON gc.item_kind = 'sense' AND s.id = gc.item_id
+     WHERE gc.group_id = ?`,
+    [groupId],
+  );
+  const byPage = new Map();
+  for (const r of rows) {
+    if (!byPage.has(r.page)) byPage.set(r.page, []);
+    byPage.get(r.page).push(r);
+  }
+  const lastPage = rows.length ? Math.max(...rows.map((r) => r.page)) : 0;
+  for (let page = 0; page <= lastPage; page++) {
+    const items = byPage.get(page) ?? [];
+    const taken = new Set(items.map((i) => i.slot_index));
+    const claimedCols = new Set(items.map((i) => colOf(i.slot_index)));
+    const freeCol = (col) => colSlots(col).find((s) => !taken.has(s));
+    const bandCols = [...new Set(
+      items.filter((i) => bandRank(i.band) === rank).map((i) => colOf(i.slot_index)),
+    )].sort((a, b) => a - b);
+    if (bandCols.length) {
+      for (const col of bandCols) {
+        const free = freeCol(col);
+        if (free !== undefined) return { page, slot_index: free };
+      }
+      // Area full — extend it into the next unclaimed column.
+      const after = COL_PREF.indexOf(bandCols[bandCols.length - 1]) + 1;
+      for (const col of COL_PREF.slice(after)) {
+        if (claimedCols.has(col)) continue;
+        const free = freeCol(col);
+        if (free !== undefined) return { page, slot_index: free };
+      }
+      continue;
+    }
+    // A kind new to this page starts after the earlier bands' area.
+    const earlier = items.filter((i) => bandRank(i.band) < rank).map((i) => colOf(i.slot_index));
+    const boundary = earlier.length
+      ? Math.max(...earlier.map((c) => COL_PREF.indexOf(c))) + 1
+      : 0;
+    for (const col of COL_PREF.slice(boundary)) {
+      if (!claimedCols.has(col)) return { page, slot_index: colSlots(col)[0] };
+    }
+  }
+  return { page: lastPage + (rows.length ? 1 : 0), slot_index: FIRST_ITEM_SLOT };
+}
+
 /** Lowest free (page, slot_index), page-major. Pages grow without bound. */
 export function nextFreeCell(db, groupId) {
   const taken = new Set(
@@ -415,9 +497,10 @@ export function nextFreeCell(db, groupId) {
   }
 }
 
-/** Append an item at the next free cell — or at `cell` when the adult
- *  tapped an empty slot to add there (the slot is the picker). No-op when
- *  already present; an occupied target refuses. */
+/** Append an item at the next free spot in its kind's area (018 D5) —
+ *  or at `cell` when the adult tapped an empty slot to add there (the
+ *  slot is the picker). No-op when already present; an occupied target
+ *  refuses. */
 export function placeItem(db, groupId, kind, id, cell = null, addedAt = null) {
   const existing = one(
     db,
@@ -433,7 +516,7 @@ export function placeItem(db, groupId, kind, id, cell = null, addedAt = null) {
     );
     if (taken) throw new Error(`group ${groupId} slot ${cell.page}:${cell.slot_index} is occupied`);
   }
-  const target = cell ?? nextFreeCell(db, groupId);
+  const target = cell ?? bandedFreeCell(db, groupId, kind, id);
   const at = addedAt ?? Date.now();
   insertCell(db, groupId, kind, id, target.page, target.slot_index, at);
   recordOp(db, "place_item", {
