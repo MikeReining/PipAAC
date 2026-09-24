@@ -42,6 +42,7 @@ now a decided direction with a proposed design:
 | Image | A photo from this device, or no photo. A missing photo shows the name and its Fitzgerald color. It does not borrow a competitor symbol. |
 | Groups | Where the child finds it: one or more `group_cell` rows (§ Filing). Set by the group the add started in; classification may add one more. The adult is never asked to pick a folder. |
 | Home cell | An adult may place a person in any non-anchor home cell — a `core_override` row with `item_kind='entity'` — **BUILT** (014 slice 10, `placeOnBoard` in `public/shared/coremove.mjs`). A retired entity's placement stops claiming the cell. |
+| Stand-in | When enrichment's `sense_suggestion` names a catalog sense (a Jev judgment, never asked), the person replaces that word in the Smart bar at the word's rank — their photo, name, and recording — **BUILT** (014 slice 11, `entityForSense`). The producer is 017 R14. |
 | Category | The record's home category, a classifier input only. Set when the add started in a built-in group seeded from a category, else null. Display never reads it. |
 | Hint | Optional free text ("our dog", "grandma", "his school"). Classification input only. Never required. |
 | Status | `active` or `retired` — **BUILT** (009 slice 2). Remove on the word card retires: the row, photo, recording, and placements stay, and every read path skips retired entities until restored. Retire, never delete. |

@@ -743,6 +743,25 @@ export function placeFromEnrichment(db, entityId, catalog) {
   return gid;
 }
 
+/**
+ * 014 slice 11 (§ 7a ruling 4): which active entity stands in for this
+ * catalog sense — Mama for `mom`. The mapping is enrichment's
+ * sense_suggestion (a Jev judgment, never asked of the adult); the
+ * latest ready row wins. Returns the entity row for a stand-in card,
+ * or null. A retired entity never stands in, and the rename/photo
+ * trigger supersedes stale suggestions on its own.
+ */
+export function entityForSense(db, senseId) {
+  return one(
+    db,
+    `SELECT e.id, e.spoken_name, e.photo_key FROM entity_enrichment r
+     JOIN personal_entity e ON e.id = r.entity_id
+     WHERE r.sense_suggestion = ? AND r.status = 'ready' AND e.status = 'active'
+     ORDER BY r.rowid DESC`,
+    [senseId],
+  ) ?? null;
+}
+
 /** Move a group to a free index slot. */
 export function moveGroup(db, groupId, slot) {
   const occupant = one(db, "SELECT id FROM board_group WHERE index_slot = ?", [slot]);

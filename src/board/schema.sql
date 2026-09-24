@@ -200,6 +200,7 @@ CREATE TABLE IF NOT EXISTS entity_enrichment (
     'Numbers & Counting'
   )),
   associations TEXT,
+  sense_suggestion TEXT REFERENCES sense(id),
   model TEXT NOT NULL,
   prompt_version TEXT NOT NULL,
   status TEXT NOT NULL CHECK (status IN ('ready', 'abstained', 'superseded'))
@@ -720,4 +721,4 @@ CREATE TABLE IF NOT EXISTS stats_day (
   PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 15;
+PRAGMA user_version = 16;

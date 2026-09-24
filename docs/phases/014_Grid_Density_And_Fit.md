@@ -294,13 +294,14 @@ for it.
      wins over the default picture (`public/shared/images.mjs:22`); a
      person's recording wins over the synthesized name
      (`public/shared/voice.mjs:103`).
-   - **Gap:** a family person is not linked to the catalog word it stands
-     for. When the book predicts `mom`, the bar shows our stick figure,
-     not the family's Mama. Fix (**PROPOSED**): enrichment derives which
-     catalog word, if any, the person stands for (a Jev judgment, not a
-     string rule — 017 R14; the adult is never asked —
-     `Personal_Entities.md` § 2). The bar then shows the person in that
-     word's place, with the word's prediction score.
+   - **BUILT** (slice 11): enrichment derives which catalog word, if any,
+     the person stands for (`entity_enrichment.sense_suggestion` — a Jev
+     judgment, not a string rule; the adult is never asked). When the
+     word is offered in the bar, `entityForSense` substitutes the person:
+     Mama's photo and name in `mom`'s place, at `mom`'s score; a tap
+     speaks her recording, and her home cell takes the word's halo. The
+     producer (Jev writing `sense_suggestion`) is 017 R14's work — the
+     mechanism is live and proven against seeded rows.
 5. **"Call a person" joins the function table** in
    `Core_Grid_Membership.md` § 1, owned by rulings 1–3, not by a core
    cell.
@@ -497,3 +498,17 @@ Slices: 9–11 in § 9.
     4). Works test: a family adds "Mama" with a photo; after "I want",
     when the book ranks `mom` in the bar, the bar shows Mama's photo and
     speaks her recording.
+
+    **DONE** (mechanism; producer is 017 R14). The mapping lives on
+    `entity_enrichment.sense_suggestion` — a ready enrichment row says
+    which catalog sense the entity stands for; the rename/photo
+    supersede trigger already retires stale suggestions, so an old name
+    can never keep standing in. `entityForSense` (`public/shared/groups.mjs`)
+    returns the active entity for a sense, latest ready row first;
+    `stripCards` (`public/board.js`) substitutes the entity card at the
+    word's rank — photo, name, recording on tap — and `applyLikely`
+    lands the word's halo on the person's home cell. The row syncs like
+    all enrichment. Nothing writes `sense_suggestion` yet: the Jev
+    judgment is 017's. Works Test: `src/board/stand_in.test.mjs` —
+    mapped stand-in, retired/superseded never show, rename supersedes
+    via the real trigger, latest ready row wins.

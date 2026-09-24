@@ -30,6 +30,7 @@ import { displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
   createEntity,
+  entityForSense,
   groupDisplayName,
   groupIndex,
   maskedSenseIds,
@@ -537,6 +538,12 @@ function stripCards(items) {
     if (c.kind === "entity") {
       return { entity: ALL(db, "SELECT * FROM personal_entity WHERE id = ?", [c.id])[0] };
     }
+    // 014 slice 11: a family person stands in for the catalog word it
+    // represents — the bar shows Mama's photo and her name in `mom`'s
+    // place, at `mom`'s rank. The word's score is untouched; only the
+    // tile and the voice change.
+    const standIn = entityForSense(db, c.id);
+    if (standIn) return { entity: standIn };
     const w = ALL(
       db,
       `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
@@ -1249,8 +1256,12 @@ function applyLikely() {
     const model = { weights: loadWeights(db, catalog.prediction).weights,
                     tau: catalog.prediction.tau };
     for (const c of keyboardContinuations(db, sents, locale, Date.now(), model)) {
-      if (c.kind !== "sense" || !cellEls.has(c.id)) continue;
-      next.add(c.id);
+      if (c.kind !== "sense") continue;
+      // A stand-in person on the board takes the word's halo too —
+      // Mama's cell glows when `mom` is likely (014 slice 11).
+      const id = cellEls.has(c.id) ? c.id : (entityForSense(db, c.id)?.id ?? null);
+      if (id === null || !cellEls.has(id)) continue;
+      next.add(id);
       if (next.size === 3) break;
     }
   }
