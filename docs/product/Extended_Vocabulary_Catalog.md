@@ -9,6 +9,27 @@ drawn pictures. Characters, shows, games, apps and songs get words and audio
 only, no drawn picture. Families use Draw it for me for those, which also
 tells us what Muse will draw. Holidays and occasions are their own groups.
 
+> [!IMPORTANT]
+> **Check for an existing picture before generating one.** About 1,930 rows
+> already have an unreviewed drawing in `out/extended_art/<id>.png`. The
+> `<id>` is the label in lowercase with every run of other characters turned into
+> `_` (`Goldfish (crackers)` → `goldfish_crackers.png`). The founder
+> estimates about 75% are usable.
+>
+> For any extended word:
+>
+> 1. Look for `out/extended_art/<id>.png`. If it exists, review it first. Its
+>    prompt and settings are in `out/extended_art/results.jsonl`.
+> 2. Generate only if there is no file or the review rejects it. Generate one
+>    image at a time, ten at most, with the founder (`AGENTS.md` § Project Laws).
+> 3. Record every review decision in `out/extended_art/review.json`
+>    (`approve`, `reroll` or `reject`). `node scripts/art/review_server.mjs`
+>    shows the unreviewed ones 50 at a time. It calls no paid API.
+>
+> `out/` is gitignored, so these files exist only on the founder's machine. Do
+> not delete them. 1,472 rows were never drawn. 19 were blocked by Meta's content
+> filter (mostly toileting and underwear words); `results.jsonl` lists them.
+
 How to read this file:
 
 - Each `##` section is one category. Its `art:` line says whether we draw it.

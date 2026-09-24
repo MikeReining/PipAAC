@@ -46,6 +46,8 @@ approval: about 1,950 images and 3,400 Jev calls before the OpenRouter daily
 budget stopped it. The images sit unreviewed in `out/extended_art/`
 (gitignored). The script now refuses to run without `--founder-approved`.
 Never pass that flag unless the founder has said yes to that exact run.
+Before drawing any extended word, check `out/extended_art/` for an existing
+picture and review that first (steps at the top of the catalog).
 
 Goal: a ranked, deduplicated list of candidate words and phrases, each with
 role, archetype, category, and a one-line drawing description.
