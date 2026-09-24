@@ -174,6 +174,64 @@ or a person (014 slice 10).
   answer must keep this rule: the bar holds words, and one button opens
   groups.
 
+### D10 — Editing the home board: "what goes here?"
+
+**DECIDED 2026-09-24** (founder). On the home board, editing is about
+**placement**: what goes in this spot. Editing the word itself (its
+picture, voice, hiding it) lives on the word card.
+
+Why: the 60-cell board is full, so today there is no way to put a
+different word in a spot. Tapping an empty cell opens the picker, but
+there are no empty cells. Families also can't see which words get used,
+so they can't tell what to take off.
+
+**Edit mode toolbar:** ✓ (done) · 📊 (show counts).
+
+- **📊** puts a count on every tile: how many times the child tapped it
+  in the last 30 days. It counts the child's own taps only; an adult's
+  modeling taps never count. No banner and no fading: the numbers are
+  the explanation.
+
+**Tap a tile → the placement sheet:**
+
+```text
+┌─────────────────────────────┐
+│ [ this ]    33           ✎  │  the tapped tile, its count, edit word
+│ 🔍                          │  search any word or person
+│ cookie                  14  │  words NOT on the home board,
+│ juice                    9  │  most-tapped first, with counts
+│ milk                     8  │
+│ …                           │
+└─────────────────────────────┘
+```
+
+- **Tap a row → it goes in that spot.** The old word goes back to its
+  group (`placeOnBoard`, 014 slice 10). Undo shows as a toast.
+- **🔍** filters the list to what was typed: any word, or the family's
+  people.
+- **The empty-field list** is sorted by this child's use. On day one,
+  with no history, it is sorted by the words children use most (the
+  opening book's unigram). The list has no label and no section headers.
+- **✎** opens the word card (built: picture, voice, hide).
+- **Drag** still moves or swaps tiles. Tap means "what goes here", drag
+  means "where it goes".
+
+**No locks.** It's the family's app. Any spot, including the safety
+column, can take any word. The only fixed thing is color: a word keeps
+its own color wherever it's placed (D2, D7).
+
+**Copy rule for edit mode:** icons, one field, one list, numbers. No
+explaining sentences, and no user's name in the copy. A screen that
+needs a sentence isn't finished. At closeout this rule moves to
+`docs/product/Design_System.md`.
+
+**Open:** whether group pages get the same 📊 counts (to drag the
+most-used items onto page one), and whether "add a new word" should end
+with an offer to place it on the home board. Neither is decided.
+
+Preview: `public/preview-core60.html`, the "Edit mode — tap any tile"
+section (sample counts).
+
 ## Evidence (CHILDES, 2026-09-24)
 
 - Frequency, among all 680 Pip words children say: *this* #10, *mom*
@@ -213,6 +271,11 @@ or a person (014 slice 10).
    - Mixed groups use the banded layout.
 5. **Color from kind (D7).** A plain-words kind picker when adding a
    word, and a one-time Jev classification.
+6. **Edit the home board (D10).** 📊 counts, the placement sheet (tile +
+   count + ✎, 🔍, most-used list), tap-to-place with Undo. **Proof:** on
+   the real board, 📊 shows the child's own 30-day counts (a modeling
+   tap doesn't change them); tapping *this* and picking *cookie* puts
+   *cookie* in that spot and *this* back in its group; Undo restores it.
 
 Each slice is proved on the real board (`npm run dev:agent`), not only
 in unit tests.

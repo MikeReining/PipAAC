@@ -131,6 +131,11 @@ and is on no page until the family adds it (`docs/product/Word_Library.md`
   built-in group, because that is the findability guarantee; hiding a word
   is masking (`docs/product/Vocabulary_Masking_And_Safety.md`). An entity
   removed from its last group returns to My Words and is never orphaned.
+- **Home board editing — DECIDED 2026-09-24, not built**
+  (`docs/phases/018_Core_Board_V2_And_Groups.md` D10). In Edit mode on
+  the home board, a tap opens "what goes here?": the tile and its
+  30-day count, a search field, and the most-used words that aren't on
+  the board. 📊 shows every tile's count. There are no locks.
 - **One Edit mode.** Parent Corner → `Edit groups`. The corner button
   reads `✓ Done` while editing. Built-in groups can be moved but not
   deleted or renamed. **BUILT** (009 slice 2): Edit mode works like the
