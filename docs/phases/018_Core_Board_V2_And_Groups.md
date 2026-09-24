@@ -152,6 +152,28 @@ Animals 1.6%, Time 1.9%. People, at 3.3%, is handled by D1. A family may
 place any group door in any home cell, the same way it can place a word
 or a person (014 slice 10).
 
+### D9 — The Smart bar suggests words only; groups have one button
+
+**DECIDED 2026-09-24** (founder: "consistency wins").
+
+- **The Predict row only ever holds words:** likely words, the small
+  words from "one step up", and the "no" word in the last slot (017
+  R21). It never holds a group door, so the bar always means one thing.
+- **Groups have exactly one way in: the 🗂 Groups anchor,** always in the
+  same place at the end of the Smart bar.
+- **The likely group glows in the group list** when it opens (the sentence
+  so far, the time of day, and this child's history). Nothing moves, and
+  no slot is spent.
+- Why (CHILDES): after *I want* / *I have* / *give me*, the next word is
+  mostly a small word the bar already offers (*a*, *some*, *to*, *it*).
+  The content word after it is spread across many groups, and no single
+  group beats the bar's words by much. The best case, *I want a* → Food
+  (7%) vs. the 4th word (1%), was a near-tie that is not worth breaking
+  consistency for.
+- **Open (founder):** a faster way into groups is still wanted. Any
+  answer must keep this rule: the bar holds words, and one button opens
+  groups.
+
 ## Evidence (CHILDES, 2026-09-24)
 
 - Frequency, among all 680 Pip words children say: *this* #10, *mom*
@@ -183,8 +205,9 @@ or a person (014 slice 10).
    every root-core word, including *they* and *mine*.
 3. **The child's people on the home board.** Setup's answers fill the
    *mom*/*dad* cells with those entities and photos (D1).
-4. **Groups (D4–D6).**
+4. **Groups (D4–D6, D9).**
    - Return home after Speak.
+   - The likely group glows in the group list (D9).
    - Group doors are neutral with a folder tab.
    - Re-seed the default `index_slot` order.
    - Mixed groups use the banded layout.

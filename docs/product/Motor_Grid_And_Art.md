@@ -295,6 +295,11 @@ less. That look cost decides whether prediction pays at all (017 R18).
 
 **Rules for the Predict row.**
 
+0. **Words only (DECIDED 2026-09-24, founder).** The Predict row never
+   holds a group door. Groups open from the 🗂 Groups anchor only, and the
+   likely group glows in the list
+   (`docs/phases/018_Core_Board_V2_And_Groups.md` D9).
+
 1. **Board words count.** Core words are ranked with everything else
    and may appear in the bar. The grid never changes.
 2. **The "no" word takes the last slot.** If a "no" word is among the
