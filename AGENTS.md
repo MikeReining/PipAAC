@@ -72,6 +72,11 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
 - Before proposing platform surfaces (APIs, linters, JSON rules), run
   `docs/product/Design_Invariants.md` and prefer routed docs + live CLI topics
   first.
+- **Never run batch art generation without explicit founder approval.** Art is
+  generated one image at a time, ten at most, with the founder reviewing
+  (`docs/operations/art-generator/SKILL.md` § 7). On 2026-09-24 an agent ran
+  `scripts/art/extended_batch.mjs` unasked (~1,950 images, ~3,400 Jev calls) and
+  exhausted the OpenRouter daily budget. "Generate the words" means the list.
 - Agents preview with `npm run dev:agent`. `npm run dev` is the founder browse
   copy — do not kill it or reuse `.wrangler/slot-0`.
 - **Interactive IDE agents commit directly** with `git add <paths>` and

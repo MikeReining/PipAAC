@@ -1,6 +1,8 @@
 # Phase 010 — Extended picture library
 
-**Status:** Ready to execute. Not started. Size decided (slice 0).
+**Status:** In progress. Slice 1 word list drafted (2026-09-24). Slice 2 art
+is NOT approved: generation stays one image at a time, ten at most, with the
+founder (`AGENTS.md` § Project Laws).
 
 **DECIDED 2026-09-22** (founder: "a thousand images only cost us $10 …
 high leverage and high wow if we really build out our image library").
@@ -33,6 +35,18 @@ loop). Generation is cheap; review speed is the real limit (slice 2).
 
 ## Slice 1 — The word list
 
+**DRAFTED 2026-09-24:** `docs/product/Extended_Vocabulary_Catalog.md`, about
+3,000 drawn words, 600 characters/media/songs (no art), and 400 phrases (founder: "generate
+the 3000 words and 400 phrases … one-time effort"). Characters, shows, games,
+apps and songs get words and audio only; Draw it for me covers their pictures
+(founder 2026-09-24). Still to do: the generated JSON and the Works Test below.
+
+**WARNING 2026-09-24:** an agent ran `scripts/art/extended_batch.mjs` without
+approval: about 1,950 images and 3,400 Jev calls before the OpenRouter daily
+budget stopped it. The images sit unreviewed in `out/extended_art/`
+(gitignored). The script now refuses to run without `--founder-approved`.
+Never pass that flag unless the founder has said yes to that exact run.
+
 Goal: a ranked, deduplicated list of candidate words and phrases, each with
 role, archetype, category, and a one-line drawing description.
 
@@ -63,7 +77,9 @@ review is a founder-and-agent pass (same practice as the occasions
 review: side by side, decided together).
 
 Build the review page first: a contact sheet of 50 images at a time,
-with one key or tap for approve, re-roll or reject. At 2,300 images, how
+with one key or tap for approve, re-roll or reject. **BUILT 2026-09-24, not approved for use:**
+`scripts/art/extended_batch.mjs` (batch runner, gated by `--founder-approved`)
+and `scripts/art/review_server.mjs` (review page). At 2,300 images, how
 fast this page is decides how fast the library ships.
 
 Works Test: the catalog build rejects a `secondary_fringe` sense with no
