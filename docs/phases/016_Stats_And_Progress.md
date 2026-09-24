@@ -289,6 +289,45 @@ requests: every field is on the whitelist; no own-word name, entity id,
 user id, device id or photo hash appears; the Worker rejects a payload
 with an extra field. With the setting off, no research request is made.
 
+**DONE 2026-09-25.** Built (storage: Workers Analytics Engine — the
+`RESEARCH` binding on `pip_research`; append-only datapoints, no schema
+or auth surface to defend):
+
+- `src/board/schema.sql` — `learner_profile.share_research` (default 1),
+  `research_id` (`res_*`, synced so every device reports under it),
+  `presentation_mode` (the whitelist field; 'symbol' until the display
+  filter lands with its own phase), `stats_day.reported` (device-local
+  send-once flag — never synced, replicas keep 0). `user_version` 14.
+- `public/shared/research.mjs` — `dayPayload` builds the whitelist from
+  a stats_day row (only `sense:` ids go out as bare `sns_*` ids;
+  `entity:` taps collapse to the `own_taps` number); `ensureResearchId`
+  mints + syncs the id via `set_setting`; `flushResearch` posts only
+  own-device unreported rows, caps a flush at 14, marks `reported` on
+  success. `RESEARCH_FIELDS` mirrors the Worker's allowed set.
+- `src/worker/research.js` + `POST /research` — `validateResearch`
+  constructs a clean object from the allowlist rather than deleting
+  forbidden keys (a missed delete can't leak); extra key, non-`sns_`
+  word id, non-`res_` rid, out-of-range number → 400. Handler writes
+  one AE datapoint indexed by rid.
+- `public/board.js` + `index.html` — the "Help improve Pip" seg in
+  Parent Corner (same synced-setting mechanics as Smarter suggestions);
+  `flushResearch` rides each stats refresh, fire-and-forget.
+- `public/shared/groups.mjs` — the three new columns join
+  `SYNCED_SETTINGS`.
+
+Works Test: `src/board/research.test.mjs` — a capture-fetch inspects
+every byte leaving the device: field set equals the whitelist, all
+`words` keys are `sns_*`, Cooper's taps arrive as the number 3, no
+name/entity id/user id/device id/hour appears in any body; a supporter
+replica's copy of the row never sends; send-once via `reported`; off →
+zero requests; the id is random, stable, and syncs via `set_setting`.
+`handleResearch` round-trips a real payload into a datapoint and 400s
+on extras/malformed JSON; `accounts.heavy.test.mjs` adds the live-worker
+leg (200/400/405). `check:fast` green.
+
+Known caveat: a schema rebuild resets `reported` to 0, so an upgraded
+device re-posts each day once — dedup on `(rid, day)` when querying.
+
 ## Out of scope
 
 Automatic tagging of communicative functions (requesting, commenting,

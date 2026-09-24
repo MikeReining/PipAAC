@@ -3,6 +3,7 @@ import { UserRelay } from "./relay.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
 import { verifyAssertion } from "./webauthn.mjs";
+import { handleResearch } from "./research.js";
 
 export { UserRelay, PairingLobby, SupporterAccounts };
 
@@ -23,6 +24,12 @@ export default {
 
     if (path === "/catalog.json") {
       return json(catalog);
+    }
+
+    // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted
+    // daily totals only, keyed by a random research id.
+    if (path === "/research") {
+      return handleResearch(request, env);
     }
 
     // Sync relay (Sync_And_Web_Editing § 6): one Durable Object per user

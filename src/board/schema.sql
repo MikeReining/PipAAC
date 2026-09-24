@@ -115,24 +115,35 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   highlight_next INTEGER NOT NULL DEFAULT 0 CHECK (highlight_next IN (0, 1)),
   -- Parent Corner: Jev sharing — the strip's shortlist and the sentence
   -- being built may be reranked by TypeSafe Jev through the Worker
-  -- (Dual_Engine § 3.2). Default ON; off means no Jev call, ever.
+  -- (Dual_Engine § 3.2). Default ON — off means no Jev call, ever.
   jev_sharing INTEGER NOT NULL DEFAULT 1 CHECK (jev_sharing IN (0, 1)),
   -- One Cells setting per profile (014 § 3): the layout the home board,
   -- every group page, and the strip all draw at. Names a coordinate-map
-  -- layout (catalog.layouts); anything unknown renders as grid60.
+  -- layout (catalog.layouts) — anything unknown renders as grid60.
   board_layout TEXT NOT NULL DEFAULT 'grid60',
   -- Spotlight settings (013 § 4), synced: non-target dim percent, glow
   -- style (0 steady / 1 pulse), default session length in minutes
-  -- (0 = until ended; midnight is always the latest bound).
+  -- (0 = until ended — midnight is always the latest bound).
   spot_dim INTEGER NOT NULL DEFAULT 45 CHECK (spot_dim BETWEEN 10 AND 90),
   spot_pulse INTEGER NOT NULL DEFAULT 0 CHECK (spot_pulse IN (0, 1)),
   spot_minutes INTEGER NOT NULL DEFAULT 0 CHECK (spot_minutes >= 0),
   -- Smart bar boost (013 § 4): 1 gives session targets a gentle Predict
-  -- lift; spotGate still caps them at half the bar.
+  -- lift — spotGate still caps them at half the bar.
   spot_boost INTEGER NOT NULL DEFAULT 1 CHECK (spot_boost IN (0, 1)),
   -- Live modeling (013 § 4): silent by default — the adult's voice is
   -- the audio. 1 speaks the modeled word on the child's board too.
-  model_speaks INTEGER NOT NULL DEFAULT 0 CHECK (model_speaks IN (0, 1))
+  model_speaks INTEGER NOT NULL DEFAULT 0 CHECK (model_speaks IN (0, 1)),
+  -- "Help improve Pip" (016 § 6.3, decided 2026-09-23): the whitelisted
+  -- daily totals to Pip. Default ON — off means nothing is sent, ever.
+  share_research INTEGER NOT NULL DEFAULT 1 CHECK (share_research IN (0, 1)),
+  -- The random research id, minted on first send and synced so every
+  -- device reports under it. Never the user id, never a device id.
+  research_id TEXT CHECK (research_id IS NULL OR research_id GLOB 'res_*'),
+  -- Presentation mode (Profile_Presentation_Modes.md): which render the
+  -- board shows. Reported in the research whitelist — the display filter
+  -- itself lands with its own phase.
+  presentation_mode TEXT NOT NULL DEFAULT 'symbol'
+    CHECK (presentation_mode IN ('symbol', 'label'))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (
@@ -699,7 +710,10 @@ CREATE TABLE IF NOT EXISTS stats_day (
   device_id TEXT NOT NULL,
   computed_at INTEGER NOT NULL CHECK (computed_at > 0),
   payload TEXT NOT NULL CHECK (json_valid(payload)),
+  -- Device-local: has this device posted this row's whitelisted totals
+  -- to /research (016 § 6.3). Never synced — replicas keep their own 0.
+  reported INTEGER NOT NULL DEFAULT 0 CHECK (reported IN (0, 1)),
   PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 13;
+PRAGMA user_version = 14;

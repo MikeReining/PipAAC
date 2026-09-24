@@ -379,3 +379,19 @@ test("supporter invites: claim → Allow → grant → revoke", async () => {
   const badOpen = await post(`/accounts/invites/${t2}`, { action: "open" });
   assert.equal(badOpen.status, 403, "declined invite still opens");
 });
+
+// 016 slice 6: POST /research — the route exists on the real worker,
+// accepts a whitelisted payload, rejects anything extra.
+test("research intake: whitelist enforced on the live worker", async () => {
+  const good = {
+    v: 1, rid: "res_00000000-0000-4000-8000-000000000000", day: 14000,
+    words: { sns_want: 8 }, own_taps: 3, sent_lengths: { 2: 3 },
+    wpm: 5, wpm_n: 4, strip_share: 0.31,
+    layout: "grid60", mode: "symbol", age_days: 0, ver: "2026-09-25",
+  };
+  assert.equal((await post("/research", good)).status, 200);
+  assert.equal((await post("/research", { ...good, user_id: "u-1" })).status, 400);
+  assert.equal((await post("/research", { ...good, words: { ent_x: 1 } })).status, 400);
+  const get = await fetch(`${BASE}/research`);
+  assert.equal(get.status, 405);
+});

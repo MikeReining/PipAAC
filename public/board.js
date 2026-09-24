@@ -39,6 +39,7 @@ import { setDeviceId } from "./shared/ops.mjs";
 import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
 import { initSync, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import { refreshStatsDays } from "./shared/stats.mjs";
+import { flushResearch } from "./shared/research.mjs";
 import { mountWincard } from "./board/wincard-ui.js";
 import { mountProgress } from "./board/progress-ui.js";
 import {
@@ -197,12 +198,18 @@ initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
   })
   .catch((err) => console.warn("sync unavailable", err));
 // 016 slice 1: today's and yesterday's totals recompute on boot; older
-// days are fixed. A spoken sentence schedules the same refresh.
-refreshStatsDays(db);
+// days are fixed. A spoken sentence schedules the same refresh. Slice 6:
+// each refresh also flushes the whitelisted research totals — async and
+// fire-and-forget, so a dead network never touches the board.
+const refreshAndReport = () => {
+  refreshStatsDays(db);
+  flushResearch(db).catch(() => {});
+};
+refreshAndReport();
 let statsTimer = null;
 const scheduleStatsRefresh = () => {
   clearTimeout(statsTimer);
-  statsTimer = setTimeout(() => refreshStatsDays(db), 2000);
+  statsTimer = setTimeout(refreshAndReport, 2000);
 };
 // Profile locale and voice resolve once at boot (schema §7.1) and bind
 // into every label query and speech call — never a literal, never
@@ -1346,6 +1353,24 @@ $("jev-share").addEventListener("click", (e) => {
   setSetting(db, "jev_sharing", jevSharing ? 1 : 0);
   kbUi.syncSettings();
 });
+/* "Help improve Pip" (016 slice 6) — the research-totals switch. Same
+ * synced-setting mechanics as the seg above. */
+const syncShareSeg = () => {
+  const on = (ALL(db,
+    "SELECT share_research AS s FROM learner_profile WHERE id = 'prf_local'",
+  )[0]?.s ?? 1) === 1;
+  for (const b of $("share-research").querySelectorAll("button")) {
+    b.classList.toggle("on", (b.dataset.v === "1") === on);
+  }
+};
+$("share-research").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v === undefined) return;
+  setSetting(db, "share_research", v === "1" ? 1 : 0);
+  syncShareSeg();
+  if (v === "1") flushResearch(db); // turning it on sends what's pending
+});
+syncShareSeg();
 
 /* Spotlight sheet — public/board/spotlight-sheet.js */
 mountSpotlightSheet({

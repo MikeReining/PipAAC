@@ -26,5 +26,8 @@
   ],
   "r2_buckets": [
     { "binding": "BLOBS", "bucket_name": "pippaac-sync" }
+  ],
+  "analytics_engine_datasets": [
+    { "binding": "RESEARCH", "dataset": "pip_research" }
   ]
 }

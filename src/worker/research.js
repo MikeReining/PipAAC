@@ -1,0 +1,100 @@
+/**
+ * POST /research — the "Help improve Pip" intake
+ * (Stats_And_Progress § 6.3).
+ *
+ * One POST per stats_day per device: whitelisted daily totals keyed by
+ * a random research id. The whitelist is enforced by construction —
+ * `validateResearch` returns a NEW object containing only allowed
+ * fields, so a strip can't be bypassed by forgetting a delete. Storage
+ * is Workers Analytics Engine (`RESEARCH` binding): append-only
+ * analytics, no per-request auth, no writes back.
+ */
+
+const RE = {
+  rid: /^res_[0-9a-f-]{8,64}$/,
+  sense: /^sns_[0-9a-z-]{1,64}$/,
+  short: /^[a-z0-9._-]{1,32}$/i,
+};
+
+const int = (v, max) => Number.isInteger(v) && v >= 0 && v <= max;
+
+/** Returns a clean payload or null. Extra keys reject the whole POST —
+ *  a client that sends anything else is not this app. */
+export function validateResearch(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return null;
+  const allowed = new Set([
+    "v", "rid", "day", "words", "own_taps", "sent_lengths",
+    "wpm", "wpm_n", "strip_share", "layout", "mode", "age_days", "ver",
+  ]);
+  for (const k of Object.keys(body)) if (!allowed.has(k)) return null;
+
+  if (body.v !== 1) return null;
+  if (typeof body.rid !== "string" || !RE.rid.test(body.rid)) return null;
+  if (!int(body.day, 100000)) return null;
+  if (!int(body.age_days, 100000)) return null;
+  if (typeof body.ver !== "string" || !RE.short.test(body.ver)) return null;
+
+  if (body.words == null || typeof body.words !== "object" || Array.isArray(body.words)) return null;
+  const words = {};
+  for (const [k, v] of Object.entries(body.words)) {
+    if (!RE.sense.test(k) || !int(v, 100000)) return null; // built-in ids only
+    words[k] = v;
+  }
+  if (Object.keys(words).length > 600) return null;
+  if (!int(body.own_taps, 100000)) return null;
+
+  if (body.sent_lengths == null || typeof body.sent_lengths !== "object"
+      || Array.isArray(body.sent_lengths)) return null;
+  const sentLengths = {};
+  for (const [k, v] of Object.entries(body.sent_lengths)) {
+    if (!/^[0-9]{1,2}$/.test(k) || !int(v, 100000)) return null;
+    sentLengths[k] = v;
+  }
+  if (Object.keys(sentLengths).length > 40) return null;
+
+  if (body.wpm !== null && (typeof body.wpm !== "number" || body.wpm < 0 || body.wpm > 500)) {
+    return null;
+  }
+  if (!int(body.wpm_n, 100000)) return null;
+  if (typeof body.strip_share !== "number" || body.strip_share < 0 || body.strip_share > 1) {
+    return null;
+  }
+  if (typeof body.layout !== "string" || !RE.short.test(body.layout)) return null;
+  if (body.mode !== "symbol" && body.mode !== "label") return null;
+
+  return {
+    v: 1, rid: body.rid, day: body.day,
+    words, own_taps: body.own_taps, sent_lengths: sentLengths,
+    wpm: body.wpm, wpm_n: body.wpm_n, strip_share: body.strip_share,
+    layout: body.layout, mode: body.mode, age_days: body.age_days, ver: body.ver,
+  };
+}
+
+/** Validate → write one Analytics Engine data point. The datapoint is
+ *  the whitelist as JSON blobs plus the queryable numerics; `rid` is
+ *  the index so a user's days can be followed without any other key. */
+export async function handleResearch(request, env) {
+  if (request.method !== "POST") return json({ error: "method" }, { status: 405 });
+  const body = await request.json().catch(() => null);
+  const clean = validateResearch(body);
+  if (!clean) return json({ error: "bad_request" }, { status: 400 });
+  env?.RESEARCH?.writeDataPoint?.({
+    blobs: [
+      JSON.stringify(clean.words),
+      JSON.stringify(clean.sent_lengths),
+      clean.layout, clean.mode, clean.ver,
+    ],
+    doubles: [
+      clean.day, clean.age_days, clean.own_taps,
+      clean.wpm ?? -1, clean.wpm_n, clean.strip_share,
+    ],
+    indexes: [clean.rid],
+  });
+  return json({ ok: true });
+}
+
+const json = (data, init = {}) =>
+  new Response(JSON.stringify(data), {
+    ...init,
+    headers: { "content-type": "application/json; charset=utf-8", ...(init.headers || {}) },
+  });

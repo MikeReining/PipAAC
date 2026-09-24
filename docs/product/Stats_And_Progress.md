@@ -186,6 +186,16 @@ pattern: on by default, one switch, a strict list).
   typed.
 - **Used for:** the grid, the catalog and prediction; and published
   claims such as "new words in the first 90 days", only as measured.
+
+BUILT 2026-09-25 — `learner_profile.share_research` is the synced
+switch ("Help improve Pip" in Parent Corner). `public/shared/research.mjs`
+posts each device-computed `stats_day` row once to `POST /research`;
+`src/worker/research.js` validates by constructing a clean object from
+the allowlist (extras → 400) and writes Analytics Engine datapoints on
+the `RESEARCH` binding (`pip_research` dataset), indexed by the random
+`res_*` id. Own-word taps report as a count only; tap times and sentence
+sequences never leave the device. A schema rebuild re-posts a device's
+days once — dedup on `(rid, day)` at query time.
 - **DECIDED 2026-09-23** (founder: "our flywheel should be on"). The
   prediction flywheel adds anonymous 1–3-word counts of built-in words
   from spoken sentences, with no identifier at all, under this same
