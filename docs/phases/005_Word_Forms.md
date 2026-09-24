@@ -274,6 +274,75 @@ Done when: the test passes.
 
 ---
 
+## Slice 5 (IDEA) — Forms in the Predict row
+
+**IDEA, founder 2026-09-24:** "super simple, and it will help." Build
+it with this phase, after slice 1. Not yet specified for execution:
+the developer turns this into a slice spec when slice 1 lands.
+
+The idea: the Smart bar's Predict row shows the form the sentence
+needs, not only the lemma. It uses the same picture with the form's
+label. After *I want* → `waffles`; after *I want a* → `waffle`; after
+*I want some* → `milk`. It's the same one tap, and the child sees and
+hears the right ending every time: "one step up"
+(`docs/product/Motor_Grid_And_Art.md` § 2.2) for word endings, with no
+teaching screen. It suggests and never auto-replaces, and the grid
+button still shows the lemma. The Forms key (slice 3) stays for
+choosing any other form.
+
+**Evidence (CHILDES, 2026-09-24, scratch script).** What speaking
+children say after *I want* / *I need* / *can I have* / *give me*:
+
+| Word | Bare | Plural | "a …" | "some …" |
+| --- | --- | --- | --- | --- |
+| milk | 41% | 0% | 1% | 42% |
+| water | 41% | 0% | 3% | 49% |
+| cookie | 38% | 10% | 22% | 10% |
+| egg | 31% | 33% | 18% | 9% |
+| toy | 18% | 32% | 10% | 14% |
+| banana | 29% | 6% | 60% | 0% |
+| spoon | 7% | 0% | 73% | 2% |
+
+- **Each word has its own habit.** No one says *milks*; *spoon* takes
+  *a*; *eggs* and *toys* go plural. So this is per-word counts, not a
+  rule. A blanket "suggest the plural" would be wrong for half the
+  words.
+- After *a*, the plural follows only 1% of the time, so *a* →
+  singular falls out of the counts.
+- Speaking children also say the bare word 30–40% of the time. The
+  fuller form is the step up, not the only thing they say.
+
+**How it works.**
+1. The opening book (017 step 23) counts **forms**, not only lemmas:
+   *waffles* and *waffle* are counted separately and linked to the same
+   sense. Today the book lemmatizes before counting, which throws this
+   away.
+2. A Predict tile for a sense shows its most likely form in this
+   context, from the book's form counts plus the child's own history.
+3. Rare words with too few counts (e.g. *waffle*) borrow the habit of
+   similar words, learned from the counts, never from a rule table
+   (017 R14).
+4. The Sentence help setting applies: *One step up* (default) keeps the
+   book's forms strong; *Their words* lets the child's own history
+   lead.
+
+**Depends on:** slice 1 (forms exist in the catalog) and 017 step 23
+(the book), with a form-counting change to `build_book.mjs`.
+
+**Proof, sketched:** the item-1 real-children scorer (017) reports
+whether the child's actual form (not just the lemma) is in the top 4,
+with and without form counts. On a real board: *I want* → the bar shows
+`cookies` or `a` next to `milk` (not `milks`); *I want a* → `banana`
+(not `bananas`).
+
+**Open:** slice 3's `rankForms` uses a hand-written rule table (*he* →
+`wants`, *yesterday* → past, a number → plural). That predates 017
+R14 (no hand-coded language rules, 2026-09-23). If this slice's counts
+rank forms well, they could replace that table. Founder call when
+slice 3 is specified.
+
+---
+
 ## Out of scope
 
 - **Automatic agreement** (the engine inserts `wants` without asking): a
