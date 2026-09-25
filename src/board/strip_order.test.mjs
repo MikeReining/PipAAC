@@ -1,11 +1,11 @@
 /**
- * Smart bar v2 Works Test — merge order and the evidence gate.
+ * Smart bar v2 Works Test — merge order at the chosen ending.
  *
- * Proves: sources merge her-now, her-any, children; longer endings rank
- * before shorter endings inside a table; dedupe keeps the first
- * source's copy; board words are not excluded; a hidden word never
- * paints; fewer than four tiles is the honest answer when evidence is
- * thin; the same input paints the same slots.
+ * Proves: the first ending with a follower is the only ending that
+ * speaks; sources merge her-now, her-any, children; dedupe keeps the
+ * first source's copy; board words are not excluded; a hidden word
+ * never paints; fewer than four tiles is the honest answer when
+ * evidence is thin; the same input paints the same slots.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -94,18 +94,6 @@ test("dedupe: the first source keeps the tile", () => {
   assert.deepEqual(s, ["juice", "milk"]);
 });
 
-test("longer ending ranks first; shorter endings fill what is missing", () => {
-  const db = fresh();
-  const kids = makeKids(db, [
-    { ctx: ["play", "want"], next: { juice: 60 } },      // length-2 ending
-    { ctx: ["want"], next: { more: 60, cookie: 40 } },  // length-1 ending
-  ]);
-  const s = shown(db, ["go", "do", "play", "want"], kids);
-  // 'play want' is the longest seen ending — its follower leads; the
-  // 'want' ending only adds what 'play want' never produced.
-  assert.deepEqual(s, ["juice", "more", "cookie"]);
-});
-
 test("mid-sentence never falls back to the empty phrase", () => {
   const db = fresh();
   const kids = makeKids(db, [
@@ -116,28 +104,6 @@ test("mid-sentence never falls back to the empty phrase", () => {
   assert.deepEqual(s, []);
   // At sentence start the empty phrase IS the context — openers paint.
   assert.deepEqual(shown(db, [], kids), ["i", "more"]);
-});
-
-test("the gate: below 3% or below 30 observations shows nothing", () => {
-  const db = fresh();
-  const thin = makeKids(db, [
-    { ctx: ["i", "want"], next: { juice: 3, milk: 2 } }, // total 5 < 30
-  ]);
-  assert.deepEqual(shown(db, ["i", "want"], thin), [],
-    "a small table must not produce weak tiles");
-  const share = makeKids(db, [
-    { ctx: ["i", "want"], next: { juice: 100, milk: 2, cookie: 1 } },
-  ]);
-  // total 103 ≥ 30; juice at ~97% passes, milk ~1.9% and cookie <1% fail.
-  assert.deepEqual(shown(db, ["i", "want"], share), ["juice"]);
-});
-
-test("her count of 1 is not enough; 2 paints", () => {
-  const db = fresh();
-  say(db, ["i", "want", "milk"], NOW - 100000);
-  assert.deepEqual(shown(db, ["i", "want"]), []);
-  say(db, ["i", "want", "milk"], NOW - 90000);
-  assert.deepEqual(shown(db, ["i", "want"]), ["milk"]);
 });
 
 test("fewer than four tiles is honest output", () => {

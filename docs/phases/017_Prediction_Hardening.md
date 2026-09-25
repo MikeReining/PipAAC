@@ -2135,33 +2135,43 @@ what came next after the entire phrase, merged her-now (±90 min) →
 her-any-time → children-in-general (CHILDES train, suffix contexts ≤6,
 counts ≥2 — `data/prediction/phrase_table.en.json`). Backoff walks
 suffix endings longest-first; a non-empty phrase never reads the empty
-ctx. Evidence gate: `her >= 2` taps after the ending, or children follow
-it `>= 7%` of `>= 30` observations. Fewer than 4 tiles or none is
-correct output. `phrase_count` derives from `learner_event_log`;
-spoken closeSentence trains it, cleared bars and detached picks do not.
-`strip_impression` keeps full candidate evidence + the gate — every
-stored moment replays (`replayImpression`).
+ctx. THE RULE (revised same day after founder testing): walk the
+phrase's endings longest-first and stop at the FIRST ending that has
+any following word in any source — her-now, her-any, children — then
+show only the words that followed THAT ending, merged in that order by
+count, deduplicated, up to 4. Never fill slots from a shorter ending:
+a shorter ending is a different grammatical situation ("i like my mom"
+must not inherit "my mom"→"is" — that evidence is sentence-START data,
+"my mom is tall"). No gate, no threshold, no minimum count — one spoken
+sentence is evidence. Fewer than 4 tiles or none is correct output; the
+longer the sentence, the emptier the honest bar.
+`phrase_count` derives from `learner_event_log`; spoken closeSentence
+trains it, cleared bars and detached picks do not — a sentence she
+ended adds no follower, so her stops never claim an ending and never
+block children data. `strip_impression` stores the ending length in
+`gate` ({"ending": n}; 0 = sentence start, null = nothing matched);
+`replayImpression` = first 4 unhidden of the stored ranked list.
 
-Reference replay (`scripts/prediction/phrase_jev/replay_v2.mjs`, real
-`stripRanked` on ava_log.json, test day = last Monday, 47 moments, no
-gate): 0d 28, 1d 35, 3d 36, 7d 41, 20d 43 — vs reference filter
-29/36/37/40/43, inside the ±1 tolerance at every history length. Word→id
-mapping: non-lemma words are entities, so name targets can only come
-from her history — that is the per-row explanation for the −1 diffs
-(the +1 at 7d is the suffix table finding endings the prefix-only
-reference table could not).
+The two bugs that forced this, both from the founder's first session:
+"i like my" → empty bar ("i like my"→mom 13.6% was gated out at 22
+observations < kidMin 30; each word was judged only on its longest
+ending and shorter-ending evidence was thrown away), and
+"i like my mom" → "is" (filled from the shorter "my mom" ending —
+sentence-start context leaked into mid-sentence).
 
-Gate check (`gate_check_v2.mjs`, run_ava3's 20 mid-sentence moments,
-judge_ava3.json): at hist 0, kid>=7%/30 drops "go"->"go" (CHILDES 6.4%
-of 51.6k) with zero hit loss; 8% loses "i want"->"a". "good morning"->
-"the" (22.4%/245) is attested English — no evidence gate removes it,
-and no hand rule was added. Chosen gate: herMin 2, kidShare 0.07,
-kidMin 30.
+Children-table fix (build_phrase_table.mjs): an unmapped word is a
+WALL, not an utterance break — no context may include it and the next
+word is not a sentence start; only the real first word of a child line
+counts toward ctx "". The old split minted fake sentence starts.
+
+Proof: `scripts/prediction/bar_examples.mjs` + `bar_examples.json` —
+18 founder-reviewed rows, expected bars computed on the raw transcripts
+by a separate implementation; all 18 OK on the real `stripRanked`.
+Not wired into npm run check while the bar is still iterating.
 
 20 real bar rows (`real_rows_v2.mjs` — the app's own call path, real
 catalog + shipped table, 20 days of Ava history): 17/20 strip hits, all
-20 impressions replay-consistent. Printed rows for human review are in
-the script output.
+20 impressions replay-consistent under the new rule.
 
 Permission (R11): the shipped table is still aggregate counts over the
 closed catalog vocabulary — no utterances, speakers, or transcript
@@ -2169,7 +2179,8 @@ text — but it conditions on longer suffix contexts (≤6) than the
 opening book's last-2. Within the written scope's shape; flag to
 TalkBank if scope wording matters.
 
-Known pre-existing failures (unrelated, reproduce at the commit before
-this work): `synth.test.mjs` manifest --check (generator drifted vs
+Known pre-existing failures (unrelated, reproduce with this work
+stashed): `synth.test.mjs` manifest --check (generator drifted vs
 committed manifest before this branch), `core_move.test.mjs` UNIQUE
-core_cell on a hand-edited map (fails identically at HEAD).
+core_cell on a hand-edited map, `symbol_art.test.mjs` SENSE_ART_SQL
+(fails stashed — environment-dependent, on-disk symbols).

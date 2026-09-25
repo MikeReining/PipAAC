@@ -1,18 +1,16 @@
 /**
  * Slice 3 strip — phrase-history ranking (smart bar v2).
  *
- * One rule: after every tap, rank candidate next items by the RELATIVE
- * frequency of what came next after the ENTIRE phrase built so far —
- * never the previous word, never total frequency. Three tables merged
- * in order, deduplicated:
- *   1. her own sentences that started within 90 minutes of now (any day)
- *   2. her own sentences, any time
- *   3. children in general (the shipped CHILDES phrase table)
- * An unseen phrase backs off to its longest seen ending, then shorter
- * endings, down to the last item; a mid-sentence phrase never falls
- * back to the empty phrase — "" means "start of a sentence". A word
- * shows only with evidence (EVIDENCE_GATE): an empty slot beats a weak
- * word. No model, no weights, no learned parameters.
+ * One rule: after every tap, walk the phrase's endings longest-first —
+ * the whole phrase, then drop the first item, down to the last item —
+ * and stop at the FIRST ending that has any following word in any
+ * source. Show only the words that followed THAT ending: her-now by
+ * count, then her-any by count, then children by count, deduplicated,
+ * up to 4. A shorter ending is a different grammatical situation —
+ * never fill missing slots from it. A mid-sentence phrase never falls
+ * back to the empty phrase — "" means "start of a sentence".
+ * No gate, no threshold, no model, no learned parameters: one spoken
+ * sentence of hers is evidence.
  */
 
 import { pathTimes, wpmStats, wrongPicks } from "./stats.mjs";
@@ -23,16 +21,6 @@ export { STRIP_CAP };
 /** Her "now" table: sentence starts within +-90 minutes of the current
  *  local time of day, any day. */
 export const HER_NOW_MIN = 90;
-
-/** The evidence gate — starting values, to be confirmed on the
- *  reference replay: she tapped it after this ending at least
- *  `herMin` times, or children follow this ending with it at least
- *  `kidShare` of the time AND that ending was seen `kidMin` times.
- *  Values set on the 20-row Ava gate check (scripts/prediction/
- *  phrase_jev/gate_check_v2.mjs): 3% let CHILDES-attested noise through
- *  ("go"->"go" at 6.4%); 8% cost a real hit ("i want"->"a"); 7% is the
- *  edge that drops the nonsense tile without losing hits. */
-export const EVIDENCE_GATE = { herMin: 2, kidShare: 0.07, kidMin: 30 };
 
 /** Ranked candidates kept on a strip moment for later evaluation. */
 const RANKED_CAP = 16;
@@ -234,22 +222,20 @@ function endingsOf(phrase) {
 
 /** Ranked next items under one table: walk the whole ending chain —
  *  a longer ending's followers first, shorter endings only fill what
- *  is missing. Each item carries the count, share, and total of the
- *  ending that first contributed it. */
+ *  is missing. Group mode only (the main strip stops at the first
+ *  ending with evidence). */
 function lookupRanked(getRows, phrase) {
   const ranked = [];
   const seen = new Set();
   for (const ending of endingsOf(phrase)) {
     const rows = getRows(ending);
     if (!rows?.length) continue;
-    const total = rows.reduce((a, r) => a + r.n, 0);
-    const sorted = [...rows].sort(
-      (a, b) => b.n - a.n || itemKey(a).localeCompare(itemKey(b)));
+    const sorted = [...rows].sort((a, b) => b.n - a.n);
     for (const r of sorted) {
       const k = itemKey(r);
       if (seen.has(k)) continue;
       seen.add(k);
-      ranked.push({ kind: r.kind, id: r.id, n: r.n, share: r.n / total, total });
+      ranked.push({ kind: r.kind, id: r.id, n: r.n });
     }
   }
   return ranked;
@@ -273,10 +259,13 @@ function maskedSenses(db) {
 }
 
 /**
- * The strip's ranked candidates with their evidence, and the gated
- * offer. Merged table order: her-now, her-any, children. A candidate's
- * `her` field is its best count after its contributing ending across
- * her two tables; `kid` is the children ending's share and total.
+ * The strip's ranked candidates and the offer. THE RULE: the first
+ * ending (longest first) with any following word in any source is the
+ * only ending consulted — her-now rows by count, then her-any, then
+ * children, deduplicated. Hidden senses are removed after the ending
+ * is chosen; nothing falls back to replace a hidden word. `ending` is
+ * the chosen ending's length — 0 means sentence start, null means no
+ * ending had any follower anywhere.
  */
 export function stripRanked(db, sentence, now, locale, kidsTable = null) {
   ensurePhraseHistory(db);
@@ -289,52 +278,41 @@ export function stripRanked(db, sentence, now, locale, kidsTable = null) {
   const allTbl = herAllRows(db, endings);
   const kids = locale === "en" ? kidsTable : null;
 
-  const herNow = lookupRanked((e) => nowTbl.get(ctxKey(e)), phrase);
-  const herAll = lookupRanked((e) => allTbl.get(ctxKey(e)), phrase);
-  const kidRank = lookupRanked((e) => kidsRows(kids, e), phrase);
-
+  let ending = null;
   const merged = [];
   const seen = new Set();
-  const sources = new Map(); // item key -> {her, kid:{share,total}}
-  const mark = (ranked, src) => {
-    for (const r of ranked) {
-      const k = itemKey(r);
-      const rec = sources.get(k) ?? {};
-      if (src === "kids") rec.kid = { share: r.share, total: r.total };
-      else rec.her = Math.max(rec.her ?? 0, r.n);
-      sources.set(k, rec);
-      if (seen.has(k)) continue;
-      seen.add(k);
-      merged.push({ kind: r.kind, id: r.id, src });
+  for (const e of endings) {
+    const rows = [
+      ["now", nowTbl.get(ctxKey(e))],
+      ["all", allTbl.get(ctxKey(e))],
+      ["kids", kidsRows(kids, e)],
+    ];
+    if (!rows.some(([, r]) => r?.length)) continue;
+    ending = e.length;
+    for (const [src, r] of rows) {
+      // Stable by count: ties keep the source's own order (the children
+      // table's rows are already in the build's encounter order).
+      for (const c of [...(r ?? [])].sort((a, b) => b.n - a.n)) {
+        const k = itemKey(c);
+        if (seen.has(k)) continue;
+        seen.add(k);
+        merged.push({ kind: c.kind, id: c.id, src, n: c.n });
+      }
     }
-  };
-  mark(herNow, "now");
-  mark(herAll, "all");
-  mark(kidRank, "kids");
+    break;
+  }
 
   const masked = maskedSenses(db);
-  const ranked = merged.map((c) => {
-    const ev = sources.get(itemKey(c)) ?? {};
-    return {
-      ...c, her: ev.her ?? 0, kid: ev.kid ?? null,
-      mask: c.kind === "sense" && masked.has(c.id) ? 1 : 0,
-    };
-  });
-  const gated = ranked
-    .filter((c) => c.her >= EVIDENCE_GATE.herMin
-      || (c.kid && c.kid.share >= EVIDENCE_GATE.kidShare && c.kid.total >= EVIDENCE_GATE.kidMin))
-    .filter((c) => !c.mask)
-    .slice(0, STRIP_CAP);
-  const shown = gated.map((c) => ({ kind: c.kind, id: c.id }));
-  // The stored list keeps the top RANKED_CAP plus every shown tile —
-  // a gated item beyond the cap still records its evidence on the row.
-  const stored = ranked.slice(0, RANKED_CAP);
-  for (const c of gated) if (!stored.includes(c)) stored.push(c);
-  return { ranked: stored, shown };
+  const ranked = merged.map((c) => ({
+    ...c, mask: c.kind === "sense" && masked.has(c.id) ? 1 : 0,
+  }));
+  const shown = ranked.filter((c) => !c.mask).slice(0, STRIP_CAP)
+    .map(({ kind, id }) => ({ kind, id }));
+  return { ranked: ranked.slice(0, RANKED_CAP), shown, ending };
 }
 
 /**
- * The gated strip tiles — up to STRIP_CAP, fewer when evidence is thin.
+ * The strip tiles — up to STRIP_CAP, fewer when evidence is thin.
  *
  * @returns {Array<{kind:'sense'|'entity', id:string}>}
  */
@@ -444,10 +422,11 @@ export function groupRanked(db, sentence, groupId, now = Date.now()) {
 
 /**
  * One strip moment: the ranking the bar had and the tiles it showed.
- * `candidates` are stripRanked entries — {kind, id, src, her, kid} —
- * enough evidence for the stored gate to replay exactly. `chosen_*`
- * stays NULL until the next pick (fillChosen); a cleared sentence
- * leaves them NULL: metrics only, never a training example.
+ * `candidates` are stripRanked entries — {kind, id, src, n, mask};
+ * `gate` carries {ending: n} — the ending length that spoke (0 =
+ * sentence start, null = nothing matched). `chosen_*` stays NULL until
+ * the next pick (fillChosen); a cleared sentence leaves them NULL:
+ * metrics only, never a training example.
  */
 export function logImpression(db, {
   sentenceId, position, shownAt = Date.now(), candidates, shown,
@@ -475,10 +454,11 @@ export function stampShownFinal(db, impressionId, shownKeys) {
 }
 
 /**
- * Replay a stored phrase-history moment: recompute the gate from the
- * stored candidates and compare against shown_local — and, when the
- * painter stamped it, shown_final. Pre-v2 rows (feature vectors,
- * weights) cannot replay under the new rule; they report as such.
+ * Replay a stored phrase-history moment: the shown tiles are the first
+ * STRIP_CAP unhidden entries of the stored ranked list — the ending
+ * choice is already baked into `candidates`. Pre-v2 rows (feature
+ * vectors, weights) cannot replay under the new rule; they report as
+ * such.
  */
 export function replayImpression(row) {
   if (row.weight_set !== "phrase_history") {
@@ -491,12 +471,12 @@ export function replayImpression(row) {
   if (gj?.group) {
     return { ok: false, diffs: [`group bar row (${gj.group}) — ranked under the group rule`] };
   }
+  if (gj == null || !("ending" in gj)) {
+    return { ok: false, diffs: ["no ending recorded — pre-rule-change row"] };
+  }
   const diffs = [];
   const cands = JSON.parse(row.candidates);
-  const g = { ...EVIDENCE_GATE, ...(gj ?? {}) };
   const shown = cands
-    .filter((c) => (c.her ?? 0) >= g.herMin
-      || (c.kid && c.kid.share >= g.kidShare && c.kid.total >= g.kidMin))
     .filter((c) => !c.mask)
     .slice(0, row.shortlist_cap ?? STRIP_CAP)
     .map((c) => `${c.kind}:${c.id}`);

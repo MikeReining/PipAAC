@@ -7,7 +7,6 @@ import { bootDb, exportLegacyKvvfsDb, savePhoto, loadPhotoURL } from "./db.js";
 import {
   closeSentence,
   detachEvent,
-  EVIDENCE_GATE,
   fillChosen,
   groupRanked,
   keyboardContinuations,
@@ -244,7 +243,7 @@ let lastImpressionKey = null;
 /* The open strip moment — one row per moment; the painter stamps
  * shown_final on it (017-5). */
 let openImpressionId = null;
-function maybeImpression(candidates, shown, { mode = "picture", cap = null, gate = EVIDENCE_GATE } = {}) {
+function maybeImpression(candidates, shown, { mode = "picture", cap = null, gate = null } = {}) {
   if (sentenceId === null) return false;
   const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
   const key = `${sentenceId}:${sentencePicks}:${shownKeys.join()}`;
@@ -682,7 +681,7 @@ async function renderStrip() {
       maybeImpression(
         ranked?.ranked ?? items.map((c) => ({ kind: c.kind, id: c.id })),
         items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
-          gate: groupId ? { group: groupId } : EVIDENCE_GATE },
+          gate: groupId ? { group: groupId } : { ending: ranked?.ending ?? null } },
       );
       cards = stripCards(items);
     }

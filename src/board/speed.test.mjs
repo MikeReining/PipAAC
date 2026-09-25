@@ -77,22 +77,23 @@ const bar = (db, start, end, kind) => {
   return db.prepare("SELECT last_insert_rowid() AS id").all()[0].id;
 };
 
-/** A v2 strip moment: the ranked rows and the keys the gate painted,
- *  chosen_* filled by the next pick. `cands` carries {kind,id,her,kid}
- *  so replayImpression can recompute the gate. */
+/** A v2 strip moment: the ranked rows and the keys the bar painted,
+ *  chosen_* filled by the next pick. `cands` carries {kind,id,src,n}
+ *  so replayImpression can replay the stored ending's list. */
 const imp = (db, sid, pos, { local, cands = null, final = null, chosen, cap = 4, at = 0 }) =>
   db.prepare(
     `INSERT INTO strip_impression
        (sentence_id, position, shown_at, candidates, shown_local, shown_final,
-        weight_set, shortlist_cap, chosen_kind, chosen_id, chosen_source)
-     VALUES (?, ?, ?, ?, ?, ?, 'phrase_history', ?, ?, ?, 'strip')`,
+        weight_set, gate, shortlist_cap, chosen_kind, chosen_id, chosen_source)
+     VALUES (?, ?, ?, ?, ?, ?, 'phrase_history', ?, ?, ?, ?, 'strip')`,
   ).run(sid, pos, T0 + at * S,
     JSON.stringify(cands ?? local.map((k) => {
       const [kind, id] = k.split(":");
-      return { kind, id, src: "kids", her: 0, kid: { share: 0.5, total: 100 } };
+      return { kind, id, src: "kids", n: 1, mask: 0 };
     })),
     JSON.stringify(local),
     final ? JSON.stringify(final) : null,
+    JSON.stringify({ ending: 1 }),
     cap, chosen.split(":")[0] === "entity" ? "entity" : "sense",
     chosen.split(":").pop());
 

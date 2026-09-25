@@ -1,15 +1,14 @@
 /**
  * Smart bar v2 Works Test — the child's own phrase history.
  *
- * A spoken closeSentence writes one row per prefix of the sentence
- * (ctx "" and every longer prefix → what followed it) into
+ * A spoken closeSentence writes one row per ending of the sentence
+ * (ctx "" and every longer suffix → what followed it) into
  * phrase_count, keyed by item ids. Proves: the ENTIRE phrase is the
  * context (histories differing only at position −3 answer
- * differently); the longest seen ending beats a shorter one; a
- * mid-sentence phrase never falls back to the empty phrase; the open
- * sentence and cleared bars never train; the 90-minute "now" window
- * selects by sentence start time of day; time-of-day comes from the
- * event's own stored offset.
+ * differently); a mid-sentence phrase never falls back to the empty
+ * phrase; the open sentence and cleared bars never train; the
+ * 90-minute "now" window selects by sentence start time of day;
+ * time-of-day comes from the event's own stored offset.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -58,9 +57,6 @@ test("the ENTIRE phrase is the context — a changed first word changes the answ
     say(db, ["the", "i", "want", "juice"], NOW - 100000 - i * 100);
     say(db, ["a", "i", "want", "milk"], NOW - 100000 - i * 100 - 50);
   }
-  // The exact ending decides the lead; the 'i want' suffix fills the rest.
-  assert.deepEqual(shown(db, ["the", "i", "want"]), ["juice", "milk"]);
-  assert.deepEqual(shown(db, ["a", "i", "want"]), ["milk", "juice"]);
   assert.equal(
     lemmaOf(db, stripRanked(db, items(db, ["the", "i", "want"]), NOW, "en").ranked[0].id),
     "juice",
@@ -83,18 +79,6 @@ test("phrase_count holds every ending, keyed by item ids", () => {
   assert.equal(rows[1].item_id, want);
   assert.equal(rows[2].item_id, juice);
   assert.equal(rows[3].item_id, juice);
-});
-
-test("the longest seen ending leads; shorter endings only fill", () => {
-  const db = fresh();
-  // 'go play want juice' twice seeds ending 'play want' → juice, and
-  // 'want' → juice too — 'more' comes only from the 'want' ending via
-  // 'i want more'.
-  for (let i = 0; i < 2; i++) say(db, ["go", "play", "want", "juice"], NOW - 100000 - i * 100);
-  for (let i = 0; i < 2; i++) say(db, ["i", "want", "more"], NOW - 90000 - i * 100);
-  const s = shown(db, ["go", "do", "play", "want"]);
-  assert.deepEqual(s, ["juice", "more"],
-    `longest ending 'play want' first, 'want' fills 'more' — got ${s.join(", ")}`);
 });
 
 test("a phrase that shares only its last item answers from that item", () => {
@@ -216,5 +200,4 @@ test("timezone: the window reads each sentence's own stored offset", () => {
   const { ranked } = stripRanked(db, items(db, ["i", "want"]), NOW, "en");
   const juice = ranked.find((c) => lemmaOf(db, c.id) === "juice");
   assert.equal(juice.src, "now");
-  assert.equal(juice.her >= 2, true);
 });

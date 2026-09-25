@@ -12,7 +12,7 @@ import { createDatabase, importCatalog } from '../../../src/board/catalog.mjs';
 import { addPersonalEntity } from '../../../src/board/entities.mjs';
 import {
   openSentence, closeSentence, logSelection, stripRanked,
-  logImpression, stampShownFinal, fillChosen, replayImpression, EVIDENCE_GATE,
+  logImpression, stampShownFinal, fillChosen, replayImpression,
 } from '../../../public/shared/funnel.mjs';
 import catalog from '../../../data/catalog/catalog.json' with { type: 'json' };
 
@@ -70,11 +70,11 @@ for (const e of LOG) {
   const s = openSentence(db, at);
   e.sent.forEach((w, i) => {
     const phrase = e.sent.slice(0, i).map((x) => itemOf[x]);
-    const { ranked, shown } = stripRanked(db, phrase, at + i * 1000, 'en', kids);
+    const { ranked, shown, ending } = stripRanked(db, phrase, at + i * 1000, 'en', kids);
     const imp = logImpression(db, {
       sentenceId: s, position: i, shownAt: at + i * 1000,
       candidates: ranked, shown: shown.map((c) => `${c.kind}:${c.id}`),
-      gate: EVIDENCE_GATE, shortlistCap: 4,
+      gate: { ending }, shortlistCap: 4,
     });
     stampShownFinal(db, imp, shown.map((c) => `${c.kind}:${c.id}`));
     const it = itemOf[w];

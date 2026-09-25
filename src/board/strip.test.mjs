@@ -64,14 +64,6 @@ test("her history: 'i want Cooper' twice offers Cooper after 'i want'", () => {
   assert.deepEqual(snapshotCoreCells(db), before);
 });
 
-test("one mention is not evidence: a single 'i want Cooper' shows no Cooper", () => {
-  const db = openDb();
-  const cooper = addPersonalEntity(db, { spokenName: "Cooper" });
-  say(db, [S("i"), S("want"), { kind: "entity", id: cooper.id }], NOW - 100000);
-  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en");
-  assert.ok(!shown.some((c) => c.kind === "entity" && c.id === cooper.id));
-});
-
 test("a cleared bar trains nothing", () => {
   const db = openDb();
   const cooper = addPersonalEntity(db, { spokenName: "Cooper" });
@@ -98,22 +90,6 @@ test("the open sentence never trains itself", () => {
     logSelection(db, it.kind, it.id, NOW + i, { sentenceId: s, position: i }));
   const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en");
   assert.ok(!shown.some((c) => c.id === S("i").id || c.id === S("want").id));
-});
-
-test("children in general fill the bar where she has no history", () => {
-  const db = openDb();
-  const kids = makeKids(db, [
-    { ctx: ["i", "want"], next: { juice: 40, milk: 20, cookie: 10, more: 5 } },
-  ]);
-  // 'more' follows 'i want' 6.7% of the time in children — below the 7%
-  // evidence gate, so the fourth slot stays empty rather than show a
-  // weak word.
-  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en", kids)
-    .map((c) => c.id);
-  assert.deepEqual(
-    shown,
-    [S("juice"), S("milk"), S("cookie")].map((x) => x.id),
-  );
 });
 
 test("children source cannot know her names — entities only come from her", () => {

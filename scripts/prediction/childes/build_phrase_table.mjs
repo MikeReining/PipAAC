@@ -33,31 +33,42 @@ for (const l of cat.labels) {
 const table = new Map(); // ctx key (space-joined sense ids) -> Map(next sense id -> n)
 // Backoff contexts are SUFFIXES of an utterance's prefix, capped at
 // CTX_MAX; the empty ctx counts utterance-start items only.
-function add(items) {
-  for (let j = 0; j < items.length; j++) {
-    for (let len = j === 0 ? 0 : 1; len <= Math.min(j, CTX_MAX); len++) {
-      const ctx = items.slice(j - len, j).join(' ');
-      if (!table.has(ctx)) table.set(ctx, new Map());
-      const m = table.get(ctx);
-      m.set(items[j], (m.get(items[j]) ?? 0) + 1);
-    }
+function put(ctx, next) {
+  if (!table.has(ctx)) table.set(ctx, new Map());
+  const m = table.get(ctx);
+  m.set(next, (m.get(next) ?? 0) + 1);
+}
+// Emit all ending->next rows for one word following `run` — the words
+// since the last wall, longest ending first never matters here: every
+// suffix of length 1..CTX_MAX is a stored context.
+function emit(run, next, lineStart) {
+  if (lineStart) put('', next); // only the real first word of a line
+  for (let len = 1; len <= Math.min(run.length, CTX_MAX); len++) {
+    put(run.slice(-len).join(' '), next);
   }
 }
 
 const trs = C.loadTranscripts();
 const { train } = C.splitIdx(trs.length, 20260923);
 let unmapped = 0, utts = 0;
+// A word we don't have is a WALL: no context may include it, and the
+// word after it is not a sentence start — it gets only the contexts
+// that begin after the wall. Splitting the line into fresh utterances
+// would mint fake sentence starts in the empty ctx.
 for (const i of train) {
   for (const [spk, words] of trs[i]) {
     if (!C.CHILD_TAGS.has(spk)) continue;
-    let cur = [];
+    utts++;
+    let run = [];        // mapped senses since the last wall
+    let lineStart = true; // still at the real first word of the line
     for (const lem of C.lemmatize(words)) {
       const sid = lem === null ? null : lemmaSense.get(lem);
       if (sid === undefined) unmapped++;
-      if (sid == null) { if (cur.length) { add(cur); utts++; } cur = []; continue; }
-      cur.push(sid);
+      if (sid == null) { run = []; lineStart = false; continue; }
+      emit(run, sid, lineStart);
+      run.push(sid);
+      lineStart = false;
     }
-    if (cur.length) { add(cur); utts++; }
   }
 }
 
