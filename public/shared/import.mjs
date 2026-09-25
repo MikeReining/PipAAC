@@ -55,13 +55,13 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
 
     const insLabel = db.prepare(
       `INSERT OR IGNORE INTO label (id, sense_id, utterance_id, locale, text, normalized_text,
-         normalizer_version, kind, part_of_speech, default_for_text, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         normalizer_version, kind, part_of_speech, features, default_for_text, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     );
     for (const l of labels) {
       insLabel.run(
         l.id, l.sense_id, l.utterance_id, l.locale, l.text, l.normalized_text,
-        l.normalizer_version, l.kind, l.part_of_speech, l.default_for_text, l.status,
+        l.normalizer_version, l.kind, l.part_of_speech, l.features ?? null, l.default_for_text, l.status,
       );
     }
 

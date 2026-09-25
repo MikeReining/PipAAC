@@ -136,6 +136,9 @@ would also turn *upside down* into *down* and *peanut butter* into
 
 ## Slice 1 — Forms in the catalog
 
+**Status: built (2026-09-25).** Schema to `user_version = 17`; 191 form
+labels in the catalog; phrase table folded.
+
 Use 005 slice 1's schema exactly: `label.kind` gains `'form'`, a `features`
 column, the two indexes, a `user_version` bump, and the schema-doc DDL in
 the same commit. Changes from 005 slice 1:
@@ -191,6 +194,39 @@ as they are.
 Show: the forms added (count per word), the words that got verb forms by
 use (with counts), the rule-fallback spellings, `npm run
 catalog:build:check` green.
+
+### Slice 1 results (2026-09-25)
+
+- **191 form labels** in the catalog (180 verb `-s`/`-ing` rows + 11
+  pinned: has, am, are, be, doesn't, him, her, us, them, an). Surfaces
+  that are themselves lemmas reuse that lemma's utterance (*has* →
+  `utt_0612`, *him* → `utt_0629`, *an* → `utt_0620`); new surfaces mint
+  `utt_f*` rows (*be*, *doesn't*, all `-s`/`-ing` spellings).
+- **Verbs by use (child lines, both shapes ≥20):** *hurt* (-s 151, -ing 73)
+  and *rain* (-s 20, -ing 227). *snow* (-s 5) and *clean* (-s 15) did not
+  qualify — the data said no.
+- **Non-inflecting set:** closed auxiliaries and past-tense lemma entries
+  (`is, am, are, was, were, had, did, don't, didn't, won't, can't, can,
+  will, would`) emit only pinned rows. Item 1's data gate alone could not
+  decide this — noun *cans* / *canning* attest for modal *can*, so the
+  closed class is listed explicitly. *do* inflects (*does*, *doing* are
+  attested).
+- **Rule-fallback spellings** (no attested form in CHILDES, listed in
+  `en.json.fallbackSpellings`): only the merged/non-inflecting lemmas and
+  *wake* — every emitted verb form spelling is measured.
+- **Merges** live once in `common.mjs` (`MERGES`); `lemmatize` folds them
+  so *be* (12,688 tokens, previously a wall) lands on the *is* sense.
+  The app derives the same fold from the label table itself — a form
+  label whose text is a lemma marks two senses as one (`funnel.mjs`
+  `senseMerge`), so no second list can drift.
+- Phrase table `2026-09-25.4`: 89,429 → **90,966** contexts, 275,255
+  rows, 12.40 MB. `bar_examples.mjs` 27/27 OK after updating four rows
+  to folded truth (`i` → is/want/have/don't; `he have` and `he has` are
+  now the same ending → a/to/not; `the boy is` seen 164→291 →
+  run/still/go, *walk* fell to 3.1%). `measure_bar.mjs`: 450,865
+  moments, next-word-on-bar 25.4% @5% (unchanged from 020B).
+- `src/board/schema.sql` `user_version = 17`; `catalog.json` ships the
+  labels; `import.mjs` binds `features`.
 
 ## Slice 2 — Voice clips
 

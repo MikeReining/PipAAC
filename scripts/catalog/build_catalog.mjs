@@ -30,6 +30,7 @@ const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
 const GROUP_SEED = join(repoRoot, "data/group_seed.json");
 const FAMILY_SEED = join(repoRoot, "data/family_seed.json");
 const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
+const FORMS_DATA = join(repoRoot, "data/forms/en.json");
 const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
@@ -259,12 +260,73 @@ export function buildDigitAliases(lexicon, numberAliases) {
         normalizer_version: "v1",
         kind: "alias",
         part_of_speech: "Number",
+        features: null,
         default_for_text: 1,
         status: "approved",
       });
     }
   }
   return out;
+}
+
+/**
+ * Form labels (021 slice 1, schema doc §5.3): data/forms/en.json is the
+ * CHILDES-measured source — which lemmas carry which forms and how the
+ * surface is spelled. Each row becomes a kind='form' label on the
+ * lemma's sense; the form's utterance reuses an existing row when the
+ * normalized surface already exists ("has" shares the has utterance)
+ * and mints utt_fNNNN/lbl_fNNNN ids otherwise. Rows are sorted by
+ * (slot, features) so ids stay stable across rebuilds.
+ */
+function buildFormLabels(lexicon, formsData, ownerSlotByNorm, utterances) {
+  const entryByNorm = new Map();
+  for (const e of lexicon.entries) {
+    const n = normalizeV1(e.spokenText);
+    if (!entryByNorm.has(n)) entryByNorm.set(n, []);
+    entryByNorm.get(n).push(e);
+  }
+  const resolve = (lemma) => {
+    const hits = entryByNorm.get(normalizeV1(lemma)) ?? [];
+    if (hits.length !== 1) {
+      throw new Error(`forms: lemma "${lemma}" resolves to ${hits.length} senses (want exactly 1)`);
+    }
+    return hits[0];
+  };
+  const rows = formsData.forms
+    .map((f) => ({ ...f, entry: resolve(f.lemma) }))
+    .sort((a, b) => a.entry.slot - b.entry.slot || a.features.localeCompare(b.features));
+
+  const uttByNorm = new Map(utterances.map((u) => [u.normalized_spoken_text, u.id]));
+  const labels = [];
+  let seq = 1;
+  const mint = () => `f${String(seq++).padStart(4, "0")}`;
+  for (const f of rows) {
+    const norm = normalizeV1(f.text);
+    let uttId = uttByNorm.get(norm);
+    if (!uttId) {
+      uttId = `utt_${mint()}`;
+      utterances.push({
+        id: uttId, locale: "en", spoken_text: f.text,
+        normalized_spoken_text: norm, normalizer_version: "v1",
+      });
+      uttByNorm.set(norm, uttId);
+    }
+    labels.push({
+      id: `lbl_${mint()}`,
+      sense_id: `sns_${pad4(f.entry.slot)}`,
+      utterance_id: uttId,
+      locale: "en",
+      text: f.text,
+      normalized_text: norm,
+      normalizer_version: "v1",
+      kind: "form",
+      part_of_speech: f.entry.partOfSpeech,
+      features: f.features,
+      default_for_text: 0,
+      status: "approved",
+    });
+  }
+  return labels;
 }
 
 /** Smart bar families (014 § 5): seed → catalog rows, and the map's
@@ -381,10 +443,13 @@ export function buildCatalog(
     normalizer_version: "v1",
     kind: "lemma",
     part_of_speech: e.partOfSpeech,
+    features: null,
     default_for_text: ownerSlotByNorm.get(normalizeV1(e.spokenText)) === e.slot ? 1 : 0,
     status: "approved",
   }));
   labels.push(...buildDigitAliases(lexicon, numberAliases));
+  const formsData = existsSync(FORMS_DATA) ? JSON.parse(readFileSync(FORMS_DATA, "utf8")) : null;
+  if (formsData) labels.push(...buildFormLabels(lexicon, formsData, ownerSlotByNorm, utterances));
 
   const coreCells = [];
   const layouts = {};
@@ -424,6 +489,7 @@ export function buildCatalog(
       schema: "src/board/schema.sql",
       groupSeed: "data/group_seed.json",
       numberAliases: "data/number_aliases.json",
+      forms: "data/forms/en.json",
       phraseTable: "data/prediction/phrase_table.en.json",
     },
     // 013 § 5a coach view: shipped one-line modeling tips by sense id;

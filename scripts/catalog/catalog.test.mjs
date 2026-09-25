@@ -67,7 +67,9 @@ test("homograph senses share one utterance; only the owner label is default", ()
     parseCoordinateMapMarkdown(mapRaw),
   );
   // Three shared spoken texts: orange (131/509), bathroom (158/606), light (521/552).
-  assert.equal(catalog.utterances.length, catalog.senses.length - 3);
+  // Form labels mint utt_fNNNN rows for surfaces no lemma covers.
+  const formUtts = catalog.utterances.filter((u) => u.id.startsWith("utt_f")).length;
+  assert.equal(catalog.utterances.length, catalog.senses.length - 3 + formUtts);
   for (const [word, owner] of [["orange", "sns_0131"], ["bathroom", "sns_0158"], ["light", "sns_0521"]]) {
     const group = catalog.labels.filter((l) => l.normalized_text === word);
     assert.equal(group.length, 2, `${word} should have two sense labels`);
@@ -103,6 +105,50 @@ test("digit aliases 1–10 land on their Number sense, sharing its utterance (00
     assert.equal(alias.default_for_text, 1);
     assert.equal(alias.part_of_speech, "Number");
   }
+});
+
+test("form labels carry features, sit on the lemma sense, share or mint utterances (021 slice 1)", () => {
+  const lexRaw = readFileSync(join(repoRoot, "docs/product/Initial_Vocabulary_600.md"), "utf8");
+  const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8");
+  const catalog = buildCatalog(
+    parseLaunchLexiconMarkdown(lexRaw),
+    parseCoordinateMapMarkdown(mapRaw),
+  );
+  const forms = catalog.labels.filter((l) => l.kind === "form");
+  const formsData = JSON.parse(readFileSync(join(repoRoot, "data/forms/en.json"), "utf8"));
+  assert.equal(forms.length, formsData.forms.length, "every source row emits one label");
+  for (const f of forms) {
+    assert.ok(f.features?.length > 0, `${f.text} carries a feature tag`);
+    assert.equal(f.default_for_text, 0, "a form is never the default label");
+    assert.equal(f.status, "approved");
+    assert.ok(f.id.startsWith("lbl_f"), `${f.id} in the form id space`);
+  }
+  // One approved form per (sense, features) — mirrors the db index.
+  const seen = new Set();
+  for (const f of forms) {
+    const k = `${f.sense_id}|${f.locale}|${f.features}`;
+    assert.ok(!seen.has(k), `duplicate form features ${k}`);
+    seen.add(k);
+  }
+  const lemmaOf = (text) => catalog.labels.find((l) => l.kind === "lemma" && l.normalized_text === text);
+  const formOn = (senseText, text) => {
+    const f = forms.find((l) => l.sense_id === lemmaOf(senseText).sense_id && l.text === text);
+    assert.ok(f, `${text} is a form of ${senseText}`);
+    return f;
+  };
+  // A surface that is itself a lemma reuses that lemma's utterance —
+  // "him" on the he sense plays the him clip.
+  assert.equal(formOn("he", "him").utterance_id, lemmaOf("him").utterance_id);
+  assert.equal(formOn("have", "has").utterance_id, lemmaOf("has").utterance_id);
+  assert.equal(formOn("a", "an").utterance_id, lemmaOf("an").utterance_id);
+  // A surface with no lemma mints a form utterance that ships its text.
+  const beForm = formOn("is", "be");
+  assert.ok(beForm.utterance_id.startsWith("utt_f"));
+  const beUtt = catalog.utterances.find((u) => u.id === beForm.utterance_id);
+  assert.equal(beUtt.normalized_spoken_text, "be");
+  // Every form label resolves to a shipped utterance.
+  const uttIds = new Set(catalog.utterances.map((u) => u.id));
+  for (const f of forms) assert.ok(uttIds.has(f.utterance_id), `${f.text} has an utterance`);
 });
 
 test("a digit alias resolving to zero or two senses fails the build", () => {

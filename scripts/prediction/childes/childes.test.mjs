@@ -26,19 +26,28 @@ test('lemmatizer maps inflections, irregulars, OOV', () => {
   assert.equal(C.toLemma('xyzzyqq'), null);
 });
 
-test('am/is/are are vocabulary words, not the ghost lemma be', () => {
-  // surface lemmas win over IRREG: Pip has am/is/are tiles, not "be"
-  assert.deepEqual(C.lemmatize(['i', 'am', 'happy']), ['i', 'am', 'happy']);
+test('be-forms fold into the is-sense; object pronouns fold too (021)', () => {
+  // toLemma still returns the surface lemma — the fold lives in
+  // lemmatize so the phrase table holds one sense per meaning
   for (const w of ['am', 'is', 'are', 'was', 'were']) assert.equal(C.toLemma(w), w);
-  // no lemmatizer path may produce 'be' — Pip has no such tile
-  for (const w of ['been', 'being', 'be']) assert.equal(C.toLemma(w), null);
+  assert.equal(C.toLemma('be'), null);
+  assert.deepEqual(C.lemmatize(['i', 'am', 'happy']), ['i', 'is', 'happy']);
+  assert.deepEqual(C.lemmatize(['we', 'are', 'here']), ['we', 'is', 'here']);
+  // "be" is a form of the is-sense, not a wall anymore
+  assert.deepEqual(C.lemmatize(['i', 'want', 'to', 'be', 'there']),
+    ['i', 'want', 'to', 'is', 'there']);
+  assert.deepEqual(C.lemmatize(['give', 'it', 'to', 'him']),
+    ['give', 'it', 'to', 'he']);
+  assert.deepEqual(C.lemmatize(['he', 'has', 'it']), ['he', 'have', 'it']);
+  assert.deepEqual(C.lemmatize(['i', 'want', 'an', 'apple']),
+    ['i', 'want', 'a', 'apple']);
 });
 
 test('contractions split into Pip parts, never ghost to a phrase', () => {
   // pronoun/wh-word + be/will tail splits when both parts are Pip words
   for (const [tok, out] of [
-    ["i'm", ['i', 'am']], ["it's", ['it', 'is']], ["that's", ['that', 'is']],
-    ["you're", ['you', 'are']], ["he's", ['he', 'is']], ["i'll", ['i', 'will']],
+    ["i'm", ['i', 'is']], ["it's", ['it', 'is']], ["that's", ['that', 'is']],
+    ["you're", ['you', 'is']], ["he's", ['he', 'is']], ["i'll", ['i', 'will']],
     ["what's", ['what', 'is']], ["there's", ['there', 'is']],
   ]) assert.deepEqual(C.lemmatize([tok]), out, `${tok}`);
   // negative contractions that are lemmas stay whole

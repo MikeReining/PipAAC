@@ -38,8 +38,9 @@ Executing phases only. Each row names the **next** slice.
 | [019 — User-testing readiness](019_User_Testing_Readiness.md) | Local board paints and speaks, including a board saved before the v2 map. Next: deploy (stop/ask), then the first-open people question |
 | [020 — Prediction data fix](020_Prediction_Data_Fix.md) | Done 2026-09-25 (`b57f600`); follow-up in 020B |
 | [020B — Converter fixes](020B_Converter_Fixes.md) | Done 2026-09-25 (`6314581`); baby-talk spellings follow in 021 step 0 |
-| [021 — Grammar help](021_Grammar_Help.md) | **Next:** step 0 (baby-talk spellings), then slice 1 — forms in the catalog |
+| [021 — Grammar help](021_Grammar_Help.md) | Step 0 (`adbcf6e`) + slice 1 (forms catalog, merges) done; **Next:** slice 2 — form voice clips |
 | [022 — Whose and how many](022_Whose_And_How_Many.md) | Queued after 021: his / our / their / your and *Leo's* by the next word, *mine* at Speak, plurals after two / some / all |
+| [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven (2026-09-25): Groq + qwen3.8-27b on-demand past, question, future, fix-it |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

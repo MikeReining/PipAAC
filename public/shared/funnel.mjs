@@ -56,7 +56,32 @@ export function closeSentence(db, id, at = Date.now(), kind) {
 }
 
 const itemKey = (it) => `${it.kind}:${it.id}`;
-const ctxKey = (items) => items.map(itemKey).join(" ");
+
+/** One-meaning merges (021): "has" and "have" are the same sense, so a
+ *  merged lemma's taps and its phrase contexts fold onto the kept
+ *  sense. Read from the data, not a list — a form label whose text is
+ *  itself a lemma says these two senses are one word. */
+const mergeCache = new WeakMap(); // db -> Map<sense_id, kept sense_id>
+function senseMerge(db) {
+  let m = mergeCache.get(db);
+  if (m) return m;
+  m = new Map();
+  for (const r of db.prepare(
+    `SELECT l.sense_id AS gone, f.sense_id AS kept
+     FROM label f JOIN label l
+       ON l.kind = 'lemma' AND l.status = 'approved'
+      AND l.locale = f.locale AND l.normalized_text = f.normalized_text
+     WHERE f.kind = 'form' AND f.status = 'approved' AND l.sense_id != f.sense_id`,
+  ).all()) {
+    m.set(r.gone, r.kept);
+  }
+  mergeCache.set(db, m);
+  return m;
+}
+const foldItem = (db, it) =>
+  it.kind === "sense" ? { kind: it.kind, id: senseMerge(db).get(it.id) ?? it.id } : it;
+const itemKeyDb = (db, it) => itemKey(foldItem(db, it));
+const ctxKeyDb = (db, items) => items.map((it) => itemKeyDb(db, it)).join(" ");
 
 /** A pick left the sentence (backspace reopened it): its event stays as
  *  usage evidence but is no longer a sentence member, and the rest of
@@ -102,8 +127,9 @@ function recordPhraseHistory(db, sentenceId) {
      ON CONFLICT (ctx, item_kind, item_id) DO UPDATE SET n = n + 1`,
   );
   for (let j = 0; j < picks.length; j++) {
+    const it = foldItem(db, picks[j]);
     for (let len = j === 0 ? 0 : 1; len <= j; len++) {
-      put.run(ctxKey(picks.slice(j - len, j)), picks[j].kind, picks[j].id);
+      put.run(ctxKeyDb(db, picks.slice(j - len, j)), it.kind, it.id);
     }
   }
 }
@@ -169,10 +195,11 @@ function herNowTable(db, nowMin, tzNow) {
      ORDER BY sid, position`,
   ).all()) {
     if (cur === null || cur.sid !== e.sid) cur = { sid: e.sid, pos: 0, items: [] };
+    const it = foldItem(db, { kind: e.kind, id: e.id });
     for (let len = cur.pos === 0 ? 0 : 1; len <= cur.pos; len++) {
-      add(ctxKey(cur.items.slice(cur.pos - len)), e.kind, e.id);
+      add(ctxKeyDb(db, cur.items.slice(cur.pos - len)), it.kind, it.id);
     }
-    cur.items.push({ kind: e.kind, id: e.id });
+    cur.items.push(it);
     cur.pos++;
   }
   return table;
@@ -182,7 +209,7 @@ function herNowTable(db, nowMin, tzNow) {
  *  most its own length + 1 endings to try). Returns Map ctx -> rows. */
 function herAllRows(db, endings) {
   const table = new Map();
-  const keys = endings.map(ctxKey);
+  const keys = endings.map((e) => ctxKeyDb(db, e));
   if (!keys.length) return table;
   for (const r of db.prepare(
     `SELECT ctx, item_kind AS kind, item_id AS id, n
@@ -236,9 +263,9 @@ export const KIDS_MIN_SHARE = 0.05;
  *  Returns { rows, seen } — seen is how often the ending occurred at
  *  all, so share = n / seen counts the times children said the ending
  *  and followed it with nothing we know. */
-function kidsRows(kidsTable, ending) {
+function kidsRows(kidsTable, ending, db) {
   if (!kidsTable?.contexts || ending.some((it) => it.kind !== "sense")) return null;
-  const key = ending.map((it) => it.id).join(" ");
+  const key = ending.map((it) => foldItem(db, it).id).join(" ");
   const row = kidsTable.contexts[key];
   if (!row) return null;
   return {
@@ -278,10 +305,10 @@ export function stripRanked(db, sentence, now, locale, kidsTable = null) {
   const merged = [];
   const seen = new Set();
   for (const e of endings) {
-    const kid = kidsRows(kids, e);
+    const kid = kidsRows(kids, e, db);
     const rows = [
-      ["now", nowTbl.get(ctxKey(e))],
-      ["all", allTbl.get(ctxKey(e))],
+      ["now", nowTbl.get(ctxKeyDb(db, e))],
+      ["all", allTbl.get(ctxKeyDb(db, e))],
       ["kids", kid?.rows],
     ];
     if (!rows.some(([, r]) => r?.length)) continue;
@@ -356,17 +383,18 @@ export function groupRanked(db, sentence, groupId, now = Date.now()) {
   const members = new Set(
     db.prepare(
       "SELECT item_kind AS kind, item_id AS id FROM group_cell WHERE group_id = ?",
-    ).all(groupId).map(itemKey));
+    ).all(groupId).map((it) => itemKeyDb(db, it)));
   if (!members.size) return { ranked: [], shown: [] };
   const masked = maskedSenses(db);
   const used = new Set(
     db.prepare(
-      "SELECT DISTINCT item_kind || ':' || item_id AS k FROM learner_event_log",
-    ).all().map((r) => r.k));
+      "SELECT DISTINCT item_kind, item_id FROM learner_event_log",
+    ).all().map((r) => itemKeyDb(db, { kind: r.item_kind, id: r.item_id })));
   const offerable = (r) => {
-    const k = itemKey(r);
+    const it = foldItem(db, r);
+    const k = itemKey(it);
     return members.has(k) && used.has(k)
-      && !(r.kind === "sense" && masked.has(r.id));
+      && !(it.kind === "sense" && masked.has(it.id));
   };
 
   const phrase = sentence.map((it) => ({ kind: it.kind, id: it.id }));
@@ -377,15 +405,15 @@ export function groupRanked(db, sentence, groupId, now = Date.now()) {
   const nowTbl = herNowTable(db, nowMin, tzNow);
   const allTbl = herAllRows(db, endings);
   const phraseNow = lookupRanked(
-    (e) => nowTbl.get(ctxKey(e))?.filter(offerable), phrase);
+    (e) => nowTbl.get(ctxKeyDb(db, e))?.filter(offerable), phrase);
   const phraseAll = lookupRanked(
-    (e) => allTbl.get(ctxKey(e))?.filter(offerable), phrase);
+    (e) => allTbl.get(ctxKeyDb(db, e))?.filter(offerable), phrase);
 
   const freqNow = new Map(), freqAll = new Map();
   for (const e of db.prepare(
     "SELECT item_kind AS kind, item_id AS id, selected_at AS at, tz_offset_min AS tz FROM learner_event_log",
   ).all()) {
-    const it = { kind: e.kind, id: e.id };
+    const it = foldItem(db, { kind: e.kind, id: e.id });
     if (!offerable(it)) continue;
     const k = itemKey(it);
     freqAll.set(k, (freqAll.get(k) ?? 0) + 1);

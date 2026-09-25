@@ -1,0 +1,1754 @@
+{
+ "version": "form-data.2026-09-25",
+ "locale": "en",
+ "verbs": {
+  "am": {
+   "s": "ames",
+   "ing": "aming",
+   "sCount": 8,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "are": {
+   "s": "ares",
+   "ing": "aring",
+   "sCount": 4,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "ask": {
+   "s": "asks",
+   "ing": "asking",
+   "sCount": 364,
+   "ingCount": 1560,
+   "pos": "Verb"
+  },
+  "bite": {
+   "s": "bites",
+   "ing": "biting",
+   "sCount": 714,
+   "ingCount": 860,
+   "pos": "Verb"
+  },
+  "break": {
+   "s": "breaks",
+   "ing": "breaking",
+   "sCount": 576,
+   "ingCount": 728,
+   "pos": "Verb"
+  },
+  "build": {
+   "s": "builds",
+   "ing": "building",
+   "sCount": 242,
+   "ingCount": 4054,
+   "pos": "Verb"
+  },
+  "can": {
+   "s": "cans",
+   "ing": "canning",
+   "sCount": 318,
+   "ingCount": 2,
+   "pos": "Verb"
+  },
+  "can't": {
+   "s": "can'ts",
+   "ing": "can'ting",
+   "sCount": 0,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "carry": {
+   "s": "carries",
+   "ing": "carrying",
+   "sCount": 456,
+   "ingCount": 1244,
+   "pos": "Verb"
+  },
+  "catch": {
+   "s": "catches",
+   "ing": "catching",
+   "sCount": 834,
+   "ingCount": 536,
+   "pos": "Verb"
+  },
+  "choose": {
+   "s": "chooses",
+   "ing": "choosing",
+   "sCount": 76,
+   "ingCount": 86,
+   "pos": "Verb"
+  },
+  "clean": {
+   "s": "cleans",
+   "ing": "cleaning",
+   "sCount": 136,
+   "ingCount": 1484,
+   "pos": "Adjective"
+  },
+  "clean up": {
+   "s": "cleans",
+   "ing": "cleaning",
+   "sCount": 68,
+   "ingCount": 742,
+   "pos": "Verb"
+  },
+  "climb": {
+   "s": "climbs",
+   "ing": "climbing",
+   "sCount": 634,
+   "ingCount": 1992,
+   "pos": "Verb"
+  },
+  "close": {
+   "s": "closes",
+   "ing": "closing",
+   "sCount": 2274,
+   "ingCount": 614,
+   "pos": "Verb"
+  },
+  "color": {
+   "s": "colors",
+   "ing": "coloring",
+   "sCount": 5864,
+   "ingCount": 2410,
+   "pos": "Verb"
+  },
+  "come": {
+   "s": "comes",
+   "ing": "coming",
+   "sCount": 12890,
+   "ingCount": 20634,
+   "pos": "Verb"
+  },
+  "cook": {
+   "s": "cooks",
+   "ing": "cooking",
+   "sCount": 134,
+   "ingCount": 2442,
+   "pos": "Verb"
+  },
+  "cough": {
+   "s": "coughs",
+   "ing": "coughing",
+   "sCount": 512,
+   "ingCount": 476,
+   "pos": "Verb"
+  },
+  "count": {
+   "s": "counts",
+   "ing": "counting",
+   "sCount": 206,
+   "ingCount": 1064,
+   "pos": "Verb"
+  },
+  "crawl": {
+   "s": "crawls",
+   "ing": "crawling",
+   "sCount": 1062,
+   "ingCount": 654,
+   "pos": "Verb"
+  },
+  "cry": {
+   "s": "cries",
+   "ing": "crying",
+   "sCount": 1246,
+   "ingCount": 6538,
+   "pos": "Verb"
+  },
+  "cut": {
+   "s": "cuts",
+   "ing": "cutting",
+   "sCount": 476,
+   "ingCount": 1926,
+   "pos": "Verb"
+  },
+  "dance": {
+   "s": "dances",
+   "ing": "dancing",
+   "sCount": 262,
+   "ingCount": 2916,
+   "pos": "Verb"
+  },
+  "did": {
+   "s": "dids",
+   "ing": "didding",
+   "sCount": 2,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "didn't": {
+   "s": "didn'ts",
+   "ing": "didn'ting",
+   "sCount": 0,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "do": {
+   "s": "does",
+   "ing": "doing",
+   "sCount": 73214,
+   "ingCount": 58028,
+   "pos": "Verb"
+  },
+  "don't": {
+   "s": "don'ts",
+   "ing": "don'ting",
+   "sCount": 8,
+   "ingCount": 6,
+   "pos": "Verb"
+  },
+  "draw": {
+   "s": "draws",
+   "ing": "drawing",
+   "sCount": 2122,
+   "ingCount": 5062,
+   "pos": "Verb"
+  },
+  "drink": {
+   "s": "drinks",
+   "ing": "drinking",
+   "sCount": 1466,
+   "ingCount": 2496,
+   "pos": "Verb"
+  },
+  "drop": {
+   "s": "drops",
+   "ing": "dropping",
+   "sCount": 3690,
+   "ingCount": 522,
+   "pos": "Verb"
+  },
+  "eat": {
+   "s": "eats",
+   "ing": "eating",
+   "sCount": 3128,
+   "ingCount": 13208,
+   "pos": "Verb"
+  },
+  "fall": {
+   "s": "falls",
+   "ing": "falling",
+   "sCount": 2824,
+   "ingCount": 3792,
+   "pos": "Verb"
+  },
+  "feel": {
+   "s": "feels",
+   "ing": "feeling",
+   "sCount": 1430,
+   "ingCount": 2076,
+   "pos": "Verb"
+  },
+  "find": {
+   "s": "finds",
+   "ing": "finding",
+   "sCount": 718,
+   "ingCount": 812,
+   "pos": "Verb"
+  },
+  "fix": {
+   "s": "fixes",
+   "ing": "fixing",
+   "sCount": 348,
+   "ingCount": 976,
+   "pos": "Verb"
+  },
+  "forget": {
+   "s": "forgets",
+   "ing": "forgetting",
+   "sCount": 58,
+   "ingCount": 160,
+   "pos": "Verb"
+  },
+  "get": {
+   "s": "gets",
+   "ing": "getting",
+   "sCount": 10162,
+   "ingCount": 17910,
+   "pos": "Verb"
+  },
+  "give": {
+   "s": "gives",
+   "ing": "giving",
+   "sCount": 4204,
+   "ingCount": 3476,
+   "pos": "Verb"
+  },
+  "glue": {
+   "s": "glues",
+   "ing": "gluing",
+   "sCount": 8,
+   "ingCount": 102,
+   "pos": "Verb"
+  },
+  "go": {
+   "s": "goes",
+   "ing": "going",
+   "sCount": 36910,
+   "ingCount": 160626,
+   "pos": "Verb"
+  },
+  "had": {
+   "s": "hades",
+   "ing": "hading",
+   "sCount": 6,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "has": {
+   "s": "has",
+   "ing": "hasing",
+   "sCount": 57484,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "have": {
+   "s": "haves",
+   "ing": "having",
+   "sCount": 18,
+   "ingCount": 13422,
+   "pos": "Verb"
+  },
+  "help": {
+   "s": "helps",
+   "ing": "helping",
+   "sCount": 1452,
+   "ingCount": 1682,
+   "pos": "Verb"
+  },
+  "hit": {
+   "s": "hits",
+   "ing": "hitting",
+   "sCount": 1346,
+   "ingCount": 888,
+   "pos": "Verb"
+  },
+  "hold": {
+   "s": "holds",
+   "ing": "holding",
+   "sCount": 12166,
+   "ingCount": 6758,
+   "pos": "Verb"
+  },
+  "hug": {
+   "s": "hugs",
+   "ing": "hugging",
+   "sCount": 964,
+   "ingCount": 482,
+   "pos": "Verb"
+  },
+  "hurt": {
+   "s": "hurts",
+   "ing": "hurting",
+   "sCount": 2022,
+   "ingCount": 1184,
+   "pos": "Adjective"
+  },
+  "is": {
+   "s": "iss",
+   "ing": "ising",
+   "sCount": 6,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "jump": {
+   "s": "jumps",
+   "ing": "jumping",
+   "sCount": 1016,
+   "ingCount": 3186,
+   "pos": "Verb"
+  },
+  "kick": {
+   "s": "kicks",
+   "ing": "kicking",
+   "sCount": 372,
+   "ingCount": 1136,
+   "pos": "Verb"
+  },
+  "kiss": {
+   "s": "kiss",
+   "ing": "kissing",
+   "sCount": 7222,
+   "ingCount": 804,
+   "pos": "Verb"
+  },
+  "know": {
+   "s": "knows",
+   "ing": "knowing",
+   "sCount": 3434,
+   "ingCount": 118,
+   "pos": "Verb"
+  },
+  "laugh": {
+   "s": "laughs",
+   "ing": "laughing",
+   "sCount": 5322,
+   "ingCount": 2366,
+   "pos": "Verb"
+  },
+  "like": {
+   "s": "likes",
+   "ing": "liking",
+   "sCount": 8548,
+   "ingCount": 138,
+   "pos": "Verb"
+  },
+  "listen": {
+   "s": "listens",
+   "ing": "listening",
+   "sCount": 182,
+   "ingCount": 1604,
+   "pos": "Verb"
+  },
+  "look": {
+   "s": "looks",
+   "ing": "looking",
+   "sCount": 69682,
+   "ingCount": 17840,
+   "pos": "Verb"
+  },
+  "love": {
+   "s": "loves",
+   "ing": "loving",
+   "sCount": 2624,
+   "ingCount": 156,
+   "pos": "Verb"
+  },
+  "make": {
+   "s": "makes",
+   "ing": "making",
+   "sCount": 10822,
+   "ingCount": 14822,
+   "pos": "Verb"
+  },
+  "need": {
+   "s": "needs",
+   "ing": "needing",
+   "sCount": 5302,
+   "ingCount": 48,
+   "pos": "Verb"
+  },
+  "open": {
+   "s": "opens",
+   "ing": "opening",
+   "sCount": 4278,
+   "ingCount": 994,
+   "pos": "Verb"
+  },
+  "paint": {
+   "s": "paints",
+   "ing": "painting",
+   "sCount": 464,
+   "ingCount": 2894,
+   "pos": "Verb"
+  },
+  "play": {
+   "s": "plays",
+   "ing": "playing",
+   "sCount": 3338,
+   "ingCount": 19380,
+   "pos": "Verb"
+  },
+  "pull": {
+   "s": "pulls",
+   "ing": "pulling",
+   "sCount": 5368,
+   "ingCount": 2698,
+   "pos": "Verb"
+  },
+  "push": {
+   "s": "pushes",
+   "ing": "pushing",
+   "sCount": 4136,
+   "ingCount": 1938,
+   "pos": "Verb"
+  },
+  "put": {
+   "s": "puts",
+   "ing": "putting",
+   "sCount": 20888,
+   "ingCount": 11194,
+   "pos": "Verb"
+  },
+  "rain": {
+   "s": "rains",
+   "ing": "raining",
+   "sCount": 194,
+   "ingCount": 2800,
+   "pos": "Noun"
+  },
+  "read": {
+   "s": "reads",
+   "ing": "reading",
+   "sCount": 624,
+   "ingCount": 4068,
+   "pos": "Verb"
+  },
+  "remember": {
+   "s": "remembers",
+   "ing": "remembering",
+   "sCount": 116,
+   "ingCount": 124,
+   "pos": "Verb"
+  },
+  "ride": {
+   "s": "rides",
+   "ing": "riding",
+   "sCount": 782,
+   "ingCount": 2398,
+   "pos": "Verb"
+  },
+  "run": {
+   "s": "runs",
+   "ing": "running",
+   "sCount": 2684,
+   "ingCount": 6062,
+   "pos": "Verb"
+  },
+  "scratch": {
+   "s": "scratches",
+   "ing": "scratching",
+   "sCount": 232,
+   "ingCount": 408,
+   "pos": "Verb"
+  },
+  "see": {
+   "s": "sees",
+   "ing": "seeing",
+   "sCount": 1322,
+   "ingCount": 1296,
+   "pos": "Verb"
+  },
+  "share": {
+   "s": "shares",
+   "ing": "sharing",
+   "sCount": 32,
+   "ingCount": 856,
+   "pos": "Verb"
+  },
+  "show": {
+   "s": "shows",
+   "ing": "showing",
+   "sCount": 2482,
+   "ingCount": 1574,
+   "pos": "Verb"
+  },
+  "shut": {
+   "s": "shuts",
+   "ing": "shutting",
+   "sCount": 424,
+   "ingCount": 168,
+   "pos": "Verb"
+  },
+  "sing": {
+   "s": "sings",
+   "ing": "singing",
+   "sCount": 5528,
+   "ingCount": 3842,
+   "pos": "Verb"
+  },
+  "sit": {
+   "s": "sits",
+   "ing": "sitting",
+   "sCount": 4470,
+   "ingCount": 9630,
+   "pos": "Verb"
+  },
+  "sleep": {
+   "s": "sleeps",
+   "ing": "sleeping",
+   "sCount": 616,
+   "ingCount": 5292,
+   "pos": "Verb"
+  },
+  "slide": {
+   "s": "slides",
+   "ing": "sliding",
+   "sCount": 1034,
+   "ingCount": 488,
+   "pos": "Verb"
+  },
+  "speak": {
+   "s": "speaks",
+   "ing": "speaking",
+   "sCount": 364,
+   "ingCount": 502,
+   "pos": "Verb"
+  },
+  "stand": {
+   "s": "stands",
+   "ing": "standing",
+   "sCount": 3108,
+   "ingCount": 4150,
+   "pos": "Verb"
+  },
+  "stop": {
+   "s": "stops",
+   "ing": "stopping",
+   "sCount": 2564,
+   "ingCount": 414,
+   "pos": "Verb"
+  },
+  "swim": {
+   "s": "swims",
+   "ing": "swimming",
+   "sCount": 272,
+   "ingCount": 4888,
+   "pos": "Verb"
+  },
+  "swing": {
+   "s": "swings",
+   "ing": "swing",
+   "sCount": 792,
+   "ingCount": 2508,
+   "pos": "Verb"
+  },
+  "take": {
+   "s": "takes",
+   "ing": "taking",
+   "sCount": 17344,
+   "ingCount": 7220,
+   "pos": "Verb"
+  },
+  "talk": {
+   "s": "talks",
+   "ing": "talking",
+   "sCount": 1146,
+   "ingCount": 10208,
+   "pos": "Verb"
+  },
+  "tell": {
+   "s": "tells",
+   "ing": "telling",
+   "sCount": 1002,
+   "ingCount": 3366,
+   "pos": "Verb"
+  },
+  "think": {
+   "s": "thinks",
+   "ing": "thinking",
+   "sCount": 1372,
+   "ingCount": 2818,
+   "pos": "Verb"
+  },
+  "throw": {
+   "s": "throws",
+   "ing": "throwing",
+   "sCount": 3056,
+   "ingCount": 2306,
+   "pos": "Verb"
+  },
+  "tickle": {
+   "s": "tickles",
+   "ing": "tickling",
+   "sCount": 922,
+   "ingCount": 654,
+   "pos": "Verb"
+  },
+  "touch": {
+   "s": "touches",
+   "ing": "touching",
+   "sCount": 3512,
+   "ingCount": 1194,
+   "pos": "Verb"
+  },
+  "turn": {
+   "s": "turns",
+   "ing": "turning",
+   "sCount": 12856,
+   "ingCount": 2244,
+   "pos": "Verb"
+  },
+  "wait": {
+   "s": "waits",
+   "ing": "waiting",
+   "sCount": 104,
+   "ingCount": 2840,
+   "pos": "Verb"
+  },
+  "wake": {
+   "s": "wakes",
+   "ing": "waking",
+   "sCount": 0,
+   "ingCount": 0
+  },
+  "wake up": {
+   "s": "wakes",
+   "ing": "waking",
+   "sCount": 183,
+   "ingCount": 256,
+   "pos": "Verb"
+  },
+  "walk": {
+   "s": "walks",
+   "ing": "walking",
+   "sCount": 6026,
+   "ingCount": 5068,
+   "pos": "Verb"
+  },
+  "want": {
+   "s": "wants",
+   "ing": "wanting",
+   "sCount": 12482,
+   "ingCount": 572,
+   "pos": "Verb"
+  },
+  "was": {
+   "s": "was",
+   "ing": "wasing",
+   "sCount": 136388,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "wash": {
+   "s": "washes",
+   "ing": "washing",
+   "sCount": 188,
+   "ingCount": 3536,
+   "pos": "Verb"
+  },
+  "were": {
+   "s": "weres",
+   "ing": "wering",
+   "sCount": 0,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "will": {
+   "s": "wills",
+   "ing": "willing",
+   "sCount": 12,
+   "ingCount": 66,
+   "pos": "Verb"
+  },
+  "wipe": {
+   "s": "wipes",
+   "ing": "wiping",
+   "sCount": 700,
+   "ingCount": 524,
+   "pos": "Verb"
+  },
+  "won't": {
+   "s": "won'ts",
+   "ing": "won'ting",
+   "sCount": 0,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "work": {
+   "s": "works",
+   "ing": "working",
+   "sCount": 2286,
+   "ingCount": 4196,
+   "pos": "Verb"
+  },
+  "would": {
+   "s": "woulds",
+   "ing": "woulding",
+   "sCount": 0,
+   "ingCount": 0,
+   "pos": "Verb"
+  },
+  "write": {
+   "s": "writes",
+   "ing": "writing",
+   "sCount": 642,
+   "ingCount": 3408,
+   "pos": "Verb"
+  }
+ },
+ "verbUse": {
+  "hurt": {
+   "s": 151,
+   "ing": 73
+  },
+  "rain": {
+   "s": 20,
+   "ing": 227
+  }
+ },
+ "fallbackSpellings": [
+  "am",
+  "are",
+  "can't",
+  "did",
+  "didn't",
+  "had",
+  "has",
+  "is",
+  "wake",
+  "was",
+  "were",
+  "won't",
+  "would"
+ ],
+ "merges": {
+  "has": "have",
+  "am": "is",
+  "are": "is",
+  "be": "is",
+  "him": "he",
+  "her": "she",
+  "us": "we",
+  "them": "they",
+  "an": "a"
+ },
+ "forms": [
+  {
+   "lemma": "want",
+   "features": "V;PRS;3;SG",
+   "text": "wants"
+  },
+  {
+   "lemma": "want",
+   "features": "V;V.PTCP;PRS",
+   "text": "wanting"
+  },
+  {
+   "lemma": "like",
+   "features": "V;PRS;3;SG",
+   "text": "likes"
+  },
+  {
+   "lemma": "like",
+   "features": "V;V.PTCP;PRS",
+   "text": "liking"
+  },
+  {
+   "lemma": "go",
+   "features": "V;PRS;3;SG",
+   "text": "goes"
+  },
+  {
+   "lemma": "go",
+   "features": "V;V.PTCP;PRS",
+   "text": "going"
+  },
+  {
+   "lemma": "come",
+   "features": "V;PRS;3;SG",
+   "text": "comes"
+  },
+  {
+   "lemma": "come",
+   "features": "V;V.PTCP;PRS",
+   "text": "coming"
+  },
+  {
+   "lemma": "get",
+   "features": "V;PRS;3;SG",
+   "text": "gets"
+  },
+  {
+   "lemma": "get",
+   "features": "V;V.PTCP;PRS",
+   "text": "getting"
+  },
+  {
+   "lemma": "make",
+   "features": "V;PRS;3;SG",
+   "text": "makes"
+  },
+  {
+   "lemma": "make",
+   "features": "V;V.PTCP;PRS",
+   "text": "making"
+  },
+  {
+   "lemma": "do",
+   "features": "V;PRS;3;SG",
+   "text": "does"
+  },
+  {
+   "lemma": "do",
+   "features": "V;V.PTCP;PRS",
+   "text": "doing"
+  },
+  {
+   "lemma": "see",
+   "features": "V;PRS;3;SG",
+   "text": "sees"
+  },
+  {
+   "lemma": "see",
+   "features": "V;V.PTCP;PRS",
+   "text": "seeing"
+  },
+  {
+   "lemma": "look",
+   "features": "V;PRS;3;SG",
+   "text": "looks"
+  },
+  {
+   "lemma": "look",
+   "features": "V;V.PTCP;PRS",
+   "text": "looking"
+  },
+  {
+   "lemma": "put",
+   "features": "V;PRS;3;SG",
+   "text": "puts"
+  },
+  {
+   "lemma": "put",
+   "features": "V;V.PTCP;PRS",
+   "text": "putting"
+  },
+  {
+   "lemma": "take",
+   "features": "V;PRS;3;SG",
+   "text": "takes"
+  },
+  {
+   "lemma": "take",
+   "features": "V;V.PTCP;PRS",
+   "text": "taking"
+  },
+  {
+   "lemma": "give",
+   "features": "V;PRS;3;SG",
+   "text": "gives"
+  },
+  {
+   "lemma": "give",
+   "features": "V;V.PTCP;PRS",
+   "text": "giving"
+  },
+  {
+   "lemma": "help",
+   "features": "V;PRS;3;SG",
+   "text": "helps"
+  },
+  {
+   "lemma": "help",
+   "features": "V;V.PTCP;PRS",
+   "text": "helping"
+  },
+  {
+   "lemma": "stop",
+   "features": "V;PRS;3;SG",
+   "text": "stops"
+  },
+  {
+   "lemma": "stop",
+   "features": "V;V.PTCP;PRS",
+   "text": "stopping"
+  },
+  {
+   "lemma": "play",
+   "features": "V;PRS;3;SG",
+   "text": "plays"
+  },
+  {
+   "lemma": "play",
+   "features": "V;V.PTCP;PRS",
+   "text": "playing"
+  },
+  {
+   "lemma": "eat",
+   "features": "V;PRS;3;SG",
+   "text": "eats"
+  },
+  {
+   "lemma": "eat",
+   "features": "V;V.PTCP;PRS",
+   "text": "eating"
+  },
+  {
+   "lemma": "drink",
+   "features": "V;PRS;3;SG",
+   "text": "drinks"
+  },
+  {
+   "lemma": "drink",
+   "features": "V;V.PTCP;PRS",
+   "text": "drinking"
+  },
+  {
+   "lemma": "open",
+   "features": "V;PRS;3;SG",
+   "text": "opens"
+  },
+  {
+   "lemma": "open",
+   "features": "V;V.PTCP;PRS",
+   "text": "opening"
+  },
+  {
+   "lemma": "turn",
+   "features": "V;PRS;3;SG",
+   "text": "turns"
+  },
+  {
+   "lemma": "turn",
+   "features": "V;V.PTCP;PRS",
+   "text": "turning"
+  },
+  {
+   "lemma": "read",
+   "features": "V;PRS;3;SG",
+   "text": "reads"
+  },
+  {
+   "lemma": "read",
+   "features": "V;V.PTCP;PRS",
+   "text": "reading"
+  },
+  {
+   "lemma": "need",
+   "features": "V;PRS;3;SG",
+   "text": "needs"
+  },
+  {
+   "lemma": "need",
+   "features": "V;V.PTCP;PRS",
+   "text": "needing"
+  },
+  {
+   "lemma": "feel",
+   "features": "V;PRS;3;SG",
+   "text": "feels"
+  },
+  {
+   "lemma": "feel",
+   "features": "V;V.PTCP;PRS",
+   "text": "feeling"
+  },
+  {
+   "lemma": "tell",
+   "features": "V;PRS;3;SG",
+   "text": "tells"
+  },
+  {
+   "lemma": "tell",
+   "features": "V;V.PTCP;PRS",
+   "text": "telling"
+  },
+  {
+   "lemma": "think",
+   "features": "V;PRS;3;SG",
+   "text": "thinks"
+  },
+  {
+   "lemma": "think",
+   "features": "V;V.PTCP;PRS",
+   "text": "thinking"
+  },
+  {
+   "lemma": "find",
+   "features": "V;PRS;3;SG",
+   "text": "finds"
+  },
+  {
+   "lemma": "find",
+   "features": "V;V.PTCP;PRS",
+   "text": "finding"
+  },
+  {
+   "lemma": "work",
+   "features": "V;PRS;3;SG",
+   "text": "works"
+  },
+  {
+   "lemma": "work",
+   "features": "V;V.PTCP;PRS",
+   "text": "working"
+  },
+  {
+   "lemma": "wait",
+   "features": "V;PRS;3;SG",
+   "text": "waits"
+  },
+  {
+   "lemma": "wait",
+   "features": "V;V.PTCP;PRS",
+   "text": "waiting"
+  },
+  {
+   "lemma": "have",
+   "features": "V;PRS;3;SG",
+   "text": "has"
+  },
+  {
+   "lemma": "have",
+   "features": "V;V.PTCP;PRS",
+   "text": "having"
+  },
+  {
+   "lemma": "cough",
+   "features": "V;PRS;3;SG",
+   "text": "coughs"
+  },
+  {
+   "lemma": "cough",
+   "features": "V;V.PTCP;PRS",
+   "text": "coughing"
+  },
+  {
+   "lemma": "run",
+   "features": "V;PRS;3;SG",
+   "text": "runs"
+  },
+  {
+   "lemma": "run",
+   "features": "V;V.PTCP;PRS",
+   "text": "running"
+  },
+  {
+   "lemma": "jump",
+   "features": "V;PRS;3;SG",
+   "text": "jumps"
+  },
+  {
+   "lemma": "jump",
+   "features": "V;V.PTCP;PRS",
+   "text": "jumping"
+  },
+  {
+   "lemma": "walk",
+   "features": "V;PRS;3;SG",
+   "text": "walks"
+  },
+  {
+   "lemma": "walk",
+   "features": "V;V.PTCP;PRS",
+   "text": "walking"
+  },
+  {
+   "lemma": "sit",
+   "features": "V;PRS;3;SG",
+   "text": "sits"
+  },
+  {
+   "lemma": "sit",
+   "features": "V;V.PTCP;PRS",
+   "text": "sitting"
+  },
+  {
+   "lemma": "stand",
+   "features": "V;PRS;3;SG",
+   "text": "stands"
+  },
+  {
+   "lemma": "stand",
+   "features": "V;V.PTCP;PRS",
+   "text": "standing"
+  },
+  {
+   "lemma": "climb",
+   "features": "V;PRS;3;SG",
+   "text": "climbs"
+  },
+  {
+   "lemma": "climb",
+   "features": "V;V.PTCP;PRS",
+   "text": "climbing"
+  },
+  {
+   "lemma": "dance",
+   "features": "V;PRS;3;SG",
+   "text": "dances"
+  },
+  {
+   "lemma": "dance",
+   "features": "V;V.PTCP;PRS",
+   "text": "dancing"
+  },
+  {
+   "lemma": "swim",
+   "features": "V;PRS;3;SG",
+   "text": "swims"
+  },
+  {
+   "lemma": "swim",
+   "features": "V;V.PTCP;PRS",
+   "text": "swimming"
+  },
+  {
+   "lemma": "ride",
+   "features": "V;PRS;3;SG",
+   "text": "rides"
+  },
+  {
+   "lemma": "ride",
+   "features": "V;V.PTCP;PRS",
+   "text": "riding"
+  },
+  {
+   "lemma": "crawl",
+   "features": "V;PRS;3;SG",
+   "text": "crawls"
+  },
+  {
+   "lemma": "crawl",
+   "features": "V;V.PTCP;PRS",
+   "text": "crawling"
+  },
+  {
+   "lemma": "kick",
+   "features": "V;PRS;3;SG",
+   "text": "kicks"
+  },
+  {
+   "lemma": "kick",
+   "features": "V;V.PTCP;PRS",
+   "text": "kicking"
+  },
+  {
+   "lemma": "throw",
+   "features": "V;PRS;3;SG",
+   "text": "throws"
+  },
+  {
+   "lemma": "throw",
+   "features": "V;V.PTCP;PRS",
+   "text": "throwing"
+  },
+  {
+   "lemma": "catch",
+   "features": "V;PRS;3;SG",
+   "text": "catches"
+  },
+  {
+   "lemma": "catch",
+   "features": "V;V.PTCP;PRS",
+   "text": "catching"
+  },
+  {
+   "lemma": "push",
+   "features": "V;PRS;3;SG",
+   "text": "pushes"
+  },
+  {
+   "lemma": "push",
+   "features": "V;V.PTCP;PRS",
+   "text": "pushing"
+  },
+  {
+   "lemma": "pull",
+   "features": "V;PRS;3;SG",
+   "text": "pulls"
+  },
+  {
+   "lemma": "pull",
+   "features": "V;V.PTCP;PRS",
+   "text": "pulling"
+  },
+  {
+   "lemma": "swing",
+   "features": "V;PRS;3;SG",
+   "text": "swings"
+  },
+  {
+   "lemma": "swing",
+   "features": "V;V.PTCP;PRS",
+   "text": "swing"
+  },
+  {
+   "lemma": "slide",
+   "features": "V;PRS;3;SG",
+   "text": "slides"
+  },
+  {
+   "lemma": "slide",
+   "features": "V;V.PTCP;PRS",
+   "text": "sliding"
+  },
+  {
+   "lemma": "fall",
+   "features": "V;PRS;3;SG",
+   "text": "falls"
+  },
+  {
+   "lemma": "fall",
+   "features": "V;V.PTCP;PRS",
+   "text": "falling"
+  },
+  {
+   "lemma": "carry",
+   "features": "V;PRS;3;SG",
+   "text": "carries"
+  },
+  {
+   "lemma": "carry",
+   "features": "V;V.PTCP;PRS",
+   "text": "carrying"
+  },
+  {
+   "lemma": "drop",
+   "features": "V;PRS;3;SG",
+   "text": "drops"
+  },
+  {
+   "lemma": "drop",
+   "features": "V;V.PTCP;PRS",
+   "text": "dropping"
+  },
+  {
+   "lemma": "write",
+   "features": "V;PRS;3;SG",
+   "text": "writes"
+  },
+  {
+   "lemma": "write",
+   "features": "V;V.PTCP;PRS",
+   "text": "writing"
+  },
+  {
+   "lemma": "draw",
+   "features": "V;PRS;3;SG",
+   "text": "draws"
+  },
+  {
+   "lemma": "draw",
+   "features": "V;V.PTCP;PRS",
+   "text": "drawing"
+  },
+  {
+   "lemma": "color",
+   "features": "V;PRS;3;SG",
+   "text": "colors"
+  },
+  {
+   "lemma": "color",
+   "features": "V;V.PTCP;PRS",
+   "text": "coloring"
+  },
+  {
+   "lemma": "paint",
+   "features": "V;PRS;3;SG",
+   "text": "paints"
+  },
+  {
+   "lemma": "paint",
+   "features": "V;V.PTCP;PRS",
+   "text": "painting"
+  },
+  {
+   "lemma": "cut",
+   "features": "V;PRS;3;SG",
+   "text": "cuts"
+  },
+  {
+   "lemma": "cut",
+   "features": "V;V.PTCP;PRS",
+   "text": "cutting"
+  },
+  {
+   "lemma": "glue",
+   "features": "V;PRS;3;SG",
+   "text": "glues"
+  },
+  {
+   "lemma": "glue",
+   "features": "V;V.PTCP;PRS",
+   "text": "gluing"
+  },
+  {
+   "lemma": "listen",
+   "features": "V;PRS;3;SG",
+   "text": "listens"
+  },
+  {
+   "lemma": "listen",
+   "features": "V;V.PTCP;PRS",
+   "text": "listening"
+  },
+  {
+   "lemma": "speak",
+   "features": "V;PRS;3;SG",
+   "text": "speaks"
+  },
+  {
+   "lemma": "speak",
+   "features": "V;V.PTCP;PRS",
+   "text": "speaking"
+  },
+  {
+   "lemma": "talk",
+   "features": "V;PRS;3;SG",
+   "text": "talks"
+  },
+  {
+   "lemma": "talk",
+   "features": "V;V.PTCP;PRS",
+   "text": "talking"
+  },
+  {
+   "lemma": "sing",
+   "features": "V;PRS;3;SG",
+   "text": "sings"
+  },
+  {
+   "lemma": "sing",
+   "features": "V;V.PTCP;PRS",
+   "text": "singing"
+  },
+  {
+   "lemma": "count",
+   "features": "V;PRS;3;SG",
+   "text": "counts"
+  },
+  {
+   "lemma": "count",
+   "features": "V;V.PTCP;PRS",
+   "text": "counting"
+  },
+  {
+   "lemma": "share",
+   "features": "V;PRS;3;SG",
+   "text": "shares"
+  },
+  {
+   "lemma": "share",
+   "features": "V;V.PTCP;PRS",
+   "text": "sharing"
+  },
+  {
+   "lemma": "clean up",
+   "features": "V;PRS;3;SG",
+   "text": "cleans up"
+  },
+  {
+   "lemma": "clean up",
+   "features": "V;V.PTCP;PRS",
+   "text": "cleaning up"
+  },
+  {
+   "lemma": "wash",
+   "features": "V;PRS;3;SG",
+   "text": "washes"
+  },
+  {
+   "lemma": "wash",
+   "features": "V;V.PTCP;PRS",
+   "text": "washing"
+  },
+  {
+   "lemma": "wipe",
+   "features": "V;PRS;3;SG",
+   "text": "wipes"
+  },
+  {
+   "lemma": "wipe",
+   "features": "V;V.PTCP;PRS",
+   "text": "wiping"
+  },
+  {
+   "lemma": "cook",
+   "features": "V;PRS;3;SG",
+   "text": "cooks"
+  },
+  {
+   "lemma": "cook",
+   "features": "V;V.PTCP;PRS",
+   "text": "cooking"
+  },
+  {
+   "lemma": "build",
+   "features": "V;PRS;3;SG",
+   "text": "builds"
+  },
+  {
+   "lemma": "build",
+   "features": "V;V.PTCP;PRS",
+   "text": "building"
+  },
+  {
+   "lemma": "fix",
+   "features": "V;PRS;3;SG",
+   "text": "fixes"
+  },
+  {
+   "lemma": "fix",
+   "features": "V;V.PTCP;PRS",
+   "text": "fixing"
+  },
+  {
+   "lemma": "hold",
+   "features": "V;PRS;3;SG",
+   "text": "holds"
+  },
+  {
+   "lemma": "hold",
+   "features": "V;V.PTCP;PRS",
+   "text": "holding"
+  },
+  {
+   "lemma": "touch",
+   "features": "V;PRS;3;SG",
+   "text": "touches"
+  },
+  {
+   "lemma": "touch",
+   "features": "V;V.PTCP;PRS",
+   "text": "touching"
+  },
+  {
+   "lemma": "know",
+   "features": "V;PRS;3;SG",
+   "text": "knows"
+  },
+  {
+   "lemma": "know",
+   "features": "V;V.PTCP;PRS",
+   "text": "knowing"
+  },
+  {
+   "lemma": "remember",
+   "features": "V;PRS;3;SG",
+   "text": "remembers"
+  },
+  {
+   "lemma": "remember",
+   "features": "V;V.PTCP;PRS",
+   "text": "remembering"
+  },
+  {
+   "lemma": "forget",
+   "features": "V;PRS;3;SG",
+   "text": "forgets"
+  },
+  {
+   "lemma": "forget",
+   "features": "V;V.PTCP;PRS",
+   "text": "forgetting"
+  },
+  {
+   "lemma": "choose",
+   "features": "V;PRS;3;SG",
+   "text": "chooses"
+  },
+  {
+   "lemma": "choose",
+   "features": "V;V.PTCP;PRS",
+   "text": "choosing"
+  },
+  {
+   "lemma": "show",
+   "features": "V;PRS;3;SG",
+   "text": "shows"
+  },
+  {
+   "lemma": "show",
+   "features": "V;V.PTCP;PRS",
+   "text": "showing"
+  },
+  {
+   "lemma": "ask",
+   "features": "V;PRS;3;SG",
+   "text": "asks"
+  },
+  {
+   "lemma": "ask",
+   "features": "V;V.PTCP;PRS",
+   "text": "asking"
+  },
+  {
+   "lemma": "hug",
+   "features": "V;PRS;3;SG",
+   "text": "hugs"
+  },
+  {
+   "lemma": "hug",
+   "features": "V;V.PTCP;PRS",
+   "text": "hugging"
+  },
+  {
+   "lemma": "kiss",
+   "features": "V;PRS;3;SG",
+   "text": "kiss"
+  },
+  {
+   "lemma": "kiss",
+   "features": "V;V.PTCP;PRS",
+   "text": "kissing"
+  },
+  {
+   "lemma": "laugh",
+   "features": "V;PRS;3;SG",
+   "text": "laughs"
+  },
+  {
+   "lemma": "laugh",
+   "features": "V;V.PTCP;PRS",
+   "text": "laughing"
+  },
+  {
+   "lemma": "cry",
+   "features": "V;PRS;3;SG",
+   "text": "cries"
+  },
+  {
+   "lemma": "cry",
+   "features": "V;V.PTCP;PRS",
+   "text": "crying"
+  },
+  {
+   "lemma": "sleep",
+   "features": "V;PRS;3;SG",
+   "text": "sleeps"
+  },
+  {
+   "lemma": "sleep",
+   "features": "V;V.PTCP;PRS",
+   "text": "sleeping"
+  },
+  {
+   "lemma": "wake up",
+   "features": "V;PRS;3;SG",
+   "text": "wakes up"
+  },
+  {
+   "lemma": "wake up",
+   "features": "V;V.PTCP;PRS",
+   "text": "waking up"
+  },
+  {
+   "lemma": "hit",
+   "features": "V;PRS;3;SG",
+   "text": "hits"
+  },
+  {
+   "lemma": "hit",
+   "features": "V;V.PTCP;PRS",
+   "text": "hitting"
+  },
+  {
+   "lemma": "bite",
+   "features": "V;PRS;3;SG",
+   "text": "bites"
+  },
+  {
+   "lemma": "bite",
+   "features": "V;V.PTCP;PRS",
+   "text": "biting"
+  },
+  {
+   "lemma": "break",
+   "features": "V;PRS;3;SG",
+   "text": "breaks"
+  },
+  {
+   "lemma": "break",
+   "features": "V;V.PTCP;PRS",
+   "text": "breaking"
+  },
+  {
+   "lemma": "scratch",
+   "features": "V;PRS;3;SG",
+   "text": "scratches"
+  },
+  {
+   "lemma": "scratch",
+   "features": "V;V.PTCP;PRS",
+   "text": "scratching"
+  },
+  {
+   "lemma": "close",
+   "features": "V;PRS;3;SG",
+   "text": "closes"
+  },
+  {
+   "lemma": "close",
+   "features": "V;V.PTCP;PRS",
+   "text": "closing"
+  },
+  {
+   "lemma": "shut",
+   "features": "V;PRS;3;SG",
+   "text": "shuts"
+  },
+  {
+   "lemma": "shut",
+   "features": "V;V.PTCP;PRS",
+   "text": "shutting"
+  },
+  {
+   "lemma": "tickle",
+   "features": "V;PRS;3;SG",
+   "text": "tickles"
+  },
+  {
+   "lemma": "tickle",
+   "features": "V;V.PTCP;PRS",
+   "text": "tickling"
+  },
+  {
+   "lemma": "love",
+   "features": "V;PRS;3;SG",
+   "text": "loves"
+  },
+  {
+   "lemma": "love",
+   "features": "V;V.PTCP;PRS",
+   "text": "loving"
+  },
+  {
+   "lemma": "hurt",
+   "features": "V;PRS;3;SG",
+   "text": "hurts"
+  },
+  {
+   "lemma": "hurt",
+   "features": "V;V.PTCP;PRS",
+   "text": "hurting"
+  },
+  {
+   "lemma": "rain",
+   "features": "V;PRS;3;SG",
+   "text": "rains"
+  },
+  {
+   "lemma": "rain",
+   "features": "V;V.PTCP;PRS",
+   "text": "raining"
+  },
+  {
+   "lemma": "is",
+   "features": "V;PRS;1;SG",
+   "text": "am"
+  },
+  {
+   "lemma": "is",
+   "features": "V;PRS;2;SG;PL",
+   "text": "are"
+  },
+  {
+   "lemma": "is",
+   "features": "V;NFIN",
+   "text": "be"
+  },
+  {
+   "lemma": "don't",
+   "features": "V;PRS;3;SG",
+   "text": "doesn't"
+  },
+  {
+   "lemma": "he",
+   "features": "PRO;ACC",
+   "text": "him"
+  },
+  {
+   "lemma": "she",
+   "features": "PRO;ACC",
+   "text": "her"
+  },
+  {
+   "lemma": "we",
+   "features": "PRO;ACC",
+   "text": "us"
+  },
+  {
+   "lemma": "they",
+   "features": "PRO;ACC",
+   "text": "them"
+  },
+  {
+   "lemma": "a",
+   "features": "DET;PHON",
+   "text": "an"
+  }
+ ]
+}

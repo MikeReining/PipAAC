@@ -221,13 +221,17 @@ CREATE TABLE label (
   text TEXT NOT NULL CHECK (length(text) > 0),
   normalized_text TEXT NOT NULL CHECK (length(normalized_text) > 0),
   normalizer_version TEXT NOT NULL CHECK (normalizer_version = 'v1'),
-  kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias')),
+  kind TEXT NOT NULL CHECK (kind IN ('lemma', 'alias', 'form')),
   part_of_speech TEXT NOT NULL CHECK (part_of_speech IN (
     'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',
     'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'
   )),
+  -- UniMorph-style tag for kind='form' ("V;PRS;3;SG"); NULL otherwise.
+  features TEXT CHECK (features IS NULL OR length(features) > 0),
   default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),
-  status TEXT NOT NULL CHECK (status IN ('proposed', 'approved'))
+  status TEXT NOT NULL CHECK (status IN ('proposed', 'approved')),
+  CHECK ((kind = 'form') = (features IS NOT NULL)),
+  CHECK (kind != 'form' OR default_for_text = 0)
 );
 ```
 
@@ -235,6 +239,16 @@ CREATE TABLE label (
 rejects a label whose locale disagrees with its utterance. That is the
 same class of bug as a clip whose locale disagrees with its voice, which
 is why clip does not carry a locale of its own.
+
+A `form` label is one surface of the sense under one feature tag —
+`wants` on the want sense, `him` on the he sense — so a tile can show
+the word that fits the sentence without moving or gaining a sense.
+Which forms exist and how they are spelled is measured data
+(`data/forms/en.json`, built from CHILDES by
+`scripts/prediction/childes/build_forms_data.mjs`), never a hand-written
+grammar table. A form speaks its own utterance and is never the
+`default_for_text` label — lookups and typed-word completions resolve
+to lemmas and aliases only.
 
 Launch lemmas have `text` equal to `utterance.spoken_text`. The columns
 are allowed to differ later, so a button can show `3` and speak the
@@ -685,7 +699,12 @@ id, name, photo, and index position; legacy `group_item` order becomes
 
 ```sql
 CREATE UNIQUE INDEX label_one_row_per_sense_text
-  ON label(sense_id, locale, normalized_text);
+  ON label(sense_id, locale, normalized_text)
+  WHERE kind IN ('lemma', 'alias');
+
+CREATE UNIQUE INDEX label_one_form_per_features
+  ON label(sense_id, locale, features)
+  WHERE kind = 'form' AND status = 'approved';
 
 CREATE UNIQUE INDEX label_one_approved_lemma
   ON label(sense_id, locale)

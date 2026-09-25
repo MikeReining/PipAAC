@@ -181,7 +181,11 @@ export const CASUAL = {
   dose: ['those'],
 };
 
-export function lemmatize(words) {
+/** Surface tokens -> the word stream before lemmatizing: contractions
+ *  split, casual reductions expanded and their standard-form echoes
+ *  consumed. Exported so tools that need the same stream (form counts
+ *  after "it's", "i'm") do not re-implement it. */
+export function expandAll(words) {
   const lw = [];
   for (let wi = 0; wi < words.length; wi++) {
     const w = words[wi].toLowerCase();
@@ -198,6 +202,20 @@ export function lemmatize(words) {
     }
     lw.push(...expandContraction(w));
   }
+  return lw;
+}
+
+/** One-meaning merges (021 slice 1): these surfaces are the same sense —
+ * "has" IS "have", "him" IS object "he". Folding here means the phrase
+ * table never holds a "he has" ending separate from "he have", and the
+ * app folds the same way (funnel derives it from the form labels). */
+export const MERGES = {
+  has: 'have', am: 'is', are: 'is', be: 'is',
+  him: 'he', her: 'she', us: 'we', them: 'they', an: 'a',
+};
+
+export function lemmatize(words) {
+  const lw = expandAll(words);
   const out = [];
   let i = 0;
   while (i < lw.length) {
@@ -206,8 +224,11 @@ export function lemmatize(words) {
       const parts = mw.split(' ');
       if (lw.slice(i, i + parts.length).join(' ') === mw) { hit = mw; i += parts.length; break; }
     }
-    if (hit) { out.push(hit); continue; }
-    out.push(toLemma(lw[i]));
+    if (hit) { out.push(MERGES[hit] ?? hit); continue; }
+    // Merge lookup first so raw merge surfaces that aren't lemmas
+    // resolve ("be" -> "is"); toLemma still owns inflections and walls.
+    const lem = MERGES[lw[i]] ?? toLemma(lw[i]);
+    out.push(lem === null ? null : (MERGES[lem] ?? lem));
     i++;
   }
   return out;
