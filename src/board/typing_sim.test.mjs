@@ -23,7 +23,6 @@ import { createDatabase, importCatalog } from "./catalog.mjs";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { buildIndex, suggest } from "../../public/shared/spelling.mjs";
 import {
-  keyboardContinuations,
   logSelection,
   stripCandidates,
 } from "../../public/shared/funnel.mjs";
@@ -74,10 +73,8 @@ function cards(mode, items, buffer, clock) {
   if (buffer) return suggest(INDEX, buffer, 4);
   if (items.length === 0) return [];
   const sents = items.map((i) => ({ kind: i.kind, id: i.id }));
-  const picks =
-    mode === "C"
-      ? keyboardContinuations(db, sents, "en", clock, kids)
-      : stripCandidates(db, sents, clock, "en", kids);
+  // One rule everywhere now: the keyboard bar IS stripRanked.
+  const picks = stripCandidates(db, sents, clock, "en", kids);
   return picks.map((p) => ({ kind: p.kind, id: p.id, text: labelById.get(`${p.kind}:${p.id}`) }));
 }
 
@@ -136,21 +133,4 @@ test("empty log: continuations never cost more than completions alone", () => {
   assert.ok(c.taps <= b.taps, `C ${c.taps} > B ${b.taps} taps on an empty log`);
 });
 
-test("with history: continuations use fewer taps per word than completions", () => {
-  db.prepare("DELETE FROM learner_event_log").run();
-  simulate("C"); // enter the fixture once — bigrams now exist
-  const { b, c } = runPair("with history");
-  assert.ok(
-    c.perWord < b.perWord,
-    `C ${c.perWord.toFixed(2)} >= B ${b.perWord.toFixed(2)} taps/word with history`,
-  );
-});
 
-test("an i tail invites core verbs after commit", () => {
-  db.prepare("DELETE FROM learner_event_log").run();
-  const items = [{ kind: "sense", id: lemmaByNorm.get("i"), text: "i" }];
-  const picks = keyboardContinuations(db, items, "en", Date.now(), kids).map((p) => labelById.get(`${p.kind}:${p.id}`));
-  console.log(`after "i": ${JSON.stringify(picks)}`);
-  const coreVerbs = picks.filter((t) => ["want", "like", "go", "need", "feel"].includes(t));
-  assert.ok(picks.length > 0 && coreVerbs.length > 0, `expected core verbs, got ${JSON.stringify(picks)}`);
-});

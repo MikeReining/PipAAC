@@ -15,7 +15,7 @@ import { createDatabase, importCatalog } from "./catalog.mjs";
 import { maskedSenseIds, setMask } from "../../public/shared/groups.mjs";
 import { listOps, replayOps } from "../../public/shared/ops.mjs";
 import {
-  keyboardContinuations, openSentence, closeSentence, logSelection,
+  openSentence, closeSentence, logSelection,
   stripRanked,
 } from "../../public/shared/funnel.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
@@ -64,8 +64,6 @@ test("hide stop (core): maps byte-identical; hide juice (fringe): out of strip +
   const sent = [{ kind: "sense", id: want }];
   const before = stripRanked(db, sent, Date.now(), "en", kids);
   assert.ok(before.shown.some((c) => c.id === juice), "juice is offered unmasked");
-  const kbBefore = keyboardContinuations(db, sent, "en", Date.now(), kids);
-  assert.ok(kbBefore.some((c) => c.id === juice), "juice continues 'want' unmasked");
 
   setMask(db, stop, true);
   setMask(db, juice, true);
@@ -77,16 +75,12 @@ test("hide stop (core): maps byte-identical; hide juice (fringe): out of strip +
   assert.ok(!after.shown.some((c) => c.id === juice), "hidden: out of the strip");
   assert.ok(after.ranked.some((c) => c.id === juice && c.mask),
     "the mask is recorded on the ranked row, not just hidden at paint");
-  const kbAfter = keyboardContinuations(db, sent, "en", Date.now(), kids);
-  assert.ok(!kbAfter.some((c) => c.id === juice), "hidden: out of continuations");
 
   setMask(db, stop, false);
   setMask(db, juice, false);
   assert.equal(maskedSenseIds(db).size, 0);
   const restored = stripRanked(db, sent, Date.now(), "en", kids);
   assert.ok(restored.shown.some((c) => c.id === juice), "show restores the strip");
-  const kbRestored = keyboardContinuations(db, sent, "en", Date.now(), kids);
-  assert.ok(kbRestored.some((c) => c.id === juice), "show restores continuations");
 });
 
 test("the set_mask op replays — a hidden word stays hidden after sync", () => {

@@ -9,7 +9,6 @@ import {
   detachEvent,
   fillChosen,
   groupRanked,
-  keyboardContinuations,
   logImpression,
   likelyGroups,
   logSelection,
@@ -618,29 +617,28 @@ async function renderStrip() {
     // mid-word: the strip switches from continuations to completions
     cards = kbUi.completions();
   } else {
-    // Keyboard open with an empty buffer: next-word continuations, core
-    // words included — the grid is hidden so board words belong in the
-    // bar regardless of board cells (R21).
+    // One question, one answer: "what does she say next after this
+    // phrase" — the same rule paints the bar whether the keyboard is
+    // open or not. (Mid-word letters still get spelling completions
+    // above; that's not next-word prediction.)
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
     // Open group: the bar narrows to that group's used words — her
     // history only, no children table (group mode, 2026-09-24).
     const groupId = view === "group" ? groupsUi.getGroupKey() : null;
-    const ranked = kbUi.isOpen() ? null
-      : groupId ? groupRanked(db, sents, groupId, Date.now())
+    const ranked = groupId
+      ? groupRanked(db, sents, groupId, Date.now())
       : stripRanked(db, sents, Date.now(), locale, phrases);
-    const items = kbUi.isOpen()
-      ? keyboardContinuations(db, sents, locale, Date.now(), phrases)
-      : ranked.shown;
+    const items = ranked.shown;
     // Position-0 offers are real moments too (017-21): open the
     // sentence so the impression row can exist. A row with no picks
     // stays invisible to stats (end_kind IS NULL). An empty bar —
     // start or mid-sentence — stays empty: no resting-card guesses
     // (founder call, 2026-09-25).
-    if (ranked) ensureSentence();
+    ensureSentence();
     maybeImpression(
-      ranked?.ranked ?? items.map((c) => ({ kind: c.kind, id: c.id })),
+      ranked.ranked,
       items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
-        gate: groupId ? { group: groupId } : { ending: ranked?.ending ?? null } },
+        gate: groupId ? { group: groupId } : { ending: ranked.ending } },
     );
     cards = stripCards(items);
   }
@@ -1145,7 +1143,7 @@ function applyLikely() {
   const next = new Set();
   if (highlightNext && !editing && view === "board" && !kbUi.isOpen() && sentence.length) {
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-    for (const c of keyboardContinuations(db, sents, locale, Date.now(), phrases)) {
+    for (const c of stripRanked(db, sents, Date.now(), locale, phrases).shown) {
       if (c.kind !== "sense") continue;
       // A stand-in person on the board takes the word's halo too —
       // Mama's cell glows when `mom` is likely (014 slice 11).

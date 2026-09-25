@@ -85,4 +85,5 @@ for (const row of rows) {
     `${String(ending).padEnd(6)} ${ok ? 'OK' : 'DIFF'}`,
   );
 }
+console.log('\nnote: the keyboard-open bar and the board "likely next" halos call this same stripRanked — one question, one answer.');
 process.exit(diffs ? 1 : 0);

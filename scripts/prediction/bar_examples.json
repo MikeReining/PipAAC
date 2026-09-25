@@ -11,6 +11,7 @@
   { "history": [], "phrase": ["we", "go", "to", "the"], "expected": ["zoo", "park", "beach"] },
   { "history": [], "phrase": ["i", "want", "to", "go", "to"], "expected": ["the", "sleep", "school", "that"], "note": "founder: must stay" },
   { "history": [], "phrase": ["i", "want", "my", "purple"], "expected": ["toothbrush", "shirt"] },
+  { "history": [], "phrase": ["the", "boy", "is"], "expected": ["go", "run", "still", "walk"], "note": "keyboard bar + halos use this same rule" },
   { "history": [["i", "like", "my", "mom"]], "phrase": ["i", "like", "my"], "expected": ["mom", "new", "food"] },
   { "history": [["i", "like", "my", "mom"]], "phrase": ["i", "like", "my", "mom"], "expected": ["and"] },
   { "history": [["my", "mom", "is", "here"]], "phrase": ["i", "like", "my", "mom"], "expected": ["and"] },
