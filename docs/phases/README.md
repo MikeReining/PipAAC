@@ -41,6 +41,7 @@ Executing phases only. Each row names the **next** slice.
 | [021 — Grammar help](021_Grammar_Help.md) | Step 0 + slice 1 done. **Next: slice 3** (form table + measurement), then 4 (app), 2 (clips), 5 (examples) |
 | [022 — Whose and how many](022_Whose_And_How_Many.md) | Queued after 021: his / our / their / your and *Leo's* by the next word, *mine* at Speak, plurals after two / some / all |
 | [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
+| [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Reviewed 2026-09-25: Grok whole-sentence speech, one voice everywhere, ▶ never waits on the network, shared cache for Pip-words-only sentences, no subscription. Next: slice 1 (Worker endpoint) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
