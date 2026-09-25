@@ -85,6 +85,27 @@ test('multiword pieces stay honest: named aliases, else walls', () => {
   }
 });
 
+test('inflected multiword heads fold: the particle belongs to the token (021)', () => {
+  // "he wakes up" is he + wakes up — not he + wake up + up (a stray
+  // 'up' token once split every wake-up context in the phrase table)
+  assert.deepEqual(
+    C.analyzeLine(['he', 'wakes', 'up', 'early']).map((t) => t.lemma),
+    ['he', 'wake up', null]);
+  // an inflected standalone-head lemma still completes the multiword:
+  // "cleaning up" is the clean-up sense, not clean(adjective) + up
+  assert.deepEqual(
+    C.analyzeLine(['she', 'is', 'cleaning', 'up']).map((t) => t.lemma),
+    ['she', 'is', 'clean up']);
+  // but "is clean" alone stays the adjective, and a lone "wake" keeps
+  // its alias target without eating the next word
+  assert.deepEqual(
+    C.analyzeLine(['the', 'room', 'is', 'clean']).map((t) => t.lemma),
+    ['the', null, 'is', 'clean']);
+  assert.deepEqual(
+    C.analyzeLine(['i', 'wake', 'him']).map((t) => t.lemma),
+    ['i', 'wake up', 'he']);
+});
+
 test('band edges and split semantics', () => {
   assert.equal(C.band(1.9), 'mlu_lt2');
   assert.equal(C.band(2), 'mlu_2_35');

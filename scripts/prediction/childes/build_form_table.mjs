@@ -57,6 +57,9 @@ for (const f of FORMS.forms) {
 // them would let aux evidence answer for lexical verbs.
 verbSense.delete(senseOf.get('is'));
 verbSense.delete(senseOf.get("don't"));
+// ...but decision 4 is per-sense keyed — "where are you" must still
+// re-pick is -> are when 'you' lands. Pool exclusion, not evidence exclusion.
+const nextSense = new Set([...verbSense, senseOf.get('is'), senseOf.get("don't")]);
 
 const wordCtx = new Map();   // `${ctx}|${sense}` -> Map feat -> n
 const verbFree = new Map();  // ctx -> Map feat -> n
@@ -120,10 +123,10 @@ for (const ti of train) {
       for (const ctx of ctxs) put(wordCtx, `${ctx}|${sense}`, feat);
       const next = i + 1 < ids.length ? ids[i + 1] : null;
       if (verbSense.has(sense)) {
-        for (const ctx of ctxs) {
-          put(verbFree, ctx, feat);
-          if (next) put(nextVerb, `${ctx}|${sense}|${next}`, feat);
-        }
+        for (const ctx of ctxs) put(verbFree, ctx, feat);
+      }
+      if (nextSense.has(sense) && next) {
+        for (const ctx of ctxs) put(nextVerb, `${ctx}|${sense}|${next}`, feat);
       }
       if (t.lemma === 'a' && !child && next) put(aAn, next, feat);
     }

@@ -1,7 +1,8 @@
 # 021 — Grammar Help: every word fits the sentence, from data
 
-**Status:** executing. Step 0 (`adbcf6e`) and slice 1 (`f288177`) done and
-reviewed 2026-09-25.
+**Status:** executing. Step 0 (`adbcf6e`), slice 1 (`f288177`), slice 3
+(`ffe0b7a`), slice 4 (`e821ef6`), slice 2 (`245d280`) done; slice 5 closes
+the phase (founder table below).
 **Order from here: slice 3 → slice 4 → slice 2 → slice 5.** Slice 1 folded
 *am / are / be* into *is* (and *has* into *have*, *him* into *he*…), so until
 slice 4's `formFor` exists the app shows each merged word's default label:
@@ -419,6 +420,34 @@ behind any DIFF.
 | *I want a*, then tap *ball* | — | sentence reads **I want a ball** |
 | bar after *I* | — | **am**, want, have, don't |
 | bar after *He is* | — | **going, a, getting, not** |
+
+**Slice 5 status (2026-09-25):** `form_examples.mjs` covers all rows above
+plus merged taps, walls and Grammar-help-off — **47/48 OK**. The one DIFF
+is honest data: `my mom|like` ties {BASE:2, 3SG:2} in CHILDES so the pick
+is `like` (insertion order). Every other row matches, including the three
+sentence-rewrite rows.
+
+Building the harness caught two real corpus bugs, fixed in this slice:
+
+1. **Inflected multiword heads** — "he wakes up" tokenized as
+   `he + wake up + up` (a stray `up` split every wake-up context), and
+   "cleaning up" landed on the *clean* adjective + `up`, never the
+   clean-up sense. `analyzeLine` now consumes the particle when a token
+   resolves to a multiword lemma or completes one (`common.mjs`).
+   Phrase table rebuilt: 90,966 → 90,941 contexts; `measure_bar` is
+   unchanged (450,837 moments, 25.4% on-bar @5%) and `bar_examples`
+   stayed 27/27.
+2. **Decision 4 blind spot** — `is`/`don't` were dropped from
+   `verbSenses` (right: their aux shapes must not pollute the pooled
+   verb table) but that also kept them out of `nextVerb`, so *where is
+   you* could never re-pick *are* despite 4,283 CHILDES "where are you"
+   lines. `nextVerb` now counts them (`nextSense`); `verbFree` still
+   excludes them. is-sense accuracy went 91.0/94.9 → **95.5/96.4**;
+   decision 4 now answers 295,378 held-out positions at 96.8% right.
+
+`<name>` remains unmeasured — the parquet mirror carries no `n:prop`
+tier (item 5's documented stop condition); entities fall back to the
+lemma form.
 
 ## Report back with
 

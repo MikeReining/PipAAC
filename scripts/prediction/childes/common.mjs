@@ -216,6 +216,23 @@ export const MERGES = {
 
 /** Per-token lemma + the surface that produced it — the form table
  *  needs both ("him" is surface PRO;ACC of the he-sense). */
+// Multiword lemmas keyed by their head's resolved lemma — "cleaning up"
+// lemmatizes to clean + up, but the particle makes it the clean-up sense;
+// "wakes up" resolves its head to wake up directly and the "up" belongs
+// to the same token. Built lazily since toLemma needs the full maps above.
+let MW_BY_HEAD = null;
+function multiwordHeads() {
+  if (!MW_BY_HEAD) {
+    MW_BY_HEAD = new Map();
+    for (const mw of MULTIWORD) {
+      const head = mw.split(' ')[0];
+      const hl = MERGES[head] ?? toLemma(head);
+      const rl = hl === null ? null : (MERGES[hl] ?? hl);
+      if (rl) MW_BY_HEAD.set(rl, mw);
+    }
+  }
+  return MW_BY_HEAD;
+}
 export function analyzeLine(words) {
   const lw = expandAll(words);
   const out = [];
@@ -235,7 +252,26 @@ export function analyzeLine(words) {
     // Merge lookup first so raw merge surfaces that aren't lemmas
     // resolve ("be" -> "is"); toLemma still owns inflections and walls.
     const lem = MERGES[lw[i]] ?? toLemma(lw[i]);
-    out.push({ lemma: lem === null ? null : (MERGES[lem] ?? lem), surf: lw[i] });
+    const resolved = lem === null ? null : (MERGES[lem] ?? lem);
+    // Inflected multiword heads. "wakes up" lemmatizes the head to the
+    // two-word lemma — the trailing particle belongs to the same token
+    // ("he wakes up" is he + wakes up, not he + wake up + up). And when
+    // the head lemmatizes to a standalone word, a following particle can
+    // still complete the multiword sense ("cleaning up" -> clean up).
+    if (resolved) {
+      const mwHit = MULTIWORD.includes(resolved)
+        ? resolved
+        : multiwordHeads().get(resolved);
+      if (mwHit) {
+        const parts = mwHit.split(' ');
+        if (lw.slice(i + 1, i + parts.length).join(' ') === parts.slice(1).join(' ')) {
+          out.push({ lemma: MERGES[mwHit] ?? mwHit, surf: lw.slice(i, i + parts.length).join(' ') });
+          i += parts.length;
+          continue;
+        }
+      }
+    }
+    out.push({ lemma: resolved, surf: lw[i] });
     i++;
   }
   return out;
