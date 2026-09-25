@@ -28,6 +28,8 @@ files touched, proof state, and next action.
 | Product vocabulary and durable truths | `docs/product/SSOT.md` |
 | Visual design: tokens, tiles, brand marks | `docs/product/Design_System.md` |
 | Clipart, tile symbols, framing lenses | `docs/operations/art-generator/SKILL.md` |
+| Catalog voice clips, Grok TTS minting | `docs/operations/Grok_Voice_Synthesis_Best_Practices.md` |
+| Voice emotion tags, prosody formulas | `docs/operations/Grok_Voice_Emotional_Prosody.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |
 | Repo conventions | `docs/operations/Contributing.md` |
@@ -77,6 +79,10 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
   (`docs/operations/art-generator/SKILL.md` § 7). On 2026-09-24 an agent ran
   `scripts/art/extended_batch.mjs` unasked (~1,950 images, ~3,400 Jev calls) and
   exhausted the OpenRouter daily budget. "Generate the words" means the list.
+- **Never replace catalog audio, or upload new voice clips, without explicit
+  founder approval.** Mint locally, ten clips at most, and wait for a listen
+  (`docs/operations/Grok_Voice_Synthesis_Best_Practices.md`). The ElevenLabs
+  catalog stays until the founder picks the file.
 - Agents preview with `npm run dev:agent`. `npm run dev` is the founder browse
   copy — do not kill it or reuse `.wrangler/slot-0`.
 - **Interactive IDE agents commit directly** with `git add <paths>` and
