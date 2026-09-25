@@ -67,6 +67,50 @@ Works Test: the generator rejects a row whose label matches a launch
 lemma, a row with no category, and a duplicate row. Seed a fixture list
 containing each and assert all three are rejected.
 
+### Everyday words children say that Pip lacks (founder, 2026-09-25)
+
+Separate from the add-later library above: these words **ship in the
+catalog's groups** (not the home board), so they are on every board and
+feed the smart bar.
+
+**The list comes from data.** Rank the words children say most in CHILDES
+(child lines, after `020B_Converter_Fixes.md`) that map to no catalog word.
+Drop fillers (*um*, *yeah*-type sounds), names, letters and baby-talk
+spellings that 020B maps to real words (*dis* → *this*). Every word said
+1,000+ times gets in. The top of that list on 2026-09-25:
+
+| Word | Times children say it |
+| --- | --- |
+| let's / let | ~12,000 |
+| say / said | ~12,000 |
+| hey | 7,761 |
+| well | 7,157 |
+| gone | 5,312 |
+| watch | 4,164 |
+| from, about, into, through, around | 2,000–3,100 each |
+| nice, mean, move, better, alright | 2,300–2,800 each |
+
+(*be*, 8,483, arrives in 021 as a form of *is*.)
+
+**Rulings:**
+- ***let's* is one word**, not *let* + *'s*. As a catalog word, the
+  converter keeps it whole instead of reading it as *let is*. The spelling
+  *lets* counts as *let's*. *let* (*let me*) is its own word too.
+- ***said* is its own word for now**, the way *was*, *did* and *had* are
+  today, so *he said* works before any past-tense support. When the time
+  button (`docs/backlog/Time_Buttons.md`) is built, *said* becomes the past
+  form of *say*, the way *has* became a form of *have* in 021.
+- **No special handling in the smart bar.** Once a word is in the catalog
+  and the phrase table is rebuilt, the bar offers it when the data supports
+  it (the 5% rule). Measured: 0.2% of children's sentences start with
+  *let's* (rank 71; *I* is 6.1%), and *said* follows *he* 2.3% of the time
+  (rank 8) and *she* 3.5% (rank 4). So they won't show on day one, and
+  nothing forces them. Her own words are never cut: the first time she says
+  *let's go* or *he said*, her bar offers them after that phrase from then
+  on, first at the times of day she uses them.
+- Each word needs art (art rules above: one at a time with the founder) and
+  a clip (WorkbookBench first).
+
 ## Slice 2 — The art
 
 Goal: every row drawn in the house style with `scripts/art/gen.mjs`.
