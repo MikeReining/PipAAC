@@ -18,8 +18,10 @@ cell, same picture, same meaning; only the word and its sound change.
    reads **going**. After *he wants to*, *get* is **get** again. No tile
    moves; no meaning changes. Showing *has* in the bar while the board says
    *have* is ruled out: one word, one form, everywhere.
-2. **Present tense only:** base, -s, -ing. Past tense, and *am/is/are* as
-   one word, are later conversations. Do not build them.
+2. **Present tense only:** base, -s, -ing, and *am / is / are / be*
+   (added the same day: *I am*, *he is*, *they are*, *we are*, *you are*;
+   slice 1 item 5). Past tense (*was / were*, *went*, *had*…) is a later
+   conversation. Do not build it.
 3. **No grammar rules and no JEV.** The data picks the form. It is measured
    to be right far more often than today (below), long sentences included.
 4. **A word already in the sentence keeps its form, with one exception:**
@@ -27,9 +29,9 @@ cell, same picture, same meaning; only the word and its sound change.
    decides it (*what do* + *he* → *what **does** he*). Only that word, and
    only between present forms.
 5. **Setting name: "Grammar help"** (On by default). Supporter-facing line:
-   *"Words change to fit the sentence: he needs, she is going."* Off = every
-   word shows its base form, as today. It is not called "word endings":
-   later steps (*I am* / *he is*) change more than endings.
+   *"Words change to fit the sentence: he needs, they are going."* Off =
+   every word shows its default form, as today. It is not called "word
+   endings": *I am* → *he is* changes the whole word, not an ending.
 6. **Missing voice clips are authorized.** Pull from WorkbookBench first,
    generate only what is missing (slice 2).
 
@@ -70,6 +72,17 @@ harder, because the form depends on the last 1–3 words:
 
 A version that only changed the form when 80%+ sure scored slightly lower
 (92.5%), so there is no threshold: the data's top form wins.
+
+*am / is / are*, measured the same way (first word of a line skipped):
+
+| | Adults (171,299 uses) | Children (50,300) |
+| --- | --- | --- |
+| Today: the cell always says *is* | 70.8% right | 72.7% right |
+| **Data picks am / is / are** | **92.6% right** | **96.4% right** |
+
+It holds at every sentence length (adults 91–94%, children 95–97% at 1 to
+6+ words before). *be* (*to be*, *will be*) was not in this run; slice 3
+adds it to the measurement.
 
 What's in the remaining ~7%:
 - Questions where the subject comes after the verb (*what does he* vs *what
@@ -118,8 +131,8 @@ the same commit. Changes from 005 slice 1:
    verb (e.g. *needs* → *need*, *getting* → *get*).
 3. **Source and check without a paid model run:** generate forms with 005's
    spelling rules plus a small irregular list (*has, does, goes*; *am / is /
-   are* are not part of this phase). The independent check is CHILDES attestation (item 2), not the
-   OpenRouter oracle. List every generated form CHILDES never contains, with
+   are / be* come from item 5). The independent check is CHILDES
+   attestation (item 2), not the OpenRouter oracle. List every generated form CHILDES never contains, with
    the reason it was dropped or kept.
 4. **has becomes the -s form of have.** The separate sense *has*
    (`sns_0612`) stops being its own word:
@@ -129,8 +142,33 @@ the same commit. Changes from 005 slice 1:
    - her existing logged taps of `sns_0612` count as *have* wherever
      history is read (phrase history, group mode). No destructive rewrite of
      her log.
-   *did*, *had*, *was*, *were*, *am/is/are* stay as they are (past tense and
-   *be* are later).
+5. **am, is and are become one word, with be as a fourth form.** Today they
+   are three separate senses: *is* (`sns_0607`, on `grid60`/`grid90` and in
+   More Doing), *am* (`sns_0609`) and *are* (`sns_0608`), both in Little
+   Words. *be* is not in the catalog.
+   - *is* stays the sense and the cell. Its **default label stays *is***:
+     that's how 58–72% of sentences starting with this word begin, and it's
+     what the cell shows today. So for this word, "default form" means *is*,
+     not *be*.
+   - `am` (`V;PRS;1;SG`), `are` (`V;PRS;2;PL`, used for *you / we / they*)
+     and `be` (`V;NFIN`, for *to be*, *will be*, *can be*) become its form
+     labels. *am* and *are* reuse their existing utterances and clips; *be*
+     needs a clip (slice 2).
+   - The Little Words cells *am* and *are* stay where they are. Tapping one
+     adds the *is* sense with that form fixed, like the *has* cell.
+   - Her logged taps of `sns_0609` / `sns_0608` count as the *is* sense
+     wherever history is read. No destructive rewrite of her log.
+   This is what makes *I* → **am**, *he* → **is**, *they / we / you* →
+   **are** work on the board cell that says *is* today.
+6. **Fold the same way in the children's phrase table.** Rebuild
+   `phrase_table.en.json` with *has* → *have* and *am / is / are / be* → the
+   *is* sense, so prediction runs on meanings. The bar then predicts that
+   sense after *I*, and `formFor` shows it as **am**. Rerun
+   `bar_examples.mjs`: rows naming *am* or *is* (e.g. *I* → *am, want,
+   have, don't*) must show the same words through `formFor`; explain any
+   other change.
+
+*did*, *had*, *was* and *were* stay as they are (past tense is later).
 
 Show: the list of forms added (count per verb), the dropped/unattested list,
 `npm run catalog:build:check` green.
@@ -149,10 +187,10 @@ by utterance id (005 slice 2 item 1).
 2. **Generate the rest: authorized by the founder (2026-09-25).** Use
    `generate_missing_audio.mjs` (ElevenLabs, same voice id and settings as
    the base words). Print the exact list and count before running, then run
-   it. Expect about 100 clips.
+   it. Expect about 100 clips, plus *be*. *am* and *are* already have clips.
 3. Coverage: every approved form label has a ready clip. Listen to *needs*,
-   *has*, *going* next to *need*, *have*, *go* in the dev browser: same
-   speaker.
+   *has*, *going*, *be* next to *need*, *have*, *go*, *is* in the dev
+   browser: same speaker.
 
 ## Slice 3 — The form table and its measurement (before any app work)
 
@@ -172,14 +210,18 @@ expanded), plus contractions split (*you're* → *you are*, *I'm* → *I am*,
    start; a wall at any word that isn't a catalog word or one of its forms)
    + the verb; value = counts of each of its present forms. Also a verb-free
    table: (words before) → counts of base / -s / -ing, so a verb with little
-   data still gets a form. Drop counts below 2. Aggregate counts only.
+   data still gets a form. *am / is / are / be* are counted as the four forms
+   of the one *is* sense (slice 1 item 5); they have plenty of data and do
+   not use the verb-free table. Drop counts below 2. Aggregate counts only.
 3. **The choice (this is `formFor`):**
    1. Longest ending of the words before that has counts for this verb →
       its top form.
    2. Otherwise the verb-free table's longest ending → base / -s / -ing →
       that verb's form of that kind (if it has one).
-   3. Otherwise the base form.
-   No threshold. The first word of a sentence always shows its base form.
+   3. Otherwise the word's default form: the base form, or *is* for the
+      *is* sense.
+   No threshold. The first word of a sentence always shows its default
+   form.
 4. **The one allowed change back (decision 4):** a small extra table keyed by
    (words before, verb, the one word after). When she taps a new word, re-run
    the choice for the previous word only, with the new word as its
@@ -198,7 +240,10 @@ expanded), plus contractions split (*you're* → *you are*, *I'm* → *I am*,
    actual form (base / -s / -ing); by number of words before (1…6+); the
    change-back rule's % right on the words it changes; % with and without
    `<name>`. Expected about 81.6% → 93.3% (adults) and 82.0% → 90.3%
-   (children). A clearly lower number means stop and report, not tune.
+   (children). Report *am / is / are / be* as its own block: "always *is*"
+   vs the choice, expected about 70.8% → 92.6% (adults) and 72.7% → 96.4%
+   (children), plus how often *be* is right (not measured yet). A clearly
+   lower number means stop and report, not tune.
 
 ## Slice 4 — Grammar help in the app
 
@@ -219,7 +264,8 @@ expanded), plus contractions split (*you're* → *you are*, *I'm* → *I am*,
    `user_version`, migration leaves old rows null) so the log records the
    form she said. Phrase history and the bar keep using sense ids.
 6. **Setting "Grammar help"** (On by default) in the same settings sheet as
-   *Sentence help*. Off: `formFor` returns the base form everywhere.
+   *Sentence help*. Off: `formFor` returns the default form everywhere
+   (the base form; *is* for the *is* sense), which is exactly today's board.
 7. **Keyboard:** unchanged in this phase (typed forms are 005 slice 4).
 
 ## Slice 5 — Founder-reviewed examples
@@ -247,7 +293,19 @@ with the counts behind any DIFF.
 | my mom | like | **likes** |
 | entity *Leo* | want | **wants** (if `<name>` exists) |
 | (start) | go | go |
+| I | is (cell) | **am** |
+| he | is (cell) | **is** |
+| she | is (cell) | **is** |
+| they | is (cell) | **are** |
+| we | is (cell) | **are** |
+| you | is (cell) | **are** |
+| they are | go | **going** |
+| I want to | is (cell) | **be** |
+| he will | is (cell) | **be** |
+| (start) | is (cell) | is |
 | *what do*, then tap *he* | — | sentence reads **what does he** |
+| *where is*, then tap *you* | — | sentence reads **where are you** |
+| bar after *I* | — | **am**, want, have, don't |
 | bar after *He is* | — | **going, a, getting, not** |
 
 ## Report back with
@@ -256,14 +314,16 @@ with the counts behind any DIFF.
    found in WorkbookBench, generated, and the generated list.
 2. `measure_forms.mjs` output.
 3. `form_examples.mjs` output, every row.
-4. From the real app (`npm run dev:agent`): the home board after *He*
-   (which cells changed), the bar after *He is*, and the sentence
-   *what do he* → *what does he*. Screenshots.
+4. From the real app (`npm run dev:agent`): the home board after *He*, *I*
+   and *They* (which cells changed; the *is* cell must read *is*, *am*,
+   *are*), the bar after *He is*, and the sentences *what do he* → *what
+   does he* and *where is you* → *where are you*. Screenshots.
 5. Files changed. Commit per `AGENTS.md`, one commit per slice.
 
 ## Out of scope
 
-Past tense and every way to choose it (the Forms key, 005 slice 3); *am /
-is / are* as one word; plurals and adjectives; typed forms (005 slice 4);
+Past tense and every way to choose it (*was / were*, *went*, the Forms key,
+005 slice 3); contractions as tiles (*I'm*, *he's*); plurals and
+adjectives; typed forms (005 slice 4);
 her own form history (with Grammar help on, her taps follow the shown form,
 so there is nothing new to learn yet); JEV.
