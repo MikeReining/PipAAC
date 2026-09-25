@@ -845,7 +845,6 @@
   "head": 32,
   "hippo": 23,
   "horse": 150,
-  "jam": 32,
   "lion": 97,
   "mama": 447,
   "man": 372,
@@ -1330,10 +1329,6 @@
   "jacket": [
    "jackets",
    73
-  ],
-  "jam": [
-   "james",
-   1145
   ],
   "juice": [
    "juices",
@@ -2972,11 +2967,6 @@
    "text": "horse's"
   },
   {
-   "lemma": "jam",
-   "features": "N;POSS",
-   "text": "jam's"
-  },
-  {
    "lemma": "lion",
    "features": "N;POSS",
    "text": "lion's"
@@ -3710,11 +3700,6 @@
    "lemma": "jacket",
    "features": "N;PL",
    "text": "jackets"
-  },
-  {
-   "lemma": "jam",
-   "features": "N;PL",
-   "text": "james"
   },
   {
    "lemma": "juice",

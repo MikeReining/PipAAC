@@ -93,8 +93,16 @@ function candForms(base) {
   return out;
 }
 
+// Tokens that strip cleanly to an open-class lemma but are never that
+// word in this corpus. 'james' is always the name (1,476 uses — "thank
+// you james", "christopher james"), never jam's plural; folding it
+// minted "james" as jam's N;PL surface and poured name grammar into
+// every jam context.
+const NEVER_LEMMA = new Set(['james']);
+
 export function toLemma(tok) {
   const t = tok.toLowerCase().trim();
+  if (NEVER_LEMMA.has(t)) return null;
   // surface first: Pip's vocab has am/is/are as words — mapping them to
   // 'be' (not a lemma) made the #1 word after "I" OOV and broke context
   if (t in surface) return surface[t];

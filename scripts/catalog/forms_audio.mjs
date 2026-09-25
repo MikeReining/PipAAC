@@ -32,9 +32,11 @@ import {
   resolveWbbAudioForEntry,
 } from "./wbb_audio.mjs";
 import { localPathForAudioKey, r2GetArgs, sha256File } from "./storage.mjs";
+import { buildCatalog, parseCoordinateMapMarkdown } from "./build_catalog.mjs";
 
-const CATALOG_PATH = join(repoRoot, "data/catalog/catalog.json");
 const FORMS_AUDIO_PATH = join(repoRoot, "data/catalog/forms_audio.json");
+const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
+const LEXICON_PATH = join(repoRoot, "data/launch_lexicon.json");
 
 function loadEnv() {
   try {
@@ -77,7 +79,12 @@ function r2Get(key, dest) {
 async function main() {
   const generate = process.argv.includes("--generate");
   loadEnv();
-  const catalog = JSON.parse(readFileSync(CATALOG_PATH, "utf8"));
+  // Build the catalog in memory rather than reading catalog.json: new
+  // form surfaces may not be shipped yet (the strict clip guard holds
+  // the file until this plan covers them — this script produces it).
+  const lexicon = JSON.parse(readFileSync(LEXICON_PATH, "utf8"));
+  const map = parseCoordinateMapMarkdown(readFileSync(MAP_MD, "utf8"));
+  const catalog = buildCatalog(lexicon, map);
   const needed = formUtterances(catalog);
   let existing = {};
   try {
@@ -85,8 +92,25 @@ async function main() {
   } catch {
     // no forms_audio.json yet — everything is to-do
   }
-  const done = new Map((existing.entries ?? []).map((e) => [e.utterance_id, e]));
-  const todo = needed.filter((u) => !done.has(u.utterance_id));
+  // A plan entry only covers an utterance when the surface still matches:
+  // fresh utt_f#### mints are positional, so a forms-data change can move
+  // an id to a different surface — trusting the id alone would speak the
+  // wrong word.
+  const done = new Map();
+  for (const e of existing.entries ?? []) done.set(e.utterance_id, e);
+  const stale = [];
+  const todo = needed.filter((u) => {
+    const e = done.get(u.utterance_id);
+    if (!e) return true;
+    if (e.spoken_text !== u.spoken_text) {
+      stale.push(`${u.utterance_id}: "${e.spoken_text}" now "${u.spoken_text}"`);
+      done.delete(u.utterance_id);
+      return true;
+    }
+    return false;
+  });
+  if (stale.length) console.log(`stale plan entries (surface moved): ${stale.length}`);
+  for (const s of stale) console.log(`  stale ${s}`);
   console.log(`form utterances: ${needed.length} needed, ${done.size} covered, ${todo.length} to resolve`);
 
   const manifest = loadWbbManifest();
@@ -141,17 +165,19 @@ async function main() {
     }
   }
 
+  const liveIds = new Set(needed.map((u) => u.utterance_id));
   const out = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     voice: process.env.ELEVENLABS_VOICE_ID ?? null,
-    entries: [...entries.values()].sort((a, b) =>
-      a.utterance_id.localeCompare(b.utterance_id)),
+    entries: [...entries.values()]
+      .filter((e) => liveIds.has(e.utterance_id))
+      .sort((a, b) => a.utterance_id.localeCompare(b.utterance_id)),
   };
   mkdirSync(dirname(FORMS_AUDIO_PATH), { recursive: true });
   writeFileSync(FORMS_AUDIO_PATH, `${JSON.stringify(out, null, 2)}\n`, "utf8");
   const uncovered = needed.filter((u) => !entries.has(u.utterance_id));
-  console.log(`wrote ${FORMS_AUDIO_PATH}: ${entries.size} clips, ${uncovered.length} uncovered`);
+  console.log(`wrote ${FORMS_AUDIO_PATH}: ${out.entries.length} clips, ${uncovered.length} uncovered`);
   if (uncovered.length) console.log(`  still missing: ${uncovered.map((u) => u.spoken_text).join(", ")}`);
 }
 

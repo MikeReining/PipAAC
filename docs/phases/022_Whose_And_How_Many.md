@@ -114,6 +114,15 @@ tapped it. Nothing is guessed.
 3. **Clips.** WorkbookBench first. Plurals are the big one (a few hundred
    nouns). Print the missing list and count; the founder OKs the generation
    run before it goes.
+   **Census done (awaits founder approval for generation):** `forms_audio.mjs`
+   now builds the catalog in memory (the shipped file can't contain the
+   unclipped rows it's enumerating). 479 form utterances, **241 covered**
+   (181 existing + 60 WBB hits, some re-resolved after the id shift),
+   **238 misses for ElevenLabs**. Two fixes landed along the way: `james` is walled at
+   the lemmatizer (1,476 name tokens were minting "james" as jam's plural
+   and winning `jam|X` -> N;PL); clips now bind (id, surface) — the census
+   caught 53 plan entries reminted onto different surfaces, which would
+   have played the wrong word.
 4. **App:** `formFor` and the next-word rule gain the new forms; Speak
    applies the end-of-sentence case once, before speaking.
 5. **Examples** in `form_examples.json`:

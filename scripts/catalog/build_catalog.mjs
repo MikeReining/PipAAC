@@ -605,7 +605,10 @@ function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtte
     const byUtt = new Map((plan.entries ?? []).map((e) => [e.utterance_id, e]));
     for (const u of formUtterances) {
       const e = byUtt.get(u.id);
-      if (!e?.clip?.key) {
+      // The clip binds (id, surface): a forms-data change can remint an
+      // utt_f#### id onto a different word — a plan entry whose recorded
+      // text no longer matches is stale and must not be applied.
+      if (!e?.clip?.key || e.spoken_text !== u.spoken_text) {
         if (!allowMissingFormClips) {
           throw new Error(`form utterance ${u.id} ("${u.spoken_text}") has no clip — run forms_audio.mjs`);
         }
