@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="for">
-<g transform="translate(50 50) scale(0.946) translate(-49.10 -47.70)" stroke="#111111" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt">
-<polygon points="4,51 29,51 29,42 49,57 29,72 29,63 4,63" fill="#f16b93"/>
-<path d="M61.9,68.6 L61.9,53.4 C61.9,47.7 66.7,45.8 71.4,45.8 L74.3,45.8 L74.3,40.1 L81.8,40.1 L81.8,45.8 L84.7,45.8 C89.4,45.8 94.2,47.7 94.2,53.4 L94.2,68.6 Z" fill="#fecc2a"/>
-<circle cx="78.0" cy="32.5" r="10.4" fill="#ffffff"/>
+<g transform="translate(50 50) scale(1.000) translate(-52.20 -50.00)" stroke="#111111" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt">
+<polygon points="10,43.5 36,43.5 36,34 56,50 36,66 36,56.5 10,56.5" fill="#f16b93"/>
+<path d="M67.3,69.6 L67.3,56.8 C67.3,52.0 71.3,50.4 75.3,50.4 L77.7,50.4 L77.7,45.6 L84.0,45.6 L84.0,50.4 L86.5,50.4 C90.5,50.4 94.5,52.0 94.5,56.8 L94.5,69.6 Z" fill="#fecc2a"/>
+<circle cx="80.8" cy="39.2" r="8.8" fill="#ffffff"/>
 </g>
 </svg>
