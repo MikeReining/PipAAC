@@ -41,6 +41,7 @@ Executing phases only. Each row names the **next** slice.
 | [022 — Whose and how many](022_Whose_And_How_Many.md) | Next: slice 1 (forms and counts): his/our/their/your forms, name + noun possessives, mine at Speak, plural forms and counts |
 | [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
 | [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Reviewed 2026-09-25: Grok whole-sentence speech, one voice everywhere, ▶ never waits on the network, shared cache for Pip words + common names, pre-recorded names (people, dogs, cats), silent per-license fair use, no subscription. Next: slice 1 (Worker endpoint) |
+| [025 — Expressive voice](025_Expressive_Voice.md) | Decided 2026-09-25, queued: starts only after all of 024 is implemented. Happy / sad / angry faces in the last smart-bar slot; ▶ always neutral |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

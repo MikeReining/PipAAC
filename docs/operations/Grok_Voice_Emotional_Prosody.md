@@ -26,7 +26,7 @@ All emotional range in Pip AAC is achieved exclusively through **pure wrapping t
 | **Positive / Joyful / Excited** | `<higher-pitch><emphasis>${text}!</emphasis></higher-pitch>` | Lifts fundamental pitch ($F_0$) into a cheerful register, shifts the acoustic crescendo onto the predicate word (energy peaks at 70% of duration), and resolves with natural bright exclamation prosody. | `data/samples/happy_emphasis_pitch.mp3` |
 | **Sad / Somber** | `<emphasis>${text}.</emphasis>` | The neural model natively interprets `<emphasis>` on sad semantics as **subglottic deflation**: produces a massive **$-41\text{ Hz}$ downward pitch collapse** (237 Hz $\rightarrow$ 196 Hz) and trails off terminal energy without artificial vocal fry. | `data/samples/sad_emphasis.mp3` |
 | **Angry / Frustrated** | `<loud><emphasis>${text}!</emphasis></loud>` | Sustains high acoustic energy (`avgRMS = 2414` vs `2057` baseline) across the entire sentence, ending with a sharp, punchy finish on the final operative word. Gives the child firm, commanding presence. | `data/samples/angry_best_guess.mp3` |
-| **Repeat Tap ("Be Heard")** | `<loud>${text}!</loud>` | Projected volume without pitch distortion. Triggered when the user taps Speak a second time on the same sentence to cut through noisy classrooms. | `data/samples/happy_loud.mp3` |
+| ~~**Repeat Tap ("Be Heard")**~~ | `<loud>${text}!</loud>` | **Not used** (founder, 2026-09-25): tested, not audibly different enough from neutral. Kept only as a record. | `data/samples/happy_loud.mp3` |
 
 ---
 
@@ -56,28 +56,28 @@ During our double-blind testing, acoustic instrumentation ($F_0$ pitch tracking,
  * @returns {string} Fully tagged string ready for Grok TTS
  */
 export function applyEmotionalProsody(text, emotion = "neutral") {
-  const clean = text.replace(/[.!?]+$/, "").trim();
+  const trimmed = text.trim();
+  const clean = trimmed.replace(/[.!?]+$/, "").trim();
+  // A question stays a question in every feeling (phase 025 § 4).
+  const q = /\?$/.test(trimmed) ? "?" : null;
 
   switch (emotion) {
     case "positive":
     case "happy":
     case "excited":
-      return `<higher-pitch><emphasis>${clean}!</emphasis></higher-pitch>`;
+      return `<higher-pitch><emphasis>${clean}${q ?? "!"}</emphasis></higher-pitch>`;
 
     case "sad":
     case "somber":
-      return `<emphasis>${clean}.</emphasis>`;
+      return `<emphasis>${clean}${q ?? "."}</emphasis>`;
 
     case "angry":
     case "frustrated":
-      return `<loud><emphasis>${clean}!</emphasis></loud>`;
-
-    case "loud": // Second tap / "be heard"
-      return `<loud>${clean}!</loud>`;
+      return `<loud><emphasis>${clean}${q ?? "!"}</emphasis></loud>`;
 
     case "neutral":
     default:
-      return `${clean}.`;
+      return `${clean}${q ?? "."}`;
   }
 }
 ```
