@@ -18,21 +18,46 @@
  */
 import { senseMerge } from "./funnel.mjs";
 
-/** Endings of the context longest-first, with the '<s>'-anchored twin
- *  of the ending that reaches sentence start. */
-function ctxKeys(ctxIds) {
+/** Endings of the context longest-first. Each level pairs the
+ *  '<s>'-anchored twin (when the ending reaches sentence start) with the
+ *  plain ending — the same phrase, narrower position. */
+function ctxLevels(ctxIds) {
   const out = [];
   for (let len = Math.min(4, ctxIds.length); len >= 1; len--) {
     const key = ctxIds.slice(-len).join(" ");
-    if (len === ctxIds.length && len <= 4) out.push("<s> " + key);
-    out.push(key);
+    const lvl = [key];
+    if (len === ctxIds.length && len <= 4) lvl.unshift("<s> " + key);
+    out.push(lvl);
   }
-  if (ctxIds.length === 0) out.push("<s>");
+  if (ctxIds.length === 0) out.push(["<s>"]);
   return out;
 }
 
-const topForm = (counts) =>
-  Object.entries(counts ?? {}).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+/** Top feature tag, or null when the data can't pick — either no counts
+ *  or a top tie ("my mom" said like 2x and likes 2x). */
+const topForm = (counts) => {
+  const s = Object.entries(counts ?? {}).sort((a, b) => b[1] - a[1]);
+  return s[0] && !(s[1] && s[1][1] === s[0][1]) ? s[0][0] : null;
+};
+
+/** Walk endings longest-first; `keyFor(ctx)` returns the count-map for
+ *  a context key or undefined. A tie doesn't decide — the pick falls
+ *  through to the shorter phrase ("my mom" ties like/likes 2-2, so
+ *  "mom" answers: likes 97:85). The anchored twin keeps its priority
+ *  within the same ending, but when the ending's broad evidence ties
+ *  the whole ending is undecided — a thin line-start subset can't
+ *  rescue a coin flip. */
+function pickFromLevels(levels, keyFor) {
+  for (const lvl of levels) {
+    const broad = keyFor(lvl[lvl.length - 1]);
+    if (broad && !topForm(broad)) continue;
+    for (const ctx of lvl) {
+      const pick = topForm(keyFor(ctx));
+      if (pick) return pick;
+    }
+  }
+  return null;
+}
 
 /**
  * @param table  parsed form_table.en.json
@@ -54,24 +79,18 @@ export function pickForm(table, ctxIds, senseId, nextSenseId = null) {
     return "BASE";
   }
 
-  const keys = ctxKeys(ctxIds);
+  const levels = ctxLevels(ctxIds);
   if (nextSenseId && table.nextVerb) {
-    for (const ctx of keys) {
-      const row = table.nextVerb[`${ctx}|${senseId}|${nextSenseId}`];
-      const pick = row && topForm(row);
-      if (pick) return pick;
-    }
-  }
-  for (const ctx of keys) {
-    const row = table.contexts[`${ctx}|${senseId}`];
-    const pick = row && topForm(row);
+    const pick = pickFromLevels(levels,
+      (ctx) => table.nextVerb[`${ctx}|${senseId}|${nextSenseId}`]);
     if (pick) return pick;
   }
+  const pick = pickFromLevels(levels,
+    (ctx) => table.contexts[`${ctx}|${senseId}`]);
+  if (pick) return pick;
   if (table.verbSenses?.includes(senseId)) {
-    for (const ctx of keys) {
-      const pick = topForm(table.verbFree?.[ctx]);
-      if (pick) return pick;
-    }
+    const pooled = pickFromLevels(levels, (ctx) => table.verbFree?.[ctx]);
+    if (pooled) return pooled;
   }
   return "BASE";
 }
@@ -111,6 +130,18 @@ function labelsFor(db) {
       (f) => f.sense_id === kept && f.text === goneLemma.text);
     c.merged.set(gone, { kept, lbl: lbl ?? c.lemma.get(kept) });
   }
+  // Stand-in links (014): an entity the enrichment mapped to a catalog
+  // word (Mama -> mom) contributes that word's grammar evidence —
+  // "Mama need" picks like "mom need". An unlinked name is still a
+  // wall. Latest ready suggestion wins, same as entityForSense.
+  c.entitySense = new Map();
+  for (const r of db.prepare(
+    `SELECT r.entity_id AS e, r.sense_suggestion AS s
+       FROM entity_enrichment r
+       JOIN personal_entity p ON p.id = r.entity_id
+      WHERE r.status = 'ready' AND p.status = 'active'
+      ORDER BY r.rowid ASC`,
+  ).all()) c.entitySense.set(r.e, r.s);
   labelCache.set(db, c);
   return c;
 }
@@ -121,14 +152,18 @@ export function grammarHelpOn(db) {
   ).all()[0]?.g ?? 1) === 1;
 }
 
-/** Fold the live sentence into ctx ids; walls (entities, typed words,
- *  unknown senses) break the context just like the table build did. */
+/** Fold the live sentence into ctx ids; walls (unlinked entities, typed
+ *  words, unknown senses) break the context just like the table build
+ *  did. A stand-in entity feeds its word's sense (Mama reads as mom). */
 function ctxIdsOf(db, items) {
+  const L = labelsFor(db);
   const ids = [];
   for (let i = items.length - 1; i >= 0 && ids.length < 4; i--) {
     const it = items[i];
-    if (it.kind !== "sense") break;
-    ids.unshift(senseMerge(db).get(it.id) ?? it.id);
+    let id = it.kind === "sense" ? it.id
+      : it.kind === "entity" ? L.entitySense.get(it.id) : null;
+    if (!id) break;
+    ids.unshift(senseMerge(db).get(id) ?? id);
   }
   return ids;
 }
@@ -148,8 +183,10 @@ export function formFor(db, table, sentenceItems, senseId, nextItem = null) {
       features: merged.lbl.features ?? "BASE", merged: true };
   }
   const ctxIds = ctxIdsOf(db, sentenceItems);
-  const nextId = nextItem?.kind === "sense"
-    ? (L.merged.get(nextItem.id)?.kept ?? nextItem.id) : null;
+  const nextId = !nextItem ? null
+    : nextItem.kind === "sense"
+      ? (L.merged.get(nextItem.id)?.kept ?? nextItem.id)
+      : nextItem.kind === "entity" ? (L.entitySense.get(nextItem.id) ?? null) : null;
   const features = pickForm(table, ctxIds, senseId, nextId);
   const lbl = (features === "BASE" ? null : L.forms.get(`${senseId}|${features}`))
     ?? L.lemma.get(senseId);

@@ -146,3 +146,36 @@ test('pickForm: longest ending wins, pooled verbs fallback, next word flips (021
   assert.equal(pickForm(table, ['sns_i', 'sns_want'], 'sns_a', 'sns_ball'), 'BASE');
   assert.equal(pickForm(table, ['sns_i'], 'sns_a', 'sns_zzz'), 'BASE');
 });
+
+test('pickForm: a tie falls to the shorter phrase; a tied ending vetoes its <s> subset (021 follow-up)', async () => {
+  const { pickForm } = await import('../../../public/shared/forms.mjs');
+  const table = {
+    aSense: 'sns_a',
+    verbSenses: ['sns_like'],
+    contexts: {
+      // line-start "my mom like" twice (BASE) — the same ending's broad
+      // evidence is tied 2-2, so the ending doesn't decide at all and
+      // 'mom|like' answers (the founder's my-mom case)
+      '<s> sns_my sns_mom|sns_like': { BASE: 2 },
+      'sns_my sns_mom|sns_like': { BASE: 2, 'V;PRS;3;SG': 2 },
+      'sns_mom|sns_like': { 'V;PRS;3;SG': 97, BASE: 85 },
+      // anchored stays decisive when the broad row is not tied
+      '<s> sns_he|sns_go': { 'V;PRS;3;SG': 400, 'V;V.PTCP;PRS': 50 },
+      'sns_he|sns_go': { 'V;V.PTCP;PRS': 800, 'V;PRS;3;SG': 100 },
+      // a mid-level tie also falls through
+      'sns_x sns_he|sns_go': { 'V;PRS;3;SG': 9, BASE: 9 },
+    },
+    verbFree: {}, nextVerb: {}, aAn: {},
+  };
+  assert.equal(
+    pickForm(table, ['sns_my', 'sns_mom'], 'sns_like'), 'V;PRS;3;SG');
+  // line-start "he go" still reads the anchored row (goes, not going)
+  assert.equal(
+    pickForm(table, ['sns_he'], 'sns_go'), 'V;PRS;3;SG');
+  // mid-line "x he" + go: the plain 2-word ending decides (going)
+  assert.equal(
+    pickForm(table, ['sns_y', 'sns_he'], 'sns_go'), 'V;V.PTCP;PRS');
+  // a tied mid ending falls to the 1-word ending's answer
+  assert.equal(
+    pickForm(table, ['sns_x', 'sns_he'], 'sns_go'), 'V;V.PTCP;PRS');
+});

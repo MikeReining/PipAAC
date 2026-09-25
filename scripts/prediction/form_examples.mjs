@@ -42,7 +42,9 @@ const NOW = Date.parse('2026-09-24T08:20:00');
 /** The tap path, reduced to its grammar rule: append the form's item,
  *  then let the newest word re-pick the one before it (decision 4). */
 function tapWord(db, sentence, item) {
-  const f = formFor(db, formTable, sentence, item.id);
+  const f = item.kind === 'sense'
+    ? formFor(db, formTable, sentence, item.id)
+    : { senseId: item.id, labelId: null, text: item.text, merged: false };
   sentence.push({ kind: item.kind, id: f.senseId, text: f.text,
     labelId: f.labelId, fixed: f.merged });
   const at = sentence.length - 1;
@@ -60,7 +62,14 @@ function resolveItem(db, spec) {
       `INSERT INTO personal_entity (id, spoken_name, status)
        VALUES ('ent_leo', ?, 'active')`,
     ).run(spec.entity);
-    return { kind: 'entity', id: 'ent_leo' };
+    if (spec.link) {
+      db.prepare(
+        `INSERT INTO entity_enrichment
+           (id, entity_id, sense_suggestion, model, prompt_version, status)
+         VALUES ('enr_link', 'ent_leo', ?, 'manual', 'v1', 'ready')`,
+      ).run(S(spec.link).id);
+    }
+    return { kind: 'entity', id: 'ent_leo', text: spec.entity };
   }
   throw new Error(`bad row item ${JSON.stringify(spec)}`);
 }
@@ -93,8 +102,9 @@ for (const row of rows) {
     const actual = sentence.map((s) => s.text).join(' ');
     const ok = actual === row.expectedSentence;
     if (!ok) diffs++;
+    const shown = row.taps.map((t) => (typeof t === 'string' ? t : t.entity)).join(' ');
     console.log(
-      `${row.taps.join(' ').padEnd(22)} ${'—'.padEnd(9)} ` +
+      `${shown.padEnd(22)} ${'—'.padEnd(9)} ` +
       `${row.expectedSentence.padEnd(28)} ${actual.padEnd(28)} ${ok ? 'OK' : 'DIFF'}`);
     continue;
   }

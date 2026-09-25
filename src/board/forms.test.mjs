@@ -99,6 +99,34 @@ test("the chosen label is what resolveSlot speaks", () => {
   assert.notEqual(slot.type, "clip"); // nothing shipped — tts or silence
 });
 
+test("a stand-in entity feeds its word's grammar; an unlinked name is a wall (021 follow-up)", () => {
+  const db = openDb();
+  // Mama is linked to the 'mom' sense (entity_enrichment.sense_suggestion,
+  // the same mapping entityForSense uses for stand-in cards)
+  db.prepare(
+    `INSERT INTO personal_entity (id, spoken_name, status)
+     VALUES ('ent_mama', 'Mama', 'active')`,
+  ).run();
+  db.prepare(
+    `INSERT INTO entity_enrichment
+       (id, entity_id, sense_suggestion, model, prompt_version, status)
+     VALUES ('enr_mama', 'ent_mama', ?, 'manual', 'v1', 'ready')`,
+  ).run(senseId('mom'));
+  db.prepare(
+    `INSERT INTO personal_entity (id, spoken_name, status)
+     VALUES ('ent_leo', 'Leo', 'active')`,
+  ).run();
+  const mama = { kind: 'entity', id: 'ent_mama' };
+  const leo = { kind: 'entity', id: 'ent_leo' };
+  // "Mama want" picks like "mom want" — the link's evidence, not a wall
+  assert.equal(formFor(db, formTable, [mama], senseId('want')).text, 'wants');
+  // unlinked name: still a wall -> default form
+  assert.equal(formFor(db, formTable, [leo], senseId('want')).text, 'want');
+  // a linked entity as the NEXT word feeds decision 4 the same way
+  assert.equal(
+    formFor(db, formTable, CTX('what'), senseId('do'), mama).text, 'does');
+});
+
 test("grammar_help off drops every pick to the lemma", () => {
   const db = openDb();
   assert.equal(grammarHelpOn(db), true); // default ON

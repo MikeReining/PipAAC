@@ -422,10 +422,26 @@ behind any DIFF.
 | bar after *He is* | — | **going, a, getting, not** |
 
 **Slice 5 status (2026-09-25):** `form_examples.mjs` covers all rows above
-plus merged taps, walls and Grammar-help-off — **47/48 OK**. The one DIFF
-is honest data: `my mom|like` ties {BASE:2, 3SG:2} in CHILDES so the pick
-is `like` (insertion order). Every other row matches, including the three
-sentence-rewrite rows.
+plus merged taps, walls, stand-in entities and Grammar-help-off —
+**50/50 OK**, including the three sentence-rewrite rows.
+
+Two follow-ups landed after founder review (2026-09-25):
+
+- **Ties fall to the shorter phrase.** A top-count tie can't decide, so
+  the pick falls through to the next evidence level — `my mom|like`
+  ties {BASE:2, 3SG:2}, so `mom|like` answers: **likes** (97:85). The
+  `'<s>'`-anchored twin keeps priority within its ending, but when the
+  ending's broad evidence ties, the whole ending is undecided — its
+  thin line-start subset can't rescue a coin flip. Held-out accuracy
+  moved up slightly on every block (is-sense 95.6/96.4, don't 95.0/94.0).
+- **Stand-in entities take their word's grammar.** A person the
+  enrichment linked to a catalog sense (`entity_enrichment.
+  sense_suggestion`, the same mapping `entityForSense` uses — Mama →
+  mom) feeds that sense's context: "Mama want" → **wants**, "Mama is
+  go" → **Mama is going**, and a linked entity as the next word feeds
+  decision 4 ("what do" + Mama → **does**). An unlinked name (Leo) is
+  still a wall → base form — `<name>` remains unmeasured (no `n:prop`
+  tier; item 5's stop condition).
 
 Building the harness caught two real corpus bugs, fixed in this slice:
 
