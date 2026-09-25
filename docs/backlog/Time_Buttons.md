@@ -1,7 +1,7 @@
 # Idea — Time buttons: one tap tells Pip *when*
 
 **Status:** Never decided. Founder idea, 2026-09-25 ("a killer idea"). Not
-work. Comes after `021_Grammar_Help.md` and `022_Whose_And_How_Many.md`,
+work. Comes after phase 021 (in git history) and `022_Whose_And_How_Many.md`,
 which build the machinery it would use. Name is a placeholder.
 
 ## The idea

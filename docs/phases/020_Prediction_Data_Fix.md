@@ -78,7 +78,7 @@ AAC (*I want to*, *I need to*, *I have to*).
 
 Do **not** merge *has* into *have* here. *has* is its own catalog word today
 (sense `sns_0612`, in the Little Words group). That merge belongs to
-`021_Grammar_Help.md`, where *has* becomes the -s form of *have*.
+phase 021 (in git history), where *has* becomes the -s form of *have*.
 
 ## Expected bars (independent run on the same data)
 

@@ -2,7 +2,7 @@
 
 **Status:** done (2026-09-25). Follow-up to `020_Prediction_Data_Fix.md`
 (done, `b57f600`). Do this before
-`021_Grammar_Help.md`: its form table is built by the same converter, and a
+phase 021 (in git history): its form table is built by the same converter, and a
 converter that turns *using* into *us* would teach forms to the wrong words.
 **Truth owner:** what people actually said in CHILDES. The converter
 (`scripts/prediction/childes/prep.py` → `transcripts.jsonl` →

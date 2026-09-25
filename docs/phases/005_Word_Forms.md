@@ -2,7 +2,7 @@
 
 **Status:** Ready to execute. Not started. **Partly superseded 2026-09-25:**
 present tense (-s, -ing) is now automatic on the board, the bar and the
-sentence. See `021_Grammar_Help.md`, which builds the present-tense part of
+sentence. See phase 021 (in git history), which builds the present-tense part of
 slices 1–2 and replaces, for present tense, "the button always shows the
 lemma", "suggest, never auto-replace" and slice 3's hand-written `rankForms`
 rules. Everything else here (past tense, plurals, adjectives, the Forms key,

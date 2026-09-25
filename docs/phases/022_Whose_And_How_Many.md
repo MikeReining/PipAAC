@@ -1,7 +1,7 @@
 # 022 — Whose and How Many: her words carry the meaning
 
 **Status:** decided, queued (opened 2026-09-25). Start after
-`021_Grammar_Help.md` is done: this phase reuses its forms schema,
+phase 021 (in git history) is done: this phase reuses its forms schema,
 `formFor`, the next-word rule, the `label_id` log and the "Grammar help"
 setting. Nothing new to invent; only new forms and new counts.
 **Truth owner:** what people actually say in CHILDES, measured on held-out

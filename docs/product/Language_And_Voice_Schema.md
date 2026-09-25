@@ -255,6 +255,23 @@ are allowed to differ later, so a button can show `3` and speak the
 utterance `three` by pointing at that utterance. They must not differ by
 accident in the 677.
 
+**Which form shows (021).** `formFor` (`public/shared/forms.mjs`) picks
+the form a sense wears in the current sentence from
+`data/prediction/form_table.en.json` (CHILDES counts by
+`build_form_table.mjs`). The rule, in order: `a`/`an` asks the next word
+alone (caregiver counts); the word right after a form word re-picks it
+(decision 4 — *what do* + *he* → *does*); otherwise the longest ending
+of the words before wins its top form, with `'<s>'`-anchored twins
+preferred at line start; verbs fall to the pooled verb table; anything
+else is `BASE`. A top-count **tie does not decide** — it falls to the
+shorter phrase, and a tied ending vetoes even its `'<s>'` subset. Merged
+surfaces are one sense — `am`/`are`/`be` are the *is* sense, `him` is
+*he* — so a merged tile is a fixed form and a tap logs the kept sense.
+A stand-in entity (`entity_enrichment.sense_suggestion`, Mama → `mom`)
+feeds its word's grammar; an unlinked name is a wall → `BASE`. The
+`grammar_help` profile setting (on by default) drops every pick to the
+lemma when off.
+
 An alias speaks its own `utterance_id`. It does not fall through to the
 lemma. If two labels should play one recording, they store the same
 utterance id. A button that shows `couch` and says `sofa` is a wrong word.
