@@ -74,7 +74,8 @@ for (const row of rows) {
       const kidKey = e.every((c) => c.kind === 'sense')
         ? e.map((c) => c.id).join(' ') : null;
       const kid = kidKey != null ? kids.contexts[kidKey] : null;
-      console.log(`    ending ${JSON.stringify(row.phrase.slice(s))}: her=${JSON.stringify(her.map((r) => [lemmaOf.get(r.id) ?? r.id, r.n]))} kids=${kid ? JSON.stringify(Object.fromEntries(Object.entries(kid).map(([id, n]) => [lemmaOf.get(id) ?? id, n]))) : 'none'}`);
+      const kidSeen = kidKey != null ? kids.seen?.[kidKey] : null;
+      console.log(`    ending ${JSON.stringify(row.phrase.slice(s))}: her=${JSON.stringify(her.map((r) => [lemmaOf.get(r.id) ?? r.id, r.n]))} kids=${kid ? JSON.stringify(Object.fromEntries(Object.entries(kid).map(([id, n]) => [lemmaOf.get(id) ?? id, n, n / kidSeen]))) : 'none'} seen=${kidSeen}`);
     }
   }
   const h = row.history === 'toddler' ? 'toddler (6 sents)' : (hist.length ? hist.map((x) => x.join(' ')).join('; ') : 'none');
