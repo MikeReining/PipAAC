@@ -420,6 +420,9 @@ function renderBar() {
   $("clear").disabled = !sentence.length && !kbUi.text;
   $("backspace").disabled = !sentence.length && !kbUi.text;
   $("speak").disabled = !sentence.length;
+  for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
+    $(id).disabled = !sentence.length;
+  }
   bar.scrollLeft = bar.scrollWidth; // the newest word stays in view
 }
 $("bar").addEventListener("click", () => {

@@ -40,7 +40,7 @@ Executing phases only. Each row names the **next** slice.
 | [020B — Converter fixes](020B_Converter_Fixes.md) | Done 2026-09-25 (`6314581`); baby-talk spellings follow in 021 step 0 |
 | [021 — Grammar help](021_Grammar_Help.md) | Step 0 (`adbcf6e`) + slice 1 (forms catalog, merges) done; **Next:** slice 2 — form voice clips |
 | [022 — Whose and how many](022_Whose_And_How_Many.md) | Queued after 021: his / our / their / your and *Leo's* by the next word, *mine* at Speak, plurals after two / some / all |
-| [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven (2026-09-25): Groq + qwen3.8-27b on-demand past, question, future, fix-it |
+| [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

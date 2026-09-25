@@ -90,9 +90,10 @@
         z-index: 2;
       }
 
-      /* --- top bar: Clear, sentence, Backspace / Speak, Parent corner.
-         Controls are ink line glyphs, never clipart — art means a word,
-         a glyph means a control. Clear sits apart from Speak. --- */
+      /* --- top bar: Clear + Backspace (edit), sentence, Fix it +
+         Question, ⏪ Play ⏩ (023), Parent corner. Controls are ink line
+         glyphs, never clipart — art means a word, a glyph means a
+         control. Clear sits far from Play. --- */
       #topbar { display: flex; gap: var(--gap); height: 68px; }
       #bar {
         flex: 1;
@@ -167,6 +168,11 @@
         place-items: center;
       }
       .bar-btn.glyph.primary { width: 88px; }
+      .bar-btn.glyph.tx { width: 60px; }
+      /* A gap between the edit pair (Clear, Backspace) and the sentence,
+         and between Fix it / Question and the time transport. */
+      #backspace { margin-right: 6px; }
+      #tx-question { margin-right: 6px; }
       .bar-btn.glyph svg { width: 34px; height: 34px; }
       .bar-btn:disabled {
         border-color: var(--mask-b);
@@ -638,12 +644,27 @@
       <button id="clear" class="bar-btn glyph" title="Clear" aria-label="Clear" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 3.5h4M6 7l1 13h10l1-13M10 11v5.5M14 11v5.5"/></svg>
       </button>
-      <div id="bar" title="Sentence"></div>
       <button id="backspace" class="bar-btn glyph" title="Backspace" aria-label="Backspace" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h11v14H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>
       </button>
-      <button id="speak" class="bar-btn glyph primary" title="Speak" aria-label="Speak" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+      <div id="bar" title="Sentence"></div>
+      <!-- Transform buttons (023): say her sentence another way. Fix it
+           and Question sit apart from the time transport ⏪ ▶ ⏩, which
+           reads past → now → future. Preview only: not wired yet. -->
+      <button id="tx-fix" class="bar-btn glyph tx" title="Fix it" aria-label="Fix it" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20L14.5 9.5"/><path d="M17 2.5v4.5M14.75 4.75h4.5M20 9.5v3.5M18.25 11.25h3.5M9.5 3v3M8 4.5h3"/></svg>
+      </button>
+      <button id="tx-question" class="bar-btn glyph tx" title="Ask it" aria-label="Ask it as a question" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 8.75a3.5 3.5 0 1 1 5 3.2c-1 .5-1.5 1.25-1.5 2.3v.75"/><circle cx="12" cy="19" r="0.9" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button id="tx-past" class="bar-btn glyph tx" title="Say it in the past" aria-label="Say it in the past" disabled>
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 6.5v11L4 12zM20 6.5v11L12.5 12z"/></svg>
+      </button>
+      <button id="speak" class="bar-btn glyph primary" title="Play" aria-label="Play" disabled>
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
+      </button>
+      <button id="tx-future" class="bar-btn glyph tx" title="Say it in the future" aria-label="Say it in the future" disabled>
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 6.5v11L20 12zM4 6.5v11L11.5 12z"/></svg>
       </button>
       <button id="spot-chip" hidden>🔦 Spotlight · End</button>
       <button id="edit-counts" class="corner-btn" hidden title="Show counts" aria-label="Show counts">
