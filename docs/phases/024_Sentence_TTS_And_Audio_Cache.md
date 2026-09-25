@@ -20,8 +20,10 @@ tablet.
    same Grok voice, so a tapped word, a spoken sentence and a transformed
    sentence all sound like the same person. This answers 023 § 5 item 1.
 3. **A cache** so repeated sentences play fast and work offline: on her
-   device first, then a shared Cloudflare R2 cache for sentences made only of
-   Pip's own words (§ 5).
+   device first, then a shared Cloudflare R2 cache for sentences made of
+   Pip's own words and common names (§ 5).
+4. **Pre-recorded names** (people, dogs, cats) in the same voice, so her
+   people's names stop sounding like a different speaker (§ 5a).
 
 ## 2. Why gluing clips hits a wall
 
@@ -48,11 +50,18 @@ tablet.
    voice yet and no voice cloning in Canada. When any provider offers a
    child's voice, it's a new voice id plus a re-made clip set (about 870
    words: pennies at $4.20 per million characters). No redesign.
-4. **The shared cache holds only sentences made entirely of Pip's own words**
-   (§ 5).
-5. **No subscription.** Voice and transform buttons are part of the one price
+4. **The shared cache holds only sentences made of Pip's own words and
+   common names** (§ 5).
+5. **A silent fair-use limit per license** (§ 6a). A child never sees it;
+   past the limit she is still heard, in her word clips.
+6. **Names are pre-recorded in the Pip voice** (§ 5a): people, dogs and cats,
+   from open lists for many countries.
+7. **No subscription.** Voice and transform buttons are part of the one price
    ($49 once per user, phase 015). Founder, 2026-09-25: no subscription,
    given the cost numbers in § 6.
+8. **The license id goes to our Worker, never further.** The Worker needs it
+   to count the fair-use budget (§ 6a). It is never sent to Grok and never
+   stored with audio or in the cache, so the cache stays anonymous.
 
 ## 4. The pipeline
 
@@ -61,15 +70,16 @@ She taps ▶ (or a transform button; 023 rewrites the text first)
    │
    ├─ Tier 1: her device cache (IndexedDB / OPFS) ── hit → play now
    │
-   ├─ Tier 2: shared R2 cache (only for Pip-words-only sentences, § 5) ── hit → stream, save to Tier 1
+   ├─ Tier 2: shared R2 cache (Pip words + common names only, § 5) ── hit → stream, save to Tier 1
    │
    ├─ Tier 3: Grok Voice TTS via the Worker ── play, save to Tier 1, and to Tier 2 if eligible
    │
    └─ Deadline: nothing playing after ~300 ms → play the word clips now (rule 1)
 ```
 
-The Grok key lives in the Worker, never in the client. Requests carry no
-user, device or account id.
+The Grok key lives in the Worker, never in the client. Requests to the
+Worker carry the license id for the fair-use count only (rule 8); requests
+to Grok carry no user, device or account id.
 
 ### How often the cache will hit (measured 2026-09-25)
 
@@ -95,18 +105,49 @@ server.
 ## 5. Privacy: the shared-cache line
 
 **A sentence goes into the shared cache only if every word in it is a Pip
-catalog word or one of its forms.** A sentence with a name she added
-(`personal_entity`) or a word she typed is cached on her device only.
+catalog word, one of its forms, or a common name** (the top ~2,000 names per
+launch country from the lists in § 5a). A sentence with a rarer name, a
+surname, a nickname or a typed word is cached on her device only.
 
 Why this line: the cache is shared, so a fast answer to a sentence reveals
-that someone said it before. For *"I want a cookie"* that reveals nothing.
-For *"Aoife hit me"* it can point at a child. Pip's vocabulary is public;
-her people's names and her typed words are hers.
+that someone said it before. *"I want a cookie"*, *"Sarah is pretty"* or
+*"Mike was being mean"* reveal nothing: there are hundreds of thousands of
+Sarahs. *"Aoife McGinley hit me"* can point at one family. What makes a
+sentence risky is a **rare** name, not a name.
 
-- No name list to maintain (replaces the earlier options A, B and C).
-- Almost no cost to hit rate: most sentences are vocabulary-only.
-- Names are still spoken in the same voice. They are sent for synthesis
-  without any id, just never shared.
+- The common-names cut comes from public frequency lists, not a hand-picked
+  list (founder, 2026-09-25; replaces the earlier options A, B and C).
+- Almost no cost to hit rate: most sentences are vocabulary-only, and most
+  names children use are common.
+- Every name is still spoken in the same voice. A rare name is sent for
+  synthesis without any id, just never shared.
+
+## 5a. Pre-recorded names: people, dogs and cats
+
+A name on its own reveals nothing, so the pre-recorded list is **as big as
+we can make it** (founder, 2026-09-25): given names from many countries, plus
+the most common dog and cat names. Today her people's names speak in the
+phone's voice, the one word in a sentence that sounds like someone else.
+Pre-recorded, *Leo* sounds like every other word. That's delight for the
+family, and it's cheap: about 7 characters a name, so **20,000 names cost
+about 60 cents** to record once.
+
+- **Sources: open government data only** (free for commercial use): baby-name
+  statistics (US Social Security, UK Office for National Statistics,
+  Canadian provinces, Australian states, and more countries as found), and
+  city pet-license datasets for dog and cat names (e.g. New York City dog
+  licenses, Seattle pet licenses). Record each source in
+  `data/prediction/SOURCES.md` style: name, license, date.
+- **Not shipped in the app.** 20,000 clips is about 200 MB. They live in R2;
+  when a parent adds *Sarah*, her clip downloads once and stays on the
+  device.
+- **Pronunciation is checked by the family.** Machine voices get some names
+  wrong (*Aoife*, *Siobhan*, *Nguyen*), and a wrong version of her brother's
+  name is worse than none. When a parent adds a person or pet, Pip plays the
+  clip right away (*"Is this how you say Leo? ▶"*) with a one-tap way to fix
+  it (type how it sounds, or use the phone's voice).
+- Only the top ~2,000 per country count as "common" for the shared sentence
+  cache (§ 5). The rest of the list is for clips only.
 
 ## 6. Cost
 
@@ -125,7 +166,31 @@ Heavy user, 60 sentences a day, a year (21,900 sentences):
 
 So the cache is about **speed and offline, not money**: even with no cache
 at all, a heavy user costs about $2.50 a year. $49 once covers that for
-decades, which is why there is no subscription (rule 5).
+decades, which is why there is no subscription (rule 7).
+
+## 6a. Fair use: a silent limit per license
+
+The risk isn't a heavy child. It's someone using our Worker as a free speech
+service (a script, a leaked or shared license). So, in the Worker, per
+license, never shown to the child:
+
+1. **Only fresh synthesis counts.** Cache hits cost nothing and never count.
+2. **A character budget, not a request count:** about **8,000 characters a
+   day** (roughly 300 normal sentences, far beyond any child), plus a burst
+   limit of about **20 requests a minute**, and at most **120 characters per
+   sentence**. Worst case for an untouched abuser: about $0.03 a day.
+3. **Past the limit she is still heard:** ▶ plays her word clips (rule 1),
+   the phone's voice only for words without a clip, until the budget resets.
+4. **Per-license counters:** for each license and day, characters sent to
+   Grok and number of requests. **Counts only, never sentences.** Kept 90
+   days. They let us:
+   - spot abusers (licenses at the cap day after day);
+   - throttle just them (e.g. 1,000 characters a day, or cloud voice off),
+     so the worst case only applies until someone looks;
+   - see one license used from many devices (a shared or leaked license;
+     phase 015's device cap covers part of this).
+5. **Log every time a license hits the limit.** If real children ever do,
+   the limit is wrong.
 
 ## 7. Replacing ElevenLabs for the catalog clips
 
@@ -144,8 +209,8 @@ first source for this voice, since its clips are a different voice).
 
 1. **Worker endpoint** `POST /api/v1/voice/speak`: builds the cache key
    (rule 2), checks R2 for eligible sentences (§ 5), otherwise calls Grok
-   Voice, returns audio, stores it in R2 when eligible. No ids in the
-   request.
+   Voice, returns audio, stores it in R2 when eligible. Takes the license
+   id for the fair-use count (§ 6a); sends Grok no ids.
 2. **Client:** Tier 1 cache (IndexedDB / OPFS), the ~300 ms deadline with
    word-clip fallback (rule 1), and the per-child voice setting (rule 3).
 3. **Transform buttons** (023) speak through this pipeline, auto-speak on.
@@ -154,3 +219,9 @@ first source for this voice, since its clips are a different voice).
 5. **Measure on a real tablet:** p95 time to first sound for a cache hit, a
    cache miss, and the clip fallback; plus the Tier 1 and Tier 2 hit rates
    in real use.
+6. **Fair use** (§ 6a): per-license daily counters, character budget, burst
+   limit, clamp, silent fallback, and a way to throttle one license.
+7. **Name clips** (§ 5a): the name-list builder from open data (people,
+   dogs, cats; many countries), one clip per name per voice in R2, download
+   on add, and the "Is this how you say it?" check when a parent adds a
+   person or pet. The same lists define "common" for § 5.
