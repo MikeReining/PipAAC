@@ -107,7 +107,7 @@ for (const [ctx, m] of table) {
 }
 
 writeFileSync(OUT, JSON.stringify({
-  version: 'phrase-table.2026-09-25.2',
+  version: 'phrase-table.2026-09-25.3',
   source: 'CHILDES train split (child utterances only), lemmatized to catalog senses',
   ctxMax: CTX_MAX, minCount: MIN_COUNT,
   contexts, seen: seenOut,

@@ -168,6 +168,17 @@ export const CASUAL = {
   betcha: ['bet', 'you'],
   didja: ['did', 'you'],
   doncha: ["don't", 'you'],
+  // baby-talk spellings (021 step 0): the corpus writes the baby word
+  // then the real word — "dis this" — so the echo rule keeps one copy.
+  dis: ['this'],
+  dat: ['that'],
+  de: ['the'],
+  duh: ['the'],
+  dere: ['there'],
+  dey: ['they'],
+  dese: ['these'],
+  dem: ['them'],
+  dose: ['those'],
 };
 
 export function lemmatize(words) {
