@@ -1,0 +1,2 @@
+{"rule": "Nonsense = the word cannot continue the phrase into a meaningful board sentence (base forms and telegraphic speech count as sensible). Judged by Claude as an outside judge, 2026-09-24, after the runs and before scoring.",
+ "nonsense": {"I": ["i"], "can": ["only"], "go": ["go", "of"], "good": ["good", "i", "is"], "good morning": ["good morning", "the"], "I want my": ["tummy"], "I want to play": ["so"]}}

@@ -1,0 +1,904 @@
+[
+ {
+  "sentence": "good morning dad",
+  "at": "07:00",
+  "phrase": "good",
+  "target": "morning",
+  "history": [
+   "morning",
+   "night",
+   "girl",
+   "boy"
+  ],
+  "jev": [
+   "morning",
+   "for",
+   "night",
+   "I"
+  ],
+  "routed": [
+   "morning",
+   "night",
+   "girl",
+   "boy"
+  ],
+  "route": "history (built 18x at this time)",
+  "veto": [
+   "morning",
+   "night",
+   "girl",
+   "boy"
+  ],
+  "vetoed": [],
+  "sense": {
+   "morning": 0.84,
+   "night": 0.62,
+   "girl": 0.63,
+   "boy": 0.58,
+   "bye": 0.55,
+   "afternoon": 0.69,
+   "one": 0.49,
+   "for": 0.77,
+   "at": 0.58,
+   "good": 0.39,
+   "to": 0.77,
+   "i": 0.64
+  }
+ },
+ {
+  "sentence": "good morning dad",
+  "at": "07:00",
+  "phrase": "good morning",
+  "target": "dad",
+  "history": [
+   "mom",
+   "dad",
+   "to",
+   "little"
+  ],
+  "jev": [
+   "mom",
+   "the",
+   "dad",
+   "you"
+  ],
+  "routed": [
+   "mom",
+   "dad",
+   "to",
+   "little"
+  ],
+  "route": "history (built 18x at this time)",
+  "veto": [
+   "mom",
+   "dad",
+   "to",
+   "little"
+  ],
+  "vetoed": [],
+  "sense": {
+   "mom": 0.6,
+   "dad": 0.63,
+   "to": 0.68,
+   "little": 0.56,
+   "boy": 0.53,
+   "good morning": 0.3,
+   "man": 0.55,
+   "brother": 0.53,
+   "the": 0.7,
+   "he": 0.55,
+   "a": 0.61,
+   "now": 0.57
+  }
+ },
+ {
+  "sentence": "I want toast",
+  "at": "07:24",
+  "phrase": "I want",
+  "target": "toast",
+  "history": [
+   "cereal",
+   "juice",
+   "more",
+   "milk"
+  ],
+  "jev": [
+   "to",
+   "cereal",
+   "juice",
+   "more"
+  ],
+  "routed": [
+   "cereal",
+   "juice",
+   "more",
+   "milk"
+  ],
+  "route": "history (built 35x at this time)",
+  "veto": [
+   "cereal",
+   "juice",
+   "more",
+   "milk"
+  ],
+  "vetoed": [],
+  "sense": {
+   "cereal": 0.92,
+   "juice": 0.91,
+   "more": 0.88,
+   "milk": 0.93,
+   "toast": 0.91,
+   "pancakes": 0.91,
+   "to": 0.89,
+   "my": 0.76,
+   "a": 0.9,
+   "crackers": 0.89,
+   "the": 0.84,
+   "pasta": 0.88
+  }
+ },
+ {
+  "sentence": "I want milk",
+  "at": "07:35",
+  "phrase": "I",
+  "target": "want",
+  "history": [
+   "want",
+   "am",
+   "need",
+   "don't"
+  ],
+  "jev": [
+   "want",
+   "am",
+   "need",
+   "think"
+  ],
+  "routed": [
+   "want",
+   "am",
+   "need",
+   "don't"
+  ],
+  "route": "history (built 54x at this time)",
+  "veto": [
+   "want",
+   "am",
+   "need",
+   "don't"
+  ],
+  "vetoed": [],
+  "sense": {
+   "want": 0.94,
+   "am": 0.95,
+   "need": 0.92,
+   "don't": 0.88,
+   "saw": 0.76,
+   "love": 0.92,
+   "like": 0.94,
+   "will": 0.92,
+   "have": 0.9,
+   "get": 0.87,
+   "can't": 0.88,
+   "can": 0.93
+  }
+ },
+ {
+  "sentence": "I want milk",
+  "at": "07:35",
+  "phrase": "I want",
+  "target": "milk",
+  "history": [
+   "cereal",
+   "juice",
+   "more",
+   "milk"
+  ],
+  "jev": [
+   "to",
+   "cereal",
+   "juice",
+   "milk"
+  ],
+  "routed": [
+   "cereal",
+   "juice",
+   "more",
+   "milk"
+  ],
+  "route": "history (built 36x at this time)",
+  "veto": [
+   "cereal",
+   "juice",
+   "more",
+   "milk"
+  ],
+  "vetoed": [],
+  "sense": {
+   "cereal": 0.93,
+   "juice": 0.92,
+   "more": 0.89,
+   "milk": 0.93,
+   "toast": 0.91,
+   "pancakes": 0.92,
+   "to": 0.9,
+   "my": 0.75,
+   "a": 0.91,
+   "crackers": 0.89,
+   "the": 0.83,
+   "pasta": 0.88
+  }
+ },
+ {
+  "sentence": "can I have juice",
+  "at": "07:38",
+  "phrase": "can",
+  "target": "I",
+  "history": [
+   "I",
+   "we",
+   "you",
+   "go"
+  ],
+  "jev": [
+   "I",
+   "put",
+   "only",
+   "get"
+  ],
+  "routed": [
+   "I",
+   "we",
+   "you",
+   "go"
+  ],
+  "route": "history (built 3x at this time)",
+  "veto": [
+   "I",
+   "we",
+   "you",
+   "go"
+  ],
+  "vetoed": [],
+  "sense": {
+   "i": 0.64,
+   "we": 0.75,
+   "you": 0.72,
+   "go": 0.86,
+   "not": 0.86,
+   "do": 0.6,
+   "he": 0.64,
+   "have": 0.68,
+   "see": 0.82,
+   "come": 0.8,
+   "it": 0.48,
+   "put": 0.73
+  }
+ },
+ {
+  "sentence": "go to school",
+  "at": "08:00",
+  "phrase": "go",
+  "target": "to",
+  "history": [
+   "to",
+   "in",
+   "on",
+   "go"
+  ],
+  "jev": [
+   "to",
+   "away",
+   "home",
+   "of"
+  ],
+  "routed": [
+   "to",
+   "in",
+   "on",
+   "go"
+  ],
+  "route": "history (built 3x at this time)",
+  "veto": [
+   "to",
+   "in",
+   "on",
+   "go"
+  ],
+  "vetoed": [],
+  "sense": {
+   "to": 0.8,
+   "in": 0.71,
+   "on": 0.76,
+   "go": 0.36,
+   "there": 0.85,
+   "away": 0.83,
+   "up": 0.78,
+   "down": 0.8,
+   "back": 0.86,
+   "get": 0.6,
+   "and": 0.74,
+   "like": 0.55
+  }
+ },
+ {
+  "sentence": "go to school",
+  "at": "08:00",
+  "phrase": "go to",
+  "target": "school",
+  "history": [
+   "school",
+   "the",
+   "sleep",
+   "bed"
+  ],
+  "jev": [
+   "school",
+   "sleep",
+   "bed",
+   "the"
+  ],
+  "routed": [
+   "school",
+   "the",
+   "sleep",
+   "bed"
+  ],
+  "route": "history (built 3x at this time)",
+  "veto": [
+   "school",
+   "the",
+   "sleep",
+   "bed"
+  ],
+  "vetoed": [],
+  "sense": {
+   "school": 0.91,
+   "the": 0.83,
+   "sleep": 0.47,
+   "bed": 0.88,
+   "get": 0.27,
+   "go": 0.24,
+   "work": 0.88,
+   "a": 0.48,
+   "do": 0.31,
+   "put": 0.26,
+   "make": 0.25,
+   "see": 0.35
+  }
+ },
+ {
+  "sentence": "I need help",
+  "at": "12:31",
+  "phrase": "I",
+  "target": "need",
+  "history": [
+   "want",
+   "need",
+   "like",
+   "am"
+  ],
+  "jev": [
+   "want",
+   "am",
+   "can",
+   "do"
+  ],
+  "routed": [
+   "want",
+   "need",
+   "like",
+   "am"
+  ],
+  "route": "history (built 30x at this time)",
+  "veto": [
+   "want",
+   "need",
+   "like",
+   "am"
+  ],
+  "vetoed": [],
+  "sense": {
+   "want": 0.94,
+   "need": 0.94,
+   "like": 0.94,
+   "am": 0.95,
+   "don't": 0.86,
+   "love": 0.92,
+   "saw": 0.79,
+   "will": 0.91,
+   "have": 0.89,
+   "get": 0.88,
+   "can't": 0.88,
+   "can": 0.93
+  }
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "at": "13:30",
+  "phrase": "I want",
+  "target": "to",
+  "history": [
+   "to",
+   "crackers",
+   "a",
+   "my"
+  ],
+  "jev": [
+   "to",
+   "crackers",
+   "some",
+   "pasta"
+  ],
+  "routed": [
+   "to",
+   "crackers",
+   "a",
+   "my"
+  ],
+  "route": "history (built 19x at this time)",
+  "veto": [
+   "to",
+   "crackers",
+   "a",
+   "my"
+  ],
+  "vetoed": [],
+  "sense": {
+   "to": 0.94,
+   "crackers": 0.89,
+   "a": 0.87,
+   "my": 0.65,
+   "cereal": 0.87,
+   "juice": 0.88,
+   "more": 0.88,
+   "milk": 0.88,
+   "the": 0.76,
+   "pasta": 0.85,
+   "pizza": 0.91,
+   "toast": 0.89
+  }
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "at": "13:30",
+  "phrase": "I want to play",
+  "target": "with",
+  "history": [
+   "with",
+   "outside",
+   "it",
+   "a"
+  ],
+  "jev": [
+   "with",
+   "so",
+   "some",
+   "that"
+  ],
+  "routed": [
+   "with",
+   "outside",
+   "it",
+   "a"
+  ],
+  "route": "history (built 10x at this time)",
+  "veto": [
+   "with",
+   "outside",
+   "it",
+   "a"
+  ],
+  "vetoed": [],
+  "sense": {
+   "with": 0.89,
+   "outside": 0.72,
+   "it": 0.75,
+   "a": 0.72,
+   "the": 0.71,
+   "now": 0.88,
+   "play": 0.3,
+   "so": 0.5,
+   "some": 0.69,
+   "when": 0.79,
+   "that": 0.63,
+   "this": 0.61
+  }
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "at": "13:30",
+  "phrase": "I want to play with",
+  "target": "Leo",
+  "history": [
+   "Leo",
+   "Max",
+   "this",
+   "the"
+  ],
+  "jev": [
+   "Leo",
+   "you",
+   "our",
+   "something"
+  ],
+  "routed": [
+   "Leo",
+   "Max",
+   "this",
+   "the"
+  ],
+  "route": "history (built 7x at this time)",
+  "veto": [
+   "Leo",
+   "Max",
+   "this",
+   "the"
+  ],
+  "vetoed": [],
+  "sense": {
+   "leo": 0.83,
+   "max": 0.84,
+   "this": 0.9,
+   "the": 0.73,
+   "you": 0.87,
+   "it": 0.88,
+   "these": 0.59,
+   "my": 0.68,
+   "something": 0.88,
+   "them": 0.85,
+   "some": 0.39,
+   "a": 0.67
+  }
+ },
+ {
+  "sentence": "I want a snack",
+  "at": "15:27",
+  "phrase": "I want a",
+  "target": "snack",
+  "history": [
+   "snack",
+   "cookie",
+   "drink",
+   "big"
+  ],
+  "jev": [
+   "snack",
+   "little",
+   "red",
+   "spoon"
+  ],
+  "routed": [
+   "snack",
+   "cookie",
+   "drink",
+   "big"
+  ],
+  "route": "history (built 8x at this time)",
+  "veto": [
+   "snack",
+   "cookie",
+   "drink",
+   "big"
+  ],
+  "vetoed": [],
+  "sense": {
+   "snack": 0.97,
+   "cookie": 0.95,
+   "drink": 0.96,
+   "big": 0.68,
+   "little": 0.61,
+   "green": 0.68,
+   "different": 0.7,
+   "sandwich": 0.95,
+   "bottle": 0.93,
+   "red": 0.64,
+   "blue": 0.63,
+   "cup": 0.92
+  }
+ },
+ {
+  "sentence": "I want a snack",
+  "at": "15:32",
+  "phrase": "I want",
+  "target": "a",
+  "history": [
+   "to",
+   "a",
+   "crackers",
+   "pizza"
+  ],
+  "jev": [
+   "to",
+   "crackers",
+   "a",
+   "my"
+  ],
+  "routed": [
+   "to",
+   "a",
+   "crackers",
+   "pizza"
+  ],
+  "route": "history (built 30x at this time)",
+  "veto": [
+   "to",
+   "a",
+   "crackers",
+   "pizza"
+  ],
+  "vetoed": [],
+  "sense": {
+   "to": 0.94,
+   "a": 0.84,
+   "crackers": 0.89,
+   "pizza": 0.92,
+   "my": 0.77,
+   "cereal": 0.9,
+   "juice": 0.89,
+   "more": 0.9,
+   "milk": 0.9,
+   "the": 0.79,
+   "pasta": 0.87,
+   "toast": 0.89
+  }
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "at": "18:24",
+  "phrase": "I",
+  "target": "want",
+  "history": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "jev": [
+   "want",
+   "am",
+   "didn't",
+   "did"
+  ],
+  "routed": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "route": "history (built 66x at this time)",
+  "veto": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "vetoed": [],
+  "sense": {
+   "want": 0.94,
+   "love": 0.89,
+   "don't": 0.88,
+   "am": 0.95,
+   "need": 0.93,
+   "like": 0.94,
+   "saw": 0.76,
+   "will": 0.91,
+   "have": 0.89,
+   "get": 0.87,
+   "can't": 0.88,
+   "can": 0.93
+  }
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "at": "18:24",
+  "phrase": "I want to",
+  "target": "watch",
+  "history": [
+   "watch",
+   "take",
+   "go",
+   "play"
+  ],
+  "jev": [
+   "watch",
+   "go",
+   "have",
+   "make"
+  ],
+  "routed": [
+   "watch",
+   "take",
+   "go",
+   "play"
+  ],
+  "route": "history (built 32x at this time)",
+  "veto": [
+   "watch",
+   "take",
+   "go",
+   "play"
+  ],
+  "vetoed": [],
+  "sense": {
+   "watch": 0.95,
+   "take": 0.92,
+   "go": 0.94,
+   "play": 0.94,
+   "paint": 0.91,
+   "call": 0.91,
+   "do": 0.92,
+   "put": 0.87,
+   "see": 0.93,
+   "get": 0.93,
+   "read": 0.92,
+   "have": 0.93
+  }
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "at": "18:24",
+  "phrase": "I want to watch",
+  "target": "Bluey",
+  "history": [
+   "Bluey",
+   "TV"
+  ],
+  "jev": [
+   "Bluey",
+   "TV"
+  ],
+  "routed": [
+   "Bluey",
+   "TV"
+  ],
+  "route": "history (built 23x at this time)",
+  "veto": [
+   "Bluey",
+   "TV"
+  ],
+  "vetoed": [],
+  "sense": {
+   "bluey": 0.89,
+   "tv": 0.85
+  }
+ },
+ {
+  "sentence": "I want pizza",
+  "at": "18:26",
+  "phrase": "I",
+  "target": "want",
+  "history": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "jev": [
+   "want",
+   "am",
+   "just",
+   "can"
+  ],
+  "routed": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "route": "history (built 67x at this time)",
+  "veto": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "vetoed": [],
+  "sense": {
+   "want": 0.94,
+   "love": 0.91,
+   "don't": 0.87,
+   "am": 0.95,
+   "need": 0.93,
+   "like": 0.94,
+   "saw": 0.78,
+   "will": 0.91,
+   "have": 0.89,
+   "get": 0.88,
+   "can't": 0.88,
+   "can": 0.93
+  }
+ },
+ {
+  "sentence": "I want my blanket",
+  "at": "19:05",
+  "phrase": "I",
+  "target": "want",
+  "history": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "jev": [
+   "want",
+   "am",
+   "just",
+   "saw"
+  ],
+  "routed": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "route": "history (built 50x at this time)",
+  "veto": [
+   "want",
+   "love",
+   "don't",
+   "am"
+  ],
+  "vetoed": [],
+  "sense": {
+   "want": 0.94,
+   "love": 0.9,
+   "don't": 0.87,
+   "am": 0.95,
+   "need": 0.93,
+   "like": 0.94,
+   "saw": 0.76,
+   "will": 0.91,
+   "have": 0.89,
+   "get": 0.88,
+   "can't": 0.88,
+   "can": 0.93
+  }
+ },
+ {
+  "sentence": "I want my blanket",
+  "at": "19:05",
+  "phrase": "I want my",
+  "target": "blanket",
+  "history": [
+   "blanket",
+   "tummy",
+   "mom",
+   "dad"
+  ],
+  "jev": [
+   "blanket",
+   "bottle",
+   "cookie",
+   "breakfast"
+  ],
+  "routed": [
+   "blanket",
+   "tummy",
+   "mom",
+   "dad"
+  ],
+  "route": "history (built 10x at this time)",
+  "veto": [
+   "blanket",
+   "tummy",
+   "mom",
+   "dad"
+  ],
+  "vetoed": [],
+  "sense": {
+   "blanket": 0.93,
+   "tummy": 0.59,
+   "mom": 0.86,
+   "dad": 0.87,
+   "cookie": 0.94,
+   "shoes": 0.92,
+   "socks": 0.9,
+   "milk": 0.93,
+   "drink": 0.86,
+   "ball": 0.92,
+   "breakfast": 0.91,
+   "car": 0.9
+  }
+ }
+]

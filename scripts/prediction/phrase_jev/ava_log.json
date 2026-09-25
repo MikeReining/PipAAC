@@ -1,0 +1,1622 @@
+[
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "07:18",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "07:33",
+  "sentence": "I want more"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "07:37",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "07:59",
+  "sentence": "go to school"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "12:06",
+  "sentence": "I need help"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "12:44",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "12:51",
+  "sentence": "I need to go to the bathroom"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "15:09",
+  "sentence": "I want to go home"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "15:18",
+  "sentence": "I want to go home"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "17:05",
+  "sentence": "I want pasta"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "17:06",
+  "sentence": "can I have a cookie"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "17:21",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "17:31",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "19:05",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 1,
+  "dow": "Tue",
+  "at": "19:50",
+  "sentence": "read me a book"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "07:15",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "07:31",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "07:59",
+  "sentence": "where is my backpack"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "12:54",
+  "sentence": "I need to go to the bathroom"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "12:55",
+  "sentence": "I need to go to the bathroom"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "15:08",
+  "sentence": "I want to paint"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "15:53",
+  "sentence": "where is mom"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "17:24",
+  "sentence": "call grandma"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "18:29",
+  "sentence": "call grandma"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "19:23",
+  "sentence": "read me a book"
+ },
+ {
+  "day": 2,
+  "dow": "Wed",
+  "at": "19:33",
+  "sentence": "good night"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "07:10",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "07:24",
+  "sentence": "can I have juice"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "07:57",
+  "sentence": "I don't want to go to school"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "12:14",
+  "sentence": "I need to go to the bathroom"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "12:28",
+  "sentence": "can I play on the swing"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "14:50",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "15:23",
+  "sentence": "I am tired"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "17:02",
+  "sentence": "I want to watch TV"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "17:09",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "17:39",
+  "sentence": "I want to watch TV"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "18:59",
+  "sentence": "I am sad"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "19:24",
+  "sentence": "I want the dinosaur book"
+ },
+ {
+  "day": 3,
+  "dow": "Thu",
+  "at": "19:33",
+  "sentence": "read me a book"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "07:11",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "07:25",
+  "sentence": "can I have juice"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "07:32",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "08:08",
+  "sentence": "I need my shoes"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "08:44",
+  "sentence": "I saw a big dog"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "12:45",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "13:46",
+  "sentence": "I need help"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "15:24",
+  "sentence": "I want a cookie"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "15:59",
+  "sentence": "I want to go home"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "18:07",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "19:00",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "19:22",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 4,
+  "dow": "Fri",
+  "at": "19:41",
+  "sentence": "I love you mom"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "07:12",
+  "sentence": "where is Max"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "07:43",
+  "sentence": "I want more"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "09:46",
+  "sentence": "I want ice cream"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "11:20",
+  "sentence": "can we go to grandma's house"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "11:21",
+  "sentence": "it is raining"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "14:39",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "17:02",
+  "sentence": "call grandma"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "17:31",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "19:13",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "19:30",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 5,
+  "dow": "Sat",
+  "at": "19:40",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "07:02",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "07:15",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "07:27",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "07:34",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "07:42",
+  "sentence": "I want more"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "10:26",
+  "sentence": "can we go to grandma's house"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "11:20",
+  "sentence": "I want to go to the park"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "11:23",
+  "sentence": "I want to go to the park"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "15:42",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "17:44",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "18:05",
+  "sentence": "I want to watch TV"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "19:14",
+  "sentence": "I want the dinosaur book"
+ },
+ {
+  "day": 6,
+  "dow": "Sun",
+  "at": "19:23",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "07:02",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "07:06",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "07:23",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "07:41",
+  "sentence": "I want more"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "07:57",
+  "sentence": "I need my shoes"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "13:08",
+  "sentence": "I like the slide"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "13:48",
+  "sentence": "I need help please"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "13:58",
+  "sentence": "I need to go to the bathroom"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "14:55",
+  "sentence": "I want to go home"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "15:28",
+  "sentence": "I want to go to the zoo"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "17:28",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "19:01",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 7,
+  "dow": "Mon",
+  "at": "19:50",
+  "sentence": "where is my bear"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "07:03",
+  "sentence": "where is Max"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "07:11",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "07:30",
+  "sentence": "I want milk"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "07:46",
+  "sentence": "where is my backpack"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "07:52",
+  "sentence": "I don't want to go to school"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "12:27",
+  "sentence": "I want to play outside"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "15:12",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "17:06",
+  "sentence": "I want pizza"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "17:06",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "17:49",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "19:19",
+  "sentence": "I love you mom"
+ },
+ {
+  "day": 8,
+  "dow": "Tue",
+  "at": "19:43",
+  "sentence": "read me a book"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "07:11",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "07:18",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "07:42",
+  "sentence": "can I have juice"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "07:44",
+  "sentence": "I want more"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "07:53",
+  "sentence": "where is my backpack"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "08:01",
+  "sentence": "mom help me"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "12:09",
+  "sentence": "can I play on the swing"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "12:25",
+  "sentence": "can I play on the swing"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "13:42",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "14:40",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "15:46",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "18:04",
+  "sentence": "I want pasta"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "18:29",
+  "sentence": "I don't like that"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "19:17",
+  "sentence": "where is my bear"
+ },
+ {
+  "day": 9,
+  "dow": "Wed",
+  "at": "19:56",
+  "sentence": "where is my bear"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "07:09",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "07:15",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "07:24",
+  "sentence": "I want more"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "07:57",
+  "sentence": "go to school"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "12:02",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "13:01",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "13:15",
+  "sentence": "I want to play outside"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "15:24",
+  "sentence": "I want to go home"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "15:28",
+  "sentence": "I am tired"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "17:09",
+  "sentence": "I want grandma"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "19:00",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "19:42",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 10,
+  "dow": "Thu",
+  "at": "19:43",
+  "sentence": "where is my bear"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "07:02",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "07:33",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "07:34",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "07:42",
+  "sentence": "I want milk"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "07:49",
+  "sentence": "where is my backpack"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "08:02",
+  "sentence": "mom help me"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "11:20",
+  "sentence": "where is my red cup"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "12:46",
+  "sentence": "I need help"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "13:00",
+  "sentence": "I need help please"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "14:38",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "17:01",
+  "sentence": "I want pizza"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "17:20",
+  "sentence": "I want to watch TV"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "17:36",
+  "sentence": "call grandma"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "19:03",
+  "sentence": "I want the dinosaur book"
+ },
+ {
+  "day": 11,
+  "dow": "Fri",
+  "at": "19:51",
+  "sentence": "good night"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "07:01",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "07:01",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "07:27",
+  "sentence": "I want milk"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "10:25",
+  "sentence": "I want to play with Max"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "15:14",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "17:24",
+  "sentence": "my tummy hurts"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "18:18",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "19:08",
+  "sentence": "I love you mom"
+ },
+ {
+  "day": 12,
+  "dow": "Sat",
+  "at": "19:37",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "07:16",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "07:29",
+  "sentence": "I want milk"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "07:38",
+  "sentence": "I want toast"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "09:41",
+  "sentence": "I want to go to the park"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "11:13",
+  "sentence": "I want to go to the park"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "14:02",
+  "sentence": "I am tired"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "15:34",
+  "sentence": "I want to play outside"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "17:33",
+  "sentence": "I want to watch TV"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "17:44",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "19:19",
+  "sentence": "read me a book"
+ },
+ {
+  "day": 13,
+  "dow": "Sun",
+  "at": "19:58",
+  "sentence": "where is my bear"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "07:11",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "07:12",
+  "sentence": "where is Max"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "07:35",
+  "sentence": "I want toast"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "07:48",
+  "sentence": "I need my shoes"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "07:52",
+  "sentence": "mom help me"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "12:34",
+  "sentence": "I want to play outside"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "15:32",
+  "sentence": "I want to go home"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "15:38",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "17:26",
+  "sentence": "I want pasta"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "17:54",
+  "sentence": "I don't like that"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "18:29",
+  "sentence": "I want to watch TV"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "19:27",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 14,
+  "dow": "Mon",
+  "at": "19:38",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "07:08",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "07:24",
+  "sentence": "I want more"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "07:43",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "07:45",
+  "sentence": "I don't want to go to school"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "13:43",
+  "sentence": "I need help"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "14:31",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "15:15",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "17:19",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "17:32",
+  "sentence": "I want pasta"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "18:14",
+  "sentence": "I want to watch TV"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "19:12",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 15,
+  "dow": "Tue",
+  "at": "19:21",
+  "sentence": "good night"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "07:06",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "07:13",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "07:23",
+  "sentence": "I want milk"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "07:26",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "07:40",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "08:02",
+  "sentence": "I need my shoes"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "08:09",
+  "sentence": "I need my shoes"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "13:24",
+  "sentence": "can I play on the swing"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "14:31",
+  "sentence": "Max is hungry"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "15:05",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "15:29",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "18:10",
+  "sentence": "I want pizza"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "19:03",
+  "sentence": "good night"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "19:06",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 16,
+  "dow": "Wed",
+  "at": "19:35",
+  "sentence": "good night"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "07:01",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "07:15",
+  "sentence": "where is Max"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "07:25",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "07:43",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "07:54",
+  "sentence": "go to school"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "13:08",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "13:59",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "14:37",
+  "sentence": "where is mom"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "16:29",
+  "sentence": "I want to call dad"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "17:52",
+  "sentence": "I don't like that"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "19:07",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 17,
+  "dow": "Thu",
+  "at": "19:26",
+  "sentence": "I want to take a bath"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "07:03",
+  "sentence": "good morning mom"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "07:15",
+  "sentence": "where is Max"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "07:27",
+  "sentence": "I want milk"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "07:31",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "07:38",
+  "sentence": "I want juice"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "07:46",
+  "sentence": "I need my shoes"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "08:05",
+  "sentence": "mom help me"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "13:23",
+  "sentence": "I like the slide"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "14:45",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "15:12",
+  "sentence": "I want crackers"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "18:14",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "18:14",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "19:39",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "19:45",
+  "sentence": "I want the dinosaur book"
+ },
+ {
+  "day": 18,
+  "dow": "Fri",
+  "at": "19:50",
+  "sentence": "I want the dinosaur book"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "07:02",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "07:07",
+  "sentence": "I am hungry"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "07:31",
+  "sentence": "I want pancakes"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "07:44",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "09:55",
+  "sentence": "I want to go to the park"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "10:13",
+  "sentence": "I want to play with Max"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "11:59",
+  "sentence": "I want to go to the park"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "13:08",
+  "sentence": "I want to go to the beach"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "14:29",
+  "sentence": "I am tired"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "17:33",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "17:40",
+  "sentence": "I want pasta"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "19:24",
+  "sentence": "where is my bear"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "19:44",
+  "sentence": "I love you mom"
+ },
+ {
+  "day": 19,
+  "dow": "Sat",
+  "at": "19:54",
+  "sentence": "read me a book"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "07:02",
+  "sentence": "where is Max"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "07:06",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "07:23",
+  "sentence": "I want more"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "07:32",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "07:43",
+  "sentence": "I want cereal"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "11:12",
+  "sentence": "I want to go swimming"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "13:07",
+  "sentence": "I want to watch Bluey please"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "15:22",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "17:06",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "19:17",
+  "sentence": "I don't want to take a bath"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "19:25",
+  "sentence": "I want the dinosaur book"
+ },
+ {
+  "day": 20,
+  "dow": "Sun",
+  "at": "19:25",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:00",
+  "sentence": "good morning dad"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:24",
+  "sentence": "I want toast"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:35",
+  "sentence": "I want milk"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:38",
+  "sentence": "can I have juice"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "08:00",
+  "sentence": "go to school"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "12:31",
+  "sentence": "I need help"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "13:30",
+  "sentence": "I want to play with Leo"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:27",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:32",
+  "sentence": "I want a snack"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:24",
+  "sentence": "I want to watch Bluey"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:26",
+  "sentence": "I want pizza"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:05",
+  "sentence": "I want my blanket"
+ },
+ {
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:12",
+  "sentence": "good night"
+ }
+]

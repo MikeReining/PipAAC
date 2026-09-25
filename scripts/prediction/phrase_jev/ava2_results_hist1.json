@@ -1,0 +1,3170 @@
+[
+ {
+  "sentence": "good morning dad",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:00",
+  "t": 30660,
+  "isNew": false,
+  "phrase": [],
+  "target": "good",
+  "cands": [
+   "i",
+   "where",
+   "good",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "go",
+   "in",
+   "do"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "where",
+   "good",
+   "no"
+  ],
+  "blind": [
+   "i",
+   "good",
+   "the",
+   "mom"
+  ],
+  "informed": [
+   "i",
+   "good",
+   "there",
+   "he"
+  ],
+  "threePlusOne": [
+   "i",
+   "good",
+   "there",
+   "the"
+  ],
+  "ms": [
+   198,
+   113
+  ]
+ },
+ {
+  "sentence": "good morning dad",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:00",
+  "t": 30660,
+  "isNew": false,
+  "phrase": [
+   "good"
+  ],
+  "target": "morning",
+  "cands": [
+   "morning",
+   "girl",
+   "boy",
+   "bye",
+   "afternoon",
+   "one",
+   "for",
+   "at",
+   "good",
+   "to",
+   "i",
+   "thing",
+   "mom",
+   "if",
+   "now",
+   "and",
+   "dog",
+   "that",
+   "cookie",
+   "board game"
+  ],
+  "book": [
+   "girl",
+   "boy",
+   "at",
+   "one"
+  ],
+  "filter4": [
+   "morning",
+   "girl",
+   "boy",
+   "bye"
+  ],
+  "blind": [
+   "i",
+   "morning",
+   "now",
+   "bye"
+  ],
+  "informed": [
+   "morning",
+   "girl",
+   "i",
+   "that"
+  ],
+  "threePlusOne": [
+   "morning",
+   "girl",
+   "i",
+   "now"
+  ],
+  "ms": [
+   80,
+   87
+  ]
+ },
+ {
+  "sentence": "good morning dad",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:00",
+  "t": 30660,
+  "isNew": false,
+  "phrase": [
+   "good",
+   "morning"
+  ],
+  "target": "dad",
+  "cands": [
+   "dad",
+   "to",
+   "mom",
+   "little",
+   "boy",
+   "good morning",
+   "man",
+   "brother",
+   "the",
+   "he",
+   "a",
+   "now",
+   "and",
+   "when",
+   "where",
+   "laugh",
+   "bye",
+   "it",
+   "you",
+   "farm"
+  ],
+  "book": [
+   "the",
+   "i",
+   "and",
+   "he"
+  ],
+  "filter4": [
+   "dad",
+   "to",
+   "mom",
+   "little"
+  ],
+  "blind": [
+   "mom",
+   "to",
+   "you",
+   "and"
+  ],
+  "informed": [
+   "dad",
+   "the",
+   "to",
+   "mom"
+  ],
+  "threePlusOne": [
+   "dad",
+   "the",
+   "to",
+   "mom"
+  ],
+  "ms": [
+   112,
+   94
+  ]
+ },
+ {
+  "sentence": "I want toast",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:24",
+  "t": 30684,
+  "isNew": true,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "go",
+   "in",
+   "do"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "no"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "mom",
+   "look"
+  ],
+  "informed": [
+   "i",
+   "good",
+   "it",
+   "there"
+  ],
+  "threePlusOne": [
+   "i",
+   "good",
+   "it",
+   "the"
+  ],
+  "ms": [
+   67,
+   73
+  ]
+ },
+ {
+  "sentence": "I want toast",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:24",
+  "t": 30684,
+  "isNew": true,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "don't",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "need",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "am",
+   "will"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "have"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "have",
+   "do"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "have",
+   "go"
+  ],
+  "ms": [
+   97,
+   104
+  ]
+ },
+ {
+  "sentence": "I want toast",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:24",
+  "t": 30684,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "toast",
+  "cands": [
+   "cereal",
+   "more",
+   "to",
+   "a",
+   "the",
+   "my",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this",
+   "make",
+   "i",
+   "have"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "cereal",
+   "more",
+   "to",
+   "a"
+  ],
+  "blind": [
+   "cereal",
+   "to",
+   "go",
+   "get"
+  ],
+  "informed": [
+   "cereal",
+   "to",
+   "a",
+   "get"
+  ],
+  "threePlusOne": [
+   "cereal",
+   "to",
+   "a",
+   "go"
+  ],
+  "ms": [
+   102,
+   77
+  ]
+ },
+ {
+  "sentence": "I want milk",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:35",
+  "t": 30695,
+  "isNew": true,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "go",
+   "in",
+   "do"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "no"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "mom",
+   "look"
+  ],
+  "informed": [
+   "i",
+   "the",
+   "look",
+   "that"
+  ],
+  "threePlusOne": [
+   "i",
+   "the",
+   "look",
+   "mom"
+  ],
+  "ms": [
+   117,
+   87
+  ]
+ },
+ {
+  "sentence": "I want milk",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:35",
+  "t": 30695,
+  "isNew": true,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "don't",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "need",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "am",
+   "will"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "have"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "go",
+   "was"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "go",
+   "have"
+  ],
+  "ms": [
+   87,
+   96
+  ]
+ },
+ {
+  "sentence": "I want milk",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:35",
+  "t": 30695,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "milk",
+  "cands": [
+   "cereal",
+   "more",
+   "toast",
+   "to",
+   "a",
+   "the",
+   "my",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this",
+   "make",
+   "i"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "cereal",
+   "more",
+   "toast",
+   "to"
+  ],
+  "blind": [
+   "cereal",
+   "toast",
+   "go",
+   "to"
+  ],
+  "informed": [
+   "to",
+   "cereal",
+   "a",
+   "toast"
+  ],
+  "threePlusOne": [
+   "to",
+   "cereal",
+   "a",
+   "toast"
+  ],
+  "ms": [
+   82,
+   87
+  ]
+ },
+ {
+  "sentence": "can I have juice",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:38",
+  "t": 30698,
+  "isNew": true,
+  "phrase": [],
+  "target": "can",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "go",
+   "in",
+   "do"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "no"
+  ],
+  "blind": [
+   "i",
+   "mom",
+   "look",
+   "the"
+  ],
+  "informed": [
+   "i",
+   "mom",
+   "what",
+   "there"
+  ],
+  "threePlusOne": [
+   "i",
+   "mom",
+   "what",
+   "look"
+  ],
+  "ms": [
+   106,
+   92
+  ]
+ },
+ {
+  "sentence": "can I have juice",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:38",
+  "t": 30698,
+  "isNew": true,
+  "phrase": [
+   "can"
+  ],
+  "target": "i",
+  "cands": [
+   "i",
+   "you",
+   "we",
+   "go",
+   "not",
+   "do",
+   "he",
+   "have",
+   "see",
+   "come",
+   "it",
+   "put",
+   "get",
+   "eat",
+   "can",
+   "make",
+   "only",
+   "she",
+   "this",
+   "play"
+  ],
+  "book": [
+   "i",
+   "you",
+   "do",
+   "go"
+  ],
+  "filter4": [
+   "i",
+   "you",
+   "we",
+   "go"
+  ],
+  "blind": [
+   "i",
+   "go",
+   "not",
+   "eat"
+  ],
+  "informed": [
+   "i",
+   "not",
+   "go",
+   "you"
+  ],
+  "threePlusOne": [
+   "i",
+   "not",
+   "go",
+   "eat"
+  ],
+  "ms": [
+   86,
+   76
+  ]
+ },
+ {
+  "sentence": "can I have juice",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:38",
+  "t": 30698,
+  "isNew": true,
+  "phrase": [
+   "can",
+   "i"
+  ],
+  "target": "have",
+  "cands": [
+   "want",
+   "don't",
+   "have",
+   "do",
+   "put",
+   "go",
+   "see",
+   "get",
+   "play",
+   "take",
+   "come",
+   "sit",
+   "just",
+   "turn",
+   "eat",
+   "help",
+   "look",
+   "open",
+   "write",
+   "make"
+  ],
+  "book": [
+   "have",
+   "do",
+   "am",
+   "want"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "have",
+   "do"
+  ],
+  "blind": [
+   "go",
+   "do",
+   "want",
+   "help"
+  ],
+  "informed": [
+   "want",
+   "have",
+   "do",
+   "just"
+  ],
+  "threePlusOne": [
+   "want",
+   "have",
+   "do",
+   "go"
+  ],
+  "ms": [
+   84,
+   107
+  ]
+ },
+ {
+  "sentence": "can I have juice",
+  "day": 21,
+  "dow": "Mon",
+  "at": "07:38",
+  "t": 30698,
+  "isNew": true,
+  "phrase": [
+   "can",
+   "i",
+   "have"
+  ],
+  "target": "juice",
+  "cands": [
+   "a",
+   "some",
+   "it",
+   "the",
+   "that",
+   "one",
+   "my",
+   "this",
+   "another",
+   "more",
+   "your",
+   "something",
+   "them",
+   "these",
+   "two",
+   "mine",
+   "can",
+   "all",
+   "an",
+   "water"
+  ],
+  "book": [
+   "get",
+   "a",
+   "not",
+   "some"
+  ],
+  "filter4": [
+   "a",
+   "some",
+   "it",
+   "the"
+  ],
+  "blind": [
+   "water",
+   "a",
+   "the",
+   "something"
+  ],
+  "informed": [
+   "a",
+   "some",
+   "water",
+   "them"
+  ],
+  "threePlusOne": [
+   "a",
+   "some",
+   "water",
+   "the"
+  ],
+  "ms": [
+   85,
+   91
+  ]
+ },
+ {
+  "sentence": "go to school",
+  "day": 21,
+  "dow": "Mon",
+  "at": "08:00",
+  "t": 30720,
+  "isNew": true,
+  "phrase": [],
+  "target": "go",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "go",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "mom",
+   "a"
+  ],
+  "informed": [
+   "i",
+   "there",
+   "that",
+   "can"
+  ],
+  "threePlusOne": [
+   "i",
+   "there",
+   "that",
+   "the"
+  ],
+  "ms": [
+   101,
+   77
+  ]
+ },
+ {
+  "sentence": "go to school",
+  "day": 21,
+  "dow": "Mon",
+  "at": "08:00",
+  "t": 30720,
+  "isNew": true,
+  "phrase": [
+   "go"
+  ],
+  "target": "to",
+  "cands": [
+   "to",
+   "in",
+   "on",
+   "go",
+   "there",
+   "away",
+   "up",
+   "down",
+   "back",
+   "get",
+   "and",
+   "like",
+   "home",
+   "here",
+   "out",
+   "right",
+   "the",
+   "over",
+   "outside",
+   "of"
+  ],
+  "book": [
+   "to",
+   "in",
+   "go",
+   "on"
+  ],
+  "filter4": [
+   "to",
+   "in",
+   "on",
+   "go"
+  ],
+  "blind": [
+   "home",
+   "to",
+   "out",
+   "up"
+  ],
+  "informed": [
+   "to",
+   "in",
+   "go",
+   "on"
+  ],
+  "threePlusOne": [
+   "to",
+   "in",
+   "go",
+   "home"
+  ],
+  "ms": [
+   142,
+   76
+  ]
+ },
+ {
+  "sentence": "go to school",
+  "day": 21,
+  "dow": "Mon",
+  "at": "08:00",
+  "t": 30720,
+  "isNew": true,
+  "phrase": [
+   "go",
+   "to"
+  ],
+  "target": "school",
+  "cands": [
+   "the",
+   "sleep",
+   "bed",
+   "get",
+   "school",
+   "go",
+   "work",
+   "a",
+   "do",
+   "put",
+   "make",
+   "see",
+   "have",
+   "eat",
+   "play",
+   "my",
+   "take",
+   "come",
+   "your",
+   "his"
+  ],
+  "book": [
+   "the",
+   "get",
+   "sleep",
+   "do"
+  ],
+  "filter4": [
+   "the",
+   "sleep",
+   "bed",
+   "get"
+  ],
+  "blind": [
+   "school",
+   "bed",
+   "work",
+   "sleep"
+  ],
+  "informed": [
+   "school",
+   "the",
+   "bed",
+   "sleep"
+  ],
+  "threePlusOne": [
+   "school",
+   "the",
+   "bed",
+   "work"
+  ],
+  "ms": [
+   70,
+   102
+  ]
+ },
+ {
+  "sentence": "I need help",
+  "day": 21,
+  "dow": "Mon",
+  "at": "12:31",
+  "t": 30991,
+  "isNew": true,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "a",
+   "the",
+   "look"
+  ],
+  "informed": [
+   "i",
+   "there",
+   "the",
+   "you"
+  ],
+  "threePlusOne": [
+   "i",
+   "there",
+   "the",
+   "a"
+  ],
+  "ms": [
+   100,
+   88
+  ]
+ },
+ {
+  "sentence": "I need help",
+  "day": 21,
+  "dow": "Mon",
+  "at": "12:31",
+  "t": 30991,
+  "isNew": true,
+  "phrase": [
+   "i"
+  ],
+  "target": "need",
+  "cands": [
+   "want",
+   "don't",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "need",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "am",
+   "will"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "like"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "go",
+   "didn't"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "go",
+   "like"
+  ],
+  "ms": [
+   104,
+   79
+  ]
+ },
+ {
+  "sentence": "I need help",
+  "day": 21,
+  "dow": "Mon",
+  "at": "12:31",
+  "t": 30991,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "need"
+  ],
+  "target": "help",
+  "cands": [
+   "a",
+   "some",
+   "to",
+   "the",
+   "that",
+   "it",
+   "my",
+   "this",
+   "another",
+   "one",
+   "something",
+   "more",
+   "you",
+   "two",
+   "them",
+   "i",
+   "help",
+   "all",
+   "these",
+   "those"
+  ],
+  "book": [
+   "a",
+   "to",
+   "some",
+   "the"
+  ],
+  "filter4": [
+   "a",
+   "some",
+   "to",
+   "the"
+  ],
+  "blind": [
+   "help",
+   "a",
+   "something",
+   "some"
+  ],
+  "informed": [
+   "a",
+   "some",
+   "help",
+   "to"
+  ],
+  "threePlusOne": [
+   "a",
+   "some",
+   "help",
+   "something"
+  ],
+  "ms": [
+   83,
+   119
+  ]
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "day": 21,
+  "dow": "Mon",
+  "at": "13:30",
+  "t": 31050,
+  "isNew": true,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "mom",
+   "a"
+  ],
+  "informed": [
+   "i",
+   "there",
+   "and",
+   "it"
+  ],
+  "threePlusOne": [
+   "i",
+   "there",
+   "and",
+   "the"
+  ],
+  "ms": [
+   132,
+   81
+  ]
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "day": 21,
+  "dow": "Mon",
+  "at": "13:30",
+  "t": 31050,
+  "isNew": true,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "need",
+   "don't",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "need",
+   "don't",
+   "am"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "like"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "didn't",
+   "like"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "didn't",
+   "go"
+  ],
+  "ms": [
+   72,
+   121
+  ]
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "day": 21,
+  "dow": "Mon",
+  "at": "13:30",
+  "t": 31050,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "to",
+  "cands": [
+   "to",
+   "cereal",
+   "more",
+   "a",
+   "the",
+   "my",
+   "toast",
+   "milk",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this",
+   "make"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "to",
+   "cereal",
+   "more",
+   "a"
+  ],
+  "blind": [
+   "to",
+   "go",
+   "cereal",
+   "play"
+  ],
+  "informed": [
+   "to",
+   "a",
+   "cereal",
+   "go"
+  ],
+  "threePlusOne": [
+   "to",
+   "a",
+   "cereal",
+   "go"
+  ],
+  "ms": [
+   90,
+   133
+  ]
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "day": 21,
+  "dow": "Mon",
+  "at": "13:30",
+  "t": 31050,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "want",
+   "to"
+  ],
+  "target": "play",
+  "cands": [
+   "watch",
+   "go",
+   "do",
+   "play",
+   "put",
+   "see",
+   "get",
+   "read",
+   "have",
+   "sit",
+   "take",
+   "make",
+   "come",
+   "look",
+   "help",
+   "eat",
+   "tell",
+   "write",
+   "talk",
+   "turn"
+  ],
+  "book": [
+   "go",
+   "do",
+   "play",
+   "get"
+  ],
+  "filter4": [
+   "watch",
+   "go",
+   "do",
+   "play"
+  ],
+  "blind": [
+   "go",
+   "eat",
+   "play",
+   "do"
+  ],
+  "informed": [
+   "watch",
+   "do",
+   "go",
+   "eat"
+  ],
+  "threePlusOne": [
+   "watch",
+   "do",
+   "go",
+   "eat"
+  ],
+  "ms": [
+   79,
+   115
+  ]
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "day": 21,
+  "dow": "Mon",
+  "at": "13:30",
+  "t": 31050,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "want",
+   "to",
+   "play"
+  ],
+  "target": "with",
+  "cands": [
+   "with",
+   "it",
+   "a",
+   "the",
+   "now",
+   "play",
+   "so",
+   "some",
+   "when",
+   "that",
+   "this",
+   "something",
+   "catch",
+   "farm",
+   "in",
+   "and",
+   "sit",
+   "too",
+   "on",
+   "board game"
+  ],
+  "book": [
+   "with",
+   "it",
+   "a",
+   "this"
+  ],
+  "filter4": [
+   "with",
+   "it",
+   "a",
+   "the"
+  ],
+  "blind": [
+   "board game",
+   "with",
+   "something",
+   "now"
+  ],
+  "informed": [
+   "with",
+   "some",
+   "farm",
+   "sit"
+  ],
+  "threePlusOne": [
+   "with",
+   "some",
+   "farm",
+   "board game"
+  ],
+  "ms": [
+   91,
+   100
+  ]
+ },
+ {
+  "sentence": "I want to play with Leo",
+  "day": 21,
+  "dow": "Mon",
+  "at": "13:30",
+  "t": 31050,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "want",
+   "to",
+   "play",
+   "with"
+  ],
+  "target": "leo",
+  "cands": [
+   "this",
+   "the",
+   "you",
+   "it",
+   "these",
+   "my",
+   "something",
+   "them",
+   "some",
+   "a",
+   "that",
+   "me",
+   "legos",
+   "our",
+   "him",
+   "down",
+   "her",
+   "with",
+   "thing",
+   "book"
+  ],
+  "book": [
+   "the",
+   "it",
+   "me",
+   "this"
+  ],
+  "filter4": [
+   "this",
+   "the",
+   "you",
+   "it"
+  ],
+  "blind": [
+   "you",
+   "legos",
+   "the",
+   "something"
+  ],
+  "informed": [
+   "this",
+   "you",
+   "the",
+   "it"
+  ],
+  "threePlusOne": [
+   "this",
+   "you",
+   "the",
+   "legos"
+  ],
+  "ms": [
+   83,
+   124
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:27",
+  "t": 31167,
+  "isNew": false,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "a",
+   "what"
+  ],
+  "informed": [
+   "i",
+   "good",
+   "he",
+   "where"
+  ],
+  "threePlusOne": [
+   "i",
+   "good",
+   "he",
+   "the"
+  ],
+  "ms": [
+   84,
+   126
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:27",
+  "t": 31167,
+  "isNew": false,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "don't",
+   "need",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "need",
+   "am"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "do"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "do",
+   "have"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "do",
+   "go"
+  ],
+  "ms": [
+   79,
+   175
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:27",
+  "t": 31167,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "a",
+  "cands": [
+   "a",
+   "to",
+   "cereal",
+   "more",
+   "the",
+   "my",
+   "toast",
+   "milk",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this",
+   "make"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "a",
+   "to",
+   "cereal",
+   "more"
+  ],
+  "blind": [
+   "to",
+   "get",
+   "do",
+   "go"
+  ],
+  "informed": [
+   "to",
+   "cereal",
+   "a",
+   "do"
+  ],
+  "threePlusOne": [
+   "to",
+   "cereal",
+   "a",
+   "get"
+  ],
+  "ms": [
+   102,
+   124
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:27",
+  "t": 31167,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want",
+   "a"
+  ],
+  "target": "snack",
+  "cands": [
+   "snack",
+   "drink",
+   "big",
+   "little",
+   "green",
+   "different",
+   "sandwich",
+   "cookie",
+   "bottle",
+   "red",
+   "blue",
+   "cup",
+   "spoon",
+   "go",
+   "banana",
+   "car",
+   "book",
+   "black",
+   "pink",
+   "ice cream"
+  ],
+  "book": [
+   "big",
+   "drink",
+   "little",
+   "cup"
+  ],
+  "filter4": [
+   "snack",
+   "drink",
+   "big",
+   "little"
+  ],
+  "blind": [
+   "ice cream",
+   "drink",
+   "snack",
+   "sandwich"
+  ],
+  "informed": [
+   "snack",
+   "drink",
+   "different",
+   "ice cream"
+  ],
+  "threePlusOne": [
+   "snack",
+   "drink",
+   "different",
+   "ice cream"
+  ],
+  "ms": [
+   96,
+   88
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:32",
+  "t": 31172,
+  "isNew": false,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "no",
+   "what"
+  ],
+  "informed": [
+   "i",
+   "there",
+   "no",
+   "where"
+  ],
+  "threePlusOne": [
+   "i",
+   "there",
+   "no",
+   "the"
+  ],
+  "ms": [
+   91,
+   100
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:32",
+  "t": 31172,
+  "isNew": false,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "don't",
+   "need",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "need",
+   "am"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "like"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "think",
+   "know"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "think",
+   "go"
+  ],
+  "ms": [
+   158,
+   88
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:32",
+  "t": 31172,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "a",
+  "cands": [
+   "a",
+   "to",
+   "cereal",
+   "more",
+   "the",
+   "my",
+   "toast",
+   "milk",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this",
+   "make"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "a",
+   "to",
+   "cereal",
+   "more"
+  ],
+  "blind": [
+   "go",
+   "play",
+   "to",
+   "cereal"
+  ],
+  "informed": [
+   "to",
+   "a",
+   "cereal",
+   "more"
+  ],
+  "threePlusOne": [
+   "to",
+   "a",
+   "cereal",
+   "go"
+  ],
+  "ms": [
+   71,
+   120
+  ]
+ },
+ {
+  "sentence": "I want a snack",
+  "day": 21,
+  "dow": "Mon",
+  "at": "15:32",
+  "t": 31172,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want",
+   "a"
+  ],
+  "target": "snack",
+  "cands": [
+   "snack",
+   "drink",
+   "big",
+   "little",
+   "green",
+   "different",
+   "sandwich",
+   "cookie",
+   "bottle",
+   "red",
+   "blue",
+   "cup",
+   "spoon",
+   "go",
+   "banana",
+   "car",
+   "book",
+   "black",
+   "pink",
+   "ice cream"
+  ],
+  "book": [
+   "big",
+   "drink",
+   "little",
+   "cup"
+  ],
+  "filter4": [
+   "snack",
+   "drink",
+   "big",
+   "little"
+  ],
+  "blind": [
+   "ice cream",
+   "snack",
+   "drink",
+   "sandwich"
+  ],
+  "informed": [
+   "snack",
+   "drink",
+   "blue",
+   "red"
+  ],
+  "threePlusOne": [
+   "snack",
+   "drink",
+   "blue",
+   "ice cream"
+  ],
+  "ms": [
+   115,
+   88
+  ]
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:24",
+  "t": 31344,
+  "isNew": false,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "mom",
+   "go"
+  ],
+  "informed": [
+   "i",
+   "that",
+   "this",
+   "where"
+  ],
+  "threePlusOne": [
+   "i",
+   "that",
+   "this",
+   "the"
+  ],
+  "ms": [
+   88,
+   346
+  ]
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:24",
+  "t": 31344,
+  "isNew": false,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "don't",
+   "need",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "need",
+   "am"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "like"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "don't",
+   "can"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "don't",
+   "go"
+  ],
+  "ms": [
+   117,
+   76
+  ]
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:24",
+  "t": 31344,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "to",
+  "cands": [
+   "to",
+   "the",
+   "my",
+   "a",
+   "cereal",
+   "more",
+   "toast",
+   "milk",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this",
+   "make"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "to",
+   "the",
+   "my",
+   "a"
+  ],
+  "blind": [
+   "to",
+   "milk",
+   "go",
+   "get"
+  ],
+  "informed": [
+   "to",
+   "a",
+   "cereal",
+   "make"
+  ],
+  "threePlusOne": [
+   "to",
+   "a",
+   "cereal",
+   "milk"
+  ],
+  "ms": [
+   65,
+   71
+  ]
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:24",
+  "t": 31344,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want",
+   "to"
+  ],
+  "target": "watch",
+  "cands": [
+   "watch",
+   "go",
+   "play",
+   "do",
+   "put",
+   "see",
+   "get",
+   "read",
+   "have",
+   "sit",
+   "take",
+   "make",
+   "come",
+   "look",
+   "help",
+   "eat",
+   "tell",
+   "write",
+   "talk",
+   "turn"
+  ],
+  "book": [
+   "go",
+   "do",
+   "play",
+   "get"
+  ],
+  "filter4": [
+   "watch",
+   "go",
+   "play",
+   "do"
+  ],
+  "blind": [
+   "go",
+   "eat",
+   "watch",
+   "play"
+  ],
+  "informed": [
+   "watch",
+   "do",
+   "go",
+   "have"
+  ],
+  "threePlusOne": [
+   "watch",
+   "do",
+   "go",
+   "eat"
+  ],
+  "ms": [
+   68,
+   74
+  ]
+ },
+ {
+  "sentence": "I want to watch Bluey",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:24",
+  "t": 31344,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want",
+   "to",
+   "watch"
+  ],
+  "target": "bluey",
+  "cands": [
+   "bluey"
+  ],
+  "book": [],
+  "filter4": [
+   "bluey"
+  ],
+  "blind": [
+   "bluey"
+  ],
+  "informed": [
+   "bluey"
+  ],
+  "threePlusOne": [
+   "bluey"
+  ],
+  "ms": [
+   98,
+   80
+  ]
+ },
+ {
+  "sentence": "I want pizza",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:26",
+  "t": 31346,
+  "isNew": true,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "look",
+   "what"
+  ],
+  "informed": [
+   "i",
+   "yes",
+   "no",
+   "good"
+  ],
+  "threePlusOne": [
+   "i",
+   "yes",
+   "no",
+   "the"
+  ],
+  "ms": [
+   121,
+   128
+  ]
+ },
+ {
+  "sentence": "I want pizza",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:26",
+  "t": 31346,
+  "isNew": true,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "don't",
+   "need",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "need",
+   "am"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "like"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "didn't",
+   "like"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "didn't",
+   "go"
+  ],
+  "ms": [
+   116,
+   69
+  ]
+ },
+ {
+  "sentence": "I want pizza",
+  "day": 21,
+  "dow": "Mon",
+  "at": "18:26",
+  "t": 31346,
+  "isNew": true,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "pizza",
+  "cands": [
+   "to",
+   "the",
+   "my",
+   "a",
+   "cereal",
+   "more",
+   "toast",
+   "milk",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this",
+   "make"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "to",
+   "the",
+   "my",
+   "a"
+  ],
+  "blind": [
+   "to",
+   "go",
+   "milk",
+   "a"
+  ],
+  "informed": [
+   "to",
+   "a",
+   "cereal",
+   "my"
+  ],
+  "threePlusOne": [
+   "to",
+   "a",
+   "cereal",
+   "go"
+  ],
+  "ms": [
+   81,
+   122
+  ]
+ },
+ {
+  "sentence": "I want my blanket",
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:05",
+  "t": 31385,
+  "isNew": false,
+  "phrase": [],
+  "target": "i",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "the",
+   "what",
+   "no"
+  ],
+  "informed": [
+   "i",
+   "in",
+   "this",
+   "where"
+  ],
+  "threePlusOne": [
+   "i",
+   "in",
+   "this",
+   "the"
+  ],
+  "ms": [
+   116,
+   87
+  ]
+ },
+ {
+  "sentence": "I want my blanket",
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:05",
+  "t": 31385,
+  "isNew": false,
+  "phrase": [
+   "i"
+  ],
+  "target": "want",
+  "cands": [
+   "want",
+   "don't",
+   "need",
+   "am",
+   "will",
+   "have",
+   "get",
+   "can't",
+   "can",
+   "know",
+   "think",
+   "like",
+   "go",
+   "do",
+   "just",
+   "did",
+   "was",
+   "didn't",
+   "see",
+   "put"
+  ],
+  "book": [
+   "am",
+   "want",
+   "have",
+   "don't"
+  ],
+  "filter4": [
+   "want",
+   "don't",
+   "need",
+   "am"
+  ],
+  "blind": [
+   "am",
+   "go",
+   "want",
+   "like"
+  ],
+  "informed": [
+   "want",
+   "am",
+   "just",
+   "go"
+  ],
+  "threePlusOne": [
+   "want",
+   "am",
+   "just",
+   "go"
+  ],
+  "ms": [
+   106,
+   67
+  ]
+ },
+ {
+  "sentence": "I want my blanket",
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:05",
+  "t": 31385,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want"
+  ],
+  "target": "my",
+  "cands": [
+   "the",
+   "my",
+   "to",
+   "pizza",
+   "a",
+   "cereal",
+   "more",
+   "toast",
+   "milk",
+   "some",
+   "go",
+   "do",
+   "it",
+   "play",
+   "that",
+   "you",
+   "see",
+   "get",
+   "put",
+   "this"
+  ],
+  "book": [
+   "to",
+   "a",
+   "some",
+   "go"
+  ],
+  "filter4": [
+   "the",
+   "my",
+   "to",
+   "pizza"
+  ],
+  "blind": [
+   "to",
+   "pizza",
+   "go",
+   "more"
+  ],
+  "informed": [
+   "to",
+   "a",
+   "pizza",
+   "cereal"
+  ],
+  "threePlusOne": [
+   "to",
+   "a",
+   "pizza",
+   "go"
+  ],
+  "ms": [
+   78,
+   105
+  ]
+ },
+ {
+  "sentence": "I want my blanket",
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:05",
+  "t": 31385,
+  "isNew": false,
+  "phrase": [
+   "i",
+   "want",
+   "my"
+  ],
+  "target": "blanket",
+  "cands": [
+   "blanket",
+   "mom",
+   "dad",
+   "cookie",
+   "shoes",
+   "socks",
+   "milk",
+   "drink",
+   "ball",
+   "breakfast",
+   "car",
+   "tea",
+   "tractor",
+   "dog",
+   "bottle",
+   "dinner",
+   "thing",
+   "lunch",
+   "book",
+   "hat"
+  ],
+  "book": [
+   "mom",
+   "dad",
+   "cookie",
+   "shoes"
+  ],
+  "filter4": [
+   "blanket",
+   "mom",
+   "dad",
+   "cookie"
+  ],
+  "blind": [
+   "dinner",
+   "thing",
+   "drink",
+   "blanket"
+  ],
+  "informed": [
+   "blanket",
+   "mom",
+   "drink",
+   "shoes"
+  ],
+  "threePlusOne": [
+   "blanket",
+   "mom",
+   "drink",
+   "dinner"
+  ],
+  "ms": [
+   81,
+   125
+  ]
+ },
+ {
+  "sentence": "good night",
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:12",
+  "t": 31392,
+  "isNew": true,
+  "phrase": [],
+  "target": "good",
+  "cands": [
+   "i",
+   "good",
+   "where",
+   "can",
+   "go",
+   "no",
+   "and",
+   "it",
+   "that",
+   "what",
+   "you",
+   "a",
+   "the",
+   "yes",
+   "mom",
+   "there",
+   "this",
+   "he",
+   "look",
+   "in"
+  ],
+  "book": [
+   "i",
+   "no",
+   "and",
+   "it"
+  ],
+  "filter4": [
+   "i",
+   "good",
+   "where",
+   "can"
+  ],
+  "blind": [
+   "i",
+   "a",
+   "the",
+   "mom"
+  ],
+  "informed": [
+   "i",
+   "the",
+   "in",
+   "good"
+  ],
+  "threePlusOne": [
+   "i",
+   "the",
+   "in",
+   "a"
+  ],
+  "ms": [
+   75,
+   91
+  ]
+ },
+ {
+  "sentence": "good night",
+  "day": 21,
+  "dow": "Mon",
+  "at": "19:12",
+  "t": 31392,
+  "isNew": true,
+  "phrase": [
+   "good"
+  ],
+  "target": "night",
+  "cands": [
+   "morning",
+   "girl",
+   "boy",
+   "bye",
+   "afternoon",
+   "one",
+   "for",
+   "at",
+   "good",
+   "to",
+   "i",
+   "thing",
+   "mom",
+   "if",
+   "now",
+   "and",
+   "dog",
+   "that",
+   "cookie",
+   "board game"
+  ],
+  "book": [
+   "girl",
+   "boy",
+   "at",
+   "one"
+  ],
+  "filter4": [
+   "morning",
+   "girl",
+   "boy",
+   "bye"
+  ],
+  "blind": [
+   "now",
+   "i",
+   "bye",
+   "at"
+  ],
+  "informed": [
+   "morning",
+   "girl",
+   "boy",
+   "bye"
+  ],
+  "threePlusOne": [
+   "morning",
+   "girl",
+   "boy",
+   "now"
+  ],
+  "ms": [
+   82,
+   78
+  ]
+ }
+]
