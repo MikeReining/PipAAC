@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="but">
-<g transform="translate(50 50) scale(1.000) translate(-46.00 -53.70)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
-<path d="M12,30 L60,30 A20,20 0 0 1 60,70 L38,70" fill="none" stroke="#111111" stroke-width="20.0"/>
-<path d="M12,30 L60,30 A20,20 0 0 1 60,70 L38,70" fill="none" stroke="#f16b93" stroke-width="11"/>
-<polygon points="16.0,70.0 38.0,55.0 38.0,85.0" fill="#f16b93"/>
+<g transform="translate(50 50) scale(1.000) translate(-46.00 -54.70)" stroke="#111111" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt">
+<path d="M12,30 L60,30 A20,20 0 0 1 60,70 L38,70" fill="none" stroke="#111111" stroke-width="16" stroke-linecap="square"/>
+<polygon points="16,70 38,55 38,85" fill="#f16b93"/>
+<path d="M12,30 L60,30 A20,20 0 0 1 60,70 L35,70" fill="none" stroke="#f16b93" stroke-width="11" stroke-linecap="square"/>
 </g>
 </svg>

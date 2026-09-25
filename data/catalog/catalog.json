@@ -20195,7 +20195,7 @@
       "sense_id": "sns_0033",
       "key": "symbols/can.svg",
       "status": "approved",
-      "sha256": "22af04f4e4c8af8388b4d6159d4142c1272f4d4d5cfabe1a8d9d211da09e79ce"
+      "sha256": "c62f72094c8f3a6445d91d27929b3f022cd805d7ee98b737b09dbb831607f46d"
     },
     {
       "id": "img_0034",
@@ -20335,14 +20335,14 @@
       "sense_id": "sns_0053",
       "key": "symbols/to.svg",
       "status": "approved",
-      "sha256": "52c6c955d5b9af094e640aafe39f3fd9f3fa01267d7788d8de728e47c9b284c1"
+      "sha256": "f335e5e3439ff4904bbb9fc38f70f834b5177cdf9e4768a99170f72ec0ee6b95"
     },
     {
       "id": "img_0054",
       "sense_id": "sns_0054",
       "key": "symbols/for.svg",
       "status": "approved",
-      "sha256": "ff212c70b8e7dc5e4089b69c4d1c50cb9ad91c30bd25610d6062831727ffb07c"
+      "sha256": "1583018c646c6460582e034016c310dde447296170b13227df2e6914f9d2621f"
     },
     {
       "id": "img_0055",
@@ -20496,28 +20496,28 @@
       "sense_id": "sns_0076",
       "key": "symbols/and.svg",
       "status": "approved",
-      "sha256": "4e23d668a89237fb3a43a56cb244d343bfaafa2f5664c79772cedfcd54f8b92d"
+      "sha256": "de44b62ff65618d13d4e23d30cac503fc088617eb88c3557a6db06420bfbafec"
     },
     {
       "id": "img_0077",
       "sense_id": "sns_0077",
       "key": "symbols/but.svg",
       "status": "approved",
-      "sha256": "c1902ae6589dbec0a1947d99718e87dfc51213b6e508034df67b6182c54b8bfe"
+      "sha256": "6fd12412629e989241383188a24a71dab4274e9eafdc7a1323f5b9a876e699d3"
     },
     {
       "id": "img_0078",
       "sense_id": "sns_0078",
       "key": "symbols/or.svg",
       "status": "approved",
-      "sha256": "44dcdc95ad1ee08c869ea6421c3c3ea2b7e9f986fe358b99f16e0420f8ce7dcb"
+      "sha256": "953120639c2a0c79f9a93b880371336d6687234fbc48840b8682ed1a526dd96a"
     },
     {
       "id": "img_0079",
       "sense_id": "sns_0079",
       "key": "symbols/because.svg",
       "status": "approved",
-      "sha256": "6a40760509515eedd87dc1222cda81225f271a6ff8abd6ad9d25eb5cdee1c0d9"
+      "sha256": "1ca3dae2d36d43486d6ad731dbd6fc2754ebf9a4863b549054fd3ec2fb335b1c"
     },
     {
       "id": "img_0080",
@@ -20531,7 +20531,7 @@
       "sense_id": "sns_0081",
       "key": "symbols/at.svg",
       "status": "approved",
-      "sha256": "5a275469940de9728539ce7169505939cc26fb255756ee0945af0b8c489c47e3"
+      "sha256": "edf09a0e4a2e012daac368ab068e6a52414540e7a09a5fa27d75eb7ee0804b9c"
     },
     {
       "id": "img_0082",
@@ -21490,91 +21490,91 @@
       "sense_id": "sns_0607",
       "key": "symbols/is.svg",
       "status": "approved",
-      "sha256": "38487aec342070b0737ea5a5c064048af23ded2f3b1a6fcfa5d19325d139df29"
+      "sha256": "04d997a2a73e63f3fcd0ce70bf9d1bda20064a91e618551b0373e741ef67d8cf"
     },
     {
       "id": "img_0608",
       "sense_id": "sns_0608",
       "key": "symbols/are.svg",
       "status": "approved",
-      "sha256": "1df437c458d7ae5171f631be8e7485801923b16c7a64b64bb8b2748e4b7bc576"
+      "sha256": "0b044ed4668d5cc60547de0fd004e1495cf41ab2d99365b2f2bd135807476d58"
     },
     {
       "id": "img_0609",
       "sense_id": "sns_0609",
       "key": "symbols/am.svg",
       "status": "approved",
-      "sha256": "93eb11e6a34b0babb29560464e48d8f2b230a4530cfc19b25c9216d2f838d7ce"
+      "sha256": "5f0b6b3b3131025d560ef215884a8456ac8067811ca1cd4d71d706cbb3f694aa"
     },
     {
       "id": "img_0610",
       "sense_id": "sns_0610",
       "key": "symbols/was.svg",
       "status": "approved",
-      "sha256": "e675da5d5a93803ddb91267f5721beed5462c1beb1ca5d92be08b775748467da"
+      "sha256": "875c85076c22113fcc51a3be830f0f8a20357204df2f7234c6db2cf07d1a4e77"
     },
     {
       "id": "img_0611",
       "sense_id": "sns_0611",
       "key": "symbols/were.svg",
       "status": "approved",
-      "sha256": "da9932d56f690755257b95185b94526dd84d4029d62eb9c568e2e18387d5cd1d"
+      "sha256": "4364a921a64f9dfd009674a891519e9b6c717cd201f33ea3c60770fa0b10ce8e"
     },
     {
       "id": "img_0614",
       "sense_id": "sns_0614",
       "key": "symbols/will.svg",
       "status": "approved",
-      "sha256": "15a909a5b75df97bb3d4077dd2439f1b8da2e219a74440361e2bd2e4282d4049"
+      "sha256": "5ca9d3d5fbed4f17e9c344aea75307110e6ea93792323339956a7143dc8eb6c6"
     },
     {
       "id": "img_0615",
       "sense_id": "sns_0615",
       "key": "symbols/would.svg",
       "status": "approved",
-      "sha256": "c1ad0e60605d34f1a430cf1b4a8252f2311c872dc644d45f7d66f491f45545eb"
+      "sha256": "44db7bca8d0ca44f77035e56153430dc1bbd0524b9c13f1f08f80cc212d82859"
     },
     {
       "id": "img_0619",
       "sense_id": "sns_0619",
       "key": "symbols/a.svg",
       "status": "approved",
-      "sha256": "cfc3df203e2a84ca1e27eb8937605d80cb7020ece0182cdd50e27ad6c0bbbccc"
+      "sha256": "e0e752e1fdf7d97be01c53016f338ceb0d1b30bf61afd2cf5431de0d2909fd34"
     },
     {
       "id": "img_0620",
       "sense_id": "sns_0620",
       "key": "symbols/an.svg",
       "status": "approved",
-      "sha256": "7d1ee83d0b97205c8de2dbeb059f300edfec6cf919bbb002034382c9ab29f7f8"
+      "sha256": "f86b9f6b558911d06ba524eb4b2b9173552ad204aec04033651ffe0fa3b00f73"
     },
     {
       "id": "img_0621",
       "sense_id": "sns_0621",
       "key": "symbols/the.svg",
       "status": "approved",
-      "sha256": "b4fdb3fef65bc56254ce2b1d62938c3a37270c0cbf48772c356a35bd485338f6"
+      "sha256": "a0b5332eb3c6b9354389a42949b60f510756757ed9e3a9ff3ac3e873f642cc6d"
     },
     {
       "id": "img_0622",
       "sense_id": "sns_0622",
       "key": "symbols/of.svg",
       "status": "approved",
-      "sha256": "dd0e529213011cccc11de8772e5a6fa272cdb9881279ef00ff547a00a9d12c97"
+      "sha256": "dfdca6a97994ffd09ff95a44b0354b7355cf8c7e62c37e252750e53c13857bd2"
     },
     {
       "id": "img_0627",
       "sense_id": "sns_0627",
       "key": "symbols/so.svg",
       "status": "approved",
-      "sha256": "f9625ec7923cb6451e267c5fb7f0b429374014997d20a794471b454ce2b5533a"
+      "sha256": "2e63525dcb1ee1a3b22c4f95f1364e9ec8782f7b6a917dcff1f01acec4fc9ef4"
     },
     {
       "id": "img_0628",
       "sense_id": "sns_0628",
       "key": "symbols/if.svg",
       "status": "approved",
-      "sha256": "036e64601985b8e16a7b2db1454bf4dda7f5969b7414eb258ed75824ca90c690"
+      "sha256": "e86d3b02627b466d983ccec39565cb047ee96f1b3437584fd9061b2bd745ebde"
     }
   ],
   "voices": [

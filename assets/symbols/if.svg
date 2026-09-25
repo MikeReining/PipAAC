@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="if">
-<g transform="translate(50 50) scale(0.928) translate(-50.00 -41.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+<g transform="translate(50 50) scale(0.932) translate(-50.00 -41.90)" stroke="#111111" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt">
 <path d="M50,4 L50,18" fill="none"/>
-<polygon points="50.0,18.0 80.0,48.0 50.0,78.0 20.0,48.0" fill="#f16b93"/>
+<polygon points="50,18 80,48 50,78 20,48" fill="#f16b93"/>
 <path d="M20,48 L12,48 L12,66" fill="none"/>
 <path d="M80,48 L88,48 L88,66" fill="none"/>
-<polygon points="12.0,76.0 5.0,65.0 19.0,65.0" fill="#111111"/>
-<polygon points="88.0,76.0 81.0,65.0 95.0,65.0" fill="#111111"/>
+<polygon points="12,76 5,65 19,65" fill="#111111"/>
+<polygon points="88,76 81,65 95,65" fill="#111111"/>
 </g>
 </svg>

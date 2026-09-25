@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="will">
-<g transform="translate(50 50) scale(1.000) translate(-50.00 -50.00)" stroke="#111111" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
-<polygon points="10.0,24.0 50.0,50.0 10.0,76.0" fill="#31a44b"/>
-<polygon points="50.0,24.0 90.0,50.0 50.0,76.0" fill="#31a44b"/>
+<g transform="translate(50 50) scale(1.000) translate(-50.40 -50.00)" stroke="#111111" stroke-width="2.5" stroke-linejoin="miter" stroke-linecap="butt">
+<polygon points="10,24 50,50 10,76" fill="#31a44b"/>
+<polygon points="50,24 90,50 50,76" fill="#31a44b"/>
 </g>
 </svg>
