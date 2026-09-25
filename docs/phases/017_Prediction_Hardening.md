@@ -2144,7 +2144,15 @@ a shorter ending is a different grammatical situation ("i like my mom"
 must not inherit "my mom"→"is" — that evidence is sentence-START data,
 "my mom is tall"). No gate, no threshold, no minimum count — one spoken
 sentence is evidence. Fewer than 4 tiles or none is correct output; the
-longer the sentence, the emptier the honest bar.
+longer the sentence, the emptier the honest bar. One refinement landed
+same day: children words carry `share = n / seen[ending]` (seen counts
+every occurrence of the ending — followed by a word, a wall, or line
+end) and are cut below `KIDS_MIN_SHARE = 0.05` — measured on the
+held-out split, share is what separates good tiles from bad. Her words
+are never cut; a cut-emptied ending never falls back further. The
+resting cards (person/hello/food/help) at empty start are gone —
+sentence start uses the same rule ("i" at 7.2% of child line starts
+clears 5%, "no" at 4.9% does not).
 `phrase_count` derives from `learner_event_log`; spoken closeSentence
 trains it, cleared bars and detached picks do not — a sentence she
 ended adds no follower, so her stops never claim an ending and never
@@ -2165,9 +2173,13 @@ word is not a sentence start; only the real first word of a child line
 counts toward ctx "". The old split minted fake sentence starts.
 
 Proof: `scripts/prediction/bar_examples.mjs` + `bar_examples.json` —
-18 founder-reviewed rows, expected bars computed on the raw transcripts
-by a separate implementation; all 18 OK on the real `stripRanked`.
-Not wired into npm run check while the bar is still iterating.
+22 founder-reviewed rows, expected bars computed on the raw transcripts
+by a separate implementation; all 22 OK on the real `stripRanked`
+(sentence-start `i` only; "i like my mom and" -> dad, my; "i want to go
+to" keeps all four). `measure_bar.mjs` re-measured the cutoff on the
+held-out split: 5% -> 1.7 avg tiles, 24% empty bar, 24.2% next-word-on-
+bar, 14.4% shown-right — within a point of the reference run. Neither
+script is wired into npm run check while the bar iterates.
 
 20 real bar rows (`real_rows_v2.mjs` — the app's own call path, real
 catalog + shipped table, 20 days of Ava history): 17/20 strip hits, all
