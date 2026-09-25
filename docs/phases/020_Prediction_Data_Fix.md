@@ -1,7 +1,9 @@
 # 020 — Prediction Data Fix: casual speech in CHILDES
 
-**Status:** ready to execute (opened 2026-09-25). One slice. Do this before
-`021_Grammar_Help.md`, which builds its form table from the same text.
+**Status:** done (2026-09-25). `wanna`/`gonna`/`hafta`-class reductions now
+expand to their standard forms at `lemmatize` (`CASUAL` in `common.mjs`),
+consuming the transcriber's `[: ...]` echo when present. Table rebuilt as
+`phrase-table.2026-09-25.1`. Held-out on-bar at 5%: 24.2% → 25.4%.
 **Truth owner:** what children actually said in CHILDES, not our converter's
 reading of it.
 **Why this phase exists:** founder test, 2026-09-25: after *He have* the bar

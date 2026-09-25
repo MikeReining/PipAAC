@@ -43,8 +43,10 @@ const IRREG = {
   ran: 'run', fell: 'fall', sat: 'sit', broke: 'break',
   did: 'do',
   had: 'have', has: 'have', "'ve": 'have', "'d": 'have', "'ll": 'will',
-  would: 'will', could: 'can', should: 'will', wanna: 'want',
-  gonna: 'go', gimme: 'give',
+  would: 'will', could: 'can', should: 'will',
+  // "used" backstrips to the pronoun "us" (i used to -> i us to) —
+  // "use" is not a lemma, so the honest answer is a wall.
+  used: null,
   "n't": 'not', "'m": 'am', "'re": 'are', "'s": 'is',
   cannot: 'can', "y'all": 'you', "ma'am": 'mom',
   mommy: 'mom', momma: 'mom', mama: 'mom', mum: 'mom', mummy: 'mom',
@@ -125,9 +127,62 @@ function expandContraction(t) {
   return [t];
 }
 
+// CHILDES transcribers write casual speech the way it sounds and mark
+// the standard form as `wanna [: want to]`; prep.py's tokenizer leaks
+// that standard form as the words right after the reduction. So each
+// entry does double duty: expand an unmarked reduction ourselves, and
+// when the transcriber's standard form echoes right after, consume the
+// echo so `gonna going to` counts once, not twice. These are spellings
+// of speech, not grammar rules — they only run at table-build time.
+export const CASUAL = {
+  gonna: ['going', 'to'],
+  wanna: ['want', 'to'],
+  hafta: ['have', 'to'],
+  hasta: ['has', 'to'],
+  hadta: ['had', 'to'],
+  gotta: ['got', 'to'],
+  needta: ['need', 'to'],
+  sposta: ['supposed', 'to'],
+  oughta: ['ought', 'to'],
+  gimme: ['give', 'me'],
+  lemme: ['let', 'me'],
+  dunno: ["don't", 'know'],
+  lookit: ['look', 'at'],
+  // further spelled-out reductions from the null-token census (020)
+  kinda: ['kind', 'of'],
+  sorta: ['sort', 'of'],
+  outta: ['out', 'of'],
+  lotta: ['lot', 'of'],
+  cmon: ['come', 'on'],
+  tryna: ['trying', 'to'],
+  coulda: ['could', 'have'],
+  shoulda: ['should', 'have'],
+  woulda: ['would', 'have'],
+  musta: ['must', 'have'],
+  wanta: ['want', 'to'],
+  gotcha: ['got', 'you'],
+  betcha: ['bet', 'you'],
+  didja: ['did', 'you'],
+  doncha: ["don't", 'you'],
+};
+
 export function lemmatize(words) {
   const lw = [];
-  for (const w of words) lw.push(...expandContraction(w.toLowerCase()));
+  for (let wi = 0; wi < words.length; wi++) {
+    const w = words[wi].toLowerCase();
+    const exp = CASUAL[w];
+    if (exp) {
+      lw.push(...exp);
+      // consume the transcriber's standard-form echo — either the
+      // expanded words (`gonna [: going to]`) or another reduction that
+      // expands the same way (`wanta [: wanna]`).
+      const echo = words.slice(wi + 1, wi + 1 + exp.length).map((x) => x.toLowerCase());
+      if (echo.join(' ') === exp.join(' ')) wi += exp.length;
+      else if (CASUAL[echo[0]]?.join(' ') === exp.join(' ')) wi += 1;
+      continue;
+    }
+    lw.push(...expandContraction(w));
+  }
   const out = [];
   let i = 0;
   while (i < lw.length) {
