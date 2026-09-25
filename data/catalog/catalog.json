@@ -2334,7 +2334,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0245",
       "negation": 0
     },
     {
@@ -2343,7 +2343,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0246",
       "negation": 0
     },
     {
@@ -2352,7 +2352,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0247",
       "negation": 0
     },
     {
@@ -2361,7 +2361,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0248",
       "negation": 0
     },
     {
@@ -2370,7 +2370,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0249",
       "negation": 0
     },
     {
@@ -2379,7 +2379,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0250",
       "negation": 0
     },
     {
@@ -2388,7 +2388,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0251",
       "negation": 0
     },
     {
@@ -2397,7 +2397,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0252",
       "negation": 0
     },
     {
@@ -2406,7 +2406,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0253",
       "negation": 0
     },
     {
@@ -2415,7 +2415,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0254",
       "negation": 0
     },
     {
@@ -26298,6 +26298,76 @@
       "key": "symbols/count.png",
       "status": "approved",
       "sha256": "8123c188d65316d6d0dba08fc3322327cbb0dddeba45cd4866b04a5fd3b70c6b"
+    },
+    {
+      "id": "img_0245",
+      "sense_id": "sns_0245",
+      "key": "symbols/share.png",
+      "status": "approved",
+      "sha256": "7d5f0005ef6f6e46caf2f82f5376d45065ce4d6f9126545cfdbeeec619d7935e"
+    },
+    {
+      "id": "img_0246",
+      "sense_id": "sns_0246",
+      "key": "symbols/clean_up.png",
+      "status": "approved",
+      "sha256": "b32280ebb43672287b0026d9ee5c4a001b14e9a833396cabe34d72791a4e02a0"
+    },
+    {
+      "id": "img_0247",
+      "sense_id": "sns_0247",
+      "key": "symbols/wash.png",
+      "status": "approved",
+      "sha256": "9e83bd9788504810e792d6b584419694d8103a5d508aa309038a8e8aa6684ef5"
+    },
+    {
+      "id": "img_0248",
+      "sense_id": "sns_0248",
+      "key": "symbols/wipe.png",
+      "status": "approved",
+      "sha256": "7608d523126a0403224756c6053daf71179aa44d95f88c68e74428925f374543"
+    },
+    {
+      "id": "img_0249",
+      "sense_id": "sns_0249",
+      "key": "symbols/cook.png",
+      "status": "approved",
+      "sha256": "7f45d86261ba2e0f5718b3b835dce11f38bea36dd46f43767e0604221c505b6f"
+    },
+    {
+      "id": "img_0250",
+      "sense_id": "sns_0250",
+      "key": "symbols/build.png",
+      "status": "approved",
+      "sha256": "05aa4bd6998331381943094ed2f559fd0b64b56d75ff2dd1826cd2e421fc18aa"
+    },
+    {
+      "id": "img_0251",
+      "sense_id": "sns_0251",
+      "key": "symbols/fix.png",
+      "status": "approved",
+      "sha256": "82449ac6120fb29ef69f966f52117480b60e1be4bddcfda004a5a384c89a4d32"
+    },
+    {
+      "id": "img_0252",
+      "sense_id": "sns_0252",
+      "key": "symbols/hold.png",
+      "status": "approved",
+      "sha256": "1baffd515767fef083bfb98fd8bf37f0ae10fea023737c293187fcf8c4aaa440"
+    },
+    {
+      "id": "img_0253",
+      "sense_id": "sns_0253",
+      "key": "symbols/touch.png",
+      "status": "approved",
+      "sha256": "7244da3539f9ef23ebc825d5adaff4aa4b71dc7e5b703f04a7c9d28a5a1f9e41"
+    },
+    {
+      "id": "img_0254",
+      "sense_id": "sns_0254",
+      "key": "symbols/know.png",
+      "status": "approved",
+      "sha256": "08e023f4d9f69009db7bfff10ba4f0affc08fdcca755154c79aa1b9dd4c4f04a"
     },
     {
       "id": "img_0267",
