@@ -31,20 +31,32 @@ for (const l of cat.labels) {
 }
 
 const table = new Map(); // ctx key (space-joined sense ids) -> Map(next sense id -> n)
-// Backoff contexts are SUFFIXES of an utterance's prefix, capped at
-// CTX_MAX; the empty ctx counts utterance-start items only.
+const seen = new Map();  // ctx key -> every time that ending occurred,
+                         // whatever followed (a word, a wall, line end)
+const addSeen = (ctx) => seen.set(ctx, (seen.get(ctx) ?? 0) + 1);
 function put(ctx, next) {
   if (!table.has(ctx)) table.set(ctx, new Map());
   const m = table.get(ctx);
   m.set(next, (m.get(next) ?? 0) + 1);
 }
 // Emit all ending->next rows for one word following `run` — the words
-// since the last wall, longest ending first never matters here: every
-// suffix of length 1..CTX_MAX is a stored context.
+// since the last wall: every suffix of length 1..CTX_MAX is a stored
+// context. `seen` counts the occurrence too, so a candidate's share is
+// n / seen — how often the ending truly led to it, line ends included.
 function emit(run, next, lineStart) {
-  if (lineStart) put('', next); // only the real first word of a line
+  if (lineStart) put('', next); // real first word only
   for (let len = 1; len <= Math.min(run.length, CTX_MAX); len++) {
-    put(run.slice(-len).join(' '), next);
+    const ctx = run.slice(-len).join(' ');
+    put(ctx, next);
+    addSeen(ctx);
+  }
+}
+// A run ended — wall or end of line. Its endings still occurred; the
+// children "said" them and followed with nothing we can map. Without
+// this, shares are inflated ("like my mom" -> "and" is not 100%).
+function closeRun(run) {
+  for (let len = 1; len <= Math.min(run.length, CTX_MAX); len++) {
+    addSeen(run.slice(-len).join(' '));
   }
 }
 
@@ -59,34 +71,46 @@ for (const i of train) {
   for (const [spk, words] of trs[i]) {
     if (!C.CHILD_TAGS.has(spk)) continue;
     utts++;
+    // The empty ending is "said" at EVERY line start — even when the
+    // first word is a wall (the child said something we cannot map).
+    // Only a catalog first word earns a '' -> word row, but the
+    // occurrence still counts, same rule as non-empty endings.
+    addSeen('');
     let run = [];        // mapped senses since the last wall
     let lineStart = true; // still at the real first word of the line
     for (const lem of C.lemmatize(words)) {
       const sid = lem === null ? null : lemmaSense.get(lem);
       if (sid === undefined) unmapped++;
-      if (sid == null) { run = []; lineStart = false; continue; }
+      if (sid == null) { closeRun(run); run = []; lineStart = false; continue; }
       emit(run, sid, lineStart);
       run.push(sid);
       lineStart = false;
     }
+    closeRun(run);
   }
 }
 
 const contexts = {};
+const seenOut = {};
 let kept = 0, dropped = 0;
 for (const [ctx, m] of table) {
   const row = {};
   for (const [next, n] of m) {
     if (n >= MIN_COUNT) { row[next] = n; kept++; } else dropped++;
   }
-  if (Object.keys(row).length) contexts[ctx] = row;
+  // seen ships only for contexts that survive the prune — a stored row
+  // is never one child's lone line (R11).
+  if (Object.keys(row).length) {
+    contexts[ctx] = row;
+    seenOut[ctx] = seen.get(ctx) ?? 0;
+  }
 }
 
 writeFileSync(OUT, JSON.stringify({
-  version: 'phrase-table.2026-09-24',
+  version: 'phrase-table.2026-09-24.2',
   source: 'CHILDES train split (child utterances only), lemmatized to catalog senses',
   ctxMax: CTX_MAX, minCount: MIN_COUNT,
-  contexts,
+  contexts, seen: seenOut,
 }, null, 1));
 const size = (await import('node:fs')).statSync(OUT).size;
 console.log(`${utts} utterances -> ${Object.keys(contexts).length} contexts, ${kept} rows kept (${dropped} below ${MIN_COUNT}), ${unmapped} unmapped lemma items, ${(size / 1e6).toFixed(2)} MB -> ${path.relative(C.REPO, OUT)}`);
