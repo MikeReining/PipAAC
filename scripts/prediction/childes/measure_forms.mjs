@@ -10,7 +10,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import * as C from './common.mjs';
-import { pickForm } from '../../../public/shared/forms.mjs';
+import { pickForm, EOS } from '../../../public/shared/forms.mjs';
 
 const TABLE = JSON.parse(readFileSync(path.join(C.REPO, 'data/prediction/form_table.en.json'), 'utf8'));
 const FORMS = JSON.parse(readFileSync(path.join(C.REPO, 'data/forms/en.json'), 'utf8'));
@@ -43,6 +43,15 @@ const DONT_SENSE = senseOf.get("don't");
 const PRO_SENSES = new Set(['he', 'she', 'we', 'they'].map((w) => senseOf.get(w)));
 const A_SENSE = TABLE.aSense;
 const BY_USE = new Set(Object.keys(FORMS.verbUse).map((w) => senseOf.get(w)));
+// whose/how-many (022): senses carrying a possessive or plural row.
+const POSS_PRO = new Set(['he', 'she', 'we', 'they', 'you'].map((w) => senseOf.get(w)));
+const MY_SENSE = senseOf.get('my');
+const POSS_NOUN = new Set();
+const PL_NOUN = new Set();
+for (const f of FORMS.forms) {
+  if (f.features === 'N;POSS') POSS_NOUN.add(senseOf.get(f.lemma));
+  if (f.features === 'N;PL') PL_NOUN.add(senseOf.get(f.lemma));
+}
 
 const pct = (n, d) => (d ? `${(100 * n / d).toFixed(1)}%` : '  -');
 const block = (name, right, today, n) =>
@@ -59,6 +68,11 @@ const groups = {
   aAdult: stats(), aChild: stats(),
   byUseAdult: stats(), byUseChild: stats(),
   dontAdult: stats(), dontChild: stats(),
+  whoseProAdult: stats(), whoseProChild: stats(),
+  whoseNounAdult: stats(), whoseNounChild: stats(),
+  whoseEosAdult: stats(), whoseEosChild: stats(),
+  myEosAdult: stats(), myEosChild: stats(),
+  plAdult: stats(), plChild: stats(),
 };
 const verbsByForm = new Map();   // actual feat -> bucket
 const verbsByCtxLen = new Map(); // ctx words 1..6+ -> bucket
@@ -75,7 +89,10 @@ for (const ti of test) {
     for (let i = 1; i < toks.length; i++) {
       const t = toks[i];
       if (t.lemma === null || !formLemmas.has(t.lemma)) continue;
-      const feat = classOf.get(`${t.lemma}|${firstWord(t.surf)}`);
+      // 's surfaces attest N;POSS whatever the spelling (mommy's) —
+      // only on a sense that carries the row
+      const feat = t.poss && POSS_NOUN.has(ids[i]) ? 'N;POSS'
+        : classOf.get(`${t.lemma}|${firstWord(t.surf)}`);
       if (!feat) continue; // past forms don't take part
       const sense = ids[i];
       if (!sense) continue;
@@ -87,7 +104,10 @@ for (const ti of test) {
         if (ids[k] === null) break;
         ctx.unshift(ids[k]);
       }
-      const next = i + 1 < ids.length ? ids[i + 1] : null;
+      // line-final positions get the Speak sentinel — the app re-picks
+      // the last word with it ("it is not my" + Speak -> mine)
+      const atEnd = i + 1 === ids.length;
+      const next = atEnd ? EOS : ids[i + 1];
       const pick = pickForm(TABLE, ctx, sense, next);
       const right = pick === feat;
       const todayRight = feat === 'BASE';
@@ -105,6 +125,26 @@ for (const ti of test) {
       if (sense === DONT_SENSE) acc(child ? groups.dontChild : groups.dontAdult, right, todayRight);
       if (PRO_SENSES.has(sense)) acc(child ? groups.proChild : groups.proAdult, right, todayRight);
       if (sense === A_SENSE) acc(child ? groups.aChild : groups.aAdult, right, todayRight);
+      // whose (022): pronoun/'s-noun forms decided by what follows —
+      // a noun pulls the attributive, the line end pulls the absolute.
+      const nextIsNoun = !atEnd && toks[i + 1].lemma !== null
+        && TABLE.nounSenses.includes(ids[i + 1]);
+      if (nextIsNoun && POSS_PRO.has(sense)) {
+        acc(child ? groups.whoseProChild : groups.whoseProAdult, right, todayRight);
+      }
+      if (nextIsNoun && POSS_NOUN.has(sense)) {
+        acc(child ? groups.whoseNounChild : groups.whoseNounAdult, right, todayRight);
+      }
+      if (atEnd && POSS_PRO.has(sense)) {
+        acc(child ? groups.whoseEosChild : groups.whoseEosAdult, right, todayRight);
+      }
+      if (atEnd && sense === MY_SENSE) {
+        acc(child ? groups.myEosChild : groups.myEosAdult, right, todayRight);
+      }
+      // how many (022): any position where a plural-bearing noun was said
+      if (PL_NOUN.has(sense)) {
+        acc(child ? groups.plChild : groups.plAdult, right, todayRight);
+      }
       // decision-4 accounting: when the next-word table is what answered
       if (next && VERBS.has(sense)) {
         const without = pickForm(TABLE, ctx, sense, null);
@@ -135,6 +175,16 @@ for (const [name, g] of [
   ['a vs an (next word), children', groups.aChild],
   ["don't/doesn't, adults", groups.dontAdult],
   ["don't/doesn't, children", groups.dontChild],
+  ['whose: pronoun + noun (his/her/our/their/your), adults', groups.whoseProAdult],
+  ['whose: pronoun + noun, children', groups.whoseProChild],
+  ["whose: name/people noun + noun (X's), adults", groups.whoseNounAdult],
+  ["whose: name/people noun + noun, children", groups.whoseNounChild],
+  ['whose at EOS: he/she/we/they/you, adults', groups.whoseEosAdult],
+  ['whose at EOS: he/she/we/they/you, children', groups.whoseEosChild],
+  ['whose at EOS: my (mine), adults', groups.myEosAdult],
+  ['whose at EOS: my (mine), children', groups.myEosChild],
+  ['how many: plural-bearing nouns, adults', groups.plAdult],
+  ['how many: plural-bearing nouns, children', groups.plChild],
 ]) block(name, g.right, g.today, g.n);
 
 console.log('\n(b) verbs by actual form');

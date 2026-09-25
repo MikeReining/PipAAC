@@ -74,10 +74,43 @@ tapped it. Nothing is guessed.
    `build_form_table.mjs` with: (people word, next word) → possessive counts
    (including "end of sentence" for *mine*); (words before, noun) → singular
    / plural counts.
+   **Done (slice 1+2 commit).** What landed:
+   - `common.mjs`: `'s` on a noun stem is disambiguated by the next word
+     (noun-next or line-end → `poss` token on the stem lemma; else → `is`).
+     MERGES gained his/our/their/your/mine/hers/ours/theirs and the
+     feet/men/women irregulars.
+   - `en.json`: 498 forms — +4 PRO;POSS (his/our/their/your), +5
+     PRO;POSS;ABS (mine/hers/ours/theirs/yours), 74 measured N;POSS,
+     224 measured N;PL (spellings incl. babies, feet, sheeps).
+   - `form_table.en.json` (.2): `possNext` rows keyed `sense|N|EOS|X`
+     plus per-word `sense|x|next` rows for non-noun nexts ("your turn").
+     Multiword tiles with a possessive head still count ("your turn"
+     shows 'your' before 'turn').
+   - `pickForm`: whose-picks after a/an, before next-verb — POSS-class
+     only at EOS (a BASE/ACC top defers to context endings so "like him"
+     still works).
+   - **catalog.json NOT rebuilt yet:** 300 new surfaces need clips and
+     the strict build guard (rightly) refuses unclipped utt_f rows —
+     slice 3's founder-approved generation unblocks it. `utt_f`/`lbl_f`
+     ids are now stable by text (adding rows no longer renumbers clips).
+   - **Data findings to flag:** (a) `you + turn` stays *you turn* —
+     corpus: "you turn (around)" 1306 vs "your turn" 825 — the doc's
+     example row does not hold up. (b) `two sheep`, `some milk`,
+     `a foot` all stay singular — countability by evidence works.
 2. **Measure first:** extend `measure_forms.mjs` with one block per item
    above, "today" vs "data picks", adult and child lines separately. Stop
    and report any block that is right less often than today. That item
    doesn't ship.
+   **Done — every block beats today, none stopped:**
+   ```
+   whose pronoun + noun    today  3.9/8.1%   data 93.4/87.4%
+   whose X's noun + noun   today 59.6/73.8%  data 79.0/80.6%
+   whose at EOS (pronouns) today 76.4/53.5%  data 86.6/73.9%
+   whose at EOS: my->mine  today 24.4/26.7%  data 75.6/73.0%
+   how many (plurals)      today 81.2/84.6%  data 87.6/88.0%
+   ```
+   (adults/children). Existing blocks unchanged-to-slightly-better
+   (is-sense 94.8/96.0, pronouns 89.9/86.7, decision-4 96.7%).
 3. **Clips.** WorkbookBench first. Plurals are the big one (a few hundred
    nouns). Print the missing list and count; the founder OKs the generation
    run before it goes.
