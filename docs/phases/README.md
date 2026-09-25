@@ -39,6 +39,7 @@ Executing phases only. Each row names the **next** slice.
 | [020 — Prediction data fix](020_Prediction_Data_Fix.md) | Done 2026-09-25 (`b57f600`); follow-up in 020B |
 | [020B — Converter fixes](020B_Converter_Fixes.md) | The one slice: CHAT markup in `prep.py`, -ies bug, no piece-to-tile mapping, no endings onto small words; rebuild |
 | [021 — Grammar help](021_Grammar_Help.md) | After 020B: slice 1 — forms in the catalog (verbs, have/has, don't/doesn't, am/is/are/be, he/him…, a/an) |
+| [022 — Whose and how many](022_Whose_And_How_Many.md) | Queued after 021: his / our / their / your and *Leo's* by the next word, *mine* at Speak, plurals after two / some / all |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

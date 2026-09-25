@@ -37,5 +37,6 @@ durable ruling.
 | Doc | State | Why |
 | --- | --- | --- |
 | [Idea — The fuller sentence after Speak](Fuller_Sentence_After_Speak.md) | Never decided (founder idea, 2026-09-24) | Founder wants to return to it; not now. |
+| [Idea — Time buttons](Time_Buttons.md) | Never decided (founder idea, 2026-09-25) | One tap switches a sentence to past (or future); after 021 and 022. |
 | [008 — Partner Listening](008_Partner_Listening.md) | Held (founder, 2026-09-24) | No listening for prediction; see its HOLD banner. |
 | [012 — Playground (Canvas Mode)](012_Playground_Canvas_Mode.md) | Held (founder, 2026-09-22) | Weak clinical fit as written; see its HOLD banner for what would unhold it. |
