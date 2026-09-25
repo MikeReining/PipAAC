@@ -36,8 +36,9 @@ Executing phases only. Each row names the **next** slice.
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Items 1–4 and 6 done; step-28 items 1–4 built (WPM quartiles, per-path timings, Jev-timing experiment, wrong-pick count — `predictionReport.speed`, whitelisted payload fields). Holdback **deferred — not authorized** (founder, 2026-09-24); step-28 item 6 (calibration) waits on real totals; steps 15 and 18 parked. Open: step 26 flywheel (decided, unbuilt) |
 | [018 — Core board v2 and groups](018_Core_Board_V2_And_Groups.md) | All six decided slices done — v2 `grid60` + Purple, `grid90`/`grid15` re-laid, setup's people seated, groups re-ordered + doors + glow + banded layout, kind-colored personal words, home-board edit (📊 counts + placement sheet). Open items only |
 | [019 — User-testing readiness](019_User_Testing_Readiness.md) | Local board paints and speaks, including a board saved before the v2 map. Next: deploy (stop/ask), then the first-open people question |
-| [020 — Prediction data fix](020_Prediction_Data_Fix.md) | The one slice: expand CHILDES casual speech (wanna, gonna, hasta…), rebuild the phrase table |
-| [021 — Grammar help](021_Grammar_Help.md) | After 020: slice 1 — present-tense forms in the catalog |
+| [020 — Prediction data fix](020_Prediction_Data_Fix.md) | Done 2026-09-25 (`b57f600`); follow-up in 020B |
+| [020B — Converter fixes](020B_Converter_Fixes.md) | The one slice: CHAT markup in `prep.py`, -ies bug, no piece-to-tile mapping, no endings onto small words; rebuild |
+| [021 — Grammar help](021_Grammar_Help.md) | After 020B: slice 1 — forms in the catalog (verbs, have/has, don't/doesn't, am/is/are/be, he/him…, a/an) |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
