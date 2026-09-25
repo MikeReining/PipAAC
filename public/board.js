@@ -9,6 +9,7 @@ import {
   detachEvent,
   EVIDENCE_GATE,
   fillChosen,
+  groupRanked,
   keyboardContinuations,
   logImpression,
   likelyGroups,
@@ -243,7 +244,7 @@ let lastImpressionKey = null;
 /* The open strip moment — one row per moment; the painter stamps
  * shown_final on it (017-5). */
 let openImpressionId = null;
-function maybeImpression(candidates, shown, { mode = "picture", cap = null } = {}) {
+function maybeImpression(candidates, shown, { mode = "picture", cap = null, gate = EVIDENCE_GATE } = {}) {
   if (sentenceId === null) return false;
   const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
   const key = `${sentenceId}:${sentencePicks}:${shownKeys.join()}`;
@@ -252,7 +253,7 @@ function maybeImpression(candidates, shown, { mode = "picture", cap = null } = {
   openImpressionId = logImpression(db, {
     sentenceId, position: sentencePicks,
     candidates, shown: shownKeys,
-    mode, gate: EVIDENCE_GATE, shortlistCap: cap,
+    mode, gate, shortlistCap: cap,
   });
   return true;
 }
@@ -658,15 +659,20 @@ async function renderStrip() {
     // words included — the grid is hidden so board words belong in the
     // bar regardless of board cells (R21).
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
+    // Open group: the bar narrows to that group's used words — her
+    // history only, no children table (group mode, 2026-09-24).
+    const groupId = view === "group" ? groupsUi.getGroupKey() : null;
     const ranked = kbUi.isOpen() ? null
+      : groupId ? groupRanked(db, sents, groupId, Date.now())
       : stripRanked(db, sents, Date.now(), locale, phrases);
     const items = kbUi.isOpen()
       ? keyboardContinuations(db, sents, locale, Date.now(), phrases)
       : ranked.shown;
-    if (sentence.length === 0 && !items.length) {
+    if (sentence.length === 0 && !items.length && !groupId) {
       // Nothing has evidence at position 0 — the resting cards still
       // fill the bar (person, hello, food, help). Once her history or
       // the children table supports an opener, the offer wins instead.
+      // Group mode never fills: a group with no used words stays empty.
       cards = (await idleStarters()).slice(0, cap);
     } else {
       // Position-0 offers are real moments too (017-21): open the
@@ -675,7 +681,8 @@ async function renderStrip() {
       if (ranked) ensureSentence();
       maybeImpression(
         ranked?.ranked ?? items.map((c) => ({ kind: c.kind, id: c.id })),
-        items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap },
+        items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
+          gate: groupId ? { group: groupId } : EVIDENCE_GATE },
       );
       cards = stripCards(items);
     }
@@ -1322,7 +1329,10 @@ const kbUi = mountKeyboard({
   showGroupHint, applyLikely, fitLabels, senseById,
   getHighlightNext: () => highlightNext,
   getView: () => view,
-  setViewName: (v) => { view = v; },
+  // Every view change repaints the bar: opening a group is intent — the
+  // group bar must appear on that tap, before anything inside is picked;
+  // leaving returns the main rule.
+  setViewName: (v) => { view = v; renderStrip(); },
   renderGroupIndex: () => groupsUi.renderGroupIndex(),
   renderGroupPage: () => groupsUi.renderGroupPage(),
   renderEditor: () => editorUi.renderEditor(),

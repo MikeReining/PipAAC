@@ -164,6 +164,10 @@ const minuteOfDay = (atMs, tzOffsetMin) => {
   return (m + 1440) % 1440;
 };
 
+/** Clock distance between two minutes of day — the window wraps
+ *  midnight (23:59 and 00:01 are two minutes apart, not 1438). */
+const minuteDist = (a, b) => Math.min(Math.abs(a - b), 1440 - Math.abs(a - b));
+
 /** Her sentences that started within HER_NOW_MIN of `nowMin`: built
  *  live per paint — the window is small, so the set of sentences and
  *  their member events is a short list. Returns Map ctx -> rows. */
@@ -174,7 +178,7 @@ function herNowTable(db, nowMin, tzNow) {
      WHERE e.position = 0 AND s.end_kind = 'spoken'`,
   ).all();
   const ids = starts
-    .filter((r) => Math.abs(minuteOfDay(r.at, r.tz ?? tzNow) - nowMin) <= HER_NOW_MIN)
+    .filter((r) => minuteDist(minuteOfDay(r.at, r.tz ?? tzNow), nowMin) <= HER_NOW_MIN)
     .map((r) => r.sid);
   const table = new Map();
   if (!ids.length) return table;
@@ -354,6 +358,88 @@ export function likelyGroups(db, sentence, now, locale, kidsTable = null) {
   );
 }
 
+/**
+ * The group bar: opening a group is intent — the bar narrows to that
+ * group's members she has tapped at least once, ranked by her history
+ * ONLY (children in general never enter group mode). Order, always by
+ * frequency inside each tier:
+ *   1. what she tapped next after this phrase (longest ending first)
+ *      from her sentences inside the 90-minute window
+ *   2. the same from all her sentences
+ *   3. her raw tap counts of those words inside the window
+ *   4. her raw tap counts of those words, any time
+ * Up to STRIP_CAP: one used word paints one tile, none paints none.
+ */
+export function groupRanked(db, sentence, groupId, now = Date.now()) {
+  ensurePhraseHistory(db);
+  const members = new Set(
+    db.prepare(
+      "SELECT item_kind AS kind, item_id AS id FROM group_cell WHERE group_id = ?",
+    ).all(groupId).map(itemKey));
+  if (!members.size) return { ranked: [], shown: [] };
+  const masked = maskedSenses(db);
+  const used = new Set(
+    db.prepare(
+      "SELECT DISTINCT item_kind || ':' || item_id AS k FROM learner_event_log",
+    ).all().map((r) => r.k));
+  const offerable = (r) => {
+    const k = itemKey(r);
+    return members.has(k) && used.has(k)
+      && !(r.kind === "sense" && masked.has(r.id));
+  };
+
+  const phrase = sentence.map((it) => ({ kind: it.kind, id: it.id }));
+  const tzNow = -new Date(now).getTimezoneOffset();
+  const nowMin = minuteOfDay(now, tzNow);
+  const endings = endingsOf(phrase);
+
+  const nowTbl = herNowTable(db, nowMin, tzNow);
+  const allTbl = herAllRows(db, endings);
+  const phraseNow = lookupRanked(
+    (e) => nowTbl.get(ctxKey(e))?.filter(offerable), phrase);
+  const phraseAll = lookupRanked(
+    (e) => allTbl.get(ctxKey(e))?.filter(offerable), phrase);
+
+  const freqNow = new Map(), freqAll = new Map();
+  for (const e of db.prepare(
+    "SELECT item_kind AS kind, item_id AS id, selected_at AS at, tz_offset_min AS tz FROM learner_event_log",
+  ).all()) {
+    const it = { kind: e.kind, id: e.id };
+    if (!offerable(it)) continue;
+    const k = itemKey(it);
+    freqAll.set(k, (freqAll.get(k) ?? 0) + 1);
+    if (minuteDist(minuteOfDay(e.at, e.tz ?? tzNow), nowMin) <= HER_NOW_MIN) {
+      freqNow.set(k, (freqNow.get(k) ?? 0) + 1);
+    }
+  }
+  const freqRanked = (m) => [...m.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([k, n]) => {
+      const [kind, id] = k.split(":");
+      return { kind, id, n };
+    });
+
+  const merged = [];
+  const seen = new Set();
+  const mark = (rows, src) => {
+    for (const r of rows) {
+      const k = itemKey(r);
+      if (seen.has(k)) continue;
+      seen.add(k);
+      merged.push({ kind: r.kind, id: r.id, src, her: r.n });
+    }
+  };
+  mark(phraseNow, "now");
+  mark(phraseAll, "all");
+  mark(freqRanked(freqNow), "freqNow");
+  mark(freqRanked(freqAll), "freq");
+
+  return {
+    ranked: merged,
+    shown: merged.slice(0, STRIP_CAP).map(({ kind, id }) => ({ kind, id })),
+  };
+}
+
 /* --- The instrument (§ 5.7): strip_impression ------------------------ */
 
 /**
@@ -401,9 +487,13 @@ export function replayImpression(row) {
   if (row.mode === "keyboard") {
     return { ok: false, diffs: ["keyboard row — continuations are metrics only"] };
   }
+  const gj = row.gate ? JSON.parse(row.gate) : null;
+  if (gj?.group) {
+    return { ok: false, diffs: [`group bar row (${gj.group}) — ranked under the group rule`] };
+  }
   const diffs = [];
   const cands = JSON.parse(row.candidates);
-  const g = { ...EVIDENCE_GATE, ...(row.gate ? JSON.parse(row.gate) : {}) };
+  const g = { ...EVIDENCE_GATE, ...(gj ?? {}) };
   const shown = cands
     .filter((c) => (c.her ?? 0) >= g.herMin
       || (c.kid && c.kid.share >= g.kidShare && c.kid.total >= g.kidMin))
