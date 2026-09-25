@@ -2124,3 +2124,52 @@ Step 19 records the one `--final` eval run.
 | Speed estimate | Current strip vs none, simulated children, finding + tapping only (no thinking time) | — | +35–37% WPM at fast, middle, and slow settings (taps −28–29%) | — | — | scratch, 2026-09-23 |
 | 23/24 real children | CHILDES held-out transcripts, later words top 4: adult AAC → legal child book → CHILDES book (+partner on legal) | — | ~age 3: 26.8% → 37.0% (38.2%) → 49.2% | — | — | scratch, 2026-09-23 |
 | 29 real children | CHILDES held-out, shipped `opening_book.en.json`: all-words top 4; 'no' words with the slot on vs off | — | all: 28.9% / 36.0% / 36.4% (lt2/mid/gt35); 'no': 87.3% vs 86.8%, 64.7% vs 62.9%, 59.4% vs 55.3% | — | — | `score_book.mjs`, 2026-09-24 |
+
+# Smart bar v2 (2026-09-24) — the phase lands differently
+
+Handoff: "Smart bar v2: phrase history, no JEV" (founder). The learned
+model, its weights, the opening book, and the whole JEV path are REMOVED
+— everything above this section that describes them is the archive, not
+the plan. One rule remains: rank next items by relative frequency of
+what came next after the entire phrase, merged her-now (±90 min) →
+her-any-time → children-in-general (CHILDES train, suffix contexts ≤6,
+counts ≥2 — `data/prediction/phrase_table.en.json`). Backoff walks
+suffix endings longest-first; a non-empty phrase never reads the empty
+ctx. Evidence gate: `her >= 2` taps after the ending, or children follow
+it `>= 7%` of `>= 30` observations. Fewer than 4 tiles or none is
+correct output. `phrase_count` derives from `learner_event_log`;
+spoken closeSentence trains it, cleared bars and detached picks do not.
+`strip_impression` keeps full candidate evidence + the gate — every
+stored moment replays (`replayImpression`).
+
+Reference replay (`scripts/prediction/phrase_jev/replay_v2.mjs`, real
+`stripRanked` on ava_log.json, test day = last Monday, 47 moments, no
+gate): 0d 28, 1d 35, 3d 36, 7d 41, 20d 43 — vs reference filter
+29/36/37/40/43, inside the ±1 tolerance at every history length. Word→id
+mapping: non-lemma words are entities, so name targets can only come
+from her history — that is the per-row explanation for the −1 diffs
+(the +1 at 7d is the suffix table finding endings the prefix-only
+reference table could not).
+
+Gate check (`gate_check_v2.mjs`, run_ava3's 20 mid-sentence moments,
+judge_ava3.json): at hist 0, kid>=7%/30 drops "go"->"go" (CHILDES 6.4%
+of 51.6k) with zero hit loss; 8% loses "i want"->"a". "good morning"->
+"the" (22.4%/245) is attested English — no evidence gate removes it,
+and no hand rule was added. Chosen gate: herMin 2, kidShare 0.07,
+kidMin 30.
+
+20 real bar rows (`real_rows_v2.mjs` — the app's own call path, real
+catalog + shipped table, 20 days of Ava history): 17/20 strip hits, all
+20 impressions replay-consistent. Printed rows for human review are in
+the script output.
+
+Permission (R11): the shipped table is still aggregate counts over the
+closed catalog vocabulary — no utterances, speakers, or transcript
+text — but it conditions on longer suffix contexts (≤6) than the
+opening book's last-2. Within the written scope's shape; flag to
+TalkBank if scope wording matters.
+
+Known pre-existing failures (unrelated, reproduce at the commit before
+this work): `synth.test.mjs` manifest --check (generator drifted vs
+committed manifest before this branch), `core_move.test.mjs` UNIQUE
+core_cell on a hand-edited map (fails identically at HEAD).
