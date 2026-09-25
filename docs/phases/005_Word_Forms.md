@@ -1,6 +1,14 @@
 # Phase 005 — Word Forms
 
-**Status:** Ready to execute. Not started.
+**Status:** Ready to execute. Not started. **Partly superseded 2026-09-25:**
+present tense (-s, -ing) is now automatic on the board, the bar and the
+sentence. See `021_Grammar_Help.md`, which builds the present-tense part of
+slices 1–2 and replaces, for present tense, "the button always shows the
+lemma", "suggest, never auto-replace" and slice 3's hand-written `rankForms`
+rules. Everything else here (past tense, plurals, adjectives, the Forms key,
+typed forms) waits on the founder's past-tense conversation. Founder,
+2026-09-25: asking this audience for extra actions to reach a form may not
+be feasible.
 
 **DECIDED 2026-09-22** (founder: "All approved, proceed", on the morphology
 recommendation in the locale review). Built in English first; it is the
