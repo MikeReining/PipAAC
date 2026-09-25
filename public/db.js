@@ -11,7 +11,6 @@ import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
 import { migrateLegacyGroups, migrateBuiltinGroupNames } from "./shared/groups.mjs";
 import { ensureBaseline } from "./shared/ops.mjs";
-import { repairCorruptWeights } from "./shared/learn.mjs";
 import { getDbBytes, putDbBytes } from "./shared/users.mjs";
 import { migrateSchema } from "./shared/migrate.mjs";
 
@@ -50,10 +49,10 @@ function adapt(db, onWrite) {
 export async function bootDb(userStore, userId) {
   if (handle) return handle;
 
-  const [sqlite3, catalog, book, saved] = await Promise.all([
+  const [sqlite3, catalog, phrases, saved] = await Promise.all([
     sqlite3InitModule(),
     fetch("/catalog.json").then((r) => r.json()),
-    fetch("/opening_book.en.json").then((r) => r.json()).catch(() => null),
+    fetch("/phrase_table.en.json").then((r) => r.json()).catch(() => null),
     getDbBytes(userStore, userId).catch(() => null),
   ]);
 
@@ -98,10 +97,12 @@ export async function bootDb(userStore, userId) {
   d.exec("PRAGMA foreign_keys = ON");
   migrateSchema(d, catalog.schemaSql);
   d.exec(catalog.schemaSql);
+  // Smart bar v2: the old history_count/prediction_weights tables are
+  // superseded by phrase_count; nothing references them. Rebuilds keep
+  // listed tables fresh — these are simply gone.
+  d.exec("DROP TABLE IF EXISTS history_count");
+  d.exec("DROP TABLE IF EXISTS prediction_weights");
   importCatalog(d, catalog);
-  // 017 step 4: rows a pre-fix keyboard impression corrupted (NaN →
-  // null → zeroed weights) are reset to the shipped defaults once.
-  repairCorruptWeights(d, catalog.prediction);
   // A DB persisted under the pre-groups schema still has zone_slot:
   // migrate it — keeping custom groups, entities, and the caregiver's
   // arrangement — then drop the legacy tables. No-op on a fresh DB.
@@ -113,7 +114,7 @@ export async function bootDb(userStore, userId) {
   // the first local edit. Idempotent — a stored baseline is kept.
   ensureBaseline(d);
 
-  handle = { db: d, catalog, book, flush };
+  handle = { db: d, catalog, phrases, flush };
   return handle;
 }
 

@@ -30,7 +30,6 @@ const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
 const GROUP_SEED = join(repoRoot, "data/group_seed.json");
 const FAMILY_SEED = join(repoRoot, "data/family_seed.json");
 const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
-const PREDICTION_DEFAULTS = join(repoRoot, "data/prediction/defaults.json");
 const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
@@ -425,13 +424,8 @@ export function buildCatalog(
       schema: "src/board/schema.sql",
       groupSeed: "data/group_seed.json",
       numberAliases: "data/number_aliases.json",
-      predictionDefaults: "data/prediction/defaults.json",
+      phraseTable: "data/prediction/phrase_table.en.json",
     },
-    // Slice-3 starting weights + show-gate τ (Dual_Engine §5.3–5.4),
-    // fitted on the simulation fixture by scripts/prediction/fit_defaults.mjs.
-    prediction: existsSync(PREDICTION_DEFAULTS)
-      ? JSON.parse(readFileSync(PREDICTION_DEFAULTS, "utf8"))
-      : null,
     // 013 § 5a coach view: shipped one-line modeling tips by sense id;
     // a list item's SLP-edited tip overrides them.
     coachTips: existsSync(COACH_TIPS)

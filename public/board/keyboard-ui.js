@@ -20,7 +20,7 @@ export function mountKeyboard({
   startFresh,
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
   showGroupHint, applyLikely, fitLabels, senseById,
-  getHighlightNext, getJevSharing,
+  getHighlightNext,
   getView, setViewName, renderGroupIndex, renderGroupPage, renderEditor,
 }) {
   let kbMode = profile.keyboard_mode ?? "pip";
@@ -44,9 +44,6 @@ export function mountKeyboard({
     $("kb-order").classList.toggle("disabled", kbMode === "device");
     for (const b of $("hl-next").querySelectorAll("button")) {
       b.classList.toggle("on", b.dataset.v === (getHighlightNext() ? "1" : "0"));
-    }
-    for (const b of $("jev-share").querySelectorAll("button")) {
-      b.classList.toggle("on", b.dataset.v === (getJevSharing() ? "1" : "0"));
     }
   }
 

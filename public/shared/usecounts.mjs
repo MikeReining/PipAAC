@@ -58,7 +58,7 @@ export function offBoardItems(
     .map((r) => ({
       ...r,
       count: counts.get(`${r.kind}:${r.id}`) ?? 0,
-      uni: uni[r.label] ?? 0,
+      uni: uni[r.id] ?? 0,
     }))
     .filter((r) => !needle || r.label.toLowerCase().includes(needle))
     .sort((a, b) =>

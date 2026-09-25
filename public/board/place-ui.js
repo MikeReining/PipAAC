@@ -3,7 +3,7 @@
  * cell — "what goes here". The head row shows the tapped tile, its
  * 30-day count, and a ✎ that opens the word card. One search field,
  * then the list: every word and person with no home cell, most-tapped
- * first (the child's own counts — day one orders by the opening book).
+ * first (the child's own counts — day one orders by the children table).
  * Choosing calls back into board.js, which writes the placement — this
  * module only draws the sheet.
  */

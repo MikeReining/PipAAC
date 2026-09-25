@@ -19,10 +19,9 @@ import {
   closeSentence,
   logSelection,
   openSentence,
-  stripCandidates,
+  stripRanked,
 } from "../../public/shared/funnel.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
-import { TEST_MODEL } from "./test_model.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -47,7 +46,7 @@ const localTime = (daysAgo, hour, min = 20) => {
 test.after?.(() => {}); // placeholder for node:test API variance
 after(() => { process.env.TZ = "UTC"; });
 
-test("the hour term is the child's local hour in every timezone", () => {
+test("the 90-minute window is the child's local time of day in every timezone", () => {
   for (const tz of ["UTC", "America/Chicago", "Europe/Berlin"]) {
     process.env.TZ = tz;
     const db = openDb();
@@ -63,26 +62,32 @@ test("the hour term is the child's local hour in every timezone", () => {
       )
       .all();
     assert.ok(morning && afternoon, "fixture needs two fringe nouns");
-    for (let d = 1; d <= 3; d++) {
-      logSelection(db, "sense", morning.id, localTime(d, 8));
-      logSelection(db, "sense", afternoon.id, localTime(d, 13));
-    }
-    // Rank at 08:20 local today after a verb tail — a verb invites nouns.
-    const verb = db
+    const want = db
       .prepare(
         `SELECT s.id FROM sense s
          JOIN label l ON l.sense_id = s.id
            AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
-         WHERE s.tier = 'root_core' AND l.part_of_speech = 'Verb'
-         ORDER BY s.id LIMIT 1`,
+         WHERE l.text = 'want'`,
       )
       .all()[0];
-    const ranked = stripCandidates(
-      db, [{ kind: "sense", id: verb.id }], localTime(0, 8), "en", TEST_MODEL,
+    for (let d = 1; d <= 3; d++) {
+      // 'want morning' at 08:20 each day, 'want afternoon' at 13:20.
+      let s = openSentence(db, localTime(d, 8));
+      logSelection(db, "sense", want.id, localTime(d, 8), { sentenceId: s, position: 0 });
+      logSelection(db, "sense", morning.id, localTime(d, 8, 21), { sentenceId: s, position: 1 });
+      closeSentence(db, s, localTime(d, 8, 22), "spoken");
+      s = openSentence(db, localTime(d, 13));
+      logSelection(db, "sense", want.id, localTime(d, 13), { sentenceId: s, position: 0 });
+      logSelection(db, "sense", afternoon.id, localTime(d, 13, 21), { sentenceId: s, position: 1 });
+      closeSentence(db, s, localTime(d, 13, 22), "spoken");
+    }
+    const { ranked } = stripRanked(
+      db, [{ kind: "sense", id: want.id }], localTime(0, 8), "en",
     );
     const mi = ranked.findIndex((c) => c.id === morning.id);
     const ai = ranked.findIndex((c) => c.id === afternoon.id);
     assert.notEqual(mi, -1, `${tz}: the 08:20 word should be offered`);
+    assert.equal(ranked[mi].src, "now", `${tz}: the 08:20 word is her-now`);
     assert.ok(
       mi < ai || ai === -1,
       `${tz}: 08:20 word must outrank the 13:20 word`,

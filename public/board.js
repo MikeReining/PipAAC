@@ -5,10 +5,9 @@
  */
 import { bootDb, exportLegacyKvvfsDb, savePhoto, loadPhotoURL } from "./db.js";
 import {
-  applyJev,
   closeSentence,
   detachEvent,
-  ECHO_WINDOW_MS,
+  EVIDENCE_GATE,
   fillChosen,
   keyboardContinuations,
   logImpression,
@@ -16,13 +15,8 @@ import {
   logSelection,
   openSentence,
   stampShownFinal,
-  stripOrder,
-  stripScored,
-  stripSettings,
-  spotWeights,
-  updateImpressionJev,
+  stripRanked,
 } from "./shared/funnel.mjs";
-import { learnFromSentence, loadWeights } from "./shared/learn.mjs";
 import {
   coachTap, deleteSpotList, endSession, endSpotlight,
   listTargets, needsRouteWalk,
@@ -53,10 +47,6 @@ import {
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
-import {
-  buildJevRequest, buildKindRequest, jevDeliverable, jevKind,
-  jevProbabilities, jevRank, jevTerm,
-} from "./shared/jev.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
 import { useCounts } from "./shared/usecounts.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
@@ -153,7 +143,7 @@ if (navigator.locks?.request) {
 }
 navigator.storage?.persist?.().catch(() => {});
 
-const { db, catalog, book, flush: flushDb } = await bootDb(userStore, me.id);
+const { db, catalog, phrases, flush: flushDb } = await bootDb(userStore, me.id);
 bindLayouts(catalog.layouts); // move-cost sectors need the column counts
 // Device identity for the op log (sync § 4): the signing key's
 // fingerprint, resolved from the platform keystore. Until it lands the
@@ -173,12 +163,11 @@ function onSyncApplied() {
     senseMeta.clear();   // image overrides may have landed
     kbUi.invalidateIndex();      // masks and renames may have landed
     const p = ALL(db,
-      "SELECT keyboard_mode, keyboard_order, highlight_next, jev_sharing FROM learner_profile WHERE id = 'prf_local'",
+      "SELECT keyboard_mode, keyboard_order, highlight_next FROM learner_profile WHERE id = 'prf_local'",
     )[0] ?? {};
     kbUi.mode = p.keyboard_mode ?? kbUi.mode;
     kbUi.order = p.keyboard_order ?? kbUi.order;
     highlightNext = (p.highlight_next ?? 0) === 1;
-    jevSharing = (p.jev_sharing ?? 1) === 1;
     syncFreshSeg();
     bindSpotSettings();  // spotlight settings sync too
     resumeSession(db);   // a session started/ended elsewhere lands here
@@ -251,10 +240,10 @@ const startFresh = (editing = false) => {
  * the next pick's position — one row per distinct offer, deduped by
  * (sentence, position, shown). The next logged pick fills chosen_*. */
 let lastImpressionKey = null;
-/* 017-5: the open strip moment — one row per moment, updated in place
- * when Jev answers; the painter stamps shown_final on it. */
+/* The open strip moment — one row per moment; the painter stamps
+ * shown_final on it (017-5). */
 let openImpressionId = null;
-function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
+function maybeImpression(candidates, shown, { mode = "picture", cap = null } = {}) {
   if (sentenceId === null) return false;
   const shownKeys = shown.map((c) => `${c.kind}:${c.id}`);
   const key = `${sentenceId}:${sentencePicks}:${shownKeys.join()}`;
@@ -262,15 +251,8 @@ function maybeImpression(candidates, shown, pNone = 0, jev = {}) {
   lastImpressionKey = key;
   openImpressionId = logImpression(db, {
     sentenceId, position: sentencePicks,
-    candidates: candidates.map((c) => ({
-      kind: c.kind, id: c.id, x: c.x ?? {}, s: c.s, p: c.p })),
-    shown: shownKeys, pNone,
-    weightSet: jev.weightSet ?? "local_only",
-    jevStatus: jev.jevStatus ?? "off",
-    jevModel: jev.jevModel ?? null,
-    mode: jev.mode ?? "picture",
-    weightsLocal: jev.weightsLocal ?? null,
-    shortlistCap: jev.cap ?? null,
+    candidates, shown: shownKeys,
+    mode, gate: EVIDENCE_GATE, shortlistCap: cap,
   });
   return true;
 }
@@ -327,14 +309,7 @@ async function speakSentence() {
   if (sentenceId !== null) {
     const sid = sentenceId;
     closeSentence(db, sid, Date.now(), "spoken");
-    // §5.5: the child's weights take one gradient step per impression —
-    // only for a spoken sentence; a cleared bar is metrics only.
-    // 017-3: both paths train — local_only on its own evidence, with_jev
-    // on every moment Jev returned probabilities (late answers count).
-    learnFromSentence(db, sid, catalog.prediction);
-    learnFromSentence(db, sid, catalog.prediction, { weightSet: "with_jev" });
     scheduleStatsRefresh();
-    partnerTurn = null; // 017-24: the child's turn answered — one turn only
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
@@ -455,7 +430,7 @@ $("clear").addEventListener("click", () => {
   startFresh(true);
   if (sentenceId !== null) {
     closeSentence(db, sentenceId, Date.now(), "cleared");
-    partnerTurn = null; // 017-24: turn closed without an answer
+
     sentenceId = null;
     sentencePicks = 0;
     lastImpressionKey = null;
@@ -674,172 +649,38 @@ async function renderExpand() {
 async function renderStrip() {
   if (expand) return renderExpand();
   const cap = stripSlots(boardGeom().cols);
-  let cards, jevCall = null;
+  let cards;
   if (kbUi.text) {
     // mid-word: the strip switches from continuations to completions
     cards = kbUi.completions();
   } else {
     // Keyboard open with an empty buffer: next-word continuations, core
     // words included — the grid is hidden so board words belong in the
-    // bar regardless of Show board words (R21).
+    // bar regardless of board cells (R21).
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-    // First paint is always the local model (§ 3.4: <50 ms, never waits
-    // on the network). The child's learned weights win over the shipped
-    // defaults once Speak has trained them (§5.5).
-    const lw = loadWeights(db, catalog.prediction);
-    const model = {
-      weights: lw.weights, tau: catalog.prediction.tau, book,
-      partner: partnerTurn,
-    };
-    const scored = kbUi.isOpen() ? null : stripScored(db, sents, Date.now(), locale, model);
+    const ranked = kbUi.isOpen() ? null
+      : stripRanked(db, sents, Date.now(), locale, phrases);
     const items = kbUi.isOpen()
-      ? keyboardContinuations(db, sents, locale, Date.now(), model)
-      : stripOrder(db, scored.candidates, scored.pNone, model.tau, cap)
-          .map((r) => ({ kind: r.kind, id: r.id }));
+      ? keyboardContinuations(db, sents, locale, Date.now(), phrases)
+      : ranked.shown;
     if (sentence.length === 0 && !items.length) {
-      // Nothing has support at position 0 — the resting cards still fill
-      // the bar (person, hello, food, help). Once the book or history
-      // supports an opener (017 step 21), the scored offer wins instead.
+      // Nothing has evidence at position 0 — the resting cards still
+      // fill the bar (person, hello, food, help). Once her history or
+      // the children table supports an opener, the offer wins instead.
       cards = (await idleStarters()).slice(0, cap);
     } else {
       // Position-0 offers are real moments too (017-21): open the
       // sentence so the impression row can exist. A row with no picks
       // stays invisible to stats (end_kind IS NULL).
-      if (scored) ensureSentence();
-      // Keyboard-mode impressions are metrics only (017-4): the keyboard
-      // ranker has no feature vector, and one trained on `x: {}` rows once
-      // wrote NaN into every learned weight.
+      if (ranked) ensureSentence();
       maybeImpression(
-        scored?.candidates ?? items.map((c) => ({ kind: c.kind, id: c.id, x: {} })),
-        items, scored?.pNone ?? 0, {
-          mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
-          weightsLocal: scored ? {
-            w: model.weights, tau: model.tau,
-            ver: catalog.prediction.version, seen: lw.examplesSeen,
-            noLast: stripSettings(db).noLast ? 1 : 0,
-          } : null,
-        },
+        ranked?.ranked ?? items.map((c) => ({ kind: c.kind, id: c.id })),
+        items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap },
       );
       cards = stripCards(items);
     }
-    // Jev may re-rank inside the paint window (§ 3.4) — fired after the
-    // local paint resolves, so the strip never waits on the network and
-    // the 150 ms window is measured from the real first paint. Position-0
-    // stays local: the Jev prompt is built for continuations.
-    if (scored && sentence.length) jevCall = { scored, sents };
   }
   await paintStrip(cards);
-  if (jevCall) maybeJev(jevCall.scored, jevCall.sents, Date.now());
-}
-
-/* Jev rerank (§ 3): with sharing on, the shortlist's labels and the
- * sentence's labels go to the Worker, which adds the TypeSafe key. An
- * answer re-ranks under the with_jev weights only while it is still
- * deliverable — jevDeliverable is the single rule (017-2): the moment
- * must be open and no finger may be down on the board or strip; a tile
- * never changes under a reaching hand. */
-let jevSharing = true; // bound from learner_profile at boot
-let lastBoardPointerDown = 0; // last pointerdown on the word surface
-for (const sel of ["#grid", "#tray"]) {
-  document.querySelector(sel)?.addEventListener(
-    "pointerdown", () => { lastBoardPointerDown = Date.now(); }, true);
-}
-
-async function maybeJev(scored, sents, paintedAt) {
-  if (!jevSharing) return; // the row stays 'off' — sharing is disabled
-  if (!scored.candidates.length) return markJev("skipped", null);
-  const candTerms = scored.candidates.map((c) => jevTerm(db, c, locale));
-  const sentTerms = sents.map((c) => jevTerm(db, c, locale)).filter(Boolean);
-  const req = buildJevRequest(candTerms, sentTerms, null, { sharing: jevSharing });
-  if (!req) return markJev("skipped", null);
-  const sid = sentenceId, pos = sentencePicks;
-  try {
-    const res = await jevRank(req);
-    const probs = jevProbabilities(res);
-    const answeredAt = Date.now();
-    const latencyMs = answeredAt - paintedAt;
-    // The strip moment this answered may have already closed — the row
-    // still records what came back (late), it just can't repaint.
-    const moved = sid !== sentenceId || pos !== sentencePicks;
-    if (!probs) return markJev("error", res?.model, sid, pos);
-    // 017-2: the single deliverability rule lives in jev.mjs — open
-    // moment, and no finger down on the word surface since paint.
-    const deliverable = jevDeliverable({
-      answeredAt, moved,
-      reachStartedAt: lastBoardPointerDown > paintedAt
-        ? lastBoardPointerDown : null,
-    });
-    const lw = loadWeights(db, catalog.prediction, "with_jev");
-    const wj = {
-      weights: spotWeights(db, lw.weights),
-      tau: catalog.prediction.tau,
-      book,
-    };
-    const reranked = applyJev(scored.candidates, probs, wj.weights);
-    const items = stripOrder(db, reranked.candidates, reranked.pNone, wj.tau,
-      stripSlots(boardGeom().cols))
-      .map((r) => ({ kind: r.kind, id: r.id }));
-    // One row per moment (017-5): the answer merges in place — raw
-    // probabilities, latency, the with-Jev weights, and per-candidate
-    // jp/wp — whether or not it can still paint. Late answers are
-    // with_jev evidence too (017-3).
-    const row = jevRow(sid, pos);
-    if (!row) return markJev("error", res.model, sid, pos);
-    updateImpressionJev(db, row.id, {
-      status: deliverable ? "answered" : "late",
-      model: res.model, probs, latencyMs,
-      weightsJev: {
-        w: wj.weights, tau: wj.tau,
-        ver: catalog.prediction.version, seen: lw.examplesSeen,
-      },
-      pNoneJev: reranked.pNone,
-      // What the rerank would have painted — stored on late answers
-      // too, so the step-28 timing experiment reads recorded truth.
-      shownJev: items.map((c) => `${c.kind}:${c.id}`),
-      candidates: scored.candidates.map((c, i) => ({
-        kind: c.kind, id: c.id, x: c.x, s: c.s, p: c.p,
-        jp: probs[`c${i + 1}`] ?? 0,
-        wp: reranked.candidates.find(
-          (r) => r.kind === c.kind && r.id === c.id)?.p ?? 0,
-      })),
-    });
-    if (!deliverable) {
-      // The answer may have landed after Speak — the trained_jev flag
-      // makes the catch-up train idempotent (017-3).
-      learnFromSentence(db, sid, catalog.prediction, { weightSet: "with_jev" });
-      return;
-    }
-    // Repaint only when the offer actually changed; the painter stamps
-    // shown_final on the same row.
-    const localKeys = JSON.parse(row.shown_local);
-    if (JSON.stringify(items.map((c) => `${c.kind}:${c.id}`))
-        !== JSON.stringify(localKeys)) {
-      await paintStrip(stripCards(items));
-    }
-  } catch {
-    markJev("error", null, sid, pos);
-  }
-}
-
-/** The strip-moment row for (sentence, position) — open row when it is
- *  still the current moment, else the stored one. */
-function jevRow(sid, pos) {
-  if (sid === sentenceId && pos === sentencePicks && openImpressionId !== null) {
-    return db.prepare(
-      "SELECT id, shown_local FROM strip_impression WHERE id = ?")
-      .all(openImpressionId)[0];
-  }
-  return db.prepare(
-    `SELECT id, shown_local FROM strip_impression
-     WHERE sentence_id = ? AND position = ? ORDER BY id DESC LIMIT 1`)
-    .all(sid, pos)[0];
-}
-
-/** Stamp the Jev outcome on the impression for that position — late and
- *  error answers are evidence too (with_jev learns on any probs). */
-function markJev(status, model, sid = sentenceId, pos = sentencePicks) {
-  const row = jevRow(sid, pos);
-  if (row) updateImpressionJev(db, row.id, { status, model });
 }
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
@@ -860,8 +701,6 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     if (id) {
       const key = `${kind}:${id}`;
       syncSendModel(key, text);
-      partnerTap(key); // 017-24: the word joins the partner's turn (memory only)
-      renderStrip(); // ...so the boosted words land on the next strip moment
       coachTap(db, kind, id); // the partner's tally — device-local (§ 5a)
       coachUi.renderCoachTally();
       modelSent.add(key);
@@ -1113,19 +952,6 @@ let modelSpeaks = false;
 const modelGlow = new Map(); // "kind:id" → fade timer
 const modelSent = new Set(); // local echo on the partner's device
 const MODEL_FADE_MS = 4000;
-/** 017-24 / R20: the partner's last modeling turn — the 'kind:id' keys
- *  an adult tapped while modeling, held in memory only. They ride the
- *  strip's `echo` feature for one turn (≈2 min, or until the child's
- *  sentence closes); nothing about them is ever written to a table. */
-let partnerTurn = null; // { items: Set<string>, at: number }
-function partnerTap(key) {
-  const now = Date.now();
-  if (!partnerTurn || now - partnerTurn.at > ECHO_WINDOW_MS) {
-    partnerTurn = { items: new Set(), at: now };
-  }
-  partnerTurn.items.add(key);
-  partnerTurn.at = now;
-}
 
 function clearModel(key) {
   const t = key ? modelGlow.get(key) : undefined;
@@ -1152,8 +978,6 @@ function onModel(m) {
     rerenderView();
   }, MODEL_FADE_MS));
   const [kind, id] = m.t.split(":");
-  partnerTap(m.t); // 017-24: remote modeling taps echo too (memory only)
-  renderStrip(); // ...so the boosted words land on the next strip moment
   if (modelSpeaks && m.w) speakItem({ kind, id, text: m.w });
   renderGrid();
   rerenderView();
@@ -1357,10 +1181,7 @@ function applyLikely() {
   const next = new Set();
   if (highlightNext && !editing && view === "board" && !kbUi.isOpen() && sentence.length) {
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-    // Same local model the strip paints with (§ 3.4: never waits on Jev).
-    const model = { weights: loadWeights(db, catalog.prediction).weights,
-                    tau: catalog.prediction.tau, book };
-    for (const c of keyboardContinuations(db, sents, locale, Date.now(), model)) {
+    for (const c of keyboardContinuations(db, sents, locale, Date.now(), phrases)) {
       if (c.kind !== "sense") continue;
       // A stand-in person on the board takes the word's halo too —
       // Mama's cell glows when `mom` is likely (014 slice 11).
@@ -1478,15 +1299,14 @@ $("add-mywords").addEventListener("click", () => {
   addUi.openAddForm("grp_my_words");
 });
 
-/* Keyboard — public/board/keyboard-ui.js. Highlight and Jev sharing
- * stay here: they are board settings that share the corner's segmented
- * controls, so this block still paints them through syncSettings. */
+/* Keyboard — public/board/keyboard-ui.js. Highlight stays here: it is
+ * a board setting that shares the corner's segmented controls, so this
+ * block still paints it through syncSettings. */
 const kbProfile = ALL(
   db,
-  "SELECT keyboard_mode, keyboard_order, highlight_next, jev_sharing FROM learner_profile WHERE id = 'prf_local'",
+  "SELECT keyboard_mode, keyboard_order, highlight_next FROM learner_profile WHERE id = 'prf_local'",
 )[0] ?? {};
 highlightNext = (kbProfile.highlight_next ?? 0) === 1;
-jevSharing = (kbProfile.jev_sharing ?? 1) === 1;
 let groupsUi;
 let addUi;
 let libUi;
@@ -1501,7 +1321,6 @@ const kbUi = mountKeyboard({
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
   showGroupHint, applyLikely, fitLabels, senseById,
   getHighlightNext: () => highlightNext,
-  getJevSharing: () => jevSharing,
   getView: () => view,
   setViewName: (v) => { view = v; },
   renderGroupIndex: () => groupsUi.renderGroupIndex(),
@@ -1517,45 +1336,6 @@ $("hl-next").addEventListener("click", (e) => {
   kbUi.syncSettings();
   applyLikely();
 });
-$("jev-share").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (v === undefined) return;
-  jevSharing = v === "1";
-  setSetting(db, "jev_sharing", jevSharing ? 1 : 0);
-  kbUi.syncSettings();
-});
-/* Smart bar order (R21 / Motor_Grid § 2.2): board words in the pool,
- * the "no" slot, and sentence help — all synced per profile. A change
- * repaints the strip so the parent sees the effect immediately. */
-const syncSbSegs = () => {
-  const p = ALL(db,
-    "SELECT show_board_words AS b, no_last_slot AS n, sentence_help AS h FROM learner_profile WHERE id = 'prf_local'",
-  )[0] ?? {};
-  for (const b of $("sb-board").querySelectorAll("button")) {
-    b.classList.toggle("on", b.dataset.v === String(p.b ?? 1));
-  }
-  for (const b of $("sb-nolast").querySelectorAll("button")) {
-    b.classList.toggle("on", b.dataset.v === String(p.n ?? 1));
-  }
-  for (const b of $("sb-help").querySelectorAll("button")) {
-    b.classList.toggle("on", b.dataset.v === (p.h ?? "one_step_up"));
-  }
-};
-for (const [seg, key, numeric] of [
-  ["sb-board", "show_board_words", true],
-  ["sb-nolast", "no_last_slot", true],
-  ["sb-help", "sentence_help", false],
-]) {
-  $(seg).addEventListener("click", (e) => {
-    const v = e.target.closest("button")?.dataset.v;
-    if (v === undefined) return;
-    setSetting(db, key, numeric ? Number(v) : v);
-    syncSbSegs();
-    renderStrip();
-    applyLikely();
-  });
-}
-syncSbSegs();
 /* After Speak — whether the next word adds on or starts a fresh bar. */
 function syncFreshSeg() {
   freshAfterSpeak = (ALL(db,
@@ -1745,12 +1525,9 @@ function flashCell(el) {
 /* Groups board mode — public/board/groups-ui.js */
 groupsUi = mountGroups({
   db, locale, all: ALL, boardGeom, getEditing: () => editing, getModelGlow: () => modelGlow,
-  getLikelyGroups: () => {
-    const lw = loadWeights(db, catalog.prediction);
-    return likelyGroups(db, sentence.map((s) => ({ kind: s.kind, id: s.id })),
-      Date.now(), locale,
-      { weights: lw.weights, tau: catalog.prediction.tau, book, partner: partnerTurn });
-  },
+  getLikelyGroups: () => likelyGroups(
+    db, sentence.map((s) => ({ kind: s.kind, id: s.id })),
+    Date.now(), locale, phrases),
   setView: (v) => kbUi.setView(v), open, close, toast, wordTile, layerMark, fitLabels, tap,
   navCell, editPointer, xBadge,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
@@ -1764,15 +1541,6 @@ addUi = mountAddFlow({
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
   invalidateIndex: () => kbUi.invalidateIndex(),
   rerenderView, renderStrip, renderLibrary: () => libUi.renderLibrary(),
-  // 018 D7: Jev's one-shot kind pick. The word alone leaves the device;
-  // the answer only prefills the family's picker, never saves.
-  classifyKind: jevSharing
-    ? async (name) => {
-        const req = buildKindRequest(name, { sharing: jevSharing });
-        if (!req) return null;
-        try { return jevKind(await jevRank(req)); } catch { return null; }
-      }
-    : null,
 });
 
 /* Word library — public/board/library-ui.js */
@@ -1815,19 +1583,22 @@ mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement 
 mountProgress({ db, me, toast, open, nameOf: statNameOf, entitlement: relayEntitlement });
 
 /* The placement sheet (018 D10): Edit mode, tap any tile or an empty
- * cell — the off-board list ranks by the child's own counts, the book's
- * unigram on day one. The pick writes a placement with an undo toast,
- * same as a drag; ✎ in the head row opens the word card. */
+ * cell — the off-board list ranks by the child's own counts, the
+ * children table's unigram on day one. The pick writes a placement
+ * with an undo toast, same as a drag; ✎ in the head row opens the
+ * word card. */
+const kidsUni = (() => {
+  const uni = {};
+  for (const row of Object.values(phrases?.contexts ?? {})) {
+    for (const [id, n] of Object.entries(row)) uni[id] = (uni[id] ?? 0) + n;
+  }
+  return uni;
+})();
 const placeUi = mountPlacePicker({
   db, locale,
   getLayout: () => boardGeom().name,
   getCounts,
-  getUni: () => {
-    const band = ALL(db,
-      "SELECT book_band AS b FROM learner_profile WHERE id = 'prf_local'",
-    )[0]?.b ?? "mlu_2_35";
-    return book?.bands?.[band]?.uni ?? {};
-  },
+  getUni: () => kidsUni,
   onPick: (slot, kind, id, label) => {
     const mv = placeOnBoard(db, boardGeom().name, kind, id, slot, {
       anchors: new Set(boardGeom().anchors.keys()),

@@ -1,5 +1,5 @@
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
-import openingBook from "../../data/prediction/opening_book.en.json" with { type: "json" };
+import phraseTable from "../../data/prediction/phrase_table.en.json" with { type: "json" };
 import { UserRelay } from "./relay.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
@@ -27,10 +27,10 @@ export default {
       return json(catalog);
     }
 
-    // The opening book (017 step 23): aggregate next-word probabilities
-    // over the closed vocabulary — counts only, never source text.
-    if (path === "/opening_book.en.json") {
-      return json(openingBook);
+    // The children phrase table (smart bar v2): aggregate
+    // phrase → next-item counts — counts only, never source text.
+    if (path === "/phrase_table.en.json") {
+      return json(phraseTable);
     }
 
     // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted
@@ -66,29 +66,6 @@ export default {
     if (userMatch) {
       const stub = env.RELAY.get(env.RELAY.idFromName(userMatch[1]));
       return stub.fetch(request);
-    }
-
-    // Jev rerank (Dual_Engine § 3.2): the device never holds the key —
-    // the body is forwarded verbatim, the secret is added here, and
-    // nothing about the request or response contents is logged.
-    if (path === "/jev/rank" && request.method === "POST") {
-      if (!env?.TYPESAFE_API_KEY) {
-        return json({ error: "jev_unavailable" }, { status: 503 });
-      }
-      const body = await request.text();
-      const upstream = await fetch("https://api.typesafe.ai/v1/systemone", {
-        method: "POST",
-        headers: {
-          "authorization": `Bearer ${env.TYPESAFE_API_KEY}`,
-          "content-type": "application/json",
-        },
-        body,
-      });
-      const text = await upstream.text();
-      return new Response(text, {
-        status: upstream.status,
-        headers: { "content-type": "application/json; charset=utf-8" },
-      });
     }
 
     // Pairing lobby (§ 3): a short-lived code stands up a lobby; the new

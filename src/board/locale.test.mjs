@@ -15,7 +15,7 @@ import { stripCandidates } from "../../public/shared/funnel.mjs";
 import { resolveProfile } from "../../public/shared/profile.mjs";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
-import { TEST_MODEL } from "./test_model.mjs";
+import { makeKids } from "./test_phrases.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -109,18 +109,14 @@ test("a sense with no de label renders its picture and plays silence — never t
   assert.deepEqual(clip, []);
 });
 
-test("strip reads the profile locale: a de-unlabeled verb tail invites nothing", () => {
+test("strip reads the profile locale: the children table answers in English only", () => {
   const db = openDeDb();
-  db.prepare(
-    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_de', 'Rex', NULL, NULL, NULL)",
-  ).run();
-  // 'eat' has no de label → tailInfo sees pos NULL → no noun invitation,
-  // and the never-selected entity stays off the strip.
-  assert.deepEqual(stripCandidates(db, [{ kind: "sense", id: "sns_0028" }], NOW, "de", TEST_MODEL), []);
-  // the same tail under en invites nouns — the entity is eligible
+  const kids = makeKids(db, [{ ctx: ["eat"], next: { juice: 100 } }]);
+  const tail = [{ kind: "sense", id: "sns_0028" }]; // 'eat'
+  // Under 'de' the English children table never applies — nothing to say.
+  assert.deepEqual(stripCandidates(db, tail, NOW, "de", kids), []);
+  // Under 'en' the same table offers 'juice'.
   assert.ok(
-    stripCandidates(db, [{ kind: "sense", id: "sns_0028" }], NOW, "en", TEST_MODEL).some(
-      (c) => c.kind === "entity" && c.id === "ent_de",
-    ),
+    stripCandidates(db, tail, NOW, "en", kids).some((c) => c.id === "sns_0084"),
   );
 });

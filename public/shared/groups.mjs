@@ -732,20 +732,14 @@ const SYNCED_SETTINGS = new Set([
   "keyboard_mode",
   "keyboard_order",
   "highlight_next",
-  "jev_sharing",
   "board_layout",
   "spot_dim",
   "spot_pulse",
   "spot_minutes",
-  "spot_boost",
   "model_speaks",
   "share_research",
   "research_id",
   "presentation_mode",
-  "book_band",
-  "show_board_words",
-  "no_last_slot",
-  "sentence_help",
   "fresh_after_speak",
 ]);
 export function setSetting(db, key, value) {
@@ -843,7 +837,7 @@ export function placeFromEnrichment(db, entityId, catalog) {
 /**
  * 014 slice 11 (§ 7a ruling 4): which active entity stands in for this
  * catalog sense — Mama for `mom`. The mapping is enrichment's
- * sense_suggestion (a Jev judgment, never asked of the adult); the
+ * sense_suggestion (an enrichment judgment, never asked of the adult); the
  * latest ready row wins. Returns the entity row for a stand-in card,
  * or null. A retired entity never stands in, and the rename/photo
  * trigger supersedes stale suggestions on its own.

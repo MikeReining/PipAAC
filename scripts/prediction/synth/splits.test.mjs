@@ -3,10 +3,8 @@
  *   - fit/tune loaders throw on eval ids (81–100)
  *   - every loaded file is re-hashed against the manifest
  *   - --final requires the flag AND a clean git tree
- *   - fit_defaults --users=<eval id> exits nonzero
  */
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
@@ -61,14 +59,6 @@ test("--final requires the flag and a clean tree", () => {
 test("parseUserSpec expands ranges and singletons", () => {
   assert.deepEqual(parseUserSpec("1-3,7,60-61"), [1, 2, 3, 7, 60, 61]);
   assert.throws(() => parseUserSpec("abc"), /bad --users/);
-});
-
-test("fit_defaults refuses an eval user id", () => {
-  const r = spawnSync("node", [
-    join(repoRoot, "scripts/prediction/fit_defaults.mjs"), "--users=81",
-  ], { encoding: "utf8" });
-  assert.notEqual(r.status, 0);
-  assert.match(r.stderr, /eval/);
 });
 
 test("userToFixture carries days, messages, and lowercase entities", () => {

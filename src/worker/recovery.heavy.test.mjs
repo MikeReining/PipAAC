@@ -57,7 +57,7 @@ const SYNCED_TABLES = [
   "clip_override", "entity_enrichment", "group_cell",
 ];
 const HISTORY_TABLES = [
-  "learner_event_log", "sentence", "strip_impression", "prediction_weights",
+  "learner_event_log", "sentence", "strip_impression", "phrase_count",
 ];
 const syncedDump = (db) =>
   SYNCED_TABLES.map((t) => db.prepare(`SELECT * FROM ${t} ORDER BY rowid`).all());

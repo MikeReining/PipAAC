@@ -104,8 +104,8 @@ export function mountSpotlightSheet({
       row.append(name, start, tipsBtn, goal, del);
       box.appendChild(row);
     }
-    const { spot_dim: dim = 45, spot_boost: boost = 1 } = all(db,
-      "SELECT spot_dim, spot_boost FROM learner_profile WHERE id = 'prf_local'")[0] ?? {};
+    const { spot_dim: dim = 45 } = all(db,
+      "SELECT spot_dim FROM learner_profile WHERE id = 'prf_local'")[0] ?? {};
     for (const b of $("spot-minutes").querySelectorAll("button")) {
       b.classList.toggle("on", b.dataset.v === String(spotMinutes));
     }
@@ -117,9 +117,6 @@ export function mountSpotlightSheet({
     }
     for (const b of $("model-speaks").querySelectorAll("button")) {
       b.classList.toggle("on", b.dataset.v === (getModelSpeaks() ? "1" : "0"));
-    }
-    for (const b of $("spot-boost").querySelectorAll("button")) {
-      b.classList.toggle("on", b.dataset.v === String(boost));
     }
   }
 
@@ -170,7 +167,7 @@ export function mountSpotlightSheet({
   });
   // Session length, glow style, and dim are synced settings (§ 4) — each
   // writes its profile column on tap, like the keyboard segs.
-  for (const seg of ["spot-minutes", "spot-pulse", "spot-dim", "spot-boost", "model-speaks"]) {
+  for (const seg of ["spot-minutes", "spot-pulse", "spot-dim", "model-speaks"]) {
     $(seg).addEventListener("click", (e) => {
       const v = e.target.closest("button")?.dataset.v;
       if (v === undefined) return;

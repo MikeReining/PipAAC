@@ -1,4 +1,4 @@
-// The children-in-general phrase table (smart bar v2): full-prefix
+// The children-in-general phrase table (smart bar v2): ending (suffix)
 // contexts -> next-item counts, built from the CHILDES training split
 // (child lines only — the device never hears an adult). Items are
 // catalog sense ids, so a shipped row drops straight into the bar's
@@ -31,14 +31,16 @@ for (const l of cat.labels) {
 }
 
 const table = new Map(); // ctx key (space-joined sense ids) -> Map(next sense id -> n)
+// Backoff contexts are SUFFIXES of an utterance's prefix, capped at
+// CTX_MAX; the empty ctx counts utterance-start items only.
 function add(items) {
-  const stop = Math.min(items.length - 1, CTX_MAX);
-  for (let j = 0; j <= stop; j++) {
-    const ctx = items.slice(0, j).join(' ');
-    if (!table.has(ctx)) table.set(ctx, new Map());
-    const m = table.get(ctx);
-    const next = items[j];
-    m.set(next, (m.get(next) ?? 0) + 1);
+  for (let j = 0; j < items.length; j++) {
+    for (let len = j === 0 ? 0 : 1; len <= Math.min(j, CTX_MAX); len++) {
+      const ctx = items.slice(j - len, j).join(' ');
+      if (!table.has(ctx)) table.set(ctx, new Map());
+      const m = table.get(ctx);
+      m.set(items[j], (m.get(items[j]) ?? 0) + 1);
+    }
   }
 }
 

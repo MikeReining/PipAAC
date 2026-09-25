@@ -28,7 +28,6 @@ import {
   stripCandidates,
 } from "../../public/shared/funnel.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
-import { TEST_MODEL } from "./test_model.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -36,6 +35,9 @@ const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"
 const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
 const fixture = JSON.parse(
   readFileSync(join(repoRoot, "src/board/fixtures/typing_sentences.en.json"), "utf8"),
+);
+const kids = JSON.parse(
+  readFileSync(join(repoRoot, "data/prediction/phrase_table.en.json"), "utf8"),
 );
 
 const db = createDatabase(":memory:");
@@ -74,8 +76,8 @@ function cards(mode, items, buffer, clock) {
   const sents = items.map((i) => ({ kind: i.kind, id: i.id }));
   const picks =
     mode === "C"
-      ? keyboardContinuations(db, sents, "en", clock, TEST_MODEL)
-      : stripCandidates(db, sents, clock, "en", TEST_MODEL);
+      ? keyboardContinuations(db, sents, "en", clock, kids)
+      : stripCandidates(db, sents, clock, "en", kids);
   return picks.map((p) => ({ kind: p.kind, id: p.id, text: labelById.get(`${p.kind}:${p.id}`) }));
 }
 
@@ -147,7 +149,7 @@ test("with history: continuations use fewer taps per word than completions", () 
 test("an i tail invites core verbs after commit", () => {
   db.prepare("DELETE FROM learner_event_log").run();
   const items = [{ kind: "sense", id: lemmaByNorm.get("i"), text: "i" }];
-  const picks = keyboardContinuations(db, items, "en", Date.now(), TEST_MODEL).map((p) => labelById.get(`${p.kind}:${p.id}`));
+  const picks = keyboardContinuations(db, items, "en", Date.now(), kids).map((p) => labelById.get(`${p.kind}:${p.id}`));
   console.log(`after "i": ${JSON.stringify(picks)}`);
   const coreVerbs = picks.filter((t) => ["want", "like", "go", "need", "feel"].includes(t));
   assert.ok(picks.length > 0 && coreVerbs.length > 0, `expected core verbs, got ${JSON.stringify(picks)}`);

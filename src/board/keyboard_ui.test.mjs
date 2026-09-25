@@ -37,7 +37,6 @@ test("an unknown keyboard string stays typed", () => {
     "kb-mode": mode,
     "kb-order": order,
     "hl-next": el(),
-    "jev-share": el(),
   };
   globalThis.document = {
     getElementById: (id) => nodes[id],
@@ -68,7 +67,6 @@ test("an unknown keyboard string stays typed", () => {
     fitLabels() {},
     senseById: () => null,
     getHighlightNext: () => false,
-    getJevSharing: () => true,
     getView: () => "board",
     setViewName() {},
     renderGroupIndex() {},

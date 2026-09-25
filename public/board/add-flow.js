@@ -16,14 +16,13 @@ export function mountAddFlow({
   db, locale, all, catalog, open, close, toast,
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
   invalidateIndex, rerenderView, renderStrip, renderLibrary,
-  classifyKind = null, // (name) => Promise<role|null> — Jev's kind pick (018 D7)
+
 }) {
   let addTarget = null; // board_group id the add form files into
   let addCell = null; // {page, slot_index} when + came from an empty slot
   let bulkTarget = null;
   let bulkRows = [];
   let photoDrafts = []; // { file, url, name }
-  let kindTouched = false; // adult overrode the kind pick — Jev may not repaint it
 
   function groupName(id, fallback = "") {
     const row = all(db, "SELECT id, name FROM board_group WHERE id = ?", [id])[0];
@@ -39,7 +38,6 @@ export function mountAddFlow({
     $("add-photo").value = "";
     $("add-hint").value = "";
     $("add-kind").value = "Yellow";
-    kindTouched = false;
     $("add-newfields").hidden = true;
     $("add-matches").innerHTML = "";
     $("add-new").hidden = true;
@@ -247,18 +245,8 @@ export function mountAddFlow({
   });
 
   $("add-name").addEventListener("input", renderAddMatches);
-  $("add-kind").addEventListener("input", () => { kindTouched = true; });
   $("add-new").addEventListener("click", () => {
     $("add-newfields").hidden = false;
-    // Jev's one-shot kind pick (018 D7) fills the select when sharing is
-    // on. It only lands while the form is open and the adult hasn't
-    // touched the pick — the family's choice always wins.
-    const name = $("add-name").value.trim();
-    classifyKind?.(name).then((role) => {
-      if (role && !kindTouched && !$("add-newfields").hidden) {
-        $("add-kind").value = role;
-      }
-    }).catch(() => {});
   });
   $("add-save").addEventListener("click", async () => {
     const name = $("add-name").value.trim();

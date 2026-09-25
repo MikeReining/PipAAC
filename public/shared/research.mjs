@@ -23,7 +23,7 @@ export const APP_VERSION = "2026-09-25";
  *  list — keep them in lockstep (src/worker/research.js). */
 export const RESEARCH_FIELDS = [
   "v", "rid", "day", "words", "own_taps", "sent_lengths",
-  "wpm", "wpm_n", "wpm_q1", "wpm_q3", "path_ms", "jev_ms", "wrong_n",
+  "wpm", "wpm_n", "wpm_q1", "wpm_q3", "path_ms", "wrong_n",
   "strip_share", "layout", "mode", "age_days", "ver",
 ];
 
@@ -68,12 +68,7 @@ export function dayPayload(db, dayRow, { rid, firstDay }) {
     // Per-path pick-to-pick ms (017 step 28): median/quartiles + n per
     // source. Numbers only — no times of day, no sequences.
     path_ms: p.path_times ?? {},
-    // The Jev-timing experiment's two medians and counts, and the
-    // wrong-pick count (017 step 28 items 3–4).
-    jev_ms: {
-      shown: { median: p.jev_timing?.shown?.median ?? null, n: p.jev_timing?.shown?.n ?? 0 },
-      late: { median: p.jev_timing?.late?.median ?? null, n: p.jev_timing?.late?.n ?? 0 },
-    },
+    // The wrong-pick count (017 step 28 item 4).
     wrong_n: p.wrong_picks ?? 0,
     strip_share: p.words ? (p.sources?.strip ?? 0) / p.words : 0,
     layout: prf.board_layout ?? "grid60",

@@ -26,7 +26,7 @@ export function validateResearch(body) {
   if (!body || typeof body !== "object" || Array.isArray(body)) return null;
   const allowed = new Set([
     "v", "rid", "day", "words", "own_taps", "sent_lengths",
-    "wpm", "wpm_n", "wpm_q1", "wpm_q3", "path_ms", "jev_ms", "wrong_n",
+    "wpm", "wpm_n", "wpm_q1", "wpm_q3", "path_ms", "wrong_n",
     "strip_share", "layout", "mode", "age_days", "ver",
   ]);
   for (const k of Object.keys(body)) if (!allowed.has(k)) return null;
@@ -82,22 +82,6 @@ export function validateResearch(body) {
   }
   if (Object.keys(pathMs).length > 4) return null;
 
-  // The Jev-timing experiment's two medians and counts (017 step 28):
-  // {shown, late} × {median: ms|null, n}.
-  if (body.jev_ms == null || typeof body.jev_ms !== "object"
-      || Array.isArray(body.jev_ms)) return null;
-  const jevMs = {};
-  for (const k of ["shown", "late"]) {
-    const v = body.jev_ms[k];
-    if (!v || typeof v !== "object" || Array.isArray(v)) return null;
-    if (Object.keys(v).sort().join(",") !== "median,n") return null;
-    if (v.median !== null && (typeof v.median !== "number" || !(v.median >= 0) || v.median > 3600000)) {
-      return null;
-    }
-    if (!int(v.n, 100000)) return null;
-    jevMs[k] = { median: v.median, n: v.n };
-  }
-  if (Object.keys(body.jev_ms).length !== 2) return null;
   if (!int(body.wrong_n, 100000)) return null;
   if (typeof body.strip_share !== "number" || body.strip_share < 0 || body.strip_share > 1) {
     return null;
@@ -109,7 +93,7 @@ export function validateResearch(body) {
     v: 1, rid: body.rid, day: body.day,
     words, own_taps: body.own_taps, sent_lengths: sentLengths,
     wpm: body.wpm, wpm_n: body.wpm_n, wpm_q1: body.wpm_q1, wpm_q3: body.wpm_q3,
-    path_ms: pathMs, jev_ms: jevMs, wrong_n: body.wrong_n,
+    path_ms: pathMs, wrong_n: body.wrong_n,
     strip_share: body.strip_share,
     layout: body.layout, mode: body.mode, age_days: body.age_days, ver: body.ver,
   };
@@ -128,7 +112,6 @@ export async function handleResearch(request, env) {
       JSON.stringify(clean.words),
       JSON.stringify(clean.sent_lengths),
       JSON.stringify(clean.path_ms),
-      JSON.stringify(clean.jev_ms),
       clean.layout, clean.mode, clean.ver,
     ],
     doubles: [

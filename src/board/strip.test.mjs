@@ -1,10 +1,12 @@
 /**
- * Phase 002 slice 3 Works Test — the strip offers Cooper without a
- * coordinate, and only when the state makes him eligible.
+ * Smart bar v2 Works Test — the strip offers what followed the phrase
+ * built so far, in her own history first.
  *
- * Proves: recently-selected or sentence-invited entities appear in the
- * strip (≤4 tiles); a low-signal state shows nothing; ranking never
- * writes the coordinate table.
+ * Proves: a spoken sentence trains phrase history and the strip then
+ * offers its continuation (entities included — her names reach the bar
+ * only through her own taps); a cleared bar trains nothing; an
+ * un-evidenced state shows nothing; ranking never writes the
+ * coordinate table.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -13,9 +15,12 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog, snapshotCoreCells } from "./catalog.mjs";
 import { addPersonalEntity } from "./entities.mjs";
-import { logSelection, stripCandidates, STRIP_CAP } from "../../public/shared/funnel.mjs";
+import {
+  openSentence, closeSentence, logSelection,
+  stripCandidates, STRIP_CAP,
+} from "../../public/shared/funnel.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
-import { TEST_MODEL } from "./test_model.mjs";
+import { makeKids } from "./test_phrases.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
@@ -25,11 +30,11 @@ const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
 const senseId = (word) =>
   catalog.senses.find(
     (s) =>
-      catalog.labels.find((l) => l.sense_id === s.id && l.kind === "lemma")?.text === word,
+      catalog.labels.find((l) => l.sense_id === s.id && l.kind === "lemma")?.normalized_text === word,
   ).id;
 const S = (word) => ({ kind: "sense", id: senseId(word) });
 
-const NOW = Date.parse("2026-09-22T08:20:00"); // 8:20am — breakfast time
+const NOW = Date.parse("2026-09-24T08:20:00"); // 8:20am — breakfast time
 
 function openDb() {
   const db = createDatabase(":memory:");
@@ -37,71 +42,86 @@ function openDb() {
   return db;
 }
 
-test("sentence invites an entity: 'play with' offers Cooper", () => {
+/** Say a sentence and speak it — only a spoken close trains history. */
+function say(db, items, at) {
+  const s = openSentence(db, at);
+  items.forEach((it, i) =>
+    logSelection(db, it.kind, it.id, at + i, { sentenceId: s, position: i }));
+  closeSentence(db, s, at + items.length, "spoken");
+}
+
+test("her history: 'i want Cooper' twice offers Cooper after 'i want'", () => {
   const db = openDb();
-  const cooper = addPersonalEntity(db, {
-    spokenName: "Cooper",
-    photoKey: "fixture:cooper.png",
-    category: "Animals & Nature",
-  });
+  const cooper = addPersonalEntity(db, { spokenName: "Cooper" });
   const before = snapshotCoreCells(db);
 
-  const candidates = stripCandidates(db, [S("play"), S("with")], NOW, "en", TEST_MODEL);
-  assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
-  assert.ok(candidates.length <= STRIP_CAP);
+  for (let i = 0; i < 2; i++) {
+    say(db, [S("i"), S("want"), { kind: "entity", id: cooper.id }], NOW - 100000 - i * 100);
+  }
+  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en");
+  assert.ok(shown.some((c) => c.kind === "entity" && c.id === cooper.id));
+  assert.ok(shown.length <= STRIP_CAP);
   assert.deepEqual(snapshotCoreCells(db), before);
 });
 
-test("recent selection makes Cooper eligible even without a noun-inviting tail", () => {
+test("one mention is not evidence: a single 'i want Cooper' shows no Cooper", () => {
   const db = openDb();
   const cooper = addPersonalEntity(db, { spokenName: "Cooper" });
-  logSelection(db, "entity", cooper.id, NOW - 60_000);
-
-  const candidates = stripCandidates(db, [S("happy")], NOW, "en", TEST_MODEL); // adjective tail — nothing invited
-  assert.ok(candidates.some((c) => c.kind === "entity" && c.id === cooper.id));
+  say(db, [S("i"), S("want"), { kind: "entity", id: cooper.id }], NOW - 100000);
+  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en");
+  assert.ok(!shown.some((c) => c.kind === "entity" && c.id === cooper.id));
 });
 
-test("low-signal state renders no strip", () => {
+test("a cleared bar trains nothing", () => {
+  const db = openDb();
+  const cooper = addPersonalEntity(db, { spokenName: "Cooper" });
+  for (let i = 0; i < 3; i++) {
+    const s = openSentence(db, NOW - 100000 - i * 100);
+    [S("i"), S("want"), { kind: "entity", id: cooper.id }].forEach((it, j) =>
+      logSelection(db, it.kind, it.id, NOW - 100000 - i * 100 + j,
+        { sentenceId: s, position: j }));
+    closeSentence(db, s, NOW - 100000 - i * 100 + 10, "cleared");
+  }
+  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en");
+  assert.ok(!shown.some((c) => c.kind === "entity" && c.id === cooper.id));
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM phrase_count").all()[0].n, 0,
+    "cleared bars wrote phrase_count rows");
+});
+
+test("the open sentence never trains itself", () => {
+  const db = openDb();
+  // The open bar 'i want' was just typed — her empty history must not
+  // echo the words it contains.
+  const s = openSentence(db, NOW);
+  [S("i"), S("want")].forEach((it, i) =>
+    logSelection(db, it.kind, it.id, NOW + i, { sentenceId: s, position: i }));
+  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en");
+  assert.ok(!shown.some((c) => c.id === S("i").id || c.id === S("want").id));
+});
+
+test("children in general fill the bar where she has no history", () => {
+  const db = openDb();
+  const kids = makeKids(db, [
+    { ctx: ["i", "want"], next: { juice: 40, milk: 20, cookie: 10, more: 5 } },
+  ]);
+  // 'more' follows 'i want' 6.7% of the time in children — below the 7%
+  // evidence gate, so the fourth slot stays empty rather than show a
+  // weak word.
+  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en", kids)
+    .map((c) => c.id);
+  assert.deepEqual(
+    shown,
+    [S("juice"), S("milk"), S("cookie")].map((x) => x.id),
+  );
+});
+
+test("children source cannot know her names — entities only come from her", () => {
   const db = openDb();
   addPersonalEntity(db, { spokenName: "Cooper" });
-
-  // empty sentence, never selected → nothing
-  assert.deepEqual(stripCandidates(db, [], NOW, "en", TEST_MODEL), []);
-  // adjective tail, never selected → nothing
-  assert.deepEqual(stripCandidates(db, [S("happy")], NOW, "en", TEST_MODEL), []);
-});
-
-test("a locale with no GRAMMAR entry gets no invitations — recency only (003b slice 3)", () => {
-  const db = openDb();
-  // a fringe noun with usage evidence: invited under en after a verb
-  // tail, invisible under de — the de tail is not English grammar
-  const dog = S("dog");
-  for (let i = 0; i < 3; i++) logSelection(db, "sense", dog.id, NOW - 3600_000);
-  const en = stripCandidates(db, [S("want")], NOW, "en", TEST_MODEL);
-  assert.ok(en.some((c) => c.id === dog.id));
-  const de = stripCandidates(db, [S("want")], NOW, "de", TEST_MODEL);
-  assert.ok(!de.some((c) => c.id === dog.id));
-  // recency is locale-independent: a recently tapped entity still ranks
-  const ent = addPersonalEntity(db, { spokenName: "Cooper" });
-  logSelection(db, "entity", ent.id, NOW - 60_000);
-  assert.ok(
-    stripCandidates(db, [S("want")], NOW, "de", TEST_MODEL).some((c) => c.kind === "entity" && c.id === ent.id),
-  );
-});
-
-test("cap and ordering: at most 4 tiles, invited+recent outranks stale", () => {
-  const db = openDb();
-  const ids = ["Cooper", "Baba", "Bluey", "Spot", "Rex", "Mom"].map(
-    (n) => addPersonalEntity(db, { spokenName: n }).id,
-  );
-  const [cooper, , , , , mom] = ids;
-  // Cooper and Mom have history; the rest are bare saves.
-  for (let i = 0; i < 5; i++) logSelection(db, "entity", cooper, NOW - 3 * 3600_000);
-  logSelection(db, "entity", mom, NOW - 30_000);
-
-  const afterVerb = stripCandidates(db, [S("want")], NOW, "en", TEST_MODEL);
-  assert.ok(afterVerb.length <= STRIP_CAP);
-  assert.ok(afterVerb.some((c) => c.kind === "entity" && c.id === cooper));
-  // all six are eligible by invitation; the cap keeps the strip at 4
-  assert.equal(afterVerb.length, STRIP_CAP);
+  const kids = makeKids(db, [
+    { ctx: ["i", "want"], next: { juice: 40 } },
+  ]);
+  const shown = stripCandidates(db, [S("i"), S("want")], NOW, "en", kids);
+  assert.ok(!shown.some((c) => c.kind === "entity"));
 });

@@ -115,10 +115,6 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- Parent Corner: "Highlight likely next words" — halo up to 3 grid cells
   -- the ranker predicts. Default OFF (docs/product/Design_System.md § States).
   highlight_next INTEGER NOT NULL DEFAULT 0 CHECK (highlight_next IN (0, 1)),
-  -- Parent Corner: Jev sharing — the strip's shortlist and the sentence
-  -- being built may be reranked by TypeSafe Jev through the Worker
-  -- (Dual_Engine § 3.2). Default ON — off means no Jev call, ever.
-  jev_sharing INTEGER NOT NULL DEFAULT 1 CHECK (jev_sharing IN (0, 1)),
   -- One Cells setting per profile (014 § 3): the layout the home board,
   -- every group page, and the strip all draw at. Names a coordinate-map
   -- layout (catalog.layouts) — anything unknown renders as grid60.
@@ -129,9 +125,6 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   spot_dim INTEGER NOT NULL DEFAULT 45 CHECK (spot_dim BETWEEN 10 AND 90),
   spot_pulse INTEGER NOT NULL DEFAULT 0 CHECK (spot_pulse IN (0, 1)),
   spot_minutes INTEGER NOT NULL DEFAULT 0 CHECK (spot_minutes >= 0),
-  -- Smart bar boost (013 § 4): 1 gives session targets a gentle Predict
-  -- lift — spotGate still caps them at half the bar.
-  spot_boost INTEGER NOT NULL DEFAULT 1 CHECK (spot_boost IN (0, 1)),
   -- Live modeling (013 § 4): silent by default — the adult's voice is
   -- the audio. 1 speaks the modeled word on the child's board too.
   model_speaks INTEGER NOT NULL DEFAULT 0 CHECK (model_speaks IN (0, 1)),
@@ -146,21 +139,6 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- itself lands with its own phase.
   presentation_mode TEXT NOT NULL DEFAULT 'symbol'
     CHECK (presentation_mode IN ('symbol', 'label')),
-  -- The opening-book band this profile reads (017 item 9): supporter age
-  -- picks it at setup — the learned mix keeps whichever band wins. Default
-  -- mid (≈ age 5) when nobody has said.
-  book_band TEXT NOT NULL DEFAULT 'mlu_2_35'
-    CHECK (book_band IN ('mlu_lt2', 'mlu_2_35', 'mlu_gt35')),
-  -- Smart bar order (R21, Motor_Grid §2.2): whether Predict may offer a
-  -- word that already has a grid cell, and whether a likely negation
-  -- word pins to the last Predict slot. Both default ON.
-  show_board_words INTEGER NOT NULL DEFAULT 1 CHECK (show_board_words IN (0, 1)),
-  no_last_slot INTEGER NOT NULL DEFAULT 1 CHECK (no_last_slot IN (0, 1)),
-  -- Sentence help (R21): 'one_step_up' keeps the opening book's weight
-  -- up against the child's own history so small grammar words survive —
-  -- 'their_words' lets history take over as it grows.
-  sentence_help TEXT NOT NULL DEFAULT 'one_step_up'
-    CHECK (sentence_help IN ('one_step_up', 'their_words')),
   -- After Speak (Design_System § Sentence bar): 0 keeps the spoken words
   -- and the next pick adds on, 1 lets the next pick start a fresh bar.
   -- Either way the words stay up for a repeat until that next pick.
@@ -270,66 +248,52 @@ CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_i
 CREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);
 CREATE INDEX IF NOT EXISTS event_log_sentence ON learner_event_log(sentence_id, position);
 
--- The user's own history as decayed running counts (017-10): what
--- followed the last 1, 2, and 3 items, plus overall ('' ctx). Maintained
--- incrementally in logSelection — no per-event scans at feature time.
--- n is a decayed count (30-day half-life, decayed on read AND on write);
--- last_at is the count's last update. ctx is 'kind:id' joined by ','.
-CREATE TABLE IF NOT EXISTS history_count (
+-- The user's own phrase history (smart bar v2): ctx is an ENDING of a
+-- spoken sentence's prefix ('' = sentence start) as 'kind:id' joined by
+-- ' ', and (item_kind, item_id) is what followed it. Plain counts, written
+-- once when a sentence closes spoken — cleared bars never become
+-- history. Derived from learner_event_log: rebuilt at each boot, then
+-- kept current by closeSentence.
+CREATE TABLE IF NOT EXISTS phrase_count (
   ctx TEXT NOT NULL,
   item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
   item_id TEXT NOT NULL CHECK (length(item_id) > 0),
-  n REAL NOT NULL CHECK (n > 0),
-  last_at INTEGER NOT NULL CHECK (last_at > 0),
+  n INTEGER NOT NULL CHECK (n > 0),
   PRIMARY KEY (ctx, item_kind, item_id)
 );
 
 -- One row per strip moment (017-5): what the ranker had, what it
 -- showed, and what the child picked next (chosen_* fills on the next
--- pick). A Jev answer updates the row in place — both rankings live on
--- one row so the moment replays exactly. The training data for §5.5
--- and the instrument for §5.7. Ids and numbers only; no label text, no
--- partner words.
+-- pick). The instrument for §5.7 and the evidence base for whether an
+-- outside ranker is ever worth bringing back. Ids and numbers only;
+-- no label text, no partner words.
 CREATE TABLE IF NOT EXISTS strip_impression (
   id INTEGER PRIMARY KEY,
   sentence_id INTEGER NOT NULL REFERENCES sentence(id),
   position INTEGER NOT NULL CHECK (position >= 0),
   shown_at INTEGER NOT NULL CHECK (shown_at > 0),
-  -- JSON array: [{"kind","id","x":{feature:value},"s","p"}] in local
-  -- rank order — a Jev answer merges "jp" (Jev's raw P) and "wp"
-  -- (with-Jev p) onto each entry
+  -- JSON array: [{"kind","id","src","her","kid","mask"}] in rank order —
+  -- src is which table contributed it ('now' | 'all' | 'kids'), her is
+  -- her best next-item count after the contributing ending, kid is the
+  -- children ending's {share, total}, mask marks a hidden sense
   candidates TEXT NOT NULL,
-  -- JSON array of the (kind:id) keys the local ranking painted, ≤ cap
+  -- JSON array of the (kind:id) keys the gate painted, ≤ cap
   shown_local TEXT NOT NULL,
   -- JSON array of the keys actually on screen when the next pick
   -- happened — written by the painter, not the ranker — NULL until then
   shown_final TEXT,
-  p_none REAL NOT NULL CHECK (p_none >= 0 AND p_none <= 1),  -- local
-  p_none_jev REAL CHECK (p_none_jev IS NULL OR (p_none_jev >= 0 AND p_none_jev <= 1)),
-  weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
-  -- picture | keyboard. Keyboard rows are metrics only: the keyboard
-  -- ranker has no feature vector, so the learner must skip them (017-4).
+  -- v2 rows carry 'phrase_history' — 'local_only'/'with_jev' stay in the
+  -- CHECK only so pre-v2 rows survive a rebuild (replayImpression
+  -- declines them).
+  weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev', 'phrase_history')),
+  -- picture | keyboard. Keyboard rows are metrics only.
   mode TEXT NOT NULL DEFAULT 'picture' CHECK (mode IN ('picture', 'keyboard')),
-  -- the exact weight vectors used: JSON {"w":{...},"tau":{...},"ver","seen"}
-  weights_local TEXT,
-  weights_jev TEXT,
+  -- the gate parameters the moment was judged under: {herMin,kidShare,kidMin}
+  gate TEXT,
   shortlist_cap INTEGER CHECK (shortlist_cap IS NULL OR shortlist_cap > 0),
-  jev_probs TEXT,             -- raw probabilities incl. "none" — NULL = no answer
-  jev_model TEXT,             -- versioned id from the response — NULL = no call
-  jev_prompt_version TEXT,
-  jev_latency_ms INTEGER CHECK (jev_latency_ms IS NULL OR jev_latency_ms >= 0),
-  jev_status TEXT NOT NULL CHECK (jev_status IN ('off', 'skipped', 'answered', 'late', 'error')),
-  -- with_jev trains each prob'd moment exactly once (017-3): an answer
-  -- that lands after Speak still counts — the flag, not the sentence,
-  -- is the idempotency boundary.
-  trained_jev INTEGER NOT NULL DEFAULT 0,
   chosen_kind TEXT CHECK (chosen_kind IS NULL OR chosen_kind IN ('sense', 'entity')),
   chosen_id TEXT,
-  chosen_source TEXT CHECK (chosen_source IS NULL OR chosen_source IN ('grid', 'strip', 'group', 'keyboard')),
-  -- 017-28: keys Jev's rerank would have painted — stored for 'late'
-  -- answers too, so the timing experiment reads recorded truth instead
-  -- of reconstructing an offer. NULL = no answer or a pre-column row.
-  shown_jev TEXT
+  chosen_source TEXT CHECK (chosen_source IS NULL OR chosen_source IN ('grid', 'strip', 'group', 'keyboard'))
 );
 
 CREATE INDEX IF NOT EXISTS impression_sentence ON strip_impression(sentence_id, position);
@@ -739,19 +703,6 @@ BEGIN
       AND voice.locale = NEW.locale
   );
 END;
-
-/* Learned per-child weights (schema §6.2e). One row per weight set;
- * weights drift from the shipped defaults after each spoken sentence.
- * Never leaves the device. */
-CREATE TABLE IF NOT EXISTS prediction_weights (
-  profile_id TEXT NOT NULL REFERENCES learner_profile(id),
-  weight_set TEXT NOT NULL CHECK (weight_set IN ('local_only', 'with_jev')),
-  weights TEXT NOT NULL,                   -- JSON {feature: θ, "none_bias": θ}
-  defaults_version TEXT NOT NULL,          -- the shipped weights it drifts from
-  examples_seen INTEGER NOT NULL DEFAULT 0 CHECK (examples_seen >= 0),
-  updated_at INTEGER NOT NULL CHECK (updated_at > 0),
-  PRIMARY KEY (profile_id, weight_set)
-);
 
 -- Daily totals (016 § 6.2): one row per local day, computed on the
 -- device from learner_event_log + sentence. Counts only — payload is

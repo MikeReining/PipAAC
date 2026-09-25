@@ -7,7 +7,7 @@
  * Proves: counts group the child's events per word (all logged rows
  * are the child's — modeling taps write no event); the off-board list
  * drops every word with a home cell and orders most-tapped first,
- * falling back to the opening book's unigram on day one; a tap places
+ * falling back to the children table's unigram on day one; a tap places
  * the pick and the old word keeps a cell or its group; Undo restores.
  */
 import { test } from "node:test";
@@ -26,10 +26,15 @@ const catalog = buildCatalog(
   JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8")),
   parseCoordinateMapMarkdown(readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")),
 );
-const book = JSON.parse(
-  readFileSync(join(repoRoot, "data/prediction/opening_book.en.json"), "utf8"),
+const phrases = JSON.parse(
+  readFileSync(join(repoRoot, "data/prediction/phrase_table.en.json"), "utf8"),
 );
-const uni = book.bands.mlu_2_35.uni;
+// The children table's unigram: total next-item counts across contexts —
+// the same day-one order the board's getUni derives.
+const uni = {};
+for (const row of Object.values(phrases.contexts)) {
+  for (const [id, n] of Object.entries(row)) uni[id] = (uni[id] ?? 0) + n;
+}
 
 function openDb() {
   const db = createDatabase(":memory:");
@@ -83,15 +88,15 @@ test("the placement list ranks by the child's taps, then the book — never an o
   assert.deepEqual(hits.map((r) => r.label), ["cookie"]);
 });
 
-test("day one: with no taps the book's unigram orders the list", () => {
+test("day one: with no taps the children table's unigram orders the list", () => {
   const db = openDb();
   const list = offBoardItems(db, "grid60", "en", { counts: new Map(), uni });
-  // The book's most-said off-board word tops the empty list.
-  const topBookWord = Object.entries(uni)
+  // The most-said off-board word tops the empty list.
+  const topUniId = Object.entries(uni)
     .sort((a, b) => b[1] - a[1])
-    .map(([w]) => w)
-    .find((w) => list.some((r) => r.label === w));
-  assert.equal(list[0].label, topBookWord);
+    .map(([id]) => id)
+    .find((id) => list.some((r) => r.id === id));
+  assert.equal(list[0].id, topUniId);
 });
 
 test("a row tap places the pick; Undo puts the board back", () => {

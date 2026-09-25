@@ -19,7 +19,7 @@ export function migrateSchema(d, schemaSql) {
     "learner_profile", "personal_entity", "entity_enrichment",
     "learner_event_log", "clip_override", "image_override", "sense_mask",
     "board_group", "group_cell",
-    "group_label", "sync_op", "sync_baseline", "sentence",
+    "group_label", "sync_op", "sync_baseline", "sentence", "phrase_count",
     "strip_impression", "spotlight_list", "spotlight_item",
     "spotlight_session", "coach_event", "core_override", "move_mark",
     "bar_family", "bar_family_item", "stats_day",

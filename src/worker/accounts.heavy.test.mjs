@@ -213,7 +213,7 @@ test("sign in by email + passkey; keys stay sealed end to end", async () => {
   // user's epoch-2 key — it opens a real op.
   const privB = await openAccountPriv(good.body.sealed_priv, prf);
   const keyB = await unwrapUserKey(privB, good.body.users[0].keys[0].grant);
-  const op = { kind: "set_setting", args: { key: "spot_boost", value: 1 } };
+  const op = { kind: "set_setting", args: { key: "spot_dim", value: 60 } };
   assert.deepEqual(await openOp(keyB, await sealOp(userKey, op)), op);
 
   // Re-registering — even with a fresh authorized link — can never
