@@ -108,7 +108,9 @@ for (const ti of test) {
       // the last word with it ("it is not my" + Speak -> mine)
       const atEnd = i + 1 === ids.length;
       const next = atEnd ? EOS : ids[i + 1];
-      const pick = pickForm(TABLE, ctx, sense, next);
+      // The worn surface competes at EOS ("her" holds ACC 16.7k > ABS
+      // 201) — elsewhere it is only evidence, same as the tap pick.
+      const pick = pickForm(TABLE, ctx, sense, next, feat);
       const right = pick === feat;
       const todayRight = feat === 'BASE';
 

@@ -11,11 +11,18 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { createDatabase, importCatalog } from '../../src/board/catalog.mjs';
 import { stripRanked } from '../../public/shared/funnel.mjs';
-import { formFor } from '../../public/shared/forms.mjs';
-import catalog from '../../data/catalog/catalog.json' with { type: 'json' };
+import { EOS, formFor } from '../../public/shared/forms.mjs';
+import { buildCatalog, parseCoordinateMapMarkdown } from '../catalog/build_catalog.mjs';
 
 const HERE = path.dirname(new URL(import.meta.url).pathname);
 const REPO = path.join(HERE, '../..');
+// Permissive in-memory build: the shipped catalog stays clip-blocked
+// until the Ara re-make (022 ruling) — the new form rows live here.
+const catalog = buildCatalog(
+  JSON.parse(readFileSync(path.join(REPO, 'data/launch_lexicon.json'), 'utf8')),
+  parseCoordinateMapMarkdown(
+    readFileSync(path.join(REPO, 'docs/product/Core_Coordinate_Map.md'), 'utf8')),
+  undefined, undefined, undefined, { allowMissingFormClips: true });
 const formTable = JSON.parse(
   readFileSync(path.join(REPO, 'data/prediction/form_table.en.json'), 'utf8'));
 const kids = JSON.parse(
@@ -36,6 +43,13 @@ const S = (w) => {
   if (!hit) throw new Error(`no catalog label for "${w}"`);
   return { kind: 'sense', id: hit.id };
 };
+// lemma part_of_speech per sense — the whose rule's noun test
+const posOf = new Map();
+for (const l of catalog.labels) {
+  if (l.kind === 'lemma' && l.status === 'approved' && l.locale === 'en') {
+    posOf.set(l.sense_id, l.part_of_speech);
+  }
+}
 
 const NOW = Date.parse('2026-09-24T08:20:00');
 
@@ -46,13 +60,22 @@ function tapWord(db, sentence, item) {
     ? formFor(db, formTable, sentence, item.id)
     : { senseId: item.id, labelId: null, text: item.text, merged: false };
   sentence.push({ kind: item.kind, id: f.senseId, text: f.text,
-    labelId: f.labelId, fixed: f.merged });
+    labelId: f.labelId, fixed: f.merged, features: f.features });
   const at = sentence.length - 1;
   if (at < 1) return;
   const prev = sentence[at - 1];
+  const cur = sentence[at];
+  // 022: a name + a noun wears 's — "Leo car" reads "Leo's car"
+  if (prev.kind === 'entity' && cur.kind === 'sense' && cur.id
+      && posOf.get(cur.id) === 'Noun' && !prev.text.endsWith("'s")) {
+    prev.text = `${prev.text}'s`;
+    return;
+  }
   if (prev.kind !== 'sense' || !prev.id || prev.fixed) return;
-  const re = formFor(db, formTable, sentence.slice(0, at - 1), prev.id, sentence[at]);
-  if (re.text !== prev.text) { prev.text = re.text; prev.labelId = re.labelId; }
+  const re = formFor(db, formTable, sentence.slice(0, at - 1), prev.id, cur);
+  if (re.text !== prev.text) {
+    prev.text = re.text; prev.labelId = re.labelId; prev.features = re.features;
+  }
 }
 
 function resolveItem(db, spec) {
@@ -97,6 +120,19 @@ for (const row of rows) {
 
   const taps = row.taps ?? [...row.before, row.tap];
   for (const spec of taps) tapWord(db, sentence, resolveItem(db, spec));
+
+  if (row.speak && sentence.length) {
+    // Speak is sentence-final: the last word re-picks against EOS —
+    // "it is not my" reads "it is not mine" (022, board's speakSentence).
+    const last = sentence[sentence.length - 1];
+    if (last.kind === 'sense' && last.id) {
+      const f = formFor(db, formTable, sentence.slice(0, -1), last.id, EOS,
+        last.features);
+      if (f.text !== last.text) {
+        last.text = f.text; last.labelId = f.labelId; last.features = f.features;
+      }
+    }
+  }
 
   if (row.expectedSentence) {
     const actual = sentence.map((s) => s.text).join(' ');

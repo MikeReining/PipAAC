@@ -49,26 +49,61 @@ const bump = (outer, key, bucket, text) => {
 };
 // Whose/how-many buckets (022): plural spellings per noun lemma and
 // possessive uses per lemma, counted on the analyzed stream (the 's
-// disambiguation already decided poss-vs-is).
-const plural = new Map(); // noun lemma -> Map<surface, n>
-const possUse = new Map(); // lemma -> n (child+adult 's uses)
+// disambiguation already decided poss-vs-is). Caregiver lines only —
+// the displayed form must be a grown-up spelling, never a child's
+// mistake (sheeps, knifes). The plural bucket sits in quantity
+// position ("two X", "some X"): the bare lemma is a candidate there,
+// and when bare wins — sheep, fish, milk, people — the word simply
+// has no distinct plural and gets no N;PL row.
+const plural = new Map(); // noun lemma -> Map<surface, n> (caregiver, quantity position)
+const plSpell = new Map(); // noun lemma -> Map<surface, n> (caregiver, any position, non-lemma only)
+const possUse = new Map(); // lemma -> n (caregiver 's uses)
+// Words that put the noun after them in plural position. Mass nouns
+// land here correctly — "some milk" counts the bare lemma, which is
+// exactly the adult answer we want to record.
+const QUANT = new Set(['two', 'three', 'four', 'five', 'six', 'seven',
+  'eight', 'nine', 'ten', 'some', 'all', 'more', 'these', 'those',
+  'many', 'few', 'several', 'both', 'other', 'lot', 'lots', 'couple',
+  'pair', 'any', 'no', 'enough', 'most']);
+// A definite singular marker between the quantity word and the noun
+// breaks the position ("three boys and a girl" — girl is singular).
+const SING = new Set(['a', 'an', 'one', 'another', 'every', 'each']);
 
 const trs = C.loadTranscripts();
 const { train } = C.splitIdx(trs.length, 20260923);
 for (const i of train) {
   for (const [spk, words] of trs[i]) {
     const child = C.CHILD_TAGS.has(spk);
+    const caregiver = C.isCaregiver(spk);
     // Whose/how-many (022): the analyzed stream carries poss flags and
-    // folded merges — plural surfaces under their noun, 's uses under
-    // their lemma. Spellings counted on all lines.
-    for (const t of C.analyzeLine(words)) {
-      if (t.lemma === null || posOf[t.lemma] !== 'Noun') continue;
-      if (t.poss) possUse.set(t.lemma, (possUse.get(t.lemma) ?? 0) + 1);
-      else if (t.surf !== t.lemma && (/s$/.test(t.surf) || C.MERGES[t.surf] === t.lemma)) {
-        const m = plural.get(t.lemma) ?? new Map();
+    // folded merges. Spellings count on caregiver lines only — child
+    // speech still lemmatizes for the context tables below but can
+    // never mint a displayed surface.
+    const toks = C.analyzeLine(words);
+    for (let i = 0; i < toks.length; i++) {
+      const t = toks[i];
+      if (t.lemma === null || posOf[t.lemma] !== 'Noun' || !caregiver) continue;
+      if (t.poss) { possUse.set(t.lemma, (possUse.get(t.lemma) ?? 0) + 1); continue; }
+      if (t.surf !== t.lemma && (/s$/.test(t.surf) || C.MERGES[t.surf] === t.lemma)) {
+        const m = plSpell.get(t.lemma) ?? new Map();
         m.set(t.surf, (m.get(t.surf) ?? 0) + 1);
-        plural.set(t.lemma, m);
+        plSpell.set(t.lemma, m);
       }
+      // a noun followed by another noun is a modifier — "two baby
+      // dolls" quantifies dolls, not baby
+      if (i + 1 < toks.length && posOf[toks[i + 1].lemma ?? ''] === 'Noun' && !toks[i + 1].poss) continue;
+      // plural position: a quantity word within the last 3 tokens,
+      // unbroken by a definite singular marker
+      let quant = false;
+      for (let j = i - 1; j >= Math.max(0, i - 3) && !quant; j--) {
+        const s = toks[j].surf ?? toks[j].lemma;
+        if (SING.has(s)) break;
+        quant = QUANT.has(s);
+      }
+      if (!quant) continue;
+      const m = plural.get(t.lemma) ?? new Map();
+      m.set(t.surf, (m.get(t.surf) ?? 0) + 1);
+      plural.set(t.lemma, m);
     }
     // Use-counts read the post-expansion stream — "it's hurting" is a
     // real "it is hurting" context (contractions carry the auxiliary).
@@ -185,18 +220,31 @@ emit('she', 'PRO;POSS;ABS', 'hers');
 emit('we', 'PRO;POSS;ABS', 'ours');
 emit('they', 'PRO;POSS;ABS', 'theirs');
 emit('you', 'PRO;POSS;ABS', 'yours');
-// Whose on names: nouns the corpus shows wearing 's >= MIN_USE times
-// (mummy's knee); the surface is the lemma + 's. How many: nouns whose
-// plural is attested >= MIN_USE get N;PL spelled the corpus's way
-// (babies, feet, children — the merge surfaces land here too).
+// Whose on names: nouns the corpus shows caregivers putting 's on >=
+// MIN_USE times (mummy's knee); the surface is the lemma + 's. How
+// many: a noun gets N;PL when caregivers prefer a distinct plural in
+// quantity position — the top non-lemma surface must beat the bare
+// lemma there (two dogs > two dog; two sheep < two sheep, so sheep
+// keeps none). A word grown-ups never pluralize gets no plural —
+// that's the whole point.
 const possNouns = {};
 for (const [lem, n] of [...possUse.entries()].sort()) {
   if (n >= MIN_USE) { possNouns[lem] = n; emit(lem, 'N;POSS', `${lem}'s`); }
 }
+const MIN_PL = 5;
 const plurals = {};
 for (const [lem, m] of [...plural.entries()].sort()) {
-  const hit = top(m);
-  if (hit && hit[1] >= MIN_USE) { plurals[lem] = hit; emit(lem, 'N;PL', hit[0]); }
+  // does a distinct plural exist? caregivers' non-lemma surfaces in
+  // quantity position must beat the bare lemma there
+  const nonLemmaTotal = [...m.entries()]
+    .filter(([s]) => s !== lem)
+    .reduce((n, [, c]) => n + c, 0);
+  if (nonLemmaTotal < MIN_PL || nonLemmaTotal <= (m.get(lem) ?? 0)) continue;
+  // and how is it spelled? the most common grown-up non-lemma surface
+  const hit = top(plSpell.get(lem));
+  if (!hit) continue;
+  plurals[lem] = hit;
+  emit(lem, 'N;PL', hit[0]);
 }
 const forms = [...formMap.values()];
 

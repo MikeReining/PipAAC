@@ -234,8 +234,18 @@ export const MERGES = {
   his: 'he', our: 'we', their: 'they', your: 'you',
   hers: 'she', ours: 'we', theirs: 'they', yours: 'you', mine: 'my',
   // How many: irregular plurals whose singular is a catalog word.
-  feet: 'foot', men: 'man', women: 'woman',
+  feet: 'foot', men: 'man', women: 'woman', knives: 'knife',
+  scarves: 'scarf',
 };
+
+// Speaker tags that are children — the target child plus sibling and
+// peer codes. Grown-up lines are the only source for the spellings
+// grammar help displays (022 ruling: a caregiver-attested surface, never
+// a child's mistake, is what "the right form" means).
+export const CHILD_SPEAKER = /^(CHI\d*|CH\d*|SIS\d*|BRO\d*|SIB\d*|SI\d*|BR\d*|MCH|FCH|NCH|KID)$/;
+// Lines we can't put in anyone's mouth — not a source for spellings.
+const NONSPEECH = new Set(['ENV', 'UNK', 'XXX', '0', 'TOY']);
+export const isCaregiver = (spk) => !CHILD_SPEAKER.test(spk) && !NONSPEECH.has(spk);
 
 /** Per-token lemma + the surface that produced it — the form table
  *  needs both ("him" is surface PRO;ACC of the he-sense). */

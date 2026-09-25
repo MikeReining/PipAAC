@@ -258,6 +258,13 @@ test('pickForm: whose keys on the next word class — noun, EOS, else base (022)
       'sns_you|x|sns_want': { BASE: 22000 },
       // a tied per-word row falls back to the X class answer
       'sns_he|x|sns_rare': { BASE: 1, 'PRO;POSS': 1 },
+      // EOS competition (022): the worn feature fights the whose-lift —
+      // BASE 73k keeps "not you" bare, POSS 1099 loses "your" to yours,
+      // ACC 16.7k holds "that is her" against ABS 201.
+      'sns_you|EOS': { BASE: 73105, 'PRO;POSS': 1099,
+        'PRO;POSS;ABS': 2806, 'N;POSS': 2 },
+      'sns_she|EOS': { BASE: 9089, 'PRO;ACC': 16739,
+        'PRO;POSS;ABS': 201, 'N;POSS': 26 },
     },
   };
   // he + dog -> his; he + want -> he; he + Speak -> his (data says so here)
@@ -274,6 +281,15 @@ test('pickForm: whose keys on the next word class — noun, EOS, else base (022)
   assert.equal(pickForm(table, ['sns_it', 'sns_is', 'sns_not'], 'sns_my', EOS),
     'PRO;POSS;ABS');
   assert.equal(pickForm(table, ['sns_it'], 'sns_my', 'sns_dog'), 'BASE');
+  // EOS competes against what the word wears: a bare "not you" stays
+  // you (BASE dwarfs the whose rows), a worn "your" lifts to yours,
+  // a worn "her" holds (ACC out-speaks ABS), a bare "she" stays she.
+  assert.equal(pickForm(table, ['sns_it'], 'sns_you', EOS), 'BASE');
+  assert.equal(
+    pickForm(table, ['sns_it'], 'sns_you', EOS, 'PRO;POSS'), 'PRO;POSS;ABS');
+  assert.equal(
+    pickForm(table, ['sns_it'], 'sns_she', EOS, 'PRO;ACC'), 'PRO;ACC');
+  assert.equal(pickForm(table, ['sns_it'], 'sns_she', EOS), 'BASE');
   // a sense with no possessive row is untouched: i + dog stays i
   assert.equal(pickForm(table, [], 'sns_i', 'sns_dog'), 'BASE');
   // a tied poss row falls through to ordinary context evidence

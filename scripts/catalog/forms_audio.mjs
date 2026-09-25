@@ -1,30 +1,33 @@
 #!/usr/bin/env node
 /**
- * 021 slice 2 — voice clips for the grammar-form utterances.
+ * 021/022 — the word-form clip census.
  *
  * Form labels that share a lemma's surface reuse its utterance and clip
- * (has, him, an already speak). The new surfaces — utt_f#### rows like
- * "wants", "going", "wakes up", "doesn't" — need clips in the SAME
- * voice. WorkbookBench first (its catalog has most -ing forms), then
- * ElevenLabs with the identical voice id and settings the base words
- * were baked with (founder-authorized 2026-09-25).
+ * (has, him, an already speak). The rest — utt_f#### rows like
+ * "wants", "going", "wakes up", "doesn't", "dogs", "mom's" — need clips.
  *
- *   node scripts/catalog/forms_audio.mjs            # plan + WBB resolve/materialize
- *   node scripts/catalog/forms_audio.mjs --generate # also synthesize the misses
+ * CTO ruling 2026-09-26: all voice work moved to Grok Ara and the
+ * catalog is being re-made there by another developer. NOTHING new is
+ * generated here — no ElevenLabs, ever. This script's job is the
+ * census: enumerate every needed form utterance from a current
+ * in-memory catalog (the shipped file can't contain the unclipped rows
+ * it enumerates), reuse what already exists, and write the
+ * needed/missing list — that list is the handoff to the Ara re-make.
  *
- * Emits data/catalog/forms_audio.json — build_catalog.mjs merges it
- * into clip rows keyed by utterance id. Idempotent: a covered
- * utterance is never re-synthesized (TTS output isn't deterministic).
+ *   node scripts/catalog/forms_audio.mjs   # census + WBB resolve + write list
+ *
+ * Emits data/catalog/forms_audio.json — entries (covered clips) plus
+ * needed/missing surfaces. build_catalog.mjs merges the entries into
+ * clip rows keyed by (utterance id, surface); its strict build stays
+ * blocked until every form utterance has a clip.
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { pathToFileURL } from "node:url";
 import { spawnSync } from "node:child_process";
 
 import {
   DEFAULT_AUDIO_CACHE_ROOT,
   repoRoot,
-  resolveWorkbookBenchRoot,
 } from "./paths.mjs";
 import {
   clipPayloadFromWbb,
@@ -37,20 +40,6 @@ import { buildCatalog, parseCoordinateMapMarkdown } from "./build_catalog.mjs";
 const FORMS_AUDIO_PATH = join(repoRoot, "data/catalog/forms_audio.json");
 const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
 const LEXICON_PATH = join(repoRoot, "data/launch_lexicon.json");
-
-function loadEnv() {
-  try {
-    for (const line of readFileSync(join(repoRoot, ".env"), "utf8").split("\n")) {
-      const m = /^([A-Z_]+)=(.+)$/.exec(line.trim());
-      if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2];
-    }
-  } catch {
-    // .env absent — rely on real env
-  }
-}
-
-const slug = (text) =>
-  text.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
 
 /** The form-only utterances — utt_f#### rows minted by the forms pass. */
 function formUtterances(catalog) {
@@ -77,8 +66,6 @@ function r2Get(key, dest) {
 }
 
 async function main() {
-  const generate = process.argv.includes("--generate");
-  loadEnv();
   // Build the catalog in memory rather than reading catalog.json: new
   // form surfaces may not be shipped yet (the strict clip guard holds
   // the file until this plan covers them — this script produces it).
@@ -140,43 +127,22 @@ async function main() {
     entries.set(h.utterance_id, { ...h, clip });
   }
 
-  if (generate && misses.length) {
-    const wbbRoot = resolveWorkbookBenchRoot();
-    const tts = await import(pathToFileURL(join(wbbRoot, "scripts/catalog/tts.mjs")).href);
-    const voiceId = process.env.ELEVENLABS_VOICE_ID;
-    if (!voiceId) throw new Error("ELEVENLABS_VOICE_ID is not set");
-    for (const m of [...misses]) {
-      if (entries.has(m.utterance_id)) continue; // an r2 failure stays a miss
-      const text = m.spoken_text;
-      const buf = await tts.synthesize({ text, voiceId });
-      const tmp = join(DEFAULT_AUDIO_CACHE_ROOT, "audio", slug(text), ".tmp.mp3");
-      mkdirSync(dirname(tmp), { recursive: true });
-      writeFileSync(tmp, buf);
-      const sha = sha256File(tmp);
-      const realKey = `audio/${slug(text)}/${sha.slice(0, 12)}.mp3`;
-      const dest = localPathForAudioKey(DEFAULT_AUDIO_CACHE_ROOT, realKey);
-      writeFileSync(dest, buf);
-      writeFileSync(tmp, "");
-      entries.set(m.utterance_id, {
-        ...m,
-        clip: { key: realKey, sha256: sha, source: "elevenlabs", voice: voiceId, spokenText: text },
-      });
-      console.log(`  made ${text} -> ${realKey}`);
-    }
-  }
-
   const liveIds = new Set(needed.map((u) => u.utterance_id));
+  const uncovered = needed.filter((u) => !entries.has(u.utterance_id));
   const out = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
-    voice: process.env.ELEVENLABS_VOICE_ID ?? null,
+    voice: "grok-ara (pending catalog re-make)",
     entries: [...entries.values()]
       .filter((e) => liveIds.has(e.utterance_id))
       .sort((a, b) => a.utterance_id.localeCompare(b.utterance_id)),
+    // the Ara re-make's job list: every needed form surface, then the
+    // subset still missing a clip
+    needed: needed.map((u) => ({ utterance_id: u.utterance_id, spoken_text: u.spoken_text })),
+    missing: uncovered.map((u) => ({ utterance_id: u.utterance_id, spoken_text: u.spoken_text })),
   };
   mkdirSync(dirname(FORMS_AUDIO_PATH), { recursive: true });
   writeFileSync(FORMS_AUDIO_PATH, `${JSON.stringify(out, null, 2)}\n`, "utf8");
-  const uncovered = needed.filter((u) => !entries.has(u.utterance_id));
   console.log(`wrote ${FORMS_AUDIO_PATH}: ${out.entries.length} clips, ${uncovered.length} uncovered`);
   if (uncovered.length) console.log(`  still missing: ${uncovered.map((u) => u.spoken_text).join(", ")}`);
 }

@@ -74,9 +74,13 @@ function pickFromLevels(levels, keyFor) {
  *                caller merges has->have etc. the same way the bar does)
  * @param senseId the word's sense id
  * @param nextSenseId the next word's sense id, when known (decision 4)
+ * @param currentFeat the feature the word already wears — EOS competes
+ *                    against it ("not you" stays you on BASE 73k, while
+ *                    "not your" lifts to yours: ABS 2806 > POSS 1099)
  * @returns the winning features tag ("BASE" = the lemma/default label)
  */
-export function pickForm(table, ctxIds, senseId, nextSenseId = null) {
+export function pickForm(table, ctxIds, senseId, nextSenseId = null,
+  currentFeat = "BASE") {
   if (!table?.contexts) return "BASE";
 
   // a / an is decided by the next word alone, learned from caregivers.
@@ -96,15 +100,32 @@ export function pickForm(table, ctxIds, senseId, nextSenseId = null) {
   if (nextSenseId) {
     const cls = nextSenseId === EOS ? "EOS"
       : table.nounSenses?.includes(nextSenseId) ? "N" : "X";
-    // EOS is the app's Speak signal, not a natural position — the row
-    // answers only the whose-question (my -> mine). A non-possessive
-    // top ("he" ends "can he") defers to the context endings, which
-    // still know "like him".
-    const pick = cls === "EOS"
-      ? ((p) => (p?.includes("POSS") ? p : null))(topForm(table.possNext?.[`${senseId}|EOS`]))
-      : (topForm(table.possNext?.[`${senseId}|x|${nextSenseId}`])
-          ?? topForm(table.possNext?.[`${senseId}|${cls}`]));
-    if (pick) return pick;
+    // EOS is the app's Speak signal, not a natural position — the only
+    // honest "lift" at sentence end is the whose-family (my -> mine,
+    // your -> yours). The worn feature competes: candidates are the
+    // current form plus the possessive class, and the data decides.
+    // "that is her" stays her (ACC 16.7k out-speaks ABS 201); "it is
+    // not your" becomes yours (ABS 2806 > POSS 1099); a bare "not you"
+    // stays you because BASE's 73k dwarfs the whose rows.
+    if (cls === "EOS") {
+      const row = table.possNext?.[`${senseId}|EOS`];
+      if (row) {
+        const cands = { [currentFeat]: 1, "PRO;POSS": 1,
+          "PRO;POSS;ABS": 1, "N;POSS": 1 };
+        let best = null;
+        for (const [feat, n] of Object.entries(row))
+          if (cands[feat] && (!best || n > row[best])) best = feat;
+        if (best && best !== currentFeat) return best;
+        // No lift: a worn form stands ("that is her" stays her) — EOS
+        // never flattens a picked form to base. A bare word defers to
+        // the context endings, which still know "like him".
+        if (currentFeat !== "BASE") return currentFeat;
+      }
+    } else {
+      const pick = topForm(table.possNext?.[`${senseId}|x|${nextSenseId}`])
+        ?? topForm(table.possNext?.[`${senseId}|${cls}`]);
+      if (pick) return pick;
+    }
   }
 
   const levels = ctxLevels(ctxIds);
@@ -202,7 +223,8 @@ function ctxIdsOf(db, items) {
  *   is the kept sense for merged tiles (caller stores THAT in the item).
  *   BASE features = the lemma label (id so the log records it).
  */
-export function formFor(db, table, sentenceItems, senseId, nextItem = null) {
+export function formFor(db, table, sentenceItems, senseId, nextItem = null,
+  currentFeat = "BASE") {
   const L = labelsFor(db);
   const merged = L.merged.get(senseId);
   if (merged?.lbl) {
@@ -216,7 +238,7 @@ export function formFor(db, table, sentenceItems, senseId, nextItem = null) {
     : nextItem.kind === "sense"
       ? (L.merged.get(nextItem.id)?.kept ?? nextItem.id)
       : nextItem.kind === "entity" ? (L.entitySense.get(nextItem.id) ?? null) : null;
-  const features = pickForm(table, ctxIds, senseId, nextId);
+  const features = pickForm(table, ctxIds, senseId, nextId, currentFeat);
   const lbl = (features === "BASE" ? null : L.forms.get(`${senseId}|${features}`))
     ?? L.lemma.get(senseId);
   return { senseId, labelId: lbl?.id ?? null, text: lbl?.text ?? null,

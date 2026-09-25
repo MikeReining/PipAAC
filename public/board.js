@@ -45,7 +45,7 @@ import {
   resolveActiveUser, touchOpened,
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
-import { formFor, grammarHelpOn } from "./shared/forms.mjs";
+import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
 import { useCounts } from "./shared/usecounts.mjs";
@@ -306,6 +306,28 @@ async function speakItem(item) {
  *  next pick opens a new sentence row. */
 async function speakSentence() {
   freshNext = freshAfterSpeak;
+  // 022: Speak is sentence-final — the last word may take its absolute
+  // form ("it is not my" -> "it is not mine"). Picked once, before
+  // speaking, same as a tap's decision-4 but with EOS as the next word.
+  if (grammarHelp && sentence.length) {
+    const last = sentence[sentence.length - 1];
+    if (last.kind === "sense" && last.id) {
+      const f = formFor(db, formTable, sentence.slice(0, -1), last.id, EOS,
+        last.features);
+      if (f.text !== last.text) {
+        last.text = f.text;
+        last.labelId = f.labelId;
+        last.features = f.features;
+        if (sentenceId !== null) {
+          const pos = sentence.slice(0, -1).filter((it) => it.id).length;
+          RUN(db,
+            "UPDATE learner_event_log SET label_id = ? WHERE sentence_id = ? AND position = ?",
+            [f.labelId, sentenceId, pos]);
+        }
+        renderStrip();
+      }
+    }
+  }
   for (const item of [...sentence]) await speakItem(item);
   if (sentenceId !== null) {
     const sid = sentenceId;
@@ -704,7 +726,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
   if (kind === "sense" && id && grammarHelp) {
     const f = formFor(db, formTable, sentence, id);
     item = { kind: "sense", id: f.senseId, text: f.text ?? text,
-      labelId: f.labelId, fixed: f.merged };
+      labelId: f.labelId, fixed: f.merged, features: f.features };
   }
   expand = null; // any pick returns the bar to Predict (014 § 5)
   startFresh();
@@ -731,15 +753,36 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
  *  one before it — "what do" + he -> does. Re-picks the previous sense
  *  item only (her fixed form picks and typed words never move); a
  *  changed form rewrites the bar item and the log row's label. */
+/** Cache: sense id → lemma part_of_speech (noun-test for the whose rule). */
+const sensePos = new Map();
+function posOfSense(senseId) {
+  if (!sensePos.has(senseId)) {
+    sensePos.set(senseId, ALL(db,
+      `SELECT part_of_speech AS p FROM label
+       WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
+      [senseId, locale])[0]?.p ?? null);
+  }
+  return sensePos.get(senseId);
+}
+
 function revisitPrev(atIndex) {
   if (!grammarHelp || atIndex < 1) return;
   const prev = sentence[atIndex - 1];
   const cur = sentence[atIndex];
+  // 022: a name + a noun wears 's — "Leo car" reads "Leo's car". Entity
+  // text only (the device voice says the name as always); the corpus
+  // rule is the same as people nouns — a noun follows, so it's a whose.
+  if (prev.kind === "entity" && cur?.kind === "sense" && cur.id
+      && posOfSense(cur.id) === "Noun" && !prev.text.endsWith("'s")) {
+    prev.text = `${prev.text}'s`;
+    return;
+  }
   if (prev.kind !== "sense" || !prev.id || prev.fixed) return;
   const f = formFor(db, formTable, sentence.slice(0, atIndex - 1), prev.id, cur);
   if (f.text === prev.text) return;
   prev.text = f.text;
   prev.labelId = f.labelId;
+  prev.features = f.features;
   if (sentenceId !== null) {
     // Positions follow the seated logged picks — count them up to prev.
     const pos = sentence.slice(0, atIndex - 1).filter((it) => it.id).length;

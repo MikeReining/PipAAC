@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-25T22:46:12.331Z",
-  "voice": "WWMMC6k9tdar0BthUenK",
+  "generatedAt": "2026-09-25T23:38:08.116Z",
+  "voice": "grok-ara (pending catalog re-make)",
   "entries": [
     {
       "utterance_id": "utt_f0005",
@@ -3852,7 +3852,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0399",
+      "utterance_id": "utt_f0389",
       "spoken_text": "waffles",
       "res": {
         "status": "hit",
@@ -3880,7 +3880,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0401",
+      "utterance_id": "utt_f0391",
       "spoken_text": "bagels",
       "res": {
         "status": "hit",
@@ -3908,7 +3908,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0403",
+      "utterance_id": "utt_f0393",
       "spoken_text": "eggs",
       "res": {
         "status": "hit",
@@ -3936,7 +3936,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0427",
+      "utterance_id": "utt_f0401",
       "spoken_text": "cookies",
       "res": {
         "status": "hit",
@@ -3964,7 +3964,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0429",
+      "utterance_id": "utt_f0403",
       "spoken_text": "pretzels",
       "res": {
         "status": "hit",
@@ -3992,63 +3992,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0433",
-      "spoken_text": "candies",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "candies",
-        "clip": {
-          "senseId": "candies",
-          "key": "audio/candies/d61749f40905.mp3",
-          "spokenText": "candies",
-          "voice": "recorded",
-          "source": "bitsboard-recorded",
-          "status": "ready",
-          "verifiedSha256": "d61749f409053e0e4676082bd8027e8ced6fb213dc01f749b042fb0677796fe9",
-          "ingestedAt": "2026-08-16",
-          "id": "aud_d61749f40905"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/candies/d61749f40905.mp3",
-        "sha256": "d61749f409053e0e4676082bd8027e8ced6fb213dc01f749b042fb0677796fe9",
-        "source": "bitsboard-recorded",
-        "voice": "recorded",
-        "wbbAudioId": "aud_d61749f40905",
-        "spokenText": "candies"
-      }
-    },
-    {
-      "utterance_id": "utt_f0441",
-      "spoken_text": "fruits",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "fruits",
-        "clip": {
-          "senseId": "fruits",
-          "key": "audio/fruits/288907f237fd.mp3",
-          "spokenText": "fruits",
-          "voice": "recorded",
-          "source": "bitsboard-recorded",
-          "status": "ready",
-          "verifiedSha256": "288907f237fd4a0b45de356d12ed8d6de004216432b21c44b73fb4ea1a8550c9",
-          "ingestedAt": "2026-08-16",
-          "id": "aud_288907f237fd"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/fruits/288907f237fd.mp3",
-        "sha256": "288907f237fd4a0b45de356d12ed8d6de004216432b21c44b73fb4ea1a8550c9",
-        "source": "bitsboard-recorded",
-        "voice": "recorded",
-        "wbbAudioId": "aud_288907f237fd",
-        "spokenText": "fruits"
-      }
-    },
-    {
-      "utterance_id": "utt_f0443",
+      "utterance_id": "utt_f0409",
       "spoken_text": "apples",
       "res": {
         "status": "hit",
@@ -4076,7 +4020,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0463",
+      "utterance_id": "utt_f0421",
       "spoken_text": "eyes",
       "res": {
         "status": "hit",
@@ -4104,7 +4048,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0465",
+      "utterance_id": "utt_f0423",
       "spoken_text": "ears",
       "res": {
         "status": "hit",
@@ -4132,38 +4076,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0473",
-      "spoken_text": "necks",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "necks",
-        "clip": {
-          "senseId": "necks",
-          "key": "audio/necks/823643e7d5fe.mp3",
-          "spokenText": "necks",
-          "voice": "elevenlabs",
-          "source": "elevenlabs",
-          "status": "ready",
-          "verifiedSha256": "823643e7d5feda3e1f317e54c24633d8fe769b2cdd09299615abe369641b4d51",
-          "ingestedAt": "2026-08-22",
-          "id": "aud_823643e7d5fe",
-          "model": "eleven_v3",
-          "promptText": "necks",
-          "voiceId": "WWMMC6k9tdar0BthUenK"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/necks/823643e7d5fe.mp3",
-        "sha256": "823643e7d5feda3e1f317e54c24633d8fe769b2cdd09299615abe369641b4d51",
-        "source": "elevenlabs",
-        "voice": "elevenlabs",
-        "wbbAudioId": "aud_823643e7d5fe",
-        "spokenText": "necks"
-      }
-    },
-    {
-      "utterance_id": "utt_f0477",
+      "utterance_id": "utt_f0425",
       "spoken_text": "arms",
       "res": {
         "status": "hit",
@@ -4191,7 +4104,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0489",
+      "utterance_id": "utt_f0431",
       "spoken_text": "legs",
       "res": {
         "status": "hit",
@@ -4219,7 +4132,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0493",
+      "utterance_id": "utt_f0433",
       "spoken_text": "feet",
       "res": {
         "status": "hit",
@@ -4247,35 +4160,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0515",
-      "spoken_text": "mommies",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "mommies",
-        "clip": {
-          "senseId": "mommies",
-          "key": "audio/mommies/a51d9e962b82.mp3",
-          "spokenText": "mommies",
-          "voice": "recorded",
-          "source": "archive-recorded",
-          "status": "ready",
-          "verifiedSha256": "a51d9e962b829d24212009d39e23b291fccc3308f25c7e5cb581ab06b45ae976",
-          "ingestedAt": "2026-08-21",
-          "id": "aud_a51d9e962b82"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/mommies/a51d9e962b82.mp3",
-        "sha256": "a51d9e962b829d24212009d39e23b291fccc3308f25c7e5cb581ab06b45ae976",
-        "source": "archive-recorded",
-        "voice": "recorded",
-        "wbbAudioId": "aud_a51d9e962b82",
-        "spokenText": "mommies"
-      }
-    },
-    {
-      "utterance_id": "utt_f0529",
+      "utterance_id": "utt_f0461",
       "spoken_text": "babies",
       "res": {
         "status": "hit",
@@ -4303,7 +4188,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0537",
+      "utterance_id": "utt_f0469",
       "spoken_text": "sisters",
       "res": {
         "status": "hit",
@@ -4331,7 +4216,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0555",
+      "utterance_id": "utt_f0483",
       "spoken_text": "pets",
       "res": {
         "status": "hit",
@@ -4362,7 +4247,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0561",
+      "utterance_id": "utt_f0489",
       "spoken_text": "students",
       "res": {
         "status": "hit",
@@ -4390,7 +4275,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0563",
+      "utterance_id": "utt_f0491",
       "spoken_text": "friends",
       "res": {
         "status": "hit",
@@ -4418,38 +4303,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0595",
-      "spoken_text": "homes",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "homes",
-        "clip": {
-          "senseId": "homes",
-          "key": "audio/homes/d1563d640f55.mp3",
-          "spokenText": "homes",
-          "voice": "elevenlabs",
-          "source": "elevenlabs",
-          "status": "ready",
-          "verifiedSha256": "d1563d640f55f0e2356cd57abbc4c94c6470dfd7f9bf15eb1dac14532cddff0c",
-          "ingestedAt": "2026-08-22",
-          "id": "aud_d1563d640f55",
-          "model": "eleven_v3",
-          "promptText": "homes",
-          "voiceId": "WWMMC6k9tdar0BthUenK"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/homes/d1563d640f55.mp3",
-        "sha256": "d1563d640f55f0e2356cd57abbc4c94c6470dfd7f9bf15eb1dac14532cddff0c",
-        "source": "elevenlabs",
-        "voice": "elevenlabs",
-        "wbbAudioId": "aud_d1563d640f55",
-        "spokenText": "homes"
-      }
-    },
-    {
-      "utterance_id": "utt_f0621",
+      "utterance_id": "utt_f0521",
       "spoken_text": "toys",
       "res": {
         "status": "hit",
@@ -4477,7 +4331,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0623",
+      "utterance_id": "utt_f0523",
       "spoken_text": "balls",
       "res": {
         "status": "hit",
@@ -4508,7 +4362,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0627",
+      "utterance_id": "utt_f0527",
       "spoken_text": "dolls",
       "res": {
         "status": "hit",
@@ -4539,7 +4393,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0637",
+      "utterance_id": "utt_f0537",
       "spoken_text": "bikes",
       "res": {
         "status": "hit",
@@ -4570,7 +4424,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0661",
+      "utterance_id": "utt_f0549",
       "spoken_text": "books",
       "res": {
         "status": "hit",
@@ -4598,100 +4452,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0673",
-      "spoken_text": "beds",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "beds",
-        "clip": {
-          "senseId": "beds",
-          "key": "audio/beds/a6155b3d1499.mp3",
-          "spokenText": "beds",
-          "voice": "elevenlabs",
-          "source": "elevenlabs",
-          "status": "ready",
-          "verifiedSha256": "a6155b3d14997fc1e31c7c28f167a57a271acfa30089ab7a3b3f61ef81b2b30a",
-          "ingestedAt": "2026-08-22",
-          "id": "aud_a6155b3d1499",
-          "model": "eleven_v3",
-          "promptText": "beds",
-          "voiceId": "WWMMC6k9tdar0BthUenK"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/beds/a6155b3d1499.mp3",
-        "sha256": "a6155b3d14997fc1e31c7c28f167a57a271acfa30089ab7a3b3f61ef81b2b30a",
-        "source": "elevenlabs",
-        "voice": "elevenlabs",
-        "wbbAudioId": "aud_a6155b3d1499",
-        "spokenText": "beds"
-      }
-    },
-    {
-      "utterance_id": "utt_f0685",
-      "spoken_text": "sinks",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "sinks",
-        "clip": {
-          "senseId": "sinks",
-          "key": "audio/sinks/377085856848.mp3",
-          "spokenText": "sinks",
-          "voice": "elevenlabs",
-          "source": "elevenlabs",
-          "status": "ready",
-          "verifiedSha256": "377085856848dc633d2aeb23a9fc002c0044ea042227ca69c6ac226e72aa78e5",
-          "ingestedAt": "2026-08-22",
-          "id": "aud_377085856848",
-          "model": "eleven_v3",
-          "promptText": "sinks",
-          "voiceId": "WWMMC6k9tdar0BthUenK"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/sinks/377085856848.mp3",
-        "sha256": "377085856848dc633d2aeb23a9fc002c0044ea042227ca69c6ac226e72aa78e5",
-        "source": "elevenlabs",
-        "voice": "elevenlabs",
-        "wbbAudioId": "aud_377085856848",
-        "spokenText": "sinks"
-      }
-    },
-    {
-      "utterance_id": "utt_f0689",
-      "spoken_text": "rugs",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "rugs",
-        "clip": {
-          "senseId": "rugs",
-          "key": "audio/rugs/02f2017ab53a.mp3",
-          "spokenText": "rugs",
-          "voice": "elevenlabs",
-          "source": "elevenlabs",
-          "status": "ready",
-          "verifiedSha256": "02f2017ab53a07f3a6a9edc8a72ff5553c8b01d879490abd6620d9f3f81de03e",
-          "ingestedAt": "2026-08-22",
-          "id": "aud_02f2017ab53a",
-          "model": "eleven_v3",
-          "promptText": "rugs",
-          "voiceId": "WWMMC6k9tdar0BthUenK"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/rugs/02f2017ab53a.mp3",
-        "sha256": "02f2017ab53a07f3a6a9edc8a72ff5553c8b01d879490abd6620d9f3f81de03e",
-        "source": "elevenlabs",
-        "voice": "elevenlabs",
-        "wbbAudioId": "aud_02f2017ab53a",
-        "spokenText": "rugs"
-      }
-    },
-    {
-      "utterance_id": "utt_f0695",
+      "utterance_id": "utt_f0569",
       "spoken_text": "cups",
       "res": {
         "status": "hit",
@@ -4719,7 +4480,35 @@
       }
     },
     {
-      "utterance_id": "utt_f0703",
+      "utterance_id": "utt_f0575",
+      "spoken_text": "knives",
+      "res": {
+        "status": "hit",
+        "wbbSenseId": "knives",
+        "clip": {
+          "senseId": "knives",
+          "key": "audio/knives/d428c4ecfa45.mp3",
+          "spokenText": "knives",
+          "voice": "recorded",
+          "source": "phonicsstudio-recorded",
+          "status": "ready",
+          "verifiedSha256": "d428c4ecfa45cf2fe21f78b9e6723f8b7f010ad430f9d2d9037306fe0a1f3962",
+          "ingestedAt": "2026-08-18",
+          "id": "aud_d428c4ecfa45"
+        },
+        "via": "lookup"
+      },
+      "clip": {
+        "key": "audio/knives/d428c4ecfa45.mp3",
+        "sha256": "d428c4ecfa45cf2fe21f78b9e6723f8b7f010ad430f9d2d9037306fe0a1f3962",
+        "source": "phonicsstudio-recorded",
+        "voice": "recorded",
+        "wbbAudioId": "aud_d428c4ecfa45",
+        "spokenText": "knives"
+      }
+    },
+    {
+      "utterance_id": "utt_f0577",
       "spoken_text": "napkins",
       "res": {
         "status": "hit",
@@ -4747,7 +4536,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0709",
+      "utterance_id": "utt_f0581",
       "spoken_text": "bags",
       "res": {
         "status": "hit",
@@ -4778,7 +4567,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0717",
+      "utterance_id": "utt_f0587",
       "spoken_text": "fans",
       "res": {
         "status": "hit",
@@ -4809,7 +4598,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0719",
+      "utterance_id": "utt_f0589",
       "spoken_text": "boxes",
       "res": {
         "status": "hit",
@@ -4840,35 +4629,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0725",
-      "spoken_text": "sponges",
-      "res": {
-        "status": "hit",
-        "wbbSenseId": "sponges",
-        "clip": {
-          "senseId": "sponges",
-          "key": "audio/sponges/8ac7dbfe85b7.mp3",
-          "spokenText": "sponges",
-          "voice": "recorded",
-          "source": "bitsboard-recorded",
-          "status": "ready",
-          "verifiedSha256": "8ac7dbfe85b722a976ca17d2aff6bdd2c420d5d71c29333bd97d65ecbf36ccb1",
-          "ingestedAt": "2026-08-16",
-          "id": "aud_8ac7dbfe85b7"
-        },
-        "via": "lookup"
-      },
-      "clip": {
-        "key": "audio/sponges/8ac7dbfe85b7.mp3",
-        "sha256": "8ac7dbfe85b722a976ca17d2aff6bdd2c420d5d71c29333bd97d65ecbf36ccb1",
-        "source": "bitsboard-recorded",
-        "voice": "recorded",
-        "wbbAudioId": "aud_8ac7dbfe85b7",
-        "spokenText": "sponges"
-      }
-    },
-    {
-      "utterance_id": "utt_f0735",
+      "utterance_id": "utt_f0601",
       "spoken_text": "dresses",
       "res": {
         "status": "hit",
@@ -4899,7 +4660,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0747",
+      "utterance_id": "utt_f0605",
       "spoken_text": "hats",
       "res": {
         "status": "hit",
@@ -4930,7 +4691,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0759",
+      "utterance_id": "utt_f0611",
       "spoken_text": "animals",
       "res": {
         "status": "hit",
@@ -4958,7 +4719,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0763",
+      "utterance_id": "utt_f0613",
       "spoken_text": "dogs",
       "res": {
         "status": "hit",
@@ -4986,7 +4747,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0767",
+      "utterance_id": "utt_f0617",
       "spoken_text": "cats",
       "res": {
         "status": "hit",
@@ -5014,7 +4775,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0777",
+      "utterance_id": "utt_f0627",
       "spoken_text": "birds",
       "res": {
         "status": "hit",
@@ -5042,7 +4803,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0785",
+      "utterance_id": "utt_f0635",
       "spoken_text": "ducks",
       "res": {
         "status": "hit",
@@ -5073,7 +4834,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0789",
+      "utterance_id": "utt_f0639",
       "spoken_text": "hens",
       "res": {
         "status": "hit",
@@ -5104,7 +4865,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0791",
+      "utterance_id": "utt_f0641",
       "spoken_text": "cows",
       "res": {
         "status": "hit",
@@ -5132,7 +4893,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0799",
+      "utterance_id": "utt_f0649",
       "spoken_text": "pigs",
       "res": {
         "status": "hit",
@@ -5163,7 +4924,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0863",
+      "utterance_id": "utt_f0701",
       "spoken_text": "bugs",
       "res": {
         "status": "hit",
@@ -5194,7 +4955,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0869",
+      "utterance_id": "utt_f0707",
       "spoken_text": "butterflies",
       "res": {
         "status": "hit",
@@ -5222,7 +4983,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0871",
+      "utterance_id": "utt_f0709",
       "spoken_text": "trees",
       "res": {
         "status": "hit",
@@ -5250,7 +5011,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0875",
+      "utterance_id": "utt_f0711",
       "spoken_text": "flowers",
       "res": {
         "status": "hit",
@@ -5278,7 +5039,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0912",
+      "utterance_id": "utt_f0731",
       "spoken_text": "vans",
       "res": {
         "status": "hit",
@@ -5309,7 +5070,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0926",
+      "utterance_id": "utt_f0743",
       "spoken_text": "ships",
       "res": {
         "status": "hit",
@@ -5340,7 +5101,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0942",
+      "utterance_id": "utt_f0749",
       "spoken_text": "minutes",
       "res": {
         "status": "hit",
@@ -5368,7 +5129,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0944",
+      "utterance_id": "utt_f0751",
       "spoken_text": "hours",
       "res": {
         "status": "hit",
@@ -5396,7 +5157,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0946",
+      "utterance_id": "utt_f0753",
       "spoken_text": "things",
       "res": {
         "status": "hit",
@@ -5424,7 +5185,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0960",
+      "utterance_id": "utt_f0757",
       "spoken_text": "boys",
       "res": {
         "status": "hit",
@@ -5452,7 +5213,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0964",
+      "utterance_id": "utt_f0761",
       "spoken_text": "girls",
       "res": {
         "status": "hit",
@@ -5480,7 +5241,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0968",
+      "utterance_id": "utt_f0765",
       "spoken_text": "men",
       "res": {
         "status": "hit",
@@ -5508,7 +5269,7 @@
       }
     },
     {
-      "utterance_id": "utt_f0972",
+      "utterance_id": "utt_f0769",
       "spoken_text": "women",
       "res": {
         "status": "hit",
@@ -5534,6 +5295,2102 @@
         "wbbAudioId": "aud_8fe962cf7fa5",
         "spokenText": "women"
       }
+    }
+  ],
+  "needed": [
+    {
+      "utterance_id": "utt_f0005",
+      "spoken_text": "wants"
+    },
+    {
+      "utterance_id": "utt_f0007",
+      "spoken_text": "wanting"
+    },
+    {
+      "utterance_id": "utt_f0009",
+      "spoken_text": "likes"
+    },
+    {
+      "utterance_id": "utt_f0011",
+      "spoken_text": "liking"
+    },
+    {
+      "utterance_id": "utt_f0013",
+      "spoken_text": "goes"
+    },
+    {
+      "utterance_id": "utt_f0015",
+      "spoken_text": "going"
+    },
+    {
+      "utterance_id": "utt_f0017",
+      "spoken_text": "comes"
+    },
+    {
+      "utterance_id": "utt_f0019",
+      "spoken_text": "coming"
+    },
+    {
+      "utterance_id": "utt_f0021",
+      "spoken_text": "gets"
+    },
+    {
+      "utterance_id": "utt_f0023",
+      "spoken_text": "getting"
+    },
+    {
+      "utterance_id": "utt_f0025",
+      "spoken_text": "makes"
+    },
+    {
+      "utterance_id": "utt_f0027",
+      "spoken_text": "making"
+    },
+    {
+      "utterance_id": "utt_f0029",
+      "spoken_text": "does"
+    },
+    {
+      "utterance_id": "utt_f0031",
+      "spoken_text": "doing"
+    },
+    {
+      "utterance_id": "utt_f0033",
+      "spoken_text": "sees"
+    },
+    {
+      "utterance_id": "utt_f0035",
+      "spoken_text": "seeing"
+    },
+    {
+      "utterance_id": "utt_f0037",
+      "spoken_text": "looks"
+    },
+    {
+      "utterance_id": "utt_f0039",
+      "spoken_text": "looking"
+    },
+    {
+      "utterance_id": "utt_f0041",
+      "spoken_text": "puts"
+    },
+    {
+      "utterance_id": "utt_f0043",
+      "spoken_text": "putting"
+    },
+    {
+      "utterance_id": "utt_f0045",
+      "spoken_text": "takes"
+    },
+    {
+      "utterance_id": "utt_f0047",
+      "spoken_text": "taking"
+    },
+    {
+      "utterance_id": "utt_f0049",
+      "spoken_text": "gives"
+    },
+    {
+      "utterance_id": "utt_f0051",
+      "spoken_text": "giving"
+    },
+    {
+      "utterance_id": "utt_f0053",
+      "spoken_text": "helps"
+    },
+    {
+      "utterance_id": "utt_f0055",
+      "spoken_text": "helping"
+    },
+    {
+      "utterance_id": "utt_f0057",
+      "spoken_text": "stops"
+    },
+    {
+      "utterance_id": "utt_f0059",
+      "spoken_text": "stopping"
+    },
+    {
+      "utterance_id": "utt_f0061",
+      "spoken_text": "plays"
+    },
+    {
+      "utterance_id": "utt_f0063",
+      "spoken_text": "playing"
+    },
+    {
+      "utterance_id": "utt_f0065",
+      "spoken_text": "eats"
+    },
+    {
+      "utterance_id": "utt_f0067",
+      "spoken_text": "eating"
+    },
+    {
+      "utterance_id": "utt_f0069",
+      "spoken_text": "drinks"
+    },
+    {
+      "utterance_id": "utt_f0071",
+      "spoken_text": "drinking"
+    },
+    {
+      "utterance_id": "utt_f0073",
+      "spoken_text": "opens"
+    },
+    {
+      "utterance_id": "utt_f0075",
+      "spoken_text": "opening"
+    },
+    {
+      "utterance_id": "utt_f0077",
+      "spoken_text": "turns"
+    },
+    {
+      "utterance_id": "utt_f0079",
+      "spoken_text": "turning"
+    },
+    {
+      "utterance_id": "utt_f0081",
+      "spoken_text": "reads"
+    },
+    {
+      "utterance_id": "utt_f0083",
+      "spoken_text": "reading"
+    },
+    {
+      "utterance_id": "utt_f0085",
+      "spoken_text": "needs"
+    },
+    {
+      "utterance_id": "utt_f0087",
+      "spoken_text": "needing"
+    },
+    {
+      "utterance_id": "utt_f0089",
+      "spoken_text": "feels"
+    },
+    {
+      "utterance_id": "utt_f0091",
+      "spoken_text": "feeling"
+    },
+    {
+      "utterance_id": "utt_f0093",
+      "spoken_text": "tells"
+    },
+    {
+      "utterance_id": "utt_f0095",
+      "spoken_text": "telling"
+    },
+    {
+      "utterance_id": "utt_f0097",
+      "spoken_text": "thinks"
+    },
+    {
+      "utterance_id": "utt_f0099",
+      "spoken_text": "thinking"
+    },
+    {
+      "utterance_id": "utt_f0101",
+      "spoken_text": "finds"
+    },
+    {
+      "utterance_id": "utt_f0103",
+      "spoken_text": "finding"
+    },
+    {
+      "utterance_id": "utt_f0105",
+      "spoken_text": "works"
+    },
+    {
+      "utterance_id": "utt_f0107",
+      "spoken_text": "working"
+    },
+    {
+      "utterance_id": "utt_f0109",
+      "spoken_text": "waits"
+    },
+    {
+      "utterance_id": "utt_f0111",
+      "spoken_text": "waiting"
+    },
+    {
+      "utterance_id": "utt_f0114",
+      "spoken_text": "having"
+    },
+    {
+      "utterance_id": "utt_f0116",
+      "spoken_text": "hurts"
+    },
+    {
+      "utterance_id": "utt_f0118",
+      "spoken_text": "hurting"
+    },
+    {
+      "utterance_id": "utt_f0120",
+      "spoken_text": "coughs"
+    },
+    {
+      "utterance_id": "utt_f0122",
+      "spoken_text": "coughing"
+    },
+    {
+      "utterance_id": "utt_f0124",
+      "spoken_text": "runs"
+    },
+    {
+      "utterance_id": "utt_f0126",
+      "spoken_text": "running"
+    },
+    {
+      "utterance_id": "utt_f0128",
+      "spoken_text": "jumps"
+    },
+    {
+      "utterance_id": "utt_f0130",
+      "spoken_text": "jumping"
+    },
+    {
+      "utterance_id": "utt_f0132",
+      "spoken_text": "walks"
+    },
+    {
+      "utterance_id": "utt_f0134",
+      "spoken_text": "walking"
+    },
+    {
+      "utterance_id": "utt_f0136",
+      "spoken_text": "sits"
+    },
+    {
+      "utterance_id": "utt_f0138",
+      "spoken_text": "sitting"
+    },
+    {
+      "utterance_id": "utt_f0140",
+      "spoken_text": "stands"
+    },
+    {
+      "utterance_id": "utt_f0142",
+      "spoken_text": "standing"
+    },
+    {
+      "utterance_id": "utt_f0144",
+      "spoken_text": "climbs"
+    },
+    {
+      "utterance_id": "utt_f0146",
+      "spoken_text": "climbing"
+    },
+    {
+      "utterance_id": "utt_f0148",
+      "spoken_text": "dances"
+    },
+    {
+      "utterance_id": "utt_f0150",
+      "spoken_text": "dancing"
+    },
+    {
+      "utterance_id": "utt_f0152",
+      "spoken_text": "swims"
+    },
+    {
+      "utterance_id": "utt_f0154",
+      "spoken_text": "swimming"
+    },
+    {
+      "utterance_id": "utt_f0156",
+      "spoken_text": "rides"
+    },
+    {
+      "utterance_id": "utt_f0158",
+      "spoken_text": "riding"
+    },
+    {
+      "utterance_id": "utt_f0160",
+      "spoken_text": "crawls"
+    },
+    {
+      "utterance_id": "utt_f0162",
+      "spoken_text": "crawling"
+    },
+    {
+      "utterance_id": "utt_f0164",
+      "spoken_text": "kicks"
+    },
+    {
+      "utterance_id": "utt_f0166",
+      "spoken_text": "kicking"
+    },
+    {
+      "utterance_id": "utt_f0168",
+      "spoken_text": "throws"
+    },
+    {
+      "utterance_id": "utt_f0170",
+      "spoken_text": "throwing"
+    },
+    {
+      "utterance_id": "utt_f0172",
+      "spoken_text": "catches"
+    },
+    {
+      "utterance_id": "utt_f0174",
+      "spoken_text": "catching"
+    },
+    {
+      "utterance_id": "utt_f0176",
+      "spoken_text": "pushes"
+    },
+    {
+      "utterance_id": "utt_f0178",
+      "spoken_text": "pushing"
+    },
+    {
+      "utterance_id": "utt_f0180",
+      "spoken_text": "pulls"
+    },
+    {
+      "utterance_id": "utt_f0182",
+      "spoken_text": "pulling"
+    },
+    {
+      "utterance_id": "utt_f0184",
+      "spoken_text": "swings"
+    },
+    {
+      "utterance_id": "utt_f0187",
+      "spoken_text": "slides"
+    },
+    {
+      "utterance_id": "utt_f0189",
+      "spoken_text": "sliding"
+    },
+    {
+      "utterance_id": "utt_f0191",
+      "spoken_text": "falls"
+    },
+    {
+      "utterance_id": "utt_f0193",
+      "spoken_text": "falling"
+    },
+    {
+      "utterance_id": "utt_f0195",
+      "spoken_text": "carries"
+    },
+    {
+      "utterance_id": "utt_f0197",
+      "spoken_text": "carrying"
+    },
+    {
+      "utterance_id": "utt_f0199",
+      "spoken_text": "drops"
+    },
+    {
+      "utterance_id": "utt_f0201",
+      "spoken_text": "dropping"
+    },
+    {
+      "utterance_id": "utt_f0203",
+      "spoken_text": "writes"
+    },
+    {
+      "utterance_id": "utt_f0205",
+      "spoken_text": "writing"
+    },
+    {
+      "utterance_id": "utt_f0207",
+      "spoken_text": "draws"
+    },
+    {
+      "utterance_id": "utt_f0209",
+      "spoken_text": "drawing"
+    },
+    {
+      "utterance_id": "utt_f0211",
+      "spoken_text": "colors"
+    },
+    {
+      "utterance_id": "utt_f0213",
+      "spoken_text": "coloring"
+    },
+    {
+      "utterance_id": "utt_f0215",
+      "spoken_text": "paints"
+    },
+    {
+      "utterance_id": "utt_f0217",
+      "spoken_text": "painting"
+    },
+    {
+      "utterance_id": "utt_f0219",
+      "spoken_text": "cuts"
+    },
+    {
+      "utterance_id": "utt_f0221",
+      "spoken_text": "cutting"
+    },
+    {
+      "utterance_id": "utt_f0223",
+      "spoken_text": "glues"
+    },
+    {
+      "utterance_id": "utt_f0225",
+      "spoken_text": "gluing"
+    },
+    {
+      "utterance_id": "utt_f0227",
+      "spoken_text": "listens"
+    },
+    {
+      "utterance_id": "utt_f0229",
+      "spoken_text": "listening"
+    },
+    {
+      "utterance_id": "utt_f0231",
+      "spoken_text": "speaks"
+    },
+    {
+      "utterance_id": "utt_f0233",
+      "spoken_text": "speaking"
+    },
+    {
+      "utterance_id": "utt_f0235",
+      "spoken_text": "talks"
+    },
+    {
+      "utterance_id": "utt_f0237",
+      "spoken_text": "talking"
+    },
+    {
+      "utterance_id": "utt_f0239",
+      "spoken_text": "sings"
+    },
+    {
+      "utterance_id": "utt_f0241",
+      "spoken_text": "singing"
+    },
+    {
+      "utterance_id": "utt_f0243",
+      "spoken_text": "counts"
+    },
+    {
+      "utterance_id": "utt_f0245",
+      "spoken_text": "counting"
+    },
+    {
+      "utterance_id": "utt_f0247",
+      "spoken_text": "shares"
+    },
+    {
+      "utterance_id": "utt_f0249",
+      "spoken_text": "sharing"
+    },
+    {
+      "utterance_id": "utt_f0251",
+      "spoken_text": "cleans up"
+    },
+    {
+      "utterance_id": "utt_f0253",
+      "spoken_text": "cleaning up"
+    },
+    {
+      "utterance_id": "utt_f0255",
+      "spoken_text": "washes"
+    },
+    {
+      "utterance_id": "utt_f0257",
+      "spoken_text": "washing"
+    },
+    {
+      "utterance_id": "utt_f0259",
+      "spoken_text": "wipes"
+    },
+    {
+      "utterance_id": "utt_f0261",
+      "spoken_text": "wiping"
+    },
+    {
+      "utterance_id": "utt_f0263",
+      "spoken_text": "cooks"
+    },
+    {
+      "utterance_id": "utt_f0265",
+      "spoken_text": "cooking"
+    },
+    {
+      "utterance_id": "utt_f0267",
+      "spoken_text": "builds"
+    },
+    {
+      "utterance_id": "utt_f0269",
+      "spoken_text": "building"
+    },
+    {
+      "utterance_id": "utt_f0271",
+      "spoken_text": "fixes"
+    },
+    {
+      "utterance_id": "utt_f0273",
+      "spoken_text": "fixing"
+    },
+    {
+      "utterance_id": "utt_f0275",
+      "spoken_text": "holds"
+    },
+    {
+      "utterance_id": "utt_f0277",
+      "spoken_text": "holding"
+    },
+    {
+      "utterance_id": "utt_f0279",
+      "spoken_text": "touches"
+    },
+    {
+      "utterance_id": "utt_f0281",
+      "spoken_text": "touching"
+    },
+    {
+      "utterance_id": "utt_f0283",
+      "spoken_text": "knows"
+    },
+    {
+      "utterance_id": "utt_f0285",
+      "spoken_text": "knowing"
+    },
+    {
+      "utterance_id": "utt_f0287",
+      "spoken_text": "remembers"
+    },
+    {
+      "utterance_id": "utt_f0289",
+      "spoken_text": "remembering"
+    },
+    {
+      "utterance_id": "utt_f0291",
+      "spoken_text": "forgets"
+    },
+    {
+      "utterance_id": "utt_f0293",
+      "spoken_text": "forgetting"
+    },
+    {
+      "utterance_id": "utt_f0295",
+      "spoken_text": "chooses"
+    },
+    {
+      "utterance_id": "utt_f0297",
+      "spoken_text": "choosing"
+    },
+    {
+      "utterance_id": "utt_f0299",
+      "spoken_text": "shows"
+    },
+    {
+      "utterance_id": "utt_f0301",
+      "spoken_text": "showing"
+    },
+    {
+      "utterance_id": "utt_f0303",
+      "spoken_text": "asks"
+    },
+    {
+      "utterance_id": "utt_f0305",
+      "spoken_text": "asking"
+    },
+    {
+      "utterance_id": "utt_f0307",
+      "spoken_text": "hugs"
+    },
+    {
+      "utterance_id": "utt_f0309",
+      "spoken_text": "hugging"
+    },
+    {
+      "utterance_id": "utt_f0312",
+      "spoken_text": "kissing"
+    },
+    {
+      "utterance_id": "utt_f0314",
+      "spoken_text": "laughs"
+    },
+    {
+      "utterance_id": "utt_f0316",
+      "spoken_text": "laughing"
+    },
+    {
+      "utterance_id": "utt_f0318",
+      "spoken_text": "cries"
+    },
+    {
+      "utterance_id": "utt_f0320",
+      "spoken_text": "crying"
+    },
+    {
+      "utterance_id": "utt_f0322",
+      "spoken_text": "sleeps"
+    },
+    {
+      "utterance_id": "utt_f0324",
+      "spoken_text": "sleeping"
+    },
+    {
+      "utterance_id": "utt_f0326",
+      "spoken_text": "wakes up"
+    },
+    {
+      "utterance_id": "utt_f0328",
+      "spoken_text": "waking up"
+    },
+    {
+      "utterance_id": "utt_f0330",
+      "spoken_text": "rains"
+    },
+    {
+      "utterance_id": "utt_f0332",
+      "spoken_text": "raining"
+    },
+    {
+      "utterance_id": "utt_f0334",
+      "spoken_text": "doesn't"
+    },
+    {
+      "utterance_id": "utt_f0336",
+      "spoken_text": "be"
+    },
+    {
+      "utterance_id": "utt_f0341",
+      "spoken_text": "hits"
+    },
+    {
+      "utterance_id": "utt_f0343",
+      "spoken_text": "hitting"
+    },
+    {
+      "utterance_id": "utt_f0345",
+      "spoken_text": "bites"
+    },
+    {
+      "utterance_id": "utt_f0347",
+      "spoken_text": "biting"
+    },
+    {
+      "utterance_id": "utt_f0349",
+      "spoken_text": "breaks"
+    },
+    {
+      "utterance_id": "utt_f0351",
+      "spoken_text": "breaking"
+    },
+    {
+      "utterance_id": "utt_f0353",
+      "spoken_text": "scratches"
+    },
+    {
+      "utterance_id": "utt_f0355",
+      "spoken_text": "scratching"
+    },
+    {
+      "utterance_id": "utt_f0357",
+      "spoken_text": "closes"
+    },
+    {
+      "utterance_id": "utt_f0359",
+      "spoken_text": "closing"
+    },
+    {
+      "utterance_id": "utt_f0361",
+      "spoken_text": "shuts"
+    },
+    {
+      "utterance_id": "utt_f0363",
+      "spoken_text": "shutting"
+    },
+    {
+      "utterance_id": "utt_f0365",
+      "spoken_text": "tickles"
+    },
+    {
+      "utterance_id": "utt_f0367",
+      "spoken_text": "tickling"
+    },
+    {
+      "utterance_id": "utt_f0369",
+      "spoken_text": "loves"
+    },
+    {
+      "utterance_id": "utt_f0371",
+      "spoken_text": "loving"
+    },
+    {
+      "utterance_id": "utt_f0377",
+      "spoken_text": "hers"
+    },
+    {
+      "utterance_id": "utt_f0380",
+      "spoken_text": "ours"
+    },
+    {
+      "utterance_id": "utt_f0383",
+      "spoken_text": "theirs"
+    },
+    {
+      "utterance_id": "utt_f0385",
+      "spoken_text": "water's"
+    },
+    {
+      "utterance_id": "utt_f0387",
+      "spoken_text": "pancakes"
+    },
+    {
+      "utterance_id": "utt_f0389",
+      "spoken_text": "waffles"
+    },
+    {
+      "utterance_id": "utt_f0391",
+      "spoken_text": "bagels"
+    },
+    {
+      "utterance_id": "utt_f0393",
+      "spoken_text": "eggs"
+    },
+    {
+      "utterance_id": "utt_f0395",
+      "spoken_text": "sandwiches"
+    },
+    {
+      "utterance_id": "utt_f0397",
+      "spoken_text": "chicken's"
+    },
+    {
+      "utterance_id": "utt_f0399",
+      "spoken_text": "crackers"
+    },
+    {
+      "utterance_id": "utt_f0401",
+      "spoken_text": "cookies"
+    },
+    {
+      "utterance_id": "utt_f0403",
+      "spoken_text": "pretzels"
+    },
+    {
+      "utterance_id": "utt_f0405",
+      "spoken_text": "muffins"
+    },
+    {
+      "utterance_id": "utt_f0407",
+      "spoken_text": "donuts"
+    },
+    {
+      "utterance_id": "utt_f0409",
+      "spoken_text": "apples"
+    },
+    {
+      "utterance_id": "utt_f0411",
+      "spoken_text": "bananas"
+    },
+    {
+      "utterance_id": "utt_f0413",
+      "spoken_text": "strawberries"
+    },
+    {
+      "utterance_id": "utt_f0415",
+      "spoken_text": "carrots"
+    },
+    {
+      "utterance_id": "utt_f0417",
+      "spoken_text": "head's"
+    },
+    {
+      "utterance_id": "utt_f0419",
+      "spoken_text": "hair's"
+    },
+    {
+      "utterance_id": "utt_f0421",
+      "spoken_text": "eyes"
+    },
+    {
+      "utterance_id": "utt_f0423",
+      "spoken_text": "ears"
+    },
+    {
+      "utterance_id": "utt_f0425",
+      "spoken_text": "arms"
+    },
+    {
+      "utterance_id": "utt_f0427",
+      "spoken_text": "hands"
+    },
+    {
+      "utterance_id": "utt_f0429",
+      "spoken_text": "hand's"
+    },
+    {
+      "utterance_id": "utt_f0431",
+      "spoken_text": "legs"
+    },
+    {
+      "utterance_id": "utt_f0433",
+      "spoken_text": "feet"
+    },
+    {
+      "utterance_id": "utt_f0435",
+      "spoken_text": "foot's"
+    },
+    {
+      "utterance_id": "utt_f0437",
+      "spoken_text": "diapers"
+    },
+    {
+      "utterance_id": "utt_f0439",
+      "spoken_text": "toothbrushes"
+    },
+    {
+      "utterance_id": "utt_f0441",
+      "spoken_text": "towels"
+    },
+    {
+      "utterance_id": "utt_f0443",
+      "spoken_text": "combs"
+    },
+    {
+      "utterance_id": "utt_f0445",
+      "spoken_text": "tissues"
+    },
+    {
+      "utterance_id": "utt_f0447",
+      "spoken_text": "bandages"
+    },
+    {
+      "utterance_id": "utt_f0449",
+      "spoken_text": "mummys"
+    },
+    {
+      "utterance_id": "utt_f0451",
+      "spoken_text": "mom's"
+    },
+    {
+      "utterance_id": "utt_f0453",
+      "spoken_text": "daddies"
+    },
+    {
+      "utterance_id": "utt_f0455",
+      "spoken_text": "dad's"
+    },
+    {
+      "utterance_id": "utt_f0457",
+      "spoken_text": "mama's"
+    },
+    {
+      "utterance_id": "utt_f0459",
+      "spoken_text": "dada's"
+    },
+    {
+      "utterance_id": "utt_f0461",
+      "spoken_text": "babies"
+    },
+    {
+      "utterance_id": "utt_f0463",
+      "spoken_text": "baby's"
+    },
+    {
+      "utterance_id": "utt_f0465",
+      "spoken_text": "brothers"
+    },
+    {
+      "utterance_id": "utt_f0467",
+      "spoken_text": "brother's"
+    },
+    {
+      "utterance_id": "utt_f0469",
+      "spoken_text": "sisters"
+    },
+    {
+      "utterance_id": "utt_f0471",
+      "spoken_text": "sister's"
+    },
+    {
+      "utterance_id": "utt_f0473",
+      "spoken_text": "grandmas"
+    },
+    {
+      "utterance_id": "utt_f0475",
+      "spoken_text": "grandma's"
+    },
+    {
+      "utterance_id": "utt_f0477",
+      "spoken_text": "grandpa's"
+    },
+    {
+      "utterance_id": "utt_f0479",
+      "spoken_text": "aunts"
+    },
+    {
+      "utterance_id": "utt_f0481",
+      "spoken_text": "cousins"
+    },
+    {
+      "utterance_id": "utt_f0483",
+      "spoken_text": "pets"
+    },
+    {
+      "utterance_id": "utt_f0485",
+      "spoken_text": "teachers"
+    },
+    {
+      "utterance_id": "utt_f0487",
+      "spoken_text": "teacher's"
+    },
+    {
+      "utterance_id": "utt_f0489",
+      "spoken_text": "students"
+    },
+    {
+      "utterance_id": "utt_f0491",
+      "spoken_text": "friends"
+    },
+    {
+      "utterance_id": "utt_f0493",
+      "spoken_text": "friend's"
+    },
+    {
+      "utterance_id": "utt_f0495",
+      "spoken_text": "firefighters"
+    },
+    {
+      "utterance_id": "utt_f0497",
+      "spoken_text": "neighbors"
+    },
+    {
+      "utterance_id": "utt_f0499",
+      "spoken_text": "person's"
+    },
+    {
+      "utterance_id": "utt_f0501",
+      "spoken_text": "people's"
+    },
+    {
+      "utterance_id": "utt_f0503",
+      "spoken_text": "doctor's"
+    },
+    {
+      "utterance_id": "utt_f0505",
+      "spoken_text": "nurses"
+    },
+    {
+      "utterance_id": "utt_f0507",
+      "spoken_text": "nurse's"
+    },
+    {
+      "utterance_id": "utt_f0509",
+      "spoken_text": "names"
+    },
+    {
+      "utterance_id": "utt_f0511",
+      "spoken_text": "name's"
+    },
+    {
+      "utterance_id": "utt_f0513",
+      "spoken_text": "houses"
+    },
+    {
+      "utterance_id": "utt_f0515",
+      "spoken_text": "school's"
+    },
+    {
+      "utterance_id": "utt_f0517",
+      "spoken_text": "parks"
+    },
+    {
+      "utterance_id": "utt_f0519",
+      "spoken_text": "museums"
+    },
+    {
+      "utterance_id": "utt_f0521",
+      "spoken_text": "toys"
+    },
+    {
+      "utterance_id": "utt_f0523",
+      "spoken_text": "balls"
+    },
+    {
+      "utterance_id": "utt_f0525",
+      "spoken_text": "puzzles"
+    },
+    {
+      "utterance_id": "utt_f0527",
+      "spoken_text": "dolls"
+    },
+    {
+      "utterance_id": "utt_f0529",
+      "spoken_text": "doll's"
+    },
+    {
+      "utterance_id": "utt_f0531",
+      "spoken_text": "dinosaurs"
+    },
+    {
+      "utterance_id": "utt_f0533",
+      "spoken_text": "dinosaur's"
+    },
+    {
+      "utterance_id": "utt_f0535",
+      "spoken_text": "robots"
+    },
+    {
+      "utterance_id": "utt_f0537",
+      "spoken_text": "bikes"
+    },
+    {
+      "utterance_id": "utt_f0539",
+      "spoken_text": "songs"
+    },
+    {
+      "utterance_id": "utt_f0541",
+      "spoken_text": "tablets"
+    },
+    {
+      "utterance_id": "utt_f0543",
+      "spoken_text": "phone's"
+    },
+    {
+      "utterance_id": "utt_f0545",
+      "spoken_text": "movies"
+    },
+    {
+      "utterance_id": "utt_f0547",
+      "spoken_text": "videos"
+    },
+    {
+      "utterance_id": "utt_f0549",
+      "spoken_text": "books"
+    },
+    {
+      "utterance_id": "utt_f0551",
+      "spoken_text": "book's"
+    },
+    {
+      "utterance_id": "utt_f0553",
+      "spoken_text": "chairs"
+    },
+    {
+      "utterance_id": "utt_f0555",
+      "spoken_text": "doors"
+    },
+    {
+      "utterance_id": "utt_f0557",
+      "spoken_text": "door's"
+    },
+    {
+      "utterance_id": "utt_f0559",
+      "spoken_text": "windows"
+    },
+    {
+      "utterance_id": "utt_f0561",
+      "spoken_text": "lamps"
+    },
+    {
+      "utterance_id": "utt_f0563",
+      "spoken_text": "mirrors"
+    },
+    {
+      "utterance_id": "utt_f0565",
+      "spoken_text": "plates"
+    },
+    {
+      "utterance_id": "utt_f0567",
+      "spoken_text": "bowls"
+    },
+    {
+      "utterance_id": "utt_f0569",
+      "spoken_text": "cups"
+    },
+    {
+      "utterance_id": "utt_f0571",
+      "spoken_text": "forks"
+    },
+    {
+      "utterance_id": "utt_f0573",
+      "spoken_text": "spoons"
+    },
+    {
+      "utterance_id": "utt_f0575",
+      "spoken_text": "knives"
+    },
+    {
+      "utterance_id": "utt_f0577",
+      "spoken_text": "napkins"
+    },
+    {
+      "utterance_id": "utt_f0579",
+      "spoken_text": "bottles"
+    },
+    {
+      "utterance_id": "utt_f0581",
+      "spoken_text": "bags"
+    },
+    {
+      "utterance_id": "utt_f0583",
+      "spoken_text": "blankets"
+    },
+    {
+      "utterance_id": "utt_f0585",
+      "spoken_text": "pillows"
+    },
+    {
+      "utterance_id": "utt_f0587",
+      "spoken_text": "fans"
+    },
+    {
+      "utterance_id": "utt_f0589",
+      "spoken_text": "boxes"
+    },
+    {
+      "utterance_id": "utt_f0591",
+      "spoken_text": "batteries"
+    },
+    {
+      "utterance_id": "utt_f0593",
+      "spoken_text": "brooms"
+    },
+    {
+      "utterance_id": "utt_f0595",
+      "spoken_text": "tape's"
+    },
+    {
+      "utterance_id": "utt_f0597",
+      "spoken_text": "buckets"
+    },
+    {
+      "utterance_id": "utt_f0599",
+      "spoken_text": "shirts"
+    },
+    {
+      "utterance_id": "utt_f0601",
+      "spoken_text": "dresses"
+    },
+    {
+      "utterance_id": "utt_f0603",
+      "spoken_text": "coats"
+    },
+    {
+      "utterance_id": "utt_f0605",
+      "spoken_text": "hats"
+    },
+    {
+      "utterance_id": "utt_f0607",
+      "spoken_text": "buttons"
+    },
+    {
+      "utterance_id": "utt_f0609",
+      "spoken_text": "pockets"
+    },
+    {
+      "utterance_id": "utt_f0611",
+      "spoken_text": "animals"
+    },
+    {
+      "utterance_id": "utt_f0613",
+      "spoken_text": "dogs"
+    },
+    {
+      "utterance_id": "utt_f0615",
+      "spoken_text": "dog's"
+    },
+    {
+      "utterance_id": "utt_f0617",
+      "spoken_text": "cats"
+    },
+    {
+      "utterance_id": "utt_f0619",
+      "spoken_text": "cat's"
+    },
+    {
+      "utterance_id": "utt_f0621",
+      "spoken_text": "puppies"
+    },
+    {
+      "utterance_id": "utt_f0623",
+      "spoken_text": "puppy's"
+    },
+    {
+      "utterance_id": "utt_f0625",
+      "spoken_text": "kittens"
+    },
+    {
+      "utterance_id": "utt_f0627",
+      "spoken_text": "birds"
+    },
+    {
+      "utterance_id": "utt_f0629",
+      "spoken_text": "bird's"
+    },
+    {
+      "utterance_id": "utt_f0631",
+      "spoken_text": "bunnies"
+    },
+    {
+      "utterance_id": "utt_f0633",
+      "spoken_text": "bunny's"
+    },
+    {
+      "utterance_id": "utt_f0635",
+      "spoken_text": "ducks"
+    },
+    {
+      "utterance_id": "utt_f0637",
+      "spoken_text": "duck's"
+    },
+    {
+      "utterance_id": "utt_f0639",
+      "spoken_text": "hens"
+    },
+    {
+      "utterance_id": "utt_f0641",
+      "spoken_text": "cows"
+    },
+    {
+      "utterance_id": "utt_f0643",
+      "spoken_text": "cow's"
+    },
+    {
+      "utterance_id": "utt_f0645",
+      "spoken_text": "horses"
+    },
+    {
+      "utterance_id": "utt_f0647",
+      "spoken_text": "horse's"
+    },
+    {
+      "utterance_id": "utt_f0649",
+      "spoken_text": "pigs"
+    },
+    {
+      "utterance_id": "utt_f0651",
+      "spoken_text": "pig's"
+    },
+    {
+      "utterance_id": "utt_f0653",
+      "spoken_text": "sheep's"
+    },
+    {
+      "utterance_id": "utt_f0655",
+      "spoken_text": "goats"
+    },
+    {
+      "utterance_id": "utt_f0657",
+      "spoken_text": "bears"
+    },
+    {
+      "utterance_id": "utt_f0659",
+      "spoken_text": "bear's"
+    },
+    {
+      "utterance_id": "utt_f0661",
+      "spoken_text": "lions"
+    },
+    {
+      "utterance_id": "utt_f0663",
+      "spoken_text": "lion's"
+    },
+    {
+      "utterance_id": "utt_f0665",
+      "spoken_text": "tiger's"
+    },
+    {
+      "utterance_id": "utt_f0667",
+      "spoken_text": "elephants"
+    },
+    {
+      "utterance_id": "utt_f0669",
+      "spoken_text": "elephant's"
+    },
+    {
+      "utterance_id": "utt_f0671",
+      "spoken_text": "monkeys"
+    },
+    {
+      "utterance_id": "utt_f0673",
+      "spoken_text": "monkey's"
+    },
+    {
+      "utterance_id": "utt_f0675",
+      "spoken_text": "giraffes"
+    },
+    {
+      "utterance_id": "utt_f0677",
+      "spoken_text": "giraffe's"
+    },
+    {
+      "utterance_id": "utt_f0679",
+      "spoken_text": "zebras"
+    },
+    {
+      "utterance_id": "utt_f0681",
+      "spoken_text": "hippos"
+    },
+    {
+      "utterance_id": "utt_f0683",
+      "spoken_text": "hippo's"
+    },
+    {
+      "utterance_id": "utt_f0685",
+      "spoken_text": "penguins"
+    },
+    {
+      "utterance_id": "utt_f0687",
+      "spoken_text": "dolphins"
+    },
+    {
+      "utterance_id": "utt_f0689",
+      "spoken_text": "whales"
+    },
+    {
+      "utterance_id": "utt_f0691",
+      "spoken_text": "snakes"
+    },
+    {
+      "utterance_id": "utt_f0693",
+      "spoken_text": "snake's"
+    },
+    {
+      "utterance_id": "utt_f0695",
+      "spoken_text": "turtles"
+    },
+    {
+      "utterance_id": "utt_f0697",
+      "spoken_text": "frogs"
+    },
+    {
+      "utterance_id": "utt_f0699",
+      "spoken_text": "frog's"
+    },
+    {
+      "utterance_id": "utt_f0701",
+      "spoken_text": "bugs"
+    },
+    {
+      "utterance_id": "utt_f0703",
+      "spoken_text": "spiders"
+    },
+    {
+      "utterance_id": "utt_f0705",
+      "spoken_text": "spider's"
+    },
+    {
+      "utterance_id": "utt_f0707",
+      "spoken_text": "butterflies"
+    },
+    {
+      "utterance_id": "utt_f0709",
+      "spoken_text": "trees"
+    },
+    {
+      "utterance_id": "utt_f0711",
+      "spoken_text": "flowers"
+    },
+    {
+      "utterance_id": "utt_f0713",
+      "spoken_text": "sun's"
+    },
+    {
+      "utterance_id": "utt_f0715",
+      "spoken_text": "clouds"
+    },
+    {
+      "utterance_id": "utt_f0717",
+      "spoken_text": "vehicles"
+    },
+    {
+      "utterance_id": "utt_f0719",
+      "spoken_text": "cars"
+    },
+    {
+      "utterance_id": "utt_f0721",
+      "spoken_text": "car's"
+    },
+    {
+      "utterance_id": "utt_f0723",
+      "spoken_text": "trucks"
+    },
+    {
+      "utterance_id": "utt_f0725",
+      "spoken_text": "trains"
+    },
+    {
+      "utterance_id": "utt_f0727",
+      "spoken_text": "train's"
+    },
+    {
+      "utterance_id": "utt_f0729",
+      "spoken_text": "bicycles"
+    },
+    {
+      "utterance_id": "utt_f0731",
+      "spoken_text": "vans"
+    },
+    {
+      "utterance_id": "utt_f0733",
+      "spoken_text": "tractors"
+    },
+    {
+      "utterance_id": "utt_f0735",
+      "spoken_text": "tractor's"
+    },
+    {
+      "utterance_id": "utt_f0737",
+      "spoken_text": "airplanes"
+    },
+    {
+      "utterance_id": "utt_f0739",
+      "spoken_text": "rockets"
+    },
+    {
+      "utterance_id": "utt_f0741",
+      "spoken_text": "boats"
+    },
+    {
+      "utterance_id": "utt_f0743",
+      "spoken_text": "ships"
+    },
+    {
+      "utterance_id": "utt_f0745",
+      "spoken_text": "today's"
+    },
+    {
+      "utterance_id": "utt_f0747",
+      "spoken_text": "tomorrow's"
+    },
+    {
+      "utterance_id": "utt_f0749",
+      "spoken_text": "minutes"
+    },
+    {
+      "utterance_id": "utt_f0751",
+      "spoken_text": "hours"
+    },
+    {
+      "utterance_id": "utt_f0753",
+      "spoken_text": "things"
+    },
+    {
+      "utterance_id": "utt_f0755",
+      "spoken_text": "thing's"
+    },
+    {
+      "utterance_id": "utt_f0757",
+      "spoken_text": "boys"
+    },
+    {
+      "utterance_id": "utt_f0759",
+      "spoken_text": "boy's"
+    },
+    {
+      "utterance_id": "utt_f0761",
+      "spoken_text": "girls"
+    },
+    {
+      "utterance_id": "utt_f0763",
+      "spoken_text": "girl's"
+    },
+    {
+      "utterance_id": "utt_f0765",
+      "spoken_text": "men"
+    },
+    {
+      "utterance_id": "utt_f0767",
+      "spoken_text": "man's"
+    },
+    {
+      "utterance_id": "utt_f0769",
+      "spoken_text": "women"
+    },
+    {
+      "utterance_id": "utt_f0771",
+      "spoken_text": "woman's"
+    }
+  ],
+  "missing": [
+    {
+      "utterance_id": "utt_f0380",
+      "spoken_text": "ours"
+    },
+    {
+      "utterance_id": "utt_f0385",
+      "spoken_text": "water's"
+    },
+    {
+      "utterance_id": "utt_f0387",
+      "spoken_text": "pancakes"
+    },
+    {
+      "utterance_id": "utt_f0395",
+      "spoken_text": "sandwiches"
+    },
+    {
+      "utterance_id": "utt_f0397",
+      "spoken_text": "chicken's"
+    },
+    {
+      "utterance_id": "utt_f0399",
+      "spoken_text": "crackers"
+    },
+    {
+      "utterance_id": "utt_f0405",
+      "spoken_text": "muffins"
+    },
+    {
+      "utterance_id": "utt_f0407",
+      "spoken_text": "donuts"
+    },
+    {
+      "utterance_id": "utt_f0411",
+      "spoken_text": "bananas"
+    },
+    {
+      "utterance_id": "utt_f0413",
+      "spoken_text": "strawberries"
+    },
+    {
+      "utterance_id": "utt_f0415",
+      "spoken_text": "carrots"
+    },
+    {
+      "utterance_id": "utt_f0417",
+      "spoken_text": "head's"
+    },
+    {
+      "utterance_id": "utt_f0419",
+      "spoken_text": "hair's"
+    },
+    {
+      "utterance_id": "utt_f0427",
+      "spoken_text": "hands"
+    },
+    {
+      "utterance_id": "utt_f0429",
+      "spoken_text": "hand's"
+    },
+    {
+      "utterance_id": "utt_f0435",
+      "spoken_text": "foot's"
+    },
+    {
+      "utterance_id": "utt_f0437",
+      "spoken_text": "diapers"
+    },
+    {
+      "utterance_id": "utt_f0439",
+      "spoken_text": "toothbrushes"
+    },
+    {
+      "utterance_id": "utt_f0441",
+      "spoken_text": "towels"
+    },
+    {
+      "utterance_id": "utt_f0443",
+      "spoken_text": "combs"
+    },
+    {
+      "utterance_id": "utt_f0445",
+      "spoken_text": "tissues"
+    },
+    {
+      "utterance_id": "utt_f0447",
+      "spoken_text": "bandages"
+    },
+    {
+      "utterance_id": "utt_f0449",
+      "spoken_text": "mummys"
+    },
+    {
+      "utterance_id": "utt_f0451",
+      "spoken_text": "mom's"
+    },
+    {
+      "utterance_id": "utt_f0453",
+      "spoken_text": "daddies"
+    },
+    {
+      "utterance_id": "utt_f0455",
+      "spoken_text": "dad's"
+    },
+    {
+      "utterance_id": "utt_f0457",
+      "spoken_text": "mama's"
+    },
+    {
+      "utterance_id": "utt_f0459",
+      "spoken_text": "dada's"
+    },
+    {
+      "utterance_id": "utt_f0463",
+      "spoken_text": "baby's"
+    },
+    {
+      "utterance_id": "utt_f0465",
+      "spoken_text": "brothers"
+    },
+    {
+      "utterance_id": "utt_f0467",
+      "spoken_text": "brother's"
+    },
+    {
+      "utterance_id": "utt_f0471",
+      "spoken_text": "sister's"
+    },
+    {
+      "utterance_id": "utt_f0473",
+      "spoken_text": "grandmas"
+    },
+    {
+      "utterance_id": "utt_f0475",
+      "spoken_text": "grandma's"
+    },
+    {
+      "utterance_id": "utt_f0477",
+      "spoken_text": "grandpa's"
+    },
+    {
+      "utterance_id": "utt_f0479",
+      "spoken_text": "aunts"
+    },
+    {
+      "utterance_id": "utt_f0481",
+      "spoken_text": "cousins"
+    },
+    {
+      "utterance_id": "utt_f0485",
+      "spoken_text": "teachers"
+    },
+    {
+      "utterance_id": "utt_f0487",
+      "spoken_text": "teacher's"
+    },
+    {
+      "utterance_id": "utt_f0493",
+      "spoken_text": "friend's"
+    },
+    {
+      "utterance_id": "utt_f0495",
+      "spoken_text": "firefighters"
+    },
+    {
+      "utterance_id": "utt_f0497",
+      "spoken_text": "neighbors"
+    },
+    {
+      "utterance_id": "utt_f0499",
+      "spoken_text": "person's"
+    },
+    {
+      "utterance_id": "utt_f0501",
+      "spoken_text": "people's"
+    },
+    {
+      "utterance_id": "utt_f0503",
+      "spoken_text": "doctor's"
+    },
+    {
+      "utterance_id": "utt_f0505",
+      "spoken_text": "nurses"
+    },
+    {
+      "utterance_id": "utt_f0507",
+      "spoken_text": "nurse's"
+    },
+    {
+      "utterance_id": "utt_f0509",
+      "spoken_text": "names"
+    },
+    {
+      "utterance_id": "utt_f0511",
+      "spoken_text": "name's"
+    },
+    {
+      "utterance_id": "utt_f0513",
+      "spoken_text": "houses"
+    },
+    {
+      "utterance_id": "utt_f0515",
+      "spoken_text": "school's"
+    },
+    {
+      "utterance_id": "utt_f0517",
+      "spoken_text": "parks"
+    },
+    {
+      "utterance_id": "utt_f0519",
+      "spoken_text": "museums"
+    },
+    {
+      "utterance_id": "utt_f0525",
+      "spoken_text": "puzzles"
+    },
+    {
+      "utterance_id": "utt_f0529",
+      "spoken_text": "doll's"
+    },
+    {
+      "utterance_id": "utt_f0531",
+      "spoken_text": "dinosaurs"
+    },
+    {
+      "utterance_id": "utt_f0533",
+      "spoken_text": "dinosaur's"
+    },
+    {
+      "utterance_id": "utt_f0535",
+      "spoken_text": "robots"
+    },
+    {
+      "utterance_id": "utt_f0539",
+      "spoken_text": "songs"
+    },
+    {
+      "utterance_id": "utt_f0541",
+      "spoken_text": "tablets"
+    },
+    {
+      "utterance_id": "utt_f0543",
+      "spoken_text": "phone's"
+    },
+    {
+      "utterance_id": "utt_f0545",
+      "spoken_text": "movies"
+    },
+    {
+      "utterance_id": "utt_f0547",
+      "spoken_text": "videos"
+    },
+    {
+      "utterance_id": "utt_f0551",
+      "spoken_text": "book's"
+    },
+    {
+      "utterance_id": "utt_f0553",
+      "spoken_text": "chairs"
+    },
+    {
+      "utterance_id": "utt_f0555",
+      "spoken_text": "doors"
+    },
+    {
+      "utterance_id": "utt_f0557",
+      "spoken_text": "door's"
+    },
+    {
+      "utterance_id": "utt_f0559",
+      "spoken_text": "windows"
+    },
+    {
+      "utterance_id": "utt_f0561",
+      "spoken_text": "lamps"
+    },
+    {
+      "utterance_id": "utt_f0563",
+      "spoken_text": "mirrors"
+    },
+    {
+      "utterance_id": "utt_f0565",
+      "spoken_text": "plates"
+    },
+    {
+      "utterance_id": "utt_f0567",
+      "spoken_text": "bowls"
+    },
+    {
+      "utterance_id": "utt_f0571",
+      "spoken_text": "forks"
+    },
+    {
+      "utterance_id": "utt_f0573",
+      "spoken_text": "spoons"
+    },
+    {
+      "utterance_id": "utt_f0579",
+      "spoken_text": "bottles"
+    },
+    {
+      "utterance_id": "utt_f0583",
+      "spoken_text": "blankets"
+    },
+    {
+      "utterance_id": "utt_f0585",
+      "spoken_text": "pillows"
+    },
+    {
+      "utterance_id": "utt_f0591",
+      "spoken_text": "batteries"
+    },
+    {
+      "utterance_id": "utt_f0593",
+      "spoken_text": "brooms"
+    },
+    {
+      "utterance_id": "utt_f0595",
+      "spoken_text": "tape's"
+    },
+    {
+      "utterance_id": "utt_f0597",
+      "spoken_text": "buckets"
+    },
+    {
+      "utterance_id": "utt_f0599",
+      "spoken_text": "shirts"
+    },
+    {
+      "utterance_id": "utt_f0603",
+      "spoken_text": "coats"
+    },
+    {
+      "utterance_id": "utt_f0607",
+      "spoken_text": "buttons"
+    },
+    {
+      "utterance_id": "utt_f0609",
+      "spoken_text": "pockets"
+    },
+    {
+      "utterance_id": "utt_f0615",
+      "spoken_text": "dog's"
+    },
+    {
+      "utterance_id": "utt_f0619",
+      "spoken_text": "cat's"
+    },
+    {
+      "utterance_id": "utt_f0621",
+      "spoken_text": "puppies"
+    },
+    {
+      "utterance_id": "utt_f0623",
+      "spoken_text": "puppy's"
+    },
+    {
+      "utterance_id": "utt_f0625",
+      "spoken_text": "kittens"
+    },
+    {
+      "utterance_id": "utt_f0629",
+      "spoken_text": "bird's"
+    },
+    {
+      "utterance_id": "utt_f0631",
+      "spoken_text": "bunnies"
+    },
+    {
+      "utterance_id": "utt_f0633",
+      "spoken_text": "bunny's"
+    },
+    {
+      "utterance_id": "utt_f0637",
+      "spoken_text": "duck's"
+    },
+    {
+      "utterance_id": "utt_f0643",
+      "spoken_text": "cow's"
+    },
+    {
+      "utterance_id": "utt_f0645",
+      "spoken_text": "horses"
+    },
+    {
+      "utterance_id": "utt_f0647",
+      "spoken_text": "horse's"
+    },
+    {
+      "utterance_id": "utt_f0651",
+      "spoken_text": "pig's"
+    },
+    {
+      "utterance_id": "utt_f0653",
+      "spoken_text": "sheep's"
+    },
+    {
+      "utterance_id": "utt_f0655",
+      "spoken_text": "goats"
+    },
+    {
+      "utterance_id": "utt_f0657",
+      "spoken_text": "bears"
+    },
+    {
+      "utterance_id": "utt_f0659",
+      "spoken_text": "bear's"
+    },
+    {
+      "utterance_id": "utt_f0661",
+      "spoken_text": "lions"
+    },
+    {
+      "utterance_id": "utt_f0663",
+      "spoken_text": "lion's"
+    },
+    {
+      "utterance_id": "utt_f0665",
+      "spoken_text": "tiger's"
+    },
+    {
+      "utterance_id": "utt_f0667",
+      "spoken_text": "elephants"
+    },
+    {
+      "utterance_id": "utt_f0669",
+      "spoken_text": "elephant's"
+    },
+    {
+      "utterance_id": "utt_f0671",
+      "spoken_text": "monkeys"
+    },
+    {
+      "utterance_id": "utt_f0673",
+      "spoken_text": "monkey's"
+    },
+    {
+      "utterance_id": "utt_f0675",
+      "spoken_text": "giraffes"
+    },
+    {
+      "utterance_id": "utt_f0677",
+      "spoken_text": "giraffe's"
+    },
+    {
+      "utterance_id": "utt_f0679",
+      "spoken_text": "zebras"
+    },
+    {
+      "utterance_id": "utt_f0681",
+      "spoken_text": "hippos"
+    },
+    {
+      "utterance_id": "utt_f0683",
+      "spoken_text": "hippo's"
+    },
+    {
+      "utterance_id": "utt_f0685",
+      "spoken_text": "penguins"
+    },
+    {
+      "utterance_id": "utt_f0687",
+      "spoken_text": "dolphins"
+    },
+    {
+      "utterance_id": "utt_f0689",
+      "spoken_text": "whales"
+    },
+    {
+      "utterance_id": "utt_f0691",
+      "spoken_text": "snakes"
+    },
+    {
+      "utterance_id": "utt_f0693",
+      "spoken_text": "snake's"
+    },
+    {
+      "utterance_id": "utt_f0695",
+      "spoken_text": "turtles"
+    },
+    {
+      "utterance_id": "utt_f0697",
+      "spoken_text": "frogs"
+    },
+    {
+      "utterance_id": "utt_f0699",
+      "spoken_text": "frog's"
+    },
+    {
+      "utterance_id": "utt_f0703",
+      "spoken_text": "spiders"
+    },
+    {
+      "utterance_id": "utt_f0705",
+      "spoken_text": "spider's"
+    },
+    {
+      "utterance_id": "utt_f0713",
+      "spoken_text": "sun's"
+    },
+    {
+      "utterance_id": "utt_f0715",
+      "spoken_text": "clouds"
+    },
+    {
+      "utterance_id": "utt_f0717",
+      "spoken_text": "vehicles"
+    },
+    {
+      "utterance_id": "utt_f0719",
+      "spoken_text": "cars"
+    },
+    {
+      "utterance_id": "utt_f0721",
+      "spoken_text": "car's"
+    },
+    {
+      "utterance_id": "utt_f0723",
+      "spoken_text": "trucks"
+    },
+    {
+      "utterance_id": "utt_f0725",
+      "spoken_text": "trains"
+    },
+    {
+      "utterance_id": "utt_f0727",
+      "spoken_text": "train's"
+    },
+    {
+      "utterance_id": "utt_f0729",
+      "spoken_text": "bicycles"
+    },
+    {
+      "utterance_id": "utt_f0733",
+      "spoken_text": "tractors"
+    },
+    {
+      "utterance_id": "utt_f0735",
+      "spoken_text": "tractor's"
+    },
+    {
+      "utterance_id": "utt_f0737",
+      "spoken_text": "airplanes"
+    },
+    {
+      "utterance_id": "utt_f0739",
+      "spoken_text": "rockets"
+    },
+    {
+      "utterance_id": "utt_f0741",
+      "spoken_text": "boats"
+    },
+    {
+      "utterance_id": "utt_f0745",
+      "spoken_text": "today's"
+    },
+    {
+      "utterance_id": "utt_f0747",
+      "spoken_text": "tomorrow's"
+    },
+    {
+      "utterance_id": "utt_f0755",
+      "spoken_text": "thing's"
+    },
+    {
+      "utterance_id": "utt_f0759",
+      "spoken_text": "boy's"
+    },
+    {
+      "utterance_id": "utt_f0763",
+      "spoken_text": "girl's"
+    },
+    {
+      "utterance_id": "utt_f0767",
+      "spoken_text": "man's"
+    },
+    {
+      "utterance_id": "utt_f0771",
+      "spoken_text": "woman's"
     }
   ]
 }

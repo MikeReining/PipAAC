@@ -804,975 +804,608 @@
   "mine": "my",
   "feet": "foot",
   "men": "man",
-  "women": "woman"
+  "women": "woman",
+  "knives": "knife",
+  "scarves": "scarf"
  },
  "possNouns": {
-  "animal": 20,
-  "baby": 1378,
-  "bear": 321,
-  "bird": 204,
-  "book": 52,
-  "boy": 359,
-  "brother": 133,
-  "bunny": 97,
-  "car": 92,
-  "cat": 454,
-  "chair": 20,
-  "chicken": 32,
-  "cousin": 21,
-  "cow": 79,
-  "dad": 3466,
-  "dada": 220,
-  "dinosaur": 45,
-  "doctor": 287,
-  "dog": 412,
-  "doll": 344,
-  "door": 46,
-  "duck": 106,
-  "elephant": 200,
-  "fish": 21,
-  "foot": 37,
-  "friend": 139,
-  "frog": 24,
-  "giraffe": 41,
-  "girl": 293,
-  "goat": 51,
-  "grandma": 1003,
-  "grandpa": 119,
-  "hair": 53,
-  "hand": 27,
-  "hat": 20,
-  "head": 32,
-  "hippo": 23,
-  "horse": 150,
-  "lion": 97,
-  "mama": 447,
-  "man": 372,
-  "mom": 5221,
-  "monkey": 121,
-  "name": 249,
-  "neighbor": 25,
-  "nurse": 27,
-  "penguin": 25,
-  "people": 241,
-  "person": 57,
-  "phone": 55,
-  "pig": 75,
-  "puppy": 40,
-  "school": 29,
-  "sheep": 36,
-  "sister": 149,
-  "snake": 66,
-  "spider": 38,
-  "sun": 135,
-  "tape": 32,
-  "teacher": 70,
-  "thing": 34,
-  "tiger": 88,
-  "today": 156,
-  "tomorrow": 73,
-  "tractor": 28,
-  "train": 70,
-  "truck": 36,
-  "tummy": 31,
-  "turtle": 31,
-  "water": 48,
-  "whale": 22,
-  "wind": 20,
-  "woman": 43
+  "baby": 982,
+  "bear": 265,
+  "bird": 148,
+  "book": 43,
+  "boy": 255,
+  "brother": 75,
+  "bunny": 76,
+  "car": 55,
+  "cat": 348,
+  "chicken": 26,
+  "cow": 63,
+  "dad": 2587,
+  "dada": 171,
+  "dinosaur": 31,
+  "doctor": 183,
+  "dog": 291,
+  "doll": 141,
+  "door": 29,
+  "duck": 48,
+  "elephant": 172,
+  "foot": 27,
+  "friend": 96,
+  "frog": 21,
+  "giraffe": 34,
+  "girl": 200,
+  "grandma": 760,
+  "grandpa": 74,
+  "hair": 45,
+  "hand": 20,
+  "head": 27,
+  "hippo": 21,
+  "horse": 97,
+  "lion": 76,
+  "mama": 374,
+  "man": 229,
+  "mom": 4248,
+  "monkey": 77,
+  "name": 177,
+  "nurse": 23,
+  "people": 181,
+  "person": 31,
+  "phone": 38,
+  "pig": 51,
+  "puppy": 29,
+  "school": 20,
+  "sheep": 34,
+  "sister": 98,
+  "snake": 41,
+  "spider": 21,
+  "sun": 127,
+  "tape": 30,
+  "teacher": 53,
+  "thing": 23,
+  "tiger": 67,
+  "today": 133,
+  "tomorrow": 57,
+  "tractor": 21,
+  "train": 38,
+  "water": 39,
+  "woman": 26
  },
  "plurals": {
-  "afternoon": [
-   "afternoons",
-   29
-  ],
   "airplane": [
    "airplanes",
-   157
-  ],
-  "ambulance": [
-   "ambulances",
-   26
+   88
   ],
   "animal": [
    "animals",
-   6273
+   4944
   ],
   "apple": [
    "apples",
-   1094
+   766
   ],
   "arm": [
    "arms",
-   2058
+   1120
   ],
   "aunt": [
    "aunts",
-   25
+   18
   ],
   "baby": [
    "babies",
-   2560
-  ],
-  "back": [
-   "backs",
-   166
+   1705
   ],
   "bag": [
    "bags",
-   1009
+   730
   ],
   "bagel": [
    "bagels",
-   114
+   80
   ],
   "ball": [
    "balls",
-   1632
+   943
   ],
   "banana": [
    "bananas",
-   963
+   706
   ],
   "bandage": [
    "bandages",
-   27
-  ],
-  "bath": [
-   "baths",
-   141
+   20
   ],
   "battery": [
    "batteries",
-   538
+   352
   ],
   "bear": [
    "bears",
-   1288
-  ],
-  "bed": [
-   "beds",
-   576
-  ],
-  "bedroom": [
-   "bedrooms",
-   33
-  ],
-  "belt": [
-   "belts",
-   49
+   910
   ],
   "bicycle": [
    "bicycles",
-   62
+   51
   ],
   "bike": [
    "bikes",
-   198
+   124
   ],
   "bird": [
    "birds",
-   1376
+   989
   ],
   "blanket": [
    "blankets",
-   216
+   122
   ],
   "boat": [
    "boats",
-   401
-  ],
-  "body": [
-   "bodies",
-   64
+   291
   ],
   "book": [
    "books",
-   5025
+   4027
   ],
   "bottle": [
    "bottles",
-   619
+   490
   ],
   "bowl": [
    "bowls",
-   248
+   196
   ],
   "box": [
    "boxes",
-   1180
+   596
   ],
   "boy": [
    "boys",
-   4081
-  ],
-  "bread": [
-   "breads",
-   23
+   2303
   ],
   "broom": [
    "brooms",
-   31
+   25
   ],
   "brother": [
    "brothers",
-   453
+   310
   ],
   "bucket": [
    "buckets",
-   110
+   80
   ],
   "bug": [
    "bugs",
-   662
+   430
   ],
   "bunny": [
    "bunnies",
-   304
-  ],
-  "burger": [
-   "burgers",
-   81
-  ],
-  "bus": [
-   "buss",
-   169
+   220
   ],
   "butterfly": [
    "butterflies",
-   378
+   265
   ],
   "button": [
    "buttons",
-   1219
-  ],
-  "cake": [
-   "cakes",
-   809
-  ],
-  "camera": [
-   "cameras",
-   34
-  ],
-  "candy": [
-   "candies",
-   45
+   836
   ],
   "car": [
    "cars",
-   3488
+   1930
   ],
   "carrot": [
    "carrots",
-   1207
+   854
   ],
   "cat": [
    "cats",
-   1433
-  ],
-  "cereal": [
-   "cereals",
-   25
+   1004
   ],
   "chair": [
    "chairs",
-   1162
-  ],
-  "chalk": [
-   "chalks",
-   62
-  ],
-  "cheese": [
-   "cheeses",
-   23
-  ],
-  "chicken": [
-   "chickens",
-   533
-  ],
-  "class": [
-   "classes",
-   71
-  ],
-  "clock": [
-   "clocks",
-   84
+   750
   ],
   "cloud": [
    "clouds",
-   609
+   450
   ],
   "coat": [
    "coats",
-   202
+   164
   ],
   "comb": [
    "combs",
-   80
-  ],
-  "computer": [
-   "computers",
-   47
+   40
   ],
   "cookie": [
    "cookies",
-   2085
-  ],
-  "couch": [
-   "couches",
-   26
+   1434
   ],
   "cousin": [
    "cousins",
-   162
+   115
   ],
   "cow": [
    "cows",
-   1072
+   718
   ],
   "cracker": [
    "crackers",
-   567
+   330
   ],
   "cup": [
    "cups",
-   1652
+   655
   ],
   "dad": [
    "daddies",
-   119
-  ],
-  "desk": [
-   "desks",
-   25
+   61
   ],
   "diaper": [
    "diapers",
-   272
-  ],
-  "dinner": [
-   "dinners",
-   105
+   193
   ],
   "dinosaur": [
    "dinosaurs",
-   1151
-  ],
-  "doctor": [
-   "doctors",
-   288
+   705
   ],
   "dog": [
    "dogs",
-   1420
+   928
   ],
   "doll": [
    "dolls",
-   1306
+   840
   ],
   "dolphin": [
    "dolphins",
-   218
+   151
   ],
   "donut": [
    "donuts",
-   84
+   61
   ],
   "door": [
    "doors",
-   831
+   508
   ],
   "dress": [
    "dresses",
-   149
+   111
   ],
   "duck": [
    "ducks",
-   1366
+   1033
   ],
   "ear": [
    "ears",
-   2471
+   1785
   ],
   "egg": [
    "eggs",
-   2851
+   1934
   ],
   "elephant": [
    "elephants",
-   1304
+   1051
   ],
   "eye": [
    "eyes",
-   5846
-  ],
-  "face": [
-   "faces",
-   534
-  ],
-  "family": [
-   "families",
-   70
+   3825
   ],
   "fan": [
    "fans",
-   34
-  ],
-  "farm": [
-   "farms",
-   78
+   27
   ],
   "firefighter": [
    "firefighters",
-   52
-  ],
-  "fish": [
-   "fishes",
-   282
+   43
   ],
   "flower": [
    "flowers",
-   2844
-  ],
-  "food": [
-   "foods",
-   367
+   2116
   ],
   "foot": [
    "feet",
-   5670
+   4034
   ],
   "fork": [
    "forks",
-   207
+   129
   ],
   "friend": [
    "friends",
-   2633
+   1802
   ],
   "frog": [
    "frogs",
-   678
-  ],
-  "fruit": [
-   "fruits",
-   110
+   468
   ],
   "giraffe": [
    "giraffes",
-   295
+   210
   ],
   "girl": [
    "girls",
-   2179
+   1448
   ],
   "goat": [
    "goats",
-   184
+   134
   ],
   "grandma": [
-   "nanas",
-   74
-  ],
-  "grandpa": [
-   "grandpas",
-   20
-  ],
-  "grass": [
-   "grasses",
-   35
-  ],
-  "hair": [
-   "hairs",
-   114
+   "grandmas",
+   41
   ],
   "hand": [
    "hands",
-   8839
+   4619
   ],
   "hat": [
    "hats",
-   482
-  ],
-  "head": [
-   "heads",
-   453
-  ],
-  "helicopter": [
-   "helicopters",
-   44
+   342
   ],
   "hen": [
    "hens",
-   139
+   112
   ],
   "hippo": [
    "hippos",
-   184
-  ],
-  "home": [
-   "homes",
-   59
+   118
   ],
   "horse": [
    "horses",
-   1240
+   796
   ],
   "hour": [
    "hours",
-   416
+   338
   ],
   "house": [
    "houses",
-   744
-  ],
-  "jacket": [
-   "jackets",
-   73
-  ],
-  "juice": [
-   "juices",
-   27
+   527
   ],
   "kitten": [
    "kittens",
-   420
-  ],
-  "knee": [
-   "knees",
-   1090
+   321
   ],
   "knife": [
-   "knifes",
-   25
+   "knives",
+   128
   ],
   "lamp": [
    "lamps",
-   46
+   31
   ],
   "leg": [
    "legs",
-   3114
+   2140
   ],
   "lion": [
    "lions",
-   525
-  ],
-  "lunch": [
-   "lunches",
-   31
-  ],
-  "mama": [
-   "mamas",
-   33
+   327
   ],
   "man": [
    "men",
-   2247
-  ],
-  "milk": [
-   "milks",
-   23
+   1153
   ],
   "minute": [
    "minutes",
-   2292
+   1816
   ],
   "mirror": [
    "mirrors",
-   52
+   34
   ],
   "mom": [
-   "mommies",
-   117
+   "mummys",
+   82
   ],
   "monkey": [
    "monkeys",
-   755
-  ],
-  "moon": [
-   "moons",
-   36
-  ],
-  "morning": [
-   "mornings",
-   110
-  ],
-  "motorcycle": [
-   "motorcycles",
-   53
-  ],
-  "mouth": [
-   "mouths",
-   346
+   484
   ],
   "movie": [
    "movies",
-   281
+   188
   ],
   "muffin": [
    "muffins",
-   269
+   222
+  ],
+  "museum": [
+   "museums",
+   10
   ],
   "name": [
    "names",
-   1063
+   845
   ],
   "napkin": [
    "napkins",
-   171
-  ],
-  "neck": [
-   "necks",
-   62
+   107
   ],
   "neighbor": [
    "neighbors",
-   140
-  ],
-  "night": [
-   "nights",
-   104
-  ],
-  "nose": [
-   "noses",
-   132
+   109
   ],
   "nurse": [
    "nurses",
-   72
-  ],
-  "pajamas": [
-   "jammies",
-   83
+   49
   ],
   "pancake": [
    "pancakes",
-   412
-  ],
-  "paper": [
-   "papers",
-   463
+   268
   ],
   "park": [
    "parks",
-   48
-  ],
-  "pee": [
-   "pees",
-   21
+   32
   ],
   "penguin": [
    "penguins",
-   455
-  ],
-  "people": [
-   "peoples",
-   167
-  ],
-  "person": [
-   "persons",
-   41
+   341
   ],
   "pet": [
    "pets",
-   265
-  ],
-  "phone": [
-   "phones",
-   165
+   213
   ],
   "pig": [
    "pigs",
-   1053
+   720
   ],
   "pillow": [
    "pillows",
-   196
-  ],
-  "pizza": [
-   "pizzas",
-   76
+   121
   ],
   "plate": [
    "plates",
-   830
+   538
   ],
   "pocket": [
    "pockets",
-   197
-  ],
-  "pool": [
-   "pools",
-   34
-  ],
-  "poop": [
-   "poops",
-   54
-  ],
-  "popsicle": [
-   "popsicles",
-   43
+   131
   ],
   "pretzel": [
    "pretzels",
-   168
+   104
   ],
   "puppy": [
    "puppies",
-   316
+   221
   ],
   "puzzle": [
    "puzzles",
-   665
-  ],
-  "rain": [
-   "rains",
-   97
-  ],
-  "restaurant": [
-   "restaurants",
-   38
-  ],
-  "road": [
-   "roads",
-   164
+   497
   ],
   "robot": [
    "robots",
-   73
+   46
   ],
   "rocket": [
    "rockets",
-   48
-  ],
-  "rug": [
-   "rugs",
-   24
+   41
   ],
   "sandwich": [
    "sandwiches",
-   651
-  ],
-  "school": [
-   "schools",
-   108
-  ],
-  "sheep": [
-   "sheeps",
-   98
+   493
   ],
   "ship": [
    "ships",
-   86
+   60
   ],
   "shirt": [
    "shirts",
-   263
-  ],
-  "shoulder": [
-   "shoulders",
-   447
-  ],
-  "shower": [
-   "showers",
-   33
-  ],
-  "sink": [
-   "sinks",
-   20
+   179
   ],
   "sister": [
    "sisters",
-   338
-  ],
-  "skirt": [
-   "skirts",
-   49
-  ],
-  "snack": [
-   "snacks",
-   139
+   237
   ],
   "snake": [
    "snakes",
-   688
-  ],
-  "snow": [
-   "snows",
-   30
+   430
   ],
   "song": [
    "songs",
-   472
-  ],
-  "soup": [
-   "soups",
-   27
+   365
   ],
   "spider": [
    "spiders",
-   410
-  ],
-  "sponge": [
-   "sponges",
-   48
+   277
   ],
   "spoon": [
    "spoons",
-   998
-  ],
-  "store": [
-   "stores",
-   89
-  ],
-  "straw": [
-   "straws",
-   58
+   772
   ],
   "strawberry": [
    "strawberries",
-   1338
-  ],
-  "street": [
-   "streets",
-   57
+   915
   ],
   "student": [
    "students",
-   63
-  ],
-  "sweater": [
-   "sweaters",
-   33
-  ],
-  "table": [
-   "tables",
-   156
+   52
   ],
   "tablet": [
    "tablets",
-   110
-  ],
-  "tape": [
-   "tapes",
-   236
+   86
   ],
   "teacher": [
    "teachers",
-   345
+   208
   ],
   "thing": [
    "things",
-   13933
-  ],
-  "tiger": [
-   "tigers",
-   409
+   11283
   ],
   "tissue": [
    "tissues",
-   215
+   150
   ],
-  "toilet": [
-   "toilets",
-   26
-  ],
-  "tongue": [
-   "tongues",
-   33
+  "toothbrush": [
+   "toothbrushes",
+   15
   ],
   "towel": [
    "towels",
-   150
+   118
   ],
   "toy": [
    "toys",
-   9782
-  ],
-  "track": [
-   "tracks",
-   396
+   6216
   ],
   "tractor": [
    "tractors",
-   191
+   120
   ],
   "train": [
    "trains",
-   1260
+   830
   ],
   "tree": [
    "trees",
-   1969
+   1394
   ],
   "truck": [
    "trucks",
-   1419
-  ],
-  "tummy": [
-   "tummys",
-   35
+   833
   ],
   "turtle": [
    "turtles",
-   403
-  ],
-  "umbrella": [
-   "umbrellas",
-   68
+   175
   ],
   "van": [
    "vans",
-   78
+   63
   ],
   "vehicle": [
    "vehicles",
-   133
+   109
   ],
   "video": [
    "videos",
-   92
+   76
   ],
   "waffle": [
    "waffles",
-   283
-  ],
-  "wagon": [
-   "wagons",
-   25
-  ],
-  "water": [
-   "waters",
-   39
+   251
   ],
   "whale": [
    "whales",
-   174
-  ],
-  "wind": [
-   "winds",
-   166
+   103
   ],
   "window": [
    "windows",
-   621
+   418
   ],
   "woman": [
    "women",
-   260
+   197
   ],
   "zebra": [
    "zebras",
-   155
-  ],
-  "zipper": [
-   "zippers",
-   25
-  ],
-  "zoo": [
-   "zoos",
-   30
+   104
   ]
  },
  "forms": [
@@ -2777,11 +2410,6 @@
    "text": "yours"
   },
   {
-   "lemma": "animal",
-   "features": "N;POSS",
-   "text": "animal's"
-  },
-  {
    "lemma": "baby",
    "features": "N;POSS",
    "text": "baby's"
@@ -2827,19 +2455,9 @@
    "text": "cat's"
   },
   {
-   "lemma": "chair",
-   "features": "N;POSS",
-   "text": "chair's"
-  },
-  {
    "lemma": "chicken",
    "features": "N;POSS",
    "text": "chicken's"
-  },
-  {
-   "lemma": "cousin",
-   "features": "N;POSS",
-   "text": "cousin's"
   },
   {
    "lemma": "cow",
@@ -2892,11 +2510,6 @@
    "text": "elephant's"
   },
   {
-   "lemma": "fish",
-   "features": "N;POSS",
-   "text": "fish's"
-  },
-  {
    "lemma": "foot",
    "features": "N;POSS",
    "text": "foot's"
@@ -2922,11 +2535,6 @@
    "text": "girl's"
   },
   {
-   "lemma": "goat",
-   "features": "N;POSS",
-   "text": "goat's"
-  },
-  {
    "lemma": "grandma",
    "features": "N;POSS",
    "text": "grandma's"
@@ -2945,11 +2553,6 @@
    "lemma": "hand",
    "features": "N;POSS",
    "text": "hand's"
-  },
-  {
-   "lemma": "hat",
-   "features": "N;POSS",
-   "text": "hat's"
   },
   {
    "lemma": "head",
@@ -2997,19 +2600,9 @@
    "text": "name's"
   },
   {
-   "lemma": "neighbor",
-   "features": "N;POSS",
-   "text": "neighbor's"
-  },
-  {
    "lemma": "nurse",
    "features": "N;POSS",
    "text": "nurse's"
-  },
-  {
-   "lemma": "penguin",
-   "features": "N;POSS",
-   "text": "penguin's"
   },
   {
    "lemma": "people",
@@ -3107,34 +2700,9 @@
    "text": "train's"
   },
   {
-   "lemma": "truck",
-   "features": "N;POSS",
-   "text": "truck's"
-  },
-  {
-   "lemma": "tummy",
-   "features": "N;POSS",
-   "text": "tummy's"
-  },
-  {
-   "lemma": "turtle",
-   "features": "N;POSS",
-   "text": "turtle's"
-  },
-  {
    "lemma": "water",
    "features": "N;POSS",
    "text": "water's"
-  },
-  {
-   "lemma": "whale",
-   "features": "N;POSS",
-   "text": "whale's"
-  },
-  {
-   "lemma": "wind",
-   "features": "N;POSS",
-   "text": "wind's"
   },
   {
    "lemma": "woman",
@@ -3142,19 +2710,9 @@
    "text": "woman's"
   },
   {
-   "lemma": "afternoon",
-   "features": "N;PL",
-   "text": "afternoons"
-  },
-  {
    "lemma": "airplane",
    "features": "N;PL",
    "text": "airplanes"
-  },
-  {
-   "lemma": "ambulance",
-   "features": "N;PL",
-   "text": "ambulances"
   },
   {
    "lemma": "animal",
@@ -3182,11 +2740,6 @@
    "text": "babies"
   },
   {
-   "lemma": "back",
-   "features": "N;PL",
-   "text": "backs"
-  },
-  {
    "lemma": "bag",
    "features": "N;PL",
    "text": "bags"
@@ -3212,11 +2765,6 @@
    "text": "bandages"
   },
   {
-   "lemma": "bath",
-   "features": "N;PL",
-   "text": "baths"
-  },
-  {
    "lemma": "battery",
    "features": "N;PL",
    "text": "batteries"
@@ -3225,21 +2773,6 @@
    "lemma": "bear",
    "features": "N;PL",
    "text": "bears"
-  },
-  {
-   "lemma": "bed",
-   "features": "N;PL",
-   "text": "beds"
-  },
-  {
-   "lemma": "bedroom",
-   "features": "N;PL",
-   "text": "bedrooms"
-  },
-  {
-   "lemma": "belt",
-   "features": "N;PL",
-   "text": "belts"
   },
   {
    "lemma": "bicycle",
@@ -3267,11 +2800,6 @@
    "text": "boats"
   },
   {
-   "lemma": "body",
-   "features": "N;PL",
-   "text": "bodies"
-  },
-  {
    "lemma": "book",
    "features": "N;PL",
    "text": "books"
@@ -3295,11 +2823,6 @@
    "lemma": "boy",
    "features": "N;PL",
    "text": "boys"
-  },
-  {
-   "lemma": "bread",
-   "features": "N;PL",
-   "text": "breads"
   },
   {
    "lemma": "broom",
@@ -3327,16 +2850,6 @@
    "text": "bunnies"
   },
   {
-   "lemma": "burger",
-   "features": "N;PL",
-   "text": "burgers"
-  },
-  {
-   "lemma": "bus",
-   "features": "N;PL",
-   "text": "buss"
-  },
-  {
    "lemma": "butterfly",
    "features": "N;PL",
    "text": "butterflies"
@@ -3345,21 +2858,6 @@
    "lemma": "button",
    "features": "N;PL",
    "text": "buttons"
-  },
-  {
-   "lemma": "cake",
-   "features": "N;PL",
-   "text": "cakes"
-  },
-  {
-   "lemma": "camera",
-   "features": "N;PL",
-   "text": "cameras"
-  },
-  {
-   "lemma": "candy",
-   "features": "N;PL",
-   "text": "candies"
   },
   {
    "lemma": "car",
@@ -3377,39 +2875,9 @@
    "text": "cats"
   },
   {
-   "lemma": "cereal",
-   "features": "N;PL",
-   "text": "cereals"
-  },
-  {
    "lemma": "chair",
    "features": "N;PL",
    "text": "chairs"
-  },
-  {
-   "lemma": "chalk",
-   "features": "N;PL",
-   "text": "chalks"
-  },
-  {
-   "lemma": "cheese",
-   "features": "N;PL",
-   "text": "cheeses"
-  },
-  {
-   "lemma": "chicken",
-   "features": "N;PL",
-   "text": "chickens"
-  },
-  {
-   "lemma": "class",
-   "features": "N;PL",
-   "text": "classes"
-  },
-  {
-   "lemma": "clock",
-   "features": "N;PL",
-   "text": "clocks"
   },
   {
    "lemma": "cloud",
@@ -3427,19 +2895,9 @@
    "text": "combs"
   },
   {
-   "lemma": "computer",
-   "features": "N;PL",
-   "text": "computers"
-  },
-  {
    "lemma": "cookie",
    "features": "N;PL",
    "text": "cookies"
-  },
-  {
-   "lemma": "couch",
-   "features": "N;PL",
-   "text": "couches"
   },
   {
    "lemma": "cousin",
@@ -3467,29 +2925,14 @@
    "text": "daddies"
   },
   {
-   "lemma": "desk",
-   "features": "N;PL",
-   "text": "desks"
-  },
-  {
    "lemma": "diaper",
    "features": "N;PL",
    "text": "diapers"
   },
   {
-   "lemma": "dinner",
-   "features": "N;PL",
-   "text": "dinners"
-  },
-  {
    "lemma": "dinosaur",
    "features": "N;PL",
    "text": "dinosaurs"
-  },
-  {
-   "lemma": "doctor",
-   "features": "N;PL",
-   "text": "doctors"
   },
   {
    "lemma": "dog",
@@ -3547,24 +2990,9 @@
    "text": "eyes"
   },
   {
-   "lemma": "face",
-   "features": "N;PL",
-   "text": "faces"
-  },
-  {
-   "lemma": "family",
-   "features": "N;PL",
-   "text": "families"
-  },
-  {
    "lemma": "fan",
    "features": "N;PL",
    "text": "fans"
-  },
-  {
-   "lemma": "farm",
-   "features": "N;PL",
-   "text": "farms"
   },
   {
    "lemma": "firefighter",
@@ -3572,19 +3000,9 @@
    "text": "firefighters"
   },
   {
-   "lemma": "fish",
-   "features": "N;PL",
-   "text": "fishes"
-  },
-  {
    "lemma": "flower",
    "features": "N;PL",
    "text": "flowers"
-  },
-  {
-   "lemma": "food",
-   "features": "N;PL",
-   "text": "foods"
   },
   {
    "lemma": "foot",
@@ -3607,11 +3025,6 @@
    "text": "frogs"
   },
   {
-   "lemma": "fruit",
-   "features": "N;PL",
-   "text": "fruits"
-  },
-  {
    "lemma": "giraffe",
    "features": "N;PL",
    "text": "giraffes"
@@ -3629,22 +3042,7 @@
   {
    "lemma": "grandma",
    "features": "N;PL",
-   "text": "nanas"
-  },
-  {
-   "lemma": "grandpa",
-   "features": "N;PL",
-   "text": "grandpas"
-  },
-  {
-   "lemma": "grass",
-   "features": "N;PL",
-   "text": "grasses"
-  },
-  {
-   "lemma": "hair",
-   "features": "N;PL",
-   "text": "hairs"
+   "text": "grandmas"
   },
   {
    "lemma": "hand",
@@ -3657,16 +3055,6 @@
    "text": "hats"
   },
   {
-   "lemma": "head",
-   "features": "N;PL",
-   "text": "heads"
-  },
-  {
-   "lemma": "helicopter",
-   "features": "N;PL",
-   "text": "helicopters"
-  },
-  {
    "lemma": "hen",
    "features": "N;PL",
    "text": "hens"
@@ -3675,11 +3063,6 @@
    "lemma": "hippo",
    "features": "N;PL",
    "text": "hippos"
-  },
-  {
-   "lemma": "home",
-   "features": "N;PL",
-   "text": "homes"
   },
   {
    "lemma": "horse",
@@ -3697,29 +3080,14 @@
    "text": "houses"
   },
   {
-   "lemma": "jacket",
-   "features": "N;PL",
-   "text": "jackets"
-  },
-  {
-   "lemma": "juice",
-   "features": "N;PL",
-   "text": "juices"
-  },
-  {
    "lemma": "kitten",
    "features": "N;PL",
    "text": "kittens"
   },
   {
-   "lemma": "knee",
-   "features": "N;PL",
-   "text": "knees"
-  },
-  {
    "lemma": "knife",
    "features": "N;PL",
-   "text": "knifes"
+   "text": "knives"
   },
   {
    "lemma": "lamp",
@@ -3737,24 +3105,9 @@
    "text": "lions"
   },
   {
-   "lemma": "lunch",
-   "features": "N;PL",
-   "text": "lunches"
-  },
-  {
-   "lemma": "mama",
-   "features": "N;PL",
-   "text": "mamas"
-  },
-  {
    "lemma": "man",
    "features": "N;PL",
    "text": "men"
-  },
-  {
-   "lemma": "milk",
-   "features": "N;PL",
-   "text": "milks"
   },
   {
    "lemma": "minute",
@@ -3769,32 +3122,12 @@
   {
    "lemma": "mom",
    "features": "N;PL",
-   "text": "mommies"
+   "text": "mummys"
   },
   {
    "lemma": "monkey",
    "features": "N;PL",
    "text": "monkeys"
-  },
-  {
-   "lemma": "moon",
-   "features": "N;PL",
-   "text": "moons"
-  },
-  {
-   "lemma": "morning",
-   "features": "N;PL",
-   "text": "mornings"
-  },
-  {
-   "lemma": "motorcycle",
-   "features": "N;PL",
-   "text": "motorcycles"
-  },
-  {
-   "lemma": "mouth",
-   "features": "N;PL",
-   "text": "mouths"
   },
   {
    "lemma": "movie",
@@ -3807,6 +3140,11 @@
    "text": "muffins"
   },
   {
+   "lemma": "museum",
+   "features": "N;PL",
+   "text": "museums"
+  },
+  {
    "lemma": "name",
    "features": "N;PL",
    "text": "names"
@@ -3817,24 +3155,9 @@
    "text": "napkins"
   },
   {
-   "lemma": "neck",
-   "features": "N;PL",
-   "text": "necks"
-  },
-  {
    "lemma": "neighbor",
    "features": "N;PL",
    "text": "neighbors"
-  },
-  {
-   "lemma": "night",
-   "features": "N;PL",
-   "text": "nights"
-  },
-  {
-   "lemma": "nose",
-   "features": "N;PL",
-   "text": "noses"
   },
   {
    "lemma": "nurse",
@@ -3842,19 +3165,9 @@
    "text": "nurses"
   },
   {
-   "lemma": "pajamas",
-   "features": "N;PL",
-   "text": "jammies"
-  },
-  {
    "lemma": "pancake",
    "features": "N;PL",
    "text": "pancakes"
-  },
-  {
-   "lemma": "paper",
-   "features": "N;PL",
-   "text": "papers"
   },
   {
    "lemma": "park",
@@ -3862,34 +3175,14 @@
    "text": "parks"
   },
   {
-   "lemma": "pee",
-   "features": "N;PL",
-   "text": "pees"
-  },
-  {
    "lemma": "penguin",
    "features": "N;PL",
    "text": "penguins"
   },
   {
-   "lemma": "people",
-   "features": "N;PL",
-   "text": "peoples"
-  },
-  {
-   "lemma": "person",
-   "features": "N;PL",
-   "text": "persons"
-  },
-  {
    "lemma": "pet",
    "features": "N;PL",
    "text": "pets"
-  },
-  {
-   "lemma": "phone",
-   "features": "N;PL",
-   "text": "phones"
   },
   {
    "lemma": "pig",
@@ -3902,11 +3195,6 @@
    "text": "pillows"
   },
   {
-   "lemma": "pizza",
-   "features": "N;PL",
-   "text": "pizzas"
-  },
-  {
    "lemma": "plate",
    "features": "N;PL",
    "text": "plates"
@@ -3915,21 +3203,6 @@
    "lemma": "pocket",
    "features": "N;PL",
    "text": "pockets"
-  },
-  {
-   "lemma": "pool",
-   "features": "N;PL",
-   "text": "pools"
-  },
-  {
-   "lemma": "poop",
-   "features": "N;PL",
-   "text": "poops"
-  },
-  {
-   "lemma": "popsicle",
-   "features": "N;PL",
-   "text": "popsicles"
   },
   {
    "lemma": "pretzel",
@@ -3947,21 +3220,6 @@
    "text": "puzzles"
   },
   {
-   "lemma": "rain",
-   "features": "N;PL",
-   "text": "rains"
-  },
-  {
-   "lemma": "restaurant",
-   "features": "N;PL",
-   "text": "restaurants"
-  },
-  {
-   "lemma": "road",
-   "features": "N;PL",
-   "text": "roads"
-  },
-  {
    "lemma": "robot",
    "features": "N;PL",
    "text": "robots"
@@ -3972,24 +3230,9 @@
    "text": "rockets"
   },
   {
-   "lemma": "rug",
-   "features": "N;PL",
-   "text": "rugs"
-  },
-  {
    "lemma": "sandwich",
    "features": "N;PL",
    "text": "sandwiches"
-  },
-  {
-   "lemma": "school",
-   "features": "N;PL",
-   "text": "schools"
-  },
-  {
-   "lemma": "sheep",
-   "features": "N;PL",
-   "text": "sheeps"
   },
   {
    "lemma": "ship",
@@ -4002,34 +3245,9 @@
    "text": "shirts"
   },
   {
-   "lemma": "shoulder",
-   "features": "N;PL",
-   "text": "shoulders"
-  },
-  {
-   "lemma": "shower",
-   "features": "N;PL",
-   "text": "showers"
-  },
-  {
-   "lemma": "sink",
-   "features": "N;PL",
-   "text": "sinks"
-  },
-  {
    "lemma": "sister",
    "features": "N;PL",
    "text": "sisters"
-  },
-  {
-   "lemma": "skirt",
-   "features": "N;PL",
-   "text": "skirts"
-  },
-  {
-   "lemma": "snack",
-   "features": "N;PL",
-   "text": "snacks"
   },
   {
    "lemma": "snake",
@@ -4037,19 +3255,9 @@
    "text": "snakes"
   },
   {
-   "lemma": "snow",
-   "features": "N;PL",
-   "text": "snows"
-  },
-  {
    "lemma": "song",
    "features": "N;PL",
    "text": "songs"
-  },
-  {
-   "lemma": "soup",
-   "features": "N;PL",
-   "text": "soups"
   },
   {
    "lemma": "spider",
@@ -4057,24 +3265,9 @@
    "text": "spiders"
   },
   {
-   "lemma": "sponge",
-   "features": "N;PL",
-   "text": "sponges"
-  },
-  {
    "lemma": "spoon",
    "features": "N;PL",
    "text": "spoons"
-  },
-  {
-   "lemma": "store",
-   "features": "N;PL",
-   "text": "stores"
-  },
-  {
-   "lemma": "straw",
-   "features": "N;PL",
-   "text": "straws"
   },
   {
    "lemma": "strawberry",
@@ -4082,34 +3275,14 @@
    "text": "strawberries"
   },
   {
-   "lemma": "street",
-   "features": "N;PL",
-   "text": "streets"
-  },
-  {
    "lemma": "student",
    "features": "N;PL",
    "text": "students"
   },
   {
-   "lemma": "sweater",
-   "features": "N;PL",
-   "text": "sweaters"
-  },
-  {
-   "lemma": "table",
-   "features": "N;PL",
-   "text": "tables"
-  },
-  {
    "lemma": "tablet",
    "features": "N;PL",
    "text": "tablets"
-  },
-  {
-   "lemma": "tape",
-   "features": "N;PL",
-   "text": "tapes"
   },
   {
    "lemma": "teacher",
@@ -4122,24 +3295,14 @@
    "text": "things"
   },
   {
-   "lemma": "tiger",
-   "features": "N;PL",
-   "text": "tigers"
-  },
-  {
    "lemma": "tissue",
    "features": "N;PL",
    "text": "tissues"
   },
   {
-   "lemma": "toilet",
+   "lemma": "toothbrush",
    "features": "N;PL",
-   "text": "toilets"
-  },
-  {
-   "lemma": "tongue",
-   "features": "N;PL",
-   "text": "tongues"
+   "text": "toothbrushes"
   },
   {
    "lemma": "towel",
@@ -4150,11 +3313,6 @@
    "lemma": "toy",
    "features": "N;PL",
    "text": "toys"
-  },
-  {
-   "lemma": "track",
-   "features": "N;PL",
-   "text": "tracks"
   },
   {
    "lemma": "tractor",
@@ -4177,19 +3335,9 @@
    "text": "trucks"
   },
   {
-   "lemma": "tummy",
-   "features": "N;PL",
-   "text": "tummys"
-  },
-  {
    "lemma": "turtle",
    "features": "N;PL",
    "text": "turtles"
-  },
-  {
-   "lemma": "umbrella",
-   "features": "N;PL",
-   "text": "umbrellas"
   },
   {
    "lemma": "van",
@@ -4212,24 +3360,9 @@
    "text": "waffles"
   },
   {
-   "lemma": "wagon",
-   "features": "N;PL",
-   "text": "wagons"
-  },
-  {
-   "lemma": "water",
-   "features": "N;PL",
-   "text": "waters"
-  },
-  {
    "lemma": "whale",
    "features": "N;PL",
    "text": "whales"
-  },
-  {
-   "lemma": "wind",
-   "features": "N;PL",
-   "text": "winds"
   },
   {
    "lemma": "window",
@@ -4245,16 +3378,6 @@
    "lemma": "zebra",
    "features": "N;PL",
    "text": "zebras"
-  },
-  {
-   "lemma": "zipper",
-   "features": "N;PL",
-   "text": "zippers"
-  },
-  {
-   "lemma": "zoo",
-   "features": "N;PL",
-   "text": "zoos"
   }
  ]
 }
