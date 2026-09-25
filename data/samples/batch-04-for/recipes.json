@@ -1,0 +1,94 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-04-for",
+  "description": "Re-explore batch-04 problem words (terminal /t/ bursts, wind noun). Variation bodies match the Grok tuning guide; <soft> omitted per project rules.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    {
+      "word": "don't",
+      "slug": "dont",
+      "spokenForGate": "don't",
+      "whisperMustMatch": ["don't", "dont"],
+      "variations": [
+        { "id": "plain", "body": { "text": "don't" } },
+        { "id": "bang", "body": { "text": "don't!" } },
+        { "id": "period", "body": { "text": "don't." } },
+        { "id": "emphasis", "body": { "text": "<emphasis>don't</emphasis>" } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>don't!</emphasis>" } },
+        { "id": "ipa_nt", "body": { "text": "don't", "replace": { "don't": "/doʊnt/" } } },
+        { "id": "ipa_speed092", "body": { "text": "don't", "replace": { "don't": "/doʊnt/" }, "speed": 0.92 } },
+        { "id": "unrel", "body": { "text": "don't", "replace": { "don't": "/doʊnt̚/" } } }
+      ]
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "spokenForGate": "can't",
+      "whisperMustMatch": ["can't", "cant"],
+      "whisperReject": ["can"],
+      "variations": [
+        { "id": "plain", "body": { "text": "can't" } },
+        { "id": "bang", "body": { "text": "can't!" } },
+        { "id": "period", "body": { "text": "can't." } },
+        { "id": "emphasis", "body": { "text": "<emphasis>can't</emphasis>" } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>can't!</emphasis>" } },
+        { "id": "ipa_nt", "body": { "text": "can't", "replace": { "can't": "/kænt/" } } },
+        { "id": "ipa_speed092", "body": { "text": "can't", "replace": { "can't": "/kænt/" }, "speed": 0.92 } },
+        { "id": "unrel", "body": { "text": "can't", "replace": { "can't": "/kænt̚/" } } }
+      ]
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "spokenForGate": "won't",
+      "whisperMustMatch": ["won't", "wont"],
+      "whisperReject": ["won", "one"],
+      "variations": [
+        { "id": "plain", "body": { "text": "won't" } },
+        { "id": "bang", "body": { "text": "won't!" } },
+        { "id": "period", "body": { "text": "won't." } },
+        { "id": "emphasis", "body": { "text": "<emphasis>won't</emphasis>" } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>won't!</emphasis>" } },
+        { "id": "ipa_nt", "body": { "text": "won't", "replace": { "won't": "/woʊnt/" } } },
+        { "id": "ipa_speed092", "body": { "text": "won't", "replace": { "won't": "/woʊnt/" }, "speed": 0.92 } },
+        { "id": "unrel", "body": { "text": "won't", "replace": { "won't": "/woʊnt̚/" } } }
+      ]
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "spokenForGate": "didn't",
+      "whisperMustMatch": ["didn't", "didnt"],
+      "whisperReject": ["did"],
+      "variations": [
+        { "id": "plain", "body": { "text": "didn't" } },
+        { "id": "bang", "body": { "text": "didn't!" } },
+        { "id": "period", "body": { "text": "didn't." } },
+        { "id": "emphasis", "body": { "text": "<emphasis>didn't</emphasis>" } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>didn't!</emphasis>" } },
+        { "id": "ipa_nt", "body": { "text": "didn't", "replace": { "didn't": "/dɪdnt/" } } },
+        { "id": "ipa_syllable", "body": { "text": "didn't", "replace": { "didn't": "/ˈdɪd.ənt/" } } },
+        { "id": "ipa_speed092", "body": { "text": "didn't", "replace": { "didn't": "/dɪdnt/" }, "speed": 0.92 } },
+        { "id": "unrel", "body": { "text": "didn't", "replace": { "didn't": "/dɪdnt̚/" } } }
+      ]
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "spokenForGate": "wind",
+      "whisperMustMatch": ["wind"],
+      "variations": [
+        { "id": "plain", "body": { "text": "wind" } },
+        { "id": "period", "body": { "text": "wind." } },
+        { "id": "ipa_ih", "body": { "text": "wind", "replace": { "wind": "/wɪnd/" } } },
+        { "id": "ipa_speed092", "body": { "text": "wind", "replace": { "wind": "/wɪnd/" }, "speed": 0.92 } },
+        { "id": "unrel", "body": { "text": "wind", "replace": { "wind": "/wɪnd̚/" } } },
+        { "id": "emphasis", "body": { "text": "<emphasis>wind</emphasis>" } }
+      ]
+    }
+  ]
+}

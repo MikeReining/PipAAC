@@ -1,0 +1,325 @@
+{
+  "voice_id": "ara",
+  "language": "en",
+  "status": "picked for upload, not uploaded",
+  "clips": [
+    {
+      "word": "a",
+      "file": "a.mp3",
+      "source": "data/samples/function-words/a_ipa.mp3",
+      "text": "a",
+      "replace": { "a": "/ə/" },
+      "basis": "ear, 2026-09-25"
+    },
+    {
+      "word": "an",
+      "file": "an.mp3",
+      "source": "data/samples/function-words/an_ipa.mp3",
+      "text": "an",
+      "replace": { "an": "/æn/" },
+      "basis": "IPA rule, same listen, no separate rejection"
+    },
+    {
+      "word": "the",
+      "file": "the.mp3",
+      "source": "data/samples/function-words/the_ipa.mp3",
+      "text": "the",
+      "replace": { "the": "/ðə/" },
+      "basis": "IPA rule, same listen, no separate rejection"
+    },
+    {
+      "word": "in",
+      "file": "in.mp3",
+      "source": "data/samples/ara_in_ipa.mp3",
+      "text": "in",
+      "replace": { "in": "/ɪn/" },
+      "basis": "ear picked ara_in_ipa.mp3"
+    },
+    {
+      "word": "and",
+      "file": "and.mp3",
+      "source": "data/samples/ara_and.mp3",
+      "text": "and",
+      "replace": null,
+      "basis": "ear preferred this over and_soft"
+    },
+    {
+      "word": "I",
+      "file": "i.mp3",
+      "source": "data/samples/batch-02/i.mp3",
+      "text": "I",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "on",
+      "file": "on.mp3",
+      "source": "data/samples/batch-02/on.mp3",
+      "text": "on",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "up",
+      "file": "up.mp3",
+      "source": "data/samples/batch-02/up.mp3",
+      "text": "up",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "or",
+      "file": "or.mp3",
+      "source": "data/samples/batch-02/or.mp3",
+      "text": "or",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "at",
+      "file": "at.mp3",
+      "source": "data/samples/batch-02/at.mp3",
+      "text": "at",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "it",
+      "file": "it.mp3",
+      "source": "data/samples/batch-02/it.mp3",
+      "text": "it",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "is",
+      "file": "is.mp3",
+      "source": "data/samples/batch-02/is.mp3",
+      "text": "is",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "am",
+      "file": "am.mp3",
+      "source": "data/samples/batch-02/am.mp3",
+      "text": "am",
+      "replace": null,
+      "basis": "ear, batch-02"
+    },
+    {
+      "word": "to",
+      "file": "to.mp3",
+      "source": "data/samples/batch-02/to_tu.mp3",
+      "text": "to",
+      "replace": { "to": "/tu/" },
+      "basis": "ear preferred /tu/ over plain to"
+    },
+    {
+      "word": "of",
+      "file": "of.mp3",
+      "source": "data/samples/batch-02/of_uv.mp3",
+      "text": "of",
+      "replace": { "of": "/ʌv/" },
+      "basis": "ear approved /ʌv/"
+    },
+    {
+      "word": "for",
+      "file": "for.mp3",
+      "source": "data/samples/batch-03/for_or.mp3",
+      "text": "for",
+      "replace": { "for": "/fɔr/" },
+      "basis": "ear picked for_or"
+    },
+    {
+      "word": "are",
+      "file": "are.mp3",
+      "source": "data/samples/batch-03/are_ar.mp3",
+      "text": "are",
+      "replace": { "are": "/ɑr/" },
+      "basis": "ear picked are_ar; plain are heard as R"
+    },
+    {
+      "word": "was",
+      "file": "was.mp3",
+      "source": "data/samples/batch-03/was.mp3",
+      "text": "was",
+      "replace": null,
+      "basis": "ear, batch-03"
+    },
+    {
+      "word": "off",
+      "file": "off.mp3",
+      "source": "data/samples/batch-03/off.mp3",
+      "text": "off",
+      "replace": null,
+      "basis": "ear, batch-03"
+    },
+    {
+      "word": "you",
+      "file": "you.mp3",
+      "source": "data/samples/batch-03/you.mp3",
+      "text": "you",
+      "replace": null,
+      "basis": "ear, batch-03"
+    },
+    {
+      "word": "TV",
+      "file": "tv.mp3",
+      "source": "data/samples/batch-03/tv.mp3",
+      "text": "TV",
+      "replace": null,
+      "basis": "ear, plain TV; tee vee take also passed and was not kept"
+    },
+    {
+      "word": "ow",
+      "file": "ow.mp3",
+      "source": "data/samples/batch-03/ow_loud.mp3",
+      "text": "<loud>ow</loud>",
+      "replace": null,
+      "basis": "ear: ow_loud and ow_loud_emphasis both great; kept loud alone"
+    },
+    {
+      "word": "read",
+      "file": "read.mp3",
+      "source": "data/samples/batch-04/read_plain.mp3",
+      "text": "read",
+      "replace": null,
+      "basis": "ear picked read_plain; ending decays in one piece"
+    },
+    {
+      "word": "close",
+      "file": "close.mp3",
+      "source": "data/samples/batch-04/close_kloz.mp3",
+      "text": "close",
+      "replace": { "close": "/kloʊz/" },
+      "basis": "ear picked close_kloz, the verb shut"
+    },
+    {
+      "word": "don't",
+      "file": "dont.mp3",
+      "source": "data/samples/batch-04-for/takes/dont_emphasis_bang.mp3",
+      "text": "<emphasis>don't!</emphasis>",
+      "replace": null,
+      "basis": "ear approved 2026-09-25; batch-04-for shortlist (emphasis_bang)"
+    },
+    {
+      "word": "can't",
+      "file": "cant.mp3",
+      "source": "data/samples/batch-04-for/takes/cant_plain.mp3",
+      "text": "can't",
+      "replace": null,
+      "basis": "ear approved 2026-09-25; batch-04-for shortlist (plain)"
+    },
+    {
+      "word": "won't",
+      "file": "wont.mp3",
+      "source": "data/samples/batch-04-for/takes/wont_plain.mp3",
+      "text": "won't",
+      "replace": null,
+      "basis": "ear approved 2026-09-25; batch-04-for shortlist (plain)"
+    },
+    {
+      "word": "didn't",
+      "file": "didnt.mp3",
+      "source": "data/samples/batch-04-for/takes/didnt_plain.mp3",
+      "text": "didn't",
+      "replace": null,
+      "basis": "ear approved 2026-09-25; batch-04-for shortlist (plain)"
+    },
+    {
+      "word": "wind",
+      "file": "wind.mp3",
+      "source": "data/samples/batch-04-for/takes/wind_plain.mp3",
+      "text": "wind",
+      "replace": null,
+      "basis": "ear approved 2026-09-25; batch-04-for shortlist (plain); weather noun"
+    }
+  ],
+  "rejected": [
+    {
+      "word": "to",
+      "file": "data/samples/batch-02/to_ipa.mp3",
+      "text": "to",
+      "replace": { "to": "/tə/" },
+      "basis": "ear: bad"
+    },
+    {
+      "word": "to",
+      "file": "data/samples/batch-02/to_plain.mp3",
+      "text": "to",
+      "replace": null,
+      "basis": "replaced; ear later preferred /tu/"
+    },
+    {
+      "word": "of",
+      "file": "data/samples/batch-02/of_ipa.mp3",
+      "text": "of",
+      "replace": { "of": "/əv/" },
+      "basis": "ear: not great"
+    },
+    {
+      "word": "of",
+      "file": "data/samples/batch-02/of_plain.mp3",
+      "text": "of",
+      "replace": null,
+      "basis": "not chosen; Whisper heard Ove"
+    },
+    {
+      "word": "for",
+      "file": "data/samples/batch-03/for_plain.mp3",
+      "text": "for",
+      "replace": null,
+      "basis": "not chosen; ear preferred /fɔr/"
+    },
+    {
+      "word": "are",
+      "file": "data/samples/batch-03/are_plain.mp3",
+      "text": "are",
+      "replace": null,
+      "basis": "not chosen; Whisper heard R"
+    },
+    {
+      "word": "TV",
+      "file": "data/samples/batch-03/tv_teevee.mp3",
+      "text": "TV",
+      "replace": { "TV": "tee vee" },
+      "basis": "passed the listen; plain TV was the one kept"
+    },
+    {
+      "word": "ow",
+      "file": "data/samples/batch-03/ow.mp3",
+      "text": "ow",
+      "replace": null,
+      "basis": "not chosen; Whisper heard ảo"
+    },
+    {
+      "word": "ow",
+      "file": "data/samples/batch-03/ow_emphasis.mp3",
+      "text": "<emphasis>ow</emphasis>",
+      "replace": null,
+      "basis": "not chosen; the loud takes passed"
+    },
+    {
+      "word": "ow",
+      "file": "data/samples/batch-03/ow_loud_emphasis.mp3",
+      "text": "<loud><emphasis>ow</emphasis></loud>",
+      "replace": null,
+      "basis": "passed; not kept, loud alone was enough"
+    },
+    {
+      "word": "read",
+      "file": "data/samples/batch-04/read_rid.mp3",
+      "text": "read",
+      "replace": { "read": "/rid/" },
+      "basis": "not chosen; Whisper heard rid"
+    },
+    {
+      "word": "close",
+      "file": "data/samples/batch-04/close_plain.mp3",
+      "text": "close",
+      "replace": null,
+      "basis": "not chosen; ear preferred /kloʊz/"
+    }
+  ]
+}

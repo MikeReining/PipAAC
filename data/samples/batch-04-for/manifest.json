@@ -1,0 +1,653 @@
+[
+  {
+    "file": "takes/dont_plain.mp3",
+    "word": "don't",
+    "variation": "plain",
+    "text": "don't",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Don't.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dont_bang.mp3",
+    "word": "don't",
+    "variation": "bang",
+    "text": "don't!",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Don't!",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dont_period.mp3",
+    "word": "don't",
+    "variation": "period",
+    "text": "don't.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Don't.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dont_emphasis.mp3",
+    "word": "don't",
+    "variation": "emphasis",
+    "text": "<emphasis>don't</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " Don't.",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dont_emphasis_bang.mp3",
+    "word": "don't",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>don't!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Don't!",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dont_ipa_nt.mp3",
+    "word": "don't",
+    "variation": "ipa_nt",
+    "text": "don't",
+    "replace": {
+      "don't": "/doʊnt/"
+    },
+    "speed": 1,
+    "score": 110,
+    "whisper": " Don't.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dont_ipa_speed092.mp3",
+    "word": "don't",
+    "variation": "ipa_speed092",
+    "text": "don't",
+    "replace": {
+      "don't": "/doʊnt/"
+    },
+    "speed": 0.92,
+    "score": 110,
+    "whisper": " Don't.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dont_unrel.mp3",
+    "word": "don't",
+    "variation": "unrel",
+    "text": "don't",
+    "replace": {
+      "don't": "/doʊnt̚/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " Don't.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_plain.mp3",
+    "word": "can't",
+    "variation": "plain",
+    "text": "can't",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Can't.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_bang.mp3",
+    "word": "can't",
+    "variation": "bang",
+    "text": "can't!",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Can't",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_period.mp3",
+    "word": "can't",
+    "variation": "period",
+    "text": "can't.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Can't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_emphasis.mp3",
+    "word": "can't",
+    "variation": "emphasis",
+    "text": "<emphasis>can't</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Can't.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_emphasis_bang.mp3",
+    "word": "can't",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>can't!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Can't.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_ipa_nt.mp3",
+    "word": "can't",
+    "variation": "ipa_nt",
+    "text": "can't",
+    "replace": {
+      "can't": "/kænt/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " Can't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_ipa_speed092.mp3",
+    "word": "can't",
+    "variation": "ipa_speed092",
+    "text": "can't",
+    "replace": {
+      "can't": "/kænt/"
+    },
+    "speed": 0.92,
+    "score": 110,
+    "whisper": " Can't",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cant_unrel.mp3",
+    "word": "can't",
+    "variation": "unrel",
+    "text": "can't",
+    "replace": {
+      "can't": "/kænt̚/"
+    },
+    "speed": 1,
+    "score": 110,
+    "whisper": " Can't",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_plain.mp3",
+    "word": "won't",
+    "variation": "plain",
+    "text": "won't",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Won't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_bang.mp3",
+    "word": "won't",
+    "variation": "bang",
+    "text": "won't!",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " won't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_period.mp3",
+    "word": "won't",
+    "variation": "period",
+    "text": "won't.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Won't",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_emphasis.mp3",
+    "word": "won't",
+    "variation": "emphasis",
+    "text": "<emphasis>won't</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " won't",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_emphasis_bang.mp3",
+    "word": "won't",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>won't!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Won't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_ipa_nt.mp3",
+    "word": "won't",
+    "variation": "ipa_nt",
+    "text": "won't",
+    "replace": {
+      "won't": "/woʊnt/"
+    },
+    "speed": 1,
+    "score": 70,
+    "whisper": " won't",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_ipa_speed092.mp3",
+    "word": "won't",
+    "variation": "ipa_speed092",
+    "text": "won't",
+    "replace": {
+      "won't": "/woʊnt/"
+    },
+    "speed": 0.92,
+    "score": 110,
+    "whisper": " won't",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wont_unrel.mp3",
+    "word": "won't",
+    "variation": "unrel",
+    "text": "won't",
+    "replace": {
+      "won't": "/woʊnt̚/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " Won't.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_plain.mp3",
+    "word": "didn't",
+    "variation": "plain",
+    "text": "didn't",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " didn't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_bang.mp3",
+    "word": "didn't",
+    "variation": "bang",
+    "text": "didn't!",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " didn't",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_period.mp3",
+    "word": "didn't",
+    "variation": "period",
+    "text": "didn't.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " didn't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_emphasis.mp3",
+    "word": "didn't",
+    "variation": "emphasis",
+    "text": "<emphasis>didn't</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " Didn't",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_emphasis_bang.mp3",
+    "word": "didn't",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>didn't!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Didn't.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_ipa_nt.mp3",
+    "word": "didn't",
+    "variation": "ipa_nt",
+    "text": "didn't",
+    "replace": {
+      "didn't": "/dɪdnt/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " didn't",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_ipa_syllable.mp3",
+    "word": "didn't",
+    "variation": "ipa_syllable",
+    "text": "didn't",
+    "replace": {
+      "didn't": "/ˈdɪd.ənt/"
+    },
+    "speed": 1,
+    "score": -1000,
+    "whisper": " Did int.",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/didnt_ipa_speed092.mp3",
+    "word": "didn't",
+    "variation": "ipa_speed092",
+    "text": "didn't",
+    "replace": {
+      "didn't": "/dɪdnt/"
+    },
+    "speed": 0.92,
+    "score": 30,
+    "whisper": " didn't",
+    "notes": [
+      "too_long",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/didnt_unrel.mp3",
+    "word": "didn't",
+    "variation": "unrel",
+    "text": "didn't",
+    "replace": {
+      "didn't": "/dɪdnt̚/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " didn't.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wind_plain.mp3",
+    "word": "wind",
+    "variation": "plain",
+    "text": "wind",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wind.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wind_period.mp3",
+    "word": "wind",
+    "variation": "period",
+    "text": "wind.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wind.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wind_ipa_ih.mp3",
+    "word": "wind",
+    "variation": "ipa_ih",
+    "text": "wind",
+    "replace": {
+      "wind": "/wɪnd/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wind.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wind_ipa_speed092.mp3",
+    "word": "wind",
+    "variation": "ipa_speed092",
+    "text": "wind",
+    "replace": {
+      "wind": "/wɪnd/"
+    },
+    "speed": 0.92,
+    "score": 110,
+    "whisper": " Wind",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wind_unrel.mp3",
+    "word": "wind",
+    "variation": "unrel",
+    "text": "wind",
+    "replace": {
+      "wind": "/wɪnd̚/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wind.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wind_emphasis.mp3",
+    "word": "wind",
+    "variation": "emphasis",
+    "text": "<emphasis>wind</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Wind.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "legacy_dont.mp3",
+    "word": "don't",
+    "variation": "legacy_plain",
+    "text": null,
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Don't.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "legacy_cant.mp3",
+    "word": "can't",
+    "variation": "legacy_plain",
+    "text": null,
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Can't.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "legacy_wont.mp3",
+    "word": "won't",
+    "variation": "legacy_plain",
+    "text": null,
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Won't.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "legacy_didnt.mp3",
+    "word": "didn't",
+    "variation": "legacy_plain",
+    "text": null,
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " didn't.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "legacy_wind_ih.mp3",
+    "word": "wind",
+    "variation": "legacy_ih",
+    "text": null,
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Wind",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "legacy_wind_unrel.mp3",
+    "word": "wind",
+    "variation": "legacy_unrel",
+    "text": null,
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wind.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]

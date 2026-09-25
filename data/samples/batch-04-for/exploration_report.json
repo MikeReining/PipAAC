@@ -1,0 +1,1066 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-25T23:38:16.199Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-04-for",
+  "scored": [
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "plain",
+      "file": "dont_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_plain.mp3",
+      "whisper": " Don't.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "don't"
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "bang",
+      "file": "dont_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_bang.mp3",
+      "whisper": " Don't!",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "don't!"
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "period",
+      "file": "dont_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_period.mp3",
+      "whisper": " Don't.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "don't."
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "emphasis",
+      "file": "dont_emphasis.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_emphasis.mp3",
+      "whisper": " Don't.",
+      "score": 55,
+      "notes": [
+        "tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>don't</emphasis>"
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "emphasis_bang",
+      "file": "dont_emphasis_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_emphasis_bang.mp3",
+      "whisper": " Don't!",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>don't!</emphasis>"
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "ipa_nt",
+      "file": "dont_ipa_nt.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_ipa_nt.mp3",
+      "whisper": " Don't.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "don't",
+        "replace": {
+          "don't": "/doʊnt/"
+        }
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "ipa_speed092",
+      "file": "dont_ipa_speed092.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_ipa_speed092.mp3",
+      "whisper": " Don't.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1060,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 0.92,
+        "text": "don't",
+        "replace": {
+          "don't": "/doʊnt/"
+        }
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "unrel",
+      "file": "dont_unrel.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_unrel.mp3",
+      "whisper": " Don't.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "don't",
+        "replace": {
+          "don't": "/doʊnt̚/"
+        }
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "plain",
+      "file": "cant_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_plain.mp3",
+      "whisper": " Can't.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "can't"
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "bang",
+      "file": "cant_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_bang.mp3",
+      "whisper": " Can't",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "can't!"
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "period",
+      "file": "cant_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_period.mp3",
+      "whisper": " Can't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "can't."
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "emphasis",
+      "file": "cant_emphasis.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_emphasis.mp3",
+      "whisper": " Can't.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>can't</emphasis>"
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "emphasis_bang",
+      "file": "cant_emphasis_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_emphasis_bang.mp3",
+      "whisper": " Can't.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>can't!</emphasis>"
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "ipa_nt",
+      "file": "cant_ipa_nt.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_ipa_nt.mp3",
+      "whisper": " Can't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "can't",
+        "replace": {
+          "can't": "/kænt/"
+        }
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "ipa_speed092",
+      "file": "cant_ipa_speed092.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_ipa_speed092.mp3",
+      "whisper": " Can't",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 980,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 0.92,
+        "text": "can't",
+        "replace": {
+          "can't": "/kænt/"
+        }
+      }
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "unrel",
+      "file": "cant_unrel.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_unrel.mp3",
+      "whisper": " Can't",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "can't",
+        "replace": {
+          "can't": "/kænt̚/"
+        }
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "plain",
+      "file": "wont_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_plain.mp3",
+      "whisper": " Won't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "won't"
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "bang",
+      "file": "wont_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_bang.mp3",
+      "whisper": " won't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "won't!"
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "period",
+      "file": "wont_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_period.mp3",
+      "whisper": " Won't",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "won't."
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "emphasis",
+      "file": "wont_emphasis.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_emphasis.mp3",
+      "whisper": " won't",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>won't</emphasis>"
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "emphasis_bang",
+      "file": "wont_emphasis_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_emphasis_bang.mp3",
+      "whisper": " Won't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>won't!</emphasis>"
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "ipa_nt",
+      "file": "wont_ipa_nt.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_ipa_nt.mp3",
+      "whisper": " won't",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "won't",
+        "replace": {
+          "won't": "/woʊnt/"
+        }
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "ipa_speed092",
+      "file": "wont_ipa_speed092.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_ipa_speed092.mp3",
+      "whisper": " won't",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 980,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 0.92,
+        "text": "won't",
+        "replace": {
+          "won't": "/woʊnt/"
+        }
+      }
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "unrel",
+      "file": "wont_unrel.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_unrel.mp3",
+      "whisper": " Won't.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "won't",
+        "replace": {
+          "won't": "/woʊnt̚/"
+        }
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "plain",
+      "file": "didnt_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_plain.mp3",
+      "whisper": " didn't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "didn't"
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "bang",
+      "file": "didnt_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_bang.mp3",
+      "whisper": " didn't",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "didn't!"
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "period",
+      "file": "didnt_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_period.mp3",
+      "whisper": " didn't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "didn't."
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "emphasis",
+      "file": "didnt_emphasis.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_emphasis.mp3",
+      "whisper": " Didn't",
+      "score": 55,
+      "notes": [
+        "tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>didn't</emphasis>"
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "emphasis_bang",
+      "file": "didnt_emphasis_bang.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_emphasis_bang.mp3",
+      "whisper": " Didn't.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>didn't!</emphasis>"
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "ipa_nt",
+      "file": "didnt_ipa_nt.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_ipa_nt.mp3",
+      "whisper": " didn't",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "didn't",
+        "replace": {
+          "didn't": "/dɪdnt/"
+        }
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "ipa_syllable",
+      "file": "didnt_ipa_syllable.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_ipa_syllable.mp3",
+      "whisper": " Did int.",
+      "score": -1000,
+      "notes": [
+        "whisper_mismatch"
+      ],
+      "durMs": null,
+      "tailBurst": null,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "didn't",
+        "replace": {
+          "didn't": "/ˈdɪd.ənt/"
+        }
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "ipa_speed092",
+      "file": "didnt_ipa_speed092.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_ipa_speed092.mp3",
+      "whisper": " didn't",
+      "score": 30,
+      "notes": [
+        "too_long",
+        "tail_burst"
+      ],
+      "durMs": 1150,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 0.92,
+        "text": "didn't",
+        "replace": {
+          "didn't": "/dɪdnt/"
+        }
+      }
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "unrel",
+      "file": "didnt_unrel.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_unrel.mp3",
+      "whisper": " didn't.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "didn't",
+        "replace": {
+          "didn't": "/dɪdnt̚/"
+        }
+      }
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "plain",
+      "file": "wind_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wind_plain.mp3",
+      "whisper": " Wind.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wind"
+      }
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "period",
+      "file": "wind_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wind_period.mp3",
+      "whisper": " Wind.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wind."
+      }
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "ipa_ih",
+      "file": "wind_ipa_ih.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wind_ipa_ih.mp3",
+      "whisper": " Wind.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wind",
+        "replace": {
+          "wind": "/wɪnd/"
+        }
+      }
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "ipa_speed092",
+      "file": "wind_ipa_speed092.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wind_ipa_speed092.mp3",
+      "whisper": " Wind",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 980,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 0.92,
+        "text": "wind",
+        "replace": {
+          "wind": "/wɪnd/"
+        }
+      }
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "unrel",
+      "file": "wind_unrel.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wind_unrel.mp3",
+      "whisper": " Wind.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wind",
+        "replace": {
+          "wind": "/wɪnd̚/"
+        }
+      }
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "emphasis",
+      "file": "wind_emphasis.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wind_emphasis.mp3",
+      "whisper": " Wind.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "<emphasis>wind</emphasis>"
+      }
+    },
+    {
+      "word": "don't",
+      "slug": "dont",
+      "variationId": "legacy_plain",
+      "file": "legacy_dont.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04/dont.mp3",
+      "whisper": " Don't.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {}
+    },
+    {
+      "word": "can't",
+      "slug": "cant",
+      "variationId": "legacy_plain",
+      "file": "legacy_cant.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04/cant.mp3",
+      "whisper": " Can't.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {}
+    },
+    {
+      "word": "won't",
+      "slug": "wont",
+      "variationId": "legacy_plain",
+      "file": "legacy_wont.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04/wont.mp3",
+      "whisper": " Won't.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {}
+    },
+    {
+      "word": "didn't",
+      "slug": "didnt",
+      "variationId": "legacy_plain",
+      "file": "legacy_didnt.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04/didnt.mp3",
+      "whisper": " didn't.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {}
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "legacy_ih",
+      "file": "legacy_wind_ih.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04/wind_ih.mp3",
+      "whisper": " Wind",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {}
+    },
+    {
+      "word": "wind",
+      "slug": "wind",
+      "variationId": "legacy_unrel",
+      "file": "legacy_wind_unrel.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-04/wind_unrel.mp3",
+      "whisper": " Wind.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {}
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "can't",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/cant_plain.mp3",
+      "shortlistFile": "shortlist/cant_recommended.mp3",
+      "score": 125,
+      "whisper": " Can't.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "didn't",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/didnt_plain.mp3",
+      "shortlistFile": "shortlist/didnt_recommended.mp3",
+      "score": 125,
+      "whisper": " didn't",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "don't",
+      "variationId": "emphasis_bang",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/dont_emphasis_bang.mp3",
+      "shortlistFile": "shortlist/dont_recommended.mp3",
+      "score": 125,
+      "whisper": " Don't!",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "wind",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wind_plain.mp3",
+      "shortlistFile": "shortlist/wind_recommended.mp3",
+      "score": 125,
+      "whisper": " Wind.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "won't",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-04-for/takes/wont_plain.mp3",
+      "shortlistFile": "shortlist/wont_recommended.mp3",
+      "score": 125,
+      "whisper": " Won't",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}
