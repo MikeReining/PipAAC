@@ -518,7 +518,8 @@ export function buildCatalog(
         status: "active",
       },
     ],
-    clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm),
+    clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm,
+      utterances.filter((u) => u.id.startsWith("utt_f"))),
     coreCells,
     groups,
     groupCells,
@@ -533,7 +534,7 @@ export function buildCatalog(
  * lexicon slot. Materialized bytes are copied into public/audio/ so the
  * board can play them straight from the app shell.
  */
-function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm) {
+function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtterances = []) {
   const clipBySlot = new Map();
   for (const path of [DEFAULT_AUDIO_IMPORT_PATH, DEFAULT_GENERATED_AUDIO_PATH]) {
     if (!existsSync(path)) continue;
@@ -567,6 +568,38 @@ function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm) {
       sha256: clip.sha256,
       source: clip.source,
     });
+  }
+
+  // 021 slice 2: the form utterances (utt_f####) clip by utterance id —
+  // forms_audio.json is produced by scripts/catalog/forms_audio.mjs
+  // (WorkbookBench catalog first, ElevenLabs for the rest).
+  const formsAudio = join(repoRoot, "data/catalog/forms_audio.json");
+  if (existsSync(formsAudio) && formUtterances.length) {
+    const plan = JSON.parse(readFileSync(formsAudio, "utf8"));
+    const byUtt = new Map((plan.entries ?? []).map((e) => [e.utterance_id, e]));
+    for (const u of formUtterances) {
+      const e = byUtt.get(u.id);
+      if (!e?.clip?.key) {
+        throw new Error(`form utterance ${u.id} ("${u.spoken_text}") has no clip — run forms_audio.mjs`);
+      }
+      const srcFile = join(DEFAULT_AUDIO_CACHE_ROOT, e.clip.key);
+      if (!existsSync(srcFile)) {
+        throw new Error(`forms audio references missing file: ${e.clip.key} — rerun forms_audio.mjs`);
+      }
+      const dest = join(PUBLIC_AUDIO_ROOT, e.clip.key);
+      mkdirSync(dirname(dest), { recursive: true });
+      copyFileSync(srcFile, dest);
+      clips.push({
+        id: `clp_${u.id.slice(4)}`,
+        voice_id: DEFAULT_VOICE_ID,
+        utterance_id: u.id,
+        recorded_text: u.spoken_text,
+        key: e.clip.key,
+        status: "ready",
+        sha256: e.clip.sha256,
+        source: e.clip.source ?? null,
+      });
+    }
   }
   return clips;
 }

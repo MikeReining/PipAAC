@@ -236,6 +236,17 @@ catalog:build:check` green.
 
 ## Slice 2 — Voice clips
 
+**Status: built (2026-09-26).** `scripts/catalog/forms_audio.mjs`
+enumerates the 181 `utt_f####` utterances (forms with surfaces the
+lexicon never had), resolves WorkbookBench first — **81 hits**
+materialized from `workbookbench-catalog` — then synthesizes the 100
+misses via WBB's `tts.mjs` (eleven_v3, same voice id + settings).
+Plan: `data/catalog/forms_audio.json` keyed by utterance id;
+`buildClips` emits `clp_f####` rows and copies bytes to `public/audio/`.
+Coverage verified end-to-end: `resolveSlot` returns a ready clip for
+wants/am/him/doesn't/an/be — every approved form label speaks. The
+side-by-side listen check (item 3) is the founder's step.
+
 Pipeline already in the repo: `scripts/catalog/import_wbb_audio.mjs` →
 `materialize_audio.mjs` → `generate_missing_audio.mjs`. Key form utterances
 by utterance id (005 slice 2 item 1).
