@@ -146,9 +146,20 @@ no special handling (*I'm* is *I* + *am* since 021).
   sentence ended with `?`** (a question from ❓ stays a question, happy or
   angry). Otherwise `!` for happy and angry, `.` for sad and neutral.
 - **No sound-effect tags**, ever (`[laugh]`, `[cry]`…).
-- **Cache key includes the feeling** (024 rule 2): the same sentence happy
-  and angry are two recordings. Shared-cache eligibility is 024 § 5, the same
-  for every feeling.
+- **Every feeling recording is saved and reused: pay once, replay fast**
+  (founder, 2026-09-25). Exactly the same rule as every other sentence 024
+  speaks (present, past, question, future):
+  - the first time a sentence is spoken in a feeling, the MP3 is saved on her
+    device (024 Tier 1) **and uploaded to the shared Cloudflare R2 cache**
+    (024 Tier 2);
+  - every later request for the same sentence, voice and feeling, from any
+    child, plays from the cache: no Grok call, no cost, much faster;
+  - the only exception is 024 § 5's privacy line, identical for every
+    feeling: a sentence with a rare name, surname or typed word is saved on
+    her device only.
+- **The cache key includes the feeling** (024 rule 2): the same sentence
+  neutral, happy, sad and angry are four separate recordings, each synthesized
+  once.
 - **Fair use** (024 § 6a): characters count as usual (the sentence text, not
   the tags). Past the limit, the never-silent rule speaks it neutrally.
 - **No prefetching.** A feeling is synthesized only when she taps its face.
@@ -177,6 +188,8 @@ speech neutral.
    `sentence.spoken_feeling`; `expressive_voice` setting with sync; the
    Worker applies the formula from the `feeling` field, with the `?` rule.
    Update the helper in `Grok_Voice_Emotional_Prosody.md` § 4 to match.
+   Feeling recordings go through 024's caches like every sentence: saved on
+   the device and uploaded to R2 (§ 4), keyed by sentence + voice + feeling.
 2. **Faces in the strip:** render in the last slot (§ 1) when the conditions
    hold; tap handling (§ 2); the never-silent 1-second fallback.
 3. **Suggestion:** the "I + feeling word" rule (§ 3), lit face.
@@ -199,7 +212,10 @@ No new unit-test suite. The proof is the real app plus a listen:
    approves before shipping.
 3. **Never silent:** with the network throttled so audio takes over 1 second,
    a face tap still speaks (neutrally).
-4. Report: which faces were tapped in your own test use, from
+4. **Pay once:** tap the same face on the same sentence twice (and from a
+   second device): the second play comes from the cache, with no new Grok
+   call in the Worker log.
+5. Report: which faces were tapped in your own test use, from
    `sentence.spoken_feeling`.
 
 ## Out of scope
