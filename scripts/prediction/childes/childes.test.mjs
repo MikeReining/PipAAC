@@ -95,3 +95,33 @@ test('band edges and split semantics', () => {
   assert.equal(train.size, 80);
   for (const i of t) assert(!train.has(i));
 });
+
+test('pickForm: longest ending wins, pooled verbs fallback, next word flips (021)', async () => {
+  const { pickForm } = await import('../../../public/shared/forms.mjs');
+  const table = {
+    aSense: 'sns_a',
+    verbSenses: ['sns_need', 'sns_rare'],
+    contexts: {
+      'sns_he|sns_need': { 'V;PRS;3;SG': 50, BASE: 10 },
+      'sns_he|sns_rare': {},
+      'sns_he sns_is|sns_go': { 'V;V.PTCP;PRS': 300, BASE: 5 },
+    },
+    verbFree: { 'sns_he': { BASE: 9, 'V;PRS;3;SG': 40 } },
+    nextVerb: { 'sns_what|sns_do|sns_he': { 'V;PRS;3;SG': 800, BASE: 4 } },
+    aAn: { 'sns_apple': { 'DET;PHON': 60, BASE: 3 }, 'sns_ball': { BASE: 80 } },
+  };
+  // he + need -> needs (per-word table)
+  assert.equal(pickForm(table, ['sns_he'], 'sns_need'), 'V;PRS;3;SG');
+  // he is + go -> going: the 2-word ending answers
+  assert.equal(pickForm(table, ['sns_he', 'sns_is'], 'sns_go'), 'V;V.PTCP;PRS');
+  // a verb with no per-word row falls to the pooled verb table
+  assert.equal(pickForm(table, ['sns_he'], 'sns_rare'), 'V;PRS;3;SG');
+  // nothing anywhere -> default
+  assert.equal(pickForm(table, ['sns_x', 'sns_y'], 'sns_x'), 'BASE');
+  // next word flips: what + do + he -> does
+  assert.equal(pickForm(table, ['sns_what'], 'sns_do', 'sns_he'), 'V;PRS;3;SG');
+  // a/an by next word; no next-word data -> a
+  assert.equal(pickForm(table, ['sns_i', 'sns_want'], 'sns_a', 'sns_apple'), 'DET;PHON');
+  assert.equal(pickForm(table, ['sns_i', 'sns_want'], 'sns_a', 'sns_ball'), 'BASE');
+  assert.equal(pickForm(table, ['sns_i'], 'sns_a', 'sns_zzz'), 'BASE');
+});

@@ -257,6 +257,19 @@ by utterance id (005 slice 2 item 1).
 
 ## Slice 3 — The form table and its measurement (before any app work)
 
+**Status: built (2026-09-25).** `form-table.2026-09-25.1` ships all four
+tables; `measure_forms.mjs` numbers land at the Measured table's values
+(±~2 pts). Two deviations, both measured not guessed:
+
+- **`<name>` skipped — item 5's stop condition hit.** The parquet mirror
+  has no morphology tier (`index`, `text` columns only), so proper nouns
+  can't be recognized. Entities fall to shorter endings/default; "Leo
+  wants" stays a known gap until a name source exists.
+- **"does not" / "doesn't" count as the don't-sense.** The tile means
+  do+not; without the collapse `he|don't` read BASE 305 (children say
+  "he don't") because adult evidence lived under do+not. With it: 3SG
+  2744 vs BASE 309 → `he` + don't picks **doesn't**.
+
 New build script `scripts/prediction/childes/build_form_table.mjs` →
 `data/prediction/form_table.en.json`, on the 020B-cleaned text, with
 contractions split (*you're* → *you are*, *I'm* → *I am*, *he's* / *what's*

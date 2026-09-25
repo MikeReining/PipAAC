@@ -214,7 +214,9 @@ export const MERGES = {
   him: 'he', her: 'she', us: 'we', them: 'they', an: 'a',
 };
 
-export function lemmatize(words) {
+/** Per-token lemma + the surface that produced it — the form table
+ *  needs both ("him" is surface PRO;ACC of the he-sense). */
+export function analyzeLine(words) {
   const lw = expandAll(words);
   const out = [];
   let i = 0;
@@ -222,16 +224,25 @@ export function lemmatize(words) {
     let hit = null;
     for (const mw of MULTIWORD) {
       const parts = mw.split(' ');
-      if (lw.slice(i, i + parts.length).join(' ') === mw) { hit = mw; i += parts.length; break; }
+      if (lw.slice(i, i + parts.length).join(' ') === mw) { hit = mw; break; }
     }
-    if (hit) { out.push(MERGES[hit] ?? hit); continue; }
+    if (hit) {
+      const n = hit.split(' ').length;
+      out.push({ lemma: MERGES[hit] ?? hit, surf: lw.slice(i, i + n).join(' ') });
+      i += n;
+      continue;
+    }
     // Merge lookup first so raw merge surfaces that aren't lemmas
     // resolve ("be" -> "is"); toLemma still owns inflections and walls.
     const lem = MERGES[lw[i]] ?? toLemma(lw[i]);
-    out.push(lem === null ? null : (MERGES[lem] ?? lem));
+    out.push({ lemma: lem === null ? null : (MERGES[lem] ?? lem), surf: lw[i] });
     i++;
   }
   return out;
+}
+
+export function lemmatize(words) {
+  return analyzeLine(words).map((t) => t.lemma);
 }
 
 // ---------- CPython-compatible RNG (reproduces random.Random(seed).shuffle) ----------
