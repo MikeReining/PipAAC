@@ -241,14 +241,26 @@ function lookupRanked(getRows, phrase) {
   return ranked;
 }
 
+/** A children word shows only if it followed this ending at least this
+ *  share of the times the ending was seen. Measured, not guessed:
+ *  scripts/prediction/childes/measure_bar.mjs. */
+export const KIDS_MIN_SHARE = 0.05;
+
 /** The shipped children table lookup. Keys are space-joined sense ids;
  *  an ending holding an entity (or anything but senses) cannot be a
- *  children context — children in general never know her names. */
+ *  children context — children in general never know her names.
+ *  Returns { rows, seen } — seen is how often the ending occurred at
+ *  all, so share = n / seen counts the times children said the ending
+ *  and followed it with nothing we know. */
 function kidsRows(kidsTable, ending) {
   if (!kidsTable?.contexts || ending.some((it) => it.kind !== "sense")) return null;
-  const row = kidsTable.contexts[ending.map((it) => it.id).join(" ")];
+  const key = ending.map((it) => it.id).join(" ");
+  const row = kidsTable.contexts[key];
   if (!row) return null;
-  return Object.entries(row).map(([id, n]) => ({ kind: "sense", id, n }));
+  return {
+    rows: Object.entries(row).map(([id, n]) => ({ kind: "sense", id, n })),
+    seen: kidsTable.seen?.[key] ?? 0,
+  };
 }
 
 /** Senses the caregiver hid never enter the bar (Masking § 2). */
@@ -282,10 +294,11 @@ export function stripRanked(db, sentence, now, locale, kidsTable = null) {
   const merged = [];
   const seen = new Set();
   for (const e of endings) {
+    const kid = kidsRows(kids, e);
     const rows = [
       ["now", nowTbl.get(ctxKey(e))],
       ["all", allTbl.get(ctxKey(e))],
-      ["kids", kidsRows(kids, e)],
+      ["kids", kid?.rows],
     ];
     if (!rows.some(([, r]) => r?.length)) continue;
     ending = e.length;
@@ -296,7 +309,13 @@ export function stripRanked(db, sentence, now, locale, kidsTable = null) {
         const k = itemKey(c);
         if (seen.has(k)) continue;
         seen.add(k);
-        merged.push({ kind: c.kind, id: c.id, src, n: c.n });
+        // The 5% cutoff applies to children words only, AFTER the
+        // ending is chosen — a long shot ("me" at 3% of "my mom and")
+        // never paints, and an emptied ending never falls back further.
+        // Her own words are never cut: she said them after this phrase.
+        const share = src === "kids" && kid.seen ? c.n / kid.seen : null;
+        const cut = share !== null && share < KIDS_MIN_SHARE ? 1 : 0;
+        merged.push({ kind: c.kind, id: c.id, src, n: c.n, share, cut });
       }
     }
     break;
@@ -306,7 +325,7 @@ export function stripRanked(db, sentence, now, locale, kidsTable = null) {
   const ranked = merged.map((c) => ({
     ...c, mask: c.kind === "sense" && masked.has(c.id) ? 1 : 0,
   }));
-  const shown = ranked.filter((c) => !c.mask).slice(0, STRIP_CAP)
+  const shown = ranked.filter((c) => !c.mask && !c.cut).slice(0, STRIP_CAP)
     .map(({ kind, id }) => ({ kind, id }));
   return { ranked: ranked.slice(0, RANKED_CAP), shown, ending };
 }
@@ -326,8 +345,8 @@ export function stripCandidates(db, sentence, now = Date.now(), locale, kidsTabl
 /** The group of the top-ranked candidate, for the group list's glow —
  *  "the next word probably lives here". Empty when the bar is empty. */
 export function likelyGroups(db, sentence, now, locale, kidsTable = null) {
-  const { shown, ranked } = stripRanked(db, sentence, now, locale, kidsTable);
-  const top = shown[0] ?? ranked[0];
+  const { shown } = stripRanked(db, sentence, now, locale, kidsTable);
+  const top = shown[0];
   if (!top) return new Set();
   return new Set(
     db.prepare(
@@ -477,7 +496,7 @@ export function replayImpression(row) {
   const diffs = [];
   const cands = JSON.parse(row.candidates);
   const shown = cands
-    .filter((c) => !c.mask)
+    .filter((c) => !c.mask && !c.cut)
     .slice(0, row.shortlist_cap ?? STRIP_CAP)
     .map((c) => `${c.kind}:${c.id}`);
   const stored = JSON.parse(row.shown_local);
