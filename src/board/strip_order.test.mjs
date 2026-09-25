@@ -15,7 +15,8 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import {
-  likelyGroups, stripCandidates, stripScored, openSentence, logSelection,
+  likelyGroups, stripCandidates, stripScored, openSentence, closeSentence,
+  logSelection,
 } from "../../public/shared/funnel.mjs";
 import { setSetting, setMask } from "../../public/shared/groups.mjs";
 import { loadWeights } from "../../public/shared/learn.mjs";
@@ -53,6 +54,7 @@ function say(db, words, at) {
   const s = openSentence(db, at);
   words.forEach((w, i) =>
     logSelection(db, "sense", senseId(db, w), at + i, { sentenceId: s, position: i }));
+  closeSentence(db, s, at + words.length, "spoken");
 }
 
 test("'i': core words rank in the bar, 'don't' pins the last slot", () => {

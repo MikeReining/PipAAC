@@ -48,9 +48,47 @@ export function openSentence(db, at = Date.now()) {
 }
 
 export function closeSentence(db, id, at = Date.now(), kind) {
+  const open = db.prepare(
+    "SELECT 1 AS ok FROM sentence WHERE id = ? AND end_kind IS NULL",
+  ).all(id)[0];
+  if (!open) return;
   db.prepare(
     "UPDATE sentence SET ended_at = ?, end_kind = ? WHERE id = ? AND end_kind IS NULL",
   ).run(at, kind, id);
+  // Cleared and backspaced bars never train (learn.mjs). History is the
+  // spoken sentence, written once here — not on each tap.
+  if (kind === "spoken") recordSpokenHistory(db, id);
+}
+
+/** One bump per spoken position: the '' context and the 1/2/3-item
+ *  tails that preceded it. Decay is to that pick's own time. Detached
+ *  picks are already off the sentence, so a backspace never lands. */
+function recordSpokenHistory(db, sentenceId) {
+  const picks = db.prepare(
+    `SELECT item_kind AS k, item_id AS i, selected_at AS at
+     FROM learner_event_log
+     WHERE sentence_id = ? AND position IS NOT NULL
+     ORDER BY position`,
+  ).all(sentenceId);
+  const key = (its) => its.map((x) => `${x.k}:${x.i}`).join(",");
+  const get = db.prepare(
+    "SELECT n, last_at FROM history_count WHERE ctx = ? AND item_kind = ? AND item_id = ?");
+  const put = db.prepare(
+    `INSERT INTO history_count (ctx, item_kind, item_id, n, last_at)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT (ctx, item_kind, item_id) DO UPDATE SET
+       n = excluded.n, last_at = excluded.last_at`);
+  for (let i = 0; i < picks.length; i++) {
+    const pick = picks[i];
+    const preds = picks.slice(0, i);
+    const ctxs = new Set([""]);
+    for (const n of [1, 2, 3]) if (preds.length >= n) ctxs.add(key(preds.slice(-n)));
+    for (const c of ctxs) {
+      const row = get.all(c, pick.k, pick.i)[0];
+      const n = row ? row.n * decayW(row.last_at, pick.at) + 1 : 1;
+      put.run(c, pick.k, pick.i, n, pick.at);
+    }
+  }
 }
 
 /** A pick left the sentence (backspace reopened it): its event stays as
@@ -76,31 +114,6 @@ export function logSelection(db, kind, id, at = Date.now(), ctx = {}) {
     ctx.sentenceId ?? null, ctx.position ?? null, ctx.source ?? null,
     -new Date(at).getTimezoneOffset(), ctx.spotlit ? 1 : 0,
   );
-  // 017-10: the user's own history as decayed running counts — what
-  // followed the last 1, 2, and 3 items, plus overall (''). The n stored
-  // is decayed to `at` on every write; readers decay again to their now.
-  const preds = ctx.sentenceId == null ? [] : db
-    .prepare(
-      `SELECT item_kind AS k, item_id AS i FROM learner_event_log
-       WHERE sentence_id = ? AND position < ? AND position IS NOT NULL
-       ORDER BY position`,
-    )
-    .all(ctx.sentenceId, ctx.position ?? Number.MAX_SAFE_INTEGER);
-  const key = (its) => its.map((x) => `${x.k}:${x.i}`).join(",");
-  const ctxs = new Set([""]);
-  for (const n of [1, 2, 3]) if (preds.length >= n) ctxs.add(key(preds.slice(-n)));
-  const get = db.prepare(
-    "SELECT n, last_at FROM history_count WHERE ctx = ? AND item_kind = ? AND item_id = ?");
-  const put = db.prepare(
-    `INSERT INTO history_count (ctx, item_kind, item_id, n, last_at)
-     VALUES (?, ?, ?, ?, ?)
-     ON CONFLICT (ctx, item_kind, item_id) DO UPDATE SET
-       n = excluded.n, last_at = excluded.last_at`);
-  for (const c of ctxs) {
-    const row = get.all(c, kind, id)[0];
-    const n = row ? row.n * decayW(row.last_at, at) + 1 : 1;
-    put.run(c, kind, id, n, at);
-  }
 }
 
 /** Tail item's part of speech and text; entities are nominal. */
@@ -222,26 +235,32 @@ export function features(db, item, env) {
       hour += w;
     }
   }
-  // 017-10 — the history expert: P(next | last n items) from the running
-  // counts, per-item backoff 3 → 2 → 1 → overall. Counts decay to `now`
-  // before normalizing so an old run can't outweigh a fresh one.
+  // Witten-Bell over the spoken 1/2/3-item counts. Start at the
+  // overall share; each longer context that has data mixes this word's
+  // count with the shorter estimate. A word that never followed a known
+  // context does not inherit its lifetime share. Stop when the sentence
+  // is shorter than n or that context has no data. Counts decay to `now`.
   const ctxKey = (n) =>
     sentence.slice(-n).map((s) => `${s.kind}:${s.id}`).join(",");
-  let hist = 0;
-  for (const n of [3, 2, 1]) {
-    if (sentence.length < n) continue;
-    const rows2 = env.histStmt.all(ctxKey(n));
-    const tot = rows2.reduce((t, r) => t + r.n * decayW(r.last_at, now), 0);
-    if (!tot) continue;
-    const mine = rows2.find((r) => r.item_kind === item.kind && r.item_id === item.id);
-    const p = mine ? (mine.n * decayW(mine.last_at, now)) / tot : 0;
-    if (p > 0) { hist = p; break; }
-  }
-  if (!hist) {
-    const rows2 = env.histStmt.all("");
-    const tot = rows2.reduce((t, r) => t + r.n * decayW(r.last_at, now), 0);
-    const mine = tot && rows2.find((r) => r.item_kind === item.kind && r.item_id === item.id);
-    if (mine) hist = (mine.n * decayW(mine.last_at, now)) / tot;
+  const mass = (rows) => {
+    let N = 0, c = 0;
+    const types = new Set();
+    for (const r of rows) {
+      const w = r.n * decayW(r.last_at, now);
+      if (!(w > 0)) continue;
+      N += w;
+      types.add(`${r.item_kind}:${r.item_id}`);
+      if (r.item_kind === item.kind && r.item_id === item.id) c = w;
+    }
+    return { N, T: types.size, c };
+  };
+  const overall = mass(env.histStmt.all(""));
+  let hist = overall.N > 0 ? overall.c / overall.N : 0;
+  for (const n of [1, 2, 3]) {
+    if (sentence.length < n) break;
+    const m = mass(env.histStmt.all(ctxKey(n)));
+    if (!(m.N > 0)) break;
+    hist = (m.c + m.T * hist) / (m.N + m.T);
   }
   const rules = GRAMMAR[locale];
   const label2 = item.kind === "entity"
