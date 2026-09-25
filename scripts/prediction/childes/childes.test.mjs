@@ -56,11 +56,12 @@ test('contractions split into Pip parts, never ghost to a phrase', () => {
   assert.deepEqual(C.lemmatize(['i', "don't", 'know']), ['i don\'t know']);
 });
 
-test('multiword pieces resolve to the parent lemma, never a ghost', () => {
-  // a bare "done" is the "all done" tile; "way" -> "no way"
+test('multiword pieces stay honest: named aliases, else walls', () => {
+  // a bare "done" is the "all done" tile (named alias); "way"/"ice"
+  // are NOT "no way"/"ice cream" — a piece alone is a wall (020B)
   assert.equal(C.toLemma('done'), 'all done');
-  assert.equal(C.toLemma('ice'), 'ice cream');
-  assert.equal(C.toLemma('way'), 'no way');
+  assert.equal(C.toLemma('ice'), null);
+  assert.equal(C.toLemma('way'), null);
   // a piece that is itself a lemma keeps its own lemma
   assert.equal(C.toLemma('all'), 'all');
   assert.equal(C.toLemma('my'), 'my');

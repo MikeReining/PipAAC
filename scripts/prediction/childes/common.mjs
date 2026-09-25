@@ -44,9 +44,6 @@ const IRREG = {
   did: 'do',
   had: 'have', has: 'have', "'ve": 'have', "'d": 'have', "'ll": 'will',
   would: 'will', could: 'can', should: 'will',
-  // "used" backstrips to the pronoun "us" (i used to -> i us to) —
-  // "use" is not a lemma, so the honest answer is a wall.
-  used: null,
   "n't": 'not', "'m": 'am', "'re": 'are', "'s": 'is',
   cannot: 'can', "y'all": 'you', "ma'am": 'mom',
   mommy: 'mom', momma: 'mom', mama: 'mom', mum: 'mom', mummy: 'mom',
@@ -57,34 +54,40 @@ const IRREG = {
   telly: 'tv', television: 'tv',
   undies: 'underwear', sippy: 'cup', woof: 'dog', meow: 'cat',
   'night-night': 'good night', nite: 'night', 'nite nite': 'good night',
+  // Aliases: the single word means the two-word tile (020B — the only
+  // sanctioned list; everything else multiword stays whole or walls).
+  done: 'all done', thank: 'thank you', thanks: 'thank you',
+  excuse: 'excuse me', wake: 'wake up',
 };
 
 const surface = {};
-// Standalone lemmas first — a piece that is also a real word ("all",
-// "my") stays itself. Then bare pieces of multiword lemmas map to the
-// parent lemma (shortest, then alphabetical): a child's "done" is the
-// "all done" tile. Mapping pieces to themselves minted ghost lemmas —
-// offerable in the scorer, absent on the board (same class as the
-// am/is/are -> be bug).
+// Standalone lemmas only. A bare piece of a multiword lemma is NOT
+// automatically that tile — "way" is not "no way" (36k child words were
+// rewritten that way). Piece aliases live in IRREG where they are
+// named one by one.
 for (const w of LEMMAS) if (!w.includes(' ')) surface[w] = w;
-for (const w of LEMMAS.filter((x) => x.includes(' ')).sort((a, b) => a.length - b.length || a.localeCompare(b))) {
-  for (const piece of w.split(' ')) {
-    const p = piece.match(/[a-zA-Z']+/g)?.join('');
-    // Apostrophe pieces never ghost-map: "i'm" must reach the
-    // contraction splitter, not the "wait, i'm spelling" tile.
-    if (p && !p.includes("'") && !(p in surface)) surface[p] = w;
+
+// catalog lemma -> part of speech; a stripped ending may only land on
+// an open-class word (noun/verb/adjective). "ones" is not "one",
+// "using" is not "us", "pleased" is not "please".
+const LEMMA_POS = {};
+for (const l of cat.labels) {
+  if (l.kind === 'lemma' && !(l.normalized_text in LEMMA_POS)) {
+    LEMMA_POS[l.normalized_text] = l.part_of_speech;
   }
 }
+const OPEN_POS = new Set(['Noun', 'Verb', 'Adjective']);
 
 function candForms(base) {
   const out = [base];
-  out.push(base.endsWith('s') && base.length > 2 ? base.slice(0, -1) : base);
-  out.push(base.endsWith('ies') ? base.slice(0, -2) + 'y' : base);
-  out.push(base.endsWith('es') ? base.slice(0, -2) : base);
+  if (base.endsWith('s') && base.length > 2) out.push(base.slice(0, -1));
+  if (base.endsWith('ies')) out.push(base.slice(0, -3) + 'y'); // babies -> baby (was babiy)
+  if (base.endsWith('ied')) out.push(base.slice(0, -3) + 'y'); // cried -> cry
+  else if (base.endsWith('es')) out.push(base.slice(0, -2));
   for (const suf of ['ing', 'ed']) {
     if (base.endsWith(suf)) {
       const stem = base.slice(0, -suf.length);
-      out.push(stem, stem + 'e', stem.length > 1 && stem.at(-1) === stem.at(-2) ? stem.slice(0, -1) : stem);
+      out.push(stem + 'e', stem, stem.length > 1 && stem.at(-1) === stem.at(-2) ? stem.slice(0, -1) : stem);
     }
   }
   return out;
@@ -97,7 +100,8 @@ export function toLemma(tok) {
   if (t in surface) return surface[t];
   if (t in IRREG) return IRREG[t];
   for (const c of candForms(t)) {
-    if (c in surface) return surface[c];
+    if (c === t) continue;
+    if (c in surface && OPEN_POS.has(LEMMA_POS[surface[c]] ?? '')) return surface[c];
     if (c in IRREG) return IRREG[c];
   }
   return null;

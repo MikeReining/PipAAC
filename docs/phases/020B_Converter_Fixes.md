@@ -1,7 +1,7 @@
 # 020B — Converter Fixes: read CHILDES the way it was written
 
-**Status:** ready to execute (opened 2026-09-25). One slice. Follow-up to
-`020_Prediction_Data_Fix.md` (done, `b57f600`). Do this before
+**Status:** done (2026-09-25). Follow-up to `020_Prediction_Data_Fix.md`
+(done, `b57f600`). Do this before
 `021_Grammar_Help.md`: its form table is built by the same converter, and a
 converter that turns *using* into *us* would teach forms to the wrong words.
 **Truth owner:** what people actually said in CHILDES. The converter
@@ -101,6 +101,18 @@ the rest at once, and replaces 020's single-word patch (`used: null`).
 3. `measure_bar.mjs` before and after (both tables).
 4. `bar_examples.mjs`: every row. For each changed row, print counts,
    `seen` and share at the chosen ending, and say which item caused it.
+
+## Outcome notes (what the census found)
+
+The parquet carries no CHAT bracket markup at all — it is `word:<LAN>`
+tokens with standard forms already inlined upstream (`gonna:<LAN>
+going:<LAN> to:<LAN>`), plus `<TAG>` speaker markers and `<0>` empty-
+utterance tags. `[:]`, `[*]`, `[/]`, `[//]`, `&=`, `&-`, `0word`,
+`word@x`: zero occurrences. So item 1's prep.py rules are no-ops, the
+file is unchanged, and the `CASUAL` echo-consumption in `common.mjs`
+stays — the echo is the corpus's only representation of the standard
+form. Misspellings already wall on their own (`goed` → wall, `went` →
+go), which recovers the corrected word without duplicating it.
 
 ## Report back with
 
