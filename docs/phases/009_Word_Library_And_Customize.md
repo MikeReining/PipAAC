@@ -390,7 +390,9 @@ word `juice`.
 
 ---
 
-## Slice 10 — Suggested words
+## Slice 10 — Suggested words — HELD
+
+**HELD 2026-09-24** (017 R20: no listening). Do not start.
 
 Starts after `docs/backlog/008_Partner_Listening.md` slice 3.
 

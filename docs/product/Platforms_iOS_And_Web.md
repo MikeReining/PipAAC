@@ -37,7 +37,7 @@ advantage no incumbent offers.
 | Photos | System photo picker, many at once | File picker and drag-and-drop from a folder |
 | Record my own | Device microphone | Browser microphone |
 | Voices | Downloaded clips; device voices; **PROPOSED**: Apple Personal Voice as a `device_tts` voice (Proloquo2Go already supports it, [AssistiveWare](https://www.assistiveware.com/support/proloquo2go/speech/apple-personal)) | Downloaded clips; browser speech |
-| Listening (008) | On-device speech recognition | Engine chosen by the 008 slice 2 spike |
+| ~~Listening (008)~~ | Held 2026-09-24 (017 R20) | Held |
 | Durable storage | App container, included in the iPad's own backup | Browsers may evict site data; sync is the durable copy (`docs/product/Sync_And_Web_Editing.md` § 7) |
 
 People names from the Photos People album are not available on either

@@ -60,6 +60,7 @@ and a caregiver's recording stay on this iPad. Phase 002 already requires
 the add to work with the network off and without an account
 (`docs/product/Personal_Entities.md`).
 
+**HELD 2026-09-24** (017 R20: no listening). Pip has no microphone path.
 Partner-microphone audio stays out of this file, and so does the text
 recognized from it. That rule is speech-to-text in memory; partner words
 live for one turn and are never written
@@ -584,7 +585,7 @@ Jev answered after the 150 ms display window: logged, not shown.
 
 `prediction_weights` is **BUILT** (006 slice 4, `user_version` 7). The
 `learner_profile` columns below remain **DECIDED 2026-09-22** (not built —
-Jev sharing lands with 006 slice 5, `listening` with 008). Per profile.
+Jev sharing lands with 006 slice 5; `listening` is held with 008, 017 R20). Per profile.
 
 ```sql
 ALTER TABLE learner_profile ADD COLUMN jev_sharing INTEGER NOT NULL DEFAULT 1
@@ -607,7 +608,7 @@ The shipped starting weights and thresholds are catalog data (same for
 every child), versioned; a new version resets nothing — the L2 pull simply
 targets the new defaults.
 
-Whether listening is *currently* on is runtime state, never stored: the
+**HELD 2026-09-24** (017 R20: no listening). Whether listening is *currently* on is runtime state, never stored: the
 setting only decides whether the Listen key exists.
 
 ### 6.3 Override
@@ -1268,7 +1269,9 @@ approved image. The seeding code never writes a `group_cell` for it, and
 the strip does not rank it until a `group_cell` exists
 (`docs/product/Word_Library.md` § 6).
 
-### 14.3 Heard words (009 slice 10)
+### 14.3 Heard words (009 slice 10) — HELD
+
+**HELD 2026-09-24** (017 R20: no listening). Kept for history; not current.
 
 ```sql
 CREATE TABLE heard_word (

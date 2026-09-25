@@ -64,7 +64,7 @@ Three tabs, one search field across all of them:
 | Tab | Holds |
 | --- | --- |
 | **Added** | Everything the family added or changed: personal entities, library words they placed in a custom group or My Words, words with a recording override. Newest first — `added_at` on `personal_entity` and `group_cell` carries the placement time. |
-| **Suggested** | Words the device heard while listening and that the child does not have yet (§ 8). Empty until listening lands (009 slice 10). |
+| **Suggested** | Held with listening (017 R20, § 8). Not shown. |
 | **All** | Every word: the launch catalog, the extended picture library (§ 6), and the family's own. |
 
 Tapping any row opens its **word card**. Search matches labels and spoken
@@ -324,7 +324,9 @@ Scheduled in 009.
   (speech-to-speech), keeping the family's pronunciation in the child's
   voice. Only if families ask for it.
 
-## 8. Suggested words from listening
+## 8. Suggested words from listening — HELD
+
+**HELD 2026-09-24** (017 R20: no listening). Kept for history; not current.
 
 **DECIDED 2026-09-22** (founder: "single words only … local only, on
 device only"). Needs `docs/backlog/008_Partner_Listening.md` slice 3. Built

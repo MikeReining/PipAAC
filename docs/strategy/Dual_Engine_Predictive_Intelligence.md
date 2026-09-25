@@ -8,7 +8,15 @@ Foundational vision: `docs/strategy/Vision.md`.
 Durable facts map: `docs/product/SSOT.md`.
 Design invariants: `docs/product/Design_Invariants.md`.
 Execution: phase 006 (in git history), `docs/phases/007_Occasions.md`,
-`docs/backlog/008_Partner_Listening.md`.
+`docs/backlog/008_Partner_Listening.md` (held).
+
+**No listening — HELD 2026-09-24** (founder, 017 R20: "there is no
+listening. We have no idea what the parent said or asked."). Pip has no
+microphone path. Everything below about heard partner words, the Listen
+key, or heard-word suggestions is held, not current. The only partner
+signal is words an adult *taps* on the device while modeling (017-24
+`echo`, memory only). The device sends Jev no partner words
+(`public/board.js` passes `null`).
 
 ---
 
@@ -34,9 +42,9 @@ Transforming Augmentative and Alternative Communication (AAC) from an obsolete, 
 |  Dual-Engine Predictive Intelligence (Local-First Memory + TypeSafe Jev)          |
 |  - Formulates next-word prediction as fast classification, not text generation    |
 |  - Local engine owns context: time, occasion, habit, phrase history, recency      |
-|  - Jev owns meaning: does this word fit the sentence (and what the partner said)  |
+|  - Jev owns meaning: does this word fit the sentence                             |
 |  - The blend learns each child's weights from their own taps, on the device       |
-|  - Jev sharing is on by default (can be turned off); listening is off unless on   |
+|  - Jev sharing is on by default (can be turned off); there is no listening        |
 |  - Predictive strip: at most four fringe tiles; core cells never reorder         |
 |                                                                                   |
 +-----------------------------------------------------------------------------------+
@@ -57,12 +65,12 @@ AAC prediction has historically been crippled by a false dichotomy between two f
 | Metric | Legacy N-Gram Tables (1990s–Present)<br>*(Proloquo, TouchChat, iOS T9)* | Generative LLMs (2023–2025)<br>*(GPT-4, Claude, Gemini)* | **Pip AAC Dual-Engine**<br>*(Local-First Store + TypeSafe Jev)* |
 | :--- | :--- | :--- | :--- |
 | **Model Type** | Static statistical bigrams / trigrams | Autoregressive token generation | **Learned on-device ranker + System One classification** |
-| **Context Awareness** | **Zero.** Blind to time, environment, partner speech, or routines. | High, but prone to verbose hallucinations. | **Split by design.** Local: time, occasion, habit. Jev: meaning of the sentence and, when heard, the partner's words. |
+| **Context Awareness** | **Zero.** Blind to time, environment, partner speech, or routines. | High, but prone to verbose hallucinations. | **Split by design.** Local: time, occasion, habit. Jev: meaning of the sentence. |
 | **Output Shape** | Flat alphabetical or frequency word lists | Free-form conversational text | **Probability over a shortlist, with an explicit "none"** |
 | **Latency** | Instant (0ms) but semantically useless | High (500ms–2,000ms+ token stream) | **Local first paint <50 ms; Jev ~100 ms, never blocking** |
 | **Economics** | Free (baked into offline app) | Prohibitive (\$15–\$50/month per child) | **Low.** Jev bills input tokens only (\$0.042/Mtok); estimate a few dollars per child-year at heavy use, not measured |
 | **Motor Memory** | Jumps buttons around unpredictably | Incompatible with fixed grid layouts | **Core cells stay put. Halos mark words already on the grid. A strip of at most four tiles offers words that are not.** |
-| **Privacy** | Offline / Private | Requires sending student dialogue to LLM clouds | **History never leaves the device.** Jev sharing (on by default, can be turned off) sends only the shortlist and the sentence being built (plus partner words when listening is on). |
+| **Privacy** | Offline / Private | Requires sending student dialogue to LLM clouds | **History never leaves the device.** Jev sharing (on by default, can be turned off) sends only the shortlist and the sentence being built. |
 
 ### The Core Mathematical Insight
 Human speech generation in an AAC environment is **not an open-ended prose generation problem**. An AAC learner has a defined, personalized universe of words:
@@ -71,7 +79,7 @@ Human speech generation in an AAC environment is **not an open-ended prose gener
 - A finite set of pragmatic communicative functions (protest, request, comment, ask).
 
 The mathematical task is:
-$$\arg\max_{w \in \mathcal{V}_{\text{candidate}}} P\bigl(w \;\big|\; \text{Context}, \text{Sentence so far}, \text{Partner words (if heard)}\bigr)$$
+$$\arg\max_{w \in \mathcal{V}_{\text{candidate}}} P\bigl(w \;\big|\; \text{Context}, \text{Sentence so far}\bigr)$$
 
 This is a **classification problem**, and it splits cleanly: context is personal and local; meaning is general and is what Jev is good at.
 
@@ -83,9 +91,8 @@ This is a **classification problem**, and it splits cleanly: context is personal
 
 ### 3.1 Role: a meaning-only reranker
 
-Jev answers one question: *given the words in this sentence (and what the
-partner just said, if anything was heard), which of these candidates fits
-next?* It does not know the time, the occasion, the child's history, or
+Jev answers one question: *given the words in this sentence, which of these
+candidates fits next?* It does not know the time, the occasion, the child's history, or
 anything said in an earlier sentence. Those belong to the local engine
 (§ 4). Keeping the evidence apart is what lets the blend multiply the two
 engines without counting anything twice (§ 5.1).
@@ -121,19 +128,19 @@ With sharing on, a request carries only:
 | --- | --- | --- |
 | Shortlist | every call | The candidates' labels in the profile language, plus `none`. A personal entity is an opaque key with its category and enrichment description ("family pet dog"), never its name or photo. |
 | Sentence so far | every call | The labels of the current sentence, same entity rule. |
-| Partner words | only when listening heard the partner this turn (§ 6) | The recognized text, as heard. |
+| ~~Partner words~~ | never — held with listening (R20) | — |
 
 Never sent: time, date, occasion, any earlier sentence, counts or
 preferences, the learned weights, profile or device identifiers, photos,
 audio.
 
-No call is made when the sentence is empty and nothing was heard: there is
+No call is made when the sentence is empty: there is
 nothing for Jev to judge, and the idle strip is local.
 
 The device never holds the TypeSafe key. Calls go through the Pip Worker,
 which forwards the body and logs nothing about its contents.
 
-Without partner words — listening off, or nothing heard:
+The request:
 
 ```json
 {
@@ -154,17 +161,6 @@ Without partner words — listening off, or nothing heard:
         "none": "None of these words fits as the next word"
       }
     }
-  }
-}
-```
-
-With partner words — listening on and the partner spoke:
-
-```json
-{
-  "state": {
-    "partner_said": "Do you want pancakes or waffles?",
-    "sentence_so_far": "I want"
   }
 }
 ```
@@ -263,7 +259,7 @@ phase 006 (in git history).
 | Evidence | Owner |
 | --- | --- |
 | Meaning: does the word fit the sentence so far | Jev (+ local grammar invitation) |
-| Partner words, when heard | Jev (meaning) + local echo (named items) |
+| Partner modeling taps (017-24) | Local echo only |
 | Time of day, day type, occasion | Local only |
 | Phrase history, word pairs, frequency, recency | Local only |
 
@@ -283,7 +279,7 @@ most specific first:
 - **Phrase recall.** Items this child picked after the same last one to three items in an earlier sentence (sentence-scoped, § 6.2c of the schema doc).
 - **Word pairs.** Items picked right after the tail item, inside a sentence.
 - **Occasion and time.** Items picked in the current occasion window and local-hour window, same day type (school day / weekend), plus the catalog occasion prior (`docs/phases/007_Occasions.md`).
-- **Partner echo.** Items named in the partner's words, only when listening heard them (§ 6).
+- **Partner echo.** Items an adult tapped while modeling this turn (017-24, memory only).
 - **Sentence position.** The per-locale `GRAMMAR` invitation narrows parts of speech. Core continuations are haloed on the grid, not put in the strip (keyboard-mode exception below).
 - **Recency and frequency.** A just-added entity is reachable before any enrichment exists.
 - **Enrichment associations.** Cached Muse Spark records (§ 5.6).
@@ -316,7 +312,7 @@ enter as `log(1 + count)`):
 | `recency` | Decays over ~15 minutes since last pick |
 | `freq` | Overall count |
 | `invited` | Grammar invitation for this position (0/1) |
-| `echo` | Named in the partner's words this turn (0/1; 0 when not listening) |
+| `echo` | Tapped by an adult modeling this turn (0/1, memory only) |
 | `fresh` | Entity added in the last 24 h (0/1) |
 | `jev` | `log P_Jev(w)`, only when Jev answered |
 
@@ -414,7 +410,10 @@ The instrument is the child's own picks, not the ranker's report of itself:
 
 ---
 
-## 6. Partner Listening
+## 6. Partner Listening — HELD
+
+**HELD 2026-09-24** (017 R20: no listening). Kept for history only; none
+of this section is current.
 
 **DECIDED 2026-09-22** (not built). Replaces the four 2026-09-21 input
 modes. Execution: `docs/backlog/008_Partner_Listening.md`.
@@ -460,12 +459,12 @@ Integrating the Relational Language Graph (Pillar 1) with Dual-Engine Predictive
 
 ### 7.1 Proactive Self-Advocacy: The Power of "No"
 In typical special education, learners are conditioned into passive compliance because requesting an alternative or protesting an activity requires navigating through layers of folders (`More` $\rightarrow$ `Feelings` $\rightarrow$ `Bad` $\rightarrow$ `Don't Like`). By the time the child navigates there, the unwanted item is already in front of them, frequently triggering a behavioral crisis.
-- When an item is offered (heard through listening) that this child's history shows they refuse, **the self-advocacy tiles (`"NO"`, `"DON'T LIKE"`, `"STOP"`, `"DIFFERENT"`) are haloed in place**. The refusal history is local; only the partner's words and the sentence reach Jev.
+- ~~When an item is offered (heard through listening)…~~ Held with listening (R20): Pip cannot know what an adult offered aloud.
 - Communicating a boundary takes a single tap, fostering true autonomy and drastically reducing frustration-driven behaviors.
 
 ### 7.2 Frictionless Aided Language Stimulation (Modeling)
 Research proves that children acquire AAC fluency only when adults model communication on the device (*Aided Language Input*). Yet adults rarely model because finding words in legacy apps is too slow and difficult.
-- With listening on, the caregiver's spoken words prime the exact motor paths on the screen in real time.
+- The caregiver taps words on the child's own board (017-24 modeling); those taps glow the motor paths and feed `echo`. Spoken words are never heard (R20).
 - Parents and therapists can model full sentences in seconds, transforming modeling from a chore into a natural conversation.
 
 ### 7.3 Eradication of the Customization Tax
@@ -508,12 +507,12 @@ guess. Pip answers it by design:
   - Strip first paint is on-device and under 50 ms. Jev refines asynchronously and must not block that paint or reorder core indices.
   - Two-model division: Muse Spark (`meta/muse-spark-1.3-contributor` via OpenRouter) enriches each personal entity once at write time; Jev ranks candidates at read time. Enrichment output is a cached hint with provenance, not stored truth.
 - **DECIDED 2026-09-22** (founder review; not built):
-  - Jev is a meaning-only reranker: it receives the shortlist and the sentence so far, plus partner words only when listening heard them. No time, occasion, or history (§ 3.2).
+  - Jev is a meaning-only reranker: it receives the shortlist and the sentence so far. No time, occasion, or history (§ 3.2).
   - Jev sharing is a profile setting, on by default; a parent can turn it off, and off means no call. No zero-retention contract (§ 3.2).
   - Blend: one log-linear model over the shortlist with an explicit `none`; Jev enters as `log P_Jev`; weights learned per child on the device, in two sets (`local_only`, `with_jev`) (§ 5.3–5.5).
   - Show gate on blended probabilities, not Jev confidence (§ 5.4).
   - Sentences are tracked; a cleared sentence is a restart and not a training example (§ 5.5).
-  - Listening: off in settings, or on with a Listen key that starts and stops it; on-device speech to text; partner words expire with the turn (§ 6).
+  - ~~Listening~~ — held 2026-09-24 (R20); § 6.
   - Occasions are a dimension separate from groups; built by experiment first (`docs/phases/007_Occasions.md`).
   - Rate limits are parked until there are users.
 - **BUILT** (`src/board/strip.test.mjs`): the local funnel's sentence position, recency, and same-hour frequency (`funnel.mjs:69`). Known defect: the same-hour term compares local to UTC hours (`funnel.mjs:80`); fix in 006 slice 1.

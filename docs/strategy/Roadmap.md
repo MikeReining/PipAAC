@@ -28,7 +28,7 @@ picture library (phase 010); the labels themselves already ship.
 
 1. 006 — Prediction engine: fix local time, track sentences, log impressions and measure, the learned local model, on-device learning, then Jev behind the sharing setting (on by default) (phase 006, in git history).
 2. 007 — Occasions: breakfast experiment (LLM vs. Jev), then an occasion prior and each child's own windows (`docs/phases/007_Occasions.md`).
-3. 008 — Partner listening: setting, Listen key, on-device speech, partner words for one turn (`docs/backlog/008_Partner_Listening.md`).
+3. ~~008 — Partner listening~~ — held 2026-09-24 (017 R20: no listening; `docs/backlog/008_Partner_Listening.md`).
 4. No phase yet: core-cell halos as a fading prompt and the SLP independence report (strategy doc § 7.4).
 
 ## Customization track (decided 2026-09-22)

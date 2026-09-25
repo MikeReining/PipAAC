@@ -27,7 +27,7 @@ Executing phases only. Each row names the **next** slice.
 | --- | --- |
 | [005 — Word Forms](005_Word_Forms.md) | Slice 1 — forms in the catalog |
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
-| [008 — Partner Listening](008_Partner_Listening.md) | Slice 1 — the setting and the Listen key (after 006 slice 3) |
+| [008 — Partner Listening](../backlog/008_Partner_Listening.md) | Held 2026-09-24 (017 R20: no listening) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 10 — suggested words (blocked on 008 slice 3; 008 held 2026-09-24); slice 5 is post-launch |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
