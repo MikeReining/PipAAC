@@ -49,10 +49,13 @@ function adapt(db, onWrite) {
 export async function bootDb(userStore, userId) {
   if (handle) return handle;
 
-  const [sqlite3, catalog, phrases, saved] = await Promise.all([
+  const [sqlite3, catalog, phrases, formTable, saved] = await Promise.all([
     sqlite3InitModule(),
     fetch("/catalog.json").then((r) => r.json()),
     fetch("/phrase_table.en.json").then((r) => r.json()).catch(() => null),
+    // Grammar help's table is required when it ships — a missing or
+    // malformed file must fail the boot loudly, never degrade silently.
+    fetch("/form_table.en.json").then((r) => r.json()),
     getDbBytes(userStore, userId).catch(() => null),
   ]);
 
@@ -114,7 +117,7 @@ export async function bootDb(userStore, userId) {
   // the first local edit. Idempotent — a stored baseline is kept.
   ensureBaseline(d);
 
-  handle = { db: d, catalog, phrases, flush };
+  handle = { db: d, catalog, phrases, formTable, flush };
   return handle;
 }
 

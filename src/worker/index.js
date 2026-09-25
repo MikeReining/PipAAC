@@ -1,5 +1,6 @@
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
 import phraseTable from "../../data/prediction/phrase_table.en.json" with { type: "json" };
+import formTable from "../../data/prediction/form_table.en.json" with { type: "json" };
 import { UserRelay } from "./relay.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
@@ -31,6 +32,12 @@ export default {
     // phrase → next-item counts — counts only, never source text.
     if (path === "/phrase_table.en.json") {
       return json(phraseTable);
+    }
+
+    // Grammar help (021): phrase-context → form-feature counts —
+    // counts on sense ids only, no text.
+    if (path === "/form_table.en.json") {
+      return json(formTable);
     }
 
     // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted

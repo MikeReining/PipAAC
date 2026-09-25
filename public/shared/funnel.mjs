@@ -62,7 +62,7 @@ const itemKey = (it) => `${it.kind}:${it.id}`;
  *  sense. Read from the data, not a list — a form label whose text is
  *  itself a lemma says these two senses are one word. */
 const mergeCache = new WeakMap(); // db -> Map<sense_id, kept sense_id>
-function senseMerge(db) {
+export function senseMerge(db) {
   let m = mergeCache.get(db);
   if (m) return m;
   m = new Map();
@@ -100,12 +100,13 @@ export function detachEvent(db, sentenceId, position, at = Date.now()) {
 export function logSelection(db, kind, id, at = Date.now(), ctx = {}) {
   db.prepare(
     `INSERT INTO learner_event_log
-       (item_kind, item_id, selected_at, sentence_id, position, source, tz_offset_min, spotlit)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+       (item_kind, item_id, selected_at, sentence_id, position, source, tz_offset_min, spotlit, label_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     kind, id, at,
     ctx.sentenceId ?? null, ctx.position ?? null, ctx.source ?? null,
     -new Date(at).getTimezoneOffset(), ctx.spotlit ? 1 : 0,
+    ctx.labelId ?? null,
   );
 }
 

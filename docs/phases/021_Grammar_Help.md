@@ -315,6 +315,22 @@ contractions split (*you're* → *you are*, *I'm* → *I am*, *he's* / *what's*
 
 ## Slice 4 — Grammar help in the app
 
+**Status: built (2026-09-26).** `user_version` 18: `learner_event_log
+.label_id` (nullable — which label she actually said) and
+`learner_profile.grammar_help` (default 1, Parent Corner seg). `formFor`
+in `forms.mjs` answers display + speech: merged tiles are fixed forms
+(the 'him' cell adds the kept `he` sense wearing `lbl_f0001`), other
+senses pick by context (`pickForm`), BASE falls back to the lemma label.
+One choke point in `tap()` covers grid/strip/group/keyboard taps; typed
+commits in `commitKbItem` get the same treatment, and a spelling that
+only a form label owns ("wants") pins it. `revisitPrev` runs decision 4
+after every commit/tap — "what do" + he → does — rewriting the bar item
+and the log row's `label_id`. Cells repaint on every sentence change
+(`shownLabel`), Edit mode always shows lemmas, `/form_table.en.json` is
+required at boot (loud failure, no silent fallback). `resolveSlot` reads
+the item's `labelId` so the form's utterance speaks. `stripRanked` and
+phrase history untouched — sense ids only.
+
 1. **`public/shared/forms.mjs`**: `formFor(sentence, senseId)` over the
    shipped `form_table.en.json`, loaded at boot next to the phrase table.
    Fails loudly if the table is missing (no silent fallback).

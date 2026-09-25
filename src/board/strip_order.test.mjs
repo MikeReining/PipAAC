@@ -55,9 +55,10 @@ test("children paint in relative-frequency order, board words included", () => {
     { ctx: ["i"], next: { am: 300, want: 200, go: 100, like: 50 } },
   ]);
   const s = shown(db, ["i"], kids);
-  // 'am', 'want', 'go' are board cells — board words belong in the bar
-  // when they are likely (v2 rule: no main-board exclusion).
-  assert.deepEqual(s, ["am", "want", "go", "like"]);
+  // 'am' folds onto 'is' in a real table (021 merge) — 'is', 'want',
+  // 'go' are board cells and belong in the bar when they are likely
+  // (v2 rule: no main-board exclusion).
+  assert.deepEqual(s, ["is", "want", "go", "like"]);
 });
 
 test("source order: her-now before her-any before children", () => {

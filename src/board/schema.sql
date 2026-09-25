@@ -147,7 +147,11 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- and the next pick adds on, 1 lets the next pick start a fresh bar.
   -- Either way the words stay up for a repeat until that next pick.
   -- No semicolons in comments here: DDL readers stop at the first one.
-  fresh_after_speak INTEGER NOT NULL DEFAULT 0 CHECK (fresh_after_speak IN (0, 1))
+  fresh_after_speak INTEGER NOT NULL DEFAULT 0 CHECK (fresh_after_speak IN (0, 1)),
+  -- Grammar help (021): 1 shows each form-bearing word in the form the
+  -- sentence calls for (want -> wants after he); 0 is today's lemma-only
+  -- board. Default ON — the SLP turns it off to target endings herself.
+  grammar_help INTEGER NOT NULL DEFAULT 1 CHECK (grammar_help IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (
@@ -245,7 +249,11 @@ CREATE TABLE IF NOT EXISTS learner_event_log (
   spotlit INTEGER NOT NULL DEFAULT 0 CHECK (spotlit IN (0, 1)),
   -- 017-28: when a backspace pulled this pick out of its sentence
   -- (NULL = still seated). A fast strip-pick removal is a wrong pick.
-  detached_at INTEGER
+  detached_at INTEGER,
+  -- 021: which label spoke — the form the child actually said (wants,
+  -- him). NULL on old rows and when Grammar help is off. Phrase history
+  -- still reads item ids, so meaning-level ranking is untouched.
+  label_id TEXT REFERENCES label(id)
 );
 
 CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);
@@ -728,4 +736,4 @@ CREATE TABLE IF NOT EXISTS stats_day (
   PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 17;
+PRAGMA user_version = 18;

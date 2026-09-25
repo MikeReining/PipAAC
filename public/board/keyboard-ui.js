@@ -20,6 +20,7 @@ export function mountKeyboard({
   startFresh,
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
   showGroupHint, applyLikely, fitLabels, senseById,
+  grammar,
   getHighlightNext,
   getView, setViewName, renderGroupIndex, renderGroupPage, renderEditor,
 }) {
@@ -194,13 +195,17 @@ export function mountKeyboard({
     const norm = normalizeV1(text);
     const hit = all(
       db,
-      `SELECT s.id, l.text AS label, l.kind
+      `SELECT s.id, l.text AS label, l.kind, l.id AS label_id
        FROM label l JOIN sense s ON s.id = l.sense_id
        WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
        ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC`,
       [norm, locale],
     )[0];
-    if (hit) return { kind: "sense", id: hit.id, display: hit.kind === "lemma" ? hit.label : text };
+    // A spelling that only a form label owns ("wants") is her chosen
+    // form — pin it; lemma/alias hits let grammar help re-pick.
+    if (hit) return { kind: "sense", id: hit.id,
+      display: hit.kind === "lemma" ? hit.label : text,
+      formLabel: hit.kind === "form" ? { id: hit.label_id, text } : null };
     const ent = all(db, "SELECT id, spoken_name FROM personal_entity WHERE status = 'active'").find(
       (e) => normalizeV1(e.spoken_name) === norm,
     );
@@ -211,7 +216,20 @@ export function mountKeyboard({
   function commitKbItem(index) {
     const raw = sentence[index];
     const hit = resolveTyped(raw.text);
-    const item = { kind: hit.kind, id: hit.id, text: hit.display };
+    let item = { kind: hit.kind, id: hit.id, text: hit.display };
+    // Grammar help applies to typed words too — she typed the sense;
+    // the form it wears is the data's pick. A spelling that matched a
+    // form label is already her pick — pin it (typed "wants" stays).
+    if (hit.kind === "sense" && hit.id && grammar?.on()) {
+      if (hit.formLabel) {
+        item = { kind: "sense", id: hit.id, text: hit.formLabel.text,
+          labelId: hit.formLabel.id, fixed: true };
+      } else {
+        const f = grammar.forSense(sentence.slice(0, index), hit.id);
+        item = { kind: "sense", id: f.senseId, text: f.text ?? item.text,
+          labelId: f.labelId, fixed: !!f.merged };
+      }
+    }
     if (raw.punct) item.punct = raw.punct;
     if (raw.lead) item.lead = raw.lead;
     sentence[index] = item;
@@ -224,7 +242,9 @@ export function mountKeyboard({
       logSelection(db, item.kind, item.id, Date.now(), {
         sentenceId: getSentenceId(), position, source: "keyboard",
         spotlit: !!spotlight()?.targets.has(`${item.kind}:${item.id}`),
+        labelId: item.labelId ?? null,
       });
+      grammar?.revisit?.(index); // "what do" + typed he -> does
       showGroupHint(item.kind, item.id);
     }
   }

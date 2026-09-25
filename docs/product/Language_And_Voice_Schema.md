@@ -558,6 +558,18 @@ the popped pick's event (`sentence_id`/`position` → NULL — it stays as
 usage evidence) and shifts the remaining members down via `detachEvent`.
 Closed sentences are never rewritten — history stays as spoken.
 
+**Amendment — DECIDED, BUILT** (021 slice 4, `user_version` 18).
+`label_id` records which label the pick actually showed and spoke — the
+form the child said (`wants`, `him`). The sense stays the identity:
+`item_id` is unchanged, phrase history still folds to meaning, and
+NULL covers old rows and grammar-off picks. Decision 4 may rewrite
+`label_id` on the previous pick when the next word arrives ("what do"
++ he → does) — the sentence is still open, so the correction is legal.
+
+```sql
+ALTER TABLE learner_event_log ADD COLUMN label_id TEXT REFERENCES label(id);
+```
+
 ### 6.2d Strip impressions
 
 **DECIDED 2026-09-22, BUILT** (006 slice 2). One row per strip moment: what the
@@ -624,6 +636,18 @@ targets the new defaults.
 
 **HELD 2026-09-24** (017 R20: no listening). Whether listening is *currently* on is runtime state, never stored: the
 setting only decides whether the Listen key exists.
+
+**Amendment — DECIDED, BUILT** (021 slice 4, `user_version` 18).
+`grammar_help` (default 1) is the Parent Corner switch: on, every place
+a sense's label is painted for the child — board cell, strip tile,
+group cell, typed-word commit — shows the form `formFor` picks, and
+`label_id` logs what was actually said. Off, everything reads the lemma
+(the SLP turns it off to work endings herself).
+
+```sql
+ALTER TABLE learner_profile ADD COLUMN grammar_help INTEGER NOT NULL DEFAULT 1
+  CHECK (grammar_help IN (0, 1));
+```
 
 ### 6.3 Override
 

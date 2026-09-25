@@ -45,6 +45,7 @@ import {
   resolveActiveUser, touchOpened,
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
+import { formFor, grammarHelpOn } from "./shared/forms.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
 import { useCounts } from "./shared/usecounts.mjs";
@@ -142,7 +143,7 @@ if (navigator.locks?.request) {
 }
 navigator.storage?.persist?.().catch(() => {});
 
-const { db, catalog, phrases, flush: flushDb } = await bootDb(userStore, me.id);
+const { db, catalog, phrases, formTable, flush: flushDb } = await bootDb(userStore, me.id);
 bindLayouts(catalog.layouts); // move-cost sectors need the column counts
 // Device identity for the op log (sync § 4): the signing key's
 // fingerprint, resolved from the platform keystore. Until it lands the
@@ -168,6 +169,7 @@ function onSyncApplied() {
     kbUi.order = p.keyboard_order ?? kbUi.order;
     highlightNext = (p.highlight_next ?? 0) === 1;
     syncFreshSeg();
+    syncGrammarSeg();    // Grammar help syncs like the other segs
     bindSpotSettings();  // spotlight settings sync too
     resumeSession(db);   // a session started/ended elsewhere lands here
     renderCellsSeg();    // a Cells change may have landed
@@ -363,6 +365,17 @@ function photoFor(entityId) {
   return entityPhoto.get(entityId);
 }
 
+/* Grammar help (021): every place a sense's label is PAINTED for the
+ * child — grid cell, strip tile, group cell — shows the form the
+ * sentence calls for; what she taps is what the item wears and says.
+ * Lemma labels rule while editing (caregivers see canonical words) and
+ * when the setting is off. */
+let grammarHelp = true;
+function shownLabel(senseId, fallback) {
+  if (!grammarHelp || editing) return fallback;
+  return formFor(db, formTable, sentence, senseId).text ?? fallback;
+}
+
 function renderBar() {
   const bar = $("bar");
   bar.innerHTML = "";
@@ -441,6 +454,7 @@ $("clear").addEventListener("click", () => {
   sentence.length = 0;
   kbUi.text = "";
   renderBar();
+  renderGrid();
   renderStrip();
 });
 $("speak").addEventListener("click", () => {
@@ -463,6 +477,7 @@ $("backspace").addEventListener("click", () => {
     }
   }
   renderBar();
+  renderGrid();
   renderStrip();
 });
 
@@ -548,8 +563,9 @@ function stripCards(items) {
        WHERE s.id = ?`,
       [locale, c.id],
     )[0];
-    return { id: w.id, label: w.label, role: w.fitzgerald_role,
-      onTap: () => tap(w.label, "sense", w.id, { hint: true, source: "strip" }) };
+    const label = shownLabel(w.id, w.label);
+    return { id: w.id, label, role: w.fitzgerald_role,
+      onTap: () => tap(label, "sense", w.id, { hint: true, source: "strip" }) };
   });
 }
 
@@ -681,22 +697,56 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
   }
   // The child tapping a word the partner just modeled ends its glow.
   clearModel(id ? `${kind}:${id}` : null);
-  const item = { kind, id, text };
+  // 021: the sense keeps its identity — only its label changes. A form
+  // pick (wants, him) stores the KEPT sense id plus the label she saw
+  // and heard; merged tiles (the 'him' cell) carry their fixed form.
+  let item = { kind, id, text };
+  if (kind === "sense" && id && grammarHelp) {
+    const f = formFor(db, formTable, sentence, id);
+    item = { kind: "sense", id: f.senseId, text: f.text ?? text,
+      labelId: f.labelId, fixed: f.merged };
+  }
   expand = null; // any pick returns the bar to Predict (014 § 5)
   startFresh();
   sentence.push(item);
+  revisitPrev(sentence.length - 1); // decision 4: the next word may re-pick the last one
   renderBar();
   speakItem(item);
   if (id) {
     ensureSentence();
-    fillChosen(db, sentenceId, { kind, id, source });
-    logSelection(db, kind, id, Date.now(), {
+    fillChosen(db, sentenceId, { kind, id: item.id ?? id, source });
+    logSelection(db, kind, item.id ?? id, Date.now(), {
       sentenceId, position: sentencePicks++, source,
       spotlit: !!spotlight()?.targets.has(`${kind}:${id}`),
+      labelId: item.labelId ?? null,
     });
   }
-  if (hint && id) showGroupHint(kind, id);
+  if (hint && id) showGroupHint(kind, item.id ?? id);
+  renderGrid(); // cells wear the new context's forms
+  rerenderView(); // a group page's cells repaint too
   renderStrip();
+}
+
+/** Grammar help, decision 4 (021 §7): the word at `atIndex` settles the
+ *  one before it — "what do" + he -> does. Re-picks the previous sense
+ *  item only (her fixed form picks and typed words never move); a
+ *  changed form rewrites the bar item and the log row's label. */
+function revisitPrev(atIndex) {
+  if (!grammarHelp || atIndex < 1) return;
+  const prev = sentence[atIndex - 1];
+  const cur = sentence[atIndex];
+  if (prev.kind !== "sense" || !prev.id || prev.fixed) return;
+  const f = formFor(db, formTable, sentence.slice(0, atIndex - 1), prev.id, cur);
+  if (f.text === prev.text) return;
+  prev.text = f.text;
+  prev.labelId = f.labelId;
+  if (sentenceId !== null) {
+    // Positions follow the seated logged picks — count them up to prev.
+    const pos = sentence.slice(0, atIndex - 1).filter((it) => it.id).length;
+    RUN(db,
+      "UPDATE learner_event_log SET label_id = ? WHERE sentence_id = ? AND position = ?",
+      [f.labelId, sentenceId, pos]);
+  }
 }
 
 /* --- "Show me where": when a non-core word arrives from the strip or
@@ -1100,7 +1150,8 @@ function renderGrid() {
       grid.appendChild(withCount(ghost, "sense", c.sense_id));
       continue;
     }
-    const el = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
+    const cellLabel = shownLabel(c.sense_id, c.label);
+    const el = wordTile({ label: cellLabel, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
     el.dataset.slot = slot;
     if (editing) {
       // Adult move (014 § 2 ruling 1): drag onto a word swaps, onto an
@@ -1121,7 +1172,7 @@ function renderGrid() {
         },
       });
     } else {
-      el.addEventListener("click", () => tap(c.label, "sense", c.sense_id));
+      el.addEventListener("click", () => tap(cellLabel, "sense", c.sense_id));
     }
     layerMark(el, `sense:${c.sense_id}`, { board: true });
     cellEls.set(c.sense_id, el);
@@ -1285,6 +1336,12 @@ const kbUi = mountKeyboard({
   setSentencePicks: (n) => { sentencePicks = n; },
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
   showGroupHint, applyLikely, fitLabels, senseById,
+  grammar: {
+    on: () => grammarHelp,
+    forSense: (ctxItems, senseId, nextItem = null) =>
+      formFor(db, formTable, ctxItems, senseId, nextItem),
+    revisit: (index) => revisitPrev(index),
+  },
   getHighlightNext: () => highlightNext,
   getView: () => view,
   // Every view change repaints the bar: opening a group is intent — the
@@ -1321,6 +1378,25 @@ $("fresh-speak").addEventListener("click", (e) => {
   syncFreshSeg();
 });
 syncFreshSeg();
+/* Grammar help (021) — forms on/off. Off is instant: tiles, bar, and
+ * speech fall back to lemma labels on the next paint. */
+function syncGrammarSeg() {
+  grammarHelp = grammarHelpOn(db);
+  for (const b of $("grammar-help").querySelectorAll("button")) {
+    b.classList.toggle("on", (b.dataset.v === "1") === grammarHelp);
+  }
+}
+$("grammar-help").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v === undefined) return;
+  setSetting(db, "grammar_help", Number(v));
+  syncGrammarSeg();
+  renderBar();
+  renderGrid();
+  renderStrip();
+  rerenderView();
+});
+syncGrammarSeg();
 /* "Help improve Pip" (016 slice 6) — the research-totals switch. Same
  * synced-setting mechanics as the seg above. */
 const syncShareSeg = () => {
@@ -1497,6 +1573,7 @@ groupsUi = mountGroups({
     db, sentence.map((s) => ({ kind: s.kind, id: s.id })),
     Date.now(), locale, phrases),
   setView: (v) => kbUi.setView(v), open, close, toast, wordTile, layerMark, fitLabels, tap,
+  shownLabel,
   navCell, editPointer, xBadge,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
   openWordCard: (item) => wordCard.openWordCard(item),

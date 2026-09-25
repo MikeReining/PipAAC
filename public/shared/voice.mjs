@@ -70,12 +70,20 @@ export function overrideFor(db, itemKind, itemId) {
  */
 export function resolveSlot(db, item, locale, voiceId) {
   if (item.kind === "sense") {
-    const label = one(db,
-      `SELECT l.utterance_id, u.spoken_text FROM label l
-       JOIN utterance u ON u.id = l.utterance_id
-       WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved'
-         AND l.locale = ?`,
-      [item.id, locale]);
+    // 021: the item's chosen label wins — a form tap (wants, him) speaks
+    // its own utterance; items logged without a label resolve the lemma.
+    const label = item.labelId
+      ? one(db,
+          `SELECT l.utterance_id, u.spoken_text FROM label l
+           JOIN utterance u ON u.id = l.utterance_id
+           WHERE l.id = ?`,
+          [item.labelId])
+      : one(db,
+          `SELECT l.utterance_id, u.spoken_text FROM label l
+           JOIN utterance u ON u.id = l.utterance_id
+           WHERE l.sense_id = ? AND l.kind = 'lemma' AND l.status = 'approved'
+             AND l.locale = ?`,
+          [item.id, locale]);
     if (!label) return { type: "silence" };
     const ovr = one(db,
       "SELECT key FROM clip_override WHERE utterance_id = ? AND status = 'ready'",

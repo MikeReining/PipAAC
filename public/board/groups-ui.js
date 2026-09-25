@@ -15,7 +15,7 @@ const $ = (id) => document.getElementById(id);
 
 export function mountGroups({
   db, locale, all, boardGeom, getEditing, getModelGlow, getLikelyGroups,
-  setView, open, close, toast, wordTile, layerMark, fitLabels, tap,
+  setView, open, close, toast, wordTile, layerMark, fitLabels, tap, shownLabel,
   navCell, editPointer, xBadge, openAddForm, openWordCard,
   loadPhotoURL, savePhoto, syncUploadBlob,
 }) {
@@ -204,7 +204,9 @@ export function mountGroups({
     }
     const el = item.item_kind === "sense"
       ? senseCell(
-          { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
+          { fitzgerald_role: item.fitzgerald_role,
+            label: shownLabel?.(item.item_id, item.label) ?? item.label,
+            art: item.art },
           onSpeak,
         )
       : await entityCell(
