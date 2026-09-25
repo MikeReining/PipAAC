@@ -475,42 +475,6 @@ const senseById = (senseId) =>
   )[0];
 
 // Idle-strip starters referenced by sense id — never by English text.
-const HELLO_SENSE_ID = "sns_0583"; // hello
-const HELP_SENSE_ID = "sns_0025";  // help
-
-/** The four resting cards shown when the sentence bar is empty, in
- *  priority order: the child's top person first (a call to a person is a
- *  young child's most common word — 014 § 7a), `help` last (it is a cell
- *  on every home board). A narrow bar keeps the front of the list. */
-async function idleStarters() {
-  const cards = [];
-  const masked = maskedSenseIds(db);
-  const top = ALL(
-    db,
-    `SELECT e.id, e.spoken_name, e.photo_key FROM personal_entity e
-     LEFT JOIN learner_event_log l ON l.item_kind = 'entity' AND l.item_id = e.id
-     WHERE e.status = 'active'
-     GROUP BY e.id ORDER BY COUNT(l.id) DESC, MAX(l.selected_at) DESC, e.rowid LIMIT 1`,
-  )[0];
-  if (top) cards.push({ entity: top });
-  const hello = masked.has(HELLO_SENSE_ID) ? null : senseById(HELLO_SENSE_ID);
-  if (hello) {
-    cards.push({ id: hello.id, label: hello.label, glyph: "👋", role: hello.fitzgerald_role,
-      onTap: () => tap(hello.label, "sense", hello.id, { hint: true, source: "strip" }) });
-  }
-  const foodRow = ALL(db, "SELECT id, name FROM board_group WHERE id = 'grp_food'")[0];
-  if (foodRow) {
-    cards.push({ label: groupDisplayName(db, foodRow, locale), glyph: "🥞", role: "Pink",
-      onTap: () => groupsUi.openGroup("grp_food") });
-  }
-  const help = masked.has(HELP_SENSE_ID) ? null : senseById(HELP_SENSE_ID);
-  if (help) {
-    cards.push({ id: help.id, label: help.label, glyph: "🆘", role: help.fitzgerald_role,
-      onTap: () => tap(help.label, "sense", help.id, { hint: true, source: "strip" }) });
-  }
-  return cards.slice(0, 4);
-}
-
 /** A strip card is an ordinary word tile turned sideways: art on a white
  *  square at left, the label on the role fill at right (Design_System §
  *  Strip). Senses show their approved symbol when one ships, else a
@@ -667,24 +631,18 @@ async function renderStrip() {
     const items = kbUi.isOpen()
       ? keyboardContinuations(db, sents, locale, Date.now(), phrases)
       : ranked.shown;
-    if (sentence.length === 0 && !items.length && !groupId) {
-      // Nothing has evidence at position 0 — the resting cards still
-      // fill the bar (person, hello, food, help). Once her history or
-      // the children table supports an opener, the offer wins instead.
-      // Group mode never fills: a group with no used words stays empty.
-      cards = (await idleStarters()).slice(0, cap);
-    } else {
-      // Position-0 offers are real moments too (017-21): open the
-      // sentence so the impression row can exist. A row with no picks
-      // stays invisible to stats (end_kind IS NULL).
-      if (ranked) ensureSentence();
-      maybeImpression(
-        ranked?.ranked ?? items.map((c) => ({ kind: c.kind, id: c.id })),
-        items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
-          gate: groupId ? { group: groupId } : { ending: ranked?.ending ?? null } },
-      );
-      cards = stripCards(items);
-    }
+    // Position-0 offers are real moments too (017-21): open the
+    // sentence so the impression row can exist. A row with no picks
+    // stays invisible to stats (end_kind IS NULL). An empty bar —
+    // start or mid-sentence — stays empty: no resting-card guesses
+    // (founder call, 2026-09-25).
+    if (ranked) ensureSentence();
+    maybeImpression(
+      ranked?.ranked ?? items.map((c) => ({ kind: c.kind, id: c.id })),
+      items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
+        gate: groupId ? { group: groupId } : { ending: ranked?.ending ?? null } },
+    );
+    cards = stripCards(items);
   }
   await paintStrip(cards);
 }
