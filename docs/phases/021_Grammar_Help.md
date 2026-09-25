@@ -197,10 +197,8 @@ contractions split (*you're* → *you are*, *I'm* → *I am*, *he's* / *what's*
 
 1. **Lines:** CHILDES train split, child and caregiver lines (R11: the
    TalkBank permission covers aggregate counts from both). *a / an* uses
-   caregiver lines only (measured above). It is a second shipped table, so
-   before it ships the founder sends TalkBank a one-line FYI
-   (`data/prediction/permissions/`). Building and measuring locally needs
-   nothing.
+   caregiver lines only (measured above). Covered by the existing
+   permission; nothing to ask.
 2. **Counts, keyed on the words before** (1–4 words as spoken, e.g. `he
    is`; `<s>` at sentence start; a wall at any word that is not a catalog
    word or one of its forms) plus the word; value = counts of each of its
