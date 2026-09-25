@@ -76,7 +76,7 @@ feed the smart bar.
 **The list comes from data.** Rank the words children say most in CHILDES
 (child lines, after `020B_Converter_Fixes.md`) that map to no catalog word.
 Drop fillers (*um*, *yeah*-type sounds), names, letters and baby-talk
-spellings that 020B maps to real words (*dis* → *this*). Every word said
+spellings that 021 step 0 maps to real words (*dis* → *this*). Every word said
 1,000+ times gets in. The top of that list on 2026-09-25:
 
 | Word | Times children say it |

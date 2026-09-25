@@ -109,6 +109,31 @@ today.
 
 ---
 
+## Step 0 — Baby-talk spellings (small, from the 020B review)
+
+The corpus writes a child's baby-talk word followed by the real word:
+*dis this*, *dat that*. The converter reads *dis* as unknown, so the
+sentence is cut right before *this* and the words in front of it are lost as
+context. About 22,000 child-line words (2026-09-25 count):
+
+| Written | Times |
+| --- | --- |
+| dis this | 6,789 |
+| dat that | 5,678 |
+| de the | 3,122 |
+| dere there | 2,367 |
+| duh the | 1,878 |
+| dey they | 1,030 |
+| dese these · dem them · dose those | 693 · 621 · 535 |
+
+Add these nine to `CASUAL` in `common.mjs` (*dis* → *this*, *dat* → *that*,
+*de* / *duh* → *the*, *dere* → *there*, *dey* → *they*, *dese* → *these*,
+*dem* → *them*, *dose* → *those*), so the existing echo handling keeps one
+copy. Only these: a general "drop an unknown word before a known one" rule
+would also turn *upside down* into *down* and *peanut butter* into
+*butter*. Rebuild the phrase table, rerun `bar_examples.mjs` and
+`measure_bar.mjs`, report both. Then start slice 1.
+
 ## Slice 1 — Forms in the catalog
 
 Use 005 slice 1's schema exactly: `label.kind` gains `'form'`, a `features`
