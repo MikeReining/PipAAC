@@ -106,6 +106,62 @@ test('inflected multiword heads fold: the particle belongs to the token (021)', 
     ['i', 'wake up', 'he']);
 });
 
+test("'s on a noun stem: a noun next is possessive, anything else is 'is' (022)", () => {
+  // "mommy's knee" is mom wearing 's — one token flagged poss, not
+  // mom + is + knee
+  const knee = C.analyzeLine(["mommy's", 'knee']);
+  assert.equal(knee.length, 2);
+  assert.deepEqual(knee.map((t) => t.lemma), ['mom', 'knee']);
+  assert.equal(knee[0].poss, true);
+  assert.equal(knee[0].surf, "mommy's");
+  // "the baby's bottle" — same for a bare noun stem
+  assert.deepEqual(
+    C.analyzeLine(['the', "baby's", 'bottle']).map((t) => t.lemma),
+    ['the', 'baby', 'bottle']);
+  assert.equal(C.analyzeLine(['the', "baby's", 'bottle'])[1].poss, true);
+  // "mommy's going" is mom + is + go — a verb next breaks it up
+  assert.deepEqual(
+    C.analyzeLine(["mommy's", 'going']).map((t) => t.lemma),
+    ['mom', 'is', 'go']);
+  // pronoun/wh stems always split: "that's my car" -> that is my car
+  assert.deepEqual(
+    C.analyzeLine(["that's", 'my', 'car']).map((t) => t.lemma),
+    ['that', 'is', 'my', 'car']);
+  // end of line: "daddy's" / "it's daddy's" are possessive in the
+  // corpus ("that's daddy's"), not dangling "dad is"
+  const eos = C.analyzeLine(["daddy's"]);
+  assert.equal(eos[0].lemma, 'dad');
+  assert.equal(eos[0].poss, true);
+  assert.deepEqual(
+    C.analyzeLine(["it's", "daddy's"]).map((t) => t.lemma),
+    ['it', 'is', 'dad']);
+  assert.equal(C.analyzeLine(["it's", "daddy's"])[2].poss, true);
+});
+
+test('possessive/plural surfaces fold to their people/noun senses (022)', () => {
+  // his/our/their/your/mine/hers... are the same sense wearing a form —
+  // "his dog" IS he + dog
+  assert.deepEqual(
+    C.analyzeLine(['his', 'dog']).map((t) => t.lemma), ['he', 'dog']);
+  assert.equal(C.analyzeLine(['his', 'dog'])[0].surf, 'his');
+  assert.deepEqual(
+    C.analyzeLine(['it', 'is', 'mine']).map((t) => t.lemma),
+    ['it', 'is', 'my']);
+  assert.equal(C.analyzeLine(['it', 'is', 'mine'])[2].surf, 'mine');
+  // irregular plurals named in MERGES fold to the singular lemma
+  assert.deepEqual(
+    C.analyzeLine(['two', 'feet']).map((t) => t.lemma), ['two', 'foot']);
+  // spelling plurals fold through candForms, surf keeps the spelling
+  const dogs = C.analyzeLine(['two', 'dogs']);
+  assert.deepEqual(dogs.map((t) => t.lemma), ['two', 'dog']);
+  assert.equal(dogs[1].surf, 'dogs');
+  // 'my' keeps its own sense — "i cookie" never becomes "my cookie"
+  assert.deepEqual(
+    C.analyzeLine(['my', 'cookie']).map((t) => t.lemma), ['my', 'cookie']);
+  // an unlinked name's 's can't resolve — the token stays a wall
+  assert.equal(C.analyzeLine(["leo's", 'car'])[0].lemma, null);
+});
+
 test('band edges and split semantics', () => {
   assert.equal(C.band(1.9), 'mlu_lt2');
   assert.equal(C.band(2), 'mlu_2_35');
@@ -178,4 +234,50 @@ test('pickForm: a tie falls to the shorter phrase; a tied ending vetoes its <s> 
   // a tied mid ending falls to the 1-word ending's answer
   assert.equal(
     pickForm(table, ['sns_x', 'sns_he'], 'sns_go'), 'V;V.PTCP;PRS');
+});
+
+test('pickForm: whose keys on the next word class — noun, EOS, else base (022)', async () => {
+  const { pickForm, EOS } = await import('../../../public/shared/forms.mjs');
+  const table = {
+    aSense: 'sns_a',
+    verbSenses: [],
+    nounSenses: ['sns_dog', 'sns_phone'],
+    contexts: {},
+    verbFree: {}, nextVerb: {}, aAn: {},
+    possNext: {
+      'sns_he|N': { 'PRO;POSS': 900, BASE: 300 },   // his dog
+      'sns_he|X': { BASE: 2000, 'PRO;POSS': 40 },   // he wants
+      'sns_he|EOS': { 'PRO;POSS': 60, BASE: 30 },   // it's his
+      'sns_mom|N': { 'N;POSS': 800, BASE: 90 },     // mom's phone
+      'sns_my|EOS': { 'PRO;POSS;ABS': 500, BASE: 70 }, // it's mine
+      'sns_my|N': { BASE: 900, 'PRO;POSS;ABS': 8 }, // my dog stays my
+      // "your turn" — turn is a Verb in the catalog, so its evidence
+      // lands on the per-word X row, not the class row
+      'sns_you|X': { BASE: 657189, 'PRO;POSS': 48009 },
+      'sns_you|x|sns_turn': { 'PRO;POSS': 3000, BASE: 90 },
+      'sns_you|x|sns_want': { BASE: 22000 },
+      // a tied per-word row falls back to the X class answer
+      'sns_he|x|sns_rare': { BASE: 1, 'PRO;POSS': 1 },
+    },
+  };
+  // he + dog -> his; he + want -> he; he + Speak -> his (data says so here)
+  assert.equal(pickForm(table, [], 'sns_he', 'sns_dog'), 'PRO;POSS');
+  assert.equal(pickForm(table, ['sns_i'], 'sns_he', 'sns_want'), 'BASE');
+  // you + turn -> your turn; you + want -> you; tied row -> class answer
+  assert.equal(pickForm(table, [], 'sns_you', 'sns_turn'), 'PRO;POSS');
+  assert.equal(pickForm(table, [], 'sns_you', 'sns_want'), 'BASE');
+  assert.equal(pickForm(table, [], 'sns_he', 'sns_rare'), 'BASE');
+  assert.equal(pickForm(table, ['sns_it', 'sns_is'], 'sns_he', EOS), 'PRO;POSS');
+  // mom + phone -> mom's
+  assert.equal(pickForm(table, [], 'sns_mom', 'sns_phone'), 'N;POSS');
+  // it is not my + Speak -> mine; my + dog stays my
+  assert.equal(pickForm(table, ['sns_it', 'sns_is', 'sns_not'], 'sns_my', EOS),
+    'PRO;POSS;ABS');
+  assert.equal(pickForm(table, ['sns_it'], 'sns_my', 'sns_dog'), 'BASE');
+  // a sense with no possessive row is untouched: i + dog stays i
+  assert.equal(pickForm(table, [], 'sns_i', 'sns_dog'), 'BASE');
+  // a tied poss row falls through to ordinary context evidence
+  table.possNext['sns_you|N'] = { 'PRO;POSS': 5, BASE: 5 };
+  table.contexts['sns_the|sns_you'] = { BASE: 30 };
+  assert.equal(pickForm(table, ['sns_the'], 'sns_you', 'sns_dog'), 'BASE');
 });

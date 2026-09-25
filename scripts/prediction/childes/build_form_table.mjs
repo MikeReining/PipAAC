@@ -14,6 +14,13 @@
 //                                              ("what do" + he -> does)
 //   aAn["nextSense"]       -> { features: n }   caregivers only —
 //                                              children say "a apple"
+//   possNext["sense|cls"]  -> { features: n }   whose (022): cls is N
+//                                              (next token a noun),
+//                                              EOS (line end — Speak),
+//                                              or X (anything else)
+//   possNext["sense|x|next"] -> { features: n } per-word X rows —
+//                                              "your turn" though turn
+//                                              is a Verb on paper
 //
 // No <name> token: the parquet mirror carries no morphology tier, so
 // proper nouns can't be recognized (doc item 5's stop condition — noted
@@ -47,6 +54,19 @@ for (const f of FORMS.forms) classOf.set(`${f.lemma}|${firstWord(f.text)}`, f.fe
 // a merged lemma's own surface still counts when it can't be a form
 // ("has" merges into "have" and is its 3SG surface)
 
+// Whose (022): senses whose forms include a possessive — pronouns
+// (PRO;POSS/PRO;POSS;ABS) and measured 's nouns (N;POSS). The
+// possessive decision keys on the NEXT word's class: noun-next pulls
+// the attributive form (his dog, mommy's knee), end-of-line pulls the
+// absolute form (it's mine), anything else stays base.
+const possSense = new Set();
+for (const f of FORMS.forms) {
+  if (f.features === 'N;POSS' || f.features.startsWith('PRO;POSS')) possSense.add(senseOf.get(f.lemma));
+}
+const lex = JSON.parse(readFileSync(path.join(C.REPO, 'data/launch_lexicon.json'), 'utf8'));
+const nounLemmas = new Set(lex.entries.filter((e) => e.partOfSpeech === 'Noun').map((e) => e.spokenText.toLowerCase()));
+const nounSenses = new Set([...nounLemmas].map((l) => senseOf.get(l)).filter(Boolean));
+
 // verb lemmas for the pooled table: every emitted V;* lemma
 const verbSense = new Set();
 for (const f of FORMS.forms) {
@@ -65,6 +85,7 @@ const wordCtx = new Map();   // `${ctx}|${sense}` -> Map feat -> n
 const verbFree = new Map();  // ctx -> Map feat -> n
 const nextVerb = new Map();  // `${ctx}|${verb}|${next}` -> Map feat -> n
 const aAn = new Map();       // next sense -> Map feat -> n
+const possNext = new Map();  // `${sense}|${N|EOS|X}` -> Map feat -> n
 const put = (map, key, feat) => {
   if (!map.has(key)) map.set(key, new Map());
   const m = map.get(key);
@@ -112,16 +133,45 @@ for (const ti of train) {
     const child = C.CHILD_TAGS.has(spk);
     const toks = collapseDoNot(C.analyzeLine(words));
     const ids = toks.map((t) => (t.lemma === null ? null : senseOf.get(t.lemma) ?? null));
+    // A multiword tile that embeds a possessive head still carries the
+    // evidence — "your turn" is one tile, but it shows 'your' standing
+    // before 'turn' (the only way that pairing exists in the corpus).
+    for (const t of toks) {
+      if (!t.lemma?.includes(' ')) continue;
+      const parts = t.lemma.split(' ');
+      const hl = C.MERGES[parts[0]] ?? parts[0];
+      const tl = C.MERGES[parts[parts.length - 1]] ?? parts[parts.length - 1];
+      const hs = senseOf.get(hl);
+      const hfeat = classOf.get(`${hl}|${t.surf.split(' ')[0]}`);
+      if (!hs || !possSense.has(hs) || !hfeat) continue;
+      const cls = nounLemmas.has(tl) ? 'N' : 'X';
+      put(possNext, `${hs}|${cls}`, hfeat);
+      if (cls === 'X' && senseOf.get(tl)) put(possNext, `${hs}|x|${senseOf.get(tl)}`, hfeat);
+    }
     for (let i = 0; i < toks.length; i++) {
       const t = toks[i];
       if (t.lemma === null || !formLemmas.has(t.lemma)) continue;
-      const feat = classOf.get(`${t.lemma}|${firstWord(t.surf)}`);
+      // a 's-possessive surface counts as N;POSS whatever its spelling
+      // (mommy's counts under "mom's") — only on a sense that carries
+      // the row; other surfaces go through classOf
+      const feat = t.poss && possSense.has(ids[i]) ? 'N;POSS'
+        : classOf.get(`${t.lemma}|${firstWord(t.surf)}`);
       if (!feat) continue; // past forms and other surfaces don't take part
       const sense = ids[i];
       moments++;
       const ctxs = ctxKeys(ids, i);
       for (const ctx of ctxs) put(wordCtx, `${ctx}|${sense}`, feat);
       const next = i + 1 < ids.length ? ids[i + 1] : null;
+      if (possSense.has(sense)) {
+        const nl = i + 1 < toks.length ? toks[i + 1].lemma : null;
+        const cls = i + 1 === toks.length ? 'EOS' : (nl !== null && nounLemmas.has(nl) ? 'N' : 'X');
+        put(possNext, `${sense}|${cls}`, feat);
+        // the X class holds verbs/adjectives/adverbs — mostly base
+        // evidence, but specific words pull possessive ("your turn",
+        // where turn is cataloged a Verb). Per-sense rows decide those;
+        // the class row is the fallback for thin ones.
+        if (cls === 'X' && next) put(possNext, `${sense}|x|${next}`, feat);
+      }
       if (verbSense.has(sense)) {
         for (const ctx of ctxs) put(verbFree, ctx, feat);
       }
@@ -144,16 +194,18 @@ const pack = (map, flatKey) => {
 };
 
 writeFileSync(OUT, JSON.stringify({
-  version: 'form-table.2026-09-25.1',
+  version: 'form-table.2026-09-25.2',
   locale: 'en',
   aSense: senseOf.get('a'),
   verbSenses: [...verbSense].sort(),
+  nounSenses: [...nounSenses].sort(),
   contexts: pack(wordCtx),
   verbFree: pack(verbFree),
   nextVerb: pack(nextVerb),
   aAn: pack(aAn),
+  possNext: pack(possNext),
 }));
 
 console.log(`${trs.length} transcripts -> ${Object.keys(pack(wordCtx)).length} word ctxs, ` +
-  `${verbFree.size} pooled ctxs, ${nextVerb.size} next-word rows, ${aAn.size} a/an rows ` +
-  `(${moments} counted positions) -> ${path.relative(C.REPO, OUT)}`);
+  `${verbFree.size} pooled ctxs, ${nextVerb.size} next-word rows, ${aAn.size} a/an rows, ` +
+  `${possNext.size} possessive rows (${moments} counted positions) -> ${path.relative(C.REPO, OUT)}`);

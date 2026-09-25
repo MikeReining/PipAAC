@@ -22,7 +22,10 @@ import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/
 const repoRoot = join(import.meta.dirname, "../..");
 const lexicon = JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8"));
 const mapRaw = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8");
-const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw));
+// Fixture build: 022 forms are clip-pending until slice 3 — the shipped
+// catalog build stays strict; tests may resolve without clips.
+const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(mapRaw),
+  undefined, undefined, undefined, { allowMissingFormClips: true });
 const formTable = JSON.parse(
   readFileSync(join(repoRoot, "data/prediction/form_table.en.json"), "utf8"));
 

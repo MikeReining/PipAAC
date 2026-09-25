@@ -271,14 +271,36 @@ export function buildDigitAliases(lexicon, numberAliases) {
 
 /**
  * Form labels (021 slice 1, schema doc §5.3): data/forms/en.json is the
- * CHILDES-measured source — which lemmas carry which forms and how the
+ * CHILDES-measured source — which lemmas carry which forms and how each
  * surface is spelled. Each row becomes a kind='form' label on the
  * lemma's sense; the form's utterance reuses an existing row when the
  * normalized surface already exists ("has" shares the has utterance)
- * and mints utt_fNNNN/lbl_fNNNN ids otherwise. Rows are sorted by
- * (slot, features) so ids stay stable across rebuilds.
+ * and mints utt_fNNNN/lbl_fNNNN ids otherwise.
+ *
+ * Ids are stable BY TEXT (022): the prior catalog's utt_f/lbl_f ids are
+ * reused for the same normalized surface, so adding form rows never
+ * renumbers existing utterances — a clip keyed to utt_f0045 "wants"
+ * must keep meaning "wants". New surfaces mint fresh ids past the
+ * prior max. (Sorting by (slot, features) alone did NOT give this —
+ * an inserted row shifted every later id.)
  */
-function buildFormLabels(lexicon, formsData, ownerSlotByNorm, utterances) {
+function buildFormLabels(lexicon, formsData, ownerSlotByNorm, utterances, prior = null) {
+  const priorUtt = new Map();  // normalized text -> utt_fNNNN
+  const priorLbl = new Map();  // "norm|features" -> lbl_fNNNN
+  let seq = 0;
+  for (const u of prior?.utterances ?? []) {
+    if (u.id.startsWith("utt_f")) {
+      priorUtt.set(u.normalized_spoken_text, u.id);
+      seq = Math.max(seq, Number(u.id.slice(5)));
+    }
+  }
+  for (const l of prior?.labels ?? []) {
+    if (l.id.startsWith("lbl_f")) {
+      priorLbl.set(`${l.normalized_text}|${l.features}`, l.id);
+      seq = Math.max(seq, Number(l.id.slice(5)));
+    }
+  }
+  const mint = () => `f${String(++seq).padStart(4, "0")}`;
   const entryByNorm = new Map();
   for (const e of lexicon.entries) {
     const n = normalizeV1(e.spokenText);
@@ -298,21 +320,21 @@ function buildFormLabels(lexicon, formsData, ownerSlotByNorm, utterances) {
 
   const uttByNorm = new Map(utterances.map((u) => [u.normalized_spoken_text, u.id]));
   const labels = [];
-  let seq = 1;
-  const mint = () => `f${String(seq++).padStart(4, "0")}`;
   for (const f of rows) {
     const norm = normalizeV1(f.text);
     let uttId = uttByNorm.get(norm);
     if (!uttId) {
-      uttId = `utt_${mint()}`;
-      utterances.push({
-        id: uttId, locale: "en", spoken_text: f.text,
-        normalized_spoken_text: norm, normalizer_version: "v1",
-      });
+      uttId = priorUtt.get(norm) ?? `utt_${mint()}`;
+      if (!uttByNorm.has(norm)) {
+        utterances.push({
+          id: uttId, locale: "en", spoken_text: f.text,
+          normalized_spoken_text: norm, normalizer_version: "v1",
+        });
+      }
       uttByNorm.set(norm, uttId);
     }
     labels.push({
-      id: `lbl_${mint()}`,
+      id: priorLbl.get(`${norm}|${f.features}`) ?? `lbl_${mint()}`,
       sense_id: `sns_${pad4(f.entry.slot)}`,
       utterance_id: uttId,
       locale: "en",
@@ -384,6 +406,7 @@ export function buildCatalog(
   groupSeed = JSON.parse(readFileSync(GROUP_SEED, "utf8")),
   numberAliases = JSON.parse(readFileSync(NUMBER_ALIASES, "utf8")),
   familySeed = JSON.parse(readFileSync(FAMILY_SEED, "utf8")),
+  { allowMissingFormClips = true } = {},
 ) {
   const tier1ByWord = new Map();
   for (const e of lexicon.entries) {
@@ -449,7 +472,10 @@ export function buildCatalog(
   }));
   labels.push(...buildDigitAliases(lexicon, numberAliases));
   const formsData = existsSync(FORMS_DATA) ? JSON.parse(readFileSync(FORMS_DATA, "utf8")) : null;
-  if (formsData) labels.push(...buildFormLabels(lexicon, formsData, ownerSlotByNorm, utterances));
+  const priorCatalog = existsSync(CATALOG_OUT) ? JSON.parse(readFileSync(CATALOG_OUT, "utf8")) : null;
+  if (formsData) {
+    labels.push(...buildFormLabels(lexicon, formsData, ownerSlotByNorm, utterances, priorCatalog));
+  }
 
   const coreCells = [];
   const layouts = {};
@@ -519,7 +545,7 @@ export function buildCatalog(
       },
     ],
     clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm,
-      utterances.filter((u) => u.id.startsWith("utt_f"))),
+      utterances.filter((u) => u.id.startsWith("utt_f")), allowMissingFormClips),
     coreCells,
     groups,
     groupCells,
@@ -534,7 +560,7 @@ export function buildCatalog(
  * lexicon slot. Materialized bytes are copied into public/audio/ so the
  * board can play them straight from the app shell.
  */
-function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtterances = []) {
+function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtterances = [], allowMissingFormClips = false) {
   const clipBySlot = new Map();
   for (const path of [DEFAULT_AUDIO_IMPORT_PATH, DEFAULT_GENERATED_AUDIO_PATH]) {
     if (!existsSync(path)) continue;
@@ -580,7 +606,10 @@ function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtte
     for (const u of formUtterances) {
       const e = byUtt.get(u.id);
       if (!e?.clip?.key) {
-        throw new Error(`form utterance ${u.id} ("${u.spoken_text}") has no clip — run forms_audio.mjs`);
+        if (!allowMissingFormClips) {
+          throw new Error(`form utterance ${u.id} ("${u.spoken_text}") has no clip — run forms_audio.mjs`);
+        }
+        continue; // fixture/resolve builds only — the shipped CLI stays strict
       }
       const srcFile = join(DEFAULT_AUDIO_CACHE_ROOT, e.clip.key);
       if (!existsSync(srcFile)) {
@@ -653,7 +682,11 @@ function main() {
   const check = process.argv.includes("--check");
   const lexicon = JSON.parse(readFileSync(DEFAULT_LEXICON_PATH, "utf8"));
   const map = parseCoordinateMapMarkdown(readFileSync(MAP_MD, "utf8"));
-  const catalog = buildCatalog(lexicon, map);
+  // The shipped artifact stays strict — every form utterance needs a
+  // clip (021 slice 2). Library callers (tests, resolvers) get the
+  // permissive default and clip-less utterances speak device voice.
+  const catalog = buildCatalog(lexicon, map,
+    undefined, undefined, undefined, { allowMissingFormClips: false });
 
   if (check) {
     const existing = JSON.parse(readFileSync(CATALOG_OUT, "utf8"));

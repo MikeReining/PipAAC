@@ -115,11 +115,19 @@ export function toLemma(tok) {
 // around it. Negative contractions that are lemmas (don't, can't)
 // stay whole — the surface check catches them first.
 const TAIL = { "'m": 'am', "'re": 'are', "'s": 'is', "'ll": 'will', "'ve": 'have', "'d": 'have' };
+// 's splits only after a pronoun/wh stem (that's -> that is). A noun
+// stem's 's is ambiguous — "mommy's knee" is possessive, "mommy's going"
+// is "mommy is" — so those tokens stay whole here and analyzeLine
+// decides from the word that follows.
+const IS_STEMS = new Set(['that', 'it', 'what', 'he', 'there', 'where',
+  'she', 'who', 'here', 'how', 'this', 'i', 'you', 'we', 'they',
+  'everything', 'something', 'nothing', 'everybody', 'somebody']);
 function expandContraction(t) {
   if (!t.includes("'") || t in surface || t in IRREG) return [t];
   for (const tail of Object.keys(TAIL)) {
     if (t.endsWith(tail) && t.length > tail.length) {
       const stem = t.slice(0, -tail.length);
+      if (tail === "'s" && !IS_STEMS.has(stem)) continue;
       if (toLemma(stem) && toLemma(TAIL[tail])) return [stem, TAIL[tail]];
     }
   }
@@ -212,6 +220,13 @@ export function expandAll(words) {
 export const MERGES = {
   has: 'have', am: 'is', are: 'is', be: 'is',
   him: 'he', her: 'she', us: 'we', them: 'they', an: 'a',
+  // Whose (022): the possessive surfaces are the same people-sense —
+  // "his dog" IS he + dog with his worn. 'my' keeps its own sense
+  // (children say "i cookie" — never folded to i); 'mine' folds to it.
+  his: 'he', our: 'we', their: 'they', your: 'you',
+  hers: 'she', ours: 'we', theirs: 'they', yours: 'you', mine: 'my',
+  // How many: irregular plurals whose singular is a catalog word.
+  feet: 'foot', men: 'man', women: 'woman',
 };
 
 /** Per-token lemma + the surface that produced it — the form table
@@ -248,6 +263,28 @@ export function analyzeLine(words) {
       out.push({ lemma: MERGES[hit] ?? hit, surf: lw.slice(i, i + n).join(' ') });
       i += n;
       continue;
+    }
+    // A noun stem's 's survived expandAll unsplit ("mommy's"). A noun
+    // next makes it possessive — "mommy's knee" is mom wearing 's (one
+    // token, poss flag for the form counts); anything else is "is" —
+    // "mommy's going". Pronoun/wh stems never reach here (split above).
+    if (lw[i].endsWith("'s") && lw[i].length > 3) {
+      const stem = lw[i].slice(0, -2);
+      const slem = MERGES[stem] ?? toLemma(stem);
+      if (slem) {
+        const nlem = i + 1 < lw.length
+          ? (MERGES[lw[i + 1]] ?? toLemma(lw[i + 1])) : null;
+        const nres = nlem === null ? null : (MERGES[nlem] ?? nlem);
+        // 's at end of line is mostly "that's daddy's" / "the baby's" —
+        // possessive too.
+        if (!nres || LEMMA_POS[nres] === 'Noun') {
+          out.push({ lemma: slem, surf: lw[i], poss: true });
+        } else {
+          out.push({ lemma: slem, surf: stem }, { lemma: 'is', surf: 'is' });
+        }
+        i++;
+        continue;
+      }
     }
     // Merge lookup first so raw merge surfaces that aren't lemmas
     // resolve ("be" -> "is"); toLemma still owns inflections and walls.

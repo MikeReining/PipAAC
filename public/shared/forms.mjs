@@ -15,8 +15,17 @@
  * verb's next-word table answers first — "what do" stays "do" until
  * "he" arrives, then reads "does". For the a-sense the next word is
  * the whole question, from caregiver lines only.
+ *
+ * Whose/how-many (022): possessive senses also key on the next word's
+ * class — noun pulls his/her's-style forms, EOS pulls mine/yours-style,
+ * else base. Plurals need no extra path: "two dogs" is ordinary
+ * context evidence (two|dog -> N;PL).
  */
 import { senseMerge } from "./funnel.mjs";
+
+/** Pass as `nextSenseId` to say "this word ends the sentence" — Speak
+ *  re-picks the last word with it ("it is not my" -> "it is not mine"). */
+export const EOS = "eos";
 
 /** Endings of the context longest-first. Each level pairs the
  *  '<s>'-anchored twin (when the ending reaches sentence start) with the
@@ -77,6 +86,25 @@ export function pickForm(table, ctxIds, senseId, nextSenseId = null) {
       if (pick) return pick;
     }
     return "BASE";
+  }
+
+  // Whose (022): a pronoun or 's-noun's form keys on the NEXT word —
+  // a noun pulls the attributive form (his dog, mommy's knee), EOS pulls
+  // the absolute form (it's mine). Other nexts are word-specific:
+  // "your turn" wins its own row (turn is a Verb on paper), a thin row
+  // falls back to the X class (you want -> you).
+  if (nextSenseId) {
+    const cls = nextSenseId === EOS ? "EOS"
+      : table.nounSenses?.includes(nextSenseId) ? "N" : "X";
+    // EOS is the app's Speak signal, not a natural position — the row
+    // answers only the whose-question (my -> mine). A non-possessive
+    // top ("he" ends "can he") defers to the context endings, which
+    // still know "like him".
+    const pick = cls === "EOS"
+      ? ((p) => (p?.includes("POSS") ? p : null))(topForm(table.possNext?.[`${senseId}|EOS`]))
+      : (topForm(table.possNext?.[`${senseId}|x|${nextSenseId}`])
+          ?? topForm(table.possNext?.[`${senseId}|${cls}`]));
+    if (pick) return pick;
   }
 
   const levels = ctxLevels(ctxIds);
@@ -183,7 +211,8 @@ export function formFor(db, table, sentenceItems, senseId, nextItem = null) {
       features: merged.lbl.features ?? "BASE", merged: true };
   }
   const ctxIds = ctxIdsOf(db, sentenceItems);
-  const nextId = !nextItem ? null
+  const nextId = nextItem === EOS ? EOS
+    : !nextItem ? null
     : nextItem.kind === "sense"
       ? (L.merged.get(nextItem.id)?.kept ?? nextItem.id)
       : nextItem.kind === "entity" ? (L.entitySense.get(nextItem.id) ?? null) : null;

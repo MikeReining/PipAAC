@@ -47,12 +47,29 @@ const bump = (outer, key, bucket, text) => {
   const m = outer.get(key)[bucket];
   m.set(text, (m.get(text) ?? 0) + 1);
 };
+// Whose/how-many buckets (022): plural spellings per noun lemma and
+// possessive uses per lemma, counted on the analyzed stream (the 's
+// disambiguation already decided poss-vs-is).
+const plural = new Map(); // noun lemma -> Map<surface, n>
+const possUse = new Map(); // lemma -> n (child+adult 's uses)
 
 const trs = C.loadTranscripts();
 const { train } = C.splitIdx(trs.length, 20260923);
 for (const i of train) {
   for (const [spk, words] of trs[i]) {
     const child = C.CHILD_TAGS.has(spk);
+    // Whose/how-many (022): the analyzed stream carries poss flags and
+    // folded merges — plural surfaces under their noun, 's uses under
+    // their lemma. Spellings counted on all lines.
+    for (const t of C.analyzeLine(words)) {
+      if (t.lemma === null || posOf[t.lemma] !== 'Noun') continue;
+      if (t.poss) possUse.set(t.lemma, (possUse.get(t.lemma) ?? 0) + 1);
+      else if (t.surf !== t.lemma && (/s$/.test(t.surf) || C.MERGES[t.surf] === t.lemma)) {
+        const m = plural.get(t.lemma) ?? new Map();
+        m.set(t.surf, (m.get(t.surf) ?? 0) + 1);
+        plural.set(t.lemma, m);
+      }
+    }
     // Use-counts read the post-expansion stream — "it's hurting" is a
     // real "it is hurting" context (contractions carry the auxiliary).
     const stream = child ? C.expandAll(words) : words.map((w) => w.toLowerCase());
@@ -156,15 +173,42 @@ emit('she', 'PRO;ACC', 'her');
 emit('we', 'PRO;ACC', 'us');
 emit('they', 'PRO;ACC', 'them');
 emit('a', 'DET;PHON', 'an');
+// Whose (022): possessive surfaces, pinned like the object forms. 'his'
+// covers both "his dog" and "it's his"; 'her' (PRO;ACC) already covers
+// "her dog". 'my' keeps its own sense — mine is its absolute form.
+emit('he', 'PRO;POSS', 'his'); // "his dog" and "it's his" — one surface
+emit('we', 'PRO;POSS', 'our');
+emit('they', 'PRO;POSS', 'their');
+emit('you', 'PRO;POSS', 'your');
+emit('my', 'PRO;POSS;ABS', 'mine');
+emit('she', 'PRO;POSS;ABS', 'hers');
+emit('we', 'PRO;POSS;ABS', 'ours');
+emit('they', 'PRO;POSS;ABS', 'theirs');
+emit('you', 'PRO;POSS;ABS', 'yours');
+// Whose on names: nouns the corpus shows wearing 's >= MIN_USE times
+// (mummy's knee); the surface is the lemma + 's. How many: nouns whose
+// plural is attested >= MIN_USE get N;PL spelled the corpus's way
+// (babies, feet, children — the merge surfaces land here too).
+const possNouns = {};
+for (const [lem, n] of [...possUse.entries()].sort()) {
+  if (n >= MIN_USE) { possNouns[lem] = n; emit(lem, 'N;POSS', `${lem}'s`); }
+}
+const plurals = {};
+for (const [lem, m] of [...plural.entries()].sort()) {
+  const hit = top(m);
+  if (hit && hit[1] >= MIN_USE) { plurals[lem] = hit; emit(lem, 'N;PL', hit[0]); }
+}
 const forms = [...formMap.values()];
 
 writeFileSync(OUT, JSON.stringify({
   version: 'form-data.2026-09-25',
   locale: 'en',
-  verbs, verbUse, fallbackSpellings: fallback, merges, forms,
+  verbs, verbUse, fallbackSpellings: fallback, merges, possNouns, plurals, forms,
 }, null, 1));
 
 console.log(`verbs with forms: ${fullVerbLemmas.length} (${verbLemmas.length} catalog Verbs + ${Object.keys(verbUse).length} by use)`);
 console.log('verbs by use:', JSON.stringify(verbUse));
 console.log(`spellings from rules (no data): ${JSON.stringify(fallback)}`);
+console.log(`nouns taking 's: ${Object.keys(possNouns).length}`, JSON.stringify(possNouns));
+console.log(`nouns taking plural: ${Object.keys(plurals).length}`);
 console.log(`forms emitted: ${forms.length} -> ${path.relative(C.REPO, OUT)}`);
