@@ -1,8 +1,14 @@
 # 021 — Grammar Help: every word fits the sentence, from data
 
-**Status:** ready to execute (opened 2026-09-25, scope widened the same day).
-Start after `020B_Converter_Fixes.md` is committed: the form table is built
-by the same converter, and it must not turn *using* into *us*.
+**Status:** executing. Step 0 (`adbcf6e`) and slice 1 (`f288177`) done and
+reviewed 2026-09-25.
+**Order from here: slice 3 → slice 4 → slice 2 → slice 5.** Slice 1 folded
+*am / are / be* into *is* (and *has* into *have*, *him* into *he*…), so until
+slice 4's `formFor` exists the app shows each merged word's default label:
+the bar after *I* reads **is**, want, have, don't (it read *am* before).
+Slice 4 fixes that, so it comes before the clips. Until slice 2 lands, a
+form without a clip speaks in the device voice, the same fallback names use
+today.
 **Truth owner:** what people actually say in CHILDES (child and caregiver
 lines), measured on held-out sentences. Not hand-written grammar, not JEV.
 **Why this phase exists:** founder tests, 2026-09-25: *She need*, *He have*,
