@@ -211,6 +211,22 @@ first source for this voice, since its clips are a different voice).
    (rule 2), checks R2 for eligible sentences (§ 5), otherwise calls Grok
    Voice, returns audio, stores it in R2 when eligible. Takes the license
    id for the fair-use count (§ 6a); sends Grok no ids.
+   **Landed 2026-09-26** (`src/worker/voice.js`, `src/worker/voice.test.mjs`
+   8/8): body `{user_id, license, text, voice}` — the `pip-life-` license
+   is verified against `PIP_LICENSE_SECRET`, `text` ≤120 chars, voice in
+   `ara|eve|leo|rex|sal` (default `ara`). Eligibility is a generated word
+   set (`data/catalog/voice_words.en.json` ← `build_voice_words.mjs`:
+   catalog labels + form surfaces + IRREG child surfaces + `common_names`
+   stub — 1,157 words; names list fills in slice 7). Audio lives in the
+   `pippaac-voice` R2 bucket at `speak/<sha256>`; the fair-use ledger at
+   `usage/` and `usage-hits/` (chars + requests per day, burst per
+   minute — counts only, never sentences). The doc's constants are
+   already enforced: 8,000 chars/day, 20 req/min, 120 chars/sentence →
+   `429 {over}` so the client falls back; slice 6 adds per-license
+   throttling and the review tooling. `x-voice-cache: hit|miss|private`
+   tells the client what it may share. `XAI_API_KEY` is a Worker secret;
+   `env.VOICE_SYNTH` is the test seam — no paid calls in tests.
+   Deploy note: `wrangler r2 bucket create pippaac-voice` once.
 2. **Client:** Tier 1 cache (IndexedDB / OPFS), the ~300 ms deadline with
    word-clip fallback (rule 1), and the per-child voice setting (rule 3).
 3. **Transform buttons** (023) speak through this pipeline, auto-speak on.

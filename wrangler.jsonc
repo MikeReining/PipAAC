@@ -25,7 +25,8 @@
     { "tag": "v4", "new_sqlite_classes": ["SupporterAccounts"] }
   ],
   "r2_buckets": [
-    { "binding": "BLOBS", "bucket_name": "pippaac-sync" }
+    { "binding": "BLOBS", "bucket_name": "pippaac-sync" },
+    { "binding": "VOICE", "bucket_name": "pippaac-voice" }
   ],
   "analytics_engine_datasets": [
     { "binding": "RESEARCH", "dataset": "pip_research" }

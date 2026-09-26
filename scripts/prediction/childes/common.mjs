@@ -37,7 +37,10 @@ export const NEG = new Set(lex.filter((e) => e.negation).map((e) => e.spokenText
 // Every target must be an offerable lemma — a mapping to a word Pip
 // cannot offer (say, be, grandmother) mints a ghost lemma the scorer
 // counts but the board cannot show.
-const IRREG = {
+// Exported for 024's eligible-word set (build_voice_words): these
+// surfaces are ways to say a Pip word, so a sentence containing one
+// stays shareable.
+export const IRREG = {
   went: 'go', got: 'get', gotten: 'get', gave: 'give', saw: 'see',
   ate: 'eat', took: 'take', made: 'make', came: 'come',
   ran: 'run', fell: 'fall', sat: 'sit', broke: 'break',

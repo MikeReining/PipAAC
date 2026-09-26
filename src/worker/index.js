@@ -6,6 +6,7 @@ import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
 import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
+import { handleSpeak } from "./voice.js";
 
 export { UserRelay, PairingLobby, SupporterAccounts };
 
@@ -16,7 +17,7 @@ const json = (data, init = {}) =>
   });
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/$/, "") || "/";
 
@@ -38,6 +39,12 @@ export default {
     // counts on sense ids only, no text.
     if (path === "/form_table.en.json") {
       return json(formTable);
+    }
+
+    // Whole-sentence voice (024 slice 1): shared R2 cache for Pip-word
+    // sentences, per-license fair-use counting, no ids upstream.
+    if (path === "/api/v1/voice/speak" && request.method === "POST") {
+      return handleSpeak(request, env, ctx);
     }
 
     // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted
