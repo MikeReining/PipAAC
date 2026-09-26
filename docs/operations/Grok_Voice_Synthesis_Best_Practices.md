@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
 
 ### Rejected payloads
 
@@ -164,6 +164,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | good | `data/samples/approved/good.mp3` | `good` | Ear, `batch-10` shortlist |
 | bad | `data/samples/approved/bad.mp3` | ElevenLabs Aga, gentle trim of `aga_bad_raw.mp3` | Ear. Grok takes were raspy. The 0.40 s burst cut removed the /d/. The 0.90 s trim is the clip. |
 | happy | `data/samples/approved/happy.mp3` | `happy.` | Ear replaced plain `happy`. That take was raspy. |
+| same | `data/samples/approved/same.mp3` | `same` | Ear, `batch-11` shortlist |
+| different | `data/samples/approved/different.mp3` | `different` | Ear, `batch-11` shortlist |
+| some | `data/samples/approved/some.mp3` | `some` | Ear, `batch-11` shortlist |
+| all | `data/samples/approved/all.mp3` | `all` | Ear, `batch-11` shortlist |
+| what | `data/samples/approved/what.mp3` | `what` | Ear, `batch-11` shortlist |
+| where | `data/samples/approved/where.mp3` | `where.` | Ear, `batch-11` shortlist |
+| why | `data/samples/approved/why.mp3` | `why` | Ear, `batch-11` shortlist |
+| how | `data/samples/approved/how.mp3` | `how` | Ear, `batch-11` shortlist |
+| when | `data/samples/approved/when.mp3` | `when` | Ear, `batch-11` shortlist |
+| not | `data/samples/approved/not.mp3` | `not.` | Ear, `batch-11` shortlist |
 
 ---
 

@@ -1,0 +1,579 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T12:41:03.045Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-12-core",
+  "scored": [
+    {
+      "word": "please",
+      "slug": "please",
+      "variationId": "plain",
+      "file": "please_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/please_plain.mp3",
+      "whisper": " Please.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -11,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "please"
+      }
+    },
+    {
+      "word": "please",
+      "slug": "please",
+      "variationId": "period",
+      "file": "please_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/please_period.mp3",
+      "whisper": " Please.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -47,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "please."
+      }
+    },
+    {
+      "word": "but",
+      "slug": "but",
+      "variationId": "plain",
+      "file": "but_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/but_plain.mp3",
+      "whisper": " But.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": 62,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "but"
+      }
+    },
+    {
+      "word": "but",
+      "slug": "but",
+      "variationId": "period",
+      "file": "but_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/but_period.mp3",
+      "whisper": " BUT",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -6,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "but."
+      }
+    },
+    {
+      "word": "because",
+      "slug": "because",
+      "variationId": "plain",
+      "file": "because_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/because_plain.mp3",
+      "whisper": " Because.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "because"
+      }
+    },
+    {
+      "word": "because",
+      "slug": "because",
+      "variationId": "period",
+      "file": "because_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/because_period.mp3",
+      "whisper": " Because.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "because."
+      }
+    },
+    {
+      "word": "have",
+      "slug": "have",
+      "variationId": "plain",
+      "file": "have_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/have_plain.mp3",
+      "whisper": " Have.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -1,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "have"
+      }
+    },
+    {
+      "word": "have",
+      "slug": "have",
+      "variationId": "period",
+      "file": "have_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/have_period.mp3",
+      "whisper": " have",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "have."
+      }
+    },
+    {
+      "word": "water",
+      "slug": "water",
+      "variationId": "plain",
+      "file": "water_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/water_plain.mp3",
+      "whisper": " Water.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "water"
+      }
+    },
+    {
+      "word": "water",
+      "slug": "water",
+      "variationId": "period",
+      "file": "water_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/water_period.mp3",
+      "whisper": " Water.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -33,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "water."
+      }
+    },
+    {
+      "word": "milk",
+      "slug": "milk",
+      "variationId": "plain",
+      "file": "milk_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/milk_plain.mp3",
+      "whisper": " Milk",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -22,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "milk"
+      }
+    },
+    {
+      "word": "milk",
+      "slug": "milk",
+      "variationId": "period",
+      "file": "milk_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/milk_period.mp3",
+      "whisper": " Milk.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 0,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "milk."
+      }
+    },
+    {
+      "word": "juice",
+      "slug": "juice",
+      "variationId": "plain",
+      "file": "juice_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/juice_plain.mp3",
+      "whisper": " Juice",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -32,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "juice"
+      }
+    },
+    {
+      "word": "juice",
+      "slug": "juice",
+      "variationId": "period",
+      "file": "juice_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/juice_period.mp3",
+      "whisper": " Juice.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 62,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "juice."
+      }
+    },
+    {
+      "word": "apple juice",
+      "slug": "apple-juice",
+      "variationId": "plain",
+      "file": "apple-juice_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/apple-juice_plain.mp3",
+      "whisper": " Apple juice.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": 53,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "apple juice"
+      }
+    },
+    {
+      "word": "apple juice",
+      "slug": "apple-juice",
+      "variationId": "period",
+      "file": "apple-juice_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/apple-juice_period.mp3",
+      "whisper": " Apple juice.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "pitchSlopeHz": 0,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "apple juice."
+      }
+    },
+    {
+      "word": "chocolate milk",
+      "slug": "chocolate-milk",
+      "variationId": "plain",
+      "file": "chocolate-milk_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/chocolate-milk_plain.mp3",
+      "whisper": " Chocolate milk.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 1080,
+      "tailBurst": true,
+      "pitchSlopeHz": -14,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "chocolate milk"
+      }
+    },
+    {
+      "word": "chocolate milk",
+      "slug": "chocolate-milk",
+      "variationId": "period",
+      "file": "chocolate-milk_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/chocolate-milk_period.mp3",
+      "whisper": " Chocolate Milk",
+      "score": 30,
+      "notes": [
+        "too_long",
+        "tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": true,
+      "pitchSlopeHz": -29,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "chocolate milk."
+      }
+    },
+    {
+      "word": "tea",
+      "slug": "tea",
+      "variationId": "plain",
+      "file": "tea_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/tea_plain.mp3",
+      "whisper": " T",
+      "score": -1000,
+      "notes": [
+        "whisper_mismatch"
+      ],
+      "durMs": null,
+      "tailBurst": null,
+      "pitchSlopeHz": null,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tea"
+      }
+    },
+    {
+      "word": "tea",
+      "slug": "tea",
+      "variationId": "period",
+      "file": "tea_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/tea_period.mp3",
+      "whisper": " tea",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 45,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tea."
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "apple juice",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/apple-juice_plain.mp3",
+      "shortlistFile": "shortlist/apple-juice_recommended.mp3",
+      "score": 110,
+      "whisper": " Apple juice.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "because",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/because_plain.mp3",
+      "shortlistFile": "shortlist/because_recommended.mp3",
+      "score": 110,
+      "whisper": " Because.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "but",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/but_plain.mp3",
+      "shortlistFile": "shortlist/but_recommended.mp3",
+      "score": 125,
+      "whisper": " But.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "chocolate milk",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/chocolate-milk_plain.mp3",
+      "shortlistFile": "shortlist/chocolate-milk_recommended.mp3",
+      "score": 110,
+      "whisper": " Chocolate milk.",
+      "notes": [
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "have",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/have_period.mp3",
+      "shortlistFile": "shortlist/have_recommended.mp3",
+      "score": 125,
+      "whisper": " have",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "juice",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/juice_period.mp3",
+      "shortlistFile": "shortlist/juice_recommended.mp3",
+      "score": 125,
+      "whisper": " Juice.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "milk",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/milk_plain.mp3",
+      "shortlistFile": "shortlist/milk_recommended.mp3",
+      "score": 125,
+      "whisper": " Milk",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "please",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/please_plain.mp3",
+      "shortlistFile": "shortlist/please_recommended.mp3",
+      "score": 125,
+      "whisper": " Please.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "tea",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/tea_period.mp3",
+      "shortlistFile": "shortlist/tea_recommended.mp3",
+      "score": 125,
+      "whisper": " tea",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "water",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-12-core/takes/water_plain.mp3",
+      "shortlistFile": "shortlist/water_recommended.mp3",
+      "score": 125,
+      "whisper": " Water.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

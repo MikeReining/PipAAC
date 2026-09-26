@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-12-core",
+  "description": "Next core words by lexicon slot after batch-11. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "please", "slug": "please", "spokenForGate": "please", "whisperMustMatch": ["please"], "variations": [{ "id": "plain", "body": { "text": "please" } }, { "id": "period", "body": { "text": "please." } }] },
+    { "word": "but", "slug": "but", "spokenForGate": "but", "whisperMustMatch": ["but"], "variations": [{ "id": "plain", "body": { "text": "but" } }, { "id": "period", "body": { "text": "but." } }] },
+    { "word": "because", "slug": "because", "spokenForGate": "because", "whisperMustMatch": ["because"], "variations": [{ "id": "plain", "body": { "text": "because" } }, { "id": "period", "body": { "text": "because." } }] },
+    { "word": "have", "slug": "have", "spokenForGate": "have", "whisperMustMatch": ["have"], "variations": [{ "id": "plain", "body": { "text": "have" } }, { "id": "period", "body": { "text": "have." } }] },
+    { "word": "water", "slug": "water", "spokenForGate": "water", "whisperMustMatch": ["water"], "variations": [{ "id": "plain", "body": { "text": "water" } }, { "id": "period", "body": { "text": "water." } }] },
+    { "word": "milk", "slug": "milk", "spokenForGate": "milk", "whisperMustMatch": ["milk"], "variations": [{ "id": "plain", "body": { "text": "milk" } }, { "id": "period", "body": { "text": "milk." } }] },
+    { "word": "juice", "slug": "juice", "spokenForGate": "juice", "whisperMustMatch": ["juice"], "variations": [{ "id": "plain", "body": { "text": "juice" } }, { "id": "period", "body": { "text": "juice." } }] },
+    { "word": "apple juice", "slug": "apple-juice", "spokenForGate": "apple juice", "whisperMustMatch": ["apple juice"], "variations": [{ "id": "plain", "body": { "text": "apple juice" } }, { "id": "period", "body": { "text": "apple juice." } }] },
+    { "word": "chocolate milk", "slug": "chocolate-milk", "spokenForGate": "chocolate milk", "whisperMustMatch": ["chocolate milk"], "variations": [{ "id": "plain", "body": { "text": "chocolate milk" } }, { "id": "period", "body": { "text": "chocolate milk." } }] },
+    { "word": "tea", "slug": "tea", "spokenForGate": "tea", "whisperMustMatch": ["tea"], "variations": [{ "id": "plain", "body": { "text": "tea" } }, { "id": "period", "body": { "text": "tea." } }] }
+  ]
+}

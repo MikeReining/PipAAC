@@ -731,6 +731,86 @@
       "text": "happy.",
       "replace": null,
       "basis": "ear replaced plain happy; that take was raspy"
+    },
+    {
+      "word": "same",
+      "file": "same.mp3",
+      "source": "data/samples/batch-11-core/takes/same_plain.mp3",
+      "text": "same",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "different",
+      "file": "different.mp3",
+      "source": "data/samples/batch-11-core/takes/different_plain.mp3",
+      "text": "different",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "some",
+      "file": "some.mp3",
+      "source": "data/samples/batch-11-core/takes/some_plain.mp3",
+      "text": "some",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "all",
+      "file": "all.mp3",
+      "source": "data/samples/batch-11-core/takes/all_plain.mp3",
+      "text": "all",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "what",
+      "file": "what.mp3",
+      "source": "data/samples/batch-11-core/takes/what_plain.mp3",
+      "text": "what",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "where",
+      "file": "where.mp3",
+      "source": "data/samples/batch-11-core/takes/where_period.mp3",
+      "text": "where.",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "why",
+      "file": "why.mp3",
+      "source": "data/samples/batch-11-core/takes/why_plain.mp3",
+      "text": "why",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "how",
+      "file": "how.mp3",
+      "source": "data/samples/batch-11-core/takes/how_plain.mp3",
+      "text": "how",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "when",
+      "file": "when.mp3",
+      "source": "data/samples/batch-11-core/takes/when_plain.mp3",
+      "text": "when",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "not",
+      "file": "not.mp3",
+      "source": "data/samples/batch-11-core/takes/not_period.mp3",
+      "text": "not.",
+      "replace": null,
+      "basis": "ear, batch-11 shortlist"
     }
   ],
   "rejected": [

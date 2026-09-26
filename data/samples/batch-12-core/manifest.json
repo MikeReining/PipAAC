@@ -1,0 +1,275 @@
+[
+  {
+    "file": "takes/please_plain.mp3",
+    "word": "please",
+    "variation": "plain",
+    "text": "please",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Please.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/please_period.mp3",
+    "word": "please",
+    "variation": "period",
+    "text": "please.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Please.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/but_plain.mp3",
+    "word": "but",
+    "variation": "plain",
+    "text": "but",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " But.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/but_period.mp3",
+    "word": "but",
+    "variation": "period",
+    "text": "but.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " BUT",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/because_plain.mp3",
+    "word": "because",
+    "variation": "plain",
+    "text": "because",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Because.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/because_period.mp3",
+    "word": "because",
+    "variation": "period",
+    "text": "because.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Because.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/have_plain.mp3",
+    "word": "have",
+    "variation": "plain",
+    "text": "have",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Have.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/have_period.mp3",
+    "word": "have",
+    "variation": "period",
+    "text": "have.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " have",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/water_plain.mp3",
+    "word": "water",
+    "variation": "plain",
+    "text": "water",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Water.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/water_period.mp3",
+    "word": "water",
+    "variation": "period",
+    "text": "water.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Water.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/milk_plain.mp3",
+    "word": "milk",
+    "variation": "plain",
+    "text": "milk",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Milk",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/milk_period.mp3",
+    "word": "milk",
+    "variation": "period",
+    "text": "milk.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Milk.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/juice_plain.mp3",
+    "word": "juice",
+    "variation": "plain",
+    "text": "juice",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Juice",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/juice_period.mp3",
+    "word": "juice",
+    "variation": "period",
+    "text": "juice.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Juice.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/apple-juice_plain.mp3",
+    "word": "apple juice",
+    "variation": "plain",
+    "text": "apple juice",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Apple juice.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/apple-juice_period.mp3",
+    "word": "apple juice",
+    "variation": "period",
+    "text": "apple juice.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Apple juice.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/chocolate-milk_plain.mp3",
+    "word": "chocolate milk",
+    "variation": "plain",
+    "text": "chocolate milk",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Chocolate milk.",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/chocolate-milk_period.mp3",
+    "word": "chocolate milk",
+    "variation": "period",
+    "text": "chocolate milk.",
+    "replace": null,
+    "speed": 1,
+    "score": 30,
+    "whisper": " Chocolate Milk",
+    "notes": [
+      "too_long",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tea_plain.mp3",
+    "word": "tea",
+    "variation": "plain",
+    "text": "tea",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " T",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/tea_period.mp3",
+    "word": "tea",
+    "variation": "period",
+    "text": "tea.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " tea",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]
