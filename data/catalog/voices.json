@@ -1,0 +1,27 @@
+{
+  "schema": "pippaac.catalog-voices.v1",
+  "primary": {
+    "provider": "xai",
+    "voice_id": "ara",
+    "language": "en",
+    "label": "Grok Ara",
+    "notes": "Default catalog mint. See docs/operations/Grok_Voice_Synthesis_Best_Practices.md."
+  },
+  "backup": {
+    "provider": "elevenlabs",
+    "voice_id": "paOIq6PwrBInRivGXL1u",
+    "label": "Aga",
+    "description": "ElevenLabs instant clone of Ara — use when a Grok take fails listen or explore shortlist.",
+    "model": "eleven_v3",
+    "voice_settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.8,
+      "style": 0,
+      "use_speaker_boost": true
+    },
+    "post_process": {
+      "fix_tail_burst": true,
+      "keep_raw_suffix": "_raw"
+    }
+  }
+}

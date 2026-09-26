@@ -24,6 +24,7 @@
     "catalog:audio:materialize": "node scripts/catalog/materialize_audio.mjs",
     "catalog:audio:inspect": "node scripts/catalog/audio_inspect.mjs",
     "catalog:audio:explore": "node scripts/catalog/explore_grok_batch.mjs",
+    "catalog:audio:mint-backup": "node scripts/catalog/mint_backup_voice.mjs",
     "prediction:bench": "node scripts/prediction/bench/bench.mjs",
     "prediction:book": "node scripts/prediction/book/build_book.mjs && node scripts/prediction/book/score_book.mjs"
   },

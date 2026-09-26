@@ -232,3 +232,22 @@ A word with no table row calls this with no `replace`. A sentence calls it with 
 **Multi-take exploration (batch-04 problem words):** `data/samples/batch-04-for/recipes.json` defines variation matrices; run `npm run catalog:audio:explore -- --batch data/samples/batch-04-for` (mint cap 10 per invocation — re-run until `takes/` is full, then score). Outputs `takes/`, auto-ranked `shortlist/`, and `exploration_report.json`. Legacy `batch-04` baselines: add `--include-legacy` on score.
 
 Mint one-off rows from a batch manifest: `node scripts/catalog/mint_grok_samples.mjs`. Whisper-only: `node scripts/catalog/transcribe_groq.mjs`. Keys: `XAI_API_KEY` / `GROQ_API_KEY` in the environment.
+
+---
+
+## 10. Backup voice (ElevenLabs Aga)
+
+When a Grok take fails the ear or explore shortlist, mint the same **spoken text** with the committed backup clone.
+
+| | |
+| --- | --- |
+| **Truth file** | `data/catalog/voices.json` → `backup` (`voice_id` `paOIq6PwrBInRivGXL1u`, model `eleven_v3`) |
+| **Mint CLI** | `npm run catalog:audio:mint-backup -- --spoken bad` |
+| **Exact TTS text** | `npm run catalog:audio:mint-backup -- --spoken bad --text "<emphasis>bad!</emphasis>"` |
+| **Output** | `data/samples/backup-mint/<slug>.mp3` plus `<slug>_raw.mp3` when burst-fix runs |
+| **Post-process** | `fix-burst` on by default (ElevenLabs often adds a detached tail pop). Pass `--no-fix-burst` to skip. |
+| **Secret** | `ELEVENLABS_API_KEY` in the environment only — never commit the key. |
+
+**Process:** Grok explore shortlist first → founder listen → if reject, `mint-backup` with the same `text`/`replace` from the recipe → listen → if good, copy to `data/samples/approved/` and update `manifest.json`. Do not upload to R2 without explicit approval.
+
+Clone reference sample (long): `data/samples/voice-clone/ara_child_paragraph.mp3`. Example backup word: `data/samples/voice-clone/aga_bad.mp3`.
