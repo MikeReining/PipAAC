@@ -39,6 +39,10 @@ export const RESIDUE_FLOOR_DB = -60;
 export const RESIDUE_RISE_DB = 6;
 export const RESIDUE_HOLD_MS = 100;
 export const RESIDUE_LOOKBACK_MS = 80;
+
+/** Slapback echo: the wave nearly dies, then a medium copy comes back. */
+export const ECHO_QUIET_RATIO = 0.08;
+export const ECHO_RETURN_RATIO = 0.12;
 export const DECODE_SAMPLE_RATE = 16000;
 
 const SINGLE_LEXICAL_WORD_RE = /^\p{L}+(?:['’\-]\p{L}+)*$/u;
@@ -171,6 +175,51 @@ export function analyzeResidueShelf(
     }
   }
   return { detected: false, atMs: null, riseDb: 0, holdMs: 0 };
+}
+
+/**
+ * After the peak, the level falls below 8% and later climbs back to at least
+ * 12%. go_period.mp3 does this (the audible echo). A smooth decay does not.
+ * A loud consonant can too, so the scorer only deducts when the voice is also
+ * smeared: crest under 4 and a pitch drop of 48 Hz or more.
+ */
+export function analyzeEchoReturn(pcm, { sampleRate = DECODE_SAMPLE_RATE } = {}) {
+  const hop = Math.max(1, Math.round(sampleRate * 0.01));
+  const frames = [];
+  for (let i = 0; i < pcm.length; i += hop) {
+    let acc = 0;
+    const n = Math.min(hop, pcm.length - i);
+    for (let j = 0; j < n; j += 1) acc += pcm[i + j] * pcm[i + j];
+    frames.push(Math.sqrt(acc / n));
+  }
+  const peak = frames.reduce((max, v) => Math.max(max, v), 0);
+  if (peak === 0) return { detected: false, returnRatio: 0, atMs: null };
+  let peakAt = 0;
+  for (let i = 1; i < frames.length; i += 1) {
+    if (frames[i] > frames[peakAt]) peakAt = i;
+  }
+  let quietAt = -1;
+  for (let i = peakAt; i < frames.length; i += 1) {
+    if (frames[i] / peak < ECHO_QUIET_RATIO) {
+      quietAt = i;
+      break;
+    }
+  }
+  if (quietAt < 0) return { detected: false, returnRatio: 0, atMs: null };
+  let back = 0;
+  let at = quietAt;
+  for (let i = quietAt; i < frames.length; i += 1) {
+    if (frames[i] > back) {
+      back = frames[i];
+      at = i;
+    }
+  }
+  const returnRatio = back / peak;
+  return {
+    detected: returnRatio >= ECHO_RETURN_RATIO,
+    returnRatio,
+    atMs: at * 10,
+  };
 }
 
 export function decodePcmToMono16k(filePath, { spawn = spawnSync, ffmpegBinary = "ffmpeg" } = {}) {

@@ -410,6 +410,166 @@
       "text": "want",
       "replace": null,
       "basis": "ear, batch-06 shortlist; both takes had a tail burst"
+    },
+    {
+      "word": "like",
+      "file": "like.mp3",
+      "source": "data/samples/batch-07-core/takes/like_plain.mp3",
+      "text": "like",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist"
+    },
+    {
+      "word": "go",
+      "file": "go.mp3",
+      "source": "data/samples/batch-07-core/takes/go_plain.mp3",
+      "text": "go",
+      "replace": null,
+      "basis": "ear replaced go_period; that take had an echo"
+    },
+    {
+      "word": "come",
+      "file": "come.mp3",
+      "source": "data/samples/batch-07-core/takes/come_plain.mp3",
+      "text": "come",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist"
+    },
+    {
+      "word": "get",
+      "file": "get.mp3",
+      "source": "data/samples/batch-07-core/takes/get_plain.mp3",
+      "text": "get",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist; both takes had a tail burst"
+    },
+    {
+      "word": "make",
+      "file": "make.mp3",
+      "source": "data/samples/batch-07-core/takes/make_period.mp3",
+      "text": "make.",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist"
+    },
+    {
+      "word": "do",
+      "file": "do.mp3",
+      "source": "data/samples/batch-07-core/takes/do_plain.mp3",
+      "text": "do",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist"
+    },
+    {
+      "word": "see",
+      "file": "see.mp3",
+      "source": "data/samples/batch-07-core/takes/see_plain.mp3",
+      "text": "see",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist"
+    },
+    {
+      "word": "look",
+      "file": "look.mp3",
+      "source": "data/samples/batch-07-core/takes/look_plain.mp3",
+      "text": "look",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist; both takes had a tail burst"
+    },
+    {
+      "word": "take",
+      "file": "take.mp3",
+      "source": "data/samples/batch-07-core/takes/take_plain.mp3",
+      "text": "take",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist"
+    },
+    {
+      "word": "give",
+      "file": "give.mp3",
+      "source": "data/samples/batch-07-core/takes/give_plain.mp3",
+      "text": "give",
+      "replace": null,
+      "basis": "ear, batch-07 shortlist"
+    },
+    {
+      "word": "help",
+      "file": "help.mp3",
+      "source": "data/samples/batch-08-core/takes/help_plain.mp3",
+      "text": "help",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "stop",
+      "file": "stop.mp3",
+      "source": "data/samples/batch-08-core/takes/stop_plain.mp3",
+      "text": "stop",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "play",
+      "file": "play.mp3",
+      "source": "data/samples/batch-08-core/takes/play_period.mp3",
+      "text": "play.",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "eat",
+      "file": "eat.mp3",
+      "source": "data/samples/batch-08-core/takes/eat_plain.mp3",
+      "text": "eat",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "drink",
+      "file": "drink.mp3",
+      "source": "data/samples/batch-08-core/takes/drink_plain.mp3",
+      "text": "drink",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "open",
+      "file": "open.mp3",
+      "source": "data/samples/batch-08-core/takes/open_plain.mp3",
+      "text": "open",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "turn",
+      "file": "turn.mp3",
+      "source": "data/samples/batch-08-core/takes/turn_plain.mp3",
+      "text": "turn",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "can",
+      "file": "can.mp3",
+      "source": "data/samples/batch-08-core/takes/can_period.mp3",
+      "text": "can.",
+      "replace": null,
+      "basis": "ear preferred can. over plain; clearer and longer"
+    },
+    {
+      "word": "need",
+      "file": "need.mp3",
+      "source": "data/samples/batch-08-core/takes/need_plain.mp3",
+      "text": "need",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "feel",
+      "file": "feel.mp3",
+      "source": "data/samples/batch-08-core/takes/feel_plain.mp3",
+      "text": "feel",
+      "replace": null,
+      "basis": "ear, batch-08 shortlist"
     }
   ],
   "rejected": [

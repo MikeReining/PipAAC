@@ -1,0 +1,278 @@
+[
+  {
+    "file": "takes/tell_plain.mp3",
+    "word": "tell",
+    "variation": "plain",
+    "text": "tell",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Tell.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tell_period.mp3",
+    "word": "tell",
+    "variation": "period",
+    "text": "tell.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Tell.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/think_plain.mp3",
+    "word": "think",
+    "variation": "plain",
+    "text": "think",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Think.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/think_period.mp3",
+    "word": "think",
+    "variation": "period",
+    "text": "think.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Think",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/find_plain.mp3",
+    "word": "find",
+    "variation": "plain",
+    "text": "find",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Find.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/find_period.mp3",
+    "word": "find",
+    "variation": "period",
+    "text": "find.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Find.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/work_plain.mp3",
+    "word": "work",
+    "variation": "plain",
+    "text": "work",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Work.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/work_period.mp3",
+    "word": "work",
+    "variation": "period",
+    "text": "work.",
+    "replace": null,
+    "speed": 1,
+    "score": 30,
+    "whisper": " work.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/wait_plain.mp3",
+    "word": "wait",
+    "variation": "plain",
+    "text": "wait",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wait.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wait_period.mp3",
+    "word": "wait",
+    "variation": "period",
+    "text": "wait.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Wait.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/out_plain.mp3",
+    "word": "out",
+    "variation": "plain",
+    "text": "out",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Out.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/out_period.mp3",
+    "word": "out",
+    "variation": "period",
+    "text": "out.",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " Out.",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/down_plain.mp3",
+    "word": "down",
+    "variation": "plain",
+    "text": "down",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Down.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/down_period.mp3",
+    "word": "down",
+    "variation": "period",
+    "text": "down.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Down.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/away_plain.mp3",
+    "word": "away",
+    "variation": "plain",
+    "text": "away",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Away.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/away_period.mp3",
+    "word": "away",
+    "variation": "period",
+    "text": "away.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Away.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/here_plain.mp3",
+    "word": "here",
+    "variation": "plain",
+    "text": "here",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Here.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/here_period.mp3",
+    "word": "here",
+    "variation": "period",
+    "text": "here.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Here.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/there_plain.mp3",
+    "word": "there",
+    "variation": "plain",
+    "text": "there",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " There.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/there_period.mp3",
+    "word": "there",
+    "variation": "period",
+    "text": "there.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " There.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  }
+]

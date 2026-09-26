@@ -42,6 +42,13 @@ export function pitchTrack(samples) {
   return pitches;
 }
 
+function pitchSlopeHz(pitches) {
+  if (pitches.length < 2) return null;
+  const mid = Math.floor(pitches.length / 2);
+  const avg = (arr) => arr.reduce((sum, v) => sum + v, 0) / (arr.length || 1);
+  return Math.round(avg(pitches.slice(mid)) - avg(pitches.slice(0, mid)));
+}
+
 function formatPitchLine(pitches) {
   if (pitches.length === 0) return "No voice detected";
   const avgP = Math.round(pitches.reduce((a, b) => a + b, 0) / pitches.length);
@@ -50,7 +57,7 @@ function formatPitchLine(pitches) {
   const mid = Math.floor(pitches.length / 2);
   const p1 = Math.round(pitches.slice(0, mid).reduce((a, b) => a + b, 0) / (mid || 1));
   const p2 = Math.round(pitches.slice(mid).reduce((a, b) => a + b, 0) / ((pitches.length - mid) || 1));
-  const drift = p2 - p1;
+  const drift = pitchSlopeHz(pitches) ?? 0;
   const sign = drift > 0 ? "+" : "";
   return `Avg: ${avgP}Hz [${minP}-${maxP}Hz] | Slope: ${p1}Hz -> ${p2}Hz (${sign}${drift}Hz)`;
 }
@@ -107,12 +114,16 @@ export function measureAcousticTake(filePath, { decode = decodePcmToMono16k } = 
 
   let dynRange = "N/A";
   let crest = "N/A";
+  let crestValue = null;
   try {
     const statsOut = execSync(`ffmpeg -i "${filePath}" -af "astats=metadata=1:reset=1" -f null - 2>&1`).toString();
     dynRange = statsOut.match(/Dynamic range: ([-0-9.]+)/)?.[1] ?? "N/A";
-    crest = statsOut.match(/Crest factor: ([-0-9.]+)/)?.[1] ?? "N/A";
+    const crestRaw = statsOut.match(/Crest factor: ([-0-9.]+)/)?.[1] ?? null;
     if (dynRange !== "N/A") dynRange = `${parseFloat(dynRange).toFixed(1)} dB`;
-    if (crest !== "N/A") crest = parseFloat(crest).toFixed(2);
+    if (crestRaw != null) {
+      crestValue = parseFloat(crestRaw);
+      crest = crestValue.toFixed(2);
+    }
   } catch {
     // ignore
   }
@@ -130,6 +141,8 @@ export function measureAcousticTake(filePath, { decode = decodePcmToMono16k } = 
     maxVol: `${maxVol} dB`,
     dynRange,
     crest,
+    crestValue,
+    pitchSlopeHz: pitchSlopeHz(pitches),
     pitchStr,
     peakPos,
     envelopeShape,

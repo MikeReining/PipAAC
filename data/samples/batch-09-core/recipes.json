@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-09-core",
+  "description": "Next core words by lexicon slot after batch-08. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "tell", "slug": "tell", "spokenForGate": "tell", "whisperMustMatch": ["tell"], "variations": [{ "id": "plain", "body": { "text": "tell" } }, { "id": "period", "body": { "text": "tell." } }] },
+    { "word": "think", "slug": "think", "spokenForGate": "think", "whisperMustMatch": ["think"], "variations": [{ "id": "plain", "body": { "text": "think" } }, { "id": "period", "body": { "text": "think." } }] },
+    { "word": "find", "slug": "find", "spokenForGate": "find", "whisperMustMatch": ["find"], "variations": [{ "id": "plain", "body": { "text": "find" } }, { "id": "period", "body": { "text": "find." } }] },
+    { "word": "work", "slug": "work", "spokenForGate": "work", "whisperMustMatch": ["work"], "variations": [{ "id": "plain", "body": { "text": "work" } }, { "id": "period", "body": { "text": "work." } }] },
+    { "word": "wait", "slug": "wait", "spokenForGate": "wait", "whisperMustMatch": ["wait"], "variations": [{ "id": "plain", "body": { "text": "wait" } }, { "id": "period", "body": { "text": "wait." } }] },
+    { "word": "out", "slug": "out", "spokenForGate": "out", "whisperMustMatch": ["out"], "variations": [{ "id": "plain", "body": { "text": "out" } }, { "id": "period", "body": { "text": "out." } }] },
+    { "word": "down", "slug": "down", "spokenForGate": "down", "whisperMustMatch": ["down"], "variations": [{ "id": "plain", "body": { "text": "down" } }, { "id": "period", "body": { "text": "down." } }] },
+    { "word": "away", "slug": "away", "spokenForGate": "away", "whisperMustMatch": ["away"], "variations": [{ "id": "plain", "body": { "text": "away" } }, { "id": "period", "body": { "text": "away." } }] },
+    { "word": "here", "slug": "here", "spokenForGate": "here", "whisperMustMatch": ["here", "hear"], "variations": [{ "id": "plain", "body": { "text": "here" } }, { "id": "period", "body": { "text": "here." } }] },
+    { "word": "there", "slug": "there", "spokenForGate": "there", "whisperMustMatch": ["there", "their"], "variations": [{ "id": "plain", "body": { "text": "there" } }, { "id": "period", "body": { "text": "there." } }] }
+  ]
+}

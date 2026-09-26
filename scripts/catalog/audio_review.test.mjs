@@ -13,6 +13,7 @@ import {
   REASON_DECODE_FAILED,
   REASON_NO_ACTIVITY,
   REASON_NOT_SINGLE_LEXICAL_WORD,
+  analyzeEchoReturn,
   analyzePcm,
   analyzeResidueShelf,
   auditGeneratedWordAudio,
@@ -146,6 +147,18 @@ test("a sub-threshold sound that rises and holds is a residue shelf", () => {
   const shelf = analyzeResidueShelf(pcm, { sampleRate: SR });
   assert.equal(shelf.detected, true);
   assert.ok(shelf.riseDb >= 6);
+});
+
+test("a sound that dies and comes back is an echo return", () => {
+  const pcm = concat(level(180, -12), level(80, -30), level(40, -36), level(50, -18));
+  const echo = analyzeEchoReturn(pcm, { sampleRate: SR });
+  assert.equal(echo.detected, true);
+});
+
+test("a smooth decay is not an echo return", () => {
+  const pcm = concat(level(180, -12), level(40, -24), level(40, -36), level(80, -50));
+  const echo = analyzeEchoReturn(pcm, { sampleRate: SR });
+  assert.equal(echo.detected, false);
 });
 
 test("a smooth decay after the word is not a residue shelf", () => {

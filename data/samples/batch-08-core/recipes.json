@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-08-core",
+  "description": "Next core verbs by lexicon slot after batch-07. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "help", "slug": "help", "spokenForGate": "help", "whisperMustMatch": ["help"], "variations": [{ "id": "plain", "body": { "text": "help" } }, { "id": "period", "body": { "text": "help." } }] },
+    { "word": "stop", "slug": "stop", "spokenForGate": "stop", "whisperMustMatch": ["stop"], "variations": [{ "id": "plain", "body": { "text": "stop" } }, { "id": "period", "body": { "text": "stop." } }] },
+    { "word": "play", "slug": "play", "spokenForGate": "play", "whisperMustMatch": ["play"], "variations": [{ "id": "plain", "body": { "text": "play" } }, { "id": "period", "body": { "text": "play." } }] },
+    { "word": "eat", "slug": "eat", "spokenForGate": "eat", "whisperMustMatch": ["eat"], "variations": [{ "id": "plain", "body": { "text": "eat" } }, { "id": "period", "body": { "text": "eat." } }] },
+    { "word": "drink", "slug": "drink", "spokenForGate": "drink", "whisperMustMatch": ["drink"], "variations": [{ "id": "plain", "body": { "text": "drink" } }, { "id": "period", "body": { "text": "drink." } }] },
+    { "word": "open", "slug": "open", "spokenForGate": "open", "whisperMustMatch": ["open"], "variations": [{ "id": "plain", "body": { "text": "open" } }, { "id": "period", "body": { "text": "open." } }] },
+    { "word": "turn", "slug": "turn", "spokenForGate": "turn", "whisperMustMatch": ["turn"], "variations": [{ "id": "plain", "body": { "text": "turn" } }, { "id": "period", "body": { "text": "turn." } }] },
+    { "word": "can", "slug": "can", "spokenForGate": "can", "whisperMustMatch": ["can"], "whisperReject": ["kin"], "variations": [{ "id": "plain", "body": { "text": "can" } }, { "id": "period", "body": { "text": "can." } }] },
+    { "word": "need", "slug": "need", "spokenForGate": "need", "whisperMustMatch": ["need"], "variations": [{ "id": "plain", "body": { "text": "need" } }, { "id": "period", "body": { "text": "need." } }] },
+    { "word": "feel", "slug": "feel", "spokenForGate": "feel", "whisperMustMatch": ["feel"], "variations": [{ "id": "plain", "body": { "text": "feel" } }, { "id": "period", "body": { "text": "feel." } }] }
+  ]
+}

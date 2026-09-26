@@ -20,6 +20,7 @@ Sentences (▶ and the transform buttons) are a different path. Send the sentenc
 8. **Trim only at ship time.** Before a clip is baked into the catalog, trim leading silence over 150 ms and trailing silence over 200 ms. The files in `data/samples/approved/` are the untrimmed takes the founder is judging.
 9. **A final /t/ or /d/ can leave a detached pop.** The stop closes, the wave goes silent, then a separate burst releases. That burst is the little effect at the end. The explore scorer deducts for `tail_burst`. Prefer a new take over cutting the pop off a file the founder has not heard.
 10. **A quiet second sound can hide under the −40 dB gate.** `minute_plain.mp3` (batch-05) died, then rose about 7 dB and held near −43 dB. The gate calls that silence, and the pop detector never fires, so the take tied the clean one and won because it was listed first. The scorer now deducts for `residue_shelf`: after the word, a sub-gate level that rises at least 6 dB and holds for 100 ms. A smooth decay does not. On a score tie, the shorter residue wins, so the first recipe row is not the winner by default.
+11. **An echo can hide inside a longer take.** `go_period.mp3` is 0.77 s and `go_plain.mp3` is 0.70 s, so the length bonus picked the echo. The ring is the wave dying below 8% of its peak and then a copy returning, while the voice is smeared (crest under 4) and the pitch falls by 48 Hz or more. The scorer deducts for `echo_return`. A final consonant can bounce back too, without that pitch collapse, and it is not deducted.
 
 `speed: 0.9` was tried on *in* and is not part of the recipe.
 
@@ -42,7 +43,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*.
 
 ### Rejected payloads
 
@@ -122,6 +123,26 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | that | `data/samples/approved/that.mp3` | `that` | Ear, `batch-06` shortlist. Both takes had a tail burst. |
 | this | `data/samples/approved/this.mp3` | `this` | Ear, `batch-06` shortlist |
 | want | `data/samples/approved/want.mp3` | `want` | Ear, `batch-06` shortlist. Both takes had a tail burst. |
+| like | `data/samples/approved/like.mp3` | `like` | Ear, `batch-07` shortlist |
+| go | `data/samples/approved/go.mp3` | `go` | Ear replaced the echo period take with plain `go` |
+| come | `data/samples/approved/come.mp3` | `come` | Ear, `batch-07` shortlist |
+| get | `data/samples/approved/get.mp3` | `get` | Ear, `batch-07` shortlist. Both takes had a tail burst. |
+| make | `data/samples/approved/make.mp3` | `make.` | Ear, `batch-07` shortlist |
+| do | `data/samples/approved/do.mp3` | `do` | Ear, `batch-07` shortlist |
+| see | `data/samples/approved/see.mp3` | `see` | Ear, `batch-07` shortlist. Whisper heard "C." |
+| look | `data/samples/approved/look.mp3` | `look` | Ear, `batch-07` shortlist. Both takes had a tail burst. |
+| take | `data/samples/approved/take.mp3` | `take` | Ear, `batch-07` shortlist |
+| give | `data/samples/approved/give.mp3` | `give` | Ear, `batch-07` shortlist |
+| help | `data/samples/approved/help.mp3` | `help` | Ear, `batch-08` shortlist |
+| stop | `data/samples/approved/stop.mp3` | `stop` | Ear, `batch-08` shortlist |
+| play | `data/samples/approved/play.mp3` | `play.` | Ear, `batch-08` shortlist |
+| eat | `data/samples/approved/eat.mp3` | `eat` | Ear, `batch-08` shortlist |
+| drink | `data/samples/approved/drink.mp3` | `drink` | Ear, `batch-08` shortlist |
+| open | `data/samples/approved/open.mp3` | `open` | Ear, `batch-08` shortlist |
+| turn | `data/samples/approved/turn.mp3` | `turn` | Ear, `batch-08` shortlist |
+| can | `data/samples/approved/can.mp3` | `can.` | Ear preferred the period take. Clearer and longer than plain. |
+| need | `data/samples/approved/need.mp3` | `need` | Ear, `batch-08` shortlist |
+| feel | `data/samples/approved/feel.mp3` | `feel` | Ear, `batch-08` shortlist |
 
 ---
 

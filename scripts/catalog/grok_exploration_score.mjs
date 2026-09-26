@@ -6,6 +6,7 @@
 import { measureAcousticTake } from "./audio_metrics.mjs";
 import { analyzeDetachedBurst } from "./audio_stop_burst.mjs";
 import {
+  analyzeEchoReturn,
   analyzeResidueShelf,
   auditGeneratedWordAudio,
   decodePcmToMono16k,
@@ -66,8 +67,9 @@ export function scoreAcoustics(filePath, spokenWord) {
   const { pcm } = decodePcmToMono16k(filePath);
   const burst = analyzeDetachedBurst(pcm, 16000);
   const residue = analyzeResidueShelf(pcm, { sampleRate: 16000 });
+  const echo = analyzeEchoReturn(pcm, { sampleRate: 16000 });
 
-  return { metrics, durMs, gate, burst, residue };
+  return { metrics, durMs, gate, burst, residue, echo };
 }
 
 /**
@@ -101,7 +103,7 @@ export function scoreTake({ word, recipe, filePath, whisperText, spokenForGate, 
 
   score = whisperSkipped ? 60 : 100;
   if (whisperSkipped) notes.push("whisper_skipped");
-  const { durMs, gate, burst, residue } = acoustic;
+  const { durMs, gate, burst, residue, echo, metrics } = acoustic;
 
   if (durMs < minMs) {
     score -= 40;
@@ -132,7 +134,18 @@ export function scoreTake({ word, recipe, filePath, whisperText, spokenForGate, 
     notes.push("residue_shelf");
   }
 
-  return { score, whisper, acoustic: { durMs, gate, burst, residue }, notes };
+  // go_period: the wave dies, a copy returns, and the voice is smeared and falling.
+  // A consonant burst is louder and does not also collapse the pitch.
+  const smearedFall = metrics.pitchSlopeHz != null
+    && metrics.pitchSlopeHz <= -48
+    && metrics.crestValue != null
+    && metrics.crestValue < 4;
+  if (echo?.detected && smearedFall) {
+    score -= 40;
+    notes.push("echo_return");
+  }
+
+  return { score, whisper, acoustic: { durMs, gate, burst, residue, echo }, notes };
 }
 
 function residueHoldMs(row) {

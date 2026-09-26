@@ -1,0 +1,564 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T00:52:58.813Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-08-core",
+  "scored": [
+    {
+      "word": "help",
+      "slug": "help",
+      "variationId": "plain",
+      "file": "help_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/help_plain.mp3",
+      "whisper": " Help.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "help"
+      }
+    },
+    {
+      "word": "help",
+      "slug": "help",
+      "variationId": "period",
+      "file": "help_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/help_period.mp3",
+      "whisper": " Help.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "help."
+      }
+    },
+    {
+      "word": "stop",
+      "slug": "stop",
+      "variationId": "plain",
+      "file": "stop_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/stop_plain.mp3",
+      "whisper": " Stop.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "stop"
+      }
+    },
+    {
+      "word": "stop",
+      "slug": "stop",
+      "variationId": "period",
+      "file": "stop_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/stop_period.mp3",
+      "whisper": " Stop.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "stop."
+      }
+    },
+    {
+      "word": "play",
+      "slug": "play",
+      "variationId": "plain",
+      "file": "play_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/play_plain.mp3",
+      "whisper": " Play.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "play"
+      }
+    },
+    {
+      "word": "play",
+      "slug": "play",
+      "variationId": "period",
+      "file": "play_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/play_period.mp3",
+      "whisper": " Play.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "play."
+      }
+    },
+    {
+      "word": "eat",
+      "slug": "eat",
+      "variationId": "plain",
+      "file": "eat_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/eat_plain.mp3",
+      "whisper": " Eat.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "eat"
+      }
+    },
+    {
+      "word": "eat",
+      "slug": "eat",
+      "variationId": "period",
+      "file": "eat_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/eat_period.mp3",
+      "whisper": " eat",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "eat."
+      }
+    },
+    {
+      "word": "drink",
+      "slug": "drink",
+      "variationId": "plain",
+      "file": "drink_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/drink_plain.mp3",
+      "whisper": " Drink.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "drink"
+      }
+    },
+    {
+      "word": "drink",
+      "slug": "drink",
+      "variationId": "period",
+      "file": "drink_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/drink_period.mp3",
+      "whisper": " Drink.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "drink."
+      }
+    },
+    {
+      "word": "open",
+      "slug": "open",
+      "variationId": "plain",
+      "file": "open_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/open_plain.mp3",
+      "whisper": " Open.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "open"
+      }
+    },
+    {
+      "word": "open",
+      "slug": "open",
+      "variationId": "period",
+      "file": "open_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/open_period.mp3",
+      "whisper": " Open.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "open."
+      }
+    },
+    {
+      "word": "turn",
+      "slug": "turn",
+      "variationId": "plain",
+      "file": "turn_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/turn_plain.mp3",
+      "whisper": " Turn.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "turn"
+      }
+    },
+    {
+      "word": "turn",
+      "slug": "turn",
+      "variationId": "period",
+      "file": "turn_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/turn_period.mp3",
+      "whisper": " Turn.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "turn."
+      }
+    },
+    {
+      "word": "can",
+      "slug": "can",
+      "variationId": "plain",
+      "file": "can_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/can_plain.mp3",
+      "whisper": " Can",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "can"
+      }
+    },
+    {
+      "word": "can",
+      "slug": "can",
+      "variationId": "period",
+      "file": "can_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/can_period.mp3",
+      "whisper": " can.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "can."
+      }
+    },
+    {
+      "word": "need",
+      "slug": "need",
+      "variationId": "plain",
+      "file": "need_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/need_plain.mp3",
+      "whisper": " need",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "need"
+      }
+    },
+    {
+      "word": "need",
+      "slug": "need",
+      "variationId": "period",
+      "file": "need_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/need_period.mp3",
+      "whisper": " need",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "need."
+      }
+    },
+    {
+      "word": "feel",
+      "slug": "feel",
+      "variationId": "plain",
+      "file": "feel_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/feel_plain.mp3",
+      "whisper": " Feel.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "feel"
+      }
+    },
+    {
+      "word": "feel",
+      "slug": "feel",
+      "variationId": "period",
+      "file": "feel_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/feel_period.mp3",
+      "whisper": " Feel.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "feel."
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "can",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/can_plain.mp3",
+      "shortlistFile": "shortlist/can_recommended.mp3",
+      "score": 125,
+      "whisper": " Can",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "drink",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/drink_plain.mp3",
+      "shortlistFile": "shortlist/drink_recommended.mp3",
+      "score": 125,
+      "whisper": " Drink.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "eat",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/eat_plain.mp3",
+      "shortlistFile": "shortlist/eat_recommended.mp3",
+      "score": 125,
+      "whisper": " Eat.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "feel",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/feel_plain.mp3",
+      "shortlistFile": "shortlist/feel_recommended.mp3",
+      "score": 125,
+      "whisper": " Feel.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "help",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/help_plain.mp3",
+      "shortlistFile": "shortlist/help_recommended.mp3",
+      "score": 110,
+      "whisper": " Help.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "need",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/need_plain.mp3",
+      "shortlistFile": "shortlist/need_recommended.mp3",
+      "score": 125,
+      "whisper": " need",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "open",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/open_plain.mp3",
+      "shortlistFile": "shortlist/open_recommended.mp3",
+      "score": 125,
+      "whisper": " Open.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "play",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/play_period.mp3",
+      "shortlistFile": "shortlist/play_recommended.mp3",
+      "score": 125,
+      "whisper": " Play.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "stop",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/stop_plain.mp3",
+      "shortlistFile": "shortlist/stop_recommended.mp3",
+      "score": 125,
+      "whisper": " Stop.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "turn",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-08-core/takes/turn_plain.mp3",
+      "shortlistFile": "shortlist/turn_recommended.mp3",
+      "score": 125,
+      "whisper": " Turn.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}
