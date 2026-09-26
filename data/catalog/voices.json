@@ -7,6 +7,19 @@
     "label": "Grok Ara",
     "notes": "Default catalog mint. See docs/operations/Grok_Voice_Synthesis_Best_Practices.md."
   },
+  "tiles": {
+    "provider": "elevenlabs",
+    "voice_id": "WWMMC6k9tdar0BthUenK",
+    "label": "Catalog tile voice",
+    "description": "Human-approved ElevenLabs clone for single-word tiles and gap-fill. Not for Grok sentence playback.",
+    "model": "eleven_v3",
+    "voice_settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.8,
+      "style": 0,
+      "use_speaker_boost": true
+    }
+  },
   "backup": {
     "provider": "elevenlabs",
     "voice_id": "paOIq6PwrBInRivGXL1u",

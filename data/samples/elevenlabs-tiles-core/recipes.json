@@ -1,0 +1,1338 @@
+{
+  "schema": "pippaac.elevenlabs-tiles-recipes.v1",
+  "batch": "elevenlabs-tiles-core",
+  "generatedAt": "2026-09-26T20:55:15.116Z",
+  "defaults": {
+    "provider": "elevenlabs",
+    "voice_id": "WWMMC6k9tdar0BthUenK",
+    "model": "eleven_v3",
+    "voice_settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.8,
+      "style": 0,
+      "use_speaker_boost": true
+    }
+  },
+  "words": [
+    {
+      "slot": 56,
+      "slug": "all_done",
+      "word": "all done",
+      "tier": 1,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "all done"
+        },
+        {
+          "id": "period",
+          "text": "all done."
+        },
+        {
+          "id": "emphasis",
+          "text": "ALL DONE"
+        }
+      ]
+    },
+    {
+      "slot": 105,
+      "slug": "nuggets",
+      "word": "nuggets",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "nuggets"
+        },
+        {
+          "id": "period",
+          "text": "nuggets."
+        },
+        {
+          "id": "emphasis",
+          "text": "NUGGETS"
+        }
+      ]
+    },
+    {
+      "slot": 116,
+      "slug": "chips",
+      "word": "chips",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "chips"
+        },
+        {
+          "id": "period",
+          "text": "chips."
+        },
+        {
+          "id": "emphasis",
+          "text": "CHIPS"
+        }
+      ]
+    },
+    {
+      "slot": 120,
+      "slug": "fruit_snack",
+      "word": "fruit snack",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "fruit snack"
+        },
+        {
+          "id": "period",
+          "text": "fruit snack."
+        },
+        {
+          "id": "emphasis",
+          "text": "FRUIT SNACK"
+        }
+      ]
+    },
+    {
+      "slot": 162,
+      "slug": "wet_wipe",
+      "word": "wet wipe",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wet wipe"
+        },
+        {
+          "id": "period",
+          "text": "wet wipe."
+        },
+        {
+          "id": "emphasis",
+          "text": "WET WIPE"
+        }
+      ]
+    },
+    {
+      "slot": 171,
+      "slug": "bandage",
+      "word": "bandage",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bandage"
+        },
+        {
+          "id": "period",
+          "text": "bandage."
+        },
+        {
+          "id": "emphasis",
+          "text": "BANDAGE"
+        }
+      ]
+    },
+    {
+      "slot": 175,
+      "slug": "fever",
+      "word": "fever",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "fever"
+        },
+        {
+          "id": "period",
+          "text": "fever."
+        },
+        {
+          "id": "emphasis",
+          "text": "FEVER"
+        }
+      ]
+    },
+    {
+      "slot": 177,
+      "slug": "medicine",
+      "word": "medicine",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "medicine"
+        },
+        {
+          "id": "period",
+          "text": "medicine."
+        },
+        {
+          "id": "emphasis",
+          "text": "MEDICINE"
+        }
+      ]
+    },
+    {
+      "slot": 256,
+      "slug": "forget",
+      "word": "forget",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "forget"
+        },
+        {
+          "id": "period",
+          "text": "forget."
+        },
+        {
+          "id": "emphasis",
+          "text": "FORGET"
+        }
+      ]
+    },
+    {
+      "slot": 265,
+      "slug": "wake_up",
+      "word": "wake up",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wake up"
+        },
+        {
+          "id": "period",
+          "text": "wake up."
+        },
+        {
+          "id": "emphasis",
+          "text": "WAKE UP"
+        }
+      ]
+    },
+    {
+      "slot": 269,
+      "slug": "mama",
+      "word": "mama",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "mama"
+        },
+        {
+          "id": "period",
+          "text": "mama."
+        },
+        {
+          "id": "emphasis",
+          "text": "MAMA"
+        }
+      ]
+    },
+    {
+      "slot": 270,
+      "slug": "dada",
+      "word": "dada",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dada"
+        },
+        {
+          "id": "period",
+          "text": "dada."
+        },
+        {
+          "id": "emphasis",
+          "text": "DADA"
+        }
+      ]
+    },
+    {
+      "slot": 276,
+      "slug": "aunt",
+      "word": "aunt",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "aunt"
+        },
+        {
+          "id": "period",
+          "text": "aunt."
+        },
+        {
+          "id": "emphasis",
+          "text": "AUNT"
+        }
+      ]
+    },
+    {
+      "slot": 278,
+      "slug": "cousin",
+      "word": "cousin",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cousin"
+        },
+        {
+          "id": "period",
+          "text": "cousin."
+        },
+        {
+          "id": "emphasis",
+          "text": "COUSIN"
+        }
+      ]
+    },
+    {
+      "slot": 281,
+      "slug": "therapist",
+      "word": "therapist",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "therapist"
+        },
+        {
+          "id": "period",
+          "text": "therapist."
+        },
+        {
+          "id": "emphasis",
+          "text": "THERAPIST"
+        }
+      ]
+    },
+    {
+      "slot": 282,
+      "slug": "aide",
+      "word": "aide",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "aide"
+        },
+        {
+          "id": "period",
+          "text": "aide."
+        },
+        {
+          "id": "emphasis",
+          "text": "AIDE"
+        }
+      ]
+    },
+    {
+      "slot": 288,
+      "slug": "bus_driver",
+      "word": "bus driver",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bus driver"
+        },
+        {
+          "id": "period",
+          "text": "bus driver."
+        },
+        {
+          "id": "emphasis",
+          "text": "BUS DRIVER"
+        }
+      ]
+    },
+    {
+      "slot": 289,
+      "slug": "neighbor",
+      "word": "neighbor",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "neighbor"
+        },
+        {
+          "id": "period",
+          "text": "neighbor."
+        },
+        {
+          "id": "emphasis",
+          "text": "NEIGHBOR"
+        }
+      ]
+    },
+    {
+      "slot": 295,
+      "slug": "babysitter",
+      "word": "babysitter",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "babysitter"
+        },
+        {
+          "id": "period",
+          "text": "babysitter."
+        },
+        {
+          "id": "emphasis",
+          "text": "BABYSITTER"
+        }
+      ]
+    },
+    {
+      "slot": 302,
+      "slug": "basement",
+      "word": "basement",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "basement"
+        },
+        {
+          "id": "period",
+          "text": "basement."
+        },
+        {
+          "id": "emphasis",
+          "text": "BASEMENT"
+        }
+      ]
+    },
+    {
+      "slot": 311,
+      "slug": "hallway",
+      "word": "hallway",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hallway"
+        },
+        {
+          "id": "period",
+          "text": "hallway."
+        },
+        {
+          "id": "emphasis",
+          "text": "HALLWAY"
+        }
+      ]
+    },
+    {
+      "slot": 315,
+      "slug": "grocery_store",
+      "word": "grocery store",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "grocery store"
+        },
+        {
+          "id": "period",
+          "text": "grocery store."
+        },
+        {
+          "id": "emphasis",
+          "text": "GROCERY STORE"
+        }
+      ]
+    },
+    {
+      "slot": 320,
+      "slug": "doctor_office",
+      "word": "doctor office",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "doctor office"
+        },
+        {
+          "id": "period",
+          "text": "doctor office."
+        },
+        {
+          "id": "emphasis",
+          "text": "DOCTOR OFFICE"
+        }
+      ]
+    },
+    {
+      "slot": 322,
+      "slug": "museum",
+      "word": "museum",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "museum"
+        },
+        {
+          "id": "period",
+          "text": "museum."
+        },
+        {
+          "id": "emphasis",
+          "text": "MUSEUM"
+        }
+      ]
+    },
+    {
+      "slot": 323,
+      "slug": "movie_theater",
+      "word": "movie theater",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "movie theater"
+        },
+        {
+          "id": "period",
+          "text": "movie theater."
+        },
+        {
+          "id": "emphasis",
+          "text": "MOVIE THEATER"
+        }
+      ]
+    },
+    {
+      "slot": 338,
+      "slug": "bubbles",
+      "word": "bubbles",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bubbles"
+        },
+        {
+          "id": "period",
+          "text": "bubbles."
+        },
+        {
+          "id": "emphasis",
+          "text": "BUBBLES"
+        }
+      ]
+    },
+    {
+      "slot": 340,
+      "slug": "toy_car",
+      "word": "toy car",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "toy car"
+        },
+        {
+          "id": "period",
+          "text": "toy car."
+        },
+        {
+          "id": "emphasis",
+          "text": "TOY CAR"
+        }
+      ]
+    },
+    {
+      "slot": 341,
+      "slug": "toy_train",
+      "word": "toy train",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "toy train"
+        },
+        {
+          "id": "period",
+          "text": "toy train."
+        },
+        {
+          "id": "emphasis",
+          "text": "TOY TRAIN"
+        }
+      ]
+    },
+    {
+      "slot": 345,
+      "slug": "legos",
+      "word": "legos",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "legos"
+        },
+        {
+          "id": "period",
+          "text": "legos."
+        },
+        {
+          "id": "emphasis",
+          "text": "LEGOS"
+        }
+      ]
+    },
+    {
+      "slot": 347,
+      "slug": "swing_set",
+      "word": "swing set",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "swing set"
+        },
+        {
+          "id": "period",
+          "text": "swing set."
+        },
+        {
+          "id": "emphasis",
+          "text": "SWING SET"
+        }
+      ]
+    },
+    {
+      "slot": 354,
+      "slug": "jump_rope",
+      "word": "jump rope",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "jump rope"
+        },
+        {
+          "id": "period",
+          "text": "jump rope."
+        },
+        {
+          "id": "emphasis",
+          "text": "JUMP ROPE"
+        }
+      ]
+    },
+    {
+      "slot": 358,
+      "slug": "ipad",
+      "word": "iPad",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "iPad"
+        },
+        {
+          "id": "period",
+          "text": "iPad."
+        },
+        {
+          "id": "emphasis",
+          "text": "IPAD"
+        }
+      ]
+    },
+    {
+      "slot": 360,
+      "slug": "tv",
+      "word": "TV",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "TV"
+        },
+        {
+          "id": "period",
+          "text": "TV."
+        },
+        {
+          "id": "emphasis",
+          "text": "TV"
+        }
+      ]
+    },
+    {
+      "slot": 362,
+      "slug": "video",
+      "word": "video",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "video"
+        },
+        {
+          "id": "period",
+          "text": "video."
+        },
+        {
+          "id": "emphasis",
+          "text": "VIDEO"
+        }
+      ]
+    },
+    {
+      "slot": 402,
+      "slug": "charger",
+      "word": "charger",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "charger"
+        },
+        {
+          "id": "period",
+          "text": "charger."
+        },
+        {
+          "id": "emphasis",
+          "text": "CHARGER"
+        }
+      ]
+    },
+    {
+      "slot": 404,
+      "slug": "battery",
+      "word": "battery",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "battery"
+        },
+        {
+          "id": "period",
+          "text": "battery."
+        },
+        {
+          "id": "emphasis",
+          "text": "BATTERY"
+        }
+      ]
+    },
+    {
+      "slot": 419,
+      "slug": "sweatshirt",
+      "word": "sweatshirt",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sweatshirt"
+        },
+        {
+          "id": "period",
+          "text": "sweatshirt."
+        },
+        {
+          "id": "emphasis",
+          "text": "SWEATSHIRT"
+        }
+      ]
+    },
+    {
+      "slot": 480,
+      "slug": "vehicle",
+      "word": "vehicle",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "vehicle"
+        },
+        {
+          "id": "period",
+          "text": "vehicle."
+        },
+        {
+          "id": "emphasis",
+          "text": "VEHICLE"
+        }
+      ]
+    },
+    {
+      "slot": 503,
+      "slug": "stoplight",
+      "word": "stoplight",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "stoplight"
+        },
+        {
+          "id": "period",
+          "text": "stoplight."
+        },
+        {
+          "id": "emphasis",
+          "text": "STOPLIGHT"
+        }
+      ]
+    },
+    {
+      "slot": 533,
+      "slug": "fixed",
+      "word": "fixed",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "fixed"
+        },
+        {
+          "id": "period",
+          "text": "fixed."
+        },
+        {
+          "id": "emphasis",
+          "text": "FIXED"
+        }
+      ]
+    },
+    {
+      "slot": 554,
+      "slug": "afternoon",
+      "word": "afternoon",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "afternoon"
+        },
+        {
+          "id": "period",
+          "text": "afternoon."
+        },
+        {
+          "id": "emphasis",
+          "text": "AFTERNOON"
+        }
+      ]
+    },
+    {
+      "slot": 557,
+      "slug": "bedtime",
+      "word": "bedtime",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bedtime"
+        },
+        {
+          "id": "period",
+          "text": "bedtime."
+        },
+        {
+          "id": "emphasis",
+          "text": "BEDTIME"
+        }
+      ]
+    },
+    {
+      "slot": 558,
+      "slug": "naptime",
+      "word": "naptime",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "naptime"
+        },
+        {
+          "id": "period",
+          "text": "naptime."
+        },
+        {
+          "id": "emphasis",
+          "text": "NAPTIME"
+        }
+      ]
+    },
+    {
+      "slot": 564,
+      "slug": "yesterday",
+      "word": "yesterday",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "yesterday"
+        },
+        {
+          "id": "period",
+          "text": "yesterday."
+        },
+        {
+          "id": "emphasis",
+          "text": "YESTERDAY"
+        }
+      ]
+    },
+    {
+      "slot": 583,
+      "slug": "hello",
+      "word": "hello",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hello"
+        },
+        {
+          "id": "period",
+          "text": "hello."
+        },
+        {
+          "id": "emphasis",
+          "text": "HELLO"
+        }
+      ]
+    },
+    {
+      "slot": 584,
+      "slug": "hi",
+      "word": "hi",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hi"
+        },
+        {
+          "id": "period",
+          "text": "hi."
+        },
+        {
+          "id": "emphasis",
+          "text": "HI"
+        }
+      ]
+    },
+    {
+      "slot": 586,
+      "slug": "bye",
+      "word": "bye",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bye"
+        },
+        {
+          "id": "period",
+          "text": "bye."
+        },
+        {
+          "id": "emphasis",
+          "text": "BYE"
+        }
+      ]
+    },
+    {
+      "slot": 589,
+      "slug": "sorry",
+      "word": "sorry",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sorry"
+        },
+        {
+          "id": "period",
+          "text": "sorry."
+        },
+        {
+          "id": "emphasis",
+          "text": "SORRY"
+        }
+      ]
+    },
+    {
+      "slot": 590,
+      "slug": "excuse_me",
+      "word": "excuse me",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "excuse me"
+        },
+        {
+          "id": "period",
+          "text": "excuse me."
+        },
+        {
+          "id": "emphasis",
+          "text": "EXCUSE ME"
+        }
+      ]
+    },
+    {
+      "slot": 591,
+      "slug": "good_morning",
+      "word": "good morning",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "good morning"
+        },
+        {
+          "id": "period",
+          "text": "good morning."
+        },
+        {
+          "id": "emphasis",
+          "text": "GOOD MORNING"
+        }
+      ]
+    },
+    {
+      "slot": 592,
+      "slug": "good_night",
+      "word": "good night",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "good night"
+        },
+        {
+          "id": "period",
+          "text": "good night."
+        },
+        {
+          "id": "emphasis",
+          "text": "GOOD NIGHT"
+        }
+      ]
+    },
+    {
+      "slot": 594,
+      "slug": "ready_to_go",
+      "word": "ready to go",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "ready to go"
+        },
+        {
+          "id": "period",
+          "text": "ready to go."
+        },
+        {
+          "id": "emphasis",
+          "text": "READY TO GO"
+        }
+      ]
+    },
+    {
+      "slot": 595,
+      "slug": "wow",
+      "word": "wow",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wow"
+        },
+        {
+          "id": "period",
+          "text": "wow."
+        },
+        {
+          "id": "emphasis",
+          "text": "WOW"
+        }
+      ]
+    },
+    {
+      "slot": 599,
+      "slug": "look_at_this",
+      "word": "look at this",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "look at this"
+        },
+        {
+          "id": "period",
+          "text": "look at this."
+        },
+        {
+          "id": "emphasis",
+          "text": "LOOK AT THIS"
+        }
+      ]
+    },
+    {
+      "slot": 600,
+      "slug": "my_turn",
+      "word": "my turn",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "my turn"
+        },
+        {
+          "id": "period",
+          "text": "my turn."
+        },
+        {
+          "id": "emphasis",
+          "text": "MY TURN"
+        }
+      ]
+    },
+    {
+      "slot": 601,
+      "slug": "your_turn",
+      "word": "your turn",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "your turn"
+        },
+        {
+          "id": "period",
+          "text": "your turn."
+        },
+        {
+          "id": "emphasis",
+          "text": "YOUR TURN"
+        }
+      ]
+    },
+    {
+      "slot": 602,
+      "slug": "careful",
+      "word": "careful",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "careful"
+        },
+        {
+          "id": "period",
+          "text": "careful."
+        },
+        {
+          "id": "emphasis",
+          "text": "CAREFUL"
+        }
+      ]
+    },
+    {
+      "slot": 603,
+      "slug": "emergency",
+      "word": "emergency",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "emergency"
+        },
+        {
+          "id": "period",
+          "text": "emergency."
+        },
+        {
+          "id": "emphasis",
+          "text": "EMERGENCY"
+        }
+      ]
+    },
+    {
+      "slot": 604,
+      "slug": "no_way",
+      "word": "no way",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "no way"
+        },
+        {
+          "id": "period",
+          "text": "no way."
+        },
+        {
+          "id": "emphasis",
+          "text": "NO WAY"
+        }
+      ]
+    },
+    {
+      "slot": 663,
+      "slug": "poop",
+      "word": "poop",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "poop"
+        },
+        {
+          "id": "period",
+          "text": "poop."
+        },
+        {
+          "id": "emphasis",
+          "text": "POOP"
+        }
+      ]
+    },
+    {
+      "slot": 664,
+      "slug": "pee",
+      "word": "pee",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pee"
+        },
+        {
+          "id": "period",
+          "text": "pee."
+        },
+        {
+          "id": "emphasis",
+          "text": "PEE"
+        }
+      ]
+    },
+    {
+      "slot": 678,
+      "slug": "ow",
+      "word": "ow",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "ow"
+        },
+        {
+          "id": "period",
+          "text": "ow."
+        },
+        {
+          "id": "emphasis",
+          "text": "OW"
+        }
+      ]
+    },
+    {
+      "slot": 679,
+      "slug": "yours",
+      "word": "yours",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "yours"
+        },
+        {
+          "id": "period",
+          "text": "yours."
+        },
+        {
+          "id": "emphasis",
+          "text": "YOURS"
+        }
+      ]
+    },
+    {
+      "slot": 685,
+      "slug": "wait_i_m_spelling",
+      "word": "wait, I'm spelling",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wait, I'm spelling"
+        },
+        {
+          "id": "period",
+          "text": "wait, I'm spelling."
+        },
+        {
+          "id": "emphasis",
+          "text": "WAIT, I'M SPELLING"
+        }
+      ]
+    },
+    {
+      "slot": 686,
+      "slug": "guess_my_word",
+      "word": "guess my word",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "guess my word"
+        },
+        {
+          "id": "period",
+          "text": "guess my word."
+        },
+        {
+          "id": "emphasis",
+          "text": "GUESS MY WORD"
+        }
+      ]
+    },
+    {
+      "slot": 687,
+      "slug": "oops",
+      "word": "oops",
+      "tier": 2,
+      "variations": [
+        {
+          "id": "plain",
+          "text": "oops"
+        },
+        {
+          "id": "period",
+          "text": "oops."
+        },
+        {
+          "id": "emphasis",
+          "text": "OOPS"
+        }
+      ]
+    }
+  ]
+}

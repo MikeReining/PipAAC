@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — Grok explore audio review</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #2f6fd0; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .pipeline { font-size: 13px; color: #6b665c; margin: 0 0 10px; }
+    .pipeline a { color: var(--accent); text-decoration: none; }
+    .pipeline a:hover { text-decoration: underline; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    select, button { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--edge); background: #fff; }
+    button { cursor: pointer; }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    button:disabled { opacity: 0.45; cursor: default; }
+    main { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 80px); }
+    @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+    aside { border-right: 1px solid var(--edge); padding: 12px; background: #fff; overflow: auto; max-height: calc(100vh - 80px); }
+    aside ul { list-style: none; padding: 0; margin: 8px 0 0; }
+    aside li { margin: 2px 0; }
+    aside button.file { width: 100%; text-align: left; border: none; background: transparent; padding: 6px 8px; border-radius: 6px; }
+    aside button.file[aria-current="true"] { background: #e8f0fc; font-weight: 600; }
+    section { padding: 16px 20px; }
+    .wave-wrap { position: relative; width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--edge); background: #fff; }
+    #wave { width: 100%; height: 140px; display: block; cursor: pointer; vertical-align: top; }
+    .meta { font-size: 13px; color: #6b665c; margin: 10px 0 14px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    #status { font-size: 13px; min-height: 1.2em; margin-top: 8px; color: #6b665c; }
+    audio { width: 100%; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Grok explore review</h1>
+    <p class="pipeline">Pipeline: Grok <code>ara</code> takes + optional Aga backup / Grok emphasis. Tile gap-fill:
+      <a href="/audio-review/elevenlabs-tiles">ElevenLabs catalog voice</a>.</p>
+    <div class="row">
+      <label>Batch <select id="batch"></select></label>
+      <label>Folder <select id="folder"><option value="takes">takes</option><option value="shortlist">shortlist</option></select></label>
+      <button type="button" id="reload">Reload list</button>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <strong>Files</strong>
+      <ul id="files"></ul>
+    </aside>
+    <section>
+      <p class="meta" id="meta">Select a file.</p>
+      <div class="wave-wrap">
+        <canvas id="wave" width="900" height="140" title="Click to seek"></canvas>
+      </div>
+      <audio id="player" controls></audio>
+      <div class="actions">
+        <button type="button" data-trim="20">Trim tail −20 ms</button>
+        <button type="button" data-trim="50">Trim tail −50 ms</button>
+        <button type="button" data-trim="100">Trim tail −100 ms</button>
+        <button type="button" id="mint-backup" hidden>Mint Aga backup</button>
+        <button type="button" id="mint-emphasis" hidden>Mint Grok emphasis</button>
+        <button type="button" class="primary" id="approve">Approve → shortlist</button>
+      </div>
+      <p id="status"></p>
+    </section>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const player = $("player");
+    const canvas = $("wave");
+    let currentPath = null;
+    /** @type {{ peaks: { min: number, max: number }[], duration: number } | null} */
+    let waveData = null;
+    let playheadRaf = 0;
+    /** @type {string[]} */
+    let fileListPaths = [];
+
+    function qs() {
+      return new URLSearchParams(location.search);
+    }
+
+    function setStatus(msg, isErr) {
+      $("status").textContent = msg || "";
+      $("status").style.color = isErr ? "#c62828" : "#6b665c";
+    }
+
+    async function api(path, opts) {
+      const res = await fetch(path, opts);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || res.statusText);
+      return body;
+    }
+
+    async function loadBatches() {
+      const { batches } = await api("/api/batches?pipeline=grok");
+      const sel = $("batch");
+      sel.innerHTML = "";
+      for (const b of batches) {
+        const o = document.createElement("option");
+        o.value = b;
+        o.textContent = b;
+        sel.appendChild(o);
+      }
+      const q = qs().get("batch");
+      if (q && batches.includes(q)) sel.value = q;
+    }
+
+    async function loadFiles() {
+      const batch = $("batch").value;
+      const folder = $("folder").value;
+      if (!batch) return;
+      const { files } = await api(`/api/files?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}`);
+      const ul = $("files");
+      ul.innerHTML = "";
+      fileListPaths = files.map((f) => `${batch}/${folder}/${f.name}`);
+      const want = qs().get("file");
+      for (const f of files) {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "file";
+        btn.textContent = f.name;
+        const fullPath = `${batch}/${folder}/${f.name}`;
+        btn.onclick = () => selectFile(fullPath);
+        li.appendChild(btn);
+        ul.appendChild(li);
+        if (want && f.name === want) selectFile(fullPath);
+      }
+      history.replaceState(null, "", `?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}`);
+    }
+
+    function drawWaveWithPlayhead(currentTimeSec) {
+      if (!waveData) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      const { peaks, duration } = waveData;
+      const ratio = duration > 0 ? Math.min(1, Math.max(0, currentTimeSec / duration)) : 0;
+      const playX = Math.round(ratio * (w - 1));
+
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, w, h);
+
+      for (let x = 0; x < peaks.length; x++) {
+        const { min, max } = peaks[x];
+        const y1 = (1 - max) * 0.5 * h;
+        const y2 = (1 - min) * 0.5 * h;
+        ctx.fillStyle = x <= playX ? "#1e4f8f" : "#8eb4e8";
+        ctx.fillRect(x, y1, 1, Math.max(1, y2 - y1));
+      }
+
+      ctx.strokeStyle = "#d84315";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(playX, 0);
+      ctx.lineTo(playX, h);
+      ctx.stroke();
+      ctx.fillStyle = "#d84315";
+      ctx.beginPath();
+      ctx.moveTo(playX, 0);
+      ctx.lineTo(playX - 5, 8);
+      ctx.lineTo(playX + 5, 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function stopPlayheadLoop() {
+      if (playheadRaf) cancelAnimationFrame(playheadRaf);
+      playheadRaf = 0;
+    }
+
+    function startPlayheadLoop() {
+      stopPlayheadLoop();
+      const tick = () => {
+        drawWaveWithPlayhead(player.currentTime);
+        if (!player.paused && !player.ended) playheadRaf = requestAnimationFrame(tick);
+      };
+      playheadRaf = requestAnimationFrame(tick);
+    }
+
+    async function drawWave(url) {
+      stopPlayheadLoop();
+      waveData = null;
+      const res = await fetch(url);
+      const buf = await res.arrayBuffer();
+      const ac = new AudioContext();
+      const audio = await ac.decodeAudioData(buf.slice(0));
+      const ch = audio.getChannelData(0);
+      const w = canvas.width;
+      const h = canvas.height;
+      const step = Math.ceil(ch.length / w);
+      const peaks = [];
+      for (let x = 0; x < w; x++) {
+        let min = 1;
+        let max = -1;
+        const start = x * step;
+        for (let i = 0; i < step && start + i < ch.length; i++) {
+          const v = ch[start + i];
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+        peaks.push({ min, max });
+      }
+      waveData = { peaks, duration: audio.duration };
+      await ac.close();
+      drawWaveWithPlayhead(0);
+    }
+
+    canvas.addEventListener("click", (e) => {
+      if (!waveData || !Number.isFinite(player.duration) || player.duration <= 0) return;
+      const rect = canvas.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      player.currentTime = ratio * player.duration;
+      drawWaveWithPlayhead(player.currentTime);
+    });
+
+    player.addEventListener("play", startPlayheadLoop);
+    player.addEventListener("pause", () => {
+      stopPlayheadLoop();
+      drawWaveWithPlayhead(player.currentTime);
+    });
+    player.addEventListener("seeked", () => drawWaveWithPlayhead(player.currentTime));
+    player.addEventListener("ended", () => drawWaveWithPlayhead(waveData?.duration ?? 0));
+    player.addEventListener("timeupdate", () => {
+      if (player.paused) drawWaveWithPlayhead(player.currentTime);
+    });
+
+    function updateMintBackupButton(meta) {
+      const btn = $("mint-backup");
+      if (!meta?.slug) {
+        btn.hidden = true;
+        return;
+      }
+      btn.hidden = false;
+      btn.textContent = meta.backupExists ? "Remint Aga backup" : "Mint Aga backup";
+    }
+
+    function updateMintEmphasisButton(meta) {
+      const btn = $("mint-emphasis");
+      if (!meta?.slug) {
+        btn.hidden = true;
+        return;
+      }
+      btn.hidden = false;
+      btn.textContent = meta.emphasisExists ? "Remint Grok emphasis" : "Mint Grok emphasis";
+      btn.title = meta.emphasisText ? `Grok text: ${meta.emphasisText}` : "";
+    }
+
+    async function openMintedTake(path) {
+      $("folder").value = "takes";
+      await loadFiles();
+      if (!fileListPaths.includes(path)) fileListPaths = [...fileListPaths, path].sort();
+      await selectFile(path);
+    }
+
+    function waitForAudioReady() {
+      if (player.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) return Promise.resolve();
+      return new Promise((resolve) => {
+        player.addEventListener("loadeddata", resolve, { once: true });
+      });
+    }
+
+    async function playFromStart() {
+      if (!player.src) return;
+      player.currentTime = 0;
+      drawWaveWithPlayhead(0);
+      try {
+        await player.play();
+        startPlayheadLoop();
+      } catch {
+        // autoplay blocked without prior gesture — rare after click
+      }
+    }
+
+    function scrollFileIntoView(path) {
+      const name = path.split("/").pop();
+      const btn = [...document.querySelectorAll("button.file")].find((b) => b.textContent === name);
+      btn?.scrollIntoView({ block: "nearest" });
+    }
+
+    function isTypingTarget() {
+      const el = document.activeElement;
+      if (!el) return false;
+      const tag = el.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable;
+    }
+
+    function navigateFile(delta) {
+      if (!fileListPaths.length) return;
+      let idx = fileListPaths.indexOf(currentPath);
+      if (idx < 0) idx = 0;
+      else idx = Math.max(0, Math.min(fileListPaths.length - 1, idx + delta));
+      const next = fileListPaths[idx];
+      selectFile(next);
+      scrollFileIntoView(next);
+    }
+
+    async function selectFile(path) {
+      currentPath = path;
+      document.querySelectorAll("button.file").forEach((b) => {
+        b.setAttribute("aria-current", b.textContent === path.split("/").pop() ? "true" : "false");
+      });
+      scrollFileIntoView(path);
+      const meta = await api(`/api/meta?path=${encodeURIComponent(path)}`);
+      updateMintBackupButton(meta);
+      updateMintEmphasisButton(meta);
+      $("meta").textContent = `${path} — ${meta.durationMs != null ? (meta.durationMs / 1000).toFixed(2) + " s" : "?"} — ${meta.bytes} bytes`;
+      const url = `/api/audio?path=${encodeURIComponent(path)}&t=${Date.now()}`;
+      player.src = url;
+      await Promise.all([drawWave(url), waitForAudioReady()]);
+      await playFromStart();
+      setStatus("");
+      history.replaceState(null, "", `?batch=${encodeURIComponent($("batch").value)}&folder=${encodeURIComponent($("folder").value)}&file=${encodeURIComponent(path.split("/").pop())}`);
+    }
+
+    async function trim(ms) {
+      if (!currentPath) return;
+      const r = await api("/api/trim", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath, ms }),
+      });
+      setStatus(`Trimmed ${r.trimmedMs} ms from tail. Duration now ${(r.durationMs / 1000).toFixed(2)} s.`);
+      await selectFile(currentPath);
+    }
+
+    $("reload").onclick = () => loadFiles();
+    $("batch").onchange = () => loadFiles();
+    $("folder").onchange = () => loadFiles();
+    document.querySelectorAll("[data-trim]").forEach((btn) => {
+      btn.onclick = () => trim(Number(btn.dataset.trim)).catch((e) => setStatus(e.message, true));
+    });
+    $("approve").onclick = () => {
+      if (!currentPath) return;
+      api("/api/approve", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath }),
+      })
+        .then((r) => {
+          const extra =
+            r.removedFromShortlist?.length
+              ? ` Removed ${r.removedFromShortlist.length} other shortlist take(s): ${r.removedFromShortlist.join(", ")}.`
+              : "";
+          setStatus(`Approved → ${r.shortlist}.${extra}`);
+        })
+        .catch((e) => setStatus(e.message, true));
+    };
+    $("mint-backup").onclick = () => {
+      if (!currentPath) return;
+      const minting = $("mint-backup").textContent.startsWith("Mint");
+      setStatus(minting ? "Minting Aga backup…" : "Reminting Aga backup…");
+      api("/api/remint-backup", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath }),
+      })
+        .then(async (r) => {
+          setStatus(`${minting ? "Minted" : "Reminted"} ${r.path}${r.trimMode ? ` (${r.trimMode})` : ""}`);
+          await openMintedTake(r.path);
+        })
+        .catch((e) => setStatus(e.message, true));
+    };
+    $("mint-emphasis").onclick = () => {
+      if (!currentPath) return;
+      const minting = $("mint-emphasis").textContent.startsWith("Mint");
+      setStatus(minting ? "Minting Grok emphasis…" : "Reminting Grok emphasis…");
+      api("/api/mint-grok-emphasis", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath }),
+      })
+        .then(async (r) => {
+          setStatus(`${minting ? "Minted" : "Reminted"} ${r.path} (${r.text})`);
+          await openMintedTake(r.path);
+        })
+        .catch((e) => setStatus(e.message, true));
+    };
+
+    document.addEventListener("keydown", (e) => {
+      if (isTypingTarget()) return;
+      if (e.code === "Space") {
+        e.preventDefault();
+        playFromStart();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        navigateFile(1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        navigateFile(-1);
+      }
+    });
+
+    (async () => {
+      try {
+        const qFolder = qs().get("folder");
+        if (qFolder) $("folder").value = qFolder;
+        await loadBatches();
+        await loadFiles();
+        const file = qs().get("file");
+        const batch = $("batch").value;
+        if (file && batch) await selectFile(`${batch}/${$("folder").value}/${file}`);
+      } catch (e) {
+        setStatus(e.message, true);
+      }
+    })();
+  </script>
+</body>
+</html>

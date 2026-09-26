@@ -25,6 +25,9 @@
     "catalog:audio:inspect": "node scripts/catalog/audio_inspect.mjs",
     "catalog:audio:explore": "node scripts/catalog/explore_grok_batch.mjs",
     "catalog:audio:mint-backup": "node scripts/catalog/mint_backup_voice.mjs",
+    "catalog:audio:review": "node scripts/catalog/audio_review_dev.mjs",
+    "catalog:tiles:queue": "node scripts/catalog/build_elevenlabs_tile_queue.mjs",
+    "catalog:tiles:mint": "node scripts/catalog/mint_elevenlabs_tile.mjs",
     "prediction:bench": "node scripts/prediction/bench/bench.mjs",
     "prediction:book": "node scripts/prediction/book/build_book.mjs && node scripts/prediction/book/score_book.mjs"
   },

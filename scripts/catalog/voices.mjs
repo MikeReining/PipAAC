@@ -21,3 +21,11 @@ export function getPrimaryVoice(doc = loadCatalogVoices()) {
 export function getBackupVoice(doc = loadCatalogVoices()) {
   return doc.backup;
 }
+
+export function getCatalogTileVoice(doc = loadCatalogVoices()) {
+  const tiles = doc.tiles;
+  if (!tiles?.voice_id) {
+    throw new Error("data/catalog/voices.json is missing tiles.voice_id");
+  }
+  return tiles;
+}

@@ -18,6 +18,18 @@ export function r2GetArgs(objectKey, destPath) {
   ];
 }
 
+export function r2PutArgs(objectKey, sourcePath) {
+  return [
+    "r2",
+    "object",
+    "put",
+    `${WBB_R2_BUCKET}/${objectKey}`,
+    "--file",
+    sourcePath,
+    "--remote",
+  ];
+}
+
 export function sha256File(filePath) {
   return createHash("sha256").update(readFileSync(filePath)).digest("hex");
 }

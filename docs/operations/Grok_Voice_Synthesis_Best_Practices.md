@@ -253,6 +253,97 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | leg | `data/samples/approved/leg.mp3` | `leg.` | Ear, `batch-19` shortlist |
 | foot | `data/samples/approved/foot.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `foot_backup.mp3`. |
 | toes | `data/samples/approved/toes.mp3` | `toes` | Ear, `batch-19` shortlist |
+| bathroom | `data/samples/approved/bathroom.mp3` | `bathroom` | Ear, `batch-20` shortlist |
+| potty | `data/samples/approved/potty.mp3` | `potty` | Ear, `batch-20` shortlist |
+| toilet | `data/samples/approved/toilet.mp3` | `toilet` | Ear, `batch-20` shortlist |
+| diaper | `data/samples/approved/diaper.mp3` | `diaper.` | Ear, `batch-20` shortlist |
+| wet wipe | `data/samples/approved/wet-wipe.mp3` | `wet wipe.` | Ear, `batch-20` shortlist |
+| bath | `data/samples/approved/bath.mp3` | ElevenLabs Aga | Ear replaced Grok with `bath_backup.mp3` after manual tail trim |
+| shower | `data/samples/approved/shower.mp3` | `shower` | Ear, `batch-20` shortlist |
+| soap | `data/samples/approved/soap.mp3` | `soap.` | Ear, `batch-20` shortlist |
+| toothbrush | `data/samples/approved/toothbrush.mp3` | `toothbrush` | Ear, `batch-20` shortlist |
+| toothpaste | `data/samples/approved/toothpaste.mp3` | `toothpaste.` | Ear, `batch-20` shortlist |
+| towel | `data/samples/approved/towel.mp3` | `towel` | Ear, `batch-21` shortlist |
+| comb | `data/samples/approved/comb.mp3` | `comb` | Ear, `batch-21` shortlist |
+| tissue | `data/samples/approved/tissue.mp3` | `tissue` | Ear, `batch-21` shortlist |
+| bandage | `data/samples/approved/bandage.mp3` | `bandage.` | Ear, `batch-21` shortlist |
+| hurt | `data/samples/approved/hurt.mp3` | `hurt` | Ear, `batch-21` shortlist |
+| sick | `data/samples/approved/sick.mp3` | `sick.` | Ear, `batch-21` shortlist |
+| pain | `data/samples/approved/pain.mp3` | `pain` | Ear, `batch-21` shortlist |
+| fever | `data/samples/approved/fever.mp3` | `fever` | Ear, `batch-21` shortlist |
+| cough | `data/samples/approved/cough.mp3` | `cough` | Ear, `batch-21` shortlist |
+| medicine | `data/samples/approved/medicine.mp3` | `medicine.` | Ear, `batch-21` shortlist |
+| dentist | `data/samples/approved/dentist.mp3` | `dentist.` | Ear, `batch-22` shortlist |
+| sad | `data/samples/approved/sad.mp3` | ElevenLabs Aga | Ear replaced Grok with `sad_backup.mp3` |
+| mad | `data/samples/approved/mad.mp3` | `mad` | Ear, `batch-22` shortlist |
+| angry | `data/samples/approved/angry.mp3` | `angry.` | Ear, `batch-22` shortlist |
+| scared | `data/samples/approved/scared.mp3` | `scared.` | Ear, `batch-22` shortlist |
+| excited | `data/samples/approved/excited.mp3` | `excited.` | Ear, `batch-22` shortlist |
+| silly | `data/samples/approved/silly.mp3` | `silly` | Ear, `batch-22` shortlist |
+| nervous | `data/samples/approved/nervous.mp3` | `nervous` | Ear, `batch-22` shortlist |
+| calm | `data/samples/approved/calm.mp3` | `calm` | Ear, `batch-22` shortlist |
+| frustrated | `data/samples/approved/frustrated.mp3` | `frustrated` | Ear, `batch-22` shortlist |
+| proud | `data/samples/approved/proud.mp3` | `proud` | Ear, `batch-23` shortlist |
+| shy | `data/samples/approved/shy.mp3` | ElevenLabs Aga | Ear replaced Grok with `shy_backup.mp3` |
+| surprised | `data/samples/approved/surprised.mp3` | `surprised.` | Ear, `batch-23` shortlist |
+| bored | `data/samples/approved/bored.mp3` | `bored.` | Ear, `batch-23` shortlist |
+| lonely | `data/samples/approved/lonely.mp3` | `lonely.` | Ear, `batch-23` shortlist |
+| hungry | `data/samples/approved/hungry.mp3` | `hungry.` | Ear, `batch-23` shortlist |
+| thirsty | `data/samples/approved/thirsty.mp3` | `thirsty` | Ear, `batch-23` shortlist |
+| tired | `data/samples/approved/tired.mp3` | `tired` | Ear, `batch-23` shortlist |
+| sleepy | `data/samples/approved/sleepy.mp3` | `sleepy` | Ear, `batch-23` shortlist |
+| energetic | `data/samples/approved/energetic.mp3` | `energetic.` | Ear, `batch-23` shortlist |
+| hot | `data/samples/approved/hot.mp3` | ElevenLabs Aga | Ear replaced Grok with `hot_backup.mp3` |
+| cold | `data/samples/approved/cold.mp3` | ElevenLabs Aga | Ear replaced Grok with `cold_backup.mp3` |
+| warm | `data/samples/approved/warm.mp3` | `warm` | Ear, `batch-24` shortlist |
+| loud | `data/samples/approved/loud.mp3` | `<emphasis>loud</emphasis>` | Ear, `batch-24` shortlist (`loud_emphasis.mp3`) |
+| quiet | `data/samples/approved/quiet.mp3` | ElevenLabs Aga | Ear replaced Grok with `quiet_backup.mp3` |
+| noisy | `data/samples/approved/noisy.mp3` | `noisy.` | Ear, `batch-24` shortlist |
+| bright | `data/samples/approved/bright.mp3` | ElevenLabs Aga | Ear replaced Grok with `bright_backup.mp3` |
+| dark | `data/samples/approved/dark.mp3` | ElevenLabs Aga | Ear replaced Grok with `dark_backup.mp3` |
+| soft | `data/samples/approved/soft.mp3` | ElevenLabs Aga raw | Ear replaced Grok with `soft_backup_raw.mp3` |
+| rough | `data/samples/approved/rough.mp3` | `rough` | Ear, `batch-24` shortlist |
+| sticky | `data/samples/approved/sticky.mp3` | `sticky.` | Ear, `batch-25` shortlist |
+| dizzy | `data/samples/approved/dizzy.mp3` | ElevenLabs Aga | Ear replaced Grok with `dizzy_backup.mp3` |
+| gross | `data/samples/approved/gross.mp3` | ElevenLabs Aga | Ear replaced Grok with `gross_backup.mp3` |
+| comfortable | `data/samples/approved/comfortable.mp3` | ElevenLabs Aga | Ear replaced Grok with `comfortable_backup.mp3` |
+| uncomfortable | `data/samples/approved/uncomfortable.mp3` | ElevenLabs Aga | Ear replaced Grok with `uncomfortable_backup.mp3` |
+| overwhelmed | `data/samples/approved/overwhelmed.mp3` | `overwhelmed.` | Ear, `batch-25` shortlist |
+| run | `data/samples/approved/run.mp3` | ElevenLabs Aga | Ear replaced Grok with `run_backup.mp3` |
+| jump | `data/samples/approved/jump.mp3` | `jump.` | Ear, `batch-25` shortlist |
+| walk | `data/samples/approved/walk.mp3` | `<emphasis>walk</emphasis>` | Ear, `batch-25` shortlist (`walk_emphasis.mp3`) |
+| sit | `data/samples/approved/sit.mp3` | `sit` | Ear, `batch-25` shortlist |
+| stand | `data/samples/approved/stand.mp3` | `stand.` | Ear, `batch-26` shortlist |
+| climb | `data/samples/approved/climb.mp3` | ElevenLabs Aga | Ear replaced Grok with `climb_backup.mp3` |
+| dance | `data/samples/approved/dance.mp3` | ElevenLabs Aga | Ear replaced Grok with `dance_backup.mp3` |
+| swim | `data/samples/approved/swim.mp3` | `swim` | Ear, `batch-26` shortlist |
+| ride | `data/samples/approved/ride.mp3` | `ride` | Ear, `batch-26` shortlist |
+| crawl | `data/samples/approved/crawl.mp3` | ElevenLabs Aga | Ear replaced Grok with `crawl_backup.mp3` |
+| kick | `data/samples/approved/kick.mp3` | ElevenLabs Aga | Ear replaced Grok with `kick_backup.mp3` |
+| throw | `data/samples/approved/throw.mp3` | `throw` | Ear, `batch-26` shortlist |
+| catch | `data/samples/approved/catch.mp3` | `<emphasis>catch</emphasis>` | Ear, `batch-26` shortlist (`catch_emphasis.mp3`) |
+| push | `data/samples/approved/push.mp3` | `push` | Ear, `batch-26` shortlist |
+| pull | `data/samples/approved/pull.mp3` | `pull` | Ear, `batch-27` shortlist |
+| swing | `data/samples/approved/swing.mp3` | `swing` | Ear, `batch-27` shortlist |
+| slide | `data/samples/approved/slide.mp3` | ElevenLabs Aga | Ear replaced Grok with `slide_backup.mp3` |
+| fall | `data/samples/approved/fall.mp3` | `fall` | Ear, `batch-27` shortlist |
+| drop | `data/samples/approved/drop.mp3` | ElevenLabs Aga | Ear replaced Grok with `drop_backup.mp3` |
+| write | `data/samples/approved/write.mp3` | ElevenLabs Aga | Ear replaced Grok with `write_backup.mp3` (Grok heard Right) |
+| draw | `data/samples/approved/draw.mp3` | ElevenLabs Aga | Ear replaced Grok with `draw_backup.mp3` |
+| color | `data/samples/approved/color.mp3` | `color` | Ear, `batch-27` shortlist |
+| paint | `data/samples/approved/paint.mp3` | `paint` | Ear, `batch-27` shortlist |
+| cut | `data/samples/approved/cut.mp3` | `<emphasis>cut</emphasis>` | Ear, `batch-28` shortlist (`cut_emphasis.mp3`) |
+| glue | `data/samples/approved/glue.mp3` | `glue` | Ear, `batch-28` shortlist |
+| listen | `data/samples/approved/listen.mp3` | `listen` | Ear, `batch-28` shortlist |
+| speak | `data/samples/approved/speak.mp3` | ElevenLabs Aga | Ear replaced Grok with `speak_backup.mp3` |
+| talk | `data/samples/approved/talk.mp3` | ElevenLabs Aga | Ear replaced Grok with `talk_backup.mp3` |
+| sing | `data/samples/approved/sing.mp3` | ElevenLabs Aga | Ear replaced Grok with `sing_backup.mp3` |
+| count | `data/samples/approved/count.mp3` | `count.` | Ear, `batch-28` shortlist |
+| share | `data/samples/approved/share.mp3` | ElevenLabs Aga | Ear replaced Grok with `share_backup.mp3` |
+| clean up | `data/samples/approved/clean-up.mp3` | `clean up.` | Ear, `batch-28` shortlist |
+| wash | `data/samples/approved/wash.mp3` | ElevenLabs Aga | Ear replaced Grok with `wash_backup.mp3` |
+
+**Founder “all done, next batch”:** Shortlist is final. Promote each `batch-NN-core/shortlist/*_recommended.mp3` → `data/samples/approved/` + `manifest.json` + this table (source = `cmp` match in `takes/`). Then add `batch-(N+1)-core/recipes.json` (next ten launch-lexicon slots), mint + score explore, open local audio review on the new shortlist. No R2 upload unless explicitly asked.
 
 ---
 
@@ -324,6 +415,8 @@ A word with no table row calls this with no `replace`. A sentence calls it with 
 
 Mint one-off rows from a batch manifest: `node scripts/catalog/mint_grok_samples.mjs`. Whisper-only: `node scripts/catalog/transcribe_groq.mjs`. Keys: `XAI_API_KEY` / `GROQ_API_KEY` in the environment.
 
+**Local listen + trim (Grok explore batches):** `npm run catalog:audio:review` → [http://127.0.0.1:3747/audio-review](http://127.0.0.1:3747/audio-review). **Mint Grok emphasis** writes `takes/<slug>_emphasis.mp3` (`<emphasis>word</emphasis>`). Remint Aga backup from the same screen. ElevenLabs tile gap-fill uses a separate UI: [http://127.0.0.1:3747/audio-review/elevenlabs-tiles](http://127.0.0.1:3747/audio-review/elevenlabs-tiles) (`docs/operations/ElevenLabs_Tile_Minting.md`). Dev-only (localhost).
+
 ---
 
 ## 10. Backup voice (ElevenLabs Aga)
@@ -336,7 +429,7 @@ When a Grok take fails the ear or explore shortlist, mint the same **spoken text
 | **Mint CLI** | `npm run catalog:audio:mint-backup -- --spoken bad` |
 | **Exact TTS text** | `npm run catalog:audio:mint-backup -- --spoken bad --text "<emphasis>bad!</emphasis>"` |
 | **Output** | `data/samples/backup-mint/<slug>.mp3` plus `<slug>_raw.mp3` when burst-fix runs |
-| **Post-process** | Gentle end trim by default: if the take has **≥350 ms** of trailing silence (common ~3 s ElevenLabs pad + end spike), cut after the word + 80 ms pad and fade; otherwise fade off a terminal click in the last 80 ms. `fix-burst` is opt-in (`--fix-burst`). On *bad* it cut the /d/ and left 0.40 s. The ear kept `aga_bad_light.mp3` (0.90 s). |
+| **Post-process** | Gentle end trim by default: **only when the raw take is ≥2 s** (padded ElevenLabs tail), cut after the word + 80 ms pad and fade; never remove more than 40% of a short ~1 s take. Shorter normals keep the full raw (optional click fade in the last 80 ms only). `fix-burst` is opt-in (`--fix-burst`). On *bad* it cut the /d/ and left 0.40 s. The ear kept `aga_bad_light.mp3` (0.90 s). |
 | **Secret** | `ELEVENLABS_API_KEY` in the environment only — never commit the key. |
 
 **Process:** Grok explore shortlist first → founder listen → if reject, `mint-backup` with the same `text`/`replace` from the recipe → listen → if good, copy to `data/samples/approved/` and update `manifest.json`. Do not upload to R2 without explicit approval.

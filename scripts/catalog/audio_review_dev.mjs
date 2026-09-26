@@ -1,0 +1,578 @@
+#!/usr/bin/env node
+/**
+ * Local catalog audio review (trim tail, approve → shortlist). Dev only — binds localhost.
+ *
+ *   npm run catalog:audio:review
+ *   Grok explore:  http://127.0.0.1:3747/audio-review?batch=batch-20-core
+ *   ElevenLabs tiles: http://127.0.0.1:3747/audio-review/elevenlabs-tiles
+ */
+
+import { createServer } from "node:http";
+import {
+  copyFileSync,
+  createReadStream,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
+import { basename, dirname, extname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
+
+import { trimAudioTail } from "./audio_trim.mjs";
+import {
+  isTileReviewBatch,
+  tileTakeFilename,
+  tileVariationText,
+} from "./elevenlabs_tile_variations.mjs";
+import {
+  ensureDefaultTileTakes,
+  mintTileVariation,
+  remintAllTileVariations,
+} from "./elevenlabs_tile_mint_core.mjs";
+import {
+  catalogAudioLocalExists,
+  ensureCatalogAudioLocal,
+  enrichFileListForTiles,
+  filterFilesByShip,
+  isSlugShippedViaReview,
+  lookupCatalogWord,
+  probeR2ObjectExists,
+} from "./tile_catalog_lookup.mjs";
+import { buildGrokTtsBody, synthesizeGrokVoice } from "./grok_tts.mjs";
+import { mintBackupVoice } from "./mint_backup_voice.mjs";
+import { publishCatalogTile } from "./publish_catalog_tile.mjs";
+import { repoRoot } from "./paths.mjs";
+
+const PORT = Number(process.env.PIP_AUDIO_REVIEW_PORT) || 3747;
+const SAMPLES = join(repoRoot, "data/samples");
+const PUBLIC_HTML_GROK = join(repoRoot, "public/audio-review.html");
+const PUBLIC_HTML_ELEVENLABS_TILES = join(repoRoot, "public/audio-review-elevenlabs-tiles.html");
+
+const GROK_PIPELINE = "grok";
+const ELEVENLABS_TILES_PIPELINE = "elevenlabs-tiles";
+
+function loadEnv() {
+  try {
+    for (const line of readFileSync(join(repoRoot, ".env"), "utf8").split("\n")) {
+      const m = /^([A-Z_]+)=(.+)$/.exec(line.trim());
+      if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
+    }
+  } catch {
+    // optional
+  }
+}
+
+/** @returns {string} posix-ish path under data/samples */
+export function resolveSamplePath(relative) {
+  const clean = String(relative ?? "")
+    .replace(/^\/+/, "")
+    .split(/[/\\]/)
+    .filter((p) => p && p !== "." && p !== "..")
+    .join("/");
+  const abs = resolve(SAMPLES, clean);
+  if (!abs.startsWith(SAMPLES) || !existsSync(abs)) {
+    throw new Error("path not found");
+  }
+  return { abs, rel: clean };
+}
+
+export function slugFromMp3(filename) {
+  const base = basename(filename, extname(filename));
+  return base
+    .replace(/_recommended$/, "")
+    .replace(/_backup_raw$/, "")
+    .replace(/_backup$/, "")
+    .replace(/_emphasis_bang$/, "")
+    .replace(/_emphasis_period$/, "")
+    .replace(/_emphasis$/, "")
+    .replace(/_plain$/, "")
+    .replace(/_period$/, "")
+    .replace(/_raw$/, "");
+}
+
+/**
+ * Remove other shortlist MP3s for the same catalog slug (exact match on slugFromMp3).
+ * Keeps `keepFilename` (e.g. bath_recommended.mp3). Does not touch bathroom when slug is bath.
+ *
+ * @returns {string[]} basenames removed
+ */
+/** Always write Aga backups under batch `takes/`, even when minting from shortlist. */
+export function backupPathsForSampleRel(rel) {
+  const parts = String(rel).split("/");
+  const batch = parts[0];
+  const slug = slugFromMp3(parts[parts.length - 1]);
+  const relOut = `${batch}/takes/${slug}_backup.mp3`;
+  return { abs: join(SAMPLES, relOut), rel: relOut, slug, batch };
+}
+
+export function emphasisTakePathForSampleRel(rel) {
+  const { batch, slug } = backupPathsForSampleRel(rel);
+  const relOut = `${batch}/takes/${slug}_emphasis.mp3`;
+  return { abs: join(SAMPLES, relOut), rel: relOut, slug, batch };
+}
+
+export function emphasisGrokText(word) {
+  return `<emphasis>${word}</emphasis>`;
+}
+
+export function recipeWordForSlug(batch, slug) {
+  const recipesPath = join(SAMPLES, batch, "recipes.json");
+  if (!existsSync(recipesPath)) return { word: slug.replace(/-/g, " "), defaults: {}, slot: null };
+  const recipes = JSON.parse(readFileSync(recipesPath, "utf8"));
+  const row = (recipes.words ?? []).find((w) => w.slug === slug);
+  return {
+    word: row?.word ?? slug.replace(/-/g, " "),
+    defaults: recipes.defaults ?? {},
+    slot: row?.slot ?? null,
+  };
+}
+
+export function pruneShortlistForSlug(shortlistDir, slug, keepFilename) {
+  if (!existsSync(shortlistDir)) return [];
+  const removed = [];
+  for (const name of readdirSync(shortlistDir)) {
+    if (!name.toLowerCase().endsWith(".mp3")) continue;
+    if (name === keepFilename) continue;
+    if (slugFromMp3(name) !== slug) continue;
+    unlinkSync(join(shortlistDir, name));
+    removed.push(name);
+  }
+  return removed;
+}
+
+function json(res, status, body) {
+  res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+  res.end(JSON.stringify(body));
+}
+
+function readBody(req) {
+  return new Promise((resolveBody, reject) => {
+    const chunks = [];
+    req.on("data", (c) => chunks.push(c));
+    req.on("end", () => {
+      try {
+        resolveBody(JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}"));
+      } catch {
+        reject(new Error("invalid json"));
+      }
+    });
+    req.on("error", reject);
+  });
+}
+
+/** @param {string | null | undefined} pipeline */
+export function listBatches(pipeline) {
+  const dirs = readdirSync(SAMPLES, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name);
+  const grok = dirs.filter((n) => /^batch-\d+-core$/.test(n));
+  const tiles = dirs.filter((n) => isTileReviewBatch(n));
+  if (pipeline === GROK_PIPELINE) return grok.sort();
+  if (pipeline === ELEVENLABS_TILES_PIPELINE) return tiles.sort();
+  return [...grok, ...tiles].sort();
+}
+
+function listMp3(batch, folder) {
+  const dir = join(SAMPLES, batch, folder);
+  if (!dir.startsWith(SAMPLES) || !existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.toLowerCase().endsWith(".mp3"))
+    .sort()
+    .map((name) => {
+      const st = statSync(join(dir, name));
+      return { name, bytes: st.size, mtime: st.mtime.toISOString() };
+    });
+}
+
+function durationMs(abs) {
+  const probe = spawnSync(
+    "ffprobe",
+    ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", abs],
+    { encoding: "utf8" },
+  );
+  const sec = parseFloat(String(probe.stdout ?? "").trim());
+  return Number.isFinite(sec) ? Math.round(sec * 1000) : null;
+}
+
+async function handle(req, res) {
+  const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
+  const path = url.pathname.replace(/\/$/, "") || "/";
+
+  if (req.method === "GET" && (path === "/" || path === "/audio-review")) {
+    if (!existsSync(PUBLIC_HTML_GROK)) {
+      res.writeHead(404);
+      res.end("missing public/audio-review.html");
+      return;
+    }
+    res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    res.end(readFileSync(PUBLIC_HTML_GROK, "utf8"));
+    return;
+  }
+
+  if (req.method === "GET" && path === "/audio-review/elevenlabs-tiles") {
+    if (!existsSync(PUBLIC_HTML_ELEVENLABS_TILES)) {
+      res.writeHead(404);
+      res.end("missing public/audio-review-elevenlabs-tiles.html");
+      return;
+    }
+    res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+    res.end(readFileSync(PUBLIC_HTML_ELEVENLABS_TILES, "utf8"));
+    return;
+  }
+
+  if (path === "/api/batches" && req.method === "GET") {
+    const pipeline = url.searchParams.get("pipeline");
+    json(res, 200, { batches: listBatches(pipeline), pipeline: pipeline || "all" });
+    return;
+  }
+
+  if (path === "/api/files" && req.method === "GET") {
+    const batch = url.searchParams.get("batch");
+    const folder = url.searchParams.get("folder") || "takes";
+    const shipFilter = url.searchParams.get("shipFilter") || "all";
+    if (!batch || !["takes", "shortlist"].includes(folder)) {
+      json(res, 400, { error: "batch and folder=takes|shortlist required" });
+      return;
+    }
+    let files = listMp3(batch, folder);
+    if (isTileReviewBatch(batch)) {
+      files = enrichFileListForTiles(batch, folder, files, slugFromMp3);
+      files = filterFilesByShip(files, shipFilter);
+    }
+    json(res, 200, { batch, folder, shipFilter, files });
+    return;
+  }
+
+  if (path === "/api/tile-lookup" && req.method === "GET") {
+    try {
+      const q = url.searchParams.get("q")?.trim();
+      if (!q) throw new Error("q is required");
+      const hit = lookupCatalogWord(q);
+      const key = hit.catalogClip?.key ?? null;
+      let localExists = false;
+      let r2Exists = false;
+      if (key) {
+        localExists = catalogAudioLocalExists(key);
+        r2Exists = localExists || probeR2ObjectExists(key);
+      }
+      json(res, 200, {
+        ...hit,
+        catalog: key
+          ? {
+              key,
+              sha256: hit.catalogClip.sha256,
+              localExists,
+              r2Exists,
+              audioUrl: `/api/catalog-audio?key=${encodeURIComponent(key)}`,
+            }
+          : null,
+      });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/catalog-audio" && req.method === "GET") {
+    try {
+      const key = url.searchParams.get("key")?.trim();
+      if (!key || !key.startsWith("audio/") || key.includes("..")) {
+        throw new Error("invalid catalog audio key");
+      }
+      const abs = ensureCatalogAudioLocal(key);
+      res.writeHead(200, {
+        "content-type": "audio/mpeg",
+        "cache-control": "no-store",
+        "x-pip-catalog-key": key,
+      });
+      createReadStream(abs).pipe(res);
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/remint-tile-all" && req.method === "POST") {
+    try {
+      loadEnv();
+      const body = await readBody(req);
+      const q = String(body.q ?? body.query ?? body.slug ?? "").trim();
+      if (!q) throw new Error("q is required");
+      const hit = lookupCatalogWord(q);
+      const paths = await remintAllTileVariations({
+        slug: hit.slug,
+        spokenText: hit.spokenText,
+        samplesRoot: SAMPLES,
+        includeEmphasis: true,
+      });
+      json(res, 200, {
+        slug: hit.slug,
+        spokenText: hit.spokenText,
+        slot: hit.slot,
+        paths,
+        openPath: paths[0],
+      });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/meta" && req.method === "GET") {
+    try {
+      const { abs, rel } = resolveSamplePath(url.searchParams.get("path"));
+      const file = basename(abs);
+      const slug = slugFromMp3(file);
+      const batch = rel.split("/")[0];
+      const backupAbs = join(SAMPLES, batch, "takes", `${slug}_backup.mp3`);
+      const backupExists = existsSync(backupAbs);
+      const backupPath = backupExists ? `${batch}/takes/${slug}_backup.mp3` : null;
+      const emphasisAbs = join(SAMPLES, batch, "takes", `${slug}_emphasis.mp3`);
+      const emphasisExists = existsSync(emphasisAbs);
+      const emphasisPath = emphasisExists ? `${batch}/takes/${slug}_emphasis.mp3` : null;
+      const { word, slot } = recipeWordForSlug(batch, slug);
+      const tiles = isTileReviewBatch(batch);
+      json(res, 200, {
+        path: rel,
+        slug,
+        mode: tiles ? "tiles" : "grok",
+        slot,
+        durationMs: durationMs(abs),
+        bytes: statSync(abs).size,
+        backupExists: tiles ? false : backupExists,
+        backupPath: tiles ? null : backupPath,
+        emphasisExists: tiles ? false : emphasisExists,
+        emphasisPath: tiles ? null : emphasisPath,
+        emphasisText: tiles ? null : emphasisGrokText(word),
+        tileCapsExists: tiles ? emphasisExists : false,
+        tileCapsPath: tiles ? emphasisPath : null,
+        tileCapsText: tiles ? tileVariationText(word, "emphasis") : null,
+        shippedViaReview: tiles ? isSlugShippedViaReview(slug) : false,
+        isBackupTake: /_backup(?:_raw)?\.mp3$/i.test(file),
+      });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/audio" && req.method === "GET") {
+    try {
+      const { abs, rel } = resolveSamplePath(url.searchParams.get("path"));
+      res.writeHead(200, {
+        "content-type": "audio/mpeg",
+        "cache-control": "no-store",
+        "x-pip-path": rel,
+      });
+      createReadStream(abs).pipe(res);
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/trim" && req.method === "POST") {
+    try {
+      const body = await readBody(req);
+      const ms = Number(body.ms);
+      if (![20, 50, 100].includes(ms)) throw new Error("ms must be 20, 50, or 100");
+      const { abs, rel } = resolveSamplePath(body.path);
+      const tmp = `${abs}.trim-tmp.mp3`;
+      trimAudioTail({ sourcePath: abs, destPath: tmp, trimTailMs: ms, minTrimMs: 20 });
+      copyFileSync(tmp, abs);
+      unlinkSync(tmp);
+      json(res, 200, { path: rel, trimmedMs: ms, durationMs: durationMs(abs) });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/approve" && req.method === "POST") {
+    try {
+      const body = await readBody(req);
+      const { abs, rel } = resolveSamplePath(body.path);
+      const parts = rel.split("/");
+      const batch = parts[0];
+      const file = parts[parts.length - 1];
+      const slug = slugFromMp3(file);
+      const shortlistDir = join(SAMPLES, batch, "shortlist");
+      mkdirSync(shortlistDir, { recursive: true });
+      const destName = `${slug}_recommended.mp3`;
+      const destAbs = join(shortlistDir, destName);
+      copyFileSync(abs, destAbs);
+      const removed = pruneShortlistForSlug(shortlistDir, slug, destName);
+      json(res, 200, {
+        source: rel,
+        shortlist: `${batch}/shortlist/${destName}`,
+        slug,
+        removedFromShortlist: removed,
+      });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/ensure-tile-takes" && req.method === "POST") {
+    try {
+      loadEnv();
+      const body = await readBody(req);
+      const { rel } = resolveSamplePath(body.path);
+      const { batch, slug } = backupPathsForSampleRel(rel);
+      if (!isTileReviewBatch(batch)) {
+        throw new Error("ensure-tile-takes is only for the ElevenLabs tile review batch");
+      }
+      const { word } = recipeWordForSlug(batch, slug);
+      let spoken = word;
+      if (!spoken || spoken === slug.replace(/-/g, " ")) {
+        try {
+          spoken = lookupCatalogWord(slug).spokenText;
+        } catch {
+          // keep recipe fallback
+        }
+      }
+      const minted = await ensureDefaultTileTakes(slug, batch, SAMPLES, spoken);
+      const paths = minted.map((id) => `${batch}/takes/${tileTakeFilename(slug, id)}`);
+      json(res, 200, { slug, minted, paths });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/remint-backup" && req.method === "POST") {
+    try {
+      loadEnv();
+      const body = await readBody(req);
+      const { rel } = resolveSamplePath(body.path);
+      const { batch } = backupPathsForSampleRel(rel);
+      if (isTileReviewBatch(batch)) {
+        throw new Error("Aga backup is for Grok explore batches only — use /audio-review/elevenlabs-tiles");
+      }
+      const { abs: outPath, rel: relOut, slug } = backupPathsForSampleRel(rel);
+      const { word: spoken } = recipeWordForSlug(batch, slug);
+      mkdirSync(dirname(outPath), { recursive: true });
+      const result = await mintBackupVoice({ spoken, outPath, gentleTrim: true, fixBurst: false });
+      json(res, 200, { ...result, path: relOut });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/mint-elevenlabs-tile" && req.method === "POST") {
+    try {
+      loadEnv();
+      const body = await readBody(req);
+      const variationId = String(body.variationId ?? "emphasis");
+      const { rel } = resolveSamplePath(body.path);
+      const { batch, slug } = backupPathsForSampleRel(rel);
+      if (!isTileReviewBatch(batch)) {
+        throw new Error("mint-elevenlabs-tile is only for the ElevenLabs tile review UI");
+      }
+      const result = await mintTileVariation({
+        batch,
+        slug,
+        variationId,
+        samplesRoot: SAMPLES,
+      });
+      json(res, 200, {
+        path: result.relOut,
+        text: result.text,
+        variationId: result.variationId,
+        bytes: result.bytes,
+        durationMs: durationMs(result.outPath),
+      });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/publish-tile" && req.method === "POST") {
+    try {
+      const body = await readBody(req);
+      const dryRun = Boolean(body.dryRun);
+      const { abs, rel } = resolveSamplePath(body.path);
+      const parts = rel.split("/");
+      const batch = parts[0];
+      if (!isTileReviewBatch(batch)) throw new Error("publish-tile is only for tile review batches");
+      const slug = slugFromMp3(parts[parts.length - 1]);
+      let word;
+      let slot;
+      try {
+        const row = recipeWordForSlug(batch, slug);
+        word = row.word;
+        slot = row.slot;
+      } catch {
+        // word may exist in catalog import but not tile recipes
+      }
+      if (slot == null) {
+        const hit = lookupCatalogWord(slug);
+        word = hit.spokenText;
+        slot = hit.slot;
+      }
+      if (slot == null) throw new Error(`no lexicon slot for slug ${slug}`);
+      const result = publishCatalogTile({
+        sourceMp3Path: abs,
+        slot,
+        spokenText: word,
+        dryRun,
+      });
+      json(res, 200, { ...result, source: rel });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/mint-grok-emphasis" && req.method === "POST") {
+    try {
+      loadEnv();
+      const body = await readBody(req);
+      const { rel } = resolveSamplePath(body.path);
+      const { abs: outPath, rel: relOut, slug, batch } = emphasisTakePathForSampleRel(rel);
+      if (isTileReviewBatch(batch)) {
+        throw new Error("Grok emphasis is for explore batches only — use caps emphasis on /audio-review/elevenlabs-tiles");
+      }
+      const { word, defaults } = recipeWordForSlug(batch, slug);
+      const text = emphasisGrokText(word);
+      const ttsBody = buildGrokTtsBody(text, {
+        voiceId: defaults.voice_id ?? "ara",
+        language: defaults.language ?? "en",
+        speed: defaults.speed ?? 1,
+      });
+      mkdirSync(dirname(outPath), { recursive: true });
+      const buf = await synthesizeGrokVoice(ttsBody);
+      writeFileSync(outPath, buf);
+      json(res, 200, {
+        path: relOut,
+        text,
+        bytes: buf.length,
+        durationMs: durationMs(outPath),
+      });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  json(res, 404, { error: "not found" });
+}
+
+const invoked = process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1]);
+if (invoked) {
+  loadEnv();
+  createServer((req, res) => {
+    handle(req, res).catch((err) => json(res, 500, { error: String(err) }));
+  }).listen(PORT, "127.0.0.1", () => {
+    console.log(`Pip AAC Grok explore review:  http://127.0.0.1:${PORT}/audio-review`);
+    console.log(`Pip AAC ElevenLabs tile review: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles`);
+  });
+}

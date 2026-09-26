@@ -16,9 +16,10 @@ tablet.
 1. **Whole-sentence speech with Grok Voice.** ▶ and the transform buttons
    speak the sentence as one natural utterance instead of gluing word clips
    together.
-2. **One voice everywhere.** The single-word catalog clips are re-made in the
-   same Grok voice, so a tapped word, a spoken sentence and a transformed
-   sentence all sound like the same person. This answers 023 § 5 item 1.
+2. **One voice everywhere (sentences first; tiles deferred).** ▶ and transform
+   buttons use Grok (`ara`). **Single-word tiles** stay on human / ElevenLabs
+   catalog audio (`WWMMC6k9tdar0BthUenK`) until a founder-approved Grok
+   catalog re-make ships. Two APIs is acceptable for launch.
 3. **A cache** so repeated sentences play fast and work offline: on her
    device first, then a shared Cloudflare R2 cache for sentences made of
    Pip's own words and common names (§ 5).
@@ -192,18 +193,17 @@ license, never shown to the child:
 5. **Log every time a license hits the limit.** If real children ever do,
    the limit is wrong.
 
-## 7. Replacing ElevenLabs for the catalog clips
+## 7. Catalog clips: ElevenLabs tiles now, Grok re-make on hold
 
-ElevenLabs costs $30–100+ per 1M characters; Grok Voice $4.20. Grok (`ara`)
-was tested on the hardest single function words (*a, an, the, in, to, and*).
-Founder listen 2026-09-25: IPA where spelling lies, plain text where it does
-not, no `<soft>` tags. Rules and the approved files:
-`docs/operations/Grok_Voice_Synthesis_Best_Practices.md`. Whisper checks that
-the word came through; the listen decides whether it sounds natural.
+**Ship truth (2026-09-26):** launch tiles use WorkbookBench R2 hits plus
+ElevenLabs gap-fill for misses (`generate_missing_audio.mjs` /
+`docs/operations/ElevenLabs_Tile_Minting.md`). Ear review + R2 publish for
+new tile mints goes through `elevenlabs-tiles-core` and the local review UI.
 
-Re-making the clips changes every word's voice once, which is why it happens
-before launch. The existing pipeline stays (WorkbookBench is no longer the
-first source for this voice, since its clips are a different voice).
+**Deferred:** bulk re-make of the full catalog in Grok (`ara`). Exploration
+audio under `data/samples/` stays; slice 4 below is **not** active until the
+founder resumes that track. Grok rules and approved exploration clips:
+`docs/operations/Grok_Voice_Synthesis_Best_Practices.md`.
 
 ## 8. Slices
 
@@ -254,8 +254,9 @@ first source for this voice, since its clips are a different voice).
    re-pressing a held state re-speaks without a model call; model
    buttons grey out offline while ▶ always speaks. `bar-btn.speaking`
    holds the pressed-dark state for the audio's length.
-4. **Catalog re-make:** `scripts/catalog/generate_missing_audio.mjs` switches
-   to Grok Voice with the phonetics table, one clip set per voice.
+4. **Catalog re-make (on hold):** switch tile minting to Grok Voice with the
+   phonetics table. Until then, tiles stay ElevenLabs; see § 7 and
+   `ElevenLabs_Tile_Minting.md`.
 5. **Measure on a real tablet:** p95 time to first sound for a cache hit, a
    cache miss, and the clip fallback; plus the Tier 1 and Tier 2 hit rates
    in real use.

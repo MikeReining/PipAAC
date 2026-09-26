@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — ElevenLabs tile audio review</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #2a7a4b; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .pipeline { font-size: 13px; color: #6b665c; margin: 0 0 10px; max-width: 52rem; line-height: 1.45; }
+    .pipeline a { color: var(--accent); text-decoration: none; }
+    .pipeline a:hover { text-decoration: underline; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    select, button { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--edge); background: #fff; }
+    button { cursor: pointer; }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    button:disabled { opacity: 0.45; cursor: default; }
+    main { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 96px); }
+    @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+    aside { border-right: 1px solid var(--edge); padding: 12px; background: #fff; overflow: auto; max-height: calc(100vh - 96px); }
+    aside ul { list-style: none; padding: 0; margin: 8px 0 0; }
+    aside li { margin: 2px 0; }
+    aside button.file { width: 100%; text-align: left; border: none; background: transparent; padding: 6px 8px; border-radius: 6px; }
+    aside button.file[aria-current="true"] { background: #e6f4ec; font-weight: 600; }
+    section { padding: 16px 20px; }
+    .wave-wrap { position: relative; width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--edge); background: #fff; }
+    #wave { width: 100%; height: 140px; display: block; cursor: pointer; }
+    .meta { font-size: 13px; color: #6b665c; margin: 10px 0 14px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    #status { font-size: 13px; min-height: 1.2em; margin-top: 8px; color: #6b665c; }
+    audio { width: 100%; margin-top: 12px; }
+    input[type="search"] { min-width: 14rem; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--edge); font: inherit; }
+    .lookup-panel { margin-top: 10px; padding: 10px 12px; background: #f0f7f2; border: 1px solid #c5dcc9; border-radius: 8px; font-size: 13px; max-width: 52rem; }
+    .lookup-panel[hidden] { display: none !important; }
+    .badge { font-size: 11px; padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+    .badge.shipped { background: #e6f4ec; color: #1b5e34; }
+    .badge.needs { background: #fff3e0; color: #e65100; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ElevenLabs tile review</h1>
+    <p class="pipeline">Pipeline: <strong>catalog voice</strong> (<code>eleven_v3</code>, WBB settings) for launch-lexicon gap-fill.
+      Plain and period takes are minted automatically when you open a word. Optional <em>caps emphasis</em> is a second ElevenLabs take (ALL CAPS text — not Grok).
+      <a href="/audio-review">Grok explore review</a> is unchanged (Aga backup + Grok emphasis).</p>
+    <div class="row">
+      <label>Look up catalog <input type="search" id="word-lookup" placeholder="e.g. all done, christmas" autocomplete="off"></label>
+      <button type="button" id="lookup-go">Look up</button>
+    </div>
+    <div id="lookup-panel" class="lookup-panel" hidden>
+      <p id="lookup-summary"></p>
+      <div class="row" style="margin-top:8px">
+        <button type="button" id="lookup-play">Play live catalog clip</button>
+        <button type="button" id="remint-all">Remint plain + period + emphasis</button>
+        <button type="button" id="lookup-open-takes">Open takes in list</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label>Folder <select id="folder"><option value="takes">takes</option><option value="shortlist">shortlist</option></select></label>
+      <label>Show <select id="ship-filter">
+        <option value="all">all files</option>
+        <option value="needs-ship" selected>needs publish</option>
+        <option value="shipped">published via review</option>
+      </select></label>
+      <button type="button" id="reload">Reload list</button>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <strong>Files</strong> <span id="batch-label" style="font-size:12px;color:#6b665c"></span>
+      <ul id="files"></ul>
+    </aside>
+    <section>
+      <p class="meta" id="meta">Select a file.</p>
+      <div class="wave-wrap">
+        <canvas id="wave" width="900" height="140" title="Click to seek"></canvas>
+      </div>
+      <audio id="player" controls></audio>
+      <div class="actions">
+        <button type="button" data-trim="20">Trim tail −20 ms</button>
+        <button type="button" data-trim="50">Trim tail −50 ms</button>
+        <button type="button" data-trim="100">Trim tail −100 ms</button>
+        <button type="button" id="mint-caps-emphasis" hidden>Mint caps emphasis (ElevenLabs)</button>
+        <button type="button" class="primary" id="approve">Approve → shortlist</button>
+        <button type="button" id="publish-tile">Publish → R2 + catalog</button>
+      </div>
+      <p id="status"></p>
+    </section>
+  </main>
+  <script>
+    const TILE_BATCH = "elevenlabs-tiles-core";
+    const $ = (id) => document.getElementById(id);
+    const player = $("player");
+    const canvas = $("wave");
+    let currentPath = null;
+    let waveData = null;
+    let playheadRaf = 0;
+    let fileListPaths = [];
+    /** @type {null | { slug: string, spokenText: string, catalog: { audioUrl: string, key: string } | null }} */
+    let lookupHit = null;
+
+    function qs() {
+      return new URLSearchParams(location.search);
+    }
+
+    function setStatus(msg, isErr) {
+      $("status").textContent = msg || "";
+      $("status").style.color = isErr ? "#c62828" : "#6b665c";
+    }
+
+    async function api(path, opts) {
+      const res = await fetch(path, opts);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || res.statusText);
+      return body;
+    }
+
+    async function loadFiles() {
+      const folder = $("folder").value;
+      const shipFilter = $("ship-filter").value;
+      const { batches } = await api("/api/batches?pipeline=elevenlabs-tiles");
+      const batch = batches[0] || TILE_BATCH;
+      $("batch-label").textContent = `(${batch})`;
+      const { files } = await api(
+        `/api/files?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}&shipFilter=${encodeURIComponent(shipFilter)}`,
+      );
+      const ul = $("files");
+      ul.innerHTML = "";
+      fileListPaths = files.map((f) => `${batch}/${folder}/${f.name}`);
+      const want = qs().get("file");
+      for (const f of files) {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "file";
+        const tag = f.shippedViaReview ? "✓ pub" : "○";
+        btn.textContent = `${tag} ${f.name}`;
+        const fullPath = `${batch}/${folder}/${f.name}`;
+        btn.onclick = () => selectFile(fullPath);
+        li.appendChild(btn);
+        ul.appendChild(li);
+        if (want && f.name === want) selectFile(fullPath);
+      }
+      history.replaceState(null, "", `?folder=${encodeURIComponent(folder)}&ship=${encodeURIComponent(shipFilter)}`);
+    }
+
+    async function runLookup() {
+      const q = $("word-lookup").value.trim();
+      if (!q) return;
+      const hit = await api(`/api/tile-lookup?q=${encodeURIComponent(q)}`);
+      lookupHit = hit;
+      $("lookup-panel").hidden = false;
+      const cat = hit.catalog;
+      const ship = hit.shippedViaReview ? "published via this review UI" : "not published via review yet";
+      const r2 = cat ? (cat.r2Exists ? "R2: yes" : "R2: not found") : "no catalog clip";
+      const local = cat ? (cat.localExists ? "local cache: yes" : "local cache: no") : "";
+      $("lookup-summary").textContent = `${hit.spokenText} (slot ${hit.slot}) — ${ship}. ${r2}. ${local}${cat ? ` Key: ${cat.key}` : ""}`;
+    }
+
+    function drawWaveWithPlayhead(currentTimeSec) {
+      if (!waveData) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      const { peaks, duration } = waveData;
+      const ratio = duration > 0 ? Math.min(1, Math.max(0, currentTimeSec / duration)) : 0;
+      const playX = Math.round(ratio * (w - 1));
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, w, h);
+      for (let x = 0; x < peaks.length; x++) {
+        const { min, max } = peaks[x];
+        const y1 = (1 - max) * 0.5 * h;
+        const y2 = (1 - min) * 0.5 * h;
+        ctx.fillStyle = x <= playX ? "#1e5c36" : "#9fd4b0";
+        ctx.fillRect(x, y1, 1, Math.max(1, y2 - y1));
+      }
+      ctx.strokeStyle = "#c62828";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(playX, 0);
+      ctx.lineTo(playX, h);
+      ctx.stroke();
+    }
+
+    function stopPlayheadLoop() {
+      if (playheadRaf) cancelAnimationFrame(playheadRaf);
+      playheadRaf = 0;
+    }
+
+    function startPlayheadLoop() {
+      stopPlayheadLoop();
+      const tick = () => {
+        drawWaveWithPlayhead(player.currentTime);
+        if (!player.paused && !player.ended) playheadRaf = requestAnimationFrame(tick);
+      };
+      playheadRaf = requestAnimationFrame(tick);
+    }
+
+    async function drawWave(url) {
+      stopPlayheadLoop();
+      waveData = null;
+      const res = await fetch(url);
+      const buf = await res.arrayBuffer();
+      const ac = new AudioContext();
+      const audio = await ac.decodeAudioData(buf.slice(0));
+      const ch = audio.getChannelData(0);
+      const w = canvas.width;
+      const h = canvas.height;
+      const step = Math.ceil(ch.length / w);
+      const peaks = [];
+      for (let x = 0; x < w; x++) {
+        let min = 1;
+        let max = -1;
+        const start = x * step;
+        for (let i = 0; i < step && start + i < ch.length; i++) {
+          const v = ch[start + i];
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+        peaks.push({ min, max });
+      }
+      waveData = { peaks, duration: audio.duration };
+      await ac.close();
+      drawWaveWithPlayhead(0);
+    }
+
+    canvas.addEventListener("click", (e) => {
+      if (!waveData || !Number.isFinite(player.duration) || player.duration <= 0) return;
+      const rect = canvas.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      player.currentTime = ratio * player.duration;
+      drawWaveWithPlayhead(player.currentTime);
+    });
+
+    player.addEventListener("play", startPlayheadLoop);
+    player.addEventListener("pause", () => {
+      stopPlayheadLoop();
+      drawWaveWithPlayhead(player.currentTime);
+    });
+    player.addEventListener("seeked", () => drawWaveWithPlayhead(player.currentTime));
+    player.addEventListener("ended", () => drawWaveWithPlayhead(waveData?.duration ?? 0));
+
+    function updateCapsButton(meta) {
+      const btn = $("mint-caps-emphasis");
+      if (!meta?.slug) {
+        btn.hidden = true;
+        return;
+      }
+      btn.hidden = false;
+      btn.textContent = meta.tileCapsExists
+        ? "Remint caps emphasis (ElevenLabs)"
+        : "Mint caps emphasis (ElevenLabs)";
+      btn.title = meta.tileCapsText ? `ElevenLabs text: ${meta.tileCapsText}` : "";
+    }
+
+    async function openTake(path) {
+      $("folder").value = "takes";
+      await loadFiles();
+      if (!fileListPaths.includes(path)) fileListPaths = [...fileListPaths, path].sort();
+      await selectFile(path);
+    }
+
+    async function selectFile(path) {
+      currentPath = path;
+      const baseName = path.split("/").pop();
+      document.querySelectorAll("button.file").forEach((b) => {
+        b.setAttribute("aria-current", b.textContent.endsWith(baseName) ? "true" : "false");
+      });
+      setStatus("Ensuring plain + period takes…");
+      const ensured = await api("/api/ensure-tile-takes", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path }),
+      });
+      if (ensured.minted?.length) {
+        await loadFiles();
+        setStatus(`Auto-minted: ${ensured.minted.join(", ")}`);
+      }
+      const meta = await api(`/api/meta?path=${encodeURIComponent(path)}`);
+      updateCapsButton(meta);
+      $("publish-tile").disabled = meta.slot == null;
+      const slotNote = meta.slot != null ? ` — slot ${meta.slot}` : "";
+      $("meta").textContent = `${path}${slotNote} — ${meta.durationMs != null ? (meta.durationMs / 1000).toFixed(2) + " s" : "?"} — ${meta.bytes} bytes`;
+      const url = `/api/audio?path=${encodeURIComponent(path)}&t=${Date.now()}`;
+      player.src = url;
+      await drawWave(url);
+      if (player.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+        await new Promise((resolve) => player.addEventListener("loadeddata", resolve, { once: true }));
+      }
+      player.currentTime = 0;
+      drawWaveWithPlayhead(0);
+      try {
+        await player.play();
+        startPlayheadLoop();
+      } catch {
+        // ok
+      }
+      if (!ensured.minted?.length) setStatus("");
+      history.replaceState(null, "", `?folder=${encodeURIComponent($("folder").value)}&file=${encodeURIComponent(path.split("/").pop())}`);
+    }
+
+    async function trim(ms) {
+      if (!currentPath) return;
+      const r = await api("/api/trim", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath, ms }),
+      });
+      setStatus(`Trimmed ${r.trimmedMs} ms from tail. Duration now ${(r.durationMs / 1000).toFixed(2)} s.`);
+      await selectFile(currentPath);
+    }
+
+    $("lookup-go").onclick = () => runLookup().catch((e) => setStatus(e.message, true));
+    $("word-lookup").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        runLookup().catch((err) => setStatus(err.message, true));
+      }
+    });
+    $("lookup-play").onclick = () => {
+      if (!lookupHit?.catalog?.audioUrl) {
+        setStatus("No catalog clip to play.", true);
+        return;
+      }
+      const url = `${lookupHit.catalog.audioUrl}&t=${Date.now()}`;
+      player.src = url;
+      currentPath = null;
+      $("meta").textContent = `Live catalog: ${lookupHit.catalog.key}`;
+      drawWave(url).then(() => player.play().catch(() => {}));
+    };
+    $("remint-all").onclick = () => {
+      const q = $("word-lookup").value.trim() || lookupHit?.spokenText;
+      if (!q) return;
+      if (!confirm(`Remint plain, period, and caps emphasis for "${q}"?`)) return;
+      setStatus("Reminting all variants…");
+      api("/api/remint-tile-all", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ q }),
+      })
+        .then(async (r) => {
+          setStatus(`Reminted ${r.paths.length} takes. Pick one, trim if needed, then Publish.`);
+          $("folder").value = "takes";
+          $("ship-filter").value = "all";
+          await loadFiles();
+          await selectFile(r.openPath);
+        })
+        .catch((e) => setStatus(e.message, true));
+    };
+    $("lookup-open-takes").onclick = async () => {
+      if (!lookupHit?.slug) return;
+      $("folder").value = "takes";
+      $("ship-filter").value = "all";
+      await loadFiles();
+      const batch = TILE_BATCH;
+      const plain = `${batch}/takes/${lookupHit.slug}_plain.mp3`;
+      if (fileListPaths.includes(plain)) await selectFile(plain);
+      else setStatus(`No takes yet for ${lookupHit.spokenText} — use Remint or open any matching file.`, true);
+    };
+
+    $("reload").onclick = () => loadFiles();
+    $("folder").onchange = () => loadFiles();
+    $("ship-filter").onchange = () => loadFiles();
+    document.querySelectorAll("[data-trim]").forEach((btn) => {
+      btn.onclick = () => trim(Number(btn.dataset.trim)).catch((e) => setStatus(e.message, true));
+    });
+    $("approve").onclick = () => {
+      if (!currentPath) return;
+      api("/api/approve", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath }),
+      })
+        .then((r) => {
+          const extra =
+            r.removedFromShortlist?.length
+              ? ` Removed ${r.removedFromShortlist.length} other shortlist take(s).`
+              : "";
+          setStatus(`Approved → ${r.shortlist}.${extra}`);
+        })
+        .catch((e) => setStatus(e.message, true));
+    };
+    $("mint-caps-emphasis").onclick = () => {
+      if (!currentPath) return;
+      const minting = $("mint-caps-emphasis").textContent.startsWith("Mint");
+      setStatus(minting ? "Minting ElevenLabs caps emphasis…" : "Reminting…");
+      api("/api/mint-elevenlabs-tile", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath, variationId: "emphasis" }),
+      })
+        .then(async (r) => {
+          setStatus(`${minting ? "Minted" : "Reminted"} ${r.path} (${r.text})`);
+          await openTake(r.path);
+        })
+        .catch((e) => setStatus(e.message, true));
+    };
+    $("publish-tile").onclick = () => {
+      if (!currentPath) return;
+      if (!confirm("Copy this clip to assets/catalog, update generated_audio.json, and upload to workbookbench-catalog R2?")) return;
+      setStatus("Publishing to catalog + R2…");
+      api("/api/publish-tile", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath }),
+      })
+        .then(async (r) => {
+          setStatus(`Published slot ${r.slot} → ${r.clip.key}`);
+          await loadFiles();
+        })
+        .catch((e) => setStatus(e.message, true));
+    };
+
+    document.addEventListener("keydown", (e) => {
+      if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") return;
+      if (e.code === "Space") {
+        e.preventDefault();
+        player.currentTime = 0;
+        player.play().catch(() => {});
+      }
+    });
+
+    (async () => {
+      try {
+        const qFolder = qs().get("folder");
+        if (qFolder) $("folder").value = qFolder;
+        const qShip = qs().get("ship");
+        if (qShip) $("ship-filter").value = qShip;
+        const qWord = qs().get("q");
+        if (qWord) {
+          $("word-lookup").value = qWord;
+          await runLookup();
+        }
+        await loadFiles();
+        const file = qs().get("file");
+        if (file) await selectFile(`${TILE_BATCH}/${$("folder").value}/${file}`);
+      } catch (e) {
+        setStatus(e.message, true);
+      }
+    })();
+  </script>
+</body>
+</html>
