@@ -160,6 +160,30 @@ function pitchSlope(row) {
   return Number.isFinite(value) ? value : null;
 }
 
+/** Notes or scores that mean Grok did not produce a listen-ready shortlist pick. */
+const BACKUP_TRIGGER_NOTES = new Set([
+  "whisper_failed",
+  "whisper_mismatch",
+  "whisper_reject",
+  "whisper_missing",
+  "tail_burst",
+  "residue_shelf",
+  "echo_return",
+  "too_short",
+]);
+
+/**
+ * When true, mint ElevenLabs Aga backup after explore score (founder still listens).
+ * @param {{ score?: number, notes?: string[] } | null | undefined} winner
+ */
+export function needsElevenLabsBackup(winner, { minScore = 110 } = {}) {
+  if (!winner) return true;
+  if (typeof winner.score !== "number" || winner.score < minScore) return true;
+  return (winner.notes ?? []).some(
+    (n) => BACKUP_TRIGGER_NOTES.has(n) || String(n).startsWith("gate_"),
+  );
+}
+
 export function pickBestPerWord(scoredRows) {
   const byWord = new Map();
   for (const row of scoredRows) {

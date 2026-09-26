@@ -1,0 +1,292 @@
+[
+  {
+    "file": "takes/shoulder_plain.mp3",
+    "word": "shoulder",
+    "variation": "plain",
+    "text": "shoulder",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Shoulder.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/shoulder_period.mp3",
+    "word": "shoulder",
+    "variation": "period",
+    "text": "shoulder.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Shoulder.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/arm_plain.mp3",
+    "word": "arm",
+    "variation": "plain",
+    "text": "arm",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Arm.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/arm_period.mp3",
+    "word": "arm",
+    "variation": "period",
+    "text": "arm.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " arm",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hand_plain.mp3",
+    "word": "hand",
+    "variation": "plain",
+    "text": "hand",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " hand",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hand_period.mp3",
+    "word": "hand",
+    "variation": "period",
+    "text": "hand.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " hand",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fingers_plain.mp3",
+    "word": "fingers",
+    "variation": "plain",
+    "text": "fingers",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Fingers.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fingers_period.mp3",
+    "word": "fingers",
+    "variation": "period",
+    "text": "fingers.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Fingers.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tummy_plain.mp3",
+    "word": "tummy",
+    "variation": "plain",
+    "text": "tummy",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Tummy.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tummy_period.mp3",
+    "word": "tummy",
+    "variation": "period",
+    "text": "tummy.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Tummy.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/back_plain.mp3",
+    "word": "back",
+    "variation": "plain",
+    "text": "back",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Back.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/back_period.mp3",
+    "word": "back",
+    "variation": "period",
+    "text": "back.",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " Back.",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/leg_plain.mp3",
+    "word": "leg",
+    "variation": "plain",
+    "text": "leg",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " leg",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/leg_period.mp3",
+    "word": "leg",
+    "variation": "period",
+    "text": "leg.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Leg.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/knee_plain.mp3",
+    "word": "knee",
+    "variation": "plain",
+    "text": "knee",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " knee",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/knee_period.mp3",
+    "word": "knee",
+    "variation": "period",
+    "text": "knee.",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " ni",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/foot_plain.mp3",
+    "word": "foot",
+    "variation": "plain",
+    "text": "foot",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " foot.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/foot_period.mp3",
+    "word": "foot",
+    "variation": "period",
+    "text": "foot.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Foot.",
+    "notes": [
+      "too_short",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toes_plain.mp3",
+    "word": "toes",
+    "variation": "plain",
+    "text": "toes",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " toes",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toes_period.mp3",
+    "word": "toes",
+    "variation": "period",
+    "text": "toes.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " toes",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/foot_backup.mp3",
+    "word": "foot",
+    "variation": "backup",
+    "text": "foot",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " foot.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  }
+]

@@ -1,0 +1,706 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T13:36:32.873Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-19-core",
+  "scored": [
+    {
+      "word": "shoulder",
+      "slug": "shoulder",
+      "variationId": "plain",
+      "file": "shoulder_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/shoulder_plain.mp3",
+      "whisper": " Shoulder.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -31,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "shoulder"
+      }
+    },
+    {
+      "word": "shoulder",
+      "slug": "shoulder",
+      "variationId": "period",
+      "file": "shoulder_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/shoulder_period.mp3",
+      "whisper": " Shoulder.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "shoulder."
+      }
+    },
+    {
+      "word": "arm",
+      "slug": "arm",
+      "variationId": "plain",
+      "file": "arm_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/arm_plain.mp3",
+      "whisper": " Arm.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -24,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "arm"
+      }
+    },
+    {
+      "word": "arm",
+      "slug": "arm",
+      "variationId": "period",
+      "file": "arm_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/arm_period.mp3",
+      "whisper": " arm",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "arm."
+      }
+    },
+    {
+      "word": "hand",
+      "slug": "hand",
+      "variationId": "plain",
+      "file": "hand_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/hand_plain.mp3",
+      "whisper": " hand",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 25,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hand"
+      }
+    },
+    {
+      "word": "hand",
+      "slug": "hand",
+      "variationId": "period",
+      "file": "hand_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/hand_period.mp3",
+      "whisper": " hand",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 37,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hand."
+      }
+    },
+    {
+      "word": "fingers",
+      "slug": "fingers",
+      "variationId": "plain",
+      "file": "fingers_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/fingers_plain.mp3",
+      "whisper": " Fingers.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -29,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fingers"
+      }
+    },
+    {
+      "word": "fingers",
+      "slug": "fingers",
+      "variationId": "period",
+      "file": "fingers_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/fingers_period.mp3",
+      "whisper": " Fingers.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -68,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fingers."
+      }
+    },
+    {
+      "word": "tummy",
+      "slug": "tummy",
+      "variationId": "plain",
+      "file": "tummy_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/tummy_plain.mp3",
+      "whisper": " Tummy.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -20,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tummy"
+      }
+    },
+    {
+      "word": "tummy",
+      "slug": "tummy",
+      "variationId": "period",
+      "file": "tummy_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/tummy_period.mp3",
+      "whisper": " Tummy.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -40,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tummy."
+      }
+    },
+    {
+      "word": "back",
+      "slug": "back",
+      "variationId": "plain",
+      "file": "back_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/back_plain.mp3",
+      "whisper": " Back.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "back"
+      }
+    },
+    {
+      "word": "back",
+      "slug": "back",
+      "variationId": "period",
+      "file": "back_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/back_period.mp3",
+      "whisper": " Back.",
+      "score": 55,
+      "notes": [
+        "tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": true,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "back."
+      }
+    },
+    {
+      "word": "leg",
+      "slug": "leg",
+      "variationId": "plain",
+      "file": "leg_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/leg_plain.mp3",
+      "whisper": " leg",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -42,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "leg"
+      }
+    },
+    {
+      "word": "leg",
+      "slug": "leg",
+      "variationId": "period",
+      "file": "leg_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/leg_period.mp3",
+      "whisper": " Leg.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -24,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "leg."
+      }
+    },
+    {
+      "word": "knee",
+      "slug": "knee",
+      "variationId": "plain",
+      "file": "knee_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/knee_plain.mp3",
+      "whisper": " knee",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -42,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "knee"
+      }
+    },
+    {
+      "word": "knee",
+      "slug": "knee",
+      "variationId": "period",
+      "file": "knee_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/knee_period.mp3",
+      "whisper": " ni",
+      "score": -1000,
+      "notes": [
+        "whisper_mismatch"
+      ],
+      "durMs": null,
+      "tailBurst": null,
+      "pitchSlopeHz": null,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "knee."
+      }
+    },
+    {
+      "word": "foot",
+      "slug": "foot",
+      "variationId": "plain",
+      "file": "foot_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/foot_plain.mp3",
+      "whisper": " foot.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": -9,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "foot"
+      }
+    },
+    {
+      "word": "foot",
+      "slug": "foot",
+      "variationId": "period",
+      "file": "foot_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/foot_period.mp3",
+      "whisper": " Foot.",
+      "score": 70,
+      "notes": [
+        "too_short",
+        "no_tail_burst"
+      ],
+      "durMs": 530,
+      "tailBurst": false,
+      "pitchSlopeHz": -19,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "foot."
+      }
+    },
+    {
+      "word": "toes",
+      "slug": "toes",
+      "variationId": "plain",
+      "file": "toes_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/toes_plain.mp3",
+      "whisper": " toes",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -81,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toes"
+      }
+    },
+    {
+      "word": "toes",
+      "slug": "toes",
+      "variationId": "period",
+      "file": "toes_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/toes_period.mp3",
+      "whisper": " toes",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -90,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toes."
+      }
+    },
+    {
+      "word": "foot",
+      "slug": "foot",
+      "variationId": "backup",
+      "file": "foot_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/foot_backup.mp3",
+      "whisper": " foot.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1120,
+      "tailBurst": false,
+      "pitchSlopeHz": 27,
+      "gate": "pass",
+      "body": {
+        "text": "foot"
+      },
+      "isBackup": true
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "arm",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "back",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "fingers",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "foot",
+      "variationId": "plain",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "hand",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "knee",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "leg",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "shoulder",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "toes",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "tummy",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "arm",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/arm_plain.mp3",
+      "shortlistFile": "shortlist/arm_recommended.mp3",
+      "score": 125,
+      "whisper": " Arm.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "back",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/back_plain.mp3",
+      "shortlistFile": "shortlist/back_recommended.mp3",
+      "score": 110,
+      "whisper": " Back.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "fingers",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/fingers_period.mp3",
+      "shortlistFile": "shortlist/fingers_recommended.mp3",
+      "score": 125,
+      "whisper": " Fingers.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "foot",
+      "variationId": "backup",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/foot_backup.mp3",
+      "shortlistFile": "shortlist/foot_recommended.mp3",
+      "score": 85,
+      "whisper": " foot.",
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "hand",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/hand_plain.mp3",
+      "shortlistFile": "shortlist/hand_recommended.mp3",
+      "score": 125,
+      "whisper": " hand",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "knee",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/knee_plain.mp3",
+      "shortlistFile": "shortlist/knee_recommended.mp3",
+      "score": 125,
+      "whisper": " knee",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "leg",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/leg_plain.mp3",
+      "shortlistFile": "shortlist/leg_recommended.mp3",
+      "score": 125,
+      "whisper": " leg",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "shoulder",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/shoulder_plain.mp3",
+      "shortlistFile": "shortlist/shoulder_recommended.mp3",
+      "score": 125,
+      "whisper": " Shoulder.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "toes",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/toes_plain.mp3",
+      "shortlistFile": "shortlist/toes_recommended.mp3",
+      "score": 125,
+      "whisper": " toes",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "tummy",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-19-core/takes/tummy_plain.mp3",
+      "shortlistFile": "shortlist/tummy_recommended.mp3",
+      "score": 125,
+      "whisper": " Tummy.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

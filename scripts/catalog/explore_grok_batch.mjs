@@ -19,7 +19,8 @@ import { basename, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 import { buildGrokTtsBody, synthesizeGrokVoice } from "./grok_tts.mjs";
-import { pickBestPerWord, scoreTake } from "./grok_exploration_score.mjs";
+import { mintBackupVoice } from "./mint_backup_voice.mjs";
+import { needsElevenLabsBackup, pickBestPerWord, scoreTake } from "./grok_exploration_score.mjs";
 import { repoRoot } from "./paths.mjs";
 
 function loadEnvOptional() {
@@ -40,6 +41,7 @@ function parseArgv(argv) {
     mintMax: 10,
     dryRun: false,
     includeLegacy: false,
+    noAutoBackup: false,
     help: false,
   };
   for (let i = 0; i < argv.length; i += 1) {
@@ -57,6 +59,8 @@ function parseArgv(argv) {
       out.includeLegacy = true;
     } else if (arg === "--dry-run") {
       out.dryRun = true;
+    } else if (arg === "--no-auto-backup") {
+      out.noAutoBackup = true;
     } else if (arg === "--help" || arg === "-h") {
       out.help = true;
     }
@@ -245,6 +249,79 @@ export async function runExplore(argv, { stdout = console.log, stderr = console.
       );
     }
 
+    const grokScored = scored.filter((r) => !r.isBackup);
+    const grokWinners = pickBestPerWord(grokScored.filter((r) => r.score > -100));
+
+    if (!args.noAutoBackup && !args.dryRun) {
+      for (const w of grokWinners) {
+        if (!needsElevenLabsBackup(w)) continue;
+        const backupFile = `${w.slug}_backup.mp3`;
+        const backupPath = join(takesDir, backupFile);
+        if (existsSync(backupPath)) {
+          stderr(`auto-backup skip ${w.word}: ${backupFile} exists`);
+          continue;
+        }
+        stderr(`auto-backup mint ${w.word} (Grok best score=${w.score} notes=${w.notes.join(",")})`);
+        await mintBackupVoice({
+          spoken: w.word,
+          text: w.body?.text?.replace(/\.$/, "") ?? w.word,
+          outPath: backupPath,
+          fixBurst: false,
+          gentleTrim: true,
+        });
+        stdout(`minted backup ${backupFile}`);
+      }
+    }
+
+    for (const wordEntry of recipesDoc.words ?? []) {
+      const backupFile = `${wordEntry.slug}_backup.mp3`;
+      const backupPath = join(takesDir, backupFile);
+      if (!existsSync(backupPath) || scored.some((r) => r.file === backupFile)) continue;
+
+      let whisperText = "";
+      if (groqKey) {
+        whisperText = await transcribeGroq(groqKey, backupPath);
+      }
+      const result = scoreTake({
+        word: wordEntry.word,
+        recipe: wordEntry,
+        filePath: backupPath,
+        whisperText,
+        spokenForGate: wordEntry.spokenForGate ?? wordEntry.word,
+      });
+      const entry = {
+        word: wordEntry.word,
+        slug: wordEntry.slug,
+        variationId: "backup",
+        file: backupFile,
+        path: backupPath,
+        whisper: whisperText,
+        score: result.score,
+        notes: result.notes,
+        durMs: result.acoustic?.durMs ?? null,
+        tailBurst: result.acoustic?.burst?.burstDetected ?? null,
+        pitchSlopeHz: result.acoustic?.metrics?.pitchSlopeHz ?? null,
+        gate: result.acoustic?.gate?.outcome ?? null,
+        body: { text: wordEntry.word },
+        isBackup: true,
+      };
+      scored.push(entry);
+      manifest.push({
+        file: join("takes", backupFile),
+        word: wordEntry.word,
+        variation: "backup",
+        text: wordEntry.word,
+        replace: null,
+        speed: 1,
+        score: result.score,
+        whisper: whisperText,
+        notes: result.notes,
+      });
+      stdout(
+        `${wordEntry.word}/backup\tscore=${result.score}\t${whisperText ? `heard=${JSON.stringify(whisperText)}` : "no_whisper"}\t${result.notes.join(",")}`,
+      );
+    }
+
     const winners = pickBestPerWord(scored.filter((r) => r.score > -100));
     for (const w of winners) {
       const dest = join(shortlistDir, `${w.slug}_recommended.mp3`);
@@ -257,6 +334,13 @@ export async function runExplore(argv, { stdout = console.log, stderr = console.
       generatedAt: new Date().toISOString(),
       batchDir,
       scored,
+      grokWinners: grokWinners.map((w) => ({
+        word: w.word,
+        variationId: w.variationId,
+        score: w.score,
+        notes: w.notes,
+        needsBackup: needsElevenLabsBackup(w),
+      })),
       shortlist: winners.map((w) => ({
         word: w.word,
         variationId: w.variationId,

@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-19-core",
+  "description": "Body words after batch-18 (lexicon slots shoulder through toes). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "shoulder", "slug": "shoulder", "spokenForGate": "shoulder", "whisperMustMatch": ["shoulder"], "variations": [{ "id": "plain", "body": { "text": "shoulder" } }, { "id": "period", "body": { "text": "shoulder." } }] },
+    { "word": "arm", "slug": "arm", "spokenForGate": "arm", "whisperMustMatch": ["arm"], "variations": [{ "id": "plain", "body": { "text": "arm" } }, { "id": "period", "body": { "text": "arm." } }] },
+    { "word": "hand", "slug": "hand", "spokenForGate": "hand", "whisperMustMatch": ["hand"], "variations": [{ "id": "plain", "body": { "text": "hand" } }, { "id": "period", "body": { "text": "hand." } }] },
+    { "word": "fingers", "slug": "fingers", "spokenForGate": "fingers", "whisperMustMatch": ["fingers", "finger"], "variations": [{ "id": "plain", "body": { "text": "fingers" } }, { "id": "period", "body": { "text": "fingers." } }] },
+    { "word": "tummy", "slug": "tummy", "spokenForGate": "tummy", "whisperMustMatch": ["tummy"], "variations": [{ "id": "plain", "body": { "text": "tummy" } }, { "id": "period", "body": { "text": "tummy." } }] },
+    { "word": "back", "slug": "back", "spokenForGate": "back", "whisperMustMatch": ["back"], "variations": [{ "id": "plain", "body": { "text": "back" } }, { "id": "period", "body": { "text": "back." } }] },
+    { "word": "leg", "slug": "leg", "spokenForGate": "leg", "whisperMustMatch": ["leg"], "variations": [{ "id": "plain", "body": { "text": "leg" } }, { "id": "period", "body": { "text": "leg." } }] },
+    { "word": "knee", "slug": "knee", "spokenForGate": "knee", "whisperMustMatch": ["knee"], "variations": [{ "id": "plain", "body": { "text": "knee" } }, { "id": "period", "body": { "text": "knee." } }] },
+    { "word": "foot", "slug": "foot", "spokenForGate": "foot", "whisperMustMatch": ["foot"], "variations": [{ "id": "plain", "body": { "text": "foot" } }, { "id": "period", "body": { "text": "foot." } }] },
+    { "word": "toes", "slug": "toes", "spokenForGate": "toes", "whisperMustMatch": ["toes", "toe"], "variations": [{ "id": "plain", "body": { "text": "toes" } }, { "id": "period", "body": { "text": "toes." } }] }
+  ]
+}
