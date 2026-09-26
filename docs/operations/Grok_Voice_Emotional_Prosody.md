@@ -47,35 +47,24 @@ During our double-blind testing, acoustic instrumentation ($F_0$ pitch tracking,
 
 ## 4. Implementation Helper (Client / Worker)
 
+**BUILT** (`src/worker/prosody.mjs`): `applyEmotionalProsody(text, feeling)`
+applies these formulas on the Worker — the client sends the plain
+sentence plus `feeling`, so the tags live in exactly one place. The
+`?` rule is built in: a question keeps `?` in every feeling (a
+❓-transformed bar stays rising). Reference:
+
 ```javascript
-/**
- * Wrap a spoken sentence with Pip AAC's locked emotional prosody tags.
- *
- * @param {string} text - Clean sentence text (e.g. "I'm happy", "I am sad", "I am angry")
- * @param {"neutral" | "positive" | "sad" | "angry" | "loud"} emotion
- * @returns {string} Fully tagged string ready for Grok TTS
- */
-export function applyEmotionalProsody(text, emotion = "neutral") {
-  const trimmed = text.trim();
+export function applyEmotionalProsody(text, feeling = "neutral") {
+  const trimmed = String(text).trim();
   const clean = trimmed.replace(/[.!?]+$/, "").trim();
-  // A question stays a question in every feeling (phase 025 § 4).
   const q = /\?$/.test(trimmed) ? "?" : null;
-
-  switch (emotion) {
-    case "positive":
+  switch (feeling) {
     case "happy":
-    case "excited":
       return `<higher-pitch><emphasis>${clean}${q ?? "!"}</emphasis></higher-pitch>`;
-
     case "sad":
-    case "somber":
       return `<emphasis>${clean}${q ?? "."}</emphasis>`;
-
     case "angry":
-    case "frustrated":
       return `<loud><emphasis>${clean}${q ?? "!"}</emphasis></loud>`;
-
-    case "neutral":
     default:
       return `${clean}${q ?? "."}`;
   }

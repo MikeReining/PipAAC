@@ -12,10 +12,13 @@
  */
 import voiceWords from "../../data/catalog/voice_words.en.json" with { type: "json" };
 import { checkLicense } from "./license.mjs";
+import { FEELINGS, applyEmotionalProsody } from "./prosody.mjs";
 
 const ELIGIBLE = new Set(voiceWords.words);
 
-export const VOICE_IDS = new Set(["ara", "eve", "leo", "rex", "sal"]);
+// Launch voice (founder, 2026-09-26): Aura only — the catalog clips
+// are being re-minted for her; other Grok voices land with later picks.
+export const VOICE_IDS = new Set(["ara"]);
 export const VOICE_MODEL = "grok-tts-v1";
 export const VOICE_SPEED = 1;
 
@@ -40,8 +43,11 @@ const hexSha256 = async (s) =>
 export const normalizeText = (text) =>
   String(text).trim().toLowerCase().replace(/\s+/g, " ");
 
-export const cacheKeyMaterial = (voiceId, text) =>
-  `${voiceId}|${VOICE_SPEED}|${VOICE_MODEL}|${normalizeText(text)}`;
+/** 025 § 4: the feeling is part of the recording's identity — the
+ *  same sentence neutral, happy, sad and angry are four separate
+ *  recordings, each synthesized once. */
+export const cacheKeyMaterial = (voiceId, text, feeling = "neutral") =>
+  `${voiceId}|${VOICE_SPEED}|${VOICE_MODEL}|${feeling}|${normalizeText(text)}`;
 
 const CONTRACTION = /(?:'s|'m|'re|'ve|'ll|'d|n't)$/i;
 
@@ -138,10 +144,16 @@ export async function handleSpeak(request, env, ctx) {
   }
   const voice = typeof body?.voice === "string" ? body.voice : "ara";
   if (!VOICE_IDS.has(voice)) return json({ error: "bad_voice" }, { status: 400 });
+  // 025: feeling shapes the prosody tags here, never on the client.
+  const feeling = body?.feeling == null || body.feeling === "neutral"
+    ? "neutral" : body.feeling;
+  if (!FEELINGS.has(feeling) && feeling !== "neutral") {
+    return json({ error: "bad_feeling" }, { status: 400 });
+  }
   if (!env.VOICE) return json({ error: "voice_unavailable" }, { status: 503 });
 
   const eligible = eligibleSentence(text);
-  const key = `speak/${await hexSha256(cacheKeyMaterial(voice, text))}`;
+  const key = `speak/${await hexSha256(cacheKeyMaterial(voice, text, feeling))}`;
 
   if (eligible) {
     const obj = await env.VOICE.get(key).catch(() => null);
@@ -163,7 +175,8 @@ export async function handleSpeak(request, env, ctx) {
 
   let audio;
   try {
-    audio = await synthesize(env, text, voice);
+    // Fair use counts the sentence chars, not the prosody tags (§ 4).
+    audio = await synthesize(env, applyEmotionalProsody(text, feeling), voice);
   } catch {
     return json({ error: "grok_failed" }, { status: 502 });
   }
@@ -173,7 +186,7 @@ export async function handleSpeak(request, env, ctx) {
     await usageRecord(env, { ns: "usage", uid, chars: text.length });
     if (eligible) {
       await env.VOICE.put(key, audio, {
-        customMetadata: { voice, chars: String(text.length) },
+        customMetadata: { voice, feeling, chars: String(text.length) },
       });
     }
   })();

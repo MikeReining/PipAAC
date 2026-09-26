@@ -151,7 +151,10 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- Grammar help (021): 1 shows each form-bearing word in the form the
   -- sentence calls for (want -> wants after he); 0 is today's lemma-only
   -- board. Default ON — the SLP turns it off to target endings herself.
-  grammar_help INTEGER NOT NULL DEFAULT 1 CHECK (grammar_help IN (0, 1))
+  grammar_help INTEGER NOT NULL DEFAULT 1 CHECK (grammar_help IN (0, 1)),
+  -- Expressive voice (025 § 6): 1 shows the happy/sad/angry faces in
+  -- the smart bar's last slot; 0 speaks everything neutral. Default ON.
+  expressive_voice INTEGER NOT NULL DEFAULT 1 CHECK (expressive_voice IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (
@@ -226,7 +229,11 @@ CREATE TABLE IF NOT EXISTS sentence (
   started_at INTEGER NOT NULL CHECK (started_at > 0),
   ended_at INTEGER CHECK (ended_at IS NULL OR ended_at >= started_at),
   end_kind TEXT CHECK (end_kind IS NULL OR end_kind IN ('spoken', 'cleared')),
-  tz_offset_min INTEGER NOT NULL
+  tz_offset_min INTEGER NOT NULL,
+  -- 025 § 5: the feeling a face tap spoke it in. NULL = neutral (▶ or
+  -- clips) and every pre-025 row.
+  spoken_feeling TEXT CHECK (spoken_feeling IS NULL
+    OR spoken_feeling IN ('happy', 'sad', 'angry'))
 );
 
 -- Selection events feed the local funnel's recency and time-of-day
@@ -736,4 +743,4 @@ CREATE TABLE IF NOT EXISTS stats_day (
   PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 18;
+PRAGMA user_version = 19;

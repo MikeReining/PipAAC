@@ -103,3 +103,40 @@ test("offline fetch failure answers null", async () => {
     assert.equal(await vs.request(ARGS), null);
   });
 });
+
+/* --- 025: feeling rides to the Worker and keys the local cache --- */
+
+test("feeling goes in the request and splits the local cache", async () => {
+  await withEnv(async () => {
+    const bodies = [];
+    globalThis.fetch = async (u, init) => {
+      bodies.push(JSON.parse(init.body));
+      return new Response(new Blob(["AUDIO"]));
+    };
+    const vs = voiceSentence({ deadlineMs: 500 });
+    await vs.request({ ...ARGS, feeling: "happy" });
+    assert.equal(bodies[0].feeling, "happy");
+    // Same sentence, different feeling: a fresh fetch, not the neutral hit.
+    await vs.request({ ...ARGS, feeling: "sad" });
+    assert.equal(bodies.length, 2);
+    // Repeat of the happy one plays from Tier 1 — pay once, replay fast.
+    await vs.request({ ...ARGS, feeling: "happy" });
+    assert.equal(bodies.length, 2);
+  });
+});
+
+test("a per-request deadline overrides the module default", async () => {
+  let release;
+  const gate = new Promise((r) => { release = r; });
+  await withEnv(async () => {
+    globalThis.fetch = async () => { await gate; return new Response(new Blob(["LATE"])); };
+    const vs = voiceSentence({ deadlineMs: 500 });
+    // 1 s never-silent window (025 § 2) — short here, still > the gate.
+    const missed = await vs.request({ ...ARGS, feeling: "happy", deadlineMs: 25 });
+    assert.equal(missed, null);
+    release();
+    await new Promise((r) => setTimeout(r, 20));
+    const b = await vs.request({ ...ARGS, feeling: "happy" });
+    assert.equal(await b.text(), "LATE");
+  });
+});

@@ -1,6 +1,7 @@
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
 import phraseTable from "../../data/prediction/phrase_table.en.json" with { type: "json" };
 import formTable from "../../data/prediction/form_table.en.json" with { type: "json" };
+import feelingVoice from "../../data/catalog/feeling_voice.json" with { type: "json" };
 import { UserRelay } from "./relay.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
@@ -40,6 +41,13 @@ export default {
     // counts on sense ids only, no text.
     if (path === "/form_table.en.json") {
       return json(formTable);
+    }
+
+    // Expressive voice (025 § 3): sense id -> feeling for the lit-face
+    // suggestion. Ships inside catalog.json as feelingVoice once the
+    // Ara rebuild lands; this route is the bridge until then.
+    if (path === "/feeling_voice.json") {
+      return json(feelingVoice);
     }
 
     // Whole-sentence voice (024 slice 1): shared R2 cache for Pip-word

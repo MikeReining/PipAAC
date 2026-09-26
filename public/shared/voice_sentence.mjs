@@ -32,20 +32,21 @@ export function sentenceSpeakText(items) {
 export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}) {
   let cacheP = null;
   const store = () => (cacheP ??= caches.open(cacheName));
-  const urlFor = async (voice, text) =>
-    `https://voice.local/${voice}/${await hex(
+  // 025: the feeling keys the recording — same sentence, four voices.
+  const urlFor = async (voice, text, feeling = "neutral") =>
+    `https://voice.local/${voice}/${feeling}/${await hex(
       crypto.subtle.digest("SHA-256", te.encode(normalizeSpeakText(text))))}`;
 
-  async function cached(voice, text) {
+  async function cached(voice, text, feeling = "neutral") {
     if (typeof caches === "undefined") return null;
-    const res = await (await store()).match(await urlFor(voice, text))
+    const res = await (await store()).match(await urlFor(voice, text, feeling))
       .catch(() => null);
     return res ? res.blob() : null;
   }
 
-  async function remember(voice, text, blob) {
+  async function remember(voice, text, blob, feeling = "neutral") {
     if (typeof caches === "undefined") return;
-    await (await store()).put(await urlFor(voice, text),
+    await (await store()).put(await urlFor(voice, text, feeling),
       new Response(blob, { headers: { "content-type": "audio/mpeg" } }))
       .catch(() => {});
   }
@@ -53,25 +54,29 @@ export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}
   /** One speak attempt. Returns an audio Blob, or null to mean
    *  "speak the word clips" — offline, unlicensed, over budget,
    *  slow network, or past the deadline. A late answer still lands
-   *  in the cache for the next tap. */
-  async function request({ userId, license, voice = "ara", text, endpoint = "/api/v1/voice/speak" }) {
+   *  in the cache for the next tap. `feeling` rides to the Worker,
+   *  which applies the locked prosody (025 § 4); `deadlineMs` per
+   *  call lets a face tap wait ~1 s (§ 2's never-silent rule). */
+  async function request({ userId, license, voice = "ara", text,
+    feeling = "neutral", endpoint = "/api/v1/voice/speak",
+    deadlineMs: deadline = deadlineMs }) {
     if (!userId || !license || !text) return null;
-    const hit = await cached(voice, text);
+    const hit = await cached(voice, text, feeling);
     if (hit) return hit;
     const fetchP = (async () => {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ user_id: userId, license, voice, text }),
+        body: JSON.stringify({ user_id: userId, license, voice, text, feeling }),
       });
       if (!res.ok) return null;
       const blob = await res.blob();
-      await remember(voice, text, blob);
+      await remember(voice, text, blob, feeling);
       return blob;
     })().catch(() => null);
     const first = await Promise.race([
       fetchP,
-      new Promise((r) => setTimeout(() => r("deadline"), deadlineMs)),
+      new Promise((r) => setTimeout(() => r("deadline"), deadline)),
     ]);
     return first === "deadline" ? null : first;
   }

@@ -12,7 +12,7 @@ import { importCatalog } from "./shared/import.mjs";
 import { migrateLegacyGroups, migrateBuiltinGroupNames } from "./shared/groups.mjs";
 import { ensureBaseline } from "./shared/ops.mjs";
 import { getDbBytes, putDbBytes } from "./shared/users.mjs";
-import { migrateSchema } from "./shared/migrate.mjs";
+import { migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
 
 let handle = null;
 
@@ -100,6 +100,9 @@ export async function bootDb(userStore, userId) {
   d.exec("PRAGMA foreign_keys = ON");
   migrateSchema(d, catalog.schemaSql);
   d.exec(catalog.schemaSql);
+  // 025: spoken_feeling + expressive_voice ride catalog.schemaSql with
+  // the Ara rebuild; devices add them additively now.
+  ensureAdditiveColumns(d);
   // Smart bar v2: the old history_count/prediction_weights tables are
   // superseded by phrase_count; nothing references them. Rebuilds keep
   // listed tables fresh — these are simply gone.

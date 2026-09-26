@@ -32,6 +32,7 @@ const FAMILY_SEED = join(repoRoot, "data/family_seed.json");
 const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
 const FORMS_DATA = join(repoRoot, "data/forms/en.json");
 const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
+const FEELING_VOICE = join(repoRoot, "data/catalog/feeling_voice.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const SYMBOLS_ROOT = join(repoRoot, "assets/symbols");
@@ -517,6 +518,7 @@ export function buildCatalog(
       numberAliases: "data/number_aliases.json",
       forms: "data/forms/en.json",
       phraseTable: "data/prediction/phrase_table.en.json",
+      feelingVoice: "data/catalog/feeling_voice.json",
     },
     // 013 § 5a coach view: shipped one-line modeling tips by sense id;
     // a list item's SLP-edited tip overrides them.
@@ -526,6 +528,8 @@ export function buildCatalog(
             .filter(([k]) => !k.startsWith("_")),
         )
       : {},
+    // 025 § 3: the lit-face suggestion map (sense id -> feeling).
+    feelingVoice: JSON.parse(readFileSync(FEELING_VOICE, "utf8")),
     // The bundle is the full device bootstrap: DDL plus rows, one fetch.
     schemaSql: readFileSync(SCHEMA_SQL, "utf8"),
     layouts,

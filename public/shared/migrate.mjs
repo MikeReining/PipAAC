@@ -118,3 +118,26 @@ export function migrateSchema(d, schemaSql) {
     d.exec("PRAGMA foreign_keys = ON");
   }
 }
+
+/** 025: additive columns the shipped catalog doesn't carry yet — the
+ *  strict catalog rebuild is gated on the Ara clip re-mint, so devices
+ *  add them here rather than wait. The definitions are verbatim
+ *  schema.sql (asserted in migrate.test.mjs). When the catalog ships
+ *  them, the ALTER-shaped stored DDL still differs in text from the
+ *  shipped CREATE TABLE, so migrateSchema rebuilds the table — rows
+ *  preserved, canonical DDL restored. */
+export const ADDITIVE_COLUMNS = {
+  sentence:
+    "spoken_feeling TEXT CHECK (spoken_feeling IS NULL\n"
+    + "    OR spoken_feeling IN ('happy', 'sad', 'angry'))",
+  learner_profile:
+    "expressive_voice INTEGER NOT NULL DEFAULT 1 CHECK (expressive_voice IN (0, 1))",
+};
+export function ensureAdditiveColumns(d) {
+  for (const [table, def] of Object.entries(ADDITIVE_COLUMNS)) {
+    const name = def.split(" ")[0];
+    const has = d.all(`PRAGMA table_info(${table})`)
+      .some((c) => c.name === name);
+    if (!has) d.exec(`ALTER TABLE ${table} ADD COLUMN ${def}`);
+  }
+}

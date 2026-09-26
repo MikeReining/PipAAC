@@ -39,14 +39,34 @@ export function openSentence(db, at = Date.now()) {
   return db.prepare("SELECT last_insert_rowid() AS id").all()[0].id;
 }
 
-export function closeSentence(db, id, at = Date.now(), kind) {
+/** 025 § 5: spoken_feeling lands with the Ara catalog rebuild —
+ *  ensureAdditiveColumns adds it at boot, but a db opened any other
+ *  way still closes cleanly. */
+const hasFeelingCol = new WeakMap();
+const feelingCol = (db) => {
+  let has = hasFeelingCol.get(db);
+  if (has === undefined) {
+    has = db.prepare("PRAGMA table_info(sentence)").all()
+      .some((c) => c.name === "spoken_feeling");
+    hasFeelingCol.set(db, has);
+  }
+  return has;
+};
+
+export function closeSentence(db, id, at = Date.now(), kind, feeling = null) {
   const open = db.prepare(
     "SELECT 1 AS ok FROM sentence WHERE id = ? AND end_kind IS NULL",
   ).all(id)[0];
   if (!open) return;
-  db.prepare(
-    "UPDATE sentence SET ended_at = ?, end_kind = ? WHERE id = ? AND end_kind IS NULL",
-  ).run(at, kind, id);
+  if (feeling && feelingCol(db)) {
+    db.prepare(
+      "UPDATE sentence SET ended_at = ?, end_kind = ?, spoken_feeling = ? WHERE id = ? AND end_kind IS NULL",
+    ).run(at, kind, feeling, id);
+  } else {
+    db.prepare(
+      "UPDATE sentence SET ended_at = ?, end_kind = ? WHERE id = ? AND end_kind IS NULL",
+    ).run(at, kind, id);
+  }
   // Only spoken sentences become history — a cleared bar was never said.
   if (kind === "spoken") {
     recordPhraseHistory(db, id);

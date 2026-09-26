@@ -742,6 +742,7 @@ const SYNCED_SETTINGS = new Set([
   "presentation_mode",
   "fresh_after_speak",
   "grammar_help",
+  "expressive_voice",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);

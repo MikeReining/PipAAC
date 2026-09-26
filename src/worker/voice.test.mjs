@@ -58,13 +58,13 @@ test("eligible sentence synthesizes once then serves from R2", async () => {
   const r1 = await good(env);
   assert.equal(r1.status, 200);
   assert.equal(r1.headers.get("x-voice-cache"), "miss");
-  assert.equal(await r1.text(), "AUDIO:i want a cookie");
+  assert.equal(await r1.text(), "AUDIO:i want a cookie.");
   assert.equal(calls, 1);
   assert.equal(env.VOICE.store.size >= 2, true); // audio + usage ledger
 
   const r2 = await good(env);
   assert.equal(r2.headers.get("x-voice-cache"), "hit");
-  assert.equal(await r2.text(), "AUDIO:i want a cookie");
+  assert.equal(await r2.text(), "AUDIO:i want a cookie.");
   assert.equal(calls, 1); // cache hit — no second synth, no count
 });
 
@@ -141,4 +141,58 @@ test("no Grok key and no stub -> 503, client falls back to clips", async () => {
   env.VOICE_SYNTH = undefined;
   const r = await good(env);
   assert.equal(r.status, 503);
+});
+
+/* --- 025 slice 1: feeling — prosody tags on the Worker, never the
+ * client; the cache key carries it; a question stays a question. --- */
+
+test("the feeling shapes the Grok text, not the cache text or the count", async () => {
+  const env = makeEnv();
+  const seen = [];
+  env.VOICE_SYNTH = async (text) => { seen.push(text); return new TextEncoder().encode("A"); };
+  const r = await good(env, { text: "i am happy.", feeling: "happy" });
+  assert.equal(r.status, 200);
+  assert.equal(seen[0],
+    "<higher-pitch><emphasis>i am happy!</emphasis></higher-pitch>");
+  const day = new Date().toISOString().slice(0, 10);
+  const row = JSON.parse(env.VOICE.store.get(`usage/${UID}/${day}`));
+  assert.equal(row.chars, "i am happy.".length); // sentence chars, not tags
+});
+
+test("a question stays a question in every feeling", async () => {
+  const env = makeEnv();
+  const seen = [];
+  env.VOICE_SYNTH = async (text) => { seen.push(text); return new TextEncoder().encode("A"); };
+  await good(env, { text: "do you want to play?", feeling: "happy" });
+  await good(env, { text: "do you want to play?", feeling: "sad" });
+  await good(env, { text: "do you want to play?", feeling: "angry" });
+  assert.equal(seen[0],
+    "<higher-pitch><emphasis>do you want to play?</emphasis></higher-pitch>");
+  assert.equal(seen[1], "<emphasis>do you want to play?</emphasis>");
+  assert.equal(seen[2],
+    "<loud><emphasis>do you want to play?</emphasis></loud>");
+});
+
+test("one sentence x four feelings = four recordings, each synthesized once", async () => {
+  const env = makeEnv();
+  let calls = 0;
+  env.VOICE_SYNTH = async () => { calls++; return new TextEncoder().encode("A"); };
+  for (const feeling of ["neutral", "happy", "sad", "angry"]) {
+    await good(env, { feeling });
+  }
+  assert.equal(calls, 4);
+  for (const feeling of ["neutral", "happy", "sad", "angry"]) {
+    const r = await good(env, { feeling });
+    assert.equal(r.headers.get("x-voice-cache"), "hit");
+  }
+  assert.equal(calls, 4); // pay once, replay fast
+});
+
+test("an unknown feeling is 400; launch voice is ara only", async () => {
+  const env = makeEnv();
+  const r1 = await good(env, { feeling: "silly" });
+  assert.equal(r1.status, 400);
+  assert.equal((await r1.json()).error, "bad_feeling");
+  const r2 = await good(env, { voice: "eve" });
+  assert.equal(r2.status, 400); // only Ara ships at launch
 });
