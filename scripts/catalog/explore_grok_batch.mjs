@@ -224,6 +224,7 @@ export async function runExplore(argv, { stdout = console.log, stderr = console.
         notes: result.notes,
         durMs: result.acoustic?.durMs ?? null,
         tailBurst: result.acoustic?.burst?.burstDetected ?? null,
+        pitchSlopeHz: result.acoustic?.metrics?.pitchSlopeHz ?? null,
         gate: result.acoustic?.gate?.outcome ?? null,
         body: row.body,
       };

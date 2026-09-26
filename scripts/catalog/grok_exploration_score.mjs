@@ -121,9 +121,12 @@ export function scoreTake({ word, recipe, filePath, whisperText, spokenForGate, 
     notes.push(`gate_${gate.reasons[0]?.code ?? "review"}`);
   }
 
-  if (burst.burstDetected) {
+  if (burst.burstDetected && !burst.consonantRelease) {
     score -= 45;
     notes.push("tail_burst");
+  } else if (burst.consonantRelease) {
+    score += 10;
+    notes.push("consonant_release");
   } else {
     score += 10;
     notes.push("no_tail_burst");
@@ -145,11 +148,16 @@ export function scoreTake({ word, recipe, filePath, whisperText, spokenForGate, 
     notes.push("echo_return");
   }
 
-  return { score, whisper, acoustic: { durMs, gate, burst, residue, echo }, notes };
+  return { score, whisper, acoustic: { durMs, gate, burst, residue, echo, metrics }, notes };
 }
 
 function residueHoldMs(row) {
   return row.acoustic?.residue?.holdMs ?? (row.notes?.includes("residue_shelf") ? 1 : 0);
+}
+
+function pitchSlope(row) {
+  const value = row.pitchSlopeHz ?? row.acoustic?.metrics?.pitchSlopeHz;
+  return Number.isFinite(value) ? value : null;
 }
 
 export function pickBestPerWord(scoredRows) {
@@ -160,7 +168,16 @@ export function pickBestPerWord(scoredRows) {
       byWord.set(row.word, row);
       continue;
     }
-    if (row.score === prev.score && residueHoldMs(row) < residueHoldMs(prev)) {
+    if (row.score < prev.score) continue;
+    if (residueHoldMs(row) < residueHoldMs(prev)) {
+      byWord.set(row.word, row);
+      continue;
+    }
+    if (residueHoldMs(row) > residueHoldMs(prev)) continue;
+    const prevSlope = pitchSlope(prev);
+    const nextSlope = pitchSlope(row);
+    // find_plain fell 64 Hz and tied the steady take, then won because it was first.
+    if (prevSlope != null && nextSlope != null && nextSlope - prevSlope >= 40) {
       byWord.set(row.word, row);
     }
   }

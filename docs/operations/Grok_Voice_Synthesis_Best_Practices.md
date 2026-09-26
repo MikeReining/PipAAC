@@ -21,6 +21,7 @@ Sentences (▶ and the transform buttons) are a different path. Send the sentenc
 9. **A final /t/ or /d/ can leave a detached pop.** The stop closes, the wave goes silent, then a separate burst releases. That burst is the little effect at the end. The explore scorer deducts for `tail_burst`. Prefer a new take over cutting the pop off a file the founder has not heard.
 10. **A quiet second sound can hide under the −40 dB gate.** `minute_plain.mp3` (batch-05) died, then rose about 7 dB and held near −43 dB. The gate calls that silence, and the pop detector never fires, so the take tied the clean one and won because it was listed first. The scorer now deducts for `residue_shelf`: after the word, a sub-gate level that rises at least 6 dB and holds for 100 ms. A smooth decay does not. On a score tie, the shorter residue wins, so the first recipe row is not the winner by default.
 11. **An echo can hide inside a longer take.** `go_period.mp3` is 0.77 s and `go_plain.mp3` is 0.70 s, so the length bonus picked the echo. The ring is the wave dying below 8% of its peak and then a copy returning, while the voice is smeared (crest under 4) and the pitch falls by 48 Hz or more. The scorer deducts for `echo_return`. A final consonant can bounce back too, without that pitch collapse, and it is not deducted.
+12. **A clear final consonant is not a pop, and a tie does not keep the first row.** `wait.` releases a short /t/ after the closure. That used to score as `tail_burst` and lose to a plain take whose pitch fell 78 Hz. A release that peaks under 30% of the vowel and then falls is `consonant_release` and is not deducted. When two takes tie, the one whose pitch falls at least 40 Hz less is the winner. That is why `find.` beats plain `find`, whose pitch fell 64 Hz and which also grew a second blob after the word had died.
 
 `speed: 0.9` was tried on *in* and is not part of the recipe.
 
@@ -43,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*.
 
 ### Rejected payloads
 
@@ -143,6 +144,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | can | `data/samples/approved/can.mp3` | `can.` | Ear preferred the period take. Clearer and longer than plain. |
 | need | `data/samples/approved/need.mp3` | `need` | Ear, `batch-08` shortlist |
 | feel | `data/samples/approved/feel.mp3` | `feel` | Ear, `batch-08` shortlist |
+| tell | `data/samples/approved/tell.mp3` | `tell` | Ear, `batch-09` shortlist |
+| think | `data/samples/approved/think.mp3` | `think` | Ear, `batch-09` shortlist |
+| find | `data/samples/approved/find.mp3` | `find.` | Ear replaced plain `find`. That take's pitch fell 64 Hz and grew a second blob. |
+| work | `data/samples/approved/work.mp3` | `work` | Ear, `batch-09` shortlist |
+| wait | `data/samples/approved/wait.mp3` | `wait.` | Ear replaced plain `wait`. The period take has the /t/. |
+| out | `data/samples/approved/out.mp3` | `out` | Ear, `batch-09` shortlist |
+| down | `data/samples/approved/down.mp3` | `down` | Ear, `batch-09` shortlist |
+| away | `data/samples/approved/away.mp3` | `away` | Ear, `batch-09` shortlist |
+| here | `data/samples/approved/here.mp3` | `here` | Ear, `batch-09` shortlist |
+| there | `data/samples/approved/there.mp3` | `there` | Ear, `batch-09` shortlist |
 
 ---
 

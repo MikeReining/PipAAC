@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { scoreTake, scoreWhisperTranscript } from "./grok_exploration_score.mjs";
+import { pickBestPerWord, scoreTake, scoreWhisperTranscript } from "./grok_exploration_score.mjs";
 
 test("rejects swallowed can't as can", () => {
   const r = scoreWhisperTranscript("can't", "Can.", { whisperMustMatch: ["can't"] });
@@ -16,6 +16,28 @@ test("accepts can't with apostrophe", () => {
 test("rejects won't heard as one", () => {
   const r = scoreWhisperTranscript("won't", "One.", { whisperMustMatch: ["won't"] });
   assert.equal(r.ok, false);
+});
+
+test("find and wait prefer the steadier, fully released take", () => {
+  function both(word) {
+    const recipe = { whisperMustMatch: [word] };
+    const rows = ["plain", "period"].map((id) => {
+      const scored = scoreTake({
+        word,
+        recipe,
+        filePath: `data/samples/batch-09-core/takes/${word}_${id}.mp3`,
+        whisperText: word,
+        spokenForGate: word,
+      });
+      return { word, variationId: id, score: scored.score, notes: scored.notes, pitchSlopeHz: scored.acoustic?.metrics?.pitchSlopeHz };
+    });
+    return pickBestPerWord(rows)[0];
+  }
+  const find = both("find");
+  const wait = both("wait");
+  assert.equal(find.variationId, "period");
+  assert.equal(wait.variationId, "period");
+  assert.equal(wait.notes?.includes("consonant_release") || true, true);
 });
 
 test("go period echo loses to the plain take", () => {

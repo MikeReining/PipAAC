@@ -74,11 +74,46 @@ export function applyEndFade(samples, cutSample, sr, fadeSec = 0.012) {
   return out;
 }
 
+/**
+ * A final consonant is a short release that peaks under 30% of the vowel and
+ * then falls. An echo or a second syllable keeps rising after the gap.
+ */
+export function isConsonantRelease(samples, sr, cutSample) {
+  if (cutSample >= samples.length) return false;
+  const hop = Math.max(1, Math.round(sr * 0.01));
+  let vowelPeak = 0;
+  for (let i = 0; i < cutSample; i += hop) {
+    let acc = 0;
+    const n = Math.min(hop, cutSample - i);
+    for (let j = 0; j < n; j += 1) acc += samples[i + j] * samples[i + j];
+    vowelPeak = Math.max(vowelPeak, Math.sqrt(acc / n));
+  }
+  if (vowelPeak === 0) return false;
+  const frames = [];
+  for (let i = cutSample; i < samples.length; i += hop) {
+    let acc = 0;
+    const n = Math.min(hop, samples.length - i);
+    for (let j = 0; j < n; j += 1) acc += samples[i + j] * samples[i + j];
+    frames.push(Math.sqrt(acc / n) / vowelPeak);
+  }
+  let start = 0;
+  while (start < frames.length && frames[start] < 0.05) start += 1;
+  if (start >= frames.length) return false;
+  const peak = frames[start];
+  if (peak > 0.3) return false;
+  for (let i = start + 1; i < Math.min(frames.length, start + 6); i += 1) {
+    if (frames[i] > peak + 0.02) return false;
+  }
+  return true;
+}
+
 export function analyzeDetachedBurst(samples, sr, opts) {
   const cutSample = findDetachedBurstCutSample(samples, sr, opts);
+  const burstDetected = cutSample < samples.length;
   return {
     cutSample,
-    burstDetected: cutSample < samples.length,
+    burstDetected,
+    consonantRelease: burstDetected && isConsonantRelease(samples, sr, cutSample),
     keptMs: (cutSample / sr) * 1000,
     totalMs: (samples.length / sr) * 1000,
   };

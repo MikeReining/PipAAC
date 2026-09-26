@@ -570,6 +570,86 @@
       "text": "feel",
       "replace": null,
       "basis": "ear, batch-08 shortlist"
+    },
+    {
+      "word": "tell",
+      "file": "tell.mp3",
+      "source": "data/samples/batch-09-core/takes/tell_plain.mp3",
+      "text": "tell",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "think",
+      "file": "think.mp3",
+      "source": "data/samples/batch-09-core/takes/think_plain.mp3",
+      "text": "think",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "find",
+      "file": "find.mp3",
+      "source": "data/samples/batch-09-core/takes/find_period.mp3",
+      "text": "find.",
+      "replace": null,
+      "basis": "ear replaced plain find; pitch fell 64 Hz and a second blob grew after the word"
+    },
+    {
+      "word": "work",
+      "file": "work.mp3",
+      "source": "data/samples/batch-09-core/takes/work_plain.mp3",
+      "text": "work",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "wait",
+      "file": "wait.mp3",
+      "source": "data/samples/batch-09-core/takes/wait_period.mp3",
+      "text": "wait.",
+      "replace": null,
+      "basis": "ear replaced plain wait; period take has the t release"
+    },
+    {
+      "word": "out",
+      "file": "out.mp3",
+      "source": "data/samples/batch-09-core/takes/out_plain.mp3",
+      "text": "out",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "down",
+      "file": "down.mp3",
+      "source": "data/samples/batch-09-core/takes/down_plain.mp3",
+      "text": "down",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "away",
+      "file": "away.mp3",
+      "source": "data/samples/batch-09-core/takes/away_plain.mp3",
+      "text": "away",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "here",
+      "file": "here.mp3",
+      "source": "data/samples/batch-09-core/takes/here_plain.mp3",
+      "text": "here",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "there",
+      "file": "there.mp3",
+      "source": "data/samples/batch-09-core/takes/there_plain.mp3",
+      "text": "there",
+      "replace": null,
+      "basis": "ear, batch-09 shortlist"
     }
   ],
   "rejected": [
