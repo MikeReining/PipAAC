@@ -811,6 +811,86 @@
       "text": "not.",
       "replace": null,
       "basis": "ear, batch-11 shortlist"
+    },
+    {
+      "word": "please",
+      "file": "please.mp3",
+      "source": "data/samples/batch-12-core/takes/please_period.mp3",
+      "text": "please.",
+      "replace": null,
+      "basis": "ear replaced plain please with the period take"
+    },
+    {
+      "word": "but",
+      "file": "but.mp3",
+      "source": "data/samples/batch-12-core/takes/but_plain.mp3",
+      "text": "but",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "because",
+      "file": "because.mp3",
+      "source": "data/samples/batch-12-core/takes/because_plain.mp3",
+      "text": "because",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "have",
+      "file": "have.mp3",
+      "source": "data/samples/batch-12-core/takes/have_period.mp3",
+      "text": "have.",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "water",
+      "file": "water.mp3",
+      "source": "data/samples/batch-12-core/takes/water_plain.mp3",
+      "text": "water",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "milk",
+      "file": "milk.mp3",
+      "source": "data/samples/batch-12-core/takes/milk_plain.mp3",
+      "text": "milk",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "juice",
+      "file": "juice.mp3",
+      "source": "data/samples/batch-12-core/takes/juice_period.mp3",
+      "text": "juice.",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "apple juice",
+      "file": "apple-juice.mp3",
+      "source": "data/samples/batch-12-core/takes/apple-juice_plain.mp3",
+      "text": "apple juice",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "chocolate milk",
+      "file": "chocolate-milk.mp3",
+      "source": "data/samples/batch-12-core/takes/chocolate-milk_plain.mp3",
+      "text": "chocolate milk",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "tea",
+      "file": "tea.mp3",
+      "source": "data/samples/batch-12-core/takes/tea_period.mp3",
+      "text": "tea.",
+      "replace": null,
+      "basis": "ear, batch-12 shortlist"
     }
   ],
   "rejected": [

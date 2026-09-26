@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-13-core",
+  "description": "Next food words by lexicon slot after batch-12. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "smoothie", "slug": "smoothie", "spokenForGate": "smoothie", "whisperMustMatch": ["smoothie"], "variations": [{ "id": "plain", "body": { "text": "smoothie" } }, { "id": "period", "body": { "text": "smoothie." } }] },
+    { "word": "bread", "slug": "bread", "spokenForGate": "bread", "whisperMustMatch": ["bread"], "variations": [{ "id": "plain", "body": { "text": "bread" } }, { "id": "period", "body": { "text": "bread." } }] },
+    { "word": "toast", "slug": "toast", "spokenForGate": "toast", "whisperMustMatch": ["toast"], "variations": [{ "id": "plain", "body": { "text": "toast" } }, { "id": "period", "body": { "text": "toast." } }] },
+    { "word": "cereal", "slug": "cereal", "spokenForGate": "cereal", "whisperMustMatch": ["cereal", "serial"], "variations": [{ "id": "plain", "body": { "text": "cereal" } }, { "id": "period", "body": { "text": "cereal." } }] },
+    { "word": "oatmeal", "slug": "oatmeal", "spokenForGate": "oatmeal", "whisperMustMatch": ["oatmeal"], "variations": [{ "id": "plain", "body": { "text": "oatmeal" } }, { "id": "period", "body": { "text": "oatmeal." } }] },
+    { "word": "pancake", "slug": "pancake", "spokenForGate": "pancake", "whisperMustMatch": ["pancake"], "variations": [{ "id": "plain", "body": { "text": "pancake" } }, { "id": "period", "body": { "text": "pancake." } }] },
+    { "word": "waffle", "slug": "waffle", "spokenForGate": "waffle", "whisperMustMatch": ["waffle"], "variations": [{ "id": "plain", "body": { "text": "waffle" } }, { "id": "period", "body": { "text": "waffle." } }] },
+    { "word": "bagel", "slug": "bagel", "spokenForGate": "bagel", "whisperMustMatch": ["bagel"], "variations": [{ "id": "plain", "body": { "text": "bagel" } }, { "id": "period", "body": { "text": "bagel." } }] },
+    { "word": "egg", "slug": "egg", "spokenForGate": "egg", "whisperMustMatch": ["egg"], "variations": [{ "id": "plain", "body": { "text": "egg" } }, { "id": "period", "body": { "text": "egg." } }] },
+    { "word": "butter", "slug": "butter", "spokenForGate": "butter", "whisperMustMatch": ["butter"], "variations": [{ "id": "plain", "body": { "text": "butter" } }, { "id": "period", "body": { "text": "butter." } }] }
+  ]
+}

@@ -1,0 +1,586 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T12:45:48.499Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-13-core",
+  "scored": [
+    {
+      "word": "smoothie",
+      "slug": "smoothie",
+      "variationId": "plain",
+      "file": "smoothie_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/smoothie_plain.mp3",
+      "whisper": " Smoothie",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -44,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "smoothie"
+      }
+    },
+    {
+      "word": "smoothie",
+      "slug": "smoothie",
+      "variationId": "period",
+      "file": "smoothie_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/smoothie_period.mp3",
+      "whisper": " Smoothie.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -41,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "smoothie."
+      }
+    },
+    {
+      "word": "bread",
+      "slug": "bread",
+      "variationId": "plain",
+      "file": "bread_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/bread_plain.mp3",
+      "whisper": " Bread",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -31,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bread"
+      }
+    },
+    {
+      "word": "bread",
+      "slug": "bread",
+      "variationId": "period",
+      "file": "bread_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/bread_period.mp3",
+      "whisper": " Bread",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -57,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bread."
+      }
+    },
+    {
+      "word": "toast",
+      "slug": "toast",
+      "variationId": "plain",
+      "file": "toast_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/toast_plain.mp3",
+      "whisper": " Toast.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -55,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toast"
+      }
+    },
+    {
+      "word": "toast",
+      "slug": "toast",
+      "variationId": "period",
+      "file": "toast_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/toast_period.mp3",
+      "whisper": " Toast.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 4,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toast."
+      }
+    },
+    {
+      "word": "cereal",
+      "slug": "cereal",
+      "variationId": "plain",
+      "file": "cereal_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/cereal_plain.mp3",
+      "whisper": " Serial.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -79,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cereal"
+      }
+    },
+    {
+      "word": "cereal",
+      "slug": "cereal",
+      "variationId": "period",
+      "file": "cereal_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/cereal_period.mp3",
+      "whisper": " Serial.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -37,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cereal."
+      }
+    },
+    {
+      "word": "oatmeal",
+      "slug": "oatmeal",
+      "variationId": "plain",
+      "file": "oatmeal_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/oatmeal_plain.mp3",
+      "whisper": " oatmeal.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -29,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "oatmeal"
+      }
+    },
+    {
+      "word": "oatmeal",
+      "slug": "oatmeal",
+      "variationId": "period",
+      "file": "oatmeal_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/oatmeal_period.mp3",
+      "whisper": " Oatmeal",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -100,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "oatmeal."
+      }
+    },
+    {
+      "word": "pancake",
+      "slug": "pancake",
+      "variationId": "plain",
+      "file": "pancake_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/pancake_plain.mp3",
+      "whisper": " Pancake.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -53,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pancake"
+      }
+    },
+    {
+      "word": "pancake",
+      "slug": "pancake",
+      "variationId": "period",
+      "file": "pancake_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/pancake_period.mp3",
+      "whisper": " Pancake.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -53,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pancake."
+      }
+    },
+    {
+      "word": "waffle",
+      "slug": "waffle",
+      "variationId": "plain",
+      "file": "waffle_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/waffle_plain.mp3",
+      "whisper": " Waffle.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 5,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "waffle"
+      }
+    },
+    {
+      "word": "waffle",
+      "slug": "waffle",
+      "variationId": "period",
+      "file": "waffle_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/waffle_period.mp3",
+      "whisper": " Waffle.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -6,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "waffle."
+      }
+    },
+    {
+      "word": "bagel",
+      "slug": "bagel",
+      "variationId": "plain",
+      "file": "bagel_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/bagel_plain.mp3",
+      "whisper": " Bagel.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -43,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bagel"
+      }
+    },
+    {
+      "word": "bagel",
+      "slug": "bagel",
+      "variationId": "period",
+      "file": "bagel_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/bagel_period.mp3",
+      "whisper": " Bagel.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -22,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bagel."
+      }
+    },
+    {
+      "word": "egg",
+      "slug": "egg",
+      "variationId": "plain",
+      "file": "egg_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/egg_plain.mp3",
+      "whisper": " egg",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -51,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "egg"
+      }
+    },
+    {
+      "word": "egg",
+      "slug": "egg",
+      "variationId": "period",
+      "file": "egg_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/egg_period.mp3",
+      "whisper": " egg",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 600,
+      "tailBurst": false,
+      "pitchSlopeHz": -46,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "egg."
+      }
+    },
+    {
+      "word": "butter",
+      "slug": "butter",
+      "variationId": "plain",
+      "file": "butter_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/butter_plain.mp3",
+      "whisper": " Butter.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -35,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "butter"
+      }
+    },
+    {
+      "word": "butter",
+      "slug": "butter",
+      "variationId": "period",
+      "file": "butter_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/butter_period.mp3",
+      "whisper": " Butter.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -14,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "butter."
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "bagel",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/bagel_plain.mp3",
+      "shortlistFile": "shortlist/bagel_recommended.mp3",
+      "score": 125,
+      "whisper": " Bagel.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "bread",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/bread_plain.mp3",
+      "shortlistFile": "shortlist/bread_recommended.mp3",
+      "score": 125,
+      "whisper": " Bread",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "butter",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/butter_plain.mp3",
+      "shortlistFile": "shortlist/butter_recommended.mp3",
+      "score": 125,
+      "whisper": " Butter.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "cereal",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/cereal_period.mp3",
+      "shortlistFile": "shortlist/cereal_recommended.mp3",
+      "score": 125,
+      "whisper": " Serial.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "egg",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/egg_period.mp3",
+      "shortlistFile": "shortlist/egg_recommended.mp3",
+      "score": 110,
+      "whisper": " egg",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "oatmeal",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/oatmeal_plain.mp3",
+      "shortlistFile": "shortlist/oatmeal_recommended.mp3",
+      "score": 125,
+      "whisper": " oatmeal.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "pancake",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/pancake_period.mp3",
+      "shortlistFile": "shortlist/pancake_recommended.mp3",
+      "score": 125,
+      "whisper": " Pancake.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "smoothie",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/smoothie_plain.mp3",
+      "shortlistFile": "shortlist/smoothie_recommended.mp3",
+      "score": 125,
+      "whisper": " Smoothie",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "toast",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/toast_period.mp3",
+      "shortlistFile": "shortlist/toast_recommended.mp3",
+      "score": 125,
+      "whisper": " Toast.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "waffle",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-13-core/takes/waffle_plain.mp3",
+      "shortlistFile": "shortlist/waffle_recommended.mp3",
+      "score": 125,
+      "whisper": " Waffle.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

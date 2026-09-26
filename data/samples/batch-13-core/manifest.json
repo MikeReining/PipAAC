@@ -1,0 +1,280 @@
+[
+  {
+    "file": "takes/smoothie_plain.mp3",
+    "word": "smoothie",
+    "variation": "plain",
+    "text": "smoothie",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Smoothie",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/smoothie_period.mp3",
+    "word": "smoothie",
+    "variation": "period",
+    "text": "smoothie.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Smoothie.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bread_plain.mp3",
+    "word": "bread",
+    "variation": "plain",
+    "text": "bread",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bread",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bread_period.mp3",
+    "word": "bread",
+    "variation": "period",
+    "text": "bread.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bread",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toast_plain.mp3",
+    "word": "toast",
+    "variation": "plain",
+    "text": "toast",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Toast.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toast_period.mp3",
+    "word": "toast",
+    "variation": "period",
+    "text": "toast.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Toast.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cereal_plain.mp3",
+    "word": "cereal",
+    "variation": "plain",
+    "text": "cereal",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Serial.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cereal_period.mp3",
+    "word": "cereal",
+    "variation": "period",
+    "text": "cereal.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Serial.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/oatmeal_plain.mp3",
+    "word": "oatmeal",
+    "variation": "plain",
+    "text": "oatmeal",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " oatmeal.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/oatmeal_period.mp3",
+    "word": "oatmeal",
+    "variation": "period",
+    "text": "oatmeal.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Oatmeal",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/pancake_plain.mp3",
+    "word": "pancake",
+    "variation": "plain",
+    "text": "pancake",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Pancake.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/pancake_period.mp3",
+    "word": "pancake",
+    "variation": "period",
+    "text": "pancake.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Pancake.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/waffle_plain.mp3",
+    "word": "waffle",
+    "variation": "plain",
+    "text": "waffle",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Waffle.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/waffle_period.mp3",
+    "word": "waffle",
+    "variation": "period",
+    "text": "waffle.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Waffle.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bagel_plain.mp3",
+    "word": "bagel",
+    "variation": "plain",
+    "text": "bagel",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bagel.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bagel_period.mp3",
+    "word": "bagel",
+    "variation": "period",
+    "text": "bagel.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bagel.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/egg_plain.mp3",
+    "word": "egg",
+    "variation": "plain",
+    "text": "egg",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " egg",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/egg_period.mp3",
+    "word": "egg",
+    "variation": "period",
+    "text": "egg.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " egg",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/butter_plain.mp3",
+    "word": "butter",
+    "variation": "plain",
+    "text": "butter",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Butter.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/butter_period.mp3",
+    "word": "butter",
+    "variation": "period",
+    "text": "butter.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Butter.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  }
+]

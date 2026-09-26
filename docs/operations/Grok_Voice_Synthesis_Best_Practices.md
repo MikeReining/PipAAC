@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
 
 ### Rejected payloads
 
@@ -174,6 +174,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | how | `data/samples/approved/how.mp3` | `how` | Ear, `batch-11` shortlist |
 | when | `data/samples/approved/when.mp3` | `when` | Ear, `batch-11` shortlist |
 | not | `data/samples/approved/not.mp3` | `not.` | Ear, `batch-11` shortlist |
+| please | `data/samples/approved/please.mp3` | `please.` | Ear replaced plain `please` with the period take. |
+| but | `data/samples/approved/but.mp3` | `but` | Ear, `batch-12` shortlist |
+| because | `data/samples/approved/because.mp3` | `because` | Ear, `batch-12` shortlist |
+| have | `data/samples/approved/have.mp3` | `have.` | Ear, `batch-12` shortlist |
+| water | `data/samples/approved/water.mp3` | `water` | Ear, `batch-12` shortlist |
+| milk | `data/samples/approved/milk.mp3` | `milk` | Ear, `batch-12` shortlist |
+| juice | `data/samples/approved/juice.mp3` | `juice.` | Ear, `batch-12` shortlist |
+| apple juice | `data/samples/approved/apple-juice.mp3` | `apple juice` | Ear, `batch-12` shortlist |
+| chocolate milk | `data/samples/approved/chocolate-milk.mp3` | `chocolate milk` | Ear, `batch-12` shortlist |
+| tea | `data/samples/approved/tea.mp3` | `tea.` | Ear, `batch-12` shortlist |
 
 ---
 
