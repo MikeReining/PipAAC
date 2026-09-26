@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-10-core",
+  "description": "Next core words by lexicon slot after batch-09. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "with", "slug": "with", "spokenForGate": "with", "whisperMustMatch": ["with"], "variations": [{ "id": "plain", "body": { "text": "with" } }, { "id": "period", "body": { "text": "with." } }] },
+    { "word": "under", "slug": "under", "spokenForGate": "under", "whisperMustMatch": ["under"], "variations": [{ "id": "plain", "body": { "text": "under" } }, { "id": "period", "body": { "text": "under." } }] },
+    { "word": "over", "slug": "over", "spokenForGate": "over", "whisperMustMatch": ["over"], "variations": [{ "id": "plain", "body": { "text": "over" } }, { "id": "period", "body": { "text": "over." } }] },
+    { "word": "more", "slug": "more", "spokenForGate": "more", "whisperMustMatch": ["more"], "variations": [{ "id": "plain", "body": { "text": "more" } }, { "id": "period", "body": { "text": "more." } }] },
+    { "word": "all done", "slug": "all-done", "spokenForGate": "all done", "whisperMustMatch": ["all done"], "variations": [{ "id": "plain", "body": { "text": "all done" } }, { "id": "period", "body": { "text": "all done." } }] },
+    { "word": "big", "slug": "big", "spokenForGate": "big", "whisperMustMatch": ["big"], "variations": [{ "id": "plain", "body": { "text": "big" } }, { "id": "period", "body": { "text": "big." } }] },
+    { "word": "little", "slug": "little", "spokenForGate": "little", "whisperMustMatch": ["little"], "variations": [{ "id": "plain", "body": { "text": "little" } }, { "id": "period", "body": { "text": "little." } }] },
+    { "word": "good", "slug": "good", "spokenForGate": "good", "whisperMustMatch": ["good"], "variations": [{ "id": "plain", "body": { "text": "good" } }, { "id": "period", "body": { "text": "good." } }] },
+    { "word": "bad", "slug": "bad", "spokenForGate": "bad", "whisperMustMatch": ["bad"], "variations": [{ "id": "plain", "body": { "text": "bad" } }, { "id": "period", "body": { "text": "bad." } }] },
+    { "word": "happy", "slug": "happy", "spokenForGate": "happy", "whisperMustMatch": ["happy"], "variations": [{ "id": "plain", "body": { "text": "happy" } }, { "id": "period", "body": { "text": "happy." } }] }
+  ]
+}

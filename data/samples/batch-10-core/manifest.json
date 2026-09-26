@@ -1,0 +1,278 @@
+[
+  {
+    "file": "takes/with_plain.mp3",
+    "word": "with",
+    "variation": "plain",
+    "text": "with",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " with",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/with_period.mp3",
+    "word": "with",
+    "variation": "period",
+    "text": "with.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " with.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/under_plain.mp3",
+    "word": "under",
+    "variation": "plain",
+    "text": "under",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Under.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/under_period.mp3",
+    "word": "under",
+    "variation": "period",
+    "text": "under.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Under.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/over_plain.mp3",
+    "word": "over",
+    "variation": "plain",
+    "text": "over",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Over.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/over_period.mp3",
+    "word": "over",
+    "variation": "period",
+    "text": "over.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Over.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/more_plain.mp3",
+    "word": "more",
+    "variation": "plain",
+    "text": "more",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " More.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/more_period.mp3",
+    "word": "more",
+    "variation": "period",
+    "text": "more.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " More.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/all-done_plain.mp3",
+    "word": "all done",
+    "variation": "plain",
+    "text": "all done",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " All done.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/all-done_period.mp3",
+    "word": "all done",
+    "variation": "period",
+    "text": "all done.",
+    "replace": null,
+    "speed": 1,
+    "score": 15,
+    "whisper": " All done.",
+    "notes": [
+      "tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/big_plain.mp3",
+    "word": "big",
+    "variation": "plain",
+    "text": "big",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " big",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/big_period.mp3",
+    "word": "big",
+    "variation": "period",
+    "text": "big.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Big.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/little_plain.mp3",
+    "word": "little",
+    "variation": "plain",
+    "text": "little",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " little",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/little_period.mp3",
+    "word": "little",
+    "variation": "period",
+    "text": "little.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Little",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/good_plain.mp3",
+    "word": "good",
+    "variation": "plain",
+    "text": "good",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Good.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/good_period.mp3",
+    "word": "good",
+    "variation": "period",
+    "text": "good.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Good.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bad_plain.mp3",
+    "word": "bad",
+    "variation": "plain",
+    "text": "bad",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bad.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bad_period.mp3",
+    "word": "bad",
+    "variation": "period",
+    "text": "bad.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bad.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/happy_plain.mp3",
+    "word": "happy",
+    "variation": "plain",
+    "text": "happy",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Happy.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/happy_period.mp3",
+    "word": "happy",
+    "variation": "period",
+    "text": "happy.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Happy.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  }
+]
