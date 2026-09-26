@@ -17,7 +17,7 @@
       "file": "aga_bad.mp3",
       "text": "bad",
       "source_raw": "aga_bad_raw.mp3",
-      "note": "tail burst removed via audio_inspect fix-burst (2026-09-26)",
+      "note": "aga_bad.mp3 is the fix-burst cut to ~0.40 s and it removes the end of the word. aga_bad_light.mp3 keeps the raw through 0.90 s and only fades off the final click.",
       "generatedAt": "2026-09-26T04:20:00.000Z"
     }
   ]

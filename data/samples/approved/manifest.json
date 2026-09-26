@@ -718,10 +718,11 @@
     {
       "word": "bad",
       "file": "bad.mp3",
-      "source": "data/samples/batch-10-core/takes/bad_emphasis_bang.mp3",
-      "text": "<emphasis>bad!</emphasis>",
+      "source": "data/samples/voice-clone/aga_bad_light.mp3",
+      "text": "bad",
       "replace": null,
-      "basis": "ear for now; plain and period were raspy; this take still dips to 92 Hz"
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear finalized the gentle trim of aga_bad_raw. Grok takes were raspy. fix-burst to 0.40 s removed the d."
     },
     {
       "word": "happy",

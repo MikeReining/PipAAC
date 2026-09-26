@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*. *bad* is `<emphasis>bad!</emphasis>` for now. The ear called it raspy and kept it anyway.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
 
 ### Rejected payloads
 
@@ -162,7 +162,7 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | big | `data/samples/approved/big.mp3` | `big` | Ear, `batch-10` shortlist |
 | little | `data/samples/approved/little.mp3` | `little.` | Ear, `batch-10` shortlist |
 | good | `data/samples/approved/good.mp3` | `good` | Ear, `batch-10` shortlist |
-| bad | `data/samples/approved/bad.mp3` | `<emphasis>bad!</emphasis>` | Ear, for now. Plain and period were raspy. This take still dips to 92 Hz. |
+| bad | `data/samples/approved/bad.mp3` | ElevenLabs Aga, gentle trim of `aga_bad_raw.mp3` | Ear. Grok takes were raspy. The 0.40 s burst cut removed the /d/. The 0.90 s trim is the clip. |
 | happy | `data/samples/approved/happy.mp3` | `happy.` | Ear replaced plain `happy`. That take was raspy. |
 
 ---
@@ -245,9 +245,9 @@ When a Grok take fails the ear or explore shortlist, mint the same **spoken text
 | **Mint CLI** | `npm run catalog:audio:mint-backup -- --spoken bad` |
 | **Exact TTS text** | `npm run catalog:audio:mint-backup -- --spoken bad --text "<emphasis>bad!</emphasis>"` |
 | **Output** | `data/samples/backup-mint/<slug>.mp3` plus `<slug>_raw.mp3` when burst-fix runs |
-| **Post-process** | `fix-burst` on by default (ElevenLabs often adds a detached tail pop). Pass `--no-fix-burst` to skip. |
+| **Post-process** | Gentle end trim by default: fade off a click in the last 80 ms and keep the word. `fix-burst` is opt-in (`--fix-burst`). On *bad* it cut the /d/ and left 0.40 s. The ear kept `aga_bad_light.mp3` (0.90 s). |
 | **Secret** | `ELEVENLABS_API_KEY` in the environment only — never commit the key. |
 
 **Process:** Grok explore shortlist first → founder listen → if reject, `mint-backup` with the same `text`/`replace` from the recipe → listen → if good, copy to `data/samples/approved/` and update `manifest.json`. Do not upload to R2 without explicit approval.
 
-Clone reference sample (long): `data/samples/voice-clone/ara_child_paragraph.mp3`. Example backup word: `data/samples/voice-clone/aga_bad.mp3`.
+Clone reference sample (long): `data/samples/voice-clone/ara_child_paragraph.mp3`. Approved backup word: `data/samples/approved/bad.mp3`, from `data/samples/voice-clone/aga_bad_light.mp3`. The 0.40 s `aga_bad.mp3` is the over-cut and is not the clip.

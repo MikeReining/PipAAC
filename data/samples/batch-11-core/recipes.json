@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-11-core",
+  "description": "Next core words by lexicon slot after batch-10. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "same", "slug": "same", "spokenForGate": "same", "whisperMustMatch": ["same"], "variations": [{ "id": "plain", "body": { "text": "same" } }, { "id": "period", "body": { "text": "same." } }] },
+    { "word": "different", "slug": "different", "spokenForGate": "different", "whisperMustMatch": ["different"], "variations": [{ "id": "plain", "body": { "text": "different" } }, { "id": "period", "body": { "text": "different." } }] },
+    { "word": "some", "slug": "some", "spokenForGate": "some", "whisperMustMatch": ["some", "sum"], "variations": [{ "id": "plain", "body": { "text": "some" } }, { "id": "period", "body": { "text": "some." } }] },
+    { "word": "all", "slug": "all", "spokenForGate": "all", "whisperMustMatch": ["all"], "variations": [{ "id": "plain", "body": { "text": "all" } }, { "id": "period", "body": { "text": "all." } }] },
+    { "word": "what", "slug": "what", "spokenForGate": "what", "whisperMustMatch": ["what"], "variations": [{ "id": "plain", "body": { "text": "what" } }, { "id": "period", "body": { "text": "what." } }] },
+    { "word": "where", "slug": "where", "spokenForGate": "where", "whisperMustMatch": ["where"], "variations": [{ "id": "plain", "body": { "text": "where" } }, { "id": "period", "body": { "text": "where." } }] },
+    { "word": "why", "slug": "why", "spokenForGate": "why", "whisperMustMatch": ["why"], "variations": [{ "id": "plain", "body": { "text": "why" } }, { "id": "period", "body": { "text": "why." } }] },
+    { "word": "how", "slug": "how", "spokenForGate": "how", "whisperMustMatch": ["how"], "variations": [{ "id": "plain", "body": { "text": "how" } }, { "id": "period", "body": { "text": "how." } }] },
+    { "word": "when", "slug": "when", "spokenForGate": "when", "whisperMustMatch": ["when"], "variations": [{ "id": "plain", "body": { "text": "when" } }, { "id": "period", "body": { "text": "when." } }] },
+    { "word": "not", "slug": "not", "spokenForGate": "not", "whisperMustMatch": ["not"], "variations": [{ "id": "plain", "body": { "text": "not" } }, { "id": "period", "body": { "text": "not." } }] }
+  ]
+}

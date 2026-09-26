@@ -107,6 +107,37 @@ export function isConsonantRelease(samples, sr, cutSample) {
   return true;
 }
 
+/**
+ * Cut only a click in the last 80 ms that sits after a quiet stretch.
+ * aga_bad_raw.mp3 keeps the /d/ this way. fix-burst cut that release off
+ * and left 0.40 s.
+ * @returns {number} sample index to keep through
+ */
+export function gentleEndCutSample(samples, sr) {
+  const hop = Math.max(1, Math.round(sr * 0.01));
+  const frames = [];
+  for (let i = 0; i < samples.length; i += hop) {
+    let acc = 0;
+    const n = Math.min(hop, samples.length - i);
+    for (let j = 0; j < n; j += 1) acc += samples[i + j] * samples[i + j];
+    frames.push(Math.sqrt(acc / n));
+  }
+  const peak = frames.reduce((max, v) => Math.max(max, v), 0);
+  if (peak === 0) return samples.length;
+  const windowStart = Math.max(0, frames.length - 8);
+  let clickAt = -1;
+  for (let i = windowStart; i < frames.length; i += 1) {
+    if (frames[i] / peak < 0.02) continue;
+    let quiet = 0;
+    for (let k = Math.max(0, i - 5); k < i; k += 1) {
+      if (frames[k] / peak < 0.015) quiet += 1;
+    }
+    if (quiet >= 4) clickAt = i;
+  }
+  if (clickAt < 0) return samples.length;
+  return Math.min(samples.length, clickAt * hop);
+}
+
 export function analyzeDetachedBurst(samples, sr, opts) {
   const cutSample = findDetachedBurstCutSample(samples, sr, opts);
   const burstDetected = cutSample < samples.length;
@@ -143,6 +174,38 @@ function writePcmWav(path, sr, samples) {
  * Decode → detect burst → fade → encode MP3.
  * @returns {{ burstDetected: boolean, keptMs: number, totalMs: number }}
  */
+/**
+ * Fade off a terminal click. Does not remove a detached consonant.
+ * @returns {{ keptMs: number, totalMs: number, trimmed: boolean }}
+ */
+export function gentleEndTrim({
+  sourcePath,
+  destPath,
+  decode = decodePcmToMono16k,
+  spawn = spawnSync,
+  fadeSec = 0.02,
+} = {}) {
+  const { pcm, sampleRate: sr } = decode(sourcePath);
+  const cutSample = gentleEndCutSample(pcm, sr);
+  const faded = applyEndFade(pcm, cutSample, sr, fadeSec);
+  const wav = join(tmpdir(), `pip-gentle-${process.pid}-${Date.now()}.wav`);
+  writePcmWav(wav, sr, faded);
+  const result = spawn(
+    "ffmpeg",
+    ["-y", "-v", "error", "-i", wav, "-codec:a", "libmp3lame", "-b:a", "128k", destPath],
+    { encoding: "utf8" },
+  );
+  if (result.error || result.status !== 0 || !existsSync(destPath)) {
+    const detail = `${result.stderr ?? ""}`.trim();
+    throw new Error(`could not encode gently trimmed audio${detail ? `: ${detail}` : ""}`);
+  }
+  return {
+    keptMs: (cutSample / sr) * 1000,
+    totalMs: (pcm.length / sr) * 1000,
+    trimmed: cutSample < pcm.length,
+  };
+}
+
 export function fixDetachedBurst({
   sourcePath,
   destPath,

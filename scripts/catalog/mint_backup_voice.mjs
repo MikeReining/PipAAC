@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 /**
  * Mint one catalog clip with the committed ElevenLabs backup voice (Aga clone).
- * Applies fix-burst tail cleanup by default — same as aga_bad workflow.
+ * Saves the raw take and, by default, fades off only a click in the last 80 ms.
+ * fix-burst is opt-in. On "bad" it cut the /d/ and left 0.40 s. The ear kept
+ * the gentle trim.
  *
  *   npm run catalog:audio:mint-backup -- --spoken bad
  *   npm run catalog:audio:mint-backup -- --spoken "can't" --out data/samples/my/cant.mp3
- *   npm run catalog:audio:mint-backup -- --spoken bad --no-fix-burst
+ *   npm run catalog:audio:mint-backup -- --spoken bad --fix-burst
  */
 
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
@@ -13,7 +15,7 @@ import { basename, dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { tmpdir } from "node:os";
 
-import { fixDetachedBurst } from "./audio_stop_burst.mjs";
+import { fixDetachedBurst, gentleEndTrim } from "./audio_stop_burst.mjs";
 import { synthesizeElevenLabs } from "./elevenlabs_tts.mjs";
 import { getBackupVoice, loadCatalogVoices } from "./voices.mjs";
 import { repoRoot } from "./paths.mjs";
@@ -27,7 +29,7 @@ function slug(spoken) {
 }
 
 function parseArgv(argv) {
-  const out = { spoken: null, text: null, out: null, noFixBurst: false, dryRun: false, help: false };
+  const out = { spoken: null, text: null, out: null, noFixBurst: false, fixBurst: false, dryRun: false, help: false };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--spoken") {
@@ -41,6 +43,8 @@ function parseArgv(argv) {
       i += 1;
     } else if (arg === "--no-fix-burst") {
       out.noFixBurst = true;
+    } else if (arg === "--fix-burst") {
+      out.fixBurst = true;
     } else if (arg === "--dry-run") {
       out.dryRun = true;
     } else if (arg === "--help" || arg === "-h") {
@@ -51,7 +55,7 @@ function parseArgv(argv) {
 }
 
 const USAGE = `usage:
-  node scripts/catalog/mint_backup_voice.mjs --spoken WORD [--text "exact TTS text"] [--out FILE] [--no-fix-burst]
+  node scripts/catalog/mint_backup_voice.mjs --spoken WORD [--text "exact TTS text"] [--out FILE] [--fix-burst]
 
   Voice ID and model: data/catalog/voices.json → backup
   Requires ELEVENLABS_API_KEY in the environment.`;
@@ -71,7 +75,8 @@ export async function mintBackupVoice({
   spoken,
   text = null,
   outPath = null,
-  fixBurst = true,
+  fixBurst = false,
+  gentleTrim = true,
   dryRun = false,
   backup = getBackupVoice(),
 } = {}) {
@@ -92,10 +97,11 @@ export async function mintBackupVoice({
   });
 
   mkdirSync(dirname(dest), { recursive: true });
-  const shouldFix = fixBurst && backup.post_process?.fix_tail_burst !== false;
-  if (!shouldFix) {
+  const useBurst = fixBurst || backup.post_process?.fix_tail_burst === true;
+  const useGentle = !useBurst && gentleTrim && backup.post_process?.gentle_end_trim !== false;
+  if (!useBurst && !useGentle) {
     writeFileSync(dest, raw);
-    return { outPath: dest, bytes: raw.length, fixBurst: false, voiceId: backup.voice_id, text: ttsText };
+    return { outPath: dest, bytes: raw.length, fixBurst: false, gentleTrim: false, voiceId: backup.voice_id, text: ttsText };
   }
 
   const rawPath = join(tmpdir(), `pip-backup-${process.pid}-${Date.now()}.mp3`);
@@ -103,12 +109,14 @@ export async function mintBackupVoice({
   try {
     const rawKeep = dest.replace(/\.mp3$/i, `${backup.post_process?.keep_raw_suffix ?? "_raw"}.mp3`);
     writeFileSync(rawKeep, raw);
-    fixDetachedBurst({ sourcePath: rawPath, destPath: dest });
+    if (useBurst) fixDetachedBurst({ sourcePath: rawPath, destPath: dest });
+    else gentleEndTrim({ sourcePath: rawPath, destPath: dest });
     return {
       outPath: dest,
       rawPath: rawKeep,
       bytes: raw.length,
-      fixBurst: true,
+      fixBurst: useBurst,
+      gentleTrim: useGentle,
       voiceId: backup.voice_id,
       text: ttsText,
     };
@@ -133,7 +141,8 @@ async function main() {
     spoken: args.spoken,
     text: args.text,
     outPath: args.out,
-    fixBurst: !args.noFixBurst,
+    fixBurst: args.fixBurst && !args.noFixBurst,
+    gentleTrim: !args.fixBurst && !args.noFixBurst,
     dryRun: args.dryRun,
   });
   if (result.dryRun) {
@@ -141,7 +150,7 @@ async function main() {
     return;
   }
   console.log(`wrote ${result.outPath}${result.rawPath ? ` (raw ${result.rawPath})` : ""}`);
-  console.log(`voice=${result.voiceId} text=${JSON.stringify(result.text)} fix_burst=${result.fixBurst}`);
+  console.log(`voice=${result.voiceId} text=${JSON.stringify(result.text)} fix_burst=${result.fixBurst} gentle_trim=${result.gentleTrim}`);
 }
 
 const invoked = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;

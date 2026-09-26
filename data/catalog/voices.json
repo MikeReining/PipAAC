@@ -20,7 +20,8 @@
       "use_speaker_boost": true
     },
     "post_process": {
-      "fix_tail_burst": true,
+      "fix_tail_burst": false,
+      "gentle_end_trim": true,
       "keep_raw_suffix": "_raw"
     }
   }

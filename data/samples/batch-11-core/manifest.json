@@ -1,0 +1,276 @@
+[
+  {
+    "file": "takes/same_plain.mp3",
+    "word": "same",
+    "variation": "plain",
+    "text": "same",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Same.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/same_period.mp3",
+    "word": "same",
+    "variation": "period",
+    "text": "same.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Same.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/different_plain.mp3",
+    "word": "different",
+    "variation": "plain",
+    "text": "different",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Different.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/different_period.mp3",
+    "word": "different",
+    "variation": "period",
+    "text": "different.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " different",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/some_plain.mp3",
+    "word": "some",
+    "variation": "plain",
+    "text": "some",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Some.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/some_period.mp3",
+    "word": "some",
+    "variation": "period",
+    "text": "some.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " sum",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/all_plain.mp3",
+    "word": "all",
+    "variation": "plain",
+    "text": "all",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " All.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/all_period.mp3",
+    "word": "all",
+    "variation": "period",
+    "text": "all.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " All.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/what_plain.mp3",
+    "word": "what",
+    "variation": "plain",
+    "text": "what",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " What?",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/what_period.mp3",
+    "word": "what",
+    "variation": "period",
+    "text": "what.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " What?",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/where_plain.mp3",
+    "word": "where",
+    "variation": "plain",
+    "text": "where",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Where?",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/where_period.mp3",
+    "word": "where",
+    "variation": "period",
+    "text": "where.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Where?",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/why_plain.mp3",
+    "word": "why",
+    "variation": "plain",
+    "text": "why",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Why?",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/why_period.mp3",
+    "word": "why",
+    "variation": "period",
+    "text": "why.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Why?",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/how_plain.mp3",
+    "word": "how",
+    "variation": "plain",
+    "text": "how",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " How?",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/how_period.mp3",
+    "word": "how",
+    "variation": "period",
+    "text": "how.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " How?",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/when_plain.mp3",
+    "word": "when",
+    "variation": "plain",
+    "text": "when",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " When.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/when_period.mp3",
+    "word": "when",
+    "variation": "period",
+    "text": "when.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " When.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/not_plain.mp3",
+    "word": "not",
+    "variation": "plain",
+    "text": "not",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " not",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/not_period.mp3",
+    "word": "not",
+    "variation": "period",
+    "text": "not.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " not.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  }
+]
