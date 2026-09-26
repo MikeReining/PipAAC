@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-15-core",
+  "description": "Next food words by lexicon slot after batch-14. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "soup", "slug": "soup", "spokenForGate": "soup", "whisperMustMatch": ["soup"], "variations": [{ "id": "plain", "body": { "text": "soup" } }, { "id": "period", "body": { "text": "soup." } }] },
+    { "word": "rice", "slug": "rice", "spokenForGate": "rice", "whisperMustMatch": ["rice"], "variations": [{ "id": "plain", "body": { "text": "rice" } }, { "id": "period", "body": { "text": "rice." } }] },
+    { "word": "cheese", "slug": "cheese", "spokenForGate": "cheese", "whisperMustMatch": ["cheese"], "variations": [{ "id": "plain", "body": { "text": "cheese" } }, { "id": "period", "body": { "text": "cheese." } }] },
+    { "word": "meat", "slug": "meat", "spokenForGate": "meat", "whisperMustMatch": ["meat"], "variations": [{ "id": "plain", "body": { "text": "meat" } }, { "id": "period", "body": { "text": "meat." } }] },
+    { "word": "fish", "slug": "fish", "spokenForGate": "fish", "whisperMustMatch": ["fish"], "variations": [{ "id": "plain", "body": { "text": "fish" } }, { "id": "period", "body": { "text": "fish." } }] },
+    { "word": "snack", "slug": "snack", "spokenForGate": "snack", "whisperMustMatch": ["snack"], "variations": [{ "id": "plain", "body": { "text": "snack" } }, { "id": "period", "body": { "text": "snack." } }] },
+    { "word": "cracker", "slug": "cracker", "spokenForGate": "cracker", "whisperMustMatch": ["cracker"], "variations": [{ "id": "plain", "body": { "text": "cracker" } }, { "id": "period", "body": { "text": "cracker." } }] },
+    { "word": "cookie", "slug": "cookie", "spokenForGate": "cookie", "whisperMustMatch": ["cookie"], "variations": [{ "id": "plain", "body": { "text": "cookie" } }, { "id": "period", "body": { "text": "cookie." } }] },
+    { "word": "chips", "slug": "chips", "spokenForGate": "chips", "whisperMustMatch": ["chips"], "variations": [{ "id": "plain", "body": { "text": "chips" } }, { "id": "period", "body": { "text": "chips." } }] },
+    { "word": "popcorn", "slug": "popcorn", "spokenForGate": "popcorn", "whisperMustMatch": ["popcorn"], "variations": [{ "id": "plain", "body": { "text": "popcorn" } }, { "id": "period", "body": { "text": "popcorn." } }] }
+  ]
+}

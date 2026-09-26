@@ -971,6 +971,88 @@
       "text": "butter",
       "replace": null,
       "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "jam",
+      "file": "jam.mp3",
+      "source": "data/samples/batch-14-core/takes/jam_plain.mp3",
+      "text": "jam",
+      "replace": null,
+      "basis": "ear, batch-14 shortlist"
+    },
+    {
+      "word": "syrup",
+      "file": "syrup.mp3",
+      "source": "data/samples/batch-14-core/takes/syrup_plain.mp3",
+      "text": "syrup",
+      "replace": null,
+      "basis": "ear, batch-14 shortlist"
+    },
+    {
+      "word": "pizza",
+      "file": "pizza.mp3",
+      "source": "data/samples/batch-14-core/takes/pizza_backup_raw.mp3",
+      "text": "pizza",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga raw backup"
+    },
+    {
+      "word": "pasta",
+      "file": "pasta.mp3",
+      "source": "data/samples/batch-14-core/takes/pasta_backup_raw.mp3",
+      "text": "pasta",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga raw backup"
+    },
+    {
+      "word": "macaroni",
+      "file": "macaroni.mp3",
+      "source": "data/samples/batch-14-core/takes/macaroni_plain.mp3",
+      "text": "macaroni",
+      "replace": null,
+      "basis": "ear, batch-14 shortlist"
+    },
+    {
+      "word": "sandwich",
+      "file": "sandwich.mp3",
+      "source": "data/samples/batch-14-core/takes/sandwich_period.mp3",
+      "text": "sandwich.",
+      "replace": null,
+      "basis": "ear, batch-14 shortlist"
+    },
+    {
+      "word": "chicken",
+      "file": "chicken.mp3",
+      "source": "data/samples/batch-14-core/takes/chicken_period.mp3",
+      "text": "chicken.",
+      "replace": null,
+      "basis": "ear, batch-14 shortlist"
+    },
+    {
+      "word": "nuggets",
+      "file": "nuggets.mp3",
+      "source": "data/samples/batch-14-core/takes/nuggets_period.mp3",
+      "text": "nuggets.",
+      "replace": null,
+      "basis": "ear replaced plain nuggets with the period take"
+    },
+    {
+      "word": "burger",
+      "file": "burger.mp3",
+      "source": "data/samples/batch-14-core/takes/burger_plain.mp3",
+      "text": "burger",
+      "replace": null,
+      "basis": "ear, batch-14 shortlist"
+    },
+    {
+      "word": "hot dog",
+      "file": "hot-dog.mp3",
+      "source": "data/samples/batch-14-core/takes/hot-dog_plain.mp3",
+      "text": "hot dog",
+      "replace": null,
+      "basis": "ear, batch-14 shortlist"
     }
   ],
   "rejected": [

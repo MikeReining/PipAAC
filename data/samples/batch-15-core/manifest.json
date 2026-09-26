@@ -1,0 +1,283 @@
+[
+  {
+    "file": "takes/soup_plain.mp3",
+    "word": "soup",
+    "variation": "plain",
+    "text": "soup",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Soup.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/soup_period.mp3",
+    "word": "soup",
+    "variation": "period",
+    "text": "soup.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Soup.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/rice_plain.mp3",
+    "word": "rice",
+    "variation": "plain",
+    "text": "rice",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Rice.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/rice_period.mp3",
+    "word": "rice",
+    "variation": "period",
+    "text": "rice.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Rice.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cheese_plain.mp3",
+    "word": "cheese",
+    "variation": "plain",
+    "text": "cheese",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cheese",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cheese_period.mp3",
+    "word": "cheese",
+    "variation": "period",
+    "text": "cheese.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cheese.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/meat_plain.mp3",
+    "word": "meat",
+    "variation": "plain",
+    "text": "meat",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " meat.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/meat_period.mp3",
+    "word": "meat",
+    "variation": "period",
+    "text": "meat.",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " meat",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fish_plain.mp3",
+    "word": "fish",
+    "variation": "plain",
+    "text": "fish",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Fish",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/fish_period.mp3",
+    "word": "fish",
+    "variation": "period",
+    "text": "fish.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Fish.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/snack_plain.mp3",
+    "word": "snack",
+    "variation": "plain",
+    "text": "snack",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Snack.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/snack_period.mp3",
+    "word": "snack",
+    "variation": "period",
+    "text": "snack.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Snack.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/cracker_plain.mp3",
+    "word": "cracker",
+    "variation": "plain",
+    "text": "cracker",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cracker.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cracker_period.mp3",
+    "word": "cracker",
+    "variation": "period",
+    "text": "cracker.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cracker.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cookie_plain.mp3",
+    "word": "cookie",
+    "variation": "plain",
+    "text": "cookie",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Cookie.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/cookie_period.mp3",
+    "word": "cookie",
+    "variation": "period",
+    "text": "cookie.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cookie",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/chips_plain.mp3",
+    "word": "chips",
+    "variation": "plain",
+    "text": "chips",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Chips",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/chips_period.mp3",
+    "word": "chips",
+    "variation": "period",
+    "text": "chips.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Chips",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/popcorn_plain.mp3",
+    "word": "popcorn",
+    "variation": "plain",
+    "text": "popcorn",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " Popcorn.",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/popcorn_period.mp3",
+    "word": "popcorn",
+    "variation": "period",
+    "text": "popcorn.",
+    "replace": null,
+    "speed": 1,
+    "score": 90,
+    "whisper": " Popcorn.",
+    "notes": [
+      "duration_sweet_spot",
+      "gate_activity_after_silence",
+      "no_tail_burst"
+    ]
+  }
+]
