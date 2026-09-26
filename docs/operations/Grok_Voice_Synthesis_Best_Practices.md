@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*, *smoothie*, *bread*, *oatmeal*, *waffle*, *bagel*, *butter*, *jam*, *syrup*, *macaroni*, *hot dog*, *burger*, *soup*, *snack*, *chips*, *cracker*, *pretzel*, *yogurt*, *ice cream*, *popsicle*, *cake*, *muffin*, *donut*, *fruit*, *banana*, *grapes*, *watermelon*, *carrot*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*, *toast*, *cereal*, *pancake*, *egg*, *sandwich*, *chicken*, *nuggets*, *fish*, *cookie*, *popcorn*, *candy*, *orange*, *broccoli*, *corn*, *body*. *bad*, *pizza*, *pasta*, *cheese*, *meat*, *rice*, *fruit snack*, *apple*, and *strawberry* are ElevenLabs Aga backups. *pizza* and *pasta* keep the raw file. *cheese*, *meat*, and *rice* keep the gentle-trim file. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*, *smoothie*, *bread*, *oatmeal*, *waffle*, *bagel*, *butter*, *jam*, *syrup*, *macaroni*, *hot dog*, *burger*, *soup*, *snack*, *chips*, *cracker*, *pretzel*, *yogurt*, *ice cream*, *popsicle*, *cake*, *muffin*, *donut*, *fruit*, *banana*, *grapes*, *watermelon*, *carrot*, *hair*, *teeth*, *tongue*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*, *toast*, *cereal*, *pancake*, *egg*, *sandwich*, *chicken*, *nuggets*, *fish*, *cookie*, *popcorn*, *candy*, *orange*, *broccoli*, *corn*, *body*, *ear*, *eye*, *nose*. *bad*, *pizza*, *pasta*, *cheese*, *meat*, *rice*, *fruit snack*, *apple*, *strawberry*, *head*, *face*, *mouth*, and *neck* are ElevenLabs Aga backups. *pizza*, *pasta*, and *face* keep the raw file. *cheese*, *meat*, and *rice* keep the gentle-trim file. *neck* is Aga after trailing-silence trim from raw. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
 
 ### Rejected payloads
 
@@ -234,6 +234,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | broccoli | `data/samples/approved/broccoli.mp3` | `broccoli.` | Ear, `batch-17` shortlist |
 | corn | `data/samples/approved/corn.mp3` | `corn.` | Ear, `batch-17` shortlist |
 | body | `data/samples/approved/body.mp3` | `body.` | Ear, `batch-17` shortlist |
+| head | `data/samples/approved/head.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `head_backup.mp3`. |
+| face | `data/samples/approved/face.mp3` | ElevenLabs Aga raw | Ear replaced the Grok take with `face_backup_raw.mp3`. |
+| hair | `data/samples/approved/hair.mp3` | `hair` | Ear, `batch-18` shortlist |
+| eye | `data/samples/approved/eye.mp3` | `eye.` | Ear, `batch-18` shortlist. Whisper heard "I". |
+| ear | `data/samples/approved/ear.mp3` | `ear.` | Ear, `batch-18` shortlist |
+| nose | `data/samples/approved/nose.mp3` | `nose.` | Ear, `batch-18` shortlist |
+| mouth | `data/samples/approved/mouth.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `mouth_backup.mp3`. |
+| teeth | `data/samples/approved/teeth.mp3` | `teeth` | Ear, `batch-18` shortlist |
+| tongue | `data/samples/approved/tongue.mp3` | `tongue` | Ear, `batch-18` shortlist |
+| neck | `data/samples/approved/neck.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `neck_backup.mp3` (silence trimmed from raw). |
 
 ---
 
@@ -300,6 +310,8 @@ A word with no table row calls this with no `replace`. A sentence calls it with 
 **Two repair paths for end junk:** `fix-burst` (RMS gap + burst detector + 12 ms fade) targets final /t/ /d/ releases on contractions. `trim heal` (blind 50 ms steps) targets generic `activity_after_silence` flags (sniff-style acting). The explore score also deducts `residue_shelf` (rule 10): a quiet second sound under −40 dB that rises and holds. That is what demotes `minute_plain` under `minute.` .
 
 **Multi-take exploration (batch-04 problem words):** `data/samples/batch-04-for/recipes.json` defines variation matrices; run `npm run catalog:audio:explore -- --batch data/samples/batch-04-for` (mint cap 10 per invocation — re-run until `takes/` is full, then score). Outputs `takes/`, auto-ranked `shortlist/`, and `exploration_report.json`. Legacy `batch-04` baselines: add `--include-legacy` on score.
+
+**Auto backup on weak Grok score (batch-19+):** After scoring Grok takes, if the best row per word scores under 110 or carries `tail_burst`, `residue_shelf`, `echo_return`, whisper mismatch, or a gate flag, explore mints ElevenLabs Aga into `takes/<slug>_backup.mp3` (+ `_raw`), re-scores, and ranks backup against Grok for `shortlist/*_recommended.mp3`. The founder still listens; ear overrides. Disable with `--no-auto-backup`.
 
 Mint one-off rows from a batch manifest: `node scripts/catalog/mint_grok_samples.mjs`. Whisper-only: `node scripts/catalog/transcribe_groq.mjs`. Keys: `XAI_API_KEY` / `GROQ_API_KEY` in the environment.
 

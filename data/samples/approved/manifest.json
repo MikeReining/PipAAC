@@ -1299,6 +1299,90 @@
       "text": "body.",
       "replace": null,
       "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "head",
+      "file": "head.mp3",
+      "source": "data/samples/batch-18-core/takes/head_backup.mp3",
+      "text": "head",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "face",
+      "file": "face.mp3",
+      "source": "data/samples/batch-18-core/takes/face_backup_raw.mp3",
+      "text": "face",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup raw (gentle trim added residue_shelf)"
+    },
+    {
+      "word": "hair",
+      "file": "hair.mp3",
+      "source": "data/samples/batch-18-core/takes/hair_plain.mp3",
+      "text": "hair",
+      "replace": null,
+      "basis": "ear, batch-18 shortlist"
+    },
+    {
+      "word": "eye",
+      "file": "eye.mp3",
+      "source": "data/samples/batch-18-core/takes/eye_period.mp3",
+      "text": "eye.",
+      "replace": null,
+      "basis": "ear, batch-18 shortlist. Whisper heard \"I\"."
+    },
+    {
+      "word": "ear",
+      "file": "ear.mp3",
+      "source": "data/samples/batch-18-core/takes/ear_period.mp3",
+      "text": "ear.",
+      "replace": null,
+      "basis": "ear, batch-18 shortlist"
+    },
+    {
+      "word": "nose",
+      "file": "nose.mp3",
+      "source": "data/samples/batch-18-core/takes/nose_period.mp3",
+      "text": "nose.",
+      "replace": null,
+      "basis": "ear, batch-18 shortlist"
+    },
+    {
+      "word": "mouth",
+      "file": "mouth.mp3",
+      "source": "data/samples/batch-18-core/takes/mouth_backup.mp3",
+      "text": "mouth",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "teeth",
+      "file": "teeth.mp3",
+      "source": "data/samples/batch-18-core/takes/teeth_plain.mp3",
+      "text": "teeth",
+      "replace": null,
+      "basis": "ear, batch-18 shortlist"
+    },
+    {
+      "word": "tongue",
+      "file": "tongue.mp3",
+      "source": "data/samples/batch-18-core/takes/tongue_plain.mp3",
+      "text": "tongue",
+      "replace": null,
+      "basis": "ear, batch-18 shortlist"
+    },
+    {
+      "word": "neck",
+      "file": "neck.mp3",
+      "source": "data/samples/batch-18-core/takes/neck_backup.mp3",
+      "text": "neck",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup; trailing silence trimmed from raw"
     }
   ],
   "rejected": [
