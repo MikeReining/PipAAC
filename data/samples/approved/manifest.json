@@ -891,6 +891,86 @@
       "text": "tea.",
       "replace": null,
       "basis": "ear, batch-12 shortlist"
+    },
+    {
+      "word": "smoothie",
+      "file": "smoothie.mp3",
+      "source": "data/samples/batch-13-core/takes/smoothie_plain.mp3",
+      "text": "smoothie",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "bread",
+      "file": "bread.mp3",
+      "source": "data/samples/batch-13-core/takes/bread_plain.mp3",
+      "text": "bread",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "toast",
+      "file": "toast.mp3",
+      "source": "data/samples/batch-13-core/takes/toast_period.mp3",
+      "text": "toast.",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "cereal",
+      "file": "cereal.mp3",
+      "source": "data/samples/batch-13-core/takes/cereal_period.mp3",
+      "text": "cereal.",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist; Whisper heard Serial"
+    },
+    {
+      "word": "oatmeal",
+      "file": "oatmeal.mp3",
+      "source": "data/samples/batch-13-core/takes/oatmeal_plain.mp3",
+      "text": "oatmeal",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "pancake",
+      "file": "pancake.mp3",
+      "source": "data/samples/batch-13-core/takes/pancake_period.mp3",
+      "text": "pancake.",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "waffle",
+      "file": "waffle.mp3",
+      "source": "data/samples/batch-13-core/takes/waffle_plain.mp3",
+      "text": "waffle",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "bagel",
+      "file": "bagel.mp3",
+      "source": "data/samples/batch-13-core/takes/bagel_plain.mp3",
+      "text": "bagel",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "egg",
+      "file": "egg.mp3",
+      "source": "data/samples/batch-13-core/takes/egg_period.mp3",
+      "text": "egg.",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
+    },
+    {
+      "word": "butter",
+      "file": "butter.mp3",
+      "source": "data/samples/batch-13-core/takes/butter_plain.mp3",
+      "text": "butter",
+      "replace": null,
+      "basis": "ear, batch-13 shortlist"
     }
   ],
   "rejected": [

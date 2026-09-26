@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-14-core",
+  "description": "Next food words by lexicon slot after batch-13. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "jam", "slug": "jam", "spokenForGate": "jam", "whisperMustMatch": ["jam"], "variations": [{ "id": "plain", "body": { "text": "jam" } }, { "id": "period", "body": { "text": "jam." } }] },
+    { "word": "syrup", "slug": "syrup", "spokenForGate": "syrup", "whisperMustMatch": ["syrup"], "variations": [{ "id": "plain", "body": { "text": "syrup" } }, { "id": "period", "body": { "text": "syrup." } }] },
+    { "word": "pizza", "slug": "pizza", "spokenForGate": "pizza", "whisperMustMatch": ["pizza"], "variations": [{ "id": "plain", "body": { "text": "pizza" } }, { "id": "period", "body": { "text": "pizza." } }] },
+    { "word": "pasta", "slug": "pasta", "spokenForGate": "pasta", "whisperMustMatch": ["pasta"], "variations": [{ "id": "plain", "body": { "text": "pasta" } }, { "id": "period", "body": { "text": "pasta." } }] },
+    { "word": "macaroni", "slug": "macaroni", "spokenForGate": "macaroni", "whisperMustMatch": ["macaroni"], "variations": [{ "id": "plain", "body": { "text": "macaroni" } }, { "id": "period", "body": { "text": "macaroni." } }] },
+    { "word": "sandwich", "slug": "sandwich", "spokenForGate": "sandwich", "whisperMustMatch": ["sandwich"], "variations": [{ "id": "plain", "body": { "text": "sandwich" } }, { "id": "period", "body": { "text": "sandwich." } }] },
+    { "word": "chicken", "slug": "chicken", "spokenForGate": "chicken", "whisperMustMatch": ["chicken"], "variations": [{ "id": "plain", "body": { "text": "chicken" } }, { "id": "period", "body": { "text": "chicken." } }] },
+    { "word": "nuggets", "slug": "nuggets", "spokenForGate": "nuggets", "whisperMustMatch": ["nuggets"], "variations": [{ "id": "plain", "body": { "text": "nuggets" } }, { "id": "period", "body": { "text": "nuggets." } }] },
+    { "word": "burger", "slug": "burger", "spokenForGate": "burger", "whisperMustMatch": ["burger"], "variations": [{ "id": "plain", "body": { "text": "burger" } }, { "id": "period", "body": { "text": "burger." } }] },
+    { "word": "hot dog", "slug": "hot-dog", "spokenForGate": "hot dog", "whisperMustMatch": ["hot dog"], "variations": [{ "id": "plain", "body": { "text": "hot dog" } }, { "id": "period", "body": { "text": "hot dog." } }] }
+  ]
+}

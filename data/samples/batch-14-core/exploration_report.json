@@ -1,0 +1,587 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T12:48:39.311Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-14-core",
+  "scored": [
+    {
+      "word": "jam",
+      "slug": "jam",
+      "variationId": "plain",
+      "file": "jam_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/jam_plain.mp3",
+      "whisper": " Jam.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -44,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "jam"
+      }
+    },
+    {
+      "word": "jam",
+      "slug": "jam",
+      "variationId": "period",
+      "file": "jam_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/jam_period.mp3",
+      "whisper": " Jam.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "jam."
+      }
+    },
+    {
+      "word": "syrup",
+      "slug": "syrup",
+      "variationId": "plain",
+      "file": "syrup_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/syrup_plain.mp3",
+      "whisper": " Syrup",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 72,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "syrup"
+      }
+    },
+    {
+      "word": "syrup",
+      "slug": "syrup",
+      "variationId": "period",
+      "file": "syrup_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/syrup_period.mp3",
+      "whisper": " Syrup.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 76,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "syrup."
+      }
+    },
+    {
+      "word": "pizza",
+      "slug": "pizza",
+      "variationId": "plain",
+      "file": "pizza_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/pizza_plain.mp3",
+      "whisper": " Pizza",
+      "score": 90,
+      "notes": [
+        "duration_sweet_spot",
+        "gate_activity_after_silence",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -44,
+      "gate": "review",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pizza"
+      }
+    },
+    {
+      "word": "pizza",
+      "slug": "pizza",
+      "variationId": "period",
+      "file": "pizza_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/pizza_period.mp3",
+      "whisper": " Pizza.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -42,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pizza."
+      }
+    },
+    {
+      "word": "pasta",
+      "slug": "pasta",
+      "variationId": "plain",
+      "file": "pasta_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/pasta_plain.mp3",
+      "whisper": " Pasta.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": -66,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pasta"
+      }
+    },
+    {
+      "word": "pasta",
+      "slug": "pasta",
+      "variationId": "period",
+      "file": "pasta_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/pasta_period.mp3",
+      "whisper": " Pasta.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": -34,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pasta."
+      }
+    },
+    {
+      "word": "macaroni",
+      "slug": "macaroni",
+      "variationId": "plain",
+      "file": "macaroni_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/macaroni_plain.mp3",
+      "whisper": " Macaroni.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1250,
+      "tailBurst": false,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "macaroni"
+      }
+    },
+    {
+      "word": "macaroni",
+      "slug": "macaroni",
+      "variationId": "period",
+      "file": "macaroni_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/macaroni_period.mp3",
+      "whisper": " Macaroni.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "macaroni."
+      }
+    },
+    {
+      "word": "sandwich",
+      "slug": "sandwich",
+      "variationId": "plain",
+      "file": "sandwich_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/sandwich_plain.mp3",
+      "whisper": " Sandwich.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": 16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sandwich"
+      }
+    },
+    {
+      "word": "sandwich",
+      "slug": "sandwich",
+      "variationId": "period",
+      "file": "sandwich_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/sandwich_period.mp3",
+      "whisper": " Sandwich.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -59,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sandwich."
+      }
+    },
+    {
+      "word": "chicken",
+      "slug": "chicken",
+      "variationId": "plain",
+      "file": "chicken_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/chicken_plain.mp3",
+      "whisper": " Chicken",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -37,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "chicken"
+      }
+    },
+    {
+      "word": "chicken",
+      "slug": "chicken",
+      "variationId": "period",
+      "file": "chicken_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/chicken_period.mp3",
+      "whisper": " Chicken.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": 17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "chicken."
+      }
+    },
+    {
+      "word": "nuggets",
+      "slug": "nuggets",
+      "variationId": "plain",
+      "file": "nuggets_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/nuggets_plain.mp3",
+      "whisper": " Nuggets",
+      "score": 50,
+      "notes": [
+        "no_tail_burst",
+        "residue_shelf"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -35,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "nuggets"
+      }
+    },
+    {
+      "word": "nuggets",
+      "slug": "nuggets",
+      "variationId": "period",
+      "file": "nuggets_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/nuggets_period.mp3",
+      "whisper": " Nuggets",
+      "score": 50,
+      "notes": [
+        "no_tail_burst",
+        "residue_shelf"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -8,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "nuggets."
+      }
+    },
+    {
+      "word": "burger",
+      "slug": "burger",
+      "variationId": "plain",
+      "file": "burger_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/burger_plain.mp3",
+      "whisper": " Burger.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -34,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "burger"
+      }
+    },
+    {
+      "word": "burger",
+      "slug": "burger",
+      "variationId": "period",
+      "file": "burger_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/burger_period.mp3",
+      "whisper": " Burger.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -14,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "burger."
+      }
+    },
+    {
+      "word": "hot dog",
+      "slug": "hot-dog",
+      "variationId": "plain",
+      "file": "hot-dog_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/hot-dog_plain.mp3",
+      "whisper": " Hot dog.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 1080,
+      "tailBurst": true,
+      "pitchSlopeHz": -21,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hot dog"
+      }
+    },
+    {
+      "word": "hot dog",
+      "slug": "hot-dog",
+      "variationId": "period",
+      "file": "hot-dog_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/hot-dog_period.mp3",
+      "whisper": " Hot dog.",
+      "score": 30,
+      "notes": [
+        "too_long",
+        "tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": true,
+      "pitchSlopeHz": -13,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hot dog."
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "burger",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/burger_plain.mp3",
+      "shortlistFile": "shortlist/burger_recommended.mp3",
+      "score": 125,
+      "whisper": " Burger.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "chicken",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/chicken_period.mp3",
+      "shortlistFile": "shortlist/chicken_recommended.mp3",
+      "score": 70,
+      "whisper": " Chicken.",
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ]
+    },
+    {
+      "word": "hot dog",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/hot-dog_plain.mp3",
+      "shortlistFile": "shortlist/hot-dog_recommended.mp3",
+      "score": 110,
+      "whisper": " Hot dog.",
+      "notes": [
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "jam",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/jam_plain.mp3",
+      "shortlistFile": "shortlist/jam_recommended.mp3",
+      "score": 125,
+      "whisper": " Jam.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "macaroni",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/macaroni_plain.mp3",
+      "shortlistFile": "shortlist/macaroni_recommended.mp3",
+      "score": 85,
+      "whisper": " Macaroni.",
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "nuggets",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/nuggets_plain.mp3",
+      "shortlistFile": "shortlist/nuggets_recommended.mp3",
+      "score": 50,
+      "whisper": " Nuggets",
+      "notes": [
+        "no_tail_burst",
+        "residue_shelf"
+      ]
+    },
+    {
+      "word": "pasta",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/pasta_plain.mp3",
+      "shortlistFile": "shortlist/pasta_recommended.mp3",
+      "score": 70,
+      "whisper": " Pasta.",
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ]
+    },
+    {
+      "word": "pizza",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/pizza_period.mp3",
+      "shortlistFile": "shortlist/pizza_recommended.mp3",
+      "score": 125,
+      "whisper": " Pizza.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "sandwich",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/sandwich_period.mp3",
+      "shortlistFile": "shortlist/sandwich_recommended.mp3",
+      "score": 125,
+      "whisper": " Sandwich.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "syrup",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-14-core/takes/syrup_plain.mp3",
+      "shortlistFile": "shortlist/syrup_recommended.mp3",
+      "score": 125,
+      "whisper": " Syrup",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

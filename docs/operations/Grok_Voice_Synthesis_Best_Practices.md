@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*, *smoothie*, *bread*, *oatmeal*, *waffle*, *bagel*, *butter*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*, *toast*, *cereal*, *pancake*, *egg*. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
 
 ### Rejected payloads
 
@@ -184,6 +184,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | apple juice | `data/samples/approved/apple-juice.mp3` | `apple juice` | Ear, `batch-12` shortlist |
 | chocolate milk | `data/samples/approved/chocolate-milk.mp3` | `chocolate milk` | Ear, `batch-12` shortlist |
 | tea | `data/samples/approved/tea.mp3` | `tea.` | Ear, `batch-12` shortlist |
+| smoothie | `data/samples/approved/smoothie.mp3` | `smoothie` | Ear, `batch-13` shortlist |
+| bread | `data/samples/approved/bread.mp3` | `bread` | Ear, `batch-13` shortlist |
+| toast | `data/samples/approved/toast.mp3` | `toast.` | Ear, `batch-13` shortlist |
+| cereal | `data/samples/approved/cereal.mp3` | `cereal.` | Ear, `batch-13` shortlist. Whisper heard "Serial." |
+| oatmeal | `data/samples/approved/oatmeal.mp3` | `oatmeal` | Ear, `batch-13` shortlist |
+| pancake | `data/samples/approved/pancake.mp3` | `pancake.` | Ear, `batch-13` shortlist |
+| waffle | `data/samples/approved/waffle.mp3` | `waffle` | Ear, `batch-13` shortlist |
+| bagel | `data/samples/approved/bagel.mp3` | `bagel` | Ear, `batch-13` shortlist |
+| egg | `data/samples/approved/egg.mp3` | `egg.` | Ear, `batch-13` shortlist |
+| butter | `data/samples/approved/butter.mp3` | `butter` | Ear, `batch-13` shortlist |
 
 ---
 
