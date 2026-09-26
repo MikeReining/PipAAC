@@ -56,10 +56,14 @@ const topForm = (counts) => {
  *  within the same ending, but when the ending's broad evidence ties
  *  the whole ending is undecided — a thin line-start subset can't
  *  rescue a coin flip. */
+/** A row vetoes its ending only when it holds real counts and still
+ *  can't pick — a genuine tie. An empty row is no data, not a veto. */
+const tied = (counts) =>
+  counts && Object.keys(counts).length > 1 && !topForm(counts);
+
 function pickFromLevels(levels, keyFor) {
   for (const lvl of levels) {
-    const broad = keyFor(lvl[lvl.length - 1]);
-    if (broad && !topForm(broad)) continue;
+    if (tied(keyFor(lvl[lvl.length - 1]))) continue;
     for (const ctx of lvl) {
       const pick = topForm(keyFor(ctx));
       if (pick) return pick;
@@ -134,12 +138,37 @@ export function pickForm(table, ctxIds, senseId, nextSenseId = null,
       (ctx) => table.nextVerb[`${ctx}|${senseId}|${nextSenseId}`]);
     if (pick) return pick;
   }
-  const pick = pickFromLevels(levels,
-    (ctx) => table.contexts[`${ctx}|${senseId}`]);
-  if (pick) return pick;
-  if (table.verbSenses?.includes(senseId)) {
-    const pooled = pickFromLevels(levels, (ctx) => table.verbFree?.[ctx]);
-    if (pooled) return pooled;
+  // Every source speaks at the same phrase length before a shorter
+  // phrase gets a say: the word's own row and the pooled row (all
+  // verbs / all plural nouns) answer together at each ending. On a
+  // disagreement the pool overturns own only when the pool clearly
+  // prefers something else — its winner must beat the own pick's
+  // share inside the pool 2:1 ("<s> you" says ING on 7% of verbs, so
+  // BASE wins and "you turn" stays; "<s> mom" says 3SG nearly half
+  // the time, so "mom wants" stands). A tied own-ending still vetoes
+  // the whole level ("my mom" can't decide like/likes — "mom" does).
+  const isPl = table.plSenses?.includes(senseId);
+  const pooledTable = table.verbSenses?.includes(senseId) ? table.verbFree
+    : isPl ? table.plFree : null;
+  const quant = new Set(table.quantSenses ?? []);
+  for (const lvl of levels) {
+    if (tied(table.contexts[`${lvl[lvl.length - 1]}|${senseId}`])) continue;
+    for (const ctx of lvl) {
+      const own = table.contexts[`${ctx}|${senseId}`];
+      // A plural pool row only exists where the phrase asks "how
+      // many" — without a quantifier in the tapped ctx it was never
+      // counted, so it must not answer either ("they house" stays).
+      const pooled = (isPl && !ctx.split(" ").some((w) => quant.has(w)))
+        ? null : pooledTable?.[ctx];
+      const ownPick = topForm(own);
+      const pooledPick = topForm(pooled);
+      let pick = ownPick ?? pooledPick;
+      if (ownPick && pooledPick && ownPick !== pooledPick
+          && pooled[pooledPick] >= 2 * (pooled[ownPick] ?? 0)) {
+        pick = pooledPick;
+      }
+      if (pick) return pick;
+    }
   }
   return "BASE";
 }

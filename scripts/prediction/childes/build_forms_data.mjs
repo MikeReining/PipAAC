@@ -58,16 +58,7 @@ const bump = (outer, key, bucket, text) => {
 const plural = new Map(); // noun lemma -> Map<surface, n> (caregiver, quantity position)
 const plSpell = new Map(); // noun lemma -> Map<surface, n> (caregiver, any position, non-lemma only)
 const possUse = new Map(); // lemma -> n (caregiver 's uses)
-// Words that put the noun after them in plural position. Mass nouns
-// land here correctly — "some milk" counts the bare lemma, which is
-// exactly the adult answer we want to record.
-const QUANT = new Set(['two', 'three', 'four', 'five', 'six', 'seven',
-  'eight', 'nine', 'ten', 'some', 'all', 'more', 'these', 'those',
-  'many', 'few', 'several', 'both', 'other', 'lot', 'lots', 'couple',
-  'pair', 'any', 'no', 'enough', 'most']);
-// A definite singular marker between the quantity word and the noun
-// breaks the position ("three boys and a girl" — girl is singular).
-const SING = new Set(['a', 'an', 'one', 'another', 'every', 'each']);
+// QUANT / SING live in common.mjs (shared with build_form_table).
 
 const trs = C.loadTranscripts();
 const { train } = C.splitIdx(trs.length, 20260923);
@@ -84,7 +75,13 @@ for (const i of train) {
       const t = toks[i];
       if (t.lemma === null || posOf[t.lemma] !== 'Noun' || !caregiver) continue;
       if (t.poss) { possUse.set(t.lemma, (possUse.get(t.lemma) ?? 0) + 1); continue; }
-      if (t.surf !== t.lemma && (/s$/.test(t.surf) || C.MERGES[t.surf] === t.lemma)) {
+      // The SPELLING bucket takes only the tile's own word: moms is
+      // mom's plural, mummys is mummy's (mummy folds into mom for
+      // meaning — the folded surfaces still prove mom HAS a plural in
+      // the quantity-position count below, but they can't spell it).
+      // One-step merges are the word's own irregular (knives -> knife).
+      if (t.surf !== t.lemma && (/s$/.test(t.surf) || C.MERGES[t.surf])
+          && (C.MERGES[t.surf] === t.lemma || C.candForms(t.surf).includes(t.lemma))) {
         const m = plSpell.get(t.lemma) ?? new Map();
         m.set(t.surf, (m.get(t.surf) ?? 0) + 1);
         plSpell.set(t.lemma, m);
@@ -97,8 +94,8 @@ for (const i of train) {
       let quant = false;
       for (let j = i - 1; j >= Math.max(0, i - 3) && !quant; j--) {
         const s = toks[j].surf ?? toks[j].lemma;
-        if (SING.has(s)) break;
-        quant = QUANT.has(s);
+        if (C.SING.has(s)) break;
+        quant = C.QUANT.has(s);
       }
       if (!quant) continue;
       const m = plural.get(t.lemma) ?? new Map();

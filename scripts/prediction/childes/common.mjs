@@ -78,7 +78,10 @@ for (const l of cat.labels) {
 }
 const OPEN_POS = new Set(['Noun', 'Verb', 'Adjective']);
 
-function candForms(base) {
+// Exported for build_forms_data's own-word spelling check (022): a
+// plural surface must be an inflection of the tile's own word —
+// moms is mom's plural, mummys is mummy's.
+export function candForms(base) {
   const out = [base];
   if (base.endsWith('s') && base.length > 2) out.push(base.slice(0, -1));
   if (base.endsWith('ies')) out.push(base.slice(0, -3) + 'y'); // babies -> baby (was babiy)
@@ -237,6 +240,15 @@ export const MERGES = {
   feet: 'foot', men: 'man', women: 'woman', knives: 'knife',
   scarves: 'scarf',
 };
+
+// Words that put the noun after them in plural position ("two dogs",
+// "some milk"). A definite singular marker between the quantity word
+// and the noun breaks the position ("three boys and a girl").
+export const QUANT = new Set(['two', 'three', 'four', 'five', 'six',
+  'seven', 'eight', 'nine', 'ten', 'some', 'all', 'more', 'these',
+  'those', 'many', 'few', 'several', 'both', 'other', 'lot', 'lots',
+  'couple', 'pair', 'any', 'no', 'enough', 'most']);
+export const SING = new Set(['a', 'an', 'one', 'another', 'every', 'each']);
 
 // Speaker tags that are children — the target child plus sibling and
 // peer codes. Grown-up lines are the only source for the spellings

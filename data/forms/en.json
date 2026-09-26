@@ -1040,8 +1040,8 @@
    655
   ],
   "dad": [
-   "daddies",
-   61
+   "dads",
+   39
   ],
   "diaper": [
    "diapers",
@@ -1200,8 +1200,8 @@
    34
   ],
   "mom": [
-   "mummys",
-   82
+   "moms",
+   47
   ],
   "monkey": [
    "monkeys",
@@ -2922,7 +2922,7 @@
   {
    "lemma": "dad",
    "features": "N;PL",
-   "text": "daddies"
+   "text": "dads"
   },
   {
    "lemma": "diaper",
@@ -3122,7 +3122,7 @@
   {
    "lemma": "mom",
    "features": "N;PL",
-   "text": "mummys"
+   "text": "moms"
   },
   {
    "lemma": "monkey",

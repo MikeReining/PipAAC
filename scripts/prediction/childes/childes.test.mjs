@@ -236,6 +236,56 @@ test('pickForm: a tie falls to the shorter phrase; a tied ending vetoes its <s> 
     pickForm(table, ['sns_x', 'sns_he'], 'sns_go'), 'V;V.PTCP;PRS');
 });
 
+test('pickForm: own + pooled answer together at each length — the pool overturns only when it clearly prefers otherwise (022)', async () => {
+  const { pickForm } = await import('../../../public/shared/forms.mjs');
+  const table = {
+    aSense: 'sns_a',
+    verbSenses: ['sns_turn', 'sns_want', 'sns_like'],
+    plSenses: ['sns_baby', 'sns_mom2', 'sns_house'],
+    quantSenses: ['sns_two'],
+    contexts: {
+      // thin "are you turning?" evidence can't outvote the sentence-
+      // start pool — the pool plainly prefers BASE (2:1 over ING)
+      '<s> sns_you|sns_turn': { 'V;V.PTCP;PRS': 11 },
+      'sns_you|sns_turn': { 'V;V.PTCP;PRS': 69, 'V;PRS;3;SG': 4 },
+      // "<s> mom" is a near coin flip between BASE and 3SG — not a
+      // clear preference, so "mom want"'s own row stands (wants)
+      '<s> sns_mom|sns_want': { 'V;PRS;3;SG': 83, BASE: 75 },
+      // the mid-phrase word pair is authoritative: "mom|like" -> likes
+      // even though the unanchored pool leans BASE
+      'sns_mom|sns_like': { 'V;PRS;3;SG': 97, BASE: 85 },
+      // plural pools only exist where a quantifier asked — "they"
+      // carries merged "their" plural evidence that must not answer
+      // for "they house"
+      'sns_they|sns_house': { BASE: 177, 'N;PL': 17 },
+      'sns_two|sns_mom2': {},   // two + moms-class noun, no own row
+    },
+    verbFree: {
+      '<s> sns_you': { BASE: 74981, 'V;V.PTCP;PRS': 5775, 'V;PRS;3;SG': 102 },
+      'sns_you': { BASE: 290402, 'V;V.PTCP;PRS': 44184 },
+      '<s> sns_mom': { BASE: 952, 'V;PRS;3;SG': 870 },
+      'sns_mom': { BASE: 3085, 'V;PRS;3;SG': 2070 },
+    },
+    plFree: {
+      'sns_two': { 'N;PL': 681, BASE: 25 },
+      'sns_they': { 'N;PL': 69, BASE: 6 }, // "two of their hands" — gated off
+    },
+    nextVerb: {}, aAn: {}, possNext: {},
+  };
+  // you + turn -> turn (the pool's BASE dwarfs the ING subset 12:1)
+  assert.equal(pickForm(table, ['sns_you'], 'sns_turn'), 'BASE');
+  // Mama + want -> wants (pool near-tie can't silence the own row)
+  assert.equal(pickForm(table, ['sns_mom'], 'sns_want'), 'V;PRS;3;SG');
+  // my mom + like -> likes (own pair row over an indecisive pool)
+  assert.equal(pickForm(table, ['sns_my', 'sns_mom'], 'sns_like'),
+    'V;PRS;3;SG');
+  // two + moms-class noun with no own row -> plural (pool answers)
+  assert.equal(pickForm(table, ['sns_two'], 'sns_mom2'), 'N;PL');
+  // they + house -> house: no quantifier tapped, the pool keeps quiet
+  // even though it leans PL on merged "their" data
+  assert.equal(pickForm(table, ['sns_they'], 'sns_house'), 'BASE');
+});
+
 test('pickForm: whose keys on the next word class — noun, EOS, else base (022)', async () => {
   const { pickForm, EOS } = await import('../../../public/shared/forms.mjs');
   const table = {

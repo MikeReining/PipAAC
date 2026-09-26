@@ -63,6 +63,14 @@ const possSense = new Set();
 for (const f of FORMS.forms) {
   if (f.features === 'N;POSS' || f.features.startsWith('PRO;POSS')) possSense.add(senseOf.get(f.lemma));
 }
+// Whether a plural is USED is a grown-up question too (022 ruling —
+// same as the spellings): child fragments like "two baby" can't vote
+// down "two babies". ctx rows for N;PL senses count caregiver lines
+// only; everything else keeps all speakers.
+const plSense = new Set();
+for (const f of FORMS.forms) {
+  if (f.features === 'N;PL') plSense.add(senseOf.get(f.lemma));
+}
 const lex = JSON.parse(readFileSync(path.join(C.REPO, 'data/launch_lexicon.json'), 'utf8'));
 const nounLemmas = new Set(lex.entries.filter((e) => e.partOfSpeech === 'Noun').map((e) => e.spokenText.toLowerCase()));
 const nounSenses = new Set([...nounLemmas].map((l) => senseOf.get(l)).filter(Boolean));
@@ -81,8 +89,21 @@ verbSense.delete(senseOf.get("don't"));
 // re-pick is -> are when 'you' lands. Pool exclusion, not evidence exclusion.
 const nextSense = new Set([...verbSense, senseOf.get('is'), senseOf.get("don't")]);
 
+// The pooled plural row is only consulted when the tapped phrase
+// itself carries a quantifier ("two", "some", ...) — the question
+// "plural or not" doesn't exist without one, and merged "their"
+// ctxs would otherwise pull every noun after 'they' plural.
+const quantSenses = new Set();
+for (const w of C.QUANT) {
+  const id = senseOf.get(C.toLemma(w));
+  if (id) quantSenses.add(id);
+}
+
 const wordCtx = new Map();   // `${ctx}|${sense}` -> Map feat -> n
 const verbFree = new Map();  // ctx -> Map feat -> n
+const plFree = new Map();    // ctx -> Map feat -> n — plural nouns
+                             // pooled ("two" pulls N;PL even for a
+                             // noun with no own row — two moms)
 const nextVerb = new Map();  // `${ctx}|${verb}|${next}` -> Map feat -> n
 const aAn = new Map();       // next sense -> Map feat -> n
 const possNext = new Map();  // `${sense}|${N|EOS|X}` -> Map feat -> n
@@ -131,6 +152,7 @@ let moments = 0;
 for (const ti of train) {
   for (const [spk, words] of trs[ti]) {
     const child = C.CHILD_TAGS.has(spk);
+    const caregiver = C.isCaregiver(spk);
     const toks = collapseDoNot(C.analyzeLine(words));
     const ids = toks.map((t) => (t.lemma === null ? null : senseOf.get(t.lemma) ?? null));
     // A multiword tile that embeds a possessive head still carries the
@@ -160,7 +182,27 @@ for (const ti of train) {
       const sense = ids[i];
       moments++;
       const ctxs = ctxKeys(ids, i);
-      for (const ctx of ctxs) put(wordCtx, `${ctx}|${sense}`, feat);
+      // Plural use is a grown-up question asked at a real choice point:
+      // child lines and attributive positions ("two baby dolls"
+      // quantifies dolls) don't count for N;PL senses.
+      const attributive = i + 1 < toks.length && toks[i + 1].lemma !== null
+        && !toks[i + 1].poss && nounLemmas.has(toks[i + 1].lemma);
+      const plCounted = plSense.has(sense) && caregiver && !attributive;
+      if (!plSense.has(sense) || plCounted)
+        for (const ctx of ctxs) put(wordCtx, `${ctx}|${sense}`, feat);
+      // The pooled plural row only exists where a quantity word asked
+      // the question (a quant within the last 3 tokens, unbroken by a
+      // singular marker) — otherwise "their hands/feet" possessive
+      // plurals would pull every noun after 'they' to plural.
+      if (plCounted) {
+        let quant = false;
+        for (let j = i - 1; j >= Math.max(0, i - 3) && !quant; j--) {
+          const sw = toks[j].surf ?? toks[j].lemma;
+          if (C.SING.has(sw)) break;
+          quant = C.QUANT.has(sw);
+        }
+        if (quant) for (const ctx of ctxs) put(plFree, ctx, feat);
+      }
       const next = i + 1 < ids.length ? ids[i + 1] : null;
       if (possSense.has(sense)) {
         const nl = i + 1 < toks.length ? toks[i + 1].lemma : null;
@@ -172,7 +214,10 @@ for (const ti of train) {
         // the class row is the fallback for thin ones.
         if (cls === 'X' && next) put(possNext, `${sense}|x|${next}`, feat);
       }
-      if (verbSense.has(sense)) {
+      // Pooled tables are "the right form" evidence — caregiver lines
+      // only, same doctrine as spellings: "mommy want" fragments can't
+      // vote BASE over "mommy wants".
+      if (verbSense.has(sense) && caregiver) {
         for (const ctx of ctxs) put(verbFree, ctx, feat);
       }
       if (nextSense.has(sense) && next) {
@@ -199,13 +244,17 @@ writeFileSync(OUT, JSON.stringify({
   aSense: senseOf.get('a'),
   verbSenses: [...verbSense].sort(),
   nounSenses: [...nounSenses].sort(),
+  plSenses: [...plSense].sort(),
+  quantSenses: [...quantSenses].sort(),
   contexts: pack(wordCtx),
   verbFree: pack(verbFree),
+  plFree: pack(plFree),
   nextVerb: pack(nextVerb),
   aAn: pack(aAn),
   possNext: pack(possNext),
 }));
 
 console.log(`${trs.length} transcripts -> ${Object.keys(pack(wordCtx)).length} word ctxs, ` +
-  `${verbFree.size} pooled ctxs, ${nextVerb.size} next-word rows, ${aAn.size} a/an rows, ` +
+  `${verbFree.size} pooled verb ctxs, ${plFree.size} pooled plural ctxs, ` +
+  `${nextVerb.size} next-word rows, ${aAn.size} a/an rows, ` +
   `${possNext.size} possessive rows (${moments} counted positions) -> ${path.relative(C.REPO, OUT)}`);

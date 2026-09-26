@@ -81,28 +81,44 @@ tapped it. Nothing is guessed.
      (noun-next or line-end → `poss` token on the stem lemma; else → `is`).
      MERGES gained his/our/their/your/mine/hers/ours/theirs and the
      feet/men/women irregulars.
-   - `en.json` (caregiver-spelling pass): forms for 021 + 022 —
-     +4 PRO;POSS (his/our/their/your), +5 PRO;POSS;ABS
-     (mine/hers/ours/theirs/yours), 60 measured N;POSS, 129 measured
-     N;PL (spellings incl. babies, feet, knives — never sheeps/milks).
+   - `en.json` (caregiver-spelling + own-word pass): forms for 021 +
+     022 — +4 PRO;POSS (his/our/their/your), +5 PRO;POSS;ABS
+     (mine/hers/ours/theirs/yours), 60 measured N;POSS, 134 measured
+     N;PL (spellings incl. babies, feet, knives, moms — never
+     sheeps/milks/mummys). Folded spellings still prove a plural
+     exists, but the emitted spelling is always the tile's own word
+     (mommy/mummy/mum evidence → mom shows *moms*).
    - `form_table.en.json` (.2): `possNext` rows keyed `sense|N|EOS|X`
      plus per-word `sense|x|next` rows for non-noun nexts ("your turn").
      Multiword tiles with a possessive head still count ("your turn"
-     shows 'your' before 'turn').
+     shows 'your' before 'turn'). Pooled rows: `verbFree` (all verbs,
+     caregiver lines) and `plFree` (plural-bearing nouns, caregiver
+     lines, counted only where a quantifier within 3 tokens asked the
+     question — "their hands" can't vote). `quantSenses` ships so the
+     app knows when the plural question is live.
    - `pickForm`: whose-picks after a/an, before next-verb. At EOS the
      worn feature fights the whose-lift — candidates are the current
      form plus the possessive class and the data decides ("not you"
      stays you on BASE 73k; worn "your" lifts to yours 2806:1099; worn
      "her" holds ACC 16.7k > ABS 201; "not my" lifts to mine). A BASE
      tap of *you* can no longer flip to *yours*.
-   - **catalog.json NOT rebuilt yet:** 300 new surfaces need clips and
-     the strict build guard (rightly) refuses unclipped utt_f rows —
-     slice 3's founder-approved generation unblocks it. `utt_f`/`lbl_f`
-     ids are now stable by text (adding rows no longer renumbers clips).
-   - **Data findings to flag:** (a) `you + turn` stays *you turn* —
-     corpus: "you turn (around)" 1306 vs "your turn" 825 — the doc's
-     example row does not hold up. (b) `two sheep`, `some milk`,
-     `a foot` all stay singular — countability by evidence works.
+   - `pickForm` own-vs-pool (CTO ruling): at each phrase length the
+     word's own row and the pooled row answer **together** before a
+     shorter phrase gets a say. On disagreement the pool overturns own
+     only when it clearly prefers something else — its winner must beat
+     the own pick's share inside the pool 2:1. `<s> you` says ING on
+     7% of verbs → *you turn* stays plain (the "are you turning?"
+     subset was 11 uses); `<s> mom` is a 952:870 coin flip → *mom
+     wants* stands; `mom|like`'s own 97:85 → *my mom likes*. The
+     plural pool speaks only when the tapped ctx carries a quantifier
+     (`quantSenses`) — `they house` stays *their house*, not *their
+     houses*. A tied own-ending still vetoes the level.
+   - **catalog.json NOT rebuilt yet:** the new surfaces need Ara clips
+     and the strict build guard (rightly) refuses unclipped utt_f rows
+     — the re-make unblocks it. `utt_f`/`lbl_f` ids are now stable by
+     text (adding rows no longer renumbers clips).
+   - **Data findings:** `two sheep`, `some milk`, `a foot` all stay
+     singular — countability by evidence works.
 2. **Measure first:** extend `measure_forms.mjs` with one block per item
    above, "today" vs "data picks", adult and child lines separately. Stop
    and report any block that is right less often than today. That item
@@ -114,7 +130,7 @@ tapped it. Nothing is guessed.
    whose X's noun + noun   today 59.2/73.0%  data 79.5/80.6%
    whose at EOS (pronouns) today 76.4/53.5%  data 95.7/94.3%
    whose at EOS: my->mine  today 24.4/26.8%  data 75.6/73.2%
-   how many (plurals)      today 73.7/79.1%  data 85.3/86.8%
+   how many (plurals)      today 73.7/79.1%  data 85.6/86.0%
    ```
    (adults/children). Existing blocks unchanged-to-slightly-better
    (is-sense 94.8/96.0, pronouns 92.4/91.5, don't 95.0/94.0, decision-4
@@ -141,11 +157,11 @@ tapped it. Nothing is guessed.
    attributive nouns are skipped (two baby dolls quantifies dolls).
    Removes sheeps/milks/knifes/tummys/buss/peoples and ~90 more rows;
    spelling comes from grown-ups overall (knives, grandmas, babies).
-   **Census now:** 378 form utterances — 233 covered, **145 uncovered**,
-   the Ara handoff list. Flagged-but-kept adult spellings: `mummys`
-   (corpus spells it 103:88 over *mummies*), `today's`, `thing's`,
-   `sheep's`, `people's` — all genuinely possessive on grown-up lines
-   ("today's lunch"; "today's the day" correctly stays *is*).
+   **Census now:** 378 form utterances — 234 covered, **144 uncovered**,
+   the Ara handoff list (`moms` now, `mummys` gone). Kept adult
+   spellings: `today's`, `thing's`, `sheep's`, `people's` — all
+   genuinely possessive on grown-up lines ("today's lunch"; "today's
+   the day" correctly stays *is*).
 4. **App:** `formFor` and the next-word rule gain the new forms; Speak
    applies the end-of-sentence case once, before speaking.
    **Done.** `speakSentence` re-picks the last word with EOS (merged
@@ -153,14 +169,17 @@ tapped it. Nothing is guessed.
    so the worn form competes). Entity + noun wears `'s` in strip text
    only (*Leo's car* — speech still says the name). `resolveSlot` speaks
    the re-picked `labelId`, so the Ara clip lands automatically.
-5. **Examples** in `form_examples.json` — **done, 70/70.** Founder
-   table plus the measured corrections:
+5. **Examples** in `form_examples.json` — **done, 72/72.** Founder
+   table plus the CTO's three never-show-a-mistake rulings:
 
    | She taps | Sentence reads |
    | --- | --- |
    | he, dog | **his dog** |
    | we, car | **our car** |
-   | you, turn | **you turning** (corpus: ING 69:4; *your turn* loses 825:1306) |
+   | they, house | **their house** |
+   | you, turn | **you turn** (pool: BASE 75k vs the 11-use "turning?" subset) |
+   | my, mom, like | **my mom likes** (own 97:85 over a coin-flip pool) |
+   | entity *Mama*→mom, want | **Mama wants** |
    | entity *Leo*, car | **Leo's car** |
    | entity *Mama*→mom, car | **Mama's car** |
    | mom, phone | **Mom's phone** |
@@ -168,18 +187,15 @@ tapped it. Nothing is guessed.
    | it, is, not, your, then Speak | **it is not yours** |
    | that, is, her, then Speak | **that is her** (ACC 16.7k > ABS 201) |
    | two, dog | **two dogs** |
-   | two, knife | **two knife** (line-start bare fragments win) |
-   | two, baby | **two baby** (line-start "two baby" 22:14 — fragments + "two baby dolls" attributives) |
+   | two, knife | **two knives** |
+   | two, baby | **two babies** (plural use is a caregiver question) |
+   | two, baby, doll | **two baby dolls** (next-word rule un-pluralizes) |
+   | two, mom | **two moms** (own-word spelling; the pool supplies PL) |
    | some, cookie | **some cookies** |
    | some, milk | **some milk** |
+   | two, sheep | **two sheep** |
    | I, want, cookie | I want cookie (no signal, no change) |
    | I, cookie | I cookie (never *my cookie*) |
-
-   **Flag for review:** *two knife/baby* stay bare because utterance-
-   initial "two X" productions are mostly child fragments and
-   attributives — the same anchored-position rule approved in 021. If
-   grammar help should override position evidence for plurals, that's a
-   separate ruling.
 
 ## Report back with
 

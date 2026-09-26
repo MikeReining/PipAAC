@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-25T23:38:08.116Z",
+  "generatedAt": "2026-09-26T01:09:24.117Z",
   "voice": "grok-ara (pending catalog re-make)",
   "entries": [
     {
@@ -4160,6 +4160,37 @@
       }
     },
     {
+      "utterance_id": "utt_f0453",
+      "spoken_text": "dads",
+      "res": {
+        "status": "hit",
+        "wbbSenseId": "dads",
+        "clip": {
+          "senseId": "dads",
+          "key": "audio/dads/5753c5aede42.mp3",
+          "spokenText": "dads",
+          "voice": "elevenlabs",
+          "source": "elevenlabs",
+          "status": "ready",
+          "verifiedSha256": "5753c5aede42c0df2cbee96e4dfa69e58dc6e633d80d1a31db5a3021b54c0c05",
+          "ingestedAt": "2026-08-22",
+          "id": "aud_5753c5aede42",
+          "model": "eleven_v3",
+          "promptText": "dads",
+          "voiceId": "WWMMC6k9tdar0BthUenK"
+        },
+        "via": "lookup"
+      },
+      "clip": {
+        "key": "audio/dads/5753c5aede42.mp3",
+        "sha256": "5753c5aede42c0df2cbee96e4dfa69e58dc6e633d80d1a31db5a3021b54c0c05",
+        "source": "elevenlabs",
+        "voice": "elevenlabs",
+        "wbbAudioId": "aud_5753c5aede42",
+        "spokenText": "dads"
+      }
+    },
+    {
       "utterance_id": "utt_f0461",
       "spoken_text": "babies",
       "res": {
@@ -6164,7 +6195,7 @@
     },
     {
       "utterance_id": "utt_f0449",
-      "spoken_text": "mummys"
+      "spoken_text": "moms"
     },
     {
       "utterance_id": "utt_f0451",
@@ -6172,7 +6203,7 @@
     },
     {
       "utterance_id": "utt_f0453",
-      "spoken_text": "daddies"
+      "spoken_text": "dads"
     },
     {
       "utterance_id": "utt_f0455",
@@ -6902,15 +6933,11 @@
     },
     {
       "utterance_id": "utt_f0449",
-      "spoken_text": "mummys"
+      "spoken_text": "moms"
     },
     {
       "utterance_id": "utt_f0451",
       "spoken_text": "mom's"
-    },
-    {
-      "utterance_id": "utt_f0453",
-      "spoken_text": "daddies"
     },
     {
       "utterance_id": "utt_f0455",
