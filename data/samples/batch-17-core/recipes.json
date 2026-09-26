@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-17-core",
+  "description": "Next food and body words by lexicon slot after batch-16. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "apple", "slug": "apple", "spokenForGate": "apple", "whisperMustMatch": ["apple"], "variations": [{ "id": "plain", "body": { "text": "apple" } }, { "id": "period", "body": { "text": "apple." } }] },
+    { "word": "banana", "slug": "banana", "spokenForGate": "banana", "whisperMustMatch": ["banana"], "variations": [{ "id": "plain", "body": { "text": "banana" } }, { "id": "period", "body": { "text": "banana." } }] },
+    { "word": "strawberry", "slug": "strawberry", "spokenForGate": "strawberry", "whisperMustMatch": ["strawberry"], "variations": [{ "id": "plain", "body": { "text": "strawberry" } }, { "id": "period", "body": { "text": "strawberry." } }] },
+    { "word": "orange", "slug": "orange", "spokenForGate": "orange", "whisperMustMatch": ["orange"], "variations": [{ "id": "plain", "body": { "text": "orange" } }, { "id": "period", "body": { "text": "orange." } }] },
+    { "word": "grapes", "slug": "grapes", "spokenForGate": "grapes", "whisperMustMatch": ["grapes"], "variations": [{ "id": "plain", "body": { "text": "grapes" } }, { "id": "period", "body": { "text": "grapes." } }] },
+    { "word": "watermelon", "slug": "watermelon", "spokenForGate": "watermelon", "whisperMustMatch": ["watermelon"], "variations": [{ "id": "plain", "body": { "text": "watermelon" } }, { "id": "period", "body": { "text": "watermelon." } }] },
+    { "word": "carrot", "slug": "carrot", "spokenForGate": "carrot", "whisperMustMatch": ["carrot"], "variations": [{ "id": "plain", "body": { "text": "carrot" } }, { "id": "period", "body": { "text": "carrot." } }] },
+    { "word": "broccoli", "slug": "broccoli", "spokenForGate": "broccoli", "whisperMustMatch": ["broccoli"], "variations": [{ "id": "plain", "body": { "text": "broccoli" } }, { "id": "period", "body": { "text": "broccoli." } }] },
+    { "word": "corn", "slug": "corn", "spokenForGate": "corn", "whisperMustMatch": ["corn"], "variations": [{ "id": "plain", "body": { "text": "corn" } }, { "id": "period", "body": { "text": "corn." } }] },
+    { "word": "body", "slug": "body", "spokenForGate": "body", "whisperMustMatch": ["body"], "variations": [{ "id": "plain", "body": { "text": "body" } }, { "id": "period", "body": { "text": "body." } }] }
+  ]
+}

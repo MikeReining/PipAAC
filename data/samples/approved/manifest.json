@@ -1136,6 +1136,87 @@
       "text": "popcorn.",
       "replace": null,
       "basis": "ear, batch-15 shortlist"
+    },
+    {
+      "word": "pretzel",
+      "file": "pretzel.mp3",
+      "source": "data/samples/batch-16-core/takes/pretzel_plain.mp3",
+      "text": "pretzel",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "yogurt",
+      "file": "yogurt.mp3",
+      "source": "data/samples/batch-16-core/takes/yogurt_plain.mp3",
+      "text": "yogurt",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "fruit snack",
+      "file": "fruit-snack.mp3",
+      "source": "data/samples/batch-16-core/takes/fruit-snack_backup.mp3",
+      "text": "fruit snack",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "ice cream",
+      "file": "ice-cream.mp3",
+      "source": "data/samples/batch-16-core/takes/ice-cream_plain.mp3",
+      "text": "ice cream",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "popsicle",
+      "file": "popsicle.mp3",
+      "source": "data/samples/batch-16-core/takes/popsicle_plain.mp3",
+      "text": "popsicle",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "candy",
+      "file": "candy.mp3",
+      "source": "data/samples/batch-16-core/takes/candy_period.mp3",
+      "text": "candy.",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "cake",
+      "file": "cake.mp3",
+      "source": "data/samples/batch-16-core/takes/cake_plain.mp3",
+      "text": "cake",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "muffin",
+      "file": "muffin.mp3",
+      "source": "data/samples/batch-16-core/takes/muffin_plain.mp3",
+      "text": "muffin",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "donut",
+      "file": "donut.mp3",
+      "source": "data/samples/batch-16-core/takes/donut_plain.mp3",
+      "text": "donut",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "fruit",
+      "file": "fruit.mp3",
+      "source": "data/samples/batch-16-core/takes/fruit_plain.mp3",
+      "text": "fruit",
+      "replace": null,
+      "basis": "ear, batch-16 shortlist"
     }
   ],
   "rejected": [

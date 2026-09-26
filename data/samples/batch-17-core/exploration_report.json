@@ -1,0 +1,583 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T13:11:53.415Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-17-core",
+  "scored": [
+    {
+      "word": "apple",
+      "slug": "apple",
+      "variationId": "plain",
+      "file": "apple_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/apple_plain.mp3",
+      "whisper": " Apple.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 2,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "apple"
+      }
+    },
+    {
+      "word": "apple",
+      "slug": "apple",
+      "variationId": "period",
+      "file": "apple_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/apple_period.mp3",
+      "whisper": " Apple.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -34,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "apple."
+      }
+    },
+    {
+      "word": "banana",
+      "slug": "banana",
+      "variationId": "plain",
+      "file": "banana_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/banana_plain.mp3",
+      "whisper": " Banana.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -49,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "banana"
+      }
+    },
+    {
+      "word": "banana",
+      "slug": "banana",
+      "variationId": "period",
+      "file": "banana_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/banana_period.mp3",
+      "whisper": " Banana.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -48,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "banana."
+      }
+    },
+    {
+      "word": "strawberry",
+      "slug": "strawberry",
+      "variationId": "plain",
+      "file": "strawberry_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/strawberry_plain.mp3",
+      "whisper": " Strawberry.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -36,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "strawberry"
+      }
+    },
+    {
+      "word": "strawberry",
+      "slug": "strawberry",
+      "variationId": "period",
+      "file": "strawberry_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/strawberry_period.mp3",
+      "whisper": " Strawberry.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": 2,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "strawberry."
+      }
+    },
+    {
+      "word": "orange",
+      "slug": "orange",
+      "variationId": "plain",
+      "file": "orange_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/orange_plain.mp3",
+      "whisper": " Orange.",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -68,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "orange"
+      }
+    },
+    {
+      "word": "orange",
+      "slug": "orange",
+      "variationId": "period",
+      "file": "orange_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/orange_period.mp3",
+      "whisper": " Orange",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 15,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "orange."
+      }
+    },
+    {
+      "word": "grapes",
+      "slug": "grapes",
+      "variationId": "plain",
+      "file": "grapes_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/grapes_plain.mp3",
+      "whisper": " Grapes.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -21,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "grapes"
+      }
+    },
+    {
+      "word": "grapes",
+      "slug": "grapes",
+      "variationId": "period",
+      "file": "grapes_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/grapes_period.mp3",
+      "whisper": " Grapes.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -3,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "grapes."
+      }
+    },
+    {
+      "word": "watermelon",
+      "slug": "watermelon",
+      "variationId": "plain",
+      "file": "watermelon_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/watermelon_plain.mp3",
+      "whisper": " Watermelon.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -11,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "watermelon"
+      }
+    },
+    {
+      "word": "watermelon",
+      "slug": "watermelon",
+      "variationId": "period",
+      "file": "watermelon_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/watermelon_period.mp3",
+      "whisper": " Watermelon.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -11,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "watermelon."
+      }
+    },
+    {
+      "word": "carrot",
+      "slug": "carrot",
+      "variationId": "plain",
+      "file": "carrot_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/carrot_plain.mp3",
+      "whisper": " Carrot.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": -54,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "carrot"
+      }
+    },
+    {
+      "word": "carrot",
+      "slug": "carrot",
+      "variationId": "period",
+      "file": "carrot_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/carrot_period.mp3",
+      "whisper": " Carrot",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -11,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "carrot."
+      }
+    },
+    {
+      "word": "broccoli",
+      "slug": "broccoli",
+      "variationId": "plain",
+      "file": "broccoli_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/broccoli_plain.mp3",
+      "whisper": " Broccoli",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "broccoli"
+      }
+    },
+    {
+      "word": "broccoli",
+      "slug": "broccoli",
+      "variationId": "period",
+      "file": "broccoli_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/broccoli_period.mp3",
+      "whisper": " Broccoli.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -53,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "broccoli."
+      }
+    },
+    {
+      "word": "corn",
+      "slug": "corn",
+      "variationId": "plain",
+      "file": "corn_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/corn_plain.mp3",
+      "whisper": " Corn.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -62,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "corn"
+      }
+    },
+    {
+      "word": "corn",
+      "slug": "corn",
+      "variationId": "period",
+      "file": "corn_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/corn_period.mp3",
+      "whisper": " Corn",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "corn."
+      }
+    },
+    {
+      "word": "body",
+      "slug": "body",
+      "variationId": "plain",
+      "file": "body_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/body_plain.mp3",
+      "whisper": " Body.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": 2,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "body"
+      }
+    },
+    {
+      "word": "body",
+      "slug": "body",
+      "variationId": "period",
+      "file": "body_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/body_period.mp3",
+      "whisper": " Body.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 3,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "body."
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "apple",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/apple_plain.mp3",
+      "shortlistFile": "shortlist/apple_recommended.mp3",
+      "score": 125,
+      "whisper": " Apple.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "banana",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/banana_plain.mp3",
+      "shortlistFile": "shortlist/banana_recommended.mp3",
+      "score": 125,
+      "whisper": " Banana.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "body",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/body_period.mp3",
+      "shortlistFile": "shortlist/body_recommended.mp3",
+      "score": 125,
+      "whisper": " Body.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "broccoli",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/broccoli_period.mp3",
+      "shortlistFile": "shortlist/broccoli_recommended.mp3",
+      "score": 125,
+      "whisper": " Broccoli.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "carrot",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/carrot_plain.mp3",
+      "shortlistFile": "shortlist/carrot_recommended.mp3",
+      "score": 125,
+      "whisper": " Carrot.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "corn",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/corn_period.mp3",
+      "shortlistFile": "shortlist/corn_recommended.mp3",
+      "score": 125,
+      "whisper": " Corn",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "grapes",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/grapes_plain.mp3",
+      "shortlistFile": "shortlist/grapes_recommended.mp3",
+      "score": 125,
+      "whisper": " Grapes.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "orange",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/orange_period.mp3",
+      "shortlistFile": "shortlist/orange_recommended.mp3",
+      "score": 125,
+      "whisper": " Orange",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "strawberry",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/strawberry_plain.mp3",
+      "shortlistFile": "shortlist/strawberry_recommended.mp3",
+      "score": 110,
+      "whisper": " Strawberry.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "watermelon",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-17-core/takes/watermelon_plain.mp3",
+      "shortlistFile": "shortlist/watermelon_recommended.mp3",
+      "score": 110,
+      "whisper": " Watermelon.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

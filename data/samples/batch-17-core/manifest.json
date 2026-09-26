@@ -1,0 +1,278 @@
+[
+  {
+    "file": "takes/apple_plain.mp3",
+    "word": "apple",
+    "variation": "plain",
+    "text": "apple",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Apple.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/apple_period.mp3",
+    "word": "apple",
+    "variation": "period",
+    "text": "apple.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Apple.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/banana_plain.mp3",
+    "word": "banana",
+    "variation": "plain",
+    "text": "banana",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Banana.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/banana_period.mp3",
+    "word": "banana",
+    "variation": "period",
+    "text": "banana.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Banana.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/strawberry_plain.mp3",
+    "word": "strawberry",
+    "variation": "plain",
+    "text": "strawberry",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Strawberry.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/strawberry_period.mp3",
+    "word": "strawberry",
+    "variation": "period",
+    "text": "strawberry.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Strawberry.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/orange_plain.mp3",
+    "word": "orange",
+    "variation": "plain",
+    "text": "orange",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Orange.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/orange_period.mp3",
+    "word": "orange",
+    "variation": "period",
+    "text": "orange.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Orange",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/grapes_plain.mp3",
+    "word": "grapes",
+    "variation": "plain",
+    "text": "grapes",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Grapes.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/grapes_period.mp3",
+    "word": "grapes",
+    "variation": "period",
+    "text": "grapes.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Grapes.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/watermelon_plain.mp3",
+    "word": "watermelon",
+    "variation": "plain",
+    "text": "watermelon",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Watermelon.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/watermelon_period.mp3",
+    "word": "watermelon",
+    "variation": "period",
+    "text": "watermelon.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Watermelon.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/carrot_plain.mp3",
+    "word": "carrot",
+    "variation": "plain",
+    "text": "carrot",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Carrot.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/carrot_period.mp3",
+    "word": "carrot",
+    "variation": "period",
+    "text": "carrot.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Carrot",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/broccoli_plain.mp3",
+    "word": "broccoli",
+    "variation": "plain",
+    "text": "broccoli",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Broccoli",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/broccoli_period.mp3",
+    "word": "broccoli",
+    "variation": "period",
+    "text": "broccoli.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Broccoli.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/corn_plain.mp3",
+    "word": "corn",
+    "variation": "plain",
+    "text": "corn",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Corn.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/corn_period.mp3",
+    "word": "corn",
+    "variation": "period",
+    "text": "corn.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Corn",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/body_plain.mp3",
+    "word": "body",
+    "variation": "plain",
+    "text": "body",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Body.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/body_period.mp3",
+    "word": "body",
+    "variation": "period",
+    "text": "body.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Body.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]
