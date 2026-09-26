@@ -1,0 +1,112 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-06-core",
+  "description": "Next core words by lexicon slot, after the batch-05 careful set. Plain and a trailing period, which is the pair that separated a residue shelf from a clean ending.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    {
+      "word": "me",
+      "slug": "me",
+      "spokenForGate": "me",
+      "whisperMustMatch": ["me"],
+      "variations": [
+        { "id": "plain", "body": { "text": "me" } },
+        { "id": "period", "body": { "text": "me." } }
+      ]
+    },
+    {
+      "word": "my",
+      "slug": "my",
+      "spokenForGate": "my",
+      "whisperMustMatch": ["my"],
+      "variations": [
+        { "id": "plain", "body": { "text": "my" } },
+        { "id": "period", "body": { "text": "my." } }
+      ]
+    },
+    {
+      "word": "mine",
+      "slug": "mine",
+      "spokenForGate": "mine",
+      "whisperMustMatch": ["mine"],
+      "variations": [
+        { "id": "plain", "body": { "text": "mine" } },
+        { "id": "period", "body": { "text": "mine." } }
+      ]
+    },
+    {
+      "word": "he",
+      "slug": "he",
+      "spokenForGate": "he",
+      "whisperMustMatch": ["he"],
+      "variations": [
+        { "id": "plain", "body": { "text": "he" } },
+        { "id": "period", "body": { "text": "he." } }
+      ]
+    },
+    {
+      "word": "she",
+      "slug": "she",
+      "spokenForGate": "she",
+      "whisperMustMatch": ["she"],
+      "variations": [
+        { "id": "plain", "body": { "text": "she" } },
+        { "id": "period", "body": { "text": "she." } }
+      ]
+    },
+    {
+      "word": "we",
+      "slug": "we",
+      "spokenForGate": "we",
+      "whisperMustMatch": ["we"],
+      "variations": [
+        { "id": "plain", "body": { "text": "we" } },
+        { "id": "period", "body": { "text": "we." } }
+      ]
+    },
+    {
+      "word": "they",
+      "slug": "they",
+      "spokenForGate": "they",
+      "whisperMustMatch": ["they"],
+      "variations": [
+        { "id": "plain", "body": { "text": "they" } },
+        { "id": "period", "body": { "text": "they." } }
+      ]
+    },
+    {
+      "word": "that",
+      "slug": "that",
+      "spokenForGate": "that",
+      "whisperMustMatch": ["that"],
+      "variations": [
+        { "id": "plain", "body": { "text": "that" } },
+        { "id": "period", "body": { "text": "that." } }
+      ]
+    },
+    {
+      "word": "this",
+      "slug": "this",
+      "spokenForGate": "this",
+      "whisperMustMatch": ["this"],
+      "variations": [
+        { "id": "plain", "body": { "text": "this" } },
+        { "id": "period", "body": { "text": "this." } }
+      ]
+    },
+    {
+      "word": "want",
+      "slug": "want",
+      "spokenForGate": "want",
+      "whisperMustMatch": ["want"],
+      "variations": [
+        { "id": "plain", "body": { "text": "want" } },
+        { "id": "period", "body": { "text": "want." } }
+      ]
+    }
+  ]
+}

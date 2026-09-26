@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { scoreWhisperTranscript } from "./grok_exploration_score.mjs";
+import { scoreTake, scoreWhisperTranscript } from "./grok_exploration_score.mjs";
 
 test("rejects swallowed can't as can", () => {
   const r = scoreWhisperTranscript("can't", "Can.", { whisperMustMatch: ["can't"] });
@@ -16,4 +16,25 @@ test("accepts can't with apostrophe", () => {
 test("rejects won't heard as one", () => {
   const r = scoreWhisperTranscript("won't", "One.", { whisperMustMatch: ["won't"] });
   assert.equal(r.ok, false);
+});
+
+test("minute plain residue loses to the period take", () => {
+  const recipe = { whisperMustMatch: ["minute"], durationMs: [600, 1400] };
+  const plain = scoreTake({
+    word: "minute",
+    recipe,
+    filePath: "data/samples/batch-05-careful/takes/minute_plain.mp3",
+    whisperText: "minute",
+    spokenForGate: "minute",
+  });
+  const period = scoreTake({
+    word: "minute",
+    recipe,
+    filePath: "data/samples/batch-05-careful/takes/minute_period.mp3",
+    whisperText: "minute",
+    spokenForGate: "minute",
+  });
+  assert.equal(plain.notes.includes("residue_shelf"), true);
+  assert.equal(period.notes.includes("residue_shelf"), false);
+  assert.ok(period.score > plain.score);
 });

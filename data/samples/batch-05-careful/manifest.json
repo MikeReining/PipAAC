@@ -1,0 +1,581 @@
+[
+  {
+    "file": "takes/minute_plain.mp3",
+    "word": "minute",
+    "variation": "plain",
+    "text": "minute",
+    "replace": null,
+    "speed": 1,
+    "score": 65,
+    "whisper": " minute.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "residue_shelf"
+    ]
+  },
+  {
+    "file": "takes/minute_period.mp3",
+    "word": "minute",
+    "variation": "period",
+    "text": "minute.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " minute",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/minute_ipa.mp3",
+    "word": "minute",
+    "variation": "ipa",
+    "text": "minute",
+    "replace": {
+      "minute": "/ˈmɪnɪt/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " minute.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/aunt_plain.mp3",
+    "word": "aunt",
+    "variation": "plain",
+    "text": "aunt",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " aunt.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/aunt_period.mp3",
+    "word": "aunt",
+    "variation": "period",
+    "text": "aunt.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " aunt",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/aunt_ipa_ant.mp3",
+    "word": "aunt",
+    "variation": "ipa_ant",
+    "text": "aunt",
+    "replace": {
+      "aunt": "/ænt/"
+    },
+    "speed": 1,
+    "score": 70,
+    "whisper": " ant",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/aunt_ipa_ahnt.mp3",
+    "word": "aunt",
+    "variation": "ipa_ahnt",
+    "text": "aunt",
+    "replace": {
+      "aunt": "/ɑnt/"
+    },
+    "speed": 1,
+    "score": 70,
+    "whisper": " aunt",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/who_plain.mp3",
+    "word": "who",
+    "variation": "plain",
+    "text": "who",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Who?",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/who_period.mp3",
+    "word": "who",
+    "variation": "period",
+    "text": "who.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Who?",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/who_ipa.mp3",
+    "word": "who",
+    "variation": "ipa",
+    "text": "who",
+    "replace": {
+      "who": "/hu/"
+    },
+    "speed": 1,
+    "score": 110,
+    "whisper": " Who?",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/one_plain.mp3",
+    "word": "one",
+    "variation": "plain",
+    "text": "one",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " One.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/one_period.mp3",
+    "word": "one",
+    "variation": "period",
+    "text": "one.",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " 1.",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/one_ipa.mp3",
+    "word": "one",
+    "variation": "ipa",
+    "text": "one",
+    "replace": {
+      "one": "/wʌn/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " One.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/two_plain.mp3",
+    "word": "two",
+    "variation": "plain",
+    "text": "two",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " 2.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/two_period.mp3",
+    "word": "two",
+    "variation": "period",
+    "text": "two.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " 2.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/two_ipa.mp3",
+    "word": "two",
+    "variation": "ipa",
+    "text": "two",
+    "replace": {
+      "two": "/tu/"
+    },
+    "speed": 1,
+    "score": 110,
+    "whisper": " 2.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/put_plain.mp3",
+    "word": "put",
+    "variation": "plain",
+    "text": "put",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " put",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/put_period.mp3",
+    "word": "put",
+    "variation": "period",
+    "text": "put.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " put",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/put_ipa.mp3",
+    "word": "put",
+    "variation": "ipa",
+    "text": "put",
+    "replace": {
+      "put": "/pʊt/"
+    },
+    "speed": 1,
+    "score": -1000,
+    "whisper": " cut",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/our_plain.mp3",
+    "word": "our",
+    "variation": "plain",
+    "text": "our",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Our.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/our_period.mp3",
+    "word": "our",
+    "variation": "period",
+    "text": "our.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Our.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/our_ipa.mp3",
+    "word": "our",
+    "variation": "ipa",
+    "text": "our",
+    "replace": {
+      "our": "/aʊr/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " Our",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hour_plain.mp3",
+    "word": "hour",
+    "variation": "plain",
+    "text": "hour",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Our.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hour_period.mp3",
+    "word": "hour",
+    "variation": "period",
+    "text": "hour.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Our.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hour_ipa.mp3",
+    "word": "hour",
+    "variation": "ipa",
+    "text": "hour",
+    "replace": {
+      "hour": "/aʊr/"
+    },
+    "speed": 1,
+    "score": 125,
+    "whisper": " Our.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/no_plain.mp3",
+    "word": "no",
+    "variation": "plain",
+    "text": "no",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " No.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/no_period.mp3",
+    "word": "no",
+    "variation": "period",
+    "text": "no.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " No.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/no_emphasis_bang.mp3",
+    "word": "no",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>no!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " No!",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/no_loud.mp3",
+    "word": "no",
+    "variation": "loud",
+    "text": "<loud>no</loud>",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " No!",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/yes_plain.mp3",
+    "word": "yes",
+    "variation": "plain",
+    "text": "yes",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Yes.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/yes_period.mp3",
+    "word": "yes",
+    "variation": "period",
+    "text": "yes.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Yes.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/yes_emphasis_bang.mp3",
+    "word": "yes",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>yes!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Yes!",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/yes_loud.mp3",
+    "word": "yes",
+    "variation": "loud",
+    "text": "<loud>yes</loud>",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Yes.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wow_plain.mp3",
+    "word": "wow",
+    "variation": "plain",
+    "text": "wow",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Wow.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wow_period.mp3",
+    "word": "wow",
+    "variation": "period",
+    "text": "wow.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wow.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wow_emphasis_bang.mp3",
+    "word": "wow",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>wow!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Wow!",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wow_loud.mp3",
+    "word": "wow",
+    "variation": "loud",
+    "text": "<loud>wow</loud>",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Wow.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/oops_plain.mp3",
+    "word": "oops",
+    "variation": "plain",
+    "text": "oops",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Oops!",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/oops_period.mp3",
+    "word": "oops",
+    "variation": "period",
+    "text": "oops.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Oops.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/oops_emphasis_bang.mp3",
+    "word": "oops",
+    "variation": "emphasis_bang",
+    "text": "<emphasis>oops!</emphasis>",
+    "replace": null,
+    "speed": 1,
+    "score": 65,
+    "whisper": " Oops!",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "residue_shelf"
+    ]
+  },
+  {
+    "file": "takes/oops_loud.mp3",
+    "word": "oops",
+    "variation": "loud",
+    "text": "<loud>oops</loud>",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Oops!",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]

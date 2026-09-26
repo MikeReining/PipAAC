@@ -195,11 +195,11 @@ license, never shown to the child:
 ## 7. Replacing ElevenLabs for the catalog clips
 
 ElevenLabs costs $30–100+ per 1M characters; Grok Voice $4.20. Grok (`ara`)
-was tested on the hardest single function words (*a, an, the, in, to, and*)
-with IPA replacements (`replace: { "a": "/ə/" }`) and `<soft>` tags: natural
-lengths (0.60–0.84 s), no background noise, and 100% correct when
-transcribed back with Groq Whisper. Transcription proves the words are
-understandable; whether they sound natural is judged by listening.
+was tested on the hardest single function words (*a, an, the, in, to, and*).
+Founder listen 2026-09-25: IPA where spelling lies, plain text where it does
+not, no `<soft>` tags. Rules and the approved files:
+`docs/operations/Grok_Voice_Synthesis_Best_Practices.md`. Whisper checks that
+the word came through; the listen decides whether it sounds natural.
 
 Re-making the clips changes every word's voice once, which is why it happens
 before launch. The existing pipeline stays (WorkbookBench is no longer the

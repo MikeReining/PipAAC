@@ -1,0 +1,278 @@
+[
+  {
+    "file": "takes/me_plain.mp3",
+    "word": "me",
+    "variation": "plain",
+    "text": "me",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " me",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/me_period.mp3",
+    "word": "me",
+    "variation": "period",
+    "text": "me.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " me",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/my_plain.mp3",
+    "word": "my",
+    "variation": "plain",
+    "text": "my",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " My.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/my_period.mp3",
+    "word": "my",
+    "variation": "period",
+    "text": "my.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " My.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/mine_plain.mp3",
+    "word": "mine",
+    "variation": "plain",
+    "text": "mine",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Mine.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/mine_period.mp3",
+    "word": "mine",
+    "variation": "period",
+    "text": "mine.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Mine.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/he_plain.mp3",
+    "word": "he",
+    "variation": "plain",
+    "text": "he",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " he",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/he_period.mp3",
+    "word": "he",
+    "variation": "period",
+    "text": "he.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " he",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/she_plain.mp3",
+    "word": "she",
+    "variation": "plain",
+    "text": "she",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " she",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/she_period.mp3",
+    "word": "she",
+    "variation": "period",
+    "text": "she.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " She",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/we_plain.mp3",
+    "word": "we",
+    "variation": "plain",
+    "text": "we",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " We.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/we_period.mp3",
+    "word": "we",
+    "variation": "period",
+    "text": "we.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " we",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/they_plain.mp3",
+    "word": "they",
+    "variation": "plain",
+    "text": "they",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " they",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/they_period.mp3",
+    "word": "they",
+    "variation": "period",
+    "text": "they.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " they",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/that_plain.mp3",
+    "word": "that",
+    "variation": "plain",
+    "text": "that",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " that",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/that_period.mp3",
+    "word": "that",
+    "variation": "period",
+    "text": "that.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " that.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/this_plain.mp3",
+    "word": "this",
+    "variation": "plain",
+    "text": "this",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " This",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/this_period.mp3",
+    "word": "this",
+    "variation": "period",
+    "text": "this.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " this",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/want_plain.mp3",
+    "word": "want",
+    "variation": "plain",
+    "text": "want",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Want.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/want_period.mp3",
+    "word": "want",
+    "variation": "period",
+    "text": "want.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Want.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  }
+]

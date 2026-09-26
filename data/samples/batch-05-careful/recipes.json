@@ -1,0 +1,158 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-05-careful",
+  "description": "Words a clean Whisper score can still get wrong: spelling traps, two legal pronunciations, and interjections whose delivery is the product. <soft> omitted.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    {
+      "word": "minute",
+      "slug": "minute",
+      "spokenForGate": "minute",
+      "whisperMustMatch": ["minute"],
+      "whisperReject": ["newt", "my newt", "minoot"],
+      "durationMs": [600, 1400],
+      "variations": [
+        { "id": "plain", "body": { "text": "minute" } },
+        { "id": "period", "body": { "text": "minute." } },
+        { "id": "ipa", "body": { "text": "minute", "replace": { "minute": "/ˈmɪnɪt/" } } }
+      ]
+    },
+    {
+      "word": "aunt",
+      "slug": "aunt",
+      "spokenForGate": "aunt",
+      "whisperMustMatch": ["aunt", "ant"],
+      "variations": [
+        { "id": "plain", "body": { "text": "aunt" } },
+        { "id": "period", "body": { "text": "aunt." } },
+        { "id": "ipa_ant", "body": { "text": "aunt", "replace": { "aunt": "/ænt/" } } },
+        { "id": "ipa_ahnt", "body": { "text": "aunt", "replace": { "aunt": "/ɑnt/" } } }
+      ]
+    },
+    {
+      "word": "who",
+      "slug": "who",
+      "spokenForGate": "who",
+      "whisperMustMatch": ["who", "hoo"],
+      "whisperReject": ["woo"],
+      "variations": [
+        { "id": "plain", "body": { "text": "who" } },
+        { "id": "period", "body": { "text": "who." } },
+        { "id": "ipa", "body": { "text": "who", "replace": { "who": "/hu/" } } }
+      ]
+    },
+    {
+      "word": "one",
+      "slug": "one",
+      "spokenForGate": "one",
+      "whisperMustMatch": ["one", "won"],
+      "whisperReject": ["own"],
+      "variations": [
+        { "id": "plain", "body": { "text": "one" } },
+        { "id": "period", "body": { "text": "one." } },
+        { "id": "ipa", "body": { "text": "one", "replace": { "one": "/wʌn/" } } }
+      ]
+    },
+    {
+      "word": "two",
+      "slug": "two",
+      "spokenForGate": "two",
+      "whisperMustMatch": ["two", "too", "to", "2"],
+      "whisperReject": ["tuh"],
+      "variations": [
+        { "id": "plain", "body": { "text": "two" } },
+        { "id": "period", "body": { "text": "two." } },
+        { "id": "ipa", "body": { "text": "two", "replace": { "two": "/tu/" } } }
+      ]
+    },
+    {
+      "word": "put",
+      "slug": "put",
+      "spokenForGate": "put",
+      "whisperMustMatch": ["put"],
+      "whisperReject": ["putt"],
+      "variations": [
+        { "id": "plain", "body": { "text": "put" } },
+        { "id": "period", "body": { "text": "put." } },
+        { "id": "ipa", "body": { "text": "put", "replace": { "put": "/pʊt/" } } }
+      ]
+    },
+    {
+      "word": "our",
+      "slug": "our",
+      "spokenForGate": "our",
+      "whisperMustMatch": ["our", "hour"],
+      "whisperReject": ["are", "or"],
+      "variations": [
+        { "id": "plain", "body": { "text": "our" } },
+        { "id": "period", "body": { "text": "our." } },
+        { "id": "ipa", "body": { "text": "our", "replace": { "our": "/aʊr/" } } }
+      ]
+    },
+    {
+      "word": "hour",
+      "slug": "hour",
+      "spokenForGate": "hour",
+      "whisperMustMatch": ["hour", "our"],
+      "whisperReject": ["how"],
+      "variations": [
+        { "id": "plain", "body": { "text": "hour" } },
+        { "id": "period", "body": { "text": "hour." } },
+        { "id": "ipa", "body": { "text": "hour", "replace": { "hour": "/aʊr/" } } }
+      ]
+    },
+    {
+      "word": "no",
+      "slug": "no",
+      "spokenForGate": "no",
+      "whisperMustMatch": ["no"],
+      "whisperReject": ["know"],
+      "variations": [
+        { "id": "plain", "body": { "text": "no" } },
+        { "id": "period", "body": { "text": "no." } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>no!</emphasis>" } },
+        { "id": "loud", "body": { "text": "<loud>no</loud>" } }
+      ]
+    },
+    {
+      "word": "yes",
+      "slug": "yes",
+      "spokenForGate": "yes",
+      "whisperMustMatch": ["yes"],
+      "variations": [
+        { "id": "plain", "body": { "text": "yes" } },
+        { "id": "period", "body": { "text": "yes." } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>yes!</emphasis>" } },
+        { "id": "loud", "body": { "text": "<loud>yes</loud>" } }
+      ]
+    },
+    {
+      "word": "wow",
+      "slug": "wow",
+      "spokenForGate": "wow",
+      "whisperMustMatch": ["wow"],
+      "variations": [
+        { "id": "plain", "body": { "text": "wow" } },
+        { "id": "period", "body": { "text": "wow." } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>wow!</emphasis>" } },
+        { "id": "loud", "body": { "text": "<loud>wow</loud>" } }
+      ]
+    },
+    {
+      "word": "oops",
+      "slug": "oops",
+      "spokenForGate": "oops",
+      "whisperMustMatch": ["oops", "ups"],
+      "variations": [
+        { "id": "plain", "body": { "text": "oops" } },
+        { "id": "period", "body": { "text": "oops." } },
+        { "id": "emphasis_bang", "body": { "text": "<emphasis>oops!</emphasis>" } },
+        { "id": "loud", "body": { "text": "<loud>oops</loud>" } }
+      ]
+    }
+  ]
+}

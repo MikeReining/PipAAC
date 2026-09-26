@@ -18,7 +18,8 @@ Sentences (▶ and the transform buttons) are a different path. Send the sentenc
 6. **The approved file is the clip.** The same payload is not the same performance. `function-words/a_ipa.mp3` is 0.60 s and `ara_a_ipa.mp3` is 0.84 s, both `a` + `/ə/`. Re-synthesizing an approved word churns the catalog. Keep the file the founder picked.
 7. **Whisper is an intelligibility check.** Naturalness is the founder's ear. A transcript of "Uh" for *a* shows the schwa landed. It does not show that the clip sounds like a person. A later listen can replace an earlier pick: plain *to* was approved first, then `to_tu.mp3` (`/tu/`) replaced it. Keep the file the founder names.
 8. **Trim only at ship time.** Before a clip is baked into the catalog, trim leading silence over 150 ms and trailing silence over 200 ms. The files in `data/samples/approved/` are the untrimmed takes the founder is judging.
-9. **A final /t/ or /d/ can leave a detached pop.** The stop closes, the wave goes silent, then a separate burst releases. That burst is the little effect at the end. *you*, *read*, and *close* decay in one piece. *don't*, *can't*, *won't*, *didn't*, and *wind* do not. The repair is still a listen: cut that burst off the take, or resynthesize the stop unreleased (`/t̚/`, `/d̚/`). Do not ship either until the founder picks it.
+9. **A final /t/ or /d/ can leave a detached pop.** The stop closes, the wave goes silent, then a separate burst releases. That burst is the little effect at the end. The explore scorer deducts for `tail_burst`. Prefer a new take over cutting the pop off a file the founder has not heard.
+10. **A quiet second sound can hide under the −40 dB gate.** `minute_plain.mp3` (batch-05) died, then rose about 7 dB and held near −43 dB. The gate calls that silence, and the pop detector never fires, so the take tied the clean one and won because it was listed first. The scorer now deducts for `residue_shelf`: after the word, a sub-gate level that rises at least 6 dB and holds for 100 ms. A smooth decay does not. On a score tie, the shorter residue wins, so the first recipe row is not the winner by default.
 
 `speed: 0.9` was tried on *in* and is not part of the recipe.
 
@@ -41,7 +42,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*.
 
 ### Rejected payloads
 
@@ -99,6 +100,18 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | won't | `data/samples/approved/wont.mp3` | plain `won't` | Ear, `batch-04-for` shortlist |
 | didn't | `data/samples/approved/didnt.mp3` | plain `didn't` | Ear, `batch-04-for` shortlist |
 | wind | `data/samples/approved/wind.mp3` | plain `wind` | Ear, `batch-04-for` shortlist (weather noun) |
+| minute | `data/samples/approved/minute.mp3` | `minute.` | Ear, `batch-05` period take. Plain take had a residue shelf. |
+| aunt | `data/samples/approved/aunt.mp3` | `aunt` | Ear, `batch-05` shortlist |
+| who | `data/samples/approved/who.mp3` | `who` | Ear, `batch-05` shortlist |
+| one | `data/samples/approved/one.mp3` | `one` | Ear, `batch-05` shortlist |
+| two | `data/samples/approved/two.mp3` | `two` | Ear, `batch-05` shortlist |
+| put | `data/samples/approved/put.mp3` | `put.` | Ear, `batch-05` shortlist |
+| our | `data/samples/approved/our.mp3` | `our` | Ear, `batch-05` shortlist |
+| hour | `data/samples/approved/hour.mp3` | `hour` | Ear, `batch-05` shortlist |
+| no | `data/samples/approved/no.mp3` | `no.` | Ear, `batch-05` shortlist |
+| yes | `data/samples/approved/yes.mp3` | `yes` | Ear, `batch-05` shortlist |
+| wow | `data/samples/approved/wow.mp3` | `wow.` | Ear, `batch-05` shortlist |
+| oops | `data/samples/approved/oops.mp3` | `oops` | Ear, `batch-05` shortlist |
 
 ---
 
@@ -162,7 +175,7 @@ A word with no table row calls this with no `replace`. A sentence calls it with 
 | `inspect fix-burst --in FILE --out FILE` | Detached stop **pop** after a quiet gap (`batch-04` algorithm) |
 | `inspect fix-burst batch --dir data/samples/batch-04` | Re-run trims from `manifest.json` `source` → `*_trim.mp3` rows |
 
-**Two repair paths for end junk:** `fix-burst` (RMS gap + burst detector + 12 ms fade) targets final /t/ /d/ releases on contractions. `trim heal` (blind 50 ms steps) targets generic `activity_after_silence` flags (sniff-style acting).
+**Two repair paths for end junk:** `fix-burst` (RMS gap + burst detector + 12 ms fade) targets final /t/ /d/ releases on contractions. `trim heal` (blind 50 ms steps) targets generic `activity_after_silence` flags (sniff-style acting). The explore score also deducts `residue_shelf` (rule 10): a quiet second sound under −40 dB that rises and holds. That is what demotes `minute_plain` under `minute.` .
 
 **Multi-take exploration (batch-04 problem words):** `data/samples/batch-04-for/recipes.json` defines variation matrices; run `npm run catalog:audio:explore -- --batch data/samples/batch-04-for` (mint cap 10 per invocation — re-run until `takes/` is full, then score). Outputs `takes/`, auto-ranked `shortlist/`, and `exploration_report.json`. Legacy `batch-04` baselines: add `--include-legacy` on score.
 

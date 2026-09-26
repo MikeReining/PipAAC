@@ -69,3 +69,5 @@ In accordance with [`docs/product/Language_And_Voice_Schema.md:36-44`](file:///U
 | **Speaking is never gated** | While a cloned voice's clips are generating or downloading, the profile keeps its current voice; it switches when the clips are ready. *Correction 2026-09-22:* this replaces "fall back to OS `speechSynthesis`", which would mix two speakers inside one voice, banned by `docs/product/Language_And_Voice_Schema.md` § 5.5 and § 7. |
 | **One-time generation cost** | Batch-generating 677 short single-word utterances on modern neural engines costs pennies (~$0.30–$0.60 per voice library). It is packaged as an affordable one-time add-on or creator credit. |
 | **Privacy & Consent** | Audio samples uploaded for voice cloning require explicit adult consent in the Parent Corner and are never shared with third parties or used for public model training. |
+
+*Synthesis best practices & short-word phonetics guide:* [`docs/operations/Grok_Voice_Synthesis_Best_Practices.md`](file:///Users/mike/dev/PipAAC/docs/operations/Grok_Voice_Synthesis_Best_Practices.md).

@@ -21,6 +21,7 @@ PipAAC/
       Code_Audit.md
       code-maintainer/
       art-generator/
+      Grok_Voice_Synthesis_Best_Practices.md
     phases/
       README.md
     backlog/

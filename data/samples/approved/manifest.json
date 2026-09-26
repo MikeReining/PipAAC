@@ -234,6 +234,102 @@
       "text": "wind",
       "replace": null,
       "basis": "ear approved 2026-09-25; batch-04-for shortlist (plain); weather noun"
+    },
+    {
+      "word": "minute",
+      "file": "minute.mp3",
+      "source": "data/samples/batch-05-careful/takes/minute_period.mp3",
+      "text": "minute.",
+      "replace": null,
+      "basis": "ear, batch-05; plain take had a residue shelf"
+    },
+    {
+      "word": "aunt",
+      "file": "aunt.mp3",
+      "source": "data/samples/batch-05-careful/takes/aunt_plain.mp3",
+      "text": "aunt",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "who",
+      "file": "who.mp3",
+      "source": "data/samples/batch-05-careful/takes/who_plain.mp3",
+      "text": "who",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "one",
+      "file": "one.mp3",
+      "source": "data/samples/batch-05-careful/takes/one_plain.mp3",
+      "text": "one",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "two",
+      "file": "two.mp3",
+      "source": "data/samples/batch-05-careful/takes/two_plain.mp3",
+      "text": "two",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "put",
+      "file": "put.mp3",
+      "source": "data/samples/batch-05-careful/takes/put_period.mp3",
+      "text": "put.",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "our",
+      "file": "our.mp3",
+      "source": "data/samples/batch-05-careful/takes/our_plain.mp3",
+      "text": "our",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "hour",
+      "file": "hour.mp3",
+      "source": "data/samples/batch-05-careful/takes/hour_plain.mp3",
+      "text": "hour",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "no",
+      "file": "no.mp3",
+      "source": "data/samples/batch-05-careful/takes/no_period.mp3",
+      "text": "no.",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "yes",
+      "file": "yes.mp3",
+      "source": "data/samples/batch-05-careful/takes/yes_plain.mp3",
+      "text": "yes",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "wow",
+      "file": "wow.mp3",
+      "source": "data/samples/batch-05-careful/takes/wow_period.mp3",
+      "text": "wow.",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "oops",
+      "file": "oops.mp3",
+      "source": "data/samples/batch-05-careful/takes/oops_plain.mp3",
+      "text": "oops",
+      "replace": null,
+      "basis": "ear, batch-05 shortlist"
     }
   ],
   "rejected": [

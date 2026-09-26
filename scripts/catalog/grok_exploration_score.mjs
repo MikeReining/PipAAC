@@ -5,7 +5,12 @@
 
 import { measureAcousticTake } from "./audio_metrics.mjs";
 import { analyzeDetachedBurst } from "./audio_stop_burst.mjs";
-import { auditGeneratedWordAudio, decodePcmToMono16k, isSingleLexicalWord } from "./audio_review.mjs";
+import {
+  analyzeResidueShelf,
+  auditGeneratedWordAudio,
+  decodePcmToMono16k,
+  isSingleLexicalWord,
+} from "./audio_review.mjs";
 
 /** @typedef {{ word: string, slug: string, whisperMustMatch?: string[], whisperReject?: string[], durationMs?: [number, number] }} WordRecipe */
 
@@ -60,8 +65,9 @@ export function scoreAcoustics(filePath, spokenWord) {
   }
   const { pcm } = decodePcmToMono16k(filePath);
   const burst = analyzeDetachedBurst(pcm, 16000);
+  const residue = analyzeResidueShelf(pcm, { sampleRate: 16000 });
 
-  return { metrics, durMs, gate, burst };
+  return { metrics, durMs, gate, burst, residue };
 }
 
 /**
@@ -95,7 +101,7 @@ export function scoreTake({ word, recipe, filePath, whisperText, spokenForGate, 
 
   score = whisperSkipped ? 60 : 100;
   if (whisperSkipped) notes.push("whisper_skipped");
-  const { durMs, gate, burst } = acoustic;
+  const { durMs, gate, burst, residue } = acoustic;
 
   if (durMs < minMs) {
     score -= 40;
@@ -121,14 +127,29 @@ export function scoreTake({ word, recipe, filePath, whisperText, spokenForGate, 
     notes.push("no_tail_burst");
   }
 
-  return { score, whisper, acoustic: { durMs, gate, burst }, notes };
+  if (residue?.detected) {
+    score -= 60;
+    notes.push("residue_shelf");
+  }
+
+  return { score, whisper, acoustic: { durMs, gate, burst, residue }, notes };
+}
+
+function residueHoldMs(row) {
+  return row.acoustic?.residue?.holdMs ?? (row.notes?.includes("residue_shelf") ? 1 : 0);
 }
 
 export function pickBestPerWord(scoredRows) {
   const byWord = new Map();
   for (const row of scoredRows) {
     const prev = byWord.get(row.word);
-    if (!prev || row.score > prev.score) byWord.set(row.word, row);
+    if (!prev || row.score > prev.score) {
+      byWord.set(row.word, row);
+      continue;
+    }
+    if (row.score === prev.score && residueHoldMs(row) < residueHoldMs(prev)) {
+      byWord.set(row.word, row);
+    }
   }
   return [...byWord.values()].sort((a, b) => a.word.localeCompare(b.word));
 }

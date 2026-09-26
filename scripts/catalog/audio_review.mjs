@@ -31,6 +31,14 @@ export const FRAME_MS = 20;
 export const ACTIVE_THRESHOLD_DBFS = -40;
 export const MIN_INTERNAL_SILENCE_MS = 160;
 export const MIN_RENEWED_ACTIVITY_MS = 40;
+
+/** Sub-gate residue: a sound that comes back after the word and holds, quieter than -40 dB. */
+export const RESIDUE_SPEECH_DB = -36;
+export const RESIDUE_CEILING_DB = -38;
+export const RESIDUE_FLOOR_DB = -60;
+export const RESIDUE_RISE_DB = 6;
+export const RESIDUE_HOLD_MS = 100;
+export const RESIDUE_LOOKBACK_MS = 80;
 export const DECODE_SAMPLE_RATE = 16000;
 
 const SINGLE_LEXICAL_WORD_RE = /^\p{L}+(?:['’\-]\p{L}+)*$/u;
@@ -115,6 +123,54 @@ export function analyzePcm(
     activityAfterInternalSilenceMs,
     flag,
   };
+}
+
+/**
+ * A second sound under the -40 dB gate: after the word, level drops, then rises
+ * by at least RESIDUE_RISE_DB and holds. The activity_after_silence rule cannot
+ * see it. minute_plain.mp3 (batch-05) is the case; minute_period.mp3 is not.
+ */
+export function analyzeResidueShelf(
+  pcm,
+  {
+    sampleRate = DECODE_SAMPLE_RATE,
+    frameMs = FRAME_MS,
+  } = {},
+) {
+  const frame = Math.max(1, Math.round((sampleRate * frameMs) / 1000));
+  const dbs = [];
+  for (let i = 0; i + frame <= pcm.length; i += frame) {
+    dbs.push(frameRmsDbFs(pcm, i, frame));
+  }
+  let lastSpeech = -1;
+  for (let i = 0; i < dbs.length; i += 1) {
+    if (dbs[i] > RESIDUE_SPEECH_DB) lastSpeech = i;
+  }
+  const holdFrames = Math.ceil(RESIDUE_HOLD_MS / frameMs);
+  const lookback = Math.ceil(RESIDUE_LOOKBACK_MS / frameMs);
+  for (let i = lastSpeech + 1; i < dbs.length; i += 1) {
+    const db = dbs[i];
+    if (!(db <= RESIDUE_CEILING_DB && db > RESIDUE_FLOOR_DB)) continue;
+    let quiet = db;
+    const from = Math.max(lastSpeech + 1, i - lookback);
+    for (let k = from; k < i; k += 1) quiet = Math.min(quiet, dbs[k]);
+    if (db - quiet < RESIDUE_RISE_DB) continue;
+    let held = 0;
+    for (let k = i; k < dbs.length; k += 1) {
+      const level = dbs[k];
+      if (Math.abs(level - db) <= 3 && level <= RESIDUE_CEILING_DB && level > RESIDUE_FLOOR_DB) held += 1;
+      else break;
+    }
+    if (held >= holdFrames) {
+      return {
+        detected: true,
+        atMs: i * frameMs,
+        riseDb: db - quiet,
+        holdMs: held * frameMs,
+      };
+    }
+  }
+  return { detected: false, atMs: null, riseDb: 0, holdMs: 0 };
 }
 
 export function decodePcmToMono16k(filePath, { spawn = spawnSync, ffmpegBinary = "ffmpeg" } = {}) {

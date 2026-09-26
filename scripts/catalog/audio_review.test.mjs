@@ -14,6 +14,7 @@ import {
   REASON_NO_ACTIVITY,
   REASON_NOT_SINGLE_LEXICAL_WORD,
   analyzePcm,
+  analyzeResidueShelf,
   auditGeneratedWordAudio,
   cliMain,
   decodePcmToMono16k,
@@ -129,6 +130,28 @@ test("cliMain: review exits 1, pass exits 0", () => {
     audit: () => ({ outcome: "pass", reasons: [], measurements: {} }),
   });
   assert.equal(passCode, 0);
+});
+
+function level(ms, db) {
+  const amp = 10 ** (db / 20);
+  const n = Math.round((SR * ms) / 1000);
+  const pcm = new Int16Array(n);
+  const sample = Math.round(amp * 32767);
+  pcm.fill(sample);
+  return pcm;
+}
+
+test("a sub-threshold sound that rises and holds is a residue shelf", () => {
+  const pcm = concat(level(300, -15), level(80, -50), level(140, -42));
+  const shelf = analyzeResidueShelf(pcm, { sampleRate: SR });
+  assert.equal(shelf.detected, true);
+  assert.ok(shelf.riseDb >= 6);
+});
+
+test("a smooth decay after the word is not a residue shelf", () => {
+  const pcm = concat(level(300, -15), level(40, -42), level(40, -50), level(40, -70), silence(80));
+  const shelf = analyzeResidueShelf(pcm, { sampleRate: SR });
+  assert.equal(shelf.detected, false);
 });
 
 test("decodePcmToMono16k round-trips PCM through real ffmpeg", (t) => {
