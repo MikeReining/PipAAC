@@ -50,6 +50,9 @@ import { PIN_RE, checkPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs"
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
 import { applyTransform } from "./shared/txbar.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
+import {
+  FEELINGS, expressiveOn, loadFeelingData, suggestedFeeling,
+} from "./shared/feeling.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
 import { useCounts } from "./shared/usecounts.mjs";
@@ -148,6 +151,10 @@ if (navigator.locks?.request) {
 navigator.storage?.persist?.().catch(() => {});
 
 const { db, catalog, phrases, formTable, flush: flushDb } = await bootDb(userStore, me.id);
+// 025: the lit-face map — catalog.feelingVoice when the Ara rebuild
+// ships it, /feeling_voice.json until then.
+const feelingData = await loadFeelingData(catalog);
+let expressiveVoice = expressiveOn(db);
 bindLayouts(catalog.layouts); // move-cost sectors need the column counts
 // Device identity for the op log (sync § 4): the signing key's
 // fingerprint, resolved from the platform keystore. Until it lands the
@@ -298,6 +305,17 @@ function speak(text) {
   speechSynthesis.speak(u);
 }
 
+/* One audio element — a new play cancels the old. Resolve the old
+ * wait too, or its caller hangs forever (face tap mid-▶, 023 § 1h's
+ * "pressing another speaking button restarts audio"). */
+let playingResolve = null;
+let playGen = 0; // a new play invalidates waits started under the old
+const endPlaying = () => {
+  playGen++;
+  playingResolve?.();
+  playingResolve = null;
+};
+
 /** Play a clip: catalog keys are shipped files; `blob:` keys are
  *  content-addressed bytes in OPFS (recorded overrides, synced photos)
  *  resolved through the blob loader, which lazy-fetches a sealed copy. */
@@ -307,7 +325,9 @@ async function playClip(key) {
     src = await loadPhotoURL(key);
     if (!src) return;
   }
+  endPlaying();
   return new Promise((resolve) => {
+    playingResolve = resolve;
     audio.src = src;
     audio.onended = resolve;
     audio.onerror = resolve;
@@ -319,7 +339,9 @@ async function playClip(key) {
 async function playBlob(blob) {
   const src = URL.createObjectURL(blob);
   try {
+    endPlaying();
     return await new Promise((resolve) => {
+      playingResolve = resolve;
       audio.src = src;
       audio.onended = resolve;
       audio.onerror = resolve;
@@ -354,8 +376,8 @@ function syncTxButtons() {
     $(id).disabled = !sentence.length || offline;
   }
 }
-addEventListener("online", syncTxButtons);
-addEventListener("offline", syncTxButtons);
+addEventListener("online", () => { syncTxButtons(); renderStrip(); });
+addEventListener("offline", () => { syncTxButtons(); renderStrip(); });
 
 /** One transform press: mask her names → the Worker/Groq does the
  *  grammar → the result replaces the bar as typed words → it speaks
@@ -394,7 +416,7 @@ async function transformAndSpeak(mode) {
 /** Sentence bar: one slot per item in order; misses hold 400 ms (§7.4).
  *  Speaking ends the logged sentence — the bar keeps its words, but the
  *  next pick opens a new sentence row. */
-async function speakSentence() {
+async function speakSentence(feeling = null) {
   freshNext = freshAfterSpeak;
   // 022: Speak is sentence-final — the last word may take its absolute
   // form ("it is not my" -> "it is not mine"). Picked once, before
@@ -420,25 +442,36 @@ async function speakSentence() {
   }
   // 024 rule 1: one whole-sentence utterance when it's ready — a single
   // word is its own clip, so the pipeline only ever races real phrases.
-  // A null answer (deadline, offline, unlicensed, over budget) falls
-  // through to the clip loop; she is always heard.
+  // A face tap races every length: the shortest messages (*No!*, *Stop!*)
+  // are often the most emotional (025 § 1). A null answer (deadline,
+  // offline, unlicensed, over budget) falls through to the clip loop —
+  // she is always heard, the feeling is the extra (025 § 2).
   let spoken = false;
-  if (sentence.length >= 2) {
+  if (sentence.length >= 2 || feeling) {
     const blob = await sentenceVoice.request({
       userId: me.id,
       license: await voiceLicense(),
       voice: grokVoice,
       text: sentenceSpeakText(sentence),
+      feeling: feeling ?? "neutral",
+      // § 2: a face waits ~1 s for its feeling before neutral clips.
+      deadlineMs: feeling ? 1000 : 300,
     });
     if (blob) {
       await playBlob(blob);
       spoken = true;
     }
   }
-  if (!spoken) for (const item of [...sentence]) await speakItem(item);
+  const gen = playGen;
+  if (!spoken) {
+    for (const item of [...sentence]) {
+      if (playGen !== gen) break; // a newer speak took the element
+      await speakItem(item);
+    }
+  }
   if (sentenceId !== null) {
     const sid = sentenceId;
-    closeSentence(db, sid, Date.now(), "spoken");
+    closeSentence(db, sid, Date.now(), "spoken", feeling);
     scheduleStatsRefresh();
     sentenceId = null;
     sentencePicks = 0;
@@ -693,6 +726,68 @@ function ghostCard() {
   return el;
 }
 
+/* 025 § 1: the three faces own the strip's last slot — from the first
+ *  word, when the setting is on, online, and not mid-typed-word.
+ *  Edit/pick/model modes keep every tap a selection, never speech. */
+function facesOn() {
+  return !!(feelingData && sentence.length && expressiveVoice
+    && navigator.onLine !== false && !kbUi.text
+    && !picking && !modeling && !editing);
+}
+
+/** Cache: entity id → category — a people/pets entity (or an
+ *  unclassified family add) counts as a people word for § 3. */
+const entityCat = new Map();
+function entityCategory(entityId) {
+  if (!entityCat.has(entityId)) {
+    entityCat.set(entityId, ALL(db,
+      "SELECT category AS c FROM personal_entity WHERE id = ?",
+      [entityId])[0]?.c ?? null);
+  }
+  return entityCat.get(entityId);
+}
+
+function faceCard() {
+  const el = document.createElement("div");
+  el.className = "pred faces";
+  // § 3: the lit face is the suggestion — recomputed every paint.
+  const lit = suggestedFeeling(sentence, feelingData,
+    (id) => posOfSense(id) === "Pronoun", entityCategory);
+  for (const f of FEELINGS) {
+    const b = document.createElement("button");
+    b.className = `face${lit === f ? " lit" : ""}`;
+    b.setAttribute("aria-label", `Say it ${f}`);
+    const img = document.createElement("img");
+    img.src = `/icons/${lit === f ? "selected/" : ""}voice-${f}.svg`;
+    img.alt = "";
+    b.appendChild(img);
+    b.addEventListener("click", () => speakFeeling(f, b));
+    el.appendChild(b);
+  }
+  return el;
+}
+
+/** § 2: a face tap speaks the bar in that feeling, once — pressed at
+ *  once, dark until the audio ends, and only one control is dark at a
+ *  time. Nothing stays on. */
+async function speakFeeling(feeling, btn) {
+  if (txBusy || !sentence.length) return;
+  txBusy = true;
+  document.querySelectorAll(".speaking")
+    .forEach((n) => n.classList.remove("speaking"));
+  const img = btn.querySelector("img");
+  const normal = img.src;
+  btn.classList.add("speaking");
+  img.src = `/icons/selected/voice-${feeling}.svg`;
+  try {
+    await speakSentence(feeling);
+  } finally {
+    txBusy = false;
+    btn.classList.remove("speaking");
+    img.src = normal;
+  }
+}
+
 /** Strip items → card descriptors (entity tile or sense tile). */
 function stripCards(items) {
   return items.map((c) => {
@@ -726,11 +821,16 @@ async function paintStrip(cards, slots = stripSlots(boardGeom().cols)) {
   const tray = $("tray");
   tray.style.gridTemplateColumns = `repeat(${slots}, 1fr)`;
   tray.querySelectorAll(".pred").forEach((n) => n.remove());
-  for (let i = 0; i < slots; i++) {
+  // 025 § 1: the last slot is the three faces whenever they show —
+  // word suggestions fill the slots before it, same in every mode.
+  const wordSlots = slots - (facesOn() ? 1 : 0);
+  for (let i = 0; i < wordSlots; i++) {
     tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
   }
+  if (wordSlots < slots) tray.appendChild(faceCard());
   if (openImpressionId !== null) {
-    stampShownFinal(db, openImpressionId, cards.slice(0, slots).map((c) =>
+    // shown_final replays what was painted — the face slot is not a word.
+    stampShownFinal(db, openImpressionId, cards.slice(0, wordSlots).map((c) =>
       c.entity ? `entity:${c.entity.id}` : `sense:${c.id}`));
   }
   fitLabels(tray);
@@ -1622,6 +1722,22 @@ $("grammar-help").addEventListener("click", (e) => {
   rerenderView();
 });
 syncGrammarSeg();
+/* Expressive voice (025 § 6) — the feeling faces. Off is instant: the
+ * last slot returns to word suggestions, everything speaks neutral. */
+function syncExpressiveSeg() {
+  expressiveVoice = expressiveOn(db);
+  for (const b of $("expressive-voice").querySelectorAll("button")) {
+    b.classList.toggle("on", (b.dataset.v === "1") === expressiveVoice);
+  }
+}
+$("expressive-voice").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v === undefined) return;
+  setSetting(db, "expressive_voice", Number(v));
+  syncExpressiveSeg();
+  renderStrip();
+});
+syncExpressiveSeg();
 /* "Help improve Pip" (016 slice 6) — the research-totals switch. Same
  * synced-setting mechanics as the seg above. */
 const syncShareSeg = () => {

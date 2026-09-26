@@ -1,10 +1,16 @@
 # 025 — Expressive Voice: happy, sad, angry
 
-**Status:** decided (founder + CTO, 2026-09-25). **Queued: start only after
-all of `024_Sentence_TTS_And_Audio_Cache.md` is implemented.** It needs
-024's whole-sentence voice, cache, deadline fallback and fair-use limit, and
-▶ must already speak in the same Grok voice (Ara) so that neutral and
-emotional speech are one person.
+**Status:** slices 1–4 landed 2026-09-26 (`97c968d` + faces commit).
+Decided (founder + CTO, 2026-09-25); started once 024 slices 1–3 were
+in. Founder picked the **designer face icons** (`public/icons/voice-*`),
+not the catalog word pictures — the "which pictures" question in § 1
+is settled; slice 4 needed no drawing. Launch voice is **Ara only**.
+Two things wait on the Ara catalog rebuild: `schemaSql` carrying
+`spoken_feeling`/`expressive_voice` canonically (devices add them
+additively at boot until then) and `catalog.feelingVoice` (the worker
+serves `/feeling_voice.json` as the bridge). Remaining: the § 8
+listen + paid verification is gated on real Grok calls.
+
 **Truth owner:** the locked prosody formulas in
 `docs/operations/Grok_Voice_Emotional_Prosody.md` (acoustic analysis plus
 founder listening, 2026-09-25), and what a child hears on a real tablet.

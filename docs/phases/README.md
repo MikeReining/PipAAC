@@ -40,8 +40,8 @@ Executing phases only. Each row names the **next** slice.
 | [020B — Converter fixes](020B_Converter_Fixes.md) | Done 2026-09-25 (`6314581`); baby-talk spellings follow in 021 step 0 |
 | [022 — Whose and how many](022_Whose_And_How_Many.md) | Code done 2026-09-26 (1464e4c): whose/plurals/EOS ship, three never-show-a-mistake rulings landed (own-word plural spelling, same-length pooling, caregiver plural use). Remaining: shipped catalog.json waits on the Ara word-form clips (144 uncovered, `forms_audio.json`) |
 | [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
-| [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Reviewed 2026-09-25: Grok whole-sentence speech, one voice everywhere, ▶ never waits on the network, shared cache for Pip words + common names, pre-recorded names (people, dogs, cats), silent per-license fair use, no subscription. Next: slice 1 (Worker endpoint) |
-| [025 — Expressive voice](025_Expressive_Voice.md) | Decided 2026-09-25, queued: starts only after all of 024 is implemented. Happy / sad / angry faces in the last smart-bar slot; ▶ always neutral |
+| [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Slices 1–3 landed 2026-09-26: Worker endpoint (shared R2 cache, fair use, no ids upstream), client Tier-1 + ~300 ms clip fallback, transform buttons speak through it. Next: slice 4 clip re-mint — paid, founder-gated at ≤10/batch |
+| [025 — Expressive voice](025_Expressive_Voice.md) | Slices 1–4 landed 2026-09-26: happy/sad/angry faces in the last strip slot (designer icons), Worker-side prosody, feeling-keyed caches, lit-face suggestion, Expressive voice setting. Next: § 8 listen — paid, founder-gated |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

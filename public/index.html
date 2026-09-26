@@ -288,6 +288,37 @@
         overflow: hidden;
       }
       .pred.ghost { border-style: dashed; border-color: var(--line); background: transparent; }
+      /* 025 § 1: the last slot's three feeling faces — small
+         ink-bordered buttons, never word cards. A lit suggestion and
+         the pressed state both go dark with the selected icon. */
+      .pred.faces {
+        display: flex;
+        gap: var(--gap);
+        border-color: transparent;
+        background: transparent;
+      }
+      .pred.faces .face {
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+        border-radius: 10px;
+        border: 3px solid var(--edge);
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+      .pred.faces .face img {
+        width: clamp(20px, 4vmin, 38px);
+        height: clamp(20px, 4vmin, 38px);
+      }
+      .pred.faces .face:active { border-color: var(--ink-text); }
+      .pred.faces .face.lit,
+      .pred.faces .face.speaking {
+        background: var(--ink);
+        border-color: var(--ink-text);
+      }
       .pred:active { border-color: var(--ink-text); }
       .pred:active .part { background: var(--press-f); }
       /* Utility anchors: one column each, always visible. */
@@ -738,6 +769,14 @@
             <button data-v="1">On</button>
           </div>
           <p class="hint">Words wear the form the sentence calls for — "he" makes the board read wants, has, him.</p>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Expressive voice</span>
+          <div class="seg" id="expressive-voice">
+            <button data-v="0">Off</button>
+            <button data-v="1">On</button>
+          </div>
+          <p class="hint">Faces in the smart bar let your child say a sentence happy, sad or angry.</p>
         </div>
         <div class="seg-row">
           <span class="seg-label">Help improve Pip</span>
