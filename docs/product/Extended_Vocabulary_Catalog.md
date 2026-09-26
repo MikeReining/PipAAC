@@ -558,7 +558,7 @@ art: draw
 
 McDonald's, Happy Meal, Burger King, Wendy's, Chick-fil-A, Taco Bell, KFC,
 Subway (restaurant), Chipotle, Panera, Popeyes, Sonic (restaurant), Arby's,
-Five Guys, In-N-Out, Culver's, Whataburger, Jack in the Box, Pizza Hut,
+Five Guys, In-N-Out, Culver's, Whataburger, Jack in the Box (restaurant), Pizza Hut,
 Domino's, Papa John's, Little Caesars, Olive Garden, Applebee's, Chili's,
 IHOP, Denny's, Cracker Barrel, Red Robin, Texas Roadhouse, Panda Express,
 Starbucks, Dunkin', Krispy Kreme, Dairy Queen, Baskin-Robbins, Cold Stone,

@@ -17,7 +17,7 @@ One critical path. Replace this table when the literal next slice changes — do
 | Priority | Next slice | Doc |
 | --- | --- | --- |
 | **P1** | User-testing readiness — local board paints and speaks; next is a shareable URL (deploy, stop/ask) and the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
-| **P2** | 010 slice 1 — the word list (2,000 words + 300 phrases) — unblocks 014 slice 6 message tiles | `docs/phases/010_Extended_Picture_Library.md` |
+| **P2** | 010 slice 2 — the art (review page built; generation gated on founder, one image at a time). Slice 1 word list landed: `data/extended_lexicon.json` + `everyday_gaps.en.json` | `docs/phases/010_Extended_Picture_Library.md` |
 
 ## Live index
 
@@ -29,7 +29,7 @@ Executing phases only. Each row names the **next** slice.
 | [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
 | [008 — Partner Listening](../backlog/008_Partner_Listening.md) | Held 2026-09-24 (017 R20: no listening) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 10 — suggested words (blocked on 008 slice 3; 008 held 2026-09-24); slice 5 is post-launch |
-| [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 — the word list (size decided: 2,000 words + 300 phrases) |
+| [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 done 2026-09-26 (4,000-entry JSON + 170-word everyday-gaps list, data only). Slice 2 — the art: review page built, generation waits on founder approval |
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7, 9–11 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later). Nothing unblocked — the phase idles until 010 slice 1 lands |
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 payments **deferred** (founder, 2026-09-23) — the phase stays live until billing lands or is discharged |
@@ -38,7 +38,7 @@ Executing phases only. Each row names the **next** slice.
 | [019 — User-testing readiness](019_User_Testing_Readiness.md) | Local board paints and speaks, including a board saved before the v2 map. Next: deploy (stop/ask), then the first-open people question |
 | [020 — Prediction data fix](020_Prediction_Data_Fix.md) | Done 2026-09-25 (`b57f600`); follow-up in 020B |
 | [020B — Converter fixes](020B_Converter_Fixes.md) | Done 2026-09-25 (`6314581`); baby-talk spellings follow in 021 step 0 |
-| [022 — Whose and how many](022_Whose_And_How_Many.md) | Next: slice 1 (forms and counts): his/our/their/your forms, name + noun possessives, mine at Speak, plural forms and counts |
+| [022 — Whose and how many](022_Whose_And_How_Many.md) | Code done 2026-09-26 (1464e4c): whose/plurals/EOS ship, three never-show-a-mistake rulings landed (own-word plural spelling, same-length pooling, caregiver plural use). Remaining: shipped catalog.json waits on the Ara word-form clips (144 uncovered, `forms_audio.json`) |
 | [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
 | [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Reviewed 2026-09-25: Grok whole-sentence speech, one voice everywhere, ▶ never waits on the network, shared cache for Pip words + common names, pre-recorded names (people, dogs, cats), silent per-license fair use, no subscription. Next: slice 1 (Worker endpoint) |
 | [025 — Expressive voice](025_Expressive_Voice.md) | Decided 2026-09-25, queued: starts only after all of 024 is implemented. Happy / sad / angry faces in the last smart-bar slot; ▶ always neutral |

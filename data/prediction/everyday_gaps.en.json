@@ -1,0 +1,4106 @@
+{
+ "generated": "everyday_gaps.mjs — CHILDES child lines, unresolved by the catalog",
+ "minCount": 1000,
+ "childLines": 2215656,
+ "words": [
+  {
+   "word": "say",
+   "count": 11026,
+   "surfaces": [
+    {
+     "text": "say",
+     "count": 8219
+    },
+    {
+     "text": "says",
+     "count": 2023
+    },
+    {
+     "text": "saying",
+     "count": 768
+    },
+    {
+     "text": "sayed",
+     "count": 16
+    }
+   ]
+  },
+  {
+   "word": "hey",
+   "count": 9100,
+   "surfaces": [
+    {
+     "text": "hey",
+     "count": 9100
+    }
+   ]
+  },
+  {
+   "word": "well",
+   "count": 8211,
+   "surfaces": [
+    {
+     "text": "well",
+     "count": 8209
+    },
+    {
+     "text": "wells",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "let's",
+   "count": 7520,
+   "surfaces": [
+    {
+     "text": "let's",
+     "count": 7303
+    },
+    {
+     "text": "lets",
+     "count": 217
+    }
+   ]
+  },
+  {
+   "word": "gone",
+   "count": 6939,
+   "surfaces": [
+    {
+     "text": "gone",
+     "count": 6934
+    },
+    {
+     "text": "goned",
+     "count": 3
+    },
+    {
+     "text": "gones",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "let",
+   "count": 6937,
+   "surfaces": [
+    {
+     "text": "let",
+     "count": 6846
+    },
+    {
+     "text": "letting",
+     "count": 87
+    },
+    {
+     "text": "letted",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "word": "said",
+   "count": 6908,
+   "surfaces": [
+    {
+     "text": "said",
+     "count": 6908
+    }
+   ]
+  },
+  {
+   "word": "way",
+   "count": 6260,
+   "surfaces": [
+    {
+     "text": "way",
+     "count": 6192
+    },
+    {
+     "text": "ways",
+     "count": 68
+    }
+   ]
+  },
+  {
+   "word": "watch",
+   "count": 6189,
+   "surfaces": [
+    {
+     "text": "watch",
+     "count": 5226
+    },
+    {
+     "text": "watching",
+     "count": 579
+    },
+    {
+     "text": "watches",
+     "count": 221
+    },
+    {
+     "text": "watched",
+     "count": 163
+    }
+   ]
+  },
+  {
+   "word": "try",
+   "count": 6078,
+   "surfaces": [
+    {
+     "text": "try",
+     "count": 2490
+    },
+    {
+     "text": "trying",
+     "count": 2131
+    },
+    {
+     "text": "tries",
+     "count": 967
+    },
+    {
+     "text": "tried",
+     "count": 486
+    },
+    {
+     "text": "trys",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "word": "bit",
+   "count": 6006,
+   "surfaces": [
+    {
+     "text": "bit",
+     "count": 5600
+    },
+    {
+     "text": "bits",
+     "count": 405
+    },
+    {
+     "text": "bitted",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "time",
+   "count": 5910,
+   "surfaces": [
+    {
+     "text": "time",
+     "count": 5452
+    },
+    {
+     "text": "times",
+     "count": 451
+    },
+    {
+     "text": "timed",
+     "count": 4
+    },
+    {
+     "text": "timing",
+     "count": 3
+    }
+   ]
+  },
+  {
+   "word": "move",
+   "count": 4473,
+   "surfaces": [
+    {
+     "text": "move",
+     "count": 2881
+    },
+    {
+     "text": "moves",
+     "count": 783
+    },
+    {
+     "text": "moving",
+     "count": 574
+    },
+    {
+     "text": "moved",
+     "count": 235
+    }
+   ]
+  },
+  {
+   "word": "dear",
+   "count": 4337,
+   "surfaces": [
+    {
+     "text": "dear",
+     "count": 4332
+    },
+    {
+     "text": "dears",
+     "count": 5
+    }
+   ]
+  },
+  {
+   "word": "from",
+   "count": 3955,
+   "surfaces": [
+    {
+     "text": "from",
+     "count": 3954
+    },
+    {
+     "text": "froms",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "nice",
+   "count": 3866,
+   "surfaces": [
+    {
+     "text": "nice",
+     "count": 3866
+    }
+   ]
+  },
+  {
+   "word": "about",
+   "count": 3844,
+   "surfaces": [
+    {
+     "text": "about",
+     "count": 3844
+    }
+   ]
+  },
+  {
+   "word": "piece",
+   "count": 3809,
+   "surfaces": [
+    {
+     "text": "piece",
+     "count": 2666
+    },
+    {
+     "text": "pieces",
+     "count": 1143
+    }
+   ]
+  },
+  {
+   "word": "mean",
+   "count": 3803,
+   "surfaces": [
+    {
+     "text": "mean",
+     "count": 2925
+    },
+    {
+     "text": "means",
+     "count": 865
+    },
+    {
+     "text": "meaning",
+     "count": 12
+    },
+    {
+     "text": "meaned",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "balloon",
+   "count": 3768,
+   "surfaces": [
+    {
+     "text": "balloon",
+     "count": 3225
+    },
+    {
+     "text": "balloons",
+     "count": 542
+    },
+    {
+     "text": "ballooning",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "round",
+   "count": 3511,
+   "surfaces": [
+    {
+     "text": "round",
+     "count": 3496
+    },
+    {
+     "text": "rounds",
+     "count": 9
+    },
+    {
+     "text": "rounded",
+     "count": 4
+    },
+    {
+     "text": "rounding",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "any",
+   "count": 3508,
+   "surfaces": [
+    {
+     "text": "any",
+     "count": 3508
+    }
+   ]
+  },
+  {
+   "word": "better",
+   "count": 3209,
+   "surfaces": [
+    {
+     "text": "better",
+     "count": 3209
+    }
+   ]
+  },
+  {
+   "word": "fire",
+   "count": 3170,
+   "surfaces": [
+    {
+     "text": "fire",
+     "count": 3087
+    },
+    {
+     "text": "fires",
+     "count": 55
+    },
+    {
+     "text": "fired",
+     "count": 21
+    },
+    {
+     "text": "firing",
+     "count": 7
+    }
+   ]
+  },
+  {
+   "word": "alright",
+   "count": 3018,
+   "surfaces": [
+    {
+     "text": "alright",
+     "count": 3018
+    }
+   ]
+  },
+  {
+   "word": "called",
+   "count": 2986,
+   "surfaces": [
+    {
+     "text": "called",
+     "count": 2985
+    },
+    {
+     "text": "calleds",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "day",
+   "count": 2950,
+   "surfaces": [
+    {
+     "text": "day",
+     "count": 2616
+    },
+    {
+     "text": "days",
+     "count": 334
+    }
+   ]
+  },
+  {
+   "word": "shall",
+   "count": 2922,
+   "surfaces": [
+    {
+     "text": "shall",
+     "count": 2922
+    }
+   ]
+  },
+  {
+   "word": "which",
+   "count": 2911,
+   "surfaces": [
+    {
+     "text": "which",
+     "count": 2911
+    }
+   ]
+  },
+  {
+   "word": "stay",
+   "count": 2909,
+   "surfaces": [
+    {
+     "text": "stay",
+     "count": 2293
+    },
+    {
+     "text": "staying",
+     "count": 249
+    },
+    {
+     "text": "stayed",
+     "count": 227
+    },
+    {
+     "text": "stays",
+     "count": 140
+    }
+   ]
+  },
+  {
+   "word": "hear",
+   "count": 2720,
+   "surfaces": [
+    {
+     "text": "hear",
+     "count": 2633
+    },
+    {
+     "text": "hears",
+     "count": 35
+    },
+    {
+     "text": "hearing",
+     "count": 32
+    },
+    {
+     "text": "heared",
+     "count": 20
+    }
+   ]
+  },
+  {
+   "word": "into",
+   "count": 2714,
+   "surfaces": [
+    {
+     "text": "into",
+     "count": 2714
+    }
+   ]
+  },
+  {
+   "word": "top",
+   "count": 2707,
+   "surfaces": [
+    {
+     "text": "top",
+     "count": 2627
+    },
+    {
+     "text": "tops",
+     "count": 77
+    },
+    {
+     "text": "topping",
+     "count": 2
+    },
+    {
+     "text": "topped",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "around",
+   "count": 2696,
+   "surfaces": [
+    {
+     "text": "around",
+     "count": 2696
+    }
+   ]
+  },
+  {
+   "word": "birthday",
+   "count": 2662,
+   "surfaces": [
+    {
+     "text": "birthday",
+     "count": 2629
+    },
+    {
+     "text": "birthdays",
+     "count": 33
+    }
+   ]
+  },
+  {
+   "word": "pick",
+   "count": 2647,
+   "surfaces": [
+    {
+     "text": "pick",
+     "count": 1886
+    },
+    {
+     "text": "picking",
+     "count": 423
+    },
+    {
+     "text": "picked",
+     "count": 338
+    }
+   ]
+  },
+  {
+   "word": "hide",
+   "count": 2631,
+   "surfaces": [
+    {
+     "text": "hide",
+     "count": 1345
+    },
+    {
+     "text": "hiding",
+     "count": 1199
+    },
+    {
+     "text": "hides",
+     "count": 62
+    },
+    {
+     "text": "hided",
+     "count": 24
+    },
+    {
+     "text": "hideed",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "noise",
+   "count": 2532,
+   "surfaces": [
+    {
+     "text": "noise",
+     "count": 2089
+    },
+    {
+     "text": "noises",
+     "count": 437
+    },
+    {
+     "text": "noising",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "word": "fit",
+   "count": 2527,
+   "surfaces": [
+    {
+     "text": "fit",
+     "count": 1992
+    },
+    {
+     "text": "fits",
+     "count": 488
+    },
+    {
+     "text": "fitting",
+     "count": 30
+    },
+    {
+     "text": "fitted",
+     "count": 17
+    }
+   ]
+  },
+  {
+   "word": "by",
+   "count": 2520,
+   "surfaces": [
+    {
+     "text": "by",
+     "count": 2520
+    }
+   ]
+  },
+  {
+   "word": "keep",
+   "count": 2512,
+   "surfaces": [
+    {
+     "text": "keep",
+     "count": 2079
+    },
+    {
+     "text": "keeps",
+     "count": 315
+    },
+    {
+     "text": "keeping",
+     "count": 107
+    },
+    {
+     "text": "keeped",
+     "count": 11
+    }
+   ]
+  },
+  {
+   "word": "lady",
+   "count": 2499,
+   "surfaces": [
+    {
+     "text": "lady",
+     "count": 2274
+    },
+    {
+     "text": "ladies",
+     "count": 172
+    },
+    {
+     "text": "ladys",
+     "count": 53
+    }
+   ]
+  },
+  {
+   "word": "through",
+   "count": 2495,
+   "surfaces": [
+    {
+     "text": "through",
+     "count": 2495
+    }
+   ]
+  },
+  {
+   "word": "stuck",
+   "count": 2487,
+   "surfaces": [
+    {
+     "text": "stuck",
+     "count": 2464
+    },
+    {
+     "text": "stucked",
+     "count": 19
+    },
+    {
+     "text": "stucks",
+     "count": 2
+    },
+    {
+     "text": "stucking",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "choo",
+   "count": 2465,
+   "surfaces": [
+    {
+     "text": "choo",
+     "count": 2284
+    },
+    {
+     "text": "choos",
+     "count": 181
+    }
+   ]
+  },
+  {
+   "word": "use",
+   "count": 2447,
+   "surfaces": [
+    {
+     "text": "use",
+     "count": 1787
+    },
+    {
+     "text": "used",
+     "count": 349
+    },
+    {
+     "text": "using",
+     "count": 224
+    },
+    {
+     "text": "uses",
+     "count": 87
+    }
+   ]
+  },
+  {
+   "word": "picture",
+   "count": 2431,
+   "surfaces": [
+    {
+     "text": "picture",
+     "count": 1708
+    },
+    {
+     "text": "pictures",
+     "count": 721
+    },
+    {
+     "text": "pictured",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "guy",
+   "count": 2428,
+   "surfaces": [
+    {
+     "text": "guy",
+     "count": 1484
+    },
+    {
+     "text": "guys",
+     "count": 943
+    },
+    {
+     "text": "guied",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "pretend",
+   "count": 2400,
+   "surfaces": [
+    {
+     "text": "pretend",
+     "count": 1904
+    },
+    {
+     "text": "pretending",
+     "count": 292
+    },
+    {
+     "text": "pretends",
+     "count": 182
+    },
+    {
+     "text": "pretended",
+     "count": 22
+    }
+   ]
+  },
+  {
+   "word": "start",
+   "count": 2356,
+   "surfaces": [
+    {
+     "text": "start",
+     "count": 890
+    },
+    {
+     "text": "started",
+     "count": 704
+    },
+    {
+     "text": "starts",
+     "count": 554
+    },
+    {
+     "text": "starting",
+     "count": 208
+    }
+   ]
+  },
+  {
+   "word": "found",
+   "count": 2352,
+   "surfaces": [
+    {
+     "text": "found",
+     "count": 2348
+    },
+    {
+     "text": "founded",
+     "count": 2
+    },
+    {
+     "text": "founding",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "else",
+   "count": 2336,
+   "surfaces": [
+    {
+     "text": "else",
+     "count": 2336
+    }
+   ]
+  },
+  {
+   "word": "picks",
+   "count": 2332,
+   "surfaces": [
+    {
+     "text": "picks",
+     "count": 2332
+    }
+   ]
+  },
+  {
+   "word": "drive",
+   "count": 2321,
+   "surfaces": [
+    {
+     "text": "drive",
+     "count": 1437
+    },
+    {
+     "text": "driving",
+     "count": 740
+    },
+    {
+     "text": "drives",
+     "count": 119
+    },
+    {
+     "text": "drived",
+     "count": 25
+    }
+   ]
+  },
+  {
+   "word": "fly",
+   "count": 2291,
+   "surfaces": [
+    {
+     "text": "fly",
+     "count": 1363
+    },
+    {
+     "text": "flying",
+     "count": 622
+    },
+    {
+     "text": "flies",
+     "count": 233
+    },
+    {
+     "text": "flied",
+     "count": 53
+    },
+    {
+     "text": "flys",
+     "count": 18
+    },
+    {
+     "text": "flyed",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "bang",
+   "count": 2281,
+   "surfaces": [
+    {
+     "text": "bang",
+     "count": 1759
+    },
+    {
+     "text": "banging",
+     "count": 213
+    },
+    {
+     "text": "bangs",
+     "count": 175
+    },
+    {
+     "text": "banged",
+     "count": 134
+    }
+   ]
+  },
+  {
+   "word": "stick",
+   "count": 2249,
+   "surfaces": [
+    {
+     "text": "stick",
+     "count": 1600
+    },
+    {
+     "text": "sticks",
+     "count": 344
+    },
+    {
+     "text": "sticking",
+     "count": 272
+    },
+    {
+     "text": "sticked",
+     "count": 33
+    }
+   ]
+  },
+  {
+   "word": "money",
+   "count": 2237,
+   "surfaces": [
+    {
+     "text": "money",
+     "count": 2167
+    },
+    {
+     "text": "moneys",
+     "count": 70
+    }
+   ]
+  },
+  {
+   "word": "bring",
+   "count": 2229,
+   "surfaces": [
+    {
+     "text": "bring",
+     "count": 1809
+    },
+    {
+     "text": "brings",
+     "count": 208
+    },
+    {
+     "text": "bringing",
+     "count": 166
+    },
+    {
+     "text": "bringed",
+     "count": 46
+    }
+   ]
+  },
+  {
+   "word": "game",
+   "count": 2201,
+   "surfaces": [
+    {
+     "text": "game",
+     "count": 1777
+    },
+    {
+     "text": "games",
+     "count": 424
+    }
+   ]
+  },
+  {
+   "word": "lot",
+   "count": 2188,
+   "surfaces": [
+    {
+     "text": "lot",
+     "count": 1342
+    },
+    {
+     "text": "lots",
+     "count": 846
+    }
+   ]
+  },
+  {
+   "word": "much",
+   "count": 2181,
+   "surfaces": [
+    {
+     "text": "much",
+     "count": 2181
+    }
+   ]
+  },
+  {
+   "word": "yet",
+   "count": 2165,
+   "surfaces": [
+    {
+     "text": "yet",
+     "count": 2164
+    },
+    {
+     "text": "yets",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "wear",
+   "count": 2162,
+   "surfaces": [
+    {
+     "text": "wear",
+     "count": 1591
+    },
+    {
+     "text": "wearing",
+     "count": 432
+    },
+    {
+     "text": "wears",
+     "count": 121
+    },
+    {
+     "text": "weared",
+     "count": 18
+    }
+   ]
+  },
+  {
+   "word": "end",
+   "count": 2160,
+   "surfaces": [
+    {
+     "text": "end",
+     "count": 2069
+    },
+    {
+     "text": "ends",
+     "count": 42
+    },
+    {
+     "text": "ending",
+     "count": 32
+    },
+    {
+     "text": "ended",
+     "count": 17
+    }
+   ]
+  },
+  {
+   "word": "wheel",
+   "count": 2143,
+   "surfaces": [
+    {
+     "text": "wheel",
+     "count": 1172
+    },
+    {
+     "text": "wheels",
+     "count": 959
+    },
+    {
+     "text": "wheeling",
+     "count": 12
+    }
+   ]
+  },
+  {
+   "word": "leave",
+   "count": 2135,
+   "surfaces": [
+    {
+     "text": "leave",
+     "count": 1574
+    },
+    {
+     "text": "leaves",
+     "count": 401
+    },
+    {
+     "text": "leaving",
+     "count": 150
+    },
+    {
+     "text": "leaved",
+     "count": 10
+    }
+   ]
+  },
+  {
+   "word": "points",
+   "count": 2130,
+   "surfaces": [
+    {
+     "text": "points",
+     "count": 2130
+    }
+   ]
+  },
+  {
+   "word": "call",
+   "count": 2103,
+   "surfaces": [
+    {
+     "text": "call",
+     "count": 1642
+    },
+    {
+     "text": "calling",
+     "count": 302
+    },
+    {
+     "text": "calls",
+     "count": 159
+    }
+   ]
+  },
+  {
+   "word": "shop",
+   "count": 2096,
+   "surfaces": [
+    {
+     "text": "shop",
+     "count": 1199
+    },
+    {
+     "text": "shopping",
+     "count": 627
+    },
+    {
+     "text": "shops",
+     "count": 270
+    }
+   ]
+  },
+  {
+   "word": "kind",
+   "count": 2083,
+   "surfaces": [
+    {
+     "text": "kind",
+     "count": 1931
+    },
+    {
+     "text": "kinds",
+     "count": 152
+    }
+   ]
+  },
+  {
+   "word": "as",
+   "count": 2069,
+   "surfaces": [
+    {
+     "text": "as",
+     "count": 2069
+    }
+   ]
+  },
+  {
+   "word": "miss",
+   "count": 2064,
+   "surfaces": [
+    {
+     "text": "miss",
+     "count": 1053
+    },
+    {
+     "text": "missing",
+     "count": 495
+    },
+    {
+     "text": "missed",
+     "count": 488
+    },
+    {
+     "text": "misses",
+     "count": 28
+    }
+   ]
+  },
+  {
+   "word": "buy",
+   "count": 2046,
+   "surfaces": [
+    {
+     "text": "buy",
+     "count": 1848
+    },
+    {
+     "text": "buying",
+     "count": 109
+    },
+    {
+     "text": "buyed",
+     "count": 47
+    },
+    {
+     "text": "buys",
+     "count": 42
+    }
+   ]
+  },
+  {
+   "word": "mother",
+   "count": 2042,
+   "surfaces": [
+    {
+     "text": "mother",
+     "count": 2001
+    },
+    {
+     "text": "mothers",
+     "count": 40
+    },
+    {
+     "text": "mothering",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "out_of",
+   "count": 2040,
+   "surfaces": [
+    {
+     "text": "out_of",
+     "count": 2040
+    }
+   ]
+  },
+  {
+   "word": "room",
+   "count": 1988,
+   "surfaces": [
+    {
+     "text": "room",
+     "count": 1956
+    },
+    {
+     "text": "rooms",
+     "count": 32
+    }
+   ]
+  },
+  {
+   "word": "finished",
+   "count": 1966,
+   "surfaces": [
+    {
+     "text": "finished",
+     "count": 1966
+    }
+   ]
+  },
+  {
+   "word": "knock",
+   "count": 1963,
+   "surfaces": [
+    {
+     "text": "knock",
+     "count": 1306
+    },
+    {
+     "text": "knocked",
+     "count": 404
+    },
+    {
+     "text": "knocks",
+     "count": 150
+    },
+    {
+     "text": "knocking",
+     "count": 102
+    },
+    {
+     "text": "knockes",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "chocolate",
+   "count": 1944,
+   "surfaces": [
+    {
+     "text": "chocolate",
+     "count": 1800
+    },
+    {
+     "text": "chocolates",
+     "count": 144
+    }
+   ]
+  },
+  {
+   "word": "rabbit",
+   "count": 1902,
+   "surfaces": [
+    {
+     "text": "rabbit",
+     "count": 1679
+    },
+    {
+     "text": "rabbits",
+     "count": 223
+    }
+   ]
+  },
+  {
+   "word": "stuff",
+   "count": 1884,
+   "surfaces": [
+    {
+     "text": "stuff",
+     "count": 1790
+    },
+    {
+     "text": "stuffed",
+     "count": 54
+    },
+    {
+     "text": "stuffing",
+     "count": 31
+    },
+    {
+     "text": "stuffs",
+     "count": 8
+    },
+    {
+     "text": "stuffes",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "reach",
+   "count": 1825,
+   "surfaces": [
+    {
+     "text": "reach",
+     "count": 849
+    },
+    {
+     "text": "reaches",
+     "count": 827
+    },
+    {
+     "text": "reaching",
+     "count": 113
+    },
+    {
+     "text": "reached",
+     "count": 35
+    },
+    {
+     "text": "reachs",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "side",
+   "count": 1820,
+   "surfaces": [
+    {
+     "text": "side",
+     "count": 1706
+    },
+    {
+     "text": "sides",
+     "count": 106
+    },
+    {
+     "text": "siding",
+     "count": 8
+    }
+   ]
+  },
+  {
+   "word": "wee",
+   "count": 1819,
+   "surfaces": [
+    {
+     "text": "wee",
+     "count": 1720
+    },
+    {
+     "text": "weed",
+     "count": 62
+    },
+    {
+     "text": "wees",
+     "count": 33
+    },
+    {
+     "text": "weeing",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "word": "floor",
+   "count": 1794,
+   "surfaces": [
+    {
+     "text": "floor",
+     "count": 1770
+    },
+    {
+     "text": "floors",
+     "count": 20
+    },
+    {
+     "text": "flooring",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "word": "might",
+   "count": 1775,
+   "surfaces": [
+    {
+     "text": "might",
+     "count": 1775
+    }
+   ]
+  },
+  {
+   "word": "teddy",
+   "count": 1772,
+   "surfaces": [
+    {
+     "text": "teddy",
+     "count": 1701
+    },
+    {
+     "text": "teddies",
+     "count": 36
+    },
+    {
+     "text": "teddys",
+     "count": 35
+    }
+   ]
+  },
+  {
+   "word": "roll",
+   "count": 1744,
+   "surfaces": [
+    {
+     "text": "roll",
+     "count": 941
+    },
+    {
+     "text": "rolling",
+     "count": 407
+    },
+    {
+     "text": "rolls",
+     "count": 292
+    },
+    {
+     "text": "rolled",
+     "count": 104
+    }
+   ]
+  },
+  {
+   "word": "real",
+   "count": 1740,
+   "surfaces": [
+    {
+     "text": "real",
+     "count": 1738
+    },
+    {
+     "text": "reals",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "crash",
+   "count": 1740,
+   "surfaces": [
+    {
+     "text": "crash",
+     "count": 1228
+    },
+    {
+     "text": "crashed",
+     "count": 359
+    },
+    {
+     "text": "crashing",
+     "count": 138
+    },
+    {
+     "text": "crashes",
+     "count": 14
+    },
+    {
+     "text": "crashs",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "live",
+   "count": 1724,
+   "surfaces": [
+    {
+     "text": "live",
+     "count": 919
+    },
+    {
+     "text": "lives",
+     "count": 527
+    },
+    {
+     "text": "lived",
+     "count": 209
+    },
+    {
+     "text": "living",
+     "count": 69
+    }
+   ]
+  },
+  {
+   "word": "uhoh",
+   "count": 1718,
+   "surfaces": [
+    {
+     "text": "uhoh",
+     "count": 1718
+    }
+   ]
+  },
+  {
+   "word": "somebody",
+   "count": 1715,
+   "surfaces": [
+    {
+     "text": "somebody",
+     "count": 1715
+    }
+   ]
+  },
+  {
+   "word": "naughty",
+   "count": 1678,
+   "surfaces": [
+    {
+     "text": "naughty",
+     "count": 1678
+    }
+   ]
+  },
+  {
+   "word": "number",
+   "count": 1659,
+   "surfaces": [
+    {
+     "text": "number",
+     "count": 1361
+    },
+    {
+     "text": "numbers",
+     "count": 296
+    },
+    {
+     "text": "numbered",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "pop",
+   "count": 1648,
+   "surfaces": [
+    {
+     "text": "pop",
+     "count": 1220
+    },
+    {
+     "text": "popped",
+     "count": 290
+    },
+    {
+     "text": "pops",
+     "count": 83
+    },
+    {
+     "text": "popping",
+     "count": 54
+    },
+    {
+     "text": "poping",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "hole",
+   "count": 1647,
+   "surfaces": [
+    {
+     "text": "hole",
+     "count": 1288
+    },
+    {
+     "text": "holes",
+     "count": 357
+    },
+    {
+     "text": "holed",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "beep",
+   "count": 1638,
+   "surfaces": [
+    {
+     "text": "beep",
+     "count": 1616
+    },
+    {
+     "text": "beeping",
+     "count": 12
+    },
+    {
+     "text": "beeps",
+     "count": 8
+    },
+    {
+     "text": "beeped",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "once",
+   "count": 1632,
+   "surfaces": [
+    {
+     "text": "once",
+     "count": 1632
+    }
+   ]
+  },
+  {
+   "word": "even",
+   "count": 1628,
+   "surfaces": [
+    {
+     "text": "even",
+     "count": 1628
+    }
+   ]
+  },
+  {
+   "word": "page",
+   "count": 1589,
+   "surfaces": [
+    {
+     "text": "page",
+     "count": 1401
+    },
+    {
+     "text": "pages",
+     "count": 187
+    },
+    {
+     "text": "paging",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "fight",
+   "count": 1589,
+   "surfaces": [
+    {
+     "text": "fight",
+     "count": 829
+    },
+    {
+     "text": "fighting",
+     "count": 365
+    },
+    {
+     "text": "fighted",
+     "count": 270
+    },
+    {
+     "text": "fights",
+     "count": 125
+    }
+   ]
+  },
+  {
+   "word": "story",
+   "count": 1546,
+   "surfaces": [
+    {
+     "text": "story",
+     "count": 1413
+    },
+    {
+     "text": "stories",
+     "count": 120
+    },
+    {
+     "text": "storys",
+     "count": 13
+    }
+   ]
+  },
+  {
+   "word": "been",
+   "count": 1541,
+   "surfaces": [
+    {
+     "text": "been",
+     "count": 1541
+    }
+   ]
+  },
+  {
+   "word": "engine",
+   "count": 1526,
+   "surfaces": [
+    {
+     "text": "engine",
+     "count": 1423
+    },
+    {
+     "text": "engines",
+     "count": 103
+    }
+   ]
+  },
+  {
+   "word": "letter",
+   "count": 1499,
+   "surfaces": [
+    {
+     "text": "letter",
+     "count": 787
+    },
+    {
+     "text": "letters",
+     "count": 711
+    },
+    {
+     "text": "lettering",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "mouse",
+   "count": 1497,
+   "surfaces": [
+    {
+     "text": "mouse",
+     "count": 1433
+    },
+    {
+     "text": "mouses",
+     "count": 64
+    }
+   ]
+  },
+  {
+   "word": "shoe",
+   "count": 1487,
+   "surfaces": [
+    {
+     "text": "shoe",
+     "count": 1487
+    }
+   ]
+  },
+  {
+   "word": "brush",
+   "count": 1486,
+   "surfaces": [
+    {
+     "text": "brush",
+     "count": 1167
+    },
+    {
+     "text": "brushing",
+     "count": 154
+    },
+    {
+     "text": "brushes",
+     "count": 117
+    },
+    {
+     "text": "brushed",
+     "count": 48
+    }
+   ]
+  },
+  {
+   "word": "mess",
+   "count": 1476,
+   "surfaces": [
+    {
+     "text": "mess",
+     "count": 1281
+    },
+    {
+     "text": "messed",
+     "count": 103
+    },
+    {
+     "text": "messing",
+     "count": 82
+    },
+    {
+     "text": "messes",
+     "count": 10
+    }
+   ]
+  },
+  {
+   "word": "blow",
+   "count": 1468,
+   "surfaces": [
+    {
+     "text": "blow",
+     "count": 1033
+    },
+    {
+     "text": "blowing",
+     "count": 193
+    },
+    {
+     "text": "blows",
+     "count": 180
+    },
+    {
+     "text": "blowed",
+     "count": 62
+    }
+   ]
+  },
+  {
+   "word": "nope",
+   "count": 1461,
+   "surfaces": [
+    {
+     "text": "nope",
+     "count": 1461
+    }
+   ]
+  },
+  {
+   "word": "yum",
+   "count": 1461,
+   "surfaces": [
+    {
+     "text": "yum",
+     "count": 1461
+    }
+   ]
+  },
+  {
+   "word": "already",
+   "count": 1430,
+   "surfaces": [
+    {
+     "text": "already",
+     "count": 1430
+    }
+   ]
+  },
+  {
+   "word": "star",
+   "count": 1428,
+   "surfaces": [
+    {
+     "text": "star",
+     "count": 974
+    },
+    {
+     "text": "stars",
+     "count": 400
+    },
+    {
+     "text": "staring",
+     "count": 34
+    },
+    {
+     "text": "stared",
+     "count": 12
+    },
+    {
+     "text": "stares",
+     "count": 7
+    },
+    {
+     "text": "starred",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "poo",
+   "count": 1425,
+   "surfaces": [
+    {
+     "text": "poo",
+     "count": 1299
+    },
+    {
+     "text": "pooed",
+     "count": 58
+    },
+    {
+     "text": "poos",
+     "count": 56
+    },
+    {
+     "text": "pooing",
+     "count": 12
+    }
+   ]
+  },
+  {
+   "word": "bigger",
+   "count": 1425,
+   "surfaces": [
+    {
+     "text": "bigger",
+     "count": 1425
+    }
+   ]
+  },
+  {
+   "word": "twenty",
+   "count": 1421,
+   "surfaces": [
+    {
+     "text": "twenty",
+     "count": 1414
+    },
+    {
+     "text": "twenties",
+     "count": 7
+    }
+   ]
+  },
+  {
+   "word": "told",
+   "count": 1420,
+   "surfaces": [
+    {
+     "text": "told",
+     "count": 1419
+    },
+    {
+     "text": "tolded",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "monster",
+   "count": 1417,
+   "surfaces": [
+    {
+     "text": "monster",
+     "count": 1138
+    },
+    {
+     "text": "monsters",
+     "count": 279
+    }
+   ]
+  },
+  {
+   "word": "lots_of",
+   "count": 1403,
+   "surfaces": [
+    {
+     "text": "lots_of",
+     "count": 1403
+    }
+   ]
+  },
+  {
+   "word": "anything",
+   "count": 1378,
+   "surfaces": [
+    {
+     "text": "anything",
+     "count": 1378
+    }
+   ]
+  },
+  {
+   "word": "place",
+   "count": 1376,
+   "surfaces": [
+    {
+     "text": "place",
+     "count": 1001
+    },
+    {
+     "text": "places",
+     "count": 360
+    },
+    {
+     "text": "placing",
+     "count": 11
+    },
+    {
+     "text": "placed",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "word": "bridge",
+   "count": 1370,
+   "surfaces": [
+    {
+     "text": "bridge",
+     "count": 1346
+    },
+    {
+     "text": "bridges",
+     "count": 24
+    }
+   ]
+  },
+  {
+   "word": "all_gone",
+   "count": 1367,
+   "surfaces": [
+    {
+     "text": "all_gone",
+     "count": 1367
+    }
+   ]
+  },
+  {
+   "word": "tail",
+   "count": 1357,
+   "surfaces": [
+    {
+     "text": "tail",
+     "count": 1268
+    },
+    {
+     "text": "tails",
+     "count": 89
+    }
+   ]
+  },
+  {
+   "word": "coffee",
+   "count": 1355,
+   "surfaces": [
+    {
+     "text": "coffee",
+     "count": 1343
+    },
+    {
+     "text": "coffees",
+     "count": 12
+    }
+   ]
+  },
+  {
+   "word": "bump",
+   "count": 1351,
+   "surfaces": [
+    {
+     "text": "bump",
+     "count": 895
+    },
+    {
+     "text": "bumped",
+     "count": 330
+    },
+    {
+     "text": "bumps",
+     "count": 79
+    },
+    {
+     "text": "bumping",
+     "count": 47
+    }
+   ]
+  },
+  {
+   "word": "part",
+   "count": 1350,
+   "surfaces": [
+    {
+     "text": "part",
+     "count": 1262
+    },
+    {
+     "text": "parts",
+     "count": 88
+    }
+   ]
+  },
+  {
+   "word": "rock",
+   "count": 1348,
+   "surfaces": [
+    {
+     "text": "rock",
+     "count": 806
+    },
+    {
+     "text": "rocks",
+     "count": 339
+    },
+    {
+     "text": "rocking",
+     "count": 196
+    },
+    {
+     "text": "rocked",
+     "count": 7
+    }
+   ]
+  },
+  {
+   "word": "myself",
+   "count": 1321,
+   "surfaces": [
+    {
+     "text": "myself",
+     "count": 1321
+    }
+   ]
+  },
+  {
+   "word": "party",
+   "count": 1320,
+   "surfaces": [
+    {
+     "text": "party",
+     "count": 1277
+    },
+    {
+     "text": "parties",
+     "count": 33
+    },
+    {
+     "text": "partys",
+     "count": 10
+    }
+   ]
+  },
+  {
+   "word": "whee",
+   "count": 1318,
+   "surfaces": [
+    {
+     "text": "whee",
+     "count": 1318
+    }
+   ]
+  },
+  {
+   "word": "guess",
+   "count": 1274,
+   "surfaces": [
+    {
+     "text": "guess",
+     "count": 1231
+    },
+    {
+     "text": "guessing",
+     "count": 24
+    },
+    {
+     "text": "guessed",
+     "count": 17
+    },
+    {
+     "text": "guesses",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "thought",
+   "count": 1265,
+   "surfaces": [
+    {
+     "text": "thought",
+     "count": 1249
+    },
+    {
+     "text": "thoughted",
+     "count": 15
+    },
+    {
+     "text": "thoughts",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "everybody",
+   "count": 1258,
+   "surfaces": [
+    {
+     "text": "everybody",
+     "count": 1257
+    },
+    {
+     "text": "everybodies",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "pardon",
+   "count": 1252,
+   "surfaces": [
+    {
+     "text": "pardon",
+     "count": 1252
+    }
+   ]
+  },
+  {
+   "word": "lorry",
+   "count": 1245,
+   "surfaces": [
+    {
+     "text": "lorry",
+     "count": 1185
+    },
+    {
+     "text": "lorrys",
+     "count": 49
+    },
+    {
+     "text": "lorries",
+     "count": 11
+    }
+   ]
+  },
+  {
+   "word": "pen",
+   "count": 1227,
+   "surfaces": [
+    {
+     "text": "pen",
+     "count": 1042
+    },
+    {
+     "text": "pens",
+     "count": 185
+    }
+   ]
+  },
+  {
+   "word": "finger",
+   "count": 1216,
+   "surfaces": [
+    {
+     "text": "finger",
+     "count": 1215
+    },
+    {
+     "text": "fingering",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "ring",
+   "count": 1203,
+   "surfaces": [
+    {
+     "text": "ring",
+     "count": 870
+    },
+    {
+     "text": "rings",
+     "count": 191
+    },
+    {
+     "text": "ringing",
+     "count": 129
+    },
+    {
+     "text": "ringed",
+     "count": 13
+    }
+   ]
+  },
+  {
+   "word": "happened",
+   "count": 1201,
+   "surfaces": [
+    {
+     "text": "happened",
+     "count": 1201
+    }
+   ]
+  },
+  {
+   "word": "whoops",
+   "count": 1194,
+   "surfaces": [
+    {
+     "text": "whoops",
+     "count": 1194
+    }
+   ]
+  },
+  {
+   "word": "lost",
+   "count": 1192,
+   "surfaces": [
+    {
+     "text": "lost",
+     "count": 1189
+    },
+    {
+     "text": "losts",
+     "count": 1
+    },
+    {
+     "text": "losted",
+     "count": 1
+    },
+    {
+     "text": "losting",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "both",
+   "count": 1179,
+   "surfaces": [
+    {
+     "text": "both",
+     "count": 1179
+    }
+   ]
+  },
+  {
+   "word": "small",
+   "count": 1156,
+   "surfaces": [
+    {
+     "text": "small",
+     "count": 1155
+    },
+    {
+     "text": "smalls",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "clothes",
+   "count": 1153,
+   "surfaces": [
+    {
+     "text": "clothes",
+     "count": 1152
+    },
+    {
+     "text": "clotheses",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "pencil",
+   "count": 1147,
+   "surfaces": [
+    {
+     "text": "pencil",
+     "count": 1034
+    },
+    {
+     "text": "pencils",
+     "count": 113
+    }
+   ]
+  },
+  {
+   "word": "left",
+   "count": 1134,
+   "surfaces": [
+    {
+     "text": "left",
+     "count": 1134
+    }
+   ]
+  },
+  {
+   "word": "ouch",
+   "count": 1123,
+   "surfaces": [
+    {
+     "text": "ouch",
+     "count": 1118
+    },
+    {
+     "text": "ouched",
+     "count": 4
+    },
+    {
+     "text": "ouching",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "circle",
+   "count": 1123,
+   "surfaces": [
+    {
+     "text": "circle",
+     "count": 975
+    },
+    {
+     "text": "circles",
+     "count": 143
+    },
+    {
+     "text": "circling",
+     "count": 5
+    }
+   ]
+  },
+  {
+   "word": "sure",
+   "count": 1122,
+   "surfaces": [
+    {
+     "text": "sure",
+     "count": 1122
+    }
+   ]
+  },
+  {
+   "word": "than",
+   "count": 1119,
+   "surfaces": [
+    {
+     "text": "than",
+     "count": 1119
+    }
+   ]
+  },
+  {
+   "word": "present",
+   "count": 1107,
+   "surfaces": [
+    {
+     "text": "present",
+     "count": 750
+    },
+    {
+     "text": "presents",
+     "count": 352
+    },
+    {
+     "text": "presenting",
+     "count": 4
+    },
+    {
+     "text": "presented",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "caterpillar",
+   "count": 1096,
+   "surfaces": [
+    {
+     "text": "caterpillar",
+     "count": 1039
+    },
+    {
+     "text": "caterpillars",
+     "count": 57
+    }
+   ]
+  },
+  {
+   "word": "everything",
+   "count": 1093,
+   "surfaces": [
+    {
+     "text": "everything",
+     "count": 1090
+    },
+    {
+     "text": "everythings",
+     "count": 3
+    }
+   ]
+  },
+  {
+   "word": "many",
+   "count": 1089,
+   "surfaces": [
+    {
+     "text": "many",
+     "count": 1078
+    },
+    {
+     "text": "manys",
+     "count": 11
+    }
+   ]
+  },
+  {
+   "word": "almost",
+   "count": 1087,
+   "surfaces": [
+    {
+     "text": "almost",
+     "count": 1086
+    },
+    {
+     "text": "almosted",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "king",
+   "count": 1070,
+   "surfaces": [
+    {
+     "text": "king",
+     "count": 996
+    },
+    {
+     "text": "kings",
+     "count": 73
+    },
+    {
+     "text": "kinged",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "forgot",
+   "count": 1070,
+   "surfaces": [
+    {
+     "text": "forgot",
+     "count": 1069
+    },
+    {
+     "text": "forgotted",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "wall",
+   "count": 1059,
+   "surfaces": [
+    {
+     "text": "wall",
+     "count": 983
+    },
+    {
+     "text": "walls",
+     "count": 76
+    }
+   ]
+  },
+  {
+   "word": "sausage",
+   "count": 1058,
+   "surfaces": [
+    {
+     "text": "sausage",
+     "count": 696
+    },
+    {
+     "text": "sausages",
+     "count": 362
+    }
+   ]
+  },
+  {
+   "word": "lie",
+   "count": 1058,
+   "surfaces": [
+    {
+     "text": "lie",
+     "count": 955
+    },
+    {
+     "text": "lies",
+     "count": 82
+    },
+    {
+     "text": "lied",
+     "count": 19
+    },
+    {
+     "text": "lieing",
+     "count": 2
+    }
+   ]
+  },
+  {
+   "word": "happen",
+   "count": 1049,
+   "surfaces": [
+    {
+     "text": "happen",
+     "count": 489
+    },
+    {
+     "text": "happens",
+     "count": 305
+    },
+    {
+     "text": "happening",
+     "count": 254
+    },
+    {
+     "text": "happenned",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "bow",
+   "count": 1042,
+   "surfaces": [
+    {
+     "text": "bow",
+     "count": 1017
+    },
+    {
+     "text": "bows",
+     "count": 24
+    },
+    {
+     "text": "bowed",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "word": "card",
+   "count": 1028,
+   "surfaces": [
+    {
+     "text": "card",
+     "count": 540
+    },
+    {
+     "text": "cards",
+     "count": 488
+    }
+   ]
+  },
+  {
+   "word": "christmas",
+   "count": 1016,
+   "surfaces": [
+    {
+     "text": "christmas",
+     "count": 1016
+    }
+   ]
+  },
+  {
+   "word": "bottom",
+   "count": 1014,
+   "surfaces": [
+    {
+     "text": "bottom",
+     "count": 976
+    },
+    {
+     "text": "bottoms",
+     "count": 38
+    }
+   ]
+  },
+  {
+   "word": "bee",
+   "count": 1008,
+   "surfaces": [
+    {
+     "text": "bee",
+     "count": 785
+    },
+    {
+     "text": "bees",
+     "count": 220
+    },
+    {
+     "text": "beed",
+     "count": 3
+    }
+   ]
+  }
+ ],
+ "dropped": [
+  {
+   "word": "unk",
+   "count": 290889,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "yeah",
+   "count": 133542,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "oh",
+   "count": 58056,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "chi",
+   "count": 36527,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "um",
+   "count": 32178,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "uh",
+   "count": 18742,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "mhm",
+   "count": 13803,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "ah",
+   "count": 11008,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "huh",
+   "count": 9515,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "hm",
+   "count": 9313,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "c",
+   "count": 8861,
+   "reason": "letter"
+  },
+  {
+   "word": "b",
+   "count": 7351,
+   "reason": "letter"
+  },
+  {
+   "word": "mm",
+   "count": 7082,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "uhhuh",
+   "count": 5343,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "nin_nin",
+   "count": 5043,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "ic",
+   "count": 4721,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "yep",
+   "count": 4425,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "eh",
+   "count": 4027,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "j",
+   "count": 3504,
+   "reason": "letter"
+  },
+  {
+   "word": "peter",
+   "count": 3198,
+   "reason": "name"
+  },
+  {
+   "word": "s",
+   "count": 3142,
+   "reason": "letter"
+  },
+  {
+   "word": "ones",
+   "count": 3110,
+   "reason": "spelling of one"
+  },
+  {
+   "word": "er",
+   "count": 3060,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "yup",
+   "count": 2949,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "null",
+   "count": 2830,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "thomas",
+   "count": 2711,
+   "reason": "name"
+  },
+  {
+   "word": "e",
+   "count": 2232,
+   "reason": "letter"
+  },
+  {
+   "word": "mummie",
+   "count": 2098,
+   "reason": "spelling of mom"
+  },
+  {
+   "word": "ooh",
+   "count": 2087,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "ya",
+   "count": 2082,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "t",
+   "count": 2064,
+   "reason": "letter"
+  },
+  {
+   "word": "ma",
+   "count": 1904,
+   "reason": "spelling of mom"
+  },
+  {
+   "word": "zzz",
+   "count": 1857,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "d",
+   "count": 1804,
+   "reason": "letter"
+  },
+  {
+   "word": "o",
+   "count": 1770,
+   "reason": "letter"
+  },
+  {
+   "word": "ta",
+   "count": 1754,
+   "reason": "spelling of thank you"
+  },
+  {
+   "word": "thank_you",
+   "count": 1633,
+   "reason": "launch word: thank you"
+  },
+  {
+   "word": "dolly",
+   "count": 1584,
+   "reason": "spelling of doll"
+  },
+  {
+   "word": "uhuh",
+   "count": 1520,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "haha",
+   "count": 1518,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "purdie",
+   "count": 1505,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "carl",
+   "count": 1496,
+   "reason": "name"
+  },
+  {
+   "word": "mot",
+   "count": 1473,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "doggie",
+   "count": 1472,
+   "reason": "spelling of dog"
+  },
+  {
+   "word": "da",
+   "count": 1460,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "sep",
+   "count": 1416,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "fraser",
+   "count": 1409,
+   "reason": "name"
+  },
+  {
+   "word": "m",
+   "count": 1407,
+   "reason": "letter"
+  },
+  {
+   "word": "l",
+   "count": 1382,
+   "reason": "letter"
+  },
+  {
+   "word": "dat's",
+   "count": 1233,
+   "reason": "spelling of that is"
+  },
+  {
+   "word": "cause",
+   "count": 1205,
+   "reason": "spelling of because"
+  },
+  {
+   "word": "laura",
+   "count": 1173,
+   "reason": "name"
+  },
+  {
+   "word": "whoa",
+   "count": 1164,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "byebye",
+   "count": 1157,
+   "reason": "spelling of bye"
+  },
+  {
+   "word": "em",
+   "count": 1111,
+   "reason": "spelling of they"
+  },
+  {
+   "word": "nicole",
+   "count": 1092,
+   "reason": "name"
+  },
+  {
+   "word": "discards",
+   "count": 1091,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "h",
+   "count": 1065,
+   "reason": "letter"
+  },
+  {
+   "word": "n",
+   "count": 991,
+   "reason": "letter"
+  },
+  {
+   "word": "r",
+   "count": 940,
+   "reason": "letter"
+  },
+  {
+   "word": "ha",
+   "count": 935,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "anna",
+   "count": 928,
+   "reason": "name"
+  },
+  {
+   "word": "sue",
+   "count": 891,
+   "reason": "name"
+  },
+  {
+   "word": "firstname",
+   "count": 887,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "icecream",
+   "count": 878,
+   "reason": "spelling of ice cream"
+  },
+  {
+   "word": "baba",
+   "count": 850,
+   "reason": "corpus artifact"
+  },
+  {
+   "word": "amy",
+   "count": 845,
+   "reason": "name"
+  },
+  {
+   "word": "g",
+   "count": 759,
+   "reason": "letter"
+  },
+  {
+   "word": "p",
+   "count": 699,
+   "reason": "letter"
+  },
+  {
+   "word": "k",
+   "count": 683,
+   "reason": "letter"
+  },
+  {
+   "word": "james",
+   "count": 604,
+   "reason": "spelling of jam"
+  },
+  {
+   "word": "aah",
+   "count": 602,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "f",
+   "count": 552,
+   "reason": "letter"
+  },
+  {
+   "word": "w",
+   "count": 508,
+   "reason": "letter"
+  },
+  {
+   "word": "u",
+   "count": 496,
+   "reason": "letter"
+  },
+  {
+   "word": "y",
+   "count": 403,
+   "reason": "letter"
+  },
+  {
+   "word": "x",
+   "count": 372,
+   "reason": "letter"
+  },
+  {
+   "word": "v",
+   "count": 299,
+   "reason": "letter"
+  },
+  {
+   "word": "seeds",
+   "count": 279,
+   "reason": "spelling of seed"
+  },
+  {
+   "word": "good_night",
+   "count": 264,
+   "reason": "launch word: good night"
+  },
+  {
+   "word": "ice_cream",
+   "count": 234,
+   "reason": "launch word: ice cream"
+  },
+  {
+   "word": "q",
+   "count": 233,
+   "reason": "letter"
+  },
+  {
+   "word": "shed",
+   "count": 196,
+   "reason": "spelling of she"
+  },
+  {
+   "word": "z",
+   "count": 191,
+   "reason": "letter"
+  },
+  {
+   "word": "aw",
+   "count": 185,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "mines",
+   "count": 155,
+   "reason": "spelling of mine"
+  },
+  {
+   "word": "others",
+   "count": 88,
+   "reason": "spelling of other"
+  },
+  {
+   "word": "earrings",
+   "count": 81,
+   "reason": "spelling of earring"
+  },
+  {
+   "word": "whats",
+   "count": 81,
+   "reason": "spelling of what"
+  },
+  {
+   "word": "all_done",
+   "count": 77,
+   "reason": "launch word: all done"
+  },
+  {
+   "word": "hiss",
+   "count": 62,
+   "reason": "spelling of his"
+  },
+  {
+   "word": "teasing",
+   "count": 61,
+   "reason": "spelling of teas"
+  },
+  {
+   "word": "hmm",
+   "count": 46,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "notes",
+   "count": 43,
+   "reason": "spelling of not"
+  },
+  {
+   "word": "pleased",
+   "count": 37,
+   "reason": "spelling of please"
+  },
+  {
+   "word": "buildings",
+   "count": 37,
+   "reason": "spelling of building"
+  },
+  {
+   "word": "leggings",
+   "count": 35,
+   "reason": "spelling of legging"
+  },
+  {
+   "word": "fives",
+   "count": 34,
+   "reason": "spelling of five"
+  },
+  {
+   "word": "living_room",
+   "count": 29,
+   "reason": "launch word: living room"
+  },
+  {
+   "word": "twos",
+   "count": 27,
+   "reason": "spelling of two"
+  },
+  {
+   "word": "fours",
+   "count": 22,
+   "reason": "spelling of four"
+  },
+  {
+   "word": "paintings",
+   "count": 16,
+   "reason": "spelling of painting"
+  },
+  {
+   "word": "openings",
+   "count": 16,
+   "reason": "spelling of opening"
+  },
+  {
+   "word": "someding",
+   "count": 15,
+   "reason": "spelling of somed"
+  },
+  {
+   "word": "yous",
+   "count": 14,
+   "reason": "spelling of you"
+  },
+  {
+   "word": "sixes",
+   "count": 14,
+   "reason": "spelling of six"
+  },
+  {
+   "word": "hissing",
+   "count": 13,
+   "reason": "spelling of his"
+  },
+  {
+   "word": "drawings",
+   "count": 12,
+   "reason": "spelling of drawing"
+  },
+  {
+   "word": "gas_station",
+   "count": 12,
+   "reason": "launch word: gas station"
+  },
+  {
+   "word": "good_morning",
+   "count": 10,
+   "reason": "launch word: good morning"
+  },
+  {
+   "word": "downs",
+   "count": 9,
+   "reason": "spelling of down"
+  },
+  {
+   "word": "threes",
+   "count": 9,
+   "reason": "spelling of three"
+  },
+  {
+   "word": "feelings",
+   "count": 8,
+   "reason": "spelling of feeling"
+  },
+  {
+   "word": "lasted",
+   "count": 8,
+   "reason": "spelling of last"
+  },
+  {
+   "word": "nines",
+   "count": 7,
+   "reason": "spelling of nine"
+  },
+  {
+   "word": "tens",
+   "count": 7,
+   "reason": "spelling of ten"
+  },
+  {
+   "word": "hims",
+   "count": 7,
+   "reason": "spelling of him"
+  },
+  {
+   "word": "aww",
+   "count": 7,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "carses",
+   "count": 6,
+   "reason": "spelling of cars"
+  },
+  {
+   "word": "outs",
+   "count": 6,
+   "reason": "spelling of out"
+  },
+  {
+   "word": "excuse_me",
+   "count": 5,
+   "reason": "launch word: excuse me"
+  },
+  {
+   "word": "sevens",
+   "count": 5,
+   "reason": "spelling of seven"
+  },
+  {
+   "word": "nots",
+   "count": 5,
+   "reason": "spelling of not"
+  },
+  {
+   "word": "teases",
+   "count": 5,
+   "reason": "spelling of teas"
+  },
+  {
+   "word": "somethings",
+   "count": 5,
+   "reason": "spelling of something"
+  },
+  {
+   "word": "bookses",
+   "count": 5,
+   "reason": "spelling of books"
+  },
+  {
+   "word": "busses",
+   "count": 5,
+   "reason": "spelling of buss"
+  },
+  {
+   "word": "thems",
+   "count": 4,
+   "reason": "spelling of them"
+  },
+  {
+   "word": "animalses",
+   "count": 4,
+   "reason": "spelling of animals"
+  },
+  {
+   "word": "hatses",
+   "count": 4,
+   "reason": "spelling of hats"
+  },
+  {
+   "word": "roadses",
+   "count": 4,
+   "reason": "spelling of roads"
+  },
+  {
+   "word": "likeded",
+   "count": 4,
+   "reason": "spelling of liked"
+  },
+  {
+   "word": "theres",
+   "count": 4,
+   "reason": "spelling of there"
+  },
+  {
+   "word": "colorings",
+   "count": 3,
+   "reason": "spelling of coloring"
+  },
+  {
+   "word": "eights",
+   "count": 3,
+   "reason": "spelling of eight"
+  },
+  {
+   "word": "doss",
+   "count": 3,
+   "reason": "spelling of dos"
+  },
+  {
+   "word": "downed",
+   "count": 3,
+   "reason": "spelling of down"
+  },
+  {
+   "word": "hmph",
+   "count": 3,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "ands",
+   "count": 2,
+   "reason": "spelling of and"
+  },
+  {
+   "word": "byes",
+   "count": 2,
+   "reason": "spelling of bye"
+  },
+  {
+   "word": "cowses",
+   "count": 2,
+   "reason": "spelling of cows"
+  },
+  {
+   "word": "whered",
+   "count": 2,
+   "reason": "spelling of where"
+  },
+  {
+   "word": "anothers",
+   "count": 2,
+   "reason": "spelling of another"
+  },
+  {
+   "word": "thats",
+   "count": 2,
+   "reason": "spelling of that"
+  },
+  {
+   "word": "outed",
+   "count": 2,
+   "reason": "spelling of out"
+  },
+  {
+   "word": "hellos",
+   "count": 2,
+   "reason": "spelling of hello"
+  },
+  {
+   "word": "wheres",
+   "count": 2,
+   "reason": "spelling of where"
+  },
+  {
+   "word": "noting",
+   "count": 2,
+   "reason": "spelling of not"
+  },
+  {
+   "word": "pleasing",
+   "count": 2,
+   "reason": "spelling of please"
+  },
+  {
+   "word": "whys",
+   "count": 2,
+   "reason": "spelling of why"
+  },
+  {
+   "word": "cleaneded",
+   "count": 2,
+   "reason": "spelling of cleaned"
+  },
+  {
+   "word": "buts",
+   "count": 2,
+   "reason": "spelling of but"
+  },
+  {
+   "word": "ohh",
+   "count": 2,
+   "reason": "filler/backchannel"
+  },
+  {
+   "word": "shes",
+   "count": 2,
+   "reason": "spelling of she"
+  },
+  {
+   "word": "someones",
+   "count": 2,
+   "reason": "spelling of someone"
+  },
+  {
+   "word": "offs",
+   "count": 2,
+   "reason": "spelling of off"
+  },
+  {
+   "word": "overed",
+   "count": 2,
+   "reason": "spelling of over"
+  },
+  {
+   "word": "no_way",
+   "count": 2,
+   "reason": "launch word: no way"
+  },
+  {
+   "word": "bugses",
+   "count": 2,
+   "reason": "spelling of bugs"
+  },
+  {
+   "word": "grocery_store",
+   "count": 2,
+   "reason": "launch word: grocery store"
+  },
+  {
+   "word": "vaness",
+   "count": 2,
+   "reason": "spelling of vanes"
+  },
+  {
+   "word": "teased",
+   "count": 2,
+   "reason": "spelling of teas"
+  },
+  {
+   "word": "breakeded",
+   "count": 2,
+   "reason": "spelling of breaked"
+  },
+  {
+   "word": "headss",
+   "count": 2,
+   "reason": "spelling of heads"
+  },
+  {
+   "word": "lasts",
+   "count": 2,
+   "reason": "spelling of last"
+  },
+  {
+   "word": "dolphinses",
+   "count": 1,
+   "reason": "spelling of dolphins"
+  },
+  {
+   "word": "pigses",
+   "count": 1,
+   "reason": "spelling of pigs"
+  },
+  {
+   "word": "togethers",
+   "count": 1,
+   "reason": "spelling of together"
+  },
+  {
+   "word": "cakeses",
+   "count": 1,
+   "reason": "spelling of cakes"
+  },
+  {
+   "word": "catses",
+   "count": 1,
+   "reason": "spelling of cats"
+  },
+  {
+   "word": "eyeses",
+   "count": 1,
+   "reason": "spelling of eyes"
+  },
+  {
+   "word": "doinged",
+   "count": 1,
+   "reason": "spelling of doing"
+  },
+  {
+   "word": "laters",
+   "count": 1,
+   "reason": "spelling of later"
+  },
+  {
+   "word": "doess",
+   "count": 1,
+   "reason": "spelling of does"
+  },
+  {
+   "word": "makeded",
+   "count": 1,
+   "reason": "spelling of maked"
+  },
+  {
+   "word": "hering",
+   "count": 1,
+   "reason": "spelling of her"
+  },
+  {
+   "word": "holdings",
+   "count": 1,
+   "reason": "spelling of holding"
+  },
+  {
+   "word": "wows",
+   "count": 1,
+   "reason": "spelling of wow"
+  },
+  {
+   "word": "boyses",
+   "count": 1,
+   "reason": "spelling of boys"
+  },
+  {
+   "word": "draweded",
+   "count": 1,
+   "reason": "spelling of drawed"
+  },
+  {
+   "word": "offed",
+   "count": 1,
+   "reason": "spelling of off"
+  },
+  {
+   "word": "mouthses",
+   "count": 1,
+   "reason": "spelling of mouths"
+  },
+  {
+   "word": "fallinged",
+   "count": 1,
+   "reason": "spelling of falling"
+  },
+  {
+   "word": "tractorses",
+   "count": 1,
+   "reason": "spelling of tractors"
+  },
+  {
+   "word": "brokeded",
+   "count": 1,
+   "reason": "spelling of broked"
+  },
+  {
+   "word": "wetsed",
+   "count": 1,
+   "reason": "spelling of wets"
+  },
+  {
+   "word": "cuttinging",
+   "count": 1,
+   "reason": "spelling of cutting"
+  },
+  {
+   "word": "talkeded",
+   "count": 1,
+   "reason": "spelling of talked"
+  },
+  {
+   "word": "theses",
+   "count": 1,
+   "reason": "spelling of these"
+  },
+  {
+   "word": "whos",
+   "count": 1,
+   "reason": "spelling of who"
+  },
+  {
+   "word": "whens",
+   "count": 1,
+   "reason": "spelling of when"
+  },
+  {
+   "word": "theys",
+   "count": 1,
+   "reason": "spelling of they"
+  },
+  {
+   "word": "gettings",
+   "count": 1,
+   "reason": "spelling of getting"
+  },
+  {
+   "word": "shing",
+   "count": 1,
+   "reason": "spelling of she"
+  },
+  {
+   "word": "wipeded",
+   "count": 1,
+   "reason": "spelling of wiped"
+  },
+  {
+   "word": "parkings",
+   "count": 1,
+   "reason": "spelling of parking"
+  },
+  {
+   "word": "belteded",
+   "count": 1,
+   "reason": "spelling of belted"
+  },
+  {
+   "word": "seeded",
+   "count": 1,
+   "reason": "spelling of seed"
+  },
+  {
+   "word": "mining",
+   "count": 1,
+   "reason": "spelling of mine"
+  },
+  {
+   "word": "thingses",
+   "count": 1,
+   "reason": "spelling of things"
+  },
+  {
+   "word": "carryinged",
+   "count": 1,
+   "reason": "spelling of carrying"
+  },
+  {
+   "word": "nevers",
+   "count": 1,
+   "reason": "spelling of never"
+  },
+  {
+   "word": "somesing",
+   "count": 1,
+   "reason": "spelling of somes"
+  },
+  {
+   "word": "awayed",
+   "count": 1,
+   "reason": "spelling of away"
+  },
+  {
+   "word": "bathses",
+   "count": 1,
+   "reason": "spelling of baths"
+  },
+  {
+   "word": "singinging",
+   "count": 1,
+   "reason": "spelling of singing"
+  },
+  {
+   "word": "eatses",
+   "count": 1,
+   "reason": "spelling of eats"
+  },
+  {
+   "word": "bearings",
+   "count": 1,
+   "reason": "spelling of bearing"
+  },
+  {
+   "word": "overs",
+   "count": 1,
+   "reason": "spelling of over"
+  },
+  {
+   "word": "carefuls",
+   "count": 1,
+   "reason": "spelling of careful"
+  },
+  {
+   "word": "thiss",
+   "count": 1,
+   "reason": "spelling of this"
+  },
+  {
+   "word": "footinging",
+   "count": 1,
+   "reason": "spelling of footing"
+  },
+  {
+   "word": "dogses",
+   "count": 1,
+   "reason": "spelling of dogs"
+  },
+  {
+   "word": "beltses",
+   "count": 1,
+   "reason": "spelling of belts"
+  },
+  {
+   "word": "sixed",
+   "count": 1,
+   "reason": "spelling of six"
+  },
+  {
+   "word": "neededed",
+   "count": 1,
+   "reason": "spelling of needed"
+  },
+  {
+   "word": "butting",
+   "count": 1,
+   "reason": "spelling of but"
+  },
+  {
+   "word": "looksing",
+   "count": 1,
+   "reason": "spelling of looks"
+  },
+  {
+   "word": "writings",
+   "count": 1,
+   "reason": "spelling of writing"
+  },
+  {
+   "word": "cuttings",
+   "count": 1,
+   "reason": "spelling of cutting"
+  },
+  {
+   "word": "schoolses",
+   "count": 1,
+   "reason": "spelling of schools"
+  },
+  {
+   "word": "outing",
+   "count": 1,
+   "reason": "spelling of out"
+  },
+  {
+   "word": "hows",
+   "count": 1,
+   "reason": "spelling of how"
+  },
+  {
+   "word": "foring",
+   "count": 1,
+   "reason": "spelling of for"
+  },
+  {
+   "word": "whenning",
+   "count": 1,
+   "reason": "spelling of when"
+  },
+  {
+   "word": "oned",
+   "count": 1,
+   "reason": "spelling of one"
+  },
+  {
+   "word": "agained",
+   "count": 1,
+   "reason": "spelling of again"
+  },
+  {
+   "word": "tooing",
+   "count": 1,
+   "reason": "spelling of too"
+  },
+  {
+   "word": "boxeses",
+   "count": 1,
+   "reason": "spelling of boxes"
+  },
+  {
+   "word": "aways",
+   "count": 1,
+   "reason": "spelling of away"
+  },
+  {
+   "word": "goeds",
+   "count": 1,
+   "reason": "spelling of goed"
+  }
+ ],
+ "nearMisses": [
+  {
+   "word": "line",
+   "count": 996
+  },
+  {
+   "word": "supposed",
+   "count": 994
+  },
+  {
+   "word": "pie",
+   "count": 993
+  },
+  {
+   "word": "anymore",
+   "count": 992
+  },
+  {
+   "word": "own",
+   "count": 989
+  },
+  {
+   "word": "dragon",
+   "count": 986
+  },
+  {
+   "word": "quack",
+   "count": 984
+  },
+  {
+   "word": "change",
+   "count": 983
+  },
+  {
+   "word": "whole",
+   "count": 968
+  },
+  {
+   "word": "high",
+   "count": 964
+  },
+  {
+   "word": "hammer",
+   "count": 955
+  },
+  {
+   "word": "taste",
+   "count": 944
+  },
+  {
+   "word": "enough",
+   "count": 939
+  },
+  {
+   "word": "peanut",
+   "count": 924
+  },
+  {
+   "word": "finish",
+   "count": 923
+  },
+  {
+   "word": "fun",
+   "count": 917
+  },
+  {
+   "word": "must",
+   "count": 916
+  },
+  {
+   "word": "boo",
+   "count": 915
+  },
+  {
+   "word": "pour",
+   "count": 903
+  },
+  {
+   "word": "tower",
+   "count": 903
+  },
+  {
+   "word": "set",
+   "count": 902
+  },
+  {
+   "word": "den",
+   "count": 902
+  },
+  {
+   "word": "front",
+   "count": 897
+  },
+  {
+   "word": "crocodile",
+   "count": 886
+  },
+  {
+   "word": "hop",
+   "count": 885
+  },
+  {
+   "word": "upstairs",
+   "count": 883
+  },
+  {
+   "word": "football",
+   "count": 881
+  },
+  {
+   "word": "sugar",
+   "count": 879
+  },
+  {
+   "word": "children",
+   "count": 851
+  },
+  {
+   "word": "nods",
+   "count": 850
+  },
+  {
+   "word": "pointing",
+   "count": 849
+  },
+  {
+   "word": "moo",
+   "count": 847
+  },
+  {
+   "word": "sky",
+   "count": 847
+  },
+  {
+   "word": "ladder",
+   "count": 847
+  },
+  {
+   "word": "smell",
+   "count": 840
+  },
+  {
+   "word": "fat",
+   "count": 840
+  },
+  {
+   "word": "word",
+   "count": 838
+  },
+  {
+   "word": "mark",
+   "count": 838
+  },
+  {
+   "word": "telephone",
+   "count": 834
+  },
+  {
+   "word": "what_about",
+   "count": 826
+  }
+ ]
+}
