@@ -160,6 +160,10 @@
         padding: 0 16px;
       }
       .bar-btn.primary { background: var(--ink); color: var(--cream); }
+      /* 023: the selected tense (and the lit question / the speaking
+         button) wear ink — .sel is the trio's switch, .speaking holds
+         while audio plays. */
+      .bar-btn.sel, .bar-btn.speaking { background: var(--ink); color: var(--cream); }
       .bar-btn.glyph {
         flex: none;
         width: 68px;
@@ -168,6 +172,7 @@
         place-items: center;
       }
       .bar-btn.glyph.primary { width: 88px; }
+      .bar-btn.glyph.wide { width: 88px; }
       .bar-btn.glyph.tx { width: 60px; }
       /* A gap between the edit pair (Clear, Backspace) and the sentence,
          and between Fix it / Question and the time transport. */
@@ -660,7 +665,7 @@
       <button id="tx-past" class="bar-btn glyph tx" title="Say it in the past" aria-label="Say it in the past" disabled>
         <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 6.5v11L4 12zM20 6.5v11L12.5 12z"/></svg>
       </button>
-      <button id="speak" class="bar-btn glyph primary" title="Play" aria-label="Play" disabled>
+      <button id="speak" class="bar-btn glyph wide sel" title="Play" aria-label="Play" disabled>
         <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>
       </button>
       <button id="tx-future" class="bar-btn glyph tx" title="Say it in the future" aria-label="Say it in the future" disabled>

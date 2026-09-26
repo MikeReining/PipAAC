@@ -244,6 +244,16 @@ first source for this voice, since its clips are a different voice).
    strict `catalog.json` that waits on Ara clips; until then the voice
    is the `grokVoice` constant (`ara`).
 3. **Transform buttons** (023) speak through this pipeline, auto-speak on.
+   **Landed 2026-09-26** (`transformAndSpeak` in `public/board.js`,
+   `public/shared/txbar.mjs` + `src/board/txbar.test.mjs` 5/5):
+   ✨/❓/⏪/▶/⏩ POST the masked sentence to `/api/v1/transform`; the
+   result replaces the bar as typed words and speaks through the
+   sentence-voice pipeline — word clips when the pipeline has no answer.
+   The trio's `.sel` state lives in `barState` (reset when the bar
+   empties); ❓ keeps its flag through tense changes; ✨ moves nothing;
+   re-pressing a held state re-speaks without a model call; model
+   buttons grey out offline while ▶ always speaks. `bar-btn.speaking`
+   holds the pressed-dark state for the audio's length.
 4. **Catalog re-make:** `scripts/catalog/generate_missing_audio.mjs` switches
    to Grok Voice with the phonetics table, one clip set per voice.
 5. **Measure on a real tablet:** p95 time to first sound for a cache hit, a

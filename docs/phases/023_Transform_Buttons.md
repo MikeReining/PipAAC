@@ -1,8 +1,12 @@
 # 023 — Transform Buttons: Past, Question, Future, and Fix It
 
-**Status:** functional spec finalized with the designer (2026-09-25, § 1).
-Model proof of concept proven the same day (founder: "a category
-breakthrough"). Buttons not yet wired to the model.
+**Status:** functional spec finalized with the designer (2026-09-25, § 1);
+**wired 2026-09-26** — the buttons call `/api/v1/transform` (Groq key
+server-side, § 5.3), names masked by `name_shield` (§ 5.2), speak
+through the 024 pipeline, and the Settings PIN gates Parent corner
+(§ 5.4). Model proof of concept proven the same day (founder: "a
+category breakthrough"). Live prompt retests (§ 5.6) still pending —
+they need a paid Groq run, gated on the founder.
 **Truth owner:** § 1 is the finalized functional spec (founder + designer).
 Model behavior is owned by `qwen/qwen3.8-27b` via Groq at **temperature 0**
 with the prompts in § 3 and the live test results recorded there.

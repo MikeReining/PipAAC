@@ -47,6 +47,8 @@ import {
 import { resolveSlot } from "./shared/voice.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
 import { PIN_RE, checkPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
+import { entityNames, maskNames } from "./shared/name_shield.mjs";
+import { applyTransform } from "./shared/txbar.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
@@ -274,6 +276,10 @@ const audio = new Audio();
 // catalog.json), so the id is one named seam until then.
 const sentenceVoice = voiceSentence();
 const grokVoice = "ara";
+// 023: the bar's current shape — which tense it holds and whether it
+// is a question — drives the trio's selected state. Reset whenever
+// the bar empties (clear, backspace, after-speak fresh start).
+const barState = { tense: "present", question: false };
 let licenseP = null;
 const voiceLicense = () => {
   licenseP ??= openKeyStore()
@@ -331,6 +337,58 @@ async function speakItem(item) {
   if (slot.type === "clip") return playClip(slot.key);
   if (slot.type === "tts") return speak(slot.text);
   return new Promise((r) => setTimeout(r, SILENT_SLOT_MS));
+}
+
+/** 023: which tense the bar holds — exactly one trio member wears ink;
+ *  ❓ lights while the bar is a question; the model buttons grey out
+ *  offline (▶ never does — speaking never needs the network). */
+function syncTxButtons() {
+  const trio = { past: "tx-past", present: "speak", future: "tx-future" };
+  for (const [t, id] of Object.entries(trio)) {
+    $(id).classList.toggle("sel", barState.tense === t);
+  }
+  $("tx-question").classList.toggle("sel", barState.question);
+  const offline = typeof navigator !== "undefined" && !navigator.onLine;
+  for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
+    $(id).classList.toggle("offline", offline);
+    $(id).disabled = !sentence.length || offline;
+  }
+}
+addEventListener("online", syncTxButtons);
+addEventListener("offline", syncTxButtons);
+
+/** One transform press: mask her names → the Worker/Groq does the
+ *  grammar → the result replaces the bar as typed words → it speaks
+ *  through the 024 pipeline. A failed or offline call still speaks —
+ *  the bar as built, per § 1's every-press-produces-audio rule. */
+let txBusy = false;
+async function transformAndSpeak(mode) {
+  if (txBusy || !sentence.length) return;
+  txBusy = true;
+  const btn = $(mode === "present" ? "speak" : `tx-${mode}`);
+  btn?.classList.add("speaking");
+  try {
+    const raw = sentence.map((it) => it.text).join(" ");
+    const { masked, unmask } = maskNames(raw, entityNames(db));
+    const res = await fetch("/api/v1/transform", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        user_id: me.id, license: await voiceLicense(), mode, text: masked,
+      }),
+    }).catch(() => null);
+    const out = res?.ok ? (await res.json().catch(() => ({}))).text : null;
+    if (out) {
+      applyTransform(sentence, unmask(out), mode, barState);
+      renderBar();
+      renderStrip();
+    }
+    await speakSentence();
+  } finally {
+    txBusy = false;
+    btn?.classList.remove("speaking");
+    syncTxButtons();
+  }
 }
 
 /** Sentence bar: one slot per item in order; misses hold 400 ms (§7.4).
@@ -504,9 +562,8 @@ function renderBar() {
   $("clear").disabled = !sentence.length && !kbUi.text;
   $("backspace").disabled = !sentence.length && !kbUi.text;
   $("speak").disabled = !sentence.length;
-  for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
-    $(id).disabled = !sentence.length;
-  }
+  if (!sentence.length) { barState.tense = "present"; barState.question = false; }
+  syncTxButtons();
   bar.scrollLeft = bar.scrollWidth; // the newest word stays in view
 }
 $("bar").addEventListener("click", () => {
@@ -528,8 +585,30 @@ $("clear").addEventListener("click", () => {
   renderGrid();
   renderStrip();
 });
+/* 023 transform buttons: every press produces audio. ▶ speaks the bar
+ * as built when it already holds present; from another tense it first
+ * returns the sentence to present, then speaks (§ 1d). */
 $("speak").addEventListener("click", () => {
-  if (sentence.length) speakSentence();
+  if (!sentence.length) return;
+  if (barState.tense !== "present" && navigator.onLine !== false) {
+    transformAndSpeak("present");
+  } else {
+    speakSentence();
+  }
+});
+$("tx-fix").addEventListener("click", () => transformAndSpeak("fix"));
+$("tx-question").addEventListener("click", () => {
+  // § 4.1: ❓ on an existing question just re-speaks it.
+  if (barState.question) speakSentence();
+  else transformAndSpeak("question");
+});
+$("tx-past").addEventListener("click", () => {
+  if (barState.tense === "past") speakSentence();
+  else transformAndSpeak("past");
+});
+$("tx-future").addEventListener("click", () => {
+  if (barState.tense === "future") speakSentence();
+  else transformAndSpeak("future");
 });
 /* Backspace takes the last whole word (or the word being typed). A
  * logged pick leaves the open sentence the same way the keyboard's ⌫
