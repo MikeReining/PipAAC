@@ -1,0 +1,154 @@
+[
+  {
+    "file": "i.mp3",
+    "word": "I",
+    "text": "I",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "to_ipa.mp3",
+    "word": "to",
+    "text": "to",
+    "replace": {
+      "to": "/tə/"
+    },
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136
+  },
+  {
+    "file": "of_ipa.mp3",
+    "word": "of",
+    "text": "of",
+    "replace": {
+      "of": "/əv/"
+    },
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "on.mp3",
+    "word": "on",
+    "text": "on",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "up.mp3",
+    "word": "up",
+    "text": "up",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136
+  },
+  {
+    "file": "or.mp3",
+    "word": "or",
+    "text": "or",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "at.mp3",
+    "word": "at",
+    "text": "at",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "it.mp3",
+    "word": "it",
+    "text": "it",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136
+  },
+  {
+    "file": "is.mp3",
+    "word": "is",
+    "text": "is",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "am.mp3",
+    "word": "am",
+    "text": "am",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "to_plain.mp3",
+    "word": "to",
+    "text": "to",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288,
+    "note": "alternate after rejected reduced vowel"
+  },
+  {
+    "file": "to_tu.mp3",
+    "word": "to",
+    "text": "to",
+    "replace": {
+      "to": "/tu/"
+    },
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288,
+    "note": "alternate after rejected reduced vowel"
+  },
+  {
+    "file": "of_plain.mp3",
+    "word": "of",
+    "text": "of",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136,
+    "note": "alternate after rejected reduced vowel"
+  },
+  {
+    "file": "of_uv.mp3",
+    "word": "of",
+    "text": "of",
+    "replace": {
+      "of": "/ʌv/"
+    },
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136,
+    "note": "alternate after rejected reduced vowel"
+  }
+]

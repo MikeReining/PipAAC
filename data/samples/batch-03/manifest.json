@@ -1,0 +1,151 @@
+[
+  {
+    "file": "for_plain.mp3",
+    "word": "for",
+    "text": "for",
+    "replace": null,
+    "note": "plain spelling",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136
+  },
+  {
+    "file": "for_or.mp3",
+    "word": "for",
+    "text": "for",
+    "replace": {
+      "for": "/fɔr/"
+    },
+    "note": "citation vowel, against a weak fer",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136
+  },
+  {
+    "file": "are_plain.mp3",
+    "word": "are",
+    "text": "are",
+    "replace": null,
+    "note": "plain spelling",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "are_ar.mp3",
+    "word": "are",
+    "text": "are",
+    "replace": {
+      "are": "/ɑr/"
+    },
+    "note": "citation vowel, against a weak er",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "was.mp3",
+    "word": "was",
+    "text": "was",
+    "replace": null,
+    "note": "plain spelling",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "off.mp3",
+    "word": "off",
+    "text": "off",
+    "replace": null,
+    "note": "plain spelling",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "you.mp3",
+    "word": "you",
+    "text": "you",
+    "replace": null,
+    "note": "plain spelling",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "tv.mp3",
+    "word": "TV",
+    "text": "TV",
+    "replace": null,
+    "note": "plain abbreviation",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 16128
+  },
+  {
+    "file": "tv_teevee.mp3",
+    "word": "TV",
+    "text": "TV",
+    "replace": {
+      "TV": "tee vee"
+    },
+    "note": "respelling",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 18816
+  },
+  {
+    "file": "ow.mp3",
+    "word": "ow",
+    "text": "ow",
+    "replace": null,
+    "note": "plain interjection",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 11136
+  },
+  {
+    "file": "ow_emphasis.mp3",
+    "word": "ow",
+    "text": "<emphasis>ow</emphasis>",
+    "replace": null,
+    "note": "emphasis only",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 14976
+  },
+  {
+    "file": "ow_loud.mp3",
+    "word": "ow",
+    "text": "<loud>ow</loud>",
+    "replace": null,
+    "note": "loud only",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 14976
+  },
+  {
+    "file": "ow_loud_emphasis.mp3",
+    "word": "ow",
+    "text": "<loud><emphasis>ow</emphasis></loud>",
+    "replace": null,
+    "note": "loud plus emphasis",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 16128
+  }
+]

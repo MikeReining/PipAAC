@@ -1,0 +1,108 @@
+[
+  {
+    "file": "a_ipa.mp3",
+    "word": "a",
+    "text": "a",
+    "replace": {
+      "a": "/ə/"
+    },
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 9600,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "an_ipa.mp3",
+    "word": "an",
+    "text": "an",
+    "replace": {
+      "an": "/æn/"
+    },
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 12288,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "the_ipa.mp3",
+    "word": "the",
+    "text": "the",
+    "replace": {
+      "the": "/ðə/"
+    },
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 11136,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "in_soft.mp3",
+    "word": "in",
+    "text": "<soft>in</soft>",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 13440,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "in_comma.mp3",
+    "word": "in",
+    "text": "in,",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 12288,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "to_soft.mp3",
+    "word": "to",
+    "text": "<soft>to</soft>",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 14976,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "to_comma.mp3",
+    "word": "to",
+    "text": "to,",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 12288,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "and_soft.mp3",
+    "word": "and",
+    "text": "<soft>and</soft>",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 13440,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "up_soft.mp3",
+    "word": "up",
+    "text": "<soft>up</soft>",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 13440,
+    "content_type": "audio/mpeg"
+  },
+  {
+    "file": "on_soft.mp3",
+    "word": "on",
+    "text": "<soft>on</soft>",
+    "replace": null,
+    "voice_id": "ara",
+    "language": "en",
+    "bytes": 17280,
+    "content_type": "audio/mpeg"
+  }
+]

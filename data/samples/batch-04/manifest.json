@@ -1,0 +1,218 @@
+[
+  {
+    "file": "dont.mp3",
+    "word": "don't",
+    "text": "don't",
+    "replace": null,
+    "note": "plain contraction",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "cant.mp3",
+    "word": "can't",
+    "text": "can't",
+    "replace": null,
+    "note": "plain contraction",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "wont.mp3",
+    "word": "won't",
+    "text": "won't",
+    "replace": null,
+    "note": "plain contraction",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "didnt.mp3",
+    "word": "didn't",
+    "text": "didn't",
+    "replace": null,
+    "note": "plain contraction",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 14976
+  },
+  {
+    "file": "read_plain.mp3",
+    "word": "read",
+    "text": "read",
+    "replace": null,
+    "note": "plain; catalog sense is the verb",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 12288
+  },
+  {
+    "file": "read_rid.mp3",
+    "word": "read",
+    "text": "read",
+    "replace": {
+      "read": "/rid/"
+    },
+    "note": "present verb, not the past tense",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "close_plain.mp3",
+    "word": "close",
+    "text": "close",
+    "replace": null,
+    "note": "plain; catalog sense is the verb shut",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 14976
+  },
+  {
+    "file": "close_kloz.mp3",
+    "word": "close",
+    "text": "close",
+    "replace": {
+      "close": "/kloʊz/"
+    },
+    "note": "verb shut, not the adjective",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 14976
+  },
+  {
+    "file": "wind_plain.mp3",
+    "word": "wind",
+    "text": "wind",
+    "replace": null,
+    "note": "plain; catalog sense is the weather noun",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "wind_ih.mp3",
+    "word": "wind",
+    "text": "wind",
+    "replace": {
+      "wind": "/wɪnd/"
+    },
+    "note": "weather noun, not coil",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 16128
+  },
+  {
+    "file": "dont_trim.mp3",
+    "word": "dont",
+    "source": "dont.mp3",
+    "note": "same take, detached release burst removed",
+    "voice_id": "ara"
+  },
+  {
+    "file": "cant_trim.mp3",
+    "word": "cant",
+    "source": "cant.mp3",
+    "note": "same take, detached release burst removed",
+    "voice_id": "ara"
+  },
+  {
+    "file": "wont_trim.mp3",
+    "word": "wont",
+    "source": "wont.mp3",
+    "note": "same take, detached release burst removed",
+    "voice_id": "ara"
+  },
+  {
+    "file": "didnt_trim.mp3",
+    "word": "didnt",
+    "source": "didnt.mp3",
+    "note": "same take, detached release burst removed",
+    "voice_id": "ara"
+  },
+  {
+    "file": "wind_trim.mp3",
+    "word": "wind",
+    "source": "wind_ih.mp3",
+    "note": "same take, detached release burst removed",
+    "voice_id": "ara"
+  },
+  {
+    "file": "dont_unrel.mp3",
+    "word": "don't",
+    "text": "don't",
+    "replace": {
+      "don't": "/doʊnt̚/"
+    },
+    "note": "unreleased final stop",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "cant_unrel.mp3",
+    "word": "can't",
+    "text": "can't",
+    "replace": {
+      "can't": "/kænt̚/"
+    },
+    "note": "unreleased final stop",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "wont_unrel.mp3",
+    "word": "won't",
+    "text": "won't",
+    "replace": {
+      "won't": "/woʊnt̚/"
+    },
+    "note": "unreleased final stop",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "didnt_unrel.mp3",
+    "word": "didn't",
+    "text": "didn't",
+    "replace": {
+      "didn't": "/dɪdnt̚/"
+    },
+    "note": "unreleased final stop",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 13440
+  },
+  {
+    "file": "wind_unrel.mp3",
+    "word": "wind",
+    "text": "wind",
+    "replace": {
+      "wind": "/wɪnd̚/"
+    },
+    "note": "unreleased final stop",
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1,
+    "bytes": 14976
+  }
+]

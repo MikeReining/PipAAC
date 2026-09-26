@@ -330,6 +330,86 @@
       "text": "oops",
       "replace": null,
       "basis": "ear, batch-05 shortlist"
+    },
+    {
+      "word": "me",
+      "file": "me.mp3",
+      "source": "data/samples/batch-06-core/takes/me_period.mp3",
+      "text": "me.",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "my",
+      "file": "my.mp3",
+      "source": "data/samples/batch-06-core/takes/my_plain.mp3",
+      "text": "my",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "mine",
+      "file": "mine.mp3",
+      "source": "data/samples/batch-06-core/takes/mine_plain.mp3",
+      "text": "mine",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "he",
+      "file": "he.mp3",
+      "source": "data/samples/batch-06-core/takes/he_period.mp3",
+      "text": "he.",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "she",
+      "file": "she.mp3",
+      "source": "data/samples/batch-06-core/takes/she_plain.mp3",
+      "text": "she",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "we",
+      "file": "we.mp3",
+      "source": "data/samples/batch-06-core/takes/we_plain.mp3",
+      "text": "we",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "they",
+      "file": "they.mp3",
+      "source": "data/samples/batch-06-core/takes/they_plain.mp3",
+      "text": "they",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "that",
+      "file": "that.mp3",
+      "source": "data/samples/batch-06-core/takes/that_plain.mp3",
+      "text": "that",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist; both takes had a tail burst"
+    },
+    {
+      "word": "this",
+      "file": "this.mp3",
+      "source": "data/samples/batch-06-core/takes/this_plain.mp3",
+      "text": "this",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist"
+    },
+    {
+      "word": "want",
+      "file": "want.mp3",
+      "source": "data/samples/batch-06-core/takes/want_plain.mp3",
+      "text": "want",
+      "replace": null,
+      "basis": "ear, batch-06 shortlist; both takes had a tail burst"
     }
   ],
   "rejected": [

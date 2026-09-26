@@ -42,7 +42,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*.
 
 ### Rejected payloads
 
@@ -112,6 +112,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | yes | `data/samples/approved/yes.mp3` | `yes` | Ear, `batch-05` shortlist |
 | wow | `data/samples/approved/wow.mp3` | `wow.` | Ear, `batch-05` shortlist |
 | oops | `data/samples/approved/oops.mp3` | `oops` | Ear, `batch-05` shortlist |
+| me | `data/samples/approved/me.mp3` | `me.` | Ear, `batch-06` shortlist |
+| my | `data/samples/approved/my.mp3` | `my` | Ear, `batch-06` shortlist |
+| mine | `data/samples/approved/mine.mp3` | `mine` | Ear, `batch-06` shortlist |
+| he | `data/samples/approved/he.mp3` | `he.` | Ear, `batch-06` shortlist |
+| she | `data/samples/approved/she.mp3` | `she` | Ear, `batch-06` shortlist |
+| we | `data/samples/approved/we.mp3` | `we` | Ear, `batch-06` shortlist |
+| they | `data/samples/approved/they.mp3` | `they` | Ear, `batch-06` shortlist |
+| that | `data/samples/approved/that.mp3` | `that` | Ear, `batch-06` shortlist. Both takes had a tail burst. |
+| this | `data/samples/approved/this.mp3` | `this` | Ear, `batch-06` shortlist |
+| want | `data/samples/approved/want.mp3` | `want` | Ear, `batch-06` shortlist. Both takes had a tail burst. |
 
 ---
 

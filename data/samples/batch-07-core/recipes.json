@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-07-core",
+  "description": "Next core verbs by lexicon slot after batch-06. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "like", "slug": "like", "spokenForGate": "like", "whisperMustMatch": ["like"], "variations": [{ "id": "plain", "body": { "text": "like" } }, { "id": "period", "body": { "text": "like." } }] },
+    { "word": "go", "slug": "go", "spokenForGate": "go", "whisperMustMatch": ["go"], "variations": [{ "id": "plain", "body": { "text": "go" } }, { "id": "period", "body": { "text": "go." } }] },
+    { "word": "come", "slug": "come", "spokenForGate": "come", "whisperMustMatch": ["come"], "whisperReject": ["comb"], "variations": [{ "id": "plain", "body": { "text": "come" } }, { "id": "period", "body": { "text": "come." } }] },
+    { "word": "get", "slug": "get", "spokenForGate": "get", "whisperMustMatch": ["get"], "variations": [{ "id": "plain", "body": { "text": "get" } }, { "id": "period", "body": { "text": "get." } }] },
+    { "word": "make", "slug": "make", "spokenForGate": "make", "whisperMustMatch": ["make"], "variations": [{ "id": "plain", "body": { "text": "make" } }, { "id": "period", "body": { "text": "make." } }] },
+    { "word": "do", "slug": "do", "spokenForGate": "do", "whisperMustMatch": ["do", "dew"], "whisperReject": ["dough"], "variations": [{ "id": "plain", "body": { "text": "do" } }, { "id": "period", "body": { "text": "do." } }] },
+    { "word": "see", "slug": "see", "spokenForGate": "see", "whisperMustMatch": ["see", "sea", "c"], "variations": [{ "id": "plain", "body": { "text": "see" } }, { "id": "period", "body": { "text": "see." } }, { "id": "ipa", "body": { "text": "see", "replace": { "see": "/si/" } } }] },
+    { "word": "look", "slug": "look", "spokenForGate": "look", "whisperMustMatch": ["look"], "variations": [{ "id": "plain", "body": { "text": "look" } }, { "id": "period", "body": { "text": "look." } }] },
+    { "word": "take", "slug": "take", "spokenForGate": "take", "whisperMustMatch": ["take"], "variations": [{ "id": "plain", "body": { "text": "take" } }, { "id": "period", "body": { "text": "take." } }] },
+    { "word": "give", "slug": "give", "spokenForGate": "give", "whisperMustMatch": ["give"], "variations": [{ "id": "plain", "body": { "text": "give" } }, { "id": "period", "body": { "text": "give." } }] }
+  ]
+}
