@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*. *bad* is `<emphasis>bad!</emphasis>` for now. The ear called it raspy and kept it anyway.
 
 ### Rejected payloads
 
@@ -154,6 +154,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | away | `data/samples/approved/away.mp3` | `away` | Ear, `batch-09` shortlist |
 | here | `data/samples/approved/here.mp3` | `here` | Ear, `batch-09` shortlist |
 | there | `data/samples/approved/there.mp3` | `there` | Ear, `batch-09` shortlist |
+| with | `data/samples/approved/with.mp3` | `with.` | Ear, `batch-10` shortlist |
+| under | `data/samples/approved/under.mp3` | `under` | Ear, `batch-10` shortlist |
+| over | `data/samples/approved/over.mp3` | `over` | Ear, `batch-10` shortlist |
+| more | `data/samples/approved/more.mp3` | `more.` | Ear, `batch-10` shortlist |
+| all done | `data/samples/approved/all-done.mp3` | `all done` | Ear, `batch-10` shortlist |
+| big | `data/samples/approved/big.mp3` | `big` | Ear, `batch-10` shortlist |
+| little | `data/samples/approved/little.mp3` | `little.` | Ear, `batch-10` shortlist |
+| good | `data/samples/approved/good.mp3` | `good` | Ear, `batch-10` shortlist |
+| bad | `data/samples/approved/bad.mp3` | `<emphasis>bad!</emphasis>` | Ear, for now. Plain and period were raspy. This take still dips to 92 Hz. |
+| happy | `data/samples/approved/happy.mp3` | `happy.` | Ear replaced plain `happy`. That take was raspy. |
 
 ---
 

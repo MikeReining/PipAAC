@@ -16,7 +16,7 @@
     { "word": "big", "slug": "big", "spokenForGate": "big", "whisperMustMatch": ["big"], "variations": [{ "id": "plain", "body": { "text": "big" } }, { "id": "period", "body": { "text": "big." } }] },
     { "word": "little", "slug": "little", "spokenForGate": "little", "whisperMustMatch": ["little"], "variations": [{ "id": "plain", "body": { "text": "little" } }, { "id": "period", "body": { "text": "little." } }] },
     { "word": "good", "slug": "good", "spokenForGate": "good", "whisperMustMatch": ["good"], "variations": [{ "id": "plain", "body": { "text": "good" } }, { "id": "period", "body": { "text": "good." } }] },
-    { "word": "bad", "slug": "bad", "spokenForGate": "bad", "whisperMustMatch": ["bad"], "variations": [{ "id": "plain", "body": { "text": "bad" } }, { "id": "period", "body": { "text": "bad." } }] },
+    { "word": "bad", "slug": "bad", "spokenForGate": "bad", "whisperMustMatch": ["bad"], "variations": [{ "id": "plain", "body": { "text": "bad" } }, { "id": "period", "body": { "text": "bad." } }, { "id": "emphasis", "body": { "text": "<emphasis>bad</emphasis>" } }, { "id": "emphasis_bang", "body": { "text": "<emphasis>bad!</emphasis>" } }, { "id": "emphasis_period", "body": { "text": "<emphasis>bad.</emphasis>" } }] },
     { "word": "happy", "slug": "happy", "spokenForGate": "happy", "whisperMustMatch": ["happy"], "variations": [{ "id": "plain", "body": { "text": "happy" } }, { "id": "period", "body": { "text": "happy." } }] }
   ]
 }

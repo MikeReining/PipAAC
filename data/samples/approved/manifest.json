@@ -650,6 +650,86 @@
       "text": "there",
       "replace": null,
       "basis": "ear, batch-09 shortlist"
+    },
+    {
+      "word": "with",
+      "file": "with.mp3",
+      "source": "data/samples/batch-10-core/takes/with_period.mp3",
+      "text": "with.",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "under",
+      "file": "under.mp3",
+      "source": "data/samples/batch-10-core/takes/under_plain.mp3",
+      "text": "under",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "over",
+      "file": "over.mp3",
+      "source": "data/samples/batch-10-core/takes/over_plain.mp3",
+      "text": "over",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "more",
+      "file": "more.mp3",
+      "source": "data/samples/batch-10-core/takes/more_period.mp3",
+      "text": "more.",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "all done",
+      "file": "all-done.mp3",
+      "source": "data/samples/batch-10-core/takes/all-done_plain.mp3",
+      "text": "all done",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "big",
+      "file": "big.mp3",
+      "source": "data/samples/batch-10-core/takes/big_plain.mp3",
+      "text": "big",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "little",
+      "file": "little.mp3",
+      "source": "data/samples/batch-10-core/takes/little_period.mp3",
+      "text": "little.",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "good",
+      "file": "good.mp3",
+      "source": "data/samples/batch-10-core/takes/good_plain.mp3",
+      "text": "good",
+      "replace": null,
+      "basis": "ear, batch-10 shortlist"
+    },
+    {
+      "word": "bad",
+      "file": "bad.mp3",
+      "source": "data/samples/batch-10-core/takes/bad_emphasis_bang.mp3",
+      "text": "<emphasis>bad!</emphasis>",
+      "replace": null,
+      "basis": "ear for now; plain and period were raspy; this take still dips to 92 Hz"
+    },
+    {
+      "word": "happy",
+      "file": "happy.mp3",
+      "source": "data/samples/batch-10-core/takes/happy_period.mp3",
+      "text": "happy.",
+      "replace": null,
+      "basis": "ear replaced plain happy; that take was raspy"
     }
   ],
   "rejected": [
