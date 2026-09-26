@@ -1383,6 +1383,87 @@
       "replace": null,
       "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
       "basis": "ear replaced the Grok take with the Aga backup; trailing silence trimmed from raw"
+    },
+    {
+      "word": "shoulder",
+      "file": "shoulder.mp3",
+      "source": "data/samples/batch-19-core/takes/shoulder_plain.mp3",
+      "text": "shoulder",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "arm",
+      "file": "arm.mp3",
+      "source": "data/samples/batch-19-core/takes/arm_period.mp3",
+      "text": "arm.",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "hand",
+      "file": "hand.mp3",
+      "source": "data/samples/batch-19-core/takes/hand_plain.mp3",
+      "text": "hand",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "fingers",
+      "file": "fingers.mp3",
+      "source": "data/samples/batch-19-core/takes/fingers_period.mp3",
+      "text": "fingers.",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "tummy",
+      "file": "tummy.mp3",
+      "source": "data/samples/batch-19-core/takes/tummy_plain.mp3",
+      "text": "tummy",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "back",
+      "file": "back.mp3",
+      "source": "data/samples/batch-19-core/takes/back_plain.mp3",
+      "text": "back",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "leg",
+      "file": "leg.mp3",
+      "source": "data/samples/batch-19-core/takes/leg_period.mp3",
+      "text": "leg.",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "knee",
+      "file": "knee.mp3",
+      "source": "data/samples/batch-19-core/takes/knee_plain.mp3",
+      "text": "knee",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "foot",
+      "file": "foot.mp3",
+      "source": "data/samples/batch-19-core/takes/foot_backup.mp3",
+      "text": "foot",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "toes",
+      "file": "toes.mp3",
+      "source": "data/samples/batch-19-core/takes/toes_plain.mp3",
+      "text": "toes",
+      "replace": null,
+      "basis": "ear, batch-19 shortlist"
     }
   ],
   "rejected": [

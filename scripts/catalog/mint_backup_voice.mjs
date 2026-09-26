@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Mint one catalog clip with the committed ElevenLabs backup voice (Aga clone).
- * Saves the raw take and, by default, fades off only a click in the last 80 ms.
+ * Saves the raw take and, by default, trims a long ElevenLabs tail or fades a terminal click.
  * fix-burst is opt-in. On "bad" it cut the /d/ and left 0.40 s. The ear kept
  * the gentle trim.
  *
@@ -109,14 +109,17 @@ export async function mintBackupVoice({
   try {
     const rawKeep = dest.replace(/\.mp3$/i, `${backup.post_process?.keep_raw_suffix ?? "_raw"}.mp3`);
     writeFileSync(rawKeep, raw);
-    if (useBurst) fixDetachedBurst({ sourcePath: rawPath, destPath: dest });
-    else gentleEndTrim({ sourcePath: rawPath, destPath: dest });
+    let trimMeta = {};
+    if (useBurst) trimMeta = fixDetachedBurst({ sourcePath: rawPath, destPath: dest });
+    else trimMeta = gentleEndTrim({ sourcePath: rawPath, destPath: dest });
     return {
       outPath: dest,
       rawPath: rawKeep,
       bytes: raw.length,
       fixBurst: useBurst,
       gentleTrim: useGentle,
+      trimMode: trimMeta.trimMode,
+      trailingMsRemoved: trimMeta.trailingMsRemoved,
       voiceId: backup.voice_id,
       text: ttsText,
     };
@@ -150,7 +153,13 @@ async function main() {
     return;
   }
   console.log(`wrote ${result.outPath}${result.rawPath ? ` (raw ${result.rawPath})` : ""}`);
-  console.log(`voice=${result.voiceId} text=${JSON.stringify(result.text)} fix_burst=${result.fixBurst} gentle_trim=${result.gentleTrim}`);
+  const extra =
+    result.trimMode && result.trimMode !== "none"
+      ? ` trim_mode=${result.trimMode}${result.trailingMsRemoved != null ? ` tail_removed_ms=${Math.round(result.trailingMsRemoved)}` : ""}`
+      : "";
+  console.log(
+    `voice=${result.voiceId} text=${JSON.stringify(result.text)} fix_burst=${result.fixBurst} gentle_trim=${result.gentleTrim}${extra}`,
+  );
 }
 
 const invoked = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;

@@ -1,0 +1,292 @@
+[
+  {
+    "file": "takes/bathroom_plain.mp3",
+    "word": "bathroom",
+    "variation": "plain",
+    "text": "bathroom",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " bathroom.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bathroom_period.mp3",
+    "word": "bathroom",
+    "variation": "period",
+    "text": "bathroom.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " bathroom",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/potty_plain.mp3",
+    "word": "potty",
+    "variation": "plain",
+    "text": "potty",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Potty.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/potty_period.mp3",
+    "word": "potty",
+    "variation": "period",
+    "text": "potty.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Potty.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toilet_plain.mp3",
+    "word": "toilet",
+    "variation": "plain",
+    "text": "toilet",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Toilet.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toilet_period.mp3",
+    "word": "toilet",
+    "variation": "period",
+    "text": "toilet.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Toilet.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/diaper_plain.mp3",
+    "word": "diaper",
+    "variation": "plain",
+    "text": "diaper",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " diaper.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/diaper_period.mp3",
+    "word": "diaper",
+    "variation": "period",
+    "text": "diaper.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Diaper.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wet-wipe_plain.mp3",
+    "word": "wet wipe",
+    "variation": "plain",
+    "text": "wet wipe",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Wet Wipe",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wet-wipe_period.mp3",
+    "word": "wet wipe",
+    "variation": "period",
+    "text": "wet wipe.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Wet Wipe.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bath_plain.mp3",
+    "word": "bath",
+    "variation": "plain",
+    "text": "bath",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bath.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bath_period.mp3",
+    "word": "bath",
+    "variation": "period",
+    "text": "bath.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bath.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/shower_plain.mp3",
+    "word": "shower",
+    "variation": "plain",
+    "text": "shower",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Shower.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/shower_period.mp3",
+    "word": "shower",
+    "variation": "period",
+    "text": "shower.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Shower.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/soap_plain.mp3",
+    "word": "soap",
+    "variation": "plain",
+    "text": "soap",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Soap",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/soap_period.mp3",
+    "word": "soap",
+    "variation": "period",
+    "text": "soap.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Soap.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toothbrush_plain.mp3",
+    "word": "toothbrush",
+    "variation": "plain",
+    "text": "toothbrush",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " toothbrush.",
+    "notes": [
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/toothbrush_period.mp3",
+    "word": "toothbrush",
+    "variation": "period",
+    "text": "toothbrush.",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " toothbrush.",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/toothpaste_plain.mp3",
+    "word": "toothpaste",
+    "variation": "plain",
+    "text": "toothpaste",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Toothpaste.",
+    "notes": [
+      "consonant_release",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/toothpaste_period.mp3",
+    "word": "toothpaste",
+    "variation": "period",
+    "text": "toothpaste.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Toothpaste",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/toothbrush_backup.mp3",
+    "word": "toothbrush",
+    "variation": "backup",
+    "text": "toothbrush",
+    "replace": null,
+    "speed": 1,
+    "score": -50,
+    "whisper": " toothbrush.",
+    "notes": [
+      "too_long",
+      "gate_activity_after_silence",
+      "no_tail_burst",
+      "residue_shelf",
+      "echo_return"
+    ]
+  }
+]

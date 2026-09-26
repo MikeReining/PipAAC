@@ -113,6 +113,135 @@ export function isConsonantRelease(samples, sr, cutSample) {
  * and left 0.40 s.
  * @returns {number} sample index to keep through
  */
+/**
+ * Cut before a long silent gap (and any terminal spike) after the word.
+ * @returns {number} exclusive end index, or samples.length if no long tail
+ */
+export function findLongTailCutSample(
+  samples,
+  sr,
+  {
+    hopMs = 10,
+    peakRatio = 0.02,
+    silenceRatio = 0.015,
+    minSpeechMs = 150,
+    minGapMs = 300,
+    padMs = 80,
+  } = {},
+) {
+  const hop = Math.max(1, Math.round(sr * (hopMs / 1000)));
+  const frames = [];
+  for (let i = 0; i < samples.length; i += hop) {
+    let acc = 0;
+    const n = Math.min(hop, samples.length - i);
+    for (let j = 0; j < n; j += 1) acc += samples[i + j] * samples[i + j];
+    frames.push({ i, rms: Math.sqrt(acc / n) });
+  }
+  const peak = frames.reduce((m, f) => Math.max(m, f.rms), 0);
+  if (peak === 0) return samples.length;
+
+  const isLoud = (f) => f.rms >= peak * peakRatio;
+  const isQuiet = (f) => f.rms < peak * silenceRatio;
+
+  let speechRunMs = 0;
+  for (let i = 0; i < frames.length; i += 1) {
+    speechRunMs = isLoud(frames[i]) ? speechRunMs + hopMs : 0;
+    if (speechRunMs < minSpeechMs) continue;
+
+    let quietMs = 0;
+    for (let j = i + 1; j < frames.length; j += 1) {
+      if (isQuiet(frames[j]) || frames[j].rms < peak * peakRatio) quietMs += hopMs;
+      else quietMs = 0;
+      if (quietMs < minGapMs) continue;
+
+      let loudTailFrames = 0;
+      for (let k = j + 1; k < frames.length; k += 1) {
+        if (isLoud(frames[k])) loudTailFrames += 1;
+      }
+      // Terminal spike only — not speech after a mid-word pause.
+      if (loudTailFrames > 2) continue;
+
+      const trailingMs = ((samples.length - (frames[i].i + hop)) / sr) * 1000;
+      if (trailingMs < minGapMs) continue;
+
+      const cut = frames[i].i + hop + Math.round(sr * (padMs / 1000));
+      return Math.min(samples.length, cut);
+    }
+  }
+  return samples.length;
+}
+
+/**
+ * Long quiet run from the file end (optional terminal spike), then speech.
+ */
+export function findTerminalTailCutSample(
+  samples,
+  sr,
+  {
+    hopMs = 10,
+    peakRatio = 0.02,
+    minTailQuietMs = 300,
+    padMs = 80,
+    maxTerminalLoudFrames = 2,
+  } = {},
+) {
+  const hop = Math.max(1, Math.round(sr * (hopMs / 1000)));
+  const frames = [];
+  for (let i = 0; i < samples.length; i += hop) {
+    let acc = 0;
+    const n = Math.min(hop, samples.length - i);
+    for (let j = 0; j < n; j += 1) acc += samples[i + j] * samples[i + j];
+    frames.push({ i, rms: Math.sqrt(acc / n) });
+  }
+  const peak = frames.reduce((m, f) => Math.max(m, f.rms), 0);
+  if (peak === 0) return samples.length;
+  const isLoud = (f) => f.rms >= peak * peakRatio;
+
+  let i = frames.length - 1;
+  let terminalLoud = 0;
+  while (i >= 0 && isLoud(frames[i]) && terminalLoud < maxTerminalLoudFrames) {
+    terminalLoud += 1;
+    i -= 1;
+  }
+  let quietFrames = 0;
+  while (i >= 0 && !isLoud(frames[i])) {
+    quietFrames += 1;
+    i -= 1;
+  }
+  if (quietFrames * hopMs < minTailQuietMs || i < 0) return samples.length;
+
+  const cut = frames[i].i + hop + Math.round(sr * (padMs / 1000));
+  return Math.min(samples.length, cut);
+}
+
+/**
+ * Gentle click trim, or a long padded tail when ElevenLabs returns ~3s.
+ */
+export function resolveBackupEndCutSample(
+  samples,
+  sr,
+  { minTrailingTailMs = 350, speechPadMs = 80, longTakeMs = 1200 } = {},
+) {
+  const totalMs = (samples.length / sr) * 1000;
+  let speechCut = samples.length;
+  if (totalMs >= longTakeMs) {
+    speechCut = findTerminalTailCutSample(samples, sr, { padMs: speechPadMs });
+  }
+  if (speechCut >= samples.length) {
+    speechCut = findLongTailCutSample(samples, sr, { padMs: speechPadMs });
+  }
+  const trailingMs = ((samples.length - speechCut) / sr) * 1000;
+  if (speechCut < samples.length && trailingMs >= minTrailingTailMs) {
+    return { cutSample: speechCut, mode: "trailing_tail", trailingMs, totalMs };
+  }
+  const gentle = gentleEndCutSample(samples, sr);
+  const gentleTrailingMs = ((samples.length - gentle) / sr) * 1000;
+  if (gentle < samples.length) {
+    return { cutSample: gentle, mode: "gentle_click", trailingMs: gentleTrailingMs, totalMs };
+  }
+  return { cutSample: samples.length, mode: "none", trailingMs: 0, totalMs };
+}
+
 export function gentleEndCutSample(samples, sr) {
   const hop = Math.max(1, Math.round(sr * 0.01));
   const frames = [];
@@ -184,9 +313,12 @@ export function gentleEndTrim({
   decode = decodePcmToMono16k,
   spawn = spawnSync,
   fadeSec = 0.02,
+  minTrailingTailMs = 350,
+  speechPadMs = 80,
 } = {}) {
   const { pcm, sampleRate: sr } = decode(sourcePath);
-  const cutSample = gentleEndCutSample(pcm, sr);
+  const resolved = resolveBackupEndCutSample(pcm, sr, { minTrailingTailMs, speechPadMs });
+  const cutSample = resolved.cutSample;
   const faded = applyEndFade(pcm, cutSample, sr, fadeSec);
   const wav = join(tmpdir(), `pip-gentle-${process.pid}-${Date.now()}.wav`);
   writePcmWav(wav, sr, faded);
@@ -201,8 +333,10 @@ export function gentleEndTrim({
   }
   return {
     keptMs: (cutSample / sr) * 1000,
-    totalMs: (pcm.length / sr) * 1000,
+    totalMs: resolved.totalMs,
     trimmed: cutSample < pcm.length,
+    trimMode: resolved.mode,
+    trailingMsRemoved: resolved.mode === "trailing_tail" ? resolved.trailingMs : undefined,
   };
 }
 

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import { FRAME_MS } from "./audio_review.mjs";
-import { findDetachedBurstCutSample, rmsFrames } from "./audio_stop_burst.mjs";
+import { findDetachedBurstCutSample, resolveBackupEndCutSample, rmsFrames } from "./audio_stop_burst.mjs";
 
 const SR = 16000;
 
@@ -43,6 +43,24 @@ test("findDetachedBurstCutSample cuts before a short burst after >=25ms quiet", 
   const cut = findDetachedBurstCutSample(pcm, SR);
   assert.ok(cut < pcm.length, "should detect burst");
   assert.ok(cut <= word.length + gap.length + 100, "cut should land near burst start");
+});
+
+test("resolveBackupEndCutSample removes long ElevenLabs tail", () => {
+  const word = tone(420, 0.35);
+  const tail = silence(2500);
+  const spike = tone(20, 0.25, 200);
+  const pcm = concat(word, tail, spike);
+  const resolved = resolveBackupEndCutSample(pcm, SR);
+  assert.equal(resolved.mode, "trailing_tail");
+  assert.ok(resolved.cutSample < pcm.length * 0.3);
+  assert.ok(resolved.trailingMs >= 350);
+});
+
+test("resolveBackupEndCutSample leaves short takes alone", () => {
+  const pcm = concat(tone(700, 0.35), silence(30));
+  const resolved = resolveBackupEndCutSample(pcm, SR);
+  assert.equal(resolved.mode, "none");
+  assert.equal(resolved.cutSample, pcm.length);
 });
 
 test("rmsFrames matches hop sizing", () => {

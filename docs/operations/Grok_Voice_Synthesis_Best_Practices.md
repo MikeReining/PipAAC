@@ -244,6 +244,15 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | teeth | `data/samples/approved/teeth.mp3` | `teeth` | Ear, `batch-18` shortlist |
 | tongue | `data/samples/approved/tongue.mp3` | `tongue` | Ear, `batch-18` shortlist |
 | neck | `data/samples/approved/neck.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `neck_backup.mp3` (silence trimmed from raw). |
+| shoulder | `data/samples/approved/shoulder.mp3` | `shoulder` | Ear, `batch-19` shortlist |
+| arm | `data/samples/approved/arm.mp3` | `arm.` | Ear, `batch-19` shortlist |
+| hand | `data/samples/approved/hand.mp3` | `hand` | Ear, `batch-19` shortlist |
+| fingers | `data/samples/approved/fingers.mp3` | `fingers.` | Ear, `batch-19` shortlist |
+| tummy | `data/samples/approved/tummy.mp3` | `tummy` | Ear, `batch-19` shortlist |
+| back | `data/samples/approved/back.mp3` | `back` | Ear, `batch-19` shortlist |
+| leg | `data/samples/approved/leg.mp3` | `leg.` | Ear, `batch-19` shortlist |
+| foot | `data/samples/approved/foot.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `foot_backup.mp3`. |
+| toes | `data/samples/approved/toes.mp3` | `toes` | Ear, `batch-19` shortlist |
 
 ---
 
@@ -327,7 +336,7 @@ When a Grok take fails the ear or explore shortlist, mint the same **spoken text
 | **Mint CLI** | `npm run catalog:audio:mint-backup -- --spoken bad` |
 | **Exact TTS text** | `npm run catalog:audio:mint-backup -- --spoken bad --text "<emphasis>bad!</emphasis>"` |
 | **Output** | `data/samples/backup-mint/<slug>.mp3` plus `<slug>_raw.mp3` when burst-fix runs |
-| **Post-process** | Gentle end trim by default: fade off a click in the last 80 ms and keep the word. `fix-burst` is opt-in (`--fix-burst`). On *bad* it cut the /d/ and left 0.40 s. The ear kept `aga_bad_light.mp3` (0.90 s). |
+| **Post-process** | Gentle end trim by default: if the take has **≥350 ms** of trailing silence (common ~3 s ElevenLabs pad + end spike), cut after the word + 80 ms pad and fade; otherwise fade off a terminal click in the last 80 ms. `fix-burst` is opt-in (`--fix-burst`). On *bad* it cut the /d/ and left 0.40 s. The ear kept `aga_bad_light.mp3` (0.90 s). |
 | **Secret** | `ELEVENLABS_API_KEY` in the environment only — never commit the key. |
 
 **Process:** Grok explore shortlist first → founder listen → if reject, `mint-backup` with the same `text`/`replace` from the recipe → listen → if good, copy to `data/samples/approved/` and update `manifest.json`. Do not upload to R2 without explicit approval.

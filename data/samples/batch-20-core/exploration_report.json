@@ -1,0 +1,702 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T13:46:40.725Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-20-core",
+  "scored": [
+    {
+      "word": "bathroom",
+      "slug": "bathroom",
+      "variationId": "plain",
+      "file": "bathroom_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/bathroom_plain.mp3",
+      "whisper": " bathroom.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": 39,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bathroom"
+      }
+    },
+    {
+      "word": "bathroom",
+      "slug": "bathroom",
+      "variationId": "period",
+      "file": "bathroom_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/bathroom_period.mp3",
+      "whisper": " bathroom",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": 17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bathroom."
+      }
+    },
+    {
+      "word": "potty",
+      "slug": "potty",
+      "variationId": "plain",
+      "file": "potty_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/potty_plain.mp3",
+      "whisper": " Potty.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 9,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "potty"
+      }
+    },
+    {
+      "word": "potty",
+      "slug": "potty",
+      "variationId": "period",
+      "file": "potty_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/potty_period.mp3",
+      "whisper": " Potty.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -14,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "potty."
+      }
+    },
+    {
+      "word": "toilet",
+      "slug": "toilet",
+      "variationId": "plain",
+      "file": "toilet_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toilet_plain.mp3",
+      "whisper": " Toilet.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 5,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toilet"
+      }
+    },
+    {
+      "word": "toilet",
+      "slug": "toilet",
+      "variationId": "period",
+      "file": "toilet_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toilet_period.mp3",
+      "whisper": " Toilet.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -44,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toilet."
+      }
+    },
+    {
+      "word": "diaper",
+      "slug": "diaper",
+      "variationId": "plain",
+      "file": "diaper_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/diaper_plain.mp3",
+      "whisper": " diaper.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -9,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "diaper"
+      }
+    },
+    {
+      "word": "diaper",
+      "slug": "diaper",
+      "variationId": "period",
+      "file": "diaper_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/diaper_period.mp3",
+      "whisper": " Diaper.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 8,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "diaper."
+      }
+    },
+    {
+      "word": "wet wipe",
+      "slug": "wet-wipe",
+      "variationId": "plain",
+      "file": "wet-wipe_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/wet-wipe_plain.mp3",
+      "whisper": " Wet Wipe",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -19,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wet wipe"
+      }
+    },
+    {
+      "word": "wet wipe",
+      "slug": "wet-wipe",
+      "variationId": "period",
+      "file": "wet-wipe_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/wet-wipe_period.mp3",
+      "whisper": " Wet Wipe.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": 90,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wet wipe."
+      }
+    },
+    {
+      "word": "bath",
+      "slug": "bath",
+      "variationId": "plain",
+      "file": "bath_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/bath_plain.mp3",
+      "whisper": " Bath.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bath"
+      }
+    },
+    {
+      "word": "bath",
+      "slug": "bath",
+      "variationId": "period",
+      "file": "bath_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/bath_period.mp3",
+      "whisper": " Bath.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -61,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bath."
+      }
+    },
+    {
+      "word": "shower",
+      "slug": "shower",
+      "variationId": "plain",
+      "file": "shower_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/shower_plain.mp3",
+      "whisper": " Shower.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "shower"
+      }
+    },
+    {
+      "word": "shower",
+      "slug": "shower",
+      "variationId": "period",
+      "file": "shower_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/shower_period.mp3",
+      "whisper": " Shower.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -29,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "shower."
+      }
+    },
+    {
+      "word": "soap",
+      "slug": "soap",
+      "variationId": "plain",
+      "file": "soap_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/soap_plain.mp3",
+      "whisper": " Soap",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -39,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "soap"
+      }
+    },
+    {
+      "word": "soap",
+      "slug": "soap",
+      "variationId": "period",
+      "file": "soap_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/soap_period.mp3",
+      "whisper": " Soap.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -57,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "soap."
+      }
+    },
+    {
+      "word": "toothbrush",
+      "slug": "toothbrush",
+      "variationId": "plain",
+      "file": "toothbrush_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toothbrush_plain.mp3",
+      "whisper": " toothbrush.",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -50,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toothbrush"
+      }
+    },
+    {
+      "word": "toothbrush",
+      "slug": "toothbrush",
+      "variationId": "period",
+      "file": "toothbrush_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toothbrush_period.mp3",
+      "whisper": " toothbrush.",
+      "score": 55,
+      "notes": [
+        "tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": true,
+      "pitchSlopeHz": -21,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toothbrush."
+      }
+    },
+    {
+      "word": "toothpaste",
+      "slug": "toothpaste",
+      "variationId": "plain",
+      "file": "toothpaste_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toothpaste_plain.mp3",
+      "whisper": " Toothpaste.",
+      "score": 70,
+      "notes": [
+        "consonant_release",
+        "echo_return"
+      ],
+      "durMs": 1010,
+      "tailBurst": true,
+      "pitchSlopeHz": -74,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toothpaste"
+      }
+    },
+    {
+      "word": "toothpaste",
+      "slug": "toothpaste",
+      "variationId": "period",
+      "file": "toothpaste_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toothpaste_period.mp3",
+      "whisper": " Toothpaste",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 1080,
+      "tailBurst": true,
+      "pitchSlopeHz": -39,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "toothpaste."
+      }
+    },
+    {
+      "word": "toothbrush",
+      "slug": "toothbrush",
+      "variationId": "backup",
+      "file": "toothbrush_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toothbrush_backup.mp3",
+      "whisper": " toothbrush.",
+      "score": -50,
+      "notes": [
+        "too_long",
+        "gate_activity_after_silence",
+        "no_tail_burst",
+        "residue_shelf",
+        "echo_return"
+      ],
+      "durMs": 1360,
+      "tailBurst": false,
+      "pitchSlopeHz": -103,
+      "gate": "review",
+      "body": {
+        "text": "toothbrush"
+      },
+      "isBackup": true
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "bath",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "bathroom",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "diaper",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "potty",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "shower",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "soap",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "toilet",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "toothbrush",
+      "variationId": "plain",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "toothpaste",
+      "variationId": "period",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "wet wipe",
+      "variationId": "period",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "bath",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/bath_plain.mp3",
+      "shortlistFile": "shortlist/bath_recommended.mp3",
+      "score": 125,
+      "whisper": " Bath.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "bathroom",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/bathroom_plain.mp3",
+      "shortlistFile": "shortlist/bathroom_recommended.mp3",
+      "score": 110,
+      "whisper": " bathroom.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "diaper",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/diaper_period.mp3",
+      "shortlistFile": "shortlist/diaper_recommended.mp3",
+      "score": 125,
+      "whisper": " Diaper.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "potty",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/potty_plain.mp3",
+      "shortlistFile": "shortlist/potty_recommended.mp3",
+      "score": 125,
+      "whisper": " Potty.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "shower",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/shower_plain.mp3",
+      "shortlistFile": "shortlist/shower_recommended.mp3",
+      "score": 125,
+      "whisper": " Shower.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "soap",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/soap_period.mp3",
+      "shortlistFile": "shortlist/soap_recommended.mp3",
+      "score": 125,
+      "whisper": " Soap.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "toilet",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toilet_plain.mp3",
+      "shortlistFile": "shortlist/toilet_recommended.mp3",
+      "score": 125,
+      "whisper": " Toilet.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "toothbrush",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toothbrush_plain.mp3",
+      "shortlistFile": "shortlist/toothbrush_recommended.mp3",
+      "score": 70,
+      "whisper": " toothbrush.",
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ]
+    },
+    {
+      "word": "toothpaste",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/toothpaste_period.mp3",
+      "shortlistFile": "shortlist/toothpaste_recommended.mp3",
+      "score": 110,
+      "whisper": " Toothpaste",
+      "notes": [
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "wet wipe",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-20-core/takes/wet-wipe_period.mp3",
+      "shortlistFile": "shortlist/wet-wipe_recommended.mp3",
+      "score": 110,
+      "whisper": " Wet Wipe.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

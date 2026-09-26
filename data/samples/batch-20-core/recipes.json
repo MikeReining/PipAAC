@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-20-core",
+  "description": "Bathroom and hygiene words after batch-19 (lexicon slots 158–167). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "bathroom", "slug": "bathroom", "spokenForGate": "bathroom", "whisperMustMatch": ["bathroom"], "variations": [{ "id": "plain", "body": { "text": "bathroom" } }, { "id": "period", "body": { "text": "bathroom." } }] },
+    { "word": "potty", "slug": "potty", "spokenForGate": "potty", "whisperMustMatch": ["potty"], "variations": [{ "id": "plain", "body": { "text": "potty" } }, { "id": "period", "body": { "text": "potty." } }] },
+    { "word": "toilet", "slug": "toilet", "spokenForGate": "toilet", "whisperMustMatch": ["toilet"], "variations": [{ "id": "plain", "body": { "text": "toilet" } }, { "id": "period", "body": { "text": "toilet." } }] },
+    { "word": "diaper", "slug": "diaper", "spokenForGate": "diaper", "whisperMustMatch": ["diaper"], "variations": [{ "id": "plain", "body": { "text": "diaper" } }, { "id": "period", "body": { "text": "diaper." } }] },
+    { "word": "wet wipe", "slug": "wet-wipe", "spokenForGate": "wet wipe", "whisperMustMatch": ["wet wipe", "wipe"], "variations": [{ "id": "plain", "body": { "text": "wet wipe" } }, { "id": "period", "body": { "text": "wet wipe." } }] },
+    { "word": "bath", "slug": "bath", "spokenForGate": "bath", "whisperMustMatch": ["bath"], "variations": [{ "id": "plain", "body": { "text": "bath" } }, { "id": "period", "body": { "text": "bath." } }] },
+    { "word": "shower", "slug": "shower", "spokenForGate": "shower", "whisperMustMatch": ["shower"], "variations": [{ "id": "plain", "body": { "text": "shower" } }, { "id": "period", "body": { "text": "shower." } }] },
+    { "word": "soap", "slug": "soap", "spokenForGate": "soap", "whisperMustMatch": ["soap"], "variations": [{ "id": "plain", "body": { "text": "soap" } }, { "id": "period", "body": { "text": "soap." } }] },
+    { "word": "toothbrush", "slug": "toothbrush", "spokenForGate": "toothbrush", "whisperMustMatch": ["toothbrush"], "variations": [{ "id": "plain", "body": { "text": "toothbrush" } }, { "id": "period", "body": { "text": "toothbrush." } }] },
+    { "word": "toothpaste", "slug": "toothpaste", "spokenForGate": "toothpaste", "whisperMustMatch": ["toothpaste"], "variations": [{ "id": "plain", "body": { "text": "toothpaste" } }, { "id": "period", "body": { "text": "toothpaste." } }] }
+  ]
+}
