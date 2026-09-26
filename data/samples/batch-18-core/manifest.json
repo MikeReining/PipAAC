@@ -1,0 +1,280 @@
+[
+  {
+    "file": "takes/head_plain.mp3",
+    "word": "head",
+    "variation": "plain",
+    "text": "head",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " head",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/head_period.mp3",
+    "word": "head",
+    "variation": "period",
+    "text": "head.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " head",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/face_plain.mp3",
+    "word": "face",
+    "variation": "plain",
+    "text": "face",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Face.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/face_period.mp3",
+    "word": "face",
+    "variation": "period",
+    "text": "face.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Face.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hair_plain.mp3",
+    "word": "hair",
+    "variation": "plain",
+    "text": "hair",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " hair.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hair_period.mp3",
+    "word": "hair",
+    "variation": "period",
+    "text": "hair.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " hair",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/eye_plain.mp3",
+    "word": "eye",
+    "variation": "plain",
+    "text": "eye",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " I",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/eye_period.mp3",
+    "word": "eye",
+    "variation": "period",
+    "text": "eye.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " I",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/ear_plain.mp3",
+    "word": "ear",
+    "variation": "plain",
+    "text": "ear",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Ear",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/ear_period.mp3",
+    "word": "ear",
+    "variation": "period",
+    "text": "ear.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Ear.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/nose_plain.mp3",
+    "word": "nose",
+    "variation": "plain",
+    "text": "nose",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Nose",
+    "notes": [
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/nose_period.mp3",
+    "word": "nose",
+    "variation": "period",
+    "text": "nose.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " nose",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/mouth_plain.mp3",
+    "word": "mouth",
+    "variation": "plain",
+    "text": "mouth",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Mouth.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/mouth_period.mp3",
+    "word": "mouth",
+    "variation": "period",
+    "text": "mouth.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Mouth",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/teeth_plain.mp3",
+    "word": "teeth",
+    "variation": "plain",
+    "text": "teeth",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " teeth",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/teeth_period.mp3",
+    "word": "teeth",
+    "variation": "period",
+    "text": "teeth.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " teeth",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tongue_plain.mp3",
+    "word": "tongue",
+    "variation": "plain",
+    "text": "tongue",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Tongue",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tongue_period.mp3",
+    "word": "tongue",
+    "variation": "period",
+    "text": "tongue.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Tongue.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/neck_plain.mp3",
+    "word": "neck",
+    "variation": "plain",
+    "text": "neck",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " neck",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/neck_period.mp3",
+    "word": "neck",
+    "variation": "period",
+    "text": "neck.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " neck",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-18-core",
+  "description": "Next body words by lexicon slot after batch-17. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "head", "slug": "head", "spokenForGate": "head", "whisperMustMatch": ["head"], "variations": [{ "id": "plain", "body": { "text": "head" } }, { "id": "period", "body": { "text": "head." } }] },
+    { "word": "face", "slug": "face", "spokenForGate": "face", "whisperMustMatch": ["face"], "variations": [{ "id": "plain", "body": { "text": "face" } }, { "id": "period", "body": { "text": "face." } }] },
+    { "word": "hair", "slug": "hair", "spokenForGate": "hair", "whisperMustMatch": ["hair"], "variations": [{ "id": "plain", "body": { "text": "hair" } }, { "id": "period", "body": { "text": "hair." } }] },
+    { "word": "eye", "slug": "eye", "spokenForGate": "eye", "whisperMustMatch": ["eye", "i"], "variations": [{ "id": "plain", "body": { "text": "eye" } }, { "id": "period", "body": { "text": "eye." } }] },
+    { "word": "ear", "slug": "ear", "spokenForGate": "ear", "whisperMustMatch": ["ear"], "variations": [{ "id": "plain", "body": { "text": "ear" } }, { "id": "period", "body": { "text": "ear." } }] },
+    { "word": "nose", "slug": "nose", "spokenForGate": "nose", "whisperMustMatch": ["nose"], "variations": [{ "id": "plain", "body": { "text": "nose" } }, { "id": "period", "body": { "text": "nose." } }] },
+    { "word": "mouth", "slug": "mouth", "spokenForGate": "mouth", "whisperMustMatch": ["mouth"], "variations": [{ "id": "plain", "body": { "text": "mouth" } }, { "id": "period", "body": { "text": "mouth." } }] },
+    { "word": "teeth", "slug": "teeth", "spokenForGate": "teeth", "whisperMustMatch": ["teeth"], "variations": [{ "id": "plain", "body": { "text": "teeth" } }, { "id": "period", "body": { "text": "teeth." } }] },
+    { "word": "tongue", "slug": "tongue", "spokenForGate": "tongue", "whisperMustMatch": ["tongue"], "variations": [{ "id": "plain", "body": { "text": "tongue" } }, { "id": "period", "body": { "text": "tongue." } }] },
+    { "word": "neck", "slug": "neck", "spokenForGate": "neck", "whisperMustMatch": ["neck"], "variations": [{ "id": "plain", "body": { "text": "neck" } }, { "id": "period", "body": { "text": "neck." } }] }
+  ]
+}

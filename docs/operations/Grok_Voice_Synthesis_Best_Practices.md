@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*, *smoothie*, *bread*, *oatmeal*, *waffle*, *bagel*, *butter*, *jam*, *syrup*, *macaroni*, *hot dog*, *burger*, *soup*, *snack*, *chips*, *cracker*, *pretzel*, *yogurt*, *ice cream*, *popsicle*, *cake*, *muffin*, *donut*, *fruit*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*, *toast*, *cereal*, *pancake*, *egg*, *sandwich*, *chicken*, *nuggets*, *fish*, *cookie*, *popcorn*, *candy*. *bad*, *pizza*, *pasta*, *cheese*, *meat*, *rice*, and *fruit snack* are ElevenLabs Aga backups. *pizza* and *pasta* keep the raw file. *cheese*, *meat*, and *rice* keep the gentle-trim file. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*, *smoothie*, *bread*, *oatmeal*, *waffle*, *bagel*, *butter*, *jam*, *syrup*, *macaroni*, *hot dog*, *burger*, *soup*, *snack*, *chips*, *cracker*, *pretzel*, *yogurt*, *ice cream*, *popsicle*, *cake*, *muffin*, *donut*, *fruit*, *banana*, *grapes*, *watermelon*, *carrot*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*, *toast*, *cereal*, *pancake*, *egg*, *sandwich*, *chicken*, *nuggets*, *fish*, *cookie*, *popcorn*, *candy*, *orange*, *broccoli*, *corn*, *body*. *bad*, *pizza*, *pasta*, *cheese*, *meat*, *rice*, *fruit snack*, *apple*, and *strawberry* are ElevenLabs Aga backups. *pizza* and *pasta* keep the raw file. *cheese*, *meat*, and *rice* keep the gentle-trim file. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
 
 ### Rejected payloads
 
@@ -224,6 +224,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | muffin | `data/samples/approved/muffin.mp3` | `muffin` | Ear, `batch-16` shortlist |
 | donut | `data/samples/approved/donut.mp3` | `donut` | Ear, `batch-16` shortlist |
 | fruit | `data/samples/approved/fruit.mp3` | `fruit` | Ear, `batch-16` shortlist |
+| apple | `data/samples/approved/apple.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `apple_backup.mp3`. |
+| banana | `data/samples/approved/banana.mp3` | `banana` | Ear, `batch-17` shortlist |
+| strawberry | `data/samples/approved/strawberry.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `strawberry_backup.mp3`. |
+| orange | `data/samples/approved/orange.mp3` | `orange.` | Ear, `batch-17` shortlist |
+| grapes | `data/samples/approved/grapes.mp3` | `grapes` | Ear, `batch-17` shortlist |
+| watermelon | `data/samples/approved/watermelon.mp3` | `watermelon` | Ear, `batch-17` shortlist |
+| carrot | `data/samples/approved/carrot.mp3` | `carrot` | Ear, `batch-17` shortlist |
+| broccoli | `data/samples/approved/broccoli.mp3` | `broccoli.` | Ear, `batch-17` shortlist |
+| corn | `data/samples/approved/corn.mp3` | `corn.` | Ear, `batch-17` shortlist |
+| body | `data/samples/approved/body.mp3` | `body.` | Ear, `batch-17` shortlist |
 
 ---
 

@@ -1,0 +1,586 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T13:17:24.915Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-18-core",
+  "scored": [
+    {
+      "word": "head",
+      "slug": "head",
+      "variationId": "plain",
+      "file": "head_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/head_plain.mp3",
+      "whisper": " head",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -42,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "head"
+      }
+    },
+    {
+      "word": "head",
+      "slug": "head",
+      "variationId": "period",
+      "file": "head_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/head_period.mp3",
+      "whisper": " head",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -38,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "head."
+      }
+    },
+    {
+      "word": "face",
+      "slug": "face",
+      "variationId": "plain",
+      "file": "face_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/face_plain.mp3",
+      "whisper": " Face.",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -54,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "face"
+      }
+    },
+    {
+      "word": "face",
+      "slug": "face",
+      "variationId": "period",
+      "file": "face_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/face_period.mp3",
+      "whisper": " Face.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -56,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "face."
+      }
+    },
+    {
+      "word": "hair",
+      "slug": "hair",
+      "variationId": "plain",
+      "file": "hair_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/hair_plain.mp3",
+      "whisper": " hair.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -30,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hair"
+      }
+    },
+    {
+      "word": "hair",
+      "slug": "hair",
+      "variationId": "period",
+      "file": "hair_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/hair_period.mp3",
+      "whisper": " hair",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -18,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hair."
+      }
+    },
+    {
+      "word": "eye",
+      "slug": "eye",
+      "variationId": "plain",
+      "file": "eye_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/eye_plain.mp3",
+      "whisper": " I",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -42,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "eye"
+      }
+    },
+    {
+      "word": "eye",
+      "slug": "eye",
+      "variationId": "period",
+      "file": "eye_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/eye_period.mp3",
+      "whisper": " I",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -7,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "eye."
+      }
+    },
+    {
+      "word": "ear",
+      "slug": "ear",
+      "variationId": "plain",
+      "file": "ear_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/ear_plain.mp3",
+      "whisper": " Ear",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -56,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "ear"
+      }
+    },
+    {
+      "word": "ear",
+      "slug": "ear",
+      "variationId": "period",
+      "file": "ear_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/ear_period.mp3",
+      "whisper": " Ear.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -84,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "ear."
+      }
+    },
+    {
+      "word": "nose",
+      "slug": "nose",
+      "variationId": "plain",
+      "file": "nose_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/nose_plain.mp3",
+      "whisper": " Nose",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -55,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "nose"
+      }
+    },
+    {
+      "word": "nose",
+      "slug": "nose",
+      "variationId": "period",
+      "file": "nose_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/nose_period.mp3",
+      "whisper": " nose",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 910,
+      "tailBurst": false,
+      "pitchSlopeHz": -35,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "nose."
+      }
+    },
+    {
+      "word": "mouth",
+      "slug": "mouth",
+      "variationId": "plain",
+      "file": "mouth_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/mouth_plain.mp3",
+      "whisper": " Mouth.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -49,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "mouth"
+      }
+    },
+    {
+      "word": "mouth",
+      "slug": "mouth",
+      "variationId": "period",
+      "file": "mouth_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/mouth_period.mp3",
+      "whisper": " Mouth",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -41,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "mouth."
+      }
+    },
+    {
+      "word": "teeth",
+      "slug": "teeth",
+      "variationId": "plain",
+      "file": "teeth_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/teeth_plain.mp3",
+      "whisper": " teeth",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -92,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "teeth"
+      }
+    },
+    {
+      "word": "teeth",
+      "slug": "teeth",
+      "variationId": "period",
+      "file": "teeth_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/teeth_period.mp3",
+      "whisper": " teeth",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -59,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "teeth."
+      }
+    },
+    {
+      "word": "tongue",
+      "slug": "tongue",
+      "variationId": "plain",
+      "file": "tongue_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/tongue_plain.mp3",
+      "whisper": " Tongue",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -64,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tongue"
+      }
+    },
+    {
+      "word": "tongue",
+      "slug": "tongue",
+      "variationId": "period",
+      "file": "tongue_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/tongue_period.mp3",
+      "whisper": " Tongue.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -23,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tongue."
+      }
+    },
+    {
+      "word": "neck",
+      "slug": "neck",
+      "variationId": "plain",
+      "file": "neck_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/neck_plain.mp3",
+      "whisper": " neck",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "neck"
+      }
+    },
+    {
+      "word": "neck",
+      "slug": "neck",
+      "variationId": "period",
+      "file": "neck_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/neck_period.mp3",
+      "whisper": " neck",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -19,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "neck."
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "ear",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/ear_period.mp3",
+      "shortlistFile": "shortlist/ear_recommended.mp3",
+      "score": 110,
+      "whisper": " Ear.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "eye",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/eye_period.mp3",
+      "shortlistFile": "shortlist/eye_recommended.mp3",
+      "score": 125,
+      "whisper": " I",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "face",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/face_period.mp3",
+      "shortlistFile": "shortlist/face_recommended.mp3",
+      "score": 125,
+      "whisper": " Face.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "hair",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/hair_plain.mp3",
+      "shortlistFile": "shortlist/hair_recommended.mp3",
+      "score": 125,
+      "whisper": " hair.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "head",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/head_period.mp3",
+      "shortlistFile": "shortlist/head_recommended.mp3",
+      "score": 125,
+      "whisper": " head",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "mouth",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/mouth_plain.mp3",
+      "shortlistFile": "shortlist/mouth_recommended.mp3",
+      "score": 125,
+      "whisper": " Mouth.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "neck",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/neck_plain.mp3",
+      "shortlistFile": "shortlist/neck_recommended.mp3",
+      "score": 125,
+      "whisper": " neck",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "nose",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/nose_period.mp3",
+      "shortlistFile": "shortlist/nose_recommended.mp3",
+      "score": 125,
+      "whisper": " nose",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "teeth",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/teeth_plain.mp3",
+      "shortlistFile": "shortlist/teeth_recommended.mp3",
+      "score": 125,
+      "whisper": " teeth",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "tongue",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-18-core/takes/tongue_plain.mp3",
+      "shortlistFile": "shortlist/tongue_recommended.mp3",
+      "score": 125,
+      "whisper": " Tongue",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

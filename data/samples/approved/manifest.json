@@ -1217,6 +1217,88 @@
       "text": "fruit",
       "replace": null,
       "basis": "ear, batch-16 shortlist"
+    },
+    {
+      "word": "apple",
+      "file": "apple.mp3",
+      "source": "data/samples/batch-17-core/takes/apple_backup.mp3",
+      "text": "apple",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "banana",
+      "file": "banana.mp3",
+      "source": "data/samples/batch-17-core/takes/banana_plain.mp3",
+      "text": "banana",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "strawberry",
+      "file": "strawberry.mp3",
+      "source": "data/samples/batch-17-core/takes/strawberry_backup.mp3",
+      "text": "strawberry",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "orange",
+      "file": "orange.mp3",
+      "source": "data/samples/batch-17-core/takes/orange_period.mp3",
+      "text": "orange.",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "grapes",
+      "file": "grapes.mp3",
+      "source": "data/samples/batch-17-core/takes/grapes_plain.mp3",
+      "text": "grapes",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "watermelon",
+      "file": "watermelon.mp3",
+      "source": "data/samples/batch-17-core/takes/watermelon_plain.mp3",
+      "text": "watermelon",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "carrot",
+      "file": "carrot.mp3",
+      "source": "data/samples/batch-17-core/takes/carrot_plain.mp3",
+      "text": "carrot",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "broccoli",
+      "file": "broccoli.mp3",
+      "source": "data/samples/batch-17-core/takes/broccoli_period.mp3",
+      "text": "broccoli.",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "corn",
+      "file": "corn.mp3",
+      "source": "data/samples/batch-17-core/takes/corn_period.mp3",
+      "text": "corn.",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
+    },
+    {
+      "word": "body",
+      "file": "body.mp3",
+      "source": "data/samples/batch-17-core/takes/body_period.mp3",
+      "text": "body.",
+      "replace": null,
+      "basis": "ear, batch-17 shortlist"
     }
   ],
   "rejected": [
