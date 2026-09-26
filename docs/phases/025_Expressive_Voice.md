@@ -37,6 +37,11 @@ is three more feelings than any AAC user has today.
 10. **No "say it louder" on a second ▶.** The founder tested the `<loud>`
     formula: not audibly different enough. Not built.
 
+*(The v3 designer spec sketched different behavior — faces appearing only
+after 3+ words and an automatic feeling on ▶ for "I + feeling". This doc's
+decisions 4 and 6 are the ruling ones: faces from the first word, suggestion
+only, ▶ always neutral.)*
+
 ## What giving up slot 4 costs (measured 2026-09-25)
 
 Held-out CHILDES, the current smart bar (5% rule), how often the child's
@@ -70,10 +75,18 @@ Smart bar:     [ tile ] [ tile ] [ tile ] [ 😊 ● | 😢 | 😠 ]
   last one). Word suggestions fill the slots before it, as today. In group
   mode the faces stay in the same place.
 - **Order inside the slot, left to right:** Happy, Sad, Angry. Fixed.
-- **Pictures:** the catalog's *happy* and *sad* face pictures
-  (`symbols/happy.png`, `symbols/sad.png`). *Angry* gets one new drawing in
-  the same style: the current `symbols/angry.png` is a different drawing (its
-  face sits off-center). Drawn under the art rule: one image, founder review.
+- **Pictures:** two candidate asset sets — confirm which ships.
+  - Catalog word pictures: *happy* and *sad* faces (`symbols/happy.png`,
+    `symbols/sad.png`). *Angry* gets one new drawing in the same style: the
+    current `symbols/angry.png` is a different drawing (its face sits
+    off-center). Drawn under the art rule: one image, founder review.
+  - Designer face icons (v3 drop, 2026-09-25): `public/icons/voice-happy.svg`,
+    `public/icons/voice-sad.svg`, `public/icons/voice-angry.svg`, with
+    selected-state variants in `public/icons/selected/`. The v3 spec styles
+    them like the transform buttons (white fill, ink border) "so they never
+    read as word cards", and puts them under the same pressed-while-speaking
+    state as ✨❓⏪▶⏩ (023 § 1h). **Not yet reconciled** with the
+    catalog-picture plan — founder picks.
 - **Each face is its own button** with a label for screen readers and
   switches: "Say it happy", "Say it sad", "Say it angry". In switch scanning
   they come last in the strip.

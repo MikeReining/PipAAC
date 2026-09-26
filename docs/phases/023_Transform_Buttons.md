@@ -1,31 +1,159 @@
 # 023 — Transform Buttons: Past, Question, Future, and Fix It
 
-**Status:** proof of concept proven (2026-09-25). Founder: "a category
-breakthrough". Top-bar layout previewed in the app (§ 4, not wired yet).
-**Truth owner:** the model (`qwen/qwen3.8-27b` via Groq, **temperature 0**)
-with the short prompts in § 3, plus the live test results recorded here.
+**Status:** functional spec finalized with the designer (2026-09-25, § 1).
+Model proof of concept proven the same day (founder: "a category
+breakthrough"). Buttons not yet wired to the model.
+**Truth owner:** § 1 is the finalized functional spec (founder + designer).
+Model behavior is owned by `qwen/qwen3.8-27b` via Groq at **temperature 0**
+with the prompts in § 3 and the live test results recorded there.
 **Why this phase exists:** AAC communicators construct telegraphic thoughts (*"I go park"*, *"you want juice"*, *"Leo fall down"*) because physical navigation and motor fatigue make typing 8-word sentences exhausting. Previous attempts to predict words ahead of time (JEV in the smart bar) failed because guessing intent on every keystroke in <50ms produces cognitive clutter. Transform buttons do the opposite: **the child supplies the full semantic intent, taps a button, and the model supplies the grammatical and social packaging.**
 
 ---
 
-## 1. Architectural Principles: Keep It Dead Simple
+## 1. Functional Spec (founder + designer, 2026-09-25)
 
-1. **Trust the model. No validators, no deterministic police** (founder
-   ruling, 2026-09-25).
-   - We do not run lemma checkers, regex guards, or hand-coded grammatical rulebooks.
-   - When the model gets something wrong, fix the prompt or a setting, then show
-     the founder the proposed change before retesting. That is how the one real
-     failure was fixed (§ 3a).
-   - **Temperature 0** on every call. The same sentence and button always give
-     the same answer, so she can learn what each button does.
-2. **Transform on demand, not continuous prediction.**
-   - Runs only when the user taps an explicit action button: ⏪ Past, ❓ Question, ⏩ Future, or ✨ Fix It.
-   - The user chooses the stance; the model does not guess unprompted.
-3. **Auto-speak on tap (Audio is the interface).**
-   - Emergent AAC communicators are largely pre-readers. Silent text reorganization on a screen provides zero feedback to a child who cannot read.
-   - Because response latency is **~70–90 ms**, auto-speaking feels native, like tapping any speech tile.
-   - Delivers immediate **auditory recasting** (the gold standard in SLP intervention: child signals *"I go park"*, device speaks *"I went to the park."*).
-   - The sentence bar updates visually for communication partners and emergent print awareness.
+### Core principles
+
+- Users are pre-literate children. No control may rely on text labels.
+- Every press of a sentence-transform or speak button produces audio of the
+  resulting sentence. The user always hears what they got.
+- Each button always does the same thing, regardless of current state. No
+  toggles.
+- Control positions never change, hide, or reorder (motor planning).
+- Every control has a visible "selected/active" state where noted below.
+
+### Top row, left to right
+
+```text
+[⚙] │ He goes ................. ⌫ ✕ │ [✨] [❓] [⏪] [▶] [⏩]
+Settings    message bar: symbols +    Fix  Qstn Past Play Ftr
+            words; Backspace+Clear
+            inside, right end
+```
+
+#### 1a. Message bar
+
+- Shows the sentence as symbols + words.
+- Backspace and Clear (✕) live **inside** the bar, at its right end.
+- **Backspace:** removes the last word. Icon: `public/icons/backspace.svg`.
+- **Clear (✕):** empties the bar in one tap. No confirmation dialog. Shows
+  an undo pill (`public/icons/undo-clear.svg`) for **5 s**; tapping it
+  restores the previous sentence **including its tense/question state**.
+- The trash can icon is removed. Clear icon: `public/icons/clear-x.svg`.
+
+#### 1b. ✨ Fix (magic wand)
+
+- AI corrects the grammar of the current sentence and speaks it.
+  *"He goes school"* → *"He goes to school."*
+- Pressing again just re-speaks the fixed sentence.
+- Icon: `public/icons/fix-wand.svg`.
+
+#### 1c. ❓ Question
+
+- Turns the current sentence into a question, **keeping the current tense**,
+  and speaks it.
+  - Present: *"He goes school"* → *"Is he going to school?"*
+  - Past: *"He went to school"* → *"Did he go to school?"*
+  - Future: *"He is going to school"* → *"Is he going to school?"* — for
+    "go" + a place the question keeps the short fused form a child would
+    say; it is never *"Is he going to go to school?"* (§ 3, Mode 2)
+- One-way change. There is no way back to a statement except backspacing or
+  clearing and rebuilding.
+- Pressing again just re-speaks the question.
+- Stays in the selected state while the sentence is a question.
+- Icon: `public/icons/question.svg`.
+
+#### 1d. Tense trio: ⏪ Past / ▶ Play (Present) / ⏩ Future
+
+- Works as a **three-position switch**. Exactly one is selected at all times.
+  **Play (present) is the default.**
+- Each button sets the sentence to its tense, then speaks it:
+  - ⏪ Past (rewind): *"He went to school."*
+  - ▶ Play (present): *"He goes to school."*
+  - ⏩ Future (forward): *"He is going to school."* ("going to" is the
+    future form; kids rarely say "will" — see § 3, Mode 3)
+- **Play is also the speak button.** When the sentence is already present, it
+  just speaks it.
+- Pressing an already-selected tense re-speaks the sentence. Nothing else
+  changes.
+- Tense and question combine:
+  *"Did he go to school?"* / *"Is he going to school?"* / future question.
+- **Changing tense never removes the question. The question never resets the
+  tense.**
+- Icons: `public/icons/tense-past.svg`, `public/icons/tense-now-play.svg`,
+  `public/icons/tense-future.svg`.
+
+#### 1e. ⚙ Settings (gear)
+
+- Replaces the "+" button.
+- Small and visually quiet — no border, `#8a8272` — in the far top-left
+  corner (where the trash can was).
+- Icon: `public/icons/settings-gear.svg`.
+- Protected by a PIN. Only someone with the PIN can:
+  - add or edit words and content
+  - change settings
+
+#### 1f. Smart bar (row below the top row)
+
+- Shows next-word predictions, **or** context-specific smart suggestions (a
+  different algorithm, e.g. pressing "pain" shows pain-related options), **or**
+  nothing when there's no good suggestion.
+- Occupies **8 of the 10 columns** of row 2; Folder & Keyboard take the last
+  two (§ 1g).
+- Empty state shows an empty tray (`#e8e3d6`), no dashed empty slots.
+- Suggestions are styled like word tiles.
+
+#### 1g. Folder & Keyboard
+
+- Replace the "Groups" and "Keyboard" text buttons with icon-only buttons: a
+  folder and a keyboard.
+- Placed at the right end of the smart bar, **1 column each**.
+- Icons (first drafts in the symbol style): `public/icons/folder.svg`,
+  `public/icons/keyboard.svg`. Button fill `#e8e3d6`, border `#5b5348`.
+
+#### 1h. Graphic assets & visual tokens (designer drops, 2026-09-25)
+
+The designer delivered clickable mockups (*Pip Board v2*, *v3*) plus this
+icon set. The 14 chrome icons are in **`public/icons/`** (24×24 viewBox,
+ink `#2a241d`), with ready-made selected-state variants — the same icons in
+`#f6f4ef` for the dark ink button — in **`public/icons/selected/`**:
+
+```text
+settings-gear  backspace  clear-x  undo-clear
+fix-wand  question
+tense-past  tense-now-play  tense-future
+folder  keyboard
+voice-happy  voice-sad  voice-angry   (025's faces — see that doc)
+```
+
+**Pressed / speaking state (v3 spec):** applies to every speaking button
+(Fix, Question, Past, Play, Future, and the three faces). The button goes
+dark (ink fill, `#f6f4ef` icon from `icons/selected/`) on **touch-down** and
+stays dark until the audio finishes. ✨ and the faces return to light
+afterwards; ❓ and the selected tense stay dark (that is their state). Only
+one button is dark-while-speaking at a time — pressing another speaking
+button restarts audio with that one. (To confirm: pressing the dark button
+again while it is speaking stops the audio.)
+
+Visual tokens from the drop:
+
+- Ink `#2a241d` · background `#f6f4ef` · message bar white, border
+  `#d8d4c8` · in-bar Backspace/Clear fill `#efeadf`.
+- Transform buttons: white fill, ~2px-equivalent ink border, radius ≈ 12px.
+  **Selected: ink fill, icon `#f6f4ef`.**
+- ▶ Play is ~1.3× wider than the other transform buttons. Small gap between
+  [✨ ❓] and the tense trio.
+- Font: **Andika Bold**.
+- The mockup's 9 sample symbol PNGs were placeholders — real art comes from
+  the app's art pipeline; its `pip-mark.svg` variant was demo chrome only
+  (existing `public/brand/` marks stand).
+- The designer drop folder was deleted after this capture; `public/icons/`
+  is the shipping home.
+
+#### To be confirmed
+
+- Tapping the message bar may also speak the sentence, as a secondary option
+  alongside Play.
 
 ---
 
@@ -45,14 +173,40 @@ Tested live against Groq's API on 2026-09-25:
 
 ---
 
-## 3. The 4 Transform Modes & Battle-Tested Prompts
+## 3. The Transform Prompts & Battle-Tested Results
+
+**Model rules (founder ruling, 2026-09-25):**
+
+- **Trust the model. No validators, no deterministic police.**
+  - We do not run lemma checkers, regex guards, or hand-coded grammatical rulebooks.
+  - When the model gets something wrong, fix the prompt or a setting, then show
+    the founder the proposed change before retesting. That is how the one real
+    failure was fixed (§ 3a).
+  - **Temperature 0** on every call. The same sentence and button always give
+    the same answer, so she can learn what each button does.
+- **Transform on demand, not continuous prediction.** Runs only when the user
+  taps an explicit action button; the model never guesses unprompted.
+
+**Prompt deltas required by the finalized spec (§ 1) — need retest:**
+
+- The Question prompt must **keep the current tense** (*"He went to school"* →
+  *"Did he go to school?"*, not *"Does he go to school?"*). Wording below is
+  updated accordingly.
+- The tense prompts must **preserve question form** when the bar holds a
+  question, since changing tense never removes it. Add *"If it is a question,
+  keep it a question."* to the ⏪ / ▶ / ⏩ prompts.
+- **"Going to go" collapse (founder ruling, 2026-09-25):** for "go" + a
+  place, the fused form is what children say. CHILDES child lines: fused
+  *"going to school/bed/park/home"* **1,179** vs *"going to go to"* **77**
+  vs *"gonna go to"* **149**. Non-motion verbs keep "going to + VERB"
+  (*"Is he going to eat?"*). Wording added to the ❓ and ⏩ prompts below.
 
 ### Mode 1: ⏪ Past
 Unlocks storytelling and answering *"What did you do today?"* AAC users are typically trapped in base/present forms (*"I eat cake"*, *"she play ball"*).
 
 * **System Prompt:**
   ```text
-  A child using an AAC device is trying to say this. Turn it into past tense. Create the simplest possible past tense sentence given the childs input. Keep exactly what the child means, even if it's rude. Never refuse.
+  A child using an AAC device is trying to say this. Turn it into past tense. Create the simplest possible past tense sentence given the childs input. Keep exactly what the child means, even if it's rude. Never refuse. If it is a question, keep it a question.
   ```
 
 * **Live Test Results:**
@@ -72,9 +226,11 @@ Unlocks storytelling and answering *"What did you do today?"* AAC users are typi
 ### Mode 2: ❓ Question
 AAC communicators spend 95% of their lives answering prompts. Turning statements into questions gives them social agency to initiate interactions (*"Do you want to play?"*, *"Can I have cookie?"*). Punctuation (`?`) also triggers rising intonation in device TTS.
 
+Per spec § 1c, the question keeps the sentence's current tense.
+
 * **System Prompt:**
   ```text
-  A child using an AAC device is trying to say this. Turn it into a question. Create the simplest possible question given the childs input. Keep exactly what the child means, even if it's rude. Never refuse.
+  A child using an AAC device is trying to say this. Turn it into a question, keeping the same tense. Create the simplest possible question given the childs input. Keep exactly what the child means, even if it's rude. Never refuse. If it has "going to go" to a place, shorten it — "Is he going to school?", not "Is he going to go to school?".
   ```
 
 * **Live Test Results:**
@@ -100,10 +256,16 @@ Children speak in plans, excitement, and protests (*"I'm gonna get ice cream"*, 
     - Contracted `'ll`: **10,190**
     - Uncontracted `will`: **7,975** (mostly questions like *"Will you...?"* or stubborn pushback)
   - English expresses child intention through **aspect (`going to`) and present continuous (`is coming`)**, not stiff formal prediction (`will`). Defaulting to `will` makes a 6-year-old sound like a Victorian butler (*"Leo will buy a toy"* vs *"Leo is going to buy a toy"*).
+  - For "go" + a place, children fuse the motion into "going" — the same
+    CHILDES query (child lines): fused *"going to school/bed/park/home"*
+    **1,179** vs *"going to go to"* **77** vs *"gonna go to"* **149**.
+    *"Is he going to go to school?"* is adult bookkeeping; *"Is he going to
+    school?"* is what a child says. Non-motion verbs keep "going to + VERB"
+    (*"Is he going to eat?"* — 338 child aux-questions of that shape).
 
 * **System Prompt:**
   ```text
-  A child using an AAC device is trying to say this. Turn it into natural spoken future tense (how a child speaks, e.g. using "going to"). Create the simplest sentence given the childs input. Keep exactly what the child means, even if it's rude. Never refuse.
+  A child using an AAC device is trying to say this. Turn it into natural spoken future tense (how a child speaks, e.g. using "going to"). Create the simplest sentence given the childs input. Keep exactly what the child means, even if it's rude. Never refuse. If it is a question, keep it a question. For "go" plus a place, say "going to school", never "going to go to school".
   ```
 
 * **Live Test Results:**
@@ -116,9 +278,22 @@ Children speak in plans, excitement, and protests (*"I'm gonna get ice cream"*, 
   | `no go school` | *I will not go to school.* | `I'm not going to school.` | Child protest / refusal future. |
   | `we eat pizza` | *We will eat pizza.* | `We are going to eat pizza.` | Clean conversational future. |
 
+### ▶ Play (Present)
+
+- **Play is the speak button.** On an untransformed present sentence it never
+  goes through the model — it speaks the bar as built.
+- As the middle position of the tense switch, Play also returns a
+  past/future sentence to present (a model call using the present-tense
+  transform), then speaks it.
+
+* **System Prompt (return to present):**
+  ```text
+  A child using an AAC device is trying to say this. Turn it into natural spoken present tense. Create the simplest sentence given the childs input. Keep exactly what the child means, even if it's rude. Never refuse. If it is a question, keep it a question.
+  ```
+
 ---
 
-### Mode 4: ✨ Fix It (One-Step-Up Recast)
+### Mode 4: ✨ Fix (One-Step-Up Recast)
 The classic speech-language pathology "recast": preserve the child's exact meaning and words, but repair agreement, pronoun case, and missing functional glue without adding conversational filler or assuming unstated intent.
 
 * **System Prompt:**
@@ -181,47 +356,50 @@ them yet.
 
 ---
 
-## 4. UI & Implementation Notes
+## 4. Implementation Notes
 
-1. **The top bar (founder layout, 2026-09-25; previewed in the app):**
+1. **Execution flow on tap:**
    ```text
-   [🗑][⌫] │ He is ......................... │ [✨][❓]  [⏪][ ▶ ][⏩]  [+]
-    edit          her sentence                  change      time       parent
-   ```
-   - **▶ Play replaces the speaker icon** and says her sentence as built. It
-     never goes through the model.
-   - **⏪ ▶ ⏩ is a time transport:** past, now, future. Kids already know
-     rewind / play / fast-forward.
-   - ✨ Fix it and ❓ Question sit just left of the transport.
-   - Clear and Backspace moved to the left, next to each other: editing on the
-     left, saying on the right. **+** (Parent corner) stays at the far right.
-   - All five are disabled while the sentence is empty.
-   - Built as a preview in `public/index.html` / `public/board.js`: the four
-     new buttons are not wired to the model yet.
-2. **Execution flow on tap:**
-   ```text
-   Tap ⏪ / ❓ / ⏩ / ✨
+   Tap ✨ / ❓ / ⏪ / ▶ / ⏩
      │
-     ├── 1. Send her sentence to Groq (qwen/qwen3.8-27b, temperature 0) with that button's prompt
-     ├── 2. Show the returned sentence in the bar; the pressed button stays lit
-     └── 3. Speak it immediately (auto-speak)
+     ├── 1. Send the bar's current sentence to Groq (qwen/qwen3.8-27b,
+     │      temperature 0) with that button's prompt — except ▶ on an
+     │      already-present sentence, which speaks without a model call
+     ├── 2. Show the returned sentence in the bar; the button takes/stays
+     │      in its selected state per § 1
+     └── 3. Speak the resulting sentence immediately
    ```
-3. **Auto-speak is on by default** (founder: pre-literate users learn what each
-   button does by hearing it). Setting: *"Auto-speak transformed sentence"*.
-4. **Hiding buttons:** a setting per button. A hidden button leaves its spot
-   empty, so the others never move (motor memory).
-5. **Offline:** ⏪ ❓ ⏩ ✨ grey out. ▶ always works.
+   Every press produces audio (§ 1). A press that changes nothing (Fix on an
+   already-fixed sentence, an already-selected tense, ❓ on an existing
+   question) just re-speaks.
+2. **Selected state lives in the sentence, not the button.**
+   - The tense trio shows which tense the bar currently holds; Play is lit by
+     default.
+   - ❓ is lit while the bar's sentence is a question.
+   - ✨ is momentary — it has no persistent selected state.
+   - Adding a word after a transform edits the transformed sentence; tense
+     and question state are judged from what the bar then holds.
+3. **Empty bar:** all transform buttons and ▶ are disabled while the
+   sentence is empty. Positions never move (§ 1).
+4. **Offline:** ✨ ❓ ⏪ ⏩ and the model side of ▶ grey out. ▶ still speaks
+   the bar as-is — speaking never depends on the network.
+5. **Clear undo:** after ✕ clears the bar, show the undo pill for 5 s;
+   tapping restores the previous sentence including its tense/question
+   state (§ 1a).
+6. **Smart bar and Folder/Keyboard** follow § 1f–1g: suggestions or nothing
+   (no dashed placeholders), icons at the smart bar's right end.
 
 ## 5. Open before building
 
-1. **Voice:** the flow above says device TTS. ▶ speaks her recorded clips. A
-   transformed sentence should sound like the same voice as ▶ (her clips word
-   by word, device voice only for words without a clip), or her voice changes
-   mid-conversation.
+1. **Voice:** ▶ speaks her recorded clips. A transformed sentence should
+   sound like the same voice (her clips word by word, device voice only for
+   words without a clip), or her voice changes mid-conversation.
 2. **Names:** send placeholders for her people's names (*Leo* → PERSON1) and
    swap them back, so names never leave the device.
-3. **Her words stay the source:** each button transforms what *she* built,
-   never the model's last answer. A word she adds after a transform goes onto
-   her own sentence.
-4. **Key:** the Groq key lives in the Worker (`GROQ_API_KEY`), never in the
+3. **Key:** the Groq key lives in the Worker (`GROQ_API_KEY`), never in the
    client; the app calls a Worker route.
+4. **PIN:** where the Settings PIN is created, stored, and recovered (§ 1e).
+5. **Message-bar tap to speak:** marked "to be confirmed" in § 1.
+6. **Prompt retests:** the tense-preserving ❓ wording, the
+   question-preserving tense wording, and the "going to go" collapse
+   wording (§ 3 deltas) are spec-mandated but not yet live-tested.
