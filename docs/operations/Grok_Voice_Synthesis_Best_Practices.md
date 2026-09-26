@@ -44,7 +44,7 @@ IPA goes in `replace`. The text stays the spelled word so the key matches.
 | ow | `<loud>ow</loud>` | none | Both loud takes were great. Kept loud alone. Loud plus emphasis also passed and was not kept. |
 | close | `close` | `{ "close": "/kloʊz/" }` | Ear picked `close_kloz.mp3`. The verb "shut", not the adjective. |
 
-Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*, *smoothie*, *bread*, *oatmeal*, *waffle*, *bagel*, *butter*, *jam*, *syrup*, *macaroni*, *hot dog*, *burger*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*, *toast*, *cereal*, *pancake*, *egg*, *sandwich*, *chicken*, *nuggets*. *bad*, *pizza*, and *pasta* are ElevenLabs Aga backups. *pizza* and *pasta* keep the raw file, not the burst cut. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
+Plain text, no replace, ear-approved: *and*, *I*, *on*, *up*, *or*, *at*, *it*, *is*, *am*, *was*, *off*, *you*, *TV*, *read*, *aunt*, *who*, *one*, *two*, *our*, *hour*, *yes*, *oops*, *my*, *mine*, *she*, *we*, *they*, *this*, *that*, *want*, *like*, *go*, *come*, *get*, *do*, *see*, *look*, *take*, *give*, *help*, *stop*, *eat*, *drink*, *open*, *turn*, *need*, *feel*, *tell*, *think*, *work*, *out*, *down*, *away*, *here*, *there*, *all done*, *big*, *good*, *over*, *under*, *same*, *different*, *some*, *all*, *what*, *why*, *how*, *when*, *but*, *because*, *water*, *milk*, *apple juice*, *chocolate milk*, *smoothie*, *bread*, *oatmeal*, *waffle*, *bagel*, *butter*, *jam*, *syrup*, *macaroni*, *hot dog*, *burger*, *soup*, *snack*, *chips*, *cracker*. Period takes, ear-approved: *minute*, *put*, *no*, *wow*, *me*, *he*, *make*, *play*, *can*, *find*, *wait*, *happy*, *little*, *more*, *with*, *where*, *not*, *please*, *have*, *juice*, *tea*, *toast*, *cereal*, *pancake*, *egg*, *sandwich*, *chicken*, *nuggets*, *fish*, *cookie*, *popcorn*. *bad*, *pizza*, *pasta*, *cheese*, *meat*, and *rice* are ElevenLabs Aga backups. *pizza* and *pasta* keep the raw file. *cheese*, *meat*, and *rice* keep the gentle-trim file. *bad* is the ElevenLabs Aga backup, the gentle trim of `aga_bad_raw.mp3`, not a Grok take.
 
 ### Rejected payloads
 
@@ -204,6 +204,16 @@ These are the files to upload when the catalog moves to `ara`. Nothing has been 
 | nuggets | `data/samples/approved/nuggets.mp3` | `nuggets.` | Ear replaced plain `nuggets` with the period take. |
 | burger | `data/samples/approved/burger.mp3` | `burger` | Ear, `batch-14` shortlist |
 | hot dog | `data/samples/approved/hot-dog.mp3` | `hot dog` | Ear, `batch-14` shortlist |
+| soup | `data/samples/approved/soup.mp3` | `soup` | Ear, `batch-15` shortlist |
+| rice | `data/samples/approved/rice.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `rice_backup.mp3`. |
+| cheese | `data/samples/approved/cheese.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `cheese_backup.mp3`. |
+| meat | `data/samples/approved/meat.mp3` | ElevenLabs Aga | Ear replaced the Grok take with `meat_backup.mp3`. |
+| fish | `data/samples/approved/fish.mp3` | `fish.` | Ear, `batch-15` shortlist |
+| snack | `data/samples/approved/snack.mp3` | `snack` | Ear, `batch-15` shortlist |
+| cracker | `data/samples/approved/cracker.mp3` | `cracker` | Ear, `batch-15` shortlist |
+| cookie | `data/samples/approved/cookie.mp3` | `cookie.` | Ear, `batch-15` shortlist |
+| chips | `data/samples/approved/chips.mp3` | `chips` | Ear, `batch-15` shortlist |
+| popcorn | `data/samples/approved/popcorn.mp3` | `popcorn.` | Ear, `batch-15` shortlist |
 
 ---
 

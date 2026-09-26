@@ -1053,6 +1053,89 @@
       "text": "hot dog",
       "replace": null,
       "basis": "ear, batch-14 shortlist"
+    },
+    {
+      "word": "soup",
+      "file": "soup.mp3",
+      "source": "data/samples/batch-15-core/takes/soup_plain.mp3",
+      "text": "soup",
+      "replace": null,
+      "basis": "ear, batch-15 shortlist"
+    },
+    {
+      "word": "rice",
+      "file": "rice.mp3",
+      "source": "data/samples/batch-15-core/takes/rice_backup.mp3",
+      "text": "rice",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "cheese",
+      "file": "cheese.mp3",
+      "source": "data/samples/batch-15-core/takes/cheese_backup.mp3",
+      "text": "cheese",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "meat",
+      "file": "meat.mp3",
+      "source": "data/samples/batch-15-core/takes/meat_backup.mp3",
+      "text": "meat",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced the Grok take with the Aga backup"
+    },
+    {
+      "word": "fish",
+      "file": "fish.mp3",
+      "source": "data/samples/batch-15-core/takes/fish_period.mp3",
+      "text": "fish.",
+      "replace": null,
+      "basis": "ear, batch-15 shortlist"
+    },
+    {
+      "word": "snack",
+      "file": "snack.mp3",
+      "source": "data/samples/batch-15-core/takes/snack_plain.mp3",
+      "text": "snack",
+      "replace": null,
+      "basis": "ear, batch-15 shortlist"
+    },
+    {
+      "word": "cracker",
+      "file": "cracker.mp3",
+      "source": "data/samples/batch-15-core/takes/cracker_plain.mp3",
+      "text": "cracker",
+      "replace": null,
+      "basis": "ear, batch-15 shortlist"
+    },
+    {
+      "word": "cookie",
+      "file": "cookie.mp3",
+      "source": "data/samples/batch-15-core/takes/cookie_period.mp3",
+      "text": "cookie.",
+      "replace": null,
+      "basis": "ear, batch-15 shortlist"
+    },
+    {
+      "word": "chips",
+      "file": "chips.mp3",
+      "source": "data/samples/batch-15-core/takes/chips_plain.mp3",
+      "text": "chips",
+      "replace": null,
+      "basis": "ear, batch-15 shortlist"
+    },
+    {
+      "word": "popcorn",
+      "file": "popcorn.mp3",
+      "source": "data/samples/batch-15-core/takes/popcorn_period.mp3",
+      "text": "popcorn.",
+      "replace": null,
+      "basis": "ear, batch-15 shortlist"
     }
   ],
   "rejected": [

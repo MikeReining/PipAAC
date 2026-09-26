@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-16-core",
+  "description": "Next food words by lexicon slot after batch-15. Plain and a trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "pretzel", "slug": "pretzel", "spokenForGate": "pretzel", "whisperMustMatch": ["pretzel"], "variations": [{ "id": "plain", "body": { "text": "pretzel" } }, { "id": "period", "body": { "text": "pretzel." } }] },
+    { "word": "yogurt", "slug": "yogurt", "spokenForGate": "yogurt", "whisperMustMatch": ["yogurt", "yoghurt"], "variations": [{ "id": "plain", "body": { "text": "yogurt" } }, { "id": "period", "body": { "text": "yogurt." } }] },
+    { "word": "fruit snack", "slug": "fruit-snack", "spokenForGate": "fruit snack", "whisperMustMatch": ["fruit snack"], "variations": [{ "id": "plain", "body": { "text": "fruit snack" } }, { "id": "period", "body": { "text": "fruit snack." } }] },
+    { "word": "ice cream", "slug": "ice-cream", "spokenForGate": "ice cream", "whisperMustMatch": ["ice cream"], "variations": [{ "id": "plain", "body": { "text": "ice cream" } }, { "id": "period", "body": { "text": "ice cream." } }] },
+    { "word": "popsicle", "slug": "popsicle", "spokenForGate": "popsicle", "whisperMustMatch": ["popsicle"], "variations": [{ "id": "plain", "body": { "text": "popsicle" } }, { "id": "period", "body": { "text": "popsicle." } }] },
+    { "word": "candy", "slug": "candy", "spokenForGate": "candy", "whisperMustMatch": ["candy"], "variations": [{ "id": "plain", "body": { "text": "candy" } }, { "id": "period", "body": { "text": "candy." } }] },
+    { "word": "cake", "slug": "cake", "spokenForGate": "cake", "whisperMustMatch": ["cake"], "variations": [{ "id": "plain", "body": { "text": "cake" } }, { "id": "period", "body": { "text": "cake." } }] },
+    { "word": "muffin", "slug": "muffin", "spokenForGate": "muffin", "whisperMustMatch": ["muffin"], "variations": [{ "id": "plain", "body": { "text": "muffin" } }, { "id": "period", "body": { "text": "muffin." } }] },
+    { "word": "donut", "slug": "donut", "spokenForGate": "donut", "whisperMustMatch": ["donut", "doughnut"], "variations": [{ "id": "plain", "body": { "text": "donut" } }, { "id": "period", "body": { "text": "donut." } }] },
+    { "word": "fruit", "slug": "fruit", "spokenForGate": "fruit", "whisperMustMatch": ["fruit"], "variations": [{ "id": "plain", "body": { "text": "fruit" } }, { "id": "period", "body": { "text": "fruit." } }] }
+  ]
+}

@@ -1,0 +1,277 @@
+[
+  {
+    "file": "takes/pretzel_plain.mp3",
+    "word": "pretzel",
+    "variation": "plain",
+    "text": "pretzel",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Pretzel.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/pretzel_period.mp3",
+    "word": "pretzel",
+    "variation": "period",
+    "text": "pretzel.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Pretzel.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/yogurt_plain.mp3",
+    "word": "yogurt",
+    "variation": "plain",
+    "text": "yogurt",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Yogurt.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/yogurt_period.mp3",
+    "word": "yogurt",
+    "variation": "period",
+    "text": "yogurt.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Yogurt",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fruit-snack_plain.mp3",
+    "word": "fruit snack",
+    "variation": "plain",
+    "text": "fruit snack",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " fruit snack.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fruit-snack_period.mp3",
+    "word": "fruit snack",
+    "variation": "period",
+    "text": "fruit snack.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " fruit snack.",
+    "notes": [
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/ice-cream_plain.mp3",
+    "word": "ice cream",
+    "variation": "plain",
+    "text": "ice cream",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Ice cream.",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/ice-cream_period.mp3",
+    "word": "ice cream",
+    "variation": "period",
+    "text": "ice cream.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Ice cream.",
+    "notes": [
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/popsicle_plain.mp3",
+    "word": "popsicle",
+    "variation": "plain",
+    "text": "popsicle",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Popsicle.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/popsicle_period.mp3",
+    "word": "popsicle",
+    "variation": "period",
+    "text": "popsicle.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Popsicle.",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/candy_plain.mp3",
+    "word": "candy",
+    "variation": "plain",
+    "text": "candy",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Candy.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/candy_period.mp3",
+    "word": "candy",
+    "variation": "period",
+    "text": "candy.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Candy.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cake_plain.mp3",
+    "word": "cake",
+    "variation": "plain",
+    "text": "cake",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cake",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cake_period.mp3",
+    "word": "cake",
+    "variation": "period",
+    "text": "cake.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " cake.",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/muffin_plain.mp3",
+    "word": "muffin",
+    "variation": "plain",
+    "text": "muffin",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Muffin",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/muffin_period.mp3",
+    "word": "muffin",
+    "variation": "period",
+    "text": "muffin.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Muffin",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/donut_plain.mp3",
+    "word": "donut",
+    "variation": "plain",
+    "text": "donut",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Donut.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/donut_period.mp3",
+    "word": "donut",
+    "variation": "period",
+    "text": "donut.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Donut.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fruit_plain.mp3",
+    "word": "fruit",
+    "variation": "plain",
+    "text": "fruit",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " fruit.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/fruit_period.mp3",
+    "word": "fruit",
+    "variation": "period",
+    "text": "fruit.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " fruit",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]

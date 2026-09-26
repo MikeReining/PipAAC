@@ -1,0 +1,582 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T13:06:58.709Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-16-core",
+  "scored": [
+    {
+      "word": "pretzel",
+      "slug": "pretzel",
+      "variationId": "plain",
+      "file": "pretzel_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/pretzel_plain.mp3",
+      "whisper": " Pretzel.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 54,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pretzel"
+      }
+    },
+    {
+      "word": "pretzel",
+      "slug": "pretzel",
+      "variationId": "period",
+      "file": "pretzel_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/pretzel_period.mp3",
+      "whisper": " Pretzel.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -76,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pretzel."
+      }
+    },
+    {
+      "word": "yogurt",
+      "slug": "yogurt",
+      "variationId": "plain",
+      "file": "yogurt_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/yogurt_plain.mp3",
+      "whisper": " Yogurt.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -29,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "yogurt"
+      }
+    },
+    {
+      "word": "yogurt",
+      "slug": "yogurt",
+      "variationId": "period",
+      "file": "yogurt_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/yogurt_period.mp3",
+      "whisper": " Yogurt",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "yogurt."
+      }
+    },
+    {
+      "word": "fruit snack",
+      "slug": "fruit-snack",
+      "variationId": "plain",
+      "file": "fruit-snack_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/fruit-snack_plain.mp3",
+      "whisper": " fruit snack.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "pitchSlopeHz": -73,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fruit snack"
+      }
+    },
+    {
+      "word": "fruit snack",
+      "slug": "fruit-snack",
+      "variationId": "period",
+      "file": "fruit-snack_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/fruit-snack_period.mp3",
+      "whisper": " fruit snack.",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -48,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fruit snack."
+      }
+    },
+    {
+      "word": "ice cream",
+      "slug": "ice-cream",
+      "variationId": "plain",
+      "file": "ice-cream_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/ice-cream_plain.mp3",
+      "whisper": " Ice cream.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 1080,
+      "tailBurst": true,
+      "pitchSlopeHz": -13,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "ice cream"
+      }
+    },
+    {
+      "word": "ice cream",
+      "slug": "ice-cream",
+      "variationId": "period",
+      "file": "ice-cream_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/ice-cream_period.mp3",
+      "whisper": " Ice cream.",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -58,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "ice cream."
+      }
+    },
+    {
+      "word": "popsicle",
+      "slug": "popsicle",
+      "variationId": "plain",
+      "file": "popsicle_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/popsicle_plain.mp3",
+      "whisper": " Popsicle.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "popsicle"
+      }
+    },
+    {
+      "word": "popsicle",
+      "slug": "popsicle",
+      "variationId": "period",
+      "file": "popsicle_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/popsicle_period.mp3",
+      "whisper": " Popsicle.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 1010,
+      "tailBurst": true,
+      "pitchSlopeHz": -3,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "popsicle."
+      }
+    },
+    {
+      "word": "candy",
+      "slug": "candy",
+      "variationId": "plain",
+      "file": "candy_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/candy_plain.mp3",
+      "whisper": " Candy.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -46,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "candy"
+      }
+    },
+    {
+      "word": "candy",
+      "slug": "candy",
+      "variationId": "period",
+      "file": "candy_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/candy_period.mp3",
+      "whisper": " Candy.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -62,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "candy."
+      }
+    },
+    {
+      "word": "cake",
+      "slug": "cake",
+      "variationId": "plain",
+      "file": "cake_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/cake_plain.mp3",
+      "whisper": " Cake",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -47,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cake"
+      }
+    },
+    {
+      "word": "cake",
+      "slug": "cake",
+      "variationId": "period",
+      "file": "cake_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/cake_period.mp3",
+      "whisper": " cake.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 700,
+      "tailBurst": true,
+      "pitchSlopeHz": -98,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cake."
+      }
+    },
+    {
+      "word": "muffin",
+      "slug": "muffin",
+      "variationId": "plain",
+      "file": "muffin_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/muffin_plain.mp3",
+      "whisper": " Muffin",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -11,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "muffin"
+      }
+    },
+    {
+      "word": "muffin",
+      "slug": "muffin",
+      "variationId": "period",
+      "file": "muffin_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/muffin_period.mp3",
+      "whisper": " Muffin",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": 4,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "muffin."
+      }
+    },
+    {
+      "word": "donut",
+      "slug": "donut",
+      "variationId": "plain",
+      "file": "donut_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/donut_plain.mp3",
+      "whisper": " Donut.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -6,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "donut"
+      }
+    },
+    {
+      "word": "donut",
+      "slug": "donut",
+      "variationId": "period",
+      "file": "donut_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/donut_period.mp3",
+      "whisper": " Donut.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -41,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "donut."
+      }
+    },
+    {
+      "word": "fruit",
+      "slug": "fruit",
+      "variationId": "plain",
+      "file": "fruit_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/fruit_plain.mp3",
+      "whisper": " fruit.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": -7,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fruit"
+      }
+    },
+    {
+      "word": "fruit",
+      "slug": "fruit",
+      "variationId": "period",
+      "file": "fruit_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/fruit_period.mp3",
+      "whisper": " fruit",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 1,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fruit."
+      }
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "cake",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/cake_plain.mp3",
+      "shortlistFile": "shortlist/cake_recommended.mp3",
+      "score": 125,
+      "whisper": " Cake",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "candy",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/candy_period.mp3",
+      "shortlistFile": "shortlist/candy_recommended.mp3",
+      "score": 125,
+      "whisper": " Candy.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "donut",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/donut_plain.mp3",
+      "shortlistFile": "shortlist/donut_recommended.mp3",
+      "score": 125,
+      "whisper": " Donut.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "fruit",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/fruit_plain.mp3",
+      "shortlistFile": "shortlist/fruit_recommended.mp3",
+      "score": 125,
+      "whisper": " fruit.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "fruit snack",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/fruit-snack_plain.mp3",
+      "shortlistFile": "shortlist/fruit-snack_recommended.mp3",
+      "score": 85,
+      "whisper": " fruit snack.",
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "ice cream",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/ice-cream_plain.mp3",
+      "shortlistFile": "shortlist/ice-cream_recommended.mp3",
+      "score": 110,
+      "whisper": " Ice cream.",
+      "notes": [
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "muffin",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/muffin_plain.mp3",
+      "shortlistFile": "shortlist/muffin_recommended.mp3",
+      "score": 70,
+      "whisper": " Muffin",
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ]
+    },
+    {
+      "word": "popsicle",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/popsicle_plain.mp3",
+      "shortlistFile": "shortlist/popsicle_recommended.mp3",
+      "score": 110,
+      "whisper": " Popsicle.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "pretzel",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/pretzel_plain.mp3",
+      "shortlistFile": "shortlist/pretzel_recommended.mp3",
+      "score": 125,
+      "whisper": " Pretzel.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "yogurt",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-16-core/takes/yogurt_plain.mp3",
+      "shortlistFile": "shortlist/yogurt_recommended.mp3",
+      "score": 125,
+      "whisper": " Yogurt.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}
