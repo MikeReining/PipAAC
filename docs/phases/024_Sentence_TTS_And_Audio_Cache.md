@@ -229,6 +229,20 @@ first source for this voice, since its clips are a different voice).
    Deploy note: `wrangler r2 bucket create pippaac-voice` once.
 2. **Client:** Tier 1 cache (IndexedDB / OPFS), the ~300 ms deadline with
    word-clip fallback (rule 1), and the per-child voice setting (rule 3).
+   **Landed 2026-09-26** (`public/shared/voice_sentence.mjs`,
+   `src/board/voice_sentence.test.mjs` 5/5): Tier 1 is Cache Storage
+   (`pip-voice`), keyed by the same normalization the server uses.
+   `speakSentence` races the endpoint against the deadline — a null
+   answer (deadline, offline, unlicensed, over budget) speaks the word
+   clips, while the fetch finishes and warms the cache so the next tap
+   is instant. Single-word sentences skip the pipeline entirely (one
+   word is its clip). The license is kept device-local in the keyStore
+   at activation (`user/<id>/license`) — devices activated before this
+   lands speak clips until the key is re-entered. **Deferred with the
+   catalog:** the `grok_voice` profile column + voice picker — a synced
+   setting needs a schema column, and `schemaSql` ships inside the
+   strict `catalog.json` that waits on Ara clips; until then the voice
+   is the `grokVoice` constant (`ara`).
 3. **Transform buttons** (023) speak through this pipeline, auto-speak on.
 4. **Catalog re-make:** `scripts/catalog/generate_missing_audio.mjs` switches
    to Grok Voice with the phonetics table, one clip set per voice.

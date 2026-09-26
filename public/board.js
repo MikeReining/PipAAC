@@ -45,6 +45,7 @@ import {
   resolveActiveUser, touchOpened,
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
+import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
@@ -265,6 +266,21 @@ const getCounts = () => useCounts(db);
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
 
+// 024: whole-sentence voice — Tier 1 Cache Storage + ~300 ms deadline,
+// word clips always the fallback (rule 1). The Grok voice id is a
+// per-child setting in the doc's rule 3; the `grok_voice` profile
+// column ships with the Ara catalog rebuild (schemaSql rides in
+// catalog.json), so the id is one named seam until then.
+const sentenceVoice = voiceSentence();
+const grokVoice = "ara";
+let licenseP = null;
+const voiceLicense = () => {
+  licenseP ??= openKeyStore()
+    .then((s) => s.get(`user/${me.id}/license`))
+    .catch(() => null);
+  return licenseP;
+};
+
 function speak(text) {
   // device_tts lane — used for personal entities (§7.3). The utterance
   // carries the profile locale so names and typed words are spoken in
@@ -290,6 +306,21 @@ async function playClip(key) {
     audio.onerror = resolve;
     audio.play().catch(resolve);
   });
+}
+
+/** Play a fetched audio blob through the same element clips use. */
+async function playBlob(blob) {
+  const src = URL.createObjectURL(blob);
+  try {
+    return await new Promise((resolve) => {
+      audio.src = src;
+      audio.onended = resolve;
+      audio.onerror = resolve;
+      audio.play().catch(resolve);
+    });
+  } finally {
+    URL.revokeObjectURL(src);
+  }
 }
 
 /** Speak one tapped item — §7.2/7.3 resolution: override, voice clip,
@@ -328,7 +359,24 @@ async function speakSentence() {
       }
     }
   }
-  for (const item of [...sentence]) await speakItem(item);
+  // 024 rule 1: one whole-sentence utterance when it's ready — a single
+  // word is its own clip, so the pipeline only ever races real phrases.
+  // A null answer (deadline, offline, unlicensed, over budget) falls
+  // through to the clip loop; she is always heard.
+  let spoken = false;
+  if (sentence.length >= 2) {
+    const blob = await sentenceVoice.request({
+      userId: me.id,
+      license: await voiceLicense(),
+      voice: grokVoice,
+      text: sentenceSpeakText(sentence),
+    });
+    if (blob) {
+      await playBlob(blob);
+      spoken = true;
+    }
+  }
+  if (!spoken) for (const item of [...sentence]) await speakItem(item);
   if (sentenceId !== null) {
     const sid = sentenceId;
     closeSentence(db, sid, Date.now(), "spoken");

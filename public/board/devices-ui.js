@@ -757,8 +757,11 @@ export function mountDevices({
     const key = $("dev-license").value.trim();
     if (!key) return;
     try {
-      const { client } = await userClient();
+      const { client, store } = await userClient();
       await client.setEntitlement(key);
+      // 024: the sentence-voice endpoint wants the license on every
+      // request — the relay keeps the status, the device keeps a copy.
+      await store.put(`user/${me.id}/license`, key);
       $("dev-license").value = "";
       await renderDevices();
     } catch (e) {
