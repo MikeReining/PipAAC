@@ -46,6 +46,7 @@ import {
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
+import { PIN_RE, checkPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
@@ -1382,13 +1383,67 @@ document.addEventListener("keydown", (e) => {
   if ($("kb-device")) kbUi.feed(e.key);
   else kbUi.press(e.key);
 });
+/** 023 §1e — the Settings PIN gates Parent corner. First open creates
+ *  it on this device; every later open asks; Forgot accepts the
+ *  license key or the QR card (verifyAdult), then a new PIN is set. */
+async function gatePin(onOk) {
+  const overlay = $("pinform"), input = $("pin-input"),
+        err = $("pin-error"), hint = $("pin-hint"),
+        title = $("pin-title"), go = $("pin-go"), forgot = $("pin-forgot");
+  const store = await openKeyStore();
+  let mode = (await hasPin(store, me.id)) ? "check" : "create";
+  const render = () => {
+    err.textContent = "";
+    input.value = "";
+    input.type = mode === "forgot" ? "text" : "password";
+    input.inputMode = mode === "forgot" ? "text" : "numeric";
+    forgot.hidden = mode !== "check";
+    if (mode === "create") {
+      title.textContent = "Choose a PIN";
+      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Parent corner.";
+      go.textContent = "Set PIN";
+    } else if (mode === "check") {
+      title.textContent = "Parent PIN";
+      hint.textContent = "";
+      go.textContent = "Open";
+    } else {
+      title.textContent = "Reset the PIN";
+      hint.textContent =
+        "Paste the license key or the QR card's code — only an adult has either. You will pick a new PIN next.";
+      go.textContent = "Check";
+    }
+    input.focus();
+  };
+  const finish = () => { overlay.classList.remove("open"); onOk(); };
+  go.onclick = async () => {
+    const v = input.value.trim();
+    if (mode === "check") {
+      if (await checkPin(store, me.id, v)) return finish();
+      err.textContent = "Not that PIN.";
+      return;
+    }
+    if (mode === "forgot") {
+      if (await verifyAdult(store, me.id, v)) { mode = "create"; render(); }
+      else err.textContent = "That does not match this user's license or recovery card.";
+      return;
+    }
+    if (!PIN_RE.test(v)) { err.textContent = "4–6 digits."; return; }
+    await setPin(store, me.id, v);
+    finish();
+  };
+  input.onkeydown = (e) => { if (e.key === "Enter") go.click(); };
+  forgot.onclick = (e) => { e.preventDefault(); mode = "forgot"; render(); };
+  render();
+  overlay.classList.add("open");
+}
+
 $("corner").addEventListener("click", () => {
   if (editing) {
     setEditing(false);
     rerenderView();
     return;
   }
-  open("menu");
+  gatePin(() => open("menu"));
 });
 // 018 D10: 📊 puts the child's own 30-day taps on every tile.
 $("edit-counts").addEventListener("click", () => {

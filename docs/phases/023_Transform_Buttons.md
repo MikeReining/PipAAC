@@ -394,12 +394,40 @@ them yet.
 1. **Voice:** ▶ speaks her recorded clips. A transformed sentence should
    sound like the same voice (her clips word by word, device voice only for
    words without a clip), or her voice changes mid-conversation.
+   **Resolved by 024:** transforms speak through the sentence-voice
+   pipeline — one Grok voice everywhere, word clips as the fallback.
 2. **Names:** send placeholders for her people's names (*Leo* → PERSON1) and
    swap them back, so names never leave the device.
+   **Done 2026-09-26** (`public/shared/name_shield.mjs` +
+   `src/board/name_shield.test.mjs`): `maskNames` swaps each
+   `personal_entity` name for `PERSONn` before the request; `unmask`
+   restores the stored spelling through reordering, possessives and
+   lowercase placeholders. Groq only ever sees `PERSON1`-shaped text.
 3. **Key:** the Groq key lives in the Worker (`GROQ_API_KEY`), never in the
    client; the app calls a Worker route.
+   **Done 2026-09-26** (`src/worker/transform.js`): `POST /api/v1/transform`
+   takes `{user_id, license, mode, text}` — same license gate as the voice
+   endpoint; the §3 prompts live server-side (one place to fix them);
+   `usage-tr/` counters with their own budgets (20k chars/day, 30/min).
+   `env.GROQ_CHAT` is the test seam — no paid calls in tests.
 4. **PIN:** where the Settings PIN is created, stored, and recovered (§ 1e).
-5. **Message-bar tap to speak:** marked "to be confirmed" in § 1.
+   **Decided + built 2026-09-26** (`public/shared/pin.mjs`, `#pinform`
+   overlay, `src/board/pin.test.mjs`): a **4–6 digit** speed bump, not a
+   security boundary. **Created** on the first Parent-corner open on a
+   device; **stored** as a SHA-256 hash in the device keyStore — per
+   device, never synced (the tablet's PIN is the tablet's; a synced
+   column would ride the Ara catalog anyway). **Asked on every open** —
+   no unlock session, so a handed-back tablet re-asks. **Recovered** by
+   an adult credential: the license key (device-local copy) or the QR
+   card's root (verified against the stored root). Devices activated
+   before 024 slice 2 that never kept a license and whose tablet holds
+   no recovery root have no proof on file — re-activation is the reset.
+   Parent corner (settings + all edit entry points) is gated.
+5. **Message-bar tap to speak:** **decided yes** — the message bar is the
+   largest target and the natural "say this" gesture; a tap speaks
+   exactly what ▶ would (the bar as shown, through the 024 pipeline).
+   Wired with the transform buttons (024 slice 3). Backspace/Clear
+   inside the bar keep their own hit targets.
 6. **Prompt retests:** the tense-preserving ❓ wording, the
    question-preserving tense wording, and the "going to go" collapse
    wording (§ 3 deltas) are spec-mandated but not yet live-tested.

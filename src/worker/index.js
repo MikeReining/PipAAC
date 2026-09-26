@@ -7,6 +7,7 @@ import { SupporterAccounts } from "./accounts.js";
 import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
 import { handleSpeak } from "./voice.js";
+import { handleTransform } from "./transform.js";
 
 export { UserRelay, PairingLobby, SupporterAccounts };
 
@@ -45,6 +46,12 @@ export default {
     // sentences, per-license fair-use counting, no ids upstream.
     if (path === "/api/v1/voice/speak" && request.method === "POST") {
       return handleSpeak(request, env, ctx);
+    }
+
+    // Transform buttons (023): the Groq key lives here — the client
+    // sends the sentence with her names already masked to placeholders.
+    if (path === "/api/v1/transform" && request.method === "POST") {
+      return handleTransform(request, env);
     }
 
     // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted

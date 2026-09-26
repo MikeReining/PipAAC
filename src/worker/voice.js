@@ -60,39 +60,42 @@ export function eligibleSentence(text) {
   return true;
 }
 
-const dayKey = (uid, ts = Date.now()) =>
-  `usage/${uid}/${new Date(ts).toISOString().slice(0, 10)}`;
-const minKey = (uid, ts = Date.now()) =>
-  `usage-min/${uid}/${Math.floor(ts / 60000)}`;
+const counterKey = (ns, uid, ts = Date.now(), per = "day") =>
+  per === "day"
+    ? `${ns}/${uid}/${new Date(ts).toISOString().slice(0, 10)}`
+    : `${ns}-min/${uid}/${Math.floor(ts / 60000)}`;
 
-/** R2-backed fair-use ledger: get → decide → put after a real synth.
+/** R2-backed fair-use ledger: get → decide → put after a real call.
  * Read-modify-write can drift a few chars under parallel devices —
- * noise against an 8,000-char day. */
-async function usageCheck(env, uid, chars) {
-  if (chars > MAX_SENTENCE_CHARS) return { allowed: false, over: "sentence" };
+ * noise against an 8,000-char day. `ns` namespaces the counter
+ * (usage/ for voice, usage-tr/ for transforms) so one pipeline's
+ * budget can't starve the other's. */
+export async function usageCheck(env, { ns, uid, chars, maxChars, dayBudget, minBudget }) {
+  if (chars > maxChars) return { allowed: false, over: "sentence" };
   const read = async (key) => {
     const obj = await env.VOICE.get(key).catch(() => null);
     return obj ? JSON.parse(await obj.text()) : {};
   };
-  const day = await read(dayKey(uid));
-  if ((day.chars ?? 0) + chars > DAY_CHAR_BUDGET) return { allowed: false, over: "day" };
-  const min = await read(minKey(uid));
-  if ((min.reqs ?? 0) + 1 > MINUTE_REQUEST_BURST) return { allowed: false, over: "minute" };
+  const day = await read(counterKey(ns, uid));
+  if ((day.chars ?? 0) + chars > dayBudget) return { allowed: false, over: "day" };
+  const min = await read(counterKey(ns, uid, Date.now(), "min"));
+  if ((min.reqs ?? 0) + 1 > minBudget) return { allowed: false, over: "minute" };
   return { allowed: true };
 }
 
-async function usageRecord(env, uid, chars, over = null) {
+export async function usageRecord(env, { ns, uid, chars, over = null }) {
   const bump = async (key, patch) => {
     const obj = await env.VOICE.get(key).catch(() => null);
     const cur = obj ? JSON.parse(await obj.text()) : { chars: 0, reqs: 0 };
     await env.VOICE.put(key, JSON.stringify({ ...cur, ...patch(cur) }));
   };
-  await bump(dayKey(uid), (c) => ({ chars: c.chars + chars, reqs: c.reqs + 1 }));
-  await bump(minKey(uid), (c) => ({ chars: 0, reqs: c.reqs + 1 }));
+  await bump(counterKey(ns, uid), (c) => ({ chars: c.chars + chars, reqs: c.reqs + 1 }));
+  await bump(counterKey(ns, uid, Date.now(), "min"),
+    (c) => ({ chars: 0, reqs: c.reqs + 1 }));
   // § 6a.5: every limit hit is logged — if a real child ever hits it,
   // the limit is wrong.
   if (over) {
-    await env.VOICE.put(`usage-hits/${uid}/${Date.now()}`,
+    await env.VOICE.put(`${ns}-hits/${uid}/${Date.now()}`,
       JSON.stringify({ over, chars }));
   }
 }
@@ -150,9 +153,11 @@ export async function handleSpeak(request, env, ctx) {
   }
 
   // Fresh synthesis — the only thing the fair-use ledger counts.
-  const gate = await usageCheck(env, uid, text.length);
+  const gate = await usageCheck(env, { ns: "usage", uid, chars: text.length,
+    maxChars: MAX_SENTENCE_CHARS, dayBudget: DAY_CHAR_BUDGET,
+    minBudget: MINUTE_REQUEST_BURST });
   if (!gate.allowed) {
-    await usageRecord(env, uid, 0, gate.over);
+    await usageRecord(env, { ns: "usage", uid, chars: 0, over: gate.over });
     return json({ error: "fair_use", over: gate.over }, { status: 429 });
   }
 
@@ -165,7 +170,7 @@ export async function handleSpeak(request, env, ctx) {
   if (!audio) return json({ error: "voice_unavailable" }, { status: 503 });
 
   const after = (async () => {
-    await usageRecord(env, uid, text.length);
+    await usageRecord(env, { ns: "usage", uid, chars: text.length });
     if (eligible) {
       await env.VOICE.put(key, audio, {
         customMetadata: { voice, chars: String(text.length) },
