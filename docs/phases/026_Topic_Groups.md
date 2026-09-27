@@ -127,6 +127,59 @@ the color never changes. **The one exception is `house` (plain black and
 white) vs `home` (warm color — the color is the meaning).** Stick-figure
 torsos keep the grammar color.
 
+### D10 — Occasion doors, one address per word (2026-09-27)
+
+Founder: "the occasions drive speech". Doors are views over one word
+graph, so a word repeats in every door where someone might look (this
+replaces D4's "look first" rule). Occasion doors — Breakfast, Lunch,
+Dinner, Snack first; routines (dressing, bath, bedtime, car, park, store,
+doctor, school) to follow — sit beside the topic doors. **Every word has
+one address:** home-board words keep their home cell in every door, and
+every other word gets one cell shared by all the doors that hold it.
+Words that never share a page may share a cell (graph coloring). A family
+word added to a door lands on its address, or the nearest free cell.
+**Open (founder):** occasions on by default with one switch to turn them
+off (proposed), the "Now" cell (a fixed home cell that opens the current
+occasion — would amend 018 D8/D9), and 007's "linking groups to times
+would be wrong" line.
+
+### D11 — Doors use the whole grid (2026-09-27)
+
+So a door can share the home board's addresses: **Back replaces Settings
+in the top-left** inside doors (Settings stays on the home board only);
+**Next takes the bottom-right cell only on a door with a second page**;
+**+ Add sits next to the Groups button, in Edit mode only** (018 D9's "the
+bar holds words" gains "and the Edit-mode controls").
+
+### D12 — Each door carries its own sentence starters (2026-09-27)
+
+**stop** and **help** travel into every door. The rest of the home words
+in a door come from CHILDES: home words children said in the line, or
+within two lines after, where the door's words came up
+(`door_starters.mjs` → `data/prediction/door_starters.en.json`), as room
+allows, up to 12.
+
+## Prototype — one address per word (2026-09-27)
+
+`node scripts/catalog/preview_addresses.mjs` → `public/preview-addresses.html`
+(Home, Food, Drinks, Breakfast, Lunch, Snack at `grid60`; doors in
+`data/occasions/meal_doors.proposed.json`). Measured on the rendered
+pages, not the solver:
+
+- **Home and the four occasion doors agree completely** — every repeated
+  word sits in the same cell on all of them.
+- **The full Food door can't.** At 57 words it has no spare cells, and the
+  meal doors' starters hold ~14 home cells, so 14 foods sit next to their
+  address in Food only (71 of 85 repeated words agree everywhere, 83.5%).
+  With Food out, 100%. A topic door with room to spare would agree too.
+- **The starters are nearly the same in every meal door** (*I, is, it,
+  and, you, no, that, in, want, to, have, get*) — good for motor memory.
+  *No* ranks #6–7 once replies count; *more* ranks only #20–33 and *all
+  done* is rare in CHILDES (an AAC/sign phrase more than child speech).
+  Reported as measured; the founder decides whether either travels anyway.
+- Doors show consistent holes where a home cell isn't used — the look is
+  the founder's call.
+
 ## Evidence (CHILDES, 2026-09-26)
 
 `node scripts/prediction/childes/measure_groups.mjs` — every transcript,
