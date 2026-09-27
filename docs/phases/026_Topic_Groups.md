@@ -180,6 +180,30 @@ pages, not the solver:
 - Doors show consistent holes where a home cell isn't used — the look is
   the founder's call.
 
+## Prototype — block doors (2026-09-27)
+
+The word-level prototype above scattered clusters (drinks all over the
+page), led Food with treats, and filled doors with filler words the Smart
+bar already offers; the founder found it unlovable. Rebuilt as **block
+doors** (founder: "the only chance"):
+
+- A door is a set of blocks (breakfast foods, meals, vegetables, snacks,
+  treats, dishes, fruit, drinks). A block keeps its order — everyday
+  first, treats their own block — and one column position on every door.
+- **The frame is four words: yes, no, stop, help**, in their home cells
+  (the last column minus *not* and *hurt*). Filler is the Smart bar's job.
+- Groups and occasions become one idea: a topic door is one block, an
+  occasion door is several.
+
+`node scripts/catalog/preview_blocks.mjs` → `public/preview-blocks.html`
+(`data/occasions/block_doors.proposed.json`). Measured on the pages:
+every repeated word sits in the same cell on every page, top row on or
+off. Occasion doors use 33–43 of 60 cells with the top row off, 42–52
+with it on (Lunch nearly full). **Open:** single-block doors (Fruit,
+Drinks) sit at the right edge with the left empty, because shared blocks
+are placed next to the frame; and blocks that aren't a multiple of six
+leave a stray column (Fruit's 7th word, Drinks' last three).
+
 ## Evidence (CHILDES, 2026-09-26)
 
 `node scripts/prediction/childes/measure_groups.mjs` — every transcript,
