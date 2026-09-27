@@ -1,0 +1,288 @@
+[
+  {
+    "file": "takes/proud_plain.mp3",
+    "word": "proud",
+    "variation": "plain",
+    "text": "proud",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Proud.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/proud_period.mp3",
+    "word": "proud",
+    "variation": "period",
+    "text": "proud.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Proud.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/shy_plain.mp3",
+    "word": "shy",
+    "variation": "plain",
+    "text": "shy",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " shy",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/shy_period.mp3",
+    "word": "shy",
+    "variation": "period",
+    "text": "shy.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " shy.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/surprised_plain.mp3",
+    "word": "surprised",
+    "variation": "plain",
+    "text": "surprised",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Surprised.",
+    "notes": [
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/surprised_period.mp3",
+    "word": "surprised",
+    "variation": "period",
+    "text": "surprised.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Surprised.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bored_plain.mp3",
+    "word": "bored",
+    "variation": "plain",
+    "text": "bored",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bored.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bored_period.mp3",
+    "word": "bored",
+    "variation": "period",
+    "text": "bored.",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " Board.",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/lonely_plain.mp3",
+    "word": "lonely",
+    "variation": "plain",
+    "text": "lonely",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Lonely.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/lonely_period.mp3",
+    "word": "lonely",
+    "variation": "period",
+    "text": "lonely.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Lonely.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hungry_plain.mp3",
+    "word": "hungry",
+    "variation": "plain",
+    "text": "hungry",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Hungry.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hungry_period.mp3",
+    "word": "hungry",
+    "variation": "period",
+    "text": "hungry.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " hungry",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/thirsty_plain.mp3",
+    "word": "thirsty",
+    "variation": "plain",
+    "text": "thirsty",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " thirsty",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/thirsty_period.mp3",
+    "word": "thirsty",
+    "variation": "period",
+    "text": "thirsty.",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " thirsty",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tired_plain.mp3",
+    "word": "tired",
+    "variation": "plain",
+    "text": "tired",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Tired.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tired_period.mp3",
+    "word": "tired",
+    "variation": "period",
+    "text": "tired.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Tired.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sleepy_plain.mp3",
+    "word": "sleepy",
+    "variation": "plain",
+    "text": "sleepy",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Sleepy.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sleepy_period.mp3",
+    "word": "sleepy",
+    "variation": "period",
+    "text": "sleepy.",
+    "replace": null,
+    "speed": 1,
+    "score": 55,
+    "whisper": " Sleepy.",
+    "notes": [
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/energetic_plain.mp3",
+    "word": "energetic",
+    "variation": "plain",
+    "text": "energetic",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Energetic.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/energetic_period.mp3",
+    "word": "energetic",
+    "variation": "period",
+    "text": "energetic.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Energetic.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/surprised_backup.mp3",
+    "word": "surprised",
+    "variation": "backup",
+    "text": "surprised",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Surprised.",
+    "notes": [
+      "too_long",
+      "consonant_release"
+    ]
+  }
+]

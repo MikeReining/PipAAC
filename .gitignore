@@ -86,6 +86,10 @@ temp/
 # CHILDES transcript cache — local only, never committed (017 R11)
 data/prediction/childes/
 
+# Grok / ElevenLabs mint churn (truth: approved/, shortlist/*_recommended, shipping.json)
+data/samples/**/takes/
+data/samples/**/*_raw.mp3
+
 # Product runtime artifacts (see data/README.md)
 cache/
 out/

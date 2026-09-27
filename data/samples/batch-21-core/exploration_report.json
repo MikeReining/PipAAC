@@ -1,0 +1,690 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T19:23:08.501Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-21-core",
+  "scored": [
+    {
+      "word": "towel",
+      "slug": "towel",
+      "variationId": "plain",
+      "file": "towel_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/towel_plain.mp3",
+      "whisper": " towel",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -15,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "towel"
+      }
+    },
+    {
+      "word": "towel",
+      "slug": "towel",
+      "variationId": "period",
+      "file": "towel_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/towel_period.mp3",
+      "whisper": " towel",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -49,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "towel."
+      }
+    },
+    {
+      "word": "comb",
+      "slug": "comb",
+      "variationId": "plain",
+      "file": "comb_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/comb_plain.mp3",
+      "whisper": " comb",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -87,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "comb"
+      }
+    },
+    {
+      "word": "comb",
+      "slug": "comb",
+      "variationId": "period",
+      "file": "comb_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/comb_period.mp3",
+      "whisper": " Comb",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -56,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "comb."
+      }
+    },
+    {
+      "word": "tissue",
+      "slug": "tissue",
+      "variationId": "plain",
+      "file": "tissue_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/tissue_plain.mp3",
+      "whisper": " Tissue",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 6,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tissue"
+      }
+    },
+    {
+      "word": "tissue",
+      "slug": "tissue",
+      "variationId": "period",
+      "file": "tissue_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/tissue_period.mp3",
+      "whisper": " tissue",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -65,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tissue."
+      }
+    },
+    {
+      "word": "bandage",
+      "slug": "bandage",
+      "variationId": "plain",
+      "file": "bandage_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/bandage_plain.mp3",
+      "whisper": " Bandage",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "pitchSlopeHz": -75,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bandage"
+      }
+    },
+    {
+      "word": "bandage",
+      "slug": "bandage",
+      "variationId": "period",
+      "file": "bandage_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/bandage_period.mp3",
+      "whisper": " Bandage.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -12,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bandage."
+      }
+    },
+    {
+      "word": "hurt",
+      "slug": "hurt",
+      "variationId": "plain",
+      "file": "hurt_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/hurt_plain.mp3",
+      "whisper": " Hurt.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hurt"
+      }
+    },
+    {
+      "word": "hurt",
+      "slug": "hurt",
+      "variationId": "period",
+      "file": "hurt_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/hurt_period.mp3",
+      "whisper": " Hurt",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -77,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hurt."
+      }
+    },
+    {
+      "word": "sick",
+      "slug": "sick",
+      "variationId": "plain",
+      "file": "sick_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/sick_plain.mp3",
+      "whisper": " sick",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sick"
+      }
+    },
+    {
+      "word": "sick",
+      "slug": "sick",
+      "variationId": "period",
+      "file": "sick_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/sick_period.mp3",
+      "whisper": " Sick.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 83,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sick."
+      }
+    },
+    {
+      "word": "pain",
+      "slug": "pain",
+      "variationId": "plain",
+      "file": "pain_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/pain_plain.mp3",
+      "whisper": " Pain.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -3,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pain"
+      }
+    },
+    {
+      "word": "pain",
+      "slug": "pain",
+      "variationId": "period",
+      "file": "pain_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/pain_period.mp3",
+      "whisper": " pain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -57,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "pain."
+      }
+    },
+    {
+      "word": "fever",
+      "slug": "fever",
+      "variationId": "plain",
+      "file": "fever_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/fever_plain.mp3",
+      "whisper": " Fever.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -66,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fever"
+      }
+    },
+    {
+      "word": "fever",
+      "slug": "fever",
+      "variationId": "period",
+      "file": "fever_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/fever_period.mp3",
+      "whisper": " Fever.",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -62,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fever."
+      }
+    },
+    {
+      "word": "cough",
+      "slug": "cough",
+      "variationId": "plain",
+      "file": "cough_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/cough_plain.mp3",
+      "whisper": " Cough.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cough"
+      }
+    },
+    {
+      "word": "cough",
+      "slug": "cough",
+      "variationId": "period",
+      "file": "cough_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/cough_period.mp3",
+      "whisper": " Cough.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -55,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cough."
+      }
+    },
+    {
+      "word": "medicine",
+      "slug": "medicine",
+      "variationId": "plain",
+      "file": "medicine_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/medicine_plain.mp3",
+      "whisper": " Medicine",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -72,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "medicine"
+      }
+    },
+    {
+      "word": "medicine",
+      "slug": "medicine",
+      "variationId": "period",
+      "file": "medicine_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/medicine_period.mp3",
+      "whisper": " Medicine.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -23,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "medicine."
+      }
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "bandage",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "comb",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "cough",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "fever",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "hurt",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "medicine",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "pain",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "sick",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "tissue",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "towel",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "bandage",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/bandage_period.mp3",
+      "shortlistFile": "shortlist/bandage_recommended.mp3",
+      "score": 125,
+      "whisper": " Bandage.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "comb",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/comb_plain.mp3",
+      "shortlistFile": "shortlist/comb_recommended.mp3",
+      "score": 125,
+      "whisper": " comb",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "cough",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/cough_plain.mp3",
+      "shortlistFile": "shortlist/cough_recommended.mp3",
+      "score": 125,
+      "whisper": " Cough.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "fever",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/fever_plain.mp3",
+      "shortlistFile": "shortlist/fever_recommended.mp3",
+      "score": 125,
+      "whisper": " Fever.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "hurt",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/hurt_plain.mp3",
+      "shortlistFile": "shortlist/hurt_recommended.mp3",
+      "score": 125,
+      "whisper": " Hurt.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "medicine",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/medicine_period.mp3",
+      "shortlistFile": "shortlist/medicine_recommended.mp3",
+      "score": 125,
+      "whisper": " Medicine.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "pain",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/pain_plain.mp3",
+      "shortlistFile": "shortlist/pain_recommended.mp3",
+      "score": 125,
+      "whisper": " Pain.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "sick",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/sick_period.mp3",
+      "shortlistFile": "shortlist/sick_recommended.mp3",
+      "score": 125,
+      "whisper": " Sick.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "tissue",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/tissue_plain.mp3",
+      "shortlistFile": "shortlist/tissue_recommended.mp3",
+      "score": 125,
+      "whisper": " Tissue",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "towel",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-21-core/takes/towel_plain.mp3",
+      "shortlistFile": "shortlist/towel_recommended.mp3",
+      "score": 125,
+      "whisper": " towel",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,706 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T20:29:43.144Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-29-core",
+  "scored": [
+    {
+      "word": "wipe",
+      "slug": "wipe",
+      "variationId": "plain",
+      "file": "wipe_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/wipe_plain.mp3",
+      "whisper": " Wipe.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -38,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wipe"
+      }
+    },
+    {
+      "word": "wipe",
+      "slug": "wipe",
+      "variationId": "period",
+      "file": "wipe_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/wipe_period.mp3",
+      "whisper": " Wipe.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 11,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wipe."
+      }
+    },
+    {
+      "word": "cook",
+      "slug": "cook",
+      "variationId": "plain",
+      "file": "cook_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/cook_plain.mp3",
+      "whisper": " Cook",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -48,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cook"
+      }
+    },
+    {
+      "word": "cook",
+      "slug": "cook",
+      "variationId": "period",
+      "file": "cook_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/cook_period.mp3",
+      "whisper": " cook",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 700,
+      "tailBurst": true,
+      "pitchSlopeHz": -14,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cook."
+      }
+    },
+    {
+      "word": "build",
+      "slug": "build",
+      "variationId": "plain",
+      "file": "build_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/build_plain.mp3",
+      "whisper": " build",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -45,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "build"
+      }
+    },
+    {
+      "word": "build",
+      "slug": "build",
+      "variationId": "period",
+      "file": "build_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/build_period.mp3",
+      "whisper": " Build.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 12,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "build."
+      }
+    },
+    {
+      "word": "fix",
+      "slug": "fix",
+      "variationId": "plain",
+      "file": "fix_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/fix_plain.mp3",
+      "whisper": " Fix.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -15,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fix"
+      }
+    },
+    {
+      "word": "fix",
+      "slug": "fix",
+      "variationId": "period",
+      "file": "fix_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/fix_period.mp3",
+      "whisper": " Fix",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 30,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "fix."
+      }
+    },
+    {
+      "word": "hold",
+      "slug": "hold",
+      "variationId": "plain",
+      "file": "hold_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/hold_plain.mp3",
+      "whisper": " Hold.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -9,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hold"
+      }
+    },
+    {
+      "word": "hold",
+      "slug": "hold",
+      "variationId": "period",
+      "file": "hold_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/hold_period.mp3",
+      "whisper": " Hold.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -50,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hold."
+      }
+    },
+    {
+      "word": "touch",
+      "slug": "touch",
+      "variationId": "plain",
+      "file": "touch_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/touch_plain.mp3",
+      "whisper": " touch",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "touch"
+      }
+    },
+    {
+      "word": "touch",
+      "slug": "touch",
+      "variationId": "period",
+      "file": "touch_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/touch_period.mp3",
+      "whisper": " Touch.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 61,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "touch."
+      }
+    },
+    {
+      "word": "know",
+      "slug": "know",
+      "variationId": "plain",
+      "file": "know_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/know_plain.mp3",
+      "whisper": " No.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -32,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "know"
+      }
+    },
+    {
+      "word": "know",
+      "slug": "know",
+      "variationId": "period",
+      "file": "know_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/know_period.mp3",
+      "whisper": " No.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -23,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "know."
+      }
+    },
+    {
+      "word": "remember",
+      "slug": "remember",
+      "variationId": "plain",
+      "file": "remember_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/remember_plain.mp3",
+      "whisper": " Remember.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -27,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "remember"
+      }
+    },
+    {
+      "word": "remember",
+      "slug": "remember",
+      "variationId": "period",
+      "file": "remember_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/remember_period.mp3",
+      "whisper": " Remember.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -23,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "remember."
+      }
+    },
+    {
+      "word": "forget",
+      "slug": "forget",
+      "variationId": "plain",
+      "file": "forget_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/forget_plain.mp3",
+      "whisper": " Forget.",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -50,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "forget"
+      }
+    },
+    {
+      "word": "forget",
+      "slug": "forget",
+      "variationId": "period",
+      "file": "forget_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/forget_period.mp3",
+      "whisper": " Forget.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": -33,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "forget."
+      }
+    },
+    {
+      "word": "choose",
+      "slug": "choose",
+      "variationId": "plain",
+      "file": "choose_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/choose_plain.mp3",
+      "whisper": " Choose",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -67,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "choose"
+      }
+    },
+    {
+      "word": "choose",
+      "slug": "choose",
+      "variationId": "period",
+      "file": "choose_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/choose_period.mp3",
+      "whisper": " Choose.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -57,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "choose."
+      }
+    },
+    {
+      "word": "forget",
+      "slug": "forget",
+      "variationId": "backup",
+      "file": "forget_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/forget_backup.mp3",
+      "whisper": " forget.",
+      "score": 25,
+      "notes": [
+        "too_long",
+        "consonant_release",
+        "residue_shelf"
+      ],
+      "durMs": 1280,
+      "tailBurst": true,
+      "pitchSlopeHz": -13,
+      "gate": "pass",
+      "body": {
+        "text": "forget"
+      },
+      "isBackup": true
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "build",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "choose",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "cook",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "fix",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "forget",
+      "variationId": "plain",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "hold",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "know",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "remember",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "touch",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "wipe",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "build",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/build_period.mp3",
+      "shortlistFile": "shortlist/build_recommended.mp3",
+      "score": 125,
+      "whisper": " Build.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "choose",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/choose_period.mp3",
+      "shortlistFile": "shortlist/choose_recommended.mp3",
+      "score": 125,
+      "whisper": " Choose.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "cook",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/cook_plain.mp3",
+      "shortlistFile": "shortlist/cook_recommended.mp3",
+      "score": 110,
+      "whisper": " Cook",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "fix",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/fix_period.mp3",
+      "shortlistFile": "shortlist/fix_recommended.mp3",
+      "score": 125,
+      "whisper": " Fix",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "forget",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/forget_plain.mp3",
+      "shortlistFile": "shortlist/forget_recommended.mp3",
+      "score": 85,
+      "whisper": " Forget.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ]
+    },
+    {
+      "word": "hold",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/hold_plain.mp3",
+      "shortlistFile": "shortlist/hold_recommended.mp3",
+      "score": 125,
+      "whisper": " Hold.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "know",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/know_plain.mp3",
+      "shortlistFile": "shortlist/know_recommended.mp3",
+      "score": 125,
+      "whisper": " No.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "remember",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/remember_plain.mp3",
+      "shortlistFile": "shortlist/remember_recommended.mp3",
+      "score": 110,
+      "whisper": " Remember.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "touch",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/touch_plain.mp3",
+      "shortlistFile": "shortlist/touch_recommended.mp3",
+      "score": 125,
+      "whisper": " touch",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "wipe",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-29-core/takes/wipe_period.mp3",
+      "shortlistFile": "shortlist/wipe_recommended.mp3",
+      "score": 125,
+      "whisper": " Wipe.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

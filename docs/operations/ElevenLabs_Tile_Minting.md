@@ -1,7 +1,7 @@
 # ElevenLabs: tile gap-fill and review
 
-**Status:** operational 2026-09-26.  
-**Applies to:** single-word launch-lexicon tiles that miss WorkbookBench R2 audio.  
+**Status:** operational 2026-09-26. Launch-lexicon WBB gap-fill **shipped** (66/66 ear-reviewed, R2 + `generated_audio.json`, 2026-09-26).  
+**Applies to:** single-word **launch lexicon** tiles that miss WorkbookBench R2 audio (`data/launch_lexicon.json`, 680 rows).  
 **Not for:** sentence playback (Grok `ara` via phase 024 Worker) or Grok catalog exploration (`data/samples/batch-*-core`).
 
 ## Voices
@@ -25,42 +25,57 @@ Eleven v3 does **not** use Grok-style XML (`<emphasis>`, `<loud>`). For tile tak
 | `period` | `word.` | Punctuation shapes delivery on v3 |
 | `emphasis` | `WORD` (caps) | v3 capitalization emphasis — listen; may be too strong for some tiles |
 
-Optional v3 **[audio tags]** (`[whispers]`, etc.) are not in the default matrix; tags can be spoken or unreliable on PVCs. Add per-word rows in `recipes.json` only after a listen.
-
 Docs: [ElevenLabs TTS best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices) (Prompting Eleven v3).
+
+## Audio inventory (what is “missing”?)
+
+| Layer | Command / file | Meaning |
+| --- | --- | --- |
+| **Launch lexicon vs WBB** | `npm run catalog:audio:coverage` | WBB manifest hits/misses. Misses stay “miss” in `audio_import.json` even after gap-fill — that is expected. |
+| **Effective launch tiles** | same + `effective launch coverage` line | Misses covered by `data/catalog/generated_audio.json` count as shippable in `build_catalog.mjs`. |
+| **Ear-shipped gap-fill** | `data/samples/elevenlabs-tiles-core/shipping.json` | One row per slug after **Publish** from the review UI (or `publish_elevenlabs_shortlist.mjs`). |
+| **Inflected / form surfaces** | `forms_audio.json` `missing` + `elevenlabs-forms-core/shipping.json` | Mint: `npm run catalog:forms:mint-batch`. Publish shortlist: `npm run catalog:forms:publish-shortlist`. |
+| **Extended / holiday words** | `data/extended_lexicon.json` | e.g. `christmas` — not in the 680-row launch lexicon until promoted; no tile audio until catalogued. |
+| **Sentence + names (024)** | Grok `pippaac-voice` R2, slice 7 | Whole sentences and common names — different pipeline from tile clips. |
+
+As of 2026-09-27: **680/680** launch lexicon rows have a clip path (614 WBB + 66 ElevenLabs gap-fill). **378/378** form utterances in `forms_audio.json` have clips (144 ear-shipped via **elevenlabs-forms-core** on 2026-09-27).
 
 ## Workflow
 
-1. **Queue** — build recipes from `audio_import.json` misses:
+1. **Queue** — refresh recipes from `audio_import.json` misses:
    ```bash
-   node scripts/catalog/build_elevenlabs_tile_queue.mjs
+   npm run catalog:tiles:queue
    ```
-   Writes `data/samples/elevenlabs-tiles-core/recipes.json` (all miss slots).
+   Writes `data/samples/elevenlabs-tiles-core/recipes.json`.
 
-2. **Mint** (≤10 words per founder session; same policy as Grok explore):
+2. **Mint batch** (founder listen policy: review before publish):
    ```bash
-   node scripts/catalog/mint_elevenlabs_tile.mjs --slug all_done --all
+   npm run catalog:tiles:mint-batch
    ```
-   Or one variation: `--variation period`.
+   Plain + period per word; `--emphasis` on `mint_elevenlabs_tile_batch.mjs` for caps on all words.
 
-3. **Review** — dedicated UI (Grok explore review is unchanged):
+3. **Review** — `npm run catalog:audio:review` → [http://127.0.0.1:3747/audio-review/elevenlabs-tiles](http://127.0.0.1:3747/audio-review/elevenlabs-tiles)
+   - **↑ / ↓** move the file list; **Space** replay.
+   - **Show:** *needs publish* vs *published via review* (`shipping.json`).
+   - **Look up** any launch label to hear live R2/local catalog audio; **Remint** if replacing a bad clip.
+   - **Approve → shortlist** (optional pick per word) or publish straight from **takes**.
+   - **Publish → R2 + catalog** updates `generated_audio.json`, `assets/catalog/audio/`, and `workbookbench-catalog` R2.
+
+4. **Publish shortlist in bulk** (after one `*_recommended.mp3` per slug):
    ```bash
-   npm run catalog:audio:review
+   node scripts/catalog/publish_elevenlabs_shortlist.mjs
    ```
-   Open: `http://127.0.0.1:3747/audio-review/elevenlabs-tiles`
 
-   - **Plain + period** are auto-minted when you open a word (catalog voice).
-   - Optional **caps emphasis** is a separate ElevenLabs take (ALL CAPS — not Grok `<emphasis>`).
-   - **Show** filter on takes: *needs publish* (default) vs *published via review* — tracked in `elevenlabs-tiles-core/shipping.json` (not bulk `generate_missing_audio` alone).
-   - **Look up** any tile label (e.g. `christmas`, `all done`) to play the live catalog clip from local cache or R2, **remint all variants**, then trim and **Publish**.
-   - Trim, optional **Approve → shortlist**, then **Publish → R2 + catalog** (`generated_audio.json` + `workbookbench-catalog` R2).
+5. **Bundle** — `npm run catalog:build` copies merged clips into `public/audio/`.
 
-   Grok batches: `http://127.0.0.1:3747/audio-review` — Aga backup + Grok emphasis as before.
+Grok explore review (unchanged): [http://127.0.0.1:3747/audio-review](http://127.0.0.1:3747/audio-review).
 
-4. **Bundle** — after publish, run `npm run catalog:build` so `public/audio/` picks up the new key.
+Bulk `generate_missing_audio.mjs` can mint unattended into `generated_audio.json` without `shipping.json`; prefer the review path for ear-approved tiles.
 
-Bulk `generate_missing_audio.mjs` remains for unattended gap-fill; **ear-approved** tiles should go through this review path before **Publish**.
+## Voice policy (do not swap)
+
+**Default tile voice** = ElevenLabs catalog clone (`tiles` in `voices.json`). **Grok `ara`** = sentences + exploration batches only. Grok may become a **second (or third) user-selectable voice** later; it **must not** replace or overwrite the default tile clips without a new, explicit product slice. See phase 024 §2 and `Grok_Voice_Synthesis_Best_Practices.md`.
 
 ## Grok catalog exploration
 
-Grok batches under `data/samples/batch-*-core` and `data/samples/approved/` stay for a possible future catalog voice swap (phase 024 slice 4). **On hold** until the founder resumes that track. Do not delete exploration audio.
+Grok batches under `data/samples/batch-*-core` and `data/samples/approved/` are **exploration only**, not ship path for default tiles.

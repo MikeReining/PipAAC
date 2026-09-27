@@ -124,6 +124,7 @@
         btn.className = "file";
         btn.textContent = f.name;
         const fullPath = `${batch}/${folder}/${f.name}`;
+        btn.dataset.path = fullPath;
         btn.onclick = () => selectFile(fullPath);
         li.appendChild(btn);
         ul.appendChild(li);
@@ -276,8 +277,7 @@
     }
 
     function scrollFileIntoView(path) {
-      const name = path.split("/").pop();
-      const btn = [...document.querySelectorAll("button.file")].find((b) => b.textContent === name);
+      const btn = document.querySelector(`button.file[data-path="${CSS.escape(path)}"]`);
       btn?.scrollIntoView({ block: "nearest" });
     }
 
@@ -301,7 +301,7 @@
     async function selectFile(path) {
       currentPath = path;
       document.querySelectorAll("button.file").forEach((b) => {
-        b.setAttribute("aria-current", b.textContent === path.split("/").pop() ? "true" : "false");
+        b.setAttribute("aria-current", b.dataset.path === path ? "true" : "false");
       });
       scrollFileIntoView(path);
       const meta = await api(`/api/meta?path=${encodeURIComponent(path)}`);

@@ -10,7 +10,7 @@
  *   npm run catalog:audio:mint-backup -- --spoken bad --fix-burst
  */
 
-import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, unlinkSync, writeFileSync, copyFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { tmpdir } from "node:os";
@@ -111,7 +111,19 @@ export async function mintBackupVoice({
     writeFileSync(rawKeep, raw);
     let trimMeta = {};
     if (useBurst) trimMeta = fixDetachedBurst({ sourcePath: rawPath, destPath: dest });
-    else trimMeta = gentleEndTrim({ sourcePath: rawPath, destPath: dest });
+    else {
+      trimMeta = gentleEndTrim({
+        sourcePath: rawPath,
+        destPath: dest,
+        speechPadMs: 120,
+        minTrailingTailMs: 400,
+        paddedTakeMs: 2000,
+      });
+      if (trimMeta.trimMode === "none") {
+        copyFileSync(rawPath, dest);
+        trimMeta = { ...trimMeta, keptMs: trimMeta.totalMs, trimmed: false };
+      }
+    }
     return {
       outPath: dest,
       rawPath: rawKeep,

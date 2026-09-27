@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-26-core",
+  "description": "Activity verbs after batch-25 (lexicon slots 218–227). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "stand", "slug": "stand", "spokenForGate": "stand", "whisperMustMatch": ["stand"], "variations": [{ "id": "plain", "body": { "text": "stand" } }, { "id": "period", "body": { "text": "stand." } }] },
+    { "word": "climb", "slug": "climb", "spokenForGate": "climb", "whisperMustMatch": ["climb"], "variations": [{ "id": "plain", "body": { "text": "climb" } }, { "id": "period", "body": { "text": "climb." } }] },
+    { "word": "dance", "slug": "dance", "spokenForGate": "dance", "whisperMustMatch": ["dance"], "variations": [{ "id": "plain", "body": { "text": "dance" } }, { "id": "period", "body": { "text": "dance." } }] },
+    { "word": "swim", "slug": "swim", "spokenForGate": "swim", "whisperMustMatch": ["swim"], "variations": [{ "id": "plain", "body": { "text": "swim" } }, { "id": "period", "body": { "text": "swim." } }] },
+    { "word": "ride", "slug": "ride", "spokenForGate": "ride", "whisperMustMatch": ["ride"], "variations": [{ "id": "plain", "body": { "text": "ride" } }, { "id": "period", "body": { "text": "ride." } }] },
+    { "word": "crawl", "slug": "crawl", "spokenForGate": "crawl", "whisperMustMatch": ["crawl"], "variations": [{ "id": "plain", "body": { "text": "crawl" } }, { "id": "period", "body": { "text": "crawl." } }] },
+    { "word": "kick", "slug": "kick", "spokenForGate": "kick", "whisperMustMatch": ["kick"], "variations": [{ "id": "plain", "body": { "text": "kick" } }, { "id": "period", "body": { "text": "kick." } }] },
+    { "word": "throw", "slug": "throw", "spokenForGate": "throw", "whisperMustMatch": ["throw"], "variations": [{ "id": "plain", "body": { "text": "throw" } }, { "id": "period", "body": { "text": "throw." } }] },
+    { "word": "catch", "slug": "catch", "spokenForGate": "catch", "whisperMustMatch": ["catch"], "variations": [{ "id": "plain", "body": { "text": "catch" } }, { "id": "period", "body": { "text": "catch." } }] },
+    { "word": "push", "slug": "push", "spokenForGate": "push", "whisperMustMatch": ["push"], "variations": [{ "id": "plain", "body": { "text": "push" } }, { "id": "period", "body": { "text": "push." } }] }
+  ]
+}

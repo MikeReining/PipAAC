@@ -20,6 +20,7 @@ import {
 } from "./audio_review.mjs";
 
 export const AUDIO_TAIL_TRIM_STEP_MS = 50;
+export const AUDIO_TAIL_TRIM_MIN_MS = 20;
 
 function trimFailure(message, trimTailMs) {
   const err = new Error(message);
@@ -28,9 +29,9 @@ function trimFailure(message, trimTailMs) {
 }
 
 /** Re-encode one MP3 ending at exactly `trimTailMs` before its source end. */
-export function trimAudioTail({ sourcePath, destPath, trimTailMs, spawn = spawnSync } = {}) {
-  if (!Number.isInteger(trimTailMs) || trimTailMs < AUDIO_TAIL_TRIM_STEP_MS) {
-    throw new Error(`trimTailMs must be an integer of at least ${AUDIO_TAIL_TRIM_STEP_MS}`);
+export function trimAudioTail({ sourcePath, destPath, trimTailMs, spawn = spawnSync, minTrimMs = AUDIO_TAIL_TRIM_MIN_MS } = {}) {
+  if (!Number.isInteger(trimTailMs) || trimTailMs < minTrimMs) {
+    throw new Error(`trimTailMs must be an integer of at least ${minTrimMs}`);
   }
   const probe = spawn(
     "ffprobe",

@@ -16,10 +16,12 @@ tablet.
 1. **Whole-sentence speech with Grok Voice.** ▶ and the transform buttons
    speak the sentence as one natural utterance instead of gluing word clips
    together.
-2. **One voice everywhere (sentences first; tiles deferred).** ▶ and transform
-   buttons use Grok (`ara`). **Single-word tiles** stay on human / ElevenLabs
-   catalog audio (`WWMMC6k9tdar0BthUenK`) until a founder-approved Grok
-   catalog re-make ships. Two APIs is acceptable for launch.
+2. **Tiles keep the default voice; Grok is additive.** **Single-word tiles**
+   stay on human / ElevenLabs catalog audio (`WWMMC6k9tdar0BthUenK`). ▶ and
+   transform buttons use Grok (`ara`) for **whole sentences**. Grok **must not**
+   replace tile clips — it may later appear as an **extra** voice option in
+   settings (multi-voice), not a migration that overwrites existing catalog
+   audio.
 3. **A cache** so repeated sentences play fast and work offline: on her
    device first, then a shared Cloudflare R2 cache for sentences made of
    Pip's own words and common names (§ 5).
@@ -196,13 +198,22 @@ license, never shown to the child:
 ## 7. Catalog clips: ElevenLabs tiles now, Grok re-make on hold
 
 **Ship truth (2026-09-26):** launch tiles use WorkbookBench R2 hits plus
-ElevenLabs gap-fill for misses (`generate_missing_audio.mjs` /
-`docs/operations/ElevenLabs_Tile_Minting.md`). Ear review + R2 publish for
-new tile mints goes through `elevenlabs-tiles-core` and the local review UI.
+ElevenLabs gap-fill for misses (`data/catalog/generated_audio.json` merged at
+`build_catalog.mjs`). **Landed 2026-09-26:** all **66** WBB miss slots
+ear-reviewed and published to `workbookbench-catalog` R2 via
+`elevenlabs-tiles-core` (`shipping.json` + `publish_elevenlabs_shortlist.mjs`).
+Runbook: `docs/operations/ElevenLabs_Tile_Minting.md`. `npm run
+catalog:audio:coverage` still reports WBB “misses” for those rows; use the
+**effective launch coverage** line for ship status.
 
-**Deferred:** bulk re-make of the full catalog in Grok (`ara`). Exploration
-audio under `data/samples/` stays; slice 4 below is **not** active until the
-founder resumes that track. Grok rules and approved exploration clips:
+**Still open (not the 66 launch misses):** ~**144** inflected form surfaces in
+`forms_audio.json` `missing` (`scripts/catalog/forms_audio.mjs`); extended
+lexicon / holiday words not in `launch_lexicon.json`; Grok sentence cache and
+name clips (§ 5a, slices 5–7).
+
+**Not planned:** replacing tile audio with Grok. Exploration under
+`data/samples/` may inform an **optional** Grok tile voice later; slice 4 is
+**cancelled as a swap**. Grok exploration + sentence rules:
 `docs/operations/Grok_Voice_Synthesis_Best_Practices.md`.
 
 ## 8. Slices
@@ -254,8 +265,9 @@ founder resumes that track. Grok rules and approved exploration clips:
    re-pressing a held state re-speaks without a model call; model
    buttons grey out offline while ▶ always speaks. `bar-btn.speaking`
    holds the pressed-dark state for the audio's length.
-4. **Catalog re-make (on hold):** switch tile minting to Grok Voice with the
-   phonetics table. Until then, tiles stay ElevenLabs; see § 7 and
+4. **Optional extra tile voice (future):** user-selectable Grok (or other)
+   voices alongside the default ElevenLabs tile set — **add** clips per voice,
+   never silent swap. Default tiles stay ElevenLabs; see § 7 and
    `ElevenLabs_Tile_Minting.md`.
 5. **Measure on a real tablet:** p95 time to first sound for a cache hit, a
    cache miss, and the clip fallback; plus the Tier 1 and Tier 2 hit rates

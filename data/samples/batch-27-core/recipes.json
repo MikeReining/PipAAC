@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-27-core",
+  "description": "Activity verbs after batch-26 (lexicon slots 228–237). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "pull", "slug": "pull", "spokenForGate": "pull", "whisperMustMatch": ["pull"], "variations": [{ "id": "plain", "body": { "text": "pull" } }, { "id": "period", "body": { "text": "pull." } }] },
+    { "word": "swing", "slug": "swing", "spokenForGate": "swing", "whisperMustMatch": ["swing"], "variations": [{ "id": "plain", "body": { "text": "swing" } }, { "id": "period", "body": { "text": "swing." } }] },
+    { "word": "slide", "slug": "slide", "spokenForGate": "slide", "whisperMustMatch": ["slide"], "variations": [{ "id": "plain", "body": { "text": "slide" } }, { "id": "period", "body": { "text": "slide." } }] },
+    { "word": "fall", "slug": "fall", "spokenForGate": "fall", "whisperMustMatch": ["fall"], "variations": [{ "id": "plain", "body": { "text": "fall" } }, { "id": "period", "body": { "text": "fall." } }] },
+    { "word": "carry", "slug": "carry", "spokenForGate": "carry", "whisperMustMatch": ["carry"], "variations": [{ "id": "plain", "body": { "text": "carry" } }, { "id": "period", "body": { "text": "carry." } }] },
+    { "word": "drop", "slug": "drop", "spokenForGate": "drop", "whisperMustMatch": ["drop"], "variations": [{ "id": "plain", "body": { "text": "drop" } }, { "id": "period", "body": { "text": "drop." } }] },
+    { "word": "write", "slug": "write", "spokenForGate": "write", "whisperMustMatch": ["write"], "variations": [{ "id": "plain", "body": { "text": "write" } }, { "id": "period", "body": { "text": "write." } }] },
+    { "word": "draw", "slug": "draw", "spokenForGate": "draw", "whisperMustMatch": ["draw"], "variations": [{ "id": "plain", "body": { "text": "draw" } }, { "id": "period", "body": { "text": "draw." } }] },
+    { "word": "color", "slug": "color", "spokenForGate": "color", "whisperMustMatch": ["color", "colour"], "variations": [{ "id": "plain", "body": { "text": "color" } }, { "id": "period", "body": { "text": "color." } }] },
+    { "word": "paint", "slug": "paint", "spokenForGate": "paint", "whisperMustMatch": ["paint"], "variations": [{ "id": "plain", "body": { "text": "paint" } }, { "id": "period", "body": { "text": "paint." } }] }
+  ]
+}

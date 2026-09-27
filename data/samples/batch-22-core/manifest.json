@@ -1,0 +1,275 @@
+[
+  {
+    "file": "takes/dentist_plain.mp3",
+    "word": "dentist",
+    "variation": "plain",
+    "text": "dentist",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Dentist.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dentist_period.mp3",
+    "word": "dentist",
+    "variation": "period",
+    "text": "dentist.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Dentist",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sad_plain.mp3",
+    "word": "sad",
+    "variation": "plain",
+    "text": "sad",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Sad.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sad_period.mp3",
+    "word": "sad",
+    "variation": "period",
+    "text": "sad.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Sad.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/mad_plain.mp3",
+    "word": "mad",
+    "variation": "plain",
+    "text": "mad",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Mad.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/mad_period.mp3",
+    "word": "mad",
+    "variation": "period",
+    "text": "mad.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " mad",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/angry_plain.mp3",
+    "word": "angry",
+    "variation": "plain",
+    "text": "angry",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Angry.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/angry_period.mp3",
+    "word": "angry",
+    "variation": "period",
+    "text": "angry.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Angry.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/scared_plain.mp3",
+    "word": "scared",
+    "variation": "plain",
+    "text": "scared",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Scared.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/scared_period.mp3",
+    "word": "scared",
+    "variation": "period",
+    "text": "scared.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Scared.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/excited_plain.mp3",
+    "word": "excited",
+    "variation": "plain",
+    "text": "excited",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Excited.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/excited_period.mp3",
+    "word": "excited",
+    "variation": "period",
+    "text": "excited.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Excited.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/silly_plain.mp3",
+    "word": "silly",
+    "variation": "plain",
+    "text": "silly",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Silly.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/silly_period.mp3",
+    "word": "silly",
+    "variation": "period",
+    "text": "silly.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Silly.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/nervous_plain.mp3",
+    "word": "nervous",
+    "variation": "plain",
+    "text": "nervous",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Nervous.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/nervous_period.mp3",
+    "word": "nervous",
+    "variation": "period",
+    "text": "nervous.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Nervous.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/calm_plain.mp3",
+    "word": "calm",
+    "variation": "plain",
+    "text": "calm",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " calm",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/calm_period.mp3",
+    "word": "calm",
+    "variation": "period",
+    "text": "calm.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Calm.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/frustrated_plain.mp3",
+    "word": "frustrated",
+    "variation": "plain",
+    "text": "frustrated",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Frustrated.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/frustrated_period.mp3",
+    "word": "frustrated",
+    "variation": "period",
+    "text": "frustrated.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " frustrated.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  }
+]

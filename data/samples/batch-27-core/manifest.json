@@ -1,0 +1,277 @@
+[
+  {
+    "file": "takes/pull_plain.mp3",
+    "word": "pull",
+    "variation": "plain",
+    "text": "pull",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Pull",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/pull_period.mp3",
+    "word": "pull",
+    "variation": "period",
+    "text": "pull.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Pull",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/swing_plain.mp3",
+    "word": "swing",
+    "variation": "plain",
+    "text": "swing",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " swing",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/swing_period.mp3",
+    "word": "swing",
+    "variation": "period",
+    "text": "swing.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Swing.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/slide_plain.mp3",
+    "word": "slide",
+    "variation": "plain",
+    "text": "slide",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Slide.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/slide_period.mp3",
+    "word": "slide",
+    "variation": "period",
+    "text": "slide.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Slide.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fall_plain.mp3",
+    "word": "fall",
+    "variation": "plain",
+    "text": "fall",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Fall",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fall_period.mp3",
+    "word": "fall",
+    "variation": "period",
+    "text": "fall.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Fall",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/carry_plain.mp3",
+    "word": "carry",
+    "variation": "plain",
+    "text": "carry",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " Carrie",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/carry_period.mp3",
+    "word": "carry",
+    "variation": "period",
+    "text": "carry.",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " Carrie",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/drop_plain.mp3",
+    "word": "drop",
+    "variation": "plain",
+    "text": "drop",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Drop.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/drop_period.mp3",
+    "word": "drop",
+    "variation": "period",
+    "text": "drop.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Drop.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/write_plain.mp3",
+    "word": "write",
+    "variation": "plain",
+    "text": "write",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " Right.",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/write_period.mp3",
+    "word": "write",
+    "variation": "period",
+    "text": "write.",
+    "replace": null,
+    "speed": 1,
+    "score": -1000,
+    "whisper": " Right.",
+    "notes": [
+      "whisper_mismatch"
+    ]
+  },
+  {
+    "file": "takes/draw_plain.mp3",
+    "word": "draw",
+    "variation": "plain",
+    "text": "draw",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Draw.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/draw_period.mp3",
+    "word": "draw",
+    "variation": "period",
+    "text": "draw.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " draw",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/color_plain.mp3",
+    "word": "color",
+    "variation": "plain",
+    "text": "color",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Color.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/color_period.mp3",
+    "word": "color",
+    "variation": "period",
+    "text": "color.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Color",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/paint_plain.mp3",
+    "word": "paint",
+    "variation": "plain",
+    "text": "paint",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Paint.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/paint_period.mp3",
+    "word": "paint",
+    "variation": "period",
+    "text": "paint.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Paint.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  }
+]

@@ -1,0 +1,688 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T20:17:02.079Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-26-core",
+  "scored": [
+    {
+      "word": "stand",
+      "slug": "stand",
+      "variationId": "plain",
+      "file": "stand_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/stand_plain.mp3",
+      "whisper": " Stand.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -10,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "stand"
+      }
+    },
+    {
+      "word": "stand",
+      "slug": "stand",
+      "variationId": "period",
+      "file": "stand_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/stand_period.mp3",
+      "whisper": " Stand",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": 16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "stand."
+      }
+    },
+    {
+      "word": "climb",
+      "slug": "climb",
+      "variationId": "plain",
+      "file": "climb_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/climb_plain.mp3",
+      "whisper": " Climb.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -51,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "climb"
+      }
+    },
+    {
+      "word": "climb",
+      "slug": "climb",
+      "variationId": "period",
+      "file": "climb_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/climb_period.mp3",
+      "whisper": " Climb.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -63,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "climb."
+      }
+    },
+    {
+      "word": "dance",
+      "slug": "dance",
+      "variationId": "plain",
+      "file": "dance_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/dance_plain.mp3",
+      "whisper": " Dance.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -12,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dance"
+      }
+    },
+    {
+      "word": "dance",
+      "slug": "dance",
+      "variationId": "period",
+      "file": "dance_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/dance_period.mp3",
+      "whisper": " Dance.",
+      "score": 65,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "residue_shelf"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 27,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dance."
+      }
+    },
+    {
+      "word": "swim",
+      "slug": "swim",
+      "variationId": "plain",
+      "file": "swim_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/swim_plain.mp3",
+      "whisper": " Swim.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 13,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "swim"
+      }
+    },
+    {
+      "word": "swim",
+      "slug": "swim",
+      "variationId": "period",
+      "file": "swim_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/swim_period.mp3",
+      "whisper": " Swim.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -68,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "swim."
+      }
+    },
+    {
+      "word": "ride",
+      "slug": "ride",
+      "variationId": "plain",
+      "file": "ride_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/ride_plain.mp3",
+      "whisper": " Ride.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -22,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "ride"
+      }
+    },
+    {
+      "word": "ride",
+      "slug": "ride",
+      "variationId": "period",
+      "file": "ride_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/ride_period.mp3",
+      "whisper": " Ride.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "ride."
+      }
+    },
+    {
+      "word": "crawl",
+      "slug": "crawl",
+      "variationId": "plain",
+      "file": "crawl_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/crawl_plain.mp3",
+      "whisper": " crawl",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "crawl"
+      }
+    },
+    {
+      "word": "crawl",
+      "slug": "crawl",
+      "variationId": "period",
+      "file": "crawl_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/crawl_period.mp3",
+      "whisper": " Crawl.",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -64,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "crawl."
+      }
+    },
+    {
+      "word": "kick",
+      "slug": "kick",
+      "variationId": "plain",
+      "file": "kick_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/kick_plain.mp3",
+      "whisper": " Kick.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 700,
+      "tailBurst": true,
+      "pitchSlopeHz": -13,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "kick"
+      }
+    },
+    {
+      "word": "kick",
+      "slug": "kick",
+      "variationId": "period",
+      "file": "kick_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/kick_period.mp3",
+      "whisper": " kick",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -25,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "kick."
+      }
+    },
+    {
+      "word": "throw",
+      "slug": "throw",
+      "variationId": "plain",
+      "file": "throw_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/throw_plain.mp3",
+      "whisper": " throw",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -35,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "throw"
+      }
+    },
+    {
+      "word": "throw",
+      "slug": "throw",
+      "variationId": "period",
+      "file": "throw_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/throw_period.mp3",
+      "whisper": " Throw.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "throw."
+      }
+    },
+    {
+      "word": "catch",
+      "slug": "catch",
+      "variationId": "plain",
+      "file": "catch_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/catch_plain.mp3",
+      "whisper": " Catch.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "catch"
+      }
+    },
+    {
+      "word": "catch",
+      "slug": "catch",
+      "variationId": "period",
+      "file": "catch_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/catch_period.mp3",
+      "whisper": " Catch.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "catch."
+      }
+    },
+    {
+      "word": "push",
+      "slug": "push",
+      "variationId": "plain",
+      "file": "push_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/push_plain.mp3",
+      "whisper": " Push.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -63,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "push"
+      }
+    },
+    {
+      "word": "push",
+      "slug": "push",
+      "variationId": "period",
+      "file": "push_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/push_period.mp3",
+      "whisper": " Push.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 23,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "push."
+      }
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "catch",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "climb",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "crawl",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "dance",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "kick",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "push",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "ride",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "stand",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "swim",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "throw",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "catch",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/catch_plain.mp3",
+      "shortlistFile": "shortlist/catch_recommended.mp3",
+      "score": 125,
+      "whisper": " Catch.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "climb",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/climb_plain.mp3",
+      "shortlistFile": "shortlist/climb_recommended.mp3",
+      "score": 125,
+      "whisper": " Climb.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "crawl",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/crawl_plain.mp3",
+      "shortlistFile": "shortlist/crawl_recommended.mp3",
+      "score": 125,
+      "whisper": " crawl",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "dance",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/dance_plain.mp3",
+      "shortlistFile": "shortlist/dance_recommended.mp3",
+      "score": 125,
+      "whisper": " Dance.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "kick",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/kick_plain.mp3",
+      "shortlistFile": "shortlist/kick_recommended.mp3",
+      "score": 110,
+      "whisper": " Kick.",
+      "notes": [
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "push",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/push_period.mp3",
+      "shortlistFile": "shortlist/push_recommended.mp3",
+      "score": 125,
+      "whisper": " Push.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "ride",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/ride_plain.mp3",
+      "shortlistFile": "shortlist/ride_recommended.mp3",
+      "score": 125,
+      "whisper": " Ride.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "stand",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/stand_plain.mp3",
+      "shortlistFile": "shortlist/stand_recommended.mp3",
+      "score": 125,
+      "whisper": " Stand.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "swim",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/swim_plain.mp3",
+      "shortlistFile": "shortlist/swim_recommended.mp3",
+      "score": 125,
+      "whisper": " Swim.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "throw",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-26-core/takes/throw_plain.mp3",
+      "shortlistFile": "shortlist/throw_recommended.mp3",
+      "score": 125,
+      "whisper": " throw",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

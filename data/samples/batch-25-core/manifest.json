@@ -1,0 +1,335 @@
+[
+  {
+    "file": "takes/sticky_plain.mp3",
+    "word": "sticky",
+    "variation": "plain",
+    "text": "sticky",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Sticky.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/sticky_period.mp3",
+    "word": "sticky",
+    "variation": "period",
+    "text": "sticky.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Sticky.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dizzy_plain.mp3",
+    "word": "dizzy",
+    "variation": "plain",
+    "text": "dizzy",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Dizzy.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dizzy_period.mp3",
+    "word": "dizzy",
+    "variation": "period",
+    "text": "dizzy.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Dizzy.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/gross_plain.mp3",
+    "word": "gross",
+    "variation": "plain",
+    "text": "gross",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Gross.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/gross_period.mp3",
+    "word": "gross",
+    "variation": "period",
+    "text": "gross.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Gross.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/comfortable_plain.mp3",
+    "word": "comfortable",
+    "variation": "plain",
+    "text": "comfortable",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Comfortable.",
+    "notes": [
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/comfortable_period.mp3",
+    "word": "comfortable",
+    "variation": "period",
+    "text": "comfortable.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Comfortable.",
+    "notes": [
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/uncomfortable_plain.mp3",
+    "word": "uncomfortable",
+    "variation": "plain",
+    "text": "uncomfortable",
+    "replace": null,
+    "speed": 1,
+    "score": 30,
+    "whisper": " uncomfortable.",
+    "notes": [
+      "too_long",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/uncomfortable_period.mp3",
+    "word": "uncomfortable",
+    "variation": "period",
+    "text": "uncomfortable.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " uncomfortable.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/overwhelmed_plain.mp3",
+    "word": "overwhelmed",
+    "variation": "plain",
+    "text": "overwhelmed",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " overwhelmed.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/overwhelmed_period.mp3",
+    "word": "overwhelmed",
+    "variation": "period",
+    "text": "overwhelmed.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Overwhelmed.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/run_plain.mp3",
+    "word": "run",
+    "variation": "plain",
+    "text": "run",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Run.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/run_period.mp3",
+    "word": "run",
+    "variation": "period",
+    "text": "run.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Run.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/jump_plain.mp3",
+    "word": "jump",
+    "variation": "plain",
+    "text": "jump",
+    "replace": null,
+    "speed": 1,
+    "score": 50,
+    "whisper": " Jump.",
+    "notes": [
+      "no_tail_burst",
+      "residue_shelf"
+    ]
+  },
+  {
+    "file": "takes/jump_period.mp3",
+    "word": "jump",
+    "variation": "period",
+    "text": "jump.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Jump.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/walk_plain.mp3",
+    "word": "walk",
+    "variation": "plain",
+    "text": "walk",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " walk.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/walk_period.mp3",
+    "word": "walk",
+    "variation": "period",
+    "text": "walk.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Walk.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/sit_plain.mp3",
+    "word": "sit",
+    "variation": "plain",
+    "text": "sit",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Sit",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sit_period.mp3",
+    "word": "sit",
+    "variation": "period",
+    "text": "sit.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Sit.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sticky_backup.mp3",
+    "word": "sticky",
+    "variation": "backup",
+    "text": "sticky",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " sticky.",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/comfortable_backup.mp3",
+    "word": "comfortable",
+    "variation": "backup",
+    "text": "comfortable",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " comfortable.",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/uncomfortable_backup.mp3",
+    "word": "uncomfortable",
+    "variation": "backup",
+    "text": "uncomfortable",
+    "replace": null,
+    "speed": 1,
+    "score": 30,
+    "whisper": " uncomfortable.",
+    "notes": [
+      "too_long",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/overwhelmed_backup.mp3",
+    "word": "overwhelmed",
+    "variation": "backup",
+    "text": "overwhelmed",
+    "replace": null,
+    "speed": 1,
+    "score": 30,
+    "whisper": " overwhelmed.",
+    "notes": [
+      "too_long",
+      "tail_burst"
+    ]
+  }
+]

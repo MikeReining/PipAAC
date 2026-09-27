@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-25-core",
+  "description": "Sensory adjectives and activity verbs after batch-24 (lexicon slots 208–217). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "sticky", "slug": "sticky", "spokenForGate": "sticky", "whisperMustMatch": ["sticky"], "variations": [{ "id": "plain", "body": { "text": "sticky" } }, { "id": "period", "body": { "text": "sticky." } }] },
+    { "word": "dizzy", "slug": "dizzy", "spokenForGate": "dizzy", "whisperMustMatch": ["dizzy"], "variations": [{ "id": "plain", "body": { "text": "dizzy" } }, { "id": "period", "body": { "text": "dizzy." } }] },
+    { "word": "gross", "slug": "gross", "spokenForGate": "gross", "whisperMustMatch": ["gross"], "variations": [{ "id": "plain", "body": { "text": "gross" } }, { "id": "period", "body": { "text": "gross." } }] },
+    { "word": "comfortable", "slug": "comfortable", "spokenForGate": "comfortable", "whisperMustMatch": ["comfortable"], "variations": [{ "id": "plain", "body": { "text": "comfortable" } }, { "id": "period", "body": { "text": "comfortable." } }] },
+    { "word": "uncomfortable", "slug": "uncomfortable", "spokenForGate": "uncomfortable", "whisperMustMatch": ["uncomfortable"], "variations": [{ "id": "plain", "body": { "text": "uncomfortable" } }, { "id": "period", "body": { "text": "uncomfortable." } }] },
+    { "word": "overwhelmed", "slug": "overwhelmed", "spokenForGate": "overwhelmed", "whisperMustMatch": ["overwhelmed"], "variations": [{ "id": "plain", "body": { "text": "overwhelmed" } }, { "id": "period", "body": { "text": "overwhelmed." } }] },
+    { "word": "run", "slug": "run", "spokenForGate": "run", "whisperMustMatch": ["run"], "variations": [{ "id": "plain", "body": { "text": "run" } }, { "id": "period", "body": { "text": "run." } }] },
+    { "word": "jump", "slug": "jump", "spokenForGate": "jump", "whisperMustMatch": ["jump"], "variations": [{ "id": "plain", "body": { "text": "jump" } }, { "id": "period", "body": { "text": "jump." } }] },
+    { "word": "walk", "slug": "walk", "spokenForGate": "walk", "whisperMustMatch": ["walk"], "variations": [{ "id": "plain", "body": { "text": "walk" } }, { "id": "period", "body": { "text": "walk." } }] },
+    { "word": "sit", "slug": "sit", "spokenForGate": "sit", "whisperMustMatch": ["sit"], "variations": [{ "id": "plain", "body": { "text": "sit" } }, { "id": "period", "body": { "text": "sit." } }] }
+  ]
+}

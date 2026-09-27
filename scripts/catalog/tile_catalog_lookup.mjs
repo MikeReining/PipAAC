@@ -15,7 +15,10 @@ import {
 } from "./paths.mjs";
 import { localPathForAudioKey, r2GetArgs } from "./storage.mjs";
 
-const SHIPPING_PATH = join(repoRoot, "data/samples", TILE_REVIEW_BATCH, "shipping.json");
+export function shippingPathForBatch(batch = TILE_REVIEW_BATCH) {
+  return join(repoRoot, "data/samples", batch, "shipping.json");
+}
+
 const R2_PROBE_CACHE = join(repoRoot, ".cache", "tile-r2-probe");
 
 function wranglerBin() {
@@ -51,38 +54,48 @@ function buildImportIndex() {
   return importIndexCache;
 }
 
-export function loadShippingDoc() {
-  const doc = loadJson(SHIPPING_PATH);
+export function loadShippingDoc(batch = TILE_REVIEW_BATCH) {
+  const doc = loadJson(shippingPathForBatch(batch));
   if (!doc) return { schemaVersion: 1, bySlug: {} };
   return doc;
 }
 
-export function saveShippingDoc(doc) {
-  mkdirSync(dirname(SHIPPING_PATH), { recursive: true });
-  writeFileSync(SHIPPING_PATH, `${JSON.stringify(doc, null, 2)}\n`);
+export function saveShippingDoc(doc, batch = TILE_REVIEW_BATCH) {
+  const path = shippingPathForBatch(batch);
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, `${JSON.stringify(doc, null, 2)}\n`);
 }
 
-/** Record a successful review publish (R2 + generated_audio). */
-export function recordTileShipping({ slug, slot, spokenText, clip, sourcePath }) {
-  const doc = loadShippingDoc();
+/** Record a successful review publish (R2 + generated_audio or forms_audio). */
+export function recordTileShipping({
+  slug,
+  slot,
+  spokenText,
+  clip,
+  sourcePath,
+  batch = TILE_REVIEW_BATCH,
+  utterance_id = null,
+}) {
+  const doc = loadShippingDoc(batch);
   doc.bySlug = doc.bySlug ?? {};
   doc.bySlug[slug] = {
     slot,
+    utterance_id,
     spokenText,
     clip,
     sourcePath,
     publishedAt: new Date().toISOString(),
   };
-  saveShippingDoc(doc);
+  saveShippingDoc(doc, batch);
   return doc.bySlug[slug];
 }
 
-export function isSlugShippedViaReview(slug) {
-  return Boolean(loadShippingDoc().bySlug?.[slug]);
+export function isSlugShippedViaReview(slug, batch = TILE_REVIEW_BATCH) {
+  return Boolean(loadShippingDoc(batch).bySlug?.[slug]);
 }
 
-export function shippedSlugSet() {
-  return new Set(Object.keys(loadShippingDoc().bySlug ?? {}));
+export function shippedSlugSet(batch = TILE_REVIEW_BATCH) {
+  return new Set(Object.keys(loadShippingDoc(batch).bySlug ?? {}));
 }
 
 function clipFromGenerated(slot) {
@@ -185,7 +198,7 @@ export function probeR2ObjectExists(key) {
 }
 
 export function enrichFileListForTiles(batch, folder, files, slugFromMp3Fn) {
-  const shipped = shippedSlugSet();
+  const shipped = shippedSlugSet(batch);
   return files.map((f) => {
     const slug = slugFromMp3Fn(f.name);
     const shippedViaReview = shipped.has(slug);

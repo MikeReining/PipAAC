@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-23-core",
+  "description": "Feelings and states after batch-22 (lexicon slots 188–197). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "proud", "slug": "proud", "spokenForGate": "proud", "whisperMustMatch": ["proud"], "variations": [{ "id": "plain", "body": { "text": "proud" } }, { "id": "period", "body": { "text": "proud." } }] },
+    { "word": "shy", "slug": "shy", "spokenForGate": "shy", "whisperMustMatch": ["shy"], "variations": [{ "id": "plain", "body": { "text": "shy" } }, { "id": "period", "body": { "text": "shy." } }] },
+    { "word": "surprised", "slug": "surprised", "spokenForGate": "surprised", "whisperMustMatch": ["surprised", "surprise"], "variations": [{ "id": "plain", "body": { "text": "surprised" } }, { "id": "period", "body": { "text": "surprised." } }] },
+    { "word": "bored", "slug": "bored", "spokenForGate": "bored", "whisperMustMatch": ["bored"], "variations": [{ "id": "plain", "body": { "text": "bored" } }, { "id": "period", "body": { "text": "bored." } }] },
+    { "word": "lonely", "slug": "lonely", "spokenForGate": "lonely", "whisperMustMatch": ["lonely"], "variations": [{ "id": "plain", "body": { "text": "lonely" } }, { "id": "period", "body": { "text": "lonely." } }] },
+    { "word": "hungry", "slug": "hungry", "spokenForGate": "hungry", "whisperMustMatch": ["hungry"], "variations": [{ "id": "plain", "body": { "text": "hungry" } }, { "id": "period", "body": { "text": "hungry." } }] },
+    { "word": "thirsty", "slug": "thirsty", "spokenForGate": "thirsty", "whisperMustMatch": ["thirsty"], "variations": [{ "id": "plain", "body": { "text": "thirsty" } }, { "id": "period", "body": { "text": "thirsty." } }] },
+    { "word": "tired", "slug": "tired", "spokenForGate": "tired", "whisperMustMatch": ["tired"], "variations": [{ "id": "plain", "body": { "text": "tired" } }, { "id": "period", "body": { "text": "tired." } }] },
+    { "word": "sleepy", "slug": "sleepy", "spokenForGate": "sleepy", "whisperMustMatch": ["sleepy"], "variations": [{ "id": "plain", "body": { "text": "sleepy" } }, { "id": "period", "body": { "text": "sleepy." } }] },
+    { "word": "energetic", "slug": "energetic", "spokenForGate": "energetic", "whisperMustMatch": ["energetic"], "variations": [{ "id": "plain", "body": { "text": "energetic" } }, { "id": "period", "body": { "text": "energetic." } }] }
+  ]
+}

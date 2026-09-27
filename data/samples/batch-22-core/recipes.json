@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-22-core",
+  "description": "Health + feelings after batch-21 (lexicon slots 178–187). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "dentist", "slug": "dentist", "spokenForGate": "dentist", "whisperMustMatch": ["dentist"], "variations": [{ "id": "plain", "body": { "text": "dentist" } }, { "id": "period", "body": { "text": "dentist." } }] },
+    { "word": "sad", "slug": "sad", "spokenForGate": "sad", "whisperMustMatch": ["sad"], "variations": [{ "id": "plain", "body": { "text": "sad" } }, { "id": "period", "body": { "text": "sad." } }] },
+    { "word": "mad", "slug": "mad", "spokenForGate": "mad", "whisperMustMatch": ["mad"], "variations": [{ "id": "plain", "body": { "text": "mad" } }, { "id": "period", "body": { "text": "mad." } }] },
+    { "word": "angry", "slug": "angry", "spokenForGate": "angry", "whisperMustMatch": ["angry"], "variations": [{ "id": "plain", "body": { "text": "angry" } }, { "id": "period", "body": { "text": "angry." } }] },
+    { "word": "scared", "slug": "scared", "spokenForGate": "scared", "whisperMustMatch": ["scared"], "variations": [{ "id": "plain", "body": { "text": "scared" } }, { "id": "period", "body": { "text": "scared." } }] },
+    { "word": "excited", "slug": "excited", "spokenForGate": "excited", "whisperMustMatch": ["excited"], "variations": [{ "id": "plain", "body": { "text": "excited" } }, { "id": "period", "body": { "text": "excited." } }] },
+    { "word": "silly", "slug": "silly", "spokenForGate": "silly", "whisperMustMatch": ["silly"], "variations": [{ "id": "plain", "body": { "text": "silly" } }, { "id": "period", "body": { "text": "silly." } }] },
+    { "word": "nervous", "slug": "nervous", "spokenForGate": "nervous", "whisperMustMatch": ["nervous"], "variations": [{ "id": "plain", "body": { "text": "nervous" } }, { "id": "period", "body": { "text": "nervous." } }] },
+    { "word": "calm", "slug": "calm", "spokenForGate": "calm", "whisperMustMatch": ["calm"], "variations": [{ "id": "plain", "body": { "text": "calm" } }, { "id": "period", "body": { "text": "calm." } }] },
+    { "word": "frustrated", "slug": "frustrated", "spokenForGate": "frustrated", "whisperMustMatch": ["frustrated"], "variations": [{ "id": "plain", "body": { "text": "frustrated" } }, { "id": "period", "body": { "text": "frustrated." } }] }
+  ]
+}

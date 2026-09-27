@@ -82,8 +82,9 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
   exhausted the OpenRouter daily budget. "Generate the words" means the list.
 - **Never replace catalog audio, or upload new voice clips, without explicit
   founder approval.** Mint locally, ten clips at most, and wait for a listen
-  (`docs/operations/Grok_Voice_Synthesis_Best_Practices.md`). The ElevenLabs
-  catalog stays until the founder picks the file.
+  (`docs/operations/ElevenLabs_Tile_Minting.md`). **Default tile voice stays
+  ElevenLabs/human — Grok is sentences + optional future extra voices, never a
+  silent swap** (024 §2, `Grok_Voice_Synthesis_Best_Practices.md`).
 - Agents preview with `npm run dev:agent`. `npm run dev` is the founder browse
   copy — do not kill it or reuse `.wrangler/slot-0`.
 - **Interactive IDE agents commit directly** with `git add <paths>` and

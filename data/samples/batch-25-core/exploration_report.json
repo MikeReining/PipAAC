@@ -1,0 +1,770 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T20:11:16.093Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-25-core",
+  "scored": [
+    {
+      "word": "sticky",
+      "slug": "sticky",
+      "variationId": "plain",
+      "file": "sticky_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/sticky_plain.mp3",
+      "whisper": " Sticky.",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release",
+        "echo_return"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -128,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sticky"
+      }
+    },
+    {
+      "word": "sticky",
+      "slug": "sticky",
+      "variationId": "period",
+      "file": "sticky_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/sticky_period.mp3",
+      "whisper": " Sticky.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -20,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sticky."
+      }
+    },
+    {
+      "word": "dizzy",
+      "slug": "dizzy",
+      "variationId": "plain",
+      "file": "dizzy_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/dizzy_plain.mp3",
+      "whisper": " Dizzy.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -29,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dizzy"
+      }
+    },
+    {
+      "word": "dizzy",
+      "slug": "dizzy",
+      "variationId": "period",
+      "file": "dizzy_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/dizzy_period.mp3",
+      "whisper": " Dizzy.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dizzy."
+      }
+    },
+    {
+      "word": "gross",
+      "slug": "gross",
+      "variationId": "plain",
+      "file": "gross_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/gross_plain.mp3",
+      "whisper": " Gross.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -22,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "gross"
+      }
+    },
+    {
+      "word": "gross",
+      "slug": "gross",
+      "variationId": "period",
+      "file": "gross_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/gross_period.mp3",
+      "whisper": " Gross.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "gross."
+      }
+    },
+    {
+      "word": "comfortable",
+      "slug": "comfortable",
+      "variationId": "plain",
+      "file": "comfortable_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/comfortable_plain.mp3",
+      "whisper": " Comfortable.",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -57,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "comfortable"
+      }
+    },
+    {
+      "word": "comfortable",
+      "slug": "comfortable",
+      "variationId": "period",
+      "file": "comfortable_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/comfortable_period.mp3",
+      "whisper": " Comfortable.",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -50,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "comfortable."
+      }
+    },
+    {
+      "word": "uncomfortable",
+      "slug": "uncomfortable",
+      "variationId": "plain",
+      "file": "uncomfortable_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/uncomfortable_plain.mp3",
+      "whisper": " uncomfortable.",
+      "score": 30,
+      "notes": [
+        "too_long",
+        "tail_burst"
+      ],
+      "durMs": 1250,
+      "tailBurst": true,
+      "pitchSlopeHz": -15,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "uncomfortable"
+      }
+    },
+    {
+      "word": "uncomfortable",
+      "slug": "uncomfortable",
+      "variationId": "period",
+      "file": "uncomfortable_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/uncomfortable_period.mp3",
+      "whisper": " uncomfortable.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1250,
+      "tailBurst": false,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "uncomfortable."
+      }
+    },
+    {
+      "word": "overwhelmed",
+      "slug": "overwhelmed",
+      "variationId": "plain",
+      "file": "overwhelmed_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/overwhelmed_plain.mp3",
+      "whisper": " overwhelmed.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1250,
+      "tailBurst": false,
+      "pitchSlopeHz": -45,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "overwhelmed"
+      }
+    },
+    {
+      "word": "overwhelmed",
+      "slug": "overwhelmed",
+      "variationId": "period",
+      "file": "overwhelmed_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/overwhelmed_period.mp3",
+      "whisper": " Overwhelmed.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1250,
+      "tailBurst": false,
+      "pitchSlopeHz": 3,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "overwhelmed."
+      }
+    },
+    {
+      "word": "run",
+      "slug": "run",
+      "variationId": "plain",
+      "file": "run_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/run_plain.mp3",
+      "whisper": " Run.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 19,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "run"
+      }
+    },
+    {
+      "word": "run",
+      "slug": "run",
+      "variationId": "period",
+      "file": "run_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/run_period.mp3",
+      "whisper": " Run.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -51,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "run."
+      }
+    },
+    {
+      "word": "jump",
+      "slug": "jump",
+      "variationId": "plain",
+      "file": "jump_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/jump_plain.mp3",
+      "whisper": " Jump.",
+      "score": 50,
+      "notes": [
+        "no_tail_burst",
+        "residue_shelf"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": 6,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "jump"
+      }
+    },
+    {
+      "word": "jump",
+      "slug": "jump",
+      "variationId": "period",
+      "file": "jump_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/jump_period.mp3",
+      "whisper": " Jump.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "jump."
+      }
+    },
+    {
+      "word": "walk",
+      "slug": "walk",
+      "variationId": "plain",
+      "file": "walk_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/walk_plain.mp3",
+      "whisper": " walk.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": -1,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "walk"
+      }
+    },
+    {
+      "word": "walk",
+      "slug": "walk",
+      "variationId": "period",
+      "file": "walk_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/walk_period.mp3",
+      "whisper": " Walk.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": -35,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "walk."
+      }
+    },
+    {
+      "word": "sit",
+      "slug": "sit",
+      "variationId": "plain",
+      "file": "sit_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/sit_plain.mp3",
+      "whisper": " Sit",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 8,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sit"
+      }
+    },
+    {
+      "word": "sit",
+      "slug": "sit",
+      "variationId": "period",
+      "file": "sit_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/sit_period.mp3",
+      "whisper": " Sit.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": 0,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sit."
+      }
+    },
+    {
+      "word": "sticky",
+      "slug": "sticky",
+      "variationId": "backup",
+      "file": "sticky_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/sticky_backup.mp3",
+      "whisper": " sticky.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1030,
+      "tailBurst": false,
+      "pitchSlopeHz": -39,
+      "gate": "pass",
+      "body": {
+        "text": "sticky"
+      },
+      "isBackup": true
+    },
+    {
+      "word": "comfortable",
+      "slug": "comfortable",
+      "variationId": "backup",
+      "file": "comfortable_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/comfortable_backup.mp3",
+      "whisper": " comfortable.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1360,
+      "tailBurst": false,
+      "pitchSlopeHz": -23,
+      "gate": "pass",
+      "body": {
+        "text": "comfortable"
+      },
+      "isBackup": true
+    },
+    {
+      "word": "uncomfortable",
+      "slug": "uncomfortable",
+      "variationId": "backup",
+      "file": "uncomfortable_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/uncomfortable_backup.mp3",
+      "whisper": " uncomfortable.",
+      "score": 30,
+      "notes": [
+        "too_long",
+        "tail_burst"
+      ],
+      "durMs": 1190,
+      "tailBurst": true,
+      "pitchSlopeHz": -1,
+      "gate": "pass",
+      "body": {
+        "text": "uncomfortable"
+      },
+      "isBackup": true
+    },
+    {
+      "word": "overwhelmed",
+      "slug": "overwhelmed",
+      "variationId": "backup",
+      "file": "overwhelmed_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/overwhelmed_backup.mp3",
+      "whisper": " overwhelmed.",
+      "score": 30,
+      "notes": [
+        "too_long",
+        "tail_burst"
+      ],
+      "durMs": 1350,
+      "tailBurst": true,
+      "pitchSlopeHz": -18,
+      "gate": "pass",
+      "body": {
+        "text": "overwhelmed"
+      },
+      "isBackup": true
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "comfortable",
+      "variationId": "plain",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "dizzy",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "gross",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "jump",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "overwhelmed",
+      "variationId": "period",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "run",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "sit",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "sticky",
+      "variationId": "plain",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release",
+        "echo_return"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "uncomfortable",
+      "variationId": "period",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "walk",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "comfortable",
+      "variationId": "backup",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/comfortable_backup.mp3",
+      "shortlistFile": "shortlist/comfortable_recommended.mp3",
+      "score": 85,
+      "whisper": " comfortable.",
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "dizzy",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/dizzy_plain.mp3",
+      "shortlistFile": "shortlist/dizzy_recommended.mp3",
+      "score": 125,
+      "whisper": " Dizzy.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "gross",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/gross_plain.mp3",
+      "shortlistFile": "shortlist/gross_recommended.mp3",
+      "score": 110,
+      "whisper": " Gross.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "jump",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/jump_period.mp3",
+      "shortlistFile": "shortlist/jump_recommended.mp3",
+      "score": 125,
+      "whisper": " Jump.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "overwhelmed",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/overwhelmed_period.mp3",
+      "shortlistFile": "shortlist/overwhelmed_recommended.mp3",
+      "score": 85,
+      "whisper": " Overwhelmed.",
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "run",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/run_plain.mp3",
+      "shortlistFile": "shortlist/run_recommended.mp3",
+      "score": 125,
+      "whisper": " Run.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "sit",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/sit_plain.mp3",
+      "shortlistFile": "shortlist/sit_recommended.mp3",
+      "score": 125,
+      "whisper": " Sit",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "sticky",
+      "variationId": "backup",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/sticky_backup.mp3",
+      "shortlistFile": "shortlist/sticky_recommended.mp3",
+      "score": 110,
+      "whisper": " sticky.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "uncomfortable",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/uncomfortable_period.mp3",
+      "shortlistFile": "shortlist/uncomfortable_recommended.mp3",
+      "score": 85,
+      "whisper": " uncomfortable.",
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "walk",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-25-core/takes/walk_plain.mp3",
+      "shortlistFile": "shortlist/walk_recommended.mp3",
+      "score": 125,
+      "whisper": " walk.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    }
+  ]
+}

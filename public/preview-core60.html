@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core 60 Draft</title>
+<!-- Local founder preview (2026-09-24). Not part of the app; not committed. -->
+<style>
+  @font-face { font-family: "Andika"; src: url("/fonts/andika-bold.woff2") format("woff2"); font-weight: 700; }
+  :root {
+    --cream: #f6f4ef; --ink: #1a1a1a; --muted: #6b665c; --edge: #d8d3c7; --gap: 6px;
+    --word-font: "Andika", -apple-system, "Helvetica Neue", sans-serif;
+  }
+  .r-Yellow { --rb: #b07f00; --rf: #fdf0c8; }
+  .r-Green  { --rb: #2e8b3a; --rf: #dcf0dd; }
+  .r-Blue   { --rb: #2f6fd0; --rf: #dcecfd; }
+  .r-Pink   { --rb: #d0438c; --rf: #fbdfee; }
+  .r-Red    { --rb: #c62828; --rf: #fbdcdc; }
+  .r-Purple { --rb: #6f55b0; --rf: #ebe5f7; }
+  * { box-sizing: border-box; margin: 0; }
+  body { font-family: -apple-system, "Helvetica Neue", sans-serif; background: var(--cream); color: var(--ink); padding: 20px; }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 24px; margin-bottom: 16px; }
+  h1 { font-size: 22px; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  .controls button { font: inherit; font-size: 14px; padding: 6px 12px; border: 1px solid var(--edge); background: #fff; border-radius: 8px; cursor: pointer; }
+  .controls button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .boards { display: grid; gap: 28px; }
+  h2 { font-size: 16px; margin-bottom: 8px; display: flex; gap: 10px; align-items: baseline; }
+  h2 small { font-weight: 400; color: var(--muted); font-size: 13px; }
+  .grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: var(--gap); max-width: 1180px; }
+  .cell { aspect-ratio: 1.35; border-radius: 10px; border: 3px solid var(--rb); background: #fff; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .cell .tlabel { height: 30%; background: var(--rf); font-family: var(--word-font); font-weight: 700; font-size: clamp(11px, 1.35vw, 17px);
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 4%; line-height: 1.05; }
+  body.strip-only .cell { border-color: var(--edge); }
+  body.changes .cell.added::after { content: "new"; position: absolute; right: 5px; bottom: 5px; font-size: 11px; font-weight: 600; color: #fff; background: var(--ink); border-radius: 6px; padding: 1px 6px; }
+  body.changes .cell.removed { opacity: 0.35; }
+  body.changes .cell.removed .tlabel { text-decoration: line-through; }
+  .notes { max-width: 1180px; margin-top: 24px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .notes section { background: #fff; border: 1px solid var(--edge); border-radius: 10px; padding: 14px 16px; }
+  .notes h3 { font-size: 14px; margin-bottom: 8px; }
+  .notes p, .notes li { font-size: 14px; line-height: 1.45; }
+  .notes ul { padding-left: 18px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
+  .legend span { font-size: 13px; padding: 3px 10px; border-radius: 6px; background: var(--rf); border: 2px solid var(--rb); }
+  /* Groups mockup */
+  .r-Door { --rb: #8a8578; --rf: #f2efe6; }
+  .cell .tart { flex: 1; display: flex; align-items: center; justify-content: center; font-size: clamp(16px, 2.6vw, 34px); }
+  .cell.door { border-style: solid; box-shadow: 4px -4px 0 -1px #fff, 4px -4px 0 1px var(--rb); margin: 4px 4px 0 0; }
+  .cell.nav { --rb: #1a1a1a; --rf: #1a1a1a; }
+  .cell.nav .tlabel { color: #fff; height: 100%; font-size: clamp(11px, 1.3vw, 16px); }
+  .cell.empty { border: 2px dashed var(--edge); background: transparent; }
+  .cell.dimrow { opacity: 1; }
+  .bar { display: grid; grid-template-columns: repeat(10, 1fr); gap: var(--gap); max-width: 1180px; margin-bottom: var(--gap); }
+  .sentence { grid-column: span 10; background: #fff; border: 2px solid var(--edge); border-radius: 10px; padding: 8px 12px; font-family: var(--word-font); font-weight: 700; font-size: 18px; min-height: 44px; }
+  .pred { grid-column: span 2; background: #fff; border: 2px solid var(--rb); border-radius: 10px; font-family: var(--word-font); font-weight: 700; font-size: 15px; padding: 8px; text-align: center; }
+  .anchor { background: #fff; border: 2px solid var(--ink); border-radius: 10px; text-align: center; font-size: 14px; padding: 8px 2px; font-weight: 600; }
+  .anchor.on { background: var(--ink); color: #fff; }
+  .split { height: 0; border-top: 2px dashed var(--muted); grid-column: span 10; margin: 2px 0; }
+  .groups { margin-top: 36px; }
+  .groups > p { max-width: 1180px; font-size: 14px; line-height: 1.5; color: var(--muted); margin: 4px 0 12px; }
+  /* Edit-mode mockup */
+  .edit { margin-top: 36px; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 8px; }
+  .toolbar button { font-size: 20px; width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--ink); background: #fff; cursor: pointer; }
+  .toolbar button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  #editgrid .cell { cursor: pointer; }
+  #editgrid .cell .n { position: absolute; right: 6px; bottom: 4px; font-size: clamp(11px, 1.2vw, 15px); font-weight: 700; color: var(--muted); display: none; }
+  #editgrid.use .cell .n { display: block; }
+  .sheet-back { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .sheet-back.open { display: flex; }
+  .sheet { background: #fff; border-radius: 14px; width: min(420px, 100%); max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
+  .sheet .top { display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid var(--edge); }
+  .sheet .top .cell { width: 96px; flex: none; }
+  .sheet .top .count { font-size: 22px; font-weight: 700; flex: 1; }
+  .sheet .top button { font-size: 20px; width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--edge); background: #fff; cursor: pointer; }
+  .sheet input { margin: 12px; padding: 10px 12px; font-size: 16px; border: 2px solid var(--edge); border-radius: 10px; }
+  .sheet ul { list-style: none; padding: 0 12px 12px; overflow: auto; }
+  .sheet li { display: flex; justify-content: space-between; padding: 10px 8px; border-bottom: 1px solid #efece5; font-family: var(--word-font); font-weight: 700; font-size: 17px; cursor: pointer; }
+  .sheet li span { color: var(--muted); font-family: -apple-system, sans-serif; }
+  @media (max-width: 700px) { body { padding: 16px; } .grid { gap: 3px; } .cell { border-width: 2px; border-radius: 6px; } }
+</style>
+</head>
+<body class="changes">
+<header>
+  <h1>Core 60 — today vs. draft</h1>
+  <div class="controls">
+    <button id="t-changes" aria-pressed="true">Show changes</button>
+    <button id="t-strip" aria-pressed="false">Color on label only</button>
+  </div>
+</header>
+
+<div class="boards">
+  <div>
+    <h2>Today <small>colors from each word's grammar role, scattered across columns</small></h2>
+    <div class="grid" id="today"></div>
+  </div>
+  <div>
+    <h2>Draft <small>one color per column band, one kind of word per band</small></h2>
+    <div class="grid" id="draft"></div>
+    <div class="legend">
+      <span class="r-Yellow">People &amp; things</span>
+      <span class="r-Green">Actions</span>
+      <span class="r-Pink">Little words</span>
+      <span class="r-Blue">Describing</span>
+      <span class="r-Purple">Questions</span>
+      <span class="r-Red">Yes / no &amp; safety</span>
+    </div>
+  </div>
+</div>
+
+<div class="notes">
+  <section>
+    <h3>Added (8)</h3>
+    <p><b>this</b> (#10 of 680 in real children's speech), <b>mom</b> (#16 — more common than <i>want</i>), <b>is</b> (#19), <b>have</b> (#34), <b>we</b> (#35), <b>dad</b> (#50), <b>how</b> (#87), <b>who</b> (#117).</p>
+    <p style="margin-top:6px"><b>mom</b> and <b>dad</b> are the people this child calls for: filled from setup ("Who does {name} call for?") with their photos; <i>mom</i>/<i>dad</i> if setup is skipped.</p>
+  </section>
+  <section>
+    <h3>Moved off the grid (8)</h3>
+    <p><b>happy</b> (#266), <b>bad</b> (#242) → Feelings group; <b>big</b>, <b>little</b> → Describing; <b>give</b>, <b>take</b> → Actions; <b>at</b> → Little Words; <b>please</b> → the Smart bar at the end of a sentence, and its group.</p>
+  </section>
+  <section>
+    <h3>Rules kept</h3>
+    <ul>
+      <li>Every Universal Core word (Project Core) stays, including <b>open</b>, <b>turn</b>, <b>all done</b>; <b>who</b> is now on the grid too.</li>
+      <li>Safety words stay: <b>hurt</b>, <b>sad</b>, <b>help</b>, <b>stop</b>, <b>no</b>.</li>
+      <li><b>not</b> sits with <b>no</b> and <b>stop</b> — "no" always in one place, like the Smart bar's last slot.</li>
+      <li><b>am</b>/<b>are</b>, <b>a</b>/<b>the</b> come from the Smart bar (after <i>I</i> → <i>am</i>).</li>
+    </ul>
+  </section>
+  <section>
+    <h3>Open</h3>
+    <ul>
+      <li><b>is</b> isn't one of the 83 root-core words today — adding it is a membership change.</li>
+      <li>Questions need a sixth color (purple here).</li>
+      <li><b>yes</b> in red: fine as "answer/regulate", or should yes/no get their own color?</li>
+      <li>The 90-cell and 15-cell boards get re-derived after this one is settled.</li>
+    </ul>
+  </section>
+</div>
+
+<div class="groups">
+  <header>
+    <h1>Groups — full screen</h1>
+    <div class="controls" id="scenes">
+      <button data-s="list" aria-pressed="true">Tap Groups</button>
+      <button data-s="food" aria-pressed="false">Tap Food</button>
+      <button data-s="breakfast" aria-pressed="false">A family's "Breakfast" group</button>
+    </div>
+  </header>
+  <p id="scene-note"></p>
+  <div class="bar" id="bar"></div>
+  <div class="grid" id="scene"></div>
+  <div class="legend">
+    <span class="r-Door">Group (a door, not a word): neutral, folder tab</span>
+    <span style="background:#1a1a1a;color:#fff;border:2px solid #1a1a1a">← Board</span>
+    <span style="border:2px dashed #d8d3c7">reserved / empty — never filled by the app</span>
+  </div>
+</div>
+
+<div class="edit">
+  <h1 style="font-size:22px;margin-bottom:8px">Edit mode — tap any tile</h1>
+  <div class="toolbar"><button id="e-done" title="Done">✓</button><button id="e-use" aria-pressed="false" title="Show use">📊</button></div>
+  <div class="grid" id="editgrid"></div>
+</div>
+<div class="sheet-back" id="sheetback">
+  <div class="sheet">
+    <div class="top"><div id="s-tile"></div><div class="count" id="s-count"></div><button title="Edit word">✎</button></div>
+    <input id="s-q" placeholder="🔍">
+    <ul id="s-list"></ul>
+  </div>
+</div>
+
+<script>
+// Today = docs/product/Core_Coordinate_Map.md § 3; colors = data/launch_lexicon.json roles.
+const TODAY = [
+  "I you want like go in out more all done yes",
+  "me my need look come on off not and no",
+  "he she get make do up down big little stop",
+  "it that put take give here there good bad help",
+  "why when open turn play to for happy sad hurt",
+  "what where eat drink can with at all some please",
+];
+const ROLE = { I:"Yellow", you:"Yellow", me:"Yellow", my:"Yellow", he:"Yellow", she:"Yellow", it:"Yellow", that:"Yellow",
+  why:"Pink", when:"Pink", what:"Pink", where:"Pink", want:"Green", like:"Green", go:"Green", need:"Green", look:"Green",
+  come:"Green", get:"Green", make:"Green", do:"Green", put:"Green", take:"Green", give:"Green", open:"Green", turn:"Green",
+  play:"Green", eat:"Green", drink:"Green", can:"Green", help:"Green", in:"Pink", out:"Pink", on:"Pink", off:"Pink", up:"Pink",
+  down:"Pink", here:"Pink", there:"Pink", to:"Pink", for:"Pink", with:"Pink", at:"Pink", and:"Pink", yes:"Pink", please:"Pink",
+  more:"Blue", "all done":"Blue", big:"Blue", little:"Blue", good:"Blue", bad:"Blue", happy:"Blue", sad:"Blue", all:"Blue", some:"Blue",
+  not:"Red", no:"Red", stop:"Red", hurt:"Red" };
+// Draft: column bands (col → color), rows top to bottom.
+const DRAFT = [
+  "I you want like go in out more what yes",
+  "me my need look come on off all where no",
+  "he she get make do up down some who not",
+  "mom dad is have can here there good why stop",
+  "this that put open turn to for sad when help",
+  "it we eat drink play with and all done how hurt",
+];
+const BAND = ["Yellow","Yellow","Green","Green","Green","Pink","Pink","Blue","Purple","Red"];
+const rows = (spec) => spec.map((r) => r.replace("all done", "all|done").split(" ").map((w) => w.replace("|", " ")));
+const today = rows(TODAY).flat(), draft = rows(DRAFT).flat();
+const inDraft = new Set(draft), inToday = new Set(today);
+function paint(el, words, color, mark) {
+  words.forEach((w, i) => {
+    const c = document.createElement("div");
+    c.className = `cell r-${color(w, i)}${mark(w) ? " " + mark(w) : ""}`;
+    c.innerHTML = `<div class="tlabel"></div>`;
+    c.firstChild.textContent = w;
+    el.appendChild(c);
+  });
+}
+paint(document.getElementById("today"), today, (w) => ROLE[w], (w) => (inDraft.has(w) ? "" : "removed"));
+paint(document.getElementById("draft"), draft, (w, i) => BAND[i % 10], (w) => (inToday.has(w) ? "" : "added"));
+// ---- Groups mockup ----
+const W = (w, c) => ({ w, c });
+// Proposed default order: set once, then frozen. Things first (most-used first), then the word-type groups.
+const GROUPS = "⭐My Words|👪People|🍎Food|🥤Drinks|⚽Play|🐶Animals|🏠Places|🛋️Home|🧍Body|😊Feelings|👕Clothes|🚗Vehicles|🕐Time|🔢Numbers|💬Social|🏃Actions|🤸Moving|🎨Describing|🔤Little words|👥More people|🏃More doing|🧭More where|🎨More describing".split("|");
+const FOOD = ["water","milk","juice","apple juice","chocolate milk","tea","smoothie","bread","toast","cereal","oatmeal","pancake","waffle","bagel","egg","butter","jam","syrup","pizza","pasta","macaroni","sandwich","chicken","nuggets","burger","hot dog","soup","rice","cheese","meat","fish","snack","cracker","cookie","chips","popcorn","pretzel","yogurt","fruit snack","ice cream","popsicle","candy","cake","muffin","donut","fruit","apple","banana","strawberry","orange","grapes","watermelon","carrot","broccoli","corn","breakfast","lunch"].map((w) => W(w, "Yellow"));
+// A mixed group, laid out in the home board's band order: things, actions, little words, describing.
+const BREAKFAST = [
+  ..."cereal toast waffle pancake egg milk juice banana butter syrup bowl spoon cup fork".split(" ").map((w) => W(w, "Yellow")),
+  ..."eat drink cook".split(" ").map((w) => W(w, "Green")),
+  ..."with on".split(" ").map((w) => W(w, "Pink")),
+  ..."hot cold hungry full".split(" ").map((w) => W(w, "Blue")),
+];
+const NOTES = {
+  list: "Tapping Groups fills the whole board with the group list; the Smart bar stays. Doors are neutral gray with a folder tab, so they never read as a word color. Order is set once and never changes by itself: a supporter can drag a door, and a new group takes the next free spot without moving any other.",
+  food: "Tapping Food fills the board: all 54 foods on one page, all yellow — the color belongs to the word (a thing), never to the group. After “cookie” the Smart bar offers and / please / more / no, so Back is rarely needed; after Speak the board goes home by itself.",
+  breakfast: "A mixed group keeps each word's own color, but lays them out in the home board's order — things, then actions, then little words, then describing — filling top to bottom. Tidy, not a Christmas tree, and “actions are in the green part” still works inside the group.",
+};
+function scene(name) {
+  const el = document.getElementById("scene"), bar = document.getElementById("bar");
+  el.innerHTML = ""; bar.innerHTML = "";
+  const sentence = document.createElement("div"); sentence.className = "sentence";
+  sentence.textContent = name === "list" ? "I want" : name === "food" ? "I want cookie" : "I want";
+  bar.appendChild(sentence);
+  const preds = name === "food" ? [["and","Pink"],["please","Pink"],["more","Blue"],["no","Red"]] : [["to","Pink"],["a","Pink"],["some","Pink"],["more","Blue"]];
+  for (const [w, c] of preds) { const d = document.createElement("div"); d.className = `pred r-${c}`; d.textContent = w; bar.appendChild(d); }
+  for (const a of ["🗂 Groups", "⌨"]) { const d = document.createElement("div"); d.className = "anchor" + (a.includes("Groups") && name === "list" ? " on" : ""); d.textContent = a; bar.appendChild(d); }
+  // full screen: slot 0 ← Board, slot 1 reserved (Edit-mode action), last slot Next ›
+  const cells = new Array(60).fill(null);
+  cells[0] = { nav: "← Board" };
+  if (name === "list") GROUPS.forEach((g, i) => { const glyph = [...g][0]; cells[10 + i] = { door: true, glyph, w: g.slice(glyph.length) }; });
+  if (name === "food") { FOOD.slice(0, 54).forEach((x, i) => (cells[2 + i] = x)); }
+  if (name === "breakfast") {
+    // column-major, each word type starts a fresh column; row 1 of cols 1–2 holds the nav cells
+    let k = 6, prev = null; // first free column-major index after column 0 rows 0..5 → start at col 1
+    k = 1;
+    const at = (k) => (k % 6) * 10 + Math.floor(k / 6);
+    for (const x of BREAKFAST) {
+      if (prev && x.c !== prev && k % 6) k += 6 - (k % 6);
+      while (at(k) === 0 || at(k) === 1) k++;
+      prev = x.c; cells[at(k)] = x; k++;
+    }
+  }
+  const lower = cells;
+  lower.forEach((x) => {
+    const c = document.createElement("div");
+    if (!x) { c.className = "cell empty"; el.appendChild(c); return; }
+    if (x.nav) { c.className = "cell nav"; c.innerHTML = `<div class="tlabel"></div>`; c.firstChild.textContent = x.nav; el.appendChild(c); return; }
+    if (x.door) { c.className = "cell door r-Door"; c.innerHTML = `<div class="tlabel"></div><div class="tart"></div>`; c.firstChild.textContent = x.w; c.lastChild.textContent = x.glyph; el.appendChild(c); return; }
+    c.className = `cell r-${x.c}`; c.innerHTML = `<div class="tlabel"></div>`; c.firstChild.textContent = x.w; el.appendChild(c);
+  });
+  document.getElementById("scene-note").textContent = NOTES[name];
+  document.querySelectorAll("#scenes button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.s === name));
+}
+document.querySelectorAll("#scenes button").forEach((b) => (b.onclick = () => scene(b.dataset.s)));
+scene("list");
+// ---- Edit-mode mockup (sample counts: 30 days of one made-up child) ----
+const USE = { I:212, you:88, want:190, like:41, go:77, in:30, out:25, more:96, what:35, yes:120, me:40, my:66, need:12, look:28,
+  come:14, on:22, off:9, all:18, where:21, no:140, he:11, she:8, get:31, make:10, do:26, up:19, down:13, some:15, who:3, not:24,
+  mom:150, dad:61, is:70, have:29, can:17, here:12, there:16, good:9, why:6, stop:22, this:33, that:38, put:11, open:14,
+  turn:2, to:44, for:5, sad:1, when:2, help:7, it:57, we:4, eat:27, drink:23, play:34, with:6, and:30, "all done":45, how:1, hurt:2 };
+const OFF = [["cookie",14],["juice",9],["milk",8],["outside",6],["ball",5],["please",5],["dog",4],["bath",3],["tv",3],["happy",2],["apple",2],["car",1],["big",1],["book",1],["park",0],["train",0]];
+function tileEl(w, color) { const c = document.createElement("div"); c.className = `cell r-${color}`; c.innerHTML = `<div class="tlabel"></div><span class="n"></span>`;
+  c.firstChild.textContent = w; c.lastChild.textContent = USE[w] ?? ""; return c; }
+const eg = document.getElementById("editgrid");
+draft.forEach((w, i) => { const c = tileEl(w, BAND[i % 10]); c.onclick = () => openSheet(w, BAND[i % 10]); eg.appendChild(c); });
+const useBtn = document.getElementById("e-use");
+useBtn.onclick = () => useBtn.setAttribute("aria-pressed", eg.classList.toggle("use"));
+function openSheet(w, color) {
+  const t = document.getElementById("s-tile"); t.replaceChildren(tileEl(w, color));
+  document.getElementById("s-count").textContent = USE[w] ?? 0;
+  const q = document.getElementById("s-q"); q.value = "";
+  const paintList = () => { const ul = document.getElementById("s-list"); ul.replaceChildren();
+    OFF.filter(([x]) => x.includes(q.value.trim().toLowerCase())).forEach(([x, n]) => {
+      const li = document.createElement("li"); li.innerHTML = "<b></b><span></span>"; li.firstChild.textContent = x; li.lastChild.textContent = n;
+      li.onclick = () => document.getElementById("sheetback").classList.remove("open"); ul.appendChild(li); }); };
+  q.oninput = paintList; paintList();
+  document.getElementById("sheetback").classList.add("open");
+}
+document.getElementById("sheetback").onclick = (e) => { if (e.target.id === "sheetback") e.currentTarget.classList.remove("open"); };
+for (const [id, cls] of [["t-changes", "changes"], ["t-strip", "strip-only"]]) {
+  const b = document.getElementById(id);
+  b.onclick = () => b.setAttribute("aria-pressed", document.body.classList.toggle(cls));
+}
+</script>
+</body>
+</html>

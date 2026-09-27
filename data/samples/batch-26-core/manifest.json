@@ -1,0 +1,281 @@
+[
+  {
+    "file": "takes/stand_plain.mp3",
+    "word": "stand",
+    "variation": "plain",
+    "text": "stand",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Stand.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/stand_period.mp3",
+    "word": "stand",
+    "variation": "period",
+    "text": "stand.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Stand",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/climb_plain.mp3",
+    "word": "climb",
+    "variation": "plain",
+    "text": "climb",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Climb.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/climb_period.mp3",
+    "word": "climb",
+    "variation": "period",
+    "text": "climb.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Climb.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dance_plain.mp3",
+    "word": "dance",
+    "variation": "plain",
+    "text": "dance",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Dance.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/dance_period.mp3",
+    "word": "dance",
+    "variation": "period",
+    "text": "dance.",
+    "replace": null,
+    "speed": 1,
+    "score": 65,
+    "whisper": " Dance.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "residue_shelf"
+    ]
+  },
+  {
+    "file": "takes/swim_plain.mp3",
+    "word": "swim",
+    "variation": "plain",
+    "text": "swim",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Swim.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/swim_period.mp3",
+    "word": "swim",
+    "variation": "period",
+    "text": "swim.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Swim.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/ride_plain.mp3",
+    "word": "ride",
+    "variation": "plain",
+    "text": "ride",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Ride.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/ride_period.mp3",
+    "word": "ride",
+    "variation": "period",
+    "text": "ride.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Ride.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/crawl_plain.mp3",
+    "word": "crawl",
+    "variation": "plain",
+    "text": "crawl",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " crawl",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/crawl_period.mp3",
+    "word": "crawl",
+    "variation": "period",
+    "text": "crawl.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Crawl.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/kick_plain.mp3",
+    "word": "kick",
+    "variation": "plain",
+    "text": "kick",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Kick.",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/kick_period.mp3",
+    "word": "kick",
+    "variation": "period",
+    "text": "kick.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " kick",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/throw_plain.mp3",
+    "word": "throw",
+    "variation": "plain",
+    "text": "throw",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " throw",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/throw_period.mp3",
+    "word": "throw",
+    "variation": "period",
+    "text": "throw.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Throw.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/catch_plain.mp3",
+    "word": "catch",
+    "variation": "plain",
+    "text": "catch",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Catch.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/catch_period.mp3",
+    "word": "catch",
+    "variation": "period",
+    "text": "catch.",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Catch.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/push_plain.mp3",
+    "word": "push",
+    "variation": "plain",
+    "text": "push",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Push.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/push_period.mp3",
+    "word": "push",
+    "variation": "period",
+    "text": "push.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Push.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]

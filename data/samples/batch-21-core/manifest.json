@@ -1,0 +1,281 @@
+[
+  {
+    "file": "takes/towel_plain.mp3",
+    "word": "towel",
+    "variation": "plain",
+    "text": "towel",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " towel",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/towel_period.mp3",
+    "word": "towel",
+    "variation": "period",
+    "text": "towel.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " towel",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/comb_plain.mp3",
+    "word": "comb",
+    "variation": "plain",
+    "text": "comb",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " comb",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/comb_period.mp3",
+    "word": "comb",
+    "variation": "period",
+    "text": "comb.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Comb",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tissue_plain.mp3",
+    "word": "tissue",
+    "variation": "plain",
+    "text": "tissue",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Tissue",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/tissue_period.mp3",
+    "word": "tissue",
+    "variation": "period",
+    "text": "tissue.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " tissue",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bandage_plain.mp3",
+    "word": "bandage",
+    "variation": "plain",
+    "text": "bandage",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Bandage",
+    "notes": [
+      "too_long",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/bandage_period.mp3",
+    "word": "bandage",
+    "variation": "period",
+    "text": "bandage.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Bandage.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hurt_plain.mp3",
+    "word": "hurt",
+    "variation": "plain",
+    "text": "hurt",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Hurt.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/hurt_period.mp3",
+    "word": "hurt",
+    "variation": "period",
+    "text": "hurt.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Hurt",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sick_plain.mp3",
+    "word": "sick",
+    "variation": "plain",
+    "text": "sick",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " sick",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sick_period.mp3",
+    "word": "sick",
+    "variation": "period",
+    "text": "sick.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Sick.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/pain_plain.mp3",
+    "word": "pain",
+    "variation": "plain",
+    "text": "pain",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Pain.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/pain_period.mp3",
+    "word": "pain",
+    "variation": "period",
+    "text": "pain.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " pain",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fever_plain.mp3",
+    "word": "fever",
+    "variation": "plain",
+    "text": "fever",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Fever.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/fever_period.mp3",
+    "word": "fever",
+    "variation": "period",
+    "text": "fever.",
+    "replace": null,
+    "speed": 1,
+    "score": 85,
+    "whisper": " Fever.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "echo_return"
+    ]
+  },
+  {
+    "file": "takes/cough_plain.mp3",
+    "word": "cough",
+    "variation": "plain",
+    "text": "cough",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cough.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cough_period.mp3",
+    "word": "cough",
+    "variation": "period",
+    "text": "cough.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Cough.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/medicine_plain.mp3",
+    "word": "medicine",
+    "variation": "plain",
+    "text": "medicine",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Medicine",
+    "notes": [
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/medicine_period.mp3",
+    "word": "medicine",
+    "variation": "period",
+    "text": "medicine.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Medicine.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]

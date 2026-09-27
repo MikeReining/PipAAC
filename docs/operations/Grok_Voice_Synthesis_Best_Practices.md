@@ -1,10 +1,13 @@
-# Grok Voice: Catalog Clip Minting
+# Grok Voice: exploration and sentences
 
 **Status:** founder listen 2026-09-25. Voice `ara`.
-**Applies to:** single-word catalog clips from xAI Grok Voice (`https://api.x.ai/v1/tts`).
-**Truth owner:** the approved MP3 in `data/samples/approved/`, and the founder's listen. Whisper only checks that the word came through.
+**Applies to:** (1) **sentences** — ▶ and transform buttons via phase 024 Worker; (2) **optional future** user-selectable voices; (3) **exploration only** under `data/samples/batch-*-core` and `data/samples/approved/`.
 
-Sentences (▶ and the transform buttons) are a different path. Send the sentence as plain text. No phonetic replace, no trailing comma, no speech tags. Context carries *a*, *the*, and *to*.
+**Does not apply to:** default **tile** playback. Ship tiles stay on human / ElevenLabs catalog voice (`voices.json` → `tiles`). **Grok will never replace that voice.** It may become an **additional** voice families can choose (multi-voice picker). Agents must not bulk-swap catalog clips to Grok without an explicit, separate product decision.
+
+Exploration truth owner: approved MP3 in `data/samples/approved/` + founder listen.
+
+Sentences: plain text to Grok. No phonetic replace, no trailing comma, no speech tags on the sentence path.
 
 ---
 

@@ -1,0 +1,282 @@
+[
+  {
+    "file": "takes/cut_plain.mp3",
+    "word": "cut",
+    "variation": "plain",
+    "text": "cut",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " cut",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/cut_period.mp3",
+    "word": "cut",
+    "variation": "period",
+    "text": "cut.",
+    "replace": null,
+    "speed": 1,
+    "score": 110,
+    "whisper": " Cut.",
+    "notes": [
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/glue_plain.mp3",
+    "word": "glue",
+    "variation": "plain",
+    "text": "glue",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " glue",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/glue_period.mp3",
+    "word": "glue",
+    "variation": "period",
+    "text": "glue.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Glue",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/listen_plain.mp3",
+    "word": "listen",
+    "variation": "plain",
+    "text": "listen",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Listen.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/listen_period.mp3",
+    "word": "listen",
+    "variation": "period",
+    "text": "listen.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Listen.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/speak_plain.mp3",
+    "word": "speak",
+    "variation": "plain",
+    "text": "speak",
+    "replace": null,
+    "speed": 1,
+    "score": 65,
+    "whisper": " Speak.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst",
+      "residue_shelf"
+    ]
+  },
+  {
+    "file": "takes/speak_period.mp3",
+    "word": "speak",
+    "variation": "period",
+    "text": "speak.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Speak.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/talk_plain.mp3",
+    "word": "talk",
+    "variation": "plain",
+    "text": "talk",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Talk.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/talk_period.mp3",
+    "word": "talk",
+    "variation": "period",
+    "text": "talk.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Talk.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sing_plain.mp3",
+    "word": "sing",
+    "variation": "plain",
+    "text": "sing",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Sing.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/sing_period.mp3",
+    "word": "sing",
+    "variation": "period",
+    "text": "sing.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Sing.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/count_plain.mp3",
+    "word": "count",
+    "variation": "plain",
+    "text": "count",
+    "replace": null,
+    "speed": 1,
+    "score": 70,
+    "whisper": " Count.",
+    "notes": [
+      "duration_sweet_spot",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/count_period.mp3",
+    "word": "count",
+    "variation": "period",
+    "text": "count.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Count.",
+    "notes": [
+      "duration_sweet_spot",
+      "consonant_release"
+    ]
+  },
+  {
+    "file": "takes/share_plain.mp3",
+    "word": "share",
+    "variation": "plain",
+    "text": "share",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Share.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/share_period.mp3",
+    "word": "share",
+    "variation": "period",
+    "text": "share.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Share.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/clean-up_plain.mp3",
+    "word": "clean up",
+    "variation": "plain",
+    "text": "clean up",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Clean up.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/clean-up_period.mp3",
+    "word": "clean up",
+    "variation": "period",
+    "text": "clean up.",
+    "replace": null,
+    "speed": 1,
+    "score": 30,
+    "whisper": " Clean up.",
+    "notes": [
+      "too_long",
+      "tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wash_plain.mp3",
+    "word": "wash",
+    "variation": "plain",
+    "text": "wash",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wash.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  },
+  {
+    "file": "takes/wash_period.mp3",
+    "word": "wash",
+    "variation": "period",
+    "text": "wash.",
+    "replace": null,
+    "speed": 1,
+    "score": 125,
+    "whisper": " Wash.",
+    "notes": [
+      "duration_sweet_spot",
+      "no_tail_burst"
+    ]
+  }
+]

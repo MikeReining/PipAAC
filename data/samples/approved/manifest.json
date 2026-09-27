@@ -1464,6 +1464,745 @@
       "text": "toes",
       "replace": null,
       "basis": "ear, batch-19 shortlist"
+    },
+    {
+      "word": "bathroom",
+      "file": "bathroom.mp3",
+      "source": "data/samples/batch-20-core/takes/bathroom_plain.mp3",
+      "text": "bathroom",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "potty",
+      "file": "potty.mp3",
+      "source": "data/samples/batch-20-core/takes/potty_plain.mp3",
+      "text": "potty",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "toilet",
+      "file": "toilet.mp3",
+      "source": "data/samples/batch-20-core/takes/toilet_plain.mp3",
+      "text": "toilet",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "diaper",
+      "file": "diaper.mp3",
+      "source": "data/samples/batch-20-core/takes/diaper_period.mp3",
+      "text": "diaper.",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "wet wipe",
+      "file": "wet-wipe.mp3",
+      "source": "data/samples/batch-20-core/takes/wet-wipe_period.mp3",
+      "text": "wet wipe.",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "bath",
+      "file": "bath.mp3",
+      "source": "data/samples/batch-20-core/takes/bath_backup.mp3",
+      "text": "bath",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup; manual tail trim in local audio review"
+    },
+    {
+      "word": "shower",
+      "file": "shower.mp3",
+      "source": "data/samples/batch-20-core/takes/shower_plain.mp3",
+      "text": "shower",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "soap",
+      "file": "soap.mp3",
+      "source": "data/samples/batch-20-core/takes/soap_period.mp3",
+      "text": "soap.",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "toothbrush",
+      "file": "toothbrush.mp3",
+      "source": "data/samples/batch-20-core/takes/toothbrush_plain.mp3",
+      "text": "toothbrush",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "toothpaste",
+      "file": "toothpaste.mp3",
+      "source": "data/samples/batch-20-core/takes/toothpaste_period.mp3",
+      "text": "toothpaste.",
+      "replace": null,
+      "basis": "ear, batch-20 shortlist"
+    },
+    {
+      "word": "towel",
+      "file": "towel.mp3",
+      "source": "data/samples/batch-21-core/takes/towel_plain.mp3",
+      "text": "towel",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "comb",
+      "file": "comb.mp3",
+      "source": "data/samples/batch-21-core/takes/comb_plain.mp3",
+      "text": "comb",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "tissue",
+      "file": "tissue.mp3",
+      "source": "data/samples/batch-21-core/takes/tissue_plain.mp3",
+      "text": "tissue",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "bandage",
+      "file": "bandage.mp3",
+      "source": "data/samples/batch-21-core/takes/bandage_period.mp3",
+      "text": "bandage.",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "hurt",
+      "file": "hurt.mp3",
+      "source": "data/samples/batch-21-core/takes/hurt_plain.mp3",
+      "text": "hurt",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "sick",
+      "file": "sick.mp3",
+      "source": "data/samples/batch-21-core/takes/sick_period.mp3",
+      "text": "sick.",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "pain",
+      "file": "pain.mp3",
+      "source": "data/samples/batch-21-core/takes/pain_plain.mp3",
+      "text": "pain",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "fever",
+      "file": "fever.mp3",
+      "source": "data/samples/batch-21-core/takes/fever_plain.mp3",
+      "text": "fever",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "cough",
+      "file": "cough.mp3",
+      "source": "data/samples/batch-21-core/takes/cough_plain.mp3",
+      "text": "cough",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "medicine",
+      "file": "medicine.mp3",
+      "source": "data/samples/batch-21-core/takes/medicine_period.mp3",
+      "text": "medicine.",
+      "replace": null,
+      "basis": "ear, batch-21 shortlist"
+    },
+    {
+      "word": "dentist",
+      "file": "dentist.mp3",
+      "source": "data/samples/batch-22-core/takes/dentist_period.mp3",
+      "text": "dentist.",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "sad",
+      "file": "sad.mp3",
+      "source": "data/samples/batch-22-core/takes/sad_backup.mp3",
+      "text": "sad",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "mad",
+      "file": "mad.mp3",
+      "source": "data/samples/batch-22-core/takes/mad_plain.mp3",
+      "text": "mad",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "angry",
+      "file": "angry.mp3",
+      "source": "data/samples/batch-22-core/takes/angry_period.mp3",
+      "text": "angry.",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "scared",
+      "file": "scared.mp3",
+      "source": "data/samples/batch-22-core/takes/scared_period.mp3",
+      "text": "scared.",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "excited",
+      "file": "excited.mp3",
+      "source": "data/samples/batch-22-core/takes/excited_period.mp3",
+      "text": "excited.",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "silly",
+      "file": "silly.mp3",
+      "source": "data/samples/batch-22-core/takes/silly_plain.mp3",
+      "text": "silly",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "nervous",
+      "file": "nervous.mp3",
+      "source": "data/samples/batch-22-core/takes/nervous_plain.mp3",
+      "text": "nervous",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "calm",
+      "file": "calm.mp3",
+      "source": "data/samples/batch-22-core/takes/calm_plain.mp3",
+      "text": "calm",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "frustrated",
+      "file": "frustrated.mp3",
+      "source": "data/samples/batch-22-core/takes/frustrated_plain.mp3",
+      "text": "frustrated",
+      "replace": null,
+      "basis": "ear, batch-22 shortlist"
+    },
+    {
+      "word": "proud",
+      "file": "proud.mp3",
+      "source": "data/samples/batch-23-core/takes/proud_plain.mp3",
+      "text": "proud",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "shy",
+      "file": "shy.mp3",
+      "source": "data/samples/batch-23-core/takes/shy_backup.mp3",
+      "text": "shy",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "surprised",
+      "file": "surprised.mp3",
+      "source": "data/samples/batch-23-core/takes/surprised_period.mp3",
+      "text": "surprised.",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "bored",
+      "file": "bored.mp3",
+      "source": "data/samples/batch-23-core/takes/bored_period.mp3",
+      "text": "bored.",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "lonely",
+      "file": "lonely.mp3",
+      "source": "data/samples/batch-23-core/takes/lonely_period.mp3",
+      "text": "lonely.",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "hungry",
+      "file": "hungry.mp3",
+      "source": "data/samples/batch-23-core/takes/hungry_period.mp3",
+      "text": "hungry.",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "thirsty",
+      "file": "thirsty.mp3",
+      "source": "data/samples/batch-23-core/takes/thirsty_plain.mp3",
+      "text": "thirsty",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "tired",
+      "file": "tired.mp3",
+      "source": "data/samples/batch-23-core/takes/tired_plain.mp3",
+      "text": "tired",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "sleepy",
+      "file": "sleepy.mp3",
+      "source": "data/samples/batch-23-core/takes/sleepy_plain.mp3",
+      "text": "sleepy",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "energetic",
+      "file": "energetic.mp3",
+      "source": "data/samples/batch-23-core/takes/energetic_period.mp3",
+      "text": "energetic.",
+      "replace": null,
+      "basis": "ear, batch-23 shortlist"
+    },
+    {
+      "word": "hot",
+      "file": "hot.mp3",
+      "source": "data/samples/batch-24-core/takes/hot_backup.mp3",
+      "text": "hot",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "cold",
+      "file": "cold.mp3",
+      "source": "data/samples/batch-24-core/takes/cold_backup.mp3",
+      "text": "cold",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "warm",
+      "file": "warm.mp3",
+      "source": "data/samples/batch-24-core/takes/warm_plain.mp3",
+      "text": "warm",
+      "replace": null,
+      "basis": "ear, batch-24 shortlist"
+    },
+    {
+      "word": "loud",
+      "file": "loud.mp3",
+      "source": "data/samples/batch-24-core/takes/loud_emphasis.mp3",
+      "text": "<emphasis>loud</emphasis>",
+      "replace": null,
+      "basis": "ear, batch-24 shortlist (Grok emphasis)"
+    },
+    {
+      "word": "quiet",
+      "file": "quiet.mp3",
+      "source": "data/samples/batch-24-core/takes/quiet_backup.mp3",
+      "text": "quiet",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "noisy",
+      "file": "noisy.mp3",
+      "source": "data/samples/batch-24-core/takes/noisy_period.mp3",
+      "text": "noisy.",
+      "replace": null,
+      "basis": "ear, batch-24 shortlist"
+    },
+    {
+      "word": "bright",
+      "file": "bright.mp3",
+      "source": "data/samples/batch-24-core/takes/bright_backup.mp3",
+      "text": "bright",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "dark",
+      "file": "dark.mp3",
+      "source": "data/samples/batch-24-core/takes/dark_backup.mp3",
+      "text": "dark",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "soft",
+      "file": "soft.mp3",
+      "source": "data/samples/batch-24-core/takes/soft_backup_raw.mp3",
+      "text": "soft",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup (raw take)"
+    },
+    {
+      "word": "rough",
+      "file": "rough.mp3",
+      "source": "data/samples/batch-24-core/takes/rough_plain.mp3",
+      "text": "rough",
+      "replace": null,
+      "basis": "ear, batch-24 shortlist"
+    },
+    {
+      "word": "sticky",
+      "file": "sticky.mp3",
+      "source": "data/samples/batch-25-core/takes/sticky_period.mp3",
+      "text": "sticky.",
+      "replace": null,
+      "basis": "ear, batch-25 shortlist"
+    },
+    {
+      "word": "dizzy",
+      "file": "dizzy.mp3",
+      "source": "data/samples/batch-25-core/takes/dizzy_backup.mp3",
+      "text": "dizzy",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "gross",
+      "file": "gross.mp3",
+      "source": "data/samples/batch-25-core/takes/gross_backup.mp3",
+      "text": "gross",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "comfortable",
+      "file": "comfortable.mp3",
+      "source": "data/samples/batch-25-core/takes/comfortable_backup.mp3",
+      "text": "comfortable",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "uncomfortable",
+      "file": "uncomfortable.mp3",
+      "source": "data/samples/batch-25-core/takes/uncomfortable_backup.mp3",
+      "text": "uncomfortable",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "overwhelmed",
+      "file": "overwhelmed.mp3",
+      "source": "data/samples/batch-25-core/takes/overwhelmed_period.mp3",
+      "text": "overwhelmed.",
+      "replace": null,
+      "basis": "ear, batch-25 shortlist"
+    },
+    {
+      "word": "run",
+      "file": "run.mp3",
+      "source": "data/samples/batch-25-core/takes/run_backup.mp3",
+      "text": "run",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "jump",
+      "file": "jump.mp3",
+      "source": "data/samples/batch-25-core/takes/jump_period.mp3",
+      "text": "jump.",
+      "replace": null,
+      "basis": "ear, batch-25 shortlist"
+    },
+    {
+      "word": "walk",
+      "file": "walk.mp3",
+      "source": "data/samples/batch-25-core/takes/walk_emphasis.mp3",
+      "text": "<emphasis>walk</emphasis>",
+      "replace": null,
+      "basis": "ear, batch-25 shortlist (Grok emphasis)"
+    },
+    {
+      "word": "sit",
+      "file": "sit.mp3",
+      "source": "data/samples/batch-25-core/takes/sit_plain.mp3",
+      "text": "sit",
+      "replace": null,
+      "basis": "ear, batch-25 shortlist"
+    },
+    {
+      "word": "stand",
+      "file": "stand.mp3",
+      "source": "data/samples/batch-26-core/takes/stand_period.mp3",
+      "text": "stand.",
+      "replace": null,
+      "basis": "ear, batch-26 shortlist"
+    },
+    {
+      "word": "climb",
+      "file": "climb.mp3",
+      "source": "data/samples/batch-26-core/takes/climb_backup.mp3",
+      "text": "climb",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "dance",
+      "file": "dance.mp3",
+      "source": "data/samples/batch-26-core/takes/dance_backup.mp3",
+      "text": "dance",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "swim",
+      "file": "swim.mp3",
+      "source": "data/samples/batch-26-core/takes/swim_plain.mp3",
+      "text": "swim",
+      "replace": null,
+      "basis": "ear, batch-26 shortlist"
+    },
+    {
+      "word": "ride",
+      "file": "ride.mp3",
+      "source": "data/samples/batch-26-core/takes/ride_plain.mp3",
+      "text": "ride",
+      "replace": null,
+      "basis": "ear, batch-26 shortlist"
+    },
+    {
+      "word": "crawl",
+      "file": "crawl.mp3",
+      "source": "data/samples/batch-26-core/takes/crawl_backup.mp3",
+      "text": "crawl",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "kick",
+      "file": "kick.mp3",
+      "source": "data/samples/batch-26-core/takes/kick_backup.mp3",
+      "text": "kick",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "throw",
+      "file": "throw.mp3",
+      "source": "data/samples/batch-26-core/takes/throw_plain.mp3",
+      "text": "throw",
+      "replace": null,
+      "basis": "ear, batch-26 shortlist"
+    },
+    {
+      "word": "catch",
+      "file": "catch.mp3",
+      "source": "data/samples/batch-26-core/takes/catch_emphasis.mp3",
+      "text": "<emphasis>catch</emphasis>",
+      "replace": null,
+      "basis": "ear, batch-26 shortlist (Grok emphasis)"
+    },
+    {
+      "word": "push",
+      "file": "push.mp3",
+      "source": "data/samples/batch-26-core/takes/push_plain.mp3",
+      "text": "push",
+      "replace": null,
+      "basis": "ear, batch-26 shortlist"
+    },
+    {
+      "word": "pull",
+      "file": "pull.mp3",
+      "source": "data/samples/batch-27-core/takes/pull_plain.mp3",
+      "text": "pull",
+      "replace": null,
+      "basis": "ear, batch-27 shortlist"
+    },
+    {
+      "word": "swing",
+      "file": "swing.mp3",
+      "source": "data/samples/batch-27-core/takes/swing_plain.mp3",
+      "text": "swing",
+      "replace": null,
+      "basis": "ear, batch-27 shortlist"
+    },
+    {
+      "word": "slide",
+      "file": "slide.mp3",
+      "source": "data/samples/batch-27-core/takes/slide_backup.mp3",
+      "text": "slide",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "fall",
+      "file": "fall.mp3",
+      "source": "data/samples/batch-27-core/takes/fall_plain.mp3",
+      "text": "fall",
+      "replace": null,
+      "basis": "ear, batch-27 shortlist"
+    },
+    {
+      "word": "drop",
+      "file": "drop.mp3",
+      "source": "data/samples/batch-27-core/takes/drop_backup.mp3",
+      "text": "drop",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "write",
+      "file": "write.mp3",
+      "source": "data/samples/batch-27-core/takes/write_backup.mp3",
+      "text": "write",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup (Grok heard Right)"
+    },
+    {
+      "word": "draw",
+      "file": "draw.mp3",
+      "source": "data/samples/batch-27-core/takes/draw_backup.mp3",
+      "text": "draw",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "color",
+      "file": "color.mp3",
+      "source": "data/samples/batch-27-core/takes/color_plain.mp3",
+      "text": "color",
+      "replace": null,
+      "basis": "ear, batch-27 shortlist"
+    },
+    {
+      "word": "paint",
+      "file": "paint.mp3",
+      "source": "data/samples/batch-27-core/takes/paint_plain.mp3",
+      "text": "paint",
+      "replace": null,
+      "basis": "ear, batch-27 shortlist"
+    },
+    {
+      "word": "cut",
+      "file": "cut.mp3",
+      "source": "data/samples/batch-28-core/takes/cut_emphasis.mp3",
+      "text": "<emphasis>cut</emphasis>",
+      "replace": null,
+      "basis": "ear, batch-28 shortlist (Grok emphasis)"
+    },
+    {
+      "word": "glue",
+      "file": "glue.mp3",
+      "source": "data/samples/batch-28-core/takes/glue_plain.mp3",
+      "text": "glue",
+      "replace": null,
+      "basis": "ear, batch-28 shortlist"
+    },
+    {
+      "word": "listen",
+      "file": "listen.mp3",
+      "source": "data/samples/batch-28-core/takes/listen_plain.mp3",
+      "text": "listen",
+      "replace": null,
+      "basis": "ear, batch-28 shortlist"
+    },
+    {
+      "word": "speak",
+      "file": "speak.mp3",
+      "source": "data/samples/batch-28-core/takes/speak_backup.mp3",
+      "text": "speak",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "talk",
+      "file": "talk.mp3",
+      "source": "data/samples/batch-28-core/takes/talk_backup.mp3",
+      "text": "talk",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "sing",
+      "file": "sing.mp3",
+      "source": "data/samples/batch-28-core/takes/sing_backup.mp3",
+      "text": "sing",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "count",
+      "file": "count.mp3",
+      "source": "data/samples/batch-28-core/takes/count_period.mp3",
+      "text": "count.",
+      "replace": null,
+      "basis": "ear, batch-28 shortlist"
+    },
+    {
+      "word": "share",
+      "file": "share.mp3",
+      "source": "data/samples/batch-28-core/takes/share_backup.mp3",
+      "text": "share",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
+    },
+    {
+      "word": "clean up",
+      "file": "clean-up.mp3",
+      "source": "data/samples/batch-28-core/takes/clean-up_period.mp3",
+      "text": "clean up.",
+      "replace": null,
+      "basis": "ear, batch-28 shortlist"
+    },
+    {
+      "word": "wash",
+      "file": "wash.mp3",
+      "source": "data/samples/batch-28-core/takes/wash_backup.mp3",
+      "text": "wash",
+      "replace": null,
+      "voice": "elevenlabs:paOIq6PwrBInRivGXL1u",
+      "basis": "ear replaced Grok with Aga backup"
     }
   ],
   "rejected": [

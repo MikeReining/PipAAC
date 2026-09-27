@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-24-core",
+  "description": "Sensory adjectives after batch-23 (lexicon slots 198–207). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "hot", "slug": "hot", "spokenForGate": "hot", "whisperMustMatch": ["hot"], "variations": [{ "id": "plain", "body": { "text": "hot" } }, { "id": "period", "body": { "text": "hot." } }] },
+    { "word": "cold", "slug": "cold", "spokenForGate": "cold", "whisperMustMatch": ["cold"], "variations": [{ "id": "plain", "body": { "text": "cold" } }, { "id": "period", "body": { "text": "cold." } }] },
+    { "word": "warm", "slug": "warm", "spokenForGate": "warm", "whisperMustMatch": ["warm"], "variations": [{ "id": "plain", "body": { "text": "warm" } }, { "id": "period", "body": { "text": "warm." } }] },
+    { "word": "loud", "slug": "loud", "spokenForGate": "loud", "whisperMustMatch": ["loud"], "variations": [{ "id": "plain", "body": { "text": "loud" } }, { "id": "period", "body": { "text": "loud." } }] },
+    { "word": "quiet", "slug": "quiet", "spokenForGate": "quiet", "whisperMustMatch": ["quiet"], "variations": [{ "id": "plain", "body": { "text": "quiet" } }, { "id": "period", "body": { "text": "quiet." } }] },
+    { "word": "noisy", "slug": "noisy", "spokenForGate": "noisy", "whisperMustMatch": ["noisy"], "variations": [{ "id": "plain", "body": { "text": "noisy" } }, { "id": "period", "body": { "text": "noisy." } }] },
+    { "word": "bright", "slug": "bright", "spokenForGate": "bright", "whisperMustMatch": ["bright"], "variations": [{ "id": "plain", "body": { "text": "bright" } }, { "id": "period", "body": { "text": "bright." } }] },
+    { "word": "dark", "slug": "dark", "spokenForGate": "dark", "whisperMustMatch": ["dark"], "variations": [{ "id": "plain", "body": { "text": "dark" } }, { "id": "period", "body": { "text": "dark." } }] },
+    { "word": "soft", "slug": "soft", "spokenForGate": "soft", "whisperMustMatch": ["soft"], "variations": [{ "id": "plain", "body": { "text": "soft" } }, { "id": "period", "body": { "text": "soft." } }] },
+    { "word": "rough", "slug": "rough", "spokenForGate": "rough", "whisperMustMatch": ["rough"], "variations": [{ "id": "plain", "body": { "text": "rough" } }, { "id": "period", "body": { "text": "rough." } }] }
+  ]
+}

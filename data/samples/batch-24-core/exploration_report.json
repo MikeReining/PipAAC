@@ -1,0 +1,690 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T20:04:32.648Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-24-core",
+  "scored": [
+    {
+      "word": "hot",
+      "slug": "hot",
+      "variationId": "plain",
+      "file": "hot_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/hot_plain.mp3",
+      "whisper": " Hot.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": 119,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hot"
+      }
+    },
+    {
+      "word": "hot",
+      "slug": "hot",
+      "variationId": "period",
+      "file": "hot_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/hot_period.mp3",
+      "whisper": " Hot.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 700,
+      "tailBurst": true,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hot."
+      }
+    },
+    {
+      "word": "cold",
+      "slug": "cold",
+      "variationId": "plain",
+      "file": "cold_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/cold_plain.mp3",
+      "whisper": " Cold.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -42,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cold"
+      }
+    },
+    {
+      "word": "cold",
+      "slug": "cold",
+      "variationId": "period",
+      "file": "cold_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/cold_period.mp3",
+      "whisper": " Cold.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -37,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cold."
+      }
+    },
+    {
+      "word": "warm",
+      "slug": "warm",
+      "variationId": "plain",
+      "file": "warm_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/warm_plain.mp3",
+      "whisper": " Warm",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -40,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "warm"
+      }
+    },
+    {
+      "word": "warm",
+      "slug": "warm",
+      "variationId": "period",
+      "file": "warm_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/warm_period.mp3",
+      "whisper": " warm",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "warm."
+      }
+    },
+    {
+      "word": "loud",
+      "slug": "loud",
+      "variationId": "plain",
+      "file": "loud_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/loud_plain.mp3",
+      "whisper": " Loud.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -13,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "loud"
+      }
+    },
+    {
+      "word": "loud",
+      "slug": "loud",
+      "variationId": "period",
+      "file": "loud_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/loud_period.mp3",
+      "whisper": " loud",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -32,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "loud."
+      }
+    },
+    {
+      "word": "quiet",
+      "slug": "quiet",
+      "variationId": "plain",
+      "file": "quiet_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/quiet_plain.mp3",
+      "whisper": " Quiet.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 47,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "quiet"
+      }
+    },
+    {
+      "word": "quiet",
+      "slug": "quiet",
+      "variationId": "period",
+      "file": "quiet_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/quiet_period.mp3",
+      "whisper": " Quiet.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": -60,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "quiet."
+      }
+    },
+    {
+      "word": "noisy",
+      "slug": "noisy",
+      "variationId": "plain",
+      "file": "noisy_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/noisy_plain.mp3",
+      "whisper": " noisy",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -18,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "noisy"
+      }
+    },
+    {
+      "word": "noisy",
+      "slug": "noisy",
+      "variationId": "period",
+      "file": "noisy_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/noisy_period.mp3",
+      "whisper": " Noisy.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -27,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "noisy."
+      }
+    },
+    {
+      "word": "bright",
+      "slug": "bright",
+      "variationId": "plain",
+      "file": "bright_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/bright_plain.mp3",
+      "whisper": " bright.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": -27,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bright"
+      }
+    },
+    {
+      "word": "bright",
+      "slug": "bright",
+      "variationId": "period",
+      "file": "bright_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/bright_period.mp3",
+      "whisper": " Bright",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -26,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bright."
+      }
+    },
+    {
+      "word": "dark",
+      "slug": "dark",
+      "variationId": "plain",
+      "file": "dark_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/dark_plain.mp3",
+      "whisper": " Dark.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": 7,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dark"
+      }
+    },
+    {
+      "word": "dark",
+      "slug": "dark",
+      "variationId": "period",
+      "file": "dark_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/dark_period.mp3",
+      "whisper": " Dark.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": -3,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dark."
+      }
+    },
+    {
+      "word": "soft",
+      "slug": "soft",
+      "variationId": "plain",
+      "file": "soft_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/soft_plain.mp3",
+      "whisper": " Soft.",
+      "score": 90,
+      "notes": [
+        "duration_sweet_spot",
+        "gate_activity_after_silence",
+        "consonant_release"
+      ],
+      "durMs": 940,
+      "tailBurst": true,
+      "pitchSlopeHz": 24,
+      "gate": "review",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "soft"
+      }
+    },
+    {
+      "word": "soft",
+      "slug": "soft",
+      "variationId": "period",
+      "file": "soft_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/soft_period.mp3",
+      "whisper": " Soft.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 0,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "soft."
+      }
+    },
+    {
+      "word": "rough",
+      "slug": "rough",
+      "variationId": "plain",
+      "file": "rough_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/rough_plain.mp3",
+      "whisper": " Rough.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 90,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "rough"
+      }
+    },
+    {
+      "word": "rough",
+      "slug": "rough",
+      "variationId": "period",
+      "file": "rough_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/rough_period.mp3",
+      "whisper": " Rough.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 38,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "rough."
+      }
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "bright",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "cold",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "dark",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "hot",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "loud",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "noisy",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "quiet",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "rough",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "soft",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "warm",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "bright",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/bright_period.mp3",
+      "shortlistFile": "shortlist/bright_recommended.mp3",
+      "score": 125,
+      "whisper": " Bright",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "cold",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/cold_plain.mp3",
+      "shortlistFile": "shortlist/cold_recommended.mp3",
+      "score": 125,
+      "whisper": " Cold.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "dark",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/dark_plain.mp3",
+      "shortlistFile": "shortlist/dark_recommended.mp3",
+      "score": 125,
+      "whisper": " Dark.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "hot",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/hot_plain.mp3",
+      "shortlistFile": "shortlist/hot_recommended.mp3",
+      "score": 125,
+      "whisper": " Hot.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "loud",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/loud_plain.mp3",
+      "shortlistFile": "shortlist/loud_recommended.mp3",
+      "score": 125,
+      "whisper": " Loud.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "noisy",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/noisy_period.mp3",
+      "shortlistFile": "shortlist/noisy_recommended.mp3",
+      "score": 125,
+      "whisper": " Noisy.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "quiet",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/quiet_plain.mp3",
+      "shortlistFile": "shortlist/quiet_recommended.mp3",
+      "score": 125,
+      "whisper": " Quiet.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "rough",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/rough_plain.mp3",
+      "shortlistFile": "shortlist/rough_recommended.mp3",
+      "score": 125,
+      "whisper": " Rough.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "soft",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/soft_period.mp3",
+      "shortlistFile": "shortlist/soft_recommended.mp3",
+      "score": 125,
+      "whisper": " Soft.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "warm",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-24-core/takes/warm_plain.mp3",
+      "shortlistFile": "shortlist/warm_recommended.mp3",
+      "score": 125,
+      "whisper": " Warm",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

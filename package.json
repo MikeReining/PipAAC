@@ -28,6 +28,11 @@
     "catalog:audio:review": "node scripts/catalog/audio_review_dev.mjs",
     "catalog:tiles:queue": "node scripts/catalog/build_elevenlabs_tile_queue.mjs",
     "catalog:tiles:mint": "node scripts/catalog/mint_elevenlabs_tile.mjs",
+    "catalog:tiles:mint-batch": "node scripts/catalog/build_elevenlabs_tile_queue.mjs && node scripts/catalog/mint_elevenlabs_tile_batch.mjs",
+    "catalog:tiles:publish-shortlist": "node scripts/catalog/publish_elevenlabs_shortlist.mjs",
+    "catalog:forms:queue": "node scripts/catalog/build_elevenlabs_forms_queue.mjs",
+    "catalog:forms:mint-batch": "node scripts/catalog/build_elevenlabs_forms_queue.mjs && node scripts/catalog/mint_elevenlabs_tile_batch.mjs --batch elevenlabs-forms-core",
+    "catalog:forms:publish-shortlist": "node scripts/catalog/publish_elevenlabs_forms_shortlist.mjs",
     "prediction:bench": "node scripts/prediction/bench/bench.mjs",
     "prediction:book": "node scripts/prediction/book/build_book.mjs && node scripts/prediction/book/score_book.mjs"
   },

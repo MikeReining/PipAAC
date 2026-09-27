@@ -1,0 +1,678 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T19:39:41.966Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-22-core",
+  "scored": [
+    {
+      "word": "dentist",
+      "slug": "dentist",
+      "variationId": "plain",
+      "file": "dentist_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/dentist_plain.mp3",
+      "whisper": " Dentist.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": 8,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dentist"
+      }
+    },
+    {
+      "word": "dentist",
+      "slug": "dentist",
+      "variationId": "period",
+      "file": "dentist_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/dentist_period.mp3",
+      "whisper": " Dentist",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -9,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "dentist."
+      }
+    },
+    {
+      "word": "sad",
+      "slug": "sad",
+      "variationId": "plain",
+      "file": "sad_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/sad_plain.mp3",
+      "whisper": " Sad.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 700,
+      "tailBurst": false,
+      "pitchSlopeHz": -12,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sad"
+      }
+    },
+    {
+      "word": "sad",
+      "slug": "sad",
+      "variationId": "period",
+      "file": "sad_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/sad_period.mp3",
+      "whisper": " Sad.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -1,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sad."
+      }
+    },
+    {
+      "word": "mad",
+      "slug": "mad",
+      "variationId": "plain",
+      "file": "mad_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/mad_plain.mp3",
+      "whisper": " Mad.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -37,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "mad"
+      }
+    },
+    {
+      "word": "mad",
+      "slug": "mad",
+      "variationId": "period",
+      "file": "mad_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/mad_period.mp3",
+      "whisper": " mad",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -25,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "mad."
+      }
+    },
+    {
+      "word": "angry",
+      "slug": "angry",
+      "variationId": "plain",
+      "file": "angry_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/angry_plain.mp3",
+      "whisper": " Angry.",
+      "score": 85,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -48,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "angry"
+      }
+    },
+    {
+      "word": "angry",
+      "slug": "angry",
+      "variationId": "period",
+      "file": "angry_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/angry_period.mp3",
+      "whisper": " Angry.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -10,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "angry."
+      }
+    },
+    {
+      "word": "scared",
+      "slug": "scared",
+      "variationId": "plain",
+      "file": "scared_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/scared_plain.mp3",
+      "whisper": " Scared.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -40,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "scared"
+      }
+    },
+    {
+      "word": "scared",
+      "slug": "scared",
+      "variationId": "period",
+      "file": "scared_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/scared_period.mp3",
+      "whisper": " Scared.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -22,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "scared."
+      }
+    },
+    {
+      "word": "excited",
+      "slug": "excited",
+      "variationId": "plain",
+      "file": "excited_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/excited_plain.mp3",
+      "whisper": " Excited.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "pitchSlopeHz": -7,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "excited"
+      }
+    },
+    {
+      "word": "excited",
+      "slug": "excited",
+      "variationId": "period",
+      "file": "excited_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/excited_period.mp3",
+      "whisper": " Excited.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -45,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "excited."
+      }
+    },
+    {
+      "word": "silly",
+      "slug": "silly",
+      "variationId": "plain",
+      "file": "silly_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/silly_plain.mp3",
+      "whisper": " Silly.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -40,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "silly"
+      }
+    },
+    {
+      "word": "silly",
+      "slug": "silly",
+      "variationId": "period",
+      "file": "silly_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/silly_period.mp3",
+      "whisper": " Silly.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -15,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "silly."
+      }
+    },
+    {
+      "word": "nervous",
+      "slug": "nervous",
+      "variationId": "plain",
+      "file": "nervous_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/nervous_plain.mp3",
+      "whisper": " Nervous.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -24,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "nervous"
+      }
+    },
+    {
+      "word": "nervous",
+      "slug": "nervous",
+      "variationId": "period",
+      "file": "nervous_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/nervous_period.mp3",
+      "whisper": " Nervous.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": 12,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "nervous."
+      }
+    },
+    {
+      "word": "calm",
+      "slug": "calm",
+      "variationId": "plain",
+      "file": "calm_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/calm_plain.mp3",
+      "whisper": " calm",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -18,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "calm"
+      }
+    },
+    {
+      "word": "calm",
+      "slug": "calm",
+      "variationId": "period",
+      "file": "calm_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/calm_period.mp3",
+      "whisper": " Calm.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "calm."
+      }
+    },
+    {
+      "word": "frustrated",
+      "slug": "frustrated",
+      "variationId": "plain",
+      "file": "frustrated_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/frustrated_plain.mp3",
+      "whisper": " Frustrated.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -37,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "frustrated"
+      }
+    },
+    {
+      "word": "frustrated",
+      "slug": "frustrated",
+      "variationId": "period",
+      "file": "frustrated_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/frustrated_period.mp3",
+      "whisper": " frustrated.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -23,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "frustrated."
+      }
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "angry",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "calm",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "dentist",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "excited",
+      "variationId": "period",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "frustrated",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "mad",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "nervous",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "sad",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "scared",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "silly",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "angry",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/angry_period.mp3",
+      "shortlistFile": "shortlist/angry_recommended.mp3",
+      "score": 125,
+      "whisper": " Angry.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "calm",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/calm_plain.mp3",
+      "shortlistFile": "shortlist/calm_recommended.mp3",
+      "score": 125,
+      "whisper": " calm",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "dentist",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/dentist_period.mp3",
+      "shortlistFile": "shortlist/dentist_recommended.mp3",
+      "score": 125,
+      "whisper": " Dentist",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "excited",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/excited_period.mp3",
+      "shortlistFile": "shortlist/excited_recommended.mp3",
+      "score": 110,
+      "whisper": " Excited.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "frustrated",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/frustrated_plain.mp3",
+      "shortlistFile": "shortlist/frustrated_recommended.mp3",
+      "score": 110,
+      "whisper": " Frustrated.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "mad",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/mad_plain.mp3",
+      "shortlistFile": "shortlist/mad_recommended.mp3",
+      "score": 125,
+      "whisper": " Mad.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "nervous",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/nervous_plain.mp3",
+      "shortlistFile": "shortlist/nervous_recommended.mp3",
+      "score": 110,
+      "whisper": " Nervous.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "sad",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/sad_period.mp3",
+      "shortlistFile": "shortlist/sad_recommended.mp3",
+      "score": 125,
+      "whisper": " Sad.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "scared",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/scared_period.mp3",
+      "shortlistFile": "shortlist/scared_recommended.mp3",
+      "score": 125,
+      "whisper": " Scared.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "silly",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-22-core/takes/silly_plain.mp3",
+      "shortlistFile": "shortlist/silly_recommended.mp3",
+      "score": 125,
+      "whisper": " Silly.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

@@ -6,13 +6,11 @@
  * (has, him, an already speak). The rest — utt_f#### rows like
  * "wants", "going", "wakes up", "doesn't", "dogs", "mom's" — need clips.
  *
- * CTO ruling 2026-09-26: all voice work moved to Grok Ara and the
- * catalog is being re-made there by another developer. NOTHING new is
- * generated here — no ElevenLabs, ever. This script's job is the
- * census: enumerate every needed form utterance from a current
- * in-memory catalog (the shipped file can't contain the unclipped rows
- * it enumerates), reuse what already exists, and write the
- * needed/missing list — that list is the handoff to the Ara re-make.
+ * Census + WBB resolve for form-surface clips (`utt_f####`). Missing
+ * surfaces are minted in ElevenLabs catalog voice via
+ * `elevenlabs-forms-core` (see `docs/operations/ElevenLabs_Tile_Minting.md`).
+ * Grok `ara` is for sentences and may become an optional extra voice —
+ * it does not replace the default tile voice.
  *
  *   node scripts/catalog/forms_audio.mjs   # census + WBB resolve + write list
  *
@@ -132,12 +130,11 @@ async function main() {
   const out = {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
-    voice: "grok-ara (pending catalog re-make)",
+    voice: "WWMMC6k9tdar0BthUenK",
     entries: [...entries.values()]
       .filter((e) => liveIds.has(e.utterance_id))
       .sort((a, b) => a.utterance_id.localeCompare(b.utterance_id)),
-    // the Ara re-make's job list: every needed form surface, then the
-    // subset still missing a clip
+    // Mint/review queue: every needed form surface, then the subset still missing a clip
     needed: needed.map((u) => ({ utterance_id: u.utterance_id, spoken_text: u.spoken_text })),
     missing: uncovered.map((u) => ({ utterance_id: u.utterance_id, spoken_text: u.spoken_text })),
   };

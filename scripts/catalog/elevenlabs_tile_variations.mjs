@@ -7,6 +7,9 @@
  */
 
 export const TILE_REVIEW_BATCH = "elevenlabs-tiles-core";
+export const FORMS_REVIEW_BATCH = "elevenlabs-forms-core";
+
+const ELEVENLABS_REVIEW_BATCHES = new Set([TILE_REVIEW_BATCH, FORMS_REVIEW_BATCH]);
 
 /** @typedef {"plain" | "period" | "emphasis"} TileVariationId */
 
@@ -43,6 +46,11 @@ export function tileTakeFilename(slug, variationId) {
   return `${slug}_${variationId}.mp3`;
 }
 
+export function isElevenlabsReviewBatch(batch) {
+  return ELEVENLABS_REVIEW_BATCHES.has(batch);
+}
+
+/** @deprecated use isElevenlabsReviewBatch */
 export function isTileReviewBatch(batch) {
-  return batch === TILE_REVIEW_BATCH;
+  return isElevenlabsReviewBatch(batch);
 }

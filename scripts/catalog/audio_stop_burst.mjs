@@ -215,23 +215,72 @@ export function findTerminalTailCutSample(
 }
 
 /**
+ * ~1 s ElevenLabs take: word, then quiet, then a blip/spike (e.g. bath).
+ * @returns {number}
+ */
+export function findShortTakeTailJunkCutSample(
+  samples,
+  sr,
+  {
+    hopMs = 10,
+    speechRatio = 0.08,
+    quietRatio = 0.04,
+    releasePadMs = 70,
+    minQuietAfterSpeechMs = 180,
+    minJunkTailMs = 200,
+  } = {},
+) {
+  const hop = Math.max(1, Math.round(sr * (hopMs / 1000)));
+  const frames = [];
+  for (let i = 0; i < samples.length; i += hop) {
+    let acc = 0;
+    const n = Math.min(hop, samples.length - i);
+    for (let j = 0; j < n; j += 1) acc += samples[i + j] * samples[i + j];
+    frames.push({ i, rms: Math.sqrt(acc / n) });
+  }
+  const peak = frames.reduce((m, f) => Math.max(m, f.rms), 0);
+  if (peak === 0) return samples.length;
+  const quiet = peak * quietRatio;
+  let lastSpeech = 0;
+  for (const f of frames) {
+    if (f.rms >= peak * speechRatio) lastSpeech = f.i + hop;
+  }
+  if (lastSpeech === 0) return samples.length;
+
+  for (let i = 0; i < frames.length; i += 1) {
+    if (frames[i].i < lastSpeech) continue;
+    let q = 0;
+    for (let j = i; j < frames.length; j += 1) {
+      if (frames[j].rms < quiet) q += hopMs;
+      else break;
+    }
+    if (q < minQuietAfterSpeechMs) continue;
+    const junkMs = ((samples.length - (lastSpeech + Math.round(sr * (releasePadMs / 1000)))) / sr) * 1000;
+    if (junkMs < minJunkTailMs) return samples.length;
+    return Math.min(samples.length, lastSpeech + Math.round(sr * (releasePadMs / 1000)));
+  }
+  return samples.length;
+}
+
+/**
  * Gentle click trim, or a long padded tail when ElevenLabs returns ~3s.
  */
 export function resolveBackupEndCutSample(
   samples,
   sr,
-  { minTrailingTailMs = 350, speechPadMs = 80, longTakeMs = 1200 } = {},
+  { minTrailingTailMs = 350, speechPadMs = 80, paddedTakeMs = 2000 } = {},
 ) {
   const totalMs = (samples.length / sr) * 1000;
   let speechCut = samples.length;
-  if (totalMs >= longTakeMs) {
-    speechCut = findTerminalTailCutSample(samples, sr, { padMs: speechPadMs });
-  }
-  if (speechCut >= samples.length) {
-    speechCut = findLongTailCutSample(samples, sr, { padMs: speechPadMs });
+  // ElevenLabs often returns ~2.5–3 s with a padded tail; ~1 s normals should not be shortened.
+  if (totalMs >= paddedTakeMs) {
+    speechCut = findTerminalTailCutSample(samples, sr, {
+      padMs: speechPadMs,
+      minTailQuietMs: 400,
+    });
   }
   const trailingMs = ((samples.length - speechCut) / sr) * 1000;
-  if (speechCut < samples.length && trailingMs >= minTrailingTailMs) {
+  if (speechCut < samples.length && trailingMs >= minTrailingTailMs && totalMs >= paddedTakeMs) {
     return { cutSample: speechCut, mode: "trailing_tail", trailingMs, totalMs };
   }
   const gentle = gentleEndCutSample(samples, sr);
@@ -315,9 +364,10 @@ export function gentleEndTrim({
   fadeSec = 0.02,
   minTrailingTailMs = 350,
   speechPadMs = 80,
+  paddedTakeMs = 2000,
 } = {}) {
   const { pcm, sampleRate: sr } = decode(sourcePath);
-  const resolved = resolveBackupEndCutSample(pcm, sr, { minTrailingTailMs, speechPadMs });
+  const resolved = resolveBackupEndCutSample(pcm, sr, { minTrailingTailMs, speechPadMs, paddedTakeMs });
   const cutSample = resolved.cutSample;
   const faded = applyEndFade(pcm, cutSample, sr, fadeSec);
   const wav = join(tmpdir(), `pip-gentle-${process.pid}-${Date.now()}.wav`);

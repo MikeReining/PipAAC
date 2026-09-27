@@ -25,7 +25,8 @@ import { spawnSync } from "node:child_process";
 
 import { trimAudioTail } from "./audio_trim.mjs";
 import {
-  isTileReviewBatch,
+  FORMS_REVIEW_BATCH,
+  isElevenlabsReviewBatch,
   tileTakeFilename,
   tileVariationText,
 } from "./elevenlabs_tile_variations.mjs";
@@ -45,6 +46,7 @@ import {
 } from "./tile_catalog_lookup.mjs";
 import { buildGrokTtsBody, synthesizeGrokVoice } from "./grok_tts.mjs";
 import { mintBackupVoice } from "./mint_backup_voice.mjs";
+import { publishCatalogForm } from "./publish_catalog_form.mjs";
 import { publishCatalogTile } from "./publish_catalog_tile.mjs";
 import { repoRoot } from "./paths.mjs";
 
@@ -122,13 +124,14 @@ export function emphasisGrokText(word) {
 
 export function recipeWordForSlug(batch, slug) {
   const recipesPath = join(SAMPLES, batch, "recipes.json");
-  if (!existsSync(recipesPath)) return { word: slug.replace(/-/g, " "), defaults: {}, slot: null };
+  if (!existsSync(recipesPath)) return { word: slug.replace(/-/g, " "), defaults: {}, slot: null, utterance_id: null };
   const recipes = JSON.parse(readFileSync(recipesPath, "utf8"));
   const row = (recipes.words ?? []).find((w) => w.slug === slug);
   return {
     word: row?.word ?? slug.replace(/-/g, " "),
     defaults: recipes.defaults ?? {},
     slot: row?.slot ?? null,
+    utterance_id: row?.utterance_id ?? null,
   };
 }
 
@@ -171,10 +174,12 @@ export function listBatches(pipeline) {
     .filter((d) => d.isDirectory())
     .map((d) => d.name);
   const grok = dirs.filter((n) => /^batch-\d+-core$/.test(n));
-  const tiles = dirs.filter((n) => isTileReviewBatch(n));
+  const elevenlabs = dirs.filter((n) => /^elevenlabs-(tiles|forms)-core$/.test(n));
   if (pipeline === GROK_PIPELINE) return grok.sort();
-  if (pipeline === ELEVENLABS_TILES_PIPELINE) return tiles.sort();
-  return [...grok, ...tiles].sort();
+  if (pipeline === ELEVENLABS_TILES_PIPELINE || pipeline === "elevenlabs-catalog") {
+    return elevenlabs.sort();
+  }
+  return [...grok, ...elevenlabs].sort();
 }
 
 function listMp3(batch, folder) {
@@ -240,7 +245,7 @@ async function handle(req, res) {
       return;
     }
     let files = listMp3(batch, folder);
-    if (isTileReviewBatch(batch)) {
+    if (isElevenlabsReviewBatch(batch)) {
       files = enrichFileListForTiles(batch, folder, files, slugFromMp3);
       files = filterFilesByShip(files, shipFilter);
     }
@@ -335,24 +340,28 @@ async function handle(req, res) {
       const emphasisAbs = join(SAMPLES, batch, "takes", `${slug}_emphasis.mp3`);
       const emphasisExists = existsSync(emphasisAbs);
       const emphasisPath = emphasisExists ? `${batch}/takes/${slug}_emphasis.mp3` : null;
-      const { word, slot } = recipeWordForSlug(batch, slug);
-      const tiles = isTileReviewBatch(batch);
+      const { word, slot, utterance_id } = recipeWordForSlug(batch, slug);
+      const el = isElevenlabsReviewBatch(batch);
+      const batchKind = batch === FORMS_REVIEW_BATCH ? "forms" : el ? "tiles" : "grok";
       json(res, 200, {
         path: rel,
         slug,
-        mode: tiles ? "tiles" : "grok",
+        mode: el ? "elevenlabs" : "grok",
+        batchKind,
+        utterance_id,
+        canPublishTile: batchKind === "tiles",
         slot,
         durationMs: durationMs(abs),
         bytes: statSync(abs).size,
-        backupExists: tiles ? false : backupExists,
-        backupPath: tiles ? null : backupPath,
-        emphasisExists: tiles ? false : emphasisExists,
-        emphasisPath: tiles ? null : emphasisPath,
-        emphasisText: tiles ? null : emphasisGrokText(word),
-        tileCapsExists: tiles ? emphasisExists : false,
-        tileCapsPath: tiles ? emphasisPath : null,
-        tileCapsText: tiles ? tileVariationText(word, "emphasis") : null,
-        shippedViaReview: tiles ? isSlugShippedViaReview(slug) : false,
+        backupExists: el ? false : backupExists,
+        backupPath: el ? null : backupPath,
+        emphasisExists: el ? false : emphasisExists,
+        emphasisPath: el ? null : emphasisPath,
+        emphasisText: el ? null : emphasisGrokText(word),
+        tileCapsExists: el ? emphasisExists : false,
+        tileCapsPath: el ? emphasisPath : null,
+        tileCapsText: el ? tileVariationText(word, "emphasis") : null,
+        shippedViaReview: el ? isSlugShippedViaReview(slug, batch) : false,
         isBackupTake: /_backup(?:_raw)?\.mp3$/i.test(file),
       });
     } catch (e) {
@@ -425,7 +434,7 @@ async function handle(req, res) {
       const body = await readBody(req);
       const { rel } = resolveSamplePath(body.path);
       const { batch, slug } = backupPathsForSampleRel(rel);
-      if (!isTileReviewBatch(batch)) {
+      if (!isElevenlabsReviewBatch(batch)) {
         throw new Error("ensure-tile-takes is only for the ElevenLabs tile review batch");
       }
       const { word } = recipeWordForSlug(batch, slug);
@@ -452,7 +461,7 @@ async function handle(req, res) {
       const body = await readBody(req);
       const { rel } = resolveSamplePath(body.path);
       const { batch } = backupPathsForSampleRel(rel);
-      if (isTileReviewBatch(batch)) {
+      if (isElevenlabsReviewBatch(batch)) {
         throw new Error("Aga backup is for Grok explore batches only — use /audio-review/elevenlabs-tiles");
       }
       const { abs: outPath, rel: relOut, slug } = backupPathsForSampleRel(rel);
@@ -473,7 +482,7 @@ async function handle(req, res) {
       const variationId = String(body.variationId ?? "emphasis");
       const { rel } = resolveSamplePath(body.path);
       const { batch, slug } = backupPathsForSampleRel(rel);
-      if (!isTileReviewBatch(batch)) {
+      if (!isElevenlabsReviewBatch(batch)) {
         throw new Error("mint-elevenlabs-tile is only for the ElevenLabs tile review UI");
       }
       const result = await mintTileVariation({
@@ -502,7 +511,21 @@ async function handle(req, res) {
       const { abs, rel } = resolveSamplePath(body.path);
       const parts = rel.split("/");
       const batch = parts[0];
-      if (!isTileReviewBatch(batch)) throw new Error("publish-tile is only for tile review batches");
+      if (batch === FORMS_REVIEW_BATCH) {
+        const slug = slugFromMp3(parts[parts.length - 1]);
+        const { word, utterance_id } = recipeWordForSlug(batch, slug);
+        if (!utterance_id) throw new Error(`no utterance_id in recipes for slug ${slug}`);
+        const result = publishCatalogForm({
+          sourceMp3Path: abs,
+          utterance_id,
+          spokenText: word,
+          slug,
+          dryRun,
+        });
+        json(res, 200, { ...result, source: rel });
+        return;
+      }
+      if (!isElevenlabsReviewBatch(batch)) throw new Error("publish-tile is only for ElevenLabs catalog review batches");
       const slug = slugFromMp3(parts[parts.length - 1]);
       let word;
       let slot;
@@ -538,7 +561,7 @@ async function handle(req, res) {
       const body = await readBody(req);
       const { rel } = resolveSamplePath(body.path);
       const { abs: outPath, rel: relOut, slug, batch } = emphasisTakePathForSampleRel(rel);
-      if (isTileReviewBatch(batch)) {
+      if (isElevenlabsReviewBatch(batch)) {
         throw new Error("Grok emphasis is for explore batches only — use caps emphasis on /audio-review/elevenlabs-tiles");
       }
       const { word, defaults } = recipeWordForSlug(batch, slug);

@@ -1,0 +1,700 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T19:49:54.964Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-23-core",
+  "scored": [
+    {
+      "word": "proud",
+      "slug": "proud",
+      "variationId": "plain",
+      "file": "proud_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/proud_plain.mp3",
+      "whisper": " Proud.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -42,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "proud"
+      }
+    },
+    {
+      "word": "proud",
+      "slug": "proud",
+      "variationId": "period",
+      "file": "proud_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/proud_period.mp3",
+      "whisper": " Proud.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -36,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "proud."
+      }
+    },
+    {
+      "word": "shy",
+      "slug": "shy",
+      "variationId": "plain",
+      "file": "shy_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/shy_plain.mp3",
+      "whisper": " shy",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -55,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "shy"
+      }
+    },
+    {
+      "word": "shy",
+      "slug": "shy",
+      "variationId": "period",
+      "file": "shy_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/shy_period.mp3",
+      "whisper": " shy.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -65,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "shy."
+      }
+    },
+    {
+      "word": "surprised",
+      "slug": "surprised",
+      "variationId": "plain",
+      "file": "surprised_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/surprised_plain.mp3",
+      "whisper": " Surprised.",
+      "score": 70,
+      "notes": [
+        "no_tail_burst",
+        "echo_return"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -59,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "surprised"
+      }
+    },
+    {
+      "word": "surprised",
+      "slug": "surprised",
+      "variationId": "period",
+      "file": "surprised_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/surprised_period.mp3",
+      "whisper": " Surprised.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "pitchSlopeHz": 10,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "surprised."
+      }
+    },
+    {
+      "word": "bored",
+      "slug": "bored",
+      "variationId": "plain",
+      "file": "bored_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/bored_plain.mp3",
+      "whisper": " Bored.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -17,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bored"
+      }
+    },
+    {
+      "word": "bored",
+      "slug": "bored",
+      "variationId": "period",
+      "file": "bored_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/bored_period.mp3",
+      "whisper": " Board.",
+      "score": -1000,
+      "notes": [
+        "whisper_mismatch"
+      ],
+      "durMs": null,
+      "tailBurst": null,
+      "pitchSlopeHz": null,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "bored."
+      }
+    },
+    {
+      "word": "lonely",
+      "slug": "lonely",
+      "variationId": "plain",
+      "file": "lonely_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/lonely_plain.mp3",
+      "whisper": " Lonely.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 860,
+      "tailBurst": false,
+      "pitchSlopeHz": -27,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "lonely"
+      }
+    },
+    {
+      "word": "lonely",
+      "slug": "lonely",
+      "variationId": "period",
+      "file": "lonely_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/lonely_period.mp3",
+      "whisper": " Lonely.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -68,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "lonely."
+      }
+    },
+    {
+      "word": "hungry",
+      "slug": "hungry",
+      "variationId": "plain",
+      "file": "hungry_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/hungry_plain.mp3",
+      "whisper": " Hungry.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -88,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hungry"
+      }
+    },
+    {
+      "word": "hungry",
+      "slug": "hungry",
+      "variationId": "period",
+      "file": "hungry_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/hungry_period.mp3",
+      "whisper": " hungry",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -25,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "hungry."
+      }
+    },
+    {
+      "word": "thirsty",
+      "slug": "thirsty",
+      "variationId": "plain",
+      "file": "thirsty_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/thirsty_plain.mp3",
+      "whisper": " thirsty",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "thirsty"
+      }
+    },
+    {
+      "word": "thirsty",
+      "slug": "thirsty",
+      "variationId": "period",
+      "file": "thirsty_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/thirsty_period.mp3",
+      "whisper": " thirsty",
+      "score": 55,
+      "notes": [
+        "tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": true,
+      "pitchSlopeHz": 8,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "thirsty."
+      }
+    },
+    {
+      "word": "tired",
+      "slug": "tired",
+      "variationId": "plain",
+      "file": "tired_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/tired_plain.mp3",
+      "whisper": " Tired.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tired"
+      }
+    },
+    {
+      "word": "tired",
+      "slug": "tired",
+      "variationId": "period",
+      "file": "tired_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/tired_period.mp3",
+      "whisper": " Tired.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": -27,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "tired."
+      }
+    },
+    {
+      "word": "sleepy",
+      "slug": "sleepy",
+      "variationId": "plain",
+      "file": "sleepy_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/sleepy_plain.mp3",
+      "whisper": " Sleepy.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": false,
+      "pitchSlopeHz": -68,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sleepy"
+      }
+    },
+    {
+      "word": "sleepy",
+      "slug": "sleepy",
+      "variationId": "period",
+      "file": "sleepy_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/sleepy_period.mp3",
+      "whisper": " Sleepy.",
+      "score": 55,
+      "notes": [
+        "tail_burst"
+      ],
+      "durMs": 1080,
+      "tailBurst": true,
+      "pitchSlopeHz": 11,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sleepy."
+      }
+    },
+    {
+      "word": "energetic",
+      "slug": "energetic",
+      "variationId": "plain",
+      "file": "energetic_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/energetic_plain.mp3",
+      "whisper": " Energetic.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": false,
+      "pitchSlopeHz": -34,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "energetic"
+      }
+    },
+    {
+      "word": "energetic",
+      "slug": "energetic",
+      "variationId": "period",
+      "file": "energetic_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/energetic_period.mp3",
+      "whisper": " Energetic.",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "durMs": 1010,
+      "tailBurst": false,
+      "pitchSlopeHz": 12,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "energetic."
+      }
+    },
+    {
+      "word": "surprised",
+      "slug": "surprised",
+      "variationId": "backup",
+      "file": "surprised_backup.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/surprised_backup.mp3",
+      "whisper": " Surprised.",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "consonant_release"
+      ],
+      "durMs": 1440,
+      "tailBurst": true,
+      "pitchSlopeHz": -33,
+      "gate": "pass",
+      "body": {
+        "text": "surprised"
+      },
+      "isBackup": true
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "bored",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "energetic",
+      "variationId": "period",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "hungry",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "lonely",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "proud",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "shy",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "sleepy",
+      "variationId": "plain",
+      "score": 110,
+      "notes": [
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "surprised",
+      "variationId": "period",
+      "score": 85,
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ],
+      "needsBackup": true
+    },
+    {
+      "word": "thirsty",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "tired",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "bored",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/bored_plain.mp3",
+      "shortlistFile": "shortlist/bored_recommended.mp3",
+      "score": 125,
+      "whisper": " Bored.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "energetic",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/energetic_period.mp3",
+      "shortlistFile": "shortlist/energetic_recommended.mp3",
+      "score": 110,
+      "whisper": " Energetic.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "hungry",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/hungry_period.mp3",
+      "shortlistFile": "shortlist/hungry_recommended.mp3",
+      "score": 125,
+      "whisper": " hungry",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "lonely",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/lonely_plain.mp3",
+      "shortlistFile": "shortlist/lonely_recommended.mp3",
+      "score": 125,
+      "whisper": " Lonely.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "proud",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/proud_plain.mp3",
+      "shortlistFile": "shortlist/proud_recommended.mp3",
+      "score": 125,
+      "whisper": " Proud.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "shy",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/shy_plain.mp3",
+      "shortlistFile": "shortlist/shy_recommended.mp3",
+      "score": 125,
+      "whisper": " shy",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "sleepy",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/sleepy_plain.mp3",
+      "shortlistFile": "shortlist/sleepy_recommended.mp3",
+      "score": 110,
+      "whisper": " Sleepy.",
+      "notes": [
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "surprised",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/surprised_period.mp3",
+      "shortlistFile": "shortlist/surprised_recommended.mp3",
+      "score": 85,
+      "whisper": " Surprised.",
+      "notes": [
+        "too_long",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "thirsty",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/thirsty_plain.mp3",
+      "shortlistFile": "shortlist/thirsty_recommended.mp3",
+      "score": 125,
+      "whisper": " thirsty",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "tired",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-23-core/takes/tired_plain.mp3",
+      "shortlistFile": "shortlist/tired_recommended.mp3",
+      "score": 125,
+      "whisper": " Tired.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}

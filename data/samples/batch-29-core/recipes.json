@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-29-core",
+  "description": "Activity verbs after batch-28 (lexicon slots 248–257). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "wipe", "slug": "wipe", "spokenForGate": "wipe", "whisperMustMatch": ["wipe"], "variations": [{ "id": "plain", "body": { "text": "wipe" } }, { "id": "period", "body": { "text": "wipe." } }] },
+    { "word": "cook", "slug": "cook", "spokenForGate": "cook", "whisperMustMatch": ["cook"], "variations": [{ "id": "plain", "body": { "text": "cook" } }, { "id": "period", "body": { "text": "cook." } }] },
+    { "word": "build", "slug": "build", "spokenForGate": "build", "whisperMustMatch": ["build"], "variations": [{ "id": "plain", "body": { "text": "build" } }, { "id": "period", "body": { "text": "build." } }] },
+    { "word": "fix", "slug": "fix", "spokenForGate": "fix", "whisperMustMatch": ["fix"], "variations": [{ "id": "plain", "body": { "text": "fix" } }, { "id": "period", "body": { "text": "fix." } }] },
+    { "word": "hold", "slug": "hold", "spokenForGate": "hold", "whisperMustMatch": ["hold"], "variations": [{ "id": "plain", "body": { "text": "hold" } }, { "id": "period", "body": { "text": "hold." } }] },
+    { "word": "touch", "slug": "touch", "spokenForGate": "touch", "whisperMustMatch": ["touch"], "variations": [{ "id": "plain", "body": { "text": "touch" } }, { "id": "period", "body": { "text": "touch." } }] },
+    { "word": "know", "slug": "know", "spokenForGate": "know", "whisperMustMatch": ["know", "no"], "variations": [{ "id": "plain", "body": { "text": "know" } }, { "id": "period", "body": { "text": "know." } }] },
+    { "word": "remember", "slug": "remember", "spokenForGate": "remember", "whisperMustMatch": ["remember"], "variations": [{ "id": "plain", "body": { "text": "remember" } }, { "id": "period", "body": { "text": "remember." } }] },
+    { "word": "forget", "slug": "forget", "spokenForGate": "forget", "whisperMustMatch": ["forget"], "variations": [{ "id": "plain", "body": { "text": "forget" } }, { "id": "period", "body": { "text": "forget." } }] },
+    { "word": "choose", "slug": "choose", "spokenForGate": "choose", "whisperMustMatch": ["choose"], "variations": [{ "id": "plain", "body": { "text": "choose" } }, { "id": "period", "body": { "text": "choose." } }] }
+  ]
+}

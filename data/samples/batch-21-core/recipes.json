@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-21-core",
+  "description": "Body, health & hygiene after batch-20 (lexicon slots 168–177). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "towel", "slug": "towel", "spokenForGate": "towel", "whisperMustMatch": ["towel"], "variations": [{ "id": "plain", "body": { "text": "towel" } }, { "id": "period", "body": { "text": "towel." } }] },
+    { "word": "comb", "slug": "comb", "spokenForGate": "comb", "whisperMustMatch": ["comb"], "variations": [{ "id": "plain", "body": { "text": "comb" } }, { "id": "period", "body": { "text": "comb." } }] },
+    { "word": "tissue", "slug": "tissue", "spokenForGate": "tissue", "whisperMustMatch": ["tissue"], "variations": [{ "id": "plain", "body": { "text": "tissue" } }, { "id": "period", "body": { "text": "tissue." } }] },
+    { "word": "bandage", "slug": "bandage", "spokenForGate": "bandage", "whisperMustMatch": ["bandage"], "variations": [{ "id": "plain", "body": { "text": "bandage" } }, { "id": "period", "body": { "text": "bandage." } }] },
+    { "word": "hurt", "slug": "hurt", "spokenForGate": "hurt", "whisperMustMatch": ["hurt"], "variations": [{ "id": "plain", "body": { "text": "hurt" } }, { "id": "period", "body": { "text": "hurt." } }] },
+    { "word": "sick", "slug": "sick", "spokenForGate": "sick", "whisperMustMatch": ["sick"], "variations": [{ "id": "plain", "body": { "text": "sick" } }, { "id": "period", "body": { "text": "sick." } }] },
+    { "word": "pain", "slug": "pain", "spokenForGate": "pain", "whisperMustMatch": ["pain"], "variations": [{ "id": "plain", "body": { "text": "pain" } }, { "id": "period", "body": { "text": "pain." } }] },
+    { "word": "fever", "slug": "fever", "spokenForGate": "fever", "whisperMustMatch": ["fever"], "variations": [{ "id": "plain", "body": { "text": "fever" } }, { "id": "period", "body": { "text": "fever." } }] },
+    { "word": "cough", "slug": "cough", "spokenForGate": "cough", "whisperMustMatch": ["cough"], "variations": [{ "id": "plain", "body": { "text": "cough" } }, { "id": "period", "body": { "text": "cough." } }] },
+    { "word": "medicine", "slug": "medicine", "spokenForGate": "medicine", "whisperMustMatch": ["medicine"], "variations": [{ "id": "plain", "body": { "text": "medicine" } }, { "id": "period", "body": { "text": "medicine." } }] }
+  ]
+}

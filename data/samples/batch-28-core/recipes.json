@@ -1,0 +1,22 @@
+{
+  "schema": "pippaac.grok-exploration.v1",
+  "batchId": "batch-28-core",
+  "description": "Activity verbs after batch-27 (lexicon slots 238–247). Plain and trailing period.",
+  "defaults": {
+    "voice_id": "ara",
+    "language": "en",
+    "speed": 1
+  },
+  "words": [
+    { "word": "cut", "slug": "cut", "spokenForGate": "cut", "whisperMustMatch": ["cut"], "variations": [{ "id": "plain", "body": { "text": "cut" } }, { "id": "period", "body": { "text": "cut." } }] },
+    { "word": "glue", "slug": "glue", "spokenForGate": "glue", "whisperMustMatch": ["glue"], "variations": [{ "id": "plain", "body": { "text": "glue" } }, { "id": "period", "body": { "text": "glue." } }] },
+    { "word": "listen", "slug": "listen", "spokenForGate": "listen", "whisperMustMatch": ["listen"], "variations": [{ "id": "plain", "body": { "text": "listen" } }, { "id": "period", "body": { "text": "listen." } }] },
+    { "word": "speak", "slug": "speak", "spokenForGate": "speak", "whisperMustMatch": ["speak"], "variations": [{ "id": "plain", "body": { "text": "speak" } }, { "id": "period", "body": { "text": "speak." } }] },
+    { "word": "talk", "slug": "talk", "spokenForGate": "talk", "whisperMustMatch": ["talk"], "variations": [{ "id": "plain", "body": { "text": "talk" } }, { "id": "period", "body": { "text": "talk." } }] },
+    { "word": "sing", "slug": "sing", "spokenForGate": "sing", "whisperMustMatch": ["sing"], "variations": [{ "id": "plain", "body": { "text": "sing" } }, { "id": "period", "body": { "text": "sing." } }] },
+    { "word": "count", "slug": "count", "spokenForGate": "count", "whisperMustMatch": ["count"], "variations": [{ "id": "plain", "body": { "text": "count" } }, { "id": "period", "body": { "text": "count." } }] },
+    { "word": "share", "slug": "share", "spokenForGate": "share", "whisperMustMatch": ["share"], "variations": [{ "id": "plain", "body": { "text": "share" } }, { "id": "period", "body": { "text": "share." } }] },
+    { "word": "clean up", "slug": "clean-up", "spokenForGate": "clean up", "whisperMustMatch": ["clean up", "cleanup"], "variations": [{ "id": "plain", "body": { "text": "clean up" } }, { "id": "period", "body": { "text": "clean up." } }] },
+    { "word": "wash", "slug": "wash", "spokenForGate": "wash", "whisperMustMatch": ["wash"], "variations": [{ "id": "plain", "body": { "text": "wash" } }, { "id": "period", "body": { "text": "wash." } }] }
+  ]
+}

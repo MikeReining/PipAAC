@@ -42,8 +42,8 @@
 </head>
 <body>
   <header>
-    <h1>ElevenLabs tile review</h1>
-    <p class="pipeline">Pipeline: <strong>catalog voice</strong> (<code>eleven_v3</code>, WBB settings) for launch-lexicon gap-fill.
+    <h1>ElevenLabs catalog review</h1>
+    <p class="pipeline">Pipeline: <strong>default tile voice</strong> (<code>eleven_v3</code>, WBB settings) — launch-lexicon gap-fill and form surfaces.
       Plain and period takes are minted automatically when you open a word. Optional <em>caps emphasis</em> is a second ElevenLabs take (ALL CAPS text — not Grok).
       <a href="/audio-review">Grok explore review</a> is unchanged (Aga backup + Grok emphasis).</p>
     <div class="row">
@@ -59,6 +59,7 @@
       </div>
     </div>
     <div class="row" style="margin-top:10px">
+      <label>Batch <select id="batch"></select></label>
       <label>Folder <select id="folder"><option value="takes">takes</option><option value="shortlist">shortlist</option></select></label>
       <label>Show <select id="ship-filter">
         <option value="all">all files</option>
@@ -91,7 +92,7 @@
     </section>
   </main>
   <script>
-    const TILE_BATCH = "elevenlabs-tiles-core";
+    const DEFAULT_BATCH = "elevenlabs-forms-core";
     const $ = (id) => document.getElementById(id);
     const player = $("player");
     const canvas = $("wave");
@@ -118,11 +119,27 @@
       return body;
     }
 
+    async function loadBatches() {
+      const { batches } = await api("/api/batches?pipeline=elevenlabs-catalog");
+      const sel = $("batch");
+      sel.innerHTML = "";
+      for (const b of batches) {
+        const o = document.createElement("option");
+        o.value = b;
+        o.textContent = b;
+        sel.appendChild(o);
+      }
+      const q = qs().get("batch");
+      if (q && batches.includes(q)) sel.value = q;
+      else if (batches.includes(DEFAULT_BATCH)) sel.value = DEFAULT_BATCH;
+      else if (batches[0]) sel.value = batches[0];
+    }
+
     async function loadFiles() {
       const folder = $("folder").value;
       const shipFilter = $("ship-filter").value;
-      const { batches } = await api("/api/batches?pipeline=elevenlabs-tiles");
-      const batch = batches[0] || TILE_BATCH;
+      const batch = $("batch").value;
+      if (!batch) return;
       $("batch-label").textContent = `(${batch})`;
       const { files } = await api(
         `/api/files?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}&shipFilter=${encodeURIComponent(shipFilter)}`,
@@ -139,12 +156,13 @@
         const tag = f.shippedViaReview ? "✓ pub" : "○";
         btn.textContent = `${tag} ${f.name}`;
         const fullPath = `${batch}/${folder}/${f.name}`;
+        btn.dataset.path = fullPath;
         btn.onclick = () => selectFile(fullPath);
         li.appendChild(btn);
         ul.appendChild(li);
         if (want && f.name === want) selectFile(fullPath);
       }
-      history.replaceState(null, "", `?folder=${encodeURIComponent(folder)}&ship=${encodeURIComponent(shipFilter)}`);
+      history.replaceState(null, "", `?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}&ship=${encodeURIComponent(shipFilter)}`);
     }
 
     async function runLookup() {
@@ -263,27 +281,63 @@
       await selectFile(path);
     }
 
+    function scrollFileIntoView(path) {
+      const btn = document.querySelector(`button.file[data-path="${CSS.escape(path)}"]`);
+      btn?.scrollIntoView({ block: "nearest" });
+    }
+
+    function isTypingTarget() {
+      const el = document.activeElement;
+      if (!el) return false;
+      const tag = el.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable;
+    }
+
+    function navigateFile(delta) {
+      if (!fileListPaths.length) return;
+      let idx = fileListPaths.indexOf(currentPath);
+      if (idx < 0) idx = 0;
+      else idx = Math.max(0, Math.min(fileListPaths.length - 1, idx + delta));
+      const next = fileListPaths[idx];
+      selectFile(next);
+      scrollFileIntoView(next);
+    }
+
+    function isElevenlabsReviewBatch(batch) {
+      return /^elevenlabs-(tiles|forms)-core$/.test(batch);
+    }
+
     async function selectFile(path) {
       currentPath = path;
-      const baseName = path.split("/").pop();
       document.querySelectorAll("button.file").forEach((b) => {
-        b.setAttribute("aria-current", b.textContent.endsWith(baseName) ? "true" : "false");
+        b.setAttribute("aria-current", b.dataset.path === path ? "true" : "false");
       });
-      setStatus("Ensuring plain + period takes…");
-      const ensured = await api("/api/ensure-tile-takes", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ path }),
-      });
-      if (ensured.minted?.length) {
-        await loadFiles();
-        setStatus(`Auto-minted: ${ensured.minted.join(", ")}`);
+      scrollFileIntoView(path);
+      const batch = path.split("/")[0];
+      /** @type {{ minted?: string[] }} */
+      let ensured = {};
+      if (isElevenlabsReviewBatch(batch)) {
+        setStatus("Ensuring plain + period takes…");
+        try {
+          ensured = await api("/api/ensure-tile-takes", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ path }),
+          });
+          if (ensured.minted?.length) {
+            await loadFiles();
+            setStatus(`Auto-minted: ${ensured.minted.join(", ")}`);
+          }
+        } catch (e) {
+          setStatus(e.message, true);
+        }
       }
       const meta = await api(`/api/meta?path=${encodeURIComponent(path)}`);
       updateCapsButton(meta);
-      $("publish-tile").disabled = meta.slot == null;
-      const slotNote = meta.slot != null ? ` — slot ${meta.slot}` : "";
-      $("meta").textContent = `${path}${slotNote} — ${meta.durationMs != null ? (meta.durationMs / 1000).toFixed(2) + " s" : "?"} — ${meta.bytes} bytes`;
+      $("publish-tile").hidden = meta.canPublishTile === false;
+      $("publish-tile").disabled = meta.canPublishTile === false || meta.slot == null;
+      const idNote = meta.utterance_id ? ` — ${meta.utterance_id}` : meta.slot != null ? ` — slot ${meta.slot}` : "";
+      $("meta").textContent = `${path}${idNote} — ${meta.durationMs != null ? (meta.durationMs / 1000).toFixed(2) + " s" : "?"} — ${meta.bytes} bytes`;
       const url = `/api/audio?path=${encodeURIComponent(path)}&t=${Date.now()}`;
       player.src = url;
       await drawWave(url);
@@ -355,13 +409,14 @@
       $("folder").value = "takes";
       $("ship-filter").value = "all";
       await loadFiles();
-      const batch = TILE_BATCH;
+      const batch = $("batch").value;
       const plain = `${batch}/takes/${lookupHit.slug}_plain.mp3`;
       if (fileListPaths.includes(plain)) await selectFile(plain);
       else setStatus(`No takes yet for ${lookupHit.spokenText} — use Remint or open any matching file.`, true);
     };
 
     $("reload").onclick = () => loadFiles();
+    $("batch").onchange = () => loadFiles();
     $("folder").onchange = () => loadFiles();
     $("ship-filter").onchange = () => loadFiles();
     document.querySelectorAll("[data-trim]").forEach((btn) => {
@@ -415,16 +470,23 @@
     };
 
     document.addEventListener("keydown", (e) => {
-      if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") return;
+      if (isTypingTarget()) return;
       if (e.code === "Space") {
         e.preventDefault();
         player.currentTime = 0;
         player.play().catch(() => {});
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        navigateFile(1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        navigateFile(-1);
       }
     });
 
     (async () => {
       try {
+        await loadBatches();
         const qFolder = qs().get("folder");
         if (qFolder) $("folder").value = qFolder;
         const qShip = qs().get("ship");
@@ -436,7 +498,8 @@
         }
         await loadFiles();
         const file = qs().get("file");
-        if (file) await selectFile(`${TILE_BATCH}/${$("folder").value}/${file}`);
+        const batch = $("batch").value;
+        if (file && batch) await selectFile(`${batch}/${$("folder").value}/${file}`);
       } catch (e) {
         setStatus(e.message, true);
       }

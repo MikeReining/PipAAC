@@ -1,0 +1,689 @@
+{
+  "schema": "pippaac.grok-exploration-report.v1",
+  "generatedAt": "2026-09-26T20:23:59.837Z",
+  "batchDir": "/Users/mike/dev/PipAAC/data/samples/batch-28-core",
+  "scored": [
+    {
+      "word": "cut",
+      "slug": "cut",
+      "variationId": "plain",
+      "file": "cut_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/cut_plain.mp3",
+      "whisper": " cut",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": 91,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cut"
+      }
+    },
+    {
+      "word": "cut",
+      "slug": "cut",
+      "variationId": "period",
+      "file": "cut_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/cut_period.mp3",
+      "whisper": " Cut.",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "durMs": 700,
+      "tailBurst": true,
+      "pitchSlopeHz": 51,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "cut."
+      }
+    },
+    {
+      "word": "glue",
+      "slug": "glue",
+      "variationId": "plain",
+      "file": "glue_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/glue_plain.mp3",
+      "whisper": " glue",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -39,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "glue"
+      }
+    },
+    {
+      "word": "glue",
+      "slug": "glue",
+      "variationId": "period",
+      "file": "glue_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/glue_period.mp3",
+      "whisper": " Glue",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 13,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "glue."
+      }
+    },
+    {
+      "word": "listen",
+      "slug": "listen",
+      "variationId": "plain",
+      "file": "listen_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/listen_plain.mp3",
+      "whisper": " Listen.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": 12,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "listen"
+      }
+    },
+    {
+      "word": "listen",
+      "slug": "listen",
+      "variationId": "period",
+      "file": "listen_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/listen_period.mp3",
+      "whisper": " Listen.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -19,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "listen."
+      }
+    },
+    {
+      "word": "speak",
+      "slug": "speak",
+      "variationId": "plain",
+      "file": "speak_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/speak_plain.mp3",
+      "whisper": " Speak.",
+      "score": 65,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst",
+        "residue_shelf"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": -69,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "speak"
+      }
+    },
+    {
+      "word": "speak",
+      "slug": "speak",
+      "variationId": "period",
+      "file": "speak_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/speak_period.mp3",
+      "whisper": " Speak.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 840,
+      "tailBurst": true,
+      "pitchSlopeHz": 14,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "speak."
+      }
+    },
+    {
+      "word": "talk",
+      "slug": "talk",
+      "variationId": "plain",
+      "file": "talk_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/talk_plain.mp3",
+      "whisper": " Talk.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "talk"
+      }
+    },
+    {
+      "word": "talk",
+      "slug": "talk",
+      "variationId": "period",
+      "file": "talk_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/talk_period.mp3",
+      "whisper": " Talk.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": null,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "talk."
+      }
+    },
+    {
+      "word": "sing",
+      "slug": "sing",
+      "variationId": "plain",
+      "file": "sing_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/sing_plain.mp3",
+      "whisper": " Sing.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -46,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sing"
+      }
+    },
+    {
+      "word": "sing",
+      "slug": "sing",
+      "variationId": "period",
+      "file": "sing_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/sing_period.mp3",
+      "whisper": " Sing.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -55,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "sing."
+      }
+    },
+    {
+      "word": "count",
+      "slug": "count",
+      "variationId": "plain",
+      "file": "count_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/count_plain.mp3",
+      "whisper": " Count.",
+      "score": 70,
+      "notes": [
+        "duration_sweet_spot",
+        "tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": 76,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "count"
+      }
+    },
+    {
+      "word": "count",
+      "slug": "count",
+      "variationId": "period",
+      "file": "count_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/count_period.mp3",
+      "whisper": " Count.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "durMs": 770,
+      "tailBurst": true,
+      "pitchSlopeHz": 83,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "count."
+      }
+    },
+    {
+      "word": "share",
+      "slug": "share",
+      "variationId": "plain",
+      "file": "share_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/share_plain.mp3",
+      "whisper": " Share.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -20,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "share"
+      }
+    },
+    {
+      "word": "share",
+      "slug": "share",
+      "variationId": "period",
+      "file": "share_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/share_period.mp3",
+      "whisper": " Share.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 770,
+      "tailBurst": false,
+      "pitchSlopeHz": -30,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "share."
+      }
+    },
+    {
+      "word": "clean up",
+      "slug": "clean-up",
+      "variationId": "plain",
+      "file": "clean-up_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/clean-up_plain.mp3",
+      "whisper": " Clean up.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 39,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "clean up"
+      }
+    },
+    {
+      "word": "clean up",
+      "slug": "clean-up",
+      "variationId": "period",
+      "file": "clean-up_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/clean-up_period.mp3",
+      "whisper": " Clean up.",
+      "score": 30,
+      "notes": [
+        "too_long",
+        "tail_burst"
+      ],
+      "durMs": 1180,
+      "tailBurst": true,
+      "pitchSlopeHz": -6,
+      "gate": null,
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "clean up."
+      }
+    },
+    {
+      "word": "wash",
+      "slug": "wash",
+      "variationId": "plain",
+      "file": "wash_plain.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/wash_plain.mp3",
+      "whisper": " Wash.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 840,
+      "tailBurst": false,
+      "pitchSlopeHz": -28,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wash"
+      }
+    },
+    {
+      "word": "wash",
+      "slug": "wash",
+      "variationId": "period",
+      "file": "wash_period.mp3",
+      "path": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/wash_period.mp3",
+      "whisper": " Wash.",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "durMs": 940,
+      "tailBurst": false,
+      "pitchSlopeHz": 16,
+      "gate": "pass",
+      "body": {
+        "voice_id": "ara",
+        "language": "en",
+        "speed": 1,
+        "text": "wash."
+      }
+    }
+  ],
+  "grokWinners": [
+    {
+      "word": "clean up",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "count",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "cut",
+      "variationId": "period",
+      "score": 110,
+      "notes": [
+        "consonant_release"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "glue",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "listen",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "share",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "sing",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "speak",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "talk",
+      "variationId": "plain",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    },
+    {
+      "word": "wash",
+      "variationId": "period",
+      "score": 125,
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ],
+      "needsBackup": false
+    }
+  ],
+  "shortlist": [
+    {
+      "word": "clean up",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/clean-up_plain.mp3",
+      "shortlistFile": "shortlist/clean-up_recommended.mp3",
+      "score": 125,
+      "whisper": " Clean up.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "count",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/count_period.mp3",
+      "shortlistFile": "shortlist/count_recommended.mp3",
+      "score": 125,
+      "whisper": " Count.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "cut",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/cut_period.mp3",
+      "shortlistFile": "shortlist/cut_recommended.mp3",
+      "score": 110,
+      "whisper": " Cut.",
+      "notes": [
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "glue",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/glue_period.mp3",
+      "shortlistFile": "shortlist/glue_recommended.mp3",
+      "score": 125,
+      "whisper": " Glue",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "listen",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/listen_plain.mp3",
+      "shortlistFile": "shortlist/listen_recommended.mp3",
+      "score": 125,
+      "whisper": " Listen.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "share",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/share_plain.mp3",
+      "shortlistFile": "shortlist/share_recommended.mp3",
+      "score": 125,
+      "whisper": " Share.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "sing",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/sing_plain.mp3",
+      "shortlistFile": "shortlist/sing_recommended.mp3",
+      "score": 125,
+      "whisper": " Sing.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "speak",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/speak_period.mp3",
+      "shortlistFile": "shortlist/speak_recommended.mp3",
+      "score": 125,
+      "whisper": " Speak.",
+      "notes": [
+        "duration_sweet_spot",
+        "consonant_release"
+      ]
+    },
+    {
+      "word": "talk",
+      "variationId": "plain",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/talk_plain.mp3",
+      "shortlistFile": "shortlist/talk_recommended.mp3",
+      "score": 125,
+      "whisper": " Talk.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    },
+    {
+      "word": "wash",
+      "variationId": "period",
+      "source": "/Users/mike/dev/PipAAC/data/samples/batch-28-core/takes/wash_period.mp3",
+      "shortlistFile": "shortlist/wash_recommended.mp3",
+      "score": 125,
+      "whisper": " Wash.",
+      "notes": [
+        "duration_sweet_spot",
+        "no_tail_burst"
+      ]
+    }
+  ]
+}
