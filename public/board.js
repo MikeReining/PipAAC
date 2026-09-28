@@ -77,6 +77,7 @@ import { mountFamilyEditor } from "./board/family-editor.js";
 import { mountSettings } from "./board/settings-ui.js";
 import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
 import { mountGroupShows } from "./board/group-shows.js";
+import { mountOnramp } from "./board/onramp-ui.js";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -2239,7 +2240,20 @@ $("open-setup").addEventListener("click", () => {
   close("menu");
   setupUi.openWizard();
 });
-if (me.needsSetup) setupUi.openWizard();
+/* The welcome — public/board/onramp-ui.js: a name and "Who's it for?"
+ * (plus the button look for a teen or adult) on a new person, then
+ * straight to the board. The old "their world" form is Settings-only. */
+const onramp = mountOnramp({
+  me, saveUser,
+  setLook: (v) => setSetting(db, "presentation_mode", v),
+  tileFor: (senseId) => {
+    const w = senseById(senseId);
+    return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
+  },
+  fitLabels,
+  onDone: () => { renderGrid(); renderStrip(); },
+});
+if (me.needsSetup) onramp.start();
 
 /* QR card — public/board/recovery-ui.js */
 mountRecovery({

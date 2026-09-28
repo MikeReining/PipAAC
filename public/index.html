@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="/board/editor-ui.css" />
     <link rel="stylesheet" href="/board/coach-ui.css" />
     <link rel="stylesheet" href="/board/settings-ui.css" />
+    <link rel="stylesheet" href="/board/onramp-ui.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -453,6 +454,12 @@
         object-fit: contain;
         display: block;
       }
+      /* Words only (learner_profile.presentation_mode = 'label';
+         Profile_Presentation_Modes § 2.2): no pictures anywhere; the
+         label takes the whole tile and grows; the border keeps the
+         grammar color; nothing moves. */
+      .words-only .cell .tart, .words-only .pred .part, .words-only .chip .cart { display: none; }
+      .words-only .cell .tlabel { height: 100%; flex: 1; padding: 0 8%; }
       /* Photos fill the art area edge to edge. */
       .cell.photo .tart { padding: 0; }
       .cell.photo .tart img { width: 100%; height: 100%; object-fit: cover; }

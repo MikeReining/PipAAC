@@ -1,0 +1,39 @@
+/* The welcome (onramp-ui.js): one calm card on cream, big targets.
+ * Adult chrome — system font, ink + warm neutrals, no grammar hue. */
+.welcome {
+  position: fixed; inset: 0; z-index: 90; background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px 16px; overflow-y: auto;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--ink-text);
+}
+.welcome-card {
+  width: min(560px, 100%); display: flex; flex-direction: column; gap: 18px;
+}
+.welcome-mark { width: 56px; height: 56px; }
+.welcome h1 { font-size: clamp(28px, 5vw, 36px); line-height: 1.15; }
+.welcome-sub { color: var(--muted); margin-top: -8px; }
+.welcome-field { display: flex; flex-direction: column; gap: 6px; font-weight: 700; }
+.welcome-field input {
+  font: inherit; font-size: 20px; font-weight: 400; padding: 14px 16px;
+  border: 2px solid var(--line); border-radius: 12px; background: #fff;
+}
+.welcome-field input:focus { outline: none; border-color: var(--ink); }
+.welcome-q { font-weight: 700; margin-bottom: -6px; }
+.welcome-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.welcome-choice {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  min-height: 88px; padding: 16px; border-radius: 16px; border: 2px solid var(--line);
+  background: #fff; font: inherit; font-size: 19px; font-weight: 700; cursor: pointer;
+  color: var(--ink-text);
+}
+.welcome-choice[aria-pressed="true"] {
+  border-color: var(--ink); box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--ink);
+}
+.welcome-go { min-height: 60px; font-size: 19px; }
+.welcome-go:disabled { opacity: .35; }
+.welcome-tiles { display: flex; gap: 8px; pointer-events: none; }
+.welcome-tiles .cell { width: 84px; height: 84px; }
+@media (max-width: 420px) {
+  .welcome-tiles .cell { width: 64px; height: 64px; }
+}
