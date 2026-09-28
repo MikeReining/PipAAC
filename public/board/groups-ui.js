@@ -176,6 +176,12 @@ export function mountGroups({
     zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
     const editing = getEditing();
+    // Row 0 is reserved on the index too (doors start at canonical slot
+    // 10): it shows the home board's tiles under the same rule as a group
+    // page — frame cells always, the rest when the top-row setting is on.
+    const geom = geometryOf(db, layout);
+    const topRowOn = profileFlag("group_top_row");
+    const home = new Map(homeCells().map((c) => [c.slot_index, c]));
     const placed = new Map();
     let indexPages = 1;
     for (const g of groupIndex(db)) {
@@ -208,6 +214,11 @@ export function mountGroups({
         zg.appendChild(groupIndexCell(
           row, slot, spotGroups ? (spotGroups.has(row.id) ? "glow" : "dimmed")
             : ((modelGroups?.has(row.id) || likely?.has(row.id)) ? "glow" : null)));
+        continue;
+      }
+      if (slot < cols) {
+        const showHome = geom.frame.includes(slot) || topRowOn;
+        zg.appendChild(reservedCell(showHome ? home.get(slot) : null, editing));
         continue;
       }
       const empty = document.createElement("button");

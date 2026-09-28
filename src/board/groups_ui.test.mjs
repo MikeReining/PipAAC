@@ -98,7 +98,17 @@ test("the index paints stored groups by name — no back cell in the grid; hidde
   const { ui, grid } = mount(db);
   ui.renderGroupIndex();
   assert.equal(grid.children.length, 60);
-  assert.equal(grid.children[0].textContent, "", "Home lives in the corner, not in the grid (027 B5)");
+  // Row 0 is reserved on the index too — it shows the home board's own
+  // tiles when "Top row on every group" is on; no back cell in the grid.
+  const home = new Map(coreCells(db, "grid60", "en").map((c) => [c.slot_index, c.label]));
+  assert.equal(grid.children[0].textContent, `home:${home.get(0)}`);
+  assert.equal(grid.children[9].textContent, `home:${home.get(9)}`, "frame cell always shows");
+  setSetting(db, "group_top_row", 0);
+  ui.renderGroupIndex();
+  assert.match(grid.children[0].className, /empty reserved/);
+  assert.equal(grid.children[9].textContent, `home:${home.get(9)}`, "frame cell stays with the toggle off");
+  setSetting(db, "group_top_row", 1);
+  ui.renderGroupIndex();
   const first = labelsOf(grid);
   assert.deepEqual(first.slice(0, 5), ["Breakfast", "Lunch", "Dinner", "Snack", "My Words"]);
   assert.ok(!first.includes("More people"), "grid15-only groups stay off the 60-cell index");
