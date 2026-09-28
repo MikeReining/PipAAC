@@ -116,15 +116,7 @@ export function lookupCatalogWord(query) {
   const norm = normalizeSpokenQuery(raw);
   const slug = catalogSlug(raw);
 
-  let importRow = byNorm.get(norm) ?? bySlug.get(slug);
-  if (!importRow) {
-    for (const [s, row] of bySlug) {
-      if (s.includes(slug) || slug.includes(s)) {
-        importRow = row;
-        break;
-      }
-    }
-  }
+  const importRow = byNorm.get(norm) ?? bySlug.get(slug);
   if (!importRow) {
     throw new Error(`no catalog row for "${raw}" — try the exact tile label`);
   }

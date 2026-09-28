@@ -15,7 +15,7 @@ API key: `ELEVENLABS_API_KEY` in `.env` only.
 
 ## Model and settings
 
-Match WorkbookBench catalog mints: **`eleven_v3`**, `stability: 0.4`, `similarity_boost: 0.8`, `use_speaker_boost: true`.
+Tile voice default model: **`eleven_v4`** in `data/catalog/voices.json` (`stability: 0.4`, `similarity_boost: 0.8`). v4 uses stability + similarity only at API time.
 
 Eleven v3 does **not** use Grok-style XML (`<emphasis>`, `<loud>`). For tile takes we mint:
 
@@ -26,6 +26,30 @@ Eleven v3 does **not** use Grok-style XML (`<emphasis>`, `<loud>`). For tile tak
 | `emphasis` | `WORD` (caps) | v3 capitalization emphasis — listen; may be too strong for some tiles |
 
 Docs: [ElevenLabs TTS best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices) (Prompting Eleven v3).
+
+## Eleven v4 listen lab (non-shipping)
+
+Founder-only A/B before any model change in `voices.json`:
+
+```bash
+npm run catalog:audio:review
+```
+
+Open [http://127.0.0.1:3747/audio-review/elevenlabs-v4-lab](http://127.0.0.1:3747/audio-review/elevenlabs-v4-lab).
+
+- **Enter** mints **`v4_plain` only** (one API call). **Mint IPA fallback** runs Groq + `v4_ipa` when plain is not good enough.
+- Takes write to `data/samples/elevenlabs-v4-lab/takes/` (gitignored). **No publish** — production path remains `/audio-review/elevenlabs-tiles`.
+- Single-word takes show the same acoustic gate as ship path (`scripts/catalog/audio_review.mjs`); multi-word forms show gate n/a.
+- **IPA fallback only** uses **Groq** `qwen/qwen3.8-27b` with **Isolated tile** citation pronunciation (e.g. `an` → `/æn/`). Single-word tiles send IPA alone to Eleven ([best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices#prompting-eleven-v4)).
+
+### Bulk regen: which clips are ElevenLabs?
+
+```bash
+npm run catalog:audio:elevenlabs-inventory
+npm run catalog:audio:elevenlabs-inventory -- --json
+```
+
+Counts clips with `source: elevenlabs` in built `catalog.json`, plus `generated_audio.json`, `forms_audio.json`, and review `shipping.json`. WBB/Bitsboard originals are the rest.
 
 ## Audio inventory (what is “missing”?)
 

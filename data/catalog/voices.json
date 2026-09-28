@@ -12,7 +12,7 @@
     "voice_id": "WWMMC6k9tdar0BthUenK",
     "label": "Catalog tile voice",
     "description": "Human-approved ElevenLabs clone for single-word tiles and gap-fill. Not for Grok sentence playback.",
-    "model": "eleven_v3",
+    "model": "eleven_v4",
     "voice_settings": {
       "stability": 0.4,
       "similarity_boost": 0.8,
@@ -25,7 +25,7 @@
     "voice_id": "paOIq6PwrBInRivGXL1u",
     "label": "Aga",
     "description": "ElevenLabs instant clone of Ara — use when a Grok take fails listen or explore shortlist.",
-    "model": "eleven_v3",
+    "model": "eleven_v4",
     "voice_settings": {
       "stability": 0.4,
       "similarity_boost": 0.8,

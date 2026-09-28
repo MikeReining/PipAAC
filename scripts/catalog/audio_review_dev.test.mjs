@@ -35,9 +35,11 @@ test("slugFromMp3 strips known take suffixes", () => {
 test("listBatches splits grok explore vs elevenlabs tile pipelines", () => {
   const grok = listBatches("grok");
   const tiles = listBatches("elevenlabs-catalog");
+  const v4Lab = listBatches("elevenlabs-v4-lab");
   assert.ok(grok.every((b) => /^batch-\d+-core$/.test(b)));
   assert.ok(!grok.some((b) => b.startsWith("elevenlabs-")));
   if (tiles.length) assert.ok(tiles.includes("elevenlabs-tiles-core"));
+  assert.deepEqual(v4Lab, ["elevenlabs-v4-lab"]);
 });
 
 test("pruneShortlistForSlug removes same-slug variants only", () => {

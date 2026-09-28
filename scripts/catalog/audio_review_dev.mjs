@@ -48,15 +48,33 @@ import { buildGrokTtsBody, synthesizeGrokVoice } from "./grok_tts.mjs";
 import { mintBackupVoice } from "./mint_backup_voice.mjs";
 import { publishCatalogForm } from "./publish_catalog_form.mjs";
 import { publishCatalogTile } from "./publish_catalog_tile.mjs";
+import {
+  isV4LabBatch,
+  labTakeFilename,
+  remintV4LabMatrix,
+  slugFromLabTakeFilename,
+  V4_LAB_BATCH,
+  V4_LAB_VARIATION_IDS,
+} from "./elevenlabs_v4_lab.mjs";
+import {
+  loadReviewDoc,
+  reviewStatusForSlug,
+  reviewSummary,
+  setReviewStatus,
+} from "./elevenlabs_v4_lab_review.mjs";
+import { auditGeneratedWordAudio } from "./audio_review.mjs";
+import { lookupIpaGroq } from "./ipa_lookup_groq.mjs";
 import { repoRoot } from "./paths.mjs";
 
 const PORT = Number(process.env.PIP_AUDIO_REVIEW_PORT) || 3747;
 const SAMPLES = join(repoRoot, "data/samples");
 const PUBLIC_HTML_GROK = join(repoRoot, "public/audio-review.html");
 const PUBLIC_HTML_ELEVENLABS_TILES = join(repoRoot, "public/audio-review-elevenlabs-tiles.html");
+const PUBLIC_HTML_ELEVENLABS_V4_LAB = join(repoRoot, "public/audio-review-elevenlabs-v4-lab.html");
 
 const GROK_PIPELINE = "grok";
 const ELEVENLABS_TILES_PIPELINE = "elevenlabs-tiles";
+const ELEVENLABS_V4_LAB_PIPELINE = "elevenlabs-v4-lab";
 
 function loadEnv() {
   try {
@@ -176,6 +194,7 @@ export function listBatches(pipeline) {
   const grok = dirs.filter((n) => /^batch-\d+-core$/.test(n));
   const elevenlabs = dirs.filter((n) => /^elevenlabs-(tiles|forms)-core$/.test(n));
   if (pipeline === GROK_PIPELINE) return grok.sort();
+  if (pipeline === ELEVENLABS_V4_LAB_PIPELINE) return [V4_LAB_BATCH];
   if (pipeline === ELEVENLABS_TILES_PIPELINE || pipeline === "elevenlabs-catalog") {
     return elevenlabs.sort();
   }
@@ -227,6 +246,20 @@ async function handle(req, res) {
     }
     res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     res.end(readFileSync(PUBLIC_HTML_ELEVENLABS_TILES, "utf8"));
+    return;
+  }
+
+  if (req.method === "GET" && path === "/audio-review/elevenlabs-v4-lab") {
+    if (!existsSync(PUBLIC_HTML_ELEVENLABS_V4_LAB)) {
+      res.writeHead(404);
+      res.end("missing public/audio-review-elevenlabs-v4-lab.html");
+      return;
+    }
+    res.writeHead(200, {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+    });
+    res.end(readFileSync(PUBLIC_HTML_ELEVENLABS_V4_LAB, "utf8"));
     return;
   }
 
@@ -302,6 +335,95 @@ async function handle(req, res) {
     return;
   }
 
+  if (path === "/api/v4-lab/review" && req.method === "GET") {
+    try {
+      const doc = loadReviewDoc(SAMPLES);
+      const summary = reviewSummary(doc);
+      json(res, 200, { bySlug: doc.bySlug, summary });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/v4-lab/review" && req.method === "POST") {
+    try {
+      const body = await readBody(req);
+      const slug = String(body.slug ?? "").trim();
+      const status = String(body.status ?? "").trim();
+      if (!slug) throw new Error("slug is required");
+      const doc = setReviewStatus(slug, status, SAMPLES);
+      json(res, 200, { slug, status: reviewStatusForSlug(slug, doc), bySlug: doc.bySlug });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/v4-lab/ipa" && req.method === "GET") {
+    try {
+      loadEnv();
+      const q = url.searchParams.get("q")?.trim();
+      if (!q) throw new Error("q is required");
+      let spoken = q;
+      try {
+        spoken = lookupCatalogWord(q).spokenText;
+      } catch {
+        // free text
+      }
+      const context =
+        url.searchParams.get("context") === "connected_speech" ? "connected_speech" : "isolated_tile";
+      const result = await lookupIpaGroq({ text: spoken, context });
+      json(res, 200, { spokenText: spoken, ...result });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/v4-lab/remint-all" && req.method === "POST") {
+    try {
+      loadEnv();
+      const body = await readBody(req);
+      const q = String(body.q ?? body.query ?? "").trim();
+      if (!q) throw new Error("q is required");
+      const spokenOverride = String(body.spokenText ?? "").trim();
+      const ipa = String(body.ipa ?? "").trim();
+      const ipaContext = body.ipaContext === "connected_speech" ? "connected_speech" : "isolated_tile";
+      const mode = body.mode === "ipa" ? "ipa" : "plain";
+      const result = await remintV4LabMatrix({
+        q,
+        spokenText: spokenOverride || undefined,
+        ipa: ipa || undefined,
+        ipaContext,
+        samplesRoot: SAMPLES,
+        mode,
+      });
+      const openPath =
+        result.paths[0] ?? `${V4_LAB_BATCH}/takes/${labTakeFilename(result.slug, "v4_plain")}`;
+      json(res, 200, { ...result, openPath, variations: V4_LAB_VARIATION_IDS });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/v4-lab/audit" && req.method === "GET") {
+    try {
+      const { abs, rel } = resolveSamplePath(url.searchParams.get("path"));
+      const batch = rel.split("/")[0];
+      if (!isV4LabBatch(batch)) throw new Error("audit is only for elevenlabs-v4-lab takes");
+      const file = basename(abs);
+      const slug = slugFromLabTakeFilename(file);
+      const spoken = url.searchParams.get("spoken")?.trim() || slug.replace(/_/g, " ");
+      const audit = auditGeneratedWordAudio({ filePath: abs, spokenText: spoken });
+      json(res, 200, { path: rel, spokenText: spoken, audit });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
   if (path === "/api/remint-tile-all" && req.method === "POST") {
     try {
       loadEnv();
@@ -332,8 +454,8 @@ async function handle(req, res) {
     try {
       const { abs, rel } = resolveSamplePath(url.searchParams.get("path"));
       const file = basename(abs);
-      const slug = slugFromMp3(file);
       const batch = rel.split("/")[0];
+      const slug = isV4LabBatch(batch) ? slugFromLabTakeFilename(file) : slugFromMp3(file);
       const backupAbs = join(SAMPLES, batch, "takes", `${slug}_backup.mp3`);
       const backupExists = existsSync(backupAbs);
       const backupPath = backupExists ? `${batch}/takes/${slug}_backup.mp3` : null;
@@ -342,14 +464,23 @@ async function handle(req, res) {
       const emphasisPath = emphasisExists ? `${batch}/takes/${slug}_emphasis.mp3` : null;
       const { word, slot, utterance_id } = recipeWordForSlug(batch, slug);
       const el = isElevenlabsReviewBatch(batch);
-      const batchKind = batch === FORMS_REVIEW_BATCH ? "forms" : el ? "tiles" : "grok";
+      const v4Lab = isV4LabBatch(batch);
+      const batchKind = v4Lab ? "v4-lab" : batch === FORMS_REVIEW_BATCH ? "forms" : el ? "tiles" : "grok";
+      let labVariationId = null;
+      let labMintText = null;
+      if (v4Lab) {
+        const m = /_(v3_plain|v3_period|v4_plain|v4_period|v4_warm|v4_ipa)\.mp3$/i.exec(file);
+        labVariationId = m ? m[1] : null;
+      }
       json(res, 200, {
         path: rel,
         slug,
-        mode: el ? "elevenlabs" : "grok",
+        mode: v4Lab || el ? "elevenlabs" : "grok",
         batchKind,
+        labVariationId,
+        labMintText,
         utterance_id,
-        canPublishTile: batchKind === "tiles",
+        canPublishTile: batchKind === "tiles" && !v4Lab,
         slot,
         durationMs: durationMs(abs),
         bytes: statSync(abs).size,
@@ -597,5 +728,6 @@ if (invoked) {
   }).listen(PORT, "127.0.0.1", () => {
     console.log(`Pip AAC Grok explore review:  http://127.0.0.1:${PORT}/audio-review`);
     console.log(`Pip AAC ElevenLabs tile review: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles`);
+    console.log(`Pip AAC ElevenLabs v4 lab:       http://127.0.0.1:${PORT}/audio-review/elevenlabs-v4-lab`);
   });
 }

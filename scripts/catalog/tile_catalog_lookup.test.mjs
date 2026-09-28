@@ -56,3 +56,7 @@ test("shipping log drives file filters", () => {
 test("catalogSlug", () => {
   assert.equal(catalogSlug("all done"), "all_done");
 });
+
+test("lookupCatalogWord does not substring-match car for cars", () => {
+  assert.throws(() => lookupCatalogWord("cars"), /no catalog row/);
+});
