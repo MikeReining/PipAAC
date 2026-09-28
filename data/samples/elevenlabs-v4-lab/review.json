@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-28T23:46:53.611Z",
+  "bySlug": {
+    "afternoon": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:22.718Z"
+    },
+    "aide": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:24.225Z"
+    },
+    "airplanes": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:26.473Z"
+    },
+    "all_done": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:28.995Z"
+    },
+    "an": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:30.498Z"
+    },
+    "animal": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:31.899Z"
+    },
+    "asks": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:39.779Z"
+    },
+    "aunt": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:41.411Z"
+    },
+    "aunts": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:47.555Z"
+    },
+    "baby_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:49.115Z"
+    },
+    "babysitter": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:50.987Z"
+    },
+    "car": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:52.258Z"
+    },
+    "his": {
+      "status": "approved",
+      "at": "2026-09-28T23:46:53.611Z"
+    }
+  }
+}

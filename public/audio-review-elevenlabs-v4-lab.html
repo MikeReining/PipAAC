@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — ElevenLabs v4 listen lab</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --accent2: #2a7a4b; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .pipeline { font-size: 13px; color: #6b665c; margin: 0 0 10px; max-width: 56rem; line-height: 1.45; }
+    .pipeline a { color: var(--accent2); text-decoration: none; }
+    .pipeline a:hover { text-decoration: underline; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 8px; }
+    select, button, input { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--edge); background: #fff; }
+    button { cursor: pointer; }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    button:disabled { opacity: 0.45; cursor: default; }
+    main { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 120px); }
+    @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+    aside { border-right: 1px solid var(--edge); padding: 12px; background: #fff; overflow: auto; max-height: calc(100vh - 120px); }
+    aside ul { list-style: none; padding: 0; margin: 8px 0 0; }
+    aside li { margin: 2px 0; }
+    aside button.file { width: 100%; text-align: left; border: none; background: transparent; padding: 6px 8px; border-radius: 6px; font-size: 12px; }
+    aside button.file[aria-current="true"] { background: #e3eef5; font-weight: 600; }
+    aside button.file .audit-pass { color: #1b5e34; }
+    aside button.file .audit-review { color: #c62828; }
+    section { padding: 16px 20px; }
+    .wave-wrap { position: relative; width: 100%; border-radius: 10px; overflow: hidden; border: 1px solid var(--edge); background: #fff; }
+    #wave { width: 100%; height: 140px; display: block; cursor: pointer; }
+    .meta { font-size: 13px; color: #6b665c; margin: 10px 0 14px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    #status { font-size: 13px; min-height: 1.2em; margin-top: 8px; color: #6b665c; }
+    audio { width: 100%; margin-top: 12px; }
+    input[type="search"], input[type="text"] { min-width: 12rem; }
+    .lookup-panel { margin-top: 10px; padding: 10px 12px; background: #eef4f8; border: 1px solid #b8d4e8; border-radius: 8px; font-size: 13px; max-width: 56rem; }
+    .lookup-panel[hidden] { display: none !important; }
+    .warn { font-size: 12px; color: #6b665c; margin-top: 6px; }
+    label.ipa { font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ElevenLabs v4 listen lab</h1>
+    <p class="pipeline"><strong>v4 plain</strong> only by default (one ElevenLabs call). Optional <strong>IPA fallback</strong> if plain is not good enough.
+      Takes in <code>data/samples/elevenlabs-v4-lab/takes/</code> — no publish.
+      <a href="/audio-review/elevenlabs-tiles">Production tile review</a> · <a href="/audio-review">Grok explore</a>.</p>
+    <div class="row">
+      <label style="flex:1;min-width:16rem;font-size:15px;font-weight:600">Word
+        <input type="search" id="word-lookup" placeholder="e.g. his — press Enter to mint" autocomplete="off" style="width:100%;max-width:20rem;font-size:16px;padding:10px 12px">
+      </label>
+    </div>
+    <p class="warn"><strong>Enter</strong> mint/load <code>v4_plain</code>. Sidebar list changes only when you change <strong>List</strong> or <strong>Reload</strong>. <strong>↑↓</strong> move in that list · <strong>A</strong> approve + next · <strong>R</strong> reject (stay).</p>
+    <div class="row">
+      <button type="button" id="remint-matrix" class="primary">Remint v4 plain</button>
+      <button type="button" id="mint-ipa">Mint IPA fallback (Groq + Eleven)</button>
+    </div>
+    <div class="row" style="margin-top:4px">
+      <label style="font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer" title="Only applies to IPA fallback">
+        <input type="checkbox" id="ipa-isolated" checked>
+        Isolated tile pronunciation for IPA
+      </label>
+    </div>
+    <details style="font-size:13px;margin-top:8px;max-width:40rem">
+      <summary>Advanced (override IPA / spoken text)</summary>
+      <div class="row" style="margin-top:8px">
+        <label class="ipa">IPA (auto — read only)
+          <input type="text" id="ipa" placeholder="filled on remint" spellcheck="false" readonly>
+        </label>
+        <span id="ipa-gloss" style="font-size:12px;color:#6b665c"></span>
+        <label>Spoken override <input type="text" id="spoken-override" placeholder="rare" spellcheck="false"></label>
+      </div>
+    </details>
+    <div id="lookup-panel" class="lookup-panel" hidden>
+      <p id="lookup-summary"></p>
+      <div class="row">
+        <button type="button" id="lookup-play">Play live catalog clip</button>
+        <button type="button" id="open-takes">Open takes for this word</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <label>List <select id="review-filter" title="Filters by ear-review state (A/R), not whether the file exists">
+        <option value="all" selected>all v4_plain takes</option>
+        <option value="pending">needs review (not A/R yet)</option>
+        <option value="approved">approved (A)</option>
+        <option value="rejected">rejected (R) — IPA round</option>
+      </select></label>
+      <span id="review-stats" style="font-size:12px;color:#6b665c"></span>
+      <button type="button" id="reload">Reload list</button>
+    </div>
+  </header>
+  <main>
+    <aside>
+      <strong>Queue</strong> <span style="font-size:11px;color:#6b665c">↑↓ · Space · A approve · R reject</span>
+      <ul id="files"></ul>
+    </aside>
+    <section>
+      <p class="meta" id="meta">Mint a word or select a take.</p>
+      <div class="wave-wrap">
+        <canvas id="wave" width="900" height="140" title="Click to seek" tabindex="0"></canvas>
+      </div>
+      <audio id="player" controls></audio>
+      <div class="actions">
+        <button type="button" data-trim="20">Trim tail −20 ms</button>
+        <button type="button" data-trim="50">Trim tail −50 ms</button>
+        <button type="button" data-trim="100">Trim tail −100 ms</button>
+      </div>
+      <p id="status"></p>
+    </section>
+  </main>
+  <script>
+    const LAB_BATCH = "elevenlabs-v4-lab";
+    const VAR_ORDER = ["v4_plain", "v4_ipa", "v3_plain", "v3_period", "v4_period", "v4_warm"];
+    const $ = (id) => document.getElementById(id);
+    const player = $("player");
+    const canvas = $("wave");
+    let currentPath = null;
+    let waveData = null;
+    let playheadRaf = 0;
+    let fileListPaths = [];
+    /** @type {null | { slug: string, spokenText: string, catalog: object | null }} */
+    let lookupHit = null;
+    let lastSpokenForAudit = "";
+    let minting = false;
+    let selectSeq = 0;
+    /** Frozen ↑↓ / sidebar order — rebuilt only on filter change or Reload. */
+    let sidebarPaths = [];
+    /** @type {Record<string, { status: string }>} */
+    let reviewBySlug = {};
+
+    const LAB_SUFFIX_RE = /_(v3_plain|v3_period|v4_plain|v4_period|v4_warm|v4_ipa)\.mp3$/i;
+
+    function catalogSlug(text) {
+      return String(text ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
+
+    function slugFromPath(path) {
+      const name = path.split("/").pop() || "";
+      return name.replace(LAB_SUFFIX_RE, "");
+    }
+
+    /** Canonical ↑↓ order — always v3_plain … v4_ipa, never alphabetical. */
+    function variantPathsForSlug(slug) {
+      if (!slug) return [];
+      return VAR_ORDER.map((v) => `${LAB_BATCH}/takes/${slug}_${v}.mp3`).filter((p) => fileListPaths.includes(p));
+    }
+
+    function pathsForSlug(slug) {
+      return variantPathsForSlug(slug);
+    }
+
+    function qs() {
+      return new URLSearchParams(location.search);
+    }
+
+    function setStatus(msg, isErr) {
+      $("status").textContent = msg || "";
+      $("status").style.color = isErr ? "#c62828" : "#6b665c";
+    }
+
+    async function api(path, opts) {
+      const res = await fetch(path, opts);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || res.statusText);
+      return body;
+    }
+
+    function sortLabPaths(paths) {
+      return [...paths].sort((a, b) => {
+        const sa = slugFromPath(a);
+        const sb = slugFromPath(b);
+        if (sa !== sb) return sa.localeCompare(sb);
+        const va = VAR_ORDER.findIndex((v) => a.includes(`_${v}.`));
+        const vb = VAR_ORDER.findIndex((v) => b.includes(`_${v}.`));
+        return (va < 0 ? 99 : va) - (vb < 0 ? 99 : vb);
+      });
+    }
+
+    function reviewStatus(slug) {
+      const row = reviewBySlug[slug];
+      if (row?.status === "approved" || row?.status === "rejected") return row.status;
+      return "pending";
+    }
+
+    function reviewLabelPrefix(slug) {
+      const s = reviewStatus(slug);
+      if (s === "approved") return "✓ ";
+      if (s === "rejected") return "✗ ";
+      return "○ ";
+    }
+
+    /** One row per word: prefer v4_plain for the regen queue. */
+    function queuePlainPaths() {
+      const bySlug = new Map();
+      for (const p of fileListPaths) {
+        if (!p.endsWith("_v4_plain.mp3")) continue;
+        const slug = slugFromPath(p);
+        bySlug.set(slug, p);
+      }
+      return sortLabPaths([...bySlug.values()]);
+    }
+
+    function labelForSlug(slug) {
+      return `${reviewLabelPrefix(slug)}${slug.replace(/_/g, " ")}`;
+    }
+
+    function computeSidebarPaths() {
+      const filter = $("review-filter").value;
+      return queuePlainPaths().filter((p) => {
+        const slug = slugFromPath(p);
+        const st = reviewStatus(slug);
+        if (filter === "all") return true;
+        return st === filter;
+      });
+    }
+
+    function refreshSidebarLabels() {
+      for (const btn of document.querySelectorAll("button.file")) {
+        const slug = btn.dataset.slug;
+        if (!slug) continue;
+        const span = btn.querySelector("span");
+        if (span) span.textContent = labelForSlug(slug);
+      }
+    }
+
+    function renderSidebar() {
+      const ul = $("files");
+      ul.innerHTML = "";
+      for (const fullPath of sidebarPaths) {
+        const slug = slugFromPath(fullPath);
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "file";
+        btn.dataset.path = fullPath;
+        btn.dataset.slug = slug;
+        btn.innerHTML = `<span class="audit-pending">${labelForSlug(slug)}</span>`;
+        btn.onclick = () => selectFile(fullPath);
+        if (fullPath === currentPath) btn.setAttribute("aria-current", "true");
+        li.appendChild(btn);
+        ul.appendChild(li);
+      }
+      refreshAuditBadges();
+    }
+
+    async function refreshReviewStats() {
+      const pending = queuePlainPaths().filter((p) => reviewStatus(slugFromPath(p)) === "pending").length;
+      let summary = { approved: 0, rejected: 0 };
+      for (const row of Object.values(reviewBySlug)) {
+        if (row?.status === "approved") summary.approved += 1;
+        else if (row?.status === "rejected") summary.rejected += 1;
+      }
+      $("review-stats").textContent = `approved ${summary.approved} · rejected ${summary.rejected} · needs review ${pending}`;
+    }
+
+    async function loadReviewState() {
+      try {
+        const { bySlug, summary } = await api("/api/v4-lab/review");
+        reviewBySlug = bySlug ?? {};
+        await refreshReviewStats();
+      } catch (e) {
+        reviewBySlug = {};
+        const msg = e instanceof Error ? e.message : String(e);
+        $("review-stats").textContent = "";
+        setStatus(
+          `Review API failed (${msg}). Restart: npm run catalog:audio:review — then reload this page.`,
+          true,
+        );
+      }
+    }
+
+    async function loadFiles({ rebuildSidebar = true } = {}) {
+      const { files } = await api(`/api/files?batch=${encodeURIComponent(LAB_BATCH)}&folder=takes`);
+      fileListPaths = sortLabPaths(files.map((f) => `${LAB_BATCH}/takes/${f.name}`));
+      await loadReviewState();
+      if (rebuildSidebar) {
+        sidebarPaths = computeSidebarPaths();
+      }
+      const plainCount = queuePlainPaths().length;
+      if (!$("status").textContent.startsWith("Review API failed")) {
+        if (!sidebarPaths.length && plainCount) {
+          setStatus('No rows for this list filter — switch to “all v4_plain takes”.', true);
+        } else if (!sidebarPaths.length && !plainCount) {
+          setStatus("No v4_plain takes yet — run catalog:v4-lab:mint-batch or mint with Enter.", true);
+        } else {
+          setStatus("");
+        }
+      }
+      renderSidebar();
+    }
+
+    async function postReview(slug, status) {
+      await api("/api/v4-lab/review", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ slug, status }),
+      });
+      if (status === "pending") delete reviewBySlug[slug];
+      else reviewBySlug[slug] = { status };
+      await refreshReviewStats();
+    }
+
+    function sidebarPathForCurrent() {
+      if (!sidebarPaths.length) return null;
+      if (currentPath && sidebarPaths.includes(currentPath)) return currentPath;
+      if (currentPath) {
+        const slug = slugFromPath(currentPath);
+        const match = sidebarPaths.find((p) => slugFromPath(p) === slug);
+        if (match) return match;
+      }
+      return sidebarPaths[0] ?? null;
+    }
+
+    async function advanceInSidebar(delta) {
+      const list = sidebarPaths;
+      if (!list.length) return;
+      const here = sidebarPathForCurrent();
+      let idx = here ? list.indexOf(here) : 0;
+      if (idx < 0) idx = 0;
+      const next = idx + delta;
+      if (next >= 0 && next < list.length) await selectFile(list[next]);
+    }
+
+    async function approveCurrent() {
+      const path = sidebarPathForCurrent();
+      if (!path) return;
+      const slug = slugFromPath(path);
+      await postReview(slug, "approved");
+      refreshSidebarLabels();
+      await advanceInSidebar(1);
+    }
+
+    async function rejectCurrent() {
+      const path = sidebarPathForCurrent();
+      if (!path) return;
+      const slug = slugFromPath(path);
+      await postReview(slug, "rejected");
+      refreshSidebarLabels();
+      setStatus(`Rejected “${slug.replace(/_/g, " ")}” — Mint IPA if needed; ↑↓ to move.`);
+    }
+
+    async function refreshAuditBadges() {
+      for (const btn of document.querySelectorAll("button.file")) {
+        const path = btn.dataset.path;
+        const slug = btn.dataset.slug || slugFromPath(path);
+        const spoken = lastSpokenForAudit || slug.replace(/_/g, " ");
+        const baseLabel = labelForSlug(slug);
+        try {
+          const { audit } = await api(
+            `/api/v4-lab/audit?path=${encodeURIComponent(path)}&spoken=${encodeURIComponent(spoken)}`,
+          );
+          const span = btn.querySelector("span");
+          if (audit.outcome === "pass") {
+            span.className = "audit-pass";
+            span.textContent = baseLabel;
+          } else if (audit.outcome === "not_applicable") {
+            span.className = "";
+            span.textContent = baseLabel;
+          } else {
+            span.className = "audit-review";
+            span.textContent = `! ${baseLabel}`;
+          }
+        } catch {
+          // ignore
+        }
+      }
+    }
+
+    function ipaContextParam() {
+      return $("ipa-isolated").checked ? "isolated_tile" : "connected_speech";
+    }
+
+    async function fetchIpa(q) {
+      $("ipa-gloss").textContent = "Looking up IPA…";
+      try {
+        const r = await api(
+          `/api/v4-lab/ipa?q=${encodeURIComponent(q)}&context=${encodeURIComponent(ipaContextParam())}`,
+        );
+        $("ipa").value = r.ipa;
+        $("ipa-gloss").textContent = r.gloss ? `Sense: ${r.gloss}` : "";
+        return r.ipa;
+      } catch (e) {
+        $("ipa").value = "";
+        $("ipa-gloss").textContent = e.message;
+        return "";
+      }
+    }
+
+    async function runLookup({ fetchIpaToo = false } = {}) {
+      const q = $("word-lookup").value.trim();
+      if (!q) return;
+      try {
+        const hit = await api(`/api/tile-lookup?q=${encodeURIComponent(q)}`);
+        lookupHit = hit;
+        $("lookup-panel").hidden = false;
+        const cat = hit.catalog;
+        const r2 = cat ? (cat.r2Exists ? "R2: yes" : "R2: not found") : "no catalog clip";
+        $("lookup-summary").textContent = `${hit.spokenText}${hit.slot != null ? ` (slot ${hit.slot})` : ""} — ${r2}${cat ? ` · ${cat.key}` : ""}`;
+        lastSpokenForAudit = hit.spokenText;
+      } catch {
+        const slug = catalogSlug(q);
+        lookupHit = { slug, spokenText: q, catalog: null };
+        $("lookup-panel").hidden = true;
+        lastSpokenForAudit = q;
+      }
+      if (fetchIpaToo) await fetchIpa(q);
+    }
+
+    function resolveSlug(q) {
+      if (lookupHit?.slug) return lookupHit.slug;
+      return catalogSlug(lookupHit?.spokenText || q);
+    }
+
+    async function openWord(forceRemint = false) {
+      const q = $("word-lookup").value.trim();
+      if (!q) {
+        setStatus("Type a word first.", true);
+        return;
+      }
+      if (minting) return;
+      minting = true;
+      $("word-lookup").disabled = true;
+      try {
+        await runLookup({ fetchIpaToo: false });
+        const slug = resolveSlug(q);
+        await loadFiles();
+        const plainPath = `${LAB_BATCH}/takes/${slug}_v4_plain.mp3`;
+        const existing = pathsForSlug(slug);
+        if (existing.length > 0 && !forceRemint) {
+          const pick = fileListPaths.includes(plainPath) ? plainPath : existing[0];
+          await selectFile(pick);
+          setStatus(
+            `Loaded “${lastSpokenForAudit}” — use sidebar / ↑↓. Remint only if you need fresh API audio.`,
+          );
+          return;
+        }
+
+        setStatus("Minting v4 plain…");
+        const spokenText = $("spoken-override").value.trim();
+        const r = await api("/api/v4-lab/remint-all", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            q,
+            spokenText: spokenText || undefined,
+            mode: "plain",
+          }),
+        });
+        lastSpokenForAudit = r.spokenText;
+        lookupHit = { slug: r.slug, spokenText: r.spokenText, catalog: lookupHit?.catalog ?? null };
+        $("lookup-panel").hidden = false;
+        $("lookup-summary").textContent = `Minted ${r.paths.length} takes for “${r.spokenText}”${r.skipped?.length ? ` (skipped: ${r.skipped.join(", ")})` : ""}`;
+        await loadFiles();
+        const ordered = pathsForSlug(r.slug);
+        if (ordered[0]) await selectFile(ordered[0]);
+        setStatus("Done — ↑↓ to compare takes, Space to replay.");
+      } catch (e) {
+        setStatus(e.message, true);
+      } finally {
+        minting = false;
+        $("word-lookup").disabled = false;
+      }
+    }
+
+    function drawWaveWithPlayhead(currentTimeSec) {
+      if (!waveData) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      const { peaks, duration } = waveData;
+      const ratio = duration > 0 ? Math.min(1, Math.max(0, currentTimeSec / duration)) : 0;
+      const playX = Math.round(ratio * (w - 1));
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, w, h);
+      for (let x = 0; x < peaks.length; x++) {
+        const { min, max } = peaks[x];
+        const y1 = (1 - max) * 0.5 * h;
+        const y2 = (1 - min) * 0.5 * h;
+        ctx.fillStyle = x <= playX ? "#134a6b" : "#9ec5de";
+        ctx.fillRect(x, y1, 1, Math.max(1, y2 - y1));
+      }
+      ctx.strokeStyle = "#c62828";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(playX, 0);
+      ctx.lineTo(playX, h);
+      ctx.stroke();
+    }
+
+    function stopPlayheadLoop() {
+      if (playheadRaf) cancelAnimationFrame(playheadRaf);
+      playheadRaf = 0;
+    }
+
+    function startPlayheadLoop() {
+      stopPlayheadLoop();
+      const tick = () => {
+        drawWaveWithPlayhead(player.currentTime);
+        if (!player.paused && !player.ended) playheadRaf = requestAnimationFrame(tick);
+      };
+      playheadRaf = requestAnimationFrame(tick);
+    }
+
+    async function drawWave(url) {
+      stopPlayheadLoop();
+      waveData = null;
+      const res = await fetch(url);
+      const buf = await res.arrayBuffer();
+      const ac = new AudioContext();
+      const audio = await ac.decodeAudioData(buf.slice(0));
+      const ch = audio.getChannelData(0);
+      const w = canvas.width;
+      const h = canvas.height;
+      const step = Math.ceil(ch.length / w);
+      const peaks = [];
+      for (let x = 0; x < w; x++) {
+        let min = 1;
+        let max = -1;
+        const start = x * step;
+        for (let i = 0; i < step && start + i < ch.length; i++) {
+          const v = ch[start + i];
+          if (v < min) min = v;
+          if (v > max) max = v;
+        }
+        peaks.push({ min, max });
+      }
+      waveData = { peaks, duration: audio.duration };
+      await ac.close();
+      drawWaveWithPlayhead(0);
+    }
+
+    canvas.addEventListener("click", (e) => {
+      if (!waveData || !Number.isFinite(player.duration) || player.duration <= 0) return;
+      const rect = canvas.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      player.currentTime = ratio * player.duration;
+      drawWaveWithPlayhead(player.currentTime);
+    });
+
+    player.addEventListener("play", startPlayheadLoop);
+    player.addEventListener("pause", () => {
+      stopPlayheadLoop();
+      drawWaveWithPlayhead(player.currentTime);
+    });
+    player.addEventListener("seeked", () => drawWaveWithPlayhead(player.currentTime));
+    player.addEventListener("ended", () => drawWaveWithPlayhead(waveData?.duration ?? 0));
+
+    async function selectFile(path) {
+      const token = ++selectSeq;
+      currentPath = path;
+      document.querySelectorAll("button.file").forEach((b) => {
+        b.setAttribute("aria-current", b.dataset.path === path ? "true" : "false");
+      });
+      const btn = document.querySelector(`button.file[data-path="${CSS.escape(path)}"]`);
+      btn?.scrollIntoView({ block: "nearest" });
+      const meta = await api(`/api/meta?path=${encodeURIComponent(path)}`);
+      if (token !== selectSeq) return;
+      const audit = await api(
+        `/api/v4-lab/audit?path=${encodeURIComponent(path)}&spoken=${encodeURIComponent(lastSpokenForAudit || meta.slug.replace(/_/g, " "))}`,
+      );
+      if (token !== selectSeq) return;
+      const auditLabel =
+        audit.audit.outcome === "pass"
+          ? "gate: pass"
+          : audit.audit.outcome === "not_applicable"
+            ? "gate: n/a (multi-word)"
+            : `gate: review (${audit.audit.reasons.map((r) => r.code).join(", ")})`;
+      const rev = reviewStatus(meta.slug);
+      $("meta").textContent = `${path} — ${meta.labVariationId ?? "?"} — review: ${rev} — ${auditLabel} — ${meta.durationMs != null ? (meta.durationMs / 1000).toFixed(2) + " s" : "?"}`;
+      const url = `/api/audio?path=${encodeURIComponent(path)}&t=${Date.now()}`;
+      player.src = url;
+      await drawWave(url);
+      if (token !== selectSeq) return;
+      try {
+        await player.play();
+        startPlayheadLoop();
+      } catch {
+        // ok
+      }
+      canvas.focus({ preventScroll: true });
+      history.replaceState(null, "", `?file=${encodeURIComponent(path.split("/").pop())}`);
+    }
+
+    async function trim(ms) {
+      if (!currentPath) return;
+      const r = await api("/api/trim", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ path: currentPath, ms }),
+      });
+      setStatus(`Trimmed ${r.trimmedMs} ms. Duration ${(r.durationMs / 1000).toFixed(2)} s.`);
+      await selectFile(currentPath);
+    }
+
+    function navigateFile(delta) {
+      if (!sidebarPaths.length) return;
+      const here = sidebarPathForCurrent();
+      let idx = here ? sidebarPaths.indexOf(here) : 0;
+      if (idx < 0) idx = 0;
+      const next = Math.max(0, Math.min(sidebarPaths.length - 1, idx + delta));
+      if (sidebarPaths[next] === currentPath) return;
+      selectFile(sidebarPaths[next]);
+    }
+
+    function isTypingTarget() {
+      const el = document.activeElement;
+      if (!el) return false;
+      if (el.id === "wave") return false;
+      const tag = el.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable;
+    }
+
+    function isReviewHotkeyTarget() {
+      if (isTypingTarget()) return false;
+      const el = document.activeElement;
+      if (el?.id === "word-lookup") return false;
+      return sidebarPaths.length > 0;
+    }
+
+    async function mintIpaFallback() {
+      const q = $("word-lookup").value.trim();
+      if (!q) {
+        setStatus("Type a word first.", true);
+        return;
+      }
+      if (minting) return;
+      minting = true;
+      $("word-lookup").disabled = true;
+      setStatus("Minting v4 IPA (Groq + ElevenLabs)…");
+      try {
+        await runLookup({ fetchIpaToo: false });
+        const spokenText = $("spoken-override").value.trim();
+        const r = await api("/api/v4-lab/remint-all", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            q,
+            spokenText: spokenText || undefined,
+            mode: "ipa",
+            ipaContext: ipaContextParam(),
+          }),
+        });
+        lastSpokenForAudit = r.spokenText;
+        if (r.ipa) {
+          $("ipa").value = r.ipa;
+          $("ipa-gloss").textContent = r.ipaGloss ? `Sense: ${r.ipaGloss}` : "";
+        }
+        await loadFiles();
+        const ipaPath = `${LAB_BATCH}/takes/${r.slug}_v4_ipa.mp3`;
+        if (fileListPaths.includes(ipaPath)) await selectFile(ipaPath);
+        setStatus("IPA take ready — sidebar stays on v4_plain list; play IPA from wave or remint row.");
+      } catch (e) {
+        setStatus(e.message, true);
+      } finally {
+        minting = false;
+        $("word-lookup").disabled = false;
+      }
+    }
+
+    $("remint-matrix").onclick = () => {
+      if (!confirm("Remint v4 plain for this word? (one ElevenLabs call)")) return;
+      openWord(true);
+    };
+    $("mint-ipa").onclick = () => mintIpaFallback();
+
+    $("word-lookup").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        openWord(false);
+      }
+    });
+
+    $("lookup-play").onclick = () => {
+      if (!lookupHit?.catalog?.audioUrl) {
+        setStatus("No catalog clip (free-text word or missing audio).", true);
+        return;
+      }
+      const url = `${lookupHit.catalog.audioUrl}&t=${Date.now()}`;
+      player.src = url;
+      currentPath = null;
+      $("meta").textContent = `Live catalog: ${lookupHit.catalog.key}`;
+      drawWave(url).then(() => player.play().catch(() => {}));
+    };
+
+    $("open-takes").onclick = async () => {
+      const slug = lookupHit?.slug;
+      if (!slug) return;
+      await loadFiles();
+      const plain = `${LAB_BATCH}/takes/${slug}_v4_plain.mp3`;
+      const first = fileListPaths.includes(plain) ? plain : pathsForSlug(slug)[0];
+      if (first) await selectFile(first);
+      else setStatus("No takes yet — use Mint comparison set.", true);
+    };
+
+    $("reload").onclick = () => {
+      loadFiles({ rebuildSidebar: true }).catch((e) => setStatus(e.message, true));
+    };
+    $("review-filter").onchange = () => {
+      loadFiles({ rebuildSidebar: true }).catch((e) => setStatus(e.message, true));
+    };
+    document.querySelectorAll("[data-trim]").forEach((btn) => {
+      btn.onclick = () => trim(Number(btn.dataset.trim)).catch((e) => setStatus(e.message, true));
+    });
+
+    document.addEventListener(
+      "keydown",
+      (e) => {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+          if (isTypingTarget()) return;
+          if (!sidebarPaths.length) return;
+          e.preventDefault();
+          e.stopPropagation();
+          navigateFile(e.key === "ArrowDown" ? 1 : -1);
+          return;
+        }
+        if (e.code === "Space") {
+          if (isTypingTarget()) return;
+          e.preventDefault();
+          player.currentTime = 0;
+          player.play().catch(() => {});
+          return;
+        }
+        if ((e.key === "a" || e.key === "A") && isReviewHotkeyTarget()) {
+          e.preventDefault();
+          approveCurrent().catch((err) => setStatus(err.message, true));
+          return;
+        }
+        if ((e.key === "r" || e.key === "R") && isReviewHotkeyTarget()) {
+          e.preventDefault();
+          rejectCurrent().catch((err) => setStatus(err.message, true));
+        }
+      },
+      true,
+    );
+
+    (async () => {
+      try {
+        const qWord = qs().get("q");
+        if (qWord) {
+          $("word-lookup").value = qWord;
+        }
+        $("word-lookup").focus();
+        await loadFiles();
+        const file = qs().get("file");
+        if (file) await selectFile(`${LAB_BATCH}/takes/${file}`);
+      } catch (e) {
+        setStatus(e.message, true);
+      }
+    })();
+  </script>
+</body>
+</html>
