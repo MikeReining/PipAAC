@@ -289,8 +289,10 @@ const grokVoice = "ara";
 const barState = { tense: "present", question: false };
 let licenseP = null;
 const voiceLicense = () => {
-  licenseP ??= openKeyStore()
-    .then((s) => s.get(`user/${me.id}/license`))
+  // openKeyStore() returns the store itself, not a promise — calling
+  // .then on it threw, so every multi-word Speak died before a sound.
+  licenseP ??= Promise.resolve()
+    .then(() => openKeyStore().get(`user/${me.id}/license`))
     .catch(() => null);
   return licenseP;
 };
@@ -310,8 +312,11 @@ function speak(text) {
  * "pressing another speaking button restarts audio"). */
 let playingResolve = null;
 let playGen = 0; // a new play invalidates waits started under the old
-const endPlaying = () => {
-  playGen++;
+// `chained`: the sentence loop's own next word — it takes the element
+// without invalidating the loop that asked for it (else ▶ stopped after
+// the first word).
+const endPlaying = ({ chained = false } = {}) => {
+  if (!chained) playGen++;
   playingResolve?.();
   playingResolve = null;
 };
@@ -319,13 +324,13 @@ const endPlaying = () => {
 /** Play a clip: catalog keys are shipped files; `blob:` keys are
  *  content-addressed bytes in OPFS (recorded overrides, synced photos)
  *  resolved through the blob loader, which lazy-fetches a sealed copy. */
-async function playClip(key) {
+async function playClip(key, { chained = false } = {}) {
   let src = `/${key}`;
   if (key.startsWith("blob:")) {
     src = await loadPhotoURL(key);
     if (!src) return;
   }
-  endPlaying();
+  endPlaying({ chained });
   return new Promise((resolve) => {
     playingResolve = resolve;
     audio.src = src;
@@ -354,9 +359,9 @@ async function playBlob(blob) {
 
 /** Speak one tapped item — §7.2/7.3 resolution: override, voice clip,
  *  TTS, or a held 400 ms silent slot. */
-async function speakItem(item) {
+async function speakItem(item, { chained = false } = {}) {
   const slot = resolveSlot(db, item, locale, voiceId);
-  if (slot.type === "clip") return playClip(slot.key);
+  if (slot.type === "clip") return playClip(slot.key, { chained });
   if (slot.type === "tts") return speak(slot.text);
   return new Promise((r) => setTimeout(r, SILENT_SLOT_MS));
 }
@@ -462,11 +467,12 @@ async function speakSentence(feeling = null) {
       spoken = true;
     }
   }
-  const gen = playGen;
   if (!spoken) {
+    endPlaying(); // this speak takes the element from any older one
+    const gen = playGen;
     for (const item of [...sentence]) {
-      if (playGen !== gen) break; // a newer speak took the element
-      await speakItem(item);
+      if (playGen !== gen) break; // a newer speak or tap took the element
+      await speakItem(item, { chained: true });
     }
   }
   if (sentenceId !== null) {
