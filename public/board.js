@@ -290,11 +290,27 @@ const grokVoice = "ara";
 // the bar empties (clear, backspace, after-speak fresh start).
 const barState = { tense: "present", question: false };
 let licenseP = null;
+const LOCALHOST = ["localhost", "127.0.0.1", "[::1]"];
 const voiceLicense = () => {
   // openKeyStore() returns the store itself, not a promise — calling
   // .then on it threw, so every multi-word Speak died before a sound.
+  // Localhost self-activates: no stored license → mint one from the
+  // dev-only endpoint and keep it, so preview needs no paste ritual.
   licenseP ??= Promise.resolve()
     .then(() => openKeyStore().get(`user/${me.id}/license`))
+    .then(async (lic) => {
+      if (lic || !LOCALHOST.includes(location.hostname)) return lic;
+      const res = await fetch("/api/v1/voice/dev-license", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ user_id: me.id }),
+      }).catch(() => null);
+      const fresh = res?.ok ? (await res.json().catch(() => ({}))).license : null;
+      if (fresh) {
+        await openKeyStore().put(`user/${me.id}/license`, fresh).catch(() => {});
+      }
+      return fresh;
+    })
     .catch(() => null);
   return licenseP;
 };

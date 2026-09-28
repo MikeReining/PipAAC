@@ -9,6 +9,7 @@ import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
 import { handleSpeak } from "./voice.js";
 import { handleTransform } from "./transform.js";
+import { licenseFor } from "./license.mjs";
 
 export { UserRelay, PairingLobby, SupporterAccounts };
 
@@ -61,6 +62,22 @@ export default {
     // sentences, per-license fair-use counting, no ids upstream.
     if (path === "/api/v1/voice/speak" && request.method === "POST") {
       return handleSpeak(request, env, ctx);
+    }
+
+    // Dev only: localhost self-activates — mints the same pip-life token
+    // the Devices paste flow would, so preview needs no license ritual.
+    // Double-gated: ENVIRONMENT=development AND a loopback hostname.
+    if (path === "/api/v1/voice/dev-license" && request.method === "POST") {
+      const loopback = ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname);
+      if (env.ENVIRONMENT !== "development" || !loopback || !env.PIP_LICENSE_SECRET) {
+        return json({ error: "not_found" }, { status: 404 });
+      }
+      const body = await request.json().catch(() => null);
+      const uid = typeof body?.user_id === "string" ? body.user_id : null;
+      if (!uid || !/^[0-9a-f-]{36}$/i.test(uid)) {
+        return json({ error: "bad_user_id" }, { status: 400 });
+      }
+      return json({ license: await licenseFor(env.PIP_LICENSE_SECRET, uid) });
     }
 
     // Transform buttons (023): the Groq key lives here — the client

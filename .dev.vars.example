@@ -11,3 +11,9 @@ PIP_LICENSE_SECRET=
 # 015 slice 7 — worker-internal calls (account-deletion cascade to user
 # relays). Optional: falls back to PIP_LICENSE_SECRET when unset.
 PIP_INTERNAL_SECRET=
+# 023 — transform buttons (fix/question/tense): Worker-side Groq key.
+# Without it POST /api/v1/transform returns 503 transform_unavailable.
+GROQ_API_KEY=
+# 024 — whole-sentence voice: Worker-side xAI Grok TTS key.
+# Without it POST /api/v1/voice/speak returns 503 voice_unavailable.
+XAI_API_KEY=
