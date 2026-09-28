@@ -67,6 +67,10 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
      *  rotate keys after — it keeps what it already saw. */
     removeSupporter: (for_acct) =>
       call("DELETE", `/supporters/${encodeURIComponent(for_acct)}`),
+    /** Owner only: make a supporter account an owner, or back to team.
+     *  The relay refuses to demote the last owner (409 last_owner). */
+    setSupporterOwner: (for_acct, owner) =>
+      call("POST", `/supporters/${encodeURIComponent(for_acct)}/owner`, { owner: !!owner }),
     /** Post a new key epoch: { epoch, wrapped: { device_id: grant } }. */
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
     /** Activate Pip Lifetime with a user-bound license key (dev path). */

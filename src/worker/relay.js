@@ -95,6 +95,7 @@ export class UserRelay {
         "ALTER TABLE device ADD COLUMN epoch INTEGER NOT NULL DEFAULT 1",
         "ALTER TABLE device ADD COLUMN via_acct TEXT",
         "ALTER TABLE join_token ADD COLUMN for_acct TEXT",
+        "ALTER TABLE supporter ADD COLUMN owner INTEGER NOT NULL DEFAULT 0",
         "ALTER TABLE op ADD COLUMN epoch INTEGER NOT NULL DEFAULT 1",
       ]) {
         try { ctx.storage.sql.exec(alter); } catch { /* column already there */ }
@@ -130,6 +131,33 @@ export class UserRelay {
     return this.ctx.storage.sql
       .exec("SELECT pubkey FROM device WHERE device_id = ?", deviceId)
       .toArray()[0]?.pubkey ?? null;
+  }
+
+  /**
+   * Owner or Team (founder 2026-09-28: "an owner, and everyone else can
+   * edit everything except deleting the board, managing people and the
+   * license"). Derived, never stored per device: a device that joined
+   * without an account tag — the creator, a device an owner paired, a
+   * QR-card restore, an owner's own signed-in device — is an Owner; a
+   * device that joined through a supporter account is Owner only when
+   * that account is marked owner. Edits need no check: every device
+   * may write ops. Only the actions the relay can see are gated.
+   */
+  isOwner(deviceId) {
+    const row = this.ctx.storage.sql.exec(
+      "SELECT via_acct FROM device WHERE device_id = ?", deviceId).toArray()[0];
+    if (!row) return false;
+    if (!row.via_acct) return true;
+    return (this.ctx.storage.sql.exec(
+      "SELECT owner FROM supporter WHERE acct_id = ?", row.via_acct).toArray()[0]?.owner ?? 0) === 1;
+  }
+
+  /** Owner devices left if `acct` stopped being an owner (or left). */
+  ownersWithout(acct) {
+    return this.ctx.storage.sql.exec(
+      `SELECT COUNT(*) AS n FROM device d LEFT JOIN supporter s ON s.acct_id = d.via_acct
+       WHERE (d.via_acct IS NULL OR s.owner = 1) AND (d.via_acct IS NULL OR d.via_acct != ?)`,
+      acct).toArray()[0].n;
   }
 
   async verify(request, bodyBytes) {
@@ -307,6 +335,19 @@ export class UserRelay {
       this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
     }
 
+    // Owner-only: adding or removing people and devices, the key they
+    // are re-keyed under, the QR card, the license, and deleting the
+    // board. Team devices keep every read and every edit.
+    const ownerOnly =
+      (method === "POST" && ["devices", "supporters", "keys", "recovery", "entitlement", "undelete"]
+        .includes(route))
+      || (method === "POST" && /^supporters\/[^/]+\/owner$/.test(route))
+      || (method === "DELETE"
+        && (route === "" || route.startsWith("supporters/") || route.startsWith("devices/")));
+    if (ownerOnly && !this.isOwner(device)) {
+      return json({ error: "owner_only", message: "Only an owner can do this." }, { status: 403 });
+    }
+
     // Free users carry one linked device at a time (§ 11). The relay —
     // not the UI — refuses a second registration; pairing surfaces the
     // upgrade message from this response.
@@ -340,6 +381,12 @@ export class UserRelay {
         n = Math.min(Math.max(Number(b.n ?? 1), 1), 8);
         forAcct = b.for_acct ? String(b.for_acct) : null;
       } catch { /* malformed body mints one untagged */ }
+      // A Team device's tokens always carry its own account: its owner's
+      // next device joins as Team too, never as an untagged Owner.
+      if (!this.isOwner(device)) {
+        forAcct = this.ctx.storage.sql.exec(
+          "SELECT via_acct FROM device WHERE device_id = ?", device).toArray()[0]?.via_acct ?? null;
+      }
       const expires = Date.now() + 30 * 86400000;
       const tokens = [];
       for (let i = 0; i < n; i++) {
@@ -358,9 +405,23 @@ export class UserRelay {
     // account and every unredeemed token minted for it die together.
     if (method === "GET" && route === "supporters") {
       const rows = this.ctx.storage.sql.exec(
-        "SELECT acct_id, email, added_at FROM supporter ORDER BY added_at")
-        .toArray();
+        "SELECT acct_id, email, added_at, owner FROM supporter ORDER BY added_at")
+        .toArray().map((r) => ({ ...r, owner: r.owner === 1 }));
       return json({ supporters: rows });
+    }
+    // Make an account an owner, or back to team. The last owner stays.
+    if (method === "POST" && /^supporters\/[^/]+\/owner$/.test(route)) {
+      const target = decodeURIComponent(route.split("/")[1]);
+      let parsed = null;
+      try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
+      const owner = parsed?.owner === true;
+      const known = this.ctx.storage.sql.exec(
+        "SELECT 1 AS x FROM supporter WHERE acct_id = ?", target).toArray()[0];
+      if (!known) return bad("no_supporter", 404);
+      if (!owner && this.ownersWithout(target) === 0) return bad("last_owner", 409);
+      this.ctx.storage.sql.exec(
+        "UPDATE supporter SET owner = ? WHERE acct_id = ?", owner ? 1 : 0, target);
+      return json({ ok: true, owner });
     }
     if (method === "POST" && route === "supporters") {
       let parsed = null;
@@ -374,6 +435,7 @@ export class UserRelay {
     }
     if (method === "DELETE" && route.startsWith("supporters/")) {
       const target = route.slice("supporters/".length);
+      if (this.ownersWithout(target) === 0) return bad("last_owner", 409);
       this.ctx.storage.sql.exec(
         "DELETE FROM supporter WHERE acct_id = ?", target);
       this.ctx.storage.sql.exec(
@@ -394,6 +456,7 @@ export class UserRelay {
       return json({
         ...row, current_epoch: this.epoch(),
         entitlement: this.entitlement(),
+        owner: this.isOwner(device),
         ...(this.metaGet("delete_at") ? { delete_at: Number(this.metaGet("delete_at")) } : {}),
         ...(idleAt - Date.now() <= IDLE_DELETE_MS - IDLE_WARN_MS ? { idle_delete_at: idleAt } : {}),
       });

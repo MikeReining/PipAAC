@@ -310,3 +310,76 @@ test("op pruning follows the snapshot, never entitlement", async () => {
   const left = ctx._db.prepare("SELECT op_id FROM op ORDER BY relay_seq").all();
   assert.deepEqual(left.map((r) => r.op_id), ["c"], "op beyond snapshot pruned");
 });
+
+test("owner and team: team edits and reads; only owners manage people, devices, license, deletion", async () => {
+  // Founder 2026-09-28: an Owner, and a Team that can edit everything
+  // except deleting the board, managing people, and the license. The
+  // relay — not the UI — refuses the owner-only calls.
+  const userId = "user-owner";
+  const { relay, dev: a } = await userAt(userId);
+  const p = `/users/${userId}`;
+  const call = async (who, method, path, body) =>
+    relay.fetch(await signed(who.identity, method, `${p}${path}`, body));
+  const self = async (who) => (await (await call(who, "GET", "/devices/self")).json()).owner;
+  const join = async (token) => {
+    const d = await newDevice();
+    const res = await relay.fetch(new Request(`https://relay${p}/devices`, {
+      method: "POST",
+      body: JSON.stringify({ join_token: token, device_id: d.device_id, pubkey: d.pubkey, dh_pub: d.dh_pub }),
+    }));
+    assert.equal(res.status, 200);
+    return d;
+  };
+
+  // The creator is an owner; the license needs one.
+  assert.equal(await self(a), true);
+  let res = await call(a, "POST", "/entitlement", { license: await licenseFor(SECRET, userId) });
+  assert.equal(res.status, 200);
+
+  // Invite = team: the SLP account joins through a tagged token.
+  assert.equal((await call(a, "POST", "/supporters", { acct_id: "acct_slp", email: "s@x.org" })).status, 200);
+  const { tokens } = await (await call(a, "POST", "/join_tokens", { n: 2, for_acct: "acct_slp" })).json();
+  const s = await join(tokens[0]);
+  assert.equal(await self(s), false);
+  assert.equal((await (await call(a, "GET", "/supporters")).json()).supporters[0].owner, false);
+
+  // Team reads and lists like anyone on the board…
+  assert.equal((await call(s, "GET", "/devices")).status, 200);
+  assert.equal((await call(s, "GET", "/supporters")).status, 200);
+  // …and every owner-only call is refused by the relay.
+  for (const [m, path, body] of [
+    ["DELETE", ""],
+    ["POST", "/undelete", {}],
+    ["DELETE", `/devices/${a.device_id}`],
+    ["DELETE", "/supporters/acct_slp"],
+    ["POST", "/supporters", { acct_id: "acct_x" }],
+    ["POST", "/supporters/acct_slp/owner", { owner: true }],
+    ["POST", "/entitlement", { license: "x" }],
+    ["POST", "/devices", { device_id: "d", pubkey: "k" }],
+    ["POST", "/keys", { epoch: 9, wrapped: {} }],
+    ["POST", "/recovery", { recovery_proof: "x" }],
+  ]) {
+    res = await call(s, m, path, body);
+    assert.equal(res.status, 403, `${m} ${path} should be owner-only`);
+    assert.equal((await res.json()).error, "owner_only");
+  }
+
+  // A team device's join tokens carry its account: the next device it
+  // brings is team too, never an untagged owner.
+  const own = await (await call(s, "POST", "/join_tokens", { n: 1 })).json();
+  const s2 = await join(own.tokens[0]);
+  assert.equal(await self(s2), false);
+
+  // An owner makes the account an owner; its devices follow.
+  assert.equal((await call(a, "POST", "/supporters/acct_slp/owner", { owner: true })).status, 200);
+  assert.equal(await self(s), true);
+  assert.equal(await self(s2), true);
+
+  // The last owner stays: once A's device is gone, acct_slp can't be
+  // demoted or removed.
+  assert.equal((await call(s, "DELETE", `/devices/${a.device_id}`)).status, 200);
+  res = await call(s, "POST", "/supporters/acct_slp/owner", { owner: false });
+  assert.equal(res.status, 409);
+  assert.equal((await res.json()).error, "last_owner");
+  assert.equal((await call(s, "DELETE", "/supporters/acct_slp")).status, 409);
+});
