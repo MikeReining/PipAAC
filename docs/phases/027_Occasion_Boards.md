@@ -12,9 +12,10 @@ generation or publishing.
 
 **User-visible claim:** the words for an everyday activity are together;
 common short messages are one tap away; editing one group changes only that
-group. Matching positions across groups is how the boards *start*, not a rule
-that overrides a family's edits. Being better than incumbents is a goal, not a
-measured outcome.
+group. The meal kit — drinks, fruit, vegetables, tableware — sits in the
+same cells on every board that offers it; positions are how the boards
+*start*, not a rule that overrides a family's edits. Being better than
+incumbents is a goal, not a measured outcome.
 
 | Concern | Owner |
 | --- | --- |
@@ -254,8 +255,10 @@ checking rendered cells and audible speech — not a helper's report.
 
 1. Fresh grid60: open Breakfast; *I, want, milk* and *more, milk* are direct
    taps. Speak; the page stays. Home and Groups each work.
-2. Lunch, Dinner, Snack, Fruit, Drinks: repeated words share cells. Breakfast
-   has yogurt; Snack has cup. Every launch word has a route. No overlaps.
+2. Lunch, Dinner, Snack: the kit (drinks, fruit, vegetables, tableware)
+   shares cells on every board that offers it. Fruit and Drinks are dense
+   topic doors. Breakfast has yogurt; Dinner has corn. Every launch word
+   has a route. No overlaps.
 3. Move *want* on the home board: every group's top row shows the move.
 4. Remove chocolate milk from Breakfast: a hole; Lunch and Drinks unchanged.
    Restart, reimport, restore on another device: still removed. Remove a
@@ -267,8 +270,9 @@ checking rendered cells and audible speech — not a helper's report.
    Lunch and Snack with Add to other boards; Undo that. Change its photo on the
    word card: every placement updates.
 7. Top row off, then on: nothing moves; the frame stays.
-8. grid15: the authored first pages, paging, shared positions. grid90: bounds and
-   full vocabulary. Customize, change Cells with the preview, switch back: exact.
+8. grid15: the authored first pages, paging, the kit's shared positions.
+   grid90: bounds and full vocabulary. Customize, change Cells with the
+   preview, switch back: exact.
 9. Empty group sentence: first-word suggestions; after a tap, continuations.
    Navigate away during playback: no jump back. No suggestion moves a tile.
 

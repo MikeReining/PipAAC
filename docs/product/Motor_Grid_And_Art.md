@@ -82,13 +82,17 @@ bar starts from the child's own first picks.
   create its own. Hiding preserves membership, positions, and index slots.
   Time/history may glow a visible door; they never move, open, or hide it.
   No default Now cell. More occasions are post-launch.
-- **Curated membership, coordinated starting positions.** Seed meal groups,
-  Fruit, and Drinks together so repeated words have the same cell (and on a
-  paged layout, the same page). Keep meaningful clusters and accept blanks.
-  Membership is independent: yogurt can appear in Breakfast without popcorn;
-  Snack includes cup without requiring every utensil. Other topic groups need
-  not share this coordinate map. Consistency is a starting arrangement, not
-  a constraint on later family edits.
+- **Curated membership; a shared meal kit on dense boards.** (Amended
+  2026-09-28 — one coordinate per word across all occasion groups produced
+  sparse, unreadable pages.) Each meal board packs its own members in
+  reading order: the occasion's menu leads in authored order — food before
+  utensils — while the kit sits in identical cells on every board that
+  offers it: water/milk/juice and the common fruits right-anchored,
+  vegetables on Lunch/Dinner/Snack, tableware bottom-anchored. Membership
+  is independent: yogurt can appear in Breakfast without popcorn. The
+  Fruit and Drinks doors are ordinary topic groups carrying the full
+  shelves. Positions are a starting arrangement, not a constraint on later
+  family edits.
 - **The top row and the frame are part of the page.** On every page of every
   group, reserved cells show whatever the home board holds there: the top row
   (row 0) and the frame (the home cells of yes, no, stop, help). They are not

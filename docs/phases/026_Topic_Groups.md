@@ -73,7 +73,8 @@ then frozen. Counts below are input sizes, not final capacity claims.
 | Going out | stores, places in town, vehicles + *ride, wait* | 41 |
 | Colors | the colors + *color* | 11 |
 | School | school places and people + *read, write, count, listen, ask, show, work* + *easy, difficult, right, wrong* | 27 |
-| Drinks | drinks, cup, bottle, straw + *drink, thirsty* — **an ordinary group with coordinated 027 seed positions** | 12 |
+| Drinks | drinks + vessels (cup, bottle, straw) + *drink, thirsty* — an ordinary topic door, expanded 2026-09-28 | 18 |
+| Fruit | the fruit shelf — split from Food and expanded 2026-09-28 | 19 |
 | Art & music | paper, crayons, markers, music + *draw, color, paint, cut, glue, write, sing, dance* | 16 |
 | Feelings | emotions + body states (*hungry, tired, hot, cold, sick*) + *feel, laugh, cry* | 32 |
 | Clothes | clothes | 28 |
