@@ -6,7 +6,10 @@ capacity-checked by `scripts/catalog/build_groups.mjs` (one page on 60/90, every
 launch word reachable on every size). Home, Describing and Little words split
 into Home/Things, Describing/Touch & sound, Little words/Who & which — a
 curation draft for founder review (`node scripts/catalog/preview_blocks.mjs`).
-Slices 2–4 open. The existing
+**Slice 3 built 2026-09-28:** 319 lexicon words carry `None`, schema CHECK and
+catalog regenerated, preview shim removed. On screen: home board unchanged
+(zero `r-None` on grid60), Animals page shows 33 neutral tiles.
+Slices 2 and 4 open. The existing
 `public/preview-groups.html` is an earlier review, not launch proof; the compiled seed renders with `node scripts/catalog/preview_blocks.mjs`.
 
 **2026-09-27:** group behavior and editing are owned by

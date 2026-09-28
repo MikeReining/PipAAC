@@ -82,13 +82,7 @@ for (const s of allWords) {
   const buf = await sharp(f).resize(88, 88, { fit: 'contain', background: '#fff' }).webp({ quality: 60 }).toBuffer();
   art.set(s, `data:image/webp;base64,${buf.toString('base64')}`);
 }
-// D8: things and places take the neutral frame; people and pronouns stay yellow.
-const PEOPLE = new Set(['People, Family & Roles', 'Function Words & Grammar', null]);
-const role = (s) => {
-  const x = sense.get(s);
-  return x.fitzgerald_role === 'Yellow' && !PEOPLE.has(x.category) ? 'None' : x.fitzgerald_role;
-};
-const words = Object.fromEntries([...allWords].map((s) => [s, { label: label.get(s), role: role(s), art: art.get(s) ?? null }]));
+const words = Object.fromEntries([...allWords].map((s) => [s, { label: label.get(s), role: sense.get(s)?.fitzgerald_role, art: art.get(s) ?? null }]));
 const data = {
   words,
   sizes: Object.fromEntries(Object.entries(sizes).map(([size, z]) => [size, {

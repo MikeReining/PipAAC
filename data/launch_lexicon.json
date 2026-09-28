@@ -738,7 +738,7 @@
       "tier": 2,
       "spokenText": "water",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -747,7 +747,7 @@
       "tier": 2,
       "spokenText": "milk",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -756,7 +756,7 @@
       "tier": 2,
       "spokenText": "juice",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -765,7 +765,7 @@
       "tier": 2,
       "spokenText": "apple juice",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -774,7 +774,7 @@
       "tier": 2,
       "spokenText": "chocolate milk",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -783,7 +783,7 @@
       "tier": 2,
       "spokenText": "tea",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -792,7 +792,7 @@
       "tier": 2,
       "spokenText": "smoothie",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -801,7 +801,7 @@
       "tier": 2,
       "spokenText": "bread",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -810,7 +810,7 @@
       "tier": 2,
       "spokenText": "toast",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -819,7 +819,7 @@
       "tier": 2,
       "spokenText": "cereal",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -828,7 +828,7 @@
       "tier": 2,
       "spokenText": "oatmeal",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -837,7 +837,7 @@
       "tier": 2,
       "spokenText": "pancake",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -846,7 +846,7 @@
       "tier": 2,
       "spokenText": "waffle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -855,7 +855,7 @@
       "tier": 2,
       "spokenText": "bagel",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -864,7 +864,7 @@
       "tier": 2,
       "spokenText": "egg",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -873,7 +873,7 @@
       "tier": 2,
       "spokenText": "butter",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -882,7 +882,7 @@
       "tier": 2,
       "spokenText": "jam",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -891,7 +891,7 @@
       "tier": 2,
       "spokenText": "syrup",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -900,7 +900,7 @@
       "tier": 2,
       "spokenText": "pizza",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -909,7 +909,7 @@
       "tier": 2,
       "spokenText": "pasta",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -918,7 +918,7 @@
       "tier": 2,
       "spokenText": "macaroni",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -927,7 +927,7 @@
       "tier": 2,
       "spokenText": "sandwich",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -936,7 +936,7 @@
       "tier": 2,
       "spokenText": "chicken",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -945,7 +945,7 @@
       "tier": 2,
       "spokenText": "nuggets",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -954,7 +954,7 @@
       "tier": 2,
       "spokenText": "burger",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -963,7 +963,7 @@
       "tier": 2,
       "spokenText": "hot dog",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -972,7 +972,7 @@
       "tier": 2,
       "spokenText": "soup",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -981,7 +981,7 @@
       "tier": 2,
       "spokenText": "rice",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -990,7 +990,7 @@
       "tier": 2,
       "spokenText": "cheese",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -999,7 +999,7 @@
       "tier": 2,
       "spokenText": "meat",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1008,7 +1008,7 @@
       "tier": 2,
       "spokenText": "fish",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1017,7 +1017,7 @@
       "tier": 2,
       "spokenText": "snack",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1026,7 +1026,7 @@
       "tier": 2,
       "spokenText": "cracker",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1035,7 +1035,7 @@
       "tier": 2,
       "spokenText": "cookie",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1044,7 +1044,7 @@
       "tier": 2,
       "spokenText": "chips",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1053,7 +1053,7 @@
       "tier": 2,
       "spokenText": "popcorn",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1062,7 +1062,7 @@
       "tier": 2,
       "spokenText": "pretzel",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1071,7 +1071,7 @@
       "tier": 2,
       "spokenText": "yogurt",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1080,7 +1080,7 @@
       "tier": 2,
       "spokenText": "fruit snack",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1089,7 +1089,7 @@
       "tier": 2,
       "spokenText": "ice cream",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1098,7 +1098,7 @@
       "tier": 2,
       "spokenText": "popsicle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1107,7 +1107,7 @@
       "tier": 2,
       "spokenText": "candy",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1116,7 +1116,7 @@
       "tier": 2,
       "spokenText": "cake",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1125,7 +1125,7 @@
       "tier": 2,
       "spokenText": "muffin",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1134,7 +1134,7 @@
       "tier": 2,
       "spokenText": "donut",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1143,7 +1143,7 @@
       "tier": 2,
       "spokenText": "fruit",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1152,7 +1152,7 @@
       "tier": 2,
       "spokenText": "apple",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1161,7 +1161,7 @@
       "tier": 2,
       "spokenText": "banana",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1170,7 +1170,7 @@
       "tier": 2,
       "spokenText": "strawberry",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1179,7 +1179,7 @@
       "tier": 2,
       "spokenText": "orange",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1188,7 +1188,7 @@
       "tier": 2,
       "spokenText": "grapes",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1197,7 +1197,7 @@
       "tier": 2,
       "spokenText": "watermelon",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1206,7 +1206,7 @@
       "tier": 2,
       "spokenText": "carrot",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1215,7 +1215,7 @@
       "tier": 2,
       "spokenText": "broccoli",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1224,7 +1224,7 @@
       "tier": 2,
       "spokenText": "corn",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -1233,7 +1233,7 @@
       "tier": 2,
       "spokenText": "body",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1242,7 +1242,7 @@
       "tier": 2,
       "spokenText": "head",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1251,7 +1251,7 @@
       "tier": 2,
       "spokenText": "face",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1260,7 +1260,7 @@
       "tier": 2,
       "spokenText": "hair",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1269,7 +1269,7 @@
       "tier": 2,
       "spokenText": "eye",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1278,7 +1278,7 @@
       "tier": 2,
       "spokenText": "ear",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1287,7 +1287,7 @@
       "tier": 2,
       "spokenText": "nose",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1296,7 +1296,7 @@
       "tier": 2,
       "spokenText": "mouth",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1305,7 +1305,7 @@
       "tier": 2,
       "spokenText": "teeth",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1314,7 +1314,7 @@
       "tier": 2,
       "spokenText": "tongue",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1323,7 +1323,7 @@
       "tier": 2,
       "spokenText": "neck",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1332,7 +1332,7 @@
       "tier": 2,
       "spokenText": "shoulder",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1341,7 +1341,7 @@
       "tier": 2,
       "spokenText": "arm",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1350,7 +1350,7 @@
       "tier": 2,
       "spokenText": "hand",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1359,7 +1359,7 @@
       "tier": 2,
       "spokenText": "fingers",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1368,7 +1368,7 @@
       "tier": 2,
       "spokenText": "tummy",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1377,7 +1377,7 @@
       "tier": 2,
       "spokenText": "back",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1386,7 +1386,7 @@
       "tier": 2,
       "spokenText": "leg",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1395,7 +1395,7 @@
       "tier": 2,
       "spokenText": "knee",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -1404,7 +1404,7 @@
       "tier": 2,
       "spokenText": "foot",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1413,7 +1413,7 @@
       "tier": 2,
       "spokenText": "toes",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1422,7 +1422,7 @@
       "tier": 2,
       "spokenText": "bathroom",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1431,7 +1431,7 @@
       "tier": 2,
       "spokenText": "potty",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1440,7 +1440,7 @@
       "tier": 2,
       "spokenText": "toilet",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1449,7 +1449,7 @@
       "tier": 2,
       "spokenText": "diaper",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1458,7 +1458,7 @@
       "tier": 2,
       "spokenText": "wet wipe",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1467,7 +1467,7 @@
       "tier": 2,
       "spokenText": "bath",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1476,7 +1476,7 @@
       "tier": 2,
       "spokenText": "shower",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1485,7 +1485,7 @@
       "tier": 2,
       "spokenText": "soap",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1494,7 +1494,7 @@
       "tier": 2,
       "spokenText": "toothbrush",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1503,7 +1503,7 @@
       "tier": 2,
       "spokenText": "toothpaste",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1512,7 +1512,7 @@
       "tier": 2,
       "spokenText": "towel",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1521,7 +1521,7 @@
       "tier": 2,
       "spokenText": "comb",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1530,7 +1530,7 @@
       "tier": 2,
       "spokenText": "tissue",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1539,7 +1539,7 @@
       "tier": 2,
       "spokenText": "bandage",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1593,7 +1593,7 @@
       "tier": 2,
       "spokenText": "medicine",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -1602,7 +1602,7 @@
       "tier": 2,
       "spokenText": "dentist",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Body, Health & Hygiene"
     },
@@ -2673,7 +2673,7 @@
       "tier": 2,
       "spokenText": "home",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2682,7 +2682,7 @@
       "tier": 2,
       "spokenText": "house",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2691,7 +2691,7 @@
       "tier": 2,
       "spokenText": "bedroom",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2700,7 +2700,7 @@
       "tier": 2,
       "spokenText": "living room",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2709,7 +2709,7 @@
       "tier": 2,
       "spokenText": "kitchen",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2718,7 +2718,7 @@
       "tier": 2,
       "spokenText": "basement",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2727,7 +2727,7 @@
       "tier": 2,
       "spokenText": "stairs",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2736,7 +2736,7 @@
       "tier": 2,
       "spokenText": "yard",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2745,7 +2745,7 @@
       "tier": 2,
       "spokenText": "school",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2754,7 +2754,7 @@
       "tier": 2,
       "spokenText": "classroom",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2763,7 +2763,7 @@
       "tier": 2,
       "spokenText": "playground",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2772,7 +2772,7 @@
       "tier": 2,
       "spokenText": "gym",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2781,7 +2781,7 @@
       "tier": 2,
       "spokenText": "cafeteria",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2790,7 +2790,7 @@
       "tier": 2,
       "spokenText": "library",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2799,7 +2799,7 @@
       "tier": 2,
       "spokenText": "hallway",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2808,7 +2808,7 @@
       "tier": 2,
       "spokenText": "desk",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2817,7 +2817,7 @@
       "tier": 2,
       "spokenText": "park",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2826,7 +2826,7 @@
       "tier": 2,
       "spokenText": "store",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2835,7 +2835,7 @@
       "tier": 2,
       "spokenText": "grocery store",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2844,7 +2844,7 @@
       "tier": 2,
       "spokenText": "restaurant",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2853,7 +2853,7 @@
       "tier": 2,
       "spokenText": "pool",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2862,7 +2862,7 @@
       "tier": 2,
       "spokenText": "beach",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2871,7 +2871,7 @@
       "tier": 2,
       "spokenText": "zoo",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2880,7 +2880,7 @@
       "tier": 2,
       "spokenText": "doctor office",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2889,7 +2889,7 @@
       "tier": 2,
       "spokenText": "hospital",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2898,7 +2898,7 @@
       "tier": 2,
       "spokenText": "museum",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2907,7 +2907,7 @@
       "tier": 2,
       "spokenText": "movie theater",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2916,7 +2916,7 @@
       "tier": 2,
       "spokenText": "mall",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2925,7 +2925,7 @@
       "tier": 2,
       "spokenText": "farm",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2934,7 +2934,7 @@
       "tier": 2,
       "spokenText": "airport",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2943,7 +2943,7 @@
       "tier": 2,
       "spokenText": "outside",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2952,7 +2952,7 @@
       "tier": 2,
       "spokenText": "inside",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2961,7 +2961,7 @@
       "tier": 2,
       "spokenText": "street",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2970,7 +2970,7 @@
       "tier": 2,
       "spokenText": "town",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2979,7 +2979,7 @@
       "tier": 2,
       "spokenText": "church",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Places, Rooms & Community"
     },
@@ -2988,7 +2988,7 @@
       "tier": 2,
       "spokenText": "toy",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -2997,7 +2997,7 @@
       "tier": 2,
       "spokenText": "ball",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3006,7 +3006,7 @@
       "tier": 2,
       "spokenText": "blocks",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3015,7 +3015,7 @@
       "tier": 2,
       "spokenText": "puzzle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3024,7 +3024,7 @@
       "tier": 2,
       "spokenText": "doll",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3033,7 +3033,7 @@
       "tier": 2,
       "spokenText": "action figure",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3042,7 +3042,7 @@
       "tier": 2,
       "spokenText": "bubbles",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3051,7 +3051,7 @@
       "tier": 2,
       "spokenText": "play dough",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3060,7 +3060,7 @@
       "tier": 2,
       "spokenText": "toy car",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3069,7 +3069,7 @@
       "tier": 2,
       "spokenText": "toy train",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3078,7 +3078,7 @@
       "tier": 2,
       "spokenText": "stuffed animal",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3087,7 +3087,7 @@
       "tier": 2,
       "spokenText": "dinosaur",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3096,7 +3096,7 @@
       "tier": 2,
       "spokenText": "robot",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3105,7 +3105,7 @@
       "tier": 2,
       "spokenText": "legos",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3114,7 +3114,7 @@
       "tier": 2,
       "spokenText": "board game",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3123,7 +3123,7 @@
       "tier": 2,
       "spokenText": "swing set",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3132,7 +3132,7 @@
       "tier": 2,
       "spokenText": "sandbox",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3141,7 +3141,7 @@
       "tier": 2,
       "spokenText": "bike",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3150,7 +3150,7 @@
       "tier": 2,
       "spokenText": "scooter",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3159,7 +3159,7 @@
       "tier": 2,
       "spokenText": "skateboard",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3168,7 +3168,7 @@
       "tier": 2,
       "spokenText": "wagon",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3177,7 +3177,7 @@
       "tier": 2,
       "spokenText": "chalk",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3186,7 +3186,7 @@
       "tier": 2,
       "spokenText": "jump rope",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3195,7 +3195,7 @@
       "tier": 2,
       "spokenText": "music",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3204,7 +3204,7 @@
       "tier": 2,
       "spokenText": "song",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3213,7 +3213,7 @@
       "tier": 2,
       "spokenText": "tablet",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3222,7 +3222,7 @@
       "tier": 2,
       "spokenText": "iPad",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3231,7 +3231,7 @@
       "tier": 2,
       "spokenText": "phone",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3240,7 +3240,7 @@
       "tier": 2,
       "spokenText": "TV",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3249,7 +3249,7 @@
       "tier": 2,
       "spokenText": "movie",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3258,7 +3258,7 @@
       "tier": 2,
       "spokenText": "video",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3267,7 +3267,7 @@
       "tier": 2,
       "spokenText": "headphones",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3276,7 +3276,7 @@
       "tier": 2,
       "spokenText": "computer",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3285,7 +3285,7 @@
       "tier": 2,
       "spokenText": "camera",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3294,7 +3294,7 @@
       "tier": 2,
       "spokenText": "paper",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3303,7 +3303,7 @@
       "tier": 2,
       "spokenText": "markers",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3312,7 +3312,7 @@
       "tier": 2,
       "spokenText": "crayons",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3321,7 +3321,7 @@
       "tier": 2,
       "spokenText": "book",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Toys, Play, Media & Leisure"
     },
@@ -3330,7 +3330,7 @@
       "tier": 2,
       "spokenText": "chair",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3339,7 +3339,7 @@
       "tier": 2,
       "spokenText": "couch",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3348,7 +3348,7 @@
       "tier": 2,
       "spokenText": "table",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3357,7 +3357,7 @@
       "tier": 2,
       "spokenText": "bed",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3366,7 +3366,7 @@
       "tier": 2,
       "spokenText": "door",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3375,7 +3375,7 @@
       "tier": 2,
       "spokenText": "window",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3384,7 +3384,7 @@
       "tier": 2,
       "spokenText": "lamp",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3393,7 +3393,7 @@
       "tier": 2,
       "spokenText": "clock",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3402,7 +3402,7 @@
       "tier": 2,
       "spokenText": "trash",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3411,7 +3411,7 @@
       "tier": 2,
       "spokenText": "sink",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3420,7 +3420,7 @@
       "tier": 2,
       "spokenText": "mirror",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3429,7 +3429,7 @@
       "tier": 2,
       "spokenText": "rug",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3438,7 +3438,7 @@
       "tier": 2,
       "spokenText": "plate",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3447,7 +3447,7 @@
       "tier": 2,
       "spokenText": "bowl",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3456,7 +3456,7 @@
       "tier": 2,
       "spokenText": "cup",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3465,7 +3465,7 @@
       "tier": 2,
       "spokenText": "fork",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3474,7 +3474,7 @@
       "tier": 2,
       "spokenText": "spoon",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3483,7 +3483,7 @@
       "tier": 2,
       "spokenText": "knife",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3492,7 +3492,7 @@
       "tier": 2,
       "spokenText": "napkin",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3501,7 +3501,7 @@
       "tier": 2,
       "spokenText": "bottle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3510,7 +3510,7 @@
       "tier": 2,
       "spokenText": "straw",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3519,7 +3519,7 @@
       "tier": 2,
       "spokenText": "fridge",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3528,7 +3528,7 @@
       "tier": 2,
       "spokenText": "microwave",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3537,7 +3537,7 @@
       "tier": 2,
       "spokenText": "backpack",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3546,7 +3546,7 @@
       "tier": 2,
       "spokenText": "bag",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3555,7 +3555,7 @@
       "tier": 2,
       "spokenText": "keys",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3564,7 +3564,7 @@
       "tier": 2,
       "spokenText": "wallet",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3573,7 +3573,7 @@
       "tier": 2,
       "spokenText": "glasses",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3582,7 +3582,7 @@
       "tier": 2,
       "spokenText": "umbrella",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3591,7 +3591,7 @@
       "tier": 2,
       "spokenText": "blanket",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3600,7 +3600,7 @@
       "tier": 2,
       "spokenText": "pillow",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3609,7 +3609,7 @@
       "tier": 2,
       "spokenText": "fan",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3618,7 +3618,7 @@
       "tier": 2,
       "spokenText": "charger",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3627,7 +3627,7 @@
       "tier": 2,
       "spokenText": "box",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3636,7 +3636,7 @@
       "tier": 2,
       "spokenText": "battery",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3645,7 +3645,7 @@
       "tier": 2,
       "spokenText": "broom",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3654,7 +3654,7 @@
       "tier": 2,
       "spokenText": "vacuum",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3663,7 +3663,7 @@
       "tier": 2,
       "spokenText": "sponge",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3672,7 +3672,7 @@
       "tier": 2,
       "spokenText": "tape",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3681,7 +3681,7 @@
       "tier": 2,
       "spokenText": "flashlight",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3690,7 +3690,7 @@
       "tier": 2,
       "spokenText": "bucket",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3699,7 +3699,7 @@
       "tier": 2,
       "spokenText": "paper towel",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Home, Household Objects & Daily Tools"
     },
@@ -3708,7 +3708,7 @@
       "tier": 2,
       "spokenText": "shirt",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3717,7 +3717,7 @@
       "tier": 2,
       "spokenText": "pants",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3726,7 +3726,7 @@
       "tier": 2,
       "spokenText": "shorts",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3735,7 +3735,7 @@
       "tier": 2,
       "spokenText": "underwear",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3744,7 +3744,7 @@
       "tier": 2,
       "spokenText": "dress",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3753,7 +3753,7 @@
       "tier": 2,
       "spokenText": "skirt",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3762,7 +3762,7 @@
       "tier": 2,
       "spokenText": "sweater",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3771,7 +3771,7 @@
       "tier": 2,
       "spokenText": "sweatshirt",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3780,7 +3780,7 @@
       "tier": 2,
       "spokenText": "socks",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3789,7 +3789,7 @@
       "tier": 2,
       "spokenText": "shoes",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3798,7 +3798,7 @@
       "tier": 2,
       "spokenText": "pajamas",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3807,7 +3807,7 @@
       "tier": 2,
       "spokenText": "robe",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3816,7 +3816,7 @@
       "tier": 2,
       "spokenText": "slippers",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3825,7 +3825,7 @@
       "tier": 2,
       "spokenText": "jacket",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3834,7 +3834,7 @@
       "tier": 2,
       "spokenText": "coat",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3843,7 +3843,7 @@
       "tier": 2,
       "spokenText": "hat",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3852,7 +3852,7 @@
       "tier": 2,
       "spokenText": "mittens",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3861,7 +3861,7 @@
       "tier": 2,
       "spokenText": "gloves",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3870,7 +3870,7 @@
       "tier": 2,
       "spokenText": "scarf",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3879,7 +3879,7 @@
       "tier": 2,
       "spokenText": "boots",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3888,7 +3888,7 @@
       "tier": 2,
       "spokenText": "raincoat",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3897,7 +3897,7 @@
       "tier": 2,
       "spokenText": "swimsuit",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3906,7 +3906,7 @@
       "tier": 2,
       "spokenText": "sunglasses",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3915,7 +3915,7 @@
       "tier": 2,
       "spokenText": "zipper",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3924,7 +3924,7 @@
       "tier": 2,
       "spokenText": "button",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3933,7 +3933,7 @@
       "tier": 2,
       "spokenText": "belt",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3942,7 +3942,7 @@
       "tier": 2,
       "spokenText": "pocket",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3951,7 +3951,7 @@
       "tier": 2,
       "spokenText": "sandals",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Clothing & Accessories"
     },
@@ -3960,7 +3960,7 @@
       "tier": 2,
       "spokenText": "animal",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -3969,7 +3969,7 @@
       "tier": 2,
       "spokenText": "dog",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -3978,7 +3978,7 @@
       "tier": 2,
       "spokenText": "cat",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -3987,7 +3987,7 @@
       "tier": 2,
       "spokenText": "puppy",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -3996,7 +3996,7 @@
       "tier": 2,
       "spokenText": "kitten",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4005,7 +4005,7 @@
       "tier": 2,
       "spokenText": "bird",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4014,7 +4014,7 @@
       "tier": 2,
       "spokenText": "bunny",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4023,7 +4023,7 @@
       "tier": 2,
       "spokenText": "duck",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4032,7 +4032,7 @@
       "tier": 2,
       "spokenText": "hen",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4041,7 +4041,7 @@
       "tier": 2,
       "spokenText": "cow",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4050,7 +4050,7 @@
       "tier": 2,
       "spokenText": "horse",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4059,7 +4059,7 @@
       "tier": 2,
       "spokenText": "pig",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4068,7 +4068,7 @@
       "tier": 2,
       "spokenText": "sheep",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4077,7 +4077,7 @@
       "tier": 2,
       "spokenText": "goat",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4086,7 +4086,7 @@
       "tier": 2,
       "spokenText": "bear",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4095,7 +4095,7 @@
       "tier": 2,
       "spokenText": "lion",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4104,7 +4104,7 @@
       "tier": 2,
       "spokenText": "tiger",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4113,7 +4113,7 @@
       "tier": 2,
       "spokenText": "elephant",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4122,7 +4122,7 @@
       "tier": 2,
       "spokenText": "monkey",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4131,7 +4131,7 @@
       "tier": 2,
       "spokenText": "giraffe",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4140,7 +4140,7 @@
       "tier": 2,
       "spokenText": "zebra",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4149,7 +4149,7 @@
       "tier": 2,
       "spokenText": "hippo",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4158,7 +4158,7 @@
       "tier": 2,
       "spokenText": "penguin",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4167,7 +4167,7 @@
       "tier": 2,
       "spokenText": "dolphin",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4176,7 +4176,7 @@
       "tier": 2,
       "spokenText": "whale",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4185,7 +4185,7 @@
       "tier": 2,
       "spokenText": "snake",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4194,7 +4194,7 @@
       "tier": 2,
       "spokenText": "turtle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4203,7 +4203,7 @@
       "tier": 2,
       "spokenText": "frog",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4212,7 +4212,7 @@
       "tier": 2,
       "spokenText": "bug",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4221,7 +4221,7 @@
       "tier": 2,
       "spokenText": "spider",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4230,7 +4230,7 @@
       "tier": 2,
       "spokenText": "butterfly",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4239,7 +4239,7 @@
       "tier": 2,
       "spokenText": "tree",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4248,7 +4248,7 @@
       "tier": 2,
       "spokenText": "grass",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4257,7 +4257,7 @@
       "tier": 2,
       "spokenText": "flower",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4266,7 +4266,7 @@
       "tier": 2,
       "spokenText": "sun",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4275,7 +4275,7 @@
       "tier": 2,
       "spokenText": "rain",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4284,7 +4284,7 @@
       "tier": 2,
       "spokenText": "snow",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4293,7 +4293,7 @@
       "tier": 2,
       "spokenText": "wind",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4302,7 +4302,7 @@
       "tier": 2,
       "spokenText": "cloud",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4311,7 +4311,7 @@
       "tier": 2,
       "spokenText": "moon",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Animals & Nature"
     },
@@ -4320,7 +4320,7 @@
       "tier": 2,
       "spokenText": "vehicle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4329,7 +4329,7 @@
       "tier": 2,
       "spokenText": "car",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4338,7 +4338,7 @@
       "tier": 2,
       "spokenText": "bus",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4347,7 +4347,7 @@
       "tier": 2,
       "spokenText": "school bus",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4356,7 +4356,7 @@
       "tier": 2,
       "spokenText": "truck",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4365,7 +4365,7 @@
       "tier": 2,
       "spokenText": "fire truck",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4374,7 +4374,7 @@
       "tier": 2,
       "spokenText": "police car",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4383,7 +4383,7 @@
       "tier": 2,
       "spokenText": "ambulance",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4392,7 +4392,7 @@
       "tier": 2,
       "spokenText": "train",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4401,7 +4401,7 @@
       "tier": 2,
       "spokenText": "bicycle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4410,7 +4410,7 @@
       "tier": 2,
       "spokenText": "motorcycle",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4419,7 +4419,7 @@
       "tier": 2,
       "spokenText": "van",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4428,7 +4428,7 @@
       "tier": 2,
       "spokenText": "tractor",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4437,7 +4437,7 @@
       "tier": 2,
       "spokenText": "stroller",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4446,7 +4446,7 @@
       "tier": 2,
       "spokenText": "airplane",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4455,7 +4455,7 @@
       "tier": 2,
       "spokenText": "helicopter",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4464,7 +4464,7 @@
       "tier": 2,
       "spokenText": "rocket",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4473,7 +4473,7 @@
       "tier": 2,
       "spokenText": "boat",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4482,7 +4482,7 @@
       "tier": 2,
       "spokenText": "ship",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4491,7 +4491,7 @@
       "tier": 2,
       "spokenText": "canoe",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4500,7 +4500,7 @@
       "tier": 2,
       "spokenText": "subway",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4509,7 +4509,7 @@
       "tier": 2,
       "spokenText": "road",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4518,7 +4518,7 @@
       "tier": 2,
       "spokenText": "track",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4527,7 +4527,7 @@
       "tier": 2,
       "spokenText": "stoplight",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4536,7 +4536,7 @@
       "tier": 2,
       "spokenText": "gas station",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Vehicles & Transportation"
     },
@@ -4968,7 +4968,7 @@
       "tier": 2,
       "spokenText": "morning",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -4977,7 +4977,7 @@
       "tier": 2,
       "spokenText": "afternoon",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -4986,7 +4986,7 @@
       "tier": 2,
       "spokenText": "evening",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -4995,7 +4995,7 @@
       "tier": 2,
       "spokenText": "night",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5004,7 +5004,7 @@
       "tier": 2,
       "spokenText": "bedtime",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5013,7 +5013,7 @@
       "tier": 2,
       "spokenText": "naptime",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Stick Figure",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5049,7 +5049,7 @@
       "tier": 2,
       "spokenText": "today",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5058,7 +5058,7 @@
       "tier": 2,
       "spokenText": "tomorrow",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5067,7 +5067,7 @@
       "tier": 2,
       "spokenText": "yesterday",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5167,7 +5167,7 @@
       "tier": 2,
       "spokenText": "minute",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5176,7 +5176,7 @@
       "tier": 2,
       "spokenText": "hour",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Diagrammatic",
       "category": "Time, Calendar & Sequencing"
     },
@@ -5855,7 +5855,7 @@
       "tier": 2,
       "spokenText": "breakfast",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -5864,7 +5864,7 @@
       "tier": 2,
       "spokenText": "lunch",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -5873,7 +5873,7 @@
       "tier": 2,
       "spokenText": "dinner",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -5882,7 +5882,7 @@
       "tier": 2,
       "spokenText": "food",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -5891,7 +5891,7 @@
       "tier": 2,
       "spokenText": "ketchup",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -5900,7 +5900,7 @@
       "tier": 2,
       "spokenText": "fries",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
     },
@@ -5909,7 +5909,7 @@
       "tier": 2,
       "spokenText": "poop",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },
@@ -5918,7 +5918,7 @@
       "tier": 2,
       "spokenText": "pee",
       "partOfSpeech": "Noun",
-      "fitzgeraldColor": "Yellow",
+      "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Body, Health & Hygiene"
     },

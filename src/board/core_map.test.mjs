@@ -168,7 +168,7 @@ test("board read returns all 60 grid60 cells with label and color", () => {
   assert.equal(board.length, 60);
   for (const cell of board) {
     assert.ok(cell.label.length > 0);
-    assert.ok(["Yellow", "Green", "Blue", "Pink", "Purple", "Red"].includes(cell.fitzgerald_role));
+    assert.ok(["Yellow", "Green", "Blue", "Pink", "Purple", "Red", "None"].includes(cell.fitzgerald_role));
     assert.ok(cell.slot_index >= 0 && cell.slot_index < 60);
   }
   assert.equal(board[0].label, "I");

@@ -362,6 +362,11 @@ family and SLP choose. Pip ships its default.
 > kind (a plain-words choice, or Jev once at add time), never from a
 > color picker.
 
+> **Amended 2026-09-26 (founder; `docs/phases/026_Topic_Groups.md` D8).**
+> People and pronouns keep yellow; things and places take the existing
+> no-role pair (`.r-None`, `#8a8578` / `#f2efe6`). The home board is
+> unchanged — its yellow words are all people and pronouns.
+
 **DECIDED 2026-09-22** (not built). Button fields and stick-figure torsos use these roles. The torso is a grammar cue, not clothing.
 
 The hex values, tile anatomy, and states are **BUILT** and owned by
@@ -369,7 +374,8 @@ The hex values, tile anatomy, and states are **BUILT** and owned by
 
 | Color | Role |
 | --- | --- |
-| Yellow / orange | Pronouns, people, nouns |
+| Yellow / orange | Pronouns, people |
+| Neutral gray (`None`) | Things, places — every other noun (026 D8, decided 2026-09-26) |
 | Green | Verbs, actions |
 | Blue | Descriptors, adjectives, adverbs |
 | Pink / magenta | Social phrases, little words, conjunctions |

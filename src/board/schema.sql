@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS sense (
   id TEXT PRIMARY KEY CHECK (id GLOB 'sns_*'),
   fitzgerald_role TEXT NOT NULL
-    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Purple', 'Red')),
+    CHECK (fitzgerald_role IN ('Yellow', 'Green', 'Blue', 'Pink', 'Purple', 'Red', 'None')),
   art_archetype TEXT NOT NULL
     CHECK (art_archetype IN ('Stick Figure', 'Illustrated Object', 'Diagrammatic')),
   tier TEXT NOT NULL CHECK (tier IN ('root_core', 'primary_fringe')),
