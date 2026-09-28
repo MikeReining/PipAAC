@@ -252,7 +252,7 @@ export function mountKeyboard({
   function buildKbIndex() {
     const senses = all(
       db,
-      `SELECT s.id, l.text AS label, s.fitzgerald_role,
+      `SELECT s.id, l.text AS label, l.kind AS label_kind, s.fitzgerald_role,
          (SELECT COUNT(*) FROM learner_event_log le
            WHERE le.item_kind = 'sense' AND le.item_id = s.id) AS freq
        FROM label l JOIN sense s ON s.id = l.sense_id
@@ -264,6 +264,7 @@ export function mountKeyboard({
       kind: "sense",
       id: w.id,
       text: w.label,
+      labelKind: w.label_kind,
       freq: w.freq,
       role: w.fitzgerald_role,
     }));

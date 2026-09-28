@@ -44,7 +44,13 @@ const cooper = addPersonalEntity(db, {
 function catalogEntries(locale = "en") {
   const senses = catalog.labels
     .filter((l) => l.locale === locale && l.status === "approved")
-    .map((l) => ({ kind: "sense", id: l.sense_id, text: l.text, freq: 0 }));
+    .map((l) => ({
+      kind: "sense",
+      id: l.sense_id,
+      text: l.text,
+      labelKind: l.kind,
+      freq: 0,
+    }));
   const ents = db
     .prepare("SELECT id, spoken_name FROM personal_entity")
     .all()

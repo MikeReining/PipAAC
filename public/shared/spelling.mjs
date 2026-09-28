@@ -141,8 +141,13 @@ export function buildIndex(entries, locale) {
  *    where before the merely-nearby warm and work.
  *
  * Within a tier: accent-exact match first (Spanish papá typed with the
- * dead key beats papa), then freq desc, edit distance asc, |length delta|
- * asc, text. Dedupe by kind:id keeping the best tier. Cap at `cap`.
+ * dead key beats papa), then label kind (a word's own lemma beats an
+ * alias or a borrowed form — typing "mine" wants the "mine" tile, not
+ * the "my" tile wearing mine as a form), then freq desc, edit distance
+ * asc, |length delta| asc, text. Dedupe by kind:id keeping the best
+ * tier, then — for senses — by normalized text, so two senses sharing
+ * one spelling can't spend two slots on identical-looking tiles. Cap
+ * at `cap`.
  *
  * @returns {Array<object>} entries, best first, capped at `cap`.
  */
@@ -153,6 +158,18 @@ export function suggest(index, typed, cap = 4) {
   const L = t.length;
   const k = L <= 5 ? 1 : 2;
   const tSound = index.soundKey && L >= 3 ? index.soundKey(t) : null;
+
+  const labelRank = (e) =>
+    e.labelKind === "lemma" ? 0 : e.labelKind === "form" ? 2 : 1;
+  const better = (a, b) =>
+    a.tier - b.tier ||
+    a.sub - b.sub ||
+    Number(b.entry.norm === norm) - Number(a.entry.norm === norm) ||
+    labelRank(a.entry) - labelRank(b.entry) ||
+    (b.entry.freq ?? 0) - (a.entry.freq ?? 0) ||
+    a.dist - b.dist ||
+    Math.abs(a.entry.fold.length - L) - Math.abs(b.entry.fold.length - L) ||
+    a.entry.text.localeCompare(b.entry.text);
 
   const seen = new Map(); // kind:id -> best { entry, tier, sub, dist }
   for (const e of index.entries) {
@@ -192,17 +209,16 @@ export function suggest(index, typed, cap = 4) {
     }
   }
 
-  return [...seen.values()]
-    .sort(
-      (a, b) =>
-        a.tier - b.tier ||
-        a.sub - b.sub ||
-        Number(b.entry.norm === norm) - Number(a.entry.norm === norm) ||
-        (b.entry.freq ?? 0) - (a.entry.freq ?? 0) ||
-        a.dist - b.dist ||
-        Math.abs(a.entry.fold.length - L) - Math.abs(b.entry.fold.length - L) ||
-        a.entry.text.localeCompare(b.entry.text),
-    )
+  const byText = new Map(); // senses: one tile per normalized text
+  for (const r of seen.values()) {
+    const key =
+      r.entry.kind === "sense" ? `s:${r.entry.norm}` : `e:${r.entry.id}`;
+    const prev = byText.get(key);
+    if (!prev || better(r, prev) < 0) byText.set(key, r);
+  }
+
+  return [...byText.values()]
+    .sort(better)
     .slice(0, cap)
     .map((r) => r.entry);
 }
