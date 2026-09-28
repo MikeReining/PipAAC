@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS label (
     'Adjective', 'Adverb', 'Conjunction', 'Determiner', 'Interjection',
     'Noun', 'Number', 'Preposition', 'Pronoun', 'Verb'
   )),
-  -- UniMorph-style tag for kind='form' ("V;PRS;3;SG"); NULL otherwise.
+  -- UniMorph-style tag for kind='form' (semicolon-joined: V PRS 3 SG). NULL otherwise.
   features TEXT CHECK (features IS NULL OR length(features) > 0),
   default_for_text INTEGER NOT NULL CHECK (default_for_text IN (0, 1)),
   status TEXT NOT NULL CHECK (status IN ('proposed', 'approved')),
@@ -149,11 +149,11 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- No semicolons in comments here: DDL readers stop at the first one.
   fresh_after_speak INTEGER NOT NULL DEFAULT 0 CHECK (fresh_after_speak IN (0, 1)),
   -- Grammar help (021): 1 shows each form-bearing word in the form the
-  -- sentence calls for (want -> wants after he); 0 is today's lemma-only
+  -- sentence calls for (want -> wants after he). 0 is today's lemma-only
   -- board. Default ON — the SLP turns it off to target endings herself.
   grammar_help INTEGER NOT NULL DEFAULT 1 CHECK (grammar_help IN (0, 1)),
   -- Expressive voice (025 § 6): 1 shows the happy/sad/angry faces in
-  -- the smart bar's last slot; 0 speaks everything neutral. Default ON.
+  -- the smart bar's last slot. 0 speaks everything neutral. Default ON.
   expressive_voice INTEGER NOT NULL DEFAULT 1 CHECK (expressive_voice IN (0, 1)),
   -- Groups (027 B6, B8): the home board's top row shows on every group page
   -- (off leaves those cells empty, still reserved), and the four occasion
