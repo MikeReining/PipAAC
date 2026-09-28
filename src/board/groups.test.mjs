@@ -3,11 +3,12 @@
  * positions, paging. Every assertion is measured against the DB, not the
  * functions' return values.
  *
- * Proves: the 027 seed — index order, one page on 60/90, shared cells for
- * repeated occasion words, reserved cells kept clear, authored grid15
- * first pages, every launch word reachable on every size — and each
- * compiler gate rejecting once; caregiver edits survive re-import;
- * removal rules hold; the core map is untouched.
+ * Proves: the 027 seed — index order, one page on 60/90, the shared meal
+ * kit in identical cells on every board that offers it, reserved cells
+ * kept clear, authored grid15 first pages, every launch word reachable
+ * on every size — and each compiler gate rejecting once; caregiver
+ * edits survive re-import; removal rules hold; the core map is
+ * untouched.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -70,8 +71,19 @@ const seedTopics = JSON.parse(readFileSync(join(repoRoot, "data/group_seed.topic
 const seedOccasions = JSON.parse(readFileSync(join(repoRoot, "data/group_seed.occasions.json"), "utf8"));
 const compile = (topics = seedTopics, occasions = seedOccasions) =>
   buildGroups(lexicon, topics, occasions, { layouts: catalog.layouts, coreCells: catalog.coreCells });
-const OCCASION_GROUPS = ["grp_breakfast", "grp_lunch", "grp_dinner", "grp_snack", "grp_fruit", "grp_drinks"];
+const OCCASION_GROUPS = ["grp_breakfast", "grp_lunch", "grp_dinner", "grp_snack"];
 const lemma = (id) => catalog.labels.find((l) => l.sense_id === id && l.kind === "lemma" && l.locale === "en").text;
+const lemmaToId = new Map(catalog.labels.filter((l) => l.kind === "lemma" && l.locale === "en").map((l) => [l.text, l.sense_id]));
+const senseOf = (w) => {
+  const [text, slot] = w.split("#");
+  return slot ? `sns_${pad4(Number(slot))}` : lemmaToId.get(text);
+};
+// Senses in `shared` occasion blocks — the meal kit that must sit in the
+// same cells on every board offering it.
+const sharedSenses = new Map();
+for (const c of seedOccasions.clusters.filter((c) => c.shared)) {
+  for (const w of c.words) sharedSenses.set(senseOf(w), c.key);
+}
 const cellsOf = (gid, layout) => catalog.groupCells.filter((c) => c.group_id === gid && c.layout === layout);
 
 test("027 A1 seed: occasions lead the index, then My Words; every seeded group is one page on 60/90", () => {
@@ -89,21 +101,39 @@ test("027 A1 seed: occasions lead the index, then My Words; every seeded group i
   assert.deepEqual(groupPage(db, "grp_my_words", 0, "en"), []);
 });
 
-test("027 B2: a word repeated across meal, Fruit and Drinks groups has one cell per size", () => {
+test("027 B2: the shared meal kit has one cell per size on every board that offers it", () => {
   for (const layout of Object.keys(catalog.layouts)) {
     const at = new Map();
     for (const gid of OCCASION_GROUPS) {
       for (const c of cellsOf(gid, layout)) {
+        if (!sharedSenses.has(c.item_id)) continue;
         const k = `${c.page}:${c.slot_index}`;
         if (at.has(c.item_id)) assert.equal(at.get(c.item_id), k, `${lemma(c.item_id)} on ${layout}`);
         at.set(c.item_id, k);
       }
     }
+    // every meal board holds the whole kit: dishes, drinks, fruit
+    for (const w of ["cup", "water", "apple"]) {
+      const s = senseOf(w);
+      for (const gid of OCCASION_GROUPS) {
+        assert.ok(
+          cellsOf(gid, layout).some((c) => c.item_id === s),
+          `${w} missing from ${gid} on ${layout}`,
+        );
+      }
+    }
+    // vegetables are the kit on lunch, dinner and snack — not breakfast
+    const carrot = senseOf("carrot");
+    assert.ok(!cellsOf("grp_breakfast", layout).some((c) => c.item_id === carrot));
+    for (const gid of ["grp_lunch", "grp_dinner", "grp_snack"]) {
+      assert.ok(cellsOf(gid, layout).some((c) => c.item_id === carrot));
+    }
   }
-  // membership stays independent: yogurt on Breakfast, cup on Snack, no popcorn on Breakfast
+  // membership stays independent: yogurt on Breakfast, corn only on Dinner, no popcorn on Breakfast
   const inGroup = (gid, w) => catalog.groupMembers.some((m) => m.group_id === gid && lemma(m.item_id) === w);
   assert.ok(inGroup("grp_breakfast", "yogurt"));
-  assert.ok(inGroup("grp_snack", "cup"));
+  assert.ok(inGroup("grp_dinner", "corn"));
+  assert.ok(!inGroup("grp_lunch", "corn"));
   assert.ok(!inGroup("grp_breakfast", "popcorn"));
 });
 
@@ -120,7 +150,7 @@ test("027 § 3.2: no seeded position sits on the top row, the frame, or Next", (
     for (const w of ["eat", "drink", "all done"]) {
       const slot = home.get(w);
       if (slot === undefined || reserved.has(slot)) continue;
-      for (const gid of OCCASION_GROUPS.slice(0, 4)) {
+      for (const gid of OCCASION_GROUPS) {
         const c = cellsOf(gid, layout).find((x) => lemma(x.item_id) === w);
         assert.deepEqual([c.page, c.slot_index], [0, slot], `${w} in ${gid} on ${layout}`);
       }
@@ -152,7 +182,7 @@ test("026 D6: every launch word is reachable on every size — home board or a g
 
 test("027 A1 gates: each rejection is seen once", () => {
   const clone = () => structuredClone(compile());
-  const ctx = { lexicon, coreCells: catalog.coreCells, coordinated: OCCASION_GROUPS };
+  const ctx = { lexicon, coreCells: catalog.coreCells, coordinated: OCCASION_GROUPS, shared: sharedSenses };
   const expectReject = (mutate, re) => {
     const out = clone();
     mutate(out);
@@ -164,11 +194,11 @@ test("027 A1 gates: each rejection is seen once", () => {
   expectReject((o) => { lunch60(o)[0].slot_index = 999; }, /out of bounds/);
   expectReject((o) => { lunch60(o)[0].page = 1; }, /more than one page/);
   expectReject((o) => {
-    const milk = o.groupCells.find((c) => c.group_id === "grp_drinks" && c.layout === "grid60" && lemma(c.item_id) === "milk");
+    const milk = o.groupCells.find((c) => c.group_id === "grp_lunch" && c.layout === "grid60" && lemma(c.item_id) === "milk");
     const free = [13, 14, 15, 16, 17, 18].find((s) =>
-      !o.groupCells.some((c) => c.group_id === "grp_drinks" && c.layout === "grid60" && c.slot_index === s));
+      !o.groupCells.some((c) => c.group_id === "grp_lunch" && c.layout === "grid60" && c.slot_index === s));
     milk.slot_index = free;
-  }, /repeated word mismatch/);
+  }, /shared block mismatch/);
   expectReject((o) => { o.groupCells.splice(o.groupCells.indexOf(lunch60(o)[0]), 1); }, /member without a position/);
   expectReject((o) => {
     const zoo = catalog.labels.find((l) => l.text === "zoo" && l.kind === "lemma").sense_id;
@@ -183,7 +213,7 @@ test("027 A1 gates: each rejection is seen once", () => {
   dupTopics.groups.find((g) => g.key === "numbers").words.push("one");
   assert.throws(() => compile(dupTopics), /duplicate meaning/);
   const ambiguous = structuredClone(seedOccasions);
-  ambiguous.groups.find((g) => g.key === "fruit").words.push("orange");
+  ambiguous.groups.find((g) => g.key === "breakfast").words.push("orange");
   assert.throws(() => compile(seedTopics, ambiguous), /resolves to 2 lexicon senses/);
   const orphan = structuredClone(seedOccasions);
   orphan.groups.push({ key: "brunch", names: { en: "Brunch" }, words: ["toast"] });
@@ -417,12 +447,12 @@ test("027 § 3.4 placement: target, then seed cell, then another group's cell, t
   // Added to a group that never held it: its cell in another group at this size.
   const { id: gid } = createGroup(db, { name: "Picnic" });
   assert.deepEqual(placeItem(db, gid, "sense", milk), { page: seedCell.page, slot_index: seedCell.slot_index });
-  // A word whose preferred cell is taken: the lowest free cell, column by column.
-  const water = senseIdByText(db, "water");
-  const waterCell = catalog.groupCells.find((c) => c.group_id === "grp_drinks" && c.layout === "grid60" && c.item_id === water);
-  const bob = placeItem(db, gid, "sense", senseIdByText(db, "zoo"), { page: waterCell.page, slot_index: waterCell.slot_index });
-  assert.deepEqual(bob, { page: waterCell.page, slot_index: waterCell.slot_index });
-  assert.deepEqual(placeItem(db, gid, "sense", water), { page: 0, slot_index: geom.content[0] });
+  // A word whose preferred cell is taken: the lowest free cell in reading order.
+  const popsicle = senseIdByText(db, "popsicle");
+  const popsicleCell = catalog.groupCells.find((c) => c.group_id === "grp_treats" && c.layout === "grid60" && c.item_id === popsicle);
+  const bob = placeItem(db, gid, "sense", senseIdByText(db, "zoo"), { page: popsicleCell.page, slot_index: popsicleCell.slot_index });
+  assert.deepEqual(bob, { page: popsicleCell.page, slot_index: popsicleCell.slot_index });
+  assert.deepEqual(placeItem(db, gid, "sense", popsicle), { page: 0, slot_index: geom.content[0] });
   // An explicit target on a reserved cell or an occupied one refuses; nothing moved.
   const before = groupPage(db, gid, 0, "en").map((r) => [r.item_id, r.slot_index]);
   assert.throws(() => placeItem(db, gid, "sense", senseIdByText(db, "cup"), { page: 0, slot_index: 0 }), /reserved/);

@@ -618,11 +618,60 @@
     },
     {
       "key": "drinks",
-      "seed": "occasions"
+      "glyph": "🥤",
+      "category": "Food & Drink",
+      "names": {
+        "en": "Drinks"
+      },
+      "words": [
+        "drink",
+        "thirsty",
+        "cup",
+        "straw",
+        "bottle",
+        "water",
+        "milk",
+        "juice",
+        "apple juice",
+        "chocolate milk",
+        "smoothie",
+        "tea",
+        "orange juice",
+        "grape juice",
+        "strawberry milk",
+        "lemonade",
+        "hot chocolate",
+        "milkshake"
+      ]
     },
     {
       "key": "fruit",
-      "seed": "occasions"
+      "glyph": "🍎",
+      "category": "Food & Drink",
+      "names": {
+        "en": "Fruit"
+      },
+      "words": [
+        "fruit",
+        "apple",
+        "banana",
+        "grapes",
+        "strawberry",
+        "orange#131",
+        "watermelon",
+        "blueberry",
+        "raspberry",
+        "blackberry",
+        "cherry",
+        "peach",
+        "pear",
+        "mango",
+        "pineapple",
+        "kiwi",
+        "cantaloupe",
+        "melon",
+        "coconut"
+      ]
     },
     {
       "key": "art_music",

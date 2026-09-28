@@ -41,7 +41,7 @@ layout reset tools, automatic filing by classification.
 | ID | Decision |
 | --- | --- |
 | B1 | One group model. Blocks exist only in the authoring input the builder reads. No block tables, no block renderer. |
-| B2 | Author matching positions for repeated words across the four meal groups, Fruit, and Drinks, per named size. Curate each group's membership on its own (yogurt on Breakfast, cup on Snack); clusters may be partial. Keep the blanks. |
+| B2 | **The meal kit holds one position per size.** (Amended 2026-09-28 — per-word coordinates across every occasion group produced sparse, unreadable pages.) `shared` clusters — dishes, drinks, fruit, vegetables — are all-or-nothing: a board holds the whole block or none, and the block claims the same cells on every board that offers it. Everything else packs per-board. The Fruit and Drinks doors are ordinary topic groups carrying the full shelves, with layouts of their own. |
 | B3 | **The top row and the frame are part of the page, not group content.** Reserved cells show whatever the home board holds in those cells: the top row (row 0, minus frame cells) and the frame (the home cells of yes, no, stop, help). A home-board edit shows in every group at once. They are not editable inside a group. |
 | B4 | *Eat, drink, all done* are ordinary seeded words in the meal groups, at their home coordinates where free. |
 | B5 | Home in the corner, outside the grid, replaces Settings while a group or the index is open; Groups still opens the index. Add sits by Groups in Edit mode only. The last grid cell is always reserved for Next, shown only when a group has more than one page, cycling with a page counter. |
@@ -60,20 +60,24 @@ layout reset tools, automatic filing by classification.
   IDs, and ordered clusters. Add Dinner. Clusters suggest coordinates; they
   never imply membership. `data/group_seed.json` is deleted.
 - **Positions are computed, not typed** (amended 2026-09-28). One rule in the
-  builder assigns every size's seed positions: the home coordinates of *eat,
-  drink, all done* where free, then the size's first-page priority list (grid15),
-  then clusters in authored order, each word taking the first content cell
-  (column by column) that is free in every coordinated group holding it. The
-  same rule fills topic groups in band order. Hand coordinates for three sizes
-  would drift; the rule plus its validation gate cannot.
+  builder assigns every size's seed positions on each occasion board: the home
+  coordinates of *eat, drink, all done* where free, then the size's first-page
+  priority list (grid15) and each board's lead word, then `shared` clusters —
+  the meal kit, anchored to the right by the frame — then board clusters kept
+  together from a row start, then leftovers, most-said first inside every
+  block. Shared blocks claim from an identical used set on every board, so the
+  kit lands in the same cells. The same reading-order rule fills topic groups
+  in band order. Hand coordinates for three sizes would drift; the rule plus
+  its validation gate cannot.
 - Meal groups hold their meal word, useful food and drink choices, *eat, drink,
   all done*, and tableware. Every launch food word has a route; no Food
   mega-group; overflow goes to named sibling topic groups, never dropped.
 - The builder resolves meanings with `word#slot`, then emits ordinary
   membership plus explicit per-size positions. The browser never reads
   prototype JSON; there is one renderer.
-- Clusters yield to reserved cells. Repeated meal/Fruit/Drinks words must agree
-  in page and cell. Short columns are fine.
+- Clusters yield to reserved cells. Shared-block words must agree in page and
+  cell on every board that holds them. Other repeated words may sit wherever
+  each board packs them.
 
 ### 3.2 Reserved cells and capacity
 
@@ -335,7 +339,7 @@ Home on group surfaces in Edit mode too (3da8bda).
   `public/preview-blocks.html`: the sibling splits (Home/Things, Describing/Touch
   & sound, Little words/Who & which), Dinner's words, the grid15 first page
   (milk, water, banana, cup, eat, all done + cereal/pasta/cracker), and grid15
-  Fruit, whose shared positions leave its page 2 empty. Edits go in
+  Fruit's expanded shelf. Edits go in
   `data/group_seed.occasions.json` / `data/group_seed.topics.json`, then
   `npm run catalog:build` — the gate re-checks every size.
 - **Starter table** — on the machine with the CHILDES cache:

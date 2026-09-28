@@ -7,14 +7,16 @@
  * size. The browser reads only this output; there is one renderer.
  *
  * Positions come from one rule, never hand coordinates:
- *   - occasion groups share a coordinate per word and size, free in every
- *     occasion group that holds the word: the home cells of
- *     `homeCoordinates` where free, then the size's `firstPage` list and
- *     each `lead` word at the first free cell, then clusters in authored
- *     order, each kept together from a row start (`side: "right"`
- *     clusters run the rows right-to-left, by the frame) — inside a
- *     cluster and among leftovers, words claim most-said first by
- *     CHILDES counts (026), authored order breaking ties;
+ *   - occasion groups each pack their own members, in a fixed claim
+ *     order: `homeCoordinates` pins where free, the size's `firstPage`
+ *     list and each `lead` word at the first free cell, then `shared`
+ *     clusters — the meal kit (dishes, drinks, fruit, vegetables),
+ *     anchored to the right by the frame — then board clusters kept
+ *     together from a row start, then leftovers. Shared blocks are
+ *     all-or-nothing membership, so every board offering one claims it
+ *     from the same used set into the same cells; inside every block
+ *     and among leftovers, words claim most-said first by CHILDES
+ *     counts (026), authored order breaking ties;
  *   - topic groups fill in band order (018 D5), a new band starting a
  *     fresh row while the rest of the group still fits on the page.
  *     Inside a band, members sort by CHILDES child-speech frequency —
@@ -186,109 +188,154 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
 
   const coordinated = specs.filter((g) => g.occasionSeed).map((g) => `grp_${g.key}`);
   const clusterOf = new Map();
+  const clusterSenses = new Map();
   for (const c of occasionSeed.clusters) {
+    const senses = [];
     for (const w of c.words) {
       const s = resolve(w, `cluster ${c.key}`);
       if (clusterOf.has(s)) throw new Error(`group seed: ${w} is in clusters ${clusterOf.get(s)} and ${c.key} — one cluster per word`);
       clusterOf.set(s, c.key);
+      senses.push(s);
+    }
+    clusterSenses.set(c.key, senses);
+  }
+  const sharedOf = new Map(); // sense -> shared cluster key
+  for (const c of occasionSeed.clusters.filter((c) => c.shared)) {
+    for (const s of clusterSenses.get(c.key)) sharedOf.set(s, c.key);
+  }
+  // Shared blocks are the meal kit: a board holds the whole block or
+  // none of it, so identical membership + identical claim order put it
+  // in the same cells on every board that offers it.
+  for (const c of occasionSeed.clusters.filter((c) => c.shared)) {
+    const set = new Set(clusterSenses.get(c.key));
+    for (const gid of coordinated) {
+      const held = membersOf.get(gid).filter((s) => set.has(s)).length;
+      if (held && held !== set.size) {
+        throw new Error(
+          `group seed: ${gid} holds ${held}/${set.size} of shared block "${c.key}" — shared blocks are all-or-nothing`,
+        );
+      }
     }
   }
   const eligible = (g, layout) => !g.layouts || g.layouts.includes(layout);
-  const holders = new Map(); // sense -> the occasion groups holding it
-  for (const gid of coordinated) {
-    for (const s of membersOf.get(gid)) holders.set(s, [...(holders.get(s) ?? []), gid]);
-  }
 
   const groupCells = [];
   for (const layout of Object.keys(layouts)) {
     const geom = groupGeometry(shapes[layout]);
     const home = homeOf(layout);
     const shown = shownByReserved(geom, home);
-
-    // Occasion groups: one coordinate per word, free in all its holders.
-    const used = new Map(coordinated.map((g) => [g, new Set()]));
-    const at = new Map();
-    const free = (s, page, slot) => holders.get(s).every((g) => !used.get(g).has(`${page}:${slot}`));
-    const claim = (s, page, slot) => {
-      at.set(s, { page, slot_index: slot });
-      for (const g of holders.get(s)) used.get(g).add(`${page}:${slot}`);
-    };
     const n = geom.content.length;
     // Right-anchored traversal: same rows top to bottom, each row read
-    // right to left — `side: "right"` clusters (drinks/fruit/dishes
-    // staples) hug the frame column on the right edge.
+    // right to left — `side: "right"` clusters (the meal kit) hug the
+    // frame column on the right edge.
     const rightCells = [];
     for (let r = 0; r < geom.rows; r++) {
       rightCells.push(...geom.content.filter((s) => Math.floor(s / geom.cols) === r).reverse());
     }
-    const cellAt = (i, list = geom.content) => ({ page: Math.floor(i / n), slot: list[i % n] });
-    const pending = (s) => !at.has(s) && !shown.has(s) && holders.has(s);
-    // Lay `words` down strictly in order from linear cell `start`, each in
-    // the first cell after the previous word's that is free in its groups.
-    const run = (words, start, list = geom.content) => {
-      const out = [];
-      let i = start;
-      for (const s of words) {
-        while (!free(s, cellAt(i, list).page, cellAt(i, list).slot)) i++;
-        out.push([s, cellAt(i, list).page, cellAt(i, list).slot]);
-        i++;
-      }
-      return out;
-    };
-    const firstFit = (s) => {
-      if (!pending(s)) return;
-      const [[, page, slot]] = run([s], 0);
-      claim(s, page, slot);
-    };
-    // Row starts: indices where the row changes. The same boundaries index
-    // the mirrored list — there a start is the row's rightmost cell.
-    const tops = geom.content.map((slot, i) => [slot, i])
-      .filter(([slot], i) => i === 0
-        || Math.floor(slot / geom.cols) !== Math.floor(geom.content[i - 1] / geom.cols))
-      .map(([, i]) => i);
-    // A cluster keeps together: it starts at a row start where the whole
-    // run ends on the page it starts on — the mirrored right-to-left rows
-    // for a `side: "right"` cluster (staples by the frame), else
-    // left-to-right. Failing that, each word takes the first free cell.
-    const assignCluster = (words, side) => {
-      const todo = words.filter(pending);
-      if (!todo.length) return;
-      const list = side === "right" ? rightCells : geom.content;
-      // One-page sizes never push a cluster to a later page to keep it
-      // whole; paged sizes (grid15) may, when it fits one page.
-      const pagesToTry = ONE_PAGE_LAYOUTS.has(layout) || todo.length > n ? 1 : 3;
-      for (let page = 0; page < pagesToTry; page++) {
-        for (const t of tops) {
-          const placed = run(todo, page * n + t, list);
-          if (placed.every(([, p]) => p === page)) {
-            for (const [w, p, slot] of placed) claim(w, p, slot);
-            return;
+    const byFreq = (a, b) => freqOf(b) - freqOf(a); // stable: authored order ties
+
+    // Occasion boards each pack their own members under a fixed claim
+    // order — home pins, the size's firstPage list, lead, shared blocks,
+    // board blocks, leftovers. Two boards claiming the same block see
+    // the same used set, so the kit lands in the same cells.
+    const boardCells = new Map();
+    for (const gid of coordinated) {
+      const members = new Set(membersOf.get(gid));
+      const used = new Set();
+      const cellOf = new Map();
+      const free = (page, slot) => !used.has(`${page}:${slot}`);
+      const claim = (s, page, slot) => {
+        cellOf.set(s, { page, slot_index: slot });
+        used.add(`${page}:${slot}`);
+      };
+      const cellAt = (i, list = geom.content) => ({ page: Math.floor(i / n), slot: list[i % n] });
+      const pending = (s) => members.has(s) && !cellOf.has(s) && !shown.has(s);
+      // Lay `words` down strictly in order from linear cell `start`.
+      const run = (words, start, list = geom.content) => {
+        const out = [];
+        let i = start;
+        for (const s of words) {
+          while (!free(cellAt(i, list).page, cellAt(i, list).slot)) i++;
+          out.push([s, cellAt(i, list).page, cellAt(i, list).slot]);
+          i++;
+        }
+        return out;
+      };
+      const firstFit = (s) => {
+        if (!pending(s)) return;
+        const [[, page, slot]] = run([s], 0);
+        claim(s, page, slot);
+      };
+      // Row starts: indices where the row changes. The same boundaries
+      // index the mirrored list — there a start is the row's rightmost.
+      const tops = geom.content.map((slot, i) => [slot, i])
+        .filter(([slot], i) => i === 0
+          || Math.floor(slot / geom.cols) !== Math.floor(geom.content[i - 1] / geom.cols))
+        .map(([, i]) => i);
+      // A cluster keeps together: it prefers a strictly contiguous run
+      // from a row start — no skips, so a word never leaks into the row
+      // above its block — then a skipping run (fills the free-cell snake
+      // left of the kit), then first free cells.
+      const strictRun = (words, start, list) => {
+        const placed = [];
+        for (let j = 0; j < words.length; j++) {
+          const { page, slot } = cellAt(start + j, list);
+          if (!free(page, slot)) return null;
+          placed.push([words[j], page, slot]);
+        }
+        return placed;
+      };
+      const assignCluster = (words, side) => {
+        const todo = words.filter(pending);
+        if (!todo.length) return;
+        const list = side === "right" ? rightCells : geom.content;
+        // One-page sizes never push a cluster to a later page to keep it
+        // whole; paged sizes (grid15) may, when it fits one page.
+        const pagesToTry = ONE_PAGE_LAYOUTS.has(layout) || todo.length > n ? 1 : 3;
+        for (let page = 0; page < pagesToTry; page++) {
+          for (const t of tops) {
+            const placed = strictRun(todo, page * n + t, list);
+            if (placed && placed.every(([, p]) => p === page)) {
+              for (const [w, p, slot] of placed) claim(w, p, slot);
+              return;
+            }
           }
         }
+        for (let page = 0; page < pagesToTry; page++) {
+          for (const t of tops) {
+            const placed = run(todo, page * n + t, list);
+            if (placed.every(([, p]) => p === page)) {
+              for (const [w, p, slot] of placed) claim(w, p, slot);
+              return;
+            }
+          }
+        }
+        todo.forEach(firstFit);
+      };
+      for (const w of occasionSeed.homeCoordinates ?? []) {
+        const s = resolve(w, "homeCoordinates");
+        const c = home.find((h) => h.sense_id === s);
+        if (pending(s) && c && !geom.reserved.has(c.slot_index) && free(0, c.slot_index)) {
+          claim(s, 0, c.slot_index);
+        }
       }
-      todo.forEach(firstFit);
-    };
-    for (const w of occasionSeed.homeCoordinates ?? []) {
-      const s = resolve(w, "homeCoordinates");
-      const c = home.find((h) => h.sense_id === s);
-      if (holders.has(s) && c && !geom.reserved.has(c.slot_index) && free(s, 0, c.slot_index)) {
-        claim(s, 0, c.slot_index);
+      for (const w of occasionSeed.firstPage?.[layout] ?? []) firstFit(resolve(w, `firstPage.${layout}`));
+      for (const w of occasionSeed.lead ?? []) firstFit(resolve(w, "lead"));
+      for (const c of occasionSeed.clusters) {
+        if (c.shared) assignCluster(clusterSenses.get(c.key).sort(byFreq), c.side);
       }
+      for (const c of occasionSeed.clusters) {
+        if (!c.shared) assignCluster(clusterSenses.get(c.key).sort(byFreq), c.side);
+      }
+      [...members].sort(byFreq).forEach(firstFit);
+      boardCells.set(gid, cellOf);
     }
-    for (const w of occasionSeed.firstPage?.[layout] ?? []) firstFit(resolve(w, `firstPage.${layout}`));
-    for (const w of occasionSeed.lead ?? []) firstFit(resolve(w, "lead"));
-    const byFreq = (a, b) => freqOf(b) - freqOf(a); // stable: authored order ties
-    for (const c of occasionSeed.clusters) {
-      assignCluster(c.words.map((w) => resolve(w, `cluster ${c.key}`)).sort(byFreq), c.side);
-    }
-    [...new Set(coordinated.flatMap((gid) => membersOf.get(gid)))]
-      .sort(byFreq).forEach(firstFit);
 
     for (const g of specs) {
       const gid = `grp_${g.key}`;
       if (!eligible(g, layout)) continue;
       const members = membersOf.get(gid).filter((s) => !shown.has(s));
-      const cells = coordinated.includes(gid) ? at : fillTopic(members, geom, bandOf, freqOf);
+      const cells = boardCells.get(gid) ?? fillTopic(members, geom, bandOf, freqOf);
       for (const s of members) {
         const c = cells.get(s);
         groupCells.push({ group_id: gid, layout, item_kind: "sense", item_id: s, page: c.page, slot_index: c.slot_index });
@@ -297,18 +344,18 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
   }
 
   const out = { groups, groupMembers, groupCells, groupLabels, groupLayouts: shapes };
-  validateGroups(out, { lexicon, coreCells, coordinated });
+  validateGroups(out, { lexicon, coreCells, coordinated, shared: sharedOf });
   return out;
 }
 
 /**
  * Independent checks over compiled output. Throws the first violation:
  * out-of-bounds, reserved cell, overlap, more than one page on 60/90,
- * a member without a position (or a position without a member), an
- * occasion word whose cell differs between groups, or a launch word no
- * home board or group reaches on some size.
+ * a member without a position (or a position without a member), a
+ * shared-block word whose cell differs between occasion boards, or a
+ * launch word no home board or group reaches on some size.
  */
-export function validateGroups(out, { lexicon, coreCells, coordinated }) {
+export function validateGroups(out, { lexicon, coreCells, coordinated, shared = new Map() }) {
   const { groups, groupMembers, groupCells, groupLayouts: shapes } = out;
   const byId = new Map(groups.map((g) => [g.id, g]));
   const member = new Set(groupMembers.map((m) => `${m.group_id}|${m.item_id}`));
@@ -333,11 +380,11 @@ export function validateGroups(out, { lexicon, coreCells, coordinated }) {
     if (g.kind === "builtin" && ONE_PAGE_LAYOUTS.has(c.layout) && c.page > 0) {
       throw new Error(`group seed: more than one page on ${c.layout} — ${where}`);
     }
-    if (coordinated.includes(c.group_id)) {
+    if (coordinated.includes(c.group_id) && shared.has(c.item_id)) {
       const k = `${c.layout}|${c.item_id}`;
       const prev = coordAt.get(k);
       if (prev && (prev.page !== c.page || prev.slot_index !== c.slot_index)) {
-        throw new Error(`group seed: repeated word mismatch — ${where} vs ${prev.group_id} at ${prev.page}:${prev.slot_index}`);
+        throw new Error(`group seed: shared block mismatch — ${where} vs ${prev.group_id} at ${prev.page}:${prev.slot_index}`);
       }
       coordAt.set(k, c);
     }

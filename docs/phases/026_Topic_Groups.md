@@ -91,9 +91,10 @@ band blocks most-said-first by CHILDES child-line counts
 (`data/prediction/word_frequency.en.json`, built by
 `scripts/prediction/childes/word_frequency.mjs`); the seed's authored
 order breaks ties and orders unheard words. No hand-ranked word lists.
-Occasion groups keep their shared coordinates (027) — pinned
-homeCoordinates/firstPage/lead and cluster order stay authored — but
-inside each cluster and among leftovers, words claim cells most-said
+Occasion boards pack their own members (027 B2, amended): pinned
+homeCoordinates/firstPage/lead first, then `shared` blocks — the meal
+kit, identical cells on every board offering it — then board blocks and
+leftovers; inside each block and among leftovers, words claim most-said
 first by the same counts.
 
 **Fill direction, ruled 2026-09-28** (founder): blocks fill in reading
