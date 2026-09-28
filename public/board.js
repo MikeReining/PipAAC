@@ -549,7 +549,9 @@ function shownLabel(senseId, fallback) {
 
 function renderBar() {
   const bar = $("bar");
+  const barBtns = $("bar-btns");
   bar.innerHTML = "";
+  bar.appendChild(barBtns); // innerHTML detached the button dock — re-seat it last
   // Display-only: capitalization and ¿¡/?! marks live on the items as
   // lead/punct; item.text and spoken text are unchanged (slice 2 rule 7).
   // Each item renders as its picture with the word underneath in ink —
@@ -582,13 +584,13 @@ function renderBar() {
         chip.classList.add("photo");
       });
     }
-    bar.appendChild(chip);
+    bar.insertBefore(chip, barBtns);
   });
   if (kbUi.text) {
     const p = document.createElement("span");
     p.className = "partial";
     p.textContent = kbUi.text + "▌";
-    bar.appendChild(p);
+    bar.insertBefore(p, barBtns);
   }
   if (!sentence.length && !kbUi.text) {
     // The ink bird (never the gold one near the grid) holds the empty bar.
@@ -599,7 +601,8 @@ function renderBar() {
     const note = document.createElement("span");
     note.className = "empty-note";
     note.textContent = "Tap a word to start.";
-    bar.append(img, note);
+    bar.insertBefore(img, barBtns);
+    bar.insertBefore(note, barBtns);
   }
   $("clear").disabled = !sentence.length && !kbUi.text;
   $("backspace").disabled = !sentence.length && !kbUi.text;
@@ -608,7 +611,10 @@ function renderBar() {
   syncTxButtons();
   bar.scrollLeft = bar.scrollWidth; // the newest word stays in view
 }
-$("bar").addEventListener("click", () => {
+$("bar").addEventListener("click", (e) => {
+  // The in-bar Backspace/Clear have their own jobs — their taps never
+  // speak the sentence.
+  if (e.target.closest("#bar-btns")) return;
   if (sentence.length) speakSentence();
 });
 $("clear").addEventListener("click", () => {
