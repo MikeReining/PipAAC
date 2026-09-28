@@ -58,3 +58,21 @@ test("family editor paints one chip per bar_family row", () => {
   assert.equal(famList.children[0].className, "fam-chip");
   assert.equal(nodes.corner.listeners.click.length, 1);
 });
+
+test("a family named only by its glyph shows its words, not '? ?'", async () => {
+  const { importCatalog } = await import("./catalog.mjs");
+  const { readFileSync } = await import("node:fs");
+  const { join } = await import("node:path");
+  const db = createDatabase(":memory:");
+  importCatalog(db, JSON.parse(readFileSync(join(import.meta.dirname, "../../data/catalog/catalog.json"), "utf8")));
+  const famList = el();
+  const nodes = {
+    "fam-list": famList, "fam-items": el(), "fam-title": el(), "fam-add": el(),
+    "fam-add-btn": el(), "fam-save": el(), corner: el(),
+  };
+  globalThis.document = { getElementById: (id) => nodes[id], createElement: () => el() };
+  mountFamilyEditor({ db, locale: "en", open() {}, close() {}, toast() {}, resolveTyped() { return null; } });
+  nodes.corner.listeners.click[0]();
+  const q = famList.children.map((c) => c.textContent).find((t) => t.startsWith("?"));
+  assert.equal(q, "? why, when, where, who");
+});
