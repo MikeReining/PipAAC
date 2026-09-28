@@ -7,7 +7,7 @@ test("GET /health returns service identity", async () => {
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.ok, true);
-  assert.equal(body.service, "pippaac");
+  assert.equal(body.service, "pipaac");
 });
 
 test("unknown paths return 404 JSON", async () => {

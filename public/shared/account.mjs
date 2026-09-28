@@ -72,10 +72,17 @@ export const accountPub = async (acctId) =>
   (await get(`/accounts/${acctId}/state`)).acct_pub;
 
 /* --- passkey ceremonies (WebAuthn, ES256, PRF extension) --- */
+// Passkeys register on the registrable domain so credentials survive host
+// moves within pipaac.org (e.g. marketing root ↔ app.); other hosts
+// (localhost dev) omit rp.id and default to the request host.
+const rpId = () => {
+  const h = globalThis.location?.hostname ?? "";
+  return h === "pipaac.org" || h.endsWith(".pipaac.org") ? "pipaac.org" : undefined;
+};
 async function createPasskey({ challenge, email, acctId, prfSalt }) {
   const cred = await navigator.credentials.create({ publicKey: {
     challenge: unb64u(challenge),
-    rp: { name: "Pip AAC" },
+    rp: { name: "Pip AAC", ...(rpId() ? { id: rpId() } : {}) },
     user: { id: unb64u(prfSalt), name: email, displayName: email },
     pubKeyCredParams: [{ type: "public-key", alg: -7 }],
     authenticatorSelection: { residentKey: "preferred", userVerification: "preferred" },
@@ -92,6 +99,7 @@ async function createPasskey({ challenge, email, acctId, prfSalt }) {
 async function getPasskey({ challenge, credentialIds, prfSalt }) {
   const asn = await navigator.credentials.get({ publicKey: {
     challenge: unb64u(challenge),
+    ...(rpId() ? { rpId: rpId() } : {}),
     allowCredentials: credentialIds.map((id) => ({ type: "public-key", id: unb64u(id) })),
     extensions: prfSalt ? { prf: { eval: { first: unb64u(prfSalt) } } } : {},
   }});

@@ -191,8 +191,16 @@ Instead of forcing the learner into a single rigid grid:
   - Within a view, core indices do not move on their own; a parent or SLP may move them (amended 2026-09-22). Across densities, spatial-vector anchoring is a default goal with a shown move cost (amended 2026-09-22).
   - Predictive strip: at most four text-and-icon tiles between the sentence bar and the core grid. Suggestions do not reorder the grid.
   - Symbol art: one neutral stick character with Fitzgerald-colored torsos; illustrated objects for inanimate nouns; in-house assets only.
-- **DECIDED 2026-09-23** (founder):
-  - Primary production domain: `pippaac.org`.
+- **DECIDED 2026-09-23** (founder; amended 2026-10-01 — correct spelling is one `p`, and the origin splits):
+  - Primary production domain: `pipaac.org`.
+  - `pipaac.org` root: marketing site — first contact for families and supporters; its "Open Pip" link lands on the app.
+  - `app.pipaac.org`: the Pip app and the supporter web editor (same origin, separate routes — accounts and keys stay in one place).
+  - The app origin is a one-way decision. Pip is local-first: the board, IndexedDB/OPFS data, service-worker cache, and cached voice clips are all origin-scoped. Moving the app later strands every installed family's local data — `app.` never moves once families are on it.
+  - Marketing never shares an origin with child data: no marketing analytics or cookies on `app.` (COPPA posture + trust), and marketing deploys as a separate project so its changes can't break the offline app.
+  - Return path: families don't re-visit the root. First visit taps "Open Pip" → `app.pipaac.org`, then "Add to Home Screen"; after that the Pip icon opens the app fullscreen and offline (paired with Guided Access on a dedicated iPad).
+  - Passkeys: WebAuthn `rpId` is `pipaac.org` (the registrable domain), not `app.pipaac.org`, so supporter credentials keep working across any future subdomain.
+  - Email: sends from the one brand spelling — `accounts@pipaac.org`.
+  - Deployment: the app Worker routes to `app.pipaac.org`.
 - **PROPOSED**:
   - Phase 1 execution slice: Relational Core Schema + Spatial Vector Engine + Responsive Motor Grid View proof.
 

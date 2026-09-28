@@ -18,13 +18,20 @@ const json = (data, init = {}) =>
     headers: { "content-type": "application/json; charset=utf-8", ...(init.headers || {}) },
   });
 
+// Passkeys register on the registrable domain so credentials survive host
+// moves within pipaac.org (e.g. marketing root ↔ app.); localhost dev keeps
+// the request host.
+const rpIdFor = (hostname) =>
+  hostname === "pipaac.org" || hostname.endsWith(".pipaac.org")
+    ? "pipaac.org" : hostname;
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/$/, "") || "/";
 
     if (path === "/health") {
-      return json({ ok: true, service: "pippaac" });
+      return json({ ok: true, service: "pipaac" });
     }
 
     if (path === "/catalog.json") {
@@ -146,7 +153,7 @@ export default {
         try {
           const { EmailMessage } = await import("cloudflare:email");
           const raw = [
-            `From: Pip <accounts@pipaac.app>`,
+            `From: Pip <accounts@pipaac.org>`,
             `To: ${email}`,
             `Subject: Your Pip sign-in link`,
             `Content-Type: text/plain; charset=utf-8`,
@@ -156,7 +163,7 @@ export default {
             ``,
             `It works once and expires in 15 minutes.`,
           ].join("\r\n");
-          await env.EMAIL.send(new EmailMessage("accounts@pipaac.app", email, raw));
+          await env.EMAIL.send(new EmailMessage("accounts@pipaac.org", email, raw));
           sent = true;
         } catch { sent = false; }
       }
@@ -319,7 +326,7 @@ export default {
         try {
           await verifyAssertion(await cred.json(), body, {
             challenge: body.challenge,
-            rpId: url.hostname,
+            rpId: rpIdFor(url.hostname),
             origins: [url.origin],
           });
         } catch (e) {
@@ -357,7 +364,7 @@ export default {
             try {
               const { EmailMessage } = await import("cloudflare:email");
               const raw = [
-                `From: Pip <accounts@pipaac.app>`,
+                `From: Pip <accounts@pipaac.org>`,
                 `To: ${body.email}`,
                 `Subject: You've been invited to support a Pip user`,
                 `Content-Type: text/plain; charset=utf-8`,
@@ -367,7 +374,7 @@ export default {
                 ``,
                 `The family approves the share on their device before anything syncs.`,
               ].join("\r\n");
-              await env.EMAIL.send(new EmailMessage("accounts@pipaac.app", body.email, raw));
+              await env.EMAIL.send(new EmailMessage("accounts@pipaac.org", body.email, raw));
               sent = true;
             } catch { sent = false; }
           }

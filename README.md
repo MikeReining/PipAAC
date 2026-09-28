@@ -1,7 +1,7 @@
 # Pip AAC
 
 Open, non-predatory **augmentative and alternative communication (AAC)** for
-families, late-talkers, SPED classrooms, and therapists — **pippaac.org**
+families, late-talkers, SPED classrooms, and therapists — **pipaac.org**
 (working title).
 
 New product workspace (repo: **PipAAC**). Durable product truth lands in

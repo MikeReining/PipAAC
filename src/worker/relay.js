@@ -579,7 +579,7 @@ export class UserRelay {
     for (const email of emails) {
       try {
         const raw = [
-          `From: Pip <accounts@pipaac.app>`,
+          `From: Pip <accounts@pipaac.org>`,
           `To: ${email}`,
           `Subject: A Pip board you support will be deleted soon`,
           `Content-Type: text/plain; charset=utf-8`,
@@ -591,7 +591,7 @@ export class UserRelay {
         let msg = raw;
         try {
           const { EmailMessage } = await import("cloudflare:email");
-          msg = new EmailMessage("accounts@pipaac.app", email, raw);
+          msg = new EmailMessage("accounts@pipaac.org", email, raw);
         } catch { /* no cf module (tests) — the binding takes the raw */ }
         await this.env.EMAIL?.send?.(msg);
         sent++;
