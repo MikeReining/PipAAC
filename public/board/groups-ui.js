@@ -6,9 +6,9 @@
  */
 import { spotlight, spotlightGroups } from "../shared/spotlight.mjs";
 import {
-  canonCell, createGroup, deleteGroup, groupDisplayName, groupIndex, groupPage,
-  indexSlotAt, indexVisual, maskedSenseIds, moveGroup, moveItem, pageCount, pageGeom,
-  posAtVisual, removeItemUndoable, swapGroups, swapItems,
+  createGroup, deleteGroup, geometryOf, groupDisplayName, groupIndex, groupPage,
+  indexSlotAt, indexVisual, maskedSenseIds, moveGroup, moveItem, pageCount,
+  removeItemUndoable, swapGroups, swapItems,
 } from "../shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -90,7 +90,7 @@ export function mountGroups({
     const zg = $("groupgrid");
     zg.innerHTML = "";
     const { cols, rows: nRows, cells } = boardGeom();
-    const geom = pageGeom(cells);
+    const next = cells - 1;
     zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
     const placed = new Map();
@@ -118,7 +118,7 @@ export function mountGroups({
         zg.appendChild(editSlotCell(getEditing() && "+ Group", () => open("groupform")));
         continue;
       }
-      if (slot === geom.next) {
+      if (slot === next) {
         if (indexPages > 1) {
           const el = navCell("Next ›", () => {
             indexPageNo = (indexPageNo + 1) % indexPages;
@@ -187,7 +187,7 @@ export function mountGroups({
       gestures = editing,
       group = groupKey,
       page = groupPageNo,
-      cells = boardGeom().cells,
+      layout = boardGeom().name,
       onChange = renderGroupPage,
     } = ctx;
     const onSpeak = gestures
@@ -215,7 +215,7 @@ export function mountGroups({
           onSpeak,
         );
     layerMark(el, `${item.item_kind}:${item.item_id}`);
-    el.dataset.slot = item.vslot ?? item.slot_index;
+    el.dataset.slot = item.slot_index;
     el.dataset.item = `${item.item_kind}:${item.item_id}`;
     if (!gestures) return el;
 
@@ -231,13 +231,12 @@ export function mountGroups({
     editPointer(el, {
       onTap: () => openWordCard(item),
       onDrop: (slot) => {
-        const target = groupPage(db, group, page, locale, cells)
-          .find((r) => r.vslot === slot);
+        const target = groupPage(db, group, page, locale, layout)
+          .find((r) => r.slot_index === slot);
         if (target) {
-          swapItems(db, group, item, { item_kind: target.item_kind, item_id: target.item_id });
-        } else {
-          const c = canonCell(posAtVisual(page, slot, cells));
-          moveItem(db, group, item.item_kind, item.item_id, c.page, c.slot_index);
+          swapItems(db, group, item, { item_kind: target.item_kind, item_id: target.item_id }, layout);
+        } else if (geometryOf(db, layout).content.includes(slot)) {
+          moveItem(db, group, item.item_kind, item.item_id, page, slot, layout);
         }
         onChange();
       },
@@ -248,14 +247,14 @@ export function mountGroups({
   async function renderGroupPage() {
     const zg = $("groupgrid");
     zg.innerHTML = "";
-    const cells = boardGeom().cells;
-    const geom = pageGeom(cells);
+    const { cells, name: layout } = boardGeom();
+    const geom = geometryOf(db, layout);
     zg.style.gridTemplateColumns = `repeat(${boardGeom().cols}, 1fr)`;
     zg.style.gridTemplateRows = `repeat(${boardGeom().rows}, 1fr)`;
     const items = new Map(
-      groupPage(db, groupKey, groupPageNo, locale, cells).map((r) => [r.vslot, r]),
+      groupPage(db, groupKey, groupPageNo, locale, layout).map((r) => [r.slot_index, r]),
     );
-    const pages = pageCount(db, groupKey, cells);
+    const pages = pageCount(db, groupKey, layout);
     const gKind = all(db, "SELECT kind FROM board_group WHERE id = ?", [groupKey])[0]?.kind;
     const editing = getEditing();
 
@@ -290,10 +289,10 @@ export function mountGroups({
       if (!item) {
         const empty = document.createElement("div");
         empty.className = "gcell empty";
-        if (editing) {
+        if (editing && geom.content.includes(slot)) {
           empty.dataset.slot = slot;
           empty.addEventListener("click", () => {
-            openAddForm(groupKey, canonCell(posAtVisual(groupPageNo, slot, cells)));
+            openAddForm(groupKey, { page: groupPageNo, slot_index: slot });
           });
         }
         zg.appendChild(empty);

@@ -1,10 +1,9 @@
 /**
- * 014 slice 1 Works Test — a renderer that draws any grid shape. The
- * lie-prone layer is a render that quietly assumes 60 cells: this
- * measures the stored→visual map itself — identity at 60, re-wrap at
- * 15 (12 items per page, Next on the last slot) — then walks a real
- * group's cells through groupPage at both sizes. The browser leg
- * (scripts/probes/layout_probe.mjs) measures rendered pixels.
+ * 014 slice 1 / 027 § 3.3 Works Test — any grid shape. Groups store a
+ * position per board size: this measures the reserved-cell geometry each
+ * size leaves for content, and a Cells change writing the new size's
+ * missing positions in one op — switching back exact, replay identical.
+ * The browser leg (scripts/probes/layout_probe.mjs) measures pixels.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -13,9 +12,10 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import {
-  canonCell, canonPos, groupPage, indexSlotAt, indexVisual,
-  pageCount, pageGeom, placeItem, posAtVisual, visualCell,
+  createEntity, geometryOf, groupPage, indexSlotAt, indexVisual, placeItem,
 } from "../../public/shared/groups.mjs";
+import { listOps, replayOps } from "../../public/shared/ops.mjs";
+import { setBoardLayout } from "../../public/shared/movecost.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
@@ -24,73 +24,53 @@ const catalog = buildCatalog(
   parseCoordinateMapMarkdown(readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")),
 );
 
-test("geometry: 60 is the identity, 15 re-wraps into pages of 12", () => {
-  // Every canonical item slot round-trips through the map at 60 cells.
-  for (let pos = 0; pos < 57 * 3; pos++) {
-    const v = visualCell(pos, 60);
-    assert.equal(posAtVisual(v.page, v.slot, 60), pos);
-    assert.equal(v.page, Math.floor(pos / 57));
-    assert.equal(v.slot, 2 + (pos % 57));
-  }
-  // At 15 cells a page is back + edit + 12 items + Next (§3).
-  const g = pageGeom(15);
-  assert.deepEqual(g, { first: 2, last: 13, next: 14, per: 12 });
-  assert.deepEqual(visualCell(0, 15), { page: 0, slot: 2 });
-  assert.deepEqual(visualCell(11, 15), { page: 0, slot: 13 });
-  assert.deepEqual(visualCell(12, 15), { page: 1, slot: 2 }); // 13th item pages
-  // Round-trip through the write path: drop at visual → canonical cell.
-  assert.deepEqual(canonCell(posAtVisual(1, 5, 15)), canonCell(15));
-  // Index: slot 10 lands where it always did at 60; at 15 the index pages.
+test("027 § 3.2: reserved cells per size — top row, frame, Next — leave 46 / 76 / 7 content cells", () => {
+  const db = createDatabase(":memory:");
+  importCatalog(db, catalog);
+  const counts = Object.fromEntries(["grid60", "grid90", "grid15"].map((l) => [l, geometryOf(db, l).content.length]));
+  assert.deepEqual(counts, { grid60: 46, grid90: 76, grid15: 7 });
+  const g15 = geometryOf(db, "grid15");
+  assert.deepEqual([...g15.reserved].sort((x, y) => x - y), [0, 1, 2, 3, 4, 8, 9, 14]);
+  // the index keeps its canonical mapping
   assert.deepEqual(indexVisual(10, 60), { page: 0, slot: 10 });
-  assert.deepEqual(indexVisual(10, 15), { page: 0, slot: 10 });
   assert.deepEqual(indexVisual(14, 15), { page: 1, slot: 2 });
-  assert.equal(indexSlotAt(0, 10, 15), 10);
   assert.equal(indexSlotAt(1, 2, 15), 14);
 });
 
-test("a group re-wraps without a single row moving", () => {
+test("027 § 3.3: a Cells change writes the new size's missing positions in one op; switching back is exact", () => {
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);
-  // 15 items in My Words → canonical page 0 holds them all (slots 2–16).
-  // Explicit cells: this is a geometry test — the banded fill rule
-  // (018 D5) has its own proof in groups.test.mjs.
-  for (let i = 0; i < 15; i++) {
-    db.prepare(
-      "INSERT INTO personal_entity (id, spoken_name) VALUES (?, ?)",
-    ).run(`ent_t${i}`, `thing ${i}`);
-    placeItem(db, "grp_my_words", "entity", `ent_t${i}`, canonCell(i));
-  }
-  const stored = db.prepare(
-    "SELECT item_id, page, slot_index FROM group_cell WHERE group_id = 'grp_my_words' ORDER BY page, slot_index",
-  ).all();
-  assert.equal(stored.length, 15);
-  assert.ok(stored.every((r) => r.page === 0), "canonical storage: one page of 57");
+  const { id } = createEntity(db, { name: "Oat milk" });
+  const at60 = placeItem(db, "grp_breakfast", "entity", id); // written at grid60 only
+  const positions = () => db.prepare("SELECT * FROM group_cell ORDER BY group_id, layout, item_kind, item_id").all()
+    .map((r) => JSON.stringify(r));
+  const where = (layout) => db.prepare(
+    "SELECT page, slot_index FROM group_cell WHERE item_id = ? AND layout = ?").all(id, layout)[0];
+  assert.equal(where("grid15"), undefined);
+  const seeded60 = positions().filter((r) => r.includes('"grid60"'));
 
-  // At 60 cells one page, items at slots 2–16.
-  const p60 = groupPage(db, "grp_my_words", 0, "en", 60);
-  assert.equal(p60.length, 15);
-  assert.equal(p60[0].vslot, 2);
-  assert.equal(p60[14].vslot, 16);
-  assert.equal(pageCount(db, "grp_my_words", 60), 1);
+  const opsBefore = listOps(db).length;
+  const r = setBoardLayout(db, "grid15");
+  assert.equal(r.groupCells, 1, "only the family's word lacked a grid15 position — the seed ships all sizes");
+  assert.equal(listOps(db).length, opsBefore + 1);
+  const op = listOps(db).at(-1);
+  assert.equal(op.kind, "set_layout");
+  assert.equal(JSON.parse(op.args).groupCells.length, 1);
+  const g15 = where("grid15");
+  assert.ok(geometryOf(db, "grid15").content.includes(g15.slot_index));
+  assert.equal(groupPage(db, "grp_breakfast", g15.page, "en").some((x) => x.item_id === id), true);
 
-  // At 15 cells the same rows render as 12 + 3 across two pages —
-  // nothing in group_cell changed.
-  const p15a = groupPage(db, "grp_my_words", 0, "en", 15);
-  const p15b = groupPage(db, "grp_my_words", 1, "en", 15);
-  assert.equal(p15a.length, 12);
-  assert.equal(p15b.length, 3);
-  assert.equal(p15a[0].item_id, "ent_t0");
-  assert.equal(p15b[0].item_id, "ent_t12"); // order preserved across the wrap
-  assert.equal(pageCount(db, "grp_my_words", 15), 2);
+  setBoardLayout(db, "grid60");
+  assert.deepEqual({ ...where("grid60") }, at60, "switching back is exact");
+  assert.deepEqual(positions().filter((x) => x.includes('"grid60"')), seeded60);
 
-  // And a visual drop at 15 cells writes the canonical cell: page 1,
-  // slot 5 = linear position 15 → stored page 0, slot 17.
-  db.prepare("INSERT INTO personal_entity (id, spoken_name) VALUES ('ent_new', 'new thing')").run();
-  const c = canonCell(posAtVisual(1, 5, 15));
-  assert.deepEqual(c, { page: 0, slot_index: 17 });
-  placeItem(db, "grp_my_words", "entity", "ent_new", c);
-  const back = groupPage(db, "grp_my_words", 1, "en", 15).find((r) => r.item_id === "ent_new");
-  assert.equal(back.vslot, 5, "the item lands exactly where the adult dropped it");
+  // A replica replays the carried positions — never recomputes them.
+  const replica = createDatabase(":memory:");
+  importCatalog(replica, catalog);
+  replayOps(replica, listOps(db));
+  const replicaPositions = replica.prepare("SELECT * FROM group_cell ORDER BY group_id, layout, item_kind, item_id").all()
+    .map((x) => JSON.stringify(x));
+  assert.deepEqual(replicaPositions, positions());
 });
 
 test("grid90 renders its anchors — Groups cell + eleven reserved", () => {

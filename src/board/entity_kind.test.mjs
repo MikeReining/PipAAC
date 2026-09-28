@@ -53,16 +53,11 @@ test("an action-word entity paints Green on the board and in its group; an unpic
   const cell = coreCells(db, "grid60", "en").find((c) => c.entity_id === "ent_jump");
   assert.equal(cell.fitzgerald_role, "Green");
 
-  // The group page — banded placement consults the stored role.
+  // The group page paints the stored role. (Where a word lands is 027
+  // § 3.4's placement rule, proven in groups.test.mjs.)
   const items = groupPage(db, "grp_my_words", 0, "en");
   assert.equal(items.find((i) => i.item_id === "ent_jump").fitzgerald_role, "Green");
   assert.equal(items.find((i) => i.item_id === "ent_baba").fitzgerald_role, "Yellow");
-
-  // Banded placement: the two Greens share the column Jump claimed,
-  // stacked top-to-bottom — never beside the Yellow in its column.
-  const slots = new Map(items.map((i) => [i.item_id, i.slot_index]));
-  assert.equal(slots.get("ent_spin") - slots.get("ent_jump"), 10);
-  assert.notEqual(slots.get("ent_baba") % 10, slots.get("ent_jump") % 10);
 });
 
 test("the create_entity op carries the kind — replay restores the color on a second device", () => {

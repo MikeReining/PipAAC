@@ -11,27 +11,33 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 
 import { createDatabase, importCatalog, snapshotCoreCells } from "./catalog.mjs";
 import {
+  addToGroups,
   catalogMatches,
+  createEntity,
   createGroup,
   deleteGroup,
+  geometryOf,
   groupDisplayName,
-  placeFromEnrichment,
   groupIndex,
   groupPage,
-  migrateBuiltinGroupNames,
   moveGroup,
   moveItem,
   pageCount,
   placeItem,
   removeItem,
+  setGroupHidden,
   swapGroups,
   swapItems,
 } from "../../public/shared/groups.mjs";
+import { applyOp, drainOps, listOps, replayOps } from "../../public/shared/ops.mjs";
+import { CLEAN_BREAK_VERSION, beforeCleanBreak } from "../../public/shared/migrate.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 import { buildGroups, validateGroups } from "../../scripts/catalog/build_groups.mjs";
 
@@ -205,10 +211,11 @@ test("caregiver edits survive re-import: swapped cells and swapped groups hold",
   assert.equal(idx.find((g) => g.id === "grp_animals").index_slot, foodWas);
 });
 
-test("removal rules: built-in senses stay, orphaned entities land in My Words, built-ins can't delete", () => {
+test("removal rules: any group loses a word to a hole, no My Words re-filing, built-ins hide rather than delete", () => {
   const db = openDb();
-  const food = groupPage(db, "grp_breakfast", 0, "en")[0];
-  assert.throws(() => removeItem(db, "grp_breakfast", "sense", food.item_id), /built-in/);
+  const first = groupPage(db, "grp_breakfast", 0, "en")[0];
+  removeItem(db, "grp_breakfast", "sense", first.item_id); // built-in: allowed now (027 § 3.4)
+  assert.ok(!groupPage(db, "grp_breakfast", 0, "en").some((r) => r.item_id === first.item_id));
   assert.throws(() => deleteGroup(db, "grp_breakfast"), /custom/);
   assert.throws(() => deleteGroup(db, "grp_my_words"), /custom/);
 
@@ -217,18 +224,11 @@ test("removal rules: built-in senses stay, orphaned entities land in My Words, b
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_x', 'Rex', NULL, NULL, NULL)",
   ).run();
   placeItem(db, gid, "entity", "ent_x");
-  // a sense may sit in (and leave) a custom group
-  placeItem(db, gid, "sense", food.item_id);
-  removeItem(db, gid, "sense", food.item_id);
-  assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = ? AND item_id = ?").all(gid, food.item_id)[0].n,
-    0,
-  );
-
   removeItem(db, gid, "entity", "ent_x"); // its only group
   assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = 'grp_my_words' AND item_id = 'ent_x'").all()[0].n,
-    1,
+    db.prepare("SELECT COUNT(*) AS n FROM group_membership WHERE item_id = 'ent_x'").all()[0].n,
+    0,
+    "the last placement's removal files nothing anywhere",
   );
 
   deleteGroup(db, gid);
@@ -344,47 +344,6 @@ test("slice 4 Cooper proof: a personal entity lands in the group it was added fr
   assert.deepEqual(snapshotCoreCells(db), before);
 });
 
-test("slice 5 classifier placement: ready suggestion adds a copy, never moves", () => {
-  const db = openDb();
-  const before = snapshotCoreCells(db);
-  db.prepare(
-    "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_e', 'Rex', NULL, NULL, NULL)",
-  ).run();
-  const mwCell = placeItem(db, "grp_my_words", "entity", "ent_e");
-
-  // abstained → nothing
-  db.prepare(
-    "INSERT INTO entity_enrichment (id, entity_id, category_suggestion, model, prompt_version, status) VALUES ('enr_1', 'ent_e', 'Animals & Nature', 'm', 'p1', 'abstained')",
-  ).run();
-  assert.equal(placeFromEnrichment(db, "ent_e", catalog), null);
-  assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE item_id = 'ent_e'").all()[0].n,
-    1,
-  );
-
-  // ready + suggestion → copy into grp_animals; My Words slot unchanged
-  db.prepare(
-    "INSERT INTO entity_enrichment (id, entity_id, category_suggestion, model, prompt_version, status) VALUES ('enr_2', 'ent_e', 'Animals & Nature', 'm', 'p1', 'ready')",
-  ).run();
-  assert.equal(placeFromEnrichment(db, "ent_e", catalog), "grp_animals");
-  const mwAfter = db
-    .prepare("SELECT page, slot_index FROM group_cell WHERE group_id = 'grp_my_words' AND item_id = 'ent_e'")
-    .all()[0];
-  assert.deepEqual({ page: mwAfter.page, slot_index: mwAfter.slot_index }, mwCell);
-  assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id = 'grp_animals' AND item_id = 'ent_e'").all()[0].n,
-    1,
-  );
-
-  // second call is a no-op
-  assert.equal(placeFromEnrichment(db, "ent_e", catalog), null);
-  assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE item_id = 'ent_e'").all()[0].n,
-    2,
-  );
-  assert.deepEqual(snapshotCoreCells(db), before);
-});
-
 test("slice 1: group names resolve per locale — override wins, no cross-locale fallback", () => {
   const db = openDb();
   // seeded rows carry no name — it is the caregiver-override column
@@ -400,24 +359,6 @@ test("slice 1: group names resolve per locale — override wins, no cross-locale
   db.prepare("UPDATE board_group SET name = 'Snacks' WHERE id = 'grp_breakfast'").run();
   assert.equal(groupDisplayName(db, row(), "en"), "Snacks");
   assert.equal(groupDisplayName(db, row(), "de"), "Snacks");
-});
-
-test("slice 1: seed-name migration NULLs stored seed names, keeps renames, idempotent", () => {
-  const db = openDb();
-  // simulate a device persisted under the pre-003b schema, which stored
-  // the English seed name in board_group.name
-  db.prepare("UPDATE board_group SET name = 'Breakfast' WHERE id = 'grp_breakfast'").run();
-  db.prepare("UPDATE board_group SET name = 'Yummy' WHERE id = 'grp_drinks'").run();
-  migrateBuiltinGroupNames(db, catalog);
-  const nameOf = (id) => db.prepare("SELECT name FROM board_group WHERE id = ?").all(id)[0].name;
-  assert.equal(nameOf("grp_breakfast"), null);
-  assert.equal(nameOf("grp_drinks"), "Yummy"); // a caregiver rename, not the seed
-  migrateBuiltinGroupNames(db, catalog); // second run changes nothing
-  assert.equal(nameOf("grp_breakfast"), null);
-  assert.equal(nameOf("grp_drinks"), "Yummy");
-  // and the nulled groups still display via group_label
-  const food = db.prepare("SELECT id, name FROM board_group WHERE id = 'grp_breakfast'").all()[0];
-  assert.equal(groupDisplayName(db, food, "en"), "Breakfast");
 });
 
 test("slice 1: the build rejects a group with no name for a shipped locale", () => {
@@ -461,27 +402,167 @@ function nextFreeIndexSlot(db) {
   throw new Error("no free index slot");
 }
 
-test("018 D5: a mixed group lays out in band order — fresh column per kind, filled top to bottom", () => {
+test("027 § 3.4 placement: target, then seed cell, then another group's cell, then lowest free", () => {
   const db = openDb();
-  const gid = createGroup(db, { name: "Breakfast" }).id;
-  const [cookie, milk, bread, eat, no, more] =
-    ["cookie", "milk", "bread", "eat", "no", "more"].map((w) => senseIdByText(db, w));
+  const geom = geometryOf(db, "grid60");
+  const milk = senseIdByText(db, "milk");
+  const seedCell = catalog.groupCells.find((c) => c.group_id === "grp_breakfast" && c.layout === "grid60" && c.item_id === milk);
+  // Re-added to its own group: its authored seed cell.
+  removeItem(db, "grp_breakfast", "sense", milk);
+  assert.deepEqual(placeItem(db, "grp_breakfast", "sense", milk), { page: seedCell.page, slot_index: seedCell.slot_index });
+  // Added to a group that never held it: its cell in another group at this size.
+  const { id: gid } = createGroup(db, { name: "Picnic" });
+  assert.deepEqual(placeItem(db, gid, "sense", milk), { page: seedCell.page, slot_index: seedCell.slot_index });
+  // A word whose preferred cell is taken: the lowest free cell, column by column.
+  const water = senseIdByText(db, "water");
+  const waterCell = catalog.groupCells.find((c) => c.group_id === "grp_drinks" && c.layout === "grid60" && c.item_id === water);
+  const bob = placeItem(db, gid, "sense", senseIdByText(db, "zoo"), { page: waterCell.page, slot_index: waterCell.slot_index });
+  assert.deepEqual(bob, { page: waterCell.page, slot_index: waterCell.slot_index });
+  assert.deepEqual(placeItem(db, gid, "sense", water), { page: 0, slot_index: geom.content[0] });
+  // An explicit target on a reserved cell or an occupied one refuses; nothing moved.
+  const before = groupPage(db, gid, 0, "en").map((r) => [r.item_id, r.slot_index]);
+  assert.throws(() => placeItem(db, gid, "sense", senseIdByText(db, "cup"), { page: 0, slot_index: 0 }), /reserved/);
+  assert.throws(() => placeItem(db, gid, "sense", senseIdByText(db, "cup"), { page: 0, slot_index: geom.content[0] }), /occupied/);
+  assert.deepEqual(groupPage(db, gid, 0, "en").map((r) => [r.item_id, r.slot_index]), before);
+  // Filling a page adds the next page — never a reserved cell.
+  const { id: full } = createGroup(db, { name: "Full" });
+  const ids = db.prepare("SELECT id FROM sense ORDER BY id LIMIT ?").all(geom.content.length + 1).map((r) => r.id);
+  for (const id of ids) placeItem(db, full, "sense", id);
+  assert.equal(pageCount(db, full), 2);
+  assert.deepEqual(groupPage(db, full, 1, "en").map((r) => r.slot_index), [geom.content[0]]);
+});
 
-  placeItem(db, gid, "sense", cookie); // Yellow claims the first column
-  placeItem(db, gid, "sense", milk);   // Yellow fills it top to bottom
-  placeItem(db, gid, "sense", eat);    // Green starts a fresh column
-  placeItem(db, gid, "sense", no);     // Red starts its own column
-  placeItem(db, gid, "sense", bread);  // Yellow goes to ITS area's next
-                                       // free spot — nothing else moves
-  placeItem(db, gid, "sense", more);   // Blue lands between Green and Red
-
-  const page = groupPage(db, gid, 0, "en");
-  const at = (id) => page.find((r) => r.item_id === id)?.slot_index;
-  assert.deepEqual(
-    [cookie, milk, eat, no, bread, more].map(at),
-    // Yellow · Green · Red · Blue — Red claimed col 4 before Blue
-    // arrived, and stored cells never move (D5: stability over order).
-    [2, 12, 3, 4, 22, 5],
-    "each kind columnar in band order; late kinds don't shift earlier claims",
+test("027 A2: remove → reimport stays removed; a hidden group stays hidden; install markers hold", () => {
+  const db = openDb();
+  const choc = senseIdByText(db, "chocolate milk");
+  removeItem(db, "grp_breakfast", "sense", choc);
+  setGroupHidden(db, "grp_lunch", true);
+  importCatalog(db, catalog); // an app restart / catalog reimport
+  assert.ok(!groupPage(db, "grp_breakfast", 0, "en").some((r) => r.item_id === choc), "removal survives reimport");
+  assert.ok(groupPage(db, "grp_drinks", 0, "en").some((r) => r.item_id === choc), "Drinks unchanged");
+  assert.equal(groupIndex(db).find((g) => g.id === "grp_lunch").hidden, 1);
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM group_seed_install").all()[0].n,
+    catalog.groups.length,
   );
+  // Even an emptied group never re-seeds: every word out, reimport, still empty.
+  for (const r of groupPage(db, "grp_fruit", 0, "en")) removeItem(db, "grp_fruit", r.item_kind, r.item_id);
+  importCatalog(db, catalog);
+  assert.deepEqual(groupPage(db, "grp_fruit", 0, "en"), []);
+  assert.equal(listOps(db).filter((o) => o.kind === "seed_install").length, 1, "one install op, ever");
+});
+
+test("027 A2: a deleted custom group stays deleted through reimport and replay", () => {
+  const db = openDb();
+  const { id: gid } = createGroup(db, { name: "Park" });
+  placeItem(db, gid, "sense", senseIdByText(db, "swing"));
+  deleteGroup(db, gid);
+  importCatalog(db, catalog);
+  assert.ok(!groupIndex(db).some((g) => g.id === gid));
+  const replica = openDb();
+  replayOps(replica, listOps(db));
+  assert.ok(!groupIndex(replica).some((g) => g.id === gid));
+  assert.equal(replica.prepare("SELECT COUNT(*) AS n FROM group_membership WHERE group_id = ?").all(gid)[0].n, 0);
+});
+
+test("027 § 4: two devices install the seed offline — the first install the relay confirms wins", () => {
+  const a = openDb();
+  // b runs a newer catalog whose Snack seed has no cake.
+  const cake = catalog.labels.find((l) => l.text === "cake" && l.kind === "lemma").sense_id;
+  const newer = {
+    ...catalog,
+    groupMembers: catalog.groupMembers.filter((m) => !(m.group_id === "grp_snack" && m.item_id === cake)),
+    groupCells: catalog.groupCells.filter((c) => !(c.group_id === "grp_snack" && c.item_id === cake)),
+  };
+  const b = createDatabase(":memory:");
+  importCatalog(b, newer);
+  assert.ok(!groupPage(b, "grp_snack", 0, "en").some((r) => r.item_id === cake));
+  removeItem(a, "grp_snack", "sense", senseIdByText(a, "cup"));
+  const opsA = listOps(a).map((o) => ({ ...o, device_id: "dev_a" }));
+  const opsB = listOps(b).map((o) => ({ ...o, device_id: "dev_b" }));
+  const relay = [...opsA, ...opsB].map((o, k) => ({ ...o, relay_seq: k + 1 }));
+  drainOps(a, relay);
+  drainOps(b, relay);
+  const dump = (db, t) => db.prepare(`SELECT * FROM ${t} ORDER BY rowid`).all().map((r) => JSON.stringify(r));
+  for (const t of ["board_group", "group_membership", "group_cell", "group_seed_install"]) {
+    assert.deepEqual(dump(b, t), dump(a, t), `${t} diverged`);
+  }
+  assert.ok(!groupPage(b, "grp_snack", 0, "en").some((r) => r.item_id === senseIdByText(b, "cup")));
+  assert.ok(groupPage(b, "grp_snack", 0, "en").some((r) => r.item_id === cake), "a's install won on b");
+});
+
+test("027 A2: a fresh device restores from the relay and matches the original", () => {
+  const a = openDb();
+  const { id } = createEntity(a, { name: "Oat milk" });
+  placeItem(a, "grp_breakfast", "entity", id);
+  removeItem(a, "grp_breakfast", "sense", senseIdByText(a, "jam"));
+  swapItems(a, "grp_lunch",
+    { item_kind: "sense", item_id: senseIdByText(a, "pizza") },
+    { item_kind: "sense", item_id: senseIdByText(a, "soup") });
+  const relay = listOps(a).map((o, k) => ({ ...o, device_id: "dev_a", relay_seq: k + 1 }));
+  const c = openDb(); // a new device: its own seed install is pending
+  drainOps(c, relay);
+  const dump = (db, t) => db.prepare(`SELECT * FROM ${t} ORDER BY group_id, item_kind, item_id${t === "group_cell" ? ", layout" : ""}`)
+    .all().map((r) => JSON.stringify(r));
+  for (const t of ["group_membership", "group_cell"]) assert.deepEqual(dump(c, t), dump(a, t), `${t} diverged`);
+});
+
+test("027 B9: Add to other boards is one op — skips existing, rolls back on failure, Undo removes only its adds", () => {
+  const db = openDb();
+  const { id } = createEntity(db, { name: "Oat milk" });
+  placeItem(db, "grp_breakfast", "entity", id);
+  const opsBefore = listOps(db).length;
+  const { added, undo } = addToGroups(db, "entity", id, ["grp_lunch", "grp_snack", "grp_breakfast"]);
+  assert.deepEqual(added, ["grp_lunch", "grp_snack"], "Breakfast already held it — skipped, never moved");
+  assert.equal(listOps(db).length, opsBefore + 1);
+  assert.equal(listOps(db).at(-1).kind, "add_to_groups");
+  const where = () => db.prepare("SELECT group_id FROM group_membership WHERE item_id = ? ORDER BY group_id").all(id).map((r) => r.group_id);
+  assert.deepEqual(where(), ["grp_breakfast", "grp_lunch", "grp_snack"]);
+  // replay lands the same places
+  const replica = openDb();
+  replayOps(replica, listOps(db));
+  const cellsOf = (x) => x.prepare("SELECT * FROM group_cell WHERE item_id = ? ORDER BY group_id").all(id).map((r) => JSON.stringify(r));
+  assert.deepEqual(cellsOf(replica), cellsOf(db));
+  undo();
+  assert.deepEqual(where(), ["grp_breakfast"]);
+  // a missing destination rolls the whole add back
+  assert.throws(() => addToGroups(db, "entity", id, ["grp_lunch", "grp_nope"]), /no group/);
+  assert.deepEqual(where(), ["grp_breakfast"]);
+});
+
+test("027 § 3.2: the index grows past slot 59 — nothing compacts", () => {
+  const db = openDb();
+  const made = [];
+  for (let i = 0; i < 40; i++) made.push(createGroup(db, { name: `G${i}` }).index_slot);
+  assert.ok(Math.max(...made) > 59);
+  assert.equal(new Set(groupIndex(db).map((g) => g.index_slot)).size, groupIndex(db).length);
+});
+
+test("027 § 4: a group op recorded before 027 is skipped on every replica", () => {
+  const db = openDb();
+  const { id } = createEntity(db, { name: "Rex" });
+  const before = db.prepare("SELECT COUNT(*) AS n FROM group_cell").all()[0].n;
+  applyOp(db, { kind: "place_item", args: { groupId: "grp_people", kind: "entity", id, page: 0, slot_index: 2, added_at: 1 } });
+  applyOp(db, { kind: "remove_item", args: { groupId: "grp_breakfast", kind: "sense", id: senseIdByText(db, "milk"), allowOrphan: false } });
+  applyOp(db, { kind: "move_item", args: { groupId: "grp_breakfast", kind: "sense", id: senseIdByText(db, "milk"), page: 0, slot_index: 13 } });
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM group_cell").all()[0].n, before);
+  assert.ok(groupPage(db, "grp_breakfast", 0, "en").some((r) => r.item_id === senseIdByText(db, "milk")));
+});
+
+test("027 § 4: a saved database from before the clean break is discarded; a current one is kept", () => {
+  const dir = mkdtempSync(join(tmpdir(), "pip-break-"));
+  const bytesAt = (version) => {
+    const path = join(dir, `v${version}.sqlite`);
+    const d = new DatabaseSync(path);
+    d.exec(`CREATE TABLE t (x); PRAGMA user_version = ${version};`);
+    d.close();
+    return readFileSync(path);
+  };
+  assert.equal(beforeCleanBreak(bytesAt(19)), true);
+  assert.equal(beforeCleanBreak(bytesAt(CLEAN_BREAK_VERSION)), false);
+  assert.equal(beforeCleanBreak(new Uint8Array(10)), true, "not a database — start fresh");
+  // the shipped schema is at the break or later
+  const fresh = join(dir, "fresh.sqlite");
+  createDatabase(fresh).close();
+  assert.equal(beforeCleanBreak(readFileSync(fresh)), false);
 });

@@ -289,12 +289,18 @@ npm run lint:phase-freshness
   Word_Library, sync in Sync_And_Web_Editing, storage in
   Language_And_Voice_Schema; this phase retires per the playbook.
 
-**Packet state (2026-09-28):** A1 landed — `scripts/catalog/build_groups.mjs`
-compiles both seeds into membership plus per-size positions and gates them
-(`src/board/groups.test.mjs`); `node scripts/catalog/preview_blocks.mjs` renders
-every compiled page for founder review. Until A2, the runtime installs the
-grid60 positions into today's canonical `group_cell`. Every Works Test above is
-still to be run. No efficacy or clinical claim.
+**Packet state (2026-09-28):** A1 and A2 landed. A1:
+`scripts/catalog/build_groups.mjs` compiles both seeds into membership plus
+per-size positions and gates them; `node scripts/catalog/preview_blocks.mjs`
+renders every compiled page. A2: `group_membership` + per-size `group_cell`,
+`group_seed_install` markers, `hidden` and the two settings; catalog tables
+`layout_shape`, `group_meta`, `group_seed_cell`; seed install as one op after
+the pre-seed baseline; the placement rule, multi-board add, Cells-switch fill,
+and replay (pre-027 group ops skipped) in `groups.mjs`/`ops.mjs`; whole-DB
+reset below schema 20 in `db.js` (`beforeCleanBreak`). The app boots on it
+(agent slot, fresh profile: 33 groups, one install op, empty baseline groups).
+The group surface still draws the old chrome until A3. Every Works Test above
+is still to be run. No efficacy or clinical claim.
 
 **Founder review items (curation draft):** the sibling splits (Home/Things,
 Describing/Touch & sound, Little words/Who & which), Dinner's membership, the

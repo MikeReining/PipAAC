@@ -22,7 +22,7 @@
  * any violation.
  */
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
-import { BAND_ORDER, groupGeometry } from "../../public/shared/groups.mjs";
+import { BAND_ORDER, groupGeometry, shownByReserved } from "../../public/shared/groups.mjs";
 
 const pad4 = (n) => String(n).padStart(4, "0");
 const sid = (slot) => `sns_${pad4(slot)}`;
@@ -69,16 +69,6 @@ export function groupLayouts(layouts, coreCells, frameSenses) {
     out[name] = { cols: l.cols, rows: l.rows, frame: frame.sort((a, b) => a - b) };
   }
   return out;
-}
-
-/** Senses the page already shows on `layout`: home words in reserved
- *  top-row and frame cells (Next replaces its home word). */
-function shownByPage(geom, homeCells) {
-  const shown = new Set();
-  for (const c of homeCells) {
-    if (geom.topRow.includes(c.slot_index) || geom.frame.includes(c.slot_index)) shown.add(c.sense_id);
-  }
-  return shown;
 }
 
 /** Topic fill: band order, fresh column per band while the rest fits. */
@@ -202,7 +192,7 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
   for (const layout of Object.keys(layouts)) {
     const geom = groupGeometry(shapes[layout]);
     const home = homeOf(layout);
-    const shown = shownByPage(geom, home);
+    const shown = shownByReserved(geom, home);
 
     // Occasion groups: one coordinate per word, free in all its holders.
     const used = new Map(coordinated.map((g) => [g, new Set()]));
@@ -333,7 +323,7 @@ export function validateGroups(out, { lexicon, coreCells, coordinated }) {
   }
   for (const layout of Object.keys(shapes)) {
     const geom = groupGeometry(shapes[layout]);
-    const shown = shownByPage(geom, coreCells.filter((c) => c.layout === layout));
+    const shown = shownByReserved(geom, coreCells.filter((c) => c.layout === layout));
     for (const m of groupMembers) {
       const g = byId.get(m.group_id);
       if (g.layouts && !g.layouts.includes(layout)) continue;

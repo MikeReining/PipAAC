@@ -1040,8 +1040,8 @@ function showGroupHint(kind, id) {
     if (ALL(db, "SELECT 1 AS x FROM core_cell WHERE layout = ? AND sense_id = ?", [boardGeom().name, id]).length) return;
     const row = ALL(
       db,
-      `SELECT g.id, g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
-       WHERE gc.item_kind = 'sense' AND gc.item_id = ? AND g.kind = 'builtin'
+      `SELECT g.id, g.name FROM group_membership gm JOIN board_group g ON g.id = gm.group_id
+       WHERE gm.item_kind = 'sense' AND gm.item_id = ? AND g.kind = 'builtin'
        ORDER BY g.index_slot`,
       [id],
     )[0];
@@ -1049,8 +1049,8 @@ function showGroupHint(kind, id) {
   } else if (kind === "entity") {
     const row = ALL(
       db,
-      `SELECT g.id, g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
-       WHERE gc.item_kind = 'entity' AND gc.item_id = ?
+      `SELECT g.id, g.name FROM group_membership gm JOIN board_group g ON g.id = gm.group_id
+       WHERE gm.item_kind = 'entity' AND gm.item_id = ?
        ORDER BY g.index_slot`,
       [id],
     )[0];

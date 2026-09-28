@@ -20,6 +20,7 @@ import {
   deleteGroup,
   moveGroup,
   moveItem,
+  geometryOf,
   placeItem,
   removeItem,
   removeItemUndoable,
@@ -62,19 +63,19 @@ const ENTITIES = (db) =>
 const SENSES = (db) =>
   db.prepare("SELECT id FROM sense").all().map((r) => r.id);
 const CELLS = (db, gid) =>
-  db.prepare("SELECT item_kind, item_id, slot_index FROM group_cell WHERE group_id=?").all(gid);
+  db.prepare("SELECT item_kind, item_id, slot_index FROM group_cell WHERE group_id=? AND layout='grid60'").all(gid);
 const GROUPS = (db) => db.prepare("SELECT id, index_slot FROM board_group").all();
 const FREE_SLOTS = (db, gid) => {
   const used = new Set(
-    db.prepare("SELECT slot_index FROM group_cell WHERE group_id=? AND page=0").all(gid).map((r) => r.slot_index),
+    db.prepare("SELECT slot_index FROM group_cell WHERE group_id=? AND layout='grid60' AND page=0")
+      .all(gid).map((r) => r.slot_index),
   );
-  const out = [];
-  for (let s = 2; s <= 58; s++) if (!used.has(s)) out.push(s);
-  return out;
+  return geometryOf(db, "grid60").content.filter((s) => !used.has(s));
 };
 
 const SYNCED_TABLES = [
-  "personal_entity", "board_group", "group_cell", "clip_override", "entity_enrichment",
+  "personal_entity", "board_group", "group_membership", "group_cell", "group_seed_install",
+  "clip_override", "entity_enrichment",
 ];
 
 const dump = (db, t) =>
@@ -95,7 +96,8 @@ test("seeded 500-edit storm: replay rebuilds synced tables byte-identical", () =
     `INSERT INTO personal_entity (id, spoken_name, added_at) VALUES ('ent_seed','Seed',1);
      INSERT INTO clip_override (id, entity_id, recorded_text, key, status) VALUES ('ovr_seed','ent_seed','Seed','aud_seed','ready');
      INSERT INTO entity_enrichment (id, entity_id, model, prompt_version, status) VALUES ('enr_seed','ent_seed','m','p1','ready');
-     INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_people','entity','ent_seed',0,58,1);`,
+     INSERT INTO group_membership (group_id,item_kind,item_id,added_at) VALUES ('grp_people','entity','ent_seed',1);
+     INSERT INTO group_cell (group_id,layout,item_kind,item_id,page,slot_index) VALUES ('grp_people','grid60','entity','ent_seed',0,58);`,
   );
 
   const counts = {};
@@ -144,7 +146,7 @@ test("seeded 500-edit storm: replay rebuilds synced tables byte-identical", () =
           swapItems(db, gid, pick(rng, cells), pick(rng, cells));
         });
         break;
-      case 5: // remove an item (builtin senses refuse — the storm catches)
+      case 5: // remove an item — from any group, built-ins too (027 § 3.4)
         tryEdit("remove_item", () => {
           const gid = pick(rng, groups.map((g) => g.id));
           const cells = CELLS(db, gid);
@@ -228,7 +230,8 @@ test("seeded 500-edit storm: replay rebuilds synced tables byte-identical", () =
     `INSERT INTO personal_entity (id, spoken_name, added_at) VALUES ('ent_seed','Seed',1);
      INSERT INTO clip_override (id, entity_id, recorded_text, key, status) VALUES ('ovr_seed','ent_seed','Seed','aud_seed','ready');
      INSERT INTO entity_enrichment (id, entity_id, model, prompt_version, status) VALUES ('enr_seed','ent_seed','m','p1','ready');
-     INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_people','entity','ent_seed',0,58,1);`,
+     INSERT INTO group_membership (group_id,item_kind,item_id,added_at) VALUES ('grp_people','entity','ent_seed',1);
+     INSERT INTO group_cell (group_id,layout,item_kind,item_id,page,slot_index) VALUES ('grp_people','grid60','entity','ent_seed',0,58);`,
   );
   replayOps(replay, ops);
 

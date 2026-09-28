@@ -9,10 +9,8 @@
  */
 import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
-import { migrateLegacyGroups, migrateBuiltinGroupNames } from "./shared/groups.mjs";
-import { ensureBaseline } from "./shared/ops.mjs";
 import { getDbBytes, putDbBytes } from "./shared/users.mjs";
-import { migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
+import { beforeCleanBreak, migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
 
 let handle = null;
 
@@ -60,7 +58,7 @@ export async function bootDb(userStore, userId) {
   ]);
 
   let db;
-  if (saved?.length) {
+  if (saved?.length && !beforeCleanBreak(saved)) {
     db = new sqlite3.oo1.DB(":memory:");
     const bytes = saved instanceof Uint8Array ? saved : new Uint8Array(saved);
     const p = sqlite3.wasm.allocFromTypedArray(bytes);
@@ -108,17 +106,10 @@ export async function bootDb(userStore, userId) {
   // listed tables fresh — these are simply gone.
   d.exec("DROP TABLE IF EXISTS history_count");
   d.exec("DROP TABLE IF EXISTS prediction_weights");
+  // Catalog tables, then the rebase baseline (§ 5), then the group seed —
+  // installed once, as an op, so replicas converge on one install
+  // (importCatalog owns that order).
   importCatalog(d, catalog);
-  // A DB persisted under the pre-groups schema still has zone_slot:
-  // migrate it — keeping custom groups, entities, and the caregiver's
-  // arrangement — then drop the legacy tables. No-op on a fresh DB.
-  migrateLegacyGroups(d, catalog);
-  // Devices seeded while built-in names were stored as English text get
-  // those seed values NULLed (caregiver renames survive) — idempotent.
-  migrateBuiltinGroupNames(d, catalog);
-  // The rebase point for § 5 merging: snapshot the synced tables before
-  // the first local edit. Idempotent — a stored baseline is kept.
-  ensureBaseline(d);
 
   handle = { db: d, catalog, phrases, formTable, flush };
   return handle;

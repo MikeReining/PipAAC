@@ -382,7 +382,7 @@ export function likelyGroups(db, sentence, now, locale, kidsTable = null) {
   if (!top) return new Set();
   return new Set(
     db.prepare(
-      "SELECT group_id FROM group_cell WHERE item_kind = ? AND item_id = ?",
+      "SELECT group_id FROM group_membership WHERE item_kind = ? AND item_id = ?",
     ).all(top.kind, top.id).map((r) => r.group_id),
   );
 }
@@ -403,7 +403,7 @@ export function groupRanked(db, sentence, groupId, now = Date.now()) {
   ensurePhraseHistory(db);
   const members = new Set(
     db.prepare(
-      "SELECT item_kind AS kind, item_id AS id FROM group_cell WHERE group_id = ?",
+      "SELECT item_kind AS kind, item_id AS id FROM group_membership WHERE group_id = ?",
     ).all(groupId).map((it) => itemKeyDb(db, it)));
   if (!members.size) return { ranked: [], shown: [] };
   const masked = maskedSenses(db);

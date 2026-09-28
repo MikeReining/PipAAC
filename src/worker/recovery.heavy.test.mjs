@@ -54,7 +54,7 @@ const catalog = buildCatalog(lexicon, parseCoordinateMapMarkdown(readFileSync(jo
 
 const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
-  "clip_override", "entity_enrichment", "group_cell",
+  "clip_override", "entity_enrichment", "group_membership", "group_cell", "group_seed_install",
 ];
 const HISTORY_TABLES = [
   "learner_event_log", "sentence", "strip_impression", "phrase_count",

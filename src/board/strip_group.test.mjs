@@ -53,10 +53,10 @@ function makeGroup(db, lemmas) {
   db.prepare(
     "INSERT INTO board_group (id, kind, name, index_slot) VALUES (?, 'custom', 'test', ?)",
   ).run(GROUP, slot);
-  lemmas.forEach((w, i) =>
+  lemmas.forEach((w) =>
     db.prepare(
-      "INSERT INTO group_cell (group_id, item_kind, item_id, slot_index) VALUES (?, 'sense', ?, ?)",
-    ).run(GROUP, senseId(db, w), i + 2));
+      "INSERT INTO group_membership (group_id, item_kind, item_id) VALUES (?, 'sense', ?)",
+    ).run(GROUP, senseId(db, w)));
 }
 const shown = (db, words, group = GROUP, at = NOW) =>
   groupRanked(db, items(db, words), group, at).shown.map((c) => lemmaOf(db, c.id));

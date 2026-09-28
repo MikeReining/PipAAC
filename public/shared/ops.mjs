@@ -11,20 +11,23 @@
  * write owner but does not append a new op to the replica's log.
  */
 import {
+  applyAddToGroups,
+  applyPlace,
+  applySeedInstall,
   createEntity,
   createGroup,
   deleteGroup,
+  firstFreeCell,
   lowestFreeIndexSlot,
   moveGroup,
   moveItem,
-  nextFreeCell,
-  placeItem,
   removeItem,
   renameEntity,
   restoreEntity,
   retireEntity,
   setEntityPhoto,
   setEntityRole,
+  setGroupHidden,
   setSetting,
   swapGroups,
   swapItems,
@@ -64,25 +67,32 @@ export function recordOp(db, kind, args) {
 
 const exists = (db, table, id) =>
   !!db.prepare(`SELECT 1 AS x FROM ${table} WHERE id = ?`).all(id)[0];
+const positionAt = (db, groupId, layout, kind, id) =>
+  db.prepare(
+    `SELECT page, slot_index FROM group_cell
+     WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
+  ).all(groupId, layout, kind, id)[0] ?? null;
 const inGroup = (db, groupId, kind, id) =>
   !!db.prepare(
-    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    "SELECT 1 AS x FROM group_membership WHERE group_id = ? AND item_kind = ? AND item_id = ?",
   ).all(groupId, kind, id)[0];
-const slotFree = (db, groupId, page, slot) =>
+const slotFree = (db, groupId, layout, page, slot) =>
   !db.prepare(
-    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
-  ).all(groupId, page, slot)[0];
+    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND layout = ? AND page = ? AND slot_index = ?",
+  ).all(groupId, layout, page, slot)[0];
 const indexFree = (db, slot) =>
   !db.prepare("SELECT 1 AS x FROM board_group WHERE index_slot = ?").all(slot)[0];
 
 /**
  * Apply one op through the same write owner that recorded it — intent,
- * not results (§ 5). A placement lands at its slot if free, else the
- * next free slot; an op never displaces an item already placed. Under
- * merge an op's target may be gone (its group was deleted, the entity
- * was never created here): the op degrades to the nearest honest
- * intent — an entity keeps a home in My Words; sense writes into a
- * dead group skip. Missing kinds still throw: silence forks replicas.
+ * not results (§ 5). A placement lands at its recorded cell if free, else
+ * the first free cell; an op never displaces an item already placed.
+ * Under merge an op's target may be gone (its group was deleted, the
+ * entity was never created here): writes into a missing group are
+ * skipped, never redirected (027 § 3.4). A group op recorded before 027
+ * carries no `layout` (or `cells`) and is skipped on every replica — the
+ * clean break converts nothing. Missing kinds still throw: silence forks
+ * replicas.
  */
 export function applyOp(db, op) {
   const a = typeof op.args === "string" ? JSON.parse(op.args) : op.args;
@@ -129,49 +139,46 @@ export function applyOp(db, op) {
           swapGroups(db, a.a, a.b);
         }
         break;
-      case "place_item": {
-        let gid = a.groupId;
-        if (!exists(db, "board_group", gid)) {
-          // Its group was deleted by an earlier op — an entity keeps a
-          // home in My Words; a sense write has nothing to land in.
-          if (a.kind === "sense") break;
-          gid = "grp_my_words";
-        }
-        if (a.kind === "entity" && !exists(db, "personal_entity", a.id)) break;
-        if (slotFree(db, gid, a.page, a.slot_index)) {
-          placeItem(db, gid, a.kind, a.id, { page: a.page, slot_index: a.slot_index }, a.added_at);
-        } else {
-          // Slot taken by an earlier op — next free, but the op's own
-          // added_at still applies (the add happened once, on the origin).
-          placeItem(db, gid, a.kind, a.id, null, a.added_at);
-        }
+      case "seed_install":
+        applySeedInstall(db, a);
         break;
-      }
+      case "place_item":
+        if (!a.cells) break; // pre-027
+        if (!exists(db, "board_group", a.groupId)) break;
+        if (a.kind === "entity" && !exists(db, "personal_entity", a.id)) break;
+        applyPlace(db, a);
+        break;
+      case "add_to_groups":
+        if (a.kind === "entity" && !exists(db, "personal_entity", a.id)) break;
+        applyAddToGroups(db, a);
+        break;
       case "move_item": {
-        if (!inGroup(db, a.groupId, a.kind, a.id)) break;
-        if (slotFree(db, a.groupId, a.page, a.slot_index)) {
-          moveItem(db, a.groupId, a.kind, a.id, a.page, a.slot_index);
-        } else {
-          const cell = nextFreeCell(db, a.groupId);
-          if (cell) moveItem(db, a.groupId, a.kind, a.id, cell.page, cell.slot_index);
-        }
+        if (!a.layout) break; // pre-027
+        if (!positionAt(db, a.groupId, a.layout, a.kind, a.id)) break;
+        const to = slotFree(db, a.groupId, a.layout, a.page, a.slot_index)
+          ? { page: a.page, slot_index: a.slot_index }
+          : firstFreeCell(db, a.groupId, a.layout);
+        moveItem(db, a.groupId, a.kind, a.id, to.page, to.slot_index, a.layout);
         break;
       }
       case "swap_items":
-        if (inGroup(db, a.groupId, a.a.item_kind, a.a.item_id)
-            && inGroup(db, a.groupId, a.b.item_kind, a.b.item_id)) {
-          swapItems(db, a.groupId, a.a, a.b);
+        if (!a.layout) break; // pre-027
+        if (positionAt(db, a.groupId, a.layout, a.a.item_kind, a.a.item_id)
+            && positionAt(db, a.groupId, a.layout, a.b.item_kind, a.b.item_id)) {
+          swapItems(db, a.groupId, a.a, a.b, a.layout);
         }
         break;
       case "remove_item":
-        if (inGroup(db, a.groupId, a.kind, a.id)) {
-          removeItem(db, a.groupId, a.kind, a.id, { allowOrphan: a.allowOrphan });
-        }
+        if (!a.layout) break; // pre-027
+        if (inGroup(db, a.groupId, a.kind, a.id)) removeItem(db, a.groupId, a.kind, a.id);
+        break;
+      case "set_group_hidden":
+        if (exists(db, "board_group", a.groupId)) setGroupHidden(db, a.groupId, a.hidden);
         break;
       case "set_setting":
         // A layout change always goes through the write owner so the
         // transition marks stamp on every replica (014 § 4).
-        if (a.key === "board_layout") setBoardLayout(db, a.value);
+        if (a.key === "board_layout") setBoardLayout(db, a.value, { groupCells: [] });
         else setSetting(db, a.key, a.value);
         break;
       case "set_override": {
@@ -244,7 +251,9 @@ export function applyOp(db, op) {
         break;
       }
       case "set_layout":
-        setBoardLayout(db, a.layout);
+        // The positions the switch wrote were chosen at edit time and
+        // ride the op — replay never recomputes them (027 § 3.3).
+        setBoardLayout(db, a.layout, { groupCells: a.groupCells ?? [] });
         break;
       case "create_family":
         if (!exists(db, "bar_family", a.id)) createFamily(db, a);
@@ -284,7 +293,8 @@ export function listOps(db) {
  */
 const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
-  "clip_override", "image_override", "entity_enrichment", "group_cell",
+  "clip_override", "image_override", "entity_enrichment", "group_membership",
+  "group_cell", "group_seed_install",
   "sense_mask", "spotlight_list", "spotlight_item", "spotlight_session",
   "core_override", "move_mark", "bar_family", "bar_family_item",
 ];

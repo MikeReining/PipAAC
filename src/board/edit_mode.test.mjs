@@ -36,7 +36,8 @@ const openDb = () => {
 const cells = (db, groupId) =>
   db
     .prepare(
-      "SELECT item_kind, item_id, page, slot_index FROM group_cell WHERE group_id = ? ORDER BY page, slot_index",
+      `SELECT item_kind, item_id, page, slot_index FROM group_cell
+       WHERE group_id = ? AND layout = 'grid60' ORDER BY page, slot_index`,
     )
     .all(groupId);
 
@@ -46,14 +47,14 @@ test("× removal reflows nothing; Undo restores the exact slot", () => {
   db.prepare(
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_a', 'Rex', NULL, NULL, NULL), ('ent_b', 'Nana', NULL, NULL, NULL), ('ent_c', 'Coop', NULL, NULL, NULL)",
   ).run();
-  placeItem(db, gid, "entity", "ent_a"); // slot 2
-  placeItem(db, gid, "entity", "ent_b"); // slot 3
-  placeItem(db, gid, "entity", "ent_c"); // slot 4
+  placeItem(db, gid, "entity", "ent_a"); // slot 10 — the first content cell
+  placeItem(db, gid, "entity", "ent_b"); // slot 20
+  placeItem(db, gid, "entity", "ent_c"); // slot 30
 
   const before = cells(db, gid);
   const { undo } = removeItemUndoable(db, gid, "entity", "ent_b");
   const after = cells(db, gid);
-  // slot 3 is empty; every other row byte-identical
+  // slot 20 is empty; every other row byte-identical
   assert.equal(after.length, before.length - 1);
   assert.deepEqual(after, before.filter((r) => r.item_id !== "ent_b"));
 
@@ -61,30 +62,36 @@ test("× removal reflows nothing; Undo restores the exact slot", () => {
   assert.deepEqual(cells(db, gid), before);
 });
 
-test("undo reverts the never-orphan landing in My Words", () => {
+test("removing a person's last placement leaves them unplaced — no My Words re-filing; Undo restores", () => {
   const db = openDb();
   const { id: gid } = createGroup(db, { name: "Park" });
   db.prepare(
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint) VALUES ('ent_solo', 'Rex', NULL, NULL, NULL)",
   ).run();
-  placeItem(db, gid, "entity", "ent_solo"); // its only group
+  const at = placeItem(db, gid, "entity", "ent_solo"); // its only group
 
   const { undo } = removeItemUndoable(db, gid, "entity", "ent_solo");
-  // never-orphan fired: he is in My Words now
+  const placements = () =>
+    db.prepare("SELECT group_id FROM group_membership WHERE item_id='ent_solo'").all().map((r) => r.group_id);
+  assert.deepEqual(placements(), [], "no automatic My Words landing (027 § 3.4)");
   assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id='grp_my_words' AND item_id='ent_solo'").all()[0].n,
-    1,
+    db.prepare("SELECT status FROM personal_entity WHERE id='ent_solo'").all()[0].status,
+    "active",
+    "the word record stays — the Library and keyboard still find it",
   );
+  assert.deepEqual(undo(), { moved: false });
+  assert.deepEqual(placements(), [gid]);
+  assert.deepEqual(cells(db, gid).map((r) => [r.page, r.slot_index]), [[at.page, at.slot_index]]);
+});
+
+test("a built-in group loses a word to × like any group — a hole, nothing else moves", () => {
+  const db = openDb();
+  const before = cells(db, "grp_breakfast");
+  const milk = before.find((r) => r.item_kind === "sense");
+  const { undo } = removeItemUndoable(db, "grp_breakfast", milk.item_kind, milk.item_id);
+  assert.deepEqual(cells(db, "grp_breakfast"), before.filter((r) => r.item_id !== milk.item_id));
   undo();
-  // restored to the original group, and the auto-landing is gone
-  assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id=? AND item_id='ent_solo'").all(gid)[0].n,
-    1,
-  );
-  assert.equal(
-    db.prepare("SELECT COUNT(*) AS n FROM group_cell WHERE group_id='grp_my_words' AND item_id='ent_solo'").all()[0].n,
-    0,
-  );
+  assert.deepEqual(cells(db, "grp_breakfast"), before);
 });
 
 test("tap an empty slot, add there: the word lands at that slot and nothing else moves", () => {

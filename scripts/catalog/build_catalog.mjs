@@ -428,6 +428,9 @@ export function buildCatalog(
     clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm,
       utterances.filter((u) => u.id.startsWith("utt_f")), allowMissingFormClips),
     coreCells,
+    // Stamped on each install marker (027 § 3.3) — which seed a device
+    // installed; a newer seed never re-installs a marked group.
+    groupSeedVersion: `${groupSeed.topics.version}.${groupSeed.occasions.version}`,
     groups,
     groupMembers,
     groupCells,

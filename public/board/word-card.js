@@ -4,7 +4,7 @@
  * read-only here except hide, a picture override, and a recording.
  */
 import {
-  entityGroups, groupDisplayName, groupIndex, maskedSenseIds, placeItem,
+  activeLayout, entityGroups, groupDisplayName, groupIndex, maskedSenseIds, placeItem,
   removeItemUndoable, renameEntity, restoreEntity, retireEntity, senseGroups,
   setEntityPhoto, setEntityRole, setMask,
 } from "../shared/groups.mjs";
@@ -311,8 +311,8 @@ export function mountWordCard({
     if (!target) { setView("board"); return; }
     const cell = all(
       db,
-      "SELECT page FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-      [target.id, it.item_kind, it.item_id],
+      "SELECT page FROM group_cell WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?",
+      [target.id, activeLayout(db), it.item_kind, it.item_id],
     )[0];
     setGroup(target.id, cell?.page ?? 0);
     setView("group");

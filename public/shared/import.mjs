@@ -7,8 +7,15 @@
  * All inserts are OR IGNORE with deterministic ids, so the import is also
  * the reconcile: a persisted DB from an older catalog (pre-fringe,
  * pre-audio) converges on re-run without a destructive reset.
+ *
+ * Order matters at the end (027 § 4): catalog tables and seeded families,
+ * then the sync rebase baseline, then the group seed — installed once, as
+ * an op, so the baseline holds no groups and replicas converge on the
+ * first install the relay confirms. A reimport never touches installed
+ * groups.
  */
-import { seedGroups } from "./groups.mjs";
+import { installSeedGroups } from "./groups.mjs";
+import { ensureBaseline } from "./ops.mjs";
 
 export function importCatalog(db, catalog, { tiers = ["root_core", "primary_fringe"] } = {}) {
   const keep = new Set(tiers);
@@ -92,6 +99,34 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
     );
     for (const c of cells) insCell.run(c.id, c.layout, c.sense_id, c.slot_index);
 
+    // Group geometry and metadata (027 § 3.2): each size's shape and frame
+    // cells, which sizes and settings a built-in group answers to, and the
+    // authored seed positions — catalog tables, replaced wholesale.
+    db.exec("DELETE FROM layout_shape");
+    const insShape = db.prepare("INSERT INTO layout_shape (layout, cols, rows, frame) VALUES (?, ?, ?, ?)");
+    for (const [name, l] of Object.entries(catalog.layouts ?? {})) {
+      insShape.run(name, l.cols, l.rows, JSON.stringify(l.frame ?? []));
+    }
+    db.exec("DELETE FROM group_meta");
+    const insMeta = db.prepare("INSERT INTO group_meta (group_id, layouts, occasion) VALUES (?, ?, ?)");
+    for (const g of catalog.groups ?? []) {
+      insMeta.run(g.id, g.layouts ? JSON.stringify(g.layouts) : null, g.occasion ? 1 : 0);
+    }
+    db.exec("DELETE FROM group_seed_cell");
+    const insSeedCell = db.prepare(
+      `INSERT INTO group_seed_cell (group_id, layout, item_kind, item_id, page, slot_index)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+    );
+    for (const c of catalog.groupCells ?? []) {
+      insSeedCell.run(c.group_id, c.layout, c.item_kind, c.item_id, c.page, c.slot_index);
+    }
+    // Catalog-owned group names, replaced on every import — a caregiver's
+    // rename lives in board_group.name and always wins.
+    const insGroupLabel = db.prepare(
+      "INSERT OR REPLACE INTO group_label (group_id, locale, text) VALUES (?, ?, ?)",
+    );
+    for (const gl of catalog.groupLabels ?? []) insGroupLabel.run(gl.group_id, gl.locale, gl.text);
+
     db.exec("COMMIT");
   } catch (err) {
     db.exec("ROLLBACK");
@@ -104,11 +139,6 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
       "INSERT OR IGNORE INTO learner_profile (id, locale, preferred_voice_id) VALUES (?, ?, ?)",
     ).run("prf_local", defaultVoice.locale, defaultVoice.id);
   }
-
-  // Groups: built-in groups and their seeded cells. The seed is the
-  // reconcile — caregiver edits always win, and a seeded item is never
-  // dropped (groups.mjs).
-  seedGroups(db, catalog);
 
   // Smart bar families (014 § 5): same reconcile rule — a family's
   // seeded rows land once; the adult's reorder/remove owns the rows.
@@ -132,4 +162,7 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
       "INSERT OR IGNORE INTO bar_family_item (family_id, position, item_kind, item_id) VALUES (?, ?, ?, ?)",
     ).run(it.family_id, it.position, it.item_kind, it.item_id);
   }
+
+  ensureBaseline(db);
+  installSeedGroups(db, catalog);
 }

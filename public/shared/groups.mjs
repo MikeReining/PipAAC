@@ -1,9 +1,12 @@
 /**
- * Groups — the one container (docs/product/Motor_Grid_And_Art.md § Groups).
- * board_group rows are the index coordinate map (slots 10–59); group_cell
- * rows place items (catalog senses or personal entities) at fixed
- * (page, slot_index) inside a group — slots 2–58, 57 per page. This module
- * is the only code that writes those tables.
+ * Groups — the one container (docs/product/Motor_Grid_And_Art.md § Groups,
+ * docs/phases/027_Occasion_Boards.md). board_group rows are the index
+ * coordinate map (canonical slots from 10, no upper bound). A group holds
+ * words — group_membership — and each member's position is stored per board
+ * size in group_cell: a real cell of that size's grid, never one of the
+ * reserved cells (top row, frame, Next). This module is the only code that
+ * writes those tables and the only owner of the reserved-cell and placement
+ * rules.
  *
  * Pure functions over the minimal db interface shared with import.mjs
  * ({ exec, prepare(sql).run/all }) — one body of logic for node:sqlite
@@ -12,51 +15,11 @@
 
 import { normalizeV1 } from "./normalize.mjs";
 
-export const ITEMS_PER_PAGE = 57; // canonical page slots 2..58 (60-cell space)
-
-const FIRST_ITEM_SLOT = 2;
-const LAST_ITEM_SLOT = 58;
 const FIRST_INDEX_SLOT = 10;
-const LAST_INDEX_SLOT = 59;
 
-/* --- any-shape geometry (014 slice 1) ---
- * Storage stays canonical: group_cell holds (page, slot_index) in the
- * 60-cell space (57 items per page) and board_group.index_slot is a
- * 60-space slot. The profile's cell count N only changes how those
- * coordinates are drawn: linear position is preserved, then re-wrapped
- * into pages of N-3 item slots (slot 0 = back, 1 = edit, N-1 = Next).
- * No rows are rewritten when Cells changes — the map is pure. */
-export function pageGeom(cells) {
-  return { first: FIRST_ITEM_SLOT, last: cells - 2, next: cells - 1, per: cells - 3 };
-}
-/** Stored (page, slot_index) → linear position in the canonical strip. */
-export function canonPos(page, slotIndex) {
-  return page * ITEMS_PER_PAGE + (slotIndex - FIRST_ITEM_SLOT);
-}
-/** Linear position → stored (page, slot_index). Inverse of canonPos. */
-export function canonCell(pos) {
-  return { page: Math.floor(pos / ITEMS_PER_PAGE), slot_index: FIRST_ITEM_SLOT + (pos % ITEMS_PER_PAGE) };
-}
-/** Linear position → where it lands on a `cells`-cell surface. */
-export function visualCell(pos, cells) {
-  const per = cells - 3;
-  return { page: Math.floor(pos / per), slot: FIRST_ITEM_SLOT + (pos % per) };
-}
-/** Visual (page, slot) on a `cells`-cell surface → linear position.
- *  Inverse of visualCell. */
-export function posAtVisual(page, slot, cells) {
-  return page * (cells - 3) + (slot - FIRST_ITEM_SLOT);
-}
-/** Index coordinate → (page, slot) on a `cells`-cell index surface.
- *  The index keeps its canonical slots (10–59 seeded); at 60 cells this
- *  is the identity for every slot below the Next cell. */
-export function indexVisual(indexSlot, cells) {
-  return visualCell(indexSlot - FIRST_ITEM_SLOT, cells);
-}
-/** Visual (page, slot) on the index → the canonical index_slot to store. */
-export function indexSlotAt(page, slot, cells) {
-  return posAtVisual(page, slot, cells) + FIRST_ITEM_SLOT;
-}
+/** Grammar bands in home-board order (018 D5) — the seed compiler fills
+ *  topic groups in this order. */
+export const BAND_ORDER = ["Yellow", "Green", "Pink", "Blue", "Purple", "Red"];
 
 /* --- 027 § 3.2: reserved cells ---
  * On every page of every group the top row (row 0), the frame (the home
@@ -85,6 +48,30 @@ export function groupGeometry(shape) {
   return { cols, rows, cells, topRow, frame, next, reserved, content };
 }
 
+/** Senses a size's group pages already show: home cells (`{ sense_id,
+ *  slot_index }`) in the reserved top row and frame. They get no group
+ *  position at that size — they would render twice. Next replaces its
+ *  home word. The seed compiler and runtime fill share this rule. */
+export function shownByReserved(geom, homeCells) {
+  const shown = new Set();
+  for (const c of homeCells) {
+    if (geom.topRow.includes(c.slot_index) || geom.frame.includes(c.slot_index)) shown.add(c.sense_id);
+  }
+  return shown;
+}
+
+/** Index coordinate → (page, slot) on a `cells`-cell index surface: the
+ *  canonical slots from 10 wrap into pages of cells − 3 (the index keeps
+ *  its pre-027 mapping; at 60 cells it is the identity below Next). */
+export function indexVisual(indexSlot, cells) {
+  const per = cells - 3;
+  return { page: Math.floor((indexSlot - 2) / per), slot: 2 + ((indexSlot - 2) % per) };
+}
+/** Visual (page, slot) on the index → the canonical index_slot to store. */
+export function indexSlotAt(page, slot, cells) {
+  return page * (cells - 3) + slot;
+}
+
 const all = (db, sql, params = []) => db.prepare(sql).all(...params);
 const one = (db, sql, params = []) => all(db, sql, params)[0];
 
@@ -96,48 +83,15 @@ function requireLocale(locale) {
   }
 }
 
-function hasTable(db, name) {
-  return all(
-    db,
-    "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?",
-    [name],
-  ).length > 0;
-}
-
-/** Category name → built-in group id, from the seed. Split groups keep
- *  the category on the larger half (Food, Actions), so e.g. 'Food &
- *  Drink' resolves to grp_food. */
-function categoryGroupMap(catalog) {
-  return new Map(
-    (catalog.groups ?? []).filter((g) => g.category).map((g) => [g.category, g.id]),
-  );
-}
-
-export function lowestFreeIndexSlot(db) {
-  const used = new Set(
-    all(db, "SELECT index_slot FROM board_group").map((r) => r.index_slot),
-  );
-  for (let s = FIRST_INDEX_SLOT; s <= LAST_INDEX_SLOT; s++) {
-    if (!used.has(s)) return s;
-  }
-  return null;
-}
-
 // 011 slice 1: every adult edit records an op (Sync_And_Web_Editing § 4).
 // Imported lazily-safe: ops.mjs imports this module for replay; the cycle
 // resolves because recordOp is only called inside function bodies.
 import { recordOp } from "./ops.mjs";
 import { SENSE_ART_SQL } from "./images.mjs";
 
-function insertCell(db, groupId, kind, id, page, slot, addedAt = null) {
-  db.prepare(
-    "INSERT INTO group_cell (group_id, item_kind, item_id, page, slot_index, added_at) VALUES (?, ?, ?, ?, ?, ?)",
-  ).run(groupId, kind, id, page, slot, addedAt);
-}
-
 /**
  * Savepoint-scoped transaction: nests cleanly inside an outer savepoint
- * (migrateLegacyGroups) where a bare second BEGIN would throw.
+ * where a bare second BEGIN would throw.
  */
 function txn(db, fn) {
   db.exec("SAVEPOINT groups_txn");
@@ -152,138 +106,168 @@ function txn(db, fn) {
   }
 }
 
-/**
- * Seed built-in groups and their cells from the catalog. Also the
- * reconcile: a caregiver's edits always win, and a seeded item is never
- * dropped — when its seeded slot is taken it lands at nextFreeCell.
- */
-export function seedGroups(db, catalog) {
-  txn(db, () => {
-    // Catalog-owned display names: replaced wholesale on every import so
-    // a renamed seed reaches existing devices — but only for groups whose
-    // board_group.name is still NULL (a caregiver's rename always wins).
-    for (const gl of catalog.groupLabels ?? []) {
-      db.prepare(
-        "INSERT OR REPLACE INTO group_label (group_id, locale, text) VALUES (?, ?, ?)",
-      ).run(gl.group_id, gl.locale, gl.text);
-    }
-    for (const g of catalog.groups ?? []) {
-      const exists = one(db, "SELECT id FROM board_group WHERE id = ?", [g.id]);
-      if (exists) continue;
-      const taken = one(db, "SELECT id FROM board_group WHERE index_slot = ?", [g.index_slot]);
-      const slot = taken ? lowestFreeIndexSlot(db) : g.index_slot;
-      if (slot === null) throw new Error(`group index full — cannot seed ${g.id}`);
-      db.prepare(
-        "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, NULL, ?, NULL, ?)",
-      ).run(g.id, g.kind, g.glyph ?? null, slot);
-    }
-    // 027 A1 → A2: the catalog ships per-size positions; until per-size
-    // storage lands this canonical table holds the grid60 set.
-    for (const c of (catalog.groupCells ?? []).filter((x) => x.layout === "grid60")) {
-      const present = one(
-        db,
-        "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-        [c.group_id, c.item_kind, c.item_id],
-      );
-      if (present) continue;
-      const taken = one(
-        db,
-        "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
-        [c.group_id, c.page, c.slot_index],
-      );
-      const cell = taken ? nextFreeCell(db, c.group_id) : c;
-      insertCell(db, c.group_id, c.item_kind, c.item_id, cell.page, cell.slot_index);
-    }
-  });
+/* --- geometry from the database --- */
+
+/** A board size's group geometry, from the catalog's layout_shape rows.
+ *  An unknown size fails loudly — a placement must never guess a grid. */
+export function geometryOf(db, layout) {
+  const row = one(db, "SELECT cols, rows, frame FROM layout_shape WHERE layout = ?", [layout]);
+  if (!row) throw new Error(`no layout shape for ${layout}`);
+  return groupGeometry({ cols: row.cols, rows: row.rows, frame: JSON.parse(row.frame) });
 }
 
-/**
- * One-time migration for a device DB persisted under the pre-groups
- * schema. No-op when zone_slot is absent. Keeps a family's custom groups,
- * their entities, and the caregiver's index arrangement.
- */
-export function migrateLegacyGroups(db, catalog) {
-  if (!hasTable(db, "zone_slot")) return;
-  const groupForCategory = categoryGroupMap(catalog);
-
-  txn(db, () => {
-    // Built-in (and My Words) positions: the legacy zone row's slot wins.
-    for (const r of all(db, "SELECT zone_key, slot_index FROM zone_slot ORDER BY slot_index")) {
-      if (r.zone_key.startsWith("grp_")) continue; // custom groups handled below
-      const gid = r.zone_key === "my_words" ? "grp_my_words" : groupForCategory.get(r.zone_key);
-      if (!gid) continue;
-      const row = one(db, "SELECT index_slot FROM board_group WHERE id = ?", [gid]);
-      if (!row || row.index_slot === r.slot_index) continue;
-      const occupant = one(db, "SELECT id FROM board_group WHERE index_slot = ?", [r.slot_index]);
-      if (occupant) swapGroups(db, gid, occupant.id);
-      else moveGroup(db, gid, r.slot_index);
-    }
-
-    // Custom groups: same id, name, photo; index slot from their zone row.
-    if (hasTable(db, "custom_group")) {
-      for (const g of all(db, "SELECT id, name, photo_key FROM custom_group")) {
-        if (one(db, "SELECT id FROM board_group WHERE id = ?", [g.id])) continue;
-        const legacy = one(db, "SELECT slot_index FROM zone_slot WHERE zone_key = ?", [g.id]);
-        let slot = legacy?.slot_index ?? null;
-        if (slot === null || one(db, "SELECT id FROM board_group WHERE index_slot = ?", [slot])) {
-          slot = lowestFreeIndexSlot(db);
-        }
-        if (slot === null) throw new Error(`group index full — cannot migrate ${g.id}`);
-        db.prepare(
-          "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, 'custom', ?, NULL, ?, ?)",
-        ).run(g.id, g.name, g.photo_key ?? null, slot);
-      }
-      for (const gi of all(db, "SELECT group_id, entity_id FROM group_item ORDER BY slot_index")) {
-        placeItem(db, gi.group_id, "entity", gi.entity_id);
-      }
-    }
-
-    // Entities: a recorded category files into the matching built-in group;
-    // a null-category entity in no custom group lands in My Words.
-    for (const e of all(db, "SELECT id, category FROM personal_entity")) {
-      if (e.category && groupForCategory.has(e.category)) {
-        placeItem(db, groupForCategory.get(e.category), "entity", e.id);
-      } else if (!e.category) {
-        const inCustom = one(
-          db,
-          `SELECT 1 AS x FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
-           WHERE gc.item_kind = 'entity' AND gc.item_id = ? AND g.kind = 'custom'`,
-          [e.id],
-        );
-        if (!inCustom) placeItem(db, "grp_my_words", "entity", e.id);
-      }
-    }
-
-    db.exec("DROP TABLE IF EXISTS group_item");
-    db.exec("DROP TABLE IF EXISTS custom_group");
-    db.exec("DROP TABLE IF EXISTS zone_slot");
-  });
+/** The size groups draw at: the profile's Cells setting when the catalog
+ *  knows it, else grid60 (the board's own fallback). */
+export function activeLayout(db) {
+  const l = one(db, "SELECT board_layout AS l FROM learner_profile WHERE id = 'prf_local'")?.l;
+  return l && one(db, "SELECT 1 AS x FROM layout_shape WHERE layout = ?", [l]) ? l : "grid60";
 }
 
-/**
- * One-time migration for devices seeded while built-in names were stored
- * as English text in board_group.name: NULL out the name where it equals
- * that group's en catalog label (it was the seed, not a caregiver
- * choice). Any other value is a rename and is kept. Idempotent — the
- * second run matches nothing.
- */
-export function migrateBuiltinGroupNames(db, catalog) {
-  const enName = new Map(
-    (catalog.groupLabels ?? [])
-      .filter((gl) => gl.locale === "en")
-      .map((gl) => [gl.group_id, gl.text]),
+/** Senses the page itself shows on `layout`, from the shipped home cells. */
+function shownByPage(db, layout) {
+  return shownByReserved(geometryOf(db, layout),
+    all(db, "SELECT sense_id, slot_index FROM core_cell WHERE layout = ?", [layout]));
+}
+
+/** Whether a group shows on a board size: catalog metadata for built-in
+ *  groups (the four More groups are grid15-only); custom groups and My
+ *  Words show everywhere. */
+export function shownOn(db, groupId, layout) {
+  const meta = one(db, "SELECT layouts FROM group_meta WHERE group_id = ?", [groupId]);
+  return !meta?.layouts || JSON.parse(meta.layouts).includes(layout);
+}
+
+const isMember = (db, groupId, kind, id) =>
+  !!one(db,
+    "SELECT 1 AS x FROM group_membership WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupId, kind, id]);
+
+const cellOf = (db, groupId, layout, kind, id) =>
+  one(db,
+    `SELECT page, slot_index FROM group_cell
+     WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
+    [groupId, layout, kind, id]) ?? null;
+
+function occupiedCells(db, groupId, layout) {
+  return new Set(
+    all(db, "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND layout = ?",
+      [groupId, layout]).map((r) => `${r.page}:${r.slot_index}`),
   );
+}
+
+/** Lowest free (page, slot) in content order — a new page when every
+ *  existing one is full. */
+function lowestFree(geom, taken) {
+  for (let page = 0; ; page++) {
+    for (const slot of geom.content) {
+      if (!taken.has(`${page}:${slot}`)) return { page, slot_index: slot };
+    }
+  }
+}
+
+/** The first free content cell of a group at a size — where a replayed
+ *  write lands when its recorded cell was taken first. */
+export function firstFreeCell(db, groupId, layout) {
+  return lowestFree(geometryOf(db, layout), occupiedCells(db, groupId, layout));
+}
+
+const usable = (geom, taken, c) =>
+  !!c && geom.content.includes(c.slot_index) && c.page >= 0 && !taken.has(`${c.page}:${c.slot_index}`);
+
+/**
+ * 027 § 3.4 — choosing a cell when no target was given: the word's
+ * authored seed coordinate in this group, then its position in another
+ * group at this size (index order, then group id) — a preference, never a
+ * link — then the lowest free cell. `taken` lets a batch see its own
+ * earlier choices.
+ */
+function chooseCell(db, groupId, layout, kind, id, taken = occupiedCells(db, groupId, layout)) {
+  const geom = geometryOf(db, layout);
+  const seed = one(db,
+    `SELECT page, slot_index FROM group_seed_cell
+     WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
+    [groupId, layout, kind, id]);
+  if (usable(geom, taken, seed)) return { page: seed.page, slot_index: seed.slot_index };
+  const elsewhere = all(db,
+    `SELECT gc.page, gc.slot_index FROM group_cell gc
+     JOIN board_group g ON g.id = gc.group_id
+     WHERE gc.layout = ? AND gc.item_kind = ? AND gc.item_id = ? AND gc.group_id != ?
+     ORDER BY g.index_slot, g.id`,
+    [layout, kind, id, groupId]);
+  for (const c of elsewhere) {
+    if (usable(geom, taken, c)) return { page: c.page, slot_index: c.slot_index };
+  }
+  return lowestFree(geom, taken);
+}
+
+/** Replay's cell: the recorded one when it is still a free content cell,
+ *  else the first free — the earlier occupant always stays (§ 3.4). */
+function landing(db, groupId, layout, c) {
+  const geom = geometryOf(db, layout);
+  const taken = occupiedCells(db, groupId, layout);
+  return usable(geom, taken, c) ? { page: c.page, slot_index: c.slot_index } : lowestFree(geom, taken);
+}
+
+function insertMember(db, groupId, kind, id, addedAt) {
+  db.prepare(
+    "INSERT INTO group_membership (group_id, item_kind, item_id, added_at) VALUES (?, ?, ?, ?)",
+  ).run(groupId, kind, id, addedAt);
+}
+function insertCell(db, groupId, layout, kind, id, c) {
+  db.prepare(
+    `INSERT INTO group_cell (group_id, layout, item_kind, item_id, page, slot_index)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+  ).run(groupId, layout, kind, id, c.page, c.slot_index);
+}
+
+/* --- seed install (027 § 4) --- */
+
+/**
+ * Install every catalog group that has no install marker — once, as one
+ * `seed_install` op carrying the memberships and positions, so replay and
+ * restore never re-derive them from a newer catalog. Called after the
+ * rebase baseline is taken (importCatalog owns that order).
+ */
+export function installSeedGroups(db, catalog) {
+  const installed = new Set(all(db, "SELECT group_id FROM group_seed_install").map((r) => r.group_id));
+  const groups = (catalog.groups ?? []).filter((g) => !installed.has(g.id)).map((g) => ({
+    id: g.id,
+    kind: g.kind,
+    glyph: g.glyph ?? null,
+    index_slot: g.index_slot,
+    members: (catalog.groupMembers ?? []).filter((m) => m.group_id === g.id)
+      .map((m) => [m.item_kind, m.item_id]),
+    cells: (catalog.groupCells ?? []).filter((c) => c.group_id === g.id)
+      .map((c) => [c.layout, c.item_kind, c.item_id, c.page, c.slot_index]),
+  }));
+  if (!groups.length) return;
+  const args = { version: catalog.groupSeedVersion ?? "0", groups };
+  applySeedInstall(db, args);
+  recordOp(db, "seed_install", args);
+}
+
+/** Apply a seed install. A group that already has a marker is skipped —
+ *  the first install the relay confirmed wins (027 § 4). */
+export function applySeedInstall(db, { version, groups }) {
   txn(db, () => {
-    for (const row of all(
-      db,
-      "SELECT id, name FROM board_group WHERE kind IN ('builtin', 'my_words') AND name IS NOT NULL",
-    )) {
-      if (enName.get(row.id) === row.name) {
-        db.prepare("UPDATE board_group SET name = NULL WHERE id = ?").run(row.id);
+    for (const g of groups) {
+      if (one(db, "SELECT 1 AS x FROM group_seed_install WHERE group_id = ?", [g.id])) continue;
+      if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [g.id])) {
+        const taken = one(db, "SELECT 1 AS x FROM board_group WHERE index_slot = ?", [g.index_slot]);
+        db.prepare(
+          "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, NULL, ?, NULL, ?)",
+        ).run(g.id, g.kind, g.glyph, taken ? lowestFreeIndexSlot(db) : g.index_slot);
       }
+      for (const [kind, id] of g.members) insertMember(db, g.id, kind, id, null);
+      for (const [layout, kind, id, page, slot] of g.cells) {
+        insertCell(db, g.id, layout, kind, id, { page, slot_index: slot });
+      }
+      db.prepare("INSERT INTO group_seed_install (group_id, seed_version) VALUES (?, ?)").run(g.id, version);
     }
   });
 }
+
+/* --- reads --- */
 
 /**
  * The name a group shows: the caregiver's override when one is stored,
@@ -299,24 +283,23 @@ export function groupDisplayName(db, row, locale) {
   );
 }
 
-/** The group index: every group at its coordinate, in slot order. */
+/** The group index: every group at its coordinate, in slot order —
+ *  hidden ones included (they keep their slot; the renderer skips them). */
 export function groupIndex(db) {
   return all(
     db,
-    "SELECT id, kind, name, glyph, photo_key, index_slot FROM board_group ORDER BY index_slot",
+    "SELECT id, kind, name, glyph, photo_key, index_slot, hidden FROM board_group ORDER BY index_slot",
   );
 }
 
 /**
- * One visual page of a group at `cells` cells: rows carry their stored
- * canonical (page, slot_index) plus `vpage`/`vslot` — where the cell
- * lands on the current surface. Renderers place by `vslot`; edit calls
- * keep using the canonical coordinates. Entities carry photo_key;
- * senses resolve their approved lemma and symbol key (art).
+ * One page of a group at a board size: the members positioned there, each
+ * at its real cell (`slot_index`). Entities carry photo_key; senses
+ * resolve their approved lemma and symbol key (art).
  */
-export function groupPage(db, groupId, page = 0, locale, cells = 60) {
+export function groupPage(db, groupId, page = 0, locale, layout = activeLayout(db)) {
   requireLocale(locale);
-  const rows = all(
+  return all(
     db,
     `SELECT gc.item_kind, gc.item_id, gc.page, gc.slot_index,
             COALESCE(l.text, e.spoken_name) AS label,
@@ -328,27 +311,20 @@ export function groupPage(db, groupId, page = 0, locale, cells = 60) {
      LEFT JOIN label l ON gc.item_kind = 'sense' AND l.sense_id = gc.item_id
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
      LEFT JOIN personal_entity e ON gc.item_kind = 'entity' AND e.id = gc.item_id
-     WHERE gc.group_id = ?
+     WHERE gc.group_id = ? AND gc.layout = ? AND gc.page = ?
        AND (gc.item_kind = 'sense' OR e.status = 'active')
-     ORDER BY gc.page, gc.slot_index`,
-    [locale, groupId],
+     ORDER BY gc.slot_index`,
+    [locale, groupId, layout, page],
   );
-  for (const r of rows) {
-    const v = visualCell(canonPos(r.page, r.slot_index), cells);
-    r.vpage = v.page;
-    r.vslot = v.slot;
-  }
-  return rows.filter((r) => r.vpage === page);
 }
 
-export function pageCount(db, groupId, cells = 60) {
-  const row = one(
-    db,
-    "SELECT MAX(page * ? + slot_index) AS m FROM group_cell WHERE group_id = ?",
-    [ITEMS_PER_PAGE, groupId],
-  );
-  if (row?.m == null) return 1;
-  return Math.floor(canonPos(0, row.m) / (cells - 3)) + 1;
+/** Pages at a size: one plus the highest content page (minimum one).
+ *  Empty pages in between remain; a removal never changes another
+ *  word's page. */
+export function pageCount(db, groupId, layout = activeLayout(db)) {
+  const row = one(db, "SELECT MAX(page) AS m FROM group_cell WHERE group_id = ? AND layout = ?",
+    [groupId, layout]);
+  return row?.m == null ? 1 : row.m + 1;
 }
 
 /**
@@ -367,12 +343,12 @@ export function entityMatches(db, text, groupId, locale, seedCategory = null) {
     `SELECT e.id, e.spoken_name, e.photo_key, e.category, e.fitzgerald_role,
             COALESCE(g.name, gl.text) AS gname
      FROM personal_entity e
-     LEFT JOIN group_cell gc ON gc.item_kind = 'entity' AND gc.item_id = e.id
-     LEFT JOIN board_group g ON g.id = gc.group_id
+     LEFT JOIN group_membership gm ON gm.item_kind = 'entity' AND gm.item_id = e.id
+     LEFT JOIN board_group g ON g.id = gm.group_id
      LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
      WHERE e.status = 'active'
        AND NOT EXISTS (
-       SELECT 1 FROM group_cell x
+       SELECT 1 FROM group_membership x
        WHERE x.group_id = ? AND x.item_kind = 'entity' AND x.item_id = e.id
      )
      ORDER BY g.index_slot`,
@@ -420,8 +396,8 @@ export function catalogMatches(db, text, groupId, locale, seedCategory = null) {
      WHERE l.normalized_text LIKE ? ESCAPE '\\'
        AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
        AND NOT EXISTS (
-         SELECT 1 FROM group_cell gc
-         WHERE gc.group_id = ? AND gc.item_kind = 'sense' AND gc.item_id = s.id
+         SELECT 1 FROM group_membership gm
+         WHERE gm.group_id = ? AND gm.item_kind = 'sense' AND gm.item_id = s.id
        )
      ORDER BY (l.normalized_text = ?) DESC,
               COALESCE(s.category = ?, 0) DESC,
@@ -431,246 +407,253 @@ export function catalogMatches(db, text, groupId, locale, seedCategory = null) {
   );
 }
 
-/* --- 018 D5: banded placement ---
- * A group's page lays out in the home board's band order: each kind of
- * word starts a fresh column and fills it top to bottom. A family's
- * addition takes the next free spot in its kind's area — the earliest
- * claimed column with room, else the next unclaimed column after the
- * kind's last. A kind new to the page claims the first unclaimed column
- * after the last earlier-band kind's area. Stored cells never move, so
- * a late-arriving earlier-band kind lands after later kinds rather than
- * shifting them — stability wins over strict order. */
-export const BAND_ORDER = ["Yellow", "Green", "Pink", "Blue", "Purple", "Red"];
-const bandRank = (b) => Math.max(0, BAND_ORDER.indexOf(b));
-/* Columns in claim order: their first usable slot, left to right — the
- * row-0 item cells (cols 2–9) come before the cols 0–1 columns that
- * start at row 1. */
-const COL_PREF = [2, 3, 4, 5, 6, 7, 8, 9, 0, 1];
-const colOf = (slot) => slot % 10;
-const colSlots = (col) => {
-  const out = [];
-  for (let s = col; s <= LAST_ITEM_SLOT; s += 10) {
-    if (s >= FIRST_ITEM_SLOT) out.push(s);
-  }
-  return out;
-};
+/* --- placement writes (027 § 3.4) --- */
 
-function itemBand(db, kind, id) {
-  const table = kind === "sense" ? "sense" : "personal_entity";
-  return one(db, `SELECT fitzgerald_role AS r FROM ${table} WHERE id = ?`, [id])?.r ?? "Yellow";
-}
-
-/** The next free spot in the item's band area (D5). Falls back to a
- *  fresh page when every existing page leaves the kind no column. */
-function bandedFreeCell(db, groupId, kind, id) {
-  const rank = bandRank(itemBand(db, kind, id));
-  const rows = all(
-    db,
-    `SELECT gc.page, gc.slot_index,
-            COALESCE(s.fitzgerald_role, e.fitzgerald_role, 'Yellow') AS band
-     FROM group_cell gc
-     LEFT JOIN sense s ON gc.item_kind = 'sense' AND s.id = gc.item_id
-     LEFT JOIN personal_entity e ON gc.item_kind = 'entity' AND e.id = gc.item_id
-     WHERE gc.group_id = ?`,
-    [groupId],
-  );
-  const byPage = new Map();
-  for (const r of rows) {
-    if (!byPage.has(r.page)) byPage.set(r.page, []);
-    byPage.get(r.page).push(r);
-  }
-  const lastPage = rows.length ? Math.max(...rows.map((r) => r.page)) : 0;
-  for (let page = 0; page <= lastPage; page++) {
-    const items = byPage.get(page) ?? [];
-    const taken = new Set(items.map((i) => i.slot_index));
-    const claimedCols = new Set(items.map((i) => colOf(i.slot_index)));
-    const freeCol = (col) => colSlots(col).find((s) => !taken.has(s));
-    const bandCols = [...new Set(
-      items.filter((i) => bandRank(i.band) === rank).map((i) => colOf(i.slot_index)),
-    )].sort((a, b) => a - b);
-    if (bandCols.length) {
-      for (const col of bandCols) {
-        const free = freeCol(col);
-        if (free !== undefined) return { page, slot_index: free };
-      }
-      // Area full — extend it into the next unclaimed column.
-      const after = COL_PREF.indexOf(bandCols[bandCols.length - 1]) + 1;
-      for (const col of COL_PREF.slice(after)) {
-        if (claimedCols.has(col)) continue;
-        const free = freeCol(col);
-        if (free !== undefined) return { page, slot_index: free };
-      }
-      continue;
-    }
-    // A kind new to this page starts after the earlier bands' area.
-    const earlier = items.filter((i) => bandRank(i.band) < rank).map((i) => colOf(i.slot_index));
-    const boundary = earlier.length
-      ? Math.max(...earlier.map((c) => COL_PREF.indexOf(c))) + 1
-      : 0;
-    for (const col of COL_PREF.slice(boundary)) {
-      if (!claimedCols.has(col)) return { page, slot_index: colSlots(col)[0] };
-    }
-  }
-  return { page: lastPage + (rows.length ? 1 : 0), slot_index: FIRST_ITEM_SLOT };
-}
-
-/** Lowest free (page, slot_index), page-major. Pages grow without bound. */
-export function nextFreeCell(db, groupId) {
-  const taken = new Set(
-    all(db, "SELECT page, slot_index FROM group_cell WHERE group_id = ?", [groupId]).map(
-      (r) => `${r.page}:${r.slot_index}`,
-    ),
-  );
-  for (let page = 0; ; page++) {
-    for (let slot = FIRST_ITEM_SLOT; slot <= LAST_ITEM_SLOT; slot++) {
-      if (!taken.has(`${page}:${slot}`)) return { page, slot_index: slot };
-    }
-  }
-}
-
-/** Append an item at the next free spot in its kind's area (018 D5) —
- *  or at `cell` when the adult tapped an empty slot to add there (the
- *  slot is the picker). No-op when already present; an occupied target
- *  refuses. */
+/**
+ * Add a word to a group at the active size — at `cell` when the adult
+ * tapped an empty cell (the cell is the picker), else by the placement
+ * rule. A stale occupied or reserved target refuses; an add never
+ * overwrites or swaps. Already a member with a position here: returns it.
+ * Writes only the active size (§ 3.3). Returns { page, slot_index }.
+ */
 export function placeItem(db, groupId, kind, id, cell = null, addedAt = null) {
-  const existing = one(
-    db,
-    "SELECT page, slot_index FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-    [groupId, kind, id],
-  );
-  if (existing) return { page: existing.page, slot_index: existing.slot_index };
-  if (cell) {
-    const taken = one(
-      db,
-      "SELECT item_id FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
-      [groupId, cell.page, cell.slot_index],
-    );
-    if (taken) throw new Error(`group ${groupId} slot ${cell.page}:${cell.slot_index} is occupied`);
+  const layout = activeLayout(db);
+  if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) {
+    throw new Error(`no group ${groupId}`);
   }
-  const target = cell ?? bandedFreeCell(db, groupId, kind, id);
-  const at = addedAt ?? Date.now();
-  insertCell(db, groupId, kind, id, target.page, target.slot_index, at);
+  const existing = cellOf(db, groupId, layout, kind, id);
+  if (existing) return existing;
+  let target;
+  if (cell) {
+    const geom = geometryOf(db, layout);
+    if (!geom.content.includes(cell.slot_index)) {
+      throw new Error(`group ${groupId} slot ${cell.page}:${cell.slot_index} is reserved`);
+    }
+    if (occupiedCells(db, groupId, layout).has(`${cell.page}:${cell.slot_index}`)) {
+      throw new Error(`group ${groupId} slot ${cell.page}:${cell.slot_index} is occupied`);
+    }
+    target = { page: cell.page, slot_index: cell.slot_index };
+  } else {
+    target = chooseCell(db, groupId, layout, kind, id);
+  }
+  const member = one(db,
+    "SELECT added_at FROM group_membership WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupId, kind, id]);
+  const at = member ? member.added_at : addedAt ?? Date.now();
+  txn(db, () => {
+    if (!member) insertMember(db, groupId, kind, id, at);
+    insertCell(db, groupId, layout, kind, id, target);
+  });
   recordOp(db, "place_item", {
-    groupId, kind, id, page: target.page, slot_index: target.slot_index, added_at: at,
+    groupId, kind, id, added_at: at, cells: [{ layout, ...target }],
   });
   return target;
 }
 
-/** Move an item to a free slot on any page of the same group. */
-export function moveItem(db, groupId, kind, id, page, slot) {
-  const taken = one(
-    db,
-    "SELECT item_id FROM group_cell WHERE group_id = ? AND page = ? AND slot_index = ?",
-    [groupId, page, slot],
-  );
-  if (taken) throw new Error(`group ${groupId} slot ${page}:${slot} is occupied`);
-  const row = one(
-    db,
-    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-    [groupId, kind, id],
-  );
-  if (!row) throw new Error(`item ${id} is not in group ${groupId}`);
+/**
+ * Replay/Undo body of place_item: the membership (with its added_at) and
+ * each recorded position — exactly where free, else the first free cell.
+ * Returns true when any position had to move.
+ */
+export function applyPlace(db, { groupId, kind, id, added_at, cells }) {
+  let moved = false;
+  txn(db, () => {
+    if (!isMember(db, groupId, kind, id)) insertMember(db, groupId, kind, id, added_at ?? null);
+    for (const c of cells) {
+      if (cellOf(db, groupId, c.layout, kind, id)) continue;
+      const at = landing(db, groupId, c.layout, c);
+      if (at.page !== c.page || at.slot_index !== c.slot_index) moved = true;
+      insertCell(db, groupId, c.layout, kind, id, at);
+    }
+  });
+  return moved;
+}
+
+/** Move a member to a free content cell of the same group, at one size. */
+export function moveItem(db, groupId, kind, id, page, slot, layout = activeLayout(db)) {
+  const geom = geometryOf(db, layout);
+  if (!geom.content.includes(slot)) throw new Error(`group ${groupId} slot ${page}:${slot} is reserved`);
+  if (occupiedCells(db, groupId, layout).has(`${page}:${slot}`)) {
+    throw new Error(`group ${groupId} slot ${page}:${slot} is occupied`);
+  }
+  if (!cellOf(db, groupId, layout, kind, id)) throw new Error(`item ${id} is not in group ${groupId}`);
   db.prepare(
-    "UPDATE group_cell SET page = ?, slot_index = ? WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-  ).run(page, slot, groupId, kind, id);
-  recordOp(db, "move_item", { groupId, kind, id, page, slot_index: slot });
+    `UPDATE group_cell SET page = ?, slot_index = ?
+     WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
+  ).run(page, slot, groupId, layout, kind, id);
+  recordOp(db, "move_item", { groupId, kind, id, layout, page, slot_index: slot });
 }
 
 /**
- * Swap two items' cells. UNIQUE(group_id, page, slot_index) forbids the
- * two-step UPDATE, so this deletes both rows and re-inserts them swapped,
- * in one transaction.
+ * Swap two members' cells at one size — a drag onto a word swaps just
+ * those two. UNIQUE(group, layout, page, slot) forbids the two-step
+ * UPDATE, so both rows are deleted and re-inserted swapped in one
+ * transaction.
  */
-export function swapItems(db, groupId, a, b) {
+export function swapItems(db, groupId, a, b, layout = activeLayout(db)) {
   txn(db, () => {
-    const cellOf = (it) =>
-      one(
-        db,
-        "SELECT page, slot_index, added_at FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-        [groupId, it.item_kind, it.item_id],
-      );
-    const ca = cellOf(a);
-    const cb = cellOf(b);
+    const ca = cellOf(db, groupId, layout, a.item_kind, a.item_id);
+    const cb = cellOf(db, groupId, layout, b.item_kind, b.item_id);
     if (!ca || !cb) throw new Error("swapItems: both items must be in the group");
-    db.prepare(
-      "DELETE FROM group_cell WHERE group_id = ? AND item_kind IN (?, ?) AND item_id IN (?, ?)",
-    ).run(groupId, a.item_kind, b.item_kind, a.item_id, b.item_id);
-    insertCell(db, groupId, a.item_kind, a.item_id, cb.page, cb.slot_index, ca.added_at);
-    insertCell(db, groupId, b.item_kind, b.item_id, ca.page, ca.slot_index, cb.added_at);
-    recordOp(db, "swap_items", { groupId, a, b });
+    const del = db.prepare(
+      "DELETE FROM group_cell WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?",
+    );
+    del.run(groupId, layout, a.item_kind, a.item_id);
+    del.run(groupId, layout, b.item_kind, b.item_id);
+    insertCell(db, groupId, layout, a.item_kind, a.item_id, cb);
+    insertCell(db, groupId, layout, b.item_kind, b.item_id, ca);
+    recordOp(db, "swap_items", {
+      groupId, layout,
+      a: { item_kind: a.item_kind, item_id: a.item_id },
+      b: { item_kind: b.item_kind, item_id: b.item_id },
+    });
   });
 }
 
 /**
- * Remove an item from a group. A sense can leave a custom or My Words
- * group, never a built-in — built-in contents are the findability
- * guarantee (hiding is masking, docs/product/Vocabulary_Masking_And_Safety.md).
- * An entity removed from its last group lands in My Words, never orphaned.
+ * Remove a word from one group: its membership and its positions at every
+ * size. Leaves a hole — nothing reflows, in built-in groups too. The word
+ * record is untouched; a word with no placements stays in the Library and
+ * the keyboard (Motor_Grid § Groups).
  */
-export function removeItem(db, groupId, kind, id, { allowOrphan = false } = {}) {
-  const group = one(db, "SELECT kind FROM board_group WHERE id = ?", [groupId]);
-  if (!group) throw new Error(`no group ${groupId}`);
-  if (kind === "sense" && group.kind === "builtin") {
-    throw new Error("a sense cannot be removed from a built-in group");
+export function removeItem(db, groupId, kind, id) {
+  if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) {
+    throw new Error(`no group ${groupId}`);
   }
-  const removed = one(
-    db,
-    "SELECT added_at FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-    [groupId, kind, id],
-  );
-  db.prepare(
-    "DELETE FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-  ).run(groupId, kind, id);
-  if (kind === "entity" && !allowOrphan) {
-    const left = one(
-      db,
-      "SELECT COUNT(*) AS n FROM group_cell WHERE item_kind = 'entity' AND item_id = ?",
-      [id],
-    ).n;
-    // The landing in My Words is the same add re-filed, not a new one —
-    // it keeps the removed placement's timestamp (and replay converges).
-    if (left === 0) placeItem(db, "grp_my_words", "entity", id, null, removed?.added_at);
-  }
-  recordOp(db, "remove_item", { groupId, kind, id, allowOrphan });
+  txn(db, () => {
+    db.prepare("DELETE FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?")
+      .run(groupId, kind, id);
+    db.prepare("DELETE FROM group_membership WHERE group_id = ? AND item_kind = ? AND item_id = ?")
+      .run(groupId, kind, id);
+  });
+  recordOp(db, "remove_item", { groupId, kind, id, layout: activeLayout(db) });
 }
 
 /**
- * removeItem with a way back (Edit-mode × + Undo toast): returns the
- * removed row and an undo() that restores it byte-for-byte — including
- * reverting the never-orphan landing in My Words when it fired.
+ * removeItem with a way back (Edit-mode × + Undo toast). undo() restores
+ * the membership and every size's position — exactly where still free,
+ * else the first free cell — and returns { moved } so the caller can say
+ * the word moved. Undo never displaces a later edit.
  */
 export function removeItemUndoable(db, groupId, kind, id) {
-  const removed = one(
-    db,
-    "SELECT page, slot_index, added_at FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-    [groupId, kind, id],
-  );
-  if (!removed) throw new Error(`item ${id} is not in group ${groupId}`);
-  const myWordsBefore = kind === "entity" &&
-    one(
-      db,
-      "SELECT 1 AS x FROM group_cell WHERE group_id = 'grp_my_words' AND item_kind = 'entity' AND item_id = ?",
-      [id],
-    );
+  const member = one(db,
+    "SELECT added_at FROM group_membership WHERE group_id = ? AND item_kind = ? AND item_id = ?",
+    [groupId, kind, id]);
+  if (!member) throw new Error(`item ${id} is not in group ${groupId}`);
+  const cells = all(db,
+    `SELECT layout, page, slot_index FROM group_cell
+     WHERE group_id = ? AND item_kind = ? AND item_id = ? ORDER BY layout`,
+    [groupId, kind, id]);
   removeItem(db, groupId, kind, id);
   return {
-    removed,
+    removed: { added_at: member.added_at, cells },
     undo() {
-      // Both writes go through the write owners so each lands in the op
-      // log: drop the never-orphan landing (skips the catch-all it would
-      // re-trigger), then restore the exact cell with its added_at.
-      if (kind === "entity" && !myWordsBefore) {
-        const mw = one(
-          db,
-          "SELECT 1 AS x FROM group_cell WHERE group_id = 'grp_my_words' AND item_kind = 'entity' AND item_id = ?",
-          [id],
-        );
-        if (mw) removeItem(db, "grp_my_words", "entity", id, { allowOrphan: true });
-      }
-      placeItem(db, groupId, kind, id, removed, removed.added_at);
+      if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) return { moved: false };
+      const args = { groupId, kind, id, added_at: member.added_at, cells };
+      const moved = applyPlace(db, args);
+      const landed = all(db,
+        `SELECT layout, page, slot_index FROM group_cell
+         WHERE group_id = ? AND item_kind = ? AND item_id = ? ORDER BY layout`,
+        [groupId, kind, id]);
+      recordOp(db, "place_item", { ...args, cells: landed });
+      return { moved };
     },
   };
 }
+
+/**
+ * Add to other boards (027 B9): one transaction and one op for the named
+ * destinations at the active size. Groups that already hold the word are
+ * skipped, never moved; any failure rolls it all back. Returns the groups
+ * added to and an undo() that removes only those.
+ */
+export function addToGroups(db, kind, id, groupIds, addedAt = null) {
+  const layout = activeLayout(db);
+  const at = addedAt ?? Date.now();
+  const places = txn(db, () => {
+    const out = [];
+    for (const groupId of groupIds) {
+      if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) {
+        throw new Error(`no group ${groupId}`);
+      }
+      if (isMember(db, groupId, kind, id)) continue;
+      const c = chooseCell(db, groupId, layout, kind, id);
+      insertMember(db, groupId, kind, id, at);
+      insertCell(db, groupId, layout, kind, id, c);
+      out.push({ groupId, layout, page: c.page, slot_index: c.slot_index });
+    }
+    return out;
+  });
+  if (places.length) recordOp(db, "add_to_groups", { kind, id, added_at: at, places });
+  return {
+    added: places.map((p) => p.groupId),
+    undo() {
+      for (const p of places) {
+        if (isMember(db, p.groupId, kind, id)) removeItem(db, p.groupId, kind, id);
+      }
+    },
+  };
+}
+
+/** Replay body of add_to_groups: each place lands where free, else the
+ *  first free cell; deleted groups and existing members are skipped. */
+export function applyAddToGroups(db, { kind, id, added_at, places }) {
+  for (const p of places) {
+    if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [p.groupId])) continue;
+    if (isMember(db, p.groupId, kind, id)) continue;
+    applyPlace(db, {
+      groupId: p.groupId, kind, id, added_at,
+      cells: [{ layout: p.layout, page: p.page, slot_index: p.slot_index }],
+    });
+  }
+}
+
+/* --- Cells changes (027 § 3.3) --- */
+
+/**
+ * The positions a size is missing: every member with no cell at `layout`
+ * (and not shown by that size's reserved cells) in every group that shows
+ * on that size, placed by the placement rule — groups in index order,
+ * members oldest first. Computed at edit
+ * time and carried by the Cells-switch op, so replay never recomputes it.
+ */
+export function missingPositions(db, layout) {
+  const shown = shownByPage(db, layout);
+  const out = [];
+  for (const g of all(db, "SELECT id FROM board_group ORDER BY index_slot, id")) {
+    if (!shownOn(db, g.id, layout)) continue;
+    const taken = occupiedCells(db, g.id, layout);
+    const todo = all(db,
+      `SELECT gm.item_kind, gm.item_id FROM group_membership gm
+       WHERE gm.group_id = ? AND NOT EXISTS (
+         SELECT 1 FROM group_cell gc WHERE gc.group_id = gm.group_id AND gc.layout = ?
+           AND gc.item_kind = gm.item_kind AND gc.item_id = gm.item_id)
+       ORDER BY COALESCE(gm.added_at, 0), gm.rowid`,
+      [g.id, layout]);
+    for (const m of todo) {
+      if (m.item_kind === "sense" && shown.has(m.item_id)) continue;
+      const c = chooseCell(db, g.id, layout, m.item_kind, m.item_id, taken);
+      taken.add(`${c.page}:${c.slot_index}`);
+      out.push({ groupId: g.id, kind: m.item_kind, id: m.item_id, page: c.page, slot_index: c.slot_index });
+    }
+  }
+  return out;
+}
+
+/** Write a size's missing positions (the Cells switch, and its replay):
+ *  each lands where recorded when still free, else the first free cell;
+ *  members removed meanwhile are skipped. */
+export function writePositions(db, layout, cells) {
+  txn(db, () => {
+    for (const c of cells) {
+      if (!isMember(db, c.groupId, c.kind, c.id)) continue;
+      if (cellOf(db, c.groupId, layout, c.kind, c.id)) continue;
+      insertCell(db, c.groupId, layout, c.kind, c.id, landing(db, c.groupId, layout, c));
+    }
+  });
+}
+
+/* --- word identity (Word_Library § 4) --- */
 
 /**
  * The word card's edits (Word_Library § 4). Rename supersedes the ready
@@ -709,11 +692,11 @@ export function entityGroups(db, entityId, locale) {
   requireLocale(locale);
   return all(
     db,
-    `SELECT g.id, COALESCE(g.name, gl.text) AS name
-     FROM group_cell gc
-     JOIN board_group g ON g.id = gc.group_id
+    `SELECT g.id, g.kind, COALESCE(g.name, gl.text) AS name
+     FROM group_membership gm
+     JOIN board_group g ON g.id = gm.group_id
      LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
-     WHERE gc.item_kind = 'entity' AND gc.item_id = ?
+     WHERE gm.item_kind = 'entity' AND gm.item_id = ?
      ORDER BY g.index_slot`,
     [locale, entityId],
   );
@@ -725,16 +708,15 @@ export function senseGroups(db, senseId, locale) {
   return all(
     db,
     `SELECT g.id, g.kind, COALESCE(g.name, gl.text) AS name
-     FROM group_cell gc
-     JOIN board_group g ON g.id = gc.group_id
+     FROM group_membership gm
+     JOIN board_group g ON g.id = gm.group_id
      LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
-     WHERE gc.item_kind = 'sense' AND gc.item_id = ?
+     WHERE gm.item_kind = 'sense' AND gm.item_id = ?
      ORDER BY g.index_slot`,
     [locale, senseId],
   );
 }
 
-/** Create a custom group at the lowest free index slot. */
 /** Create a personal entity (the + Add "New" path and op replay share
  *  this). `id`/`addedAt` are set by replay so replicas match byte-for-byte;
  *  a fresh save generates them. */
@@ -772,6 +754,8 @@ const SYNCED_SETTINGS = new Set([
   "fresh_after_speak",
   "grammar_help",
   "expressive_voice",
+  "group_top_row",
+  "occasions_visible",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);
@@ -781,7 +765,7 @@ export function setSetting(db, key, value) {
 
 /** Hide or show a catalog word (Masking § 2): a sense_mask row, synced
  *  like every other caregiver edit. The word keeps its core_cell and
- *  group_cells — only the render and the funnel change. */
+ *  group positions — only the render and the funnel change. */
 export function setMask(db, senseId, hidden) {
   db.prepare(
     `INSERT INTO sense_mask (sense_id, status) VALUES (?, ?)
@@ -798,9 +782,19 @@ export function maskedSenseIds(db) {
   );
 }
 
+/* --- the index --- */
+
+export function lowestFreeIndexSlot(db) {
+  const used = new Set(all(db, "SELECT index_slot FROM board_group").map((r) => r.index_slot));
+  let s = FIRST_INDEX_SLOT;
+  while (used.has(s)) s++;
+  return s;
+}
+
+/** Create a custom group at the lowest free index slot. It starts empty;
+ *  its reserved cells show like any group's. */
 export function createGroup(db, { name, photoKey = null, id = null, indexSlot = null }) {
   const slot = indexSlot ?? lowestFreeIndexSlot(db);
-  if (slot === null) throw new Error("group index is full");
   const gid = id ?? `grp_${crypto.randomUUID().replaceAll("-", "")}`;
   db.prepare(
     "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, 'custom', ?, NULL, ?, ?)",
@@ -809,60 +803,29 @@ export function createGroup(db, { name, photoKey = null, id = null, indexSlot = 
   return { id: gid, index_slot: slot };
 }
 
-/**
- * Delete a custom group. Entities whose only group it was land in
- * My Words — an entity is never orphaned.
- */
+/** Delete a custom group — its positions and memberships go with it; the
+ *  words themselves stay in the Library. Built-in groups are hidden, not
+ *  deleted. */
 export function deleteGroup(db, groupId) {
   const group = one(db, "SELECT kind FROM board_group WHERE id = ?", [groupId]);
   if (!group) throw new Error(`no group ${groupId}`);
   if (group.kind !== "custom") throw new Error("only custom groups can be deleted");
-  const orphans = all(
-    db,
-    "SELECT item_id, added_at FROM group_cell WHERE group_id = ? AND item_kind = 'entity'",
-    [groupId],
-  );
-  db.prepare("DELETE FROM group_cell WHERE group_id = ?").run(groupId);
-  db.prepare("DELETE FROM board_group WHERE id = ?").run(groupId);
-  for (const o of orphans) {
-    const left = one(
-      db,
-      "SELECT COUNT(*) AS n FROM group_cell WHERE item_kind = 'entity' AND item_id = ?",
-      [o.item_id],
-    ).n;
-    if (left === 0) placeItem(db, "grp_my_words", "entity", o.item_id, null, o.added_at);
-  }
+  txn(db, () => {
+    db.prepare("DELETE FROM group_cell WHERE group_id = ?").run(groupId);
+    db.prepare("DELETE FROM group_membership WHERE group_id = ?").run(groupId);
+    db.prepare("DELETE FROM board_group WHERE id = ?").run(groupId);
+  });
   recordOp(db, "delete_group", { groupId });
 }
 
-/**
- * Classifier placement (phase 003 slice 5): read the entity's latest
- * ready entity_enrichment row; when its category_suggestion maps to a
- * built-in group the entity is not already in, place a copy there.
- * Additive only — never removes, never moves, never touches My Words or
- * custom placements. abstained/superseded rows and unmappable categories
- * do nothing. Returns the group id placed into, or null.
- */
-export function placeFromEnrichment(db, entityId, catalog) {
-  const row = one(
-    db,
-    `SELECT category_suggestion FROM entity_enrichment
-     WHERE entity_id = ? AND status = 'ready'
-     ORDER BY rowid DESC`,
-    [entityId],
-  );
-  const gid = row?.category_suggestion
-    ? categoryGroupMap(catalog).get(row.category_suggestion)
-    : null;
-  if (!gid) return null;
-  const present = one(
-    db,
-    "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = 'entity' AND item_id = ?",
-    [gid, entityId],
-  );
-  if (present) return null;
-  placeItem(db, gid, "entity", entityId);
-  return gid;
+/** Hide or show a group: it keeps membership, positions and its index
+ *  slot — nothing compacts (027 B8). */
+export function setGroupHidden(db, groupId, hidden) {
+  if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) {
+    throw new Error(`no group ${groupId}`);
+  }
+  db.prepare("UPDATE board_group SET hidden = ? WHERE id = ?").run(hidden ? 1 : 0, groupId);
+  recordOp(db, "set_group_hidden", { groupId, hidden: !!hidden });
 }
 
 /**
@@ -897,7 +860,7 @@ export function moveGroup(db, groupId, slot) {
 /**
  * Swap two groups' index slots. The UNIQUE index_slot constraint forbids
  * the two-step UPDATE, so both rows are deleted and re-inserted swapped in
- * one transaction; deferred FK enforcement keeps their group_cell rows
+ * one transaction; deferred FK enforcement keeps their membership rows
  * valid through the gap.
  */
 export function swapGroups(db, a, b) {
@@ -907,12 +870,11 @@ export function swapGroups(db, a, b) {
     const gb = one(db, "SELECT * FROM board_group WHERE id = ?", [b]);
     if (!ga || !gb) throw new Error("swapGroups: both groups must exist");
     db.prepare("DELETE FROM board_group WHERE id IN (?, ?)").run(a, b);
-    db.prepare(
-      "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, ?, ?, ?, ?)",
-    ).run(ga.id, ga.kind, ga.name, ga.glyph, ga.photo_key, gb.index_slot);
-    db.prepare(
-      "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, ?, ?, ?, ?)",
-    ).run(gb.id, gb.kind, gb.name, gb.glyph, gb.photo_key, ga.index_slot);
+    const ins = db.prepare(
+      "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot, hidden) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    );
+    ins.run(ga.id, ga.kind, ga.name, ga.glyph, ga.photo_key, gb.index_slot, ga.hidden);
+    ins.run(gb.id, gb.kind, gb.name, gb.glyph, gb.photo_key, ga.index_slot, gb.hidden);
     recordOp(db, "swap_groups", { a, b });
   });
 }

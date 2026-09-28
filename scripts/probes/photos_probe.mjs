@@ -75,7 +75,7 @@ out.afterBlank = await evalJs(`[...document.querySelectorAll('#photo-rows .prow'
 await evalJs(`document.querySelector('#photo-save').click()`);
 await sleep(1500);
 out.saved = await evalJs(`window.pip.db.prepare(
-  "SELECT e.spoken_name, e.photo_key FROM group_cell gc JOIN personal_entity e ON e.id=gc.item_id WHERE gc.group_id='grp_my_words'"
+  "SELECT e.spoken_name, e.photo_key FROM group_membership gc JOIN personal_entity e ON e.id=gc.item_id WHERE gc.group_id='grp_my_words'"
 ).all()`);
 out.blankRows = await evalJs(`window.pip.db.prepare(
   "SELECT COUNT(*) AS n FROM personal_entity WHERE spoken_name IS NULL OR spoken_name = '' OR spoken_name = 'pip photo blank'"

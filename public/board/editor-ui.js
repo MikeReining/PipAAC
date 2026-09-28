@@ -5,8 +5,8 @@
  */
 import { applyPasteRows, nameFromFile, resolvePasteRows } from "../shared/bulk.mjs";
 import {
-  canonCell, createEntity, groupDisplayName, groupIndex, groupPage,
-  pageCount, pageGeom, placeItem, posAtVisual,
+  createEntity, geometryOf, groupDisplayName, groupIndex, groupPage,
+  pageCount, placeItem,
 } from "../shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -58,17 +58,17 @@ export function mountEditor({
   async function renderEditorGrid() {
     const zg = $("ed-grid");
     zg.innerHTML = "";
-    const { cols, rows: nRows, cells } = boardGeom();
-    const geom = pageGeom(cells);
+    const { cols, rows: nRows, cells, name: layout } = boardGeom();
+    const geom = geometryOf(db, layout);
     zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
     const gid = edTarget();
     const items = new Map(
-      groupPage(db, gid, edPage, locale, cells).map((r) => [r.vslot, r]),
+      groupPage(db, gid, edPage, locale, layout).map((r) => [r.slot_index, r]),
     );
-    const pages = pageCount(db, gid, cells);
+    const pages = pageCount(db, gid, layout);
     const gKind = all(db, "SELECT kind FROM board_group WHERE id = ?", [gid])[0]?.kind;
-    const ctx = { gestures: true, group: gid, page: edPage, cells, onChange: renderEditorGrid };
+    const ctx = { gestures: true, group: gid, page: edPage, layout, onChange: renderEditorGrid };
     for (let slot = 0; slot < cells; slot++) {
       if (slot === 0) {
         const el = navCell(edGroupName(gid), () => {});
@@ -102,10 +102,12 @@ export function mountEditor({
       if (!item) {
         const empty = document.createElement("div");
         empty.className = "gcell empty";
-        empty.dataset.slot = slot;
-        empty.addEventListener("click", () => {
-          openAddForm(gid, canonCell(posAtVisual(edPage, slot, cells)));
-        });
+        if (geom.content.includes(slot)) {
+          empty.dataset.slot = slot;
+          empty.addEventListener("click", () => {
+            openAddForm(gid, { page: edPage, slot_index: slot });
+          });
+        }
         zg.appendChild(empty);
         continue;
       }

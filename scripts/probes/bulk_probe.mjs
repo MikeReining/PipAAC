@@ -62,10 +62,10 @@ out.addLabel = await evalJs(`document.querySelector('#bulk-add').textContent`);
 
 await evalJs(`document.querySelector('#bulk-add').click()`); await sleep(600);
 out.myWords = await evalJs(`window.pip.db.prepare(
-  "SELECT e.spoken_name FROM group_cell gc JOIN personal_entity e ON e.id=gc.item_id AND gc.item_kind='entity' WHERE gc.group_id='grp_my_words'"
+  "SELECT e.spoken_name FROM group_membership gc JOIN personal_entity e ON e.id=gc.item_id AND gc.item_kind='entity' WHERE gc.group_id='grp_my_words'"
 ).all().map((r) => r.spoken_name)`);
 out.juiceCell = await evalJs(`window.pip.db.prepare(
-  "SELECT COUNT(*) AS n FROM group_cell gc JOIN label l ON l.sense_id=gc.item_id AND l.kind='lemma' WHERE gc.group_id='grp_my_words' AND gc.item_kind='sense' AND l.text='juice'"
+  "SELECT COUNT(*) AS n FROM group_membership gc JOIN label l ON l.sense_id=gc.item_id AND l.kind='lemma' WHERE gc.group_id='grp_my_words' AND gc.item_kind='sense' AND l.text='juice'"
 ).all()[0].n`);
 out.entities = await evalJs(`window.pip.db.prepare(
   "SELECT spoken_name FROM personal_entity WHERE status='active'").all().map((r) => r.spoken_name)`);

@@ -144,7 +144,7 @@ test("the likely group is the group of the top-ranked word", () => {
   const groups = likelyGroups(db, items(db, ["i", "want"]), NOW, "en", kids);
   const top = ranked[0];
   const expected = db.prepare(
-    "SELECT group_id FROM group_cell WHERE item_kind = ? AND item_id = ?",
+    "SELECT group_id FROM group_membership WHERE item_kind = ? AND item_id = ?",
   ).all(top.kind, top.id).map((r) => r.group_id);
   assert.deepEqual([...groups].sort(), expected.sort(),
     `the glow tracks the top candidate (${lemmaOf(db, top.id) ?? top.id})`);
