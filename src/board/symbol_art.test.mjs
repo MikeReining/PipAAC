@@ -75,9 +75,10 @@ test("SENSE_ART_SQL resolves the symbol on the read path the board uses", () => 
   // on disk — the deterministic preference ships the .png.
   assert.equal(artFor(senseOf("want")), "symbols/want.png");
   assert.equal(artFor(senseOf("in")), "symbols/in.png");
-  // mom/dad have no shipped symbol by design — setup fills those cells
-  // with the child's own people.
-  assert.equal(artFor(senseOf("mom")), null);
+  // mom/dad ship default symbols so the board works out of the box —
+  // setup or a family photo can still replace them per child.
+  assert.equal(artFor(senseOf("mom")), "symbols/mom.png");
+  assert.equal(artFor(senseOf("dad")), "symbols/dad.png");
 
   // The home board itself: every grid60 cell resolves art through the
   // same metaFor query the renderer runs per tile.
@@ -98,9 +99,9 @@ test("SENSE_ART_SQL resolves the symbol on the read path the board uses", () => 
       assert.equal(artFor(c.sense_id), null, `cell ${c.label}`);
     }
   }
-  // Every home cell paints a picture except mom/dad — those cells are
-  // for the child's own people, filled by setup or a family photo.
+  // Every home cell paints a picture — mom/dad included, since the
+  // shipped defaults landed (1464e4c).
   const unpainted = cells.filter((c) => !expected.has(c.sense_id)).map((c) => c.label);
-  assert.deepEqual(unpainted.sort(), ["dad", "mom"]);
-  assert.equal(painted, cells.length - 2);
+  assert.deepEqual(unpainted, []);
+  assert.equal(painted, cells.length);
 });
