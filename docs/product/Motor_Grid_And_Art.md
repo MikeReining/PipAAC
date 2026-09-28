@@ -85,22 +85,19 @@ must not be described as shipped until 027's proofs pass.
   Snack includes cup without requiring every utensil. Other topic groups need
   not share this coordinate map. Consistency is a starting arrangement, not
   a constraint on later family edits.
-- **Core language travels by default.** New groups include the named layout's
-  core top row, plus yes/no/stop/help at their home coordinates. Meal groups
-  also include eat/drink/all done; words absent from a small home layout are
-  ordinary group content. Deduplicate overlapping anchors. The top-row setting
-  defaults ON. Supplied anchors repeat on every page until locally changed or
-  removed. They are local placements, not live mirrors of home-board edits.
-  Turning the top row off hides its untouched supplied tiles without reflow;
-  the frame and meal anchors remain. Local placement edits detach a supplied
-  tile from repetition/top-row visibility; word-picture or recording edits do
-  not. The setting never resurrects a locally removed tile. Reserved geometry
-  and the legacy-profile exception are specified in 027 § 3–4.
+- **The top row and the frame are part of the page.** On every page of every
+  group, reserved cells show whatever the home board holds there: the top row
+  (row 0) and the frame (the home cells of yes, no, stop, help). They are not
+  group content and can't be edited inside a group; a home-board edit shows in
+  every group at once. The setting **Top row on every group** defaults ON; off
+  leaves those cells empty and still reserved, so nothing reflows. The frame
+  always shows. Meal groups also hold *eat, drink, all done* as ordinary seeded
+  words at their home coordinates where free. Reserved cells are in 027 § 3.2.
 - **Same geometry, full-screen groups.** Group tiles use the active Cells size;
   sentence bar and Smart bar stay in place. Home in the corner returns directly
   to the home board; Groups opens the index. Add sits by Groups in Edit mode.
-  Next uses the permanently reserved last grid cell, visible only for multiple
-  pages. The top-left word cell is available; corner Home is outside the grid.
+  Next uses the always-reserved last grid cell, visible only for multiple pages.
+  Corner Home is outside the grid.
 - **Stay after Speak.** Speaking leaves the current view, group, and page in
   place, including expressive and transformed speech. Existing sentence-clear/
   fresh-start preferences are unchanged. Explicit navigation always wins over
@@ -110,15 +107,15 @@ must not be described as shipped until 027's proofs pass.
   continuation ranking. Suggestions are optional shortcuts, not board cells;
   they never rearrange the grid. No new network dependency for speaking or
   editing. Prediction semantics remain in 017; 027 specifies the starter input.
-- **Placement edits are local.** Add/remove affects membership in this group
-  across its layouts; move/swap affects this group's active layout only. Remove
+- **Placement edits are local.** Add/remove affects membership in this group;
+  move/swap affects this group at the active board size only. Remove
   leaves a hole, including in built-in groups. A drag onto a word explicitly
   swaps only those two placements. Edits never move unrelated words or write
   another group. No scope modal, block handles, pins, drift badge, or make-it-
   match action. A new custom group uses the same rules.
 - **Placement choice:** an explicit empty-cell target wins; otherwise prefer a
   free established coordinate for this word, then the first free cell, then a
-  new page. No automatic displacement. The tie-break and reservations have one
+  new page. No automatic displacement. The tie-break and reserved cells have one
   code owner in `public/shared/groups.mjs` (planned). Parent placement wins
   over authored clusters. Toggling settings never closes gaps.
 - **Shared identity is explicit.** A word-card picture, name, or recording edit
@@ -139,15 +136,18 @@ must not be described as shipped until 027's proofs pass.
   not a substitute for claiming child-visible group reachability.
 - **Saved work wins.** A catalog import never restores removals, adds new
   placements to installed groups, or overwrites custom positions. Seed once;
-  retain installation state even for empty/hidden groups. Existing saved
-  profiles retain their layout until the adult explicitly accepts a conversion
-  preview. 027 owns that compatibility path. No automatic re-seed on upgrade.
-- **Cells changes are explicit.** Store positions per layout. Membership stays
-  the same across sizes, but layout switches show the existing move-cost
-  preview and switching back restores exact positions. On 15 cells, paging is
-  expected; author the first page rather than truncate the 60-cell board.
+  keep the installation record even for empty, hidden, or deleted groups. No
+  automatic re-seed on upgrade. (027 ships as a clean break: there are no
+  saved boards to convert.)
+- **Cells changes are explicit.** Positions are stored per board size, created
+  when needed: the seed ships all three named sizes; after that, edits write the
+  active size, and accepting a Cells change (its move-cost preview includes the
+  groups) writes the new size's missing positions once. Switching back is exact.
+  On 15 cells paging is expected; author the first page rather than truncate the
+  60-cell board.
 - **One level deep.** A group never contains a group. Built-in starter content
-  fits one page on 60/90 cells after anchors; personalized groups can page.
+  fits one page on 60/90 cells after the reserved cells; personalized groups can
+  page.
 - **One Edit mode.** Drag moves/swaps, tap opens the word card, × removes this
   placement with Undo, and tapping an available empty cell adds there. A custom
   group's delete remains explicit; built-in groups can be hidden. Undo is local
