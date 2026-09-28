@@ -51,6 +51,28 @@ export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}
       .catch(() => {});
   }
 
+  /* One network call per recording, ever: callers asking for the same
+   *  (voice, feeling, text) while a fetch is in flight share it — the
+   *  deadline race stays per-caller so a slow face tap never holds a
+   *  normal speak. */
+  const inflight = new Map();
+  const fetchOnce = async (key, endpoint, body) => {
+    if (!inflight.has(key)) {
+      inflight.set(key, (async () => {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) return null;
+        const blob = await res.blob();
+        await remember(body.voice, body.text, blob, body.feeling);
+        return blob;
+      })().catch(() => null).finally(() => inflight.delete(key)));
+    }
+    return inflight.get(key);
+  };
+
   /** One speak attempt. Returns an audio Blob, or null to mean
    *  "speak the word clips" — offline, unlicensed, over budget,
    *  slow network, or past the deadline. A late answer still lands
@@ -63,19 +85,9 @@ export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}
     if (!userId || !license || !text) return null;
     const hit = await cached(voice, text, feeling);
     if (hit) return hit;
-    const fetchP = (async () => {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ user_id: userId, license, voice, text, feeling }),
-      });
-      if (!res.ok) return null;
-      const blob = await res.blob();
-      await remember(voice, text, blob, feeling);
-      return blob;
-    })().catch(() => null);
+    const key = await urlFor(voice, text, feeling);
     const first = await Promise.race([
-      fetchP,
+      fetchOnce(key, endpoint, { user_id: userId, license, voice, text, feeling }),
       new Promise((r) => setTimeout(() => r("deadline"), deadline)),
     ]);
     return first === "deadline" ? null : first;

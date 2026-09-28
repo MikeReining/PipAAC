@@ -7,7 +7,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { applyTransform } from "../../public/shared/txbar.mjs";
+import { applyTransform, wordLemmaCandidates } from "../../public/shared/txbar.mjs";
 
 const fresh = () => ({
   sentence: [{ kind: "sense", id: "s1", text: "i" }, { kind: "sense", id: "s2", text: "go" }, { kind: "sense", id: "s3", text: "park" }],
@@ -54,4 +54,16 @@ test("present returns the bar and speaks present", () => {
   applyTransform(sentence, "I'm not going to school.", "future", st);
   applyTransform(sentence, "I don't go to school.", "present", st);
   assert.equal(st.tense, "present");
+});
+
+/* Display-only lemma candidates — the label table is still the arbiter;
+ * these just give it the forms a transform will emit. */
+test("lemma candidates cover past forms, inflections, irregulars", () => {
+  assert.equal(wordLemmaCandidates("wanted").includes("want"), true); // loved -> love order
+  assert.equal(wordLemmaCandidates("went")[1], "go");
+  assert.equal(wordLemmaCandidates("coming").includes("come"), true);
+  assert.equal(wordLemmaCandidates("stopped").includes("stop"), true);
+  assert.equal(wordLemmaCandidates("babies").includes("baby"), true);
+  assert.equal(wordLemmaCandidates("burger")[0], "burger"); // unchanged words try first
+  assert.equal(wordLemmaCandidates("i").length, 1); // nothing spurious
 });

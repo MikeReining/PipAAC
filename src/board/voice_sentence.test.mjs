@@ -125,6 +125,27 @@ test("feeling goes in the request and splits the local cache", async () => {
   });
 });
 
+test("concurrent requests for one sentence share one fetch", async () => {
+  let release;
+  const gate = new Promise((r) => { release = r; });
+  await withEnv(async () => {
+    let calls = 0;
+    globalThis.fetch = async () => {
+      calls++;
+      await gate;
+      return new Response(new Blob(["AUDIO"]));
+    };
+    const vs = voiceSentence({ deadlineMs: 500 });
+    const p1 = vs.request(ARGS);
+    const p2 = vs.request(ARGS); // same key while the first is in flight
+    release();
+    const [b1, b2] = await Promise.all([p1, p2]);
+    assert.equal(await b1.text(), "AUDIO");
+    assert.equal(await b2.text(), "AUDIO");
+    assert.equal(calls, 1); // one Grok generation per recording, ever
+  });
+});
+
 test("a per-request deadline overrides the module default", async () => {
   let release;
   const gate = new Promise((r) => { release = r; });

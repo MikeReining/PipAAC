@@ -45,9 +45,10 @@ import {
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
+import { normalizeV1 } from "./shared/normalize.mjs";
 import { PIN_RE, checkPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
-import { applyTransform } from "./shared/txbar.mjs";
+import { applyTransform, wordLemmaCandidates } from "./shared/txbar.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
 import {
   FEELINGS, expressiveOn, loadFeelingData, suggestedFeeling,
@@ -318,11 +319,19 @@ const voiceLicense = () => {
 function speak(text) {
   // device_tts lane — used for personal entities (§7.3). The utterance
   // carries the profile locale so names and typed words are spoken in
-  // the profile's language, not the device's.
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = locale;
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
+  // the profile's language, not the device's. Returns a promise that
+  // resolves when the word ends — the sentence loop awaits it, or every
+  // queued speak() cancels the last and only the final word is heard.
+  // The timeout is a wedge guard only (a stuck engine can't hang Speak).
+  return new Promise((resolve) => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = locale;
+    u.onend = resolve;
+    u.onerror = resolve;
+    setTimeout(resolve, Math.max(4000, text.length * 300));
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  });
 }
 
 /* One audio element — a new play cancels the old. Resolve the old
@@ -425,6 +434,9 @@ async function transformAndSpeak(mode) {
     const out = res?.ok ? (await res.json().catch(() => ({}))).text : null;
     if (out) {
       applyTransform(sentence, unmask(out), mode, barState);
+      for (const it of sentence) {
+        if (it.kind === "typed") it.art = artForWord(it.text);
+      }
       renderBar();
       renderStrip();
     }
@@ -439,7 +451,12 @@ async function transformAndSpeak(mode) {
 /** Sentence bar: one slot per item in order; misses hold 400 ms (§7.4).
  *  Speaking ends the logged sentence — the bar keeps its words, but the
  *  next pick opens a new sentence row. */
+/* Speaks serialize: the newest call owns the audio. A request in flight
+ * for text the bar no longer holds is dropped — never played (the blob
+ * is still cached under its own key, so nothing is wasted). */
+let speakSeq = 0;
 async function speakSentence(feeling = null) {
+  const seq = ++speakSeq;
   freshNext = freshAfterSpeak;
   // 022: Speak is sentence-final — the last word may take its absolute
   // form ("it is not my" -> "it is not mine"). Picked once, before
@@ -471,15 +488,22 @@ async function speakSentence(feeling = null) {
   // she is always heard, the feeling is the extra (025 § 2).
   let spoken = false;
   if (sentence.length >= 2 || feeling) {
+    const text = sentenceSpeakText(sentence);
     const blob = await sentenceVoice.request({
       userId: me.id,
       license: await voiceLicense(),
       voice: grokVoice,
-      text: sentenceSpeakText(sentence),
+      text,
       feeling: feeling ?? "neutral",
       // § 2: a face waits ~1 s for its feeling before neutral clips.
       deadlineMs: feeling ? 1000 : 300,
     });
+    if (seq !== speakSeq) return; // a newer speak owns the audio now
+    if (text !== sentenceSpeakText(sentence)) {
+      // The bar changed mid-request — speak what it holds now, never
+      // the stale recording.
+      return speakSentence(feeling);
+    }
     if (blob) {
       await playBlob(blob);
       spoken = true;
@@ -488,8 +512,11 @@ async function speakSentence(feeling = null) {
   if (!spoken) {
     endPlaying(); // this speak takes the element from any older one
     const gen = playGen;
+    const text = sentenceSpeakText(sentence);
     for (const item of [...sentence]) {
-      if (playGen !== gen) break; // a newer speak or tap took the element
+      // A newer speak or tap took the element, or the bar changed —
+      // either way this loop no longer speaks the bar as it stands.
+      if (playGen !== gen || sentenceSpeakText(sentence) !== text) break;
       await speakItem(item, { chained: true });
     }
   }
@@ -523,6 +550,32 @@ function metaFor(senseId) {
     );
   }
   return senseMeta.get(senseId);
+}
+
+/** Cache: normalized transform token → art key | null. A model-supplied
+ *  word that resolves to a label ("wanted" lemmas to want) shows that
+ *  sense's symbol — the bar stays readable after a transform. The item
+ *  stays typed; the art is display only. */
+const wordArt = new Map();
+function artForWord(word) {
+  const w = normalizeV1(
+    String(word).replace(/^[^\p{L}\p{N}'-]+|[^\p{L}\p{N}'-]+$/gu, ""));
+  if (!w) return null;
+  if (!wordArt.has(w)) {
+    let art = null;
+    for (const cand of wordLemmaCandidates(w)) {
+      const row = ALL(
+        db,
+        `SELECT l.sense_id FROM label l
+         WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
+         ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC LIMIT 1`,
+        [cand, locale],
+      )[0];
+      if (row) { art = metaFor(row.sense_id).art; break; }
+    }
+    wordArt.set(w, art);
+  }
+  return wordArt.get(w);
 }
 
 /** Cache: entity id → fitzgerald_role — the family's kind pick (018 D7),
@@ -599,6 +652,12 @@ function renderBar() {
         ar.appendChild(img);
         chip.classList.add("photo");
       });
+    } else if (item.art) {
+      // Typed word that resolved to a catalog sense (post-transform)
+      const img = document.createElement("img");
+      img.alt = "";
+      if (artInto(img, item.art)) chip.classList.add("photo");
+      ar.appendChild(img);
     }
     bar.insertBefore(chip, barBtns);
   });
@@ -629,9 +688,10 @@ function renderBar() {
 }
 $("bar").addEventListener("click", (e) => {
   // The in-bar Backspace/Clear have their own jobs — their taps never
-  // speak the sentence.
+  // speak the sentence. Mid-transform the press would read the stale
+  // bar aloud; the transform speaks the new one moments later.
   if (e.target.closest("#bar-btns")) return;
-  if (sentence.length) speakSentence();
+  if (sentence.length && !txBusy) speakSentence();
 });
 $("clear").addEventListener("click", () => {
   startFresh(true);
@@ -653,7 +713,9 @@ $("clear").addEventListener("click", () => {
  * as built when it already holds present; from another tense it first
  * returns the sentence to present, then speaks (§ 1d). */
 $("speak").addEventListener("click", () => {
-  if (!sentence.length) return;
+  // txBusy: a transform is mid-flight and speaks on landing — a press
+  // now would read the pre-transform bar aloud.
+  if (!sentence.length || txBusy) return;
   if (barState.tense !== "present" && navigator.onLine !== false) {
     transformAndSpeak("present");
   } else {
@@ -662,15 +724,18 @@ $("speak").addEventListener("click", () => {
 });
 $("tx-fix").addEventListener("click", () => transformAndSpeak("fix"));
 $("tx-question").addEventListener("click", () => {
+  if (txBusy) return;
   // § 4.1: ❓ on an existing question just re-speaks it.
   if (barState.question) speakSentence();
   else transformAndSpeak("question");
 });
 $("tx-past").addEventListener("click", () => {
+  if (txBusy) return;
   if (barState.tense === "past") speakSentence();
   else transformAndSpeak("past");
 });
 $("tx-future").addEventListener("click", () => {
+  if (txBusy) return;
   if (barState.tense === "future") speakSentence();
   else transformAndSpeak("future");
 });
