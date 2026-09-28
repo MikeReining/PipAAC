@@ -98,8 +98,9 @@ incumbents before launch.
 ### D4 — Full-screen groups and speech
 
 **AMENDED 2026-09-27; not built:** 027 replaces the original return-home-after-
-Speak behavior. Groups remain full screen with the Smart bar above; the core
-top row is ON by default in the new seed. Speak keeps the current group and
+Speak behavior. Groups remain full screen with the Smart bar above; the home
+board's top row shows on every group by default (a setting), with the
+yes/no/stop/help frame always. Speak keeps the current group and
 page; Home is explicit. Existing sentence fresh-start settings are unchanged.
 Owner: `docs/product/Motor_Grid_And_Art.md` § Groups; implementation: 027 A3–A4.
 
@@ -115,8 +116,8 @@ mandatory grammar band. No runtime block membership or shared edit propagation.
 
 027 owns the new-profile order: Breakfast, Lunch, Dinner, Snack, then My Words
 and 026's topic order. Only adult editing changes installed positions; time and
-history may highlight a door. Saved profiles adopt new groups/layouts through
-027's explicit preview, never a catalog-driven reshuffle.
+history may highlight a door. A catalog update never reshuffles installed
+groups. (027 ships as a clean break — no saved profiles to convert.)
 
 ### D7 — Color comes from the kind of word, never a color picker
 
