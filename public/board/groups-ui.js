@@ -17,12 +17,12 @@ import {
 
 const $ = (id) => document.getElementById(id);
 
-/* 026 D7: door icons are ink glyphs from the chrome icon family. Not
- * every door has art yet — a group with no entry keeps its seed emoji,
- * which is the visible gap list for the designer. `places` serves
- * Going out, `actions` (a pointing hand) serves Touch & sound, the
- * palette serves Colors (D7), and Who & which borrows the chrome
- * question mark. */
+/* 026 D7: door icons are ink glyphs from the chrome icon family. A
+ * group with no entry keeps its seed emoji, so a new group shows its gap
+ * until it gets a glyph. `places` serves Going out, `actions` (a pointing
+ * hand) serves Touch & sound, the palette serves Colors, `food` (fork
+ * and knife) serves Dinner, and Who & which borrows the chrome question
+ * mark. */
 const GROUP_ICONS = {
   grp_people: "/icons/groups/people.svg",
   grp_my_words: "/icons/groups/my_words.svg",
@@ -45,6 +45,19 @@ const GROUP_ICONS = {
   grp_senses: "/icons/groups/actions.svg",
   grp_colors: "/icons/groups/describing.svg",
   grp_who_which: "/icons/question.svg",
+  grp_breakfast: "/icons/groups/breakfast.svg",
+  grp_lunch: "/icons/groups/lunch.svg",
+  grp_dinner: "/icons/groups/food.svg",
+  grp_snack: "/icons/groups/snack.svg",
+  grp_fruit: "/icons/groups/fruit.svg",
+  grp_things: "/icons/groups/things.svg",
+  grp_describing: "/icons/groups/shapes.svg",
+  grp_outside: "/icons/groups/outside.svg",
+  grp_school: "/icons/groups/school.svg",
+  grp_art_music: "/icons/groups/art_music.svg",
+  grp_bathroom: "/icons/groups/bathroom.svg",
+  grp_screens: "/icons/groups/screens.svg",
+  grp_weather: "/icons/groups/weather.svg",
 };
 
 export function mountGroups({
