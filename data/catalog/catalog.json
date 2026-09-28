@@ -3654,7 +3654,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0387",
       "negation": 0
     },
     {
@@ -3663,7 +3663,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0388",
       "negation": 0
     },
     {
@@ -3672,7 +3672,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0389",
       "negation": 0
     },
     {
@@ -3681,7 +3681,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0390",
       "negation": 0
     },
     {
@@ -3690,7 +3690,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0391",
       "negation": 0
     },
     {
@@ -3699,7 +3699,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0392",
       "negation": 0
     },
     {
@@ -3708,7 +3708,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0393",
       "negation": 0
     },
     {
@@ -3717,7 +3717,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0394",
       "negation": 0
     },
     {
@@ -3726,7 +3726,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0395",
       "negation": 0
     },
     {
@@ -3735,7 +3735,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0396",
       "negation": 0
     },
     {
@@ -31543,6 +31543,76 @@
       "sha256": "1790679c1c80360df895b9e94cb19732d472b5d3ed808ceb126146cded57d75b"
     },
     {
+      "id": "img_0387",
+      "sense_id": "sns_0387",
+      "key": "symbols/knife.png",
+      "status": "approved",
+      "sha256": "b6617dcbc007cdc5627a6f2ac0b7b9f87ab8eb67b5d14e604460ff44bcaf3650"
+    },
+    {
+      "id": "img_0388",
+      "sense_id": "sns_0388",
+      "key": "symbols/napkin.png",
+      "status": "approved",
+      "sha256": "c32875335762791bbfe2c7b880355f4b8fc926a765c584c03e4d4a5f7bb82f7f"
+    },
+    {
+      "id": "img_0389",
+      "sense_id": "sns_0389",
+      "key": "symbols/bottle.png",
+      "status": "approved",
+      "sha256": "be7b81bfac7876eccedf1ec2dff5fa8ce6b6c74fb134d2cb21f5b461a51d2626"
+    },
+    {
+      "id": "img_0390",
+      "sense_id": "sns_0390",
+      "key": "symbols/straw.png",
+      "status": "approved",
+      "sha256": "e3ace7775e1b9bfc0cdc2e40879bd1217e368abdebbce581d90d66714e7bf2e9"
+    },
+    {
+      "id": "img_0391",
+      "sense_id": "sns_0391",
+      "key": "symbols/fridge.png",
+      "status": "approved",
+      "sha256": "9f15ba362a4757e745c41f0d2aa50bcb02823f8d83762db5ddfe0f1f4768d4fb"
+    },
+    {
+      "id": "img_0392",
+      "sense_id": "sns_0392",
+      "key": "symbols/microwave.png",
+      "status": "approved",
+      "sha256": "42af99d7aed539281105634626c56a92c3269a1582d6f20048612c0e6f969158"
+    },
+    {
+      "id": "img_0393",
+      "sense_id": "sns_0393",
+      "key": "symbols/backpack.png",
+      "status": "approved",
+      "sha256": "dfae4bc89fe19b2f5f722b66fec0331de73eff04b7e356d4bb2d54c76fc98a93"
+    },
+    {
+      "id": "img_0394",
+      "sense_id": "sns_0394",
+      "key": "symbols/bag.png",
+      "status": "approved",
+      "sha256": "cacd64df456662cce5fe8301263473a02b4ea7d0053270bd52201a6a90c0a396"
+    },
+    {
+      "id": "img_0395",
+      "sense_id": "sns_0395",
+      "key": "symbols/keys.png",
+      "status": "approved",
+      "sha256": "05362440a9050bdc323bcec1977ed7cc0fb745b2ae1444cfdab637ad26c77dbd"
+    },
+    {
+      "id": "img_0396",
+      "sense_id": "sns_0396",
+      "key": "symbols/wallet.png",
+      "status": "approved",
+      "sha256": "5d6949f35e14b6c596113a9a4e8570ba2f1b6336c14caa8510ba529c111ab99a"
+    },
+    {
       "id": "img_0509",
       "sense_id": "sns_0509",
       "key": "symbols/orange.png",
@@ -47597,7 +47667,7 @@
       "item_kind": "sense",
       "item_id": "sns_0091",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 11
     },
     {
       "group_id": "grp_breakfast",
@@ -47605,7 +47675,7 @@
       "item_kind": "sense",
       "item_id": "sns_0092",
       "page": 0,
-      "slot_index": 30
+      "slot_index": 41
     },
     {
       "group_id": "grp_breakfast",
@@ -47613,7 +47683,7 @@
       "item_kind": "sense",
       "item_id": "sns_0090",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 50
     },
     {
       "group_id": "grp_breakfast",
@@ -47621,7 +47691,7 @@
       "item_kind": "sense",
       "item_id": "sns_0096",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 20
     },
     {
       "group_id": "grp_breakfast",
@@ -47629,7 +47699,7 @@
       "item_kind": "sense",
       "item_id": "sns_0093",
       "page": 0,
-      "slot_index": 11
+      "slot_index": 31
     },
     {
       "group_id": "grp_breakfast",
@@ -47637,7 +47707,7 @@
       "item_kind": "sense",
       "item_id": "sns_0094",
       "page": 0,
-      "slot_index": 21
+      "slot_index": 12
     },
     {
       "group_id": "grp_breakfast",
@@ -47645,7 +47715,7 @@
       "item_kind": "sense",
       "item_id": "sns_0095",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 22
     },
     {
       "group_id": "grp_breakfast",
@@ -47653,7 +47723,7 @@
       "item_kind": "sense",
       "item_id": "sns_0089",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 30
     },
     {
       "group_id": "grp_breakfast",
@@ -47669,7 +47739,7 @@
       "item_kind": "sense",
       "item_id": "sns_0097",
       "page": 0,
-      "slot_index": 12
+      "slot_index": 40
     },
     {
       "group_id": "grp_breakfast",
@@ -47677,7 +47747,7 @@
       "item_kind": "sense",
       "item_id": "sns_0098",
       "page": 0,
-      "slot_index": 22
+      "slot_index": 21
     },
     {
       "group_id": "grp_breakfast",
@@ -47693,7 +47763,7 @@
       "item_kind": "sense",
       "item_id": "sns_0119",
       "page": 0,
-      "slot_index": 43
+      "slot_index": 42
     },
     {
       "group_id": "grp_breakfast",
@@ -47701,7 +47771,7 @@
       "item_kind": "sense",
       "item_id": "sns_0384",
       "page": 0,
-      "slot_index": 15
+      "slot_index": 14
     },
     {
       "group_id": "grp_breakfast",
@@ -47709,7 +47779,7 @@
       "item_kind": "sense",
       "item_id": "sns_0382",
       "page": 0,
-      "slot_index": 25
+      "slot_index": 34
     },
     {
       "group_id": "grp_breakfast",
@@ -47717,7 +47787,7 @@
       "item_kind": "sense",
       "item_id": "sns_0383",
       "page": 0,
-      "slot_index": 35
+      "slot_index": 44
     },
     {
       "group_id": "grp_breakfast",
@@ -47725,7 +47795,7 @@
       "item_kind": "sense",
       "item_id": "sns_0386",
       "page": 0,
-      "slot_index": 45
+      "slot_index": 24
     },
     {
       "group_id": "grp_breakfast",
@@ -47733,7 +47803,7 @@
       "item_kind": "sense",
       "item_id": "sns_0385",
       "page": 0,
-      "slot_index": 55
+      "slot_index": 15
     },
     {
       "group_id": "grp_breakfast",
@@ -47741,7 +47811,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 16
+      "slot_index": 47
     },
     {
       "group_id": "grp_breakfast",
@@ -47765,7 +47835,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 46
+      "slot_index": 56
     },
     {
       "group_id": "grp_breakfast",
@@ -47773,7 +47843,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 56
+      "slot_index": 46
     },
     {
       "group_id": "grp_breakfast",
@@ -47781,7 +47851,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 38
+      "slot_index": 16
     },
     {
       "group_id": "grp_breakfast",
@@ -47789,7 +47859,7 @@
       "item_kind": "sense",
       "item_id": "sns_0133",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 48
     },
     {
       "group_id": "grp_breakfast",
@@ -47821,7 +47891,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 28
     },
     {
       "group_id": "grp_breakfast",
@@ -47829,7 +47899,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 18
+      "slot_index": 58
     },
     {
       "group_id": "grp_breakfast",
@@ -47837,7 +47907,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 0,
-      "slot_index": 28
+      "slot_index": 29
     },
     {
       "group_id": "grp_breakfast",
@@ -47845,7 +47915,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 18
     },
     {
       "group_id": "grp_breakfast",
@@ -47853,7 +47923,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 38
     },
     {
       "group_id": "grp_lunch",
@@ -47893,7 +47963,7 @@
       "item_kind": "sense",
       "item_id": "sns_0660",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 30
     },
     {
       "group_id": "grp_lunch",
@@ -47901,7 +47971,7 @@
       "item_kind": "sense",
       "item_id": "sns_0103",
       "page": 0,
-      "slot_index": 30
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
@@ -47909,7 +47979,7 @@
       "item_kind": "sense",
       "item_id": "sns_0100",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 21
     },
     {
       "group_id": "grp_lunch",
@@ -47917,7 +47987,7 @@
       "item_kind": "sense",
       "item_id": "sns_0101",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 22
     },
     {
       "group_id": "grp_lunch",
@@ -47925,7 +47995,7 @@
       "item_kind": "sense",
       "item_id": "sns_0102",
       "page": 0,
-      "slot_index": 11
+      "slot_index": 42
     },
     {
       "group_id": "grp_lunch",
@@ -47933,7 +48003,7 @@
       "item_kind": "sense",
       "item_id": "sns_0104",
       "page": 0,
-      "slot_index": 21
+      "slot_index": 40
     },
     {
       "group_id": "grp_lunch",
@@ -47941,7 +48011,7 @@
       "item_kind": "sense",
       "item_id": "sns_0105",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 33
     },
     {
       "group_id": "grp_lunch",
@@ -47949,7 +48019,7 @@
       "item_kind": "sense",
       "item_id": "sns_0108",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 31
     },
     {
       "group_id": "grp_lunch",
@@ -47965,7 +48035,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 12
+      "slot_index": 20
     },
     {
       "group_id": "grp_lunch",
@@ -47973,7 +48043,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 22
+      "slot_index": 41
     },
     {
       "group_id": "grp_lunch",
@@ -47981,7 +48051,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 13
     },
     {
       "group_id": "grp_lunch",
@@ -47989,7 +48059,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 32
     },
     {
       "group_id": "grp_lunch",
@@ -47997,7 +48067,7 @@
       "item_kind": "sense",
       "item_id": "sns_0662",
       "page": 0,
-      "slot_index": 13
+      "slot_index": 23
     },
     {
       "group_id": "grp_lunch",
@@ -48005,7 +48075,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 23
+      "slot_index": 12
     },
     {
       "group_id": "grp_lunch",
@@ -48013,7 +48083,7 @@
       "item_kind": "sense",
       "item_id": "sns_0110",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 50
     },
     {
       "group_id": "grp_lunch",
@@ -48029,7 +48099,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 0,
-      "slot_index": 14
+      "slot_index": 45
     },
     {
       "group_id": "grp_lunch",
@@ -48037,7 +48107,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 0,
-      "slot_index": 24
+      "slot_index": 35
     },
     {
       "group_id": "grp_lunch",
@@ -48045,7 +48115,7 @@
       "item_kind": "sense",
       "item_id": "sns_0384",
       "page": 0,
-      "slot_index": 15
+      "slot_index": 14
     },
     {
       "group_id": "grp_lunch",
@@ -48053,7 +48123,7 @@
       "item_kind": "sense",
       "item_id": "sns_0382",
       "page": 0,
-      "slot_index": 25
+      "slot_index": 34
     },
     {
       "group_id": "grp_lunch",
@@ -48061,7 +48131,7 @@
       "item_kind": "sense",
       "item_id": "sns_0383",
       "page": 0,
-      "slot_index": 35
+      "slot_index": 44
     },
     {
       "group_id": "grp_lunch",
@@ -48069,7 +48139,7 @@
       "item_kind": "sense",
       "item_id": "sns_0386",
       "page": 0,
-      "slot_index": 45
+      "slot_index": 24
     },
     {
       "group_id": "grp_lunch",
@@ -48077,7 +48147,7 @@
       "item_kind": "sense",
       "item_id": "sns_0385",
       "page": 0,
-      "slot_index": 55
+      "slot_index": 15
     },
     {
       "group_id": "grp_lunch",
@@ -48085,7 +48155,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 16
+      "slot_index": 47
     },
     {
       "group_id": "grp_lunch",
@@ -48109,7 +48179,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 46
+      "slot_index": 56
     },
     {
       "group_id": "grp_lunch",
@@ -48117,7 +48187,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 56
+      "slot_index": 46
     },
     {
       "group_id": "grp_lunch",
@@ -48125,7 +48195,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 38
+      "slot_index": 16
     },
     {
       "group_id": "grp_lunch",
@@ -48157,7 +48227,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 28
     },
     {
       "group_id": "grp_lunch",
@@ -48165,7 +48235,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 18
+      "slot_index": 58
     },
     {
       "group_id": "grp_lunch",
@@ -48173,7 +48243,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 18
     },
     {
       "group_id": "grp_lunch",
@@ -48181,7 +48251,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 38
     },
     {
       "group_id": "grp_dinner",
@@ -48221,7 +48291,7 @@
       "item_kind": "sense",
       "item_id": "sns_0660",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 30
     },
     {
       "group_id": "grp_dinner",
@@ -48229,7 +48299,7 @@
       "item_kind": "sense",
       "item_id": "sns_0249",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 50
     },
     {
       "group_id": "grp_dinner",
@@ -48237,7 +48307,7 @@
       "item_kind": "sense",
       "item_id": "sns_0100",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 21
     },
     {
       "group_id": "grp_dinner",
@@ -48245,7 +48315,7 @@
       "item_kind": "sense",
       "item_id": "sns_0101",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 22
     },
     {
       "group_id": "grp_dinner",
@@ -48253,7 +48323,7 @@
       "item_kind": "sense",
       "item_id": "sns_0102",
       "page": 0,
-      "slot_index": 11
+      "slot_index": 42
     },
     {
       "group_id": "grp_dinner",
@@ -48261,7 +48331,7 @@
       "item_kind": "sense",
       "item_id": "sns_0104",
       "page": 0,
-      "slot_index": 21
+      "slot_index": 40
     },
     {
       "group_id": "grp_dinner",
@@ -48269,7 +48339,7 @@
       "item_kind": "sense",
       "item_id": "sns_0105",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 33
     },
     {
       "group_id": "grp_dinner",
@@ -48277,7 +48347,7 @@
       "item_kind": "sense",
       "item_id": "sns_0108",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 31
     },
     {
       "group_id": "grp_dinner",
@@ -48293,7 +48363,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 12
+      "slot_index": 20
     },
     {
       "group_id": "grp_dinner",
@@ -48301,7 +48371,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 22
+      "slot_index": 41
     },
     {
       "group_id": "grp_dinner",
@@ -48309,7 +48379,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 13
     },
     {
       "group_id": "grp_dinner",
@@ -48317,7 +48387,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 32
     },
     {
       "group_id": "grp_dinner",
@@ -48325,7 +48395,7 @@
       "item_kind": "sense",
       "item_id": "sns_0662",
       "page": 0,
-      "slot_index": 13
+      "slot_index": 23
     },
     {
       "group_id": "grp_dinner",
@@ -48333,7 +48403,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 23
+      "slot_index": 12
     },
     {
       "group_id": "grp_dinner",
@@ -48349,7 +48419,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 0,
-      "slot_index": 14
+      "slot_index": 45
     },
     {
       "group_id": "grp_dinner",
@@ -48357,7 +48427,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 0,
-      "slot_index": 24
+      "slot_index": 35
     },
     {
       "group_id": "grp_dinner",
@@ -48365,7 +48435,7 @@
       "item_kind": "sense",
       "item_id": "sns_0384",
       "page": 0,
-      "slot_index": 15
+      "slot_index": 14
     },
     {
       "group_id": "grp_dinner",
@@ -48373,7 +48443,7 @@
       "item_kind": "sense",
       "item_id": "sns_0382",
       "page": 0,
-      "slot_index": 25
+      "slot_index": 34
     },
     {
       "group_id": "grp_dinner",
@@ -48381,7 +48451,7 @@
       "item_kind": "sense",
       "item_id": "sns_0383",
       "page": 0,
-      "slot_index": 35
+      "slot_index": 44
     },
     {
       "group_id": "grp_dinner",
@@ -48389,7 +48459,7 @@
       "item_kind": "sense",
       "item_id": "sns_0386",
       "page": 0,
-      "slot_index": 45
+      "slot_index": 24
     },
     {
       "group_id": "grp_dinner",
@@ -48397,7 +48467,7 @@
       "item_kind": "sense",
       "item_id": "sns_0385",
       "page": 0,
-      "slot_index": 55
+      "slot_index": 15
     },
     {
       "group_id": "grp_dinner",
@@ -48405,7 +48475,7 @@
       "item_kind": "sense",
       "item_id": "sns_0387",
       "page": 0,
-      "slot_index": 16
+      "slot_index": 54
     },
     {
       "group_id": "grp_dinner",
@@ -48413,7 +48483,7 @@
       "item_kind": "sense",
       "item_id": "sns_0388",
       "page": 0,
-      "slot_index": 26
+      "slot_index": 25
     },
     {
       "group_id": "grp_dinner",
@@ -48477,7 +48547,7 @@
       "item_kind": "sense",
       "item_id": "sns_0114",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 21
     },
     {
       "group_id": "grp_snack",
@@ -48485,7 +48555,7 @@
       "item_kind": "sense",
       "item_id": "sns_0110",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 50
     },
     {
       "group_id": "grp_snack",
@@ -48493,7 +48563,7 @@
       "item_kind": "sense",
       "item_id": "sns_0119",
       "page": 0,
-      "slot_index": 43
+      "slot_index": 42
     },
     {
       "group_id": "grp_snack",
@@ -48501,7 +48571,7 @@
       "item_kind": "sense",
       "item_id": "sns_0118",
       "page": 0,
-      "slot_index": 14
+      "slot_index": 41
     },
     {
       "group_id": "grp_snack",
@@ -48509,7 +48579,7 @@
       "item_kind": "sense",
       "item_id": "sns_0117",
       "page": 0,
-      "slot_index": 24
+      "slot_index": 31
     },
     {
       "group_id": "grp_snack",
@@ -48517,7 +48587,7 @@
       "item_kind": "sense",
       "item_id": "sns_0116",
       "page": 0,
-      "slot_index": 34
+      "slot_index": 11
     },
     {
       "group_id": "grp_snack",
@@ -48525,7 +48595,7 @@
       "item_kind": "sense",
       "item_id": "sns_0120",
       "page": 0,
-      "slot_index": 44
+      "slot_index": 13
     },
     {
       "group_id": "grp_snack",
@@ -48541,7 +48611,7 @@
       "item_kind": "sense",
       "item_id": "sns_0124",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 20
     },
     {
       "group_id": "grp_snack",
@@ -48549,7 +48619,7 @@
       "item_kind": "sense",
       "item_id": "sns_0121",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 40
     },
     {
       "group_id": "grp_snack",
@@ -48557,7 +48627,7 @@
       "item_kind": "sense",
       "item_id": "sns_0122",
       "page": 0,
-      "slot_index": 11
+      "slot_index": 22
     },
     {
       "group_id": "grp_snack",
@@ -48565,7 +48635,7 @@
       "item_kind": "sense",
       "item_id": "sns_0123",
       "page": 0,
-      "slot_index": 21
+      "slot_index": 12
     },
     {
       "group_id": "grp_snack",
@@ -48573,7 +48643,7 @@
       "item_kind": "sense",
       "item_id": "sns_0126",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 32
     },
     {
       "group_id": "grp_snack",
@@ -48589,7 +48659,7 @@
       "item_kind": "sense",
       "item_id": "sns_0384",
       "page": 0,
-      "slot_index": 15
+      "slot_index": 14
     },
     {
       "group_id": "grp_snack",
@@ -48597,7 +48667,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 16
+      "slot_index": 47
     },
     {
       "group_id": "grp_snack",
@@ -48621,7 +48691,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 46
+      "slot_index": 56
     },
     {
       "group_id": "grp_snack",
@@ -48629,7 +48699,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 56
+      "slot_index": 46
     },
     {
       "group_id": "grp_snack",
@@ -48637,7 +48707,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 38
+      "slot_index": 16
     },
     {
       "group_id": "grp_snack",
@@ -48645,7 +48715,7 @@
       "item_kind": "sense",
       "item_id": "sns_0133",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 48
     },
     {
       "group_id": "grp_snack",
@@ -48677,7 +48747,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 28
     },
     {
       "group_id": "grp_snack",
@@ -48685,7 +48755,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 18
+      "slot_index": 58
     },
     {
       "group_id": "grp_snack",
@@ -48693,7 +48763,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 0,
-      "slot_index": 28
+      "slot_index": 29
     },
     {
       "group_id": "grp_snack",
@@ -48701,7 +48771,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 18
     },
     {
       "group_id": "grp_snack",
@@ -48709,7 +48779,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 38
     },
     {
       "group_id": "grp_social",
@@ -52101,7 +52171,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 28
     },
     {
       "group_id": "grp_drinks",
@@ -52109,7 +52179,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 18
+      "slot_index": 58
     },
     {
       "group_id": "grp_drinks",
@@ -52117,7 +52187,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 0,
-      "slot_index": 28
+      "slot_index": 29
     },
     {
       "group_id": "grp_drinks",
@@ -52125,7 +52195,7 @@
       "item_kind": "sense",
       "item_id": "sns_0087",
       "page": 0,
-      "slot_index": 38
+      "slot_index": 47
     },
     {
       "group_id": "grp_drinks",
@@ -52133,7 +52203,7 @@
       "item_kind": "sense",
       "item_id": "sns_0384",
       "page": 0,
-      "slot_index": 15
+      "slot_index": 14
     },
     {
       "group_id": "grp_drinks",
@@ -52141,7 +52211,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 18
     },
     {
       "group_id": "grp_drinks",
@@ -52149,7 +52219,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 38
     },
     {
       "group_id": "grp_drinks",
@@ -52157,7 +52227,7 @@
       "item_kind": "sense",
       "item_id": "sns_0194",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 48
     },
     {
       "group_id": "grp_fruit",
@@ -52165,7 +52235,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 16
+      "slot_index": 47
     },
     {
       "group_id": "grp_fruit",
@@ -52189,7 +52259,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 46
+      "slot_index": 56
     },
     {
       "group_id": "grp_fruit",
@@ -52197,7 +52267,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 56
+      "slot_index": 46
     },
     {
       "group_id": "grp_fruit",
@@ -52205,7 +52275,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 38
+      "slot_index": 16
     },
     {
       "group_id": "grp_fruit",
@@ -52213,7 +52283,7 @@
       "item_kind": "sense",
       "item_id": "sns_0133",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 48
     },
     {
       "group_id": "grp_art_music",
@@ -53749,7 +53819,7 @@
       "item_kind": "sense",
       "item_id": "sns_0091",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 60
     },
     {
       "group_id": "grp_breakfast",
@@ -53757,7 +53827,7 @@
       "item_kind": "sense",
       "item_id": "sns_0092",
       "page": 0,
-      "slot_index": 30
+      "slot_index": 11
     },
     {
       "group_id": "grp_breakfast",
@@ -53765,7 +53835,7 @@
       "item_kind": "sense",
       "item_id": "sns_0090",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 50
     },
     {
       "group_id": "grp_breakfast",
@@ -53773,7 +53843,7 @@
       "item_kind": "sense",
       "item_id": "sns_0096",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 20
     },
     {
       "group_id": "grp_breakfast",
@@ -53781,7 +53851,7 @@
       "item_kind": "sense",
       "item_id": "sns_0093",
       "page": 0,
-      "slot_index": 60
+      "slot_index": 80
     },
     {
       "group_id": "grp_breakfast",
@@ -53789,7 +53859,7 @@
       "item_kind": "sense",
       "item_id": "sns_0094",
       "page": 0,
-      "slot_index": 70
+      "slot_index": 31
     },
     {
       "group_id": "grp_breakfast",
@@ -53797,7 +53867,7 @@
       "item_kind": "sense",
       "item_id": "sns_0095",
       "page": 0,
-      "slot_index": 80
+      "slot_index": 41
     },
     {
       "group_id": "grp_breakfast",
@@ -53805,7 +53875,7 @@
       "item_kind": "sense",
       "item_id": "sns_0089",
       "page": 0,
-      "slot_index": 11
+      "slot_index": 30
     },
     {
       "group_id": "grp_breakfast",
@@ -53821,7 +53891,7 @@
       "item_kind": "sense",
       "item_id": "sns_0097",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 40
     },
     {
       "group_id": "grp_breakfast",
@@ -53829,7 +53899,7 @@
       "item_kind": "sense",
       "item_id": "sns_0098",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 70
     },
     {
       "group_id": "grp_breakfast",
@@ -53845,7 +53915,7 @@
       "item_kind": "sense",
       "item_id": "sns_0119",
       "page": 0,
-      "slot_index": 22
+      "slot_index": 61
     },
     {
       "group_id": "grp_breakfast",
@@ -53861,7 +53931,7 @@
       "item_kind": "sense",
       "item_id": "sns_0382",
       "page": 0,
-      "slot_index": 26
+      "slot_index": 36
     },
     {
       "group_id": "grp_breakfast",
@@ -53869,7 +53939,7 @@
       "item_kind": "sense",
       "item_id": "sns_0383",
       "page": 0,
-      "slot_index": 36
+      "slot_index": 46
     },
     {
       "group_id": "grp_breakfast",
@@ -53877,7 +53947,7 @@
       "item_kind": "sense",
       "item_id": "sns_0386",
       "page": 0,
-      "slot_index": 46
+      "slot_index": 26
     },
     {
       "group_id": "grp_breakfast",
@@ -53885,7 +53955,7 @@
       "item_kind": "sense",
       "item_id": "sns_0385",
       "page": 0,
-      "slot_index": 56
+      "slot_index": 66
     },
     {
       "group_id": "grp_breakfast",
@@ -53893,7 +53963,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 17
+      "slot_index": 77
     },
     {
       "group_id": "grp_breakfast",
@@ -53917,7 +53987,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 67
     },
     {
       "group_id": "grp_breakfast",
@@ -53925,7 +53995,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 67
+      "slot_index": 47
     },
     {
       "group_id": "grp_breakfast",
@@ -53933,7 +54003,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 77
+      "slot_index": 17
     },
     {
       "group_id": "grp_breakfast",
@@ -53973,7 +54043,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 68
     },
     {
       "group_id": "grp_breakfast",
@@ -53981,7 +54051,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 29
     },
     {
       "group_id": "grp_breakfast",
@@ -53989,7 +54059,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 0,
-      "slot_index": 68
+      "slot_index": 59
     },
     {
       "group_id": "grp_breakfast",
@@ -53997,7 +54067,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 88
+      "slot_index": 58
     },
     {
       "group_id": "grp_breakfast",
@@ -54005,7 +54075,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 78
     },
     {
       "group_id": "grp_lunch",
@@ -54045,7 +54115,7 @@
       "item_kind": "sense",
       "item_id": "sns_0660",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 30
     },
     {
       "group_id": "grp_lunch",
@@ -54053,7 +54123,7 @@
       "item_kind": "sense",
       "item_id": "sns_0103",
       "page": 0,
-      "slot_index": 30
+      "slot_index": 60
     },
     {
       "group_id": "grp_lunch",
@@ -54061,7 +54131,7 @@
       "item_kind": "sense",
       "item_id": "sns_0100",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 70
     },
     {
       "group_id": "grp_lunch",
@@ -54069,7 +54139,7 @@
       "item_kind": "sense",
       "item_id": "sns_0101",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 41
     },
     {
       "group_id": "grp_lunch",
@@ -54077,7 +54147,7 @@
       "item_kind": "sense",
       "item_id": "sns_0102",
       "page": 0,
-      "slot_index": 60
+      "slot_index": 61
     },
     {
       "group_id": "grp_lunch",
@@ -54085,7 +54155,7 @@
       "item_kind": "sense",
       "item_id": "sns_0104",
       "page": 0,
-      "slot_index": 70
+      "slot_index": 40
     },
     {
       "group_id": "grp_lunch",
@@ -54093,7 +54163,7 @@
       "item_kind": "sense",
       "item_id": "sns_0105",
       "page": 0,
-      "slot_index": 80
+      "slot_index": 12
     },
     {
       "group_id": "grp_lunch",
@@ -54101,7 +54171,7 @@
       "item_kind": "sense",
       "item_id": "sns_0108",
       "page": 0,
-      "slot_index": 11
+      "slot_index": 80
     },
     {
       "group_id": "grp_lunch",
@@ -54117,7 +54187,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 20
     },
     {
       "group_id": "grp_lunch",
@@ -54125,7 +54195,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
@@ -54133,7 +54203,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 51
+      "slot_index": 71
     },
     {
       "group_id": "grp_lunch",
@@ -54141,7 +54211,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 61
+      "slot_index": 51
     },
     {
       "group_id": "grp_lunch",
@@ -54149,7 +54219,7 @@
       "item_kind": "sense",
       "item_id": "sns_0662",
       "page": 0,
-      "slot_index": 71
+      "slot_index": 81
     },
     {
       "group_id": "grp_lunch",
@@ -54157,7 +54227,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 81
+      "slot_index": 31
     },
     {
       "group_id": "grp_lunch",
@@ -54165,7 +54235,7 @@
       "item_kind": "sense",
       "item_id": "sns_0110",
       "page": 0,
-      "slot_index": 12
+      "slot_index": 50
     },
     {
       "group_id": "grp_lunch",
@@ -54181,7 +54251,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 42
     },
     {
       "group_id": "grp_lunch",
@@ -54189,7 +54259,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 32
     },
     {
       "group_id": "grp_lunch",
@@ -54205,7 +54275,7 @@
       "item_kind": "sense",
       "item_id": "sns_0382",
       "page": 0,
-      "slot_index": 26
+      "slot_index": 36
     },
     {
       "group_id": "grp_lunch",
@@ -54213,7 +54283,7 @@
       "item_kind": "sense",
       "item_id": "sns_0383",
       "page": 0,
-      "slot_index": 36
+      "slot_index": 46
     },
     {
       "group_id": "grp_lunch",
@@ -54221,7 +54291,7 @@
       "item_kind": "sense",
       "item_id": "sns_0386",
       "page": 0,
-      "slot_index": 46
+      "slot_index": 26
     },
     {
       "group_id": "grp_lunch",
@@ -54229,7 +54299,7 @@
       "item_kind": "sense",
       "item_id": "sns_0385",
       "page": 0,
-      "slot_index": 56
+      "slot_index": 66
     },
     {
       "group_id": "grp_lunch",
@@ -54237,7 +54307,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 17
+      "slot_index": 77
     },
     {
       "group_id": "grp_lunch",
@@ -54261,7 +54331,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 67
     },
     {
       "group_id": "grp_lunch",
@@ -54269,7 +54339,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 67
+      "slot_index": 47
     },
     {
       "group_id": "grp_lunch",
@@ -54277,7 +54347,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 77
+      "slot_index": 17
     },
     {
       "group_id": "grp_lunch",
@@ -54309,7 +54379,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 68
     },
     {
       "group_id": "grp_lunch",
@@ -54317,7 +54387,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 29
     },
     {
       "group_id": "grp_lunch",
@@ -54325,7 +54395,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 88
+      "slot_index": 58
     },
     {
       "group_id": "grp_lunch",
@@ -54333,7 +54403,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 78
     },
     {
       "group_id": "grp_dinner",
@@ -54373,7 +54443,7 @@
       "item_kind": "sense",
       "item_id": "sns_0660",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 30
     },
     {
       "group_id": "grp_dinner",
@@ -54381,7 +54451,7 @@
       "item_kind": "sense",
       "item_id": "sns_0249",
       "page": 0,
-      "slot_index": 12
+      "slot_index": 50
     },
     {
       "group_id": "grp_dinner",
@@ -54389,7 +54459,7 @@
       "item_kind": "sense",
       "item_id": "sns_0100",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 70
     },
     {
       "group_id": "grp_dinner",
@@ -54397,7 +54467,7 @@
       "item_kind": "sense",
       "item_id": "sns_0101",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 41
     },
     {
       "group_id": "grp_dinner",
@@ -54405,7 +54475,7 @@
       "item_kind": "sense",
       "item_id": "sns_0102",
       "page": 0,
-      "slot_index": 60
+      "slot_index": 61
     },
     {
       "group_id": "grp_dinner",
@@ -54413,7 +54483,7 @@
       "item_kind": "sense",
       "item_id": "sns_0104",
       "page": 0,
-      "slot_index": 70
+      "slot_index": 40
     },
     {
       "group_id": "grp_dinner",
@@ -54421,7 +54491,7 @@
       "item_kind": "sense",
       "item_id": "sns_0105",
       "page": 0,
-      "slot_index": 80
+      "slot_index": 12
     },
     {
       "group_id": "grp_dinner",
@@ -54429,7 +54499,7 @@
       "item_kind": "sense",
       "item_id": "sns_0108",
       "page": 0,
-      "slot_index": 11
+      "slot_index": 80
     },
     {
       "group_id": "grp_dinner",
@@ -54445,7 +54515,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 20
     },
     {
       "group_id": "grp_dinner",
@@ -54453,7 +54523,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 11
     },
     {
       "group_id": "grp_dinner",
@@ -54461,7 +54531,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 51
+      "slot_index": 71
     },
     {
       "group_id": "grp_dinner",
@@ -54469,7 +54539,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 61
+      "slot_index": 51
     },
     {
       "group_id": "grp_dinner",
@@ -54477,7 +54547,7 @@
       "item_kind": "sense",
       "item_id": "sns_0662",
       "page": 0,
-      "slot_index": 71
+      "slot_index": 81
     },
     {
       "group_id": "grp_dinner",
@@ -54485,7 +54555,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 81
+      "slot_index": 31
     },
     {
       "group_id": "grp_dinner",
@@ -54501,7 +54571,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 42
     },
     {
       "group_id": "grp_dinner",
@@ -54509,7 +54579,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 32
     },
     {
       "group_id": "grp_dinner",
@@ -54525,7 +54595,7 @@
       "item_kind": "sense",
       "item_id": "sns_0382",
       "page": 0,
-      "slot_index": 26
+      "slot_index": 36
     },
     {
       "group_id": "grp_dinner",
@@ -54533,7 +54603,7 @@
       "item_kind": "sense",
       "item_id": "sns_0383",
       "page": 0,
-      "slot_index": 36
+      "slot_index": 46
     },
     {
       "group_id": "grp_dinner",
@@ -54541,7 +54611,7 @@
       "item_kind": "sense",
       "item_id": "sns_0386",
       "page": 0,
-      "slot_index": 46
+      "slot_index": 26
     },
     {
       "group_id": "grp_dinner",
@@ -54549,7 +54619,7 @@
       "item_kind": "sense",
       "item_id": "sns_0385",
       "page": 0,
-      "slot_index": 56
+      "slot_index": 66
     },
     {
       "group_id": "grp_dinner",
@@ -54557,7 +54627,7 @@
       "item_kind": "sense",
       "item_id": "sns_0387",
       "page": 0,
-      "slot_index": 66
+      "slot_index": 56
     },
     {
       "group_id": "grp_dinner",
@@ -54629,7 +54699,7 @@
       "item_kind": "sense",
       "item_id": "sns_0114",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 70
     },
     {
       "group_id": "grp_snack",
@@ -54637,7 +54707,7 @@
       "item_kind": "sense",
       "item_id": "sns_0110",
       "page": 0,
-      "slot_index": 12
+      "slot_index": 50
     },
     {
       "group_id": "grp_snack",
@@ -54645,7 +54715,7 @@
       "item_kind": "sense",
       "item_id": "sns_0119",
       "page": 0,
-      "slot_index": 22
+      "slot_index": 61
     },
     {
       "group_id": "grp_snack",
@@ -54653,7 +54723,7 @@
       "item_kind": "sense",
       "item_id": "sns_0118",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 11
     },
     {
       "group_id": "grp_snack",
@@ -54661,7 +54731,7 @@
       "item_kind": "sense",
       "item_id": "sns_0117",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 80
     },
     {
       "group_id": "grp_snack",
@@ -54669,7 +54739,7 @@
       "item_kind": "sense",
       "item_id": "sns_0116",
       "page": 0,
-      "slot_index": 62
+      "slot_index": 60
     },
     {
       "group_id": "grp_snack",
@@ -54677,7 +54747,7 @@
       "item_kind": "sense",
       "item_id": "sns_0120",
       "page": 0,
-      "slot_index": 72
+      "slot_index": 71
     },
     {
       "group_id": "grp_snack",
@@ -54693,7 +54763,7 @@
       "item_kind": "sense",
       "item_id": "sns_0124",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 20
     },
     {
       "group_id": "grp_snack",
@@ -54701,7 +54771,7 @@
       "item_kind": "sense",
       "item_id": "sns_0121",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 40
     },
     {
       "group_id": "grp_snack",
@@ -54709,7 +54779,7 @@
       "item_kind": "sense",
       "item_id": "sns_0122",
       "page": 0,
-      "slot_index": 60
+      "slot_index": 41
     },
     {
       "group_id": "grp_snack",
@@ -54717,7 +54787,7 @@
       "item_kind": "sense",
       "item_id": "sns_0123",
       "page": 0,
-      "slot_index": 70
+      "slot_index": 31
     },
     {
       "group_id": "grp_snack",
@@ -54725,7 +54795,7 @@
       "item_kind": "sense",
       "item_id": "sns_0126",
       "page": 0,
-      "slot_index": 80
+      "slot_index": 51
     },
     {
       "group_id": "grp_snack",
@@ -54749,7 +54819,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 17
+      "slot_index": 77
     },
     {
       "group_id": "grp_snack",
@@ -54773,7 +54843,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 67
     },
     {
       "group_id": "grp_snack",
@@ -54781,7 +54851,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 67
+      "slot_index": 47
     },
     {
       "group_id": "grp_snack",
@@ -54789,7 +54859,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 77
+      "slot_index": 17
     },
     {
       "group_id": "grp_snack",
@@ -54829,7 +54899,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 68
     },
     {
       "group_id": "grp_snack",
@@ -54837,7 +54907,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 29
     },
     {
       "group_id": "grp_snack",
@@ -54845,7 +54915,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 0,
-      "slot_index": 68
+      "slot_index": 59
     },
     {
       "group_id": "grp_snack",
@@ -54853,7 +54923,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 88
+      "slot_index": 58
     },
     {
       "group_id": "grp_snack",
@@ -54861,7 +54931,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 78
     },
     {
       "group_id": "grp_social",
@@ -58253,7 +58323,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 48
+      "slot_index": 68
     },
     {
       "group_id": "grp_drinks",
@@ -58261,7 +58331,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 0,
-      "slot_index": 58
+      "slot_index": 29
     },
     {
       "group_id": "grp_drinks",
@@ -58269,7 +58339,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 0,
-      "slot_index": 68
+      "slot_index": 59
     },
     {
       "group_id": "grp_drinks",
@@ -58277,7 +58347,7 @@
       "item_kind": "sense",
       "item_id": "sns_0087",
       "page": 0,
-      "slot_index": 78
+      "slot_index": 48
     },
     {
       "group_id": "grp_drinks",
@@ -58293,7 +58363,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 0,
-      "slot_index": 88
+      "slot_index": 58
     },
     {
       "group_id": "grp_drinks",
@@ -58301,7 +58371,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 0,
-      "slot_index": 29
+      "slot_index": 78
     },
     {
       "group_id": "grp_drinks",
@@ -58309,7 +58379,7 @@
       "item_kind": "sense",
       "item_id": "sns_0194",
       "page": 0,
-      "slot_index": 59
+      "slot_index": 88
     },
     {
       "group_id": "grp_fruit",
@@ -58317,7 +58387,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 0,
-      "slot_index": 17
+      "slot_index": 77
     },
     {
       "group_id": "grp_fruit",
@@ -58341,7 +58411,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 0,
-      "slot_index": 47
+      "slot_index": 67
     },
     {
       "group_id": "grp_fruit",
@@ -58349,7 +58419,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 0,
-      "slot_index": 67
+      "slot_index": 47
     },
     {
       "group_id": "grp_fruit",
@@ -58357,7 +58427,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 0,
-      "slot_index": 77
+      "slot_index": 17
     },
     {
       "group_id": "grp_fruit",
@@ -59908,8 +59978,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0092",
-      "page": 3,
-      "slot_index": 11
+      "page": 4,
+      "slot_index": 6
     },
     {
       "group_id": "grp_breakfast",
@@ -59917,7 +59987,7 @@
       "item_kind": "sense",
       "item_id": "sns_0090",
       "page": 3,
-      "slot_index": 7
+      "slot_index": 13
     },
     {
       "group_id": "grp_breakfast",
@@ -59925,29 +59995,13 @@
       "item_kind": "sense",
       "item_id": "sns_0096",
       "page": 3,
-      "slot_index": 12
+      "slot_index": 11
     },
     {
       "group_id": "grp_breakfast",
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0093",
-      "page": 3,
-      "slot_index": 13
-    },
-    {
-      "group_id": "grp_breakfast",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0094",
-      "page": 4,
-      "slot_index": 5
-    },
-    {
-      "group_id": "grp_breakfast",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0095",
       "page": 4,
       "slot_index": 10
     },
@@ -59955,9 +60009,25 @@
       "group_id": "grp_breakfast",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0089",
+      "item_id": "sns_0094",
       "page": 4,
-      "slot_index": 6
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_breakfast",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0095",
+      "page": 4,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_breakfast",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0089",
+      "page": 3,
+      "slot_index": 7
     },
     {
       "group_id": "grp_breakfast",
@@ -59972,8 +60042,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0097",
-      "page": 4,
-      "slot_index": 7
+      "page": 3,
+      "slot_index": 12
     },
     {
       "group_id": "grp_breakfast",
@@ -59981,7 +60051,7 @@
       "item_kind": "sense",
       "item_id": "sns_0098",
       "page": 4,
-      "slot_index": 12
+      "slot_index": 5
     },
     {
       "group_id": "grp_breakfast",
@@ -60012,14 +60082,6 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0382",
-      "page": 2,
-      "slot_index": 13
-    },
-    {
-      "group_id": "grp_breakfast",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0383",
       "page": 3,
       "slot_index": 5
     },
@@ -60027,9 +60089,17 @@
       "group_id": "grp_breakfast",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0386",
+      "item_id": "sns_0383",
       "page": 3,
       "slot_index": 10
+    },
+    {
+      "group_id": "grp_breakfast",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0386",
+      "page": 2,
+      "slot_index": 13
     },
     {
       "group_id": "grp_breakfast",
@@ -60045,7 +60115,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 2,
-      "slot_index": 5
+      "slot_index": 7
     },
     {
       "group_id": "grp_breakfast",
@@ -60069,7 +60139,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 2,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_breakfast",
@@ -60077,7 +60147,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 2,
-      "slot_index": 11
+      "slot_index": 6
     },
     {
       "group_id": "grp_breakfast",
@@ -60085,7 +60155,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 2,
-      "slot_index": 7
+      "slot_index": 5
     },
     {
       "group_id": "grp_breakfast",
@@ -60125,7 +60195,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 1,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_breakfast",
@@ -60133,7 +60203,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 1,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_breakfast",
@@ -60141,7 +60211,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 1,
-      "slot_index": 7
+      "slot_index": 13
     },
     {
       "group_id": "grp_breakfast",
@@ -60149,7 +60219,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 1,
-      "slot_index": 12
+      "slot_index": 6
     },
     {
       "group_id": "grp_breakfast",
@@ -60157,7 +60227,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 1,
-      "slot_index": 13
+      "slot_index": 7
     },
     {
       "group_id": "grp_lunch",
@@ -60196,14 +60266,6 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0660",
-      "page": 1,
-      "slot_index": 7
-    },
-    {
-      "group_id": "grp_lunch",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0103",
       "page": 2,
       "slot_index": 12
     },
@@ -60211,9 +60273,17 @@
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
+      "item_id": "sns_0103",
+      "page": 3,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_lunch",
+      "layout": "grid15",
+      "item_kind": "sense",
       "item_id": "sns_0100",
       "page": 3,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_lunch",
@@ -60228,7 +60298,7 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0102",
-      "page": 3,
+      "page": 4,
       "slot_index": 7
     },
     {
@@ -60237,23 +60307,23 @@
       "item_kind": "sense",
       "item_id": "sns_0104",
       "page": 3,
-      "slot_index": 12
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0105",
-      "page": 3,
-      "slot_index": 13
+      "page": 5,
+      "slot_index": 5
     },
     {
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0108",
-      "page": 4,
-      "slot_index": 5
+      "page": 3,
+      "slot_index": 13
     },
     {
       "group_id": "grp_lunch",
@@ -60268,8 +60338,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0112",
-      "page": 4,
-      "slot_index": 6
+      "page": 1,
+      "slot_index": 13
     },
     {
       "group_id": "grp_lunch",
@@ -60277,7 +60347,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 4,
-      "slot_index": 11
+      "slot_index": 5
     },
     {
       "group_id": "grp_lunch",
@@ -60285,7 +60355,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 4,
-      "slot_index": 7
+      "slot_index": 12
     },
     {
       "group_id": "grp_lunch",
@@ -60293,7 +60363,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 4,
-      "slot_index": 12
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
@@ -60308,8 +60378,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0661",
-      "page": 5,
-      "slot_index": 5
+      "page": 4,
+      "slot_index": 6
     },
     {
       "group_id": "grp_lunch",
@@ -60333,7 +60403,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 5,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
@@ -60341,7 +60411,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 5,
-      "slot_index": 11
+      "slot_index": 6
     },
     {
       "group_id": "grp_lunch",
@@ -60356,14 +60426,6 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0382",
-      "page": 2,
-      "slot_index": 13
-    },
-    {
-      "group_id": "grp_lunch",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0383",
       "page": 3,
       "slot_index": 5
     },
@@ -60371,9 +60433,17 @@
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0386",
+      "item_id": "sns_0383",
       "page": 3,
       "slot_index": 10
+    },
+    {
+      "group_id": "grp_lunch",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0386",
+      "page": 2,
+      "slot_index": 13
     },
     {
       "group_id": "grp_lunch",
@@ -60389,7 +60459,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 2,
-      "slot_index": 5
+      "slot_index": 7
     },
     {
       "group_id": "grp_lunch",
@@ -60413,7 +60483,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 2,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
@@ -60421,7 +60491,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 2,
-      "slot_index": 11
+      "slot_index": 6
     },
     {
       "group_id": "grp_lunch",
@@ -60429,7 +60499,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 2,
-      "slot_index": 7
+      "slot_index": 5
     },
     {
       "group_id": "grp_lunch",
@@ -60461,7 +60531,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 1,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
@@ -60469,7 +60539,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 1,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_lunch",
@@ -60477,7 +60547,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 1,
-      "slot_index": 12
+      "slot_index": 6
     },
     {
       "group_id": "grp_lunch",
@@ -60485,7 +60555,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 1,
-      "slot_index": 13
+      "slot_index": 7
     },
     {
       "group_id": "grp_dinner",
@@ -60524,8 +60594,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0660",
-      "page": 1,
-      "slot_index": 7
+      "page": 2,
+      "slot_index": 12
     },
     {
       "group_id": "grp_dinner",
@@ -60541,7 +60611,7 @@
       "item_kind": "sense",
       "item_id": "sns_0100",
       "page": 3,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_dinner",
@@ -60556,7 +60626,7 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0102",
-      "page": 3,
+      "page": 4,
       "slot_index": 7
     },
     {
@@ -60565,23 +60635,23 @@
       "item_kind": "sense",
       "item_id": "sns_0104",
       "page": 3,
-      "slot_index": 12
+      "slot_index": 11
     },
     {
       "group_id": "grp_dinner",
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0105",
-      "page": 3,
-      "slot_index": 13
+      "page": 5,
+      "slot_index": 5
     },
     {
       "group_id": "grp_dinner",
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0108",
-      "page": 4,
-      "slot_index": 5
+      "page": 3,
+      "slot_index": 13
     },
     {
       "group_id": "grp_dinner",
@@ -60596,8 +60666,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0112",
-      "page": 4,
-      "slot_index": 6
+      "page": 1,
+      "slot_index": 13
     },
     {
       "group_id": "grp_dinner",
@@ -60605,7 +60675,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 4,
-      "slot_index": 11
+      "slot_index": 5
     },
     {
       "group_id": "grp_dinner",
@@ -60613,7 +60683,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 4,
-      "slot_index": 7
+      "slot_index": 12
     },
     {
       "group_id": "grp_dinner",
@@ -60621,7 +60691,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 4,
-      "slot_index": 12
+      "slot_index": 11
     },
     {
       "group_id": "grp_dinner",
@@ -60636,8 +60706,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0661",
-      "page": 5,
-      "slot_index": 5
+      "page": 4,
+      "slot_index": 6
     },
     {
       "group_id": "grp_dinner",
@@ -60653,7 +60723,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 5,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_dinner",
@@ -60661,7 +60731,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 5,
-      "slot_index": 11
+      "slot_index": 6
     },
     {
       "group_id": "grp_dinner",
@@ -60676,14 +60746,6 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0382",
-      "page": 2,
-      "slot_index": 13
-    },
-    {
-      "group_id": "grp_dinner",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0383",
       "page": 3,
       "slot_index": 5
     },
@@ -60691,9 +60753,17 @@
       "group_id": "grp_dinner",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0386",
+      "item_id": "sns_0383",
       "page": 3,
       "slot_index": 10
+    },
+    {
+      "group_id": "grp_dinner",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0386",
+      "page": 2,
+      "slot_index": 13
     },
     {
       "group_id": "grp_dinner",
@@ -60804,8 +60874,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0118",
-      "page": 2,
-      "slot_index": 13
+      "page": 3,
+      "slot_index": 10
     },
     {
       "group_id": "grp_snack",
@@ -60820,8 +60890,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0116",
-      "page": 3,
-      "slot_index": 10
+      "page": 2,
+      "slot_index": 13
     },
     {
       "group_id": "grp_snack",
@@ -60837,7 +60907,7 @@
       "item_kind": "sense",
       "item_id": "sns_0115",
       "page": 3,
-      "slot_index": 11
+      "slot_index": 7
     },
     {
       "group_id": "grp_snack",
@@ -60845,7 +60915,7 @@
       "item_kind": "sense",
       "item_id": "sns_0124",
       "page": 3,
-      "slot_index": 7
+      "slot_index": 11
     },
     {
       "group_id": "grp_snack",
@@ -60860,16 +60930,16 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0122",
-      "page": 3,
-      "slot_index": 13
+      "page": 4,
+      "slot_index": 5
     },
     {
       "group_id": "grp_snack",
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0123",
-      "page": 4,
-      "slot_index": 5
+      "page": 3,
+      "slot_index": 13
     },
     {
       "group_id": "grp_snack",
@@ -60901,7 +60971,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 2,
-      "slot_index": 5
+      "slot_index": 7
     },
     {
       "group_id": "grp_snack",
@@ -60925,7 +60995,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 2,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_snack",
@@ -60933,7 +61003,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 2,
-      "slot_index": 11
+      "slot_index": 6
     },
     {
       "group_id": "grp_snack",
@@ -60941,7 +61011,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 2,
-      "slot_index": 7
+      "slot_index": 5
     },
     {
       "group_id": "grp_snack",
@@ -60981,7 +61051,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 1,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_snack",
@@ -60989,7 +61059,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 1,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_snack",
@@ -60997,7 +61067,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 1,
-      "slot_index": 7
+      "slot_index": 13
     },
     {
       "group_id": "grp_snack",
@@ -61005,7 +61075,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 1,
-      "slot_index": 12
+      "slot_index": 6
     },
     {
       "group_id": "grp_snack",
@@ -61013,7 +61083,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 1,
-      "slot_index": 13
+      "slot_index": 7
     },
     {
       "group_id": "grp_social",
@@ -64405,7 +64475,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 1,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_drinks",
@@ -64413,7 +64483,7 @@
       "item_kind": "sense",
       "item_id": "sns_0086",
       "page": 1,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_drinks",
@@ -64421,7 +64491,7 @@
       "item_kind": "sense",
       "item_id": "sns_0088",
       "page": 1,
-      "slot_index": 7
+      "slot_index": 13
     },
     {
       "group_id": "grp_drinks",
@@ -64445,7 +64515,7 @@
       "item_kind": "sense",
       "item_id": "sns_0389",
       "page": 1,
-      "slot_index": 12
+      "slot_index": 6
     },
     {
       "group_id": "grp_drinks",
@@ -64453,7 +64523,7 @@
       "item_kind": "sense",
       "item_id": "sns_0390",
       "page": 1,
-      "slot_index": 13
+      "slot_index": 7
     },
     {
       "group_id": "grp_drinks",
@@ -64469,7 +64539,7 @@
       "item_kind": "sense",
       "item_id": "sns_0127",
       "page": 2,
-      "slot_index": 5
+      "slot_index": 7
     },
     {
       "group_id": "grp_fruit",
@@ -64493,7 +64563,7 @@
       "item_kind": "sense",
       "item_id": "sns_0132",
       "page": 2,
-      "slot_index": 6
+      "slot_index": 11
     },
     {
       "group_id": "grp_fruit",
@@ -64501,7 +64571,7 @@
       "item_kind": "sense",
       "item_id": "sns_0130",
       "page": 2,
-      "slot_index": 11
+      "slot_index": 6
     },
     {
       "group_id": "grp_fruit",
@@ -64509,7 +64579,7 @@
       "item_kind": "sense",
       "item_id": "sns_0131",
       "page": 2,
-      "slot_index": 7
+      "slot_index": 5
     },
     {
       "group_id": "grp_fruit",

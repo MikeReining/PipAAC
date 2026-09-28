@@ -90,6 +90,10 @@ band columns most-said-first by CHILDES child-line counts
 (`data/prediction/word_frequency.en.json`, built by
 `scripts/prediction/childes/word_frequency.mjs`); the seed's authored
 order breaks ties and orders unheard words. No hand-ranked word lists.
+Occasion groups keep their shared coordinates (027) — pinned
+homeCoordinates/firstPage/lead and cluster order stay authored — but
+inside each cluster and among leftovers, words claim cells most-said
+first by the same counts.
 
 ### D3 — One page per seeded topic on 60/90 cells
 

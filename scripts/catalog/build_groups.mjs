@@ -12,7 +12,9 @@
  *     `homeCoordinates` where free, then the size's `firstPage` list and
  *     each `lead` word at the first free cell, then clusters in authored
  *     order, each kept together from a column top (`side: "right"`
- *     clusters by the frame);
+ *     clusters by the frame) — inside a cluster and among leftovers,
+ *     words claim most-said first by CHILDES counts (026), authored
+ *     order breaking ties;
  *   - topic groups fill in band order (018 D5), a new band starting a fresh
  *     column while the rest of the group still fits on the page. Inside a
  *     band, members sort by CHILDES child-speech frequency — most-said
@@ -263,10 +265,12 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
     }
     for (const w of occasionSeed.firstPage?.[layout] ?? []) firstFit(resolve(w, `firstPage.${layout}`));
     for (const w of occasionSeed.lead ?? []) firstFit(resolve(w, "lead"));
+    const byFreq = (a, b) => freqOf(b) - freqOf(a); // stable: authored order ties
     for (const c of occasionSeed.clusters) {
-      assignCluster(c.words.map((w) => resolve(w, `cluster ${c.key}`)), c.side);
+      assignCluster(c.words.map((w) => resolve(w, `cluster ${c.key}`)).sort(byFreq), c.side);
     }
-    for (const gid of coordinated) membersOf.get(gid).forEach(firstFit);
+    [...new Set(coordinated.flatMap((gid) => membersOf.get(gid)))]
+      .sort(byFreq).forEach(firstFit);
 
     for (const g of specs) {
       const gid = `grp_${g.key}`;
