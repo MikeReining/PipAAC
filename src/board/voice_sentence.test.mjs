@@ -125,6 +125,28 @@ test("feeling goes in the request and splits the local cache", async () => {
   });
 });
 
+test("distinct sentences never share a cache entry", async () => {
+  // The Promise-as-key bug: hex(crypto.subtle.digest(...)) hashed the
+  // Promise, so every sentence stored under one URL — the first cached
+  // blob replayed for every later sentence.
+  await withEnv(async () => {
+    let calls = 0;
+    globalThis.fetch = async (u, init) => {
+      calls++;
+      return new Response(new Blob([`AUDIO:${JSON.parse(init.body).text}`]));
+    };
+    const vs = voiceSentence({ deadlineMs: 500 });
+    const b1 = await vs.request(ARGS);
+    assert.equal(await b1.text(), "AUDIO:i want a cookie.");
+    const b2 = await vs.request({ ...ARGS, text: "you are noisy." });
+    assert.equal(await b2.text(), "AUDIO:you are noisy.");
+    assert.equal(calls, 2);
+    const b3 = await vs.request(ARGS);
+    assert.equal(await b3.text(), "AUDIO:i want a cookie."); // own key, still cached
+    assert.equal(calls, 2);
+  });
+});
+
 test("concurrent requests for one sentence share one fetch", async () => {
   let release;
   const gate = new Promise((r) => { release = r; });

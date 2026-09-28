@@ -31,11 +31,23 @@ export function sentenceSpeakText(items) {
 
 export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}) {
   let cacheP = null;
-  const store = () => (cacheP ??= caches.open(cacheName));
+  const store = () => (cacheP ??= (async () => {
+    const c = await caches.open(cacheName);
+    // One-time sweep: the key hash once received the digest Promise
+    // un-awaited, so every sentence stored under a URL ending in "/".
+    // Those entries are poison — the first blob ever cached replays for
+    // every sentence while they stand.
+    if (typeof c.keys === "function" && typeof c.delete === "function") {
+      for (const req of await c.keys().catch(() => [])) {
+        if (req.url.endsWith("/")) await c.delete(req).catch(() => {});
+      }
+    }
+    return c;
+  })());
   // 025: the feeling keys the recording — same sentence, four voices.
   const urlFor = async (voice, text, feeling = "neutral") =>
-    `https://voice.local/${voice}/${feeling}/${await hex(
-      crypto.subtle.digest("SHA-256", te.encode(normalizeSpeakText(text))))}`;
+    `https://voice.local/${voice}/${feeling}/${hex(
+      await crypto.subtle.digest("SHA-256", te.encode(normalizeSpeakText(text))))}`;
 
   async function cached(voice, text, feeling = "neutral") {
     if (typeof caches === "undefined") return null;
