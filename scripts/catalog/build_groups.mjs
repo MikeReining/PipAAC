@@ -272,10 +272,11 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
         .filter(([slot], i) => i === 0
           || Math.floor(slot / geom.cols) !== Math.floor(geom.content[i - 1] / geom.cols))
         .map(([, i]) => i);
-      // A cluster keeps together: it prefers a strictly contiguous run
-      // from a row start — no skips, so a word never leaks into the row
-      // above its block — then a skipping run (fills the free-cell snake
-      // left of the kit), then first free cells.
+      // A cluster keeps together. Shared/right-anchored blocks prefer a
+      // strictly contiguous run — no skips, so the shelf never splits;
+      // left-flow menus prefer the skipping run, which takes the free
+      // cells at the top before contiguity lower down. Failing both,
+      // each word takes the first free cell.
       const strictRun = (words, start, list) => {
         const placed = [];
         for (let j = 0; j < words.length; j++) {
@@ -289,24 +290,18 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
         const todo = words.filter(pending);
         if (!todo.length) return;
         const list = side === "right" ? rightCells : geom.content;
+        const runs = side === "right" ? [strictRun, run] : [run, strictRun];
         // One-page sizes never push a cluster to a later page to keep it
         // whole; paged sizes (grid15) may, when it fits one page.
         const pagesToTry = ONE_PAGE_LAYOUTS.has(layout) || todo.length > n ? 1 : 3;
-        for (let page = 0; page < pagesToTry; page++) {
-          for (const t of tops) {
-            const placed = strictRun(todo, page * n + t, list);
-            if (placed && placed.every(([, p]) => p === page)) {
-              for (const [w, p, slot] of placed) claim(w, p, slot);
-              return;
-            }
-          }
-        }
-        for (let page = 0; page < pagesToTry; page++) {
-          for (const t of tops) {
-            const placed = run(todo, page * n + t, list);
-            if (placed.every(([, p]) => p === page)) {
-              for (const [w, p, slot] of placed) claim(w, p, slot);
-              return;
+        for (const fn of runs) {
+          for (let page = 0; page < pagesToTry; page++) {
+            for (const t of tops) {
+              const placed = fn(todo, page * n + t, list);
+              if (placed && placed.every(([, p]) => p === page)) {
+                for (const [w, p, slot] of placed) claim(w, p, slot);
+                return;
+              }
             }
           }
         }
@@ -321,13 +316,19 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
       }
       for (const w of occasionSeed.firstPage?.[layout] ?? []) firstFit(resolve(w, `firstPage.${layout}`));
       for (const w of occasionSeed.lead ?? []) firstFit(resolve(w, "lead"));
+      // The shared shelves claim most-said first; the board's own menu is
+      // authored — the seed list is the rank, because corpus frequency
+      // can't know what belongs at this meal. The board's biggest block
+      // claims first, right-anchored tableware last.
       for (const c of occasionSeed.clusters) {
         if (c.shared) assignCluster(clusterSenses.get(c.key).sort(byFreq), c.side);
       }
-      for (const c of occasionSeed.clusters) {
-        if (!c.shared) assignCluster(clusterSenses.get(c.key).sort(byFreq), c.side);
-      }
-      [...members].sort(byFreq).forEach(firstFit);
+      const boardClusters = occasionSeed.clusters
+        .filter((c) => !c.shared)
+        .map((c) => ({ ...c, held: clusterSenses.get(c.key).filter((s) => members.has(s)).length }))
+        .sort((a, b) => (a.side === "right") - (b.side === "right") || b.held - a.held);
+      for (const c of boardClusters) assignCluster(clusterSenses.get(c.key), c.side);
+      membersOf.get(gid).forEach(firstFit);
       boardCells.set(gid, cellOf);
     }
 

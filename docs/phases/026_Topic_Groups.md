@@ -93,9 +93,10 @@ band blocks most-said-first by CHILDES child-line counts
 order breaks ties and orders unheard words. No hand-ranked word lists.
 Occasion boards pack their own members (027 B2, amended): pinned
 homeCoordinates/firstPage/lead first, then `shared` blocks — the meal
-kit, identical cells on every board offering it — then board blocks and
-leftovers; inside each block and among leftovers, words claim most-said
-first by the same counts.
+kit, identical cells on every board offering it, most-said inside —
+then the board's own menu blocks in AUTHORED order (the occasion is
+food; the menu is curated — corpus frequency cannot know what belongs
+at this meal), the board's biggest block first and tableware last.
 
 **Fill direction, ruled 2026-09-28** (founder): blocks fill in reading
 order — row by row, left to right (`groupGeometry.content` is

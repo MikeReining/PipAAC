@@ -1,9 +1,9 @@
 {
-  "version": 2,
-  "status": "LIVE 2026-09-28 — docs/phases/027_Occasion_Boards.md § 3.1, shared-block rework 2026-09-28. Read by scripts/catalog/build_groups.mjs.",
+  "version": 3,
+  "status": "LIVE 2026-09-28 — docs/phases/027_Occasion_Boards.md § 3.1, shared-block rework + food-leads ordering 2026-09-28. Read by scripts/catalog/build_groups.mjs.",
   "notes": {
-    "groups": "Membership is the explicit word list — nothing else adds a word. Index order lives in data/group_seed.topics.json (these keys appear there as stubs). The Fruit and Drinks doors are ordinary topic groups now — they carry the full produce/drink shelves and lay out their own pages.",
-    "clusters": "A cluster is a semantic block that keeps together on a page, in authored order; words sit in at most one cluster. `shared: true` blocks (dishes, drinks, fruit, vegetables) are the meal kit: every board that holds one holds ALL of its words, and they claim first, anchored to the right by the frame — so the kit sits in the same cells on every board that offers it. Non-shared clusters are board food; they fill in reading order from the left. Inside every block, words claim most-said first by CHILDES counts.",
+    "groups": "Membership is the explicit word list — nothing else adds a word. Index order lives in data/group_seed.topics.json (these keys appear there as stubs). The Fruit and Drinks doors are ordinary topic groups now — they carry the full shelves and lay out their own pages.",
+    "clusters": "A cluster is a semantic block that keeps together on a page; words sit in at most one cluster. `shared: true` blocks — drinks (water/milk/juice), fruit, vegetables — are the meal kit: every board that holds one holds ALL of its words, they claim first anchored to the right by the frame, most-said inside, so the kit sits in the same cells on every board that offers it. Non-shared clusters are the board's own menu, in AUTHORED order — the seed list is the rank (corpus frequency can't know what belongs at this meal), and they fill in reading order from the left. dishes claims last, side right, so tableware lands low — the occasion is food, so food leads.",
     "frame": "The home cells of these words are reserved on every group page (027 B3).",
     "homeCoordinates": "Seeded at their home cell where that cell is free (027 B4) — identical on every meal board.",
     "firstPage": "Assigned before the blocks on that size — grid15 authors its first page rather than truncating the 60-cell board (027 § 3.2).",
@@ -17,16 +17,10 @@
   },
   "clusters": [
     {
-      "key": "dishes",
-      "shared": true,
-      "side": "right",
-      "words": ["cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
-    },
-    {
       "key": "drinks",
       "shared": true,
       "side": "right",
-      "words": ["water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle"]
+      "words": ["water", "milk", "juice"]
     },
     {
       "key": "fruit",
@@ -42,15 +36,20 @@
     },
     {
       "key": "breakfast_foods",
-      "words": ["cereal", "oatmeal", "toast", "egg", "pancake", "waffle", "bagel", "bread", "muffin", "butter", "jam", "syrup"]
+      "words": ["cereal", "toast", "egg", "waffle", "pancake", "oatmeal", "bagel", "muffin", "bread", "butter", "jam", "syrup", "smoothie"]
     },
     {
       "key": "meals",
-      "words": ["food", "sandwich", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "cook"]
+      "words": ["food", "sandwich", "pizza", "chicken", "nuggets", "pasta", "macaroni", "fries", "soup", "rice", "burger", "hot dog", "fish", "meat", "ketchup", "cook", "apple juice"]
     },
     {
       "key": "snacks",
-      "words": ["cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack", "granola bar", "string cheese", "applesauce", "goldfish crackers", "hummus", "banana bread"]
+      "words": ["cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "hummus", "chocolate milk"]
+    },
+    {
+      "key": "dishes",
+      "side": "right",
+      "words": ["cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     }
   ],
   "groups": [
@@ -62,7 +61,7 @@
       "names": {
         "en": "Breakfast"
       },
-      "words": ["breakfast", "eat", "drink", "all done", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "cereal", "oatmeal", "toast", "egg", "pancake", "waffle", "bagel", "bread", "muffin", "butter", "jam", "syrup", "yogurt"]
+      "words": ["breakfast", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "cereal", "toast", "egg", "waffle", "pancake", "oatmeal", "bagel", "muffin", "bread", "butter", "jam", "syrup", "smoothie", "yogurt", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     },
     {
       "key": "lunch",
@@ -72,7 +71,7 @@
       "names": {
         "en": "Lunch"
       },
-      "words": ["lunch", "eat", "drink", "all done", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "sandwich", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "cheese", "carrot", "broccoli", "cucumber", "pepper"]
+      "words": ["lunch", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "sandwich", "pizza", "chicken", "nuggets", "pasta", "macaroni", "fries", "soup", "rice", "burger", "hot dog", "fish", "meat", "ketchup", "apple juice", "cheese", "carrot", "broccoli", "cucumber", "pepper", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     },
     {
       "key": "dinner",
@@ -82,7 +81,7 @@
       "names": {
         "en": "Dinner"
       },
-      "words": ["dinner", "eat", "drink", "all done", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "cook", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "carrot", "broccoli", "cucumber", "pepper", "corn"]
+      "words": ["dinner", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "cook", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "apple juice", "carrot", "broccoli", "cucumber", "pepper", "corn", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     },
     {
       "key": "snack",
@@ -92,7 +91,7 @@
       "names": {
         "en": "Snack"
       },
-      "words": ["snack", "eat", "drink", "all done", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack", "granola bar", "string cheese", "applesauce", "goldfish crackers", "hummus", "banana bread", "carrot", "broccoli", "cucumber", "pepper", "muffin"]
+      "words": ["snack", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "hummus", "chocolate milk", "carrot", "broccoli", "cucumber", "pepper", "muffin", "smoothie", "apple juice", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     }
   ]
 }
