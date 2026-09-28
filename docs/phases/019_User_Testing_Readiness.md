@@ -35,7 +35,7 @@ works after a reload.
 | # | Blocker | Notes |
 | --- | --- | --- |
 | 1 | **No deploy** — the app only exists on localhost; nothing is published to a URL a tester can open | `wrangler.jsonc` bindings exist (DO/R2/AE) but `wrangler deploy` has never run; needs account/domain decisions — **stop/ask: publishing** |
-| 2 | **First-run setup** — the automatic first user is created without `needsSetup`, so "Who do they call for?" never appears and mom/dad stay picture-less | adding a user from Parent Corner does arm it (`devices_ui.test.mjs`) |
+| 2 | ~~**First-run setup**~~ — fixed 2026-09-28: the automatic first user is created with `needsSetup` and the "Who do they call for?" sheet opens on first boot | proven on screen: fresh profile → setupform open, save closed it (agent slot 8797) |
 | 3 | **Dev-server hygiene** — slot-0 (8787, founder's copy) still accepts TCP and never answers HTTP (workerd pid 19014, 2026-09-24). `npm run dev` treats that as already running | a working copy is on 8795 |
 
 ## Landed slices

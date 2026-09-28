@@ -122,7 +122,9 @@ let me = users.find((u) => u.id === sessionStorage.getItem("pip_active_user"))
 if (!me && users.length === 0) {
   // First boot: a child's device opens straight to its board — the
   // first user is the home user, named later in Parent corner → Users.
-  me = await addUser(userStore, { home: true });
+  // needsSetup arms the same "Who do they call for?" first-open that a
+  // Parent-Corner add gets (014 § 9 ruling 1, 019 blocker 2).
+  me = await addUser(userStore, { home: true, needsSetup: true });
 }
 if (!me) me = await pickUser(users); // shared device, no home — ask
 sessionStorage.setItem("pip_active_user", me.id);
