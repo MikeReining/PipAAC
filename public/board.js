@@ -1645,25 +1645,27 @@ async function gatePin(onOk) {
 }
 
 $("corner").addEventListener("click", () => {
+  // 027 B5: while a group or the index is open the corner is Home — one
+  // action back to the home board, outside the grid. In Edit mode it
+  // keeps editing, so the home board is one tap away; Done is the home
+  // board's corner.
+  if (view === "group" || view === "groupIndex") {
+    kbUi.setView("board");
+    return;
+  }
   if (editing) {
     setEditing(false);
     rerenderView();
     return;
   }
-  // 027 B5: while a group or the index is open the corner is Home — one
-  // action back to the home board, outside the grid.
-  if (view === "group" || view === "groupIndex") {
-    kbUi.setView("board");
-    return;
-  }
   gatePin(() => open("menu"));
 });
-/** The corner's job and label follow the mode: ✓ Done while editing,
- *  Home while a group or the index is open, else Parent corner (its
- *  glyph swaps on body.editing / body.groups). */
+/** The corner's job and label follow the mode: Home while a group or the
+ *  index is open, else ✓ Done while editing, else Parent corner (its
+ *  glyph swaps on body.groups / body.editing). */
 function syncCorner() {
   const inGroups = view === "group" || view === "groupIndex";
-  $("corner").title = editing ? "Done editing" : inGroups ? "Home" : "Parent corner";
+  $("corner").title = inGroups ? "Home" : editing ? "Done editing" : "Parent corner";
   $("corner").setAttribute("aria-label", $("corner").title);
   // 027 B5: Add sits beside Groups, in Edit mode only.
   $("anchor-add").hidden = !(editing && inGroups);

@@ -199,9 +199,10 @@
       .corner-btn[hidden] { display: none; }
       #corner .g-done, #corner .g-home, body.editing #corner .g-open { display: none; }
       body.editing #corner .g-done { display: block; }
-      /* 027 B5: Home replaces Parent corner while a group or the index is open. */
-      body.groups:not(.editing) #corner .g-open { display: none; }
-      body.groups:not(.editing) #corner .g-home { display: block; }
+      /* 027 B5: Home replaces the corner's other jobs while a group or the
+         index is open — in Edit mode too (Done is the home board's). */
+      body.groups #corner .g-open, body.groups #corner .g-done { display: none; }
+      body.groups #corner .g-home { display: block; }
       /* The 📊 toggle's on state (018 D10): pressed chrome, same rule as
          the seg buttons. */
       .corner-btn.on { border-color: var(--ink-text); background: var(--tray); }
