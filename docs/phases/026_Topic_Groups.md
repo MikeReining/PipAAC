@@ -13,7 +13,7 @@ and topic door icons. All new groups use the same local editing rules.
 
 | Topic | Owner |
 | --- | --- |
-| Occasion seed composition, geometry, migration and execution map | `docs/phases/027_Occasion_Boards.md` |
+| Occasion seed composition, geometry, and execution map | `docs/phases/027_Occasion_Boards.md` |
 | Groups are the backup path to every word | `docs/product/Motor_Grid_And_Art.md` § Groups |
 | Door order, doors, banded layout | `docs/phases/018_Core_Board_V2_And_Groups.md` D5, D6 (D6's list replaced here) |
 | Occasion time windows (prediction) | `docs/phases/007_Occasions.md`; occasion doors are 027 |
@@ -81,10 +81,10 @@ reorder or hide any group; frequency never reorders an installed index.
 
 ### D3 — One page per seeded topic on 60/90 cells
 
-027's shared geometry computes capacity from the active layout's anchor union
-and reserved Next cell. An untouched topic has **46** ordinary slots on grid60
-and **76** on grid90; a meal has 43/73. grid15 pages (7 topic / 6 meal content
-slots). The counts in D2 therefore require an authoring pass: Home, Describing,
+027's shared geometry computes capacity from the reserved cells (the home
+board's top row and frame, plus Next). Every group has **46** content cells on
+grid60 and **76** on grid90; a meal group spends three of them on *eat, drink,
+all done*. grid15 pages (7 content cells per page). The counts in D2 therefore require an authoring pass: Home, Describing,
 and Little words cannot ship unchanged as 60-cell one-page groups. Partition
 surplus vocabulary into meaningful sibling groups with fixed index slots and
 no nested groups; never drop vocabulary to pass a size check. 027 A1 owns this
@@ -178,10 +178,10 @@ What this says, plainly:
    mapping for the actual reserved-cell capacity, meaning resolution, layout
    eligibility, and every-launch-word reachability. Seed mixed topics in useful
    clusters; shared meal/Fruit/Drinks positions follow 027. The final compiler
-   output replaces the old seed through the normal catalog build. Saved groups
-   follow 027 A2's seed-once/previewed adoption contract, never automatic re-seed.
-   Proof: `src/board/groups.test.mjs`, `src/board/layout.test.mjs`, saved-board
-   import/replay fixtures, rendered groups. No second competing seed writer.
+   output replaces the old seed through the normal catalog build, seeded once
+   (027 A2; a clean break — no saved groups to convert), never re-seeded.
+   Proof: `src/board/groups.test.mjs`, `src/board/layout.test.mjs`, import and
+   replay fixtures, rendered groups. No second competing seed writer.
 2. **Topic icons.** Outside, Bathroom, School, Going out, Screens, Art & music,
    Colors, and the Describing glyph; any new sibling groups need a matching
    glyph. Follow D7, and existing founder approval rules for generated media.
