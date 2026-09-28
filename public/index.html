@@ -197,6 +197,13 @@
       }
       .corner-btn svg { width: 26px; height: 26px; }
       .corner-btn[hidden] { display: none; }
+      /* v3 spec: the settings gear is small and quiet — borderless,
+         muted #8a8272, far top-left. Edit's ✓ Done and the groups Home
+         keep the corner's normal chrome. */
+      #corner { border-color: transparent; background: transparent; color: #8a8272; }
+      body.editing #corner, body.groups #corner {
+        border-color: var(--line); background: #fff; color: var(--ink);
+      }
       #corner .g-done, #corner .g-home, body.editing #corner .g-open { display: none; }
       body.editing #corner .g-done { display: block; }
       /* 027 B5: Home replaces the corner's other jobs while a group or the
@@ -683,6 +690,11 @@
   </head>
   <body>
     <div id="topbar">
+      <button id="corner" class="corner-btn" title="Parent corner" aria-label="Parent corner">
+        <svg class="g-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.6M12 18.9v2.6M21.5 12h-2.6M5.1 12H2.5M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8M18.7 18.7l-1.8-1.8M7.1 7.1L5.3 5.3"/><circle cx="12" cy="12" r="6.6"/></svg>
+        <svg class="g-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+        <svg class="g-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10h12V10"/><path d="M10 20v-5.5h4V20"/></svg>
+      </button>
       <button id="clear" class="bar-btn glyph" title="Clear" aria-label="Clear" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 3.5h4M6 7l1 13h10l1-13M10 11v5.5M14 11v5.5"/></svg>
       </button>
@@ -711,11 +723,6 @@
       <button id="spot-chip" hidden>🔦 Spotlight · End</button>
       <button id="edit-counts" class="corner-btn" hidden title="Show counts" aria-label="Show counts">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V12M12 20V5M19 20v-5"/></svg>
-      </button>
-      <button id="corner" class="corner-btn" title="Parent corner" aria-label="Parent corner">
-        <svg class="g-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v15M4.5 12h15"/></svg>
-        <svg class="g-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
-        <svg class="g-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10h12V10"/><path d="M10 20v-5.5h4V20"/></svg>
       </button>
     </div>
     <!-- Coach view (013 § 5a): partner devices only — the session's
