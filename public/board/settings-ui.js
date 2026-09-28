@@ -121,6 +121,30 @@ export function mountSettings({ me, open }) {
     open("menu");
   }
 
+  /* On/off rows (`.seg[data-switch]`, Off = data-v 0, On = data-v 1)
+   * show one switch beside their label. The two buttons stay in the DOM,
+   * hidden: the switch clicks the one it means, so the owning module's
+   * handler still writes the setting, and it mirrors their `.on` class,
+   * so a synced change repaints it too. */
+  for (const seg of pane.querySelectorAll(".seg[data-switch]")) {
+    const row = seg.closest(".seg-row");
+    const label = row.querySelector(".seg-label");
+    const btn = (v) => seg.querySelector(`button[data-v="${v}"]`);
+    const sw = document.createElement("button");
+    sw.className = "set-switch";
+    sw.setAttribute("role", "switch");
+    sw.setAttribute("aria-label", label.textContent);
+    const sync = () => sw.setAttribute("aria-checked", String(btn("1").classList.contains("on")));
+    sw.addEventListener("click", () => btn(sw.getAttribute("aria-checked") === "true" ? "0" : "1").click());
+    new MutationObserver(sync).observe(seg, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    sync();
+    const head = document.createElement("div");
+    head.className = "set-head";
+    label.replaceWith(head);
+    head.append(label, sw);
+    seg.hidden = true;
+  }
+
   return {
     open: openSettings, show, paintNames, renderNav,
     current: () => current,
