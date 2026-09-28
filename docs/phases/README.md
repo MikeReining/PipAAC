@@ -26,7 +26,7 @@ Executing phases only. Each row names the **next** slice.
 | Phase | Next slice |
 | --- | --- |
 | [005 — Word Forms](005_Word_Forms.md) | Present tense moved to 021 (2026-09-25); the rest waits on the past-tense conversation |
-| [007 — Occasions](007_Occasions.md) | Slice 1 — the breakfast experiment (no app code; can run any time) |
+| [007 — Occasions](007_Occasions.md) | Optional prediction/window experiment; independent of the curated occasion groups launching in 027. |
 | [008 — Partner Listening](../backlog/008_Partner_Listening.md) | Held 2026-09-24 (017 R20: no listening) |
 | [009 — Word Library and customization](009_Word_Library_And_Customize.md) | Slice 10 — suggested words (blocked on 008 slice 3; 008 held 2026-09-24); slice 5 is post-launch |
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 done 2026-09-26 (4,000-entry JSON + 170-word everyday-gaps list, data only). Slice 2 — the art: review page built, generation waits on founder approval |
@@ -42,8 +42,8 @@ Executing phases only. Each row names the **next** slice.
 | [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
 | [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Slices 1–3 landed 2026-09-26: Worker endpoint (shared R2 cache, fair use, no ids upstream), client Tier-1 + ~300 ms clip fallback, transform buttons speak through it. Next: slice 4 clip re-mint — paid, founder-gated at ≤10/batch |
 | [025 — Expressive voice](025_Expressive_Voice.md) | Slices 1–4 landed 2026-09-26: happy/sad/angry faces in the last strip slot (designer icons), Worker-side prosody, feeling-keyed caches, lit-face suggestion, Expressive voice setting. Next: § 8 listen — paid, founder-gated |
-| [026 — Topic groups](026_Topic_Groups.md) | Decided 2026-09-26: what goes in which topic group, neutral noun frame, natural-color art, door icons. Mapping waits on the founder's mark-up (`public/preview-groups.html`); slice 1 (seed swap) depends on 027 A2 |
-| [027 — Block doors](027_Block_Doors.md) | Decided 2026-09-27: doors built from blocks, yes/no/stop/help frame, doors use the whole grid, occasion doors, edit rules; execution map A→E in the doc. Next: slice A1 — door layout (Back replaces Settings in doors) |
+| [026 — Topic groups](026_Topic_Groups.md) | Ready: finalize membership with 027 A1 against actual anchor capacity; neutral noun frame and topic glyphs follow. Existing saves use 027 adoption, never re-seeding. |
+| [027 — Occasion boards and independent editing](027_Block_Doors.md) | Ready 2026-09-27: A1 seed/compiler + geometry, then state/replay, one local editor, Speak-stays/starters, integrated proof. Blocks author seeds only; no runtime linked edits. |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

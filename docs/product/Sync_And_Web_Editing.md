@@ -160,6 +160,25 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
 - Retire, never delete, fits: a removal is an op, and the retired row
   keeps its bytes (`docs/product/Vocabulary_Masking_And_Safety.md` § 3.2).
 
+### 027 group-state amendment — decided 2026-09-27, not built
+
+027 A2 versions group ops and snapshots for independent membership and per-layout
+positions. Include `group_membership`, `group_cell`, `group_layout`, seed installation
+records, visibility, and the top-row setting in the synced state. Migrate live
+DBs, persisted `sync_baseline` JSON, and legacy no-layout op payloads together.
+A newly restored device must load saved installation markers before seeding;
+empty/locally pruned groups must remain empty/pruned after import and replay.
+
+Local group edits never target other groups. Multi-board add carries explicit
+selected destination IDs and requested per-layout positions as one operation;
+replay resolves occupied slots with the same deterministic geometry owner.
+Identity/photo/recording edits remain shared. Unknown payload versions require
+an update, never interpretation as the old op. Crypto, relay access, history
+privacy, and user data retention are unchanged.
+
+027 § 3–4 owns the executable migration packet; durable group semantics live in
+Motor_Grid_And_Art § Groups. No runtime block membership or linked-edit ops.
+
 ## 5. Ordering and merging: one order, same functions
 
 **The rule:** every device applies the same ops, in the same order,
@@ -186,12 +205,13 @@ itself is still PROPOSED.
   op never displaces an item another device already placed. **BUILT** —
   `applyOp` resolves each op against live state; a target gone under
   merge (deleted group, never-created entity) degrades to the nearest
-  honest intent — an entity keeps a home in My Words; a sense write into
-  a dead group skips.
+  honest intent. **027 amendment (not built):** writes into deleted groups
+  skip for both senses and entities; they do not silently file into My Words.
 - **Invariants hold after every op**, because every op runs through the
-  same write owner that enforces them today: no orphan entity (My Words
-  catch-all), a seeded word never leaves its built-in group, one item per
-  slot. Nothing writes the core map, ever.
+  same write owner. **027 amendment (not built):** one membership per
+  group/item, one ordinary occupant per layout/page/slot, valid reservations,
+  and no placement edits to other groups. Zero placements is allowed; built-in
+  words may be removed locally. Group ops never write the core map.
 - **Last writer wins on plain fields.** Two adults renaming Cooper: the
   later sequence number wins, and the earlier name stays in history (the
   schema supersedes and never deletes).

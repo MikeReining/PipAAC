@@ -95,41 +95,28 @@ prediction bar in place of the lists.
 **Human stop:** an IP lawyer compares the finished board with the
 incumbents before launch.
 
-### D4 — Groups open full screen
+### D4 — Full-screen groups and speech
 
-- A group, and the group list, fill the whole board. The Smart bar stays
-  above. This supersedes the "keep the top two rows" idea from the same
-  day: after a group word, a core word the bar doesn't already offer
-  comes next only 4–14% of the time.
-- **New rule: after Speak, the board returns home.** The sentence is
-  done, and the next one starts at home.
-- A word tapped inside a group speaks and stays in the group (browsing
-  still works).
+**AMENDED 2026-09-27; not built:** 027 replaces the original return-home-after-
+Speak behavior. Groups remain full screen with the Smart bar above; the core
+top row is ON by default in the new seed. Speak keeps the current group and
+page; Home is explicit. Existing sentence fresh-start settings are unchanged.
+Owner: `docs/product/Motor_Grid_And_Art.md` § Groups; implementation: 027 A3–A4.
 
-### D5 — Group tiles are doors, not words
+### D5 — Group doors and starting layout
 
-- A group tile is **neutral gray** (the no-role color) with a
-  **folder-tab edge** and a picture. The shape says "this opens", and the
-  gray says "this isn't a word".
-- The words inside keep their own color. Most groups hold one kind of
-  word, so their pages are one color on their own (Food is all yellow).
-- **Mixed groups** (occasions, a family's "Breakfast") lay their words
-  out in the home board's band order: things, then actions, then little
-  words, then describing. Pages fill top to bottom, and each kind starts
-  a fresh column. A word a family adds goes to the next free spot in its
-  kind's area, and nothing else moves.
+Neutral ink glyphs and a folder-tab shape identify a group. 026's neutral noun
+frames mean gray alone no longer distinguishes a group from a word. 027 seeds
+related meal vocabulary in coordinated clusters, then stores ordinary local
+placements. Adding a word uses its explicit/preferred/free position, not a
+mandatory grammar band. No runtime block membership or shared edit propagation.
 
-### D6 — Group order is set once, then frozen
+### D6 — Group order stays fixed
 
-- It is never sorted by frequency (it would keep changing) or
-  alphabetically (it doesn't help non-readers, and additions would shift
-  the rest).
-- Default order: My Words, People, Food, Drinks, Play, Animals, Places,
-  Home, Body, Feelings, Clothes, Vehicles, Time, Numbers, Social, then
-  Actions, Moving, Describing, Little words, More people, More doing,
-  More where, More describing.
-- Only a supporter changes it, by dragging (built, 009 slice 2). A new
-  group takes the next free spot.
+027 owns the new-profile order: Breakfast, Lunch, Dinner, Snack, then My Words
+and 026's topic order. Only adult editing changes installed positions; time and
+history may highlight a door. Saved profiles adopt new groups/layouts through
+027's explicit preview, never a catalog-driven reshuffle.
 
 ### D7 — Color comes from the kind of word, never a color picker
 
@@ -157,7 +144,7 @@ or a person (014 slice 10).
 
 **DECIDED 2026-09-24** (founder: "consistency wins").
 
-- **The Predict row only ever holds words:** likely words, the small
+- **The Predict row holds words:** likely words, the small
   words from "one step up", and the "no" word in the last slot (017
   R21). It never holds a group door, so the bar always means one thing.
 - **Groups have exactly one way in: the 🗂 Groups anchor,** always in the
@@ -171,9 +158,10 @@ or a person (014 slice 10).
   group beats the bar's words by much. The best case, *I want a* → Food
   (7%) vs. the 4th word (1%), was a near-tie that is not worth breaking
   consistency for.
-- **Open (founder):** a faster way into groups is still wanted. Any
-  answer must keep this rule: the bar holds words, and one button opens
-  groups.
+- **AMENDED 2026-09-27:** Add sits beside Groups in Edit mode only. Empty
+  group sentences receive actual first-word suggestions (027 A4). The grid
+  top row is available by default; word suggestions do not write placements.
+  No Now cell or additional default group entrances at launch.
 
 ### D10 — Editing the home board: "what goes here?"
 

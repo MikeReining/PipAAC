@@ -12,6 +12,16 @@ word in the same language. That is the gap this schema fills.
 
 ---
 
+## Pending group schema amendment — 027
+
+**DECIDED 2026-09-27; not built.** `docs/phases/027_Block_Doors.md` § 3–4
+specifies the implementation packet for ordinary group membership separated
+from per-layout placements, seed installation state, reserved anchor geometry,
+and legacy snapshot/op conversion. No runtime block tables are planned.
+Existing DDL/code still describes the current implementation; 027 A2 must update
+this schema owner and the executable schema together when those changes land.
+Product rules: `docs/product/Motor_Grid_And_Art.md` § Groups.
+
 ## 1. What we keep
 
 | Law | What it means here |
@@ -452,9 +462,10 @@ order; `group_cell.added_at` does the same for placed catalog words.
 There is no `type` column, no `pronoun` column, and no edge table. The
 adult supplies facts a model cannot know — the name, the photo, an
 optional hint. Filing is a `group_cell` row in the group the add started
-in — the place is the picker — or a second row from classification when
-the device is online; an entity in no group sits in My Words
-(`docs/product/Personal_Entities.md` § Filing).
+in — the place is the picker. **027 amendment, not built:** classification
+suggests only; no automatic second placement or My Words catch-all. Zero
+placements keeps the active record in Library/keyboard. The new group membership
+and layout storage are specified in 027; Personal_Entities owns the filing rule.
 Strip relevance is computed live: sentence position and recency
 on-device, the classifier when online. The only stored semantics are the
 enrichment rows below — cached model output with provenance, never an
@@ -691,6 +702,12 @@ The insert trigger enforces `recorded_text` matching the utterance's
 invariant `clip` already enforces, not a read-time hope.
 
 ### 6.3b Group map
+
+The following records the pre-027 shape. **027 amendment, not built:** replace
+this canonical strip with membership plus per-layout cells, seed-once state,
+and previewed legacy adoption as specified in 027 § 3–4. Do not implement the
+old reconcile behavior below for the new model. Update this section and the
+executable schema together in 027 A2.
 
 ```sql
 CREATE TABLE board_group (

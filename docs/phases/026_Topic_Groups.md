@@ -1,21 +1,20 @@
 # Phase 026 — Topic groups
 
-**Status:** DECIDED 2026-09-26 (founder: "all approved"). The word-by-word
-mapping is **PROPOSED** in `data/group_seed.topics.json` and waits on the
-founder's mark-up (review page: `public/preview-groups.html`, built by
-`scripts/catalog/preview_topic_groups.mjs`). Nothing is built. The live
-seed stays `data/group_seed.json` until slice 1.
+**Status:** READY FOR IMPLEMENTATION — launch direction approved 2026-09-27.
+Not built. `data/group_seed.topics.json` is the starting mapping, not yet the
+final capacity-checked seed. Finalize it under 027 A1's geometry/reachability
+rules; do not wait for another product-model decision. The existing
+`public/preview-groups.html` is an earlier review, not launch proof.
 
-**2026-09-27:** the door model — block doors, the yes/no/stop/help frame,
-doors using the whole grid, occasion doors, and the edit rules — moved to
-`docs/phases/027_Block_Doors.md`, which also owns the execution map. This
-doc keeps what goes in which topic group, noun and object color, and the
-door icons.
+**2026-09-27:** group behavior and editing are owned by
+`docs/product/Motor_Grid_And_Art.md` § Groups; 027 owns implementation. Blocks
+are authoring tools only. This phase owns topic membership, noun/object color,
+and topic door icons. All new groups use the same local editing rules.
 
 | Topic | Owner |
 | --- | --- |
-| Door model, blocks, occasion doors, edit rules, execution map | `docs/phases/027_Block_Doors.md` |
-| Groups are the backup path to every word | `docs/product/Motor_Grid_And_Art.md` § Groups (amended by slice 4 and 027 A5) |
+| Occasion seed composition, geometry, migration and execution map | `docs/phases/027_Block_Doors.md` |
+| Groups are the backup path to every word | `docs/product/Motor_Grid_And_Art.md` § Groups |
 | Door order, doors, banded layout | `docs/phases/018_Core_Board_V2_And_Groups.md` D5, D6 (D6's list replaced here) |
 | Occasion time windows (prediction) | `docs/phases/007_Occasions.md`; occasion doors are 027 |
 | Word colors | `docs/product/Motor_Grid_And_Art.md` § 3 (amended by D8) |
@@ -47,8 +46,9 @@ in Food).
 
 ### D2 — The doors
 
-Default order is by how often children need each door (Evidence), with My
-Words first and the grammar backup last; set once, then frozen (018 D6).
+027 puts Breakfast, Lunch, Dinner, Snack first on a new profile; My Words
+then leads the topic order below, with the grammar backup last. Set once,
+then frozen. Counts below are input sizes, not final capacity claims.
 
 | Door | Holds | Words |
 | --- | --- | --- |
@@ -62,11 +62,11 @@ Words first and the grammar backup last; set once, then frozen (018 D6).
 | Outside | yard, park, playground gear, weather, nature + every moving verb + *hot, cold, wet* | 44 |
 | Animals | animals + *zoo, farm, pet* | 34 |
 | Body & health | body parts, sick, hurt, medicine, doctor + *see, touch, scratch, hit, bite* | 40 |
-| Food | food, meals + *eat, cook, bite* — **superseded:** food becomes 027 blocks, no Food door | 57 |
+| Food | food, meals + *eat, cook, bite* — **superseded:** food is distributed across 027 meal and topic groups; no Food door | 57 |
 | Going out | stores, places in town, vehicles + *ride, wait* | 41 |
 | Colors | the colors + *color* | 11 |
 | School | school places and people + *read, write, count, listen, ask, show, work* + *easy, difficult, right, wrong* | 27 |
-| Drinks | drinks, cup, bottle, straw + *drink, thirsty* — **a 027 block door** | 12 |
+| Drinks | drinks, cup, bottle, straw + *drink, thirsty* — **an ordinary group with coordinated 027 seed positions** | 12 |
 | Art & music | paper, crayons, markers, music + *draw, color, paint, cut, glue, write, sing, dance* | 16 |
 | Feelings | emotions + body states (*hungry, tired, hot, cold, sick*) + *feel, laugh, cry* | 32 |
 | Clothes | clothes | 28 |
@@ -76,17 +76,19 @@ Words first and the grammar backup last; set once, then frozen (018 D6).
 | Little words | grammar backup (+ *they, mine, under, over, away, but, or, because*) | 56 |
 | More people / doing / where / describing | the rest of `grid60` — **`grid15` only** (D5) | 10 / 15 / 12 / 9 |
 
-**Open (founder):** the usage order puts Bathroom and Screens late —
-CHILDES is typical children at home, and AAC users may need Bathroom
-sooner. Drag in the mark-up.
+Bathroom and Screens keep the draft topic order for launch. Families can
+reorder or hide any group; frequency never reorders an installed index.
 
-### D3 — One page per group
+### D3 — One page per seeded topic on 60/90 cells
 
-Every group fits one `grid60` page. The build already refuses a bigger
-group (`buildGroups`, `ITEMS_PER_PAGE`, 57 today). Under 027 a page holds
-**56** (60 cells minus the yes/no/stop/help frame; navigation leaves the
-grid), so Home (57) loses one word in the mark-up. On `grid15` (12 per page) paging
-is unavoidable; the seed order puts the most-used words on page 1.
+027's shared geometry computes capacity from the active layout's anchor union
+and reserved Next cell. An untouched topic has **46** ordinary slots on grid60
+and **76** on grid90; a meal has 43/73. grid15 pages (7 topic / 6 meal content
+slots). The counts in D2 therefore require an authoring pass: Home, Describing,
+and Little words cannot ship unchanged as 60-cell one-page groups. Partition
+surplus vocabulary into meaningful sibling groups with fixed index slots and
+no nested groups; never drop vocabulary to pass a size check. 027 A1 owns this
+pass and its negative fixtures. Personalized groups may grow additional pages.
 
 ### D4 — Superseded by 027
 
@@ -106,8 +108,9 @@ Today 18 words sit only on the `grid90` board and in no group, so on
 mine, see, read, feel, tell, think, find, work, wait, away, under, over,
 same, different, but, or, because*. The build's reachability gate only
 checked words with a catalog category, and these have none. The proposal
-gives each a door; 027 slice A2 makes the gate check every word on every
-layout.
+gives each a door; 027 slice A1 makes the gate check every launch word on
+every layout for the fresh seed. Family removals/hides/masks may deliberately
+reduce group reachability; Library recovery remains available.
 
 ### D7 — Door icons are ink glyphs
 
@@ -115,8 +118,9 @@ Same family as `public/icons` (24 grid, 2px ink, round caps, no color).
 Draft set in `public/icons/groups/` (founder-approved style; Body is the
 arms-out figure). New doors need icons: Outside, Bathroom, School, Going
 out, Screens, Art & music, Colors. Retired: Actions, Moving, Vehicles,
-Places. **Open:** Describing's palette moves to Colors; Describing needs
-a new one.
+Places. Describing uses a contrasting-size shapes glyph; the palette moves to
+Colors. Follow the existing ink glyph family; no generated raster batch is
+authorized by this packet.
 
 ### D8 — Things and places take the neutral frame
 
@@ -134,12 +138,12 @@ the color never changes. **The one exception is `house` (plain black and
 white) vs `home` (warm color — the color is the meaning).** Stick-figure
 torsos keep the grammar color.
 
-### D10–D12 — Moved to 027
+### D10–D12 — Implemented through 027
 
-Occasion doors, word addresses, doors using the whole grid, and door
-starters were decided here on 2026-09-27 and refined the same day into
-block doors — see `docs/phases/027_Block_Doors.md` (B1–B9, § 3). The two
-prototypes and their measurements are in 027 § 1 and § 6.
+Occasion membership, coordinated starting positions, repeated top row ON,
+frame, grid navigation, corrected first-word priors, and local editing are
+specified in 027. These replace both earlier address/block prototypes; the
+live product contract is Motor_Grid_And_Art § Groups.
 
 ## Evidence (CHILDES, 2026-09-26)
 
@@ -170,26 +174,31 @@ What this says, plainly:
 
 ## Slices
 
-Builder work (`word#slot`, `layouts`, reachability on every layout) and the
-group index honoring `layouts` are 027 slices A2 and A4.
+1. **Finalize and compile topic membership with 027 A1.** Update the authored
+   mapping for the actual reserved-cell capacity, meaning resolution, layout
+   eligibility, and every-launch-word reachability. Seed mixed topics in useful
+   clusters; shared meal/Fruit/Drinks positions follow 027. The final compiler
+   output replaces the old seed through the normal catalog build. Saved groups
+   follow 027 A2's seed-once/previewed adoption contract, never automatic re-seed.
+   Proof: `src/board/groups.test.mjs`, `src/board/layout.test.mjs`, saved-board
+   import/replay fixtures, rendered groups. No second competing seed writer.
+2. **Topic icons.** Outside, Bathroom, School, Going out, Screens, Art & music,
+   Colors, and the Describing glyph; any new sibling groups need a matching
+   glyph. Follow D7, and existing founder approval rules for generated media.
+3. **Neutral noun frame.** Update the lexicon truth owner for things/places,
+   regenerate the catalog, keep pronouns/people yellow. Verify actual rendered
+   tiles and home-board stability; catalog counts alone do not prove appearance.
+4. **Owner docs and closeout.** Update built statuses only with proof. Coordinate
+   Motor_Grid_And_Art roles, Design_System, and the art-generator's natural-color
+   instructions. 027 owns group behavior; this phase must not duplicate it.
 
-1. **Swap the seed.** `group_seed.topics.json` → `group_seed.json` after
-   the founder's mark-up, with food as 027 blocks. Mixed groups seed in the
-   banded layout (018 D5 — things, actions, little words, describing, each
-   kind starting a column), not row order. Saved boards: a migration
-   re-seeds built-in groups and leaves custom groups and family additions
-   alone (018 slice 4's pattern). Depends on 027 A2. Proof:
-   `groups.test.mjs` + a saved-board replay.
-2. **Icons** for the new doors (D7), founder review one at a time.
-3. **Neutral noun frame** (D8): things' role → none in the lexicon and
-   catalog; the band order puts none first; the review page's before and
-   after. Proof: catalog role counts; founder look.
-4. **Docs.** `Motor_Grid_And_Art.md` § 3 (D8, D9) and § Groups (D1, D3,
-   D5, D6); `Design_System.md` roles table; 018 D6 points here;
-   `art-generator/SKILL.md` natural-color rule and the house/home
-   exception.
+**Works Test:** on grid60, Outside brings run and swing set together; Bathroom
+includes potty and wash. On grid15, the four More groups appear and every
+launch word is reachable. On all sizes, shared top/frame words render once,
+ordinary tiles do not overlap them, and removal changes only the selected group.
 
-**Works Test:** the founder opens the group index on `grid60`, taps
-Outside and finds *run* next to *swing set*; taps Bathroom and finds
-*potty* with *wash*; switches to `grid15` and sees the four More doors
-appear.
+**Focused proof:** extend `src/board/groups.test.mjs` and
+`src/board/layout.test.mjs`; run with `scripts/test.sh`, then the rendered Works
+Test on `npm run dev:agent`. `npm run check:fast` and
+`npm run lint:phase-freshness` close the affected slice. Full-wall approval rules
+remain in `docs/operations/Testing.md`.

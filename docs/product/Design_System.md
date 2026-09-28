@@ -20,6 +20,30 @@ One bird, drawn at the sizes it's used:
 | `icon-ios.svg` | iOS 1024 app icon (charcoal, seated bird). `icon-180.png` is the rasterized touch icon. |
 | `icon-maskable-512.svg` | PWA maskable icon, bird inside the 80% safe circle (`icon-512.png` raster). |
 
+## Group surface — launch amendment
+
+**DECIDED 2026-09-27; not built.** Behavior owner:
+`docs/product/Motor_Grid_And_Art.md` § Groups; execution: 027.
+
+- Groups share the home board's active cell size; sentence bar and Smart bar
+  do not move. The existing core top row is supplied by default, plus the
+  yes/no/stop/help frame; meal groups also supply eat/drink/all done.
+- Home is a corner control outside the word grid. Groups opens the index.
+  Add sits beside Groups in Edit mode only. Next reserves the final grid cell
+  at all times and appears only when paging, with a page count.
+- Seed clusters have no outlines, handles, titles, or block-edit affordances.
+  Empty space is intentional. Word identity/art is shared; placement is local.
+- × says Remove from [group], with Undo. No scope modal, linked-state marker,
+  drift badge, or make-it-match control. The word card labels shared identity
+  edits and offers explicit Add to other boards with named destinations.
+- Top-row OFF leaves space instead of repacking. Edit mode distinguishes an
+  untouched supplied tile hidden by that setting from an available empty cell;
+  globally masked words keep their separate existing treatment.
+- Speak preserves the open group/page. Home remains explicit. A likely occasion
+  may glow, but index positions and selected group remain fixed.
+- Old saved layouts retain their geometry until the adult accepts a previewed
+  conversion; no refresh silently rearranges a personalized group.
+
 ## Palette
 
 > **Amended 2026-09-24 (`docs/phases/018_Core_Board_V2_And_Groups.md` slice 1):** a sixth role, **Purple**, for

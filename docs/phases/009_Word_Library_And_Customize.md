@@ -22,6 +22,13 @@ is unchanged, and no save performs a network call
 
 ---
 
+**Launch amendment 2026-09-27:** 027 implements built-in local removal,
+zero-placement Library/keyboard recovery, explicit multi-board add, shared
+word-card scope copy, and no automatic classification filing. Earlier built
+slice reports below describe historical code, not a requirement to preserve
+My Words catch-all or built-in removal restrictions. Word_Library and
+Motor_Grid_And_Art § Groups own the amended semantics.
+
 ## What exists (checked 2026-09-22)
 
 **BUILT:** groups (many-to-many), Edit mode (tap to lift, tap to move or

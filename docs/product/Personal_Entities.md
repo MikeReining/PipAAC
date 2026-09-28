@@ -40,7 +40,7 @@ now a decided direction with a proposed design:
 | --- | --- |
 | Spoken name | What the device says. Required. A rename supersedes the ready recording override and enrichment — **BUILT** (`renameEntity`). |
 | Image | A photo from this device, or no photo. A missing photo shows the name and its Fitzgerald color. It does not borrow a competitor symbol. |
-| Groups | Where the child finds it: one or more `group_cell` rows (§ Filing). Set by the group the add started in; classification may add one more. The adult is never asked to pick a folder. |
+| Groups | Where the child finds it: group memberships (§ Filing). 027 allows zero after deliberate removal; adds target the current group only. Classification may suggest, never add another placement. The adult is never asked to pick a folder. |
 | Home cell | An adult may place a person in any non-anchor home cell — a `core_override` row with `item_kind='entity'` — **BUILT** (014 slice 10, `placeOnBoard` in `public/shared/coremove.mjs`). A retired entity's placement stops claiming the cell. |
 | Stand-in | When enrichment's `sense_suggestion` names a catalog sense (a Jev judgment, never asked), the person replaces that word in the Smart bar at the word's rank — their photo, name, and recording — **BUILT** (014 slice 11, `entityForSense`). The producer is 017 R14. |
 | Category | The record's home category, a classifier input only. Set when the add started in a built-in group seeded from a category, else null. Display never reads it. |
@@ -84,22 +84,22 @@ category-and-My-Words filing written earlier the same day). **BUILT**
   (009 slice 1 — `entityMatches` + `catalogMatches` in
   `public/shared/groups.mjs`; `renderAddMatches` in `public/board.js`).
   Rule: `docs/product/Word_Library.md` § 5.1.
-- **Many groups, never none.** An entity can sit in several groups. Removing
-  it from its last group returns it to My Words. Deleting a custom group
-  moves its only-there entities to My Words.
+- **Many groups, or no placement after removal (027; decided, not built).**
+  Removing the last placement or deleting its only group leaves the active
+  entity in the Library and keyboard lookup. Never silently add it to My Words.
+  Retirement is a separate explicit word-card action.
 - **Find and change it later: the word card.** **DECIDED 2026-09-22**
   (not built). Every entity is listed in the Word Library, and its card
   shows its groups as chips, renames it, changes its photo, and records how
   its name sounds. The card may list groups because the adult is
   deliberately adding the word somewhere else, not filing a new add:
   `docs/product/Word_Library.md` § 3–4.
-- **Classification only adds.** When enrichment returns a
-  `category_suggestion`, the entity is *also* placed in the matching
-  built-in group (founder ruling 2026-09-22: "proceed" on the groups
-  review). It never moves or removes a placement the adult made, never
-  touches My Words or custom groups, and does nothing on abstain.
-  Classification is a refinement, never a gate: an offline save never
-  waits on it, and a save never performs a network call.
+- **Classification suggests only (027; decided, not built).** Enrichment may
+  supply a meaning/category hint with provenance. It must not automatically
+  place the entity in another group, online or offline. Additional destinations
+  require the explicit Add to other boards action. Retire the old automatic
+  `placeFromEnrichment` write behavior and its tests; this is an API/policy
+  change, not a claim that a production caller currently invokes it.
 
 ### Wiring — there is no edge table
 
@@ -164,7 +164,7 @@ run: the cached judgment of a model that saw the picture.
 **DECIDED 2026-09-22** (not built).
 
 - Open any group the entity is in (the one it was added in, My Words, or a
-  group classification added). The entity is there, photo and name, at a
+  group the adult explicitly selected). The entity is there, photo and name, at a
   fixed slot. Leaving the group restores the same core indices.
 - The predictive strip may offer the entity. Layout cap and stack order stay
   in `docs/product/Motor_Grid_And_Art.md`. The first strip is local: the
@@ -182,8 +182,8 @@ These are the negative tests for the customization slice.
 | An add writes the core coordinate map | Snapshot the map, save an entity, deep-compare. The map is unchanged. |
 | An add inserts a lexicon row | Sense count is unchanged by the save. |
 | A group open, an Edit-mode move, or a strip offer writes the core map | Same snapshot compare. |
-| An entity ends up in no group | Remove it from its last group, or delete that custom group; it is in My Words. |
-| Classification moves or removes an adult placement | After `placeFromEnrichment`, every prior `group_cell` of the entity is unchanged. |
+| Group removal unexpectedly files or retires the entity | Remove its last placement/delete its only group; active Library and keyboard record remains, no My Words placement is invented (027). |
+| Classification changes any placement | Complete enrichment after an offline add; all memberships/positions remain unchanged. Only an explicit destination selection adds a group (027). |
 | The save path performs a network call | With the network unavailable the save succeeds; no request is attempted. |
 | The add form asks the adult something a model can infer, or where to file | The form collects a name (catalog match or new), and for a new entity an optional photo and hint. No type, pronoun, edge, category, or folder UI. |
 | Enrichment gates or blocks a save | Enrichment is a deferred background job; the entity is fully usable with none. |

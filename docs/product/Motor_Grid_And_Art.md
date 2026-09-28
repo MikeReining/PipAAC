@@ -59,121 +59,105 @@ These are both in force. They answer different questions.
 
 When a grid engine exists, a test must show that a suggestion model cannot reorder or swap primary core indices. That test is **PROPOSED**. It does not exist yet.
 
-### Groups — the backup path to every word
+### Groups — occasions and independent editing
 
-> **Amended 2026-09-24 (founder; `docs/phases/018_Core_Board_V2_And_Groups.md` D4–D6, D8).** Groups keep
-> opening full screen with the Smart bar above. New rules: after Speak,
-> the board returns home. Group tiles are neutral doors with a folder
-> tab. Mixed groups lay words out in the home board's band order. The
-> default group order is set once, then frozen (supporters drag). There
-> are no default group doors on the home board.
+**DECIDED 2026-09-27; not built.** Founder approved the launch recommendation
+in the 027 review. This section owns the product contract; execution and
+migration details are in `docs/phases/027_Block_Doors.md`. It replaces the
+2026-09-24 return-home rule and the earlier linked-block proposal. Existing
+many-to-many groups and local editing are built; the amended behavior below
+must not be described as shipped until 027's proofs pass.
 
-**DECIDED 2026-09-22** (founder review of the zones build; supersedes the
-"sub-zone" / "zone" wording and the `zone_slot` + `custom_group` model from
-earlier the same day). **BUILT** (fb5a8d7…0555aa9).
+- **One container: Group.** Breakfast, Drinks, My Words, and a family's custom
+  group have the same editing rules. A door is the tile that opens a group.
+  Blocks are seed-authoring clusters, never a family-facing concept or a
+  runtime subscription. One word record can appear in many independent groups.
+- **Launch occasions:** Breakfast, Lunch, Dinner, Snack, enabled by default and
+  first in that fixed order on a new profile. Topic groups follow. A family
+  can hide groups, turn off the four occasions together, reorder groups, and
+  create its own. Hiding preserves membership, positions, and index slots.
+  Time/history may glow a visible door; they never move, open, or hide it.
+  No default Now cell. More occasions are post-launch.
+- **Curated membership, coordinated starting positions.** Seed meal groups,
+  Fruit, and Drinks together so repeated words have the same cell (and on a
+  paged layout, the same page). Keep meaningful clusters and accept blanks.
+  Membership is independent: yogurt can appear in Breakfast without popcorn;
+  Snack includes cup without requiring every utensil. Other topic groups need
+  not share this coordinate map. Consistency is a starting arrangement, not
+  a constraint on later family edits.
+- **Core language travels by default.** New groups include the named layout's
+  core top row, plus yes/no/stop/help at their home coordinates. Meal groups
+  also include eat/drink/all done; words absent from a small home layout are
+  ordinary group content. Deduplicate overlapping anchors. The top-row setting
+  defaults ON. Supplied anchors repeat on every page until locally changed or
+  removed. They are local placements, not live mirrors of home-board edits.
+  Turning the top row off hides its untouched supplied tiles without reflow;
+  the frame and meal anchors remain. Local placement edits detach a supplied
+  tile from repetition/top-row visibility; word-picture or recording edits do
+  not. The setting never resurrects a locally removed tile. Reserved geometry
+  and the legacy-profile exception are specified in 027 § 3–4.
+- **Same geometry, full-screen groups.** Group tiles use the active Cells size;
+  sentence bar and Smart bar stay in place. Home in the corner returns directly
+  to the home board; Groups opens the index. Add sits by Groups in Edit mode.
+  Next uses the permanently reserved last grid cell, visible only for multiple
+  pages. The top-left word cell is available; corner Home is outside the grid.
+- **Stay after Speak.** Speaking leaves the current view, group, and page in
+  place, including expressive and transformed speech. Existing sentence-clear/
+  fresh-start preferences are unchanged. Explicit navigation always wins over
+  a pending playback. Home is one action, not an automatic destination.
+- **The Smart bar supplements the grid.** In an empty group sentence, use
+  measured first-word priors, then the child's own starts. After a word, use
+  continuation ranking. Suggestions are optional shortcuts, not board cells;
+  they never rearrange the grid. No new network dependency for speaking or
+  editing. Prediction semantics remain in 017; 027 specifies the starter input.
+- **Placement edits are local.** Add/remove affects membership in this group
+  across its layouts; move/swap affects this group's active layout only. Remove
+  leaves a hole, including in built-in groups. A drag onto a word explicitly
+  swaps only those two placements. Edits never move unrelated words or write
+  another group. No scope modal, block handles, pins, drift badge, or make-it-
+  match action. A new custom group uses the same rules.
+- **Placement choice:** an explicit empty-cell target wins; otherwise prefer a
+  free established coordinate for this word, then the first free cell, then a
+  new page. No automatic displacement. The tie-break and reservations have one
+  code owner in `public/shared/groups.mjs` (planned). Parent placement wins
+  over authored clusters. Toggling settings never closes gaps.
+- **Shared identity is explicit.** A word-card picture, name, or recording edit
+  changes that record throughout this user's vocabulary. Its scope is stated
+  on the card. Global Hide/retire remains a distinct word-card action. Removing
+  from a group never masks, retires, or deletes the word record.
+- **Multiple destinations require intent.** After an add, offer an optional
+  Add to other boards action, also available on the word card. Show named
+  destinations, none preselected; save to only those selected. Existing
+  placements are skipped. Enrichment can suggest destinations but cannot file
+  a word automatically. Same behavior online and offline.
+- **Removal and recovery.** An active word can have zero group placements.
+  Last-placement removal does not silently add it to My Words. The Word
+  Library retains it for restoration; active words remain available through
+  the keyboard lookup. Full home/group reachability is a fresh-seed guarantee,
+  not a promise to override a family's removals or global masks. Do not show
+  a group-path hint for an unplaced word. Library recovery is an adult path,
+  not a substitute for claiming child-visible group reachability.
+- **Saved work wins.** A catalog import never restores removals, adds new
+  placements to installed groups, or overwrites custom positions. Seed once;
+  retain installation state even for empty/hidden groups. Existing saved
+  profiles retain their layout until the adult explicitly accepts a conversion
+  preview. 027 owns that compatibility path. No automatic re-seed on upgrade.
+- **Cells changes are explicit.** Store positions per layout. Membership stays
+  the same across sizes, but layout switches show the existing move-cost
+  preview and switching back restores exact positions. On 15 cells, paging is
+  expected; author the first page rather than truncate the 60-cell board.
+- **One level deep.** A group never contains a group. Built-in starter content
+  fits one page on 60/90 cells after anchors; personalized groups can page.
+- **One Edit mode.** Drag moves/swaps, tap opens the word card, × removes this
+  placement with Undo, and tapping an available empty cell adds there. A custom
+  group's delete remains explicit; built-in groups can be hidden. Undo is local
+  and restores exact positions when free, without displacing later edits.
 
-The strip is the primary path to fringe words. Groups are the guaranteed
-path: **every seeded catalog word is reachable in at least one group**, one
-level below the board. **Amended 2026-09-22:** the extended picture library
-(tier `secondary_fringe`) is found through `+ Add` and the Word Library,
-and is on no page until the family adds it (`docs/product/Word_Library.md`
-§ 6).
-
-- **One concept, one name: Group.** Built-in groups ship with the app
-  (Food, Drinks, People, Animals…), **My Words** is the family's default
-  group, and families make **custom** groups ("School", "Grandma's").
-  They are all the same kind of container with the same rules. "Zone",
-  "sub-zone", and "folder" are not product words. `category` is a catalog
-  property (a word's home, the seed for built-in groups, the classifier's
-  target). It is never a container.
-- **In place, same geometry.** The group index and every group page render
-  in the core grid's space at the profile's one Cells setting — the same
-  cell size as the home board. A group has no size of its own; a big group
-  pages. **Amended 2026-09-22** (founder; not built beyond 10×6 —
-  `docs/phases/014_Grid_Density_And_Fit.md` § 3). The sentence bar and
-  strip never move, and the strip keeps predicting inside a group. A word
-  tapped inside a group speaks and stays in the group.
-- **Fixed nav cells.** Slot 0 is always back (`← Board` / `← Groups`).
-  Slot 1 is reserved for the Edit-mode action (`+ Group`, `+ Add`,
-  `Delete group`; `Remove` today, the × badge after 009 slice 2) and is blank in use mode, so adult controls
-  are never shown to the child and no item shifts between modes. On a
-  group page, the last slot is reserved for `Next ›` paging and items fill
-  the slots between. At `grid60`: slot 59 is `Next ›`, items sit in slots
-  2–58 (57 per page), index slots 2–9 are reserved, and groups sit at
-  10–59. At 15 cells: 12 items per page.
-- **When Cells changes,** group items keep their saved order and are laid
-  out again at the new size; moved items join the move-cost preview
-  (`docs/phases/014_Grid_Density_And_Fit.md` § 4). **BUILT** (014 slice 1):
-  `group_cell` and `board_group.index_slot` stay in canonical 60-space;
-  renderers re-wrap the linear order into pages of N−3
-  (`visualCell`/`posAtVisual`/`indexVisual` in `public/shared/groups.mjs`)
-  — no row moves when Cells changes.
-- **The Cells change is never silent** (014 § 4). **BUILT** (014 slice 4):
-  the Parent Corner Cells seg previews the move cost before anything
-  changes — `moveCost` in `public/shared/movecost.mjs` classifies every
-  pooled word same / sector / moved / gone / new against both coordinate
-  maps, weighted by the real `learner_event_log` (no history → the whole
-  board, unweighted). Apply → `setBoardLayout` writes the synced
-  `board_layout` setting and stamps `move_mark` rows on the words that
-  changed place; they render a soft `.cell.moved` ring for 14 days.
-  `core_override` rows are per-layout, so adult moves survive a Cells
-  change and land again if the adult switches back.
-- **Motor-memory law inside groups too.** The index and every group page
-  are coordinate maps (`board_group.index_slot`, `group_cell (page,
-  slot_index)`). Built-in contents are seeded in vocabulary-doc order
-  (meaning-clustered), never alphabetical. New items take the next free
-  slot, and nothing shifts. A catalog update never moves or drops an item.
-- **One level deep.** A group never contains a group. A built-in group
-  that outgrows one page is split into sibling groups (Food → Food +
-  Drinks, Actions → Actions + Moving), not nested.
-- **Many-to-many.** An item can sit in several groups (`banana` in Food
-  and in "Snack time"). Seeded senses cannot be removed from their
-  built-in group, because that is the findability guarantee; hiding a word
-  is masking (`docs/product/Vocabulary_Masking_And_Safety.md`). An entity
-  removed from its last group returns to My Words and is never orphaned.
-- **Home board editing — DECIDED 2026-09-24, not built**
-  (`docs/phases/018_Core_Board_V2_And_Groups.md` D10). In Edit mode on
-  the home board, a tap opens "what goes here?": the tile and its
-  30-day count, a search field, and the most-used words that aren't on
-  the board. 📊 shows every tile's count. There are no locks.
-- **One Edit mode.** Parent Corner → `Edit groups`. The corner button
-  reads `✓ Done` while editing. Built-in groups can be moved but not
-  deleted or renamed. **BUILT** (009 slice 2): Edit mode works like the
-  iPhone home screen, with one deliberate difference.
-  - **Drag** an item to an empty slot to move it, or onto another item to
-    swap the two. Only the dragged item (and a swapped partner) moves
-    (`editPointer` in `public/board.js`; `moveItem`/`swapItems` in
-    `public/shared/groups.mjs`). On the group index the same drag moves a
-    group between index slots ≥ 10.
-  - **Tap** an item to open its word card (`docs/product/Word_Library.md`
-    § 4); tap a group to open it.
-  - **×** badge on each removable item removes it from this group, with
-    an Undo toast (`removeItemUndoable` restores the row byte-for-byte).
-    A custom group's × deletes the group after a two-button ask.
-  - **Tap an empty slot** to add straight into that slot (the slot is the
-    picker, as the group is today).
-  - **The difference from the home screen: removal never reflows.** The
-    slot stays empty and no other item moves. "Remove and close the gap"
-    is not a feature (founder: "users have learned where words are").
-- **Add where you are.** `+ Add` inside a group opens one field. Typing
-  offers every existing meaning of what was typed as pictures (the
-  family's own words first, then catalog senses, ranked by this group),
-  or "New: '…'" to create a personal entity with an optional photo.
-  Picking an existing meaning places that same record here. One meaning,
-  one record; the same spelling may repeat (`bat` 🦇 and `bat` ⚾).
-  **DECIDED 2026-09-22; BUILT** (009 slice 1; `docs/product/Word_Library.md`
-  § 5.1). The
-  place is the picker; there is no folder picker. Filing rules for
-  entities: `docs/product/Personal_Entities.md` § Filing.
-- **Show me where.** When a non-core word arrives through the strip or
-  the keyboard, the Groups anchor briefly shows the path (`Groups › Food`)
-  with no layout shift. The shortcut teaches the motor plan of the backup
-  route.
-
-The entry point is one `🗂️ Groups` anchor in the strip's utility columns.
-A dock row of category buttons is not the design: it does not scale past a
-dozen groups, and it spends prime motor real estate on navigation instead
-of language.
+The core map remains owned by `docs/product/Core_Coordinate_Map.md`; adding a
+word to a group never writes it. Word-card identity and recovery belong to
+`docs/product/Word_Library.md`; personal additions belong to
+`docs/product/Personal_Entities.md`. Existing code paths and replacement proof
+are enumerated in 027, rather than inferred from these decided rules.
 
 Each named layout (`grid60`, `grid90`) is its own default map. Changing
 density swaps the map; it does not move a cell within one. A profile's board

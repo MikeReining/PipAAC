@@ -23,12 +23,19 @@ Product truth this phase implements:
 
 ---
 
+**Scope amendment 2026-09-27:** 027 ships four explicitly selected occasion
+boards independently of this model experiment. Their membership is curated,
+never inferred from the current time. This phase owns optional learned windows
+and prediction priors; its experiment is not a prerequisite for 027 launch.
+The group index may glow a likely visible occasion, never open or reorder it.
+
 ## Why this phase exists
 
 Groups are topics (Food & Drink, Clothing). Occasions cut across them:
 breakfast is waffles and juice, but also *brush teeth*, *get dressed*,
 *hurry*, *bus*. The strip needs "what does this child say at breakfast";
-groups cannot answer it, and linking groups to times would be wrong.
+a selected group is useful context but does not fully describe the occasion.
+Time may suggest a group; it must not change that group's contents or selection.
 
 A new child also has no history, so the strip is empty on day one. A
 shipped occasion prior fills that gap until the child's own picks take
@@ -42,17 +49,15 @@ score per word), regenerated from source, consumed as one weighted feature
 
 ## Vocabulary for code and docs
 
-| Use | Never use |
-| **Routine = occasion. DECIDED 2026-09-22** (founder). "Routine" is the
-familiar word in early education (morning circle, snack, bedtime) and the
-same concept. Code and docs keep *occasion*; what adults see may say
-*routine*. A routine can carry a saved Spotlight list for the Coach view
-(`docs/product/Design_System.md` § Attention layer).
+| Term | Meaning |
+| --- | --- |
+| occasion | Context for ranking and learned time windows (this phase). |
+| occasion group | A curated board such as Breakfast, explicitly opened by the user (027). |
+| occasion prior | A per-word model hint, never group membership. |
+| occasion window | A learned time range, not an automatic schedule or navigation rule. |
 
---- | --- |
-| occasion (breakfast, bath, bedtime …) — in user-facing copy, **routine** | routine group, scene, context folder |
-| occasion prior (shipped, per word, 0–1) | occasion membership, occasion list |
-| occasion window (time range, per child) | schedule |
+A routine can carry a saved Spotlight list for Coach (Design_System). This
+phase's generated hints never file words, add groups, or move cells.
 
 ---
 

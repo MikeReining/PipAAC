@@ -1,306 +1,395 @@
-# Phase 027 — Block doors
+# Phase 027 — Occasion boards and independent editing
 
-**Status:** DECIDED 2026-09-27 (founder: "we are close to something
-dramatically better than what has existed before"). Not built. This doc
-owns the door model, the edit rules, and the execution map (§ 5).
-Prototype: `public/preview-blocks.html`, built by
-`scripts/catalog/preview_blocks.mjs` from
-`data/occasions/block_doors.proposed.json`.
+**Status:** READY FOR IMPLEMENTATION — founder approved 2026-09-27. Not built.
+This replaces the earlier linked-block design. Blocks author starting layouts;
+families edit ordinary groups. No parent/child research trial is a launch gate.
+The required proof is deterministic checks plus our own rendered interaction
+and speech checks. This packet does not authorize media generation or publishing.
 
-| Topic | Owner |
+## 1. Scope and ownership
+
+**User-visible claim:** familiar words are together for an everyday activity;
+common short messages are available directly; editing one group changes only
+that group. Cross-group coordinate consistency is a seed property, not a rule
+that overrides family choices. Comparative superiority is a product goal, not
+an outcome established by the corpus or the prototype.
+
+| Concern | Truth / surface owner |
 | --- | --- |
-| Door model, blocks, frame, door layout, edit rules | **this doc** |
-| Which words sit in which topic group; noun frame color; object art; door icons | `docs/phases/026_Topic_Groups.md` |
-| Groups are the backup path to every word | `docs/product/Motor_Grid_And_Art.md` § Groups (amended in slice A5) |
-| Smart bar ranking | `docs/phases/017_Prediction_Hardening.md`; `renderStrip` in `public/board.js` |
-| Occasion time windows learned per child | `docs/phases/007_Occasions.md` |
-| Op log and replay | `docs/product/Sync_And_Web_Editing.md` § 4 |
+| Durable group behavior and edit scope | `docs/product/Motor_Grid_And_Art.md` § Groups |
+| Topic membership, noun color, natural-color art, door icons | `docs/phases/026_Topic_Groups.md` |
+| Word identity, word-card scope, Library recovery | `docs/product/Word_Library.md` |
+| New personal words and enrichment | `docs/product/Personal_Entities.md` |
+| Group membership, positions, geometry, placement writes | `public/shared/groups.mjs` (extend existing owner) |
+| Group view/index state and controls | `public/board/groups-ui.js` |
+| Speech completion, sentence state, Smart bar integration | `public/board.js` |
+| Shared edit replay, snapshot, baseline conversion | `public/shared/ops.mjs`; `docs/product/Sync_And_Web_Editing.md` § 4–5 |
+| Catalog output | `scripts/catalog/build_catalog.mjs`, `src/board/catalog.mjs`, `public/shared/import.mjs` |
+| Prediction ranking / learned time windows | 017 / `docs/phases/007_Occasions.md`; neither may write placements |
 
-## 1. Why
+Launch: Breakfast, Lunch, Dinner, Snack; Fruit and Drinks; 026 topic groups;
+local editing and explicit multi-board add; all three supported sizes. Further
+occasions, Now cell, linked block editing, global move, layout reset tools, and
+new automatic classification filing are out of scope.
 
-A child who wants breakfast needs the cereal, the milk, the banana, and
-the spoon — which today live behind four different doors. Grid AAC apps
-avoid repeating a word because each placement is a separate button to
-keep in sync, so every word gets one home and the child hunts. Pip's
-words are records, and a door is a view of them (the schema already says
-so: "groups are views, not exclusive homes"). So a word can sit in every
-door where someone might look — and still in the same place, so the
-motor plan holds.
+## 2. Locked launch decisions
 
-Topic boards failed for five reasons (AssistiveWare, "Don't limit
-communication with topic boards"): you can only say what's on the board;
-the words don't teach where they live in the main system; placement
-differs board to board; context-only words don't generalize; boards take
-hours to build. Block doors answer each: a door is one view inside the
-full system; a word keeps its cell everywhere; words repeat across
-contexts; the graph builds the doors.
+These are implementation requirements for the product contract, not new kinds
+of group. `board_group.kind` keeps builtin / my_words / custom.
 
-Two prototypes got here. The first gave every word its own address across
-doors; it scattered clusters (drinks all over the page), led Food with
-treats, and packed doors with filler words the Smart bar already offers —
-the founder found it unlovable. The second, block doors, kept clusters
-whole and every repeated word in the same cell on every page, top row on
-or off (§ 6).
-
-## 2. Decisions
-
-### B1 — Two kinds of door
-
-- **Plain group** — an ordered list, exactly as groups work today
-  (`group_cell` positions). Most topic doors stay plain: People, Animals,
-  Clothes, Social, Little words, a family's custom group.
-- **Block door** — a set of blocks (B2). Used where doors share words:
-  meals and snacks, food and drinks. Blocks are optional; no group has to
-  have them.
-
-Both are doors in the same group index, with the same folder tab.
-
-### B2 — Blocks
-
-A block is an ordered list of words: breakfast foods, meals, vegetables,
-snacks, treats, dishes, fruit, drinks. It fills top to bottom, then the
-next column. It has **one column position per board layout, the same on
-every door that holds it** — the block's address. A word lives in at most
-one block (it may still sit in plain groups too).
-
-Order inside a block: everyday first; treats are their own block and
-never lead a page. Set once when the block ships; a word added later goes
-to the end, so nothing reshuffles.
-
-Occasion doors are several blocks — Breakfast = breakfast foods + dishes
-+ fruit + drinks. A single-block door (Fruit, Drinks) is a topic door.
-
-### B3 — The frame: yes, no, stop, help
-
-On every door, plain or block, *yes, no, stop, help* sit in their home
-cells — the home board's last column minus *not* and *hurt*. The rest of
-that column stays empty. *Stop* and *help* are there for safety; *yes*
-and *no* because a meal runs on offers ("do you want more?"). Nothing
-else travels by default.
-
-### B4 — Doors use the whole grid
-
-So door cells can line up with the home board:
-
-- **Back replaces Settings in the top-left** inside a door. Settings stays
-  on the home board only.
-- **Next takes the bottom-right cell only on a door with a second page.**
-  That cell is *hurt*'s home cell, which B3 leaves free.
-- **+ Add sits next to the Groups button, in Edit mode only.** 018 D9's
-  "the bar holds words, one button opens groups" gains "and the Edit-mode
-  controls".
-
-### B5 — Filler words are the Smart bar's job
-
-Doors carry no sentence starters. *I, want, is, the* come from the Smart
-bar, which stays visible inside doors and already offers the small words
-("one step up", 017 R21). CHILDES backs this: after a group word the
-sentence ends 38–73% of the time, and a home word the bar doesn't offer
-comes next only 4–14% (018 Evidence).
-
-**Top row on every door** is a setting, **off by default**: the home
-board's top row repeats on every door, Proloquo-style, for families who
-want it.
-
-### B6 — The Smart bar opens a door with sentence openers
-
-Today, inside a group the bar ranks that group's words from the child's
-own history, and an empty sentence shows an empty bar (founder,
-2026-09-25). **Narrow exception: in a door, with an empty sentence, the
-bar offers the door's openers** — ranked from CHILDES per door
-(`data/prediction/door_starters.en.json`, built by
-`scripts/prediction/childes/door_starters.mjs`; *I* ranks first or
-second in every meal door). The child's own starts replace them as
-history builds. A new user, with no history, gets a useful bar on day one.
-
-### B7 — Occasion doors
-
-First: **Breakfast, Lunch, Dinner, Snack**. After editing lands (§ 5,
-phase D): getting dressed, bath & teeth, bedtime, car ride, park, store,
-doctor, school day — the routines visual-schedule programs teach most.
-Occasions sit first in the index; the likely door glows at its time of
-day (018 D9's glow, built).
-
-### B8 — Editing: the parent edits intent
-
-| Parent does | Result |
+| ID | Decision |
 | --- | --- |
-| Moves a word inside a block | The block's order changes on **every door** that has it |
-| Moves a block on one door | The block moves on **every door** (default) |
-| Drags a word elsewhere on one door | A **pin** — this door only; other doors untouched |
-| Adds a word | It joins a block (Pip suggests which) and shows on **every door** with that block, at the block's end — or "just here", as an extra on this door |
-| Removes a word | "Just here" hides it on this door; "everywhere" takes it out of the block |
+| B1 | One runtime group model. Blocks exist only in authoring/build input. No block tables, `group_block`, `door_pin`, `door_hide`, or separate block renderer. |
+| B2 | Author common positions for repeated words across the four meal groups, Fruit, and Drinks per layout. Curate each group's membership separately; allow subsets of clusters. Preserve blanks, including on single-topic Fruit/Drinks. |
+| B3 | Seed yes/no/stop/help in their named-layout home cells; deduplicate with the top row. Seed eat/drink/all done in meal groups. |
+| B4 | Corner Home outside the grid replaces Settings while a group/index is open. Groups still opens the index. Add by Groups only in Edit mode. Permanently reserve the last grid cell for Next; show it only if multiple pages, cycling with a page counter. |
+| B5 | Existing core top row ON by default for new profiles/groups. Smart bar supplements it. The setting changes visibility without reflow; locally customized/removed tiles are respected (§ 3). |
+| B6 | Empty-sentence suggestions come from actual first-word counts. Nonempty sentences keep continuation ranking. Never treat within-turn frequency as an opener distribution. |
+| B7 | Breakfast, Lunch, Dinner, Snack first, in that order, on a new index; then My Words and 026's topics. Fixed after seeding. Occasion visibility defaults ON; individual group hides preserve slots. Likelihood glows only, with existing scoring; no auto-opening or reordering. |
+| B8 | Add/remove is local to the current group; move/swap additionally local to the active layout. Word identity edits are shared and labeled. Explicit Add to other boards chooses destinations. No ordinary scope questions, block UI, pins, drift warnings, or make-it-match. |
+| B9 | Speak stays in the current group/page. Sentence clearing/fresh-start preference is independent. No async speech completion may undo the user's later navigation. |
 
-One question, only when it matters: **"Change it everywhere drinks
-appear, or just here?"** — "everywhere" by default, with the existing undo
-toast.
+## 3. Geometry and storage contract
 
-Two promises, each a test (§ 5, C1):
+### 3.1 Seed inputs and generated output
 
-1. **An edit moves only the word or block being edited.** If a block grows
-   into a neighbor, the new word takes the nearest free cell; nothing is
-   pushed.
-2. **Anything that moved on another door rings softly for 14 days** (014's
-   `move_mark`, built for the highlight after a Cells change).
+A1 updates the existing authoring sources; their current contents are prototypes,
+not this decision's final data:
 
-Pins and "just here" edits are allowed — the family knows best — but in
-Edit mode a door that differs from its blocks shows a small marker with
-**"make it match"**.
+- `data/group_seed.topics.json`: 026 topic membership and layout eligibility.
+- `data/occasions/block_doors.proposed.json`: replace whole-block membership with
+  explicit per-group words, stable group IDs, ordered layout clusters, and
+  per-layout seed placements. Add Dinner (absent from the current prototype).
+  Clusters may suggest coordinates; they never imply runtime membership.
+- Require yogurt on Breakfast and cup on Snack. Meals include their named meal
+  word, useful food/drink choices, eat/drink/all done, and tableware. Ensure all
+  launch food words have a home or group route; no Food mega-group. Overflowing
+  topic content uses explicitly named sibling topic groups, never silent loss.
+- Resolve meanings with the existing `word#slot` resolver. The builder emits
+  ordinary group membership and explicit per-layout positions. Do not read
+  prototype JSON directly from the browser or maintain a second renderer.
+- Cluster layout yields to fixed core anchors. Seed food words around them;
+  trim/reassign topic membership rather than overlap anchors or break the
+  one-page fresh-seed rule on 60/90. Repeated meal/Fruit/Drinks words must still
+  agree. Short columns are acceptable. No number-of-words multiple is required.
 
-Which block a new word joins is a meaning judgment: Jev suggests it once
-at add time, stored with provenance, shown to the adult in plain words,
-changeable (Design_Invariants § 7; the 018 D7 pattern). Offline, the
-word goes in as "just here".
+### 3.2 Per-layout positions and supplied anchors
 
-### B9 — Occasions on by default (proposed)
+Replace the current single canonical strip for group contents. Target schema:
 
-One setting turns occasion doors off; topic doors always stay. **Open —
-founder.**
+- `group_membership(group_id, item_kind, item_id, added_at)`: one membership per word
+  per group; PK `(group_id, item_kind, item_id)`. Removing this row removes all
+  its layout placements, never the word record.
+- `group_cell(group_id, layout, item_kind, item_id, page, slot_index, seed_role)`:
+  FK to membership; PK `(group_id, layout, item_kind, item_id)`;
+  UNIQUE `(group_id, layout, page, slot_index)`. Nonnegative page and slot within
+  the named layout, with navigation excluded. `seed_role` is content / top /
+  frame / meal. It records initial presentation only, not block inheritance.
+- `group_layout(group_id, layout, geometry_version)`: v1 retains the old
+  cells-minus-three geometry for existing saves; v2 uses this packet. This is
+  internal compatibility state, never a family-facing group type.
+- `group_seed_install(group_id PRIMARY KEY, seed_version)`: persisted installation record,
+  including for an empty group. Imported again does not mean installed again.
+  Keep this marker after group deletion to prevent automatic recreation; it has
+  no cascading FK to `board_group`. The version is provenance only: any marker
+  suppresses seeding, even when the catalog version changes. Carry authored preference coordinates
+  and anchor reservations with the installed version; updates must not silently
+  change its next-free policy or reinterpret seed roles.
+- Synced profile setting `group_top_row` defaults true for new profiles;
+  `occasions_visible` defaults true. Per-group `hidden` defaults false. Store
+  occasion classification/layout eligibility as catalog metadata, not `kind`.
 
-## 3. What this supersedes
+Extend existing schema/migration owners; these tables and fields are planned,
+not present today. `groupPage` remains the one content reader. `groups.mjs`
+owns geometry for the builder, local writes, replay, and renderer; no separate
+`doorCells` path. Membership queries (Library, keyboard, eligibility, recency,
+entity chips, path hints) read `group_membership` once, not one row per layout.
 
-- 026 D4 ("a word goes where people look first") — words repeat wherever
-  someone might look.
-- 026 D10–D12 (word-level addresses, CHILDES starters inside every door) —
-  replaced by B2, B3, B5. The word-level prototype page
-  (`preview_addresses.mjs`) is retired; its lessons are in § 1.
-  `meal_doors.proposed.json` stays only as the door list for
-  `door_starters.mjs` until B-2 reads the block doors instead.
-- 026 D2's Food and Drinks rows — food becomes blocks (breakfast foods,
-  meals, vegetables, snacks, treats, fruit, drinks, dishes) and the Food
-  mega-door goes (founder: "I wouldn't even have a food group").
-- 018 D9 — the bar's wording (B4) and the empty-bar exception (B6).
-- 007's "linking groups to times would be wrong" — occasion doors do link
-  doors to times (B7); 007 keeps learning the windows.
+Top/frame/meal placements have page 0 as their stored address and render at that
+slot on every page. They reserve that slot on every page even when not shown.
+Frame takes precedence over top, then meal, then content; seed one membership
+and placement per word. Thus yes appears once, and remains when the top row is
+off. A position edit of any supplied anchor converts it to content in that
+layout; its repeats disappear and only the chosen position remains. Remove
+removes membership from this group across layouts. Identity/image/voice edits
+do not change its seed role. Toggle off/on never recreates a removed placement.
 
-## 4. Data model
+The top-row switch controls only unmodified supplied top-role tiles. Customized
+positions stay visible. Its settings explanation must say this. The fixed seed
+anchor cells remain reserved for automatic placement, even after a local
+removal/move; an adult can explicitly place a content tile in a vacated cell.
+An occupied hidden top-role cell is not empty and cannot be overwritten without
+an explicit local removal. Edit mode shows hidden supplied tiles as muted
+placeholders, distinct from globally masked words. No setting changes capacity.
 
-Built on what exists: the catalog ships seed rows that are copied into the
-user's database; adult edits are ops that carry intent and replay through
-the same write owners (`public/shared/ops.mjs`), so every device lands on
-the same cells.
+Dragging a repeated anchor on a later page resolves its word identity from the
+stored page-0 placement but uses the **displayed** source/destination page for
+move/swap. Both swap participants become ordinary content if either was an
+anchor; Undo restores their original role, stored address, and repetitions.
+Manual re-add always creates content, never silently restores an anchor role.
+Only seed installation or explicitly previewed adoption creates supplied roles.
 
-**Catalog (shipped, never edited on device):**
+The index retains the existing `indexVisual`/`indexSlotAt` mapping (canonical
+index slots begin at 10, visual page width is cells-minus-three). This is
+independent of group-content v2 geometry; it has no repeated word anchors.
+Its first two visual slots remain unavailable; corner Home and Edit controls
+are outside the grid, and the last cell is Next. New-profile occasions occupy
+canonical slots 10–13, My Words 14, then topics. Do not remap an existing index.
+Remove the storage upper bound of 59 and let `lowestFreeIndexSlot` append beyond
+it; existing index positions remain unchanged and extra groups page normally.
+Hidden/ineligible groups keep their slots; filtering never compacts other doors.
 
-- `block` (id, per-locale name) and `block_item` (block_id, position,
-  sense_id).
-- `group_block` (group_id, block_id, position) — which blocks a door holds.
-- `block_place` (block_id, layout, col) — the block's address per layout,
-  solved at build.
+All repeated anchor slots plus Next are excluded from ordinary automatic
+placement on every page. Default capacities (top ON, before local edits):
 
-**User database (seeded from the catalog, edited through ops):** the same
-three tables, plus
-
-- `door_pin` (group_id, item, layout, slot) — pins and "just here" extras.
-- `door_hide` (group_id, item) — "just here" removals.
-- `board_group.kind` stays; a door is a block door when it has
-  `group_block` rows.
-
-**One layout function** — `doorCells(db, groupId, layout)` — returns the
-cells of a block door from blocks, places, frame, pins, and hides. It is
-pure and deterministic. The renderer calls it for block doors; plain
-groups keep `groupPage` (`public/shared/groups.mjs`).
-
-**Schema changes:** `group_cell.slot_index` is `2..58` today because
-slots 0, 1, and 59 hold navigation (`src/board/schema.sql`); B4 frees
-them, so the range becomes the whole grid, with the frame cells reserved.
-New op kinds: move in block, move block, add to block, remove from block,
-pin, unpin, hide, unhide, make it match.
-
-**Build gates** (in `buildGroups` or next to it): every door fits one
-page per layout — 56 cells on `grid60` (60 minus the four frame cells;
-navigation has left the grid); no two blocks of one door overlap; frame cells stay
-free; every word is reachable on every layout (026 D6). Each gate is seen
-to fail once (Design_Invariants § 2).
-
-## 5. Execution map
-
-Order: foundation → meal doors as the proof → editing → the rest of the
-occasions. Editing comes before the other occasions because it is where
-the model is tested hardest; a model change is cheaper with four doors
-than fifteen. The 026 track (topic-group remap, noun frame color, icons,
-natural-color art) runs alongside.
-
-### Phase A — Foundation (nothing visible changes except door layout)
-
-| Slice | What | Depends on | Proof |
+| Layout | Topic content slots/page | Meal content slots/page | Small-layout treatment |
 | --- | --- | --- | --- |
-| **A1** | Door layout (B4): Back replaces Settings in doors, Next bottom-right only when paging, + Add by Groups in Edit mode; `group_cell` takes the whole grid; existing items on frame cells move to the nearest free cell with the soft ring | — | `groups.test.mjs` legs; saved-board replay; founder look on `npm run dev:agent` |
-| **A2** | Builder: `word#slot`, `layouts`, reachability on every layout (was 026 slice 1); block tables in the catalog; block places solved at build; the § 4 gates | — | `buildGroups` legs in `src/board/groups.test.mjs`, each gate seen failing |
-| **A3** | `doorCells` + renderer for block doors; the frame on every door | A1, A2 | Property tests: same word, same cell on every block door; frame present; no overlap — plus a rendered-page check like the prototype's |
-| **A4** | Group index honors `layouts` (was 026 slice 3) | A2 | `layout.test.mjs` leg per layout |
-| **A5** | Docs: `Motor_Grid_And_Art.md` § Groups (B1–B4), 018 D9 line, `Design_System.md` door anatomy | A1–A4 | — |
+| grid60 | 46 | 43 | Core top row + four frame words; meal adds three anchors. |
+| grid90 | 76 | 73 | Same named core coordinates; last cell 89 is Next in groups. |
+| grid15 | 7 | 6 | Top row I/want/more/yes/stop; no/help complete frame; all done at slot 7. Eat/drink have no home cell here, so are ordinary paged content. |
 
-### Phase B — Meal doors (the proof)
+The last cell is reserved even on a one-page group; paging can never evict a
+word. Counts are derived from the union of slots, not hard-coded as 56 or 57.
+In product copy, page 1 means stored page 0. At 15 cells put milk, water,
+banana, and cup on page 1 of every meal. Assign the remaining two content positions from the authored food priorities subject
+to the shared-coordinate constraint; A1 records the resulting exact seed. Do
+not independently choose those two per occasion and then claim alignment.
+Repeated words in the meal/Fruit/Drinks family use the same page and cell, so later pages may be sparse.
+Layout-ineligible groups (the More groups on 60/90) stay out of the index;
+materialize positions only for their eligible layouts. Existing custom cell
+geometries supported by 014 retain v1 rendering and editing; this phase authors
+v2 for grid15/grid60/grid90 only and must not disable existing custom sizes.
+A new group created while a custom size is active uses v1 there and v2 for the
+three named sizes; disclose that conversion preview supports the named sizes.
+All fresh-seed words remain reachable. A Cells change previews the move cost
+and switches to saved per-layout coordinates; switching back is exact.
 
-| Slice | What | Depends on | Proof |
+Page count is one plus the highest stored content page, with a minimum of one;
+repeated anchors do not create pages. Empty intermediate pages remain, not
+compacted. If removal empties the current last page, retain that page until
+explicit navigation or reopen; then clamp to the last remaining page. No word
+changes its page number when another word is removed.
+
+### 3.3 Placement, editing, and replay
+
+Membership edits apply to all supported layouts **within the selected group**.
+Position edits affect only the active layout. Seed all eligible layout positions
+when adding membership; don't lazily recompute them at render or density change.
+
+For each layout, select a position in this order:
+
+1. Explicit target in the active layout, if available. A stale occupied target
+   refreshes the picker; local Add does not silently overwrite or swap.
+2. That word's authored preferred coordinate in the target's seed layout, if
+   free and not reserved. A manual re-add may use its own vacated seed-anchor
+   coordinate as content; it does not acquire repetition/visibility behavior.
+3. An existing placement in another group in this layout, ordered by stored
+   group index then group ID, if eligible/free. This reads a preference only;
+   it never modifies or subscribes to the other group.
+4. Lowest available `(page, slot_index)` in this layout, growing pages as needed.
+
+Moving onto an occupied cell explicitly swaps those two words. Converting an
+anchor to content frees its repeated copies; no unrelated cell reflows. Global
+masking stays separate from Remove from this board. Last-placement removal
+leaves an active Library record; remove the implicit My Words relocation.
+
+Multi-board add is one local transaction and one versioned op with the explicit
+ordered destination IDs and chosen per-layout coordinates. None preselected.
+Skip existing memberships; never move them. Failure rolls back all selected
+adds. Its Undo removes only the memberships created by that action. Ordinary
+Undo restores exact coordinates when still free; on a concurrent conflict use
+the same deterministic free-cell fallback and say the restored word is in a
+new spot. Never displace a later edit. Keep added_at stable for move/undo.
+Undo snapshots include seed_role and every affected layout position; restoring an anchor role also requires its repeated
+slot to be free on every affected page. On conflict restore as content at the
+first free cell and report the changed position rather than hide an occupant.
+
+Extend existing place/remove/move/swap ops with a payload version and layout
+coordinates. Capture placement choices at edit time so replay cannot change
+its preference because another group's index changed. Conflict resolution in
+relay order preserves earlier occupants and picks the first free eligible cell;
+unknown op versions fail explicitly. Missing/deleted destinations are skipped,
+not redirected to My Words. No hidden global filing. Versioned multi-add replay
+applies only still-existing selected groups and reports skipped destinations.
+
+Include every new table/field in snapshots, restore, and replay baselines.
+Migrate persisted `sync_baseline` JSON and legacy op payloads, not just live
+SQLite. Convert old no-layout ops by their legacy visual coordinates for each
+layout; new position ops name one layout. Fixtures must cover pending old ops
+at upgrade and mixed historical ops after restore. Older clients must not
+apply v2 payloads as v1; unsupported versions require updating before editing.
+
+## 4. Installation and existing saves
+
+Current call paths, verified from entrypoints:
+
+- `importCatalog` in `public/shared/import.mjs` calls `seedGroups`, which currently
+  inserts every missing seed cell. A removed word would reappear on reimport.
+- `groups-ui.js` calls `groupPage`, which rewraps canonical 60-space via
+  `canonPos`/`visualCell`. Merely widening a slot CHECK cannot provide these maps.
+- `removeItem` refuses builtin sense removals and relocates last-group entities
+  to My Words. Both must change with the new editor/replay contract.
+- `speakSentence` in `public/board.js` calls `kbUi.setView('board')` after closing
+  a sentence. Remove that navigation, preserving sentence/event/audio handling.
+- `placeFromEnrichment` exposes automatic category filing; the existing entity
+  policy authorizes it. Retire that write behavior, even if no production caller
+  currently invokes it. Classification remains a suggestion.
+
+Fresh profile: install the curated v2 seed once with all layout positions and
+installation markers. New custom groups seed their local anchors once.
+Reimport may update catalog identity metadata, but never installed memberships,
+positions, visibility, ordering, or a family's label/image/voice overrides.
+
+Existing profile: convert membership and materialize the current visible
+coordinates for all sizes using the old geometry; mark those group layouts v1
+and installed. Run the older zone/custom-group migration before this conversion;
+its historical `group_item` table is not the new `group_membership` table. Preserve custom additions, removals, empty groups, hidden/masked
+state, index order, and word records. Do not run 026's old destructive re-seed.
+Do not auto-insert new occasion groups into occupied/familiar index positions.
+
+Offer a one-time, dismissible setup action **Add meal boards** for an existing
+profile. Preview the four new groups and their free index destinations, then
+install them as v2 using explicit synced intent. Existing groups stay v1 until
+an adult selects **Use new group layout** in that group's settings. Preview all
+three layouts, preserve membership, and show every relocation caused by new
+reserved slots; add the supplied anchors explicitly in the preview. Conversion
+is one atomic, undoable op carrying the resulting maps. Custom words are never
+dropped. Removing a tile locally is not grounds to restore it during conversion;
+include previously removed anchors only if the adult explicitly selects them
+in the preview. v1 compatibility uses its existing navigation reservations;
+Speak-stays and local-removal rules apply to both versions. Conversion is not
+required to keep using a saved board.
+
+For legacy saves without reliable removal provenance, absence from the existing
+group wins; migration never guesses that a missing seed word should come back.
+The first v2 seed installation/adoption is the only placement-changing event;
+subsequent catalog versions cannot reinterpret it. Fresh-device restore uses
+the saved installation state before any seeding, including baseline replay.
+Persist the original concrete seed installation as a versioned baseline (or
+installation op containing all maps) before accepting edits. An op-only restore
+must receive that base; it must not replay removals against today's seed. Keep
+legacy seed payloads/version resolvers needed to reconstruct old operation logs.
+If that base is unavailable, stop restore with an explicit recoverable error
+rather than invent memberships. Test restoring after the shipped seed changes.
+
+## 5. Smart bar and evidence
+
+Fix `scripts/prediction/childes/door_starters.mjs`: read final compiled group
+membership, find child turns in the same or previous-two-turn word context,
+then count the **first analyzed token only**. If it is unmapped, do not promote
+a later word to first. Do not count every home word in the turn. Retain one-word
+responses. Emit aggregate candidate counts/support plus corpus/tokenizer/seed
+provenance into `data/prediction/door_starters.en.json`; never ship transcripts.
+
+Count all offerable initial words; normal runtime filtering removes masks,
+retired words, and duplicates already visible in the active grid. Backfill after
+filtering, with the current strip capacity/negation/expression-slot policy (017
+and 025). Empty home-board behavior is unchanged. For custom groups without a
+shipped prior, use pooled starts; group-specific child starts rank ahead by
+count, tied by the shipped prior then sense ID. Use completed spoken sentences,
+not clears, grouped by where the first pick occurred. Keep learning local under
+the existing history policy. After the first pick, existing continuation ranking
+owns suggestions. Missing priors leave the usable grid intact, never block it.
+
+Read-only local analysis on 2026-09-27 covered 10,828 transcripts / 2,108,192
+nonempty child turns. A proxy using current proposed food/drink/tableware words
+in the child turn or two preceding turns selected 148,751 turns; 57,868 had one
+normalized token and 97,451 at most three. Within that selection: want 5,881,
+eat 3,899, like 3,196, more 2,339 turns. Actual mapped first words led with I
+(11,632) and no (6,655); 47,423 first tokens were unmapped and were not skipped
+forward. These are exploratory aggregate counts, not labeled mealtimes, AAC
+outcomes, or measured interface gains. Raw-literal adjacency counts from a
+separate 130,364-turn proxy were more→juice 275, more→milk 211, my→milk 177.
+Do not mix the two denominators. Provenance/permission:
+`data/prediction/permissions/2026-09-23_TalkBank_CHILDES.md`.
+
+The old prototype's 42–52 occupied cells with top row ON is only a feasibility
+observation. Its layout does not include all final anchors/members or editing;
+its opener table counts words anywhere in turns. It is not launch proof.
+A4 must record reproducible counts from the corrected script and final seed;
+no product decision is blocked on repeating the exploratory analysis.
+
+## 6. Ordered implementation slices
+
+Every slice includes its focused tests, hunk cleanup, owner-doc status update,
+and rendered proof where named. Paths in this table exist; extend their suites
+instead of creating a parallel block subsystem. Install/verify the test guard
+per `docs/operations/Testing.md` before tests. The full wall remains subject to
+that document's per-run approval rule; it is not automatically authorized here.
+
+| Slice | Deliverable and files | Depends on | Required proof |
 | --- | --- | --- | --- |
-| **B-1** | Food blocks + Breakfast, Lunch, Dinner, Snack, Fruit, Drinks doors; settle the § 7 layout opens (single-block doors, stray columns) | A3, 026 seed swap | Founder on a device: open Breakfast, find cereal, milk, banana, spoon on one page, same cells as in Snack |
-| **B-2** | Smart bar door openers (B6); `door_starters.mjs` reads the block doors, `meal_doors.proposed.json` and `preview_addresses.mjs` are deleted | A3 | Test: empty sentence in a door offers the door's openers; history replaces them. Founder look |
-| **B-3** | "Top row on every door" setting (B5) | A3 | Setting leg; founder look with it on and off |
-| **B-4** | Occasion doors first in the index; the time-of-day glow reaches them | B-1 | `strip_order.test.mjs` likely-door leg |
+| A1 — Seed/compiler and geometry | Update the two authoring inputs; resolve meanings/layout eligibility; emit group membership, per-layout cells/roles and seed version in `scripts/catalog/build_catalog.mjs`. Shared geometry in `public/shared/groups.mjs`. Finish 026 topic membership against actual capacities; update `preview_blocks.mjs` to consume compiler output. | — | `src/board/groups.test.mjs`: duplicate meaning, overlap, reserved slot, missing reachability, repeated-word mismatch, wrong layout bounds, one-page 60/90 seeds; demonstrate each rejection once. Check 15-cell pages and Dinner. |
+| A2 — State, install, migration and replay | `src/board/schema.sql`, `src/board/catalog.mjs`, `public/shared/import.mjs`, groups/ops owners. Membership/position split, installation state, settings/hidden fields, versioned ops, legacy live/baseline conversion and explicit adoption; stable paged index extension. Audit every `group_cell` reader and snapshot allowlist. | A1 | `src/board/groups.test.mjs`, `src/board/sync_op.test.mjs`, `src/board/sync_merge.test.mjs`, `src/board/layout.test.mjs`: custom legacy saves, empty groups, remove→reimport, density round trip, page-2 anchor drag/swap/role Undo, manual anchor re-add, index overflow, offline concurrent same-slot adds, pending v1 ops, fresh-device restore, adoption/undo. |
+| A3 — One group surface and local editor | `public/board/groups-ui.js`, `public/board.js`, `public/index.html`, relevant board styles. Home/Next/Add, anchor repetition, top-row switch, hides, fixed index/glow, local remove/move/swap, explicit multi-add and scope copy, setup/adoption preview. Disable automatic enrichment filing; update entity/word-card callers. | A2 | `src/board/groups_ui.test.mjs`, `src/board/keyboard_ui.test.mjs`, plus affected writer suites. Render all three layouts; execute the Works Test below, including identity sharing versus placement locality. |
+| A4 — Stay after Speak and correct starters | Speech completion and `renderStrip` integration in `public/board.js`; corrected CHILDES builder/table; first-pick group history through existing local learner owners. Remove obsolete `meal_doors.proposed.json`/`preview_addresses.mjs` once no consumers remain. | A2; A3 for rendered proof | `scripts/prediction/childes/childes.test.mjs` distinguishes initial versus later words/unmapped starts; affected prediction/speech tests. Offline rendered speech, fresh-start both ways, expressive/transformed/canceled speech, later navigation, learned and cold-start suggestions. |
+| A5 — Integrated launch proof and status | Final built catalog and previews from source, 026 visual work, all owner docs + SSOT + live index. No catalog audio swaps or bulk art generation. | A1–A4; 026 visuals | Works Test, focused suites below, `npm run check:fast`, doc routes/phase freshness. Record actual observed results and outstanding failures; mark built only when proven. |
 
-### Phase C — Editing
+### Works Test — owner-visible release proof
 
-| Slice | What | Depends on | Proof |
-| --- | --- | --- | --- |
-| **C1** | Write owners + ops for every B8 edit; replay converges | A3 | Replay tests; the two promises as property tests (an edit moves only its word or block; moved words get `move_mark`) |
-| **C2** | Editor: "everywhere / just here", pins, hides, add-to-block with Jev's suggestion (offline → just here) | C1 | Founder edits a door on a device; the other doors follow |
-| **C3** | Drift marker + "make it match" | C2 | Test: a pinned door shows the marker; the action clears it |
+Use `npm run dev:agent`; never replace the founder's browse process. Run offline
+as well as online. Inspect actual rendered cells and audible output, not a
+layout helper's success report. This is our own acceptance check, not a request
+for parents to trial an unfinished product.
 
-### Phase D — More occasions
+1. Fresh grid60: open Breakfast; I/want/milk and more/milk are directly selectable
+   without the Smart bar. Speak audibly and remain on the same group/page. Clear
+   according to the chosen preference; Home and Groups work independently.
+2. Open Lunch, Dinner, Snack, Fruit, Drinks; inspect repeated seed coordinates.
+   Breakfast includes yogurt; Snack includes cup. Every launch word has a
+   home/group route on the fresh seed. No overlapping or invisible occupied tile.
+3. Remove chocolate milk from Breakfast; inspect its empty cell and unchanged
+   Lunch/Drinks. Reopen, restart, reimport catalog, restore on another device;
+   the removal persists. Remove the last placement of a personal word; verify
+   active Library/keyboard recovery and no unsolicited My Words placement.
+4. Move milk on Breakfast; only its active-layout placement changes. Undo.
+   Add an existing word whose preferred slot is occupied; no occupant moves.
+   Fill a page and add again; Next appears without relocating a word.
+5. Add a personal drink to Breakfast offline; only Breakfast changes. Explicitly
+   add it to Lunch/Snack, skip already-present destinations, then Undo that add.
+   Change its photo/recording on the scoped word card; all occurrences update.
+6. Toggle the top row off/on; content never moves, removed tiles stay removed,
+   frame yes remains, customized positions remain visible, no duplicate yes.
+7. grid15: verify the six authored first-page meal content cells, paging, repeated
+   anchors and matching shared page/cell addresses. grid90: verify bounds and
+   full vocabulary. Customize each, change Cells with preview, and switch back.
+8. Existing saved profile: decline adoption and preserve the old layout; accept
+   one group's preview and verify only the shown changes. Undo restores it.
+9. Empty group sentence: observe eligible first-word suggestions; after a tap,
+   continuations. Speak after manually navigating away during playback: no jump
+   back. No prediction completion may move a board tile.
 
-| Slice | What | Depends on | Proof |
-| --- | --- | --- | --- |
-| **D1** | Routines: getting dressed, bath & teeth, bedtime, car ride, park, store, doctor, school day — blocks + doors, founder review | C2 | Founder review, a door at a time |
-| **D2** | Icons for occasion doors (026 D7 style) | — | Founder review, one at a time |
+Focused command sets (run the suites affected by each slice, not the whole wall):
 
-### Phase E — Other board sizes
+```sh
+scripts/test.sh src/board/groups.test.mjs src/board/layout.test.mjs
+scripts/test.sh src/board/sync_op.test.mjs src/board/sync_merge.test.mjs
+scripts/test.sh src/board/groups_ui.test.mjs src/board/keyboard_ui.test.mjs
+scripts/test.sh scripts/prediction/childes/childes.test.mjs
+npm run check:fast
+npm run lint:phase-freshness
+```
 
-| Slice | What | Depends on | Proof |
-| --- | --- | --- | --- |
-| **E1** | Block places for `grid90` and `grid15`. `grid15` (5 × 3) can't hold six-row blocks: blocks get their own shapes there, and doors page | A2 | Build gates per layout; founder look on `grid15` |
+## 7. Completion and deletion targets
 
-**Works Test (the phase):** on `grid60`, the founder taps 🗂️ → Breakfast
-and says "I want cheerios" without leaving the door (the bar offers *I*,
-*want*); flips to Snack and finds *milk* and *banana* in the same cells;
-moves *juice* first in Drinks and sees it move on Breakfast, Lunch, and
-Snack; pins *water* on Breakfast only and sees the "make it match"
-marker.
+- No runtime block tables, linked-edit operations, pin/hide overlay subsystem,
+  make-it-match state, or category-driven automatic placement.
+- No return-home-after-Speak path; no built-in removal veto or never-orphan
+  re-filing; no repeated seed import restoring family removals.
+- No stale within-turn counts labeled as starters; no old prototype presented
+  as final proof. Remove retired prototype sources only after their consumers
+  switch, and regenerate output from the final authoring owner.
+- Product docs distinguish decided behavior from built behavior. At completion,
+  retain the durable contract in Motor_Grid_And_Art, identity in Word_Library,
+  sync in Sync_And_Web_Editing, geometry/storage in Language_And_Voice_Schema;
+  retire this phase per the playbook rather than leave duplicate owners.
 
-## 6. Prototype results (2026-09-27)
+**Packet proof state (2026-09-27):** docs-only decision work. Runtime and data
+are unchanged; all implementation Works Tests above remain to be built/run.
+No product efficacy claim or clinical validation is asserted.
 
-Measured on the rendered pages (`preview_blocks.mjs`):
-
-- Every repeated word sits in the same cell on every page, top row on or
-  off.
-- Occasion doors use 33–43 of 60 cells with the top row off (calm, real
-  empty space), 42–52 with it on (Lunch nearly full).
-- CHILDES openers per meal door, once one-word replies count: *I, is, it,
-  and, you, no, that, in, want, to, have, get* — nearly the same for every
-  meal door. *More* ranks 20–33 and *all done* is rare in child speech.
-
-## 7. Open — founder
-
-- **B9:** occasions on by default with one switch to turn them off?
-- **Single-block doors** (Fruit, Drinks) sit at the right edge, left side
-  empty, because shared blocks sit next to the frame. Flip shared blocks to
-  the left (single doors look natural; meal doors lead with fruit and
-  drinks) or keep.
-- **Block sizes:** blocks that aren't a multiple of the column height leave
-  a stray column (Fruit's 7th word). Size blocks to 6 or 12, or accept
-  short columns.
-- **The "Now" cell:** a fixed home cell that opens the current occasion
-  (would amend 018 D8/D9).
-- **More** and **all done** travel on meal doors despite the data?
-- **`grid15`** block shapes (E1).
-
-## 8. Risks
-
-- **The editor is the hard part, not the database.** "Everywhere or just
-  here" has to feel obvious to a tired parent.
-- **Drift:** heavy "just here" use slowly makes doors disagree — the
-  marker and "make it match" are the answer.
-- **SLP pushback** ("one word, one place"): the home board keeps one
-  location for every core word; doors repeat words only in the same place.
-  The five-reasons table in § 1 is the argument.
+**Documentation closeout:** the 2026-09-27 packet received a read-only architecture
+review covering layout, install/replay, local scope, migration, and recovery.
+Its findings are incorporated above. Doc-route scan, phase freshness, and diff
+whitespace checks pass. Runtime tests are not claimed: this task changed only
+Markdown. Git staging/commit/handoff is intentionally left to the founder.

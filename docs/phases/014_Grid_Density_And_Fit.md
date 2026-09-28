@@ -100,13 +100,14 @@ all three.
 **One Cells setting per profile** (**DECIDED 2026-09-22**, founder). Cells follow the person's
 hands and eyes, not the content, so the home board, every group page, and
 the Smart bar all use the profile's one setting. A group has no size of its
-own; a big group pages (`Next ›`). Group items keep their saved order; when
-Cells changes, groups are laid out again in that order and their moved
-items join the move-cost preview (§ 4). Showing fewer choices for an
-activity is Spotlight's job (`docs/product/Design_System.md` § Attention layer),
-not a bigger or smaller group. **Settled in slice 1:** at 15 cells a group
-page keeps back, the reserved Edit slot, and `Next ›`, leaving 12 items —
-and the group index pages the same way.
+own; a big group pages (`Next ›`). **AMENDED 2026-09-27; not built (027):**
+new group layouts save positions per named size, and Cells changes select those
+maps through the existing move-cost preview. Returning to a size restores its
+positions exactly. Old saved/custom geometries retain the existing linear rewrap
+until explicit adoption. 027 owns new reservations and capacities (7 ordinary
+content cells per grid15 topic page, 6 per meal page), replacing the old 12-item
+claim for new layouts. Index ordering remains stable; activity choices are
+curated group membership, not a separate Cells setting.
 
 Examples: a toddler and a CP child — both Core 15 (15 cells, full
 vocabulary, words), with different access settings. A stroke survivor —

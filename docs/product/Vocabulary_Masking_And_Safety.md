@@ -6,6 +6,14 @@ Truth owners: `docs/product/Personal_Entities.md`, `docs/product/Motor_Grid_And_
 
 ---
 
+## Group removal is not global hiding
+
+**DECIDED 2026-09-27; not built (027).** Remove from [group] removes only that
+membership and its layout positions; it never masks or retires a word. An
+active word with no group placements remains in the Library and keyboard
+lookup. Global Hide/retire stays a separate word-card action. The group editor
+must not use global masking as a substitute for removing a built-in placement.
+
 ## 1. The Principle: Parental Agency Meets Motor Invariance
 
 AssistiveWare's Proloquo (2022) provoked widespread parent backlash by hardcoding words like "shut up" and adult terms, refusing to allow caregivers to hide or disable them under the dogmatic claim that *"no language should ever be restricted to children."*
