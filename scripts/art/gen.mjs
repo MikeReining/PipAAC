@@ -145,6 +145,8 @@ export const NON_PLURALS_ENDING_IN_S = new Set([
   "always",
   "sometimes",
   "perhaps",
+  "pajamas",
+  "pyjamas",
 ]);
 
 export function isPluralWord(word) {
