@@ -63,7 +63,7 @@ test("a photo override wins on every surface; revert restores the art", () => {
   // Every surface resolves the default picture.
   assert.equal(artFor(db, cup), "art/cup_a.png");
   const homeRow = () =>
-    groupPage(db, "grp_home", 0, "en").find((r) => r.item_id === cup);
+    groupPage(db, "grp_drinks", 0, "en").find((r) => r.item_id === cup);
   assert.equal(homeRow()?.art, "art/cup_a.png");
   assert.equal(
     libraryAll(db, "en").find((r) => r.kind === "sense" && r.id === cup)?.art,
@@ -78,7 +78,7 @@ test("a photo override wins on every surface; revert restores the art", () => {
     libraryAll(db, "en").find((r) => r.kind === "sense" && r.id === cup)?.art, k);
   // The group's add-flow row resolves it too (the word is already placed,
   // so check through a custom group query — same expression either way).
-  assert.equal(catalogMatches(db, "cu", "grp_food", "en").find((m) => m.id === cup)?.art, k);
+  assert.equal(catalogMatches(db, "cu", "grp_fruit", "en").find((m) => m.id === cup)?.art, k);
 
   // The other library picture → its key everywhere.
   setImageOverride(db, { senseId: cup, imageId: "img_cup_b" });

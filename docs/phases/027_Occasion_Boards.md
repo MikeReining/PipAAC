@@ -54,8 +54,7 @@ layout reset tools, automatic filing by classification.
 ### 3.1 Authoring and build
 
 - `data/group_seed.topics.json` — 026 topic membership and layout eligibility.
-- `data/occasions/block_doors.proposed.json` — becomes
-  `data/group_seed.occasions.json`: explicit per-group word lists, stable group
+- `data/group_seed.occasions.json` (was `data/occasions/block_doors.proposed.json`): explicit per-group word lists, stable group
   IDs, and ordered clusters. Add Dinner. Clusters suggest coordinates; they
   never imply membership. `data/group_seed.json` is deleted.
 - **Positions are computed, not typed** (amended 2026-09-28). One rule in the
@@ -290,5 +289,14 @@ npm run lint:phase-freshness
   Word_Library, sync in Sync_And_Web_Editing, storage in
   Language_And_Voice_Schema; this phase retires per the playbook.
 
-**Packet state (2026-09-27):** docs only. Runtime and data unchanged; every
-Works Test above is still to be built and run. No efficacy or clinical claim.
+**Packet state (2026-09-28):** A1 landed — `scripts/catalog/build_groups.mjs`
+compiles both seeds into membership plus per-size positions and gates them
+(`src/board/groups.test.mjs`); `node scripts/catalog/preview_blocks.mjs` renders
+every compiled page for founder review. Until A2, the runtime installs the
+grid60 positions into today's canonical `group_cell`. Every Works Test above is
+still to be run. No efficacy or clinical claim.
+
+**Founder review items (curation draft):** the sibling splits (Home/Things,
+Describing/Touch & sound, Little words/Who & which), Dinner's membership, the
+grid15 first page (milk, water, banana, cup, eat, all done + cereal/pasta/cracker),
+and grid15 Fruit, whose shared positions leave page 2 empty.

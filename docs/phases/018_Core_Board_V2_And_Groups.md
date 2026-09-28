@@ -281,7 +281,7 @@ section (sample counts).
      behind spotlight and modeling glows.
    - Group doors are neutral with a folder tab — `.gcell.door` paints a
      tab edge over the existing no-role gray.
-   - Re-seed the default `index_slot` order — `group_seed.json` reordered
+   - Re-seed the default `index_slot` order — `group_seed.json` (now `group_seed.topics.json`) reordered
      to the D6 list; new devices get it (adult order on existing devices
      is untouched — it lives in `board_group`, not the seed).
    - Mixed groups use the banded layout — `bandedFreeCell` in

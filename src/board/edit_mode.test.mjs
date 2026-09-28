@@ -115,10 +115,10 @@ test("tap an empty slot, add there: the word lands at that slot and nothing else
 
 test("swap touches exactly the two rows", () => {
   const db = openDb();
-  const before = cells(db, "grp_food");
+  const before = cells(db, "grp_breakfast");
   const [a, b] = [before[0], before[10]];
-  swapItems(db, "grp_food", a, b);
-  const after = cells(db, "grp_food");
+  swapItems(db, "grp_breakfast", a, b);
+  const after = cells(db, "grp_breakfast");
   assert.equal(after.length, before.length);
   const diff = before.filter(
     (r) =>
@@ -140,7 +140,7 @@ test("edit gestures never touch the core map", () => {
   placeItem(db, gid, "entity", "ent_a", { page: 0, slot_index: 14 });
   const { undo } = removeItemUndoable(db, gid, "entity", "ent_a");
   undo();
-  const rows = cells(db, "grp_food");
-  swapItems(db, "grp_food", rows[0], rows[1]);
+  const rows = cells(db, "grp_breakfast");
+  swapItems(db, "grp_breakfast", rows[0], rows[1]);
   assert.deepEqual(snapshotCoreCells(db), before);
 });

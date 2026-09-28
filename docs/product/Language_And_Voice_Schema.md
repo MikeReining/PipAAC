@@ -734,7 +734,7 @@ CREATE TABLE group_cell (
 );
 ```
 
-One container type: built-in groups (seeded from `data/group_seed.json`),
+One container type: built-in groups (seeded from `data/group_seed.topics.json` and `data/group_seed.occasions.json`, compiled by `scripts/catalog/build_groups.mjs`),
 My Words, and caregiver custom groups are all `board_group` rows; items —
 senses or entities — sit at fixed `(page, slot_index)` in `group_cell`.
 The group index is a second coordinate map: `index_slot` gets the same
@@ -1212,7 +1212,7 @@ Fixes were routed to phases 003b and 004 (both complete, in git history).
 | --- | --- | --- |
 | Runtime reads `learner_profile.locale`; `resolveProfile` implements § 7.1 and every label query and `clipKeyFor` bind the profile locale/voice; a check-fast gate bans the literals | **BUILT** (cfcd0a9) | `public/shared/profile.mjs`, `scripts/check_locale_literals.mjs` |
 | `speak()` sets `u.lang` to the profile locale; `document.documentElement.lang` follows at boot | **BUILT** (cfcd0a9) | `public/board.js` |
-| Built-in group names come from the `group_label` catalog table per locale; `board_group.name` is the caregiver override (NULL for built-ins); stored seed names are NULLed by `migrateBuiltinGroupNames` | **BUILT** (f203693) | `data/group_seed.json`, `public/shared/groups.mjs` |
+| Built-in group names come from the `group_label` catalog table per locale; `board_group.name` is the caregiver override (NULL for built-ins); stored seed names are NULLed by `migrateBuiltinGroupNames` | **BUILT** (f203693) | `data/group_seed.topics.json`, `public/shared/groups.mjs` |
 | Strip grammar is per locale (`GRAMMAR` keyed by locale); the infinitival-*to* rule matches the tail's sense id, never the English text | **BUILT** (5c971c4) | `public/shared/funnel.mjs` |
 | Keyboard letters, punctuation, capitals, and spelling rules are English | **BUILT** (004: `26d4e52`, `7f87bee`, `70ff059`, `9ca4653`) | per-locale key maps (`public/shared/keymaps.mjs`), accent-insensitive matching + en sound key (`public/shared/spelling.mjs`), en invented-spelling fixture (`src/board/fixtures/invented_spellings.en.json`), next-word continuations (`public/shared/funnel.mjs`) |
 | Digits have no language-neutral path to number senses | **BUILT** (`7f87bee`) | digit **alias labels** per locale from `data/number_aliases.json`, emitted by `scripts/catalog/build_catalog.mjs` |

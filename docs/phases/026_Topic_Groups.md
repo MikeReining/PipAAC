@@ -1,10 +1,13 @@
 # Phase 026 — Topic groups
 
-**Status:** READY FOR IMPLEMENTATION — launch direction approved 2026-09-27.
-Not built. `data/group_seed.topics.json` is the starting mapping, not yet the
-final capacity-checked seed. Finalize it under 027 A1's geometry/reachability
-rules; do not wait for another product-model decision. The existing
-`public/preview-groups.html` is an earlier review, not launch proof.
+**Status:** EXECUTING — launch direction approved 2026-09-27. **Slice 1
+compiled 2026-09-28 (027 A1):** `data/group_seed.topics.json` is the live seed,
+capacity-checked by `scripts/catalog/build_groups.mjs` (one page on 60/90, every
+launch word reachable on every size). Home, Describing and Little words split
+into Home/Things, Describing/Touch & sound, Little words/Who & which — a
+curation draft for founder review (`node scripts/catalog/preview_blocks.mjs`).
+Slices 2–4 open. The existing
+`public/preview-groups.html` is an earlier review, not launch proof; the compiled seed renders with `node scripts/catalog/preview_blocks.mjs`.
 
 **2026-09-27:** group behavior and editing are owned by
 `docs/product/Motor_Grid_And_Art.md` § Groups; 027 owns implementation. Blocks
@@ -147,7 +150,7 @@ live product contract is Motor_Grid_And_Art § Groups.
 
 ## Evidence (CHILDES, 2026-09-26)
 
-`node scripts/prediction/childes/measure_groups.mjs` — every transcript,
+Measured on the proposal by `scripts/prediction/childes/measure_groups.mjs` (retired with the 027 A1 swap; in git history) — every transcript,
 like for like (a word counts only if both seeds put it behind a door).
 "Door words" are words not on the home board. Reported, not gated.
 

@@ -1,12 +1,30 @@
 {
   "version": 1,
-  "status": "PROPOSED 2026-09-26 — docs/phases/026_Topic_Groups.md. Not read by the build; data/group_seed.json stays live until the founder marks up the mapping.",
+  "status": "LIVE 2026-09-28 — docs/phases/026_Topic_Groups.md + 027 § 3.1. Read by scripts/catalog/build_groups.mjs. Array order is the default index order; entries with seed \"occasions\" are defined in data/group_seed.occasions.json. The Home/Things, Describing/Touch & sound, and Little words/Who & which splits are a curation draft for founder review (027 A1).",
   "notes": {
     "word#slot": "Picks one sense of a two-meaning word by launch_lexicon slot (orange, bathroom, light). The builder needs this before the swap (026 slice 1).",
     "layouts": "Doors shown only on these board layouts. The four More groups hold the rest of grid60 for grid15 users (014 § 3.1); on grid60/grid90 every word in them is already on the home board.",
-    "order": "Array order is the default door order (018 D6), set once, then frozen."
+    "order": "Array order is the default door order (018 D6), set once, then frozen.",
+    "seed": "\"occasions\" — the group is defined in data/group_seed.occasions.json; its entry here only fixes its index position.",
+    "category": "The lexicon category the add flow ranks first in this group (Word_Library § 5.1). A ranking hint, never membership."
   },
   "groups": [
+    {
+      "key": "breakfast",
+      "seed": "occasions"
+    },
+    {
+      "key": "lunch",
+      "seed": "occasions"
+    },
+    {
+      "key": "dinner",
+      "seed": "occasions"
+    },
+    {
+      "key": "snack",
+      "seed": "occasions"
+    },
     {
       "key": "my_words",
       "glyph": "⭐",
@@ -17,6 +35,7 @@
     {
       "key": "social",
       "glyph": "💬",
+      "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
       "names": {
         "en": "Social"
       },
@@ -68,6 +87,7 @@
     {
       "key": "numbers",
       "glyph": "🔢",
+      "category": "Numbers & Counting",
       "names": {
         "en": "Numbers"
       },
@@ -88,6 +108,7 @@
     {
       "key": "people",
       "glyph": "👪",
+      "category": "People, Family & Roles",
       "names": {
         "en": "People"
       },
@@ -136,6 +157,7 @@
     {
       "key": "time",
       "glyph": "🕐",
+      "category": "Time, Calendar & Sequencing",
       "names": {
         "en": "Time"
       },
@@ -170,6 +192,7 @@
     {
       "key": "home",
       "glyph": "🏠",
+      "category": "Home, Household Objects & Daily Tools",
       "names": {
         "en": "Home"
       },
@@ -199,6 +222,23 @@
         "rug",
         "fridge",
         "microwave",
+        "sleep",
+        "wake up",
+        "clean up",
+        "open",
+        "close",
+        "shut",
+        "turn"
+      ]
+    },
+    {
+      "key": "things",
+      "glyph": "🧰",
+      "category": "Home, Household Objects & Daily Tools",
+      "names": {
+        "en": "Things"
+      },
+      "words": [
         "plate",
         "bowl",
         "fork",
@@ -218,13 +258,6 @@
         "flashlight",
         "bucket",
         "paper towel",
-        "sleep",
-        "wake up",
-        "clean up",
-        "open",
-        "close",
-        "shut",
-        "turn",
         "carry",
         "drop",
         "hold",
@@ -236,6 +269,7 @@
     {
       "key": "describing",
       "glyph": "🎨",
+      "category": "Descriptors, Adjectives & Opposites",
       "names": {
         "en": "Describing"
       },
@@ -253,30 +287,10 @@
         "long",
         "heavy",
         "light#521",
-        "thick",
-        "thin",
-        "wide",
-        "narrow",
-        "hard",
-        "soft",
-        "rough",
-        "smooth",
-        "sticky",
-        "wet",
-        "dry",
-        "clean",
-        "dirty",
         "broken",
         "fixed",
         "empty",
         "full",
-        "loud",
-        "quiet",
-        "noisy",
-        "bright",
-        "light#552",
-        "dark",
-        "gross",
         "new",
         "old",
         "pretty",
@@ -295,8 +309,39 @@
       ]
     },
     {
+      "key": "senses",
+      "glyph": "🖐️",
+      "category": "Descriptors, Adjectives & Opposites",
+      "names": {
+        "en": "Touch & sound"
+      },
+      "words": [
+        "thick",
+        "thin",
+        "wide",
+        "narrow",
+        "hard",
+        "soft",
+        "rough",
+        "smooth",
+        "sticky",
+        "wet",
+        "dry",
+        "clean",
+        "dirty",
+        "loud",
+        "quiet",
+        "noisy",
+        "bright",
+        "light#552",
+        "dark",
+        "gross"
+      ]
+    },
+    {
       "key": "outside",
       "glyph": "🌳",
+      "category": "Animals & Nature",
       "names": {
         "en": "Outside"
       },
@@ -350,6 +395,7 @@
     {
       "key": "animals",
       "glyph": "🐶",
+      "category": "Animals & Nature",
       "names": {
         "en": "Animals"
       },
@@ -393,6 +439,7 @@
     {
       "key": "body",
       "glyph": "🧍",
+      "category": "Body, Health & Hygiene",
       "names": {
         "en": "Body & health"
       },
@@ -440,74 +487,9 @@
       ]
     },
     {
-      "key": "food",
-      "glyph": "🍎",
-      "names": {
-        "en": "Food"
-      },
-      "words": [
-        "breakfast",
-        "lunch",
-        "dinner",
-        "food",
-        "bread",
-        "toast",
-        "cereal",
-        "oatmeal",
-        "pancake",
-        "waffle",
-        "bagel",
-        "egg",
-        "butter",
-        "jam",
-        "syrup",
-        "pizza",
-        "pasta",
-        "macaroni",
-        "sandwich",
-        "chicken",
-        "nuggets",
-        "burger",
-        "hot dog",
-        "fries",
-        "ketchup",
-        "soup",
-        "rice",
-        "cheese",
-        "meat",
-        "fish",
-        "snack",
-        "cracker",
-        "cookie",
-        "chips",
-        "popcorn",
-        "pretzel",
-        "yogurt",
-        "fruit snack",
-        "ice cream",
-        "popsicle",
-        "candy",
-        "cake",
-        "muffin",
-        "donut",
-        "fruit",
-        "apple",
-        "banana",
-        "strawberry",
-        "orange#131",
-        "grapes",
-        "watermelon",
-        "carrot",
-        "broccoli",
-        "corn",
-        "eat",
-        "cook",
-        "bite"
-      ]
-    },
-    {
       "key": "going_out",
       "glyph": "🚗",
+      "category": "Places, Rooms & Community",
       "names": {
         "en": "Going out"
       },
@@ -613,28 +595,16 @@
     },
     {
       "key": "drinks",
-      "glyph": "🥤",
-      "names": {
-        "en": "Drinks"
-      },
-      "words": [
-        "water",
-        "milk",
-        "juice",
-        "apple juice",
-        "chocolate milk",
-        "tea",
-        "smoothie",
-        "cup",
-        "bottle",
-        "straw",
-        "drink",
-        "thirsty"
-      ]
+      "seed": "occasions"
+    },
+    {
+      "key": "fruit",
+      "seed": "occasions"
     },
     {
       "key": "art_music",
       "glyph": "🖍️",
+      "category": "Toys, Play, Media & Leisure",
       "names": {
         "en": "Art & music"
       },
@@ -660,6 +630,7 @@
     {
       "key": "feelings",
       "glyph": "😊",
+      "category": "Feelings, Emotions & Sensory States",
       "names": {
         "en": "Feelings"
       },
@@ -701,6 +672,7 @@
     {
       "key": "clothes",
       "glyph": "👕",
+      "category": "Clothing & Accessories",
       "names": {
         "en": "Clothes"
       },
@@ -738,6 +710,7 @@
     {
       "key": "play",
       "glyph": "⚽",
+      "category": "Toys, Play, Media & Leisure",
       "names": {
         "en": "Play"
       },
@@ -767,6 +740,7 @@
     {
       "key": "bathroom",
       "glyph": "🚽",
+      "category": "Body, Health & Hygiene",
       "names": {
         "en": "Bathroom"
       },
@@ -796,6 +770,7 @@
     {
       "key": "screens",
       "glyph": "📱",
+      "category": "Toys, Play, Media & Leisure",
       "names": {
         "en": "Screens"
       },
@@ -820,26 +795,11 @@
     {
       "key": "little_words",
       "glyph": "🔤",
+      "category": "Function Words & Grammar",
       "names": {
         "en": "Little words"
       },
       "words": [
-        "something",
-        "someone",
-        "everyone",
-        "nothing",
-        "thing",
-        "they",
-        "him",
-        "her",
-        "us",
-        "them",
-        "his",
-        "your",
-        "yours",
-        "our",
-        "their",
-        "mine",
         "are",
         "am",
         "was",
@@ -864,12 +824,6 @@
         "over",
         "away",
         "behind",
-        "every",
-        "each",
-        "another",
-        "other",
-        "these",
-        "those",
         "very",
         "too",
         "just",
@@ -883,11 +837,46 @@
       ]
     },
     {
+      "key": "who_which",
+      "glyph": "👉",
+      "category": "Function Words & Grammar",
+      "names": {
+        "en": "Who & which"
+      },
+      "words": [
+        "something",
+        "someone",
+        "everyone",
+        "nothing",
+        "thing",
+        "they",
+        "him",
+        "her",
+        "us",
+        "them",
+        "his",
+        "your",
+        "yours",
+        "our",
+        "their",
+        "mine",
+        "every",
+        "each",
+        "another",
+        "other",
+        "these",
+        "those"
+      ]
+    },
+    {
       "key": "more_people",
       "glyph": "👥",
       "layouts": [
         "grid15"
       ],
+      "names": {
+        "en": "More people"
+      },
       "sector": {
         "layout": "grid60",
         "cols": [
@@ -895,9 +884,6 @@
           1
         ],
         "excludeLayout": "grid15"
-      },
-      "names": {
-        "en": "More people"
       }
     },
     {
@@ -906,6 +892,9 @@
       "layouts": [
         "grid15"
       ],
+      "names": {
+        "en": "More doing"
+      },
       "sector": {
         "layout": "grid60",
         "cols": [
@@ -913,9 +902,6 @@
           4
         ],
         "excludeLayout": "grid15"
-      },
-      "names": {
-        "en": "More doing"
       }
     },
     {
@@ -924,6 +910,9 @@
       "layouts": [
         "grid15"
       ],
+      "names": {
+        "en": "More where"
+      },
       "sector": {
         "layout": "grid60",
         "cols": [
@@ -931,9 +920,6 @@
           6
         ],
         "excludeLayout": "grid15"
-      },
-      "names": {
-        "en": "More where"
       }
     },
     {
@@ -942,6 +928,9 @@
       "layouts": [
         "grid15"
       ],
+      "names": {
+        "en": "More describing"
+      },
       "sector": {
         "layout": "grid60",
         "cols": [
@@ -949,9 +938,6 @@
           9
         ],
         "excludeLayout": "grid15"
-      },
-      "names": {
-        "en": "More describing"
       }
     }
   ]

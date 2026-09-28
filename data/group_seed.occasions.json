@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "status": "LIVE 2026-09-28 — docs/phases/027_Occasion_Boards.md § 3.1. Read by scripts/catalog/build_groups.mjs. Curation is a draft for founder review on the preview (027 A1).",
+  "notes": {
+    "groups": "Membership is the explicit word list — nothing else adds a word. Index order lives in data/group_seed.topics.json (these keys appear there as stubs).",
+    "clusters": "Clusters order the coordinate assignment and never imply membership. A word sits in at most one cluster. A `side: \"right\"` cluster (the staples every meal shares) starts from the right, by the frame; the rest fill from the left. Staples come first so they find cells free in every group that holds them.",
+    "frame": "The home cells of these words are reserved on every group page (027 B3).",
+    "homeCoordinates": "Seeded at their home cell where that cell is free (027 B4).",
+    "firstPage": "Assigned before the clusters on that size — grid15 authors its first page rather than truncating the 60-cell board (027 § 3.2).",
+    "lead": "Each group's name word takes the first free cell on every size, before the clusters."
+  },
+  "frame": ["yes", "no", "stop", "help"],
+  "homeCoordinates": ["eat", "drink", "all done"],
+  "lead": ["breakfast", "lunch", "dinner", "snack"],
+  "firstPage": {
+    "grid15": ["milk", "water", "banana", "cup", "eat", "cereal", "pasta", "cracker"]
+  },
+  "clusters": [
+    {
+      "key": "drinks",
+      "side": "right",
+      "words": ["water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "tea", "bottle", "straw", "thirsty"]
+    },
+    {
+      "key": "fruit",
+      "side": "right",
+      "words": ["fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon"]
+    },
+    {
+      "key": "dishes",
+      "side": "right",
+      "words": ["cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
+    },
+    {
+      "key": "breakfast_foods",
+      "words": ["cereal", "oatmeal", "toast", "egg", "pancake", "waffle", "bagel", "bread", "muffin", "butter", "jam", "syrup"]
+    },
+    {
+      "key": "meals",
+      "words": ["food", "sandwich", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "cook"]
+    },
+    {
+      "key": "vegetables",
+      "words": ["carrot", "broccoli", "corn"]
+    },
+    {
+      "key": "snacks",
+      "words": ["cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack"]
+    },
+    {
+      "key": "treats",
+      "words": ["cookie", "cake", "ice cream", "popsicle", "candy", "donut"]
+    }
+  ],
+  "groups": [
+    {
+      "key": "breakfast",
+      "glyph": "🥣",
+      "occasion": true,
+      "category": "Food & Drink",
+      "names": {
+        "en": "Breakfast"
+      },
+      "words": ["breakfast", "eat", "drink", "all done", "cereal", "oatmeal", "toast", "egg", "pancake", "waffle", "bagel", "bread", "muffin", "butter", "jam", "syrup", "yogurt", "cup", "plate", "bowl", "spoon", "fork", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "straw"]
+    },
+    {
+      "key": "lunch",
+      "glyph": "🥪",
+      "occasion": true,
+      "category": "Food & Drink",
+      "names": {
+        "en": "Lunch"
+      },
+      "words": ["lunch", "eat", "drink", "all done", "food", "sandwich", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "cheese", "carrot", "broccoli", "corn", "cup", "plate", "bowl", "spoon", "fork", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "water", "milk", "juice", "apple juice", "chocolate milk", "bottle", "straw"]
+    },
+    {
+      "key": "dinner",
+      "glyph": "🍝",
+      "occasion": true,
+      "category": "Food & Drink",
+      "names": {
+        "en": "Dinner"
+      },
+      "words": ["dinner", "eat", "drink", "all done", "food", "cook", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "carrot", "broccoli", "corn", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin", "water", "milk", "juice"]
+    },
+    {
+      "key": "snack",
+      "glyph": "🥨",
+      "occasion": true,
+      "category": "Food & Drink",
+      "names": {
+        "en": "Snack"
+      },
+      "words": ["snack", "eat", "drink", "all done", "cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack", "cookie", "cake", "ice cream", "popsicle", "candy", "donut", "muffin", "cup", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "straw"]
+    },
+    {
+      "key": "fruit",
+      "glyph": "🍎",
+      "category": "Food & Drink",
+      "names": {
+        "en": "Fruit"
+      },
+      "words": ["fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon"]
+    },
+    {
+      "key": "drinks",
+      "glyph": "🥤",
+      "category": "Food & Drink",
+      "names": {
+        "en": "Drinks"
+      },
+      "words": ["drink", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "tea", "cup", "bottle", "straw", "thirsty"]
+    }
+  ]
+}

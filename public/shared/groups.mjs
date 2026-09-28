@@ -58,6 +58,33 @@ export function indexSlotAt(page, slot, cells) {
   return posAtVisual(page, slot, cells) + FIRST_ITEM_SLOT;
 }
 
+/* --- 027 § 3.2: reserved cells ---
+ * On every page of every group the top row (row 0), the frame (the home
+ * cells of yes/no/stop/help) and the last cell (Next) are reserved: they
+ * belong to the page, never to group content. `shape` is a catalog
+ * layout — { cols, rows, frame: [home slots of the frame words] } — so
+ * the reserved set comes from the size's shipped home layout and never
+ * moves. `content` lists the cells groups may use, column by column,
+ * top to bottom: the one fill order the seed compiler and runtime
+ * placement share. */
+export function groupGeometry(shape) {
+  const { cols, rows } = shape;
+  const cells = cols * rows;
+  const frame = [...(shape.frame ?? [])].sort((a, b) => a - b);
+  const frameSet = new Set(frame);
+  const topRow = [...Array(cols).keys()].filter((s) => !frameSet.has(s));
+  const next = cells - 1;
+  const reserved = new Set([...topRow, ...frame, next]);
+  const content = [];
+  for (let c = 0; c < cols; c++) {
+    for (let r = 0; r < rows; r++) {
+      const s = r * cols + c;
+      if (!reserved.has(s)) content.push(s);
+    }
+  }
+  return { cols, rows, cells, topRow, frame, next, reserved, content };
+}
+
 const all = (db, sql, params = []) => db.prepare(sql).all(...params);
 const one = (db, sql, params = []) => all(db, sql, params)[0];
 
@@ -150,7 +177,9 @@ export function seedGroups(db, catalog) {
         "INSERT INTO board_group (id, kind, name, glyph, photo_key, index_slot) VALUES (?, ?, NULL, ?, NULL, ?)",
       ).run(g.id, g.kind, g.glyph ?? null, slot);
     }
-    for (const c of catalog.groupCells ?? []) {
+    // 027 A1 → A2: the catalog ships per-size positions; until per-size
+    // storage lands this canonical table holds the grid60 set.
+    for (const c of (catalog.groupCells ?? []).filter((x) => x.layout === "grid60")) {
       const present = one(
         db,
         "SELECT 1 AS x FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
@@ -411,7 +440,7 @@ export function catalogMatches(db, text, groupId, locale, seedCategory = null) {
  * after the last earlier-band kind's area. Stored cells never move, so
  * a late-arriving earlier-band kind lands after later kinds rather than
  * shifting them — stability wins over strict order. */
-const BAND_ORDER = ["Yellow", "Green", "Pink", "Blue", "Purple", "Red"];
+export const BAND_ORDER = ["Yellow", "Green", "Pink", "Blue", "Purple", "Red"];
 const bandRank = (b) => Math.max(0, BAND_ORDER.indexOf(b));
 /* Columns in claim order: their first usable slot, left to right — the
  * row-0 item cells (cols 2–9) come before the cols 0–1 columns that

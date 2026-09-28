@@ -95,7 +95,7 @@ test("seeded 500-edit storm: replay rebuilds synced tables byte-identical", () =
     `INSERT INTO personal_entity (id, spoken_name, added_at) VALUES ('ent_seed','Seed',1);
      INSERT INTO clip_override (id, entity_id, recorded_text, key, status) VALUES ('ovr_seed','ent_seed','Seed','aud_seed','ready');
      INSERT INTO entity_enrichment (id, entity_id, model, prompt_version, status) VALUES ('enr_seed','ent_seed','m','p1','ready');
-     INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_people','entity','ent_seed',0,57,1);`,
+     INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_people','entity','ent_seed',0,58,1);`,
   );
 
   const counts = {};
@@ -228,7 +228,7 @@ test("seeded 500-edit storm: replay rebuilds synced tables byte-identical", () =
     `INSERT INTO personal_entity (id, spoken_name, added_at) VALUES ('ent_seed','Seed',1);
      INSERT INTO clip_override (id, entity_id, recorded_text, key, status) VALUES ('ovr_seed','ent_seed','Seed','aud_seed','ready');
      INSERT INTO entity_enrichment (id, entity_id, model, prompt_version, status) VALUES ('enr_seed','ent_seed','m','p1','ready');
-     INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_people','entity','ent_seed',0,57,1);`,
+     INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_people','entity','ent_seed',0,58,1);`,
   );
   replayOps(replay, ops);
 

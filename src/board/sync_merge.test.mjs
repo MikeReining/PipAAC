@@ -52,7 +52,7 @@ const openReplica = () => {
   importCatalog(db, catalog);
   db.exec(
     `INSERT INTO personal_entity (id, spoken_name, added_at) VALUES ('ent_shared','Shared',1);
-     INSERT INTO board_group (id, kind, name, index_slot) VALUES ('grp_shared','custom','Shared grp',40);
+     INSERT INTO board_group (id, kind, name, index_slot) VALUES ('grp_shared','custom','Shared grp',50);
      INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_shared','entity','ent_shared',0,57,1);`,
   );
   ensureBaseline(db);
@@ -98,14 +98,14 @@ test("two replicas, colliding edits, one relay order: byte-identical", () => {
   renameEntity(a, "ent_shared", "Shared by A");
   renameEntity(b, "ent_shared", "Shared by B");
   // A deletes grp_doomed while B adds to it.
-  createGroup(a, { name: "doomed", id: "grp_doomed", indexSlot: 41 });
-  createGroup(b, { name: "doomed", id: "grp_doomed", indexSlot: 41 });
+  createGroup(a, { name: "doomed", id: "grp_doomed", indexSlot: 51 });
+  createGroup(b, { name: "doomed", id: "grp_doomed", indexSlot: 51 });
   createEntity(b, { id: "ent_b_doomed", name: "B doomed" });
   placeItem(b, "grp_doomed", "entity", "ent_b_doomed");
   deleteGroup(a, "grp_doomed");
   // Same index slot claimed by two different new groups.
-  createGroup(a, { name: "A idx", id: "grp_a_idx", indexSlot: 42 });
-  createGroup(b, { name: "B idx", id: "grp_b_idx", indexSlot: 42 });
+  createGroup(a, { name: "A idx", id: "grp_a_idx", indexSlot: 52 });
+  createGroup(b, { name: "B idx", id: "grp_b_idx", indexSlot: 52 });
 
   // Then a random offline storm on each replica — disjoint entity ids.
   const storm = (db, r, tag, n) => {
