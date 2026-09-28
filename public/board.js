@@ -346,6 +346,11 @@ const endPlaying = ({ chained = false } = {}) => {
   if (!chained) playGen++;
   playingResolve?.();
   playingResolve = null;
+  // Resolving the wait isn't enough — actually silence both lanes, or a
+  // blob mid-play (or a TTS word from an abandoned clip loop) keeps
+  // talking under the new speaker.
+  audio.pause();
+  speechSynthesis.cancel();
 };
 
 /** Play a clip: catalog keys are shipped files; `blob:` keys are
@@ -389,7 +394,10 @@ async function playBlob(blob) {
 async function speakItem(item, { chained = false } = {}) {
   const slot = resolveSlot(db, item, locale, voiceId);
   if (slot.type === "clip") return playClip(slot.key, { chained });
-  if (slot.type === "tts") return speak(slot.text);
+  if (slot.type === "tts") {
+    endPlaying({ chained });
+    return speak(slot.text);
+  }
   return new Promise((r) => setTimeout(r, SILENT_SLOT_MS));
 }
 
@@ -1811,6 +1819,7 @@ const kbUi = mountKeyboard({
   getSentencePicks: () => sentencePicks,
   setSentencePicks: (n) => { sentencePicks = n; },
   speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
+  isTxBusy: () => txBusy,
   showGroupHint, applyLikely, fitLabels, senseById,
   grammar: {
     on: () => grammarHelp,

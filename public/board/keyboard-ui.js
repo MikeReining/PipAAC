@@ -18,7 +18,8 @@ export function mountKeyboard({
   db, locale, profile, all,
   sentence, getSentenceId, ensureSentence, getSentencePicks, setSentencePicks,
   startFresh,
-  speak, speakItem, speakSentence, playClip, renderBar, renderStrip, tap,
+  speakItem, speakSentence, renderBar, renderStrip, tap,
+  isTxBusy,
   showGroupHint, applyLikely, fitLabels, senseById,
   grammar,
   getHighlightNext,
@@ -157,9 +158,7 @@ export function mountKeyboard({
         sentenceId: getSentenceId(), position: null, source: "keyboard",
         spotlit: !!spotlight()?.targets.has(`sense:${s.id}`),
       });
-      const key = clipKeyFor(s.id);
-      if (key) await playClip(key);
-      else speak(s.label);
+      await speakItem({ kind: "sense", id: s.id });
     });
     return el;
   }
@@ -183,7 +182,7 @@ export function mountKeyboard({
     sentence.splice(0, sentence.length, ...res.state.items);
     for (const e of res.effects) {
       if (e.type === "commit") commitKbItem(e.index);
-      else if (e.type === "speak") speakSentence();
+      else if (e.type === "speak") { if (!isTxBusy()) speakSentence(); }
     }
     if (kbDeadEl) kbDeadEl.classList.toggle("latched", kbPendingAccent !== null);
     renderBar();
