@@ -225,6 +225,55 @@ chrome follows one rule: icons, one field, one list, numbers. No
 explaining sentences, and no user's name in the copy. A screen that
 needs a sentence isn't finished.
 
+## Settings (formerly Parent corner)
+
+**DECIDED 2026-09-28** (founder, "I fully agree with everything", on the
+Settings redesign proposal: https://claude.ai/artifact/4wYfqZjY7QCz8GgvXxkaLG).
+**BUILT 2026-09-28** unless marked. Markup `public/index.html` `#menu`;
+navigation, summaries, checklist, search, switches `public/board/settings-ui.js`;
+people `public/board/people-ui.js`; styles `settings-ui.css`. Every control
+keeps its id and its owner module's wiring — Settings owns navigation only.
+
+- **Who it's for.** Parents, SLPs, teachers, aides, and adult
+  communicators. It is "Settings" with the Settings PIN, never "Parent
+  corner". Copy names the person (their name, else "this person"),
+  never a role ("your child"). Edit-mode chrome keeps its own no-name
+  rule above; this amendment is Settings only.
+- **Layout.** Full screen. Header: the person (tap to switch), search,
+  Done. A section list beside one page; under 760px the list, then the
+  page with Back. Pages: Overview · Words · Board · Talking · Language
+  help · Progress · Team & devices · Backup & privacy, then *You* → Your
+  account. A page whose every row is hidden drops out of the list.
+- **Overview.** A setup checklist of measurable facts only (named;
+  people & places exist; recovery card shown on this device —
+  `cardShownAt` on the registry row), gone when done. Quick actions: Add
+  a word, Practice words (Spotlight), Edit the board. "How it's set up":
+  one line per page, read from the live controls.
+- **Controls.** On/off is a switch, On on the right (`.seg[data-switch]`;
+  the hidden buttons still carry the write). Real choices stay labelled
+  options. Risky actions sit in a red-bordered block at the bottom of
+  their page. A missing recovery card shows a warning dot on Backup &
+  privacy.
+- **People.** The header switcher reloads into the chosen person and
+  reopens the same page (one-shot `pip_reopen_settings`, written only
+  inside Settings). "When Pip opens on this device": a person (`home`),
+  or Show the list (no home → the launch list "Who's talking?").
+- **PIN.** One per device (`device/pin`, `public/shared/pin.mjs`);
+  legacy per-person PINs migrate on first good check. Change PIN asks
+  for the new PIN twice, never the old one. The PIN is never shown.
+- **Search.** Word-start match over each row's text plus per-page
+  synonyms (`SYNONYMS` in settings-ui.js); a hit opens the page and
+  rings the row.
+
+**PROPOSED** (from the proposal, not built yet): live previews per
+setting (grid thumbnails for Buttons per screen, a sentence bar for
+After Play, an outlined tile for Outline likely next words, "he + want →
+he wants" for Grammar help); a Show switch per group in Words replacing
+the single Meal groups switch; one "Add a device" button that asks which
+device you're holding; team roles and permissions (needs the feature
+workflow — permissions are a high-risk stop); a "this board is mine"
+mode for adult communicators.
+
 ## Open items (designer's "next" list)
 
 **PROPOSED**, unscheduled: custom "Pip" wordmark (Andika Bold is the
