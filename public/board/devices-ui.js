@@ -83,12 +83,28 @@ export function mountDevices({
     return next;
   }
 
+  /* Owner or Team (relay.js isOwner). The relay's answer on devices/self
+   * is the truth; a board that isn't synced has no team, so this device
+   * is its owner. Team keeps every edit — only managing people and
+   * devices, the license and deletion are owners'. `me.owner` is kept in
+   * memory for Settings (checklist), never saved. */
+  let owner = true;
+  function applyOwner(isOwner) {
+    owner = isOwner;
+    me.owner = isOwner;
+    $("dev-choose").hidden = !isOwner;
+    $("dev-license-row").hidden = !isOwner || $("dev-license-row").hidden;
+    if (!isOwner) $("dev-delete-row").hidden = true;
+    $("team-note").hidden = isOwner;
+  }
+
   async function renderDevices() {
     const list = $("dev-list");
     const cfg = me.sync;
     $("dev-lifetime-row").hidden = !cfg?.userId;
     $("dev-delete-row").hidden = !cfg?.userId;
     if (!cfg?.userId) {
+      applyOwner(true);
       list.innerHTML = '<p class="hint">Only on this device so far.</p>';
       return;
     }
@@ -98,6 +114,7 @@ export function mountDevices({
       const userKey = await getUserKey(store, me.id, cfg.epoch ?? 1);
       const client = relayClient({ userId: cfg.userId, baseUrl: relayBase, identity, userKey });
       const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
+      const isOwner = self?.owner !== false;
       list.innerHTML = "";
       for (const d of devices) {
         const row = document.createElement("div");
@@ -108,7 +125,7 @@ export function mountDevices({
           ? `${d.device_id} (this device)` : d.device_id)
           + (d.via_acct ? " — supporter device" : "");
         row.append(name);
-        if (d.device_id !== identity.deviceId) {
+        if (isOwner && d.device_id !== identity.deviceId) {
           const rm = document.createElement("button");
           rm.className = "btn secondary";
           rm.textContent = "Remove";
@@ -118,6 +135,7 @@ export function mountDevices({
         list.append(row);
       }
       renderEntitlement(self);
+      applyOwner(isOwner);
     } catch (err) {
       list.innerHTML = '<p class="hint">Relay unreachable — devices cannot be listed.</p>';
     }
@@ -420,12 +438,14 @@ export function mountDevices({
     if (!cfg?.userId) return;
     const list = $("sup-list");
     const st = accountState();
-    $("sup-form").hidden = !st;
-    let supporters = [], invites = [];
+    let supporters = [], invites = [], isOwner = owner, client = null;
     try {
-      const { client } = await userClient();
+      ({ client } = await userClient());
       ({ supporters } = await client.listSupporters());
+      isOwner = (await client.selfKey())?.owner !== false;
     } catch { /* relay unreachable — invites may still render */ }
+    // Team members see who's on the team; only owners invite and remove.
+    $("sup-form").hidden = !st || !isOwner;
     if (st) {
       try {
         ({ invites } = await listInvites(st.acct_id, st.session));
@@ -434,42 +454,56 @@ export function mountDevices({
     invites = (invites ?? []).filter((i) => i.user_id === me.id
       && ["pending_claim", "pending_allow", "granted"].includes(i.status));
     list.innerHTML = "";
-    const mkRow = (label, btnText, onClick) => {
+    // buttons: [[text, onClick], …] — none for a Team viewer.
+    const mkRow = (label, buttons = []) => {
       const row = document.createElement("div");
       row.className = "dev-row";
       const name = document.createElement("span");
       name.className = "dev-id";
       name.textContent = label;
       row.append(name);
-      const b = document.createElement("button");
-      b.className = "btn secondary";
-      b.textContent = btnText;
-      b.onclick = onClick;
-      row.append(b);
+      for (const [text, onClick] of isOwner ? buttons : []) {
+        const b = document.createElement("button");
+        b.className = "btn secondary";
+        b.textContent = text;
+        b.onclick = onClick;
+        row.append(b);
+      }
       list.append(row);
     };
+    const levelOf = (acct) => (supporters.find((s) => s.acct_id === acct)?.owner ? "owner" : "team");
+    // Owners make someone else an owner (or back to team) with one tap.
+    const ownerButton = (acct) => [levelOf(acct) === "owner" ? "Make team" : "Make owner", async () => {
+      try {
+        await client.setSupporterOwner(acct, levelOf(acct) !== "owner");
+      } catch (e) {
+        toast(e.status === 409 ? "Someone has to stay an owner." : `Couldn't change that: ${e.message}`);
+      }
+      await renderSupporters();
+    }];
+    const memberRow = (acct, email, token) => mkRow(
+      `${email ?? acct} — ${levelOf(acct) === "owner" ? "owner" : "team, can edit everything"}`,
+      [ownerButton(acct), ["Remove", () => removeSupporterFlow({ acct_id: acct, email, token })]]);
     for (const inv of invites) {
       if (inv.status === "granted") {
-        mkRow(`${inv.email} — can edit`, "Remove", () =>
-          removeSupporterFlow({ acct_id: inv.to_acct, email: inv.email, token: inv.token }));
+        memberRow(inv.to_acct, inv.email, inv.token);
       } else if (inv.status === "pending_allow") {
-        mkRow(`${inv.email} — waiting for your Allow`, "Allow", () => allowInvite(inv));
+        mkRow(`${inv.email} — waiting for an owner's Allow`, [["Allow", () => allowInvite(inv)]]);
       } else {
-        mkRow(`${inv.email} — invited`, "Cancel", async () => {
+        mkRow(`${inv.email} — invited`, [["Cancel", async () => {
           await declineInvite(inv.token, st.session).catch(() => {});
           await renderSupporters();
-        });
+        }]]);
       }
     }
     // Relay supporters without a visible invite (e.g. shared from
     // another signed-in device) still list and still remove.
     for (const s of supporters) {
       if (invites.some((i) => i.status === "granted" && i.to_acct === s.acct_id)) continue;
-      mkRow(`${s.email ?? s.acct_id} — can edit`, "Remove", () =>
-        removeSupporterFlow({ acct_id: s.acct_id, email: s.email }));
+      memberRow(s.acct_id, s.email);
     }
     if (!list.children.length) {
-      list.innerHTML = '<p class="hint">No supporters yet.</p>';
+      list.innerHTML = '<p class="hint">No one else yet.</p>';
     }
   }
 

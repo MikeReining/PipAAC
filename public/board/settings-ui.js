@@ -72,9 +72,12 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
     board: () => [onText("cells-seg") && `${onText("cells-seg")} buttons`, onText("kb-mode")].filter(Boolean).join(" · "),
     talking: () => `Feeling faces ${onOff("expressive-voice")} · ${onText("fresh-speak").toLowerCase()}`,
     lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
-    backup: () => (cardMade() ? "Recovery card made" : "No recovery card yet"),
+    backup: () => (team() ? "Owners keep the recovery card" : cardMade() ? "Recovery card made" : "No recovery card yet"),
   };
-  const WARN = { backup: () => !cardMade() };
+  // The recovery card is an owner's job: a Team device (me.owner false,
+  // set from the relay by devices-ui) is never nagged about it.
+  const team = () => me.owner === false;
+  const WARN = { backup: () => !team() && !cardMade() };
 
   /* The setup checklist: only facts Pip can measure. It leaves once all
    * are done; the missing-card warning stays on the list regardless. */
@@ -83,8 +86,8 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
     return [
       { done: !!me.name?.trim(), label: "Name who uses this board", hint: "Team & devices → Name", go: () => show("team") },
       { done: f.entities > 0, label: "Add their people and places", hint: "Names and photos Pip can suggest", go: () => $("open-setup").click() },
-      { done: cardMade(), label: "Make the recovery card", hint: "If this device is lost or reset, the card brings everything back.", go: () => show("backup"), warn: true },
-    ];
+      { done: cardMade(), label: "Make the recovery card", hint: "If this device is lost or reset, the card brings everything back.", go: () => show("backup"), warn: true, ownerOnly: true },
+    ].filter((i) => !(i.ownerOnly && team()));
   }
 
   function renderOverview() {

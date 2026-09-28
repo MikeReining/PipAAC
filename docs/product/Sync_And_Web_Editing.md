@@ -515,6 +515,13 @@ never shares a sibling.
   rostering reopens this.
 - Adult emails are the only new personal data the server holds. A
   supporter deletes their account from settings.
+- **Owner and Team** (**BUILT 2026-09-28**, founder ruling). A supporter
+  joins as Team: every edit, no management. Owners (untagged devices,
+  or accounts marked owner) alone add/remove devices and supporters,
+  rotate keys, replace the card, set the license, and delete the board;
+  the relay returns 403 `owner_only` otherwise and keeps the last owner
+  (409 `last_owner`). A Team device's join tokens are stamped with its
+  account. Contract and UI: `docs/product/Design_System.md` § Settings.
 - **A supporter is only a supporter.** Deleting a supporter account
   removes that account's access and nothing else: the user, its words,
   its license, its QR card and its devices are untouched. The user owns

@@ -276,9 +276,23 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   holding and hands off to the existing flow (`dev-link` shows a code,
   `dev-add` types it and Allows — devices-ui owns both).
 
-**PROPOSED** (from the proposal, not built yet): team roles and
-permissions (needs the feature workflow — permissions are a high-risk
-stop); a "this board is mine" mode for adult communicators.
+- **Owner and Team.** **DECIDED 2026-09-28** (founder: "an owner, and
+  someone who can edit everything except deleting boards, managing
+  people and changing the license — we can stop there"). Two kinds of
+  people, no levels to pick. Whoever creates the board, a device an
+  owner pairs, and a recovery-card restore are Owners; everyone invited
+  joins as Team; an owner can Make owner / Make team. Team edits
+  everything; only owners invite, remove, add devices, manage the
+  license, replace the card, and delete the board. Enforced by the relay
+  (`src/worker/relay.js` `isOwner`), shown in Team & devices
+  (`public/board/devices-ui.js` `applyOwner`); a Team device sees a
+  "You're on the team" note and no management buttons, and is never
+  nagged about the recovery card. Owner/Team is derived per device, not
+  stored: no account tag → Owner; through a supporter account → that
+  account's `owner` flag. The last owner can't be demoted or removed.
+
+**PROPOSED** (from the proposal, not built yet): a "this board is mine"
+mode for adult communicators.
 
 ## Open items (designer's "next" list)
 
