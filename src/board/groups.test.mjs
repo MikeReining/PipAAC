@@ -375,7 +375,9 @@ test("the core coordinate map is untouched by every group operation", () => {
   const assertCore = () => assert.deepEqual(snapshotCoreCells(db), before);
 
   const food = groupPage(db, "grp_breakfast", 0, "en")[0];
-  moveItem(db, "grp_breakfast", "sense", food.item_id, 0, 13); // an empty Breakfast cell
+  const taken = new Set(groupPage(db, "grp_breakfast", 0, "en").map((r) => r.slot_index));
+  const empty = geometryOf(db, "grid60").content.find((s) => !taken.has(s));
+  moveItem(db, "grp_breakfast", "sense", food.item_id, 0, empty); // an empty Breakfast cell
   assertCore();
   const [a, b] = groupPage(db, "grp_breakfast", 0, "en");
   swapItems(db, "grp_breakfast", a, b);

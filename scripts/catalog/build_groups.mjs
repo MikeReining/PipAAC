@@ -11,16 +11,18 @@
  *     occasion group that holds the word: the home cells of
  *     `homeCoordinates` where free, then the size's `firstPage` list and
  *     each `lead` word at the first free cell, then clusters in authored
- *     order, each kept together from a column top (`side: "right"`
- *     clusters by the frame) — inside a cluster and among leftovers,
- *     words claim most-said first by CHILDES counts (026), authored
- *     order breaking ties;
- *   - topic groups fill in band order (018 D5), a new band starting a fresh
- *     column while the rest of the group still fits on the page. Inside a
- *     band, members sort by CHILDES child-speech frequency — most-said
- *     first (026: the words children actually say reach the top of the
- *     column); the seed's authored order breaks ties and orders words the
+ *     order, each kept together from a row start (`side: "right"`
+ *     clusters run the rows right-to-left, by the frame) — inside a
+ *     cluster and among leftovers, words claim most-said first by
+ *     CHILDES counts (026), authored order breaking ties;
+ *   - topic groups fill in band order (018 D5), a new band starting a
+ *     fresh row while the rest of the group still fits on the page.
+ *     Inside a band, members sort by CHILDES child-speech frequency —
+ *     most-said first (026: the words children actually say lead the
+ *     block); the seed's authored order breaks ties and orders words the
  *     corpus never heard.
+ * Everywhere the fill order is reading order — row by row, left to
+ * right (026 ruling 2026-09-28).
  * A word the page already shows in a reserved cell (top row, frame) gets
  * no position at that size — it would render twice.
  *
@@ -77,29 +79,29 @@ export function groupLayouts(layouts, coreCells, frameSenses) {
   return out;
 }
 
-/** Topic fill: band order, fresh column per band while the rest fits.
+/** Topic fill: band order, fresh row per band while the rest fits.
  *  Within a band: child-speech frequency desc, then authored order. */
 function fillTopic(members, geom, bandOf, freqOf) {
   const rank = (s) => Math.max(0, BAND_ORDER.indexOf(bandOf(s)));
   const sorted = members.map((s, i) => [s, i])
     .sort((a, b) => rank(a[0]) - rank(b[0]) || freqOf(b[0]) - freqOf(a[0]) || a[1] - b[1]).map(([s]) => s);
-  const columns = [];
+  const rows = [];
   for (const slot of geom.content) {
-    const col = slot % geom.cols;
-    if (!columns.length || columns[columns.length - 1].col !== col) columns.push({ col, slots: [] });
-    columns[columns.length - 1].slots.push(slot);
+    const row = Math.floor(slot / geom.cols);
+    if (!rows.length || rows[rows.length - 1].row !== row) rows.push({ row, slots: [] });
+    rows[rows.length - 1].slots.push(slot);
   }
   const cells = new Map();
-  let page = 0, ci = 0, row = 0;
+  let page = 0, ri = 0, col = 0;
   sorted.forEach((s, k) => {
-    if (k > 0 && row > 0 && rank(s) !== rank(sorted[k - 1])) {
-      const leftAfterJump = columns.slice(ci + 1).reduce((n, c) => n + c.slots.length, 0);
-      if (sorted.length - k <= leftAfterJump) { ci++; row = 0; }
+    if (k > 0 && col > 0 && rank(s) !== rank(sorted[k - 1])) {
+      const leftAfterJump = rows.slice(ri + 1).reduce((n, r) => n + r.slots.length, 0);
+      if (sorted.length - k <= leftAfterJump) { ri++; col = 0; }
     }
-    cells.set(s, { page, slot_index: columns[ci].slots[row] });
-    row++;
-    if (row === columns[ci].slots.length) { ci++; row = 0; }
-    if (ci === columns.length) { page++; ci = 0; }
+    cells.set(s, { page, slot_index: rows[ri].slots[col] });
+    col++;
+    if (col === rows[ri].slots.length) { ri++; col = 0; }
+    if (ri === rows.length) { page++; ri = 0; }
   });
   return cells;
 }
@@ -212,16 +214,23 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
       for (const g of holders.get(s)) used.get(g).add(`${page}:${slot}`);
     };
     const n = geom.content.length;
-    const cellAt = (i) => ({ page: Math.floor(i / n), slot: geom.content[i % n] });
+    // Right-anchored traversal: same rows top to bottom, each row read
+    // right to left — `side: "right"` clusters (drinks/fruit/dishes
+    // staples) hug the frame column on the right edge.
+    const rightCells = [];
+    for (let r = 0; r < geom.rows; r++) {
+      rightCells.push(...geom.content.filter((s) => Math.floor(s / geom.cols) === r).reverse());
+    }
+    const cellAt = (i, list = geom.content) => ({ page: Math.floor(i / n), slot: list[i % n] });
     const pending = (s) => !at.has(s) && !shown.has(s) && holders.has(s);
     // Lay `words` down strictly in order from linear cell `start`, each in
     // the first cell after the previous word's that is free in its groups.
-    const run = (words, start) => {
+    const run = (words, start, list = geom.content) => {
       const out = [];
       let i = start;
       for (const s of words) {
-        while (!free(s, cellAt(i).page, cellAt(i).slot)) i++;
-        out.push([s, cellAt(i).page, cellAt(i).slot]);
+        while (!free(s, cellAt(i, list).page, cellAt(i, list).slot)) i++;
+        out.push([s, cellAt(i, list).page, cellAt(i, list).slot]);
         i++;
       }
       return out;
@@ -231,23 +240,26 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
       const [[, page, slot]] = run([s], 0);
       claim(s, page, slot);
     };
+    // Row starts: indices where the row changes. The same boundaries index
+    // the mirrored list — there a start is the row's rightmost cell.
     const tops = geom.content.map((slot, i) => [slot, i])
-      .filter(([slot], i) => i === 0 || slot % geom.cols !== geom.content[i - 1] % geom.cols)
+      .filter(([slot], i) => i === 0
+        || Math.floor(slot / geom.cols) !== Math.floor(geom.content[i - 1] / geom.cols))
       .map(([, i]) => i);
-    // A cluster keeps together: it starts at a column top where the whole
-    // run ends on the page it starts on — the rightmost such column for a
-    // `side: "right"` cluster (staples by the frame), else the leftmost.
-    // Failing that, each word takes the first free cell.
+    // A cluster keeps together: it starts at a row start where the whole
+    // run ends on the page it starts on — the mirrored right-to-left rows
+    // for a `side: "right"` cluster (staples by the frame), else
+    // left-to-right. Failing that, each word takes the first free cell.
     const assignCluster = (words, side) => {
       const todo = words.filter(pending);
       if (!todo.length) return;
-      const starts = side === "right" ? [...tops].reverse() : tops;
+      const list = side === "right" ? rightCells : geom.content;
       // One-page sizes never push a cluster to a later page to keep it
       // whole; paged sizes (grid15) may, when it fits one page.
       const pagesToTry = ONE_PAGE_LAYOUTS.has(layout) || todo.length > n ? 1 : 3;
       for (let page = 0; page < pagesToTry; page++) {
-        for (const t of starts) {
-          const placed = run(todo, page * n + t);
+        for (const t of tops) {
+          const placed = run(todo, page * n + t, list);
           if (placed.every(([, p]) => p === page)) {
             for (const [w, p, slot] of placed) claim(w, p, slot);
             return;

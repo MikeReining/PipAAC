@@ -27,9 +27,9 @@ export const BAND_ORDER = ["Yellow", "Green", "Pink", "Blue", "Purple", "Red"];
  * belong to the page, never to group content. `shape` is a catalog
  * layout — { cols, rows, frame: [home slots of the frame words] } — so
  * the reserved set comes from the size's shipped home layout and never
- * moves. `content` lists the cells groups may use, column by column,
- * top to bottom: the one fill order the seed compiler and runtime
- * placement share. */
+ * moves. `content` lists the cells groups may use, row by row, left to
+ * right — reading order is the one fill order the seed compiler and
+ * runtime placement share (026 ruling 2026-09-28). */
 export function groupGeometry(shape) {
   const { cols, rows } = shape;
   const cells = cols * rows;
@@ -39,8 +39,8 @@ export function groupGeometry(shape) {
   const next = cells - 1;
   const reserved = new Set([...topRow, ...frame, next]);
   const content = [];
-  for (let c = 0; c < cols; c++) {
-    for (let r = 0; r < rows; r++) {
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
       const s = r * cols + c;
       if (!reserved.has(s)) content.push(s);
     }

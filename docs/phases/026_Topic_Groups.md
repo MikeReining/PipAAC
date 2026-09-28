@@ -87,7 +87,7 @@ Bathroom and Screens keep the draft topic order for launch. Families can
 reorder or hide any group; frequency never reorders an installed index.
 
 **Member order, ruled 2026-09-28** (founder): inside a group, words fill
-band columns most-said-first by CHILDES child-line counts
+band blocks most-said-first by CHILDES child-line counts
 (`data/prediction/word_frequency.en.json`, built by
 `scripts/prediction/childes/word_frequency.mjs`); the seed's authored
 order breaks ties and orders unheard words. No hand-ranked word lists.
@@ -95,6 +95,12 @@ Occasion groups keep their shared coordinates (027) — pinned
 homeCoordinates/firstPage/lead and cluster order stay authored — but
 inside each cluster and among leftovers, words claim cells most-said
 first by the same counts.
+
+**Fill direction, ruled 2026-09-28** (founder): blocks fill in reading
+order — row by row, left to right (`groupGeometry.content` is
+row-major). A band starts a fresh row, not a fresh column; a cluster
+anchors at a row start; `side: "right"` clusters traverse rows mirrored
+to stay by the frame.
 
 ### D3 — One page per seeded topic on 60/90 cells
 
