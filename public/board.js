@@ -1748,7 +1748,10 @@ async function gatePin(onOk, { change = false } = {}) {
 
 /* Settings — public/board/settings-ui.js owns the page navigation;
  * every control inside keeps its own module's wiring. */
-const settingsUi = mountSettings({ me, open });
+const settingsUi = mountSettings({
+  me, open,
+  facts: () => ({ entities: ALL(db, "SELECT count(*) AS n FROM personal_entity")[0]?.n ?? 0 }),
+});
 $("pin-change").addEventListener("click", () => gatePin(() => {}, { change: true }));
 // Set only by the post-switch reopen below: the corner click then skips
 // the PIN (it was just entered in this tab) and opens that page, so every

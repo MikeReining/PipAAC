@@ -36,7 +36,7 @@ export function personWords(name) {
 
 const NARROW = "(max-width: 760px)";
 
-export function mountSettings({ me, open }) {
+export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
   const body = $("set-body");
   const nav = $("set-nav");
   const pane = $("set-pane");
@@ -58,6 +58,81 @@ export function mountSettings({ me, open }) {
     ![...sec.querySelectorAll(":scope > .seg-row, :scope > .set-quick, :scope > .wincard")]
       .some((el) => !el.hidden);
 
+  /* One-line state per page, read from the controls themselves (their
+   * owners keep them current) — so an SLP reads the whole setup from
+   * the list without opening a page. */
+  const onText = (id) => $(id)?.querySelector("button.on")?.textContent?.trim() ?? "";
+  const isOn = (id) => $(id)?.querySelector('button[data-v="1"]')?.classList.contains("on");
+  const onOff = (id) => (isOn(id) ? "on" : "off");
+  const cardMade = () => !!me.cardShownAt;
+  const SUMMARIES = {
+    board: () => [onText("cells-seg") && `${onText("cells-seg")} buttons`, onText("kb-mode")].filter(Boolean).join(" · "),
+    talking: () => `Feeling faces ${onOff("expressive-voice")} · ${onText("fresh-speak").toLowerCase()}`,
+    lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
+    backup: () => (cardMade() ? "Recovery card made" : "No recovery card yet"),
+  };
+  const WARN = { backup: () => !cardMade() };
+
+  /* The setup checklist: only facts Pip can measure. It leaves once all
+   * are done; the missing-card warning stays on the list regardless. */
+  function checklist() {
+    const f = facts();
+    return [
+      { done: !!me.name?.trim(), label: "Name who uses this board", hint: "Team & devices → Name", go: () => show("team") },
+      { done: f.entities > 0, label: "Add their people and places", hint: "Names and photos Pip can suggest", go: () => $("open-setup").click() },
+      { done: cardMade(), label: "Make the recovery card", hint: "If this device is lost or reset, the card brings everything back.", go: () => show("backup"), warn: true },
+    ];
+  }
+
+  function renderOverview() {
+    const box = $("set-check");
+    const items = checklist();
+    const left = items.filter((i) => !i.done).length;
+    box.hidden = left === 0;
+    box.replaceChildren();
+    if (left) {
+      const h = document.createElement("span");
+      h.className = "seg-label";
+      h.textContent = `Finish setting up · ${items.length - left} of ${items.length} done`;
+      box.append(h);
+      for (const it of items) {
+        const b = document.createElement("button");
+        b.className = "set-check-item" + (it.done ? " done" : it.warn ? " warn" : "");
+        b.disabled = it.done;
+        const mark = document.createElement("span");
+        mark.className = "set-check-mark";
+        mark.textContent = it.done ? "✓" : it.warn ? "!" : "";
+        const txt = document.createElement("span");
+        txt.className = "set-navtext";
+        const t = document.createElement("b");
+        t.textContent = it.label;
+        const s = document.createElement("span");
+        s.className = "set-sum";
+        s.textContent = it.hint;
+        txt.append(t, s);
+        b.append(mark, txt);
+        if (!it.done) b.onclick = it.go;
+        box.append(b);
+      }
+    }
+    const glance = $("set-glance");
+    glance.replaceChildren();
+    for (const sec of sections) {
+      const sum = SUMMARIES[sec.dataset.sec];
+      if (!sum || isEmpty(sec)) continue;
+      const b = document.createElement("button");
+      b.className = "set-glance-row";
+      const t = document.createElement("b");
+      t.textContent = sec.dataset.title;
+      const v = document.createElement("span");
+      v.textContent = sum();
+      if (WARN[sec.dataset.sec]?.()) v.className = "set-warn";
+      b.append(t, v);
+      b.onclick = () => show(sec.dataset.sec, { focus: true });
+      glance.append(b);
+    }
+  }
+
   function renderNav() {
     nav.replaceChildren();
     let grp = null;
@@ -78,9 +153,23 @@ export function mountSettings({ me, open }) {
       const t = document.createElement("span");
       t.className = "set-navtext";
       t.textContent = sec.dataset.title;
+      const sum = SUMMARIES[sec.dataset.sec]?.();
+      if (sum) {
+        const s = document.createElement("span");
+        s.className = "set-sum";
+        s.textContent = sum;
+        t.append(s);
+      }
       b.append(t);
+      if (WARN[sec.dataset.sec]?.()) {
+        const dot = document.createElement("span");
+        dot.className = "set-dot";
+        dot.title = "Needs attention";
+        b.append(dot);
+      }
       nav.append(b);
     }
+    renderOverview();
   }
 
   function show(id, { focus = false } = {}) {
@@ -103,10 +192,15 @@ export function mountSettings({ me, open }) {
     const b = e.target.closest("[data-click]");
     if (b) $(b.dataset.click)?.click();
   });
-  // Rows hide and show as account / sync state resolves after open.
-  new MutationObserver(renderNav).observe(pane, {
-    subtree: true, attributes: true, attributeFilter: ["hidden"],
-  });
+  // Rows hide and show as account / sync state resolves after open, and
+  // a control's .on moves when its owner writes — the list follows both.
+  let queued = false;
+  new MutationObserver((muts) => {
+    if (queued || !$("menu").classList.contains("open")) return;
+    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance"))) return;
+    queued = true;
+    queueMicrotask(() => { queued = false; renderNav(); });
+  }).observe(pane, { subtree: true, attributes: true, attributeFilter: ["hidden", "class"] });
 
   /** Open Settings: fresh names, the list on a phone, Overview on a
    *  wide screen. */

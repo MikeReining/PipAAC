@@ -91,6 +91,9 @@ export function mountRecovery({
     const rootBytes = root instanceof Uint8Array ? root : new Uint8Array(root);
     const payload = cardPayload(cfg.userId, rootBytes);
     openRec("QR card");
+    // Settings' checklist and Backup warning read this: the card has
+    // been on screen on this device at least once (registry, device-local).
+    if (!me.cardShownAt) saveUser({ cardShownAt: Date.now() }).catch(() => {});
     const qr = document.createElement("div");
     qr.className = "pair-qr";
     const q = qrcode(0, "M");
