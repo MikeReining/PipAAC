@@ -148,6 +148,7 @@ export const NON_PLURALS_ENDING_IN_S = new Set([
   "pajamas",
   "pyjamas",
   "sunglasses",
+  "sandals",
 ]);
 
 export function isPluralWord(word) {
