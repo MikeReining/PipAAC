@@ -1,8 +1,8 @@
 # Phase 027 — Occasion boards and independent editing
 
-**Status:** READY FOR IMPLEMENTATION — founder approved 2026-09-27; simplified
+**Status:** EXECUTING (2026-09-28) — founder approved 2026-09-27; simplified
 the same day (founder: "there is nothing to preserve. We have no users").
-Not built. No parent/child trial is a launch gate: the proof is deterministic
+No testing and no users until every slice lands (founder, 2026-09-28). No parent/child trial is a launch gate: the proof is deterministic
 checks plus our own rendered interaction and speech checks. This packet does
 not authorize media generation or publishing.
 
@@ -54,9 +54,17 @@ layout reset tools, automatic filing by classification.
 ### 3.1 Authoring and build
 
 - `data/group_seed.topics.json` — 026 topic membership and layout eligibility.
-- `data/occasions/block_doors.proposed.json` — becomes explicit per-group word
-  lists, stable group IDs, ordered clusters, and per-size seed positions. Add
-  Dinner. Clusters suggest coordinates; they never imply membership.
+- `data/occasions/block_doors.proposed.json` — becomes
+  `data/group_seed.occasions.json`: explicit per-group word lists, stable group
+  IDs, and ordered clusters. Add Dinner. Clusters suggest coordinates; they
+  never imply membership. `data/group_seed.json` is deleted.
+- **Positions are computed, not typed** (amended 2026-09-28). One rule in the
+  builder assigns every size's seed positions: the home coordinates of *eat,
+  drink, all done* where free, then the size's first-page priority list (grid15),
+  then clusters in authored order, each word taking the first content cell
+  (column by column) that is free in every coordinated group holding it. The
+  same rule fills topic groups in band order. Hand coordinates for three sizes
+  would drift; the rule plus its validation gate cannot.
 - Meal groups hold their meal word, useful food and drink choices, *eat, drink,
   all done*, and tableware. Every launch food word has a route; no Food
   mega-group; overflow goes to named sibling topic groups, never dropped.
@@ -159,6 +167,23 @@ The schema version goes up; a device database from before this change is reset
 to the fresh seed. No v1 geometry, no conversion of old edits or sync
 baselines, no adoption preview, no "Add meal boards" setup action.
 
+**Decided 2026-09-28 (founder approved the review):**
+
+- **Reset scope: the whole device database.** `bootDb` (`public/db.js`) opens a
+  fresh database when the saved one's `user_version` predates this change,
+  before `migrateSchema` runs. A group-tables-only reset was considered and
+  dropped: `sync_baseline` and the `sync_op` log both carry old group rows and
+  arg shapes, so the next rebase would replay them into the new tables.
+- **Old ops on the relay.** A group op recorded before this change has no
+  `layout` field. Every replica skips such ops, deterministically, so a device
+  that restores from a relay still holding them converges without converting
+  them. No other op kind changes.
+- **Seed install is an op, and the first install wins.** The rebase baseline is
+  taken after catalog import and before seeding; seeding then records one
+  `seed_install` op carrying memberships and positions. On replay, a group that
+  already has an install marker ignores later installs, so two devices that
+  each seeded offline converge on the first one the relay confirmed.
+
 Fresh profile: install the curated seed once, with install markers. A new custom
 group starts empty; its reserved cells show like any group's. A catalog reimport may update word identity
 metadata; it never touches installed memberships, positions, visibility, order,
@@ -211,8 +236,8 @@ needs its own approval.
 
 | Slice | Deliverable | Depends on | Proof |
 | --- | --- | --- | --- |
-| **A1 — Seed and geometry** | Update both authoring inputs; resolve meanings and eligibility; emit membership and per-size positions from `build_catalog.mjs`; reserved-cell geometry in `groups.mjs`; finish 026 membership against real capacity; `preview_blocks.mjs` reads compiler output. | — | `src/board/groups.test.mjs`: duplicate meaning, overlap, reserved cell, missing route, repeated-word mismatch, out-of-bounds, one-page 60/90 seeds — each rejection seen once. grid15 first pages and Dinner checked. |
-| **A2 — State, install, replay** | `src/board/schema.sql`, `src/board/catalog.mjs`, `import.mjs`, groups/ops owners: membership/position split, install markers, settings and hidden, schema bump with reset, ops with layout coordinates, multi-add and Cells-switch ops, index beyond 59. Audit every `group_cell` reader and the snapshot allowlist. | A1 | `groups.test.mjs`, `sync_op.test.mjs`, `sync_merge.test.mjs`, `layout.test.mjs`: remove → reimport stays removed, deleted group stays deleted, Cells switch and exact switch-back, offline same-cell adds, fresh-device restore, multi-add Undo, pre-change DB resets to the fresh seed. |
+| **A1 — Seed and geometry** | Update both authoring inputs; resolve meanings and eligibility; emit membership and per-size positions from `build_catalog.mjs`; reserved-cell geometry in `groups.mjs`; finish 026 membership against real capacity; `preview_blocks.mjs` reads compiler output. Two parts: the compiler, geometry and gates (code), and the curation — sibling-group splits, grid15 first pages, Dinner — which ships as a draft for founder review on the preview. Code never waits on curation. | — | `src/board/groups.test.mjs`: duplicate meaning, overlap, reserved cell, missing route, repeated-word mismatch, out-of-bounds, one-page 60/90 seeds — each rejection seen once. grid15 first pages and Dinner checked. |
+| **A2 — State, install, replay** | `src/board/schema.sql`, `src/board/catalog.mjs`, `import.mjs`, `public/db.js` (boot order, reset, `migrateLegacyGroups` call), `public/shared/migrate.mjs`, groups/ops owners: membership/position split, install markers, settings and hidden, schema bump with reset, ops with layout coordinates, multi-add and Cells-switch ops, index beyond 59. Audit every `group_cell` reader and the snapshot allowlist. | A1 | `groups.test.mjs`, `sync_op.test.mjs`, `sync_merge.test.mjs`, `layout.test.mjs`: remove → reimport stays removed, deleted group stays deleted, Cells switch and exact switch-back, offline same-cell adds, fresh-device restore, multi-add Undo, pre-change DB resets to the fresh seed. |
 | **A3 — One group surface and editor** | `groups-ui.js`, `board.js`, `index.html`, board styles: reserved cells rendered from the home board, Home/Next/Add, top-row setting, hides, index and glow, local remove/move/swap, multi-add and scope copy. Automatic enrichment filing off. | A2 | `groups_ui.test.mjs`, `keyboard_ui.test.mjs`, affected writer suites. Render all three sizes; run the Works Test. |
 | **A4 — Stay after Speak; real starters** | Speech completion and `renderStrip` in `board.js`; corrected CHILDES builder and table; per-group first-pick history. Delete `meal_doors.proposed.json` and `preview_addresses.mjs` once unused. | A2; A3 for rendered proof | `scripts/prediction/childes/childes.test.mjs` (first vs later word, unmapped starts); prediction/speech tests; rendered speech offline, fresh-start both ways, expressive/transformed/cancelled speech, later navigation, learned and cold-start suggestions. |
 | **A5 — Launch proof** | Final catalog and previews from source, 026 visuals, owner docs, SSOT, live index. No audio swaps or bulk art. | A1–A4; 026 visuals | Works Test, focused suites, `npm run check:fast`, doc routes and phase freshness. Record what was observed; mark built only when proven. |

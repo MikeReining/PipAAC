@@ -16,8 +16,9 @@ One critical path. Replace this table when the literal next slice changes — do
 
 | Priority | Next slice | Doc |
 | --- | --- | --- |
-| **P1** | User-testing readiness — local board paints and speaks; next is a shareable URL (deploy, stop/ask) and the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
-| **P2** | 010 slice 2 — the art (review page built; generation gated on founder, one image at a time). Slice 1 word list landed: `data/extended_lexicon.json` + `everyday_gaps.en.json` | `docs/phases/010_Extended_Picture_Library.md` |
+| **P1** | 027 occasion boards, slices A1–A5 in order (026 slice 1 folds into A1). The clean break lands before any tester has a board to lose — no testing and no users until it's done (founder, 2026-09-28) | `docs/phases/027_Occasion_Boards.md` |
+| **P2** | User-testing readiness after 027 — shareable URL (deploy, stop/ask) and the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
+| **P3** | 010 slice 2 — the art (review page built; generation gated on founder, one image at a time) | `docs/phases/010_Extended_Picture_Library.md` |
 
 ## Live index
 
@@ -43,7 +44,7 @@ Executing phases only. Each row names the **next** slice.
 | [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Slices 1–3 landed 2026-09-26: Worker endpoint (shared R2 cache, fair use, no ids upstream), client Tier-1 + ~300 ms clip fallback, transform buttons speak through it. Next: slice 4 clip re-mint — paid, founder-gated at ≤10/batch |
 | [025 — Expressive voice](025_Expressive_Voice.md) | Slices 1–4 landed 2026-09-26: happy/sad/angry faces in the last strip slot (designer icons), Worker-side prosody, feeling-keyed caches, lit-face suggestion, Expressive voice setting. Next: § 8 listen — paid, founder-gated |
 | [026 — Topic groups](026_Topic_Groups.md) | Ready: finalize membership with 027 A1 against the reserved-cell capacity; neutral noun frame and topic glyphs follow. Seeded once, never re-seeded. |
-| [027 — Occasion boards and independent editing](027_Occasion_Boards.md) | Ready 2026-09-27: A1 seed/compiler + geometry, then state/replay, one local editor, Speak-stays/starters, integrated proof. Blocks author seeds only; no runtime linked edits. Simplified 2026-09-27: clean break (no legacy conversion), top row and frame from the home board, per-size positions on a Cells change. |
+| [027 — Occasion boards and independent editing](027_Occasion_Boards.md) | Executing 2026-09-28: A1 seed compiler + geometry, then A2 state/replay, A3 editor, A4 Speak-stays/starters, A5 launch proof. |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
