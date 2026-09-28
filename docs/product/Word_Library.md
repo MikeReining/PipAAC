@@ -210,7 +210,7 @@ One tap from the Suggested tab (§ 8).
 
 ### 5.6 First-run setup: "Tell us about their world"
 
-**DECIDED 2026-09-22** (not built; 009 slice 11). Adoption is decided in
+**DECIDED 2026-09-22.** Adoption is decided in
 the first ten minutes after install. After the board first draws, the
 Parent Corner offers a guided pass with four short steps: **People** (many
 photos at once), **Pets**, **Favorite foods** (bulk entry, answered by
@@ -218,8 +218,14 @@ library pictures), and **Places**. Each step files into the matching
 built-in group, and any step can be skipped. Target: 30 personal words in
 about ten minutes.
 
-Proof is a stopwatch, not our own report. Time a parent adding the same
-10 words in Pip and in Proloquo2Go.
+**BUILT** (009 slice 11): `#setupform` is the four-step wizard — People
+(names seat at mom/dad, 018 D1, plus many-photo drafts), Pets, Favorite
+foods and Places as one-per-line lists through the § 5.4 resolve→apply
+path. `SETUP_STEPS` in `public/shared/setup.mjs` is the step→group
+truth: `grp_people`, `grp_animals`, `grp_snack` (Food is retired —
+Snack is the anytime food board), `grp_going_out`. Proof
+`src/board/setup.test.mjs`; the parent-vs-Proloquo2Go stopwatch
+comparison is still owed.
 
 **Rejected 2026-09-22:** "save from the sentence" (founder: the child does
 not type sentences). Also rejected: suggesting words the child typed on the

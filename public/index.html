@@ -753,6 +753,7 @@
         <div id="wincard" class="wincard" hidden></div>
         <button class="btn secondary" id="open-progress">Progress</button>
         <button class="btn" id="add-mywords">Add to My Words</button>
+        <button class="btn secondary" id="open-setup">Tell us about their world</button>
         <button class="btn secondary" id="edit-groups">Edit groups</button>
         <button class="btn secondary" id="open-library">Words</button>
         <button class="btn secondary" id="menu-editor" hidden>Board editor</button>
@@ -1060,18 +1061,31 @@
       </div>
     </div>
 
+    <!-- First-run setup (Word_Library § 5.6): a guided pass of four
+         skippable steps — People (names + many photos), Pets, Favorite
+         foods, Places — each filing into its built-in group. -->
     <div class="overlay" id="setupform">
       <div class="sheet">
+        <p class="hint" id="setup-step"></p>
         <h2 id="setup-title">Who do they call for?</h2>
-        <p class="hint">Up to three people — a name each, a photo can come later.</p>
-        <div id="setup-names">
-          <input class="setup-name" placeholder="Mom" autocomplete="off" />
-          <input class="setup-name" placeholder="Dad" autocomplete="off" />
-          <input class="setup-name" placeholder="" autocomplete="off" />
+        <p class="hint" id="setup-hint">Up to three people — a name each, a photo can come later.</p>
+        <div id="setup-people">
+          <div id="setup-names">
+            <input class="setup-name" placeholder="Mom" autocomplete="off" />
+            <input class="setup-name" placeholder="Dad" autocomplete="off" />
+            <input class="setup-name" placeholder="" autocomplete="off" />
+          </div>
+          <button class="btn secondary" id="setup-photo-btn">Add photos…</button>
+          <input type="file" id="setup-photo-input" accept="image/*" multiple hidden />
+          <div id="setup-photo-rows"></div>
+        </div>
+        <div id="setup-list" hidden>
+          <textarea id="setup-paste" placeholder="One per line" spellcheck="false"></textarea>
+          <div id="setup-preview"></div>
         </div>
         <div class="row">
-          <button class="btn" id="setup-save">Save</button>
-          <button class="btn secondary" id="setup-skip">Not now</button>
+          <button class="btn" id="setup-save">Next</button>
+          <button class="btn secondary" id="setup-skip">Skip</button>
         </div>
       </div>
     </div>

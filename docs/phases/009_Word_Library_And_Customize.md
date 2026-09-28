@@ -452,6 +452,24 @@ about ten minutes.
 
 Done when: the test passes and the timed comparison is recorded here.
 
+**BUILT** (code + automated test done; the stopwatch comparison still
+needs a parent). `public/shared/setup.mjs` owns `SETUP_STEPS` — the
+step→group truth — and `applySetupPeople`; `public/board/setup-ui.js`
+drives `#setupform` as a four-step wizard. It opens once on a new user
+(`needsSetup`, 019 blocker 2) and again from the Parent Corner's "Tell
+us about their world". Step 1 keeps 018 D1: names seat at mom/dad and
+now also join People; a photo button runs the slice-8 many-photos
+drafts into People. Steps 2–4 reuse the slice-7 resolve→apply path.
+Filing under the new model (026/027): People → `grp_people`, Pets →
+`grp_animals`, Favorite foods → `grp_snack` (the Food door is retired;
+Snack is the anytime food board, and 027 B9's "Add to other boards"
+spreads a favorite to meals later), Places → `grp_going_out`.
+`src/board/setup.test.mjs` measures the spec's scenario — entities and
+senses land in the right groups, a skipped step writes nothing, list
+steps leave the core map byte-identical. Live probe: fresh profile →
+Step 1 of 4 → names seat at mom/dad → pets preview tags
+new/already → Done closes with a 60-cell board.
+
 ---
 
 ## Order

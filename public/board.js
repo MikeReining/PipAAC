@@ -25,7 +25,6 @@ import {
 import { displaySentence, keyMap, resolveKeymap } from "./shared/keyboard.mjs";
 import { resolveProfile } from "./shared/profile.mjs";
 import {
-  createEntity,
   entityForSense,
   groupDisplayName,
   groupIndex,
@@ -54,7 +53,7 @@ import {
   FEELINGS, expressiveOn, loadFeelingData, suggestedFeeling,
 } from "./shared/feeling.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
-import { coreCells, moveCore, placeOnBoard, seatSetupPeople } from "./shared/coremove.mjs";
+import { coreCells, moveCore, placeOnBoard } from "./shared/coremove.mjs";
 import { useCounts } from "./shared/usecounts.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
 import { mountCellsSheet } from "./board/cells-sheet.js";
@@ -66,6 +65,7 @@ import { mountLibrary } from "./board/library-ui.js";
 import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
 import { mountPlacePicker } from "./board/place-ui.js";
+import { mountSetup } from "./board/setup-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
 import { mountEditor } from "./board/editor-ui.js";
 import { mountCoach } from "./board/coach-ui.js";
@@ -2088,29 +2088,22 @@ const placeUi = mountPlacePicker({
   },
 });
 
-/* First-open setup (014 § 9 ruling 1): a new user is asked "Who do
- * they call for?" once — up to three people, names now, photos later
- * from each person's card. The entities sync like any other. */
-if (me.needsSetup) {
-  $("setup-title").textContent = `Who does ${me.name || "your child"} call for?`;
-  open("setupform");
-}
-$("setup-save").addEventListener("click", async () => {
-  const names = [...document.querySelectorAll(".setup-name")]
-    .map((i) => i.value.trim()).filter(Boolean).slice(0, 3);
-  /* 018 slice 3 (D1): the first two people take the mom/dad cells —
-   * the people this child calls for, side by side on every layout that
-   * has them. A third stays an entity (reachable in My Words). */
-  const ids = names.map((name) => createEntity(db, { name }).id);
-  seatSetupPeople(db, ids, locale);
-  if (names.length) { await flushDb(); renderGrid(); }
-  await saveUser({ needsSetup: false });
-  close("setupform");
+/* First-open setup (014 § 9 ruling 1 + 009 slice 11, Word_Library §
+ * 5.6): a new user gets the "Tell us about their world" guided pass —
+ * People (names seat at mom/dad, 018 D1), Pets, Favorite foods, Places;
+ * each step is skippable and files into its built-in group. The Parent
+ * Corner offers the same pass again ("Tell us about their world"). */
+const setupUi = mountSetup({
+  db, locale, catalog, open, close, toast,
+  savePhoto, syncUploadBlob, me, saveUser, flushDb,
+  invalidateIndex: () => kbUi.invalidateIndex(),
+  renderGrid, rerenderView, renderStrip,
 });
-$("setup-skip").addEventListener("click", async () => {
-  await saveUser({ needsSetup: false });
-  close("setupform");
+$("open-setup").addEventListener("click", () => {
+  close("menu");
+  setupUi.openWizard();
 });
+if (me.needsSetup) setupUi.openWizard();
 
 /* QR card — public/board/recovery-ui.js */
 mountRecovery({
