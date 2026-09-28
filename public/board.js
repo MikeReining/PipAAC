@@ -831,18 +831,24 @@ function stripCards(items) {
 
 /** Paint the strip's slots — the only path that touches the tray.
  *  Stamps shown_final on the open strip moment: what was painted is
- *  the truth the stored row must replay (017-5). */
+ *  the truth the stored row must replay (017-5). Card building awaits
+ *  art; two renders can overlap, so the tray swap is single-flight —
+ *  a superseded paint never touches the DOM. */
+let stripPaint = 0;
 async function paintStrip(cards, slots = stripSlots(boardGeom().cols)) {
-  const tray = $("tray");
-  tray.style.gridTemplateColumns = `repeat(${slots}, 1fr)`;
-  tray.querySelectorAll(".pred").forEach((n) => n.remove());
+  const mine = ++stripPaint;
   // 025 § 1: the last slot is the three faces whenever they show —
   // word suggestions fill the slots before it, same in every mode.
   const wordSlots = slots - (facesOn() ? 1 : 0);
+  const els = [];
   for (let i = 0; i < wordSlots; i++) {
-    tray.appendChild(cards[i] ? await predCard(cards[i]) : ghostCard());
+    els.push(cards[i] ? await predCard(cards[i]) : ghostCard());
   }
-  if (wordSlots < slots) tray.appendChild(faceCard());
+  if (wordSlots < slots) els.push(faceCard());
+  if (mine !== stripPaint) return;
+  const tray = $("tray");
+  tray.style.gridTemplateColumns = `repeat(${slots}, 1fr)`;
+  tray.replaceChildren(...els);
   if (openImpressionId !== null) {
     // shown_final replays what was painted — the face slot is not a word.
     stampShownFinal(db, openImpressionId, cards.slice(0, wordSlots).map((c) =>
