@@ -126,14 +126,20 @@ arms-out figure). Describing uses a contrasting-size shapes glyph; the
 palette moves to Colors.
 
 **Wired 2026-09-28:** `GROUP_ICONS` in `groups-ui.js` paints the svg for
-mapped doors and falls back to the seed emoji where no art exists — the
-remaining emoji doors are the designer's gap list: Breakfast, Lunch,
-Dinner, Snack, Fruit, Things, Describing (shapes glyph), Outside,
-School, Art & music, Bathroom, Screens. Reused: `places` → Going out,
-`actions` (pointing hand) → Touch & sound, the palette → Colors, the
-chrome question mark → Who & which. Unused drafts: `food`, `moving`,
-`vehicles`. Follow the existing ink glyph family; no generated raster batch is
-authorized by this packet.
+mapped doors and falls back to the seed emoji where no art exists, so a
+new group shows its gap until it gets a glyph. Reused: `places` → Going
+out, `actions` (pointing hand) → Touch & sound, the palette → Colors,
+`food` (fork and knife) → Dinner, the chrome question mark → Who & which.
+Unused drafts: `moving`, `vehicles`. Hand-drawn svg only; no generated
+raster batch is authorized by this packet.
+
+**Gap list closed 2026-09-28** (founder picks): Breakfast bowl and spoon,
+Lunch sandwich half, Snack cracker with a bite (healthier than a cookie),
+Fruit apple, Things open box, Describing big circle + small square
+(`shapes`), Outside tree, School backpack, Art & music paintbrush (one
+object, not two), Bathroom faucet with a drop (the polite word, not a
+toilet), Screens tablet with play. `weather` (sun behind a cloud) is
+drawn and mapped ahead of the Weather group below.
 
 ### D8 — Things and places take the neutral frame
 
@@ -195,15 +201,24 @@ What this says, plainly:
    (027 A2; a clean break — no saved groups to convert), never re-seeded.
    Proof: `src/board/groups.test.mjs`, `src/board/layout.test.mjs`, import and
    replay fixtures, rendered groups. No second competing seed writer.
-2. **Topic icons.** Outside, Bathroom, School, Going out, Screens, Art & music,
-   Colors, and the Describing glyph; any new sibling groups need a matching
-   glyph. Follow D7, and existing founder approval rules for generated media.
+2. **Topic icons.** Every seeded door has an ink glyph (D7); any new sibling
+   group needs a matching glyph. Follow D7, and existing founder approval
+   rules for generated media.
 3. **Neutral noun frame.** Update the lexicon truth owner for things/places,
    regenerate the catalog, keep pronouns/people yellow. Verify actual rendered
    tiles and home-board stability; catalog counts alone do not prove appearance.
 4. **Owner docs and closeout.** Update built statuses only with proof. Coordinate
    Motor_Grid_And_Art roles, Design_System, and the art-generator's natural-color
    instructions. 027 owns group behavior; this phase must not duplicate it.
+5. **Weather group** (founder-approved 2026-09-28; weather only, not nature).
+   Seed it from words that already have art and audio — *sun, rain, raining,
+   snow, wind, cloud, moon, hot, cold, warm, cool, wet, dry, umbrella, coat,
+   jacket, raincoat, boots, mittens, gloves, hat* — shared with their current
+   groups. Then mint the ten missing talk words under the art and voice
+   approval rules: *weather, sunny, cloudy, rainy, windy, snowy, storm,
+   thunder, lightning, rainbow*. Later: *foggy, puddle, sky, ice, freezing,
+   sunscreen*. Door order and capacity go through `build_groups.mjs`; the
+   glyph is ready (`weather`).
 
 **Works Test:** on grid60, Outside brings run and swing set together; Bathroom
 includes potty and wash. On grid15, the four More groups appear and every
