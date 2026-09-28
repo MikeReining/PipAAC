@@ -272,8 +272,11 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   (`public/board/group-shows.js` → `setGroupHidden`, 027 B8). Meal
   groups keep their one switch (`occasions_visible`).
 
-**PROPOSED** (from the proposal, not built yet): one "Add a device"
-button that asks which device you're holding; team roles and
+- **Add a device.** One button; a sheet asks which device you're
+  holding and hands off to the existing flow (`dev-link` shows a code,
+  `dev-add` types it and Allows — devices-ui owns both).
+
+**PROPOSED** (from the proposal, not built yet): team roles and
 permissions (needs the feature workflow — permissions are a high-risk
 stop); a "this board is mine" mode for adult communicators.
 

@@ -59,6 +59,8 @@
 }
 .set-tile.likely { box-shadow: inset 0 0 0 4px var(--c); }
 
+.set-choice { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; }
+.set-choice .hint { font-weight: 400; font-size: 14px; }
 .set-list { display: flex; flex-direction: column; }
 .set-listrow { padding: 8px 0; border-top: 1px solid var(--line); }
 .set-listrow:first-child { border-top: 0; }

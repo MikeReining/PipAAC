@@ -48,7 +48,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
     const w = personWords(me.name);
     $("set-name").textContent = w.title;
     $("set-avatar").textContent = w.unnamed ? "" : w.title[0].toUpperCase();
-    for (const el of pane.querySelectorAll("[data-person]")) el.textContent = w.inline;
+    for (const el of document.querySelectorAll("#menu [data-person], #devchoose [data-person]")) el.textContent = w.inline;
     for (const el of pane.querySelectorAll("[data-person-cap]")) el.textContent = w.cap;
   }
 
@@ -194,6 +194,15 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
   pane.addEventListener("click", (e) => {
     const b = e.target.closest("[data-click]");
     if (b) $(b.dataset.click)?.click();
+  });
+  // Add a device: one door; the sheet asks which device this is and
+  // hands off to the flow devices-ui owns (dev-link / dev-add).
+  $("dev-choose").addEventListener("click", () => open("devchoose"));
+  $("devchoose").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-pick]");
+    if (!b) return;
+    $("devchoose").classList.remove("open");
+    $(b.dataset.pick).click();
   });
   // Rows hide and show as account / sync state resolves after open, and
   // a control's .on moves when its owner writes — the list follows both.

@@ -983,10 +983,12 @@
                 <span class="seg-label">Devices</span>
                 <div id="dev-list"><p class="hint">Only on this device so far.</p></div>
                 <div class="row">
-                  <button class="btn secondary" id="dev-add">Add a device</button>
-                  <button class="btn secondary" id="dev-link">Link this device</button>
+                  <button class="btn secondary" id="dev-choose">Add a device</button>
+                  <!-- The two flows devices-ui owns; Add a device asks which one. -->
+                  <button id="dev-add" hidden>Approve a new device</button>
+                  <button id="dev-link" hidden>Link this device</button>
                 </div>
-                <p class="hint">Add a device: bring another device in from this one. Link this device: join a board that is already on another device.</p>
+                <p class="hint">A linked device sees and edits the whole board. Removing one locks it out.</p>
               </div>
             </section>
 
@@ -1269,6 +1271,22 @@
           <button class="btn danger" id="del-yes">Delete</button>
           <button class="btn secondary" data-close>Keep</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Settings → Team & devices → Add a device: which device is this? -->
+    <div class="overlay" id="devchoose">
+      <div class="sheet">
+        <h2>Which device are you holding?</h2>
+        <button class="btn secondary set-choice" data-pick="dev-link">
+          <b>The new one</b>
+          <span class="hint">It shows a code; type it on a device that already has <span data-person></span>.</span>
+        </button>
+        <button class="btn secondary set-choice" data-pick="dev-add">
+          <b>One that already has <span data-person></span></b>
+          <span class="hint">Type the code the new device is showing, then Allow.</span>
+        </button>
+        <button class="btn secondary" data-close>Cancel</button>
       </div>
     </div>
 
