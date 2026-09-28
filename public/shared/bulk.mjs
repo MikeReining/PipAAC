@@ -35,7 +35,7 @@ export function nameFromFile(name) {
  */
 export function resolvePasteRows(db, text, { groupId, locale }) {
   const inGroup = new Set(
-    all(db, "SELECT item_kind, item_id FROM group_cell WHERE group_id = ?", [groupId])
+    all(db, "SELECT item_kind, item_id FROM group_membership WHERE group_id = ?", [groupId])
       .map((r) => `${r.item_kind}:${r.item_id}`),
   );
   const entByNorm = new Map(

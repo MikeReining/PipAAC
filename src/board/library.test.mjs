@@ -39,7 +39,7 @@ const saveEntity = (db, id, name, groupId, at) => {
     "INSERT INTO personal_entity (id, spoken_name, photo_key, category, hint, added_at) VALUES (?, ?, NULL, NULL, NULL, ?)",
   ).run(id, name, at);
   db.prepare(
-    "INSERT INTO group_cell (group_id, item_kind, item_id, page, slot_index, added_at) VALUES (?, 'entity', ?, 0, 58, ?)",
+    "INSERT INTO group_membership (group_id, item_kind, item_id, added_at) VALUES (?, 'entity', ?, ?)",
   ).run(groupId, id, at);
 };
 
@@ -55,7 +55,7 @@ test("Added lists the family's words newest first", () => {
   const swing = senseId(db, "swing");
   assert.ok(swing, "fixture sense exists");
   db.prepare(
-    "INSERT INTO group_cell (group_id, item_kind, item_id, page, slot_index, added_at) VALUES ('grp_my_words', 'sense', ?, 0, 57, ?)",
+    "INSERT INTO group_membership (group_id, item_kind, item_id, added_at) VALUES ('grp_my_words', 'sense', ?, ?)",
   ).run(swing, 3000);
 
   const added = libraryAdded(db, "en");
@@ -67,10 +67,10 @@ test("Added lists the family's words newest first", () => {
   // a sense seeded only in a built-in group is not "added" by the family
   const builtinOnly = db.prepare(
     `SELECT s.id FROM sense s
-     WHERE EXISTS (SELECT 1 FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
-                   WHERE gc.item_id = s.id AND g.kind = 'builtin')
-       AND NOT EXISTS (SELECT 1 FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
-                       WHERE gc.item_id = s.id AND g.kind != 'builtin')
+     WHERE EXISTS (SELECT 1 FROM group_membership gm JOIN board_group g ON g.id = gm.group_id
+                   WHERE gm.item_id = s.id AND g.kind = 'builtin')
+       AND NOT EXISTS (SELECT 1 FROM group_membership gm JOIN board_group g ON g.id = gm.group_id
+                       WHERE gm.item_id = s.id AND g.kind != 'builtin')
      LIMIT 1`,
   ).all()[0].id;
   assert.ok(!added.some((r) => r.id === builtinOnly));

@@ -154,7 +154,12 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   grammar_help INTEGER NOT NULL DEFAULT 1 CHECK (grammar_help IN (0, 1)),
   -- Expressive voice (025 § 6): 1 shows the happy/sad/angry faces in
   -- the smart bar's last slot; 0 speaks everything neutral. Default ON.
-  expressive_voice INTEGER NOT NULL DEFAULT 1 CHECK (expressive_voice IN (0, 1))
+  expressive_voice INTEGER NOT NULL DEFAULT 1 CHECK (expressive_voice IN (0, 1)),
+  -- Groups (027 B6, B8): the home board's top row shows on every group page
+  -- (off leaves those cells empty, still reserved), and the four occasion
+  -- groups show in the index. Both default ON.
+  group_top_row INTEGER NOT NULL DEFAULT 1 CHECK (group_top_row IN (0, 1)),
+  occasions_visible INTEGER NOT NULL DEFAULT 1 CHECK (occasions_visible IN (0, 1))
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (
@@ -260,7 +265,11 @@ CREATE TABLE IF NOT EXISTS learner_event_log (
   -- 021: which label spoke — the form the child actually said (wants,
   -- him). NULL on old rows and when Grammar help is off. Phrase history
   -- still reads item ids, so meaning-level ranking is untouched.
-  label_id TEXT REFERENCES label(id)
+  label_id TEXT REFERENCES label(id),
+  -- 027 § 5: the group open when this word was picked (NULL outside a
+  -- group) — a spoken sentence's first pick is that group's own start.
+  -- Device-local history, never synced.
+  group_id TEXT
 );
 
 CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);
@@ -434,16 +443,19 @@ CREATE TABLE IF NOT EXISTS bar_family_item (
   PRIMARY KEY (family_id, position)
 );
 
--- Groups: one kind of container. The index is a coordinate map (slots
--- 10–59); items sit at fixed (page, slot) inside a group. Positions move
--- only in Edit mode. Owner: docs/product/Motor_Grid_And_Art.md § Groups.
+-- Groups: one kind of container (docs/product/Motor_Grid_And_Art.md
+-- § Groups, 027). The index is a coordinate map (canonical slots from 10,
+-- no upper bound). A group holds words (group_membership); where each sits
+-- is stored per board size (group_cell). Hidden groups keep membership,
+-- positions, and index slot. Owner: public/shared/groups.mjs.
 CREATE TABLE IF NOT EXISTS board_group (
   id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),
   kind TEXT NOT NULL CHECK (kind IN ('builtin', 'my_words', 'custom')),
   name TEXT CHECK (name IS NULL OR length(name) > 0),
   glyph TEXT,
   photo_key TEXT,
-  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10 AND index_slot < 60),
+  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10),
+  hidden INTEGER NOT NULL DEFAULT 0 CHECK (hidden IN (0, 1)),
   CHECK (kind != 'custom' OR name IS NOT NULL)
 );
 
@@ -458,19 +470,69 @@ CREATE TABLE IF NOT EXISTS group_label (
   PRIMARY KEY (group_id, locale)
 );
 
-CREATE TABLE IF NOT EXISTS group_cell (
+-- A word in a group. Removing it removes that group's positions, never the
+-- word record. added_at drives Word Library → Added order; moves, swaps
+-- and Undo carry it over.
+CREATE TABLE IF NOT EXISTS group_membership (
   group_id TEXT NOT NULL REFERENCES board_group(id),
   item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
   item_id TEXT NOT NULL,
-  page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),
-  slot_index INTEGER NOT NULL CHECK (slot_index >= 2 AND slot_index <= 58),
-  -- When this placement was made — drives Word Library → Added order.
-  -- Moves and swaps carry it over — only a fresh placement sets it.
   added_at INTEGER,
   PRIMARY KEY (group_id, item_kind, item_id),
-  UNIQUE (group_id, page, slot_index),
   CHECK ((item_kind = 'sense' AND item_id GLOB 'sns_*')
       OR (item_kind = 'entity' AND item_id GLOB 'ent_*'))
+);
+
+-- Where a member sits on one board size. Slots are real cells of that
+-- size's grid; the reserved cells (top row, frame, Next) are never used —
+-- groups.mjs owns that rule. A size gets its positions when a Cells change
+-- asks for them (027 § 3.3).
+CREATE TABLE IF NOT EXISTS group_cell (
+  group_id TEXT NOT NULL,
+  layout TEXT NOT NULL CHECK (length(layout) > 0),
+  item_kind TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
+  PRIMARY KEY (group_id, layout, item_kind, item_id),
+  UNIQUE (group_id, layout, page, slot_index),
+  FOREIGN KEY (group_id, item_kind, item_id)
+    REFERENCES group_membership(group_id, item_kind, item_id)
+);
+
+-- One row per seeded group, written when it is installed and kept after the
+-- group is emptied or hidden. Any row stops that group seeding again,
+-- whatever the catalog version (027 § 3.3). No FK: it outlives the group.
+CREATE TABLE IF NOT EXISTS group_seed_install (
+  group_id TEXT PRIMARY KEY CHECK (group_id GLOB 'grp_*'),
+  seed_version TEXT NOT NULL
+);
+
+-- Catalog tables, replaced on import: each board size's shape and frame
+-- cells (the reserved-cell source), the authored seed positions — the
+-- placement rule's second choice when a word is re-added to its group —
+-- and per-group catalog metadata: the sizes a built-in group shows on
+-- (NULL = every size) and whether it is one of the occasions the
+-- occasions_visible setting hides together (027 B8).
+CREATE TABLE IF NOT EXISTS layout_shape (
+  layout TEXT PRIMARY KEY CHECK (length(layout) > 0),
+  cols INTEGER NOT NULL CHECK (cols > 0),
+  rows INTEGER NOT NULL CHECK (rows > 0),
+  frame TEXT NOT NULL CHECK (json_valid(frame))
+);
+CREATE TABLE IF NOT EXISTS group_meta (
+  group_id TEXT PRIMARY KEY CHECK (group_id GLOB 'grp_*'),
+  layouts TEXT CHECK (layouts IS NULL OR json_valid(layouts)),
+  occasion INTEGER NOT NULL DEFAULT 0 CHECK (occasion IN (0, 1))
+);
+CREATE TABLE IF NOT EXISTS group_seed_cell (
+  group_id TEXT NOT NULL,
+  layout TEXT NOT NULL,
+  item_kind TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  page INTEGER NOT NULL CHECK (page >= 0),
+  slot_index INTEGER NOT NULL CHECK (slot_index >= 0),
+  PRIMARY KEY (group_id, layout, item_kind, item_id)
 );
 
 -- Every adult edit lands here as an op (docs/product/Sync_And_Web_Editing.md
@@ -743,4 +805,4 @@ CREATE TABLE IF NOT EXISTS stats_day (
   PRIMARY KEY (day, device_id)
 );
 
-PRAGMA user_version = 19;
+PRAGMA user_version = 20;

@@ -49,7 +49,7 @@ export function spotlightGroups(db, targets) {
   const marks = ids.map(() => "?").join(",");
   return new Set(
     db.prepare(
-      `SELECT DISTINCT group_id FROM group_cell
+      `SELECT DISTINCT group_id FROM group_membership
        WHERE item_id IN (${marks})`,
     ).all(...ids).map((r) => r.group_id),
   );

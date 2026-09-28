@@ -46,7 +46,7 @@ await sleep(4000);
 const out = {};
 const mapDump = `JSON.stringify({
   core: window.pip.db.prepare("SELECT * FROM core_cell ORDER BY layout, slot_index").all(),
-  grp: window.pip.db.prepare("SELECT * FROM group_cell ORDER BY group_id, page, slot_index").all() })`;
+  grp: window.pip.db.prepare("SELECT * FROM group_cell ORDER BY group_id, layout, page, slot_index").all() })`;
 
 out.mapBefore = await evalJs(mapDump);
 

@@ -71,7 +71,7 @@ test("the family's own words are offered first and placing one adds no record", 
 
   // Already in People → not offered there again; still offered elsewhere.
   assert.ok(!entityMatches(db, "Coo", "grp_people", "en", seedCategory("grp_people")).some((h) => h.id === "ent_cooper"));
-  assert.ok(entityMatches(db, "Coo", "grp_food", "en", seedCategory("grp_food")).some((h) => h.id === "ent_cooper"));
+  assert.ok(entityMatches(db, "Coo", "grp_breakfast", "en", seedCategory("grp_breakfast")).some((h) => h.id === "ent_cooper"));
 
   // Empty input offers nothing.
   assert.deepEqual(entityMatches(db, "", "grp_people", "en"), []);

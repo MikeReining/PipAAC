@@ -4,7 +4,7 @@
  * read-only here except hide, a picture override, and a recording.
  */
 import {
-  entityGroups, groupDisplayName, groupIndex, maskedSenseIds, placeItem,
+  activeLayout, entityGroups, maskedSenseIds,
   removeItemUndoable, renameEntity, restoreEntity, retireEntity, senseGroups,
   setEntityPhoto, setEntityRole, setMask,
 } from "../shared/groups.mjs";
@@ -20,6 +20,7 @@ export function mountWordCard({
   metaFor, artInto, loadPhotoURL, savePhoto, syncUploadBlob, speakItem, xBadge,
   invalidateIndex, setView, rerenderView, renderStrip, renderGrid, flashCell,
   getCell, getGroupKey, setGroup, dropEntityPhoto, dropEntityRole, dropSenseMeta,
+  openAddToBoards,
 }) {
   let cardItem = null; // { item_kind, item_id, label } currently shown
   let recorder = null;
@@ -38,18 +39,21 @@ export function mountWordCard({
       const chip = document.createElement("span");
       chip.className = "wchip";
       chip.textContent = g.name;
-      const removable =
-        cardItem.item_kind === "entity"
-          ? g.id !== "grp_my_words" // last cell is My Words — Remove retires
-          : g.kind !== "builtin"; // senses never leave built-ins
-      if (removable) {
-        chip.appendChild(xBadge(() => {
-          const undo = removeItemUndoable(db, g.id, cardItem.item_kind, cardItem.item_id);
+      // 027 B9: remove from any group — this placement only; the word
+      // stays in the Library and the keyboard with zero placements.
+      const x = xBadge(() => {
+        const undo = removeItemUndoable(db, g.id, cardItem.item_kind, cardItem.item_id);
+        renderCardGroups();
+        rerenderView();
+        toast(`Removed from ${g.name}`, () => {
+          const { moved } = undo.undo();
           renderCardGroups();
           rerenderView();
-          toast(`Removed from ${g.name}`, () => { undo.undo(); renderCardGroups(); rerenderView(); });
-        }));
-      }
+          if (moved) toast(`${cardItem.label} is back in ${g.name} — its cell was taken, so it moved`);
+        });
+      });
+      x.title = `Remove from ${g.name}`;
+      chip.appendChild(x);
       box.appendChild(chip);
     }
   }
@@ -85,7 +89,6 @@ export function mountWordCard({
       $("wc-hide").hidden = false;
       $("wc-hide").textContent = hidden ? "Show word" : "Hide word";
     }
-    $("wc-grouplist").hidden = true;
     if (isEnt && item.photo_key) {
       loadPhotoURL(item.photo_key).then((url) => {
         if (!url) return;
@@ -267,27 +270,11 @@ export function mountWordCard({
     toast("Back to the app's voice");
   });
 
-  /** Groups the item is not yet in — one tap places it at the next free
-   *  cell of that group. */
+  /** 027 B9: Add to other boards — named destinations, none preselected. */
   $("wc-addgroup").addEventListener("click", () => {
-    const list = $("wc-grouplist");
-    list.hidden = !list.hidden;
-    if (list.hidden) return;
-    list.innerHTML = "";
-    const member = new Set(cardGroups().map((g) => g.id));
-    for (const g of groupIndex(db)) {
-      if (member.has(g.id)) continue;
-      const chip = document.createElement("button");
-      chip.className = "wchip";
-      chip.textContent = groupDisplayName(db, g, locale);
-      chip.addEventListener("click", () => {
-        placeItem(db, g.id, cardItem.item_kind, cardItem.item_id);
-        renderCardGroups();
-        list.hidden = true;
-        rerenderView();
-      });
-      list.appendChild(chip);
-    }
+    const item = cardItem;
+    close("wordcard"); // the destinations sheet takes the screen
+    openAddToBoards(item);
   });
 
   /** Show on board: jump to where the word lives and mark its cell for a
@@ -311,8 +298,8 @@ export function mountWordCard({
     if (!target) { setView("board"); return; }
     const cell = all(
       db,
-      "SELECT page FROM group_cell WHERE group_id = ? AND item_kind = ? AND item_id = ?",
-      [target.id, it.item_kind, it.item_id],
+      "SELECT page FROM group_cell WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?",
+      [target.id, activeLayout(db), it.item_kind, it.item_id],
     )[0];
     setGroup(target.id, cell?.page ?? 0);
     setView("group");

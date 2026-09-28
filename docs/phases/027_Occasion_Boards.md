@@ -1,10 +1,12 @@
 # Phase 027 — Occasion boards and independent editing
 
-**Status:** READY FOR IMPLEMENTATION — founder approved 2026-09-27; simplified
-the same day (founder: "there is nothing to preserve. We have no users").
-Not built. No parent/child trial is a launch gate: the proof is deterministic
-checks plus our own rendered interaction and speech checks. This packet does
-not authorize media generation or publishing.
+**Status:** BUILT 2026-09-28 — A1–A4 landed and the Works Test passed on an
+agent slot (§ 6, observations below). Founder approved 2026-09-27; simplified
+the same day (founder: "there is nothing to preserve. We have no users"). Open
+before retirement: founder review of the seed curation and the corrected
+CHILDES starter table (both need the founder; see the end of this doc). No
+parent/child trial is a launch gate. This packet does not authorize media
+generation or publishing.
 
 ## 1. Scope and ownership
 
@@ -54,9 +56,16 @@ layout reset tools, automatic filing by classification.
 ### 3.1 Authoring and build
 
 - `data/group_seed.topics.json` — 026 topic membership and layout eligibility.
-- `data/occasions/block_doors.proposed.json` — becomes explicit per-group word
-  lists, stable group IDs, ordered clusters, and per-size seed positions. Add
-  Dinner. Clusters suggest coordinates; they never imply membership.
+- `data/group_seed.occasions.json` (was `data/occasions/block_doors.proposed.json`): explicit per-group word lists, stable group
+  IDs, and ordered clusters. Add Dinner. Clusters suggest coordinates; they
+  never imply membership. `data/group_seed.json` is deleted.
+- **Positions are computed, not typed** (amended 2026-09-28). One rule in the
+  builder assigns every size's seed positions: the home coordinates of *eat,
+  drink, all done* where free, then the size's first-page priority list (grid15),
+  then clusters in authored order, each word taking the first content cell
+  (column by column) that is free in every coordinated group holding it. The
+  same rule fills topic groups in band order. Hand coordinates for three sizes
+  would drift; the rule plus its validation gate cannot.
 - Meal groups hold their meal word, useful food and drink choices, *eat, drink,
   all done*, and tableware. Every launch food word has a route; no Food
   mega-group; overflow goes to named sibling topic groups, never dropped.
@@ -159,6 +168,23 @@ The schema version goes up; a device database from before this change is reset
 to the fresh seed. No v1 geometry, no conversion of old edits or sync
 baselines, no adoption preview, no "Add meal boards" setup action.
 
+**Decided 2026-09-28 (founder approved the review):**
+
+- **Reset scope: the whole device database.** `bootDb` (`public/db.js`) opens a
+  fresh database when the saved one's `user_version` predates this change,
+  before `migrateSchema` runs. A group-tables-only reset was considered and
+  dropped: `sync_baseline` and the `sync_op` log both carry old group rows and
+  arg shapes, so the next rebase would replay them into the new tables.
+- **Old ops on the relay.** A group op recorded before this change has no
+  `layout` field. Every replica skips such ops, deterministically, so a device
+  that restores from a relay still holding them converges without converting
+  them. No other op kind changes.
+- **Seed install is an op, and the first install wins.** The rebase baseline is
+  taken after catalog import and before seeding; seeding then records one
+  `seed_install` op carrying memberships and positions. On replay, a group that
+  already has an install marker ignores later installs, so two devices that
+  each seeded offline converge on the first one the relay confirmed.
+
 Fresh profile: install the curated seed once, with install markers. A new custom
 group starts empty; its reserved cells show like any group's. A catalog reimport may update word identity
 metadata; it never touches installed memberships, positions, visibility, order,
@@ -211,8 +237,8 @@ needs its own approval.
 
 | Slice | Deliverable | Depends on | Proof |
 | --- | --- | --- | --- |
-| **A1 — Seed and geometry** | Update both authoring inputs; resolve meanings and eligibility; emit membership and per-size positions from `build_catalog.mjs`; reserved-cell geometry in `groups.mjs`; finish 026 membership against real capacity; `preview_blocks.mjs` reads compiler output. | — | `src/board/groups.test.mjs`: duplicate meaning, overlap, reserved cell, missing route, repeated-word mismatch, out-of-bounds, one-page 60/90 seeds — each rejection seen once. grid15 first pages and Dinner checked. |
-| **A2 — State, install, replay** | `src/board/schema.sql`, `src/board/catalog.mjs`, `import.mjs`, groups/ops owners: membership/position split, install markers, settings and hidden, schema bump with reset, ops with layout coordinates, multi-add and Cells-switch ops, index beyond 59. Audit every `group_cell` reader and the snapshot allowlist. | A1 | `groups.test.mjs`, `sync_op.test.mjs`, `sync_merge.test.mjs`, `layout.test.mjs`: remove → reimport stays removed, deleted group stays deleted, Cells switch and exact switch-back, offline same-cell adds, fresh-device restore, multi-add Undo, pre-change DB resets to the fresh seed. |
+| **A1 — Seed and geometry** | Update both authoring inputs; resolve meanings and eligibility; emit membership and per-size positions from `build_catalog.mjs`; reserved-cell geometry in `groups.mjs`; finish 026 membership against real capacity; `preview_blocks.mjs` reads compiler output. Two parts: the compiler, geometry and gates (code), and the curation — sibling-group splits, grid15 first pages, Dinner — which ships as a draft for founder review on the preview. Code never waits on curation. | — | `src/board/groups.test.mjs`: duplicate meaning, overlap, reserved cell, missing route, repeated-word mismatch, out-of-bounds, one-page 60/90 seeds — each rejection seen once. grid15 first pages and Dinner checked. |
+| **A2 — State, install, replay** | `src/board/schema.sql`, `src/board/catalog.mjs`, `import.mjs`, `public/db.js` (boot order, reset, `migrateLegacyGroups` call), `public/shared/migrate.mjs`, groups/ops owners: membership/position split, install markers, settings and hidden, schema bump with reset, ops with layout coordinates, multi-add and Cells-switch ops, index beyond 59. Audit every `group_cell` reader and the snapshot allowlist. | A1 | `groups.test.mjs`, `sync_op.test.mjs`, `sync_merge.test.mjs`, `layout.test.mjs`: remove → reimport stays removed, deleted group stays deleted, Cells switch and exact switch-back, offline same-cell adds, fresh-device restore, multi-add Undo, pre-change DB resets to the fresh seed. |
 | **A3 — One group surface and editor** | `groups-ui.js`, `board.js`, `index.html`, board styles: reserved cells rendered from the home board, Home/Next/Add, top-row setting, hides, index and glow, local remove/move/swap, multi-add and scope copy. Automatic enrichment filing off. | A2 | `groups_ui.test.mjs`, `keyboard_ui.test.mjs`, affected writer suites. Render all three sizes; run the Works Test. |
 | **A4 — Stay after Speak; real starters** | Speech completion and `renderStrip` in `board.js`; corrected CHILDES builder and table; per-group first-pick history. Delete `meal_doors.proposed.json` and `preview_addresses.mjs` once unused. | A2; A3 for rendered proof | `scripts/prediction/childes/childes.test.mjs` (first vs later word, unmapped starts); prediction/speech tests; rendered speech offline, fresh-start both ways, expressive/transformed/cancelled speech, later navigation, learned and cold-start suggestions. |
 | **A5 — Launch proof** | Final catalog and previews from source, 026 visuals, owner docs, SSOT, live index. No audio swaps or bulk art. | A1–A4; 026 visuals | Works Test, focused suites, `npm run check:fast`, doc routes and phase freshness. Record what was observed; mark built only when proven. |
@@ -265,5 +291,57 @@ npm run lint:phase-freshness
   Word_Library, sync in Sync_And_Web_Editing, storage in
   Language_And_Voice_Schema; this phase retires per the playbook.
 
-**Packet state (2026-09-27):** docs only. Runtime and data unchanged; every
-Works Test above is still to be built and run. No efficacy or clinical claim.
+**Works Test — observed 2026-09-28** (fresh profile on an agent slot,
+headless Chromium with autoplay allowed; cells read from the painted grid,
+speech from the audio element's own `ended` events; 12/12 checks, no page
+errors):
+
+1. Breakfast: *I, want, milk, more* on the page; ▶ played `i want milk` and
+   `more milk` to `ended`, the view stayed on the group; corner Home → board,
+   Groups → index.
+2. milk, water, juice, cup, banana, apple, eat, all done each sit in one cell
+   across Breakfast/Lunch/Dinner/Snack/Fruit/Drinks; Breakfast has yogurt, Snack
+   has cup. (Every launch word's route and no overlaps: the A1 gate.)
+3. Swapping *want* and *like* on the home board (Edit-mode drag) showed in
+   Lunch's and Snack's top rows.
+4. × on chocolate milk in Breakfast left slot 18 empty; Lunch and Drinks kept it;
+   after a reload (catalog reimport) Breakfast still lacked it. Removing a
+   personal word's only placement left it in the Library with no My Words
+   placement. (Restore on another device: `groups.test.mjs` fresh-device drain.)
+5. Dragging milk 27 → 13 in Breakfast changed only that cell; Lunch's milk stayed
+   at 27. (Undo, seed-cell-taken adds, and Next on a full page:
+   `groups.test.mjs` placement test and `edit_mode.test.mjs`.)
+6. Offline: adding Kefir to Breakfast changed only Breakfast; the toast offered
+   Add to other boards → Lunch, Snack in one op; Undo left only Breakfast.
+   (Photo change on the word card updating every placement: not driven here —
+   every placement reads the one `personal_entity` row.)
+7. Top row off: row 0 empty except *yes* (frame), content unchanged; on again:
+   identical.
+8. grid15 Breakfast page 1: milk, banana, all done, water, cup, eat, cereal, Next
+   1/6; Lunch's milk in the same cell; grid90 renders 90 cells; back on 60 every
+   stored position was exact.
+9. Navigating to the index during playback stayed on the index; no tile's word
+   changed cell. Empty-sentence starters were empty: no corpus table yet, and
+   her one first pick (*I*) is already on the page.
+
+Found and fixed on the way (own commits): multi-word Speak never sounded
+(license lookup threw; clip loop stopped after one word — 354f1c1); Edit-mode
+drag with a mouse was cancelled by native image drag (54348c1); the corner is
+Home on group surfaces in Edit mode too (3da8bda).
+
+**Founder review (needed to retire this phase):**
+
+- **Seed curation** — `node scripts/catalog/preview_blocks.mjs`, then open
+  `public/preview-blocks.html`: the sibling splits (Home/Things, Describing/Touch
+  & sound, Little words/Who & which), Dinner's words, the grid15 first page
+  (milk, water, banana, cup, eat, all done + cereal/pasta/cracker), and grid15
+  Fruit, whose shared positions leave its page 2 empty. Edits go in
+  `data/group_seed.occasions.json` / `data/group_seed.topics.json`, then
+  `npm run catalog:build` — the gate re-checks every size.
+- **Starter table** — on the machine with the CHILDES cache:
+  `node scripts/prediction/childes/door_starters.mjs && npm run catalog:build`.
+  Until then the empty-sentence bar starts from the child's own first picks.
+- **026 visuals** (topic door icons, neutral noun frame) stay open in 026;
+  groups show their emoji glyphs meanwhile.
+
+No efficacy or clinical claim.

@@ -1,4 +1,19 @@
 /**
+ * 027 § 4 — the clean break. A saved database older than this schema
+ * version predates per-size group storage and is discarded whole: its
+ * group rows, sync baseline and op log all carry the old shapes, and there
+ * are no users to keep. Read from the SQLite header (user_version is the
+ * big-endian u32 at byte 60), so the check needs no open database; bytes
+ * too short to be a database count as old.
+ */
+export const CLEAN_BREAK_VERSION = 20;
+export function beforeCleanBreak(bytes) {
+  const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+  if (b.length < 64) return true;
+  return ((b[60] << 24) | (b[61] << 16) | (b[62] << 8) | b[63]) >>> 0 < CLEAN_BREAK_VERSION;
+}
+
+/**
  * CHECK constraints are baked into CREATE TABLE — a persisted DB keeps the
  * old list forever, and `INSERT OR IGNORE` then silently drops rows that
  * violate it (observed: function-word senses rejected under the pre-2026-09-22
@@ -18,8 +33,8 @@ export function migrateSchema(d, schemaSql) {
     "sense", "utterance", "label", "image", "voice", "clip", "core_cell",
     "learner_profile", "personal_entity", "entity_enrichment",
     "learner_event_log", "clip_override", "image_override", "sense_mask",
-    "board_group", "group_cell",
-    "group_label", "sync_op", "sync_baseline", "sentence", "phrase_count",
+    "board_group", "group_membership", "group_cell", "group_seed_install",
+    "layout_shape", "group_meta", "group_seed_cell", "group_label", "sync_op", "sync_baseline", "sentence", "phrase_count",
     "strip_impression", "spotlight_list", "spotlight_item",
     "spotlight_session", "coach_event", "core_override", "move_mark",
     "bar_family", "bar_family_item", "stats_day",

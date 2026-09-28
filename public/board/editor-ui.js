@@ -5,15 +5,14 @@
  */
 import { applyPasteRows, nameFromFile, resolvePasteRows } from "../shared/bulk.mjs";
 import {
-  canonCell, createEntity, groupDisplayName, groupIndex, groupPage,
-  pageCount, pageGeom, placeItem, posAtVisual,
+  createEntity, groupDisplayName, groupIndex, pageCount, placeItem,
 } from "../shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
 
 export function mountEditor({
-  db, locale, all, catalog, boardGeom,
-  navCell, fitLabels, openAddForm, itemCell,
+  db, locale, all, catalog,
+  openAddForm, paintGroupPage,
   renderLibrary, invalidateIndex, setView, toast, close,
   savePhoto, syncUploadBlob,
 }) {
@@ -51,68 +50,23 @@ export function mountEditor({
     }
   }
 
-  /** The real page at the profile's cell count: items land where the
-   *  child sees them (canonical coordinates re-wrapped into pages of
-   *  N-3). Slot 0 shows the group name; slot 1 is + Add; the last slot
-   *  pages when the group overflows. */
+  /** The real page at the profile's board size, painted by the board's
+   *  own group painter (groups-ui.js) — reserved cells, Next and all — with
+   *  gestures always on: the editor is the adult's surface. */
   async function renderEditorGrid() {
-    const zg = $("ed-grid");
-    zg.innerHTML = "";
-    const { cols, rows: nRows, cells } = boardGeom();
-    const geom = pageGeom(cells);
-    zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
     const gid = edTarget();
-    const items = new Map(
-      groupPage(db, gid, edPage, locale, cells).map((r) => [r.vslot, r]),
-    );
-    const pages = pageCount(db, gid, cells);
-    const gKind = all(db, "SELECT kind FROM board_group WHERE id = ?", [gid])[0]?.kind;
-    const ctx = { gestures: true, group: gid, page: edPage, cells, onChange: renderEditorGrid };
-    for (let slot = 0; slot < cells; slot++) {
-      if (slot === 0) {
-        const el = navCell(edGroupName(gid), () => {});
-        el.disabled = true;
-        zg.appendChild(el);
-        continue;
-      }
-      if (slot === 1) {
-        zg.appendChild(navCell("+ Add", () => openAddForm(gid)));
-        continue;
-      }
-      if (slot === geom.next) {
-        if (pages > 1) {
-          const el = navCell("Next ›", () => {
-            edPage = (edPage + 1) % pages;
-            renderEditorGrid();
-          });
-          const badge = document.createElement("span");
-          badge.className = "badge";
-          badge.textContent = `${edPage + 1}/${pages}`;
-          el.appendChild(badge);
-          zg.appendChild(el);
-        } else {
-          const blank = document.createElement("div");
-          blank.className = "gcell empty";
-          zg.appendChild(blank);
-        }
-        continue;
-      }
-      const item = items.get(slot);
-      if (!item) {
-        const empty = document.createElement("div");
-        empty.className = "gcell empty";
-        empty.dataset.slot = slot;
-        empty.addEventListener("click", () => {
-          openAddForm(gid, canonCell(posAtVisual(edPage, slot, cells)));
-        });
-        zg.appendChild(empty);
-        continue;
-      }
-      zg.appendChild(await itemCell(item, gKind, ctx));
-    }
-    fitLabels(zg);
+    await paintGroupPage($("ed-grid"), {
+      group: gid,
+      page: edPage,
+      gestures: true,
+      onChange: renderEditorGrid,
+      onNext: () => {
+        edPage = (edPage + 1) % pageCount(db, gid);
+        renderEditorGrid();
+      },
+    });
   }
+  $("ed-add").addEventListener("click", () => openAddForm(edTarget()));
 
   /** Bulk paste (Word_Library § 5.4): preview each row's resolution, then
    *  Add all files them into the group open in the editor grid. */

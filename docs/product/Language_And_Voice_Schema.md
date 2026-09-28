@@ -12,16 +12,13 @@ word in the same language. That is the gap this schema fills.
 
 ---
 
-## Pending group schema amendment — 027
+## Group schema amendment — 027
 
-**DECIDED 2026-09-27; not built.** `docs/phases/027_Occasion_Boards.md` § 3–4
-specifies the implementation packet: group membership separated from
-per-size placements (created when needed), seed installation state, and
-reserved cells (top row, frame, Next) that render from the home board and are
-never stored as group content. It ships as a clean break — a pre-change device
-DB resets to the fresh seed; there is no legacy conversion. No block tables.
-Existing DDL/code still describes the current implementation; 027 A2 must update
-this schema owner and the executable schema together when those changes land.
+**BUILT 2026-09-28 (027 A2).** Group membership is separate from per-size
+placements (created when needed), with seed installation state; reserved cells
+(top row, frame, Next) render from the home board and are never stored as group
+content. It shipped as a clean break — a pre-change device DB resets to the
+fresh seed; there is no legacy conversion. No block tables. Storage: § 6.3b.
 Product rules: `docs/product/Motor_Grid_And_Art.md` § Groups.
 
 ## 1. What we keep
@@ -459,15 +456,16 @@ CREATE TABLE personal_entity (
 `status` is retirement (§ 14.5): `retired` renders nowhere and every read
 path filters on `'active'`; the row and its `group_cell` placements stay.
 `added_at` is the family's creation time and drives Word Library → Added
-order; `group_cell.added_at` does the same for placed catalog words.
+order; `group_membership.added_at` does the same for placed catalog words.
 
 There is no `type` column, no `pronoun` column, and no edge table. The
 adult supplies facts a model cannot know — the name, the photo, an
 optional hint. Filing is a `group_cell` row in the group the add started
-in — the place is the picker. **027 amendment, not built:** classification
+in — the place is the picker. **027 amendment, built 2026-09-28:** classification
 suggests only; no automatic second placement or My Words catch-all. Zero
-placements keeps the active record in Library/keyboard. The new group membership
-and layout storage are specified in 027; Personal_Entities owns the filing rule.
+placements keeps the active record in Library/keyboard. Filing writes a
+`group_membership` row plus the active size's `group_cell` (§ 6.3b);
+Personal_Entities owns the filing rule.
 Strip relevance is computed live: sentence position and recency
 on-device, the classifier when online. The only stored semantics are the
 enrichment rows below — cached model output with provenance, never an
@@ -705,56 +703,31 @@ invariant `clip` already enforces, not a read-time hope.
 
 ### 6.3b Group map
 
-The following records the pre-027 shape. **027 amendment, not built:** replace
-this canonical strip with membership plus per-size cells and seed-once state,
-as specified in 027 § 3–4; pre-change DBs reset rather than convert. Do not implement the
-old reconcile behavior below for the new model. Update this section and the
-executable schema together in 027 A2.
+**BUILT 2026-09-28 (027 A2).** Executable DDL: `src/board/schema.sql` (schema
+version 20); the one writer is `public/shared/groups.mjs`. A saved device
+database older than version 20 is discarded on boot (`beforeCleanBreak` in
+`public/shared/migrate.mjs`) — 027's clean break; nothing converts.
 
-```sql
-CREATE TABLE board_group (
-  id TEXT PRIMARY KEY CHECK (id GLOB 'grp_*'),
-  kind TEXT NOT NULL CHECK (kind IN ('builtin', 'my_words', 'custom')),
-  name TEXT NOT NULL CHECK (length(name) > 0),
-  glyph TEXT,
-  photo_key TEXT,
-  index_slot INTEGER NOT NULL UNIQUE CHECK (index_slot >= 10 AND index_slot < 60)
-);
+| Table | Synced | What it holds |
+| --- | --- | --- |
+| `board_group` | yes | One row per group: `kind` builtin / my_words / custom, caregiver `name` override (NULL for built-ins), glyph, photo, `index_slot` (canonical from 10, no upper bound), `hidden`. |
+| `group_membership` | yes | A word in a group: `(group_id, item_kind, item_id)` + `added_at` (Library → Added order; moves, swaps and Undo carry it). Removing it removes that group's positions, never the word record. |
+| `group_cell` | yes | Where a member sits on one board size: `(group_id, layout, item_kind, item_id)` → `(page, slot_index)`, a real cell of that size's grid; UNIQUE per `(group_id, layout, page, slot_index)`; FK to membership. |
+| `group_seed_install` | yes | One row per seeded group with the seed version; any row stops that group seeding again. No FK — it outlives the group. |
+| `layout_shape` | catalog | Each board size's `cols`, `rows` and `frame` (the home cells of yes/no/stop/help) — the reserved-cell source. |
+| `group_meta` | catalog | Per built-in group: the sizes it shows on (NULL = every size) and whether it is an occasion. |
+| `group_seed_cell` | catalog | The authored seed positions — the placement rule's second choice. |
+| `group_label` | catalog | Built-in group names per locale. |
 
-CREATE TABLE group_cell (
-  group_id TEXT NOT NULL REFERENCES board_group(id),
-  item_kind TEXT NOT NULL CHECK (item_kind IN ('sense', 'entity')),
-  item_id TEXT NOT NULL,
-  page INTEGER NOT NULL DEFAULT 0 CHECK (page >= 0),
-  slot_index INTEGER NOT NULL CHECK (slot_index >= 2 AND slot_index <= 58),
-  PRIMARY KEY (group_id, item_kind, item_id),
-  UNIQUE (group_id, page, slot_index),
-  CHECK ((item_kind = 'sense' AND item_id GLOB 'sns_*')
-      OR (item_kind = 'entity' AND item_id GLOB 'ent_*'))
-);
-```
-
-One container type: built-in groups (seeded from `data/group_seed.json`),
-My Words, and caregiver custom groups are all `board_group` rows; items —
-senses or entities — sit at fixed `(page, slot_index)` in `group_cell`.
-The group index is a second coordinate map: `index_slot` gets the same
-motor-memory law as `core_cell`. Index slots 0–9 are pinned nav cells;
-groups occupy 10–59. On a group page, slots 0, 1, and 59 are pinned
-(`← Groups`, the Edit-mode action, `Next ›`); items occupy 2–58 — 57 per
-page. Those numbers are the `grid60` geometry; at any other Cells
-setting the pinned roles are the same (first two slots, last slot) and
-items keep their saved order (**DECIDED 2026-09-22**, not built; storage
-shape settled in `docs/phases/014_Grid_Density_And_Fit.md` slice 1).
-All writes go through `public/shared/groups.mjs`; the import doubles
-as the reconcile, so a caregiver's moves are never overwritten and a
-seeded item is never dropped.
-
-**Change note (2026-09-22, phase 003):** these tables replace `zone_slot`,
-`custom_group`, and `group_item`. A device DB persisted under that schema
-is migrated by `migrateLegacyGroups` on boot — custom groups keep their
-id, name, photo, and index position; legacy `group_item` order becomes
-`group_cell` order; entities keep their groups. **027 (not built)** deletes
-this migration with its clean break.
+Reserved cells — the top row, the frame, and the last cell (Next) — are never
+stored as group content; a group page draws the home board's own tiles there
+(027 B3). A size gets positions when a Cells change asks for them: the seed
+ships all three named sizes; after that, edits write the active size, and the
+`set_layout` op carries the new size's missing positions. The seed is compiled
+by `scripts/catalog/build_groups.mjs` from `data/group_seed.topics.json` and
+`data/group_seed.occasions.json` and installed once as a `seed_install` op.
+`learner_event_log.group_id` (device-local) records the group open at each
+pick — a spoken sentence's first pick is that group's own start (027 § 5).
 
 ### 6.4 Indexes
 
@@ -1212,7 +1185,7 @@ Fixes were routed to phases 003b and 004 (both complete, in git history).
 | --- | --- | --- |
 | Runtime reads `learner_profile.locale`; `resolveProfile` implements § 7.1 and every label query and `clipKeyFor` bind the profile locale/voice; a check-fast gate bans the literals | **BUILT** (cfcd0a9) | `public/shared/profile.mjs`, `scripts/check_locale_literals.mjs` |
 | `speak()` sets `u.lang` to the profile locale; `document.documentElement.lang` follows at boot | **BUILT** (cfcd0a9) | `public/board.js` |
-| Built-in group names come from the `group_label` catalog table per locale; `board_group.name` is the caregiver override (NULL for built-ins); stored seed names are NULLed by `migrateBuiltinGroupNames` | **BUILT** (f203693) | `data/group_seed.json`, `public/shared/groups.mjs` |
+| Built-in group names come from the `group_label` catalog table per locale; `board_group.name` is the caregiver override (NULL for built-ins); stored seed names are NULLed by `migrateBuiltinGroupNames` | **BUILT** (f203693) | `data/group_seed.topics.json`, `public/shared/groups.mjs` |
 | Strip grammar is per locale (`GRAMMAR` keyed by locale); the infinitival-*to* rule matches the tail's sense id, never the English text | **BUILT** (5c971c4) | `public/shared/funnel.mjs` |
 | Keyboard letters, punctuation, capitals, and spelling rules are English | **BUILT** (004: `26d4e52`, `7f87bee`, `70ff059`, `9ca4653`) | per-locale key maps (`public/shared/keymaps.mjs`), accent-insensitive matching + en sound key (`public/shared/spelling.mjs`), en invented-spelling fixture (`src/board/fixtures/invented_spellings.en.json`), next-word continuations (`public/shared/funnel.mjs`) |
 | Digits have no language-neutral path to number senses | **BUILT** (`7f87bee`) | digit **alias labels** per locale from `data/number_aliases.json`, emitted by `scripts/catalog/build_catalog.mjs` |

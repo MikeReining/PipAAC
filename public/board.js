@@ -8,7 +8,7 @@ import {
   closeSentence,
   detachEvent,
   fillChosen,
-  groupRanked,
+  groupRanked, groupStarters,
   logImpression,
   likelyGroups,
   logSelection,
@@ -289,8 +289,10 @@ const grokVoice = "ara";
 const barState = { tense: "present", question: false };
 let licenseP = null;
 const voiceLicense = () => {
-  licenseP ??= openKeyStore()
-    .then((s) => s.get(`user/${me.id}/license`))
+  // openKeyStore() returns the store itself, not a promise — calling
+  // .then on it threw, so every multi-word Speak died before a sound.
+  licenseP ??= Promise.resolve()
+    .then(() => openKeyStore().get(`user/${me.id}/license`))
     .catch(() => null);
   return licenseP;
 };
@@ -310,8 +312,11 @@ function speak(text) {
  * "pressing another speaking button restarts audio"). */
 let playingResolve = null;
 let playGen = 0; // a new play invalidates waits started under the old
-const endPlaying = () => {
-  playGen++;
+// `chained`: the sentence loop's own next word — it takes the element
+// without invalidating the loop that asked for it (else ▶ stopped after
+// the first word).
+const endPlaying = ({ chained = false } = {}) => {
+  if (!chained) playGen++;
   playingResolve?.();
   playingResolve = null;
 };
@@ -319,13 +324,13 @@ const endPlaying = () => {
 /** Play a clip: catalog keys are shipped files; `blob:` keys are
  *  content-addressed bytes in OPFS (recorded overrides, synced photos)
  *  resolved through the blob loader, which lazy-fetches a sealed copy. */
-async function playClip(key) {
+async function playClip(key, { chained = false } = {}) {
   let src = `/${key}`;
   if (key.startsWith("blob:")) {
     src = await loadPhotoURL(key);
     if (!src) return;
   }
-  endPlaying();
+  endPlaying({ chained });
   return new Promise((resolve) => {
     playingResolve = resolve;
     audio.src = src;
@@ -354,9 +359,9 @@ async function playBlob(blob) {
 
 /** Speak one tapped item — §7.2/7.3 resolution: override, voice clip,
  *  TTS, or a held 400 ms silent slot. */
-async function speakItem(item) {
+async function speakItem(item, { chained = false } = {}) {
   const slot = resolveSlot(db, item, locale, voiceId);
-  if (slot.type === "clip") return playClip(slot.key);
+  if (slot.type === "clip") return playClip(slot.key, { chained });
   if (slot.type === "tts") return speak(slot.text);
   return new Promise((r) => setTimeout(r, SILENT_SLOT_MS));
 }
@@ -462,11 +467,12 @@ async function speakSentence(feeling = null) {
       spoken = true;
     }
   }
-  const gen = playGen;
   if (!spoken) {
+    endPlaying(); // this speak takes the element from any older one
+    const gen = playGen;
     for (const item of [...sentence]) {
-      if (playGen !== gen) break; // a newer speak took the element
-      await speakItem(item);
+      if (playGen !== gen) break; // a newer speak or tap took the element
+      await speakItem(item, { chained: true });
     }
   }
   if (sentenceId !== null) {
@@ -477,8 +483,9 @@ async function speakSentence(feeling = null) {
     sentencePicks = 0;
     lastImpressionKey = null;
     openImpressionId = null;
-    // 018 D4: the sentence is done — the next one starts at home.
-    if (view !== "board") kbUi.setView("board");
+    // 027 B10: Speak stays in the current group and page — no navigation
+    // here, so a late callback can never undo where the user went since.
+    renderStrip();
   }
 }
 
@@ -891,12 +898,17 @@ async function renderStrip() {
     // open or not. (Mid-word letters still get spelling completions
     // above; that's not next-word prediction.)
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-    // Open group: the bar narrows to that group's used words — her
-    // history only, no children table (group mode, 2026-09-24).
+    // Open group: an empty sentence (or one that starts fresh after
+    // Speak) offers first words — her own starts here, then children's
+    // (027 § 5); after the first pick the bar narrows to that group's
+    // used words, her history only (group mode, 2026-09-24).
     const groupId = view === "group" ? groupsUi.getGroupKey() : null;
-    const ranked = groupId
-      ? groupRanked(db, sents, groupId, Date.now())
-      : stripRanked(db, sents, Date.now(), locale, phrases);
+    const starting = !sents.length || freshNext;
+    const ranked = !groupId
+      ? stripRanked(db, sents, Date.now(), locale, phrases)
+      : starting
+        ? groupStarters(db, groupId, { starters: catalog.groupStarters, visible: groupsUi.visibleKeys() })
+        : groupRanked(db, sents, groupId, Date.now());
     const items = ranked.shown;
     // Position-0 offers are real moments too (017-21): open the
     // sentence so the impression row can exist. A row with no picks
@@ -969,6 +981,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
       sentenceId, position: sentencePicks++, source,
       spotlit: !!spotlight()?.targets.has(`${kind}:${id}`),
       labelId: item.labelId ?? null,
+      groupId: view === "group" ? groupsUi.getGroupKey() : null,
     });
   }
   if (hint && id) showGroupHint(kind, item.id ?? id);
@@ -1040,8 +1053,8 @@ function showGroupHint(kind, id) {
     if (ALL(db, "SELECT 1 AS x FROM core_cell WHERE layout = ? AND sense_id = ?", [boardGeom().name, id]).length) return;
     const row = ALL(
       db,
-      `SELECT g.id, g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
-       WHERE gc.item_kind = 'sense' AND gc.item_id = ? AND g.kind = 'builtin'
+      `SELECT g.id, g.name FROM group_membership gm JOIN board_group g ON g.id = gm.group_id
+       WHERE gm.item_kind = 'sense' AND gm.item_id = ? AND g.kind = 'builtin'
        ORDER BY g.index_slot`,
       [id],
     )[0];
@@ -1049,8 +1062,8 @@ function showGroupHint(kind, id) {
   } else if (kind === "entity") {
     const row = ALL(
       db,
-      `SELECT g.id, g.name FROM group_cell gc JOIN board_group g ON g.id = gc.group_id
-       WHERE gc.item_kind = 'entity' AND gc.item_id = ?
+      `SELECT g.id, g.name FROM group_membership gm JOIN board_group g ON g.id = gm.group_id
+       WHERE gm.item_kind = 'entity' AND gm.item_id = ?
        ORDER BY g.index_slot`,
       [id],
     )[0];
@@ -1296,13 +1309,45 @@ const coachUi = mountCoach({
 function sizeStrip(cols) {
   $("strip").style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   const tray = $("tray");
-  tray.style.gridColumn = `span ${cols - 2}`;
+  // Groups and Keyboard always; Add joins them in Edit mode on a group (027 B5).
+  tray.style.gridColumn = `span ${cols - ($("anchor-add").hidden ? 2 : 3)}`;
   tray.style.gridTemplateColumns = `repeat(${stripSlots(cols)}, 1fr)`;
 }
 
 /** Transition-highlight marks (014 § 4): refreshed each grid render so
  *  an accepted Cells change glows immediately and expired marks drop. */
 let movedSet = new Set();
+
+/**
+ * One effective home cell's tile, without gestures — the core grid and
+ * every group page's reserved cells (027 B3) draw the same tile. A person
+ * shows the family's kind color (018 D7 — Yellow until classified) and
+ * photo; a hidden word keeps its slot as a ghost (Design_System mask
+ * tokens — faded, never tappable or spoken; Masking § 2). `say` is what a
+ * tap speaks, null for a ghost.
+ */
+function homeTile(c, masked = maskedSenseIds(db)) {
+  if (c.kind === "entity") {
+    const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "Yellow" });
+    loadPhotoURL(photoFor(c.entity_id)).then((url) => {
+      if (!url) return;
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "";
+      el.querySelector(".tart").appendChild(img);
+      el.classList.add("photo");
+    });
+    return { el, say: c.label };
+  }
+  if (masked.has(c.sense_id)) {
+    const ghost = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
+    ghost.classList.add("masked");
+    ghost.disabled = true;
+    return { el: ghost, say: null };
+  }
+  const say = shownLabel(c.sense_id, c.label);
+  return { el: wordTile({ label: say, role: c.fitzgerald_role, art: metaFor(c.sense_id).art }), say };
+}
 
 function renderGrid() {
   const geom = boardGeom();
@@ -1372,18 +1417,8 @@ function renderGrid() {
       continue;
     }
     if (c.kind === "entity") {
-      // A person in a home cell (014 § 9): the family's kind color
-      // (018 D7 — Yellow until classified), photo when added.
-      const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "Yellow" });
+      const { el } = homeTile(c, masked);
       el.dataset.slot = slot;
-      loadPhotoURL(photoFor(c.entity_id)).then((url) => {
-        if (!url) return;
-        const img = document.createElement("img");
-        img.src = url;
-        img.alt = "";
-        el.querySelector(".tart").appendChild(img);
-        el.classList.add("photo");
-      });
       if (editing) {
         // D10: tap asks "what goes here" — the placement sheet. Drag
         // still moves; the ✎ inside the sheet opens the word card.
@@ -1411,18 +1446,11 @@ function renderGrid() {
       grid.appendChild(withCount(el, "entity", c.entity_id));
       continue;
     }
-    // A hidden word keeps its slot as a ghost tile (Design_System mask
-    // tokens — faded, never tappable or spoken); nothing moves into the
-    // space (Masking § 2).
-    if (masked.has(c.sense_id)) {
-      const ghost = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
-      ghost.classList.add("masked");
-      ghost.disabled = true;
-      grid.appendChild(withCount(ghost, "sense", c.sense_id));
+    const { el, say: cellLabel } = homeTile(c, masked);
+    if (cellLabel === null) {
+      grid.appendChild(withCount(el, "sense", c.sense_id));
       continue;
     }
-    const cellLabel = shownLabel(c.sense_id, c.label);
-    const el = wordTile({ label: cellLabel, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
     el.dataset.slot = slot;
     if (editing) {
       // Adult move (014 § 2 ruling 1): drag onto a word swaps, onto an
@@ -1617,12 +1645,35 @@ async function gatePin(onOk) {
 }
 
 $("corner").addEventListener("click", () => {
+  // 027 B5: while a group or the index is open the corner is Home — one
+  // action back to the home board, outside the grid. In Edit mode it
+  // keeps editing, so the home board is one tap away; Done is the home
+  // board's corner.
+  if (view === "group" || view === "groupIndex") {
+    kbUi.setView("board");
+    return;
+  }
   if (editing) {
     setEditing(false);
     rerenderView();
     return;
   }
   gatePin(() => open("menu"));
+});
+/** The corner's job and label follow the mode: Home while a group or the
+ *  index is open, else ✓ Done while editing, else Parent corner (its
+ *  glyph swaps on body.groups / body.editing). */
+function syncCorner() {
+  const inGroups = view === "group" || view === "groupIndex";
+  $("corner").title = inGroups ? "Home" : editing ? "Done editing" : "Parent corner";
+  $("corner").setAttribute("aria-label", $("corner").title);
+  // 027 B5: Add sits beside Groups, in Edit mode only.
+  $("anchor-add").hidden = !(editing && inGroups);
+  sizeStrip(boardGeom().cols);
+}
+$("anchor-add").addEventListener("click", () => {
+  if (view === "group") addUi.openAddForm(groupsUi.getGroupKey());
+  else if (view === "groupIndex") open("groupform");
 });
 // 018 D10: 📊 puts the child's own 30-day taps on every tile.
 $("edit-counts").addEventListener("click", () => {
@@ -1672,7 +1723,7 @@ const kbUi = mountKeyboard({
   // Every view change repaints the bar: opening a group is intent — the
   // group bar must appear on that tap, before anything inside is picked;
   // leaving returns the main rule.
-  setViewName: (v) => { view = v; renderStrip(); },
+  setViewName: (v) => { view = v; syncCorner(); renderStrip(); },
   renderGroupIndex: () => groupsUi.renderGroupIndex(),
   renderGroupPage: () => groupsUi.renderGroupPage(),
   renderEditor: () => editorUi.renderEditor(),
@@ -1703,6 +1754,27 @@ $("fresh-speak").addEventListener("click", (e) => {
   syncFreshSeg();
 });
 syncFreshSeg();
+/* Groups (027 B6, B8): the home top row on every group page, and the
+ * four meal groups in the index. Both default ON; neither moves a cell —
+ * off leaves the top-row cells empty and the meal doors' slots kept. */
+function syncGroupSegs() {
+  const p = ALL(db,
+    "SELECT group_top_row AS t, occasions_visible AS o FROM learner_profile WHERE id = 'prf_local'",
+  )[0] ?? {};
+  for (const [id, on] of [["group-toprow", (p.t ?? 1) === 1], ["group-occasions", (p.o ?? 1) === 1]]) {
+    for (const b of $(id).querySelectorAll("button")) b.classList.toggle("on", (b.dataset.v === "1") === on);
+  }
+}
+for (const [id, key] of [["group-toprow", "group_top_row"], ["group-occasions", "occasions_visible"]]) {
+  $(id).addEventListener("click", (e) => {
+    const v = e.target.closest("button")?.dataset.v;
+    if (v === undefined) return;
+    setSetting(db, key, Number(v));
+    syncGroupSegs();
+    rerenderView();
+  });
+}
+syncGroupSegs();
 /* Grammar help (021) — forms on/off. Off is instant: tiles, bar, and
  * speech fall back to lemma labels on the next paint. */
 function syncGrammarSeg() {
@@ -1805,8 +1877,7 @@ function setEditing(on) {
   document.body.classList.toggle("editing", on);
   $("edit-counts").hidden = !on;
   $("edit-counts").classList.toggle("on", countsOn);
-  $("corner").title = on ? "Done editing" : "Parent corner";
-  $("corner").setAttribute("aria-label", $("corner").title);
+  syncCorner();
   renderGrid(); // the home grid takes edit gestures too (014 slice 3)
   applyLikely();
 }
@@ -1832,6 +1903,10 @@ function navCell(label, onTap) {
  *  target's data-slot; `onTap` fires when the press never became a drag. */
 function editPointer(el, { onDrop, onTap }) {
   let lastPointer = 0;
+  // A tile's picture is an <img>: a mouse drag would start the browser's
+  // native image drag, which cancels the pointer stream (pointercancel)
+  // before the move ever registers. The edit gesture owns the drag.
+  el.addEventListener("dragstart", (e) => e.preventDefault());
   // Keyboard/AT Enter fires click with no pointer events — treat it as a tap.
   el.addEventListener("click", () => {
     if (Date.now() - lastPointer > 400) onTap?.();
@@ -1890,13 +1965,16 @@ function xBadge(onRemove) {
 
 /** One pending undo at a time. */
 let toastTimer = null;
-function toast(text, undo) {
+function toast(text, undo, { actionLabel = null, onAction = null } = {}) {
   const el = $("toast");
   clearTimeout(toastTimer);
   $("toast-text").textContent = text;
   $("toast-undo").hidden = !undo;
+  $("toast-act").hidden = !onAction;
+  $("toast-act").textContent = actionLabel ?? "";
   el.hidden = false;
   $("toast-undo").onclick = () => { el.hidden = true; undo?.(); };
+  $("toast-act").onclick = () => { el.hidden = true; onAction?.(); };
   toastTimer = setTimeout(() => { el.hidden = true; }, 6000);
 }
 
@@ -1918,6 +1996,9 @@ groupsUi = mountGroups({
   navCell, editPointer, xBadge,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
   openWordCard: (item) => wordCard.openWordCard(item),
+  homeCells: () => coreCells(db, boardGeom().name, locale),
+  homeTile,
+  rerenderView: () => rerenderView(),
   loadPhotoURL, savePhoto, syncUploadBlob,
 });
 
@@ -1927,6 +2008,7 @@ addUi = mountAddFlow({
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
   invalidateIndex: () => kbUi.invalidateIndex(),
   rerenderView, renderStrip, renderLibrary: () => libUi.renderLibrary(),
+  openAddToBoards: (item) => groupsUi.openAddToBoards(item),
 });
 
 /* Word library — public/board/library-ui.js */
@@ -1948,6 +2030,7 @@ wordCard = mountWordCard({
   dropEntityPhoto: (id) => entityPhoto.delete(id),
   dropEntityRole: (id) => entityRole.delete(id),
   dropSenseMeta: (id) => senseMeta.delete(id),
+  openAddToBoards: (item) => groupsUi.openAddToBoards(item),
 });
 
 /* Devices, users, and supporter sign-in — public/board/devices-ui.js */
@@ -2035,10 +2118,9 @@ mountRecovery({
 
 /* Web editor — public/board/editor-ui.js */
 editorUi = mountEditor({
-  db, locale, all: ALL, catalog, boardGeom,
-  navCell, fitLabels,
+  db, locale, all: ALL, catalog,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
-  itemCell: (item, gKind, ctx) => groupsUi.itemCell(item, gKind, ctx),
+  paintGroupPage: (zg, opts) => groupsUi.paintGroupPage(zg, opts),
   renderLibrary: () => libUi.renderLibrary(),
   invalidateIndex: () => kbUi.invalidateIndex(),
   setView: (v) => kbUi.setView(v),

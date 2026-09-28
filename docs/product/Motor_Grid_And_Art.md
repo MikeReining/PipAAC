@@ -61,12 +61,16 @@ When a grid engine exists, a test must show that a suggestion model cannot reord
 
 ### Groups — occasions and independent editing
 
-**DECIDED 2026-09-27; not built.** Founder approved the launch recommendation
-in the 027 review. This section owns the product contract; execution and
-migration details are in `docs/phases/027_Occasion_Boards.md`. It replaces the
-2026-09-24 return-home rule and the earlier linked-block proposal. Existing
-many-to-many groups and local editing are built; the amended behavior below
-must not be described as shipped until 027's proofs pass.
+**DECIDED 2026-09-27; BUILT 2026-09-28** (027 A1–A4; its Works Test passed on
+an agent slot). Founder approved the launch recommendation in the 027 review.
+This section owns the product contract; execution details are in
+`docs/phases/027_Occasion_Boards.md`. It replaces the 2026-09-24 return-home
+rule and the earlier linked-block proposal. Code owners: `public/shared/groups.mjs`
+(storage, reserved cells, placement, replay), `public/board/groups-ui.js` (the
+one group-page painter), `scripts/catalog/build_groups.mjs` (the seed). Still
+open: founder review of the seed curation, and the corrected CHILDES starter
+table (generated on the founder's machine) — until it exists the empty-sentence
+bar starts from the child's own first picks.
 
 - **One container: Group.** Breakfast, Drinks, My Words, and a family's custom
   group have the same editing rules. A door is the tile that opens a group.
@@ -116,7 +120,7 @@ must not be described as shipped until 027's proofs pass.
 - **Placement choice:** an explicit empty-cell target wins; otherwise prefer a
   free established coordinate for this word, then the first free cell, then a
   new page. No automatic displacement. The tie-break and reserved cells have one
-  code owner in `public/shared/groups.mjs` (planned). Parent placement wins
+  code owner in `public/shared/groups.mjs`. Parent placement wins
   over authored clusters. Toggling settings never closes gaps.
 - **Shared identity is explicit.** A word-card picture, name, or recording edit
   changes that record throughout this user's vocabulary. Its scope is stated

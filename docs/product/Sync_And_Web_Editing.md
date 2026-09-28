@@ -160,7 +160,7 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
 - Retire, never delete, fits: a removal is an op, and the retired row
   keeps its bytes (`docs/product/Vocabulary_Masking_And_Safety.md` § 3.2).
 
-### 027 group-state amendment — decided 2026-09-27, not built
+### 027 group-state amendment — decided 2026-09-27, BUILT 2026-09-28
 
 027 A2 adds layout coordinates to group ops and puts `group_membership`,
 `group_cell` (per board size), seed installation records, visibility, and the
@@ -181,8 +181,13 @@ occupied cells with the same deterministic geometry owner. Identity, photo, and
 recording edits stay shared. Crypto, relay access, history privacy, and user
 data retention are unchanged.
 
-027 § 3–4 owns the executable packet; durable group semantics live in
-Motor_Grid_And_Art § Groups. No runtime block membership or linked-edit ops.
+Built ops (`public/shared/ops.mjs`): `seed_install` (first confirmed install
+wins), `place_item` with per-size `cells`, `add_to_groups`, `move_item` /
+`swap_items` / `remove_item` with `layout`, `set_group_hidden`, and `set_layout`
+carrying `groupCells`; a group op without `layout`/`cells` predates 027 and is
+skipped on every replica. `SYNCED_TABLES` adds `group_membership` and
+`group_seed_install`. Durable group semantics live in Motor_Grid_And_Art
+§ Groups. No runtime block membership or linked-edit ops.
 
 ## 5. Ordering and merging: one order, same functions
 
@@ -210,10 +215,10 @@ itself is still PROPOSED.
   op never displaces an item another device already placed. **BUILT** —
   `applyOp` resolves each op against live state; a target gone under
   merge (deleted group, never-created entity) degrades to the nearest
-  honest intent. **027 amendment (not built):** writes into deleted groups
+  honest intent. **027 amendment (built):** writes into deleted groups
   skip for both senses and entities; they do not silently file into My Words.
 - **Invariants hold after every op**, because every op runs through the
-  same write owner. **027 amendment (not built):** one membership per
+  same write owner. **027 amendment (built):** one membership per
   group/item, one occupant per board size/page/slot, no writes to reserved cells,
   and no placement edits to other groups. Zero placements is allowed; built-in
   words may be removed locally. Group ops never write the core map.

@@ -82,7 +82,7 @@ test("group and label queries return only de text — never the English string",
   const juice = rows.find((r) => r.item_id === "sns_0084");
   assert.equal(juice.label, "Saft");
   // bread has no de label: the label column is NULL, not the English text
-  const page = groupPage(db, "grp_food", 0, "de");
+  const page = groupPage(db, "grp_breakfast", 0, "de");
   const bread = page.find((r) => r.item_id === "sns_0089");
   assert.equal(bread.label, null);
   assert.ok(!page.some((r) => ["juice", "want", "hello"].includes(r.label)));

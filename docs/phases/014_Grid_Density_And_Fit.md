@@ -100,7 +100,7 @@ all three.
 **One Cells setting per profile** (**DECIDED 2026-09-22**, founder). Cells follow the person's
 hands and eyes, not the content, so the home board, every group page, and
 the Smart bar all use the profile's one setting. A group has no size of its
-own; a big group pages (`Next ›`). **AMENDED 2026-09-27; not built (027):**
+own; a big group pages (`Next ›`). **AMENDED 2026-09-27; BUILT 2026-09-28 (027):**
 groups store positions per board size, created when needed — the seed ships
 the three named sizes, and accepting a Cells change (the existing move-cost
 preview, now including groups) writes the new size's missing positions once.
@@ -409,7 +409,7 @@ Slices: 9–11 in § 9.
    switch and lands again on switch-back. The four grammar groups —
    `grp_more_people` (9), `more_doing` (15), `more_where` (12),
    `more_describing` (10) — derive from the grid60 column sectors
-   minus words already on grid15 (`sector` seed in group_seed.json,
+   minus words already on grid15 (`sector` seed in group_seed.topics.json,
    not a hand-copied list). Works Tests: `src/board/
    move_cost.test.mjs` (exact same/sector/moved/gone/new classification
    on synthetic maps, selection-log weighting, marks only on moved

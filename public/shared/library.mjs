@@ -33,10 +33,10 @@ export function libraryAdded(db, locale) {
        UNION ALL
        SELECT 'sense', s.id, l.text, s.fitzgerald_role, NULL,
               ${SENSE_ART_SQL},
-              MIN(COALESCE(gc.added_at, gc.rowid))
-       FROM group_cell gc
-       JOIN board_group g ON g.id = gc.group_id AND g.kind IN ('custom', 'my_words')
-       JOIN sense s ON s.id = gc.item_id AND gc.item_kind = 'sense'
+              MIN(COALESCE(gm.added_at, gm.rowid))
+       FROM group_membership gm
+       JOIN board_group g ON g.id = gm.group_id AND g.kind IN ('custom', 'my_words')
+       JOIN sense s ON s.id = gm.item_id AND gm.item_kind = 'sense'
        JOIN label l ON l.sense_id = s.id AND ${LEMMA}
        GROUP BY s.id
        UNION ALL
@@ -126,10 +126,10 @@ export function libraryHomes(db, kind, id, locale) {
   return all(
     db,
     `SELECT COALESCE(g.name, gl.text) AS name
-     FROM group_cell gc
-     JOIN board_group g ON g.id = gc.group_id
+     FROM group_membership gm
+     JOIN board_group g ON g.id = gm.group_id
      LEFT JOIN group_label gl ON gl.group_id = g.id AND gl.locale = ?
-     WHERE gc.item_kind = ? AND gc.item_id = ?
+     WHERE gm.item_kind = ? AND gm.item_id = ?
      ORDER BY g.index_slot`,
     [locale, kind, id],
   ).map((r) => r.name);

@@ -1,6 +1,6 @@
 /**
- * Web editor grid. The open group paints into the editor, with the
- * group name in the first cell and Add in the second.
+ * Web editor grid. The open group paints into the editor through the
+ * board's own group painter — one renderer for a group page.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -27,7 +27,7 @@ function el() {
   return node;
 }
 
-test("the editor grid names the open group and offers add", () => {
+test("the editor lists the groups and paints the open one through the board's painter", async () => {
   const db = createDatabase(":memory:");
   db.prepare(
     `INSERT INTO board_group (id, kind, name, glyph, index_slot)
@@ -35,7 +35,7 @@ test("the editor grid names the open group and offers add", () => {
   ).run();
   const grid = el();
   const groups = el();
-  const ids = ["ed-paste", "ed-paste-preview", "ed-paste-add", "editor", "ed-board", "menu-editor"];
+  const ids = ["ed-paste", "ed-paste-preview", "ed-paste-add", "editor", "ed-board", "menu-editor", "ed-add"];
   const nodes = { "ed-grid": grid, "ed-groups": groups };
   for (const id of ids) nodes[id] = el();
   globalThis.document = {
@@ -43,21 +43,14 @@ test("the editor grid names the open group and offers add", () => {
     createElement: () => el(),
     body: { classList: { add() {}, remove() {} } },
   };
-
+  const painted = [];
   const editor = mountEditor({
     db,
     locale: "en",
     all: (database, sql, p = []) => database.prepare(sql).all(...p),
     catalog: { groups: [] },
-    boardGeom: () => ({ cols: 10, rows: 6, cells: 60 }),
-    navCell(label) {
-      const n = el();
-      n.textContent = label;
-      return n;
-    },
-    fitLabels() {},
     openAddForm() {},
-    async itemCell() { return el(); },
+    async paintGroupPage(zg, opts) { painted.push({ zg, ...opts }); return 1; },
     renderLibrary() {},
     invalidateIndex() {},
     setView() {},
@@ -71,7 +64,11 @@ test("the editor grid names the open group and offers add", () => {
   assert.equal(groups.children.length, 1);
   assert.equal(groups.children[0].textContent, "My Words");
   assert.match(groups.children[0].className, /on/);
-  assert.equal(grid.children[0].textContent, "My Words");
-  assert.equal(grid.children[1].textContent, "+ Add");
-  assert.equal(grid.children.length, 60);
+  // One renderer for a group page (027 A3): the editor hands its grid to
+  // the board's painter, gestures always on.
+  assert.equal(painted.length, 1);
+  assert.equal(painted[0].zg, grid);
+  assert.equal(painted[0].group, "grp_my_words");
+  assert.equal(painted[0].page, 0);
+  assert.equal(painted[0].gestures, true);
 });

@@ -164,7 +164,7 @@ export function placeOnBoard(db, layout, kind, id, toSlot, { anchors = new Set()
       // core word has none — My Words is the catch-all (no-op when a
       // group already holds it).
       const grouped = db.prepare(
-        "SELECT 1 AS x FROM group_cell WHERE item_kind = ? AND item_id = ? LIMIT 1",
+        "SELECT 1 AS x FROM group_membership WHERE item_kind = ? AND item_id = ? LIMIT 1",
       ).all(other.kind, other.id)[0];
       if (!grouped) placeItem(db, "grp_my_words", other.kind, other.id);
     }

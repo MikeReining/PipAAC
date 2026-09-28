@@ -65,7 +65,7 @@ test("restart + catalog regen: the adult's placement survives", () => {
   // adult's override is profile data and must still win.
   const md = readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")
     .replace("I · you · want · like", "I · you · stop · like")
-    .replace("little · stop", "little · want");
+    .replace("good · why · stop", "good · why · want");
   const updated = buildCatalog(
     JSON.parse(readFileSync(join(repoRoot, "data/launch_lexicon.json"), "utf8")),
     parseCoordinateMapMarkdown(md),

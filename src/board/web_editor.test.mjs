@@ -31,7 +31,7 @@ const catalog = buildCatalog(
   lexicon,
   parseCoordinateMapMarkdown(readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")),
 );
-const FOOD = "grp_food"; // a seeded built-in group
+const FOOD = "grp_fruit"; // a seeded built-in group without juice or milk
 
 const openDb = () => {
   const db = createDatabase(":memory:");

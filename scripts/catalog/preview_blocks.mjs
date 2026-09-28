@@ -1,8 +1,8 @@
-// Prototype: block doors (026 D10 follow-up). A door is a set of blocks;
-// a block keeps its word order and one column position on every door that
-// holds it. yes/no/stop/help sit in their home cells on every door (the
-// home board's last column minus not and hurt); filler words are left to
-// the Smart bar. Optional: the home board's top row repeats on every door.
+// Founder review page for the compiled group seed (027 A1). Reads only
+// the catalog the build emits — the same membership and per-size
+// positions the board installs — and draws every group page on every
+// board size, with the reserved cells (top row, frame, Next) shown the
+// way the board shows them: the top row and frame are the home board's.
 //
 // Writes public/preview-blocks.html (local preview, not committed).
 //
@@ -11,82 +11,50 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
-import { seedResolver } from './seed_members.mjs';
+import { groupGeometry } from '../../public/shared/groups.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const read = (p) => JSON.parse(readFileSync(path.join(REPO, p), 'utf8'));
-const LEX = read('data/launch_lexicon.json').entries;
 const CAT = read('data/catalog/catalog.json');
-const SPEC = read('data/occasions/block_doors.proposed.json');
 const OUT = path.join(REPO, 'public/preview-blocks.html');
 
-const { resolve } = seedResolver(LEX, CAT);
-const L = SPEC.layout;
-const COLS = CAT.layouts[L].cols;
-const ROWS = CAT.layouts[L].rows;
-const CELLS = COLS * ROWS;
-const homeCell = new Map(CAT.coreCells.filter((c) => c.layout === L).map((c) => [c.sense_id, c.slot_index]));
 const label = new Map(CAT.labels.filter((l) => l.kind === 'lemma' && l.locale === 'en').map((l) => [l.sense_id, l.text]));
 const sense = new Map(CAT.senses.map((s) => [s.id, s]));
 const imageKey = new Map(CAT.images.map((i) => [i.id, i.key]));
+const groupName = new Map(CAT.groupLabels.filter((g) => g.locale === 'en').map((g) => [g.group_id, g.text]));
+const SIZES = Object.keys(CAT.layouts).sort((a, b) =>
+  CAT.layouts[a].cols * CAT.layouts[a].rows - CAT.layouts[b].cols * CAT.layouts[b].rows);
 
-const frame = SPEC.frame.map((w) => resolve(w, 'frame'));
-const frameCol = homeCell.get(frame[0]) % COLS;
-if (frame.some((s) => homeCell.get(s) % COLS !== frameCol)) throw new Error('frame words must share one home column');
-const contentCols = [...Array(COLS).keys()].filter((c) => c !== frameCol);
-const topRow = CAT.coreCells.filter((c) => c.layout === L && c.slot_index < COLS && c.slot_index % COLS !== frameCol);
-
-const blocks = new Map(SPEC.blocks.map((b) => [b.key, { ...b, senses: b.words.map((w) => resolve(w, b.key)) }]));
-const seen = new Map();
-for (const b of blocks.values()) for (const s of b.senses) {
-  if (seen.has(s)) throw new Error(`${label.get(s)} is in ${seen.get(s)} and ${b.key} — one block per word`);
-  seen.set(s, b.key);
-}
-const doorsOf = (bk) => SPEC.doors.filter((d) => d.blocks.includes(bk));
-
-// Block columns, one layout per mode. Shared blocks sit right, next to the
-// frame; a block used by one door fills from the left.
-function solve(withTopRow) {
-  const rowStart = withTopRow ? 1 : 0;
-  const rows = ROWS - rowStart;
-  const width = (b) => Math.ceil(b.senses.length / rows);
-  const used = new Map(SPEC.doors.map((d) => [d.key, new Set()]));
-  const at = new Map();
-  const order = [...blocks.values()].sort((a, b) => doorsOf(b.key).length - doorsOf(a.key).length);
-  for (const b of order) {
-    const w = width(b);
-    const ds = doorsOf(b.key);
-    const starts = contentCols.slice(0, contentCols.length - w + 1)
-      .filter((c) => contentCols.indexOf(c) + w <= contentCols.length && contentCols[contentCols.indexOf(c) + w - 1] === c + w - 1);
-    const pref = ds.length > 1 ? [...starts].reverse() : starts;
-    const start = pref.find((c) => ds.every((d) => [...Array(w).keys()].every((k) => !used.get(d.key).has(c + k))));
-    if (start === undefined) throw new Error(`${withTopRow ? 'top row on' : 'top row off'}: no room for ${b.name}`);
-    at.set(b.key, { col: start, w });
-    for (const d of ds) for (let k = 0; k < w; k++) used.get(d.key).add(start + k);
-  }
-  const views = [{ key: 'home', name: 'Home', grid: Array(CELLS).fill(null), rects: [] }];
-  for (const [s, c] of homeCell) views[0].grid[c] = s;
-  for (const d of SPEC.doors) {
-    const grid = Array(CELLS).fill(null);
-    for (const s of frame) grid[homeCell.get(s)] = s;
-    if (withTopRow) for (const c of topRow) grid[c.slot_index] = c.sense_id;
-    const rects = [];
-    for (const bk of d.blocks) {
-      const b = blocks.get(bk);
-      const { col, w } = at.get(bk);
-      b.senses.forEach((s, i) => { grid[(rowStart + (i % rows)) * COLS + col + Math.floor(i / rows)] = s; });
-      rects.push({ name: b.name, col, w, row: rowStart, rows });
+// One view per group page, top row on; the home board first. The page
+// blanks the top-row cells when the setting is off — still reserved
+// (027 B6).
+function views(size) {
+  const L = CAT.layouts[size];
+  const geom = groupGeometry(L);
+  const home = CAT.coreCells.filter((c) => c.layout === size);
+  const homeGrid = Array(geom.cells).fill(null);
+  for (const c of home) homeGrid[c.slot_index] = c.sense_id;
+  const out = [{ key: 'home', name: 'Home board', grid: homeGrid }];
+  for (const g of CAT.groups) {
+    if (g.layouts && !g.layouts.includes(size)) continue;
+    const cells = CAT.groupCells.filter((c) => c.group_id === g.id && c.layout === size);
+    if (!cells.length) continue;
+    const pages = Math.max(...cells.map((c) => c.page)) + 1;
+    for (let p = 0; p < pages; p++) {
+      const grid = Array(geom.cells).fill(null);
+      for (const s of geom.frame) grid[s] = homeGrid[s];
+      for (const s of geom.topRow) grid[s] = homeGrid[s];
+      for (const c of cells) if (c.page === p) grid[c.slot_index] = c.item_id;
+      out.push({ key: `${g.id}:${p}`, name: groupName.get(g.id) + (pages > 1 ? ` ${p + 1}/${pages}` : ''), grid });
     }
-    views.push({ key: d.key, name: d.name, grid, rects });
   }
-  return views;
+  return out;
 }
-const modes = { off: solve(false), on: solve(true) };
 
 // ---- measure from the rendered grids ----
-function measure(views) {
+function measure(vs) {
   const cells = new Map();
-  for (const v of views) v.grid.forEach((s, c) => {
+  for (const v of vs.slice(1)) v.grid.forEach((s, c) => {
     if (!s) return;
     if (!cells.has(s)) cells.set(s, { n: 0, at: new Set() });
     cells.get(s).n++;
@@ -95,21 +63,23 @@ function measure(views) {
   const rep = [...cells.values()].filter((x) => x.n > 1);
   return { repeated: rep.length, same: rep.filter((x) => x.at.size === 1).length, cells };
 }
-const stats = Object.fromEntries(Object.entries(modes).map(([m, v]) => [m, measure(v)]));
-for (const [m, v] of Object.entries(modes)) {
-  const st = stats[m];
-  console.log(`top row ${m}: ${st.same}/${st.repeated} repeated words in the same cell on every page · ` +
-    v.slice(1).map((x) => `${x.name} ${x.grid.filter(Boolean).length}`).join(', '));
-}
+const topRowOff = (vs, topRow) => vs.map((v, i) =>
+  (i === 0 ? v : { ...v, grid: v.grid.map((s, c) => (topRow.includes(c) ? null : s)) }));
+const sizes = Object.fromEntries(SIZES.map((size) => {
+  const { topRow } = groupGeometry(CAT.layouts[size]);
+  const on = views(size);
+  const stats = { on: measure(on), off: measure(topRowOff(on, topRow)) };
+  return [size, { cols: CAT.layouts[size].cols, topRow, views: on, stats }];
+}));
 
 // ---- art + roles ----
-const allWords = new Set([...stats.on.cells.keys(), ...stats.off.cells.keys()]);
+const allWords = new Set(Object.values(sizes).flatMap((z) => z.views.flatMap((v) => v.grid.filter(Boolean))));
 const art = new Map();
 for (const s of allWords) {
   const key = imageKey.get(sense.get(s)?.default_image_id);
   const f = key && path.join(REPO, 'public', key);
   if (!f || !existsSync(f)) continue;
-  const buf = await sharp(f).resize(120, 120, { fit: 'contain', background: '#fff' }).webp({ quality: 78 }).toBuffer();
+  const buf = await sharp(f).resize(88, 88, { fit: 'contain', background: '#fff' }).webp({ quality: 60 }).toBuffer();
   art.set(s, `data:image/webp;base64,${buf.toString('base64')}`);
 }
 // D8: things and places take the neutral frame; people and pronouns stay yellow.
@@ -120,10 +90,13 @@ const role = (s) => {
 };
 const words = Object.fromEntries([...allWords].map((s) => [s, { label: label.get(s), role: role(s), art: art.get(s) ?? null }]));
 const data = {
-  cols: COLS, words,
-  modes: Object.fromEntries(Object.entries(modes).map(([m, v]) => [m, v.map(({ key, name, grid, rects }) => ({ key, name, grid, rects }))])),
-  stats: Object.fromEntries(Object.entries(stats).map(([m, s]) => [m, { repeated: s.repeated, same: s.same }])),
-  pages: Object.fromEntries(Object.entries(stats).map(([m, s]) => [m, Object.fromEntries([...s.cells].map(([k, x]) => [k, x.n]))])),
+  words,
+  sizes: Object.fromEntries(Object.entries(sizes).map(([size, z]) => [size, {
+    cols: z.cols,
+    topRow: z.topRow,
+    views: z.views,
+    stats: Object.fromEntries(Object.entries(z.stats).map(([m, st]) => [m, { repeated: st.repeated, same: st.same }])),
+  }])),
 };
 const svg = (f) => readFileSync(path.join(REPO, 'public/icons', f), 'utf8')
   .replace(/<metadata>[\s\S]*?<\/metadata>/, '').replace(/ xmlns:c2pa="[^"]*"/, '')
@@ -134,8 +107,8 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Block Doors</title>
-<!-- Local founder preview (026 D10). Generated by scripts/catalog/preview_blocks.mjs — not committed. -->
+<title>Group Seed</title>
+<!-- Local founder preview (027 A1). Generated by scripts/catalog/preview_blocks.mjs from data/catalog/catalog.json — not committed. -->
 <style>
   @font-face { font-family: "Andika"; src: url("/fonts/andika-bold.woff2") format("woff2"); font-weight: 700; }
   :root { --ink: #2a241d; --ink-text: #1a1a1a; --cream: #f6f4ef; --line: #d8d4c8; --tray: #e8e3d6; --edge: #8a8578;
@@ -171,10 +144,6 @@ const html = `<!doctype html>
   body.holes .cell.hole { border: 2px dashed var(--line); }
   .cell.same-as-last { outline: 3px solid #e8a200; outline-offset: 1px; }
   body:not(.ring) .cell.same-as-last { outline: none; }
-  .rects { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(var(--cols), 1fr); grid-auto-rows: 1fr; gap: var(--gap); pointer-events: none; }
-  .rects div { border: 2px dashed #b9b2a3; border-radius: 12px; margin: -4px; position: relative; }
-  .rects span { position: absolute; top: -10px; left: 8px; font-size: 11px; background: var(--cream); padding: 0 4px; color: var(--muted); }
-  body:not(.blocks) .rects { display: none; }
   .row2 { display: grid; grid-template-columns: 1fr 300px; gap: 16px; margin-top: 16px; }
   .panel { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
   .panel h2 { font-size: 15px; margin-bottom: 8px; } .panel p { font-size: 13px; line-height: 1.5; color: var(--muted); }
@@ -189,19 +158,19 @@ const html = `<!doctype html>
 </head>
 <body class="ring">
 <main>
-  <h1>Block doors — prototype</h1>
-  <p class="lede">Each door is a set of blocks (drinks, fruit, breakfast foods…). A block keeps its order and its columns on every door that has it. <b>yes, no, stop, help</b> stay in the last column everywhere; filler words are left to the Smart bar. Flip pages with the buttons or ← →. Amber ring = same word, same cell as the page you just left.</p>
+  <h1>Group seed — review</h1>
+  <p class="lede">Every group page the build ships, on each board size. The top row and the frame (<b>yes, no, stop, help</b>) are the home board's cells, reserved on every page; the last cell is Next. Words repeated across Breakfast, Lunch, Dinner, Snack, Fruit and Drinks share one cell. Flip pages with the buttons or ← →. Amber ring = same word, same cell as the page you just left. Source: <code>data/group_seed.occasions.json</code>, <code>data/group_seed.topics.json</code>; decisions: <code>docs/phases/027_Occasion_Boards.md</code>.</p>
+  <div class="tabs" id="sizes"></div>
   <div class="tabs" id="tabs"></div>
   <div class="tabs">
-    <label><input type="checkbox" id="top"> Top row on every door</label>
-    <label><input type="checkbox" id="blk"> Show blocks</label>
+    <label><input type="checkbox" id="top" checked> Top row on every group</label>
     <label><input type="checkbox" id="hol"> Show empty cells</label>
     <label><input type="checkbox" id="rng" checked> Ring same-as-last</label>
   </div>
   <div class="device"><div class="screen">
     <div class="topbar"><div class="corner" id="corner"></div><div class="bar">I want …</div></div>
     <div class="strip"><div class="folder">${svg('folder.svg')}</div></div>
-    <div class="gridwrap"><div class="grid" id="grid" style="--cols:${COLS}"></div><div class="rects" id="rects" style="--cols:${COLS}"></div></div>
+    <div class="gridwrap"><div class="grid" id="grid"></div></div>
   </div></div>
   <div class="row2">
     <div class="panel"><h2>Every page, one hover</h2><div class="minis" id="minis"></div></div>
@@ -212,12 +181,26 @@ const html = `<!doctype html>
 const D = ${JSON.stringify(data)};
 const BACK = '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#2a241d" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4.5 7.5 12l7.5 7.5"/></svg>';
 const GEAR = ${JSON.stringify(svg('settings-gear.svg'))};
-let mode = 'off', cur = 0, last = null;
-const V = () => D.modes[mode];
+let size = 'grid60', mode = 'on', cur = 0, last = null;
+const Z = () => D.sizes[size];
+const V = () => (mode === 'on' ? Z().views
+  : Z().views.map((v, i) => (i === 0 ? v : { ...v, grid: v.grid.map((s, c) => (Z().topRow.includes(c) ? null : s)) })));
 const tabs = document.getElementById('tabs');
-V().forEach((v, i) => { const b = document.createElement('button'); b.textContent = v.name; b.onclick = () => show(i); tabs.appendChild(b); });
+function tabsDraw() {
+  tabs.innerHTML = '';
+  V().forEach((v, i) => { const b = document.createElement('button'); b.textContent = v.name; b.onclick = () => show(i); tabs.appendChild(b); });
+}
+const sizesEl = document.getElementById('sizes');
+Object.keys(D.sizes).forEach((z) => {
+  const b = document.createElement('button');
+  b.textContent = (D.sizes[z].views[0].grid.length) + ' cells';
+  b.dataset.z = z;
+  b.onclick = () => { size = z; cur = 0; last = null; sizesMark(); tabsDraw(); sizesMark(); tabsDraw(); minisDraw(); show(0, true); };
+  sizesEl.appendChild(b);
+});
+const sizesMark = () => [...sizesEl.children].forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.z === size)));
 const flag = (id, cls) => { document.getElementById(id).onchange = (e) => document.body.classList.toggle(cls, e.target.checked); };
-flag('blk', 'blocks'); flag('hol', 'holes'); flag('rng', 'ring');
+flag('hol', 'holes'); flag('rng', 'ring');
 document.getElementById('top').onchange = (e) => { mode = e.target.checked ? 'on' : 'off'; last = null; show(cur, true); minisDraw(); };
 function tile(s, c, prev) {
   const el = document.createElement('div');
@@ -237,13 +220,9 @@ function show(i, keepLast) {
   corner.className = 'corner ' + (v.key === 'home' ? 'gear' : 'back');
   corner.innerHTML = v.key === 'home' ? GEAR : BACK;
   const g = document.getElementById('grid'); g.innerHTML = '';
+  g.style.setProperty('--cols', Z().cols);
   v.grid.forEach((s, c) => g.appendChild(tile(s, c, last === v.grid ? null : last)));
-  const r = document.getElementById('rects'); r.innerHTML = '';
-  r.style.gridTemplateRows = 'repeat(' + (v.grid.length / D.cols) + ', 1fr)';
-  v.rects.forEach((x) => { const d = document.createElement('div');
-    d.style.gridColumn = (x.col + 1) + ' / span ' + x.w; d.style.gridRow = (x.row + 1) + ' / span ' + x.rows;
-    d.innerHTML = '<span>' + x.name + '</span>'; r.appendChild(d); });
-  const st = D.stats[mode];
+  const st = Z().stats[mode];
   document.getElementById('stat').textContent = st.same + '/' + st.repeated;
   document.getElementById('statp').textContent = 'words on 2+ pages sit in the same cell on all of them. This page: ' + v.grid.filter(Boolean).length + ' of ' + v.grid.length + ' cells.';
 }
@@ -252,7 +231,7 @@ function minisDraw() {
   minis.innerHTML = '';
   V().forEach((v) => {
     const m = document.createElement('div'); m.className = 'mini'; m.innerHTML = '<h3>' + v.name + '</h3>';
-    const g = document.createElement('div'); g.className = 'g'; g.style.setProperty('--cols', D.cols);
+    const g = document.createElement('div'); g.className = 'g'; g.style.setProperty('--cols', Z().cols);
     v.grid.forEach((s) => { const i = document.createElement('i'); if (s) { i.className = 'r-' + D.words[s].role; i.dataset.s = s; i.onmouseenter = () => light(s); i.onmouseleave = () => light(null); } g.appendChild(i); });
     m.appendChild(g); minis.appendChild(m);
   });
@@ -263,7 +242,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') show((cur + 1) % V().length);
   if (e.key === 'ArrowLeft') show((cur - 1 + V().length) % V().length);
 });
-minisDraw(); show(0, true);
+sizesMark(); tabsDraw(); minisDraw(); show(0, true);
 </script>
 </body>
 </html>`;

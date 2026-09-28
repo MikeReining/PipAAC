@@ -87,7 +87,7 @@ are scheduled with those slices.
 | Picture | Photo, or change it — **BUILT** (file input → `savePhoto`) | **BUILT** — **Use my own picture** (a photo) or another approved library image sets `image_override`; **Use our picture** restores (`public/shared/images.mjs`) |
 | Name | Editable — **BUILT**. A rename supersedes the ready recording and enrichment (schema § 6.2; `renameEntity`) | Read-only — **BUILT**. For another word, add it as a new word |
 | Sound | ▶ plays what the board plays — **BUILT** (`resolveSlot` in `public/shared/voice.mjs`: override → voice clip → TTS → silent slot). **Record it** / **Use the voice again** — **BUILT** (`MediaRecorder` → `blob:` key → `set_override` op) |
-| In groups | Chips, one per group — **BUILT** (`entityGroups`/`senseGroups`). × removes with Undo — **BUILT**. **+ Add to group** lists groups — **BUILT** | Same. **DECIDED 2026-09-27, not built:** seeded words may leave any group; group removal is distinct from global Hide (027). |
+| In groups | Chips, one per group — **BUILT** (`entityGroups`/`senseGroups`). × removes from that group with Undo — **BUILT**. **Add to other boards** opens named destinations — **BUILT** (027) | Same — seeded words leave any group too; group removal is distinct from global Hide (027, **BUILT**). |
 | Show on board | **BUILT** — opens the group page with the cell flashed; a core-mapped sense flashes on the board | Same |
 | Remove / Hide | **Remove** retires the entity — **BUILT** (`retireEntity`, restorable; `docs/product/Vocabulary_Masking_And_Safety.md` § 3.2) | **Hide** masks it — not built (009 slice 9) |
 
@@ -98,16 +98,16 @@ Rules:
   (`docs/product/Personal_Entities.md` § Filing). On the card the adult is
   deliberately putting a word somewhere else, so a group list is the answer
   to the question they asked.
-- **Scope must be visible (027; decided, not built).** Picture, name, and
+- **Scope must be visible (027; BUILT 2026-09-28).** Picture, name, and
   recording changes say “Changes this word everywhere it appears.” Group ×
   says “Remove from [group]”; global Hide/retire is separately named. No ordinary
   placement action asks “here or everywhere?”
-- **Zero placements is allowed (027; decided, not built).** Removing the last
+- **Zero placements is allowed (027; BUILT 2026-09-28).** Removing the last
   membership keeps the active word in the Library and keyboard lookup. Do not
   silently place it in My Words; this replaces the existing `removeItem`
   catch-all. Removing from My Words is also a local placement removal; retiring
   the word is a separate explicit action. A removed word can be added again.
-- **Add to other boards (027; decided, not built).** Named destinations, none
+- **Add to other boards (027; BUILT 2026-09-28).** Named destinations, none
   preselected; one save to only the selected groups. Already-present placements
   are skipped, never moved. Undo affects only memberships created by that save.
   The same optional action follows an ordinary successful add.

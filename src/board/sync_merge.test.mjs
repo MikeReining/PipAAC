@@ -21,6 +21,7 @@ import {
   createGroup,
   deleteGroup,
   moveItem,
+  geometryOf,
   placeItem,
   removeItem,
   renameEntity,
@@ -52,9 +53,13 @@ const openReplica = () => {
   importCatalog(db, catalog);
   db.exec(
     `INSERT INTO personal_entity (id, spoken_name, added_at) VALUES ('ent_shared','Shared',1);
-     INSERT INTO board_group (id, kind, name, index_slot) VALUES ('grp_shared','custom','Shared grp',40);
-     INSERT INTO group_cell (group_id,item_kind,item_id,page,slot_index,added_at) VALUES ('grp_shared','entity','ent_shared',0,57,1);`,
+     INSERT INTO board_group (id, kind, name, index_slot) VALUES ('grp_shared','custom','Shared grp',50);
+     INSERT INTO group_membership (group_id,item_kind,item_id,added_at) VALUES ('grp_shared','entity','ent_shared',1);
+     INSERT INTO group_cell (group_id,layout,item_kind,item_id,page,slot_index) VALUES ('grp_shared','grid60','entity','ent_shared',0,57);`,
   );
+  // import took the rebase baseline before these fixture rows — retake it
+  // so both replicas start from the same shared state.
+  db.exec("DELETE FROM sync_baseline");
   ensureBaseline(db);
   return db;
 };
@@ -65,19 +70,18 @@ const ENTITIES = (db) =>
   db.prepare("SELECT id FROM personal_entity WHERE status='active'").all().map((r) => r.id);
 const SENSES = (db) => db.prepare("SELECT id FROM sense").all().map((r) => r.id);
 const CELLS = (db, gid) =>
-  db.prepare("SELECT item_kind, item_id, slot_index FROM group_cell WHERE group_id=?").all(gid);
+  db.prepare("SELECT item_kind, item_id, slot_index FROM group_cell WHERE group_id=? AND layout='grid60'").all(gid);
 const FREE_SLOTS = (db, gid) => {
   const used = new Set(
-    db.prepare("SELECT slot_index FROM group_cell WHERE group_id=? AND page=0").all(gid).map((r) => r.slot_index),
+    db.prepare("SELECT slot_index FROM group_cell WHERE group_id=? AND layout='grid60' AND page=0")
+      .all(gid).map((r) => r.slot_index),
   );
-  const out = [];
-  for (let s = 2; s <= 58; s++) if (!used.has(s)) out.push(s);
-  return out;
+  return geometryOf(db, "grid60").content.filter((s) => !used.has(s));
 };
 
 const SYNCED_TABLES = [
   "learner_profile", "personal_entity", "board_group", "group_label",
-  "clip_override", "entity_enrichment", "group_cell",
+  "clip_override", "entity_enrichment", "group_membership", "group_cell", "group_seed_install",
 ];
 const dump = (db, t) =>
   db.prepare(`SELECT * FROM ${t} ORDER BY rowid`).all().map((r) => JSON.stringify(r));
@@ -89,23 +93,23 @@ test("two replicas, colliding edits, one relay order: byte-identical", () => {
   const b = openReplica();
 
   // Forced collisions — deterministic, so every seed exercises them.
-  // Same slot in the same group: one op wins, the loser lands next-free.
+  // Same cell in the same group: one op wins, the loser lands first-free.
   createEntity(a, { id: "ent_a_slot", name: "A slot" });
-  placeItem(a, "grp_shared", "entity", "ent_a_slot", { page: 0, slot_index: 2 });
+  placeItem(a, "grp_shared", "entity", "ent_a_slot", { page: 0, slot_index: 10 });
   createEntity(b, { id: "ent_b_slot", name: "B slot" });
-  placeItem(b, "grp_shared", "entity", "ent_b_slot", { page: 0, slot_index: 2 });
+  placeItem(b, "grp_shared", "entity", "ent_b_slot", { page: 0, slot_index: 10 });
   // Same entity renamed on both replicas: the later relay seq wins.
   renameEntity(a, "ent_shared", "Shared by A");
   renameEntity(b, "ent_shared", "Shared by B");
   // A deletes grp_doomed while B adds to it.
-  createGroup(a, { name: "doomed", id: "grp_doomed", indexSlot: 41 });
-  createGroup(b, { name: "doomed", id: "grp_doomed", indexSlot: 41 });
+  createGroup(a, { name: "doomed", id: "grp_doomed", indexSlot: 51 });
+  createGroup(b, { name: "doomed", id: "grp_doomed", indexSlot: 51 });
   createEntity(b, { id: "ent_b_doomed", name: "B doomed" });
   placeItem(b, "grp_doomed", "entity", "ent_b_doomed");
   deleteGroup(a, "grp_doomed");
   // Same index slot claimed by two different new groups.
-  createGroup(a, { name: "A idx", id: "grp_a_idx", indexSlot: 42 });
-  createGroup(b, { name: "B idx", id: "grp_b_idx", indexSlot: 42 });
+  createGroup(a, { name: "A idx", id: "grp_a_idx", indexSlot: 52 });
+  createGroup(b, { name: "B idx", id: "grp_b_idx", indexSlot: 52 });
 
   // Then a random offline storm on each replica — disjoint entity ids.
   const storm = (db, r, tag, n) => {
@@ -210,20 +214,26 @@ test("two replicas, colliding edits, one relay order: byte-identical", () => {
 
   // Invariants after merge, on both replicas.
   for (const [tag, db] of [["a", a], ["b", b]]) {
-    // No orphan entity: every active entity lives in at least one group.
-    const orphans = db.prepare(
-      `SELECT e.id FROM personal_entity e WHERE e.status='active' AND NOT EXISTS
-       (SELECT 1 FROM group_cell c WHERE c.item_kind='entity' AND c.item_id=e.id)`,
+    // Every position belongs to a member and sits on a content cell —
+    // no merge ever lands a word on a reserved cell (027 § 3.2).
+    const content = new Set(geometryOf(db, "grid60").content);
+    const stray = db.prepare(
+      `SELECT c.group_id, c.item_id, c.slot_index FROM group_cell c WHERE NOT EXISTS
+       (SELECT 1 FROM group_membership m WHERE m.group_id=c.group_id
+          AND m.item_kind=c.item_kind AND m.item_id=c.item_id)`,
     ).all();
-    assert.deepEqual(orphans, [], `${tag}: orphan entities (seed ${seed})`);
-    // Built-in group membership unchanged: no seeded sense left its group.
+    assert.deepEqual(stray, [], `${tag}: positions without membership (seed ${seed})`);
+    const reserved = db.prepare("SELECT group_id, item_id, slot_index FROM group_cell WHERE layout='grid60'")
+      .all().filter((c) => !content.has(c.slot_index));
+    assert.deepEqual(reserved, [], `${tag}: a position on a reserved cell (seed ${seed})`);
+    // The storm edits only custom groups: built-in membership is unchanged.
     const fresh = openReplica();
     for (const g of db.prepare("SELECT id FROM board_group WHERE kind='builtin'").all()) {
       const now = db.prepare(
-        "SELECT item_id FROM group_cell WHERE group_id=? AND item_kind='sense' ORDER BY item_id",
+        "SELECT item_id FROM group_membership WHERE group_id=? AND item_kind='sense' ORDER BY item_id",
       ).all(g.id).map((r) => r.item_id);
       const was = fresh.prepare(
-        "SELECT item_id FROM group_cell WHERE group_id=? AND item_kind='sense' ORDER BY item_id",
+        "SELECT item_id FROM group_membership WHERE group_id=? AND item_kind='sense' ORDER BY item_id",
       ).all(g.id).map((r) => r.item_id);
       assert.deepEqual(now, was, `${tag}: builtin ${g.id} lost a sense (seed ${seed})`);
     }
@@ -232,8 +242,8 @@ test("two replicas, colliding edits, one relay order: byte-identical", () => {
       `${tag}: core_cell changed (seed ${seed})`);
   }
 
-  // The doomed group's fate is deterministic on both — and its entity
-  // kept a home wherever the merge put it.
+  // The doomed group's fate is deterministic on both; B's add into it is
+  // skipped, not redirected (027 § 3.4).
   const doomedA = a.prepare("SELECT 1 AS x FROM board_group WHERE id='grp_doomed'").all()[0];
   const doomedB = b.prepare("SELECT 1 AS x FROM board_group WHERE id='grp_doomed'").all()[0];
   assert.deepEqual(doomedA, doomedB);
@@ -244,10 +254,10 @@ test("a replica's pending ops re-apply on top of the confirmed stream", () => {
   const b = openReplica();
   // a's own offline edit, never sent: pending — must survive the drain.
   createEntity(a, { id: "ent_a1", name: "Ay" });
-  placeItem(a, "grp_shared", "entity", "ent_a1", { page: 0, slot_index: 2 });
+  placeItem(a, "grp_shared", "entity", "ent_a1", { page: 0, slot_index: 10 });
   // b claims the same slot and gets confirmed first.
   createEntity(b, { id: "ent_b1", name: "Bee" });
-  placeItem(b, "grp_shared", "entity", "ent_b1", { page: 0, slot_index: 2 });
+  placeItem(b, "grp_shared", "entity", "ent_b1", { page: 0, slot_index: 10 });
   const relay = listOps(b).map((o, k) => ({ ...o, device_id: "dev_b", relay_seq: k + 1 }));
   drainOps(a, relay);
   drainOps(a, relay); // same stream again — idempotent
@@ -255,5 +265,5 @@ test("a replica's pending ops re-apply on top of the confirmed stream", () => {
     "SELECT slot_index FROM group_cell WHERE group_id='grp_shared' AND item_id='ent_a1'",
   ).all()[0];
   assert.ok(row, "pending placement was lost in rebase");
-  assert.notEqual(row.slot_index, 2, "pending op displaced the confirmed item");
+  assert.notEqual(row.slot_index, 10, "pending op displaced the confirmed item");
 });

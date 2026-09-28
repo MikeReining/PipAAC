@@ -16,7 +16,7 @@ import assert from "node:assert/strict";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import {
-  openSentence, closeSentence, logSelection, groupRanked,
+  openSentence, closeSentence, logSelection, groupRanked, groupStarters,
 } from "../../public/shared/funnel.mjs";
 import catalog from "../../data/catalog/catalog.json" with { type: "json" };
 
@@ -53,10 +53,10 @@ function makeGroup(db, lemmas) {
   db.prepare(
     "INSERT INTO board_group (id, kind, name, index_slot) VALUES (?, 'custom', 'test', ?)",
   ).run(GROUP, slot);
-  lemmas.forEach((w, i) =>
+  lemmas.forEach((w) =>
     db.prepare(
-      "INSERT INTO group_cell (group_id, item_kind, item_id, slot_index) VALUES (?, 'sense', ?, ?)",
-    ).run(GROUP, senseId(db, w), i + 2));
+      "INSERT INTO group_membership (group_id, item_kind, item_id) VALUES (?, 'sense', ?)",
+    ).run(GROUP, senseId(db, w)));
 }
 const shown = (db, words, group = GROUP, at = NOW) =>
   groupRanked(db, items(db, words), group, at).shown.map((c) => lemmaOf(db, c.id));
@@ -120,4 +120,47 @@ test("taps inside the group extend the phrase — the filter stays on", () => {
   const second = shown(db, ["i", "want", "juice"]);
   assert.deepEqual(second, ["juice", "milk"],
     "the filter stays on while the group is open — used members by frequency");
+});
+
+/* --- 027 § 5: first words in an empty group sentence ------------------- */
+
+const starterTable = (db, words, pooled = []) => ({
+  groups: { grp_breakfast: { first: words.map((w, i) => ({ sense: senseId(db, w), n: 100 - i })) } },
+  pooled: { first: pooled.map((w, i) => ({ sense: senseId(db, w), n: 100 - i })) },
+});
+const startNames = (db, groupId, opts) =>
+  groupStarters(db, groupId, opts).shown.map((c) => lemmaOf(db, c.id));
+
+test("an empty group sentence offers children's first words — masked and visible ones backfill", () => {
+  const db = fresh();
+  const starters = starterTable(db, ["i", "no", "want", "more", "cookie", "juice"]);
+  assert.deepEqual(startNames(db, "grp_breakfast", { starters }), ["i", "no", "want", "more"]);
+  db.prepare("INSERT INTO sense_mask (sense_id, status) VALUES (?, 'hidden')").run(senseId(db, "no"));
+  const visible = new Set([`sense:${senseId(db, "want")}`]); // already on the page
+  assert.deepEqual(startNames(db, "grp_breakfast", { starters, visible }), ["i", "more", "cookie", "juice"],
+    "a hidden or on-page word never shows; the next one fills its place");
+});
+
+test("her own first picks in the group rank ahead as they accumulate — spoken, first word only", () => {
+  const db = fresh();
+  const starters = starterTable(db, ["i", "no", "want", "more"]);
+  const start = (words, at, end = "spoken", group = "grp_breakfast") => {
+    const s = openSentence(db, at);
+    words.forEach((w, i) => logSelection(db, "sense", senseId(db, w), at + i,
+      { sentenceId: s, position: i, groupId: group }));
+    closeSentence(db, s, at + words.length, end);
+  };
+  start(["milk", "please"], NOW - 5000);
+  start(["milk"], NOW - 4000);
+  start(["toast"], NOW - 3000, "cleared"); // a restart is not a start
+  start(["juice"], NOW - 2000, "spoken", "grp_lunch"); // another group's start
+  assert.deepEqual(startNames(db, "grp_breakfast", { starters }), ["milk", "i", "no", "want"]);
+});
+
+test("a custom group uses the pooled first words; no evidence at all is an empty bar, never a block", () => {
+  const db = fresh();
+  makeGroup(db, ["juice", "milk"]);
+  const starters = starterTable(db, ["i"], ["want", "no"]);
+  assert.deepEqual(startNames(db, GROUP, { starters }), ["want", "no"]);
+  assert.deepEqual(startNames(db, "grp_breakfast", { starters: null }), []);
 });

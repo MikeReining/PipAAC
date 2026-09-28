@@ -16,6 +16,7 @@
 
 import { recordOp } from "./ops.mjs";
 import { coreSlot } from "./coremove.mjs";
+import { missingPositions, writePositions } from "./groups.mjs";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 export const MARK_DAYS = 14;
@@ -99,8 +100,11 @@ export function moveMarks(db) {
 /** Change the board layout: write the profile column and mark the used
  *  words that move (or leave the board) for the transition window.
  *  Marks are computed from THIS device's selection log — the log is
- *  device-local, so each replica marks what its own child used. */
-export function setBoardLayout(db, layout, now = Date.now()) {
+ *  device-local, so each replica marks what its own child used.
+ *  027 § 3.3: the switch also writes the new size's missing group
+ *  positions, chosen here once and carried by the op (`groupCells`) —
+ *  replay passes them back and never recomputes. */
+export function setBoardLayout(db, layout, { groupCells = null, now = Date.now() } = {}) {
   const p = db.prepare(
     "SELECT board_layout AS l, locale FROM learner_profile WHERE id = 'prf_local'",
   ).all()[0] ?? {};
@@ -113,11 +117,13 @@ export function setBoardLayout(db, layout, now = Date.now()) {
     .filter((w) => w.cls === "sector" || w.cls === "moved")
     .map((w) => w.sense_id);
   const until = now + MARK_DAYS * DAY_MS;
+  const cells = groupCells ?? missingPositions(db, layout);
+  writePositions(db, layout, cells);
   db.prepare("UPDATE learner_profile SET board_layout = ? WHERE id = 'prf_local'").run(layout);
   db.exec("DELETE FROM move_mark");
   for (const sid of moved) {
     db.prepare("INSERT INTO move_mark (sense_id, until) VALUES (?, ?)").run(sid, until);
   }
-  recordOp(db, "set_layout", { layout });
-  return { from, moved, until };
+  recordOp(db, "set_layout", { layout, groupCells: cells });
+  return { from, moved, until, groupCells: cells.length };
 }

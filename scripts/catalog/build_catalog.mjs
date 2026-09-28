@@ -17,6 +17,7 @@ import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFi
 import { dirname, join } from "node:path";
 
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
+import { buildGroups } from "./build_groups.mjs";
 import {
   DEFAULT_AUDIO_CACHE_ROOT,
   DEFAULT_AUDIO_IMPORT_PATH,
@@ -27,12 +28,14 @@ import {
 
 const MAP_MD = join(repoRoot, "docs/product/Core_Coordinate_Map.md");
 const SCHEMA_SQL = join(repoRoot, "src/board/schema.sql");
-const GROUP_SEED = join(repoRoot, "data/group_seed.json");
+const TOPIC_SEED = join(repoRoot, "data/group_seed.topics.json");
+const OCCASION_SEED = join(repoRoot, "data/group_seed.occasions.json");
 const FAMILY_SEED = join(repoRoot, "data/family_seed.json");
 const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
 const FORMS_DATA = join(repoRoot, "data/forms/en.json");
 const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
 const FEELING_VOICE = join(repoRoot, "data/catalog/feeling_voice.json");
+const GROUP_STARTERS = join(repoRoot, "data/prediction/door_starters.en.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const SYMBOLS_ROOT = join(repoRoot, "assets/symbols");
@@ -40,7 +43,6 @@ const PUBLIC_SYMBOLS_ROOT = join(repoRoot, "public/symbols");
 const SYMBOL_EXT_PREF = [".png", ".svg", ".jpg", ".jpeg"];
 const DEFAULT_VOICE_ID = "voi_default_en";
 const CATALOG_SCHEMA_VERSION = 1;
-const ITEMS_PER_PAGE = 57; // group page slots 2..58
 
 const pad4 = (n) => String(n).padStart(4, "0");
 
@@ -95,137 +97,6 @@ export function parseCoordinateMapMarkdown(raw) {
     }
   }
   return layouts;
-}
-
-/**
- * Emit board_group + group_cell + group_label seed rows from
- * data/group_seed.json. File order is the default index order (slots 10..).
- * Members are senses at fixed cells: member i → page floor(i/57),
- * slot 2 + i % 57. Group display names ship in `groupLabels` keyed by
- * locale — board_group.name is the caregiver override, never the seed.
- * Throws on any violation — the build is the gate that keeps every
- * catalog word reachable in at least one built-in group, and every group
- * named in every locale the catalog ships.
- */
-export function buildGroups(lexicon, seed, locales = ["en"], mapLayouts = {}) {
-  const byNorm = new Map();
-  for (const e of lexicon.entries) {
-    const n = normalizeV1(e.spokenText);
-    if (!byNorm.has(n)) byNorm.set(n, []);
-    byNorm.get(n).push(e);
-  }
-  const resolve = (word, ctx) => {
-    const hits = byNorm.get(normalizeV1(word)) ?? [];
-    if (hits.length !== 1) {
-      throw new Error(
-        `group seed ${ctx}: "${word}" resolves to ${hits.length} lexicon senses (want exactly 1)`,
-      );
-    }
-    return `sns_${pad4(hits[0].slot)}`;
-  };
-
-  const groups = [];
-  const groupCells = [];
-  const groupLabels = [];
-  const memberOf = new Map(); // sense_id -> Set(group key)
-  const excepted = []; // [{ key, word, senseId }]
-  const seenKeys = new Set();
-
-  seed.groups.forEach((g, gi) => {
-    if (!/^[a-z_]+$/.test(g.key)) {
-      throw new Error(`group seed: key "${g.key}" must match ^[a-z_]+$`);
-    }
-    if (seenKeys.has(g.key)) throw new Error(`group seed: duplicate key "${g.key}"`);
-    seenKeys.add(g.key);
-    if ([g.category, g.words, g.sector].filter(Boolean).length > 1) {
-      throw new Error(`group seed ${g.key}: category, words and sector are mutually exclusive`);
-    }
-    if (!g.names || typeof g.names !== "object") {
-      throw new Error(`group seed ${g.key}: names must be a per-locale map`);
-    }
-    for (const loc of locales) {
-      if (typeof g.names[loc] !== "string" || g.names[loc].length === 0) {
-        throw new Error(`group seed ${g.key}: no name for shipped locale "${loc}"`);
-      }
-    }
-    const id = `grp_${g.key}`;
-    groups.push({
-      id,
-      kind: g.key === "my_words" ? "my_words" : "builtin",
-      glyph: g.glyph ?? null,
-      index_slot: 10 + gi,
-      category: g.category ?? null,
-    });
-    for (const loc of locales) {
-      groupLabels.push({ group_id: id, locale: loc, text: g.names[loc] });
-    }
-
-    let memberIds = [];
-    if (g.category) {
-      const excluded = new Set(
-        (g.except ?? []).map((w) => {
-          const sid = resolve(w, `${g.key}.except`);
-          excepted.push({ key: g.key, word: w, senseId: sid });
-          return sid;
-        }),
-      );
-      memberIds = lexicon.entries
-        .filter((e) => e.category === g.category)
-        .sort((a, b) => a.slot - b.slot)
-        .map((e) => `sns_${pad4(e.slot)}`)
-        .filter((sid) => !excluded.has(sid));
-    } else if (g.words) {
-      memberIds = g.words.map((w) => resolve(w, `${g.key}.words`));
-    } else if (g.sector) {
-      // The § 3.1 grammar groups: every `grid60` cell in these column
-      // bands that the starter (`excludeLayout`) doesn't already hold —
-      // derived from the coordinate map, never a hand-copied list.
-      const lay = mapLayouts[g.sector.layout];
-      const excl = new Set(
-        (mapLayouts[g.sector.excludeLayout]?.cells ?? []).map((c) => normalizeV1(c.word)),
-      );
-      if (!lay) throw new Error(`group seed ${g.key}: unknown sector layout ${g.sector.layout}`);
-      memberIds = lay.cells
-        .filter((c) => c.slot % lay.cols >= g.sector.cols[0]
-          && c.slot % lay.cols <= g.sector.cols[1]
-          && !excl.has(normalizeV1(c.word)))
-        .sort((a, b) => a.slot - b.slot)
-        .map((c) => resolve(c.word, `${g.key}.sector`));
-    }
-    if (memberIds.length > ITEMS_PER_PAGE) {
-      throw new Error(
-        `group seed ${g.key}: ${memberIds.length} members exceeds one page (${ITEMS_PER_PAGE}) — split it`,
-      );
-    }
-    memberIds.forEach((sid, i) => {
-      groupCells.push({
-        group_id: id,
-        item_kind: "sense",
-        item_id: sid,
-        page: Math.floor(i / ITEMS_PER_PAGE),
-        slot_index: 2 + (i % ITEMS_PER_PAGE),
-      });
-      if (!memberOf.has(sid)) memberOf.set(sid, new Set());
-      memberOf.get(sid).add(g.key);
-    });
-  });
-
-  // Reachability gates: every categorized sense is in a built-in group,
-  // and every excepted word landed in some other group.
-  for (const e of lexicon.entries) {
-    if (e.category && !memberOf.has(`sns_${pad4(e.slot)}`)) {
-      throw new Error(
-        `group seed: "${e.spokenText}" (${e.category}) lands in no built-in group`,
-      );
-    }
-  }
-  for (const x of excepted) {
-    if (!memberOf.has(x.senseId)) {
-      throw new Error(`group seed: "${x.word}" is excepted from ${x.key} but lands in no other group`);
-    }
-  }
-
-  return { groups, groupCells, groupLabels };
 }
 
 /**
@@ -404,7 +275,10 @@ function buildFamilies(lexicon, seed, mapLayouts) {
 export function buildCatalog(
   lexicon,
   mapLayouts,
-  groupSeed = JSON.parse(readFileSync(GROUP_SEED, "utf8")),
+  groupSeed = {
+    topics: JSON.parse(readFileSync(TOPIC_SEED, "utf8")),
+    occasions: JSON.parse(readFileSync(OCCASION_SEED, "utf8")),
+  },
   numberAliases = JSON.parse(readFileSync(NUMBER_ALIASES, "utf8")),
   familySeed = JSON.parse(readFileSync(FAMILY_SEED, "utf8")),
   { allowMissingFormClips = true } = {},
@@ -505,7 +379,11 @@ export function buildCatalog(
   }
 
   const catalogLocales = [...new Set(labels.map((l) => l.locale))];
-  const { groups, groupCells, groupLabels } = buildGroups(lexicon, groupSeed, catalogLocales, mapLayouts);
+  const { groups, groupMembers, groupCells, groupLabels, groupLayouts } = buildGroups(
+    lexicon, groupSeed.topics, groupSeed.occasions,
+    { locales: catalogLocales, layouts, coreCells },
+  );
+  for (const [name, g] of Object.entries(groupLayouts)) layouts[name].frame = g.frame;
   const { families, familyItems } = buildFamilies(lexicon, familySeed, mapLayouts);
 
   return {
@@ -514,7 +392,7 @@ export function buildCatalog(
       lexicon: "data/launch_lexicon.json",
       coordinateMap: "docs/product/Core_Coordinate_Map.md",
       schema: "src/board/schema.sql",
-      groupSeed: "data/group_seed.json",
+      groupSeed: ["data/group_seed.topics.json", "data/group_seed.occasions.json"],
       numberAliases: "data/number_aliases.json",
       forms: "data/forms/en.json",
       phraseTable: "data/prediction/phrase_table.en.json",
@@ -528,6 +406,10 @@ export function buildCatalog(
             .filter(([k]) => !k.startsWith("_")),
         )
       : {},
+    // 027 § 5: first-word counts per group from real children, when the
+    // corrected CHILDES builder has run (door_starters.mjs, local cache);
+    // absent, the bar starts from the child's own first picks.
+    ...(existsSync(GROUP_STARTERS) ? { groupStarters: JSON.parse(readFileSync(GROUP_STARTERS, "utf8")) } : {}),
     // 025 § 3: the lit-face suggestion map (sense id -> feeling).
     feelingVoice: JSON.parse(readFileSync(FEELING_VOICE, "utf8")),
     // The bundle is the full device bootstrap: DDL plus rows, one fetch.
@@ -551,7 +433,11 @@ export function buildCatalog(
     clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm,
       utterances.filter((u) => u.id.startsWith("utt_f")), allowMissingFormClips),
     coreCells,
+    // Stamped on each install marker (027 § 3.3) — which seed a device
+    // installed; a newer seed never re-installs a marked group.
+    groupSeedVersion: `${groupSeed.topics.version}.${groupSeed.occasions.version}`,
     groups,
+    groupMembers,
     groupCells,
     groupLabels,
     families,
