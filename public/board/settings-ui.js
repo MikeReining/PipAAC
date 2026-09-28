@@ -61,7 +61,10 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
   /* One-line state per page, read from the controls themselves (their
    * owners keep them current) — so an SLP reads the whole setup from
    * the list without opening a page. */
-  const onText = (id) => $(id)?.querySelector("button.on")?.textContent?.trim() ?? "";
+  const onText = (id) => {
+    const b = $(id)?.querySelector("button.on");
+    return (b?.querySelector(".set-opt") ?? b)?.textContent?.trim() ?? "";
+  };
   const isOn = (id) => $(id)?.querySelector('button[data-v="1"]')?.classList.contains("on");
   const onOff = (id) => (isOn(id) ? "on" : "off");
   const cardMade = () => !!me.cardShownAt;

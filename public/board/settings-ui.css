@@ -34,6 +34,31 @@
 .set-card:empty { display: none; }
 .set-found { box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--ink); transition: box-shadow .2s; }
 
+/* Previews: a picture of what the setting does. */
+#cells-seg button { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#cells-seg button::before {
+  content: ""; width: 72%; max-width: 120px; aspect-ratio: 4 / 3; border-radius: 4px;
+  background-color: var(--line);
+  background-image: linear-gradient(to right, #fff 2px, transparent 2px),
+    linear-gradient(to bottom, #fff 2px, transparent 2px);
+}
+#cells-seg button[data-v="grid15"]::before { background-size: 20% 33.34%; }
+#cells-seg button[data-v="grid60"]::before { background-size: 10% 16.67%; }
+#cells-seg button[data-v="grid90"]::before { background-size: 10% 11.12%; }
+#fresh-speak button { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.set-eg { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; justify-content: center; margin: 0; font-size: 13px; font-weight: 400; }
+.set-sec p.set-eg { justify-content: flex-start; }
+.set-eg i { font-style: normal; border: 1.5px solid var(--edge); background: #fff; border-radius: 6px; padding: 2px 7px; }
+.set-eg i.new { border-color: #2e8b3a; background: #dcf0dd; font-weight: 700; }
+.set-eg span { color: var(--muted); padding: 0 4px; }
+.set-tiles { display: flex; gap: 8px; margin: 0; }
+.set-tile {
+  width: 58px; height: 50px; border-radius: 8px; border: 3px solid var(--c); background: #fff;
+  font-family: var(--word-font, inherit); font-weight: 700; font-size: 12px; color: var(--ink-text);
+  display: flex; justify-content: center; padding-top: 4px;
+}
+.set-tile.likely { box-shadow: inset 0 0 0 4px var(--c); }
+
 /* On/off rows: label left, switch right (On is always to the right). */
 .set-head { display: flex; align-items: center; gap: 16px; }
 .set-head .seg-label { flex: 1; min-width: 0; }

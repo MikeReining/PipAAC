@@ -903,10 +903,12 @@
               <div class="seg-row">
                 <span class="seg-label">After Play</span>
                 <div class="seg" id="fresh-speak">
-                  <button data-v="0">Keep the sentence</button>
-                  <button data-v="1">Start a new one</button>
+                  <button data-v="0"><span class="set-opt">Keep the sentence</span>
+                    <span class="set-eg" aria-hidden="true"><i>I</i><i>want</i><i>juice</i><i class="new">more</i></span></button>
+                  <button data-v="1"><span class="set-opt">Start a new one</span>
+                    <span class="set-eg" aria-hidden="true"><i class="new">more</i></span></button>
                 </div>
-                <p class="hint">Keep: the next word adds on. New: the next word starts a fresh sentence.</p>
+                <p class="hint">After "I want juice" is played, tapping "more" either adds on or starts a fresh sentence.</p>
               </div>
             </section>
 
@@ -919,6 +921,7 @@
                   <button data-v="0">Off</button>
                   <button data-v="1">On</button>
                 </div>
+                <p class="set-eg" aria-hidden="true"><i>he</i><i>want</i> <span>→</span> <i>he</i><i class="new">wants</i></p>
                 <p class="hint">Words take the form the sentence needs: after "he", the board reads wants, has, him.</p>
               </div>
               <div class="seg-row">
@@ -927,6 +930,11 @@
                   <button data-v="0">Off</button>
                   <button data-v="1">On</button>
                 </div>
+                <p class="set-tiles" aria-hidden="true">
+                  <span class="set-tile" style="--c:#2e8b3a">want</span>
+                  <span class="set-tile likely" style="--c:#2e8b3a">go</span>
+                  <span class="set-tile" style="--c:#b07f00">juice</span>
+                </p>
                 <p class="hint">Up to three buttons get a thick outline in their own color. Nothing moves.</p>
               </div>
               <div class="seg-row">
