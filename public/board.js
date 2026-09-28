@@ -1901,6 +1901,10 @@ function navCell(label, onTap) {
  *  target's data-slot; `onTap` fires when the press never became a drag. */
 function editPointer(el, { onDrop, onTap }) {
   let lastPointer = 0;
+  // A tile's picture is an <img>: a mouse drag would start the browser's
+  // native image drag, which cancels the pointer stream (pointercancel)
+  // before the move ever registers. The edit gesture owns the drag.
+  el.addEventListener("dragstart", (e) => e.preventDefault());
   // Keyboard/AT Enter fires click with no pointer events — treat it as a tap.
   el.addEventListener("click", () => {
     if (Date.now() - lastPointer > 400) onTap?.();
