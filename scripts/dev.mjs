@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
- * Local Worker slots. The founder browse copy is port 8787 / slot-0 and keeps
+ * Local Worker slots. The founder browse copy is port 21087 / slot-0 and keeps
  * the live CATALOG. Agents start their own copy with `npm run dev:agent`.
+ * Ports live in the 210xx block — the 87xx range collides with every other
+ * wrangler project on this Mac (founder ruling 2026-09-28).
  */
 import { spawn, spawnSync } from "node:child_process";
 import net from "node:net";
@@ -9,10 +11,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-export const BROWSE_PORT = 8787;
-export const BROWSE_INSPECTOR_PORT = 9229;
-export const AGENT_PORT_FIRST = 8788;
-export const AGENT_PORT_LAST = 8798;
+export const BROWSE_PORT = 21087;
+export const BROWSE_INSPECTOR_PORT = 21229;
+export const AGENT_PORT_FIRST = 21088;
+export const AGENT_PORT_LAST = 21098;
 export const LAUNCHD_LABEL = "com.pippaac.dev-slot0";
 
 const WRANGLER_JS = path.join(REPO_ROOT, "node_modules/wrangler/bin/wrangler.js");

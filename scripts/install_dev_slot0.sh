@@ -5,7 +5,7 @@
 #   bash scripts/install_dev_slot0.sh --uninstall
 #   bash scripts/install_dev_slot0.sh --print-node
 #
-# Bookmark: http://localhost:8787
+# Bookmark: http://localhost:21087
 # Agents:   npm run dev:agent
 set -euo pipefail
 
@@ -132,6 +132,6 @@ launchctl bootstrap "gui/$(id -u)" "$PLIST_DEST" 2>/dev/null || launchctl load "
 launchctl kickstart "gui/$(id -u)/$LABEL" 2>/dev/null || true
 
 echo "ok: installed $LABEL"
-echo "  Bookmark http://localhost:8787"
+echo "  Bookmark http://localhost:21087"
 echo "  Log      $LOG_PATH"
 echo "  Agents   npm run dev:agent"

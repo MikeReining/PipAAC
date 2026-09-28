@@ -49,8 +49,8 @@ shell profile changes.
 | `npm test` | Full unit suite via protected runner |
 | `npm run check:fast` | Cheap gates during iteration |
 | `npm run check` | Closeout wall |
-| `npm run dev` | Founder browse copy at `http://localhost:8787` |
-| `npm run dev:agent` | Agent copy on the first free port 8788–8798 |
+| `npm run dev` | Founder browse copy at `http://localhost:21087` |
+| `npm run dev:agent` | Agent copy on the first free port 21088–21098 |
 | `npm run dev:status` | Which local copies are listening |
 | `bash scripts/install_dev_slot0.sh` | macOS LaunchAgent so the browse copy comes back if something kills it |
 | `scripts/test.sh <paths>` | Targeted proof while iterating |
@@ -58,7 +58,9 @@ shell profile changes.
 
 ## Local preview
 
-**DECIDED 2026-08-28.** One founder browse copy, always at `http://localhost:8787`.
+**DECIDED 2026-08-28.** One founder browse copy, always at
+`http://localhost:21087` (moved off 8787 on 2026-09-28 — the 87xx block
+collides with other wrangler projects on this Mac).
 Agents and other processes start their own copy with `npm run dev:agent`.
 
 - Each copy has its own persist dir and inspector port. **BUILT** (`scripts/dev.mjs:51`)

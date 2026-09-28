@@ -1,7 +1,7 @@
 // Phase 010 slice 2 review page: 50 drawings at a time, everything approved
 // unless tapped. One tap = re-roll, two = reject, three = back to approve.
 //
-//   node scripts/art/review_server.mjs [--port 8787]   then open http://localhost:8787
+//   node scripts/art/review_server.mjs [--port 21187]   then open http://localhost:21187
 //
 // Decisions land in out/extended_art/review.json ({ id: "approve"|"reroll"|"reject" }).
 // `node scripts/art/extended_batch.mjs --reroll` redraws the re-roll pile.
@@ -51,7 +51,7 @@ await fetch("/api/decide",{method:"POST",headers:{"content-type":"application/js
 document.getElementById("save").onclick=save;document.onkeydown=e=>{if(e.key==="Enter")save()};load();
 </script></body></html>`;
 
-const port = Number(process.argv.includes("--port") ? process.argv[process.argv.indexOf("--port") + 1] : 8787);
+const port = Number(process.argv.includes("--port") ? process.argv[process.argv.indexOf("--port") + 1] : 21187);
 createServer((req, res) => {
   const url = new URL(req.url, "http://x");
   if (url.pathname === "/") return res.writeHead(200, { "content-type": "text/html" }).end(html);
