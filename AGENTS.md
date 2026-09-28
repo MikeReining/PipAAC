@@ -87,6 +87,11 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
   silent swap** (024 §2, `Grok_Voice_Synthesis_Best_Practices.md`).
 - Agents preview with `npm run dev:agent`. `npm run dev` is the founder browse
   copy — do not kill it or reuse `.wrangler/slot-0`.
+- **When asking the founder to look at a change, always give
+  `http://localhost:21087/?reseed`.** Seed installs are once-ever, so a
+  running profile never re-seeds — `?reseed` reinstalls built-in group
+  seeds at boot and shows the shipped catalog. Plain `/` is for testing
+  that family edits stick.
 - **Interactive IDE agents commit directly** with `git add <paths>` and
   `git commit`. Hookless agents enqueue per the handoff queue.
 

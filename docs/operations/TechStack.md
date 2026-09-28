@@ -63,6 +63,14 @@ shell profile changes.
 collides with other wrangler projects on this Mac).
 Agents and other processes start their own copy with `npm run dev:agent`.
 
+Founder review URL: `http://localhost:21087/?reseed` — group seeds
+install once per profile (027 § 4), so without the flag a running
+profile shows its first-installed seed forever. `?reseed` drops
+installed builtin seeds at boot and reinstalls from the shipped
+catalog; custom groups, My Words and entities survive (`public/db.js`,
+`shared/groups.mjs: reseedBuiltinGroups`). Plain `/` keeps the
+profile's edits — use it when testing that they stick.
+
 - Each copy has its own persist dir and inspector port. **BUILT** (`scripts/dev.mjs:51`)
 - `npm run dev` on a live browse copy prints the URL and exits; it does not kill the founder tab. **BUILT** (`scripts/dev.mjs:231-232`)
 - Wrangler secrets live in `.dev.vars` (see `.dev.vars.example`).
