@@ -43,7 +43,7 @@ Executing phases only. Each row names the **next** slice.
 | [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Slices 1–3 landed 2026-09-26: Worker endpoint (shared R2 cache, fair use, no ids upstream), client Tier-1 + ~300 ms clip fallback, transform buttons speak through it. Next: slice 4 clip re-mint — paid, founder-gated at ≤10/batch |
 | [025 — Expressive voice](025_Expressive_Voice.md) | Slices 1–4 landed 2026-09-26: happy/sad/angry faces in the last strip slot (designer icons), Worker-side prosody, feeling-keyed caches, lit-face suggestion, Expressive voice setting. Next: § 8 listen — paid, founder-gated |
 | [026 — Topic groups](026_Topic_Groups.md) | Ready: finalize membership with 027 A1 against actual anchor capacity; neutral noun frame and topic glyphs follow. Existing saves use 027 adoption, never re-seeding. |
-| [027 — Occasion boards and independent editing](027_Block_Doors.md) | Ready 2026-09-27: A1 seed/compiler + geometry, then state/replay, one local editor, Speak-stays/starters, integrated proof. Blocks author seeds only; no runtime linked edits. |
+| [027 — Occasion boards and independent editing](027_Occasion_Boards.md) | Ready 2026-09-27: A1 seed/compiler + geometry, then state/replay, one local editor, Speak-stays/starters, integrated proof. Blocks author seeds only; no runtime linked edits. |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

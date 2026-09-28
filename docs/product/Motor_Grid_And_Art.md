@@ -63,7 +63,7 @@ When a grid engine exists, a test must show that a suggestion model cannot reord
 
 **DECIDED 2026-09-27; not built.** Founder approved the launch recommendation
 in the 027 review. This section owns the product contract; execution and
-migration details are in `docs/phases/027_Block_Doors.md`. It replaces the
+migration details are in `docs/phases/027_Occasion_Boards.md`. It replaces the
 2026-09-24 return-home rule and the earlier linked-block proposal. Existing
 many-to-many groups and local editing are built; the amended behavior below
 must not be described as shipped until 027's proofs pass.

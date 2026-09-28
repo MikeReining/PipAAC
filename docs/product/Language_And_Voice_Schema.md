@@ -14,7 +14,7 @@ word in the same language. That is the gap this schema fills.
 
 ## Pending group schema amendment — 027
 
-**DECIDED 2026-09-27; not built.** `docs/phases/027_Block_Doors.md` § 3–4
+**DECIDED 2026-09-27; not built.** `docs/phases/027_Occasion_Boards.md` § 3–4
 specifies the implementation packet for ordinary group membership separated
 from per-layout placements, seed installation state, reserved anchor geometry,
 and legacy snapshot/op conversion. No runtime block tables are planned.
