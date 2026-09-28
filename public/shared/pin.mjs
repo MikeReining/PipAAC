@@ -12,11 +12,17 @@
  *   first open after reset) — never factory-seeded; a known default
  *   PIN protects nobody and a forced setup flow adds a step before a
  *   child ever speaks.
- * - **Stored** as a SHA-256 hash under `user/<id>/pin` in the device
- *   keyStore — per device, never synced. The tablet's PIN belongs to
- *   the tablet; a sibling's iPad can have its own. (A synced setting
- *   would need a learner_profile column, and schemaSql ships with the
- *   Ara catalog — per-device is also just better.)
+ * - **Stored** as a SHA-256 hash under `device/pin` in the device
+ *   keyStore — one PIN per device, never synced, shared by every person
+ *   on it. The tablet's PIN belongs to the tablet; a sibling's iPad can
+ *   have its own. An SLP's laptop with 14 clients has one PIN, not 14
+ *   (Settings redesign, founder 2026-09-28). A PIN stored the old way,
+ *   under `user/<id>/pin`, still opens and moves itself to the device
+ *   key on its first good check.
+ * - **Never shown.** Only the hash is kept, so the app cannot display
+ *   the digits — the child watching is the threat, and adults reuse
+ *   phone PINs. Settings changes it (no old PIN: the gate was just
+ *   passed); Forgot resets it with the license or recovery card.
  * - **Recovered** with the license key — the same pip-life token that
  *   activated Pip, compared against the device-local copy 024 keeps.
  *   A child can't type a 20+-char license. If the device has no stored
@@ -33,7 +39,8 @@ const te = new TextEncoder();
 const hex = (buf) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 
-const pinKey = (userId) => `user/${userId}/pin`;
+const DEVICE_PIN = "device/pin";
+const legacyPinKey = (userId) => `user/${userId}/pin`;
 const licenseKey = (userId) => `user/${userId}/license`;
 
 export const PIN_RE = /^\d{4,6}$/;
@@ -44,18 +51,23 @@ async function hash(userId, pin) {
 }
 
 export async function hasPin(store, userId) {
-  return !!(await store.get(pinKey(userId)));
+  return !!(await store.get(DEVICE_PIN)) || !!(await store.get(legacyPinKey(userId)));
 }
 
 export async function setPin(store, userId, pin) {
   if (!PIN_RE.test(String(pin))) throw new Error("pin must be 4-6 digits");
-  await store.put(pinKey(userId), await hash(userId, String(pin)));
+  await store.put(DEVICE_PIN, await hash("device", String(pin)));
 }
 
+/** The device PIN when set; else this person's PIN from before the
+ *  device PIN, which becomes the device PIN on a match. */
 export async function checkPin(store, userId, pin) {
-  const stored = await store.get(pinKey(userId));
-  if (!stored) return false;
-  return stored === (await hash(userId, String(pin)));
+  const device = await store.get(DEVICE_PIN);
+  if (device) return device === (await hash("device", String(pin)));
+  const legacy = await store.get(legacyPinKey(userId));
+  if (!legacy || legacy !== (await hash(userId, String(pin)))) return false;
+  await setPin(store, userId, pin);
+  return true;
 }
 
 /** Recovery: verify an adult credential, then the caller sets a new

@@ -1673,15 +1673,19 @@ document.addEventListener("keydown", (e) => {
   if ($("kb-device")) kbUi.feed(e.key);
   else kbUi.press(e.key);
 });
-/** 023 §1e — the Settings PIN gates Parent corner. First open creates
- *  it on this device; every later open asks; Forgot accepts the
- *  license key or the QR card (verifyAdult), then a new PIN is set. */
-async function gatePin(onOk) {
+/** 023 §1e — the Settings PIN gates Settings. First open creates it on
+ *  this device; every later open asks; Forgot accepts the license key
+ *  or the QR card (verifyAdult), then a new PIN is set. `change` (from
+ *  Settings → Backup & privacy) asks for the new PIN twice and never
+ *  for the old one: the gate was just passed. */
+const PIN_SHARE_HINT = "Pick one you're happy to share with the team. Don't reuse your phone or bank PIN.";
+async function gatePin(onOk, { change = false } = {}) {
   const overlay = $("pinform"), input = $("pin-input"),
         err = $("pin-error"), hint = $("pin-hint"),
         title = $("pin-title"), go = $("pin-go"), forgot = $("pin-forgot");
   const store = await openKeyStore();
-  let mode = (await hasPin(store, me.id)) ? "check" : "create";
+  let mode = change ? "new" : (await hasPin(store, me.id)) ? "check" : "create";
+  let first = "";
   const render = () => {
     err.textContent = "";
     input.value = "";
@@ -1690,8 +1694,16 @@ async function gatePin(onOk) {
     forgot.hidden = mode !== "check";
     if (mode === "create") {
       title.textContent = "Choose a PIN";
-      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Settings.";
+      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Settings. " + PIN_SHARE_HINT;
       go.textContent = "Set PIN";
+    } else if (mode === "new") {
+      title.textContent = "New Settings PIN";
+      hint.textContent = "4–6 digits, for everyone on this device. " + PIN_SHARE_HINT;
+      go.textContent = "Next";
+    } else if (mode === "confirm") {
+      title.textContent = "Type it again";
+      hint.textContent = "The same 4–6 digits, to be sure.";
+      go.textContent = "Save PIN";
     } else if (mode === "check") {
       title.textContent = "Settings PIN";
       hint.textContent = "";
@@ -1714,11 +1726,18 @@ async function gatePin(onOk) {
     }
     if (mode === "forgot") {
       if (await verifyAdult(store, me.id, v)) { mode = "create"; render(); }
-      else err.textContent = "That does not match this user's license or recovery card.";
+      else err.textContent = "That does not match this board's license or recovery card.";
       return;
     }
     if (!PIN_RE.test(v)) { err.textContent = "4–6 digits."; return; }
+    if (mode === "new") { first = v; mode = "confirm"; render(); return; }
+    if (mode === "confirm" && v !== first) {
+      mode = "new"; render();
+      err.textContent = "Those didn't match. Start again.";
+      return;
+    }
     await setPin(store, me.id, v);
+    if (change) toast("Settings PIN changed.");
     finish();
   };
   input.onkeydown = (e) => { if (e.key === "Enter") go.click(); };
@@ -1730,6 +1749,7 @@ async function gatePin(onOk) {
 /* Settings — public/board/settings-ui.js owns the page navigation;
  * every control inside keeps its own module's wiring. */
 const settingsUi = mountSettings({ me, open });
+$("pin-change").addEventListener("click", () => gatePin(() => {}, { change: true }));
 // Set only by the post-switch reopen below: the corner click then skips
 // the PIN (it was just entered in this tab) and opens that page, so every
 // module's corner-click refresh runs as on a normal open.

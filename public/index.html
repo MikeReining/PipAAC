@@ -981,6 +981,11 @@
                 <p class="hint">If this device is lost or reset, the card brings everything back. Print it and keep it somewhere safe. Without the card, a linked device, or a device backup, a lost board is gone for good.</p>
               </div>
               <div class="seg-row">
+                <span class="seg-label">Settings PIN</span>
+                <div class="row"><button class="btn secondary" id="pin-change">Change PIN</button></div>
+                <p class="hint">One PIN for everyone on this device. Pip never shows it, so a child watching can't learn it. Forgot it? The license key or the recovery card resets it.</p>
+              </div>
+              <div class="seg-row">
                 <span class="seg-label">Share anonymous counts with Pip</span>
                 <div class="seg" id="share-research">
                   <button data-v="0">Off</button>
@@ -1261,7 +1266,7 @@
          created on first open, recovered with the license key. -->
     <div class="overlay" id="pinform">
       <div class="sheet">
-        <h2 id="pin-title">Parent PIN</h2>
+        <h2 id="pin-title">Settings PIN</h2>
         <div id="pin-body">
           <p class="hint" id="pin-hint"></p>
           <input type="password" id="pin-input" inputmode="numeric"
