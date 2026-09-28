@@ -147,6 +147,7 @@ export const NON_PLURALS_ENDING_IN_S = new Set([
   "perhaps",
   "pajamas",
   "pyjamas",
+  "sunglasses",
 ]);
 
 export function isPluralWord(word) {
