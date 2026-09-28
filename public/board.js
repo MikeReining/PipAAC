@@ -1380,7 +1380,7 @@ function renderGrid() {
     if (anchor?.kind === "groups") {
       const el = document.createElement("button");
       el.className = "cell anchor-cell";
-      el.innerHTML = `<span class="glyph">🗂️</span>`;
+      el.innerHTML = `<span class="glyph"><img class="gicon" src="/icons/folder.svg" alt=""></span>`;
       el.addEventListener("click", groupsUi.openGroupIndex);
       grid.appendChild(el);
       continue;

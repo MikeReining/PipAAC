@@ -342,6 +342,7 @@
       }
       .anchor[hidden] { display: none; }
       .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; flex: none; }
+      .anchor .glyph img, .cell.anchor-cell .glyph img { width: 1em; height: 1em; display: block; }
       .anchor span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       /* "Show me where": a 1.5s ink halo on the Groups anchor plus a
          fixed-position caption — out of flow, so zero layout shift, and
@@ -737,10 +738,10 @@
         <span class="glyph">＋</span><span>Add</span>
       </button>
       <button class="anchor" id="anchor-groups" title="Groups">
-        <span class="glyph">🗂️</span><span>Groups</span>
+        <span class="glyph"><img class="gicon" src="/icons/folder.svg" alt=""></span><span>Groups</span>
       </button>
       <button class="anchor" id="anchor-kb" title="Keyboard">
-        <span class="glyph">⌨</span><span>Keyboard</span>
+        <span class="glyph"><img class="gicon" src="/icons/keyboard.svg" alt=""></span><span>Keyboard</span>
       </button>
     </div>
     <div id="grid"></div>

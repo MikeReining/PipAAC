@@ -122,10 +122,17 @@ reduce group reachability; Library recovery remains available.
 
 Same family as `public/icons` (24 grid, 2px ink, round caps, no color).
 Draft set in `public/icons/groups/` (founder-approved style; Body is the
-arms-out figure). New doors need icons: Outside, Bathroom, School, Going
-out, Screens, Art & music, Colors. Retired: Actions, Moving, Vehicles,
-Places. Describing uses a contrasting-size shapes glyph; the palette moves to
-Colors. Follow the existing ink glyph family; no generated raster batch is
+arms-out figure). Describing uses a contrasting-size shapes glyph; the
+palette moves to Colors.
+
+**Wired 2026-09-28:** `GROUP_ICONS` in `groups-ui.js` paints the svg for
+mapped doors and falls back to the seed emoji where no art exists — the
+remaining emoji doors are the designer's gap list: Breakfast, Lunch,
+Dinner, Snack, Fruit, Things, Describing (shapes glyph), Outside,
+School, Art & music, Bathroom, Screens. Reused: `places` → Going out,
+`actions` (pointing hand) → Touch & sound, the palette → Colors, the
+chrome question mark → Who & which. Unused drafts: `food`, `moving`,
+`vehicles`. Follow the existing ink glyph family; no generated raster batch is
 authorized by this packet.
 
 ### D8 — Things and places take the neutral frame

@@ -69,7 +69,6 @@ export function mountKeyboard({
 
   function renderKbAnchor() {
     const a = $("anchor-kb");
-    a.querySelector(".glyph").textContent = kbOpen ? "▦" : "⌨";
     a.querySelector("span:last-child").textContent = kbOpen ? "Board" : "Keyboard";
     a.title = kbOpen ? "Board" : "Keyboard";
   }

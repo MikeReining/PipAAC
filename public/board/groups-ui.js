@@ -17,6 +17,36 @@ import {
 
 const $ = (id) => document.getElementById(id);
 
+/* 026 D7: door icons are ink glyphs from the chrome icon family. Not
+ * every door has art yet — a group with no entry keeps its seed emoji,
+ * which is the visible gap list for the designer. `places` serves
+ * Going out, `actions` (a pointing hand) serves Touch & sound, the
+ * palette serves Colors (D7), and Who & which borrows the chrome
+ * question mark. */
+const GROUP_ICONS = {
+  grp_people: "/icons/groups/people.svg",
+  grp_my_words: "/icons/groups/my_words.svg",
+  grp_social: "/icons/groups/social.svg",
+  grp_numbers: "/icons/groups/numbers.svg",
+  grp_time: "/icons/groups/time.svg",
+  grp_home: "/icons/groups/home.svg",
+  grp_animals: "/icons/groups/animals.svg",
+  grp_body: "/icons/groups/body.svg",
+  grp_feelings: "/icons/groups/feelings.svg",
+  grp_clothes: "/icons/groups/clothes.svg",
+  grp_play: "/icons/groups/play.svg",
+  grp_drinks: "/icons/groups/drinks.svg",
+  grp_little_words: "/icons/groups/little_words.svg",
+  grp_more_people: "/icons/groups/more_people.svg",
+  grp_more_doing: "/icons/groups/more_doing.svg",
+  grp_more_where: "/icons/groups/more_where.svg",
+  grp_more_describing: "/icons/groups/more_describing.svg",
+  grp_going_out: "/icons/groups/places.svg",
+  grp_senses: "/icons/groups/actions.svg",
+  grp_colors: "/icons/groups/describing.svg",
+  grp_who_which: "/icons/question.svg",
+};
+
 export function mountGroups({
   db, locale, all, boardGeom, getEditing, getModelGlow, getLikelyGroups,
   setView, open, close, toast, wordTile, layerMark, fitLabels, tap, shownLabel,
@@ -54,7 +84,16 @@ export function mountGroups({
     el.dataset.group = row.id;
     const g = document.createElement("span");
     g.className = "glyph";
-    g.textContent = row.glyph ?? "🗂️";
+    const icon = GROUP_ICONS[row.id];
+    if (icon) {
+      const img = document.createElement("img");
+      img.className = "gicon";
+      img.src = icon;
+      img.alt = "";
+      g.appendChild(img);
+    } else {
+      g.textContent = row.glyph ?? "🗂️";
+    }
     if (row.photo_key) {
       loadPhotoURL(row.photo_key).then((url) => {
         if (!url) return;
