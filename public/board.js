@@ -1675,6 +1675,11 @@ function syncCorner() {
   const inGroups = view === "group" || view === "groupIndex";
   $("corner").title = inGroups ? "Home" : editing ? "Done editing" : "Parent corner";
   $("corner").setAttribute("aria-label", $("corner").title);
+  // Groups toggles like Keyboard: on the groups screen the anchor offers
+  // the way back — the label names the destination, never where you are.
+  const onIndex = view === "groupIndex";
+  $("anchor-groups").querySelector("span:last-child").textContent = onIndex ? "Board" : "Groups";
+  $("anchor-groups").title = onIndex ? "Board" : "Groups";
   // 027 B5: Add sits beside Groups, in Edit mode only.
   $("anchor-add").hidden = !(editing && inGroups);
   sizeStrip(boardGeom().cols);
@@ -1865,7 +1870,8 @@ $("anchor-kb").addEventListener("click", () => {
   // gesture — synchronous, no await before it.
   $("kb-device")?.focus();
 });
-$("anchor-groups").addEventListener("click", () => groupsUi.openGroupIndex());
+$("anchor-groups").addEventListener("click", () =>
+  view === "groupIndex" ? kbUi.setView("board") : groupsUi.openGroupIndex());
 $("spot-chip").addEventListener("click", () => {
   endSession(db);
   renderGrid();
