@@ -162,21 +162,26 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
 
 ### 027 group-state amendment — decided 2026-09-27, not built
 
-027 A2 versions group ops and snapshots for independent membership and per-layout
-positions. Include `group_membership`, `group_cell`, `group_layout`, seed installation
-records, visibility, and the top-row setting in the synced state. Migrate live
-DBs, persisted `sync_baseline` JSON, and legacy no-layout op payloads together.
-A newly restored device must load saved installation markers before seeding;
-empty/locally pruned groups must remain empty/pruned after import and replay.
+027 A2 adds layout coordinates to group ops and puts `group_membership`,
+`group_cell` (per board size), seed installation records, visibility, and the
+top-row setting in the synced state. The reserved cells (top row, frame) are
+never stored per group, so they sync nothing of their own. A newly restored
+device loads saved installation markers before seeding; empty or pruned groups
+stay that way after import and replay. The seed-install op carries the installed
+memberships and positions, so replay never re-derives them from a newer catalog.
+A Cells change is one op that writes the new size's missing positions.
+
+**Clean break:** there are no users, so no migration of live DBs, persisted
+`sync_baseline` JSON, or old op payloads — a pre-change DB resets to the fresh
+seed.
 
 Local group edits never target other groups. Multi-board add carries explicit
-selected destination IDs and requested per-layout positions as one operation;
-replay resolves occupied slots with the same deterministic geometry owner.
-Identity/photo/recording edits remain shared. Unknown payload versions require
-an update, never interpretation as the old op. Crypto, relay access, history
-privacy, and user data retention are unchanged.
+selected destination IDs and chosen positions as one operation; replay resolves
+occupied cells with the same deterministic geometry owner. Identity, photo, and
+recording edits stay shared. Crypto, relay access, history privacy, and user
+data retention are unchanged.
 
-027 § 3–4 owns the executable migration packet; durable group semantics live in
+027 § 3–4 owns the executable packet; durable group semantics live in
 Motor_Grid_And_Art § Groups. No runtime block membership or linked-edit ops.
 
 ## 5. Ordering and merging: one order, same functions
@@ -209,7 +214,7 @@ itself is still PROPOSED.
   skip for both senses and entities; they do not silently file into My Words.
 - **Invariants hold after every op**, because every op runs through the
   same write owner. **027 amendment (not built):** one membership per
-  group/item, one ordinary occupant per layout/page/slot, valid reservations,
+  group/item, one occupant per board size/page/slot, no writes to reserved cells,
   and no placement edits to other groups. Zero placements is allowed; built-in
   words may be removed locally. Group ops never write the core map.
 - **Last writer wins on plain fields.** Two adults renaming Cooper: the
