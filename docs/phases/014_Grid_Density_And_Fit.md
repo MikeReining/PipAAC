@@ -100,7 +100,7 @@ all three.
 **One Cells setting per profile** (**DECIDED 2026-09-22**, founder). Cells follow the person's
 hands and eyes, not the content, so the home board, every group page, and
 the Smart bar all use the profile's one setting. A group has no size of its
-own; a big group pages (`Next ›`). **AMENDED 2026-09-27; not built (027):**
+own; a big group pages (`Next ›`). **AMENDED 2026-09-27; BUILT 2026-09-28 (027):**
 groups store positions per board size, created when needed — the seed ships
 the three named sizes, and accepting a Cells change (the existing move-cost
 preview, now including groups) writes the new size's missing positions once.

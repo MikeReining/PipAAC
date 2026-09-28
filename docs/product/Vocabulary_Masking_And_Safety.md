@@ -8,7 +8,7 @@ Truth owners: `docs/product/Personal_Entities.md`, `docs/product/Motor_Grid_And_
 
 ## Group removal is not global hiding
 
-**DECIDED 2026-09-27; not built (027).** Remove from [group] removes only that
+**DECIDED 2026-09-27; BUILT 2026-09-28 (027).** Remove from [group] removes only that
 membership and its layout positions; it never masks or retires a word. An
 active word with no group placements remains in the Library and keyboard
 lookup. Global Hide/retire stays a separate word-card action. The group editor

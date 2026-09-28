@@ -84,7 +84,7 @@ category-and-My-Words filing written earlier the same day). **BUILT**
   (009 slice 1 — `entityMatches` + `catalogMatches` in
   `public/shared/groups.mjs`; `renderAddMatches` in `public/board.js`).
   Rule: `docs/product/Word_Library.md` § 5.1.
-- **Many groups, or no placement after removal (027; decided, not built).**
+- **Many groups, or no placement after removal (027; BUILT 2026-09-28).**
   Removing the last placement or deleting its only group leaves the active
   entity in the Library and keyboard lookup. Never silently add it to My Words.
   Retirement is a separate explicit word-card action.
@@ -94,7 +94,7 @@ category-and-My-Words filing written earlier the same day). **BUILT**
   its name sounds. The card may list groups because the adult is
   deliberately adding the word somewhere else, not filing a new add:
   `docs/product/Word_Library.md` § 3–4.
-- **Classification suggests only (027; decided, not built).** Enrichment may
+- **Classification suggests only (027; BUILT 2026-09-28).** Enrichment may
   supply a meaning/category hint with provenance. It must not automatically
   place the entity in another group, online or offline. Additional destinations
   require the explicit Add to other boards action. Retire the old automatic

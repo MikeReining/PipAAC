@@ -22,8 +22,10 @@ One bird, drawn at the sizes it's used:
 
 ## Group surface — launch amendment
 
-**DECIDED 2026-09-27; not built.** Behavior owner:
-`docs/product/Motor_Grid_And_Art.md` § Groups; execution: 027.
+**DECIDED 2026-09-27; BUILT 2026-09-28** (027 A3). Behavior owner:
+`docs/product/Motor_Grid_And_Art.md` § Groups; painter: `public/board/groups-ui.js`
+(`groups-ui.css` — reserved cells read faded-solid in Edit mode, never dashed
+or droppable; a hidden door shows faded with Show/Hide).
 
 - Groups share the home board's active cell size; sentence bar and Smart bar
   do not move. Reserved cells show the home board's top row (on by default)

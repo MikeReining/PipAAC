@@ -97,7 +97,7 @@ incumbents before launch.
 
 ### D4 — Full-screen groups and speech
 
-**AMENDED 2026-09-27; not built:** 027 replaces the original return-home-after-
+**AMENDED 2026-09-27; BUILT 2026-09-28:** 027 replaced the original return-home-after-
 Speak behavior. Groups remain full screen with the Smart bar above; the home
 board's top row shows on every group by default (a setting), with the
 yes/no/stop/help frame always. Speak keeps the current group and
