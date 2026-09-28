@@ -36,6 +36,7 @@ const FORMS_DATA = join(repoRoot, "data/forms/en.json");
 const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
 const FEELING_VOICE = join(repoRoot, "data/catalog/feeling_voice.json");
 const GROUP_STARTERS = join(repoRoot, "data/prediction/door_starters.en.json");
+const WORD_FREQ = join(repoRoot, "data/prediction/word_frequency.en.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const SYMBOLS_ROOT = join(repoRoot, "assets/symbols");
@@ -379,9 +380,16 @@ export function buildCatalog(
   }
 
   const catalogLocales = [...new Set(labels.map((l) => l.locale))];
+  // 026: topic members fill their band columns most-said first —
+  // CHILDES child-line counts, built by
+  // scripts/prediction/childes/word_frequency.mjs. A checkout without
+  // the table falls back to the seed's authored order.
+  const wordFreq = existsSync(WORD_FREQ)
+    ? JSON.parse(readFileSync(WORD_FREQ, "utf8")).counts
+    : {};
   const { groups, groupMembers, groupCells, groupLabels, groupLayouts } = buildGroups(
     lexicon, groupSeed.topics, groupSeed.occasions,
-    { locales: catalogLocales, layouts, coreCells },
+    { locales: catalogLocales, layouts, coreCells, wordFreq },
   );
   for (const [name, g] of Object.entries(groupLayouts)) layouts[name].frame = g.frame;
   const { families, familyItems } = buildFamilies(lexicon, familySeed, mapLayouts);
@@ -393,6 +401,7 @@ export function buildCatalog(
       coordinateMap: "docs/product/Core_Coordinate_Map.md",
       schema: "src/board/schema.sql",
       groupSeed: ["data/group_seed.topics.json", "data/group_seed.occasions.json"],
+      wordFrequency: "data/prediction/word_frequency.en.json",
       numberAliases: "data/number_aliases.json",
       forms: "data/forms/en.json",
       phraseTable: "data/prediction/phrase_table.en.json",

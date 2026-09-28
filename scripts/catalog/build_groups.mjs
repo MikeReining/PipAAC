@@ -14,7 +14,11 @@
  *     order, each kept together from a column top (`side: "right"`
  *     clusters by the frame);
  *   - topic groups fill in band order (018 D5), a new band starting a fresh
- *     column while the rest of the group still fits on the page.
+ *     column while the rest of the group still fits on the page. Inside a
+ *     band, members sort by CHILDES child-speech frequency — most-said
+ *     first (026: the words children actually say reach the top of the
+ *     column); the seed's authored order breaks ties and orders words the
+ *     corpus never heard.
  * A word the page already shows in a reserved cell (top row, frame) gets
  * no position at that size — it would render twice.
  *
@@ -71,11 +75,12 @@ export function groupLayouts(layouts, coreCells, frameSenses) {
   return out;
 }
 
-/** Topic fill: band order, fresh column per band while the rest fits. */
-function fillTopic(members, geom, bandOf) {
+/** Topic fill: band order, fresh column per band while the rest fits.
+ *  Within a band: child-speech frequency desc, then authored order. */
+function fillTopic(members, geom, bandOf, freqOf) {
   const rank = (s) => Math.max(0, BAND_ORDER.indexOf(bandOf(s)));
   const sorted = members.map((s, i) => [s, i])
-    .sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).map(([s]) => s);
+    .sort((a, b) => rank(a[0]) - rank(b[0]) || freqOf(b[0]) - freqOf(a[0]) || a[1] - b[1]).map(([s]) => s);
   const columns = [];
   for (const slot of geom.content) {
     const col = slot % geom.cols;
@@ -102,10 +107,12 @@ function fillTopic(members, geom, bandOf) {
  * the shipped home cells. Returns catalog rows plus `groupLayouts` (shape +
  * frame per size, shipped as catalog.layouts[*].frame).
  */
-export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"], layouts, coreCells }) {
+export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"], layouts, coreCells, wordFreq = {} }) {
   const resolve = resolver(lexicon);
   const band = new Map(lexicon.entries.map((e) => [sid(e.slot), e.fitzgeraldColor]));
   const bandOf = (s) => band.get(s);
+  const freq = new Map(lexicon.entries.map((e) => [sid(e.slot), wordFreq[normalizeV1(e.spokenText)] ?? 0]));
+  const freqOf = (s) => freq.get(s) ?? 0;
   const frameSenses = occasionSeed.frame.map((w) => resolve(w, "frame"));
   const shapes = groupLayouts(layouts, coreCells, frameSenses);
   const homeOf = (layout) => coreCells.filter((c) => c.layout === layout);
@@ -265,7 +272,7 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
       const gid = `grp_${g.key}`;
       if (!eligible(g, layout)) continue;
       const members = membersOf.get(gid).filter((s) => !shown.has(s));
-      const cells = coordinated.includes(gid) ? at : fillTopic(members, geom, bandOf);
+      const cells = coordinated.includes(gid) ? at : fillTopic(members, geom, bandOf, freqOf);
       for (const s of members) {
         const c = cells.get(s);
         groupCells.push({ group_id: gid, layout, item_kind: "sense", item_id: s, page: c.page, slot_index: c.slot_index });

@@ -85,6 +85,12 @@ then frozen. Counts below are input sizes, not final capacity claims.
 Bathroom and Screens keep the draft topic order for launch. Families can
 reorder or hide any group; frequency never reorders an installed index.
 
+**Member order, ruled 2026-09-28** (founder): inside a group, words fill
+band columns most-said-first by CHILDES child-line counts
+(`data/prediction/word_frequency.en.json`, built by
+`scripts/prediction/childes/word_frequency.mjs`); the seed's authored
+order breaks ties and orders unheard words. No hand-ranked word lists.
+
 ### D3 — One page per seeded topic on 60/90 cells
 
 027's shared geometry computes capacity from the reserved cells (the home
