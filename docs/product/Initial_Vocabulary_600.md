@@ -251,6 +251,24 @@ and grammar words).
 | 700 | **chocolate** | Noun | None | Illustrated Object | CDI; ARASAAC | Chocolate bar with broken square pieces |
 | 701 | **lollipop** | Noun | None | Illustrated Object | CDI; ARASAAC | Round swirl lollipop on a white stick |
 | 702 | **dessert** | Noun | None | Illustrated Object | CDI; ARASAAC | Assorted sweets plate with cake and candy |
+| 703 | **blueberry** | Noun | None | Illustrated Object | CDI; ARASAAC | Small cluster of round blue berries |
+| 704 | **raspberry** | Noun | None | Illustrated Object | CDI; ARASAAC | Bumpy red raspberry with tiny drupelets |
+| 705 | **blackberry** | Noun | None | Illustrated Object | CDI; ARASAAC | Bumpy dark purple blackberry |
+| 706 | **cherry** | Noun | None | Illustrated Object | CDI; ARASAAC | Pair of shiny red cherries on a stem |
+| 707 | **peach** | Noun | None | Illustrated Object | CDI; ARASAAC | Fuzzy orange-pink peach with one leaf |
+| 708 | **pear** | Noun | None | Illustrated Object | CDI; ARASAAC | Green pear with curved stem |
+| 709 | **mango** | Noun | None | Illustrated Object | CDI; ARASAAC | Ripe orange-red mango, one slice cut |
+| 710 | **pineapple** | Noun | None | Illustrated Object | CDI; ARASAAC | Spiky pineapple with green crown |
+| 711 | **kiwi** | Noun | None | Illustrated Object | CDI; ARASAAC | Brown kiwi cut open showing green flesh |
+| 712 | **cantaloupe** | Noun | None | Illustrated Object | CDI; ARASAAC | Netted cantaloupe half with orange flesh |
+| 713 | **melon** | Noun | None | Illustrated Object | CDI; ARASAAC | Whole green melon beside a cut wedge |
+| 714 | **coconut** | Noun | None | Illustrated Object | CDI; ARASAAC | Brown coconut cracked open showing white flesh |
+| 715 | **orange juice** | Noun | None | Illustrated Object | CDI; ARASAAC | Glass of orange juice beside an orange half |
+| 716 | **grape juice** | Noun | None | Illustrated Object | CDI; ARASAAC | Glass of purple grape juice with grapes |
+| 717 | **strawberry milk** | Noun | None | Illustrated Object | CDI; ARASAAC | Carton of pink strawberry milk |
+| 718 | **lemonade** | Noun | None | Illustrated Object | CDI; ARASAAC | Glass of lemonade with lemon slice and straw |
+| 719 | **hot chocolate** | Noun | None | Illustrated Object | CDI; ARASAAC | Mug of hot chocolate with marshmallows |
+| 720 | **milkshake** | Noun | None | Illustrated Object | CDI; ARASAAC | Tall milkshake glass with whipped cream and straw |
 
 ### 3.2 Body, Health & Hygiene (43 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Health taxonomy. Art archetype: Stick Figure (somatic/roles) & Illustrated Object (tools/organs).*

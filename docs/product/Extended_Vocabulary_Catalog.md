@@ -128,8 +128,7 @@ walker, crutches, cane, communication device, stairs gate, baby monitor
 
 art: draw
 
-avocado, blueberry, raspberry, blackberry, cherry, peach, pear, plum, mango,
-pineapple, kiwi, lemon, lime, coconut, cantaloupe, melon, clementine, raisins,
+avocado, plum, lemon, lime, clementine, raisins,
 fruit cup, tomato, potato, sweet potato, mashed potatoes,
 french toast, hash browns, tater tots, onion, pickle,
 lettuce, salad, spinach, celery, peas, green beans, beans, cauliflower,
@@ -144,8 +143,8 @@ pita, cornbread, biscuit, dinner roll, croissant, bun,
 granola, trail mix, nuts, peanuts, almonds, sunflower seeds,
 rice cake, pie, cinnamon roll, marshmallow,
 gum, gummy bears, jelly beans, cotton candy, caramel,
-sprinkles, whipped cream, frosting, milkshake, hot chocolate, lemonade, soda,
-orange juice, grape juice, coffee, sparkling water, ice, ice cube, slushie,
+sprinkles, whipped cream, frosting, soda,
+coffee, sparkling water, ice, ice cube, slushie,
 snow cone, sundae, ice cream cone, baby food, formula, puffs, chili, corn dog,
 cheeseburger, fried chicken, chicken tenders, leftovers, lunch meat,
 bologna, hot pocket, pot roast, pork chop, lamb chop, tofu, lentils,
@@ -163,7 +162,7 @@ sugar cookie, chocolate chip cookie, pumpkin bread, apple pie,
 cherry pie, cheesecake, birthday cake, cake pop, cookie dough, frozen yogurt,
 sherbet, italian ice, fudge, candy bar, peppermint, licorice, gumdrops,
 jawbreaker, applesauce pouch, warm milk, soy milk, oat milk, almond milk,
-coconut water, iced tea, sweet tea, root beer float, strawberry milk, eggnog,
+coconut water, iced tea, sweet tea, root beer float, eggnog,
 apple cider
 
 ## Animals

@@ -4642,81 +4642,9 @@
    "art": "draw"
   },
   {
-   "id": "blueberry",
-   "text": "blueberry",
-   "spokenText": "blueberry",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "raspberry",
-   "text": "raspberry",
-   "spokenText": "raspberry",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "blackberry",
-   "text": "blackberry",
-   "spokenText": "blackberry",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "cherry",
-   "text": "cherry",
-   "spokenText": "cherry",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "peach",
-   "text": "peach",
-   "spokenText": "peach",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "pear",
-   "text": "pear",
-   "spokenText": "pear",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
    "id": "plum",
    "text": "plum",
    "spokenText": "plum",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "mango",
-   "text": "mango",
-   "spokenText": "mango",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "pineapple",
-   "text": "pineapple",
-   "spokenText": "pineapple",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "kiwi",
-   "text": "kiwi",
-   "spokenText": "kiwi",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -4733,30 +4661,6 @@
    "id": "lime",
    "text": "lime",
    "spokenText": "lime",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "coconut",
-   "text": "coconut",
-   "spokenText": "coconut",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "cantaloupe",
-   "text": "cantaloupe",
-   "spokenText": "cantaloupe",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "melon",
-   "text": "melon",
-   "spokenText": "melon",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -5522,49 +5426,9 @@
    "art": "draw"
   },
   {
-   "id": "milkshake",
-   "text": "milkshake",
-   "spokenText": "milkshake",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "hot_chocolate",
-   "text": "hot chocolate",
-   "spokenText": "hot chocolate",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "lemonade",
-   "text": "lemonade",
-   "spokenText": "lemonade",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
    "id": "soda",
    "text": "soda",
    "spokenText": "soda",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "orange_juice",
-   "text": "orange juice",
-   "spokenText": "orange juice",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "grape_juice",
-   "text": "grape juice",
-   "spokenText": "grape juice",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -6493,14 +6357,6 @@
    "id": "root_beer_float",
    "text": "root beer float",
    "spokenText": "root beer float",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "strawberry_milk",
-   "text": "strawberry milk",
-   "spokenText": "strawberry milk",
    "category": "Food",
    "kind": "word",
    "art": "draw"

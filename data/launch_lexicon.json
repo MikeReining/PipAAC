@@ -6263,6 +6263,168 @@
       "fitzgeraldColor": "None",
       "visualStyle": "Illustrated Object",
       "category": "Food & Drink"
+    },
+    {
+      "slot": 703,
+      "tier": 2,
+      "spokenText": "blueberry",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 704,
+      "tier": 2,
+      "spokenText": "raspberry",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 705,
+      "tier": 2,
+      "spokenText": "blackberry",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 706,
+      "tier": 2,
+      "spokenText": "cherry",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 707,
+      "tier": 2,
+      "spokenText": "peach",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 708,
+      "tier": 2,
+      "spokenText": "pear",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 709,
+      "tier": 2,
+      "spokenText": "mango",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 710,
+      "tier": 2,
+      "spokenText": "pineapple",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 711,
+      "tier": 2,
+      "spokenText": "kiwi",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 712,
+      "tier": 2,
+      "spokenText": "cantaloupe",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 713,
+      "tier": 2,
+      "spokenText": "melon",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 714,
+      "tier": 2,
+      "spokenText": "coconut",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 715,
+      "tier": 2,
+      "spokenText": "orange juice",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 716,
+      "tier": 2,
+      "spokenText": "grape juice",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 717,
+      "tier": 2,
+      "spokenText": "strawberry milk",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 718,
+      "tier": 2,
+      "spokenText": "lemonade",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 719,
+      "tier": 2,
+      "spokenText": "hot chocolate",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 720,
+      "tier": 2,
+      "spokenText": "milkshake",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     }
   ]
 }
