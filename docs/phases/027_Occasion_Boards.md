@@ -306,7 +306,17 @@ Add beside Groups in Edit mode; hidden groups and the occasions switch keep
 slots; × removes from any group with Undo; Add to other boards after an add
 and on the word card (with its shared-identity line); the Cells preview names
 group positions. Rendered on an agent slot at 60, 15 and 90 cells. Works Test
-items 1–3 and 5–8 still to run end to end in A5. No efficacy or clinical claim.
+items 1–3 and 5–8 still to run end to end in A5. A4: Speak stays in the group
+and page (rendered: a sentence spoken in Breakfast stays there; navigating to
+the index mid-playback stays there); `door_starters.mjs` counts only a turn's
+first analyzed token in group context (`childes.test.mjs`); `groupStarters`
+ranks her own spoken first picks in the group, then the table (pooled for
+custom groups), skipping masked, retired and on-page words; each pick logs the
+open group. The corrected table is not generated yet — the CHILDES cache is on
+the founder's machine (`node scripts/prediction/childes/door_starters.mjs`,
+then rebuild the catalog); until then the bar starts from her own first picks.
+The old within-turn table and the prototype address files are deleted.
+Proving A4 exposed two pre-024 Speak bugs, fixed separately (354f1c1). No efficacy or clinical claim.
 
 **Founder review items (curation draft):** the sibling splits (Home/Things,
 Describing/Touch & sound, Little words/Who & which), Dinner's membership, the

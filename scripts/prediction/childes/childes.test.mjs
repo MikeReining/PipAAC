@@ -347,3 +347,33 @@ test('pickForm: whose keys on the next word class — noun, EOS, else base (022)
   table.contexts['sns_the|sns_you'] = { BASE: 30 };
   assert.equal(pickForm(table, ['sns_the'], 'sns_you', 'sns_dog'), 'BASE');
 });
+
+test('group starters count only the first analyzed token, in context (027 § 5)', async () => {
+  const { countFirstWords, starterTable } = await import('./door_starters.mjs');
+  const sensesOf = new Map([
+    ['i', ['sns_i']], ['want', ['sns_want']], ['juice', ['sns_juice']], ['no', ['sns_no']],
+    ['more', ['sns_more']], ['dog', ['sns_dog']],
+  ]);
+  const analyze = (words) => words.map((w) => ({ lemma: sensesOf.has(w) ? w : null }));
+  const drinks = { id: 'grp_drinks', own: new Set(['sns_juice']) };
+  const transcripts = [[
+    ['MOT', ['more', 'juice']],
+    ['CHI', ['no']], // a one-word reply to an offer: counts, via the turn before
+    ['CHI', ['um', 'want', 'juice']], // unmapped first token: never promote "want"
+    ['CHI', ['i', 'want', 'juice']], // first token "i" — not "want", not "juice"
+    ['MOT', ['look']],
+    ['MOT', ['a', 'dog']],
+    ['CHI', ['dog']], // three turns past the juice: out of the drinks context
+  ]];
+  const out = countFirstWords(transcripts, [drinks], sensesOf, analyze);
+  const g = out.groups.grp_drinks;
+  assert.equal(g.turns, 3);
+  assert.equal(g.unmapped, 1);
+  assert.deepEqual(Object.fromEntries(g.counts), { sns_no: 1, sns_i: 1 });
+  assert.ok(!g.counts.has('sns_want'), 'a later word is never promoted');
+  assert.equal(out.pooled.turns, 4, 'pooled counts every child turn');
+  assert.deepEqual(Object.fromEntries(out.pooled.counts), { sns_no: 1, sns_i: 1, sns_dog: 1 });
+  const table = starterTable(out, { corpus: 'fixture' });
+  assert.deepEqual(table.groups.grp_drinks.first, [{ sense: 'sns_i', n: 1 }, { sense: 'sns_no', n: 1 }]);
+  assert.equal(JSON.stringify(table).includes('um'), false, 'aggregate counts only — no transcript text');
+});

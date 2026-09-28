@@ -35,6 +35,7 @@ const NUMBER_ALIASES = join(repoRoot, "data/number_aliases.json");
 const FORMS_DATA = join(repoRoot, "data/forms/en.json");
 const COACH_TIPS = join(repoRoot, "data/coach_tips.json");
 const FEELING_VOICE = join(repoRoot, "data/catalog/feeling_voice.json");
+const GROUP_STARTERS = join(repoRoot, "data/prediction/door_starters.en.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const SYMBOLS_ROOT = join(repoRoot, "assets/symbols");
@@ -405,6 +406,10 @@ export function buildCatalog(
             .filter(([k]) => !k.startsWith("_")),
         )
       : {},
+    // 027 § 5: first-word counts per group from real children, when the
+    // corrected CHILDES builder has run (door_starters.mjs, local cache);
+    // absent, the bar starts from the child's own first picks.
+    ...(existsSync(GROUP_STARTERS) ? { groupStarters: JSON.parse(readFileSync(GROUP_STARTERS, "utf8")) } : {}),
     // 025 § 3: the lit-face suggestion map (sense id -> feeling).
     feelingVoice: JSON.parse(readFileSync(FEELING_VOICE, "utf8")),
     // The bundle is the full device bootstrap: DDL plus rows, one fetch.

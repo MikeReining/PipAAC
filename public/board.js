@@ -8,7 +8,7 @@ import {
   closeSentence,
   detachEvent,
   fillChosen,
-  groupRanked,
+  groupRanked, groupStarters,
   logImpression,
   likelyGroups,
   logSelection,
@@ -483,8 +483,9 @@ async function speakSentence(feeling = null) {
     sentencePicks = 0;
     lastImpressionKey = null;
     openImpressionId = null;
-    // 018 D4: the sentence is done — the next one starts at home.
-    if (view !== "board") kbUi.setView("board");
+    // 027 B10: Speak stays in the current group and page — no navigation
+    // here, so a late callback can never undo where the user went since.
+    renderStrip();
   }
 }
 
@@ -897,12 +898,17 @@ async function renderStrip() {
     // open or not. (Mid-word letters still get spelling completions
     // above; that's not next-word prediction.)
     const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-    // Open group: the bar narrows to that group's used words — her
-    // history only, no children table (group mode, 2026-09-24).
+    // Open group: an empty sentence (or one that starts fresh after
+    // Speak) offers first words — her own starts here, then children's
+    // (027 § 5); after the first pick the bar narrows to that group's
+    // used words, her history only (group mode, 2026-09-24).
     const groupId = view === "group" ? groupsUi.getGroupKey() : null;
-    const ranked = groupId
-      ? groupRanked(db, sents, groupId, Date.now())
-      : stripRanked(db, sents, Date.now(), locale, phrases);
+    const starting = !sents.length || freshNext;
+    const ranked = !groupId
+      ? stripRanked(db, sents, Date.now(), locale, phrases)
+      : starting
+        ? groupStarters(db, groupId, { starters: catalog.groupStarters, visible: groupsUi.visibleKeys() })
+        : groupRanked(db, sents, groupId, Date.now());
     const items = ranked.shown;
     // Position-0 offers are real moments too (017-21): open the
     // sentence so the impression row can exist. A row with no picks
@@ -975,6 +981,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
       sentenceId, position: sentencePicks++, source,
       spotlit: !!spotlight()?.targets.has(`${kind}:${id}`),
       labelId: item.labelId ?? null,
+      groupId: view === "group" ? groupsUi.getGroupKey() : null,
     });
   }
   if (hint && id) showGroupHint(kind, item.id ?? id);

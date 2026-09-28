@@ -265,7 +265,11 @@ CREATE TABLE IF NOT EXISTS learner_event_log (
   -- 021: which label spoke — the form the child actually said (wants,
   -- him). NULL on old rows and when Grammar help is off. Phrase history
   -- still reads item ids, so meaning-level ranking is untouched.
-  label_id TEXT REFERENCES label(id)
+  label_id TEXT REFERENCES label(id),
+  -- 027 § 5: the group open when this word was picked (NULL outside a
+  -- group) — a spoken sentence's first pick is that group's own start.
+  -- Device-local history, never synced.
+  group_id TEXT
 );
 
 CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_id, selected_at);

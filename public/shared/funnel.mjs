@@ -120,13 +120,13 @@ export function detachEvent(db, sentenceId, position, at = Date.now()) {
 export function logSelection(db, kind, id, at = Date.now(), ctx = {}) {
   db.prepare(
     `INSERT INTO learner_event_log
-       (item_kind, item_id, selected_at, sentence_id, position, source, tz_offset_min, spotlit, label_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (item_kind, item_id, selected_at, sentence_id, position, source, tz_offset_min, spotlit, label_id, group_id)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     kind, id, at,
     ctx.sentenceId ?? null, ctx.position ?? null, ctx.source ?? null,
     -new Date(at).getTimezoneOffset(), ctx.spotlit ? 1 : 0,
-    ctx.labelId ?? null,
+    ctx.labelId ?? null, ctx.groupId ?? null,
   );
 }
 
@@ -468,6 +468,46 @@ export function groupRanked(db, sentence, groupId, now = Date.now()) {
     ranked: merged,
     shown: merged.slice(0, STRIP_CAP).map(({ kind, id }) => ({ kind, id })),
   };
+}
+
+/**
+ * 027 § 5 / B7 — the group bar in an empty sentence: first words. The
+ * child's own first picks in this group (the first word of each spoken
+ * sentence she started with it open) rank ahead as they accumulate;
+ * then real children's first words in this group's context
+ * (`starters`, the catalog's groupStarters table; a custom group uses
+ * the pooled counts). Masked, retired and already-visible words are left
+ * out and the next candidate backfills, up to `cap`. Missing priors only
+ * mean fewer tiles — never a blocked grid.
+ */
+export function groupStarters(db, groupId, { starters = null, visible = new Set(), cap = STRIP_CAP } = {}) {
+  const masked = maskedSenses(db);
+  const offerable = (it) => {
+    const k = itemKey(it);
+    if (visible.has(k)) return false;
+    if (it.kind === "sense") {
+      return !masked.has(it.id) && !!db.prepare("SELECT 1 AS x FROM sense WHERE id = ?").all(it.id)[0];
+    }
+    return !!db.prepare("SELECT 1 AS x FROM personal_entity WHERE id = ? AND status = 'active'").all(it.id)[0];
+  };
+  const own = db.prepare(
+    `SELECT e.item_kind AS kind, e.item_id AS id, COUNT(*) AS n
+     FROM learner_event_log e JOIN sentence s ON s.id = e.sentence_id
+     WHERE e.group_id = ? AND e.position = 0 AND e.detached_at IS NULL AND s.end_kind = 'spoken'
+     GROUP BY e.item_kind, e.item_id
+     ORDER BY n DESC, e.item_kind, e.item_id`,
+  ).all(groupId).map((r) => ({ ...foldItem(db, { kind: r.kind, id: r.id }), src: "own", n: r.n }));
+  const kind = db.prepare("SELECT kind FROM board_group WHERE id = ?").all(groupId)[0]?.kind;
+  const prior = (kind === "builtin" ? starters?.groups?.[groupId] : starters?.pooled)?.first ?? [];
+  const ranked = [];
+  const seen = new Set();
+  for (const r of [...own, ...prior.map((p) => ({ kind: "sense", id: p.sense, src: "children", n: p.n }))]) {
+    const k = itemKey(r);
+    if (seen.has(k) || !offerable(r)) continue;
+    seen.add(k);
+    ranked.push(r);
+  }
+  return { ranked, shown: ranked.slice(0, cap).map(({ kind: k, id }) => ({ kind: k, id })) };
 }
 
 /* --- The instrument (§ 5.7): strip_impression ------------------------ */

@@ -335,6 +335,23 @@ export function mountGroups({
     return pages;
   }
 
+  /** Every word the open group page shows — its own words plus the home
+   *  tiles in its reserved cells. The empty-sentence bar never repeats
+   *  one of them (027 § 5). */
+  function visibleKeys() {
+    const { name: layout } = boardGeom();
+    const geom = geometryOf(db, layout);
+    const keys = new Set(groupPage(db, groupKey, groupPageNo, locale, layout)
+      .map((r) => `${r.item_kind}:${r.item_id}`));
+    const topRowOn = profileFlag("group_top_row");
+    for (const c of homeCells()) {
+      if (geom.frame.includes(c.slot_index) || (topRowOn && geom.topRow.includes(c.slot_index))) {
+        keys.add(c.kind === "entity" ? `entity:${c.entity_id}` : `sense:${c.sense_id}`);
+      }
+    }
+    return keys;
+  }
+
   async function renderGroupPage() {
     await paintGroupPage($("groupgrid"), {
       group: groupKey,
@@ -413,6 +430,7 @@ export function mountGroups({
     openGroupIndex,
     openGroup,
     openAddToBoards,
+    visibleKeys,
     getGroupKey: () => groupKey,
     setGroup(id, page) {
       groupKey = id;
