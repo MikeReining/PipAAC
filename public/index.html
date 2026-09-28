@@ -68,6 +68,10 @@
       .r-None   { --rb: #8a8578; --rf: #f2efe6; } /* typed words — no role */
 
       * { box-sizing: border-box; margin: 0; }
+      /* The hidden attribute always wins. Without this, any class that sets
+         display (.sheet .row is flex) silently un-hides the element: Delete
+         account showed while signed out. */
+      [hidden] { display: none !important; }
       body {
         font-family: -apple-system, "Helvetica Neue", sans-serif;
         background: var(--cream);
