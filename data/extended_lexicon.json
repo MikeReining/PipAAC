@@ -4778,14 +4778,6 @@
    "art": "draw"
   },
   {
-   "id": "applesauce",
-   "text": "applesauce",
-   "spokenText": "applesauce",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
    "id": "fruit_cup",
    "text": "fruit cup",
    "spokenText": "fruit cup",
@@ -4853,22 +4845,6 @@
    "id": "onion",
    "text": "onion",
    "spokenText": "onion",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "pepper",
-   "text": "pepper",
-   "spokenText": "pepper",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "cucumber",
-   "text": "cucumber",
-   "spokenText": "cucumber",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -5354,14 +5330,6 @@
    "art": "draw"
   },
   {
-   "id": "hummus",
-   "text": "hummus",
-   "spokenText": "hummus",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
    "id": "pita",
    "text": "pita",
    "spokenText": "pita",
@@ -5405,22 +5373,6 @@
    "id": "bun",
    "text": "bun",
    "spokenText": "bun",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "string_cheese",
-   "text": "string cheese",
-   "spokenText": "string cheese",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "granola_bar",
-   "text": "granola bar",
-   "spokenText": "granola bar",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -5482,38 +5434,6 @@
    "art": "draw"
   },
   {
-   "id": "pudding",
-   "text": "pudding",
-   "spokenText": "pudding",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "jello",
-   "text": "jello",
-   "spokenText": "jello",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "brownie",
-   "text": "brownie",
-   "spokenText": "brownie",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "cupcake",
-   "text": "cupcake",
-   "spokenText": "cupcake",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
    "id": "pie",
    "text": "pie",
    "spokenText": "pie",
@@ -5533,22 +5453,6 @@
    "id": "marshmallow",
    "text": "marshmallow",
    "spokenText": "marshmallow",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "chocolate",
-   "text": "chocolate",
-   "spokenText": "chocolate",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "lollipop",
-   "text": "lollipop",
-   "spokenText": "lollipop",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -5789,14 +5693,6 @@
    "id": "chicken_tenders",
    "text": "chicken tenders",
    "spokenText": "chicken tenders",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "dessert",
-   "text": "dessert",
-   "spokenText": "dessert",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -6397,14 +6293,6 @@
    "id": "chocolate_chip_cookie",
    "text": "chocolate chip cookie",
    "spokenText": "chocolate chip cookie",
-   "category": "Food",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "banana_bread",
-   "text": "banana bread",
-   "spokenText": "banana bread",
    "category": "Food",
    "kind": "word",
    "art": "draw"
@@ -19661,14 +19549,6 @@
    "id": "slurpee",
    "text": "Slurpee",
    "spokenText": "slurpee",
-   "category": "Brand foods and drinks",
-   "kind": "word",
-   "art": "draw"
-  },
-  {
-   "id": "goldfish_crackers",
-   "text": "Goldfish (crackers)",
-   "spokenText": "goldfish",
    "category": "Brand foods and drinks",
    "kind": "word",
    "art": "draw"

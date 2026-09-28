@@ -26,6 +26,29 @@
       "seed": "occasions"
     },
     {
+      "key": "treats",
+      "glyph": "🍦",
+      "category": "Food & Drink",
+      "names": {
+        "en": "Treats"
+      },
+      "words": [
+        "cookie",
+        "cake",
+        "ice cream",
+        "popsicle",
+        "candy",
+        "donut",
+        "pudding",
+        "jello",
+        "brownie",
+        "cupcake",
+        "chocolate",
+        "lollipop",
+        "dessert"
+      ]
+    },
+    {
       "key": "my_words",
       "glyph": "⭐",
       "names": {

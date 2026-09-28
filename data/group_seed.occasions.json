@@ -41,15 +41,11 @@
     },
     {
       "key": "vegetables",
-      "words": ["carrot", "broccoli", "corn"]
+      "words": ["carrot", "broccoli", "corn", "cucumber", "pepper"]
     },
     {
       "key": "snacks",
-      "words": ["cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack"]
-    },
-    {
-      "key": "treats",
-      "words": ["cookie", "cake", "ice cream", "popsicle", "candy", "donut"]
+      "words": ["cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack", "granola bar", "string cheese", "applesauce", "goldfish crackers", "hummus", "banana bread"]
     }
   ],
   "groups": [
@@ -91,7 +87,7 @@
       "names": {
         "en": "Snack"
       },
-      "words": ["snack", "eat", "drink", "all done", "cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack", "cookie", "cake", "ice cream", "popsicle", "candy", "donut", "muffin", "cup", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "straw"]
+      "words": ["snack", "eat", "drink", "all done", "cracker", "cheese", "yogurt", "pretzel", "popcorn", "chips", "fruit snack", "granola bar", "string cheese", "applesauce", "goldfish crackers", "hummus", "banana bread", "carrot", "broccoli", "cucumber", "pepper", "muffin", "cup", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "water", "milk", "juice", "apple juice", "chocolate milk", "smoothie", "bottle", "straw"]
     },
     {
       "key": "fruit",

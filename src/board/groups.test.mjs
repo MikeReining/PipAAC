@@ -74,7 +74,7 @@ const cellsOf = (gid, layout) => catalog.groupCells.filter((c) => c.group_id ===
 
 test("027 A1 seed: occasions lead the index, then My Words; every seeded group is one page on 60/90", () => {
   const ids = catalog.groups.map((g) => g.id);
-  assert.deepEqual(ids.slice(0, 5), ["grp_breakfast", "grp_lunch", "grp_dinner", "grp_snack", "grp_my_words"]);
+  assert.deepEqual(ids.slice(0, 6), ["grp_breakfast", "grp_lunch", "grp_dinner", "grp_snack", "grp_treats", "grp_my_words"]);
   catalog.groups.forEach((g, i) => assert.equal(g.index_slot, 10 + i));
   assert.deepEqual(catalog.groups.filter((g) => g.occasion).map((g) => g.id), ids.slice(0, 4));
   assert.ok(!ids.includes("grp_food"), "no Food mega-group");
@@ -467,16 +467,16 @@ test("027 A2: a deleted custom group stays deleted through reimport and replay",
 
 test("027 § 4: two devices install the seed offline — the first install the relay confirms wins", () => {
   const a = openDb();
-  // b runs a newer catalog whose Snack seed has no cake.
+  // b runs a newer catalog whose Treats seed has no cake.
   const cake = catalog.labels.find((l) => l.text === "cake" && l.kind === "lemma").sense_id;
   const newer = {
     ...catalog,
-    groupMembers: catalog.groupMembers.filter((m) => !(m.group_id === "grp_snack" && m.item_id === cake)),
-    groupCells: catalog.groupCells.filter((c) => !(c.group_id === "grp_snack" && c.item_id === cake)),
+    groupMembers: catalog.groupMembers.filter((m) => !(m.group_id === "grp_treats" && m.item_id === cake)),
+    groupCells: catalog.groupCells.filter((c) => !(c.group_id === "grp_treats" && c.item_id === cake)),
   };
   const b = createDatabase(":memory:");
   importCatalog(b, newer);
-  assert.ok(!groupPage(b, "grp_snack", 0, "en").some((r) => r.item_id === cake));
+  assert.ok(!groupPage(b, "grp_treats", 0, "en").some((r) => r.item_id === cake));
   removeItem(a, "grp_snack", "sense", senseIdByText(a, "cup"));
   const opsA = listOps(a).map((o) => ({ ...o, device_id: "dev_a" }));
   const opsB = listOps(b).map((o) => ({ ...o, device_id: "dev_b" }));
@@ -488,7 +488,7 @@ test("027 § 4: two devices install the seed offline — the first install the r
     assert.deepEqual(dump(b, t), dump(a, t), `${t} diverged`);
   }
   assert.ok(!groupPage(b, "grp_snack", 0, "en").some((r) => r.item_id === senseIdByText(b, "cup")));
-  assert.ok(groupPage(b, "grp_snack", 0, "en").some((r) => r.item_id === cake), "a's install won on b");
+  assert.ok(groupPage(b, "grp_treats", 0, "en").some((r) => r.item_id === cake), "a's install won on b");
 });
 
 test("027 A2: a fresh device restores from the relay and matches the original", () => {

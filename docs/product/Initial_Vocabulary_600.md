@@ -170,7 +170,7 @@ their ids and bundled audio; 28 everyday fringe words added at slots 657–684
 (meals and food staples, hygiene verbs, behavior words, people, social words,
 and grammar words).
 
-### 3.1 Food & Drink (61 words)
+### 3.1 Food & Drink (76 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Nutrition taxonomy. Art archetype: Illustrated Object.*
 
 | # | Word | Part of Speech | Fitzgerald Color | Visual Style | Clinical Source | Visual Prompt Description |
@@ -236,6 +236,21 @@ and grammar words).
 | 660 | **food** | Noun | None | Illustrated Object | CDI; ARASAAC | Plate holding varied meal portions |
 | 661 | **ketchup** | Noun | None | Illustrated Object | CDI; ARASAAC | Bright red ketchup bottle tilted mid-squeeze |
 | 662 | **fries** | Noun | None | Illustrated Object | CDI; ARASAAC | Red carton filled with golden french fries |
+| 688 | **cucumber** | Noun | None | Illustrated Object | CDI; ARASAAC | Sliced green cucumber rounds with pale flesh |
+| 689 | **pepper** | Noun | None | Illustrated Object | CDI; ARASAAC | Red bell pepper cut into crunchy strips |
+| 690 | **granola bar** | Noun | None | Illustrated Object | CDI; ARASAAC | Oat granola bar half-wrapped in foil |
+| 691 | **string cheese** | Noun | None | Illustrated Object | CDI; ARASAAC | Peeled mozzarella string cheese stick |
+| 692 | **applesauce** | Noun | None | Illustrated Object | CDI; ARASAAC | Small cup of smooth applesauce with spoon |
+| 693 | **hummus** | Noun | None | Illustrated Object | CDI; ARASAAC | Bowl of creamy hummus with olive oil swirl |
+| 694 | **banana bread** | Noun | None | Illustrated Object | CDI; ARASAAC | Slice of moist banana bread loaf |
+| 695 | **goldfish crackers** | Noun | None | Illustrated Object | CDI; ARASAAC | Handful of tiny orange fish-shaped crackers |
+| 696 | **pudding** | Noun | None | Illustrated Object | CDI; ARASAAC | Cup of chocolate pudding with swirl top |
+| 697 | **jello** | Noun | None | Illustrated Object | CDI; ARASAAC | Wobbly red gelatin cube on small plate |
+| 698 | **brownie** | Noun | None | Illustrated Object | CDI; ARASAAC | Fudgy chocolate brownie square |
+| 699 | **cupcake** | Noun | None | Illustrated Object | CDI; ARASAAC | Cupcake with swirled frosting and sprinkles |
+| 700 | **chocolate** | Noun | None | Illustrated Object | CDI; ARASAAC | Chocolate bar with broken square pieces |
+| 701 | **lollipop** | Noun | None | Illustrated Object | CDI; ARASAAC | Round swirl lollipop on a white stick |
+| 702 | **dessert** | Noun | None | Illustrated Object | CDI; ARASAAC | Assorted sweets plate with cake and candy |
 
 ### 3.2 Body, Health & Hygiene (43 words)
 *Seeded from MacArthur-Bates CDI & ARASAAC Health taxonomy. Art archetype: Stick Figure (somatic/roles) & Illustrated Object (tools/organs).*

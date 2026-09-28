@@ -3744,7 +3744,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0397",
       "negation": 0
     },
     {
@@ -3753,7 +3753,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0398",
       "negation": 0
     },
     {
@@ -3762,7 +3762,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0399",
       "negation": 0
     },
     {
@@ -3771,7 +3771,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0400",
       "negation": 0
     },
     {
@@ -3780,7 +3780,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0401",
       "negation": 0
     },
     {
@@ -3789,7 +3789,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0402",
       "negation": 0
     },
     {
@@ -3798,7 +3798,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0403",
       "negation": 0
     },
     {
@@ -3807,7 +3807,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0404",
       "negation": 0
     },
     {
@@ -3816,7 +3816,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0405",
       "negation": 0
     },
     {
@@ -3825,7 +3825,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Home, Household Objects & Daily Tools",
-      "default_image_id": null,
+      "default_image_id": "img_0406",
       "negation": 0
     },
     {
@@ -6291,6 +6291,141 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0688",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0689",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0690",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0691",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0692",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0693",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0694",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0695",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0696",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0697",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0698",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0699",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0700",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0701",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
+      "default_image_id": null,
+      "negation": 0
+    },
+    {
+      "id": "sns_0702",
+      "fitzgerald_role": "None",
+      "art_archetype": "Illustrated Object",
+      "tier": "primary_fringe",
+      "category": "Food & Drink",
       "default_image_id": null,
       "negation": 0
     }
@@ -11033,6 +11168,111 @@
       "locale": "en",
       "spoken_text": "oops",
       "normalized_spoken_text": "oops",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0688",
+      "locale": "en",
+      "spoken_text": "cucumber",
+      "normalized_spoken_text": "cucumber",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0689",
+      "locale": "en",
+      "spoken_text": "pepper",
+      "normalized_spoken_text": "pepper",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0690",
+      "locale": "en",
+      "spoken_text": "granola bar",
+      "normalized_spoken_text": "granola bar",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0691",
+      "locale": "en",
+      "spoken_text": "string cheese",
+      "normalized_spoken_text": "string cheese",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0692",
+      "locale": "en",
+      "spoken_text": "applesauce",
+      "normalized_spoken_text": "applesauce",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0693",
+      "locale": "en",
+      "spoken_text": "hummus",
+      "normalized_spoken_text": "hummus",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0694",
+      "locale": "en",
+      "spoken_text": "banana bread",
+      "normalized_spoken_text": "banana bread",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0695",
+      "locale": "en",
+      "spoken_text": "goldfish crackers",
+      "normalized_spoken_text": "goldfish crackers",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0696",
+      "locale": "en",
+      "spoken_text": "pudding",
+      "normalized_spoken_text": "pudding",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0697",
+      "locale": "en",
+      "spoken_text": "jello",
+      "normalized_spoken_text": "jello",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0698",
+      "locale": "en",
+      "spoken_text": "brownie",
+      "normalized_spoken_text": "brownie",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0699",
+      "locale": "en",
+      "spoken_text": "cupcake",
+      "normalized_spoken_text": "cupcake",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0700",
+      "locale": "en",
+      "spoken_text": "chocolate",
+      "normalized_spoken_text": "chocolate",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0701",
+      "locale": "en",
+      "spoken_text": "lollipop",
+      "normalized_spoken_text": "lollipop",
+      "normalizer_version": "v1"
+    },
+    {
+      "id": "utt_0702",
+      "locale": "en",
+      "spoken_text": "dessert",
+      "normalized_spoken_text": "dessert",
       "normalizer_version": "v1"
     },
     {
@@ -23204,6 +23444,216 @@
       "status": "approved"
     },
     {
+      "id": "lbl_0688",
+      "sense_id": "sns_0688",
+      "utterance_id": "utt_0688",
+      "locale": "en",
+      "text": "cucumber",
+      "normalized_text": "cucumber",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0689",
+      "sense_id": "sns_0689",
+      "utterance_id": "utt_0689",
+      "locale": "en",
+      "text": "pepper",
+      "normalized_text": "pepper",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0690",
+      "sense_id": "sns_0690",
+      "utterance_id": "utt_0690",
+      "locale": "en",
+      "text": "granola bar",
+      "normalized_text": "granola bar",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0691",
+      "sense_id": "sns_0691",
+      "utterance_id": "utt_0691",
+      "locale": "en",
+      "text": "string cheese",
+      "normalized_text": "string cheese",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0692",
+      "sense_id": "sns_0692",
+      "utterance_id": "utt_0692",
+      "locale": "en",
+      "text": "applesauce",
+      "normalized_text": "applesauce",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0693",
+      "sense_id": "sns_0693",
+      "utterance_id": "utt_0693",
+      "locale": "en",
+      "text": "hummus",
+      "normalized_text": "hummus",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0694",
+      "sense_id": "sns_0694",
+      "utterance_id": "utt_0694",
+      "locale": "en",
+      "text": "banana bread",
+      "normalized_text": "banana bread",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0695",
+      "sense_id": "sns_0695",
+      "utterance_id": "utt_0695",
+      "locale": "en",
+      "text": "goldfish crackers",
+      "normalized_text": "goldfish crackers",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0696",
+      "sense_id": "sns_0696",
+      "utterance_id": "utt_0696",
+      "locale": "en",
+      "text": "pudding",
+      "normalized_text": "pudding",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0697",
+      "sense_id": "sns_0697",
+      "utterance_id": "utt_0697",
+      "locale": "en",
+      "text": "jello",
+      "normalized_text": "jello",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0698",
+      "sense_id": "sns_0698",
+      "utterance_id": "utt_0698",
+      "locale": "en",
+      "text": "brownie",
+      "normalized_text": "brownie",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0699",
+      "sense_id": "sns_0699",
+      "utterance_id": "utt_0699",
+      "locale": "en",
+      "text": "cupcake",
+      "normalized_text": "cupcake",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0700",
+      "sense_id": "sns_0700",
+      "utterance_id": "utt_0700",
+      "locale": "en",
+      "text": "chocolate",
+      "normalized_text": "chocolate",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0701",
+      "sense_id": "sns_0701",
+      "utterance_id": "utt_0701",
+      "locale": "en",
+      "text": "lollipop",
+      "normalized_text": "lollipop",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
+      "id": "lbl_0702",
+      "sense_id": "sns_0702",
+      "utterance_id": "utt_0702",
+      "locale": "en",
+      "text": "dessert",
+      "normalized_text": "dessert",
+      "normalizer_version": "v1",
+      "kind": "lemma",
+      "part_of_speech": "Noun",
+      "features": null,
+      "default_for_text": 1,
+      "status": "approved"
+    },
+    {
       "id": "lbl_alias_en_1",
       "sense_id": "sns_0647",
       "utterance_id": "utt_0647",
@@ -31611,6 +32061,76 @@
       "key": "symbols/wallet.png",
       "status": "approved",
       "sha256": "5d6949f35e14b6c596113a9a4e8570ba2f1b6336c14caa8510ba529c111ab99a"
+    },
+    {
+      "id": "img_0397",
+      "sense_id": "sns_0397",
+      "key": "symbols/glasses.png",
+      "status": "approved",
+      "sha256": "8de54f4cdf77b2ab502796fe19da674f7c44907b9fd4abc8e84a9b74b7258aaa"
+    },
+    {
+      "id": "img_0398",
+      "sense_id": "sns_0398",
+      "key": "symbols/umbrella.png",
+      "status": "approved",
+      "sha256": "91497b5d3733edf3aa903124508f4a27b4683851cd241cf92c108e1b8189ddd3"
+    },
+    {
+      "id": "img_0399",
+      "sense_id": "sns_0399",
+      "key": "symbols/blanket.png",
+      "status": "approved",
+      "sha256": "1a4c12425c5b42ba25f4d4b17b629612a1af92900c21337d61d2b866e821ce62"
+    },
+    {
+      "id": "img_0400",
+      "sense_id": "sns_0400",
+      "key": "symbols/pillow.png",
+      "status": "approved",
+      "sha256": "3efff93bff84c4e3f42d87e2a0cc36ef5ccbe41c7a891933d66c4a0a4e7e8607"
+    },
+    {
+      "id": "img_0401",
+      "sense_id": "sns_0401",
+      "key": "symbols/fan.png",
+      "status": "approved",
+      "sha256": "e13eee022eab03ceffdbf439ca3e449aa73618ea6f03a379b70f239c480e44d8"
+    },
+    {
+      "id": "img_0402",
+      "sense_id": "sns_0402",
+      "key": "symbols/charger.png",
+      "status": "approved",
+      "sha256": "ebca9cc34064075bdf5bfca5617762f7c1c805263180659ea079b448091795ac"
+    },
+    {
+      "id": "img_0403",
+      "sense_id": "sns_0403",
+      "key": "symbols/box.png",
+      "status": "approved",
+      "sha256": "ce665763ef39882d8672776fdbbf07d9121be91d510cb56a07d15159d0aefe1f"
+    },
+    {
+      "id": "img_0404",
+      "sense_id": "sns_0404",
+      "key": "symbols/battery.png",
+      "status": "approved",
+      "sha256": "cb8df05582b4a12e41977baf517048d1fdd9967f1dc35fe2ee7176fc9abc4eef"
+    },
+    {
+      "id": "img_0405",
+      "sense_id": "sns_0405",
+      "key": "symbols/broom.png",
+      "status": "approved",
+      "sha256": "391a94855ca30b8b9ae38bdc314ad10c8a30c50d87c9fb8fcdf0102126e83f81"
+    },
+    {
+      "id": "img_0406",
+      "sense_id": "sns_0406",
+      "key": "symbols/vacuum.png",
+      "status": "approved",
+      "sha256": "ba58636f0780c299224a57d6b92efcbf55fd7a9df55cdbdb971b30b27b9eca2a"
     },
     {
       "id": "img_0509",
@@ -43262,10 +43782,19 @@
       "occasion": 1
     },
     {
+      "id": "grp_treats",
+      "kind": "builtin",
+      "glyph": "🍦",
+      "index_slot": 14,
+      "category": "Food & Drink",
+      "layouts": null,
+      "occasion": 0
+    },
+    {
       "id": "grp_my_words",
       "kind": "my_words",
       "glyph": "⭐",
-      "index_slot": 14,
+      "index_slot": 15,
       "category": null,
       "layouts": null,
       "occasion": 0
@@ -43274,7 +43803,7 @@
       "id": "grp_social",
       "kind": "builtin",
       "glyph": "💬",
-      "index_slot": 15,
+      "index_slot": 16,
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
       "layouts": null,
       "occasion": 0
@@ -43283,7 +43812,7 @@
       "id": "grp_numbers",
       "kind": "builtin",
       "glyph": "🔢",
-      "index_slot": 16,
+      "index_slot": 17,
       "category": "Numbers & Counting",
       "layouts": null,
       "occasion": 0
@@ -43292,7 +43821,7 @@
       "id": "grp_people",
       "kind": "builtin",
       "glyph": "👪",
-      "index_slot": 17,
+      "index_slot": 18,
       "category": "People, Family & Roles",
       "layouts": null,
       "occasion": 0
@@ -43301,7 +43830,7 @@
       "id": "grp_time",
       "kind": "builtin",
       "glyph": "🕐",
-      "index_slot": 18,
+      "index_slot": 19,
       "category": "Time, Calendar & Sequencing",
       "layouts": null,
       "occasion": 0
@@ -43310,7 +43839,7 @@
       "id": "grp_home",
       "kind": "builtin",
       "glyph": "🏠",
-      "index_slot": 19,
+      "index_slot": 20,
       "category": "Home, Household Objects & Daily Tools",
       "layouts": null,
       "occasion": 0
@@ -43319,7 +43848,7 @@
       "id": "grp_things",
       "kind": "builtin",
       "glyph": "🧰",
-      "index_slot": 20,
+      "index_slot": 21,
       "category": "Home, Household Objects & Daily Tools",
       "layouts": null,
       "occasion": 0
@@ -43328,7 +43857,7 @@
       "id": "grp_describing",
       "kind": "builtin",
       "glyph": "🎨",
-      "index_slot": 21,
+      "index_slot": 22,
       "category": "Descriptors, Adjectives & Opposites",
       "layouts": null,
       "occasion": 0
@@ -43337,7 +43866,7 @@
       "id": "grp_senses",
       "kind": "builtin",
       "glyph": "🖐️",
-      "index_slot": 22,
+      "index_slot": 23,
       "category": "Descriptors, Adjectives & Opposites",
       "layouts": null,
       "occasion": 0
@@ -43346,7 +43875,7 @@
       "id": "grp_outside",
       "kind": "builtin",
       "glyph": "🌳",
-      "index_slot": 23,
+      "index_slot": 24,
       "category": "Animals & Nature",
       "layouts": null,
       "occasion": 0
@@ -43355,7 +43884,7 @@
       "id": "grp_animals",
       "kind": "builtin",
       "glyph": "🐶",
-      "index_slot": 24,
+      "index_slot": 25,
       "category": "Animals & Nature",
       "layouts": null,
       "occasion": 0
@@ -43364,7 +43893,7 @@
       "id": "grp_body",
       "kind": "builtin",
       "glyph": "🧍",
-      "index_slot": 25,
+      "index_slot": 26,
       "category": "Body, Health & Hygiene",
       "layouts": null,
       "occasion": 0
@@ -43373,7 +43902,7 @@
       "id": "grp_going_out",
       "kind": "builtin",
       "glyph": "🚗",
-      "index_slot": 26,
+      "index_slot": 27,
       "category": "Places, Rooms & Community",
       "layouts": null,
       "occasion": 0
@@ -43382,7 +43911,7 @@
       "id": "grp_colors",
       "kind": "builtin",
       "glyph": "🌈",
-      "index_slot": 27,
+      "index_slot": 28,
       "category": null,
       "layouts": null,
       "occasion": 0
@@ -43391,7 +43920,7 @@
       "id": "grp_school",
       "kind": "builtin",
       "glyph": "🎒",
-      "index_slot": 28,
+      "index_slot": 29,
       "category": null,
       "layouts": null,
       "occasion": 0
@@ -43400,7 +43929,7 @@
       "id": "grp_drinks",
       "kind": "builtin",
       "glyph": "🥤",
-      "index_slot": 29,
+      "index_slot": 30,
       "category": "Food & Drink",
       "layouts": null,
       "occasion": 0
@@ -43409,7 +43938,7 @@
       "id": "grp_fruit",
       "kind": "builtin",
       "glyph": "🍎",
-      "index_slot": 30,
+      "index_slot": 31,
       "category": "Food & Drink",
       "layouts": null,
       "occasion": 0
@@ -43418,7 +43947,7 @@
       "id": "grp_art_music",
       "kind": "builtin",
       "glyph": "🖍️",
-      "index_slot": 31,
+      "index_slot": 32,
       "category": "Toys, Play, Media & Leisure",
       "layouts": null,
       "occasion": 0
@@ -43427,7 +43956,7 @@
       "id": "grp_feelings",
       "kind": "builtin",
       "glyph": "😊",
-      "index_slot": 32,
+      "index_slot": 33,
       "category": "Feelings, Emotions & Sensory States",
       "layouts": null,
       "occasion": 0
@@ -43436,7 +43965,7 @@
       "id": "grp_clothes",
       "kind": "builtin",
       "glyph": "👕",
-      "index_slot": 33,
+      "index_slot": 34,
       "category": "Clothing & Accessories",
       "layouts": null,
       "occasion": 0
@@ -43445,7 +43974,7 @@
       "id": "grp_play",
       "kind": "builtin",
       "glyph": "⚽",
-      "index_slot": 34,
+      "index_slot": 35,
       "category": "Toys, Play, Media & Leisure",
       "layouts": null,
       "occasion": 0
@@ -43454,7 +43983,7 @@
       "id": "grp_bathroom",
       "kind": "builtin",
       "glyph": "🚽",
-      "index_slot": 35,
+      "index_slot": 36,
       "category": "Body, Health & Hygiene",
       "layouts": null,
       "occasion": 0
@@ -43463,7 +43992,7 @@
       "id": "grp_screens",
       "kind": "builtin",
       "glyph": "📱",
-      "index_slot": 36,
+      "index_slot": 37,
       "category": "Toys, Play, Media & Leisure",
       "layouts": null,
       "occasion": 0
@@ -43472,7 +44001,7 @@
       "id": "grp_little_words",
       "kind": "builtin",
       "glyph": "🔤",
-      "index_slot": 37,
+      "index_slot": 38,
       "category": "Function Words & Grammar",
       "layouts": null,
       "occasion": 0
@@ -43481,7 +44010,7 @@
       "id": "grp_who_which",
       "kind": "builtin",
       "glyph": "👉",
-      "index_slot": 38,
+      "index_slot": 39,
       "category": "Function Words & Grammar",
       "layouts": null,
       "occasion": 0
@@ -43490,7 +44019,7 @@
       "id": "grp_more_people",
       "kind": "builtin",
       "glyph": "👥",
-      "index_slot": 39,
+      "index_slot": 40,
       "category": null,
       "layouts": [
         "grid15"
@@ -43501,7 +44030,7 @@
       "id": "grp_more_doing",
       "kind": "builtin",
       "glyph": "🏃",
-      "index_slot": 40,
+      "index_slot": 41,
       "category": null,
       "layouts": [
         "grid15"
@@ -43512,7 +44041,7 @@
       "id": "grp_more_where",
       "kind": "builtin",
       "glyph": "🧭",
-      "index_slot": 41,
+      "index_slot": 42,
       "category": null,
       "layouts": [
         "grid15"
@@ -43523,7 +44052,7 @@
       "id": "grp_more_describing",
       "kind": "builtin",
       "glyph": "🎨",
-      "index_slot": 42,
+      "index_slot": 43,
       "category": null,
       "layouts": [
         "grid15"
@@ -44140,32 +44669,52 @@
     {
       "group_id": "grp_snack",
       "item_kind": "sense",
-      "item_id": "sns_0115"
+      "item_id": "sns_0690"
     },
     {
       "group_id": "grp_snack",
       "item_kind": "sense",
-      "item_id": "sns_0124"
+      "item_id": "sns_0691"
     },
     {
       "group_id": "grp_snack",
       "item_kind": "sense",
-      "item_id": "sns_0121"
+      "item_id": "sns_0692"
     },
     {
       "group_id": "grp_snack",
       "item_kind": "sense",
-      "item_id": "sns_0122"
+      "item_id": "sns_0695"
     },
     {
       "group_id": "grp_snack",
       "item_kind": "sense",
-      "item_id": "sns_0123"
+      "item_id": "sns_0693"
     },
     {
       "group_id": "grp_snack",
       "item_kind": "sense",
-      "item_id": "sns_0126"
+      "item_id": "sns_0694"
+    },
+    {
+      "group_id": "grp_snack",
+      "item_kind": "sense",
+      "item_id": "sns_0134"
+    },
+    {
+      "group_id": "grp_snack",
+      "item_kind": "sense",
+      "item_id": "sns_0135"
+    },
+    {
+      "group_id": "grp_snack",
+      "item_kind": "sense",
+      "item_id": "sns_0688"
+    },
+    {
+      "group_id": "grp_snack",
+      "item_kind": "sense",
+      "item_id": "sns_0689"
     },
     {
       "group_id": "grp_snack",
@@ -44251,6 +44800,71 @@
       "group_id": "grp_snack",
       "item_kind": "sense",
       "item_id": "sns_0390"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0115"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0124"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0121"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0122"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0123"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0126"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0696"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0697"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0698"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0699"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0700"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0701"
+    },
+    {
+      "group_id": "grp_treats",
+      "item_kind": "sense",
+      "item_id": "sns_0702"
     },
     {
       "group_id": "grp_social",
@@ -48595,13 +49209,77 @@
       "item_kind": "sense",
       "item_id": "sns_0120",
       "page": 0,
+      "slot_index": 44
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0690",
+      "page": 0,
+      "slot_index": 33
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0691",
+      "page": 0,
+      "slot_index": 34
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0692",
+      "page": 0,
       "slot_index": 13
     },
     {
       "group_id": "grp_snack",
       "layout": "grid60",
       "item_kind": "sense",
-      "item_id": "sns_0115",
+      "item_id": "sns_0695",
+      "page": 0,
+      "slot_index": 54
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0693",
+      "page": 0,
+      "slot_index": 24
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0694",
+      "page": 0,
+      "slot_index": 23
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0134",
+      "page": 0,
+      "slot_index": 43
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0135",
+      "page": 0,
+      "slot_index": 45
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0688",
       "page": 0,
       "slot_index": 30
     },
@@ -48609,41 +49287,9 @@
       "group_id": "grp_snack",
       "layout": "grid60",
       "item_kind": "sense",
-      "item_id": "sns_0124",
+      "item_id": "sns_0689",
       "page": 0,
       "slot_index": 20
-    },
-    {
-      "group_id": "grp_snack",
-      "layout": "grid60",
-      "item_kind": "sense",
-      "item_id": "sns_0121",
-      "page": 0,
-      "slot_index": 40
-    },
-    {
-      "group_id": "grp_snack",
-      "layout": "grid60",
-      "item_kind": "sense",
-      "item_id": "sns_0122",
-      "page": 0,
-      "slot_index": 22
-    },
-    {
-      "group_id": "grp_snack",
-      "layout": "grid60",
-      "item_kind": "sense",
-      "item_id": "sns_0123",
-      "page": 0,
-      "slot_index": 12
-    },
-    {
-      "group_id": "grp_snack",
-      "layout": "grid60",
-      "item_kind": "sense",
-      "item_id": "sns_0126",
-      "page": 0,
-      "slot_index": 32
     },
     {
       "group_id": "grp_snack",
@@ -48780,6 +49426,110 @@
       "item_id": "sns_0390",
       "page": 0,
       "slot_index": 38
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0115",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0124",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0121",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0122",
+      "page": 0,
+      "slot_index": 51
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0123",
+      "page": 0,
+      "slot_index": 50
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0126",
+      "page": 0,
+      "slot_index": 22
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0696",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0697",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0698",
+      "page": 0,
+      "slot_index": 32
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0699",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0700",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0701",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid60",
+      "item_kind": "sense",
+      "item_id": "sns_0702",
+      "page": 0,
+      "slot_index": 31
     },
     {
       "group_id": "grp_social",
@@ -54251,7 +55001,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 62
     },
     {
       "group_id": "grp_lunch",
@@ -54571,7 +55321,7 @@
       "item_kind": "sense",
       "item_id": "sns_0135",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 62
     },
     {
       "group_id": "grp_dinner",
@@ -54747,55 +55497,87 @@
       "item_kind": "sense",
       "item_id": "sns_0120",
       "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0690",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0691",
+      "page": 0,
+      "slot_index": 82
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0692",
+      "page": 0,
       "slot_index": 71
     },
     {
       "group_id": "grp_snack",
       "layout": "grid90",
       "item_kind": "sense",
-      "item_id": "sns_0115",
+      "item_id": "sns_0695",
       "page": 0,
-      "slot_index": 30
+      "slot_index": 23
     },
     {
       "group_id": "grp_snack",
       "layout": "grid90",
       "item_kind": "sense",
-      "item_id": "sns_0124",
+      "item_id": "sns_0693",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 32
     },
     {
       "group_id": "grp_snack",
       "layout": "grid90",
       "item_kind": "sense",
-      "item_id": "sns_0121",
+      "item_id": "sns_0694",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 81
     },
     {
       "group_id": "grp_snack",
       "layout": "grid90",
       "item_kind": "sense",
-      "item_id": "sns_0122",
+      "item_id": "sns_0134",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 22
     },
     {
       "group_id": "grp_snack",
       "layout": "grid90",
       "item_kind": "sense",
-      "item_id": "sns_0123",
+      "item_id": "sns_0135",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 62
     },
     {
       "group_id": "grp_snack",
       "layout": "grid90",
       "item_kind": "sense",
-      "item_id": "sns_0126",
+      "item_id": "sns_0688",
       "page": 0,
-      "slot_index": 51
+      "slot_index": 72
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0689",
+      "page": 0,
+      "slot_index": 42
     },
     {
       "group_id": "grp_snack",
@@ -54932,6 +55714,110 @@
       "item_id": "sns_0390",
       "page": 0,
       "slot_index": 78
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0115",
+      "page": 0,
+      "slot_index": 20
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0124",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0121",
+      "page": 0,
+      "slot_index": 40
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0122",
+      "page": 0,
+      "slot_index": 21
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0123",
+      "page": 0,
+      "slot_index": 50
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0126",
+      "page": 0,
+      "slot_index": 41
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0696",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0697",
+      "page": 0,
+      "slot_index": 31
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0698",
+      "page": 0,
+      "slot_index": 51
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0699",
+      "page": 0,
+      "slot_index": 70
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0700",
+      "page": 0,
+      "slot_index": 30
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0701",
+      "page": 0,
+      "slot_index": 60
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid90",
+      "item_kind": "sense",
+      "item_id": "sns_0702",
+      "page": 0,
+      "slot_index": 80
     },
     {
       "group_id": "grp_social",
@@ -60875,7 +61761,7 @@
       "item_kind": "sense",
       "item_id": "sns_0118",
       "page": 3,
-      "slot_index": 10
+      "slot_index": 11
     },
     {
       "group_id": "grp_snack",
@@ -60883,29 +61769,45 @@
       "item_kind": "sense",
       "item_id": "sns_0117",
       "page": 3,
-      "slot_index": 5
-    },
-    {
-      "group_id": "grp_snack",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0116",
-      "page": 2,
-      "slot_index": 13
-    },
-    {
-      "group_id": "grp_snack",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0120",
-      "page": 3,
       "slot_index": 6
     },
     {
       "group_id": "grp_snack",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0115",
+      "item_id": "sns_0116",
+      "page": 3,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0120",
+      "page": 4,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0690",
+      "page": 3,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0691",
+      "page": 4,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0692",
       "page": 3,
       "slot_index": 7
     },
@@ -60913,23 +61815,15 @@
       "group_id": "grp_snack",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0124",
-      "page": 3,
-      "slot_index": 11
+      "item_id": "sns_0695",
+      "page": 4,
+      "slot_index": 7
     },
     {
       "group_id": "grp_snack",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0121",
-      "page": 3,
-      "slot_index": 12
-    },
-    {
-      "group_id": "grp_snack",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0122",
+      "item_id": "sns_0693",
       "page": 4,
       "slot_index": 5
     },
@@ -60937,17 +61831,41 @@
       "group_id": "grp_snack",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0123",
+      "item_id": "sns_0694",
       "page": 3,
-      "slot_index": 13
+      "slot_index": 12
     },
     {
       "group_id": "grp_snack",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0126",
-      "page": 4,
+      "item_id": "sns_0134",
+      "page": 5,
       "slot_index": 10
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0135",
+      "page": 5,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0688",
+      "page": 3,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_snack",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0689",
+      "page": 2,
+      "slot_index": 13
     },
     {
       "group_id": "grp_snack",
@@ -61084,6 +62002,110 @@
       "item_id": "sns_0390",
       "page": 1,
       "slot_index": 7
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0115",
+      "page": 0,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0124",
+      "page": 0,
+      "slot_index": 5
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0121",
+      "page": 0,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0122",
+      "page": 1,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0123",
+      "page": 0,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0126",
+      "page": 1,
+      "slot_index": 7
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0696",
+      "page": 1,
+      "slot_index": 10
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0697",
+      "page": 1,
+      "slot_index": 11
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0698",
+      "page": 1,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0699",
+      "page": 0,
+      "slot_index": 13
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0700",
+      "page": 0,
+      "slot_index": 6
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0701",
+      "page": 0,
+      "slot_index": 12
+    },
+    {
+      "group_id": "grp_treats",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0702",
+      "page": 1,
+      "slot_index": 5
     },
     {
       "group_id": "grp_social",
@@ -66474,6 +67496,11 @@
       "group_id": "grp_snack",
       "locale": "en",
       "text": "Snack"
+    },
+    {
+      "group_id": "grp_treats",
+      "locale": "en",
+      "text": "Treats"
     },
     {
       "group_id": "grp_my_words",

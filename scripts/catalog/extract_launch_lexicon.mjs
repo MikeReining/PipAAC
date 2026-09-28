@@ -94,8 +94,8 @@ function main() {
   const check = process.argv.includes("--check");
   const raw = readFileSync(LEXICON_MD, "utf8");
   const parsed = parseLaunchLexiconMarkdown(raw);
-  if (parsed.entries.length !== 680) {
-    throw new Error(`expected 680 lexicon rows, got ${parsed.entries.length}`);
+  if (parsed.entries.length !== 695) {
+    throw new Error(`expected 695 lexicon rows, got ${parsed.entries.length}`);
   }
 
   if (check) {
@@ -107,7 +107,7 @@ function main() {
       console.error("launch_lexicon.json is stale — run extract_launch_lexicon.mjs");
       process.exit(1);
     }
-    console.log("launch_lexicon.json OK (680 entries)");
+    console.log("launch_lexicon.json OK (695 entries)");
     return;
   }
 

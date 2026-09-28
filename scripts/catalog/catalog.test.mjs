@@ -14,10 +14,10 @@ import { PARTNER_SENSES } from "../../public/shared/keymaps.mjs";
 import { localPathForAudioKey, r2GetArgs } from "./storage.mjs";
 import { repoRoot } from "./paths.mjs";
 
-test("parseLaunchLexiconMarkdown extracts 680 tier 1+2 words", () => {
+test("parseLaunchLexiconMarkdown extracts 695 tier 1+2 words", () => {
   const raw = readFileSync(join(repoRoot, "docs/product/Initial_Vocabulary_600.md"), "utf8");
   const parsed = parseLaunchLexiconMarkdown(raw);
-  assert.equal(parsed.entries.length, 680);
+  assert.equal(parsed.entries.length, 695);
   assert.equal(parsed.entries[0].spokenText, "I");
   assert.equal(parsed.entries[0].tier, 1);
   const tier1 = parsed.entries.filter((e) => e.tier === 1);

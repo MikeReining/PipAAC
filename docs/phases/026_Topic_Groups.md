@@ -69,6 +69,7 @@ then frozen. Counts below are input sizes, not final capacity claims.
 | Animals | animals + *zoo, farm, pet* | 34 |
 | Body & health | body parts, sick, hurt, medicine, doctor + *see, touch, scratch, hit, bite* | 40 |
 | Food | food, meals + *eat, cook, bite* — **superseded:** food is distributed across 027 meal and topic groups; no Food door | 57 |
+| Treats | sweets and desserts (cookie, candy, ice cream, …) + *dessert* — split from Snack 2026-09-28 | 13 |
 | Going out | stores, places in town, vehicles + *ride, wait* | 41 |
 | Colors | the colors + *color* | 11 |
 | School | school places and people + *read, write, count, listen, ask, show, work* + *easy, difficult, right, wrong* | 27 |

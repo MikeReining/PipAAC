@@ -6128,6 +6128,141 @@
       "fitzgeraldColor": "Pink",
       "visualStyle": "Stick Figure",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety"
+    },
+    {
+      "slot": 688,
+      "tier": 2,
+      "spokenText": "cucumber",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 689,
+      "tier": 2,
+      "spokenText": "pepper",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 690,
+      "tier": 2,
+      "spokenText": "granola bar",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 691,
+      "tier": 2,
+      "spokenText": "string cheese",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 692,
+      "tier": 2,
+      "spokenText": "applesauce",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 693,
+      "tier": 2,
+      "spokenText": "hummus",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 694,
+      "tier": 2,
+      "spokenText": "banana bread",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 695,
+      "tier": 2,
+      "spokenText": "goldfish crackers",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 696,
+      "tier": 2,
+      "spokenText": "pudding",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 697,
+      "tier": 2,
+      "spokenText": "jello",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 698,
+      "tier": 2,
+      "spokenText": "brownie",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 699,
+      "tier": 2,
+      "spokenText": "cupcake",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 700,
+      "tier": 2,
+      "spokenText": "chocolate",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 701,
+      "tier": 2,
+      "spokenText": "lollipop",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
+    },
+    {
+      "slot": 702,
+      "tier": 2,
+      "spokenText": "dessert",
+      "partOfSpeech": "Noun",
+      "fitzgeraldColor": "None",
+      "visualStyle": "Illustrated Object",
+      "category": "Food & Drink"
     }
   ]
 }
