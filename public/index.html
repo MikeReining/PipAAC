@@ -791,10 +791,11 @@
     <div class="overlay settings" id="menu">
       <div class="set-shell" role="dialog" aria-modal="true" aria-labelledby="set-name">
         <header class="set-top">
-          <div class="set-who">
+          <button class="set-who" id="set-who" aria-haspopup="true" aria-expanded="false">
             <span class="set-avatar" id="set-avatar" aria-hidden="true"></span>
-            <span class="set-whotext"><b id="set-name">Settings</b><small>Settings</small></span>
-          </div>
+            <span class="set-whotext"><b><span id="set-name">Settings</span> <span class="set-caret" aria-hidden="true">▾</span></b><small>Settings · switch person</small></span>
+          </button>
+          <div class="set-pop" id="set-pop" hidden></div>
           <input type="search" id="set-search" hidden placeholder="Search settings" autocomplete="off" aria-label="Search settings" />
           <button class="btn set-done" id="set-done" data-close>Done</button>
         </header>
@@ -942,6 +943,11 @@
                   <button class="btn secondary" id="usr-add">Add a person</button>
                 </div>
                 <p class="hint">Each person keeps their own board, words, and sync. Switching opens that person; the others keep everything they had.</p>
+              </div>
+              <div class="seg-row" id="opens-row" hidden>
+                <span class="seg-label">When Pip opens on this device</span>
+                <div class="seg set-wrap" id="opens-seg"></div>
+                <p class="hint">A child's own device opens straight to their board. On a shared or therapy device, "Show the list" asks who's talking each time Pip starts.</p>
               </div>
               <div class="seg-row" id="sup-row" hidden>
                 <span class="seg-label">Team</span>

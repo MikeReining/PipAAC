@@ -75,6 +75,7 @@ import {
 } from "./shared/families.mjs";
 import { mountFamilyEditor } from "./board/family-editor.js";
 import { mountSettings } from "./board/settings-ui.js";
+import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -89,28 +90,6 @@ const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
  * changing the home flag.
  * ------------------------------------------------------------------ */
 const userStore = openUserStore();
-
-/** Shared device, no home user: ask who is playing. A plain full-screen
- * list — the child's page never carries a settings chrome. */
-function pickUser(rows) {
-  return new Promise((resolve) => {
-    const wrap = document.createElement("div");
-    wrap.style.cssText = "position:fixed;inset:0;background:var(--cream);"
-      + "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:99";
-    const h = document.createElement("p");
-    h.className = "hint";
-    h.textContent = "Who is playing?";
-    wrap.append(h);
-    for (const u of rows) {
-      const b = document.createElement("button");
-      b.className = "btn";
-      b.textContent = u.name || "This user";
-      b.onclick = () => { wrap.remove(); resolve(u); };
-      wrap.append(b);
-    }
-    document.body.append(wrap);
-  });
-}
 
 await migrateLegacy({
   storage: localStorage,
@@ -128,7 +107,7 @@ if (!me && users.length === 0) {
   // Parent-Corner add gets (014 § 9 ruling 1, 019 blocker 2).
   me = await addUser(userStore, { home: true, needsSetup: true });
 }
-if (!me) me = await pickUser(users); // shared device, no home — ask
+if (!me) me = await pickPerson(users); // shared device, no home — ask
 sessionStorage.setItem("pip_active_user", me.id);
 await touchOpened(userStore, me.id);
 const saveUser = async (patch) => {
@@ -1751,7 +1730,17 @@ async function gatePin(onOk) {
 /* Settings — public/board/settings-ui.js owns the page navigation;
  * every control inside keeps its own module's wiring. */
 const settingsUi = mountSettings({ me, open });
+// Set only by the post-switch reopen below: the corner click then skips
+// the PIN (it was just entered in this tab) and opens that page, so every
+// module's corner-click refresh runs as on a normal open.
+let reopenSection = null;
 $("corner").addEventListener("click", () => {
+  if (reopenSection) {
+    const section = reopenSection;
+    reopenSection = null;
+    settingsUi.open(section);
+    return;
+  }
   // 027 B5: while a group or the index is open the corner is Home — one
   // action back to the home board, outside the grid. In Edit mode it
   // keeps editing, so the home board is one tap away; Done is the home
@@ -2153,6 +2142,14 @@ const devicesUi = mountDevices({
   initSync, onSyncApplied, onModel, qrcode, syncRekey,
 });
 
+/* People — public/board/people-ui.js: the Settings header switcher and
+ * "When Pip opens". */
+const peopleUi = mountPeople({
+  me, userStore, keyStore: openKeyStore(), flushDb, settings: settingsUi,
+  onHomeChanged: () => { devicesUi.renderAccount(); devicesUi.renderUsers(); },
+});
+settingsUi.onOpen(() => { peopleUi.closePop(); peopleUi.renderOpens(); });
+
 /* The weekly win card and progress dashboard — public/board/wincard-ui.js
  * and progress-ui.js (016 slices 2 and 4). Item ids resolve to names
  * here so the shared modules stay off the label and entity tables. */
@@ -2240,6 +2237,16 @@ resumeSession(db);
 renderGrid();
 renderBar();
 renderStrip();
+// A switch from Settings reloads into the chosen person and lands back
+// on the same Settings page (people-ui.js) — unless the new person's
+// first-open setup is showing.
+{
+  const reopen = takeReopen();
+  if (reopen && !me.needsSetup) {
+    reopenSection = reopen;
+    $("corner").click();
+  }
+}
 
 // Timer/midnight expiry: the row's ends_at is the truth; the layer
 // checks it on a slow tick (and on every sync drain) and ends itself.

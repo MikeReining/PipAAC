@@ -14,7 +14,7 @@ import {
   listInvites, openInvite, registerAccount, requestLink, revokeInvite,
   saveAccountState, shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
-import { addUser, listUsers, putUser, removeUser, setHome } from "../shared/users.mjs";
+import { addUser, listUsers, putUser, removeUser } from "../shared/users.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -79,7 +79,7 @@ export function mountDevices({
     const next = { userId: user_id, epoch: 1, cursor: 0 };
     await saveUser({ sync: next });
     await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel);
-    toast("This user syncs now — make the recovery card: Settings → Backup & privacy");
+    toast(`${me.name || "This board"} syncs now — make the recovery card: Settings → Backup & privacy`);
     return next;
   }
 
@@ -89,7 +89,7 @@ export function mountDevices({
     $("dev-lifetime-row").hidden = !cfg?.userId;
     $("dev-delete-row").hidden = !cfg?.userId;
     if (!cfg?.userId) {
-      list.innerHTML = '<p class="hint">This user is only on this device.</p>';
+      list.innerHTML = '<p class="hint">Only on this device so far.</p>';
       return;
     }
     try {
@@ -133,7 +133,7 @@ export function mountDevices({
     const state = $("dev-delete-state");
     if (self?.delete_at) {
       const when = new Date(self.delete_at).toLocaleDateString();
-      state.innerHTML = `<p class="hint"><b>This user is scheduled for deletion on ${when}.</b></p>`;
+      state.innerHTML = `<p class="hint"><b>${me.name || "This board"} is scheduled for deletion on ${when}.</b></p>`;
       $("dev-delete").hidden = true;
       $("dev-undelete").hidden = false;
     } else {
@@ -185,7 +185,7 @@ export function mountDevices({
       const locked = u.sync?.userId
         && !(await ks.get(`user/${u.id}/key_e${u.sync.epoch ?? 1}`));
       name.textContent = (u.id === me.id ? "● " : "")
-        + (u.name || "This user") + (u.home ? " — opens first" : "")
+        + (u.name || "Unnamed") + (u.home ? " — opens first" : "")
         + (locked ? " 🔒 needs an Allow or QR card" : "");
       row.append(name);
       if (u.id !== me.id && !locked) {
@@ -194,6 +194,7 @@ export function mountDevices({
         sw.textContent = "Switch";
         sw.onclick = async () => {
           sessionStorage.setItem("pip_active_user", u.id);
+          sessionStorage.setItem("pip_reopen_settings", "team");
           await flushDb();
           location.reload();
         };
@@ -218,31 +219,21 @@ export function mountDevices({
       edit.className = "btn secondary";
       edit.textContent = "Name";
       edit.onclick = async () => {
-        const n = prompt("Name this user", u.name || "");
+        const n = prompt("Name this person", u.name || "");
         if (n === null) return;
         if (u.id === me.id) await saveUser({ name: n.trim() });
         else await putUser(userStore, { ...u, name: n.trim() });
         await renderUsers();
       };
       row.append(edit);
-      if (!u.home) {
-        const home = document.createElement("button");
-        home.className = "btn secondary";
-        home.textContent = "Opens first";
-        home.onclick = async () => {
-          await setHome(userStore, u.id);
-          if (u.id === me.id) me.home = true;
-          await renderUsers();
-          renderAccount(); // the sign-in row hides on the child's device
-        };
-        row.append(home);
-      }
+      // Which person opens first is Settings → "When Pip opens"
+      // (people-ui.js), one control for one fact.
       list.append(row);
     }
   }
 
   $("usr-add").onclick = async () => {
-    const name = prompt("Name this user", "") ?? "";
+    const name = prompt("Name this person", "") ?? "";
     const added = await addUser(userStore, { name: name.trim() });
     // 014 § 9 ruling 1: a new profile gets the setup question on first
     // open — "Who do they call for?" — so the family's people can sit
@@ -802,5 +793,5 @@ export function mountDevices({
     }
   };
 
-  return { userClient, renderAccount };
+  return { userClient, renderAccount, renderUsers };
 }

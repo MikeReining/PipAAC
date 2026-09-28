@@ -110,7 +110,9 @@ export function mountSettings({ me, open }) {
 
   /** Open Settings: fresh names, the list on a phone, Overview on a
    *  wide screen. */
+  const onOpen = [];
   function openSettings(section = "overview") {
+    for (const fn of onOpen) fn();
     paintNames();
     current = section;
     renderNav();
@@ -119,5 +121,9 @@ export function mountSettings({ me, open }) {
     open("menu");
   }
 
-  return { open: openSettings, show, paintNames, renderNav };
+  return {
+    open: openSettings, show, paintNames, renderNav,
+    current: () => current,
+    onOpen: (fn) => onOpen.push(fn),
+  };
 }
