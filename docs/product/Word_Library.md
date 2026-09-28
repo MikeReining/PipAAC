@@ -16,15 +16,15 @@ wins it by being fast to add, easy to find again, and easy to change.
 
 ## 1. The problem, from first principles
 
-Every incumbent (Proloquo2Go, TouchChat, TD Snap, LAMP) stores vocabulary
-as buttons in folders. A button *is* its location. The same word in two
-folders is two buttons that drift apart when one is edited.
+Repeated word placements become expensive to maintain when their identity and
+location are coupled. Pip keeps those responsibilities separate: changing a
+picture can update the word everywhere while removing one placement stays local.
 
 Pip separates the word from where it shows up. A word is one record. A group
-is a list of places it appears (many-to-many, **BUILT**
-fb5a8d7…0555aa9). Occasions are a third, computed dimension
-(`docs/phases/007_Occasions.md`). That model is stronger, but only if the
-adult can answer three questions without learning it:
+is a collection of word placements (many-to-many, **BUILT**
+fb5a8d7…0555aa9). Occasion groups are curated views with ordinary memberships
+(027); learned occasion context is a separate prediction input (007). The adult
+must be able to answer three questions without learning that model:
 
 1. Where did the word I just added go?
 2. How do I find it again?
@@ -45,7 +45,7 @@ an album does not delete it. No one asks which folder a photo is in.
 | --- | --- |
 | Library | **Word Library**: every word the child can have, searchable |
 | Album | **Group**: built-in, My Words, or custom |
-| Smart album | **Occasion**: breakfast, bedtime (computed, 007) |
+| Prepared album | **Occasion group**: Breakfast, Lunch, Dinner, Snack (027); independent local memberships |
 | Info panel | **Word card** |
 | Recently Added | Library → Added, newest first |
 
@@ -87,8 +87,7 @@ are scheduled with those slices.
 | Picture | Photo, or change it — **BUILT** (file input → `savePhoto`) | **BUILT** — **Use my own picture** (a photo) or another approved library image sets `image_override`; **Use our picture** restores (`public/shared/images.mjs`) |
 | Name | Editable — **BUILT**. A rename supersedes the ready recording and enrichment (schema § 6.2; `renameEntity`) | Read-only — **BUILT**. For another word, add it as a new word |
 | Sound | ▶ plays what the board plays — **BUILT** (`resolveSlot` in `public/shared/voice.mjs`: override → voice clip → TTS → silent slot). **Record it** / **Use the voice again** — **BUILT** (`MediaRecorder` → `blob:` key → `set_override` op) |
-| In groups | Chips, one per group — **BUILT** (`entityGroups`/`senseGroups`). × removes with Undo — **BUILT**. **+ Add to group** lists groups — **BUILT** | Same. A seeded word cannot leave its built-in group; use Hide |
-| Occasions | Read-only chips once 007 lands | Same |
+| In groups | Chips, one per group — **BUILT** (`entityGroups`/`senseGroups`). × removes with Undo — **BUILT**. **+ Add to group** lists groups — **BUILT** | Same. **DECIDED 2026-09-27, not built:** seeded words may leave any group; group removal is distinct from global Hide (027). |
 | Show on board | **BUILT** — opens the group page with the cell flashed; a core-mapped sense flashes on the board | Same |
 | Remove / Hide | **Remove** retires the entity — **BUILT** (`retireEntity`, restorable; `docs/product/Vocabulary_Masking_And_Safety.md` § 3.2) | **Hide** masks it — not built (009 slice 9) |
 
@@ -99,9 +98,19 @@ Rules:
   (`docs/product/Personal_Entities.md` § Filing). On the card the adult is
   deliberately putting a word somewhere else, so a group list is the answer
   to the question they asked.
-- **Never none.** Removing an entity's last group chip puts it in My Words.
-  **BUILT** in `removeItem` (`public/shared/groups.mjs`); the My Words
-  chip has no × — Remove on the card retires instead.
+- **Scope must be visible (027; decided, not built).** Picture, name, and
+  recording changes say “Changes this word everywhere it appears.” Group ×
+  says “Remove from [group]”; global Hide/retire is separately named. No ordinary
+  placement action asks “here or everywhere?”
+- **Zero placements is allowed (027; decided, not built).** Removing the last
+  membership keeps the active word in the Library and keyboard lookup. Do not
+  silently place it in My Words; this replaces the existing `removeItem`
+  catch-all. Removing from My Words is also a local placement removal; retiring
+  the word is a separate explicit action. A removed word can be added again.
+- **Add to other boards (027; decided, not built).** Named destinations, none
+  preselected; one save to only the selected groups. Already-present placements
+  are skipped, never moved. Undo affects only memberships created by that save.
+  The same optional action follows an ordinary successful add.
 - The card never writes the core map.
 
 ## 5. Adding words
@@ -137,9 +146,10 @@ adult types, every existing meaning of the text appears as a picture row:
 **The group ranks, it never hides.** Inside Animals, 🦇 sorts above ⚾.
 Inside Sports, ⚾ sorts first. Every meaning stays offered.
 
-**What is forbidden:** the same record twice in one group (the
-`group_cell` primary key already enforces it), and an add that silently
-creates a second record when the one the adult meant already exists.
+**What is forbidden:** the same record twice in one group, or an add that
+silently creates a second record when the intended one already exists. The
+current `group_cell` key enforces membership uniqueness; 027 moves that
+constraint to `group_membership`.
 **BUILT** (009 slice 1): `entityMatches` offers the family's own entities
 first, `catalogMatches` ranks by the target group's seed category, and
 picking a row places the same record (`public/shared/groups.mjs`,
@@ -363,9 +373,9 @@ What is stored, on the device only:
 
 | Ban | Negative test |
 | --- | --- |
-| `+ Add` hides a meaning the family already has | Add Cooper in Animals; in People type "Coo" and pick the match. `personal_entity` count stays 1; Cooper has two `group_cell` rows. |
+| `+ Add` hides a meaning the family already has | Add Cooper in Animals; in People type "Coo" and pick the match. `personal_entity` count stays 1; Cooper has two group memberships with per-layout positions (027: `group_membership`), not duplicate word records. |
 | Same spelling is treated as a duplicate | In Animals type "bat": 🦇 and ⚾ are both offered, 🦇 first; in Sports ⚾ is first. Adding a New "Max" while an entity "Max" exists creates a second entity. |
-| Removing an item moves another item | Remove the item at slot 14. Every other `group_cell` row of that group is byte-identical. |
+| Removing an item changes another group or resurrects later | Remove slot 14 from a built-in group, restart/reimport/restore; other groups and remaining placements stay unchanged, removed placement stays absent (027). |
 | The add form asks where to file | Unchanged from `docs/product/Personal_Entities.md` § 4. |
 | An extended word appears on a page or in the strip before the family adds it | After import, no `group_cell` row points at an extended sense; the strip never offers an unplaced extended sense. |
 | A recording plays for the wrong word | The schema trigger holds: an override's `recorded_text` equals the spoken text. |
