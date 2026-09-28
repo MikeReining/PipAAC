@@ -27,11 +27,13 @@ import {
   groupDisplayName,
   groupIndex,
   groupPage,
+  installSeedGroups,
   moveGroup,
   moveItem,
   pageCount,
   placeItem,
   removeItem,
+  reseedBuiltinGroups,
   setGroupHidden,
   swapGroups,
   swapItems,
@@ -565,4 +567,36 @@ test("027 § 4: a saved database from before the clean break is discarded; a cur
   const fresh = join(dir, "fresh.sqlite");
   createDatabase(fresh).close();
   assert.equal(beforeCleanBreak(readFileSync(fresh)), false);
+});
+
+test("reseed: wiping built-in seed installs restores the shipped seed, spares custom and My Words", () => {
+  const db = openDb();
+  const chips = senseIdByText(db, "chips");
+  const seedCell = cellsOf("grp_snack", "grid60").find((c) => c.item_id === chips);
+  // Caregiver edits inside a built-in group, plus things a reseed must not touch.
+  removeItem(db, "grp_snack", "sense", chips);
+  const { id: park } = createGroup(db, { name: "Park" });
+  placeItem(db, park, "sense", senseIdByText(db, "swing"));
+  const { id: spot } = createEntity(db, { name: "Spot" });
+  placeItem(db, "grp_my_words", "entity", spot);
+  const opsBefore = listOps(db).length;
+
+  const wiped = reseedBuiltinGroups(db);
+  assert.ok(wiped > 0);
+  assert.equal(listOps(db).length, opsBefore, "reseed records no op");
+  installSeedGroups(db, catalog);
+
+  const page = groupPage(db, "grp_snack", 0, "en", "grid60");
+  const back = page.find((r) => r.item_id === chips);
+  assert.ok(back, "chips restored to Snack");
+  assert.equal(back.slot_index, seedCell.slot_index, "at its seed cell");
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM group_membership WHERE group_id = 'grp_snack'").all()[0].n,
+    catalog.groupMembers.filter((m) => m.group_id === "grp_snack").length,
+  );
+  assert.ok(groupIndex(db).some((g) => g.id === park), "custom group survives");
+  assert.ok(
+    groupPage(db, "grp_my_words", 0, "en").some((r) => r.item_id === spot),
+    "My Words keeps the family's entity",
+  );
 });

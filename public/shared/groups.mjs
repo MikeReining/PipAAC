@@ -267,6 +267,31 @@ export function applySeedInstall(db, { version, groups }) {
   });
 }
 
+/**
+ * Forget every installed built-in seed group — markers, board rows,
+ * memberships, cells — so the next installSeedGroups rebuilds them from
+ * the shipped catalog. Local seed-iteration affordance (the `?reseed`
+ * boot flag): a founder reviewing a seed change must see it, while real
+ * devices keep § 4's first-install-wins. Custom groups, entities, and
+ * My Words (kind != 'builtin') are untouched; a caregiver's edits inside
+ * built-in groups go with them. Local only — records no op, so a reseed
+ * never propagates to replicas.
+ */
+export function reseedBuiltinGroups(db) {
+  const seeded = all(db,
+    `SELECT g.id FROM group_seed_install s JOIN board_group g ON g.id = s.group_id
+     WHERE g.kind = 'builtin'`).map((r) => r.id);
+  txn(db, () => {
+    for (const g of seeded) {
+      db.prepare("DELETE FROM group_cell WHERE group_id = ?").run(g);
+      db.prepare("DELETE FROM group_membership WHERE group_id = ?").run(g);
+      db.prepare("DELETE FROM board_group WHERE id = ?").run(g);
+      db.prepare("DELETE FROM group_seed_install WHERE group_id = ?").run(g);
+    }
+  });
+  return seeded.length;
+}
+
 /* --- reads --- */
 
 /**

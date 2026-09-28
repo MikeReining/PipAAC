@@ -9,6 +9,7 @@
  */
 import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
+import { reseedBuiltinGroups } from "./shared/groups.mjs";
 import { getDbBytes, putDbBytes } from "./shared/users.mjs";
 import { beforeCleanBreak, migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
 
@@ -106,6 +107,14 @@ export async function bootDb(userStore, userId) {
   // listed tables fresh — these are simply gone.
   d.exec("DROP TABLE IF EXISTS history_count");
   d.exec("DROP TABLE IF EXISTS prediction_weights");
+  // ?reseed — local seed iteration: drop installed built-in group seeds
+  // so importCatalog reinstalls them from this catalog. First install
+  // still wins everywhere else; the flag exists so a reviewer reloading
+  // the dev copy always sees the shipped seed.
+  if (typeof location !== "undefined"
+      && new URLSearchParams(location.search).has("reseed")) {
+    reseedBuiltinGroups(d);
+  }
   // Catalog tables, then the rebase baseline (§ 5), then the group seed —
   // installed once, as an op, so replicas converge on one install
   // (importCatalog owns that order).
