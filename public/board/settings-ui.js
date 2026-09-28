@@ -206,6 +206,8 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
    *  wide screen. */
   const onOpen = [];
   function openSettings(section = "overview") {
+    if (section === "results") section = "overview";
+    $("set-search").value = "";
     for (const fn of onOpen) fn();
     paintNames();
     current = section;
@@ -214,6 +216,69 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
     if (narrow() && section === "overview") body.dataset.view = "list";
     open("menu");
   }
+
+  /* Search: every row's own words (label, hint, button text) plus the
+   * everyday words people use for a page ("voice", "bigger", "teacher").
+   * A hit opens the page and marks the row. */
+  const SYNONYMS = {
+    overview: "spotlight practice goal target model lesson add word edit",
+    words: "vocabulary library photo picture name add list people places family meal breakfast lunch dinner snack groups folder hide",
+    board: "cells size bigger smaller grid layout top row core keyboard typing letters spell qwerty abc alphabet",
+    talking: "voice speak sound expressive emotion feelings happy sad angry tone play sentence clear fresh",
+    lang: "grammar forms endings plural tense highlight predict prediction hint next smart bar question families",
+    progress: "stats report iep evidence week numbers",
+    team: "invite supporter slp teacher therapist share device link pair ipad phone tablet code person people user switch client add",
+    backup: "backup qr restore lost recovery card pin lock password privacy research data anonymous delete remove erase",
+    you: "account email sign login passkey license lifetime buy upgrade",
+  };
+  const search = $("set-search");
+  const results = $("set-results");
+  const rowText = (row) => row.textContent.replace(/\s+/g, " ").trim();
+  function runSearch() {
+    const q = search.value.trim().toLowerCase();
+    if (!q) { show(current === "results" ? "overview" : current); return; }
+    // Match at the start of a word: "pin" finds PIN, not "typing".
+    const esc = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const re = new RegExp(`(^|[^\\p{L}\\p{N}])${esc}`, "iu");
+    const hits = [];
+    for (const sec of sections) {
+      if (sec === results || isEmpty(sec)) continue;
+      // Overview's checklist and summary repeat other pages' words.
+      const rows = [...sec.querySelectorAll(":scope > .seg-row")]
+        .filter((r) => !r.hidden && r.id !== "set-check" && !r.querySelector("#set-glance"));
+      const matched = rows.filter((r) => re.test(rowText(r)));
+      if (matched.length) {
+        for (const r of matched) hits.push({ sec, row: r, label: r.querySelector(".seg-label")?.textContent || sec.dataset.title });
+      } else if (re.test(SYNONYMS[sec.dataset.sec] ?? "") || re.test(sec.dataset.title)) {
+        hits.push({ sec, row: null, label: sec.dataset.title });
+      }
+    }
+    const list = $("set-results-list");
+    list.replaceChildren();
+    $("set-results-title").textContent = `Results for "${search.value.trim()}"`;
+    for (const h of hits) {
+      const b = document.createElement("button");
+      b.className = "set-glance-row";
+      const t = document.createElement("b");
+      t.textContent = h.label;
+      const v = document.createElement("span");
+      v.textContent = h.row ? h.sec.dataset.title : "Open page";
+      b.append(t, v);
+      b.onclick = () => {
+        search.value = "";
+        show(h.sec.dataset.sec);
+        if (h.row) {
+          h.row.scrollIntoView({ block: "center" });
+          h.row.classList.add("set-found");
+          setTimeout(() => h.row.classList.remove("set-found"), 1600);
+        }
+      };
+      list.append(b);
+    }
+    $("set-results-none").hidden = hits.length > 0;
+    show("results");
+  }
+  search.addEventListener("input", runSearch);
 
   /* On/off rows (`.seg[data-switch]`, Off = data-v 0, On = data-v 1)
    * show one switch beside their label. The two buttons stay in the DOM,

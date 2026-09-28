@@ -30,6 +30,10 @@
 .set-glance-row .set-warn { color: #8a5a00; font-weight: 700; }
 .set-glance-row:hover, .set-check-item:not(:disabled):hover { background: var(--cream); }
 
+.set-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px; }
+.set-card:empty { display: none; }
+.set-found { box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--ink); transition: box-shadow .2s; }
+
 /* On/off rows: label left, switch right (On is always to the right). */
 .set-head { display: flex; align-items: center; gap: 16px; }
 .set-head .seg-label { flex: 1; min-width: 0; }

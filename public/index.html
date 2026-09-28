@@ -796,7 +796,7 @@
             <span class="set-whotext"><b><span id="set-name">Settings</span> <span class="set-caret" aria-hidden="true">▾</span></b><small>Settings · switch person</small></span>
           </button>
           <div class="set-pop" id="set-pop" hidden></div>
-          <input type="search" id="set-search" hidden placeholder="Search settings" autocomplete="off" aria-label="Search settings" />
+          <input type="search" id="set-search" placeholder="Search settings: voice, keyboard, teacher…" autocomplete="off" aria-label="Search settings" />
           <button class="btn set-done" id="set-done" data-close>Done</button>
         </header>
         <div class="set-body" id="set-body" data-view="list">
@@ -819,6 +819,12 @@
                 <span class="seg-label">How it's set up</span>
                 <div id="set-glance" class="set-glance"></div>
               </div>
+            </section>
+
+            <section class="set-sec" data-sec="results" data-title="Search" id="set-results">
+              <h2 id="set-results-title">Results</h2>
+              <div class="set-glance set-card" id="set-results-list"></div>
+              <p class="set-intro" id="set-results-none" hidden>Nothing matches. Try "voice", "bigger", or "teacher".</p>
             </section>
 
             <section class="set-sec" data-sec="words" data-title="Words">
