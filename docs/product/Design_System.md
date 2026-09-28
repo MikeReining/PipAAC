@@ -26,8 +26,10 @@ One bird, drawn at the sizes it's used:
 `docs/product/Motor_Grid_And_Art.md` § Groups; execution: 027.
 
 - Groups share the home board's active cell size; sentence bar and Smart bar
-  do not move. The existing core top row is supplied by default, plus the
-  yes/no/stop/help frame; meal groups also supply eat/drink/all done.
+  do not move. Reserved cells show the home board's top row (on by default)
+  and its yes/no/stop/help frame — the same tiles as home, not group content,
+  and not editable inside a group. Meal groups seed eat/drink/all done as
+  ordinary words.
 - Home is a corner control outside the word grid. Groups opens the index.
   Add sits beside Groups in Edit mode only. Next reserves the final grid cell
   at all times and appears only when paging, with a page count.
@@ -36,13 +38,12 @@ One bird, drawn at the sizes it's used:
 - × says Remove from [group], with Undo. No scope modal, linked-state marker,
   drift badge, or make-it-match control. The word card labels shared identity
   edits and offers explicit Add to other boards with named destinations.
-- Top-row OFF leaves space instead of repacking. Edit mode distinguishes an
-  untouched supplied tile hidden by that setting from an available empty cell;
-  globally masked words keep their separate existing treatment.
+- Top-row OFF leaves those cells empty instead of repacking. In Edit mode
+  reserved cells read as reserved (not drop targets), distinct from an available
+  empty cell; globally masked words keep their separate existing treatment.
 - Speak preserves the open group/page. Home remains explicit. A likely occasion
   may glow, but index positions and selected group remain fixed.
-- Old saved layouts retain their geometry until the adult accepts a previewed
-  conversion; no refresh silently rearranges a personalized group.
+- No refresh or catalog update rearranges a group a family has edited.
 
 ## Palette
 
