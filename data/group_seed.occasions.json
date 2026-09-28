@@ -3,7 +3,7 @@
   "status": "LIVE 2026-09-28 — docs/phases/027_Occasion_Boards.md § 3.1, shared-block rework + food-leads ordering 2026-09-28. Read by scripts/catalog/build_groups.mjs.",
   "notes": {
     "groups": "Membership is the explicit word list — nothing else adds a word. Index order lives in data/group_seed.topics.json (these keys appear there as stubs). The Fruit and Drinks doors are ordinary topic groups now — they carry the full shelves and lay out their own pages.",
-    "clusters": "A cluster is a semantic block that keeps together on a page; words sit in at most one cluster. `shared: true` blocks — drinks (water/milk/juice), fruit, vegetables — are the meal kit: every board that holds one holds ALL of its words, they claim first anchored to the right by the frame, most-said inside, so the kit sits in the same cells on every board that offers it. Non-shared clusters are the board's own menu, in AUTHORED order — the seed list is the rank (corpus frequency can't know what belongs at this meal), and they fill in reading order from the left. dishes claims last, side right, so tableware lands low — the occasion is food, so food leads.",
+    "clusters": "A cluster is a semantic block that keeps together on a page; words sit in at most one cluster. `shared: true` blocks — drinks (water/milk/juice), fruit, vegetables — are the meal kit: every board that holds one holds ALL of its words, they claim first anchored to the right by the frame, most-said inside, so the kit sits in the same cells on every board that offers it. Non-shared clusters are the board's own menu, in AUTHORED order — the seed list is the rank (corpus frequency can't know what belongs at this meal), and they fill in reading order from the left. dishes is shared too, but anchored side bottom — the same lower-right cells on every board, out of the food's way — the occasion is food, so food leads.",
     "frame": "The home cells of these words are reserved on every group page (027 B3).",
     "homeCoordinates": "Seeded at their home cell where that cell is free (027 B4) — identical on every meal board.",
     "firstPage": "Assigned before the blocks on that size — grid15 authors its first page rather than truncating the 60-cell board (027 § 3.2).",
@@ -29,6 +29,12 @@
       "words": ["fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon"]
     },
     {
+      "key": "dishes",
+      "shared": true,
+      "side": "bottom",
+      "words": ["cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
+    },
+    {
       "key": "vegetables",
       "shared": true,
       "side": "right",
@@ -45,11 +51,6 @@
     {
       "key": "snacks",
       "words": ["cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "hummus", "chocolate milk"]
-    },
-    {
-      "key": "dishes",
-      "side": "right",
-      "words": ["cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     }
   ],
   "groups": [

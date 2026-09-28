@@ -232,6 +232,21 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
     for (let r = 0; r < geom.rows; r++) {
       rightCells.push(...geom.content.filter((s) => Math.floor(s / geom.cols) === r).reverse());
     }
+    // Bottom-anchored traversal: rows bottom to top, each right to left —
+    // `side: "bottom"` blocks (tableware) park in the lower right corner
+    // on every board regardless of which shared blocks a board skips.
+    const bottomCells = [];
+    for (let r = geom.rows - 1; r >= 0; r--) {
+      bottomCells.push(...geom.content.filter((s) => Math.floor(s / geom.cols) === r).reverse());
+    }
+    const rowStartsOf = (list) => list.map((slot, i) => [slot, i])
+      .filter(([slot], i) => i === 0
+        || Math.floor(slot / geom.cols) !== Math.floor(list[i - 1] / geom.cols))
+      .map(([, i]) => i);
+    const traversal = {
+      right: { list: rightCells, tops: rowStartsOf(rightCells) },
+      bottom: { list: bottomCells, tops: rowStartsOf(bottomCells) },
+    };
     const byFreq = (a, b) => freqOf(b) - freqOf(a); // stable: authored order ties
 
     // Occasion boards each pack their own members under a fixed claim
@@ -266,12 +281,6 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
         const [[, page, slot]] = run([s], 0);
         claim(s, page, slot);
       };
-      // Row starts: indices where the row changes. The same boundaries
-      // index the mirrored list — there a start is the row's rightmost.
-      const tops = geom.content.map((slot, i) => [slot, i])
-        .filter(([slot], i) => i === 0
-          || Math.floor(slot / geom.cols) !== Math.floor(geom.content[i - 1] / geom.cols))
-        .map(([, i]) => i);
       // A cluster keeps together. Shared/right-anchored blocks prefer a
       // strictly contiguous run — no skips, so the shelf never splits;
       // left-flow menus prefer the skipping run, which takes the free
@@ -289,8 +298,8 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
       const assignCluster = (words, side) => {
         const todo = words.filter(pending);
         if (!todo.length) return;
-        const list = side === "right" ? rightCells : geom.content;
-        const runs = side === "right" ? [strictRun, run] : [run, strictRun];
+        const { list, tops } = traversal[side] ?? { list: geom.content, tops: rowStartsOf(geom.content) };
+        const runs = side === "right" || side === "bottom" ? [strictRun, run] : [run, strictRun];
         // One-page sizes never push a cluster to a later page to keep it
         // whole; paged sizes (grid15) may, when it fits one page.
         const pagesToTry = ONE_PAGE_LAYOUTS.has(layout) || todo.length > n ? 1 : 3;
