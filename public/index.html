@@ -197,8 +197,11 @@
       }
       .corner-btn svg { width: 26px; height: 26px; }
       .corner-btn[hidden] { display: none; }
-      #corner .g-done, body.editing #corner .g-open { display: none; }
+      #corner .g-done, #corner .g-home, body.editing #corner .g-open { display: none; }
       body.editing #corner .g-done { display: block; }
+      /* 027 B5: Home replaces Parent corner while a group or the index is open. */
+      body.groups:not(.editing) #corner .g-open { display: none; }
+      body.groups:not(.editing) #corner .g-home { display: block; }
       /* The 📊 toggle's on state (018 D10): pressed chrome, same rule as
          the seg buttons. */
       .corner-btn.on { border-color: var(--ink-text); background: var(--tray); }
@@ -336,6 +339,7 @@
         overflow: hidden;
         padding: 0 4px;
       }
+      .anchor[hidden] { display: none; }
       .anchor .glyph { font-size: clamp(16px, 3vmin, 28px); line-height: 1; flex: none; }
       .anchor span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       /* "Show me where": a 1.5s ink halo on the Groups anchor plus a
@@ -709,6 +713,7 @@
       <button id="corner" class="corner-btn" title="Parent corner" aria-label="Parent corner">
         <svg class="g-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5v15M4.5 12h15"/></svg>
         <svg class="g-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+        <svg class="g-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10h12V10"/><path d="M10 20v-5.5h4V20"/></svg>
       </button>
     </div>
     <!-- Coach view (013 § 5a): partner devices only — the session's
@@ -727,6 +732,9 @@
       <!-- The tray holds the four prediction cards; the two utility
            anchors are permanent markup. -->
       <div id="tray"></div>
+      <button class="anchor" id="anchor-add" title="Add" hidden>
+        <span class="glyph">＋</span><span>Add</span>
+      </button>
       <button class="anchor" id="anchor-groups" title="Groups">
         <span class="glyph">🗂️</span><span>Groups</span>
       </button>
@@ -754,6 +762,20 @@
             <button data-v="1">On</button>
           </div>
           <p class="hint">Up to three grid words get a thicker inner border in their own color.</p>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Top row on every group</span>
+          <div class="seg" id="group-toprow">
+            <button data-v="1">On</button>
+            <button data-v="0">Off</button>
+          </div>
+        </div>
+        <div class="seg-row">
+          <span class="seg-label">Meal groups (Breakfast, Lunch, Dinner, Snack)</span>
+          <div class="seg" id="group-occasions">
+            <button data-v="1">Show</button>
+            <button data-v="0">Hide</button>
+          </div>
         </div>
         <div class="seg-row">
           <span class="seg-label">After Speak, the next word</span>
@@ -995,6 +1017,7 @@
       <div class="sheet">
         <h2 id="cells-title">Change the board?</h2>
         <p id="cells-summary" class="hint"></p>
+        <p id="cells-groups" class="hint" hidden></p>
         <div id="cells-moved"></div>
         <div class="row">
           <button class="btn" id="cells-apply">Apply</button>
@@ -1061,6 +1084,19 @@
         </label>
         <div class="row">
           <button class="btn" id="group-save">Save</button>
+          <button class="btn secondary" data-close>Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 027 B9: Add to other boards — named destinations, none preselected. -->
+    <div class="overlay" id="boardsform">
+      <div class="sheet">
+        <h2 id="boards-title">Add to other boards</h2>
+        <p class="hint">Only the boards you pick change. Boards that already have this word are not listed.</p>
+        <div id="boards-list" class="wchips"></div>
+        <div class="row">
+          <button class="btn" id="boards-save" disabled>Add</button>
           <button class="btn secondary" data-close>Cancel</button>
         </div>
       </div>
@@ -1230,9 +1266,9 @@
           <button class="btn secondary" id="wc-revert" hidden>Use the voice again</button>
         </div>
         <p class="hint" id="wc-rechint" hidden></p>
+        <p class="hint" id="wc-scope">Picture, name, and recording change everywhere this word appears.</p>
         <div id="wc-groups"></div>
-        <button class="btn secondary" id="wc-addgroup">+ Add to group</button>
-        <div id="wc-grouplist" hidden></div>
+        <button class="btn secondary" id="wc-addgroup">Add to other boards</button>
         <div class="row">
           <button class="btn secondary" id="wc-show">Show on board</button>
           <button class="btn secondary" id="wc-hide" hidden>Hide word</button>
@@ -1260,6 +1296,7 @@
         </section>
         <section id="ed-mid">
           <div id="ed-groups"></div>
+          <button class="btn secondary" id="ed-add">+ Add word</button>
           <div id="ed-grid"></div>
         </section>
         <section id="ed-right">
@@ -1272,6 +1309,7 @@
     <div id="toast" hidden>
       <span id="toast-text"></span>
       <button id="toast-undo">Undo</button>
+      <button id="toast-act" hidden></button>
     </div>
 
     <div id="pathhint" hidden></div>

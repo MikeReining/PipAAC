@@ -54,4 +54,7 @@
   border: none; background: var(--ink); color: var(--cream);
   font-size: 12px; line-height: 1; padding: 0;
 }
-#wc-grouplist .wchip { cursor: pointer; background: #fff; }
+/* 027 B9: Add to other boards — pick named destinations. */
+.wchips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+#boards-list .wchip { cursor: pointer; background: #fff; }
+#boards-list .wchip[aria-pressed="true"] { border-color: var(--ink-text); background: var(--tray); }

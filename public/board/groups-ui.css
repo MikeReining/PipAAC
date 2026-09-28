@@ -52,3 +52,22 @@ body.groups #groupgrid { display: grid; }
 body.editing #groupgrid .gcell:not(.nav):not(.empty),
 body.editing #groupgrid .cell { border-style: dashed; }
 body.editing #groupgrid .gcell.empty:not(:disabled) { cursor: pointer; }
+/* 027 B3: reserved cells are the page's — the home board's own tiles, or
+   empty when the top row is off. In Edit mode they read as reserved: not
+   dashed like movable words, not drop targets, distinct from an
+   available empty cell (Design_System § Groups). */
+body.editing #groupgrid .cell.reserved { border-style: solid; opacity: 0.55; cursor: not-allowed; }
+#groupgrid .gcell.empty.reserved { border-color: transparent; background: transparent; }
+body.editing #groupgrid .gcell.empty.reserved {
+  border: 3px solid var(--line);
+  background: repeating-linear-gradient(45deg, transparent 0 6px, var(--line) 6px 7px);
+  opacity: 0.6;
+}
+/* 027 B8: a hidden door keeps its slot; in Edit mode it shows faded with
+   a Show switch. */
+.gcell.door.hidden-door { opacity: 0.45; }
+.gcell .hbadge {
+  position: absolute; bottom: 4px; right: 4px;
+  font-size: 11px; font-weight: 700; padding: 2px 6px;
+  border-radius: 999px; border: 2px solid var(--muted); background: #fff; color: var(--ink-text);
+}

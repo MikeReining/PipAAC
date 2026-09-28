@@ -15,8 +15,7 @@ const $ = (id) => document.getElementById(id);
 export function mountAddFlow({
   db, locale, all, catalog, open, close, toast,
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
-  invalidateIndex, rerenderView, renderStrip, renderLibrary,
-
+  invalidateIndex, rerenderView, renderStrip, renderLibrary, openAddToBoards,
 }) {
   let addTarget = null; // board_group id the add form files into
   let addCell = null; // {page, slot_index} when + came from an empty slot
@@ -129,11 +128,12 @@ export function mountAddFlow({
       el.className = `pic ${cls}`;
       return el;
     };
-    const place = (kind, id) => () => {
+    const place = (kind, id, label) => () => {
       placeItem(db, addTarget, kind, id, addCell);
       close("addform");
       rerenderView();
       renderStrip();
+      offerOtherBoards({ item_kind: kind, item_id: id, label });
     };
 
     for (const m of entityMatches(db, text, addTarget, locale, seed)) {
@@ -164,7 +164,7 @@ export function mountAddFlow({
         txt.appendChild(sub);
       }
       row.append(p, txt);
-      row.addEventListener("click", place("entity", m.id));
+      row.addEventListener("click", place("entity", m.id, m.name));
       box.appendChild(row);
     }
 
@@ -184,7 +184,7 @@ export function mountAddFlow({
       lb.textContent = m.label;
       txt.appendChild(lb);
       row.append(p, txt);
-      row.addEventListener("click", place("sense", m.id));
+      row.addEventListener("click", place("sense", m.id, m.label));
       box.appendChild(row);
     }
   }
@@ -264,7 +264,17 @@ export function mountAddFlow({
     close("addform");
     rerenderView();
     renderStrip();
+    offerOtherBoards({ item_kind: "entity", item_id: id, label: name });
   });
+
+  /** 027 B9: after an add, an optional Add to other boards — never a
+   *  silent multi-board write. */
+  function offerOtherBoards(item) {
+    toast(`Added ${item.label}`, null, {
+      actionLabel: "Add to other boards",
+      onAction: () => openAddToBoards(item),
+    });
+  }
 
   return { openAddForm };
 }

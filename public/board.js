@@ -1296,13 +1296,45 @@ const coachUi = mountCoach({
 function sizeStrip(cols) {
   $("strip").style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   const tray = $("tray");
-  tray.style.gridColumn = `span ${cols - 2}`;
+  // Groups and Keyboard always; Add joins them in Edit mode on a group (027 B5).
+  tray.style.gridColumn = `span ${cols - ($("anchor-add").hidden ? 2 : 3)}`;
   tray.style.gridTemplateColumns = `repeat(${stripSlots(cols)}, 1fr)`;
 }
 
 /** Transition-highlight marks (014 § 4): refreshed each grid render so
  *  an accepted Cells change glows immediately and expired marks drop. */
 let movedSet = new Set();
+
+/**
+ * One effective home cell's tile, without gestures — the core grid and
+ * every group page's reserved cells (027 B3) draw the same tile. A person
+ * shows the family's kind color (018 D7 — Yellow until classified) and
+ * photo; a hidden word keeps its slot as a ghost (Design_System mask
+ * tokens — faded, never tappable or spoken; Masking § 2). `say` is what a
+ * tap speaks, null for a ghost.
+ */
+function homeTile(c, masked = maskedSenseIds(db)) {
+  if (c.kind === "entity") {
+    const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "Yellow" });
+    loadPhotoURL(photoFor(c.entity_id)).then((url) => {
+      if (!url) return;
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "";
+      el.querySelector(".tart").appendChild(img);
+      el.classList.add("photo");
+    });
+    return { el, say: c.label };
+  }
+  if (masked.has(c.sense_id)) {
+    const ghost = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
+    ghost.classList.add("masked");
+    ghost.disabled = true;
+    return { el: ghost, say: null };
+  }
+  const say = shownLabel(c.sense_id, c.label);
+  return { el: wordTile({ label: say, role: c.fitzgerald_role, art: metaFor(c.sense_id).art }), say };
+}
 
 function renderGrid() {
   const geom = boardGeom();
@@ -1372,18 +1404,8 @@ function renderGrid() {
       continue;
     }
     if (c.kind === "entity") {
-      // A person in a home cell (014 § 9): the family's kind color
-      // (018 D7 — Yellow until classified), photo when added.
-      const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "Yellow" });
+      const { el } = homeTile(c, masked);
       el.dataset.slot = slot;
-      loadPhotoURL(photoFor(c.entity_id)).then((url) => {
-        if (!url) return;
-        const img = document.createElement("img");
-        img.src = url;
-        img.alt = "";
-        el.querySelector(".tart").appendChild(img);
-        el.classList.add("photo");
-      });
       if (editing) {
         // D10: tap asks "what goes here" — the placement sheet. Drag
         // still moves; the ✎ inside the sheet opens the word card.
@@ -1411,18 +1433,11 @@ function renderGrid() {
       grid.appendChild(withCount(el, "entity", c.entity_id));
       continue;
     }
-    // A hidden word keeps its slot as a ghost tile (Design_System mask
-    // tokens — faded, never tappable or spoken); nothing moves into the
-    // space (Masking § 2).
-    if (masked.has(c.sense_id)) {
-      const ghost = wordTile({ label: c.label, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
-      ghost.classList.add("masked");
-      ghost.disabled = true;
-      grid.appendChild(withCount(ghost, "sense", c.sense_id));
+    const { el, say: cellLabel } = homeTile(c, masked);
+    if (cellLabel === null) {
+      grid.appendChild(withCount(el, "sense", c.sense_id));
       continue;
     }
-    const cellLabel = shownLabel(c.sense_id, c.label);
-    const el = wordTile({ label: cellLabel, role: c.fitzgerald_role, art: metaFor(c.sense_id).art });
     el.dataset.slot = slot;
     if (editing) {
       // Adult move (014 § 2 ruling 1): drag onto a word swaps, onto an
@@ -1622,7 +1637,28 @@ $("corner").addEventListener("click", () => {
     rerenderView();
     return;
   }
+  // 027 B5: while a group or the index is open the corner is Home — one
+  // action back to the home board, outside the grid.
+  if (view === "group" || view === "groupIndex") {
+    kbUi.setView("board");
+    return;
+  }
   gatePin(() => open("menu"));
+});
+/** The corner's job and label follow the mode: ✓ Done while editing,
+ *  Home while a group or the index is open, else Parent corner (its
+ *  glyph swaps on body.editing / body.groups). */
+function syncCorner() {
+  const inGroups = view === "group" || view === "groupIndex";
+  $("corner").title = editing ? "Done editing" : inGroups ? "Home" : "Parent corner";
+  $("corner").setAttribute("aria-label", $("corner").title);
+  // 027 B5: Add sits beside Groups, in Edit mode only.
+  $("anchor-add").hidden = !(editing && inGroups);
+  sizeStrip(boardGeom().cols);
+}
+$("anchor-add").addEventListener("click", () => {
+  if (view === "group") addUi.openAddForm(groupsUi.getGroupKey());
+  else if (view === "groupIndex") open("groupform");
 });
 // 018 D10: 📊 puts the child's own 30-day taps on every tile.
 $("edit-counts").addEventListener("click", () => {
@@ -1672,7 +1708,7 @@ const kbUi = mountKeyboard({
   // Every view change repaints the bar: opening a group is intent — the
   // group bar must appear on that tap, before anything inside is picked;
   // leaving returns the main rule.
-  setViewName: (v) => { view = v; renderStrip(); },
+  setViewName: (v) => { view = v; syncCorner(); renderStrip(); },
   renderGroupIndex: () => groupsUi.renderGroupIndex(),
   renderGroupPage: () => groupsUi.renderGroupPage(),
   renderEditor: () => editorUi.renderEditor(),
@@ -1703,6 +1739,27 @@ $("fresh-speak").addEventListener("click", (e) => {
   syncFreshSeg();
 });
 syncFreshSeg();
+/* Groups (027 B6, B8): the home top row on every group page, and the
+ * four meal groups in the index. Both default ON; neither moves a cell —
+ * off leaves the top-row cells empty and the meal doors' slots kept. */
+function syncGroupSegs() {
+  const p = ALL(db,
+    "SELECT group_top_row AS t, occasions_visible AS o FROM learner_profile WHERE id = 'prf_local'",
+  )[0] ?? {};
+  for (const [id, on] of [["group-toprow", (p.t ?? 1) === 1], ["group-occasions", (p.o ?? 1) === 1]]) {
+    for (const b of $(id).querySelectorAll("button")) b.classList.toggle("on", (b.dataset.v === "1") === on);
+  }
+}
+for (const [id, key] of [["group-toprow", "group_top_row"], ["group-occasions", "occasions_visible"]]) {
+  $(id).addEventListener("click", (e) => {
+    const v = e.target.closest("button")?.dataset.v;
+    if (v === undefined) return;
+    setSetting(db, key, Number(v));
+    syncGroupSegs();
+    rerenderView();
+  });
+}
+syncGroupSegs();
 /* Grammar help (021) — forms on/off. Off is instant: tiles, bar, and
  * speech fall back to lemma labels on the next paint. */
 function syncGrammarSeg() {
@@ -1805,8 +1862,7 @@ function setEditing(on) {
   document.body.classList.toggle("editing", on);
   $("edit-counts").hidden = !on;
   $("edit-counts").classList.toggle("on", countsOn);
-  $("corner").title = on ? "Done editing" : "Parent corner";
-  $("corner").setAttribute("aria-label", $("corner").title);
+  syncCorner();
   renderGrid(); // the home grid takes edit gestures too (014 slice 3)
   applyLikely();
 }
@@ -1890,13 +1946,16 @@ function xBadge(onRemove) {
 
 /** One pending undo at a time. */
 let toastTimer = null;
-function toast(text, undo) {
+function toast(text, undo, { actionLabel = null, onAction = null } = {}) {
   const el = $("toast");
   clearTimeout(toastTimer);
   $("toast-text").textContent = text;
   $("toast-undo").hidden = !undo;
+  $("toast-act").hidden = !onAction;
+  $("toast-act").textContent = actionLabel ?? "";
   el.hidden = false;
   $("toast-undo").onclick = () => { el.hidden = true; undo?.(); };
+  $("toast-act").onclick = () => { el.hidden = true; onAction?.(); };
   toastTimer = setTimeout(() => { el.hidden = true; }, 6000);
 }
 
@@ -1918,6 +1977,9 @@ groupsUi = mountGroups({
   navCell, editPointer, xBadge,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
   openWordCard: (item) => wordCard.openWordCard(item),
+  homeCells: () => coreCells(db, boardGeom().name, locale),
+  homeTile,
+  rerenderView: () => rerenderView(),
   loadPhotoURL, savePhoto, syncUploadBlob,
 });
 
@@ -1927,6 +1989,7 @@ addUi = mountAddFlow({
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
   invalidateIndex: () => kbUi.invalidateIndex(),
   rerenderView, renderStrip, renderLibrary: () => libUi.renderLibrary(),
+  openAddToBoards: (item) => groupsUi.openAddToBoards(item),
 });
 
 /* Word library — public/board/library-ui.js */
@@ -1948,6 +2011,7 @@ wordCard = mountWordCard({
   dropEntityPhoto: (id) => entityPhoto.delete(id),
   dropEntityRole: (id) => entityRole.delete(id),
   dropSenseMeta: (id) => senseMeta.delete(id),
+  openAddToBoards: (item) => groupsUi.openAddToBoards(item),
 });
 
 /* Devices, users, and supporter sign-in — public/board/devices-ui.js */
@@ -2035,10 +2099,9 @@ mountRecovery({
 
 /* Web editor — public/board/editor-ui.js */
 editorUi = mountEditor({
-  db, locale, all: ALL, catalog, boardGeom,
-  navCell, fitLabels,
+  db, locale, all: ALL, catalog,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
-  itemCell: (item, gKind, ctx) => groupsUi.itemCell(item, gKind, ctx),
+  paintGroupPage: (zg, opts) => groupsUi.paintGroupPage(zg, opts),
   renderLibrary: () => libUi.renderLibrary(),
   invalidateIndex: () => kbUi.invalidateIndex(),
   setView: (v) => kbUi.setView(v),

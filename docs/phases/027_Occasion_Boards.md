@@ -299,8 +299,14 @@ the pre-seed baseline; the placement rule, multi-board add, Cells-switch fill,
 and replay (pre-027 group ops skipped) in `groups.mjs`/`ops.mjs`; whole-DB
 reset below schema 20 in `db.js` (`beforeCleanBreak`). The app boots on it
 (agent slot, fresh profile: 33 groups, one install op, empty baseline groups).
-The group surface still draws the old chrome until A3. Every Works Test above
-is still to be run. No efficacy or clinical claim.
+A3: `groups-ui.js` is the one group-page painter (the web editor uses it):
+reserved cells show the home board's tiles (`homeTile` in `board.js`), top row
+off leaves them empty and reserved, Next only when paging; Home in the corner,
+Add beside Groups in Edit mode; hidden groups and the occasions switch keep
+slots; × removes from any group with Undo; Add to other boards after an add
+and on the word card (with its shared-identity line); the Cells preview names
+group positions. Rendered on an agent slot at 60, 15 and 90 cells. Works Test
+items 1–3 and 5–8 still to run end to end in A5. No efficacy or clinical claim.
 
 **Founder review items (curation draft):** the sibling splits (Home/Things,
 Describing/Touch & sound, Little words/Who & which), Dinner's membership, the

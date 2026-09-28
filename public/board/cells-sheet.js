@@ -2,6 +2,7 @@
  * Cells picker and move-cost preview (014 §§ 3–4). Choosing a different
  * board size shows what moves before anything changes.
  */
+import { missingPositions } from "../shared/groups.mjs";
 import { moveCost, setBoardLayout } from "../shared/movecost.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -35,6 +36,11 @@ export function mountCellsSheet({
     $("cells-summary").textContent = mc.weighted
       ? `${moved} of the ${n} words this board uses will move or leave the home board.`
       : `${moved} of ${n} words will move or leave the home board.`;
+    // 027 § 3.3: the groups preview too — words a family added on this
+    // size get their place on the new one when the change is accepted.
+    const missing = missingPositions(db, cellsTarget).length;
+    $("cells-groups").hidden = missing === 0;
+    $("cells-groups").textContent = `${missing} group ${missing === 1 ? "word gets its" : "words get their"} place on this size. Switching back later puts every word where it was.`;
     const box = $("cells-moved");
     box.innerHTML = "";
     const CLS = { sector: "moved nearby", moved: "new place", gone: "in Groups" };
