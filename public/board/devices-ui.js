@@ -79,7 +79,7 @@ export function mountDevices({
     const next = { userId: user_id, epoch: 1, cursor: 0 };
     await saveUser({ sync: next });
     await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel);
-    toast("This user syncs now — print or save the QR card: Parent corner → Backup");
+    toast("This user syncs now — make the recovery card: Settings → Backup & privacy");
     return next;
   }
 
@@ -631,7 +631,7 @@ export function mountDevices({
     pairBody.append(qr);
     const hint = document.createElement("p");
     hint.className = "hint";
-    hint.textContent = "On the other device: Parent corner → Add a device → type this code → Allow.";
+    hint.textContent = "On the other device: Settings → Team & devices → Add a device → type this code → Allow.";
     pairBody.append(hint);
     const status = document.createElement("p");
     status.className = "hint";

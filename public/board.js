@@ -74,6 +74,7 @@ import {
   family as familyRow, familyItems,
 } from "./shared/families.mjs";
 import { mountFamilyEditor } from "./board/family-editor.js";
+import { mountSettings } from "./board/settings-ui.js";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -200,7 +201,7 @@ initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
     // window (or while a deletion is pending) hears about it once.
     const self = await sync.client.selfKey().catch(() => null);
     if (self?.delete_at) {
-      toast(`This user is scheduled for deletion on ${new Date(self.delete_at).toLocaleDateString()} — Parent corner → Delete to undo.`);
+      toast(`This user is scheduled for deletion on ${new Date(self.delete_at).toLocaleDateString()} — Settings → Backup & privacy → Undo deletion.`);
     } else if (self?.idle_delete_at) {
       toast(`This user has not synced in a long time and may be removed on ${new Date(self.idle_delete_at).toLocaleDateString()}.`);
     }
@@ -209,7 +210,7 @@ initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
     if (sessionStorage.getItem("pip_restore_moved")) {
       sessionStorage.removeItem("pip_restore_moved");
       toast("Restored — on a free user the other devices were unlinked. "
-        + "Relink them from Parent corner.");
+        + "Relink them from Settings → Team & devices.");
     }
   })
   .catch((err) => console.warn("sync unavailable", err));
@@ -1710,10 +1711,10 @@ async function gatePin(onOk) {
     forgot.hidden = mode !== "check";
     if (mode === "create") {
       title.textContent = "Choose a PIN";
-      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Parent corner.";
+      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Settings.";
       go.textContent = "Set PIN";
     } else if (mode === "check") {
-      title.textContent = "Parent PIN";
+      title.textContent = "Settings PIN";
       hint.textContent = "";
       go.textContent = "Open";
     } else {
@@ -1747,6 +1748,9 @@ async function gatePin(onOk) {
   overlay.classList.add("open");
 }
 
+/* Settings — public/board/settings-ui.js owns the page navigation;
+ * every control inside keeps its own module's wiring. */
+const settingsUi = mountSettings({ me, open });
 $("corner").addEventListener("click", () => {
   // 027 B5: while a group or the index is open the corner is Home — one
   // action back to the home board, outside the grid. In Edit mode it
@@ -1761,14 +1765,14 @@ $("corner").addEventListener("click", () => {
     rerenderView();
     return;
   }
-  gatePin(() => open("menu"));
+  gatePin(() => settingsUi.open());
 });
 /** The corner's job and label follow the mode: Home while a group or the
  *  index is open, else ✓ Done while editing, else Parent corner (its
  *  glyph swaps on body.groups / body.editing). */
 function syncCorner() {
   const inGroups = view === "group" || view === "groupIndex";
-  $("corner").title = inGroups ? "Home" : editing ? "Done editing" : "Parent corner";
+  $("corner").title = inGroups ? "Home" : editing ? "Done editing" : "Settings";
   $("corner").setAttribute("aria-label", $("corner").title);
   // Groups toggles like Keyboard: on the groups screen the anchor offers
   // the way back — the label names the destination, never where you are.
