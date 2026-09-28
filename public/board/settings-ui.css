@@ -59,6 +59,11 @@
 }
 .set-tile.likely { box-shadow: inset 0 0 0 4px var(--c); }
 
+.set-list { display: flex; flex-direction: column; }
+.set-listrow { padding: 8px 0; border-top: 1px solid var(--line); }
+.set-listrow:first-child { border-top: 0; }
+.set-listrow .seg-label { font-weight: 400 !important; }
+
 /* On/off rows: label left, switch right (On is always to the right). */
 .set-head { display: flex; align-items: center; gap: 16px; }
 .set-head .seg-label { flex: 1; min-width: 0; }

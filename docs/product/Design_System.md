@@ -265,14 +265,17 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   synonyms (`SYNONYMS` in settings-ui.js); a hit opens the page and
   rings the row.
 
-**PROPOSED** (from the proposal, not built yet): live previews per
-setting (grid thumbnails for Buttons per screen, a sentence bar for
-After Play, an outlined tile for Outline likely next words, "he + want →
-he wants" for Grammar help); a Show switch per group in Words replacing
-the single Meal groups switch; one "Add a device" button that asks which
-device you're holding; team roles and permissions (needs the feature
-workflow — permissions are a high-risk stop); a "this board is mine"
-mode for adult communicators.
+- **Previews.** Pictures of the effect: grid per size (CSS from the
+  cells seg's layout id), After Play as a sentence bar, Grammar help as
+  he + want → he wants, an outlined tile for Outline likely next words.
+- **Show groups.** Words lists every non-meal group with a switch
+  (`public/board/group-shows.js` → `setGroupHidden`, 027 B8). Meal
+  groups keep their one switch (`occasions_visible`).
+
+**PROPOSED** (from the proposal, not built yet): one "Add a device"
+button that asks which device you're holding; team roles and
+permissions (needs the feature workflow — permissions are a high-risk
+stop); a "this board is mine" mode for adult communicators.
 
 ## Open items (designer's "next" list)
 

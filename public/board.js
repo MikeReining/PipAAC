@@ -76,6 +76,7 @@ import {
 import { mountFamilyEditor } from "./board/family-editor.js";
 import { mountSettings } from "./board/settings-ui.js";
 import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
+import { mountGroupShows } from "./board/group-shows.js";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -2172,6 +2173,9 @@ const peopleUi = mountPeople({
   onHomeChanged: () => { devicesUi.renderAccount(); devicesUi.renderUsers(); },
 });
 settingsUi.onOpen(() => { peopleUi.closePop(); peopleUi.renderOpens(); });
+/* Show groups — public/board/group-shows.js (Settings → Words). */
+const groupShows = mountGroupShows({ db, locale, all: ALL, onChange: () => rerenderView() });
+settingsUi.onOpen(() => groupShows.render());
 
 /* The weekly win card and progress dashboard — public/board/wincard-ui.js
  * and progress-ui.js (016 slices 2 and 4). Item ids resolve to names
