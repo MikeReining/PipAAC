@@ -101,12 +101,13 @@ all three.
 hands and eyes, not the content, so the home board, every group page, and
 the Smart bar all use the profile's one setting. A group has no size of its
 own; a big group pages (`Next ›`). **AMENDED 2026-09-27; not built (027):**
-new group layouts save positions per named size, and Cells changes select those
-maps through the existing move-cost preview. Returning to a size restores its
-positions exactly. Old saved/custom geometries retain the existing linear rewrap
-until explicit adoption. 027 owns new reservations and capacities (7 ordinary
-content cells per grid15 topic page, 6 per meal page), replacing the old 12-item
-claim for new layouts. Index ordering remains stable; activity choices are
+groups store positions per board size, created when needed — the seed ships
+the three named sizes, and accepting a Cells change (the existing move-cost
+preview, now including groups) writes the new size's missing positions once.
+Returning to a size restores its positions exactly. Custom sizes follow the same
+rules. No old geometry is kept (027 is a clean break). 027 owns the reserved
+cells and capacities (7 content cells per grid15 group page), replacing the old
+12-item claim. Index ordering remains stable; activity choices are
 curated group membership, not a separate Cells setting.
 
 Examples: a toddler and a CP child — both Core 15 (15 cells, full
