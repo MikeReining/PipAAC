@@ -73,13 +73,16 @@ Anatomy Routing
   * **Both Arms Present:** Active arm performs the sign; passive arm curves from the shoulder and runs naturally straight down along the torso, exiting the frame cleanly at the mid-chest cut. Never leave an amputee; never draw an isolated dangling hand.
   * **Strict Facial Anchors:** In eye/ear/mouth gestures, anchor directly to facial bone: *"Fingertips placed directly on the cheekbone right beneath the eye in the ASL see sign."*
 
-### C. Anti-Overprompting on Simple Physical Archetypes
-* For familiar physical objects (`carrot`, `watermelon`, `apple`), micro-describing geometry ("triangular", "cylindrical") causes category confusion (e.g. turning watermelon slices into pizza).
-* Trust the model on the primary noun archetype; add minimal spatial hints only when showing both whole and interior.
+### C. Anti-Overprompting on Simple Physical Archetypes (Trust Muse First)
+* **Default to One Clean Sentence:** For familiar physical objects (`carrot`, `apple`, `chair`, `couch`, `bed`, `lamp`), the default `hint` is **exactly one simple, natural English sentence** naming the archetype:
+  `"A clean standalone wooden dining chair with a slatted backrest."`
+* **Never Micromanage Camera Angles by Default:** Do NOT write `"in 3/4 perspective"`, `"front-facing straight-on view"`, or `"perfectly upright, symmetrical, centered, facing forward"` into default hints. Muse already knows the canonical viewing angle for physical objects. Micromanaging camera angles distorts geometry, skews screens, and breaks catalog consistency.
+* **Never Add Negative Laundry Lists by Default:** Do NOT append `"no animals, no dogs, no pencils, no hands, no human face, no text"` to default prompts.
+* **Hints are for Interventions, Not Defaults:** Elaborate hints, spatial adjustments, and negative constraints are strictly a **surgical re-roll tool**. Use them *if and only if* Muse fails on an initial roll (e.g., if a style-reference dog bleeds in or duplicate objects appear). Trust the model first.
 
-### D. Banned Words (Anti-Flat / Anti-Sterile)
+### D. Banned Words & Perspective Rationale
 * **Never use "flat", "no shading", or "solid colour".** In diffusion models, "flat" collapses 3D volume into lifeless cookie-cutter stickers, while "no shading" strips form curvature.
-* **Form is communicated through 3/4 perspective geometry** (cut edge, slab thickness, rim of bowl).
+* **Natural Volume vs Angle Policing:** Form is naturally communicated through subtle volume (a cut edge, a slab thickness, the rim of a bowl). This describes how the model renders depth—it is **never** an invitation to inject `"in 3/4 perspective"` into prompt text.
 
 ### E. Lightweight Chat Galleries (The 20MB Rule)
 * Multi-megabyte raw base64 PNGs embedded into `.html` galleries hit the chat's **20 MB hard ceiling**, causing rendering crashes.
