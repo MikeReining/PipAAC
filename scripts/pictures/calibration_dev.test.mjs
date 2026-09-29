@@ -70,3 +70,29 @@ test("localImagePath: ext_ from out/extended_art, img_ via catalog key, drw_ non
   assert.equal(localImagePath("img_9999", cat), null);
   assert.equal(localImagePath("nonsense", cat), null);
 });
+
+test("030 § 7: the shipped queries cover the required cases", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { join, dirname } = await import("node:path");
+  const { fileURLToPath } = await import("node:url");
+  const repo = join(dirname(fileURLToPath(import.meta.url)), "../..");
+  const { queries } = JSON.parse(
+    readFileSync(join(repo, "data/pictures/calibration_queries.json"), "utf8"));
+  const byText = (t) => queries.find((q) => q.text === t);
+
+  // personal/description rows — the description path must be exercised
+  assert.equal(byText("Cooper")?.description, "our golden retriever");
+  assert.equal(byText("Grandma Rosa")?.description, "my mom's mom");
+  assert.ok(queries.filter((q) => q.description).length >= 2);
+
+  // ≥15 rows each for de/es/fr — identified by the shipped word blocks
+  const de = ["Apfel","Hund","Katze","Wasser","Milch","Brot","Haus","rot",
+    "groß","danke","spielen","schlafen","Banane","Saft","Gift"];
+  const es = ["manzana","perro","gato","agua","leche","pan","casa","rojo",
+    "grande","gracias","jugar","dormir","plátano","jugo","más"];
+  const fr = ["pomme","chien","chat","eau","lait","pain","maison","rouge",
+    "grand","merci","jouer","dormir","banane","jus","beurre"];
+  for (const w of [...de, ...es, ...fr]) {
+    assert.ok(byText(w), `missing language row: ${w}`);
+  }
+});
