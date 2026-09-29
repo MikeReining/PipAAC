@@ -2419,6 +2419,7 @@ const tourUi = mountTour({
     },
     speakBar: () => speakSentence(),
     clearBar: () => $("clear").click(),
+    openVoices: () => gatePin(() => { settingsUi.open("talking"); voiceUi.openPicker(); }),
   },
 });
 $("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });

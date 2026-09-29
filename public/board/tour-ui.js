@@ -71,11 +71,17 @@ export function mountTour({ board, saveUser }) {
         ? "✨ and the time buttons need the internet to work on your own sentences. Connect when you can."
         : "✨ and the time buttons work on any sentence you build.";
       card.append(note);
+      // The first sentence is when a parent notices the voice: offer the
+      // rest right here (founder 2026-09-29).
+      const voices = document.createElement("button");
+      voices.className = "btn secondary";
+      voices.textContent = "Try other voices";
+      voices.onclick = async () => { await end(); board.openVoices(); };
       const go = document.createElement("button");
       go.className = "btn";
       go.textContent = "Start talking";
       go.onclick = () => end();
-      row.append(go);
+      row.append(voices, go);
     } else {
       const skip = document.createElement("button");
       skip.className = "tour-skip";
