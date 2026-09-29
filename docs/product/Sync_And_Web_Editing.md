@@ -309,6 +309,11 @@ undo against the live relay).
 
 ## 7. The web editor
 
+**2026-09-29:** the editor's layout is rebuilt in
+`docs/phases/031_Board_Editor.md` (the board is the editor; one add-or-find
+field; pages list; card on selection). Sync and live behavior below are
+unchanged.
+
 The same web app, laid out for a computer when the screen is wide:
 
 - **Library** full-screen with search, the tabs from

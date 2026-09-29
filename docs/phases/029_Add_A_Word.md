@@ -147,6 +147,15 @@ Driven by 030 `find` (text only) the moment the card opens:
 - **Describe it** (replaces Hint): placeholder *"What should it show? e.g.
   a bowl, not a jar"*. **Draw it again** is disabled until it has text; it
   sends `draw` with the description and shows "uses 1 of N left" beside it.
+- Under the field, one quiet line: *"Your description helps us draw better
+  pictures for everyone."* True as written: only the word and description
+  are shared, never who wrote them (030 § 8).
+- **Replacing our choice sends `reject`** (030 § 6.3) — once, when the
+  adult swaps the picture we chose (the `auto` match or our automatic
+  drawing) for an alternative, a photo, or a redraw. Replacing a picture the
+  adult chose themselves sends nothing.
+- **Nothing is lost on a redraw.** The picture it replaced moves into
+  **Other pictures**, so switching back is one tap and free.
 - The description is saved on the entity (`personal_entity.hint`, same
   column) so enrichment can read it later.
 - An accepted picture is saved onto the entity like a photo (works offline,
@@ -212,13 +221,19 @@ once. It is never removed or hidden (memory: never interfere with the child).
    confirmation.
 8. **Child board untouched.** During a pending draw the child's grid never
    loses or moves the tile; the picture swaps in once.
+9. **Overruling us is recorded once, and reversible.** With an `auto`
+   picture applied: picking an alternative sends one `reject` (action
+   `pick`) plus one `pick`; a photo sends one `reject` with no image data;
+   a redraw sends one `reject` (action `draw`) and the old picture appears
+   in Other pictures. Swapping between the adult's own choices afterwards
+   sends no further `reject`.
 
 ## 8. Slices (front end; Claude leads design)
 
 | # | Slice | Depends on |
 | --- | --- | --- |
 | A | Sheet (§ 3): highlighted row, Return, Make, destination chip, ▶ on matches, quiet links, ✕. Make saves at once and opens the card in its "just added" state with label + color only. Removes `#add-newfields`. | — |
-| B | Card picture states (§ 4.1) and kind chip (§ 4.3) against the 030 contract (stubbed until 030 slice 1). | 030 slices 1, 3 for real data |
+| B | Card picture states (§ 4.1), `pick`/`reject` calls, and kind chip (§ 4.3) against the 030 contract (stubbed until 030 slice 1). | 030 slices 1, 3, 7 for real data |
 | C | Card voice states (§ 4.2). | 028 slices 1–2 |
 | D | Paste a list with thumbnails and the draw count (§ 5). | 030 `find-batch` |
 | E | Stopwatch Works Test on a real tablet with live 028 + 030. | all |

@@ -43,6 +43,14 @@ bulk vision-caption run, needs explicit founder approval
    asks first only when it needs more than 10 new drawings or more than are
    left (the client asks; the server enforces the allowance).
 9. No voice cloning. Voices are catalog voices (028).
+10. **Families can overrule us, and we learn from it** (founder,
+    2026-09-29). When an adult replaces the picture we chose (an auto-applied
+    match or an auto-drawing) — by picking another, using a photo, or
+    redrawing with a description — that "no" is recorded anonymously. It
+    lowers our picture for that text on its own (no review needed), and it
+    lands on a **"Where families disagreed with us"** review page where the
+    founder can adopt the family's idea for everyone (§ 5.5, § 6.3). Review
+    never blocks anything.
 
 ## 1. Why
 
@@ -78,6 +86,7 @@ POST /api/v1/pictures/find   {text, description?}
                      png  (x-draw-cache: hit | mint, x-drawings-left: n)
 
 Adult taps an alternative → POST /api/v1/pictures/pick {text, image_id}
+Adult replaces our choice  → POST /api/v1/pictures/reject {text, ours, action, theirs?}
 ```
 
 ## 3. The picture index
@@ -143,11 +152,14 @@ One vector per picture plus metadata (Vectorize metadata or a side table):
 ### 4.2 Score and the auto rule
 
 ```text
-score(image) = cosine(query, caption) + PICK_WEIGHT · log(1 + picks(text, image))
-auto         = top.score ≥ AUTO_CUTOFF  ?  top.image_id  :  null
+score(image) = cosine(query, caption)
+             + PICK_WEIGHT   · log(1 + picks(text, image))
+             − REJECT_WEIGHT · log(1 + rejects(text, image))
+auto         = pinned(text)                                  if the founder pinned one (§ 5.5)
+             : top.score ≥ AUTO_CUTOFF and top not blocked(text) ? top.image_id : null
 ```
 
-`AUTO_CUTOFF`, `PICK_WEIGHT`, the model id and `caption_version` live in
+`AUTO_CUTOFF`, `PICK_WEIGHT`, `REJECT_WEIGHT`, the model id and `caption_version` live in
 **`data/catalog/picture_finder.json`** (new, source of truth), imported by
 the Worker like `catalog.json`. Changing the cutoff is a one-number edit and
 a deploy; no code change. The server computes `auto` — the client never
@@ -262,6 +274,34 @@ a stub** (a fixed placeholder png, `x-draw-cache: stub`) unless
 queue (`Clipart_Pipeline_And_Catalog_Growth.md` § 4–5). Picks (§ 6.2) are a
 second demand signal for the same queue.
 
+### 5.5 "Where families disagreed with us" (review page, non-blocking)
+
+We make mistakes, and families often have better ideas. Every rejection
+(§ 6.3) is a free lesson. This page turns them into catalog fixes. Nothing
+waits on it: the ranking already corrects itself through `REJECT_WEIGHT`.
+
+- **Where:** a second tab on the local review page from § 7 (same server,
+  same admin token). No public admin UI.
+- **Rows:** grouped by `(text, our picture)`, sorted by rejection count,
+  newest activity first on ties. Each row shows **our picture** next to
+  **what families chose instead** — the alternatives they picked (with
+  counts), the drawings they made, and the **descriptions they wrote** — plus
+  how many chose a photo (count only; photos are never seen).
+- **Only `scope: common` rows appear.** People, pets and private places are
+  never listed. Descriptions shown have passed the § 5.3 safety check.
+- **Actions** (each logged in the ledger with a timestamp):
+
+| Action | Effect |
+| --- | --- |
+| **Make theirs the default** | `pinned(text) = their image`. `find` auto-applies it for that text for everyone, above any score. |
+| **Stop auto-applying ours** | `blocked(text, our image)`. Ours still shows as an alternative, never auto. |
+| **Promote to catalog** | Sends their drawing to the extended-library review (`Clipart_Pipeline_And_Catalog_Growth.md` § 5); approval makes it catalog art. |
+| **Redraw our art** | Queues a redraw of our picture using their description as the hint, into the art review flow. **Founder-gated, ten at most per run** (`AGENTS.md`); never replaces shipped art without approval. |
+| **Dismiss** | Hides the row until new rejections arrive. |
+
+- Pins and blocks are keyed by text only, like everything else here. Undo
+  is removing the row.
+
 ## 6. Counting
 
 ### 6.1 Drawing allowance (per user, the only identity-keyed counter)
@@ -289,6 +329,27 @@ second demand signal for the same queue.
 ranking. Picks for a personal-scope query are recorded against the
 description, never the name.
 
+### 6.3 Rejections
+
+A **rejection** is the adult replacing the picture *we* chose — the `auto`
+match or an automatic drawing — on the new word's card (029 § 4.1). Replacing
+a picture the adult chose themselves is not a rejection.
+
+- **Client sends** `reject {text, description?, ours: image_id, action:
+  pick|photo|draw, theirs?: image_id}` once per replacement. For `photo`,
+  `theirs` is omitted: we record only that a photo was chosen, never the
+  photo. For `draw`, `theirs` is the new `drw_*` and the description travels
+  with it.
+- **Server records** `rejects(text_norm, image_id)++` (feeds § 4.2) and one
+  anonymous disagreement row `(text_norm, ours, action, theirs, description,
+  scope, created_at)` for § 5.5. **No user, device, or license id.**
+- Personal scope: recorded against the description, never the name, and
+  never shown on the review page.
+- Rate-limited per license (ns `usage-reject`, same limit as picks) so one
+  account cannot demote a picture for everyone.
+- A rejection never costs anything. The redraw that may follow costs 1
+  drawing, as any draw does.
+
 ## 7. Calibration page (founder decides "close")
 
 A local review page, like the `audio-review-*` pages — built by the backend
@@ -312,7 +373,9 @@ side-by-side page and a joint decision, not an eval harness).
   fits"); the header shows, at the current cutoff, how many rows auto-apply
   the right picture, auto-apply a wrong one, or draw when a fit existed.
 - **Save** writes `AUTO_CUTOFF`, any `AUTO_CUTOFF_BY_LANG` overrides (and
-  `PICK_WEIGHT` if changed) to
+  `PICK_WEIGHT` / `REJECT_WEIGHT` if changed — each has its own slider; the
+  page can seed fake pick/reject counts on a row to show how far a weight
+  moves it) to
   `data/catalog/picture_finder.json`. Marks are saved beside the queries so
   the page can be re-run after a model or caption change.
 - Runs against the calibration index (includes `pending` extended art) so
@@ -330,9 +393,12 @@ client shows the four and the adult chooses.
   (scope/kind/language), Groq (only if the § 4.5 translation fallback is
   built) and, on a draw, OpenRouter/Muse. **No user, device, or
   license id is sent to any vendor.**
-- Stored without identity: index captions, drawing ledger, pick counts.
+- Stored without identity: index captions, drawing ledger, pick counts,
+  rejection counts and disagreement rows, pins and blocks.
 - Stored with identity: only the per-user drawing allowance counter.
-- Names never enter the index or pick counts (§ 3.3, § 6.2).
+- Names never enter the index, pick counts, or rejections (§ 3.3, § 6.2,
+  § 6.3), and personal-scope rows never reach the review page (§ 5.5).
+- A rejection by photo records only the word "photo" — no image, no hash.
 - Photos never leave this path's scope (unchanged).
 - The privacy policy must say typed word labels are sent to image and
   classification providers (same line as 028 § 8).
@@ -350,7 +416,10 @@ All follow `src/worker/voice.js` conventions (JSON errors, license check,
 | `POST /api/v1/pictures/draw` | `{…, text, description?}` | `200 image/png`, `x-draw-cache: hit\|mint\|stub`, `x-drawings-left` | 402 `allowance`; 422 `unsafe`; 429 `fair_use`; 502 `draw_failed`; 503 |
 | `GET /api/v1/pictures/img/<image_id>` | — | `image/png` | 403; 404 |
 | `GET /api/v1/pictures/allowance` | headers `x-pip-user`, `x-pip-license` | `{left, total}` | 403 |
+| `POST /api/v1/pictures/reject` | `{…, text, description?, ours, action, theirs?}` | 204 | 400; 403; 429 |
 | `GET /admin/v1/pictures/recent` | `source`, `before`, `limit` | recent drawings (newest first) | 401 |
+| `GET /admin/v1/pictures/disagreements` | `before`, `limit` | § 5.5 rows (common scope only) | 401 |
+| `POST /admin/v1/pictures/disagreements/action` | `{text, ours, action: pin\|block\|promote\|redraw\|dismiss, theirs?}` | 204 | 401 |
 
 Text rules: `normalizeV1`, 1–80 characters for text, 0–120 for description.
 
@@ -378,6 +447,10 @@ founder-approved run of ≤10 words. Proof: Works Test 11 (the instrument).
 
 **Slice 6 — Extended library joins.** After the founder's 010 slice 2
 review, rebuild the index with approved extended art (no generation).
+
+**Slice 7 — Rejections and the disagreement page.** § 6.3 (`reject`,
+counts, `REJECT_WEIGHT` in scoring), § 5.5 (page tab, admin routes, pin /
+block / promote / dismiss; redraw queues only). Proof: Works Tests 15–18.
 
 **Later, founder-gated:** vision captions (§ 3.3) if calibration shows the
 need.
@@ -417,3 +490,19 @@ need.
     at the same score does not; removing the override flips `Apfel` back to
     "show four". Jev returns `language: de` for "Apfel"; `locale: de` breaks
     the tie for "Gift".
+15. **A "no" is recorded without identity.** Replace an auto-applied picture
+    by pick, by photo, and by draw: three disagreement rows with the right
+    `action`; the photo row has no `theirs` and no image data; no row
+    contains a user, device, or license id.
+16. **Rejections self-correct.** With `REJECT_WEIGHT` set, N rejections of
+    apple for "red apple" from different licenses drop apple below
+    `AUTO_CUTOFF` for that text — `auto` becomes another picture or null —
+    while `find("apple")` is unchanged. One license past its reject limit
+    gets 429 and moves nothing.
+17. **People never reach review.** A rejection for "Grandma Rosa — …" is
+    counted but absent from `/admin/v1/pictures/disagreements`; its row holds
+    the description, not the name.
+18. **Pin and block act for everyone.** Pin their drawing for "applesauce":
+    a new license's `find("applesauce")` auto-applies it. Block ours for
+    "red apple": ours appears only as an alternative. Removing the pin/block
+    restores scoring.
