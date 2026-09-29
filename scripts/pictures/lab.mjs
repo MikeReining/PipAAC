@@ -78,6 +78,16 @@ export function lintHint(hint) {
   return BANNED_HINT_PATTERNS.filter((re) => re.test(hint)).map((re) => re.source);
 }
 
+/** social_scale "zero" is Jev saying no humans belong — a hint naming a
+ *  person, stick figure, or body part fights the spec. */
+const HUMAN_WORDS =
+  /\b(person|people|man|woman|child|children|boy|girl|kid|baby|adult|figure|stick\s*figure|hand|hands|face|arms?|legs?|feet|foot)\b/i;
+
+export function lintSpecFit(hint, spec = {}) {
+  if ((spec.social_scale ?? "solo") !== "zero") return [];
+  return HUMAN_WORDS.test(hint) ? ["humans in a zero-human spec"] : [];
+}
+
 export async function askSpark({
   text, description, spec,
   apiKey = resolveApiKey("OPENROUTER_API_KEY"),

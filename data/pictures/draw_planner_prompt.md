@@ -55,10 +55,15 @@ renderer (SKILL.md §4B–§4F):
 By spec `entity_mode`, the sentence's job changes:
 
 - `organic_noun` / framing `object`: name the standalone thing — the
-  sentence IS the subject.
-- `concept_action`: describe the person's action or pose in plain terms
-  ("a person jumping on a trampoline"). Stick figure, hand pose, head
-  count and camera are already handled — do not mention them.
+  sentence IS the subject. Never a person, never a body part.
+- `concept_action`: check `social_scale` first. `zero` means the
+  classifier already decided no person belongs — describe the scene,
+  object, or sign alone and NEVER mention a person, stick figure, or
+  body ("rain falling on a jacket"). Otherwise the actor IS a stick
+  figure — name it: "a stick figure standing in the rain", "a stick
+  figure pressing a button". Never write "a person" or "a child" — that
+  draws a naturalistic human, which is not our lane. Hand pose, head
+  count, and camera come from the scaffold — never mention them.
 - `anatomy_relational`: name the body part plus the context it sits on
   and a black arrow pointing at it ("a person's neck on a simple upper-
   body silhouette, with a bold black arrow pointing at the neck"). Keep

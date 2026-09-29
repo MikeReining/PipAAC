@@ -6,10 +6,11 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  composePrompt, labImagePath, lintHint, listLabTakes, mintLabTake,
-  parseSparkHint, plannerSystemPrompt, setTakeVerdict, sparkChatBody,
-  takeFileName, LAB_TAKES_DIR, SPARK_MODEL,
+  composePrompt, labImagePath, lintHint, lintSpecFit, listLabTakes,
+  mintLabTake, parseSparkHint, plannerSystemPrompt, setTakeVerdict,
+  sparkChatBody, takeFileName, LAB_TAKES_DIR, SPARK_MODEL,
 } from "./lab.mjs";
+import { styleRefBundle } from "../../src/shared/draw_prompt.mjs";
 
 test("sparkChatBody: spark model, system prompt from the md, spec in user msg", () => {
   const body = sparkChatBody({
@@ -28,8 +29,8 @@ test("sparkChatBody: spark model, system prompt from the md, spec in user msg", 
 
 test("plannerSystemPrompt reads the body after the --- marker", () => {
   const sys = plannerSystemPrompt();
-  assert.match(sys, /You write image prompts/);
-  assert.ok(!sys.includes("system prompt (v0)"));
+  assert.match(sys, /hint sentence/);
+  assert.ok(!sys.includes("system prompt (v1)"));
 });
 
 test("parseSparkHint strips quotes; throws on an empty response", () => {
@@ -67,6 +68,37 @@ test("composePrompt: personal scope prompts from the description, never the name
   });
   assert.doesNotMatch(prompt, /Cooper/);
   assert.match(prompt, /our golden retriever/);
+});
+
+test("lintSpecFit: a zero-human spec rejects people words in the hint", () => {
+  const zero = { social_scale: "zero" };
+  assert.deepEqual(lintSpecFit("rain falling on a jacket", zero), []);
+  assert.equal(lintSpecFit("a stick figure in the rain", zero).length, 1);
+  assert.equal(lintSpecFit("a person in the rain", zero).length, 1);
+  assert.equal(lintSpecFit("a child's hand", zero).length, 1);
+  assert.deepEqual(lintSpecFit("a stick figure waving", { social_scale: "solo" }), []);
+});
+
+test("styleRefBundle: humans get pip-v1, thing-only specs get object-v1", () => {
+  // The `wet` spec — a person in frame must ship the stick persona refs,
+  // never pencil/bread/dog.
+  assert.equal(styleRefBundle({
+    entity_mode: "concept_action", framing: "object", social_scale: "solo",
+  }), "pip-v1");
+  assert.equal(styleRefBundle({
+    entity_mode: "concept_action", framing: "full", social_scale: "pair",
+  }), "pip-v1");
+  assert.equal(styleRefBundle({
+    entity_mode: "anatomy_relational", framing: "object", social_scale: "zero",
+  }), "pip-v1"); // the silhouette lives in pip-v1
+  assert.equal(styleRefBundle({
+    entity_mode: "concept_action", framing: "object", social_scale: "zero",
+  }), "object-v1"); // a sign/object scene, no people
+  assert.equal(styleRefBundle({
+    entity_mode: "organic_noun", framing: "object", social_scale: "zero",
+  }), "object-v1");
+  assert.equal(styleRefBundle({ entity_mode: "category_packshot" }), null);
+  assert.equal(styleRefBundle({ entity_mode: "cpg_brand" }), null);
 });
 
 test("takeFileName + takes list + verdict round-trip", () => {

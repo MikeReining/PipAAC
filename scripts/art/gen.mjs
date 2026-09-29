@@ -109,6 +109,7 @@ import {
   MUSE_MODEL,
   OPENROUTER_ENDPOINT,
   appHeaders,
+  styleRefBundle,
 } from "../../src/shared/draw_prompt.mjs";
 export {
   isPluralWord,
@@ -213,7 +214,8 @@ export async function generateToFile({
       endpoint = META_GEN_ENDPOINT;
     } else {
       const effectiveRefDir =
-        refDir === DEFAULT_STYLE_REF_DIR && (framing === "object" || entity_mode === "organic_noun")
+        refDir === DEFAULT_STYLE_REF_DIR
+          && styleRefBundle({ entity_mode, framing, social_scale }) === "object-v1"
           ? OBJECT_STYLE_REF_DIR
           : refDir;
       body.images = loadStyleRefs(effectiveRefDir).map((r) => ({
@@ -255,7 +257,8 @@ export async function generateToFile({
 
   if (!isPackshot) {
     const effectiveRefDir =
-      refDir === DEFAULT_STYLE_REF_DIR && (framing === "object" || entity_mode === "organic_noun")
+      refDir === DEFAULT_STYLE_REF_DIR
+        && styleRefBundle({ entity_mode, framing, social_scale }) === "object-v1"
         ? OBJECT_STYLE_REF_DIR
         : refDir;
 

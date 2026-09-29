@@ -329,11 +329,20 @@ export function appHeaders(lane = null) {
   };
 }
 
-/** gen.mjs's ref-bundle rule: packaged products draw without style refs,
- *  standalone objects/organic nouns use the object bundle, everything else
- *  the full pip-v1 set. null → no input_references on the vendor body. */
+/** Ref-bundle rule, keyed on WHO is in the picture: packaged products
+ *  draw without refs; any spec with humans (concept_action/anatomy with
+ *  a non-zero social scale) gets the pip-v1 bundle — it holds the stick
+ *  persona — and diagram framings get it too (the diagram ref lives
+ *  there). Only genuine no-human subjects get the object bundle. Routing
+ *  on framing alone sent the pencil/bread/dog refs to human scenes, which
+ *  is how a "wet" draw produced a dog. null → no input_references. */
 export function styleRefBundle(spec = {}) {
   if (spec.entity_mode === "category_packshot" || spec.entity_mode === "cpg_brand") return null;
-  if (spec.framing === "object" || spec.entity_mode === "organic_noun") return "object-v1";
-  return "pip-v1";
+  const humans = (spec.social_scale ?? "solo") !== "zero";
+  if (spec.entity_mode === "anatomy_relational") return "pip-v1";
+  if (spec.entity_mode === "concept_action") {
+    return humans || spec.framing === "diagram" ? "pip-v1" : "object-v1";
+  }
+  return spec.framing === "object" || spec.entity_mode === "organic_noun"
+    ? "object-v1" : "pip-v1";
 }

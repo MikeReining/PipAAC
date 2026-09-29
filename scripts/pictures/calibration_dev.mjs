@@ -20,7 +20,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 import {
-  askSpark, composePrompt, labImagePath, labSpec, lintHint,
+  askSpark, composePrompt, labImagePath, labSpec, lintHint, lintSpecFit,
   listLabTakes, mintLabTake, setTakeVerdict, LAB_TAKES_DIR,
 } from "./lab.mjs";
 
@@ -326,7 +326,7 @@ function buildHandler() {
         const hint = await askSpark({ text, description, spec });
         return json(res, 200, {
           hint,
-          warnings: lintHint(hint),
+          warnings: [...lintHint(hint), ...lintSpecFit(hint, spec)],
           prompt: composePrompt({
             text, description, scope, kind: body?.kind, spec, hint,
           }),
