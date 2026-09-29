@@ -304,3 +304,36 @@ export function parseDrawSpec(answers = {}) {
     social_scale: answers?.social_scale?.choice ?? "solo",
   };
 }
+
+/* --------------------------- vendor call shape ---------------------------- */
+
+export const MUSE_MODEL = "meta/muse-image";
+export const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/images";
+export const OPENROUTER_APP_HOST = "artgen.pipaac.local";
+export const OPENROUTER_APP_TITLE = "PipAAC art gen";
+
+/**
+ * OpenRouter app attribution (openrouter.ai/docs/app-attribution): the App
+ * column in activity logs is keyed on HTTP-Referer, and apps group by origin —
+ * so a per-lane subdomain gives each batch lane its own App row instead of
+ * "Unknown". The host is an identifier only; it never receives traffic.
+ */
+export function appHeaders(lane = null) {
+  const slug = lane ? String(lane).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") : "";
+  const host = slug ? `${slug}.${OPENROUTER_APP_HOST}` : OPENROUTER_APP_HOST;
+  return {
+    "HTTP-Referer": `https://${host}`,
+    "X-OpenRouter-Title": slug ? `${OPENROUTER_APP_TITLE} · ${slug}` : OPENROUTER_APP_TITLE,
+    "X-OpenRouter-Categories": "image-gen",
+    "X-OpenRouter-App-Visibility": "hidden",
+  };
+}
+
+/** gen.mjs's ref-bundle rule: packaged products draw without style refs,
+ *  standalone objects/organic nouns use the object bundle, everything else
+ *  the full pip-v1 set. null → no input_references on the vendor body. */
+export function styleRefBundle(spec = {}) {
+  if (spec.entity_mode === "category_packshot" || spec.entity_mode === "cpg_brand") return null;
+  if (spec.framing === "object" || spec.entity_mode === "organic_noun") return "object-v1";
+  return "pip-v1";
+}

@@ -17,32 +17,10 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 
-export const MUSE_MODEL = "meta/muse-image";
-export const OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/images";
 export const META_API_ENDPOINT = "https://api.meta.ai/v1/images/edits";
 export const META_GEN_ENDPOINT = "https://api.meta.ai/v1/images/generations";
 export const META_MUSE_MODEL = "muse-image-1.0";
 export const MAX_STYLE_REFS = 3;
-
-export const OPENROUTER_APP_HOST = "artgen.pipaac.local";
-export const OPENROUTER_APP_TITLE = "PipAAC art gen";
-
-/**
- * OpenRouter app attribution (openrouter.ai/docs/app-attribution): the App
- * column in activity logs is keyed on HTTP-Referer, and apps group by origin —
- * so a per-lane subdomain gives each batch lane its own App row instead of
- * "Unknown". The host is an identifier only; it never receives traffic.
- */
-export function appHeaders(lane = null) {
-  const slug = lane ? String(lane).toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "") : "";
-  const host = slug ? `${slug}.${OPENROUTER_APP_HOST}` : OPENROUTER_APP_HOST;
-  return {
-    "HTTP-Referer": `https://${host}`,
-    "X-OpenRouter-Title": slug ? `${OPENROUTER_APP_TITLE} · ${slug}` : OPENROUTER_APP_TITLE,
-    "X-OpenRouter-Categories": "image-gen",
-    "X-OpenRouter-App-Visibility": "hidden",
-  };
-}
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const DEFAULT_STYLE_REF_DIR = join(repoRoot, "assets/style-refs/pip-v1");
@@ -128,6 +106,9 @@ import {
   buildPrompt,
   DRAW_JEV_QUESTIONS,
   parseDrawSpec,
+  MUSE_MODEL,
+  OPENROUTER_ENDPOINT,
+  appHeaders,
 } from "../../src/shared/draw_prompt.mjs";
 export {
   isPluralWord,
@@ -135,6 +116,9 @@ export {
   VALID_SOCIAL_SCALES,
   VALID_ENTITY_MODES,
   VALID_PACKAGING,
+  MUSE_MODEL,
+  OPENROUTER_ENDPOINT,
+  appHeaders,
   VALID_HAND_MODES,
   formatHandMode,
   buildPrompt,

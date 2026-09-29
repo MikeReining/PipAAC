@@ -295,6 +295,41 @@ test("single flight: a second claim waits, then fails closed at the bound", asyn
   assert.equal(r.status, 502);
 });
 
+test("style refs: spec picks the bundle gen.mjs would (organic → object-v1)", async () => {
+  const seen = [];
+  const env = makeEnv({
+    jev: async () => ({ scope: "common", kind: "None", language: "en", draw: {
+      entity_mode: "organic_noun", packaging: "none", framing: "object",
+      hand_mode: "resting_ball", anchor: "none", social_scale: "zero" } }),
+    synth: async (prompt, refs) => (seen.push(refs), PNG_BYTES),
+  });
+  await env.VOICE.put("style-refs/manifest.json", JSON.stringify({ files: [
+    { name: "pip-v1/01-stick.jpg", mime: "image/jpeg" },
+    { name: "pip-v1/02-obj.jpg", mime: "image/jpeg" },
+    { name: "object-v1/01-pencil.png", mime: "image/png" },
+    { name: "object-v1/02-bread.png", mime: "image/png" },
+  ] }));
+  for (const n of ["pip-v1/01-stick.jpg", "pip-v1/02-obj.jpg",
+    "object-v1/01-pencil.png", "object-v1/02-bread.png"]) {
+    await env.VOICE.put(`style-refs/${n}`, PNG_BYTES);
+  }
+  await draw(env, { text: "pencil" });
+  assert.deepEqual(seen[0].map((r) => r.name).sort(), [
+    "object-v1/01-pencil.png", "object-v1/02-bread.png",
+  ]);
+  assert.ok(seen[0][0].dataUri.startsWith("data:image/png;base64,"));
+
+  // packshot draws with no refs at all — gen.mjs omits input_references
+  const env2 = makeEnv({
+    jev: async () => ({ scope: "common", kind: "None", language: "en", draw: {
+      entity_mode: "category_packshot", packaging: "jar", framing: "object",
+      hand_mode: "resting_ball", anchor: "none", social_scale: "zero" } }),
+    synth: async (prompt, refs) => (seen.push(refs), PNG_BYTES),
+  });
+  await draw(env2, { text: "peanut butter" });
+  assert.deepEqual(seen[1], []);
+});
+
 test("draw gates: bad ids, bad license, unsafe order before allowance", async () => {
   const env = makeEnv();
   assert.equal((await draw(env, { user_id: "nope", text: "x" })).status, 400);

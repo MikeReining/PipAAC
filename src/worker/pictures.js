@@ -29,9 +29,13 @@ import {
   signalsKey,
 } from "../shared/picture_index.mjs";
 import {
+  appHeaders,
   buildPrompt,
   DRAW_JEV_QUESTIONS,
+  MUSE_MODEL,
+  OPENROUTER_ENDPOINT,
   parseDrawSpec,
+  styleRefBundle,
 } from "../shared/draw_prompt.mjs";
 import { adminOk } from "./tile.js";
 
@@ -278,8 +282,6 @@ const DRAW_DAY = 30; // abuse guard (§ 6.1)
 const DRAW_MIN = 10;
 const ALLOWANCE = { free: 5, lifetime: 300 }; // Pricing § 4.2
 const STYLE_REFS_MANIFEST = "style-refs/manifest.json";
-const OPENROUTER_IMAGES = "https://openrouter.ai/api/v1/images";
-const MUSE_MODEL = "meta/muse-image";
 
 /** 1×1 transparent png — the default local-dev mint when neither a
  *  DRAW_SYNTH seam nor a live key is present (x-draw-cache: stub). */
@@ -331,12 +333,16 @@ const picPost = (env, path, body = {}) =>
     method: "POST", body: JSON.stringify(body),
   }));
 
-/** Style bundle, R2-side (the Worker cannot read assets/). Published by
- *  the slice-4 tooling; until then an empty list — the stub ignores it. */
-async function loadDrawRefs(env) {
+/** Style bundle, R2-side (the Worker cannot read assets/). The manifest
+ *  lists every published ref as {name: "pip-v1/…", mime}; bundle picks the
+ *  set per spec — null bundle (packshot) draws with no refs, like gen.mjs.
+ *  Published by scripts/pictures/publish_style_refs.mjs. */
+async function loadDrawRefs(env, bundle) {
+  if (!bundle) return [];
   const man = await env.VOICE.get(STYLE_REFS_MANIFEST).catch(() => null);
   if (!man) return [];
-  const files = JSON.parse(await man.text()).files ?? [];
+  const files = (JSON.parse(await man.text()).files ?? [])
+    .filter((f) => String(f.name).startsWith(`${bundle}/`));
   const refs = [];
   for (const f of files) {
     const obj = await env.VOICE.get(`style-refs/${f.name}`).catch(() => null);
@@ -362,21 +368,25 @@ async function synthesizeDraw(env, { prompt, refs }) {
     return { bytes: new Uint8Array(await env.DRAW_SYNTH(prompt, refs)), cache: "mint" };
   }
   if (env.DRAW_LIVE === "1" && env.OPENROUTER_API_KEY) {
-    const res = await fetch(OPENROUTER_IMAGES, {
+    const body = {
+      model: MUSE_MODEL,
+      prompt,
+      aspect_ratio: "1:1",
+      output_format: "png",
+    };
+    if (refs.length) {
+      body.input_references = refs.map((r) => ({
+        type: "image_url", image_url: { url: r.dataUri },
+      }));
+    }
+    const res = await fetch(OPENROUTER_ENDPOINT, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+        ...appHeaders("pictures"),
       },
-      body: JSON.stringify({
-        model: MUSE_MODEL,
-        prompt,
-        aspect_ratio: "1:1",
-        output_format: "png",
-        input_references: refs.map((r) => ({
-          type: "image_url", image_url: { url: r.dataUri },
-        })),
-      }),
+      body: JSON.stringify(body),
     });
     if (!res.ok) throw new Error(`draw_${res.status}`);
     const b64 = (await res.json())?.data?.[0]?.b64_json;
@@ -521,7 +531,7 @@ export async function handleDraw(request, env, ctx) {
   // 5 — we hold the claim: synth, store, index, charge once.
   let minted;
   try {
-    const refs = await loadDrawRefs(env);
+    const refs = await loadDrawRefs(env, styleRefBundle(jev.draw));
     minted = await synthesizeDraw(env, { prompt, refs });
   } catch {
     await picPost(env, "/pic/draw/fail", { key, retryAfter: Date.now() + 60_000 });
