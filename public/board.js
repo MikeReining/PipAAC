@@ -167,6 +167,7 @@ function onSyncApplied() {
     highlightNext = (p.highlight_next ?? 0) === 1;
     syncFreshSeg();
     syncGrammarSeg();    // Grammar help syncs like the other segs
+    syncLook();          // Words only syncs too
     bindSpotSettings();  // spotlight settings sync too
     resumeSession(db);   // a session started/ended elsewhere lands here
     renderCellsSeg();    // a Cells change may have landed
@@ -1231,6 +1232,19 @@ function fitLabels(root) {
         lb.style.fontSize = `${px}px`;
       }
     }
+    // Words only: one text size across the tiles, so "I" isn't huge
+    // beside "make" — the smallest one-word fit sets it; two-word labels
+    // keep their own fit, never larger than that.
+    if (document.body.classList.contains("words-only")) {
+      const tiles = [...root.querySelectorAll(".cell .tlabel")];
+      const one = tiles.filter((lb) => !lb.textContent.trim().includes(" "));
+      const px = Math.min(...one.map((lb) => parseFloat(lb.style.fontSize) || Infinity));
+      if (Number.isFinite(px)) {
+        for (const lb of tiles) {
+          lb.style.fontSize = `${Math.min(px, parseFloat(lb.style.fontSize) || px)}px`;
+        }
+      }
+    }
   });
 }
 
@@ -2248,12 +2262,35 @@ $("open-setup").addEventListener("click", () => {
   close("menu");
   setupUi.openWizard();
 });
+/* Words only (Profile_Presentation_Modes § 2.2):
+ * learner_profile.presentation_mode, synced. A display filter only — the
+ * body class hides every picture (index.html .words-only); no cell moves. */
+function syncLook() {
+  const m = ALL(db,
+    "SELECT presentation_mode AS m FROM learner_profile WHERE id = 'prf_local'",
+  )[0]?.m ?? "symbol";
+  document.body.classList.toggle("words-only", m === "label");
+  for (const b of $("look-seg").querySelectorAll("button")) b.classList.toggle("on", b.dataset.v === m);
+}
+function setLook(v) {
+  setSetting(db, "presentation_mode", v);
+  syncLook();
+  renderGrid();
+  renderBar();
+  renderStrip();
+  rerenderView();
+}
+$("look-seg").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v) setLook(v);
+});
+syncLook();
 /* The welcome — public/board/onramp-ui.js: a name and "Who's it for?"
  * (plus the button look for a teen or adult) on a new person, then
  * straight to the board. The old "their world" form is Settings-only. */
 const onramp = mountOnramp({
   me, saveUser,
-  setLook: (v) => setSetting(db, "presentation_mode", v),
+  setLook,
   tileFor: (senseId) => {
     const w = senseById(senseId);
     return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });

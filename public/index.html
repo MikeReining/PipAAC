@@ -460,6 +460,8 @@
          grammar color; nothing moves. */
       .words-only .cell .tart, .words-only .pred .part, .words-only .chip .cart { display: none; }
       .words-only .cell .tlabel { height: 100%; flex: 1; padding: 0 8%; }
+      .words-only .chip { justify-content: center; }
+      .words-only .chip .clabel { height: auto; font-size: 28px; line-height: 1.15; }
       /* Photos fill the art area edge to edge. */
       .cell.photo .tart { padding: 0; }
       .cell.photo .tart img { width: 100%; height: 100%; object-fit: cover; }
@@ -872,6 +874,14 @@
                 <span class="seg-label">Buttons per screen</span>
                 <div class="seg" id="cells-seg"></div>
                 <p class="hint">Fewer, bigger buttons are easier to hit. More buttons reach a word in fewer taps. Pip shows what moves before anything changes.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Buttons show</span>
+                <div class="seg" id="look-seg">
+                  <button data-v="symbol">Pictures and words</button>
+                  <button data-v="label">Words only</button>
+                </div>
+                <p class="hint">Words only removes every picture. Each button keeps its place and its color; the word gets bigger.</p>
               </div>
               <div class="seg-row">
                 <span class="seg-label">Keep the top row in every group</span>
