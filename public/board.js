@@ -2152,7 +2152,40 @@ function syncExpressiveSeg() {
   for (const b of $("expressive-voice").querySelectorAll("button")) {
     b.classList.toggle("on", (b.dataset.v === "1") === expressiveVoice);
   }
+  syncTryFaces();
 }
+/* Settings → Talking: the board's faces, live on the sample sentence.
+ * Off dims and disables them; offline they stay but say why. */
+function syncTryFaces() {
+  const online = navigator.onLine !== false;
+  const live = expressiveVoice && online;
+  $("try-faces").classList.toggle("off", !live);
+  for (const b of $("try-faces").querySelectorAll(".face")) b.disabled = !live;
+  const note = $("try-faces-note");
+  note.dataset.full ??= note.innerHTML;
+  note.innerHTML = !expressiveVoice
+    ? "Off — the Smart bar shows word suggestions instead."
+    : !online ? "Needs internet to hear." : note.dataset.full;
+}
+window.addEventListener("online", syncTryFaces);
+window.addEventListener("offline", syncTryFaces);
+let tryBusy = false;
+$("try-faces").addEventListener("click", async (e) => {
+  const b = e.target.closest(".face");
+  if (!b || b.disabled || tryBusy) return;
+  tryBusy = true;
+  const img = b.querySelector("img");
+  const normal = img.src;
+  b.classList.add("speaking");
+  img.src = `/icons/selected/voice-${b.dataset.f}.svg`;
+  try {
+    if ((await sampleVoice(voiceId, b.dataset.f)) === false) toast("Couldn't play that — try again online.");
+  } finally {
+    tryBusy = false;
+    b.classList.remove("speaking");
+    img.src = normal;
+  }
+});
 $("expressive-voice").addEventListener("click", (e) => {
   const v = e.target.closest("button")?.dataset.v;
   if (v === undefined) return;
@@ -2537,13 +2570,14 @@ syncLook();
  * board: word clips and sentence voice together; the sample is the
  * demo sentence. */
 const SAMPLE_TEXT = "I want an apple.";
-async function sampleVoice(id) {
+async function sampleVoice(id, feeling = "neutral") {
   if (id !== voiceId) return; // only the board's voice can speak today
   const blob = await sentenceVoice.request({
     userId: me.id, license: await voiceLicense(), voice: id,
-    text: SAMPLE_TEXT, feeling: "neutral", deadlineMs: 1500,
+    text: SAMPLE_TEXT, feeling, deadlineMs: 1500,
   }).catch(() => null);
   if (blob) return playBlob(blob);
+  if (feeling !== "neutral") return false; // a feeling has no word-clip fallback
   // Offline or unlicensed: the word clips, in the same voice.
   endPlaying();
   for (const [text, sid] of [["I", senseIdOf("I")], ["want", "sns_0013"], ["apple", "sns_0128"]]) {

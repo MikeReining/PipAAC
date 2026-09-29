@@ -354,6 +354,17 @@
         background: var(--ink);
         border-color: var(--ink-text);
       }
+      /* Settings → Talking: the same faces, live, on the sample sentence. */
+      .try-faces .try-row { display: flex; gap: var(--gap, 8px); margin: 10px 0 0; }
+      .try-faces .face {
+        flex: 1; min-height: 56px; border-radius: 10px;
+        border: 3px solid var(--edge); background: #fff;
+        display: flex; align-items: center; justify-content: center; padding: 0;
+      }
+      .try-faces .face img { width: 34px; height: 34px; }
+      .try-faces .face:active { border-color: var(--ink-text); }
+      .try-faces .face.speaking { background: var(--ink); border-color: var(--ink-text); }
+      .try-faces.off .try-row { opacity: .4; }
       .pred:active { border-color: var(--ink-text); }
       .pred:active .part { background: var(--press-f); }
       /* Utility anchors: one column each, always visible. */
@@ -990,7 +1001,15 @@
                   <button data-v="0">Off</button>
                   <button data-v="1">On</button>
                 </div>
-                <p class="hint">Faces in the Smart bar let <span data-person></span> say a sentence happy, sad, or angry.</p>
+                <div class="try-faces" id="try-faces">
+                  <span class="set-eg" aria-hidden="true"><i>I</i><i>want</i><i>an</i><i>apple</i></span>
+                  <div class="try-row">
+                    <button class="face" data-f="happy" aria-label="Hear it happy"><img src="/icons/voice-happy.svg" alt=""></button>
+                    <button class="face" data-f="sad" aria-label="Hear it sad"><img src="/icons/voice-sad.svg" alt=""></button>
+                    <button class="face" data-f="angry" aria-label="Hear it angry"><img src="/icons/voice-angry.svg" alt=""></button>
+                  </div>
+                  <p class="hint" id="try-faces-note">Tap a face to hear it. In the Smart bar, faces let <span data-person></span> say a sentence happy, sad, or angry.</p>
+                </div>
               </div>
               <div class="seg-row">
                 <span class="seg-label">After Play</span>
