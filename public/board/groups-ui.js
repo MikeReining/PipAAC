@@ -49,6 +49,7 @@ const GROUP_ICONS = {
   grp_lunch: "/icons/groups/lunch.svg",
   grp_dinner: "/icons/groups/food.svg",
   grp_snack: "/icons/groups/snack.svg",
+  grp_treats: "/icons/groups/treats.svg",
   grp_fruit: "/icons/groups/fruit.svg",
   grp_things: "/icons/groups/things.svg",
   grp_describing: "/icons/groups/shapes.svg",
