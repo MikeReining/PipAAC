@@ -71,7 +71,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   const SUMMARIES = {
     board: () => [onText("cells-seg") && `${onText("cells-seg")} buttons`,
       onText("look-seg") === "Words only" ? "words only" : "", onText("kb-mode")].filter(Boolean).join(" · "),
-    talking: () => `Feeling faces ${onOff("expressive-voice")} · ${onText("fresh-speak").toLowerCase()}`,
+    talking: () => `${$("voice-name")?.textContent ?? "Voice"} · feeling faces ${onOff("expressive-voice")}`,
     lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
     backup: () => (team() ? "Owners keep the recovery card" : cardMade() ? "Recovery card made" : "No recovery card yet"),
   };
@@ -273,7 +273,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     overview: "spotlight practice goal target model lesson add word edit",
     words: "vocabulary library photo picture name add list people places family meal breakfast lunch dinner snack groups folder hide",
     board: "cells size bigger smaller grid layout top row core keyboard typing letters spell qwerty abc alphabet pictures images symbols words text only",
-    talking: "voice speak sound expressive emotion feelings happy sad angry tone play sentence clear fresh",
+    talking: "voice voices speak sound girl boy man woman teen change expressive emotion feelings happy sad angry tone play sentence clear fresh",
     lang: "grammar forms endings plural tense highlight predict prediction hint next smart bar question families",
     progress: "stats report iep evidence week numbers",
     team: "invite supporter slp teacher therapist share device link pair ipad phone tablet code person people user switch client add",

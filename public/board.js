@@ -79,6 +79,7 @@ import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
 import { mountGroupShows } from "./board/group-shows.js";
 import { mountOnramp } from "./board/onramp-ui.js";
 import { mountTour } from "./board/tour-ui.js";
+import { mountVoice } from "./board/voice-ui.js";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -168,6 +169,8 @@ function onSyncApplied() {
     syncFreshSeg();
     syncGrammarSeg();    // Grammar help syncs like the other segs
     syncLook();          // Words only syncs too
+    voiceId = resolveProfile(db).voiceId; // a voice chosen on another device
+    voiceUi.renderRow();
     bindSpotSettings();  // spotlight settings sync too
     resumeSession(db);   // a session started/ended elsewhere lands here
     renderCellsSeg();    // a Cells change may have landed
@@ -214,7 +217,9 @@ const scheduleStatsRefresh = () => {
 // Profile locale and voice resolve once at boot (schema §7.1) and bind
 // into every label query and speech call — never a literal, never
 // another locale's voice.
-const { locale, voiceId } = resolveProfile(db);
+const { locale } = resolveProfile(db);
+// The board's voice (Settings → Talking → Voice); a synced change re-resolves it.
+let { voiceId } = resolveProfile(db);
 document.documentElement.lang = locale;
 const sentence = []; // [{kind, id, text}]
 
@@ -2318,6 +2323,39 @@ $("look-seg").addEventListener("click", (e) => {
   if (v) setLook(v);
 });
 syncLook();
+/* Voice — public/board/voice-ui.js (Settings → Talking). One voice per
+ * board: word clips and sentence voice together; the sample is the
+ * demo sentence. */
+const SAMPLE_TEXT = "I want an apple.";
+async function sampleVoice(id) {
+  if (id !== voiceId) return; // only the board's voice can speak today
+  const blob = await sentenceVoice.request({
+    userId: me.id, license: await voiceLicense(), voice: grokVoice,
+    text: SAMPLE_TEXT, feeling: "neutral", deadlineMs: 1500,
+  }).catch(() => null);
+  if (blob) return playBlob(blob);
+  // Offline or unlicensed: the word clips, in the same voice.
+  endPlaying();
+  for (const [text, sid] of [["I", senseIdOf("I")], ["want", "sns_0013"], ["apple", "sns_0128"]]) {
+    await speakItem({ kind: sid ? "sense" : "typed", id: sid, text }, { chained: true });
+  }
+}
+function senseIdOf(text) {
+  return ALL(db, `SELECT sense_id AS id FROM label WHERE text = ? AND kind = 'lemma'
+    AND status = 'approved' AND locale = ?`, [text, locale])[0]?.id ?? null;
+}
+const voiceUi = mountVoice({
+  db, locale, open,
+  getVoiceId: () => voiceId,
+  chooseVoice: (id) => {
+    setSetting(db, "preferred_voice_id", id);
+    voiceId = resolveProfile(db).voiceId;
+    settingsUi.renderNav();
+  },
+  sample: sampleVoice,
+});
+settingsUi.onOpen(() => voiceUi.renderRow());
+
 /* The welcome — public/board/onramp-ui.js: a name and "Who's it for?"
  * (plus the button look for a teen or adult) on a new person, then
  * straight to the board. The old "their world" form is Settings-only. */
