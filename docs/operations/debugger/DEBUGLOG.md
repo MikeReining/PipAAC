@@ -57,3 +57,19 @@ Truth owner: `src/worker/tile_ledger.mjs` — every `sql.exec` call against the 
 Lie-prone layer: call sites passed params as one array (`sql.exec(q, [a, b])`); the real DO's `sql.exec` is variadic, so `node:sqlite` read the array as named parameters and threw `Unknown named parameter '0'` — only at the first real `wrangler dev` run, not in review
 Proof: node --test src/worker/tile.heavy.test.mjs — failed on the DO path before the fix, green after converting all call sites to `sql.exec(q, a, b)`
 Pattern candidate: code written for a DO storage API must be exercised against the real `wrangler dev` binding at least once — a light-test shim that accepts array params hides the contract mismatch
+
+## 2026-09-29 ready-row-missing-r2-object-loops-forever
+
+Tier: T1
+Truth owner: `src/worker/tile.js` `serveClip` — the ready→R2→hit path
+Lie-prone layer: "R2 object gone — fall through and re-mint it" looked safe, but `claimMint` refuses `ready` rows, so the rerun recursed until the request died (live: 62 s → 503 on a seeded clip whose object was absent from local R2)
+Proof: node --test src/worker/tile.test.mjs — seeded row + missing object now demotes via `missingObject` and re-mints once (`x-tile-cache: mint`)
+Pattern candidate: a "fall through and retry" path must verify the retry gate can actually open — if the state the gate checks is the same state that triggered the fall-through, the loop is infinite; demote first
+
+## 2026-09-29 heavy-test-inherits-dev-vars
+
+Tier: T3
+Truth owner: `src/worker/tile.heavy.test.mjs` — spawns its own `wrangler dev`
+Lie-prone layer: the spawned wrangler read the developer's `.dev.vars`, so a later `TILE_LIVE=1` turned the "stub mint" assertion into a real vendor call
+Proof: node --test src/worker/tile.heavy.test.mjs — green with `--env-file` pointed at a minimal vars file the test writes itself
+Pattern candidate: a test that launches a real server must control the server's env file, not inherit the developer's — `.dev.vars` drifts as features ship
