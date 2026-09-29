@@ -724,20 +724,27 @@ export async function handleDraw(request, env, ctx) {
   }
 
   // 6 — we hold the claim: synth, store, index — the reservation we made
-  // is the charge. Any failure refunds it.
+  // is the charge. Everything from the paid call through ledger-ready is
+  // one failure boundary: any throw marks the row failed (retry_after
+  // frees the next request immediately — no 10-minute minting tombstone),
+  // refunds the allowance, and 502s.
+  const fail = async () => {
+    await picPost(env, "/pic/draw/fail", { key, retryAfter: Date.now() + 60_000 })
+      .catch(() => {});
+    await refund();
+    return json({ error: "draw_failed" }, { status: 502 });
+  };
   let minted;
   try {
     const refs = await loadDrawRefs(env, styleRefBundle(jev.draw));
     minted = await synthesizeDraw(env, { prompt, refs });
+    const r2Key = `drawing/${key}.png`;
+    await env.VOICE.put(r2Key, minted.bytes);
+    const ready = await picPost(env, "/pic/draw/ready", { key, r2Key });
+    if (!ready.ok) throw new Error("ready_failed");
   } catch {
-    await picPost(env, "/pic/draw/fail", { key, retryAfter: Date.now() + 60_000 });
-    await refund();
-    return json({ error: "draw_failed" }, { status: 502 });
+    return fail();
   }
-
-  const r2Key = `drawing/${key}.png`;
-  await env.VOICE.put(r2Key, minted.bytes);
-  await picPost(env, "/pic/draw/ready", { key, r2Key });
 
   // The next family finds this drawing by its description-derived caption
   // (§ 3.3) — upsert inline so the very next find sees it. A stub mint

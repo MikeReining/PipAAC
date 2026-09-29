@@ -347,6 +347,23 @@ test("§ 0.5: a personal drawing (description-keyed) is a free hit at 0 left", a
   assert.equal(calls, 1);
 });
 
+test("a post-mint storage failure fails the row and refunds the allowance", async () => {
+  let calls = 0;
+  const env = makeEnv({ synth: async () => (calls++, PNG_BYTES) });
+  env.VOICE.put = async () => { throw new Error("r2 down"); };
+  const r = await draw(env, { text: "trampoline" });
+  assert.equal(r.status, 502);
+  assert.equal((await r.json()).error, "draw_failed");
+  assert.equal(calls, 1); // Muse was paid — the failure came after
+  const row = env.__db.prepare("SELECT status, retry_after FROM pic_drawing").all()[0];
+  assert.equal(row.status, "failed"); // not stuck minting for 10 minutes
+  assert.ok(row.retry_after > Date.now());
+  assert.equal(await drawUsed(env, UID), 0); // allowance refunded
+  // the next request sees failed_wait, not a minting tombstone
+  const again = await draw(env, { text: "trampoline" });
+  assert.equal(again.status, 502);
+});
+
 test("a failed mint refunds the reservation — the next subject can draw", async () => {
   let calls = 0;
   const env = makeEnv({
