@@ -412,6 +412,55 @@ test("admin routes: 401 without the token; recent/review/held/audio work", async
     env, `/admin/v1/tile-voice/usage?from=${now}`)).json();
   assert.equal(window.mints, 0); // nothing minted after `now`
 
+  // Slice 7 free half — seed registers an existing R2 object as a ready
+  // row: a typed request for its text then hits, no mint, no vendor call.
+  const seed = await admin(env, "/admin/v1/tile-voice/seed", {
+    method: "POST",
+    body: JSON.stringify({ rows: [
+      { voice_key: "voi_default_en", locale: "en", text: "Giraffe",
+        r2_key: "audio/giraffe/abc.mp3" },
+      { voice_key: "voi_default_en", locale: "en", text: "",
+        r2_key: "audio/x/y.mp3" }, // bad row — skipped
+    ] }),
+  });
+  assert.deepEqual(await seed.json(), { inserted: 1, skipped: 1 });
+  env.VOICE.put("audio/giraffe/abc.mp3", te("CATALOG"));
+  const hit = await good(env, { text: "  giraffe ", source: "user_typed" });
+  assert.equal(hit.status, 200);
+  assert.equal(hit.headers.get("x-tile-cache"), "hit"); // served, not minted
+  const seeded = env.__db.prepare(
+    "SELECT * FROM tile_clip WHERE text = 'giraffe'").all()[0];
+  assert.equal(seeded.source, "seed");
+  assert.equal(seeded.review, "approved");
+  assert.equal(seeded.r2_key, "audio/giraffe/abc.mp3");
+  // A second seed of the same text is a no-op — existing rows win.
+  const again = await admin(env, "/admin/v1/tile-voice/seed", {
+    method: "POST",
+    body: JSON.stringify({ rows: [
+      { voice_key: "voi_default_en", locale: "en", text: "giraffe",
+        r2_key: "audio/other.mp3" }] }),
+  });
+  assert.deepEqual(await again.json(), { inserted: 0, skipped: 1 });
+
+  // Seeded row whose R2 object is gone: demote + re-mint, never loop
+  // (claimMint refuses 'ready', so a rerun without the demote hangs).
+  await admin(env, "/admin/v1/tile-voice/seed", {
+    method: "POST",
+    body: JSON.stringify({ rows: [
+      { voice_key: "voi_default_en", locale: "en", text: "platypus",
+        r2_key: "audio/platypus/missing.mp3" }] }),
+  });
+  let remints = 0;
+  env.TILE_SYNTH = async (t) => { remints++; return te(`AUDIO:${t}`); };
+  const reminted = await good(env, { text: "platypus" });
+  assert.equal(reminted.status, 200);
+  assert.equal(reminted.headers.get("x-tile-cache"), "mint");
+  assert.equal(remints, 1);
+  const platypus = env.__db.prepare(
+    "SELECT * FROM tile_clip WHERE text = 'platypus'").all()[0];
+  assert.equal(platypus.status, "ready");
+  assert.match(platypus.r2_key, /^tile\//); // now lives in the tile namespace
+
   // replaced sweep: the withheld/replaced clip's text hash is listed
   const lic = await licenseFor(SECRET, UID);
   const sweep = await worker.fetch(new Request(

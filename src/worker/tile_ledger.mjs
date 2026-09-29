@@ -145,8 +145,30 @@ export function failMint(sql, { id, now, retryMs = FAILED_RETRY_MS }) {
   sql.exec("UPDATE tile_clip SET status = 'failed', retry_after = ? WHERE id = ?", now + retryMs, id);
 }
 
+/** Ready row whose R2 object is gone (deleted upstream): demote to a
+ *  claimable state so claimMint can re-mint it — claimMint refuses
+ *  'ready', so without this serveClip reruns forever. */
+export function missingObject(sql, id) {
+  sql.exec("UPDATE tile_clip SET status = 'failed', retry_after = 0 WHERE id = ? AND status = 'ready'", id);
+}
+
 export function touchHit(sql, id) {
   sql.exec("UPDATE tile_clip SET hits = hits + 1 WHERE id = ?", id);
+}
+
+/** § 10 slice 7 (free half) — register an existing clip object (the
+ *  catalog's R2 files) as a ready row so identical typed text hits it.
+ *  INSERT OR IGNORE: a row that exists — minted, withheld, whatever —
+ *  is never clobbered. Review=approved: these clips already shipped. */
+export function seedClip(sql, { id, voiceKey, locale, text, mintText, model, profile, r2Key, bytes, durationMs, now }) {
+  if (getClip(sql, id)) return false; // never clobber an existing row
+  sql.exec(`INSERT INTO tile_clip
+      (id, voice_key, locale, text, mint_text, model, profile, source,
+       status, r2_key, bytes, duration_ms, checks, review, created_at, minted_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'seed', 'ready', ?, ?, ?, ?, 'approved', ?, ?)`,
+    id, voiceKey, locale, text, mintText, model, profile,
+    r2Key, bytes ?? null, durationMs ?? null, null, now, now);
+  return true;
 }
 
 /** § 9 / WT9 — what the ledger asked the vendor to synthesize in

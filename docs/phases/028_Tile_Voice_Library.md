@@ -214,6 +214,13 @@ id = sha256( voice_key | locale | TILE_PROFILE | normalizedText )      // hex
 Index on `(created_at DESC)`, `(review, source, created_at DESC)`, `(replaced_at)`.
 **No user/device/license column, ever.**
 
+`tile_mint` (append-only vendor-spend events, added in slice 5): every
+completed synth — first mints and each remint — logs
+`(clip_id, voice_key, chars, minted_at)` where `chars` is the exact
+`LENGTH(mint_text)` sent. `tile_clip` is state and a remint rewrites it;
+the reconcile (WT9) needs the event stream. Stub synths log `chars=0`.
+
+
 - **Single flight:** the DO keeps `Map<id, Promise>`. A second request for a
   `minting` id awaits the same promise. A `minting` row older than 60 s with
   no in-memory promise (DO was evicted) is reclaimed by the next request.
@@ -238,6 +245,8 @@ All Worker routes follow `src/worker/voice.js` conventions (JSON errors,
 | `POST /admin/v1/tile-voice/review` | `{ids:[…], review:"approved"\|"rejected"}` | `204`; `rejected` also sets `status=withheld` | 401 |
 | `POST /admin/v1/tile-voice/remint` | `{id, mode:"plain"\|"ipa", ipa?}` | new clip, `version++`, `status=ready`, `review=unreviewed` | 401, 502 |
 | `GET /admin/v1/tile-voice/held` | — | `[{locale, text, reason, count}]` | 401 |
+| `GET /admin/v1/tile-voice/row/<id>` | — | `{row}` — one clip's full ledger row | 401/404 |
+| `GET /admin/v1/tile-voice/usage?from=<ms>&to=<ms>` | — | `{mints, chars}` — vendor-spend events in the window (WT9) | 401 |
 
 Admin routes are on the same Worker; `PIP_ADMIN_TOKEN` is a Worker secret. No
 admin UI is served from the Worker (§ 7).
@@ -331,7 +340,10 @@ the old voice active and offer retry.
 - **Record** (existing `setOverride`/`clearOverride`) is per-user, private,
   wins over everything, and **never touches the shared clip**.
 - Word card gets **"Sounds wrong"** → `POST …/tile/flag`; the tile keeps
-  playing. Flag is a review signal, not a takedown.
+  playing. Flag is a review signal, not a takedown. **Entity cards only**
+  (shipped): catalog words resolve to the catalog clip pipeline, which
+  has its own review path — the flag targets a minted clip, so it shows
+  where `resolveSlot` can return `tileclip` (entity names, typed words).
 
 ### 5.6 Keyboard text
 

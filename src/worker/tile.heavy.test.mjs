@@ -11,7 +11,7 @@
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -35,8 +35,12 @@ let wrangler;
 
 before(async () => {
   const stateDir = mkdtempSync(join(tmpdir(), "pip-tile-"));
+  // The developer's .dev.vars may carry TILE_LIVE/ELEVENLABS_API_KEY — this
+  // test owns its env file so the stub path is what runs, never a vendor call.
+  const envFile = join(stateDir, ".dev.vars");
+  writeFileSync(envFile, `PIP_LICENSE_SECRET=${SECRET}\n`);
   wrangler = spawn("npx", ["wrangler", "dev", "--port", String(PORT),
-    "--ip", "127.0.0.1", "--persist-to", stateDir],
+    "--ip", "127.0.0.1", "--persist-to", stateDir, "--env-file", envFile],
     { cwd: repoRoot, stdio: "ignore" });
   for (let i = 0; i < 120; i++) {
     await sleep(500);

@@ -228,9 +228,25 @@ export async function handleTileReplaced(request, env, url) {
 
 /** Founder-only review plumbing (§ 4.6): Bearer PIP_ADMIN_TOKEN. The
  *  ledger is reached for state; audio still streams from R2. */
+/** Constant-time bearer check — a leaked prefix must not shave the
+ *  search space via timing. Uses the Workers primitive when present;
+ *  the byte loop is the portable fallback (Node tests lack the API). */
+const teAdmin = new TextEncoder();
+async function adminOk(request, env) {
+  if (!env.PIP_ADMIN_TOKEN) return false;
+  const got = teAdmin.encode(request.headers.get("authorization") ?? "");
+  const want = teAdmin.encode(`Bearer ${env.PIP_ADMIN_TOKEN}`);
+  if (got.byteLength !== want.byteLength) return false;
+  if (typeof crypto.subtle.timingSafeEqual === "function") {
+    return crypto.subtle.timingSafeEqual(got, want);
+  }
+  let diff = 0;
+  for (let i = 0; i < got.byteLength; i++) diff |= got[i] ^ want[i];
+  return diff === 0;
+}
+
 export async function handleTileAdmin(request, env, url) {
-  if (!env.PIP_ADMIN_TOKEN
-      || request.headers.get("authorization") !== `Bearer ${env.PIP_ADMIN_TOKEN}`) {
+  if (!(await adminOk(request, env))) {
     return json({ error: "unauthorized" }, { status: 401 });
   }
   if (!env.TILE_LEDGER) return json({ error: "voice_unavailable" }, { status: 503 });
@@ -255,6 +271,11 @@ export async function handleTileAdmin(request, env, url) {
   }
   if (path === "/admin/v1/tile-voice/usage" && request.method === "GET") {
     return stub.fetch(new Request(`https://tile/usage${url.search}`));
+  }
+  if (path === "/admin/v1/tile-voice/seed" && request.method === "POST") {
+    return stub.fetch(new Request("https://tile/seed", {
+      method: "POST", body: await request.text(),
+    }));
   }
   const rowMatch = path.match(/^\/admin\/v1\/tile-voice\/row\/([0-9a-f]{64})$/);
   if (rowMatch && request.method === "GET") {
@@ -343,6 +364,35 @@ export class TileLedger {
       }).map((r) => r.text);
       return json({ texts });
     }
+    /** § 10 slice 7 — register existing R2 clips (catalog audio) as
+     *  ready seed rows so identical typed text hits. Founder tooling;
+     *  never overwrites an existing row. The DO derives ids — the id
+     *  recipe is ledger-owned, scripts must not recompute it. */
+    if (p === "/seed" && request.method === "POST") {
+      const { rows } = (await body()) ?? {};
+      if (!Array.isArray(rows) || rows.length > 500) {
+        return json({ error: "bad_request" }, { status: 400 });
+      }
+      let inserted = 0, skipped = 0;
+      for (const r of rows) {
+        const voice = VOICES.get(String(r?.voice_key ?? ""));
+        const text = normalizeV1(String(r?.text ?? ""));
+        const locale = String(r?.locale ?? "en");
+        if (!voice || !text || typeof r?.r2_key !== "string" || !r.r2_key) {
+          skipped++;
+          continue;
+        }
+        const id = await ledger.tileClipId(voice.voice_key, locale, text);
+        ledger.seedClip(this.sql, {
+          id, voiceKey: voice.voice_key, locale, text,
+          mintText: r.mint_text ?? text, model: voice.model,
+          profile: TILE_PROFILE, r2Key: r.r2_key,
+          bytes: r.bytes, durationMs: r.duration_ms,
+          now: this.now(),
+        }) ? inserted++ : skipped++;
+      }
+      return json({ inserted, skipped });
+    }
     if (p === "/usage" && request.method === "GET") {
       return json(ledger.mintedChars(this.sql, {
         from: Number(url.searchParams.get("from")) || 0,
@@ -380,7 +430,9 @@ export class TileLedger {
         return audioResponse(await obj.arrayBuffer(), {
           cache: "hit", version: row.version });
       }
-      // R2 object gone — fall through and re-mint it.
+      // R2 object gone — demote the row so claimMint can reclaim it,
+      // then fall through and re-mint (claimMint refuses 'ready').
+      ledger.missingObject(this.sql, id);
     }
     if (row?.status === "withheld") {
       return json({ error: "withheld" }, { status: 409 });

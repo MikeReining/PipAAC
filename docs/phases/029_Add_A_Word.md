@@ -166,6 +166,14 @@ Driven by 030 `find` (text only) the moment the card opens:
 - On open: 028 `voice_tile.ensure(text)` — "Making {voice}'s voice…", then
   it **plays once** so the adult hears it without asking. Cache hit = instant.
 - Held / failed: 028 § 5.2 messages + **Record your own**. Never device TTS.
+- **Handoff from 028 (founder 2026-09-29):** the shipped minting copy —
+  "Making Eve's voice…", the tile badge, the word-card voice line, and
+  "Try again" — is engineer prose, not designed UI. Slice C owns its
+  visual treatment: where minting progress lives, how a "voice pending"
+  tile reads on the board, and how Try again sits next to Record. The
+  contract is the states (`minting | ready | held | withheld | budget |
+  failed | offline | unavailable | denied` via `tileApi.status` /
+  `onStatus`), not today's strings.
 
 ### 4.3 Kind and places
 

@@ -99,7 +99,27 @@
   <script>
     const DEFAULT_VOICE = "voi_default_en";
     const DEFAULT_SURFACE = "tiles";
-    /** @type {Array<{ voice_key: string, display_name: string, status: string, surfaces: Array<{ surfaceId: string, label: string, batch: string, canPublishCatalog: boolean }> }>} */
+    /** Same shape as GET /api/tile-review/voices — used when review server is stale. */
+    const BUILTIN_REVIEW_VOICES = [
+      {
+        voice_key: "voi_default_en",
+        display_name: "Eve",
+        status: "active",
+        surfaces: [
+          { surfaceId: "tiles", label: "Launch tiles", batch: "elevenlabs-tiles-core", canPublishCatalog: true },
+          { surfaceId: "forms", label: "Word forms", batch: "elevenlabs-forms-core", canPublishCatalog: true },
+        ],
+      },
+      {
+        voice_key: "voi_leo_en",
+        display_name: "Leo",
+        status: "planned",
+        surfaces: [
+          { surfaceId: "tiles", label: "Launch tiles", batch: "elevenlabs-tiles-leo", canPublishCatalog: false },
+        ],
+      },
+    ];
+    /** @type {typeof BUILTIN_REVIEW_VOICES} */
     let reviewVoices = [];
     const $ = (id) => document.getElementById(id);
     const player = $("player");
@@ -148,8 +168,7 @@
       return activeLane()?.batch ?? "";
     }
 
-    async function loadVoices() {
-      const { voices } = await api("/api/tile-review/voices");
+    function populateVoiceSelect(voices) {
       reviewVoices = voices;
       const sel = $("voice");
       sel.innerHTML = "";
@@ -165,6 +184,20 @@
       else if (voices.some((v) => v.voice_key === DEFAULT_VOICE)) sel.value = DEFAULT_VOICE;
       else if (voices[0]) sel.value = voices[0].voice_key;
       syncSurfaceOptions();
+    }
+
+    async function loadVoices() {
+      try {
+        const { voices } = await api("/api/tile-review/voices");
+        if (voices?.length) populateVoiceSelect(voices);
+        else populateVoiceSelect(BUILTIN_REVIEW_VOICES);
+      } catch {
+        populateVoiceSelect(BUILTIN_REVIEW_VOICES);
+        setStatus(
+          "Voice list loaded from page (review server is outdated). Restart catalog:audio:review when you can.",
+          false,
+        );
+      }
     }
 
     function syncSurfaceOptions() {
@@ -256,10 +289,21 @@
     async function loadMintRuns() {
       const voice = $("voice").value;
       const surface = $("surface").value;
-      if (!voice) return [];
-      const { runs } = await api(
-        `/api/mint-runs?voice=${encodeURIComponent(voice)}&surface=${encodeURIComponent(surface)}`,
-      );
+      const batch = activeBatch();
+      if (!voice && !batch) return [];
+      let runs = [];
+      try {
+        if (voice) {
+          ({ runs } = await api(
+            `/api/mint-runs?voice=${encodeURIComponent(voice)}&surface=${encodeURIComponent(surface)}`,
+          ));
+        } else {
+          throw new Error("no voice");
+        }
+      } catch {
+        if (!batch) return [];
+        ({ runs } = await api(`/api/mint-runs?batch=${encodeURIComponent(batch)}`));
+      }
       const sel = $("mint-run");
       const prev = sel.value;
       sel.innerHTML = "";
