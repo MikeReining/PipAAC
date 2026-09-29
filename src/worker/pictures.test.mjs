@@ -667,3 +667,25 @@ test("admin disagreements routes need the token", async () => {
   const r = await worker.fetch(new Request("https://x/admin/v1/pictures/disagreements"), env);
   assert.equal(r.status, 401);
 });
+
+test("Jev null scope fails closed on pick and reject — nothing recorded", async () => {
+  for (const jev of [
+    async () => ({ scope: null, kind: null, language: null }),
+    async () => { throw new Error("jev down"); },
+  ]) {
+    const env = makeEnv({ jev });
+    const p = await pick(env, { text: "Cooper", description: "our dog", image_id: "img_dog" });
+    assert.equal(p.status, 503);
+    assert.equal((await p.json()).error, "classify_unavailable");
+    assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_pick").all()[0].c, 0);
+
+    const r = await reject(env, {
+      text: "Grandma Rosa", description: "my mom's mom",
+      ours: "img_0692", action: "pick", theirs: "img_x",
+    });
+    assert.equal(r.status, 503);
+    assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_disagreement").all()[0].c, 0);
+    const { rows } = await (await adminDisagree(env, "")).json();
+    assert.equal(rows.length, 0);
+  }
+});

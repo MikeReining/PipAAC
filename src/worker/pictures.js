@@ -313,7 +313,12 @@ export async function handlePick(request, env, ctx) {
   try {
     jev = await classify(env, { text, description });
   } catch {
-    jev = { scope: body?.scope === "personal" && description ? "personal" : "common" };
+    jev = null;
+  }
+  // Fail closed: a null scope stored "common" would write a personal
+  // name into the anonymous pick table. The client never decides scope.
+  if (!jev?.scope) {
+    return json({ error: "classify_unavailable" }, { status: 503 });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   if (scope === "personal" && !description) {
@@ -380,7 +385,12 @@ export async function handleReject(request, env, ctx) {
   try {
     jev = await classify(env, { text, description });
   } catch {
-    jev = { scope: body?.scope === "personal" && description ? "personal" : "common" };
+    jev = null;
+  }
+  // Fail closed: a null scope stored "common" would leak a name into the
+  // disagreement rows and onto the founder's review page (§ 5.5, § 8).
+  if (!jev?.scope) {
+    return json({ error: "classify_unavailable" }, { status: 503 });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   if (scope === "personal" && !description) {
@@ -583,15 +593,18 @@ export async function handleDraw(request, env, ctx) {
     return json({ error: "fair_use", over: guard.over }, { status: 429 });
   }
 
-  // 3 — Jev: scope/kind/language + the framing spec, one call.
+  // 3 — Jev: scope/kind/language + the framing spec, one call. A null
+  // scope fails closed (§ 8): "Cooper" treated as common would leak the
+  // name into the prompt, the ledger, and the review page. 503 before
+  // any ledger claim or vendor call — the client never decides scope.
   let jev;
   try {
     jev = await classify(env, { text, description, forDraw: true });
   } catch {
-    jev = {
-      scope: null, kind: null, language: null, language_probs: {},
-      draw: parseDrawSpec(null),
-    };
+    jev = null;
+  }
+  if (!jev?.scope) {
+    return json({ error: "classify_unavailable" }, { status: 503 });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   // A person/pet with no description has nothing to draw (and the name

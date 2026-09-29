@@ -351,6 +351,24 @@ test("draw gates: bad ids, bad license, unsafe order before allowance", async ()
   assert.equal((await draw(env, { text: "fuck" })).status, 422);
 });
 
+test("Jev null scope fails closed: 503, zero synth calls, zero ledger rows", async () => {
+  for (const jev of [
+    async () => ({ scope: null, kind: null, language: null, draw: null }),
+    async () => { throw new Error("jev down"); },
+  ]) {
+    let calls = 0;
+    const env = makeEnv({ jev, synth: async () => (calls++, PNG_BYTES) });
+    const r = await draw(env, { text: "Cooper" });
+    assert.equal(r.status, 503);
+    assert.equal((await r.json()).error, "classify_unavailable");
+    assert.equal(calls, 0);
+    assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_drawing").all()[0].c, 0);
+    // the name never reached anywhere
+    const keys = [...env.VOICE.store.keys()].filter((k) => k.includes("rawing"));
+    assert.equal(keys.length, 0);
+  }
+});
+
 test("no identity in the vendor seam arguments", async () => {
   const seen = [];
   const env = makeEnv({ synth: async (...args) => (seen.push(JSON.stringify(args)), PNG_BYTES) });
