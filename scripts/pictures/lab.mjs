@@ -21,22 +21,30 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 export const LAB_TAKES_DIR = join(repoRoot, "out/draw_lab");
 export const PLANNER_PROMPT_PATH =
   join(repoRoot, "data/pictures/draw_planner_prompt.md");
-export const SPARK_MODEL = "meta/muse-spark-1.3-contributor";
 export const OPENROUTER_CHAT = "https://openrouter.ai/api/v1/chat/completions";
 
-/* ----------------------------- prompt planner ---------------------------- */
+/** The planner lanes — same draw_planner_prompt.md, same one-sentence
+ *  contract, different brains. The lab runs both so speed and hint
+ *  quality can be compared; whichever wins becomes the production
+ *  default. qwen routes to Groq via OpenRouter's provider order, and
+ *  thinking is off — a hint is not a reasoning task. */
+export const PLANNER_MODELS = {
+  spark: { model: "meta/muse-spark-1.3-contributor" },
+  qwen: {
+    model: "qwen/qwen3-32b",
+    provider: { order: ["Groq"], allow_fallbacks: true },
+    reasoning: { effort: "none" },
+  },
+};
 
-/** Re-read every call — editing the md is the whole point of the lab. */
-export function plannerSystemPrompt({ path = PLANNER_PROMPT_PATH } = {}) {
-  const md = readFileSync(path, "utf8");
-  return md.slice(md.indexOf("---") + 3).trim();
-}
-
-/** What spark sees: the concept, the family's description (the subject
- *  for personal scope), and Jev's draw spec. No ids exist on this path. */
-export function sparkChatBody({ text, description, spec, system }) {
+/** What spark/qwen sees: the concept, the family's description (the
+ *  subject for personal scope), and Jev's draw spec. No ids exist on
+ *  this path. */
+export function plannerChatBody({ lane = "spark", text, description, spec, system }) {
+  const cfg = PLANNER_MODELS[lane];
+  if (!cfg) throw new Error(`unknown planner lane ${lane}`);
   return {
-    model: SPARK_MODEL,
+    ...cfg,
     messages: [
       { role: "system", content: system ?? plannerSystemPrompt() },
       {
@@ -50,6 +58,16 @@ export function sparkChatBody({ text, description, spec, system }) {
     ],
   };
 }
+
+/* ----------------------------- prompt planner ---------------------------- */
+
+/** Re-read every call — editing the md is the whole point of the lab. */
+export function plannerSystemPrompt({ path = PLANNER_PROMPT_PATH } = {}) {
+  const md = readFileSync(path, "utf8");
+  return md.slice(md.indexOf("---") + 3).trim();
+}
+
+
 
 /** Pull the hint sentence out of the chat response; spark may wrap it
  *  in quotes or add whitespace — strip that, keep the sentence. */
@@ -88,13 +106,16 @@ export function lintSpecFit(hint, spec = {}) {
   return HUMAN_WORDS.test(hint) ? ["humans in a zero-human spec"] : [];
 }
 
-export async function askSpark({
-  text, description, spec,
+/** One planner lane → { hint, ms }. The lab calls it once per lane in
+ *  parallel and shows the timings side by side. */
+export async function askPlanner({
+  lane = "spark", text, description, spec,
   apiKey = resolveApiKey("OPENROUTER_API_KEY"),
   fetchImpl = globalThis.fetch,
   system,
 } = {}) {
   if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set (.env)");
+  const t0 = Date.now();
   const res = await fetchImpl(OPENROUTER_CHAT, {
     method: "POST",
     headers: {
@@ -102,10 +123,12 @@ export async function askSpark({
       authorization: `Bearer ${apiKey}`,
       ...appHeaders("picture-lab"),
     },
-    body: JSON.stringify(sparkChatBody({ text, description, spec, system })),
+    body: JSON.stringify(plannerChatBody({ lane, text, description, spec, system })),
   });
-  if (!res.ok) throw new Error(`spark HTTP ${res.status}: ${(await res.text()).slice(0, 400)}`);
-  return parseSparkHint(await res.json());
+  if (!res.ok) {
+    throw new Error(`${lane} HTTP ${res.status}: ${(await res.text()).slice(0, 400)}`);
+  }
+  return { hint: parseSparkHint(await res.json()), ms: Date.now() - t0 };
 }
 
 /** The full Muse prompt for a subject — the buildPrompt scaffold plus a
@@ -183,6 +206,7 @@ export async function mintLabTake({
   const meta = {
     word: String(word ?? ""), description: description || null,
     spec, prompt, source, file, created_at: Date.now(), verdict: null,
+    ...(PLANNER_MODELS[source] ? { planner_model: PLANNER_MODELS[source].model } : {}),
   };
   writeFileSync(join(takesDir, `${file}.json`), JSON.stringify(meta, null, 2) + "\n");
   return meta;

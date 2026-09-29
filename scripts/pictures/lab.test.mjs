@@ -7,24 +7,34 @@ import assert from "node:assert/strict";
 
 import {
   composePrompt, labImagePath, lintHint, lintSpecFit, listLabTakes,
-  mintLabTake, parseSparkHint, plannerSystemPrompt, setTakeVerdict,
-  sparkChatBody, takeFileName, LAB_TAKES_DIR, SPARK_MODEL,
+  mintLabTake, parseSparkHint, plannerChatBody, plannerSystemPrompt,
+  setTakeVerdict, takeFileName, LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
 import { styleRefBundle } from "../../src/shared/draw_prompt.mjs";
 
-test("sparkChatBody: spark model, system prompt from the md, spec in user msg", () => {
-  const body = sparkChatBody({
+test("plannerChatBody: lane model + system prompt from the md, spec in user msg", () => {
+  const body = plannerChatBody({
+    lane: "spark",
     text: "trampoline", description: "big backyard one",
     spec: { entity_mode: "organic_noun", framing: "object" },
     system: "SYS",
   });
-  assert.equal(body.model, SPARK_MODEL);
+  assert.equal(body.model, PLANNER_MODELS.spark.model);
   assert.equal(body.messages[0].role, "system");
   assert.equal(body.messages[0].content, "SYS");
   const user = JSON.parse(body.messages[1].content);
   assert.equal(user.concept, "trampoline");
   assert.equal(user.description, "big backyard one");
   assert.equal(user.spec.entity_mode, "organic_noun");
+
+  // The fast lane routes Qwen to Groq with thinking off — a hint is not
+  // a reasoning task.
+  const q = plannerChatBody({ lane: "qwen", text: "x", spec: {}, system: "s" });
+  assert.equal(q.model, "qwen/qwen3-32b");
+  assert.deepEqual(q.provider.order, ["Groq"]);
+  assert.equal(q.reasoning.effort, "none");
+
+  assert.throws(() => plannerChatBody({ lane: "nope", text: "x" }));
 });
 
 test("plannerSystemPrompt reads the body after the --- marker", () => {

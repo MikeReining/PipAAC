@@ -20,8 +20,8 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 import {
-  askSpark, composePrompt, labImagePath, labSpec, lintHint, lintSpecFit,
-  listLabTakes, mintLabTake, setTakeVerdict, LAB_TAKES_DIR,
+  askPlanner, composePrompt, labImagePath, labSpec, lintHint, lintSpecFit,
+  listLabTakes, mintLabTake, setTakeVerdict, LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -313,34 +313,43 @@ function buildHandler() {
       }
     }
 
-    /** The spark lane — the planner writes the ONE hint sentence, then
-     *  the same buildPrompt scaffold composes the Muse prompt around it.
-     *  Warnings flag banned style words before a paid mint. */
-    if (path === "/api/lab/spark" && req.method === "POST") {
+    /** The planner lanes — every lane in PLANNER_MODELS writes the ONE
+     *  hint sentence in parallel, timed; the same buildPrompt scaffold
+     *  composes each Muse prompt. Warnings flag banned style words and
+     *  humans-in-a-zero-spec before a paid mint. */
+    if (path === "/api/lab/plan" && req.method === "POST") {
       const body = await readBody(req);
       const text = String(body?.text ?? "").trim();
       const description = String(body?.description ?? "").trim() || null;
       const scope = body?.scope === "personal" ? "personal" : "common";
       const spec = body?.spec ?? {};
-      try {
-        const hint = await askSpark({ text, description, spec });
-        return json(res, 200, {
-          hint,
-          warnings: [...lintHint(hint), ...lintSpecFit(hint, spec)],
-          prompt: composePrompt({
-            text, description, scope, kind: body?.kind, spec, hint,
-          }),
-        });
-      } catch (e) {
-        return json(res, 502, { error: "spark_failed", detail: String(e?.message ?? e) });
+      if (!text) return json(res, 400, { error: "bad_text" });
+      const lanes = Object.keys(PLANNER_MODELS);
+      const settled = await Promise.allSettled(
+        lanes.map((lane) => askPlanner({ lane, text, description, spec })),
+      );
+      const plans = {};
+      for (const [i, s] of settled.entries()) {
+        const lane = lanes[i];
+        plans[lane] = s.status === "fulfilled"
+          ? {
+              hint: s.value.hint,
+              ms: s.value.ms,
+              warnings: [...lintHint(s.value.hint), ...lintSpecFit(s.value.hint, spec)],
+              prompt: composePrompt({
+                text, description, scope, kind: body?.kind, spec, hint: s.value.hint,
+              }),
+            }
+          : { error: String(s.reason?.message ?? s.reason) };
       }
+      return json(res, 200, { plans });
     }
 
     /** One paid Muse call per click — never a batch. */
     if (path === "/api/lab/mint" && req.method === "POST") {
       const body = await readBody(req);
-      const source = ["template", "spark", "custom"].includes(body?.source)
-        ? body.source : "custom";
+      const source = ["template", "custom", ...Object.keys(PLANNER_MODELS)]
+        .includes(body?.source) ? body.source : "custom";
       try {
         const meta = await mintLabTake({
           word: String(body?.word ?? body?.text ?? ""),

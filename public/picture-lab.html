@@ -32,7 +32,7 @@
     .card img { width: 100%; height: 100px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--edge); }
     .card .cap { font-size: 11px; color: #55504a; margin-top: 4px; line-height: 1.25; min-height: 2.4em; word-break: break-word; }
     .card .score { font-size: 12px; font-variant-numeric: tabular-nums; font-weight: 600; }
-    .lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .lanes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
     .lane h3 { margin: 0 0 6px; font-size: 14px; }
     .lane textarea { width: 100%; min-height: 130px; font: 12px/1.45 ui-monospace, monospace; padding: 8px; border: 1px solid var(--edge); border-radius: 8px; resize: vertical; }
     .lane .acts { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
@@ -90,23 +90,35 @@
       <div class="spec" id="spec"></div>
     </div>
 
+    <div class="panel" id="planbar" hidden>
+      <button class="primary" id="genplans">Generate image prompts</button>
+      <span class="meta" style="margin-left:8px">both planners write their one hint sentence in parallel — timings shown; buildPrompt composes each scaffold. Edit <code>draw_planner_prompt.md</code> to tune both.</span>
+    </div>
     <div class="lanes" id="lanespanel" hidden>
       <div class="panel lane">
         <h3>Template <span class="meta">buildPrompt — what production sends today</span></h3>
         <textarea id="ptpl"></textarea>
         <div class="acts">
-          <button class="mint" id="mtpl">Mint (template)</button>
+          <button class="mint" id="mtpl" disabled>Mint (template)</button>
           <span class="meta" id="stpl"></span>
         </div>
       </div>
       <div class="panel lane">
-        <h3>Spark <span class="meta">planner writes the one hint sentence; buildPrompt composes the scaffold — edit draw_planner_prompt.md to tune it</span></h3>
+        <h3>Spark <span class="meta">meta/muse-spark-1.3-contributor</span></h3>
         <div id="spkhint" class="meta" style="margin-bottom:6px"></div>
         <textarea id="pspk"></textarea>
         <div class="acts">
-          <button id="askspk">Ask spark</button>
-          <button class="mint" id="mspk">Mint (spark)</button>
+          <button class="mint" id="mspk" disabled>Mint (spark)</button>
           <span class="meta" id="sspk"></span>
+        </div>
+      </div>
+      <div class="panel lane">
+        <h3>Qwen <span class="meta">qwen3-32b on Groq — the fast candidate</span></h3>
+        <div id="qwnhint" class="meta" style="margin-bottom:6px"></div>
+        <textarea id="pqwn"></textarea>
+        <div class="acts">
+          <button class="mint" id="mqwn" disabled>Mint (qwen)</button>
+          <span class="meta" id="sqwn"></span>
         </div>
       </div>
     </div>
@@ -140,6 +152,10 @@ async function probe() {
     probed = { text, description, find: j.find, spec: j.spec };
     renderFind(j);
     renderSpec(j.spec);
+    for (const l of Object.keys(LANES)) {
+      const [txt, btn, stat, hintEl] = laneEls(l);
+      txt.value = ""; btn.disabled = true; stat.textContent = ""; hintEl.innerHTML = "";
+    }
     await fillTemplate();
     const errs = Object.entries(j.errors ?? {}).map(([k, v]) => `${k}: ${v}`).join(" · ");
     setStatus(errs || "ready");
@@ -177,6 +193,15 @@ function renderSpec(spec) {
     .map((k) => `<span class="badge">${k}: ${esc(spec[k])}</span>`).join("");
 }
 
+const LANES = { spark: ["pspk", "mspk", "sspk", "spkhint"], qwen: ["pqwn", "mqwn", "sqwn", "qwnhint"] };
+const laneEls = (l) => LANES[l].map($);
+
+/** A mint button lives only while its box has a prompt — type or clear
+ *  to re-gate it. */
+for (const [txt, btn] of [["ptpl", "mtpl"], ["pspk", "mspk"], ["pqwn", "mqwn"]]) {
+  $(txt).addEventListener("input", () => { $(btn).disabled = !$(txt).value.trim(); });
+}
+
 async function fillTemplate() {
   const { text, description, find, spec } = probed;
   try {
@@ -186,6 +211,7 @@ async function fillTemplate() {
       spec: spec ?? {},
     });
     $("ptpl").value = j.prompt;
+    $("planbar").hidden = false;
     $("lanespanel").hidden = false;
     $("mtpl").disabled = false;
   } catch (e) {
@@ -193,32 +219,41 @@ async function fillTemplate() {
   }
 }
 
-async function askSpark() {
+async function genPlans() {
   if (!probed) return;
-  $("askspk").disabled = true;
-  $("sspk").textContent = "asking spark…";
+  $("genplans").disabled = true;
+  for (const l of Object.keys(LANES)) {
+    const [txt, btn, stat, hint] = laneEls(l);
+    stat.textContent = "planning…";
+    txt.value = ""; btn.disabled = true; hint.innerHTML = "";
+  }
   try {
-    const j = await post("/api/lab/spark", {
+    const j = await post("/api/lab/plan", {
       text: probed.text, description: probed.description, spec: probed.spec ?? {},
       scope: probed.find?.scope ?? "common", kind: probed.find?.kind ?? null,
     });
-    $("pspk").value = j.prompt;
-    const warn = (j.warnings ?? []).length
-      ? ` — ⚠ banned words in hint: ${j.warnings.join(", ")}` : "";
-    $("spkhint").innerHTML = `<b>hint:</b> ${esc(j.hint)}${warn ? ` <span style="color:var(--bad)">${warn}</span>` : ""}`;
-    $("mspk").disabled = false;
-    $("sspk").textContent = "";
+    for (const [lane, p] of Object.entries(j.plans ?? {})) {
+      const [txt, btn, stat, hintEl] = laneEls(lane);
+      if (p.error) { stat.textContent = `${lane}: ${p.error}`; continue; }
+      txt.value = p.prompt;
+      btn.disabled = false;
+      const warn = (p.warnings ?? []).length
+        ? ` <span style="color:var(--bad)">⚠ ${p.warnings.join(", ")}</span>` : "";
+      hintEl.innerHTML = `<b>hint:</b> ${esc(p.hint)}${warn}`;
+      stat.textContent = `${(p.ms / 1000).toFixed(1)}s`;
+    }
   } catch (e) {
-    $("sspk").textContent = `spark: ${e.message}`;
+    setStatus(`plan: ${e.message}`, true);
   }
-  $("askspk").disabled = false;
+  $("genplans").disabled = false;
 }
 
 async function mint(source) {
-  const prompt = (source === "template" ? $("ptpl") : $("pspk")).value.trim();
+  const txt = source === "template" ? $("ptpl") : $(LANES[source][0]);
+  const prompt = txt.value.trim();
   if (!prompt || !probed) return;
-  const btn = source === "template" ? $("mtpl") : $("mspk");
-  const stat = source === "template" ? $("stpl") : $("sspk");
+  const btn = source === "template" ? $("mtpl") : $(LANES[source][1]);
+  const stat = source === "template" ? $("stpl") : $(LANES[source][2]);
   btn.disabled = true;
   stat.textContent = "minting (paid call)…";
   try {
@@ -231,7 +266,7 @@ async function mint(source) {
   } catch (e) {
     stat.textContent = `mint: ${e.message}`;
   }
-  btn.disabled = false;
+  btn.disabled = !txt.value.trim();
 }
 
 async function verdict(file, v, btn) {
@@ -265,9 +300,10 @@ function zoom(src) {
 $("go").addEventListener("click", probe);
 $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") probe(); });
 $("desc").addEventListener("keydown", (e) => { if (e.key === "Enter") probe(); });
-$("askspk").addEventListener("click", askSpark);
+$("genplans").addEventListener("click", genPlans);
 $("mtpl").addEventListener("click", () => mint("template"));
 $("mspk").addEventListener("click", () => mint("spark"));
+$("mqwn").addEventListener("click", () => mint("qwen"));
 $("addq").addEventListener("click", async () => {
   if (!probed) return;
   await post("/api/lab/add-query", { text: probed.text, description: probed.description });
