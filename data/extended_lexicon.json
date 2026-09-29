@@ -5866,6 +5866,14 @@
    "art": "draw"
   },
   {
+   "id": "hummus",
+   "text": "hummus",
+   "spokenText": "hummus",
+   "category": "Food",
+   "kind": "word",
+   "art": "draw"
+  },
+  {
    "id": "pasta_salad",
    "text": "pasta salad",
    "spokenText": "pasta salad",

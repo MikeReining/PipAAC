@@ -6175,15 +6175,6 @@
       "category": "Food & Drink"
     },
     {
-      "slot": 693,
-      "tier": 2,
-      "spokenText": "hummus",
-      "partOfSpeech": "Noun",
-      "fitzgeraldColor": "None",
-      "visualStyle": "Illustrated Object",
-      "category": "Food & Drink"
-    },
-    {
       "slot": 694,
       "tier": 2,
       "spokenText": "banana bread",

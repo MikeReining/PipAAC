@@ -165,6 +165,8 @@ artifacts (`wipe action` → `wipe`, `clean item` → `clean`, `light weight` �
 `light`, `orange color` → `orange`, `pink color` → `pink`, `light color` →
 `light`, `bathroom urgent` → `bathroom`); `dark color` removed as a duplicate
 of `dark` (#205); the duplicate digit senses `1`–`5`/`10` (#577–582) removed —
+`hummus` (#693) removed 2026-09-28, moved to the extended catalog — CHILDES
+child-speech count of 3 doesn't support a launch slot;
 the canonical numeral set is the word forms `one`–`ten` in §3.16, which keep
 their ids and bundled audio; 28 everyday fringe words added at slots 657–684
 (meals and food staples, hygiene verbs, behavior words, people, social words,
@@ -241,7 +243,6 @@ and grammar words).
 | 690 | **granola bar** | Noun | None | Illustrated Object | CDI; ARASAAC | Oat granola bar half-wrapped in foil |
 | 691 | **string cheese** | Noun | None | Illustrated Object | CDI; ARASAAC | Peeled mozzarella string cheese stick |
 | 692 | **applesauce** | Noun | None | Illustrated Object | CDI; ARASAAC | Small cup of smooth applesauce with spoon |
-| 693 | **hummus** | Noun | None | Illustrated Object | CDI; ARASAAC | Bowl of creamy hummus with olive oil swirl |
 | 694 | **banana bread** | Noun | None | Illustrated Object | CDI; ARASAAC | Slice of moist banana bread loaf |
 | 695 | **goldfish crackers** | Noun | None | Illustrated Object | CDI; ARASAAC | Handful of tiny orange fish-shaped crackers |
 | 696 | **pudding** | Noun | None | Illustrated Object | CDI; ARASAAC | Cup of chocolate pudding with swirl top |
