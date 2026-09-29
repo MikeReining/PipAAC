@@ -253,6 +253,9 @@ export async function handleTileAdmin(request, env, url) {
       method: "POST", body: await request.text(),
     }));
   }
+  if (path === "/admin/v1/tile-voice/usage" && request.method === "GET") {
+    return stub.fetch(new Request(`https://tile/usage${url.search}`));
+  }
   const rowMatch = path.match(/^\/admin\/v1\/tile-voice\/row\/([0-9a-f]{64})$/);
   if (rowMatch && request.method === "GET") {
     return stub.fetch(new Request(`https://tile/row?id=${rowMatch[1]}`));
@@ -339,6 +342,12 @@ export class TileLedger {
         voiceKey: url.searchParams.get("voice"),
       }).map((r) => r.text);
       return json({ texts });
+    }
+    if (p === "/usage" && request.method === "GET") {
+      return json(ledger.mintedChars(this.sql, {
+        from: Number(url.searchParams.get("from")) || 0,
+        to: Number(url.searchParams.get("to")) || Number.MAX_SAFE_INTEGER,
+      }));
     }
     if (p === "/row" && request.method === "GET") {
       const row = ledger.getClip(this.sql, url.searchParams.get("id"));
@@ -477,7 +486,8 @@ export class TileLedger {
       const r2Key = `tile/${voiceKey}/${id}.mp3`;
       await this.env.VOICE.put(r2Key, audio);
       ledger.completeMint(this.sql, {
-        id, r2Key, bytes: audio.length,
+        id, voiceKey, chars: stub ? 0 : mintText.length, r2Key,
+        bytes: audio.length,
         durationMs: checks.duration_ms, checks, now: this.now(),
       });
       const done = ledger.getClip(this.sql, id);
@@ -527,14 +537,15 @@ export class TileLedger {
       mintText = tileMintText(row.text);
     }
     try {
-      const { audio } = await this.synth(mintText, voice);
+      const { audio, stub } = await this.synth(mintText, voice);
       if (!audio?.length) throw new Error("empty_synth");
       const version = row.version + 1;
       const r2Key = `tile/${row.voice_key}/${id}.v${version}.mp3`;
       await this.env.VOICE.put(r2Key, audio);
       const checks = mintChecks(audio.length, row.text);
       ledger.applyRemint(this.sql, {
-        id, r2Key, mintText, bytes: audio.length,
+        id, voiceKey: row.voice_key, chars: stub ? 0 : mintText.length,
+        r2Key, mintText, bytes: audio.length,
         durationMs: checks.duration_ms, checks, now: this.now(),
       });
       return json({ id, version });

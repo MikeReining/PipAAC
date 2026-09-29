@@ -398,6 +398,20 @@ test("admin routes: 401 without the token; recent/review/held/audio work", async
   assert.equal(after.review, "unreviewed");
   assert.match(after.r2_key, /\.v2\.mp3$/);
 
+  // WT9 ledger side: /usage counts every synth event — the two mints
+  // plus the remint (a remint spends vendor chars again). Hits add
+  // zero; the held word and a repeat request never mint.
+  await good(env, { text: "banana", source: "user_keyboard" }); // a hit
+  const usage = await (await admin(
+    env, "/admin/v1/tile-voice/usage?from=0&to=99999999999999")).json();
+  assert.equal(usage.mints, 3); // apple + banana + banana remint
+  assert.equal(usage.chars,
+    "apple".length + "banana".length + "banana".length);
+  now += 1;
+  const window = await (await admin(
+    env, `/admin/v1/tile-voice/usage?from=${now}`)).json();
+  assert.equal(window.mints, 0); // nothing minted after `now`
+
   // replaced sweep: the withheld/replaced clip's text hash is listed
   const lic = await licenseFor(SECRET, UID);
   const sweep = await worker.fetch(new Request(

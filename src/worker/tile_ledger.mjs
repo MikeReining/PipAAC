@@ -79,6 +79,16 @@ export function ensureSchema(sql) {
     mints INTEGER NOT NULL DEFAULT 0,
     alerted INTEGER NOT NULL DEFAULT 0
   )`);
+  // Append-only vendor-spend events: every completed synth (first mint
+  // and each remint) logs the exact chars sent. tile_clip is state and
+  // a remint rewrites it — the reconcile needs the event stream (WT9).
+  sql.exec(`CREATE TABLE IF NOT EXISTS tile_mint (
+    clip_id TEXT NOT NULL,
+    voice_key TEXT NOT NULL,
+    chars INTEGER NOT NULL,
+    minted_at INTEGER NOT NULL
+  )`);
+  sql.exec("CREATE INDEX IF NOT EXISTS tile_mint_at ON tile_mint (minted_at)");
 }
 
 export function getClip(sql, id) {
@@ -123,10 +133,12 @@ export function claimMint(sql, { id, voiceKey, locale, text, mintText, model, pr
   return { claim: true, row: getClip(sql, id) };
 }
 
-export function completeMint(sql, { id, r2Key, bytes, durationMs, checks, now }) {
+export function completeMint(sql, { id, voiceKey, chars, r2Key, bytes, durationMs, checks, now }) {
   sql.exec(`UPDATE tile_clip SET status = 'ready', r2_key = ?, bytes = ?,
       duration_ms = ?, checks = ?, minted_at = ?, retry_after = NULL
     WHERE id = ?`, r2Key, bytes, durationMs, JSON.stringify(checks), now, id);
+  sql.exec("INSERT INTO tile_mint (clip_id, voice_key, chars, minted_at) VALUES (?, ?, ?, ?)",
+    id, voiceKey, chars, now);
 }
 
 export function failMint(sql, { id, now, retryMs = FAILED_RETRY_MS }) {
@@ -135,6 +147,16 @@ export function failMint(sql, { id, now, retryMs = FAILED_RETRY_MS }) {
 
 export function touchHit(sql, id) {
   sql.exec("UPDATE tile_clip SET hits = hits + 1 WHERE id = ?", id);
+}
+
+/** § 9 / WT9 — what the ledger asked the vendor to synthesize in
+ *  [from, to): the tile_mint event stream, where chars is the exact
+ *  LENGTH of the mint_text POSTed each time (remints count again). */
+export function mintedChars(sql, { from = 0, to = Number.MAX_SAFE_INTEGER } = {}) {
+  return one(sql, `SELECT COUNT(*) AS mints,
+      COALESCE(SUM(chars), 0) AS chars
+    FROM tile_mint WHERE minted_at >= ? AND minted_at < ?`, [from, to])
+    ?? { mints: 0, chars: 0 };
 }
 
 /** "Sounds wrong" — a review signal, never a takedown (§ 5.5). */
@@ -190,12 +212,14 @@ export function applyReview(sql, ids, review, now) {
 
 /** Remint lands a new object: version bumps, replaced_at marks the
  *  eviction sweep for devices, review resets to unreviewed. */
-export function applyRemint(sql, { id, r2Key, mintText, bytes, durationMs, checks, now }) {
+export function applyRemint(sql, { id, voiceKey, chars, r2Key, mintText, bytes, durationMs, checks, now }) {
   sql.exec(`UPDATE tile_clip SET
       r2_key = ?, mint_text = ?, bytes = ?, duration_ms = ?, checks = ?,
       status = 'ready', review = 'unreviewed', flagged = 0, reviewed_at = NULL,
       version = version + 1, replaced_at = ?, minted_at = ?, retry_after = NULL
     WHERE id = ?`, r2Key, mintText, bytes, durationMs, JSON.stringify(checks), now, now, id);
+  sql.exec("INSERT INTO tile_mint (clip_id, voice_key, chars, minted_at) VALUES (?, ?, ?, ?)",
+    id, voiceKey, chars, now);
 }
 
 /** Text (not ids) of clips replaced or withheld since `since` for one

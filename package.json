@@ -33,6 +33,7 @@
     "catalog:audio:mint-backup": "node scripts/catalog/mint_backup_voice.mjs",
     "catalog:audio:review": "node scripts/catalog/audio_review_dev.mjs",
     "tilevoice:review": "node scripts/catalog/audio_review_dev.mjs",
+    "tilevoice:reconcile": "node scripts/catalog/tilevoice_reconcile.mjs",
     "catalog:tiles:queue": "node scripts/catalog/build_elevenlabs_tile_queue.mjs",
     "catalog:tiles:mint": "node scripts/catalog/mint_elevenlabs_tile.mjs",
     "catalog:tiles:mint-batch": "node scripts/catalog/build_elevenlabs_tile_queue.mjs && node scripts/catalog/mint_elevenlabs_tile_batch.mjs",
