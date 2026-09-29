@@ -1,9 +1,14 @@
 # 028 — Tile voice library (mint once, speak in the chosen voice)
 
-**Status:** **Decided 2026-09-29 (founder review), ready to slice.** Supersedes
-the earlier "proposal" packet. Nothing here is built. Bulk mints, R2 publish of
-seed clips, and any change to shipped catalog audio stay founder-gated
-(§ 9 policy).
+**Status:** **Core shipped 2026-09-29.** Slices 0–5 + the free half of 7
+landed (mint core, client playback + triggers, review page, flag/sweep,
+reconcile, catalog seed). Leo (slice 6) and the extended-library seed
+(slice 7 paid half) are a follow-up gated on founder cost approval;
+slice 8 `catalog_lazy` waits on 010. Production deploy: done
+(`pippaac.emailmike.workers.dev`, v5 DO migration, admin + vendor
+secrets set — overage check remains a founder dashboard step).
+Keep-in-phases: still owns the live API/ledger spec and the gated
+slices 6–8 work orders.
 **Related:** phase 010 (extended library), 024 (sentence Grok cache — a
 **different** pipeline that this one copies patterns from),
 `docs/product/Language_And_Voice_Schema.md`,
