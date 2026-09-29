@@ -10,6 +10,8 @@ import { catalogSlug } from "./elevenlabs_tile_variations.mjs";
 import { synthesizeElevenLabs, voiceSettingsForModel } from "./elevenlabs_tts.mjs";
 import { repoRoot } from "./paths.mjs";
 import { getCatalogTileVoice } from "./voices.mjs";
+import { normalizeV1 } from "../../public/shared/normalize.mjs";
+import { tileMintText } from "../../src/shared/tile_recipe.mjs";
 
 export const VOICE_SELECTOR_BATCH = "elevenlabs-voice-selector";
 export const VOICE_SELECTOR_VARIATION = "v4_plain";
@@ -99,7 +101,8 @@ export async function mintVoiceSelectorProbe({
   const round = loadRoundConfig(root);
   const model = round.model ?? "eleven_v4";
   const tiles = getCatalogTileVoice();
-  const text = String(spokenText ?? slug.replace(/_/g, " ")).trim();
+  const spoken = String(spokenText ?? slug.replace(/_/g, " ")).trim();
+  const text = tileMintText(normalizeV1(spoken));
   const relOut = `${VOICE_SELECTOR_BATCH}/takes/${probeTakeFilename(slug, candidateId)}`;
   const outPath = join(root, relOut);
   mkdirSync(join(root, VOICE_SELECTOR_BATCH, "takes"), { recursive: true });

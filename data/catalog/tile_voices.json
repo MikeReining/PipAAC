@@ -15,11 +15,23 @@
       "voice_key": "voi_leo_en",
       "display_name": "Leo",
       "provider": "elevenlabs",
-      "voice_id": "aGfQDyfOrmWWfC7ZnTbv",
+      "voice_id": "4sAJvpuF0iHhO9nptfOD",
       "model": "eleven_v4",
       "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"],
-      "status": "planned"
+      "status": "planned",
+      "profile_tag": "young_adult"
+    },
+    {
+      "voice_key": "voi_sam_en",
+      "display_name": "Sam",
+      "provider": "elevenlabs",
+      "voice_id": "4JVOFy4SLQs9my0OLhEw",
+      "model": "eleven_v4",
+      "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
+      "locales": ["en"],
+      "status": "planned",
+      "profile_tag": "mature_adult"
     }
   ]
 }

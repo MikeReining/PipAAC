@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "runId": "leo-final-c3-tricky-10",
+  "label": "Leo tricky probe (10)",
+  "note": "Pilot seed — Leo, plain only, not published",
+  "batch": "elevenlabs-tiles-leo",
+  "createdAt": "2026-09-29T19:38:10.068Z",
+  "voice": {
+    "label": "Leo",
+    "voice_id": "4sAJvpuF0iHhO9nptfOD",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": 176,
+      "spokenText": "cough",
+      "slug": "cough",
+      "takeRel": "elevenlabs-tiles-leo/takes/cough_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 262,
+      "spokenText": "laugh",
+      "slug": "laugh",
+      "takeRel": "elevenlabs-tiles-leo/takes/laugh_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 620,
+      "spokenText": "an",
+      "slug": "an",
+      "takeRel": "elevenlabs-tiles-leo/takes/an_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 619,
+      "spokenText": "a",
+      "slug": "a",
+      "takeRel": "elevenlabs-tiles-leo/takes/a_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 32,
+      "spokenText": "read",
+      "slug": "read",
+      "takeRel": "elevenlabs-tiles-leo/takes/read_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 141,
+      "spokenText": "eye",
+      "slug": "eye",
+      "takeRel": "elevenlabs-tiles-leo/takes/eye_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 678,
+      "spokenText": "ow",
+      "slug": "ow",
+      "takeRel": "elevenlabs-tiles-leo/takes/ow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 53,
+      "spokenText": "to",
+      "slug": "to",
+      "takeRel": "elevenlabs-tiles-leo/takes/to_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 622,
+      "spokenText": "of",
+      "slug": "of",
+      "takeRel": "elevenlabs-tiles-leo/takes/of_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 608,
+      "spokenText": "are",
+      "slug": "are",
+      "takeRel": "elevenlabs-tiles-leo/takes/are_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    }
+  ]
+}

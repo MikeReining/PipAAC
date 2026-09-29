@@ -26,6 +26,7 @@ import {
   tileMintText,
 } from "../shared/tile_recipe.mjs";
 import * as ledger from "./tile_ledger.mjs";
+import * as pictureLedger from "./picture_ledger.mjs";
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -232,7 +233,7 @@ export async function handleTileReplaced(request, env, url) {
  *  search space via timing. Uses the Workers primitive when present;
  *  the byte loop is the portable fallback (Node tests lack the API). */
 const teAdmin = new TextEncoder();
-async function adminOk(request, env) {
+export async function adminOk(request, env) {
   if (!env.PIP_ADMIN_TOKEN) return false;
   const got = teAdmin.encode(request.headers.get("authorization") ?? "");
   const want = teAdmin.encode(`Bearer ${env.PIP_ADMIN_TOKEN}`);
@@ -297,7 +298,10 @@ export class TileLedger {
     /** Single flight (§ 3): one in-flight mint per clip id; concurrent
      *  callers share the promise and each wraps its own Response. */
     this.inflight = new Map();
-    ctx.blockConcurrencyWhile(() => ledger.ensureSchema(ctx.storage.sql));
+    ctx.blockConcurrencyWhile(() => {
+      ledger.ensureSchema(ctx.storage.sql);
+      pictureLedger.ensureSchema(ctx.storage.sql);
+    });
   }
 
   get sql() { return this.ctx.storage.sql; }
@@ -392,6 +396,12 @@ export class TileLedger {
         }) ? inserted++ : skipped++;
       }
       return json({ inserted, skipped });
+    }
+    /** 030 — the picture ledger shares this DO (§ 5.1): rank inputs
+     *  (pins, blocks, pick/reject counts) for find's scoring. */
+    if (p === "/pic/rank" && request.method === "POST") {
+      const { items } = (await body()) ?? {};
+      return json({ items: pictureLedger.rankSignals(this.sql, items) });
     }
     if (p === "/usage" && request.method === "GET") {
       return json(ledger.mintedChars(this.sql, {

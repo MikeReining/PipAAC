@@ -1,8 +1,13 @@
 {
   "schemaVersion": 1,
-  "roundId": "men-intake-001",
-  "intentLabel": "Male voices — intake round 1",
-  "pickedCandidateId": "c2",
-  "pickedVoiceId": "aGfQDyfOrmWWfC7ZnTbv",
-  "at": "2026-09-29T13:55:16.861Z"
+  "roundId": "leo-compare-002",
+  "intentLabel": "Eve (1) · louder Leo clone (2) · custom clone (3)",
+  "pickedCandidateId": "c3",
+  "pickedVoiceId": "4sAJvpuF0iHhO9nptfOD",
+  "at": "2026-09-29T20:31:00.000Z",
+  "previousRound": {
+    "roundId": "leo-compare-001",
+    "pickedCandidateId": "c2",
+    "pickedVoiceId": "qyFhaJEAwHR0eYLCmlUT"
+  }
 }

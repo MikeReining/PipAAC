@@ -1,25 +1,25 @@
 {
   "schemaVersion": 1,
-  "roundId": "men-intake-001",
-  "intentLabel": "Male voices — intake round 1",
-  "notes": "Always three candidates → pick one. This round’s working label is not the long-term taxonomy (expect multiple male voices with names like Adam, Bill, Jake in step 2). Pip default tile voice unchanged.",
-  "probes": ["him", "his", "car", "ball"],
+  "roundId": "leo-compare-002",
+  "intentLabel": "Eve (1) · louder Leo clone (2) · custom clone (3)",
+  "notes": "c1 Eve default tile WWMMC6k9tdar0BthUenK — volume reference. c2 e3oGn9iqDJMutoMXXt6i. c3 4sAJvpuF0iHhO9nptfOD.",
+  "probes": ["I", "you", "me", "my", "mine", "he", "she", "it", "we", "they"],
   "model": "eleven_v4",
   "candidates": [
     {
       "id": "c1",
-      "voice_id": "fIoDqeVKE9jI9AGvEvZU",
-      "workingLabel": "Candidate 1"
+      "voice_id": "WWMMC6k9tdar0BthUenK",
+      "workingLabel": "Eve — default tile"
     },
     {
       "id": "c2",
-      "voice_id": "aGfQDyfOrmWWfC7ZnTbv",
-      "workingLabel": "Candidate 2"
+      "voice_id": "e3oGn9iqDJMutoMXXt6i",
+      "workingLabel": "Leo clone — louder (2)"
     },
     {
       "id": "c3",
-      "voice_id": "KMjDragTYnXfFE5NOvAo",
-      "workingLabel": "Candidate 3"
+      "voice_id": "4sAJvpuF0iHhO9nptfOD",
+      "workingLabel": "Custom clone (calibrated)"
     }
   ]
 }

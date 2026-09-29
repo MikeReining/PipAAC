@@ -6,7 +6,7 @@
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10 --offset 10
  *   node scripts/catalog/mint_tile_voice_seed.mjs --dry-run
- *   node scripts/catalog/mint_tile_voice_seed.mjs --voice-key voi_leo_en --run-id leo-pilot-1
+ *   node scripts/catalog/mint_tile_voice_seed.mjs --all --run-id leo-final-c3-full-seed
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -24,6 +24,7 @@ import { reviewUrlQuery, writeMintRun } from "./elevenlabs_mint_run.mjs";
 import { listLaunchLemmaRows } from "./launch_lexicon_rows.mjs";
 import { getTileVoiceByKey } from "./tile_voices.mjs";
 import { repoRoot } from "./paths.mjs";
+import { tileMintTextForVariation } from "../../src/shared/tile_recipe.mjs";
 
 const DEFAULT_VOICE_KEY = "voi_leo_en";
 const BATCH = ELEVENLABS_TILES_LEO_BATCH;
@@ -77,6 +78,7 @@ function ensureLeoRecipes(tileVoice, rows) {
 async function main() {
   loadEnv();
   const dryRun = process.argv.includes("--dry-run");
+  const mintAll = process.argv.includes("--all");
   const voiceKey = argValue("--voice-key") ?? DEFAULT_VOICE_KEY;
   const tileVoice = getTileVoiceByKey(voiceKey);
   const limitRaw = argValue("--limit");
@@ -85,7 +87,16 @@ async function main() {
   const offset = offsetRaw != null ? Number(offsetRaw) : 0;
   const runId =
     argValue("--run-id") ??
-    `leo-seed-${new Date().toISOString().slice(0, 10)}-o${offset}-n${limit}`;
+    (mintAll
+      ? `leo-seed-full-${new Date().toISOString().slice(0, 10)}`
+      : `leo-seed-${new Date().toISOString().slice(0, 10)}-o${offset}-n${limit}`);
+
+  const wordsArg = argValue("--words");
+  const force = process.argv.includes("--force");
+
+  if (mintAll && wordsArg?.trim()) {
+    throw new Error("use either --all or --words, not both");
+  }
 
   if (!Number.isFinite(limit) || limit < 1) {
     throw new Error("--limit must be a positive number");
@@ -97,17 +108,33 @@ async function main() {
   const allRows = listLaunchLemmaRows();
   ensureLeoRecipes(tileVoice, allRows);
 
-  const slice = allRows.slice(offset, offset + limit);
+  let slice;
+  if (wordsArg?.trim()) {
+    const want = wordsArg.split(",").map((s) => s.trim()).filter(Boolean);
+    const byNorm = new Map(allRows.map((r) => [r.spokenText.toLowerCase(), r]));
+    slice = [];
+    for (const w of want) {
+      const row = byNorm.get(w.toLowerCase());
+      if (!row) throw new Error(`launch lexicon has no owner row for: ${w}`);
+      slice.push(row);
+    }
+  } else if (mintAll) {
+    slice = allRows;
+  } else {
+    slice = allRows.slice(offset, offset + limit);
+  }
   if (slice.length === 0) {
     console.log(`mint_tile_voice_seed: no rows at offset ${offset} (launch size ${allRows.length})`);
     return;
   }
 
   console.log(
-    `${tileVoice.display_name} (${voiceKey}): minting ${slice.length} launch word(s) [offset ${offset}, limit ${limit}]`,
+    `${tileVoice.display_name} (${voiceKey}): minting ${slice.length} launch word(s)` +
+      (wordsArg ? ` [--words]` : mintAll ? ` [--all, skip existing]` : ` [offset ${offset}, limit ${limit}]`),
   );
   for (const r of slice) {
-    console.log(`  - ${r.spokenText} (slot ${r.slot})`);
+    const elevenText = tileMintTextForVariation(r.spokenText, "plain");
+    console.log(`  - ${r.spokenText} (slot ${r.slot}) → ${elevenText}`);
   }
   if (dryRun) return;
 
@@ -121,7 +148,7 @@ async function main() {
 
   for (const r of slice) {
     const plainPath = join(takesRoot, tileTakeFilename(r.slug, "plain"));
-    if (!existsSync(plainPath)) {
+    if (force || !existsSync(plainPath)) {
       const out = await mintTileVariation({
         batch: BATCH,
         slug: r.slug,
@@ -143,7 +170,11 @@ async function main() {
   const doc = writeMintRun({
     runId,
     batch: BATCH,
-    label: `${tileVoice.display_name} seed ${offset + 1}–${offset + slice.length}`,
+    label: wordsArg
+      ? `${tileVoice.display_name} tricky probe (${slice.length})`
+      : mintAll
+        ? `${tileVoice.display_name} full launch seed (${slice.length})`
+        : `${tileVoice.display_name} seed ${offset + 1}–${offset + slice.length}`,
     note: `Pilot seed — ${tileVoice.display_name}, plain only, not published`,
     voice: {
       label: tileVoice.display_name,

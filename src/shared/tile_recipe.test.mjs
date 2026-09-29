@@ -16,6 +16,7 @@ import {
   lexicalV4GuardText,
   needsLexicalV4Guard,
   tileMintText,
+  tileMintTextForVariation,
 } from "./tile_recipe.mjs";
 import * as lab from "../../scripts/catalog/elevenlabs_v4_lab.mjs";
 
@@ -34,8 +35,12 @@ test("tileMintText semantics — guard, override, passthrough", () => {
     "[isolated dictionary word, do not make the sound] sneeze.");
   // US-citation IPA overrides for laugh forms
   assert.equal(tileMintText("laughs"), "/lævz/");
-  assert.equal(tileMintText("laugh"), "/lævz/");
+  assert.equal(tileMintText("laugh"), "/læf/");
   assert.equal(tileMintText("laughing"), "/ˈlæfɪŋ/");
+  assert.equal(tileMintText("i"), "/aɪ/");
+  assert.equal(tileMintText("an"), "/æn/");
+  assert.equal(tileMintText("a"), "/æ/");
+  assert.equal(tileMintTextForVariation("I", "plain"), "/aɪ/");
   // a plain word passes through unchanged
   assert.equal(tileMintText("scientist"), "scientist");
   assert.equal(tileMintText("peanut butter"), "peanut butter");

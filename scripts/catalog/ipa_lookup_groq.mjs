@@ -23,7 +23,7 @@ export function buildIpaSystemPrompt(context = "isolated_tile") {
   Examples: "an" → /æn/ (one syllable, indefinite article — NOT the name "Anne"); "a" → /eɪ/ when letter name or clear /æ/ for article, not schwa /ə/; "the" → prefer /ðiː/ when isolated.
 - One syllable per tile unless the label is a multi-word phrase.
 - Articles, prepositions, pronouns, and helpers are still spoken as standalone words, not as they sound mid-sentence.
-- American English: "laughs" → /lævz/ (NOT /lɔːɡz/ — that reads as "logs").
+- American English: "laughs" → /lævz/ (NOT /lɔːɡz/ — that reads as "logs"). The lemma "laugh" → /læf/ — never reuse the laughs IPA on laugh or Eleven says "laughs".
 - Labels that name a body sound (cough, laugh, sneeze, burp, hiccup): IPA for the dictionary word only — never onomatopoeia or imitating the sound.`
     : `CONTEXT: Word or phrase as in natural connected speech (reduced vowels allowed when appropriate).`;
 

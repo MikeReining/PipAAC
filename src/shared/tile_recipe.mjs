@@ -4,8 +4,17 @@
  *
  * tileMintText produces exactly the text the lab proved for v4_plain:
  * a lexical guard for labels that name a body sound, a US-citation IPA
- * override for laugh/laughing, plain text otherwise.
+ * override for laugh/laughing, homograph IPA for labels like I, plain otherwise.
+ *
+ * ## Inflection rule (do not skip)
+ * Mint text is keyed to the **exact catalog label**, not the lemma family.
+ * Never reuse plural / -ing IPA on a different surface form — e.g. `/lævz/` is
+ * for the label **laughs** only; the lemma **laugh** must use **`/læf/`** or
+ * Eleven says “laughs”. See `ipaOverrideForSoundEffectLabel` and
+ * `docs/operations/ElevenLabs_Tile_Minting.md` § Tile mint recipe.
  */
+
+import { normalizeV1 } from "../../public/shared/normalize.mjs";
 
 /** Dedupe-key ingredient (028 § 4.5). Bump only when the recipe or model
  *  changes and every clip should re-mint. */
@@ -19,10 +28,24 @@ export const TILE_TEXT_ALLOW_RE = /^[\p{Script=Latin}\p{N}\s'’\-.,!?&]+$/u;
 const LEXICAL_GUARD_LABEL_RE =
   /^(coughing|coughs?|sneezing|sneezes?|burps?|burping|hiccups?|hiccuping)$/i;
 
+/** US citation IPA for single-word labels where v4 plain misreads (Roman numerals, etc.). */
+const HOMOGRAPH_IPA_OVERRIDES = {
+  i: "/aɪ/", // "I" → "one" if sent as plain grapheme
+  a: "/æ/", // indefinite article, not letter name
+  an: "/æn/", // not "Anne"
+};
+
+/** @param {string} word normalized (normalizeV1) or raw label */
+export function ipaOverrideForHomographLabel(word) {
+  const w = String(word ?? "").trim().toLowerCase();
+  return HOMOGRAPH_IPA_OVERRIDES[w] ?? "";
+}
+
 /** @param {string} word */
 export function ipaOverrideForSoundEffectLabel(word) {
   const w = String(word ?? "").trim().toLowerCase();
-  if (w === "laughs" || w === "laugh") return "/lævz/";
+  if (w === "laughs") return "/lævz/"; // plain → "logs"; /lævz/ is the laughs form
+  if (w === "laugh") return "/læf/"; // not /lævz/ — Eleven reads that as "laughs"
   if (w === "laughing") return "/ˈlæfɪŋ/";
   return "";
 }
@@ -42,6 +65,27 @@ export function needsLexicalV4Guard(word) {
 export function needsSoundEffectIpaOverride(word) {
   const w = String(word ?? "").trim().toLowerCase();
   return w === "laughs" || w === "laugh" || w === "laughing";
+}
+
+export function needsHomographIpaOverride(word) {
+  return Boolean(ipaOverrideForHomographLabel(word));
+}
+
+/**
+ * Plain + period Eleven text for catalog tile variations (028 § 4.4).
+ * @param {string} spokenText display label from lexicon
+ * @param {"plain" | "period"} variationId
+ */
+export function tileMintTextForVariation(spokenText, variationId) {
+  const w = String(spokenText ?? "").trim();
+  const norm = normalizeV1(w.replace(/\.+$/, ""));
+  const mint = tileMintText(norm);
+  if (variationId === "plain") return mint;
+  if (variationId === "period") {
+    if (mint !== norm) return mint;
+    return `${norm}.`;
+  }
+  throw new Error(`unsupported variation: ${variationId}`);
 }
 
 /**
@@ -86,5 +130,7 @@ export function tileMintText(normalizedText, { ipa } = {}) {
   if (needsLexicalV4Guard(w)) return lexicalV4GuardText(w);
   const override = ipaOverrideForSoundEffectLabel(w);
   if (override) return formatElevenV4IpaLine(w, override);
+  const homograph = ipaOverrideForHomographLabel(w);
+  if (homograph) return formatElevenV4IpaLine(w, homograph);
   return w;
 }

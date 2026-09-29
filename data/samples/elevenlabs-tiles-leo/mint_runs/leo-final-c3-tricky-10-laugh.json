@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "runId": "leo-final-c3-tricky-10-laugh",
+  "label": "Leo tricky probe (1)",
+  "note": "Pilot seed — Leo, plain only, not published",
+  "batch": "elevenlabs-tiles-leo",
+  "createdAt": "2026-09-29T19:39:34.878Z",
+  "voice": {
+    "label": "Leo",
+    "voice_id": "4sAJvpuF0iHhO9nptfOD",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": 262,
+      "spokenText": "laugh",
+      "slug": "laugh",
+      "takeRel": "elevenlabs-tiles-leo/takes/laugh_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    }
+  ]
+}

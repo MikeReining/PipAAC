@@ -15,4 +15,5 @@ test("probeTakeFilename and parseProbeTakeFilename", () => {
 
 test("probeSlug", () => {
   assert.equal(probeSlug("car"), "car");
+  assert.equal(probeSlug("I"), "i");
 });

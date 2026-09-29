@@ -14,6 +14,7 @@ import {
 import { synthesizeElevenLabs } from "./elevenlabs_tts.mjs";
 import { repoRoot } from "./paths.mjs";
 import { getCatalogTileVoice } from "./voices.mjs";
+import { tileMintTextForVariation } from "../../src/shared/tile_recipe.mjs";
 
 /** Minted automatically when you open a word in the ElevenLabs tiles review UI. */
 export const TILE_AUTO_MINT_VARIATIONS = ["plain", "period"];
@@ -53,7 +54,10 @@ export async function mintTileVariation({ batch = TILE_REVIEW_BATCH, slug, varia
   const defaults = loadRecipeDefaults(batch);
   const word = resolveSpokenWord(slug, batch, spokenText);
   const voice = getCatalogTileVoice();
-  const text = tileVariationText(word, variationId);
+  const text =
+    variationId === "emphasis"
+      ? tileVariationText(word, variationId)
+      : tileMintTextForVariation(word, variationId);
   const relOut = `${batch}/takes/${tileTakeFilename(slug, variationId)}`;
   const outPath = join(root, relOut);
   mkdirSync(join(root, batch, "takes"), { recursive: true });

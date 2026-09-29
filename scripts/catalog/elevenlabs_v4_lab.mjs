@@ -12,6 +12,8 @@ import { lookupCatalogWord } from "./tile_catalog_lookup.mjs";
 import { repoRoot } from "./paths.mjs";
 import { formatElevenV4IpaLine, lookupIpaGroq, normalizeIpaField } from "./ipa_lookup_groq.mjs";
 import { getCatalogTileVoice } from "./voices.mjs";
+import { normalizeV1 } from "../../public/shared/normalize.mjs";
+import { tileMintText } from "../../src/shared/tile_recipe.mjs";
 
 export const V4_LAB_BATCH = "elevenlabs-v4-lab";
 export const V4_MODEL = "eleven_v4";
@@ -64,7 +66,7 @@ export function labVariationText(word, variationId, opts = {}) {
   if (!w) throw new Error("word is required");
   switch (variationId) {
     case "v4_plain":
-      return w;
+      return tileMintText(normalizeV1(w));
     case "v4_ipa": {
       const ipa = ensureIpaWrapped(opts.ipa);
       if (!ipa) throw new Error("ipa is required for v4_ipa");

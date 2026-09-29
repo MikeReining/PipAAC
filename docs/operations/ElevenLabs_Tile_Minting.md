@@ -60,6 +60,38 @@ Counts clips with `source: elevenlabs` in built `catalog.json`, plus `generated_
 | Pattern | Example | Fix |
 | --- | --- | --- |
 | Wrong IPA locale | `laughs` → sounded like “logs” (`/lɔːɡz/`) | US citation IPA **`/lævz/`** (see `ipaOverrideForSoundEffectLabel` in `elevenlabs_v4_lab.mjs`) |
+| Same IPA on lemma | `laugh` → “laughs” when sent `/lævz/` | Lemma **`/læf/`**; keep `/lævz/` for **`laughs`** only |
+
+### Tile mint recipe (SSOT: `src/shared/tile_recipe.mjs`)
+
+Every launch label has **its own** mint string. **Do not copy IPA from another inflection** (singular vs plural vs -ing). Groq IPA lookup and manual overrides must match the **exact** `spokenText` row.
+
+| Label (examples) | Sent to Eleven (plain variation) | Notes |
+| --- | --- | --- |
+| Plain word | the label | Default (~99% of launch lexicon) |
+| **I** | `/aɪ/` | Plain **I** → “one” (Roman numeral) |
+| **a** / **an** | `/æ/` / `/æn/` | Not letter name / not “Anne” |
+| **laugh** | `/læf/` | Lemma only — **not** `/lævz/` |
+| **laughs** | `/lævz/` | Plain sounded like “logs” |
+| **laughing** | `/ˈlæfɪŋ/` | |
+| **cough**, **coughs**, **coughing**, sneeze/burp/hiccup family | `[isolated dictionary word, do not make the sound] …` | Lexical guard — IPA alone can still perform the sound |
+
+Audit launch overrides before bulk mint:
+
+```bash
+node -e "
+import { listLaunchLemmaRows } from './scripts/catalog/launch_lexicon_rows.mjs';
+import { tileMintTextForVariation } from './src/shared/tile_recipe.mjs';
+import { normalizeV1 } from './public/shared/normalize.mjs';
+for (const r of listLaunchLemmaRows()) {
+  const n = normalizeV1(r.spokenText);
+  const m = tileMintTextForVariation(r.spokenText, 'plain');
+  if (m !== n) console.log(r.spokenText, '→', m);
+}
+"
+```
+
+All mint paths (Worker on-demand, `elevenlabs_tile_mint_core.mjs`, Leo seed) call **`tileMintTextForVariation`** — never raw labels to Eleven.
 | Model imitates the thing, not the word | `coughing`, `coughs` | **Lexical guard** v4 line: `[isolated dictionary word, do not make the sound] coughing.` — not IPA-only |
 | Citation / double speak | `an` | Single-word tiles: **IPA only** to Eleven, not `an /æn/` |
 
@@ -89,16 +121,18 @@ After `catalog:tiles:mint-gaps` or `mint_elevenlabs_tile_batch.mjs --mint-run`, 
 
 ### Leo seed (pilot — listen before bulk)
 
-Male tile voice **Leo** (`aGfQDyfOrmWWfC7ZnTbv`, `data/catalog/tile_voices.json`) is minted in a **separate sample lane** (`elevenlabs-tiles-leo`). Takes do **not** replace Eve clips or publish to R2 until slice 6.
+Male tile voice **Leo** (`4sAJvpuF0iHhO9nptfOD`, custom clone — see `data/catalog/tile_voices.json`) is minted in a **separate sample lane** (`elevenlabs-tiles-leo`). **Sam** (`4JVOFy4SLQs9my0OLhEw`, mature adult) is listed there too; seed lane TBD.
 
-Founder review: `npm run catalog:audio:review` → [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles) → **Voice: Leo (seed)** → **Show: mint run (spot check)** → pick the run → **↑ / ↓**. **Reload list** after an off-screen mint. Agents mint with:
+Founder review: `npm run catalog:audio:review` → [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles) → **Voice: Leo** → **Show: mint run (spot check)** → pick the run → **↑ / ↓**. **Reload list** after an off-screen mint. Agents mint with:
 
 ```bash
 npm run catalog:tiles:mint-leo-seed -- --limit 10
 npm run catalog:tiles:mint-leo-seed -- --limit 10 --offset 10
+npm run catalog:tiles:mint-leo-seed -- --words cough,laugh --run-id my-probe --force
+npm run catalog:tiles:mint-leo-seed -- --all --run-id leo-final-c3-full-seed
 ```
 
-Full launch pre-seed only after founder OK on pilots.
+`--all` walks the full launch lemma list (~709), **skips** takes that already exist on disk, writes one mint-run manifest. Use `--force` only to remint. Full launch pre-seed only after founder OK on pilots (30-word gate passed 2026-09-29).
 ## Audio inventory (what is “missing”?)
 
 | Layer | Command / file | Meaning |

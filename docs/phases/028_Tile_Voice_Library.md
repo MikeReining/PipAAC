@@ -546,8 +546,9 @@ with `source=catalog_lazy` (today it is silence). Same endpoint, same ledger.
    object under `tile/` after a run: no user id, device id, or license string
    present; the synth stub's arguments contain only the mint text and voice.
 6. **Recipe parity.** `tileMintText("coughing")` equals the lab's lexical-guard
-   text; `laughs`/`laugh`/`laughing` get the lab's IPA override; a plain word
-   is passed through unchanged.
+   text; **`laugh` → `/læf/`**, **`laughs` → `/lævz/`**, **`laughing` → `/ˈlæfɪŋ/`**
+   (never share IPA across inflections); homographs **I**, **a**, **an** use IPA;
+   a plain word is passed through unchanged.
 7. **Limits.** 101st fresh mint by one license in a day → 429 `fair_use`; 21
    mints in a minute from one license → 429; cache hits never count. With
    `TILE_DAY_MINTS` set low, the next mint → 503 `budget`, no vendor call, no

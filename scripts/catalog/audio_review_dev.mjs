@@ -1009,6 +1009,9 @@ if (invoked) {
     console.log(`Pip AAC ElevenLabs v4 lab:       http://127.0.0.1:${PORT}/audio-review/elevenlabs-v4-lab`);
     console.log(`Pip AAC voice selector:          http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector`);
     console.log(
+      `Pip AAC Leo A/B (2 male voices): http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector — round leo-compare-001`,
+    );
+    console.log(
       `Pip AAC tile review (Eve):  http://127.0.0.1:${PORT}${tileReviewUrlForRun("gap-launch-food-2026-09-29", "elevenlabs-tiles-core")}`,
     );
     console.log(
