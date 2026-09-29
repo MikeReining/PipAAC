@@ -1,6 +1,6 @@
 # ElevenLabs: tile gap-fill and review
 
-**Status:** operational 2026-09-26. Launch-lexicon WBB gap-fill **shipped** (66/66 ear-reviewed, R2 + `generated_audio.json`, 2026-09-26).  
+**Status:** operational 2026-09-26. Launch-lexicon WBB gap-fill **shipped** (66/66 ear-reviewed, 2026-09-26). **Eleven v4 catalog regen** ear-approved and published to R2 + `catalog.json` (2026-09-29).  
 **Applies to:** single-word **launch lexicon** tiles that miss WorkbookBench R2 audio (`data/launch_lexicon.json`, 680 rows).  
 **Not for:** sentence playback (Grok `ara` via phase 024 Worker) or Grok catalog exploration (`data/samples/batch-*-core`).
 
@@ -38,7 +38,7 @@ npm run catalog:audio:review
 Open [http://127.0.0.1:3747/audio-review/elevenlabs-v4-lab](http://127.0.0.1:3747/audio-review/elevenlabs-v4-lab).
 
 - **Enter** mints **`v4_plain` only** (one API call). **Mint IPA fallback** runs Groq + `v4_ipa` when plain is not good enough.
-- Takes write to `data/samples/elevenlabs-v4-lab/takes/` (gitignored). **No publish** — production path remains `/audio-review/elevenlabs-tiles`.
+- Takes write to `data/samples/elevenlabs-v4-lab/takes/` (gitignored). **Publish** approved rows with `catalog:v4-lab:publish` (same R2 + sidecars as tile review). Legacy v3 path: `/audio-review/elevenlabs-tiles`.
 - Single-word takes show the same acoustic gate as ship path (`scripts/catalog/audio_review.mjs`); multi-word forms show gate n/a.
 - **IPA fallback only** uses **Groq** `qwen/qwen3.8-27b` with **Isolated tile** citation pronunciation (e.g. `an` → `/æn/`). Single-word tiles send IPA alone to Eleven ([best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices#prompting-eleven-v4)).
 
@@ -54,6 +54,22 @@ npm run catalog:build
 ```
 
 Counts clips with `source: elevenlabs` in built `catalog.json`, plus `generated_audio.json`, `forms_audio.json`, and review `shipping.json`. **Mint batch** writes `v4_plain` into `data/samples/elevenlabs-v4-lab/takes/` (skips existing unless `--force`). **Publish** uploads every **approved** row in `elevenlabs-v4-lab/review.json` to WBB R2 + updates `generated_audio.json` / `forms_audio.json`, then **catalog:build** refreshes `catalog.json` and `public/audio/`. WBB/Bitsboard originals are the rest.
+
+### Lessons from v4 regen (2026-09)
+
+**Product:** On a full ear pass over ~352 ElevenLabs tiles, **v4 plain was ~99% acceptable** — a step change vs v3. Default tile model stays **`eleven_v4`** in `voices.json`.
+
+**Workflow:** Ear review (A/R) is the ship gate; the lab acoustic gate (`activity_after_silence`, etc.) is a **hint** only — red sidebar rows can still be good (e.g. trailing /s/ on “bags”).
+
+**When plain fails (rare):**
+
+| Pattern | Example | Fix |
+| --- | --- | --- |
+| Wrong IPA locale | `laughs` → sounded like “logs” (`/lɔːɡz/`) | US citation IPA **`/lævz/`** (see `ipaOverrideForSoundEffectLabel` in `elevenlabs_v4_lab.mjs`) |
+| Model imitates the thing, not the word | `coughing`, `coughs` | **Lexical guard** v4 line: `[isolated dictionary word, do not make the sound] coughing.` — not IPA-only |
+| Citation / double speak | `an` | Single-word tiles: **IPA only** to Eleven, not `an /æn/` |
+
+**Ops:** Inventory dedupes by R2 key; publish routes forms vs launch/generated slots (`publish_v4_lab_approved.mjs`). Rows with no catalog sidecar (e.g. a lab-only slug) cannot publish until catalogued.
 
 ## Audio inventory (what is “missing”?)
 
