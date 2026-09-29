@@ -18,12 +18,15 @@ PIP_INTERNAL_SECRET=
 # 023 — transform buttons (fix/question/tense): Worker-side Groq key.
 # Without it POST /api/v1/transform returns 503 transform_unavailable.
 GROQ_API_KEY=
-# 024 — whole-sentence voice: Worker-side xAI Grok TTS key.
-# Without it POST /api/v1/voice/speak returns 503 voice_unavailable.
+# 024/025 — whole-sentence voice (neutral + feelings): Eleven v4, same
+# voice_key as tiles. Without ELEVENLABS_API_KEY, POST /api/v1/voice/speak
+# returns 503 voice_unavailable.
+# Legacy Grok explore scripts only (not sentence playback):
 XAI_API_KEY=
-# 028 — tile voice library. Real ElevenLabs mints need BOTH: the key and
-# TILE_LIVE=1. Without them POST /api/v1/voice/tile mints a short silent
-# stub clip — dev servers never spend money by accident.
+# 028 — tile voice library. Real ElevenLabs tile mints need BOTH: the key
+# and TILE_LIVE=1. Without them POST /api/v1/voice/tile mints a short
+# silent stub clip — dev servers never spend money by accident.
+# Sentence speak uses the key only (no TILE_LIVE).
 ELEVENLABS_API_KEY=
 TILE_LIVE=
 # Founder-only /admin/v1/tile-voice/* review routes (Bearer token).
