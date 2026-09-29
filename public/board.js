@@ -2017,11 +2017,16 @@ $("edit-counts").addEventListener("click", () => {
   renderGrid();
 });
 // 031 G: one editor on every screen — "Edit the board" opens it; wide
-// screens get side room, narrow ones a drawer and a bottom sheet.
+// screens get side room, narrow ones a drawer and a bottom sheet. From
+// inside the editor it just closes Settings: the editor keeps its place.
 $("edit-groups").addEventListener("click", () => {
   close("menu");
-  kbUi.setView("editor");
+  if (view !== "editor") kbUi.setView("editor");
 });
+// The editor's gear: Settings through the same PIN gate as the board's
+// corner — the editor is never a way around the PIN. Settings opens over
+// the editor; closing it returns to the same place.
+$("ed-settings").addEventListener("click", () => gatePin(() => settingsUi.open()));
 $("add-mywords").addEventListener("click", () => {
   close("menu");
   addUi.openAddForm("grp_my_words");

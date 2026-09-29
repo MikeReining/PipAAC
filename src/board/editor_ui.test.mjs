@@ -214,3 +214,12 @@ test("Preview → Back / Esc / reload returns to the same group, word and card; 
   assert.equal(h3.log.main, 1);
   assert.equal(h3.log.cards.length, 0);
 });
+
+test("the editor's gear opens Settings through the PIN gate, like the board's corner", () => {
+  const html = readFileSync(join(repoRoot, "public/index.html"), "utf8");
+  const head = html.slice(html.indexOf('<header id="ed-head">'), html.indexOf('<div class="ed-who">'));
+  assert.match(head, /id="ed-settings"/, "the gear leads the editor's top bar");
+  const board = readFileSync(join(repoRoot, "public/board.js"), "utf8");
+  assert.match(board, /\$\("ed-settings"\)\.addEventListener\("click", \(\) => gatePin\(\(\) => settingsUi\.open\(\)\)\)/,
+    "never a way around the PIN");
+});

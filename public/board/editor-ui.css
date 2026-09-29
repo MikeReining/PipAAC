@@ -9,6 +9,13 @@ body.editor #editor { display: flex; flex-direction: column; flex: 1; min-height
 
 /* Top bar */
 #ed-head { display: flex; align-items: center; gap: 14px; min-height: 52px; }
+.ed-gear {
+  width: 44px; height: 44px; flex: none; border-radius: 12px;
+  border: 2px solid var(--line); background: #fff; color: var(--ink);
+  display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.ed-gear:hover { border-color: var(--muted); }
+.ed-gear svg { width: 24px; height: 24px; }
 .ed-who { position: relative; flex: none; }
 .ed-person {
   border: none; background: none; padding: 6px 8px; border-radius: 10px;
