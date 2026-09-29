@@ -28,7 +28,11 @@ export function beforeCleanBreak(bytes) {
  * { exec(sql), all(sql, params), prepare(sql).run(...) } — the browser
  * side adapts sqlite-wasm; tests hand it node:sqlite.
  */
-export function migrateSchema(d, schemaSql) {
+/** `additive` ({ table: def | def[] }, e.g. ADDITIVE_COLUMNS): columns a
+ *  device added ahead of the catalog. A stale-table rebuild keeps them
+ *  and their values — without this, every boot rebuilt learner_profile
+ *  to the catalog's columns and reset speech_rate to its default. */
+export function migrateSchema(d, schemaSql, additive = {}) {
   const tables = [
     "sense", "utterance", "label", "image", "voice", "clip", "core_cell",
     "learner_profile", "personal_entity", "entity_enrichment",
@@ -102,8 +106,13 @@ export function migrateSchema(d, schemaSql) {
     }
     for (const t of stale) {
       d.exec(ddlFor(t).replace(`TABLE IF NOT EXISTS ${t}`, `TABLE ${t}_new`));
-      const cols = d.all(`PRAGMA table_info(${t}_new)`).map((c) => c.name);
       const oldCols = new Set(d.all(`PRAGMA table_info(${t})`).map((c) => c.name));
+      for (const def of [additive[t] ?? []].flat()) {
+        const name = def.split(" ")[0];
+        const has = d.all(`PRAGMA table_info(${t}_new)`).some((c) => c.name === name);
+        if (!has && oldCols.has(name)) d.exec(`ALTER TABLE ${t}_new ADD COLUMN ${def}`);
+      }
+      const cols = d.all(`PRAGMA table_info(${t}_new)`).map((c) => c.name);
       const shared = cols.filter((c) => oldCols.has(c)).join(", ");
       if (t === "core_override" && oldCols.has("sense_id") && !oldCols.has("item_id")) {
         // Pre-polymorphic rows (014 slice 3): sense_id carried the item.
@@ -145,14 +154,19 @@ export const ADDITIVE_COLUMNS = {
   sentence:
     "spoken_feeling TEXT CHECK (spoken_feeling IS NULL\n"
     + "    OR spoken_feeling IN ('happy', 'sad', 'angry'))",
-  learner_profile:
+  learner_profile: [
     "expressive_voice INTEGER NOT NULL DEFAULT 1 CHECK (expressive_voice IN (0, 1))",
+    // Speaking speed (Settings → Talking, 2026-09-29).
+    "speech_rate TEXT NOT NULL DEFAULT 'normal' CHECK (speech_rate IN ('slower', 'normal', 'faster'))",
+  ],
 };
 export function ensureAdditiveColumns(d) {
-  for (const [table, def] of Object.entries(ADDITIVE_COLUMNS)) {
-    const name = def.split(" ")[0];
-    const has = d.all(`PRAGMA table_info(${table})`)
-      .some((c) => c.name === name);
-    if (!has) d.exec(`ALTER TABLE ${table} ADD COLUMN ${def}`);
+  for (const [table, defs] of Object.entries(ADDITIVE_COLUMNS)) {
+    for (const def of [defs].flat()) {
+      const name = def.split(" ")[0];
+      const has = d.all(`PRAGMA table_info(${table})`)
+        .some((c) => c.name === name);
+      if (!has) d.exec(`ALTER TABLE ${table} ADD COLUMN ${def}`);
+    }
   }
 }

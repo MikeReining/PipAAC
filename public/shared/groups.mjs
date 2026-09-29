@@ -776,6 +776,7 @@ const SYNCED_SETTINGS = new Set([
   "share_research",
   "research_id",
   "presentation_mode",
+  "speech_rate",
   "fresh_after_speak",
   "grammar_help",
   "expressive_voice",

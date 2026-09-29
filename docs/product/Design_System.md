@@ -324,6 +324,25 @@ sign-in before the wow.
   (`/audio/onramp/i-want-an-apple.mp3`, `i-wanted-an-apple.mp3`) wait
   for a founder listen (AGENTS.md) — until then the normal sentence
   voice speaks.
+- **Voice** (**BUILT 2026-09-29**, founder: "very important and highly
+  requested"). Settings → Talking opens on Voice: the voice in use, ▶
+  Hear it, Change voice. The picker (`public/board/voice-ui.js`) lists
+  voices by ear — chips Girl · Boy · Woman · Man, a card per voice with
+  ▶ "I want an apple." — under Available now, and the planned lineup
+  (Girl, Boy, Teen girl, Teen boy, Woman, Man; `VOICE_LINEUP` in
+  `public/shared/voices.mjs`) under Coming soon. A voice is selectable
+  only when the catalog `voice` table has it active: each voice is a
+  full word clip library plus its matching sentence voice, never two
+  speakers in one (Schema § 5.5, § 7). Choosing writes
+  `preferred_voice_id` (synced). The demo's last card offers "Try other
+  voices". **Open:** each new voice's clip library and sentence voice —
+  a founder-approved batch and listen per voice (AGENTS.md); a
+  download-progress state ("Getting Sam's voice ready…") when a second
+  voice exists; the sentence voice (`grokVoice`) still a fixed seam in
+  board.js until voice rows carry their sentence engine.
+- **Speaking speed** (Settings → Talking; `learner_profile.speech_rate`
+  slower / normal / faster, synced, added via `ADDITIVE_COLUMNS`): every
+  clip and sentence plays at 0.8×, 1× or 1.2× with pitch kept.
 - **Words only** (Settings → Board → Buttons show; `presentation_mode`
   'label', synced; `.words-only` in index.html): no pictures anywhere,
   one shared text size, every cell and color unchanged.

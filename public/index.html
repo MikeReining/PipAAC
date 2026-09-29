@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="/board/coach-ui.css" />
     <link rel="stylesheet" href="/board/settings-ui.css" />
     <link rel="stylesheet" href="/board/onramp-ui.css" />
+    <link rel="stylesheet" href="/board/voice-ui.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -913,6 +914,24 @@
             <section class="set-sec" data-sec="talking" data-title="Talking">
               <h2>Talking</h2>
               <p class="set-intro">How sentences sound and behave.</p>
+              <div class="seg-row" id="voice-row">
+                <span class="seg-label">Voice</span>
+                <p class="set-voice-name" id="voice-name">Pip's voice</p>
+                <div class="row">
+                  <button class="btn secondary" id="voice-hear">▶ Hear it</button>
+                  <button class="btn secondary" id="voice-change">Change voice</button>
+                </div>
+                <p class="hint">Girl, boy, teen and adult voices are coming. Every word and sentence speaks in the one voice you choose.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Speaking speed</span>
+                <div class="seg" id="speed-seg">
+                  <button data-v="slower">Slower</button>
+                  <button data-v="normal">Normal</button>
+                  <button data-v="faster">Faster</button>
+                </div>
+                <p class="hint">Every word and sentence plays at this speed. The voice keeps its pitch.</p>
+              </div>
               <div class="seg-row">
                 <span class="seg-label">Feeling faces</span>
                 <div class="seg" id="expressive-voice" data-switch>
@@ -1081,6 +1100,24 @@
             </section>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Settings → Talking → Change voice (public/board/voice-ui.js). -->
+    <div class="overlay" id="voiceform">
+      <div class="sheet voice-sheet">
+        <h2>Voice</h2>
+        <p class="hint">Tap ▶ to hear a voice say "I want an apple."</p>
+        <div class="seg voice-filters" id="voice-filters"></div>
+        <div id="voice-now-row" class="voice-group">
+          <span class="seg-label">Available now</span>
+          <div id="voice-now" class="voice-list"></div>
+        </div>
+        <div id="voice-soon-row" class="voice-group">
+          <span class="seg-label">Coming soon</span>
+          <div id="voice-soon" class="voice-list"></div>
+        </div>
+        <button class="btn secondary" data-close>Done</button>
       </div>
     </div>
 

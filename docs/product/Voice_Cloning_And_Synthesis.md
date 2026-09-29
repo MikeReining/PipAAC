@@ -54,6 +54,7 @@ A person's voice is intimately tied to identity, comfort, and emotional connecti
 ## 3. Storage & Schema Integration
 
 In accordance with [`docs/product/Language_And_Voice_Schema.md:36-44`](file:///Users/mike/dev/PipAAC/docs/product/Language_And_Voice_Schema.md#L36-L44):
+* **Voice picker BUILT 2026-09-29** (Settings → Talking → Voice; `docs/product/Design_System.md` § Settings → Voice). A cloned or banked voice joins it as one more active `voice` row.
 * **One Voice per Profile:** A user profile selects one active voice (`learner_profile.preferred_voice_id`). A cloned voice is one more `voice` row, chosen in the same voice picker as the catalog voices (`docs/product/Word_Library.md` § 7; UI in `docs/phases/009_Word_Library_And_Customize.md` slice 5).
 * **The `voice` Row:** columns and rules are owned by `docs/product/Language_And_Voice_Schema.md` § 5.5. *Correction 2026-09-22:* an earlier example here used columns (`name`, `kind`, `provider`, `provider_voice_id`) that the schema does not have. A cloned voice plays from clips, so it is shaped like any clip-backed voice; any provider id it needs is an amendment to § 5.5 made when cloning is built, not a second definition here.
 * **Recording one word instead:** a caregiver recording of a single word or name is a `clip_override` (schema § 6.3), not a cloned voice. It wins in every voice for that word.

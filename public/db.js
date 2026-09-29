@@ -11,7 +11,7 @@ import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
 import { reseedBuiltinGroups } from "./shared/groups.mjs";
 import { getDbBytes, putDbBytes } from "./shared/users.mjs";
-import { beforeCleanBreak, migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
+import { ADDITIVE_COLUMNS, beforeCleanBreak, migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
 
 let handle = null;
 
@@ -97,7 +97,7 @@ export async function bootDb(userStore, userId) {
   // as the reconcile, so a DB persisted under an older catalog converges
   // (missing senses/labels/clips get inserted, existing rows untouched).
   d.exec("PRAGMA foreign_keys = ON");
-  migrateSchema(d, catalog.schemaSql);
+  migrateSchema(d, catalog.schemaSql, ADDITIVE_COLUMNS);
   d.exec(catalog.schemaSql);
   // 025: spoken_feeling + expressive_voice ride catalog.schemaSql with
   // the Ara rebuild; devices add them additively now.

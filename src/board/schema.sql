@@ -155,6 +155,9 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- Expressive voice (025 § 6): 1 shows the happy/sad/angry faces in
   -- the smart bar's last slot. 0 speaks everything neutral. Default ON.
   expressive_voice INTEGER NOT NULL DEFAULT 1 CHECK (expressive_voice IN (0, 1)),
+  -- Speaking speed (Settings → Talking, 2026-09-29): every word clip and
+  -- sentence plays at this rate, pitch kept. Default normal.
+  speech_rate TEXT NOT NULL DEFAULT 'normal' CHECK (speech_rate IN ('slower', 'normal', 'faster')),
   -- Groups (027 B6, B8): the home board's top row shows on every group page
   -- (off leaves those cells empty, still reserved), and the four occasion
   -- groups show in the index. Both default ON.

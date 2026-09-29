@@ -144,6 +144,10 @@ test("a pre-025 device gains spoken_feeling and expressive_voice additively", ()
     db.prepare("SELECT expressive_voice FROM learner_profile WHERE id = 'prf_local'")
       .get().expressive_voice, 1,
   );
+  assert.equal(
+    db.prepare("SELECT speech_rate FROM learner_profile WHERE id = 'prf_local'")
+      .get().speech_rate, "normal",
+  );
   const sCols = db.prepare("PRAGMA table_info(sentence)").all().map((c) => c.name);
   assert.ok(sCols.includes("spoken_feeling"));
   ensureAdditiveColumns(facade(db)); // idempotent
@@ -151,7 +155,8 @@ test("a pre-025 device gains spoken_feeling and expressive_voice additively", ()
 
 test("the additive defs are verbatim schema.sql — no drift", () => {
   const norm = (s) => s.replace(/\s+/g, " ").trim();
-  for (const [table, def] of Object.entries(ADDITIVE_COLUMNS)) {
+  for (const [table, def] of Object.entries(ADDITIVE_COLUMNS)
+    .flatMap(([t, defs]) => [defs].flat().map((d) => [t, d]))) {
     const name = def.split(" ")[0];
     const t = schemaSql.indexOf(`CREATE TABLE IF NOT EXISTS ${table}`);
     const i = schemaSql.indexOf(name, t);
@@ -164,4 +169,39 @@ test("the additive defs are verbatim schema.sql — no drift", () => {
     }
     assert.equal(norm(def), norm(schemaSql.slice(i, e)), `${table}.${name}`);
   }
+});
+
+test("a stale rebuild keeps additive columns and their values", () => {
+  // Boot runs migrateSchema, then ensureAdditiveColumns. A column added
+  // ahead of the catalog makes learner_profile differ from the shipped
+  // DDL, so it is rebuilt every boot — the value must survive it.
+  const catalogDdl = `CREATE TABLE IF NOT EXISTS learner_profile (
+  id TEXT PRIMARY KEY,
+  locale TEXT NOT NULL,
+  preferred_voice_id TEXT NOT NULL
+);`;
+  const db = new DatabaseSync(":memory:");
+  db.exec(catalogDdl);
+  db.prepare("INSERT INTO learner_profile VALUES ('prf_local', 'en', 'voi_x')").run();
+  const additive = { learner_profile: [
+    "speech_rate TEXT NOT NULL DEFAULT 'normal' CHECK (speech_rate IN ('slower', 'normal', 'faster'))",
+  ] };
+  const boot = () => {
+    migrateSchema(facade(db), catalogDdl, additive);
+    for (const def of additive.learner_profile) {
+      const name = def.split(" ")[0];
+      if (!db.prepare("PRAGMA table_info(learner_profile)").all().some((c) => c.name === name)) {
+        db.exec(`ALTER TABLE learner_profile ADD COLUMN ${def}`);
+      }
+    }
+  };
+  boot();
+  db.prepare("UPDATE learner_profile SET speech_rate = 'faster'").run();
+  boot(); // next launch: stale (ALTER-shaped DDL) → rebuilt
+  boot();
+  assert.equal(db.prepare("SELECT speech_rate FROM learner_profile").get().speech_rate, "faster");
+  // Without the additive map the value is lost — the bug this guards.
+  migrateSchema(facade(db), catalogDdl);
+  const cols = db.prepare("PRAGMA table_info(learner_profile)").all().map((c) => c.name);
+  assert.ok(!cols.includes("speech_rate"));
 });
