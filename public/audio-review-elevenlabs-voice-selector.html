@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — Voice selector</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --win: #2a7a4b; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; }
+    h1 { font-size: 18px; margin: 0 0 6px; }
+    .sub { font-size: 13px; color: #6b665c; max-width: 52rem; line-height: 1.45; }
+    .sub a { color: var(--accent); }
+    main { padding: 16px 20px 32px; max-width: 900px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--edge); border-radius: 10px; overflow: hidden; }
+    th, td { border-bottom: 1px solid var(--edge); padding: 10px 12px; text-align: center; }
+    th { background: #f0ebe3; font-size: 13px; }
+    th.word { text-align: left; width: 6rem; }
+    td.word { text-align: left; font-weight: 600; }
+    button.cell { width: 100%; min-height: 44px; border: 2px solid transparent; border-radius: 8px; background: #faf8f5; cursor: pointer; font: inherit; font-size: 13px; }
+    button.cell:hover { background: #eef4f8; }
+    button.cell[aria-current="true"] { border-color: var(--accent); background: #e3eef5; }
+    button.cell.winner-col { box-shadow: inset 0 0 0 2px var(--win); }
+    .pick-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; align-items: center; }
+    button.pick { padding: 10px 16px; border-radius: 8px; border: 1px solid var(--edge); background: #fff; cursor: pointer; font: inherit; }
+    button.pick.primary { background: var(--win); color: #fff; border-color: var(--win); }
+    button.pick:disabled { opacity: 0.5; cursor: default; }
+    #winner { font-size: 14px; color: var(--win); font-weight: 600; }
+    #status { font-size: 13px; color: #6b665c; margin-top: 8px; min-height: 1.2em; }
+    audio { width: 100%; margin-top: 16px; }
+    .meta { font-size: 12px; color: #6b665c; margin-top: 8px; }
+    code { font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Voice selector</h1>
+    <p class="sub">
+      <strong>Three candidates → pick one</strong> per round. Probes use <code>eleven_v4</code> and the same tile stability settings as Pip’s default — only the ElevenLabs <code>voice_id</code> changes.
+      <strong>Pip’s default tile voice is not replaced.</strong> Catalog names (Adam, Bill, …) come in step 2.
+      <a href="/audio-review/elevenlabs-v4-lab">v4 lab</a> ·
+      <a href="/audio-review/elevenlabs-tiles">Tile review</a>.
+    </p>
+    <p class="sub" id="round-label"></p>
+  </header>
+  <main>
+    <table id="grid">
+      <thead>
+        <tr id="head-row">
+          <th class="word">Word</th>
+        </tr>
+      </thead>
+      <tbody id="body"></tbody>
+    </table>
+    <div class="pick-row">
+      <span>Pick winner:</span>
+      <span id="pick-buttons"></span>
+      <span id="winner"></span>
+    </div>
+    <p class="meta">Click a cell to play · <strong>Space</strong> replay · <strong>1</strong> <strong>2</strong> <strong>3</strong> pick that column</p>
+    <button type="button" id="reload">Reload grid</button>
+    <p id="status"></p>
+    <audio id="player" controls></audio>
+    <p class="meta" id="play-meta"></p>
+  </main>
+  <script>
+    const LAB_BATCH = "elevenlabs-voice-selector";
+    const $ = (id) => document.getElementById(id);
+    const player = $("player");
+    let round = null;
+    let decisions = null;
+    let currentPath = null;
+    let currentCandidateId = null;
+
+    function setStatus(msg, err) {
+      $("status").textContent = msg || "";
+      $("status").style.color = err ? "#c62828" : "#6b665c";
+    }
+
+    async function api(path, opts) {
+      const res = await fetch(path, opts);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || res.statusText);
+      return body;
+    }
+
+    function pathFor(probe, candidateId) {
+      const slug = probe.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      return `${LAB_BATCH}/takes/${slug}__${candidateId}_v4_plain.mp3`;
+    }
+
+    function slugFromProbe(probe) {
+      return probe.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+    }
+
+    async function playPath(path, candidateId) {
+      currentPath = path;
+      currentCandidateId = candidateId;
+      document.querySelectorAll("button.cell").forEach((b) => {
+        b.setAttribute("aria-current", b.dataset.path === path ? "true" : "false");
+      });
+      const url = `/api/audio?path=${encodeURIComponent(path)}&t=${Date.now()}`;
+      player.src = url;
+      $("play-meta").textContent = path;
+      try {
+        await player.play();
+      } catch {
+        // user gesture ok
+      }
+    }
+
+    function renderGrid() {
+      if (!round) return;
+      $("round-label").textContent = `Round: ${round.roundId} — ${round.intentLabel}`;
+      const head = $("head-row");
+      head.innerHTML = '<th class="word">Word</th>';
+      const picked = decisions?.pickedCandidateId;
+      for (const c of round.candidates) {
+        const th = document.createElement("th");
+        const tail = c.voice_id.slice(-6);
+        th.textContent = `${c.workingLabel || c.id} (…${tail})`;
+        if (c.id === picked) th.style.color = "var(--win)";
+        head.appendChild(th);
+      }
+      const body = $("body");
+      body.innerHTML = "";
+      for (const probe of round.probes) {
+        const tr = document.createElement("tr");
+        const tdWord = document.createElement("td");
+        tdWord.className = "word";
+        tdWord.textContent = probe;
+        tr.appendChild(tdWord);
+        for (const c of round.candidates) {
+          const td = document.createElement("td");
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "cell" + (c.id === picked ? " winner-col" : "");
+          const p = pathFor(probe, c.id);
+          btn.dataset.path = p;
+          btn.dataset.candidateId = c.id;
+          btn.textContent = "▶";
+          btn.onclick = () => playPath(p, c.id);
+          td.appendChild(btn);
+          tr.appendChild(td);
+        }
+        body.appendChild(tr);
+      }
+      const picks = $("pick-buttons");
+      picks.innerHTML = "";
+      round.candidates.forEach((c, idx) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "pick" + (c.id === picked ? " primary" : "");
+        b.textContent = `${idx + 1}. ${c.workingLabel || c.id}`;
+        b.onclick = () => pickWinner(c.id);
+        picks.appendChild(b);
+      });
+      if (picked) {
+        const win = round.candidates.find((x) => x.id === picked);
+        $("winner").textContent = win
+          ? `Winner: ${win.workingLabel} (${win.voice_id}) — saved to decisions.json`
+          : "";
+      } else {
+        $("winner").textContent = "";
+      }
+    }
+
+    async function pickWinner(candidateId) {
+      const c = round.candidates.find((x) => x.id === candidateId);
+      if (!c) return;
+      if (!confirm(`Pick ${c.workingLabel || c.id} as the winner for round "${round.roundId}"?`)) return;
+      await api("/api/voice-selector/pick", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ candidateId: c.id }),
+      });
+      decisions = await api("/api/voice-selector/decisions");
+      renderGrid();
+      setStatus(`Saved winner ${c.id} for ${round.roundId}.`);
+    }
+
+    async function loadAll() {
+      const data = await api("/api/voice-selector/round");
+      round = data.round;
+      decisions = data.decisions;
+      renderGrid();
+      setStatus("");
+    }
+
+    $("reload").onclick = () => loadAll().catch((e) => setStatus(e.message, true));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.code === "Space" && currentPath) {
+        e.preventDefault();
+        player.currentTime = 0;
+        player.play().catch(() => {});
+        return;
+      }
+      const n = e.key;
+      if (n === "1" || n === "2" || n === "3") {
+        const c = round?.candidates[Number(n) - 1];
+        if (c) {
+          e.preventDefault();
+          pickWinner(c.id).catch((err) => setStatus(err.message, true));
+        }
+      }
+    });
+
+    loadAll().catch((e) => setStatus(e.message, true));
+  </script>
+</body>
+</html>

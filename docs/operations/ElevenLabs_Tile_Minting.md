@@ -71,6 +71,19 @@ Counts clips with `source: elevenlabs` in built `catalog.json`, plus `generated_
 
 **Ops:** Inventory dedupes by R2 key; publish routes forms vs launch/generated slots (`publish_v4_lab_approved.mjs`). Rows with no catalog sidecar (e.g. a lab-only slug) cannot publish until catalogued.
 
+## Voice selector (step 1 — intake only)
+
+Always **three ElevenLabs candidates → pick one** per round. Working labels (e.g. “Men (first intake)”) and display names (Adam, Bill, Jake) can change later; **round id + voice_id** are what `decisions.json` records. Does **not** change Pip’s default tile voice or mint the full catalog library.
+
+```bash
+npm run catalog:audio:review
+npm run catalog:voice-selector:mint
+```
+
+Open [http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector](http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector). Probes and candidate IDs live in `data/samples/elevenlabs-voice-selector/round.json`. Takes: `data/samples/elevenlabs-voice-selector/takes/` (gitignore). Winner: `decisions.json` in the same folder.
+
+**Full-library coverage (default + extra voices):** execution plan only — `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md`.
+
 ## Audio inventory (what is “missing”?)
 
 | Layer | Command / file | Meaning |

@@ -30,6 +30,7 @@ files touched, proof state, and next action.
 | Clipart, tile symbols, framing lenses | `docs/operations/art-generator/SKILL.md` |
 | Catalog voice clips, Grok TTS minting | `docs/operations/Grok_Voice_Synthesis_Best_Practices.md` |
 | ElevenLabs tile gap-fill, R2 publish | `docs/operations/ElevenLabs_Tile_Minting.md` |
+| Default + extra tile voice full-library coverage (plan) | `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md` |
 | Voice emotion tags, prosody formulas | `docs/operations/Grok_Voice_Emotional_Prosody.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |

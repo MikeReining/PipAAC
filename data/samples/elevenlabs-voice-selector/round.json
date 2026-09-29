@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "roundId": "men-intake-001",
+  "intentLabel": "Male voices — intake round 1",
+  "notes": "Always three candidates → pick one. This round’s working label is not the long-term taxonomy (expect multiple male voices with names like Adam, Bill, Jake in step 2). Pip default tile voice unchanged.",
+  "probes": ["him", "his", "car", "ball"],
+  "model": "eleven_v4",
+  "candidates": [
+    {
+      "id": "c1",
+      "voice_id": "fIoDqeVKE9jI9AGvEvZU",
+      "workingLabel": "Candidate 1"
+    },
+    {
+      "id": "c2",
+      "voice_id": "aGfQDyfOrmWWfC7ZnTbv",
+      "workingLabel": "Candidate 2"
+    },
+    {
+      "id": "c3",
+      "voice_id": "KMjDragTYnXfFE5NOvAo",
+      "workingLabel": "Candidate 3"
+    }
+  ]
+}

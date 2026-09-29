@@ -57,6 +57,14 @@ import {
   V4_LAB_VARIATION_IDS,
 } from "./elevenlabs_v4_lab.mjs";
 import {
+  isVoiceSelectorBatch,
+  loadDecisions,
+  loadRoundConfig,
+  parseProbeTakeFilename,
+  saveDecision,
+  VOICE_SELECTOR_BATCH,
+} from "./elevenlabs_voice_selector.mjs";
+import {
   loadReviewDoc,
   reviewStatusForSlug,
   reviewSummary,
@@ -71,10 +79,12 @@ const SAMPLES = join(repoRoot, "data/samples");
 const PUBLIC_HTML_GROK = join(repoRoot, "public/audio-review.html");
 const PUBLIC_HTML_ELEVENLABS_TILES = join(repoRoot, "public/audio-review-elevenlabs-tiles.html");
 const PUBLIC_HTML_ELEVENLABS_V4_LAB = join(repoRoot, "public/audio-review-elevenlabs-v4-lab.html");
+const PUBLIC_HTML_VOICE_SELECTOR = join(repoRoot, "public/audio-review-elevenlabs-voice-selector.html");
 
 const GROK_PIPELINE = "grok";
 const ELEVENLABS_TILES_PIPELINE = "elevenlabs-tiles";
 const ELEVENLABS_V4_LAB_PIPELINE = "elevenlabs-v4-lab";
+const VOICE_SELECTOR_PIPELINE = "elevenlabs-voice-selector";
 
 function loadEnv() {
   try {
@@ -195,6 +205,7 @@ export function listBatches(pipeline) {
   const elevenlabs = dirs.filter((n) => /^elevenlabs-(tiles|forms)-core$/.test(n));
   if (pipeline === GROK_PIPELINE) return grok.sort();
   if (pipeline === ELEVENLABS_V4_LAB_PIPELINE) return [V4_LAB_BATCH];
+  if (pipeline === VOICE_SELECTOR_PIPELINE) return [VOICE_SELECTOR_BATCH];
   if (pipeline === ELEVENLABS_TILES_PIPELINE || pipeline === "elevenlabs-catalog") {
     return elevenlabs.sort();
   }
@@ -260,6 +271,63 @@ async function handle(req, res) {
       "cache-control": "no-store",
     });
     res.end(readFileSync(PUBLIC_HTML_ELEVENLABS_V4_LAB, "utf8"));
+    return;
+  }
+
+  if (req.method === "GET" && path === "/audio-review/elevenlabs-voice-selector") {
+    if (!existsSync(PUBLIC_HTML_VOICE_SELECTOR)) {
+      res.writeHead(404);
+      res.end("missing public/audio-review-elevenlabs-voice-selector.html");
+      return;
+    }
+    res.writeHead(200, {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+    });
+    res.end(readFileSync(PUBLIC_HTML_VOICE_SELECTOR, "utf8"));
+    return;
+  }
+
+  if (path === "/api/voice-selector/round" && req.method === "GET") {
+    try {
+      const round = loadRoundConfig(SAMPLES);
+      const decisions = loadDecisions(SAMPLES);
+      json(res, 200, { round, decisions });
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/voice-selector/decisions" && req.method === "GET") {
+    try {
+      json(res, 200, loadDecisions(SAMPLES));
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
+  if (path === "/api/voice-selector/pick" && req.method === "POST") {
+    try {
+      const body = await readBody(req);
+      const candidateId = String(body.candidateId ?? "").trim();
+      const round = loadRoundConfig(SAMPLES);
+      const cand = round.candidates.find((c) => c.id === candidateId);
+      if (!cand) throw new Error(`unknown candidateId: ${candidateId}`);
+      const out = saveDecision(
+        {
+          roundId: round.roundId,
+          intentLabel: round.intentLabel,
+          pickedCandidateId: cand.id,
+          pickedVoiceId: cand.voice_id,
+        },
+        SAMPLES,
+      );
+      json(res, 200, out);
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
     return;
   }
 
@@ -455,17 +523,52 @@ async function handle(req, res) {
       const { abs, rel } = resolveSamplePath(url.searchParams.get("path"));
       const file = basename(abs);
       const batch = rel.split("/")[0];
-      const slug = isV4LabBatch(batch) ? slugFromLabTakeFilename(file) : slugFromMp3(file);
+      const voiceSel = isVoiceSelectorBatch(batch);
+      let slug;
+      let voiceSelectorCandidateId = null;
+      if (voiceSel) {
+        const parsed = parseProbeTakeFilename(file);
+        if (!parsed) throw new Error("invalid voice selector take filename");
+        slug = parsed.slug;
+        voiceSelectorCandidateId = parsed.candidateId;
+      } else {
+        slug = isV4LabBatch(batch) ? slugFromLabTakeFilename(file) : slugFromMp3(file);
+      }
       const backupAbs = join(SAMPLES, batch, "takes", `${slug}_backup.mp3`);
       const backupExists = existsSync(backupAbs);
       const backupPath = backupExists ? `${batch}/takes/${slug}_backup.mp3` : null;
       const emphasisAbs = join(SAMPLES, batch, "takes", `${slug}_emphasis.mp3`);
       const emphasisExists = existsSync(emphasisAbs);
       const emphasisPath = emphasisExists ? `${batch}/takes/${slug}_emphasis.mp3` : null;
-      const { word, slot, utterance_id } = recipeWordForSlug(batch, slug);
+      let word = slug.replace(/_/g, " ");
+      let slot = null;
+      let utterance_id = null;
+      if (!voiceSel && !isV4LabBatch(batch)) {
+        const row = recipeWordForSlug(batch, slug);
+        word = row.word;
+        slot = row.slot;
+        utterance_id = row.utterance_id;
+      } else if (!voiceSel && isV4LabBatch(batch)) {
+        try {
+          const row = recipeWordForSlug(batch, slug);
+          word = row.word;
+          slot = row.slot;
+          utterance_id = row.utterance_id;
+        } catch {
+          // optional
+        }
+      }
       const el = isElevenlabsReviewBatch(batch);
       const v4Lab = isV4LabBatch(batch);
-      const batchKind = v4Lab ? "v4-lab" : batch === FORMS_REVIEW_BATCH ? "forms" : el ? "tiles" : "grok";
+      const batchKind = voiceSel
+        ? "voice-selector"
+        : v4Lab
+          ? "v4-lab"
+          : batch === FORMS_REVIEW_BATCH
+            ? "forms"
+            : el
+              ? "tiles"
+              : "grok";
       let labVariationId = null;
       let labMintText = null;
       if (v4Lab) {
@@ -479,6 +582,7 @@ async function handle(req, res) {
         batchKind,
         labVariationId,
         labMintText,
+        voiceSelectorCandidateId,
         utterance_id,
         canPublishTile: batchKind === "tiles" && !v4Lab,
         slot,
@@ -729,5 +833,6 @@ if (invoked) {
     console.log(`Pip AAC Grok explore review:  http://127.0.0.1:${PORT}/audio-review`);
     console.log(`Pip AAC ElevenLabs tile review: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles`);
     console.log(`Pip AAC ElevenLabs v4 lab:       http://127.0.0.1:${PORT}/audio-review/elevenlabs-v4-lab`);
+    console.log(`Pip AAC voice selector:          http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector`);
   });
 }
