@@ -1,0 +1,25 @@
+{
+  "schema": "pippaac.tile-voices.v1",
+  "voices": [
+    {
+      "voice_key": "voi_default_en",
+      "display_name": "Eve",
+      "provider": "elevenlabs",
+      "voice_id": "WWMMC6k9tdar0BthUenK",
+      "model": "eleven_v4",
+      "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
+      "locales": ["en"],
+      "status": "active"
+    },
+    {
+      "voice_key": "voi_leo_en",
+      "display_name": "Leo",
+      "provider": "elevenlabs",
+      "voice_id": "aGfQDyfOrmWWfC7ZnTbv",
+      "model": "eleven_v4",
+      "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
+      "locales": ["en"],
+      "status": "planned"
+    }
+  ]
+}

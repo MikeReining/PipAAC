@@ -3,8 +3,14 @@
  * Env: GROQ_API_KEY — never read .env from disk in library code; callers load .env in CLI/dev server.
  */
 
+import { formatElevenV4IpaLine, normalizeIpaField } from "../../src/shared/tile_recipe.mjs";
+
 export const GROQ_IPA_MODEL = "qwen/qwen3.8-27b";
 const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
+
+// The IPA line format moved to the shared tile recipe (028 § 4.4) —
+// re-exported so lab/dev-server importers keep their paths.
+export { formatElevenV4IpaLine, normalizeIpaField };
 
 /** @typedef {"isolated_tile" | "connected_speech"} IpaSpeechContext */
 
@@ -36,20 +42,6 @@ Rules:
 export const IPA_SYSTEM_PROMPT = buildIpaSystemPrompt("isolated_tile");
 
 /**
- * Eleven v4: grapheme plus IPA in slashes (see ElevenLabs best practices).
- * @param {string} spoken
- * @param {string} ipa e.g. /æn/
- */
-export function formatElevenV4IpaLine(spoken, ipa) {
-  const word = String(spoken ?? "").trim();
-  const wrapped = normalizeIpaField(ipa);
-  if (!word) return wrapped;
-  // Single-word tiles: grapheme + IPA makes Eleven say both (e.g. "an /æn/" → "an" + "Anne").
-  if (!/\s/.test(word)) return wrapped;
-  return `${word} ${wrapped}`;
-}
-
-/**
  * @param {string} raw model message
  */
 export function parseGroqIpaPayload(raw) {
@@ -61,20 +53,6 @@ export function parseGroqIpaPayload(raw) {
   const gloss = typeof parsed.gloss === "string" ? parsed.gloss.trim() : "";
   if (!ipa) throw new Error("Groq IPA JSON missing ipa");
   return { ipa, gloss };
-}
-
-/**
- * @param {string} ipa
- */
-export function normalizeIpaField(ipa) {
-  const raw = String(ipa ?? "").trim();
-  if (!raw) return "";
-  const inner = raw.replace(/^\/+|\/+$/g, "").trim();
-  if (!inner) return "";
-  if (!/^[\p{L}\p{M}\p{Nd}\sˈˌːʰʷʼ˞\-.,]+$/u.test(inner)) {
-    throw new Error("ipa contains unexpected characters");
-  }
-  return `/${inner}/`;
 }
 
 function requireGroqKey(apiKey = process.env.GROQ_API_KEY) {

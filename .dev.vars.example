@@ -17,3 +17,10 @@ GROQ_API_KEY=
 # 024 — whole-sentence voice: Worker-side xAI Grok TTS key.
 # Without it POST /api/v1/voice/speak returns 503 voice_unavailable.
 XAI_API_KEY=
+# 028 — tile voice library. Real ElevenLabs mints need BOTH: the key and
+# TILE_LIVE=1. Without them POST /api/v1/voice/tile mints a short silent
+# stub clip — dev servers never spend money by accident.
+ELEVENLABS_API_KEY=
+TILE_LIVE=
+# Founder-only /admin/v1/tile-voice/* review routes (Bearer token).
+PIP_ADMIN_TOKEN=

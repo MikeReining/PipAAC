@@ -9,9 +9,10 @@ import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
 import { handleSpeak } from "./voice.js";
 import { handleTransform } from "./transform.js";
+import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger } from "./tile.js";
 import { licenseFor } from "./license.mjs";
 
-export { UserRelay, PairingLobby, SupporterAccounts };
+export { UserRelay, PairingLobby, SupporterAccounts, TileLedger };
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -62,6 +63,22 @@ export default {
     // sentences, per-license fair-use counting, no ids upstream.
     if (path === "/api/v1/voice/speak" && request.method === "POST") {
       return handleSpeak(request, env, ctx);
+    }
+
+    // Tile voice library (028): mint-once ElevenLabs clips behind the
+    // TileLedger DO — hits are free, fresh mints are quota'd, the ledger
+    // never learns who asked.
+    if (path === "/api/v1/voice/tile" && request.method === "POST") {
+      return handleTile(request, env, ctx);
+    }
+    if (path === "/api/v1/voice/tile/flag" && request.method === "POST") {
+      return handleTileFlag(request, env);
+    }
+    if (path === "/api/v1/voice/tile/replaced" && request.method === "GET") {
+      return handleTileReplaced(request, env, url);
+    }
+    if (path.startsWith("/admin/v1/tile-voice")) {
+      return handleTileAdmin(request, env, url);
     }
 
     // Dev only: localhost self-activates — mints the same pip-life token

@@ -110,33 +110,15 @@ function normalizeLabQuery(text) {
   return String(text ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-/** IPA alone still performs the sound — use lexical v4 line instead. */
-const LEXICAL_GUARD_LABEL_RE = /^(coughing|coughs?|sneezing|sneezes?|burps?|burping|hiccups?|hiccuping)$/i;
-
-/** @param {string} word */
-export function ipaOverrideForSoundEffectLabel(word) {
-  const w = String(word ?? "").trim().toLowerCase();
-  if (w === "laughs" || w === "laugh") return "/lævz/";
-  if (w === "laughing") return "/ˈlæfɪŋ/";
-  return "";
-}
-
-/** @param {string} word */
-export function lexicalV4GuardText(word) {
-  const w = String(word ?? "").trim();
-  const line = w.endsWith(".") ? w : `${w}.`;
-  return `[isolated dictionary word, do not make the sound] ${line}`;
-}
-
-/** @param {string} word */
-export function needsLexicalV4Guard(word) {
-  return LEXICAL_GUARD_LABEL_RE.test(String(word ?? "").trim());
-}
-
-export function needsSoundEffectIpaOverride(word) {
-  const w = String(word ?? "").trim().toLowerCase();
-  return w === "laughs" || w === "laugh" || w === "laughing";
-}
+/** The recipes live in src/shared/tile_recipe.mjs (028 § 4.4) — the Worker
+ *  mints with exactly the text the lab proved. Re-exported so lab callers
+ *  and tests keep their import paths. */
+export {
+  ipaOverrideForSoundEffectLabel,
+  lexicalV4GuardText,
+  needsLexicalV4Guard,
+  needsSoundEffectIpaOverride,
+} from "../../src/shared/tile_recipe.mjs";
 
 /**
  * @param {{ slug: string, variationId: V4LabVariationId, spokenText: string, ipa?: string, samplesRoot?: string }} opts
