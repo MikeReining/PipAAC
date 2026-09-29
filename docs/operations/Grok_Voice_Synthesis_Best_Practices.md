@@ -428,7 +428,7 @@ When a Grok take fails the ear or explore shortlist, mint the same **spoken text
 
 | | |
 | --- | --- |
-| **Truth file** | `data/catalog/voices.json` → `backup` (`voice_id` `paOIq6PwrBInRivGXL1u`, model `eleven_v3`) |
+| **Truth file** | `data/catalog/voices.json` → `backup` (`voice_id` `paOIq6PwrBInRivGXL1u`, model `eleven_v4`) |
 | **Mint CLI** | `npm run catalog:audio:mint-backup -- --spoken bad` |
 | **Exact TTS text** | `npm run catalog:audio:mint-backup -- --spoken bad --text "<emphasis>bad!</emphasis>"` |
 | **Output** | `data/samples/backup-mint/<slug>.mp3` plus `<slug>_raw.mp3` when burst-fix runs |

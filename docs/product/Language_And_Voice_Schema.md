@@ -1052,7 +1052,7 @@ The catalog generator emits:
 
 - 677 senses, 674 English utterances, and 677 approved English lemma labels, generated from that catalog — homograph senses share one utterance row (§ 5.3). For each launch lemma, `label.text` equals `utterance.spoken_text`. The markdown list stays the human source. Ids are assigned deterministically at generation (§ 4).
 - `core_cell` rows per `docs/product/Core_Coordinate_Map.md`: 83 for `grid90`, 60 for `grid60`. **Amended 2026-09-22:** the device import carries all 677 senses — labels only, no art required. An empty groups surface was a broken first-run experience (founder ruling); the earlier tier filter gated on illustrations, which labels do not need.
-- One default bundled voice, locale `en`, and one clip per utterance: WorkbookBench recordings where the catalog has them, ElevenLabs (`eleven_v3`, the WorkbookBench voice id and settings) for misses.
+- One default bundled voice, locale `en`, and one clip per utterance: WorkbookBench recordings where the catalog has them, ElevenLabs (`eleven_v4`, the tile voice id and settings from `data/catalog/voices.json`) for misses.
 - One profile pointing at that voice.
 - No second locale, no alias rows, no voice picker, no override recorder. (Amended 2026-09-22: the picker and recorder are scheduled in `docs/phases/009_Word_Library_And_Customize.md` slices 4–5; the tables above already hold them.)
 

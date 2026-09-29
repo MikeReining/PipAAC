@@ -17,15 +17,9 @@ API key: `ELEVENLABS_API_KEY` in `.env` only.
 
 Tile voice default model: **`eleven_v4`** in `data/catalog/voices.json` (`stability: 0.4`, `similarity_boost: 0.8`). v4 uses stability + similarity only at API time.
 
-Eleven v3 does **not** use Grok-style XML (`<emphasis>`, `<loud>`). For tile takes we mint:
+Eleven v4 does **not** use Grok-style XML (`<emphasis>`, `<loud>`). Single-word tile takes are **plain** (the spoken label); the lab adds an IPA line or a lexical guard only when plain fails (see *When plain fails* below). Model retired: **v3** — do not mint with it.
 
-| Variation | TTS text | Notes |
-| --- | --- | --- |
-| `plain` | spoken label | Default tile playback text |
-| `period` | `word.` | Punctuation shapes delivery on v3 |
-| `emphasis` | `WORD` (caps) | v3 capitalization emphasis — listen; may be too strong for some tiles |
-
-Docs: [ElevenLabs TTS best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices) (Prompting Eleven v3).
+Docs: [ElevenLabs TTS best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices) (Prompting Eleven v4).
 
 ## Eleven v4 listen lab (non-shipping)
 
@@ -38,7 +32,7 @@ npm run catalog:audio:review
 Open [http://127.0.0.1:3747/audio-review/elevenlabs-v4-lab](http://127.0.0.1:3747/audio-review/elevenlabs-v4-lab).
 
 - **Enter** mints **`v4_plain` only** (one API call). **Mint IPA fallback** runs Groq + `v4_ipa` when plain is not good enough.
-- Takes write to `data/samples/elevenlabs-v4-lab/takes/` (gitignored). **Publish** approved rows with `catalog:v4-lab:publish` (same R2 + sidecars as tile review). Legacy v3 path: `/audio-review/elevenlabs-tiles`.
+- Takes write to `data/samples/elevenlabs-v4-lab/takes/` (gitignored). **Publish** approved rows with `catalog:v4-lab:publish` (same R2 + sidecars as tile review). The older tile review page `/audio-review/elevenlabs-tiles` remains for shipping-shortlist publish; its recipes are v4.
 - Single-word takes show the same acoustic gate as ship path (`scripts/catalog/audio_review.mjs`); multi-word forms show gate n/a.
 - **IPA fallback only** uses **Groq** `qwen/qwen3.8-27b` with **Isolated tile** citation pronunciation (e.g. `an` → `/æn/`). Single-word tiles send IPA alone to Eleven ([best practices](https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices#prompting-eleven-v4)).
 
@@ -82,7 +76,7 @@ npm run catalog:voice-selector:mint
 
 Open [http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector](http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector). Probes and candidate IDs live in `data/samples/elevenlabs-voice-selector/round.json`. Takes: `data/samples/elevenlabs-voice-selector/takes/` (gitignore). Winner: `decisions.json` in the same folder.
 
-**Full-library coverage (default + extra voices):** review packet — `docs/phases/028_Catalog_Tile_Voice_Library_Proposal.md` (ops gaps: `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md`).
+**Full-library coverage (default + extra voices):** `docs/phases/028_Tile_Voice_Library.md` (decided: on-demand mint of typed words, review page, one mint core) (ops gaps: `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md`).
 
 ## Audio inventory (what is “missing”?)
 

@@ -1,0 +1,544 @@
+# 028 — Tile voice library (mint once, speak in the chosen voice)
+
+**Status:** **Decided 2026-09-29 (founder review), ready to slice.** Supersedes
+the earlier "proposal" packet. Nothing here is built. Bulk mints, R2 publish of
+seed clips, and any change to shipped catalog audio stay founder-gated
+(§ 9 policy).
+**Related:** phase 010 (extended library), 024 (sentence Grok cache — a
+**different** pipeline that this one copies patterns from),
+`docs/product/Language_And_Voice_Schema.md`,
+`docs/operations/ElevenLabs_Tile_Minting.md`,
+`docs/operations/Catalog_Tile_Voice_Coverage_Plan.md` (bulk pre-seed inventory).
+**Truth owners:** the ElevenLabs usage counter (what we were billed for), the
+mint ledger (what we made), and what a real tablet plays (§ 11).
+
+---
+
+## 0. Decisions (founder, 2026-09-29)
+
+1. **Every word or phrase a supporter adds is minted instantly, once, in that
+   user's selected voice**, uploaded to R2, and served from cache to everyone
+   who later asks for the same text in the same voice. No per-user re-mint.
+2. **No device TTS for tiles, ever.** Apple/system voices are the wrong voice
+   and feel cheap. While the clip is being made the editor says
+   *"Making Eve's voice for 'scientist'…"* (voice display name). The child's
+   board never waits: minting happens in the supporter's editor.
+3. **English only for auto-mint in v1.** Other locales are accepted, held, and
+   counted (§ 4.3). When v2 opens a locale is decided later.
+4. **Model is `eleven_v4` only.** v3 is retired; leftover v3 references are a
+   cleanup slice (§ 10, slice 0), separate from the feature.
+5. **Review never blocks anything.** A page lists what was minted most
+   recently; the founder spot-checks on whatever cadence they like (§ 7).
+   Seed clips (ours) and user-typed clips are told apart by a `source` field.
+6. **One mint path.** Bulk pre-seed is the same mint core called with a list;
+   there is no second pipeline.
+7. **Ship on first mint.** v4 plain was ~99% acceptable on 400+ catalog clips.
+   Custom input is harder (names, homographs), so quality is watched by review
+   plus a "sounds wrong" flag, not by a gate.
+
+## 1. Problem and economics
+
+Families customize; the tile voice must stay one consistent human voice.
+ElevenLabs must run **once per shared text + voice**, not once per user. Cost
+scales with **unique strings**, which repeat heavily (common words, common
+names), not with users × vocabulary. Marginal cost of a hit is an R2 read.
+
+**Code truth today** (verify before relying on it):
+
+| Path | Audio today |
+| --- | --- |
+| Catalog sense with a ready clip | Clip plays (`public/shared/voice.mjs` → `resolveSlot`) |
+| Catalog sense without a clip | **Silence** |
+| Personal entity (Add → New) | Recording override if any, else **device TTS** on `spoken_name` (`resolveSlot`, entity branch) ← **replaced by this phase** |
+| Keyboard `typed` text | Device TTS (`resolveSlot`, typed branch) ← **out of scope**, see § 12 |
+| Sentence ▶ / transforms | Grok + R2 cache (`src/worker/voice.js`, 024) — not this phase |
+
+## 2. Principles
+
+1. **Audio is a pure function of `(voice, locale, text)`.** Cache it by that;
+   it needs no promotion, no catalog membership, no user id. Promotion to the
+   public catalog (art, curated entry) is a separate decision that audio does
+   not wait for.
+2. **The ledger never learns who asked.** Rows hold text, voice, source,
+   timestamps, review state, counters. No user, device or license id.
+3. **Audio does not require art.** Label + Fitzgerald color already renders.
+4. **Never speak in a wrong voice.** No fallback voice; silence + a visible
+   state + the Record button (existing override) is the failure mode.
+5. **Do not interfere with the child.** Nothing in this phase empties, hides
+   or changes a tile the child already has. Failed or held words are a
+   supporter-side state.
+6. **The instrument the code can't influence is the vendor's usage counter**
+   (§ 11 Works Test 9), not our own ledger.
+
+## 3. Architecture
+
+```text
+Supporter adds "scientist" (voice: Eve, locale en)         [editor, adult side]
+  │  normalizeV1 → validate (§ 4.2) → locale gate (§ 4.3)
+  │  local Cache Storage hit?  ── yes ─▶ done (already on this device)
+  │  no ▶ "Making Eve's voice for 'scientist'…"
+  ▼
+POST /api/v1/voice/tile          (Worker, src/worker/tile.js)
+  │  license check (024 pattern)  → per-license quota (misses only)
+  ▼
+TileLedger  (one Durable Object, SQLite)      key = sha256(voice|locale|profile|text)
+  ├─ ready     → stream R2 object, `x-tile-cache: hit`             (free)
+  ├─ withheld  → 409 (founder rejected it, remint pending)
+  ├─ minting   → await the in-flight promise (single-flight)
+  └─ absent    → global budget check → claim → ElevenLabs v4 → R2 put → ready
+                                                                   `x-tile-cache: mint`
+```
+
+- **Namespaces (R2 bucket `VOICE`, already bound):** `tile/<voice_key>/<id>.mp3`
+  for user-typed and lazy clips. Seed clips keep their existing catalog R2
+  paths; they are **not** copied (slice 7 backfills ledger rows pointing at
+  them so identical text hits).
+- **Why a Durable Object:** the mint must be claimed atomically (two
+  supporters adding "scientist" in the same second must produce one vendor
+  call), and review needs "most recent N" listing. R2 alone gives neither.
+  One singleton ledger DO (`idFromName("ledger")`) is ample: mints are rare,
+  hits are one `peek`.
+- **Why the Worker is the only reader:** the bucket has no public access, and
+  every read needs a valid license, so keys need no secret salt.
+- **Client caches locally** (Cache Storage, same pattern as
+  `public/shared/voice_sentence.mjs`), so replays are instant and offline.
+
+## 4. Contract
+
+### 4.1 Voices (`data/catalog/tile_voices.json`, new — source of truth)
+
+```json
+{ "schema": "pippaac.tile-voices.v1",
+  "voices": [
+    { "voice_key": "voi_default_en", "display_name": "<name shown in UI>",
+      "provider": "elevenlabs", "voice_id": "WWMMC6k9tdar0BthUenK",
+      "model": "eleven_v4", "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
+      "locales": ["en"], "status": "active" } ] }
+```
+
+- `voice_key` **is the local `voice.id`** (`voi_*`, schema § voice). The client
+  sends `voice_key`; it never sends an ElevenLabs id. Unknown/retired key →
+  400 `bad_voice`.
+- Launch: the current default tile voice only. The male intake winner
+  (`aGfQDyfOrmWWfC7ZnTbv`) and others are added as rows in slice 6 — a data
+  change, no code change.
+- Settings come from this file, not from `voices.json` `tiles` (that stays for
+  bulk tooling; slice 1 makes `voices.json` `tiles` and this file agree, or
+  points the former at the latter).
+
+### 4.2 Text rules (Worker-side, authoritative; client mirrors for UX)
+
+```text
+text   = normalizeV1(input)                     // public/shared/normalize.mjs: NFC, trim, casefold, collapse ws
+length = 1..60 characters (longer → 400 bad_text; sentences belong to 024)
+allow  = ^[\p{Script=Latin}\p{N}\s'’\-.,!?&]+$  // letters, digits, space, ' ’ - . , ! ? &
+```
+
+- Anything outside `allow` (brackets, angle brackets, slashes, emoji, other
+  scripts) → **held**, reason `chars` (§ 4.3). This is a character-set
+  validity check, not a language rule, and it also makes ElevenLabs audio tags
+  (`[whispers]`) and IPA slashes un-injectable by users.
+- The mint text is produced by the shared recipe (§ 4.4), never the raw input.
+
+### 4.3 Locale gate and held words
+
+- The client sends the board's `locale`. Worker mints only when
+  `locale ∈ voice.locales` (v1: `en`). No language detection.
+- Otherwise the request returns `422 {held: "locale"|"chars"}` and the Worker
+  records/increments a row in `tile_held(locale, text, reason, count,
+  first_seen, last_seen)`. No audio, no vendor call.
+- Editor copy for held: *"A voice for this word isn't available yet. You can
+  record your own."* The tile still saves; the Record button (existing
+  `setOverride`) works. This table is the demand signal for v2 locales.
+- Known v1 limitation, accepted: a Latin-script foreign word on an English
+  board ("gato") mints with English pronunciation. Review and the flag catch it.
+
+### 4.4 Mint recipe (single shared module)
+
+Extract the pure text rules from `scripts/catalog/elevenlabs_v4_lab.mjs` into
+`src/shared/tile_recipe.mjs` (no Node APIs — the Worker imports it; the lab
+script re-exports so nothing else changes):
+
+- `tileMintText(normalizedText)` → `v4_plain` text, applying
+  `needsLexicalV4Guard` (`[isolated dictionary word, do not make the sound] …`)
+  and `ipaOverrideForSoundEffectLabel` exactly as the lab does today.
+- `TILE_PROFILE = "v4-plain-1"` — part of the dedupe key. Bump only when the
+  recipe or model changes and everything should re-mint.
+- Multi-word phrases go through plain text (the lab's rule: IPA-only is for
+  single-word citation forms; the Groq IPA fallback stays a founder-side lab
+  tool, used by review remint, § 7).
+
+### 4.5 Dedupe key and ledger
+
+```text
+id = sha256( voice_key | locale | TILE_PROFILE | normalizedText )      // hex
+```
+
+`tile_clip` (DO SQLite, created in `TileLedger` constructor):
+
+| Column | Notes |
+| --- | --- |
+| `id` TEXT PK | the dedupe key above |
+| `voice_key`, `locale`, `text` | `text` is the normalized text (needed for review) |
+| `mint_text`, `model`, `profile` | what was actually sent to ElevenLabs |
+| `source` | `seed` \| `user_typed` \| `catalog_lazy` — **this is the "where did it come from" answer** |
+| `status` | `minting` \| `ready` \| `withheld` \| `failed` |
+| `r2_key`, `bytes`, `duration_ms` | `duration_ms` estimated from bytes at the mp3 bitrate |
+| `checks` | JSON: `{ duration_ok, silence_ok }` (§ 6 auto-hints; never gates serving) |
+| `review` | `unreviewed` \| `approved` \| `rejected` (default `unreviewed`) |
+| `flagged` | 0/1 — set by "sounds wrong" |
+| `version` | starts 1; +1 on replace |
+| `replaced_at` | ms; set on replace |
+| `hits` | endpoint requests served (not device replays) |
+| `created_at`, `minted_at`, `reviewed_at` | ms |
+
+Index on `(created_at DESC)`, `(review, source, created_at DESC)`, `(replaced_at)`.
+**No user/device/license column, ever.**
+
+- **Single flight:** the DO keeps `Map<id, Promise>`. A second request for a
+  `minting` id awaits the same promise. A `minting` row older than 60 s with
+  no in-memory promise (DO was evicted) is reclaimed by the next request.
+- **Failure:** ElevenLabs error → row `failed` with `retry_after = now+30 s`;
+  the request returns 502. The next request after `retry_after` re-claims.
+  A tap never loops the vendor (client backs off, § 5.4).
+- **Replace:** new R2 object `tile/<voice_key>/<id>.v<n>.mp3`; row `r2_key`
+  swaps, `version++`, `replaced_at = now`. Old objects are kept.
+
+### 4.6 Endpoints
+
+All Worker routes follow `src/worker/voice.js` conventions (JSON errors,
+`checkLicense`, `user_id` UUID check, `env.VOICE` present or 503).
+
+| Route | Body | Success | Errors |
+| --- | --- | --- | --- |
+| `POST /api/v1/voice/tile` | `{user_id, license, voice, locale, text, source?}` (`source` default `user_typed`; only `catalog_lazy` allowed from clients) | `200 audio/mpeg`, headers `x-tile-cache: hit\|mint`, `x-tile-version: n` | 400 `bad_user_id\|bad_voice\|bad_text`; 403 `bad_license`; 409 `withheld`; 422 `held` (+ reason); 429 `fair_use` (+ `over`); 502 `mint_failed`; 503 `voice_unavailable\|budget` |
+| `POST /api/v1/voice/tile/flag` | `{user_id, license, voice, locale, text}` | `204`; sets `flagged=1` | 400/403; rate-limited via the same usage counter (ns `usage-tileflag`) |
+| `GET /api/v1/voice/tile/replaced?since=<ms>&voice=<key>` (license in header `x-pip-license`, `x-pip-user`) | — | `{ids:[<sha256 of normalized text>…], next:<ms>}` — text hashes of clips replaced or withheld since `since` | 403 |
+| `GET /admin/v1/tile-voice/recent` | query: `source`, `review`, `flagged`, `before`, `limit≤100` | rows (no audio) | 401 without `Authorization: Bearer $PIP_ADMIN_TOKEN` |
+| `GET /admin/v1/tile-voice/audio/<id>` | — | `audio/mpeg` | 401/404 |
+| `POST /admin/v1/tile-voice/review` | `{ids:[…], review:"approved"\|"rejected"}` | `204`; `rejected` also sets `status=withheld` | 401 |
+| `POST /admin/v1/tile-voice/remint` | `{id, mode:"plain"\|"ipa", ipa?}` | new clip, `version++`, `status=ready`, `review=unreviewed` | 401, 502 |
+| `GET /admin/v1/tile-voice/held` | — | `[{locale, text, reason, count}]` | 401 |
+
+Admin routes are on the same Worker; `PIP_ADMIN_TOKEN` is a Worker secret. No
+admin UI is served from the Worker (§ 7).
+
+### 4.7 Limits and the budget breaker (silent, per 024 § 6a)
+
+Cache **hits are free and uncounted**. Only fresh mints count.
+
+| Limit | Default | Mechanism |
+| --- | --- | --- |
+| Text length | 60 chars | § 4.2 |
+| Per-license new words per day | 300 | reuse `usageCheck` / `usageRecord` (`src/worker/voice.js`), ns `usage-tile` |
+| Per-license burst | 30 mints/min | same |
+| **Global** daily mint characters | `TILE_DAY_CHARS` var (founder sets from the ElevenLabs plan) | ledger DO counter row per UTC day; over → 503 `budget`, logged |
+
+Every limit hit is logged (`usage-tile-hits/…`), as in 024. If a real supporter
+ever hits the per-license cap the cap is wrong. A bulk add of many words paces
+itself client-side (§ 5.3).
+
+## 5. Client
+
+### 5.1 Playback resolution
+
+`resolveSlot` (`public/shared/voice.mjs`) entity branch: override still wins.
+Otherwise return a new type `{ type: "tileclip", voice, locale, text }`
+instead of `{ type: "tts" }`. The player resolves it through a new
+`public/shared/voice_tile.mjs` (modeled on `voice_sentence.mjs`):
+
+1. Cache Storage lookup `https://voice.local/tile/<voice>/<sha256(normalizeV1(text))>`.
+2. Hit → play. Miss → `POST /api/v1/voice/tile`; on 200 store + play.
+3. Any failure → **silence** (never device TTS). The word card shows the
+   state (§ 5.4). The `text` field on today's clip results is kept so callers
+   that show captions still work; it is no longer a spoken fallback for these.
+
+`{ type: "tts" }` remains only for `typed` keyboard text (§ 12) and any
+bundled voice whose `source = device_tts` (users who explicitly picked a
+device voice keep it — that is their choice, not our fallback).
+
+### 5.2 Add / rename flow (the primary path)
+
+Hook points: `createEntity` and `renameEntity` in `public/shared/groups.mjs`
+callers in the add UI (`src/board/add_flow.test.mjs` shows the flow;
+bulk path: `bulk_add.test.mjs`; library adds: `library_add.test.mjs`).
+
+- On save, the editor immediately starts `voice_tile.ensure(text)` and shows
+  **"Making {voice display_name}'s voice for '{text}'…"** on the new tile.
+  The tile is usable in layout at once; it plays only when ready.
+- Ready → state clears silently.
+- `held` → *"A voice for this word isn't available yet."* + **Record** button.
+- `failed`/offline → *"Couldn't make {name}'s voice. Try again."* + **Try
+  again** + **Record**. Offline: the request queues and retries on reconnect.
+- Rename recomputes the key; the old clip stays in the ledger untouched.
+- The child-facing board never triggers a mint from a tap. A tile whose clip
+  is missing on this device (new device, cleared cache) fetches once — a
+  ledger hit, ~100 ms; if that is also impossible (offline), it is silent and
+  the supporter sees the "not downloaded" badge on next edit.
+
+### 5.3 Bulk add and prefetch
+
+- Bulk add (`bulk_add`): mint sequentially, ≤ 10 concurrent-free, one progress
+  line ("Making Eve's voice, 12 of 50"); respects 429 by pausing.
+- **Prefetch** on device link/restore, voice switch, and app start (idle):
+  for every active entity name + label without a local clip, request it. Hits
+  are free; misses mint (they are the user's own words).
+- Once a day: `GET …/tile/replaced?since=` → evict those hashes from Cache
+  Storage so a rejected clip is not replayed forever.
+
+### 5.4 Voice switch
+
+Switching the board voice shows progress ("Making Eve's voice, 12 of 40") and
+**keeps the old voice on the board until the new set is complete**; voices
+never mix on one board. Misses mint; everything else is a hit. Failures leave
+the old voice active and offer retry.
+
+### 5.5 Overrides and the flag
+
+- **Record** (existing `setOverride`/`clearOverride`) is per-user, private,
+  wins over everything, and **never touches the shared clip**.
+- Word card gets **"Sounds wrong"** → `POST …/tile/flag`; the tile keeps
+  playing. Flag is a review signal, not a takedown.
+
+## 6. Automatic hints at mint time (never gate serving)
+
+Recorded in `checks`, shown as badges in review:
+
+- `duration_ok`: estimated duration within `[0.15 s, 0.5 s + 0.12 s × chars]`.
+- `silence_ok`: file is not near-zero-size for its character count.
+- (Optional, review-side only, slice 5) round-trip ASR of the mp3 with the
+  existing Groq transcriber (`scripts/catalog/transcribe_groq.mjs`) compared
+  to the text: mismatch → badge. A hint like the lab acoustic gate, not a gate.
+
+## 7. Review page (founder spot-check, non-blocking)
+
+Local tool, consistent with the other `audio-review-*` pages — **no public
+admin UI**:
+
+- Route added to `scripts/catalog/audio_review_dev.mjs`:
+  `http://127.0.0.1:3747/audio-review/tile-voice`, page
+  `public/audio-review-tile-voice.html`. It proxies the § 4.6 admin routes
+  using `PIP_ADMIN_TOKEN` and the Worker base URL from `.env`
+  (`PIP_TILE_ADMIN_URL`).
+- Default view: **newest first**, all sources. Filters: source
+  (`user_typed` / `seed` / `catalog_lazy`), review (`unreviewed` / all),
+  flagged only, held words tab.
+- Per row: text, voice, source badge, created time, auto-check badges, ▶ play,
+  **✓ approve**, **✗ reject**, **Remint (plain)**, **Remint (IPA)** (uses the
+  existing Groq IPA lookup, `ipa_lookup_groq.mjs`), and "approve all shown".
+- Reject → `withheld` immediately (tile goes silent for everyone until a
+  remint is approved). Remint → new version → devices evict via the replaced
+  list (§ 5.3).
+- No cadence is assumed; nothing waits on this page.
+- Existing lab pages keep working for bulk seed review.
+
+## 8. Privacy
+
+- Typed text goes to ElevenLabs (a vendor) **without any identity** — no
+  user/device/license id is sent (same rule as 024 rule 8). This includes
+  names; a child's name spoken in the human voice is the point. The privacy
+  policy text must say typed word labels are sent to a voice provider.
+- R2/ledger hold text + audio with **no user linkage**. The public cannot read
+  either: no public bucket access; every read is license-gated by the Worker.
+- Personal photos, Jev `personal` scope, and family data never enter this
+  path. `catalog_candidate` promotion (art) is unchanged and independent.
+- Held words are stored as anonymous `(locale, text, count)`.
+- ElevenLabs plan check (slice 1 exit criterion): confirm the current plan
+  permits commercial storage and redistribution of generated audio and that
+  the selected voice(s) carry no restriction; consider vendor zero-retention
+  mode if available.
+
+## 9. Policy amendments (this phase must land them)
+
+`AGENTS.md` Project Laws, replace the audio-replacement bullet's scope so it
+matches what is now true:
+
+> **Never replace shipped catalog audio, or bulk-mint (>10 clips), without
+> explicit founder approval.** Mint locally, ten clips at most, and wait for a
+> listen. **Exception (028, founder 2026-09-29):** the on-demand tile mint
+> path may create new clips automatically for authenticated supporters' typed
+> text, within the per-license and global budget caps, into the `tile/`
+> namespace only. It never edits or replaces an existing clip; replacement is
+> a founder action in the review tool.
+
+The default tile voice rule is unchanged: ElevenLabs/human default, Grok
+sentences only, no silent swap.
+
+## 10. Slices (each: read route → name truth owner + proof → focused proof → deslop → commit)
+
+Order matters; each slice is independently shippable. Tests are the proof
+named under it; add Works Test ids from § 11.
+
+**Slice 0 — v3 cleanup (no behavior change; do not mix with slice 1).**
+v3 is retired; the only model is `eleven_v4`.
+- *Docs (done with this doc, 2026-09-29):* `ElevenLabs_Tile_Minting.md` v3
+  variation table and "legacy v3 path" wording;
+  `Grok_Voice_Synthesis_Best_Practices.md` § 10 backup model;
+  `Language_And_Voice_Schema.md` § default voice line.
+- *Code/data (implementer):* `scripts/catalog/elevenlabs_tts.mjs`
+  (`DEFAULT_MODEL` → `eleven_v4`; drop the v3 settings branch);
+  `build_elevenlabs_tile_queue.mjs` and `build_elevenlabs_forms_queue.mjs`
+  (`?? "eleven_v3"` → read `voices.json`, fail if absent);
+  `generate_missing_audio.mjs` header; `elevenlabs_tile_variations.mjs`
+  (v3 variation matrix — delete or reduce to plain if still referenced);
+  `elevenlabs_v4_lab.mjs` + `.test.mjs` (`V3_MODEL`, `v3_*` variation ids —
+  keep only ids that appear in existing take filenames, marked legacy read-only,
+  or migrate the takes); `audio_review_dev.mjs` line ~575 regex;
+  `public/audio-review-elevenlabs-tiles.html` banner (`eleven_v3` claim);
+  `explore_grok_batch.mjs`, `transcribe_groq.mjs` (check each hit).
+  Forward config in `data/samples/elevenlabs-{tiles,forms}-core/recipes.json`
+  → `eleven_v4`. **Do not rewrite historical records** of what was actually
+  minted (e.g. `data/samples/voice-clone/manifest.json`).
+- *Proof:* `grep -rniE "eleven_v3|eleven ?v3" . --exclude-dir=node_modules
+  --exclude-dir=.git` returns only allowed historical records (list them in
+  the commit body); `npm run check:fast` green; a dry `catalog:tiles:queue`
+  produces `eleven_v4` recipes.
+
+**Slice 1 — Worker mint core (no client).**
+Files: `data/catalog/tile_voices.json`; `src/shared/tile_recipe.mjs`
+(extract from the lab; lab re-exports; existing lab tests stay green);
+`src/worker/tile_ledger.mjs` (pure SQL ledger logic over a minimal `sql`
+interface so it is unit-testable with the same SQLite driver the board tests
+use); `src/worker/tile.js` (routes, validation, quotas; `TileLedger` DO class,
+a thin wrapper around the pure logic); route wiring in `src/worker/index.js`;
+`wrangler.jsonc` (DO binding `TILE_LEDGER`, migration `{"tag":"v5",
+"new_sqlite_classes":["TileLedger"]}`); secrets `ELEVENLABS_API_KEY`,
+`PIP_ADMIN_TOKEN`; var `TILE_DAY_CHARS`.
+- Synth seam: `env.TILE_SYNTH(mintText, {voice})` for tests (like
+  `VOICE_SYNTH`). **Local dev default is a stub** (a short silent mp3, header
+  `x-tile-cache: stub`) unless `TILE_LIVE=1` **and** `ELEVENLABS_API_KEY` are
+  set — dev servers must never spend money by accident.
+- Proof (`src/worker/tile.test.mjs`, light; DO behavior in
+  `src/worker/tile.heavy.test.mjs`): Works Tests 2, 3, 4, 5, 6, 7, 8 (§ 11).
+- Exit: ElevenLabs plan/licensing check (§ 8) recorded in the commit body.
+
+**Slice 2 — Client playback and add flow.**
+Files: `public/shared/voice_tile.mjs` (+ test, fake `caches` like
+`voice_sentence` tests); `public/shared/voice.mjs` (`tileclip` type; entity
+branch); `public/board.js` player for `tileclip`; add/rename/bulk UI states
+(§ 5.2–5.3) in the editor code paths exercised by `add_flow`, `bulk_add`,
+`library_add` tests; prefetch; voice-switch progress (§ 5.4) — the switch UI
+may land with slice 6 if there is only one voice.
+- Proof: Works Tests 1, 10, 11, 12; `resolveSlot` unit tests (override wins,
+  tileclip for entity, tts only for typed/device voices); update
+  `src/board/entities.test.mjs`/`voice_sentence.test.mjs`-style tests.
+- Founder view: `http://localhost:21087/?reseed` (agents preview with
+  `npm run dev:agent`; dev mint is stubbed unless `TILE_LIVE=1`).
+
+**Slice 3 — Review tool.**
+Files: `public/audio-review-tile-voice.html`; route + proxy in
+`scripts/catalog/audio_review_dev.mjs`; admin routes finished in
+`src/worker/tile.js`; `npm run tilevoice:review` alias; doc: add the URL to
+`ElevenLabs_Tile_Minting.md`.
+- Proof: Works Test 13; admin routes 401 without token (light test).
+
+**Slice 4 — Flag, reject, remint, replaced list.**
+Word-card "Sounds wrong"; `tile/flag`; `withheld` handling in the client
+(silent + Record offer); daily `replaced` sweep; remint modes.
+- Proof: Works Tests 14, 15.
+
+**Slice 5 — Reconcile + optional ASR hint.**
+`scripts/catalog/tilevoice_reconcile.mjs` (`npm run tilevoice:reconcile`):
+compares ledger minted characters for a window to the ElevenLabs usage
+counter delta over the same window; prints both and the gap. Optional: ASR
+badge in the review page (§ 6).
+- Proof: Works Test 9 (the reconcile is the instrument).
+
+**Slice 6 — Additional voices.**
+Add rows to `tile_voices.json` (male intake winner and any future voice; names
+from the voice selector decision). Voice-switch UI and prefetch backfill
+(§ 5.4). Pre-seed the top-N most frequent words for each new voice only with
+explicit founder approval (bulk gate).
+- Proof: Works Test 12 (voice switch), 16.
+
+**Slice 7 — Seed + backfill (founder-gated bulk).**
+Ledger rows for existing catalog clips (`source=seed`, pointing at their R2
+paths) so identical typed text hits. Bulk pre-seed of default-voice clips for
+the extended lexicon uses **this same mint core** with `source=seed`, driven
+by the queue tooling in `Catalog_Tile_Voice_Coverage_Plan.md` (phases A–C
+there remain the inventory). Never run without explicit founder approval and
+cost.
+
+**Slice 8 — `catalog_lazy` (after 010 slice 3).**
+A catalog sense with no ready clip, placed by a supporter, requests a mint
+with `source=catalog_lazy` (today it is silence). Same endpoint, same ledger.
+
+## 11. Works Tests
+
+1. **Add speaks, in the chosen voice.** Add "scientist" with voice V on a
+   fresh profile: editor shows "Making {name}'s voice…", then the tile plays a
+   clip whose R2 key is under `tile/V/`. No `speechSynthesis` call occurs
+   (spy on `speechSynthesis.speak` — assert zero).
+2. **Dedupe.** Two licenses request the same `(voice, locale, text)`; the
+   synth stub is called **once**; second response has `x-tile-cache: hit`.
+   Case/space variants ("Scientist ", "scientist") collapse to one key.
+3. **Single flight.** Ten concurrent requests for one new key → exactly one
+   synth call, ten 200 responses, one ledger row.
+4. **Held.** locale `es`, and text `你好`, and `[whispers] hi` → 422 `held`,
+   zero synth calls, `tile_held` counts incremented, no `tile_clip` row.
+5. **No identity.** Inspect every `tile_clip` and `tile_held` column and every
+   object under `tile/` after a run: no user id, device id, or license string
+   present; the synth stub's arguments contain only the mint text and voice.
+6. **Recipe parity.** `tileMintText("coughing")` equals the lab's lexical-guard
+   text; `laughs`/`laugh`/`laughing` get the lab's IPA override; a plain word
+   is passed through unchanged.
+7. **Limits.** 301st fresh mint in a day → 429 `fair_use`; cache hits never
+   count; setting `TILE_DAY_CHARS` low → 503 `budget` and requests degrade to
+   the client failure state (no vendor call, no fallback voice).
+8. **Failure isolation.** Synth throws → 502, row `failed`, no R2 object;
+   an immediate retry inside `retry_after` returns 502 without a vendor call;
+   after `retry_after` it mints.
+9. **Billing truth (instrument the code can't influence).** After a
+   controlled live run of N distinct new words (≤10, founder-approved):
+   ElevenLabs' usage character counter delta equals the ledger's minted
+   characters for that window, and repeated requests add zero.
+10. **Child never waits.** The child board render/tap path issues no
+    `/voice/tile` request for tiles whose clip is cached; the only network
+    call on a cache miss is the ledger hit, and it never blocks a different
+    tile's playback.
+11. **Failure states are visible and silent-safe.** Force `held`, 502, and
+    offline: each shows its message, offers Record, and produces no device-TTS
+    audio (spy = zero calls).
+12. **Voice switch.** Switch A→B on a board of 40 entities: progress shown,
+    A keeps playing until B completes, then plays B clips; no mixed board.
+13. **Review page.** With 3 seeded ledger rows (2 `user_typed`, 1 `seed`), the
+    page lists newest first, filters by source, ▶ plays, approve sets
+    `review=approved`, reject sets `withheld`, and the `seed` row is
+    distinguishable at a glance.
+14. **Flag.** "Sounds wrong" sets `flagged`, the tile keeps playing, the row
+    sorts first under "flagged only".
+15. **Reject → remint → devices update.** Reject makes the clip 409/silent;
+    remint (mode ipa) bumps `version`; a device with the old clip evicts it on
+    its next `replaced` sweep and fetches the new one.
+16. **Override safety.** A user's Record override wins locally and leaves the
+    shared clip's `hits`, `version` and R2 object untouched.
+
+## 12. Out of scope / known remaining device-TTS surfaces (decide separately)
+
+- **Keyboard `typed` text** still uses device TTS in `resolveSlot`. Options
+  later: mint it too (bounded by the same caps) or leave it. Not decided.
+- **Sentence ▶ word-clip fallback** (024 rule 1) will pick up user-minted
+  entity clips only if the sentence path is taught to read the tile cache —
+  a 024 follow-up, not this phase.
+- Non-English auto-mint (v2), a child-voice provider, Grok as a tile voice,
+  changing `catalog_candidate` promotion rules, image generation.
+
+## 13. Defaults the founder may tune (all are config, not code)
+
+| Knob | Default | Where |
+| --- | --- | --- |
+| Per-license new words/day | 300 | Worker const in `tile.js` |
+| Per-license burst | 30/min | same |
+| Text max | 60 chars | same |
+| Global daily mint chars | set from plan | `TILE_DAY_CHARS` |
+| Voice display names | from the voice selector decision | `tile_voices.json` |
+| Failed-mint retry delay | 30 s | ledger const |
+
+## Related
+
+- `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md` — bulk inventory and
+  phases A–C (seed clips through the same mint core, slice 7)
+- `docs/operations/ElevenLabs_Tile_Minting.md` — current review pages and lab
+- `docs/phases/024_Sentence_TTS_And_Audio_Cache.md` — pattern source
+- `src/worker/voice.js`, `public/shared/voice_sentence.mjs` — code to mirror
+- `docs/phases/010_Extended_Picture_Library.md`

@@ -125,19 +125,15 @@ npm run catalog:tiles:master-queue -- --layer extended --batch elevenlabs-tiles-
 npm run catalog:tiles:master-mint -- --batch elevenlabs-tiles-extended --limit 10
 ```
 
-### On-demand mint (future — growth loop)
+### On-demand mint
 
-Not implemented in the Worker yet. Direction matches `docs/product/Clipart_Pipeline_And_Catalog_Growth.md` § 1 (audio synthesized once when a word enters the shared catalog).
+Decided and specified in **`docs/phases/028_Tile_Voice_Library.md`** (one
+Worker mint core + ledger; typed words mint instantly in the user's voice;
+bulk pre-seed is the same core with `source=seed`, founder-gated). This plan
+keeps the **inventory and queue tooling** for phases A–C only.
 
-**Recommended implementation:**
-
-1. **Trigger:** missing ready clip for a **catalog** utterance under the active bundled voice (first tap or first promotion), not for Jev-`personal` entities.
-2. **Mint:** ElevenLabs `eleven_v4` + tile settings from `voices.json`; same text rules as gap-fill.
-3. **Persist:** R2 + catalog `clip` row; **dedupe** on `(voice_id, normalized_spoken_text)` so later users hit cache.
-4. **Privacy:** personal names/places stay off the public library (entities keep device TTS today).
-5. **Quality:** treat v4 plain as **good enough to ship on first mint** for on-demand; keep batch ear-review for pre-seeded launch/extended bulk; optional async spot-check.
-
-Bundled voice + catalog sense without clip is **silence** today (`resolveSlot`) — so extended import must pair with either **pre-seed (Phase C)** or **on-demand fill**, not art.
+Bundled voice + catalog sense without clip is **silence** today (`resolveSlot`);
+028 slice 8 (`catalog_lazy`) fills it on placement after extended import.
 
 ---
 
@@ -162,7 +158,7 @@ Voice selector: round 1 winner **`c2`** → `aGfQDyfOrmWWfC7ZnTbv` in `data/samp
 
 ## Related docs
 
-- **`docs/phases/028_Catalog_Tile_Voice_Library_Proposal.md`** — review packet (economics, on-demand, Works Tests) before execution
+- **`docs/phases/028_Tile_Voice_Library.md`** — decided architecture: economics, mint core, ledger, review page, slices, Works Tests
 - `docs/product/Word_Library.md` § 6 — extended library size and tier
 - `docs/phases/010_Extended_Picture_Library.md` — slices 2–4 (art, catalog tier, voices)
 - `docs/operations/ElevenLabs_Tile_Minting.md` — today’s launch gap-fill review URLs

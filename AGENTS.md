@@ -31,7 +31,7 @@ files touched, proof state, and next action.
 | Catalog voice clips, Grok TTS minting | `docs/operations/Grok_Voice_Synthesis_Best_Practices.md` |
 | ElevenLabs tile gap-fill, R2 publish | `docs/operations/ElevenLabs_Tile_Minting.md` |
 | Default + extra tile voice full-library coverage (plan) | `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md` |
-| Catalog tile voice library + on-demand mint (proposal, review before execute) | `docs/phases/028_Catalog_Tile_Voice_Library_Proposal.md` |
+| Tile voice library, on-demand mint of typed words, review page | `docs/phases/028_Tile_Voice_Library.md` |
 | Voice emotion tags, prosody formulas | `docs/operations/Grok_Voice_Emotional_Prosody.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |
@@ -82,11 +82,17 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
   (`docs/operations/art-generator/SKILL.md` § 7). On 2026-09-24 an agent ran
   `scripts/art/extended_batch.mjs` unasked (~1,950 images, ~3,400 Jev calls) and
   exhausted the OpenRouter daily budget. "Generate the words" means the list.
-- **Never replace catalog audio, or upload new voice clips, without explicit
-  founder approval.** Mint locally, ten clips at most, and wait for a listen
-  (`docs/operations/ElevenLabs_Tile_Minting.md`). **Default tile voice stays
-  ElevenLabs/human — Grok is sentences + optional future extra voices, never a
-  silent swap** (024 §2, `Grok_Voice_Synthesis_Best_Practices.md`).
+- **Never replace shipped catalog audio, or bulk-mint (>10 clips), without
+  explicit founder approval.** Mint locally, ten clips at most, and wait for a
+  listen (`docs/operations/ElevenLabs_Tile_Minting.md`). **Exception (phase
+  028, founder 2026-09-29):** the on-demand tile mint path creates new clips
+  automatically for authenticated supporters' typed text, within its
+  per-license and global budget caps, into the `tile/` namespace only; it never
+  edits or replaces an existing clip (replacement is a founder action in the
+  review tool). **Default tile voice stays ElevenLabs/human — Grok is
+  sentences + optional future extra voices, never a silent swap** (024 §2,
+  `Grok_Voice_Synthesis_Best_Practices.md`). Tiles never fall back to device
+  TTS.
 - Agents preview with `npm run dev:agent`. `npm run dev` is the founder browse
   copy — do not kill it or reuse `.wrangler/slot-0`.
 - **When asking the founder to look at a change, always give
