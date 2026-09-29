@@ -325,6 +325,17 @@ export class UserRelay {
       return json({ ok: true });
     }
 
+    // Worker-internal entitlement read (030 § 6.1): the draw allowance
+    // tiers off this, and the pictures routes hold no device signature.
+    if (method === "GET" && route === "internal/entitlement") {
+      const secret = this.env.PIP_INTERNAL_SECRET ?? this.env.PIP_LICENSE_SECRET;
+      if (!secret) return bad("internal_unavailable", 503);
+      if (request.headers.get("x-pip-internal") !== secret) {
+        return bad("forbidden", 403);
+      }
+      return json({ entitlement: this.entitlement() });
+    }
+
     const device = await this.verify(request, bodyBytes);
     if (!device) return bad("forbidden", 403);
     // last_seen BEFORE this request — a long-absent device refreshing it

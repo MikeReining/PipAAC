@@ -114,3 +114,70 @@ export function rankSignals(sql, items) {
   }
   return out;
 }
+
+/* ------------------------------ draws ------------------------------ */
+
+export function getDraw(sql, key) {
+  return one(sql, "SELECT * FROM pic_drawing WHERE key = ?", [String(key)]);
+}
+
+/** § 5.1 single flight: exactly one claimant mints; a `minting` row is
+ *  reclaimable after STALE_MS (claimant died mid-synth). Returns
+ *  hit | mint | minting | failed_wait. */
+export const DRAW_STALE_MS = 10 * 60 * 1000;
+
+export function claimDraw(sql, { key, text, description, scope, lens, kind, now }) {
+  const row = getDraw(sql, key);
+  if (row?.status === "ready" && row.r2_key) {
+    sql.exec("UPDATE pic_drawing SET hits = hits + 1 WHERE key = ?", key);
+    return { disposition: "hit", row };
+  }
+  if (row?.status === "withheld") return { disposition: "withheld", row };
+  if (row?.status === "failed" && row.retry_after && row.retry_after > now) {
+    return { disposition: "failed_wait", row };
+  }
+  if (row?.status === "minting" && now - (row.claimed_at ?? 0) < DRAW_STALE_MS) {
+    return { disposition: "minting", row };
+  }
+  if (row) {
+    sql.exec(
+      "UPDATE pic_drawing SET status = 'minting', claimed_at = ? WHERE key = ?",
+      now, key);
+  } else {
+    sql.exec(
+      `INSERT INTO pic_drawing (key, text, description, scope, lens, kind,
+        status, claimed_at, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, 'minting', ?, ?)`,
+      key, text, description, scope ?? null, lens ?? null, kind ?? null, now, now);
+  }
+  return { disposition: "mint" };
+}
+
+/** Mint events are append-only billing truth (WT11): one row per image
+ *  call the ledger knows about — the count that must match OpenRouter. */
+export function finishDraw(sql, { key, r2Key, now }) {
+  sql.exec(
+    `UPDATE pic_drawing SET status = 'ready', r2_key = ?, minted_at = ?,
+       retry_after = NULL WHERE key = ?`,
+    r2Key, now, key);
+  sql.exec("INSERT INTO pic_mint (key, minted_at) VALUES (?, ?)", key, now);
+}
+
+export function failDraw(sql, { key, retryAfter, now }) {
+  sql.exec(
+    "UPDATE pic_drawing SET status = 'failed', retry_after = ? WHERE key = ?",
+    retryAfter, key);
+}
+
+/** Founder view (§ 9 /admin/v1/pictures/recent): newest first, no identity
+ *  columns exist to leak. `before` paginates on created_at. */
+export function listDraws(sql, { before = null, limit = 50 } = {}) {
+  const args = [];
+  let where = "";
+  if (before) { where = "WHERE created_at < ?"; args.push(Number(before)); }
+  return all(sql,
+    `SELECT key, text, description, scope, lens, kind, r2_key, status,
+            review, hits, created_at, minted_at
+     FROM pic_drawing ${where} ORDER BY created_at DESC LIMIT ?`,
+    [...args, Math.min(Math.max(1, Number(limit) || 50), 200)]);
+}

@@ -17,13 +17,22 @@ import { checkLicense } from "./license.mjs";
 import { usageCheck, usageRecord } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import pictureFinder from "../../data/catalog/picture_finder.json" with { type: "json" };
+import drawBlocklist from "../../data/pictures/draw_blocklist.json" with { type: "json" };
 import {
+  captionForDrawing,
   decideAuto,
+  drawKey,
+  drawSubject,
   queryText,
   resolveLanguage,
   scoreOf,
   signalsKey,
 } from "../shared/picture_index.mjs";
+import {
+  buildPrompt,
+  DRAW_JEV_QUESTIONS,
+  parseDrawSpec,
+} from "../shared/draw_prompt.mjs";
 import { adminOk } from "./tile.js";
 
 const CFG = pictureFinder;
@@ -79,22 +88,27 @@ const JEV_QUESTIONS = {
   },
 };
 
-/** Jev classify (§ 4.3): scope/kind/language in one call. env.PICTURE_JEV
+/** Jev classify (§ 4.3): scope/kind/language in one call — forDraw adds
+ *  the § 5.3 framing questions to the same round-trip. env.PICTURE_JEV
  *  is the test seam; without it or TYPESAFE_API_KEY the caller gets
  *  nulls and treats them per 029's rules (no auto-draw, Yellow, default
  *  cutoff). Model judgments — never keyword rules. */
-async function classify(env, { text, description }) {
+async function classify(env, { text, description, forDraw = false }) {
   if (typeof env.PICTURE_JEV === "function") {
-    const r = await env.PICTURE_JEV({ text, description });
+    const r = await env.PICTURE_JEV({ text, description, forDraw });
     return {
       scope: r?.scope ?? null,
       kind: r?.kind ?? null,
       language: r?.language ?? null,
       language_probs: r?.language_probs ?? {},
+      draw: r?.draw ?? (forDraw ? parseDrawSpec(null) : null),
     };
   }
   if (!env.TYPESAFE_API_KEY) {
-    return { scope: null, kind: null, language: null, language_probs: {} };
+    return {
+      scope: null, kind: null, language: null, language_probs: {},
+      draw: forDraw ? parseDrawSpec(null) : null,
+    };
   }
   const res = await fetch(TYPESAFE_ENDPOINT, {
     method: "POST",
@@ -105,7 +119,7 @@ async function classify(env, { text, description }) {
     body: JSON.stringify({
       model: JEV_MODEL,
       state: JEV_STATE(text, description),
-      questions: JEV_QUESTIONS,
+      questions: forDraw ? { ...JEV_QUESTIONS, ...DRAW_JEV_QUESTIONS } : JEV_QUESTIONS,
     }),
   });
   if (!res.ok) throw new Error(`jev_${res.status}`);
@@ -115,6 +129,7 @@ async function classify(env, { text, description }) {
     kind: data?.answers?.kind?.choice ?? null,
     language: data?.answers?.language?.choice ?? null,
     language_probs: data?.answers?.language?.probabilities ?? {},
+    draw: forDraw ? parseDrawSpec(data?.answers) : null,
   };
 }
 
@@ -256,6 +271,310 @@ export async function handleFindBatch(request, env, ctx) {
   return json({ results });
 }
 
+/* ------------------------------ draw (§ 5) ------------------------------ */
+
+const DRAW_NS = "usage-draw";
+const DRAW_DAY = 30; // abuse guard (§ 6.1)
+const DRAW_MIN = 10;
+const ALLOWANCE = { free: 5, lifetime: 300 }; // Pricing § 4.2
+const STYLE_REFS_MANIFEST = "style-refs/manifest.json";
+const OPENROUTER_IMAGES = "https://openrouter.ai/api/v1/images";
+const MUSE_MODEL = "meta/muse-image";
+
+/** 1×1 transparent png — the default local-dev mint when neither a
+ *  DRAW_SYNTH seam nor a live key is present (x-draw-cache: stub). */
+const STUB_PNG = Uint8Array.from(
+  atob("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="),
+  (c) => c.charCodeAt(0));
+
+const BLOCK_TERMS = drawBlocklist.terms.map((t) => normalizeV1(t));
+
+/** § 5.3 step 1 — the safety blocklist refuses before Jev/Muse. Whole-word
+ *  match on the normalized pair so "Essex" never trips "sex". */
+export function isUnsafe(text, description) {
+  const hay = ` ${normalizeV1(`${text} ${description}`)} `;
+  return BLOCK_TERMS.some((t) => t && hay.includes(` ${t} `));
+}
+
+/** The draw counter is the only identity-keyed record on this path —
+ *  a lifetime total per user (§ 6.1). ns usage-draw. */
+const drawUsedKey = (uid) => `${DRAW_NS}-total/${uid}`;
+async function drawUsed(env, uid) {
+  const obj = await env.VOICE.get(drawUsedKey(uid)).catch(() => null);
+  return obj ? (JSON.parse(await obj.text()).used ?? 0) : 0;
+}
+async function drawBump(env, uid) {
+  const used = (await drawUsed(env, uid)) + 1;
+  await env.VOICE.put(drawUsedKey(uid), JSON.stringify({ used }));
+  return used;
+}
+
+/** Tier from the relay's entitlement row (011 § 9); anything unverifiable
+ *  is free — the conservative side of a paywall. */
+async function entitlementFor(env, uid) {
+  try {
+    if (!env.RELAY) return "free";
+    const secret = env.PIP_INTERNAL_SECRET ?? env.PIP_LICENSE_SECRET;
+    const res = await env.RELAY.get(env.RELAY.idFromName(uid)).fetch(
+      new Request(`https://relay/users/${uid}/internal/entitlement`, {
+        headers: { "x-pip-internal": secret ?? "" },
+      }));
+    const j = await res.json();
+    return j?.entitlement === "lifetime" ? "lifetime" : "free";
+  } catch {
+    return "free";
+  }
+}
+
+const picPost = (env, path, body = {}) =>
+  pictureStub(env).fetch(new Request(`https://tile${path}`, {
+    method: "POST", body: JSON.stringify(body),
+  }));
+
+/** Style bundle, R2-side (the Worker cannot read assets/). Published by
+ *  the slice-4 tooling; until then an empty list — the stub ignores it. */
+async function loadDrawRefs(env) {
+  const man = await env.VOICE.get(STYLE_REFS_MANIFEST).catch(() => null);
+  if (!man) return [];
+  const files = JSON.parse(await man.text()).files ?? [];
+  const refs = [];
+  for (const f of files) {
+    const obj = await env.VOICE.get(`style-refs/${f.name}`).catch(() => null);
+    if (!obj) continue;
+    const bytes = new Uint8Array(await obj.arrayBuffer());
+    let bin = "";
+    for (let i = 0; i < bytes.length; i += 8192) {
+      bin += String.fromCharCode(...bytes.subarray(i, i + 8192));
+    }
+    refs.push({ name: f.name, dataUri: `data:${f.mime};base64,${btoa(bin)}` });
+  }
+  return refs;
+}
+
+/** § 5.3 step 4 — one image call. env.DRAW_SYNTH is the test seam;
+ *  DRAW_LIVE=1 + OPENROUTER_API_KEY is the founder-gated live path;
+ *  DRAW_STUB=1 is the explicit local-dev placeholder (a deploy without a
+ *  live key must 502, never serve a blank image as a drawing).
+ *  The vendor body carries the prompt and style refs — never a user,
+ *  device, or license id. */
+async function synthesizeDraw(env, { prompt, refs }) {
+  if (typeof env.DRAW_SYNTH === "function") {
+    return { bytes: new Uint8Array(await env.DRAW_SYNTH(prompt, refs)), cache: "mint" };
+  }
+  if (env.DRAW_LIVE === "1" && env.OPENROUTER_API_KEY) {
+    const res = await fetch(OPENROUTER_IMAGES, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: MUSE_MODEL,
+        prompt,
+        aspect_ratio: "1:1",
+        output_format: "png",
+        input_references: refs.map((r) => ({
+          type: "image_url", image_url: { url: r.dataUri },
+        })),
+      }),
+    });
+    if (!res.ok) throw new Error(`draw_${res.status}`);
+    const b64 = (await res.json())?.data?.[0]?.b64_json;
+    if (!b64) throw new Error("draw_no_image");
+    return { bytes: Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)), cache: "mint" };
+  }
+  if (env.DRAW_STUB === "1") return { bytes: STUB_PNG, cache: "stub" };
+  throw new Error("draw_unavailable");
+}
+
+/** A loser of the single-flight claim waits out the winner's mint, then
+ *  serves the same row. Bounded — a dead claimant fails closed at 502. */
+async function waitDraw(env, key) {
+  const deadline = Date.now() + (Number(env.PIC_DRAW_WAIT_MS) || 45000);
+  while (Date.now() < deadline) {
+    const res = await pictureStub(env).fetch(
+      new Request(`https://tile/pic/draw/row?key=${key}`));
+    const row = (await res.json().catch(() => ({})))?.row;
+    if (row?.status === "ready" && row.r2_key) return row;
+    if (row?.status === "failed" || row?.status === "withheld") return row;
+    await new Promise((r) => setTimeout(r, 400));
+  }
+  return null;
+}
+
+const pngResponse = (bytes, headers) =>
+  new Response(bytes, {
+    headers: { "content-type": "image/png", "cache-control": "private, max-age=86400", ...headers },
+  });
+
+/** POST /api/v1/pictures/draw {user_id, license, text, description?}
+ *  200 image/png with x-draw-cache: hit|mint|stub + x-drawings-left.
+ *  Order per § 5.3: safety → allowance → Jev → key → claim → mint. */
+export async function handleDraw(request, env, ctx) {
+  const body = await request.json().catch(() => null);
+  const uid = typeof body?.user_id === "string" ? body.user_id : null;
+  if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
+  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license))) {
+    return json({ error: "bad_license" }, { status: 403 });
+  }
+  const text = cleanText(body?.text, TEXT_MAX);
+  const description = cleanText(body?.description, DESC_MAX);
+  if (!text || (body?.description != null && description === null)) {
+    return json({ error: "bad_text" }, { status: 400 });
+  }
+  if (!env.VOICE || !env.TILE_LEDGER || !env.AI || !env.PICTURES) {
+    return json({ error: "pictures_unavailable" }, { status: 503 });
+  }
+
+  // 1 — safety, before any Jev/vendor call (422 unsafe).
+  if (isUnsafe(text, description)) {
+    return json({ error: "unsafe" }, { status: 422 });
+  }
+
+  // 2 — allowance (§ 6.1): lifetime total per tier + 30/day abuse guard.
+  const tier = await entitlementFor(env, uid);
+  const cap = ALLOWANCE[tier] ?? ALLOWANCE.free;
+  const used = await drawUsed(env, uid);
+  if (used >= cap) {
+    // § 6.1 — the client offers a photo (and later a top-up) at zero.
+    return json(
+      { error: "allowance", left: 0, total: cap, suggest: "photo" },
+      { status: 402 });
+  }
+  const guard = await usageCheck(env, {
+    ns: DRAW_NS, uid, chars: 1, maxChars: 1, dayBudget: DRAW_DAY, minBudget: DRAW_MIN,
+  });
+  if (!guard.allowed) {
+    await usageRecord(env, { ns: DRAW_NS, uid, chars: 0, over: guard.over });
+    return json({ error: "fair_use", over: guard.over }, { status: 429 });
+  }
+
+  // 3 — Jev: scope/kind/language + the framing spec, one call.
+  let jev;
+  try {
+    jev = await classify(env, { text, description, forDraw: true });
+  } catch {
+    jev = {
+      scope: null, kind: null, language: null, language_probs: {},
+      draw: parseDrawSpec(null),
+    };
+  }
+  const scope = jev.scope === "personal" ? "personal" : "common";
+  // A person/pet with no description has nothing to draw (and the name
+  // alone is never drawable — it never reaches the prompt).
+  if (scope === "personal" && !description) {
+    return json({ error: "bad_description" }, { status: 400 });
+  }
+
+  // The name never leaves this Worker: a personal subject draws the
+  // description ("our golden retriever"), never "Cooper" (§ 3.3, § 8).
+  const subject = drawSubject({ scope, text, description });
+  const key = await drawKey(CFG.style_version, subject);
+  const promptWord = scope === "personal" ? normalizeV1(description) : text;
+  const prompt = buildPrompt({
+    word: promptWord,
+    torso: jev.kind && jev.kind !== "None" ? jev.kind.toLowerCase() : null,
+    hint: scope === "personal" ? null : (description || null),
+    framing: jev.draw.framing,
+    hand: jev.draw.hand_mode,
+    social_scale: jev.draw.social_scale,
+    entity_mode: jev.draw.entity_mode,
+    packaging: jev.draw.packaging,
+  });
+
+  // 4 — ledger claim: hit serves, minting waits, mint draws once.
+  const claimed = await (await picPost(env, "/pic/draw/claim", {
+    key, text: scope === "personal" ? normalizeV1(description) : text,
+    description, scope, kind: jev.kind, lens: jev.draw.framing,
+  })).json();
+  const headersFor = (cache, left) => ({
+    "x-draw-cache": cache, "x-drawings-left": String(left),
+    "x-draw-key": key,
+  });
+
+  const serveRow = async (row, cache, left) => {
+    const obj = await env.VOICE.get(row.r2_key).catch(() => null);
+    if (!obj) return null;
+    return pngResponse(await obj.arrayBuffer(), headersFor(cache, left));
+  };
+
+  const left = cap - used;
+  if (claimed.disposition === "hit") {
+    return (await serveRow(claimed.row, "hit", left))
+      ?? json({ error: "draw_failed" }, { status: 502 });
+  }
+  if (claimed.disposition === "withheld") {
+    return json({ error: "unsafe" }, { status: 422 });
+  }
+  if (claimed.disposition === "failed_wait") {
+    return json({ error: "draw_failed", retry_after: claimed.row.retry_after }, { status: 502 });
+  }
+  if (claimed.disposition === "minting") {
+    const row = await waitDraw(env, key);
+    if (row?.status === "ready") {
+      return (await serveRow(row, "hit", left))
+        ?? json({ error: "draw_failed" }, { status: 502 });
+    }
+    return json({ error: "draw_failed" }, { status: 502 });
+  }
+
+  // 5 — we hold the claim: synth, store, index, charge once.
+  let minted;
+  try {
+    const refs = await loadDrawRefs(env);
+    minted = await synthesizeDraw(env, { prompt, refs });
+  } catch {
+    await picPost(env, "/pic/draw/fail", { key, retryAfter: Date.now() + 60_000 });
+    return json({ error: "draw_failed" }, { status: 502 });
+  }
+
+  const r2Key = `drawing/${key}.png`;
+  await env.VOICE.put(r2Key, minted.bytes);
+  await picPost(env, "/pic/draw/ready", { key, r2Key });
+
+  // The next family finds this drawing by its description-derived caption
+  // (§ 3.3) — upsert inline so the very next find sees it.
+  try {
+    const caption = captionForDrawing({ scope, text, description });
+    if (caption) {
+      const [vec] = await embed(env, [caption]);
+      await env.PICTURES.upsert([{
+        id: `drw_${key}`,
+        values: vec,
+        metadata: {
+          asset: `/api/v1/pictures/img/drw_${key}`,
+          source: "drawn",
+          status: "approved",
+          caption,
+          fitzgerald_role: jev.kind ?? "",
+          lens: jev.draw.framing,
+          caption_version: CFG.caption_version,
+        },
+      }]);
+    }
+  } catch { /* a missed index row costs nothing — the ledger still serves */ }
+
+  await usageRecord(env, { ns: DRAW_NS, uid, chars: 1 });
+  const newUsed = await drawBump(env, uid);
+  const leftAfter = Math.max(0, cap - newUsed);
+  return pngResponse(minted.bytes, headersFor(minted.cache, leftAfter));
+}
+
+/** GET /api/v1/pictures/allowance — headers x-pip-user / x-pip-license. */
+export async function handleAllowance(request, env) {
+  const uid = request.headers.get("x-pip-user");
+  if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
+  if (!(await checkLicense(
+    env.PIP_LICENSE_SECRET, uid, request.headers.get("x-pip-license")))) {
+    return json({ error: "bad_license" }, { status: 403 });
+  }
+  if (!env.VOICE) return json({ error: "pictures_unavailable" }, { status: 503 });
+  const tier = await entitlementFor(env, uid);
+  const cap = ALLOWANCE[tier] ?? ALLOWANCE.free;
+  const used = await drawUsed(env, uid);
+  return json({ left: Math.max(0, cap - used), total: cap });
+}
+
 /** GET /api/v1/pictures/img/<image_id> — license-gated streams for
  *  extended-library art (EXT_ART bucket) and drawn pictures (VOICE
  *  bucket `drawing/`). Catalog images are public/ statics and never
@@ -332,6 +651,14 @@ export async function handlePicturesAdmin(request, env, url) {
       info[name] = env[binding] ? await env[binding].describe().catch(() => null) : null;
     }
     return json(info);
+  }
+
+  // § 9 — founder view of recent drawings (newest first, paginated).
+  if (path === "/admin/v1/pictures/recent" && request.method === "GET") {
+    if (!env.TILE_LEDGER) return json({ error: "pictures_unavailable" }, { status: 503 });
+    const res = await pictureStub(env).fetch(new Request(
+      `https://tile/pic/draw/recent?before=${url.searchParams.get("before") ?? ""}&limit=${url.searchParams.get("limit") ?? ""}`));
+    return json(await res.json());
   }
 
   // Calibration page (§ 7): same pipeline as find, on the chosen index,

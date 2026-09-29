@@ -403,6 +403,32 @@ export class TileLedger {
       const { items } = (await body()) ?? {};
       return json({ items: pictureLedger.rankSignals(this.sql, items) });
     }
+    /** Draw ledger (030 § 5.1): claim is the single-flight gate — the DO
+     *  row decides who mints; the worker does synth/R2/index after. */
+    if (p === "/pic/draw/claim" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      return json(pictureLedger.claimDraw(this.sql, { ...b, now: this.now() }));
+    }
+    if (p === "/pic/draw/ready" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      pictureLedger.finishDraw(this.sql, { ...b, now: this.now() });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/draw/fail" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      pictureLedger.failDraw(this.sql, { ...b, now: this.now() });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/draw/row" && request.method === "GET") {
+      const row = pictureLedger.getDraw(this.sql, url.searchParams.get("key"));
+      return row ? json({ row }) : json({ error: "not_found" }, { status: 404 });
+    }
+    if (p === "/pic/draw/recent" && request.method === "GET") {
+      return json({ rows: pictureLedger.listDraws(this.sql, {
+        before: url.searchParams.get("before"),
+        limit: url.searchParams.get("limit"),
+      }) });
+    }
     if (p === "/usage" && request.method === "GET") {
       return json(ledger.mintedChars(this.sql, {
         from: Number(url.searchParams.get("from")) || 0,

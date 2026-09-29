@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "note": "030 § 5.3 / 010 slice 6 — normalized words and phrases the draw path refuses before any Jev or image call (422 unsafe). Whole-word match on text + description. Body parts, toileting and medicine words stay allowed — a child needs them. The founder edits this list.",
+  "terms": [
+    "porn", "pornography", "sex", "sexual", "orgasm", "masturbate", "masturbation",
+    "blowjob", "handjob", "dildo", "vibrator", "erection", "ejaculate",
+    "rape", "molest", "molestation", "incest", "necrophilia", "bestiality",
+    "suicide", "kill myself", "self harm", "self-harm", "cut myself",
+    "beheading", "decapitate", "decapitation", "dismember", "torture",
+    "cocaine", "heroin", "methamphetamine", "meth", "crack cocaine",
+    "fuck", "fucking", "shit", "cunt", "nigger", "faggot", "whore", "slut",
+    "cum", "tits", "boobs", "dick pic"
+  ]
+}

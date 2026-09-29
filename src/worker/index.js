@@ -11,7 +11,8 @@ import { handleSpeak } from "./voice.js";
 import { handleTransform } from "./transform.js";
 import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger } from "./tile.js";
 import {
-  handleFind, handleFindBatch, handlePictureImage, handlePicturesAdmin,
+  handleAllowance, handleDraw, handleFind, handleFindBatch,
+  handlePictureImage, handlePicturesAdmin,
 } from "./pictures.js";
 import { licenseFor } from "./license.mjs";
 
@@ -91,6 +92,12 @@ export default {
     }
     if (path === "/api/v1/pictures/find-batch" && request.method === "POST") {
       return handleFindBatch(request, env, ctx);
+    }
+    if (path === "/api/v1/pictures/draw" && request.method === "POST") {
+      return handleDraw(request, env, ctx);
+    }
+    if (path === "/api/v1/pictures/allowance" && request.method === "GET") {
+      return handleAllowance(request, env);
     }
     const picImgMatch = path.match(/^\/api\/v1\/pictures\/img\/([A-Za-z0-9_]+)$/);
     if (picImgMatch && request.method === "GET") {
