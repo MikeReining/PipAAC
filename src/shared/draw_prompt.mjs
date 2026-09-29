@@ -283,12 +283,12 @@ export const DRAW_JEV_QUESTIONS = {
   },
   social_scale: {
     type: "choice",
-    instructions: "What is the optimal social scale / number of human actors for this AAC concept?",
+    instructions: "How many human actors does this AAC concept need? A person is the LAST resort — prefer zero unless the meaning is unreadable without a human.",
     criteria: {
-      zero: "No humans (diagrams, inanimate objects, universal signs like stop, in, on, off)",
-      solo: "Exactly 1 person (individual action, private emotion, or self-reference like eat, drink, happy, I)",
-      pair: "Exactly 2 people (1-on-1 social transaction, hand-off, or partner reference like you, give, help)",
-      group: "3 or more people (collective concept, plural pronoun like we, they, group, all)",
+      zero: "No humans — diagrams, inanimate objects, universal signs (stop, in, on, off), and any state, texture, or quality that reads on a thing or scene alone (wet, dirty, hot, cold, empty, broken, new)",
+      solo: "Exactly 1 person — only when the concept is inseparable from a human body: physical actions (run, eat, sit), emotions and facial expressions (happy, sad), self-reference (I, me)",
+      pair: "Exactly 2 people — only for 1-on-1 social transactions, hand-offs, or partner references (you, give, help)",
+      group: "3 or more people — only for collective concepts and plural pronouns (we, they, all)",
     },
   },
 };
