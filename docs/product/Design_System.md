@@ -245,22 +245,32 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   help · Progress · Team & devices · Backup & privacy, then *You* → Your
   account. A page whose every row is hidden drops out of the list.
 - **Overview.** A setup checklist of measurable facts only (named;
-  people & places exist; recovery card shown on this device —
-  `cardShownAt` on the registry row), gone when done. Quick actions: Add
-  a word, Practice words (Spotlight), Edit the board. "How it's set up":
-  one line per page, read from the live controls.
+  people & places exist), gone when done. **Protect** card once the
+  board is invested (first customization: people, words, groups,
+  pictures, hidden or moved words, saved practice lists — `sync_op`
+  kinds; settings flips and the demo don't count): Lock Settings with a
+  PIN and Make the recovery card, whichever is missing, owners only.
+  Quick actions: Add a word, Practice words (Spotlight), Edit the board,
+  Replay the tour. "How it's set up": one line per page, read from the
+  live controls.
 - **Controls.** On/off is a switch, On on the right (`.seg[data-switch]`;
   the hidden buttons still carry the write). Real choices stay labelled
   options. Risky actions sit in a red-bordered block at the bottom of
   their page. A missing recovery card shows a warning dot on Backup &
-  privacy.
+  privacy — only once the board is invested.
 - **People.** The header switcher reloads into the chosen person and
   reopens the same page (one-shot `pip_reopen_settings`, written only
   inside Settings). "When Pip opens on this device": a person (`home`),
   or Show the list (no home → the launch list "Who's talking?").
-- **PIN.** One per device (`device/pin`, `public/shared/pin.mjs`);
-  legacy per-person PINs migrate on first good check. Change PIN asks
-  for the new PIN twice, never the old one. The PIN is never shown.
+- **PIN.** Off until someone asks for one (founder 2026-09-28): the
+  gear opens Settings with one tap. Backup & privacy → Settings PIN:
+  Lock Settings with a PIN (twice), Change PIN (never the old one), Turn
+  off the PIN. One per device (`device/pin`, `public/shared/pin.mjs`);
+  legacy per-person PINs still ask and migrate on first good check.
+  Never shown.
+- **Recovery card.** Asking for it on an unsynced board turns on the
+  encrypted sync first, then shows the card (`recovery-ui.js` →
+  devices-ui `ensureUser`); offline, it says so in one line.
 - **Search.** Word-start match over each row's text plus per-page
   synonyms (`SYNONYMS` in settings-ui.js); a hit opens the page and
   rings the row.
@@ -291,8 +301,32 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   stored: no account tag → Owner; through a supporter account → that
   account's `owner` flag. The last owner can't be demoted or removed.
 
-**PROPOSED** (from the proposal, not built yet): a "this board is mine"
-mode for adult communicators.
+## Welcome and first-run demo
+
+**DECIDED 2026-09-28** (founder: "get the user to a wow experience as
+quickly as possible"); **BUILT 2026-09-29**. No photos, PIN, backup or
+sign-in before the wow.
+
+- **Welcome** (`public/board/onramp-ui.js`, on a new person —
+  `needsSetup`): one screen, a name (optional) and "Who's it for?" — A
+  child / A teen or adult (`audience` on the registry row). A teen or
+  adult gets one more: "How should the buttons look?" — Pictures and
+  words / Words only, shown as real tiles. Mom and Dad stay on every
+  board. The old four-step "their world" form opens only from Settings.
+- **Demo** (`public/board/tour-ui.js`): want → apple (placed on the
+  Smart bar for the tour) → ✨ Fix it → "I want an apple." → ⏪ → "I
+  wanted an apple." → "Now try your own." Scripted, so it plays offline
+  and instantly; while it runs, board.js routes taps, the Smart bar and
+  the transforms to it and nothing reaches the tap log, stats or the
+  ranker. The last card says ✨ needs the internet on your own
+  sentences. **Open:** the founder confirms the live Fix it / past
+  output for "want apple" matches the script; optional recorded clips
+  (`/audio/onramp/i-want-an-apple.mp3`, `i-wanted-an-apple.mp3`) wait
+  for a founder listen (AGENTS.md) — until then the normal sentence
+  voice speaks.
+- **Words only** (Settings → Board → Buttons show; `presentation_mode`
+  'label', synced; `.words-only` in index.html): no pictures anywhere,
+  one shared text size, every cell and color unchanged.
 
 ## Open items (designer's "next" list)
 

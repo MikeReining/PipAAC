@@ -36,6 +36,8 @@ Pip AAC establishes that **presentation is a display filter over a stable coordi
 - Torso / icon accents match the Modified Fitzgerald Key color role.
 
 ### 2.2 Mode B: Label-Only (Text Mode)
+
+**BUILT 2026-09-29** as "Words only": Settings → Board → Buttons show, and the welcome's teen-or-adult question (`learner_profile.presentation_mode = 'label'`; `.words-only` in `public/index.html`; `docs/product/Design_System.md` § Welcome and first-run demo).
 - **Target Audience:** Literate autistic adults, teens, individuals with ALS, stroke/aphasia patients, and communicators transitioning to full orthographic reading.
 - **Visual Design:**
   - Hides all symbol graphics entirely.
