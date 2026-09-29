@@ -15,6 +15,11 @@ import { recordOp } from "./ops.mjs";
 const newId = (p) => `${p}_${crypto.randomUUID().replaceAll("-", "").slice(0, 12)}`;
 const one = (db, sql, p = []) => db.prepare(sql).all(...p)[0];
 
+/** A family that picked a device voice keeps it — their choice, never
+ *  our fallback (028 § 5.1: tts survives only for source='device_tts'). */
+const isDeviceTts = (db, voiceId) =>
+  one(db, "SELECT source FROM voice WHERE id = ?", [voiceId])?.source === "device_tts";
+
 /** Record or re-record an override. `id` is part of the op so replicas
  *  write the same row; re-applying the same op is a no-op. */
 export function setOverride(db, { id = newId("ovr"), itemKind, itemId, key, recordedText }) {
@@ -60,13 +65,14 @@ export function overrideFor(db, itemKind, itemId) {
  * clip whose recorded_text equals spoken_text; a device_tts voice
  * synthesizes; a bundled voice without a clip is silence.
  *
- * § 7.3 — an entity's override wins; else the name synthesizes (the
- * bundled library cannot contain Cooper — entities have always spoken
- * through the device voice, so TTS is the fallback regardless of the
- * resolved voice's source).
+ * § 7.3 — an entity's override wins; else the name resolves to the tile
+ * voice library (028): { type: 'tileclip', voice, locale, text } played
+ * through voice_tile.mjs. Device TTS answers only when the resolved
+ * voice is a device_tts voice — a family's choice, never the fallback
+ * for a bundled voice.
  *
- * item: { kind: 'sense'|'entity', id }. Returns
- * { type: 'clip', key } | { type: 'tts', text } | { type: 'silence' }.
+ * item: { kind: 'sense'|'entity'|'typed', id }. Returns
+ * { type: 'clip'|'tts'|'tileclip'|'silence', ... }.
  */
 export function resolveSlot(db, item, locale, voiceId) {
   if (item.kind === "sense") {
@@ -103,9 +109,12 @@ export function resolveSlot(db, item, locale, voiceId) {
       : { type: "silence" };
   }
   if (item.kind === "typed") {
-    // Keyboard text that resolved to no sense or entity — speak what
-    // was typed, exactly as written.
-    return item.text ? { type: "tts", text: item.text } : { type: "silence" };
+    // 028: keyboard text that resolved to no sense or entity plays its
+    // minted tile clip; silence on any failure, never a TTS fallback.
+    if (!item.text) return { type: "silence" };
+    return isDeviceTts(db, voiceId)
+      ? { type: "tts", text: item.text }
+      : { type: "tileclip", voice: voiceId, locale, text: item.text };
   }
   const ent = one(db,
     "SELECT spoken_name FROM personal_entity WHERE id = ?", [item.id]);
@@ -114,5 +123,9 @@ export function resolveSlot(db, item, locale, voiceId) {
     "SELECT key FROM clip_override WHERE entity_id = ? AND status = 'ready'",
     [item.id]);
   if (ovr) return { type: "clip", key: ovr.key, text: ent.spoken_name };
-  return { type: "tts", text: ent.spoken_name };
+  // 028: personal names resolve to the tile library clip (minted at
+  // add/rename) — device TTS only when the family chose a device voice.
+  return isDeviceTts(db, voiceId)
+    ? { type: "tts", text: ent.spoken_name }
+    : { type: "tileclip", voice: voiceId, locale, text: ent.spoken_name };
 }

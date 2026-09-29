@@ -19,7 +19,7 @@ export function mountKeyboard({
   sentence, getSentenceId, ensureSentence, getSentencePicks, setSentencePicks,
   startFresh,
   speakItem, speakSentence, renderBar, renderStrip, tap,
-  isTxBusy,
+  isTxBusy, tileEnsure,
   showGroupHint, applyLikely, fitLabels, senseById,
   grammar,
   getHighlightNext,
@@ -231,6 +231,12 @@ export function mountKeyboard({
     if (raw.punct) item.punct = raw.punct;
     if (raw.lead) item.lead = raw.lead;
     sentence[index] = item;
+    // 028 § 5.6: the committed word is the mint trigger — the clip fetch
+    // runs in the background; speech never waits on it and keystrokes
+    // never mint.
+    if (item.kind === "typed") {
+      tileEnsure?.(item.text, { source: "user_keyboard" }).catch(() => {});
+    }
     speakItem(item);
     if (item.id) {
       ensureSentence();

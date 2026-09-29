@@ -15,6 +15,7 @@ export function mountEditor({
   openAddForm, paintGroupPage,
   renderLibrary, invalidateIndex, setView, toast, close,
   savePhoto, syncUploadBlob,
+  tile,
 }) {
   /* --- the web editor (Sync_And_Web_Editing § 7): on a wide screen the
      app opens here — Library left, the real 10×6 group grid in the middle
@@ -95,10 +96,14 @@ export function mountEditor({
   $("ed-paste").addEventListener("input", renderPastePreview);
   $("ed-paste-add").addEventListener("click", () => {
     const gid = edTarget();
+    const newTexts = edPasteRows.filter((r) => r.kind === "new" && !r.already)
+      .map((r) => r.text);
     const res = applyPasteRows(db, edPasteRows, {
       groupId: gid,
       category: catalog.groups.find((g) => g.id === gid)?.category ?? null,
     });
+    // 028 § 5.3: the new words mint in the background, one at a time.
+    if (newTexts.length) tile?.prefetch(newTexts).catch(() => {});
     $("ed-paste").value = "";
     renderPastePreview();
     renderEditorGrid();
@@ -125,6 +130,7 @@ export function mountEditor({
       if (photo) syncUploadBlob(photo.bytes).catch(() => {});
       const { id } = createEntity(db, { name, photoKey: photo?.key ?? null, category });
       placeItem(db, gid, "entity", id);
+      tile?.ensure(name, { source: "user_typed" }).catch(() => {}); // 028 — mint the name's clip
       n++;
     }
     if (n) {

@@ -663,6 +663,21 @@
         color: var(--muted, #777);
         z-index: 3;
       }
+      /* 028 § 5.2: a tile whose shared voice clip is still being made
+         (or is queued) wears the state in the corner — supporter-facing,
+         the child never reads it. */
+      .vbadge {
+        position: absolute;
+        left: 6px;
+        bottom: 4px;
+        font-size: clamp(10px, 1.1vw, 14px);
+        font-weight: 700;
+        color: var(--muted, #777);
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 6px;
+        padding: 1px 5px;
+        z-index: 3;
+      }
       /* The placement sheet: tapped tile chip + count + ✎, then rows. */
       .ptile {
         flex: 1;
@@ -1543,7 +1558,9 @@
         <div class="row">
           <button class="btn secondary" id="wc-record">Record it</button>
           <button class="btn secondary" id="wc-revert" hidden>Use the voice again</button>
+          <button class="btn secondary" id="wc-voicetry" hidden>Try again</button>
         </div>
+        <p class="hint" id="wc-voice" hidden></p>
         <p class="hint" id="wc-rechint" hidden></p>
         <p class="hint" id="wc-scope">Picture, name, and recording change everywhere this word appears.</p>
         <div id="wc-groups"></div>

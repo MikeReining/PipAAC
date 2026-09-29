@@ -16,6 +16,7 @@ export function mountAddFlow({
   db, locale, all, catalog, open, close, toast,
   savePhoto, syncUploadBlob, loadPhotoURL, artInto,
   invalidateIndex, rerenderView, renderStrip, renderLibrary, openAddToBoards,
+  tile,
 }) {
   let addTarget = null; // board_group id the add form files into
   let addCell = null; // {page, slot_index} when + came from an empty slot
@@ -191,10 +192,20 @@ export function mountAddFlow({
 
   $("bulk-paste").addEventListener("input", renderBulkPreview);
   $("bulk-add").addEventListener("click", () => {
+    // 028 § 5.3: brand-new entity words mint one at a time after the
+    // rows land — hits for words the ledger already knows are free.
+    const newTexts = bulkRows.filter((r) => r.kind === "new" && !r.already)
+      .map((r) => r.text);
     const res = applyPasteRows(db, bulkRows, {
       groupId: bulkTarget,
       category: catalog.groups.find((g) => g.id === bulkTarget)?.category ?? null,
     });
+    if (newTexts.length) {
+      tile?.prefetch(newTexts, {
+        onProgress: (p) =>
+          toast(`Making ${tile.name()}'s voice, ${p.done + p.failed} of ${newTexts.length}`),
+      }).catch(() => {});
+    }
     close("bulkform");
     invalidateIndex();
     rerenderView();
@@ -234,6 +245,8 @@ export function mountAddFlow({
       category: catalog.groups.find((g) => g.id === gid)?.category ?? null,
       cell: addCell,
     });
+    const named = drafts.filter((d) => d.name).map((d) => d.name);
+    if (named.length) tile?.prefetch(named).catch(() => {});
     for (const d of photoDrafts) URL.revokeObjectURL(d.url);
     photoDrafts = [];
     close("photoform");
@@ -260,6 +273,9 @@ export function mountAddFlow({
     const category = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
     createEntity(db, { id, name, photoKey, category, hint, role: $("add-kind").value });
     placeItem(db, addTarget, "entity", id, addCell);
+    // 028 § 5.2: the save kicks off the voice mint in the background —
+    // the tile is usable in layout at once and plays when ready.
+    tile?.ensure(name, { source: "user_typed" }).catch(() => {});
     invalidateIndex();
     close("addform");
     rerenderView();

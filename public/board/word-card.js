@@ -18,6 +18,7 @@ const $ = (id) => document.getElementById(id);
 export function mountWordCard({
   db, locale, all, open, close, toast,
   metaFor, artInto, loadPhotoURL, savePhoto, syncUploadBlob, speakItem, xBadge,
+  tile,
   invalidateIndex, setView, rerenderView, renderStrip, renderGrid, flashCell,
   getCell, getGroupKey, setGroup, dropEntityPhoto, dropEntityRole, dropSenseMeta,
   openAddToBoards,
@@ -25,6 +26,26 @@ export function mountWordCard({
   let cardItem = null; // { item_kind, item_id, label } currently shown
   let recorder = null;
   let recChunks = [];
+
+  /** 028 § 5.1 — the card shows the shared-voice state for an entity
+   *  word: making/held/budget/failed, with Try again where it heals. */
+  function updateVoiceUI() {
+    const el = $("wc-voice");
+    if (!el) return;
+    const state = cardItem?.item_kind === "entity"
+      ? tile?.status(cardItem.label) : null;
+    el.hidden = !state || state === "ready";
+    el.textContent = state && state !== "ready"
+      ? (tile?.message(state, cardItem.label) ?? "") : "";
+    $("wc-voicetry").hidden = !["failed", "offline", "unavailable"].includes(state);
+  }
+  tile?.onStatus?.(() => updateVoiceUI());
+  $("wc-voicetry")?.addEventListener("click", () => {
+    if (cardItem?.item_kind === "entity") {
+      tile?.ensure(cardItem.label, { source: "user_typed" }).catch(() => {});
+      updateVoiceUI();
+    }
+  });
 
   function cardGroups() {
     return cardItem.item_kind === "entity"
@@ -109,6 +130,7 @@ export function mountWordCard({
     renderCardGroups();
     updateRecUI();
     updatePicUI();
+    updateVoiceUI();
     open("wordcard");
   }
 
@@ -185,6 +207,9 @@ export function mountWordCard({
     const name = $("wc-name").value.trim();
     if (!name || name === cardItem.label) { $("wc-name").value = cardItem.label; return; }
     renameEntity(db, cardItem.item_id, name);
+    // 028 § 5.2: a rename recomputes the clip key — the new name mints,
+    // the old clip stays in the ledger untouched.
+    tile?.ensure(name, { source: "user_typed" }).catch(() => {});
     cardItem.label = name;
     invalidateIndex(); // completions index the old spelling
     rerenderView();

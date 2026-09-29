@@ -85,13 +85,13 @@ test("a sentence bar speaks three slots; the overridden middle plays the overrid
   assert.ok(played[2].key.startsWith("audio/"));
 });
 
-test("an entity override beats TTS; rename supersedes it", () => {
+test("an entity override beats the shared clip; rename supersedes it", () => {
   const db = openDb();
   const { id } = createEntity(db, { name: "Cooper" });
-  // No override → the name synthesizes.
+  // No override → the name resolves to its minted tile clip (028 § 7.3).
   assert.deepEqual(
     resolveSlot(db, { kind: "entity", id }, "en", "voi_default_en"),
-    { type: "tts", text: "Cooper" });
+    { type: "tileclip", voice: "voi_default_en", locale: "en", text: "Cooper" });
   setOverride(db, { itemKind: "entity", itemId: id,
     key: "blob:" + "c".repeat(64), recordedText: "Cooper" });
   assert.equal(resolveSlot(db, { kind: "entity", id }, "en", "voi_default_en").key,
@@ -101,14 +101,14 @@ test("an entity override beats TTS; rename supersedes it", () => {
   assert.equal(overrideFor(db, "entity", id), null);
   assert.deepEqual(
     resolveSlot(db, { kind: "entity", id }, "en", "voi_default_en"),
-    { type: "tts", text: "Coop" });
+    { type: "tileclip", voice: "voi_default_en", locale: "en", text: "Coop" });
 });
 
-test("a typed word that resolves to nothing still speaks as typed", () => {
+test("a typed word that resolves to nothing plays its minted clip", () => {
   const db = openDb();
   assert.deepEqual(
     resolveSlot(db, { kind: "typed", id: null, text: "flurgle" }, "en", "voi_default_en"),
-    { type: "tts", text: "flurgle" });
+    { type: "tileclip", voice: "voi_default_en", locale: "en", text: "flurgle" });
 });
 
 test("re-record supersedes; override ops replay byte-identical", () => {

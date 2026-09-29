@@ -44,7 +44,9 @@ import {
   resolveActiveUser, touchOpened,
 } from "./shared/users.mjs";
 import { resolveSlot } from "./shared/voice.mjs";
+import { voiceName } from "./shared/voices.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
+import { tileStateBadge, tileStateMessage, voiceTile } from "./shared/voice_tile.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { PIN_RE, RESET_PHRASE, checkPin, clearPin, hasPin, isResetPhrase, setPin } from "./shared/pin.mjs";
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
@@ -287,6 +289,59 @@ function syncSpeed() {
 // catalog.json), so the id is one named seam until then.
 const sentenceVoice = voiceSentence();
 const grokVoice = "ara";
+// 028: tile voice library — entity names and committed typed words play
+// minted clips from Cache Storage + the ledger; never device TTS.
+const tileVoice = voiceTile();
+/* § 5.2 — the mint triggers are supporter actions (add, rename, bulk,
+   setup, a committed typed word); a child tap only ever fetches. The
+   states this tracks are what the tile badge and the word card show. */
+const tileApi = {
+  name: () => voiceName(db, voiceId),
+  status: (text) => tileVoice.status(voiceId, text),
+  message: (state, text) => tileStateMessage(state, voiceName(db, voiceId), text),
+  onStatus: (cb) => tileVoice.onStatus(cb),
+  /** Fire-and-forget mint for one word — returns the outcome so the
+   *  caller can message; failures that can heal are already queued. */
+  ensure: async (text, { source = "user_typed" } = {}) =>
+    tileVoice.ensure({
+      userId: me.id, license: await voiceLicense(),
+      voice: voiceId, locale, text, source,
+    }).catch(() => ({ ok: false, reason: "failed" })),
+  /** Sequential ensures (§ 5.3 bulk/prefetch) — hits are free, a budget
+   *  answer pauses the run. `voice` overrides the board voice for the
+   *  switch prefetch. */
+  prefetch: (texts, { voice = voiceId, onProgress } = {}) =>
+    voiceLicense().then((license) => tileVoice.prefetch({
+      userId: me.id, license, voice, locale, texts, onProgress,
+    })),
+};
+let tileBadgeTimer = null;
+tileVoice.onStatus(() => {
+  // Mint completions repaint the badge — debounced so a bulk run is one
+  // repaint, not fifty.
+  clearTimeout(tileBadgeTimer);
+  tileBadgeTimer = setTimeout(() => { renderGrid(); renderStrip(); rerenderView(); }, 200);
+});
+/* § 5.3 — prefetch on boot (idle) and the offline queue drain on
+   reconnect. Active entity names are the family's own words: hits are
+   free, misses mint inside the caps. */
+const tilePrefetch = async () => {
+  const texts = ALL(db,
+    "SELECT spoken_name AS t FROM personal_entity WHERE status = 'active'")
+    .map((r) => r.t);
+  await tileVoice.drainQueue({
+    userId: me.id, license: await voiceLicense() }).catch(() => {});
+  tileApi.prefetch(texts).catch(() => {});
+};
+if (typeof requestIdleCallback === "function") {
+  requestIdleCallback(() => tilePrefetch(), { timeout: 8000 });
+} else {
+  setTimeout(tilePrefetch, 3000);
+}
+addEventListener("online", () => {
+  voiceLicense().then((license) =>
+    tileVoice.drainQueue({ userId: me.id, license })).catch(() => {});
+});
 // 023: the bar's current shape — which tense it holds and whether it
 // is a question — drives the trio's selected state. Reset whenever
 // the bar empties (clear, backspace, after-speak fresh start).
@@ -376,10 +431,10 @@ async function playClip(key, { chained = false } = {}) {
 }
 
 /** Play a fetched audio blob through the same element clips use. */
-async function playBlob(blob) {
+async function playBlob(blob, { chained = false } = {}) {
   const src = URL.createObjectURL(blob);
   try {
-    endPlaying();
+    endPlaying({ chained });
     return await new Promise((resolve) => {
       playingResolve = () => resolve("cut");
       audio.src = src;
@@ -402,6 +457,17 @@ async function speakItem(item, { chained = false } = {}) {
   if (slot.type === "clip") {
     if (await playClip(slot.key, { chained })) return;
     if (!slot.text) return;
+  }
+  if (slot.type === "tileclip") {
+    // 028 § 5.1: cache hit plays; a miss is one ledger fetch behind a
+    // deadline — the fill lands for the next tap. Any failure is the
+    // silent slot; tiles never speak through the device voice.
+    const r = await tileVoice.request({
+      userId: me.id, license: await voiceLicense(),
+      voice: slot.voice, locale: slot.locale, text: slot.text,
+    }).catch(() => null);
+    if (r?.ok && (await playBlob(r.blob, { chained })) !== false) return;
+    return new Promise((r2) => setTimeout(r2, SILENT_SLOT_MS));
   }
   if (slot.type === "tts" || slot.type === "clip") {
     endPlaying({ chained });
@@ -1471,6 +1537,15 @@ let movedSet = new Set();
 function homeTile(c, masked = maskedSenseIds(db)) {
   if (c.kind === "entity") {
     const el = wordTile({ label: c.label, role: c.fitzgerald_role ?? "Yellow" });
+    // 028 § 5.2: the supporter sees the voice state on the tile while a
+    // mint is in flight or queued. The child hears silence until ready.
+    const vst = tileApi.status(c.label);
+    if (vst && vst !== "ready") {
+      const b = document.createElement("span");
+      b.className = "vbadge";
+      b.textContent = tileStateBadge(vst);
+      el.appendChild(b);
+    }
     loadPhotoURL(photoFor(c.entity_id)).then((url) => {
       if (!url) return;
       const img = document.createElement("img");
@@ -1943,6 +2018,9 @@ const kbUi = mountKeyboard({
       formFor(db, formTable, ctxItems, senseId, nextItem),
     revisit: (index) => revisitPrev(index),
   },
+  // 028 § 5.6: a committed typed word mints in the background — never
+  // per keystroke.
+  tileEnsure: (text, opts) => tileApi.ensure(text, opts),
   getHighlightNext: () => highlightNext,
   getView: () => view,
   // Every view change repaints the bar: opening a group is intent — the
@@ -2235,6 +2313,7 @@ addUi = mountAddFlow({
   invalidateIndex: () => kbUi.invalidateIndex(),
   rerenderView, renderStrip, renderLibrary: () => libUi.renderLibrary(),
   openAddToBoards: (item) => groupsUi.openAddToBoards(item),
+  tile: tileApi,
 });
 
 /* Word library — public/board/library-ui.js */
@@ -2247,6 +2326,7 @@ libUi = mountLibrary({
 wordCard = mountWordCard({
   db, locale, all: ALL, open, close, toast,
   metaFor, artInto, loadPhotoURL, savePhoto, syncUploadBlob, speakItem, xBadge,
+  tile: tileApi,
   invalidateIndex: () => kbUi.invalidateIndex(),
   setView: (v) => kbUi.setView(v),
   rerenderView, renderStrip, renderGrid, flashCell,
@@ -2331,6 +2411,7 @@ const placeUi = mountPlacePicker({
 const setupUi = mountSetup({
   db, locale, catalog, open, close, toast,
   savePhoto, syncUploadBlob, me, saveUser, flushDb,
+  tile: tileApi,
   invalidateIndex: () => kbUi.invalidateIndex(),
   renderGrid, rerenderView, renderStrip,
 });
@@ -2385,7 +2466,24 @@ function senseIdOf(text) {
 const voiceUi = mountVoice({
   db, locale, open,
   getVoiceId: () => voiceId,
-  chooseVoice: (id) => {
+  chooseVoice: async (id) => {
+    if (id === voiceId) return;
+    // 028 § 5.4: the old voice keeps playing while the new voice's clips
+    // fill (hits for seeded words, mints for the family's own). Only a
+    // clean fill swaps — failures leave the old voice active.
+    const texts = ALL(db,
+      "SELECT spoken_name AS t FROM personal_entity WHERE status = 'active'")
+      .map((r) => r.t);
+    toast(`Making ${voiceName(db, id)}'s voice…`);
+    const res = await tileApi.prefetch(texts, {
+      voice: id,
+      onProgress: (p) =>
+        toast(`Making ${voiceName(db, id)}'s voice, ${p.done + p.failed} of ${texts.length}`),
+    });
+    if (res.failed) {
+      toast(`Couldn't finish ${voiceName(db, id)}'s voice — try again when you're online.`);
+      return;
+    }
     setSetting(db, "preferred_voice_id", id);
     voiceId = resolveProfile(db).voiceId;
     settingsUi.renderNav();
@@ -2467,6 +2565,7 @@ editorUi = mountEditor({
   invalidateIndex: () => kbUi.invalidateIndex(),
   setView: (v) => kbUi.setView(v),
   toast, close, savePhoto, syncUploadBlob,
+  tile: tileApi,
 });
 
 // A session survives a restart (013 § 4): the synced row lights the

@@ -16,6 +16,7 @@ const $ = (id) => document.getElementById(id);
 export function mountSetup({
   db, locale, catalog, open, close, toast,
   savePhoto, syncUploadBlob, me, saveUser, flushDb,
+  tile,
   invalidateIndex, renderGrid, rerenderView, renderStrip,
 }) {
   let step = 0;
@@ -140,14 +141,21 @@ export function mountSetup({
       }
       if (!names.length && !drafts.length) return;
       applySetupPeople(db, { names, drafts, locale, category: categoryOf("people") });
+      // 028: the family's own words mint in the background — every name
+      // the supporter just typed is a new tile clip.
+      const minted = [...names, ...drafts.map((d) => d.name)].filter(Boolean);
+      if (minted.length) tile?.prefetch(minted).catch(() => {});
     } else {
       const rows = resolvePasteRows(db, $("setup-paste").value, {
         groupId: stepGroup(m.key), locale,
       });
       if (!rows.some((r) => !r.already)) return;
+      const newTexts = rows.filter((r) => r.kind === "new" && !r.already)
+        .map((r) => r.text);
       applyPasteRows(db, rows, {
         groupId: stepGroup(m.key), category: categoryOf(m.key),
       });
+      if (newTexts.length) tile?.prefetch(newTexts).catch(() => {});
     }
     wrote = true;
   }

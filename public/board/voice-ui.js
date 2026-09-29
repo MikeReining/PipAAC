@@ -38,7 +38,10 @@ export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample }
       c.append(el("span", "voice-badge current", "In use"));
     } else {
       const pick = el("button", "btn voice-pick", "Use this voice");
-      pick.onclick = () => { chooseVoice(v.id); renderSheet(); renderRow(); };
+      // 028 § 5.4: chooseVoice waits for the new voice's clips before
+      // swapping — the picker redraws when it lands (or stays put on
+      // failure, with the old voice still checked).
+      pick.onclick = async () => { await chooseVoice(v.id); renderSheet(); renderRow(); };
       c.append(pick);
     }
     return c;
