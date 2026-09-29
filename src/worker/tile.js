@@ -406,13 +406,27 @@ export class TileLedger {
     if (p === "/audio" && request.method === "GET") {
       const row = ledger.getClip(this.sql, url.searchParams.get("id"));
       if (!row?.r2_key) return json({ error: "not_found" }, { status: 404 });
-      const obj = await this.env.VOICE.get(row.r2_key).catch(() => null);
-      if (!obj) return json({ error: "not_found" }, { status: 404 });
-      return new Response(obj.body, {
+      const bytes = await this.clipBytes(row);
+      if (!bytes) return json({ error: "not_found" }, { status: 404 });
+      return new Response(bytes, {
         headers: { "content-type": "audio/mpeg", "x-tile-version": String(row.version) },
       });
     }
     return json({ error: "not_found" }, { status: 404 });
+  }
+
+  /** Ready-row audio may live in VOICE (minted tiles) or in the shipped
+   *  static bundle (catalog seeds point at audio/… which is in
+   *  public/, not the VOICE bucket). R2 first, then ASSETS. */
+  async clipBytes(row) {
+    const obj = await this.env.VOICE.get(row.r2_key).catch(() => null);
+    if (obj) return obj.arrayBuffer();
+    if (row.r2_key.startsWith("audio/") && this.env.ASSETS) {
+      const res = await this.env.ASSETS
+        .fetch(`https://assets/${row.r2_key}`).catch(() => null);
+      if (res?.ok) return res.arrayBuffer();
+    }
+    return null;
   }
 
   /** The mint path (§ 3): ready → stream; withheld → 409; failed inside
@@ -424,13 +438,12 @@ export class TileLedger {
     const row = ledger.getClip(this.sql, id);
 
     if (row?.status === "ready" && row.r2_key) {
-      const obj = await this.env.VOICE.get(row.r2_key).catch(() => null);
-      if (obj) {
+      const bytes = await this.clipBytes(row);
+      if (bytes) {
         ledger.touchHit(this.sql, id);
-        return audioResponse(await obj.arrayBuffer(), {
-          cache: "hit", version: row.version });
+        return audioResponse(bytes, { cache: "hit", version: row.version });
       }
-      // R2 object gone — demote the row so claimMint can reclaim it,
+      // No bytes anywhere — demote the row so claimMint can reclaim it,
       // then fall through and re-mint (claimMint refuses 'ready').
       ledger.missingObject(this.sql, id);
     }
@@ -480,9 +493,9 @@ export class TileLedger {
       const row = ledger.getClip(this.sql, id);
       if (!row) return { kind: "json", data: { error: "mint_failed" }, status: 502 };
       if (row.status === "ready" && row.r2_key) {
-        const obj = await this.env.VOICE.get(row.r2_key).catch(() => null);
-        if (obj) {
-          return { kind: "audio", bytes: await obj.arrayBuffer(),
+        const bytes = await this.clipBytes(row);
+        if (bytes) {
+          return { kind: "audio", bytes,
             cache: "hit", version: row.version };
         }
       }
