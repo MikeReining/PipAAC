@@ -722,6 +722,39 @@
         padding: 0;
       }
       .hint { color: #777; font-size: 14px; }
+      /* The Settings PIN sheet: digits spaced and centered; the reset
+         phrase reads as a plain word. Empty lines take no room. */
+      #pin-body { display: flex; flex-direction: column; gap: 8px; }
+      #pin-body .hint { font-size: 15px; line-height: 1.4; color: var(--muted); }
+      #pin-body .hint:empty { display: none; }
+      #pin-hint strong { color: var(--ink); }
+      #pin-input {
+        width: 100%;
+        font-size: 26px;
+        letter-spacing: 8px;
+        text-align: center;
+        padding: 10px 12px;
+        border: 2px solid var(--line);
+        border-radius: 10px;
+      }
+      #pin-input::placeholder { letter-spacing: normal; font-size: 18px; color: #aaa; }
+      #pin-input.phrase { font-size: 20px; letter-spacing: normal; }
+      #pin-input:focus { outline: none; border-color: var(--ink); }
+      #pin-body #pin-error { color: #a33; font-weight: 600; }
+      .pin-forgot {
+        align-self: center;
+        border: 0;
+        background: none;
+        font: inherit;
+        font-size: 15px;
+        color: var(--muted);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        padding: 8px 12px;
+        min-height: 44px;
+        cursor: pointer;
+      }
+      .pin-forgot[hidden] { display: none; }
 
     </style>
   </head>
@@ -1370,23 +1403,22 @@
       </div>
     </div>
 
-    <!-- 023 §1e: the Settings PIN — a speed bump for little fingers,
-         created on first open, recovered with the license key. -->
+    <!-- 023 §1e: the Settings PIN — a speed bump for little fingers.
+         Forgot → type the reset phrase → choose a new one. -->
     <div class="overlay" id="pinform">
       <div class="sheet">
         <h2 id="pin-title">Settings PIN</h2>
         <div id="pin-body">
           <p class="hint" id="pin-hint"></p>
           <input type="password" id="pin-input" inputmode="numeric"
-                 autocomplete="off" maxlength="6" placeholder="4–6 digits"
-                 style="font-size:24px; letter-spacing:6px; text-align:center; width:100%;" />
-          <p class="hint" id="pin-error" style="color:#a33;"></p>
-          <p class="hint"><a href="#" id="pin-forgot">Forgot the PIN?</a></p>
+                 autocomplete="off" autocapitalize="off" spellcheck="false" />
+          <p class="hint" id="pin-error" role="alert"></p>
         </div>
         <div class="row">
           <button class="btn" id="pin-go">Open</button>
           <button class="btn secondary" data-close>Close</button>
         </div>
+        <button type="button" class="pin-forgot" id="pin-forgot">Forgot the PIN?</button>
       </div>
     </div>
 

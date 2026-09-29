@@ -421,11 +421,11 @@ them yet.
    device; **stored** as a SHA-256 hash in the device keyStore — per
    device, never synced (the tablet's PIN is the tablet's; a synced
    column would ride the Ara catalog anyway). **Asked on every open** —
-   no unlock session, so a handed-back tablet re-asks. **Recovered** by
-   an adult credential: the license key (device-local copy) or the QR
-   card's root (verified against the stored root). Devices activated
-   before 024 slice 2 that never kept a license and whose tablet holds
-   no recovery root have no proof on file — re-activation is the reset.
+   no unlock session, so a handed-back tablet re-asks. **Forgot**
+   (founder 2026-09-29): type the reset phrase "new pin", then choose a
+   new PIN twice — no license or QR card, since most boards have
+   neither and a family must never be locked out of their own Settings.
+   The board is never touched.
    Parent corner (settings + all edit entry points) is gated.
 5. **Message-bar tap to speak:** **decided yes** — the message bar is the
    largest target and the natural "say this" gesture; a tap speaks

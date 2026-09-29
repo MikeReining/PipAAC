@@ -270,7 +270,8 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   Lock Settings with a PIN (twice), Change PIN (never the old one), Turn
   off the PIN. One per device (`device/pin`, `public/shared/pin.mjs`);
   legacy per-person PINs still ask and migrate on first good check.
-  Never shown.
+  Never shown. Forgot the PIN? → type "new pin" → choose a new one;
+  one path, no license or card, the words untouched.
 - **Recovery card.** Asking for it on an unsynced board turns on the
   encrypted sync first, then shows the card (`recovery-ui.js` →
   devices-ui `ensureUser`); offline, it says so in one line.

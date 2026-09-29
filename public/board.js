@@ -46,7 +46,7 @@ import {
 import { resolveSlot } from "./shared/voice.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
-import { PIN_RE, checkPin, clearPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
+import { PIN_RE, RESET_PHRASE, checkPin, clearPin, hasPin, isResetPhrase, setPin } from "./shared/pin.mjs";
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
 import { applyTransform, wordLemmaCandidates } from "./shared/txbar.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
@@ -1732,11 +1732,11 @@ document.addEventListener("keydown", (e) => {
   if ($("kb-device")) kbUi.feed(e.key);
   else kbUi.press(e.key);
 });
-/** 023 §1e — the Settings PIN gates Settings. First open creates it on
- *  this device; every later open asks; Forgot accepts the license key
- *  or the QR card (verifyAdult), then a new PIN is set. `change` (from
- *  Settings → Backup & privacy) asks for the new PIN twice and never
- *  for the old one: the gate was just passed. */
+/** 023 §1e — the Settings PIN gates Settings. Every open asks once a
+ *  PIN is set. Forgot: type the reset phrase, then choose a new PIN
+ *  twice — the words are never touched. `change` (from Settings →
+ *  Backup & privacy) asks for the new PIN twice and never for the old
+ *  one: the gate was just passed. */
 const PIN_SHARE_HINT = "Pick one you're happy to share with the team. Don't reuse your phone or bank PIN.";
 async function gatePin(onOk, { change = false } = {}) {
   const overlay = $("pinform"), input = $("pin-input"),
@@ -1747,19 +1747,20 @@ async function gatePin(onOk, { change = false } = {}) {
   // No PIN yet: Settings opens with one tap (founder 2026-09-28).
   if (!change && !locked) return onOk();
   let mode = change ? "new" : "check";
+  let reset = false;
   let first = "";
   const render = () => {
+    const phrase = mode === "forgot";
     err.textContent = "";
     input.value = "";
-    input.type = mode === "forgot" ? "text" : "password";
-    input.inputMode = mode === "forgot" ? "text" : "numeric";
+    input.type = phrase ? "text" : "password";
+    input.inputMode = phrase ? "text" : "numeric";
+    input.maxLength = phrase ? 20 : 6;
+    input.classList.toggle("phrase", phrase);
+    input.placeholder = phrase ? "" : mode === "check" ? "Enter PIN" : "4–6 digits";
     forgot.hidden = mode !== "check";
-    if (mode === "create") {
-      title.textContent = "Choose a PIN";
-      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Settings. " + PIN_SHARE_HINT;
-      go.textContent = "Set PIN";
-    } else if (mode === "new") {
-      title.textContent = locked ? "New Settings PIN" : "Choose a PIN";
+    if (mode === "new") {
+      title.textContent = reset ? "Choose a new PIN" : locked ? "New Settings PIN" : "Choose a PIN";
       hint.textContent = "4–6 digits, for everyone on this device. " + PIN_SHARE_HINT;
       go.textContent = "Next";
     } else if (mode === "confirm") {
@@ -1771,10 +1772,12 @@ async function gatePin(onOk, { change = false } = {}) {
       hint.textContent = "";
       go.textContent = "Open";
     } else {
-      title.textContent = "Reset the PIN";
-      hint.textContent =
-        "Paste the license key or the QR card's code — only an adult has either. You will pick a new PIN next.";
-      go.textContent = "Check";
+      title.textContent = "Forgot the PIN?";
+      const word = document.createElement("strong");
+      word.textContent = RESET_PHRASE;
+      hint.replaceChildren("Your words stay just as they are. To choose a new PIN, type ",
+        word, " below.");
+      go.textContent = "Continue";
     }
     input.focus();
   };
@@ -1783,12 +1786,13 @@ async function gatePin(onOk, { change = false } = {}) {
     const v = input.value.trim();
     if (mode === "check") {
       if (await checkPin(store, me.id, v)) return finish();
+      input.value = "";
       err.textContent = "Not that PIN.";
       return;
     }
     if (mode === "forgot") {
-      if (await verifyAdult(store, me.id, v)) { mode = "create"; render(); }
-      else err.textContent = "That does not match this board's license or recovery card.";
+      if (isResetPhrase(v)) { reset = true; mode = "new"; render(); }
+      else err.textContent = `Type the two words: ${RESET_PHRASE}`;
       return;
     }
     if (!PIN_RE.test(v)) { err.textContent = "4–6 digits."; return; }
@@ -1799,13 +1803,15 @@ async function gatePin(onOk, { change = false } = {}) {
       return;
     }
     await setPin(store, me.id, v);
-    if (change) toast(locked ? "Settings PIN changed." : "Settings is locked with a PIN.");
+    if (reset) toast("New PIN saved.");
+    else if (change) toast(locked ? "Settings PIN changed." : "Settings is locked with a PIN.");
     finish();
   };
   input.onkeydown = (e) => { if (e.key === "Enter") go.click(); };
-  forgot.onclick = (e) => { e.preventDefault(); mode = "forgot"; render(); };
+  forgot.onclick = () => { mode = "forgot"; render(); };
   render();
   overlay.classList.add("open");
+  input.focus();
 }
 
 /* Settings — public/board/settings-ui.js owns the page navigation;

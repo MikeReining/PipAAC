@@ -26,18 +26,16 @@
  * - **Never shown.** Only the hash is kept, so the app cannot display
  *   the digits — the child watching is the threat, and adults reuse
  *   phone PINs. Settings changes it (no old PIN: the gate was just
- *   passed); Forgot resets it with the license or recovery card.
- * - **Recovered** with the license key — the same pip-life token that
- *   activated Pip, compared against the device-local copy 024 keeps.
- *   A child can't type a 20+-char license. If the device has no stored
- *   license (activated before 024 slice 2), the parent re-enters the
- *   key once in Parent corner → Devices, and it is kept thereafter.
+ *   passed).
+ * - **Forgot** is one path anyone holding the tablet can finish: type
+ *   the reset phrase, then choose a new PIN. A young child can't read
+ *   or spell it; an adult types it in two seconds. No license or QR
+ *   card — most boards have neither, and a gate that can lock a family
+ *   out of their own Settings for good is worse than the speed bump it
+ *   protects (founder 2026-09-29). The board is never touched.
  * - **Asked on every open.** No unlock session: mom finishes, hands
  *   the tablet back, and the very next tap is the child's again.
  */
-
-import { recoverFromText } from "./recovery.mjs";
-import { RECOVERY_WORDS } from "./recovery_words.mjs";
 
 const te = new TextEncoder();
 const hex = (buf) =>
@@ -45,7 +43,6 @@ const hex = (buf) =>
 
 const DEVICE_PIN = "device/pin";
 const legacyPinKey = (userId) => `user/${userId}/pin`;
-const licenseKey = (userId) => `user/${userId}/license`;
 
 export const PIN_RE = /^\d{4,6}$/;
 
@@ -80,23 +77,10 @@ export async function checkPin(store, userId, pin) {
   return true;
 }
 
-/** Recovery: verify an adult credential, then the caller sets a new
- *  PIN. Two proofs, both things only a parent can produce:
- *  - the license key — verbatim compare against the device-local copy
- *    (issued by the server, verified at activation, never leaves);
- *  - the QR card / recovery sheet — decodes to the root, compared
- *    against the device's own `user/<id>/root`. Paired devices hold
- *    wrapped keys, not the root — they use the license instead. */
-export async function verifyAdult(store, userId, text) {
-  const t = String(text).trim();
-  if (t.startsWith("pip-life-")) {
-    return (await store.get(licenseKey(userId))) === t;
-  }
-  const rec = await recoverFromText(t, RECOVERY_WORDS).catch(() => null);
-  if (!rec || rec.userId.toLowerCase() !== userId.toLowerCase()) return false;
-  const stored = await store.get(`user/${userId}/root`);
-  if (!stored || stored.length !== rec.root.length) return false;
-  let same = true;
-  for (let i = 0; i < stored.length; i++) if (stored[i] !== rec.root[i]) same = false;
-  return same;
+/** Forgot: the words an adult types to choose a new PIN. Case and
+ *  spacing don't matter. */
+export const RESET_PHRASE = "new pin";
+
+export function isResetPhrase(text) {
+  return String(text).trim().toLowerCase().replace(/\s+/g, " ") === RESET_PHRASE;
 }
