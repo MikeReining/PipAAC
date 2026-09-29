@@ -1,5 +1,9 @@
 /* Groups: an in-place board mode, same geometry as the core grid. */
-#groupgrid { flex: 1; display: none; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(6, 1fr); gap: var(--gap); }
+/* min-height: 0 — a flex child's auto minimum is its content height,
+   and tall tile art can force the group page taller than the board's
+   leftover, inflating cells and labels. It must take exactly #grid's
+   share. */
+#groupgrid { flex: 1; min-height: 0; display: none; grid-template-columns: repeat(10, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); gap: var(--gap); }
 body.groups #grid { display: none; }
 body.groups #groupgrid { display: grid; }
 /* Group cells: same footprint as .cell. Neutral navigation color —

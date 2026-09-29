@@ -1508,8 +1508,8 @@ function renderGrid() {
     return el;
   };
   const grid = $("grid");
-  grid.style.gridTemplateColumns = `repeat(${geom.cols}, 1fr)`;
-  grid.style.gridTemplateRows = `repeat(${geom.rows}, 1fr)`;
+  grid.style.gridTemplateColumns = `repeat(${geom.cols}, minmax(0, 1fr))`;
+  grid.style.gridTemplateRows = `repeat(${geom.rows}, minmax(0, 1fr))`;
   sizeStrip(geom.cols);
   grid.innerHTML = "";
   cellEls.clear();

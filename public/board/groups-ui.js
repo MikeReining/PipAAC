@@ -187,8 +187,8 @@ export function mountGroups({
     const zg = $("groupgrid");
     zg.innerHTML = "";
     const { cols, rows: nRows, cells, name: layout } = boardGeom();
-    zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    zg.style.gridTemplateRows = `repeat(${nRows}, 1fr)`;
+    zg.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+    zg.style.gridTemplateRows = `repeat(${nRows}, minmax(0, 1fr))`;
     const editing = getEditing();
     // Row 0 is reserved on the index too (doors start at canonical slot
     // 10): it shows the home board's tiles under the same rule as a group
@@ -365,8 +365,8 @@ export function mountGroups({
     zg.innerHTML = "";
     const { cols, rows, cells, name: layout } = boardGeom();
     const geom = geometryOf(db, layout);
-    zg.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    zg.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    zg.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+    zg.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
     const items = new Map(groupPage(db, group, page, locale, layout).map((r) => [r.slot_index, r]));
     const pages = pageCount(db, group, layout);
     const topRowOn = profileFlag("group_top_row");
