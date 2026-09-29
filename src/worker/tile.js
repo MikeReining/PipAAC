@@ -403,6 +403,14 @@ export class TileLedger {
       const { items } = (await body()) ?? {};
       return json({ items: pictureLedger.rankSignals(this.sql, items) });
     }
+    /** § 6.2 anonymous pick — the caller sends the signals key, never a
+     *  personal name (the Worker resolves scope before this call). */
+    if (p === "/pic/pick" && request.method === "POST") {
+      const { text_norm, image_id } = (await body()) ?? {};
+      if (!text_norm || !image_id) return json({ error: "bad_request" }, { status: 400 });
+      pictureLedger.recordPick(this.sql, { textNorm: text_norm, imageId: image_id });
+      return new Response(null, { status: 204 });
+    }
     /** Draw ledger (030 § 5.1): claim is the single-flight gate — the DO
      *  row decides who mints; the worker does synth/R2/index after. */
     if (p === "/pic/draw/claim" && request.method === "POST") {

@@ -275,6 +275,59 @@ export async function handleFindBatch(request, env, ctx) {
   return json({ results });
 }
 
+/* ------------------------------ pick (§ 6.2) ------------------------------ */
+
+const PICK_NS = "usage-pick";
+const PICK_DAY = 200; // § 6.2 — one account cannot steer everyone's ranking
+const PICK_MIN = 30;
+
+/** POST /api/v1/pictures/pick {user_id, license, text, description?,
+ *  image_id} → 204. Anonymous crowd signal: the row key is the § 3.3
+ *  signals key, so a personal pick stores the description, never a name —
+ *  scope comes from Jev (the client can hint but never decides). */
+export async function handlePick(request, env, ctx) {
+  const body = await request.json().catch(() => null);
+  const uid = typeof body?.user_id === "string" ? body.user_id : null;
+  if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
+  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license))) {
+    return json({ error: "bad_license" }, { status: 403 });
+  }
+  const text = cleanText(body?.text, TEXT_MAX);
+  const description = cleanText(body?.description, DESC_MAX);
+  const imageId = typeof body?.image_id === "string" ? body.image_id.slice(0, 128) : null;
+  if (!text || (body?.description != null && description === null) || !imageId) {
+    return json({ error: "bad_request" }, { status: 400 });
+  }
+  if (!env.VOICE || !env.TILE_LEDGER) {
+    return json({ error: "pictures_unavailable" }, { status: 503 });
+  }
+  const guard = await usageCheck(env, {
+    ns: PICK_NS, uid, chars: 1, maxChars: 1, dayBudget: PICK_DAY, minBudget: PICK_MIN,
+  });
+  if (!guard.allowed) {
+    await usageRecord(env, { ns: PICK_NS, uid, chars: 0, over: guard.over });
+    return json({ error: "fair_use", over: guard.over }, { status: 429 });
+  }
+
+  let jev;
+  try {
+    jev = await classify(env, { text, description });
+  } catch {
+    jev = { scope: body?.scope === "personal" && description ? "personal" : "common" };
+  }
+  const scope = jev.scope === "personal" ? "personal" : "common";
+  if (scope === "personal" && !description) {
+    return json({ error: "bad_description" }, { status: 400 });
+  }
+  const textNorm = signalsKey(scope, text, description);
+  if (!textNorm) return json({ error: "bad_request" }, { status: 400 });
+
+  const res = await picPost(env, "/pic/pick", { text_norm: textNorm, image_id: imageId });
+  if (!res.ok) return json({ error: "pick_failed" }, { status: 502 });
+  await usageRecord(env, { ns: PICK_NS, uid, chars: 1 });
+  return new Response(null, { status: 204 });
+}
+
 /* ------------------------------ draw (§ 5) ------------------------------ */
 
 const DRAW_NS = "usage-draw";

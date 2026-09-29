@@ -115,6 +115,16 @@ export function rankSignals(sql, items) {
   return out;
 }
 
+/** § 6.2 — the anonymous crowd signal. One row per (text_norm, image_id);
+ *  text_norm is the § 3.3 signals key (description for personal scope),
+ *  so a name can never be the row key. */
+export function recordPick(sql, { textNorm, imageId }) {
+  sql.exec(
+    `INSERT INTO pic_pick (text_norm, image_id, count) VALUES (?, ?, 1)
+     ON CONFLICT (text_norm, image_id) DO UPDATE SET count = count + 1`,
+    textNorm, imageId);
+}
+
 /* ------------------------------ draws ------------------------------ */
 
 export function getDraw(sql, key) {

@@ -12,7 +12,7 @@ import { handleTransform } from "./transform.js";
 import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger } from "./tile.js";
 import {
   handleAllowance, handleDraw, handleFind, handleFindBatch,
-  handlePictureImage, handlePicturesAdmin,
+  handlePick, handlePictureImage, handlePicturesAdmin,
 } from "./pictures.js";
 import { licenseFor } from "./license.mjs";
 
@@ -92,6 +92,9 @@ export default {
     }
     if (path === "/api/v1/pictures/find-batch" && request.method === "POST") {
       return handleFindBatch(request, env, ctx);
+    }
+    if (path === "/api/v1/pictures/pick" && request.method === "POST") {
+      return handlePick(request, env, ctx);
     }
     if (path === "/api/v1/pictures/draw" && request.method === "POST") {
       return handleDraw(request, env, ctx);

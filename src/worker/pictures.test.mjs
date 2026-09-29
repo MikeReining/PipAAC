@@ -423,3 +423,85 @@ test("img route: ext_* streams from EXT_ART, drw_* from VOICE, 403/404 gates", a
   assert.equal((await get("drw_zzzz")).status, 404);
   assert.equal((await get("img_0001")).status, 404);
 });
+
+/* --------------------------------- WT12: picks --------------------------------- */
+
+const pick = async (env, body, uid = UID) =>
+  worker.fetch(new Request("https://x/api/v1/pictures/pick", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      user_id: uid, license: await licenseFor(SECRET, uid), ...body,
+    }),
+  }), env);
+
+test("pick: 204, anonymous row keyed by normalized text, no identity", async () => {
+  const env = makeEnv();
+  const r = await pick(env, { text: "  Apple ", image_id: "img_banana" });
+  assert.equal(r.status, 204);
+  const rows = env.__db.prepare("SELECT * FROM pic_pick").all();
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].text_norm, "apple");
+  assert.equal(rows[0].image_id, "img_banana");
+  assert.equal(rows[0].count, 1);
+  for (const v of Object.values(rows[0])) {
+    assert.ok(!String(v).includes(UID));
+    assert.ok(!/pip-life-/.test(String(v)));
+  }
+  // a second pick for the same pair bumps the count, not the row count
+  await pick(env, { text: "apple", image_id: "img_banana" });
+  assert.equal(env.__db.prepare("SELECT count FROM pic_pick").all()[0].count, 2);
+});
+
+test("WT12: a pick moves the score by pick_weight*log1p(n)", async () => {
+  const env = makeEnv();
+  await seedIndex(env);
+  const scoreFor = async () => {
+    const { candidates } = await (await find(env, { text: "apple" })).json();
+    return candidates.find((c) => c.image_id === "img_banana")?.score ?? null;
+  };
+  const before = await scoreFor();
+  await pick(env, { text: "apple", image_id: "img_banana" });
+  const after1 = await scoreFor();
+  await pick(env, { text: "apple", image_id: "img_banana" });
+  const after2 = await scoreFor();
+  const w = 0.05; // picture_finder.json pick_weight
+  assert.ok(Math.abs((after1 - before) - w * Math.log1p(1)) < 1e-9);
+  assert.ok(Math.abs((after2 - before) - w * Math.log1p(2)) < 1e-9);
+});
+
+test("personal pick keys on the description, never the name", async () => {
+  const env = makeEnv({
+    jev: async () => ({ scope: "personal", kind: "Yellow", language: "en" }),
+  });
+  const r = await pick(env, {
+    text: "Cooper", description: "our golden retriever", image_id: "drw_abc",
+  });
+  assert.equal(r.status, 204);
+  const rows = env.__db.prepare("SELECT text_norm FROM pic_pick").all();
+  assert.equal(rows[0].text_norm, "our golden retriever");
+  // the name is nowhere in the anonymous table
+  assert.ok(!rows.some((row) => row.text_norm.includes("cooper")));
+});
+
+test("pick fair-use: the 201st pick in a day 429s and records nothing", async () => {
+  const env = makeEnv();
+  const day = new Date().toISOString().slice(0, 10);
+  await env.VOICE.put(`usage-pick/${UID}/${day}`, JSON.stringify({ chars: 200 }));
+  const r = await pick(env, { text: "apple", image_id: "img_apple" });
+  assert.equal(r.status, 429);
+  assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_pick").all()[0].c, 0);
+});
+
+test("pick gates: bad id, bad license, missing image_id — and never spends draws", async () => {
+  const env = makeEnv();
+  assert.equal((await pick(env, { user_id: "nope", text: "x", image_id: "i" })).status, 400);
+  const r = await worker.fetch(new Request("https://x/api/v1/pictures/pick", {
+    method: "POST",
+    body: JSON.stringify({ user_id: UID, license: "pip-life-no", text: "x", image_id: "i" }),
+  }), env);
+  assert.equal(r.status, 403);
+  assert.equal((await pick(env, { text: "apple" })).status, 400);
+  assert.ok(await (await pick(env, { text: "apple", image_id: "img_apple" })).ok);
+  assert.equal(await env.VOICE.get(`usage-draw-total/${UID}`), null);
+});
