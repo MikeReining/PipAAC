@@ -84,3 +84,30 @@ export function applyEmotionalProsody(text, feeling = "neutral") {
 ```
 
 *Note:* Full-sentence emotional requests do **not** use the `replace` phonetics table. The surrounding sentence context naturally carries standard pronunciation.
+
+---
+
+## 6. Legacy — Grok was production until 2026-09-29
+
+Sections § 1–5 remain the acoustic record for **Grok Ara** (`applyEmotionalProsody` in `src/worker/prosody.mjs`). New expressive sentences use Eleven v4 (§ 7).
+
+---
+
+## 7. Eleven v4 expressive sentences (025 — shipping target)
+
+**Founder decision 2026-09-29:** migrate **all** sentence feelings (neutral + happy/sad/angry) to **ElevenLabs `eleven_v4`**, using the **same voice as tiles** (`tile_voices.json` — Eve default, Leo when selected). Rationale: better delivery, one voice identity (tiles + bar), cost amortized by **024-style cache** (mint once per sentence × feeling × voice, replay from R2/device). AAC users need a **narrow, repeatable** expressive range — the probe winners are sufficient.
+
+**Truth owner for mint text:** `src/shared/expressive_eleven.mjs` (`elevenExpressiveMintText`). **Do not** send Grok XML to Eleven.
+
+| Feeling | Eleven text (after `normalize` / bar text) |
+| --- | --- |
+| neutral | `{sentence}{end}` — plain, no tag |
+| happy | `[cheerful, bright voice] {sentence}!` (or `?` if question) |
+| sad | `[sad] {sentence}.` |
+| angry | `[frustrated] {sentence}!` |
+
+`{end}` / `?` rule unchanged from 025 § 4 (questions stay questions).
+
+**Listen lab:** `npm run catalog:expressive-probe:mint -- --round compare-v1` → [expressive review](http://127.0.0.1:3747/audio-review/elevenlabs-expressive). Probe CLI: `scripts/catalog/elevenlabs_expressive_probe.mjs`.
+
+**Worker (shipped 2026-09-29):** `src/worker/voice.js` — Eleven + `elevenExpressiveMintText`, `voice` = active `tile_voices.json` `voice_key`, cache model `eleven_v4-expressive-1`. Fair-use counts **spoken sentence text** (not tags). Grok Ara remains in `voices.json` for catalog exploration scripts only until retired.

@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — Eleven v4 expressive probe</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --grok: #5c4d8a; --eve: #1a5f8a; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; }
+    h1 { font-size: 18px; margin: 0 0 6px; }
+    .sub { font-size: 13px; color: #6b665c; max-width: 52rem; line-height: 1.45; }
+    .sub a { color: var(--accent); }
+    main { padding: 16px 20px 32px; max-width: 900px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--edge); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+    th, td { border-bottom: 1px solid var(--edge); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #f0ebe3; font-size: 13px; }
+    button.play { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--edge); background: #faf8f5; cursor: pointer; font: inherit; margin-top: 6px; }
+    button.play[aria-current="true"] { border-color: var(--accent); background: #e3eef5; }
+    button.play.grok[aria-current="true"] { border-color: var(--grok); background: #ece8f5; }
+    button.play.eve[aria-current="true"] { border-color: var(--eve); background: #e3eef5; }
+    code { font-size: 11px; word-break: break-word; display: block; margin-top: 4px; color: #4a4640; }
+    .feel { font-weight: 600; text-transform: capitalize; }
+    audio { width: 100%; margin-top: 16px; }
+    #status { font-size: 13px; color: #6b665c; margin-top: 8px; min-height: 1.2em; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Eleven v4 expressive probe</h1>
+    <p class="sub">
+      One probe round at a time (see manifest title).
+      <a href="/audio-review/elevenlabs-v4-lab">v4 tile lab</a> ·
+      <a href="/audio-review/elevenlabs-tiles">Tile review</a>.
+    </p>
+    <p class="sub" id="meta"></p>
+  </header>
+  <main>
+    <table id="grid">
+      <thead id="head"></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <button type="button" id="reload">Reload</button>
+    <p id="status"></p>
+    <audio id="player" controls></audio>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const player = $("player");
+    const feelEmoji = { happy: "😊", sad: "😢", angry: "😠" };
+
+    function setStatus(msg, err) {
+      $("status").textContent = msg || "";
+      $("status").style.color = err ? "#c62828" : "#6b665c";
+    }
+
+    function synthText(v) {
+      return v.synthText ?? v.elevenText ?? "";
+    }
+
+    function playBtn(takeRel, cls) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `play ${cls ?? ""}`.trim();
+      btn.textContent = "Play";
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("button.play").forEach((b) => b.removeAttribute("aria-current"));
+        btn.setAttribute("aria-current", "true");
+        player.src = `/api/audio?path=${encodeURIComponent(takeRel)}`;
+        player.play().catch(() => {});
+      });
+      return btn;
+    }
+
+    function renderCompare(body) {
+      $("head").innerHTML =
+        "<tr><th>Feeling</th><th>Grok Ara</th><th>Eve (Eleven v4)</th></tr>";
+      const byFeel = new Map();
+      for (const v of body.variants ?? []) {
+        const f = v.feeling ?? "?";
+        if (!byFeel.has(f)) byFeel.set(f, {});
+        byFeel.get(f)[v.provider] = v;
+      }
+      const tbody = $("rows");
+      tbody.replaceChildren();
+      const order = ["happy", "sad", "angry"];
+      for (const f of order) {
+        const pair = byFeel.get(f);
+        if (!pair) continue;
+        const tr = document.createElement("tr");
+        const tdFeel = document.createElement("td");
+        tdFeel.className = "feel";
+        tdFeel.textContent = `${feelEmoji[f] ?? ""} ${f}`.trim();
+        const tdGrok = document.createElement("td");
+        const g = pair.grok;
+        if (g) {
+          tdGrok.appendChild(playBtn(g.takeRel, "grok"));
+          const code = document.createElement("code");
+          code.textContent = synthText(g);
+          tdGrok.appendChild(code);
+        }
+        const tdEve = document.createElement("td");
+        const e = pair.elevenlabs;
+        if (e) {
+          tdEve.appendChild(playBtn(e.takeRel, "eve"));
+          const code = document.createElement("code");
+          code.textContent = synthText(e);
+          tdEve.appendChild(code);
+        }
+        tr.append(tdFeel, tdGrok, tdEve);
+        tbody.appendChild(tr);
+      }
+    }
+
+    function renderList(body) {
+      $("head").innerHTML = "<tr><th>Variant</th><th>Synth text</th><th></th></tr>";
+      const tbody = $("rows");
+      tbody.replaceChildren();
+      for (const v of body.variants ?? []) {
+        const tr = document.createElement("tr");
+        const td0 = document.createElement("td");
+        td0.textContent = v.label ?? v.id ?? "?";
+        const td1 = document.createElement("td");
+        const code = document.createElement("code");
+        code.textContent = synthText(v);
+        td1.appendChild(code);
+        const td2 = document.createElement("td");
+        td2.appendChild(playBtn(v.takeRel));
+        tr.append(td0, td1, td2);
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function load() {
+      setStatus("Loading…");
+      const res = await fetch("/api/expressive-probe/manifest");
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || res.statusText);
+      const voices =
+        body.layout === "compare"
+          ? `Grok ${body.grokVoice?.voice_id ?? "?"} vs Eve ${body.voice?.voice_id ?? "?"}`
+          : body.voice?.label ?? "?";
+      $("meta").textContent =
+        `${body.title ?? body.roundId ?? "probe"} · “${body.sentence}” · ${voices} · ${body.generatedAt ?? ""}`;
+      if (body.layout === "compare") renderCompare(body);
+      else renderList(body);
+      setStatus("");
+    }
+
+    $("reload").addEventListener("click", () => load().catch((e) => setStatus(e.message, true)));
+    load().catch((e) => setStatus(e.message, true));
+  </script>
+</body>
+</html>

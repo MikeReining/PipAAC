@@ -1,19 +1,14 @@
 # 025 — Expressive Voice: happy, sad, angry
 
 **Status:** slices 1–4 landed 2026-09-26 (`97c968d` + faces commit).
-Decided (founder + CTO, 2026-09-25); started once 024 slices 1–3 were
-in. Founder picked the **designer face icons** (`public/icons/voice-*`),
-not the catalog word pictures — the "which pictures" question in § 1
-is settled; slice 4 needed no drawing. Launch voice is **Ara only**.
-Two things wait on the Ara catalog rebuild: `schemaSql` carrying
-`spoken_feeling`/`expressive_voice` canonically (devices add them
-additively at boot until then) and `catalog.feelingVoice` (the worker
-serves `/feeling_voice.json` as the bridge). Remaining: the § 8
-listen + paid verification is gated on real Grok calls.
+**2026-09-29:** founder approved **Eleven v4** for all sentence feelings
+(same voice as tiles — Eve/Leo per `tile_voices.json`). Compare lab
+`compare-v1` passed vs Grok Ara. **Worker shipped:** `POST /api/v1/voice/speak`
+uses Eleven + `src/shared/expressive_eleven.mjs`; board sends `voice_key`
+from `preferred_voice_id`. UI/faces unchanged; cache-once economics unchanged.
 
-**Truth owner:** the locked prosody formulas in
-`docs/operations/Grok_Voice_Emotional_Prosody.md` (acoustic analysis plus
-founder listening, 2026-09-25), and what a child hears on a real tablet.
+**Truth owner:** `src/shared/expressive_eleven.mjs` + ear on tablet;
+Grok formulas in `Grok_Voice_Emotional_Prosody.md` § 2 are legacy reference.
 **Why this phase exists:** for 40 years people who rely on AAC have spoken in
 one flat voice. A furious *go away* sounds polite; *I love you* sounds like a
 weather report. The voice can now say any sentence happy, sad or angry. That
@@ -149,22 +144,22 @@ no special handling (*I'm* is *I* + *am* since 021).
 ## 4. The voice request (024's pipeline)
 
 - The client calls 024's endpoint with the sentence text, the voice, and
-  **`feeling`**: `neutral | happy | sad | angry`. The **Worker** applies the
-  prosody formula, so the formulas live in one place.
-- **The locked formulas** (`Grok_Voice_Emotional_Prosody.md` § 2), with one
-  correction for questions:
+  **`feeling`**: `neutral | happy | sad | angry`. The **Worker** builds the
+  provider text in one place (`expressive_eleven.mjs` as of 2026-09-29).
+- **Eleven v4 mint text** (`Grok_Voice_Emotional_Prosody.md` § 7):
 
-  | Feeling | Sent to Grok |
+  | Feeling | Sent to Eleven |
   | --- | --- |
-  | happy | `<higher-pitch><emphasis>{text}{end}</emphasis></higher-pitch>` |
-  | sad | `<emphasis>{text}{end}</emphasis>` |
-  | angry | `<loud><emphasis>{text}{end}</emphasis></loud>` |
+  | happy | `[cheerful, bright voice] {text}{end}` |
+  | sad | `[sad] {text}{end}` |
+  | angry | `[frustrated] {text}{end}` |
   | neutral | `{text}{end}` |
 
   `{text}` is the sentence without its final `. ! ?`. `{end}` is **`?` if the
   sentence ended with `?`** (a question from ❓ stays a question, happy or
   angry). Otherwise `!` for happy and angry, `.` for sad and neutral.
-- **No sound-effect tags**, ever (`[laugh]`, `[cry]`…).
+- **No theatrical sound-effect tags** on the bar (`[laugh]`, sob cues, etc.).
+  Eleven **delivery** tags above are voice-quality directions, not pantomime.
 - **Every feeling recording is saved and reused: pay once, replay fast**
   (founder, 2026-09-25). Exactly the same rule as every other sentence 024
   speaks (present, past, question, future):
@@ -192,7 +187,7 @@ no special handling (*I'm* is *I* + *am* since 021).
 - `learner_profile.expressive_voice INTEGER NOT NULL DEFAULT 1`, synced like
   `grammar_help` (021 slice 4 is the pattern: profile column, settings seg,
   `onSyncApplied` resync).
-- Nothing else is stored. The feeling travels to Grok only as tags; no ids.
+- Nothing else is stored. The feeling selects Eleven mint text; no ids on the wire.
 
 ## 6. Setting
 

@@ -34,7 +34,7 @@ files touched, proof state, and next action.
 | Tile voice library, on-demand mint of typed words, review page | `docs/phases/028_Tile_Voice_Library.md` |
 | Add a word: sheet, new-word card, picture/voice states | `docs/phases/029_Add_A_Word.md` |
 | Picture reuse by meaning, drawing once, allowance, calibration | `docs/phases/030_Picture_Finder_And_Drawing.md` |
-| Voice emotion tags, prosody formulas | `docs/operations/Grok_Voice_Emotional_Prosody.md` |
+| Voice emotion tags, prosody formulas (Eleven sentences § 7; Grok legacy § 2) | `docs/operations/Grok_Voice_Emotional_Prosody.md` |
 | Vision, roadmap, monetization | `docs/strategy/Vision.md` + `docs/strategy/Roadmap.md` |
 | Stack, commands, local setup | `docs/operations/TechStack.md` |
 | Repo conventions | `docs/operations/Contributing.md` |
@@ -79,11 +79,12 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
 - Before proposing platform surfaces (APIs, linters, JSON rules), run
   `docs/product/Design_Invariants.md` and prefer routed docs + live CLI topics
   first.
-- **Never run batch art generation without explicit founder approval.** Art is
-  generated one image at a time, ten at most, with the founder reviewing
-  (`docs/operations/art-generator/SKILL.md` § 7). On 2026-09-24 an agent ran
-  `scripts/art/extended_batch.mjs` unasked (~1,950 images, ~3,400 Jev calls) and
-  exhausted the OpenRouter daily budget. "Generate the words" means the list.
+- **Never run batch art generation without explicit founder approval.** Work in
+  **slices of up to ten**: agree the word list and picture plan, then generate
+  those ten Muse rolls, then founder review (`docs/operations/art-generator/SKILL.md`
+  §6). On 2026-09-24 an agent ran `scripts/art/extended_batch.mjs` unasked
+  (~1,950 images, ~3,400 Jev calls) and exhausted the OpenRouter daily budget.
+  "Generate the words" means the list.
 - **Never replace shipped catalog audio, or bulk-mint (>10 clips), without
   explicit founder approval.** Mint locally, ten clips at most, and wait for a
   listen (`docs/operations/ElevenLabs_Tile_Minting.md`). **Exception (phase

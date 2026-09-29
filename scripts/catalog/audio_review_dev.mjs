@@ -73,6 +73,7 @@ import {
   saveDecision,
   VOICE_SELECTOR_BATCH,
 } from "./elevenlabs_voice_selector.mjs";
+import { loadProbeManifest } from "./elevenlabs_expressive_probe.mjs";
 import {
   loadReviewDoc,
   reviewStatusForSlug,
@@ -90,6 +91,7 @@ const PUBLIC_HTML_ELEVENLABS_TILES = join(repoRoot, "public/audio-review-elevenl
 const PUBLIC_HTML_ELEVENLABS_V4_LAB = join(repoRoot, "public/audio-review-elevenlabs-v4-lab.html");
 const PUBLIC_HTML_VOICE_SELECTOR = join(repoRoot, "public/audio-review-elevenlabs-voice-selector.html");
 const PUBLIC_HTML_TILE_VOICE = join(repoRoot, "public/audio-review-tile-voice.html");
+const PUBLIC_HTML_EXPRESSIVE_PROBE = join(repoRoot, "public/audio-review-elevenlabs-expressive.html");
 
 const GROK_PIPELINE = "grok";
 const ELEVENLABS_TILES_PIPELINE = "elevenlabs-tiles";
@@ -354,6 +356,35 @@ async function handle(req, res) {
       "cache-control": "no-store",
     });
     res.end(readFileSync(PUBLIC_HTML_VOICE_SELECTOR, "utf8"));
+    return;
+  }
+
+  if (req.method === "GET" && path === "/audio-review/elevenlabs-expressive") {
+    if (!existsSync(PUBLIC_HTML_EXPRESSIVE_PROBE)) {
+      res.writeHead(404);
+      res.end("missing public/audio-review-elevenlabs-expressive.html");
+      return;
+    }
+    res.writeHead(200, {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+    });
+    res.end(readFileSync(PUBLIC_HTML_EXPRESSIVE_PROBE, "utf8"));
+    return;
+  }
+
+  if (path === "/api/expressive-probe/manifest" && req.method === "GET") {
+    try {
+      const doc = loadProbeManifest(SAMPLES);
+      if (!doc) {
+        throw new Error(
+          "missing probe — run: npm run catalog:expressive-probe:mint",
+        );
+      }
+      json(res, 200, doc);
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
     return;
   }
 
@@ -1008,6 +1039,9 @@ if (invoked) {
     console.log(`Pip AAC ElevenLabs tile review: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles`);
     console.log(`Pip AAC ElevenLabs v4 lab:       http://127.0.0.1:${PORT}/audio-review/elevenlabs-v4-lab`);
     console.log(`Pip AAC voice selector:          http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector`);
+    console.log(
+      `Pip AAC Eleven expressive probe: http://127.0.0.1:${PORT}/audio-review/elevenlabs-expressive`,
+    );
     console.log(
       `Pip AAC Leo A/B (2 male voices): http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector — round leo-compare-001`,
     );

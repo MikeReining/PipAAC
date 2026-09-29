@@ -29,6 +29,7 @@
     "catalog:v4-lab:mint-batch": "node scripts/catalog/mint_v4_lab_batch.mjs",
     "catalog:v4-lab:publish": "node scripts/catalog/publish_v4_lab_approved.mjs",
     "catalog:voice-selector:mint": "node scripts/catalog/mint_voice_selector_round.mjs",
+    "catalog:expressive-probe:mint": "node scripts/catalog/elevenlabs_expressive_probe.mjs",
     "catalog:audio:import": "node scripts/catalog/import_wbb_audio.mjs",
     "catalog:audio:materialize": "node scripts/catalog/materialize_audio.mjs",
     "catalog:audio:inspect": "node scripts/catalog/audio_inspect.mjs",

@@ -1,0 +1,81 @@
+{
+  "schema": "pippaac.elevenlabs-expressive-probe.v1",
+  "batch": "elevenlabs-expressive-probe",
+  "layout": "compare",
+  "roundKey": "compare-v1",
+  "roundId": "compare-v1",
+  "title": "Grok Ara vs Eve — three winning feelings",
+  "generatedAt": "2026-09-29T20:22:18.051Z",
+  "sentence": "I want an apple",
+  "grokVoice": {
+    "label": "Grok Ara",
+    "voice_id": "ara"
+  },
+  "voice": {
+    "label": "Eve",
+    "voice_id": "WWMMC6k9tdar0BthUenK",
+    "model": "eleven_v4"
+  },
+  "variants": [
+    {
+      "id": "happy_grok",
+      "feeling": "happy",
+      "provider": "grok",
+      "label": "happy — Grok Grok Ara",
+      "synthText": "<higher-pitch><emphasis>I want an apple!</emphasis></higher-pitch>",
+      "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_happy_grok.mp3",
+      "bytes": 23808,
+      "skipped": false
+    },
+    {
+      "id": "happy_eleven",
+      "feeling": "happy",
+      "provider": "elevenlabs",
+      "label": "happy — Eve",
+      "synthText": "[cheerful, bright voice] I want an apple!",
+      "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_happy_eleven.mp3",
+      "bytes": 28047,
+      "skipped": false
+    },
+    {
+      "id": "sad_grok",
+      "feeling": "sad",
+      "provider": "grok",
+      "label": "sad — Grok Grok Ara",
+      "synthText": "<emphasis>I want an apple.</emphasis>",
+      "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_sad_grok.mp3",
+      "bytes": 27648,
+      "skipped": false
+    },
+    {
+      "id": "sad_eleven",
+      "feeling": "sad",
+      "provider": "elevenlabs",
+      "label": "sad — Eve",
+      "synthText": "[sad] I want an apple.",
+      "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_sad_eleven.mp3",
+      "bytes": 33062,
+      "skipped": false
+    },
+    {
+      "id": "angry_grok",
+      "feeling": "angry",
+      "provider": "grok",
+      "label": "angry — Grok Grok Ara",
+      "synthText": "<loud><emphasis>I want an apple!</emphasis></loud>",
+      "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_angry_grok.mp3",
+      "bytes": 30336,
+      "skipped": false
+    },
+    {
+      "id": "angry_eleven",
+      "feeling": "angry",
+      "provider": "elevenlabs",
+      "label": "angry — Eve",
+      "synthText": "[frustrated] I want an apple!",
+      "takeRel": "elevenlabs-expressive-probe/takes/i_want_an_apple_compare_angry_eleven.mp3",
+      "bytes": 31808,
+      "skipped": false
+    }
+  ]
+}
