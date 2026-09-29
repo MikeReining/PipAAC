@@ -46,11 +46,11 @@
     },
     {
       "key": "meals",
-      "words": ["food", "sandwich", "pizza", "chicken", "nuggets", "pasta", "macaroni", "fries", "soup", "rice", "burger", "hot dog", "fish", "meat", "ketchup", "cook", "apple juice"]
+      "words": ["food", "sandwich", "pizza", "chicken", "nuggets", "cheese", "pasta", "macaroni", "fries", "soup", "rice", "corn", "burger", "hot dog", "fish", "meat", "ketchup", "cook", "apple juice"]
     },
     {
       "key": "snacks",
-      "words": ["cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "muffin", "chocolate milk"]
+      "words": ["cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "muffin", "chocolate milk", "smoothie", "apple juice"]
     }
   ],
   "groups": [

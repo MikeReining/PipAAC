@@ -4806,7 +4806,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0515",
       "negation": 0
     },
     {
@@ -4815,7 +4815,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0516",
       "negation": 0
     },
     {
@@ -4824,7 +4824,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0517",
       "negation": 0
     },
     {
@@ -4833,7 +4833,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0518",
       "negation": 0
     },
     {
@@ -4842,7 +4842,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0519",
       "negation": 0
     },
     {
@@ -4851,7 +4851,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0520",
       "negation": 0
     },
     {
@@ -4860,7 +4860,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0521",
       "negation": 0
     },
     {
@@ -4869,7 +4869,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0522",
       "negation": 0
     },
     {
@@ -4878,7 +4878,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0523",
       "negation": 0
     },
     {
@@ -4887,7 +4887,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0524",
       "negation": 0
     },
     {
@@ -5130,7 +5130,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Descriptors, Adjectives & Opposites",
-      "default_image_id": null,
+      "default_image_id": "img_0552",
       "negation": 0
     },
     {
@@ -33392,6 +33392,83 @@
       "sha256": "f198b652d4a9efeb82efcb9e9bbb39a6ee4b7d8732819b373261ec6007d64d88"
     },
     {
+      "id": "img_0515",
+      "sense_id": "sns_0515",
+      "key": "symbols/fast.png",
+      "status": "approved",
+      "sha256": "c364f6960fc60a6b73101fcc20189da3961de3eec9f8eda3c851288fe01eccab"
+    },
+    {
+      "id": "img_0516",
+      "sense_id": "sns_0516",
+      "key": "symbols/slow.png",
+      "status": "approved",
+      "sha256": "ac3f2391b61762eba2c2b21ab3b0b9214fdd96b75b2f28c0ed8f9f664b5352c9"
+    },
+    {
+      "id": "img_0517",
+      "sense_id": "sns_0517",
+      "key": "symbols/tall.png",
+      "status": "approved",
+      "sha256": "1ea35e4bdf2a6fbebb2f269bed43ce7f8cbe8076f8b2acffc4f42dd57243d805"
+    },
+    {
+      "id": "img_0518",
+      "sense_id": "sns_0518",
+      "key": "symbols/short.png",
+      "status": "approved",
+      "sha256": "27e5e8a25321817fee1b1f68569e5c34b4e6640e1629674e54a252b4062463d1"
+    },
+    {
+      "id": "img_0519",
+      "sense_id": "sns_0519",
+      "key": "symbols/long.png",
+      "status": "approved",
+      "sha256": "3e81d75f9acc544ab9b55fa9165621d0b40be78f9b59f5819d0b62dba0fc1581"
+    },
+    {
+      "id": "img_0520",
+      "sense_id": "sns_0520",
+      "key": "symbols/heavy.png",
+      "status": "approved",
+      "sha256": "5c6b051eb9744edd4d430f10ca5897be138299051cb1ef841355c9249987bee5"
+    },
+    {
+      "id": "img_0521",
+      "sense_id": "sns_0521",
+      "key": "symbols/light.png",
+      "status": "approved",
+      "sha256": "31ce0d13764fdd6a9a043cf5afedbd0ce6ca99b9409bea2727fe47086d1750e2"
+    },
+    {
+      "id": "img_0522",
+      "sense_id": "sns_0522",
+      "key": "symbols/thick.png",
+      "status": "approved",
+      "sha256": "cb0d63208b5eb1b4a783495ee0d98ba5e1c73bd35de3fac77ff2e3829c452e24"
+    },
+    {
+      "id": "img_0523",
+      "sense_id": "sns_0523",
+      "key": "symbols/thin.png",
+      "status": "approved",
+      "sha256": "42ae1f54f97032e9e8c85a35dabed3cb0ed9697e8a97d0176acc02828ed3dbe2"
+    },
+    {
+      "id": "img_0524",
+      "sense_id": "sns_0524",
+      "key": "symbols/wide.png",
+      "status": "approved",
+      "sha256": "c2862aa5ec69df40c03a754f107fc14b04ef17ba7ec6b4cd522d49f1ec315683"
+    },
+    {
+      "id": "img_0552",
+      "sense_id": "sns_0552",
+      "key": "symbols/light.png",
+      "status": "approved",
+      "sha256": "31ce0d13764fdd6a9a043cf5afedbd0ce6ca99b9409bea2727fe47086d1750e2"
+    },
+    {
       "id": "img_0606",
       "sense_id": "sns_0606",
       "key": "symbols/bathroom.png",
@@ -50083,7 +50160,7 @@
       "item_kind": "sense",
       "item_id": "sns_0101",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 21
     },
     {
       "group_id": "grp_lunch",
@@ -50091,7 +50168,7 @@
       "item_kind": "sense",
       "item_id": "sns_0102",
       "page": 0,
-      "slot_index": 21
+      "slot_index": 22
     },
     {
       "group_id": "grp_lunch",
@@ -50099,7 +50176,7 @@
       "item_kind": "sense",
       "item_id": "sns_0662",
       "page": 0,
-      "slot_index": 22
+      "slot_index": 30
     },
     {
       "group_id": "grp_lunch",
@@ -50107,7 +50184,7 @@
       "item_kind": "sense",
       "item_id": "sns_0108",
       "page": 0,
-      "slot_index": 30
+      "slot_index": 31
     },
     {
       "group_id": "grp_lunch",
@@ -50115,7 +50192,7 @@
       "item_kind": "sense",
       "item_id": "sns_0109",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 32
     },
     {
       "group_id": "grp_lunch",
@@ -50123,7 +50200,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 33
     },
     {
       "group_id": "grp_lunch",
@@ -50131,7 +50208,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 34
     },
     {
       "group_id": "grp_lunch",
@@ -50139,7 +50216,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 34
+      "slot_index": 40
     },
     {
       "group_id": "grp_lunch",
@@ -50147,7 +50224,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 41
     },
     {
       "group_id": "grp_lunch",
@@ -50155,7 +50232,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 50
     },
     {
       "group_id": "grp_lunch",
@@ -50163,7 +50240,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 51
     },
     {
       "group_id": "grp_lunch",
@@ -50171,7 +50248,7 @@
       "item_kind": "sense",
       "item_id": "sns_0110",
       "page": 0,
-      "slot_index": 51
+      "slot_index": 20
     },
     {
       "group_id": "grp_lunch",
@@ -50387,7 +50464,7 @@
       "item_kind": "sense",
       "item_id": "sns_0249",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 50
     },
     {
       "group_id": "grp_dinner",
@@ -50451,7 +50528,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 34
     },
     {
       "group_id": "grp_dinner",
@@ -50459,7 +50536,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 34
+      "slot_index": 40
     },
     {
       "group_id": "grp_dinner",
@@ -50467,7 +50544,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 32
     },
     {
       "group_id": "grp_dinner",
@@ -50475,7 +50552,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 33
     },
     {
       "group_id": "grp_dinner",
@@ -50491,7 +50568,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 41
     },
     {
       "group_id": "grp_dinner",
@@ -50499,7 +50576,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 50
+      "slot_index": 51
     },
     {
       "group_id": "grp_dinner",
@@ -50539,7 +50616,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 0,
-      "slot_index": 51
+      "slot_index": 31
     },
     {
       "group_id": "grp_dinner",
@@ -56611,7 +56688,7 @@
       "item_kind": "sense",
       "item_id": "sns_0101",
       "page": 0,
-      "slot_index": 20
+      "slot_index": 21
     },
     {
       "group_id": "grp_lunch",
@@ -56619,7 +56696,7 @@
       "item_kind": "sense",
       "item_id": "sns_0102",
       "page": 0,
-      "slot_index": 21
+      "slot_index": 22
     },
     {
       "group_id": "grp_lunch",
@@ -56627,7 +56704,7 @@
       "item_kind": "sense",
       "item_id": "sns_0662",
       "page": 0,
-      "slot_index": 22
+      "slot_index": 30
     },
     {
       "group_id": "grp_lunch",
@@ -56635,7 +56712,7 @@
       "item_kind": "sense",
       "item_id": "sns_0108",
       "page": 0,
-      "slot_index": 30
+      "slot_index": 31
     },
     {
       "group_id": "grp_lunch",
@@ -56643,7 +56720,7 @@
       "item_kind": "sense",
       "item_id": "sns_0109",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 32
     },
     {
       "group_id": "grp_lunch",
@@ -56651,7 +56728,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 33
     },
     {
       "group_id": "grp_lunch",
@@ -56659,7 +56736,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 34
     },
     {
       "group_id": "grp_lunch",
@@ -56667,7 +56744,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 34
+      "slot_index": 40
     },
     {
       "group_id": "grp_lunch",
@@ -56675,7 +56752,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 41
     },
     {
       "group_id": "grp_lunch",
@@ -56683,7 +56760,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 42
     },
     {
       "group_id": "grp_lunch",
@@ -56691,7 +56768,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 43
     },
     {
       "group_id": "grp_lunch",
@@ -56699,7 +56776,7 @@
       "item_kind": "sense",
       "item_id": "sns_0110",
       "page": 0,
-      "slot_index": 43
+      "slot_index": 20
     },
     {
       "group_id": "grp_lunch",
@@ -56915,7 +56992,7 @@
       "item_kind": "sense",
       "item_id": "sns_0249",
       "page": 0,
-      "slot_index": 41
+      "slot_index": 42
     },
     {
       "group_id": "grp_dinner",
@@ -56979,7 +57056,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 34
     },
     {
       "group_id": "grp_dinner",
@@ -56987,7 +57064,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 0,
-      "slot_index": 34
+      "slot_index": 40
     },
     {
       "group_id": "grp_dinner",
@@ -56995,7 +57072,7 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 32
     },
     {
       "group_id": "grp_dinner",
@@ -57003,7 +57080,7 @@
       "item_kind": "sense",
       "item_id": "sns_0107",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 33
     },
     {
       "group_id": "grp_dinner",
@@ -57019,7 +57096,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 0,
-      "slot_index": 40
+      "slot_index": 41
     },
     {
       "group_id": "grp_dinner",
@@ -57027,7 +57104,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 0,
-      "slot_index": 42
+      "slot_index": 43
     },
     {
       "group_id": "grp_dinner",
@@ -57067,7 +57144,7 @@
       "item_kind": "sense",
       "item_id": "sns_0136",
       "page": 0,
-      "slot_index": 43
+      "slot_index": 31
     },
     {
       "group_id": "grp_dinner",
@@ -63147,7 +63224,7 @@
       "item_kind": "sense",
       "item_id": "sns_0102",
       "page": 4,
-      "slot_index": 7
+      "slot_index": 10
     },
     {
       "group_id": "grp_lunch",
@@ -63155,7 +63232,7 @@
       "item_kind": "sense",
       "item_id": "sns_0662",
       "page": 4,
-      "slot_index": 10
+      "slot_index": 11
     },
     {
       "group_id": "grp_lunch",
@@ -63163,7 +63240,7 @@
       "item_kind": "sense",
       "item_id": "sns_0108",
       "page": 4,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_lunch",
@@ -63171,21 +63248,13 @@
       "item_kind": "sense",
       "item_id": "sns_0109",
       "page": 4,
-      "slot_index": 12
-    },
-    {
-      "group_id": "grp_lunch",
-      "layout": "grid15",
-      "item_kind": "sense",
-      "item_id": "sns_0106",
-      "page": 4,
       "slot_index": 13
     },
     {
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0107",
+      "item_id": "sns_0106",
       "page": 5,
       "slot_index": 5
     },
@@ -63193,7 +63262,7 @@
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0112",
+      "item_id": "sns_0107",
       "page": 5,
       "slot_index": 6
     },
@@ -63201,7 +63270,7 @@
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0111",
+      "item_id": "sns_0112",
       "page": 5,
       "slot_index": 7
     },
@@ -63209,7 +63278,7 @@
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0661",
+      "item_id": "sns_0111",
       "page": 5,
       "slot_index": 10
     },
@@ -63217,7 +63286,7 @@
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0085",
+      "item_id": "sns_0661",
       "page": 5,
       "slot_index": 11
     },
@@ -63225,9 +63294,17 @@
       "group_id": "grp_lunch",
       "layout": "grid15",
       "item_kind": "sense",
-      "item_id": "sns_0110",
+      "item_id": "sns_0085",
       "page": 5,
       "slot_index": 12
+    },
+    {
+      "group_id": "grp_lunch",
+      "layout": "grid15",
+      "item_kind": "sense",
+      "item_id": "sns_0110",
+      "page": 4,
+      "slot_index": 7
     },
     {
       "group_id": "grp_lunch",
@@ -63339,7 +63416,7 @@
       "item_kind": "sense",
       "item_id": "sns_0029",
       "page": 5,
-      "slot_index": 12
+      "slot_index": 13
     },
     {
       "group_id": "grp_dinner",
@@ -63443,7 +63520,7 @@
       "item_kind": "sense",
       "item_id": "sns_0249",
       "page": 5,
-      "slot_index": 10
+      "slot_index": 11
     },
     {
       "group_id": "grp_dinner",
@@ -63507,7 +63584,7 @@
       "item_kind": "sense",
       "item_id": "sns_0112",
       "page": 5,
-      "slot_index": 5
+      "slot_index": 6
     },
     {
       "group_id": "grp_dinner",
@@ -63515,7 +63592,7 @@
       "item_kind": "sense",
       "item_id": "sns_0111",
       "page": 5,
-      "slot_index": 6
+      "slot_index": 7
     },
     {
       "group_id": "grp_dinner",
@@ -63523,15 +63600,15 @@
       "item_kind": "sense",
       "item_id": "sns_0106",
       "page": 4,
-      "slot_index": 12
+      "slot_index": 13
     },
     {
       "group_id": "grp_dinner",
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0107",
-      "page": 4,
-      "slot_index": 13
+      "page": 5,
+      "slot_index": 5
     },
     {
       "group_id": "grp_dinner",
@@ -63547,7 +63624,7 @@
       "item_kind": "sense",
       "item_id": "sns_0661",
       "page": 5,
-      "slot_index": 7
+      "slot_index": 10
     },
     {
       "group_id": "grp_dinner",
@@ -63555,7 +63632,7 @@
       "item_kind": "sense",
       "item_id": "sns_0085",
       "page": 5,
-      "slot_index": 11
+      "slot_index": 12
     },
     {
       "group_id": "grp_dinner",
@@ -63594,8 +63671,8 @@
       "layout": "grid15",
       "item_kind": "sense",
       "item_id": "sns_0136",
-      "page": 5,
-      "slot_index": 13
+      "page": 4,
+      "slot_index": 12
     },
     {
       "group_id": "grp_dinner",
