@@ -167,8 +167,8 @@ Decided with the founder 2026-09-26. People and pronouns stay yellow;
 things and places take the existing no-role pair (`.r-None`, `#8a8578` /
 `#f2efe6`) — about 310 words. No new color: five grammar hues plus
 neutral. The home board is unchanged (its yellow words are all people and
-pronouns). Group doors and noun tiles share the gray; the folder tab says
-"opens" (the "gray = not a word" line in `groups-ui.css` goes).
+pronouns). Group doors and noun tiles share the gray; a door reads by structure
+(glyph above label, no label band — 018 D5).
 
 ### D9 — Object art is its natural color
 

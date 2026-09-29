@@ -106,8 +106,11 @@ Owner: `docs/product/Motor_Grid_And_Art.md` § Groups; implementation: 027 A3–
 
 ### D5 — Group doors and starting layout
 
-Neutral ink glyphs and a folder-tab shape identify a group. 026's neutral noun
-frames mean gray alone no longer distinguishes a group from a word. 027 seeds
+A group door reads by structure: ink glyph above the label on one cream fill,
+where a word has a label band over white clipart. 026's neutral noun frames mean
+gray alone no longer distinguishes a group from a word. The folder-tab edge was
+dropped 2026-09-29 — clipped inside the cell it read as a defect, and on the
+index page every cell is a door. 027 seeds
 related meal vocabulary in coordinated clusters, then stores ordinary local
 placements. Adding a word uses its explicit/preferred/free position, not a
 mandatory grammar band. No runtime block membership or shared edit propagation.
@@ -279,8 +282,8 @@ section (sample counts).
    - The likely group glows in the group list (D9) — `likelyGroups`
      (funnel.mjs) glows the group of the strip's top-scored candidate,
      behind spotlight and modeling glows.
-   - Group doors are neutral with a folder tab — `.gcell.door` paints a
-     tab edge over the existing no-role gray.
+   - Group doors are neutral — no-role gray; the folder-tab edge was
+     dropped 2026-09-29 (D5).
    - Re-seed the default `index_slot` order — `group_seed.json` (now `group_seed.topics.json`) reordered
      to the D6 list; new devices get it (adult order on existing devices
      is untouched — it lives in `board_group`, not the seed).
