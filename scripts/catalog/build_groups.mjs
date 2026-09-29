@@ -193,7 +193,6 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
     const senses = [];
     for (const w of c.words) {
       const s = resolve(w, `cluster ${c.key}`);
-      if (clusterOf.has(s)) throw new Error(`group seed: ${w} is in clusters ${clusterOf.get(s)} and ${c.key} — one cluster per word`);
       clusterOf.set(s, c.key);
       senses.push(s);
     }
@@ -308,7 +307,13 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
             for (const t of tops) {
               const placed = fn(todo, page * n + t, list);
               if (placed && placed.every(([, p]) => p === page)) {
-                for (const [w, p, slot] of placed) claim(w, p, slot);
+                // Anchored traversals walk cells right-to-left or bottom-up;
+                // the words still read most-said / authored first left to
+                // right, so re-pair them with the claimed cells in reading
+                // order. The cell set — and kit identity — is unchanged.
+                const cells = placed.map(([, p, slot]) => [p, slot])
+                  .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+                todo.forEach((w, i) => claim(w, cells[i][0], cells[i][1]));
                 return;
               }
             }
