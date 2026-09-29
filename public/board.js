@@ -1243,19 +1243,26 @@ function wordTile({ label, role, art = null, photoURL = null }) {
   return el;
 }
 
-/** Shrink-to-fit labels: Andika Bold on one line, stepping down until the
- *  text fits its strip — a word never breaks inside itself; multi-word
- *  labels may wrap between words. */
+/** Uniform-size labels: every label on a board renders at the same size —
+ *  two lines fit the strip at nominal, so a long label wraps (long words
+ *  hyphenate) instead of shrinking. The shrink loop is the last resort
+ *  for a label that can't fit even wrapped. Text is measured with a
+ *  Range — scrollHeight reports the flex item's quirks, not the glyphs. */
 function fitLabels(root) {
   document.fonts.ready.then(() => {
+    const range = document.createRange();
     for (const lb of root.querySelectorAll(".tlabel, .plabel")) {
       const maxW = lb.clientWidth;
       const maxH = lb.clientHeight;
       if (!maxW || !maxH) continue;
-      let px = Math.floor(maxH * 0.8);
+      // Tile labels: nominal fits two lines in the strip. Bar labels are
+      // single-line horizontal cards — keep the old one-line target.
+      let px = Math.floor(maxH * (lb.classList.contains("tlabel") ? 0.38 : 0.8));
       lb.style.fontSize = `${px}px`;
-      for (let guard = 14; guard > 0 && px > 8; guard--) {
-        if (lb.scrollWidth <= maxW && lb.scrollHeight <= maxH) break;
+      for (let guard = 18; guard > 0 && px > 8; guard--) {
+        range.selectNodeContents(lb);
+        const r = range.getBoundingClientRect();
+        if (r.width <= maxW && r.height <= maxH) break;
         px = Math.max(8, Math.floor(px * 0.86));
         lb.style.fontSize = `${px}px`;
       }

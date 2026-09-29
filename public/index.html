@@ -427,7 +427,7 @@
       }
       .cell .tlabel {
         flex: none;
-        height: 22%;
+        height: 33%;
         width: 100%;
         background: var(--rf, var(--press-f));
         color: var(--ink-text);
@@ -440,6 +440,11 @@
         text-align: center;
         padding: 0 6%;
         overflow: hidden;
+        /* One label size per board: long labels wrap to a second line
+           (long words hyphenate at proper points via lang) rather than
+           shrinking into a different size. */
+        hyphens: auto;
+        overflow-wrap: break-word;
       }
       .cell .tart {
         flex: 1;

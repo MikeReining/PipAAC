@@ -91,10 +91,12 @@ Grammar roles (border / label-strip fill):
 
 **BUILT** (`public/index.html` `.cell`, `public/board.js` `wordTile`).
 
-- **Label strip:** top 22% of the tile, role fill, Andika Bold, centered,
-  one line, shrink-to-fit (`fitLabels`). A word never breaks inside
-  itself; two-word labels may wrap between words.
-- **Art area:** white, remaining 78%, ~3% padding, `object-fit: contain`.
+- **Label strip:** top 33% of the tile, role fill, Andika Bold, centered.
+  One uniform size per board (`fitLabels` — nominal fits two lines in the
+  strip); a label that doesn't fit on one line wraps to two, hyphenating
+  long words (`hyphens: auto`), never shrinking into a different size.
+  Shrinking is the last resort when even two lines don't fit.
+- **Art area:** white, remaining 67%, ~3% padding, `object-fit: contain`.
   Art is trimmed to the drawing's bounding box at build time; stick-figure
   symbols share one trim scale, objects are trimmed individually.
 - **Border:** 3px role border color, ~10px radius.
