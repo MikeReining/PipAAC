@@ -363,6 +363,11 @@ export async function handleReject(request, env, ctx) {
   if (!env.VOICE || !env.TILE_LEDGER) {
     return json({ error: "pictures_unavailable" }, { status: 503 });
   }
+  // § 5.5 shows reject descriptions on the founder's review page — only
+  // descriptions that pass the § 5.3 safety check may be stored there.
+  if (isUnsafe(text, description)) {
+    return json({ error: "unsafe" }, { status: 422 });
+  }
   const guard = await usageCheck(env, {
     ns: REJECT_NS, uid, chars: 1, maxChars: 1, dayBudget: PICK_DAY, minBudget: PICK_MIN,
   });
@@ -644,6 +649,9 @@ export async function handleDraw(request, env, ctx) {
       return (await serveRow(row, "hit", left))
         ?? json({ error: "draw_failed" }, { status: 502 });
     }
+    if (row?.status === "withheld") {
+      return json({ error: "unsafe" }, { status: 422 });
+    }
     return json({ error: "draw_failed" }, { status: 502 });
   }
 
@@ -827,7 +835,12 @@ export async function handlePicturesAdmin(request, env, url) {
     } else if (action === "dismiss") {
       ok = ours && await doPost("/pic/dismiss", { textNorm, ours });
     } else if (action === "promote" || action === "redraw") {
-      // The log entry IS the queue — one row, no second write.
+      // The log entry IS the queue — one row, no second write. A redraw
+      // queue row without a hint is useless (§ 5.5: their description is
+      // the hint).
+      if (action === "redraw" && !description) {
+        return json({ error: "bad_request" }, { status: 400 });
+      }
       ok = await doPost("/pic/admin-log", {
         action, textNorm, ours, theirs, detail: description ?? undefined,
       });

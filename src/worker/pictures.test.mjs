@@ -557,6 +557,9 @@ test("reject validation: photo carries no theirs; draw needs a drw_ id", async (
   assert.equal((await reject(env, { text: "x", ours: "img_a", action: "photo", theirs: "img_b" })).status, 400);
   assert.equal((await reject(env, { text: "x", ours: "img_a", action: "draw", theirs: "img_b" })).status, 400);
   assert.equal((await reject(env, { text: "x", ours: "img_a", action: "nope" })).status, 400);
+  // descriptions shown on the founder review page must pass § 5.3 safety
+  assert.equal((await reject(env, { text: "x", ours: "img_a", action: "pick",
+    theirs: "img_b", description: "hardcore porn" })).status, 422);
   assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_disagreement").all()[0].c, 0);
 });
 
@@ -624,6 +627,13 @@ test("WT18: pin auto-applies theirs for everyone; block keeps ours listed, never
   // log rows exist for every ruling
   const logs = env.__db.prepare("SELECT action FROM pic_admin_log").all();
   assert.ok(logs.length >= 6);
+
+  // a redraw queue row without the hint is refused
+  assert.equal((await adminDisagree(env, "/redraw", {
+    text_norm: "apple", ours: "img_apple" })).status, 400);
+  assert.equal((await adminDisagree(env, "/redraw", {
+    text_norm: "apple", ours: "img_apple",
+    description: "a shinier apple" })).status, 204);
 });
 
 test("disagreements grouping: choices carry counts, descriptions, photo totals", async () => {
