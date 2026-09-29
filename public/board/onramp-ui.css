@@ -37,3 +37,30 @@
 @media (max-width: 420px) {
   .welcome-tiles .cell { width: 64px; height: 64px; }
 }
+
+/* The demo (tour-ui.js): a pulsing ring on the one thing to tap, a
+ * caption card away from it, and every other control quiet. */
+.tour-ring {
+  position: fixed; z-index: 80; pointer-events: none; border-radius: 14px;
+  box-shadow: 0 0 0 4px var(--cream), 0 0 0 8px var(--ink);
+  animation: tour-pulse 1.4s ease-in-out infinite;
+}
+@keyframes tour-pulse { 50% { box-shadow: 0 0 0 4px var(--cream), 0 0 0 14px rgba(42, 36, 29, .25); } }
+@media (prefers-reduced-motion: reduce) { .tour-ring { animation: none; } }
+.tour-card {
+  position: fixed; z-index: 81; left: 50%; bottom: 20px; transform: translateX(-50%);
+  width: min(460px, calc(100vw - 32px)); background: #fff; border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(30, 26, 20, .25); padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink-text);
+}
+.tour-card.top { bottom: auto; top: 96px; }
+.tour-say { font-size: 20px; font-weight: 800; margin: 0; }
+.tour-note { font-size: 14px; color: var(--muted); margin: 0; }
+.tour-row { display: flex; justify-content: flex-end; gap: 10px; }
+.tour-row .btn { flex: 1; min-height: 52px; }
+.tour-skip { border: 0; background: none; font: inherit; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 6px; }
+body.touring #corner, body.touring .anchor, body.touring #backspace, body.touring #clear,
+body.touring #tx-question, body.touring #tx-future, body.touring #speak, body.touring #edit-counts {
+  pointer-events: none; opacity: .35;
+}

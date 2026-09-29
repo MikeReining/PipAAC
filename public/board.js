@@ -78,6 +78,7 @@ import { mountSettings } from "./board/settings-ui.js";
 import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
 import { mountGroupShows } from "./board/group-shows.js";
 import { mountOnramp } from "./board/onramp-ui.js";
+import { mountTour } from "./board/tour-ui.js";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -395,7 +396,7 @@ function syncTxButtons() {
   const offline = typeof navigator !== "undefined" && !navigator.onLine;
   for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
     $(id).classList.toggle("offline", offline);
-    $(id).disabled = !sentence.length || offline;
+    $(id).disabled = !sentence.length || (offline && !tour);
   }
 }
 addEventListener("online", () => { syncTxButtons(); renderStrip(); });
@@ -406,7 +407,12 @@ addEventListener("offline", () => { syncTxButtons(); renderStrip(); });
  *  through the 024 pipeline. A failed or offline call still speaks —
  *  the bar as built, per § 1's every-press-produces-audio rule. */
 let txBusy = false;
+/* The first-run demo (public/board/tour-ui.js) owns taps, the Smart bar
+ * and the transform buttons while it runs — its taps never reach the
+ * tap log, stats or the ranker. Null the rest of the time. */
+let tour = null;
 async function transformAndSpeak(mode) {
+  if (tour) return tour.onTransform(mode);
   if (txBusy || !sentence.length) return;
   txBusy = true;
   const btn = $(mode === "present" ? "speak" : `tx-${mode}`);
@@ -816,7 +822,7 @@ function ghostCard() {
  *  word, when the setting is on, online, and not mid-typed-word.
  *  Edit/pick/model modes keep every tap a selection, never speech. */
 function facesOn() {
-  return !!(feelingData && sentence.length && expressiveVoice
+  return !!(!tour && feelingData && sentence.length && expressiveVoice
     && navigator.onLine !== false && !kbUi.text
     && !picking && !modeling && !editing);
 }
@@ -971,6 +977,7 @@ async function renderExpand() {
 }
 
 async function renderStrip() {
+  if (tour) return paintStrip(stripCards(tour.stripItems()));
   if (expand) return renderExpand();
   const cap = stripSlots(boardGeom().cols);
   let cards;
@@ -1012,6 +1019,7 @@ async function renderStrip() {
 }
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
+  if (tour) return tour.onTap(kind, id);
   if (picking) {
     // Pick mode: a tap chooses a target, never speaks or appends.
     if (id) {
@@ -2251,8 +2259,38 @@ const onramp = mountOnramp({
     return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
   },
   fitLabels,
-  onDone: () => { renderGrid(); renderStrip(); },
+  onDone: () => { renderGrid(); renderStrip(); tourUi.start(); },
 });
+/* The demo — public/board/tour-ui.js. The board side: add a word, set
+ * the bar to a scripted sentence, speak it — none of it logged. */
+const tourUi = mountTour({
+  saveUser,
+  board: {
+    setTour: (h) => { tour = h; syncTxButtons(); renderStrip(); },
+    showBoard: () => { if (view !== "board") kbUi.setView("board"); },
+    cellEl: (senseId) => cellEls.get(senseId) ?? null,
+    addWord: (senseId) => {
+      const w = senseById(senseId);
+      const item = { kind: "sense", id: senseId, text: w?.label ?? "" };
+      sentence.push(item);
+      renderBar();
+      speakItem(item);
+      syncTxButtons();
+      renderStrip();
+    },
+    setBar: (text, mode) => {
+      applyTransform(sentence, text, mode, barState);
+      for (const it of sentence) {
+        if (it.kind === "typed") it.art = artForWord(it.text);
+      }
+      renderBar();
+      syncTxButtons();
+    },
+    speakBar: () => speakSentence(),
+    clearBar: () => $("clear").click(),
+  },
+});
+$("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });
 if (me.needsSetup) onramp.start();
 
 /* QR card — public/board/recovery-ui.js */
