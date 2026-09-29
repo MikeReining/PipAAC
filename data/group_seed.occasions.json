@@ -46,11 +46,11 @@
     },
     {
       "key": "meals",
-      "words": ["food", "sandwich", "pizza", "chicken", "nuggets", "cheese", "pasta", "macaroni", "fries", "soup", "rice", "corn", "burger", "hot dog", "fish", "meat", "ketchup", "cook", "apple juice"]
+      "words": ["food", "sandwich", "pizza", "chicken", "nuggets", "cheese", "pasta", "macaroni", "fries", "soup", "rice", "corn", "burger", "hot dog", "fish", "meat", "ketchup", "cook"]
     },
     {
       "key": "snacks",
-      "words": ["cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "muffin", "chocolate milk", "smoothie", "apple juice"]
+      "words": ["cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "muffin", "chocolate milk", "smoothie"]
     }
   ],
   "groups": [
@@ -72,7 +72,7 @@
       "names": {
         "en": "Lunch"
       },
-      "words": ["lunch", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "sandwich", "pizza", "chicken", "nuggets", "pasta", "macaroni", "fries", "soup", "rice", "burger", "hot dog", "fish", "meat", "ketchup", "apple juice", "cheese", "carrot", "broccoli", "cucumber", "pepper", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
+      "words": ["lunch", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "sandwich", "pizza", "chicken", "nuggets", "pasta", "macaroni", "fries", "soup", "rice", "burger", "hot dog", "fish", "meat", "ketchup", "cheese", "carrot", "broccoli", "cucumber", "pepper", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     },
     {
       "key": "dinner",
@@ -82,7 +82,7 @@
       "names": {
         "en": "Dinner"
       },
-      "words": ["dinner", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "cook", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "apple juice", "carrot", "broccoli", "cucumber", "pepper", "corn", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
+      "words": ["dinner", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "food", "cook", "pizza", "pasta", "macaroni", "chicken", "nuggets", "soup", "rice", "fish", "meat", "burger", "hot dog", "fries", "ketchup", "carrot", "broccoli", "cucumber", "pepper", "corn", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     },
     {
       "key": "snack",
@@ -92,7 +92,7 @@
       "names": {
         "en": "Snack"
       },
-      "words": ["snack", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "chocolate milk", "carrot", "broccoli", "cucumber", "pepper", "muffin", "smoothie", "apple juice", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
+      "words": ["snack", "eat", "drink", "all done", "water", "milk", "juice", "fruit", "apple", "banana", "grapes", "strawberry", "orange#131", "watermelon", "cracker", "cheese", "goldfish crackers", "pretzel", "chips", "popcorn", "applesauce", "string cheese", "yogurt", "granola bar", "fruit snack", "banana bread", "chocolate milk", "carrot", "broccoli", "cucumber", "pepper", "muffin", "smoothie", "cup", "plate", "bowl", "spoon", "fork", "knife", "napkin"]
     }
   ]
 }
