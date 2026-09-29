@@ -10,6 +10,9 @@ import { handleResearch } from "./research.js";
 import { handleSpeak } from "./voice.js";
 import { handleTransform } from "./transform.js";
 import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger } from "./tile.js";
+import {
+  handleFind, handleFindBatch, handlePictureImage, handlePicturesAdmin,
+} from "./pictures.js";
 import { licenseFor } from "./license.mjs";
 
 export { UserRelay, PairingLobby, SupporterAccounts, TileLedger };
@@ -79,6 +82,22 @@ export default {
     }
     if (path.startsWith("/admin/v1/tile-voice")) {
       return handleTileAdmin(request, env, url);
+    }
+
+    // Picture Finder (030): reuse-first matching over the pictures we
+    // own — Vectorize + Workers AI; auto is computed server-side only.
+    if (path === "/api/v1/pictures/find" && request.method === "POST") {
+      return handleFind(request, env, ctx);
+    }
+    if (path === "/api/v1/pictures/find-batch" && request.method === "POST") {
+      return handleFindBatch(request, env, ctx);
+    }
+    const picImgMatch = path.match(/^\/api\/v1\/pictures\/img\/([A-Za-z0-9_]+)$/);
+    if (picImgMatch && request.method === "GET") {
+      return handlePictureImage(request, env, picImgMatch[1]);
+    }
+    if (path.startsWith("/admin/v1/pictures")) {
+      return handlePicturesAdmin(request, env, url);
     }
 
     // Dev only: localhost self-activates — mints the same pip-life token

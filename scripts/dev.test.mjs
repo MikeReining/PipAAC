@@ -69,7 +69,9 @@ test("agent copy never uses the browse port and uses a scratch catalog", () => {
   const plan = planAuto(new Set());
   assert.equal(plan.port, AGENT_PORT_FIRST);
   assert.notEqual(plan.port, BROWSE_PORT);
-  assert.ok(plan.args.includes("--local"));
+  // --local would disable remote:true bindings (AI, Vectorize); the slot's own
+  // --persist-to dir is what keeps its catalog scratch.
+  assert.ok(!plan.args.includes("--local"));
   assert.ok(plan.args.includes(`${REPO_ROOT}/.wrangler/slot-1`));
   assert.equal(inspectorPortFor(plan.port), BROWSE_INSPECTOR_PORT + 1);
   assert.equal(flagValue(plan.args, "--local-upstream"), `localhost:${AGENT_PORT_FIRST}`);
@@ -94,7 +96,7 @@ test("CLI auto --print-cmd starts a scratch slot, not the live catalog", () => {
   const plan = printCmd("auto", `${AGENT_PORT_FIRST},${AGENT_PORT_FIRST + 1}`);
   assert.equal(plan.action, "start");
   assert.equal(plan.port, AGENT_PORT_FIRST + 2);
-  assert.ok(plan.args.includes("--local"));
+  assert.ok(!plan.args.includes("--local"));
   assert.ok(!plan.args.includes("--remote"));
 });
 

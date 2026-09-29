@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "embed_model": "@cf/baai/bge-m3",
+  "caption_version": 1,
+  "style_version": "pip-v1",
+  "auto_cutoff": 1.01,
+  "auto_cutoff_by_lang": {},
+  "pick_weight": 0.05,
+  "reject_weight": 0.1,
+  "top_k": 4,
+  "fetch_k": 12,
+  "vectorize_index": "pip-pictures",
+  "vectorize_calibration_index": "pip-pictures-calibration"
+}

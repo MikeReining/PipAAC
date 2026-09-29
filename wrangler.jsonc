@@ -27,9 +27,15 @@
     { "tag": "v4", "new_sqlite_classes": ["SupporterAccounts"] },
     { "tag": "v5", "new_sqlite_classes": ["TileLedger"] }
   ],
+  "ai": { "binding": "AI", "remote": true },
+  "vectorize": [
+    { "binding": "PICTURES", "index_name": "pip-pictures", "remote": true },
+    { "binding": "PICTURES_CALIB", "index_name": "pip-pictures-calibration", "remote": true }
+  ],
   "r2_buckets": [
     { "binding": "BLOBS", "bucket_name": "pippaac-sync" },
-    { "binding": "VOICE", "bucket_name": "pippaac-voice" }
+    { "binding": "VOICE", "bucket_name": "pippaac-voice" },
+    { "binding": "EXT_ART", "bucket_name": "workbookbench-catalog" }
   ],
   "analytics_engine_datasets": [
     { "binding": "RESEARCH", "dataset": "pip_research" }

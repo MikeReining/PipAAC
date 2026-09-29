@@ -95,7 +95,8 @@ export function planAuto(busyPorts) {
     action: "start",
     port,
     origin: `http://localhost:${port}`,
-    args: wranglerDevArgs({ port, repoRoot: REPO_ROOT, localCatalog: true }),
+    // No --local: remote:true bindings (AI, Vectorize) must stay reachable.
+    args: wranglerDevArgs({ port, repoRoot: REPO_ROOT, localCatalog: false }),
   };
 }
 
