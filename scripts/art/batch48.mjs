@@ -11,8 +11,8 @@ export const BATCH48 = [
     displayName: "wind",
     category: "Nature",
     framing: "object",
-    hint: "A clean standalone dynamic swirling breeze gust with curved light cyan wind stream lines and three fluttering small green leaves carried in the air.",
-    note: "Curling cyan wind breeze lines with fluttering green leaves",
+    hint: "A clean standalone bold weather symbol of a directional blowing wind breeze, blowing horizontally from left to right with three smooth bright blue gust stream lines with curling wave loops at the right trailing end.",
+    note: "Directional horizontal blowing wind gust streams with curled wave ends",
   },
   {
     slot: 478,
@@ -38,8 +38,8 @@ export const BATCH48 = [
     displayName: "vehicle",
     category: "Vehicles",
     framing: "object",
-    hint: "A clean standalone circular blue category emblem badge featuring clean white icons of transport: a car, an airplane, and a ship.",
-    note: "Circular transport category emblem badge",
+    hint: "A clean standalone heavy yellow construction road roller vehicle in side profile with a large smooth steel roller drum at the front, an enclosed driver cab with windows, and large treaded rear rubber tires.",
+    note: "Yellow road roller construction machine (unmistakable vehicle archetype)",
   },
   {
     slot: 481,
