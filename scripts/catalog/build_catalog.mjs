@@ -432,7 +432,7 @@ export function buildCatalog(
       {
         id: DEFAULT_VOICE_ID,
         locale: "en",
-        display_name: "Default",
+        display_name: "Eve", // 028: the default tile voice has a name
         source: "bundled",
         engine_id: null,
         is_default: 1,

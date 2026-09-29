@@ -8,6 +8,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  armUtcRollRetry, msUntilUtcDayRoll,
   tileCacheUrl, tileStateBadge, tileStateMessage, tileTextHash, voiceTile,
 } from "../../public/shared/voice_tile.mjs";
 
@@ -242,6 +243,35 @@ test("evict drops a cached clip; flag posts and replaced lists hashes", async ()
     assert.deepEqual(rep.ids, ["h1", "h2"]);
     assert.match(calls[1].url, /tile\/replaced\?since=0&voice=voi_default_en/);
     assert.equal(calls[1].init.headers["x-pip-license"], "x");
+  });
+});
+
+test("the UTC day roll retries a budget-queued mint (fake clock)", async () => {
+  assert.equal(msUntilUtcDayRoll(Date.UTC(2026, 8, 29, 23, 59, 0)), 60_000);
+  assert.equal(msUntilUtcDayRoll(Date.UTC(2026, 8, 30, 0, 0, 0)), 86_400_000);
+  await withEnv(async () => {
+    const vt = voiceTile();
+    // Budget wall at mint time: the word queues for tomorrow.
+    globalThis.fetch = async () =>
+      new Response(JSON.stringify({ error: "budget" }), { status: 503 });
+    const r = await vt.ensure({ ...ARGS, source: "user_keyboard" });
+    assert.equal(r.reason, "budget");
+    assert.equal((await (await globalThis.caches.open("pip-tile-queue")).keys()).length, 1);
+
+    // Arm the roll at 23:59 UTC; the captured timer fires on the day roll.
+    let cb, delay;
+    const cancel = armUtcRollRetry(
+      async () => vt.drainQueue({ userId: "u-1", license: "x" }),
+      { now: () => Date.UTC(2026, 8, 29, 23, 59, 0),
+        setTimeoutFn: (fn, ms) => { cb = fn; delay = ms; return 7; },
+        clearTimeoutFn: () => {} },
+    );
+    assert.equal(delay, 60_000); // armed for exactly the UTC roll
+    globalThis.fetch = async () => okAudio();
+    await cb(); // midnight UTC — the drain runs
+    assert.equal(vt.status("voi_default_en", "scientist"), "ready");
+    assert.equal((await (await globalThis.caches.open("pip-tile-queue")).keys()).length, 0);
+    cancel();
   });
 });
 

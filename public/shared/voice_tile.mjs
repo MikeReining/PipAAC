@@ -274,3 +274,26 @@ export function voiceTile({
     status, onStatus,
   };
 }
+
+/** Ms until the next UTC midnight — the per-day budget rolls on the UTC
+ *  day, so that is when queued mints get another chance (WT7's
+ *  fake-clock seam: the timer is injected in tests). */
+export const msUntilUtcDayRoll = (now = Date.now()) => {
+  const d = new Date(now);
+  d.setUTCHours(24, 0, 0, 0);
+  return d.getTime() - now;
+};
+
+/** Arm the UTC-day-roll drain: at each UTC midnight, `drain` runs (the
+ *  caller supplies `drainQueue` with credentials) and the next roll is
+ *  armed. Returns a cancel handle. */
+export function armUtcRollRetry(drain, {
+  now = () => Date.now(),
+  setTimeoutFn = setTimeout,
+  clearTimeoutFn = clearTimeout,
+} = {}) {
+  const schedule = () => setTimeoutFn(fire, msUntilUtcDayRoll(now()));
+  const fire = async () => { await drain().catch(() => {}); handle = schedule(); };
+  let handle = schedule();
+  return () => clearTimeoutFn(handle);
+}

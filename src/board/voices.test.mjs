@@ -26,7 +26,7 @@ test("today: one voice in use, the six planned voices are coming soon", () => {
   const db = fresh();
   const { available, coming } = voiceChoices(db, "en");
   assert.equal(available.length, 1);
-  assert.equal(voiceName(db, available[0].id), "Pip's voice");
+  assert.equal(voiceName(db, available[0].id), "Eve"); // 028: the default tile voice is named
   assert.deepEqual(coming.map((v) => v.name), VOICE_LINEUP.map((v) => v.name));
 });
 

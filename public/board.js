@@ -46,7 +46,7 @@ import {
 import { resolveSlot } from "./shared/voice.mjs";
 import { voiceName } from "./shared/voices.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
-import { tileStateBadge, tileStateMessage, voiceTile } from "./shared/voice_tile.mjs";
+import { armUtcRollRetry, tileStateBadge, tileStateMessage, voiceTile } from "./shared/voice_tile.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { PIN_RE, RESET_PHRASE, checkPin, clearPin, hasPin, isResetPhrase, setPin } from "./shared/pin.mjs";
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
@@ -342,6 +342,10 @@ addEventListener("online", () => {
   voiceLicense().then((license) =>
     tileVoice.drainQueue({ userId: me.id, license })).catch(() => {});
 });
+/* The per-day budget rolls on the UTC day — queued "ready tomorrow"
+   mints retry at the roll, not just on boot/reconnect (§ 5.2). */
+armUtcRollRetry(async () =>
+  tileVoice.drainQueue({ userId: me.id, license: await voiceLicense() }));
 // 023: the bar's current shape — which tense it holds and whether it
 // is a question — drives the trio's selected state. Reset whenever
 // the bar empties (clear, backspace, after-speak fresh start).
