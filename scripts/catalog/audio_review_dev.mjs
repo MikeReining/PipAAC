@@ -572,7 +572,7 @@ async function handle(req, res) {
       let labVariationId = null;
       let labMintText = null;
       if (v4Lab) {
-        const m = /_(v3_plain|v3_period|v4_plain|v4_period|v4_warm|v4_ipa)\.mp3$/i.exec(file);
+        const m = /_(v4_plain|v4_ipa)\.mp3$/i.exec(file);
         labVariationId = m ? m[1] : null;
       }
       json(res, 200, {

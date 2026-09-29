@@ -27,5 +27,8 @@ export function getCatalogTileVoice(doc = loadCatalogVoices()) {
   if (!tiles?.voice_id) {
     throw new Error("data/catalog/voices.json is missing tiles.voice_id");
   }
+  if (!tiles?.model) {
+    throw new Error("data/catalog/voices.json is missing tiles.model");
+  }
   return tiles;
 }

@@ -53,7 +53,7 @@ function main() {
     defaults: {
       provider: "elevenlabs",
       voice_id: tilesVoice.voice_id,
-      model: tilesVoice.model ?? "eleven_v3",
+      model: tilesVoice.model,
       voice_settings: tilesVoice.voice_settings,
     },
     words,

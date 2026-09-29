@@ -112,7 +112,7 @@
   </main>
   <script>
     const LAB_BATCH = "elevenlabs-v4-lab";
-    const VAR_ORDER = ["v4_plain", "v4_ipa", "v3_plain", "v3_period", "v4_period", "v4_warm"];
+    const VAR_ORDER = ["v4_plain", "v4_ipa"];
     const $ = (id) => document.getElementById(id);
     const player = $("player");
     const canvas = $("wave");
@@ -130,7 +130,7 @@
     /** @type {Record<string, { status: string }>} */
     let reviewBySlug = {};
 
-    const LAB_SUFFIX_RE = /_(v3_plain|v3_period|v4_plain|v4_period|v4_warm|v4_ipa)\.mp3$/i;
+    const LAB_SUFFIX_RE = /_(v4_plain|v4_ipa)\.mp3$/i;
 
     function catalogSlug(text) {
       return String(text ?? "")
@@ -145,7 +145,7 @@
       return name.replace(LAB_SUFFIX_RE, "");
     }
 
-    /** Canonical ↑↓ order — always v3_plain … v4_ipa, never alphabetical. */
+    /** Canonical ↑↓ order — always v4_plain … v4_ipa, never alphabetical. */
     function variantPathsForSlug(slug) {
       if (!slug) return [];
       return VAR_ORDER.map((v) => `${LAB_BATCH}/takes/${slug}_${v}.mp3`).filter((p) => fileListPaths.includes(p));

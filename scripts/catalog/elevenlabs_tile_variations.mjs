@@ -1,9 +1,9 @@
 /**
- * ElevenLabs v3 variation matrix for single-word tile gap-fill.
- * See https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices (Prompting Eleven v3).
+ * ElevenLabs variation matrix for single-word tile gap-fill (eleven_v4 only —
+ * v3 is retired, 028 slice 0).
  *
- * Grok explore uses XML tags (<emphasis>, <loud>); v3 uses punctuation, capitalization, and [audio tags].
- * Tiles default to plain + period; emphasis is ALL CAPS (v3 capitalization guidance).
+ * Grok explore uses XML tags (<emphasis>, <loud>); the ElevenLabs takes are
+ * plain + period, with ALL CAPS as the optional emphasis take.
  */
 
 export const TILE_REVIEW_BATCH = "elevenlabs-tiles-core";

@@ -1,11 +1,11 @@
 {
   "schema": "pippaac.elevenlabs-tiles-recipes.v1",
   "batch": "elevenlabs-tiles-core",
-  "generatedAt": "2026-09-26T21:15:48.806Z",
+  "generatedAt": "2026-09-29T16:03:48.249Z",
   "defaults": {
     "provider": "elevenlabs",
     "voice_id": "WWMMC6k9tdar0BthUenK",
-    "model": "eleven_v3",
+    "model": "eleven_v4",
     "voice_settings": {
       "stability": 0.4,
       "similarity_boost": 0.8,

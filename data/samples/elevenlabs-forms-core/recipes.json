@@ -5,7 +5,7 @@
   "defaults": {
     "provider": "elevenlabs",
     "voice_id": "WWMMC6k9tdar0BthUenK",
-    "model": "eleven_v3",
+    "model": "eleven_v4",
     "voice_settings": {
       "stability": 0.4,
       "similarity_boost": 0.8,

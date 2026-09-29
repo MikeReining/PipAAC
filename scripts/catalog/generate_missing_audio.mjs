@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Generate audio for lexicon rows the WorkbookBench catalog missed, using
- * ElevenLabs with the same voice id and settings WBB bakes with
- * (eleven_v3, stability 0.4, similarity 0.8, speaker boost).
+ * ElevenLabs with the same voice id and settings the catalog uses
+ * (eleven_v4, stability 0.4, similarity 0.8).
  *
  *   node scripts/catalog/generate_missing_audio.mjs
  *

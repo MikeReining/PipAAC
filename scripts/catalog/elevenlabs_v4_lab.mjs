@@ -14,10 +14,9 @@ import { formatElevenV4IpaLine, lookupIpaGroq, normalizeIpaField } from "./ipa_l
 import { getCatalogTileVoice } from "./voices.mjs";
 
 export const V4_LAB_BATCH = "elevenlabs-v4-lab";
-export const V3_MODEL = "eleven_v3";
 export const V4_MODEL = "eleven_v4";
 
-/** @typedef {"v3_plain" | "v3_period" | "v4_plain" | "v4_period" | "v4_warm" | "v4_ipa"} V4LabVariationId */
+/** @typedef {"v4_plain" | "v4_ipa"} V4LabVariationId */
 
 /** Default lab mint (one ElevenLabs call). */
 export const V4_LAB_DEFAULT_MINT_IDS = ["v4_plain"];
@@ -25,13 +24,9 @@ export const V4_LAB_DEFAULT_MINT_IDS = ["v4_plain"];
 /** Optional fallback when plain is not good enough (Groq + Eleven). */
 export const V4_LAB_IPA_MINT_IDS = ["v4_ipa"];
 
-/** Legacy filenames still on disk from earlier A/B matrix. */
-export const V4_LAB_LEGACY_VARIATION_IDS = ["v3_plain", "v3_period", "v4_period", "v4_warm"];
-
 export const V4_LAB_VARIATION_IDS = [...V4_LAB_DEFAULT_MINT_IDS, ...V4_LAB_IPA_MINT_IDS];
 
-const LAB_SUFFIX_RE =
-  /_(v3_plain|v3_period|v4_plain|v4_period|v4_warm|v4_ipa)$/;
+const LAB_SUFFIX_RE = /_(v4_plain|v4_ipa)$/;
 
 /**
  * @param {string} filename e.g. bathroom_v4_plain.mp3
@@ -68,18 +63,8 @@ export function labVariationText(word, variationId, opts = {}) {
   const w = String(word ?? "").trim();
   if (!w) throw new Error("word is required");
   switch (variationId) {
-    case "v3_plain":
-      return w;
-    case "v3_period":
-      return w.endsWith(".") ? w : `${w}.`;
     case "v4_plain":
       return w;
-    case "v4_period":
-      return w.endsWith(".") ? w : `${w}.`;
-    case "v4_warm": {
-      const line = w.endsWith(".") ? w : `${w}.`;
-      return `[warm, clear] ${line}`;
-    }
     case "v4_ipa": {
       const ipa = ensureIpaWrapped(opts.ipa);
       if (!ipa) throw new Error("ipa is required for v4_ipa");
@@ -91,7 +76,10 @@ export function labVariationText(word, variationId, opts = {}) {
 }
 
 export function modelForLabVariation(variationId) {
-  return String(variationId).startsWith("v4_") ? V4_MODEL : V3_MODEL;
+  if (!V4_LAB_VARIATION_IDS.includes(variationId)) {
+    throw new Error(`unknown lab variation: ${variationId}`);
+  }
+  return V4_MODEL;
 }
 
 /**
@@ -121,10 +109,6 @@ export function resolveLabWord(q) {
 function normalizeLabQuery(text) {
   return String(text ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 }
-
-/** TTS tends to imitate the sound, not say the label (IPA or lexical guard). */
-const SOUND_EFFECT_LABEL_RE =
-  /^(coughing|coughs?|laughs?|laughing|sneezing|sneezes?|burps?|burping|hiccups?|hiccuping)$/i;
 
 /** IPA alone still performs the sound — use lexical v4 line instead. */
 const LEXICAL_GUARD_LABEL_RE = /^(coughing|coughs?|sneezing|sneezes?|burps?|burping|hiccups?|hiccuping)$/i;

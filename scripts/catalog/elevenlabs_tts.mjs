@@ -5,7 +5,7 @@
 
 const API = "https://api.elevenlabs.io/v1";
 
-export const DEFAULT_MODEL = "eleven_v3";
+export const DEFAULT_MODEL = "eleven_v4";
 export const DEFAULT_VOICE_SETTINGS = {
   stability: 0.4,
   similarity_boost: 0.8,
@@ -15,16 +15,9 @@ export const DEFAULT_VOICE_SETTINGS = {
 
 /** Eleven v4 accepts stability + similarity_boost only (no style / speaker_boost). */
 export function voiceSettingsForModel(model, base = DEFAULT_VOICE_SETTINGS) {
-  const stability = base.stability ?? DEFAULT_VOICE_SETTINGS.stability;
-  const similarity_boost = base.similarity_boost ?? DEFAULT_VOICE_SETTINGS.similarity_boost;
-  if (String(model).startsWith("eleven_v4")) {
-    return { stability, similarity_boost };
-  }
   return {
-    stability,
-    similarity_boost,
-    style: base.style ?? 0,
-    use_speaker_boost: base.use_speaker_boost ?? true,
+    stability: base.stability ?? DEFAULT_VOICE_SETTINGS.stability,
+    similarity_boost: base.similarity_boost ?? DEFAULT_VOICE_SETTINGS.similarity_boost,
   };
 }
 
