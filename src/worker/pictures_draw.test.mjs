@@ -491,3 +491,78 @@ test("admin recent: 401 without token, newest drawings first", async () => {
   assert.ok(rows[0].created_at >= rows[1].created_at);
   assert.equal(rows[0].status, "ready");
 });
+
+test("WT13: no identity in any pic_* row, index metadata, or vendor bodies", async () => {
+  const jevBodies = [], synthBodies = [];
+  const env = makeEnv({
+    jev: async (args) => {
+      jevBodies.push(JSON.stringify(args));
+      const personal = /cooper|grandma/i.test(String(args?.text ?? ""));
+      return {
+        scope: personal ? "personal" : "common",
+        kind: "None", language: "en",
+        draw: { framing: "group", entity_mode: "person", hand_mode: "resting_ball" },
+      };
+    },
+    synth: async (prompt, refs) => (synthBodies.push(prompt), PNG_BYTES),
+  });
+  const lic = await licenseFor(SECRET, UID);
+
+  // Exercise every write path: common + personal draws, pick, reject.
+  assert.equal((await draw(env, { text: "trampoline" })).status, 200);
+  assert.equal((await draw(env, {
+    text: "Cooper", description: "our golden retriever" })).status, 200);
+  const post = (path, b) => worker.fetch(new Request(`https://x/api/v1/pictures/${path}`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: UID, license: lic, ...b }),
+  }), env);
+  assert.equal((await post("pick", {
+    text: "Cooper", description: "our golden retriever", image_id: "drw_x" })).status, 204);
+  assert.equal((await post("reject", {
+    text: "Grandma Rosa", description: "my mom's mom",
+    ours: "img_0692", action: "pick", theirs: "img_x" })).status, 204);
+
+  // 1 — every pic_* table: the only identity-keyed record is pic_allowance.
+  const tables = env.__db.prepare(
+    "SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'pic\\_%' ESCAPE '\\'")
+    .all().map((r) => r.name);
+  assert.ok(tables.length >= 8, `expected all pic_* tables, got ${tables}`);
+  const identityTerms = [UID.toLowerCase(), lic.toLowerCase()];
+  const nameTerms = ["cooper", "grandma rosa", "rosa"];
+  for (const t of tables) {
+    const dump = JSON.stringify(env.__db.prepare(`SELECT * FROM "${t}"`).all())
+      .toLowerCase();
+    for (const term of nameTerms) {
+      assert.ok(!dump.includes(term), `${t} leaked the personal name ${term}`);
+    }
+    for (const term of identityTerms) {
+      if (t === "pic_allowance") continue; // the one sanctioned identity row
+      assert.ok(!dump.includes(term), `${t} leaked an identity id`);
+    }
+  }
+  // pic_allowance holds ONLY uid + used — prove the shape, not just absence.
+  assert.deepEqual(
+    Object.keys(env.__db.prepare("SELECT * FROM pic_allowance").all()[0]).sort(),
+    ["uid", "used"]);
+
+  // 2 — index metadata: description-derived captions, never a name or id.
+  for (const row of env.PICTURES.rows.values()) {
+    const meta = JSON.stringify(row.metadata).toLowerCase();
+    for (const term of [...nameTerms, ...identityTerms]) {
+      assert.ok(!meta.includes(term), `index metadata leaked ${term}`);
+    }
+  }
+
+  // 3 — vendor bodies. Jev sees the typed label ("Cooper") per § 8 — never
+  // an id. Muse sees the description-derived prompt — never a name or id.
+  for (const b of jevBodies) {
+    for (const term of identityTerms) assert.ok(!b.toLowerCase().includes(term));
+  }
+  for (const p of synthBodies) {
+    const low = p.toLowerCase();
+    for (const term of [...nameTerms, ...identityTerms]) {
+      assert.ok(!low.includes(term), `Muse prompt leaked ${term}`);
+    }
+  }
+  assert.ok(synthBodies.some((p) => p.includes("golden retriever")));
+});

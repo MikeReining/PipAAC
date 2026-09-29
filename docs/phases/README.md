@@ -45,7 +45,7 @@ Executing phases only. Each row names the **next** slice.
 | [027 — Occasion boards and independent editing](027_Occasion_Boards.md) | Built 2026-09-28 (A1–A4, Works Test 12/12 on an agent slot). Waiting on the founder: seed curation review and the CHILDES starter table |
 | [028 — Tile voice library](028_Tile_Voice_Library.md) | **Core shipped 2026-09-29.** Slices 0–5 + slice-7 free half: mint core + ledger DO (`ae16407`), client playback + triggers (`547c5f7`), review page (`ac0678e`), flag + sweep (`c8134e3`), reconcile (`bcd3d60`), catalog seed + missing-object fix (`b412844`, `f140b39`). Deployed to prod with secrets. Next: Leo + extended seed — founder-gated on cost; slice 8 waits on 010 |
 | [029 — Add a word](029_Add_A_Word.md) | Decided 2026-09-29. Front end, Claude leads design. Next: slice A (sheet + Make saves at once); B–D wait on 030/028 contracts (stubbable) |
-| [030 — Picture Finder and drawing](030_Picture_Finder_And_Drawing.md) | Decided 2026-09-29. Backend handoff (another developer). Next: slice 1 index + find, then slice 2 calibration page for the founder |
+| [030 — Picture Finder and drawing](030_Picture_Finder_And_Drawing.md) | Slices 1–7 built; open = founder calibration save, slice-4 live run (≤10, founder-approved), and Works Tests 11 and 13 |
 | [031 — The editor, rebuilt](031_Board_Editor.md) | Decided 2026-09-29. UI only, Claude leads design. Next: slice A (shell: pages list, one field, opens on Home) alongside 029 slice A |
 
 ## Proposals awaiting review

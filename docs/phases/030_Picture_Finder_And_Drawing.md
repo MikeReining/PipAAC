@@ -1,6 +1,7 @@
 # 030 — Picture Finder and drawing (backend)
 
-**Status:** **Decided 2026-09-29 (founder), ready to slice. Nothing built.**
+**Status:** **Slices 1–7 built; open = founder calibration save, slice-4
+live run (≤10, founder-approved), and Works Tests 11 and 13.**
 Backend handoff: this doc is written for the developer building the Worker
 side. The add experience that calls it is `029_Add_A_Word.md` (front end,
 designed separately). Voice for the same add is `028_Tile_Voice_Library.md`
@@ -400,8 +401,9 @@ client shows the four and the adult chooses.
   § 6.3), and personal-scope rows never reach the review page (§ 5.5).
 - A rejection by photo records only the word "photo" — no image, no hash.
 - Photos never leave this path's scope (unchanged).
-- The privacy policy must say typed word labels are sent to image and
-  classification providers (same line as 028 § 8).
+- **Open:** the privacy policy must say typed word labels are sent to
+  image and classification providers (same line as 028 § 8). No policy
+  doc exists in the repo yet — adding the line is an open founder item.
 
 ## 9. Endpoints
 
@@ -422,6 +424,12 @@ All follow `src/worker/voice.js` conventions (JSON errors, license check,
 | `POST /admin/v1/pictures/disagreements/action` | `{text, ours, action: pin\|block\|promote\|redraw\|dismiss, theirs?}` | 204 | 401 |
 
 Text rules: `normalizeV1`, 1–80 characters for text, 0–120 for description.
+
+**Shape note (as built, differs above):** the admin ruling routes put the
+action in the path — `POST /admin/v1/pictures/disagreements/{pin|unpin|
+block|unblock|dismiss|promote|redraw}` — and the bodies use `text_norm`,
+not `text`. Harmless while the local page is the only consumer; recorded
+here so the contract isn't read as settled.
 
 ## 10. Slices
 
