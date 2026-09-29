@@ -8,8 +8,14 @@
 
 export const TILE_REVIEW_BATCH = "elevenlabs-tiles-core";
 export const FORMS_REVIEW_BATCH = "elevenlabs-forms-core";
+/** Alternate tile voice seed (Leo) — local takes only until 028 slice 6 publish path. */
+export const ELEVENLABS_TILES_LEO_BATCH = "elevenlabs-tiles-leo";
 
-const ELEVENLABS_REVIEW_BATCHES = new Set([TILE_REVIEW_BATCH, FORMS_REVIEW_BATCH]);
+const ELEVENLABS_REVIEW_BATCHES = new Set([
+  TILE_REVIEW_BATCH,
+  FORMS_REVIEW_BATCH,
+  ELEVENLABS_TILES_LEO_BATCH,
+]);
 
 /** @typedef {"plain" | "period" | "emphasis"} TileVariationId */
 

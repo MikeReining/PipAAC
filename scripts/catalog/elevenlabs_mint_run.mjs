@@ -5,9 +5,18 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { TILE_REVIEW_BATCH, catalogSlug, tileTakeFilename } from "./elevenlabs_tile_variations.mjs";
+import {
+  ELEVENLABS_TILES_LEO_BATCH,
+  FORMS_REVIEW_BATCH,
+  TILE_REVIEW_BATCH,
+  catalogSlug,
+  tileTakeFilename,
+} from "./elevenlabs_tile_variations.mjs";
 import { getCatalogTileVoice } from "./voices.mjs";
+import { tileReviewUrlForRun } from "./tile_review_voices.mjs";
 import { repoRoot } from "./paths.mjs";
+
+const MINT_RUN_BATCHES = [TILE_REVIEW_BATCH, ELEVENLABS_TILES_LEO_BATCH, FORMS_REVIEW_BATCH];
 
 export function mintRunsDir(batch = TILE_REVIEW_BATCH) {
   return join(repoRoot, "data/samples", batch, "mint_runs");
@@ -56,7 +65,14 @@ export function writeMintRun(opts) {
   const runId =
     opts.runId ??
     `run-${new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)}`;
-  const voice = getCatalogTileVoice();
+  const defaultVoice = getCatalogTileVoice();
+  const voice =
+    opts.voice ??
+    {
+      label: defaultVoice.label,
+      voice_id: defaultVoice.voice_id,
+      model: defaultVoice.model,
+    };
   const items = opts.items.map((item) => {
     const slug = item.slug ?? catalogSlug(item.spokenText);
     const takeRel =
@@ -125,13 +141,16 @@ export function mintRunFileList(runId, batch, folder) {
   });
 }
 
-/** Review URL query string for a run. */
+export function findMintRunBatch(runId) {
+  const id = String(runId ?? "").trim();
+  if (!id) return null;
+  for (const batch of MINT_RUN_BATCHES) {
+    if (existsSync(mintRunPath(id, batch))) return batch;
+  }
+  return null;
+}
+
+/** Review URL path for a run (includes /audio-review/elevenlabs-tiles). */
 export function reviewUrlQuery(runId, batch = TILE_REVIEW_BATCH) {
-  const q = new URLSearchParams({
-    batch,
-    folder: "takes",
-    ship: "mint-run",
-    runId,
-  });
-  return `/audio-review/elevenlabs-tiles?${q.toString()}`;
+  return tileReviewUrlForRun(runId, batch);
 }

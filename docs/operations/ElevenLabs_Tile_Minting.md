@@ -87,6 +87,18 @@ After `catalog:tiles:mint-gaps` or `mint_elevenlabs_tile_batch.mjs --mint-run`, 
 
 **Full-library coverage (default + extra voices):** `docs/phases/028_Tile_Voice_Library.md` (decided: on-demand mint of typed words, review page, one mint core) (ops gaps: `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md`).
 
+### Leo seed (pilot — listen before bulk)
+
+Male tile voice **Leo** (`aGfQDyfOrmWWfC7ZnTbv`, `data/catalog/tile_voices.json`) is minted in a **separate sample lane** (`elevenlabs-tiles-leo`). Takes do **not** replace Eve clips or publish to R2 until slice 6.
+
+Founder review: `npm run catalog:audio:review` → [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles) → **Voice: Leo (seed)** → **Show: mint run (spot check)** → pick the run → **↑ / ↓**. **Reload list** after an off-screen mint. Agents mint with:
+
+```bash
+npm run catalog:tiles:mint-leo-seed -- --limit 10
+npm run catalog:tiles:mint-leo-seed -- --limit 10 --offset 10
+```
+
+Full launch pre-seed only after founder OK on pilots.
 ## Audio inventory (what is “missing”?)
 
 | Layer | Command / file | Meaning |

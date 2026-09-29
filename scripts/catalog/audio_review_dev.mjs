@@ -25,6 +25,7 @@ import { spawnSync } from "node:child_process";
 
 import { trimAudioTail } from "./audio_trim.mjs";
 import {
+  ELEVENLABS_TILES_LEO_BATCH,
   FORMS_REVIEW_BATCH,
   isElevenlabsReviewBatch,
   tileTakeFilename,
@@ -45,7 +46,13 @@ import {
   probeR2ObjectExists,
   resolveTileReviewWord,
 } from "./tile_catalog_lookup.mjs";
-import { listMintRuns, mintRunFileList } from "./elevenlabs_mint_run.mjs";
+import { findMintRunBatch, listMintRuns, mintRunFileList } from "./elevenlabs_mint_run.mjs";
+import {
+  canPublishCatalogBatch,
+  listTileReviewVoices,
+  resolveTileReviewLane,
+  tileReviewUrlForRun,
+} from "./tile_review_voices.mjs";
 import { buildGrokTtsBody, synthesizeGrokVoice } from "./grok_tts.mjs";
 import { mintBackupVoice } from "./mint_backup_voice.mjs";
 import { publishCatalogForm } from "./publish_catalog_form.mjs";
@@ -250,7 +257,7 @@ export function listBatches(pipeline) {
     .filter((d) => d.isDirectory())
     .map((d) => d.name);
   const grok = dirs.filter((n) => /^batch-\d+-core$/.test(n));
-  const elevenlabs = dirs.filter((n) => /^elevenlabs-(tiles|forms)-core$/.test(n));
+  const elevenlabs = dirs.filter((n) => /^elevenlabs-(tiles-leo|tiles-core|forms-core)$/.test(n));
   if (pipeline === GROK_PIPELINE) return grok.sort();
   if (pipeline === ELEVENLABS_V4_LAB_PIPELINE) return [V4_LAB_BATCH];
   if (pipeline === VOICE_SELECTOR_PIPELINE) return [VOICE_SELECTOR_BATCH];
@@ -393,6 +400,26 @@ async function handle(req, res) {
     return;
   }
 
+  if (path === "/api/tile-review/voices" && req.method === "GET") {
+    json(res, 200, { voices: listTileReviewVoices() });
+    return;
+  }
+
+  if (path === "/api/tile-review/lane" && req.method === "GET") {
+    const voiceKey = url.searchParams.get("voice")?.trim();
+    const surfaceId = url.searchParams.get("surface")?.trim() || "tiles";
+    if (!voiceKey) {
+      json(res, 400, { error: "voice required" });
+      return;
+    }
+    try {
+      json(res, 200, resolveTileReviewLane(voiceKey, surfaceId));
+    } catch (e) {
+      json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+    }
+    return;
+  }
+
   if (path === "/api/batches" && req.method === "GET") {
     const pipeline = url.searchParams.get("pipeline");
     json(res, 200, { batches: listBatches(pipeline), pipeline: pipeline || "all" });
@@ -400,8 +427,33 @@ async function handle(req, res) {
   }
 
   if (path === "/api/mint-runs" && req.method === "GET") {
-    const batch = url.searchParams.get("batch") || "elevenlabs-tiles-core";
-    json(res, 200, { batch, runs: listMintRuns(batch) });
+    const voiceKey = url.searchParams.get("voice")?.trim();
+    const surfaceId = url.searchParams.get("surface")?.trim() || "tiles";
+    let batch = url.searchParams.get("batch") || "elevenlabs-tiles-core";
+    if (voiceKey) {
+      try {
+        batch = resolveTileReviewLane(voiceKey, surfaceId).batch;
+      } catch (e) {
+        json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+        return;
+      }
+    }
+    json(res, 200, { batch, voice: voiceKey ?? null, runs: listMintRuns(batch) });
+    return;
+  }
+
+  if (path === "/api/mint-run-lookup" && req.method === "GET") {
+    const runId = url.searchParams.get("runId")?.trim();
+    if (!runId) {
+      json(res, 400, { error: "runId required" });
+      return;
+    }
+    const batch = findMintRunBatch(runId);
+    if (!batch) {
+      json(res, 404, { error: `unknown mint run: ${runId}` });
+      return;
+    }
+    json(res, 200, { runId, batch });
     return;
   }
 
@@ -675,7 +727,7 @@ async function handle(req, res) {
         labMintText,
         voiceSelectorCandidateId,
         utterance_id,
-        canPublishTile: batchKind === "tiles" && !v4Lab,
+        canPublishTile: batchKind === "tiles" && !v4Lab && canPublishCatalogBatch(batch),
         slot,
         durationMs: durationMs(abs),
         bytes: statSync(abs).size,
@@ -957,7 +1009,10 @@ if (invoked) {
     console.log(`Pip AAC ElevenLabs v4 lab:       http://127.0.0.1:${PORT}/audio-review/elevenlabs-v4-lab`);
     console.log(`Pip AAC voice selector:          http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector`);
     console.log(
-      `Pip AAC tile mint-run spot-check: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&folder=takes&ship=mint-run&runId=gap-launch-food-2026-09-29`,
+      `Pip AAC tile review (Eve):  http://127.0.0.1:${PORT}${tileReviewUrlForRun("gap-launch-food-2026-09-29", "elevenlabs-tiles-core")}`,
+    );
+    console.log(
+      `Pip AAC tile review (Leo):  http://127.0.0.1:${PORT}${tileReviewUrlForRun("leo-pilot-10-1", ELEVENLABS_TILES_LEO_BATCH)}`,
     );
     console.log(`Pip AAC tile voice review:       http://127.0.0.1:${PORT}/audio-review/tile-voice`);
   });

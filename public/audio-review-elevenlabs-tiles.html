@@ -43,12 +43,10 @@
 <body>
   <header>
     <h1>ElevenLabs catalog review</h1>
-    <p class="pipeline">Pipeline: <strong>Eve</strong> (default tile voice, <code>eleven_v4</code>) — launch gap-fill and forms.
-      Plain and period takes are minted automatically when you open a word. Optional <em>caps emphasis</em> is a second ElevenLabs take (ALL CAPS text — not Grok).
-      <strong>Batch spot-check:</strong> <a href="/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&amp;folder=takes&amp;ship=mint-run&amp;runId=gap-launch-food-2026-09-29">32 launch food/drink clips (↑↓ in sidebar)</a>.
-      Set <em>Show → mint run</em> for other batches.
-      <a href="/audio-review">Grok explore review</a> ·
-      <a href="/audio-review/elevenlabs-v4-lab">Eleven v4 listen lab</a>.</p>
+    <p class="pipeline">Pick a <strong>voice</strong>, then listen in the file list (↑↓ · Space). Plain + period takes auto-mint when you open a word (Eve launch tiles).
+      Leo seed clips are listen-only — do not publish them to the catalog.
+      <a href="/audio-review">Grok explore</a> ·
+      <a href="/audio-review/elevenlabs-v4-lab">Eleven v4 lab</a>.</p>
     <div class="row">
       <label>Look up catalog <input type="search" id="word-lookup" placeholder="e.g. all done, christmas" autocomplete="off"></label>
       <button type="button" id="lookup-go">Look up</button>
@@ -62,7 +60,8 @@
       </div>
     </div>
     <div class="row" style="margin-top:10px">
-      <label>Batch <select id="batch"></select></label>
+      <label>Voice <select id="voice"></select></label>
+      <label id="surface-wrap">Content <select id="surface"></select></label>
       <label>Folder <select id="folder"><option value="takes">takes</option><option value="shortlist">shortlist</option></select></label>
       <label>Show <select id="ship-filter">
         <option value="all">all files</option>
@@ -76,7 +75,7 @@
   </header>
   <main>
     <aside>
-      <strong>Files</strong> <span id="batch-label" style="font-size:12px;color:#6b665c"></span>
+      <strong>Files</strong> <span id="voice-label" style="font-size:12px;color:#6b665c"></span>
       <p style="font-size:12px;color:#6b665c;margin:8px 0 0">↑ ↓ move · Space replay</p>
       <ul id="files"></ul>
     </aside>
@@ -98,7 +97,10 @@
     </section>
   </main>
   <script>
-    const DEFAULT_BATCH = "elevenlabs-tiles-core";
+    const DEFAULT_VOICE = "voi_default_en";
+    const DEFAULT_SURFACE = "tiles";
+    /** @type {Array<{ voice_key: string, display_name: string, status: string, surfaces: Array<{ surfaceId: string, label: string, batch: string, canPublishCatalog: boolean }> }>} */
+    let reviewVoices = [];
     const $ = (id) => document.getElementById(id);
     const player = $("player");
     const canvas = $("wave");
@@ -130,25 +132,99 @@
       return body;
     }
 
-    async function loadBatches() {
-      const { batches } = await api("/api/batches?pipeline=elevenlabs-catalog");
-      const sel = $("batch");
+    function selectedVoiceDoc() {
+      const key = $("voice").value;
+      return reviewVoices.find((v) => v.voice_key === key) ?? null;
+    }
+
+    function activeLane() {
+      const doc = selectedVoiceDoc();
+      if (!doc) return null;
+      const surfaceId = $("surface").value || DEFAULT_SURFACE;
+      return doc.surfaces.find((s) => s.surfaceId === surfaceId) ?? doc.surfaces[0] ?? null;
+    }
+
+    function activeBatch() {
+      return activeLane()?.batch ?? "";
+    }
+
+    async function loadVoices() {
+      const { voices } = await api("/api/tile-review/voices");
+      reviewVoices = voices;
+      const sel = $("voice");
       sel.innerHTML = "";
-      for (const b of batches) {
+      for (const v of voices) {
         const o = document.createElement("option");
-        o.value = b;
-        o.textContent = b;
+        o.value = v.voice_key;
+        const tag = v.status === "planned" ? " (seed)" : "";
+        o.textContent = `${v.display_name}${tag}`;
         sel.appendChild(o);
       }
-      const q = qs().get("batch");
-      if (q && batches.includes(q)) sel.value = q;
-      else if (batches.includes(DEFAULT_BATCH)) sel.value = DEFAULT_BATCH;
-      else if (batches[0]) sel.value = batches[0];
+      const qVoice = qs().get("voice");
+      if (qVoice && voices.some((v) => v.voice_key === qVoice)) sel.value = qVoice;
+      else if (voices.some((v) => v.voice_key === DEFAULT_VOICE)) sel.value = DEFAULT_VOICE;
+      else if (voices[0]) sel.value = voices[0].voice_key;
+      syncSurfaceOptions();
+    }
+
+    function syncSurfaceOptions() {
+      const doc = selectedVoiceDoc();
+      const sel = $("surface");
+      const prev = sel.value;
+      sel.innerHTML = "";
+      const surfaces = doc?.surfaces ?? [];
+      for (const s of surfaces) {
+        const o = document.createElement("option");
+        o.value = s.surfaceId;
+        o.textContent = s.label;
+        sel.appendChild(o);
+      }
+      $("surface-wrap").hidden = surfaces.length <= 1;
+      const qSurface = qs().get("surface");
+      if (qSurface && surfaces.some((s) => s.surfaceId === qSurface)) sel.value = qSurface;
+      else if (prev && surfaces.some((s) => s.surfaceId === prev)) sel.value = prev;
+      else if (surfaces[0]) sel.value = surfaces[0].surfaceId;
+    }
+
+    async function applyLegacyBatchParam() {
+      const qBatch = qs().get("batch");
+      if (!qBatch) return;
+      for (const v of reviewVoices) {
+        const hit = v.surfaces.find((s) => s.batch === qBatch);
+        if (hit) {
+          $("voice").value = v.voice_key;
+          syncSurfaceOptions();
+          $("surface").value = hit.surfaceId;
+          return;
+        }
+      }
+    }
+
+    async function applyRunIdParam() {
+      const qRun = qs().get("runId");
+      if (!qRun) return;
+      try {
+        const hit = await api(`/api/mint-run-lookup?runId=${encodeURIComponent(qRun)}`);
+        if (!hit.batch) return;
+        for (const v of reviewVoices) {
+          const lane = v.surfaces.find((s) => s.batch === hit.batch);
+          if (lane) {
+            $("voice").value = v.voice_key;
+            syncSurfaceOptions();
+            $("surface").value = lane.surfaceId;
+            $("ship-filter").value = "mint-run";
+            return;
+          }
+        }
+      } catch {
+        // unknown run
+      }
     }
 
     function syncUrlFromControls() {
       const params = new URLSearchParams();
-      params.set("batch", $("batch").value);
+      params.set("voice", $("voice").value);
+      params.set("surface", $("surface").value);
       params.set("folder", $("folder").value);
       params.set("ship", $("ship-filter").value);
       if ($("ship-filter").value === "mint-run" && $("mint-run").value) {
@@ -160,21 +236,36 @@
       history.replaceState(null, "", `?${params.toString()}`);
     }
 
+    function runsHintForVoice(voiceKey) {
+      if (voiceKey === "voi_leo_en") {
+        return "No Leo mint runs yet. After a mint finishes, keep Voice on Leo and click Reload list.";
+      }
+      return "";
+    }
+
+    async function refreshList() {
+      await loadMintRuns();
+      await loadFiles();
+    }
+
     function updateMintRunUi() {
       const on = $("ship-filter").value === "mint-run";
       $("mint-run-wrap").hidden = !on;
     }
 
     async function loadMintRuns() {
-      const batch = $("batch").value;
-      if (!batch) return;
-      const { runs } = await api(`/api/mint-runs?batch=${encodeURIComponent(batch)}`);
+      const voice = $("voice").value;
+      const surface = $("surface").value;
+      if (!voice) return [];
+      const { runs } = await api(
+        `/api/mint-runs?voice=${encodeURIComponent(voice)}&surface=${encodeURIComponent(surface)}`,
+      );
       const sel = $("mint-run");
       const prev = sel.value;
       sel.innerHTML = "";
       const empty = document.createElement("option");
       empty.value = "";
-      empty.textContent = runs.length ? "— pick run —" : "— no runs yet —";
+      empty.textContent = runs.length ? "— pick run —" : "— no mint runs yet —";
       sel.appendChild(empty);
       for (const r of runs) {
         const o = document.createElement("option");
@@ -185,20 +276,32 @@
       const qRun = qs().get("runId");
       if (qRun && [...sel.options].some((o) => o.value === qRun)) sel.value = qRun;
       else if (prev && [...sel.options].some((o) => o.value === prev)) sel.value = prev;
+      else if ($("ship-filter").value === "mint-run" && runs.length > 0 && !sel.value) {
+        sel.value = runs[0].runId;
+      }
+      return runs;
     }
 
     async function loadFiles() {
       const folder = $("folder").value;
       const shipFilter = $("ship-filter").value;
-      const batch = $("batch").value;
+      const batch = activeBatch();
+      const lane = activeLane();
       if (!batch) return;
       updateMintRunUi();
-      $("batch-label").textContent = `(${batch})`;
+      const voiceDoc = selectedVoiceDoc();
+      $("voice-label").textContent = lane
+        ? `(${voiceDoc?.display_name ?? ""} · ${lane.label})`
+        : "";
       if (shipFilter === "mint-run" && !$("mint-run").value) {
         const ul = $("files");
         ul.innerHTML = "";
         fileListPaths = [];
-        setStatus("Pick a mint run to spot-check.", false);
+        setStatus(
+          runsHintForVoice(voiceDoc?.voice_key) ||
+            "Pick a mint run above, or switch Show to “all files”.",
+          false,
+        );
         syncUrlFromControls();
         return;
       }
@@ -368,7 +471,7 @@
     }
 
     function isElevenlabsReviewBatch(batch) {
-      return /^elevenlabs-(tiles|forms)-core$/.test(batch);
+      return /^elevenlabs-(tiles-leo|tiles-core|forms-core)$/.test(batch);
     }
 
     async function selectFile(path) {
@@ -486,16 +589,22 @@
       $("folder").value = "takes";
       $("ship-filter").value = "all";
       await loadFiles();
-      const batch = $("batch").value || DEFAULT_BATCH;
-      const plain = `${batch}/takes/${lookupHit.slug}_plain.mp3`;
+      const plain = `${activeBatch()}/takes/${lookupHit.slug}_plain.mp3`;
       if (fileListPaths.includes(plain)) await selectFile(plain);
       else setStatus(`No takes yet for ${lookupHit.spokenText} — use Remint or open any matching file.`, true);
     };
 
-    $("reload").onclick = () => loadFiles();
-    $("batch").onchange = () => loadMintRuns().then(loadFiles);
+    $("reload").onclick = () => refreshList().catch((e) => setStatus(e.message, true));
+    $("voice").onchange = () => {
+      syncSurfaceOptions();
+      refreshList().catch((e) => setStatus(e.message, true));
+    };
+    $("surface").onchange = () => refreshList().catch((e) => setStatus(e.message, true));
     $("folder").onchange = () => loadFiles();
-    $("ship-filter").onchange = () => loadFiles();
+    $("ship-filter").onchange = async () => {
+      if ($("ship-filter").value === "mint-run") await loadMintRuns();
+      await loadFiles();
+    };
     $("mint-run").onchange = () => loadFiles();
     document.querySelectorAll("[data-trim]").forEach((btn) => {
       btn.onclick = () => trim(Number(btn.dataset.trim)).catch((e) => setStatus(e.message, true));
@@ -564,17 +673,17 @@
 
     (async () => {
       try {
-        await loadBatches();
+        await loadVoices();
+        await applyLegacyBatchParam();
+        await applyRunIdParam();
         const qFolder = qs().get("folder");
         if (qFolder) $("folder").value = qFolder;
         const qShip = qs().get("ship");
         if (qShip) $("ship-filter").value = qShip;
-        await loadMintRuns();
         const qRun = qs().get("runId");
-        if (qRun) {
-          $("ship-filter").value = "mint-run";
-          $("mint-run").value = qRun;
-        }
+        if (qRun && !$("ship-filter").value) $("ship-filter").value = "mint-run";
+        await loadMintRuns();
+        if (qRun) $("mint-run").value = qRun;
         updateMintRunUi();
         const qWord = qs().get("q");
         if (qWord) {
@@ -583,11 +692,12 @@
         }
         await loadFiles();
         const file = qs().get("file");
-        const batch = $("batch").value;
+        const batch = activeBatch();
         if (file && batch) await selectFile(`${batch}/${$("folder").value}/${file}`);
         else if (fileListPaths.length && $("ship-filter").value === "mint-run") {
           await selectFile(fileListPaths[0]);
         }
+        syncUrlFromControls();
       } catch (e) {
         setStatus(e.message, true);
       }
