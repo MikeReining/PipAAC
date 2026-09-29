@@ -14,15 +14,36 @@
   width: 40px; height: 40px; border-radius: 50%; border: none;
   background: var(--tray); color: var(--ink); font-size: 18px; cursor: pointer; flex: none;
 }
-.add-destlist:not([hidden]) {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  max-height: 30vh; overflow: auto; padding: 4px 0;
+/* The page picker (029 § 3.1): search, Recent, All pages A–Z, New page. */
+.add-pages:not([hidden]) { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.add-pagelist {
+  display: flex; flex-direction: column; gap: 2px;
+  max-height: min(52vh, 460px); overflow-y: auto; margin: 0 -6px; padding: 0 6px;
 }
-.add-destlist button {
-  border: 2px solid var(--line); border-radius: 999px; background: #fff;
-  font: inherit; font-size: 15px; font-weight: 700; padding: 6px 12px; cursor: pointer;
+.add-pagehead {
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em; margin: 8px 0 2px;
 }
-.add-destlist button[aria-selected="true"] { border-color: var(--ink-text); background: var(--tray); }
+.add-pagehead:first-child { margin-top: 0; }
+.add-page {
+  display: flex; align-items: center; gap: 12px;
+  border: none; border-radius: 10px; background: none;
+  padding: 6px 8px; font: inherit; text-align: left; cursor: pointer;
+}
+.add-page:hover, .add-page:focus-visible { background: var(--tray); }
+.add-page .glyph {
+  font-family: var(--word-font); font-weight: 700; color: var(--ink);
+  width: 36px; height: 36px; flex: none; border-radius: 8px;
+  background: var(--tray); display: flex; align-items: center; justify-content: center;
+  font-size: 20px; overflow: hidden;
+}
+.add-page .glyph img { width: 100%; height: 100%; object-fit: cover; }
+.add-page .glyph img.gicon { width: 72%; height: 72%; object-fit: contain; }
+.add-page .pname { flex: 1; min-width: 0; font-weight: 700; font-size: 17px; color: var(--ink-text); }
+.add-page[aria-selected="true"] .pname { text-decoration: underline; text-underline-offset: 3px; }
+.add-page .ptick { font-weight: 700; color: var(--ink-text); }
+.add-newpage .glyph { background: #fff; border: 2px dashed var(--line); font-weight: 700; color: var(--ink); }
+.add-newpage .pname { color: var(--ink); }
 #add-name { font-size: 22px; }
 #add-matches { display: flex; flex-direction: column; gap: 8px; }
 #add-matches:empty { display: none; }

@@ -8,8 +8,10 @@ import {
   applyPasteRows, applyPhotoDrafts, nameFromFile, resolvePasteRows,
 } from "../shared/bulk.mjs";
 import {
-  catalogMatches, createEntity, entityMatches, groupDisplayName, groupIndex, placeItem,
+  catalogMatches, createEntity, createGroup, entityMatches, groupDisplayName, groupIndex,
+  placeItem,
 } from "../shared/groups.mjs";
+import { groupGlyph } from "./group-glyph.js";
 import { normalizeV1 } from "../shared/normalize.mjs";
 import { SENSE_ART_SQL } from "../shared/images.mjs";
 import { needsDraw, pictureAction, shouldConfirmDraws } from "../shared/pictures.mjs";
@@ -40,40 +42,151 @@ export function mountAddFlow({
     addCell = cell;
     $("add-title").textContent = "Add a word";
     $("add-destname").textContent = groupName(addTarget, "My Words");
-    $("add-destlist").hidden = true;
+    setPickerOpen(false);
     $("add-name").value = "";
     renderAddMatches();
     open("addform");
     setTimeout(() => $("add-name").focus?.(), 0);
   }
 
-  /** Destination chip: any visible page. Changing it drops a picked
-   *  empty cell — that cell belonged to the page the + came from. */
-  function renderDestList() {
-    const box = $("add-destlist");
-    box.innerHTML = "";
-    for (const g of groupIndex(db)) {
-      if (g.hidden) continue;
-      const b = document.createElement("button");
-      b.type = "button";
-      b.setAttribute("role", "option");
-      b.setAttribute("aria-selected", String(g.id === addTarget));
-      b.textContent = `${g.glyph ?? ""} ${groupDisplayName(db, g, locale)}`.trim();
-      b.addEventListener("click", () => {
-        if (g.id !== addTarget) addCell = null;
-        addTarget = g.id;
-        $("add-destname").textContent = groupName(addTarget, "My Words");
-        box.hidden = true;
-        renderAddMatches();
-        $("add-name").focus?.();
-      });
-      box.appendChild(b);
+  /* --- the page picker (029 § 3.1) ---
+     The destination is the page the adult came from (Settings → My
+     Words; the editor → the page being edited) — never a guess. The chip
+     opens a searchable list in place of the results: Recent (pages the
+     adult actually added to), then every page A–Z, then New page. */
+  const RECENT_KEY = "pip-add-recent";
+  const readRecent = () => {
+    try { return JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"); } catch { return []; }
+  };
+  function noteRecent(id) {
+    try {
+      const next = [id, ...readRecent().filter((x) => x !== id)].slice(0, 3);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+    } catch { /* private mode: no recents */ }
+  }
+
+  function setPickerOpen(on) {
+    $("add-destlist").hidden = !on;
+    $("add-name").hidden = on;
+    $("add-matches").hidden = on;
+    for (const el of [$("add-bulk"), $("add-photos")]) {
+      if (el?.parentElement) el.parentElement.hidden = on;
+    }
+    $("add-dest").setAttribute?.("aria-expanded", String(on));
+    if (on) {
+      $("add-pageq").value = "";
+      $("add-pageq").placeholder = "Find a page";
+      renderPages();
+      setTimeout(() => $("add-pageq").focus?.(), 0);
+    } else {
+      setTimeout(() => $("add-name").focus?.(), 0);
     }
   }
-  $("add-dest").addEventListener("click", () => {
-    const box = $("add-destlist");
-    if (box.hidden) renderDestList();
-    box.hidden = !box.hidden;
+
+  function choosePage(id) {
+    if (id !== addTarget) addCell = null; // that cell belonged to the other page
+    addTarget = id;
+    $("add-destname").textContent = groupName(addTarget, "My Words");
+    setPickerOpen(false);
+    renderAddMatches();
+  }
+
+  /** "Make a page called …": a custom page, selected at once; the word
+   *  that follows lands in it. Its door is in Groups. */
+  function makePage(name) {
+    const clean = name.trim().replace(/\s+/g, " ");
+    if (!clean) return;
+    const { id } = createGroup(db, { name: clean });
+    toast(`New page “${clean}” — its door is in Groups`);
+    rerenderView();
+    choosePage(id);
+  }
+
+  function pageRow(g, { selected }) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "add-page";
+    b.setAttribute?.("role", "option");
+    b.setAttribute?.("aria-selected", String(selected));
+    const name = document.createElement("span");
+    name.className = "pname";
+    name.textContent = groupDisplayName(db, g, locale);
+    b.append(groupGlyph(g, { db, locale, loadPhotoURL }), name);
+    if (selected) {
+      const tick = document.createElement("span");
+      tick.className = "ptick";
+      tick.textContent = "✓";
+      b.appendChild(tick);
+    }
+    b.addEventListener("click", () => choosePage(g.id));
+    return b;
+  }
+
+  function renderPages() {
+    const box = $("add-pagelist");
+    box.innerHTML = "";
+    const q = normalizeV1($("add-pageq").value);
+    const pages = groupIndex(db).filter((g) => !g.hidden)
+      .map((g) => ({ g, name: groupDisplayName(db, g, locale) }));
+    const byName = (a, b) => a.name.localeCompare(b.name, locale, { sensitivity: "base" });
+    const head = (text) => {
+      const h = document.createElement("p");
+      h.className = "add-pagehead";
+      h.textContent = text;
+      box.appendChild(h);
+    };
+    const firstMatch = [];
+    if (!q) {
+      const recent = readRecent()
+        .map((id) => pages.find((p) => p.g.id === id)).filter(Boolean);
+      if (recent.length) {
+        head("Recent");
+        for (const p of recent) box.appendChild(pageRow(p.g, { selected: p.g.id === addTarget }));
+      }
+      head("All pages");
+    }
+    const shown = pages.filter((p) => !q || normalizeV1(p.name).includes(q)).sort(byName);
+    for (const p of shown) {
+      box.appendChild(pageRow(p.g, { selected: p.g.id === addTarget }));
+      firstMatch.push(p.g.id);
+    }
+    // Last row: a new page — named from the search when nothing is called that.
+    // Offer to make a page only when nothing is called anything like it.
+    const anyMatch = shown.length > 0;
+    const typed = $("add-pageq").value.trim();
+    const make = document.createElement("button");
+    make.type = "button";
+    make.className = "add-page add-newpage";
+    make.id = "add-newpage";
+    const plus = document.createElement("span");
+    plus.className = "glyph";
+    plus.textContent = "+";
+    const lb = document.createElement("span");
+    lb.className = "pname";
+    lb.textContent = q && !anyMatch ? `Make a page called “${typed}”` : "New page";
+    make.append(plus, lb);
+    make.addEventListener("click", () => {
+      if (q && !anyMatch) { makePage(typed); return; }
+      $("add-pageq").value = "";
+      $("add-pageq").placeholder = "Name the new page";
+      $("add-pageq").focus?.();
+      renderPages();
+    });
+    box.appendChild(make);
+    pagesFirst = firstMatch[0] ?? null;
+    pagesCanMake = !!q && !anyMatch;
+  }
+  let pagesFirst = null;
+  let pagesCanMake = false;
+
+  $("add-dest").addEventListener("click", () => setPickerOpen($("add-destlist").hidden));
+  $("add-pageq").addEventListener("input", renderPages);
+  $("add-pageq").addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { e.preventDefault?.(); e.stopPropagation?.(); setPickerOpen(false); return; }
+    if (e.key !== "Enter") return;
+    e.preventDefault?.();
+    if (pagesFirst) choosePage(pagesFirst);
+    else if (pagesCanMake) makePage($("add-pageq").value);
   });
 
   function openBulkForm(groupId) {
@@ -405,6 +518,7 @@ export function mountAddFlow({
 
   const place = (kind, id, label) => () => {
     placeItem(db, addTarget, kind, id, addCell);
+    noteRecent(addTarget);
     close("addform");
     rerenderView();
     renderStrip();
@@ -426,6 +540,7 @@ export function mountAddFlow({
     const category = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
     createEntity(db, { id, name, category });
     placeItem(db, addTarget, "entity", id, addCell);
+    noteRecent(addTarget);
     // 028 § 5.2: the save kicks off the voice mint in the background.
     tile?.ensure(name, { source: "user_typed" }).catch(() => {});
     invalidateIndex();
@@ -466,6 +581,7 @@ export function mountAddFlow({
       }).catch(() => {});
     }
     fillPastedPictures(res.newIds ?? []);
+    noteRecent(bulkTarget);
     close("bulkform");
     invalidateIndex();
     rerenderView();

@@ -15,51 +15,9 @@ import {
   removeItemUndoable, setGroupHidden, shownOn, swapGroups, swapItems,
 } from "../shared/groups.mjs";
 
-const $ = (id) => document.getElementById(id);
+import { groupGlyph } from "./group-glyph.js";
 
-/* 026 D7: door icons are ink glyphs from the chrome icon family. A
- * group with no entry keeps its seed emoji, so a new group shows its gap
- * until it gets a glyph. `places` serves Going out, `actions` (a pointing
- * hand) serves Touch & sound, the palette serves Colors, `food` (fork
- * and knife) serves Dinner, and Who & which borrows the chrome question
- * mark. */
-const GROUP_ICONS = {
-  grp_people: "/icons/groups/people.svg",
-  grp_my_words: "/icons/groups/my_words.svg",
-  grp_social: "/icons/groups/social.svg",
-  grp_numbers: "/icons/groups/numbers.svg",
-  grp_time: "/icons/groups/time.svg",
-  grp_home: "/icons/groups/home.svg",
-  grp_animals: "/icons/groups/animals.svg",
-  grp_body: "/icons/groups/body.svg",
-  grp_feelings: "/icons/groups/feelings.svg",
-  grp_clothes: "/icons/groups/clothes.svg",
-  grp_play: "/icons/groups/play.svg",
-  grp_drinks: "/icons/groups/drinks.svg",
-  grp_little_words: "/icons/groups/little_words.svg",
-  grp_more_people: "/icons/groups/more_people.svg",
-  grp_more_doing: "/icons/groups/more_doing.svg",
-  grp_more_where: "/icons/groups/more_where.svg",
-  grp_more_describing: "/icons/groups/more_describing.svg",
-  grp_going_out: "/icons/groups/places.svg",
-  grp_senses: "/icons/groups/actions.svg",
-  grp_colors: "/icons/groups/describing.svg",
-  grp_who_which: "/icons/question.svg",
-  grp_breakfast: "/icons/groups/breakfast.svg",
-  grp_lunch: "/icons/groups/lunch.svg",
-  grp_dinner: "/icons/groups/food.svg",
-  grp_snack: "/icons/groups/snack.svg",
-  grp_treats: "/icons/groups/treats.svg",
-  grp_fruit: "/icons/groups/fruit.svg",
-  grp_things: "/icons/groups/things.svg",
-  grp_describing: "/icons/groups/shapes.svg",
-  grp_outside: "/icons/groups/outside.svg",
-  grp_school: "/icons/groups/school.svg",
-  grp_art_music: "/icons/groups/art_music.svg",
-  grp_bathroom: "/icons/groups/bathroom.svg",
-  grp_screens: "/icons/groups/screens.svg",
-  grp_weather: "/icons/groups/weather.svg",
-};
+const $ = (id) => document.getElementById(id);
 
 export function mountGroups({
   db, locale, all, boardGeom, getEditing, getModelGlow, getLikelyGroups,
@@ -96,26 +54,7 @@ export function mountGroups({
     if (spot) el.classList.add(spot);
     el.dataset.slot = vslot;
     el.dataset.group = row.id;
-    const g = document.createElement("span");
-    g.className = "glyph";
-    const icon = GROUP_ICONS[row.id];
-    if (icon) {
-      const img = document.createElement("img");
-      img.className = "gicon";
-      img.src = icon;
-      img.alt = "";
-      g.appendChild(img);
-    } else {
-      g.textContent = row.glyph ?? "🗂️";
-    }
-    if (row.photo_key) {
-      loadPhotoURL(row.photo_key).then((url) => {
-        if (!url) return;
-        const img = document.createElement("img");
-        img.src = url;
-        g.replaceChildren(img);
-      });
-    }
+    const g = groupGlyph(row, { db, locale, loadPhotoURL });
     const lb = document.createElement("span");
     lb.className = "glabel";
     lb.textContent = groupDisplayName(db, row, locale);

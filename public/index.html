@@ -1465,7 +1465,12 @@
           </button>
           <button type="button" class="add-x" data-close aria-label="Close">✕</button>
         </header>
-        <div class="add-destlist" id="add-destlist" role="listbox" hidden></div>
+        <!-- Page picker (029 § 3.1): opens in place of the results. -->
+        <div class="add-pages" id="add-destlist" hidden>
+          <input type="text" id="add-pageq" placeholder="Find a page" autocomplete="off"
+            autocapitalize="off" enterkeyhint="go" aria-controls="add-pagelist" />
+          <div class="add-pagelist" id="add-pagelist" role="listbox"></div>
+        </div>
         <input type="text" id="add-name" placeholder="Type a word or a name"
           autocomplete="off" autocapitalize="off" enterkeyhint="done"
           role="combobox" aria-controls="add-matches" aria-expanded="false" />

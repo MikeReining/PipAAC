@@ -44,6 +44,14 @@ saved) and a stopwatch on a real tablet (§ 7).
    choose among catalog voices (more coming soon).
 8. **Paste a list** asks before drawing only when it needs more than 10 new
    drawings or more than are left.
+9. **No page guessing** (founder, 2026-09-29). The destination is where the
+   adult came from: Settings → Add a word is always **My Words**; in the
+   editor (031) it is the page being edited (an empty cell keeps that
+   cell). Categories are never used to suggest a page — occasion pages mix
+   words from many groups, and the adult is customizing on purpose.
+10. **Pages look the same everywhere.** Our ink icons on the doors, the page
+    picker, and the card's page chips — one owner
+    (`public/board/group-glyph.js`).
 
 ## 1. The bar
 
@@ -106,6 +114,22 @@ Traced from `public/board/add-flow.js` (`openAddForm` → `renderAddMatches` →
 - **▶ on every match row** plays that word's clip.
 - **Paste a list · Add photos** as one quiet line. **Cancel** is ✕, Esc, or
   tap outside.
+
+### 3.1 The page picker
+
+Tapping "to My Words ▾" replaces the results with a searchable list and
+focuses **Find a page**:
+
+- **Recent** — the last three pages the adult actually added to (history on
+  this device, not a guess), then **All pages, A–Z**. Typing narrows the
+  list; Return picks the first match; Esc goes back.
+- Every row shows the page's face: our ink icon; else its photo; else, for a
+  family's own page, its first word's picture (derived when painted, so it
+  follows that word); else its initial.
+- **New page** is always the last row. Typing a name no page matches offers
+  **Make a page called "…"** — one tap (or Return) creates it, selects it,
+  and says "its door is in Groups". The word typed next lands there.
+- Picking closes the list and returns focus to the word field.
 
 ## 4. Step 2 — Make (the new word's card)
 

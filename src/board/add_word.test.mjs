@@ -127,3 +127,69 @@ test("arrow keys move the highlight; Return takes the highlighted row", async ()
   await h.$("add-name").fire("keydown", { key: "ArrowUp" });
   assert.equal(h.rows().indexOf(h.hiRow()), last - 1);
 });
+
+/* --- the page picker (029 § 3.1) --- */
+
+function memoryStorage() {
+  const m = new Map();
+  return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)) };
+}
+const pageNames = (h) => findAll(h.$("add-pagelist"), (n) => n.className === "pname").map((n) => n.textContent);
+
+test("the destination is the page the adult came from — no guess", async () => {
+  const h = harness();
+  h.add.openAddForm("grp_my_words");
+  assert.equal(h.$("add-destname").textContent, "My Words");
+  h.add.openAddForm("grp_mine");
+  await h.type("pancake"); // a Breakfast word — still files into Mine
+  await h.$("add-name").fire("keydown", { key: "Enter" });
+  const row = h.db.prepare(
+    `SELECT gm.group_id FROM group_membership gm JOIN label l ON l.sense_id = gm.item_id
+     WHERE l.text = 'pancake' AND l.kind = 'lemma' AND gm.group_id = 'grp_mine'`).get();
+  assert.ok(row);
+});
+
+test("find a page: typing narrows the A–Z list; Return picks the first", async () => {
+  globalThis.localStorage = memoryStorage();
+  const h = harness();
+  h.add.openAddForm("grp_my_words");
+  await h.$("add-dest").click();
+  assert.equal(h.$("add-destlist").hidden, false);
+  assert.equal(h.$("add-name").hidden, true, "the list takes the results' place");
+  const all = pageNames(h).filter((n) => !/^(New page|Make a page)/.test(n));
+  assert.deepEqual(all, [...all].sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" })));
+  h.$("add-pageq").value = "min";
+  await h.$("add-pageq").fire("input");
+  assert.deepEqual(pageNames(h), ["Mine", "New page"]);
+  await h.$("add-pageq").fire("keydown", { key: "Enter" });
+  assert.equal(h.$("add-destname").textContent, "Mine");
+  assert.equal(h.$("add-destlist").hidden, true);
+  assert.equal(h.$("add-name").hidden, false);
+});
+
+test("a name no page has makes that page, selects it, and the word lands there", async () => {
+  globalThis.localStorage = memoryStorage();
+  const h = harness();
+  h.add.openAddForm("grp_my_words");
+  await h.$("add-dest").click();
+  h.$("add-pageq").value = "Grandma's house";
+  await h.$("add-pageq").fire("input");
+  assert.equal(pageNames(h).at(-1), "Make a page called “Grandma's house”");
+  await h.$("add-pageq").fire("keydown", { key: "Enter" });
+  const g = h.db.prepare("SELECT id, kind FROM board_group WHERE name = ?").get("Grandma's house");
+  assert.equal(g?.kind, "custom");
+  assert.equal(h.$("add-destname").textContent, "Grandma's house");
+  await h.type("rocking chair");
+  await h.$("add-name").fire("keydown", { key: "Enter" });
+  const placed = h.db.prepare(
+    `SELECT 1 AS x FROM group_membership gm JOIN personal_entity e ON e.id = gm.item_id
+     WHERE gm.group_id = ? AND e.spoken_name = 'rocking chair'`).get(g.id);
+  assert.ok(placed);
+
+  // Recent: the page just used leads the list next time.
+  h.add.openAddForm("grp_my_words");
+  await h.$("add-dest").click();
+  const heads = findAll(h.$("add-pagelist"), (n) => n.className === "add-pagehead").map((n) => n.textContent);
+  assert.deepEqual(heads, ["Recent", "All pages"]);
+  assert.equal(pageNames(h)[0], "Grandma's house");
+});

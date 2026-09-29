@@ -15,6 +15,7 @@ import {
   clearImageOverride, imageOverrideFor, libraryImagesFor, setImageOverride,
 } from "../shared/images.mjs";
 import { clearOverride, overrideFor, setOverride } from "../shared/voice.mjs";
+import { groupGlyph } from "./group-glyph.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -140,7 +141,11 @@ export function mountWordCard({
     for (const g of cardGroups()) {
       const chip = document.createElement("span");
       chip.className = "wchip";
-      chip.textContent = g.name;
+      const row = all(db, "SELECT id, kind, name, glyph, photo_key FROM board_group WHERE id = ?", [g.id])[0];
+      if (row) chip.appendChild(groupGlyph(row, { db, locale, loadPhotoURL }));
+      const nm = document.createElement("span");
+      nm.textContent = g.name;
+      chip.appendChild(nm);
       // 027 B9: remove from any page — this placement only; the word
       // stays in the Library and the keyboard with zero placements.
       const x = xBadge(() => {
