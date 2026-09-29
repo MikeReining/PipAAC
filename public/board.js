@@ -46,7 +46,7 @@ import {
 import { resolveSlot } from "./shared/voice.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
-import { PIN_RE, checkPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
+import { PIN_RE, checkPin, clearPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
 import { applyTransform, wordLemmaCandidates } from "./shared/txbar.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
@@ -74,6 +74,11 @@ import {
   family as familyRow, familyItems,
 } from "./shared/families.mjs";
 import { mountFamilyEditor } from "./board/family-editor.js";
+import { mountSettings } from "./board/settings-ui.js";
+import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
+import { mountGroupShows } from "./board/group-shows.js";
+import { mountOnramp } from "./board/onramp-ui.js";
+import { mountTour } from "./board/tour-ui.js";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -88,28 +93,6 @@ const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
  * changing the home flag.
  * ------------------------------------------------------------------ */
 const userStore = openUserStore();
-
-/** Shared device, no home user: ask who is playing. A plain full-screen
- * list — the child's page never carries a settings chrome. */
-function pickUser(rows) {
-  return new Promise((resolve) => {
-    const wrap = document.createElement("div");
-    wrap.style.cssText = "position:fixed;inset:0;background:var(--cream);"
-      + "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:99";
-    const h = document.createElement("p");
-    h.className = "hint";
-    h.textContent = "Who is playing?";
-    wrap.append(h);
-    for (const u of rows) {
-      const b = document.createElement("button");
-      b.className = "btn";
-      b.textContent = u.name || "This user";
-      b.onclick = () => { wrap.remove(); resolve(u); };
-      wrap.append(b);
-    }
-    document.body.append(wrap);
-  });
-}
 
 await migrateLegacy({
   storage: localStorage,
@@ -127,7 +110,7 @@ if (!me && users.length === 0) {
   // Parent-Corner add gets (014 § 9 ruling 1, 019 blocker 2).
   me = await addUser(userStore, { home: true, needsSetup: true });
 }
-if (!me) me = await pickUser(users); // shared device, no home — ask
+if (!me) me = await pickPerson(users); // shared device, no home — ask
 sessionStorage.setItem("pip_active_user", me.id);
 await touchOpened(userStore, me.id);
 const saveUser = async (patch) => {
@@ -184,6 +167,7 @@ function onSyncApplied() {
     highlightNext = (p.highlight_next ?? 0) === 1;
     syncFreshSeg();
     syncGrammarSeg();    // Grammar help syncs like the other segs
+    syncLook();          // Words only syncs too
     bindSpotSettings();  // spotlight settings sync too
     resumeSession(db);   // a session started/ended elsewhere lands here
     renderCellsSeg();    // a Cells change may have landed
@@ -200,7 +184,7 @@ initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
     // window (or while a deletion is pending) hears about it once.
     const self = await sync.client.selfKey().catch(() => null);
     if (self?.delete_at) {
-      toast(`This user is scheduled for deletion on ${new Date(self.delete_at).toLocaleDateString()} — Parent corner → Delete to undo.`);
+      toast(`This user is scheduled for deletion on ${new Date(self.delete_at).toLocaleDateString()} — Settings → Backup & privacy → Undo deletion.`);
     } else if (self?.idle_delete_at) {
       toast(`This user has not synced in a long time and may be removed on ${new Date(self.idle_delete_at).toLocaleDateString()}.`);
     }
@@ -209,7 +193,7 @@ initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
     if (sessionStorage.getItem("pip_restore_moved")) {
       sessionStorage.removeItem("pip_restore_moved");
       toast("Restored — on a free user the other devices were unlinked. "
-        + "Relink them from Parent corner.");
+        + "Relink them from Settings → Team & devices.");
     }
   })
   .catch((err) => console.warn("sync unavailable", err));
@@ -413,7 +397,7 @@ function syncTxButtons() {
   const offline = typeof navigator !== "undefined" && !navigator.onLine;
   for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
     $(id).classList.toggle("offline", offline);
-    $(id).disabled = !sentence.length || offline;
+    $(id).disabled = !sentence.length || (offline && !tour);
   }
 }
 addEventListener("online", () => { syncTxButtons(); renderStrip(); });
@@ -424,7 +408,12 @@ addEventListener("offline", () => { syncTxButtons(); renderStrip(); });
  *  through the 024 pipeline. A failed or offline call still speaks —
  *  the bar as built, per § 1's every-press-produces-audio rule. */
 let txBusy = false;
+/* The first-run demo (public/board/tour-ui.js) owns taps, the Smart bar
+ * and the transform buttons while it runs — its taps never reach the
+ * tap log, stats or the ranker. Null the rest of the time. */
+let tour = null;
 async function transformAndSpeak(mode) {
+  if (tour) return tour.onTransform(mode);
   if (txBusy || !sentence.length) return;
   txBusy = true;
   const btn = $(mode === "present" ? "speak" : `tx-${mode}`);
@@ -834,7 +823,7 @@ function ghostCard() {
  *  word, when the setting is on, online, and not mid-typed-word.
  *  Edit/pick/model modes keep every tap a selection, never speech. */
 function facesOn() {
-  return !!(feelingData && sentence.length && expressiveVoice
+  return !!(!tour && feelingData && sentence.length && expressiveVoice
     && navigator.onLine !== false && !kbUi.text
     && !picking && !modeling && !editing);
 }
@@ -989,6 +978,7 @@ async function renderExpand() {
 }
 
 async function renderStrip() {
+  if (tour) return paintStrip(stripCards(tour.stripItems()));
   if (expand) return renderExpand();
   const cap = stripSlots(boardGeom().cols);
   let cards;
@@ -1030,6 +1020,7 @@ async function renderStrip() {
 }
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
+  if (tour) return tour.onTap(kind, id);
   if (picking) {
     // Pick mode: a tap chooses a target, never speaks or appends.
     if (id) {
@@ -1239,6 +1230,19 @@ function fitLabels(root) {
         if (lb.scrollWidth <= maxW && lb.scrollHeight <= maxH) break;
         px = Math.max(8, Math.floor(px * 0.86));
         lb.style.fontSize = `${px}px`;
+      }
+    }
+    // Words only: one text size across the tiles, so "I" isn't huge
+    // beside "make" — the smallest one-word fit sets it; two-word labels
+    // keep their own fit, never larger than that.
+    if (document.body.classList.contains("words-only")) {
+      const tiles = [...root.querySelectorAll(".cell .tlabel")];
+      const one = tiles.filter((lb) => !lb.textContent.trim().includes(" "));
+      const px = Math.min(...one.map((lb) => parseFloat(lb.style.fontSize) || Infinity));
+      if (Number.isFinite(px)) {
+        for (const lb of tiles) {
+          lb.style.fontSize = `${Math.min(px, parseFloat(lb.style.fontSize) || px)}px`;
+        }
       }
     }
   });
@@ -1693,15 +1697,22 @@ document.addEventListener("keydown", (e) => {
   if ($("kb-device")) kbUi.feed(e.key);
   else kbUi.press(e.key);
 });
-/** 023 §1e — the Settings PIN gates Parent corner. First open creates
- *  it on this device; every later open asks; Forgot accepts the
- *  license key or the QR card (verifyAdult), then a new PIN is set. */
-async function gatePin(onOk) {
+/** 023 §1e — the Settings PIN gates Settings. First open creates it on
+ *  this device; every later open asks; Forgot accepts the license key
+ *  or the QR card (verifyAdult), then a new PIN is set. `change` (from
+ *  Settings → Backup & privacy) asks for the new PIN twice and never
+ *  for the old one: the gate was just passed. */
+const PIN_SHARE_HINT = "Pick one you're happy to share with the team. Don't reuse your phone or bank PIN.";
+async function gatePin(onOk, { change = false } = {}) {
   const overlay = $("pinform"), input = $("pin-input"),
         err = $("pin-error"), hint = $("pin-hint"),
         title = $("pin-title"), go = $("pin-go"), forgot = $("pin-forgot");
   const store = await openKeyStore();
-  let mode = (await hasPin(store, me.id)) ? "check" : "create";
+  const locked = await hasPin(store, me.id);
+  // No PIN yet: Settings opens with one tap (founder 2026-09-28).
+  if (!change && !locked) return onOk();
+  let mode = change ? "new" : "check";
+  let first = "";
   const render = () => {
     err.textContent = "";
     input.value = "";
@@ -1710,10 +1721,18 @@ async function gatePin(onOk) {
     forgot.hidden = mode !== "check";
     if (mode === "create") {
       title.textContent = "Choose a PIN";
-      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Parent corner.";
+      hint.textContent = "Pick 4–6 digits — it keeps little hands out of Settings. " + PIN_SHARE_HINT;
       go.textContent = "Set PIN";
+    } else if (mode === "new") {
+      title.textContent = locked ? "New Settings PIN" : "Choose a PIN";
+      hint.textContent = "4–6 digits, for everyone on this device. " + PIN_SHARE_HINT;
+      go.textContent = "Next";
+    } else if (mode === "confirm") {
+      title.textContent = "Type it again";
+      hint.textContent = "The same 4–6 digits, to be sure.";
+      go.textContent = "Save PIN";
     } else if (mode === "check") {
-      title.textContent = "Parent PIN";
+      title.textContent = "Settings PIN";
       hint.textContent = "";
       go.textContent = "Open";
     } else {
@@ -1734,11 +1753,18 @@ async function gatePin(onOk) {
     }
     if (mode === "forgot") {
       if (await verifyAdult(store, me.id, v)) { mode = "create"; render(); }
-      else err.textContent = "That does not match this user's license or recovery card.";
+      else err.textContent = "That does not match this board's license or recovery card.";
       return;
     }
     if (!PIN_RE.test(v)) { err.textContent = "4–6 digits."; return; }
+    if (mode === "new") { first = v; mode = "confirm"; render(); return; }
+    if (mode === "confirm" && v !== first) {
+      mode = "new"; render();
+      err.textContent = "Those didn't match. Start again.";
+      return;
+    }
     await setPin(store, me.id, v);
+    if (change) toast(locked ? "Settings PIN changed." : "Settings is locked with a PIN.");
     finish();
   };
   input.onkeydown = (e) => { if (e.key === "Enter") go.click(); };
@@ -1747,7 +1773,54 @@ async function gatePin(onOk) {
   overlay.classList.add("open");
 }
 
+/* Settings — public/board/settings-ui.js owns the page navigation;
+ * every control inside keeps its own module's wiring. */
+const settingsUi = mountSettings({
+  me, open,
+  facts: () => ({
+    entities: ALL(db, "SELECT count(*) AS n FROM personal_entity")[0]?.n ?? 0,
+    // Invested: something of theirs is on the board — people, words,
+    // groups, pictures, hidden or moved words, saved practice lists.
+    // Settings flips and the demo don't count.
+    invested: (ALL(db, "SELECT count(*) AS n FROM personal_entity")[0]?.n ?? 0) > 0
+      || !!ALL(db, `SELECT 1 AS x FROM sync_op WHERE kind IN ('create_entity',
+        'set_entity_photo', 'create_group', 'add_to_groups', 'place_item', 'move_item',
+        'swap_items', 'set_image_override', 'set_override', 'set_mask', 'rename_entity',
+        'set_family_items', 'spot_list_save', 'set_group_hidden', 'move_group', 'swap_groups',
+        'delete_group') LIMIT 1`)[0],
+    pinOn,
+  }),
+});
+/** Settings → Backup & privacy → Settings PIN: lock, change, or off. */
+let pinOn = false; // Settings' Protect card reads it; renderPinRow keeps it
+async function renderPinRow() {
+  const on = await hasPin(await openKeyStore(), me.id);
+  pinOn = on;
+  settingsUi.renderNav();
+  $("pin-state").textContent = on
+    ? "Settings is locked with a PIN."
+    : "No PIN yet: Settings opens with one tap.";
+  $("pin-change").textContent = on ? "Change PIN" : "Lock Settings with a PIN";
+  $("pin-off").hidden = !on;
+}
+$("pin-change").addEventListener("click", () => gatePin(renderPinRow, { change: true }));
+$("pin-off").addEventListener("click", async () => {
+  await clearPin(await openKeyStore(), me.id);
+  toast("PIN turned off. Settings opens with one tap.");
+  renderPinRow();
+});
+settingsUi.onOpen(renderPinRow);
+// Set only by the post-switch reopen below: the corner click then skips
+// the PIN (it was just entered in this tab) and opens that page, so every
+// module's corner-click refresh runs as on a normal open.
+let reopenSection = null;
 $("corner").addEventListener("click", () => {
+  if (reopenSection) {
+    const section = reopenSection;
+    reopenSection = null;
+    settingsUi.open(section);
+    return;
+  }
   // 027 B5: while a group or the index is open the corner is Home — one
   // action back to the home board, outside the grid. In Edit mode it
   // keeps editing, so the home board is one tap away; Done is the home
@@ -1761,14 +1834,14 @@ $("corner").addEventListener("click", () => {
     rerenderView();
     return;
   }
-  gatePin(() => open("menu"));
+  gatePin(() => settingsUi.open());
 });
 /** The corner's job and label follow the mode: Home while a group or the
  *  index is open, else ✓ Done while editing, else Parent corner (its
  *  glyph swaps on body.groups / body.editing). */
 function syncCorner() {
   const inGroups = view === "group" || view === "groupIndex";
-  $("corner").title = inGroups ? "Home" : editing ? "Done editing" : "Parent corner";
+  $("corner").title = inGroups ? "Home" : editing ? "Done editing" : "Settings";
   $("corner").setAttribute("aria-label", $("corner").title);
   // Groups toggles like Keyboard: on the groups screen the anchor offers
   // the way back — the label names the destination, never where you are.
@@ -2149,6 +2222,17 @@ const devicesUi = mountDevices({
   initSync, onSyncApplied, onModel, qrcode, syncRekey,
 });
 
+/* People — public/board/people-ui.js: the Settings header switcher and
+ * "When Pip opens". */
+const peopleUi = mountPeople({
+  me, userStore, keyStore: openKeyStore(), flushDb, settings: settingsUi,
+  onHomeChanged: () => { devicesUi.renderAccount(); devicesUi.renderUsers(); },
+});
+settingsUi.onOpen(() => { peopleUi.closePop(); peopleUi.renderOpens(); });
+/* Show groups — public/board/group-shows.js (Settings → Words). */
+const groupShows = mountGroupShows({ db, locale, all: ALL, onChange: () => rerenderView() });
+settingsUi.onOpen(() => groupShows.render());
+
 /* The weekly win card and progress dashboard — public/board/wincard-ui.js
  * and progress-ui.js (016 slices 2 and 4). Item ids resolve to names
  * here so the shared modules stay off the label and entity tables. */
@@ -2211,12 +2295,79 @@ $("open-setup").addEventListener("click", () => {
   close("menu");
   setupUi.openWizard();
 });
-if (me.needsSetup) setupUi.openWizard();
+/* Words only (Profile_Presentation_Modes § 2.2):
+ * learner_profile.presentation_mode, synced. A display filter only — the
+ * body class hides every picture (index.html .words-only); no cell moves. */
+function syncLook() {
+  const m = ALL(db,
+    "SELECT presentation_mode AS m FROM learner_profile WHERE id = 'prf_local'",
+  )[0]?.m ?? "symbol";
+  document.body.classList.toggle("words-only", m === "label");
+  for (const b of $("look-seg").querySelectorAll("button")) b.classList.toggle("on", b.dataset.v === m);
+}
+function setLook(v) {
+  setSetting(db, "presentation_mode", v);
+  syncLook();
+  renderGrid();
+  renderBar();
+  renderStrip();
+  rerenderView();
+}
+$("look-seg").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (v) setLook(v);
+});
+syncLook();
+/* The welcome — public/board/onramp-ui.js: a name and "Who's it for?"
+ * (plus the button look for a teen or adult) on a new person, then
+ * straight to the board. The old "their world" form is Settings-only. */
+const onramp = mountOnramp({
+  me, saveUser,
+  setLook,
+  tileFor: (senseId) => {
+    const w = senseById(senseId);
+    return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
+  },
+  fitLabels,
+  onDone: () => { renderGrid(); renderStrip(); tourUi.start(); },
+});
+/* The demo — public/board/tour-ui.js. The board side: add a word, set
+ * the bar to a scripted sentence, speak it — none of it logged. */
+const tourUi = mountTour({
+  saveUser,
+  board: {
+    setTour: (h) => { tour = h; syncTxButtons(); renderStrip(); },
+    showBoard: () => { if (view !== "board") kbUi.setView("board"); },
+    cellEl: (senseId) => cellEls.get(senseId) ?? null,
+    addWord: (senseId) => {
+      const w = senseById(senseId);
+      const item = { kind: "sense", id: senseId, text: w?.label ?? "" };
+      sentence.push(item);
+      renderBar();
+      speakItem(item);
+      syncTxButtons();
+      renderStrip();
+    },
+    setBar: (text, mode) => {
+      applyTransform(sentence, text, mode, barState);
+      for (const it of sentence) {
+        if (it.kind === "typed") it.art = artForWord(it.text);
+      }
+      renderBar();
+      syncTxButtons();
+    },
+    speakBar: () => speakSentence(),
+    clearBar: () => $("clear").click(),
+  },
+});
+$("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });
+if (me.needsSetup) onramp.start();
 
 /* QR card — public/board/recovery-ui.js */
 mountRecovery({
   me, saveUser, userStore, flushDb, toast, qrcode,
   userClient: () => devicesUi.userClient(),
+  ensureUser: (o) => devicesUi.ensureUser(o),
 });
 
 /* Web editor — public/board/editor-ui.js */
@@ -2236,6 +2387,16 @@ resumeSession(db);
 renderGrid();
 renderBar();
 renderStrip();
+// A switch from Settings reloads into the chosen person and lands back
+// on the same Settings page (people-ui.js) — unless the new person's
+// first-open setup is showing.
+{
+  const reopen = takeReopen();
+  if (reopen && !me.needsSetup) {
+    reopenSection = reopen;
+    $("corner").click();
+  }
+}
 
 // Timer/midnight expiry: the row's ends_at is the truth; the layer
 // checks it on a slow tick (and on every sync drain) and ends itself.

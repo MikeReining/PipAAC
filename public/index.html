@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="/board/recovery-ui.css" />
     <link rel="stylesheet" href="/board/editor-ui.css" />
     <link rel="stylesheet" href="/board/coach-ui.css" />
+    <link rel="stylesheet" href="/board/settings-ui.css" />
+    <link rel="stylesheet" href="/board/onramp-ui.css" />
     <style>
       /* Andika Bold (SIL OFL) — single-story a/g literacy letterforms.
          Self-hosted; the app is offline-first, never a CDN. It is the
@@ -68,6 +70,10 @@
       .r-None   { --rb: #8a8578; --rf: #f2efe6; } /* typed words — no role */
 
       * { box-sizing: border-box; margin: 0; }
+      /* The hidden attribute always wins. Without this, any class that sets
+         display (.sheet .row is flex) silently un-hides the element: Delete
+         account showed while signed out. */
+      [hidden] { display: none !important; }
       body {
         font-family: -apple-system, "Helvetica Neue", sans-serif;
         background: var(--cream);
@@ -448,6 +454,14 @@
         object-fit: contain;
         display: block;
       }
+      /* Words only (learner_profile.presentation_mode = 'label';
+         Profile_Presentation_Modes § 2.2): no pictures anywhere; the
+         label takes the whole tile and grows; the border keeps the
+         grammar color; nothing moves. */
+      .words-only .cell .tart, .words-only .pred .part, .words-only .chip .cart { display: none; }
+      .words-only .cell .tlabel { height: 100%; flex: 1; padding: 0 8%; }
+      .words-only .chip { justify-content: center; }
+      .words-only .chip .clabel { height: auto; font-size: 28px; line-height: 1.15; }
       /* Photos fill the art area edge to edge. */
       .cell.photo .tart { padding: 0; }
       .cell.photo .tart img { width: 100%; height: 100%; object-fit: cover; }
@@ -707,7 +721,7 @@
   </head>
   <body>
     <div id="topbar">
-      <button id="corner" class="corner-btn" title="Parent corner" aria-label="Parent corner">
+      <button id="corner" class="corner-btn" title="Settings" aria-label="Settings">
         <svg class="g-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.6M12 18.9v2.6M21.5 12h-2.6M5.1 12H2.5M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8M18.7 18.7l-1.8-1.8M7.1 7.1L5.3 5.3"/><circle cx="12" cy="12" r="6.6"/></svg>
         <svg class="g-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
         <svg class="g-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10h12V10"/><path d="M10 20v-5.5h4V20"/></svg>
@@ -778,166 +792,295 @@
     <div id="groupgrid"></div>
     <div id="kb"></div>
 
-    <div class="overlay" id="menu">
-      <div class="sheet">
-        <h2>Parent corner</h2>
-        <div id="wincard" class="wincard" hidden></div>
-        <button class="btn secondary" id="open-progress">Progress</button>
-        <button class="btn" id="add-mywords">Add to My Words</button>
-        <button class="btn secondary" id="open-setup">Tell us about their world</button>
-        <button class="btn secondary" id="edit-groups">Edit groups</button>
-        <button class="btn secondary" id="open-library">Words</button>
-        <button class="btn secondary" id="menu-editor" hidden>Board editor</button>
-        <div class="seg-row">
-          <span class="seg-label">Highlight likely next words</span>
-          <div class="seg" id="hl-next">
-            <button data-v="0">Off</button>
-            <button data-v="1">On</button>
+    <!-- Settings (the redesign of Parent corner): full screen, a section
+         list beside one page at a time; on a phone the list, then the
+         page. Every control keeps its id — the modules that own them
+         (board.js, devices-ui, keyboard-ui, …) wire them unchanged.
+         public/board/settings-ui.js owns navigation only. -->
+    <div class="overlay settings" id="menu">
+      <div class="set-shell" role="dialog" aria-modal="true" aria-labelledby="set-name">
+        <header class="set-top">
+          <button class="set-who" id="set-who" aria-haspopup="true" aria-expanded="false">
+            <span class="set-avatar" id="set-avatar" aria-hidden="true"></span>
+            <span class="set-whotext"><b><span id="set-name">Settings</span> <span class="set-caret" aria-hidden="true">▾</span></b><small>Settings · switch person</small></span>
+          </button>
+          <div class="set-pop" id="set-pop" hidden></div>
+          <input type="search" id="set-search" placeholder="Search settings: voice, keyboard, teacher…" autocomplete="off" aria-label="Search settings" />
+          <button class="btn set-done" id="set-done" data-close>Done</button>
+        </header>
+        <div class="set-body" id="set-body" data-view="list">
+          <nav class="set-nav" id="set-nav" aria-label="Settings sections"></nav>
+          <div class="set-pane" id="set-pane" tabindex="-1">
+            <button class="set-back" id="set-back">‹ Settings</button>
+
+            <section class="set-sec" data-sec="overview" data-title="Overview">
+              <h2>Overview</h2>
+              <div class="seg-row set-protect" id="set-protect" hidden></div>
+              <div class="seg-row set-check" id="set-check" hidden></div>
+              <div id="wincard" class="wincard" hidden></div>
+              <div class="set-quick">
+                <button class="btn" id="add-mywords">Add a word</button>
+                <button class="btn secondary" id="open-spot">Practice words</button>
+                <button class="btn secondary" id="edit-groups">Edit the board</button>
+                <button class="btn secondary" id="menu-editor" hidden>Open the full editor</button>
+              </div>
+              <p class="hint">Practice words lights up the words you want to model with Spotlight; everything else dims but still speaks.</p>
+              <div class="row"><button class="btn secondary" id="replay-tour">Replay the tour</button></div>
+              <div class="seg-row">
+                <span class="seg-label">How it's set up</span>
+                <div id="set-glance" class="set-glance"></div>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="results" data-title="Search" id="set-results">
+              <h2 id="set-results-title">Results</h2>
+              <div class="set-glance set-card" id="set-results-list"></div>
+              <p class="set-intro" id="set-results-none" hidden>Nothing matches. Try "voice", "bigger", or "teacher".</p>
+            </section>
+
+            <section class="set-sec" data-sec="words" data-title="Words">
+              <h2>Words</h2>
+              <p class="set-intro">What <span data-person></span> can say, and where it lives.</p>
+              <div class="seg-row">
+                <div class="row">
+                  <button class="btn" data-click="add-mywords">Add a word</button>
+                  <button class="btn secondary" id="open-library">All words</button>
+                </div>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">People &amp; places</span>
+                <div class="row"><button class="btn secondary" id="open-setup">Names, photos, and places</button></div>
+                <p class="hint">The people <span data-person></span> calls for and the places Pip should suggest.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Show meal groups (Breakfast, Lunch, Dinner, Snack)</span>
+                <div class="seg" id="group-occasions" data-switch>
+                  <button data-v="0">Hide</button>
+                  <button data-v="1">Show</button>
+                </div>
+                <p class="hint">A hidden group keeps its place, so nothing on the board moves.</p>
+              </div>
+              <div class="seg-row" id="group-shows-row">
+                <span class="seg-label">Show groups</span>
+                <div id="group-shows" class="set-list"></div>
+                <p class="hint">A hidden group keeps its words and its place. To add, rename, or move groups, edit them on the board.</p>
+                <div class="row"><button class="btn secondary" data-click="edit-groups">Edit groups on the board</button></div>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="board" data-title="Board">
+              <h2>Board</h2>
+              <p class="set-intro">How the board is laid out. These are usually set once.</p>
+              <div class="seg-row">
+                <span class="seg-label">Buttons per screen</span>
+                <div class="seg" id="cells-seg"></div>
+                <p class="hint">Fewer, bigger buttons are easier to hit. More buttons reach a word in fewer taps. Pip shows what moves before anything changes.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Buttons show</span>
+                <div class="seg" id="look-seg">
+                  <button data-v="symbol">Pictures and words</button>
+                  <button data-v="label">Words only</button>
+                </div>
+                <p class="hint">Words only removes every picture. Each button keeps its place and its color; the word gets bigger.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Keep the top row in every group</span>
+                <div class="seg" id="group-toprow" data-switch>
+                  <button data-v="0">Off</button>
+                  <button data-v="1">On</button>
+                </div>
+                <p class="hint">The same words stay in the same place when <span data-person></span> opens a group.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Keyboard</span>
+                <div class="seg" id="kb-mode">
+                  <button data-v="pip">Pip keyboard</button>
+                  <button data-v="device">Device keyboard</button>
+                </div>
+                <p class="hint">Pip's keyboard keeps every letter in one place.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Letter layout</span>
+                <div class="seg" id="kb-order">
+                  <button data-v="standard" id="kb-order-standard">QWERTY</button>
+                  <button data-v="abc">ABC</button>
+                </div>
+                <p class="hint">Pick once. Switching moves every letter, and <span data-person></span> has to relearn them.</p>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="talking" data-title="Talking">
+              <h2>Talking</h2>
+              <p class="set-intro">How sentences sound and behave.</p>
+              <div class="seg-row">
+                <span class="seg-label">Feeling faces</span>
+                <div class="seg" id="expressive-voice" data-switch>
+                  <button data-v="0">Off</button>
+                  <button data-v="1">On</button>
+                </div>
+                <p class="hint">Faces in the Smart bar let <span data-person></span> say a sentence happy, sad, or angry.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">After Play</span>
+                <div class="seg" id="fresh-speak">
+                  <button data-v="0"><span class="set-opt">Keep the sentence</span>
+                    <span class="set-eg" aria-hidden="true"><i>I</i><i>want</i><i>juice</i><i class="new">more</i></span></button>
+                  <button data-v="1"><span class="set-opt">Start a new one</span>
+                    <span class="set-eg" aria-hidden="true"><i class="new">more</i></span></button>
+                </div>
+                <p class="hint">After "I want juice" is played, tapping "more" either adds on or starts a fresh sentence.</p>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="lang" data-title="Language help">
+              <h2>Language help</h2>
+              <p class="set-intro">How much Pip helps while <span data-person></span> builds a sentence.</p>
+              <div class="seg-row">
+                <span class="seg-label">Grammar help</span>
+                <div class="seg" id="grammar-help" data-switch>
+                  <button data-v="0">Off</button>
+                  <button data-v="1">On</button>
+                </div>
+                <p class="set-eg" aria-hidden="true"><i>he</i><i>want</i> <span>→</span> <i>he</i><i class="new">wants</i></p>
+                <p class="hint">Words take the form the sentence needs: after "he", the board reads wants, has, him.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Outline likely next words</span>
+                <div class="seg" id="hl-next" data-switch>
+                  <button data-v="0">Off</button>
+                  <button data-v="1">On</button>
+                </div>
+                <p class="set-tiles" aria-hidden="true">
+                  <span class="set-tile" style="--c:#2e8b3a">want</span>
+                  <span class="set-tile likely" style="--c:#2e8b3a">go</span>
+                  <span class="set-tile" style="--c:#b07f00">juice</span>
+                </p>
+                <p class="hint">Up to three buttons get a thick outline in their own color. Nothing moves.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Smart bar word families</span>
+                <div id="fam-list"></div>
+                <p class="hint">These open in the Smart bar when their button is tapped, always in the same order. Tap one to change the order.</p>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="progress" data-title="Progress">
+              <h2>Progress</h2>
+              <p class="set-intro">Every number comes from <span data-person></span>'s own taps on this device.</p>
+              <div class="seg-row">
+                <div class="row"><button class="btn secondary" id="open-progress">See progress</button></div>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="team" data-title="Team &amp; devices">
+              <h2>Team &amp; devices</h2>
+              <p class="set-intro">Everyone who helps <span data-person></span>, and every device the board is on.</p>
+              <div class="seg-row">
+                <span class="seg-label">People on this device</span>
+                <div id="usr-list"></div>
+                <div class="row">
+                  <button class="btn secondary" id="usr-add">Add a person</button>
+                </div>
+                <p class="hint">Each person keeps their own board, words, and sync. Switching opens that person; the others keep everything they had.</p>
+              </div>
+              <div class="seg-row" id="opens-row" hidden>
+                <span class="seg-label">When Pip opens on this device</span>
+                <div class="seg set-wrap" id="opens-seg"></div>
+                <p class="hint">A child's own device opens straight to their board. On a shared or therapy device, "Show the list" asks who's talking each time Pip starts.</p>
+              </div>
+              <div class="seg-row" id="team-note" hidden>
+                <span class="seg-label">You're on the team</span>
+                <p class="hint">You can edit everything on <span data-person></span>'s board. An owner invites and removes people, adds devices, manages the license, and can delete the board.</p>
+              </div>
+              <div class="seg-row" id="sup-row" hidden>
+                <span class="seg-label">Team</span>
+                <div id="sup-list"><p class="hint">No one else yet.</p></div>
+                <div class="row" id="sup-form">
+                  <input type="email" id="sup-email" placeholder="teacher@school.org" autocomplete="email" style="flex:1" />
+                  <button class="btn secondary" id="sup-invite">Invite</button>
+                </div>
+                <p class="hint">People you invite join the team: they edit everything, on their own phone or laptop. Make owner lets them manage people and devices too. Remove locks them out.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Devices</span>
+                <div id="dev-list"><p class="hint">Only on this device so far.</p></div>
+                <div class="row">
+                  <button class="btn secondary" id="dev-choose">Add a device</button>
+                  <!-- The two flows devices-ui owns; Add a device asks which one. -->
+                  <button id="dev-add" hidden>Approve a new device</button>
+                  <button id="dev-link" hidden>Link this device</button>
+                </div>
+                <p class="hint">A linked device sees and edits the whole board. Removing one locks it out.</p>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="backup" data-title="Backup &amp; privacy">
+              <h2>Backup &amp; privacy</h2>
+              <p class="set-intro">Keep <span data-person></span>'s words safe, and choose what leaves this device.</p>
+              <div class="seg-row">
+                <span class="seg-label">Recovery card</span>
+                <div class="row">
+                  <button class="btn secondary" id="dev-sheet">Make the recovery card</button>
+                  <button class="btn secondary" id="dev-restore">Restore from a card</button>
+                </div>
+                <p class="hint">If this device is lost or reset, the card brings everything back. Print it and keep it somewhere safe. Without the card, a linked device, or a device backup, a lost board is gone for good.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Settings PIN</span>
+                <p class="hint" id="pin-state">No PIN yet: Settings opens with one tap.</p>
+                <div class="row">
+                  <button class="btn secondary" id="pin-change">Lock Settings with a PIN</button>
+                  <button class="btn secondary" id="pin-off" hidden>Turn off the PIN</button>
+                </div>
+                <p class="hint">One PIN for everyone on this device. Pip never shows it, so a child watching can't learn it. Forgot it? The license key or the recovery card resets it.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Share anonymous counts with Pip</span>
+                <div class="seg" id="share-research" data-switch>
+                  <button data-v="0">Off</button>
+                  <button data-v="1">On</button>
+                </div>
+                <p class="hint">Daily totals only: word counts, sentence lengths, speed. Never names, <span data-person></span>'s own words, sentences, or tap times.</p>
+              </div>
+              <div class="seg-row set-danger" id="dev-delete-row" hidden>
+                <span class="seg-label">Delete</span>
+                <div id="dev-delete-state"></div>
+                <div class="row">
+                  <button class="btn secondary" id="dev-delete">Delete from Pip…</button>
+                  <button class="btn secondary" id="dev-undelete" hidden>Undo deletion</button>
+                </div>
+                <p class="hint">Removed from sync after 30 days. Undo any time before then. This device keeps its copy.</p>
+              </div>
+            </section>
+
+            <section class="set-sec" data-sec="you" data-title="Your account" data-group="you">
+              <h2>Your account</h2>
+              <p class="set-intro">About you, the adult. <span data-person-cap></span> never needs an account.</p>
+              <div class="seg-row" id="acct-row" hidden>
+                <span class="seg-label">Sign in</span>
+                <div id="acct-state"><p class="hint">Not signed in.</p></div>
+                <div class="row" id="acct-form">
+                  <input type="email" id="acct-email" placeholder="you@example.com" autocomplete="email" style="flex:1" />
+                  <button class="btn secondary" id="acct-send">Email me a sign-in link</button>
+                </div>
+                <p class="hint">Sign in with an email link and your passkey to reach everyone you support from any device.</p>
+                <div class="row set-danger" id="acct-danger" hidden>
+                  <button class="btn secondary" id="acct-delete">Delete your account…</button>
+                </div>
+              </div>
+              <div class="seg-row" id="dev-lifetime-row" hidden>
+                <span class="seg-label">Pip Lifetime</span>
+                <div id="dev-lifetime"><p class="hint">Checking…</p></div>
+                <div class="row" id="dev-license-row">
+                  <input type="text" id="dev-license" placeholder="License key" autocomplete="off" style="flex:1" />
+                  <button class="btn secondary" id="dev-activate">Activate</button>
+                </div>
+                <p class="hint">Lifetime links more than one device and unlocks the web editor.</p>
+              </div>
+            </section>
           </div>
-          <p class="hint">Up to three grid words get a thicker inner border in their own color.</p>
         </div>
-        <div class="seg-row">
-          <span class="seg-label">Top row on every group</span>
-          <div class="seg" id="group-toprow">
-            <button data-v="1">On</button>
-            <button data-v="0">Off</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Meal groups (Breakfast, Lunch, Dinner, Snack)</span>
-          <div class="seg" id="group-occasions">
-            <button data-v="1">Show</button>
-            <button data-v="0">Hide</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">After Speak, the next word</span>
-          <div class="seg" id="fresh-speak">
-            <button data-v="0">Adds on</button>
-            <button data-v="1">Starts fresh</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Grammar help</span>
-          <div class="seg" id="grammar-help">
-            <button data-v="0">Off</button>
-            <button data-v="1">On</button>
-          </div>
-          <p class="hint">Words wear the form the sentence calls for — "he" makes the board read wants, has, him.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Expressive voice</span>
-          <div class="seg" id="expressive-voice">
-            <button data-v="0">Off</button>
-            <button data-v="1">On</button>
-          </div>
-          <p class="hint">Faces in the smart bar let your child say a sentence happy, sad or angry.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Help improve Pip</span>
-          <div class="seg" id="share-research">
-            <button data-v="0">Off</button>
-            <button data-v="1">On</button>
-          </div>
-          <p class="hint">Sends daily counts — word totals, sentence lengths, speed — never names, own words, sentences, or tap times.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Spotlight</span>
-          <div class="row">
-            <button class="btn secondary" id="open-spot">🔦 Spotlight…</button>
-          </div>
-          <p class="hint">Glow the words you want to point at; everything else dims but still speaks.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Cells</span>
-          <div class="seg" id="cells-seg"></div>
-          <p class="hint">How many cells the board shows. Changing it shows what moves before anything does.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Smart bar</span>
-          <div id="fam-list"></div>
-          <p class="hint">Families open in the bar when their tile is tapped. Tiles always sit in the same order — this list is the order.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Keyboard</span>
-          <div class="seg" id="kb-mode">
-            <button data-v="pip">Pip keys</button>
-            <button data-v="device">Device keyboard</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Letter order</span>
-          <div class="seg" id="kb-order">
-            <button data-v="standard" id="kb-order-standard">QWERTY</button>
-            <button data-v="abc">ABC</button>
-          </div>
-          <p class="hint">Pick one and keep it — changing it moves every letter.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Users on this device</span>
-          <div id="usr-list"></div>
-          <div class="row">
-            <button class="btn secondary" id="usr-add">Add a user</button>
-          </div>
-          <p class="hint">Each user keeps its own board, words, and sync. Switching opens that user — the other one keeps everything it had.</p>
-        </div>
-        <div class="seg-row" id="acct-row" hidden>
-          <span class="seg-label">Supporter account</span>
-          <div id="acct-state"><p class="hint">Not signed in.</p></div>
-          <div class="row" id="acct-form">
-            <input type="email" id="acct-email" placeholder="you@example.com" autocomplete="email" style="flex:1" />
-            <button class="btn secondary" id="acct-send">Send sign-in link</button>
-          </div>
-          <div class="row" id="acct-danger" hidden>
-            <button class="btn secondary" id="acct-delete">Delete account…</button>
-          </div>
-          <p class="hint">Sign in with an email link and your passkey — every user you support appears with its keys. The child's device never asks for this.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Linked devices</span>
-          <div id="dev-list"><p class="hint">This user is only on this device.</p></div>
-          <div class="row">
-            <button class="btn secondary" id="dev-add">Add a device</button>
-            <button class="btn secondary" id="dev-link">Link this device</button>
-          </div>
-          <p class="hint">A linked device sees and edits the whole user. Removing it locks it out and re-keys the user.</p>
-        </div>
-        <div class="seg-row" id="sup-row" hidden>
-          <span class="seg-label">Supporters of this user</span>
-          <div id="sup-list"><p class="hint">No supporters yet.</p></div>
-          <div class="row" id="sup-form">
-            <input type="email" id="sup-email" placeholder="supporter@example.com" autocomplete="email" style="flex:1" />
-            <button class="btn secondary" id="sup-invite">Invite</button>
-          </div>
-          <p class="hint">A supporter signs in on their own devices. You Allow the share here first — and Remove locks them out and re-keys this user.</p>
-        </div>
-        <div class="seg-row" id="dev-lifetime-row" hidden>
-          <span class="seg-label">Pip Lifetime</span>
-          <div id="dev-lifetime"><p class="hint">Checking…</p></div>
-          <div class="row" id="dev-license-row">
-            <input type="text" id="dev-license" placeholder="License key" autocomplete="off" style="flex:1" />
-            <button class="btn secondary" id="dev-activate">Activate</button>
-          </div>
-          <p class="hint">Lifetime links more than one device and unlocks the web editor.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Backup</span>
-          <div class="row">
-            <button class="btn secondary" id="dev-sheet">QR card</button>
-            <button class="btn secondary" id="dev-restore">Restore a user</button>
-          </div>
-          <p class="hint">The QR card is the last resort — print it and keep it somewhere safe. Without the card, a linked device, or a device backup, a lost user is gone for good.</p>
-        </div>
-        <div class="seg-row" id="dev-delete-row" hidden>
-          <span class="seg-label">Delete</span>
-          <div id="dev-delete-state"></div>
-          <div class="row">
-            <button class="btn secondary" id="dev-delete">Delete this user</button>
-            <button class="btn secondary" id="dev-undelete" hidden>Undo deletion</button>
-          </div>
-          <p class="hint">Deletes the user from the relay after 30 days. Undo any time before then. This does not erase this device's copy.</p>
-        </div>
-        <button class="btn secondary" data-close>Close</button>
       </div>
     </div>
 
@@ -1158,6 +1301,22 @@
       </div>
     </div>
 
+    <!-- Settings → Team & devices → Add a device: which device is this? -->
+    <div class="overlay" id="devchoose">
+      <div class="sheet">
+        <h2>Which device are you holding?</h2>
+        <button class="btn secondary set-choice" data-pick="dev-link">
+          <b>The new one</b>
+          <span class="hint">It shows a code; type it on a device that already has <span data-person></span>.</span>
+        </button>
+        <button class="btn secondary set-choice" data-pick="dev-add">
+          <b>One that already has <span data-person></span></b>
+          <span class="hint">Type the code the new device is showing, then Allow.</span>
+        </button>
+        <button class="btn secondary" data-close>Cancel</button>
+      </div>
+    </div>
+
     <div class="overlay" id="pairform">
       <div class="sheet">
         <h2 id="pair-title">Link this device</h2>
@@ -1173,7 +1332,7 @@
          created on first open, recovered with the license key. -->
     <div class="overlay" id="pinform">
       <div class="sheet">
-        <h2 id="pin-title">Parent PIN</h2>
+        <h2 id="pin-title">Settings PIN</h2>
         <div id="pin-body">
           <p class="hint" id="pin-hint"></p>
           <input type="password" id="pin-input" inputmode="numeric"

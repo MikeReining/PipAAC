@@ -47,3 +47,43 @@ test("forgot: the QR card's root verifies, a different user's fails", async () =
   const OTHER_UID = "99999999-8888-7777-6666-555555555555";
   assert.equal(await verifyAdult(s, UID, cardPayload(OTHER_UID, root)), false);
 });
+
+test("one PIN per device: every person on it opens with the same digits", async () => {
+  const s = memoryKeyStore();
+  const OTHER = "99999999-8888-7777-6666-555555555555";
+  await setPin(s, UID, "2468");
+  assert.equal(await hasPin(s, OTHER), true);
+  assert.equal(await checkPin(s, OTHER, "2468"), true);
+  assert.equal(await checkPin(s, OTHER, "1357"), false);
+  // Change: the new PIN replaces the old one for everyone.
+  await setPin(s, OTHER, "1357");
+  assert.equal(await checkPin(s, UID, "1357"), true);
+  assert.equal(await checkPin(s, UID, "2468"), false);
+});
+
+test("a PIN from before the device PIN still opens, then becomes the device PIN", async () => {
+  const s = memoryKeyStore();
+  const OTHER = "99999999-8888-7777-6666-555555555555";
+  const legacy = [...new Uint8Array(await crypto.subtle.digest(
+    "SHA-256", new TextEncoder().encode(`pip-pin:${UID}:4321`)))]
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
+  await s.put(`user/${UID}/pin`, legacy);
+  assert.equal(await hasPin(s, UID), true);
+  assert.equal(await hasPin(s, OTHER), false);
+  assert.equal(await checkPin(s, UID, "1111"), false);
+  assert.equal(await checkPin(s, UID, "4321"), true);
+  // Migrated: the other person on the device now opens with it too.
+  assert.equal(await checkPin(s, OTHER, "4321"), true);
+});
+
+test("no PIN until one is set; turning it off clears it for everyone", async () => {
+  const { clearPin } = await import("../../public/shared/pin.mjs");
+  const s = memoryKeyStore();
+  const OTHER = "99999999-8888-7777-6666-555555555555";
+  assert.equal(await hasPin(s, UID), false);
+  await setPin(s, UID, "2468");
+  assert.equal(await hasPin(s, OTHER), true);
+  await clearPin(s, UID);
+  assert.equal(await hasPin(s, UID), false);
+  assert.equal(await hasPin(s, OTHER), false);
+});

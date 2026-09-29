@@ -225,6 +225,109 @@ chrome follows one rule: icons, one field, one list, numbers. No
 explaining sentences, and no user's name in the copy. A screen that
 needs a sentence isn't finished.
 
+## Settings (formerly Parent corner)
+
+**DECIDED 2026-09-28** (founder, "I fully agree with everything", on the
+Settings redesign proposal: https://claude.ai/artifact/4wYfqZjY7QCz8GgvXxkaLG).
+**BUILT 2026-09-28** unless marked. Markup `public/index.html` `#menu`;
+navigation, summaries, checklist, search, switches `public/board/settings-ui.js`;
+people `public/board/people-ui.js`; styles `settings-ui.css`. Every control
+keeps its id and its owner module's wiring — Settings owns navigation only.
+
+- **Who it's for.** Parents, SLPs, teachers, aides, and adult
+  communicators. It is "Settings" with the Settings PIN, never "Parent
+  corner". Copy names the person (their name, else "this person"),
+  never a role ("your child"). Edit-mode chrome keeps its own no-name
+  rule above; this amendment is Settings only.
+- **Layout.** Full screen. Header: the person (tap to switch), search,
+  Done. A section list beside one page; under 760px the list, then the
+  page with Back. Pages: Overview · Words · Board · Talking · Language
+  help · Progress · Team & devices · Backup & privacy, then *You* → Your
+  account. A page whose every row is hidden drops out of the list.
+- **Overview.** A setup checklist of measurable facts only (named;
+  people & places exist), gone when done. **Protect** card once the
+  board is invested (first customization: people, words, groups,
+  pictures, hidden or moved words, saved practice lists — `sync_op`
+  kinds; settings flips and the demo don't count): Lock Settings with a
+  PIN and Make the recovery card, whichever is missing, owners only.
+  Quick actions: Add a word, Practice words (Spotlight), Edit the board,
+  Replay the tour. "How it's set up": one line per page, read from the
+  live controls.
+- **Controls.** On/off is a switch, On on the right (`.seg[data-switch]`;
+  the hidden buttons still carry the write). Real choices stay labelled
+  options. Risky actions sit in a red-bordered block at the bottom of
+  their page. A missing recovery card shows a warning dot on Backup &
+  privacy — only once the board is invested.
+- **People.** The header switcher reloads into the chosen person and
+  reopens the same page (one-shot `pip_reopen_settings`, written only
+  inside Settings). "When Pip opens on this device": a person (`home`),
+  or Show the list (no home → the launch list "Who's talking?").
+- **PIN.** Off until someone asks for one (founder 2026-09-28): the
+  gear opens Settings with one tap. Backup & privacy → Settings PIN:
+  Lock Settings with a PIN (twice), Change PIN (never the old one), Turn
+  off the PIN. One per device (`device/pin`, `public/shared/pin.mjs`);
+  legacy per-person PINs still ask and migrate on first good check.
+  Never shown.
+- **Recovery card.** Asking for it on an unsynced board turns on the
+  encrypted sync first, then shows the card (`recovery-ui.js` →
+  devices-ui `ensureUser`); offline, it says so in one line.
+- **Search.** Word-start match over each row's text plus per-page
+  synonyms (`SYNONYMS` in settings-ui.js); a hit opens the page and
+  rings the row.
+
+- **Previews.** Pictures of the effect: grid per size (CSS from the
+  cells seg's layout id), After Play as a sentence bar, Grammar help as
+  he + want → he wants, an outlined tile for Outline likely next words.
+- **Show groups.** Words lists every non-meal group with a switch
+  (`public/board/group-shows.js` → `setGroupHidden`, 027 B8). Meal
+  groups keep their one switch (`occasions_visible`).
+
+- **Add a device.** One button; a sheet asks which device you're
+  holding and hands off to the existing flow (`dev-link` shows a code,
+  `dev-add` types it and Allows — devices-ui owns both).
+
+- **Owner and Team.** **DECIDED 2026-09-28** (founder: "an owner, and
+  someone who can edit everything except deleting boards, managing
+  people and changing the license — we can stop there"). Two kinds of
+  people, no levels to pick. Whoever creates the board, a device an
+  owner pairs, and a recovery-card restore are Owners; everyone invited
+  joins as Team; an owner can Make owner / Make team. Team edits
+  everything; only owners invite, remove, add devices, manage the
+  license, replace the card, and delete the board. Enforced by the relay
+  (`src/worker/relay.js` `isOwner`), shown in Team & devices
+  (`public/board/devices-ui.js` `applyOwner`); a Team device sees a
+  "You're on the team" note and no management buttons, and is never
+  nagged about the recovery card. Owner/Team is derived per device, not
+  stored: no account tag → Owner; through a supporter account → that
+  account's `owner` flag. The last owner can't be demoted or removed.
+
+## Welcome and first-run demo
+
+**DECIDED 2026-09-28** (founder: "get the user to a wow experience as
+quickly as possible"); **BUILT 2026-09-29**. No photos, PIN, backup or
+sign-in before the wow.
+
+- **Welcome** (`public/board/onramp-ui.js`, on a new person —
+  `needsSetup`): one screen, a name (optional) and "Who's it for?" — A
+  child / A teen or adult (`audience` on the registry row). A teen or
+  adult gets one more: "How should the buttons look?" — Pictures and
+  words / Words only, shown as real tiles. Mom and Dad stay on every
+  board. The old four-step "their world" form opens only from Settings.
+- **Demo** (`public/board/tour-ui.js`): want → apple (placed on the
+  Smart bar for the tour) → ✨ Fix it → "I want an apple." → ⏪ → "I
+  wanted an apple." → "Now try your own." Scripted, so it plays offline
+  and instantly; while it runs, board.js routes taps, the Smart bar and
+  the transforms to it and nothing reaches the tap log, stats or the
+  ranker. The last card says ✨ needs the internet on your own
+  sentences. **Open:** the founder confirms the live Fix it / past
+  output for "want apple" matches the script; optional recorded clips
+  (`/audio/onramp/i-want-an-apple.mp3`, `i-wanted-an-apple.mp3`) wait
+  for a founder listen (AGENTS.md) — until then the normal sentence
+  voice speaks.
+- **Words only** (Settings → Board → Buttons show; `presentation_mode`
+  'label', synced; `.words-only` in index.html): no pictures anywhere,
+  one shared text size, every cell and color unchanged.
+
 ## Open items (designer's "next" list)
 
 **PROPOSED**, unscheduled: custom "Pip" wordmark (Andika Bold is the

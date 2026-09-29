@@ -31,7 +31,7 @@ export function mountWincard({ db, me, nameOf, entitlement, toast }) {
     if (!life) {
       const pitch = document.createElement("p");
       pitch.className = "hint";
-      pitch.textContent = `See all of ${me.name || "this user"}'s progress with Pip Lifetime.`;
+      pitch.textContent = `See all of ${me.name || "this person"}'s progress with Pip Lifetime.`;
       el().appendChild(pitch);
     }
   }
@@ -55,7 +55,7 @@ export function mountWincard({ db, me, nameOf, entitlement, toast }) {
     const card = weeklyCard(db, now, nameOf);
     if (card.empty) return;
     localStorage.setItem(key, String(week));
-    toast(`${card.summary} — ${card.wins[0] ?? "open Parent corner for the week."}`);
+    toast(`${card.summary} — ${card.wins[0] ?? "open Settings for the week."}`);
   }
 
   $("corner").addEventListener("click", render);

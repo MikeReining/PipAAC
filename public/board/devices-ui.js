@@ -14,7 +14,7 @@ import {
   listInvites, openInvite, registerAccount, requestLink, revokeInvite,
   saveAccountState, shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
-import { addUser, listUsers, putUser, removeUser, setHome } from "../shared/users.mjs";
+import { addUser, listUsers, putUser, removeUser } from "../shared/users.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -58,7 +58,7 @@ export function mountDevices({
   /** First linked-device action on a user creates it on the relay. The
    *  recovery root is minted here so the relay holds the sheet's proof
    *  from the start — it stores the hash, never the key. */
-  async function ensureUser() {
+  async function ensureUser({ quiet = false } = {}) {
     if (me.sync?.userId) return me.sync;
     const store = openKeyStore();
     const identity = await getDeviceIdentity(store);
@@ -79,8 +79,23 @@ export function mountDevices({
     const next = { userId: user_id, epoch: 1, cursor: 0 };
     await saveUser({ sync: next });
     await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel);
-    toast("This user syncs now — print or save the QR card: Parent corner → Backup");
+    if (!quiet) toast(`${me.name || "This board"} syncs now — make the recovery card: Settings → Backup & privacy`);
     return next;
+  }
+
+  /* Owner or Team (relay.js isOwner). The relay's answer on devices/self
+   * is the truth; a board that isn't synced has no team, so this device
+   * is its owner. Team keeps every edit — only managing people and
+   * devices, the license and deletion are owners'. `me.owner` is kept in
+   * memory for Settings (checklist), never saved. */
+  let owner = true;
+  function applyOwner(isOwner) {
+    owner = isOwner;
+    me.owner = isOwner;
+    $("dev-choose").hidden = !isOwner;
+    $("dev-license-row").hidden = !isOwner || $("dev-license-row").hidden;
+    if (!isOwner) $("dev-delete-row").hidden = true;
+    $("team-note").hidden = isOwner;
   }
 
   async function renderDevices() {
@@ -89,7 +104,8 @@ export function mountDevices({
     $("dev-lifetime-row").hidden = !cfg?.userId;
     $("dev-delete-row").hidden = !cfg?.userId;
     if (!cfg?.userId) {
-      list.innerHTML = '<p class="hint">This user is only on this device.</p>';
+      applyOwner(true);
+      list.innerHTML = '<p class="hint">Only on this device so far.</p>';
       return;
     }
     try {
@@ -98,6 +114,7 @@ export function mountDevices({
       const userKey = await getUserKey(store, me.id, cfg.epoch ?? 1);
       const client = relayClient({ userId: cfg.userId, baseUrl: relayBase, identity, userKey });
       const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
+      const isOwner = self?.owner !== false;
       list.innerHTML = "";
       for (const d of devices) {
         const row = document.createElement("div");
@@ -108,7 +125,7 @@ export function mountDevices({
           ? `${d.device_id} (this device)` : d.device_id)
           + (d.via_acct ? " — supporter device" : "");
         row.append(name);
-        if (d.device_id !== identity.deviceId) {
+        if (isOwner && d.device_id !== identity.deviceId) {
           const rm = document.createElement("button");
           rm.className = "btn secondary";
           rm.textContent = "Remove";
@@ -118,6 +135,7 @@ export function mountDevices({
         list.append(row);
       }
       renderEntitlement(self);
+      applyOwner(isOwner);
     } catch (err) {
       list.innerHTML = '<p class="hint">Relay unreachable — devices cannot be listed.</p>';
     }
@@ -133,7 +151,7 @@ export function mountDevices({
     const state = $("dev-delete-state");
     if (self?.delete_at) {
       const when = new Date(self.delete_at).toLocaleDateString();
-      state.innerHTML = `<p class="hint"><b>This user is scheduled for deletion on ${when}.</b></p>`;
+      state.innerHTML = `<p class="hint"><b>${me.name || "This board"} is scheduled for deletion on ${when}.</b></p>`;
       $("dev-delete").hidden = true;
       $("dev-undelete").hidden = false;
     } else {
@@ -185,7 +203,7 @@ export function mountDevices({
       const locked = u.sync?.userId
         && !(await ks.get(`user/${u.id}/key_e${u.sync.epoch ?? 1}`));
       name.textContent = (u.id === me.id ? "● " : "")
-        + (u.name || "This user") + (u.home ? " — opens first" : "")
+        + (u.name || "Unnamed") + (u.home ? " — opens first" : "")
         + (locked ? " 🔒 needs an Allow or QR card" : "");
       row.append(name);
       if (u.id !== me.id && !locked) {
@@ -194,6 +212,7 @@ export function mountDevices({
         sw.textContent = "Switch";
         sw.onclick = async () => {
           sessionStorage.setItem("pip_active_user", u.id);
+          sessionStorage.setItem("pip_reopen_settings", "team");
           await flushDb();
           location.reload();
         };
@@ -218,31 +237,21 @@ export function mountDevices({
       edit.className = "btn secondary";
       edit.textContent = "Name";
       edit.onclick = async () => {
-        const n = prompt("Name this user", u.name || "");
+        const n = prompt("Name this person", u.name || "");
         if (n === null) return;
         if (u.id === me.id) await saveUser({ name: n.trim() });
         else await putUser(userStore, { ...u, name: n.trim() });
         await renderUsers();
       };
       row.append(edit);
-      if (!u.home) {
-        const home = document.createElement("button");
-        home.className = "btn secondary";
-        home.textContent = "Opens first";
-        home.onclick = async () => {
-          await setHome(userStore, u.id);
-          if (u.id === me.id) me.home = true;
-          await renderUsers();
-          renderAccount(); // the sign-in row hides on the child's device
-        };
-        row.append(home);
-      }
+      // Which person opens first is Settings → "When Pip opens"
+      // (people-ui.js), one control for one fact.
       list.append(row);
     }
   }
 
   $("usr-add").onclick = async () => {
-    const name = prompt("Name this user", "") ?? "";
+    const name = prompt("Name this person", "") ?? "";
     const added = await addUser(userStore, { name: name.trim() });
     // 014 § 9 ruling 1: a new profile gets the setup question on first
     // open — "Who do they call for?" — so the family's people can sit
@@ -429,12 +438,14 @@ export function mountDevices({
     if (!cfg?.userId) return;
     const list = $("sup-list");
     const st = accountState();
-    $("sup-form").hidden = !st;
-    let supporters = [], invites = [];
+    let supporters = [], invites = [], isOwner = owner, client = null;
     try {
-      const { client } = await userClient();
+      ({ client } = await userClient());
       ({ supporters } = await client.listSupporters());
+      isOwner = (await client.selfKey())?.owner !== false;
     } catch { /* relay unreachable — invites may still render */ }
+    // Team members see who's on the team; only owners invite and remove.
+    $("sup-form").hidden = !st || !isOwner;
     if (st) {
       try {
         ({ invites } = await listInvites(st.acct_id, st.session));
@@ -443,42 +454,56 @@ export function mountDevices({
     invites = (invites ?? []).filter((i) => i.user_id === me.id
       && ["pending_claim", "pending_allow", "granted"].includes(i.status));
     list.innerHTML = "";
-    const mkRow = (label, btnText, onClick) => {
+    // buttons: [[text, onClick], …] — none for a Team viewer.
+    const mkRow = (label, buttons = []) => {
       const row = document.createElement("div");
       row.className = "dev-row";
       const name = document.createElement("span");
       name.className = "dev-id";
       name.textContent = label;
       row.append(name);
-      const b = document.createElement("button");
-      b.className = "btn secondary";
-      b.textContent = btnText;
-      b.onclick = onClick;
-      row.append(b);
+      for (const [text, onClick] of isOwner ? buttons : []) {
+        const b = document.createElement("button");
+        b.className = "btn secondary";
+        b.textContent = text;
+        b.onclick = onClick;
+        row.append(b);
+      }
       list.append(row);
     };
+    const levelOf = (acct) => (supporters.find((s) => s.acct_id === acct)?.owner ? "owner" : "team");
+    // Owners make someone else an owner (or back to team) with one tap.
+    const ownerButton = (acct) => [levelOf(acct) === "owner" ? "Make team" : "Make owner", async () => {
+      try {
+        await client.setSupporterOwner(acct, levelOf(acct) !== "owner");
+      } catch (e) {
+        toast(e.status === 409 ? "Someone has to stay an owner." : `Couldn't change that: ${e.message}`);
+      }
+      await renderSupporters();
+    }];
+    const memberRow = (acct, email, token) => mkRow(
+      `${email ?? acct} — ${levelOf(acct) === "owner" ? "owner" : "team, can edit everything"}`,
+      [ownerButton(acct), ["Remove", () => removeSupporterFlow({ acct_id: acct, email, token })]]);
     for (const inv of invites) {
       if (inv.status === "granted") {
-        mkRow(`${inv.email} — can edit`, "Remove", () =>
-          removeSupporterFlow({ acct_id: inv.to_acct, email: inv.email, token: inv.token }));
+        memberRow(inv.to_acct, inv.email, inv.token);
       } else if (inv.status === "pending_allow") {
-        mkRow(`${inv.email} — waiting for your Allow`, "Allow", () => allowInvite(inv));
+        mkRow(`${inv.email} — waiting for an owner's Allow`, [["Allow", () => allowInvite(inv)]]);
       } else {
-        mkRow(`${inv.email} — invited`, "Cancel", async () => {
+        mkRow(`${inv.email} — invited`, [["Cancel", async () => {
           await declineInvite(inv.token, st.session).catch(() => {});
           await renderSupporters();
-        });
+        }]]);
       }
     }
     // Relay supporters without a visible invite (e.g. shared from
     // another signed-in device) still list and still remove.
     for (const s of supporters) {
       if (invites.some((i) => i.status === "granted" && i.to_acct === s.acct_id)) continue;
-      mkRow(`${s.email ?? s.acct_id} — can edit`, "Remove", () =>
-        removeSupporterFlow({ acct_id: s.acct_id, email: s.email }));
+      memberRow(s.acct_id, s.email);
     }
     if (!list.children.length) {
-      list.innerHTML = '<p class="hint">No supporters yet.</p>';
+      list.innerHTML = '<p class="hint">No one else yet.</p>';
     }
   }
 
@@ -631,7 +656,7 @@ export function mountDevices({
     pairBody.append(qr);
     const hint = document.createElement("p");
     hint.className = "hint";
-    hint.textContent = "On the other device: Parent corner → Add a device → type this code → Allow.";
+    hint.textContent = "On the other device: Settings → Team & devices → Add a device → type this code → Allow.";
     pairBody.append(hint);
     const status = document.createElement("p");
     status.className = "hint";
@@ -802,5 +827,5 @@ export function mountDevices({
     }
   };
 
-  return { userClient, renderAccount };
+  return { userClient, renderAccount, renderUsers, ensureUser };
 }
