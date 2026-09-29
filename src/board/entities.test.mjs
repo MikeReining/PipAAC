@@ -67,7 +67,9 @@ test("the save moves nothing: sense count, coordinate table, enrichment rows", (
   });
 
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM sense").get().n, sensesBefore);
-  assert.equal(sensesBefore, 680);
+  // The count itself is catalog data — it grows; the invariant is that a
+  // save doesn't move it, not that it equals a frozen number.
+  assert.ok(sensesBefore > 0);
   assert.deepEqual(snapshotCoreCells(db), cellsBefore);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM entity_enrichment").get().n, 0);
 
