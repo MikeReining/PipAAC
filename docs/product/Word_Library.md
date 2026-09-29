@@ -260,6 +260,12 @@ Execution: `docs/phases/010_Extended_Picture_Library.md`.
 
 ### 6.1 Draw it for me
 
+**AMENDED 2026-09-29 (founder):** automatic, not a button. Every new word
+first gets the closest picture we already own (free); we draw only when
+nothing is close, never automatically for people and pets. A redraw needs a
+description. Owners: `docs/phases/030_Picture_Finder_And_Drawing.md`
+(backend), `docs/phases/029_Add_A_Word.md` (experience).
+
 **DECIDED 2026-09-22** (founder: "a really killer idea … for people that
 make the full payment, we should absolutely enable it").
 Architecture & growth pipeline: `docs/product/Clipart_Pipeline_And_Catalog_Growth.md`.

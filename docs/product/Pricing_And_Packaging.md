@@ -152,6 +152,11 @@ subscription before a child can speak
 - **Drawings** are the one cost that recurs (about 1¢ each). 300 are
   included once, not per year; top-ups are an in-app purchase priced near
   cost. This replaces the 2026-09-22 fair use of 30 a day / 1,000 a year.
+  **What counts (founder, 2026-09-29):** image API calls only — a new
+  drawing or a redraw. Using any picture we already have (catalog, extended
+  library, or any earlier drawing) is free and stays available at 0 left.
+  Spending is automatic and shown on the card
+  (`docs/phases/030_Picture_Finder_And_Drawing.md` § 6.1).
 - **Voice cloning and other passthrough credits** are unchanged (§ 2,
   tier 3).
 

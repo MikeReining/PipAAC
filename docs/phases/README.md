@@ -44,10 +44,12 @@ Executing phases only. Each row names the **next** slice.
 | [026 — Topic groups](026_Topic_Groups.md) | Slice 1 compiled with 027 A1 (live seed, capacity-checked; splits await founder review). Next: slice 2 topic door icons, slice 3 neutral noun frame |
 | [027 — Occasion boards and independent editing](027_Occasion_Boards.md) | Built 2026-09-28 (A1–A4, Works Test 12/12 on an agent slot). Waiting on the founder: seed curation review and the CHILDES starter table |
 | [028 — Tile voice library](028_Tile_Voice_Library.md) | Decided 2026-09-29, ready to slice. Next: slice 0 v3 cleanup (code/data), then slice 1 Worker mint core. Eve default, Leo (voice id final, seed pending). Nothing built; bulk mints stay founder-gated |
+| [029 — Add a word](029_Add_A_Word.md) | Decided 2026-09-29. Front end, Claude leads design. Next: slice A (sheet + Make saves at once); B–D wait on 030/028 contracts (stubbable) |
+| [030 — Picture Finder and drawing](030_Picture_Finder_And_Drawing.md) | Decided 2026-09-29. Backend handoff (another developer). Next: slice 1 index + find, then slice 2 calibration page for the founder |
 
 ## Proposals awaiting review
 
-- [029 — Add a word](029_Add_A_Word_Proposal.md) — one-tap add with auto voice + auto drawing, minted once; five founder decisions in § 6.
+None currently.
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

@@ -6,6 +6,12 @@ Execution phase: `docs/phases/010_Extended_Picture_Library.md` Slice 6.
 Parent spec: `docs/product/Word_Library.md` § 6.1.
 Art standards: `docs/operations/art-generator/SKILL.md`.
 
+**AMENDED 2026-09-29 (founder):** reuse first. Before any generation the
+Worker searches every picture we own by meaning and applies a close match;
+a drawing is keyed and stored once, so the same subject is never drawn
+twice. The flow in § 2 runs only on a miss. Owner of find, draw ledger,
+allowance and calibration: `docs/phases/030_Picture_Finder_And_Drawing.md`.
+
 ---
 
 ## 1. The Core Economic Principle: Generate Once, Benefit Forever

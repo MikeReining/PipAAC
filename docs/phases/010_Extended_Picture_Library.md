@@ -254,6 +254,13 @@ shows its label and color, and the add still saves.
 
 ## Slice 6 — Draw it for me
 
+**AMENDED 2026-09-29 (founder):** drawing is now automatic and reuse-first —
+a close existing picture is applied before any drawing, the allowance counts
+image API calls only, and a redraw needs a description. Backend owner:
+`docs/phases/030_Picture_Finder_And_Drawing.md`; experience owner:
+`docs/phases/029_Add_A_Word.md`. Where this slice disagrees with them, they
+win; the safety check, lenses, entitlement tiers and k ≥ 20 loop stand.
+
 **DECIDED 2026-09-22** (founder: "a really killer idea … for people that
 make the full payment, we should absolutely enable it").
 Architecture & growth pipeline: `docs/product/Clipart_Pipeline_And_Catalog_Growth.md`.

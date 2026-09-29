@@ -124,6 +124,10 @@ groups. (027 ships as a clean break — no saved profiles to convert.)
 
 ### D7 — Color comes from the kind of word, never a color picker
 
+**AMENDED 2026-09-29 (founder, 029 § 0.5):** the add form no longer asks
+the kind. Jev's answer (030 `find`) is shown as a color chip on the new
+word's card; the adult can change it there. Offline default unchanged.
+
 - Catalog words already carry their kind and color. The 010 library
   (2,000 words) ships with them too.
 - **Families choose what a new word is, in plain words:** a person or

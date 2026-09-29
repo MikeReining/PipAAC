@@ -1,37 +1,59 @@
-# 029 — Add a word: type it, tap once, it's finished (PROPOSAL)
+# 029 — Add a word: type it, tap once, it's finished (front end)
 
-**Status:** **PROPOSAL, awaiting founder review (2026-09-29).** Nothing built.
-No paid generation (image or voice) runs from this doc; every live mint stays
-founder-gated until the § 6 decisions are made.
-**Trigger:** founder test 2026-09-29 — typed "apple sauce" into Add to My Words
-and got a confusing sheet: the right action (the dashed "New" row) looked like
-the weakest thing on screen, and after tapping it the form asked questions
-with no stated purpose (kind, photo, hint), said nothing about sound, nothing
-about a picture, and nothing about where the word would go.
-**Composes (does not replace):** 028 (tile voice mint), 010 slice 6 (Draw it
-for me), 010 slices 2–3 (extended library), `Personal_Entities.md`
-(enrichment).
+**Status:** **Decided 2026-09-29 (founder), ready to slice. Nothing built.**
+This doc owns the **experience** (sheet, card, states, copy). Claude leads
+the design. The backends it calls are owned elsewhere and built by another
+developer:
+
+| Need | Backend doc |
+| --- | --- |
+| A picture: find by meaning, apply, pick, draw once | `030_Picture_Finder_And_Drawing.md` |
+| A voice: minted once in the board's voice | `028_Tile_Voice_Library.md` |
+
+The front end can be built first against stubs of both contracts (030 § 9,
+028 § 4.6); the dev Worker already stubs paid calls.
+**Trigger:** founder test 2026-09-29 — typed "apple sauce" into Add to My
+Words: the right action (the dashed "New" row) looked weakest on screen;
+after tapping it the form asked unexplained questions (kind, photo, hint),
+said nothing about sound or a picture, and nothing about where the word
+goes.
 **Truth owners:** the local database (the tile exists the moment it is
-saved), the R2 object (the clip or drawing exists), and a stopwatch on a real
-tablet (§ 7).
+saved) and a stopwatch on a real tablet (§ 7).
 
 ---
 
+## 0. Decisions (founder, 2026-09-29)
+
+1. **Make saves at once; no form.** Everything after is optional editing on
+   the new word's card.
+2. **Pictures:** a close existing match is applied automatically, with 3
+   alternatives to pick for free; otherwise we draw automatically. People
+   and pets are never drawn automatically — the card leads with Add a photo
+   (030 § 0).
+3. **Allowance** counts image API calls only (new drawings, redraws).
+   Existing pictures are always free, even with 0 left. Spending is
+   automatic; the card shows the count.
+4. **Redraw needs a description.** "Draw again" is disabled until the adult
+   says what to change.
+5. **Kind is inferred** (Jev, via 030 `find`) and shown as a color chip; the
+   "What kind of word is it?" question goes away.
+6. **"Hint" becomes "Describe it"** on the picture, with its purpose stated.
+7. **Voice is always minted** in the board's chosen voice (028). Voices
+   never count against anything the adult sees. No voice cloning — families
+   choose among catalog voices (more coming soon).
+8. **Paste a list** asks before drawing only when it needs more than 10 new
+   drawings or more than are left.
+
 ## 1. The bar
 
-> Type **applesauce**, press Return. Within a few seconds the tile is on the
-> board with **our drawing** and **the board's voice** saying it. No question
-> was asked. Anything the adult wants to change is one tap away on the same
+> Type **applesauce**, press Return. Within seconds the tile is on the board
+> with **a picture** and **the board's voice** saying it. No question was
+> asked. Anything the adult wants to change is one tap away on the same
 > card.
 
 The adult supplies only what a model cannot know (Design Invariants § 7):
-the word, and optionally a photo or a sentence about what it is. Everything
-else — color/kind, picture, voice, filing — has a default made for them.
-
-Competitors add a button through an edit mode, a label field, a symbol
-search, a save, and a recorded or device voice. We have not timed them
-ourselves; § 7 Works Test 1 times ours, and a side-by-side timing of one
-incumbent is a cheap follow-up if the founder wants the claim.
+the word, and optionally a photo or a description. Color, picture, voice,
+and filing default for them.
 
 ## 2. What's wrong today (code truth)
 
@@ -42,211 +64,174 @@ Traced from `public/board/add-flow.js` (`openAddForm` → `renderAddMatches` →
 | --- | --- | --- |
 | 1 | The creating action is a dashed, low-contrast row; three full-width outlined buttons (Paste a list, Add photos, Cancel) outrank it. | `#add-new` vs `#add-bulk`, `#add-photos`, `data-close` |
 | 2 | "New" opens a form instead of creating. Save is a second tap after three questions. | `#add-new` click only unhides `#add-newfields` |
-| 3 | **Hint is stored and read by nothing.** Its only intended consumer, entity enrichment, is not built (`Personal_Entities.md` § enrichment; no client/Worker code calls it). The adult is asked for input that does nothing. | `createEntity(... hint)` → `personal_entity.hint` |
-| 4 | "What kind of word is it?" contradicts `Personal_Entities.md` ban table ("No type … UI") — added in 018 D7 for tile color. A model can infer it. | `#add-kind` |
-| 5 | A new word **speaks with device TTS**. 028 (mint in the board voice) is decided, not built. | `resolveSlot` entity branch, `public/shared/voice.mjs` |
-| 6 | A new word **has no picture** unless the adult uploads a photo. Draw it for me (010 slice 6) is decided, not built — no Worker route exists. | `src/worker/` has no draw route |
-| 7 | "applesauce" **already has a drawing** — `out/extended_art/applesauce.png` is one of 1,934 unreviewed extended images — but none ship, so the catalog can't match it. | 010 slice 2 review not done; slice 3 not built |
-| 8 | "apple sauce" (space) would not match "applesauce" even once it ships. | `catalogMatches` uses normalized text; no compound folding |
-| 9 | Where the word goes is only the sheet title ("Add to My Words"); other groups are offered in a toast after the sheet closes. | `offerOtherBoards` |
+| 3 | **Hint is stored and read by nothing.** Its intended consumer, entity enrichment, is not built. | `createEntity(... hint)` → `personal_entity.hint` |
+| 4 | "What kind of word is it?" contradicts `Personal_Entities.md` ("No type … UI"); added in 018 D7 for tile color. | `#add-kind` |
+| 5 | A new word **speaks with device TTS** (028 not built). | `resolveSlot` entity branch, `public/shared/voice.mjs` |
+| 6 | A new word **has no picture** unless the adult uploads a photo (030 not built). | — |
+| 7 | "applesauce" already has a drawing (`out/extended_art/applesauce.png`, unreviewed), but nothing can find it. | 010 slice 2; 030 |
+| 8 | "apple sauce" (space) would not match "applesauce". | `catalogMatches` is string-based; 030 `find` fixes it |
+| 9 | Destination is only the sheet title; other groups are offered in a toast after the sheet closes. | `offerOtherBoards` |
 | 10 | No way to hear a match before adding it. | match rows have no ▶ |
 
-## 3. Gap map: documented vs. missing
-
-| Capability | Status | Doc |
-| --- | --- | --- |
-| Voice minted once in the board's voice, shared by text | **Decided, not built** | 028 (slices 1–2) |
-| Drawing in house style (Jev lens → Muse Image → R2) | **Decided, not built** | 010 slice 6, `Clipart_Pipeline_And_Catalog_Growth.md`, `Word_Library.md` § 6.1 |
-| Extended library (3,400 drawn words) | **Words done, art generated but unreviewed, not shipped** | 010 slices 2–3 |
-| Enrichment (what the hint is for) | **Decided, not built** | `Personal_Entities.md`, `Dual_Engine_Predictive_Intelligence.md` § 5.6 |
-| Drawing **automatically** on every new word | **Not documented** — 010 slice 6 is a button, 5 free / 300 lifetime | needs § 6 decision 1–2 |
-| Drawings **minted once and shared** (cache hit before generating) | **Not documented** — pipeline always generates; reuse only after k ≥ 20 review | this doc § 5 |
-| The add sheet and the "just added" card | **Not documented** | this doc § 4 |
-| Compound/spacing match ("apple sauce") | **Not documented** | this doc § 4.1 |
-| Kind inferred instead of asked | **Contradiction** between `Personal_Entities.md` and 018 D7 | this doc § 6 decision 3 |
-
-So: most of the engine is specified. What's missing is (a) the experience
-that ties it together, (b) the decision to draw automatically, and (c)
-mint-once economics for pictures, matching what 028 already does for voice.
-
-## 4. The design
-
-### 4.1 Step 1 — Type (the sheet)
+## 3. Step 1 — Type (the sheet)
 
 ```text
 ┌──────────────────────────────────────────────┐
-│ Add a word                         to My Words ▾   ✕ │
+│ Add a word                   to My Words ▾  ✕ │
 │ ┌──────────────────────────────────────────┐ │
 │ │ apple sauce▍                             │ │
 │ └──────────────────────────────────────────┘ │
 │                                              │
-│  ┌──────┐  applesauce                    ▶   │  ← best match, highlighted,
-│  │ 🥣   │  our picture · our voice      [Add]│    Return adds it
+│  ┌──────┐  applesauce                    ▶   │  ← best match, highlighted;
+│  │ 🥣   │  Food & Drink                 [Add]│    Return adds it
 │  └──────┘                                    │
 │  ┌──────┐  applesauce pouch              ▶   │
 │  └──────┘                                    │
-│  ┌ ─ ─ ─┐  "apple sauce" — make a new word   │  ← always last; primary
-│  │  +   │  we'll draw it and voice it  [Make]│    when there is no match
-│  └ ─ ─ ─┘                                    │
+│  ┌──────┐  "apple sauce" — a new word        │  ← always last; becomes the
+│  │  +   │  picture and voice made for you [Make]│  highlighted row when
+│  └──────┘                                    │    nothing matches
 │                                              │
 │  Adding lots?  Paste a list · Add photos     │  ← quiet text links
 └──────────────────────────────────────────────┘
 ```
 
-- **One primary action, always the top row.** Return does it. With a match,
-  it's the match; with none, it's Make.
-- **Destination is a chip in the header** ("to My Words ▾"), changeable
-  before adding (multi-select, reuses 027 add-to-boards). No post-hoc toast
-  needed for the common case.
-- **▶ on every match row** plays the clip that will speak.
-- **Paste a list / Add photos** become one quiet text line. **Cancel** is ✕
-  (and Esc / tap outside).
-- **Near-match folding:** compare with spaces and hyphens removed as a second
-  key ("apple sauce" ⇄ "applesauce", "ice-cream" ⇄ "ice cream"). This is
-  string normalization, not a language rule.
+- **One highlighted row; Return does it.** With a word match it's the match;
+  with none, it's Make. Same visual weight as a real tile, never dashed.
+- **Word matches stay local and instant** (today's `entityMatches` +
+  `catalogMatches`). Pictures by meaning (030 `find`) are used on the card,
+  not here — the sheet never waits on the network.
+- **Destination chip** ("to My Words ▾") in the header; multi-select from
+  the 027 add-to-boards list, set before adding.
+- **▶ on every match row** plays that word's clip.
+- **Paste a list · Add photos** as one quiet line. **Cancel** is ✕, Esc, or
+  tap outside.
 
-### 4.2 Step 2 — Make (no form; the tile is created)
+## 4. Step 2 — Make (the new word's card)
 
-Tapping Make (or Return) **saves immediately** (offline-first, same
-`createEntity` + `placeItem`) and turns the sheet into the word card for the
-new tile:
+Make (or Return) **saves immediately** — `createEntity` + `placeItem`,
+offline-first, name only — and the sheet becomes the word card for the new
+tile (reuse `public/board/word-card.js`; one card, a "just added" state).
 
 ```text
 ┌──────────────────────────────────────────────┐
-│  ✓ Added to My Words                     Done │
+│  ✓ Added to My Words                    Done │
 │                                              │
 │        ┌────────────────┐                    │
-│        │   (drawing…)   │  ← shimmer → our   │
-│        │                │    drawing appears │
+│        │   [picture]    │  ← best match now, │
+│        │                │    or "Drawing…"   │
 │        │  apple sauce   │  ← tile, real size │
 │        └────────────────┘    and real color  │
 │                                              │
-│  🔊  Making Eve's voice…  →  ▶ plays once    │
+│  🔊  Making Eve's voice…   →   plays once     │
 │                                              │
-│  Picture   [↻ Draw again] [📷 Photo] [✎ Describe it] │
-│  Voice     [▶] [🎙 Record your own]          │
-│  Kind      [● thing ▾]   Also in [+ group]   │
+│  Other pictures  [▢] [▢] [▢]   📷 Photo       │
+│  Not right?  [ Describe it… ] [Draw it again] │
+│                          uses 1 of 295 left   │
+│  Voice   ▶   🎙 Record your own               │
+│  Kind    ● thing ▾        Also in  + group    │
 └──────────────────────────────────────────────┘
 ```
 
-- **Voice** (028 § 5.2): "Making {voice}'s voice…", then it plays once
-  automatically so the adult hears it without asking. Hit = instant.
-  Failure/held = message + Record. Never device TTS.
-- **Picture**: if a shared drawing exists (catalog, extended, or a prior
-  mint of the same text), it appears at once. Otherwise it draws (§ 5).
-  **People and pets** (Jev scope = `personal`, e.g. "Grandma Rosa",
-  "Cooper") are not auto-drawn: the picture slot shows the initial and a
-  prominent **Add a photo**, with **Draw it** secondary — people are best as
-  photos (`Word_Library.md` § 6.1).
-- **✎ Describe it** replaces the Hint field and says what it's for:
-  *"Tell us what it is — we'll draw it again. e.g. our golden retriever."*
-  The same text feeds enrichment when that lands. One field, one visible
-  purpose.
-- **Kind** is inferred (Jev, same call as the drawing's framing lens) and
-  shown as a color chip; tap to change. Offline default: thing (Yellow),
-  corrected when the call returns — never after the adult changed it.
-- **Done** closes. Leaving without Done keeps everything — nothing waits on
-  this card.
+### 4.1 Picture
 
-### 4.3 Many words at once
+Driven by 030 `find` (text only) the moment the card opens:
 
-Paste a list and Add photos keep their sheets. After save, each new row
-voices and draws in the background with one progress line ("Drawing and
-voicing 12 of 40"); the words are usable (label + color) immediately.
+| `find` result | Card shows |
+| --- | --- |
+| `auto` set | That picture on the tile at once; the other 3 under **Other pictures**. Tapping one applies it and sends `pick`. |
+| no `auto`, `scope: common`, drawings left | "Drawing…" on the tile, then the drawing (030 `draw`); the 4 candidates still shown as alternatives. Small line: "Used 1 drawing · 294 left". |
+| no `auto`, `scope: personal` | Tile shows the initial and color; **Add a photo** leads; the candidates show under "Or use one of ours" (Cooper → our golden retriever); drawing only via Describe it. |
+| no `auto`, 0 drawings left | Label + color; candidates as alternatives; **Add a photo**; "No drawings left" (top-ups when payments land). |
+| offline / error | Label + color; "We'll find a picture when you're back online." Retries on reconnect. |
 
-### 4.4 The child never waits and never sees churn
+- **Describe it** (replaces Hint): placeholder *"What should it show? e.g.
+  a bowl, not a jar"*. **Draw it again** is disabled until it has text; it
+  sends `draw` with the description and shows "uses 1 of N left" beside it.
+- The description is saved on the entity (`personal_entity.hint`, same
+  column) so enrichment can read it later.
+- An accepted picture is saved onto the entity like a photo (works offline,
+  syncs).
 
-Minting happens on the adult side (028 § 5.2). A tile whose drawing is still
-coming shows its label and color, then the picture fills in once. It is
-never removed or hidden (memory: never interfere with the child).
+### 4.2 Voice
 
-## 5. Pictures minted once (amends 010 slice 6)
+- On open: 028 `voice_tile.ensure(text)` — "Making {voice}'s voice…", then
+  it **plays once** so the adult hears it without asking. Cache hit = instant.
+- Held / failed: 028 § 5.2 messages + **Record your own**. Never device TTS.
 
-Mirror 028's ledger for images:
+### 4.3 Kind and places
 
-```text
-key   = sha256( style_version | lens | normalizedText | normalizedHint )
-hit   → R2 object, free
-miss  → Jev (scope, lens, kind) → Muse Image (gen.mjs settings, pip-v1 refs)
-        → R2 `drawing/<key>.png` → ready
-```
+- **Kind chip** shows 030 `find`'s `kind` as the Fitzgerald color; tap to
+  change (existing `setEntityRole`). Offline or null: Yellow until the
+  result arrives; never overwrite a kind the adult set.
+- **Also in + group** reuses the word card's add-to-boards.
 
-- **No identity in the key or ledger** (same rule as 028 § 2.2). Two
-  families who type "applesauce" pay once; the second gets it instantly.
-- **Re-roll** creates a new variant under the same key (`v2`, `v3`); the
-  family's choice is a per-entity picture override and does not change what
-  others get.
-- **Personal-scope text** ("Cooper" + "our golden retriever") is still keyed
-  and cached by text only — a drawing of a golden retriever reveals nothing —
-  but never enters the k ≥ 20 catalog review queue (unchanged).
-- Safety check on word + hint before generating (unchanged, 010 slice 6).
-- One ledger for both assets is attractive (`AssetLedger`, kind =
-  `audio|image`); decide at 028 slice 1 so voice isn't built twice.
+### 4.4 Done
 
-## 6. Decisions for the founder
+Closes. Closing any other way also keeps everything — nothing on the card
+blocks or undoes the save.
 
-1. **Draw automatically on every new non-person word?** *Recommend yes.*
-   About 1¢ a miss, $0 a hit, and it is the wow. 010 slice 6 currently makes
-   it a button.
-2. **What counts against the drawing allowance** (5 free / 300 Lifetime,
-   `Pricing_And_Packaging.md` § 4.2)? *Recommend: cache misses and re-rolls
-   only; shared hits are free.* Open sub-question: does a free user's
-   auto-draw stop after 5 (then the card offers Photo), or is the auto-draw
-   free and only re-rolls are metered? This is a pricing call.
-3. **Remove the kind question; infer it.** *Recommend yes* — resolves the
-   `Personal_Entities.md` vs 018 D7 contradiction; the chip keeps the
-   override.
-4. **Replace "Hint" with "Describe it" on the picture.** *Recommend yes.*
-5. **Review the 1,934 already-generated extended images** (010 slice 2, no
-   new generation). This is the cheapest wow: every common word becomes an
-   instant hit with no cost and no wait. Founder time, not money.
+## 5. Many at once
 
-"In your voice" here means the board's chosen voice (Eve, etc.) per 028 —
-not a cloned parent voice. Say so if you meant a clone; that's a separate
-decision.
+- **Paste a list:** the preview calls 030 `find-batch` and shows each row's
+  picture thumbnail (tap to swap among its 4). Rows with no close match show
+  "will draw". If that count is > 10 or > drawings left, the Add button reads
+  *"Add 40 · draws 32 new pictures (uses 32 of 300)"* and asks once;
+  otherwise it just adds. Voice mints for every row in the background with
+  one progress line (028 § 5.3).
+- **Add photos:** unchanged (photos are the picture); voices mint in the
+  background.
+- Words are usable (label + color) immediately; pictures and voices fill in.
+
+## 6. The child never waits and never sees churn
+
+Finding, drawing, and minting all happen on the adult's side. A tile whose
+picture is still coming shows its label and color, then the picture fills in
+once. It is never removed or hidden (memory: never interfere with the child).
 
 ## 7. Works Tests
 
-1. **Stopwatch.** On a real iPad, fresh profile, network on: type
-   "applesauce" + Return → tile on the board with drawing and clip playing.
-   Record wall time for (a) a shared hit and (b) a cold mint. Report both;
-   no target invented.
-2. **Two taps, zero questions.** The add path from typing to a saved,
-   placed entity requires no field other than the name (DOM test: Make with
-   only `#add-name` filled creates `personal_entity` + placement).
-3. **Offline add.** Network off: Make saves, tile shows label + color,
-   card shows "will draw and voice when online"; reconnect → both fill in.
-   No device TTS (spy = 0).
-4. **Mint once (instrument the code can't influence).** Two profiles make
-   "applesauce": OpenRouter's usage log shows one image call; ElevenLabs'
-   counter shows one clip (028 WT 9).
-5. **Person words aren't auto-drawn.** "Grandma Rosa" → zero image calls;
-   card leads with Add a photo.
-6. **Near-match.** "apple sauce" lists catalog "applesauce" first once the
-   extended library ships.
-7. **Child board untouched.** During a pending draw, the child's grid never
-   loses or moves the tile; picture swaps in place once.
+1. **Stopwatch.** Real iPad, fresh profile, network on: type "applesauce" +
+   Return → tile on the board with picture and voice playing. Record wall
+   time for (a) existing picture + cached voice, (b) cold draw + cold mint.
+   Report both; no target invented.
+2. **Zero questions.** DOM test: Make with only `#add-name` filled creates a
+   `personal_entity` and a placement; no other field is required or shown
+   before the save.
+3. **Offline add.** Network off: Make saves; tile shows label + color; card
+   shows the offline lines; reconnect → picture and voice fill in; device
+   TTS spy = 0.
+4. **Close match applies, alternatives are free.** With a `find` stub
+   returning `auto`, the tile gets that picture and zero `draw` requests are
+   sent; tapping an alternative sends one `pick` and zero `draw`.
+5. **Redraw needs words.** Draw it again is disabled with an empty
+   description; with text it sends exactly one `draw` including it.
+6. **People lead with a photo.** `find` stub with `scope: personal` → zero
+   `draw` requests; Add a photo is the first action.
+7. **Bulk asks only when it should.** Paste 12 rows where 11 need drawing →
+   one confirmation naming the count; 5 rows needing 5 (with ≥ 5 left) → no
+   confirmation.
+8. **Child board untouched.** During a pending draw the child's grid never
+   loses or moves the tile; the picture swaps in once.
 
-## 8. Slices (proposed order)
+## 8. Slices (front end; Claude leads design)
 
-| # | Slice | Needs money? | Depends on |
-| --- | --- | --- | --- |
-| A | Sheet + "just added" card (§ 4.1–4.2), near-match folding, ▶ on matches, kind chip (default Yellow until Jev), Describe it field. Pure client. | No | — |
-| B | 028 slices 0–2 (voice mint) wired into the card. | Stubbed in dev; live ≤10 founder-gated | 028 |
-| C | 010 slice 2 founder review of existing images → slice 3 ship as `secondary_fringe` | No (review only) | Founder time |
-| D | Drawing Worker route with mint-once ledger (§ 5), Jev scope/lens/kind, auto-draw from the card. Amends 010 slice 6. | Stubbed in dev; live ≤10 founder-gated | Decisions 1–2 |
-| E | Background draw/voice for Paste a list and Add photos (§ 4.3) | Budget caps | B, D |
-| F | Enrichment reads "Describe it" | Jev | `Personal_Entities.md` |
+| # | Slice | Depends on |
+| --- | --- | --- |
+| A | Sheet (§ 3): highlighted row, Return, Make, destination chip, ▶ on matches, quiet links, ✕. Make saves at once and opens the card in its "just added" state with label + color only. Removes `#add-newfields`. | — |
+| B | Card picture states (§ 4.1) and kind chip (§ 4.3) against the 030 contract (stubbed until 030 slice 1). | 030 slices 1, 3 for real data |
+| C | Card voice states (§ 4.2). | 028 slices 1–2 |
+| D | Paste a list with thumbnails and the draw count (§ 5). | 030 `find-batch` |
+| E | Stopwatch Works Test on a real tablet with live 028 + 030. | all |
 
-A is shippable tomorrow and alone fixes the confusion in the founder's
-screenshots. B + C + D make it category-defining.
+Slice A alone fixes the confusion in the founder's screenshots.
 
-## 9. Docs this would amend on acceptance
+## 9. Docs amended with this decision
 
-- `010_Extended_Picture_Library.md` slice 6: button → automatic; mint-once
-  ledger; allowance counting.
-- `Word_Library.md` § 6.1, `Clipart_Pipeline_And_Catalog_Growth.md` § 1–2:
-  cache check before generating.
-- `Personal_Entities.md`: hint → "Describe it"; kind inferred + chip.
-- `018_Core_Board_V2_And_Groups.md` D7: kind select → inferred chip.
-- `Pricing_And_Packaging.md` § 4.2: what a "drawing" counts.
+- `010_Extended_Picture_Library.md` slice 6 and `Word_Library.md` § 6.1 →
+  backend now owned by 030 (automatic, reuse first, redraw needs a
+  description).
+- `Clipart_Pipeline_And_Catalog_Growth.md` → reuse-first note, 030 pointer.
+- `Personal_Entities.md` → hint is asked as "Describe it"; kind inferred.
+- `018_Core_Board_V2_And_Groups.md` D7 → the kind question becomes an
+  inferred chip.
+- `Pricing_And_Packaging.md` § 4.2 → what a drawing counts.

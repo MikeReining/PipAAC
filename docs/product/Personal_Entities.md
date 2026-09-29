@@ -47,6 +47,10 @@ now a decided direction with a proposed design:
 | Hint | Optional free text ("our dog", "grandma", "his school"). Classification input only. Never required. |
 | Status | `active` or `retired` — **BUILT** (009 slice 2). Remove on the word card retires: the row, photo, recording, and placements stay, and every read path skips retired entities until restored. Retire, never delete. |
 
+**2026-09-29 (029):** the hint is asked on the new word's card as
+"Describe it" — it steers the drawing (030) and feeds enrichment; the kind
+is inferred and shown as a changeable chip, never asked up front.
+
 There is no type picker, no pronoun picker, and no edge editor. "Type" is
 jargon a parent or SLP should never meet; the earlier design that asked the
 adult to confirm word relationships made the add harder than the incumbents'
