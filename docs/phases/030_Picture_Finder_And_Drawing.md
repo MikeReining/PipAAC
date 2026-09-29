@@ -153,6 +153,14 @@ the Worker like `catalog.json`. Changing the cutoff is a one-number edit and
 a deploy; no code change. The server computes `auto` — the client never
 applies its own threshold, so there is one place to tune.
 
+**Per-language cutoff.** Cross-language cosine scores run lower than
+same-language ones ("Apfel" → apple scores below "apple" → apple), so one
+number would either block German or let English near-misses through.
+`picture_finder.json` holds `AUTO_CUTOFF` as the default plus optional
+`AUTO_CUTOFF_BY_LANG` overrides (`{ "de": …, "es": …, "fr": … }`). The
+language comes from Jev (§ 4.3). A language with no override uses the
+default. Overrides are set on the calibration page (§ 7), never by hand.
+
 ### 4.3 Jev in the same request
 
 One Jev call (text + description, no ids) returns:
@@ -161,9 +169,35 @@ One Jev call (text + description, no ids) returns:
 - `kind`: Fitzgerald role (`Yellow` thing/person, `Green` action, …) — this
   is what replaces the "What kind of word is it?" question in 029.
 
+- `language`: which language the text is in (ISO 639-1 label, e.g. `en`,
+  `de`). Jev is a classifier: it returns a label from a fixed list and
+  **cannot write or translate**. The label picks the cutoff (§ 4.2). It does
+  not disambiguate words that exist in two languages ("Gift", "chat") — the
+  app `locale` in the request body is the tiebreaker for those: when Jev's
+  top two languages are close, prefer `locale`.
+
 These are model judgments, not keyword rules. If Jev fails, return
-`scope: null, kind: null`; the client treats null scope as "don't auto-draw"
-and null kind as Yellow (029).
+`scope: null, kind: null, language: null`; the client treats null scope as
+"don't auto-draw" and null kind as Yellow (029); null language uses the
+default `AUTO_CUTOFF`.
+
+### 4.5 Translation fallback (only if calibration shows it is needed)
+
+**Not built in slice 1.** Ship with the language label and per-language
+cutoffs only. Add this only if the calibration page (§ 7) still shows
+non-English rows missing pictures we own:
+
+- Trigger: the first lookup is below its cutoff **and** `language` is not
+  `en`. Most typed words never reach it, so the cost stays small.
+- A generative model (Groq — already used for magic fix-it and tense
+  changes; Jev cannot translate) returns the English text for the string.
+- Embed the English text, run the same lookup, and apply `auto` only when
+  **both** lookups agree on the top picture. If they disagree, return the
+  candidates and let the adult choose — a wrong auto-apply is the costly
+  failure.
+- Skip it for `scope: personal` (never translate a name).
+- Record the English text as an extra column on the calibration page so the
+  founder can see each translation next to its row.
 
 ### 4.4 Serving images
 
@@ -270,10 +304,15 @@ side-by-side page and a joint decision, not an eval harness).
   Rosa", "Cooper — our golden retriever"); and words we have no picture for.
 - **Page:** each query → its top 4 pictures with scores and Jev scope/kind.
   A **cutoff slider** recolors every row live: auto-applied / would draw.
+  There is one slider per language (default plus each override), and the
+  header shows a **per-language table** of the counts below. Cover at least
+  15 rows each for English, German, Spanish and French, including words that
+  exist in two languages ("Gift", "chat", "pain") as hard cases.
   The founder marks each row's right answer (one of the four, or "none
   fits"); the header shows, at the current cutoff, how many rows auto-apply
   the right picture, auto-apply a wrong one, or draw when a fit existed.
-- **Save** writes `AUTO_CUTOFF` (and `PICK_WEIGHT` if changed) to
+- **Save** writes `AUTO_CUTOFF`, any `AUTO_CUTOFF_BY_LANG` overrides (and
+  `PICK_WEIGHT` if changed) to
   `data/catalog/picture_finder.json`. Marks are saved beside the queries so
   the page can be re-run after a model or caption change.
 - Runs against the calibration index (includes `pending` extended art) so
@@ -288,7 +327,8 @@ client shows the four and the adult chooses.
 
 - Leaves the device: the typed text and optional description, on the
   adult's tap, to our Worker; from there to Workers AI (embedding) and Jev
-  (scope/kind) and, on a draw, OpenRouter/Muse. **No user, device, or
+  (scope/kind/language), Groq (only if the § 4.5 translation fallback is
+  built) and, on a draw, OpenRouter/Muse. **No user, device, or
   license id is sent to any vendor.**
 - Stored without identity: index captions, drawing ledger, pick counts.
 - Stored with identity: only the per-user drawing allowance counter.
@@ -304,7 +344,7 @@ All follow `src/worker/voice.js` conventions (JSON errors, license check,
 
 | Route | Body | Success | Errors |
 | --- | --- | --- | --- |
-| `POST /api/v1/pictures/find` | `{user_id, license, text, description?, locale}` | `{candidates:[{image_id, asset, source, score}]×≤4, auto, scope, kind}` | 400 `bad_text`; 403; 429 |
+| `POST /api/v1/pictures/find` | `{user_id, license, text, description?, locale}` | `{candidates:[{image_id, asset, source, score}]×≤4, auto, scope, kind, language}` | 400 `bad_text`; 403; 429 |
 | `POST /api/v1/pictures/find-batch` | `{…, items:[{text, description?}]×≤50}` | `{results:[<find result>]}` | same |
 | `POST /api/v1/pictures/pick` | `{…, text, description?, image_id}` | 204 | 400; 403; 429 |
 | `POST /api/v1/pictures/draw` | `{…, text, description?}` | `200 image/png`, `x-draw-cache: hit\|mint\|stub`, `x-drawings-left` | 402 `allowance`; 422 `unsafe`; 429 `fair_use`; 502 `draw_failed`; 503 |
@@ -321,11 +361,12 @@ Each: read route → truth owner + proof → focused proof → deslop → commit
 **Slice 1 — Index + find (no drawing, no money).**
 `data/catalog/picture_finder.json`; `scripts/pictures/build_index.mjs`;
 Vectorize + Workers AI bindings in `wrangler.jsonc`; `src/worker/pictures.js`
-(`find`, `find-batch`, Jev scope/kind); route wiring in `src/worker/index.js`.
-Proof: Works Tests 1, 2, 3, 8.
+(`find`, `find-batch`, Jev scope/kind/language); route wiring in
+`src/worker/index.js`. Proof: Works Tests 1, 2, 3, 8.
 
 **Slice 2 — Calibration page.** § 7. Founder + Claude run it and save the
-cutoff. Proof: Works Test 4.
+cutoffs, per language. Proof: Works Tests 4, 14. If non-English rows still
+miss after this, add the § 4.5 translation fallback as slice 2b.
 
 **Slice 3 — Draw ledger + allowance (stubbed synth).** § 5, § 6.1; shared
 prompt module extracted from `gen.mjs`. Proof: Works Tests 5, 6, 7, 9, 10.
@@ -371,3 +412,8 @@ need.
 13. **No identity.** Inspect every ledger, index-metadata, and pick row: no
     user, device, or license id; vendor request bodies contain only text,
     description, and prompt.
+14. **Per-language cutoff.** With `AUTO_CUTOFF_BY_LANG.de` set below the
+    default, `find("Apfel")` auto-applies apple while an English near-miss
+    at the same score does not; removing the override flips `Apfel` back to
+    "show four". Jev returns `language: de` for "Apfel"; `locale: de` breaks
+    the tie for "Gift".
