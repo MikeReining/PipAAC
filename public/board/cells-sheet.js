@@ -34,8 +34,8 @@ export function mountCellsSheet({
     $("cells-title").textContent =
       `Switch to ${catalog.layouts[cellsTarget].cols * catalog.layouts[cellsTarget].rows} cells?`;
     $("cells-summary").textContent = mc.weighted
-      ? `${moved} of the ${n} words this board uses will move or leave the home board.`
-      : `${moved} of ${n} words will move or leave the home board.`;
+      ? `${moved} of the ${n} words this board uses will move or leave the main board.`
+      : `${moved} of ${n} words will move or leave the main board.`;
     // 027 § 3.3: the groups preview too — words a family added on this
     // size get their place on the new one when the change is accepted.
     const missing = missingPositions(db, cellsTarget).length;

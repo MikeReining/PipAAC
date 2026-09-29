@@ -2,7 +2,7 @@
  * Add a word (029 § 3): one field, type → one highlighted row → Return.
  * A match places the real word; Make saves a personal word at once and
  * opens its card, where the picture and voice are made. Bulk paste and
- * the photo drafts file into the same page.
+ * the photo drafts file into the same group.
  */
 import {
   applyPasteRows, applyPhotoDrafts, nameFromFile, resolvePasteRows,
@@ -49,11 +49,11 @@ export function mountAddFlow({
     setTimeout(() => $("add-name").focus?.(), 0);
   }
 
-  /* --- the page picker (029 § 3.1) ---
-     The destination is the page the adult came from (Settings → My
-     Words; the editor → the page being edited) — never a guess. The chip
-     opens a searchable list in place of the results: Recent (pages the
-     adult actually added to), then every page A–Z, then New page. */
+  /* --- the group picker (029 § 3.1) ---
+     The destination is the group the adult came from (Settings → My
+     Words; the editor → the group being edited) — never a guess. The chip
+     opens a searchable list in place of the results: Recent (groups the
+     adult actually added to), then every group A–Z, then New group. */
   const RECENT_KEY = "pip-add-recent";
   const readRecent = () => {
     try { return JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"); } catch { return []; }
@@ -74,38 +74,38 @@ export function mountAddFlow({
     }
     $("add-dest").setAttribute?.("aria-expanded", String(on));
     if (on) {
-      $("add-pageq").value = "";
-      $("add-pageq").placeholder = "Find a page";
-      renderPages();
-      setTimeout(() => $("add-pageq").focus?.(), 0);
+      $("add-groupq").value = "";
+      $("add-groupq").placeholder = "Find a group";
+      renderGroups();
+      setTimeout(() => $("add-groupq").focus?.(), 0);
     } else {
       setTimeout(() => $("add-name").focus?.(), 0);
     }
   }
 
-  function choosePage(id) {
-    if (id !== addTarget) addCell = null; // that cell belonged to the other page
+  function chooseGroup(id) {
+    if (id !== addTarget) addCell = null; // that cell belonged to the other group
     addTarget = id;
     $("add-destname").textContent = groupName(addTarget, "My Words");
     setPickerOpen(false);
     renderAddMatches();
   }
 
-  /** "Make a page called …": a custom page, selected at once; the word
-   *  that follows lands in it. Its door is in Groups. */
-  function makePage(name) {
+  /** "Make a group called …": a custom group, selected at once; the
+   *  word that follows lands in it. Its door is in Groups. */
+  function makeGroup(name) {
     const clean = name.trim().replace(/\s+/g, " ");
     if (!clean) return;
     const { id } = createGroup(db, { name: clean });
-    toast(`New page “${clean}” — its door is in Groups`);
+    toast(`New group “${clean}” — its door is in Groups`);
     rerenderView();
-    choosePage(id);
+    chooseGroup(id);
   }
 
-  function pageRow(g, { selected }) {
+  function groupRow(g, { selected }) {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "add-page";
+    b.className = "add-group";
     b.setAttribute?.("role", "option");
     b.setAttribute?.("aria-selected", String(selected));
     const name = document.createElement("span");
@@ -118,75 +118,75 @@ export function mountAddFlow({
       tick.textContent = "✓";
       b.appendChild(tick);
     }
-    b.addEventListener("click", () => choosePage(g.id));
+    b.addEventListener("click", () => chooseGroup(g.id));
     return b;
   }
 
-  function renderPages() {
-    const box = $("add-pagelist");
+  function renderGroups() {
+    const box = $("add-grouplist");
     box.innerHTML = "";
-    const q = normalizeV1($("add-pageq").value);
-    const pages = groupIndex(db).filter((g) => !g.hidden)
+    const q = normalizeV1($("add-groupq").value);
+    const groups = groupIndex(db).filter((g) => !g.hidden)
       .map((g) => ({ g, name: groupDisplayName(db, g, locale) }));
     const byName = (a, b) => a.name.localeCompare(b.name, locale, { sensitivity: "base" });
     const head = (text) => {
       const h = document.createElement("p");
-      h.className = "add-pagehead";
+      h.className = "add-grouphead";
       h.textContent = text;
       box.appendChild(h);
     };
     const firstMatch = [];
     if (!q) {
       const recent = readRecent()
-        .map((id) => pages.find((p) => p.g.id === id)).filter(Boolean);
+        .map((id) => groups.find((p) => p.g.id === id)).filter(Boolean);
       if (recent.length) {
         head("Recent");
-        for (const p of recent) box.appendChild(pageRow(p.g, { selected: p.g.id === addTarget }));
+        for (const p of recent) box.appendChild(groupRow(p.g, { selected: p.g.id === addTarget }));
       }
-      head("All pages");
+      head("All groups");
     }
-    const shown = pages.filter((p) => !q || normalizeV1(p.name).includes(q)).sort(byName);
+    const shown = groups.filter((p) => !q || normalizeV1(p.name).includes(q)).sort(byName);
     for (const p of shown) {
-      box.appendChild(pageRow(p.g, { selected: p.g.id === addTarget }));
+      box.appendChild(groupRow(p.g, { selected: p.g.id === addTarget }));
       firstMatch.push(p.g.id);
     }
-    // Last row: a new page — named from the search when nothing is called that.
-    // Offer to make a page only when nothing is called anything like it.
+    // Last row: a new group — named from the search when nothing is called that.
+    // Offer to make a group only when nothing is called anything like it.
     const anyMatch = shown.length > 0;
-    const typed = $("add-pageq").value.trim();
+    const typed = $("add-groupq").value.trim();
     const make = document.createElement("button");
     make.type = "button";
-    make.className = "add-page add-newpage";
-    make.id = "add-newpage";
+    make.className = "add-group add-newgroup";
+    make.id = "add-newgroup";
     const plus = document.createElement("span");
     plus.className = "glyph";
     plus.textContent = "+";
     const lb = document.createElement("span");
     lb.className = "pname";
-    lb.textContent = q && !anyMatch ? `Make a page called “${typed}”` : "New page";
+    lb.textContent = q && !anyMatch ? `Make a group called “${typed}”` : "New group";
     make.append(plus, lb);
     make.addEventListener("click", () => {
-      if (q && !anyMatch) { makePage(typed); return; }
-      $("add-pageq").value = "";
-      $("add-pageq").placeholder = "Name the new page";
-      $("add-pageq").focus?.();
-      renderPages();
+      if (q && !anyMatch) { makeGroup(typed); return; }
+      $("add-groupq").value = "";
+      $("add-groupq").placeholder = "Name the new group";
+      $("add-groupq").focus?.();
+      renderGroups();
     });
     box.appendChild(make);
-    pagesFirst = firstMatch[0] ?? null;
-    pagesCanMake = !!q && !anyMatch;
+    groupsFirst = firstMatch[0] ?? null;
+    groupsCanMake = !!q && !anyMatch;
   }
-  let pagesFirst = null;
-  let pagesCanMake = false;
+  let groupsFirst = null;
+  let groupsCanMake = false;
 
   $("add-dest").addEventListener("click", () => setPickerOpen($("add-destlist").hidden));
-  $("add-pageq").addEventListener("input", renderPages);
-  $("add-pageq").addEventListener("keydown", (e) => {
+  $("add-groupq").addEventListener("input", renderGroups);
+  $("add-groupq").addEventListener("keydown", (e) => {
     if (e.key === "Escape") { e.preventDefault?.(); e.stopPropagation?.(); setPickerOpen(false); return; }
     if (e.key !== "Enter") return;
     e.preventDefault?.();
-    if (pagesFirst) choosePage(pagesFirst);
-    else if (pagesCanMake) makePage($("add-pageq").value);
+    if (groupsFirst) chooseGroup(groupsFirst);
+    else if (groupsCanMake) makeGroup($("add-groupq").value);
   });
 
   function openBulkForm(groupId) {
@@ -374,7 +374,7 @@ export function mountAddFlow({
      A match is highlighted only when it IS the typed word (spacing and
      hyphens aside: "apple sauce" is applesauce); otherwise Make is, so a
      new word is never swapped for a longer one that merely starts the
-     same. Words already on this page say so and open their card. */
+     same. Words already in this group say so and open their card. */
   let rows = []; // [{ el, go }]
   let hi = -1;
 
@@ -660,7 +660,7 @@ export function mountAddFlow({
    *  silent multi-board write. */
   function offerOtherBoards(item) {
     toast(`Added ${item.label}`, null, {
-      actionLabel: "Add to other boards",
+      actionLabel: "Add to other groups",
       onAction: () => openAddToBoards(item),
     });
   }

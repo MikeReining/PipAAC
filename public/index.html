@@ -1054,7 +1054,7 @@
                 <div class="row">
                   <button class="btn secondary" id="usr-add">Add a person</button>
                 </div>
-                <p class="hint">Each person keeps their own board, words, and sync. Switching opens that person; the others keep everything they had.</p>
+                <p class="hint">Each person keeps their own words, groups, and sync. Switching opens that person; the others keep everything they had.</p>
               </div>
               <div class="seg-row" id="opens-row" hidden>
                 <span class="seg-label">When Pip opens on this device</span>
@@ -1083,7 +1083,7 @@
                   <button id="dev-add" hidden>Approve a new device</button>
                   <button id="dev-link" hidden>Link this device</button>
                 </div>
-                <p class="hint">A linked device sees and edits the whole board. Removing one locks it out.</p>
+                <p class="hint">A linked device sees and edits everything for this person. Removing one locks it out.</p>
               </div>
             </section>
 
@@ -1096,7 +1096,7 @@
                   <button class="btn secondary" id="dev-sheet">Make the recovery card</button>
                   <button class="btn secondary" id="dev-restore">Restore from a card</button>
                 </div>
-                <p class="hint">If this device is lost or reset, the card brings everything back. Print it and keep it somewhere safe. Without the card, a linked device, or a device backup, a lost board is gone for good.</p>
+                <p class="hint">If this device is lost or reset, the card brings everything back. Print it and keep it somewhere safe. Without the card, a linked device, or a device backup, their words are gone for good.</p>
               </div>
               <div class="seg-row">
                 <span class="seg-label">Settings PIN</span>
@@ -1251,10 +1251,10 @@
           <div class="row">
             <button class="btn secondary" id="spot-model">Model — tap board words</button>
           </div>
-          <p class="hint">Your taps glow the word on linked boards for a few seconds. Say the word aloud while you point — the glow is silent by default.</p>
+          <p class="hint">Your taps glow the word on linked devices for a few seconds. Say the word aloud while you point — the glow is silent by default.</p>
           <div class="seg" id="model-speaks">
             <button data-v="0">Silent</button>
-            <button data-v="1">Speak on this board</button>
+            <button data-v="1">Speak on this device</button>
           </div>
         </div>
         <button class="btn secondary" data-close>Close</button>
@@ -1279,7 +1279,7 @@
       <button class="pick-quiet" id="spot-pick-cancel">Cancel</button>
     </div>
     <div id="modelbar" hidden>
-      <span>🔦 Modeling — taps glow linked boards</span>
+      <span>🔦 Modeling — taps glow on linked devices</span>
       <button class="pick-quiet" id="model-done">Done</button>
     </div>
 
@@ -1372,11 +1372,11 @@
       </div>
     </div>
 
-    <!-- 027 B9: Add to other boards — named destinations, none preselected. -->
+    <!-- 027 B9: Add to other groups — named destinations, none preselected. -->
     <div class="overlay" id="boardsform">
       <div class="sheet">
-        <h2 id="boards-title">Add to other boards</h2>
-        <p class="hint">Only the boards you pick change. Boards that already have this word are not listed.</p>
+        <h2 id="boards-title">Add to other groups</h2>
+        <p class="hint">Only the groups you pick change. Groups that already have this word are not listed.</p>
         <div id="boards-list" class="wchips"></div>
         <div class="row">
           <button class="btn" id="boards-save" disabled>Add</button>
@@ -1465,11 +1465,11 @@
           </button>
           <button type="button" class="add-x" data-close aria-label="Close">✕</button>
         </header>
-        <!-- Page picker (029 § 3.1): opens in place of the results. -->
-        <div class="add-pages" id="add-destlist" hidden>
-          <input type="text" id="add-pageq" placeholder="Find a page" autocomplete="off"
-            autocapitalize="off" enterkeyhint="go" aria-controls="add-pagelist" />
-          <div class="add-pagelist" id="add-pagelist" role="listbox"></div>
+        <!-- Group picker (029 § 3.1): opens in place of the results. -->
+        <div class="add-groups" id="add-destlist" hidden>
+          <input type="text" id="add-groupq" placeholder="Find a group" autocomplete="off"
+            autocapitalize="off" enterkeyhint="go" aria-controls="add-grouplist" />
+          <div class="add-grouplist" id="add-grouplist" role="listbox"></div>
         </div>
         <input type="text" id="add-name" placeholder="Type a word or a name"
           autocomplete="off" autocapitalize="off" enterkeyhint="done"
@@ -1602,9 +1602,9 @@
             <div class="wc-kindmenu" id="wc-kindmenu" role="listbox" hidden></div>
           </div>
           <div class="wc-pages">
-            <span class="wc-lab">On</span>
+            <span class="wc-lab">In</span>
             <div id="wc-groups"></div>
-            <button type="button" class="wc-chipbtn" id="wc-addgroup">+ Another page</button>
+            <button type="button" class="wc-chipbtn" id="wc-addgroup">+ Another group</button>
             <button type="button" class="linkbtn" id="wc-show">Show on board</button>
           </div>
         </section>

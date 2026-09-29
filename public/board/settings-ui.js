@@ -89,7 +89,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   function checklist() {
     const f = facts();
     return [
-      { done: !!me.name?.trim(), label: "Name who uses this board", hint: "Team & devices → Name", go: () => show("team") },
+      { done: !!me.name?.trim(), label: "Name who uses Pip", hint: "Team & devices → Name", go: () => show("team") },
       { done: f.entities > 0, label: "Add their people and places", hint: "Names and photos Pip can suggest", go: () => $("open-setup").click() },
     ];
   }
@@ -107,7 +107,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     box.replaceChildren();
     const h = document.createElement("span");
     h.className = "seg-label";
-    h.textContent = `Protect ${personWords(me.name).inline === "this person" ? "this board" : `${me.name.trim()}'s board`}`;
+    h.textContent = `Protect ${personWords(me.name).inline === "this person" ? "this person's words" : `${me.name.trim()}'s words`}`;
     const p = document.createElement("p");
     p.className = "hint";
     p.textContent = "You've made Pip yours. A PIN keeps curious hands out of Settings, and the recovery card brings everything back if this device is lost.";

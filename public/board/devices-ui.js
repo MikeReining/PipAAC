@@ -79,7 +79,7 @@ export function mountDevices({
     const next = { userId: user_id, epoch: 1, cursor: 0 };
     await saveUser({ sync: next });
     await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel);
-    if (!quiet) toast(`${me.name || "This board"} syncs now — make the recovery card: Settings → Backup & privacy`);
+    if (!quiet) toast(`${me.name || "This person"} syncs now — make the recovery card: Settings → Backup & privacy`);
     return next;
   }
 
@@ -151,7 +151,7 @@ export function mountDevices({
     const state = $("dev-delete-state");
     if (self?.delete_at) {
       const when = new Date(self.delete_at).toLocaleDateString();
-      state.innerHTML = `<p class="hint"><b>${me.name || "This board"} is scheduled for deletion on ${when}.</b></p>`;
+      state.innerHTML = `<p class="hint"><b>${me.name || "This person"} is scheduled for deletion on ${when}.</b></p>`;
       $("dev-delete").hidden = true;
       $("dev-undelete").hidden = false;
     } else {
@@ -286,7 +286,7 @@ export function mountDevices({
     if (!st) return;
     if (!confirm(
       `Delete the account ${st.email}? Its sign-in and its supporter access end. ` +
-      `The users you support keep everything — boards, devices, license, QR cards.`)) return;
+      `The users you support keep everything — words, groups, devices, license, QR cards.`)) return;
     try {
       await deleteAccount(st.acct_id, st.session);
       saveAccountState(null);

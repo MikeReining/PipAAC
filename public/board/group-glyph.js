@@ -1,10 +1,10 @@
 /**
- * A page's face, one owner for every surface that names a page — the
- * board's doors, the add sheet's page picker, and the word card's page
- * chips. Our ink icon when the page has one; else the page's photo; else,
- * for a family's own page, the picture of its first word (derived at
+ * A group's face, one owner for every surface that names a group — the
+ * board's doors, the add sheet's group picker, and the word card's group
+ * chips. Our ink icon when the group has one; else the group's photo; else,
+ * for a family's own group, the picture of its first word (derived at
  * paint time, so it follows that word's picture), else its initial; a
- * seed page without an icon keeps its seed emoji.
+ * seed group without an icon keeps its seed emoji.
  */
 import { groupPage } from "../shared/groups.mjs";
 
@@ -62,7 +62,7 @@ function firstPicture(db, groupId, locale) {
   }
 }
 
-/** `span.glyph` holding the page's face. */
+/** `span.glyph` holding the group's face. */
 export function groupGlyph(row, { db, locale, loadPhotoURL }) {
   const g = document.createElement("span");
   g.className = "glyph";
@@ -78,8 +78,8 @@ export function groupGlyph(row, { db, locale, loadPhotoURL }) {
     g.appendChild(img(icon, "gicon"));
     return g;
   }
-  // A family's own page with no picture yet shows its initial — ink, like
-  // our icons; a seed page without an icon keeps its seed emoji.
+  // A family's own group with no picture yet shows its initial — ink, like
+  // our icons; a seed group without an icon keeps its seed emoji.
   g.textContent = row.glyph
     ?? (row.kind === "custom" ? (row.name?.trim()[0]?.toUpperCase() ?? "•") : "🗂️");
   const first = !row.photo_key && row.kind === "custom" ? firstPicture(db, row.id, locale) : null;

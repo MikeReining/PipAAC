@@ -86,6 +86,6 @@ test("cells sheet marks the current layout and previews a different one", () => 
   assert.equal(nodes["cells-title"].textContent, "Switch to 15 cells?");
   assert.equal(
     summary.textContent,
-    "0 of 0 words will move or leave the home board.",
+    "0 of 0 words will move or leave the main board.",
   );
 });

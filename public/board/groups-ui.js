@@ -286,7 +286,7 @@ export function mountGroups({
     el.classList.add("reserved");
     if (gestures) {
       el.disabled = true;
-      el.title = "Home board word — edit it on the home board";
+      el.title = "Main board word — edit it on the main board";
     } else if (say) {
       el.addEventListener("click", () => tap(say, c.kind, c.kind === "entity" ? c.entity_id : c.sense_id,
         { source: "group" }));
@@ -388,7 +388,7 @@ export function mountGroups({
     const holds = new Set(all(db,
       "SELECT group_id FROM group_membership WHERE item_kind = ? AND item_id = ?",
       [item.item_kind, item.item_id]).map((r) => r.group_id));
-    $("boards-title").textContent = `Add ${item.label} to other boards`;
+    $("boards-title").textContent = `Add ${item.label} to other groups`;
     const list = $("boards-list");
     list.innerHTML = "";
     for (const g of groupIndex(db)) {

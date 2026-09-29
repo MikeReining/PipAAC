@@ -63,7 +63,7 @@ export function mountWordCard({
   let recorder = null;
   let recChunks = [];
 
-  /* Picture memory per entity for this page's life: which picture WE
+  /* Picture memory per entity while the app is open: which picture WE
    * chose (so replacing it sends one `reject`, 030 § 6.3), the picture
    * showing now, and the alternatives — earlier pictures stay here so
    * switching back is free. */
@@ -146,7 +146,7 @@ export function mountWordCard({
       const nm = document.createElement("span");
       nm.textContent = g.name;
       chip.appendChild(nm);
-      // 027 B9: remove from any page — this placement only; the word
+      // 027 B9: remove from any group — this placement only; the word
       // stays in the Library and the keyboard with zero placements.
       const x = xBadge(() => {
         const undo = removeItemUndoable(db, g.id, cardItem.item_kind, cardItem.item_id);
@@ -646,7 +646,7 @@ export function mountWordCard({
     toast("Back to the app's voice");
   });
 
-  /** 027 B9: add to other pages — named destinations, none preselected. */
+  /** 027 B9: add to other groups — named destinations, none preselected. */
   $("wc-addgroup").addEventListener("click", () => {
     const item = cardItem;
     close("wordcard"); // the destinations sheet takes the screen

@@ -44,6 +44,21 @@ do not duplicate long policy in `AGENTS.md`.
 | Dev process | `docs/operations/` + `AGENTS.md` |
 | Live work index | `docs/phases/README.md` |
 
+## Words we use in the app (DECIDED 2026-09-29, founder)
+
+One word, one meaning, in every screen, toast, and doc a family reads.
+
+| Word | Means | Never |
+| --- | --- | --- |
+| **User** | The person who speaks with Pip ("Maya"). Adults are **supporters**. | "board" for the person or their saved data — say their name ("Maya's words") |
+| **Board** | Everything the user sees and taps: the **main board** (the core grid) plus all its groups. "Board editor", "Show on board". | the sync unit, the account, the recovery key |
+| **Main board** | The core grid only, when it must be told apart from groups. | "Home" — Home is a group (house words) |
+| **Group** | A set of words behind a door: Breakfast, My Words, Grandma's house. The child's **Groups** button; "New group", "Add to other groups". | "page", "folder", "board" |
+| **Page** | Only a screenful inside a group ("page 2 of 3", Next). | a group |
+
+Internal preview and review pages may use older terms; anything a family
+sees follows this table.
+
 ## Engineering laws (pointer)
 
 Cross-cutting: `docs/product/Design_Invariants.md`. Test rules: `AGENTS.md` § Running Tests.

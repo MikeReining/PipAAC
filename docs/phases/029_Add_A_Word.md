@@ -44,14 +44,16 @@ saved) and a stopwatch on a real tablet (§ 7).
    choose among catalog voices (more coming soon).
 8. **Paste a list** asks before drawing only when it needs more than 10 new
    drawings or more than are left.
-9. **No page guessing** (founder, 2026-09-29). The destination is where the
+9. **No group guessing** (founder, 2026-09-29). The destination is where the
    adult came from: Settings → Add a word is always **My Words**; in the
-   editor (031) it is the page being edited (an empty cell keeps that
-   cell). Categories are never used to suggest a page — occasion pages mix
-   words from many groups, and the adult is customizing on purpose.
-10. **Pages look the same everywhere.** Our ink icons on the doors, the page
-    picker, and the card's page chips — one owner
+   editor (031) it is the group being edited (an empty cell keeps that
+   cell). Categories are never used to suggest a group — occasion groups mix
+   words from many topics, and the adult is customizing on purpose.
+10. **Groups look the same everywhere.** Our ink icons on the doors, the
+    group picker, and the card's group chips — one owner
     (`public/board/group-glyph.js`).
+11. **Vocabulary** (founder, 2026-09-29): board / main board / group / page
+    mean one thing each — `docs/product/SSOT.md` § Words we use in the app.
 
 ## 1. The bar
 
@@ -115,19 +117,19 @@ Traced from `public/board/add-flow.js` (`openAddForm` → `renderAddMatches` →
 - **Paste a list · Add photos** as one quiet line. **Cancel** is ✕, Esc, or
   tap outside.
 
-### 3.1 The page picker
+### 3.1 The group picker
 
 Tapping "to My Words ▾" replaces the results with a searchable list and
-focuses **Find a page**:
+focuses **Find a group**:
 
-- **Recent** — the last three pages the adult actually added to (history on
-  this device, not a guess), then **All pages, A–Z**. Typing narrows the
+- **Recent** — the last three groups the adult actually added to (history
+  on this device, not a guess), then **All groups, A–Z**. Typing narrows the
   list; Return picks the first match; Esc goes back.
-- Every row shows the page's face: our ink icon; else its photo; else, for a
-  family's own page, its first word's picture (derived when painted, so it
+- Every row shows the group's face: our ink icon; else its photo; else, for
+  a family's own group, its first word's picture (derived when painted, so it
   follows that word); else its initial.
-- **New page** is always the last row. Typing a name no page matches offers
-  **Make a page called "…"** — one tap (or Return) creates it, selects it,
+- **New group** is always the last row. Typing a name no group matches
+  offers **Make a group called "…"** — one tap (or Return) creates it, selects it,
   and says "its door is in Groups". The word typed next lands there.
 - Picking closes the list and returns focus to the word field.
 
@@ -299,16 +301,16 @@ Slice A alone fixes the confusion in the founder's screenshots.
   word (spacing/hyphens folded: "pop corn" → popcorn); otherwise Make is.
   A longer word that merely starts the same ("pop" → popcorn) is offered
   but never steals Return.
-- **Already here.** A word already on the destination page shows "Already
-  in {page}" and opens its card instead of adding a duplicate.
-- **Destination is single-select** on the sheet; more pages are one tap
-  on the card ("+ Another page"). One path for multi-page, not two.
+- **Already here.** A word already in the destination group shows "Already
+  in {group}" and opens its card instead of adding a duplicate.
+- **Destination is single-select** on the sheet; more groups are one tap
+  on the card ("+ Another group"). One path for multi-group, not two.
 - **Adding a catalog match plays it** — the adult hears what was added.
 - **Uncalibrated finder never auto-draws.** 030 `find` now returns
   `calibrated` (false while `auto_cutoff` is the 1.01 default); until the
   founder saves a cutoff the card shows ours + "Draw it" (no words needed
   for a first drawing), and paste shows "picture later".
-- **"Ours" is remembered for the page's life**, so `reject` fires once per
+- **"Ours" is remembered while the app is open**, so `reject` fires once per
   replacement of our choice in a session; a card reopened after reload
   sends no reject (no durable provenance column — acceptable signal loss).
 - **Missing pictures vanish.** A candidate whose image can't load is
