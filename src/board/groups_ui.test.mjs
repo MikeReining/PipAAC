@@ -34,6 +34,7 @@ function el() {
     setAttribute() {},
     append(...kids) { node.children.push(...kids); },
     appendChild(kid) { node.children.push(kid); return kid; },
+    replaceChildren(...kids) { node.children.length = 0; node.children.push(...kids); },
     addEventListener() {},
     set innerHTML(value) { if (value === "") node.children.length = 0; },
   };

@@ -81,18 +81,20 @@ export function resolvePasteRows(db, text, { groupId, locale }) {
  *  ranking treat them like a hand-added word. Rows already placed skip. */
 export function applyPasteRows(db, rows, { groupId, category = null }) {
   let placed = 0, created = 0, skipped = 0;
+  const newIds = []; // [{ row, id }] — the caller gives each its picture
   for (const r of rows) {
     if (r.already) { skipped++; continue; }
     if (r.kind === "new") {
       const { id } = createEntity(db, { name: r.text, category });
       placeItem(db, groupId, "entity", id);
+      newIds.push({ row: r, id });
       created++;
     } else {
       placeItem(db, groupId, r.kind, r.id);
     }
     placed++;
   }
-  return { placed, created, skipped };
+  return { placed, created, skipped, newIds };
 }
 
 /** Photo-drop drafts (§ 5.3): one entity per named draft — photo bytes

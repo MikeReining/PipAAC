@@ -226,7 +226,8 @@ out.childHidden = await A.until(
   `document.querySelector('#acct-row')?.hidden === true`, 8000);
 
 console.error("== A: Cooper + photo");
-// Cooper + photo through the real add-word form.
+// Cooper + photo through the real add flow: Make saves at once (029),
+// then the new word's card takes the photo.
 out.cooper = await A.evalJs(`(async () => {
   document.querySelector('#add-mywords').click();
   const name = document.querySelector('#add-name');
@@ -234,10 +235,9 @@ out.cooper = await A.evalJs(`(async () => {
   name.dispatchEvent(new Event('input', { bubbles: true }));
   await new Promise((r) => setTimeout(r, 400));
   document.querySelector('#add-new').click();
-  return { newfields: !document.querySelector('#add-newfields').hidden };
+  return { card: document.querySelector('#wordcard').classList.contains('open') };
 })()`);
-await A.setFile("#add-photo", "/tmp/pip-acct-photo.png");
-await A.fireJs(`document.querySelector('#add-save').click()`);
+await A.setFile("#wc-photo", "/tmp/pip-acct-photo.png");
 out.cooperSaved = await A.until(
   `window.pip.db.prepare("SELECT COUNT(*) AS n FROM personal_entity WHERE spoken_name='Cooper'").all()[0].n === 1`);
 

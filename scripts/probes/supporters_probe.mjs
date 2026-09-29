@@ -279,7 +279,6 @@ await S.fireJs(`(async () => {
   return 1;
 })()`);
 await sleep(800);
-await S.fireJs(`document.querySelector('#add-save')?.click()`);
 out.sZebraSaved = await S.until(
   `window.pip.db.prepare("SELECT COUNT(*) AS n FROM personal_entity WHERE spoken_name='Zebra'").all()[0].n === 1`,
   15000);
@@ -347,7 +346,6 @@ await P.fireJs(`(async () => {
   return 1;
 })()`);
 await sleep(800);
-await P.fireJs(`document.querySelector('#add-save')?.click()`);
 await P.until(
   `window.pip.db.prepare("SELECT COUNT(*) AS n FROM personal_entity WHERE spoken_name='PostRemoval'").all()[0].n === 1`,
   15000);

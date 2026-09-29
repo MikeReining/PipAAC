@@ -1,9 +1,10 @@
 # 029 — Add a word: type it, tap once, it's finished (front end)
 
-**Status:** **Decided 2026-09-29 (founder), ready to slice. Nothing built.**
+**Status:** **Slices A–D built 2026-09-29** (§ 10). Open: slice E — the
+stopwatch on a real tablet with live 028 + 030 (needs the founder's
+calibration save and a live draw run, both founder-gated in 030).
 This doc owns the **experience** (sheet, card, states, copy). Claude leads
-the design. The backends it calls are owned elsewhere and built by another
-developer:
+the design. The backends it calls are owned elsewhere:
 
 | Need | Backend doc |
 | --- | --- |
@@ -258,3 +259,46 @@ Slice A alone fixes the confusion in the founder's screenshots.
 - `018_Core_Board_V2_And_Groups.md` D7 → the kind question becomes an
   inferred chip.
 - `Pricing_And_Packaging.md` § 4.2 → what a drawing counts.
+
+## 10. As built (2026-09-29)
+
+| Slice | Where | Proof |
+| --- | --- | --- |
+| A — sheet | `public/board/add-flow.js`, `#addform` in `public/index.html`, `add-flow.css` | `src/board/add_word.test.mjs` (WT2, spacing fold, highlight rule, already-here, arrows) |
+| B — card pictures + kind | `public/board/word-card.js`, `public/board/picture-fill.js` (one path for card + paste), `public/shared/pictures.mjs` (client + pure rules) | `src/board/word_card.test.mjs` (WT4, WT5, WT6, WT9, never-overwrite, uncalibrated, calibrated draw); `src/board/pictures_client.test.mjs` |
+| C — card voice | `word-card.js` voice line (028 `tileApi` states), plays once when ready | `word_card.test.mjs` "plays once" |
+| D — paste a list | `add-flow.js` bulk preview (thumbnails, cycle, draw count, one confirm), background fill; editor paste routes through the same fill | `pictures_client.test.mjs` (confirm rule), `web_editor.test.mjs` (`newIds`) |
+
+**Design calls made while building (Claude, design lead):**
+
+- **Return's target.** A match is highlighted only when it *is* the typed
+  word (spacing/hyphens folded: "pop corn" → popcorn); otherwise Make is.
+  A longer word that merely starts the same ("pop" → popcorn) is offered
+  but never steals Return.
+- **Already here.** A word already on the destination page shows "Already
+  in {page}" and opens its card instead of adding a duplicate.
+- **Destination is single-select** on the sheet; more pages are one tap
+  on the card ("+ Another page"). One path for multi-page, not two.
+- **Adding a catalog match plays it** — the adult hears what was added.
+- **Uncalibrated finder never auto-draws.** 030 `find` now returns
+  `calibrated` (false while `auto_cutoff` is the 1.01 default); until the
+  founder saves a cutoff the card shows ours + "Draw it" (no words needed
+  for a first drawing), and paste shows "picture later".
+- **"Ours" is remembered for the page's life**, so `reject` fires once per
+  replacement of our choice in a session; a card reopened after reload
+  sends no reject (no durable provenance column — acceptable signal loss).
+- **Missing pictures vanish.** A candidate whose image can't load is
+  dropped from Other pictures instead of showing an empty square.
+- **"Describe it" is saved on the word** through a new synced op,
+  `set_entity_hint` (`setEntityHint`, replayed in `ops.mjs`).
+
+**Fixes found on the way:** on wide screens the card was stuck in the
+editor's hidden right pane when opened from the board (now docks to the
+page outside the editor); the shared group painter could interleave two
+in-flight paints (a picture landing mid-rerender) — it now builds off-screen
+and swaps once.
+
+**Known, not this phase:** local dev's `EXT_ART` bucket is empty (the index
+is remote), so extended-library candidates 404 locally and are dropped; in
+production they resolve. The editor's own paste box and the stale "Tap a
+word to open its card here" line go in 031 slice A.

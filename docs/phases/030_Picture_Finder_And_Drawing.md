@@ -412,7 +412,7 @@ All follow `src/worker/voice.js` conventions (JSON errors, license check,
 
 | Route | Body | Success | Errors |
 | --- | --- | --- | --- |
-| `POST /api/v1/pictures/find` | `{user_id, license, text, description?, locale}` | `{candidates:[{image_id, asset, source, score}]×≤4, auto, scope, kind, language}` | 400 `bad_text`; 403; 429 |
+| `POST /api/v1/pictures/find` | `{user_id, license, text, description?, locale}` | `{candidates:[{image_id, asset, source, score}]×≤4, auto, scope, kind, language, calibrated}` — `calibrated` is false while `auto_cutoff` > 1 (029: no auto-draw until the founder saves a cutoff) | 400 `bad_text`; 403; 429 |
 | `POST /api/v1/pictures/find-batch` | `{…, items:[{text, description?}]×≤50}` | `{results:[<find result>]}` | same |
 | `POST /api/v1/pictures/pick` | `{…, text, description?, image_id}` | 204 | 400; 403; 429 |
 | `POST /api/v1/pictures/draw` | `{…, text, description?}` | `200 image/png`, `x-draw-cache: hit\|mint\|stub`, `x-drawings-left` | 402 `allowance`; 422 `unsafe`; 429 `fair_use`; 502 `draw_failed`; 503 |

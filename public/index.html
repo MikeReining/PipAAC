@@ -1453,33 +1453,28 @@
       </div>
     </div>
 
+    <!-- Add a word (029 § 3): one field, one highlighted row, Return does
+         it. A match places the real word; Make saves a new word at once
+         and opens its card — picture and voice are made there. -->
     <div class="overlay" id="addform">
-      <div class="sheet">
-        <h2 id="add-title">Add a word</h2>
-        <input type="text" id="add-name" placeholder="Type a word or a name" autocomplete="off" />
-        <div id="add-matches"></div>
-        <button class="addmatch" id="add-new" hidden>New</button>
-        <div id="add-newfields" hidden>
-          <label class="hint">What kind of word is it?
-            <select id="add-kind">
-              <option value="Yellow">A person or thing</option>
-              <option value="Green">An action</option>
-              <option value="Pink">A little word (in, on, the…)</option>
-              <option value="Blue">A describing word</option>
-              <option value="Purple">A question word</option>
-              <option value="Red">A safety word (stop, help…)</option>
-            </select>
-          </label>
-          <label class="hint">Photo (optional)
-            <input type="file" id="add-photo" accept="image/*" />
-          </label>
-          <input type="text" id="add-hint" placeholder="Hint (optional), e.g. our dog" autocomplete="off" />
-          <button class="btn" id="add-save">Save</button>
-        </div>
-        <button class="btn secondary" id="add-bulk">Paste a list</button>
-        <button class="btn secondary" id="add-photos">Add photos</button>
+      <div class="sheet add-sheet">
+        <header class="add-head">
+          <h2 id="add-title">Add a word</h2>
+          <button type="button" class="add-dest" id="add-dest" aria-haspopup="listbox">
+            to <b id="add-destname">My Words</b> <span aria-hidden="true">▾</span>
+          </button>
+          <button type="button" class="add-x" data-close aria-label="Close">✕</button>
+        </header>
+        <div class="add-destlist" id="add-destlist" role="listbox" hidden></div>
+        <input type="text" id="add-name" placeholder="Type a word or a name"
+          autocomplete="off" autocapitalize="off" enterkeyhint="done"
+          role="combobox" aria-controls="add-matches" aria-expanded="false" />
+        <div id="add-matches" role="listbox"></div>
+        <p class="add-more">Adding lots?
+          <button type="button" class="linkbtn" id="add-bulk">Paste a list</button> ·
+          <button type="button" class="linkbtn" id="add-photos">Add photos</button>
+        </p>
         <input type="file" id="add-photos-input" accept="image/*" multiple hidden />
-        <button class="btn secondary" data-close>Cancel</button>
       </div>
     </div>
 
@@ -1505,6 +1500,7 @@
         <h2 id="bulk-title">Add a list</h2>
         <textarea id="bulk-paste" placeholder="One word or short phrase per line" spellcheck="false"></textarea>
         <div id="bulk-preview"></div>
+        <p class="hint" id="bulk-note" hidden></p>
         <div class="row">
           <button class="btn" id="bulk-add" disabled>Add all</button>
           <button class="btn secondary" data-close>Cancel</button>
@@ -1532,50 +1528,81 @@
     <!-- The word card (Word_Library § 4): one screen answers where the
          word is, how it sounds, and what can change. -->
     <div class="overlay" id="wordcard">
-      <div class="sheet">
-        <div class="wc-top">
-          <span id="wc-pic" class="pic"></span>
-          <div class="wc-namecol">
-            <input type="text" id="wc-name" autocomplete="off" />
-            <span id="wc-role" class="hint"></span>
+      <div class="sheet wc-sheet">
+        <header class="wc-head">
+          <p class="wc-added" id="wc-added" hidden>✓ Added to <b id="wc-addedto"></b></p>
+          <span id="wc-role" class="wc-rolelab"></span>
+          <button type="button" class="wc-more" id="wc-more" aria-haspopup="menu" aria-label="More">…</button>
+          <button type="button" class="btn wc-done" data-close>Done</button>
+        </header>
+        <div class="wc-menu" id="wc-menu" role="menu" hidden>
+          <button type="button" role="menuitem" id="wc-flag" hidden>Sounds wrong</button>
+          <button type="button" role="menuitem" id="wc-hide" hidden>Hide word</button>
+          <button type="button" role="menuitem" class="danger" id="wc-remove">Remove everywhere</button>
+        </div>
+
+        <!-- The tile as the child sees it: label strip, picture, role border. -->
+        <div class="wc-hero">
+          <div class="wc-tile" id="wc-tile">
+            <textarea id="wc-name" class="wc-label" rows="2" autocomplete="off" spellcheck="false" aria-label="Word"></textarea>
+            <span id="wc-pic" class="pic"></span>
           </div>
-          <button id="wc-play" class="bar-btn" title="Play">▶</button>
+          <div class="wc-sound">
+            <button type="button" id="wc-play" class="wc-play" aria-label="Play">▶</button>
+            <p class="wc-voice" id="wc-voice"></p>
+            <div class="wc-voicebtns">
+              <button type="button" class="linkbtn" id="wc-voicetry" hidden>Try again</button>
+              <button type="button" class="linkbtn" id="wc-record">Record your own</button>
+              <button type="button" class="linkbtn" id="wc-revert" hidden>Use the voice again</button>
+            </div>
+            <p class="hint" id="wc-rechint" hidden></p>
+          </div>
         </div>
-        <label class="hint" id="wc-kindlabel" hidden>What kind of word is it?
-          <select id="wc-kind">
-            <option value="Yellow">A person or thing</option>
-            <option value="Green">An action</option>
-            <option value="Pink">A little word (in, on, the…)</option>
-            <option value="Blue">A describing word</option>
-            <option value="Purple">A question word</option>
-            <option value="Red">A safety word (stop, help…)</option>
-          </select>
-        </label>
-        <label class="hint" id="wc-photolabel">Change photo
-          <input type="file" id="wc-photo" accept="image/*" />
-        </label>
-        <label class="hint" id="wc-ownpiclabel" hidden>Use my own picture
-          <input type="file" id="wc-ownpic" accept="image/*" />
-        </label>
-        <div id="wc-libpics" hidden></div>
-        <button class="btn secondary" id="wc-ourpic" hidden>Use our picture</button>
-        <div class="row">
-          <button class="btn secondary" id="wc-record">Record it</button>
-          <button class="btn secondary" id="wc-revert" hidden>Use the voice again</button>
-          <button class="btn secondary" id="wc-voicetry" hidden>Try again</button>
-          <button class="btn secondary" id="wc-flag" hidden>Sounds wrong</button>
-        </div>
-        <p class="hint" id="wc-voice" hidden></p>
-        <p class="hint" id="wc-rechint" hidden></p>
-        <p class="hint" id="wc-scope">Picture, name, and recording change everywhere this word appears.</p>
-        <div id="wc-groups"></div>
-        <button class="btn secondary" id="wc-addgroup">Add to other boards</button>
-        <div class="row">
-          <button class="btn secondary" id="wc-show">Show on board</button>
-          <button class="btn secondary" id="wc-hide" hidden>Hide word</button>
-          <button class="btn danger" id="wc-remove">Remove</button>
-        </div>
-        <button class="btn secondary" data-close>Close</button>
+
+        <!-- Picture: personal words (029 § 4.1). -->
+        <section class="wc-sec" id="wc-picsec" hidden>
+          <p class="wc-picstate" id="wc-picstate" hidden></p>
+          <div class="wc-picrow">
+            <span class="wc-lab" id="wc-otherslab">Other pictures</span>
+            <div class="wc-others" id="wc-others"></div>
+            <label class="wc-chipbtn" id="wc-photolabel">📷 Photo
+              <input type="file" id="wc-photo" accept="image/*" hidden />
+            </label>
+          </div>
+          <div class="wc-describe" id="wc-describe">
+            <span class="wc-lab" id="wc-desclab">Not right? Say what it should show</span>
+            <input type="text" id="wc-desc" maxlength="120" autocomplete="off"
+              placeholder="e.g. a bowl, not a jar" />
+            <button type="button" class="btn secondary" id="wc-redraw" disabled>Draw it again</button>
+          </div>
+          <p class="hint wc-fine" id="wc-drawcost"></p>
+          <p class="hint wc-fine" id="wc-helps">Your description helps us draw better pictures for everyone.</p>
+        </section>
+
+        <!-- Picture: catalog words — another of ours, or your own. -->
+        <section class="wc-sec" id="wc-catpics">
+          <div id="wc-libpics" hidden></div>
+          <div class="wc-picrow">
+            <label class="wc-chipbtn" id="wc-ownpiclabel" hidden>📷 Use my own picture
+              <input type="file" id="wc-ownpic" accept="image/*" hidden />
+            </label>
+            <button type="button" class="wc-chipbtn" id="wc-ourpic" hidden>Use our picture</button>
+          </div>
+        </section>
+
+        <section class="wc-sec wc-where">
+          <div class="wc-kindwrap" id="wc-kindlabel" hidden>
+            <span class="wc-lab">Kind</span>
+            <button type="button" class="wc-kindchip" id="wc-kind" aria-haspopup="listbox"></button>
+            <div class="wc-kindmenu" id="wc-kindmenu" role="listbox" hidden></div>
+          </div>
+          <div class="wc-pages">
+            <span class="wc-lab">On</span>
+            <div id="wc-groups"></div>
+            <button type="button" class="wc-chipbtn" id="wc-addgroup">+ Another page</button>
+            <button type="button" class="linkbtn" id="wc-show">Show on board</button>
+          </div>
+        </section>
       </div>
     </div>
 

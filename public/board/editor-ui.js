@@ -15,7 +15,7 @@ export function mountEditor({
   openAddForm, paintGroupPage,
   renderLibrary, invalidateIndex, setView, toast, close,
   savePhoto, syncUploadBlob,
-  tile,
+  tile, pictureFill,
 }) {
   /* --- the web editor (Sync_And_Web_Editing § 7): on a wide screen the
      app opens here — Library left, the real 10×6 group grid in the middle
@@ -104,6 +104,10 @@ export function mountEditor({
     });
     // 028 § 5.3: the new words mint in the background, one at a time.
     if (newTexts.length) tile?.prefetch(newTexts).catch(() => {});
+    // 029 § 5: and get their pictures the same way the add card does.
+    (async () => {
+      for (const { id } of res.newIds ?? []) await pictureFill?.autoFill(id).catch(() => {});
+    })();
     $("ed-paste").value = "";
     renderPastePreview();
     renderEditorGrid();

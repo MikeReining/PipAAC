@@ -362,11 +362,13 @@ export function mountGroups({
    * Returns the page count.
    */
   async function paintGroupPage(zg, { group, page, gestures, onChange, onNext }) {
-    zg.innerHTML = "";
+    // Tiles resolve asynchronously; two paints in flight (a picture
+    // landing while the page rerenders) must not interleave their cells.
+    // Build off-screen and swap once — a superseded paint never lands.
+    const gen = (zg._paintGen = (zg._paintGen ?? 0) + 1);
+    const out = [];
     const { cols, rows, cells, name: layout } = boardGeom();
     const geom = geometryOf(db, layout);
-    zg.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-    zg.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
     const items = new Map(groupPage(db, group, page, locale, layout).map((r) => [r.slot_index, r]));
     const pages = pageCount(db, group, layout);
     const topRowOn = profileFlag("group_top_row");
@@ -374,17 +376,17 @@ export function mountGroups({
     const ctx = { gestures, group, page, layout, onChange };
     for (let slot = 0; slot < cells; slot++) {
       if (slot === geom.next) {
-        zg.appendChild(pagerCell(page, pages, onNext));
+        out.push(pagerCell(page, pages, onNext));
         continue;
       }
       if (geom.frame.includes(slot) || geom.topRow.includes(slot)) {
         const showHome = geom.frame.includes(slot) || topRowOn;
-        zg.appendChild(reservedCell(showHome ? home.get(slot) : null, gestures));
+        out.push(reservedCell(showHome ? home.get(slot) : null, gestures));
         continue;
       }
       const item = items.get(slot);
       if (item) {
-        zg.appendChild(await itemCell(item, ctx));
+        out.push(await itemCell(item, ctx));
         continue;
       }
       const empty = document.createElement("div");
@@ -393,8 +395,12 @@ export function mountGroups({
         empty.dataset.slot = slot; // a drop target, and tap-to-add here
         empty.addEventListener("click", () => openAddForm(group, { page, slot_index: slot }));
       }
-      zg.appendChild(empty);
+      out.push(empty);
     }
+    if (zg._paintGen !== gen) return pages;
+    zg.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+    zg.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
+    zg.replaceChildren(...out);
     fitLabels(zg);
     return pages;
   }

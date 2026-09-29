@@ -702,6 +702,14 @@ export function setEntityRole(db, id, role) {
   recordOp(db, "set_entity_role", { id, role });
 }
 
+/** "Describe it" (029 § 4.1): what the picture should show — it steers
+ *  a redraw and is the hint enrichment reads. Blank clears it. */
+export function setEntityHint(db, id, hint) {
+  const h = typeof hint === "string" && hint.trim() ? hint.trim() : null;
+  db.prepare("UPDATE personal_entity SET hint = ? WHERE id = ?").run(h, id);
+  recordOp(db, "set_entity_hint", { id, hint: h });
+}
+
 /** Retire, never delete: the entity renders nowhere until restored. */
 export function retireEntity(db, id) {
   db.prepare("UPDATE personal_entity SET status = 'retired' WHERE id = ?").run(id);

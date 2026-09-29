@@ -241,6 +241,8 @@ test("response shape + default cutoff means auto is never set", async () => {
   const r = await find(env, { text: "trampoline" });
   const body = await r.json();
   assert.equal(body.auto, null); // AUTO_CUTOFF defaults to 1.01
+  // 029: until the founder saves a cutoff, a miss must not auto-draw.
+  assert.equal(body.calibrated, false);
   assert.equal(body.scope, "common");
   assert.equal(body.kind, "None");
   assert.equal(body.language, "en");

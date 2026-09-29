@@ -206,7 +206,13 @@ async function findOne(env, { text, description, locale, binding = "PICTURES", i
   const auto = decideAuto(
     { candidates, pinned: signals?.pinned ?? null, blocked: signals?.blocked ?? [] },
     CFG, language);
-  return { candidates, auto, scope: jev.scope, kind: jev.kind, language };
+  // `calibrated` tells the add card whether "nothing close" means "draw
+  // one" — until the founder saves a cutoff (§ 7, default 1.01 = never
+  // auto) every miss would spend a drawing, so 029 shows the four instead.
+  return {
+    candidates, auto, scope: jev.scope, kind: jev.kind, language,
+    calibrated: CFG.auto_cutoff <= 1,
+  };
 }
 
 /** Shared gate for find routes: ids, license, bindings, fair use.

@@ -82,6 +82,8 @@ import { mountGroupShows } from "./board/group-shows.js";
 import { mountOnramp } from "./board/onramp-ui.js";
 import { mountTour } from "./board/tour-ui.js";
 import { mountVoice } from "./board/voice-ui.js";
+import { mountPictureFill } from "./board/picture-fill.js";
+import { pictureClient } from "./shared/pictures.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -2331,6 +2333,25 @@ groupsUi = mountGroups({
   loadPhotoURL, savePhoto, syncUploadBlob,
 });
 
+/* 029/030 — pictures for personal words: find by meaning, apply a close
+   match free, draw when nothing is close. One path for the card and
+   Paste a list; parked words retry on reconnect. */
+const pictures = pictureClient();
+const pictureCreds = async () => ({ userId: me.id, license: await voiceLicense() });
+const pictureFill = mountPictureFill({
+  db, all: ALL, locale, client: pictures, creds: pictureCreds,
+  savePhoto, syncUploadBlob,
+  onChanged: (id) => {
+    entityPhoto.delete(id);
+    entityRole.delete(id);
+    rerenderView();
+    renderStrip();
+    renderGrid();
+  },
+});
+addEventListener("online", () => pictureFill.drainPending().catch(() => {}));
+setTimeout(() => pictureFill.drainPending().catch(() => {}), 5000);
+
 /* Add a word — public/board/add-flow.js */
 addUi = mountAddFlow({
   db, locale, all: ALL, catalog, open, close, toast,
@@ -2339,6 +2360,9 @@ addUi = mountAddFlow({
   rerenderView, renderStrip, renderLibrary: () => libUi.renderLibrary(),
   openAddToBoards: (item) => groupsUi.openAddToBoards(item),
   tile: tileApi,
+  speakItem: (item) => speakItem(item),
+  openWordCard: (item, opts) => wordCard.openWordCard(item, opts),
+  pictures, pictureFill, creds: pictureCreds,
 });
 
 /* Word library — public/board/library-ui.js */
@@ -2351,7 +2375,7 @@ libUi = mountLibrary({
 wordCard = mountWordCard({
   db, locale, all: ALL, open, close, toast,
   metaFor, artInto, loadPhotoURL, savePhoto, syncUploadBlob, speakItem, xBadge,
-  tile: tileApi,
+  tile: tileApi, pictures, pictureFill, creds: pictureCreds,
   invalidateIndex: () => kbUi.invalidateIndex(),
   setView: (v) => kbUi.setView(v),
   rerenderView, renderStrip, renderGrid, flashCell,
@@ -2591,7 +2615,7 @@ editorUi = mountEditor({
   invalidateIndex: () => kbUi.invalidateIndex(),
   setView: (v) => kbUi.setView(v),
   toast, close, savePhoto, syncUploadBlob,
-  tile: tileApi,
+  tile: tileApi, pictureFill,
 });
 
 // A session survives a restart (013 § 4): the synced row lights the

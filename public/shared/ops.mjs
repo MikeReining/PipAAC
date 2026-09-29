@@ -27,6 +27,7 @@ import {
   retireEntity,
   setEntityPhoto,
   setEntityRole,
+  setEntityHint,
   setGroupHidden,
   setSetting,
   swapGroups,
@@ -116,6 +117,9 @@ export function applyOp(db, op) {
         break;
       case "set_entity_role":
         if (exists(db, "personal_entity", a.id)) setEntityRole(db, a.id, a.role);
+        break;
+      case "set_entity_hint":
+        if (exists(db, "personal_entity", a.id)) setEntityHint(db, a.id, a.hint);
         break;
       case "create_group":
         if (!exists(db, "board_group", a.id)) {

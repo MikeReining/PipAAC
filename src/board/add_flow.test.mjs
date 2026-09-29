@@ -6,43 +6,15 @@ import assert from "node:assert/strict";
 
 import { createDatabase } from "./catalog.mjs";
 import { mountAddFlow } from "../../public/board/add-flow.js";
+import { installDom } from "./fake_dom.mjs";
 
-function el() {
-  const node = {
-    textContent: "",
-    value: "",
-    hidden: false,
-    disabled: false,
-    files: [],
-    children: [],
-    listeners: {},
-    classList: { toggle() {}, add() {} },
-    addEventListener(type, fn) { node.listeners[type] = fn; },
-    click() {},
-    async fire(type, ev = {}) { await node.listeners[type]?.(ev); },
-    append() {},
-    appendChild(kid) { return kid; },
-    set innerHTML(value) { if (value === "") node.children.length = 0; },
-  };
-  return node;
-}
-
-const FORM_IDS = [
-  "add-name", "add-photo", "add-hint", "add-kind", "add-newfields", "add-matches", "add-new",
-  "bulk-paste", "bulk-preview", "bulk-add", "bulk-title", "add-bulk", "lib-bulk",
-  "add-photos", "add-photos-input", "photo-title", "photo-rows", "photo-save", "add-save",
-];
-
-test("add form titles itself with the target group", () => {
+test("add form names the page the word will be filed into", () => {
   const db = createDatabase(":memory:");
   db.prepare(
     `INSERT INTO board_group (id, kind, name, glyph, index_slot)
      VALUES ('grp_snacks', 'custom', 'Snacks', '🍎', 12)`,
   ).run();
-  const title = el();
-  const nodes = { "add-title": title };
-  for (const id of FORM_IDS) nodes[id] = el();
-  globalThis.document = { getElementById: (id) => nodes[id] };
+  const $ = installDom();
   const opened = [];
 
   const add = mountAddFlow({
@@ -64,7 +36,8 @@ test("add form titles itself with the target group", () => {
   });
 
   add.openAddForm("grp_snacks");
-  assert.equal(title.textContent, "Add to Snacks");
+  assert.equal($("add-title").textContent, "Add a word");
+  assert.equal($("add-destname").textContent, "Snacks");
   assert.deepEqual(opened, ["addform"]);
 });
 
@@ -79,10 +52,7 @@ test("a saved entity word fires exactly one background mint", async () => {
     `INSERT INTO board_group (id, kind, name, glyph, index_slot)
      VALUES ('grp_snacks', 'custom', 'Snacks', '🍎', 12)`,
   ).run();
-  const nodes = { "add-title": el() };
-  for (const id of FORM_IDS) nodes[id] = el();
-  globalThis.document = { getElementById: (id) => nodes[id] };
-
+  const $ = installDom();
   const mints = [];
   const add = mountAddFlow({
     db,
@@ -110,9 +80,9 @@ test("a saved entity word fires exactly one background mint", async () => {
   });
 
   add.openAddForm("grp_snacks");
-  nodes["add-name"].value = "Cooper";
-  nodes["add-kind"].value = "Yellow";
-  await nodes["add-save"].fire("click");
+  $("add-name").value = "Cooper";
+  await $("add-name").fire("input");
+  await $("add-name").fire("keydown", { key: "Enter" });
 
   assert.deepEqual(mints, [{ text: "Cooper", source: "user_typed" }]);
   const ent = db.prepare(
