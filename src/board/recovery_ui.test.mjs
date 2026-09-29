@@ -19,24 +19,44 @@ function el() {
   return node;
 }
 
-test("an unlinked user is told to link before a QR card", async () => {
+function mount(me, ensureUser) {
   const body = el();
   const ids = ["recform", "rec-go", "rec-print", "rec-title", "dev-sheet", "dev-restore"];
   const nodes = { "rec-body": body };
   for (const id of ids) nodes[id] = el();
   globalThis.document = { getElementById: (id) => nodes[id] };
   globalThis.location = { origin: "http://test" };
-
   const rec = mountRecovery({
-    me: { id: "usr_1" },
+    me,
     async saveUser() {},
     userStore: {},
     async flushDb() {},
     toast() {},
     qrcode() {},
     async userClient() { throw new Error("no client"); },
+    ensureUser,
   });
+  return { rec, body };
+}
 
+test("asking for the card on an unsynced board turns sync on first", async () => {
+  // Founder 2026-09-28: the card restores from an encrypted copy only it
+  // can open — making it turns that copy on, no "link first" detour.
+  const me = { id: "usr_1" };
+  let asked = 0;
+  const { rec, body } = mount(me, async ({ quiet }) => {
+    asked++;
+    assert.equal(quiet, true);
+    me.sync = { userId: "usr_1", epoch: 1, cursor: 0 };
+    return me.sync;
+  });
   await rec.showCard();
-  assert.match(body.html, /Link this user first/);
+  assert.equal(asked, 1);
+  assert.doesNotMatch(body.html, /Link this user first|Connect to the internet/);
+});
+
+test("offline: the card explains it needs the internet, once", async () => {
+  const { rec, body } = mount({ id: "usr_1" }, async () => { throw new Error("offline"); });
+  await rec.showCard();
+  assert.match(body.html, /Connect to the internet to make the card/);
 });

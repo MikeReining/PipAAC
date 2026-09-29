@@ -36,7 +36,7 @@ export function personWords(name) {
 
 const NARROW = "(max-width: 760px)";
 
-export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
+export function mountSettings({ me, open, facts = () => ({ entities: 0, invested: false, pinOn: false }) }) {
   const body = $("set-body");
   const nav = $("set-nav");
   const pane = $("set-pane");
@@ -78,20 +78,53 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
   // The recovery card is an owner's job: a Team device (me.owner false,
   // set from the relay by devices-ui) is never nagged about it.
   const team = () => me.owner === false;
-  const WARN = { backup: () => !team() && !cardMade() };
+  // Protection is offered once the board is worth protecting (founder
+  // 2026-09-28): `invested` = something was customized, never before.
+  const needsCard = () => !team() && !cardMade() && !!facts().invested;
+  const WARN = { backup: needsCard };
 
-  /* The setup checklist: only facts Pip can measure. It leaves once all
-   * are done; the missing-card warning stays on the list regardless. */
+  /* The setup checklist: only facts Pip can measure. It leaves once
+   * both are done. The PIN and the recovery card are not setup — they
+   * arrive on the Protect card after the first customization. */
   function checklist() {
     const f = facts();
     return [
       { done: !!me.name?.trim(), label: "Name who uses this board", hint: "Team & devices → Name", go: () => show("team") },
       { done: f.entities > 0, label: "Add their people and places", hint: "Names and photos Pip can suggest", go: () => $("open-setup").click() },
-      { done: cardMade(), label: "Make the recovery card", hint: "If this device is lost or reset, the card brings everything back.", go: () => show("backup"), warn: true, ownerOnly: true },
-    ].filter((i) => !(i.ownerOnly && team()));
+    ];
+  }
+
+  /* Protect: after the first customization, one card with whatever is
+   * still missing — a PIN, the recovery card. Owners only. */
+  function renderProtect() {
+    const box = $("set-protect");
+    const f = facts();
+    const wants = [];
+    if (!f.pinOn) wants.push(["Lock Settings with a PIN", () => $("pin-change").click()]);
+    if (!cardMade()) wants.push(["Make the recovery card", () => $("dev-sheet").click()]);
+    box.hidden = team() || !f.invested || !wants.length;
+    if (box.hidden) return;
+    box.replaceChildren();
+    const h = document.createElement("span");
+    h.className = "seg-label";
+    h.textContent = `Protect ${personWords(me.name).inline === "this person" ? "this board" : `${me.name.trim()}'s board`}`;
+    const p = document.createElement("p");
+    p.className = "hint";
+    p.textContent = "You've made Pip yours. A PIN keeps curious hands out of Settings, and the recovery card brings everything back if this device is lost.";
+    const row = document.createElement("div");
+    row.className = "row";
+    for (const [label, go] of wants) {
+      const b = document.createElement("button");
+      b.className = "btn secondary";
+      b.textContent = label;
+      b.onclick = go;
+      row.append(b);
+    }
+    box.append(h, p, row);
   }
 
   function renderOverview() {
+    renderProtect();
     const box = $("set-check");
     const items = checklist();
     const left = items.filter((i) => !i.done).length;
@@ -213,7 +246,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0 }) }) {
   let queued = false;
   new MutationObserver((muts) => {
     if (queued || !$("menu").classList.contains("open")) return;
-    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance"))) return;
+    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance, #set-protect"))) return;
     queued = true;
     queueMicrotask(() => { queued = false; renderNav(); });
   }).observe(pane, { subtree: true, attributes: true, attributeFilter: ["hidden", "class"] });

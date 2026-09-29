@@ -58,7 +58,7 @@ export function mountDevices({
   /** First linked-device action on a user creates it on the relay. The
    *  recovery root is minted here so the relay holds the sheet's proof
    *  from the start — it stores the hash, never the key. */
-  async function ensureUser() {
+  async function ensureUser({ quiet = false } = {}) {
     if (me.sync?.userId) return me.sync;
     const store = openKeyStore();
     const identity = await getDeviceIdentity(store);
@@ -79,7 +79,7 @@ export function mountDevices({
     const next = { userId: user_id, epoch: 1, cursor: 0 };
     await saveUser({ sync: next });
     await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel);
-    toast(`${me.name || "This board"} syncs now — make the recovery card: Settings → Backup & privacy`);
+    if (!quiet) toast(`${me.name || "This board"} syncs now — make the recovery card: Settings → Backup & privacy`);
     return next;
   }
 
@@ -827,5 +827,5 @@ export function mountDevices({
     }
   };
 
-  return { userClient, renderAccount, renderUsers };
+  return { userClient, renderAccount, renderUsers, ensureUser };
 }

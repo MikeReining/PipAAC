@@ -1777,11 +1777,26 @@ async function gatePin(onOk, { change = false } = {}) {
  * every control inside keeps its own module's wiring. */
 const settingsUi = mountSettings({
   me, open,
-  facts: () => ({ entities: ALL(db, "SELECT count(*) AS n FROM personal_entity")[0]?.n ?? 0 }),
+  facts: () => ({
+    entities: ALL(db, "SELECT count(*) AS n FROM personal_entity")[0]?.n ?? 0,
+    // Invested: something of theirs is on the board — people, words,
+    // groups, pictures, hidden or moved words, saved practice lists.
+    // Settings flips and the demo don't count.
+    invested: (ALL(db, "SELECT count(*) AS n FROM personal_entity")[0]?.n ?? 0) > 0
+      || !!ALL(db, `SELECT 1 AS x FROM sync_op WHERE kind IN ('create_entity',
+        'set_entity_photo', 'create_group', 'add_to_groups', 'place_item', 'move_item',
+        'swap_items', 'set_image_override', 'set_override', 'set_mask', 'rename_entity',
+        'set_family_items', 'spot_list_save', 'set_group_hidden', 'move_group', 'swap_groups',
+        'delete_group') LIMIT 1`)[0],
+    pinOn,
+  }),
 });
 /** Settings → Backup & privacy → Settings PIN: lock, change, or off. */
+let pinOn = false; // Settings' Protect card reads it; renderPinRow keeps it
 async function renderPinRow() {
   const on = await hasPin(await openKeyStore(), me.id);
+  pinOn = on;
+  settingsUi.renderNav();
   $("pin-state").textContent = on
     ? "Settings is locked with a PIN."
     : "No PIN yet: Settings opens with one tap.";
@@ -2352,6 +2367,7 @@ if (me.needsSetup) onramp.start();
 mountRecovery({
   me, saveUser, userStore, flushDb, toast, qrcode,
   userClient: () => devicesUi.userClient(),
+  ensureUser: (o) => devicesUi.ensureUser(o),
 });
 
 /* Web editor — public/board/editor-ui.js */

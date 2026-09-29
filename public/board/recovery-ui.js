@@ -16,6 +16,7 @@ const $ = (id) => document.getElementById(id);
 
 export function mountRecovery({
   me, saveUser, userStore, flushDb, toast, qrcode, userClient,
+  ensureUser = async () => { throw new Error("no relay"); },
 }) {
   const relayBase = location.origin;
   /* ------------------------------------------------------------------ *
@@ -73,16 +74,24 @@ export function mountRecovery({
 
   /** 015 slice 3: the QR card — scan it on a fresh device to restore. */
   async function showCard() {
-    const cfg = me.sync;
-    if (!cfg?.userId) {
-      openRec("QR card");
-      recBody.innerHTML =
-        '<p class="hint">Link this user first — the card backs up a synced user.</p>';
-      return;
+    // Asking for the card turns on the encrypted backup it restores
+    // from (founder 2026-09-28): the relay holds only sealed data the
+    // card alone can open, so there is nothing to ask permission for.
+    if (!me.sync?.userId) {
+      try {
+        await ensureUser({ quiet: true });
+      } catch { /* the board may exist on the relay even if the first sync failed */ }
+      if (!me.sync?.userId) {
+        openRec("Recovery card");
+        recBody.innerHTML =
+          '<p class="hint">Connect to the internet to make the card. Pip keeps an encrypted copy that only the card can open.</p>';
+        return;
+      }
     }
+    const cfg = me.sync;
     const root = await openKeyStore().get(userRootName(me.id));
     if (!root) {
-      openRec("QR card");
+      openRec("Recovery card");
       recBody.innerHTML =
         '<p class="hint">This device was linked by another device and cannot show the card — '
         + "print it on the device that set up sync.</p>";
@@ -90,7 +99,7 @@ export function mountRecovery({
     }
     const rootBytes = root instanceof Uint8Array ? root : new Uint8Array(root);
     const payload = cardPayload(cfg.userId, rootBytes);
-    openRec("QR card");
+    openRec("Recovery card");
     // Settings' checklist and Backup warning read this: the card has
     // been on screen on this device at least once (registry, device-local).
     if (!me.cardShownAt) saveUser({ cardShownAt: Date.now() }).catch(() => {});
@@ -328,7 +337,7 @@ export function mountRecovery({
   }
 
   $("dev-sheet").onclick = () => showCard().catch((e) => {
-    openRec("QR card");
+    openRec("Recovery card");
     recBody.innerHTML = `<p class="hint">Could not build the card: ${e.message}</p>`;
   });
   $("dev-restore").onclick = () => restoreFlow();
