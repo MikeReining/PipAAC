@@ -82,6 +82,7 @@ const PUBLIC_HTML_GROK = join(repoRoot, "public/audio-review.html");
 const PUBLIC_HTML_ELEVENLABS_TILES = join(repoRoot, "public/audio-review-elevenlabs-tiles.html");
 const PUBLIC_HTML_ELEVENLABS_V4_LAB = join(repoRoot, "public/audio-review-elevenlabs-v4-lab.html");
 const PUBLIC_HTML_VOICE_SELECTOR = join(repoRoot, "public/audio-review-elevenlabs-voice-selector.html");
+const PUBLIC_HTML_TILE_VOICE = join(repoRoot, "public/audio-review-tile-voice.html");
 
 const GROK_PIPELINE = "grok";
 const ELEVENLABS_TILES_PIPELINE = "elevenlabs-tiles";
@@ -198,6 +199,51 @@ function readBody(req) {
   });
 }
 
+/** 028 § 7 — the tile-voice review page calls the Worker's founder-only
+ *  admin routes through this proxy; PIP_ADMIN_TOKEN never reaches the
+ *  browser. Base URL is PIP_TILE_ADMIN_URL in .env (e.g. the local
+ *  dev Worker http://127.0.0.1:21088, or the deployed Worker). */
+function tilevoiceBase() {
+  return (process.env.PIP_TILE_ADMIN_URL ?? "").replace(/\/+$/, "");
+}
+
+/** Authenticated fetch to the tile admin API; returns the raw Response. */
+async function tilevoiceFetch(upstreamPath, init = {}) {
+  const base = tilevoiceBase();
+  if (!base) return null;
+  const headers = {
+    ...(init.headers ?? {}),
+    authorization: `Bearer ${process.env.PIP_ADMIN_TOKEN ?? ""}`,
+  };
+  return fetch(`${base}${upstreamPath}`, { ...init, headers }).catch(() => null);
+}
+
+async function tilevoiceUpstream(res, method, upstreamPath, body) {
+  const base = tilevoiceBase();
+  if (!base) {
+    json(res, 503, {
+      error: "PIP_TILE_ADMIN_URL unset — point it at a Worker "
+        + "(e.g. http://127.0.0.1:21088 for the agent dev copy) in .env",
+    });
+    return;
+  }
+  const init = { method };
+  if (body !== undefined) {
+    init.body = JSON.stringify(body);
+    init.headers = { "content-type": "application/json" };
+  }
+  const up = await tilevoiceFetch(upstreamPath, init);
+  if (!up) {
+    json(res, 502, { error: `tile admin unreachable at ${base}` });
+    return;
+  }
+  res.writeHead(up.status, {
+    "content-type": up.headers.get("content-type") ?? "application/json",
+    "cache-control": "no-store",
+  });
+  res.end(Buffer.from(await up.arrayBuffer()));
+}
+
 /** @param {string | null | undefined} pipeline */
 export function listBatches(pipeline) {
   const dirs = readdirSync(SAMPLES, { withFileTypes: true })
@@ -273,6 +319,20 @@ async function handle(req, res) {
       "cache-control": "no-store",
     });
     res.end(readFileSync(PUBLIC_HTML_ELEVENLABS_V4_LAB, "utf8"));
+    return;
+  }
+
+  if (req.method === "GET" && path === "/audio-review/tile-voice") {
+    if (!existsSync(PUBLIC_HTML_TILE_VOICE)) {
+      res.writeHead(404);
+      res.end("missing public/audio-review-tile-voice.html");
+      return;
+    }
+    res.writeHead(200, {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+    });
+    res.end(readFileSync(PUBLIC_HTML_TILE_VOICE, "utf8"));
     return;
   }
 
@@ -841,6 +901,48 @@ async function handle(req, res) {
     return;
   }
 
+  /* --- 028 slice 3: tile-voice review page API → Worker admin routes --- */
+
+  if (path === "/api/tilevoice/recent" && req.method === "GET") {
+    return tilevoiceUpstream(res, "GET", `/admin/v1/tile-voice/recent${url.search}`);
+  }
+  if (path === "/api/tilevoice/held" && req.method === "GET") {
+    return tilevoiceUpstream(res, "GET", "/admin/v1/tile-voice/held");
+  }
+  const tvAudio = path.match(/^\/api\/tilevoice\/audio\/([0-9a-f]{64})$/);
+  if (tvAudio && req.method === "GET") {
+    return tilevoiceUpstream(res, "GET", `/admin/v1/tile-voice/audio/${tvAudio[1]}`);
+  }
+  if (path === "/api/tilevoice/review" && req.method === "POST") {
+    return tilevoiceUpstream(res, "POST", "/admin/v1/tile-voice/review", await readBody(req));
+  }
+  if (path === "/api/tilevoice/remint" && req.method === "POST") {
+    const inBody = await readBody(req);
+    // Remint (IPA): look the word's IPA up with the lab's Groq helper
+    // when the founder didn't supply one — the Worker only mints, it
+    // never guesses pronunciation.
+    if (inBody.mode === "ipa" && !inBody.ipa) {
+      try {
+        let text = String(inBody.text ?? "");
+        if (!text) {
+          const rowRes = await tilevoiceFetch(`/admin/v1/tile-voice/row/${inBody.id}`);
+          const row = rowRes?.ok ? (await rowRes.json())?.row : null;
+          if (!row?.text) {
+            json(res, 502, { error: "IPA lookup needs the clip row; admin row fetch failed" });
+            return;
+          }
+          text = row.text;
+        }
+        const { ipa } = await lookupIpaGroq({ text });
+        if (ipa) inBody.ipa = ipa;
+      } catch (e) {
+        json(res, 502, { error: `IPA lookup failed: ${e instanceof Error ? e.message : e}` });
+        return;
+      }
+    }
+    return tilevoiceUpstream(res, "POST", "/admin/v1/tile-voice/remint", inBody);
+  }
+
   json(res, 404, { error: "not found" });
 }
 
@@ -857,5 +959,6 @@ if (invoked) {
     console.log(
       `Pip AAC tile mint-run spot-check: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&folder=takes&ship=mint-run&runId=gap-launch-food-2026-09-29`,
     );
+    console.log(`Pip AAC tile voice review:       http://127.0.0.1:${PORT}/audio-review/tile-voice`);
   });
 }

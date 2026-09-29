@@ -348,9 +348,13 @@ test("admin routes: 401 without the token; recent/review/held/audio work", async
     "https://x/admin/v1/tile-voice/recent"), env);
   assert.equal(noAuth.status, 401);
 
+  let now = 1_700_000_000_000;
+  env.TILE_NOW = () => now;
   env.TILE_SYNTH = async (t) => te(`AUDIO:${t}`);
   await good(env, { text: "apple", source: "user_typed" });
+  now += 1;
   await good(env, { text: "banana", source: "user_keyboard" });
+  now += 1;
   await good(env, { locale: "es", text: "gato" }); // held
 
   const recent = await (await admin(env, "/admin/v1/tile-voice/recent")).json();

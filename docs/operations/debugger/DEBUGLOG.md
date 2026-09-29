@@ -55,5 +55,5 @@ Pattern candidate: (optional)
 Tier: T2
 Truth owner: `src/worker/tile_ledger.mjs` — every `sql.exec` call against the Durable Object's SQLite
 Lie-prone layer: call sites passed params as one array (`sql.exec(q, [a, b])`); the real DO's `sql.exec` is variadic, so `node:sqlite` read the array as named parameters and threw `Unknown named parameter '0'` — only at the first real `wrangler dev` run, not in review
-Proof: `node --test src/worker/tile.heavy.test.mjs` — failed on the DO path before the fix, green after converting all call sites to `sql.exec(q, a, b)`
+Proof: node --test src/worker/tile.heavy.test.mjs — failed on the DO path before the fix, green after converting all call sites to `sql.exec(q, a, b)`
 Pattern candidate: code written for a DO storage API must be exercised against the real `wrangler dev` binding at least once — a light-test shim that accepts array params hides the contract mismatch

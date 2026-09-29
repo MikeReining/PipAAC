@@ -253,6 +253,10 @@ export async function handleTileAdmin(request, env, url) {
       method: "POST", body: await request.text(),
     }));
   }
+  const rowMatch = path.match(/^\/admin\/v1\/tile-voice\/row\/([0-9a-f]{64})$/);
+  if (rowMatch && request.method === "GET") {
+    return stub.fetch(new Request(`https://tile/row?id=${rowMatch[1]}`));
+  }
   const audioMatch = path.match(/^\/admin\/v1\/tile-voice\/audio\/([0-9a-f]{64})$/);
   if (audioMatch && request.method === "GET") {
     return stub.fetch(new Request(`https://tile/audio?id=${audioMatch[1]}`));

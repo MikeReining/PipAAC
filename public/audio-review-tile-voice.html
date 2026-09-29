@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — tile voice review</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #2a7a4b; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .pipeline { font-size: 13px; color: #6b665c; margin: 0 0 10px; max-width: 56rem; line-height: 1.45; }
+    .pipeline a { color: var(--accent); text-decoration: none; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    select, button { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--edge); background: #fff; }
+    button { cursor: pointer; }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    button.danger { color: #a33; }
+    button:disabled { opacity: 0.45; cursor: default; }
+    #daybar { margin-top: 10px; font-size: 13px; color: #6b665c; }
+    #daybar.warn { color: #b26a00; font-weight: 700; }
+    main { padding: 16px 20px; }
+    table { border-collapse: collapse; width: 100%; background: #fff; border: 1px solid var(--edge); border-radius: 10px; overflow: hidden; }
+    th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #6b665c; padding: 8px 10px; border-bottom: 1px solid var(--edge); }
+    td { padding: 8px 10px; border-bottom: 1px solid #eee9df; font-size: 14px; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr.flagged td { background: #fff8f3; }
+    tr.withheld td { opacity: 0.65; }
+    .word { font-weight: 700; }
+    .badge { font-size: 11px; padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+    .badge.src { background: #eef2ff; color: #3743a0; }
+    .badge.src-seed { background: #f3e8ff; color: #6b21a8; font-weight: 700; }
+    .badge.rev { background: #f0f0f0; color: #555; }
+    .badge.rev.approved { background: #e6f4ec; color: #1b5e34; }
+    .badge.rev.rejected { background: #fdecea; color: #a33; }
+    .badge.chk { background: #fff3e0; color: #e65100; }
+    .badge.flag { background: #fdecea; color: #a33; font-weight: 700; }
+    .badge.status { background: #f0f0f0; color: #666; }
+    .badge.status.withheld { background: #fdecea; color: #a33; }
+    .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .actions button { padding: 4px 8px; font-size: 13px; }
+    #status { font-size: 13px; min-height: 1.2em; margin: 10px 0; color: #6b665c; }
+    #status.err { color: #a33; }
+    .muted { color: #6b665c; font-size: 12px; }
+    audio { display: none; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+    .tabs button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tile voice review</h1>
+    <p class="pipeline">
+      On-demand minted clips (028) — newest first. Flag/reject/remint here;
+      rejected clips go silent for every family at once (withheld). Replaced
+      versions reach devices on their next sweep. Keyboard noise filters out
+      with the source picker.
+      <a href="/audio-review/elevenlabs-tiles">Catalog tiles review</a> ·
+      <a href="/audio-review/elevenlabs-v4-lab">v4 lab</a>.
+    </p>
+    <div class="row">
+      <label>Tab
+        <select id="tab">
+          <option value="clips">clips</option>
+          <option value="held">held words</option>
+        </select>
+      </label>
+      <span id="clip-controls" class="row">
+        <label>Source
+          <select id="f-source">
+            <option value="all">all</option>
+            <option value="user_typed">supporter add/rename</option>
+            <option value="user_keyboard">keyboard typed</option>
+            <option value="seed">seed</option>
+            <option value="catalog_lazy">catalog lazy</option>
+          </select>
+        </label>
+        <label>Review
+          <select id="f-review">
+            <option value="all">all</option>
+            <option value="unreviewed" selected>unreviewed</option>
+            <option value="approved">approved</option>
+            <option value="rejected">rejected</option>
+          </select>
+        </label>
+        <label><input type="checkbox" id="f-flagged"> flagged only</label>
+        <button type="button" id="approve-all">Approve all shown</button>
+        <button type="button" id="reload">Reload</button>
+      </span>
+    </div>
+    <div id="daybar"></div>
+  </header>
+  <main>
+    <div id="status"></div>
+    <table id="clips">
+      <thead>
+        <tr><th>Word</th><th>Source</th><th>Status</th><th>Checks</th><th>Plays</th><th>When</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <table id="held" hidden>
+      <thead>
+        <tr><th>Word</th><th>Locale</th><th>Reason</th><th>Count</th><th>Last seen</th></tr>
+      </thead>
+      <tbody id="held-rows"></tbody>
+    </table>
+    <audio id="player" controls></audio>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const player = $("player");
+
+    function setStatus(msg, err = false) {
+      const el = $("status");
+      el.textContent = msg;
+      el.className = err ? "err" : "";
+    }
+
+    async function api(path, init) {
+      const res = await fetch(path, init);
+      const text = await res.text();
+      let body = null;
+      try { body = JSON.parse(text); } catch { /* audio passthrough */ }
+      if (!res.ok) throw new Error(body?.error ?? `${res.status} ${text.slice(0, 120)}`);
+      return body;
+    }
+
+    const fmtWhen = (ms) => ms ? new Date(ms).toLocaleString() : "—";
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
+      (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
+
+    function checkBadges(row) {
+      const c = row.checks ? JSON.parse(row.checks) : {};
+      const out = [];
+      if (c.duration_ok === false) out.push('<span class="badge chk">long/short</span>');
+      if (c.silence_ok === false) out.push('<span class="badge chk">silent?</span>');
+      if (row.flagged) out.push('<span class="badge flag">sounds wrong</span>');
+      return out.join(" ") || '<span class="muted">ok</span>';
+    }
+
+    function rowHtml(r) {
+      const src = r.source === "seed" ? "src-seed" : "src";
+      const acts = [];
+      if (r.r2_key) acts.push(`<button data-act="play" data-id="${r.id}">▶</button>`);
+      if (r.review !== "approved") acts.push(`<button data-act="approve" data-id="${r.id}">✓</button>`);
+      if (r.status !== "withheld") acts.push(`<button class="danger" data-act="reject" data-id="${r.id}">✗</button>`);
+      acts.push(`<button data-act="remint-plain" data-id="${r.id}">Remint</button>`);
+      acts.push(`<button data-act="remint-ipa" data-id="${r.id}" data-text="${esc(r.text)}">Remint IPA</button>`);
+      return `<tr class="${r.flagged ? "flagged" : ""} ${r.status === "withheld" ? "withheld" : ""}">
+        <td class="word">${esc(r.text)}</td>
+        <td><span class="badge ${src}">${esc(r.source)}</span> <span class="muted">v${r.version}</span></td>
+        <td><span class="badge status ${esc(r.status)}">${esc(r.status)}</span>
+            <span class="badge rev ${esc(r.review)}">${esc(r.review)}</span></td>
+        <td>${checkBadges(r)}</td>
+        <td class="muted">${r.hits}</td>
+        <td class="muted">${fmtWhen(r.created_at)}</td>
+        <td><span class="actions">${acts.join("")}</span></td>
+      </tr>`;
+    }
+
+    async function loadClips() {
+      const params = new URLSearchParams({
+        source: $("f-source").value,
+        review: $("f-review").value,
+        flagged: $("f-flagged").checked ? "1" : "0",
+        limit: "100",
+      });
+      const { rows, day } = await api(`/api/tilevoice/recent?${params}`);
+      $("rows").innerHTML = rows.map(rowHtml).join("") ||
+        '<tr><td colspan="7" class="muted">no clips</td></tr>';
+      const bar = $("daybar");
+      bar.textContent = `Today (UTC ${day.day}): ${day.mints}/${day.cap} new words minted`;
+      bar.className = day.mints >= Math.ceil(day.cap * 0.8) ? "warn" : "";
+      if (day.alerted) bar.textContent += " — 80% marker hit";
+      return rows;
+    }
+
+    async function loadHeld() {
+      const { rows } = await api("/api/tilevoice/held");
+      $("held-rows").innerHTML = rows.map((r) =>
+        `<tr><td class="word">${esc(r.text)}</td><td>${esc(r.locale)}</td><td>${esc(r.reason)}</td><td>${r.count}</td><td class="muted">${fmtWhen(r.last_seen)}</td></tr>`,
+      ).join("") || '<tr><td colspan="5" class="muted">no held words</td></tr>';
+    }
+
+    let shown = [];
+    async function reload() {
+      setStatus("loading…");
+      try {
+        if ($("tab").value === "held") await loadHeld();
+        else shown = (await loadClips()).map((r) => r.id);
+        setStatus("");
+      } catch (e) { setStatus(e.message, true); }
+    }
+
+    $("rows").addEventListener("click", async (e) => {
+      const b = e.target.closest("button[data-act]");
+      if (!b) return;
+      const id = b.dataset.id;
+      b.disabled = true;
+      try {
+        if (b.dataset.act === "play") {
+          player.src = `/api/tilevoice/audio/${id}?t=${Date.now()}`;
+          player.play();
+          return;
+        }
+        if (b.dataset.act === "approve" || b.dataset.act === "reject") {
+          await api("/api/tilevoice/review", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ ids: [id],
+              review: b.dataset.act === "approve" ? "approved" : "rejected" }),
+          });
+        } else if (b.dataset.act === "remint-plain" || b.dataset.act === "remint-ipa") {
+          const body = { id, mode: b.dataset.act === "remint-ipa" ? "ipa" : "plain",
+            text: b.dataset.text };
+          if (body.mode === "ipa") {
+            const ipa = prompt(`IPA for '${b.dataset.text}' (blank = Groq lookup)`, "");
+            if (ipa === null) return;
+            if (ipa.trim()) body.ipa = ipa.trim();
+          }
+          setStatus(body.mode === "ipa"
+            ? `Minting '${b.dataset.text}' with IPA…` : "Reminting…");
+          await api("/api/tilevoice/remint", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(body),
+          });
+        }
+        await reload();
+      } catch (err) {
+        setStatus(err.message, true);
+      } finally {
+        b.disabled = false;
+      }
+    });
+
+    $("approve-all").addEventListener("click", async () => {
+      if (!shown.length) return;
+      try {
+        await api("/api/tilevoice/review", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ ids: shown, review: "approved" }),
+        });
+        await reload();
+      } catch (e) { setStatus(e.message, true); }
+    });
+
+    $("tab").addEventListener("change", () => {
+      const clips = $("tab").value === "clips";
+      $("clip-controls").style.display = clips ? "" : "none";
+      $("clips").hidden = !clips;
+      $("held").hidden = clips;
+      reload();
+    });
+    for (const id of ["f-source", "f-review", "f-flagged"]) {
+      $(id).addEventListener("change", reload);
+    }
+    $("reload").addEventListener("click", reload);
+
+    reload();
+  </script>
+</body>
+</html>
