@@ -1,5 +1,9 @@
 # wrangler dev secrets. Copy to .dev.vars and fill in. Never commit .dev.vars.
 #
+# Required for local dev: wrangler.jsonc ships ENVIRONMENT=production so
+# deploys never expose dev routes; .dev.vars overrides it back locally.
+ENVIRONMENT=development
+#
 #   cp .dev.vars.example .dev.vars
 #
 # Production (once, per environment):

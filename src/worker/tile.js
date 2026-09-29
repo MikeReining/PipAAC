@@ -565,7 +565,9 @@ export class TileLedger {
   }
 
   /** § slice 1 — synth seam: TILE_SYNTH in tests; real ElevenLabs only
-   *  when TILE_LIVE=1 AND a key is set; otherwise the silent stub. */
+   *  when TILE_LIVE=1 AND a key is set; the silent stub is development
+   *  only — in production an unconfigured synth must fail, never cache
+   *  a clip of silence as ready. */
   async synth(mintText, voice) {
     if (typeof this.env.TILE_SYNTH === "function") {
       return { audio: await this.env.TILE_SYNTH(mintText, { voice }), stub: false };
@@ -573,7 +575,10 @@ export class TileLedger {
     if (this.env.TILE_LIVE === "1" && this.env.ELEVENLABS_API_KEY) {
       return { audio: await synthesizeElevenLabs(this.env, mintText, voice), stub: false };
     }
-    return { audio: SILENT_MP3, stub: true };
+    if (this.env.ENVIRONMENT === "development") {
+      return { audio: SILENT_MP3, stub: true };
+    }
+    throw new Error("synth_unconfigured");
   }
 
   /** Admin remint (§ 4.6): plain re-runs the recipe; ipa needs an
