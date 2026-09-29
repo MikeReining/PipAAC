@@ -38,12 +38,29 @@ export function mountWordCard({
     el.textContent = state && state !== "ready"
       ? (tile?.message(state, cardItem.label) ?? "") : "";
     $("wc-voicetry").hidden = !["failed", "offline", "unavailable"].includes(state);
+    // 028 § 5.5 — "Sounds wrong" flags the shared clip for founder
+    // review; only entity names resolve to it (catalog words keep the
+    // catalog clip pipeline), and only for a shared board voice.
+    $("wc-flag").hidden =
+      !(cardItem?.item_kind === "entity" && tile?.shared?.());
   }
   tile?.onStatus?.(() => updateVoiceUI());
   $("wc-voicetry")?.addEventListener("click", () => {
     if (cardItem?.item_kind === "entity") {
       tile?.ensure(cardItem.label, { source: "user_typed" }).catch(() => {});
       updateVoiceUI();
+    }
+  });
+  $("wc-flag")?.addEventListener("click", async () => {
+    if (cardItem?.item_kind !== "entity") return;
+    const ok = await tile?.flag(cardItem.label);
+    if (ok) {
+      const b = $("wc-flag");
+      b.disabled = true;
+      b.textContent = "Flagged for review";
+      toast("Flagged — it keeps playing meanwhile");
+    } else {
+      toast("Couldn't flag — try again when you're online");
     }
   });
 
@@ -131,6 +148,9 @@ export function mountWordCard({
     updateRecUI();
     updatePicUI();
     updateVoiceUI();
+    const flagBtn = $("wc-flag");
+    flagBtn.disabled = false; // a fresh card can flag again
+    flagBtn.textContent = "Sounds wrong";
     open("wordcard");
   }
 

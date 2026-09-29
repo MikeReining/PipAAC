@@ -314,6 +314,17 @@ const tileApi = {
     voiceLicense().then((license) => tileVoice.prefetch({
       userId: me.id, license, voice, locale, texts, onProgress,
     })),
+  /** § 5.5 — "Sounds wrong": flags the shared clip for founder review;
+   *  the tile keeps playing meanwhile (a signal, never a takedown). */
+  flag: async (text) => tileVoice.flag({
+    userId: me.id, license: await voiceLicense(),
+    voice: voiceId, locale, text,
+  }).catch(() => false),
+  /** Shared library voice on the board (not device TTS) → tiles resolve
+   *  to minted clips, so flagging and the sweep apply. */
+  shared: () =>
+    ALL(db, "SELECT source AS s FROM voice WHERE id = ?", [voiceId])[0]?.s
+      !== "device_tts",
 };
 let tileBadgeTimer = null;
 tileVoice.onStatus(() => {
@@ -322,6 +333,19 @@ tileVoice.onStatus(() => {
   clearTimeout(tileBadgeTimer);
   tileBadgeTimer = setTimeout(() => { renderGrid(); renderStrip(); rerenderView(); }, 200);
 });
+/* § 5.3 — once a day per voice: evict hashes the Worker lists as
+   replaced or withheld, so a rejected clip is not replayed from Cache
+   Storage forever. `since` rides in localStorage; the first sweep asks
+   for everything and afterwards it is a delta. */
+const tileSweep = async (voice = voiceId) => {
+  const key = `pip-tile-sweep:${voice}`;
+  const since = Number(localStorage.getItem(key) ?? 0);
+  if (since && Date.now() - since < 86_400_000) return;
+  const res = await tileVoice.sweepReplaced({
+    userId: me.id, license: await voiceLicense(), voice, since,
+  }).catch(() => null);
+  if (res?.next) localStorage.setItem(key, String(res.next));
+};
 /* § 5.3 — prefetch on boot (idle) and the offline queue drain on
    reconnect. Active entity names are the family's own words: hits are
    free, misses mint inside the caps. */
@@ -331,6 +355,7 @@ const tilePrefetch = async () => {
     .map((r) => r.t);
   await tileVoice.drainQueue({
     userId: me.id, license: await voiceLicense() }).catch(() => {});
+  await tileSweep();
   tileApi.prefetch(texts).catch(() => {});
 };
 if (typeof requestIdleCallback === "function") {
@@ -2488,6 +2513,7 @@ const voiceUi = mountVoice({
       toast(`Couldn't finish ${voiceName(db, id)}'s voice — try again when you're online.`);
       return;
     }
+    tileSweep(id).catch(() => {}); // evict the new voice's rejects too
     setSetting(db, "preferred_voice_id", id);
     voiceId = resolveProfile(db).voiceId;
     settingsUi.renderNav();

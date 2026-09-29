@@ -246,6 +246,38 @@ test("evict drops a cached clip; flag posts and replaced lists hashes", async ()
   });
 });
 
+test("sweepReplaced evicts exactly the listed hashes and returns next", async () => {
+  await withEnv(async () => {
+    const vt = voiceTile();
+    const h1 = await tileTextHash("zebra");
+    const h2 = await tileTextHash("banana");
+    await vt.remember("voi_default_en", "zebra", new Blob(["OLD"]));
+    await vt.remember("voi_default_en", "banana", new Blob(["OLD"]));
+    await vt.remember("voi_default_en", "apple", new Blob(["KEEP"]));
+
+    const calls = [];
+    globalThis.fetch = async (u, init) => {
+      calls.push({ url: u, init });
+      return new Response(JSON.stringify({ ids: [h1, h2], next: 777 }));
+    };
+    const res = await vt.sweepReplaced(
+      { userId: "u-1", license: "x", voice: "voi_default_en", since: 42 });
+    assert.deepEqual(res, { evicted: 2, next: 777 });
+    assert.match(calls[0].url, /since=42&voice=voi_default_en/);
+    // Only the listed hashes are gone — an unlisted clip survives.
+    assert.equal(await vt.cached("voi_default_en", "zebra"), null);
+    assert.equal(await vt.cached("voi_default_en", "banana"), null);
+    assert.notEqual(await vt.cached("voi_default_en", "apple"), null);
+
+    // Offline / upstream failure → null, nothing evicted, nothing stored.
+    await vt.remember("voi_default_en", "zebra", new Blob(["OLD"]));
+    globalThis.fetch = async () => { throw new Error("down"); };
+    assert.equal(await vt.sweepReplaced(
+      { userId: "u-1", license: "x", voice: "voi_default_en", since: 777 }), null);
+    assert.notEqual(await vt.cached("voi_default_en", "zebra"), null);
+  });
+});
+
 test("the UTC day roll retries a budget-queued mint (fake clock)", async () => {
   assert.equal(msUntilUtcDayRoll(Date.UTC(2026, 8, 29, 23, 59, 0)), 60_000);
   assert.equal(msUntilUtcDayRoll(Date.UTC(2026, 8, 30, 0, 0, 0)), 86_400_000);

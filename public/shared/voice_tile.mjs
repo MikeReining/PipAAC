@@ -268,9 +268,20 @@ export function voiceTile({
     return res?.ok ? res.json().catch(() => null) : null;
   }
 
+  /** § 5.3 — run the sweep: evict every hash the Worker lists, return
+   *  {evicted, next} so the caller can persist `next` as tomorrow's
+   *  `since`. null when the call couldn't be made (offline, no license). */
+  async function sweepReplaced({ userId, license, voice, since }) {
+    const res = await replacedSince({ userId, license, voice, since });
+    if (!res) return null;
+    const ids = Array.isArray(res.ids) ? res.ids : [];
+    for (const id of ids) await evict(voice, id);
+    return { evicted: ids.length, next: res.next ?? null };
+  }
+
   return {
     request, ensure, cached, remember, evict,
-    prefetch, drainQueue, flag, replacedSince,
+    prefetch, drainQueue, flag, replacedSince, sweepReplaced,
     status, onStatus,
   };
 }
