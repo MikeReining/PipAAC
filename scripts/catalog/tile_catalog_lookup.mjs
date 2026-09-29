@@ -123,6 +123,32 @@ function clipFromGenerated(slot) {
 }
 
 /**
+ * Spoken label + slot for tile review (recipes queue or launch lexicon).
+ * @param {string} slug
+ * @param {string} [batch]
+ */
+export function resolveTileReviewWord(slug, batch = TILE_REVIEW_BATCH) {
+  const recipesPath = join(repoRoot, "data/samples", batch, "recipes.json");
+  if (existsSync(recipesPath)) {
+    const recipes = loadJson(recipesPath);
+    const row = (recipes?.words ?? []).find((w) => w.slug === slug);
+    if (row) {
+      return {
+        word: row.word,
+        slot: row.slot,
+        utterance_id: row.utterance_id ?? null,
+      };
+    }
+  }
+  const hit = lookupCatalogWord(slug);
+  return {
+    word: hit.spokenText,
+    slot: hit.slot,
+    utterance_id: hit.shipping?.utterance_id ?? null,
+  };
+}
+
+/**
  * Resolve a launch-lexicon label to slot + best-known catalog clip.
  * Index: launch_lexicon.json (always), then audio_import / generated_audio / shipping.
  * @param {string} query free text or slug

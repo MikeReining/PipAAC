@@ -43,6 +43,7 @@ import {
   isSlugShippedViaReview,
   lookupCatalogWord,
   probeR2ObjectExists,
+  resolveTileReviewWord,
 } from "./tile_catalog_lookup.mjs";
 import { listMintRuns, mintRunFileList } from "./elevenlabs_mint_run.mjs";
 import { buildGrokTtsBody, synthesizeGrokVoice } from "./grok_tts.mjs";
@@ -565,15 +566,22 @@ async function handle(req, res) {
       const emphasisAbs = join(SAMPLES, batch, "takes", `${slug}_emphasis.mp3`);
       const emphasisExists = existsSync(emphasisAbs);
       const emphasisPath = emphasisExists ? `${batch}/takes/${slug}_emphasis.mp3` : null;
+      const el = isElevenlabsReviewBatch(batch);
+      const v4Lab = isV4LabBatch(batch);
       let word = slug.replace(/_/g, " ");
       let slot = null;
       let utterance_id = null;
-      if (!voiceSel && !isV4LabBatch(batch)) {
+      if (!voiceSel && el) {
+        const resolved = resolveTileReviewWord(slug, batch);
+        word = resolved.word;
+        slot = resolved.slot;
+        utterance_id = resolved.utterance_id;
+      } else if (!voiceSel && !v4Lab) {
         const row = recipeWordForSlug(batch, slug);
         word = row.word;
         slot = row.slot;
         utterance_id = row.utterance_id;
-      } else if (!voiceSel && isV4LabBatch(batch)) {
+      } else if (!voiceSel && v4Lab) {
         try {
           const row = recipeWordForSlug(batch, slug);
           word = row.word;
@@ -583,8 +591,6 @@ async function handle(req, res) {
           // optional
         }
       }
-      const el = isElevenlabsReviewBatch(batch);
-      const v4Lab = isV4LabBatch(batch);
       const batchKind = voiceSel
         ? "voice-selector"
         : v4Lab
@@ -697,15 +703,7 @@ async function handle(req, res) {
       if (!isElevenlabsReviewBatch(batch)) {
         throw new Error("ensure-tile-takes is only for the ElevenLabs tile review batch");
       }
-      const { word } = recipeWordForSlug(batch, slug);
-      let spoken = word;
-      if (!spoken || spoken === slug.replace(/-/g, " ")) {
-        try {
-          spoken = lookupCatalogWord(slug).spokenText;
-        } catch {
-          // keep recipe fallback
-        }
-      }
+      const { word: spoken } = resolveTileReviewWord(slug, batch);
       const minted = await ensureDefaultTileTakes(slug, batch, SAMPLES, spoken);
       const paths = minted.map((id) => `${batch}/takes/${tileTakeFilename(slug, id)}`);
       json(res, 200, { slug, minted, paths });
@@ -794,12 +792,9 @@ async function handle(req, res) {
         word = row.word;
         slot = row.slot;
       } catch {
-        // word may exist in catalog import but not tile recipes
-      }
-      if (slot == null) {
-        const hit = lookupCatalogWord(slug);
-        word = hit.spokenText;
-        slot = hit.slot;
+        const resolved = resolveTileReviewWord(slug, batch);
+        word = resolved.word;
+        slot = resolved.slot;
       }
       if (slot == null) throw new Error(`no lexicon slot for slug ${slug}`);
       const result = publishCatalogTile({

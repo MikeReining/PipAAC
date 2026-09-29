@@ -11,6 +11,7 @@ import {
   filterFilesByShip,
   lookupCatalogWord,
   normalizeSpokenQuery,
+  resolveTileReviewWord,
 } from "./tile_catalog_lookup.mjs";
 
 test("normalizeSpokenQuery collapses spaces", () => {
@@ -68,6 +69,12 @@ test("shipping log drives file filters", () => {
 
 test("catalogSlug", () => {
   assert.equal(catalogSlug("all done"), "all_done");
+});
+
+test("resolveTileReviewWord finds gap-fill slug not in recipes queue", () => {
+  const r = resolveTileReviewWord("peach");
+  assert.equal(r.word, "peach");
+  assert.equal(r.slot, 707);
 });
 
 test("lookupCatalogWord does not substring-match car for cars", () => {
