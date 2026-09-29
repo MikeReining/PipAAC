@@ -24,6 +24,7 @@ const QUERIES_PATH = join(repoRoot, "data/pictures/calibration_queries.json");
 const FINDER_PATH = join(repoRoot, "data/catalog/picture_finder.json");
 const CATALOG_PATH = join(repoRoot, "data/catalog/catalog.json");
 const PAGE_PATH = join(repoRoot, "public/picture-calibration.html");
+const DISAGREE_PAGE_PATH = join(repoRoot, "public/picture-disagreements.html");
 const EXT_DIR = join(repoRoot, "out/extended_art");
 const PUBLIC_DIR = join(repoRoot, "public");
 
@@ -132,6 +133,45 @@ function buildHandler() {
     if (path === "/picture-calibration") {
       res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
       return res.end(readFileSync(PAGE_PATH));
+    }
+    // § 5.5 — the second tab: "where families disagreed with us".
+    if (path === "/picture-disagreements") {
+      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      return res.end(readFileSync(DISAGREE_PAGE_PATH));
+    }
+
+    const adminProxy = async (method, workerPath, body = null) => {
+      const base = (process.env.PIP_PICTURE_ADMIN_URL ?? "").replace(/\/+$/, "");
+      const token = process.env.PIP_ADMIN_TOKEN ?? "";
+      if (!base || !token) {
+        return json(res, 503, {
+          error: "no_worker",
+          hint: "set PIP_PICTURE_ADMIN_URL + PIP_ADMIN_TOKEN (.env)",
+        });
+      }
+      const r = await fetch(`${base}${workerPath}`, {
+        method,
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      }).catch(() => null);
+      if (!r) return json(res, 502, { error: "worker_unreachable" });
+      return json(res, r.status, r.status === 204 ? { ok: true } : await r.json());
+    };
+
+    if (path === "/api/disagreements" && req.method === "GET") {
+      return adminProxy("GET", "/admin/v1/pictures/disagreements");
+    }
+    if (path === "/api/disagreement-action" && req.method === "POST") {
+      const body = await readBody(req);
+      const action = String(body?.action ?? "");
+      if (!["pin", "unpin", "block", "unblock", "dismiss", "promote", "redraw"]
+        .includes(action)) {
+        return json(res, 400, { error: "bad_action" });
+      }
+      return adminProxy("POST", `/admin/v1/pictures/disagreements/${action}`, body);
     }
 
     if (path === "/api/state" && req.method === "GET") {

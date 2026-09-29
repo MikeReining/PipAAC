@@ -411,6 +411,57 @@ export class TileLedger {
       pictureLedger.recordPick(this.sql, { textNorm: text_norm, imageId: image_id });
       return new Response(null, { status: 204 });
     }
+    /** § 6.3 rejection — demote ours + one anonymous disagreement row. */
+    if (p === "/pic/reject" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      if (!b.text_norm || !b.ours || !b.action) {
+        return json({ error: "bad_request" }, { status: 400 });
+      }
+      pictureLedger.recordReject(this.sql, {
+        textNorm: b.text_norm, ours: b.ours, action: b.action,
+        theirs: b.theirs, description: b.description, scope: b.scope,
+        now: this.now(),
+      });
+      return new Response(null, { status: 204 });
+    }
+    /** § 5.5 review + rulings. */
+    if (p === "/pic/disagreements" && request.method === "GET") {
+      return json({ rows: pictureLedger.listDisagreements(this.sql, {
+        limit: url.searchParams.get("limit"),
+      }) });
+    }
+    if (p === "/pic/dismiss" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      pictureLedger.dismissDisagreement(this.sql, { ...b, now: this.now() });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/pin" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      if (!b.text_norm || !b.image_id) return json({ error: "bad_request" }, { status: 400 });
+      pictureLedger.pin(this.sql, { textNorm: b.text_norm, imageId: b.image_id, now: this.now() });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/unpin" && request.method === "POST") {
+      const { text_norm } = (await body()) ?? {};
+      pictureLedger.unpin(this.sql, text_norm);
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/block" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      if (!b.text_norm || !b.image_id) return json({ error: "bad_request" }, { status: 400 });
+      pictureLedger.block(this.sql, { textNorm: b.text_norm, imageId: b.image_id, now: this.now() });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/unblock" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      pictureLedger.unblock(this.sql, { textNorm: b.text_norm, imageId: b.image_id });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/admin-log" && request.method === "POST") {
+      const b = (await body()) ?? {};
+      pictureLedger.adminLog(this.sql, { ...b, now: this.now() });
+      return new Response(null, { status: 204 });
+    }
     /** Draw ledger (030 § 5.1): claim is the single-flight gate — the DO
      *  row decides who mints; the worker does synth/R2/index after. */
     if (p === "/pic/draw/claim" && request.method === "POST") {

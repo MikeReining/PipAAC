@@ -328,6 +328,72 @@ export async function handlePick(request, env, ctx) {
   return new Response(null, { status: 204 });
 }
 
+/* ------------------------------ reject (§ 6.3) ---------------------------- */
+
+const REJECT_NS = "usage-reject";
+const REJECT_ACTIONS = new Set(["pick", "photo", "draw"]);
+
+/** POST /api/v1/pictures/reject {user_id, license, text, description?,
+ *  ours, action: pick|photo|draw, theirs?} → 204. The adult replaced the
+ *  picture we chose: demote ours for everyone and keep one anonymous
+ *  disagreement row for the § 5.5 review. A photo is counted, never seen;
+ *  a personal rejection keys on the description, never the name. */
+export async function handleReject(request, env, ctx) {
+  const body = await request.json().catch(() => null);
+  const uid = typeof body?.user_id === "string" ? body.user_id : null;
+  if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
+  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license))) {
+    return json({ error: "bad_license" }, { status: 403 });
+  }
+  const text = cleanText(body?.text, TEXT_MAX);
+  const description = cleanText(body?.description, DESC_MAX);
+  const ours = typeof body?.ours === "string" ? body.ours.slice(0, 128) : null;
+  const action = body?.action;
+  const theirs = typeof body?.theirs === "string" ? body.theirs.slice(0, 128) : null;
+  if (!text || (body?.description != null && description === null)
+      || !ours || !REJECT_ACTIONS.has(action)) {
+    return json({ error: "bad_request" }, { status: 400 });
+  }
+  if (action === "photo" && theirs) {
+    return json({ error: "bad_request" }, { status: 400 }); // photos are never seen
+  }
+  if (action === "draw" && !/^drw_[0-9a-f]{64}$/.test(theirs ?? "")) {
+    return json({ error: "bad_request" }, { status: 400 }); // theirs is the new drw_*
+  }
+  if (!env.VOICE || !env.TILE_LEDGER) {
+    return json({ error: "pictures_unavailable" }, { status: 503 });
+  }
+  const guard = await usageCheck(env, {
+    ns: REJECT_NS, uid, chars: 1, maxChars: 1, dayBudget: PICK_DAY, minBudget: PICK_MIN,
+  });
+  if (!guard.allowed) {
+    await usageRecord(env, { ns: REJECT_NS, uid, chars: 0, over: guard.over });
+    return json({ error: "fair_use", over: guard.over }, { status: 429 });
+  }
+
+  let jev;
+  try {
+    jev = await classify(env, { text, description });
+  } catch {
+    jev = { scope: body?.scope === "personal" && description ? "personal" : "common" };
+  }
+  const scope = jev.scope === "personal" ? "personal" : "common";
+  if (scope === "personal" && !description) {
+    return json({ error: "bad_description" }, { status: 400 });
+  }
+  const textNorm = signalsKey(scope, text, description);
+  if (!textNorm) return json({ error: "bad_request" }, { status: 400 });
+
+  const res = await picPost(env, "/pic/reject", {
+    text_norm: textNorm, ours, action,
+    theirs: action === "photo" ? null : theirs,
+    description, scope,
+  });
+  if (!res.ok) return json({ error: "reject_failed" }, { status: 502 });
+  await usageRecord(env, { ns: REJECT_NS, uid, chars: 1 });
+  return new Response(null, { status: 204 });
+}
+
 /* ------------------------------ draw (§ 5) ------------------------------ */
 
 const DRAW_NS = "usage-draw";
@@ -722,6 +788,59 @@ export async function handlePicturesAdmin(request, env, url) {
     const res = await pictureStub(env).fetch(new Request(
       `https://tile/pic/draw/recent?before=${url.searchParams.get("before") ?? ""}&limit=${url.searchParams.get("limit") ?? ""}`));
     return json(await res.json());
+  }
+
+  // § 5.5 — "where families disagreed with us": common-scope rows only,
+  // grouped (text, ours), with what families chose instead.
+  if (path === "/admin/v1/pictures/disagreements" && request.method === "GET") {
+    if (!env.TILE_LEDGER) return json({ error: "pictures_unavailable" }, { status: 503 });
+    const res = await pictureStub(env).fetch(new Request(
+      `https://tile/pic/disagreements?limit=${url.searchParams.get("limit") ?? ""}`));
+    return json(await res.json());
+  }
+  // Founder rulings — each is logged with a timestamp (§ 5.5). Pin makes
+  // their picture the auto default for everyone; block keeps ours listed
+  // but never auto; dismiss hides the group until new rejections arrive.
+  // Promote and redraw only queue (admin_log) — redraws run founder-gated
+  // in batches of at most ten, never silently.
+  if (path.startsWith("/admin/v1/pictures/disagreements/")
+      && request.method === "POST") {
+    if (!env.TILE_LEDGER) return json({ error: "pictures_unavailable" }, { status: 503 });
+    const action = path.split("/").pop();
+    const body = await request.json().catch(() => null);
+    const textNorm = typeof body?.text_norm === "string" ? body.text_norm : null;
+    const theirs = typeof body?.theirs === "string" ? body.theirs : null;
+    const ours = typeof body?.ours === "string" ? body.ours : null;
+    const description = cleanText(body?.description, DESC_MAX);
+    if (!textNorm) return json({ error: "bad_request" }, { status: 400 });
+
+    const doPost = (p, b) => picPost(env, p, b).then((r) => r.ok);
+    let ok = false;
+    if (action === "pin") {
+      ok = theirs && await doPost("/pic/pin", { text_norm: textNorm, image_id: theirs });
+    } else if (action === "unpin") {
+      ok = await doPost("/pic/unpin", { text_norm: textNorm });
+    } else if (action === "block") {
+      ok = theirs && await doPost("/pic/block", { text_norm: textNorm, image_id: theirs });
+    } else if (action === "unblock") {
+      ok = theirs && await doPost("/pic/unblock", { text_norm: textNorm, image_id: theirs });
+    } else if (action === "dismiss") {
+      ok = ours && await doPost("/pic/dismiss", { textNorm, ours });
+    } else if (action === "promote" || action === "redraw") {
+      // The log entry IS the queue — one row, no second write.
+      ok = await doPost("/pic/admin-log", {
+        action, textNorm, ours, theirs, detail: description ?? undefined,
+      });
+      return ok ? new Response(null, { status: 204 })
+        : json({ error: "bad_request" }, { status: 400 });
+    } else {
+      return json({ error: "not_found" }, { status: 404 });
+    }
+    if (!ok) return json({ error: "bad_request" }, { status: 400 });
+    await doPost("/pic/admin-log", {
+      action, textNorm, ours, theirs, detail: description ?? undefined,
+    });
+    return new Response(null, { status: 204 });
   }
 
   // Calibration page (§ 7): same pipeline as find, on the chosen index,

@@ -76,8 +76,15 @@ export function ensureSchema(sql) {
     text_norm TEXT,
     ours TEXT,
     theirs TEXT,
+    detail TEXT,
     created_at INTEGER NOT NULL
   )`);
+  // detail arrived after the first deploy: CREATE IF NOT EXISTS does
+  // nothing for an older table, so backfill the column when missing.
+  if (!all(sql, "SELECT name FROM pragma_table_info('pic_admin_log')")
+    .some((c) => c.name === "detail")) {
+    sql.exec("ALTER TABLE pic_admin_log ADD COLUMN detail TEXT");
+  }
 }
 
 /** § 4.2 rank inputs for a find: the founder pin, blocked images, and
@@ -123,6 +130,87 @@ export function recordPick(sql, { textNorm, imageId }) {
     `INSERT INTO pic_pick (text_norm, image_id, count) VALUES (?, ?, 1)
      ON CONFLICT (text_norm, image_id) DO UPDATE SET count = count + 1`,
     textNorm, imageId);
+}
+
+/** § 6.3 — an adult replaced our picture: demote it for everyone and keep
+ *  one disagreement row for the § 5.5 review. `theirs` is null for a photo
+ *  (counted, never seen); `description` is what the adult wrote. */
+export function recordReject(sql, { textNorm, ours, action, theirs, description, scope, now }) {
+  sql.exec(
+    `INSERT INTO pic_reject (text_norm, image_id, count) VALUES (?, ?, 1)
+     ON CONFLICT (text_norm, image_id) DO UPDATE SET count = count + 1`,
+    textNorm, ours);
+  sql.exec(
+    `INSERT INTO pic_disagreement
+       (text_norm, ours, action, theirs, description, scope, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    textNorm, ours, action, theirs ?? null, description ?? null,
+    scope ?? "common", now);
+}
+
+/** § 5.5 — review rows: (text, our picture) groups, common scope only,
+ *  dismissed rows hidden until fresh rejections arrive. Each group
+ *  carries what families chose instead, descriptions included. */
+export function listDisagreements(sql, { limit = 200 } = {}) {
+  const groups = all(sql,
+    `SELECT text_norm, ours, COUNT(*) AS rejects, MAX(created_at) AS latest
+     FROM pic_disagreement
+     WHERE (scope IS NULL OR scope = 'common') AND dismissed_at IS NULL
+     GROUP BY text_norm, ours
+     ORDER BY rejects DESC, latest DESC
+     LIMIT ?`,
+    [Math.min(Math.max(1, Number(limit) || 200), 500)]);
+  for (const g of groups) {
+    g.choices = all(sql,
+      `SELECT action, theirs, description, COUNT(*) AS count
+       FROM pic_disagreement
+       WHERE text_norm = ? AND ours = ? AND dismissed_at IS NULL
+       GROUP BY action, theirs, description
+       ORDER BY count DESC`,
+      [g.text_norm, g.ours]);
+  }
+  return groups;
+}
+
+export function dismissDisagreement(sql, { textNorm, ours, now }) {
+  sql.exec(
+    `UPDATE pic_disagreement SET dismissed_at = ?
+     WHERE text_norm = ? AND ours = ? AND dismissed_at IS NULL`,
+    now, textNorm, ours);
+}
+
+/* ------------------------------ pins/blocks ---------------------------- */
+
+/** Founder rulings (§ 5.5). A pin makes their picture the auto default
+ *  for that text for everyone; a block keeps ours listed but never
+ *  auto-applied. Both are keyed by text_norm only; undo deletes the row. */
+export function pin(sql, { textNorm, imageId, now }) {
+  sql.exec(
+    `INSERT INTO pic_pin (text_norm, image_id, created_at) VALUES (?, ?, ?)
+     ON CONFLICT (text_norm) DO UPDATE SET image_id = excluded.image_id,
+       created_at = excluded.created_at`,
+    textNorm, imageId, now);
+}
+export function unpin(sql, textNorm) {
+  sql.exec("DELETE FROM pic_pin WHERE text_norm = ?", textNorm);
+}
+export function block(sql, { textNorm, imageId, now }) {
+  sql.exec(
+    `INSERT OR IGNORE INTO pic_block (text_norm, image_id, created_at)
+     VALUES (?, ?, ?)`,
+    textNorm, imageId, now);
+}
+export function unblock(sql, { textNorm, imageId }) {
+  sql.exec(
+    "DELETE FROM pic_block WHERE text_norm = ? AND image_id = ?",
+    textNorm, imageId);
+}
+
+export function adminLog(sql, { action, textNorm, ours, theirs, detail, now }) {
+  sql.exec(
+    `INSERT INTO pic_admin_log (action, text_norm, ours, theirs, detail, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    action, textNorm ?? null, ours ?? null, theirs ?? null, detail ?? null, now);
 }
 
 /* ------------------------------ draws ------------------------------ */

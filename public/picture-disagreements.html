@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — Where families disagreed</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --win: #2a7a4b; --warn: #b45309; --bad: #b3261e; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; position: sticky; top: 0; z-index: 5; }
+    h1 { font-size: 18px; margin: 0 0 6px; }
+    .sub { font-size: 13px; color: #6b665c; max-width: 60rem; line-height: 1.45; }
+    nav { margin-top: 8px; font-size: 13px; }
+    nav a { color: var(--accent); margin-right: 14px; }
+    main { padding: 16px 20px 40px; max-width: 1180px; }
+    button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--edge); background: #fff; padding: 6px 10px; font-size: 12px; }
+    button:hover { border-color: var(--accent); }
+    .row { background: #fff; border: 1px solid var(--edge); border-left: 5px solid var(--warn); border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+    .row-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .qtext { font-size: 16px; font-weight: 650; }
+    .count { font-size: 13px; font-weight: 700; color: var(--bad); }
+    .latest { font-size: 11px; color: #6b665c; margin-left: auto; }
+    .cols { display: flex; gap: 16px; margin-top: 10px; }
+    .ours { width: 160px; flex-shrink: 0; text-align: center; }
+    .ours img, .choices img, .ph { width: 100%; height: 110px; object-fit: contain; background: #fff; border: 1px solid var(--edge); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #9a958a; }
+    .ours .cap, .choices .cap { font-size: 11px; color: #55504a; margin-top: 3px; word-break: break-word; }
+    .choices { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
+    .choice { width: 140px; border: 2px solid var(--edge); border-radius: 10px; padding: 6px; background: #faf8f5; text-align: center; }
+    .choice .n { font-size: 12px; font-weight: 700; color: var(--accent); }
+    .choice .desc { font-size: 11px; color: #6b665c; font-style: italic; margin-top: 3px; word-break: break-word; }
+    .choice .actions { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
+    .photo-note { font-size: 12px; color: #6b665c; padding: 8px; border: 1px dashed var(--edge); border-radius: 8px; width: 140px; text-align: center; }
+    .row-actions { margin-top: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .row-actions input[type=text] { font: inherit; font-size: 12px; padding: 5px 8px; border: 1px solid var(--edge); border-radius: 8px; width: 260px; }
+    #status { font-size: 13px; color: #6b665c; margin: 8px 0; min-height: 1.2em; }
+    #status.err { color: var(--bad); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Where families disagreed with us</h1>
+    <p class="sub">
+      Every time an adult replaced the picture we chose. Grouped by
+      <em>(word, our picture)</em> — <strong>common scope only</strong>: people,
+      pets and private places never appear here. Photos are counted, never
+      shown. Actions are logged; pins/blocks key on the word only.
+    </p>
+    <nav><a href="/picture-calibration">Calibration</a><a href="/picture-disagreements"><strong>Disagreements</strong></a></nav>
+  </header>
+  <main>
+    <div id="status">Loading…</div>
+    <div id="rows"></div>
+  </main>
+  <script>
+    const $ = (s, el = document) => el.querySelector(s);
+    const el = (tag, cls, text) => {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text != null) e.textContent = text;
+      return e;
+    };
+    const esc = (s) => String(s ?? "");
+    const imgFor = (id) => {
+      const wrap = el("div");
+      if (id && (id.startsWith("ext_") || id.startsWith("img_"))) {
+        const im = el("img");
+        im.src = `/img/${id}`;
+        im.alt = id;
+        im.onerror = () => { im.replaceWith(el("div", "ph", id)); };
+        wrap.appendChild(im);
+      } else {
+        wrap.appendChild(el("div", "ph", id ?? "?"));
+      }
+      return wrap;
+    };
+
+    async function act(action, body) {
+      const r = await fetch("/api/disagreement-action", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action, ...body }),
+      });
+      if (!r.ok) throw new Error(`${action} → ${r.status}`);
+    }
+
+    function rowEl(g) {
+      const row = el("div", "row");
+      const head = el("div", "row-head");
+      head.appendChild(el("span", "qtext", g.text_norm));
+      head.appendChild(el("span", "count", `${g.rejects}× replaced`));
+      head.appendChild(el("span", "latest", new Date(g.latest).toLocaleString()));
+      row.appendChild(head);
+
+      const cols = el("div", "cols");
+      const ours = el("div", "ours");
+      ours.appendChild(el("div", "cap", `we chose: ${g.ours}`));
+      ours.appendChild(imgFor(g.ours));
+      cols.appendChild(ours);
+
+      const choices = el("div", "choices");
+      let photoCount = 0;
+      for (const c of g.choices) {
+        if (c.action === "photo") { photoCount += c.count; continue; }
+        const card = el("div", "choice");
+        card.appendChild(el("div", "n", `${c.count}× ${c.action}`));
+        if (c.theirs) card.appendChild(imgFor(c.theirs));
+        else card.appendChild(el("div", "ph", c.action));
+        if (c.theirs) card.appendChild(el("div", "cap", c.theirs));
+        if (c.description) card.appendChild(el("div", "desc", `“${esc(c.description)}”`));
+        const actions = el("div", "actions");
+        if (c.theirs) {
+          const pin = el("button", "", "make theirs default");
+          pin.onclick = () => doAct(pin, "pin", { text_norm: g.text_norm, theirs: c.theirs });
+          const promo = el("button", "", "promote to catalog");
+          promo.onclick = () => doAct(promo, "promote", { text_norm: g.text_norm, ours: g.ours, theirs: c.theirs });
+          actions.append(pin, promo);
+        }
+        card.appendChild(actions);
+        choices.appendChild(card);
+      }
+      if (photoCount) choices.appendChild(el("div", "photo-note", `${photoCount}× chose a photo`));
+      cols.appendChild(choices);
+      row.appendChild(cols);
+
+      const ra = el("div", "row-actions");
+      const desc = el("input");
+      desc.type = "text";
+      desc.placeholder = "redraw hint — the description to draw ours from (founder-gated, ≤10/run)";
+      const redraw = el("button", "", "queue redraw");
+      redraw.onclick = () => {
+        if (!desc.value.trim()) return (desc.focus(), undefined);
+        return doAct(redraw, "redraw", { text_norm: g.text_norm, ours: g.ours, description: desc.value.trim() });
+      };
+      const block = el("button", "", "stop auto-applying ours");
+      block.onclick = () => doAct(block, "block", { text_norm: g.text_norm, theirs: g.ours });
+      const dismiss = el("button", "", "dismiss");
+      dismiss.onclick = () => doAct(dismiss, "dismiss", { text_norm: g.text_norm, ours: g.ours }, true);
+      ra.append(desc, redraw, block, dismiss);
+      row.appendChild(ra);
+      return row;
+    }
+
+    async function doAct(btn, action, body, reload = false) {
+      const status = $("#status");
+      btn.disabled = true;
+      try {
+        await act(action, body);
+        status.textContent = `${action} saved`;
+        status.className = "";
+        if (reload) load();
+      } catch (e) {
+        status.textContent = String(e);
+        status.className = "err";
+        btn.disabled = false;
+      }
+    }
+
+    async function load() {
+      const status = $("#status");
+      const r = await fetch("/api/disagreements");
+      const data = await r.json();
+      const rows = data.rows ?? [];
+      status.textContent = r.ok
+        ? `${rows.length} disagreement groups (common scope only)`
+        : `load failed: ${data.error ?? r.status}`;
+      status.className = r.ok ? "" : "err";
+      const host = $("#rows");
+      host.textContent = "";
+      rows.forEach((g) => host.appendChild(rowEl(g)));
+    }
+    load();
+  </script>
+</body>
+</html>

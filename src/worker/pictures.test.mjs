@@ -25,6 +25,7 @@ import { TileLedger } from "./tile.js";
 const SECRET = "pic-test-secret";
 const UID = "11111111-2222-3333-4444-555555555555";
 const UID2 = "99999999-aaaa-bbbb-cccc-dddddddddddd";
+const UID3 = "77777777-8888-9999-aaaa-bbbbbbbbbbbb";
 const te = (s) => new TextEncoder().encode(s);
 
 const fakeBucket = () => {
@@ -504,4 +505,155 @@ test("pick gates: bad id, bad license, missing image_id — and never spends dra
   assert.equal((await pick(env, { text: "apple" })).status, 400);
   assert.ok(await (await pick(env, { text: "apple", image_id: "img_apple" })).ok);
   assert.equal(await env.VOICE.get(`usage-draw-total/${UID}`), null);
+});
+
+/* ------------------------------- WT15–18: reject + review ------------------------------- */
+
+const reject = async (env, body, uid = UID) =>
+  worker.fetch(new Request("https://x/api/v1/pictures/reject", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      user_id: uid, license: await licenseFor(SECRET, uid), ...body,
+    }),
+  }), env);
+
+const adminDisagree = async (env, path, body) =>
+  worker.fetch(new Request(`https://x/admin/v1/pictures/disagreements${path}`, {
+    method: body === undefined ? "GET" : "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.PIP_ADMIN_TOKEN}`,
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  }), env);
+
+test("WT15: a no is recorded without identity — pick, photo, draw", async () => {
+  const env = makeEnv();
+  const drw = `drw_${"c".repeat(64)}`;
+  assert.equal((await reject(env, { text: "apple", ours: "img_apple", action: "pick", theirs: "img_banana" })).status, 204);
+  assert.equal((await reject(env, { text: "apple", ours: "img_apple", action: "photo" })).status, 204);
+  assert.equal((await reject(env, { text: "apple", ours: "img_apple", action: "draw", theirs: drw, description: "a shinier apple" })).status, 204);
+
+  const rows = env.__db.prepare("SELECT * FROM pic_disagreement ORDER BY id").all();
+  assert.equal(rows.length, 3);
+  assert.deepEqual(rows.map((r) => r.action), ["pick", "photo", "draw"]);
+  assert.equal(rows[1].theirs, null); // a photo is counted, never seen
+  assert.equal(rows[2].theirs, drw);
+  assert.equal(rows[2].description, "a shinier apple");
+  for (const row of rows) {
+    for (const v of Object.values(row)) {
+      assert.ok(!String(v).includes(UID));
+      assert.ok(!/pip-life-/.test(String(v)));
+    }
+  }
+  // demotion counter moved too
+  const rc = env.__db.prepare("SELECT count FROM pic_reject WHERE text_norm='apple' AND image_id='img_apple'").all();
+  assert.equal(rc[0].count, 3);
+});
+
+test("reject validation: photo carries no theirs; draw needs a drw_ id", async () => {
+  const env = makeEnv();
+  assert.equal((await reject(env, { text: "x", ours: "img_a", action: "photo", theirs: "img_b" })).status, 400);
+  assert.equal((await reject(env, { text: "x", ours: "img_a", action: "draw", theirs: "img_b" })).status, 400);
+  assert.equal((await reject(env, { text: "x", ours: "img_a", action: "nope" })).status, 400);
+  assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_disagreement").all()[0].c, 0);
+});
+
+test("WT16: rejections drop our picture's score for that text only", async () => {
+  const env = makeEnv();
+  await seedIndex(env);
+  const scoreFor = async (text, id) => {
+    const { candidates } = await (await find(env, { text })).json();
+    return candidates.find((c) => c.image_id === id)?.score ?? null;
+  };
+  const before = await scoreFor("red apple", "img_apple");
+  for (const uid of [UID, UID2]) {
+    await reject(env, { text: "red apple", ours: "img_apple", action: "photo" }, uid);
+  }
+  const after = await scoreFor("red apple", "img_apple");
+  assert.ok(Math.abs((before - after) - 0.1 * Math.log1p(2)) < 1e-9);
+  // "apple" untouched — the reject row keys on its own text
+  assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_reject WHERE text_norm='apple'").all()[0].c, 0);
+});
+
+test("reject fair-use: past the day limit, 429 and nothing moves", async () => {
+  const env = makeEnv();
+  const day = new Date().toISOString().slice(0, 10);
+  await env.VOICE.put(`usage-reject/${UID}/${day}`, JSON.stringify({ chars: 200 }));
+  const r = await reject(env, { text: "apple", ours: "img_apple", action: "pick", theirs: "img_banana" });
+  assert.equal(r.status, 429);
+  assert.equal(env.__db.prepare("SELECT COUNT(*) c FROM pic_disagreement").all()[0].c, 0);
+});
+
+test("WT17: personal rejections count but never reach the review page", async () => {
+  const env = makeEnv({ jev: async () => ({ scope: "personal", kind: "Yellow", language: "en" }) });
+  const r = await reject(env, {
+    text: "Grandma Rosa", description: "grandma with grey hair",
+    ours: "img_0692", action: "draw", theirs: `drw_${"d".repeat(64)}`,
+  });
+  assert.equal(r.status, 204);
+  const row = env.__db.prepare("SELECT * FROM pic_disagreement").all()[0];
+  assert.equal(row.text_norm, "grandma with grey hair"); // description, not the name
+  assert.equal(row.scope, "personal");
+  const { rows } = await (await adminDisagree(env, "")).json();
+  assert.equal(rows.length, 0); // personal scope never listed
+});
+
+test("WT18: pin auto-applies theirs for everyone; block keeps ours listed, never auto; undo restores", async () => {
+  const env = makeEnv();
+  await seedIndex(env);
+  const autoOf = async (text) => (await (await find(env, { text })).json()).auto;
+
+  // pin banana for "apple" — decideAuto returns a founder pin above any score
+  await adminDisagree(env, "/pin", { text_norm: "apple", theirs: "img_banana" });
+  assert.equal(await autoOf("apple"), "img_banana");
+  await adminDisagree(env, "/unpin", { text_norm: "apple" });
+  assert.equal(await autoOf("apple"), null); // default cutoff 1.01 → no auto
+
+  // block apple for "red apple": still a candidate, never auto
+  await adminDisagree(env, "/pin", { text_norm: "red apple", theirs: "img_apple" });
+  await adminDisagree(env, "/block", { text_norm: "red apple", theirs: "img_apple" });
+  const blocked = await (await find(env, { text: "red apple" })).json();
+  assert.ok(blocked.candidates.some((c) => c.image_id === "img_apple"), "still listed");
+  assert.equal(blocked.auto, "img_apple"); // pin outranks block in decideAuto
+  await adminDisagree(env, "/unpin", { text_norm: "red apple" });
+  assert.equal(await autoOf("red apple"), null);
+  await adminDisagree(env, "/unblock", { text_norm: "red apple", theirs: "img_apple" });
+
+  // log rows exist for every ruling
+  const logs = env.__db.prepare("SELECT action FROM pic_admin_log").all();
+  assert.ok(logs.length >= 6);
+});
+
+test("disagreements grouping: choices carry counts, descriptions, photo totals", async () => {
+  const env = makeEnv();
+  const drw = `drw_${"e".repeat(64)}`;
+  await reject(env, { text: "trampoline", ours: "ext_trampoline", action: "photo" });
+  await reject(env, { text: "trampoline", ours: "ext_trampoline", action: "draw", theirs: drw, description: "a red one" }, UID2);
+  await reject(env, { text: "submarine", ours: "ext_x", action: "pick", theirs: "img_sub" });
+  const { rows } = await (await adminDisagree(env, "")).json();
+  assert.equal(rows.length, 2);
+  const g = rows.find((r) => r.text_norm === "trampoline");
+  assert.equal(g.rejects, 2);
+  assert.equal(g.ours, "ext_trampoline");
+  const draw = g.choices.find((c) => c.action === "draw");
+  assert.equal(draw.theirs, drw);
+  assert.equal(draw.description, "a red one");
+  const photo = g.choices.find((c) => c.action === "photo");
+  assert.equal(photo.count, 1);
+
+  // dismiss hides the group until a fresh rejection lands
+  await adminDisagree(env, "/dismiss", { text_norm: "trampoline", ours: "ext_trampoline" });
+  const after = await (await adminDisagree(env, "")).json();
+  assert.equal(after.rows.length, 1);
+  await reject(env, { text: "trampoline", ours: "ext_trampoline", action: "photo" });
+  const back = await (await adminDisagree(env, "")).json();
+  assert.equal(back.rows.find((r) => r.text_norm === "trampoline").rejects, 1);
+});
+
+test("admin disagreements routes need the token", async () => {
+  const env = makeEnv();
+  const r = await worker.fetch(new Request("https://x/admin/v1/pictures/disagreements"), env);
+  assert.equal(r.status, 401);
 });
