@@ -16,14 +16,19 @@ import { createEntity, createGroup, placeItem } from "../../public/shared/groups
 const repoRoot = join(import.meta.dirname, "../..");
 const flush = async () => { for (let i = 0; i < 6; i++) await new Promise((r) => setTimeout(r, 0)); };
 
-function harness() {
+function freshDb() {
   const db = createDatabase(":memory:");
   db.exec(`INSERT INTO layout_shape (layout, cols, rows, frame) VALUES ('grid60', 10, 6, '[9,19,39,49]')`);
   createGroup(db, { id: "grp_food", name: "Food" });
   createGroup(db, { id: "grp_mine", name: "Mine" });
+  return db;
+}
+
+function harness({ db = freshDb() } = {}) {
   const $ = installDom();
-  const log = { main: 0, painted: [], cards: [], made: [], placed: [], bulk: [] };
-  const editor = mountEditor({
+  const log = { main: 0, painted: [], cards: [], made: [], placed: [], bulk: [], views: [], flashed: [] };
+  let editor = null;
+  editor = mountEditor({
     db,
     locale: "en",
     all: (database, sql, p = []) => database.prepare(sql).all(...p),
@@ -40,10 +45,12 @@ function harness() {
       placeWord: (kind, id, label, o) => { log.placed.push({ kind, id, ...o }); },
       openBulkForm: (gid, text) => log.bulk.push({ gid, text }),
     },
-    openWordCard: (item) => log.cards.push(item),
-    closeCard() {},
-    setView() {},
-    openGroupView() {},
+    openWordCard: (item) => { log.cards.push(item); $("wordcard").classList.add("open"); },
+    closeCard: () => $("wordcard").classList.remove("open"),
+    // The app's setView("editor") repaints the editor; mirror that.
+    setView: (v) => { log.views.push(v); if (v === "editor") editor.renderEditor(); },
+    openGroupView: (id) => log.views.push(`group:${id}`),
+    flashCell: (el) => log.flashed.push(el),
     toast() {},
     undoLast() {},
     syncState: () => ({ linked: false, pending: 0, online: true, flushError: null }),
@@ -150,4 +157,60 @@ test("WT 6 — two photos dropped on an empty cell: the first lands there, the s
   assert.deepEqual([sand.page, sand.slot_index], [0, 22]);
   const bucket = cells.find((c) => c.name.toLowerCase() === "bucket");
   assert.ok(bucket && !(bucket.page === 0 && bucket.slot_index === 22), "the second takes the next free cell");
+});
+
+function memoryStorage() {
+  const m = new Map();
+  return {
+    getItem: (k) => m.get(k) ?? null,
+    setItem: (k, v) => m.set(k, String(v)),
+    removeItem: (k) => m.delete(k),
+  };
+}
+
+test("Preview → Back / Esc / reload returns to the same group, word and card; Done forgets", async () => {
+  globalThis.sessionStorage = memoryStorage();
+  const db = freshDb();
+  const { id } = createEntity(db, { name: "Cooper" });
+  placeItem(db, "grp_mine", "entity", id);
+  const h = harness({ db });
+  h.editor.renderEditor();
+  await h.editor.openGroup("grp_mine");
+  h.editor.select({ item_kind: "entity", item_id: id, label: "Cooper" }, { additive: false });
+  assert.equal(h.$("wordcard").classList.contains("open"), true);
+
+  await h.$("ed-preview").click();
+  assert.equal(h.$("wordcard").classList.contains("open"), false, "Preview shows Maya's view");
+  assert.equal(h.log.views.at(-1), "group:grp_mine");
+
+  const cardsBefore = h.log.cards.length;
+  await h.$("ed-back").click();
+  await flush();
+  assert.equal(h.log.painted.at(-1).group, "grp_mine", "same group");
+  assert.equal(h.log.cards.length, cardsBefore + 1, "the card reopens");
+  assert.equal(h.log.cards.at(-1).item_id, id, "on the same word");
+
+  // Esc from Preview does the same.
+  await h.$("ed-preview").click();
+  const n = h.log.cards.length;
+  await document.fire("keydown", { key: "Escape" });
+  await flush();
+  assert.equal(h.log.cards.length, n + 1);
+  assert.equal(h.log.painted.at(-1).group, "grp_mine");
+
+  // A reload in the same tab lands in the same place, card open.
+  const h2 = harness({ db });
+  h2.editor.renderEditor();
+  await flush();
+  assert.equal(h2.log.painted.at(-1)?.group, "grp_mine");
+  assert.equal(h2.log.cards.at(-1)?.item_id, id);
+
+  // Done leaves the editor and forgets the place: next time, the main board.
+  await h2.$("ed-preview").click();
+  await h2.$("ed-done").click();
+  const h3 = harness({ db });
+  h3.editor.renderEditor();
+  await flush();
+  assert.equal(h3.log.main, 1);
+  assert.equal(h3.log.cards.length, 0);
 });

@@ -2666,7 +2666,7 @@ editorUi = mountEditor({
   invalidateIndex: () => kbUi.invalidateIndex(),
   renderStrip,
   savePhoto, syncUploadBlob,
-  tile: tileApi, loadPhotoURL, artInto,
+  tile: tileApi, loadPhotoURL, artInto, flashCell,
 });
 
 // A session survives a restart (013 § 4): the synced row lights the

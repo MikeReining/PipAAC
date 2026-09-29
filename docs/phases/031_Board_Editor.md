@@ -306,6 +306,17 @@ changes; art and voice generation (030, 028).
 | 11 | Structural: the editor's main board is the same `#grid` and `renderGrid` code path as the tablet's Edit mode — same owners (`moveCore`, `placeOnBoard`). |
 | 12 | Narrow rules checked with the media query forced on desktop; a real-tablet pass is open. |
 
+**Preview keeps your place (founder, 2026-09-29).** Preview flashes the word
+being worked on once (the same local flash as Show on board — nothing
+syncs), then it is exactly Maya's view. Back to editing — or Esc — returns
+to the same group, page, word and open card, even if the adult tapped
+around in Preview. The place (group, page, selection, card) is kept for
+the tab in `sessionStorage` (`pip-ed-place`), so a reload lands there too;
+Done leaves the editor and forgets it. Before this, Preview's closing the
+card cleared the selection, and a reload always landed on the main board.
+Proof: `editor_ui.test.mjs` "Preview → Back / Esc / reload …" (seen failing
+with the card restore disabled).
+
 **Not done / deferred:** ⇧⌘Z redo (⌘Z undo is built); the 📊 tap counts toggle
 (018 D10) is not in the editor yet; hidden groups keep a Show action but the
 board's group index is unchanged.

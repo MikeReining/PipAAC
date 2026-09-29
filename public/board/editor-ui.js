@@ -27,9 +27,17 @@ import { editorStatus, findSections, isList } from "./editor-find.js";
 
 const $ = (id) => document.getElementById(id);
 const HELLO_KEY = "pip-ed-hello-done";
+const PLACE_KEY = "pip-ed-place";
 const store = {
   get: (k) => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* private mode */ } },
+};
+/* Where the adult is in the editor, for this tab: survives Preview and a
+   reload; Done (leaving the editor) forgets it. */
+const tabPlace = {
+  get: () => { try { return JSON.parse(sessionStorage.getItem(PLACE_KEY) ?? "null"); } catch { return null; } },
+  set: (v) => { try { sessionStorage.setItem(PLACE_KEY, JSON.stringify(v)); } catch { /* private mode */ } },
+  clear: () => { try { sessionStorage.removeItem(PLACE_KEY); } catch { /* private mode */ } },
 };
 
 export function mountEditor({
@@ -38,12 +46,14 @@ export function mountEditor({
   addFlow, openWordCard, closeCard,
   setView, openGroupView, toast, undoLast, syncState,
   renderLibrary, invalidateIndex, renderStrip,
-  savePhoto, syncUploadBlob, tile, loadPhotoURL, artInto,
+  savePhoto, syncUploadBlob, tile, loadPhotoURL, artInto, flashCell,
 }) {
   /* where: { kind: "main" } | { kind: "group", id, page } | { kind: "words" } */
   let where = { kind: "main" };
   let selected = new Map(); // "kind:id" → { item_kind, item_id, label }
   let lastPointerAdds = false; // shift/⌘ held on the last press — multi-select
+  let previewing = false; // Preview is up: the place is frozen, not cleared
+  let restoreCard = false; // reopen the selected word's card on the next paint
   const gridHome = { parent: null, next: null };
 
   const name = () => me?.name?.trim() || "this person";
@@ -427,12 +437,44 @@ export function mountEditor({
 
   const keyOf = (it) => `${it.item_kind}:${it.item_id}`;
 
+  /** Remember the place — group, page, selection, card — for this tab. */
+  function savePlace() {
+    if (previewing) return;
+    tabPlace.set({
+      where,
+      items: [...selected.values()].map(({ item_kind, item_id, label }) => ({ item_kind, item_id, label })),
+      card: !!$("wordcard")?.classList.contains("open"),
+    });
+  }
+
+  /** A remembered place is only used if it still exists. */
+  function placeFrom(saved) {
+    const w = saved?.where;
+    if (!w || !["main", "group", "words"].includes(w.kind)) return null;
+    if (w.kind === "group" && !groupRow(w.id)) return null;
+    const alive = (it) => (it.item_kind === "entity"
+      ? all(db, "SELECT 1 AS x FROM personal_entity WHERE id = ? AND status = 'active'", [it.item_id])[0]
+      : all(db, "SELECT 1 AS x FROM sense WHERE id = ?", [it.item_id])[0]);
+    const items = (saved.items ?? []).filter((it) => it?.item_kind && it?.item_id && alive(it));
+    return { where: w.kind === "group" ? { kind: "group", id: w.id, page: w.page ?? 0 } : { kind: w.kind }, items, card: !!saved.card };
+  }
+
   function markSelection() {
     const grid = stageGrid();
+    for (const g of [$("grid"), $("ed-grid")]) {
+      for (const el of g?.querySelectorAll?.(".sel") ?? []) el.classList.remove("sel");
+    }
     if (grid) {
-      for (const el of grid.querySelectorAll(".sel")) el.classList.remove("sel");
       for (const k of selected.keys()) grid.querySelector(`[data-item="${k}"]`)?.classList.add("sel");
     }
+    if (restoreCard) {
+      restoreCard = false;
+      const only = selected.size === 1 ? [...selected.values()][0] : null;
+      if (only) openWordCard(only);
+      grid?.querySelector(`[data-item="${[...selected.keys()][0]}"]`)?.scrollIntoView?.({ block: "nearest" });
+      $("ed-groups").querySelector?.(".ed-grow.on")?.scrollIntoView?.({ block: "nearest" });
+    }
+    savePlace();
     const many = selected.size > 1 && where.kind === "group";
     $("ed-selbar").hidden = !many;
     if (many) {
@@ -917,16 +959,45 @@ export function mountEditor({
 
   /* --------------------------- preview & done -------------------------- */
 
+  /** Preview: the board as Maya sees it. The place freezes (the card
+   *  closing must not clear the selection) and the word being worked on
+   *  flashes once so the adult can find it — then it is exactly her view.
+   *  The flash is local; nothing is synced. */
   $("ed-preview").addEventListener("click", () => {
+    savePlace(); // the card is still open here — the place remembers it
+    previewing = true;
     $("ed-previewname").textContent = Name();
     closeCard();
     if (where.kind === "group") openGroupView(where.id, where.page);
     else setView("board");
     $("ed-previewbar").hidden = false;
+    const key = [...selected.keys()][0];
+    if (key) {
+      setTimeout(() => {
+        const host = where.kind === "group" ? $("groupgrid") : $("grid");
+        flashCell?.(host?.querySelector(`[data-item="${key}"]`));
+      }, 250);
+    }
   });
+  /** Back to editing (or Esc): the same group, page, word and card.
+   *  Done leaves the editor and forgets the place. */
   const endPreview = (back) => {
     $("ed-previewbar").hidden = true;
-    if (back) setView("editor");
+    if (!back) {
+      previewing = false;
+      where = { kind: "main" };
+      selected = new Map();
+      tabPlace.clear();
+      return;
+    }
+    const saved = placeFrom(tabPlace.get());
+    previewing = false;
+    if (saved) {
+      where = saved.where;
+      selected = new Map(saved.items.map((it) => [keyOf(it), it]));
+      restoreCard = saved.card;
+    }
+    setView("editor");
   };
   $("ed-back").addEventListener("click", () => endPreview(true));
   $("ed-done").addEventListener("click", () => endPreview(false));
@@ -996,11 +1067,23 @@ export function mountEditor({
   // The card closing (Done, Esc) ends a single selection too.
   if ($("wordcard") && typeof MutationObserver === "function") {
     new MutationObserver(() => {
+      if (previewing) return;
       if (!$("wordcard").classList.contains("open") && selected.size === 1) clearSelection();
+      else savePlace();
     }).observe($("wordcard"), { attributes: true, attributeFilter: ["class"] });
   }
 
   let statusTimer = null;
+
+  // A reload lands where the adult was (this tab only).
+  {
+    const saved = placeFrom(tabPlace.get());
+    if (saved) {
+      where = saved.where;
+      selected = new Map(saved.items.map((it) => [keyOf(it), it]));
+      restoreCard = saved.card;
+    }
+  }
 
   /** Repaint after any write made here. */
   function changed() {
