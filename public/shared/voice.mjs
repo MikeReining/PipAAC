@@ -88,13 +88,15 @@ export function resolveSlot(db, item, locale, voiceId) {
     const ovr = one(db,
       "SELECT key FROM clip_override WHERE utterance_id = ? AND status = 'ready'",
       [label.utterance_id]);
-    if (ovr) return { type: "clip", key: ovr.key };
+    // `text` rides along so a clip the element refuses to play (autoplay
+    // policy, a dead file) still speaks through the device voice.
+    if (ovr) return { type: "clip", key: ovr.key, text: label.spoken_text };
     const clip = one(db,
       `SELECT key FROM clip
        WHERE utterance_id = ? AND voice_id = ? AND status = 'ready'
          AND recorded_text = ?`,
       [label.utterance_id, voiceId, label.spoken_text]);
-    if (clip) return { type: "clip", key: clip.key };
+    if (clip) return { type: "clip", key: clip.key, text: label.spoken_text };
     const source = one(db, "SELECT source FROM voice WHERE id = ?", [voiceId])?.source;
     return source === "device_tts"
       ? { type: "tts", text: label.spoken_text }
@@ -111,6 +113,6 @@ export function resolveSlot(db, item, locale, voiceId) {
   const ovr = one(db,
     "SELECT key FROM clip_override WHERE entity_id = ? AND status = 'ready'",
     [item.id]);
-  if (ovr) return { type: "clip", key: ovr.key };
+  if (ovr) return { type: "clip", key: ovr.key, text: ent.spoken_name };
   return { type: "tts", text: ent.spoken_name };
 }

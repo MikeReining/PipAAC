@@ -2,7 +2,9 @@
  * The welcome (founder 2026-09-28): the only thing Pip asks before the
  * board. One screen — a name (optional) and "Who's it for?" — plus, for
  * a teen or adult, one more: "How should the buttons look?" Then the
- * short demo (tour-ui.js). No photos, PIN, backup or sign-in up front:
+ * short demo (tour-ui.js). Every prompt and every choice is said aloud
+ * on show and on tap — users can't read. No photos, PIN, backup or
+ * sign-in up front:
  * those come later, once something is worth protecting (Settings →
  * Overview). The old four-step "their world" form still opens from
  * Settings → Words → People & places, never by itself.
@@ -23,7 +25,7 @@ const el = (tag, cls, text) => {
 /** Preview tiles for the look question: real board words, real art. */
 const PREVIEW = ["sns_0013", "sns_0128"]; // want, apple
 
-export function mountOnramp({ me, saveUser, setLook, tileFor, fitLabels = () => {}, onDone }) {
+export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fitLabels = () => {}, onDone }) {
   let wrap = null;
 
   function screen(build) {
@@ -48,6 +50,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, fitLabels = () => 
       b.append(el("span", "welcome-choice-label", label));
       b.onclick = () => {
         for (const o of row.children) o.setAttribute("aria-pressed", String(o === b));
+        say(label);
         onPick(value);
       };
       row.append(b);
@@ -81,6 +84,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, fitLabels = () => 
         if (audience === "adult") look();
         else finish();
       };
+      say("Let's set up Pip. Who's it for?");
     });
   }
 
@@ -102,6 +106,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, fitLabels = () => 
       ], (v) => { choice = v; go.disabled = false; }));
       card.append(go);
       go.onclick = () => { setLook(choice); finish(); };
+      say("How should the buttons look?");
     });
     fitLabels(wrap);
   }

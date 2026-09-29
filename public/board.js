@@ -348,11 +348,11 @@ async function playClip(key, { chained = false } = {}) {
   }
   endPlaying({ chained });
   return new Promise((resolve) => {
-    playingResolve = resolve;
+    playingResolve = () => resolve("cut");
     audio.src = src;
-    audio.onended = resolve;
-    audio.onerror = resolve;
-    audio.play().catch(resolve);
+    audio.onended = () => resolve(true);
+    audio.onerror = () => resolve(false);
+    audio.play().catch(() => resolve(false));
   });
 }
 
@@ -362,11 +362,11 @@ async function playBlob(blob) {
   try {
     endPlaying();
     return await new Promise((resolve) => {
-      playingResolve = resolve;
+      playingResolve = () => resolve("cut");
       audio.src = src;
-      audio.onended = resolve;
-      audio.onerror = resolve;
-      audio.play().catch(resolve);
+      audio.onended = () => resolve(true);
+      audio.onerror = () => resolve(false);
+      audio.play().catch(() => resolve(false));
     });
   } finally {
     URL.revokeObjectURL(src);
@@ -374,11 +374,16 @@ async function playBlob(blob) {
 }
 
 /** Speak one tapped item — §7.2/7.3 resolution: override, voice clip,
- *  TTS, or a held 400 ms silent slot. */
+ *  TTS, or a held 400 ms silent slot. A clip the element refuses to
+ *  start (autoplay policy, a missing file) falls back to the device
+ *  voice — a tap is never silent when a word exists to say. */
 async function speakItem(item, { chained = false } = {}) {
   const slot = resolveSlot(db, item, locale, voiceId);
-  if (slot.type === "clip") return playClip(slot.key, { chained });
-  if (slot.type === "tts") {
+  if (slot.type === "clip") {
+    if (await playClip(slot.key, { chained })) return;
+    if (!slot.text) return;
+  }
+  if (slot.type === "tts" || slot.type === "clip") {
     endPlaying({ chained });
     return speak(slot.text);
   }
@@ -502,8 +507,11 @@ async function speakSentence(feeling = null) {
       return speakSentence(feeling);
     }
     if (blob) {
-      await playBlob(blob);
-      spoken = true;
+      // true = played to the end, "cut" = a newer play owns the element
+      // (counts as spoken so the clip loop doesn't talk over it), and
+      // false = the element refused to start — fall through so the bar
+      // still speaks word by word.
+      spoken = (await playBlob(blob)) !== false;
     }
   }
   if (!spoken) {
@@ -2324,6 +2332,7 @@ syncLook();
 const onramp = mountOnramp({
   me, saveUser,
   setLook,
+  say: (text) => speak(text), // the welcome talks — users can't read
   tileFor: (senseId) => {
     const w = senseById(senseId);
     return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
@@ -2344,9 +2353,10 @@ const tourUi = mountTour({
       const item = { kind: "sense", id: senseId, text: w?.label ?? "" };
       sentence.push(item);
       renderBar();
-      speakItem(item);
+      const p = speakItem(item);
       syncTxButtons();
       renderStrip();
+      return p;
     },
     setBar: (text, mode) => {
       applyTransform(sentence, text, mode, barState);
@@ -2358,6 +2368,7 @@ const tourUi = mountTour({
     },
     speakBar: () => speakSentence(),
     clearBar: () => $("clear").click(),
+    say: (text) => speak(text), // instruction cards — the device voice
   },
 });
 $("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });

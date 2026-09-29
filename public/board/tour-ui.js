@@ -12,7 +12,10 @@
  * - the last card says Fix it needs the internet on your own words.
  * Optional recorded clips (`/audio/onramp/<name>.mp3`) play when they
  * ship — founder listens first (AGENTS.md); until then the sentence
- * speaks through the normal sentence voice.
+ * speaks through the normal sentence voice. The cards' words are said
+ * aloud through the device voice — users can't read, so every step is
+ * heard, not just seen. Each instruction speaks after the audio it
+ * follows so they never overlap.
  */
 
 const $ = (id) => document.getElementById(id);
@@ -93,8 +96,11 @@ export function mountTour({ board, saveUser }) {
       const res = await fetch(`/audio/onramp/${name}.mp3`, { method: "HEAD" });
       if (res.ok && res.headers.get("content-type")?.startsWith("audio/")) {
         const a = new Audio(`/audio/onramp/${name}.mp3`);
-        await a.play();
-        return;
+        const played = await a.play().then(() => true, () => false);
+        if (played) {
+          await new Promise((r) => { a.onended = r; a.onerror = r; });
+          return;
+        }
       }
     } catch { /* offline or missing — the voice path below */ }
     await board.speakBar();
@@ -102,11 +108,15 @@ export function mountTour({ board, saveUser }) {
 
   // Board hooks while the tour runs (board.js checks `active`).
   const hooks = {
-    onTap(kind, id) {
+    async onTap(kind, id) {
       // Advance first: adding the word repaints the Smart bar, which
-      // must already see the next step's card.
-      if (step === 0 && id === SCRIPT.want) { show(1); board.addWord(SCRIPT.want); }
-      else if (step === 1 && id === SCRIPT.apple) { show(2); board.addWord(SCRIPT.apple); }
+      // must already see the next step's card. The next instruction
+      // speaks after the word's own audio lands.
+      if (step === 0 && id === SCRIPT.want) {
+        show(1); await board.addWord(SCRIPT.want); board.say(steps[1].say);
+      } else if (step === 1 && id === SCRIPT.apple) {
+        show(2); await board.addWord(SCRIPT.apple); board.say(steps[2].say);
+      }
     },
     stripItems: () => (step === 1 ? [{ kind: "sense", id: SCRIPT.apple }] : []),
     async onTransform(mode) {
@@ -114,10 +124,12 @@ export function mountTour({ board, saveUser }) {
         board.setBar(SCRIPT.fix, "fix");
         show(3);
         await sayBar("i-want-an-apple");
+        board.say(steps[3].say);
       } else if (step === 3 && mode === "past") {
         board.setBar(SCRIPT.past, "past");
         show(4);
         await sayBar("i-wanted-an-apple");
+        board.say(steps[4].say);
       }
     },
   };
@@ -144,6 +156,7 @@ export function mountTour({ board, saveUser }) {
     card.setAttribute("role", "status");
     document.body.append(ring, card);
     show(0);
+    board.say(steps[0].say);
     timer = setInterval(place, 250);
   }
 
