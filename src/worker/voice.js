@@ -1,26 +1,25 @@
 /**
  * 024 slice 1 — POST /api/v1/voice/speak.
  *
- * Whole-sentence Grok Voice behind the Worker: shared R2 cache for
- * eligible sentences (024 § 5 — Pip words, their forms, common names
- * only), per-license fair-use counters (§ 6a — counts, never
- * sentences), and nothing user-identifying sent upstream (rule 8).
+ * Whole-sentence Eleven v4 behind the Worker (2026-09-29): same voice_key
+ * as tile playback (tile_voices.json). Shared R2 cache for eligible
+ * sentences (024 § 5), per-license fair-use (§ 6a), no user ids upstream.
  *
- * Cache key = sha256(voice id + voice settings + model + normalized
- * text). The audio objects carry no ids; the usage ledger lives under
- * usage/<user>/ keys, separate from the anonymous speak/ namespace.
+ * Cache key = sha256(voice_key + model + feeling + normalized text).
  */
-import voiceWords from "../../data/catalog/voice_words.en.json" with { type: "json" };
+import tileVoices from "../../data/catalog/tile_voices.json" with { type: "json" };
 import { checkLicense } from "./license.mjs";
-import { FEELINGS, applyEmotionalProsody } from "./prosody.mjs";
+import { FEELINGS } from "./prosody.mjs";
+import { elevenExpressiveMintText } from "../shared/expressive_eleven.mjs";
+
+import voiceWords from "../../data/catalog/voice_words.en.json" with { type: "json" };
+
+const TILE_VOICES = new Map(tileVoices.voices.map((v) => [v.voice_key, v]));
 
 const ELIGIBLE = new Set(voiceWords.words);
 
-// Launch voice (founder, 2026-09-26): Aura only — the catalog clips
-// are being re-minted for her; other Grok voices land with later picks.
-export const VOICE_IDS = new Set(["ara"]);
-export const VOICE_MODEL = "grok-tts-v1";
-export const VOICE_SPEED = 1;
+/** Bumps cache namespace when the TTS provider or recipe changes. */
+export const VOICE_MODEL = "eleven_v4-expressive-1";
 
 // 024 § 6a — silent fair use: fresh synthesis only; cache hits free.
 const MAX_SENTENCE_CHARS = 120;
@@ -43,17 +42,13 @@ const hexSha256 = async (s) =>
 export const normalizeText = (text) =>
   String(text).trim().toLowerCase().replace(/\s+/g, " ");
 
-/** 025 § 4: the feeling is part of the recording's identity — the
- *  same sentence neutral, happy, sad and angry are four separate
- *  recordings, each synthesized once. */
-export const cacheKeyMaterial = (voiceId, text, feeling = "neutral") =>
-  `${voiceId}|${VOICE_SPEED}|${VOICE_MODEL}|${feeling}|${normalizeText(text)}`;
+/** 025 § 4: the feeling is part of the recording's identity. */
+export const cacheKeyMaterial = (voiceKey, text, feeling = "neutral") =>
+  `${voiceKey}|${VOICE_MODEL}|${feeling}|${normalizeText(text)}`;
 
 const CONTRACTION = /(?:'s|'m|'re|'ve|'ll|'d|n't)$/i;
 
-/** 024 § 5: every word resolves to the eligible set — catalog words,
- * their forms, sanctioned child surfaces, or a common name. One rare
- * name or typed word keeps the whole sentence on her device. */
+/** 024 § 5: every word resolves to the eligible set. */
 export function eligibleSentence(text) {
   for (const raw of normalizeText(text).split(" ")) {
     const tok = raw.replace(/^[^\p{L}\p{N}']+|[^\p{L}\p{N}']+$/gu, "");
@@ -66,16 +61,22 @@ export function eligibleSentence(text) {
   return true;
 }
 
+export function resolveSentenceVoice(voiceKey) {
+  const row = TILE_VOICES.get(String(voiceKey ?? ""));
+  if (!row || row.status !== "active" || row.provider !== "elevenlabs") return null;
+  return row;
+}
+
+/** @deprecated use resolveSentenceVoice — tests and imports may still say VOICE_IDS */
+export const VOICE_IDS = new Set(
+  tileVoices.voices.filter((v) => v.status === "active").map((v) => v.voice_key),
+);
+
 const counterKey = (ns, uid, ts = Date.now(), per = "day") =>
   per === "day"
     ? `${ns}/${uid}/${new Date(ts).toISOString().slice(0, 10)}`
     : `${ns}-min/${uid}/${Math.floor(ts / 60000)}`;
 
-/** R2-backed fair-use ledger: get → decide → put after a real call.
- * Read-modify-write can drift a few chars under parallel devices —
- * noise against an 8,000-char day. `ns` namespaces the counter
- * (usage/ for voice, usage-tr/ for transforms) so one pipeline's
- * budget can't starve the other's. */
 export async function usageCheck(env, { ns, uid, chars, maxChars, dayBudget, minBudget }) {
   if (chars > maxChars) return { allowed: false, over: "sentence" };
   const read = async (key) => {
@@ -98,34 +99,33 @@ export async function usageRecord(env, { ns, uid, chars, over = null }) {
   await bump(counterKey(ns, uid), (c) => ({ chars: c.chars + chars, reqs: c.reqs + 1 }));
   await bump(counterKey(ns, uid, Date.now(), "min"),
     (c) => ({ chars: 0, reqs: c.reqs + 1 }));
-  // § 6a.5: every limit hit is logged — if a real child ever hits it,
-  // the limit is wrong.
   if (over) {
     await env.VOICE.put(`${ns}-hits/${uid}/${Date.now()}`,
       JSON.stringify({ over, chars }));
   }
 }
 
-/** Grok Voice (xAI). env.VOICE_SYNTH is the test seam; without either
- * a stub or XAI_API_KEY the caller gets 503 and falls back to clips. */
-async function synthesize(env, text, voiceId) {
+/** Eleven v4 expressive sentence. env.VOICE_SYNTH is the test seam. */
+async function synthesize(env, mintText, voiceRow) {
   if (typeof env.VOICE_SYNTH === "function") {
-    return env.VOICE_SYNTH(text, { voiceId });
+    return env.VOICE_SYNTH(mintText, { voice: voiceRow.voice_key });
   }
-  if (!env.XAI_API_KEY) return null;
-  const res = await fetch("https://api.x.ai/v1/tts", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.XAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    // Sentence text and voice only — no user, device or license id
-    // ever leaves this Worker (024 rule 8).
-    body: JSON.stringify({
-      text, voice_id: voiceId, language: "en", speed: VOICE_SPEED,
-    }),
-  });
-  if (!res.ok) throw new Error(`grok_tts_${res.status}`);
+  if (!env.ELEVENLABS_API_KEY) return null;
+  const res = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${voiceRow.voice_id}`, {
+      method: "POST",
+      headers: {
+        "xi-api-key": env.ELEVENLABS_API_KEY,
+        "content-type": "application/json",
+        accept: "audio/mpeg",
+      },
+      body: JSON.stringify({
+        text: mintText,
+        model_id: voiceRow.model,
+        voice_settings: voiceRow.voice_settings,
+      }),
+    });
+  if (!res.ok) throw new Error(`elevenlabs_${res.status}`);
   return new Uint8Array(await res.arrayBuffer());
 }
 
@@ -142,9 +142,9 @@ export async function handleSpeak(request, env, ctx) {
   if (!text || text.length > MAX_SENTENCE_CHARS) {
     return json({ error: "bad_text" }, { status: 400 });
   }
-  const voice = typeof body?.voice === "string" ? body.voice : "ara";
-  if (!VOICE_IDS.has(voice)) return json({ error: "bad_voice" }, { status: 400 });
-  // 025: feeling shapes the prosody tags here, never on the client.
+  const voiceKey = typeof body?.voice === "string" ? body.voice : "voi_default_en";
+  const voiceRow = resolveSentenceVoice(voiceKey);
+  if (!voiceRow) return json({ error: "bad_voice" }, { status: 400 });
   const feeling = body?.feeling == null || body.feeling === "neutral"
     ? "neutral" : body.feeling;
   if (!FEELINGS.has(feeling) && feeling !== "neutral") {
@@ -153,7 +153,7 @@ export async function handleSpeak(request, env, ctx) {
   if (!env.VOICE) return json({ error: "voice_unavailable" }, { status: 503 });
 
   const eligible = eligibleSentence(text);
-  const key = `speak/${await hexSha256(cacheKeyMaterial(voice, text, feeling))}`;
+  const key = `speak/${await hexSha256(cacheKeyMaterial(voiceKey, text, feeling))}`;
 
   if (eligible) {
     const obj = await env.VOICE.get(key).catch(() => null);
@@ -164,7 +164,6 @@ export async function handleSpeak(request, env, ctx) {
     }
   }
 
-  // Fresh synthesis — the only thing the fair-use ledger counts.
   const gate = await usageCheck(env, { ns: "usage", uid, chars: text.length,
     maxChars: MAX_SENTENCE_CHARS, dayBudget: DAY_CHAR_BUDGET,
     minBudget: MINUTE_REQUEST_BURST });
@@ -173,12 +172,12 @@ export async function handleSpeak(request, env, ctx) {
     return json({ error: "fair_use", over: gate.over }, { status: 429 });
   }
 
+  const mintText = elevenExpressiveMintText(text, feeling);
   let audio;
   try {
-    // Fair use counts the sentence chars, not the prosody tags (§ 4).
-    audio = await synthesize(env, applyEmotionalProsody(text, feeling), voice);
+    audio = await synthesize(env, mintText, voiceRow);
   } catch {
-    return json({ error: "grok_failed" }, { status: 502 });
+    return json({ error: "tts_failed" }, { status: 502 });
   }
   if (!audio) return json({ error: "voice_unavailable" }, { status: 503 });
 
@@ -186,7 +185,7 @@ export async function handleSpeak(request, env, ctx) {
     await usageRecord(env, { ns: "usage", uid, chars: text.length });
     if (eligible) {
       await env.VOICE.put(key, audio, {
-        customMetadata: { voice, feeling, chars: String(text.length) },
+        customMetadata: { voice: voiceKey, feeling, chars: String(text.length) },
       });
     }
   })();
@@ -195,8 +194,6 @@ export async function handleSpeak(request, env, ctx) {
   return new Response(audio, {
     headers: {
       "content-type": "audio/mpeg",
-      // private = spoken but device-cache only (024 § 5); never stored
-      // where a fast answer would reveal someone said it before.
       "x-voice-cache": eligible ? "miss" : "private",
     },
   });

@@ -282,13 +282,9 @@ function syncSpeed() {
   for (const b of document.querySelectorAll("#speed-seg button")) b.classList.toggle("on", b.dataset.v === v);
 }
 
-// 024: whole-sentence voice — Tier 1 Cache Storage + ~300 ms deadline,
-// word clips always the fallback (rule 1). The Grok voice id is a
-// per-child setting in the doc's rule 3; the `grok_voice` profile
-// column ships with the Ara catalog rebuild (schemaSql rides in
-// catalog.json), so the id is one named seam until then.
+// 024/025: whole-sentence voice — Tier 1 Cache Storage + deadline.
+// Same voice_key as tiles (preferred_voice_id → voi_*_en).
 const sentenceVoice = voiceSentence();
-const grokVoice = "ara";
 // 028: tile voice library — entity names and committed typed words play
 // minted clips from Cache Storage + the ledger; never device TTS.
 const tileVoice = voiceTile();
@@ -609,7 +605,7 @@ async function speakSentence(feeling = null) {
     const blob = await sentenceVoice.request({
       userId: me.id,
       license: await voiceLicense(),
-      voice: grokVoice,
+      voice: voiceId,
       text,
       feeling: feeling ?? "neutral",
       // § 2: a face waits ~1 s for its feeling before neutral clips.
@@ -2478,7 +2474,7 @@ const SAMPLE_TEXT = "I want an apple.";
 async function sampleVoice(id) {
   if (id !== voiceId) return; // only the board's voice can speak today
   const blob = await sentenceVoice.request({
-    userId: me.id, license: await voiceLicense(), voice: grokVoice,
+    userId: me.id, license: await voiceLicense(), voice: id,
     text: SAMPLE_TEXT, feeling: "neutral", deadlineMs: 1500,
   }).catch(() => null);
   if (blob) return playBlob(blob);

@@ -39,7 +39,7 @@ const withEnv = async (fn, { fetchImpl } = {}) => {
   }
 };
 
-const ARGS = { userId: "u-1", license: "pip-life-x", voice: "ara", text: "i want a cookie." };
+const ARGS = { userId: "u-1", license: "pip-life-x", voice: "voi_default_en", text: "i want a cookie." };
 
 test("sentenceSpeakText joins display forms and terminates", () => {
   assert.equal(sentenceSpeakText([{ text: "i" }, { text: "want" }, { text: "cookies" }]),

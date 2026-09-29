@@ -89,12 +89,12 @@ export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}
    *  "speak the word clips" — offline, unlicensed, over budget,
    *  slow network, or past the deadline. A late answer still lands
    *  in the cache for the next tap. `feeling` rides to the Worker,
-   *  which applies the locked prosody (025 § 4); `deadlineMs` per
+   *  which applies Eleven expressive text (025 § 4); `deadlineMs` per
    *  call lets a face tap wait ~1 s (§ 2's never-silent rule). */
-  async function request({ userId, license, voice = "ara", text,
+  async function request({ userId, license, voice, text,
     feeling = "neutral", endpoint = "/api/v1/voice/speak",
     deadlineMs: deadline = deadlineMs }) {
-    if (!userId || !license || !text) return null;
+    if (!userId || !license || !voice || !text) return null;
     const hit = await cached(voice, text, feeling);
     if (hit) return hit;
     const key = await urlFor(voice, text, feeling);
