@@ -64,15 +64,18 @@
       <label>Folder <select id="folder"><option value="takes">takes</option><option value="shortlist">shortlist</option></select></label>
       <label>Show <select id="ship-filter">
         <option value="all">all files</option>
-        <option value="needs-ship" selected>needs publish</option>
+        <option value="needs-ship">needs publish</option>
         <option value="shipped">published via review</option>
+        <option value="mint-run">mint run (spot check)</option>
       </select></label>
+      <label id="mint-run-wrap" hidden>Mint run <select id="mint-run"></select></label>
       <button type="button" id="reload">Reload list</button>
     </div>
   </header>
   <main>
     <aside>
       <strong>Files</strong> <span id="batch-label" style="font-size:12px;color:#6b665c"></span>
+      <p style="font-size:12px;color:#6b665c;margin:8px 0 0">↑ ↓ move · Space replay</p>
       <ul id="files"></ul>
     </aside>
     <section>
@@ -93,7 +96,7 @@
     </section>
   </main>
   <script>
-    const DEFAULT_BATCH = "elevenlabs-forms-core";
+    const DEFAULT_BATCH = "elevenlabs-tiles-core";
     const $ = (id) => document.getElementById(id);
     const player = $("player");
     const canvas = $("wave");
@@ -136,15 +139,68 @@
       else if (batches[0]) sel.value = batches[0];
     }
 
+    function syncUrlFromControls() {
+      const params = new URLSearchParams();
+      params.set("batch", $("batch").value);
+      params.set("folder", $("folder").value);
+      params.set("ship", $("ship-filter").value);
+      if ($("ship-filter").value === "mint-run" && $("mint-run").value) {
+        params.set("runId", $("mint-run").value);
+      }
+      const q = $("word-lookup").value.trim();
+      if (q) params.set("q", q);
+      if (currentPath) params.set("file", currentPath.split("/").pop());
+      history.replaceState(null, "", `?${params.toString()}`);
+    }
+
+    function updateMintRunUi() {
+      const on = $("ship-filter").value === "mint-run";
+      $("mint-run-wrap").hidden = !on;
+    }
+
+    async function loadMintRuns() {
+      const batch = $("batch").value;
+      if (!batch) return;
+      const { runs } = await api(`/api/mint-runs?batch=${encodeURIComponent(batch)}`);
+      const sel = $("mint-run");
+      const prev = sel.value;
+      sel.innerHTML = "";
+      const empty = document.createElement("option");
+      empty.value = "";
+      empty.textContent = runs.length ? "— pick run —" : "— no runs yet —";
+      sel.appendChild(empty);
+      for (const r of runs) {
+        const o = document.createElement("option");
+        o.value = r.runId;
+        o.textContent = `${r.label || r.runId} (${r.itemCount})`;
+        sel.appendChild(o);
+      }
+      const qRun = qs().get("runId");
+      if (qRun && [...sel.options].some((o) => o.value === qRun)) sel.value = qRun;
+      else if (prev && [...sel.options].some((o) => o.value === prev)) sel.value = prev;
+    }
+
     async function loadFiles() {
       const folder = $("folder").value;
       const shipFilter = $("ship-filter").value;
       const batch = $("batch").value;
       if (!batch) return;
+      updateMintRunUi();
       $("batch-label").textContent = `(${batch})`;
-      const { files } = await api(
-        `/api/files?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}&shipFilter=${encodeURIComponent(shipFilter)}`,
-      );
+      if (shipFilter === "mint-run" && !$("mint-run").value) {
+        const ul = $("files");
+        ul.innerHTML = "";
+        fileListPaths = [];
+        setStatus("Pick a mint run to spot-check.", false);
+        syncUrlFromControls();
+        return;
+      }
+      let url =
+        `/api/files?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}&shipFilter=${encodeURIComponent(shipFilter)}`;
+      if (shipFilter === "mint-run") {
+        url += `&runId=${encodeURIComponent($("mint-run").value)}`;
+      }
+      const { files } = await api(url);
       const ul = $("files");
       ul.innerHTML = "";
       fileListPaths = files.map((f) => `${batch}/${folder}/${f.name}`);
@@ -155,7 +211,8 @@
         btn.type = "button";
         btn.className = "file";
         const tag = f.shippedViaReview ? "✓ pub" : "○";
-        btn.textContent = `${tag} ${f.name}`;
+        const label = f.spokenText || f.name;
+        btn.textContent = `${tag} ${label}`;
         const fullPath = `${batch}/${folder}/${f.name}`;
         btn.dataset.path = fullPath;
         btn.onclick = () => selectFile(fullPath);
@@ -163,7 +220,7 @@
         ul.appendChild(li);
         if (want && f.name === want) selectFile(fullPath);
       }
-      history.replaceState(null, "", `?batch=${encodeURIComponent(batch)}&folder=${encodeURIComponent(folder)}&ship=${encodeURIComponent(shipFilter)}`);
+      syncUrlFromControls();
     }
 
     async function runLookup() {
@@ -354,7 +411,7 @@
         // ok
       }
       if (!ensured.minted?.length) setStatus("");
-      history.replaceState(null, "", `?folder=${encodeURIComponent($("folder").value)}&file=${encodeURIComponent(path.split("/").pop())}`);
+      syncUrlFromControls();
     }
 
     async function trim(ms) {
@@ -410,16 +467,17 @@
       $("folder").value = "takes";
       $("ship-filter").value = "all";
       await loadFiles();
-      const batch = $("batch").value;
+      const batch = $("batch").value || DEFAULT_BATCH;
       const plain = `${batch}/takes/${lookupHit.slug}_plain.mp3`;
       if (fileListPaths.includes(plain)) await selectFile(plain);
       else setStatus(`No takes yet for ${lookupHit.spokenText} — use Remint or open any matching file.`, true);
     };
 
     $("reload").onclick = () => loadFiles();
-    $("batch").onchange = () => loadFiles();
+    $("batch").onchange = () => loadMintRuns().then(loadFiles);
     $("folder").onchange = () => loadFiles();
     $("ship-filter").onchange = () => loadFiles();
+    $("mint-run").onchange = () => loadFiles();
     document.querySelectorAll("[data-trim]").forEach((btn) => {
       btn.onclick = () => trim(Number(btn.dataset.trim)).catch((e) => setStatus(e.message, true));
     });
@@ -492,6 +550,13 @@
         if (qFolder) $("folder").value = qFolder;
         const qShip = qs().get("ship");
         if (qShip) $("ship-filter").value = qShip;
+        await loadMintRuns();
+        const qRun = qs().get("runId");
+        if (qRun) {
+          $("ship-filter").value = "mint-run";
+          $("mint-run").value = qRun;
+        }
+        updateMintRunUi();
         const qWord = qs().get("q");
         if (qWord) {
           $("word-lookup").value = qWord;
@@ -501,6 +566,9 @@
         const file = qs().get("file");
         const batch = $("batch").value;
         if (file && batch) await selectFile(`${batch}/${$("folder").value}/${file}`);
+        else if (fileListPaths.length && $("ship-filter").value === "mint-run") {
+          await selectFile(fileListPaths[0]);
+        }
       } catch (e) {
         setStatus(e.message, true);
       }

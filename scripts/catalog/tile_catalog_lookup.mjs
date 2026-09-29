@@ -14,6 +14,7 @@ import {
   repoRoot,
 } from "./paths.mjs";
 import { localPathForAudioKey, r2GetArgs } from "./storage.mjs";
+import { loadLexicon } from "./wbb_audio.mjs";
 
 export function shippingPathForBatch(batch = TILE_REVIEW_BATCH) {
   return join(repoRoot, "data/samples", batch, "shipping.json");
@@ -38,6 +39,23 @@ function loadJson(path) {
 }
 
 let importIndexCache = null;
+let lexiconIndexCache = null;
+
+function buildLaunchLexiconIndex() {
+  if (lexiconIndexCache) return lexiconIndexCache;
+  const lexicon = loadLexicon();
+  const byNorm = new Map();
+  const bySlug = new Map();
+  for (const e of lexicon.entries ?? []) {
+    const norm = normalizeSpokenQuery(e.spokenText);
+    const slug = catalogSlug(e.spokenText);
+    const row = { slot: e.slot, spokenText: e.spokenText, tier: e.tier };
+    if (!byNorm.has(norm)) byNorm.set(norm, row);
+    if (!bySlug.has(slug)) bySlug.set(slug, row);
+  }
+  lexiconIndexCache = { byNorm, bySlug };
+  return lexiconIndexCache;
+}
 
 function buildImportIndex() {
   if (importIndexCache) return importIndexCache;
@@ -105,37 +123,45 @@ function clipFromGenerated(slot) {
 }
 
 /**
- * Resolve a launch-lexicon word to import row + best-known catalog clip.
+ * Resolve a launch-lexicon label to slot + best-known catalog clip.
+ * Index: launch_lexicon.json (always), then audio_import / generated_audio / shipping.
  * @param {string} query free text or slug
  */
 export function lookupCatalogWord(query) {
   const raw = String(query ?? "").trim();
   if (!raw) throw new Error("query is required");
 
-  const { byNorm, bySlug } = buildImportIndex();
+  const launch = buildLaunchLexiconIndex();
+  const { byNorm: importByNorm, bySlug: importBySlug } = buildImportIndex();
   const norm = normalizeSpokenQuery(raw);
   const slug = catalogSlug(raw);
 
-  const importRow = byNorm.get(norm) ?? bySlug.get(slug);
-  if (!importRow) {
+  const lexRow = launch.byNorm.get(norm) ?? launch.bySlug.get(slug);
+  if (!lexRow) {
     throw new Error(`no catalog row for "${raw}" — try the exact tile label`);
   }
 
-  const resolvedSlug = catalogSlug(importRow.spokenText);
+  const resolvedSlug = catalogSlug(lexRow.spokenText);
+  const importRow =
+    importByNorm.get(normalizeSpokenQuery(lexRow.spokenText)) ??
+    importBySlug.get(resolvedSlug);
+
   const shipping = loadShippingDoc().bySlug?.[resolvedSlug];
   const shippedViaReview = Boolean(shipping);
 
   let catalogClip =
     shipping?.clip ??
-    (importRow.status === "hit" ? importRow.clip : null) ??
-    clipFromGenerated(importRow.slot);
+    (importRow?.status === "hit" ? importRow.clip : null) ??
+    clipFromGenerated(lexRow.slot);
+
+  const importStatus = importRow?.status ?? (catalogClip ? "generated" : "miss");
 
   return {
     query: raw,
     slug: resolvedSlug,
-    spokenText: importRow.spokenText,
-    slot: importRow.slot,
-    importStatus: importRow.status,
+    spokenText: lexRow.spokenText,
+    slot: lexRow.slot,
+    importStatus,
     catalogClip,
     shippedViaReview,
     shipping: shipping ?? null,
@@ -202,5 +228,6 @@ export function filterFilesByShip(files, shipFilter) {
   if (!shipFilter || shipFilter === "all") return files;
   if (shipFilter === "needs-ship") return files.filter((f) => !f.shippedViaReview);
   if (shipFilter === "shipped") return files.filter((f) => f.shippedViaReview);
-  throw new Error('shipFilter must be all, needs-ship, or shipped');
+  if (shipFilter === "mint-run") return files;
+  throw new Error('shipFilter must be all, needs-ship, shipped, or mint-run');
 }

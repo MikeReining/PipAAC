@@ -33396,77 +33396,77 @@
       "sense_id": "sns_0515",
       "key": "symbols/fast.png",
       "status": "approved",
-      "sha256": "c364f6960fc60a6b73101fcc20189da3961de3eec9f8eda3c851288fe01eccab"
+      "sha256": "8c55ac2d446db151b31f5317cbf059d329551173697abb3a64fd532f462b2359"
     },
     {
       "id": "img_0516",
       "sense_id": "sns_0516",
       "key": "symbols/slow.png",
       "status": "approved",
-      "sha256": "ac3f2391b61762eba2c2b21ab3b0b9214fdd96b75b2f28c0ed8f9f664b5352c9"
+      "sha256": "a08c4849ceeea41719195284b260d80a6860eb7335372c1b0fc1b78c314f2ae1"
     },
     {
       "id": "img_0517",
       "sense_id": "sns_0517",
       "key": "symbols/tall.png",
       "status": "approved",
-      "sha256": "1ea35e4bdf2a6fbebb2f269bed43ce7f8cbe8076f8b2acffc4f42dd57243d805"
+      "sha256": "b1fe5cdd993c4c1f29146602c1d6cf3ac0b04bdca22ccd7cb7e1a8248c5e393f"
     },
     {
       "id": "img_0518",
       "sense_id": "sns_0518",
       "key": "symbols/short.png",
       "status": "approved",
-      "sha256": "27e5e8a25321817fee1b1f68569e5c34b4e6640e1629674e54a252b4062463d1"
+      "sha256": "8c70e3c7486927569841591c704aa8b107e54fb62419ffc0ffbf6b44eb96270d"
     },
     {
       "id": "img_0519",
       "sense_id": "sns_0519",
       "key": "symbols/long.png",
       "status": "approved",
-      "sha256": "3e81d75f9acc544ab9b55fa9165621d0b40be78f9b59f5819d0b62dba0fc1581"
+      "sha256": "36833d484e7b12e4983f2bb638baa0275368d629ee2989b9d0d89c631d6a4d75"
     },
     {
       "id": "img_0520",
       "sense_id": "sns_0520",
       "key": "symbols/heavy.png",
       "status": "approved",
-      "sha256": "5c6b051eb9744edd4d430f10ca5897be138299051cb1ef841355c9249987bee5"
+      "sha256": "8d222f4d6c6f2a1fb1e2816190c0e3867bec2af58f7a2710eb1a33478783f32c"
     },
     {
       "id": "img_0521",
       "sense_id": "sns_0521",
       "key": "symbols/light.png",
       "status": "approved",
-      "sha256": "31ce0d13764fdd6a9a043cf5afedbd0ce6ca99b9409bea2727fe47086d1750e2"
+      "sha256": "a82372875559aff1eafba2814224cbb1316136ad23138dac2cd777bf0035408c"
     },
     {
       "id": "img_0522",
       "sense_id": "sns_0522",
       "key": "symbols/thick.png",
       "status": "approved",
-      "sha256": "cb0d63208b5eb1b4a783495ee0d98ba5e1c73bd35de3fac77ff2e3829c452e24"
+      "sha256": "ed85c3933c960d7e9d61ff7b795b858756fe09d40161508dd1d8692cde06c017"
     },
     {
       "id": "img_0523",
       "sense_id": "sns_0523",
       "key": "symbols/thin.png",
       "status": "approved",
-      "sha256": "42ae1f54f97032e9e8c85a35dabed3cb0ed9697e8a97d0176acc02828ed3dbe2"
+      "sha256": "6f61bedf7ddfe288d3816b0f22f7a17568c67a03e5452a4ae77255365b45550d"
     },
     {
       "id": "img_0524",
       "sense_id": "sns_0524",
       "key": "symbols/wide.png",
       "status": "approved",
-      "sha256": "c2862aa5ec69df40c03a754f107fc14b04ef17ba7ec6b4cd522d49f1ec315683"
+      "sha256": "98461279eb63381824958708e3a9dfc6ba340e3814c6510626d8fc911c471434"
     },
     {
       "id": "img_0552",
       "sense_id": "sns_0552",
       "key": "symbols/light.png",
       "status": "approved",
-      "sha256": "31ce0d13764fdd6a9a043cf5afedbd0ce6ca99b9409bea2727fe47086d1750e2"
+      "sha256": "a82372875559aff1eafba2814224cbb1316136ad23138dac2cd777bf0035408c"
     },
     {
       "id": "img_0606",
@@ -40375,6 +40375,326 @@
       "key": "audio/oops/6f2e4fdad769.mp3",
       "status": "ready",
       "sha256": "6f2e4fdad769c249047dfce26d8147d97513fca383d8062068251cb675027d52",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0688",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0688",
+      "recorded_text": "cucumber",
+      "key": "audio/cucumber/6ccc35b74465.mp3",
+      "status": "ready",
+      "sha256": "6ccc35b74465671e521e92bb221cdad8e04600284e227ec8186dbb7726d38509",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0689",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0689",
+      "recorded_text": "pepper",
+      "key": "audio/pepper/c9944d8eb1fc.mp3",
+      "status": "ready",
+      "sha256": "c9944d8eb1fc5c0724d45cc0c17592057bff6b7c0b6bb5a123dc133112c497a5",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0690",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0690",
+      "recorded_text": "granola bar",
+      "key": "audio/granola_bar/47e4dbb8858b.mp3",
+      "status": "ready",
+      "sha256": "47e4dbb8858bd723e270285d001460a4e65eab71b5a2fba2d445e6b3b54e007f",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0691",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0691",
+      "recorded_text": "string cheese",
+      "key": "audio/string_cheese/9ad40fe61463.mp3",
+      "status": "ready",
+      "sha256": "9ad40fe614638165360f815a421b32215250c010ddff6f6aecf20c23af3156b5",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0692",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0692",
+      "recorded_text": "applesauce",
+      "key": "audio/applesauce/daebfbba404e.mp3",
+      "status": "ready",
+      "sha256": "daebfbba404e957f77ba19779d44b851afebb6564b3ad64fb627cf1408a920a9",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0694",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0694",
+      "recorded_text": "banana bread",
+      "key": "audio/banana_bread/e02a963d47c7.mp3",
+      "status": "ready",
+      "sha256": "e02a963d47c77a8e7bdaf8213dba23da65150c8df751085cc439b17120575c71",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0695",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0695",
+      "recorded_text": "goldfish crackers",
+      "key": "audio/goldfish_crackers/324f36043208.mp3",
+      "status": "ready",
+      "sha256": "324f3604320869464ec61ac4042f7283d5f03dd99a226ed6ab16813d387198b2",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0696",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0696",
+      "recorded_text": "pudding",
+      "key": "audio/pudding/ba706a03b220.mp3",
+      "status": "ready",
+      "sha256": "ba706a03b220c53f76c895055bd2a68419f5c61659daa736c101a19051f3beb4",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0697",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0697",
+      "recorded_text": "jello",
+      "key": "audio/jello/1eeeab46b15f.mp3",
+      "status": "ready",
+      "sha256": "1eeeab46b15f1d179c8f9a3ad931ca870361355eb6f7c4192ca6076ed027ae92",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0698",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0698",
+      "recorded_text": "brownie",
+      "key": "audio/brownie/00748704642e.mp3",
+      "status": "ready",
+      "sha256": "00748704642e52b225a1e752184df8f982275e83e1d5acf57f36a5ac8baaee08",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0699",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0699",
+      "recorded_text": "cupcake",
+      "key": "audio/cupcake/7cf8869dcc6b.mp3",
+      "status": "ready",
+      "sha256": "7cf8869dcc6b51f56ddef248f57aa41a88f21ed73a9d4732adf5fb4fb2af8c9c",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0700",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0700",
+      "recorded_text": "chocolate",
+      "key": "audio/chocolate/cdba9503f923.mp3",
+      "status": "ready",
+      "sha256": "cdba9503f923d3cc1d24305e2acda0ab2d2ca9e7dd2ee356467dad6334a1a363",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0701",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0701",
+      "recorded_text": "lollipop",
+      "key": "audio/lollipop/d4ab04a9b091.mp3",
+      "status": "ready",
+      "sha256": "d4ab04a9b09188a364da839000aa1c011ba588b646b875320513461c32dbafde",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0702",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0702",
+      "recorded_text": "dessert",
+      "key": "audio/dessert/0d9b1b9128ef.mp3",
+      "status": "ready",
+      "sha256": "0d9b1b9128efd7bc3dfb03e2f914193a444c615ca57a4668214ac5e5259d6d52",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0703",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0703",
+      "recorded_text": "blueberry",
+      "key": "audio/blueberry/a0c019084152.mp3",
+      "status": "ready",
+      "sha256": "a0c01908415281c335d749e2fa74fa07f70327dfd5878420fe83c3e476b10a60",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0704",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0704",
+      "recorded_text": "raspberry",
+      "key": "audio/raspberry/f225216dd99a.mp3",
+      "status": "ready",
+      "sha256": "f225216dd99a6305dbbef1210287e8f76c7132e635c71d0dfc18b81b4c6ba6ac",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0705",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0705",
+      "recorded_text": "blackberry",
+      "key": "audio/blackberry/a0485ae6a8cb.mp3",
+      "status": "ready",
+      "sha256": "a0485ae6a8cb79e4ff7dfb138a36e2c26f234e81870799d6f34ca8b98fc5a0a1",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0706",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0706",
+      "recorded_text": "cherry",
+      "key": "audio/cherry/d2dfa13798ee.mp3",
+      "status": "ready",
+      "sha256": "d2dfa13798eef787ae1a09c9d829931d75550ff60593b325c5461b65bdbd0295",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0707",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0707",
+      "recorded_text": "peach",
+      "key": "audio/peach/fbc5160d5726.mp3",
+      "status": "ready",
+      "sha256": "fbc5160d5726e18c12ca30f7f926e6bb7034ddd2994617c49aee1504b305c40a",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0708",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0708",
+      "recorded_text": "pear",
+      "key": "audio/pear/6fc9493cfab3.mp3",
+      "status": "ready",
+      "sha256": "6fc9493cfab3c0c3d5939220a59e3028ec349d62d5ec3139d0085669f0b19a4e",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0709",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0709",
+      "recorded_text": "mango",
+      "key": "audio/mango/88fe41017e81.mp3",
+      "status": "ready",
+      "sha256": "88fe41017e8184541961f41d5c6db2b1209a447ff7e26da8834e5681936204d1",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0710",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0710",
+      "recorded_text": "pineapple",
+      "key": "audio/pineapple/2a1e1b67b1e4.mp3",
+      "status": "ready",
+      "sha256": "2a1e1b67b1e4ec6babdf78908f8ec3c59ad15050d9539f3297b335b616f2a2cc",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0711",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0711",
+      "recorded_text": "kiwi",
+      "key": "audio/kiwi/bf208a6a3d63.mp3",
+      "status": "ready",
+      "sha256": "bf208a6a3d63d9901f0fdff0a8a38ff4da1c8a326e16991bb54a9e0c0736a86b",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0712",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0712",
+      "recorded_text": "cantaloupe",
+      "key": "audio/cantaloupe/908520bb90bd.mp3",
+      "status": "ready",
+      "sha256": "908520bb90bdd42527046f69f32d29f96742a632180d7dd78e9f4303a41aaf37",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0713",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0713",
+      "recorded_text": "melon",
+      "key": "audio/melon/893977946332.mp3",
+      "status": "ready",
+      "sha256": "89397794633285d4335977316b1c37d546094cd189b81fde5a5eb8f828f9f42d",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0714",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0714",
+      "recorded_text": "coconut",
+      "key": "audio/coconut/669f60f96cf0.mp3",
+      "status": "ready",
+      "sha256": "669f60f96cf0e3a3568faaacfa3e3b30412e7ea7fca334d10113eeb1c8e8bf34",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0715",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0715",
+      "recorded_text": "orange juice",
+      "key": "audio/orange_juice/1ae2a56057a9.mp3",
+      "status": "ready",
+      "sha256": "1ae2a56057a9a3ff234056dae54f0649f291306a14d15eb4054aa8734a60de0a",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0716",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0716",
+      "recorded_text": "grape juice",
+      "key": "audio/grape_juice/f7281fcb0a46.mp3",
+      "status": "ready",
+      "sha256": "f7281fcb0a466751cd4fff58a458108253f4031f58175583f596b9ee9133ac1e",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0717",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0717",
+      "recorded_text": "strawberry milk",
+      "key": "audio/strawberry_milk/d7017402b507.mp3",
+      "status": "ready",
+      "sha256": "d7017402b507f155ea90dd24923f1e8e5730119f94ee4a1b748ed2e6827d2971",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0718",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0718",
+      "recorded_text": "lemonade",
+      "key": "audio/lemonade/0b9e57a20c49.mp3",
+      "status": "ready",
+      "sha256": "0b9e57a20c49f71231629c918d79d71dc9860f31b71b0cd9af1477d32998eed6",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0719",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0719",
+      "recorded_text": "hot chocolate",
+      "key": "audio/hot_chocolate/da1e16c35a7e.mp3",
+      "status": "ready",
+      "sha256": "da1e16c35a7eea2165eb2e3ca5ea47114712a91a596e9761419acf576310183a",
+      "source": "elevenlabs"
+    },
+    {
+      "id": "clp_0720",
+      "voice_id": "voi_default_en",
+      "utterance_id": "utt_0720",
+      "recorded_text": "milkshake",
+      "key": "audio/milkshake/dd0b542306dd.mp3",
+      "status": "ready",
+      "sha256": "dd0b542306ddaf6c6b6537390b9bcdffbe50bc69d2179560febca1086cf5a796",
       "source": "elevenlabs"
     },
     {

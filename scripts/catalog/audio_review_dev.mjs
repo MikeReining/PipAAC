@@ -44,6 +44,7 @@ import {
   lookupCatalogWord,
   probeR2ObjectExists,
 } from "./tile_catalog_lookup.mjs";
+import { listMintRuns, mintRunFileList } from "./elevenlabs_mint_run.mjs";
 import { buildGrokTtsBody, synthesizeGrokVoice } from "./grok_tts.mjs";
 import { mintBackupVoice } from "./mint_backup_voice.mjs";
 import { publishCatalogForm } from "./publish_catalog_form.mjs";
@@ -337,12 +338,36 @@ async function handle(req, res) {
     return;
   }
 
+  if (path === "/api/mint-runs" && req.method === "GET") {
+    const batch = url.searchParams.get("batch") || "elevenlabs-tiles-core";
+    json(res, 200, { batch, runs: listMintRuns(batch) });
+    return;
+  }
+
   if (path === "/api/files" && req.method === "GET") {
     const batch = url.searchParams.get("batch");
     const folder = url.searchParams.get("folder") || "takes";
     const shipFilter = url.searchParams.get("shipFilter") || "all";
     if (!batch || !["takes", "shortlist"].includes(folder)) {
       json(res, 400, { error: "batch and folder=takes|shortlist required" });
+      return;
+    }
+    if (isElevenlabsReviewBatch(batch) && shipFilter === "mint-run") {
+      const runId = url.searchParams.get("runId")?.trim();
+      if (!runId) {
+        json(res, 400, { error: "runId required when shipFilter=mint-run" });
+        return;
+      }
+      try {
+        let files = mintRunFileList(runId, batch, folder);
+        const runShip = url.searchParams.get("runShip") || "all";
+        if (runShip === "needs-ship") {
+          files = files.filter((f) => !f.shippedViaReview);
+        }
+        json(res, 200, { batch, folder, shipFilter, runId, files });
+      } catch (e) {
+        json(res, 400, { error: e instanceof Error ? e.message : String(e) });
+      }
       return;
     }
     let files = listMp3(batch, folder);

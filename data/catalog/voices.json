@@ -10,8 +10,8 @@
   "tiles": {
     "provider": "elevenlabs",
     "voice_id": "WWMMC6k9tdar0BthUenK",
-    "label": "Catalog tile voice",
-    "description": "Human-approved ElevenLabs clone for single-word tiles and gap-fill. Not for Grok sentence playback.",
+    "label": "Eve",
+    "description": "Default female tile voice (ElevenLabs). Human-approved clone for single-word tiles and gap-fill. Not for Grok sentence playback.",
     "model": "eleven_v4",
     "voice_settings": {
       "stability": 0.4,

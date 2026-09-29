@@ -3,7 +3,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 import { catalogSlug } from "./elevenlabs_tile_variations.mjs";
@@ -85,7 +85,15 @@ export function publishCatalogTile({ sourceMp3Path, slot, spokenText, dryRun = f
   const voice = getCatalogTileVoice();
   const clip = buildClipRecord(spokenText, sourceMp3Path, voice.voice_id);
   const dest = localPathForAudioKey(DEFAULT_AUDIO_CACHE_ROOT, clip.key);
-  mkdirSync(dirname(dest), { recursive: true });
+  const destDir = dirname(dest);
+  if (existsSync(destDir)) {
+    try {
+      if (lstatSync(destDir).isSymbolicLink()) unlinkSync(destDir);
+    } catch {
+      // leave real dirs alone
+    }
+  }
+  mkdirSync(destDir, { recursive: true });
 
   if (!dryRun) {
     copyFileSync(sourceMp3Path, dest);

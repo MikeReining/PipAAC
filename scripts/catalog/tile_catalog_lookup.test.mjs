@@ -24,6 +24,19 @@ test("lookupCatalogWord finds import row", () => {
   assert.equal(hit.slot, 56);
 });
 
+test("lookupCatalogWord finds launch-only gap-fill row", () => {
+  const hit = lookupCatalogWord("hot chocolate");
+  assert.equal(hit.spokenText, "hot chocolate");
+  assert.equal(hit.slug, "hot_chocolate");
+  assert.ok(hit.catalogClip?.key);
+});
+
+test("lookupCatalogWord finds melon", () => {
+  const hit = lookupCatalogWord("melon");
+  assert.equal(hit.spokenText, "melon");
+  assert.ok(hit.catalogClip?.key);
+});
+
 test("shipping log drives file filters", () => {
   const dir = mkdtempSync(join(tmpdir(), "pip-ship-"));
   const shippingPath = join(dir, "shipping.json");

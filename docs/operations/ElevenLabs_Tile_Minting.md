@@ -76,6 +76,15 @@ npm run catalog:voice-selector:mint
 
 Open [http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector](http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector). Probes and candidate IDs live in `data/samples/elevenlabs-voice-selector/round.json`. Takes: `data/samples/elevenlabs-voice-selector/takes/` (gitignore). Winner: `decisions.json` in the same folder.
 
+### Mint runs (batch spot-check)
+
+After `catalog:tiles:mint-gaps` or `mint_elevenlabs_tile_batch.mjs --mint-run`, the CLI prints a review URL. In [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles): **Show → mint run (spot check)**, pick the run, **↑ / ↓** through spoken labels.
+
+32 launch food/drink gaps (Eve):  
+[http://127.0.0.1:3747/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&folder=takes&ship=mint-run&runId=gap-launch-food-2026-09-29](http://127.0.0.1:3747/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&folder=takes&ship=mint-run&runId=gap-launch-food-2026-09-29)
+
+**Look up catalog** uses `launch_lexicon.json` + `generated_audio.json` (any launch label, including gap-fill rows not in `audio_import.json`).
+
 **Full-library coverage (default + extra voices):** `docs/phases/028_Tile_Voice_Library.md` (decided: on-demand mint of typed words, review page, one mint core) (ops gaps: `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md`).
 
 ## Audio inventory (what is “missing”?)

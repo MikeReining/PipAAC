@@ -20,6 +20,7 @@ import {
   mintTileVariation,
   recipesPathForBatch,
 } from "./elevenlabs_tile_mint_core.mjs";
+import { reviewUrlQuery, writeMintRun } from "./elevenlabs_mint_run.mjs";
 import { repoRoot } from "./paths.mjs";
 
 function loadEnv() {
@@ -42,6 +43,9 @@ async function main() {
 
   const batchIdx = process.argv.indexOf("--batch");
   const batch = batchIdx >= 0 ? process.argv[batchIdx + 1] : TILE_REVIEW_BATCH;
+  const recordMintRun = process.argv.includes("--mint-run");
+  const labelIdx = process.argv.indexOf("--mint-run-label");
+  const mintRunLabel = labelIdx >= 0 ? process.argv[labelIdx + 1] : null;
 
   const recipes = JSON.parse(readFileSync(recipesPathForBatch(batch), "utf8"));
   const words = limit != null && Number.isFinite(limit) ? recipes.words.slice(0, limit) : recipes.words;
@@ -51,12 +55,21 @@ async function main() {
   let minted = 0;
   let skipped = 0;
   let failed = 0;
+  /** @type {Map<string, { slot: number, spokenText: string, slug: string }>} */
+  const runWords = new Map();
 
   for (const row of words) {
     for (const variationId of variations) {
       const outPath = join(takesRoot, tileTakeFilename(row.slug, variationId));
       if (!force && existsSync(outPath)) {
         skipped++;
+        if (recordMintRun && variationId === "plain") {
+          runWords.set(row.slug, {
+            slot: row.slot,
+            spokenText: row.word,
+            slug: row.slug,
+          });
+        }
         continue;
       }
       try {
@@ -68,11 +81,30 @@ async function main() {
         });
         minted++;
         console.log(`minted ${row.slug} ${variationId} -> ${r.relOut} (${r.bytes} B)`);
+        if (recordMintRun && variationId === "plain") {
+          runWords.set(row.slug, {
+            slot: row.slot,
+            spokenText: row.word,
+            slug: row.slug,
+          });
+        }
       } catch (err) {
         failed++;
         console.error(`FAIL ${row.slug} ${variationId}: ${err instanceof Error ? err.message : err}`);
       }
     }
+  }
+
+  if (recordMintRun && runWords.size > 0) {
+    const run = writeMintRun({
+      batch,
+      label: mintRunLabel ?? `Batch mint (${runWords.size} words)`,
+      note: "plain takes — review before publish",
+      items: [...runWords.values()],
+    });
+    const port = process.env.PIP_AUDIO_REVIEW_PORT || 3747;
+    console.log(`mint run: ${run.runId}`);
+    console.log(`review: http://127.0.0.1:${port}${reviewUrlQuery(run.runId, batch)}`);
   }
 
   console.log(`batch done (${batch}): ${words.length} words, minted=${minted}, skipped=${skipped}, failed=${failed}`);

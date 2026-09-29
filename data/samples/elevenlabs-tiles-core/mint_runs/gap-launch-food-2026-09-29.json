@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "runId": "gap-launch-food-2026-09-29",
+  "label": "Launch food/drink gaps (32) — Eve",
+  "note": "Retroactive manifest for spot-check; clips were mint+published before mint-run UI existed.",
+  "batch": "elevenlabs-tiles-core",
+  "createdAt": "2026-09-29T16:10:50.891Z",
+  "voice": {
+    "label": "Eve",
+    "voice_id": "WWMMC6k9tdar0BthUenK",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": 688,
+      "spokenText": "cucumber",
+      "slug": "cucumber",
+      "takeRel": "elevenlabs-tiles-core/takes/cucumber_plain.mp3",
+      "publishedAt": "2026-09-29T16:00:41.242Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 689,
+      "spokenText": "pepper",
+      "slug": "pepper",
+      "takeRel": "elevenlabs-tiles-core/takes/pepper_plain.mp3",
+      "publishedAt": "2026-09-29T16:00:43.343Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 690,
+      "spokenText": "granola bar",
+      "slug": "granola_bar",
+      "takeRel": "elevenlabs-tiles-core/takes/granola_bar_plain.mp3",
+      "publishedAt": "2026-09-29T16:00:46.302Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 691,
+      "spokenText": "string cheese",
+      "slug": "string_cheese",
+      "takeRel": "elevenlabs-tiles-core/takes/string_cheese_plain.mp3",
+      "publishedAt": "2026-09-29T16:00:49.087Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 692,
+      "spokenText": "applesauce",
+      "slug": "applesauce",
+      "takeRel": "elevenlabs-tiles-core/takes/applesauce_plain.mp3",
+      "publishedAt": "2026-09-29T16:00:51.702Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 694,
+      "spokenText": "banana bread",
+      "slug": "banana_bread",
+      "takeRel": "elevenlabs-tiles-core/takes/banana_bread_plain.mp3",
+      "publishedAt": "2026-09-29T16:00:54.382Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 695,
+      "spokenText": "goldfish crackers",
+      "slug": "goldfish_crackers",
+      "takeRel": "elevenlabs-tiles-core/takes/goldfish_crackers_plain.mp3",
+      "publishedAt": "2026-09-29T16:00:57.274Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 696,
+      "spokenText": "pudding",
+      "slug": "pudding",
+      "takeRel": "elevenlabs-tiles-core/takes/pudding_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:00.701Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 697,
+      "spokenText": "jello",
+      "slug": "jello",
+      "takeRel": "elevenlabs-tiles-core/takes/jello_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:03.090Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 698,
+      "spokenText": "brownie",
+      "slug": "brownie",
+      "takeRel": "elevenlabs-tiles-core/takes/brownie_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:05.333Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 699,
+      "spokenText": "cupcake",
+      "slug": "cupcake",
+      "takeRel": "elevenlabs-tiles-core/takes/cupcake_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:07.674Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 700,
+      "spokenText": "chocolate",
+      "slug": "chocolate",
+      "takeRel": "elevenlabs-tiles-core/takes/chocolate_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:31.472Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 701,
+      "spokenText": "lollipop",
+      "slug": "lollipop",
+      "takeRel": "elevenlabs-tiles-core/takes/lollipop_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:12.770Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 702,
+      "spokenText": "dessert",
+      "slug": "dessert",
+      "takeRel": "elevenlabs-tiles-core/takes/dessert_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:15.992Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 703,
+      "spokenText": "blueberry",
+      "slug": "blueberry",
+      "takeRel": "elevenlabs-tiles-core/takes/blueberry_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:20.268Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 704,
+      "spokenText": "raspberry",
+      "slug": "raspberry",
+      "takeRel": "elevenlabs-tiles-core/takes/raspberry_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:25.231Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 705,
+      "spokenText": "blackberry",
+      "slug": "blackberry",
+      "takeRel": "elevenlabs-tiles-core/takes/blackberry_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:32.618Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 706,
+      "spokenText": "cherry",
+      "slug": "cherry",
+      "takeRel": "elevenlabs-tiles-core/takes/cherry_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:36.898Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 707,
+      "spokenText": "peach",
+      "slug": "peach",
+      "takeRel": "elevenlabs-tiles-core/takes/peach_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:41.253Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 708,
+      "spokenText": "pear",
+      "slug": "pear",
+      "takeRel": "elevenlabs-tiles-core/takes/pear_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:45.713Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 709,
+      "spokenText": "mango",
+      "slug": "mango",
+      "takeRel": "elevenlabs-tiles-core/takes/mango_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:49.086Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 710,
+      "spokenText": "pineapple",
+      "slug": "pineapple",
+      "takeRel": "elevenlabs-tiles-core/takes/pineapple_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:54.154Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 711,
+      "spokenText": "kiwi",
+      "slug": "kiwi",
+      "takeRel": "elevenlabs-tiles-core/takes/kiwi_plain.mp3",
+      "publishedAt": "2026-09-29T16:01:57.992Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 712,
+      "spokenText": "cantaloupe",
+      "slug": "cantaloupe",
+      "takeRel": "elevenlabs-tiles-core/takes/cantaloupe_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:02.700Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 713,
+      "spokenText": "melon",
+      "slug": "melon",
+      "takeRel": "elevenlabs-tiles-core/takes/melon_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:05.937Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 714,
+      "spokenText": "coconut",
+      "slug": "coconut",
+      "takeRel": "elevenlabs-tiles-core/takes/coconut_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:09.484Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 715,
+      "spokenText": "orange juice",
+      "slug": "orange_juice",
+      "takeRel": "elevenlabs-tiles-core/takes/orange_juice_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:11.916Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 716,
+      "spokenText": "grape juice",
+      "slug": "grape_juice",
+      "takeRel": "elevenlabs-tiles-core/takes/grape_juice_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:14.536Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 717,
+      "spokenText": "strawberry milk",
+      "slug": "strawberry_milk",
+      "takeRel": "elevenlabs-tiles-core/takes/strawberry_milk_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:16.979Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 718,
+      "spokenText": "lemonade",
+      "slug": "lemonade",
+      "takeRel": "elevenlabs-tiles-core/takes/lemonade_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:19.913Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 719,
+      "spokenText": "hot chocolate",
+      "slug": "hot_chocolate",
+      "takeRel": "elevenlabs-tiles-core/takes/hot_chocolate_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:23.015Z",
+      "review": "published_before_run_ui"
+    },
+    {
+      "slot": 720,
+      "spokenText": "milkshake",
+      "slug": "milkshake",
+      "takeRel": "elevenlabs-tiles-core/takes/milkshake_plain.mp3",
+      "publishedAt": "2026-09-29T16:02:25.520Z",
+      "review": "published_before_run_ui"
+    }
+  ]
+}
