@@ -19,6 +19,10 @@
  *   (Settings redesign, founder 2026-09-28). A PIN stored the old way,
  *   under `user/<id>/pin`, still opens and moves itself to the device
  *   key on its first good check.
+ * - **Off until asked for** (founder 2026-09-28). A new board has no
+ *   PIN: Settings opens with one tap until someone locks it (Settings →
+ *   Backup & privacy, or the "Protect" card once the board is worth
+ *   protecting). Turning it off clears it for everyone on the device.
  * - **Never shown.** Only the hash is kept, so the app cannot display
  *   the digits — the child watching is the threat, and adults reuse
  *   phone PINs. Settings changes it (no old PIN: the gate was just
@@ -57,6 +61,12 @@ export async function hasPin(store, userId) {
 export async function setPin(store, userId, pin) {
   if (!PIN_RE.test(String(pin))) throw new Error("pin must be 4-6 digits");
   await store.put(DEVICE_PIN, await hash("device", String(pin)));
+}
+
+/** Turn the PIN off: Settings opens without one again. */
+export async function clearPin(store, userId) {
+  await store.del(DEVICE_PIN);
+  await store.del(legacyPinKey(userId));
 }
 
 /** The device PIN when set; else this person's PIN from before the

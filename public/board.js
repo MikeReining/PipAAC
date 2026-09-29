@@ -46,7 +46,7 @@ import {
 import { resolveSlot } from "./shared/voice.mjs";
 import { sentenceSpeakText, voiceSentence } from "./shared/voice_sentence.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
-import { PIN_RE, checkPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
+import { PIN_RE, checkPin, clearPin, hasPin, setPin, verifyAdult } from "./shared/pin.mjs";
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
 import { applyTransform, wordLemmaCandidates } from "./shared/txbar.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
@@ -1708,7 +1708,10 @@ async function gatePin(onOk, { change = false } = {}) {
         err = $("pin-error"), hint = $("pin-hint"),
         title = $("pin-title"), go = $("pin-go"), forgot = $("pin-forgot");
   const store = await openKeyStore();
-  let mode = change ? "new" : (await hasPin(store, me.id)) ? "check" : "create";
+  const locked = await hasPin(store, me.id);
+  // No PIN yet: Settings opens with one tap (founder 2026-09-28).
+  if (!change && !locked) return onOk();
+  let mode = change ? "new" : "check";
   let first = "";
   const render = () => {
     err.textContent = "";
@@ -1721,7 +1724,7 @@ async function gatePin(onOk, { change = false } = {}) {
       hint.textContent = "Pick 4–6 digits — it keeps little hands out of Settings. " + PIN_SHARE_HINT;
       go.textContent = "Set PIN";
     } else if (mode === "new") {
-      title.textContent = "New Settings PIN";
+      title.textContent = locked ? "New Settings PIN" : "Choose a PIN";
       hint.textContent = "4–6 digits, for everyone on this device. " + PIN_SHARE_HINT;
       go.textContent = "Next";
     } else if (mode === "confirm") {
@@ -1761,7 +1764,7 @@ async function gatePin(onOk, { change = false } = {}) {
       return;
     }
     await setPin(store, me.id, v);
-    if (change) toast("Settings PIN changed.");
+    if (change) toast(locked ? "Settings PIN changed." : "Settings is locked with a PIN.");
     finish();
   };
   input.onkeydown = (e) => { if (e.key === "Enter") go.click(); };
@@ -1776,7 +1779,22 @@ const settingsUi = mountSettings({
   me, open,
   facts: () => ({ entities: ALL(db, "SELECT count(*) AS n FROM personal_entity")[0]?.n ?? 0 }),
 });
-$("pin-change").addEventListener("click", () => gatePin(() => {}, { change: true }));
+/** Settings → Backup & privacy → Settings PIN: lock, change, or off. */
+async function renderPinRow() {
+  const on = await hasPin(await openKeyStore(), me.id);
+  $("pin-state").textContent = on
+    ? "Settings is locked with a PIN."
+    : "No PIN yet: Settings opens with one tap.";
+  $("pin-change").textContent = on ? "Change PIN" : "Lock Settings with a PIN";
+  $("pin-off").hidden = !on;
+}
+$("pin-change").addEventListener("click", () => gatePin(renderPinRow, { change: true }));
+$("pin-off").addEventListener("click", async () => {
+  await clearPin(await openKeyStore(), me.id);
+  toast("PIN turned off. Settings opens with one tap.");
+  renderPinRow();
+});
+settingsUi.onOpen(renderPinRow);
 // Set only by the post-switch reopen below: the corner click then skips
 // the PIN (it was just entered in this tab) and opens that page, so every
 // module's corner-click refresh runs as on a normal open.

@@ -75,3 +75,15 @@ test("a PIN from before the device PIN still opens, then becomes the device PIN"
   // Migrated: the other person on the device now opens with it too.
   assert.equal(await checkPin(s, OTHER, "4321"), true);
 });
+
+test("no PIN until one is set; turning it off clears it for everyone", async () => {
+  const { clearPin } = await import("../../public/shared/pin.mjs");
+  const s = memoryKeyStore();
+  const OTHER = "99999999-8888-7777-6666-555555555555";
+  assert.equal(await hasPin(s, UID), false);
+  await setPin(s, UID, "2468");
+  assert.equal(await hasPin(s, OTHER), true);
+  await clearPin(s, UID);
+  assert.equal(await hasPin(s, UID), false);
+  assert.equal(await hasPin(s, OTHER), false);
+});

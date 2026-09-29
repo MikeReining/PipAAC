@@ -1027,7 +1027,11 @@
               </div>
               <div class="seg-row">
                 <span class="seg-label">Settings PIN</span>
-                <div class="row"><button class="btn secondary" id="pin-change">Change PIN</button></div>
+                <p class="hint" id="pin-state">No PIN yet: Settings opens with one tap.</p>
+                <div class="row">
+                  <button class="btn secondary" id="pin-change">Lock Settings with a PIN</button>
+                  <button class="btn secondary" id="pin-off" hidden>Turn off the PIN</button>
+                </div>
                 <p class="hint">One PIN for everyone on this device. Pip never shows it, so a child watching can't learn it. Forgot it? The license key or the recovery card resets it.</p>
               </div>
               <div class="seg-row">
