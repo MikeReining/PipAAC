@@ -301,6 +301,52 @@ test("allowance is atomic: 1 left, 5 concurrent draws → 1 mint + four 402s", a
   }
 });
 
+test("§ 0.5: existing pictures stay free at 0 left — miss still 402s", async () => {
+  let calls = 0, jevCalls = 0;
+  const env = makeEnv({
+    synth: async () => (calls++, PNG_BYTES),
+    jev: async () => (jevCalls++, {
+      scope: "common", kind: "None", language: "en",
+      draw: { framing: "object", entity_mode: "organic_noun" },
+    }),
+  });
+  const mint = await draw(env, { text: "trampoline", description: "big backyard one" });
+  assert.equal(mint.status, 200);
+  assert.equal(calls, 1);
+  const jevAfterMint = jevCalls;
+  setUsed(env, UID, 5); // allowance now empty
+
+  // the same (text, description) is a free hit — 200, still 0 spent
+  const hit = await draw(env, { text: "trampoline", description: "big backyard one" });
+  assert.equal(hit.status, 200);
+  assert.equal(hit.headers.get("x-draw-cache"), "hit");
+  assert.equal(hit.headers.get("x-drawings-left"), "0");
+  assert.equal(calls, 1); // zero vendor calls for the hit
+  assert.equal(await drawUsed(env, UID), 5);
+
+  // a NEW subject still 402s — and never reached a vendor call
+  const miss = await draw(env, { text: "aardvark" });
+  assert.equal(miss.status, 402);
+  assert.equal(calls, 1);
+  assert.equal(jevCalls, jevAfterMint); // the hit and the 402 called nothing
+});
+
+test("§ 0.5: a personal drawing (description-keyed) is a free hit at 0 left", async () => {
+  let calls = 0;
+  const env = makeEnv({
+    synth: async () => (calls++, PNG_BYTES),
+    jev: async () => ({ scope: "personal", kind: "None", language: "en", draw: { framing: "group" } }),
+  });
+  const mint = await draw(env, { text: "Cooper", description: "our golden retriever" });
+  assert.equal(mint.status, 200);
+  setUsed(env, UID, 5);
+  // different name, same description — the shared personal drawing
+  const hit = await draw(env, { text: "Max", description: "our golden retriever" });
+  assert.equal(hit.status, 200);
+  assert.equal(hit.headers.get("x-draw-cache"), "hit");
+  assert.equal(calls, 1);
+});
+
 test("a failed mint refunds the reservation — the next subject can draw", async () => {
   let calls = 0;
   const env = makeEnv({

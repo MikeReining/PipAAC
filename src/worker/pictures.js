@@ -442,6 +442,13 @@ const reserveAllowance = (env, uid, cap) =>
   picPost(env, "/pic/allowance/reserve", { uid, cap });
 const refundAllowance = (env, uid) =>
   picPost(env, "/pic/allowance/refund", { uid }).catch(() => {});
+async function allowanceLeft(env, uid, cap) {
+  const res = await pictureStub(env).fetch(
+    new Request(`https://tile/pic/allowance?uid=${uid}&cap=${cap}`))
+    .catch(() => null);
+  const { left } = (await res?.json().catch(() => ({}))) ?? {};
+  return typeof left === "number" ? left : null;
+}
 
 /** Tier from the relay's entitlement row (011 § 9); anything unverifiable
  *  is free — the conservative side of a paywall. */
@@ -529,14 +536,19 @@ async function synthesizeDraw(env, { prompt, refs }) {
   throw new Error("draw_unavailable");
 }
 
+/** Read-only ledger row lookup — never a claim, never a charge. */
+async function lookupDraw(env, key) {
+  const res = await pictureStub(env).fetch(
+    new Request(`https://tile/pic/draw/row?key=${key}`)).catch(() => null);
+  return (await res?.json().catch(() => null))?.row ?? null;
+}
+
 /** A loser of the single-flight claim waits out the winner's mint, then
  *  serves the same row. Bounded — a dead claimant fails closed at 502. */
 async function waitDraw(env, key) {
   const deadline = Date.now() + (Number(env.PIC_DRAW_WAIT_MS) || 45000);
   while (Date.now() < deadline) {
-    const res = await pictureStub(env).fetch(
-      new Request(`https://tile/pic/draw/row?key=${key}`));
-    const row = (await res.json().catch(() => ({})))?.row;
+    const row = await lookupDraw(env, key);
     if (row?.status === "ready" && row.r2_key) return row;
     if (row?.status === "failed" || row?.status === "withheld") return row;
     await new Promise((r) => setTimeout(r, 400));
@@ -573,9 +585,44 @@ export async function handleDraw(request, env, ctx) {
     return json({ error: "unsafe" }, { status: 422 });
   }
 
-  // 2 — allowance (§ 6.1): atomic lifetime reservation + 30/day guard.
   const tier = await entitlementFor(env, uid);
   const cap = ALLOWANCE[tier] ?? ALLOWANCE.free;
+  const headersFor = (cache, left, key) => ({
+    "x-draw-cache": cache,
+    ...(left == null ? {} : { "x-drawings-left": String(left) }),
+    "x-draw-key": key,
+  });
+  const serveRow = async (row, cache, left) => {
+    const obj = await env.VOICE.get(row.r2_key).catch(() => null);
+    if (!obj) return null;
+    return pngResponse(await obj.arrayBuffer(), headersFor(cache, left, row.key));
+  };
+
+  // 2 — an existing picture stays free even at 0 left (§ 0.5). This
+  // read-only lookup needs no vendor call: both candidate keys are
+  // computable locally — a personal key hashes the description alone,
+  // and only the hash reaches our own DO (the name never leaves this
+  // Worker). The 402 below applies to a miss only.
+  const keyCommon = await drawKey(CFG.style_version,
+    drawSubject({ scope: "common", text, description }));
+  const keyPersonal = description ? await drawKey(CFG.style_version,
+    drawSubject({ scope: "personal", text, description })) : null;
+  let readyRow = null, withheldRow = null;
+  for (const k of [keyCommon, keyPersonal].filter(Boolean)) {
+    const row = await lookupDraw(env, k);
+    if (row?.status === "ready" && row.r2_key) readyRow ??= row;
+    if (row?.status === "withheld") withheldRow ??= row;
+  }
+  if (readyRow) {
+    const served =
+      await serveRow(readyRow, "hit", await allowanceLeft(env, uid, cap));
+    if (served) return served;
+    // ready row, missing bytes — fall through and mint it again
+  } else if (withheldRow) {
+    return json({ error: "unsafe" }, { status: 422 });
+  }
+
+  // 3 — allowance (§ 6.1): atomic lifetime reservation + 30/day guard.
   let rs;
   try {
     rs = await (await reserveAllowance(env, uid, cap)).json();
@@ -602,7 +649,7 @@ export async function handleDraw(request, env, ctx) {
     return json({ error: "fair_use", over: guard.over }, { status: 429 });
   }
 
-  // 3 — Jev: scope/kind/language + the framing spec, one call. A null
+  // 4 — Jev: scope/kind/language + the framing spec, one call. A null
   // scope fails closed (§ 8): "Cooper" treated as common would leak the
   // name into the prompt, the ledger, and the review page. 503 before
   // any ledger claim or vendor call — the client never decides scope.
@@ -640,7 +687,7 @@ export async function handleDraw(request, env, ctx) {
     packaging: jev.draw.packaging,
   });
 
-  // 4 — ledger claim: hit serves, minting waits, mint draws once. Every
+  // 5 — ledger claim: hit serves, minting waits, mint draws once. Every
   // non-mint disposition refunds the reservation — nothing was drawn.
   let claimed;
   try {
@@ -652,16 +699,6 @@ export async function handleDraw(request, env, ctx) {
     await refund();
     return json({ error: "draw_unavailable" }, { status: 503 });
   }
-  const headersFor = (cache, left) => ({
-    "x-draw-cache": cache, "x-drawings-left": String(left),
-    "x-draw-key": key,
-  });
-
-  const serveRow = async (row, cache, left) => {
-    const obj = await env.VOICE.get(row.r2_key).catch(() => null);
-    if (!obj) return null;
-    return pngResponse(await obj.arrayBuffer(), headersFor(cache, left));
-  };
 
   if (claimed.disposition !== "mint") await refund();
   if (claimed.disposition === "hit") {
@@ -686,7 +723,7 @@ export async function handleDraw(request, env, ctx) {
     return json({ error: "draw_failed" }, { status: 502 });
   }
 
-  // 5 — we hold the claim: synth, store, index — the reservation we made
+  // 6 — we hold the claim: synth, store, index — the reservation we made
   // is the charge. Any failure refunds it.
   let minted;
   try {
@@ -728,7 +765,7 @@ export async function handleDraw(request, env, ctx) {
   } catch { /* a missed index row costs nothing — the ledger still serves */ }
 
   await usageRecord(env, { ns: DRAW_NS, uid, chars: 1 });
-  return pngResponse(minted.bytes, headersFor(minted.cache, left));
+  return pngResponse(minted.bytes, headersFor(minted.cache, left, key));
 }
 
 /** GET /api/v1/pictures/allowance — headers x-pip-user / x-pip-license. */
