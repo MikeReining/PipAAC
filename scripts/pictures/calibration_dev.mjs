@@ -19,12 +19,20 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
+import { buildPrompt } from "../../src/shared/draw_prompt.mjs";
+import { normalizeV1 } from "../../public/shared/normalize.mjs";
+import {
+  askSpark, labImagePath, labSpec, listLabTakes, mintLabTake,
+  setTakeVerdict, LAB_TAKES_DIR,
+} from "./lab.mjs";
+
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const QUERIES_PATH = join(repoRoot, "data/pictures/calibration_queries.json");
 const FINDER_PATH = join(repoRoot, "data/catalog/picture_finder.json");
 const CATALOG_PATH = join(repoRoot, "data/catalog/catalog.json");
 const PAGE_PATH = join(repoRoot, "public/picture-calibration.html");
 const DISAGREE_PAGE_PATH = join(repoRoot, "public/picture-disagreements.html");
+const LAB_PAGE_PATH = join(repoRoot, "public/picture-lab.html");
 const EXT_DIR = join(repoRoot, "out/extended_art");
 const PUBLIC_DIR = join(repoRoot, "public");
 
@@ -139,6 +147,11 @@ function buildHandler() {
       res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
       return res.end(readFileSync(DISAGREE_PAGE_PATH));
     }
+    // The lab tab: type any word → live find + draw spec + prompts → mint.
+    if (path === "/picture-lab") {
+      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      return res.end(readFileSync(LAB_PAGE_PATH));
+    }
 
     const adminProxy = async (method, workerPath, body = null) => {
       const base = (process.env.PIP_PICTURE_ADMIN_URL ?? "").replace(/\/+$/, "");
@@ -240,6 +253,145 @@ function buildHandler() {
       if (!merged) return json(res, 400, { error: "bad_config" });
       writeJson(FINDER_PATH, merged);
       return json(res, 200, { ok: true, config: merged });
+    }
+
+    /* --------------------------- picture lab ---------------------------
+       Type anything → the real find (calibration index) + Jev's draw
+       spec, then a prompt from each lane: the buildPrompt template, and
+       spark (data/pictures/draw_planner_prompt.md). Mints are one paid
+       call per click, saved as takes with sidecars in out/draw_lab. */
+
+    if (path === "/api/lab/probe" && req.method === "POST") {
+      const body = await readBody(req);
+      const text = String(body?.text ?? "").trim();
+      const description = String(body?.description ?? "").trim() || null;
+      if (!text) return json(res, 400, { error: "bad_text" });
+      const base = (process.env.PIP_PICTURE_ADMIN_URL ?? "").replace(/\/+$/, "");
+      const token = process.env.PIP_ADMIN_TOKEN ?? "";
+      let find = null, spec = null;
+      const errors = {};
+      if (base && token) {
+        const r = await fetch(`${base}/admin/v1/pictures/find`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            index: "calibration",
+            items: [{ text, description }],
+          }),
+        }).catch(() => null);
+        if (r?.ok) find = (await r.json()).results?.[0] ?? null;
+        else errors.find = `worker ${r?.status ?? "unreachable"}`;
+      } else {
+        errors.find = "no_worker";
+      }
+      try {
+        spec = await labSpec({ text, description });
+      } catch (e) {
+        errors.spec = String(e?.message ?? e);
+      }
+      return json(res, 200, { find, spec, errors });
+    }
+
+    /** The template lane — exactly what handleDraw would build for this
+     *  subject: personal scope prompts from the description alone, the
+     *  torso from Jev's kind. */
+    if (path === "/api/lab/prompt" && req.method === "POST") {
+      const body = await readBody(req);
+      const text = String(body?.text ?? "").trim();
+      const description = String(body?.description ?? "").trim() || null;
+      const scope = body?.scope === "personal" ? "personal" : "common";
+      const spec = body?.spec ?? {};
+      if (!text) return json(res, 400, { error: "bad_text" });
+      try {
+        const prompt = buildPrompt({
+          word: scope === "personal" ? normalizeV1(description) : text,
+          torso: body?.kind && body.kind !== "None"
+            ? String(body.kind).toLowerCase() : null,
+          hint: scope === "personal" ? null : description,
+          framing: spec.framing,
+          hand: spec.hand_mode,
+          social_scale: spec.social_scale,
+          entity_mode: spec.entity_mode,
+          packaging: spec.packaging,
+        });
+        return json(res, 200, { prompt });
+      } catch (e) {
+        return json(res, 400, { error: "prompt_failed", detail: String(e?.message ?? e) });
+      }
+    }
+
+    /** The spark lane — the LLM planner writes the prompt. */
+    if (path === "/api/lab/spark" && req.method === "POST") {
+      const body = await readBody(req);
+      try {
+        const prompt = await askSpark({
+          text: String(body?.text ?? ""),
+          description: String(body?.description ?? "").trim() || null,
+          spec: body?.spec ?? {},
+        });
+        return json(res, 200, { prompt });
+      } catch (e) {
+        return json(res, 502, { error: "spark_failed", detail: String(e?.message ?? e) });
+      }
+    }
+
+    /** One paid Muse call per click — never a batch. */
+    if (path === "/api/lab/mint" && req.method === "POST") {
+      const body = await readBody(req);
+      const source = ["template", "spark", "custom"].includes(body?.source)
+        ? body.source : "custom";
+      try {
+        const meta = await mintLabTake({
+          word: String(body?.word ?? body?.text ?? ""),
+          description: String(body?.description ?? "").trim() || null,
+          prompt: String(body?.prompt ?? "").trim(),
+          spec: body?.spec ?? {},
+          source,
+        });
+        return json(res, 200, { take: meta });
+      } catch (e) {
+        return json(res, 502, { error: "mint_failed", detail: String(e?.message ?? e) });
+      }
+    }
+
+    if (path === "/api/lab/takes" && req.method === "GET") {
+      return json(res, 200, { takes: listLabTakes() });
+    }
+
+    if (path === "/api/lab/verdict" && req.method === "POST") {
+      const body = await readBody(req);
+      try {
+        const meta = setTakeVerdict({ file: body?.file, verdict: body?.verdict ?? null });
+        if (!meta) return json(res, 404, { error: "not_found" });
+        return json(res, 200, { take: meta });
+      } catch (e) {
+        return json(res, 400, { error: String(e?.message ?? e) });
+      }
+    }
+
+    /** A probe worth keeping becomes a calibration query. */
+    if (path === "/api/lab/add-query" && req.method === "POST") {
+      const body = await readBody(req);
+      const text = String(body?.text ?? "").trim();
+      const description = String(body?.description ?? "").trim() || null;
+      if (!text) return json(res, 400, { error: "bad_text" });
+      const data = readJson(QUERIES_PATH, null);
+      if (!data) return json(res, 500, { error: "queries_missing" });
+      const row = { text, ...(description ? { description } : {}) };
+      data.queries.push(row);
+      writeJson(QUERIES_PATH, data);
+      return json(res, 200, { ok: true, row });
+    }
+
+    const labImg = path.match(/^\/lab-img\/([A-Za-z0-9_.-]+)$/);
+    if (labImg && req.method === "GET") {
+      const file = labImagePath(labImg[1]);
+      if (!file || !existsSync(file)) return json(res, 404, { error: "not_found" });
+      res.writeHead(200, { "content-type": "image/png", "cache-control": "no-cache" });
+      return res.end(readFileSync(file));
     }
 
     if (path === "/api/reindex" && req.method === "POST") {

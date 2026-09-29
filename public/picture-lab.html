@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — Picture lab</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --win: #2a7a4b; --warn: #b45309; --bad: #b3261e; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; position: sticky; top: 0; z-index: 5; }
+    h1 { font-size: 18px; margin: 0 0 6px; }
+    .sub { font-size: 13px; color: #6b665c; max-width: 62rem; line-height: 1.45; }
+    main { padding: 16px 20px 40px; max-width: 1180px; }
+    nav { margin-top: 8px; font-size: 13px; }
+    nav a { color: var(--accent); margin-right: 14px; }
+    button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--edge); background: #fff; padding: 7px 12px; }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    button.mint { background: var(--warn); color: #fff; border-color: var(--warn); }
+    button:disabled { opacity: .5; cursor: default; }
+    input[type=text] { font: inherit; padding: 8px 10px; border: 1px solid var(--edge); border-radius: 8px; }
+    .probe { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+    .probe input { flex: 1; min-width: 160px; }
+    .probe input.w { max-width: 260px; }
+    .badge { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--edge); color: #6b665c; background: #faf8f5; }
+    .badge.personal { color: #7a3ea1; border-color: #d9c6ea; }
+    .panel { background: #fff; border: 1px solid var(--edge); border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+    .row-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .cards { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .card { width: 150px; border: 2px solid var(--edge); border-radius: 10px; padding: 6px; background: #faf8f5; text-align: center; }
+    .card.top1 { border-color: var(--accent); }
+    .card img { width: 100%; height: 100px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--edge); }
+    .card .cap { font-size: 11px; color: #55504a; margin-top: 4px; line-height: 1.25; min-height: 2.4em; word-break: break-word; }
+    .card .score { font-size: 12px; font-variant-numeric: tabular-nums; font-weight: 600; }
+    .lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .lane h3 { margin: 0 0 6px; font-size: 14px; }
+    .lane textarea { width: 100%; min-height: 130px; font: 12px/1.45 ui-monospace, monospace; padding: 8px; border: 1px solid var(--edge); border-radius: 8px; resize: vertical; }
+    .lane .acts { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+    .spec { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+    .takes { display: flex; gap: 10px; flex-wrap: wrap; }
+    .take { width: 170px; border: 1px solid var(--edge); border-radius: 10px; padding: 6px; background: #faf8f5; }
+    .take img { width: 100%; height: 120px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--edge); cursor: zoom-in; }
+    .take .meta { font-size: 11px; color: #55504a; margin-top: 4px; }
+    .take .v { display: flex; gap: 6px; margin-top: 4px; }
+    .take .v button { font-size: 11px; padding: 2px 8px; }
+    .take .v button.sel-good { background: var(--win); color: #fff; }
+    .take .v button.sel-bad { background: var(--bad); color: #fff; }
+    .take details { font-size: 10px; margin-top: 4px; }
+    .take details div { white-space: pre-wrap; color: #55504a; }
+    #status { font-size: 13px; color: #6b665c; margin: 8px 0; min-height: 1.2em; }
+    #status.err { color: var(--bad); }
+    .zoom { position: fixed; inset: 0; background: rgba(0,0,0,.75); display: flex; align-items: center; justify-content: center; z-index: 50; cursor: zoom-out; }
+    .zoom img { max-width: 90vw; max-height: 90vh; background: #fff; border-radius: 8px; }
+    .meta { font-size: 12px; color: #6b665c; }
+    h2 { font-size: 14px; margin: 18px 0 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Picture lab</h1>
+    <p class="sub">
+      Type any word → live <strong>find</strong> (calibration index) + Jev's draw spec, then a prompt
+      from each lane — the <strong>template</strong> (<code>buildPrompt</code>) and <strong>spark</strong>
+      (<code>meta/muse-spark-1.3-contributor</code> reading
+      <code>data/pictures/draw_planner_prompt.md</code>). Every <em>Mint</em> is one paid Muse call,
+      saved as a take below. Verdicts (✓/✗) stick to the take.
+    </p>
+    <nav>
+      <a href="/picture-lab"><strong>Lab</strong></a>
+      <a href="/picture-calibration">Calibration</a>
+      <a href="/picture-disagreements">Disagreements</a>
+    </nav>
+  </header>
+  <main>
+    <div class="probe">
+      <input type="text" class="w" id="q" placeholder="word or concept (e.g. trampoline)" autocomplete="off">
+      <input type="text" id="desc" placeholder="description (optional — e.g. our golden retriever)" autocomplete="off">
+      <button class="primary" id="go">Probe</button>
+      <button id="addq" disabled>+ keep as calibration query</button>
+    </div>
+    <p id="status"></p>
+
+    <div class="panel" id="findpanel" hidden>
+      <div class="row-head" id="findhead"></div>
+      <div class="cards" id="cands"></div>
+    </div>
+
+    <div class="panel" id="specpanel" hidden>
+      <h2>Jev draw spec</h2>
+      <div class="spec" id="spec"></div>
+    </div>
+
+    <div class="lanes" id="lanespanel" hidden>
+      <div class="panel lane">
+        <h3>Template <span class="meta">buildPrompt — what production sends today</span></h3>
+        <textarea id="ptpl"></textarea>
+        <div class="acts">
+          <button class="mint" id="mtpl">Mint (template)</button>
+          <span class="meta" id="stpl"></span>
+        </div>
+      </div>
+      <div class="panel lane">
+        <h3>Spark <span class="meta">planner LLM — edit draw_planner_prompt.md to change its style</span></h3>
+        <textarea id="pspk"></textarea>
+        <div class="acts">
+          <button id="askspk">Ask spark</button>
+          <button class="mint" id="mspk">Mint (spark)</button>
+          <span class="meta" id="sspk"></span>
+        </div>
+      </div>
+    </div>
+
+    <h2>Takes <span class="meta">(out/draw_lab — one paid call each)</span></h2>
+    <div class="takes" id="takes"></div>
+  </main>
+<script>
+const $ = (id) => document.getElementById(id);
+const post = async (path, body) => {
+  const r = await fetch(path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.detail || j.error || `HTTP ${r.status}`);
+  return j;
+};
+const setStatus = (msg, err) => { $("status").textContent = msg || ""; $("status").className = err ? "err" : ""; };
+
+let probed = null; // {text, description, find, spec}
+
+function esc(s) { const d = document.createElement("span"); d.textContent = s ?? ""; return d.innerHTML; }
+
+async function probe() {
+  const text = $("q").value.trim();
+  const description = $("desc").value.trim();
+  if (!text) return;
+  $("go").disabled = true;
+  setStatus("finding + classifying…");
+  probed = null;
+  try {
+    const j = await post("/api/lab/probe", { text, description });
+    probed = { text, description, find: j.find, spec: j.spec };
+    renderFind(j);
+    renderSpec(j.spec);
+    await fillTemplate();
+    const errs = Object.entries(j.errors ?? {}).map(([k, v]) => `${k}: ${v}`).join(" · ");
+    setStatus(errs || "ready");
+    $("addq").disabled = false;
+  } catch (e) {
+    setStatus(String(e.message), true);
+  }
+  $("go").disabled = false;
+}
+
+function renderFind({ find }) {
+  const p = $("findpanel");
+  p.hidden = !find;
+  if (!find) return;
+  $("findhead").innerHTML =
+    `<strong>${esc(probed.text)}</strong>` +
+    (find.language ? `<span class="badge">${find.language}</span>` : "") +
+    (find.scope ? `<span class="badge ${find.scope === "personal" ? "personal" : ""}">${find.scope}</span>` : "") +
+    (find.kind ? `<span class="badge">${find.kind}</span>` : "") +
+    (find.auto ? `<span class="badge">auto → ${find.auto}</span>` : `<span class="badge">no auto</span>`);
+  $("cands").innerHTML = (find.candidates ?? []).map((c, i) =>
+    `<div class="card ${i === 0 ? "top1" : ""}">
+      <img src="/img/${c.image_id}" loading="lazy" onerror="this.style.visibility='hidden'">
+      <div class="cap">${esc(c.caption || c.image_id)}${c.status === "pending" ? ' <span class="badge">pending</span>' : ""}</div>
+      <div class="score">${Number(c.score ?? c.cosine ?? 0).toFixed(3)}</div>
+    </div>`).join("") || '<span class="meta">no candidates</span>';
+}
+
+function renderSpec(spec) {
+  const p = $("specpanel");
+  p.hidden = !spec;
+  if (!spec) return;
+  $("spec").innerHTML = ["entity_mode", "packaging", "framing", "hand_mode", "proloquo_anchor", "anchor", "social_scale"]
+    .filter((k) => spec[k] != null && spec[k] !== "")
+    .map((k) => `<span class="badge">${k}: ${esc(spec[k])}</span>`).join("");
+}
+
+async function fillTemplate() {
+  const { text, description, find, spec } = probed;
+  try {
+    const j = await post("/api/lab/prompt", {
+      text, description,
+      scope: find?.scope ?? "common", kind: find?.kind ?? null,
+      spec: spec ?? {},
+    });
+    $("ptpl").value = j.prompt;
+    $("lanespanel").hidden = false;
+    $("mtpl").disabled = false;
+  } catch (e) {
+    $("stpl").textContent = `template: ${e.message}`;
+  }
+}
+
+async function askSpark() {
+  if (!probed) return;
+  $("askspk").disabled = true;
+  $("sspk").textContent = "asking spark…";
+  try {
+    const j = await post("/api/lab/spark", {
+      text: probed.text, description: probed.description, spec: probed.spec ?? {},
+    });
+    $("pspk").value = j.prompt;
+    $("mspk").disabled = false;
+    $("sspk").textContent = "";
+  } catch (e) {
+    $("sspk").textContent = `spark: ${e.message}`;
+  }
+  $("askspk").disabled = false;
+}
+
+async function mint(source) {
+  const prompt = (source === "template" ? $("ptpl") : $("pspk")).value.trim();
+  if (!prompt || !probed) return;
+  const btn = source === "template" ? $("mtpl") : $("mspk");
+  const stat = source === "template" ? $("stpl") : $("sspk");
+  btn.disabled = true;
+  stat.textContent = "minting (paid call)…";
+  try {
+    const j = await post("/api/lab/mint", {
+      word: probed.text, description: probed.description,
+      prompt, spec: probed.spec ?? {}, source,
+    });
+    stat.textContent = `minted ${j.take.file}`;
+    await renderTakes();
+  } catch (e) {
+    stat.textContent = `mint: ${e.message}`;
+  }
+  btn.disabled = false;
+}
+
+async function verdict(file, v, btn) {
+  await post("/api/lab/verdict", { file, verdict: v });
+  await renderTakes();
+}
+
+async function renderTakes() {
+  const { takes } = await (await fetch("/api/lab/takes")).json();
+  $("takes").innerHTML = takes.map((t) => `
+    <div class="take">
+      <img src="/lab-img/${t.file}" loading="lazy" onclick="zoom(this.src)">
+      <div class="meta">${esc(t.word || "")} · <b>${esc(t.source || "?")}</b></div>
+      <div class="v">
+        <button class="${t.verdict === "good" ? "sel-good" : ""}" onclick="verdict('${t.file}','good')">✓</button>
+        <button class="${t.verdict === "bad" ? "sel-bad" : ""}" onclick="verdict('${t.file}','bad')">✗</button>
+        ${t.verdict ? `<button onclick="verdict('${t.file}',null)">clear</button>` : ""}
+      </div>
+      ${t.prompt ? `<details><summary>prompt</summary><div>${esc(t.prompt)}</div></details>` : ""}
+    </div>`).join("") || '<span class="meta">no takes yet</span>';
+}
+
+function zoom(src) {
+  const d = document.createElement("div");
+  d.className = "zoom";
+  d.innerHTML = `<img src="${src}">`;
+  d.onclick = () => d.remove();
+  document.body.appendChild(d);
+}
+
+$("go").addEventListener("click", probe);
+$("q").addEventListener("keydown", (e) => { if (e.key === "Enter") probe(); });
+$("desc").addEventListener("keydown", (e) => { if (e.key === "Enter") probe(); });
+$("askspk").addEventListener("click", askSpark);
+$("mtpl").addEventListener("click", () => mint("template"));
+$("mspk").addEventListener("click", () => mint("spark"));
+$("addq").addEventListener("click", async () => {
+  if (!probed) return;
+  await post("/api/lab/add-query", { text: probed.text, description: probed.description });
+  $("addq").disabled = true;
+  $("addq").textContent = "kept ✓";
+});
+renderTakes();
+</script>
+</body>
+</html>

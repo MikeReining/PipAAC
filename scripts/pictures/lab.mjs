@@ -1,0 +1,174 @@
+/**
+ * Picture lab helpers — the prompt-planner lane (spark) and the mint
+ * path used by /api/lab/* in calibration_dev.mjs. The planner's system
+ * prompt is data/pictures/draw_planner_prompt.md, read fresh on every
+ * call so the file IS the tweak surface.
+ */
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+import {
+  classifyWithJev, extractImage, loadStyleRefs, resolveApiKey,
+  DEFAULT_STYLE_REF_DIR, OBJECT_STYLE_REF_DIR,
+} from "../art/gen.mjs";
+import {
+  MUSE_MODEL, OPENROUTER_ENDPOINT, appHeaders, styleRefBundle,
+} from "../../src/shared/draw_prompt.mjs";
+import { normalizeV1 } from "../../public/shared/normalize.mjs";
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
+export const LAB_TAKES_DIR = join(repoRoot, "out/draw_lab");
+export const PLANNER_PROMPT_PATH =
+  join(repoRoot, "data/pictures/draw_planner_prompt.md");
+export const SPARK_MODEL = "meta/muse-spark-1.3-contributor";
+export const OPENROUTER_CHAT = "https://openrouter.ai/api/v1/chat/completions";
+
+/* ----------------------------- prompt planner ---------------------------- */
+
+/** Re-read every call — editing the md is the whole point of the lab. */
+export function plannerSystemPrompt({ path = PLANNER_PROMPT_PATH } = {}) {
+  const md = readFileSync(path, "utf8");
+  return md.slice(md.indexOf("---") + 3).trim();
+}
+
+/** What spark sees: the concept, the family's description (the subject
+ *  for personal scope), and Jev's draw spec. No ids exist on this path. */
+export function sparkChatBody({ text, description, spec, system }) {
+  return {
+    model: SPARK_MODEL,
+    messages: [
+      { role: "system", content: system ?? plannerSystemPrompt() },
+      {
+        role: "user",
+        content: JSON.stringify({
+          concept: String(text ?? ""),
+          description: description || null,
+          spec,
+        }, null, 2),
+      },
+    ],
+  };
+}
+
+/** Pull the prompt text out of the chat response; spark may wrap it in
+ *  quotes or add whitespace — strip that, keep the sentences. */
+export function parseSparkPrompt(payload) {
+  const msg = payload?.choices?.[0]?.message?.content;
+  const text = String(msg ?? "").trim().replace(/^["'`]+|["'`]+$/g, "").trim();
+  if (!text) throw new Error(`no prompt in response: ${JSON.stringify(payload).slice(0, 200)}`);
+  return text;
+}
+
+export async function askSpark({
+  text, description, spec,
+  apiKey = resolveApiKey("OPENROUTER_API_KEY"),
+  fetchImpl = globalThis.fetch,
+  system,
+} = {}) {
+  if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set (.env)");
+  const res = await fetchImpl(OPENROUTER_CHAT, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${apiKey}`,
+      ...appHeaders("picture-lab"),
+    },
+    body: JSON.stringify(sparkChatBody({ text, description, spec, system })),
+  });
+  if (!res.ok) throw new Error(`spark HTTP ${res.status}: ${(await res.text()).slice(0, 400)}`);
+  return parseSparkPrompt(await res.json());
+}
+
+/** Jev draw spec for the lab — description rides into the state string
+ *  the same way the Worker's classify carries it. */
+export async function labSpec({ text, description, fetchImpl } = {}) {
+  const word = description ? `${text} — ${description}` : text;
+  return classifyWithJev({ word, fetchImpl });
+}
+
+/* -------------------------------- minting -------------------------------- */
+
+const REF_DIRS = { "pip-v1": DEFAULT_STYLE_REF_DIR, "object-v1": OBJECT_STYLE_REF_DIR };
+
+const slug = (s) =>
+  normalizeV1(s).replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "word";
+
+export function takeFileName(word, source, ts = Date.now()) {
+  return `${ts}-${slug(word)}-${source}.png`;
+}
+
+/** One paid Muse call, same body shape as the Worker's live path and
+ *  gen.mjs: style refs by bundle, packshots with none. Writes the png
+ *  and a .json sidecar so takes carry their prompt/spec/verdict. */
+export async function mintLabTake({
+  word, description, prompt, spec = {}, source,
+  apiKey = resolveApiKey("OPENROUTER_API_KEY"),
+  fetchImpl = globalThis.fetch,
+  takesDir = LAB_TAKES_DIR,
+} = {}) {
+  if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set (.env)");
+  if (!prompt) throw new Error("prompt is required");
+  const bundle = styleRefBundle(spec);
+  const body = {
+    model: MUSE_MODEL,
+    prompt,
+    aspect_ratio: "1:1",
+    output_format: "png",
+  };
+  if (bundle && REF_DIRS[bundle]) {
+    body.input_references = loadStyleRefs(REF_DIRS[bundle])
+      .map((r) => ({ type: "image_url", image_url: { url: r.dataUri } }));
+  }
+  const res = await fetchImpl(OPENROUTER_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${apiKey}`,
+      ...appHeaders("picture-lab"),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`muse HTTP ${res.status}: ${(await res.text()).slice(0, 400)}`);
+  const bytes = Buffer.from(extractImage(await res.json()));
+
+  mkdirSync(takesDir, { recursive: true });
+  const file = takeFileName(word, source);
+  writeFileSync(join(takesDir, file), bytes);
+  const meta = {
+    word: String(word ?? ""), description: description || null,
+    spec, prompt, source, file, created_at: Date.now(), verdict: null,
+  };
+  writeFileSync(join(takesDir, `${file}.json`), JSON.stringify(meta, null, 2) + "\n");
+  return meta;
+}
+
+/** Newest-first take list with sidecars (png-only files without a
+ *  sidecar still list, with file as the only field). */
+export function listLabTakes({ takesDir = LAB_TAKES_DIR } = {}) {
+  if (!existsSync(takesDir)) return [];
+  return readdirSync(takesDir)
+    .filter((f) => f.endsWith(".png"))
+    .map((f) => {
+      const side = join(takesDir, `${f}.json`);
+      return existsSync(side)
+        ? JSON.parse(readFileSync(side, "utf8"))
+        : { file: f, word: null, source: null, prompt: null, verdict: null };
+    })
+    .sort((a, b) => String(b.file).localeCompare(String(a.file)));
+}
+
+export function setTakeVerdict({ file, verdict, takesDir = LAB_TAKES_DIR }) {
+  if (!["good", "bad", null].includes(verdict)) throw new Error("bad_verdict");
+  const side = join(takesDir, `${file}.json`);
+  if (!existsSync(side)) return null;
+  const meta = JSON.parse(readFileSync(side, "utf8"));
+  meta.verdict = verdict;
+  writeFileSync(side, JSON.stringify(meta, null, 2) + "\n");
+  return meta;
+}
+
+export function labImagePath(file, takesDir = LAB_TAKES_DIR) {
+  const f = String(file ?? "");
+  return /^[0-9]+-[a-z0-9-]+\.png$/.test(f) ? join(takesDir, f) : null;
+}
