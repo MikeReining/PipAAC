@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-28T23:46:53.611Z",
+  "updatedAt": "2026-09-29T03:56:16.577Z",
   "bySlug": {
     "afternoon": {
       "status": "approved",
@@ -48,11 +48,1379 @@
     },
     "car": {
       "status": "approved",
-      "at": "2026-09-28T23:46:52.258Z"
+      "at": "2026-09-28T23:54:33.330Z"
     },
     "his": {
       "status": "approved",
-      "at": "2026-09-28T23:46:53.611Z"
+      "at": "2026-09-28T23:56:51.748Z"
+    },
+    "bad": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:30.250Z"
+    },
+    "bags": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:31.906Z"
+    },
+    "balls": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:33.282Z"
+    },
+    "bananas": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:34.874Z"
+    },
+    "bandage": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:36.301Z"
+    },
+    "bandages": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:37.669Z"
+    },
+    "basement": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:38.965Z"
+    },
+    "batteries": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:56.819Z"
+    },
+    "battery": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:58.178Z"
+    },
+    "bear_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:53:59.474Z"
+    },
+    "bears": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:00.762Z"
+    },
+    "bedtime": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:01.907Z"
+    },
+    "bicycles": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:03.097Z"
+    },
+    "bikes": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:04.313Z"
+    },
+    "bird_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:05.636Z"
+    },
+    "bites": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:06.896Z"
+    },
+    "blankets": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:08.689Z"
+    },
+    "boats": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:09.929Z"
+    },
+    "book_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:11.065Z"
+    },
+    "bottles": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:12.212Z"
+    },
+    "bowls": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:13.403Z"
+    },
+    "boxes": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:14.609Z"
+    },
+    "boy_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:15.699Z"
+    },
+    "breaks": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:16.827Z"
+    },
+    "brooms": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:18.025Z"
+    },
+    "brother_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:19.203Z"
+    },
+    "brothers": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:20.442Z"
+    },
+    "bubbles": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:21.745Z"
+    },
+    "buckets": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:22.976Z"
+    },
+    "bugs": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:24.979Z"
+    },
+    "builds": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:26.244Z"
+    },
+    "bunnies": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:27.487Z"
+    },
+    "bunny_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:28.681Z"
+    },
+    "bus_driver": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:29.976Z"
+    },
+    "buttons": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:31.224Z"
+    },
+    "bye": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:32.242Z"
+    },
+    "car_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:34.377Z"
+    },
+    "careful": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:35.425Z"
+    },
+    "carries": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:36.590Z"
+    },
+    "carrots": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:37.761Z"
+    },
+    "cars": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:38.792Z"
+    },
+    "cat_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:39.756Z"
+    },
+    "catches": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:40.867Z"
+    },
+    "chairs": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:42.005Z"
+    },
+    "charger": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:43.050Z"
+    },
+    "chicken_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:44.074Z"
+    },
+    "chips": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:45.025Z"
+    },
+    "chooses": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:46.144Z"
+    },
+    "clean": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:47.172Z"
+    },
+    "cleaning_up": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:48.290Z"
+    },
+    "cleans_up": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:49.379Z"
+    },
+    "climbs": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:50.364Z"
+    },
+    "closes": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:51.448Z"
+    },
+    "clouds": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:52.578Z"
+    },
+    "coats": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:53.674Z"
+    },
+    "coloring": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:54.849Z"
+    },
+    "combs": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:55.882Z"
+    },
+    "comes": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:57.092Z"
+    },
+    "coming": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:58.162Z"
+    },
+    "cooks": {
+      "status": "approved",
+      "at": "2026-09-28T23:54:59.234Z"
+    },
+    "counts": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:13.148Z"
+    },
+    "cousin": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:14.826Z"
+    },
+    "cousins": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:17.107Z"
+    },
+    "cow_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:18.241Z"
+    },
+    "crackers": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:19.465Z"
+    },
+    "crawls": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:20.783Z"
+    },
+    "cuts": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:21.802Z"
+    },
+    "dad_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:22.892Z"
+    },
+    "dada": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:24.020Z"
+    },
+    "dada_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:25.265Z"
+    },
+    "dads": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:26.394Z"
+    },
+    "dances": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:27.585Z"
+    },
+    "dark_color": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:29.079Z"
+    },
+    "diapers": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:30.257Z"
+    },
+    "dinosaur_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:31.617Z"
+    },
+    "dinosaurs": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:33.098Z"
+    },
+    "doctor_office": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:34.601Z"
+    },
+    "doctor_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:35.825Z"
+    },
+    "dog_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:37.000Z"
+    },
+    "doing": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:38.092Z"
+    },
+    "doll_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:39.234Z"
+    },
+    "dolls": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:40.394Z"
+    },
+    "dolphins": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:41.577Z"
+    },
+    "donuts": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:42.778Z"
+    },
+    "door_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:43.866Z"
+    },
+    "doors": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:45.128Z"
+    },
+    "draws": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:46.297Z"
+    },
+    "dresses": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:47.460Z"
+    },
+    "drinks": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:48.585Z"
+    },
+    "dropping": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:49.794Z"
+    },
+    "drops": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:50.802Z"
+    },
+    "duck_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:51.909Z"
+    },
+    "ducks": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:53.002Z"
+    },
+    "eats": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:53.979Z"
+    },
+    "elephant_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:55.147Z"
+    },
+    "elephants": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:56.346Z"
+    },
+    "emergency": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:57.509Z"
+    },
+    "excuse_me": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:58.650Z"
+    },
+    "falls": {
+      "status": "approved",
+      "at": "2026-09-28T23:55:59.769Z"
+    },
+    "fans": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:00.881Z"
+    },
+    "feels": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:02.594Z"
+    },
+    "fever": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:03.848Z"
+    },
+    "finds": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:05.049Z"
+    },
+    "firefighters": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:06.505Z"
+    },
+    "fixed": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:07.532Z"
+    },
+    "fixes": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:08.705Z"
+    },
+    "foot_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:09.762Z"
+    },
+    "forget": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:10.780Z"
+    },
+    "forgets": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:11.922Z"
+    },
+    "forgetting": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:13.020Z"
+    },
+    "forks": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:13.969Z"
+    },
+    "friend_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:15.049Z"
+    },
+    "frog_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:16.122Z"
+    },
+    "frogs": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:17.202Z"
+    },
+    "fruit_snack": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:18.307Z"
+    },
+    "gets": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:19.387Z"
+    },
+    "getting": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:20.418Z"
+    },
+    "giraffe_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:21.466Z"
+    },
+    "giraffes": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:22.633Z"
+    },
+    "girl_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:23.731Z"
+    },
+    "gives": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:24.747Z"
+    },
+    "glues": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:25.914Z"
+    },
+    "gluing": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:26.985Z"
+    },
+    "goats": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:27.985Z"
+    },
+    "good_morning": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:29.131Z"
+    },
+    "good_night": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:30.228Z"
+    },
+    "grandma_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:31.289Z"
+    },
+    "grandmas": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:32.411Z"
+    },
+    "grandpa_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:33.564Z"
+    },
+    "grocery_store": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:34.769Z"
+    },
+    "guess_my_word": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:36.002Z"
+    },
+    "hair_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:37.098Z"
+    },
+    "hallway": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:38.106Z"
+    },
+    "hand_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:39.147Z"
+    },
+    "hands": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:40.145Z"
+    },
+    "hats": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:41.082Z"
+    },
+    "having": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:42.145Z"
+    },
+    "head_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:43.280Z"
+    },
+    "hello": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:44.147Z"
+    },
+    "helps": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:45.122Z"
+    },
+    "hens": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:46.228Z"
+    },
+    "hers": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:47.395Z"
+    },
+    "hi": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:48.347Z"
+    },
+    "hippo_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:49.506Z"
+    },
+    "hippos": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:50.752Z"
+    },
+    "hits": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:52.786Z"
+    },
+    "holds": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:53.929Z"
+    },
+    "horse_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:55.034Z"
+    },
+    "horses": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:56.213Z"
+    },
+    "hour": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:57.321Z"
+    },
+    "houses": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:58.484Z"
+    },
+    "hugs": {
+      "status": "approved",
+      "at": "2026-09-28T23:56:59.554Z"
+    },
+    "hurting": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:00.641Z"
+    },
+    "hurts": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:02.105Z"
+    },
+    "ipad": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:03.219Z"
+    },
+    "jump_rope": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:04.385Z"
+    },
+    "jumps": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:05.530Z"
+    },
+    "kicks": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:06.518Z"
+    },
+    "kids": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:07.617Z"
+    },
+    "kittens": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:08.784Z"
+    },
+    "knowing": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:09.965Z"
+    },
+    "knows": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:11.243Z"
+    },
+    "lamps": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:12.443Z"
+    },
+    "legos": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:18.523Z"
+    },
+    "light": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:19.762Z"
+    },
+    "light_color": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:21.130Z"
+    },
+    "likes": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:22.378Z"
+    },
+    "liking": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:23.618Z"
+    },
+    "lion_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:24.619Z"
+    },
+    "lions": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:25.747Z"
+    },
+    "listens": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:26.842Z"
+    },
+    "look_at_this": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:28.154Z"
+    },
+    "looks": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:29.166Z"
+    },
+    "loves": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:30.316Z"
+    },
+    "makes": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:31.281Z"
+    },
+    "mama": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:32.300Z"
+    },
+    "mama_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:33.351Z"
+    },
+    "man_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:34.394Z"
+    },
+    "medicine": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:35.569Z"
+    },
+    "minute": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:36.705Z"
+    },
+    "mirrors": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:38.259Z"
+    },
+    "mom_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:39.401Z"
+    },
+    "moms": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:40.483Z"
+    },
+    "monkey_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:41.602Z"
+    },
+    "monkeys": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:42.755Z"
+    },
+    "movie_theater": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:43.994Z"
+    },
+    "movies": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:45.131Z"
+    },
+    "muffins": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:46.349Z"
+    },
+    "museum": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:47.577Z"
+    },
+    "museums": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:48.971Z"
+    },
+    "my_turn": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:50.122Z"
+    },
+    "name_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:51.312Z"
+    },
+    "names": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:52.435Z"
+    },
+    "napkin": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:53.533Z"
+    },
+    "naptime": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:54.731Z"
+    },
+    "needing": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:55.845Z"
+    },
+    "needs": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:56.923Z"
+    },
+    "neighbor": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:57.969Z"
+    },
+    "neighbors": {
+      "status": "approved",
+      "at": "2026-09-28T23:57:59.108Z"
+    },
+    "no_way": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:00.508Z"
+    },
+    "nuggets": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:01.771Z"
+    },
+    "nurse_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:02.890Z"
+    },
+    "nurses": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:04.082Z"
+    },
+    "oops": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:08.947Z"
+    },
+    "opens": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:10.085Z"
+    },
+    "orange_color": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:11.450Z"
+    },
+    "ours": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:12.569Z"
+    },
+    "ow": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:13.753Z"
+    },
+    "paints": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:14.856Z"
+    },
+    "pancakes": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:16.056Z"
+    },
+    "parks": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:17.171Z"
+    },
+    "pee": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:18.236Z"
+    },
+    "penguins": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:19.402Z"
+    },
+    "people_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:20.570Z"
+    },
+    "person_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:21.730Z"
+    },
+    "pets": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:22.701Z"
+    },
+    "phone_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:23.770Z"
+    },
+    "pig_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:24.731Z"
+    },
+    "pigs": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:25.793Z"
+    },
+    "pillows": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:26.802Z"
+    },
+    "pink": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:27.772Z"
+    },
+    "plates": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:28.738Z"
+    },
+    "plays": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:29.763Z"
+    },
+    "pocket": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:30.778Z"
+    },
+    "pockets": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:31.905Z"
+    },
+    "poop": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:32.930Z"
+    },
+    "pulls": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:33.971Z"
+    },
+    "puppies": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:35.009Z"
+    },
+    "puppy_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:36.123Z"
+    },
+    "pushes": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:37.193Z"
+    },
+    "puts": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:38.298Z"
+    },
+    "puzzles": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:39.460Z"
+    },
+    "rains": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:40.614Z"
+    },
+    "reads": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:41.686Z"
+    },
+    "ready_to_go": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:43.243Z"
+    },
+    "remembering": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:44.587Z"
+    },
+    "remembers": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:45.929Z"
+    },
+    "rides": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:47.058Z"
+    },
+    "robots": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:48.188Z"
+    },
+    "rockets": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:49.321Z"
+    },
+    "runs": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:50.400Z"
+    },
+    "sandwiches": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:51.724Z"
+    },
+    "school_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:52.937Z"
+    },
+    "scratches": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:54.105Z"
+    },
+    "scratching": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:55.290Z"
+    },
+    "sees": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:56.467Z"
+    },
+    "share": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:57.602Z"
+    },
+    "shares": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:58.737Z"
+    },
+    "sharing": {
+      "status": "approved",
+      "at": "2026-09-28T23:58:59.866Z"
+    },
+    "sheep_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:01.018Z"
+    },
+    "ships": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:02.099Z"
+    },
+    "shirts": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:03.177Z"
+    },
+    "shows": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:04.271Z"
+    },
+    "shuts": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:05.322Z"
+    },
+    "shutting": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:06.323Z"
+    },
+    "sings": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:07.459Z"
+    },
+    "sister_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:08.570Z"
+    },
+    "sits": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:09.590Z"
+    },
+    "sleeps": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:10.689Z"
+    },
+    "slides": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:11.873Z"
+    },
+    "snake_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:12.955Z"
+    },
+    "snakes": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:14.105Z"
+    },
+    "songs": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:15.236Z"
+    },
+    "sorry": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:16.562Z"
+    },
+    "speaking": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:17.705Z"
+    },
+    "speaks": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:18.806Z"
+    },
+    "spider_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:20.004Z"
+    },
+    "spiders": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:21.193Z"
+    },
+    "spoons": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:22.387Z"
+    },
+    "stands": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:23.499Z"
+    },
+    "stoplight": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:24.633Z"
+    },
+    "stopping": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:25.605Z"
+    },
+    "stops": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:26.604Z"
+    },
+    "strawberries": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:27.725Z"
+    },
+    "student": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:28.741Z"
+    },
+    "sun_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:30.222Z"
+    },
+    "sweatshirt": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:31.683Z"
+    },
+    "swims": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:32.874Z"
+    },
+    "swing_set": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:33.923Z"
+    },
+    "tablet": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:34.891Z"
+    },
+    "tablets": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:35.907Z"
+    },
+    "takes": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:36.866Z"
+    },
+    "talks": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:37.810Z"
+    },
+    "tape_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:38.742Z"
+    },
+    "teacher_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:39.729Z"
+    },
+    "teachers": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:40.834Z"
+    },
+    "tells": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:41.867Z"
+    },
+    "theirs": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:42.859Z"
+    },
+    "therapist": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:44.042Z"
+    },
+    "thing_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:45.190Z"
+    },
+    "things": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:46.298Z"
+    },
+    "thinks": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:47.346Z"
+    },
+    "throws": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:48.481Z"
+    },
+    "tickles": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:49.561Z"
+    },
+    "tiger_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:50.670Z"
+    },
+    "tissues": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:51.795Z"
+    },
+    "today_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:52.850Z"
+    },
+    "tomorrow_s": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:54.130Z"
+    },
+    "toothbrushes": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:55.465Z"
+    },
+    "touches": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:56.488Z"
+    },
+    "towels": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:57.578Z"
+    },
+    "toy_car": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:58.689Z"
+    },
+    "toy_train": {
+      "status": "approved",
+      "at": "2026-09-28T23:59:59.905Z"
+    },
+    "tractor_s": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:01.034Z"
+    },
+    "tractors": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:02.280Z"
+    },
+    "train_s": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:03.448Z"
+    },
+    "trains": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:04.602Z"
+    },
+    "trucks": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:05.650Z"
+    },
+    "turns": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:06.666Z"
+    },
+    "turtles": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:07.786Z"
+    },
+    "tv": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:08.819Z"
+    },
+    "vans": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:09.859Z"
+    },
+    "vehicle": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:10.940Z"
+    },
+    "vehicles": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:12.110Z"
+    },
+    "video": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:13.140Z"
+    },
+    "videos": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:14.218Z"
+    },
+    "wait_i_m_spelling": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:16.163Z"
+    },
+    "waits": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:17.227Z"
+    },
+    "wake_up": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:18.291Z"
+    },
+    "wakes_up": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:19.541Z"
+    },
+    "walks": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:20.547Z"
+    },
+    "wanting": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:21.557Z"
+    },
+    "wants": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:22.557Z"
+    },
+    "washes": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:23.587Z"
+    },
+    "water_s": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:24.714Z"
+    },
+    "wet_wipe": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:25.820Z"
+    },
+    "whales": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:26.876Z"
+    },
+    "windows": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:27.915Z"
+    },
+    "wipe": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:28.789Z"
+    },
+    "wipes": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:29.779Z"
+    },
+    "woman_s": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:30.891Z"
+    },
+    "works": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:31.741Z"
+    },
+    "wow": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:32.860Z"
+    },
+    "writes": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:33.898Z"
+    },
+    "yesterday": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:34.898Z"
+    },
+    "your_turn": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:35.947Z"
+    },
+    "yours": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:36.939Z"
+    },
+    "zebras": {
+      "status": "approved",
+      "at": "2026-09-29T00:00:38.060Z"
+    },
+    "bathroom_urgent": {
+      "status": "approved",
+      "at": "2026-09-29T00:01:40.466Z"
+    },
+    "coughing": {
+      "status": "approved",
+      "at": "2026-09-29T03:55:18.172Z"
+    },
+    "laughs": {
+      "status": "approved",
+      "at": "2026-09-29T03:55:23.482Z"
+    },
+    "coughs": {
+      "status": "approved",
+      "at": "2026-09-29T03:56:16.577Z"
     }
   }
 }

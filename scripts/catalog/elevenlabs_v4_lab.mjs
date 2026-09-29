@@ -3,7 +3,7 @@
  * Samples: data/samples/elevenlabs-v4-lab/takes/
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { catalogSlug } from "./elevenlabs_tile_variations.mjs";
@@ -122,6 +122,38 @@ function normalizeLabQuery(text) {
   return String(text ?? "").trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+/** TTS tends to imitate the sound, not say the label (IPA or lexical guard). */
+const SOUND_EFFECT_LABEL_RE =
+  /^(coughing|coughs?|laughs?|laughing|sneezing|sneezes?|burps?|burping|hiccups?|hiccuping)$/i;
+
+/** IPA alone still performs the sound — use lexical v4 line instead. */
+const LEXICAL_GUARD_LABEL_RE = /^(coughing|coughs?|sneezing|sneezes?|burps?|burping|hiccups?|hiccuping)$/i;
+
+/** @param {string} word */
+export function ipaOverrideForSoundEffectLabel(word) {
+  const w = String(word ?? "").trim().toLowerCase();
+  if (w === "laughs" || w === "laugh") return "/lævz/";
+  if (w === "laughing") return "/ˈlæfɪŋ/";
+  return "";
+}
+
+/** @param {string} word */
+export function lexicalV4GuardText(word) {
+  const w = String(word ?? "").trim();
+  const line = w.endsWith(".") ? w : `${w}.`;
+  return `[isolated dictionary word, do not make the sound] ${line}`;
+}
+
+/** @param {string} word */
+export function needsLexicalV4Guard(word) {
+  return LEXICAL_GUARD_LABEL_RE.test(String(word ?? "").trim());
+}
+
+export function needsSoundEffectIpaOverride(word) {
+  const w = String(word ?? "").trim().toLowerCase();
+  return w === "laughs" || w === "laugh" || w === "laughing";
+}
+
 /**
  * @param {{ slug: string, variationId: V4LabVariationId, spokenText: string, ipa?: string, samplesRoot?: string }} opts
  */
@@ -172,22 +204,61 @@ export async function remintV4LabMatrix({
       }
     }
     if (!ipaTrim) {
-      const looked = await lookupIpaGroq({ text: word, context: ipaContext });
-      ipaTrim = looked.ipa;
-      ipaGloss = looked.gloss ?? "";
+      const override = ipaOverrideForSoundEffectLabel(word);
+      if (override) {
+        ipaTrim = override;
+      } else {
+        const looked = await lookupIpaGroq({ text: word, context: ipaContext });
+        ipaTrim = looked.ipa;
+        ipaGloss = looked.gloss ?? "";
+      }
     }
   }
 
   const paths = [];
-  for (const variationId of variationIds) {
+  const root = samplesRoot ?? join(repoRoot, "data/samples");
+
+  async function writePlainAndIpaFromBuffer(buf) {
+    const relPlain = `${V4_LAB_BATCH}/takes/${labTakeFilename(slug, "v4_plain")}`;
+    const relIpa = `${V4_LAB_BATCH}/takes/${labTakeFilename(slug, "v4_ipa")}`;
+    mkdirSync(join(root, V4_LAB_BATCH, "takes"), { recursive: true });
+    writeFileSync(join(root, relPlain), buf);
+    writeFileSync(join(root, relIpa), buf);
+    paths.push(relPlain, relIpa);
+  }
+
+  if (mode === "ipa" && needsLexicalV4Guard(word)) {
+    const voice = getCatalogTileVoice();
+    const model = V4_MODEL;
+    const buf = await synthesizeElevenLabs({
+      text: lexicalV4GuardText(word),
+      voiceId: voice.voice_id,
+      model,
+      voiceSettings: voiceSettingsForModel(model, voice.voice_settings ?? {}),
+    });
+    await writePlainAndIpaFromBuffer(buf);
+  } else if (mode === "ipa" && needsSoundEffectIpaOverride(word)) {
     const r = await mintLabVariation({
       slug,
-      variationId,
+      variationId: "v4_ipa",
       spokenText: word,
       ipa: ipaTrim,
-      samplesRoot,
+      samplesRoot: root,
     });
     paths.push(r.relOut);
+    const ipaBytes = readFileSync(join(root, r.relOut));
+    await writePlainAndIpaFromBuffer(ipaBytes);
+  } else {
+    for (const variationId of variationIds) {
+      const r = await mintLabVariation({
+        slug,
+        variationId,
+        spokenText: word,
+        ipa: ipaTrim,
+        samplesRoot: root,
+      });
+      paths.push(r.relOut);
+    }
   }
   return {
     slug,

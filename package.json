@@ -22,6 +22,7 @@
     "catalog:audio:coverage": "node scripts/catalog/coverage.mjs",
     "catalog:audio:elevenlabs-inventory": "node scripts/catalog/list_elevenlabs_catalog_audio.mjs",
     "catalog:v4-lab:mint-batch": "node scripts/catalog/mint_v4_lab_batch.mjs",
+    "catalog:v4-lab:publish": "node scripts/catalog/publish_v4_lab_approved.mjs",
     "catalog:audio:import": "node scripts/catalog/import_wbb_audio.mjs",
     "catalog:audio:materialize": "node scripts/catalog/materialize_audio.mjs",
     "catalog:audio:inspect": "node scripts/catalog/audio_inspect.mjs",

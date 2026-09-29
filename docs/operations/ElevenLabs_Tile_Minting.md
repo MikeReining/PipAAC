@@ -49,9 +49,11 @@ npm run catalog:audio:elevenlabs-inventory
 npm run catalog:audio:elevenlabs-inventory -- --json
 npm run catalog:v4-lab:mint-batch -- --limit 10
 npm run catalog:v4-lab:mint-batch
+npm run catalog:v4-lab:publish
+npm run catalog:build
 ```
 
-Counts clips with `source: elevenlabs` in built `catalog.json`, plus `generated_audio.json`, `forms_audio.json`, and review `shipping.json`. **Mint batch** writes `v4_plain` into `data/samples/elevenlabs-v4-lab/takes/` (skips existing unless `--force`). WBB/Bitsboard originals are the rest.
+Counts clips with `source: elevenlabs` in built `catalog.json`, plus `generated_audio.json`, `forms_audio.json`, and review `shipping.json`. **Mint batch** writes `v4_plain` into `data/samples/elevenlabs-v4-lab/takes/` (skips existing unless `--force`). **Publish** uploads every **approved** row in `elevenlabs-v4-lab/review.json` to WBB R2 + updates `generated_audio.json` / `forms_audio.json`, then **catalog:build** refreshes `catalog.json` and `public/audio/`. WBB/Bitsboard originals are the rest.
 
 ## Audio inventory (what is “missing”?)
 
