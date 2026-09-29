@@ -61,10 +61,11 @@ function readJsonl(path) {
 }
 
 /** Rows for the picture index. calibration=true keeps unreviewed
- *  extended art as status:pending (the find path never serves it). */
-export function buildRows({ calibration = false } = {}) {
-  const catalog = readJson(CATALOG);
-  const cfg = readJson(CFG_PATH);
+ *  extended art as status:pending (the find path never serves it).
+ *  `paths` overrides the source files (tests). */
+export function buildRows({ calibration = false, paths = {} } = {}) {
+  const catalog = readJson(paths.catalog ?? CATALOG);
+  const cfg = readJson(paths.cfg ?? CFG_PATH);
   const rows = [];
 
   const senses = new Map(catalog.senses.map((s) => [s.id, s]));
@@ -92,18 +93,27 @@ export function buildRows({ calibration = false } = {}) {
     });
   }
 
-  const review = readJson(REVIEW, {});
-  const manifest = readJson(MANIFEST, { entries: {} }).entries ?? {};
-  const meta = new Map(readJsonl(RESULTS).map((r) => [r.id, r]));
+  const review = readJson(paths.review ?? REVIEW, {});
+  const manifest = readJson(paths.manifest ?? MANIFEST, { entries: {} }).entries ?? {};
+  const meta = new Map(readJsonl(paths.results ?? RESULTS).map((r) => [r.id, r]));
   // Every generated slug (results) plus any verdict without a results row.
   // Unreviewed slugs are pending — they calibrate but never serve in find.
   const extIds = new Set([...meta.keys(), ...Object.keys(review)]);
+  const serveMismatches = [];
   for (const id of extIds) {
     const verdict = review[id];
     if (verdict === "reject") continue;
     const approved = verdict === "approve";
     const published = manifest[id]?.r2Key;
+    // 030 slice 6: the manifest and the img route must agree — the route
+    // serves exactly `symbols/extended/<id>.png`, so any other r2Key is a
+    // broken asset no matter what the manifest says.
+    const served = `symbols/extended/${id}.png`;
     if (approved && !published) continue; // the img route could not serve it
+    if (approved && published !== served) {
+      serveMismatches.push(`${id}: manifest ${published}`);
+      continue;
+    }
     if (!approved && !calibration) continue;
     const r = meta.get(id) ?? {};
     rows.push({
@@ -120,7 +130,7 @@ export function buildRows({ calibration = false } = {}) {
     });
   }
 
-  for (const d of readJson(DRAWINGS, []) ?? []) {
+  for (const d of readJson(paths.drawings ?? DRAWINGS, []) ?? []) {
     if (d.status !== "ready" || !d.key) continue;
     const caption = captionForDrawing(d);
     if (!caption) continue;
@@ -134,6 +144,10 @@ export function buildRows({ calibration = false } = {}) {
       lens: d.lens ?? "",
       caption_version: cfg.caption_version,
     });
+  }
+  if (serveMismatches.length) {
+    console.warn(`extended manifest/serve disagreement (${serveMismatches.length} skipped):`,
+      serveMismatches.slice(0, 10).join(", "));
   }
   return rows;
 }
