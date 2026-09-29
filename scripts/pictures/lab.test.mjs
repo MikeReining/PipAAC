@@ -6,9 +6,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  labImagePath, listLabTakes, mintLabTake, parseSparkPrompt,
-  plannerSystemPrompt, setTakeVerdict, sparkChatBody, takeFileName,
-  LAB_TAKES_DIR, SPARK_MODEL,
+  composePrompt, labImagePath, lintHint, listLabTakes, mintLabTake,
+  parseSparkHint, plannerSystemPrompt, setTakeVerdict, sparkChatBody,
+  takeFileName, LAB_TAKES_DIR, SPARK_MODEL,
 } from "./lab.mjs";
 
 test("sparkChatBody: spark model, system prompt from the md, spec in user msg", () => {
@@ -32,11 +32,41 @@ test("plannerSystemPrompt reads the body after the --- marker", () => {
   assert.ok(!sys.includes("system prompt (v0)"));
 });
 
-test("parseSparkPrompt strips quotes; throws on an empty response", () => {
-  assert.equal(parseSparkPrompt({
-    choices: [{ message: { content: ' "Draw a dog." ' } }],
-  }), "Draw a dog.");
-  assert.throws(() => parseSparkPrompt({ choices: [{ message: { content: "  " } }] }));
+test("parseSparkHint strips quotes; throws on an empty response", () => {
+  assert.equal(parseSparkHint({
+    choices: [{ message: { content: ' "A golden retriever sitting." ' } }],
+  }), "A golden retriever sitting.");
+  assert.throws(() => parseSparkHint({ choices: [{ message: { content: "  " } }] }));
+});
+
+test("lintHint flags the skill's banned moves (§4B–F)", () => {
+  assert.deepEqual(lintHint("a golden retriever sitting"), []);
+  assert.ok(lintHint("a flat vector icon with thick outlines").length >= 3);
+  assert.ok(lintHint("a centered dog, front-facing, no people").length >= 3);
+  assert.ok(lintHint("a dog in 3/4 perspective").length === 1);
+});
+
+test("composePrompt: the spark hint lands inside the buildPrompt scaffold", () => {
+  const prompt = composePrompt({
+    text: "trampoline", scope: "common", kind: "Yellow",
+    spec: { entity_mode: "organic_noun", framing: "object", social_scale: "zero" },
+    hint: "A round backyard trampoline with a black jumping mat and short metal legs.",
+  });
+  assert.match(prompt, /teach a child the concept of: trampoline\./);
+  assert.match(prompt, /reference images on a pure white background/);
+  assert.match(prompt, /A round backyard trampoline with a black jumping mat/);
+  // No style words appear — the refs carry style (§4D).
+  assert.doesNotMatch(prompt, /flat|outline|shad|vector|perspective/i);
+});
+
+test("composePrompt: personal scope prompts from the description, never the name", () => {
+  const prompt = composePrompt({
+    text: "Cooper", description: "our golden retriever", scope: "personal",
+    spec: { entity_mode: "organic_noun", framing: "object" },
+    hint: "a golden retriever sitting",
+  });
+  assert.doesNotMatch(prompt, /Cooper/);
+  assert.match(prompt, /our golden retriever/);
 });
 
 test("takeFileName + takes list + verdict round-trip", () => {

@@ -19,11 +19,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
-import { buildPrompt } from "../../src/shared/draw_prompt.mjs";
-import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
-  askSpark, labImagePath, labSpec, listLabTakes, mintLabTake,
-  setTakeVerdict, LAB_TAKES_DIR,
+  askSpark, composePrompt, labImagePath, labSpec, lintHint,
+  listLabTakes, mintLabTake, setTakeVerdict, LAB_TAKES_DIR,
 } from "./lab.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -303,36 +301,36 @@ function buildHandler() {
       const text = String(body?.text ?? "").trim();
       const description = String(body?.description ?? "").trim() || null;
       const scope = body?.scope === "personal" ? "personal" : "common";
-      const spec = body?.spec ?? {};
       if (!text) return json(res, 400, { error: "bad_text" });
       try {
-        const prompt = buildPrompt({
-          word: scope === "personal" ? normalizeV1(description) : text,
-          torso: body?.kind && body.kind !== "None"
-            ? String(body.kind).toLowerCase() : null,
-          hint: scope === "personal" ? null : description,
-          framing: spec.framing,
-          hand: spec.hand_mode,
-          social_scale: spec.social_scale,
-          entity_mode: spec.entity_mode,
-          packaging: spec.packaging,
+        return json(res, 200, {
+          prompt: composePrompt({
+            text, description, scope, kind: body?.kind, spec: body?.spec ?? {},
+          }),
         });
-        return json(res, 200, { prompt });
       } catch (e) {
         return json(res, 400, { error: "prompt_failed", detail: String(e?.message ?? e) });
       }
     }
 
-    /** The spark lane — the LLM planner writes the prompt. */
+    /** The spark lane — the planner writes the ONE hint sentence, then
+     *  the same buildPrompt scaffold composes the Muse prompt around it.
+     *  Warnings flag banned style words before a paid mint. */
     if (path === "/api/lab/spark" && req.method === "POST") {
       const body = await readBody(req);
+      const text = String(body?.text ?? "").trim();
+      const description = String(body?.description ?? "").trim() || null;
+      const scope = body?.scope === "personal" ? "personal" : "common";
+      const spec = body?.spec ?? {};
       try {
-        const prompt = await askSpark({
-          text: String(body?.text ?? ""),
-          description: String(body?.description ?? "").trim() || null,
-          spec: body?.spec ?? {},
+        const hint = await askSpark({ text, description, spec });
+        return json(res, 200, {
+          hint,
+          warnings: lintHint(hint),
+          prompt: composePrompt({
+            text, description, scope, kind: body?.kind, spec, hint,
+          }),
         });
-        return json(res, 200, { prompt });
       } catch (e) {
         return json(res, 502, { error: "spark_failed", detail: String(e?.message ?? e) });
       }

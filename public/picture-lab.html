@@ -100,7 +100,8 @@
         </div>
       </div>
       <div class="panel lane">
-        <h3>Spark <span class="meta">planner LLM — edit draw_planner_prompt.md to change its style</span></h3>
+        <h3>Spark <span class="meta">planner writes the one hint sentence; buildPrompt composes the scaffold — edit draw_planner_prompt.md to tune it</span></h3>
+        <div id="spkhint" class="meta" style="margin-bottom:6px"></div>
         <textarea id="pspk"></textarea>
         <div class="acts">
           <button id="askspk">Ask spark</button>
@@ -199,8 +200,12 @@ async function askSpark() {
   try {
     const j = await post("/api/lab/spark", {
       text: probed.text, description: probed.description, spec: probed.spec ?? {},
+      scope: probed.find?.scope ?? "common", kind: probed.find?.kind ?? null,
     });
     $("pspk").value = j.prompt;
+    const warn = (j.warnings ?? []).length
+      ? ` — ⚠ banned words in hint: ${j.warnings.join(", ")}` : "";
+    $("spkhint").innerHTML = `<b>hint:</b> ${esc(j.hint)}${warn ? ` <span style="color:var(--bad)">${warn}</span>` : ""}`;
     $("mspk").disabled = false;
     $("sspk").textContent = "";
   } catch (e) {

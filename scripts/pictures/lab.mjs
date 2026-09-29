@@ -13,7 +13,7 @@ import {
   DEFAULT_STYLE_REF_DIR, OBJECT_STYLE_REF_DIR,
 } from "../art/gen.mjs";
 import {
-  MUSE_MODEL, OPENROUTER_ENDPOINT, appHeaders, styleRefBundle,
+  MUSE_MODEL, OPENROUTER_ENDPOINT, appHeaders, buildPrompt, styleRefBundle,
 } from "../../src/shared/draw_prompt.mjs";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 
@@ -51,13 +51,31 @@ export function sparkChatBody({ text, description, spec, system }) {
   };
 }
 
-/** Pull the prompt text out of the chat response; spark may wrap it in
- *  quotes or add whitespace — strip that, keep the sentences. */
-export function parseSparkPrompt(payload) {
+/** Pull the hint sentence out of the chat response; spark may wrap it
+ *  in quotes or add whitespace — strip that, keep the sentence. */
+export function parseSparkHint(payload) {
   const msg = payload?.choices?.[0]?.message?.content;
   const text = String(msg ?? "").trim().replace(/^["'`]+|["'`]+$/g, "").trim();
   if (!text) throw new Error(`no prompt in response: ${JSON.stringify(payload).slice(0, 200)}`);
   return text;
+}
+
+/** The skill's banned moves (art-generator SKILL.md §4B–§4F): style
+ *  words that fight the reference images, camera policing, and negative
+ *  laundry lists. A hint that trips these gets flagged in the lab before
+ *  a paid mint. */
+export const BANNED_HINT_PATTERNS = [
+  /\bflat\b/i, /\bvector\b/i, /\boutlines?\b/i, /\bstrokes?\b/i,
+  /\bshad(e|ed|ing)\b/i, /\bsolid colou?rs?\b/i, /\bcontrast(y|ing)?\b/i,
+  /\bclip ?art\b/i, /\bicon(ic)? style\b/i, /\bminimalist\b/i,
+  /\bcentered\b/i, /\bcentred\b/i, /\bsymmetric/i, /\bfront[- ]facing\b/i,
+  /\bstraight[- ]on\b/i, /\bperspective\b/i, /\bclose[- ]up\b/i,
+  /\bfilling the frame\b/i, /\bfills? the frame\b/i,
+  /\bno\s+\w/i, /\bwithout\b/i, /\bdo not\b/i, /\bdon't\b/i,
+];
+
+export function lintHint(hint) {
+  return BANNED_HINT_PATTERNS.filter((re) => re.test(hint)).map((re) => re.source);
 }
 
 export async function askSpark({
@@ -77,7 +95,24 @@ export async function askSpark({
     body: JSON.stringify(sparkChatBody({ text, description, spec, system })),
   });
   if (!res.ok) throw new Error(`spark HTTP ${res.status}: ${(await res.text()).slice(0, 400)}`);
-  return parseSparkPrompt(await res.json());
+  return parseSparkHint(await res.json());
+}
+
+/** The full Muse prompt for a subject — the buildPrompt scaffold plus a
+ *  hint. The template lane passes hint=null (production behavior); the
+ *  spark lane passes its sentence. Personal scope prompts from the
+ *  description alone, exactly like handleDraw. */
+export function composePrompt({ text, description, scope, kind, spec = {}, hint = null }) {
+  return buildPrompt({
+    word: scope === "personal" ? normalizeV1(description) : text,
+    torso: kind && kind !== "None" ? String(kind).toLowerCase() : null,
+    hint: hint ?? (scope === "personal" ? null : description),
+    framing: spec.framing,
+    hand: spec.hand_mode,
+    social_scale: spec.social_scale,
+    entity_mode: spec.entity_mode,
+    packaging: spec.packaging,
+  });
 }
 
 /** Jev draw spec for the lab — description rides into the state string
