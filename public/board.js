@@ -170,6 +170,7 @@ function onSyncApplied() {
     syncGrammarSeg();    // Grammar help syncs like the other segs
     syncLook();          // Words only syncs too
     voiceId = resolveProfile(db).voiceId; // a voice chosen on another device
+    syncSpeed();
     voiceUi.renderRow();
     bindSpotSettings();  // spotlight settings sync too
     resumeSession(db);   // a session started/ended elsewhere lands here
@@ -267,6 +268,17 @@ const getCounts = () => useCounts(db);
 
 const SILENT_SLOT_MS = 400;
 const audio = new Audio();
+// Speaking speed (Settings → Talking; learner_profile.speech_rate,
+// synced). Browsers keep pitch at a changed playbackRate by default.
+const SPEECH_RATES = { slower: 0.8, normal: 1, faster: 1.2 };
+let speechRate = 1;
+function syncSpeed() {
+  const v = ALL(db, "SELECT speech_rate AS r FROM learner_profile WHERE id = 'prf_local'")[0]?.r ?? "normal";
+  speechRate = SPEECH_RATES[v] ?? 1;
+  audio.defaultPlaybackRate = speechRate;
+  audio.playbackRate = speechRate;
+  for (const b of document.querySelectorAll("#speed-seg button")) b.classList.toggle("on", b.dataset.v === v);
+}
 
 // 024: whole-sentence voice — Tier 1 Cache Storage + ~300 ms deadline,
 // word clips always the fallback (rule 1). The Grok voice id is a
@@ -315,6 +327,7 @@ function speak(text) {
   return new Promise((resolve) => {
     const u = new SpeechSynthesisUtterance(text);
     u.lang = locale;
+    u.rate = speechRate;
     u.onend = resolve;
     u.onerror = resolve;
     setTimeout(resolve, Math.max(4000, text.length * 300));
@@ -355,6 +368,7 @@ async function playClip(key, { chained = false } = {}) {
   return new Promise((resolve) => {
     playingResolve = resolve;
     audio.src = src;
+    audio.playbackRate = speechRate;
     audio.onended = resolve;
     audio.onerror = resolve;
     audio.play().catch(resolve);
@@ -369,6 +383,7 @@ async function playBlob(blob) {
     return await new Promise((resolve) => {
       playingResolve = resolve;
       audio.src = src;
+      audio.playbackRate = speechRate;
       audio.onended = resolve;
       audio.onerror = resolve;
       audio.play().catch(resolve);
@@ -2355,6 +2370,14 @@ const voiceUi = mountVoice({
   sample: sampleVoice,
 });
 settingsUi.onOpen(() => voiceUi.renderRow());
+$("speed-seg").addEventListener("click", (e) => {
+  const v = e.target.closest("button")?.dataset.v;
+  if (!v) return;
+  setSetting(db, "speech_rate", v);
+  syncSpeed();
+  sampleVoice(voiceId); // hear the new speed at once
+});
+syncSpeed();
 
 /* The welcome — public/board/onramp-ui.js: a name and "Who's it for?"
  * (plus the button look for a teen or adult) on a new person, then
