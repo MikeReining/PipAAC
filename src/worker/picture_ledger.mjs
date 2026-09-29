@@ -34,6 +34,12 @@ export function ensureSchema(sql) {
     minted_at INTEGER NOT NULL
   )`);
   sql.exec("CREATE INDEX IF NOT EXISTS pic_mint_at ON pic_mint (minted_at)");
+  // The ONLY identity-keyed record on the picture path: the per-user
+  // drawing allowance (§ 8). Everything else in this schema is anonymous.
+  sql.exec(`CREATE TABLE IF NOT EXISTS pic_allowance (
+    uid TEXT PRIMARY KEY,
+    used INTEGER NOT NULL DEFAULT 0
+  )`);
   // Anonymous crowd signal: (text or description) -> picture counts.
   sql.exec(`CREATE TABLE IF NOT EXISTS pic_pick (
     text_norm TEXT NOT NULL,
@@ -130,6 +136,32 @@ export function recordPick(sql, { textNorm, imageId }) {
     `INSERT INTO pic_pick (text_norm, image_id, count) VALUES (?, ?, 1)
      ON CONFLICT (text_norm, image_id) DO UPDATE SET count = count + 1`,
     textNorm, imageId);
+}
+
+/** § 6.1 — the drawing allowance, atomic in SQLite (a read-modify-write
+ *  counter on R2 could be overspent by a burst of concurrent draws).
+ *  Reserve before the vendor call; refund when the mint doesn't happen. */
+export function reserveDraw(sql, { uid, cap }) {
+  sql.exec(
+    "INSERT OR IGNORE INTO pic_allowance (uid, used) VALUES (?, 0)", uid);
+  sql.exec(
+    "UPDATE pic_allowance SET used = used + 1 WHERE uid = ? AND used < ?",
+    uid, cap);
+  const applied = one(sql, "SELECT changes() AS c")?.c === 1;
+  const used = one(sql,
+    "SELECT used FROM pic_allowance WHERE uid = ?", [uid])?.used ?? 0;
+  return { reserved: applied, used, left: Math.max(0, cap - used) };
+}
+
+export function refundDraw(sql, { uid }) {
+  sql.exec(
+    "UPDATE pic_allowance SET used = MAX(0, used - 1) WHERE uid = ?", uid);
+}
+
+export function drawAllowance(sql, { uid, cap }) {
+  const used = one(sql,
+    "SELECT used FROM pic_allowance WHERE uid = ?", [uid])?.used ?? 0;
+  return { used, left: Math.max(0, cap - used) };
 }
 
 /** § 6.3 — an adult replaced our picture: demote it for everyone and keep

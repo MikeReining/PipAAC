@@ -462,6 +462,24 @@ export class TileLedger {
       pictureLedger.adminLog(this.sql, { ...b, now: this.now() });
       return new Response(null, { status: 204 });
     }
+    /** The only identity-keyed record on this path: the per-user draw
+     *  allowance (030 § 6.1). Atomic reserve + refund — an R2 read-modify-
+     *  write counter can be overspent by concurrent draws. */
+    if (p === "/pic/allowance/reserve" && request.method === "POST") {
+      const { uid, cap } = (await body()) ?? {};
+      return json(pictureLedger.reserveDraw(this.sql, {
+        uid: String(uid), cap: Number(cap) || 0 }));
+    }
+    if (p === "/pic/allowance/refund" && request.method === "POST") {
+      const { uid } = (await body()) ?? {};
+      pictureLedger.refundDraw(this.sql, { uid: String(uid) });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/pic/allowance" && request.method === "GET") {
+      return json(pictureLedger.drawAllowance(this.sql, {
+        uid: url.searchParams.get("uid") ?? "",
+        cap: Number(url.searchParams.get("cap")) || 0 }));
+    }
     /** Draw ledger (030 § 5.1): claim is the single-flight gate — the DO
      *  row decides who mints; the worker does synth/R2/index after. */
     if (p === "/pic/draw/claim" && request.method === "POST") {

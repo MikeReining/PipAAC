@@ -433,17 +433,15 @@ export function isUnsafe(text, description) {
 }
 
 /** The draw counter is the only identity-keyed record on this path —
- *  a lifetime total per user (§ 6.1). ns usage-draw. */
-const drawUsedKey = (uid) => `${DRAW_NS}-total/${uid}`;
-async function drawUsed(env, uid) {
-  const obj = await env.VOICE.get(drawUsedKey(uid)).catch(() => null);
-  return obj ? (JSON.parse(await obj.text()).used ?? 0) : 0;
-}
-async function drawBump(env, uid) {
-  const used = (await drawUsed(env, uid)) + 1;
-  await env.VOICE.put(drawUsedKey(uid), JSON.stringify({ used }));
-  return used;
-}
+ *  a lifetime total per user (§ 6.1). It lives in the ledger DO's SQLite
+ *  so reservation is atomic: an R2 read-modify-write counter here could
+ *  be overspent by a burst of concurrent draws (each real mint is a paid
+ *  vendor call). Reserve before the mint; refund on every exit that
+ *  doesn't complete one. */
+const reserveAllowance = (env, uid, cap) =>
+  picPost(env, "/pic/allowance/reserve", { uid, cap });
+const refundAllowance = (env, uid) =>
+  picPost(env, "/pic/allowance/refund", { uid }).catch(() => {});
 
 /** Tier from the relay's entitlement row (011 § 9); anything unverifiable
  *  is free — the conservative side of a paywall. */
@@ -575,20 +573,31 @@ export async function handleDraw(request, env, ctx) {
     return json({ error: "unsafe" }, { status: 422 });
   }
 
-  // 2 — allowance (§ 6.1): lifetime total per tier + 30/day abuse guard.
+  // 2 — allowance (§ 6.1): atomic lifetime reservation + 30/day guard.
   const tier = await entitlementFor(env, uid);
   const cap = ALLOWANCE[tier] ?? ALLOWANCE.free;
-  const used = await drawUsed(env, uid);
-  if (used >= cap) {
+  let rs;
+  try {
+    rs = await (await reserveAllowance(env, uid, cap)).json();
+  } catch {
+    return json({ error: "draw_unavailable" }, { status: 503 });
+  }
+  const refund = () => refundAllowance(env, uid);
+  if (!rs.reserved) {
     // § 6.1 — the client offers a photo (and later a top-up) at zero.
     return json(
       { error: "allowance", left: 0, total: cap, suggest: "photo" },
       { status: 402 });
   }
+  // `rs.left` counts this reservation; a non-mint exit refunds it, so the
+  // honest uncharged remainder on a free hit is one more.
+  const left = rs.left;
+  const leftFree = Math.min(cap, left + 1);
   const guard = await usageCheck(env, {
     ns: DRAW_NS, uid, chars: 1, maxChars: 1, dayBudget: DRAW_DAY, minBudget: DRAW_MIN,
   });
   if (!guard.allowed) {
+    await refund();
     await usageRecord(env, { ns: DRAW_NS, uid, chars: 0, over: guard.over });
     return json({ error: "fair_use", over: guard.over }, { status: 429 });
   }
@@ -604,12 +613,14 @@ export async function handleDraw(request, env, ctx) {
     jev = null;
   }
   if (!jev?.scope) {
+    await refund();
     return json({ error: "classify_unavailable" }, { status: 503 });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   // A person/pet with no description has nothing to draw (and the name
   // alone is never drawable — it never reaches the prompt).
   if (scope === "personal" && !description) {
+    await refund();
     return json({ error: "bad_description" }, { status: 400 });
   }
 
@@ -629,11 +640,18 @@ export async function handleDraw(request, env, ctx) {
     packaging: jev.draw.packaging,
   });
 
-  // 4 — ledger claim: hit serves, minting waits, mint draws once.
-  const claimed = await (await picPost(env, "/pic/draw/claim", {
-    key, text: scope === "personal" ? normalizeV1(description) : text,
-    description, scope, kind: jev.kind, lens: jev.draw.framing,
-  })).json();
+  // 4 — ledger claim: hit serves, minting waits, mint draws once. Every
+  // non-mint disposition refunds the reservation — nothing was drawn.
+  let claimed;
+  try {
+    claimed = await (await picPost(env, "/pic/draw/claim", {
+      key, text: scope === "personal" ? normalizeV1(description) : text,
+      description, scope, kind: jev.kind, lens: jev.draw.framing,
+    })).json();
+  } catch {
+    await refund();
+    return json({ error: "draw_unavailable" }, { status: 503 });
+  }
   const headersFor = (cache, left) => ({
     "x-draw-cache": cache, "x-drawings-left": String(left),
     "x-draw-key": key,
@@ -645,9 +663,9 @@ export async function handleDraw(request, env, ctx) {
     return pngResponse(await obj.arrayBuffer(), headersFor(cache, left));
   };
 
-  const left = cap - used;
+  if (claimed.disposition !== "mint") await refund();
   if (claimed.disposition === "hit") {
-    return (await serveRow(claimed.row, "hit", left))
+    return (await serveRow(claimed.row, "hit", leftFree))
       ?? json({ error: "draw_failed" }, { status: 502 });
   }
   if (claimed.disposition === "withheld") {
@@ -659,7 +677,7 @@ export async function handleDraw(request, env, ctx) {
   if (claimed.disposition === "minting") {
     const row = await waitDraw(env, key);
     if (row?.status === "ready") {
-      return (await serveRow(row, "hit", left))
+      return (await serveRow(row, "hit", leftFree))
         ?? json({ error: "draw_failed" }, { status: 502 });
     }
     if (row?.status === "withheld") {
@@ -668,13 +686,15 @@ export async function handleDraw(request, env, ctx) {
     return json({ error: "draw_failed" }, { status: 502 });
   }
 
-  // 5 — we hold the claim: synth, store, index, charge once.
+  // 5 — we hold the claim: synth, store, index — the reservation we made
+  // is the charge. Any failure refunds it.
   let minted;
   try {
     const refs = await loadDrawRefs(env, styleRefBundle(jev.draw));
     minted = await synthesizeDraw(env, { prompt, refs });
   } catch {
     await picPost(env, "/pic/draw/fail", { key, retryAfter: Date.now() + 60_000 });
+    await refund();
     return json({ error: "draw_failed" }, { status: 502 });
   }
 
@@ -708,9 +728,7 @@ export async function handleDraw(request, env, ctx) {
   } catch { /* a missed index row costs nothing — the ledger still serves */ }
 
   await usageRecord(env, { ns: DRAW_NS, uid, chars: 1 });
-  const newUsed = await drawBump(env, uid);
-  const leftAfter = Math.max(0, cap - newUsed);
-  return pngResponse(minted.bytes, headersFor(minted.cache, leftAfter));
+  return pngResponse(minted.bytes, headersFor(minted.cache, left));
 }
 
 /** GET /api/v1/pictures/allowance — headers x-pip-user / x-pip-license. */
@@ -721,11 +739,18 @@ export async function handleAllowance(request, env) {
     env.PIP_LICENSE_SECRET, uid, request.headers.get("x-pip-license")))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
-  if (!env.VOICE) return json({ error: "pictures_unavailable" }, { status: 503 });
+  if (!env.TILE_LEDGER) {
+    return json({ error: "pictures_unavailable" }, { status: 503 });
+  }
   const tier = await entitlementFor(env, uid);
   const cap = ALLOWANCE[tier] ?? ALLOWANCE.free;
-  const used = await drawUsed(env, uid);
-  return json({ left: Math.max(0, cap - used), total: cap });
+  const res = await pictureStub(env).fetch(
+    new Request(`https://tile/pic/allowance?uid=${uid}&cap=${cap}`));
+  const { left } = await res.json().catch(() => ({}));
+  if (typeof left !== "number") {
+    return json({ error: "pictures_unavailable" }, { status: 503 });
+  }
+  return json({ left, total: cap });
 }
 
 /** GET /api/v1/pictures/img/<image_id> — license-gated streams for

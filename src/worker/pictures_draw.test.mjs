@@ -203,7 +203,7 @@ test("WT9: empty allowance returns 402 before any vendor call", async () => {
     synth: async () => (calls++, PNG_BYTES),
     jev: async () => (jevCalls++, { scope: "common", kind: "None", language: "en", draw: {} }),
   });
-  await env.VOICE.put(`usage-draw-total/${UID}`, JSON.stringify({ used: 5 }));
+  setUsed(env, UID, 5);
   const r = await draw(env, { text: "trampoline" });
   assert.equal(r.status, 402);
   assert.equal(calls, 0);
@@ -248,10 +248,14 @@ test("WT5: find and a hit cost nothing — reuse is free", async () => {
   assert.equal((await drawUsed(env, UID)), 1); // hit did not spend
   assert.equal(hit.headers.get("x-draw-cache"), "hit");
 });
-const drawUsed = async (env, uid) => {
-  const obj = await env.VOICE.get(`usage-draw-total/${uid}`);
-  return obj ? JSON.parse(await obj.text()).used : 0;
-};
+// The allowance lives in the ledger DO's SQLite now — the only
+// identity-keyed row on this path. Tests instrument the table directly.
+const drawUsed = async (env, uid) =>
+  env.__db.prepare("SELECT used FROM pic_allowance WHERE uid = ?").all(uid)[0]?.used ?? 0;
+const setUsed = (env, uid, used) =>
+  env.__db.prepare(
+    "INSERT INTO pic_allowance (uid, used) VALUES (?, ?) " +
+    "ON CONFLICT(uid) DO UPDATE SET used = excluded.used").run(uid, used);
 
 test("default stub: mints a placeholder, still counts — never indexes", async () => {
   const env = makeEnv({ synth: null });
@@ -278,6 +282,37 @@ test("no stub flag and no live key: the claim fails closed at 502", async () => 
   assert.equal(row.status, "failed");
   assert.ok(row.retry_after > Date.now());
   assert.equal(await drawUsed(env, UID), 0); // a failed mint never spends
+});
+
+test("allowance is atomic: 1 left, 5 concurrent draws → 1 mint + four 402s", async () => {
+  let calls = 0;
+  const env = makeEnv({ synth: async () => (calls++, PNG_BYTES) });
+  setUsed(env, UID, 4); // one drawing left
+  const rs = await Promise.all(
+    ["aardvark", "trampoline", "zucchini", "harmonica", "toaster"]
+      .map((text) => draw(env, { text })));
+  const statuses = rs.map((r) => r.status).sort();
+  assert.deepEqual(statuses, [200, 402, 402, 402, 402]);
+  assert.equal(calls, 1); // exactly one paid vendor call
+  assert.equal(await drawUsed(env, UID), 5); // spent once, never overspent
+  // and the losers were refunded, not double-charged — still 0 left
+  for (const r of rs.filter((r) => r.status === 402)) {
+    assert.equal((await r.clone().json()).left ?? 0, 0);
+  }
+});
+
+test("a failed mint refunds the reservation — the next subject can draw", async () => {
+  let calls = 0;
+  const env = makeEnv({
+    synth: async () => (calls++, calls === 1 ? Promise.reject(new Error("muse 500")) : PNG_BYTES),
+  });
+  setUsed(env, UID, 4); // one drawing left
+  const r1 = await draw(env, { text: "aardvark" });
+  assert.equal(r1.status, 502);
+  assert.equal(await drawUsed(env, UID), 4); // refunded
+  const r2 = await draw(env, { text: "trampoline" });
+  assert.equal(r2.status, 200);
+  assert.equal(calls, 2);
 });
 
 test("drawn rows enter the picture index as source drawn", async () => {
@@ -347,7 +382,7 @@ test("draw gates: bad ids, bad license, unsafe order before allowance", async ()
   }), env);
   assert.equal(r.status, 403);
   // 422 beats 402 — unsafe never spends a check
-  await env.VOICE.put(`usage-draw-total/${UID}`, JSON.stringify({ used: 5 }));
+  setUsed(env, UID, 5);
   assert.equal((await draw(env, { text: "fuck" })).status, 422);
 });
 
