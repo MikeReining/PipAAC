@@ -95,9 +95,13 @@ export function buildRows({ calibration = false } = {}) {
   const review = readJson(REVIEW, {});
   const manifest = readJson(MANIFEST, { entries: {} }).entries ?? {};
   const meta = new Map(readJsonl(RESULTS).map((r) => [r.id, r]));
-  for (const [id, verdict] of Object.entries(review)) {
+  // Every generated slug (results) plus any verdict without a results row.
+  // Unreviewed slugs are pending — they calibrate but never serve in find.
+  const extIds = new Set([...meta.keys(), ...Object.keys(review)]);
+  for (const id of extIds) {
+    const verdict = review[id];
+    if (verdict === "reject") continue;
     const approved = verdict === "approve";
-    if (!approved && verdict === "reject") continue;
     const published = manifest[id]?.r2Key;
     if (approved && !published) continue; // the img route could not serve it
     if (!approved && !calibration) continue;

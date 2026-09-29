@@ -141,6 +141,7 @@ const makeEnv = ({ jev } = {}) => {
       },
     },
     PICTURES: fakeIndex(),
+    PICTURES_CALIB: fakeIndex(),
     PICTURE_JEV: jev ?? (async () => ({ scope: "common", kind: "None", language: "en" })),
   };
   const db = new DatabaseSync(":memory:");
@@ -345,6 +346,59 @@ test("admin index: 401 without token; upsert embeds and stores; info counts", as
     "https://x/admin/v1/pictures/index/info",
     { headers: { authorization: `Bearer ${env.PIP_ADMIN_TOKEN}` } }), env)).json();
   assert.equal(info.main.vectorCount, ROWS.length);
+});
+
+test("admin find: calibration index sees pending rows; app find never does", async () => {
+  const env = makeEnv();
+  const noAuth = await worker.fetch(new Request(
+    "https://x/admin/v1/pictures/find", { method: "POST", body: "{}" }), env);
+  assert.equal(noAuth.status, 401);
+
+  const PENDING = {
+    image_id: "ext_apple2", asset: "/ext-local/apple2.png", source: "extended",
+    status: "pending", caption: "apple · Food · object",
+  };
+  const put = (index, rows) => worker.fetch(new Request(
+    "https://x/admin/v1/pictures/index", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${env.PIP_ADMIN_TOKEN}`,
+      },
+      body: JSON.stringify({ index, rows }),
+    }), env);
+  assert.equal((await put("calibration", [...ROWS, PENDING])).status, 200);
+
+  const r = await worker.fetch(new Request("https://x/admin/v1/pictures/find", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.PIP_ADMIN_TOKEN}`,
+    },
+    body: JSON.stringify({ index: "calibration", items: [{ text: "apple" }] }),
+  }), env);
+  assert.equal(r.status, 200);
+  const { results } = await r.json();
+  assert.equal(results.length, 1);
+  const ids = results[0].candidates.map((c) => c.image_id);
+  assert.ok(ids.includes("ext_apple2")); // pending rows calibrate too
+  assert.equal(typeof results[0].candidates[0].cosine, "number");
+  assert.equal(results[0].language, "en");
+
+  // The app's find path reads only PICTURES — the pending row stays out.
+  const app = await find(env, { text: "apple" });
+  const appIds = (await app.json()).candidates.map((c) => c.image_id);
+  assert.ok(!appIds.includes("ext_apple2"));
+
+  const bad = await worker.fetch(new Request("https://x/admin/v1/pictures/find", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.PIP_ADMIN_TOKEN}`,
+    },
+    body: JSON.stringify({ index: "nope", items: [{ text: "x" }] }),
+  }), env);
+  assert.equal(bad.status, 400);
 });
 
 test("img route: ext_* streams from EXT_ART, drw_* from VOICE, 403/404 gates", async () => {

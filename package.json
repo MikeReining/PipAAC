@@ -48,6 +48,8 @@
     "catalog:forms:mint-batch": "node scripts/catalog/build_elevenlabs_forms_queue.mjs && node scripts/catalog/mint_elevenlabs_tile_batch.mjs --batch elevenlabs-forms-core",
     "catalog:forms:publish-shortlist": "node scripts/catalog/publish_elevenlabs_forms_shortlist.mjs",
     "pictures:index": "node scripts/pictures/build_index.mjs --upsert",
+    "pictures:index:calib": "node scripts/pictures/build_index.mjs --calibration --upsert",
+    "pictures:calibrate": "node scripts/pictures/calibration_dev.mjs",
     "prediction:bench": "node scripts/prediction/bench/bench.mjs",
     "prediction:book": "node scripts/prediction/book/build_book.mjs && node scripts/prediction/book/score_book.mjs"
   },

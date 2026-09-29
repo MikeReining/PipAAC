@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "note": "030 § 7 — calibration queries for the picture finder. The founder marks each row's right answer (one candidate image_id, or \"none\"); marks save beside the query so the page re-runs after a model or caption change. Drafted by the developer, edited by the founder.",
+  "queries": [
+    {
+      "text": "want"
+    },
+    {
+      "text": "more"
+    },
+    {
+      "text": "go"
+    },
+    {
+      "text": "help"
+    },
+    {
+      "text": "stop"
+    },
+    {
+      "text": "eat"
+    },
+    {
+      "text": "drink"
+    },
+    {
+      "text": "happy"
+    },
+    {
+      "text": "sad"
+    },
+    {
+      "text": "dog"
+    },
+    {
+      "text": "cat"
+    },
+    {
+      "text": "apple"
+    },
+    {
+      "text": "banana"
+    },
+    {
+      "text": "water"
+    },
+    {
+      "text": "milk"
+    },
+    {
+      "text": "juice"
+    },
+    {
+      "text": "mom"
+    },
+    {
+      "text": "dad"
+    },
+    {
+      "text": "play"
+    },
+    {
+      "text": "sleep"
+    },
+    {
+      "text": "cookie"
+    },
+    {
+      "text": "ball"
+    },
+    {
+      "text": "book"
+    },
+    {
+      "text": "yes"
+    },
+    {
+      "text": "no"
+    },
+    {
+      "text": "apple sauce"
+    },
+    {
+      "text": "applesauce"
+    },
+    {
+      "text": "ice cream"
+    },
+    {
+      "text": "ice-cream"
+    },
+    {
+      "text": "hot dog"
+    },
+    {
+      "text": "hotdog"
+    },
+    {
+      "text": "peanut butter"
+    },
+    {
+      "text": "all done"
+    },
+    {
+      "text": "clean up"
+    },
+    {
+      "text": "wake up"
+    },
+    {
+      "text": "swing set"
+    },
+    {
+      "text": "bananna"
+    },
+    {
+      "text": "aple"
+    },
+    {
+      "text": "watr"
+    },
+    {
+      "text": "juce"
+    },
+    {
+      "text": "doggie"
+    },
+    {
+      "text": "kitty"
+    },
+    {
+      "text": "choclate milk"
+    },
+    {
+      "text": "red apple"
+    },
+    {
+      "text": "yellow banana"
+    },
+    {
+      "text": "big dog"
+    },
+    {
+      "text": "little cat"
+    },
+    {
+      "text": "green peas"
+    },
+    {
+      "text": "my ball"
+    },
+    {
+      "text": "more juice"
+    },
+    {
+      "text": "I want applesauce"
+    },
+    {
+      "text": "go to the park"
+    },
+    {
+      "text": "can I have water"
+    },
+    {
+      "text": "I need help"
+    },
+    {
+      "text": "want to play"
+    },
+    {
+      "text": "all done eating"
+    },
+    {
+      "text": "Apfel"
+    },
+    {
+      "text": "Hund"
+    },
+    {
+      "text": "Katze"
+    },
+    {
+      "text": "Wasser"
+    },
+    {
+      "text": "Milch"
+    },
+    {
+      "text": "Brot"
+    },
+    {
+      "text": "Haus"
+    },
+    {
+      "text": "rot"
+    },
+    {
+      "text": "groß"
+    },
+    {
+      "text": "danke"
+    },
+    {
+      "text": "spielen"
+    },
+    {
+      "text": "schlafen"
+    },
+    {
+      "text": "Banane"
+    },
+    {
+      "text": "Saft"
+    },
+    {
+      "text": "Gift"
+    },
+    {
+      "text": "manzana"
+    },
+    {
+      "text": "perro"
+    },
+    {
+      "text": "gato"
+    },
+    {
+      "text": "agua"
+    },
+    {
+      "text": "leche"
+    },
+    {
+      "text": "pan"
+    },
+    {
+      "text": "casa"
+    },
+    {
+      "text": "rojo"
+    },
+    {
+      "text": "grande"
+    },
+    {
+      "text": "gracias"
+    },
+    {
+      "text": "jugar"
+    },
+    {
+      "text": "dormir"
+    },
+    {
+      "text": "plátano"
+    },
+    {
+      "text": "jugo"
+    },
+    {
+      "text": "más"
+    },
+    {
+      "text": "pomme"
+    },
+    {
+      "text": "chien"
+    },
+    {
+      "text": "chat"
+    },
+    {
+      "text": "eau"
+    },
+    {
+      "text": "lait"
+    },
+    {
+      "text": "pain"
+    },
+    {
+      "text": "maison"
+    },
+    {
+      "text": "rouge"
+    },
+    {
+      "text": "grand"
+    },
+    {
+      "text": "merci"
+    },
+    {
+      "text": "jouer"
+    },
+    {
+      "text": "dormir"
+    },
+    {
+      "text": "banane"
+    },
+    {
+      "text": "jus"
+    },
+    {
+      "text": "beurre"
+    },
+    {
+      "text": "Grandma Rosa"
+    },
+    {
+      "text": "Cooper",
+      "description": "our golden retriever"
+    },
+    {
+      "text": "my dog Rex",
+      "description": "our beagle"
+    },
+    {
+      "text": "Aunt Maria"
+    },
+    {
+      "text": "grandma"
+    },
+    {
+      "text": "my teacher Ms Chen"
+    },
+    {
+      "text": "our house"
+    },
+    {
+      "text": "Uncle Dave"
+    },
+    {
+      "text": "submarine"
+    },
+    {
+      "text": "xylophone"
+    },
+    {
+      "text": "cryptocurrency"
+    },
+    {
+      "text": "saxophone"
+    },
+    {
+      "text": "volcano"
+    },
+    {
+      "text": "telescope"
+    },
+    {
+      "text": "espresso machine"
+    },
+    {
+      "text": "TypeError"
+    }
+  ]
+}

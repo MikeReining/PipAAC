@@ -145,8 +145,10 @@ async function rankSignals(env, items) {
   return (await res.json()).items;
 }
 
-/** One find: classify -> embed -> query -> rescore -> auto. */
-async function findOne(env, { text, description, locale }) {
+/** One find: classify -> embed -> query -> rescore -> auto.
+ *  `binding` picks the Vectorize index (main find is always PICTURES);
+ *  `includePending` is for the calibration page only — never the app. */
+async function findOne(env, { text, description, locale, binding = "PICTURES", includePending = false }) {
   let jev;
   try {
     jev = await classify(env, { text, description });
@@ -157,12 +159,13 @@ async function findOne(env, { text, description, locale }) {
     choice: jev.language, probabilities: jev.language_probs, locale,
   });
   const [vec] = await embed(env, [queryText(text, description)]);
-  const raw = await env.PICTURES.query(vec, {
+  const raw = await env[binding].query(vec, {
     topK: CFG.fetch_k,
     returnMetadata: "all",
   });
   const matches = (raw?.matches ?? [])
-    .filter((m) => (m.metadata?.status ?? "approved") === "approved");
+    .filter((m) => includePending
+      || (m.metadata?.status ?? "approved") === "approved");
 
   const skey = signalsKey(jev.scope, text, description);
   const [signals] = await rankSignals(env, [{
@@ -175,6 +178,8 @@ async function findOne(env, { text, description, locale }) {
       asset: m.metadata?.asset ?? null,
       source: m.metadata?.source ?? null,
       caption: m.metadata?.caption ?? null,
+      status: m.metadata?.status ?? "approved",
+      cosine: m.score,
       score: scoreOf(m.score, signals?.counts?.[m.id] ?? {}, CFG),
     }))
     .sort((a, b) => b.score - a.score)
@@ -327,6 +332,31 @@ export async function handlePicturesAdmin(request, env, url) {
       info[name] = env[binding] ? await env[binding].describe().catch(() => null) : null;
     }
     return json(info);
+  }
+
+  // Calibration page (§ 7): same pipeline as find, on the chosen index,
+  // including pending rows — founder-only, never the app's find path.
+  if (path === "/admin/v1/pictures/find" && request.method === "POST") {
+    const body = await request.json().catch(() => null);
+    const binding = INDEX_BINDINGS[body?.index ?? "calibration"];
+    const items = Array.isArray(body?.items) ? body.items : null;
+    if (!binding || !items || items.length === 0 || items.length > BATCH_MAX) {
+      return json({ error: "bad_request" }, { status: 400 });
+    }
+    if (!env.AI || !env[binding]) {
+      return json({ error: "pictures_unavailable" }, { status: 503 });
+    }
+    const results = await Promise.all(items.map((it) => {
+      const text = cleanText(it?.text, TEXT_MAX);
+      const description = cleanText(it?.description, DESC_MAX);
+      return text && description !== null
+        ? findOne(env, {
+          text, description, locale: it?.locale ?? body?.locale,
+          binding, includePending: true,
+        })
+        : { error: "bad_text" };
+    }));
+    return json({ results });
   }
 
   return json({ error: "not_found" }, { status: 404 });

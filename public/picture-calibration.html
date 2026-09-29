@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pip AAC — Picture calibration</title>
+  <style>
+    :root { --bg: #f6f4ef; --ink: #1a1a1a; --edge: #d8d3c7; --accent: #1a5f8a; --win: #2a7a4b; --warn: #b45309; --bad: #b3261e; }
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 0; background: var(--bg); color: var(--ink); }
+    header { padding: 16px 20px; border-bottom: 1px solid var(--edge); background: #fff; position: sticky; top: 0; z-index: 5; }
+    h1 { font-size: 18px; margin: 0 0 6px; }
+    .sub { font-size: 13px; color: #6b665c; max-width: 60rem; line-height: 1.45; }
+    main { padding: 16px 20px 40px; max-width: 1180px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; margin-top: 10px; }
+    .ctl { font-size: 12px; color: #6b665c; }
+    .ctl label { display: block; margin-bottom: 2px; font-weight: 600; }
+    .ctl input[type="range"] { width: 130px; }
+    .ctl .val { font-variant-numeric: tabular-nums; color: var(--ink); }
+    button { font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid var(--edge); background: #fff; padding: 7px 12px; }
+    button.primary { background: var(--win); color: #fff; border-color: var(--win); }
+    button:disabled { opacity: .5; cursor: default; }
+    table.counts { border-collapse: collapse; background: #fff; border: 1px solid var(--edge); border-radius: 8px; overflow: hidden; margin-top: 12px; font-size: 12px; }
+    table.counts th, table.counts td { border-bottom: 1px solid var(--edge); padding: 4px 10px; text-align: center; }
+    table.counts th { background: #f0ebe3; }
+    .row { background: #fff; border: 1px solid var(--edge); border-left-width: 5px; border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+    .row.auto-ok { border-left-color: var(--win); }
+    .row.auto-bad { border-left-color: var(--bad); }
+    .row.draw-fit { border-left-color: var(--warn); }
+    .row.draw-ok { border-left-color: #9a958a; }
+    .row.unmarked { border-left-color: var(--edge); }
+    .row-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .qtext { font-size: 16px; font-weight: 650; }
+    .qdesc { font-size: 12px; color: #6b665c; }
+    .badge { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--edge); color: #6b665c; background: #faf8f5; }
+    .badge.personal { color: #7a3ea1; border-color: #d9c6ea; }
+    .badge.pending { color: var(--warn); border-color: #ecd3ac; }
+    .verdict { font-size: 12px; margin-left: auto; font-weight: 600; }
+    .cards { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .card { width: 150px; border: 2px solid var(--edge); border-radius: 10px; padding: 6px; background: #faf8f5; cursor: pointer; text-align: center; }
+    .card:hover { border-color: var(--accent); }
+    .card.top1 { border-color: var(--accent); }
+    .card.marked { border-color: var(--win); box-shadow: 0 0 0 2px var(--win); }
+    .card img { width: 100%; height: 100px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--edge); }
+    .card .cap { font-size: 11px; color: #55504a; margin-top: 4px; line-height: 1.25; min-height: 2.4em; word-break: break-word; }
+    .card .score { font-size: 12px; font-variant-numeric: tabular-nums; font-weight: 600; }
+    .card .seed { display: flex; gap: 4px; margin-top: 4px; font-size: 10px; color: #6b665c; }
+    .card .seed input { width: 38px; font-size: 10px; padding: 1px 3px; }
+    .none-btn { margin-top: 8px; font-size: 12px; }
+    .none-btn.marked { background: var(--win); color: #fff; border-color: var(--win); }
+    #status { font-size: 13px; color: #6b665c; margin: 8px 0; min-height: 1.2em; }
+    #status.err { color: var(--bad); }
+    .meta { font-size: 12px; color: #6b665c; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Picture finder — calibration</h1>
+    <p class="sub">
+      Top 4 per query from the <strong>calibration index</strong> (includes pending extended art).
+      Click the right picture, or <em>none fits</em>. Sliders recolor rows live:
+      <span style="color:var(--win)">green = auto-apply correct</span>,
+      <span style="color:var(--bad)">red = auto-apply wrong</span>,
+      <span style="color:var(--warn)">amber = would draw although a fit exists</span>.
+      p/r seed boxes show how far pick/reject weights move a candidate.
+    </p>
+    <div class="controls">
+      <div class="ctl"><label>AUTO_CUTOFF</label>
+        <input type="range" id="cut-default" min="0.3" max="1.05" step="0.005">
+        <span class="val" id="cut-default-val"></span></div>
+      <div class="ctl" data-lang="en"><label>en override</label>
+        <input type="range" min="0.3" max="1.05" step="0.005"><span class="val"></span>
+        <input type="checkbox" class="use"> use</div>
+      <div class="ctl" data-lang="de"><label>de override</label>
+        <input type="range" min="0.3" max="1.05" step="0.005"><span class="val"></span>
+        <input type="checkbox" class="use"> use</div>
+      <div class="ctl" data-lang="es"><label>es override</label>
+        <input type="range" min="0.3" max="1.05" step="0.005"><span class="val"></span>
+        <input type="checkbox" class="use"> use</div>
+      <div class="ctl" data-lang="fr"><label>fr override</label>
+        <input type="range" min="0.3" max="1.05" step="0.005"><span class="val"></span>
+        <input type="checkbox" class="use"> use</div>
+      <div class="ctl"><label>PICK_WEIGHT</label>
+        <input type="range" id="w-pick" min="0" max="0.3" step="0.005"><span class="val" id="w-pick-val"></span></div>
+      <div class="ctl"><label>REJECT_WEIGHT</label>
+        <input type="range" id="w-reject" min="0" max="0.3" step="0.005"><span class="val" id="w-reject-val"></span></div>
+      <button class="primary" id="run">Run all</button>
+      <button id="save">Save config</button>
+      <button id="reindex">Rebuild calib index</button>
+    </div>
+    <table class="counts" id="counts"></table>
+  </header>
+  <main>
+    <p id="status"></p>
+    <div id="rows"></div>
+    <p class="meta">030 § 7 — marks save beside the queries; Save writes AUTO_CUTOFF / AUTO_CUTOFF_BY_LANG / PICK_WEIGHT / REJECT_WEIGHT to picture_finder.json. Cutoff ≥ 1.01 = never auto.</p>
+  </main>
+<script>
+const $ = (id) => document.getElementById(id);
+const LANGS = ["en","de","es","fr"];
+let queries = [], config = {}, results = new Map(); // key -> find result
+const key = (q) => q.text + "\u0001" + (q.description || "");
+
+function setStatus(msg, err) {
+  $("status").textContent = msg || "";
+  $("status").className = err ? "err" : "";
+}
+
+/* The scoring rule mirrors scoreOf() in src/shared/picture_index.mjs —
+   same formula, so the slider shows exactly what the Worker will do. */
+function rescore(c, seeds, pw, rw) {
+  const s = seeds[c.image_id] || { p: 0, r: 0 };
+  return c.cosine + pw * Math.log1p(s.p) - rw * Math.log1p(s.r);
+}
+function cutoffFor(lang) {
+  const ctl = document.querySelector(`.ctl[data-lang="${lang}"]`);
+  if (ctl && ctl.querySelector(".use").checked) return Number(ctl.querySelector("input[type=range]").value);
+  return Number($("cut-default").value);
+}
+
+function verdict(res, q) {
+  const pw = Number($("w-pick").value), rw = Number($("w-reject").value);
+  const seeds = q._seeds || {};
+  const cands = (res.candidates || []).map(c => ({...c, s: rescore(c, seeds, pw, rw)}))
+    .sort((a,b) => b.s - a.s);
+  const top = cands[0];
+  const cut = cutoffFor(res.language);
+  const auto = top && top.s >= cut ? top.image_id : null;
+  const mark = q.mark;
+  let cls = "unmarked", label = "unmarked";
+  if (auto) {
+    if (mark === auto) { cls = "auto-ok"; label = "auto ✓"; }
+    else if (mark) { cls = "auto-bad"; label = "auto ✗"; }
+    else { cls = "unmarked"; label = `auto→${auto}`; }
+  } else {
+    if (mark === "none") { cls = "draw-ok"; label = "draw ✓ (no fit)"; }
+    else if (mark) { cls = "draw-fit"; label = "draw despite fit"; }
+    else { cls = "unmarked"; label = "draw?"; }
+  }
+  return { cands, top, cut, auto, cls, label };
+}
+
+function renderCounts() {
+  const t = {};
+  for (const q of queries) {
+    const res = results.get(key(q));
+    if (!res || res.error) continue;
+    const lang = res.language || "?";
+    t[lang] = t[lang] || { ok: 0, bad: 0, fit: 0, none: 0, unmarked: 0 };
+    const v = verdict(res, q);
+    if (!q.mark) t[lang].unmarked++;
+    else if (v.cls === "auto-ok") t[lang].ok++;
+    else if (v.cls === "auto-bad") t[lang].bad++;
+    else if (v.cls === "draw-fit") t[lang].fit++;
+    else if (v.cls === "draw-ok") t[lang].none++;
+  }
+  const langs = Object.keys(t).sort();
+  $("counts").innerHTML = "<tr><th>lang</th><th>auto ✓</th><th>auto ✗</th><th>draw w/ fit</th><th>no fit → draw</th><th>unmarked</th></tr>" +
+    langs.map(l => `<tr><td>${l}</td><td>${t[l].ok}</td><td style="color:var(--bad)">${t[l].bad}</td><td style="color:var(--warn)">${t[l].fit}</td><td>${t[l].none}</td><td>${t[l].unmarked}</td></tr>`).join("");
+}
+
+function cardHtml(q, res, c, isTop) {
+  const seeds = (q._seeds ||= {});
+  const s = seeds[c.image_id] || { p: 0, r: 0 };
+  const pw = Number($("w-pick").value), rw = Number($("w-reject").value);
+  return `<div class="card ${isTop ? "top1" : ""} ${q.mark === c.image_id ? "marked" : ""}"
+      data-img="${c.image_id}">
+    <img src="/img/${c.image_id}" loading="lazy" onerror="this.style.visibility='hidden'" alt="">
+    <div class="cap">${c.caption || c.image_id}${c.status === "pending" ? ' <span class="badge pending">pending</span>' : ""}</div>
+    <div class="score">${rescore(c, seeds, pw, rw).toFixed(3)}</div>
+    <div class="seed" onclick="event.stopPropagation()">
+      p<input type="number" min="0" max="999" value="${s.p}" data-seed="p" data-img="${c.image_id}">
+      r<input type="number" min="0" max="999" value="${s.r}" data-seed="r" data-img="${c.image_id}">
+    </div>
+  </div>`;
+}
+
+function renderRow(q) {
+  const res = results.get(key(q));
+  const el = document.createElement("div");
+  if (!res) {
+    el.className = "row unmarked";
+    el.innerHTML = `<div class="row-head"><span class="qtext">${q.text}</span>
+      <span class="qdesc">${q.description || ""}</span><span class="verdict">not run</span></div>`;
+    return el;
+  }
+  if (res.error) {
+    el.className = "row unmarked";
+    el.innerHTML = `<div class="row-head"><span class="qtext">${q.text}</span><span class="verdict">${res.error}</span></div>`;
+    return el;
+  }
+  const v = verdict(res, q);
+  el.className = `row ${v.cls}`;
+  el.innerHTML = `<div class="row-head">
+      <span class="qtext">${q.text}</span>
+      ${q.description ? `<span class="qdesc">“${q.description}”</span>` : ""}
+      <span class="badge">${res.language}</span>
+      ${res.scope ? `<span class="badge ${res.scope === "personal" ? "personal" : ""}">${res.scope}</span>` : ""}
+      ${res.kind ? `<span class="badge">${res.kind}</span>` : ""}
+      <span class="meta">cut ${v.cut.toFixed(3)}</span>
+      <span class="verdict">${v.label}</span>
+    </div>
+    <div class="cards">${v.cands.map((c,i) => cardHtml(q,res,c,i===0)).join("")}</div>
+    <button class="none-btn ${q.mark === "none" ? "marked" : ""}">none fits</button>`;
+  el.querySelectorAll(".card").forEach(card => card.addEventListener("click", () => mark(q, card.dataset.img)));
+  el.querySelectorAll(".seed input").forEach(inp => inp.addEventListener("change", () => {
+    const seeds = (q._seeds ||= {});
+    seeds[inp.dataset.img] = seeds[inp.dataset.img] || { p: 0, r: 0 };
+    seeds[inp.dataset.img][inp.dataset.seed] = Number(inp.value) || 0;
+    renderAll();
+  }));
+  el.querySelector(".none-btn").addEventListener("click", () => mark(q, "none"));
+  return el;
+}
+
+function renderAll() {
+  const box = $("rows");
+  box.innerHTML = "";
+  for (const q of queries) box.appendChild(renderRow(q));
+  renderCounts();
+}
+
+async function mark(q, imageId) {
+  q.mark = imageId;
+  renderAll();
+  await fetch("/api/mark", { method: "POST", headers: {"content-type":"application/json"},
+    body: JSON.stringify({ text: q.text, description: q.description || "", mark: imageId }) });
+}
+
+async function runAll() {
+  $("run").disabled = true;
+  setStatus("running…");
+  results.clear();
+  const items = queries.map(q => ({ text: q.text, description: q.description || "" }));
+  for (let i = 0; i < items.length; i += 25) {
+    const r = await fetch("/api/find", { method: "POST", headers: {"content-type":"application/json"},
+      body: JSON.stringify({ items: items.slice(i, i + 25) }) });
+    const j = await r.json();
+    if (!r.ok) { setStatus(`find failed: ${j.error || r.status} ${j.detail || ""}`, true); $("run").disabled = false; return; }
+    j.results.forEach((res, k) => results.set(key(queries[i + k]), res));
+    renderAll();
+    setStatus(`ran ${Math.min(i + 25, items.length)}/${items.length}…`);
+  }
+  setStatus(`done — ${results.size} rows`);
+  $("run").disabled = false;
+}
+
+async function save() {
+  const byLang = {};
+  document.querySelectorAll(".ctl[data-lang]").forEach(ctl => {
+    if (ctl.querySelector(".use").checked) byLang[ctl.dataset.lang] = Number(ctl.querySelector("input[type=range]").value);
+  });
+  const body = {
+    auto_cutoff: Number($("cut-default").value),
+    auto_cutoff_by_lang: byLang,
+    pick_weight: Number($("w-pick").value),
+    reject_weight: Number($("w-reject").value),
+  };
+  const r = await fetch("/api/save", { method: "POST", headers: {"content-type":"application/json"}, body: JSON.stringify(body) });
+  const j = await r.json();
+  setStatus(r.ok ? `saved → AUTO_CUTOFF ${j.config.auto_cutoff}` : `save failed: ${j.error}`, !r.ok);
+}
+
+async function reindex() {
+  $("reindex").disabled = true;
+  setStatus("rebuilding calibration index (embeds ~1700 captions)…");
+  const r = await fetch("/api/reindex", { method: "POST" });
+  const j = await r.json();
+  setStatus(r.ok ? "rebuilt ✓" : `reindex failed:\n${(j.out||"").slice(-400)}`, !r.ok);
+  $("reindex").disabled = false;
+}
+
+function bindSliders() {
+  const upd = () => {
+    $("cut-default-val").textContent = Number($("cut-default").value).toFixed(3);
+    $("w-pick-val").textContent = Number($("w-pick").value).toFixed(3);
+    $("w-reject-val").textContent = Number($("w-reject").value).toFixed(3);
+    document.querySelectorAll(".ctl[data-lang]").forEach(ctl => {
+      ctl.querySelector(".val").textContent = Number(ctl.querySelector("input[type=range]").value).toFixed(3);
+    });
+    renderAll();
+  };
+  document.querySelectorAll("input[type=range], .ctl .use").forEach(el => el.addEventListener("input", upd));
+}
+
+async function boot() {
+  const r = await fetch("/api/state");
+  const j = await r.json();
+  queries = j.queries.queries || [];
+  config = j.config || {};
+  $("cut-default").value = config.auto_cutoff ?? 1.01;
+  $("w-pick").value = config.pick_weight ?? 0;
+  $("w-reject").value = config.reject_weight ?? 0;
+  document.querySelectorAll(".ctl[data-lang]").forEach(ctl => {
+    const v = config.auto_cutoff_by_lang?.[ctl.dataset.lang];
+    if (v != null) { ctl.querySelector("input[type=range]").value = v; ctl.querySelector(".use").checked = true; }
+    else ctl.querySelector("input[type=range]").value = config.auto_cutoff ?? 1.01;
+  });
+  bindSliders();
+  $("run").addEventListener("click", runAll);
+  $("save").addEventListener("click", save);
+  $("reindex").addEventListener("click", reindex);
+  renderAll();
+  $("cut-default-val").textContent = Number($("cut-default").value).toFixed(3);
+}
+boot();
+</script>
+</body>
+</html>
