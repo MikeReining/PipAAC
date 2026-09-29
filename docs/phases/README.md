@@ -43,6 +43,13 @@ Executing phases only. Each row names the **next** slice.
 | [025 — Expressive voice](025_Expressive_Voice.md) | Slices 1–4 landed 2026-09-26: happy/sad/angry faces in the last strip slot (designer icons), Worker-side prosody, feeling-keyed caches, lit-face suggestion, Expressive voice setting. Next: § 8 listen — paid, founder-gated |
 | [026 — Topic groups](026_Topic_Groups.md) | Slice 1 compiled with 027 A1 (live seed, capacity-checked; splits await founder review). Next: slice 2 topic door icons, slice 3 neutral noun frame |
 | [027 — Occasion boards and independent editing](027_Occasion_Boards.md) | Built 2026-09-28 (A1–A4, Works Test 12/12 on an agent slot). Waiting on the founder: seed curation review and the CHILDES starter table |
+| [028 — Catalog tile voice library](028_Catalog_Tile_Voice_Library_Proposal.md) | **Proposal only** — awaiting review; no execution until approved |
+
+## Proposals awaiting review
+
+| Doc | Purpose |
+| --- | --- |
+| [028 — Catalog tile voice library](028_Catalog_Tile_Voice_Library_Proposal.md) | Pre-seed + on-demand ElevenLabs tile clips; mint-once economics for customization |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

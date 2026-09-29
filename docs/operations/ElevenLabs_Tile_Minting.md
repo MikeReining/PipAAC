@@ -82,7 +82,7 @@ npm run catalog:voice-selector:mint
 
 Open [http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector](http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector). Probes and candidate IDs live in `data/samples/elevenlabs-voice-selector/round.json`. Takes: `data/samples/elevenlabs-voice-selector/takes/` (gitignore). Winner: `decisions.json` in the same folder.
 
-**Full-library coverage (default + extra voices):** execution plan only — `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md`.
+**Full-library coverage (default + extra voices):** review packet — `docs/phases/028_Catalog_Tile_Voice_Library_Proposal.md` (ops gaps: `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md`).
 
 ## Audio inventory (what is “missing”?)
 
