@@ -43,7 +43,7 @@ Executing phases only. Each row names the **next** slice.
 | [025 — Expressive voice](025_Expressive_Voice.md) | Slices 1–4 landed 2026-09-26: happy/sad/angry faces in the last strip slot (designer icons), Worker-side prosody, feeling-keyed caches, lit-face suggestion, Expressive voice setting. Next: § 8 listen — paid, founder-gated |
 | [026 — Topic groups](026_Topic_Groups.md) | Slice 1 compiled with 027 A1 (live seed, capacity-checked; splits await founder review). Next: slice 2 topic door icons, slice 3 neutral noun frame |
 | [027 — Occasion boards and independent editing](027_Occasion_Boards.md) | Built 2026-09-28 (A1–A4, Works Test 12/12 on an agent slot). Waiting on the founder: seed curation review and the CHILDES starter table |
-| [028 — Tile voice library](028_Tile_Voice_Library.md) | Decided 2026-09-29, ready to slice. Next: slice 0 v3 cleanup (code/data), then slice 1 Worker mint core. Nothing built; bulk mints stay founder-gated |
+| [028 — Tile voice library](028_Tile_Voice_Library.md) | Decided 2026-09-29, ready to slice. Next: slice 0 v3 cleanup (code/data), then slice 1 Worker mint core. Eve default, Leo (voice id final, seed pending). Nothing built; bulk mints stay founder-gated |
 
 ## Proposals awaiting review
 
