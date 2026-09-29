@@ -1,7 +1,7 @@
 /**
  * 023 §1e — the Settings PIN.
  *
- * A 4–6 digit gate on Parent corner: the child can't open Settings or
+ * A four-digit gate on Parent corner: the child can't open Settings or
  * edit words; the parent types four digits and is in. It is a speed
  * bump for little fingers, not a security boundary — the honest
  * threat model is the communicator, and four digits is what adults
@@ -16,13 +16,15 @@
  *   keyStore — one PIN per device, never synced, shared by every person
  *   on it. The tablet's PIN belongs to the tablet; a sibling's iPad can
  *   have its own. An SLP's laptop with 14 clients has one PIN, not 14
- *   (Settings redesign, founder 2026-09-28). A PIN stored the old way,
- *   under `user/<id>/pin`, still opens and moves itself to the device
- *   key on its first good check.
+ *   (Settings redesign, founder 2026-09-28).
  * - **Off until asked for** (founder 2026-09-28). A new board has no
  *   PIN: Settings opens with one tap until someone locks it (Settings →
  *   Backup & privacy, or the "Protect" card once the board is worth
  *   protecting). Turning it off clears it for everyone on the device.
+ * - **Exactly four digits** (founder 2026-09-29). The threat is a curious
+ *   child, not an attacker, so 10,000 combinations is plenty. Fixed
+ *   length means the sheet checks on the fourth digit: no Open button,
+ *   no length to choose.
  * - **Never shown.** Only the hash is kept, so the app cannot display
  *   the digits — the child watching is the threat, and adults reuse
  *   phone PINs. Settings changes it (no old PIN: the gate was just
@@ -42,39 +44,30 @@ const hex = (buf) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 
 const DEVICE_PIN = "device/pin";
-const legacyPinKey = (userId) => `user/${userId}/pin`;
 
-export const PIN_RE = /^\d{4,6}$/;
+export const PIN_RE = /^\d{4}$/;
 
-async function hash(userId, pin) {
-  return hex(await crypto.subtle.digest(
-    "SHA-256", te.encode(`pip-pin:${userId}:${pin}`)));
+async function hash(pin) {
+  return hex(await crypto.subtle.digest("SHA-256", te.encode(`pip-pin:device:${pin}`)));
 }
 
-export async function hasPin(store, userId) {
-  return !!(await store.get(DEVICE_PIN)) || !!(await store.get(legacyPinKey(userId)));
+export async function hasPin(store) {
+  return !!(await store.get(DEVICE_PIN));
 }
 
-export async function setPin(store, userId, pin) {
-  if (!PIN_RE.test(String(pin))) throw new Error("pin must be 4-6 digits");
-  await store.put(DEVICE_PIN, await hash("device", String(pin)));
+export async function setPin(store, pin) {
+  if (!PIN_RE.test(String(pin))) throw new Error("pin must be 4 digits");
+  await store.put(DEVICE_PIN, await hash(String(pin)));
 }
 
 /** Turn the PIN off: Settings opens without one again. */
-export async function clearPin(store, userId) {
+export async function clearPin(store) {
   await store.del(DEVICE_PIN);
-  await store.del(legacyPinKey(userId));
 }
 
-/** The device PIN when set; else this person's PIN from before the
- *  device PIN, which becomes the device PIN on a match. */
-export async function checkPin(store, userId, pin) {
+export async function checkPin(store, pin) {
   const device = await store.get(DEVICE_PIN);
-  if (device) return device === (await hash("device", String(pin)));
-  const legacy = await store.get(legacyPinKey(userId));
-  if (!legacy || legacy !== (await hash(userId, String(pin)))) return false;
-  await setPin(store, userId, pin);
-  return true;
+  return !!device && device === (await hash(String(pin)));
 }
 
 /** Forgot: the words an adult types to choose a new PIN. Case and

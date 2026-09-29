@@ -1743,7 +1743,7 @@ async function gatePin(onOk, { change = false } = {}) {
         err = $("pin-error"), hint = $("pin-hint"),
         title = $("pin-title"), go = $("pin-go"), forgot = $("pin-forgot");
   const store = await openKeyStore();
-  const locked = await hasPin(store, me.id);
+  const locked = await hasPin(store);
   // No PIN yet: Settings opens with one tap (founder 2026-09-28).
   if (!change && !locked) return onOk();
   let mode = change ? "new" : "check";
@@ -1755,22 +1755,20 @@ async function gatePin(onOk, { change = false } = {}) {
     input.value = "";
     input.type = phrase ? "text" : "password";
     input.inputMode = phrase ? "text" : "numeric";
-    input.maxLength = phrase ? 20 : 6;
+    input.maxLength = phrase ? 20 : 4;
+    go.hidden = !phrase;
     input.classList.toggle("phrase", phrase);
-    input.placeholder = phrase ? "" : mode === "check" ? "Enter PIN" : "4–6 digits";
+    input.placeholder = phrase ? "" : mode === "check" ? "" : "4 digits";
     forgot.hidden = mode !== "check";
     if (mode === "new") {
       title.textContent = reset ? "Choose a new PIN" : locked ? "New Settings PIN" : "Choose a PIN";
-      hint.textContent = "4–6 digits, for everyone on this device. " + PIN_SHARE_HINT;
-      go.textContent = "Next";
+      hint.textContent = "4 digits, for everyone on this device. " + PIN_SHARE_HINT;
     } else if (mode === "confirm") {
       title.textContent = "Type it again";
-      hint.textContent = "The same 4–6 digits, to be sure.";
-      go.textContent = "Save PIN";
+      hint.textContent = "The same 4 digits, to be sure.";
     } else if (mode === "check") {
       title.textContent = "Settings PIN";
       hint.textContent = "";
-      go.textContent = "Open";
     } else {
       title.textContent = "Forgot the PIN?";
       const word = document.createElement("strong");
@@ -1785,7 +1783,7 @@ async function gatePin(onOk, { change = false } = {}) {
   go.onclick = async () => {
     const v = input.value.trim();
     if (mode === "check") {
-      if (await checkPin(store, me.id, v)) return finish();
+      if (await checkPin(store, v)) return finish();
       input.value = "";
       err.textContent = "Not that PIN.";
       return;
@@ -1795,19 +1793,23 @@ async function gatePin(onOk, { change = false } = {}) {
       else err.textContent = `Type the two words: ${RESET_PHRASE}`;
       return;
     }
-    if (!PIN_RE.test(v)) { err.textContent = "4–6 digits."; return; }
+    if (!PIN_RE.test(v)) { err.textContent = "4 digits."; return; }
     if (mode === "new") { first = v; mode = "confirm"; render(); return; }
     if (mode === "confirm" && v !== first) {
       mode = "new"; render();
       err.textContent = "Those didn't match. Start again.";
       return;
     }
-    await setPin(store, me.id, v);
+    await setPin(store, v);
     if (reset) toast("New PIN saved.");
     else if (change) toast(locked ? "Settings PIN changed." : "Settings is locked with a PIN.");
     finish();
   };
   input.onkeydown = (e) => { if (e.key === "Enter") go.click(); };
+  // Four digits is the whole PIN: act on the fourth, no button.
+  input.oninput = () => {
+    if (mode !== "forgot" && /^\d{4}$/.test(input.value)) go.click();
+  };
   forgot.onclick = () => { mode = "forgot"; render(); };
   render();
   overlay.classList.add("open");
@@ -1835,7 +1837,7 @@ const settingsUi = mountSettings({
 /** Settings → Backup & privacy → Settings PIN: lock, change, or off. */
 let pinOn = false; // Settings' Protect card reads it; renderPinRow keeps it
 async function renderPinRow() {
-  const on = await hasPin(await openKeyStore(), me.id);
+  const on = await hasPin(await openKeyStore());
   pinOn = on;
   settingsUi.renderNav();
   $("pin-state").textContent = on
@@ -1846,7 +1848,7 @@ async function renderPinRow() {
 }
 $("pin-change").addEventListener("click", () => gatePin(renderPinRow, { change: true }));
 $("pin-off").addEventListener("click", async () => {
-  await clearPin(await openKeyStore(), me.id);
+  await clearPin(await openKeyStore());
   toast("PIN turned off. Settings opens with one tap.");
   renderPinRow();
 });

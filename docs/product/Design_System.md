@@ -268,8 +268,9 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
 - **PIN.** Off until someone asks for one (founder 2026-09-28): the
   gear opens Settings with one tap. Backup & privacy → Settings PIN:
   Lock Settings with a PIN (twice), Change PIN (never the old one), Turn
-  off the PIN. One per device (`device/pin`, `public/shared/pin.mjs`);
-  legacy per-person PINs still ask and migrate on first good check.
+  off the PIN. One per device (`device/pin`, `public/shared/pin.mjs`).
+  Exactly four digits (founder 2026-09-29): the sheet acts on the
+  fourth digit, with no Open button.
   Never shown. Forgot the PIN? → type "new pin" → choose a new one;
   one path, no license or card, the words untouched.
 - **Recovery card.** Asking for it on an unsynced board turns on the
