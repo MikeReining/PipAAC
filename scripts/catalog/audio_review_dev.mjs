@@ -859,5 +859,8 @@ if (invoked) {
     console.log(`Pip AAC ElevenLabs tile review: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles`);
     console.log(`Pip AAC ElevenLabs v4 lab:       http://127.0.0.1:${PORT}/audio-review/elevenlabs-v4-lab`);
     console.log(`Pip AAC voice selector:          http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector`);
+    console.log(
+      `Pip AAC tile mint-run spot-check: http://127.0.0.1:${PORT}/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&folder=takes&ship=mint-run&runId=gap-launch-food-2026-09-29`,
+    );
   });
 }
