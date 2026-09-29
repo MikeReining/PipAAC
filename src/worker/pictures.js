@@ -670,9 +670,12 @@ export async function handleDraw(request, env, ctx) {
   await picPost(env, "/pic/draw/ready", { key, r2Key });
 
   // The next family finds this drawing by its description-derived caption
-  // (§ 3.3) — upsert inline so the very next find sees it.
+  // (§ 3.3) — upsert inline so the very next find sees it. A stub mint
+  // never indexes: a placeholder that exists only in dev R2 would point
+  // the real index at a picture that doesn't exist.
   try {
-    const caption = captionForDrawing({ scope, text, description });
+    const caption = minted.cache === "stub" ? null
+      : captionForDrawing({ scope, text, description });
     if (caption) {
       const [vec] = await embed(env, [caption]);
       await env.PICTURES.upsert([{

@@ -60,7 +60,11 @@ const fakeIndex = () => {
   const rows = new Map();
   return {
     rows,
-    async upsert(batch) { for (const r of batch) rows.set(r.id, r); },
+    upsertCalls: 0,
+    async upsert(batch) {
+      this.upsertCalls += 1;
+      for (const r of batch) rows.set(r.id, r);
+    },
     async query() { return { matches: [] }; },
     async describe() { return { vectorCount: rows.size }; },
   };
@@ -249,7 +253,7 @@ const drawUsed = async (env, uid) => {
   return obj ? JSON.parse(await obj.text()).used : 0;
 };
 
-test("default stub: no seam and no live key mints a placeholder, still counts", async () => {
+test("default stub: mints a placeholder, still counts — never indexes", async () => {
   const env = makeEnv({ synth: null });
   env.DRAW_SYNTH = undefined;
   const r = await draw(env, { text: "trampoline" });
@@ -258,6 +262,10 @@ test("default stub: no seam and no live key mints a placeholder, still counts", 
   assert.equal(r.headers.get("x-drawings-left"), "4");
   const key = await keyFor("common", "trampoline");
   assert.ok(env.VOICE.store.has(`drawing/${key}.png`));
+  // a stub drawing must never reach the picture index — it exists only
+  // in this dev bucket, and the index would point at a missing image
+  assert.equal(env.PICTURES.upsertCalls, 0);
+  assert.ok(![...env.PICTURES.rows.keys()].some((id) => id.startsWith("drw_")));
 });
 
 test("no stub flag and no live key: the claim fails closed at 502", async () => {
