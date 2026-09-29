@@ -47,7 +47,7 @@ Executing phases only. Each row names the **next** slice.
 
 ## Proposals awaiting review
 
-None currently.
+- [029 — Add a word](029_Add_A_Word_Proposal.md) — one-tap add with auto voice + auto drawing, minted once; five founder decisions in § 6.
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
