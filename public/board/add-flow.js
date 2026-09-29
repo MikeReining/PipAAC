@@ -189,11 +189,12 @@ export function mountAddFlow({
     else if (groupsCanMake) makeGroup($("add-groupq").value);
   });
 
-  function openBulkForm(groupId) {
+  /** `text` pre-fills the list — the editor's field hands over a paste. */
+  function openBulkForm(groupId, text = "") {
     bulkTarget = groupId ?? "grp_my_words";
     const name = groupName(bulkTarget);
     $("bulk-title").textContent = name ? `Add a list to ${name}` : "Add a list";
-    $("bulk-paste").value = "";
+    $("bulk-paste").value = text;
     renderBulkPreview();
     open("bulkform");
   }
@@ -516,15 +517,20 @@ export function mountAddFlow({
     setHi(exact >= 0 ? exact : rows.length - 1);
   }
 
-  const place = (kind, id, label) => () => {
-    placeItem(db, addTarget, kind, id, addCell);
-    noteRecent(addTarget);
+  const place = (kind, id, label) => () => placeWord(kind, id, label);
+
+  /** Place an existing word — the sheet's rows and the editor's one field
+   *  (031 § 4) share this. Returns the cell it landed in. */
+  function placeWord(kind, id, label, { groupId = addTarget, cell = addCell } = {}) {
+    const at = placeItem(db, groupId, kind, id, cell);
+    noteRecent(groupId);
     close("addform");
     rerenderView();
     renderStrip();
     speakItem?.({ kind, id }); // hear what was added
     offerOtherBoards({ item_kind: kind, item_id: id, label });
-  };
+    return at;
+  }
 
   const openExisting = (kind, id, label) => () => {
     close("addform");
@@ -533,14 +539,14 @@ export function mountAddFlow({
 
   /** § 4 — Make saves at once: name only, offline-first. The card that
    *  opens makes the picture and voice; nothing here waits on them. */
-  function makeWord(text) {
+  function makeWord(text, { groupId = addTarget, cell = addCell } = {}) {
     const name = text.trim();
-    if (!name) return;
+    if (!name) return null;
     const id = `ent_${crypto.randomUUID().replaceAll("-", "")}`;
-    const category = catalog.groups.find((g) => g.id === addTarget)?.category ?? null;
+    const category = catalog.groups.find((g) => g.id === groupId)?.category ?? null;
     createEntity(db, { id, name, category });
-    placeItem(db, addTarget, "entity", id, addCell);
-    noteRecent(addTarget);
+    placeItem(db, groupId, "entity", id, cell);
+    noteRecent(groupId);
     // 028 § 5.2: the save kicks off the voice mint in the background.
     tile?.ensure(name, { source: "user_typed" }).catch(() => {});
     invalidateIndex();
@@ -550,8 +556,9 @@ export function mountAddFlow({
     renderLibrary?.();
     openWordCard?.(
       { item_kind: "entity", item_id: id, label: name },
-      { justAdded: { groupName: groupName(addTarget, "My Words") } },
+      { justAdded: { groupName: groupName(groupId, "My Words") } },
     );
+    return id;
   }
 
   $("add-name").addEventListener("keydown", (e) => {
@@ -665,5 +672,5 @@ export function mountAddFlow({
     });
   }
 
-  return { openAddForm };
+  return { openAddForm, openBulkForm, makeWord, placeWord };
 }

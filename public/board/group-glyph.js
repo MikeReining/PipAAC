@@ -53,6 +53,16 @@ export const GROUP_ICONS = {
 };
 
 
+/** Our ink icon set — what a family may pick for a group's face (031 § 7).
+ *  Mirrors public/icons/groups/*.svg. */
+export const ICON_SET = [
+  "people", "my_words", "social", "home", "things", "school", "places", "vehicles",
+  "animals", "outside", "weather", "body", "bathroom", "clothes", "feelings",
+  "play", "screens", "art_music", "numbers", "time", "food", "breakfast", "lunch",
+  "snack", "treats", "fruit", "drinks", "describing", "shapes", "actions", "moving",
+];
+export const iconUrl = (name) => `/icons/groups/${name}.svg`;
+
 /** The face's first-word fallback: slot order on page 1. */
 function firstPicture(db, groupId, locale) {
   try {
@@ -66,7 +76,9 @@ function firstPicture(db, groupId, locale) {
 export function groupGlyph(row, { db, locale, loadPhotoURL }) {
   const g = document.createElement("span");
   g.className = "glyph";
-  const icon = GROUP_ICONS[row.id];
+  // A family's pick from our set wins; else the seed group's own icon.
+  const picked = row.glyph?.startsWith("icon:") ? iconUrl(row.glyph.slice(5)) : null;
+  const icon = picked ?? GROUP_ICONS[row.id];
   const img = (src, cls = "") => {
     const i = document.createElement("img");
     if (cls) i.className = cls;

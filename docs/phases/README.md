@@ -46,7 +46,7 @@ Executing phases only. Each row names the **next** slice.
 | [028 — Tile voice library](028_Tile_Voice_Library.md) | **Core shipped 2026-09-29.** Slices 0–5 + slice-7 free half: mint core + ledger DO (`ae16407`), client playback + triggers (`547c5f7`), review page (`ac0678e`), flag + sweep (`c8134e3`), reconcile (`bcd3d60`), catalog seed + missing-object fix (`b412844`, `f140b39`). Deployed to prod with secrets. Next: Leo + extended seed — founder-gated on cost; slice 8 waits on 010 |
 | [029 — Add a word](029_Add_A_Word.md) | Slices A–D built 2026-09-29 (sheet, card pictures/kind/voice, paste). Next: slice E stopwatch on a real tablet — after the founder saves the 030 cutoff and approves a live draw run |
 | [030 — Picture Finder and drawing](030_Picture_Finder_And_Drawing.md) | Slices 1–7 built; open = founder calibration save, slice-4 live run (≤10, founder-approved), and Works Tests 11 and 13 |
-| [031 — The editor, rebuilt](031_Board_Editor.md) | Decided 2026-09-29. UI only, Claude leads design. Next: slice A (shell: pages list, one field, opens on Home) alongside 029 slice A |
+| [031 — The editor, rebuilt](031_Board_Editor.md) | Slices A–G built 2026-09-29. Open: Works Test 1 (first-timer stopwatch) and a real-tablet pass of the narrow layout |
 
 ## Proposals awaiting review
 

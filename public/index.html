@@ -876,7 +876,6 @@
                 <button class="btn" id="add-mywords">Add a word</button>
                 <button class="btn secondary" id="open-spot">Practice words</button>
                 <button class="btn secondary" id="edit-groups">Edit the board</button>
-                <button class="btn secondary" id="menu-editor" hidden>Open the full editor</button>
               </div>
               <p class="hint">Practice words lights up the words you want to model with Spotlight; everything else dims but still speaks.</p>
               <div class="row"><button class="btn secondary" id="replay-tour">Replay the tour</button></div>
@@ -1611,31 +1610,77 @@
       </div>
     </div>
 
-    <!-- The web editor (Sync_And_Web_Editing § 7): on a wide screen this
-         is the landing view — Library left, the real group grid center,
-         the word card docked right. The board is one tap away. -->
+    <!-- The board editor (031): the board is the editor. Top bar (who,
+         the one Add-or-find field, honest save status, Preview), groups
+         on the left, the real main board or group in the center, the
+         word card docked right only while a word is selected. -->
     <div id="editor">
       <header id="ed-head">
-        <strong>Board editor</strong>
-        <span class="hint" id="ed-status"></span>
-        <button class="btn secondary" id="ed-board">Board</button>
+        <div class="ed-who">
+          <button type="button" class="ed-person" id="ed-person" aria-haspopup="menu"></button>
+          <div class="ed-pop" id="ed-people" role="menu" hidden></div>
+        </div>
+        <div class="ed-find">
+          <input type="text" id="ed-q" placeholder="Add or find a word" autocomplete="off"
+            autocapitalize="off" spellcheck="false" role="combobox" aria-controls="ed-drop"
+            aria-expanded="false" aria-keyshortcuts="/ Meta+K" />
+          <kbd class="ed-kbd" aria-hidden="true">/</kbd>
+          <div class="ed-drop" id="ed-drop" role="listbox" hidden></div>
+        </div>
+        <span class="ed-status" id="ed-status" role="status" aria-live="polite"></span>
+        <button type="button" class="btn secondary ed-preview" id="ed-preview">▶ Preview</button>
       </header>
       <div id="ed-main">
-        <section id="ed-left">
-          <textarea id="ed-paste" placeholder="Paste a list — one word or phrase per line" spellcheck="false"></textarea>
-          <div id="ed-paste-preview"></div>
-          <button class="btn" id="ed-paste-add" disabled>Add all</button>
-          <p class="hint">Drop photos here — each file becomes a draft word named from the file.</p>
-        </section>
+        <nav id="ed-left" aria-label="Groups">
+          <div class="ed-groups" id="ed-groups"></div>
+        </nav>
         <section id="ed-mid">
-          <div id="ed-groups"></div>
-          <button class="btn secondary" id="ed-add">+ Add word</button>
-          <div id="ed-grid"></div>
+          <div class="ed-crumbbar">
+            <button type="button" class="ed-navbtn" id="ed-navbtn" aria-controls="ed-left">☰ Groups</button>
+            <span class="ed-crumb" id="ed-crumb"></span>
+            <span class="ed-pager" id="ed-pager" hidden>
+              <button type="button" id="ed-prev" aria-label="Previous page">‹</button>
+              <span id="ed-pageno"></span>
+              <button type="button" id="ed-next" aria-label="Next page">›</button>
+            </span>
+          </div>
+          <p class="ed-hello" id="ed-hello" hidden>
+            <span id="ed-hello-text"></span>
+            <button type="button" class="ed-x" id="ed-hello-x" aria-label="Got it">✕</button>
+          </p>
+          <div class="ed-selbar" id="ed-selbar" hidden>
+            <span id="ed-selcount"></span>
+            <label class="ed-selmove">Move to
+              <select id="ed-selto"></select>
+            </label>
+            <button type="button" class="linkbtn" id="ed-selremove">Remove from this group</button>
+            <button type="button" class="linkbtn" id="ed-selclear">Clear</button>
+          </div>
+          <div class="ed-stage" id="ed-stage">
+            <div id="ed-grid"></div>
+            <div class="ed-words" id="ed-words" hidden>
+              <div class="ed-wordsbar">
+                <input type="text" id="ed-wq" placeholder="Search Maya's words" autocomplete="off" />
+                <div class="seg" id="ed-wtabs">
+                  <button type="button" data-t="added" class="on">Added by you</button>
+                  <button type="button" data-t="suggested">Suggested</button>
+                  <button type="button" data-t="all">Everything</button>
+                </div>
+              </div>
+              <div class="ed-wlist" id="ed-wlist"></div>
+            </div>
+          </div>
         </section>
-        <section id="ed-right">
-          <p class="hint ed-hint">Tap a word to open its card here.</p>
-        </section>
+        <section id="ed-right"></section>
       </div>
+      <div class="ed-scrim" id="ed-scrim" hidden></div>
+    </div>
+
+    <!-- Preview (031 § 8): the board as Maya sees it; one tap back. -->
+    <div class="ed-previewbar" id="ed-previewbar" hidden>
+      <span>Previewing <b id="ed-previewname"></b>'s board</span>
+      <button type="button" class="btn" id="ed-back">Back to editing</button>
+      <button type="button" class="btn secondary" id="ed-done">Done</button>
     </div>
 
     <!-- One pending undo at a time (Edit-mode × and card Remove). -->

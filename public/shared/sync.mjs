@@ -21,6 +21,11 @@ import {
 import { relayClient } from "./sync_client.mjs";
 
 let running = null;
+/** 031 § 8 — honest save status: did the last attempt to hand ops to
+ *  the relay fail? Pending ops themselves are read from sync_op
+ *  (relay_seq IS NULL until the relay accepted them). */
+let flushError = null;
+export const syncHealth = () => ({ running: !!running, flushError });
 /**
  * `user` is the registry row (id, sync). `saveUser(patch)` persists
  * sync-state changes back to the row (epoch bumps on rotation).
@@ -106,9 +111,15 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
   const pendingOps = () => listOps(db).filter((o) => o.relay_seq === null);
   const flush = async () => {
     const ops = pendingOps();
-    if (!ops.length) return;
-    const { ops: assigned } = await client.submit(ops);
-    confirmOps(db, assigned);
+    if (!ops.length) { flushError = null; return; }
+    try {
+      const { ops: assigned } = await client.submit(ops);
+      confirmOps(db, assigned);
+      flushError = null;
+    } catch (err) {
+      flushError = String(err?.message ?? err);
+      throw err;
+    }
   };
   let flushTimer = null;
   const scheduleFlush = () => {

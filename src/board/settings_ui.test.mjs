@@ -14,9 +14,10 @@ import { personWords } from "../../public/board/settings-ui.js";
 const html = readFileSync(join(import.meta.dirname, "../../public/index.html"), "utf8");
 
 // The Parent corner controls as of 2026-09-28 (before the redesign).
+// "Open the full editor" (menu-editor) merged into "Edit the board" (031 G).
 const CONTROLS = [
   "wincard", "open-progress", "add-mywords", "open-setup", "edit-groups",
-  "open-library", "menu-editor", "hl-next", "group-toprow", "group-occasions",
+  "open-library", "hl-next", "group-toprow", "group-occasions",
   "fresh-speak", "grammar-help", "expressive-voice", "share-research",
   "open-spot", "cells-seg", "fam-list", "kb-mode", "kb-order", "usr-list",
   "usr-add", "acct-row", "dev-list", "dev-add", "dev-link", "sup-row",

@@ -286,7 +286,7 @@ export function mountGroups({
     el.classList.add("reserved");
     if (gestures) {
       el.disabled = true;
-      el.title = "Main board word — edit it on the main board";
+      el.title = "Always here — from the main board";
     } else if (say) {
       el.addEventListener("click", () => tap(say, c.kind, c.kind === "entity" ? c.entity_id : c.sense_id,
         { source: "group" }));

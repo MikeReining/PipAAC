@@ -1,7 +1,9 @@
 # 031 — The editor, rebuilt: the board is the editor
 
-**Status:** **Decided 2026-09-29 (founder: "rebuild it from the ground up …
-super elegant, simple, easy to use"), ready to slice. Nothing built.**
+**Status:** **Slices A–G built 2026-09-29** (§ 13). Open: Works Test 1
+(the first-timer stopwatch — needs a person who has never seen Pip) and a
+real-tablet pass of the narrow layout (slice G was checked with the narrow
+rules forced on a desktop browser, not on an iPad).
 UI only. The data owners already exist (`public/shared/groups.mjs`,
 `coremove.mjs`, `bulk.mjs`, `images.mjs`, `voice.mjs`); this phase changes
 what the adult sees and touches, not how anything is stored.
@@ -274,3 +276,36 @@ changes; art and voice generation (030, 028).
 - `docs/phases/018_Core_Board_V2_And_Groups.md` — main-board editing rules
 - `docs/phases/027_Occasion_Boards.md` — occasion groups, add to other groups
 - `docs/product/Design_System.md` — tokens, tiles
+
+## 13. As built (2026-09-29)
+
+| Slice | Where |
+| --- | --- |
+| A — shell | `#editor` in `public/index.html`; `public/board/editor-ui.js` (rewrite); `editor-ui.css` (rewrite). Opens on the main board; the child's bar, strip and keyboard leave the editor; paste pane, **Add all**, drop hint, **+ Add word**, the Board button and "Open the full editor" are gone. |
+| B — the one field | `editor-ui.js` § the field + `public/board/editor-find.js` (`findSections`, `isList`, `fold`). On Maya's board → Go to it (+ Add to this group), From our library → Add to this group, New → Make; empty focus shows Suggested + Recently added; a pasted list opens 029's list preview for this group. Make/Add/Paste call the add flow's own `makeWord` / `placeWord` / `openBulkForm` (one path). |
+| C — the board | The real `#grid` moves into the stage for the main board (`renderGrid` gives it editor gestures: tap selects, drag moves/swaps through `moveCore`/`placeOnBoard`); groups paint through `paintGroupPage`. Delete removes from the group; arrows walk the words; no ✕; faint empties with "+" on hover; reserved cells dimmed, "Always here — from the main board", refuse drops; photo drops land on the cell under them. |
+| D — the card | 029's card docked right only while a word is selected (`:has(#wordcard.open)`); shift/⌘-click multi-select → a bar with Move to (a group) and Remove from this group. Main-board words show a "Main board" chip; "Show on board" hides in the editor. |
+| E — groups | Main board, then groups in door order with icon and word count; Occasions and Hidden collapse; drag a row onto another swaps doors; row "…": Rename, Change icon (our ink set), Hide/Show, Delete (a family's own, with Undo); + New group inline; All words with search and Added by you / Suggested / Everything, voice state, Go to it. New owners: `renameGroup`, `setGroupGlyph` (`icon:<name>`), `deleteGroupUndoable`, with synced ops `rename_group`, `set_group_glyph`. |
+| F — preview, status, undo | ▶ Preview shows the main board or the group on screen exactly as Maya sees it, with a pill: Back to editing (or Esc) / Done. Status reads the op log: *Saving…* while `sync_op.relay_seq IS NULL`, *✓ Saved* once the relay accepted, *Offline — will sync* when offline or the last flush failed (`syncHealth()` in `sync.mjs`), *Saved on this device* when the person isn't linked; never "on Maya's iPad". Every undoable toast also feeds ⌘Z (last 20). First-open line, dismissible. |
+| G — one editor | Settings → **Edit the board** opens this editor on every screen. Below 960 px the groups list is a drawer (☰ Groups) and the card a bottom sheet. |
+
+**Works Tests:**
+
+| # | Result |
+| --- | --- |
+| 1 | **Open** — needs a first-time person with a stopwatch. |
+| 2 | Same DOM script, fresh profile, 1920×968. Before: 67 visible controls — 13 tiles (a mostly empty My Words), 34 group chips, **20 tools**. After: the real main board (60 tiles), the group list, and **4 tools** (Maya, the field, Preview, the first-open ✕). The total rises because the main board is now on screen; the tools the adult must understand first fell from 20 to 4. |
+| 3 | `src/board/editor_ui.test.mjs` — one field creates words; old ids gone. |
+| 4 | `editor_ui.test.mjs` (Return on a word Maya has opens its group and selects it) + `editor_find.test.mjs`. |
+| 5 | Both files: a pasted list hands over to the list preview for the group on screen. |
+| 6 | `editor_ui.test.mjs` — two photos on empty cell 22: the first there, the second next free. |
+| 7 | `editor_find.test.mjs` — delete group / reorder / rename / icon each undo to an identical snapshot; also checked in the browser (remove + ⌘Z). |
+| 8 | `editor_find.test.mjs` — a reserved cell throws, snapshot unchanged. |
+| 9 | `editor_find.test.mjs` — status measured on real ops: Saving until `confirmOps` marks the relay's acceptance, then Saved; offline and flush failure say so. |
+| 10 | Browser: Preview of Treats showed the same 12 words as the editor. |
+| 11 | Structural: the editor's main board is the same `#grid` and `renderGrid` code path as the tablet's Edit mode — same owners (`moveCore`, `placeOnBoard`). |
+| 12 | Narrow rules checked with the media query forced on desktop; a real-tablet pass is open. |
+
+**Not done / deferred:** ⇧⌘Z redo (⌘Z undo is built); the 📊 tap counts toggle
+(018 D10) is not in the editor yet; hidden groups keep a Show action but the
+board's group index is unchanged.

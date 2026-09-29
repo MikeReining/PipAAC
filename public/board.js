@@ -34,7 +34,7 @@ import {
 } from "./shared/groups.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
 import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
-import { initSync, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
+import { initSync, syncHealth, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import { refreshStatsDays } from "./shared/stats.mjs";
 import { flushResearch } from "./shared/research.mjs";
 import { mountWincard } from "./board/wincard-ui.js";
@@ -1600,7 +1600,8 @@ function renderGrid() {
   const bySlot = new Map(cells.map((c) => [c.slot_index, c]));
   const masked = maskedSenseIds(db);
   // 018 D10 📊: one query per repaint, a badge on every tile.
-  const counts = editing && countsOn ? getCounts() : null;
+  const edit = editing || view === "editor"; // 031: the editor is Edit mode, always
+  const counts = edit && countsOn ? getCounts() : null;
   const withCount = (el, kind, id) => {
     if (!counts) return el;
     const n = document.createElement("span");
@@ -1648,7 +1649,7 @@ function renderGrid() {
       const empty = document.createElement("div");
       empty.className = "cell empty";
       empty.dataset.slot = slot; // a legal drop target in Edit mode
-      if (editing) {
+      if (edit) {
         // 014 § 9: an empty cell takes whatever the adult picks — a word
         // or a person — via the place picker.
         empty.setAttribute("role", "button");
@@ -1663,13 +1664,17 @@ function renderGrid() {
     if (c.kind === "entity") {
       const { el } = homeTile(c, masked);
       el.dataset.slot = slot;
-      if (editing) {
+      el.dataset.item = `entity:${c.entity_id}`;
+      if (edit) {
         // D10: tap asks "what goes here" — the placement sheet. Drag
-        // still moves; the ✎ inside the sheet opens the word card.
+        // still moves; the ✎ inside the sheet opens the word card. In
+        // the editor (031) a tap selects the word and opens its card.
         editPointer(el, {
-          onTap: () => placeUi.openPicker(slot,
-            { kind: "entity", id: c.entity_id, label: c.label,
-              role: c.fitzgerald_role }),
+          onTap: () => (view === "editor"
+            ? editorUi.select({ item_kind: "entity", item_id: c.entity_id, label: c.label })
+            : placeUi.openPicker(slot,
+              { kind: "entity", id: c.entity_id, label: c.label,
+                role: c.fitzgerald_role })),
           onDrop: (to) => {
             const mv = placeOnBoard(db, geom.name, "entity", c.entity_id, to, {
               anchors: new Set(geom.anchors.keys()),
@@ -1696,14 +1701,18 @@ function renderGrid() {
       continue;
     }
     el.dataset.slot = slot;
-    if (editing) {
+    el.dataset.item = `sense:${c.sense_id}`;
+    if (edit) {
       // Adult move (014 § 2 ruling 1): drag onto a word swaps, onto an
       // empty slot moves; anchors and reserved slots refuse. D10: a tap
-      // opens the placement sheet — ✎ inside it opens the word card.
+      // opens the placement sheet — ✎ inside it opens the word card; in
+      // the editor (031) a tap selects the word and opens its card.
       editPointer(el, {
-        onTap: () => placeUi.openPicker(slot,
-          { kind: "sense", id: c.sense_id, label: c.label,
-            role: c.fitzgerald_role }),
+        onTap: () => (view === "editor"
+          ? editorUi.select({ item_kind: "sense", item_id: c.sense_id, label: c.label })
+          : placeUi.openPicker(slot,
+            { kind: "sense", id: c.sense_id, label: c.label,
+              role: c.fitzgerald_role })),
         onDrop: (to) => {
           const mv = moveCore(db, geom.name, c.sense_id, to, { anchors: new Set(geom.anchors.keys()) });
           if (!mv) return;
@@ -2007,10 +2016,11 @@ $("edit-counts").addEventListener("click", () => {
   $("edit-counts").classList.toggle("on", countsOn);
   renderGrid();
 });
+// 031 G: one editor on every screen — "Edit the board" opens it; wide
+// screens get side room, narrow ones a drawer and a bottom sheet.
 $("edit-groups").addEventListener("click", () => {
   close("menu");
-  setEditing(true);
-  groupsUi.openGroupIndex();
+  kbUi.setView("editor");
 });
 $("add-mywords").addEventListener("click", () => {
   close("menu");
@@ -2053,7 +2063,13 @@ const kbUi = mountKeyboard({
   // Every view change repaints the bar: opening a group is intent — the
   // group bar must appear on that tap, before anything inside is picked;
   // leaving returns the main rule.
-  setViewName: (v) => { view = v; syncCorner(); renderStrip(); },
+  setViewName: (v) => {
+    const was = view;
+    view = v;
+    if (was === "editor" && v !== "editor") editorUi?.leave();
+    syncCorner();
+    renderStrip();
+  },
   renderGroupIndex: () => groupsUi.renderGroupIndex(),
   renderGroupPage: () => groupsUi.renderGroupPage(),
   renderEditor: () => editorUi.renderEditor(),
@@ -2296,9 +2312,26 @@ function xBadge(onRemove) {
 
 /** One pending undo at a time. */
 let toastTimer = null;
+/* 031 § 8 — every change with an Undo can also be undone by ⌘Z in the
+   editor: the last few undos, newest first, each runs once. */
+const undoStack = [];
+function undoLast() {
+  const u = undoStack.pop();
+  if (!u) { toast("Nothing to undo"); return; }
+  u.run();
+}
 function toast(text, undo, { actionLabel = null, onAction = null } = {}) {
   const el = $("toast");
   clearTimeout(toastTimer);
+  if (undo) {
+    const original = undo;
+    let used = false;
+    const once = () => { if (used) return; used = true; original(); };
+    const entry = { run: () => { once(); toast(`Undid: ${text}`); } };
+    undoStack.push(entry);
+    if (undoStack.length > 20) undoStack.shift();
+    undo = () => { const i = undoStack.indexOf(entry); if (i >= 0) undoStack.splice(i, 1); once(); };
+  }
   $("toast-text").textContent = text;
   $("toast-undo").hidden = !undo;
   $("toast-act").hidden = !onAction;
@@ -2326,7 +2359,9 @@ groupsUi = mountGroups({
   shownLabel,
   navCell, editPointer, xBadge,
   openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
-  openWordCard: (item) => wordCard.openWordCard(item),
+  // 031: in the editor a tile tap selects (the card follows); elsewhere
+  // it opens the card as before.
+  openWordCard: (item) => (view === "editor" ? editorUi.select(item) : wordCard.openWordCard(item)),
   homeCells: () => coreCells(db, boardGeom().name, locale),
   homeTile,
   rerenderView: () => rerenderView(),
@@ -2386,6 +2421,8 @@ wordCard = mountWordCard({
   dropEntityRole: (id) => entityRole.delete(id),
   dropSenseMeta: (id) => senseMeta.delete(id),
   openAddToBoards: (item) => groupsUi.openAddToBoards(item),
+  isOnMainBoard: (kind, id) => coreCells(db, boardGeom().name, locale)
+    .some((c) => (kind === "entity" ? c.entity_id === id : c.sense_id === id)),
 });
 
 /* Devices, users, and supporter sign-in — public/board/devices-ui.js */
@@ -2606,16 +2643,30 @@ mountRecovery({
   ensureUser: (o) => devicesUi.ensureUser(o),
 });
 
-/* Web editor — public/board/editor-ui.js */
+/* Board editor — public/board/editor-ui.js (031) */
 editorUi = mountEditor({
-  db, locale, all: ALL, catalog,
-  openAddForm: (groupId, cell) => addUi.openAddForm(groupId, cell),
+  db, locale, all: ALL, catalog, me, userStore, flushDb,
   paintGroupPage: (zg, opts) => groupsUi.paintGroupPage(zg, opts),
+  renderMainBoard: () => renderGrid(),
+  homeCells: () => coreCells(db, boardGeom().name, locale),
+  boardGeom,
+  addFlow: addUi,
+  openWordCard: (item, opts) => wordCard.openWordCard(item, opts),
+  closeCard: () => close("wordcard"),
+  setView: (v) => kbUi.setView(v),
+  openGroupView: (id, page = 0) => { groupsUi.setGroup(id, page); kbUi.setView("group"); },
+  toast, undoLast,
+  syncState: () => ({
+    linked: !!me.sync?.userId,
+    pending: ALL(db, "SELECT COUNT(*) AS n FROM sync_op WHERE relay_seq IS NULL")[0]?.n ?? 0,
+    online: navigator.onLine,
+    flushError: syncHealth().flushError,
+  }),
   renderLibrary: () => libUi.renderLibrary(),
   invalidateIndex: () => kbUi.invalidateIndex(),
-  setView: (v) => kbUi.setView(v),
-  toast, close, savePhoto, syncUploadBlob,
-  tile: tileApi, pictureFill,
+  renderStrip,
+  savePhoto, syncUploadBlob,
+  tile: tileApi, loadPhotoURL, artInto,
 });
 
 // A session survives a restart (013 § 4): the synced row lights the
@@ -2646,14 +2697,10 @@ setInterval(() => {
   }
 }, 30000);
 
-// On a wide screen the app opens to the editor (Sync § 7): the Library
-// and word card overlays move into the editor panes — same nodes, same
-// listeners — and the Library is always open there.
+// On a wide screen the app opens to the editor (031 § 11.2): a laptop
+// supporter came to edit. The word card docks in the editor's right pane
+// when a word is selected (word-card.js dock()).
 if (matchMedia("(min-width: 1100px)").matches) {
-  $("ed-left").prepend($("library"));
-  $("ed-right").prepend($("wordcard"));
-  $("menu-editor").hidden = false;
-  open("library");
   kbUi.setView("editor");
 }
 

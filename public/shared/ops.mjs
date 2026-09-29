@@ -29,6 +29,8 @@ import {
   setEntityRole,
   setEntityHint,
   setGroupHidden,
+  renameGroup,
+  setGroupGlyph,
   setSetting,
   swapGroups,
   swapItems,
@@ -178,6 +180,12 @@ export function applyOp(db, op) {
         break;
       case "set_group_hidden":
         if (exists(db, "board_group", a.groupId)) setGroupHidden(db, a.groupId, a.hidden);
+        break;
+      case "rename_group":
+        if (exists(db, "board_group", a.groupId)) renameGroup(db, a.groupId, a.name);
+        break;
+      case "set_group_glyph":
+        if (exists(db, "board_group", a.groupId)) setGroupGlyph(db, a.groupId, a.glyph);
         break;
       case "set_setting":
         // A layout change always goes through the write owner so the

@@ -65,10 +65,18 @@ export function installDom() {
     if (!nodes.has(id)) { const n = el(); n.id = id; nodes.set(id, n); }
     return nodes.get(id);
   };
+  const docListeners = {};
   globalThis.document = {
     getElementById: get,
     createElement: (tag) => el(tag),
     body: el("body"),
+    activeElement: null,
+    querySelector: () => null,
+    querySelectorAll: () => [],
+    addEventListener(type, fn) { (docListeners[type] ??= []).push(fn); },
+    async fire(type, ev = {}) {
+      for (const fn of docListeners[type] ?? []) await fn({ preventDefault() {}, stopPropagation() {}, ...ev });
+    },
   };
   return get;
 }

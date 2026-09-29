@@ -852,6 +852,68 @@ export function deleteGroup(db, groupId) {
   recordOp(db, "delete_group", { groupId });
 }
 
+/** Rename a group (031 § 7). A stored name is always the override — a
+ *  built-in's shipped label stays in group_label, untouched. */
+export function renameGroup(db, groupId, name) {
+  const clean = String(name ?? "").trim().replace(/\s+/g, " ");
+  if (!clean) throw new Error("renameGroup: empty name");
+  if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) {
+    throw new Error(`no group ${groupId}`);
+  }
+  db.prepare("UPDATE board_group SET name = ? WHERE id = ?").run(clean, groupId);
+  recordOp(db, "rename_group", { groupId, name: clean });
+}
+
+/** A group's face from our ink icon set (031 § 7): `icon:<name>` names
+ *  /icons/groups/<name>.svg; null goes back to the default face. */
+export function setGroupGlyph(db, groupId, glyph) {
+  if (glyph != null && !/^icon:[a-z0-9_]+$/.test(glyph)) {
+    throw new Error(`setGroupGlyph: bad glyph ${glyph}`);
+  }
+  if (!one(db, "SELECT 1 AS x FROM board_group WHERE id = ?", [groupId])) {
+    throw new Error(`no group ${groupId}`);
+  }
+  db.prepare("UPDATE board_group SET glyph = ? WHERE id = ?").run(glyph, groupId);
+  recordOp(db, "set_group_glyph", { groupId, glyph });
+}
+
+/** Delete a family's own group with Undo (031 § 7): the words stay in the
+ *  Library; undo brings the group back at its slot (when still free) with
+ *  its words where they were at the current size. Other sizes re-derive
+ *  their positions, as for any placement. */
+export function deleteGroupUndoable(db, groupId) {
+  const g = one(db, "SELECT * FROM board_group WHERE id = ?", [groupId]);
+  if (!g) throw new Error(`no group ${groupId}`);
+  const layout = activeLayout(db);
+  const members = all(db,
+    `SELECT gm.item_kind, gm.item_id, gm.added_at, gc.page, gc.slot_index
+     FROM group_membership gm
+     LEFT JOIN group_cell gc ON gc.group_id = gm.group_id AND gc.item_kind = gm.item_kind
+       AND gc.item_id = gm.item_id AND gc.layout = ?
+     WHERE gm.group_id = ? ORDER BY gm.added_at`,
+    [layout, groupId]);
+  deleteGroup(db, groupId);
+  let done = false;
+  return {
+    undo() {
+      if (done) return;
+      done = true;
+      const slotFree = !one(db, "SELECT 1 AS x FROM board_group WHERE index_slot = ?", [g.index_slot]);
+      createGroup(db, { id: g.id, name: g.name, photoKey: g.photo_key, indexSlot: slotFree ? g.index_slot : null });
+      if (g.glyph?.startsWith("icon:")) setGroupGlyph(db, g.id, g.glyph);
+      if (g.hidden) setGroupHidden(db, g.id, true);
+      for (const m of members) {
+        const cell = m.page == null ? null : { page: m.page, slot_index: m.slot_index };
+        try {
+          placeItem(db, g.id, m.item_kind, m.item_id, cell, m.added_at);
+        } catch {
+          placeItem(db, g.id, m.item_kind, m.item_id, null, m.added_at); // its cell was taken
+        }
+      }
+    },
+  };
+}
+
 /** Hide or show a group: it keeps membership, positions and its index
  *  slot — nothing compacts (027 B8). */
 export function setGroupHidden(db, groupId, hidden) {

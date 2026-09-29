@@ -55,7 +55,7 @@ export function mountWordCard({
   tile, pictures, pictureFill, creds,
   invalidateIndex, setView, rerenderView, renderStrip, renderGrid, flashCell,
   getCell, getGroupKey, setGroup, dropEntityPhoto, dropEntityRole, dropSenseMeta,
-  openAddToBoards,
+  openAddToBoards, isOnMainBoard,
 }) {
   let cardItem = null; // { item_kind, item_id, label } currently shown
   let justAdded = null; // { groupName } while the card is the add's step 2
@@ -138,6 +138,13 @@ export function mountWordCard({
   function renderCardGroups() {
     const box = $("wc-groups");
     box.innerHTML = "";
+    // A main-board word says so — it is moved there, never removed here.
+    if (isOnMainBoard?.(cardItem.item_kind, cardItem.item_id)) {
+      const chip = document.createElement("span");
+      chip.className = "wchip";
+      chip.textContent = "Main board";
+      box.appendChild(chip);
+    }
     for (const g of cardGroups()) {
       const chip = document.createElement("span");
       chip.className = "wchip";
@@ -472,6 +479,9 @@ export function mountWordCard({
       $("wc-hide").textContent = maskedSenseIds(db).has(item.item_id) ? "Show word" : "Hide word";
     }
     paintTilePic(item, meta);
+    // In the editor the word is already on screen; Preview shows the
+    // child's view — "Show on board" would leave the editor.
+    $("wc-show").hidden = !!document.body?.classList?.contains?.("editor");
     renderCardGroups();
     updateRecUI();
     updatePicUI();

@@ -1,74 +1,153 @@
 /**
- * Web editor grid. The open group paints into the editor through the
- * board's own group painter — one renderer for a group page.
+ * 031 — the board editor. The main board and each group paint through
+ * the board's own painters (one renderer, WT 11); the one field finds
+ * and adds (WT 3, 4); group changes write through the owners.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 import { createDatabase } from "./catalog.mjs";
+import { installDom, findAll } from "./fake_dom.mjs";
 import { mountEditor } from "../../public/board/editor-ui.js";
+import { createEntity, createGroup, placeItem } from "../../public/shared/groups.mjs";
 
-function el() {
-  const node = {
-    value: "",
-    textContent: "",
-    disabled: false,
-    hidden: false,
-    className: "",
-    dataset: {},
-    style: {},
-    children: [],
-    classList: { add() {}, remove() {} },
-    addEventListener() {},
-    append(...kids) { node.children.push(...kids); },
-    appendChild(kid) { node.children.push(kid); return kid; },
-    set innerHTML(value) { if (value === "") node.children.length = 0; },
-  };
-  return node;
-}
+const repoRoot = join(import.meta.dirname, "../..");
+const flush = async () => { for (let i = 0; i < 6; i++) await new Promise((r) => setTimeout(r, 0)); };
 
-test("the editor lists the groups and paints the open one through the board's painter", async () => {
+function harness() {
   const db = createDatabase(":memory:");
-  db.prepare(
-    `INSERT INTO board_group (id, kind, name, glyph, index_slot)
-     VALUES ('grp_my_words', 'my_words', 'My Words', '⭐', 10)`,
-  ).run();
-  const grid = el();
-  const groups = el();
-  const ids = ["ed-paste", "ed-paste-preview", "ed-paste-add", "editor", "ed-board", "menu-editor", "ed-add"];
-  const nodes = { "ed-grid": grid, "ed-groups": groups };
-  for (const id of ids) nodes[id] = el();
-  globalThis.document = {
-    getElementById: (id) => nodes[id],
-    createElement: () => el(),
-    body: { classList: { add() {}, remove() {} } },
-  };
-  const painted = [];
+  db.exec(`INSERT INTO layout_shape (layout, cols, rows, frame) VALUES ('grid60', 10, 6, '[9,19,39,49]')`);
+  createGroup(db, { id: "grp_food", name: "Food" });
+  createGroup(db, { id: "grp_mine", name: "Mine" });
+  const $ = installDom();
+  const log = { main: 0, painted: [], cards: [], made: [], placed: [], bulk: [] };
   const editor = mountEditor({
     db,
     locale: "en",
     all: (database, sql, p = []) => database.prepare(sql).all(...p),
     catalog: { groups: [] },
-    openAddForm() {},
-    async paintGroupPage(zg, opts) { painted.push({ zg, ...opts }); return 1; },
+    me: { id: "u1", name: "Maya" },
+    userStore: null,
+    flushDb: async () => {},
+    async paintGroupPage(zg, opts) { log.painted.push({ zg, ...opts }); return 1; },
+    renderMainBoard: () => { log.main++; },
+    homeCells: () => [],
+    boardGeom: () => ({ cols: 10, name: "grid60", anchors: new Map() }),
+    addFlow: {
+      makeWord: (text, o) => { log.made.push({ text, ...o }); return createEntity(db, { name: text }).id; },
+      placeWord: (kind, id, label, o) => { log.placed.push({ kind, id, ...o }); },
+      openBulkForm: (gid, text) => log.bulk.push({ gid, text }),
+    },
+    openWordCard: (item) => log.cards.push(item),
+    closeCard() {},
+    setView() {},
+    openGroupView() {},
+    toast() {},
+    undoLast() {},
+    syncState: () => ({ linked: false, pending: 0, online: true, flushError: null }),
     renderLibrary() {},
     invalidateIndex() {},
-    setView() {},
-    toast() {},
-    close() {},
+    renderStrip() {},
     async savePhoto() { return null; },
     syncUploadBlob() {},
+    tile: null,
+    async loadPhotoURL() { return null; },
+    artInto() { return false; },
   });
+  const rowsNamed = () => findAll($("ed-groups"), (n) => n.className?.startsWith("ed-grow"))
+    .map((n) => findAll(n, (k) => k.className === "ed-gname")[0]?.textContent);
+  return { db, $, editor, log, rowsNamed };
+}
 
-  editor.renderEditor();
-  assert.equal(groups.children.length, 1);
-  assert.equal(groups.children[0].textContent, "My Words");
-  assert.match(groups.children[0].className, /on/);
-  // One renderer for a group page (027 A3): the editor hands its grid to
-  // the board's painter, gestures always on.
-  assert.equal(painted.length, 1);
-  assert.equal(painted[0].zg, grid);
-  assert.equal(painted[0].group, "grp_my_words");
-  assert.equal(painted[0].page, 0);
-  assert.equal(painted[0].gestures, true);
+test("opens on the main board, painted by the board's own painter", async () => {
+  const h = harness();
+  h.editor.renderEditor();
+  await flush();
+  assert.equal(h.log.main, 1, "the main board renders through renderGrid (WT 11)");
+  assert.equal(h.$("ed-grid").hidden, true);
+  assert.equal(h.rowsNamed()[0], "Main board");
+  assert.deepEqual(h.rowsNamed().slice(1, 3), ["Food", "Mine"], "groups in door order");
+  assert.equal(h.rowsNamed().at(-1), "All words");
+});
+
+test("a group paints into the stage through the group painter, gestures on", async () => {
+  const h = harness();
+  h.editor.renderEditor();
+  await h.editor.openGroup("grp_food");
+  await flush();
+  const p = h.log.painted.at(-1);
+  assert.equal(p.zg, h.$("ed-grid"));
+  assert.equal(p.group, "grp_food");
+  assert.equal(p.page, 0);
+  assert.equal(p.gestures, true);
+  assert.equal(h.$("ed-grid").hidden, false);
+});
+
+test("WT 4 — find → go: typing a word Maya has, Return opens its group and selects it", async () => {
+  const h = harness();
+  const { id } = createEntity(h.db, { name: "Cooper" });
+  placeItem(h.db, "grp_mine", "entity", id);
+  h.editor.renderEditor();
+  h.$("ed-q").value = "Cooper";
+  await h.$("ed-q").fire("input");
+  const heads = findAll(h.$("ed-drop"), (n) => n.className === "ed-dhead").map((n) => n.textContent);
+  assert.equal(heads[0], "On Maya's board");
+  await h.$("ed-q").fire("keydown", { key: "Enter" });
+  await flush();
+  assert.equal(h.log.painted.at(-1).group, "grp_mine");
+  assert.equal(h.log.cards.at(-1)?.item_id, id, "selected: its card opens");
+});
+
+test("Make from the field saves into the group on screen", async () => {
+  const h = harness();
+  h.editor.renderEditor();
+  await h.editor.openGroup("grp_food");
+  h.$("ed-q").value = "applesauce";
+  await h.$("ed-q").fire("input");
+  await h.$("ed-q").fire("keydown", { key: "Enter" });
+  await flush();
+  assert.deepEqual(h.log.made, [{ text: "applesauce", groupId: "grp_food", cell: null }]);
+});
+
+test("WT 5 — a pasted list hands over to the list preview for this group", async () => {
+  const h = harness();
+  h.editor.renderEditor();
+  await h.editor.openGroup("grp_food");
+  await h.$("ed-q").fire("paste", {
+    clipboardData: { getData: () => "kite\nbeach ball\nsunscreen" },
+  });
+  assert.deepEqual(h.log.bulk, [{ gid: "grp_food", text: "kite\nbeach ball\nsunscreen" }]);
+});
+
+test("WT 3 — one add path: the editor has one field that creates words, the old paste pane is gone", () => {
+  const html = readFileSync(join(repoRoot, "public/index.html"), "utf8");
+  const editor = html.slice(html.indexOf('<div id="editor">'), html.indexOf("<!-- Preview (031"));
+  for (const gone of ['id="ed-paste"', 'id="ed-paste-add"', 'id="ed-add"', 'id="menu-editor"', 'id="ed-board"']) {
+    assert.equal(html.includes(gone), false, `${gone} removed`);
+  }
+  const textInputs = [...editor.matchAll(/<input type="text" id="([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(textInputs, ["ed-q", "ed-wq"], "ed-q adds; ed-wq only searches All words");
+  assert.equal(editor.includes("<textarea"), false);
+});
+
+test("WT 6 — two photos dropped on an empty cell: the first lands there, the second on the next free cell", async () => {
+  const h = harness();
+  h.editor.renderEditor();
+  await h.editor.openGroup("grp_food");
+  const slotEl = { dataset: { slot: "22" }, classList: { contains: (c) => c === "empty" } };
+  const file = (name) => ({ name, type: "image/jpeg" });
+  await h.$("editor").fire("drop", {
+    dataTransfer: { types: ["Files"], files: [file("Sand castle.jpg"), file("bucket.png")] },
+    target: { closest: () => slotEl },
+  });
+  await flush();
+  const cells = h.db.prepare(
+    `SELECT e.spoken_name AS name, gc.page, gc.slot_index FROM group_cell gc
+     JOIN personal_entity e ON e.id = gc.item_id WHERE gc.group_id = 'grp_food' ORDER BY gc.slot_index`).all();
+  const sand = cells.find((c) => c.name.toLowerCase() === "sand castle");
+  assert.deepEqual([sand.page, sand.slot_index], [0, 22]);
+  const bucket = cells.find((c) => c.name.toLowerCase() === "bucket");
+  assert.ok(bucket && !(bucket.page === 0 && bucket.slot_index === 22), "the second takes the next free cell");
 });
