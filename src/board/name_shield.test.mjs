@@ -31,6 +31,13 @@ test("possessives and lowercase placeholders restore to the stored spelling", ()
   assert.equal(unmask("person1's toy is fast."), "Leo's toy is fast.");
 });
 
+test("a model that splits the token — 'Person 1' — still unmasks", () => {
+  const { masked, unmask } = maskNames("leo sad", ["Leo"]);
+  assert.equal(masked, "PERSON1 sad");
+  assert.equal(unmask("Person 1 is sad."), "Leo is sad.");
+  assert.equal(unmask("person 1 is sad."), "Leo is sad.");
+});
+
 test("no names in the sentence means identity masking and unmasking", () => {
   const { masked, unmask } = maskNames("i want a cookie", ["Leo"]);
   assert.equal(masked, "i want a cookie");

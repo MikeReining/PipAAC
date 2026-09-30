@@ -1,9 +1,10 @@
 /**
  * 023 — POST /api/v1/transform: the transform buttons' model call.
  *
- * The Groq key lives here, never in the client (023 §5.3). Prompts are
- * the §3 battle-tested strings verbatim — prompt fixes land in one
- * place, no client version skew. The client sends the sentence with
+ * The Groq key lives here, never in the client (023 §5.3). Prompts live
+ * in src/shared/transform_prompts.mjs — the grammar-pass strings proven
+ * in the sentence-lab battery (the wand law: her words + glue, abstain
+ * rather than guess). The client sends the sentence with
  * her people's names already swapped for placeholders (name_shield) —
  * names never leave the device, so the Worker and Groq only ever see
  * PERSON1-shaped text.

@@ -177,6 +177,8 @@ Tested live against Groq's API on 2026-09-25:
 
 *2026-09-30 — sentence lab (`/sentence-lab`):* `openai/gpt-oss-120b` at `reasoning_effort: low` was compared head-to-head on all five modes — still spent 15–32 reasoning tokens per call, ran ~40–60% slower wall-clock (mostly Groq queue time), and dropped the subject on `past` ("Wanted to play." vs "I wanted to play."). **Ruling: stay on qwen3.8-27b.** Re-test via the lab if Groq model versions or pricing move.
 
+*2026-09-30 — the wand law (shipped):* the battery (`scripts/sentences/battery.json` + scorer) exposed that the §3 prompts put words in her mouth — a fabricated subject in 90/165 cells, invented content in 28. Rewritten prompts (grammar pass only: her words + glue, no added content/subjects, abstain-by-echo) score 164/165 clean. Shipped with: transforms read a snapshot of her taps (never chained model output), ▶ restores the snapshot with no model call (works offline), any bar edit voids the snapshot, and `unmask` tolerates "Person 1" splits — the lab caught that leak too.
+
 ---
 
 ## 3. The Transform Prompts & Battle-Tested Results

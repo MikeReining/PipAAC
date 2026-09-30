@@ -10,9 +10,16 @@
  * - ❓ sets question; the tense buttons keep it if the result still
  *   ends with a question mark ("changing tense never removes the
  *   question"), ✨ is judged the same way.
- * - Tense buttons set tense; ✨ and ❓ never move it.
+ * - ⏪/⏩ set tense; anything derived from untensed taps (✨, ❓, ▶)
+ *   leaves the bar at present — the flag describes what the bar holds.
  * - Clearing the bar resets both — renderBar owns that (no items, no
  *   state to display).
+ *
+ * Provenance (the play-button law): the first transform snapshots her
+ * taps into barState.preTransform; every later button reads THAT copy,
+ * never the last model output, and ▶ puts it back with no model call.
+ * Any edit to the bar voids the snapshot — noteBarEdit — because the
+ * bar then holds her words again by definition.
  */
 export function applyTransform(sentence, out, mode, barState) {
   sentence.length = 0;
@@ -21,9 +28,43 @@ export function applyTransform(sentence, out, mode, barState) {
   }
   if (mode === "question") barState.question = true;
   else barState.question = /[?¿]\s*$/.test(out);
-  if (mode === "past" || mode === "present" || mode === "future") {
-    barState.tense = mode;
+  if (mode === "past" || mode === "future") barState.tense = mode;
+  else barState.tense = "present"; // fix/question output came from taps
+}
+
+/** Snapshot her taps the moment the first transform lands — once, and
+ *  never overwritten by a second transform. */
+export function snapshotBar(sentence, barState) {
+  if (!barState.preTransform) {
+    barState.preTransform = sentence.map((it) => ({ ...it }));
   }
+}
+
+/** What a transform reads: her taps while a snapshot lives, the bar
+ *  otherwise. */
+export function transformSource(sentence, barState) {
+  return barState.preTransform ?? sentence;
+}
+
+/** ▶ puts her words back exactly — no model, works offline. Returns
+ *  true when a restore happened. */
+export function restoreBar(sentence, barState) {
+  if (!barState.preTransform) return false;
+  sentence.splice(
+    0, sentence.length, ...barState.preTransform.map((it) => ({ ...it })),
+  );
+  barState.preTransform = null;
+  barState.tense = "present";
+  barState.question = false;
+  return true;
+}
+
+/** Any edit to the bar (tap, typed word, backspace, clear) voids the
+ *  snapshot and the transform flags — the bar holds her words again. */
+export function noteBarEdit(barState) {
+  barState.preTransform = null;
+  barState.tense = "present";
+  barState.question = false;
 }
 
 /* Display-only lemma candidates for a model-supplied token, strongest

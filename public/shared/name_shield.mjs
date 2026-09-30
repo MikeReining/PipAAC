@@ -9,8 +9,8 @@
  *
  * Matching is whole-phrase, longest-first ("Grandma Sue" beats
  * "Grandma"), case-insensitive on the way out and on the way back
- * (the model may lowercase the token or add a possessive — the 's
- * stays attached to the restored name).
+ * (the model may lowercase the token, split it as "Person 1", or add
+ * a possessive — the 's stays attached to the restored name).
  */
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -33,7 +33,7 @@ export function maskNames(text, names) {
     (m) => `PERSON${hits.findIndex((n) => n.toLowerCase() === m.toLowerCase()) + 1}`);
 
   const unmask = (out) =>
-    out.replace(/\bperson(\d+)\b/gi, (m, n) => map.get(`PERSON${n}`) ?? m);
+    out.replace(/\bperson\s*(\d+)\b/gi, (m, n) => map.get(`PERSON${n}`) ?? m);
   return { masked, unmask };
 }
 

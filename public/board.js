@@ -51,7 +51,10 @@ import { armUtcRollRetry, tileStateBadge, tileStateMessage, voiceTile } from "./
 import { normalizeV1 } from "./shared/normalize.mjs";
 import { PIN_RE, RESET_PHRASE, checkPin, clearPin, hasPin, isResetPhrase, setPin } from "./shared/pin.mjs";
 import { entityNames, maskNames } from "./shared/name_shield.mjs";
-import { applyTransform, wordLemmaCandidates } from "./shared/txbar.mjs";
+import {
+  applyTransform, noteBarEdit, restoreBar, snapshotBar, transformSource,
+  wordLemmaCandidates,
+} from "./shared/txbar.mjs";
 import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
 import {
   FEELINGS, expressiveOn, loadFeelingData, suggestedFeeling,
@@ -386,7 +389,7 @@ armUtcRollRetry(async () =>
 // 023: the bar's current shape — which tense it holds and whether it
 // is a question — drives the trio's selected state. Reset whenever
 // the bar empties (clear, backspace, after-speak fresh start).
-const barState = { tense: "present", question: false };
+const barState = { tense: "present", question: false, preTransform: null };
 let licenseP = null;
 const LOCALHOST = ["localhost", "127.0.0.1", "[::1]"];
 const voiceLicense = () => {
@@ -540,7 +543,9 @@ addEventListener("offline", () => { syncTxButtons(); renderStrip(); });
 /** One transform press: mask her names → the Worker/Groq does the
  *  grammar → the result replaces the bar as typed words → it speaks
  *  through the 024 pipeline. A failed or offline call still speaks —
- *  the bar as built, per § 1's every-press-produces-audio rule. */
+ *  the bar as built, per § 1's every-press-produces-audio rule.
+ *  Every transform reads her saved taps (transformSource), never the
+ *  last model output — chains can't compound a guess. */
 let txBusy = false;
 /* The first-run demo (public/board/tour-ui.js) owns taps, the Smart bar
  * and the transform buttons while it runs — its taps never reach the
@@ -559,7 +564,8 @@ async function transformAndSpeak(mode) {
   const btn = $(mode === "present" ? "speak" : `tx-${mode}`);
   btn?.classList.add("speaking");
   try {
-    const raw = sentence.map((it) => it.text).join(" ");
+    const raw = transformSource(sentence, barState)
+      .map((it) => it.text).join(" ");
     const { masked, unmask } = maskNames(raw, entityNames(db));
     const res = await fetch("/api/v1/transform", {
       method: "POST",
@@ -570,6 +576,7 @@ async function transformAndSpeak(mode) {
     }).catch(() => null);
     const out = res?.ok ? (await res.json().catch(() => ({}))).text : null;
     if (out) {
+      snapshotBar(sentence, barState); // her taps, saved before replace
       applyTransform(sentence, unmask(out), mode, barState);
       for (const it of sentence) {
         if (it.kind === "typed") it.art = artForWord(it.text);
@@ -823,7 +830,10 @@ function renderBar() {
   $("clear").disabled = !sentence.length && !kbUi.text;
   $("backspace").disabled = !sentence.length && !kbUi.text;
   $("speak").disabled = !sentence.length;
-  if (!sentence.length) { barState.tense = "present"; barState.question = false; }
+  if (!sentence.length) {
+    barState.tense = "present"; barState.question = false;
+    barState.preTransform = null; // nothing to restore to
+  }
   syncTxButtons();
   bar.scrollLeft = bar.scrollWidth; // the newest word stays in view
 }
@@ -845,23 +855,24 @@ $("clear").addEventListener("click", () => {
     openImpressionId = null;
   }
   sentence.length = 0;
+  noteBarEdit(barState);
   kbUi.text = "";
   renderBar();
   renderGrid();
   renderStrip();
 });
 /* 023 transform buttons: every press produces audio. ▶ speaks the bar
- * as built when it already holds present; from another tense it first
- * returns the sentence to present, then speaks (§ 1d). */
+ * as built; while a transform holds it restores her saved taps first —
+ * no model call, works offline, her exact words (§ 1d). */
 $("speak").addEventListener("click", () => {
   // txBusy: a transform is mid-flight and speaks on landing — a press
   // now would read the pre-transform bar aloud.
   if (!sentence.length || txBusy) return;
-  if (barState.tense !== "present" && navigator.onLine !== false) {
-    transformAndSpeak("present");
-  } else {
-    speakSentence();
+  if (restoreBar(sentence, barState)) {
+    renderBar();
+    renderStrip();
   }
+  speakSentence();
 });
 $("tx-fix").addEventListener("click", () => {
   if (controlPress("fix")) return;
@@ -895,6 +906,7 @@ $("backspace").addEventListener("click", () => {
     if (dev) dev.value = "";
   } else {
     const last = sentence.pop();
+    noteBarEdit(barState);
     if (last?.id && sentenceId !== null && sentencePicks > 0) {
       detachEvent(db, sentenceId, sentencePicks - 1);
       sentencePicks--;
@@ -1174,6 +1186,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     // the tap log, the sentence row, or the ranker (the bar was set aside).
     if (id && spotDemo.buildsBar?.()) {
       sentence.push({ kind, id, text });
+      noteBarEdit(barState);
       renderBar();
       syncTxButtons();
     }
@@ -1225,6 +1238,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
   expand = null; // any pick returns the bar to Predict (014 § 5)
   startFresh();
   sentence.push(item);
+  noteBarEdit(barState);
   revisitPrev(sentence.length - 1); // decision 4: the next word may re-pick the last one
   renderBar();
   speakItem(item);
