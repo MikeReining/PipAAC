@@ -694,11 +694,21 @@ function main() {
       console.error("catalog.json is stale — run build_catalog.mjs");
       process.exit(1);
     }
+    const served = join(repoRoot, "public/catalog.json");
+    if (!existsSync(served)
+        || readFileSync(served, "utf8") !== `${JSON.stringify(catalog, null, 2)}\n`) {
+      console.error("public/catalog.json is stale — run build_catalog.mjs");
+      process.exit(1);
+    }
     console.log(`catalog.json OK (${catalog.senses.length} senses, ${catalog.coreCells.length} cells)`);
     return;
   }
 
   writeFileSync(CATALOG_OUT, `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+  // The Worker serves /catalog.json from public/ (static asset — the file
+  // is too big to import into the worker bundle; DOs OOM'd, 2026-09-30).
+  writeFileSync(join(repoRoot, "public/catalog.json"),
+    `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
   console.log(
     `Wrote ${CATALOG_OUT} (${catalog.senses.length} senses, ${catalog.coreCells.length} core cells)`,
   );

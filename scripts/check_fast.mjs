@@ -12,6 +12,7 @@ const GATES = [
   { name: "lint:lockfile-sync", cmd: process.execPath, args: ["scripts/check_lockfile_sync.mjs"] },
   { name: "lint:locale-literals", cmd: process.execPath, args: ["scripts/check_locale_literals.mjs"] },
   { name: "lint:childes-git-guard", cmd: process.execPath, args: ["scripts/check_childes_git.mjs"] },
+  { name: "data:assets-sync", cmd: process.execPath, args: ["scripts/prediction/sync_data_assets.mjs", "--check"] },
   { name: "regression_law_meta_gate", cmd: process.execPath, args: ["scripts/regression_law_meta_gate.mjs"] },
   { name: "guard-liveness", cmd: "bash", args: ["scripts/check-test-guard-liveness.sh"] },
 ];

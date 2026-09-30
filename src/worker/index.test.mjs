@@ -55,3 +55,28 @@ test("jev rank is gone: every method 404s", async () => {
     assert.equal(res.status, 404);
   }
 });
+
+/* The 45 MB form table ships as public/form_table.en.json.gz (over the
+ * per-asset limit uncompressed) — the route forwards the asset bytes
+ * under content-encoding so fetch().json() decodes it transparently. */
+test("form_table serves the gzipped asset as encoded JSON", async () => {
+  const { gzipSync, gunzipSync } = await import("node:zlib");
+  const payload = gzipSync(Buffer.from('{"k":1}'));
+  const env = { ASSETS: { fetch: async (req) =>
+    new URL(req.url).pathname === "/form_table.en.json.gz"
+      ? new Response(payload) : new Response(null, { status: 404 }) } };
+  const res = await worker.fetch(new Request("http://localhost/form_table.en.json"), env);
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get("content-encoding"), "gzip");
+  assert.equal(res.headers.get("content-type"), "application/json; charset=utf-8");
+  // Edge cache ignores vary:accept-encoding — a cached variant would
+  // hand the gzipped body to a client without the encoding marker.
+  assert.equal(res.headers.get("cache-control"), "no-store");
+  assert.deepEqual(JSON.parse(gunzipSync(Buffer.from(await res.arrayBuffer())).toString()), { k: 1 });
+});
+
+test("form_table 404s when the asset is absent", async () => {
+  const env = { ASSETS: { fetch: async () => new Response(null, { status: 404 }) } };
+  const res = await worker.fetch(new Request("http://localhost/form_table.en.json"), env);
+  assert.equal(res.status, 404);
+});

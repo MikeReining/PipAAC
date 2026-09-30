@@ -1,0 +1,13 @@
+{
+  "_comment": "025 § 3 — expressive voice data. feelings: sense id -> feeling for the 'I + feeling word' suggestion (adding a word is a data change). self: the people-word ids that light the suggestion (I, me). peopleEntityCategories: personal_entity categories that count as a people word; a pronoun (lemma part_of_speech 'Pronoun') always counts.",
+  "feelings": {
+    "sns_0061": "happy",
+    "sns_0183": "happy",
+    "sns_0179": "sad",
+    "sns_0181": "angry",
+    "sns_0180": "angry",
+    "sns_0187": "angry"
+  },
+  "self": ["sns_0001", "sns_0003"],
+  "peopleEntityCategories": ["People, Family & Roles", "Animals & Nature"]
+}

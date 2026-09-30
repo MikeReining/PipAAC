@@ -13,12 +13,18 @@ import { fileURLToPath } from "node:url";
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 const PUBLIC = join(repoRoot, "public");
 const SKIP = new Set(["vendor"]);
+// Generated data payloads (catalog + prediction tables) legitimately
+// contain voice/locale ids as data — the gate scans code, not cargo.
+const SKIP_FILES = new Set([
+  "catalog.json", "phrase_table.en.json", "form_table.en.json.gz",
+  "feeling_voice.json",
+]);
 
 const PATTERNS = [/locale\s*=\s*['"]en['"]/, /voi_default_en/];
 
 function* walk(dir) {
   for (const name of readdirSync(dir)) {
-    if (SKIP.has(name)) continue;
+    if (SKIP.has(name) || SKIP_FILES.has(name)) continue;
     const p = join(dir, name);
     if (statSync(p).isDirectory()) yield* walk(p);
     else yield p;
