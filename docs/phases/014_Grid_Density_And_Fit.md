@@ -1,6 +1,6 @@
 # Phase 014 — Grid Density and Individual Fit
 
-**Status:** Slices 1–5 and 7 built; slice 9 built and slices 10–11 added 2026-09-23 (§ 7a) (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` on `grid60`'s column sectors; Smart bar families). Remaining: slice 6 — message tiles (waits on 010's phrase list); slice 8 — keyguard specs (later). Rulings and starters below are **DECIDED
+**Status:** `grid30` Core 30 (6×5) **BUILT 2026-09-30** (§ 7.1; map § 7 of the coordinate map); slices 1–5 and 7 built; slice 9 built and slices 10–11 added 2026-09-23 (§ 7a) (renderer of any shape; `grid15` Core 15 starter map; adult moves via `core_override`; Cells picker + move cost + transition highlight + grammar groups; `grid90` on `grid60`'s column sectors; Smart bar families). Remaining: slice 6 — message tiles (waits on 010's phrase list); slice 8 — keyguard specs (later). Rulings and starters below are **DECIDED
 2026-09-22** (founder; not built) unless tagged **PROPOSED**. The `grid60`
 `why`/`when` change is **BUILT** (catalog regenerated; gate
 `src/board/core_map.test.mjs`).
@@ -93,7 +93,7 @@ all three.
 
 | Dial | Question | Values |
 | --- | --- | --- |
-| **Cells** | How many cells show at once? | Presets 15 (5×3), 30 (6×5), 60 (10×6), 90 (10×9); any size an adult picks within renderer limits. |
+| **Cells** | How many cells show at once? | Presets 15 (5×3), 30 (6×5, **BUILT 2026-09-30**), 60 (10×6), 90 (10×9); any size an adult picks within renderer limits. |
 | **Vocabulary** | Which words are reachable? | Everything, by default. An adult may hold words back and reveal them over time (ghost cells; masking owner). |
 | **Content** | Single words or whole messages? | Core words (default) or message tiles ("I'm in pain"). Phrase catalog: `docs/phases/010_Extended_Picture_Library.md`. |
 
@@ -234,9 +234,18 @@ full access became the default, the same vocabulary.
 
 Recommended defaults (**PROPOSED**; adjustable per profile):
 
-1. **30 is 6×5.** Near-square cells on a landscape iPad (5×6 would be twice
-   as wide as tall), and six columns give questions their own column:
-   people · questions · doing · where · describing · regulate.
+1. **30 is 6×5 — BUILT 2026-09-30 (DECIDED, founder).** Near-square cells
+   on a landscape iPad (5×6 would be twice as wide as tall). Columns:
+   people · doing · doing · where · describing · regulate. Why it exists:
+   15 → 60 cuts button area to a quarter; 30 halves the step. Map:
+   `docs/product/Core_Coordinate_Map.md` § 7; membership:
+   `Core_Grid_Membership.md` § 9. Built as: the map section (generated
+   `core_cell` rows), `SECTORS.grid30` in `movecost.mjs`, the picker
+   preview rule, frame = yes/no/stop/help homes `[5, 11, 23, 28]`, four
+   grid30-only `More … ` groups (`more_*_thirty`; the words off its board,
+   so every launch word stays reachable), mom/dad seating as on 60/90.
+   Smart bar: the existing width rule gives two prediction cards at six
+   columns. Group pages page like grid15 (20 content cells).
 2. **Switch scanning** is column-first, left to right, following sentence
    order. Validate with an SLP before launch.
 3. **Keyguards.** Cell spacing is fixed per preset so plastic keyguards fit.

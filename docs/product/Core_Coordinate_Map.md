@@ -29,6 +29,7 @@ differed from; the derivation is recorded in `docs/phases/018_Core_Board_V2_And_
 | `grid60` | 10 columns × 6 rows | 60 | Default density. The words a learner builds every sentence out of. |
 | `grid90` | 10 columns × 9 rows | 90 | Dense. All 78 root-core cells, one `Groups` anchor, 11 reserved anchors. |
 | `grid15` | 5 columns × 3 rows | 15 | Core 15 starter (014 § 5.1): early language and motor/visual access. The whole vocabulary stays reachable through the Groups anchor and the keyboard. |
+| `grid30` | 6 columns × 5 rows | 30 | Core 30 (014 § 3): the step between 15 and 60. All of Core 15 plus the next most-said words; the rest stays behind the Groups anchor and the keyboard. |
 
 Ten columns keeps tiles near or above ~100 pt on an 11-inch iPad in
 landscape — large enough for the motor-impaired hands this board exists for.
@@ -153,6 +154,28 @@ Slot 13 is the `?` family tile — it opens the Smart bar's `?` family
 (why · when · where · who, fixed order — 014 slice 7). `what` and `?`
 are the board's two Purple cells; the other columns are color-pure.
 
+
+## 7. `grid30` — Core 30 (6 × 5)
+
+**DECIDED 2026-09-30 (founder).** Why it exists: 15 → 60 shrinks each
+button to a quarter of its area; 30 halves that step. Membership and the
+reasons for each choice: `Core_Grid_Membership.md` § 9. Placement: each
+word sits as close as possible to its `grid60` screen position (the board
+the user graduates to), bands keeping `grid60`'s left-to-right order.
+`hurt` stays bottom-right as on 15 and 60; `sad · help · hurt` close the
+bottom-right corner. Average on-screen move: 15 → 30 ≈ 35% of the board,
+30 → 60 ≈ 12% (15 → 60 direct ≈ 39%).
+
+| Row | Slots |
+| --- | --- |
+| 1 | I · want · go · in · more · yes |
+| 2 | you · like · look · on · what · no |
+| 3 | my · get · do · up · ? · not |
+| 4 | mom · dad · can · here · sad · stop |
+| 5 | it · that · have · all done · help · hurt |
+
+Slot 17 (1-based; index 16) is the same `?` family tile as on `grid15`.
+Visual reference: `public/preview-core30.html`.
 
 Editing a slot assignment is a product decision. It lands here first, tagged
 with a new DECIDED date, and the generated `core_cell` rows are regenerated

@@ -300,7 +300,7 @@ export function buildGroups(lexicon, topicSeed, occasionSeed, { locales = ["en"]
         const { list, tops } = traversal[side] ?? { list: geom.content, tops: rowStartsOf(geom.content) };
         const runs = side === "right" || side === "bottom" ? [strictRun, run] : [run, strictRun];
         // One-page sizes never push a cluster to a later page to keep it
-        // whole; paged sizes (grid15) may, when it fits one page.
+        // whole; paged sizes (grid15, grid30) may, when it fits one page.
         const pagesToTry = ONE_PAGE_LAYOUTS.has(layout) || todo.length > n ? 1 : 3;
         for (const fn of runs) {
           for (let page = 0; page < pagesToTry; page++) {

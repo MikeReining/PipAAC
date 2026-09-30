@@ -150,9 +150,10 @@ test("seed: the default order is the shipped rows, and every list paints it", ()
   assert.equal(s.rows().length, groupIndex(db).length - 3, "four meal groups fold to one row");
   // No list sorts A–Z any more: the picker would put Animals first.
   assert.notEqual(pickerOrder(db)[0], "Animals");
-  // grid15-only groups come after the ten-wide rows of the default layout.
+  // grid15- and grid30-only groups come after the ten-wide rows of the default layout.
   assert.deepEqual(groupIndex(db).slice(30).map((g) => g.id),
-    ["grp_more_people", "grp_more_doing", "grp_more_where", "grp_more_describing"]);
+    ["grp_more_people", "grp_more_doing", "grp_more_where", "grp_more_describing",
+      "grp_more_people_thirty", "grp_more_doing_thirty", "grp_more_where_thirty", "grp_more_describing_thirty"]);
 });
 
 test("Recent stays on top of All groups in the picker", () => {

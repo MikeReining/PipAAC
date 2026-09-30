@@ -3,7 +3,7 @@
   "status": "LIVE 2026-09-28 — docs/phases/026_Topic_Groups.md + 027 § 3.1. Read by scripts/catalog/build_groups.mjs. Array order is the default index order; entries with seed \"occasions\" are defined in data/group_seed.occasions.json. The Home/Things, Describing/Touch & sound, and Little words/Who & which splits are a curation draft for founder review (027 A1).",
   "notes": {
     "word#slot": "Picks one sense of a two-meaning word by launch_lexicon slot (orange, bathroom, light). The builder needs this before the swap (026 slice 1).",
-    "layouts": "Doors shown only on these board layouts. The four More groups hold the rest of grid60 for grid15 users (014 § 3.1); on grid60/grid90 every word in them is already on the home board.",
+    "layouts": "Doors shown only on these board layouts. The four More groups hold the rest of grid60 for grid15 users (014 § 3.1); the four More … (_thirty) groups do the same for grid30 and hold only words off its board. On grid60/grid90 every word in them is already on the home board.",
     "order": "Array order is the default door order (018 D6), set once, then frozen. One order everywhere: the board index, Settings and the editor read this same order (index_slot). Rows of ten: food and daily times first, then people/self, things/places, describing/language. Within each block groups run by CHILDES child-line total of their members' counts (data/prediction/word_frequency.en.json), most-said first; My Words leads and the four meal groups keep time-of-day order.",
     "seed": "\"occasions\" — the group is defined in data/group_seed.occasions.json; its entry here only fixes its index position.",
     "category": "The lexicon category the add flow ranks first in this group (Word_Library § 5.1). A ranking hint, never membership."
@@ -1010,6 +1010,78 @@
           9
         ],
         "excludeLayout": "grid15"
+      }
+    },
+    {
+      "key": "more_people_thirty",
+      "glyph": "👥",
+      "layouts": [
+        "grid30"
+      ],
+      "names": {
+        "en": "More people"
+      },
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          0,
+          1
+        ],
+        "excludeLayout": "grid30"
+      }
+    },
+    {
+      "key": "more_doing_thirty",
+      "glyph": "🏃",
+      "layouts": [
+        "grid30"
+      ],
+      "names": {
+        "en": "More doing"
+      },
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          2,
+          4
+        ],
+        "excludeLayout": "grid30"
+      }
+    },
+    {
+      "key": "more_where_thirty",
+      "glyph": "🧭",
+      "layouts": [
+        "grid30"
+      ],
+      "names": {
+        "en": "More where"
+      },
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          5,
+          6
+        ],
+        "excludeLayout": "grid30"
+      }
+    },
+    {
+      "key": "more_describing_thirty",
+      "glyph": "🎨",
+      "layouts": [
+        "grid30"
+      ],
+      "names": {
+        "en": "More describing"
+      },
+      "sector": {
+        "layout": "grid60",
+        "cols": [
+          7,
+          9
+        ],
+        "excludeLayout": "grid30"
       }
     }
   ]

@@ -324,3 +324,23 @@ asked least of the five and stays in the `?` family on small boards
 (`docs/phases/014_Grid_Density_And_Fit.md` § 5), in `grid90`, and in the
 Smart bar.
 
+## 9. Core 30 — `grid30` (DECIDED 2026-09-30, founder)
+
+Map: `Core_Coordinate_Map.md` § 7. Why the size exists: 15 → 60 cuts button
+area to a quarter; 30 halves the step (014 § 3).
+
+Members (29 words + the `?` tile):
+
+- All of Core 15.
+- `sad` — rule 0 (reports that something is wrong).
+- `mom · dad` — rule 3, calling a person; chosen over `he · she`.
+- `my · have` — CHILDES child-speech frequency (~62k / ~58k); `my` is
+  Banajee toddler core. Chosen over `put` / `good`, which the founder
+  rejected.
+- `get · do · in · up · it · on · here · look · that · can` — Universal Core
+  and frequent.
+
+Left off on purpose: `the` / `is` / `a` (children at the one- to two-word
+stage omit them; meaningless tapped alone) and `need` (rare in child
+speech; `want` covers requesting). Every word is a root-core `grid60` word,
+so the UC36 gate is unaffected.

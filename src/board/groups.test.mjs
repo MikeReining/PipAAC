@@ -94,7 +94,7 @@ test("027 A1 seed: My Words then the meals lead the index; every seeded group is
   assert.deepEqual(catalog.groups.filter((g) => g.occasion).map((g) => g.id), ids.slice(1, 5));
   assert.ok(!ids.includes("grp_food"), "no Food mega-group");
   for (const c of catalog.groupCells) {
-    if (c.layout !== "grid15") assert.equal(c.page, 0, `${c.group_id} ${lemma(c.item_id)} on ${c.layout}`);
+    if (c.layout !== "grid15" && c.layout !== "grid30") assert.equal(c.page, 0, `${c.group_id} ${lemma(c.item_id)} on ${c.layout}`);
   }
   // the DB the board reads carries the same seed
   const db = openDb();

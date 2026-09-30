@@ -147,7 +147,7 @@ out.afterReload = await evalJs(`(() => ({
 console.log(JSON.stringify(out, null, 2));
 const ok =
   out.override.slot2 === "stop" &&
-  out.seg.btns.length === 3 && out.seg.btns.find((b) => b.v === "grid60")?.on &&
+  out.seg.btns.length === 4 && out.seg.btns.find((b) => b.v === "grid60")?.on &&
   out.preview.layoutBefore === "grid60" &&
   out.preview.layoutStill === "grid60" &&   // preview changed nothing
   out.preview.formOpen && out.preview.rows > 0 &&

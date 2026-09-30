@@ -230,19 +230,19 @@ test("018 slice 3: setup's people take the mom/dad cells on every layout that ha
   const ids = ["Maria", "Tom", "Grandma"].map((n) => createEntity(db, { name: n }).id);
   const placed = seatSetupPeople(db, ids, "en");
 
-  // Both seats land on grid60 AND grid90 — the people follow the child
-  // when density changes. grid15 has no mom/dad cells: untouched.
+  // The seats land on grid30, grid60 AND grid90 — the people follow the
+  // child when density changes. grid15 has no mom/dad cells: untouched.
   assert.deepEqual(
     placed.map((p) => [p.id, p.layout, p.slot]),
-    [[ids[0], "grid60", 30], [ids[0], "grid90", 30],
-     [ids[1], "grid60", 31], [ids[1], "grid90", 31]]);
+    [[ids[0], "grid30", 18], [ids[0], "grid60", 30], [ids[0], "grid90", 30],
+     [ids[1], "grid30", 19], [ids[1], "grid60", 31], [ids[1], "grid90", 31]]);
   assert.equal(db.prepare(
     "SELECT COUNT(*) AS n FROM core_override WHERE layout = 'grid15'").all()[0].n, 0);
 
-  for (const layout of ["grid60", "grid90"]) {
+  for (const [layout, momSlot] of [["grid30", 18], ["grid60", 30], ["grid90", 30]]) {
     const cells = coreCells(db, layout, "en");
-    assert.equal(cells.find((c) => c.slot_index === 30)?.entity_id, ids[0]);
-    assert.equal(cells.find((c) => c.slot_index === 31)?.entity_id, ids[1]);
+    assert.equal(cells.find((c) => c.slot_index === momSlot)?.entity_id, ids[0]);
+    assert.equal(cells.find((c) => c.slot_index === momSlot + 1)?.entity_id, ids[1]);
     // The mom/dad words left the board — but not their group.
     assert.equal(cellSlot(db, layout, "sense", mom), null);
     assert.equal(cellSlot(db, layout, "sense", dad), null);

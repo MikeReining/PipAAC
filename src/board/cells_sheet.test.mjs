@@ -34,7 +34,8 @@ test("cells sheet marks the current layout and previews a different one", () => 
   const db = createDatabase(":memory:");
   // Group geometry is catalog data the import writes (027 § 3.2).
   db.exec(`INSERT INTO layout_shape (layout, cols, rows, frame) VALUES
-    ('grid60', 10, 6, '[9,19,39,49]'), ('grid15', 5, 3, '[3,4,8,9]')`);
+    ('grid60', 10, 6, '[9,19,39,49]'), ('grid30', 6, 5, '[5,11,21,28]'),
+    ('grid15', 5, 3, '[3,4,8,9]')`);
   const seg = el();
   const summary = el();
   const nodes = {
@@ -54,6 +55,7 @@ test("cells sheet marks the current layout and previews a different one", () => 
   const catalog = {
     layouts: {
       grid60: { cols: 10, rows: 6 },
+      grid30: { cols: 6, rows: 5 },
       grid15: { cols: 5, rows: 3 },
     },
   };
@@ -75,6 +77,7 @@ test("cells sheet marks the current layout and previews a different one", () => 
     seg.children.map((b) => [b.textContent, b.dataset.v, b.on]),
     [
       ["15", "grid15", false],
+      ["30", "grid30", false],
       ["60", "grid60", true],
     ],
   );

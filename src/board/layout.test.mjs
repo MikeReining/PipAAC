@@ -24,13 +24,17 @@ const catalog = buildCatalog(
   parseCoordinateMapMarkdown(readFileSync(join(repoRoot, "docs/product/Core_Coordinate_Map.md"), "utf8")),
 );
 
-test("027 § 3.2: reserved cells per size — top row, frame, Next — leave 46 / 76 / 7 content cells", () => {
+test("027 § 3.2: reserved cells per size — top row, frame, Next — leave 46 / 76 / 7 / 20 content cells", () => {
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);
-  const counts = Object.fromEntries(["grid60", "grid90", "grid15"].map((l) => [l, geometryOf(db, l).content.length]));
-  assert.deepEqual(counts, { grid60: 46, grid90: 76, grid15: 7 });
+  const counts = Object.fromEntries(["grid60", "grid90", "grid15", "grid30"].map((l) => [l, geometryOf(db, l).content.length]));
+  assert.deepEqual(counts, { grid60: 46, grid90: 76, grid15: 7, grid30: 20 });
   const g15 = geometryOf(db, "grid15");
   assert.deepEqual([...g15.reserved].sort((x, y) => x - y), [0, 1, 2, 3, 4, 8, 9, 14]);
+  // grid30: top row 0-4, frame = yes/no/stop/help homes, Next at 29.
+  assert.deepEqual(geometryOf(db, "grid30").frame, [5, 11, 23, 28]);
+  assert.deepEqual([...geometryOf(db, "grid30").reserved].sort((x, y) => x - y),
+    [0, 1, 2, 3, 4, 5, 11, 23, 28, 29]);
   // the index keeps its canonical mapping
   assert.deepEqual(indexVisual(10, 60), { page: 0, slot: 10 });
   assert.deepEqual(indexVisual(14, 15), { page: 1, slot: 2 });
@@ -132,4 +136,61 @@ test("grid15 is § 5.1's board: 14 words + the ? family slot, in place", () => {
     ).all(c.slot_index)[0];
     assert.equal(s60?.text, c.text);
   }
+});
+
+test("grid30 is the founder's Core 30 (DECIDED 2026-09-30): 6 x 5, 29 words + the ? family slot, in place", () => {
+  const layout = catalog.layouts.grid30;
+  assert.deepEqual({ cols: layout.cols, rows: layout.rows }, { cols: 6, rows: 5 });
+  assert.deepEqual(layout.anchors, [{ slot: 16, kind: "family", family: "bf_q" }],
+    "slot 16 (row 3 col 5) is the same ? family tile grid15 uses");
+  // The frame is the yes / no / stop / help homes (027 B3), same rule as 15 and 60.
+  assert.deepEqual(layout.frame, [5, 11, 23, 28]);
+
+  const db = createDatabase(":memory:");
+  importCatalog(db, catalog);
+  const cells = db.prepare(
+    `SELECT cc.slot_index, l.text FROM core_cell cc
+     JOIN label l ON l.sense_id = cc.sense_id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = 'en'
+     WHERE cc.layout = 'grid30' ORDER BY cc.slot_index`,
+  ).all();
+  const spec = [
+    ["I", "want", "go", "in", "more", "yes"],
+    ["you", "like", "look", "on", "what", "no"],
+    ["my", "get", "do", "up", null, "not"],
+    ["mom", "dad", "can", "here", "sad", "stop"],
+    ["it", "that", "have", "all done", "help", "hurt"],
+  ].flat();
+  assert.equal(spec.length, 30);
+  for (const [i, word] of spec.entries()) {
+    if (word === null) continue;
+    assert.equal(cells.find((c) => c.slot_index === i)?.text, word, `grid30 slot ${i} should be "${word}"`);
+  }
+  assert.equal(cells.length, 29);
+  // Every word is on grid60 too — a size changes the map, never the vocabulary —
+  // and all of Core 15 is on Core 30.
+  const on = (l) => new Set(db.prepare("SELECT sense_id FROM core_cell WHERE layout = ?").all(l).map((r) => r.sense_id));
+  const s60 = on("grid60");
+  const s15 = on("grid15");
+  const s30 = on("grid30");
+  for (const s of s30) assert.ok(s60.has(s), "every grid30 word is a grid60 word");
+  for (const s of s15) assert.ok(s30.has(s), "Core 30 holds all of Core 15");
+});
+
+test("grid30's More groups hold exactly the grid60 words not on its board, and show only there", () => {
+  const db = createDatabase(":memory:");
+  importCatalog(db, catalog);
+  const on30 = new Set(db.prepare("SELECT sense_id FROM core_cell WHERE layout = 'grid30'").all().map((r) => r.sense_id));
+  const groups = db.prepare(
+    "SELECT group_id, layouts FROM group_meta WHERE group_id LIKE 'grp_more_%_thirty'").all();
+  assert.equal(groups.length, 4);
+  let held = 0;
+  for (const g of groups) {
+    assert.deepEqual(JSON.parse(g.layouts), ["grid30"]);
+    for (const m of db.prepare("SELECT item_id FROM group_membership WHERE group_id = ?").all(g.group_id)) {
+      assert.ok(!on30.has(m.item_id), "no More word is on the grid30 board");
+      held++;
+    }
+  }
+  assert.ok(held > 0);
 });

@@ -183,7 +183,7 @@ export function moveCore(db, layout, senseId, toSlot, opts = {}) {
 
 /** 018 slice 3 (D1): seat the child's people. The first entity takes
  *  `mom`'s cell, the second `dad`'s — on every layout that has those
- *  cells (grid60, grid90; grid15 has neither). Further entities stay
+ *  cells (grid30, grid60, grid90; grid15 has neither). Further entities stay
  *  off-board, reachable through their group. A seat a person already
  *  holds stays theirs — a later pass fills only the free ones. Returns
  *  the seatings. */

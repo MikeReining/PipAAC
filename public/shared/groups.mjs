@@ -130,7 +130,7 @@ function shownByPage(db, layout) {
 }
 
 /** Whether a group shows on a board size: catalog metadata for built-in
- *  groups (the four More groups are grid15-only); custom groups and My
+ *  groups (the More groups are grid15-only or grid30-only); custom groups and My
  *  Words show everywhere. */
 export function shownOn(db, groupId, layout) {
   const meta = one(db, "SELECT layouts FROM group_meta WHERE group_id = ?", [groupId]);
