@@ -175,6 +175,8 @@ Tested live against Groq's API on 2026-09-25:
 
 *Note on model selection:* `openai/gpt-oss-20b` was tested on identical inputs and burned 28 reasoning tokens inside `<think>` tags before emitting text. `qwen/qwen3.8-27b` is zero-reasoning, instruction-tuned, and generates immediately.
 
+*2026-09-30 — sentence lab (`/sentence-lab`):* `openai/gpt-oss-120b` at `reasoning_effort: low` was compared head-to-head on all five modes — still spent 15–32 reasoning tokens per call, ran ~40–60% slower wall-clock (mostly Groq queue time), and dropped the subject on `past` ("Wanted to play." vs "I wanted to play."). **Ruling: stay on qwen3.8-27b.** Re-test via the lab if Groq model versions or pricing move.
+
 ---
 
 ## 3. The Transform Prompts & Battle-Tested Results
