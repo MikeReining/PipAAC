@@ -1,33 +1,38 @@
 /**
  * First-run setup, "Tell us about their world" — 009 slice 11
  * (Word_Library § 5.6). After the board first draws, the Parent Corner
- * offers a guided pass: People (names + many photos, slice 8), then
+ * offers a guided pass: People (a face and a name per person), then
  * Pets, Favorite foods and Places as one-per-line lists answered by
  * library pictures (slice 7). Each step is skippable; each files into
- * the matching built-in group named by SETUP_STEPS. Named people still
- * seat at mom/dad (018 D1). The wizard opens once on a new user
- * (needsSetup) and again from the Parent Corner whenever asked.
+ * the matching built-in group named by SETUP_STEPS. New people still
+ * seat at a free mom/dad cell (018 D1). The wizard opens once on a new
+ * user (needsSetup) and again from the Parent Corner whenever asked —
+ * People then opens on who is already there, so a second pass edits
+ * the family instead of re-adding it.
  */
 import { applyPasteRows, nameFromFile, resolvePasteRows } from "../shared/bulk.mjs";
-import { applySetupPeople, SETUP_STEPS } from "../shared/setup.mjs";
+import { SENSE_ART_SQL } from "../shared/images.mjs";
+import { applySetupPeople, setupPeople, SETUP_STEPS } from "../shared/setup.mjs";
+import { GROUP_ICONS } from "./group-glyph.js";
 
 const $ = (id) => document.getElementById(id);
 
 export function mountSetup({
   db, locale, catalog, open, close, toast,
-  savePhoto, syncUploadBlob, me, saveUser, flushDb,
-  tile,
+  savePhoto, syncUploadBlob, loadPhotoURL, artInto, me, saveUser, flushDb,
+  tile, dropEntityPhoto,
   invalidateIndex, renderGrid, rerenderView, renderStrip,
 }) {
   let step = 0;
-  let photoDrafts = []; // { file, url, name }
+  let people = []; // { id?, name, photoKey?, file?, url? } — one row each
+  let faceRow = null; // the row whose face opened the photo picker
   let wrote = false;
 
   const meta = [
     {
       key: "people",
       title: () => `Who does ${me.name || "your child"} call for?`,
-      hint: "Up to three people — a name each. Add photos for the rest of their world.",
+      hint: "A name for each person. Tap the square to add their photo.",
       next: "Next",
     },
     {
@@ -57,32 +62,91 @@ export function mountSetup({
   function openWizard() {
     step = 0;
     wrote = false;
-    photoDrafts.forEach((d) => URL.revokeObjectURL(d.url));
-    photoDrafts = [];
     render();
     open("setupform");
   }
 
   function render() {
     const m = meta[step];
-    $("setup-step").textContent = `Step ${step + 1} of ${meta.length}`;
+    const dots = $("setup-dots");
+    dots.replaceChildren(...meta.map((_, i) => {
+      const d = document.createElement("span");
+      d.className = i === step ? "on" : i < step ? "done" : "";
+      return d;
+    }));
+    dots.setAttribute("aria-label", `Step ${step + 1} of ${meta.length}`);
+    $("setup-icon").src = GROUP_ICONS[stepGroup(m.key)] ?? "";
     $("setup-title").textContent = m.title();
     $("setup-hint").textContent = m.hint;
     $("setup-people").hidden = m.key !== "people";
     $("setup-list").hidden = m.key === "people";
+    $("setup-back").hidden = step === 0;
     $("setup-save").textContent = m.next;
     if (m.key === "people") {
-      [...document.querySelectorAll(".setup-name")].forEach((i) => { i.value = ""; });
-      renderDrafts();
+      clearPeople();
+      people = setupPeople(db);
+      // A first pass starts on two blank rows — Mom and Dad's seats.
+      while (people.length < 2) people.push({ name: "" });
+      renderPeople();
     } else {
       $("setup-paste").value = "";
       renderPreview();
     }
   }
 
-  /* The list steps share the paste-box preview (§ 5.4): exact library
-   * matches get their word, everything else is a new word that needs a
-   * picture. */
+  function clearPeople() {
+    for (const p of people) if (p.url) URL.revokeObjectURL(p.url);
+    people = [];
+  }
+
+  const CAMERA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+  const EXAMPLES = ["Mom", "Dad"];
+
+  function renderPeople() {
+    const box = $("setup-rows");
+    box.innerHTML = "";
+    people.forEach((p, i) => {
+      const row = document.createElement("div");
+      row.className = "setup-person";
+      const face = document.createElement("button");
+      face.type = "button";
+      face.className = "setup-face";
+      const label = p.name || "this person";
+      face.setAttribute("aria-label", p.url || p.photoKey
+        ? `Change photo of ${label}` : `Add a photo of ${label}`);
+      face.innerHTML = CAMERA;
+      if (p.url) {
+        showFace(face, p.url);
+      } else if (p.photoKey) {
+        loadPhotoURL(p.photoKey).then((url) => { if (url) showFace(face, url); });
+      }
+      face.addEventListener("click", () => {
+        faceRow = p;
+        $("setup-photo-input").click();
+      });
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = p.name;
+      input.placeholder = p.id ? "Name" : `Name — like ${EXAMPLES[i] ?? "Grandma"}`;
+      input.autocomplete = "off";
+      input.setAttribute("aria-label", "Name");
+      input.addEventListener("input", () => { p.name = input.value; });
+      row.append(face, input);
+      box.appendChild(row);
+    });
+  }
+
+  function showFace(face, url) {
+    const img = document.createElement("img");
+    img.alt = "";
+    img.src = url;
+    face.replaceChildren(img);
+    face.classList.add("has");
+  }
+
+  /* The list steps share the paste-box preview (§ 5.4): each line shows
+   * the tile it becomes — library words with their picture, anything
+   * else as a new word that gets its picture later. */
   function renderPreview() {
     const m = meta[step];
     const rows = resolvePasteRows(db, $("setup-paste").value, {
@@ -92,13 +156,30 @@ export function mountSetup({
     box.innerHTML = "";
     for (const r of rows) {
       const row = document.createElement("div");
-      row.className = "ed-prow" + (r.already ? " over" : "");
-      const tag = document.createElement("span");
-      tag.className = "tag" + (r.kind === "new" ? " new" : r.already ? " already" : "");
-      tag.textContent = r.already ? "already" : r.kind === "new" ? "new — needs a picture" : r.kind;
+      row.className = "ed-prow";
+      const thumb = document.createElement("span");
+      thumb.className = "bthumb" + (r.kind === "new" ? " new" : "");
+      const art = r.kind === "sense"
+        ? db.prepare(`SELECT ${SENSE_ART_SQL} AS art FROM sense s WHERE s.id = ?`).all(r.id)[0]?.art
+        : null;
+      if (art) {
+        const img = document.createElement("img");
+        img.alt = "";
+        artInto(img, art);
+        thumb.appendChild(img);
+      } else {
+        thumb.textContent = r.label[0]?.toUpperCase() ?? "";
+      }
       const lb = document.createElement("span");
       lb.textContent = r.label;
-      row.append(tag, lb);
+      if (r.already) lb.className = "gone";
+      row.append(thumb, lb);
+      if (r.already || r.kind === "new") {
+        const tag = document.createElement("span");
+        tag.className = "tag" + (r.already ? " already" : " new");
+        tag.textContent = r.already ? "already here" : "new — picture later";
+        row.appendChild(tag);
+      }
       box.appendChild(row);
     }
   }
@@ -107,43 +188,28 @@ export function mountSetup({
     return SETUP_STEPS.find((s) => s.key === key).groupId;
   }
 
-  function renderDrafts() {
-    const box = $("setup-photo-rows");
-    box.innerHTML = "";
-    for (const d of photoDrafts) {
-      const row = document.createElement("div");
-      row.className = "prow" + (d.name ? "" : " blank");
-      const img = document.createElement("img");
-      img.className = "thumb"; img.alt = ""; img.src = d.url;
-      const input = document.createElement("input");
-      input.type = "text"; input.value = d.name;
-      input.placeholder = "Name this one";
-      input.addEventListener("input", () => {
-        d.name = input.value.trim();
-        row.classList.toggle("blank", !d.name);
-      });
-      row.append(img, input);
-      box.appendChild(row);
-    }
-  }
-
   async function apply() {
     const m = meta[step];
     if (m.key === "people") {
-      const names = [...document.querySelectorAll(".setup-name")]
-        .map((i) => i.value).filter((v) => v.trim());
-      const drafts = [];
-      for (const d of photoDrafts) {
-        if (!d.name) continue;
-        const photo = await savePhoto(d.file);
-        if (photo) syncUploadBlob(photo.bytes).catch(() => {});
-        drafts.push({ name: d.name, photoKey: photo?.key ?? null });
+      const rows = [];
+      for (const p of people) {
+        if (!p.name.trim()) continue;
+        let photoKey = p.photoKey ?? null;
+        if (p.file) {
+          const photo = await savePhoto(p.file);
+          if (photo) {
+            syncUploadBlob(photo.bytes).catch(() => {});
+            photoKey = photo.key;
+          }
+        }
+        rows.push({ id: p.id, name: p.name, photoKey });
+        if (p.id && p.file) dropEntityPhoto(p.id); // the tile repaints its new face
       }
-      if (!names.length && !drafts.length) return;
-      applySetupPeople(db, { names, drafts, locale, category: categoryOf("people") });
+      const res = applySetupPeople(db, { people: rows, locale, category: categoryOf("people") });
+      if (!res.added && !res.updated) return;
       // 028: the family's own words mint in the background — every name
       // the supporter just typed is a new tile clip.
-      const minted = [...names, ...drafts.map((d) => d.name)].filter(Boolean);
+      const minted = rows.filter((r) => !r.id).map((r) => r.name.trim());
       if (minted.length) tile?.prefetch(minted).catch(() => {});
     } else {
       const rows = resolvePasteRows(db, $("setup-paste").value, {
@@ -168,8 +234,7 @@ export function mountSetup({
   }
 
   async function finish() {
-    for (const d of photoDrafts) URL.revokeObjectURL(d.url);
-    photoDrafts = [];
+    clearPeople();
     close("setupform");
     if (wrote) {
       await flushDb();
@@ -187,16 +252,37 @@ export function mountSetup({
     if (++step >= meta.length) finish();
     else render();
   });
+  // Back and ✕ never undo: a step saves when you press Next.
+  $("setup-back").addEventListener("click", () => {
+    if (step > 0) { step--; render(); }
+  });
+  $("setup-x").addEventListener("click", finish);
   $("setup-paste").addEventListener("input", renderPreview);
-  $("setup-photo-btn").addEventListener("click", () => $("setup-photo-input").click());
+  $("setup-addrow").addEventListener("click", () => {
+    people.push({ name: "" });
+    renderPeople();
+    $("setup-rows").lastElementChild?.querySelector("input")?.focus();
+  });
+  // One picture fills the face that was tapped; picking several adds a
+  // row for each of the rest, named from its file.
   $("setup-photo-input").addEventListener("change", (e) => {
     const files = [...e.target.files].filter((f) => f.type.startsWith("image/"));
     e.target.value = "";
-    if (!files.length) return;
-    photoDrafts.push(...files.map((file) => ({
-      file, url: URL.createObjectURL(file), name: nameFromFile(file.name),
-    })));
-    renderDrafts();
+    if (!files.length || !faceRow) return;
+    const fill = (p, file) => {
+      if (p.url) URL.revokeObjectURL(p.url);
+      p.file = file;
+      p.url = URL.createObjectURL(file);
+      if (!p.name.trim()) p.name = nameFromFile(file.name);
+    };
+    fill(faceRow, files[0]);
+    for (const file of files.slice(1)) {
+      const p = { name: "" };
+      fill(p, file);
+      people.push(p);
+    }
+    faceRow = null;
+    renderPeople();
   });
 
   return { openWizard };

@@ -100,11 +100,10 @@
   color: var(--ink); font-weight: 700; text-decoration: underline;
   text-underline-offset: 3px; cursor: pointer;
 }
-#bulk-preview, #setup-preview { display: flex; flex-direction: column; gap: 4px; font-size: 14px;
+#bulk-preview { display: flex; flex-direction: column; gap: 4px; font-size: 14px;
   max-height: 40vh; overflow: auto; }
-#photo-rows, #setup-photo-rows { display: flex; flex-direction: column; gap: 10px;
+#photo-rows { display: flex; flex-direction: column; gap: 10px;
   max-height: 55vh; overflow: auto; }
-#setup-paste { width: 100%; min-height: 90px; }
 .prow { display: flex; align-items: center; gap: 10px; }
 .prow .thumb { width: 56px; height: 56px; border-radius: 10px;
   object-fit: cover; background: var(--tray); border: 1.5px solid var(--line); }

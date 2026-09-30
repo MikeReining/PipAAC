@@ -184,7 +184,9 @@ export function moveCore(db, layout, senseId, toSlot, opts = {}) {
 /** 018 slice 3 (D1): seat the child's people. The first entity takes
  *  `mom`'s cell, the second `dad`'s — on every layout that has those
  *  cells (grid60, grid90; grid15 has neither). Further entities stay
- *  off-board, reachable through their group. Returns the seatings. */
+ *  off-board, reachable through their group. A seat a person already
+ *  holds stays theirs — a later pass fills only the free ones. Returns
+ *  the seatings. */
 export function seatSetupPeople(db, entityIds, locale) {
   const seats = db.prepare(
     `SELECT cc.layout, cc.slot_index FROM core_cell cc
@@ -195,6 +197,7 @@ export function seatSetupPeople(db, entityIds, locale) {
   const byLayout = new Map();
   for (const s of seats) {
     if (!byLayout.has(s.layout)) byLayout.set(s.layout, []);
+    if (occupant(db, s.layout, s.slot_index)?.kind === "entity") continue;
     byLayout.get(s.layout).push(s.slot_index);
   }
   const placed = [];

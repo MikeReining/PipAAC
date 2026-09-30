@@ -219,9 +219,12 @@ built-in group, and any step can be skipped. Target: 30 personal words in
 about ten minutes.
 
 **BUILT** (009 slice 11): `#setupform` is the four-step wizard — People
-(names seat at mom/dad, 018 D1, plus many-photo drafts), Pets, Favorite
+(a face and a name per row; tap the face for a photo, several photos add
+a row each; new people take a free mom/dad seat, 018 D1), Pets, Favorite
 foods and Places as one-per-line lists through the § 5.4 resolve→apply
-path. `SETUP_STEPS` in `public/shared/setup.mjs` is the step→group
+path, each line previewed with its picture. People opens on who is
+already in the group (`setupPeople`), so a second pass from the Parent
+Corner renames or re-photographs them instead of adding duplicates. `SETUP_STEPS` in `public/shared/setup.mjs` is the step→group
 truth: `grp_people`, `grp_animals`, `grp_snack` (Food is retired —
 Snack is the anytime food board), `grp_going_out`. Proof
 `src/board/setup.test.mjs`; the parent-vs-Proloquo2Go stopwatch

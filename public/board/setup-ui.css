@@ -1,0 +1,74 @@
+/* --- "Tell us about their world" (Word_Library § 5.6): four short
+   steps. The header shows the group being filled and where you are;
+   People is a face and a name per person. --- */
+.setup-sheet { gap: 16px; width: min(560px, 92vw); padding: 20px 24px 16px; }
+.setup-head { display: flex; align-items: center; gap: 12px; }
+.setup-icon {
+  width: 48px; height: 48px; flex: none; padding: 8px;
+  border-radius: 12px; background: var(--tray);
+}
+.setup-dots { display: flex; gap: 6px; margin-right: auto; }
+.setup-dots span {
+  width: 8px; height: 8px; border-radius: 999px; background: var(--line);
+  transition: width 0.2s, background 0.2s;
+}
+.setup-dots span.done { background: var(--edge); }
+.setup-dots span.on { width: 24px; background: var(--ink); }
+.setup-sheet h2 { font-size: 24px; margin: 0; }
+.setup-sheet .hint { font-size: 15px; line-height: 1.4; color: var(--muted); margin: 6px 0 0; }
+
+/* People: one row per person — tap the face for a photo. */
+#setup-people:not([hidden]) { display: flex; flex-direction: column; gap: 10px; }
+#setup-rows {
+  display: flex; flex-direction: column; gap: 10px;
+  max-height: 46vh; overflow-y: auto;
+}
+.setup-person { display: flex; align-items: center; gap: 12px; }
+.setup-face {
+  width: 56px; height: 56px; flex: none; padding: 0; overflow: hidden;
+  display: grid; place-items: center;
+  border: 2px dashed var(--edge); border-radius: 14px; background: var(--cream);
+  color: var(--muted); font-size: 22px; cursor: pointer;
+}
+.setup-face svg { width: 26px; height: 26px; }
+.setup-face.has { border: 2px solid var(--line); }
+.setup-face img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.setup-face:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+.setup-person input[type="text"] { flex: 1; min-width: 0; }
+.setup-sheet input::placeholder, .setup-sheet textarea::placeholder { color: var(--mask-t); }
+.setup-sheet input[type="text"]:focus, #setup-paste:focus {
+  outline: none; border-color: var(--ink);
+}
+.setup-addrow {
+  display: flex; align-items: center; gap: 12px;
+  border: none; background: none; padding: 0; font: inherit;
+  font-size: 17px; font-weight: 700; color: var(--ink); cursor: pointer;
+  align-self: flex-start;
+}
+.setup-addrow .setup-face { cursor: inherit; }
+
+/* Pets, foods, places: a list box, each line previewed as its tile. */
+#setup-list:not([hidden]) { display: flex; flex-direction: column; gap: 10px; }
+#setup-paste {
+  width: 100%; min-height: 120px; resize: vertical;
+  font: inherit; font-size: 18px; line-height: 1.4;
+  border: 2px solid var(--line); border-radius: 10px; padding: 10px 12px;
+}
+#setup-preview {
+  display: flex; flex-direction: column; gap: 6px; font-size: 16px;
+  max-height: 32vh; overflow: auto;
+}
+#setup-preview .ed-prow { gap: 10px; }
+#setup-preview .bthumb { cursor: default; display: grid; place-items: center; }
+#setup-preview .bthumb.new { border-style: dashed; }
+#setup-preview .gone { text-decoration: line-through; color: var(--muted); }
+
+/* Next is the one primary; Back is quieter; Skip is a text link. */
+.setup-actions { display: flex; gap: 10px; margin-top: 4px; }
+.setup-actions .btn { flex: 1; }
+.setup-actions #setup-back { flex: 0 0 auto; padding-inline: 22px; }
+.setup-skip {
+  align-self: center; border: none; background: none; padding: 4px 8px;
+  font: inherit; font-size: 15px; color: var(--muted);
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}

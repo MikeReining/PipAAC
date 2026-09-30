@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="/board/keyboard-ui.css" />
     <link rel="stylesheet" href="/board/groups-ui.css" />
     <link rel="stylesheet" href="/board/add-flow.css" />
+    <link rel="stylesheet" href="/board/setup-ui.css" />
     <link rel="stylesheet" href="/board/library-ui.css" />
     <link rel="stylesheet" href="/board/word-card.css" />
     <link rel="stylesheet" href="/board/devices-ui.css" />
@@ -593,7 +594,6 @@
       #prog-body p { margin: 4px 0; }
       #prog-body .seg-label { margin-top: 14px; }
       .place-row { display: flex; justify-content: space-between; width: 100%; margin-top: 6px; }
-      #setup-names input { display: block; width: 100%; margin-top: 8px; }
 
       .overlay {
         position: fixed;
@@ -1375,31 +1375,35 @@
     </div>
 
     <!-- First-run setup (Word_Library § 5.6): a guided pass of four
-         skippable steps — People (names + many photos), Pets, Favorite
+         skippable steps — People (a face and a name each), Pets, Favorite
          foods, Places — each filing into its built-in group. -->
     <div class="overlay" id="setupform">
-      <div class="sheet">
-        <p class="hint" id="setup-step"></p>
-        <h2 id="setup-title">Who do they call for?</h2>
-        <p class="hint" id="setup-hint">Up to three people — a name each, a photo can come later.</p>
+      <div class="sheet setup-sheet">
+        <header class="setup-head">
+          <img class="setup-icon" id="setup-icon" alt="" />
+          <div class="setup-dots" id="setup-dots" role="img"></div>
+          <button type="button" class="add-x" id="setup-x" aria-label="Close">✕</button>
+        </header>
+        <div>
+          <h2 id="setup-title">Who do they call for?</h2>
+          <p class="hint" id="setup-hint"></p>
+        </div>
         <div id="setup-people">
-          <div id="setup-names">
-            <input class="setup-name" placeholder="Mom" autocomplete="off" />
-            <input class="setup-name" placeholder="Dad" autocomplete="off" />
-            <input class="setup-name" placeholder="" autocomplete="off" />
-          </div>
-          <button class="btn secondary" id="setup-photo-btn">Add photos…</button>
+          <div id="setup-rows"></div>
+          <button type="button" class="setup-addrow" id="setup-addrow">
+            <span class="setup-face" aria-hidden="true">＋</span> Add someone
+          </button>
           <input type="file" id="setup-photo-input" accept="image/*" multiple hidden />
-          <div id="setup-photo-rows"></div>
         </div>
         <div id="setup-list" hidden>
           <textarea id="setup-paste" placeholder="One per line" spellcheck="false"></textarea>
           <div id="setup-preview"></div>
         </div>
-        <div class="row">
-          <button class="btn" id="setup-save">Next</button>
-          <button class="btn secondary" id="setup-skip">Skip</button>
+        <div class="setup-actions">
+          <button type="button" class="btn secondary" id="setup-back">Back</button>
+          <button type="button" class="btn" id="setup-save">Next</button>
         </div>
+        <button type="button" class="setup-skip" id="setup-skip">Skip this step</button>
       </div>
     </div>
 

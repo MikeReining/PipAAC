@@ -2680,8 +2680,9 @@ const placeUi = mountPlacePicker({
  * Corner offers the same pass again ("Tell us about their world"). */
 const setupUi = mountSetup({
   db, locale, catalog, open, close, toast,
-  savePhoto, syncUploadBlob, me, saveUser, flushDb,
+  savePhoto, syncUploadBlob, loadPhotoURL, artInto, me, saveUser, flushDb,
   tile: tileApi,
+  dropEntityPhoto: (id) => entityPhoto.delete(id),
   invalidateIndex: () => kbUi.invalidateIndex(),
   renderGrid, rerenderView, renderStrip,
 });

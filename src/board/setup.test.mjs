@@ -2,7 +2,8 @@
  * 009 slice 11 Works Test — "Tell us about their world" (Word_Library
  * § 5.6). The lie-prone layer is the wizard filing into whatever group
  * it is pointed at, so this measures SETUP_STEPS plus the real write
- * owners: People seats mom/dad and joins People; Pets lands in Animals;
+ * owners: People seats mom/dad and joins People, and a second pass
+ * edits the same people instead of re-adding them; Pets lands in Animals;
  * Favorite foods lands in Snack (026/027 retired the Food door); Places
  * lands in Going out. A skipped step writes nothing, and no list step
  * ever touches the core map.
@@ -14,7 +15,7 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { applyPasteRows, resolvePasteRows } from "../../public/shared/bulk.mjs";
-import { applySetupPeople, SETUP_STEPS, stepGroup } from "../../public/shared/setup.mjs";
+import { applySetupPeople, setupPeople, SETUP_STEPS, stepGroup } from "../../public/shared/setup.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
@@ -51,16 +52,17 @@ test("setup steps file into their built-in groups", () => {
     "no Food group exists to file into");
 });
 
-test("People: named people seat at mom/dad and join the People group; photo drafts too", () => {
+test("People: new people seat at mom/dad and join the People group", () => {
   const db = openDb();
   const res = applySetupPeople(db, {
-    names: ["Mom", "Dad", "Nana"],
-    drafts: [{ name: "Aunt Jo", photoKey: "blob:auntjo" }, { name: "" }],
+    people: [
+      { name: "Mom" }, { name: "Dad" }, { name: "Nana" },
+      { name: "Aunt Jo", photoKey: "blob:auntjo" }, { name: "  " },
+    ],
     locale: "en",
     category: categoryOf("grp_people"),
   });
-  assert.equal(res.people, 3);
-  assert.equal(res.photos, 1, "the blank-named draft is skipped");
+  assert.equal(res.added, 4, "the blank row is skipped");
 
   // 018 D1: the first two entities sit where mom/dad sat, on every
   // layout that has those cells.
@@ -80,6 +82,39 @@ test("People: named people seat at mom/dad and join the People group; photo draf
   for (const n of ["Mom", "Dad", "Nana", "Aunt Jo"]) {
     assert.ok(people.includes(n), `${n} filed into People`);
   }
+  assert.equal(setupPeople(db).find((p) => p.name === "Aunt Jo")?.photoKey, "blob:auntjo");
+});
+
+test("People, second pass: the wizard edits who is there, never duplicates or unseats", () => {
+  const db = openDb();
+  applySetupPeople(db, { people: [{ name: "Mom" }], locale: "en" });
+  const seatsOf = (id) => db.prepare(
+    "SELECT layout, slot_index FROM core_override WHERE item_kind = 'entity' AND item_id = ? ORDER BY layout",
+  ).all(id).map((r) => `${r.layout}:${r.slot_index}`);
+
+  // The wizard reopens on the rows it filed.
+  const rows = setupPeople(db);
+  assert.deepEqual(rows.map((r) => r.name), ["Mom"]);
+  const mom = rows[0].id;
+  const momSeats = seatsOf(mom);
+  assert.ok(momSeats.length > 0, "Mom took a seat");
+
+  // Resubmitting unchanged, renaming, adding a face, blanking a name,
+  // and adding one new person.
+  const res = applySetupPeople(db, {
+    people: [{ id: mom, name: "Mama", photoKey: "blob:mama" }, { name: "Dad" }],
+    locale: "en",
+  });
+  assert.deepEqual([res.added, res.updated], [1, 1]);
+  applySetupPeople(db, { people: [{ id: mom, name: "" }], locale: "en" });
+
+  const after = setupPeople(db);
+  assert.deepEqual(after.map((r) => r.name), ["Mama", "Dad"], "renamed, not duplicated");
+  assert.equal(after[0].photoKey, "blob:mama");
+  assert.deepEqual(seatsOf(mom), momSeats, "Mama keeps her seat");
+  const dadSeats = seatsOf(after[1].id);
+  assert.equal(dadSeats.length, momSeats.length, "Dad takes the free seat on each layout");
+  assert.ok(dadSeats.every((s) => !momSeats.includes(s)));
 });
 
 test("Pets, foods and places: library words resolve, new names become entities", () => {
@@ -126,6 +161,6 @@ test("a skipped step writes nothing", () => {
   const empty = resolvePasteRows(db, "  \n\n", { groupId: stepGroup("pets"), locale: "en" });
   assert.equal(empty.length, 0);
   applyPasteRows(db, empty, { groupId: stepGroup("pets") });
-  applySetupPeople(db, { names: ["", "  "], drafts: [], locale: "en" });
+  applySetupPeople(db, { people: [{ name: "" }, { name: "  " }], locale: "en" });
   assert.equal(counts(), before, "skipped and empty steps write nothing");
 });
