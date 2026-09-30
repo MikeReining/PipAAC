@@ -355,7 +355,9 @@
         border-color: var(--ink-text);
       }
       /* Settings → Talking: the same faces, live, on the sample sentence. */
-      .try-faces .try-row { display: flex; gap: var(--gap, 8px); margin: 10px 0 0; }
+      .try-faces { display: flex; flex-direction: column; gap: 10px; }
+      .try-faces .try-row { display: flex; gap: 6px; }
+      .try-faces .hint { margin: 0; }
       .try-faces .face {
         flex: 1; min-height: 56px; border-radius: 10px;
         border: 3px solid var(--edge); background: #fff;
