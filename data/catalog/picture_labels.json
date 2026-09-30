@@ -503,7 +503,7 @@
     "sense": "sns_0055"
    }
   ],
-  "all done": [
+  "alldone": [
    {
     "image_id": "img_0056",
     "asset": "/symbols/all done.png",
@@ -764,7 +764,7 @@
     "sense": "sns_0084"
    }
   ],
-  "apple juice": [
+  "applejuice": [
    {
     "image_id": "img_0085",
     "asset": "/symbols/apple juice.png",
@@ -773,7 +773,7 @@
     "sense": "sns_0085"
    }
   ],
-  "chocolate milk": [
+  "chocolatemilk": [
    {
     "image_id": "img_0086",
     "asset": "/symbols/chocolate milk.png",
@@ -962,7 +962,7 @@
     "sense": "sns_0106"
    }
   ],
-  "hot dog": [
+  "hotdog": [
    {
     "image_id": "img_0107",
     "asset": "/symbols/hot_dog.png",
@@ -1079,7 +1079,7 @@
     "sense": "sns_0119"
    }
   ],
-  "fruit snack": [
+  "fruitsnack": [
    {
     "image_id": "img_0120",
     "asset": "/symbols/fruit_snack.png",
@@ -1088,7 +1088,7 @@
     "sense": "sns_0120"
    }
   ],
-  "ice cream": [
+  "icecream": [
    {
     "image_id": "img_0121",
     "asset": "/symbols/ice_cream.png",
@@ -1471,7 +1471,7 @@
     "sense": "sns_0161"
    }
   ],
-  "wet wipe": [
+  "wetwipe": [
    {
     "image_id": "img_0162",
     "asset": "/symbols/wet_wipe.png",
@@ -2218,7 +2218,7 @@
     "sense": "sns_0245"
    }
   ],
-  "clean up": [
+  "cleanup": [
    {
     "image_id": "img_0246",
     "asset": "/symbols/clean_up.png",
@@ -2389,7 +2389,7 @@
     "sense": "sns_0264"
    }
   ],
-  "wake up": [
+  "wakeup": [
    {
     "image_id": "img_0265",
     "asset": "/symbols/wake_up.png",
@@ -2587,7 +2587,7 @@
     "sense": "sns_0286"
    }
   ],
-  "police officer": [
+  "policeofficer": [
    {
     "image_id": "img_0287",
     "asset": "/symbols/police_officer.png",
@@ -2596,7 +2596,7 @@
     "sense": "sns_0287"
    }
   ],
-  "bus driver": [
+  "busdriver": [
    {
     "image_id": "img_0288",
     "asset": "/symbols/bus_driver.png",
@@ -2704,7 +2704,7 @@
     "sense": "sns_0299"
    }
   ],
-  "living room": [
+  "livingroom": [
    {
     "image_id": "img_0300",
     "asset": "/symbols/living_room.png",
@@ -2839,7 +2839,7 @@
     "sense": "sns_0314"
    }
   ],
-  "grocery store": [
+  "grocerystore": [
    {
     "image_id": "img_0315",
     "asset": "/symbols/grocery_store.png",
@@ -2884,7 +2884,7 @@
     "sense": "sns_0319"
    }
   ],
-  "doctor office": [
+  "doctoroffice": [
    {
     "image_id": "img_0320",
     "asset": "/symbols/doctor_office.png",
@@ -2911,7 +2911,7 @@
     "sense": "sns_0322"
    }
   ],
-  "movie theater": [
+  "movietheater": [
    {
     "image_id": "img_0323",
     "asset": "/symbols/movie_theater.png",
@@ -3037,7 +3037,7 @@
     "sense": "sns_0336"
    }
   ],
-  "action figure": [
+  "actionfigure": [
    {
     "image_id": "img_0337",
     "asset": "/symbols/action_figure.png",
@@ -3055,7 +3055,7 @@
     "sense": "sns_0338"
    }
   ],
-  "play dough": [
+  "playdough": [
    {
     "image_id": "img_0339",
     "asset": "/symbols/play_dough.png",
@@ -3064,7 +3064,7 @@
     "sense": "sns_0339"
    }
   ],
-  "toy car": [
+  "toycar": [
    {
     "image_id": "img_0340",
     "asset": "/symbols/toy_car.png",
@@ -3073,7 +3073,7 @@
     "sense": "sns_0340"
    }
   ],
-  "toy train": [
+  "toytrain": [
    {
     "image_id": "img_0341",
     "asset": "/symbols/toy_train.png",
@@ -3082,7 +3082,7 @@
     "sense": "sns_0341"
    }
   ],
-  "stuffed animal": [
+  "stuffedanimal": [
    {
     "image_id": "img_0342",
     "asset": "/symbols/stuffed_animal.png",
@@ -3118,7 +3118,7 @@
     "sense": "sns_0345"
    }
   ],
-  "board game": [
+  "boardgame": [
    {
     "image_id": "img_0346",
     "asset": "/symbols/board_game.png",
@@ -3127,7 +3127,7 @@
     "sense": "sns_0346"
    }
   ],
-  "swing set": [
+  "swingset": [
    {
     "image_id": "img_0347",
     "asset": "/symbols/swing_set.png",
@@ -3190,7 +3190,7 @@
     "sense": "sns_0353"
    }
   ],
-  "jump rope": [
+  "jumprope": [
    {
     "image_id": "img_0354",
     "asset": "/symbols/jump_rope.png",
@@ -3685,7 +3685,7 @@
     "sense": "sns_0410"
    }
   ],
-  "paper towel": [
+  "papertowel": [
    {
     "image_id": "img_0411",
     "asset": "/symbols/paper towel.png",
@@ -4342,7 +4342,7 @@
     "sense": "sns_0484"
    }
   ],
-  "fire truck": [
+  "firetruck": [
    {
     "image_id": "img_0485",
     "asset": "/symbols/fire truck.png",
@@ -4351,7 +4351,7 @@
     "sense": "sns_0485"
    }
   ],
-  "police car": [
+  "policecar": [
    {
     "image_id": "img_0486",
     "asset": "/symbols/police car.png",
@@ -4513,7 +4513,7 @@
     "sense": "sns_0503"
    }
   ],
-  "gas station": [
+  "gasstation": [
    {
     "image_id": "img_0504",
     "asset": "/symbols/gas station.png",
@@ -5186,7 +5186,7 @@
     "sense": "sns_0586"
    }
   ],
-  "thank you": [
+  "thankyou": [
    {
     "image_id": "img_0587",
     "asset": "/symbols/thank you.png",
@@ -5195,7 +5195,7 @@
     "sense": "sns_0587"
    }
   ],
-  "you're welcome": [
+  "yourewelcome": [
    {
     "image_id": "img_0588",
     "asset": "/symbols/you're welcome.png",
@@ -5213,7 +5213,7 @@
     "sense": "sns_0589"
    }
   ],
-  "excuse me": [
+  "excuseme": [
    {
     "image_id": "img_0590",
     "asset": "/symbols/excuse me.png",
@@ -5222,7 +5222,7 @@
     "sense": "sns_0590"
    }
   ],
-  "good morning": [
+  "goodmorning": [
    {
     "image_id": "img_0591",
     "asset": "/symbols/good morning.png",
@@ -5231,7 +5231,7 @@
     "sense": "sns_0591"
    }
   ],
-  "good night": [
+  "goodnight": [
    {
     "image_id": "img_0592",
     "asset": "/symbols/good night.png",
@@ -5446,7 +5446,7 @@
     "sense": "ext_pepper"
    }
   ],
-  "granola bar": [
+  "granolabar": [
    {
     "image_id": "img_0690",
     "asset": "/symbols/granola_bar.png",
@@ -5718,7 +5718,7 @@
     "sense": "ext_coconut"
    }
   ],
-  "orange juice": [
+  "orangejuice": [
    {
     "image_id": "img_0715",
     "asset": "/symbols/orange_juice.png",
@@ -5734,7 +5734,7 @@
     "sense": "ext_orange_juice"
    }
   ],
-  "grape juice": [
+  "grapejuice": [
    {
     "image_id": "img_0716",
     "asset": "/symbols/grape_juice.png",
@@ -5750,7 +5750,7 @@
     "sense": "ext_grape_juice"
    }
   ],
-  "strawberry milk": [
+  "strawberrymilk": [
    {
     "image_id": "img_0717",
     "asset": "/symbols/strawberry_milk.png",
@@ -6394,7 +6394,7 @@
     "sense": "sns_0080"
    }
   ],
-  "water's": [
+  "waters": [
    {
     "image_id": "img_0082",
     "asset": "/symbols/water.png",
@@ -6448,7 +6448,7 @@
     "sense": "sns_0103"
    }
   ],
-  "chicken's": [
+  "chickens": [
    {
     "image_id": "img_0104",
     "asset": "/symbols/chicken.png",
@@ -6538,7 +6538,7 @@
     "sense": "sns_0134"
    }
   ],
-  "head's": [
+  "heads": [
    {
     "image_id": "img_0138",
     "asset": "/symbols/head.png",
@@ -6547,7 +6547,7 @@
     "sense": "sns_0138"
    }
   ],
-  "hair's": [
+  "hairs": [
    {
     "image_id": "img_0140",
     "asset": "/symbols/hair.png",
@@ -6592,15 +6592,6 @@
     "sense": "sns_0150"
    }
   ],
-  "hand's": [
-   {
-    "image_id": "img_0150",
-    "asset": "/symbols/hand.png",
-    "source": "catalog",
-    "caption": "hand · hands · hand's · Body, Health & Hygiene",
-    "sense": "sns_0150"
-   }
-  ],
   "legs": [
    {
     "image_id": "img_0154",
@@ -6619,7 +6610,7 @@
     "sense": "sns_0156"
    }
   ],
-  "foot's": [
+  "foots": [
    {
     "image_id": "img_0156",
     "asset": "/symbols/foot.png",
@@ -7285,7 +7276,7 @@
     "sense": "sns_0245"
    }
   ],
-  "cleans up": [
+  "cleansup": [
    {
     "image_id": "img_0246",
     "asset": "/symbols/clean_up.png",
@@ -7294,7 +7285,7 @@
     "sense": "sns_0246"
    }
   ],
-  "cleaning up": [
+  "cleaningup": [
    {
     "image_id": "img_0246",
     "asset": "/symbols/clean_up.png",
@@ -7618,7 +7609,7 @@
     "sense": "sns_0264"
    }
   ],
-  "wakes up": [
+  "wakesup": [
    {
     "image_id": "img_0265",
     "asset": "/symbols/wake_up.png",
@@ -7627,7 +7618,7 @@
     "sense": "sns_0265"
    }
   ],
-  "waking up": [
+  "wakingup": [
    {
     "image_id": "img_0265",
     "asset": "/symbols/wake_up.png",
@@ -7645,15 +7636,6 @@
     "sense": "sns_0267"
    }
   ],
-  "mom's": [
-   {
-    "image_id": "img_0267",
-    "asset": "/symbols/mom.png",
-    "source": "catalog",
-    "caption": "mom · moms · mom's · People, Family & Roles",
-    "sense": "sns_0267"
-   }
-  ],
   "dads": [
    {
     "image_id": "img_0268",
@@ -7663,16 +7645,7 @@
     "sense": "sns_0268"
    }
   ],
-  "dad's": [
-   {
-    "image_id": "img_0268",
-    "asset": "/symbols/dad.png",
-    "source": "catalog",
-    "caption": "dad · dads · dad's · People, Family & Roles",
-    "sense": "sns_0268"
-   }
-  ],
-  "mama's": [
+  "mamas": [
    {
     "image_id": "img_0269",
     "asset": "/symbols/mama.png",
@@ -7681,7 +7654,7 @@
     "sense": "sns_0269"
    }
   ],
-  "dada's": [
+  "dadas": [
    {
     "image_id": "img_0270",
     "asset": "/symbols/dada.png",
@@ -7699,7 +7672,7 @@
     "sense": "sns_0271"
    }
   ],
-  "baby's": [
+  "babys": [
    {
     "image_id": "img_0271",
     "asset": "/symbols/baby.png",
@@ -7717,25 +7690,7 @@
     "sense": "sns_0272"
    }
   ],
-  "brother's": [
-   {
-    "image_id": "img_0272",
-    "asset": "/symbols/brother.png",
-    "source": "catalog",
-    "caption": "brother · brothers · brother's · People, Family & Roles",
-    "sense": "sns_0272"
-   }
-  ],
   "sisters": [
-   {
-    "image_id": "img_0273",
-    "asset": "/symbols/sister.png",
-    "source": "catalog",
-    "caption": "sister · sisters · sister's · People, Family & Roles",
-    "sense": "sns_0273"
-   }
-  ],
-  "sister's": [
    {
     "image_id": "img_0273",
     "asset": "/symbols/sister.png",
@@ -7753,16 +7708,7 @@
     "sense": "sns_0274"
    }
   ],
-  "grandma's": [
-   {
-    "image_id": "img_0274",
-    "asset": "/symbols/grandma.png",
-    "source": "catalog",
-    "caption": "grandma · grandmas · grandma's · People, Family & Roles",
-    "sense": "sns_0274"
-   }
-  ],
-  "grandpa's": [
+  "grandpas": [
    {
     "image_id": "img_0275",
     "asset": "/symbols/grandpa.png",
@@ -7807,15 +7753,6 @@
     "sense": "sns_0280"
    }
   ],
-  "teacher's": [
-   {
-    "image_id": "img_0280",
-    "asset": "/symbols/teacher.png",
-    "source": "catalog",
-    "caption": "teacher · teachers · teacher's · People, Family & Roles",
-    "sense": "sns_0280"
-   }
-  ],
   "students": [
    {
     "image_id": "img_0283",
@@ -7826,15 +7763,6 @@
    }
   ],
   "friends": [
-   {
-    "image_id": "img_0284",
-    "asset": "/symbols/friend.png",
-    "source": "catalog",
-    "caption": "friend · friends · friend's · People, Family & Roles",
-    "sense": "sns_0284"
-   }
-  ],
-  "friend's": [
    {
     "image_id": "img_0284",
     "asset": "/symbols/friend.png",
@@ -7861,7 +7789,7 @@
     "sense": "sns_0289"
    }
   ],
-  "person's": [
+  "persons": [
    {
     "image_id": "img_0290",
     "asset": "/symbols/person.png",
@@ -7870,7 +7798,7 @@
     "sense": "sns_0290"
    }
   ],
-  "people's": [
+  "peoples": [
    {
     "image_id": "img_0291",
     "asset": "/symbols/people.png",
@@ -7879,7 +7807,7 @@
     "sense": "sns_0291"
    }
   ],
-  "doctor's": [
+  "doctors": [
    {
     "image_id": "img_0293",
     "asset": "/symbols/doctor.png",
@@ -7897,25 +7825,7 @@
     "sense": "sns_0294"
    }
   ],
-  "nurse's": [
-   {
-    "image_id": "img_0294",
-    "asset": "/symbols/nurse.png",
-    "source": "catalog",
-    "caption": "nurse · nurses · nurse's · People, Family & Roles",
-    "sense": "sns_0294"
-   }
-  ],
   "names": [
-   {
-    "image_id": "img_0296",
-    "asset": "/symbols/name.png",
-    "source": "catalog",
-    "caption": "name · names · name's · People, Family & Roles",
-    "sense": "sns_0296"
-   }
-  ],
-  "name's": [
    {
     "image_id": "img_0296",
     "asset": "/symbols/name.png",
@@ -7933,7 +7843,7 @@
     "sense": "sns_0298"
    }
   ],
-  "school's": [
+  "schools": [
    {
     "image_id": "img_0305",
     "asset": "/symbols/school.png",
@@ -7996,25 +7906,7 @@
     "sense": "sns_0336"
    }
   ],
-  "doll's": [
-   {
-    "image_id": "img_0336",
-    "asset": "/symbols/doll.png",
-    "source": "catalog",
-    "caption": "doll · dolls · doll's · Toys, Play, Media & Leisure",
-    "sense": "sns_0336"
-   }
-  ],
   "dinosaurs": [
-   {
-    "image_id": "img_0343",
-    "asset": "/symbols/dinosaur.png",
-    "source": "catalog",
-    "caption": "dinosaur · dinosaurs · dinosaur's · Toys, Play, Media & Leisure",
-    "sense": "sns_0343"
-   }
-  ],
-  "dinosaur's": [
    {
     "image_id": "img_0343",
     "asset": "/symbols/dinosaur.png",
@@ -8059,7 +7951,7 @@
     "sense": "sns_0357"
    }
   ],
-  "phone's": [
+  "phones": [
    {
     "image_id": "img_0359",
     "asset": "/symbols/phone.png",
@@ -8095,15 +7987,6 @@
     "sense": "sns_0369"
    }
   ],
-  "book's": [
-   {
-    "image_id": "img_0369",
-    "asset": "/symbols/book.png",
-    "source": "catalog",
-    "caption": "book · books · book's · Toys, Play, Media & Leisure",
-    "sense": "sns_0369"
-   }
-  ],
   "chairs": [
    {
     "image_id": "img_0370",
@@ -8114,15 +7997,6 @@
    }
   ],
   "doors": [
-   {
-    "image_id": "img_0374",
-    "asset": "/symbols/door.png",
-    "source": "catalog",
-    "caption": "door · doors · door's · Home, Household Objects & Daily Tools",
-    "sense": "sns_0374"
-   }
-  ],
-  "door's": [
    {
     "image_id": "img_0374",
     "asset": "/symbols/door.png",
@@ -8293,7 +8167,7 @@
     "sense": "sns_0405"
    }
   ],
-  "tape's": [
+  "tapes": [
    {
     "image_id": "img_0408",
     "asset": "/symbols/tape.png",
@@ -8383,25 +8257,7 @@
     "sense": "sns_0441"
    }
   ],
-  "dog's": [
-   {
-    "image_id": "img_0441",
-    "asset": "/symbols/dog.png",
-    "source": "catalog",
-    "caption": "dog · dogs · dog's · Animals & Nature",
-    "sense": "sns_0441"
-   }
-  ],
   "cats": [
-   {
-    "image_id": "img_0442",
-    "asset": "/symbols/cat.png",
-    "source": "catalog",
-    "caption": "cat · cats · cat's · Animals & Nature",
-    "sense": "sns_0442"
-   }
-  ],
-  "cat's": [
    {
     "image_id": "img_0442",
     "asset": "/symbols/cat.png",
@@ -8419,7 +8275,7 @@
     "sense": "sns_0443"
    }
   ],
-  "puppy's": [
+  "puppys": [
    {
     "image_id": "img_0443",
     "asset": "/symbols/puppy.png",
@@ -8446,15 +8302,6 @@
     "sense": "sns_0445"
    }
   ],
-  "bird's": [
-   {
-    "image_id": "img_0445",
-    "asset": "/symbols/bird.png",
-    "source": "catalog",
-    "caption": "bird · birds · bird's · Animals & Nature",
-    "sense": "sns_0445"
-   }
-  ],
   "bunnies": [
    {
     "image_id": "img_0446",
@@ -8464,7 +8311,7 @@
     "sense": "sns_0446"
    }
   ],
-  "bunny's": [
+  "bunnys": [
    {
     "image_id": "img_0446",
     "asset": "/symbols/bunny.png",
@@ -8474,15 +8321,6 @@
    }
   ],
   "ducks": [
-   {
-    "image_id": "img_0447",
-    "asset": "/symbols/duck.png",
-    "source": "catalog",
-    "caption": "duck · ducks · duck's · Animals & Nature",
-    "sense": "sns_0447"
-   }
-  ],
-  "duck's": [
    {
     "image_id": "img_0447",
     "asset": "/symbols/duck.png",
@@ -8509,25 +8347,7 @@
     "sense": "sns_0449"
    }
   ],
-  "cow's": [
-   {
-    "image_id": "img_0449",
-    "asset": "/symbols/cow.png",
-    "source": "catalog",
-    "caption": "cow · cows · cow's · Animals & Nature",
-    "sense": "sns_0449"
-   }
-  ],
   "horses": [
-   {
-    "image_id": "img_0450",
-    "asset": "/symbols/horse.png",
-    "source": "catalog",
-    "caption": "horse · horses · horse's · Animals & Nature",
-    "sense": "sns_0450"
-   }
-  ],
-  "horse's": [
    {
     "image_id": "img_0450",
     "asset": "/symbols/horse.png",
@@ -8545,16 +8365,7 @@
     "sense": "sns_0451"
    }
   ],
-  "pig's": [
-   {
-    "image_id": "img_0451",
-    "asset": "/symbols/pig.png",
-    "source": "catalog",
-    "caption": "pig · pigs · pig's · Animals & Nature",
-    "sense": "sns_0451"
-   }
-  ],
-  "sheep's": [
+  "sheeps": [
    {
     "image_id": "img_0452",
     "asset": "/symbols/sheep.png",
@@ -8581,15 +8392,6 @@
     "sense": "sns_0454"
    }
   ],
-  "bear's": [
-   {
-    "image_id": "img_0454",
-    "asset": "/symbols/bear.png",
-    "source": "catalog",
-    "caption": "bear · bears · bear's · Animals & Nature",
-    "sense": "sns_0454"
-   }
-  ],
   "lions": [
    {
     "image_id": "img_0455",
@@ -8599,16 +8401,7 @@
     "sense": "sns_0455"
    }
   ],
-  "lion's": [
-   {
-    "image_id": "img_0455",
-    "asset": "/symbols/lion.png",
-    "source": "catalog",
-    "caption": "lion · lions · lion's · Animals & Nature",
-    "sense": "sns_0455"
-   }
-  ],
-  "tiger's": [
+  "tigers": [
    {
     "image_id": "img_0456",
     "asset": "/symbols/tiger.png",
@@ -8626,15 +8419,6 @@
     "sense": "sns_0457"
    }
   ],
-  "elephant's": [
-   {
-    "image_id": "img_0457",
-    "asset": "/symbols/elephant.png",
-    "source": "catalog",
-    "caption": "elephant · elephants · elephant's · Animals & Nature",
-    "sense": "sns_0457"
-   }
-  ],
   "monkeys": [
    {
     "image_id": "img_0458",
@@ -8644,25 +8428,7 @@
     "sense": "sns_0458"
    }
   ],
-  "monkey's": [
-   {
-    "image_id": "img_0458",
-    "asset": "/symbols/monkey.png",
-    "source": "catalog",
-    "caption": "monkey · monkeys · monkey's · Animals & Nature",
-    "sense": "sns_0458"
-   }
-  ],
   "giraffes": [
-   {
-    "image_id": "img_0459",
-    "asset": "/symbols/giraffe.png",
-    "source": "catalog",
-    "caption": "giraffe · giraffes · giraffe's · Animals & Nature",
-    "sense": "sns_0459"
-   }
-  ],
-  "giraffe's": [
    {
     "image_id": "img_0459",
     "asset": "/symbols/giraffe.png",
@@ -8681,15 +8447,6 @@
    }
   ],
   "hippos": [
-   {
-    "image_id": "img_0461",
-    "asset": "/symbols/hippo.png",
-    "source": "catalog",
-    "caption": "hippo · hippos · hippo's · Animals & Nature",
-    "sense": "sns_0461"
-   }
-  ],
-  "hippo's": [
    {
     "image_id": "img_0461",
     "asset": "/symbols/hippo.png",
@@ -8734,15 +8491,6 @@
     "sense": "sns_0465"
    }
   ],
-  "snake's": [
-   {
-    "image_id": "img_0465",
-    "asset": "/symbols/snake.png",
-    "source": "catalog",
-    "caption": "snake · snakes · snake's · Animals & Nature",
-    "sense": "sns_0465"
-   }
-  ],
   "turtles": [
    {
     "image_id": "img_0466",
@@ -8761,15 +8509,6 @@
     "sense": "sns_0467"
    }
   ],
-  "frog's": [
-   {
-    "image_id": "img_0467",
-    "asset": "/symbols/frog.png",
-    "source": "catalog",
-    "caption": "frog · frogs · frog's · Animals & Nature",
-    "sense": "sns_0467"
-   }
-  ],
   "bugs": [
    {
     "image_id": "img_0468",
@@ -8780,15 +8519,6 @@
    }
   ],
   "spiders": [
-   {
-    "image_id": "img_0469",
-    "asset": "/symbols/spider.png",
-    "source": "catalog",
-    "caption": "spider · spiders · spider's · Animals & Nature",
-    "sense": "sns_0469"
-   }
-  ],
-  "spider's": [
    {
     "image_id": "img_0469",
     "asset": "/symbols/spider.png",
@@ -8824,7 +8554,7 @@
     "sense": "sns_0473"
    }
   ],
-  "sun's": [
+  "suns": [
    {
     "image_id": "img_0474",
     "asset": "/symbols/sun.png",
@@ -8878,15 +8608,6 @@
     "sense": "sns_0481"
    }
   ],
-  "car's": [
-   {
-    "image_id": "img_0481",
-    "asset": "/symbols/car.png",
-    "source": "catalog",
-    "caption": "car · cars · car's · Vehicles & Transportation",
-    "sense": "sns_0481"
-   }
-  ],
   "trucks": [
    {
     "image_id": "img_0484",
@@ -8897,15 +8618,6 @@
    }
   ],
   "trains": [
-   {
-    "image_id": "img_0488",
-    "asset": "/symbols/train.png",
-    "source": "catalog",
-    "caption": "train · trains · train's · Vehicles & Transportation",
-    "sense": "sns_0488"
-   }
-  ],
-  "train's": [
    {
     "image_id": "img_0488",
     "asset": "/symbols/train.png",
@@ -8933,15 +8645,6 @@
    }
   ],
   "tractors": [
-   {
-    "image_id": "img_0492",
-    "asset": "/symbols/tractor.png",
-    "source": "catalog",
-    "caption": "tractor · tractors · tractor's · Vehicles & Transportation",
-    "sense": "sns_0492"
-   }
-  ],
-  "tractor's": [
    {
     "image_id": "img_0492",
     "asset": "/symbols/tractor.png",
@@ -8986,7 +8689,7 @@
     "sense": "sns_0498"
    }
   ],
-  "today's": [
+  "todays": [
    {
     "image_id": "img_0562",
     "asset": "/symbols/today.png",
@@ -8995,7 +8698,7 @@
     "sense": "sns_0562"
    }
   ],
-  "tomorrow's": [
+  "tomorrows": [
    {
     "image_id": "img_0563",
     "asset": "/symbols/tomorrow.png",
@@ -9040,25 +8743,7 @@
     "sense": "sns_0672"
    }
   ],
-  "boy's": [
-   {
-    "image_id": "img_0672",
-    "asset": "/symbols/boy.png",
-    "source": "catalog",
-    "caption": "boy · boys · boy's · People, Family & Roles",
-    "sense": "sns_0672"
-   }
-  ],
   "girls": [
-   {
-    "image_id": "img_0673",
-    "asset": "/symbols/girl.png",
-    "source": "catalog",
-    "caption": "girl · girls · girl's · People, Family & Roles",
-    "sense": "sns_0673"
-   }
-  ],
-  "girl's": [
    {
     "image_id": "img_0673",
     "asset": "/symbols/girl.png",
@@ -9076,7 +8761,7 @@
     "sense": "sns_0674"
    }
   ],
-  "man's": [
+  "mans": [
    {
     "image_id": "img_0674",
     "asset": "/symbols/man.png",
@@ -9094,7 +8779,7 @@
     "sense": "sns_0675"
    }
   ],
-  "woman's": [
+  "womans": [
    {
     "image_id": "img_0675",
     "asset": "/symbols/woman.png",
@@ -9166,7 +8851,7 @@
     "sense": "ext_pepsi"
    }
   ],
-  "dr pepper": [
+  "drpepper": [
    {
     "image_id": "ext_dr_pepper",
     "asset": "/api/v1/pictures/img/ext_dr_pepper",
@@ -9184,7 +8869,7 @@
     "sense": "ext_7up"
    }
   ],
-  "mountain dew": [
+  "mountaindew": [
    {
     "image_id": "ext_mountain_dew",
     "asset": "/api/v1/pictures/img/ext_mountain_dew",
@@ -9202,7 +8887,7 @@
     "sense": "ext_fanta"
    }
   ],
-  "diet coke": [
+  "dietcoke": [
    {
     "image_id": "ext_diet_coke",
     "asset": "/api/v1/pictures/img/ext_diet_coke",
@@ -9238,7 +8923,7 @@
     "sense": "ext_kfc"
    }
   ],
-  "mcdonald's": [
+  "mcdonalds": [
    {
     "image_id": "ext_mcdonald_s",
     "asset": "/api/v1/pictures/img/ext_mcdonald_s",
@@ -9247,7 +8932,7 @@
     "sense": "ext_mcdonald_s"
    }
   ],
-  "wendy's": [
+  "wendys": [
    {
     "image_id": "ext_wendy_s",
     "asset": "/api/v1/pictures/img/ext_wendy_s",
@@ -9256,7 +8941,7 @@
     "sense": "ext_wendy_s"
    }
   ],
-  "chick-fil-a": [
+  "chickfila": [
    {
     "image_id": "ext_chick_fil_a",
     "asset": "/api/v1/pictures/img/ext_chick_fil_a",
@@ -9265,7 +8950,7 @@
     "sense": "ext_chick_fil_a"
    }
   ],
-  "burger king": [
+  "burgerking": [
    {
     "image_id": "ext_burger_king",
     "asset": "/api/v1/pictures/img/ext_burger_king",
@@ -9274,7 +8959,7 @@
     "sense": "ext_burger_king"
    }
   ],
-  "subway (restaurant)": [
+  "subway(restaurant)": [
    {
     "image_id": "ext_subway_restaurant",
     "asset": "/api/v1/pictures/img/ext_subway_restaurant",
@@ -9283,7 +8968,7 @@
     "sense": "ext_subway_restaurant"
    }
   ],
-  "my head hurts": [
+  "myheadhurts": [
    {
     "image_id": "ext_my_head_hurts",
     "asset": "/api/v1/pictures/img/ext_my_head_hurts",
@@ -9292,7 +8977,7 @@
     "sense": "ext_my_head_hurts"
    }
   ],
-  "i'm in pain": [
+  "iminpain": [
    {
     "image_id": "ext_i_m_in_pain",
     "asset": "/api/v1/pictures/img/ext_i_m_in_pain",
@@ -9310,7 +8995,7 @@
     "sense": "ext_yum"
    }
   ],
-  "uh-oh": [
+  "uhoh": [
    {
     "image_id": "ext_uh_oh",
     "asset": "/api/v1/pictures/img/ext_uh_oh",
@@ -9355,7 +9040,7 @@
     "sense": "ext_whoa"
    }
   ],
-  "oh no": [
+  "ohno": [
    {
     "image_id": "ext_oh_no",
     "asset": "/api/v1/pictures/img/ext_oh_no",
@@ -9589,7 +9274,7 @@
     "sense": "ext_scroll"
    }
   ],
-  "turn on": [
+  "turnon": [
    {
     "image_id": "ext_turn_on",
     "asset": "/api/v1/pictures/img/ext_turn_on",
@@ -9616,7 +9301,7 @@
     "sense": "ext_wish"
    }
   ],
-  "plug in": [
+  "plugin": [
    {
     "image_id": "ext_plug_in",
     "asset": "/api/v1/pictures/img/ext_plug_in",
@@ -9778,7 +9463,7 @@
     "sense": "ext_sweet"
    }
   ],
-  "blow out": [
+  "blowout": [
    {
     "image_id": "ext_blow_out",
     "asset": "/api/v1/pictures/img/ext_blow_out",
@@ -9787,7 +9472,7 @@
     "sense": "ext_blow_out"
    }
   ],
-  "blow bubbles": [
+  "blowbubbles": [
    {
     "image_id": "ext_blow_bubbles",
     "asset": "/api/v1/pictures/img/ext_blow_bubbles",
@@ -10318,7 +10003,7 @@
     "sense": "ext_bathtub"
    }
   ],
-  "toilet paper": [
+  "toiletpaper": [
    {
     "image_id": "ext_toilet_paper",
     "asset": "/api/v1/pictures/img/ext_toilet_paper",
@@ -10327,7 +10012,7 @@
     "sense": "ext_toilet_paper"
    }
   ],
-  "trash can": [
+  "trashcan": [
    {
     "image_id": "ext_trash_can",
     "asset": "/api/v1/pictures/img/ext_trash_can",
@@ -10408,7 +10093,7 @@
     "sense": "ext_dryer"
    }
   ],
-  "washing machine": [
+  "washingmachine": [
    {
     "image_id": "ext_washing_machine",
     "asset": "/api/v1/pictures/img/ext_washing_machine",
@@ -10453,7 +10138,7 @@
     "sense": "ext_jar"
    }
   ],
-  "sippy cup": [
+  "sippycup": [
    {
     "image_id": "ext_sippy_cup",
     "asset": "/api/v1/pictures/img/ext_sippy_cup",
@@ -10471,7 +10156,7 @@
     "sense": "ext_crib"
    }
   ],
-  "bunk bed": [
+  "bunkbed": [
    {
     "image_id": "ext_bunk_bed",
     "asset": "/api/v1/pictures/img/ext_bunk_bed",
@@ -10480,7 +10165,7 @@
     "sense": "ext_bunk_bed"
    }
   ],
-  "water bottle": [
+  "waterbottle": [
    {
     "image_id": "ext_water_bottle",
     "asset": "/api/v1/pictures/img/ext_water_bottle",
@@ -10543,7 +10228,7 @@
     "sense": "ext_lock"
    }
   ],
-  "light switch": [
+  "lightswitch": [
    {
     "image_id": "ext_light_switch",
     "asset": "/api/v1/pictures/img/ext_light_switch",
@@ -10678,7 +10363,7 @@
     "sense": "ext_candle"
    }
   ],
-  "light bulb": [
+  "lightbulb": [
    {
     "image_id": "ext_light_bulb",
     "asset": "/api/v1/pictures/img/ext_light_bulb",
@@ -10696,7 +10381,7 @@
     "sense": "ext_photo"
    }
   ],
-  "alarm clock": [
+  "alarmclock": [
    {
     "image_id": "ext_alarm_clock",
     "asset": "/api/v1/pictures/img/ext_alarm_clock",
@@ -10741,7 +10426,7 @@
     "sense": "ext_calendar"
    }
   ],
-  "piggy bank": [
+  "piggybank": [
    {
     "image_id": "ext_piggy_bank",
     "asset": "/api/v1/pictures/img/ext_piggy_bank",
@@ -10750,7 +10435,7 @@
     "sense": "ext_piggy_bank"
    }
   ],
-  "bubble bath": [
+  "bubblebath": [
    {
     "image_id": "ext_bubble_bath",
     "asset": "/api/v1/pictures/img/ext_bubble_bath",
@@ -10786,7 +10471,7 @@
     "sense": "ext_washcloth"
    }
   ],
-  "bath toy": [
+  "bathtoy": [
    {
     "image_id": "ext_bath_toy",
     "asset": "/api/v1/pictures/img/ext_bath_toy",
@@ -10795,7 +10480,7 @@
     "sense": "ext_bath_toy"
    }
   ],
-  "cotton swab": [
+  "cottonswab": [
    {
     "image_id": "ext_cotton_swab",
     "asset": "/api/v1/pictures/img/ext_cotton_swab",
@@ -10804,7 +10489,7 @@
     "sense": "ext_cotton_swab"
    }
   ],
-  "hair dryer": [
+  "hairdryer": [
    {
     "image_id": "ext_hair_dryer",
     "asset": "/api/v1/pictures/img/ext_hair_dryer",
@@ -10813,7 +10498,7 @@
     "sense": "ext_hair_dryer"
    }
   ],
-  "bug spray": [
+  "bugspray": [
    {
     "image_id": "ext_bug_spray",
     "asset": "/api/v1/pictures/img/ext_bug_spray",
@@ -10831,7 +10516,7 @@
     "sense": "ext_hairbrush"
    }
   ],
-  "nail polish": [
+  "nailpolish": [
    {
     "image_id": "ext_nail_polish",
     "asset": "/api/v1/pictures/img/ext_nail_polish",
@@ -10840,7 +10525,7 @@
     "sense": "ext_nail_polish"
    }
   ],
-  "hair tie": [
+  "hairtie": [
    {
     "image_id": "ext_hair_tie",
     "asset": "/api/v1/pictures/img/ext_hair_tie",
@@ -10966,7 +10651,7 @@
     "sense": "ext_envelope"
    }
   ],
-  "wrapping paper": [
+  "wrappingpaper": [
    {
     "image_id": "ext_wrapping_paper",
     "asset": "/api/v1/pictures/img/ext_wrapping_paper",
@@ -11083,7 +10768,7 @@
     "sense": "ext_ladder"
    }
   ],
-  "lawn mower": [
+  "lawnmower": [
    {
     "image_id": "ext_lawn_mower",
     "asset": "/api/v1/pictures/img/ext_lawn_mower",
@@ -11101,7 +10786,7 @@
     "sense": "ext_heater"
    }
   ],
-  "weighted blanket": [
+  "weightedblanket": [
    {
     "image_id": "ext_weighted_blanket",
     "asset": "/api/v1/pictures/img/ext_weighted_blanket",
@@ -11128,7 +10813,7 @@
     "sense": "ext_tent"
    }
   ],
-  "car seat": [
+  "carseat": [
    {
     "image_id": "ext_car_seat",
     "asset": "/api/v1/pictures/img/ext_car_seat",
@@ -11137,7 +10822,7 @@
     "sense": "ext_car_seat"
    }
   ],
-  "sleeping bag": [
+  "sleepingbag": [
    {
     "image_id": "ext_sleeping_bag",
     "asset": "/api/v1/pictures/img/ext_sleeping_bag",
@@ -11146,7 +10831,7 @@
     "sense": "ext_sleeping_bag"
    }
   ],
-  "ice pack": [
+  "icepack": [
    {
     "image_id": "ext_ice_pack",
     "asset": "/api/v1/pictures/img/ext_ice_pack",
@@ -11164,7 +10849,7 @@
     "sense": "ext_bib"
    }
   ],
-  "spray bottle": [
+  "spraybottle": [
    {
     "image_id": "ext_spray_bottle",
     "asset": "/api/v1/pictures/img/ext_spray_bottle",
@@ -11191,7 +10876,7 @@
     "sense": "ext_whisk"
    }
   ],
-  "booster seat": [
+  "boosterseat": [
    {
     "image_id": "ext_booster_seat",
     "asset": "/api/v1/pictures/img/ext_booster_seat",
@@ -11209,7 +10894,7 @@
     "sense": "ext_chopsticks"
    }
   ],
-  "rolling pin": [
+  "rollingpin": [
    {
     "image_id": "ext_rolling_pin",
     "asset": "/api/v1/pictures/img/ext_rolling_pin",
@@ -11218,7 +10903,7 @@
     "sense": "ext_rolling_pin"
    }
   ],
-  "measuring cup": [
+  "measuringcup": [
    {
     "image_id": "ext_measuring_cup",
     "asset": "/api/v1/pictures/img/ext_measuring_cup",
@@ -11236,7 +10921,7 @@
     "sense": "ext_spatula"
    }
   ],
-  "cookie cutter": [
+  "cookiecutter": [
    {
     "image_id": "ext_cookie_cutter",
     "asset": "/api/v1/pictures/img/ext_cookie_cutter",
@@ -11245,7 +10930,7 @@
     "sense": "ext_cookie_cutter"
    }
   ],
-  "oven mitt": [
+  "ovenmitt": [
    {
     "image_id": "ext_oven_mitt",
     "asset": "/api/v1/pictures/img/ext_oven_mitt",
@@ -11254,7 +10939,7 @@
     "sense": "ext_oven_mitt"
    }
   ],
-  "cutting board": [
+  "cuttingboard": [
    {
     "image_id": "ext_cutting_board",
     "asset": "/api/v1/pictures/img/ext_cutting_board",
@@ -11290,7 +10975,7 @@
     "sense": "ext_cooler"
    }
   ],
-  "pool noodle": [
+  "poolnoodle": [
    {
     "image_id": "ext_pool_noodle",
     "asset": "/api/v1/pictures/img/ext_pool_noodle",
@@ -11299,7 +10984,7 @@
     "sense": "ext_pool_noodle"
    }
   ],
-  "rocking chair": [
+  "rockingchair": [
    {
     "image_id": "ext_rocking_chair",
     "asset": "/api/v1/pictures/img/ext_rocking_chair",
@@ -11308,7 +10993,7 @@
     "sense": "ext_rocking_chair"
    }
   ],
-  "step stool": [
+  "stepstool": [
    {
     "image_id": "ext_step_stool",
     "asset": "/api/v1/pictures/img/ext_step_stool",
@@ -11326,7 +11011,7 @@
     "sense": "ext_cushion"
    }
   ],
-  "bean bag": [
+  "beanbag": [
    {
     "image_id": "ext_bean_bag",
     "asset": "/api/v1/pictures/img/ext_bean_bag",
@@ -11371,7 +11056,7 @@
     "sense": "ext_mattress"
    }
   ],
-  "laundry basket": [
+  "laundrybasket": [
    {
     "image_id": "ext_laundry_basket",
     "asset": "/api/v1/pictures/img/ext_laundry_basket",
@@ -11407,7 +11092,7 @@
     "sense": "ext_needle"
    }
   ],
-  "sewing machine": [
+  "sewingmachine": [
    {
     "image_id": "ext_sewing_machine",
     "asset": "/api/v1/pictures/img/ext_sewing_machine",
@@ -11425,7 +11110,7 @@
     "sense": "ext_thread"
    }
   ],
-  "smoke alarm": [
+  "smokealarm": [
    {
     "image_id": "ext_smoke_alarm",
     "asset": "/api/v1/pictures/img/ext_smoke_alarm",
@@ -11443,7 +11128,7 @@
     "sense": "ext_iron"
    }
   ],
-  "first aid kit": [
+  "firstaidkit": [
    {
     "image_id": "ext_first_aid_kit",
     "asset": "/api/v1/pictures/img/ext_first_aid_kit",
@@ -11452,7 +11137,7 @@
     "sense": "ext_first_aid_kit"
    }
   ],
-  "fire extinguisher": [
+  "fireextinguisher": [
    {
     "image_id": "ext_fire_extinguisher",
     "asset": "/api/v1/pictures/img/ext_fire_extinguisher",
@@ -11461,7 +11146,7 @@
     "sense": "ext_fire_extinguisher"
    }
   ],
-  "plant pot": [
+  "plantpot": [
    {
     "image_id": "ext_plant_pot",
     "asset": "/api/v1/pictures/img/ext_plant_pot",
@@ -11470,7 +11155,7 @@
     "sense": "ext_plant_pot"
    }
   ],
-  "watering can": [
+  "wateringcan": [
    {
     "image_id": "ext_watering_can",
     "asset": "/api/v1/pictures/img/ext_watering_can",
@@ -11479,7 +11164,7 @@
     "sense": "ext_watering_can"
    }
   ],
-  "welcome mat": [
+  "welcomemat": [
    {
     "image_id": "ext_welcome_mat",
     "asset": "/api/v1/pictures/img/ext_welcome_mat",
@@ -11488,7 +11173,7 @@
     "sense": "ext_welcome_mat"
    }
   ],
-  "bird feeder": [
+  "birdfeeder": [
    {
     "image_id": "ext_bird_feeder",
     "asset": "/api/v1/pictures/img/ext_bird_feeder",
@@ -11506,7 +11191,7 @@
     "sense": "ext_vase"
    }
   ],
-  "tape measure": [
+  "tapemeasure": [
    {
     "image_id": "ext_tape_measure",
     "asset": "/api/v1/pictures/img/ext_tape_measure",
@@ -11515,7 +11200,7 @@
     "sense": "ext_tape_measure"
    }
   ],
-  "magnifying glass": [
+  "magnifyingglass": [
    {
     "image_id": "ext_magnifying_glass",
     "asset": "/api/v1/pictures/img/ext_magnifying_glass",
@@ -11614,7 +11299,7 @@
     "sense": "ext_cane"
    }
   ],
-  "communication device": [
+  "communicationdevice": [
    {
     "image_id": "ext_communication_device",
     "asset": "/api/v1/pictures/img/ext_communication_device",
@@ -11623,7 +11308,7 @@
     "sense": "ext_communication_device"
    }
   ],
-  "baby monitor": [
+  "babymonitor": [
    {
     "image_id": "ext_baby_monitor",
     "asset": "/api/v1/pictures/img/ext_baby_monitor",
@@ -11641,7 +11326,7 @@
     "sense": "ext_earplugs"
    }
   ],
-  "stairs gate": [
+  "stairsgate": [
    {
     "image_id": "ext_stairs_gate",
     "asset": "/api/v1/pictures/img/ext_stairs_gate",
@@ -11686,7 +11371,7 @@
     "sense": "ext_clementine"
    }
   ],
-  "fruit cup": [
+  "fruitcup": [
    {
     "image_id": "ext_fruit_cup",
     "asset": "/api/v1/pictures/img/ext_fruit_cup",
@@ -11713,7 +11398,7 @@
     "sense": "ext_tomato"
    }
   ],
-  "tater tots": [
+  "tatertots": [
    {
     "image_id": "ext_tater_tots",
     "asset": "/api/v1/pictures/img/ext_tater_tots",
@@ -11722,7 +11407,7 @@
     "sense": "ext_tater_tots"
    }
   ],
-  "french toast": [
+  "frenchtoast": [
    {
     "image_id": "ext_french_toast",
     "asset": "/api/v1/pictures/img/ext_french_toast",
@@ -11731,7 +11416,7 @@
     "sense": "ext_french_toast"
    }
   ],
-  "hash browns": [
+  "hashbrowns": [
    {
     "image_id": "ext_hash_browns",
     "asset": "/api/v1/pictures/img/ext_hash_browns",
@@ -11848,7 +11533,7 @@
     "sense": "ext_zucchini"
    }
   ],
-  "green beans": [
+  "greenbeans": [
    {
     "image_id": "ext_green_beans",
     "asset": "/api/v1/pictures/img/ext_green_beans",
@@ -11857,7 +11542,7 @@
     "sense": "ext_green_beans"
    }
   ],
-  "sweet potato": [
+  "sweetpotato": [
    {
     "image_id": "ext_sweet_potato",
     "asset": "/api/v1/pictures/img/ext_sweet_potato",
@@ -11974,7 +11659,7 @@
     "sense": "ext_taco"
    }
   ],
-  "ribs (food)": [
+  "ribs(food)": [
    {
     "image_id": "ext_ribs_food",
     "asset": "/api/v1/pictures/img/ext_ribs_food",
@@ -12010,7 +11695,7 @@
     "sense": "ext_burrito"
    }
   ],
-  "chicken wings": [
+  "chickenwings": [
    {
     "image_id": "ext_chicken_wings",
     "asset": "/api/v1/pictures/img/ext_chicken_wings",
@@ -12046,7 +11731,7 @@
     "sense": "ext_spaghetti"
    }
   ],
-  "peanut butter": [
+  "peanutbutter": [
    {
     "image_id": "ext_peanut_butter",
     "asset": "/api/v1/pictures/img/ext_peanut_butter",
@@ -12073,7 +11758,7 @@
     "sense": "ext_honey"
    }
   ],
-  "mac and cheese": [
+  "macandcheese": [
    {
     "image_id": "ext_mac_and_cheese",
     "asset": "/api/v1/pictures/img/ext_mac_and_cheese",
@@ -12091,7 +11776,7 @@
     "sense": "ext_ramen"
    }
   ],
-  "grilled cheese": [
+  "grilledcheese": [
    {
     "image_id": "ext_grilled_cheese",
     "asset": "/api/v1/pictures/img/ext_grilled_cheese",
@@ -12118,7 +11803,7 @@
     "sense": "ext_mayo"
    }
   ],
-  "hot sauce": [
+  "hotsauce": [
    {
     "image_id": "ext_hot_sauce",
     "asset": "/api/v1/pictures/img/ext_hot_sauce",
@@ -12127,7 +11812,7 @@
     "sense": "ext_hot_sauce"
    }
   ],
-  "barbecue sauce": [
+  "barbecuesauce": [
    {
     "image_id": "ext_barbecue_sauce",
     "asset": "/api/v1/pictures/img/ext_barbecue_sauce",
@@ -12154,7 +11839,7 @@
     "sense": "ext_mustard"
    }
   ],
-  "fried rice": [
+  "friedrice": [
    {
     "image_id": "ext_fried_rice",
     "asset": "/api/v1/pictures/img/ext_fried_rice",
@@ -12163,7 +11848,7 @@
     "sense": "ext_fried_rice"
    }
   ],
-  "egg roll": [
+  "eggroll": [
    {
     "image_id": "ext_egg_roll",
     "asset": "/api/v1/pictures/img/ext_egg_roll",
@@ -12226,7 +11911,7 @@
     "sense": "ext_cornbread"
    }
   ],
-  "dinner roll": [
+  "dinnerroll": [
    {
     "image_id": "ext_dinner_roll",
     "asset": "/api/v1/pictures/img/ext_dinner_roll",
@@ -12262,7 +11947,7 @@
     "sense": "ext_peanuts"
    }
   ],
-  "trail mix": [
+  "trailmix": [
    {
     "image_id": "ext_trail_mix",
     "asset": "/api/v1/pictures/img/ext_trail_mix",
@@ -12289,7 +11974,7 @@
     "sense": "ext_almonds"
    }
   ],
-  "rice cake": [
+  "ricecake": [
    {
     "image_id": "ext_rice_cake",
     "asset": "/api/v1/pictures/img/ext_rice_cake",
@@ -12316,7 +12001,7 @@
     "sense": "ext_marshmallow"
    }
   ],
-  "gummy bears": [
+  "gummybears": [
    {
     "image_id": "ext_gummy_bears",
     "asset": "/api/v1/pictures/img/ext_gummy_bears",
@@ -12325,7 +12010,7 @@
     "sense": "ext_gummy_bears"
    }
   ],
-  "jelly beans": [
+  "jellybeans": [
    {
     "image_id": "ext_jelly_beans",
     "asset": "/api/v1/pictures/img/ext_jelly_beans",
@@ -12334,7 +12019,7 @@
     "sense": "ext_jelly_beans"
    }
   ],
-  "cotton candy": [
+  "cottoncandy": [
    {
     "image_id": "ext_cotton_candy",
     "asset": "/api/v1/pictures/img/ext_cotton_candy",
@@ -12361,7 +12046,7 @@
     "sense": "ext_caramel"
    }
   ],
-  "sparkling water": [
+  "sparklingwater": [
    {
     "image_id": "ext_sparkling_water",
     "asset": "/api/v1/pictures/img/ext_sparkling_water",
@@ -12379,7 +12064,7 @@
     "sense": "ext_coffee"
    }
   ],
-  "baby food": [
+  "babyfood": [
    {
     "image_id": "ext_baby_food",
     "asset": "/api/v1/pictures/img/ext_baby_food",
@@ -12388,7 +12073,7 @@
     "sense": "ext_baby_food"
    }
   ],
-  "ice cream cone": [
+  "icecreamcone": [
    {
     "image_id": "ext_ice_cream_cone",
     "asset": "/api/v1/pictures/img/ext_ice_cream_cone",
@@ -12415,7 +12100,7 @@
     "sense": "ext_ice"
    }
   ],
-  "snow cone": [
+  "snowcone": [
    {
     "image_id": "ext_snow_cone",
     "asset": "/api/v1/pictures/img/ext_snow_cone",
@@ -12424,7 +12109,7 @@
     "sense": "ext_snow_cone"
    }
   ],
-  "chicken tenders": [
+  "chickentenders": [
    {
     "image_id": "ext_chicken_tenders",
     "asset": "/api/v1/pictures/img/ext_chicken_tenders",
@@ -12442,7 +12127,7 @@
     "sense": "ext_puffs"
    }
   ],
-  "ice cube": [
+  "icecube": [
    {
     "image_id": "ext_ice_cube",
     "asset": "/api/v1/pictures/img/ext_ice_cube",
@@ -12451,7 +12136,7 @@
     "sense": "ext_ice_cube"
    }
   ],
-  "fried chicken": [
+  "friedchicken": [
    {
     "image_id": "ext_fried_chicken",
     "asset": "/api/v1/pictures/img/ext_fried_chicken",
@@ -12469,7 +12154,7 @@
     "sense": "ext_formula"
    }
   ],
-  "corn dog": [
+  "corndog": [
    {
     "image_id": "ext_corn_dog",
     "asset": "/api/v1/pictures/img/ext_corn_dog",
@@ -12496,7 +12181,7 @@
     "sense": "ext_lentils"
    }
   ],
-  "pot roast": [
+  "potroast": [
    {
     "image_id": "ext_pot_roast",
     "asset": "/api/v1/pictures/img/ext_pot_roast",
@@ -12514,7 +12199,7 @@
     "sense": "ext_chickpeas"
    }
   ],
-  "lamb chop": [
+  "lambchop": [
    {
     "image_id": "ext_lamb_chop",
     "asset": "/api/v1/pictures/img/ext_lamb_chop",
@@ -12541,7 +12226,7 @@
     "sense": "ext_tofu"
    }
   ],
-  "black beans": [
+  "blackbeans": [
    {
     "image_id": "ext_black_beans",
     "asset": "/api/v1/pictures/img/ext_black_beans",
@@ -12550,7 +12235,7 @@
     "sense": "ext_black_beans"
    }
   ],
-  "refried beans": [
+  "refriedbeans": [
    {
     "image_id": "ext_refried_beans",
     "asset": "/api/v1/pictures/img/ext_refried_beans",
@@ -12559,7 +12244,7 @@
     "sense": "ext_refried_beans"
    }
   ],
-  "pork chop": [
+  "porkchop": [
    {
     "image_id": "ext_pork_chop",
     "asset": "/api/v1/pictures/img/ext_pork_chop",
@@ -12568,7 +12253,7 @@
     "sense": "ext_pork_chop"
    }
   ],
-  "rice and beans": [
+  "riceandbeans": [
    {
     "image_id": "ext_rice_and_beans",
     "asset": "/api/v1/pictures/img/ext_rice_and_beans",
@@ -12613,7 +12298,7 @@
     "sense": "ext_plantains"
    }
   ],
-  "matzo ball soup": [
+  "matzoballsoup": [
    {
     "image_id": "ext_matzo_ball_soup",
     "asset": "/api/v1/pictures/img/ext_matzo_ball_soup",
@@ -12685,7 +12370,7 @@
     "sense": "ext_samosa"
    }
   ],
-  "spring roll": [
+  "springroll": [
    {
     "image_id": "ext_spring_roll",
     "asset": "/api/v1/pictures/img/ext_spring_roll",
@@ -12694,7 +12379,7 @@
     "sense": "ext_spring_roll"
    }
   ],
-  "orange chicken": [
+  "orangechicken": [
    {
     "image_id": "ext_orange_chicken",
     "asset": "/api/v1/pictures/img/ext_orange_chicken",
@@ -12703,7 +12388,7 @@
     "sense": "ext_orange_chicken"
    }
   ],
-  "lo mein": [
+  "lomein": [
    {
     "image_id": "ext_lo_mein",
     "asset": "/api/v1/pictures/img/ext_lo_mein",
@@ -12721,7 +12406,7 @@
     "sense": "ext_pho"
    }
   ],
-  "jerk chicken": [
+  "jerkchicken": [
    {
     "image_id": "ext_jerk_chicken",
     "asset": "/api/v1/pictures/img/ext_jerk_chicken",
@@ -12748,7 +12433,7 @@
     "sense": "ext_kebab"
    }
   ],
-  "pasta salad": [
+  "pastasalad": [
    {
     "image_id": "ext_pasta_salad",
     "asset": "/api/v1/pictures/img/ext_pasta_salad",
@@ -12766,7 +12451,7 @@
     "sense": "ext_gyro"
    }
   ],
-  "deviled eggs": [
+  "deviledeggs": [
    {
     "image_id": "ext_deviled_eggs",
     "asset": "/api/v1/pictures/img/ext_deviled_eggs",
@@ -12775,7 +12460,7 @@
     "sense": "ext_deviled_eggs"
    }
   ],
-  "fried egg": [
+  "friedegg": [
    {
     "image_id": "ext_fried_egg",
     "asset": "/api/v1/pictures/img/ext_fried_egg",
@@ -12784,7 +12469,7 @@
     "sense": "ext_fried_egg"
    }
   ],
-  "boiled egg": [
+  "boiledegg": [
    {
     "image_id": "ext_boiled_egg",
     "asset": "/api/v1/pictures/img/ext_boiled_egg",
@@ -12793,7 +12478,7 @@
     "sense": "ext_boiled_egg"
    }
   ],
-  "acai bowl": [
+  "acaibowl": [
    {
     "image_id": "ext_acai_bowl",
     "asset": "/api/v1/pictures/img/ext_acai_bowl",
@@ -12820,7 +12505,7 @@
     "sense": "ext_kimchi"
    }
   ],
-  "cheese slice": [
+  "cheeseslice": [
    {
     "image_id": "ext_cheese_slice",
     "asset": "/api/v1/pictures/img/ext_cheese_slice",
@@ -12829,7 +12514,7 @@
     "sense": "ext_cheese_slice"
    }
   ],
-  "corn on the cob": [
+  "cornonthecob": [
    {
     "image_id": "ext_corn_on_the_cob",
     "asset": "/api/v1/pictures/img/ext_corn_on_the_cob",
@@ -12847,7 +12532,7 @@
     "sense": "ext_edamame"
    }
   ],
-  "veggie sticks": [
+  "veggiesticks": [
    {
     "image_id": "ext_veggie_sticks",
     "asset": "/api/v1/pictures/img/ext_veggie_sticks",
@@ -12856,7 +12541,7 @@
     "sense": "ext_veggie_sticks"
    }
   ],
-  "snap peas": [
+  "snappeas": [
    {
     "image_id": "ext_snap_peas",
     "asset": "/api/v1/pictures/img/ext_snap_peas",
@@ -12865,7 +12550,7 @@
     "sense": "ext_snap_peas"
    }
   ],
-  "garlic bread": [
+  "garlicbread": [
    {
     "image_id": "ext_garlic_bread",
     "asset": "/api/v1/pictures/img/ext_garlic_bread",
@@ -12883,7 +12568,7 @@
     "sense": "ext_breadsticks"
    }
   ],
-  "baked potato": [
+  "bakedpotato": [
    {
     "image_id": "ext_baked_potato",
     "asset": "/api/v1/pictures/img/ext_baked_potato",
@@ -12892,7 +12577,7 @@
     "sense": "ext_baked_potato"
    }
   ],
-  "soft pretzel": [
+  "softpretzel": [
    {
     "image_id": "ext_soft_pretzel",
     "asset": "/api/v1/pictures/img/ext_soft_pretzel",
@@ -12901,7 +12586,7 @@
     "sense": "ext_soft_pretzel"
    }
   ],
-  "pizza slice": [
+  "pizzaslice": [
    {
     "image_id": "ext_pizza_slice",
     "asset": "/api/v1/pictures/img/ext_pizza_slice",
@@ -12910,7 +12595,7 @@
     "sense": "ext_pizza_slice"
    }
   ],
-  "wrap (food)": [
+  "wrap(food)": [
    {
     "image_id": "ext_wrap_food",
     "asset": "/api/v1/pictures/img/ext_wrap_food",
@@ -12919,7 +12604,7 @@
     "sense": "ext_wrap_food"
    }
   ],
-  "chicken noodle soup": [
+  "chickennoodlesoup": [
    {
     "image_id": "ext_chicken_noodle_soup",
     "asset": "/api/v1/pictures/img/ext_chicken_noodle_soup",
@@ -12928,7 +12613,7 @@
     "sense": "ext_chicken_noodle_soup"
    }
   ],
-  "sub sandwich": [
+  "subsandwich": [
    {
     "image_id": "ext_sub_sandwich",
     "asset": "/api/v1/pictures/img/ext_sub_sandwich",
@@ -12937,7 +12622,7 @@
     "sense": "ext_sub_sandwich"
    }
   ],
-  "tomato soup": [
+  "tomatosoup": [
    {
     "image_id": "ext_tomato_soup",
     "asset": "/api/v1/pictures/img/ext_tomato_soup",
@@ -12946,7 +12631,7 @@
     "sense": "ext_tomato_soup"
    }
   ],
-  "oatmeal cookie": [
+  "oatmealcookie": [
    {
     "image_id": "ext_oatmeal_cookie",
     "asset": "/api/v1/pictures/img/ext_oatmeal_cookie",
@@ -12955,7 +12640,7 @@
     "sense": "ext_oatmeal_cookie"
    }
   ],
-  "sugar cookie": [
+  "sugarcookie": [
    {
     "image_id": "ext_sugar_cookie",
     "asset": "/api/v1/pictures/img/ext_sugar_cookie",
@@ -12964,7 +12649,7 @@
     "sense": "ext_sugar_cookie"
    }
   ],
-  "chocolate chip cookie": [
+  "chocolatechipcookie": [
    {
     "image_id": "ext_chocolate_chip_cookie",
     "asset": "/api/v1/pictures/img/ext_chocolate_chip_cookie",
@@ -12973,7 +12658,7 @@
     "sense": "ext_chocolate_chip_cookie"
    }
   ],
-  "pigs in a blanket": [
+  "pigsinablanket": [
    {
     "image_id": "ext_pigs_in_a_blanket",
     "asset": "/api/v1/pictures/img/ext_pigs_in_a_blanket",
@@ -12991,7 +12676,7 @@
     "sense": "ext_cheesecake"
    }
   ],
-  "apple pie": [
+  "applepie": [
    {
     "image_id": "ext_apple_pie",
     "asset": "/api/v1/pictures/img/ext_apple_pie",
@@ -13000,7 +12685,7 @@
     "sense": "ext_apple_pie"
    }
   ],
-  "pumpkin bread": [
+  "pumpkinbread": [
    {
     "image_id": "ext_pumpkin_bread",
     "asset": "/api/v1/pictures/img/ext_pumpkin_bread",
@@ -13009,7 +12694,7 @@
     "sense": "ext_pumpkin_bread"
    }
   ],
-  "birthday cake": [
+  "birthdaycake": [
    {
     "image_id": "ext_birthday_cake",
     "asset": "/api/v1/pictures/img/ext_birthday_cake",
@@ -13018,7 +12703,7 @@
     "sense": "ext_birthday_cake"
    }
   ],
-  "cherry pie": [
+  "cherrypie": [
    {
     "image_id": "ext_cherry_pie",
     "asset": "/api/v1/pictures/img/ext_cherry_pie",
@@ -13027,7 +12712,7 @@
     "sense": "ext_cherry_pie"
    }
   ],
-  "cake pop": [
+  "cakepop": [
    {
     "image_id": "ext_cake_pop",
     "asset": "/api/v1/pictures/img/ext_cake_pop",
@@ -13036,7 +12721,7 @@
     "sense": "ext_cake_pop"
    }
   ],
-  "applesauce pouch": [
+  "applesaucepouch": [
    {
     "image_id": "ext_applesauce_pouch",
     "asset": "/api/v1/pictures/img/ext_applesauce_pouch",
@@ -13081,7 +12766,7 @@
     "sense": "ext_peppermint"
    }
   ],
-  "candy bar": [
+  "candybar": [
    {
     "image_id": "ext_candy_bar",
     "asset": "/api/v1/pictures/img/ext_candy_bar",
@@ -13090,7 +12775,7 @@
     "sense": "ext_candy_bar"
    }
   ],
-  "soy milk": [
+  "soymilk": [
    {
     "image_id": "ext_soy_milk",
     "asset": "/api/v1/pictures/img/ext_soy_milk",
@@ -13108,7 +12793,7 @@
     "sense": "ext_eggnog"
    }
   ],
-  "apple cider": [
+  "applecider": [
    {
     "image_id": "ext_apple_cider",
     "asset": "/api/v1/pictures/img/ext_apple_cider",
@@ -13117,7 +12802,7 @@
     "sense": "ext_apple_cider"
    }
   ],
-  "almond milk": [
+  "almondmilk": [
    {
     "image_id": "ext_almond_milk",
     "asset": "/api/v1/pictures/img/ext_almond_milk",
@@ -13126,7 +12811,7 @@
     "sense": "ext_almond_milk"
    }
   ],
-  "root beer float": [
+  "rootbeerfloat": [
    {
     "image_id": "ext_root_beer_float",
     "asset": "/api/v1/pictures/img/ext_root_beer_float",
@@ -13135,7 +12820,7 @@
     "sense": "ext_root_beer_float"
    }
   ],
-  "oat milk": [
+  "oatmilk": [
    {
     "image_id": "ext_oat_milk",
     "asset": "/api/v1/pictures/img/ext_oat_milk",
@@ -13144,7 +12829,7 @@
     "sense": "ext_oat_milk"
    }
   ],
-  "coconut water": [
+  "coconutwater": [
    {
     "image_id": "ext_coconut_water",
     "asset": "/api/v1/pictures/img/ext_coconut_water",
@@ -13153,7 +12838,7 @@
     "sense": "ext_coconut_water"
    }
   ],
-  "iced tea": [
+  "icedtea": [
    {
     "image_id": "ext_iced_tea",
     "asset": "/api/v1/pictures/img/ext_iced_tea",
@@ -13162,7 +12847,7 @@
     "sense": "ext_iced_tea"
    }
   ],
-  "sweet tea": [
+  "sweettea": [
    {
     "image_id": "ext_sweet_tea",
     "asset": "/api/v1/pictures/img/ext_sweet_tea",
@@ -13252,7 +12937,7 @@
     "sense": "ext_grasshopper"
    }
   ],
-  "fly (bug)": [
+  "fly(bug)": [
    {
     "image_id": "ext_fly_bug",
     "asset": "/api/v1/pictures/img/ext_fly_bug",
@@ -13477,7 +13162,7 @@
     "sense": "ext_cardinal"
    }
   ],
-  "polar bear": [
+  "polarbear": [
    {
     "image_id": "ext_polar_bear",
     "asset": "/api/v1/pictures/img/ext_polar_bear",
@@ -13504,7 +13189,7 @@
     "sense": "ext_robin"
    }
   ],
-  "blue jay": [
+  "bluejay": [
    {
     "image_id": "ext_blue_jay",
     "asset": "/api/v1/pictures/img/ext_blue_jay",
@@ -13585,7 +13270,7 @@
     "sense": "ext_raccoon"
    }
   ],
-  "guinea pig": [
+  "guineapig": [
    {
     "image_id": "ext_guinea_pig",
     "asset": "/api/v1/pictures/img/ext_guinea_pig",
@@ -13873,7 +13558,7 @@
     "sense": "ext_dragon"
    }
   ],
-  "t. rex": [
+  "t.rex": [
    {
     "image_id": "ext_t_rex",
     "asset": "/api/v1/pictures/img/ext_t_rex",
@@ -13999,7 +13684,7 @@
     "sense": "ext_duckling"
    }
   ],
-  "sea turtle": [
+  "seaturtle": [
    {
     "image_id": "ext_sea_turtle",
     "asset": "/api/v1/pictures/img/ext_sea_turtle",
@@ -14017,7 +13702,7 @@
     "sense": "ext_piglet"
    }
   ],
-  "bald eagle": [
+  "baldeagle": [
    {
     "image_id": "ext_bald_eagle",
     "asset": "/api/v1/pictures/img/ext_bald_eagle",
@@ -14269,7 +13954,7 @@
     "sense": "ext_pufferfish"
    }
   ],
-  "sea lion": [
+  "sealion": [
    {
     "image_id": "ext_sea_lion",
     "asset": "/api/v1/pictures/img/ext_sea_lion",
@@ -14332,7 +14017,7 @@
     "sense": "ext_centipede"
    }
   ],
-  "praying mantis": [
+  "prayingmantis": [
    {
     "image_id": "ext_praying_mantis",
     "asset": "/api/v1/pictures/img/ext_praying_mantis",
@@ -14359,7 +14044,7 @@
     "sense": "ext_clam"
    }
   ],
-  "stick bug": [
+  "stickbug": [
    {
     "image_id": "ext_stick_bug",
     "asset": "/api/v1/pictures/img/ext_stick_bug",
@@ -14485,7 +14170,7 @@
     "sense": "ext_parakeet"
    }
   ],
-  "woolly mammoth": [
+  "woollymammoth": [
    {
     "image_id": "ext_woolly_mammoth",
     "asset": "/api/v1/pictures/img/ext_woolly_mammoth",
@@ -14494,7 +14179,7 @@
     "sense": "ext_woolly_mammoth"
    }
   ],
-  "saber-tooth tiger": [
+  "sabertoothtiger": [
    {
     "image_id": "ext_saber_tooth_tiger",
     "asset": "/api/v1/pictures/img/ext_saber_tooth_tiger",
@@ -14557,7 +14242,7 @@
     "sense": "ext_griffin"
    }
   ],
-  "dinosaur egg": [
+  "dinosauregg": [
    {
     "image_id": "ext_dinosaur_egg",
     "asset": "/api/v1/pictures/img/ext_dinosaur_egg",
@@ -14773,7 +14458,7 @@
     "sense": "ext_pond"
    }
   ],
-  "rock (stone)": [
+  "rock(stone)": [
    {
     "image_id": "ext_rock_stone",
     "asset": "/api/v1/pictures/img/ext_rock_stone",
@@ -15025,7 +14710,7 @@
     "sense": "ext_fire"
    }
   ],
-  "wave (ocean)": [
+  "wave(ocean)": [
    {
     "image_id": "ext_wave_ocean",
     "asset": "/api/v1/pictures/img/ext_wave_ocean",
@@ -15124,7 +14809,7 @@
     "sense": "ext_blizzard"
    }
   ],
-  "crescent moon": [
+  "crescentmoon": [
    {
     "image_id": "ext_crescent_moon",
     "asset": "/api/v1/pictures/img/ext_crescent_moon",
@@ -15133,7 +14818,7 @@
     "sense": "ext_crescent_moon"
    }
   ],
-  "shooting star": [
+  "shootingstar": [
    {
     "image_id": "ext_shooting_star",
     "asset": "/api/v1/pictures/img/ext_shooting_star",
@@ -15223,7 +14908,7 @@
     "sense": "ext_crystal"
    }
   ],
-  "solar system": [
+  "solarsystem": [
    {
     "image_id": "ext_solar_system",
     "asset": "/api/v1/pictures/img/ext_solar_system",
@@ -15232,7 +14917,7 @@
     "sense": "ext_solar_system"
    }
   ],
-  "diamond (gem)": [
+  "diamond(gem)": [
    {
     "image_id": "ext_diamond_gem",
     "asset": "/api/v1/pictures/img/ext_diamond_gem",
@@ -15241,7 +14926,7 @@
     "sense": "ext_diamond_gem"
    }
   ],
-  "palm tree": [
+  "palmtree": [
    {
     "image_id": "ext_palm_tree",
     "asset": "/api/v1/pictures/img/ext_palm_tree",
@@ -15268,7 +14953,7 @@
     "sense": "ext_field"
    }
   ],
-  "apple tree": [
+  "appletree": [
    {
     "image_id": "ext_apple_tree",
     "asset": "/api/v1/pictures/img/ext_apple_tree",
@@ -15277,7 +14962,7 @@
     "sense": "ext_apple_tree"
    }
   ],
-  "pine tree": [
+  "pinetree": [
    {
     "image_id": "ext_pine_tree",
     "asset": "/api/v1/pictures/img/ext_pine_tree",
@@ -15286,7 +14971,7 @@
     "sense": "ext_pine_tree"
    }
   ],
-  "tree stump": [
+  "treestump": [
    {
     "image_id": "ext_tree_stump",
     "asset": "/api/v1/pictures/img/ext_tree_stump",
@@ -15295,7 +14980,7 @@
     "sense": "ext_tree_stump"
    }
   ],
-  "bird nest": [
+  "birdnest": [
    {
     "image_id": "ext_bird_nest",
     "asset": "/api/v1/pictures/img/ext_bird_nest",
@@ -15340,7 +15025,7 @@
     "sense": "ext_seaweed"
    }
   ],
-  "spider web": [
+  "spiderweb": [
    {
     "image_id": "ext_spider_web",
     "asset": "/api/v1/pictures/img/ext_spider_web",
@@ -15358,7 +15043,7 @@
     "sense": "ext_coral"
    }
   ],
-  "four-leaf clover": [
+  "fourleafclover": [
    {
     "image_id": "ext_four_leaf_clover",
     "asset": "/api/v1/pictures/img/ext_four_leaf_clover",
@@ -15385,7 +15070,7 @@
     "sense": "ext_glacier"
    }
   ],
-  "sand dune": [
+  "sanddune": [
    {
     "image_id": "ext_sand_dune",
     "asset": "/api/v1/pictures/img/ext_sand_dune",
@@ -15394,7 +15079,7 @@
     "sense": "ext_sand_dune"
    }
   ],
-  "south pole": [
+  "southpole": [
    {
     "image_id": "ext_south_pole",
     "asset": "/api/v1/pictures/img/ext_south_pole",
@@ -15484,7 +15169,7 @@
     "sense": "ext_headache"
    }
   ],
-  "bug bite": [
+  "bugbite": [
    {
     "image_id": "ext_bug_bite",
     "asset": "/api/v1/pictures/img/ext_bug_bite",
@@ -15493,7 +15178,7 @@
     "sense": "ext_bug_bite"
    }
   ],
-  "boo-boo": [
+  "booboo": [
    {
     "image_id": "ext_boo_boo",
     "asset": "/api/v1/pictures/img/ext_boo_boo",
@@ -15538,7 +15223,7 @@
     "sense": "ext_inhaler"
    }
   ],
-  "cough drop": [
+  "coughdrop": [
    {
     "image_id": "ext_cough_drop",
     "asset": "/api/v1/pictures/img/ext_cough_drop",
@@ -15556,7 +15241,7 @@
     "sense": "ext_germs"
    }
   ],
-  "feeding tube": [
+  "feedingtube": [
    {
     "image_id": "ext_feeding_tube",
     "asset": "/api/v1/pictures/img/ext_feeding_tube",
@@ -15628,7 +15313,7 @@
     "sense": "ext_gas"
    }
   ],
-  "a cold": [
+  "acold": [
    {
     "image_id": "ext_a_cold",
     "asset": "/api/v1/pictures/img/ext_a_cold",
@@ -15637,7 +15322,7 @@
     "sense": "ext_a_cold"
    }
   ],
-  "covid test": [
+  "covidtest": [
    {
     "image_id": "ext_covid_test",
     "asset": "/api/v1/pictures/img/ext_covid_test",
@@ -15646,7 +15331,7 @@
     "sense": "ext_covid_test"
    }
   ],
-  "tooth fairy": [
+  "toothfairy": [
    {
     "image_id": "ext_tooth_fairy",
     "asset": "/api/v1/pictures/img/ext_tooth_fairy",
@@ -15664,7 +15349,7 @@
     "sense": "ext_cavity"
    }
   ],
-  "eye drops": [
+  "eyedrops": [
    {
     "image_id": "ext_eye_drops",
     "asset": "/api/v1/pictures/img/ext_eye_drops",
@@ -15673,7 +15358,7 @@
     "sense": "ext_eye_drops"
    }
   ],
-  "ear drops": [
+  "eardrops": [
    {
     "image_id": "ext_ear_drops",
     "asset": "/api/v1/pictures/img/ext_ear_drops",
@@ -15682,7 +15367,7 @@
     "sense": "ext_ear_drops"
    }
   ],
-  "hospital bed": [
+  "hospitalbed": [
    {
     "image_id": "ext_hospital_bed",
     "asset": "/api/v1/pictures/img/ext_hospital_bed",
@@ -15709,7 +15394,7 @@
     "sense": "ext_breath"
    }
   ],
-  "mole (skin)": [
+  "mole(skin)": [
    {
     "image_id": "ext_mole_skin",
     "asset": "/api/v1/pictures/img/ext_mole_skin",
@@ -15745,7 +15430,7 @@
     "sense": "ext_sweat"
    }
   ],
-  "chicken pox": [
+  "chickenpox": [
    {
     "image_id": "ext_chicken_pox",
     "asset": "/api/v1/pictures/img/ext_chicken_pox",
@@ -15754,7 +15439,7 @@
     "sense": "ext_chicken_pox"
    }
   ],
-  "poison ivy": [
+  "poisonivy": [
    {
     "image_id": "ext_poison_ivy",
     "asset": "/api/v1/pictures/img/ext_poison_ivy",
@@ -15763,7 +15448,7 @@
     "sense": "ext_poison_ivy"
    }
   ],
-  "bee sting": [
+  "beesting": [
    {
     "image_id": "ext_bee_sting",
     "asset": "/api/v1/pictures/img/ext_bee_sting",
@@ -15772,7 +15457,7 @@
     "sense": "ext_bee_sting"
    }
   ],
-  "growth chart": [
+  "growthchart": [
    {
     "image_id": "ext_growth_chart",
     "asset": "/api/v1/pictures/img/ext_growth_chart",
@@ -15790,7 +15475,7 @@
     "sense": "ext_sunburn"
    }
   ],
-  "broken bone": [
+  "brokenbone": [
    {
     "image_id": "ext_broken_bone",
     "asset": "/api/v1/pictures/img/ext_broken_bone",
@@ -15826,7 +15511,7 @@
     "sense": "ext_braid"
    }
   ],
-  "curly hair": [
+  "curlyhair": [
    {
     "image_id": "ext_curly_hair",
     "asset": "/api/v1/pictures/img/ext_curly_hair",
@@ -15835,7 +15520,7 @@
     "sense": "ext_curly_hair"
    }
   ],
-  "potty seat": [
+  "pottyseat": [
    {
     "image_id": "ext_potty_seat",
     "asset": "/api/v1/pictures/img/ext_potty_seat",
@@ -15853,7 +15538,7 @@
     "sense": "ext_pads"
    }
   ],
-  "potty chair": [
+  "pottychair": [
    {
     "image_id": "ext_potty_chair",
     "asset": "/api/v1/pictures/img/ext_potty_chair",
@@ -15862,7 +15547,7 @@
     "sense": "ext_potty_chair"
    }
   ],
-  "tank top": [
+  "tanktop": [
    {
     "image_id": "ext_tank_top",
     "asset": "/api/v1/pictures/img/ext_tank_top",
@@ -15880,7 +15565,7 @@
     "sense": "ext_hoodie"
    }
   ],
-  "t-shirt": [
+  "tshirt": [
    {
     "image_id": "ext_t_shirt",
     "asset": "/api/v1/pictures/img/ext_t_shirt",
@@ -15907,7 +15592,7 @@
     "sense": "ext_onesie"
    }
   ],
-  "rain boots": [
+  "rainboots": [
    {
     "image_id": "ext_rain_boots",
     "asset": "/api/v1/pictures/img/ext_rain_boots",
@@ -15916,7 +15601,7 @@
     "sense": "ext_rain_boots"
    }
   ],
-  "flip-flops": [
+  "flipflops": [
    {
     "image_id": "ext_flip_flops",
     "asset": "/api/v1/pictures/img/ext_flip_flops",
@@ -15925,7 +15610,7 @@
     "sense": "ext_flip_flops"
    }
   ],
-  "hair bow": [
+  "hairbow": [
    {
     "image_id": "ext_hair_bow",
     "asset": "/api/v1/pictures/img/ext_hair_bow",
@@ -15934,7 +15619,7 @@
     "sense": "ext_hair_bow"
    }
   ],
-  "baseball cap": [
+  "baseballcap": [
    {
     "image_id": "ext_baseball_cap",
     "asset": "/api/v1/pictures/img/ext_baseball_cap",
@@ -15970,7 +15655,7 @@
     "sense": "ext_beanie"
    }
   ],
-  "life jacket": [
+  "lifejacket": [
    {
     "image_id": "ext_life_jacket",
     "asset": "/api/v1/pictures/img/ext_life_jacket",
@@ -15997,7 +15682,7 @@
     "sense": "ext_tutu"
    }
   ],
-  "tie (necktie)": [
+  "tie(necktie)": [
    {
     "image_id": "ext_tie_necktie",
     "asset": "/api/v1/pictures/img/ext_tie_necktie",
@@ -16033,7 +15718,7 @@
     "sense": "ext_bracelet"
    }
   ],
-  "watch (wristwatch)": [
+  "watch(wristwatch)": [
    {
     "image_id": "ext_watch_wristwatch",
     "asset": "/api/v1/pictures/img/ext_watch_wristwatch",
@@ -16087,7 +15772,7 @@
     "sense": "ext_nightgown"
    }
   ],
-  "polo shirt": [
+  "poloshirt": [
    {
     "image_id": "ext_polo_shirt",
     "asset": "/api/v1/pictures/img/ext_polo_shirt",
@@ -16114,7 +15799,7 @@
     "sense": "ext_bathrobe"
    }
   ],
-  "rash guard": [
+  "rashguard": [
    {
     "image_id": "ext_rash_guard",
     "asset": "/api/v1/pictures/img/ext_rash_guard",
@@ -16123,7 +15808,7 @@
     "sense": "ext_rash_guard"
    }
   ],
-  "ballet shoes": [
+  "balletshoes": [
    {
     "image_id": "ext_ballet_shoes",
     "asset": "/api/v1/pictures/img/ext_ballet_shoes",
@@ -16141,7 +15826,7 @@
     "sense": "ext_wetsuit"
    }
   ],
-  "winter hat": [
+  "winterhat": [
    {
     "image_id": "ext_winter_hat",
     "asset": "/api/v1/pictures/img/ext_winter_hat",
@@ -16150,7 +15835,7 @@
     "sense": "ext_winter_hat"
    }
   ],
-  "sun hat": [
+  "sunhat": [
    {
     "image_id": "ext_sun_hat",
     "asset": "/api/v1/pictures/img/ext_sun_hat",
@@ -16159,7 +15844,7 @@
     "sense": "ext_sun_hat"
    }
   ],
-  "puffy coat": [
+  "puffycoat": [
    {
     "image_id": "ext_puffy_coat",
     "asset": "/api/v1/pictures/img/ext_puffy_coat",
@@ -16168,7 +15853,7 @@
     "sense": "ext_puffy_coat"
    }
   ],
-  "snow boots": [
+  "snowboots": [
    {
     "image_id": "ext_snow_boots",
     "asset": "/api/v1/pictures/img/ext_snow_boots",
@@ -16177,7 +15862,7 @@
     "sense": "ext_snow_boots"
    }
   ],
-  "rain jacket": [
+  "rainjacket": [
    {
     "image_id": "ext_rain_jacket",
     "asset": "/api/v1/pictures/img/ext_rain_jacket",
@@ -16195,7 +15880,7 @@
     "sense": "ext_windbreaker"
    }
   ],
-  "bucket hat": [
+  "buckethat": [
    {
     "image_id": "ext_bucket_hat",
     "asset": "/api/v1/pictures/img/ext_bucket_hat",
@@ -16222,7 +15907,7 @@
     "sense": "ext_cardigan"
    }
   ],
-  "neck warmer": [
+  "neckwarmer": [
    {
     "image_id": "ext_neck_warmer",
     "asset": "/api/v1/pictures/img/ext_neck_warmer",
@@ -16240,7 +15925,7 @@
     "sense": "ext_gown"
    }
   ],
-  "party dress": [
+  "partydress": [
    {
     "image_id": "ext_party_dress",
     "asset": "/api/v1/pictures/img/ext_party_dress",
@@ -16258,7 +15943,7 @@
     "sense": "ext_suit"
    }
   ],
-  "princess dress": [
+  "princessdress": [
    {
     "image_id": "ext_princess_dress",
     "asset": "/api/v1/pictures/img/ext_princess_dress",
@@ -16267,7 +15952,7 @@
     "sense": "ext_princess_dress"
    }
   ],
-  "superhero cape": [
+  "superherocape": [
    {
     "image_id": "ext_superhero_cape",
     "asset": "/api/v1/pictures/img/ext_superhero_cape",
@@ -16321,7 +16006,7 @@
     "sense": "ext_wings"
    }
   ],
-  "fairy wings": [
+  "fairywings": [
    {
     "image_id": "ext_fairy_wings",
     "asset": "/api/v1/pictures/img/ext_fairy_wings",
@@ -16330,7 +16015,7 @@
     "sense": "ext_fairy_wings"
    }
   ],
-  "witch hat": [
+  "witchhat": [
    {
     "image_id": "ext_witch_hat",
     "asset": "/api/v1/pictures/img/ext_witch_hat",
@@ -16339,7 +16024,7 @@
     "sense": "ext_witch_hat"
    }
   ],
-  "cowboy hat": [
+  "cowboyhat": [
    {
     "image_id": "ext_cowboy_hat",
     "asset": "/api/v1/pictures/img/ext_cowboy_hat",
@@ -16348,7 +16033,7 @@
     "sense": "ext_cowboy_hat"
    }
   ],
-  "pirate hat": [
+  "piratehat": [
    {
     "image_id": "ext_pirate_hat",
     "asset": "/api/v1/pictures/img/ext_pirate_hat",
@@ -16357,7 +16042,7 @@
     "sense": "ext_pirate_hat"
    }
   ],
-  "bunny ears": [
+  "bunnyears": [
    {
     "image_id": "ext_bunny_ears",
     "asset": "/api/v1/pictures/img/ext_bunny_ears",
@@ -16366,7 +16051,7 @@
     "sense": "ext_bunny_ears"
    }
   ],
-  "cowboy boots": [
+  "cowboyboots": [
    {
     "image_id": "ext_cowboy_boots",
     "asset": "/api/v1/pictures/img/ext_cowboy_boots",
@@ -16375,7 +16060,7 @@
     "sense": "ext_cowboy_boots"
    }
   ],
-  "hair clip": [
+  "hairclip": [
    {
     "image_id": "ext_hair_clip",
     "asset": "/api/v1/pictures/img/ext_hair_clip",
@@ -16411,7 +16096,7 @@
     "sense": "ext_pen"
    }
   ],
-  "fanny pack": [
+  "fannypack": [
    {
     "image_id": "ext_fanny_pack",
     "asset": "/api/v1/pictures/img/ext_fanny_pack",
@@ -16564,7 +16249,7 @@
     "sense": "ext_oval"
    }
   ],
-  "star shape": [
+  "starshape": [
    {
     "image_id": "ext_star_shape",
     "asset": "/api/v1/pictures/img/ext_star_shape",
@@ -16573,7 +16258,7 @@
     "sense": "ext_star_shape"
    }
   ],
-  "school supplies": [
+  "schoolsupplies": [
    {
     "image_id": "ext_school_supplies",
     "asset": "/api/v1/pictures/img/ext_school_supplies",
@@ -16582,7 +16267,7 @@
     "sense": "ext_school_supplies"
    }
   ],
-  "heart shape": [
+  "heartshape": [
    {
     "image_id": "ext_heart_shape",
     "asset": "/api/v1/pictures/img/ext_heart_shape",
@@ -16591,7 +16276,7 @@
     "sense": "ext_heart_shape"
    }
   ],
-  "diamond shape": [
+  "diamondshape": [
    {
     "image_id": "ext_diamond_shape",
     "asset": "/api/v1/pictures/img/ext_diamond_shape",
@@ -16600,7 +16285,7 @@
     "sense": "ext_diamond_shape"
    }
   ],
-  "pencil case": [
+  "pencilcase": [
    {
     "image_id": "ext_pencil_case",
     "asset": "/api/v1/pictures/img/ext_pencil_case",
@@ -16609,7 +16294,7 @@
     "sense": "ext_pencil_case"
    }
   ],
-  "colored pencils": [
+  "coloredpencils": [
    {
     "image_id": "ext_colored_pencils",
     "asset": "/api/v1/pictures/img/ext_colored_pencils",
@@ -16627,7 +16312,7 @@
     "sense": "ext_smock"
    }
   ],
-  "paint cup": [
+  "paintcup": [
    {
     "image_id": "ext_paint_cup",
     "asset": "/api/v1/pictures/img/ext_paint_cup",
@@ -16654,7 +16339,7 @@
     "sense": "ext_yarn"
    }
   ],
-  "stamp pad": [
+  "stamppad": [
    {
     "image_id": "ext_stamp_pad",
     "asset": "/api/v1/pictures/img/ext_stamp_pad",
@@ -16663,7 +16348,7 @@
     "sense": "ext_stamp_pad"
    }
   ],
-  "pom-pom": [
+  "pompom": [
    {
     "image_id": "ext_pom_pom",
     "asset": "/api/v1/pictures/img/ext_pom_pom",
@@ -16690,7 +16375,7 @@
     "sense": "ext_beads"
    }
   ],
-  "chapter book": [
+  "chapterbook": [
    {
     "image_id": "ext_chapter_book",
     "asset": "/api/v1/pictures/img/ext_chapter_book",
@@ -16708,7 +16393,7 @@
     "sense": "ext_diary"
    }
   ],
-  "library book": [
+  "librarybook": [
    {
     "image_id": "ext_library_book",
     "asset": "/api/v1/pictures/img/ext_library_book",
@@ -16735,7 +16420,7 @@
     "sense": "ext_calculator"
    }
   ],
-  "pattern blocks": [
+  "patternblocks": [
    {
     "image_id": "ext_pattern_blocks",
     "asset": "/api/v1/pictures/img/ext_pattern_blocks",
@@ -16753,7 +16438,7 @@
     "sense": "ext_tangram"
    }
   ],
-  "clock face": [
+  "clockface": [
    {
     "image_id": "ext_clock_face",
     "asset": "/api/v1/pictures/img/ext_clock_face",
@@ -16762,7 +16447,7 @@
     "sense": "ext_clock_face"
    }
   ],
-  "science experiment": [
+  "scienceexperiment": [
    {
     "image_id": "ext_science_experiment",
     "asset": "/api/v1/pictures/img/ext_science_experiment",
@@ -16780,7 +16465,7 @@
     "sense": "ext_microscope"
    }
   ],
-  "hundreds chart": [
+  "hundredschart": [
    {
     "image_id": "ext_hundreds_chart",
     "asset": "/api/v1/pictures/img/ext_hundreds_chart",
@@ -16789,7 +16474,7 @@
     "sense": "ext_hundreds_chart"
    }
   ],
-  "gold star": [
+  "goldstar": [
    {
     "image_id": "ext_gold_star",
     "asset": "/api/v1/pictures/img/ext_gold_star",
@@ -16798,7 +16483,7 @@
     "sense": "ext_gold_star"
    }
   ],
-  "dry erase board": [
+  "dryeraseboard": [
    {
     "image_id": "ext_dry_erase_board",
     "asset": "/api/v1/pictures/img/ext_dry_erase_board",
@@ -16807,7 +16492,7 @@
     "sense": "ext_dry_erase_board"
    }
   ],
-  "glue bottle": [
+  "gluebottle": [
    {
     "image_id": "ext_glue_bottle",
     "asset": "/api/v1/pictures/img/ext_glue_bottle",
@@ -16825,7 +16510,7 @@
     "sense": "ext_pushpin"
    }
   ],
-  "paper clip": [
+  "paperclip": [
    {
     "image_id": "ext_paper_clip",
     "asset": "/api/v1/pictures/img/ext_paper_clip",
@@ -16834,7 +16519,7 @@
     "sense": "ext_paper_clip"
    }
   ],
-  "sticky note": [
+  "stickynote": [
    {
     "image_id": "ext_sticky_note",
     "asset": "/api/v1/pictures/img/ext_sticky_note",
@@ -16843,7 +16528,7 @@
     "sense": "ext_sticky_note"
    }
   ],
-  "permanent marker": [
+  "permanentmarker": [
    {
     "image_id": "ext_permanent_marker",
     "asset": "/api/v1/pictures/img/ext_permanent_marker",
@@ -16852,7 +16537,7 @@
     "sense": "ext_permanent_marker"
    }
   ],
-  "graduation cap": [
+  "graduationcap": [
    {
     "image_id": "ext_graduation_cap",
     "asset": "/api/v1/pictures/img/ext_graduation_cap",
@@ -16924,7 +16609,7 @@
     "sense": "ext_twin"
    }
   ],
-  "best friend": [
+  "bestfriend": [
    {
     "image_id": "ext_best_friend",
     "asset": "/api/v1/pictures/img/ext_best_friend",
@@ -16933,7 +16618,7 @@
     "sense": "ext_best_friend"
    }
   ],
-  "baby brother": [
+  "babybrother": [
    {
     "image_id": "ext_baby_brother",
     "asset": "/api/v1/pictures/img/ext_baby_brother",
@@ -17113,7 +16798,7 @@
     "sense": "ext_troll"
    }
   ],
-  "aba therapist": [
+  "abatherapist": [
    {
     "image_id": "ext_aba_therapist",
     "asset": "/api/v1/pictures/img/ext_aba_therapist",
@@ -17122,7 +16807,7 @@
     "sense": "ext_aba_therapist"
    }
   ],
-  "crossing guard": [
+  "crossingguard": [
    {
     "image_id": "ext_crossing_guard",
     "asset": "/api/v1/pictures/img/ext_crossing_guard",
@@ -17131,7 +16816,7 @@
     "sense": "ext_crossing_guard"
    }
   ],
-  "school nurse": [
+  "schoolnurse": [
    {
     "image_id": "ext_school_nurse",
     "asset": "/api/v1/pictures/img/ext_school_nurse",
@@ -17149,7 +16834,7 @@
     "sense": "ext_dancer"
    }
   ],
-  "truck driver": [
+  "truckdriver": [
    {
     "image_id": "ext_truck_driver",
     "asset": "/api/v1/pictures/img/ext_truck_driver",
@@ -17158,7 +16843,7 @@
     "sense": "ext_truck_driver"
    }
   ],
-  "delivery driver": [
+  "deliverydriver": [
    {
     "image_id": "ext_delivery_driver",
     "asset": "/api/v1/pictures/img/ext_delivery_driver",
@@ -17230,7 +16915,7 @@
     "sense": "ext_teenager"
    }
   ],
-  "old man": [
+  "oldman": [
    {
     "image_id": "ext_old_man",
     "asset": "/api/v1/pictures/img/ext_old_man",
@@ -17239,7 +16924,7 @@
     "sense": "ext_old_man"
    }
   ],
-  "old lady": [
+  "oldlady": [
    {
     "image_id": "ext_old_lady",
     "asset": "/api/v1/pictures/img/ext_old_lady",
@@ -17266,7 +16951,7 @@
     "sense": "ext_porch"
    }
   ],
-  "grandma's house": [
+  "grandmashouse": [
    {
     "image_id": "ext_grandma_s_house",
     "asset": "/api/v1/pictures/img/ext_grandma_s_house",
@@ -17302,7 +16987,7 @@
     "sense": "ext_temple"
    }
   ],
-  "car wash": [
+  "carwash": [
    {
     "image_id": "ext_car_wash",
     "asset": "/api/v1/pictures/img/ext_car_wash",
@@ -17320,7 +17005,7 @@
     "sense": "ext_pharmacy"
    }
   ],
-  "splash pad": [
+  "splashpad": [
    {
     "image_id": "ext_splash_pad",
     "asset": "/api/v1/pictures/img/ext_splash_pad",
@@ -17329,7 +17014,7 @@
     "sense": "ext_splash_pad"
    }
   ],
-  "water park": [
+  "waterpark": [
    {
     "image_id": "ext_water_park",
     "asset": "/api/v1/pictures/img/ext_water_park",
@@ -17356,7 +17041,7 @@
     "sense": "ext_aquarium"
    }
   ],
-  "bowling alley": [
+  "bowlingalley": [
    {
     "image_id": "ext_bowling_alley",
     "asset": "/api/v1/pictures/img/ext_bowling_alley",
@@ -17365,7 +17050,7 @@
     "sense": "ext_bowling_alley"
    }
   ],
-  "bounce house": [
+  "bouncehouse": [
    {
     "image_id": "ext_bounce_house",
     "asset": "/api/v1/pictures/img/ext_bounce_house",
@@ -17374,7 +17059,7 @@
     "sense": "ext_bounce_house"
    }
   ],
-  "skating rink": [
+  "skatingrink": [
    {
     "image_id": "ext_skating_rink",
     "asset": "/api/v1/pictures/img/ext_skating_rink",
@@ -17419,7 +17104,7 @@
     "sense": "ext_elevator"
    }
   ],
-  "children's hospital": [
+  "childrenshospital": [
    {
     "image_id": "ext_children_s_hospital",
     "asset": "/api/v1/pictures/img/ext_children_s_hospital",
@@ -17428,7 +17113,7 @@
     "sense": "ext_children_s_hospital"
    }
   ],
-  "emergency room": [
+  "emergencyroom": [
    {
     "image_id": "ext_emergency_room",
     "asset": "/api/v1/pictures/img/ext_emergency_room",
@@ -17437,7 +17122,7 @@
     "sense": "ext_emergency_room"
    }
   ],
-  "pizza place": [
+  "pizzaplace": [
    {
     "image_id": "ext_pizza_place",
     "asset": "/api/v1/pictures/img/ext_pizza_place",
@@ -17446,7 +17131,7 @@
     "sense": "ext_pizza_place"
    }
   ],
-  "taco truck": [
+  "tacotruck": [
    {
     "image_id": "ext_taco_truck",
     "asset": "/api/v1/pictures/img/ext_taco_truck",
@@ -17455,7 +17140,7 @@
     "sense": "ext_taco_truck"
    }
   ],
-  "ice cream truck": [
+  "icecreamtruck": [
    {
     "image_id": "ext_ice_cream_truck",
     "asset": "/api/v1/pictures/img/ext_ice_cream_truck",
@@ -17464,7 +17149,7 @@
     "sense": "ext_ice_cream_truck"
    }
   ],
-  "candy store": [
+  "candystore": [
    {
     "image_id": "ext_candy_store",
     "asset": "/api/v1/pictures/img/ext_candy_store",
@@ -17473,7 +17158,7 @@
     "sense": "ext_candy_store"
    }
   ],
-  "clothing store": [
+  "clothingstore": [
    {
     "image_id": "ext_clothing_store",
     "asset": "/api/v1/pictures/img/ext_clothing_store",
@@ -17482,7 +17167,7 @@
     "sense": "ext_clothing_store"
    }
   ],
-  "dry cleaner": [
+  "drycleaner": [
    {
     "image_id": "ext_dry_cleaner",
     "asset": "/api/v1/pictures/img/ext_dry_cleaner",
@@ -17491,7 +17176,7 @@
     "sense": "ext_dry_cleaner"
    }
   ],
-  "baseball field": [
+  "baseballfield": [
    {
     "image_id": "ext_baseball_field",
     "asset": "/api/v1/pictures/img/ext_baseball_field",
@@ -17500,7 +17185,7 @@
     "sense": "ext_baseball_field"
    }
   ],
-  "soccer field": [
+  "soccerfield": [
    {
     "image_id": "ext_soccer_field",
     "asset": "/api/v1/pictures/img/ext_soccer_field",
@@ -17509,7 +17194,7 @@
     "sense": "ext_soccer_field"
    }
   ],
-  "tennis court": [
+  "tenniscourt": [
    {
     "image_id": "ext_tennis_court",
     "asset": "/api/v1/pictures/img/ext_tennis_court",
@@ -17518,7 +17203,7 @@
     "sense": "ext_tennis_court"
    }
   ],
-  "go-kart track": [
+  "gokarttrack": [
    {
     "image_id": "ext_go_kart_track",
     "asset": "/api/v1/pictures/img/ext_go_kart_track",
@@ -17527,7 +17212,7 @@
     "sense": "ext_go_kart_track"
    }
   ],
-  "race track": [
+  "racetrack": [
    {
     "image_id": "ext_race_track",
     "asset": "/api/v1/pictures/img/ext_race_track",
@@ -17536,7 +17221,7 @@
     "sense": "ext_race_track"
    }
   ],
-  "basketball court": [
+  "basketballcourt": [
    {
     "image_id": "ext_basketball_court",
     "asset": "/api/v1/pictures/img/ext_basketball_court",
@@ -17545,7 +17230,7 @@
     "sense": "ext_basketball_court"
    }
   ],
-  "botanical garden": [
+  "botanicalgarden": [
    {
     "image_id": "ext_botanical_garden",
     "asset": "/api/v1/pictures/img/ext_botanical_garden",
@@ -17554,7 +17239,7 @@
     "sense": "ext_botanical_garden"
    }
   ],
-  "science center": [
+  "sciencecenter": [
    {
     "image_id": "ext_science_center",
     "asset": "/api/v1/pictures/img/ext_science_center",
@@ -17563,7 +17248,7 @@
     "sense": "ext_science_center"
    }
   ],
-  "ballet recital": [
+  "balletrecital": [
    {
     "image_id": "ext_ballet_recital",
     "asset": "/api/v1/pictures/img/ext_ballet_recital",
@@ -17581,7 +17266,7 @@
     "sense": "ext_theater"
    }
   ],
-  "city hall": [
+  "cityhall": [
    {
     "image_id": "ext_city_hall",
     "asset": "/api/v1/pictures/img/ext_city_hall",
@@ -17590,7 +17275,7 @@
     "sense": "ext_city_hall"
    }
   ],
-  "sunday school": [
+  "sundayschool": [
    {
     "image_id": "ext_sunday_school",
     "asset": "/api/v1/pictures/img/ext_sunday_school",
@@ -17599,7 +17284,7 @@
     "sense": "ext_sunday_school"
    }
   ],
-  "cruise ship": [
+  "cruiseship": [
    {
     "image_id": "ext_cruise_ship",
     "asset": "/api/v1/pictures/img/ext_cruise_ship",
@@ -17644,7 +17329,7 @@
     "sense": "ext_harbor"
    }
   ],
-  "dirt road": [
+  "dirtroad": [
    {
     "image_id": "ext_dirt_road",
     "asset": "/api/v1/pictures/img/ext_dirt_road",
@@ -17653,7 +17338,7 @@
     "sense": "ext_dirt_road"
    }
   ],
-  "country road": [
+  "countryroad": [
    {
     "image_id": "ext_country_road",
     "asset": "/api/v1/pictures/img/ext_country_road",
@@ -17662,7 +17347,7 @@
     "sense": "ext_country_road"
    }
   ],
-  "pumpkin patch": [
+  "pumpkinpatch": [
    {
     "image_id": "ext_pumpkin_patch",
     "asset": "/api/v1/pictures/img/ext_pumpkin_patch",
@@ -17671,7 +17356,7 @@
     "sense": "ext_pumpkin_patch"
    }
   ],
-  "ski resort": [
+  "skiresort": [
    {
     "image_id": "ext_ski_resort",
     "asset": "/api/v1/pictures/img/ext_ski_resort",
@@ -17698,7 +17383,7 @@
     "sense": "ext_cottage"
    }
   ],
-  "beach house": [
+  "beachhouse": [
    {
     "image_id": "ext_beach_house",
     "asset": "/api/v1/pictures/img/ext_beach_house",
@@ -17707,7 +17392,7 @@
     "sense": "ext_beach_house"
    }
   ],
-  "changing room": [
+  "changingroom": [
    {
     "image_id": "ext_changing_room",
     "asset": "/api/v1/pictures/img/ext_changing_room",
@@ -17725,7 +17410,7 @@
     "sense": "ext_rooftop"
    }
   ],
-  "laundry room": [
+  "laundryroom": [
    {
     "image_id": "ext_laundry_room",
     "asset": "/api/v1/pictures/img/ext_laundry_room",
@@ -17752,7 +17437,7 @@
     "sense": "ext_greenhouse"
    }
   ],
-  "chicken coop": [
+  "chickencoop": [
    {
     "image_id": "ext_chicken_coop",
     "asset": "/api/v1/pictures/img/ext_chicken_coop",
@@ -17770,7 +17455,7 @@
     "sense": "ext_stable"
    }
   ],
-  "garbage truck": [
+  "garbagetruck": [
    {
     "image_id": "ext_garbage_truck",
     "asset": "/api/v1/pictures/img/ext_garbage_truck",
@@ -17806,7 +17491,7 @@
     "sense": "ext_pasture"
    }
   ],
-  "dump truck": [
+  "dumptruck": [
    {
     "image_id": "ext_dump_truck",
     "asset": "/api/v1/pictures/img/ext_dump_truck",
@@ -17833,7 +17518,7 @@
     "sense": "ext_crane"
    }
   ],
-  "tow truck": [
+  "towtruck": [
    {
     "image_id": "ext_tow_truck",
     "asset": "/api/v1/pictures/img/ext_tow_truck",
@@ -17851,7 +17536,7 @@
     "sense": "ext_taxi"
    }
   ],
-  "pickup truck": [
+  "pickuptruck": [
    {
     "image_id": "ext_pickup_truck",
     "asset": "/api/v1/pictures/img/ext_pickup_truck",
@@ -17860,7 +17545,7 @@
     "sense": "ext_pickup_truck"
    }
   ],
-  "golf cart": [
+  "golfcart": [
    {
     "image_id": "ext_golf_cart",
     "asset": "/api/v1/pictures/img/ext_golf_cart",
@@ -17869,7 +17554,7 @@
     "sense": "ext_golf_cart"
    }
   ],
-  "go-kart": [
+  "gokart": [
    {
     "image_id": "ext_go_kart",
     "asset": "/api/v1/pictures/img/ext_go_kart",
@@ -17878,7 +17563,7 @@
     "sense": "ext_go_kart"
    }
   ],
-  "hot air balloon": [
+  "hotairballoon": [
    {
     "image_id": "ext_hot_air_balloon",
     "asset": "/api/v1/pictures/img/ext_hot_air_balloon",
@@ -17887,7 +17572,7 @@
     "sense": "ext_hot_air_balloon"
    }
   ],
-  "monster truck": [
+  "monstertruck": [
    {
     "image_id": "ext_monster_truck",
     "asset": "/api/v1/pictures/img/ext_monster_truck",
@@ -17896,7 +17581,7 @@
     "sense": "ext_monster_truck"
    }
   ],
-  "race car": [
+  "racecar": [
    {
     "image_id": "ext_race_car",
     "asset": "/api/v1/pictures/img/ext_race_car",
@@ -17932,7 +17617,7 @@
     "sense": "ext_tricycle"
    }
   ],
-  "roller skates": [
+  "rollerskates": [
    {
     "image_id": "ext_roller_skates",
     "asset": "/api/v1/pictures/img/ext_roller_skates",
@@ -18004,7 +17689,7 @@
     "sense": "ext_horn"
    }
   ],
-  "mail truck": [
+  "mailtruck": [
    {
     "image_id": "ext_mail_truck",
     "asset": "/api/v1/pictures/img/ext_mail_truck",
@@ -18013,7 +17698,7 @@
     "sense": "ext_mail_truck"
    }
   ],
-  "jet ski": [
+  "jetski": [
    {
     "image_id": "ext_jet_ski",
     "asset": "/api/v1/pictures/img/ext_jet_ski",
@@ -18022,7 +17707,7 @@
     "sense": "ext_jet_ski"
    }
   ],
-  "paddle board": [
+  "paddleboard": [
    {
     "image_id": "ext_paddle_board",
     "asset": "/api/v1/pictures/img/ext_paddle_board",
@@ -18040,7 +17725,7 @@
     "sense": "ext_raft"
    }
   ],
-  "row boat": [
+  "rowboat": [
    {
     "image_id": "ext_row_boat",
     "asset": "/api/v1/pictures/img/ext_row_boat",
@@ -18058,7 +17743,7 @@
     "sense": "ext_tugboat"
    }
   ],
-  "cargo ship": [
+  "cargoship": [
    {
     "image_id": "ext_cargo_ship",
     "asset": "/api/v1/pictures/img/ext_cargo_ship",
@@ -18067,7 +17752,7 @@
     "sense": "ext_cargo_ship"
    }
   ],
-  "delivery truck": [
+  "deliverytruck": [
    {
     "image_id": "ext_delivery_truck",
     "asset": "/api/v1/pictures/img/ext_delivery_truck",
@@ -18076,7 +17761,7 @@
     "sense": "ext_delivery_truck"
    }
   ],
-  "recycling truck": [
+  "recyclingtruck": [
    {
     "image_id": "ext_recycling_truck",
     "asset": "/api/v1/pictures/img/ext_recycling_truck",
@@ -18085,7 +17770,7 @@
     "sense": "ext_recycling_truck"
    }
   ],
-  "street sweeper": [
+  "streetsweeper": [
    {
     "image_id": "ext_street_sweeper",
     "asset": "/api/v1/pictures/img/ext_street_sweeper",
@@ -18112,7 +17797,7 @@
     "sense": "ext_digger"
    }
   ],
-  "semi truck": [
+  "semitruck": [
    {
     "image_id": "ext_semi_truck",
     "asset": "/api/v1/pictures/img/ext_semi_truck",
@@ -18139,7 +17824,7 @@
     "sense": "ext_atv"
    }
   ],
-  "snow plow": [
+  "snowplow": [
    {
     "image_id": "ext_snow_plow",
     "asset": "/api/v1/pictures/img/ext_snow_plow",
@@ -18148,7 +17833,7 @@
     "sense": "ext_snow_plow"
    }
   ],
-  "four-wheeler": [
+  "fourwheeler": [
    {
     "image_id": "ext_four_wheeler",
     "asset": "/api/v1/pictures/img/ext_four_wheeler",
@@ -18157,7 +17842,7 @@
     "sense": "ext_four_wheeler"
    }
   ],
-  "dune buggy": [
+  "dunebuggy": [
    {
     "image_id": "ext_dune_buggy",
     "asset": "/api/v1/pictures/img/ext_dune_buggy",
@@ -18175,7 +17860,7 @@
     "sense": "ext_convertible"
    }
   ],
-  "dirt bike": [
+  "dirtbike": [
    {
     "image_id": "ext_dirt_bike",
     "asset": "/api/v1/pictures/img/ext_dirt_bike",
@@ -18202,7 +17887,7 @@
     "sense": "ext_jeep"
    }
   ],
-  "ladder truck": [
+  "laddertruck": [
    {
     "image_id": "ext_ladder_truck",
     "asset": "/api/v1/pictures/img/ext_ladder_truck",
@@ -18211,7 +17896,7 @@
     "sense": "ext_ladder_truck"
    }
   ],
-  "sports car": [
+  "sportscar": [
    {
     "image_id": "ext_sports_car",
     "asset": "/api/v1/pictures/img/ext_sports_car",
@@ -18220,7 +17905,7 @@
     "sense": "ext_sports_car"
    }
   ],
-  "rescue helicopter": [
+  "rescuehelicopter": [
    {
     "image_id": "ext_rescue_helicopter",
     "asset": "/api/v1/pictures/img/ext_rescue_helicopter",
@@ -18229,7 +17914,7 @@
     "sense": "ext_rescue_helicopter"
    }
   ],
-  "ski lift": [
+  "skilift": [
    {
     "image_id": "ext_ski_lift",
     "asset": "/api/v1/pictures/img/ext_ski_lift",
@@ -18247,7 +17932,7 @@
     "sense": "ext_suv"
    }
   ],
-  "cable car": [
+  "cablecar": [
    {
     "image_id": "ext_cable_car",
     "asset": "/api/v1/pictures/img/ext_cable_car",
@@ -18292,7 +17977,7 @@
     "sense": "ext_monorail"
    }
   ],
-  "freight train": [
+  "freighttrain": [
    {
     "image_id": "ext_freight_train",
     "asset": "/api/v1/pictures/img/ext_freight_train",
@@ -18301,7 +17986,7 @@
     "sense": "ext_freight_train"
    }
   ],
-  "steam train": [
+  "steamtrain": [
    {
     "image_id": "ext_steam_train",
     "asset": "/api/v1/pictures/img/ext_steam_train",
@@ -18346,7 +18031,7 @@
     "sense": "ext_glider"
    }
   ],
-  "jumbo jet": [
+  "jumbojet": [
    {
     "image_id": "ext_jumbo_jet",
     "asset": "/api/v1/pictures/img/ext_jumbo_jet",
@@ -18355,7 +18040,7 @@
     "sense": "ext_jumbo_jet"
    }
   ],
-  "space shuttle": [
+  "spaceshuttle": [
    {
     "image_id": "ext_space_shuttle",
     "asset": "/api/v1/pictures/img/ext_space_shuttle",
@@ -18373,7 +18058,7 @@
     "sense": "ext_tank"
    }
   ],
-  "fighter jet": [
+  "fighterjet": [
    {
     "image_id": "ext_fighter_jet",
     "asset": "/api/v1/pictures/img/ext_fighter_jet",
@@ -18391,7 +18076,7 @@
     "sense": "ext_seaplane"
    }
   ],
-  "balance bike": [
+  "balancebike": [
    {
     "image_id": "ext_balance_bike",
     "asset": "/api/v1/pictures/img/ext_balance_bike",
@@ -18409,7 +18094,7 @@
     "sense": "ext_hoverboard"
    }
   ],
-  "electric scooter": [
+  "electricscooter": [
    {
     "image_id": "ext_electric_scooter",
     "asset": "/api/v1/pictures/img/ext_electric_scooter",
@@ -18454,7 +18139,7 @@
     "sense": "ext_carriage"
    }
   ],
-  "horse and buggy": [
+  "horseandbuggy": [
    {
     "image_id": "ext_horse_and_buggy",
     "asset": "/api/v1/pictures/img/ext_horse_and_buggy",
@@ -18463,7 +18148,7 @@
     "sense": "ext_horse_and_buggy"
    }
   ],
-  "water gun": [
+  "watergun": [
    {
     "image_id": "ext_water_gun",
     "asset": "/api/v1/pictures/img/ext_water_gun",
@@ -18472,7 +18157,7 @@
     "sense": "ext_water_gun"
    }
   ],
-  "water table": [
+  "watertable": [
    {
     "image_id": "ext_water_table",
     "asset": "/api/v1/pictures/img/ext_water_table",
@@ -18481,7 +18166,7 @@
     "sense": "ext_water_table"
    }
   ],
-  "water balloon": [
+  "waterballoon": [
    {
     "image_id": "ext_water_balloon",
     "asset": "/api/v1/pictures/img/ext_water_balloon",
@@ -18490,7 +18175,7 @@
     "sense": "ext_water_balloon"
    }
   ],
-  "beach ball": [
+  "beachball": [
    {
     "image_id": "ext_beach_ball",
     "asset": "/api/v1/pictures/img/ext_beach_ball",
@@ -18517,7 +18202,7 @@
     "sense": "ext_frisbee"
    }
   ],
-  "yo-yo": [
+  "yoyo": [
    {
     "image_id": "ext_yo_yo",
     "asset": "/api/v1/pictures/img/ext_yo_yo",
@@ -18580,7 +18265,7 @@
     "sense": "ext_dollhouse"
    }
   ],
-  "rocking horse": [
+  "rockinghorse": [
    {
     "image_id": "ext_rocking_horse",
     "asset": "/api/v1/pictures/img/ext_rocking_horse",
@@ -18589,7 +18274,7 @@
     "sense": "ext_rocking_horse"
    }
   ],
-  "hula hoop": [
+  "hulahoop": [
    {
     "image_id": "ext_hula_hoop",
     "asset": "/api/v1/pictures/img/ext_hula_hoop",
@@ -18598,7 +18283,7 @@
     "sense": "ext_hula_hoop"
    }
   ],
-  "teddy bear": [
+  "teddybear": [
    {
     "image_id": "ext_teddy_bear",
     "asset": "/api/v1/pictures/img/ext_teddy_bear",
@@ -18607,7 +18292,7 @@
     "sense": "ext_teddy_bear"
    }
   ],
-  "squishy (toy)": [
+  "squishy(toy)": [
    {
     "image_id": "ext_squishy_toy",
     "asset": "/api/v1/pictures/img/ext_squishy_toy",
@@ -18688,7 +18373,7 @@
     "sense": "ext_maracas"
    }
   ],
-  "duck duck goose": [
+  "duckduckgoose": [
    {
     "image_id": "ext_duck_duck_goose",
     "asset": "/api/v1/pictures/img/ext_duck_duck_goose",
@@ -18715,7 +18400,7 @@
     "sense": "ext_fort"
    }
   ],
-  "zip line": [
+  "zipline": [
    {
     "image_id": "ext_zip_line",
     "asset": "/api/v1/pictures/img/ext_zip_line",

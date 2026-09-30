@@ -138,15 +138,18 @@ function verdict(res, q) {
     : (res.auto ?? (top && top.s >= cut ? top.image_id : null));
   const mark = q.mark;
   let cls = "unmarked", label = "unmarked";
+  // The real post-auto action mirrors pictureAction: only a common,
+  // calibrated miss draws; personal and uncalibrated rows choose.
+  const action = res.scope === "common" && res.calibrated ? "draw" : "choose";
   if (res.homograph) { cls = "unmarked"; label = "homograph — pick"; }
   else if (auto) {
     if (mark === auto) { cls = "auto-ok"; label = "auto ✓"; }
     else if (mark) { cls = "auto-bad"; label = "auto ✗"; }
     else { cls = "unmarked"; label = `auto→${auto}`; }
   } else {
-    if (mark === "none") { cls = "draw-ok"; label = "draw ✓ (no fit)"; }
-    else if (mark) { cls = "draw-fit"; label = "draw despite fit"; }
-    else { cls = "unmarked"; label = "draw?"; }
+    if (mark === "none") { cls = "draw-ok"; label = `${action} ✓ (no fit)`; }
+    else if (mark) { cls = "draw-fit"; label = `${action} — fit not applied`; }
+    else { cls = "unmarked"; label = `${action}?`; }
   }
   return { cands, top, cut, auto, cls, label };
 }
@@ -166,7 +169,7 @@ function renderCounts() {
     else if (v.cls === "draw-ok") t[lang].none++;
   }
   const langs = Object.keys(t).sort();
-  $("counts").innerHTML = "<tr><th>lang</th><th>auto ✓</th><th>auto ✗</th><th>draw w/ fit</th><th>no fit → draw</th><th>unmarked</th></tr>" +
+  $("counts").innerHTML = "<tr><th>lang</th><th>auto ✓</th><th>auto ✗</th><th>fit not applied</th><th>no fit</th><th>unmarked</th></tr>" +
     langs.map(l => `<tr><td>${l}</td><td>${t[l].ok}</td><td style="color:var(--bad)">${t[l].bad}</td><td style="color:var(--warn)">${t[l].fit}</td><td>${t[l].none}</td><td>${t[l].unmarked}</td></tr>`).join("");
 }
 

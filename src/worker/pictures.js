@@ -24,6 +24,7 @@ import {
   decideAuto,
   drawKey,
   drawSubject,
+  labelKey,
   queryText,
   resolveLanguage,
   scoreOf,
@@ -209,13 +210,17 @@ async function findOne(env, { text, description, locale, binding = "PICTURES", i
   // `pool` is the full fetched set and `direct` the lexical label
   // map — identity can rank below fetch_k in the embedding entirely
   // ("eat", "no"), so the dictionary is the tier-1 authority (§ 4.2).
-  const labelKey = normalizeV1(String(text ?? ""));
+  const lKey = labelKey(text);
   const tier1Eligible = jev.scope === "common" && language === "en"
-    && labelKey && !normalizeV1(String(description ?? ""));
+    && lKey && !normalizeV1(String(description ?? ""));
   const direct = tier1Eligible
-    ? (env.PICTURE_LABELS ?? pictureLabels.labels)?.[labelKey] ?? null
+    ? (env.PICTURE_LABELS ?? pictureLabels.labels)?.[lKey] ?? null
     : null;
-  const homograph = new Set((direct ?? []).map((e) => e.sense ?? e.image_id)).size > 1;
+  // Homograph = the label names two CATALOG senses (orange colour vs
+  // fruit). Same-word duplicate art from extended/drawn doesn't count.
+  const homograph = new Set((direct ?? [])
+    .filter((e) => e.source === "catalog")
+    .map((e) => e.sense ?? e.image_id)).size > 1;
   const auto = decideAuto(
     { candidates, pool: rescored, pinned: signals?.pinned ?? null,
       blocked: signals?.blocked ?? [], text, description, scope: jev.scope,

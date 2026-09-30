@@ -9,6 +9,7 @@ import {
   captionForDrawing,
   captionLabels,
   decideAuto,
+  labelKey,
   drawSubject,
   queryText,
   resolveLanguage,
@@ -156,6 +157,31 @@ test("auto tier 1: the label map applies a word the embedding never surfaced", (
     decideAuto({ candidates: [], direct: dupe, text: "sofa", scope: "common" },
       { ...CFG, auto_cutoff: 1.01 }, "en"),
     "img_a");
+  // And duplicate ART of the same word isn't either: catalog +
+  // extended "blueberry" is one concept — catalog art wins.
+  const blueberries = [
+    { image_id: "img_bb", caption: "blueberry", source: "catalog", sense: "sns_bb" },
+    { image_id: "ext_bb", caption: "blueberry · Food · object", source: "extended", sense: "ext_bb" },
+  ];
+  assert.equal(
+    decideAuto({ candidates: [], direct: blueberries, text: "blueberry", scope: "common" },
+      { ...CFG, auto_cutoff: 1.01 }, "en"),
+    "img_bb");
+});
+
+test("label fold: spacing and hyphens are orthographic, not semantic", () => {
+  assert.equal(labelKey("apple sauce"), "applesauce");
+  assert.equal(labelKey("ice-cream"), labelKey("ice cream"));
+  assert.equal(labelKey("hotdog"), labelKey("hot dog"));
+  assert.equal(labelKey("Mom's"), labelKey("moms"));
+  // A folded pool scan catches "hotdog" against caption "hot dog".
+  const cands = [
+    { image_id: "hd", caption: "hot dog · Food & Drink", source: "catalog", score: 0.5 },
+  ];
+  assert.equal(
+    decideAuto({ candidates: cands, text: "hotdog", scope: "common" },
+      { ...CFG, auto_cutoff: 1.01 }, "en"),
+    "hd");
 });
 
 test("auto tier 1: language, scope, description, and block guards hold", () => {

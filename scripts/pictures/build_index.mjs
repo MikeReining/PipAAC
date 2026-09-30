@@ -23,11 +23,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
   captionForCatalog,
   captionForDrawing,
   captionForExtended,
+  labelKey,
 } from "../../src/shared/picture_index.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -197,13 +197,13 @@ export function buildLabelMap({ paths = {} } = {}) {
       labelsBySenseId.get(l.sense_id) ?? [],
       senseById.get(l.sense_id)?.category);
     for (const img of imgsBySense.get(l.sense_id) ?? []) {
-      push(normalizeV1(l.text), { image_id: img.id, asset: `/${img.key}`,
+      push(labelKey(l.text), { image_id: img.id, asset: `/${img.key}`,
         source: "catalog", caption, sense: l.sense_id });
     }
   }
   for (const [id, r] of meta) {
     if (review[id] !== "approve" || manifest[id]?.r2Key !== `symbols/extended/${id}.png`) continue;
-    push(normalizeV1(r.label ?? id.replace(/_/g, " ")), {
+    push(labelKey(r.label ?? id.replace(/_/g, " ")), {
       image_id: `ext_${id}`, asset: `/api/v1/pictures/img/ext_${id}`,
       source: "extended",
       caption: captionForExtended(r.label ?? id.replace(/_/g, " "), r.section, r.spec),
@@ -213,8 +213,8 @@ export function buildLabelMap({ paths = {} } = {}) {
   for (const d of readJson(paths.drawings ?? DRAWINGS, []) ?? []) {
     if (d.status !== "ready" || !d.key) continue;
     const norm = d.scope === "personal"
-      ? normalizeV1(d.description ?? "")
-      : normalizeV1(d.text ?? "");
+      ? labelKey(d.description ?? "")
+      : labelKey(d.text ?? "");
     push(norm, {
       image_id: `drw_${d.key}`, asset: `/api/v1/pictures/img/drw_${d.key}`,
       source: "drawn", caption: captionForDrawing(d), sense: `drw_${norm}`,

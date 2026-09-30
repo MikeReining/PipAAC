@@ -53,6 +53,17 @@ export function captionForDrawing({ scope, text, description }) {
   return queryText(text, description);
 }
 
+/** Label identity fold — normalizeV1 plus dropping spaces, hyphens,
+ *  apostrophes and underscores, so "apple sauce" ≡ "applesauce",
+ *  "ice-cream" ≡ "ice cream", "hotdog" ≡ "hot dog" all name the same
+ *  picture. Used for the tier-1 label map keys and lookups, and for
+ *  comparing caption segments to a query. Orthographic variants fold
+ *  together on purpose; a fold that merges two senses ("we'll"/"well")
+ *  reads as a homograph and declines rather than auto-applying. */
+export function labelKey(text) {
+  return normalizeV1(String(text ?? "")).replace(/[\s\-_'’]/g, "");
+}
+
 /** The caption segments that are word labels — the " · "-separated
  *  parts once caption metadata is stripped. Recipes are positional:
  *  catalog = "label · label · category" (every category contains "&"
@@ -115,7 +126,10 @@ export function cutoffFor(cfg, language) {
  *  the colour and the fruit, "bat" the animal and the baseball bat)
  *  is a real homograph: identity can't arbitrate, so NOTHING
  *  auto-applies — the homographs are listed as candidates and the
- *  adult picks. A founder pin still wins: the pin IS the arbitration.
+ *  adult picks. Duplicate art of the SAME word (catalog blueberry +
+ *  extended blueberry, or a family's drawing) is not a homograph —
+ *  only catalog senses carry meaning distinctions, so same-word dupes
+ *  just pick one. A founder pin still wins: the pin IS the arbitration.
  *  Tier 2 is similarity: the top score must clear its language's
  *  cutoff and not be blocked. A blocked top means null. */
 export function decideAuto(
@@ -125,13 +139,15 @@ export function decideAuto(
 ) {
   if (pinned) return pinned;
   if (scope === "common" && language === "en" && text && !normalizeV1(String(description ?? ""))) {
-    const q = normalizeV1(text);
-    const homograph = new Set((direct ?? []).map((e) => e.sense ?? e.image_id)).size > 1;
-    if (homograph) return null;
+    const q = labelKey(text);
+    const catalogSenses = new Set((direct ?? [])
+      .filter((e) => e.source === "catalog").map((e) => e.sense ?? e.image_id));
+    if (catalogSenses.size > 1) return null;
     const exact = new Map();
     for (const e of direct ?? []) exact.set(e.image_id, e);
     for (const c of pool ?? candidates) {
-      if (captionLabels(c.caption, c.source).includes(q)) exact.set(c.image_id, c);
+      if (captionLabels(c.caption, c.source).some((seg) => labelKey(seg) === q))
+        exact.set(c.image_id, c);
     }
     if (exact.size) {
       const pick = [...exact.values()]
