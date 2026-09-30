@@ -25,8 +25,11 @@ import {
   LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
 import {
-  listRuns, runTransformSuite, saveRun, setCellVerdict,
+  listBatteries, listRuns, runBattery, runTransformSuite, saveBattery,
+  saveRun, setCellVerdict,
 } from "../sentences/lab.mjs";
+import { TRANSFORM_PROMPTS } from "../../src/shared/transform_prompts.mjs";
+import { CANDIDATE_PROMPTS } from "../sentences/candidate_prompts.mjs";
 import { computeCoreGaps } from "../art/art_gaps.mjs";
 import { loadGlyphWords } from "../art/gen.mjs";
 import { plannerLane } from "../../src/shared/draw_prompt.mjs";
@@ -40,6 +43,7 @@ const PAGE_PATH = join(repoRoot, "public/picture-calibration.html");
 const DISAGREE_PAGE_PATH = join(repoRoot, "public/picture-disagreements.html");
 const LAB_PAGE_PATH = join(repoRoot, "public/picture-lab.html");
 const SENTENCE_LAB_PAGE_PATH = join(repoRoot, "public/sentence-lab.html");
+const BATTERY_PATH = join(repoRoot, "scripts/sentences/battery.json");
 const EXT_DIR = join(repoRoot, "out/extended_art");
 const PUBLIC_DIR = join(repoRoot, "public");
 
@@ -467,6 +471,51 @@ function buildHandler() {
 
     if (path === "/api/slab/runs" && req.method === "GET") {
       return json(res, 200, { runs: listRuns() });
+    }
+
+    /* The battery: the regression set × prompt set, scored by the dumb
+     *  stemmer. GET returns the fragment list and both prompt sets so
+     *  the page can prefill textareas; run posts whatever's in them. */
+    if (path === "/api/slab/battery" && req.method === "GET") {
+      const spec = readJson(BATTERY_PATH, { fragments: [] });
+      return json(res, 200, {
+        fragments: spec.fragments,
+        prompts: { production: TRANSFORM_PROMPTS, candidate: CANDIDATE_PROMPTS },
+        batteries: listBatteries({ limit: 10 }),
+      });
+    }
+
+    if (path === "/api/slab/battery/run" && req.method === "POST") {
+      const body = await readBody(req);
+      const spec = readJson(BATTERY_PATH, { fragments: [] });
+      const fragments = Array.isArray(body?.fragments)
+        ? body.fragments : spec.fragments;
+      const lanes = Array.isArray(body?.lanes) && body.lanes.length
+        ? body.lanes.filter((l) => ["qwen", "gptoss"].includes(l)) : undefined;
+      try {
+        const battery = await runBattery({
+          fragments, prompts: body?.prompts ?? {}, lanes,
+        });
+        return json(res, 200, {
+          battery: saveBattery({ label: body?.label ?? "run", battery }),
+        });
+      } catch (e) {
+        const msg = String(e?.message ?? e);
+        return json(res, msg === "bad_fragments" ? 400 : 502,
+          { error: "run_failed", detail: msg });
+      }
+    }
+
+    /** Edit the fragment list in the page → it becomes the stored set. */
+    if (path === "/api/slab/battery/save" && req.method === "POST") {
+      const body = await readBody(req);
+      if (!Array.isArray(body?.fragments)) {
+        return json(res, 400, { error: "bad_fragments" });
+      }
+      const spec = readJson(BATTERY_PATH, {});
+      spec.fragments = body.fragments.map((f) => String(f ?? "").trim()).filter(Boolean);
+      writeJson(BATTERY_PATH, spec);
+      return json(res, 200, { ok: true, count: spec.fragments.length });
     }
 
     if (path === "/api/slab/verdict" && req.method === "POST") {

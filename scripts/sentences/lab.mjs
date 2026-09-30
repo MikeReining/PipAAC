@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 import {
   TRANSFORM_MODES, TRANSFORM_PROMPTS,
 } from "../../src/shared/transform_prompts.mjs";
+import { scoreCell } from "./scorer.mjs";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -46,16 +47,16 @@ export { TRANSFORM_MODES };
 
 /** The request body one lane call sends — production shape plus the
  *  lane's own knobs. */
-export function transformChatBody({ lane, mode, text }) {
+export function transformChatBody({ lane, mode, text, system }) {
   const cfg = TRANSFORM_LANES[lane];
   if (!cfg) throw new Error(`unknown transform lane ${lane}`);
-  if (!TRANSFORM_PROMPTS[mode]) throw new Error(`unknown mode ${mode}`);
+  if (!TRANSFORM_PROMPTS[mode] && !system) throw new Error(`unknown mode ${mode}`);
   return {
     model: cfg.model,
     temperature: 0,
     ...(cfg.reasoning_effort ? { reasoning_effort: cfg.reasoning_effort } : {}),
     messages: [
-      { role: "system", content: TRANSFORM_PROMPTS[mode] },
+      { role: "system", content: system ?? TRANSFORM_PROMPTS[mode] },
       { role: "user", content: text },
     ],
   };
@@ -77,7 +78,7 @@ export function parseTransformReply(payload) {
 
 /** One cell of the grid → { text, ms, think, usage }. */
 export async function askTransform({
-  lane, mode, text,
+  lane, mode, text, system,
   apiKey = process.env.GROQ_API_KEY,
   fetchImpl = globalThis.fetch,
 } = {}) {
@@ -90,7 +91,7 @@ export async function askTransform({
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(transformChatBody({ lane, mode, text })),
+    body: JSON.stringify(transformChatBody({ lane, mode, text, system })),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -183,4 +184,81 @@ export function setCellVerdict({ file, mode, lane, verdict, runsDir = SENTENCE_R
   cell.verdict = verdict;
   writeFileSync(path, JSON.stringify(rec, null, 2) + "\n");
   return rec;
+}
+
+/* -------------------------------- battery ------------------------------- */
+
+/** The regression set — every fragment × every mode, scored by the
+ *  dumb stemmer (scorer.mjs): the model can't grade its own homework.
+ *  prompts overrides TRANSFORM_PROMPTS per mode so a candidate set can
+ *  be measured before it ever ships. Abstention (output === taps) is a
+ *  pass by law; fabrication, drops, and added subjects flag red. */
+export async function runBattery({
+  fragments,
+  prompts = {},
+  lanes = ["qwen"],
+  modes = TRANSFORM_MODES,
+  apiKey,
+  fetchImpl,
+} = {}) {
+  if (!Array.isArray(fragments) || !fragments.length || fragments.length > 60) {
+    throw new Error("bad_fragments");
+  }
+  const frags = fragments.map((f) => String(f ?? "").trim()).filter(Boolean);
+  if (!frags.length) throw new Error("bad_fragments");
+  const t0 = Date.now();
+  const cells = {};
+  for (const frag of frags) {
+    cells[frag] = {};
+    for (const mode of modes) cells[frag][mode] = {};
+  }
+  /** Bounded fan-out + one retry on 429/503 — a full battery is ~165
+   *  calls and Groq rate-limits the burst. */
+  const tasks = frags.flatMap((frag) => modes.flatMap((mode) =>
+    lanes.map((lane) => ({ frag, mode, lane }))));
+  const run1 = async ({ frag, mode, lane }, attempt = 0) => {
+    const system = prompts[mode] ?? TRANSFORM_PROMPTS[mode];
+    try {
+      const r = await askTransform({ lane, mode, text: frag, system, apiKey, fetchImpl });
+      cells[frag][mode][lane] = { ...r, score: scoreCell(frag, r.text) };
+    } catch (e) {
+      const msg = String(e?.message ?? e);
+      if (attempt === 0 && /groq_(429|503)/.test(msg)) {
+        await new Promise((r) => setTimeout(r, 1500));
+        return run1({ frag, mode, lane }, 1);
+      }
+      cells[frag][mode][lane] = { ms: null, error: msg };
+    }
+  };
+  const CONCURRENCY = 8;
+  for (let i = 0; i < tasks.length; i += CONCURRENCY) {
+    await Promise.all(tasks.slice(i, i + CONCURRENCY).map((t) => run1(t)));
+  }
+  return { fragments: frags, modes, lanes, cells, ms: Date.now() - t0 };
+}
+
+export function batteryFileName(label = "run", ts = Date.now()) {
+  return `battery-${ts}-${slug(label)}.json`;
+}
+
+export function batteryFilePath(file, runsDir = SENTENCE_RUNS_DIR) {
+  const f = String(file ?? "");
+  return /^battery-[0-9]+-[a-z0-9-]+\.json$/.test(f) ? join(runsDir, f) : null;
+}
+
+export function saveBattery({ label = "run", battery, runsDir = SENTENCE_RUNS_DIR } = {}) {
+  mkdirSync(runsDir, { recursive: true });
+  const file = batteryFileName(label);
+  const rec = { file, label, created_at: Date.now(), ...battery };
+  writeFileSync(join(runsDir, file), JSON.stringify(rec, null, 2) + "\n");
+  return rec;
+}
+
+export function listBatteries({ runsDir = SENTENCE_RUNS_DIR, limit = 30 } = {}) {
+  if (!existsSync(runsDir)) return [];
+  return readdirSync(runsDir)
+    .filter((f) => f.startsWith("battery-") && f.endsWith(".json"))
+    .sort().reverse()
+    .slice(0, limit)
+    .map((f) => JSON.parse(readFileSync(join(runsDir, f), "utf8")));
 }

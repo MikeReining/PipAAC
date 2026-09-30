@@ -42,6 +42,23 @@
     .meta { font-size: 12px; color: #6b665c; }
     h2 { font-size: 14px; margin: 18px 0 6px; }
     details > summary { cursor: pointer; font-size: 13px; color: #6b665c; }
+    /* battery */
+    .batt { background: #fff; border: 1px solid var(--edge); border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+    .promptrow { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+    .promptrow label { font-size: 11px; color: #6b665c; display: block; margin-bottom: 2px; }
+    .promptrow textarea { width: 230px; min-height: 110px; font: 11px/1.4 ui-monospace, monospace; padding: 6px; border: 1px solid var(--edge); border-radius: 8px; resize: vertical; }
+    .fragbox { width: 100%; min-height: 90px; font: 12px/1.5 ui-monospace, monospace; padding: 8px; border: 1px solid var(--edge); border-radius: 8px; resize: vertical; }
+    .batt td.cell { width: auto; }
+    .bcell .out { font-size: 12px; line-height: 1.35; }
+    .bcell .flags { font-size: 10px; margin-top: 3px; display: flex; gap: 4px; flex-wrap: wrap; }
+    .flag { padding: 0 5px; border-radius: 999px; border: 1px solid var(--edge); font-size: 10px; }
+    .flag.add { color: var(--bad); border-color: var(--bad); }
+    .flag.drop { color: var(--warn); border-color: var(--warn); }
+    .flag.subj { color: var(--bad); border-color: var(--bad); }
+    .flag.abstain { color: #6b665c; }
+    .flag.ok { color: var(--win); border-color: var(--win); }
+    .frag-row td.frag { font-size: 12px; font-weight: 600; font-family: ui-monospace, monospace; white-space: nowrap; }
+    .batt-sum { font-size: 13px; margin: 8px 0; }
   </style>
 </head>
 <body>
@@ -71,6 +88,25 @@
     <div id="live"></div>
     <h2>Runs <span class="meta">(newest first)</span></h2>
     <div id="runs"></div>
+
+    <h2>Battery <span class="meta">— the regression set × the prompts below, scored by a dumb stemmer the model can't influence. <b>same</b> = abstained (a pass). red = fabricated words/subject, orange = dropped her word.</span></h2>
+    <div class="batt">
+      <div class="row-head">
+        <select id="pset" style="font:inherit;padding:6px 8px;border:1px solid var(--edge);border-radius:8px">
+          <option value="candidate">candidate prompts</option>
+          <option value="production">production prompts</option>
+        </select>
+        <button class="primary" id="brun">Run battery</button>
+        <button id="bsave" title="store the fragment list as the battery">keep fragments</button>
+        <span class="meta" id="bstatus"></span>
+      </div>
+      <div class="promptrow" id="promptrow"></div>
+      <label class="meta" for="frags">fragments — one per line</label>
+      <textarea class="fragbox" id="frags"></textarea>
+      <div class="batt-sum" id="bsum"></div>
+      <div id="bmatrix"></div>
+      <div id="bhistory" style="margin-top:10px"></div>
+    </div>
   </main>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -168,9 +204,116 @@ async function renderRuns(skipFile) {
   }
 }
 
+/* ------------------------------- battery ------------------------------- */
+
+let battSpec = null;
+
+function batteryFlagsHtml(score) {
+  if (!score) return "";
+  const f = [];
+  if (score.same) f.push('<span class="flag abstain">same — abstained</span>');
+  for (const w of score.added ?? []) f.push(`<span class="flag add">+${esc(w)}</span>`);
+  for (const w of score.dropped ?? []) f.push(`<span class="flag drop">−${esc(w)}</span>`);
+  for (const g of score.subject ?? []) f.push(`<span class="flag subj">+subj:${esc(g)}</span>`);
+  if (!score.same && score.ok) f.push('<span class="flag ok">clean</span>');
+  return `<div class="flags">${f.join("")}</div>`;
+}
+
+function batteryMatrixHtml(b) {
+  const head = `<tr><th></th>${b.modes.map((m) => `<th>${MODE_LABEL[m] ?? esc(m)}</th>`).join("")}</tr>`;
+  const rows = b.fragments.map((frag) => {
+    const cells = b.modes.map((mode) => {
+      const c = b.cells?.[frag]?.[mode]?.[b.lanes[0]];
+      if (!c) return '<td class="cell"><span class="meta">—</span></td>';
+      if (c.error) return `<td class="cell"><div class="bcell"><div class="out err">${esc(c.error)}</div></div></td>`;
+      const s = c.score ?? {};
+      const bad = (s.added?.length || s.subject?.length) ? ' style="background:#fdf0ef"' : "";
+      return `<td class="cell"${bad}><div class="bcell"><div class="out">${esc(c.text)}</div>${batteryFlagsHtml(s)}<span class="meta">${c.ms}ms</span></div></td>`;
+    }).join("");
+    return `<tr class="frag-row"><td class="frag">${esc(frag)}</td>${cells}</tr>`;
+  }).join("");
+  return `<table style="table-layout:fixed">${head}${rows}</table>`;
+}
+
+function batterySummary(b) {
+  let pass = 0, abstain = 0, fab = 0, drop = 0, subj = 0, err = 0, total = 0;
+  for (const frag of b.fragments) for (const mode of b.modes) {
+    const c = b.cells?.[frag]?.[mode]?.[b.lanes[0]];
+    if (!c) continue;
+    total++;
+    if (c.error) { err++; continue; }
+    const s = c.score ?? {};
+    if (s.same) abstain++;
+    if (s.added?.length) fab++;
+    if (s.dropped?.length) drop++;
+    if (s.subject?.length) subj++;
+    if (s.ok) pass++;
+  }
+  return `${total} cells · ${pass} clean (${abstain} abstained) · ` +
+    `<span style="color:var(--bad)">${fab} fabricated</span> · ` +
+    `<span style="color:var(--warn)">${drop} dropped</span> · ` +
+    `<span style="color:var(--bad)">${subj} added subjects</span>` +
+    (err ? ` · ${err} errors` : "") + ` · ${(b.ms / 1000).toFixed(1)}s`;
+}
+
+function fillPromptAreas(which) {
+  const prompts = battSpec?.prompts?.[which] ?? {};
+  $("promptrow").innerHTML = (battSpec?.__modes ?? ["fix", "question", "past", "present", "future"])
+    .map((m) => `<div><label>${MODE_LABEL[m] ?? m}</label><textarea id="bp-${m}">${esc(prompts[m] ?? "")}</textarea></div>`)
+    .join("");
+}
+
+async function loadBattery() {
+  battSpec = await (await fetch("/api/slab/battery")).json();
+  battSpec.__modes = Object.keys(battSpec.prompts.production);
+  $("frags").value = (battSpec.fragments ?? []).join("\n");
+  fillPromptAreas($("pset").value);
+  $("bhistory").innerHTML = (battSpec.batteries ?? [])
+    .map((b) => `<details><summary>${esc(b.label)} — ${new Date(b.created_at).toLocaleString()} — ${esc(batterySummary(b).replace(/<[^>]+>/g, ""))}</summary>${batteryMatrixHtml(b)}</details>`)
+    .join("");
+}
+
+async function runBattery() {
+  const prompts = {};
+  for (const m of battSpec.__modes) prompts[m] = $(`bp-${m}`).value;
+  const fragments = $("frags").value.split("\n").map((s) => s.trim()).filter(Boolean);
+  $("brun").disabled = true;
+  $("bstatus").textContent = `running ${fragments.length} fragments × ${battSpec.__modes.length} modes…`;
+  try {
+    const j = await post("/api/slab/battery/run", {
+      prompts, fragments, label: $("pset").value,
+    });
+    $("bsum").innerHTML = batterySummary(j.battery);
+    $("bmatrix").innerHTML = batteryMatrixHtml(j.battery);
+    $("bstatus").textContent = `saved ${j.battery.file}`;
+    await loadBatteryHistory();
+  } catch (e) {
+    $("bstatus").textContent = String(e.message);
+  }
+  $("brun").disabled = false;
+}
+
+async function loadBatteryHistory() {
+  const j = await (await fetch("/api/slab/battery")).json();
+  battSpec.batteries = j.batteries;
+  $("bhistory").innerHTML = (j.batteries ?? [])
+    .map((b) => `<details><summary>${esc(b.label)} — ${new Date(b.created_at).toLocaleString()} — ${esc(batterySummary(b).replace(/<[^>]+>/g, ""))}</summary>${batteryMatrixHtml(b)}</details>`)
+    .join("");
+}
+
+$("pset").addEventListener("change", () => fillPromptAreas($("pset").value));
+$("brun").addEventListener("click", runBattery);
+$("bsave").addEventListener("click", async () => {
+  const fragments = $("frags").value.split("\n").map((s) => s.trim()).filter(Boolean);
+  await post("/api/slab/battery/save", { fragments });
+  $("bsave").textContent = `kept ${fragments.length} ✓`;
+  setTimeout(() => { $("bsave").textContent = "keep fragments"; }, 1500);
+});
+
 $("go").addEventListener("click", run);
 $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") run(); });
 renderRuns();
+loadBattery();
 </script>
 </body>
 </html>
