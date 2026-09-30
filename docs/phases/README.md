@@ -47,7 +47,7 @@ Executing phases only. Each row names the **next** slice.
 | [029 — Add a word](029_Add_A_Word.md) | Slices A–D built 2026-09-29 (sheet, card pictures/kind/voice, paste). Next: slice E stopwatch on a real tablet — after the founder saves the 030 cutoff and approves a live draw run |
 | [030 — Picture Finder and drawing](030_Picture_Finder_And_Drawing.md) | Slices 1–7 built; open = founder calibration save, slice-4 live run (≤10, founder-approved), and Works Tests 11 and 13 |
 | [031 — The editor, rebuilt](031_Board_Editor.md) | Slices A–G built 2026-09-29. Open: Works Test 1 (first-timer stopwatch) and a real-tablet pass of the narrow layout |
-| [032 — Spotlight gets its own page](032_Spotlight_Page.md) | A–C built 2026-09-29 — founder review (incl. suggested-list words); D held until then |
+| [032 — Spotlight gets its own page](032_Spotlight_Page.md) | A–C built 2026-09-29, E (moves: ✨ / ❓ targets, Try it ✨, Progress counts) 2026-09-30 — founder review; D held until then |
 
 ## Proposals awaiting review
 

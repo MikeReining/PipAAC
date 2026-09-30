@@ -1,8 +1,8 @@
 # 032 — Spotlight gets its own page
 
-**Status:** A, B, C built 2026-09-29, waiting on founder review. D
-(partner-phone coach polish) is held until the founder has reviewed A–C
-(founder, 2026-09-29).
+**Status:** A, B, C built 2026-09-29; E built 2026-09-30. Waiting on
+founder review of A–C and E. D (partner-phone coach polish) is held until
+then (founder, 2026-09-29).
 
 ## Founder intent (2026-09-29)
 
@@ -93,6 +93,19 @@ Open (founder): **real example sentences** for the recipes need one live
 ✨ / ❓ run per recipe (≈6 Groq calls, well under a cent) — not run, per
 the paid-call rule. The transform prompts' live retest (023 § 5.6) is
 still pending and should land before families are taught the buttons.
+
+## D — held, candidate scope (not decided)
+
+Written down so it isn't lost; the founder decides after reviewing A–E.
+- The coach bar on a linked phone: today a row of word chips, one tip
+  line, and a tally. Candidates: show the list's recipe (moves), group
+  ✨ / ❓ apart from words, and a clearer "you're modeling" state.
+- Starting, switching, and ending a spotlight from the phone without
+  opening Settings.
+- Phone-width top bar: the 🔦 End chip is off-screen at 390px (see
+  below) — if D owns the phone experience, it needs this fixed first.
+- The older spot probes (mirror, model, coach) still launch Chrome via
+  `open -na`; move them to the binary when D touches them.
 
 ## Works Test
 
