@@ -35,8 +35,10 @@ import {
   MUSE_MODEL,
   OPENROUTER_ENDPOINT,
   parseDrawSpec,
+  plannerLane,
   styleRefBundle,
 } from "../shared/draw_prompt.mjs";
+import { askPlanner, PLANNER_SYSTEM } from "../shared/draw_planner.mjs";
 import { adminOk } from "./tile.js";
 
 const CFG = pictureFinder;
@@ -593,6 +595,87 @@ export async function handleDraw(request, env, ctx) {
 
   const tier = await entitlementFor(env, uid);
   const cap = ALLOWANCE[tier] ?? ALLOWANCE.free;
+
+  /* The draw is a real pipeline — for metaphor words the planner alone
+   * can think for ~25s before Muse starts. Clients sending
+   * `Accept: text/event-stream` get honest stage events as each phase
+   * begins (checking → reading → planning → drawing → saving) plus the
+   * planner's hint the moment it is written; every label the UI shows
+   * is a thing that actually happened. Everything else keeps the
+   * blocking image/png contract. */
+  const sse = request.headers.get("accept")?.includes("text/event-stream");
+  if (!sse) {
+    const r = await runDraw(env, { uid, text, description, cap }, () => {});
+    return r.png ? pngResponse(r.png, r.headers) : json(r.body, { status: r.status });
+  }
+  const { readable, writable } = new TransformStream();
+  const enc = new TextEncoder();
+  const writer = writable.getWriter();
+  let chain = Promise.resolve();
+  const send = (o) =>
+    (chain = chain.then(() =>
+      writer.write(enc.encode(`data: ${JSON.stringify(o)}\n\n`)).catch(() => {})));
+  const emit = (stage, extra = {}) => send({ type: "stage", stage, ...extra });
+  const work = (async () => {
+    try {
+      const r = await runDraw(env, { uid, text, description, cap }, emit);
+      await chain; // every stage lands before the terminal event
+      if (r.png) {
+        await send({ type: "done", key: r.key, cache: r.cache,
+          left: r.left, image: b64encode(r.png) });
+      } else {
+        await send({ type: "error", status: r.status, ...r.body });
+      }
+    } catch {
+      await send({ type: "error", status: 502, error: "draw_failed" }).catch(() => {});
+    }
+    await chain.catch(() => {});
+    await writer.close().catch(() => {});
+  })();
+  ctx?.waitUntil?.(work);
+  return new Response(readable, {
+    headers: {
+      "content-type": "text/event-stream; charset=utf-8",
+      "cache-control": "no-cache",
+    },
+  });
+}
+
+const b64encode = (bytes) => {
+  let s = "";
+  for (let i = 0; i < bytes.length; i += 8192) {
+    s += String.fromCharCode(...bytes.subarray(i, i + 8192));
+  }
+  return btoa(s);
+};
+
+/** The planner's hint for a mint — Jev's imagery picks the lane
+ *  (plannerLane: literal → gptoss, metaphor → spark). env.DRAW_PLAN is
+ *  the test seam; live mints need the OpenRouter chat key that
+ *  DRAW_LIVE already requires. A planner failure never blocks a
+ *  drawing — the hint falls back to the adult's description. */
+async function planDrawHint(env, { text, description, spec }) {
+  try {
+    if (typeof env.DRAW_PLAN === "function") {
+      return (await env.DRAW_PLAN({ text, description, spec })) || null;
+    }
+    const { hint } = await askPlanner({
+      lane: plannerLane(spec), text, description, spec,
+      apiKey: env.OPENROUTER_API_KEY, system: PLANNER_SYSTEM,
+      app: "pictures", signal: AbortSignal.timeout(45_000),
+    });
+    return hint || null;
+  } catch {
+    return null;
+  }
+}
+
+/** The draw pipeline after auth/safety — one failure boundary from
+ *  claim to ready. emit(stage, extra) reports real phases to SSE
+ *  clients; classic callers pass a no-op. Returns { png, headers } to
+ *  serve or { status, body } to fail. */
+async function runDraw(env, { uid, text, description, cap }, emit) {
+  const err = (status, body) => ({ status, body });
   const headersFor = (cache, left, key) => ({
     "x-draw-cache": cache,
     ...(left == null ? {} : { "x-drawings-left": String(left) }),
@@ -601,7 +684,11 @@ export async function handleDraw(request, env, ctx) {
   const serveRow = async (row, cache, left) => {
     const obj = await env.VOICE.get(row.r2_key).catch(() => null);
     if (!obj) return null;
-    return pngResponse(await obj.arrayBuffer(), headersFor(cache, left, row.key));
+    return {
+      png: new Uint8Array(await obj.arrayBuffer()),
+      headers: headersFor(cache, left, row.key),
+      key: row.key, cache, left,
+    };
   };
 
   // 2 — an existing picture stays free even at 0 left (§ 0.5). This
@@ -609,6 +696,7 @@ export async function handleDraw(request, env, ctx) {
   // computable locally — a personal key hashes the description alone,
   // and only the hash reaches our own DO (the name never leaves this
   // Worker). The 402 below applies to a miss only.
+  emit("checking");
   const keyCommon = await drawKey(CFG.style_version,
     drawSubject({ scope: "common", text, description }));
   const keyPersonal = description ? await drawKey(CFG.style_version,
@@ -620,12 +708,13 @@ export async function handleDraw(request, env, ctx) {
     if (row?.status === "withheld") withheldRow ??= row;
   }
   if (readyRow) {
+    emit("serving");
     const served =
       await serveRow(readyRow, "hit", await allowanceLeft(env, uid, cap));
     if (served) return served;
     // ready row, missing bytes — fall through and mint it again
   } else if (withheldRow) {
-    return json({ error: "unsafe" }, { status: 422 });
+    return err(422, { error: "unsafe" });
   }
 
   // 3 — allowance (§ 6.1): atomic lifetime reservation + 30/day guard.
@@ -633,14 +722,13 @@ export async function handleDraw(request, env, ctx) {
   try {
     rs = await (await reserveAllowance(env, uid, cap)).json();
   } catch {
-    return json({ error: "draw_unavailable" }, { status: 503 });
+    return err(503, { error: "draw_unavailable" });
   }
   const refund = () => refundAllowance(env, uid);
   if (!rs.reserved) {
     // § 6.1 — the client offers a photo (and later a top-up) at zero.
-    return json(
-      { error: "allowance", left: 0, total: cap, suggest: "photo" },
-      { status: 402 });
+    return err(402,
+      { error: "allowance", left: 0, total: cap, suggest: "photo" });
   }
   // `rs.left` counts this reservation; a non-mint exit refunds it, so the
   // honest uncharged remainder on a free hit is one more.
@@ -652,13 +740,14 @@ export async function handleDraw(request, env, ctx) {
   if (!guard.allowed) {
     await refund();
     await usageRecord(env, { ns: DRAW_NS, uid, chars: 0, over: guard.over });
-    return json({ error: "fair_use", over: guard.over }, { status: 429 });
+    return err(429, { error: "fair_use", over: guard.over });
   }
 
   // 4 — Jev: scope/kind/language + the framing spec, one call. A null
   // scope fails closed (§ 8): "Cooper" treated as common would leak the
   // name into the prompt, the ledger, and the review page. 503 before
   // any ledger claim or vendor call — the client never decides scope.
+  emit("reading");
   let jev;
   try {
     jev = await classify(env, { text, description, forDraw: true });
@@ -667,14 +756,14 @@ export async function handleDraw(request, env, ctx) {
   }
   if (!jev?.scope) {
     await refund();
-    return json({ error: "classify_unavailable" }, { status: 503 });
+    return err(503, { error: "classify_unavailable" });
   }
   const scope = jev.scope === "personal" ? "personal" : "common";
   // A person/pet with no description has nothing to draw (and the name
   // alone is never drawable — it never reaches the prompt).
   if (scope === "personal" && !description) {
     await refund();
-    return json({ error: "bad_description" }, { status: 400 });
+    return err(400, { error: "bad_description" });
   }
 
   // The name never leaves this Worker: a personal subject draws the
@@ -682,16 +771,6 @@ export async function handleDraw(request, env, ctx) {
   const subject = drawSubject({ scope, text, description });
   const key = await drawKey(CFG.style_version, subject);
   const promptWord = scope === "personal" ? normalizeV1(description) : text;
-  const prompt = buildPrompt({
-    word: promptWord,
-    torso: jev.kind && jev.kind !== "None" ? jev.kind.toLowerCase() : null,
-    hint: scope === "personal" ? null : (description || null),
-    framing: jev.draw.framing,
-    hand: jev.draw.hand_mode,
-    social_scale: jev.draw.social_scale,
-    entity_mode: jev.draw.entity_mode,
-    packaging: jev.draw.packaging,
-  });
 
   // 5 — ledger claim: hit serves, minting waits, mint draws once. Every
   // non-mint disposition refunds the reservation — nothing was drawn.
@@ -703,31 +782,57 @@ export async function handleDraw(request, env, ctx) {
     })).json();
   } catch {
     await refund();
-    return json({ error: "draw_unavailable" }, { status: 503 });
+    return err(503, { error: "draw_unavailable" });
   }
 
   if (claimed.disposition !== "mint") await refund();
   if (claimed.disposition === "hit") {
+    emit("serving");
     return (await serveRow(claimed.row, "hit", leftFree))
-      ?? json({ error: "draw_failed" }, { status: 502 });
+      ?? err(502, { error: "draw_failed" });
   }
   if (claimed.disposition === "withheld") {
-    return json({ error: "unsafe" }, { status: 422 });
+    return err(422, { error: "unsafe" });
   }
   if (claimed.disposition === "failed_wait") {
-    return json({ error: "draw_failed", retry_after: claimed.row.retry_after }, { status: 502 });
+    return err(502, { error: "draw_failed", retry_after: claimed.row.retry_after });
   }
   if (claimed.disposition === "minting") {
+    emit("waiting");
     const row = await waitDraw(env, key);
     if (row?.status === "ready") {
+      emit("serving");
       return (await serveRow(row, "hit", leftFree))
-        ?? json({ error: "draw_failed" }, { status: 502 });
+        ?? err(502, { error: "draw_failed" });
     }
     if (row?.status === "withheld") {
-      return json({ error: "unsafe" }, { status: 422 });
+      return err(422, { error: "unsafe" });
     }
-    return json({ error: "draw_failed" }, { status: 502 });
+    return err(502, { error: "draw_failed" });
   }
+
+  // 5b — the planner writes the hint for common-scope mints. Jev's
+  // imagery picks the lane (literal → fast, metaphor → reasoning); a
+  // personal subject's description IS the hint and needs none. The
+  // planner only runs when a live mint can follow — never for a stub.
+  const willPlan = scope === "common"
+    && (typeof env.DRAW_PLAN === "function"
+      || (env.DRAW_LIVE === "1" && env.OPENROUTER_API_KEY));
+  if (willPlan) emit("planning", { lane: plannerLane(jev.draw) });
+  const planned = willPlan
+    ? await planDrawHint(env, { text, description, spec: jev.draw })
+    : null;
+  if (planned) emit("planned", { hint: planned });
+  const prompt = buildPrompt({
+    word: promptWord,
+    torso: jev.kind && jev.kind !== "None" ? jev.kind.toLowerCase() : null,
+    hint: scope === "personal" ? null : (planned ?? (description || null)),
+    framing: jev.draw.framing,
+    hand: jev.draw.hand_mode,
+    social_scale: jev.draw.social_scale,
+    entity_mode: jev.draw.entity_mode,
+    packaging: jev.draw.packaging,
+  });
 
   // 6 — we hold the claim: synth, store, index — the reservation we made
   // is the charge. Everything from the paid call through ledger-ready is
@@ -738,12 +843,14 @@ export async function handleDraw(request, env, ctx) {
     await picPost(env, "/pic/draw/fail", { key, retryAfter: Date.now() + 60_000 })
       .catch(() => {});
     await refund();
-    return json({ error: "draw_failed" }, { status: 502 });
+    return err(502, { error: "draw_failed" });
   };
   let minted;
   try {
+    emit("drawing");
     const refs = await loadDrawRefs(env, styleRefBundle(jev.draw));
     minted = await synthesizeDraw(env, { prompt, refs });
+    emit("saving");
     const r2Key = `drawing/${key}.png`;
     await env.VOICE.put(r2Key, minted.bytes);
     const ready = await picPost(env, "/pic/draw/ready", { key, r2Key });
@@ -778,7 +885,11 @@ export async function handleDraw(request, env, ctx) {
   } catch { /* a missed index row costs nothing — the ledger still serves */ }
 
   await usageRecord(env, { ns: DRAW_NS, uid, chars: 1 });
-  return pngResponse(minted.bytes, headersFor(minted.cache, left, key));
+  return {
+    png: minted.bytes,
+    headers: headersFor(minted.cache, left, key),
+    key, cache: minted.cache, left,
+  };
 }
 
 /** GET /api/v1/pictures/allowance — headers x-pip-user / x-pip-license. */

@@ -566,3 +566,63 @@ test("WT13: no identity in any pic_* row, index metadata, or vendor bodies", asy
   }
   assert.ok(synthBodies.some((p) => p.includes("golden retriever")));
 });
+
+/* ------- planner + SSE stages ------- */
+
+test("planner: DRAW_PLAN hint lands in the Muse prompt; failure falls back", async () => {
+  const seen = [];
+  const env = makeEnv({ synth: async (prompt) => (seen.push(prompt), PNG_BYTES) });
+  env.DRAW_PLAN = async ({ text }) => `a ${text} on a table`;
+  const r = await draw(env, { text: "mug" });
+  assert.equal(r.status, 200);
+  assert.ok(seen[0].includes("a mug on a table"));
+
+  // A planner failure never blocks a draw — the adult's description is
+  // the fallback hint.
+  const seen2 = [];
+  const env2 = makeEnv({ synth: async (prompt) => (seen2.push(prompt), PNG_BYTES) });
+  env2.DRAW_PLAN = async () => { throw new Error("planner down"); };
+  const r2 = await draw(env2, { text: "mug", description: "red one" });
+  assert.equal(r2.status, 200);
+  assert.ok(seen2[0].includes("red one"));
+});
+
+test("planner: personal scope never calls the planner", async () => {
+  let planned = 0;
+  const env = makeEnv({
+    jev: async () => ({ scope: "personal", kind: "None", language: "en", draw: {
+      entity_mode: "organic_noun", packaging: "none", framing: "object",
+      hand_mode: "resting_ball", anchor: "none", social_scale: "zero" } }),
+  });
+  env.DRAW_PLAN = async () => (++planned, "x");
+  const r = await draw(env, { text: "Cooper", description: "our golden retriever" });
+  assert.equal(r.status, 200);
+  assert.equal(planned, 0);
+});
+
+test("draw streams honest stage events over SSE and ends with the image", async () => {
+  const env = makeEnv();
+  env.DRAW_PLAN = async () => "a mug on a table";
+  const res = await worker.fetch(new Request("https://x/api/v1/pictures/draw", {
+    method: "POST",
+    headers: { "content-type": "application/json", accept: "text/event-stream" },
+    body: JSON.stringify({
+      user_id: UID, license: await licenseFor(SECRET, UID), text: "mug",
+    }),
+  }), env);
+  assert.match(res.headers.get("content-type"), /text\/event-stream/);
+  const events = (await res.text()).split("\n\n")
+    .flatMap((b) => b.split("\n"))
+    .filter((l) => l.startsWith("data: "))
+    .map((l) => JSON.parse(l.slice(6)));
+  const stages = events.filter((e) => e.type === "stage").map((e) => e.stage);
+  assert.deepEqual(stages,
+    ["checking", "reading", "planning", "planned", "drawing", "saving"]);
+  const plannedEv = events.find((e) => e.type === "stage" && e.stage === "planned");
+  assert.equal(plannedEv.hint, "a mug on a table");
+  assert.equal(events.find((e) => e.stage === "planning").lane, "spark");
+  const done = events.at(-1);
+  assert.equal(done.type, "done");
+  assert.ok(done.key && done.image);
+  assert.equal(Buffer.from(done.image, "base64").toString(), "PNG:drawn");
+});

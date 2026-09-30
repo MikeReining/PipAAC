@@ -62,6 +62,63 @@ const failReason = (status, body) => {
   return "unavailable";
 };
 
+/** 030 — the draw stages the worker reports, labeled for the UI. Every
+ *  line is a real phase that just started; "planned" carries ev.hint —
+ *  the sentence the planner actually wrote for Muse. */
+export const DRAW_STAGE_LABELS = {
+  checking: "Checking our pictures…",
+  reading: "Reading the word…",
+  planning: "Planning the picture…",
+  planned: "Planning the picture…",
+  drawing: "Drawing the picture…",
+  saving: "Saving the picture…",
+  waiting: "Waiting on another drawing…",
+  serving: "Serving your picture…",
+};
+
+const b64ToBlob = (b64) => {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new Blob([bytes], { type: "image/png" });
+};
+
+/** Read a streamed draw: `data: {json}` events until done/error. */
+async function readDrawStream(res, onStage) {
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "";
+  let result = { ok: false, reason: "unavailable" };
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    let i;
+    while ((i = buf.indexOf("\n\n")) >= 0) {
+      const block = buf.slice(0, i);
+      buf = buf.slice(i + 2);
+      for (const line of block.split("\n")) {
+        if (!line.startsWith("data: ")) continue;
+        let ev;
+        try { ev = JSON.parse(line.slice(6)); } catch { continue; }
+        if (ev.type === "stage") onStage?.(ev.stage, ev);
+        else if (ev.type === "done") {
+          result = {
+            ok: true,
+            blob: b64ToBlob(ev.image),
+            imageId: ev.key ? `drw_${ev.key}` : null,
+            cache: ev.cache ?? "mint",
+            left: ev.left ?? null,
+          };
+        } else if (ev.type === "error") {
+          result = { ok: false, reason: failReason(ev.status, ev), left: ev.left ?? null };
+        }
+      }
+    }
+  }
+  return result;
+}
+
 export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {}) {
   const post = async (path, body) => {
     const res = await fetchFn(`${base}${path}`, {
@@ -99,15 +156,28 @@ export function pictureClient({ base = "", fetchFn = (...a) => fetch(...a) } = {
   }
 
   /** 030 draw — {ok, blob, imageId, cache: hit|mint|stub, left} or
-   *  {ok:false, reason, left?}. A hit is free; a mint spent one drawing. */
-  async function draw({ userId, license, text, description = null, locale }) {
+   *  {ok:false, reason, left?}. A hit is free; a mint spent one drawing.
+   *  When the server streams (Accept: text/event-stream) it sends the
+   *  real pipeline stages — onStage(stage, ev) reports them, and the
+   *  planner's hint arrives as stage "planned". Older servers answer
+   *  image/png and we read the blob the old way. */
+  async function draw({ userId, license, text, description = null, locale, onStage }) {
     if (!userId || !license) return { ok: false, reason: "unavailable" };
     try {
-      const res = await post("/api/v1/pictures/draw",
-        { user_id: userId, license, text, description, locale });
+      const res = await fetchFn(`${base}/api/v1/pictures/draw`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          accept: "text/event-stream",
+        },
+        body: JSON.stringify({ user_id: userId, license, text, description, locale }),
+      });
       if (!res.ok) {
         const body = await res.json().catch(() => null);
         return { ok: false, reason: failReason(res.status, body), left: body?.left ?? null };
+      }
+      if (res.headers.get("content-type")?.includes("text/event-stream")) {
+        return await readDrawStream(res, onStage);
       }
       const key = res.headers.get("x-draw-key");
       const left = res.headers.get("x-drawings-left");

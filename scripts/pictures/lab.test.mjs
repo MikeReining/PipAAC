@@ -12,6 +12,7 @@ import {
   LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
 import { styleRefBundle, plannerLane, parseDrawSpec } from "../../src/shared/draw_prompt.mjs";
+import { PLANNER_SYSTEM } from "../../src/shared/draw_planner.mjs";
 
 test("plannerChatBody: lane model + system prompt from the md, spec in user msg", () => {
   const body = plannerChatBody({
@@ -179,6 +180,10 @@ test("mintLabTake: object bundle attaches style refs like the Worker", async () 
     assert.equal(refs.length, 3);
     assert.ok(refs.every((r) => r.image_url.url.startsWith("data:image/")));
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("PLANNER_SYSTEM stays identical to the editable md (no SSOT drift)", () => {
+  assert.equal(plannerSystemPrompt(), PLANNER_SYSTEM);
 });
 
 test("plannerLane: Jev's imagery picks the lane; unknown → reasoning lane", () => {

@@ -17,125 +17,46 @@ import {
 import {
   MUSE_MODEL, OPENROUTER_ENDPOINT, appHeaders, buildPrompt, styleRefBundle,
 } from "../../src/shared/draw_prompt.mjs";
+import {
+  askPlanner as sharedAskPlanner, plannerChatBody as sharedPlannerChatBody,
+} from "../../src/shared/draw_planner.mjs";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
+
+export {
+  BANNED_HINT_PATTERNS, lintHint, lintSpecFit, parseSparkHint,
+  PLANNER_MODELS, OPENROUTER_CHAT,
+} from "../../src/shared/draw_planner.mjs";
+import { PLANNER_MODELS } from "../../src/shared/draw_planner.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 export const LAB_TAKES_DIR = join(repoRoot, "out/draw_lab");
 export const PLANNER_PROMPT_PATH =
   join(repoRoot, "data/pictures/draw_planner_prompt.md");
-export const OPENROUTER_CHAT = "https://openrouter.ai/api/v1/chat/completions";
-
-/** The planner lanes — same draw_planner_prompt.md, same one-sentence
- *  contract, different brains. The lab runs both so speed and hint
- *  quality can be compared; whichever wins becomes the production
- *  default. qwen routes to Groq via OpenRouter's provider order, and
- *  thinking is off — a hint is not a reasoning task. */
-export const PLANNER_MODELS = {
-  spark: { model: "meta/muse-spark-1.3-contributor" },
-  qwen: {
-    model: "qwen/qwen3-32b",
-    provider: { order: ["Groq"], allow_fallbacks: true },
-    reasoning: { effort: "none" },
-  },
-  gptoss: {
-    model: "openai/gpt-oss-120b",
-    provider: { order: ["Groq"], allow_fallbacks: true },
-    reasoning: { effort: "low" },
-  },
-};
-
-/** What spark/qwen sees: the concept, the family's description (the
- *  subject for personal scope), and Jev's draw spec. No ids exist on
- *  this path. */
-export function plannerChatBody({ lane = "spark", text, description, spec, system }) {
-  const cfg = PLANNER_MODELS[lane];
-  if (!cfg) throw new Error(`unknown planner lane ${lane}`);
-  return {
-    ...cfg,
-    messages: [
-      { role: "system", content: system ?? plannerSystemPrompt() },
-      {
-        role: "user",
-        content: JSON.stringify({
-          concept: String(text ?? ""),
-          description: description || null,
-          spec,
-        }, null, 2),
-      },
-    ],
-  };
-}
 
 /* ----------------------------- prompt planner ---------------------------- */
 
-/** Re-read every call — editing the md is the whole point of the lab. */
+/** Re-read every call — editing the md is the whole point of the lab.
+ *  (Production uses the bundled PLANNER_SYSTEM copy; the test pins them
+ *  identical.) */
 export function plannerSystemPrompt({ path = PLANNER_PROMPT_PATH } = {}) {
   const md = readFileSync(path, "utf8");
   return md.slice(md.indexOf("---") + 3).trim();
 }
 
-
-
-/** Pull the hint sentence out of the chat response; spark may wrap it
- *  in quotes or add whitespace — strip that, keep the sentence. */
-export function parseSparkHint(payload) {
-  const msg = payload?.choices?.[0]?.message?.content;
-  const text = String(msg ?? "").trim().replace(/^["'`]+|["'`]+$/g, "").trim();
-  if (!text) throw new Error(`no prompt in response: ${JSON.stringify(payload).slice(0, 200)}`);
-  return text;
+/** Lab wrappers: same shared helpers, but the system prompt defaults to
+ *  the live md re-read and the key resolves from .env. */
+export function plannerChatBody({ system, ...rest } = {}) {
+  return sharedPlannerChatBody({ system: system ?? plannerSystemPrompt(), ...rest });
 }
 
-/** The skill's banned moves (art-generator SKILL.md §4B–§4F): style
- *  words that fight the reference images, camera policing, and negative
- *  laundry lists. A hint that trips these gets flagged in the lab before
- *  a paid mint. */
-export const BANNED_HINT_PATTERNS = [
-  /\bflat\b/i, /\bvector\b/i, /\boutlines?\b/i, /\bstrokes?\b/i,
-  /\bshad(e|ed|ing)\b/i, /\bsolid colou?rs?\b/i, /\bcontrast(y|ing)?\b/i,
-  /\bclip ?art\b/i, /\bicon(ic)? style\b/i, /\bminimalist\b/i,
-  /\bcentered\b/i, /\bcentred\b/i, /\bsymmetric/i, /\bfront[- ]facing\b/i,
-  /\bstraight[- ]on\b/i, /\bperspective\b/i, /\bclose[- ]up\b/i,
-  /\bfilling the frame\b/i, /\bfills? the frame\b/i,
-  /\bno\s+\w/i, /\bwithout\b/i, /\bdo not\b/i, /\bdon't\b/i,
-];
-
-export function lintHint(hint) {
-  return BANNED_HINT_PATTERNS.filter((re) => re.test(hint)).map((re) => re.source);
-}
-
-/** social_scale "zero" is Jev saying no humans belong — a hint naming a
- *  person, stick figure, or body part fights the spec. */
-const HUMAN_WORDS =
-  /\b(person|people|man|woman|child|children|boy|girl|kid|baby|adult|figure|stick\s*figure|hand|hands|face|arms?|legs?|feet|foot)\b/i;
-
-export function lintSpecFit(hint, spec = {}) {
-  if ((spec.social_scale ?? "solo") !== "zero") return [];
-  return HUMAN_WORDS.test(hint) ? ["humans in a zero-human spec"] : [];
-}
-
-/** One planner lane → { hint, ms }. The lab calls it once per lane in
- *  parallel and shows the timings side by side. */
-export async function askPlanner({
-  lane = "spark", text, description, spec,
-  apiKey = resolveApiKey("OPENROUTER_API_KEY"),
-  fetchImpl = globalThis.fetch,
-  system,
+export function askPlanner({
+  apiKey, system, app = "picture-lab", ...rest
 } = {}) {
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY is not set (.env)");
-  const t0 = Date.now();
-  const res = await fetchImpl(OPENROUTER_CHAT, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${apiKey}`,
-      ...appHeaders("picture-lab"),
-    },
-    body: JSON.stringify(plannerChatBody({ lane, text, description, spec, system })),
+  return sharedAskPlanner({
+    apiKey: apiKey ?? resolveApiKey("OPENROUTER_API_KEY"),
+    system: system ?? plannerSystemPrompt(),
+    app, ...rest,
   });
-  if (!res.ok) {
-    throw new Error(`${lane} HTTP ${res.status}: ${(await res.text()).slice(0, 400)}`);
-  }
-  return { hint: parseSparkHint(await res.json()), ms: Date.now() - t0 };
 }
 
 /** The full Muse prompt for a subject — the buildPrompt scaffold plus a

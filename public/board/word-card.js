@@ -15,6 +15,7 @@ import {
   clearImageOverride, imageOverrideFor, libraryImagesFor, setImageOverride,
 } from "../shared/images.mjs";
 import { clearOverride, overrideFor, setOverride } from "../shared/voice.mjs";
+import { DRAW_STAGE_LABELS } from "../shared/pictures.mjs";
 import { groupGlyph } from "./group-glyph.js";
 
 const $ = (id) => document.getElementById(id);
@@ -31,9 +32,9 @@ export const KINDS = [
 const kindName = (role) => KINDS.find(([r]) => r === role)?.[1] ?? "Person or thing";
 
 /** Supporter copy for the picture line (029 § 4.1) — one place. */
-export function pictureLine({ phase, act, error, name, drawn } = {}) {
+export function pictureLine({ phase, act, error, name, drawn, step } = {}) {
   if (phase === "finding") return "Finding a picture…";
-  if (phase === "drawing") return "Drawing…";
+  if (phase === "drawing") return DRAW_STAGE_LABELS[step] ?? "Drawing…";
   if (error === "offline" || error === "unavailable" || error === "fair_use") {
     return "We'll find a picture when you're back online.";
   }
@@ -304,9 +305,13 @@ export function mountWordCard({
       : personal ? "Or describe them and we'll draw it" : "Or describe it and we'll draw it";
     $("wc-desc").placeholder = personal ? "e.g. our golden retriever" : "e.g. a bowl, not a jar";
     const left = s.state.left;
-    $("wc-drawcost").textContent = typeof left === "number"
-      ? (left > 0 ? `A drawing uses 1 of your ${left} left.` : "No drawings left.")
-      : "";
+    // While a draw runs, this line carries the planner's hint the moment
+    // it lands — the adult watches what we decided to draw (030 SSE).
+    $("wc-drawcost").textContent = s.state.phase === "drawing" && s.state.hint
+      ? `Planned: “${s.state.hint}”`
+      : typeof left === "number"
+        ? (left > 0 ? `A drawing uses 1 of your ${left} left.` : "No drawings left.")
+        : "";
   }
 
   function afterEntityPic() {
@@ -364,7 +369,14 @@ export function mountWordCard({
     const s = sess(id);
     const paintIf = () => { if (cardItem?.item_id === id) paintPicSection(); };
     const r = await pictureFill.autoFill(id, {
-      onState: (phase) => { s.state = { ...s.state, phase }; paintIf(); },
+      onState: (phase, detail) => {
+        s.state = {
+          ...s.state, phase,
+          ...(phase === "finding" ? { step: null, hint: null } : {}),
+          ...(detail ?? {}),
+        };
+        paintIf();
+      },
     }).catch(() => ({ error: "offline" }));
     const e = cardItem?.item_id === id ? entityRow() : null;
     s.state = { act: r.act, error: r.error, drawn: r.drawn, left: r.drawn?.left ?? r.left ?? s.state.left };
@@ -413,10 +425,20 @@ export function mountWordCard({
     const desc = $("wc-desc").value.trim();
     if (desc) setEntityHint(db, id, desc);
     const e = entityRow();
-    s.state = { ...s.state, phase: "drawing", error: null, drawn: null };
+    s.state = { ...s.state, phase: "drawing", step: null, hint: null, error: null, drawn: null };
     paintPicSection();
     const { userId, license } = await creds();
-    const r = await pictures.draw({ userId, license, text: e.spoken_name, description: e.hint, locale });
+    const r = await pictures.draw({
+      userId, license, text: e.spoken_name, description: e.hint, locale,
+      onStage: (stage, ev) => {
+        const cur = sess(id).state;
+        sess(id).state = {
+          ...cur, phase: "drawing", step: stage,
+          hint: ev?.hint ?? cur.hint ?? null,
+        };
+        if (cardItem?.item_id === id) paintPicSection();
+      },
+    });
     s.state = { ...s.state, phase: null, error: r.ok ? null : r.reason,
       drawn: r.ok ? { cache: r.cache, left: r.left } : null,
       left: typeof r.left === "number" ? r.left : s.state.left };

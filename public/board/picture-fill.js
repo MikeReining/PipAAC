@@ -89,7 +89,12 @@ export function mountPictureFill({
     }
     if (act.kind === "draw") {
       onState?.("drawing");
-      const r = await client.draw({ userId, license, text: e.spoken_name, description: e.hint, locale });
+      const r = await client.draw({
+        userId, license, text: e.spoken_name, description: e.hint, locale,
+        onStage: (stage, ev) =>
+          onState?.("drawing",
+            { step: stage, ...(ev?.hint ? { hint: ev.hint } : {}) }),
+      });
       if (!r.ok) {
         if (TRANSIENT.has(r.reason)) park(entityId);
         return { found, act, error: r.reason, left: r.left ?? null };
