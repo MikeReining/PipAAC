@@ -87,6 +87,13 @@
 .spot-tips .btn { align-self: flex-start; }
 
 .spot-sub { font-size: 15px !important; margin-top: 4px !important; }
+.spot-idea { background: #fff; border-style: dashed; }
+.spot-hero .row > .btn { flex: 0 1 auto; }
+
+/* Try it: the last card points at the 🔦 chip. */
+#spot-chip.spot-demo-point { animation: spot-point 1.4s ease-in-out infinite; }
+@keyframes spot-point { 50% { box-shadow: 0 0 0 6px rgba(232, 162, 0, .45); } }
+@media (prefers-reduced-motion: reduce) { #spot-chip.spot-demo-point { animation: none; box-shadow: 0 0 0 4px var(--ink); } }
 
 /* Look: folded — set once, rarely touched. */
 .spot-look summary {

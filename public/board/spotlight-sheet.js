@@ -10,6 +10,7 @@ import {
   untilText,
 } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
+import { STARTER_LISTS, starterTargets } from "../shared/spotlight_starters.mjs";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -29,6 +30,7 @@ export function mountSpotlightSheet({
   db, catalog, me, open, close, all, coachLabel, tileFor, bindSpotSettings,
   renderGrid, renderStrip, rerenderView, setModeling, setPicking,
   getPicking, getSpotPulse, getModelSpeaks, onSettingsOpen, openSettings,
+  startDemo,
 }) {
   bindSpotSettings();
 
@@ -48,6 +50,7 @@ export function mountSpotlightSheet({
   const person = () => me.name?.trim() || "this person";
 
   function renderHero() {
+    $("spot-try").textContent = `▶ Try it on ${person()}'s board`;
     const box = $("spot-hero-tiles");
     if (box.childElementCount) return;
     for (const id of HERO) {
@@ -63,6 +66,7 @@ export function mountSpotlightSheet({
     const s = spotSession(db);
     $("spot-running").hidden = !s;
     $("spot-off").hidden = !!s;
+    $("spot-try").hidden = !!s; // the real thing is already on
     if (!s) return;
     $("spot-running-label").textContent = `🔦 “${s.name}” glows ${untilText(s)}.`;
     $("spot-running-words").replaceWith(Object.assign(chips(JSON.parse(s.targets)), { id: "spot-running-words" }));
@@ -72,9 +76,7 @@ export function mountSpotlightSheet({
     const box = $("spot-lists");
     box.replaceChildren();
     const lists = spotLists(db);
-    if (!lists.length) {
-      box.append(el("p", "hint", "No lists yet. Pick words, then Save to keep them for next time."));
-    }
+    if (!lists.length) box.append(el("p", "hint", "No lists of your own yet."));
     for (const l of lists) {
       const card = el("div", "spot-card");
       const head = el("div", "spot-card-head");
@@ -134,6 +136,25 @@ export function mountSpotlightSheet({
       card.append(head, chips(listTargets(db, l.id)), acts);
       box.append(card);
     }
+    // Suggested lists (032 C): one tap makes one theirs; an added one
+    // leaves the suggestions.
+    const saved = new Set(lists.map((l) => l.name));
+    const ideas = STARTER_LISTS.filter((x) => !saved.has(x.name));
+    if (ideas.length) box.append(el("span", "seg-label spot-sub", "Suggested"));
+    for (const x of ideas) {
+      const card = el("div", "spot-card spot-idea");
+      const head = el("div", "spot-card-head");
+      head.append(el("b", "spot-list-name", x.name));
+      const add = el("button", "btn secondary", "Add to my lists");
+      add.addEventListener("click", () => {
+        saveSpotList(db, `spl_${crypto.randomUUID().replaceAll("-", "")}`, x.name, starterTargets(x));
+        renderLists();
+      });
+      const acts = el("div", "spot-card-acts");
+      acts.append(add);
+      card.append(head, chips(starterTargets(x)), acts);
+      box.append(card);
+    }
   }
 
   /* Modeling needs two devices. Only a partner device (a linked phone or
@@ -189,6 +210,7 @@ export function mountSpotlightSheet({
   }
 
   onSettingsOpen(renderSpotForm);
+  $("spot-try").addEventListener("click", () => startDemo());
   $("spot-model").addEventListener("click", () => {
     setModeling(true);
     close("menu");

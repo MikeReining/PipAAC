@@ -61,6 +61,7 @@ import { useCounts } from "./shared/usecounts.mjs";
 import { bindLayouts, moveMarks } from "./shared/movecost.mjs";
 import { mountCellsSheet } from "./board/cells-sheet.js";
 import { mountSpotlightSheet } from "./board/spotlight-sheet.js";
+import { mountSpotlightDemo } from "./board/spotlight-demo.js";
 import { mountKeyboard } from "./board/keyboard-ui.js";
 import { mountGroups } from "./board/groups-ui.js";
 import { mountAddFlow } from "./board/add-flow.js";
@@ -177,7 +178,7 @@ function onSyncApplied() {
     syncSpeed();
     voiceUi.renderRow();
     bindSpotSettings();  // spotlight settings sync too
-    resumeSession(db);   // a session started/ended elsewhere lands here
+    if (!spotDemo) resumeSession(db); // a session started/ended elsewhere lands here
     renderCellsSeg();    // a Cells change may have landed
     renderGrid();
     renderStrip();
@@ -265,6 +266,9 @@ function maybeImpression(candidates, shown, { mode = "picture", cap = null, gate
   });
   return true;
 }
+// Try it (032 C) while it runs: { onTap, end } from spotlight-demo.js.
+// A tap then speaks and nothing else — the adult's taps are not logged.
+let spotDemo = null;
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 let countsOn = false; // 018 D10: the 📊 badge — the child's own 30-day taps
@@ -1142,6 +1146,11 @@ async function renderStrip() {
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
   if (tour) return tour.onTap(kind, id);
+  if (spotDemo) {
+    if (id) speakItem({ kind, id, text });
+    spotDemo.onTap(kind, id);
+    return;
+  }
   if (picking) {
     // Pick mode: a tap chooses a target, never speaks or appends.
     if (id) {
@@ -2224,6 +2233,17 @@ function tileForSense(senseId) {
   return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
 }
 
+/* Try it — public/board/spotlight-demo.js. */
+const spotDemoUi = mountSpotlightDemo({
+  db,
+  board: {
+    setDemo: (h) => { spotDemo = h; },
+    showBoard: () => { close("menu"); if (view !== "board") kbUi.setView("board"); },
+    repaint: () => { renderGrid(); rerenderView(); },
+  },
+  openSettings: (section) => gatePin(() => settingsUi.open(section)),
+});
+
 /* Spotlight page — public/board/spotlight-sheet.js */
 mountSpotlightSheet({
   db, catalog, me, open, close, all: ALL, tileFor: tileForSense,
@@ -2235,6 +2255,7 @@ mountSpotlightSheet({
   getModelSpeaks: () => modelSpeaks,
   onSettingsOpen: settingsUi.onOpen,
   openSettings: (section) => gatePin(() => settingsUi.open(section)),
+  startDemo: () => spotDemoUi.start(),
 });
 
 /* Cells picker — public/board/cells-sheet.js. onSyncApplied repaints this. */
@@ -2257,6 +2278,7 @@ $("anchor-kb").addEventListener("click", () => {
 $("anchor-groups").addEventListener("click", () =>
   view === "groupIndex" ? kbUi.setView("board") : groupsUi.openGroupIndex());
 $("spot-chip").addEventListener("click", () => {
+  if (spotDemo) return spotDemo.end();
   endSession(db);
   renderGrid();
   rerenderView();
@@ -2738,6 +2760,7 @@ renderStrip();
 // Timer/midnight expiry: the row's ends_at is the truth; the layer
 // checks it on a slow tick (and on every sync drain) and ends itself.
 setInterval(() => {
+  if (spotDemo) return; // Try it has no session row to check
   const was = !!spotlight();
   resumeSession(db);
   if (was !== !!spotlight()) {

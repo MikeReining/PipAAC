@@ -50,7 +50,7 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
     "spot-running", "spot-running-label", "spot-lists",
     "spot-pulse", "spot-dim", "model-speaks", "spot-off", "spot-hero-tiles",
     "spot-hero-say", "spot-running-words", "spot-model-title", "spot-model-hint",
-    "spot-link", "spot-look-sum", "spot-prev",
+    "spot-link", "spot-look-sum", "spot-prev", "spot-try",
     "spot-model", "model-done", "spot-end", "spot-pick", "spot-pick-cancel",
     "spot-pick-start", "spot-pick-save", "spot-list-name", "spot-name-save",
   ];
@@ -81,12 +81,16 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
     getModelSpeaks: () => false,
     onSettingsOpen: (fn) => onOpen.push(fn),
     openSettings() {},
+    startDemo() {},
   });
 
   assert.equal(onOpen.length, 1, "the page repaints when Settings opens");
   onOpen[0]();
-  const cards = nodes["spot-lists"].children;
+  const kids = nodes["spot-lists"].children;
+  const cards = kids.filter((c) => c.className === "spot-card");
   assert.equal(cards.length, 1);
+  // The three suggested lists follow — none is saved yet.
+  assert.equal(kids.filter((c) => c.className === "spot-card spot-idea").length, 3);
   const [head] = cards[0].children;
   assert.deepEqual(head.children.map((c) => c.textContent), ["Snack", "1 word"]);
   // The child's own device has no Model button — it would glow nothing.
