@@ -2032,7 +2032,7 @@ const settingsUi = mountSettings({
       || !!ALL(db, `SELECT 1 AS x FROM sync_op WHERE kind IN ('create_entity',
         'set_entity_photo', 'create_group', 'add_to_groups', 'place_item', 'move_item',
         'swap_items', 'set_image_override', 'set_override', 'set_mask', 'rename_entity',
-        'set_family_items', 'spot_list_save', 'set_group_hidden', 'move_group', 'swap_groups',
+        'set_family_items', 'spot_list_save', 'set_group_hidden', 'move_group', 'swap_groups', 'reorder_groups',
         'delete_group') LIMIT 1`)[0],
     pinOn,
     spot: { session: spotSession(db), lists: spotLists(db).length },
@@ -2199,17 +2199,18 @@ $("fresh-speak").addEventListener("click", (e) => {
 });
 syncFreshSeg();
 /* Groups (027 B6, B8): the home top row on every group page, and the
- * four meal groups in the index. Both default ON; neither moves a cell —
- * off leaves the top-row cells empty and the meal doors' slots kept. */
+ * four meal groups in the index (its switch is the Meals row of Show
+ * groups). Both default ON; neither moves a cell — off leaves the top-row
+ * cells empty and the meal doors' slots kept. */
 function syncGroupSegs() {
   const p = ALL(db,
-    "SELECT group_top_row AS t, occasions_visible AS o FROM learner_profile WHERE id = 'prf_local'",
+    "SELECT group_top_row AS t FROM learner_profile WHERE id = 'prf_local'",
   )[0] ?? {};
-  for (const [id, on] of [["group-toprow", (p.t ?? 1) === 1], ["group-occasions", (p.o ?? 1) === 1]]) {
+  for (const [id, on] of [["group-toprow", (p.t ?? 1) === 1]]) {
     for (const b of $(id).querySelectorAll("button")) b.classList.toggle("on", (b.dataset.v === "1") === on);
   }
 }
-for (const [id, key] of [["group-toprow", "group_top_row"], ["group-occasions", "occasions_visible"]]) {
+for (const [id, key] of [["group-toprow", "group_top_row"]]) {
   $(id).addEventListener("click", (e) => {
     const v = e.target.closest("button")?.dataset.v;
     if (v === undefined) return;
@@ -2623,7 +2624,7 @@ const peopleUi = mountPeople({
 });
 settingsUi.onOpen(() => { peopleUi.closePop(); peopleUi.renderOpens(); });
 /* Show groups — public/board/group-shows.js (Settings → Words). */
-const groupShows = mountGroupShows({ db, locale, all: ALL, onChange: () => rerenderView() });
+const groupShows = mountGroupShows({ db, locale, all: ALL, toast, onChange: () => rerenderView() });
 settingsUi.onOpen(() => groupShows.render());
 
 /* The weekly win card and progress dashboard — public/board/wincard-ui.js

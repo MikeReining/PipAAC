@@ -19,7 +19,7 @@ const html = readFileSync(join(import.meta.dirname, "../../public/index.html"), 
 // controls are checked through spot-pick and SPOTLIGHT below.
 const CONTROLS = [
   "wincard", "open-progress", "add-mywords", "open-setup", "edit-groups",
-  "open-library", "hl-next", "group-toprow", "group-occasions",
+  "open-library", "hl-next", "group-toprow", "group-shows",
   "fresh-speak", "grammar-help", "expressive-voice", "share-research",
   "spot-pick", "cells-seg", "fam-list", "kb-mode", "kb-order", "usr-list",
   "usr-add", "acct-row", "dev-list", "dev-add", "dev-link", "sup-row",

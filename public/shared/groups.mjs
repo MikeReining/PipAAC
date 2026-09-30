@@ -974,3 +974,55 @@ export function swapGroups(db, a, b) {
     recordOp(db, "swap_groups", { a, b });
   });
 }
+
+/**
+ * Give `ids` the index slots they already hold, in the order listed: the
+ * first id takes the lowest of those slots, and so on. Other groups are
+ * untouched, so a list drag shifts only the groups in between. The UNIQUE
+ * index_slot forbids a swap by UPDATE, so the rows first park above every
+ * used slot, then land — one transaction, one synced op. Unknown ids throw.
+ */
+export function reorderGroups(db, ids) {
+  const rows = ids.map((id) => {
+    const r = one(db, "SELECT id, index_slot FROM board_group WHERE id = ?", [id]);
+    if (!r) throw new Error(`no group ${id}`);
+    return r;
+  });
+  const slots = rows.map((r) => r.index_slot).sort((a, b) => a - b);
+  if (new Set(ids).size !== ids.length) throw new Error("reorderGroups: duplicate group");
+  const moves = rows.map((r, i) => ({ id: r.id, from: r.index_slot, to: slots[i] }))
+    .filter((m) => m.from !== m.to);
+  if (!moves.length) return;
+  txn(db, () => {
+    const top = one(db, "SELECT max(index_slot) AS m FROM board_group").m;
+    const upd = db.prepare("UPDATE board_group SET index_slot = ? WHERE id = ?");
+    moves.forEach((m, i) => upd.run(top + 1 + i, m.id));
+    for (const m of moves) upd.run(m.to, m.id);
+    recordOp(db, "reorder_groups", { order: ids });
+  });
+}
+
+/**
+ * Drag in a list: move the `ids` block (kept in its current order) to sit
+ * just before group `beforeId`, or last when it is null. Groups between
+ * the old and new place shift by one block; nothing else moves. Returns
+ * { undo } — the same call back to the window's old order.
+ */
+export function moveGroupBlock(db, ids, beforeId = null) {
+  const order = groupIndex(db).map((g) => g.id);
+  const block = order.filter((id) => ids.includes(id));
+  if (!block.length) throw new Error("moveGroupBlock: no such groups");
+  if (beforeId !== null && block.includes(beforeId)) return { undo() {} };
+  if (beforeId !== null && !order.includes(beforeId)) throw new Error(`no group ${beforeId}`);
+  const rest = order.filter((id) => !block.includes(id));
+  const at = beforeId === null ? rest.length : rest.indexOf(beforeId);
+  const next = [...rest.slice(0, at), ...block, ...rest.slice(at)];
+  let lo = 0;
+  while (lo < order.length && order[lo] === next[lo]) lo++;
+  let hi = order.length - 1;
+  while (hi > lo && order[hi] === next[hi]) hi--;
+  if (lo > hi) return { undo() {} };
+  const before = order.slice(lo, hi + 1);
+  reorderGroups(db, next.slice(lo, hi + 1));
+  return { undo: () => reorderGroups(db, before) };
+}

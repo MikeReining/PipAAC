@@ -61,7 +61,6 @@ export function mountEditor({
   const groupRow = (id) => all(db, "SELECT * FROM board_group WHERE id = ?", [id])[0] ?? null;
   const groupName = (id) => { const r = groupRow(id); return r ? groupDisplayName(db, r, locale) : ""; };
   const addTarget = () => (where.kind === "group" ? where.id : "grp_my_words");
-  const occasionIds = new Set((catalog?.groups ?? []).filter((g) => g.occasion).map((g) => g.id));
   const homeKeys = () => new Set((homeCells?.() ?? [])
     .map((c) => (c.kind === "entity" ? `entity:${c.entity_id}` : `sense:${c.sense_id}`)));
 
@@ -289,8 +288,9 @@ export function mountEditor({
       on: where.kind === "main", onClick: () => go({ kind: "main" }),
     }));
     const groups = groupIndex(db);
-    const regular = groups.filter((g) => !g.hidden && !occasionIds.has(g.id));
-    const occasions = groups.filter((g) => !g.hidden && occasionIds.has(g.id));
+    // One order everywhere: every shown group — the meal groups too — in
+    // index_slot order, the same order as the board and Settings.
+    const regular = groups.filter((g) => !g.hidden);
     const hidden = groups.filter((g) => g.hidden);
     for (const g of regular) box.appendChild(groupItem(g, counts));
     const section = (title, list, key) => {
@@ -305,7 +305,6 @@ export function mountEditor({
       for (const g of list) d.appendChild(groupItem(g, counts));
       box.appendChild(d);
     };
-    section("Occasions", occasions, "pip-ed-occ");
     section("Hidden", hidden, "pip-ed-hid");
 
     // + New group: an inline name field; Return creates and opens it.

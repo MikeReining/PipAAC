@@ -76,12 +76,25 @@ bar starts from the child's own first picks.
   group have the same editing rules. A door is the tile that opens a group.
   Blocks are seed-authoring clusters, never a family-facing concept or a
   runtime subscription. One word record can appear in many independent groups.
-- **Launch occasions:** Breakfast, Lunch, Dinner, Snack, enabled by default and
-  first in that fixed order on a new profile. Topic groups follow. A family
-  can hide groups, turn off the four occasions together, reorder groups, and
-  create its own. Hiding preserves membership, positions, and index slots.
-  Time/history may glow a visible door; they never move, open, or hide it.
-  No default Now cell. More occasions are post-launch.
+- **Launch order (amended 2026-09-30):** ten doors to a row on the default
+  layout — My Words, then the four meals (Breakfast, Lunch, Dinner, Snack),
+  then food, then people and self, things and places, describing and language.
+  Within a block, groups run most-said first by CHILDES child-line totals of
+  their members (`data/prediction/word_frequency.en.json`); meals keep
+  time-of-day order. The order is fixed — never reordered by usage; only
+  adults move groups. The default reaches new installs and `?reseed` only;
+  existing profiles keep their order. Source: array order of
+  `data/group_seed.topics.json`.
+- **One group order everywhere.** `board_group.index_slot` is the only stored
+  order. The board index, Settings → Show groups, the editor sidebar and the
+  Add a word picker all read it (Settings folds the four meals into one
+  "Meals" row at their place, bound to `occasions_visible`). Adults reorder
+  by dragging on the board, in the editor, or by the grip in Show groups
+  (`moveGroupBlock`, synced as `reorder_groups`, with Undo). A family can hide
+  groups, turn off the four occasions together, and create its own. Hiding
+  preserves membership, positions, and index slots. Time/history may glow a
+  visible door; they never move, open, or hide it. No default Now cell. More
+  occasions are post-launch.
 - **Curated membership; a shared meal kit on dense boards.** (Amended
   2026-09-28 — one coordinate per word across all occasion groups produced
   sparse, unreadable pages.) Each meal board packs its own members in

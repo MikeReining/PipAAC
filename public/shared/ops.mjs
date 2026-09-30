@@ -23,6 +23,7 @@ import {
   moveItem,
   removeItem,
   renameEntity,
+  reorderGroups,
   restoreEntity,
   retireEntity,
   setEntityPhoto,
@@ -145,6 +146,11 @@ export function applyOp(db, op) {
           swapGroups(db, a.a, a.b);
         }
         break;
+      case "reorder_groups": {
+        const ids = (a.order ?? []).filter((id) => exists(db, "board_group", id));
+        if (ids.length > 1) reorderGroups(db, ids);
+        break;
+      }
       case "seed_install":
         applySeedInstall(db, a);
         break;

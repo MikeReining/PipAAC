@@ -86,11 +86,12 @@ for (const c of seedOccasions.clusters.filter((c) => c.shared)) {
 }
 const cellsOf = (gid, layout) => catalog.groupCells.filter((c) => c.group_id === gid && c.layout === layout);
 
-test("027 A1 seed: occasions lead the index, then My Words; every seeded group is one page on 60/90", () => {
+test("027 A1 seed: My Words then the meals lead the index; every seeded group is one page on 60/90", () => {
   const ids = catalog.groups.map((g) => g.id);
-  assert.deepEqual(ids.slice(0, 6), ["grp_breakfast", "grp_lunch", "grp_dinner", "grp_snack", "grp_treats", "grp_my_words"]);
+  assert.deepEqual(ids.slice(0, 8), ["grp_my_words", "grp_breakfast", "grp_lunch", "grp_dinner", "grp_snack",
+    "grp_drinks", "grp_treats", "grp_fruit"]);
   catalog.groups.forEach((g, i) => assert.equal(g.index_slot, 10 + i));
-  assert.deepEqual(catalog.groups.filter((g) => g.occasion).map((g) => g.id), ids.slice(0, 4));
+  assert.deepEqual(catalog.groups.filter((g) => g.occasion).map((g) => g.id), ids.slice(1, 5));
   assert.ok(!ids.includes("grp_food"), "no Food mega-group");
   for (const c of catalog.groupCells) {
     if (c.layout !== "grid15") assert.equal(c.page, 0, `${c.group_id} ${lemma(c.item_id)} on ${c.layout}`);

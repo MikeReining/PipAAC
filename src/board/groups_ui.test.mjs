@@ -111,7 +111,7 @@ test("the index paints stored groups by name — no back cell in the grid; hidde
   setSetting(db, "group_top_row", 1);
   ui.renderGroupIndex();
   const first = labelsOf(grid);
-  assert.deepEqual(first.slice(0, 5), ["Breakfast", "Lunch", "Dinner", "Snack", "My Words"]);
+  assert.deepEqual(first.slice(0, 5), ["My Words", "Breakfast", "Lunch", "Dinner", "Snack"]);
   assert.ok(!first.includes("More people"), "grid15-only groups stay off the 60-cell index");
 
   setGroupHidden(db, "grp_lunch", true);
@@ -122,7 +122,7 @@ test("the index paints stored groups by name — no back cell in the grid; hidde
   assert.equal(after[0], "My Words");
   // My Words kept its slot: the doors before it are gaps, not a repack.
   const myWordsCell = grid.children.findIndex((cell) => cell.dataset.group === "grp_my_words");
-  assert.equal(myWordsCell, 14);
+  assert.equal(myWordsCell, 10, "My Words is the first door, at canonical slot 10");
 
   // Edit mode shows every door; a hidden one reads as hidden.
   const edit = mount(db, { editing: true });

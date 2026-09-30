@@ -129,7 +129,7 @@ an **op** in `sync_op` via `recordOp` (`public/shared/ops.mjs`):
 { op_id, device_id, kind: "create_entity" | "rename_entity" |
   "retire_entity" | "restore_entity" | "set_entity_photo" |
   "place_item" | "move_item" | "swap_items" | "remove_item" |
-  "create_group" | "delete_group" | "move_group" | "swap_groups" |
+  "create_group" | "delete_group" | "move_group" | "swap_groups" | "reorder_groups" |
   "set_setting" | "set_override" | …, args }
 ```
 

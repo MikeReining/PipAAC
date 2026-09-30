@@ -53,7 +53,8 @@ export function mountAddFlow({
      The destination is the group the adult came from (Settings → My
      Words; the editor → the group being edited) — never a guess. The chip
      opens a searchable list in place of the results: Recent (groups the
-     adult actually added to), then every group A–Z, then New group. */
+     adult actually added to), then every group in the board's own order
+     (index_slot — one order everywhere), then New group. */
   const RECENT_KEY = "pip-add-recent";
   const readRecent = () => {
     try { return JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"); } catch { return []; }
@@ -128,7 +129,6 @@ export function mountAddFlow({
     const q = normalizeV1($("add-groupq").value);
     const groups = groupIndex(db).filter((g) => !g.hidden)
       .map((g) => ({ g, name: groupDisplayName(db, g, locale) }));
-    const byName = (a, b) => a.name.localeCompare(b.name, locale, { sensitivity: "base" });
     const head = (text) => {
       const h = document.createElement("p");
       h.className = "add-grouphead";
@@ -145,7 +145,7 @@ export function mountAddFlow({
       }
       head("All groups");
     }
-    const shown = groups.filter((p) => !q || normalizeV1(p.name).includes(q)).sort(byName);
+    const shown = groups.filter((p) => !q || normalizeV1(p.name).includes(q)); // index order — the board's order
     for (const p of shown) {
       box.appendChild(groupRow(p.g, { selected: p.g.id === addTarget }));
       firstMatch.push(p.g.id);

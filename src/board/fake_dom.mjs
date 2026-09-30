@@ -36,6 +36,7 @@ export function el(tag = "div") {
     setAttribute(k, v) { node.attrs[k] = String(v); },
     getAttribute(k) { return node.attrs[k] ?? null; },
     addEventListener(type, fn) { (node.on[type] ??= []).push(fn); },
+    removeEventListener(type, fn) { node.on[type] = (node.on[type] ?? []).filter((f) => f !== fn); },
     async fire(type, ev = {}) {
       for (const fn of node.on[type] ?? []) await fn({ preventDefault() {}, stopPropagation() {}, ...ev });
     },
