@@ -118,14 +118,14 @@ console.log(JSON.stringify(out, null, 2));
 const ok =
   out.ideas.before.join() === "First words,Snack time,Play time" &&
   out.ideas.after.join() === "Snack time,Play time" &&
-  out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 5 &&
-  out.demo.lit.glow === 5 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
+  out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 6 &&
+  out.demo.lit.glow === 6 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
   out.demo.step.includes("3 of 3") &&
   out.demo.ledger.ops === 0 && out.demo.ledger.taps === 0 &&
   out.demo.ledger.sessions === 0 && out.demo.ledger.sentence === 0 &&
   out.demo.after.glow === 0 && out.demo.after.dimmed === 0 && !out.demo.after.card &&
   out.demo.after.backOnPage &&
-  out.running.tryHidden && out.running.glow === 5;
+  out.running.tryHidden && out.running.glow === 6;
 console.log(ok ? "PASS spotlight try-it and suggested lists" : "FAIL — see output");
 chrome.kill();
 process.exit(ok ? 0 : 1);

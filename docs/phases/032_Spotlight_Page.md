@@ -44,8 +44,9 @@ layer.
 6. **Try it instead of a video.** A spotlight on this person's own board,
    with three coach cards the adult steps through. It is a local layer only: no session
    row, no sync op, and it never touches a running session.
-7. **Suggested lists** (slice C): First words (want, more, help, stop,
-   all done), Snack time (eat, drink, more, all done, open), Play time (go,
+7. **Suggested lists** (slice C; First words revised in E): First words
+   (want, more, help, not, that, look — asking, refusing, pointing, and
+   commenting, not only requests), Snack time (eat, drink, more, all done, open), Play time (go,
    stop, turn, look, like). Every word already has a shipped coach tip and
    sits on the 60-button home board. Content lives in
    `public/shared/spotlight_starters.mjs`. One tap adds a list to Your
