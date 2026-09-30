@@ -115,7 +115,7 @@ function setStatus(msg, err) {
    same formula, so the slider shows exactly what the Worker will do. */
 function rescore(c, seeds, pw, rw) {
   const s = seeds[c.image_id] || { p: 0, r: 0 };
-  return c.cosine + pw * Math.log1p(s.p) - rw * Math.log1p(s.r);
+  return (c.cosine ?? 0) + pw * Math.log1p(s.p) - rw * Math.log1p(s.r);
 }
 function cutoffFor(lang) {
   const ctl = document.querySelector(`.ctl[data-lang="${lang}"]`);
@@ -130,10 +130,16 @@ function verdict(res, q) {
     .sort((a,b) => b.s - a.s);
   const top = cands[0];
   const cut = cutoffFor(res.language);
-  const auto = top && top.s >= cut ? top.image_id : null;
+  // Server auto is authoritative — tier-1 identity (label map) and
+  // founder pins can't be simulated client-side. The slider only
+  // previews tier-2 similarity for rows the server didn't auto-apply.
+  // Homograph labels never auto — the adult picks the sense (§ 4.2).
+  const auto = res.homograph ? null
+    : (res.auto ?? (top && top.s >= cut ? top.image_id : null));
   const mark = q.mark;
   let cls = "unmarked", label = "unmarked";
-  if (auto) {
+  if (res.homograph) { cls = "unmarked"; label = "homograph — pick"; }
+  else if (auto) {
     if (mark === auto) { cls = "auto-ok"; label = "auto ✓"; }
     else if (mark) { cls = "auto-bad"; label = "auto ✗"; }
     else { cls = "unmarked"; label = `auto→${auto}`; }
@@ -172,7 +178,7 @@ function cardHtml(q, res, c, isTop) {
       data-img="${c.image_id}">
     <img src="/img/${c.image_id}" loading="lazy" onerror="this.style.visibility='hidden'" alt="">
     <div class="cap">${c.caption || c.image_id}${c.status === "pending" ? ' <span class="badge pending">pending</span>' : ""}</div>
-    <div class="score">${rescore(c, seeds, pw, rw).toFixed(3)}</div>
+    <div class="score">${c.cosine == null ? "— label" : rescore(c, seeds, pw, rw).toFixed(3)}</div>
     <div class="seed" onclick="event.stopPropagation()">
       p<input type="number" min="0" max="999" value="${s.p}" data-seed="p" data-img="${c.image_id}">
       r<input type="number" min="0" max="999" value="${s.r}" data-seed="r" data-img="${c.image_id}">

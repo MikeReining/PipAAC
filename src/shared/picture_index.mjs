@@ -112,8 +112,10 @@ export function cutoffFor(cfg, language) {
  *  data/catalog/picture_labels.json): an identical word can rank below
  *  fetch_k in the embedding ("eat", "no"), so the dictionary — not the
  *  vector — decides identity. One label naming two senses ("orange"
- *  the colour and the fruit) is a real homograph: identity can't
- *  arbitrate, so tier 1 declines and the adult picks.
+ *  the colour and the fruit, "bat" the animal and the baseball bat)
+ *  is a real homograph: identity can't arbitrate, so NOTHING
+ *  auto-applies — the homographs are listed as candidates and the
+ *  adult picks. A founder pin still wins: the pin IS the arbitration.
  *  Tier 2 is similarity: the top score must clear its language's
  *  cutoff and not be blocked. A blocked top means null. */
 export function decideAuto(
@@ -125,18 +127,17 @@ export function decideAuto(
   if (scope === "common" && language === "en" && text && !normalizeV1(String(description ?? ""))) {
     const q = normalizeV1(text);
     const homograph = new Set((direct ?? []).map((e) => e.sense ?? e.image_id)).size > 1;
-    if (!homograph) {
-      const exact = new Map();
-      for (const e of direct ?? []) exact.set(e.image_id, e);
-      for (const c of pool ?? candidates) {
-        if (captionLabels(c.caption, c.source).includes(q)) exact.set(c.image_id, c);
-      }
-      if (exact.size) {
-        const pick = [...exact.values()]
-          .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
-          .find((c) => !blocked.includes(c.image_id));
-        return pick ? pick.image_id : null;
-      }
+    if (homograph) return null;
+    const exact = new Map();
+    for (const e of direct ?? []) exact.set(e.image_id, e);
+    for (const c of pool ?? candidates) {
+      if (captionLabels(c.caption, c.source).includes(q)) exact.set(c.image_id, c);
+    }
+    if (exact.size) {
+      const pick = [...exact.values()]
+        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+        .find((c) => !blocked.includes(c.image_id));
+      return pick ? pick.image_id : null;
     }
   }
   const top = candidates[0];

@@ -160,6 +160,13 @@ const makeEnv = ({ jev } = {}) => {
       // trampoline is absent — its ext row is pending, and pending art
       // never enters the label map. Its tier-1 win in tests comes from
       // the pool caption scan, same as a not-yet-indexed drawing.
+      // "bat" names two senses — a homograph: never auto, always shows.
+      bat: [
+        { image_id: "img_bat_animal", asset: "/symbols/bat.png", source: "catalog",
+          caption: "bat · Animals & Nature", sense: "sns_bat_animal" },
+        { image_id: "img_bat_sport", asset: "/symbols/bat2.png", source: "catalog",
+          caption: "bat · Toys, Play, Media & Leisure", sense: "sns_bat_sport" },
+      ],
     },
   };
   const db = new DatabaseSync(":memory:");
@@ -252,17 +259,16 @@ test("WT3 modifiers and phrases: 'red apple' → apple; 'i want applesauce' → 
   assert.ok(phrase.candidates.some((c) => c.image_id === "img_sauce"));
 });
 
-test("response shape + default cutoff gates similarity, not identity", async () => {
+test("response shape + calibrated cutoff gates similarity, not identity", async () => {
   const env = makeEnv();
   await seedIndex(env);
   const r = await find(env, { text: "trampoline" });
   const body = await r.json();
-  // AUTO_CUTOFF defaults to 1.01 — tier-2 similarity can never fire —
-  // but "trampoline" IS this picture's label, so tier-1 identity
-  // applies it anyway (§ 4.2: exact headword beats the cutoff).
+  // "trampoline" IS this picture's label — tier-1 identity applies it
+  // at any cutoff (§ 4.2: exact headword beats the score gate).
   assert.equal(body.auto, "ext_trampoline");
-  // 029: until the founder saves a cutoff, a miss must not auto-draw.
-  assert.equal(body.calibrated, false);
+  // The founder saved 0.8 — the finder is calibrated, so a miss draws.
+  assert.equal(body.calibrated, true);
   assert.equal(body.scope, "common");
   assert.equal(body.kind, "None");
   assert.equal(body.language, "en");
@@ -271,6 +277,18 @@ test("response shape + default cutoff gates similarity, not identity", async () 
   for (const key of ["image_id", "asset", "source", "score"]) {
     assert.ok(key in c, key);
   }
+});
+
+test("homograph: 'bat' never auto-applies — both senses lead the choices", async () => {
+  const env = makeEnv();
+  await seedIndex(env);
+  const body = await (await find(env, { text: "bat" })).json();
+  assert.equal(body.auto, null);
+  assert.equal(body.homograph, true);
+  // The label's own images lead — the adult picks the animal or the bat.
+  assert.equal(body.candidates[0].image_id, "img_bat_animal");
+  assert.equal(body.candidates[1].image_id, "img_bat_sport");
+  assert.equal(body.candidates[0].cosine, null); // injected — no vector score
 });
 
 /* ---------------------------------- gates ---------------------------------- */

@@ -205,21 +205,40 @@ async function findOne(env, { text, description, locale, binding = "PICTURES", i
       score: scoreOf(m.score, signals?.counts?.[m.id] ?? {}, CFG),
     }))
     .sort((a, b) => b.score - a.score);
-  const candidates = rescored.slice(0, CFG.top_k);
+  let candidates = rescored.slice(0, CFG.top_k);
   // `pool` is the full fetched set and `direct` the lexical label
   // map — identity can rank below fetch_k in the embedding entirely
   // ("eat", "no"), so the dictionary is the tier-1 authority (§ 4.2).
+  const labelKey = normalizeV1(String(text ?? ""));
+  const tier1Eligible = jev.scope === "common" && language === "en"
+    && labelKey && !normalizeV1(String(description ?? ""));
+  const direct = tier1Eligible
+    ? (env.PICTURE_LABELS ?? pictureLabels.labels)?.[labelKey] ?? null
+    : null;
+  const homograph = new Set((direct ?? []).map((e) => e.sense ?? e.image_id)).size > 1;
   const auto = decideAuto(
     { candidates, pool: rescored, pinned: signals?.pinned ?? null,
       blocked: signals?.blocked ?? [], text, description, scope: jev.scope,
-      direct: (env.PICTURE_LABELS ?? pictureLabels.labels)?.[normalizeV1(text)] ?? null },
+      direct },
     CFG, language);
+  // Homograph ("bat" the animal / the baseball bat): the label's own
+  // images lead the choices so the adult picks the right sense —
+  // nothing auto-applies on a coin-flip embedding score.
+  if (homograph) {
+    const listed = new Set(candidates.map((c) => c.image_id));
+    const skipped = new Set(signals?.blocked ?? []);
+    const extra = (direct ?? [])
+      .filter((e) => !listed.has(e.image_id) && !skipped.has(e.image_id))
+      .map((e) => ({ image_id: e.image_id, asset: e.asset, source: e.source,
+        caption: e.caption, status: "approved", cosine: null, score: null }));
+    candidates = [...extra, ...candidates].slice(0, CFG.top_k);
+  }
   // `calibrated` tells the add card whether "nothing close" means "draw
   // one" — until the founder saves a cutoff (§ 7, default 1.01 = never
   // auto) every miss would spend a drawing, so 029 shows the four instead.
   return {
     candidates, auto, scope: jev.scope, kind: jev.kind, language,
-    calibrated: CFG.auto_cutoff <= 1,
+    homograph, calibrated: CFG.auto_cutoff <= 1,
   };
 }
 
