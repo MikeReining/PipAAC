@@ -27,8 +27,8 @@ const RULES = [
 ].join("\n");
 
 const TASKS = {
-  fix: `Task: make the taps a natural sentence.`,
-  question: `Task: turn it into a question using only the child's words — a rising-intonation question is fine: "go park" → "Go to the park?", "more" → "More?". If it is already a question, keep it a question.`,
+  fix: `Task: make the taps a natural sentence. A tapped subject + bare verb describes what is happening now — "we play" → "We are playing.", "i run" → "I am running."`,
+  question: `Task: turn it into a question using only the child's words — a rising-intonation question is fine: "go park" → "Go to the park?", "more" → "More?". If a subject is tapped, use a natural question form — "we play" → "Are we playing?", "mom play" → "Is Mom playing?" (are/is/do/does are glue). If it is already a question, keep it a question.`,
   past: `Task: turn it into past tense. Dropping the subject is fine — "Went to the park." If it is a question, keep it a question. If it cannot go past naturally, output unchanged.`,
   future: `Task: turn it into natural spoken future tense, how a child speaks (using "going to"). Dropping the subject is fine — "Going to the park." "Going to" plus a place never needs a second "go" — "going to school", not "going to go to school". The words may already say it — a present want of a future thing is already future-facing: "i want to play" stays "I want to play." If it is a question, keep it a question.`,
 };
@@ -37,8 +37,8 @@ const TASKS = {
  * "go park" + past → "Went to the park?". Also the task for ⏪/⏩
  * pressed on an existing question (a tense change keeps the question). */
 const QUESTION_TASK = {
-  past: `Task: turn it into a past-tense question using only the child's words — rising intonation is fine: "go park" → "Went to the park?", "more" → "More?".`,
-  future: `Task: turn it into a future-tense question using only the child's words — rising intonation is fine: "go park" → "Going to the park?", "more" → "More?".`,
+  past: `Task: turn it into a past-tense question using only the child's words — rising intonation is fine: "go park" → "Went to the park?", "more" → "More?". If a subject is tapped, use a natural question form — "we play" → "Were we playing?", "mom play" → "Did Mom play?" (did/was/were are glue).`,
+  future: `Task: turn it into a future-tense question using only the child's words — rising intonation is fine: "go park" → "Going to the park?", "more" → "More?". If a subject is tapped, use a natural question form — "we play" → "Are we going to play?", "mom play" → "Is Mom going to play?" (is/are are glue).`,
 };
 
 export const TRANSFORM_PROMPTS = {
