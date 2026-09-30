@@ -136,3 +136,7 @@
 .spot-recipe { display: flex; flex-direction: column; gap: 6px; }
 .spot-recipe .move-row .cell, .spot-recipe .move-ctl { width: 60px; height: 60px; }
 .spot-recipe .move-ctl svg { width: 30px; height: 30px; }
+/* Try it card 1: a comparison, not a sequence — two labelled groups. */
+.move-compare { display: flex; gap: 20px; flex-wrap: wrap; pointer-events: none; }
+.move-group { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.move-cap { font-size: 13px; font-weight: 700; color: var(--muted); }

@@ -19,13 +19,15 @@ import { moveRow } from "./move-row.js";
 // Step 3 lights a move: two words and the ✨ button (sense ids: more, go).
 const MOVE = ["sense:sns_0055", "sense:sns_0015", "control:fix"];
 // Each card shows what to look for or press — the board's own tiles and
-// buttons (E5), never a word to hunt for. want glows in First words; I
-// does not, so it shows dimmed.
-const LIT = "sense:sns_0013";
-const DIM = "sense:sns_0001";
+// buttons (E5), never a word to hunt for. Card 1 is a comparison, not a
+// sequence: no arrows, two labelled groups (want and more glow in First
+// words; I and you do not). An arrow there read as "want, then I".
+const LIT = ["sns_0013", "sns_0055"]; // want more
+const DIM = "sense:sns_0001"; // I
+const DIMS = ["sns_0001", "sns_0002"]; // I you
 const STEPS = [
   { say: "These words glow. The rest dim.", note: "Nothing moved, and nothing is switched off.", go: "Next",
-    show: () => ({ steps: [LIT, DIM], mark: { [LIT]: "glow", [DIM]: "dimmed" } }) },
+    compare: true },
   { say: "Tap a dimmed word.", note: "It still speaks. Spotlight never takes a word away.", go: "Next",
     show: () => ({ steps: [DIM], mark: { [DIM]: "dimmed" } }) },
   { say: "Tap these, in order.", note: "✨ turns two words into a whole sentence and says it. Spotlight can light ✨ and ❓ too.", go: "Next", move: true,
@@ -54,7 +56,27 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
     note.className = "tour-note";
     note.textContent = s.note;
     let picture = null;
-    if (s.show) {
+    if (s.compare) {
+      picture = document.createElement("div");
+      picture.className = "move-compare";
+      picture.setAttribute("aria-hidden", "true");
+      for (const [label, ids, mark] of [["Glow", LIT, "glow"], ["Dim", DIMS, "dimmed"]]) {
+        const group = document.createElement("div");
+        group.className = "move-group";
+        const tiles = document.createElement("div");
+        tiles.className = "move-row";
+        for (const id of ids) {
+          const t = tileFor(id);
+          t.classList.add(mark);
+          tiles.append(t);
+        }
+        const cap = document.createElement("span");
+        cap.className = "move-cap";
+        cap.textContent = label;
+        group.append(tiles, cap);
+        picture.append(group);
+      }
+    } else if (s.show) {
       const { steps, done, mark } = s.show(moved);
       picture = moveRow(steps, { tileFor, done, mark });
     } else if (s.chip) {
