@@ -24,6 +24,9 @@ import {
   lintHint, lintSpecFit, listLabTakes, mintLabTake, setTakeVerdict,
   LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
+import {
+  listRuns, runTransformSuite, saveRun, setCellVerdict,
+} from "../sentences/lab.mjs";
 import { computeCoreGaps } from "../art/art_gaps.mjs";
 import { loadGlyphWords } from "../art/gen.mjs";
 import { DEFAULT_LEXICON_PATH } from "../catalog/paths.mjs";
@@ -35,6 +38,7 @@ const CATALOG_PATH = join(repoRoot, "data/catalog/catalog.json");
 const PAGE_PATH = join(repoRoot, "public/picture-calibration.html");
 const DISAGREE_PAGE_PATH = join(repoRoot, "public/picture-disagreements.html");
 const LAB_PAGE_PATH = join(repoRoot, "public/picture-lab.html");
+const SENTENCE_LAB_PAGE_PATH = join(repoRoot, "public/sentence-lab.html");
 const EXT_DIR = join(repoRoot, "out/extended_art");
 const PUBLIC_DIR = join(repoRoot, "public");
 
@@ -153,6 +157,11 @@ function buildHandler() {
     if (path === "/picture-lab") {
       res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
       return res.end(readFileSync(LAB_PAGE_PATH));
+    }
+    // The sentence lab: a fragment → every wand mode × both models, timed.
+    if (path === "/sentence-lab") {
+      res.writeHead(200, { "content-type": "text/html; charset=utf-8" });
+      return res.end(readFileSync(SENTENCE_LAB_PAGE_PATH));
     }
 
     const adminProxy = async (method, workerPath, body = null) => {
@@ -429,6 +438,43 @@ function buildHandler() {
       data.queries.push(row);
       writeJson(QUERIES_PATH, data);
       return json(res, 200, { ok: true, row });
+    }
+
+    /* --------------------------- sentence lab ---------------------------
+       One fragment → every magic-wand mode × both candidate models, in
+       parallel, timed. Same Groq endpoint + prompts as the production
+       transform route — the lab measures the real thing. Runs persist in
+       out/sentence_lab/ so ✓/✗ verdicts survive restarts. */
+
+    if (path === "/api/slab/run" && req.method === "POST") {
+      const body = await readBody(req);
+      const text = String(body?.text ?? "").trim();
+      try {
+        const suite = await runTransformSuite({ text });
+        return json(res, 200, { run: saveRun({ input: text, suite }) });
+      } catch (e) {
+        const msg = String(e?.message ?? e);
+        return json(res, msg === "bad_text" ? 400 : 502,
+          { error: "run_failed", detail: msg });
+      }
+    }
+
+    if (path === "/api/slab/runs" && req.method === "GET") {
+      return json(res, 200, { runs: listRuns() });
+    }
+
+    if (path === "/api/slab/verdict" && req.method === "POST") {
+      const body = await readBody(req);
+      try {
+        const rec = setCellVerdict({
+          file: body?.file, mode: body?.mode,
+          lane: body?.lane, verdict: body?.verdict ?? null,
+        });
+        if (!rec) return json(res, 404, { error: "not_found" });
+        return json(res, 200, { run: rec });
+      } catch (e) {
+        return json(res, 400, { error: String(e?.message ?? e) });
+      }
     }
 
     const labImg = path.match(/^\/lab-img\/([A-Za-z0-9_.-]+)$/);
