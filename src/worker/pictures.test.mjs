@@ -235,12 +235,15 @@ test("WT3 modifiers and phrases: 'red apple' → apple; 'i want applesauce' → 
   assert.ok(phrase.candidates.some((c) => c.image_id === "img_sauce"));
 });
 
-test("response shape + default cutoff means auto is never set", async () => {
+test("response shape + default cutoff gates similarity, not identity", async () => {
   const env = makeEnv();
   await seedIndex(env);
   const r = await find(env, { text: "trampoline" });
   const body = await r.json();
-  assert.equal(body.auto, null); // AUTO_CUTOFF defaults to 1.01
+  // AUTO_CUTOFF defaults to 1.01 — tier-2 similarity can never fire —
+  // but "trampoline" IS this picture's label, so tier-1 identity
+  // applies it anyway (§ 4.2: exact headword beats the cutoff).
+  assert.equal(body.auto, "ext_trampoline");
   // 029: until the founder saves a cutoff, a miss must not auto-draw.
   assert.equal(body.calibrated, false);
   assert.equal(body.scope, "common");
@@ -614,7 +617,9 @@ test("WT18: pin auto-applies theirs for everyone; block keeps ours listed, never
   await adminDisagree(env, "/pin", { text_norm: "apple", theirs: "img_banana" });
   assert.equal(await autoOf("apple"), "img_banana");
   await adminDisagree(env, "/unpin", { text_norm: "apple" });
-  assert.equal(await autoOf("apple"), null); // default cutoff 1.01 → no auto
+  // pin gone — tier-1 identity still applies the apple symbol even
+  // though the default cutoff (1.01) keeps tier-2 similarity off.
+  assert.equal(await autoOf("apple"), "img_apple");
 
   // block apple for "red apple": still a candidate, never auto
   await adminDisagree(env, "/pin", { text_norm: "red apple", theirs: "img_apple" });

@@ -193,7 +193,7 @@ async function findOne(env, { text, description, locale, binding = "PICTURES", i
     text_norm: skey, image_ids: matches.map((m) => m.id),
   }]);
 
-  const candidates = matches
+  const rescored = matches
     .map((m) => ({
       image_id: m.id,
       asset: m.metadata?.asset ?? null,
@@ -203,10 +203,13 @@ async function findOne(env, { text, description, locale, binding = "PICTURES", i
       cosine: m.score,
       score: scoreOf(m.score, signals?.counts?.[m.id] ?? {}, CFG),
     }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, CFG.top_k);
+    .sort((a, b) => b.score - a.score);
+  const candidates = rescored.slice(0, CFG.top_k);
+  // `pool` is the full fetched set — an exact-label match can rank
+  // below the displayed top_k and must still win (§ 4.2 tier 1).
   const auto = decideAuto(
-    { candidates, pinned: signals?.pinned ?? null, blocked: signals?.blocked ?? [] },
+    { candidates, pool: rescored, pinned: signals?.pinned ?? null,
+      blocked: signals?.blocked ?? [], text, description, scope: jev.scope },
     CFG, language);
   // `calibrated` tells the add card whether "nothing close" means "draw
   // one" — until the founder saves a cutoff (§ 7, default 1.01 = never

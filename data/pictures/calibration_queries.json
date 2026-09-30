@@ -3,358 +3,475 @@
   "note": "030 § 7 — calibration queries for the picture finder. Query shape: { text, description? } — description exercises the personal/description paths the same way the app's find-batch does (\"Cooper\" + \"our golden retriever\"). The founder marks each row's right answer (one candidate image_id, or \"none\"); marks save beside the query so the page re-runs after a model or caption change. Drafted by the developer, edited by the founder.",
   "queries": [
     {
-      "text": "want"
+      "text": "want",
+      "mark": "img_0013"
     },
     {
-      "text": "more"
+      "text": "more",
+      "mark": "img_0055"
     },
     {
-      "text": "go"
+      "text": "go",
+      "mark": "img_0015"
     },
     {
-      "text": "help"
+      "text": "help",
+      "mark": "none"
     },
     {
-      "text": "stop"
+      "text": "stop",
+      "mark": "img_0026"
     },
     {
-      "text": "eat"
+      "text": "eat",
+      "mark": "none"
     },
     {
-      "text": "drink"
+      "text": "drink",
+      "mark": "img_0029"
     },
     {
-      "text": "happy"
+      "text": "happy",
+      "mark": "img_0061"
     },
     {
-      "text": "sad"
+      "text": "sad",
+      "mark": "img_0179"
     },
     {
-      "text": "dog"
+      "text": "dog",
+      "mark": "img_0441"
     },
     {
-      "text": "cat"
+      "text": "cat",
+      "mark": "img_0442"
     },
     {
-      "text": "apple"
+      "text": "apple",
+      "mark": "img_0128"
     },
     {
-      "text": "banana"
+      "text": "banana",
+      "mark": "img_0129"
     },
     {
-      "text": "water"
+      "text": "water",
+      "mark": "img_0082"
     },
     {
-      "text": "milk"
+      "text": "milk",
+      "mark": "img_0083"
     },
     {
-      "text": "juice"
+      "text": "juice",
+      "mark": "img_0084"
     },
     {
-      "text": "mom"
+      "text": "mom",
+      "mark": "img_0267"
     },
     {
-      "text": "dad"
+      "text": "dad",
+      "mark": "img_0268"
     },
     {
-      "text": "play"
+      "text": "play",
+      "mark": "img_0027"
     },
     {
-      "text": "sleep"
+      "text": "sleep",
+      "mark": "img_0264"
     },
     {
-      "text": "cookie"
+      "text": "cookie",
+      "mark": "img_0115"
     },
     {
-      "text": "ball"
+      "text": "ball",
+      "mark": "img_0333"
     },
     {
-      "text": "book"
+      "text": "book",
+      "mark": "img_0369"
     },
     {
-      "text": "yes"
+      "text": "yes",
+      "mark": "img_0073"
     },
     {
-      "text": "no"
+      "text": "no",
+      "mark": "none"
     },
     {
-      "text": "apple sauce"
+      "text": "apple sauce",
+      "mark": "img_0692"
     },
     {
-      "text": "applesauce"
+      "text": "applesauce",
+      "mark": "img_0692"
     },
     {
-      "text": "ice cream"
+      "text": "ice cream",
+      "mark": "img_0121"
     },
     {
-      "text": "ice-cream"
+      "text": "ice-cream",
+      "mark": "img_0121"
     },
     {
-      "text": "hot dog"
+      "text": "hot dog",
+      "mark": "img_0107"
     },
     {
-      "text": "hotdog"
+      "text": "hotdog",
+      "mark": "img_0107"
     },
     {
-      "text": "peanut butter"
+      "text": "peanut butter",
+      "mark": "ext_peanut_butter"
     },
     {
-      "text": "all done"
+      "text": "all done",
+      "mark": "img_0056"
     },
     {
-      "text": "clean up"
+      "text": "clean up",
+      "mark": "img_0246"
     },
     {
-      "text": "wake up"
+      "text": "wake up",
+      "mark": "img_0265"
     },
     {
-      "text": "swing set"
+      "text": "swing set",
+      "mark": "img_0347"
     },
     {
-      "text": "bananna"
+      "text": "bananna",
+      "mark": "img_0129"
     },
     {
-      "text": "aple"
+      "text": "aple",
+      "mark": "img_0128"
     },
     {
-      "text": "watr"
+      "text": "watr",
+      "mark": "none"
     },
     {
-      "text": "juce"
+      "text": "juce",
+      "mark": "img_0084"
     },
     {
-      "text": "doggie"
+      "text": "doggie",
+      "mark": "img_0441"
     },
     {
-      "text": "kitty"
+      "text": "kitty",
+      "mark": "img_0444"
     },
     {
-      "text": "choclate milk"
+      "text": "choclate milk",
+      "mark": "img_0086"
     },
     {
-      "text": "red apple"
+      "text": "red apple",
+      "mark": "img_0128"
     },
     {
-      "text": "yellow banana"
+      "text": "yellow banana",
+      "mark": "img_0129"
     },
     {
-      "text": "big dog"
+      "text": "big dog",
+      "mark": "img_0441"
     },
     {
-      "text": "little cat"
+      "text": "little cat",
+      "mark": "img_0444"
     },
     {
-      "text": "green peas"
+      "text": "green peas",
+      "mark": "ext_peas"
     },
     {
-      "text": "my ball"
+      "text": "my ball",
+      "mark": "none"
     },
     {
-      "text": "more juice"
+      "text": "more juice",
+      "mark": "none"
     },
     {
-      "text": "I want applesauce"
+      "text": "I want applesauce",
+      "mark": "img_0692"
     },
     {
-      "text": "go to the park"
+      "text": "go to the park",
+      "mark": "none"
     },
     {
-      "text": "can I have water"
+      "text": "can I have water",
+      "mark": "img_0082"
     },
     {
-      "text": "I need help"
+      "text": "I need help",
+      "mark": "none"
     },
     {
-      "text": "want to play"
+      "text": "want to play",
+      "mark": "none"
     },
     {
-      "text": "all done eating"
+      "text": "all done eating",
+      "mark": "img_0056"
     },
     {
-      "text": "Apfel"
+      "text": "Apfel",
+      "mark": "none"
     },
     {
-      "text": "Hund"
+      "text": "Hund",
+      "mark": "img_0441"
     },
     {
-      "text": "Katze"
+      "text": "Katze",
+      "mark": "none"
     },
     {
-      "text": "Wasser"
+      "text": "Wasser",
+      "mark": "img_0082"
     },
     {
-      "text": "Milch"
+      "text": "Milch",
+      "mark": "img_0083"
     },
     {
-      "text": "Brot"
+      "text": "Brot",
+      "mark": "none"
     },
     {
-      "text": "Haus"
+      "text": "Haus",
+      "mark": "img_0298"
     },
     {
-      "text": "rot"
+      "text": "rot",
+      "mark": "none"
     },
     {
-      "text": "groß"
+      "text": "groß",
+      "mark": "none"
     },
     {
-      "text": "danke"
+      "text": "danke",
+      "mark": "none"
     },
     {
-      "text": "spielen"
+      "text": "spielen",
+      "mark": "none"
     },
     {
-      "text": "schlafen"
+      "text": "schlafen",
+      "mark": "img_0264"
     },
     {
-      "text": "Banane"
+      "text": "Banane",
+      "mark": "img_0129"
     },
     {
-      "text": "Saft"
+      "text": "Saft",
+      "mark": "none"
     },
     {
-      "text": "Gift"
+      "text": "Gift",
+      "mark": "none"
     },
     {
-      "text": "manzana"
+      "text": "manzana",
+      "mark": "none"
     },
     {
-      "text": "perro"
+      "text": "perro",
+      "mark": "none"
     },
     {
-      "text": "gato"
+      "text": "gato",
+      "mark": "img_0442"
     },
     {
-      "text": "agua"
+      "text": "agua",
+      "mark": "img_0082"
     },
     {
-      "text": "leche"
+      "text": "leche",
+      "mark": "img_0083"
     },
     {
-      "text": "pan"
+      "text": "pan",
+      "mark": "none"
     },
     {
-      "text": "casa"
+      "text": "casa",
+      "mark": "img_0298"
     },
     {
-      "text": "rojo"
+      "text": "rojo",
+      "mark": "none"
     },
     {
-      "text": "grande"
+      "text": "grande",
+      "mark": "none"
     },
     {
-      "text": "gracias"
+      "text": "gracias",
+      "mark": "none"
     },
     {
-      "text": "jugar"
+      "text": "jugar",
+      "mark": "none"
     },
     {
-      "text": "dormir"
+      "text": "dormir",
+      "mark": "img_0264"
     },
     {
-      "text": "plátano"
+      "text": "plátano",
+      "mark": "ext_plantains"
     },
     {
-      "text": "jugo"
+      "text": "jugo",
+      "mark": "img_0084"
     },
     {
-      "text": "más"
+      "text": "más",
+      "mark": "img_0055"
     },
     {
-      "text": "pomme"
+      "text": "pomme",
+      "mark": "none"
     },
     {
-      "text": "chien"
+      "text": "chien",
+      "mark": "none"
     },
     {
-      "text": "chat"
+      "text": "chat",
+      "mark": "none"
     },
     {
-      "text": "eau"
+      "text": "eau",
+      "mark": "none"
     },
     {
-      "text": "lait"
+      "text": "lait",
+      "mark": "img_0083"
     },
     {
-      "text": "pain"
+      "text": "pain",
+      "mark": "none"
     },
     {
-      "text": "maison"
+      "text": "maison",
+      "mark": "img_0298"
     },
     {
-      "text": "rouge"
+      "text": "rouge",
+      "mark": "none"
     },
     {
-      "text": "grand"
+      "text": "grand",
+      "mark": "none"
     },
     {
-      "text": "merci"
+      "text": "merci",
+      "mark": "none"
     },
     {
-      "text": "jouer"
+      "text": "jouer",
+      "mark": "none"
     },
     {
-      "text": "dormir"
+      "text": "dormir",
+      "mark": "img_0264"
     },
     {
-      "text": "banane"
+      "text": "banane",
+      "mark": "img_0129"
     },
     {
-      "text": "jus"
+      "text": "jus",
+      "mark": "img_0084"
     },
     {
-      "text": "beurre"
+      "text": "beurre",
+      "mark": "img_0097"
     },
     {
       "text": "Grandma Rosa",
-      "description": "my mom's mom"
+      "description": "my mom's mom",
+      "mark": "none"
     },
     {
       "text": "Cooper",
-      "description": "our golden retriever"
+      "description": "our golden retriever",
+      "mark": "none"
     },
     {
       "text": "my dog Rex",
-      "description": "our beagle"
+      "description": "our beagle",
+      "mark": "none"
     },
     {
-      "text": "Aunt Maria"
+      "text": "Aunt Maria",
+      "mark": "none"
     },
     {
-      "text": "grandma"
+      "text": "grandma",
+      "mark": "img_0274"
     },
     {
-      "text": "my teacher Ms Chen"
+      "text": "my teacher Ms Chen",
+      "mark": "none"
     },
     {
-      "text": "our house"
+      "text": "our house",
+      "mark": "none"
     },
     {
-      "text": "Uncle Dave"
+      "text": "Uncle Dave",
+      "mark": "none"
     },
     {
-      "text": "submarine"
+      "text": "submarine",
+      "mark": "ext_submarine"
     },
     {
-      "text": "xylophone"
+      "text": "xylophone",
+      "mark": "ext_xylophone"
     },
     {
-      "text": "cryptocurrency"
+      "text": "cryptocurrency",
+      "mark": "none"
     },
     {
-      "text": "saxophone"
+      "text": "saxophone",
+      "mark": "none"
     },
     {
-      "text": "volcano"
+      "text": "volcano",
+      "mark": "ext_volcano"
     },
     {
-      "text": "telescope"
+      "text": "telescope",
+      "mark": "ext_telescope"
     },
     {
-      "text": "espresso machine"
+      "text": "espresso machine",
+      "mark": "none"
     },
     {
-      "text": "TypeError"
+      "text": "TypeError",
+      "mark": "none"
     }
   ]
 }

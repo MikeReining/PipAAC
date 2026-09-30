@@ -53,6 +53,19 @@ export function captionForDrawing({ scope, text, description }) {
   return queryText(text, description);
 }
 
+/** The caption segments that are word labels — the " · "-separated
+ *  parts once caption metadata is stripped. Recipes are positional:
+ *  catalog = "label · label · category" (every category contains "&"
+ *  or ",", labels don't); extended = "label · section · framing" (only
+ *  the first segment is the word); drawn = bare text/description. */
+export function captionLabels(caption, source) {
+  const segs = String(caption ?? "")
+    .split(" · ").map(normalizeV1).filter(Boolean);
+  if (source === "extended") return segs.slice(0, 1);
+  if (segs.length > 1 && /[&,]/.test(segs[segs.length - 1])) segs.pop();
+  return segs;
+}
+
 /* ------------------------------ draw keys ------------------------------ */
 
 /** § 5.1 subject: personal keys by description alone so "Cooper — our
@@ -82,13 +95,39 @@ export function cutoffFor(cfg, language) {
   return (language && cfg.auto_cutoff_by_lang?.[language]) ?? cfg.auto_cutoff;
 }
 
-/** § 4.2 — the server-side auto rule: a founder pin beats everything;
- *  otherwise the top score must clear its language's cutoff and not be
- *  blocked for this text. A blocked top means null, not the runner-up. */
-export function decideAuto({ candidates, pinned = null, blocked = [] } = {}, cfg, language) {
+/** § 4.2 — the server-side auto rule, two tiers. A founder pin beats
+ *  everything. Tier 1 is identity: when the typed English common word
+ *  IS a candidate's label ("stop" inside "stop · stops · stopping"),
+ *  that picture applies regardless of cosine rank — go/stop/want sit
+ *  in a dense control-word neighbourhood where similarity can't
+ *  express identity (the real "stop" symbol once ranked 4th behind
+ *  off/out/stoplight). English-only: captions are English, so a
+ *  false friend like French "pain" never steals the English "pain"
+ *  symbol. Personal scope and described queries skip tier 1 — the
+ *  name/description is the meaning, not the bare word. Homographs
+ *  (bat-animal vs bat-sport) arbitrate by score among exact matches.
+ *  A blocked exact match means null — the founder rejected this
+ *  word's obvious picture, so no neighbour may substitute.
+ *  Tier 2 is similarity: the top score must clear its language's
+ *  cutoff and not be blocked. A blocked top means null. */
+export function decideAuto(
+  { candidates = [], pool = null, pinned = null, blocked = [],
+    text = null, description = null, scope = null } = {},
+  cfg, language,
+) {
   if (pinned) return pinned;
+  if (!candidates.length) return null;
+  if (scope === "common" && language === "en" && text && !normalizeV1(String(description ?? ""))) {
+    const q = normalizeV1(text);
+    const exact = (pool ?? candidates)
+      .filter((c) => captionLabels(c.caption, c.source).includes(q))
+      .sort((a, b) => b.score - a.score);
+    if (exact.length) {
+      const pick = exact.find((c) => !blocked.includes(c.image_id));
+      return pick ? pick.image_id : null;
+    }
+  }
   const top = candidates[0];
-  if (!top) return null;
   if (blocked.includes(top.image_id)) return null;
   return top.score >= cutoffFor(cfg, language) ? top.image_id : null;
 }
