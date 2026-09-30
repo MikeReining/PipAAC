@@ -281,6 +281,14 @@ export const DRAW_JEV_QUESTIONS = {
       none: "No extra physical anchor needed; human posture or face is sufficient",
     },
   },
+  imagery: {
+    type: "choice",
+    instructions: "Does this concept's picture name itself, or does it need an invented visual stand-in?",
+    criteria: {
+      literal: "The subject can be drawn exactly as it is — a concrete object, a self-evident action, or a state/quality visible on a thing (dog, train, running, a wet shirt, dirty laundry)",
+      metaphor: "The concept has no canonical physical form — an abstract adjective, amount, relation, or idea that needs a chosen visual metaphor (easy, more, same, different, finished, enough, almost)",
+    },
+  },
   social_scale: {
     type: "choice",
     instructions: "How many human actors does this AAC concept need? A person is the LAST resort — prefer zero unless the meaning is unreadable without a human.",
@@ -302,7 +310,17 @@ export function parseDrawSpec(answers = {}) {
     hand_mode: answers?.hand_mode?.choice ?? "resting_ball",
     anchor: answers?.proloquo_anchor?.choice ?? "none",
     social_scale: answers?.social_scale?.choice ?? "solo",
+    imagery: answers?.imagery?.choice ?? "metaphor",
   };
+}
+
+/** Jev's imagery verdict → which planner lane writes the hint.
+ *  literal = the subject draws itself (fast lane); metaphor = the
+ *  concept needs an invented visual stand-in (reasoning lane). Absent
+ *  or unexpected answers route to the reasoning lane — a slow hint
+ *  beats a shallow one. */
+export function plannerLane(spec = {}) {
+  return spec.imagery === "literal" ? "gptoss" : "spark";
 }
 
 /* --------------------------- vendor call shape ---------------------------- */

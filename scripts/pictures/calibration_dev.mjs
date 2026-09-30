@@ -29,6 +29,7 @@ import {
 } from "../sentences/lab.mjs";
 import { computeCoreGaps } from "../art/art_gaps.mjs";
 import { loadGlyphWords } from "../art/gen.mjs";
+import { plannerLane } from "../../src/shared/draw_prompt.mjs";
 import { DEFAULT_LEXICON_PATH } from "../catalog/paths.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -303,7 +304,12 @@ function buildHandler() {
       } catch (e) {
         errors.spec = String(e?.message ?? e);
       }
-      return json(res, 200, { find, spec, errors });
+      return json(res, 200, {
+        find, spec, errors,
+        // Which planner Jev's imagery verdict routes to (literal→gptoss,
+        // metaphor→spark) — the production decision, shown in the lab.
+        plan_lane: spec ? plannerLane(spec) : null,
+      });
     }
 
     /** The template lane — exactly what handleDraw would build for this

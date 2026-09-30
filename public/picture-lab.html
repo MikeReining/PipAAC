@@ -160,7 +160,7 @@ async function probe() {
   probed = null;
   try {
     const j = await post("/api/lab/probe", { text, description });
-    probed = { text, description, find: j.find, spec: j.spec };
+    probed = { text, description, find: j.find, spec: j.spec, lane: j.plan_lane };
     renderFind(j);
     renderSpec(j.spec);
     for (const l of Object.keys(LANES)) {
@@ -199,9 +199,15 @@ function renderSpec(spec) {
   const p = $("specpanel");
   p.hidden = !spec;
   if (!spec) return;
-  $("spec").innerHTML = ["entity_mode", "packaging", "framing", "hand_mode", "proloquo_anchor", "anchor", "social_scale"]
+  const lane = plannerLaneName();
+  $("spec").innerHTML = ["entity_mode", "packaging", "framing", "hand_mode", "proloquo_anchor", "anchor", "social_scale", "imagery"]
     .filter((k) => spec[k] != null && spec[k] !== "")
-    .map((k) => `<span class="badge">${k}: ${esc(spec[k])}</span>`).join("");
+    .map((k) => `<span class="badge">${k}: ${esc(spec[k])}</span>`).join("") +
+    (lane ? ` <span class="badge" style="border-color:var(--win);color:var(--win)">→ routes to ${lane}</span>` : "");
+}
+
+function plannerLaneName() {
+  return probed?.lane ?? null;
 }
 
 const LANES = {

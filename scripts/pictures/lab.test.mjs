@@ -11,7 +11,7 @@ import {
   plannerSystemPrompt, setTakeVerdict, takeFileName,
   LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
-import { styleRefBundle } from "../../src/shared/draw_prompt.mjs";
+import { styleRefBundle, plannerLane } from "../../src/shared/draw_prompt.mjs";
 
 test("plannerChatBody: lane model + system prompt from the md, spec in user msg", () => {
   const body = plannerChatBody({
@@ -179,6 +179,12 @@ test("mintLabTake: object bundle attaches style refs like the Worker", async () 
     assert.equal(refs.length, 3);
     assert.ok(refs.every((r) => r.image_url.url.startsWith("data:image/")));
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("plannerLane: Jev's imagery picks the lane; unknown → reasoning lane", () => {
+  assert.equal(plannerLane({ imagery: "literal" }), "gptoss");
+  assert.equal(plannerLane({ imagery: "metaphor" }), "spark");
+  assert.equal(plannerLane({}), "spark"); // absent → the safer model
 });
 
 test("adoptLabTake: copies to assets/symbols, guards personal + collisions", async () => {
