@@ -1111,9 +1111,12 @@ export function mountEditor({
     statusTimer?.unref?.(); // never keeps a test process alive
   }
 
-  /** Leaving the editor view: the main-board grid goes home. */
+  /** Leaving the editor view: the main-board grid goes home and repaints
+   *  — its cells still carry the editor's edit gestures, so a tap on the
+   *  child's board would open the placement sheet. */
   function leave() {
     placeGrid(false);
+    renderMainBoard();
     clearInterval(statusTimer);
     closeDrawer();
     closeDrop();

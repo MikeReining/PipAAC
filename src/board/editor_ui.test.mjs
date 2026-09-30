@@ -224,6 +224,15 @@ test("the editor's gear opens Settings through the PIN gate, like the board's co
     "never a way around the PIN");
 });
 
+test("leaving the editor repaints the main board out of edit gestures", async () => {
+  const h = harness({ db: freshDb() });
+  h.editor.renderEditor();
+  await flush();
+  const before = h.log.main;
+  h.editor.leave();
+  assert.equal(h.log.main, before + 1, "the child's grid is repainted on the way out");
+});
+
 test("Done in the top bar leaves for Maya's main board and forgets the place", async () => {
   globalThis.sessionStorage = memoryStorage();
   const db = freshDb();
