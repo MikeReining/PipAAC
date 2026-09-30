@@ -291,6 +291,13 @@ function syncSpeed() {
 // 024/025: whole-sentence voice — Tier 1 Cache Storage + deadline.
 // Same voice_key as tiles (preferred_voice_id → voi_*_en).
 const sentenceVoice = voiceSentence();
+/* 024 rule 1, revised 2026-09-30 (founder): word-at-a-time clips are the
+ * failure path, never the normal one — a speak waits for the whole-
+ * sentence recording. A fresh ElevenLabs mint lands in a second or two;
+ * this cap only bounds a genuinely stalled request. Offline, unlicensed,
+ * and fair-use answers come back fast and fall to the clip loop at once —
+ * she is always heard. */
+const SPEAK_VOICE_WAIT_MS = 10_000;
 // 028: tile voice library — entity names and committed typed words play
 // minted clips from Cache Storage + the ledger; never device TTS.
 const tileVoice = voiceTile();
@@ -599,10 +606,11 @@ async function speakSentence(feeling = null) {
       }
     }
   }
-  // 024 rule 1: one whole-sentence utterance when it's ready — a single
-  // word is its own clip, so the pipeline only ever races real phrases.
-  // A face tap races every length: the shortest messages (*No!*, *Stop!*)
-  // are often the most emotional (025 § 1). A null answer (deadline,
+  // 024 rule 1 (revised 2026-09-30): the sentence voice is the speech —
+  // wait out the mint, don't glue word clips. A single word is its own
+  // clip, so the pipeline only ever requests real phrases; a face tap
+  // requests every length: the shortest messages (*No!*, *Stop!*) are
+  // often the most emotional (025 § 1). A null answer (stalled request,
   // offline, unlicensed, over budget) falls through to the clip loop —
   // she is always heard, the feeling is the extra (025 § 2).
   let spoken = false;
@@ -614,8 +622,7 @@ async function speakSentence(feeling = null) {
       voice: voiceId,
       text,
       feeling: feeling ?? "neutral",
-      // § 2: a face waits ~1 s for its feeling before neutral clips.
-      deadlineMs: feeling ? 1000 : 300,
+      deadlineMs: SPEAK_VOICE_WAIT_MS,
     });
     if (seq !== speakSeq) return; // a newer speak owns the audio now
     if (text !== sentenceSpeakText(sentence)) {
@@ -2609,7 +2616,7 @@ async function sampleVoice(id, feeling = "neutral") {
   if (id !== voiceId) return; // only the board's voice can speak today
   const blob = await sentenceVoice.request({
     userId: me.id, license: await voiceLicense(), voice: id,
-    text: SAMPLE_TEXT, feeling, deadlineMs: 1500,
+    text: SAMPLE_TEXT, feeling, deadlineMs: SPEAK_VOICE_WAIT_MS,
   }).catch(() => null);
   if (blob) return playBlob(blob);
   if (feeling !== "neutral") return false; // a feeling has no word-clip fallback

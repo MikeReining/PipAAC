@@ -38,11 +38,18 @@ tablet.
 
 ## 3. Rules (founder-reviewed, 2026-09-25)
 
-1. **▶ never waits on the network.** Today ▶ plays instantly and offline from
-   clips. That must not get worse: if the whole-sentence audio isn't ready
-   within about **300 ms**, play the word clips immediately. A single-word tap
-   always plays its clip. Sentence audio is an upgrade when it's there, never
-   something she depends on.
+1. **The sentence plays as one utterance; word clips are only the failure
+   path.** *Revised 2026-09-30 (founder), replacing the 300 ms race below:*
+   word-at-a-time playback is slow and unnatural — a speak waits for the
+   whole-sentence recording, even across a fresh mint (a second or two).
+   Word clips play only when the sentence voice truly can't answer —
+   offline, unlicensed, over the fair-use limit, or a request still out
+   past the wait cap (10 s) — so she is always heard. A single-word tap
+   always plays its clip.
+   *(Original 2026-09-25 text: "▶ never waits on the network — if the
+   whole-sentence audio isn't ready within about 300 ms, play the word
+   clips immediately." Superseded: in practice every first-time and
+   transformed sentence missed the race and spoke word by word.)*
 2. **The cache key includes the voice.** Key = `sha256(voice id + voice
    settings + model version + text)`. The text keeps its punctuation
    (*"?"* gives the rising tune) and is otherwise normalized (case, spaces).
@@ -77,7 +84,9 @@ She taps ▶ (or a transform button; 023 rewrites the text first)
    │
    ├─ Tier 3: Grok Voice TTS via the Worker ── play, save to Tier 1, and to Tier 2 if eligible
    │
-   └─ Deadline: nothing playing after ~300 ms → play the word clips now (rule 1)
+   └─ Wait cap (rule 1): the recording still isn't playing after 10 s,
+      or the Worker answered offline/unlicensed/over-budget → the word
+      clips as the last resort — she is always heard
 ```
 
 The Grok key lives in the Worker, never in the client. Requests to the
@@ -238,16 +247,17 @@ name clips (§ 5a, slices 5–7).
    tells the client what it may share. `XAI_API_KEY` is a Worker secret;
    `env.VOICE_SYNTH` is the test seam — no paid calls in tests.
    Deploy note: `wrangler r2 bucket create pippaac-voice` once.
-2. **Client:** Tier 1 cache (IndexedDB / OPFS), the ~300 ms deadline with
-   word-clip fallback (rule 1), and the per-child voice setting (rule 3).
+2. **Client:** Tier 1 cache (IndexedDB / OPFS), a speak that waits out a
+   mint with word clips as the failure path (rule 1, revised 2026-09-30),
+   and the per-child voice setting (rule 3).
    **Landed 2026-09-26** (`public/shared/voice_sentence.mjs`,
    `src/board/voice_sentence.test.mjs` 5/5): Tier 1 is Cache Storage
    (`pip-voice`), keyed by the same normalization the server uses.
-   `speakSentence` races the endpoint against the deadline — a null
-   answer (deadline, offline, unlicensed, over budget) speaks the word
-   clips, while the fetch finishes and warms the cache so the next tap
-   is instant. Single-word sentences skip the pipeline entirely (one
-   word is its clip). The license is kept device-local in the keyStore
+   `speakSentence` waits for the endpoint up to the wait cap (10 s) —
+   a null answer (stalled request, offline, unlicensed, over budget)
+   speaks the word clips as the last resort, while a late fetch still
+   warms the cache so the next tap is instant. Single-word sentences
+   skip the pipeline entirely (one word is its clip). The license is kept device-local in the keyStore
    at activation (`user/<id>/license`) — devices activated before this
    lands speak clips until the key is re-entered. **Deferred with the
    catalog:** the `grok_voice` profile column + voice picker — a synced

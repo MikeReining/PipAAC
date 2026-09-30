@@ -5,11 +5,12 @@
  * returns (shared-cache or private) lands here, so a repeat plays
  * instantly and offline. Tier 2/3 live in the Worker.
  *
- * Rule 1: ▶ never waits on the network. `request` returns null after
- * ~deadlineMs and the caller speaks the word clips — but the fetch
- * keeps running and fills the cache, so the next tap of the same
- * sentence is instant. Sentence audio is an upgrade, never a
- * dependency.
+ * Rule 1 (revised 2026-09-30, founder): the whole-sentence recording is
+ * the speech — a speak waits for it, even across a fresh mint (~1–2 s).
+ * `request` only returns null when the endpoint truly can't answer —
+ * offline, unlicensed, over budget, or past the caller's deadline cap —
+ * and the caller speaks the word clips as the last resort. A fetch that
+ * resolves late still fills the cache, so the next tap is instant.
  */
 
 const te = new TextEncoder();
@@ -87,10 +88,10 @@ export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}
 
   /** One speak attempt. Returns an audio Blob, or null to mean
    *  "speak the word clips" — offline, unlicensed, over budget,
-   *  slow network, or past the deadline. A late answer still lands
-   *  in the cache for the next tap. `feeling` rides to the Worker,
-   *  which applies Eleven expressive text (025 § 4); `deadlineMs` per
-   *  call lets a face tap wait ~1 s (§ 2's never-silent rule). */
+   *  or a request still unanswered past the deadline cap. A late
+   *  answer still lands in the cache for the next tap. `feeling`
+   *  rides to the Worker, which applies Eleven expressive text
+   *  (025 § 4); `deadlineMs` is per call. */
   async function request({ userId, license, voice, text,
     feeling = "neutral", endpoint = "/api/v1/voice/speak",
     deadlineMs: deadline = deadlineMs }) {

@@ -107,10 +107,11 @@ Smart bar:     [ tile ] [ tile ] [ tile ] [ 😊 ● | 😢 | 😠 ]
 
 **Tap ▶:** neutral, exactly as today, lit face or not.
 
-**Never silent:** if the feeling's audio hasn't started within about **1
-second** (slow network, error, fair-use limit reached), speak the sentence
-neutrally with the 024 fallback (her word clips). She is always heard; the
-feeling is the extra.
+**Never silent:** a face tap waits for the feeling's recording like any
+other speak (024 rule 1, revised 2026-09-30 — no 1 s race). If the Worker
+truly can't answer — offline, unlicensed, fair-use limit, or a request
+still out past the wait cap — the 024 fallback speaks the sentence with
+her word clips. She is always heard; the feeling is the extra.
 
 ## 3. The "I + feeling word" suggestion
 

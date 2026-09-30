@@ -2,6 +2,7 @@
 
 | Date | Tier | Summary | Truth owner | Resolution |
 | --- | --- | --- | --- | --- |
+| 2026-09-30 | T1 | ✨ fix-it (and every first-time sentence) spoke word by word instead of one ElevenLabs utterance — the 300 ms race always expired before a fresh mint landed | `speakSentence` deadline in `public/board.js` (024 rule 1) | Founder revised rule 1: speaks wait out the mint (10 s cap); word clips are the failure path only. `src/board/voice_sentence.test.mjs` |
 | 2026-09-24 | T2 | Predict strip offers words that don't continue the sentence (`want` after `go do play want`): the open sentence trains `history_count` on every tap, and `hist` falls through to a word's lifetime share when that word never followed the context | `history_count` + `hist` in `public/shared/funnel.mjs` | History is written only when a sentence closes spoken. `hist` is Witten-Bell interpolation. `src/board/strip_history.test.mjs` |
 | 2026-09-24 | T2 | Board stays blank: boot throws before `renderGrid` because a persisted DB is missing columns the shipped schema added (`spotlit`, `share_research`) | `public/shared/migrate.mjs` | Catalog regenerated from `schema.sql`. Migration now parses `CREATE TABLE` past semicolons in comments, and drops triggers that name a table being rebuilt so `ALTER RENAME` can finish. `src/board/migrate.test.mjs` |
 | 2026-09-24 | T2 | `stats.test.mjs` red on clean HEAD: `logSelection` gained a `history_count` write (017 step 10) while the test's table whitelist only enumerated the read surface | `public/shared/funnel.mjs` (`logSelection`) | Added `history_count` to the fixture tables. Fixture whitelists must cover every table the exercised code path *writes*, not only what the module under test reads |
@@ -50,6 +51,14 @@ Lie-prone layer:
 Proof: npm test
 Pattern candidate: (optional)
 ```
+## 2026-09-30 speak-races-300ms-plays-word-clips
+
+Tier: T1
+Truth owner: `speakSentence` in `public/board.js` — the deadline passed to `sentenceVoice.request` (product intent: 024 rule 1)
+Lie-prone layer: the 300 ms race looked like "▶ never waits", but a fresh ElevenLabs mint takes ~1–3 s, so *every* first-time and transformed sentence (✨ fix-it included) silently fell to the word-clip loop — the mint landed only for the second press
+Proof: node --test src/board/voice_sentence.test.mjs — the board source assertion is red on the old `deadlineMs: 300` wiring, green with `SPEAK_VOICE_WAIT_MS`; the mint-inside-budget test guards the wait behavior itself
+Pattern candidate: a deadline chosen for a cache hit silently decides behavior on a cache miss — measure the miss path (mint latency) before writing "instant" into a rule
+
 ## 2026-09-29 do-sql-exec-variadic-not-arrays
 
 Tier: T2

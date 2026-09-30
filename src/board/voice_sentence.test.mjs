@@ -1,14 +1,17 @@
 /**
  * 024 slice 2 Works Test — the client's sentence-voice pipeline.
  *
- * Rule 1 is the thing being proven: a sentence that isn't ready in
- * ~deadlineMs answers null so the caller speaks word clips — while the
- * fetch finishes and warms the cache, so the next tap is instant.
- * Cache Storage and fetch are faked; the module's own deadline races
- * the real timers.
+ * Rule 1 (revised 2026-09-30): a speak waits for the whole-sentence
+ * recording — a mint that lands inside the deadline plays as one
+ * utterance. Null is only the last resort (offline, unlicensed,
+ * non-200, or past the cap) so the caller can speak word clips; a
+ * late fetch still warms the cache for the next tap. Cache Storage
+ * and fetch are faked; the module's own deadline races real timers.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   normalizeSpeakText, sentenceSpeakText, voiceSentence,
 } from "../../public/shared/voice_sentence.mjs";
@@ -174,7 +177,7 @@ test("a per-request deadline overrides the module default", async () => {
   await withEnv(async () => {
     globalThis.fetch = async () => { await gate; return new Response(new Blob(["LATE"])); };
     const vs = voiceSentence({ deadlineMs: 500 });
-    // 1 s never-silent window (025 § 2) — short here, still > the gate.
+    // A stalled request past the caller's cap — the last-resort clips.
     const missed = await vs.request({ ...ARGS, feeling: "happy", deadlineMs: 25 });
     assert.equal(missed, null);
     release();
@@ -182,4 +185,36 @@ test("a per-request deadline overrides the module default", async () => {
     const b = await vs.request({ ...ARGS, feeling: "happy" });
     assert.equal(await b.text(), "LATE");
   });
+});
+
+/* --- 2026-09-30: speaks wait out a mint; clips are the failure path --- */
+
+test("a fresh mint inside the wait budget plays — no clip fallback", async () => {
+  await withEnv(async () => {
+    globalThis.fetch = async () => {
+      await new Promise((r) => setTimeout(r, 60)); // ElevenLabs-scale mint
+      return new Response(new Blob(["MINTED"]));
+    };
+    const vs = voiceSentence({ deadlineMs: 5000 });
+    const b = await vs.request(ARGS);
+    assert.equal(await b?.text(), "MINTED");
+  });
+});
+
+test("the board waits out a mint — no sub-second race to word clips", () => {
+  // Founder, 2026-09-30: the 300 ms race spoke every first-time and
+  // transformed sentence word by word. speakSentence and the voice
+  // sample must request with a mint-covering wait cap.
+  const board = readFileSync(
+    join(import.meta.dirname, "../../public/board.js"), "utf8");
+  const m = board.match(/SPEAK_VOICE_WAIT_MS = (\d[\d_]*)/);
+  assert.ok(m, "board.js must name the speak wait cap");
+  assert.ok(Number(m[1].replaceAll("_", "")) >= 5000,
+    `speak wait ${m[1]} ms is too short for a fresh mint`);
+  const speak = board.slice(board.indexOf("async function speakSentence"));
+  assert.match(speak.slice(0, speak.indexOf("closeSentence")),
+    /deadlineMs: SPEAK_VOICE_WAIT_MS/, "speakSentence must wait out the mint");
+  const sample = board.slice(board.indexOf("async function sampleVoice"));
+  assert.match(sample, /deadlineMs: SPEAK_VOICE_WAIT_MS/,
+    "the voice sample waits too — a new voice's first play is a mint");
 });
