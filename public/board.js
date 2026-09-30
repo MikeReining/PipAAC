@@ -1434,6 +1434,29 @@ function fitLabels(root) {
   });
 }
 
+/** Tiles change size without re-rendering (the editor's word card opens
+ *  beside the board); refit labels whenever a grid's box changes. */
+{
+  const seen = new Map();
+  const dirty = new Set();
+  const ro = new ResizeObserver((entries) => {
+    for (const e of entries) {
+      const w = Math.round(e.contentRect.width), h = Math.round(e.contentRect.height);
+      const prev = seen.get(e.target);
+      seen.set(e.target, `${w}x${h}`);
+      if (prev === `${w}x${h}`) continue;
+      if (!dirty.size) {
+        requestAnimationFrame(() => { for (const t of dirty) fitLabels(t); dirty.clear(); });
+      }
+      dirty.add(e.target);
+    }
+  });
+  for (const id of ["grid", "ed-grid"]) {
+    const el = document.getElementById(id);
+    if (el) ro.observe(el);
+  }
+}
+
 /** sense_id → its grid element, for the likely-next halo pass. */
 const cellEls = new Map();
 
