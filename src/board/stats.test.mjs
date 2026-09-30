@@ -41,9 +41,9 @@ import { fileURLToPath } from "node:url";
 
 import {
   dailyTotals, dayIndex, newItemsOnDay, refreshStatsDays, sentencesOnDay,
-  tapsOnDay, upsertStatsDay,
+  tapsOnDay, transformsOnDay, upsertStatsDay,
 } from "../../public/shared/stats.mjs";
-import { logSelection } from "../../public/shared/funnel.mjs";
+import { logSelection, logTransform } from "../../public/shared/funnel.mjs";
 
 const SCHEMA = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), "schema.sql"), "utf8",
@@ -58,7 +58,7 @@ function statsOnlyDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = OFF"); // core_cell's sense ref is absent by design
   for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op",
-    "phrase_count", "strip_impression"]) {
+    "phrase_count", "strip_impression", "transform_event"]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     assert.ok(ddl, `schema for ${t}`);
     db.exec(ddl);
@@ -162,6 +162,7 @@ test("dailyTotals: every number equals the hand-computed value", () => {
       wrong_picks: 0,
       core: 3, fringe: 4, own: 1, spotlit: 1,
       sources: 0, hours: 0, lengths: 0, per_word: 0,
+      transforms: {}, // no sentence-button presses that day
     },
   );
   // wpm: s1 3 words / 50 s = 3.6, s3 2 / 25 s = 4.8 → median 4.2
@@ -253,4 +254,22 @@ test("logSelection writes the spotlit flag", () => {
   const rows = db.prepare("SELECT item_id, spotlit FROM learner_event_log ORDER BY id").all()
     .map((r) => ({ ...r }));
   assert.deepEqual(rows, [{ item_id: "want", spotlit: 1 }, { item_id: "go", spotlit: 0 }]);
+});
+
+// 032 E4: ✨ / ❓ presses, on their own vs with the glow, land on their own
+// local day and in the day row — counted from transform_event rows only.
+test("sentence-button presses: by mode, own vs glow, on their day", () => {
+  const db = statsOnlyDb();
+  const d0 = B - 3;
+  logTransform(db, "fix", false, at(d0, 9));
+  logTransform(db, "fix", true, at(d0, 10));
+  logTransform(db, "fix", false, at(d0, 11));
+  logTransform(db, "question", true, at(d0, 12));
+  logTransform(db, "past", false, at(d0 + 1, 9)); // the next day
+  const day = dayIndex(at(d0, 9), TZ);
+  assert.deepEqual(transformsOnDay(db, day), {
+    fix: { own: 2, glow: 1 }, question: { own: 0, glow: 1 },
+  });
+  assert.deepEqual(dailyTotals(db, day, 1).transforms, transformsOnDay(db, day));
+  assert.deepEqual(transformsOnDay(db, day + 1), { past: { own: 1, glow: 0 } });
 });

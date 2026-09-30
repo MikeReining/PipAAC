@@ -30,7 +30,8 @@ const TODAY = Math.floor(Date.now() / DAY);
 function statsDb() {
   const db = new DatabaseSync(":memory:");
   db.exec("PRAGMA foreign_keys = OFF");
-  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op"]) {
+  for (const t of ["learner_event_log", "sentence", "core_cell", "stats_day", "sync_op",
+    "transform_event"]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     db.exec(ddl);
   }

@@ -2,9 +2,10 @@
  * The stats engine (docs/product/Stats_And_Progress.md § 3, § 6).
  *
  * Every number has one definition, computed the same way on every
- * device, from three device-local tables: learner_event_log (taps),
- * sentence (spoken/cleared bars), and strip_impression (painted
- * moments) — plus core_cell to split core from fringe. The module
+ * device, from four device-local tables: learner_event_log (taps),
+ * sentence (spoken/cleared bars), strip_impression (painted moments),
+ * and transform_event (sentence-button presses, 032 E4) — plus
+ * core_cell to split core from fringe. The module
  * reads nothing else: the Works Test runs it against a database
  * holding only those tables.
  *
@@ -156,6 +157,21 @@ export function wrongPicks(db, { day = null, from = 0, to = Number.MAX_SAFE_INTE
   ).all(WRONG_PICK_MS, ...(day == null ? [from, to] : [day]))[0].n;
 }
 
+/** Sentence-button presses on `day` (032 E4), by mode: on their own vs
+ *  while the button glowed in a Spotlight. Only modes pressed appear. */
+export function transformsOnDay(db, day) {
+  const out = {};
+  for (const r of db.prepare(
+    `SELECT mode, spotlit, COUNT(*) AS n FROM transform_event
+     WHERE ${dayKeySql("pressed_at", "tz_offset_min")} = ?
+     GROUP BY mode, spotlit`,
+  ).all(day)) {
+    const m = (out[r.mode] ??= { own: 0, glow: 0 });
+    m[r.spotlit ? "glow" : "own"] += r.n;
+  }
+  return out;
+}
+
 /** One `stats_day` row for `day` — every § 3 number, counts only. */
 export function dailyTotals(db, day, computedAt = Date.now()) {
   const taps = tapsOnDay(db, day);
@@ -223,6 +239,7 @@ export function dailyTotals(db, day, computedAt = Date.now()) {
     hours,
     lengths,
     per_word: perWord,
+    transforms: transformsOnDay(db, day),
   };
 }
 

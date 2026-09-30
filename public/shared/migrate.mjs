@@ -41,7 +41,7 @@ export function migrateSchema(d, schemaSql, additive = {}) {
     "layout_shape", "group_meta", "group_seed_cell", "group_label", "sync_op", "sync_baseline", "sentence", "phrase_count",
     "strip_impression", "spotlight_list", "spotlight_item",
     "spotlight_session", "coach_event", "core_override", "move_mark",
-    "bar_family", "bar_family_item", "stats_day",
+    "bar_family", "bar_family_item", "stats_day", "transform_event",
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();
@@ -162,7 +162,20 @@ export const ADDITIVE_COLUMNS = {
   // 032 E: the ✨ / ❓ buttons a Spotlight list lights.
   spotlight_list: "controls TEXT",
 };
+/** 032 E4: whole tables the shipped catalog doesn't carry yet — created
+ *  here until it does. Verbatim schema.sql (asserted in migrate.test.mjs);
+ *  once the catalog ships one, its CREATE IF NOT EXISTS is a no-op. */
+export const ADDITIVE_TABLES = {
+  transform_event: `CREATE TABLE IF NOT EXISTS transform_event (
+  id INTEGER PRIMARY KEY,
+  mode TEXT NOT NULL CHECK (mode IN ('fix', 'question', 'past', 'future')),
+  pressed_at INTEGER NOT NULL CHECK (pressed_at > 0),
+  tz_offset_min INTEGER NOT NULL,
+  spotlit INTEGER NOT NULL DEFAULT 0 CHECK (spotlit IN (0, 1))
+);`,
+};
 export function ensureAdditiveColumns(d) {
+  for (const ddl of Object.values(ADDITIVE_TABLES)) d.exec(ddl);
   for (const [table, defs] of Object.entries(ADDITIVE_COLUMNS)) {
     for (const def of [defs].flat()) {
       const name = def.split(" ")[0];

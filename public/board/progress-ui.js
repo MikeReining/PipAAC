@@ -25,6 +25,7 @@ const dayLabel = (day) =>
 const trendOf = (t) => t.map((v) => fmt(v)).join(" → ");
 
 const DOWS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const BUTTON_NAMES = { fix: "✨ sentence", question: "❓ question", past: "⏪ past", future: "⏩ future" };
 
 export function mountProgress({ db, me, nameOf, entitlement, open, toast }) {
   let span = "month";
@@ -103,6 +104,18 @@ export function mountProgress({ db, me, nameOf, entitlement, open, toast }) {
         }
       }
       sec("Goal words", box);
+    }
+    // 032 E4: the move Spotlight teaches — two words, then a button.
+    if (Object.keys(d.buttons.total).length) {
+      const box = el("div");
+      for (const [mode, label] of Object.entries(BUTTON_NAMES)) {
+        const t = d.buttons.total[mode];
+        if (!t) continue;
+        const trend = d.weeks.map((w) => d.buttons.weeks[w.week]?.[mode]?.own ?? 0).join(" → ");
+        box.appendChild(el("p", null,
+          `${label} — on their own ${t.own} · with the glow ${t.glow} · on their own by week: ${trend}`));
+      }
+      sec("Sentence buttons", box);
     }
     const weeks = el("div");
     for (const w of d.weeks) {

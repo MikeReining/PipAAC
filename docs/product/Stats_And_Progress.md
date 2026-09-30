@@ -66,6 +66,7 @@ Every number has one definition, computed the same way on every device.
 | **Core / fringe / own** | Share of taps on root-core words, other built-in words, and the family's own words |
 | **Smart bar help** | Share of taps with source `strip` |
 | **Goal words** | For each word on a goal list (a Spotlight list, § 5): taps **on their own** (no glow) vs **with the glow** |
+| **Sentence buttons** | Presses of ✨ ❓ ⏪ ⏩ on a bar with words, by button: **on their own** vs **while the button glowed** in a Spotlight, by week (032 E4). Not counted: the first-run tour, Try it, ▶ returning to present, feeling faces |
 | **When** | Taps by hour of day and day of week |
 | **Top words** | The most-tapped words in the period |
 
@@ -144,7 +145,8 @@ never sync and are never sent (`docs/strategy/Dual_Engine_Predictive_Intelligenc
 § 4.1).
 
 **BUILT 2026-09-25** — the on-device engine: `learner_event_log` (with
-`spotlit`), `sentence`, and `core_cell` feed `public/shared/stats.mjs`
+`spotlit`), `sentence`, `transform_event` (sentence-button presses,
+032 E4), and `core_cell` feed `public/shared/stats.mjs`
 → one `stats_day` JSON row per local day, recomputed for today and
 yesterday on boot and after each spoken sentence
 (`src/board/stats.test.mjs`).
@@ -154,7 +156,8 @@ yesterday on boot and after each spoken sentence
 **DECIDED 2026-09-23** (founder: "they are on the support team; they got
 the QR code"). Each of the user's devices computes a **daily totals**
 row per day: counts per word, sentence-length counts, rate numbers,
-source counts, goal-word counts, taps per hour. It is sealed with the
+source counts, goal-word counts, sentence-button counts, taps per hour.
+It is sealed with the
 user key and synced like any other user data, so every supporter's
 device (the SLP's laptop included) shows the same numbers. The relay
 cannot read it. Per-word counts make totals from several devices add up

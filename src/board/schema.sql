@@ -279,6 +279,20 @@ CREATE INDEX IF NOT EXISTS event_log_item ON learner_event_log(item_kind, item_i
 CREATE INDEX IF NOT EXISTS event_log_time ON learner_event_log(selected_at);
 CREATE INDEX IF NOT EXISTS event_log_sentence ON learner_event_log(sentence_id, position);
 
+-- 032 E4: one row per press of a sentence button (✨ ❓ ⏪ ⏩) on a
+-- bar with words — the move a Spotlight teaches, counted whether or not
+-- the network answered (she still made the move). spotlit: the
+-- button glowed when pressed (on their own vs with the glow). Counts only
+-- reach stats_day; device-local, never synced. The first-run tour and
+-- Try it never write here.
+CREATE TABLE IF NOT EXISTS transform_event (
+  id INTEGER PRIMARY KEY,
+  mode TEXT NOT NULL CHECK (mode IN ('fix', 'question', 'past', 'future')),
+  pressed_at INTEGER NOT NULL CHECK (pressed_at > 0),
+  tz_offset_min INTEGER NOT NULL,
+  spotlit INTEGER NOT NULL DEFAULT 0 CHECK (spotlit IN (0, 1))
+);
+
 -- The user's own phrase history (smart bar v2): ctx is an ENDING of a
 -- spoken sentence's prefix ('' = sentence start) as 'kind:id' joined by
 -- ' ', and (item_kind, item_id) is what followed it. Plain counts, written

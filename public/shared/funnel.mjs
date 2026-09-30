@@ -130,6 +130,15 @@ export function logSelection(db, kind, id, at = Date.now(), ctx = {}) {
   );
 }
 
+/** 032 E4: one sentence-button press (✨ ❓ ⏪ ⏩). `spotlit`: the button
+ *  glowed in a running Spotlight when pressed. */
+export function logTransform(db, mode, spotlit, at = Date.now()) {
+  db.prepare(
+    `INSERT INTO transform_event (mode, pressed_at, tz_offset_min, spotlit)
+     VALUES (?, ?, ?, ?)`,
+  ).run(mode, at, -new Date(at).getTimezoneOffset(), spotlit ? 1 : 0);
+}
+
 /** One row per (ending, next item) pair of the spoken sentence: the
  *  empty ctx counts sentence-start items only; every other ctx is a
  *  SUFFIX of a prefix — "what came next after this ending" is what the

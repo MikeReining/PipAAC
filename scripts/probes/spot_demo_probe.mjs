@@ -113,7 +113,7 @@ out.demo = await evalJs(`(async () => { ${w}
   document.querySelector('#set-done').click(); await w(200);
   cell('i').click(); await w(200);
   const childBar = window.pip.sentence.map((i) => i.text).join(' ');
-  const ops0 = ${count("sync_op")}, taps0 = ${count("learner_event_log")};
+  const ops0 = ${count("sync_op")}, taps0 = ${count("learner_event_log")}, tx0 = ${count("transform_event")};
   document.querySelector('#corner').click(); await w(500);
   document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
   document.querySelector('#spot-try').click(); await w(400);
@@ -137,9 +137,9 @@ out.demo = await evalJs(`(async () => { ${w}
   const step = document.querySelector('.spot-demo-card .tour-note').textContent;
   const ledger = { ops: ${count("sync_op")} - ops0, taps: ${count("learner_event_log")} - taps0,
     sessions: ${count("spotlight_session")}, tx: window.__tx.map((b) => b.mode + ':' + b.text),
+    presses: ${count("transform_event")} - tx0,
     barAfterMove: window.pip.sentence.length };
   document.querySelector('#spot-chip').click(); await w(600);
-  window.fetch = real;
   return { lit, moveStep, moveLit, moveBar, step, ledger,
     after: { glow: document.querySelectorAll('#grid .cell.glow').length,
       dimmed: document.querySelectorAll('#grid .cell.dimmed').length,
@@ -175,7 +175,41 @@ out.moves = await evalJs(`(async () => { ${w}
     question: document.querySelector('#tx-question').classList.contains('glow'),
     cells: document.querySelectorAll('#grid .cell.glow').length,
     walk: document.querySelector('#anchor-groups').classList.contains('glow') };
+  // E4: her ✨ press while it glows counts "with the glow"; after the
+  // spotlight ends, "on their own" (network still stubbed from the demo).
+  const cell = (t) => [...document.querySelectorAll('#grid .cell')]
+    .find((c) => c.textContent.trim().toLowerCase() === t);
+  const pressFix = async () => {
+    cell('more').click(); await w(100); cell('play').click(); await w(100);
+    document.querySelector('#tx-fix').click();
+    for (let i = 0; i < 40 && document.querySelector('#tx-fix').classList.contains('speaking'); i++) await w(250);
+    document.querySelector('#clear').click(); await w(100);
+  };
+  await pressFix();
   document.querySelector('#spot-chip').click(); await w(200);
+  await pressFix();
+  // A feeling face is a speak, not a transform: it must not throw or log.
+  const errs = [];
+  const onErr = (e) => errs.push(String(e.reason ?? e.message));
+  addEventListener('error', onErr); addEventListener('unhandledrejection', onErr);
+  cell('more').click(); await w(100);
+  const face = document.querySelector('#tray .faces .face');
+  face?.click(); await w(1500);
+  removeEventListener('error', onErr); removeEventListener('unhandledrejection', onErr);
+  document.querySelector('#clear').click(); await w(100);
+  const faceTap = { found: !!face, errs };
+  const presses = window.pip.db.prepare(
+    "SELECT mode, spotlit FROM transform_event ORDER BY id").all().map((r) => r.mode + ':' + r.spotlit);
+  await w(2500); // the stats refresh is debounced
+  // Today's rows, summed across devices the way Progress reads them.
+  const dayRow = {};
+  for (const r of window.pip.db.prepare(
+    "SELECT payload FROM stats_day WHERE day = (SELECT MAX(day) FROM stats_day)").all()) {
+    for (const [m, c] of Object.entries(JSON.parse(r.payload).transforms ?? {})) {
+      const t = (dayRow[m] ??= { own: 0, glow: 0 });
+      t.own += c.own; t.glow += c.glow;
+    }
+  }
   // Pick mode: one word and ❓, then Save.
   document.querySelector('#corner').click(); await w(500);
   document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
@@ -190,7 +224,7 @@ out.moves = await evalJs(`(async () => { ${w}
   document.querySelector('#spot-list-name').value = 'Go ask';
   document.querySelector('#spot-name-save').click(); await w(600);
   const saved = window.pip.spotlight.lists().find((l) => l.name === 'Go ask');
-  return { recipe, lit, picked, saved: saved && { n: saved.n, controls: saved.controls },
+  return { recipe, lit, presses, dayRow, faceTap, picked, saved: saved && { n: saved.n, controls: saved.controls },
     afterPick: document.querySelector('#tx-question').disabled };
 })()`);
 
@@ -206,12 +240,16 @@ const ok =
   out.demo.step.includes("4 of 4") &&
   out.demo.ledger.ops === 0 && out.demo.ledger.taps === 0 && out.demo.ledger.sessions === 0 &&
   out.demo.ledger.tx.join() === "fix:more go" && out.demo.ledger.barAfterMove === 0 &&
+  out.demo.ledger.presses === 0 &&
   out.demo.after.glow === 0 && out.demo.after.dimmed === 0 && !out.demo.after.card &&
   out.demo.after.childBarBefore === "I" && out.demo.after.childBar === "I" &&
   out.demo.after.backOnPage &&
   out.running.tryHidden && out.running.glow === 6 &&
   out.moves.recipe.includes("✨") &&
   out.moves.lit.fix && !out.moves.lit.question && out.moves.lit.cells === 4 && !out.moves.lit.walk &&
+  out.moves.presses.join() === "fix:1,fix:0" &&
+  out.moves.faceTap.found && out.moves.faceTap.errs.length === 0 &&
+  out.moves.dayRow?.fix?.own === 1 && out.moves.dayRow?.fix?.glow === 1 &&
   !out.moves.picked.qDisabled && out.moves.picked.ring && out.moves.picked.count === "2 picked" &&
   out.moves.picked.sentence === 0 &&
   out.moves.saved?.n === 1 && out.moves.saved.controls.join() === "question" &&

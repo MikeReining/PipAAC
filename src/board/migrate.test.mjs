@@ -10,7 +10,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { migrateSchema, ensureAdditiveColumns, ADDITIVE_COLUMNS }
+import { migrateSchema, ensureAdditiveColumns, ADDITIVE_COLUMNS, ADDITIVE_TABLES }
   from "../../public/shared/migrate.mjs";
 
 const schemaSql = readFileSync(
@@ -214,4 +214,22 @@ test("a stale rebuild keeps additive columns and their values", () => {
   migrateSchema(facade(db), catalogDdl);
   const cols = db.prepare("PRAGMA table_info(learner_profile)").all().map((c) => c.name);
   assert.ok(!cols.includes("speech_rate"));
+});
+
+test("the additive tables are verbatim schema.sql, and a device gains them", () => {
+  const norm = (x) => x.replace(/\s+/g, " ").trim();
+  for (const [table, ddl] of Object.entries(ADDITIVE_TABLES)) {
+    const start = schemaSql.indexOf(`CREATE TABLE IF NOT EXISTS ${table} (`);
+    assert.ok(start >= 0, `${table} is in schema.sql`);
+    assert.equal(norm(ddl), norm(schemaSql.slice(start, schemaSql.indexOf(");", start) + 2)), table);
+  }
+  const db = new DatabaseSync(":memory:");
+  db.exec("CREATE TABLE sentence (id INTEGER PRIMARY KEY, spoken_feeling TEXT)");
+  db.exec("CREATE TABLE learner_profile (id TEXT PRIMARY KEY, expressive_voice INTEGER, speech_rate TEXT)");
+  db.exec("CREATE TABLE spotlight_list (id TEXT PRIMARY KEY, controls TEXT)");
+  ensureAdditiveColumns(facade(db));
+  ensureAdditiveColumns(facade(db)); // twice is a no-op
+  db.prepare("INSERT INTO transform_event (mode, pressed_at, tz_offset_min, spotlit) VALUES ('fix', 1, 0, 1)").run();
+  assert.throws(() => db.prepare(
+    "INSERT INTO transform_event (mode, pressed_at, tz_offset_min) VALUES ('present', 1, 0)").run());
 });

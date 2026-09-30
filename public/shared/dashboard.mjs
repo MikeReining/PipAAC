@@ -3,7 +3,8 @@
  *
  * Pure aggregation over stats_day rows — the device-local day totals
  * from stats.mjs, merged across the user's own devices. Reads stats_day
- * plus goal lists (via goalWords); never the tap log or sentences.
+ * plus goal lists (via goalWords); never the tap log, sentences, or
+ * sentence-button presses (their counts ride stats_day).
  * No comparisons to other children, no percentiles, no norms (§ 4.3).
  *
  * A "week" is the stats-day index bucket Math.floor(day / 7) — the same
@@ -145,7 +146,29 @@ export function dashboard(db, fromDay, toDay, { nameOf = () => null, mode = "sym
     topWords: totals.topWords.map((t) => ({ ...t, name: name(t.key) })),
     stripShare: totals.words ? totals.sources.strip / totals.words : 0,
     goals: goalWords(db, fromDay, toDay),
+    buttons: sentenceButtons(db, fromDay, toDay),
   };
+}
+
+/** 032 E4: sentence-button presses (✨ ❓ ⏪ ⏩) in [fromDay, toDay], by
+ *  mode — on their own vs with the glow — in total and by week, summed
+ *  across the user's devices like every other day total. */
+export function sentenceButtons(db, fromDay, toDay) {
+  const total = {};
+  const weeks = {};
+  for (const r of db
+    .prepare("SELECT day, payload FROM stats_day WHERE day BETWEEN ? AND ?")
+    .all(fromDay, toDay)) {
+    const wk = Math.floor(r.day / WEEK_DAYS);
+    for (const [mode, c] of Object.entries(JSON.parse(r.payload).transforms ?? {})) {
+      for (const bucket of [(total[mode] ??= { own: 0, glow: 0 }),
+        ((weeks[wk] ??= {})[mode] ??= { own: 0, glow: 0 })]) {
+        bucket.own += c.own;
+        bucket.glow += c.glow;
+      }
+    }
+  }
+  return { total, weeks };
 }
 
 /** Day index helpers shared with the UI's range picker. */

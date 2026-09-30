@@ -22,7 +22,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { dashboard, headlines, rangeTotals, weightedMedian } from "../../public/shared/dashboard.mjs";
+import { dashboard, headlines, rangeTotals, sentenceButtons, weightedMedian } from "../../public/shared/dashboard.mjs";
 import { reportPdf, reportLines } from "../../public/shared/report.mjs";
 import { saveSpotList, setListGoal } from "../../public/shared/spotlight.mjs";
 import { mountProgress } from "../../public/board/progress-ui.js";
@@ -37,7 +37,7 @@ function statsDb() {
   db.exec("PRAGMA foreign_keys = OFF");
   for (const t of [
     "learner_event_log", "sentence", "core_cell", // the win card's backfill path reads these
-    "stats_day", "sync_op", "spotlight_list", "spotlight_item",
+    "stats_day", "sync_op", "spotlight_list", "spotlight_item", "transform_event",
   ]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     assert.ok(ddl, `schema for ${t}`);
@@ -207,8 +207,9 @@ function domEl() {
   return n;
 }
 
-async function gateRun(ent) {
+async function gateRun(ent, seed = () => {}) {
   const db = statsDb();
+  seed(db);
   const ids = ["prog-body", "prog-range", "prog-mode", "prog-share", "open-progress"];
   const nodes = Object.fromEntries(ids.map((id) => [id, domEl()]));
   for (const seg of ["prog-range", "prog-mode"]) {
@@ -239,4 +240,31 @@ test("gate: Lifetime sees the dashboard, free sees the card and the offer", asyn
 
   const life = await gateRun("lifetime");
   assert.equal(life["prog-share"].hidden, false);
+});
+
+// 032 E4: ✨ / ❓ presses sum across days and devices, by week, own vs glow.
+test("sentence buttons: totals and weeks add up across devices", () => {
+  const db = statsDb();
+  putDay(db, D0, { transforms: { fix: { own: 1, glow: 2 } } });
+  putDay(db, D1, { transforms: { fix: { own: 1, glow: 0 }, question: { own: 0, glow: 1 } } }, "dev_b");
+  putDay(db, D7, { transforms: { fix: { own: 3, glow: 0 } } });
+  putDay(db, D14, {}); // an older device's row, no transforms key
+  const b = sentenceButtons(db, D0, D14);
+  assert.deepEqual(b.total, { fix: { own: 5, glow: 2 }, question: { own: 0, glow: 1 } });
+  assert.deepEqual(b.weeks[W0].fix, { own: 2, glow: 2 });
+  assert.deepEqual(b.weeks[W0 + 1].fix, { own: 3, glow: 0 });
+  assert.equal(b.weeks[W0 + 2], undefined);
+  assert.deepEqual(dashboard(db, D0, D14).buttons, b);
+});
+
+test("Progress shows sentence buttons: on their own vs with the glow", async () => {
+  const today = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86_400_000);
+  const life = await gateRun("lifetime", (db) => putDay(db, today, {
+    words: 3, different: 3, per_word: { "sense:more": { taps: 3, spotlit: 0 } },
+    transforms: { fix: { own: 2, glow: 1 } },
+  }));
+  const text = life["prog-body"].textContent;
+  assert.match(text, /Sentence buttons/);
+  assert.match(text, /✨ sentence — on their own 2 · with the glow 1/);
+  assert.doesNotMatch(text, /❓ question/, "an unpressed button is not listed");
 });

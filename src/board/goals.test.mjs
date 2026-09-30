@@ -34,7 +34,7 @@ function db() {
   d.exec("PRAGMA foreign_keys = OFF");
   for (const t of [
     "learner_event_log", "sentence", "core_cell", "stats_day", "sync_op",
-    "spotlight_list", "spotlight_item", "coach_event",
+    "spotlight_list", "spotlight_item", "coach_event", "transform_event",
   ]) {
     const ddl = SCHEMA.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${t} \\([^;]+\\);`))?.[0];
     assert.ok(ddl, `schema for ${t}`);

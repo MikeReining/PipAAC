@@ -12,6 +12,7 @@ import {
   logImpression,
   likelyGroups,
   logSelection,
+  logTransform,
   openSentence,
   stampShownFinal,
   stripRanked,
@@ -549,6 +550,12 @@ async function transformAndSpeak(mode) {
   if (tour) return tour.onTransform(mode);
   if (txBusy || !sentence.length) return;
   txBusy = true;
+  // 032 E4: her press is the move Progress counts — never Try it's, and
+  // ▶ returning to present is a speak, not a transform.
+  if (!spotDemo && mode !== "present") {
+    logTransform(db, mode, !!spotlight()?.targets.has(`control:${mode}`));
+    scheduleStatsRefresh();
+  }
   const btn = $(mode === "present" ? "speak" : `tx-${mode}`);
   btn?.classList.add("speaking");
   try {
