@@ -2747,7 +2747,9 @@ const voiceUi = mountVoice({
     const texts = ALL(db,
       "SELECT spoken_name AS t FROM personal_entity WHERE status = 'active'")
       .map((r) => r.t);
-    toast(`Making ${voiceName(db, id)}'s voice…`);
+    // Catalog words already ship in this voice — only the family's own
+    // names (people, pets, places) mint. No names → nothing to make.
+    if (texts.length) toast(`Making ${voiceName(db, id)}'s voice…`);
     const res = await tileApi.prefetch(texts, {
       voice: id,
       onProgress: (p) =>
