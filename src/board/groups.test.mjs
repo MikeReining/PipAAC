@@ -169,6 +169,31 @@ test("027 § 3.2: grid15 authors every meal group's first page; Dinner has its o
   assert.ok(cellsOf("grp_dinner", "grid60").some((c) => lemma(c.item_id) === "dinner"));
 });
 
+test("027 § 3.2: grid30 authors every meal group's first page — the meal's own foods, not corpus order", () => {
+  for (const gid of OCCASION_GROUPS) {
+    const first = cellsOf(gid, "grid30").filter((c) => c.page === 0).map((c) => lemma(c.item_id));
+    for (const w of ["eat", "drink", "banana", "cup", "water", "milk", "juice", "all done"]) {
+      assert.ok(first.includes(w), `${w} on ${gid} page 1`);
+    }
+    assert.equal(first.length, 17, `${gid} fills 17 of its 20 content cells`);
+    assert.ok(!first.includes("fish"), `fish off ${gid} page 1 — CHILDES must not pick the menu`);
+  }
+  const onFirst = (gid, w) =>
+    cellsOf(gid, "grid30").some((c) => c.page === 0 && lemma(c.item_id) === w);
+  for (const w of ["breakfast", "cereal", "egg", "toast"]) assert.ok(onFirst("grp_breakfast", w), `${w} on Breakfast page 1`);
+  for (const w of ["lunch", "sandwich", "pasta", "rice"]) assert.ok(onFirst("grp_lunch", w), `${w} on Lunch page 1`);
+  for (const w of ["dinner", "pasta", "chicken", "corn"]) assert.ok(onFirst("grp_dinner", w), `${w} on Dinner page 1`);
+  for (const w of ["snack", "cracker", "pretzel", "applesauce"]) assert.ok(onFirst("grp_snack", w), `${w} on Snack page 1`);
+  // the kit's shared cells survive: drinks anchor the same cells on all four
+  for (const w of ["water", "milk", "juice"]) {
+    const at = new Set(OCCASION_GROUPS.map((gid) => {
+      const c = cellsOf(gid, "grid30").find((x) => lemma(x.item_id) === w);
+      return `${c.page}:${c.slot_index}`;
+    }));
+    assert.equal(at.size, 1, `${w} must sit in the same cell on every meal board`);
+  }
+});
+
 test("026 D6: every launch word is reachable on every size — home board or a group shown there", () => {
   for (const layout of Object.keys(catalog.layouts)) {
     const shown = new Set(catalog.groups.filter((g) => !g.layouts || g.layouts.includes(layout)).map((g) => g.id));

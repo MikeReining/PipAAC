@@ -1,19 +1,30 @@
 {
-  "version": 3,
-  "status": "LIVE 2026-09-28 — docs/phases/027_Occasion_Boards.md § 3.1, shared-block rework + food-leads ordering 2026-09-28. Read by scripts/catalog/build_groups.mjs.",
+  "version": 4,
+  "status": "LIVE 2026-09-30 — docs/phases/027_Occasion_Boards.md § 3.1, shared-block rework + food-leads ordering 2026-09-28; grid30 first pages authored 2026-09-30. Read by scripts/catalog/build_groups.mjs.",
   "notes": {
     "groups": "Membership is the explicit word list — nothing else adds a word. Index order lives in data/group_seed.topics.json (these keys appear there as stubs). The Fruit and Drinks doors are ordinary topic groups now — they carry the full shelves and lay out their own pages.",
     "clusters": "A cluster is a semantic block that keeps together on a page; a word may sit in more than one cluster (muffin is breakfast food and snack) — the first claim wins. `shared: true` blocks — drinks (water/milk/juice), fruit, vegetables — are the meal kit: every board that holds one holds ALL of its words, they claim first anchored to the right by the frame, most-said inside, so the kit sits in the same cells on every board that offers it. Non-shared clusters are the board's own menu, in AUTHORED order — the seed list is the rank (corpus frequency can't know what belongs at this meal), and they fill in reading order from the left. dishes is shared too, but anchored side bottom — the same lower-right cells on every board, out of the food's way — the occasion is food, so food leads.",
     "frame": "The home cells of these words are reserved on every group page (027 B3).",
     "homeCoordinates": "Seeded at their home cell where that cell is free (027 B4) — identical on every meal board.",
-    "firstPage": "Assigned before the blocks on that size — grid15 authors its first page rather than truncating the 60-cell board (027 § 3.2).",
+    "firstPage": "Assigned before the blocks on that size — grid15 and grid30 author their first pages rather than truncating the 60-cell board (027 § 3.2). Paged boards keep one rule: every meal board must see the same COUNT of member words in the list, so the shared kit still claims from an identical used set (an unbalanced list breaks the same-cells invariant). grid30's rounds lean on coverage — pasta is Lunch+Dinner, yogurt Breakfast+Snack, cheese Lunch+Snack — so each board's page one is early-acquired meal words, not corpus order.",
     "lead": "Each group's name word takes the first free cell on every size, before the blocks."
   },
   "frame": ["yes", "no", "stop", "help"],
   "homeCoordinates": ["eat", "drink", "all done"],
   "lead": ["breakfast", "lunch", "dinner", "snack"],
   "firstPage": {
-    "grid15": ["milk", "water", "banana", "cup", "eat", "cereal", "pasta", "cracker"]
+    "grid15": ["milk", "water", "banana", "cup", "eat", "cereal", "pasta", "cracker"],
+    "grid30": [
+      "eat", "drink", "banana", "cup",
+      "cereal", "sandwich", "cracker",
+      "egg", "cheese", "pasta",
+      "toast", "pretzel", "pizza",
+      "yogurt", "chicken", "corn",
+      "waffle", "applesauce", "macaroni",
+      "oatmeal", "popcorn", "nuggets",
+      "pancake", "goldfish crackers", "rice",
+      "muffin", "cook"
+    ]
   },
   "clusters": [
     {

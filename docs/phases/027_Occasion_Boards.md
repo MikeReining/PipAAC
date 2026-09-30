@@ -91,11 +91,17 @@ they never move. Automatic placement never uses them.
 | grid60 | row 0 (10, incl. *yes*) + *no, stop, help* + Next = 14 | 46 |
 | grid90 | same cells + Next at 89 = 14 | 76 |
 | grid15 | row 0 (*I, want, more, yes, stop*) + *no, help* + Next = 8 | 7 |
+| grid30 | row 0 (*I, want, go, in, more*) + *yes, no, stop, help* + Next = 10 | 20 |
 
 Counts are derived from the reserved set, never hard-coded. On grid15 page 1 of
 every meal group holds *milk, water, banana, cup*, plus the remaining content
 cells chosen once from the food priorities under the shared-position rule;
-A1 records the exact seed. Later pages may be sparse.
+A1 records the exact seed. Later pages may be sparse. grid30 (added
+2026-09-30) authors its first pages the same way: *eat, drink, banana, cup*
+lead, then each board's own early-acquired foods in authored order — one rule
+constraint: every meal board must see the same count of member words in the
+`firstPage` list, so the shared kit still claims from an identical used set.
+Drinks keep their right-anchored cells; the remaining kit sits on page 2.
 
 The index keeps today's `indexVisual`/`indexSlotAt` mapping (canonical slots
 from 10). New-profile occasions take slots 10–13, My Words 14, then topics.
