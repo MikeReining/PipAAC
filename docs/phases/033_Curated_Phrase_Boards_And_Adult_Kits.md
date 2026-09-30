@@ -23,6 +23,15 @@
    error and clinically infantilizing to adults. Adult and medical phrase tiles must use
    clean, dignified, high-contrast neutral styling with functional urgency accents
    (e.g., medical emergency red or warning amber), not grammar pastels.
+4. **Color-neutral stick figures over words-only (clinical safety & dignity):**
+   Hospital and adult emergency boards must **not** be forced into words-only. Forcing
+   words-only is clinically dangerous for stroke survivors with reading deficits (alexia),
+   patients in ICU delirium or heavy sedation, patients without their reading glasses, and
+   non-English speakers. Instead, generate and display **color-neutral, monochrome stick
+   figures** (slate/charcoal torsos or clean line art) alongside clear text. Pip's stick
+   art is already calm, mature, and universal; removing the rainbow grammar fills
+   transforms them into professional medical pictograms (akin to ISO hospital wayfinding
+   signage or Apple SF Symbols) while preserving instant visual recognition in an emergency.
 
 ## Market & Clinical Rationale
 
@@ -50,25 +59,35 @@ for ~1M–1.5M individuals in the US. Pre-curated phrase boards unlock:
   generative syntax assembly breaks down, but familiar comfort phrases and social rituals
   remain intact.
 
-### 2. The Visual Dignity Law: Dropping Grammar Colors for Phrases & Adults
+### 2. Visual Dignity: Color-Neutral Pictograms over Words-Only & No Fitzgerald Colors
 
-- **The Problem:** The Modified Fitzgerald Key (yellow for nouns, green for verbs, blue
-  for descriptors, pink for prepositions) exists solely as a pedagogical scaffold for
-  developing children learning grammar. When an adult is in acute distress or recovering
-  from a stroke, a screen full of bright rainbow tiles feels degrading and induces visual
-  scanning fatigue.
-- **The Syntactic Reality:** A phrase like *"Please adjust my pillow"* contains a polite
-  marker, verb, pronoun, and noun. Forcing a single grammar color onto a phrase tile makes no
-  linguistic sense.
-- **The Design Bet:**
-  - **Neutral Canvas:** Clean white / slate / dark cards, high-legibility bold typography,
-    and crisp borders.
-  - **Functional Urgency Accents Only:** Meaningful, intuitive signaling (emergency red for
-    acute distress/pain, amber for physical assistance/toilet, neutral for comfort/social),
+- **Why Words-Only Alone Fails in Acute Care:**
+  - *Alexia & Reading Loss:* A substantial percentage of stroke survivors suffer from
+    alexia (inability to read orthographic text), even while visual comprehension of
+    drawings and actions remains intact.
+  - *ICU Fog, Sedation & Blurred Vision:* Patients coming off anesthesia or dealing with
+    acute trauma frequently lack their eyeglasses or suffer from diplopia (double vision).
+    Reading sentences requires fine visual convergence; a high-contrast pictogram can be
+    recognized instantly even with blurred vision.
+  - *Emergency Processing Speed:* During acute respiratory distress, severe pain spikes, or
+    panic, scanning a visual symbol (e.g. clutching chest, water glass, bed angle) is
+    cognitively faster than parsing written sentences.
+- **The Color-Neutral Pictogram Solution:**
+  - Pip's in-house stick art (clean posture, directional arrows, calm dot-eye head) is
+    already mature and non-infantilizing compared to competitor cartoon clipart.
+  - The problem was the **rainbow Fitzgerald Key fill** (bright yellow for nouns, green for
+    verbs, pink for prepositions).
+  - In phrase and hospital boards, the torso fill is rendered in **neutral slate, dark
+    charcoal, or clean line-art outline**. This converts the tile into a clean, dignified
+    medical pictogram matching ISO hospital wayfinding standards.
+- **Functional Urgency Accents Only:**
+  - Color is reserved strictly for life-critical signaling (e.g., medical emergency red for
+    breathing/pain, warning amber for toilet/assistance, neutral slate for comfort/social),
     never parts of speech.
-  - **Dignified Presentation:** Works seamlessly with Pip's built-in **Words only** mode
-    (`presentation_mode = 'label'`, `docs/product/Profile_Presentation_Modes.md`),
-    eliminating cartoony clipart for adults.
+- **The "Words Only" Setting Remains an Option:**
+  - For literate adults (e.g. ALS patients with intact vision who explicitly prefer pure
+    minimalist text), Pip's existing **Words only** mode (`presentation_mode = 'label'`)
+    remains toggleable in Settings, but is not the forced default.
 
 ## Architectural Fit & Laws
 
@@ -96,7 +115,7 @@ for ~1M–1.5M individuals in the US. Pre-curated phrase boards unlock:
 
 ### 1. Urgent Needs & Hospital (Acute / ICU / Post-Op)
 *Target: ICU, acute trauma, stroke rehab, tracheostomy.*
-*Styling: High-contrast neutral cards; emergency red highlight on distress tiles.*
+*Styling: High-contrast neutral cards; color-neutral medical pictograms; emergency red highlight on distress tiles.*
 *Sample Tiles:*
 - **Acute / Pain:** *"I'm in pain"* (opens 0–10 scale + body location), *"I can't breathe"*, *"Suction please"*, *"Call the nurse"*, *"What is happening?"*, *"I feel sick"*.
 - **Positioning & Body:** *"Move me / turn me"*, *"Sit me up"*, *"Lie me down"*, *"My mouth is dry"*, *"Need bathroom"*, *"Too hot / fan"*, *"Too cold / blanket"*.
@@ -104,13 +123,13 @@ for ~1M–1.5M individuals in the US. Pre-curated phrase boards unlock:
 
 ### 2. Adult Comfort & Living (ALS / MND / Stroke / Senior Care)
 *Target: Home care, progressive illness, long-term rehab.*
-*Styling: Dignified slate/white cards, optional text-only mode.*
+*Styling: Dignified slate/white cards, color-neutral stick icons or optional text-only mode.*
 *Sample Tiles:*
 - *"Please adjust my pillow"*, *"Turn on the TV"*, *"I'd like to sleep now"*, *"I want some quiet"*, *"Glasses please"*, *"Headphones please"*, *"Water please"*, *"Check my phone"*, *"What time is it?"*, *"Leave me be for a bit"*.
 
 ### 3. Gestalt Language Scripts (Autism / GLP Stages 1 & 2)
 *Target: Gestalt language processors, neurodivergent communicators.*
-*Styling: Calming neutral with subtle category accent.*
+*Styling: Calming neutral with subtle category accent and expressive stick art.*
 *Sample Tiles (organized by communicative intention):*
 - **Transition & Action:** *"Let's go check it out!"*, *"Time to get moving"*, *"Ready, set, go!"*, *"Where are we going?"*.
 - **Regulation & Protest:** *"I need a break right now"*, *"It's too loud in here"*, *"That's not what I want"*, *"I'm feeling overwhelmed"*, *"Stop that, please"*.
@@ -127,7 +146,7 @@ for ~1M–1.5M individuals in the US. Pre-curated phrase boards unlock:
 | Slice | Scope | Output / Proof |
 | :--- | :--- | :--- |
 | **Slice A: Phrase Kits Catalog & Data** | Curated starter kit definitions in `public/shared/phrase_kits.mjs` and seed definitions. | Data structure with id, title, audience, urgency, and phrase lists. Tests verify valid format and zero schema conflicts. |
-| **Slice B: Dignified Styling (`.tile--phrase` / No-Fitzgerald)** | CSS rule for phrase and adult tiles: suppresses Fitzgerald color classes; applies neutral slate/dark tokens and urgency badges. | Visual proof on `public/preview-phrase-kits.html`. |
+| **Slice B: Dignified Styling & Neutral Pictograms** | CSS rule for phrase and adult tiles: suppresses Fitzgerald color classes; applies neutral slate/dark tokens and urgency badges. Generates/maps color-neutral stick figures (slate/charcoal torsos or line art) for phrase tiles. | Visual proof on `public/preview-phrase-kits.html`. |
 | **Slice C: Board Kits in Settings** | Settings page / section allowing supporters to browse available kits and toggle them into the profile's Groups. | Toggle adds/removes kit door from Groups without touching the main board. |
 | **Slice D: Onboarding Profile Prompt** | First-run welcome question expanded: "Words First" (kids/generative) vs "Messages First" (hospital/adult recovery) vs "Gestalt Scripts". | Sets profile starter and pre-activates the chosen kit cleanly. |
 | **Slice E: Validation & Preview** | Preview harness `public/preview-phrase-kits.html` to review all phrases, voice playback, and density reflow. | Works Test: all kits render across 15, 30, and 60 densities and speak via TTS. |
