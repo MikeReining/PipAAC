@@ -32,7 +32,7 @@
     .card img { width: 100%; height: 100px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--edge); }
     .card .cap { font-size: 11px; color: #55504a; margin-top: 4px; line-height: 1.25; min-height: 2.4em; word-break: break-word; }
     .card .score { font-size: 12px; font-variant-numeric: tabular-nums; font-weight: 600; }
-    .lanes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 12px; }
     .lane h3 { margin: 0 0 6px; font-size: 14px; }
     .lane textarea { width: 100%; min-height: 130px; font: 12px/1.45 ui-monospace, monospace; padding: 8px; border: 1px solid var(--edge); border-radius: 8px; resize: vertical; }
     .lane .acts { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
@@ -121,6 +121,15 @@
           <span class="meta" id="sqwn"></span>
         </div>
       </div>
+      <div class="panel lane">
+        <h3>GPT-OSS <span class="meta">gpt-oss-120b on Groq — throughput king</span></h3>
+        <div id="gtohint" class="meta" style="margin-bottom:6px"></div>
+        <textarea id="pgto"></textarea>
+        <div class="acts">
+          <button class="mint" id="mgto" disabled>Mint (gpt-oss)</button>
+          <span class="meta" id="sgto"></span>
+        </div>
+      </div>
     </div>
 
     <h2>Takes <span class="meta">(out/draw_lab — one paid call each)</span></h2>
@@ -193,12 +202,16 @@ function renderSpec(spec) {
     .map((k) => `<span class="badge">${k}: ${esc(spec[k])}</span>`).join("");
 }
 
-const LANES = { spark: ["pspk", "mspk", "sspk", "spkhint"], qwen: ["pqwn", "mqwn", "sqwn", "qwnhint"] };
+const LANES = {
+  spark: ["pspk", "mspk", "sspk", "spkhint"],
+  qwen: ["pqwn", "mqwn", "sqwn", "qwnhint"],
+  gptoss: ["pgto", "mgto", "sgto", "gtohint"],
+};
 const laneEls = (l) => LANES[l].map($);
 
 /** A mint button lives only while its box has a prompt — type or clear
  *  to re-gate it. */
-for (const [txt, btn] of [["ptpl", "mtpl"], ["pspk", "mspk"], ["pqwn", "mqwn"]]) {
+for (const [txt, btn] of [["ptpl", "mtpl"], ["pspk", "mspk"], ["pqwn", "mqwn"], ["pgto", "mgto"]]) {
   $(txt).addEventListener("input", () => { $(btn).disabled = !$(txt).value.trim(); });
 }
 
@@ -304,6 +317,7 @@ $("genplans").addEventListener("click", genPlans);
 $("mtpl").addEventListener("click", () => mint("template"));
 $("mspk").addEventListener("click", () => mint("spark"));
 $("mqwn").addEventListener("click", () => mint("qwen"));
+$("mgto").addEventListener("click", () => mint("gptoss"));
 $("addq").addEventListener("click", async () => {
   if (!probed) return;
   await post("/api/lab/add-query", { text: probed.text, description: probed.description });

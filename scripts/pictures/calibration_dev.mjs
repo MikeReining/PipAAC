@@ -324,7 +324,7 @@ function buildHandler() {
       const scope = body?.scope === "personal" ? "personal" : "common";
       const spec = body?.spec ?? {};
       if (!text) return json(res, 400, { error: "bad_text" });
-      const lanes = Object.keys(PLANNER_MODELS);
+      const lanes = body?.lane ? [body.lane] : Object.keys(PLANNER_MODELS);
       const settled = await Promise.allSettled(
         lanes.map((lane) => askPlanner({ lane, text, description, spec })),
       );

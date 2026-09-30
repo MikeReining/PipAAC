@@ -35,6 +35,11 @@ export const PLANNER_MODELS = {
     provider: { order: ["Groq"], allow_fallbacks: true },
     reasoning: { effort: "none" },
   },
+  gptoss: {
+    model: "openai/gpt-oss-120b",
+    provider: { order: ["Groq"], allow_fallbacks: true },
+    reasoning: { effort: "low" },
+  },
 };
 
 /** What spark/qwen sees: the concept, the family's description (the
