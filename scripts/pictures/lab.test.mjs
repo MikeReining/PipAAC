@@ -6,9 +6,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  composePrompt, labImagePath, lintHint, lintSpecFit, listLabTakes,
-  mintLabTake, parseSparkHint, plannerChatBody, plannerSystemPrompt,
-  setTakeVerdict, takeFileName, LAB_TAKES_DIR, PLANNER_MODELS,
+  adoptLabTake, composePrompt, labImagePath, lintHint, lintSpecFit,
+  listLabTakes, mintLabTake, parseSparkHint, plannerChatBody,
+  plannerSystemPrompt, setTakeVerdict, takeFileName,
+  LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
 import { styleRefBundle } from "../../src/shared/draw_prompt.mjs";
 
@@ -178,4 +179,47 @@ test("mintLabTake: object bundle attaches style refs like the Worker", async () 
     assert.equal(refs.length, 3);
     assert.ok(refs.every((r) => r.image_url.url.startsWith("data:image/")));
   } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
+test("adoptLabTake: copies to assets/symbols, guards personal + collisions", async () => {
+  const takesDir = mkdtempSync(join(tmpdir(), "lab-t-"));
+  const symbolsDir = mkdtempSync(join(tmpdir(), "lab-s-"));
+  const fetchImpl = async () => ({
+    ok: true,
+    json: async () => ({ data: [{ b64_json: Buffer.from("PNG").toString("base64") }] }),
+  });
+  try {
+    const meta = await mintLabTake({
+      word: "dirty", prompt: "p", source: "gptoss", scope: "common",
+      spec: {}, apiKey: "k", fetchImpl, takesDir,
+    });
+    const after = adoptLabTake({ file: meta.file, takesDir, symbolsDir });
+    assert.equal(after.adopted.symbol, "assets/symbols/dirty.png");
+    assert.ok(readFileSync(join(symbolsDir, "dirty.png")).equals(Buffer.from("PNG")));
+    // idempotent — a second adopt returns, never rewrites
+    assert.equal(adoptLabTake({ file: meta.file, takesDir, symbolsDir }).adopted.symbol,
+      "assets/symbols/dirty.png");
+
+    // personal takes never enter the shared catalog
+    const personal = await mintLabTake({
+      word: "Cooper", description: "our golden retriever",
+      prompt: "p", source: "qwen", scope: "personal",
+      spec: {}, apiKey: "k", fetchImpl, takesDir,
+    });
+    assert.throws(
+      () => adoptLabTake({ file: personal.file, takesDir, symbolsDir }),
+      /personal_take/);
+
+    // an existing symbol is never silently replaced
+    const dupe = await mintLabTake({
+      word: "dirty", prompt: "p2", source: "custom", spec: {},
+      apiKey: "k", fetchImpl, takesDir,
+    });
+    assert.throws(
+      () => adoptLabTake({ file: dupe.file, takesDir, symbolsDir }),
+      /symbol_exists:dirty/);
+  } finally {
+    rmSync(takesDir, { recursive: true, force: true });
+    rmSync(symbolsDir, { recursive: true, force: true });
+  }
 });

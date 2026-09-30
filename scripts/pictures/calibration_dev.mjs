@@ -20,8 +20,9 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 import {
-  askPlanner, composePrompt, labImagePath, labSpec, lintHint, lintSpecFit,
-  listLabTakes, mintLabTake, setTakeVerdict, LAB_TAKES_DIR, PLANNER_MODELS,
+  adoptLabTake, askPlanner, composePrompt, labImagePath, labSpec,
+  lintHint, lintSpecFit, listLabTakes, mintLabTake, setTakeVerdict,
+  LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -357,6 +358,7 @@ function buildHandler() {
           prompt: String(body?.prompt ?? "").trim(),
           spec: body?.spec ?? {},
           source,
+          scope: body?.scope === "personal" ? "personal" : "common",
         });
         return json(res, 200, { take: meta });
       } catch (e) {
@@ -366,6 +368,22 @@ function buildHandler() {
 
     if (path === "/api/lab/takes" && req.method === "GET") {
       return json(res, 200, { takes: listLabTakes() });
+    }
+
+    /** "Use this one" — copy the take into assets/symbols/ where
+     *  catalog:build ships it as a real image (SKILL.md §6.4). */
+    if (path === "/api/lab/adopt" && req.method === "POST") {
+      const body = await readBody(req);
+      try {
+        const meta = adoptLabTake({ file: body?.file });
+        return json(res, 200, { take: meta });
+      } catch (e) {
+        const msg = String(e?.message ?? e);
+        const status = msg === "not_found" ? 404
+          : msg === "personal_take" ? 422
+          : msg.startsWith("symbol_exists") ? 409 : 400;
+        return json(res, status, { error: msg });
+      }
     }
 
     if (path === "/api/lab/verdict" && req.method === "POST") {

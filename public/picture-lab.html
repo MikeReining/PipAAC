@@ -273,6 +273,7 @@ async function mint(source) {
     const j = await post("/api/lab/mint", {
       word: probed.text, description: probed.description,
       prompt, spec: probed.spec ?? {}, source,
+      scope: probed.find?.scope ?? "common",
     });
     stat.textContent = `minted ${j.take.file}`;
     await renderTakes();
@@ -282,8 +283,18 @@ async function mint(source) {
   btn.disabled = !txt.value.trim();
 }
 
-async function verdict(file, v, btn) {
+async function verdict(file, v) {
   await post("/api/lab/verdict", { file, verdict: v });
+  await renderTakes();
+}
+
+async function adopt(file) {
+  try {
+    const j = await post("/api/lab/adopt", { file });
+    setStatus(`adopted → ${j.take.adopted.symbol} — ships with npm run catalog:build`);
+  } catch (e) {
+    setStatus(`adopt: ${e.message}`, true);
+  }
   await renderTakes();
 }
 
@@ -292,11 +303,15 @@ async function renderTakes() {
   $("takes").innerHTML = takes.map((t) => `
     <div class="take">
       <img src="/lab-img/${t.file}" loading="lazy" onclick="zoom(this.src)">
-      <div class="meta">${esc(t.word || "")} · <b>${esc(t.source || "?")}</b></div>
+      <div class="meta">${esc(t.word || "")} · <b>${esc(t.source || "?")}</b>${t.scope === "personal" ? ' <span class="badge personal">personal</span>' : ""}</div>
       <div class="v">
         <button class="${t.verdict === "good" ? "sel-good" : ""}" onclick="verdict('${t.file}','good')">✓</button>
         <button class="${t.verdict === "bad" ? "sel-bad" : ""}" onclick="verdict('${t.file}','bad')">✗</button>
         ${t.verdict ? `<button onclick="verdict('${t.file}',null)">clear</button>` : ""}
+        ${t.adopted
+          ? `<span class="badge" style="border-color:var(--win);color:var(--win)">in catalog ✓</span>`
+          : t.scope === "personal" ? ""
+          : `<button onclick="adopt('${t.file}')">★ use this</button>`}
       </div>
       ${t.prompt ? `<details><summary>prompt</summary><div>${esc(t.prompt)}</div></details>` : ""}
     </div>`).join("") || '<span class="meta">no takes yet</span>';

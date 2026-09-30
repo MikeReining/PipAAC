@@ -4,7 +4,9 @@
  * prompt is data/pictures/draw_planner_prompt.md, read fresh on every
  * call so the file IS the tweak surface.
  */
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -175,7 +177,7 @@ export function takeFileName(word, source, ts = Date.now()) {
  *  gen.mjs: style refs by bundle, packshots with none. Writes the png
  *  and a .json sidecar so takes carry their prompt/spec/verdict. */
 export async function mintLabTake({
-  word, description, prompt, spec = {}, source,
+  word, description, prompt, spec = {}, source, scope = "common",
   apiKey = resolveApiKey("OPENROUTER_API_KEY"),
   fetchImpl = globalThis.fetch,
   takesDir = LAB_TAKES_DIR,
@@ -210,7 +212,7 @@ export async function mintLabTake({
   writeFileSync(join(takesDir, file), bytes);
   const meta = {
     word: String(word ?? ""), description: description || null,
-    spec, prompt, source, file, created_at: Date.now(), verdict: null,
+    spec, prompt, source, scope, file, created_at: Date.now(), verdict: null,
     ...(PLANNER_MODELS[source] ? { planner_model: PLANNER_MODELS[source].model } : {}),
   };
   writeFileSync(join(takesDir, `${file}.json`), JSON.stringify(meta, null, 2) + "\n");
@@ -245,4 +247,31 @@ export function setTakeVerdict({ file, verdict, takesDir = LAB_TAKES_DIR }) {
 export function labImagePath(file, takesDir = LAB_TAKES_DIR) {
   const f = String(file ?? "");
   return /^[0-9]+-[a-z0-9-]+\.png$/.test(f) ? join(takesDir, f) : null;
+}
+
+/** "Use this one" — copy a take into assets/symbols/<slug>.png, the
+ *  canonical file the catalog build ships (SKILL.md §6.4). Refuses
+ *  personal-scope takes (a family's subject never enters the shared
+ *  catalog) and existing symbols (no silent replace — re-roll instead). */
+export function adoptLabTake({
+  file, takesDir = LAB_TAKES_DIR,
+  symbolsDir = join(repoRoot, "assets/symbols"),
+} = {}) {
+  const src = labImagePath(file, takesDir);
+  const sidePath = src && join(takesDir, `${file}.json`);
+  if (!src || !existsSync(src) || !existsSync(sidePath)) {
+    throw new Error("not_found");
+  }
+  const meta = JSON.parse(readFileSync(sidePath, "utf8"));
+  if (meta.scope === "personal") throw new Error("personal_take");
+  if (meta.adopted) return meta; // already in the catalog pipeline
+  const slugName = normalizeV1(meta.word).replace(/\s+/g, "_");
+  if (!slugName) throw new Error("bad_word");
+  const dest = join(symbolsDir, `${slugName}.png`);
+  if (existsSync(dest)) throw new Error(`symbol_exists:${slugName}`);
+  mkdirSync(symbolsDir, { recursive: true });
+  copyFileSync(src, dest);
+  meta.adopted = { at: Date.now(), symbol: `assets/symbols/${slugName}.png` };
+  writeFileSync(sidePath, JSON.stringify(meta, null, 2) + "\n");
+  return meta;
 }
