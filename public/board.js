@@ -2297,6 +2297,7 @@ function tileForSense(senseId) {
 /* Try it — public/board/spotlight-demo.js. */
 const spotDemoUi = mountSpotlightDemo({
   db,
+  tileFor: tileForSense,
   board: {
     // The child's bar is set aside while Try it runs and comes back after:
     // demo words never join her sentence, and hers never reach the demo.

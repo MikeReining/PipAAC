@@ -88,7 +88,7 @@
 
 .spot-sub { font-size: 15px !important; margin-top: 4px !important; }
 .spot-idea { background: #fff; border-style: dashed; }
-.spot-recipe { margin: 0 !important; }
+
 .spot-hero .row > .btn { flex: 0 1 auto; }
 
 /* Try it: the last card points at the 🔦 chip. */
@@ -115,3 +115,24 @@
   .spot-hero-tap { width: 20px; height: 20px; }
   .spot-hero-say { font-size: 12px; }
 }
+
+/* A move drawn as what you press (032 E5, move-row.js): real tiles and
+ * the real ✨ / ❓ button, in order. In Try it the next one to press wears
+ * the glow ring and pressed ones fade. */
+.move-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; pointer-events: none; }
+.move-row .cell { width: 64px; height: 64px; flex: none; }
+.move-arrow { font-size: 20px; font-weight: 800; color: var(--muted); }
+.move-ctl {
+  width: 64px; height: 64px; flex: none; display: grid; place-items: center;
+  border-radius: 12px; border: 2px solid var(--edge); background: #fff; color: var(--ink-text);
+}
+.move-ctl svg { width: 34px; height: 34px; }
+.move-step.move-now { box-shadow: 0 0 0 4px var(--glow), 0 0 14px rgba(232, 162, 0, .5); }
+.move-step.move-done { opacity: .4; }
+.move-chip {
+  border: 2px solid var(--glow); background: var(--cream); color: var(--ink-text);
+  border-radius: 999px; font-weight: 700; padding: 8px 14px; white-space: nowrap;
+}
+.spot-recipe { display: flex; flex-direction: column; gap: 6px; }
+.spot-recipe .move-row .cell, .spot-recipe .move-ctl { width: 60px; height: 60px; }
+.spot-recipe .move-ctl svg { width: 30px; height: 30px; }

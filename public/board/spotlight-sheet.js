@@ -10,7 +10,8 @@ import {
   untilText,
 } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
-import { STARTER_LISTS, recipeFor, starterTargets } from "../shared/spotlight_starters.mjs";
+import { STARTER_LISTS, starterFor, starterTargets } from "../shared/spotlight_starters.mjs";
+import { moveRow } from "./move-row.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -48,6 +49,13 @@ export function mountSpotlightSheet({
     return box;
   };
   const person = () => me.name?.trim() || "this person";
+  /** A suggestion's example move as tiles, with its line under it. */
+  const recipe = (x) => {
+    const box = el("div", "spot-recipe");
+    if (x.move) box.append(moveRow(x.move, { tileFor }));
+    if (x.recipe) box.append(el("p", "hint", x.recipe));
+    return box;
+  };
 
   function renderHero() {
     $("spot-try").textContent = `▶ Try it on ${person()}'s board`;
@@ -134,8 +142,8 @@ export function mountSpotlightSheet({
       del.addEventListener("click", () => { deleteSpotList(db, l.id); renderLists(); });
       acts.append(start, goal, tipsBtn, del);
       card.append(head, chips(listTargets(db, l.id)));
-      const recipe = recipeFor(l.name);
-      if (recipe) card.append(el("p", "hint spot-recipe", recipe));
+      const from = starterFor(l.name);
+      if (from?.recipe) card.append(recipe(from));
       card.append(acts);
       box.append(card);
     }
@@ -156,7 +164,7 @@ export function mountSpotlightSheet({
       const acts = el("div", "spot-card-acts");
       acts.append(add);
       card.append(head, chips(starterTargets(x)));
-      if (x.recipe) card.append(el("p", "hint spot-recipe", x.recipe));
+      if (x.recipe) card.append(recipe(x));
       card.append(acts);
       box.append(card);
     }

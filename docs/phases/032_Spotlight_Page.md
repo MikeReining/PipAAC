@@ -84,6 +84,7 @@ combinations.
 | E1 | First words: want, more, help, not, that, look | built `687c3c6` |
 | E2 | ✨ / ❓ as targets (`control:fix` / `control:question` on `spotlight_list.controls`); pick them, model them from a phone; moves lists Make it a sentence, Ask a question, Say no, each with a recipe for the adult | built `1830806` |
 | E3 | Try it's third card: tap more, then go, then ✨ — a live transform. Demo taps build the bar but never the log; the child's bar is set aside and comes back | built `f941373` |
+| E5 | Instructions show what you press, not words to hunt for (founder, 2026-09-30): each Try it card draws the board's own tiles and the live ✨ / ❓ icon (`public/board/move-row.js`); the move card outlines the next one and fades pressed ones; each moves suggestion shows one example move as tiles | built |
 | E4 | Progress → Sentence buttons: ✨ ❓ ⏪ ⏩ presses on their own vs with the glow, by week. New device-local `transform_event` (additive table until the catalog ships it) → `stats_day.transforms` → `sentenceButtons()`. Research sharing is a whitelist and does not carry it | built |
 
 Rules kept: the glow invites, it never scripts an order; ✨ runs only on a
