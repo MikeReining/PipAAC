@@ -1001,6 +1001,13 @@ export function mountEditor({
   };
   $("ed-back").addEventListener("click", () => endPreview(true));
   $("ed-done").addEventListener("click", () => endPreview(false));
+  /** Done in the top bar: the same finish as Preview's Done, from the
+   *  editor itself — Maya's main board, place forgotten. */
+  $("ed-exit").addEventListener("click", () => {
+    closeCard();
+    endPreview(false);
+    setView("board");
+  });
 
   /* ---------------------------- first open ----------------------------- */
 

@@ -223,3 +223,26 @@ test("the editor's gear opens Settings through the PIN gate, like the board's co
   assert.match(board, /\$\("ed-settings"\)\.addEventListener\("click", \(\) => gatePin\(\(\) => settingsUi\.open\(\)\)\)/,
     "never a way around the PIN");
 });
+
+test("Done in the top bar leaves for Maya's main board and forgets the place", async () => {
+  globalThis.sessionStorage = memoryStorage();
+  const db = freshDb();
+  const { id } = createEntity(db, { name: "Cooper" });
+  placeItem(db, "grp_mine", "entity", id);
+  const h = harness({ db });
+  h.editor.renderEditor();
+  await h.editor.openGroup("grp_mine");
+  h.editor.select({ item_kind: "entity", item_id: id, label: "Cooper" }, { additive: false });
+  assert.equal(h.$("wordcard").classList.contains("open"), true);
+
+  await h.$("ed-exit").click();
+  await flush();
+  assert.equal(h.log.views.at(-1), "board", "the child's main board, not a group");
+  assert.equal(h.$("wordcard").classList.contains("open"), false);
+
+  const h2 = harness({ db });
+  h2.editor.renderEditor();
+  await flush();
+  assert.equal(h2.log.main, 1, "next open starts on the main board");
+  assert.equal(h2.log.cards.length, 0);
+});

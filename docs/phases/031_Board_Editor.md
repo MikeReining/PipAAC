@@ -71,7 +71,7 @@ laptop, sometimes on the tablet, often in a few spare minutes.
 
 ```text
 ┌───────────────────────────────────────────────────────────────────────────────┐
-│ Maya ▾   ┌ Add or find a word…                 ⌘K ┐    ✓ Saved    ▶ Preview  │
+│ Maya ▾   ┌ Add or find a word…                 ⌘K ┐ ✓ Saved  ▶ Preview  Done │
 ├──────────┴─────────────────────────────────────────┴──────────────────────────┤
 │ GROUPS         │  Main board › Food                   page 1 of 2   ‹  ›       │
 │  ⌂ Main board  │ ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐        │
@@ -92,7 +92,7 @@ Three regions, one job each:
 
 | Region | Job | Replaces |
 | --- | --- | --- |
-| **Top bar** | Who (Maya ▾), add/find, save status, Preview | the child's sentence bar, "Board editor" title, "Board" button |
+| **Top bar** | Who (Maya ▾), add/find, save status, Preview, Done | the child's sentence bar, "Board editor" title, "Board" button |
 | **Groups** (left) | Where you are and where you can go | the 34-chip wall, Library tabs |
 | **The board** (center) | The real main board or group — select, move, drop, add | unchanged painter, calmer states |
 | **Card** (right, on demand) | Change one word | always-open word card + stale hint |
@@ -193,6 +193,12 @@ word:
 - **▶ Preview** — the board as Maya sees it, in place: sentence bar, taps
   speak, no adult tools. Esc or ▶ again returns. (This is where the
   sentence bar lives now.)
+- **Done** — finished editing: Maya's main board, the editor forgets the
+  place (same finish as the Preview pill's Done). Named *Done*, not ✕: the
+  first-open line's ✕ sits just below and means "dismiss", and saving is
+  automatic, so leaving is never "cancel". Esc stays one layer back, never
+  a jump out — a double Esc to close the card must not eject the adult
+  past the PIN (founder, 2026-09-30).
 - **Save status — honest only** (Project Law: measure the actual thing):
   *Saving…* while the op is local only; **✓ Saved** once the relay accepted
   it; *Offline — will sync* when it can't. It says "on Maya's iPad" **only**
