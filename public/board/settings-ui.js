@@ -9,6 +9,8 @@
  * beside one page; under 760px the list, then the page with Back.
  */
 
+import { untilText } from "../shared/spotlight.mjs";
+
 const $ = (id) => document.getElementById(id);
 
 const svg = (d) =>
@@ -16,6 +18,7 @@ const svg = (d) =>
 export const SECTION_ICONS = {
   overview: svg('<path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M6 10v10h12V10"/>'),
   words: svg('<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><path d="M16.5 13.5v6M13.5 16.5h6"/>'),
+  spotlight: svg('<path d="M9 3h6l-1 6h-4z"/><path d="M10 9l-1.5 11h7L14 9"/><path d="M4.5 5.5 6.5 7M19.5 5.5 17.5 7M3 11h2.5M21 11h-2.5"/>'),
   board: svg('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16M15 4v16"/>'),
   talking: svg('<path d="M5 9v6h3l5 4V5L8 9z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/>'),
   lang: svg('<path d="M4 6h10M9 4v2M6 6c1 4 4 7 8 8M12 6c-1 4-4 7-8 8"/><path d="M14 20l3.5-8 3.5 8M15.2 17.5h4.6"/>'),
@@ -74,6 +77,11 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     talking: () => `${$("voice-name")?.textContent ?? "Voice"} · feeling faces ${onOff("expressive-voice")}`,
     lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
     backup: () => (team() ? "Owners keep the recovery card" : cardMade() ? "Recovery card made" : "No recovery card yet"),
+    spotlight: () => {
+      const { session, lists = 0 } = facts().spot ?? {};
+      if (session) return `On · ${session.name} · ${untilText(session)}`;
+      return lists ? `Off · ${lists} list${lists === 1 ? "" : "s"}` : "Off";
+    },
   };
   // The recovery card is an owner's job: a Team device (me.owner false,
   // set from the relay by devices-ui) is never nagged about it.
@@ -123,7 +131,36 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     box.append(h, p, row);
   }
 
+  /* A running spotlight leads Overview: what is on, and one tap to end
+   * it (End proxies the Spotlight page's own button). */
+  function renderSpotNow() {
+    const box = $("set-spot-now");
+    const s = facts().spot?.session;
+    box.hidden = !s;
+    if (!s) return;
+    box.replaceChildren();
+    const h = document.createElement("span");
+    h.className = "seg-label";
+    h.textContent = "🔦 Spotlight is on";
+    const p = document.createElement("p");
+    p.className = "hint";
+    p.textContent = `“${s.name}” glows ${untilText(s)}. The other words are dimmed but still speak.`;
+    const row = document.createElement("div");
+    row.className = "row";
+    const end = document.createElement("button");
+    end.className = "btn secondary";
+    end.textContent = "End spotlight";
+    end.dataset.click = "spot-end";
+    const go = document.createElement("button");
+    go.className = "btn secondary";
+    go.textContent = "Open Spotlight";
+    go.onclick = () => show("spotlight", { focus: true });
+    row.append(end, go);
+    box.append(h, p, row);
+  }
+
   function renderOverview() {
+    renderSpotNow();
     renderProtect();
     const box = $("set-check");
     const items = checklist();
@@ -246,7 +283,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   let queued = false;
   new MutationObserver((muts) => {
     if (queued || !$("menu").classList.contains("open")) return;
-    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance, #set-protect"))) return;
+    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance, #set-protect, #set-spot-now"))) return;
     queued = true;
     queueMicrotask(() => { queued = false; renderNav(); });
   }).observe(pane, { subtree: true, attributes: true, attributeFilter: ["hidden", "class"] });
@@ -270,7 +307,8 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
    * everyday words people use for a page ("voice", "bigger", "teacher").
    * A hit opens the page and marks the row. */
   const SYNONYMS = {
-    overview: "spotlight practice goal target model lesson add word edit",
+    overview: "add word edit",
+    spotlight: "practice goal target model modeling teach lesson glow highlight dim coach tips",
     words: "vocabulary library photo picture name add list people places family meal breakfast lunch dinner snack groups folder hide",
     board: "cells size bigger smaller grid layout top row core keyboard typing letters spell qwerty abc alphabet pictures images symbols words text only",
     talking: "voice voices speak sound speed slow slower fast faster rate girl boy man woman teen change expressive emotion feelings happy sad angry tone play sentence clear fresh",

@@ -147,7 +147,7 @@ await A.evalJs(`(() => {
   ).all(w)[0].id;
   const targets = ['sense:' + id('juice'), 'sense:' + id('water')];
   window.pip.spotlight.saveList('Coach List', targets);
-  window.pip.spotlight.startSession({ name: 'Coach List', targets, minutes: 15 });
+  window.pip.spotlight.startSession({ name: 'Coach List', targets });
   return 1;
 })()`);
 

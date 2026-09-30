@@ -138,7 +138,7 @@ out.spot = await evalJs(`(async () => {
   const sid = window.pip.db.prepare(
     "SELECT sense_id AS id FROM label WHERE text = 'want' AND kind = 'lemma' AND status = 'approved' AND locale = 'en'"
   ).all()[0].id;
-  window.pip.spotlight.startSession({ name: "Layer", targets: ["sense:" + sid], minutes: 15 });
+  window.pip.spotlight.startSession({ name: "Layer", targets: ["sense:" + sid] });
   await new Promise((r) => setTimeout(r, 500));
   const want = [...document.querySelectorAll('#grid .cell')]
     .find((c) => (c.textContent || '').trim().toLowerCase() === 'want');

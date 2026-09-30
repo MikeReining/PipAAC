@@ -16,7 +16,7 @@ import { createDatabase, importCatalog } from "./catalog.mjs";
 import { applyOp, listOps } from "../../public/shared/ops.mjs";
 import {
   endSession, endSpotlight, listTargets, nextMidnight, resumeSession,
-  saveSpotList, spotLists, spotlight, spotSession, startSession,
+  saveSpotList, spotLists, spotlight, spotSession, startSession, untilText,
 } from "../../public/shared/spotlight.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
@@ -53,31 +53,39 @@ test("saved lists: write, read back, delete — all through synced rows", () => 
 test("a session is a synced row: it survives a restart and ends at midnight at the latest", () => {
   const db = fresh();
   const stop = senseOf(db, "stop");
-  // "Until ended" — the hard bound is local midnight.
-  startSession(db, { name: "Brown Bear", targets: [`sense:${stop}`], minutes: 0 });
+  // Runs until ended — the hard bound is local midnight.
+  startSession(db, { name: "Brown Bear", targets: [`sense:${stop}`] });
   const row = spotSession(db);
   assert.ok(row, "session row persisted");
   assert.equal(row.ends_at, nextMidnight(row.started_at));
   assert.ok(spotlight()?.targets.has(`sense:${stop}`));
 });
 
-test("a timer session ends at min(start + minutes, midnight)", () => {
+test("there is no timer: a start asking for minutes still ends at midnight", () => {
   const db = fresh();
   const stop = senseOf(db, "stop");
-  // 15 minutes, well before midnight.
-  startSession(db, {
-    name: "Quick", targets: [`sense:${stop}`],
-    minutes: 15, started_at: Date.now() - 60000,
-  });
+  startSession(db, { name: "Quick", targets: [`sense:${stop}`], minutes: 15 });
   const row = spotSession(db);
-  assert.equal(row.ends_at, row.started_at + 15 * 60000);
+  assert.equal(row.ends_at, nextMidnight(row.started_at));
+  assert.equal(untilText(row), "until tonight");
+});
+
+test("a row synced from an older device keeps its timer end", () => {
+  const db = fresh();
+  const stop = senseOf(db, "stop");
+  const started_at = new Date(2026, 8, 29, 15, 0).getTime();
+  const ends_at = started_at + 15 * 60000;
+  startSession(db, { name: "Old", targets: [`sense:${stop}`], started_at, ends_at });
+  const row = spotSession(db);
+  assert.equal(row.ends_at, ends_at);
+  assert.match(untilText(row), /^until 3:15/);
 });
 
 test("restart: the row relights the layer; an expired row ends it", () => {
   const db = fresh();
   const stop = senseOf(db, "stop");
   const juice = senseOf(db, "juice");
-  startSession(db, { name: "S", targets: [`sense:${stop}`, `sense:${juice}`], minutes: 0 });
+  startSession(db, { name: "S", targets: [`sense:${stop}`, `sense:${juice}`] });
   endSpotlight(); // a fresh boot: only the synced row carries the session
   const back = resumeSession(db);
   assert.ok(back, "live session resumed");
@@ -95,7 +103,7 @@ test("start/end replay onto a second device through the op log", () => {
   const b = fresh();
   const stop = senseOf(a, "stop");
   saveSpotList(a, "spl_x", "Snack", [`sense:${stop}`]);
-  startSession(a, { name: "Snack", targets: [`sense:${stop}`], minutes: 0 });
+  startSession(a, { name: "Snack", targets: [`sense:${stop}`] });
   for (const op of listOps(a)) applyOp(b, op);
   assert.equal(spotLists(b).length, 1, "the list synced");
   assert.ok(spotSession(b), "the running session synced");

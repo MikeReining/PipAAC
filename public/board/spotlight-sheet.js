@@ -1,11 +1,12 @@
 /**
- * Spotlight sheet (013). Parent Corner → Spotlight opens saved lists,
- * pick mode, and the synced session settings. Picking happens on the
- * board itself: taps choose targets, never speak.
+ * Spotlight page (013; Settings → Spotlight since 032): the running
+ * session, saved lists, pick mode, and the synced look settings.
+ * Picking happens on the board itself: taps choose targets, never speak.
  */
 import {
   deleteSpotList, endSession, listItems, listTargets,
   saveSpotList, spotLists, spotSession, startSession, setItemTip, setListGoal,
+  untilText,
 } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
 
@@ -14,22 +15,28 @@ const $ = (id) => document.getElementById(id);
 export function mountSpotlightSheet({
   db, catalog, open, close, all, coachLabel, bindSpotSettings,
   renderGrid, renderStrip, rerenderView, setModeling, setPicking,
-  getPicking, getSpotPulse, getModelSpeaks,
+  getPicking, getSpotPulse, getModelSpeaks, onSettingsOpen, openSettings,
 }) {
-  let spotMinutes = bindSpotSettings();
+  bindSpotSettings();
+
+  /** Start a spotlight and go look at it: Settings closes onto the board. */
+  function startGlow(name, targets) {
+    startSession(db, { name, targets });
+    close("menu");
+    renderGrid();
+    rerenderView();
+  }
 
   function renderSpotForm() {
     const s = spotSession(db);
     $("spot-running").hidden = !s;
-    if (s) {
-      $("spot-running-label").textContent =
-        `🔦 ${s.name} — ends ${new Date(s.ends_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
-    }
+    $("spot-off").hidden = !!s;
+    if (s) $("spot-running-label").textContent = `🔦 “${s.name}” glows ${untilText(s)}.`;
     const lists = spotLists(db);
     const box = $("spot-lists");
     box.innerHTML = "";
     if (!lists.length) {
-      box.innerHTML = '<p class="hint">No saved lists yet.</p>';
+      box.innerHTML = '<p class="hint">No lists yet. Pick words, then Save to keep them for next time.</p>';
     }
     for (const l of lists) {
       const row = document.createElement("div");
@@ -40,18 +47,13 @@ export function mountSpotlightSheet({
       const start = document.createElement("button");
       start.className = "btn secondary";
       start.textContent = "Start";
-      start.addEventListener("click", () => {
-        startSession(db, { name: l.name, targets: listTargets(db, l.id), minutes: spotMinutes });
-        close("spotform");
-        renderGrid();
-        rerenderView();
-      });
+      start.addEventListener("click", () => startGlow(l.name, listTargets(db, l.id)));
       // 016 § 5: a list marked as a goal is tracked in the weekly
       // stats — target words on their own vs with the glow.
       const goal = document.createElement("button");
       goal.className = "btn secondary";
-      goal.textContent = l.is_goal ? "✓ Goal" : "Goal";
-      goal.title = "Track this list's words in the progress stats";
+      goal.textContent = l.is_goal ? "✓ Tracking progress" : "Track progress";
+      goal.title = "Show this list's words in Progress";
       goal.addEventListener("click", () => {
         setListGoal(db, l.id, !l.is_goal);
         renderSpotForm();
@@ -62,7 +64,7 @@ export function mountSpotlightSheet({
       del.addEventListener("click", () => { deleteSpotList(db, l.id); renderSpotForm(); });
       const tipsBtn = document.createElement("button");
       tipsBtn.className = "btn secondary";
-      tipsBtn.textContent = "Tips";
+      tipsBtn.textContent = "Coaching tips";
       // An SLP edits a list's tips here (013 § 5a): each word gets one
       // line; the shipped default sits as the placeholder, an empty field
       // falls back to it. Writes are synced set_setting-style ops.
@@ -88,7 +90,7 @@ export function mountSpotlightSheet({
         }
         const save = document.createElement("button");
         save.className = "btn secondary";
-        save.textContent = "Save tips";
+        save.textContent = "Save coaching tips";
         save.addEventListener("click", () => {
           for (const inp of editor.querySelectorAll("input")) {
             const [kind, id] = inp.dataset.key.split(":");
@@ -106,9 +108,6 @@ export function mountSpotlightSheet({
     }
     const { spot_dim: dim = 45 } = all(db,
       "SELECT spot_dim FROM learner_profile WHERE id = 'prf_local'")[0] ?? {};
-    for (const b of $("spot-minutes").querySelectorAll("button")) {
-      b.classList.toggle("on", b.dataset.v === String(spotMinutes));
-    }
     for (const b of $("spot-pulse").querySelectorAll("button")) {
       b.classList.toggle("on", b.dataset.v === (getSpotPulse() ? "1" : "0"));
     }
@@ -120,13 +119,10 @@ export function mountSpotlightSheet({
     }
   }
 
-  $("open-spot").addEventListener("click", () => {
-    renderSpotForm();
-    open("spotform");
-  });
+  onSettingsOpen(renderSpotForm);
   $("spot-model").addEventListener("click", () => {
     setModeling(true);
-    close("spotform");
+    close("menu");
   });
   $("model-done").addEventListener("click", () => setModeling(false));
   $("spot-end").addEventListener("click", () => {
@@ -136,7 +132,7 @@ export function mountSpotlightSheet({
     rerenderView();
   });
   $("spot-pick").addEventListener("click", () => {
-    close("spotform");
+    close("menu");
     setPicking(true);
   });
   $("spot-pick-cancel").addEventListener("click", () => setPicking(false));
@@ -145,15 +141,19 @@ export function mountSpotlightSheet({
     if (!picking?.size) return;
     const targets = new Set(picking);
     setPicking(false);
-    startSession(db, { name: "Spotlight", targets, minutes: spotMinutes });
-    renderGrid();
-    rerenderView();
+    startGlow(nameFor(targets), targets);
   });
+  // A list is named for its first words until someone names it better.
+  const nameFor = (targets) => {
+    const words = [...targets].slice(0, 3).map((k) => coachLabel(...k.split(":")));
+    return words.join(", ") + (targets.size > 3 ? "…" : "");
+  };
   $("spot-pick-save").addEventListener("click", () => {
     const picking = getPicking();
     if (!picking?.size) return;
-    $("spot-list-name").value = "";
+    $("spot-list-name").value = nameFor(picking);
     open("spotname");
+    $("spot-list-name").select();
   });
   $("spot-name-save").addEventListener("click", () => {
     const picking = getPicking();
@@ -162,17 +162,16 @@ export function mountSpotlightSheet({
     saveSpotList(db, `spl_${crypto.randomUUID().replaceAll("-", "")}`, name, picking);
     close("spotname");
     setPicking(false);
-    renderSpotForm();
-    open("spotform");
+    openSettings("spotlight");
   });
-  // Session length, glow style, and dim are synced settings (§ 4) — each
-  // writes its profile column on tap, like the keyboard segs.
-  for (const seg of ["spot-minutes", "spot-pulse", "spot-dim", "model-speaks"]) {
+  // Glow style, dim, and modeled-word sound are synced settings (§ 4) —
+  // each writes its profile column on tap, like the keyboard segs.
+  for (const seg of ["spot-pulse", "spot-dim", "model-speaks"]) {
     $(seg).addEventListener("click", (e) => {
       const v = e.target.closest("button")?.dataset.v;
       if (v === undefined) return;
       setSetting(db, seg.replaceAll("-", "_"), Number(v));
-      spotMinutes = bindSpotSettings();
+      bindSpotSettings();
       renderSpotForm();
       renderGrid();
       renderStrip();

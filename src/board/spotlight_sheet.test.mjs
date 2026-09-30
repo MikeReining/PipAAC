@@ -1,6 +1,6 @@
 /**
- * Spotlight sheet paint. A saved list shows up as a row whose label is
- * the list name and how many words it holds.
+ * Spotlight page paint. A saved list shows up as a row whose label is
+ * the list name and how many words it holds, when Settings opens.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -31,7 +31,7 @@ function el() {
   return node;
 }
 
-test("spotlight sheet paints a saved list when the sheet opens", () => {
+test("the Spotlight page paints a saved list when Settings opens", () => {
   const db = createDatabase(":memory:");
   db.prepare(
     "INSERT INTO spotlight_list (id, name, created_at) VALUES ('spl_snack', 'Snack', 1)",
@@ -41,8 +41,8 @@ test("spotlight sheet paints a saved list when the sheet opens", () => {
   ).run();
 
   const ids = [
-    "spot-running", "spot-running-label", "spot-lists", "spot-minutes",
-    "spot-pulse", "spot-dim", "model-speaks", "spot-boost", "open-spot",
+    "spot-running", "spot-running-label", "spot-lists",
+    "spot-pulse", "spot-dim", "model-speaks", "spot-off",
     "spot-model", "model-done", "spot-end", "spot-pick", "spot-pick-cancel",
     "spot-pick-start", "spot-pick-save", "spot-list-name", "spot-name-save",
   ];
@@ -51,12 +51,12 @@ test("spotlight sheet paints a saved list when the sheet opens", () => {
     getElementById: (id) => nodes[id],
     createElement: () => el(),
   };
-  const opened = [];
+  const onOpen = [];
 
   mountSpotlightSheet({
     db,
     catalog: {},
-    open: (id) => opened.push(id),
+    open() {},
     close() {},
     all: (database, sql, p = []) => database.prepare(sql).all(...p),
     coachLabel: () => "",
@@ -69,10 +69,12 @@ test("spotlight sheet paints a saved list when the sheet opens", () => {
     getPicking: () => null,
     getSpotPulse: () => false,
     getModelSpeaks: () => false,
+    onSettingsOpen: (fn) => onOpen.push(fn),
+    openSettings() {},
   });
 
-  nodes["open-spot"].listeners.click[0]();
-  assert.deepEqual(opened, ["spotform"]);
+  assert.equal(onOpen.length, 1, "the page repaints when Settings opens");
+  onOpen[0]();
   assert.equal(nodes["spot-lists"].children.length, 1);
   assert.equal(nodes["spot-lists"].children[0].children[0].textContent, "Snack (1 word)");
 });

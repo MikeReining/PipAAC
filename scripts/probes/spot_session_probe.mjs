@@ -1,17 +1,17 @@
 /**
  * 013 slice 2 live proof — Spotlight on one device, the spec's own test:
  * "start, restart the app — still on; pass midnight — off." Driven
- * through the real UI (Parent corner → Spotlight → pick words on the
- * board), then a reload stands in for an app restart, and expiring the
- * row stands in for midnight. Measures rendered classes and the synced
- * row — never the module's own report.
- *   node scripts/probes/spot_session_probe.mjs
+ * through the real UI (Settings → Spotlight page → pick words on the
+ * board, 032), then a reload stands in for an app restart, and expiring
+ * the row stands in for midnight. Measures rendered classes and the
+ * synced row — never the module's own report.
+ *   PIP_ORIGIN=http://localhost:21089 node scripts/probes/spot_session_probe.mjs
  */
 import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 
-const PORT = 9256, ORIGIN = "http://localhost:8794";
+const PORT = 9256, ORIGIN = process.env.PIP_ORIGIN ?? "http://localhost:21089";
 rmSync("/tmp/pip-spot2-probe", { recursive: true, force: true });
 const chrome = spawn("open", ["-na", "Google Chrome", "--args",
   "--headless=new", `--remote-debugging-port=${PORT}`,
@@ -43,6 +43,8 @@ const glowState = `(() => ({
   chip: document.querySelector('#spot-chip').textContent,
   chipHidden: document.querySelector('#spot-chip').hidden,
   session: !!window.pip.spotlight.session,
+  untilMidnight: window.pip.spotlight.session
+    ? new Date(window.pip.spotlight.session.ends_at).getHours() === 0 : null,
 }))()`;
 
 await send("Page.enable");
@@ -58,6 +60,20 @@ const loadApp = async () => {
   throw new Error("app did not boot");
 };
 await loadApp();
+// A fresh profile opens to first-open setup and then the tour — pass both.
+await evalJs(`(async () => {
+  const w = (ms) => new Promise((r) => setTimeout(r, ms));
+  if (document.querySelector('#welcome-name')) {
+    document.querySelector('#welcome-name').value = 'Probe';
+    document.querySelector('.welcome-choice[data-v="child"]').click();
+    document.querySelector('.welcome-go').click();
+    await w(1000);
+  }
+  [...document.querySelectorAll('button')]
+    .find((b) => b.offsetParent && b.textContent.trim() === 'Skip')?.click();
+  await w(300);
+  return 1;
+})()`);
 
 const out = {};
 
@@ -67,17 +83,22 @@ await evalJs(`(() => {
   return 1;
 })()`);
 
-// Parent corner → Spotlight → pick two board words → save as a list.
-out.open = await evalJs(`(() => {
+// Settings → Spotlight page → pick two board words → save as a list.
+out.open = await evalJs(`(async () => {
   document.querySelector('#corner').click();
-  document.querySelector('#open-spot').click();
-  const wasOpen = document.querySelector('#spotform').classList.contains('open');
+  await new Promise((r) => setTimeout(r, 300));
+  const nav = document.querySelector('.set-nav-btn[data-sec="spotlight"]');
+  nav.click();
+  const page = document.querySelector('.set-sec[data-sec="spotlight"]');
+  const shown = page.classList.contains('on');
   const lists = document.querySelector('#spot-lists').textContent;
+  const navLine = nav.textContent;
   document.querySelector('#spot-pick').click();
-  // Picking happens on the board — the sheet closes behind it.
-  return { formOpen: wasOpen, lists,
-    formClosed: !document.querySelector('#spotform').classList.contains('open'),
-    pickbar: !document.querySelector('#spot-pickbar').hidden };
+  // Picking happens on the board — Settings closes behind it.
+  return { formOpen: shown, lists, navLine,
+    formClosed: !document.querySelector('#menu').classList.contains('open'),
+    pickbar: !document.querySelector('#spot-pickbar').hidden,
+    prompt: document.querySelector('#spot-pick-count').textContent };
 })()`);
 
 out.picked = await evalJs(`(() => {
@@ -92,19 +113,23 @@ out.picked = await evalJs(`(() => {
   };
 })()`);
 
-out.saved = await evalJs(`(() => {
+out.saved = await evalJs(`(async () => {
   document.querySelector('#spot-pick-save').click();
   const name = document.querySelector('#spot-list-name');
+  const suggested = name.value;
   name.value = 'Probe List';
   document.querySelector('#spot-name-save').click();
+  await new Promise((r) => setTimeout(r, 500)); // Settings reopens through the PIN gate
   return {
+    suggested,
     lists: window.pip.spotlight.lists(),
-    formOpen: document.querySelector('#spotform').classList.contains('open'),
+    backOnPage: document.querySelector('#menu').classList.contains('open')
+      && document.querySelector('.set-sec[data-sec="spotlight"]').classList.contains('on'),
     pickbarHidden: document.querySelector('#spot-pickbar').hidden,
   };
 })()`);
 
-// Start the saved list from the sheet.
+// Start the saved list from the page.
 await evalJs(`(() => {
   [...document.querySelectorAll('.spot-list-row button')]
     .find((b) => b.textContent === 'Start').click();
@@ -118,20 +143,26 @@ await loadApp();
 out.afterRestart = await evalJs(glowState);
 
 // Midnight passes — expire the row and reload: the board stays off.
-await evalJs(`window.pip.db.prepare(
-  "UPDATE spotlight_session SET ends_at = ? WHERE id = 1").run(Date.now() - 1000)`);
+await evalJs(`(async () => {
+  window.pip.db.prepare("UPDATE spotlight_session SET ends_at = ? WHERE id = 1").run(Date.now() - 1000);
+  await window.pip.flushDb(); // a raw write is not persisted until flushed
+  return 1;
+})()`);
 await loadApp();
 out.afterMidnight = await evalJs(glowState);
 
 console.log(JSON.stringify(out, null, 2));
 const ok =
   out.open.formOpen && out.open.formClosed && out.open.pickbar &&
+  out.open.navLine === "SpotlightOff" && out.open.prompt.startsWith("Tap the words") &&
   out.picked.count === "2 picked" && out.picked.pickedCells === 2 &&
   out.picked.sentence === 0 &&
   out.saved.lists.length === 1 && out.saved.lists[0].n === 2 &&
-  out.saved.pickbarHidden &&
+  out.saved.pickbarHidden && out.saved.backOnPage &&
+  out.saved.suggested === "stop, want" &&
   out.running.glow === 2 && !out.running.chipHidden &&
   out.running.chip.includes("Probe List") && out.running.session &&
+  out.running.untilMidnight === true &&
   out.afterRestart.glow === 2 && !out.afterRestart.chipHidden &&
   out.afterRestart.session &&
   out.afterMidnight.glow === 0 && out.afterMidnight.chipHidden &&

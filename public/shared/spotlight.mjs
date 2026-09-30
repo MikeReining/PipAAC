@@ -69,8 +69,8 @@ export function needsRouteWalk(targets, onBoard) {
 
 /* --- saved lists and the running session (slice 2, §§ 3–4). A session
  *  is one row in spotlight_session; it survives a restart, ends when
- *  someone ends it, its timer runs out, or local midnight arrives —
- *  never silently permanent. --- */
+ *  someone ends it or local midnight arrives — never silently
+ *  permanent. --- */
 
 export function spotLists(db) {
   return db.prepare(
@@ -217,14 +217,23 @@ export function nextMidnight(now) {
   return d.getTime();
 }
 
-/** Start a session: `{ name, targets, started_at, ends_at }` or
- *  `{ name, targets, minutes }` (this device computes the end). Writes
- *  the synced row, lights the layer, and records the op — skip the op
- *  when replaying (applyOp calls this too). */
+/** How long a running session lasts, in the words Settings shows:
+ *  "until tonight" for the midnight end, else the clock time (a row
+ *  synced from an older device may still carry a timer's end). */
+export function untilText(row) {
+  if (row.ends_at === nextMidnight(row.started_at)) return "until tonight";
+  const t = new Date(row.ends_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  return `until ${t}`;
+}
+
+/** Start a session: `{ name, targets }`, or `{ …, started_at, ends_at }`
+ *  when replaying another device's op. There is no timer (032): a session
+ *  runs until someone ends it and always ends at local midnight. A row
+ *  synced from an older device keeps the ends_at it was given. Writes the
+ *  synced row, lights the layer, and records the op. */
 export function startSession(db, s) {
   const started_at = s.started_at ?? Date.now();
-  const timer = s.minutes ? started_at + s.minutes * 60000 : Infinity;
-  const ends_at = s.ends_at ?? Math.min(timer, nextMidnight(started_at));
+  const ends_at = s.ends_at ?? nextMidnight(started_at);
   const targets = [...s.targets];
   db.prepare(
     `INSERT INTO spotlight_session (id, name, targets, started_at, ends_at)

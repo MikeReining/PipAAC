@@ -882,15 +882,14 @@
 
             <section class="set-sec" data-sec="overview" data-title="Overview">
               <h2>Overview</h2>
+              <div class="seg-row set-spot-now" id="set-spot-now" hidden></div>
               <div class="seg-row set-protect" id="set-protect" hidden></div>
               <div class="seg-row set-check" id="set-check" hidden></div>
               <div id="wincard" class="wincard" hidden></div>
               <div class="set-quick">
                 <button class="btn" id="add-mywords">Add a word</button>
-                <button class="btn secondary" id="open-spot">Practice words</button>
                 <button class="btn secondary" id="edit-groups">Edit the board</button>
               </div>
-              <p class="hint">Practice words lights up the words you want to model with Spotlight; everything else dims but still speaks.</p>
               <div class="row"><button class="btn secondary" id="replay-tour">Replay the tour</button></div>
               <div class="seg-row">
                 <span class="seg-label">How it's set up</span>
@@ -931,6 +930,55 @@
                 <div id="group-shows" class="set-list"></div>
                 <p class="hint">A hidden group keeps its words and its place. To add, rename, or move groups, edit them on the board.</p>
                 <div class="row"><button class="btn secondary" data-click="edit-groups">Edit groups on the board</button></div>
+              </div>
+            </section>
+
+            <!-- Spotlight (013; its own page since 032). The controls are
+                 wired by public/board/spotlight-sheet.js. -->
+            <section class="set-sec" data-sec="spotlight" data-title="Spotlight">
+              <h2>Spotlight</h2>
+              <p class="set-intro">Light up the words you're teaching. Everything else dims, but still speaks.</p>
+              <div class="seg-row" id="spot-now-row">
+                <span class="seg-label">Right now</span>
+                <div id="spot-running" hidden>
+                  <p id="spot-running-label"></p>
+                  <div class="row"><button class="btn secondary" id="spot-end">End spotlight</button></div>
+                </div>
+                <div id="spot-off">
+                  <p class="hint">Off.</p>
+                  <div class="row"><button class="btn" id="spot-pick">Spotlight words</button></div>
+                  <p class="hint">Tap words on the board, or inside a group, to choose them. Then Start, or Save the list for next time.</p>
+                </div>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Your lists</span>
+                <div id="spot-lists"></div>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Model from this device</span>
+                <div class="row"><button class="btn secondary" id="spot-model">Model from this device</button></div>
+                <p class="hint">Tap a word here and it glows on <span data-person></span>'s board for a few seconds. Say the word out loud while you point.</p>
+                <span class="seg-label">Modeled words</span>
+                <div class="seg" id="model-speaks">
+                  <button data-v="0">Glow silently</button>
+                  <button data-v="1">Glow and speak</button>
+                </div>
+                <p class="hint">Silent is usually best: your voice does the teaching.</p>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Glow</span>
+                <div class="seg" id="spot-pulse">
+                  <button data-v="0">Steady</button>
+                  <button data-v="1">Pulse</button>
+                </div>
+              </div>
+              <div class="seg-row">
+                <span class="seg-label">Dim the other words</span>
+                <div class="seg" id="spot-dim">
+                  <button data-v="30">A little</button>
+                  <button data-v="45">Medium</button>
+                  <button data-v="60">A lot</button>
+                </div>
               </div>
             </section>
 
@@ -1224,63 +1272,6 @@
       </div>
     </div>
 
-    <div class="overlay" id="spotform">
-      <div class="sheet">
-        <h2>Spotlight</h2>
-        <div id="spot-running" hidden>
-          <p id="spot-running-label"></p>
-          <div class="row">
-            <button class="btn secondary" id="spot-end">End spotlight</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Saved lists</span>
-          <div id="spot-lists"><p class="hint">No saved lists yet.</p></div>
-          <div class="row">
-            <button class="btn secondary" id="spot-pick">Pick words…</button>
-          </div>
-          <p class="hint">Tap words on the board — or inside a group — to choose the targets, then Start or Save.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Session length</span>
-          <div class="seg" id="spot-minutes">
-            <button data-v="0">Until ended</button>
-            <button data-v="15">15 min</button>
-            <button data-v="30">30 min</button>
-            <button data-v="60">1 hour</button>
-          </div>
-          <p class="hint">A session always ends by midnight.</p>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Glow</span>
-          <div class="seg" id="spot-pulse">
-            <button data-v="0">Steady</button>
-            <button data-v="1">Pulse</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Dim the other words</span>
-          <div class="seg" id="spot-dim">
-            <button data-v="30">A little</button>
-            <button data-v="45">Medium</button>
-            <button data-v="60">A lot</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Live modeling</span>
-          <div class="row">
-            <button class="btn secondary" id="spot-model">Model — tap board words</button>
-          </div>
-          <p class="hint">Your taps glow the word on linked devices for a few seconds. Say the word aloud while you point — the glow is silent by default.</p>
-          <div class="seg" id="model-speaks">
-            <button data-v="0">Silent</button>
-            <button data-v="1">Speak on this device</button>
-          </div>
-        </div>
-        <button class="btn secondary" data-close>Close</button>
-      </div>
-    </div>
-
     <div class="overlay" id="spotname">
       <div class="sheet">
         <h2>Save list</h2>
@@ -1293,7 +1284,7 @@
     </div>
 
     <div id="spot-pickbar" hidden>
-      <span id="spot-pick-count">0 picked</span>
+      <span id="spot-pick-count"></span>
       <button class="pick-start" id="spot-pick-start">Start</button>
       <button class="pick-quiet" id="spot-pick-save">Save…</button>
       <button class="pick-quiet" id="spot-pick-cancel">Cancel</button>

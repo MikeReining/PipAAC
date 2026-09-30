@@ -144,9 +144,10 @@ const before = {
 };
 
 // B turns on Model mode through the real sheet.
-out.modelOn = await B.evalJs(`(() => {
+out.modelOn = await B.evalJs(`(async () => {
   document.querySelector('#corner').click();
-  document.querySelector('#open-spot').click();
+  await new Promise((r) => setTimeout(r, 500)); // Settings opens through the PIN gate
+  document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
   document.querySelector('#spot-model').click();
   return {
     bar: !document.querySelector('#modelbar').hidden,

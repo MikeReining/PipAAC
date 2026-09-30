@@ -151,9 +151,10 @@ out.bJoined = await B.until(
 out.bBoard = await B.until(`document.querySelectorAll('#grid .cell').length > 10`);
 
 // A saves a list by picking two board words through the real UI.
-await A.evalJs(`(() => {
+await A.evalJs(`(async () => {
   document.querySelector('#corner').click();
-  document.querySelector('#open-spot').click();
+  await new Promise((r) => setTimeout(r, 500)); // Settings opens through the PIN gate
+  document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
   document.querySelector('#spot-pick').click();
   const tap = (w) => [...document.querySelectorAll('#grid .cell')]
     .find((c) => (c.textContent || '').trim().toLowerCase() === w)?.click();
@@ -170,9 +171,10 @@ out.bSeesList = await B.until(
 
 // The spec's works test: start on the phone → iPad glows; tap the chip
 // on the phone → the iPad's glow clears.
-await B.evalJs(`(() => {
+await B.evalJs(`(async () => {
   document.querySelector('#corner').click();
-  document.querySelector('#open-spot').click();
+  await new Promise((r) => setTimeout(r, 500)); // Settings opens through the PIN gate
+  document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
   [...document.querySelectorAll('.spot-list-row')]
     .find(r => r.textContent.includes('Mirror List'))
     .querySelector('button').click();
@@ -189,9 +191,10 @@ out.aClears = await A.until(
 out.aCleared = await A.evalJs(glowState);
 
 // Either side: A starts the same list — B glows; A ends — B clears.
-await A.evalJs(`(() => {
+await A.evalJs(`(async () => {
   document.querySelector('#corner').click();
-  document.querySelector('#open-spot').click();
+  await new Promise((r) => setTimeout(r, 500)); // Settings opens through the PIN gate
+  document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
   [...document.querySelectorAll('.spot-list-row')]
     .find(r => r.textContent.includes('Mirror List'))
     .querySelector('button').click();

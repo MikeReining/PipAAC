@@ -15,11 +15,13 @@ const html = readFileSync(join(import.meta.dirname, "../../public/index.html"), 
 
 // The Parent corner controls as of 2026-09-28 (before the redesign).
 // "Open the full editor" (menu-editor) merged into "Edit the board" (031 G).
+// "Practice words" (open-spot) became the Spotlight page (032); its
+// controls are checked through spot-pick and SPOTLIGHT below.
 const CONTROLS = [
   "wincard", "open-progress", "add-mywords", "open-setup", "edit-groups",
   "open-library", "hl-next", "group-toprow", "group-occasions",
   "fresh-speak", "grammar-help", "expressive-voice", "share-research",
-  "open-spot", "cells-seg", "fam-list", "kb-mode", "kb-order", "usr-list",
+  "spot-pick", "cells-seg", "fam-list", "kb-mode", "kb-order", "usr-list",
   "usr-add", "acct-row", "dev-list", "dev-add", "dev-link", "sup-row",
   "dev-lifetime-row", "dev-sheet", "dev-restore", "dev-delete-row",
 ];
@@ -48,4 +50,22 @@ test("the person is named, never given a role", () => {
   for (const role of ["your child", "Parent corner", "Parent PIN"]) {
     assert.ok(!block.includes(role), `Settings still says "${role}"`);
   }
+});
+
+// 032: Spotlight is a Settings page, not a sheet behind a button — its
+// controls live in that page, the timer is gone, and the old name too.
+const SPOTLIGHT = ["spot-running", "spot-end", "spot-pick", "spot-lists",
+  "spot-model", "model-speaks", "spot-pulse", "spot-dim"];
+
+test("Spotlight is its own Settings page, with no timer and no old name", () => {
+  const block = menuBlock();
+  const page = block.split('<section class="set-sec"').find((s) => s.includes('data-sec="spotlight"'));
+  assert.ok(page, "no Spotlight page");
+  for (const id of SPOTLIGHT) {
+    assert.equal(html.split(`id="${id}"`).length - 1, 1, `#${id} is not unique`);
+    assert.ok(page.includes(`id="${id}"`), `#${id} is not on the Spotlight page`);
+  }
+  assert.ok(!html.includes('id="spotform"'), "the old Spotlight sheet is still there");
+  assert.ok(!html.includes('id="spot-minutes"'), "the session timer is still there");
+  assert.ok(!html.includes("Practice words"), `"Practice words" is still in the app`);
 });

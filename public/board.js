@@ -1447,15 +1447,14 @@ function layerMark(el, key, { board = false } = {}) {
 
 /** Read the spotlight settings and apply the dim token — called at boot
  *  and after a sync drain so a setting changed on the other device
- *  lands here. Returns the default session minutes. */
+ *  lands here. */
 function bindSpotSettings() {
   const p = ALL(db,
-    "SELECT spot_dim, spot_pulse, spot_minutes, model_speaks FROM learner_profile WHERE id = 'prf_local'",
+    "SELECT spot_dim, spot_pulse, model_speaks FROM learner_profile WHERE id = 'prf_local'",
   )[0] ?? {};
   document.documentElement.style.setProperty("--dim-o", (p.spot_dim ?? 45) / 100);
   spotPulse = (p.spot_pulse ?? 0) === 1;
   modelSpeaks = (p.model_speaks ?? 0) === 1;
-  return p.spot_minutes ?? 0;
 }
 
 /* --- pick mode (013 slice 2): an adult taps words on the board or in
@@ -1463,11 +1462,15 @@ function bindSpotSettings() {
  *  is the Set of "kind:id" being chosen, or null when off. --- */
 let picking = null;
 function updatePickBar() {
-  $("spot-pick-count").textContent = `${picking?.size ?? 0} picked`;
+  const n = picking?.size ?? 0;
+  $("spot-pick-count").textContent = n
+    ? `${n} picked` : "Tap the words you'll teach. Taps won't speak.";
   $("spot-pick-start").disabled = !picking?.size;
   $("spot-pick-save").disabled = !picking?.size;
 }
 function setPicking(on) {
+  // Picking happens on the board: the editor has no pick marks.
+  if (on && view === "editor") kbUi.setView("board");
   picking = on ? new Set() : null;
   document.body.classList.toggle("picking", on);
   $("spot-pickbar").hidden = !on;
@@ -1943,6 +1946,7 @@ const settingsUi = mountSettings({
         'set_family_items', 'spot_list_save', 'set_group_hidden', 'move_group', 'swap_groups',
         'delete_group') LIMIT 1`)[0],
     pinOn,
+    spot: { session: spotSession(db), lists: spotLists(db).length },
   }),
 });
 /** Settings → Backup & privacy → Settings PIN: lock, change, or off. */
@@ -2222,6 +2226,8 @@ mountSpotlightSheet({
   getPicking: () => picking,
   getSpotPulse: () => spotPulse,
   getModelSpeaks: () => modelSpeaks,
+  onSettingsOpen: settingsUi.onOpen,
+  openSettings: (section) => gatePin(() => settingsUi.open(section)),
 });
 
 /* Cells picker — public/board/cells-sheet.js. onSyncApplied repaints this. */

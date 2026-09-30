@@ -244,17 +244,17 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   rule above; this amendment is Settings only.
 - **Layout.** Full screen. Header: the person (tap to switch), search,
   Done. A section list beside one page; under 760px the list, then the
-  page with Back. Pages: Overview · Words · Board · Talking · Language
-  help · Progress · Team & devices · Backup & privacy, then *You* → Your
-  account. A page whose every row is hidden drops out of the list.
-- **Overview.** A setup checklist of measurable facts only (named;
+  page with Back. Pages: Overview · Words · Spotlight · Board · Talking ·
+  Language help · Progress · Team & devices · Backup & privacy, then
+  *You* → Your account. A page whose every row is hidden drops out of the list.
+- **Overview.** While a spotlight runs, a card leads the page: its
+  name, "until tonight", End (032). A setup checklist of measurable facts only (named;
   people & places exist), gone when done. **Protect** card once the
   board is invested (first customization: people, words, groups,
   pictures, hidden or moved words, saved practice lists — `sync_op`
   kinds; settings flips and the demo don't count): Lock Settings with a
   PIN and Make the recovery card, whichever is missing, owners only.
-  Quick actions: Add a word, Practice words (Spotlight), Edit the board,
-  Replay the tour. "How it's set up": one line per page, read from the
+  Quick actions: Add a word, Edit the board, Replay the tour. "How it's set up": one line per page, read from the
   live controls.
 - **Controls.** On/off is a switch, On on the right (`.seg[data-switch]`;
   the hidden buttons still carry the write). Real choices stay labelled
