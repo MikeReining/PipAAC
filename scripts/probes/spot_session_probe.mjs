@@ -13,10 +13,16 @@ import { setTimeout as sleep } from "node:timers/promises";
 
 const PORT = 9256, ORIGIN = process.env.PIP_ORIGIN ?? "http://localhost:21089";
 rmSync("/tmp/pip-spot2-probe", { recursive: true, force: true });
-const chrome = spawn("open", ["-na", "Google Chrome", "--args",
-  "--headless=new", `--remote-debugging-port=${PORT}`,
-  "--user-data-dir=/tmp/pip-spot2-probe", "--no-first-run", "about:blank"]);
-await sleep(2500);
+// The binary itself, not `open -na`: kill() then reaches Chrome, and a
+// running Chrome can't swallow the launch.
+const CHROME = process.env.CHROME_BIN
+  ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const chrome = spawn(CHROME, ["--headless=new", `--remote-debugging-port=${PORT}`,
+  "--user-data-dir=/tmp/pip-spot2-probe", "--no-first-run", "about:blank"], { stdio: "ignore" });
+for (let i = 0; i < 40; i++) {
+  await sleep(250);
+  if (await fetch(`http://localhost:${PORT}/json`).then(() => true, () => false)) break;
+}
 
 const page = (await (await fetch(`http://localhost:${PORT}/json`)).json())
   .find((t) => t.type === "page");

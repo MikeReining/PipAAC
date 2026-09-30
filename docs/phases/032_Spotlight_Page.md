@@ -84,9 +84,11 @@ nothing glows. The session's `ends_at` is the next local midnight.
   At 820 it fits. Phones can still end a spotlight from Settings (the
   Overview card and the Spotlight page). The fix belongs to the top bar
   layout, not this phase.
-- **Probe hygiene:** the spot probes launch headless Chrome through
-  `open -na`, so `chrome.kill()` leaves it running. Back-to-back runs can
-  collide on the debug port. Workaround: `pkill -f pip-spot`.
+- **Probe hygiene (fixed for 032's two probes in E):** probes that
+  launch headless Chrome through `open -na` leave it running after
+  `chrome.kill()`, and a running Chrome can swallow the next launch.
+  `spot_session_probe` and `spot_demo_probe` now spawn the binary. The
+  older spot probes (mirror, model, coach, layer) still use `open -na`.
 
 ## Founder review
 
