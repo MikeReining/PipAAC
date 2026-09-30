@@ -2341,6 +2341,8 @@ const spotDemoUi = mountSpotlightDemo({
     repaint: () => { renderGrid(); rerenderView(); },
     // What the bar says right now — the card shows taps → result.
     barText: () => sentence.map((it) => it.text).join(" "),
+    // A word's tile on the board, so a card never covers it.
+    cellEl: (senseId) => cellEls.get(senseId) ?? null,
     // The move card's words leave the bar when the demo moves on.
     clearBar: () => {
       sentence.length = 0;

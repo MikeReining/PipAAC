@@ -95,7 +95,11 @@ const PROVEN = new Set(["we play", "it good", "mom play"]); // battery v5, all m
 test("the showcase tells one story, on a proven pair", () => {
   assert.ok(SHOWCASE.tiles.includes(SHOWCASE.tap));
   assert.equal(showcaseLit(SHOWCASE.tap), false, "the tapped word is dimmed");
-  assert.ok(SHOWCASE.move.includes(SHOWCASE.tap), "cards 3–4 build on the word card 2 tapped");
+  // What card 2 asks for sits in the board's top half — never under the card.
+  const slot = catalog.coreCells.find((c) => c.layout === "grid60" && c.sense_id === SHOWCASE.tap)?.slot_index;
+  assert.ok(slot != null && slot < 30, `the tap word sits at slot ${slot}`);
+  const dimmed = SHOWCASE.tiles.filter((id) => !showcaseLit(id));
+  for (const id of SHOWCASE.move) assert.ok(dimmed.includes(id), "every dimmed tile shown is used next");
   const lit = SHOWCASE.tiles.filter(showcaseLit).length;
   assert.ok(lit > 0 && lit < SHOWCASE.tiles.length, "some glow, some dim");
   const label = (id) => catalog.labels.find((l) => l.sense_id === id && l.kind === "lemma" && l.locale === "en").text;

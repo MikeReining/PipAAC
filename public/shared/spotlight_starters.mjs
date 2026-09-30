@@ -46,14 +46,16 @@ export const STARTER_LISTS = [
 /** The one worked example Spotlight teaches with (032, founder
  *  2026-09-30): the page's picture, every Try it card, and the board
  *  during Try it use these tiles. The ones First words holds glow, and
- *  Try it lights exactly those, so card and board match. `tap` is a
- *  dimmed word: the picture taps it and card 2 asks for it. `move` is
- *  the pair card 3 lights with ✨ and card 4 asks with ❓ — a happy,
- *  shared pair (founder: never lead with a negative feeling), proven in
- *  the battery: "We are playing." / "Are we playing?". */
+ *  Try it lights exactly those, so card and board match; every dimmed
+ *  tile shown is one the cards use next. `tap` is a dimmed word the
+ *  picture taps and card 2 asks for — in the board's top row, never
+ *  under the card (founder: "play" sat behind it). `move` is the pair
+ *  card 3 lights with ✨ and card 4 asks with ❓ — happy and shared
+ *  (founder: never lead with a negative feeling), proven in the
+ *  battery: "We are playing." / "Are we playing?". */
 export const SHOWCASE = {
-  tiles: ["sns_0001", "sns_0013", "sns_0055", "sns_0009", "sns_0027", "sns_0025"], // I want more we play help
-  tap: "sns_0027", // play
+  tiles: ["sns_0013", "sns_0055", "sns_0015", "sns_0009", "sns_0027", "sns_0025"], // want more go we play help
+  tap: "sns_0015", // go — top row
   move: ["sns_0009", "sns_0027"], // we → play
 };
 /** Is a showcase tile lit by First words? */

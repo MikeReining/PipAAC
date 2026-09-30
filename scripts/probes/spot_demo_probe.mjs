@@ -133,7 +133,17 @@ out.demo = await evalJs(`(async () => { ${w}
     // The board lights exactly what the card shows glowing.
     cardGlow: document.querySelectorAll('.spot-demo-card .move-compare .cell.glow').length,
     arrows: document.querySelectorAll('.spot-demo-card .move-arrow').length };
-  document.querySelector('.spot-demo-card .btn').click(); await w(200);
+  // A card never covers a tile it asks for (founder: "play" sat behind it).
+  const covers = (words) => {
+    const c = document.querySelector('.spot-demo-card').getBoundingClientRect();
+    return words.filter((t) => {
+      const r = cell(t).getBoundingClientRect();
+      return r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top;
+    });
+  };
+  document.querySelector('.spot-demo-card .btn').click(); await w(300);
+  const card2Covers = covers(['go']);
+  const card2Tile = document.querySelector('.spot-demo-card .move-row .cell')?.textContent.trim();
   // A dimmed word still speaks — and finishes step 2 by itself.
   [...document.querySelectorAll('#grid .cell.dimmed')][0].click(); await w(1000);
   const moveStep = document.querySelector('.spot-demo-card .tour-note').textContent;
@@ -148,6 +158,7 @@ out.demo = await evalJs(`(async () => { ${w}
       now: r?.querySelector('.move-now')?.textContent.trim() || (r?.querySelector('.move-now.move-ctl') ? '✨' : null) };
   };
   const card0 = cardRow();
+  const card3Covers = covers(['we', 'play']);
   // ✨ in the card's text is the button's own icon, not the emoji.
   const noteIcon = { svg: !!document.querySelector('.spot-demo-card .tour-note .text-icon svg'),
     emoji: document.querySelector('.spot-demo-card .tour-note').textContent.includes('✨') };
@@ -176,7 +187,7 @@ out.demo = await evalJs(`(async () => { ${w}
     presses: ${count("transform_event")} - tx0,
     barAfterMove: window.pip.sentence.length };
   document.querySelector('#spot-chip').click(); await w(600);
-  return { lit, moveStep, moveLit, card0, noteIcon, card2, moveBar, fixResult, askCard, askResult, step, ledger,
+  return { card2Covers, card2Tile, card3Covers, lit, moveStep, moveLit, card0, noteIcon, card2, moveBar, fixResult, askCard, askResult, step, ledger,
     after: { glow: document.querySelectorAll('#grid .cell.glow').length,
       dimmed: document.querySelectorAll('#grid .cell.dimmed').length,
       card: !!document.querySelector('.spot-demo-card'),
@@ -275,6 +286,7 @@ const ok =
   out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 6 &&
   out.demo.lit.glow === 3 && out.demo.lit.cardGlow === 3 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
   out.demo.lit.barSetAside && out.demo.lit.compare === 6 && out.demo.lit.arrows === 0 &&
+  out.demo.card2Tile === "go" && out.demo.card2Covers.length === 0 && out.demo.card3Covers.length === 0 &&
   out.demo.moveStep.includes("3 of 5") && out.demo.moveLit.fix && out.demo.moveLit.cells === 2 &&
   out.demo.moveBar === "we play" &&
   out.demo.card0.tiles === 2 && out.demo.card0.ctl && out.demo.card0.done === 0 && out.demo.card0.now === "we" &&

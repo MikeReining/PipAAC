@@ -118,10 +118,23 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
     const said = result ? [Object.assign(document.createElement("p"), {
       className: "move-result", textContent: result })] : [];
     card.append(count, say, ...(picture ? [picture] : []), ...said, note, row);
-    // The last card points at the chip; the others keep it plain. The
-    // move card sits low, away from the top bar's ✨.
+    // The last card points at the chip; the others keep it plain.
     document.getElementById("spot-chip").classList.toggle("spot-demo-point", step === STEPS.length - 1);
-    card.classList.toggle("top", step === STEPS.length - 1);
+    requestAnimationFrame(place);
+  }
+
+  /** Never cover what the card asks for (founder, 2026-09-30: "play" sat
+   *  behind the card). A tile to press in the lower part of the screen
+   *  sends the card to the top — the first-run tour's rule. The chip
+   *  card sits top, by the chip. */
+  function place() {
+    if (!card) return;
+    const s = STEPS[step];
+    const keys = s.seq ?? (s.show ? s.show(moved).steps : []);
+    const low = keys.filter((k) => k.startsWith("sense:"))
+      .map((k) => board.cellEl(k.slice(6))?.getBoundingClientRect())
+      .some((r) => r && r.bottom > innerHeight * 0.55);
+    card.classList.toggle("top", !!s.chip || low);
   }
 
   /** Advance after a beat — unless Next or End got there first. */
