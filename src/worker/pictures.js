@@ -17,6 +17,7 @@ import { checkLicense } from "./license.mjs";
 import { usageCheck, usageRecord } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import pictureFinder from "../../data/catalog/picture_finder.json" with { type: "json" };
+import pictureLabels from "../../data/catalog/picture_labels.json" with { type: "json" };
 import drawBlocklist from "../../data/pictures/draw_blocklist.json" with { type: "json" };
 import {
   captionForDrawing,
@@ -205,11 +206,13 @@ async function findOne(env, { text, description, locale, binding = "PICTURES", i
     }))
     .sort((a, b) => b.score - a.score);
   const candidates = rescored.slice(0, CFG.top_k);
-  // `pool` is the full fetched set — an exact-label match can rank
-  // below the displayed top_k and must still win (§ 4.2 tier 1).
+  // `pool` is the full fetched set and `direct` the lexical label
+  // map — identity can rank below fetch_k in the embedding entirely
+  // ("eat", "no"), so the dictionary is the tier-1 authority (§ 4.2).
   const auto = decideAuto(
     { candidates, pool: rescored, pinned: signals?.pinned ?? null,
-      blocked: signals?.blocked ?? [], text, description, scope: jev.scope },
+      blocked: signals?.blocked ?? [], text, description, scope: jev.scope,
+      direct: (env.PICTURE_LABELS ?? pictureLabels.labels)?.[normalizeV1(text)] ?? null },
     CFG, language);
   // `calibrated` tells the add card whether "nothing close" means "draw
   // one" — until the founder saves a cutoff (§ 7, default 1.01 = never

@@ -120,6 +120,44 @@ test("auto tier 1: an exact English label wins at any rank, any score", () => {
     "go");
 });
 
+test("auto tier 1: the label map applies a word the embedding never surfaced", () => {
+  // The real "eat" failure: jam/naan/nuts/mayo outranked the actual
+  // eat symbol, which sat below fetch_k — the lexical map still wins.
+  const cands = [
+    { image_id: "jam", caption: "jam · Food & Drink", source: "catalog", score: 0.68 },
+    { image_id: "naan", caption: "naan · Food · object", source: "extended", score: 0.67 },
+  ];
+  const direct = [{ image_id: "img_eat", asset: "/symbols/eat.png", source: "catalog",
+    caption: "eat · eats · eating · Daily Actions & Activity Verbs", sense: "sns_eat" }];
+  assert.equal(
+    decideAuto({ candidates: cands, direct, text: "eat", scope: "common" },
+      { ...CFG, auto_cutoff: 1.01 }, "en"),
+    "img_eat");
+  // Even with zero vector candidates at all.
+  assert.equal(
+    decideAuto({ candidates: [], direct, text: "eat", scope: "common" }, CFG, "en"),
+    "img_eat");
+  // A homograph — one label, two senses ("orange" colour vs fruit) —
+  // declines: the adult picks, no auto-apply.
+  const orange = [
+    { image_id: "img_fruit", caption: "orange · Food & Drink", source: "catalog", sense: "sns_fruit" },
+    { image_id: "img_color", caption: "orange · Descriptors", source: "catalog", sense: "sns_color" },
+  ];
+  assert.equal(
+    decideAuto({ candidates: cands, direct: orange, text: "orange", scope: "common" },
+      { ...CFG, auto_cutoff: 1.01 }, "en"),
+    null);
+  // But a same-sense duplicate label is not a homograph — it applies.
+  const dupe = [
+    { image_id: "img_a", caption: "sofa", source: "catalog", sense: "sns_sofa" },
+    { image_id: "img_b", caption: "couch", source: "catalog", sense: "sns_sofa" },
+  ];
+  assert.equal(
+    decideAuto({ candidates: [], direct: dupe, text: "sofa", scope: "common" },
+      { ...CFG, auto_cutoff: 1.01 }, "en"),
+    "img_a");
+});
+
 test("auto tier 1: language, scope, description, and block guards hold", () => {
   const cands = [
     { image_id: "pain", caption: "pain · Body, Health & Hygiene", source: "catalog", score: 0.762 },

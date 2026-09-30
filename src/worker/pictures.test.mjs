@@ -144,6 +144,23 @@ const makeEnv = ({ jev } = {}) => {
     PICTURES: fakeIndex(),
     PICTURES_CALIB: fakeIndex(),
     PICTURE_JEV: jev ?? (async () => ({ scope: "common", kind: "None", language: "en" })),
+    // Tier-1 seam: the lexical label map, mirroring the seed rows —
+    // without it the real bundled map would leak production ids in.
+    PICTURE_LABELS: {
+      apple: [{ image_id: "img_apple", asset: "/symbols/apple.png", source: "catalog",
+        caption: "apple · Food & Drink", sense: "sns_apple" }],
+      applesauce: [{ image_id: "img_sauce", asset: "/symbols/applesauce.png", source: "catalog",
+        caption: "applesauce · Food & Drink", sense: "sns_sauce" }],
+      banana: [{ image_id: "img_banana", asset: "/symbols/banana.png", source: "catalog",
+        caption: "banana · Food & Drink", sense: "sns_banana" }],
+      dog: [{ image_id: "img_dog", asset: "/symbols/dog.png", source: "catalog",
+        caption: "dog · Animals & Nature", sense: "sns_dog" }],
+      park: [{ image_id: "img_park", asset: "/symbols/park.png", source: "catalog",
+        caption: "park · Places", sense: "sns_park" }],
+      // trampoline is absent — its ext row is pending, and pending art
+      // never enters the label map. Its tier-1 win in tests comes from
+      // the pool caption scan, same as a not-yet-indexed drawing.
+    },
   };
   const db = new DatabaseSync(":memory:");
   const ctx = {

@@ -23,6 +23,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
   captionForCatalog,
   captionForDrawing,
@@ -36,6 +37,7 @@ const RESULTS = join(repoRoot, "out/extended_art/results.jsonl");
 const MANIFEST = join(repoRoot, "data/catalog/extended_art_r2.json");
 const DRAWINGS = join(repoRoot, "data/pictures/drawings.json");
 const CFG_PATH = join(repoRoot, "data/catalog/picture_finder.json");
+const LABELS_PATH = join(repoRoot, "data/catalog/picture_labels.json");
 const OUT_DIR = join(repoRoot, "out/pictures");
 
 function loadEnv() {
@@ -152,6 +154,75 @@ export function buildRows({ calibration = false, paths = {} } = {}) {
   return rows;
 }
 
+/** The lexical label map (§ 4.2 tier 1): normalized English label → the
+ *  image(s) that literally answer to it, built from the same sources as
+ *  the index rows. Identity lookup — no vector involved — so a symbol
+ *  whose embedding ranks below fetch_k ("eat", "no") still applies.
+ *  Entries carry `sense` so the find path can tell a same-sense
+ *  duplicate from a true homograph (label on two senses — "orange" the
+ *  colour vs the fruit — never auto-applies; the adult picks).
+ *  Pending extended art is excluded: it calibrates but never serves.
+ *  Personal drawings contribute their DESCRIPTION only — the name is
+ *  never a label (§ 3.3). */
+export function buildLabelMap({ paths = {} } = {}) {
+  const catalog = readJson(paths.catalog ?? CATALOG);
+  const review = readJson(paths.review ?? REVIEW, {});
+  const manifest = readJson(paths.manifest ?? MANIFEST, { entries: {} }).entries ?? {};
+  const meta = new Map(readJsonl(paths.results ?? RESULTS).map((r) => [r.id, r]));
+  const labels = {};
+  const push = (norm, entry) => {
+    if (!norm) return;
+    const list = labels[norm] ??= [];
+    if (!list.some((e) => e.image_id === entry.image_id)) list.push(entry);
+  };
+
+  const imgsBySense = new Map();
+  for (const img of catalog.images) {
+    if (img.status !== "approved") continue;
+    let list = imgsBySense.get(img.sense_id);
+    if (!list) { list = []; imgsBySense.set(img.sense_id, list); }
+    list.push(img);
+  }
+  const senseById = new Map(catalog.senses.map((s) => [s.id, s]));
+  const labelsBySenseId = new Map();
+  for (const l of catalog.labels) {
+    if (l.locale !== "en" || !l.text) continue;
+    let list = labelsBySenseId.get(l.sense_id);
+    if (!list) { list = []; labelsBySenseId.set(l.sense_id, list); }
+    list.push(l.text);
+  }
+  for (const l of catalog.labels) {
+    if (l.locale !== "en" || !l.text) continue;
+    const caption = captionForCatalog(
+      labelsBySenseId.get(l.sense_id) ?? [],
+      senseById.get(l.sense_id)?.category);
+    for (const img of imgsBySense.get(l.sense_id) ?? []) {
+      push(normalizeV1(l.text), { image_id: img.id, asset: `/${img.key}`,
+        source: "catalog", caption, sense: l.sense_id });
+    }
+  }
+  for (const [id, r] of meta) {
+    if (review[id] !== "approve" || manifest[id]?.r2Key !== `symbols/extended/${id}.png`) continue;
+    push(normalizeV1(r.label ?? id.replace(/_/g, " ")), {
+      image_id: `ext_${id}`, asset: `/api/v1/pictures/img/ext_${id}`,
+      source: "extended",
+      caption: captionForExtended(r.label ?? id.replace(/_/g, " "), r.section, r.spec),
+      sense: `ext_${id}`,
+    });
+  }
+  for (const d of readJson(paths.drawings ?? DRAWINGS, []) ?? []) {
+    if (d.status !== "ready" || !d.key) continue;
+    const norm = d.scope === "personal"
+      ? normalizeV1(d.description ?? "")
+      : normalizeV1(d.text ?? "");
+    push(norm, {
+      image_id: `drw_${d.key}`, asset: `/api/v1/pictures/img/drw_${d.key}`,
+      source: "drawn", caption: captionForDrawing(d), sense: `drw_${norm}`,
+    });
+  }
+  return { version: 1, labels };
+}
+
 async function upsert(rows, indexName) {
   loadEnv();
   const base = (process.env.PIP_PICTURE_ADMIN_URL ?? "").replace(/\/+$/, "");
@@ -193,6 +264,12 @@ function main() {
   const bySource = rows.reduce((m, r) => ((m[r.source] = (m[r.source] ?? 0) + 1), m), {});
   console.log(`${rows.length} rows → out/pictures/${name}`);
   console.log(`  sources: ${JSON.stringify(bySource)}  status: ${JSON.stringify(byStatus)}`);
+
+  // § 4.2 tier 1 — the lexical label map the Worker bundles; identity
+  // lookups never wait on the embedding to surface the same word.
+  const labelMap = buildLabelMap();
+  writeFileSync(LABELS_PATH, JSON.stringify(labelMap, null, 1));
+  console.log(`${Object.keys(labelMap.labels).length} labels → data/catalog/picture_labels.json`);
 
   if (doUpsert) {
     const indexName = calibration ? "calibration" : "main";
