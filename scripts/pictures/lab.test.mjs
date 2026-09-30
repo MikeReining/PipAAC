@@ -63,7 +63,7 @@ test("composePrompt: the spark hint lands inside the buildPrompt scaffold", () =
     spec: { entity_mode: "organic_noun", framing: "object", social_scale: "zero" },
     hint: "A round backyard trampoline with a black jumping mat and short metal legs.",
   });
-  assert.match(prompt, /teach a child the concept of: trampoline\./);
+  assert.match(prompt, /creating an image to teach the concept of: trampoline\./);
   assert.match(prompt, /reference images on a pure white background/);
   assert.match(prompt, /A round backyard trampoline with a black jumping mat/);
   // No style words appear — the refs carry style (§4D).

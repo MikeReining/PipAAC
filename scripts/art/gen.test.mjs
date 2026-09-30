@@ -36,7 +36,7 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
   assert.equal(
     base,
     [
-      "We are trying to teach a child the concept of: apple.",
+      "We are creating an image to teach the concept of: apple.",
       "Draw it in exactly the same style as the reference images on a pure white background.",
       "Do not include any text in the image.",
     ].join("\n"),
@@ -74,7 +74,7 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
   assert.equal(
     objectTest,
     [
-      "We are trying to teach a child the concept of: apple.",
+      "We are creating an image to teach the concept of: apple.",
       "Draw it in exactly the same style as the reference images on a pure white background.",
       "Do not include any text in the image.",
     ].join("\n"),
@@ -93,7 +93,7 @@ test("buildPrompt builds the 3-line base prompt with optional clauses", () => {
     entity_mode: "anatomy_relational",
     hint: "A simplified face with black hair on top and a bold black arrow pointing to the hair.",
   });
-  assert.ok(anatomyRel.includes("We are trying to teach a child the concept of: hair."));
+  assert.ok(anatomyRel.includes("We are creating an image to teach the concept of: hair."));
   assert.ok(anatomyRel.includes("A simplified face with black hair on top and a bold black arrow pointing to the hair."));
 
   const aslHeadTest = buildPrompt({ word: "head", torso: "yellow", framing: "bust", hand: "asl_head" });

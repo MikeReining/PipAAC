@@ -136,7 +136,7 @@ export function buildPrompt({
   if (entity_mode === "anatomy_relational") {
     const hintClause = hint ? hint : `A simplified human body context with a bold clean black arrow pointing directly to the ${word}.`;
     return [
-      `We are trying to teach a child the concept of: ${word}.`,
+      `We are creating an image to teach the concept of: ${word}.`,
       "Draw it in exactly the same style as the reference images on a pure white background.",
       "Do not include any text in the image.",
       hintClause,
@@ -144,7 +144,7 @@ export function buildPrompt({
   }
 
   const lines = [
-    `We are trying to teach a child the concept of: ${word}.`,
+    `We are creating an image to teach the concept of: ${word}.`,
     "Draw it in exactly the same style as the reference images on a pure white background.",
     "Do not include any text in the image.",
   ];
