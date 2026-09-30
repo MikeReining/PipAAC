@@ -67,7 +67,32 @@ layer.
 | A | Sidebar page (existing controls moved in), Overview cleanup, copy renames, timer removed, pick bar tells you what to do, list name suggested from the picks | `scripts/probes/spot_session_probe.mjs` drives Settings → Spotlight → pick → save → Start |
 | B | Page layout: hero, Right now card, list cards with word chips, Model-from-phone by role, Progress pointer, Look folded with a live preview | same probe + screenshots at 820 and 390 wide |
 | C | Try it demo (3 coach cards) + suggested lists | `scripts/probes/spot_demo_probe.mjs`: glow on the real grid, no `spotlight_session` row, no sync op, no logged tap, the layer is off after. Seen failing with the tap intercept removed |
-| D | Partner-phone coach flow polish | **held** for founder review of A–C |
+| D | Partner-phone coach flow polish | **held** for founder review of A–C (and E) |
+| E | Spotlight teaches moves, not only words (founder, 2026-09-30) — see § Slice E | `src/board/spotlight_controls.test.mjs`; `spot_demo_probe` (✨ lit in the real top bar, ❓ picked into a saved list, the live ✨ card with the network stubbed) |
+
+## Slice E — moves (founder, 2026-09-30)
+
+Why: for a Pip user the most valuable skill is not a word but two words
+and a button. ✨ is an automatic expansion — "more swing" is said back as
+a whole sentence, the recast an SLP does by hand. ❓ asks it with no
+question grammar to build. Research the founder brought: model refusal,
+pointing, and commenting from day one, and early sentences are two-word
+combinations.
+
+| Part | What | Status |
+| --- | --- | --- |
+| E1 | First words: want, more, help, not, that, look | built `687c3c6` |
+| E2 | ✨ / ❓ as targets (`control:fix` / `control:question` on `spotlight_list.controls`); pick them, model them from a phone; moves lists Make it a sentence, Ask a question, Say no, each with a recipe for the adult | built `1830806` |
+| E3 | Try it's third card: tap more, then go, then ✨ — a live transform. Demo taps build the bar but never the log; the child's bar is set aside and comes back | built |
+| E4 | Progress: ✨ / ❓ presses on their own vs with the glow, by week | see below |
+
+Rules kept: the glow invites, it never scripts an order; ✨ runs only on a
+press; recipes never state a button's output; no efficacy claim in copy.
+
+Open (founder): **real example sentences** for the recipes need one live
+✨ / ❓ run per recipe (≈6 Groq calls, well under a cent) — not run, per
+the paid-call rule. The transform prompts' live retest (023 § 5.6) is
+still pending and should land before families are taught the buttons.
 
 ## Works Test
 

@@ -269,6 +269,7 @@ function maybeImpression(candidates, shown, { mode = "picture", cap = null, gate
 // Try it (032 C) while it runs: { onTap, end } from spotlight-demo.js.
 // A tap then speaks and nothing else — the adult's taps are not logged.
 let spotDemo = null;
+let demoBar = null; // the child's bar, set aside while Try it runs
 let picking = null; // Spotlight pick mode — see setPicking
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
@@ -570,6 +571,7 @@ async function transformAndSpeak(mode) {
       renderStrip();
     }
     await speakSentence();
+    spotDemo?.onTransform?.(mode);
   } finally {
     txBusy = false;
     btn?.classList.remove("speaking");
@@ -1161,6 +1163,13 @@ async function renderStrip() {
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
   if (tour) return tour.onTap(kind, id);
   if (spotDemo) {
+    // Try it: a tap speaks; on the ✨ card it also builds the bar — never
+    // the tap log, the sentence row, or the ranker (the bar was set aside).
+    if (id && spotDemo.buildsBar?.()) {
+      sentence.push({ kind, id, text });
+      renderBar();
+      syncTxButtons();
+    }
     if (id) speakItem({ kind, id, text });
     spotDemo.onTap(kind, id);
     return;
@@ -2282,9 +2291,37 @@ function tileForSense(senseId) {
 const spotDemoUi = mountSpotlightDemo({
   db,
   board: {
-    setDemo: (h) => { spotDemo = h; },
+    // The child's bar is set aside while Try it runs and comes back after:
+    // demo words never join her sentence, and hers never reach the demo.
+    setDemo: (h) => {
+      if (h && !spotDemo) {
+        demoBar = { items: sentence.splice(0), sentenceId, sentencePicks, bar: { ...barState } };
+        sentenceId = null;
+        sentencePicks = 0;
+        barState.tense = "present";
+        barState.question = false;
+      } else if (!h && demoBar) {
+        sentence.splice(0, sentence.length, ...demoBar.items);
+        ({ sentenceId, sentencePicks } = demoBar);
+        Object.assign(barState, demoBar.bar);
+        demoBar = null;
+      }
+      spotDemo = h;
+      renderBar();
+      syncTxButtons();
+      renderStrip();
+    },
     showBoard: () => { close("menu"); if (view !== "board") kbUi.setView("board"); },
     repaint: () => { renderGrid(); rerenderView(); },
+    // The move card's words leave the bar when the demo moves on.
+    clearBar: () => {
+      sentence.length = 0;
+      barState.tense = "present";
+      barState.question = false;
+      renderBar();
+      syncTxButtons();
+      renderStrip();
+    },
   },
   openSettings: (section) => gatePin(() => settingsUi.open(section)),
 });

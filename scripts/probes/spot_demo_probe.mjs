@@ -90,24 +90,61 @@ out.ideas = await evalJs(`(async () => { ${w}
   return { before, after: names(), lists: window.pip.spotlight.lists().map((l) => [l.name, l.n]) };
 })()`);
 
-// Try it: measure the grid, the tables, and the sentence — not the demo's report.
+// Try it: measure the grid, the tables, and the sentence — not the demo's
+// report. The network is stubbed: ✨ gets a canned sentence and the voice
+// endpoints refuse, so the probe never makes a paid call — what's proven
+// is the request the board sends and what it does with the answer.
 out.demo = await evalJs(`(async () => { ${w}
+  const real = window.fetch;
+  window.__tx = [];
+  window.fetch = (url, opts) => {
+    const u = String(url);
+    if (u.includes('/api/v1/transform')) {
+      window.__tx.push(JSON.parse(opts.body));
+      return Promise.resolve(new Response(JSON.stringify({ text: 'I want to go more.' }),
+        { status: 200, headers: { 'content-type': 'application/json' } }));
+    }
+    if (u.includes('/api/v1/voice/')) return Promise.resolve(new Response('', { status: 503 }));
+    return real(url, opts);
+  };
+  const cell = (t) => [...document.querySelectorAll('#grid .cell')]
+    .find((c) => c.textContent.trim().toLowerCase() === t);
+  // The child has a word in the bar before the adult opens Try it.
+  document.querySelector('#set-done').click(); await w(200);
+  cell('i').click(); await w(200);
+  const childBar = window.pip.sentence.map((i) => i.text).join(' ');
   const ops0 = ${count("sync_op")}, taps0 = ${count("learner_event_log")};
+  document.querySelector('#corner').click(); await w(500);
+  document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
   document.querySelector('#spot-try').click(); await w(400);
   const lit = { glow: document.querySelectorAll('#grid .cell.glow').length,
     dimmed: document.querySelectorAll('#grid .cell.dimmed').length,
-    settingsClosed: !document.querySelector('#menu').classList.contains('open') };
+    settingsClosed: !document.querySelector('#menu').classList.contains('open'),
+    barSetAside: window.pip.sentence.length === 0 };
   document.querySelector('.spot-demo-card .btn').click(); await w(200);
   // A dimmed word still speaks — and finishes step 2 by itself.
   [...document.querySelectorAll('#grid .cell.dimmed')][0].click(); await w(1000);
+  const moveStep = document.querySelector('.spot-demo-card .tour-note').textContent;
+  const moveLit = { fix: document.querySelector('#tx-fix').classList.contains('glow'),
+    cells: document.querySelectorAll('#grid .cell.glow').length };
+  cell('more').click(); await w(150);
+  cell('go').click(); await w(150);
+  const moveBar = window.pip.sentence.map((i) => i.text).join(' ');
+  document.querySelector('#tx-fix').click();
+  // The card moves on once the sentence has been said (the stubbed voice
+  // falls to word-by-word slots, so allow for it).
+  for (let i = 0; i < 40 && !document.querySelector('.spot-demo-card .tour-note').textContent.includes('4 of'); i++) await w(250);
   const step = document.querySelector('.spot-demo-card .tour-note').textContent;
   const ledger = { ops: ${count("sync_op")} - ops0, taps: ${count("learner_event_log")} - taps0,
-    sessions: ${count("spotlight_session")}, sentence: window.pip.sentence.length };
+    sessions: ${count("spotlight_session")}, tx: window.__tx.map((b) => b.mode + ':' + b.text),
+    barAfterMove: window.pip.sentence.length };
   document.querySelector('#spot-chip').click(); await w(600);
-  return { lit, step, ledger,
+  window.fetch = real;
+  return { lit, moveStep, moveLit, moveBar, step, ledger,
     after: { glow: document.querySelectorAll('#grid .cell.glow').length,
       dimmed: document.querySelectorAll('#grid .cell.dimmed').length,
       card: !!document.querySelector('.spot-demo-card'),
+      childBar: window.pip.sentence.map((i) => i.text).join(' '), childBarBefore: childBar,
       backOnPage: document.querySelector('#menu').classList.contains('open')
         && document.querySelector('.set-sec[data-sec="spotlight"]').classList.contains('on') } };
 })()`);
@@ -125,6 +162,7 @@ out.running = await evalJs(`(async () => { ${w}
 // pick mode ✨ is a choosable target that lands on the saved list.
 out.moves = await evalJs(`(async () => { ${w}
   document.querySelector('#spot-end')?.click(); await w(200);
+  document.querySelector('#clear').click(); await w(100); // the demo leg left "I"
   const idea = [...document.querySelectorAll('.spot-idea')]
     .find((c) => c.querySelector('.spot-list-name').textContent === 'Make it a sentence');
   const recipe = idea.querySelector('.spot-recipe')?.textContent ?? '';
@@ -162,10 +200,14 @@ const ok =
   out.ideas.after.join() === "Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
   out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 6 &&
   out.demo.lit.glow === 6 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
-  out.demo.step.includes("3 of 3") &&
-  out.demo.ledger.ops === 0 && out.demo.ledger.taps === 0 &&
-  out.demo.ledger.sessions === 0 && out.demo.ledger.sentence === 0 &&
+  out.demo.lit.barSetAside &&
+  out.demo.moveStep.includes("3 of 4") && out.demo.moveLit.fix && out.demo.moveLit.cells === 2 &&
+  out.demo.moveBar === "more go" &&
+  out.demo.step.includes("4 of 4") &&
+  out.demo.ledger.ops === 0 && out.demo.ledger.taps === 0 && out.demo.ledger.sessions === 0 &&
+  out.demo.ledger.tx.join() === "fix:more go" && out.demo.ledger.barAfterMove === 0 &&
   out.demo.after.glow === 0 && out.demo.after.dimmed === 0 && !out.demo.after.card &&
+  out.demo.after.childBarBefore === "I" && out.demo.after.childBar === "I" &&
   out.demo.after.backOnPage &&
   out.running.tryHidden && out.running.glow === 6 &&
   out.moves.recipe.includes("✨") &&
