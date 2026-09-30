@@ -11,7 +11,7 @@ import {
   plannerSystemPrompt, setTakeVerdict, takeFileName,
   LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
-import { styleRefBundle, plannerLane } from "../../src/shared/draw_prompt.mjs";
+import { styleRefBundle, plannerLane, parseDrawSpec } from "../../src/shared/draw_prompt.mjs";
 
 test("plannerChatBody: lane model + system prompt from the md, spec in user msg", () => {
   const body = plannerChatBody({
@@ -185,6 +185,21 @@ test("plannerLane: Jev's imagery picks the lane; unknown → reasoning lane", ()
   assert.equal(plannerLane({ imagery: "literal" }), "gptoss");
   assert.equal(plannerLane({ imagery: "metaphor" }), "spark");
   assert.equal(plannerLane({}), "spark"); // absent → the safer model
+});
+
+test("parseDrawSpec reconciles contradictory framing vs social_scale", () => {
+  const answers = (framing, social_scale) => ({
+    framing: { choice: framing },
+    social_scale: { choice: social_scale },
+  });
+  // A person framing with zero humans is impossible — the lens wins.
+  assert.equal(parseDrawSpec(answers("bust", "zero")).social_scale, "solo");
+  // An object/diagram lens has no humans in it.
+  assert.equal(parseDrawSpec(answers("object", "solo")).social_scale, "zero");
+  assert.equal(parseDrawSpec(answers("diagram", "pair")).social_scale, "zero");
+  // Coherent answers pass through untouched.
+  assert.equal(parseDrawSpec(answers("bust", "solo")).social_scale, "solo");
+  assert.equal(parseDrawSpec(answers("contrast", "zero")).social_scale, "zero");
 });
 
 test("adoptLabTake: copies to assets/symbols, guards personal + collisions", async () => {

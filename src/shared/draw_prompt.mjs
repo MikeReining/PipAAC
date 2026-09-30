@@ -244,10 +244,10 @@ export const DRAW_JEV_QUESTIONS = {
   },
   framing: {
     type: "choice",
-    instructions: "Best visual framing lens for this AAC word",
+    instructions: "Best visual framing lens for this AAC word. face/bust/full/contrast show people — only pick one if the scene contains a person.",
     criteria: {
       face: "Extreme close-up of facial expression only (emotions, feelings)",
-      bust: "Upper chest, head, hands (fine motor, manual action, chest gestures)",
+      bust: "Upper chest, head, hands (fine motor, manual action, chest gestures — e.g. a person cooking, waving, eating)",
       full: "Full body stick figure with complete legs (locomotion, posture, walking)",
       diagram: "Graphic spatial diagram with box and arrow, no humans (prepositions)",
       object: "Standalone inanimate object or universal sign (nouns, stop sign)",
@@ -291,19 +291,26 @@ export const DRAW_JEV_QUESTIONS = {
   },
   social_scale: {
     type: "choice",
-    instructions: "How many human actors does this AAC concept need? A person is the LAST resort — prefer zero unless the meaning is unreadable without a human.",
+    instructions: "How many human actors does this AAC concept need? A person is the LAST resort for states and qualities — but a human-performed ACTION always shows its actor: cooking, falling, waving and eating are done BY someone. If you chose a person framing (face/bust/full/contrast), the answer cannot be zero.",
     criteria: {
-      zero: "No humans — diagrams, inanimate objects, universal signs (stop, in, on, off), and any state, texture, or quality that reads on a thing or scene alone (wet, dirty, hot, cold, empty, broken, new)",
-      solo: "Exactly 1 person — only when the concept is inseparable from a human body: physical actions (run, eat, sit), emotions and facial expressions (happy, sad), self-reference (I, me)",
+      zero: "No humans — diagrams, inanimate objects, universal signs (stop, in, on, off), and any state, texture, or quality that reads on a thing or scene alone (wet, dirty, hot, cold, empty, broken, new). Never zero for an action a person performs.",
+      solo: "Exactly 1 person — human-performed actions (run, eat, cook, sit, fall), emotions and facial expressions (happy, sad), self-reference (I, me)",
       pair: "Exactly 2 people — only for 1-on-1 social transactions, hand-offs, or partner references (you, give, help)",
       group: "3 or more people — only for collective concepts and plural pronouns (we, they, all)",
     },
   },
 };
 
-/** Jev answer object → the buildPrompt inputs (defaults = gen.mjs's). */
+/** Jev answer object → the buildPrompt inputs (defaults = gen.mjs's).
+ *  Jev answers each question independently, so contradictory pairs can
+ *  ship — e.g. "cooking" once returned framing:bust + social_scale:zero,
+ *  a person-shot of zero people. The framing lens is the authority on
+ *  whether a human is in frame (it describes what the camera sees):
+ *  a person framing implies ≥1 person, an object/diagram lens implies
+ *  none. Reconcile here so downstream code never sees the impossible
+ *  pair. */
 export function parseDrawSpec(answers = {}) {
-  return {
+  const spec = {
     entity_mode: answers?.entity_mode?.choice ?? "concept_action",
     packaging: answers?.packaging?.choice ?? "none",
     framing: answers?.framing?.choice ?? "full",
@@ -312,6 +319,12 @@ export function parseDrawSpec(answers = {}) {
     social_scale: answers?.social_scale?.choice ?? "solo",
     imagery: answers?.imagery?.choice ?? "metaphor",
   };
+  if (spec.framing === "face" || spec.framing === "bust" || spec.framing === "full") {
+    if (spec.social_scale === "zero") spec.social_scale = "solo";
+  } else if (spec.framing === "object" || spec.framing === "diagram") {
+    spec.social_scale = "zero";
+  }
+  return spec;
 }
 
 /** Jev's imagery verdict → which planner lane writes the hint.
