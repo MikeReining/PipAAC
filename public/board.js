@@ -571,6 +571,9 @@ async function transformAndSpeak(mode) {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         user_id: me.id, license: await voiceLicense(), mode, text: masked,
+        // ❓ asks in the bar's tense; ⏪/⏩ on a question keep it one.
+        tense: barState.tense,
+        question: barState.question,
       }),
     }).catch(() => null);
     const out = res?.ok ? (await res.json().catch(() => ({}))).text : null;

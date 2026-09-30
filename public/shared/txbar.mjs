@@ -10,8 +10,8 @@
  * - ❓ sets question; the tense buttons keep it if the result still
  *   ends with a question mark ("changing tense never removes the
  *   question"), ✨ is judged the same way.
- * - ⏪/⏩ set tense; anything derived from untensed taps (✨, ❓)
- *   leaves the bar at present — the flag describes what the bar holds.
+ * - ⏪/⏩ set tense; ✨ reads untensed taps so its output is present;
+ *   ❓ keeps whatever tense the bar shows — it re-wraps that sentence.
  * - Clearing the bar resets both — renderBar owns that (no items, no
  *   state to display).
  *
@@ -29,7 +29,8 @@ export function applyTransform(sentence, out, mode, barState) {
   if (mode === "question") barState.question = true;
   else barState.question = /[?¿]\s*$/.test(out);
   if (mode === "past" || mode === "future") barState.tense = mode;
-  else barState.tense = "present"; // fix/question output came from taps
+  else if (mode !== "question") barState.tense = "present";
+  // ❓ keeps whatever tense the bar shows — it re-wraps that sentence.
 }
 
 /** Snapshot her taps the moment the first transform lands — once, and
@@ -46,10 +47,11 @@ export function transformSource(sentence, barState) {
   return barState.preTransform ?? sentence;
 }
 
-/** ▶ puts her words back exactly — no model, works offline. Returns
- *  true when a restore happened. */
+/** ▶ puts her words back exactly — no model, works offline. Only on a
+ *  past/future bar: after ✨ or ❓ the bar is already present, so ▶
+ *  just speaks what's shown. Returns true when a restore happened. */
 export function restoreBar(sentence, barState) {
-  if (!barState.preTransform) return false;
+  if (!barState.preTransform || barState.tense === "present") return false;
   sentence.splice(
     0, sentence.length, ...barState.preTransform.map((it) => ({ ...it })),
   );

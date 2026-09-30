@@ -10,7 +10,7 @@ import {
   runTransformSuite, saveRun, setCellVerdict, transformChatBody,
   TRANSFORM_LANES, TRANSFORM_MODES,
 } from "./lab.mjs";
-import { TRANSFORM_PROMPTS } from "../../src/shared/transform_prompts.mjs";
+import { TRANSFORM_PROMPTS, transformPrompt } from "../../src/shared/transform_prompts.mjs";
 import { TRANSFORM_PROMPTS as WORKER_PROMPTS } from "../../src/worker/transform.js";
 
 const okReply = (text, extra = {}) => ({
@@ -24,6 +24,24 @@ const okReply = (text, extra = {}) => ({
 test("worker + lab share one prompt table", () => {
   assert.deepEqual(WORKER_PROMPTS, TRANSFORM_PROMPTS);
   assert.deepEqual(TRANSFORM_MODES, ["fix", "question", "past", "future"]);
+});
+
+test("transformPrompt composes the bar's shape with the press", () => {
+  // ❓ on a past bar → a past-tense question task
+  assert.match(transformPrompt("question", { tense: "past" }), /past-tense question/);
+  assert.match(transformPrompt("question", { tense: "future" }), /future-tense question/);
+  // ❓ on a present bar → the flat question prompt
+  assert.equal(transformPrompt("question", { tense: "present" }), TRANSFORM_PROMPTS.question);
+  // ⏪/⏩ on an existing question → the same tensed-question task
+  assert.equal(
+    transformPrompt("past", { question: true }),
+    transformPrompt("question", { tense: "past" }),
+  );
+  assert.match(transformPrompt("future", { question: true }), /future-tense question/);
+  // plain presses → flat prompts; unknown mode → null
+  assert.equal(transformPrompt("past"), TRANSFORM_PROMPTS.past);
+  assert.equal(transformPrompt("fix", { question: true }), TRANSFORM_PROMPTS.fix);
+  assert.equal(transformPrompt("shout"), null);
 });
 
 test("transformChatBody: production shape, lane knobs, prompt per mode", () => {

@@ -44,14 +44,23 @@ test("tense on a statement clears the question state it doesn't hold", () => {
   assert.equal(st.question, false); // the bar holds a statement now
 });
 
-test("✨/❓ outputs derive from taps, so they read as present", () => {
+test("❓ asks in the bar's tense; ✨ reads as present", () => {
   const { sentence, st } = fresh();
-  applyTransform(sentence, "He went to school.", "past", st);
-  applyTransform(sentence, "He went to the school.", "fix", st);
-  assert.equal(st.tense, "present"); // fixed taps, not a tense chain
-  applyTransform(sentence, "Did he go to the school?", "question", st);
-  assert.equal(st.tense, "present");
+  applyTransform(sentence, "Went to the park.", "past", st);
+  applyTransform(sentence, "Went to the park?", "question", st);
+  assert.equal(st.tense, "past"); // the question was asked in past
   assert.equal(st.question, true);
+  applyTransform(sentence, "Go to the park.", "fix", st);
+  assert.equal(st.tense, "present"); // fixed taps, not a tense chain
+});
+
+test("⏪/⏩ on a question bar keep the question", () => {
+  const { sentence, st } = fresh();
+  applyTransform(sentence, "Go to the park?", "question", st);
+  assert.equal(st.question, true);
+  applyTransform(sentence, "Went to the park?", "past", st);
+  assert.equal(st.tense, "past");
+  assert.equal(st.question, true); // tense change never removes it
 });
 
 /* The provenance law — her taps are the source, never model output. */
@@ -64,6 +73,16 @@ test("snapshot once: the first transform's input survives chains", () => {
   assert.deepEqual(st.preTransform.map((i) => i.text), ["i", "go", "park"]);
   assert.deepEqual(transformSource(sentence, st).map((i) => i.text),
     ["i", "go", "park"]); // ⏩ reads taps, not the model's words
+});
+
+test("restoreBar: ▶ on a ✨/❓ bar just speaks — restore is for tense", () => {
+  const { sentence, st } = fresh();
+  snapshotBar(sentence, st);
+  applyTransform(sentence, "I am hungry.", "fix", st);
+  assert.equal(restoreBar(sentence, st), false); // bar is present — speak what's shown
+  assert.deepEqual(sentence.map((i) => i.text), ["I", "am", "hungry."]);
+  applyTransform(sentence, "I went to the park?", "question", st);
+  assert.equal(restoreBar(sentence, st), false);
 });
 
 test("restoreBar: ▶ puts her exact items back — ids, kinds, no model", () => {

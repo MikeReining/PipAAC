@@ -58,6 +58,22 @@ test("transform returns the model's sentence, prompt picked by mode", async () =
   assert.deepEqual(seen, ["fix", "question", "past", "future"]);
 });
 
+test("bar shape flags reach the model call: ❓ tense, ⏪/⏩ question", async () => {
+  const seen = [];
+  const env = makeEnv(async (mode, text, shape) => {
+    seen.push({ mode, shape });
+    return "ok";
+  });
+  await good(env, { mode: "question", tense: "past" });
+  await good(env, { mode: "past", question: true });
+  await good(env, { mode: "future" });
+  assert.deepEqual(seen, [
+    { mode: "question", shape: { tense: "past", question: false } },
+    { mode: "past", shape: { tense: "present", question: true } },
+    { mode: "future", shape: { tense: "present", question: false } },
+  ]);
+});
+
 test("bad mode, long text, bad license, missing user rejected", async () => {
   const env = makeEnv();
   assert.equal((await good(env, { mode: "shout" })).status, 400);

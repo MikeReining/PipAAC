@@ -179,6 +179,8 @@ Tested live against Groq's API on 2026-09-25:
 
 *2026-09-30 — the wand law (shipped):* the battery (`scripts/sentences/battery.json` + scorer) exposed that the §3 prompts put words in her mouth — a fabricated subject in 90/165 cells, invented content in 28. Rewritten prompts (grammar pass only: her words + glue, no added content/subjects, abstain-by-echo) score 164/165 clean. Shipped with: transforms read a snapshot of her taps (never chained model output), ▶ restores the snapshot with no model call (works offline), any bar edit voids the snapshot, and `unmask` tolerates "Person 1" splits — the lab caught that leak too.
 
+*Same day, follow-ups:* ▶ restores **only** on a past/future bar — after ✨ or ❓ the bar is already present, so it speaks what's shown (a re-press of the fixed sentence, not an undo). ❓ composes with the bar's tense — "Went to the park." → ❓ → "Went to the park?" — and ⏪/⏩ on an existing question keep it one, restoring §1c/§1d's original intent. The press sends shape flags (`tense`, `question`); `transformPrompt()` composes the task server-side while the model input stays her taps. Prompts also went gender-neutral ("the child", not "she") — Pip isn't only for girls.
+
 ---
 
 ## 3. The Transform Prompts & Battle-Tested Results
@@ -296,6 +298,8 @@ Children speak in plans, excitement, and protests (*"I'm gonna get ice cream"*, 
   snapshots her taps (`barState.preTransform`), and ▶ restores the
   snapshot and speaks — no model call, works offline, her exact words
   come back. There is no `present` transform mode.
+- Play restores **only** on a past/future bar. After ✨ or ❓ the bar is
+  already present — ▶ speaks what's shown, never an undo.
 
   *Retired: the old behavior sent the transformed sentence back through
   a present-tense model prompt — re-inferring her words from model

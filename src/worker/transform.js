@@ -17,7 +17,7 @@
  */
 import { checkLicense } from "./license.mjs";
 import { usageCheck, usageRecord } from "./voice.js";
-import { TRANSFORM_PROMPTS } from "../shared/transform_prompts.mjs";
+import { TRANSFORM_PROMPTS, transformPrompt } from "../shared/transform_prompts.mjs";
 
 export { TRANSFORM_PROMPTS };
 
@@ -32,8 +32,8 @@ const json = (data, init = {}) =>
     headers: { "content-type": "application/json; charset=utf-8", ...(init.headers || {}) },
   });
 
-async function groq(env, mode, text) {
-  if (typeof env.GROQ_CHAT === "function") return env.GROQ_CHAT(mode, text);
+async function groq(env, mode, text, shape) {
+  if (typeof env.GROQ_CHAT === "function") return env.GROQ_CHAT(mode, text, shape);
   if (!env.GROQ_API_KEY) return null;
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -45,7 +45,7 @@ async function groq(env, mode, text) {
       model: MODEL,
       temperature: 0, // same sentence + button → same answer (model rules)
       messages: [
-        { role: "system", content: TRANSFORM_PROMPTS[mode] },
+        { role: "system", content: transformPrompt(mode, shape) },
         { role: "user", content: text },
       ],
     }),
@@ -80,9 +80,17 @@ export async function handleTransform(request, env) {
     return json({ error: "fair_use", over: gate.over }, { status: 429 });
   }
 
+  /* The bar's shape composes with the press: ❓ carries the bar's tense
+   * so the question matches it; ⏪/⏩ on an existing question carry the
+   * question flag so the tense change keeps it (023 founder ruling). */
+  const shape = {
+    tense: ["past", "future"].includes(body?.tense) ? body.tense : "present",
+    question: body?.question === true,
+  };
+
   let out;
   try {
-    out = await groq(env, mode, text);
+    out = await groq(env, mode, text, shape);
   } catch {
     return json({ error: "groq_failed" }, { status: 502 });
   }
