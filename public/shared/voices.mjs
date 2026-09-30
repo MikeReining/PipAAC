@@ -10,8 +10,9 @@
  * is a content project that ships as a catalog row.
  *
  * VOICE_LINEUP is the founder-approved plan, shown as "Coming soon"
- * until a catalog voice with the same display name is active. It never
- * makes a voice selectable on its own.
+ * until a catalog voice with the same display name — or one of the
+ * slot's `keys` (named voices like Leo fill "Man") — is active. It
+ * never makes a voice selectable on its own.
  */
 
 export const VOICE_FILTERS = [
@@ -24,7 +25,8 @@ export const VOICE_LINEUP = [
   { name: "Teen girl", group: "girl", note: "A teenage girl" },
   { name: "Teen boy", group: "boy", note: "A teenage boy" },
   { name: "Woman", group: "woman", note: "An adult woman" },
-  { name: "Man", group: "man", note: "An adult man" },
+  // Named voices fill a slot by `keys` — Leo and Sam are the adult men.
+  { name: "Man", group: "man", note: "An adult man", keys: ["voi_leo_en", "voi_sam_en"] },
 ];
 
 /** Available (active, this locale) and coming-soon voices. */
@@ -34,13 +36,18 @@ export function voiceChoices(db, locale) {
      WHERE locale = ? AND status = 'active' ORDER BY is_default DESC, display_name`,
   ).all(locale);
   const shipped = new Set(available.map((v) => v.name.toLowerCase()));
-  const coming = VOICE_LINEUP.filter((v) => !shipped.has(v.name.toLowerCase()));
-  const lineupOf = (name) => VOICE_LINEUP.find((v) => v.name.toLowerCase() === name.toLowerCase());
+  const shippedIds = new Set(available.map((v) => v.id));
+  const covers = (v) =>
+    shipped.has(v.name.toLowerCase()) || (v.keys ?? []).some((k) => shippedIds.has(k));
+  const coming = VOICE_LINEUP.filter((v) => !covers(v));
+  const lineupOf = (v) =>
+    VOICE_LINEUP.find((l) => (l.keys ?? []).includes(v.id)) ??
+    VOICE_LINEUP.find((l) => l.name.toLowerCase() === v.name.toLowerCase());
   return {
     available: available.map((v) => ({
       ...v,
-      group: lineupOf(v.name)?.group ?? null,
-      note: lineupOf(v.name)?.note ?? (v.is_default ? "The voice Pip ships with" : ""),
+      group: lineupOf(v)?.group ?? null,
+      note: lineupOf(v)?.note ?? (v.is_default ? "The voice Pip ships with" : ""),
     })),
     coming,
   };

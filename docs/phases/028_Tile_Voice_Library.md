@@ -1,14 +1,15 @@
 # 028 — Tile voice library (mint once, speak in the chosen voice)
 
-**Status:** **Core shipped 2026-09-29.** Slices 0–5 + the free half of 7
-landed (mint core, client playback + triggers, review page, flag/sweep,
-reconcile, catalog seed). Leo (slice 6) and the extended-library seed
-(slice 7 paid half) are a follow-up gated on founder cost approval;
-slice 8 `catalog_lazy` waits on 010. Production deploy: done
+**Status:** **Core shipped 2026-09-29; Leo shipped 2026-09-30.** Slices
+0–6 + the free half of 7 landed (mint core, client playback + triggers,
+review page, flag/sweep, reconcile, catalog seed, Leo full launch
+coverage incl. forms — founder approved the forms mint). The
+extended-library seed (slice 7 paid half) stays gated on founder cost
+approval; slice 8 `catalog_lazy` waits on 010. Production deploy: done
 (`pippaac.emailmike.workers.dev`, v5 DO migration, admin + vendor
 secrets set — overage check remains a founder dashboard step).
 Keep-in-phases: still owns the live API/ledger spec and the gated
-slices 6–8 work orders.
+slices 7–8 work orders.
 **Related:** phase 010 (extended library), 024 (sentence Grok cache — a
 **different** pipeline that this one copies patterns from),
 `docs/product/Language_And_Voice_Schema.md`,
@@ -39,7 +40,7 @@ mint ledger (what we made), and what a real tablet plays (§ 11).
    there is no second pipeline.
 7. **Voices:** the default female tile voice is **Eve**
    (`WWMMC6k9tdar0BthUenK`, in use today); the male voice is **Leo**
-   (`aGfQDyfOrmWWfC7ZnTbv`, voice id final, **not yet seeded in the catalog**).
+   (`4sAJvpuF0iHhO9nptfOD` — final pick, round leo-compare-002 c3).
 8. **Keyboard text mints too.** Typed words are committed to the message bar
    and minted in the background (§ 5.6); no per-keystroke mints. Device TTS
    is gone from tiles and typed text.
@@ -129,7 +130,7 @@ TileLedger  (one Durable Object, SQLite)      key = sha256(voice|locale|profile|
       "model": "eleven_v4", "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"], "status": "active" },
     { "voice_key": "voi_leo_en", "display_name": "Leo",
-      "provider": "elevenlabs", "voice_id": "aGfQDyfOrmWWfC7ZnTbv",
+      "provider": "elevenlabs", "voice_id": "4sAJvpuF0iHhO9nptfOD",
       "model": "eleven_v4", "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"], "status": "planned" } ] }
 ```
@@ -505,7 +506,7 @@ counter delta over the same window; prints both and the gap, plus the measured *
 badge in the review page (§ 6).
 - Proof: Works Test 9 (the reconcile is the instrument).
 
-**Slice 6 — Leo (second voice).**
+**Slice 6 — Leo (second voice). ✅ 2026-09-30**
 Flip `voi_leo_en` from `planned` to `active` in `tile_voices.json` and add the
 `voi_leo_en` "Leo" `voice` row with the catalog import. **Gate:** Leo is
 selectable only when launch-set seed coverage for Leo is 100% (coverage tool),
@@ -513,6 +514,14 @@ otherwise switching would silence catalog tiles. Seeding Leo's launch set
 (~1,087 utterances) is a **bulk mint — explicit founder approval and cost
 first** (slice 7 machinery). Voice-switch UI and prefetch backfill (§ 5.4).
 Pre-seeding Leo's top-N words is optional, same gate.
+- *Landed:* `mint_tile_voice_seed.mjs` lemma takes (709) +
+  `mint_leo_forms.mjs` form takes (378, founder-approved mint);
+  `publish_leo_seed.mjs` stages clips + uploads WBB R2 and writes
+  `generated_audio.leo.json` / `forms_audio.leo.json`;
+  `build_catalog.mjs` emits the Leo voice row + `clp_leo_*` clips and the
+  strict build throws on any launch-coverage gap; `VOICE_LINEUP` "Man"
+  slot maps to `voi_leo_en`/`voi_sam_en` by `keys`; "Hear it" previews a
+  non-selected voice (bundled clips offline, sentence voice online).
 - Proof: Works Tests 12 (voice switch), 16, 18.
 
 **Slice 7 — Seed + backfill (founder-gated bulk).**

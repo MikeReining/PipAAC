@@ -139,7 +139,7 @@ async function main() {
   if (dryRun) return;
 
   if (process.argv.includes("--publish")) {
-    throw new Error("Leo seed mints are listen-only — publish path is not wired yet (028 slice 6)");
+    throw new Error("Leo seed mints are listen-only — publish with publish_leo_seed.mjs (028 slice 6)");
   }
 
   const takesRoot = join(BATCH_ROOT, "takes");

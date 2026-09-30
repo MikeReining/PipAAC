@@ -182,6 +182,6 @@ test("an unknown feeling is 400; launch voice is active tile voice_key only", as
   assert.equal((await r1.json()).error, "bad_feeling");
   const r2 = await good(env, { voice: "ara" });
   assert.equal(r2.status, 400);
-  const r3 = await good(env, { voice: "voi_leo_en" });
+  const r3 = await good(env, { voice: "voi_sam_en" });
   assert.equal(r3.status, 400); // planned, not active
 });

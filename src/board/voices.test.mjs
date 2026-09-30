@@ -22,12 +22,20 @@ function fresh() {
   return db;
 }
 
-test("today: one voice in use, the six planned voices are coming soon", () => {
+test("today: Eve + Leo in use, the remaining planned voices are coming soon", () => {
   const db = fresh();
   const { available, coming } = voiceChoices(db, "en");
-  assert.equal(available.length, 1);
+  assert.equal(available.length, 2);
   assert.equal(voiceName(db, available[0].id), "Eve"); // 028: the default tile voice is named
-  assert.deepEqual(coming.map((v) => v.name), VOICE_LINEUP.map((v) => v.name));
+  const leo = available.find((v) => v.id === "voi_leo_en");
+  assert.ok(leo, "Leo ships as a selectable voice");
+  assert.equal(voiceName(db, leo.id), "Leo");
+  assert.equal(leo.group, "man"); // the lineup's Man slot, filled by keys
+  assert.ok(!coming.some((v) => v.name === "Man"), "Man slot is filled — no coming-soon card");
+  assert.deepEqual(
+    coming.map((v) => v.name),
+    VOICE_LINEUP.filter((v) => v.name !== "Man").map((v) => v.name),
+  );
 });
 
 test("a shipped voice leaves coming soon and can be chosen; the choice is a synced setting", () => {

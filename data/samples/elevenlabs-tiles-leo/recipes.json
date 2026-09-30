@@ -1,7 +1,7 @@
 {
   "schema": "pippaac.elevenlabs-tiles-recipes.v1",
   "batch": "elevenlabs-tiles-leo",
-  "generatedAt": "2026-09-29T19:39:33.958Z",
+  "generatedAt": "2026-09-29T19:41:00.402Z",
   "defaults": {
     "provider": "elevenlabs",
     "voice_id": "4sAJvpuF0iHhO9nptfOD",

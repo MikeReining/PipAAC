@@ -6,6 +6,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { join } from "node:path";
 
 import {
+  ELEVENLABS_FORMS_LEO_BATCH,
   ELEVENLABS_TILES_LEO_BATCH,
   FORMS_REVIEW_BATCH,
   TILE_REVIEW_BATCH,
@@ -16,7 +17,12 @@ import { getCatalogTileVoice } from "./voices.mjs";
 import { tileReviewUrlForRun } from "./tile_review_voices.mjs";
 import { repoRoot } from "./paths.mjs";
 
-const MINT_RUN_BATCHES = [TILE_REVIEW_BATCH, ELEVENLABS_TILES_LEO_BATCH, FORMS_REVIEW_BATCH];
+const MINT_RUN_BATCHES = [
+  TILE_REVIEW_BATCH,
+  ELEVENLABS_TILES_LEO_BATCH,
+  FORMS_REVIEW_BATCH,
+  ELEVENLABS_FORMS_LEO_BATCH,
+];
 
 export function mintRunsDir(batch = TILE_REVIEW_BATCH) {
   return join(repoRoot, "data/samples", batch, "mint_runs");

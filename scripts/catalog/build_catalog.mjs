@@ -45,6 +45,21 @@ const SYMBOL_EXT_PREF = [".png", ".svg", ".jpg", ".jpeg"];
 const DEFAULT_VOICE_ID = "voi_default_en";
 const CATALOG_SCHEMA_VERSION = 1;
 
+/* 028 slice 6 — extra bundled voices ship when their audio plan exists.
+ * The plan is written by publish_leo_seed.mjs after the voice's launch
+ * takes are minted and uploaded. A voice whose plan misses any launch
+ * utterance fails the shipped (strict) build — a half-seeded voice
+ * would leave tiles silent, which is exactly the slice-6 gate. */
+const EXTRA_VOICES = [
+  {
+    id: "voi_leo_en",
+    displayName: "Leo",
+    audioPlan: join(repoRoot, "data/catalog/generated_audio.leo.json"),
+    formsPlan: join(repoRoot, "data/catalog/forms_audio.leo.json"),
+    clipNs: "leo",
+  },
+];
+
 const pad4 = (n) => String(n).padStart(4, "0");
 
 // A layout header may carry its shape — `## 6. `grid15` — Core 15
@@ -438,6 +453,15 @@ export function buildCatalog(
         is_default: 1,
         status: "active",
       },
+      ...EXTRA_VOICES.filter((v) => existsSync(v.audioPlan)).map((v) => ({
+        id: v.id,
+        locale: "en",
+        display_name: v.displayName,
+        source: "bundled",
+        engine_id: null,
+        is_default: 0,
+        status: "active",
+      })),
     ],
     clips: buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm,
       utterances.filter((u) => u.id.startsWith("utt_f")), allowMissingFormClips),
@@ -530,6 +554,80 @@ function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtte
         sha256: e.clip.sha256,
         source: e.clip.source ?? null,
       });
+    }
+  }
+
+  /* 028 slice 6 — an extra voice's clips mirror the default layout:
+   * lemma clips by owner slot, form clips by utt_f#### id, clip ids
+   * namespaced `clp_<ns>_…` so Eve's ids never move. A shipped voice is
+   * all-or-nothing: the strict build throws on any uncovered launch
+   * utterance or form surface. */
+  for (const v of EXTRA_VOICES) {
+    if (!existsSync(v.audioPlan)) continue;
+    const vClipBySlot = new Map();
+    for (const e of JSON.parse(readFileSync(v.audioPlan, "utf8")).entries ?? []) {
+      if (e.clip?.key) vClipBySlot.set(e.slot, e.clip);
+    }
+    for (const [norm, slots] of slotsByNorm) {
+      const clipSlot = slots.find((s) => vClipBySlot.has(s));
+      if (clipSlot === undefined) {
+        if (!allowMissingFormClips) {
+          const word = entryBySlot.get(ownerSlotByNorm.get(norm))?.spokenText ?? norm;
+          throw new Error(`${v.id} coverage gap: no clip for "${word}" — run publish_leo_seed.mjs`);
+        }
+        continue;
+      }
+      const clip = vClipBySlot.get(clipSlot);
+      const srcFile = join(DEFAULT_AUDIO_CACHE_ROOT, clip.key);
+      if (!existsSync(srcFile)) {
+        throw new Error(`${v.id} audio plan references missing file: ${clip.key} — run publish_leo_seed.mjs`);
+      }
+      const dest = join(PUBLIC_AUDIO_ROOT, clip.key);
+      mkdirSync(dirname(dest), { recursive: true });
+      copyFileSync(srcFile, dest);
+      const ownerSlot = ownerSlotByNorm.get(norm);
+      clips.push({
+        id: `clp_${v.clipNs}_${String(clipSlot).padStart(4, "0")}`,
+        voice_id: v.id,
+        utterance_id: `utt_${String(ownerSlot).padStart(4, "0")}`,
+        recorded_text: entryBySlot.get(ownerSlot).spokenText,
+        key: clip.key,
+        status: "ready",
+        sha256: clip.sha256,
+        source: clip.source,
+      });
+    }
+    if (existsSync(v.formsPlan)) {
+      const plan = JSON.parse(readFileSync(v.formsPlan, "utf8"));
+      const byUtt = new Map((plan.entries ?? []).map((e) => [e.utterance_id, e]));
+      for (const u of formUtterances) {
+        const e = byUtt.get(u.id);
+        if (!e?.clip?.key || e.spoken_text !== u.spoken_text) {
+          if (!allowMissingFormClips) {
+            throw new Error(`${v.id}: form utterance ${u.id} ("${u.spoken_text}") has no clip — run publish_leo_seed.mjs`);
+          }
+          continue;
+        }
+        const srcFile = join(DEFAULT_AUDIO_CACHE_ROOT, e.clip.key);
+        if (!existsSync(srcFile)) {
+          throw new Error(`${v.id} forms audio references missing file: ${e.clip.key} — run publish_leo_seed.mjs`);
+        }
+        const dest = join(PUBLIC_AUDIO_ROOT, e.clip.key);
+        mkdirSync(dirname(dest), { recursive: true });
+        copyFileSync(srcFile, dest);
+        clips.push({
+          id: `clp_${v.clipNs}_${u.id.slice(4)}`,
+          voice_id: v.id,
+          utterance_id: u.id,
+          recorded_text: u.spoken_text,
+          key: e.clip.key,
+          status: "ready",
+          sha256: e.clip.sha256,
+          source: e.clip.source ?? null,
+        });
+      }
+    } else if (formUtterances.length && !allowMissingFormClips) {
+      throw new Error(`${v.id}: no forms plan at ${v.formsPlan} — run mint_leo_forms.mjs, then publish_leo_seed.mjs`);
     }
   }
   return clips;

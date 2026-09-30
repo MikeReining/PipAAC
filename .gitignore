@@ -154,3 +154,10 @@ Dependencies/
 # macOS app packaging
 *.app
 *.appex
+
+# Catalog clip slugs that collide with generic ignores above
+# (eggs, people, out and build are vocabulary words with shipped mp3s).
+!public/audio/eggs/
+!public/audio/people/
+!public/audio/build/
+!public/audio/out/

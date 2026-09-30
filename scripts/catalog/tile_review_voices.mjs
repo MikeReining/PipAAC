@@ -3,6 +3,7 @@
  */
 
 import {
+  ELEVENLABS_FORMS_LEO_BATCH,
   ELEVENLABS_TILES_LEO_BATCH,
   FORMS_REVIEW_BATCH,
   TILE_REVIEW_BATCH,
@@ -32,6 +33,12 @@ export const REVIEW_SURFACES_BY_VOICE = {
       surfaceId: "tiles",
       label: "Launch tiles",
       batch: ELEVENLABS_TILES_LEO_BATCH,
+      canPublishCatalog: false,
+    },
+    {
+      surfaceId: "forms",
+      label: "Word forms",
+      batch: ELEVENLABS_FORMS_LEO_BATCH,
       canPublishCatalog: false,
     },
   ],

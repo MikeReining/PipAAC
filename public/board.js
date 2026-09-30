@@ -496,8 +496,8 @@ async function playBlob(blob, { chained = false } = {}) {
  *  TTS, or a held 400 ms silent slot. A clip the element refuses to
  *  start (autoplay policy, a missing file) falls back to the device
  *  voice — a tap is never silent when a word exists to say. */
-async function speakItem(item, { chained = false } = {}) {
-  const slot = resolveSlot(db, item, locale, voiceId);
+async function speakItem(item, { chained = false, voice = voiceId } = {}) {
+  const slot = resolveSlot(db, item, locale, voice);
   if (slot.type === "clip") {
     if (await playClip(slot.key, { chained })) return;
     if (!slot.text) return;
@@ -2717,17 +2717,17 @@ syncLook();
  * demo sentence. */
 const SAMPLE_TEXT = "I want an apple.";
 async function sampleVoice(id, feeling = "neutral") {
-  if (id !== voiceId) return; // only the board's voice can speak today
   const blob = await sentenceVoice.request({
     userId: me.id, license: await voiceLicense(), voice: id,
     text: SAMPLE_TEXT, feeling, deadlineMs: SPEAK_VOICE_WAIT_MS,
   }).catch(() => null);
   if (blob) return playBlob(blob);
   if (feeling !== "neutral") return false; // a feeling has no word-clip fallback
-  // Offline or unlicensed: the word clips, in the same voice.
+  // Offline or unlicensed: the word clips, in the voice being previewed
+  // (028 slice 6 — Hear it must audition a voice before it is picked).
   endPlaying();
   for (const [text, sid] of [["I", senseIdOf("I")], ["want", "sns_0013"], ["apple", "sns_0128"]]) {
-    await speakItem({ kind: sid ? "sense" : "typed", id: sid, text }, { chained: true });
+    await speakItem({ kind: sid ? "sense" : "typed", id: sid, text }, { chained: true, voice: id });
   }
 }
 function senseIdOf(text) {
