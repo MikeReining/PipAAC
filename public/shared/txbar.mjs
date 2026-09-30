@@ -10,7 +10,7 @@
  * - ❓ sets question; the tense buttons keep it if the result still
  *   ends with a question mark ("changing tense never removes the
  *   question"), ✨ is judged the same way.
- * - ⏪/⏩ set tense; anything derived from untensed taps (✨, ❓, ▶)
+ * - ⏪/⏩ set tense; anything derived from untensed taps (✨, ❓)
  *   leaves the bar at present — the flag describes what the bar holds.
  * - Clearing the bar resets both — renderBar owns that (no items, no
  *   state to display).

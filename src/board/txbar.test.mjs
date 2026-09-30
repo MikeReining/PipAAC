@@ -3,7 +3,7 @@
  *
  * The result replaces the bar as typed words; the trio is a
  * three-position switch; a question survives a tense change; ⏪/⏩ move
- * tense, and anything derived from her taps (✨ ❓ ▶) reads as present.
+ * tense, and anything derived from her taps (✨ ❓) reads as present.
  * The provenance law: transforms read her saved taps, ▶ restores them
  * with no model, and any edit voids the snapshot.
  */
@@ -52,13 +52,6 @@ test("✨/❓ outputs derive from taps, so they read as present", () => {
   applyTransform(sentence, "Did he go to the school?", "question", st);
   assert.equal(st.tense, "present");
   assert.equal(st.question, true);
-});
-
-test("present returns the bar and speaks present", () => {
-  const { sentence, st } = fresh();
-  applyTransform(sentence, "I'm not going to school.", "future", st);
-  applyTransform(sentence, "I don't go to school.", "present", st);
-  assert.equal(st.tense, "present");
 });
 
 /* The provenance law — her taps are the source, never model output. */

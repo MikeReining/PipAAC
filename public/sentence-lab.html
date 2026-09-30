@@ -66,7 +66,7 @@
     <h1>Sentence lab</h1>
     <p class="sub">
       Type a fragment (<code>want play</code>, <code>go park</code>) → one click runs
-      <strong>every magic-wand mode</strong> (fix · question · past · present · future) through
+      <strong>every magic-wand mode</strong> (fix · question · past · future) through
       <strong>Qwen</strong> (what production ships) and <strong>GPT-OSS-120b</strong> side by side —
       same prompts, temperature 0, Groq direct. Timings are wall-clock per call.
       Verdicts (✓/✗) stick to the run in <code>out/sentence_lab/</code>.
@@ -118,7 +118,7 @@ const post = async (path, body) => {
 };
 const setStatus = (msg, err) => { $("status").textContent = msg || ""; $("status").className = err ? "err" : ""; };
 const esc = (s) => { const d = document.createElement("span"); d.textContent = s ?? ""; return d.innerHTML; };
-const MODE_LABEL = { fix: "✨ fix", question: "❓ question", past: "⏪ past", present: "▶ present", future: "⏩ future" };
+const MODE_LABEL = { fix: "✨ fix", question: "❓ question", past: "⏪ past", future: "⏩ future" };
 
 function cellHtml(run, mode, lane) {
   const c = run.results?.[mode]?.[lane];
@@ -258,7 +258,7 @@ function batterySummary(b) {
 
 function fillPromptAreas(which) {
   const prompts = battSpec?.prompts?.[which] ?? {};
-  $("promptrow").innerHTML = (battSpec?.__modes ?? ["fix", "question", "past", "present", "future"])
+  $("promptrow").innerHTML = (battSpec?.__modes ?? ["fix", "question", "past", "future"])
     .map((m) => `<div><label>${MODE_LABEL[m] ?? m}</label><textarea id="bp-${m}">${esc(prompts[m] ?? "")}</textarea></div>`)
     .join("");
 }

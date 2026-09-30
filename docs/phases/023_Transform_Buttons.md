@@ -71,13 +71,13 @@ Settings    message bar: symbols +    Fix  Qstn Past Play Ftr
 
 - Works as a **three-position switch**. Exactly one is selected at all times.
   **Play (present) is the default.**
-- Each button sets the sentence to its tense, then speaks it:
+- ⏪ and ⏩ transform the sentence to their tense, then speak it:
   - ⏪ Past (rewind): *"He went to school."*
-  - ▶ Play (present): *"He goes to school."*
   - ⏩ Future (forward): *"He is going to school."* ("going to" is the
     future form; kids rarely say "will" — see § 3, Mode 3)
-- **Play is also the speak button.** When the sentence is already present, it
-  just speaks it.
+- **Play is the speak button.** It speaks the bar as built — on a
+  transformed bar it first restores her tapped words (deterministic,
+  no model call; see § 3 ▶ Play).
 - Pressing an already-selected tense re-speaks the sentence. Nothing else
   changes.
 - Tense and question combine:
@@ -175,7 +175,7 @@ Tested live against Groq's API on 2026-09-25:
 
 *Note on model selection:* `openai/gpt-oss-20b` was tested on identical inputs and burned 28 reasoning tokens inside `<think>` tags before emitting text. `qwen/qwen3.8-27b` is zero-reasoning, instruction-tuned, and generates immediately.
 
-*2026-09-30 — sentence lab (`/sentence-lab`):* `openai/gpt-oss-120b` at `reasoning_effort: low` was compared head-to-head on all five modes — still spent 15–32 reasoning tokens per call, ran ~40–60% slower wall-clock (mostly Groq queue time), and dropped the subject on `past` ("Wanted to play." vs "I wanted to play."). **Ruling: stay on qwen3.8-27b.** Re-test via the lab if Groq model versions or pricing move.
+*2026-09-30 — sentence lab (`/sentence-lab`):* `openai/gpt-oss-120b` at `reasoning_effort: low` was compared head-to-head on all modes — still spent 15–32 reasoning tokens per call, ran ~40–60% slower wall-clock (mostly Groq queue time), and dropped the subject on `past` ("Wanted to play." vs "I wanted to play."). **Ruling: stay on qwen3.8-27b.** Re-test via the lab if Groq model versions or pricing move.
 
 *2026-09-30 — the wand law (shipped):* the battery (`scripts/sentences/battery.json` + scorer) exposed that the §3 prompts put words in her mouth — a fabricated subject in 90/165 cells, invented content in 28. Rewritten prompts (grammar pass only: her words + glue, no added content/subjects, abstain-by-echo) score 164/165 clean. Shipped with: transforms read a snapshot of her taps (never chained model output), ▶ restores the snapshot with no model call (works offline), any bar edit voids the snapshot, and `unmask` tolerates "Person 1" splits — the lab caught that leak too.
 
@@ -288,16 +288,18 @@ Children speak in plans, excitement, and protests (*"I'm gonna get ice cream"*, 
 
 ### ▶ Play (Present)
 
-- **Play is the speak button.** On an untransformed present sentence it never
-  goes through the model — it speaks the bar as built.
+- **Play is the speak button.** It always speaks the bar as built — and
+  never goes through the model.
 - As the middle position of the tense switch, Play also returns a
-  past/future sentence to present (a model call using the present-tense
-  transform), then speaks it.
+  past/future sentence to present. Since the wand law shipped
+  (2026-09-30) that return is **deterministic**: the first transform
+  snapshots her taps (`barState.preTransform`), and ▶ restores the
+  snapshot and speaks — no model call, works offline, her exact words
+  come back. There is no `present` transform mode.
 
-* **System Prompt (return to present):**
-  ```text
-  A child using an AAC device is trying to say this. Turn it into natural spoken present tense. Create the simplest sentence given the childs input. Keep exactly what the child means, even if it's rude. Never refuse. If it is a question, keep it a question.
-  ```
+  *Retired: the old behavior sent the transformed sentence back through
+  a present-tense model prompt — re-inferring her words from model
+  output, and failing offline.*
 
 ---
 
@@ -370,9 +372,9 @@ them yet.
    ```text
    Tap ✨ / ❓ / ⏪ / ▶ / ⏩
      │
-     ├── 1. Send the bar's current sentence to Groq (qwen/qwen3.8-27b,
-     │      temperature 0) with that button's prompt — except ▶ on an
-     │      already-present sentence, which speaks without a model call
+     ├── 1. Send her tapped sentence to Groq (qwen/qwen3.8-27b,
+     │      temperature 0) with that button's prompt — except ▶, which
+     │      restores the tapped snapshot and speaks without a model call
      ├── 2. Show the returned sentence in the bar; the button takes/stays
      │      in its selected state per § 1
      └── 3. Speak the resulting sentence immediately
@@ -389,8 +391,8 @@ them yet.
      and question state are judged from what the bar then holds.
 3. **Empty bar:** all transform buttons and ▶ are disabled while the
    sentence is empty. Positions never move (§ 1).
-4. **Offline:** ✨ ❓ ⏪ ⏩ and the model side of ▶ grey out. ▶ still speaks
-   the bar as-is — speaking never depends on the network.
+4. **Offline:** ✨ ❓ ⏪ ⏩ grey out. ▶ always works — restoring her taps
+   is deterministic, and speaking never depends on the network.
 5. **Clear undo:** after ✕ clears the bar, show the undo pill for 5 s;
    tapping restores the previous sentence including its tense/question
    state (§ 1a).

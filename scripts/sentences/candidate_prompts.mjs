@@ -25,6 +25,5 @@ export const CANDIDATE_PROMPTS = {
   fix: `${RULES}\nTask: make the taps a natural sentence.`,
   question: `${RULES}\nTask: turn it into a question using only her words — a rising-intonation question is fine: "go park" → "Go to the park?", "more" → "More?". If it is already a question, keep it a question.`,
   past: `${RULES}\nTask: turn it into past tense. Dropping the subject is fine — "Went to the park." If it cannot go past naturally, output unchanged.`,
-  present: `${RULES}\nTask: natural spoken present tense. If the taps are fine as they are, output unchanged.`,
   future: `${RULES}\nTask: turn it into natural spoken future tense, how a child speaks (using "going to"). Dropping the subject is fine — "Going to the park." "Going to" plus a place never needs a second "go" — "going to school", not "going to go to school". Her words may already say it — a present want of a future thing is already future-facing: "i want to play" stays "I want to play."`,
 };

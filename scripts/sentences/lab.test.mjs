@@ -23,7 +23,7 @@ const okReply = (text, extra = {}) => ({
 
 test("worker + lab share one prompt table", () => {
   assert.deepEqual(WORKER_PROMPTS, TRANSFORM_PROMPTS);
-  assert.deepEqual(TRANSFORM_MODES, ["fix", "question", "past", "present", "future"]);
+  assert.deepEqual(TRANSFORM_MODES, ["fix", "question", "past", "future"]);
 });
 
 test("transformChatBody: production shape, lane knobs, prompt per mode", () => {
@@ -93,7 +93,7 @@ test("runTransformSuite fills every mode × lane; a dead cell never sinks the ru
     return okReply(`${body.model} → ${body.messages[1].content}`);
   };
   const suite = await runTransformSuite({ text: "go park", apiKey: "k", fetchImpl });
-  assert.equal(suite.modes.length, 5);
+  assert.equal(suite.modes.length, 4);
   for (const mode of suite.modes) {
     for (const lane of Object.keys(TRANSFORM_LANES)) {
       assert.ok(suite.results[mode][lane], `${mode}/${lane} present`);
