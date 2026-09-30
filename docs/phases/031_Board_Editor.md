@@ -262,8 +262,10 @@ overwhelming.
 
 1. **One editor on every screen (slice G).** Recommend yes — two editors
    with different powers is how the product drifts.
-2. **Wide screens land in the editor, on the main board.** Recommend yes: on
-   a laptop the supporter came to edit; the main board is what Maya sees first.
+2. **The app always opens on the board — on every screen.** Founder
+   2026-09-30 overruled "wide screens land in the editor": opening into an
+   editor is not intuitive. The editor opens only from Settings → **Edit the
+   board**; inside it, the main board is what Maya sees first.
 3. **Device acknowledgement for "on Maya's iPad".** Not built. Recommend
    "✓ Saved" (relay accepted) now; a device ack is a later sync slice, and
    the status says only what it knows.

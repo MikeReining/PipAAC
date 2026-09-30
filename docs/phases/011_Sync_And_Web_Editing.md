@@ -207,8 +207,9 @@ shows them in the same slots the laptop shows. Automated half: a headless
 browser client and a second client against the local relay. The same
 paste yields byte-identical `group_cell` rows on both.
 
-**DONE.** On `min-width: 1100px` the app opens to the editor
-(`body.editor`, `setView("editor")`): the Library overlay and the word
+**DONE.** On `min-width: 1100px` the editor (`body.editor`,
+`setView("editor")`; since 2026-09-30 opened only from Settings → Edit the
+board, 031 § 11.2): the Library overlay and the word
 card overlay are reparented into the editor's left and right panes — same
 nodes, same listeners — and the middle pane renders the real 10×6 group
 grid with Edit-mode gestures always on (drag move/swap, × remove, tap

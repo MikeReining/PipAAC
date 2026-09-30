@@ -2884,13 +2884,6 @@ setInterval(() => {
   }
 }, 30000);
 
-// On a wide screen the app opens to the editor (031 § 11.2): a laptop
-// supporter came to edit. The word card docks in the editor's right pane
-// when a word is selected (word-card.js dock()).
-if (matchMedia("(min-width: 1100px)").matches) {
-  kbUi.setView("editor");
-}
-
 // Console handle for works tests and founder debugging — read-only access
 // to the live db and resolved profile. Product truth still flows through
 // the functions above; this exposes, it does not own.
