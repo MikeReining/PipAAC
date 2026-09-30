@@ -141,6 +141,9 @@ out.demo = await evalJs(`(async () => { ${w}
       now: r?.querySelector('.move-now')?.textContent.trim() || (r?.querySelector('.move-now.move-ctl') ? '✨' : null) };
   };
   const card0 = cardRow();
+  // ✨ in the card's text is the button's own icon, not the emoji.
+  const noteIcon = { svg: !!document.querySelector('.spot-demo-card .tour-note .text-icon svg'),
+    emoji: document.querySelector('.spot-demo-card .tour-note').textContent.includes('✨') };
   cell('more').click(); await w(150);
   cell('go').click(); await w(150);
   const card2 = cardRow();
@@ -155,7 +158,7 @@ out.demo = await evalJs(`(async () => { ${w}
     presses: ${count("transform_event")} - tx0,
     barAfterMove: window.pip.sentence.length };
   document.querySelector('#spot-chip').click(); await w(600);
-  return { lit, moveStep, moveLit, card0, card2, moveBar, step, ledger,
+  return { lit, moveStep, moveLit, card0, noteIcon, card2, moveBar, step, ledger,
     after: { glow: document.querySelectorAll('#grid .cell.glow').length,
       dimmed: document.querySelectorAll('#grid .cell.dimmed').length,
       card: !!document.querySelector('.spot-demo-card'),
@@ -183,6 +186,8 @@ out.moves = await evalJs(`(async () => { ${w}
   const recipe = idea.querySelector('.spot-recipe')?.textContent ?? '';
   const recipeTiles = idea.querySelectorAll('.spot-recipe .move-row .cell').length;
   const recipeCtl = !!idea.querySelector('.spot-recipe .move-ctl svg');
+  const recipeIcon = !!idea.querySelector('.spot-recipe .hint .text-icon svg')
+    && !idea.querySelector('.spot-recipe .hint').textContent.includes('✨');
   idea.querySelector('.btn').click(); await w(200);
   [...document.querySelectorAll('.spot-card')]
     .find((c) => c.querySelector('.spot-list-name').textContent === 'Make it a sentence')
@@ -241,7 +246,7 @@ out.moves = await evalJs(`(async () => { ${w}
   document.querySelector('#spot-list-name').value = 'Go ask';
   document.querySelector('#spot-name-save').click(); await w(600);
   const saved = window.pip.spotlight.lists().find((l) => l.name === 'Go ask');
-  return { recipe, recipeTiles, recipeCtl, lit, presses, dayRow, faceTap, picked, saved: saved && { n: saved.n, controls: saved.controls },
+  return { recipe, recipeTiles, recipeCtl, recipeIcon, lit, presses, dayRow, faceTap, picked, saved: saved && { n: saved.n, controls: saved.controls },
     afterPick: document.querySelector('#tx-question').disabled };
 })()`);
 
@@ -256,6 +261,7 @@ const ok =
   out.demo.moveBar === "more go" &&
   out.demo.card0.tiles === 2 && out.demo.card0.ctl && out.demo.card0.done === 0 && out.demo.card0.now === "more" &&
   out.demo.card2.done === 2 && out.demo.card2.now === "✨" &&
+  out.demo.noteIcon.svg && !out.demo.noteIcon.emoji &&
   out.demo.step.includes("4 of 4") &&
   out.demo.ledger.ops === 0 && out.demo.ledger.taps === 0 && out.demo.ledger.sessions === 0 &&
   out.demo.ledger.tx.join() === "fix:more go" && out.demo.ledger.barAfterMove === 0 &&
@@ -264,7 +270,7 @@ const ok =
   out.demo.after.childBarBefore === "I" && out.demo.after.childBar === "I" &&
   out.demo.after.backOnPage &&
   out.running.tryHidden && out.running.glow === 6 &&
-  out.moves.recipe.includes("✨") && out.moves.recipeTiles === 2 && out.moves.recipeCtl &&
+  out.moves.recipeIcon && out.moves.recipeTiles === 2 && out.moves.recipeCtl &&
   out.moves.lit.fix && !out.moves.lit.question && out.moves.lit.cells === 4 && !out.moves.lit.walk &&
   out.moves.presses.join() === "fix:1,fix:0" &&
   out.moves.faceTap.found && out.moves.faceTap.errs.length === 0 &&

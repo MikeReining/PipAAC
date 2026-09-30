@@ -11,6 +11,7 @@
 import { dashboard, rangeFor } from "../shared/dashboard.mjs";
 import { weeklyCard } from "../shared/wincard.mjs";
 import { reportPdf } from "../shared/report.mjs";
+import { withIcons } from "./inline-icons.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -112,7 +113,7 @@ export function mountProgress({ db, me, nameOf, entitlement, open, toast }) {
         const t = d.buttons.total[mode];
         if (!t) continue;
         const trend = d.weeks.map((w) => d.buttons.weeks[w.week]?.[mode]?.own ?? 0).join(" → ");
-        box.appendChild(el("p", null,
+        box.appendChild(withIcons(el("p"),
           `${label} — on their own ${t.own} · with the glow ${t.glow} · on their own by week: ${trend}`));
       }
       sec("Sentence buttons", box);

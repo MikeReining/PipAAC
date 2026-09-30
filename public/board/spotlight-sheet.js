@@ -14,6 +14,7 @@ import {
   SHOWCASE, STARTER_LISTS, showcaseLit, starterFor, starterTargets,
 } from "../shared/spotlight_starters.mjs";
 import { moveRow } from "./move-row.js";
+import { withIcons } from "./inline-icons.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -47,7 +48,7 @@ export function mountSpotlightSheet({
 
   const chips = (keys) => {
     const box = el("div", "spot-chips");
-    for (const k of keys) box.append(el("span", "spot-chip", coachLabel(...k.split(":"))));
+    for (const k of keys) box.append(withIcons(el("span", "spot-chip"), coachLabel(...k.split(":"))));
     return box;
   };
   const person = () => me.name?.trim() || "this person";
@@ -55,7 +56,7 @@ export function mountSpotlightSheet({
   const recipe = (x) => {
     const box = el("div", "spot-recipe");
     if (x.move) box.append(moveRow(x.move, { tileFor }));
-    if (x.recipe) box.append(el("p", "hint", x.recipe));
+    if (x.recipe) box.append(withIcons(el("p", "hint"), x.recipe));
     return box;
   };
 
@@ -226,6 +227,9 @@ export function mountSpotlightSheet({
     renderLook();
   }
 
+  // Page copy that names a sentence button shows its icon (index.html
+  // marks those lines data-icons).
+  for (const p of document.querySelectorAll?.("[data-icons]") ?? []) withIcons(p, p.textContent);
   onSettingsOpen(renderSpotForm);
   $("spot-try").addEventListener("click", () => startDemo());
   $("spot-model").addEventListener("click", () => {

@@ -17,6 +17,7 @@ import {
   SHOWCASE, showcaseLit,
 } from "../shared/spotlight_starters.mjs";
 import { moveRow } from "./move-row.js";
+import { withIcons } from "./inline-icons.js";
 
 // One worked example from start to end (SHOWCASE): the Spotlight page's
 // picture, then these cards, use the same tiles and the same glow. Card 1
@@ -58,7 +59,7 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
     say.textContent = s.say;
     const note = document.createElement("p");
     note.className = "tour-note";
-    note.textContent = s.note;
+    withIcons(note, s.note);
     let picture = null;
     if (s.compare) {
       picture = document.createElement("div");

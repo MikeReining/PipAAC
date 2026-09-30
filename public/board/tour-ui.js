@@ -18,6 +18,8 @@
  * follows so they never overlap.
  */
 
+import { withIcons } from "./inline-icons.js";
+
 const $ = (id) => document.getElementById(id);
 
 export const SCRIPT = {
@@ -63,16 +65,16 @@ export function mountTour({ board, saveUser }) {
     card.replaceChildren();
     const text = document.createElement("p");
     text.className = "tour-say";
-    text.textContent = s.say;
+    withIcons(text, s.say); // ✨ shows as the button's icon, not the emoji
     card.append(text);
     const row = document.createElement("div");
     row.className = "tour-row";
     if (s.done) {
       const note = document.createElement("p");
       note.className = "tour-note";
-      note.textContent = navigator.onLine === false
+      withIcons(note, navigator.onLine === false
         ? "✨ and the time buttons need the internet to work on your own sentences. Connect when you can."
-        : "✨ and the time buttons work on any sentence you build.";
+        : "✨ and the time buttons work on any sentence you build.");
       card.append(note);
       // The first sentence is when a parent notices the voice: offer the
       // rest right here (founder 2026-09-29).

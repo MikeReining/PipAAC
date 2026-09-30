@@ -4,6 +4,7 @@
  * The child's own device renders none of this.
  */
 import { CONTROLS, coachTap, coachTally, spotlight, tipFor } from "../shared/spotlight.mjs";
+import { withIcons } from "./inline-icons.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -52,7 +53,7 @@ export function mountCoach({ db, locale, all, catalog, me, syncSendModel }) {
       const label = coachLabel(kind, id);
       const b = document.createElement("button");
       b.className = "coach-word";
-      b.textContent = label;
+      withIcons(b, label);
       b.addEventListener("click", () => {
         // The same transient path as Model mode — the word glows on the
         // child's board; the tally stays here, measuring the partner.
@@ -64,7 +65,7 @@ export function mountCoach({ db, locale, all, catalog, me, syncSendModel }) {
         const tip = tipFor(db, catalog, kind, id)
           ?? `"${label}" — tap it while you say it, then wait.`;
         const tipEl = $("coach-tip");
-        tipEl.textContent = tip;
+        withIcons(tipEl, tip);
         tipEl.hidden = false;
         renderCoachTally();
       });
