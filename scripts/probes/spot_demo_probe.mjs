@@ -249,7 +249,7 @@ const ok =
   out.ideas.after.join() === "Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
   out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 6 &&
   out.demo.lit.glow === 6 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
-  out.demo.lit.barSetAside && out.demo.lit.compare === 4 && out.demo.lit.arrows === 0 &&
+  out.demo.lit.barSetAside && out.demo.lit.compare === 6 && out.demo.lit.arrows === 0 &&
   out.demo.moveStep.includes("3 of 4") && out.demo.moveLit.fix && out.demo.moveLit.cells === 2 &&
   out.demo.moveBar === "more go" &&
   out.demo.card0.tiles === 2 && out.demo.card0.ctl && out.demo.card0.done === 0 && out.demo.card0.now === "more" &&

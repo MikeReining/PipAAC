@@ -13,24 +13,28 @@
  * session that was running comes back.
  */
 import { endSpotlight, resumeSession, spotlight, startSpotlight } from "../shared/spotlight.mjs";
-import { STARTER_LISTS, starterTargets } from "../shared/spotlight_starters.mjs";
+import {
+  SHOWCASE, STARTER_LISTS, showcaseLit, starterTargets,
+} from "../shared/spotlight_starters.mjs";
 import { moveRow } from "./move-row.js";
 
-// Step 3 lights a move: two words and the ✨ button (sense ids: more, go).
-const MOVE = ["sense:sns_0055", "sense:sns_0015", "control:fix"];
-// Each card shows what to look for or press — the board's own tiles and
-// buttons (E5), never a word to hunt for. Card 1 is a comparison, not a
-// sequence: no arrows, two labelled groups (want and more glow in First
-// words; I and you do not). An arrow there read as "want, then I".
-const LIT = ["sns_0013", "sns_0055"]; // want more
-const DIM = "sense:sns_0001"; // I
-const DIMS = ["sns_0001", "sns_0002"]; // I you
+// One worked example from start to end (SHOWCASE): the Spotlight page's
+// picture, then these cards, use the same tiles and the same glow. Card 1
+// is a comparison — two labelled groups, no arrow (an arrow read as word
+// order). Card 2 asks for the dimmed word the page's picture tapped.
+// Card 3 builds the move from what they've seen: more (glowing) + that
+// same word + ✨ — so its new glow reads as the next step, not a new
+// example.
+const GLOWS = SHOWCASE.tiles.filter(showcaseLit);
+const DIMS = SHOWCASE.tiles.filter((id) => !showcaseLit(id));
+const TAP = `sense:${SHOWCASE.tap}`;
+const MOVE = [`sense:${SHOWCASE.lead}`, TAP, "control:fix"];
 const STEPS = [
   { say: "These words glow. The rest dim.", note: "Nothing moved, and nothing is switched off.", go: "Next",
     compare: true },
-  { say: "Tap a dimmed word.", note: "It still speaks. Spotlight never takes a word away.", go: "Next",
-    show: () => ({ steps: [DIM], mark: { [DIM]: "dimmed" } }) },
-  { say: "Tap these, in order.", note: "✨ turns two words into a whole sentence and says it. Spotlight can light ✨ and ❓ too.", go: "Next", move: true,
+  { say: "Tap a dimmed word, like this one.", note: "It still speaks. Spotlight never takes a word away.", go: "Next",
+    show: () => ({ steps: [TAP], mark: { [TAP]: "dimmed" } }) },
+  { say: "Now Spotlight lights a move. Tap these, in order.", note: "✨ turns two words into a whole sentence and says it.", go: "Next", move: true,
     show: (moved) => ({ steps: MOVE, done: moved }) },
   { say: "Tap this to end a spotlight.", note: "While one runs, it sits up top. Next, pick your own words in Settings → Spotlight.", go: "Done",
     chip: true },
@@ -60,7 +64,7 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
       picture = document.createElement("div");
       picture.className = "move-compare";
       picture.setAttribute("aria-hidden", "true");
-      for (const [label, ids, mark] of [["Glow", LIT, "glow"], ["Dim", DIMS, "dimmed"]]) {
+      for (const [label, ids, mark] of [["Glow", GLOWS, "glow"], ["Dim", DIMS, "dimmed"]]) {
         const group = document.createElement("div");
         group.className = "move-group";
         const tiles = document.createElement("div");

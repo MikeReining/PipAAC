@@ -16,7 +16,9 @@ import {
   CONTROLS, endSpotlight, listTargets, needsRouteWalk, saveSpotList, spotLists,
   spotlight, startSpotlight, tipFor,
 } from "../../public/shared/spotlight.mjs";
-import { STARTER_LISTS, starterTargets } from "../../public/shared/spotlight_starters.mjs";
+import {
+  SHOWCASE, STARTER_LISTS, showcaseLit, starterTargets,
+} from "../../public/shared/spotlight_starters.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
@@ -83,4 +85,15 @@ test("the moves lists carry their buttons through a save", () => {
   for (const x of STARTER_LISTS) {
     for (const id of x.senses) assert.ok(core.has(id), `${x.name}: ${id} is not on the home board`);
   }
+});
+
+// The worked example must hold together (founder, 2026-09-30): the word
+// the picture taps and card 2 asks for is dimmed; the move starts on a
+// word that glows; and some tiles glow while others dim.
+test("the showcase tells one story: tap a dimmed word, start the move on a lit one", () => {
+  assert.ok(SHOWCASE.tiles.includes(SHOWCASE.tap) && SHOWCASE.tiles.includes(SHOWCASE.lead));
+  assert.equal(showcaseLit(SHOWCASE.tap), false, "the tapped word is dimmed");
+  assert.equal(showcaseLit(SHOWCASE.lead), true, "the move starts on a glowing word");
+  const lit = SHOWCASE.tiles.filter(showcaseLit).length;
+  assert.ok(lit > 0 && lit < SHOWCASE.tiles.length, "some glow, some dim");
 });

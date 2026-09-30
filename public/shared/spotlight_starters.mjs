@@ -38,6 +38,21 @@ export const STARTER_LISTS = [
   },
 ];
 
+/** The one worked example Spotlight teaches with (032, founder
+ *  2026-09-30: the page and Try it showed three different examples and it
+ *  read as nonsense). The page's picture and every Try it card use these
+ *  tiles. What glows is never listed here — it is whatever First words
+ *  holds, so the picture always matches what Try it lights on the board.
+ *  `tap` is a dimmed word: the picture taps it, card 2 asks for it, and
+ *  card 3's move is First words' `more` + it + ✨. */
+export const SHOWCASE = {
+  tiles: ["sns_0001", "sns_0013", "sns_0055", "sns_0015", "sns_0026", "sns_0025"], // I want more go stop help
+  tap: "sns_0015", // go
+  lead: "sns_0055", // more — glows, and starts the move
+};
+/** Is a showcase tile lit by First words? */
+export const showcaseLit = (id) => STARTER_LISTS[0].senses.includes(id);
+
 export const starterTargets = (list) => [
   ...list.senses.map((id) => `sense:${id}`),
   ...(list.controls ?? []).map((c) => `control:${c}`),

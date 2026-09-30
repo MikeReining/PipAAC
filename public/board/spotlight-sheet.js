@@ -10,7 +10,9 @@ import {
   untilText,
 } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
-import { STARTER_LISTS, starterFor, starterTargets } from "../shared/spotlight_starters.mjs";
+import {
+  SHOWCASE, STARTER_LISTS, showcaseLit, starterFor, starterTargets,
+} from "../shared/spotlight_starters.mjs";
 import { moveRow } from "./move-row.js";
 
 const $ = (id) => document.getElementById(id);
@@ -21,11 +23,11 @@ const el = (tag, cls, text) => {
   return n;
 };
 
-/* The hero: six real board tiles, two glowing. The tap lands on a dimmed
- * one — it still speaks. Sense ids are the shipped core words. */
-const HERO = ["sns_0001", "sns_0013", "sns_0055", "sns_0015", "sns_0026", "sns_0025"]; // I want more go stop help
-const HERO_GLOW = new Set(["sns_0055", "sns_0025"]); // more, help
-const HERO_TAP = "sns_0026"; // stop
+/* The hero: the showcase tiles (spotlight_starters.mjs), lit exactly as
+ * Try it will light them. The tap lands on a dimmed one — it still
+ * speaks — and it is the word Try it's cards ask for next. */
+const HERO = SHOWCASE.tiles;
+const HERO_TAP = SHOWCASE.tap;
 
 export function mountSpotlightSheet({
   db, catalog, me, open, close, all, coachLabel, tileFor, bindSpotSettings,
@@ -63,11 +65,13 @@ export function mountSpotlightSheet({
     if (box.childElementCount) return;
     for (const id of HERO) {
       const t = tileFor(id);
-      t.classList.add(HERO_GLOW.has(id) ? "glow" : "dimmed");
+      t.classList.add(showcaseLit(id) ? "glow" : "dimmed");
       if (id === HERO_TAP) t.classList.add("spot-hero-tapped");
       box.append(t);
     }
     $("spot-hero-say").textContent = `“${coachLabel("sense", HERO_TAP)}”`;
+    // The tap marker sits over the tapped tile's column.
+    $("spot-hero-mark").style.gridColumn = String(HERO.indexOf(HERO_TAP) + 1);
   }
 
   function renderNow() {
@@ -207,7 +211,7 @@ export function mountSpotlightSheet({
     if (!prev.childElementCount) {
       for (const id of HERO.slice(1, 5)) {
         const t = tileFor(id);
-        t.classList.add(HERO_GLOW.has(id) ? "glow" : "dimmed");
+        t.classList.add(showcaseLit(id) ? "glow" : "dimmed");
         prev.append(t);
       }
     }

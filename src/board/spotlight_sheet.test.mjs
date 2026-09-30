@@ -13,6 +13,7 @@ function el() {
   const node = {
     children: [],
     attrs: {},
+    style: {},
     textContent: "",
     value: "",
     hidden: false,
@@ -51,7 +52,7 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
     "spot-running", "spot-running-label", "spot-lists",
     "spot-pulse", "spot-dim", "model-speaks", "spot-off", "spot-hero-tiles",
     "spot-hero-say", "spot-running-words", "spot-model-title", "spot-model-hint",
-    "spot-link", "spot-look-sum", "spot-prev", "spot-try",
+    "spot-link", "spot-look-sum", "spot-prev", "spot-try", "spot-hero-mark",
     "spot-model", "model-done", "spot-end", "spot-pick", "spot-pick-cancel",
     "spot-pick-start", "spot-pick-save", "spot-list-name", "spot-name-save",
   ];
