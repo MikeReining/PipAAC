@@ -13,7 +13,9 @@
  *  - apply   — a close picture exists (server `auto`): use it, free
  *  - draw    — nothing close, a common word, the finder is calibrated
  *  - choose  — show the candidates and let the adult pick (people and
- *              pets, an uncalibrated finder, or no scope answer)
+ *              pets, an uncalibrated finder, or no scope answer); a
+ *              spelling suggestion also lands here — "bananna" asks
+ *              "did you mean banana?" instead of drawing a second banana
  *  - none    — nothing to offer at all
  *  A null scope never auto-draws (030 § 4.3 fail-closed). */
 export function pictureAction(found) {
@@ -27,6 +29,12 @@ export function pictureAction(found) {
         others: candidates.filter((c) => c.image_id !== found.auto).slice(0, 3),
       };
     }
+  }
+  if (found.suggestion) {
+    return {
+      kind: "choose", suggestion: found.suggestion,
+      others: candidates.slice(0, 4), personal: false,
+    };
   }
   if (found.scope === "common" && found.calibrated) {
     return { kind: "draw", others: candidates.slice(0, 3) };

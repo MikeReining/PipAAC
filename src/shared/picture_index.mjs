@@ -162,6 +162,59 @@ export function decideAuto(
   return top.score >= cutoffFor(cfg, language) ? top.image_id : null;
 }
 
+/* --------------------------- typo suggestion ---------------------------- */
+
+/** Small-string Levenshtein — label keys are folded, so distances are
+ *  already over orthographic forms ("bananna" → "banana" = 1). */
+export function editDistance(a, b) {
+  const m = a.length, n = b.length;
+  if (!m) return n; if (!n) return m;
+  let prev = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) {
+    const cur = [i];
+    for (let j = 1; j <= n; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1,
+        prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[n];
+}
+
+/** § 4.2 typo suggestion — fires only when the typed word is no label
+ *  at all and nothing applied. A label within a small edit distance
+ *  whose image the embedding ALSO surfaced is a likely misspelling:
+ *  spelling says "same word", the pool says "same meaning" — so
+ *  "bananna" suggests "banana" but "crocs" never suggests "cross".
+ *  Short words (≤4) allow one edit, longer two. Returns the candidate
+ *  shape plus `text` (the label's real spelling) for the chip. */
+export function spellingSuggestion({ key, labels, pool }) {
+  if (!key || !labels) return null;
+  const rank = new Map();
+  (pool ?? []).forEach((c, i) => { if (!rank.has(c.image_id)) rank.set(c.image_id, i); });
+  const maxDist = key.length <= 4 ? 1 : 2;
+  let best = null;
+  for (const [k, entries] of Object.entries(labels)) {
+    const d = editDistance(key, k);
+    if (!d || d > maxDist) continue;
+    const hit = (entries ?? [])
+      .filter((e) => rank.has(e.image_id))
+      .sort((a, b) => rank.get(a.image_id) - rank.get(b.image_id))[0];
+    if (!hit) continue;
+    const r = rank.get(hit.image_id);
+    if (!best || d < best.d || (d === best.d && r < best.r)) {
+      best = { d, r, hit };
+    }
+  }
+  if (!best) return null;
+  const { hit } = best;
+  return {
+    text: hit.label ?? captionLabels(hit.caption, hit.source)[0] ?? null,
+    image_id: hit.image_id, asset: hit.asset ?? null,
+    source: hit.source ?? null, caption: hit.caption ?? null,
+  };
+}
+
 /* ------------------------------ language ------------------------------ */
 
 export function localeIso(locale) {

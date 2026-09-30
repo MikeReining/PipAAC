@@ -40,7 +40,7 @@ const CFG_PATH = join(repoRoot, "data/catalog/picture_finder.json");
 const LABELS_PATH = join(repoRoot, "data/catalog/picture_labels.json");
 const OUT_DIR = join(repoRoot, "out/pictures");
 
-function loadEnv() {
+export function loadEnv() {
   try {
     for (const line of readFileSync(join(repoRoot, ".env"), "utf8").split("\n")) {
       const m = /^([A-Z_]+)=(.+)$/.exec(line.trim());
@@ -198,16 +198,18 @@ export function buildLabelMap({ paths = {} } = {}) {
       senseById.get(l.sense_id)?.category);
     for (const img of imgsBySense.get(l.sense_id) ?? []) {
       push(labelKey(l.text), { image_id: img.id, asset: `/${img.key}`,
-        source: "catalog", caption, sense: l.sense_id });
+        source: "catalog", caption, sense: l.sense_id,
+        label: String(l.text).trim() });
     }
   }
   for (const [id, r] of meta) {
     if (review[id] !== "approve" || manifest[id]?.r2Key !== `symbols/extended/${id}.png`) continue;
-    push(labelKey(r.label ?? id.replace(/_/g, " ")), {
+    const extLabel = r.label ?? id.replace(/_/g, " ");
+    push(labelKey(extLabel), {
       image_id: `ext_${id}`, asset: `/api/v1/pictures/img/ext_${id}`,
       source: "extended",
-      caption: captionForExtended(r.label ?? id.replace(/_/g, " "), r.section, r.spec),
-      sense: `ext_${id}`,
+      caption: captionForExtended(extLabel, r.section, r.spec),
+      sense: `ext_${id}`, label: String(extLabel).trim(),
     });
   }
   for (const d of readJson(paths.drawings ?? DRAWINGS, []) ?? []) {
@@ -218,6 +220,7 @@ export function buildLabelMap({ paths = {} } = {}) {
     push(norm, {
       image_id: `drw_${d.key}`, asset: `/api/v1/pictures/img/drw_${d.key}`,
       source: "drawn", caption: captionForDrawing(d), sense: `drw_${norm}`,
+      label: String(d.scope === "personal" ? d.description ?? "" : d.text ?? "").trim(),
     });
   }
   return { version: 1, labels };

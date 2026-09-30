@@ -28,6 +28,19 @@ test("draw only for a common word on a calibrated finder", () => {
   assert.equal(pictureAction({ candidates: [], auto: null, scope: "personal", calibrated: true }).kind, "none");
 });
 
+test("a typo suggestion asks, never draws — even on a calibrated finder", () => {
+  // "bananna" on a calibrated finder must NOT burn a drawing — the
+  // adult confirms "did you mean banana?" or ignores it (030 § 4.2).
+  const act = pictureAction({
+    candidates: [C("img_banana"), C("b"), C("c")], auto: null,
+    scope: "common", calibrated: true,
+    suggestion: { text: "banana", image_id: "img_banana", asset: "/symbols/banana.png" },
+  });
+  assert.equal(act.kind, "choose");
+  assert.equal(act.suggestion.text, "banana");
+  assert.equal(act.others.length, 3);
+});
+
 test("paste asks before drawing more than 10, or more than are left", () => {
   assert.equal(shouldConfirmDraws(10, 300), false);
   assert.equal(shouldConfirmDraws(11, 300), true);

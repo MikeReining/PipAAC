@@ -9,12 +9,14 @@ import {
   captionForDrawing,
   captionLabels,
   decideAuto,
+  editDistance,
   labelKey,
   drawSubject,
   queryText,
   resolveLanguage,
   scoreOf,
   signalsKey,
+  spellingSuggestion,
 } from "./picture_index.mjs";
 
 const CFG = { auto_cutoff: 0.6, auto_cutoff_by_lang: {}, pick_weight: 0.05, reject_weight: 0.1 };
@@ -210,6 +212,81 @@ test("auto tier 1: language, scope, description, and block guards hold", () => {
   assert.equal(
     decideAuto({ candidates: stops, text: "stop", scope: "common", blocked: ["stop"] }, CFG, "en"),
     null);
+});
+
+test("edit distance: folded keys, the real typos land in range", () => {
+  assert.equal(editDistance("bananna", "banana"), 1);
+  assert.equal(editDistance("aple", "apple"), 1);
+  assert.equal(editDistance("juce", "juice"), 1);
+  assert.equal(editDistance("watr", "water"), 1);
+  assert.equal(editDistance(labelKey("choclate milk"), labelKey("chocolate milk")), 1);
+  assert.equal(editDistance("bananna", "apple"), 6); // unrelated stays far
+});
+
+test("typo suggestion: spelling AND the embedding pool must agree", () => {
+  const entry = (id, label) => ({ image_id: id, asset: `/s/${id}.png`,
+    source: "catalog", caption: `${label} · Food & Drink`, label });
+  const labels = {
+    banana: [entry("img_banana", "banana")],
+    apple: [entry("img_apple", "apple")],
+    juice: [entry("img_juice", "juice")],
+    water: [entry("img_water", "water")],
+    crane: [entry("img_crane", "crane")],
+  };
+  const poolOf = (...ids) => ids.map((image_id) => ({ image_id }));
+  // The real rows: each typo suggests its word when the embedding
+  // surfaced that word's picture too.
+  for (const [typo, want] of [["bananna", "banana"], ["aple", "apple"],
+    ["juce", "juice"], ["watr", "water"]]) {
+    const sug = spellingSuggestion({
+      key: labelKey(typo), labels, pool: poolOf(`img_${want}`, "img_crane"),
+    });
+    assert.equal(sug?.text, want, typo);
+    assert.equal(sug?.image_id, `img_${want}`);
+  }
+  // Semantic disagreement vetoes: "crain" is one edit from "crane" but
+  // the embedding never surfaced the crane — no suggestion.
+  assert.equal(spellingSuggestion({
+    key: "crain", labels, pool: poolOf("img_banana", "img_apple"),
+  }), null);
+  // A correctly spelled word is a label — never "corrected" (d=0).
+  assert.equal(spellingSuggestion({
+    key: "banana", labels, pool: poolOf("img_banana"),
+  }), null);
+  // Short words get one edit only — "apl"→"apple" is two edits, so a
+  // 3-char key cannot reach a 5-char label.
+  assert.equal(spellingSuggestion({
+    key: "apl", labels, pool: poolOf("img_apple"),
+  }), null);
+});
+
+test("typo suggestion: distance budget and best-match pick", () => {
+  const entry = (id, label) => ({ image_id: id, source: "catalog",
+    asset: `/s/${id}.png`, caption: `${label} · x`, label });
+  const labels = {
+    dog: [entry("img_dog", "dog")],
+    door: [entry("img_door", "door")],
+    apple: [entry("img_apple", "apple")],
+    banana: [entry("img_banana", "banana")],
+  };
+  // "dof" (len 3) is one edit from "dog", two from "door" — but a
+  // short word's budget is one edit, so only "dog" may suggest.
+  const sug = spellingSuggestion({
+    key: "dof", labels, pool: [{ image_id: "img_dog" }, { image_id: "img_door" }],
+  });
+  assert.equal(sug?.image_id, "img_dog");
+  // A long word's budget is two: "bananana" → "banana" is d2.
+  assert.equal(spellingSuggestion({
+    key: "bananana", labels, pool: [{ image_id: "img_banana" }],
+  })?.text, "banana");
+  // Two candidates at equal distance: the one the embedding ranked
+  // higher wins.
+  const tie = spellingSuggestion({
+    key: "banan", // d1 from banana
+    labels,
+    pool: [{ image_id: "img_apple" }, { image_id: "img_banana" }],
+  });
+  assert.equal(tie?.image_id, "img_banana");
 });
 
 test("language tiebreak: close top-two prefers the app locale", () => {

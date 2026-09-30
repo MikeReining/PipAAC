@@ -71,7 +71,7 @@ export function mountWordCard({
    * switching back is free. */
   const sessions = new Map();
   const sess = (id) => {
-    if (!sessions.has(id)) sessions.set(id, { ours: null, sent: false, current: null, others: [], state: {} });
+    if (!sessions.has(id)) sessions.set(id, { ours: null, sent: false, current: null, others: [], state: {}, suggestion: null });
     return sessions.get(id);
   };
 
@@ -267,9 +267,29 @@ export function mountWordCard({
     $("wc-picstate").hidden = !line;
     $("wc-pic").classList.toggle("drawing", s.state.phase === "drawing");
 
+    // 030 § 4.2 — "bananna" isn't a word but "banana" is: offer the
+    // fix instead of drawing a second banana. The chip dies the moment
+    // the word has a picture — a suggestion never outlives its use.
+    const sugEl = $("wc-suggest");
+    const sug = s.suggestion && !e?.photo_key && !s.state.phase ? s.suggestion : null;
+    if (sugEl) {
+      sugEl.hidden = !sug;
+      if (sug) sugEl.textContent = `Did you mean “${sug.text}”?`;
+    }
+
     const box = $("wc-others");
     box.replaceChildren();
     const shown = s.others.filter((c) => thumbKey(c) !== (s.current && thumbKey(s.current)));
+    // "Pick one of ours" is only true if a thumbnail actually loads; when
+    // every candidate is unavailable, say what the adult can really do.
+    let unsettled = Math.min(shown.length, 4);
+    let anyLoaded = false;
+    const settle = (ok) => {
+      anyLoaded ||= ok;
+      if (--unsettled === 0 && !anyLoaded && line === pictureLine({ act: { kind: "choose", others: [0] }, name: cardItem.label })) {
+        $("wc-picstate").textContent = pictureLine({ act: { kind: "choose", others: [] }, name: cardItem.label });
+      }
+    };
     for (const c of shown.slice(0, 4)) {
       const b = document.createElement("button");
       b.type = "button";
@@ -279,10 +299,11 @@ export function mountWordCard({
       const img = document.createElement("img");
       img.alt = "";
       thumbInto(img, c).then((ok) => {
+        settle(ok);
         if (ok) { b.hidden = false; $("wc-otherslab").hidden = false; return; }
         s.others = s.others.filter((o) => o !== c); // unavailable — stop offering it
         b.remove?.();
-      }).catch(() => b.remove?.());
+      }).catch(() => { settle(false); b.remove?.(); });
       b.appendChild(img);
       b.addEventListener("click", () => choose(c));
       box.appendChild(b);
@@ -381,6 +402,7 @@ export function mountWordCard({
     }).catch(() => ({ error: "offline" }));
     const e = cardItem?.item_id === id ? entityRow() : null;
     s.state = { act: r.act, error: r.error, drawn: r.drawn, left: r.drawn?.left ?? r.left ?? s.state.left };
+    s.suggestion = r.act?.suggestion ?? null;
     if (r.found?.candidates) {
       for (const c of r.found.candidates) {
         if (!s.others.some((o) => thumbKey(o) === thumbKey(c))) s.others.push(c);
@@ -410,6 +432,30 @@ export function mountWordCard({
       paintPicSection();
     }
   }
+
+  /** 030 § 4.2 — accepting "Did you mean banana?" fixes the word itself
+   *  (same path as typing the correction into the name field), then
+   *  applies that word's picture. Ignoring costs nothing: the draw and
+   *  pick-one-of-ours paths stay right there. */
+  $("wc-suggest")?.addEventListener("click", async () => {
+    if (!isEnt()) return;
+    const id = cardItem.item_id;
+    const s = sess(id);
+    const sug = s.suggestion;
+    if (!sug) return;
+    s.suggestion = null;
+    if (sug.text && sug.text !== cardItem.label) {
+      renameEntity(db, id, sug.text);
+      tile?.ensure(sug.text, { source: "user_typed" }).catch(() => {});
+      cardItem.label = sug.text;
+      $("wc-name").value = sug.text;
+      invalidateIndex();
+      rerenderView();
+      renderStrip();
+      updateVoiceUI();
+    }
+    await choose(sug);
+  });
 
   $("wc-desc")?.addEventListener("input", () => paintPicSection());
   $("wc-desc")?.addEventListener("keydown", (e) => {

@@ -163,10 +163,14 @@ const makeEnv = ({ jev } = {}) => {
       // "bat" names two senses — a homograph: never auto, always shows.
       bat: [
         { image_id: "img_bat_animal", asset: "/symbols/bat.png", source: "catalog",
-          caption: "bat · Animals & Nature", sense: "sns_bat_animal" },
+          caption: "bat · Animals & Nature", sense: "sns_bat_animal", label: "bat" },
         { image_id: "img_bat_sport", asset: "/symbols/bat2.png", source: "catalog",
-          caption: "bat · Toys, Play, Media & Leisure", sense: "sns_bat_sport" },
+          caption: "bat · Toys, Play, Media & Leisure", sense: "sns_bat_sport", label: "bat" },
       ],
+      // "zebra" is a label but its image is NOT in the index — spelling
+      // distance alone must never suggest what the embedding can't see.
+      zebra: [{ image_id: "img_zebra", asset: "/symbols/zebra.png", source: "catalog",
+        caption: "zebra · Animals & Nature", sense: "sns_zebra", label: "zebra" }],
     },
   };
   const db = new DatabaseSync(":memory:");
@@ -279,6 +283,22 @@ test("response shape + calibrated cutoff gates similarity, not identity", async 
   }
 });
 
+test("tier-1 auto that the vector query missed still leads the candidates", async () => {
+  // A newly added picture is in the label map before its vector is
+  // queryable. The client applies `auto` only if it is a candidate —
+  // otherwise it would spend a drawing on a word we already have.
+  const env = makeEnv();
+  await seedIndex(env);
+  env.PICTURE_LABELS.crocs = [{
+    image_id: "ext_crocs", asset: "/api/v1/pictures/img/ext_crocs", source: "extended",
+    caption: "crocs · Clothes", sense: "ext_crocs",
+  }];
+  const body = await (await find(env, { text: "crocs" })).json();
+  assert.equal(body.auto, "ext_crocs");
+  assert.equal(body.candidates[0].image_id, "ext_crocs");
+  assert.ok(body.candidates.length <= 4);
+});
+
 test("homograph: 'bat' never auto-applies — both senses lead the choices", async () => {
   const env = makeEnv();
   await seedIndex(env);
@@ -289,6 +309,48 @@ test("homograph: 'bat' never auto-applies — both senses lead the choices", asy
   assert.equal(body.candidates[0].image_id, "img_bat_animal");
   assert.equal(body.candidates[1].image_id, "img_bat_sport");
   assert.equal(body.candidates[0].cosine, null); // injected — no vector score
+});
+
+/* --------------------------- typo suggestion ---------------------------- */
+
+test("suggestion: 'bananna' offers 'banana' — nothing auto-applies", async () => {
+  const env = makeEnv();
+  await seedIndex(env);
+  const body = await (await find(env, { text: "bananna" })).json();
+  // Not a label, not a homograph — but one edit from "banana", whose
+  // picture the embedding also surfaced: suggest, never silently apply.
+  assert.equal(body.auto, null);
+  assert.equal(body.suggestion?.text, "banana");
+  assert.equal(body.suggestion?.image_id, "img_banana");
+  assert.equal(body.suggestion?.asset, "/symbols/banana.png");
+});
+
+test("suggestion guards: real words, missing pool member, scope, language", async () => {
+  const env = makeEnv();
+  await seedIndex(env);
+  // A correctly spelled label auto-applies — no suggestion.
+  const real = await (await find(env, { text: "banana" })).json();
+  assert.equal(real.auto, "img_banana");
+  assert.equal(real.suggestion, null);
+  // "zebrra" is one edit from "zebra", but img_zebra isn't in the index
+  // — the embedding never saw it, so spelling alone can't suggest.
+  const nopool = await (await find(env, { text: "zebrra" })).json();
+  assert.equal(nopool.suggestion, null);
+  // Personal scope and non-English never touch the English label map.
+  const personal = makeEnv({ jev: async () =>
+    ({ scope: "personal", kind: "None", language: "en" }) });
+  await seedIndex(personal);
+  const pbody = await (await find(personal, { text: "bananna" })).json();
+  assert.equal(pbody.suggestion, null);
+  const french = makeEnv({ jev: async () =>
+    ({ scope: "common", kind: "None", language: "fr", language_probs: { fr: 0.95 } }) });
+  await seedIndex(french);
+  const fbody = await (await find(french, { text: "bananna" })).json();
+  assert.equal(fbody.language, "fr");
+  assert.equal(fbody.suggestion, null);
+  // A homograph shows its senses — no typo suggestion on a real word.
+  const homo = await (await find(env, { text: "bat" })).json();
+  assert.equal(homo.suggestion, null);
 });
 
 /* ---------------------------------- gates ---------------------------------- */

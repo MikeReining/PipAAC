@@ -166,6 +166,27 @@ the Worker like `catalog.json`. Changing the cutoff is a one-number edit and
 a deploy; no code change. The server computes `auto` — the client never
 applies its own threshold, so there is one place to tune.
 
+**Identity beats similarity.** The rule above is tier 2. Tier 1 runs first:
+when the typed word IS a picture's label — checked against
+`data/catalog/picture_labels.json` (the lexical map `build_index.mjs`
+generates beside the index) plus a folded scan of every fetched caption —
+that picture applies at any score, any rank ("eat", "no" rank below
+`fetch_k` in the embedding entirely). `labelKey` folds case, spaces,
+hyphens, apostrophes, so "apple sauce" and "ice-cream" are labels too.
+Guards: English common scope only (French "pain" can't steal the English
+pain symbol), no description, and a homograph — one label on two catalog
+senses ("bat" the animal / the baseball bat) — never auto-applies; its own
+images lead the choices and the adult picks the sense.
+
+**Typo suggestion.** When the word is no label at all and nothing applied,
+a label within one edit (two for words over four letters) whose picture
+the embedding also surfaced is returned as `suggestion` — spelling says
+"same word", the pool says "same meaning", so "bananna" suggests "banana"
+but "crocs" never suggests "cross". The add card shows "Did you mean
+banana?"; accepting renames the word and applies that picture, ignoring
+leaves draw/choose untouched. A suggestion never auto-applies and never
+spends a drawing.
+
 **Per-language cutoff.** Cross-language cosine scores run lower than
 same-language ones ("Apfel" → apple scores below "apple" → apple), so one
 number would either block German or let English near-misses through.

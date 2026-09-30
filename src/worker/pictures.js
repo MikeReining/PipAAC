@@ -29,6 +29,7 @@ import {
   resolveLanguage,
   scoreOf,
   signalsKey,
+  spellingSuggestion,
 } from "../shared/picture_index.mjs";
 import {
   appHeaders,
@@ -238,12 +239,31 @@ async function findOne(env, { text, description, locale, binding = "PICTURES", i
         caption: e.caption, status: "approved", cosine: null, score: null }));
     candidates = [...extra, ...candidates].slice(0, CFG.top_k);
   }
+  // A tier-1 pick can rank below fetch_k (or not be embedded yet); the
+  // client applies `auto` only when it is among the candidates, and
+  // otherwise would spend a drawing on a word we already have a picture for.
+  if (auto && !candidates.some((c) => c.image_id === auto)) {
+    const e = (direct ?? []).find((d) => d.image_id === auto);
+    if (e) {
+      candidates = [{ image_id: e.image_id, asset: e.asset, source: e.source,
+        caption: e.caption, status: "approved", cosine: null, score: null },
+      ...candidates].slice(0, CFG.top_k);
+    }
+  }
+  // § 4.2 typo suggestion — only when the word is no label at all and
+  // nothing applied: a near-label whose image the embedding also
+  // surfaced ("bananna"→"banana", never "crocs"→"cross").
+  const suggestion = !auto && !homograph && tier1Eligible && !direct
+    ? spellingSuggestion({
+      key: lKey, labels: env.PICTURE_LABELS ?? pictureLabels.labels, pool: rescored,
+    })
+    : null;
   // `calibrated` tells the add card whether "nothing close" means "draw
   // one" — until the founder saves a cutoff (§ 7, default 1.01 = never
   // auto) every miss would spend a drawing, so 029 shows the four instead.
   return {
     candidates, auto, scope: jev.scope, kind: jev.kind, language,
-    homograph, calibrated: CFG.auto_cutoff <= 1,
+    homograph, suggestion, calibrated: CFG.auto_cutoff <= 1,
   };
 }
 
