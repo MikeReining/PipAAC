@@ -7,6 +7,7 @@ import assert from "node:assert/strict";
 
 import { createDatabase } from "./catalog.mjs";
 import { mountSpotlightSheet } from "../../public/board/spotlight-sheet.js";
+import { STARTER_LISTS } from "../../public/shared/spotlight_starters.mjs";
 
 function el() {
   const node = {
@@ -89,8 +90,8 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
   const kids = nodes["spot-lists"].children;
   const cards = kids.filter((c) => c.className === "spot-card");
   assert.equal(cards.length, 1);
-  // The three suggested lists follow — none is saved yet.
-  assert.equal(kids.filter((c) => c.className === "spot-card spot-idea").length, 3);
+  // Every suggested list follows — none is saved yet.
+  assert.equal(kids.filter((c) => c.className === "spot-card spot-idea").length, STARTER_LISTS.length);
   const [head] = cards[0].children;
   assert.deepEqual(head.children.map((c) => c.textContent), ["Snack", "1 word"]);
   // The child's own device has no Model button — it would glow nothing.

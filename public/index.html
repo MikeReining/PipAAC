@@ -497,7 +497,7 @@
       /* Attention layer (013): glow the targets, dim the rest — every
          cell stays 100% tappable and speaks; nothing moves, nothing is
          disabled (§ 2.1). Steady glow; no pulse unless a setting asks. */
-      .cell.glow, .gcell.glow, .anchor.glow {
+      .cell.glow, .gcell.glow, .anchor.glow, .bar-btn.glow {
         box-shadow: 0 0 0 4px var(--glow), 0 0 18px rgba(232, 162, 0, 0.55);
         z-index: 1;
       }
@@ -512,7 +512,7 @@
       /* Pick mode: tapping a word adds it to the list instead of
          speaking. Picked cells get the glow outline; the bar counts. */
       body.picking .cell, body.picking .gcell { cursor: copy; }
-      .cell.picked, .gcell.picked { box-shadow: 0 0 0 4px var(--glow); }
+      .cell.picked, .gcell.picked, .bar-btn.picked { box-shadow: 0 0 0 4px var(--glow); }
       #spot-pickbar, #modelbar {
         position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
         background: var(--ink-text); color: #fff; border-radius: 14px;
@@ -963,7 +963,7 @@
                 <div id="spot-off">
                   <p class="hint">Nothing is glowing.</p>
                   <div class="row"><button class="btn" id="spot-pick">Spotlight words</button></div>
-                  <p class="hint">Tap words on the board, or inside a group. Then Start now, or Save the list for next time.</p>
+                  <p class="hint">Tap words on the board, or inside a group. ✨ and ❓ can be picked too. Then Start now, or Save the list for next time.</p>
                 </div>
               </div>
               <div class="seg-row">

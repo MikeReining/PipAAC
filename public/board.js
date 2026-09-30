@@ -17,7 +17,7 @@ import {
   stripRanked,
 } from "./shared/funnel.mjs";
 import {
-  coachTap, deleteSpotList, endSession, endSpotlight,
+  CONTROLS, coachTap, deleteSpotList, endSession, endSpotlight,
   listTargets, needsRouteWalk,
   resumeSession, saveSpotList, spotLists, spotlight,
   spotlightGroups, spotSession, startSession, startSpotlight,
@@ -269,6 +269,7 @@ function maybeImpression(candidates, shown, { mode = "picture", cap = null, gate
 // Try it (032 C) while it runs: { onTap, end } from spotlight-demo.js.
 // A tap then speaks and nothing else — the adult's taps are not logged.
 let spotDemo = null;
+let picking = null; // Spotlight pick mode — see setPicking
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 let countsOn = false; // 018 D10: the 📊 badge — the child's own 30-day taps
@@ -526,7 +527,9 @@ function syncTxButtons() {
   const offline = typeof navigator !== "undefined" && !navigator.onLine;
   for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
     $(id).classList.toggle("offline", offline);
-    $(id).disabled = !sentence.length || (offline && !tour);
+    // In pick mode ✨ / ❓ are choosable targets, with or without words.
+    const pickable = !!picking && (id === "tx-fix" || id === "tx-question");
+    $(id).disabled = !pickable && (!sentence.length || (offline && !tour));
   }
 }
 addEventListener("online", () => { syncTxButtons(); renderStrip(); });
@@ -851,8 +854,12 @@ $("speak").addEventListener("click", () => {
     speakSentence();
   }
 });
-$("tx-fix").addEventListener("click", () => transformAndSpeak("fix"));
+$("tx-fix").addEventListener("click", () => {
+  if (controlPress("fix")) return;
+  transformAndSpeak("fix");
+});
 $("tx-question").addEventListener("click", () => {
+  if (controlPress("question")) return;
   if (txBusy) return;
   // § 4.1: ❓ on an existing question just re-speaks it.
   if (barState.question) speakSentence();
@@ -1475,8 +1482,8 @@ function bindSpotSettings() {
 
 /* --- pick mode (013 slice 2): an adult taps words on the board or in
  *  groups to choose targets; taps never speak while picking. `picking`
- *  is the Set of "kind:id" being chosen, or null when off. --- */
-let picking = null;
+ *  is the Set of "kind:id" being chosen, or null when off (declared up
+ *  top: syncTxButtons reads it from boot). --- */
 function updatePickBar() {
   const n = picking?.size ?? 0;
   $("spot-pick-count").textContent = n
@@ -1488,6 +1495,7 @@ function setPicking(on) {
   // Picking happens on the board: the editor has no pick marks.
   if (on && view === "editor") kbUi.setView("board");
   picking = on ? new Set() : null;
+  syncTxButtons(); // ✨ / ❓ become choosable
   document.body.classList.toggle("picking", on);
   $("spot-pickbar").hidden = !on;
   if (on) updatePickBar();
@@ -1531,7 +1539,8 @@ function onModel(m) {
     rerenderView();
   }, MODEL_FADE_MS));
   const [kind, id] = m.t.split(":");
-  if (modelSpeaks && m.w) speakItem({ kind, id, text: m.w });
+  // A modeled ✨ / ❓ only glows — a button has no word to say.
+  if (modelSpeaks && m.w && kind !== "control") speakItem({ kind, id, text: m.w });
   renderGrid();
   rerenderView();
 }
@@ -1550,7 +1559,36 @@ function spotChrome() {
   const chip = $("spot-chip");
   chip.hidden = !s;
   if (s) chip.textContent = `🔦 ${s.name} · End`;
+  // 032 E: ✨ / ❓ are targets too — the same ring, never dimmed, and
+  // the picker's ring while choosing.
+  for (const [name, c] of Object.entries(CONTROLS)) {
+    const key = `control:${name}`;
+    $(c.button).classList.toggle("glow", !!s?.targets.has(key) || modelGlow.has(key));
+    $(c.button).classList.toggle("picked", !!picking?.has(key));
+  }
   coachUi.renderCoach();
+}
+
+/** A press on ✨ / ❓ that isn't a transform: in pick mode it chooses the
+ *  button as a target; in Model mode it glows it on linked boards. True
+ *  when the press was taken. */
+function controlPress(name) {
+  const key = `control:${name}`;
+  if (picking) {
+    picking.has(key) ? picking.delete(key) : picking.add(key);
+    updatePickBar();
+    spotChrome();
+    return true;
+  }
+  if (modeling) {
+    syncSendModel(key, CONTROLS[name].label);
+    modelSent.add(key);
+    spotChrome();
+    setTimeout(() => { modelSent.delete(key); spotChrome(); }, 700);
+    return true;
+  }
+  clearModel(key); // the child pressed the glowing button — its glow is done
+  return false;
 }
 
 /* Coach bar — public/board/coach-ui.js. Partner devices only. */

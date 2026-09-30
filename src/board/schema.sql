@@ -370,7 +370,11 @@ CREATE TABLE IF NOT EXISTS spotlight_list (
   created_at INTEGER NOT NULL,
   -- 016 § 5: a goal list's targets are tracked in stats_day — taps on
   -- their own vs with the glow, by week.
-  is_goal INTEGER NOT NULL DEFAULT 0 CHECK (is_goal IN (0, 1))
+  is_goal INTEGER NOT NULL DEFAULT 0 CHECK (is_goal IN (0, 1)),
+  -- 032 E: sentence buttons the list also lights, as a JSON array of
+  -- names ('fix' = ✨, 'question' = ❓). Buttons are not words: they
+  -- carry no tip and no per-word stats, so they live here, not in items.
+  controls TEXT
 );
 
 CREATE TABLE IF NOT EXISTS spotlight_item (

@@ -137,8 +137,18 @@ test("a pre-025 device gains spoken_feeling and expressive_voice additively", ()
   db.prepare(
     "INSERT INTO learner_profile (id, locale, preferred_voice_id) VALUES ('prf_local', 'en', 'voi_x')",
   ).run();
+  // Pre-032: a saved list without the ✨ / ❓ controls column.
+  db.exec(`CREATE TABLE spotlight_list (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at INTEGER NOT NULL,
+    is_goal INTEGER NOT NULL DEFAULT 0
+  )`);
+  db.prepare("INSERT INTO spotlight_list (id, name, created_at) VALUES ('spl_a', 'Snack', 1)").run();
 
   ensureAdditiveColumns(facade(db));
+  assert.equal(
+    db.prepare("SELECT controls FROM spotlight_list WHERE id = 'spl_a'").get().controls, null,
+    "an old list gains controls, empty",
+  );
 
   assert.equal(
     db.prepare("SELECT expressive_voice FROM learner_profile WHERE id = 'prf_local'")

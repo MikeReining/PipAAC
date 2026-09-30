@@ -15,9 +15,20 @@ import { recordOp } from "./ops.mjs";
 
 let active = null; // { name, targets: Set<"kind:id"> }
 
+/** Sentence buttons a spotlight may light (032 E), as "control:<name>"
+ *  targets: ✨ turns two words into a sentence, ❓ asks it. Name → the
+ *  button's id, its chip label, and the coach line a partner sees. */
+export const CONTROLS = {
+  fix: { button: "tx-fix", label: "✨ sentence",
+    tip: "✨ — after two words, tap ✨ and say the whole sentence along with Pip." },
+  question: { button: "tx-question", label: "❓ question",
+    tip: "❓ — after two words, tap ❓ to ask it. Then wait for an answer." },
+};
+
 /** Start a spotlight over `targets` (iterable of "kind:id"). Masked
  *  senses are skipped — the law is never unmask; the caller is told
- *  which. Returns { skipped } — an all-masked call leaves the layer off. */
+ *  which — and so is a control this build doesn't know. Returns
+ *  { skipped } — an all-skipped call leaves the layer off. */
 export function startSpotlight(db, targets, name = "Spotlight") {
   const masked = maskedSenseIds(db);
   const set = new Set();
@@ -25,6 +36,7 @@ export function startSpotlight(db, targets, name = "Spotlight") {
   for (const key of targets) {
     const [kind, id] = key.split(":");
     if (kind === "sense" && masked.has(id)) skipped.push(key);
+    else if (kind === "control" && !CONTROLS[id]) skipped.push(key);
     else set.add(key);
   }
   active = set.size ? { name, targets: set } : null;
@@ -43,8 +55,8 @@ export function spotlight() {
 /** The groups that contain at least one target — the tiles the route
  *  walk glows on the index (§ 3). */
 export function spotlightGroups(db, targets) {
-  if (!targets.size) return new Set();
-  const kinds = [...targets].map((k) => k.split(":"));
+  const kinds = [...targets].map((k) => k.split(":")).filter(([k]) => k !== "control");
+  if (!kinds.length) return new Set();
   const ids = kinds.map(([, id]) => id);
   const marks = ids.map(() => "?").join(",");
   return new Set(
@@ -61,6 +73,7 @@ export function spotlightGroups(db, targets) {
 export function needsRouteWalk(targets, onBoard) {
   for (const key of targets) {
     const [kind, id] = key.split(":");
+    if (kind === "control") continue; // the buttons sit in the top bar
     if (kind === "entity") return true; // entities live only inside groups
     if (!onBoard.has(id)) return true;
   }
@@ -72,19 +85,27 @@ export function needsRouteWalk(targets, onBoard) {
  *  someone ends it or local midnight arrives — never silently
  *  permanent. --- */
 
+/** A list row's control names — only ones this build knows. */
+const controlsOf = (json) => {
+  try { return (JSON.parse(json ?? "[]") ?? []).filter((c) => CONTROLS[c]); } catch { return []; }
+};
+
+/** Saved lists; `n` counts words — the buttons ride in `controls`. */
 export function spotLists(db) {
   return db.prepare(
-    `SELECT l.id, l.name, l.is_goal, COUNT(i.item_id) AS n
+    `SELECT l.id, l.name, l.is_goal, l.controls, COUNT(i.item_id) AS n
      FROM spotlight_list l LEFT JOIN spotlight_item i ON i.list_id = l.id
      GROUP BY l.id ORDER BY l.name`,
-  ).all();
+  ).all().map((l) => ({ ...l, controls: controlsOf(l.controls) }));
 }
 
+/** Every target of a list: its words, then its buttons. */
 export function listTargets(db, id) {
-  return new Set(
-    db.prepare("SELECT kind, item_id FROM spotlight_item WHERE list_id = ?")
-      .all(id).map((r) => `${r.kind}:${r.item_id}`),
-  );
+  const keys = db.prepare("SELECT kind, item_id FROM spotlight_item WHERE list_id = ?")
+    .all(id).map((r) => `${r.kind}:${r.item_id}`);
+  const row = db.prepare("SELECT controls FROM spotlight_list WHERE id = ?").all(id)[0];
+  for (const c of controlsOf(row?.controls)) keys.push(`control:${c}`);
+  return new Set(keys);
 }
 
 /** A list's items with their coach tips (013 § 5a), in stable order. */
@@ -98,10 +119,13 @@ export function listItems(db, id) {
  *  list keeps each item's coach tip — adding a word must not wipe the
  *  tips an SLP wrote for the others. */
 export function saveSpotList(db, id, name, targets, createdAt = Date.now()) {
+  targets = [...targets];
+  const controls = targets.filter((k) => k.startsWith("control:"))
+    .map((k) => k.slice(8)).filter((c) => CONTROLS[c]);
   db.prepare(
-    `INSERT INTO spotlight_list (id, name, created_at) VALUES (?, ?, ?)
-     ON CONFLICT(id) DO UPDATE SET name = excluded.name`,
-  ).run(id, name, createdAt);
+    `INSERT INTO spotlight_list (id, name, created_at, controls) VALUES (?, ?, ?, ?)
+     ON CONFLICT(id) DO UPDATE SET name = excluded.name, controls = excluded.controls`,
+  ).run(id, name, createdAt, controls.length ? JSON.stringify(controls) : null);
   const tips = new Map(
     db.prepare(
       "SELECT kind, item_id, tip FROM spotlight_item WHERE list_id = ? AND tip IS NOT NULL",
@@ -110,6 +134,7 @@ export function saveSpotList(db, id, name, targets, createdAt = Date.now()) {
   db.prepare("DELETE FROM spotlight_item WHERE list_id = ?").run(id);
   for (const key of targets) {
     const [kind, item_id] = key.split(":");
+    if (kind === "control") continue;
     db.prepare(
       "INSERT OR IGNORE INTO spotlight_item (list_id, kind, item_id, tip) VALUES (?, ?, ?, ?)",
     ).run(id, kind, item_id, tips.get(key) ?? null);
@@ -203,6 +228,7 @@ export function coachTally(db, now = Date.now()) {
 /** The tip a target shows in the coach bar: a list item's SLP edit wins,
  *  then the shipped catalog default, else null (caller falls back). */
 export function tipFor(db, catalog, kind, id) {
+  if (kind === "control") return CONTROLS[id]?.tip ?? null;
   const edited = db.prepare(
     "SELECT tip FROM spotlight_item WHERE kind = ? AND item_id = ? AND tip IS NOT NULL LIMIT 1",
   ).all(kind, id)[0]?.tip;

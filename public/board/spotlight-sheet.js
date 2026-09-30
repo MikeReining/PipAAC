@@ -10,7 +10,7 @@ import {
   untilText,
 } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
-import { STARTER_LISTS, starterTargets } from "../shared/spotlight_starters.mjs";
+import { STARTER_LISTS, recipeFor, starterTargets } from "../shared/spotlight_starters.mjs";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -133,7 +133,10 @@ export function mountSpotlightSheet({
       const del = el("button", "spot-del", "Delete");
       del.addEventListener("click", () => { deleteSpotList(db, l.id); renderLists(); });
       acts.append(start, goal, tipsBtn, del);
-      card.append(head, chips(listTargets(db, l.id)), acts);
+      card.append(head, chips(listTargets(db, l.id)));
+      const recipe = recipeFor(l.name);
+      if (recipe) card.append(el("p", "hint spot-recipe", recipe));
+      card.append(acts);
       box.append(card);
     }
     // Suggested lists (032 C): one tap makes one theirs; an added one
@@ -152,7 +155,9 @@ export function mountSpotlightSheet({
       });
       const acts = el("div", "spot-card-acts");
       acts.append(add);
-      card.append(head, chips(starterTargets(x)), acts);
+      card.append(head, chips(starterTargets(x)));
+      if (x.recipe) card.append(el("p", "hint spot-recipe", x.recipe));
+      card.append(acts);
       box.append(card);
     }
   }

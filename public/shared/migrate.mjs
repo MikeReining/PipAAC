@@ -159,6 +159,8 @@ export const ADDITIVE_COLUMNS = {
     // Speaking speed (Settings → Talking, 2026-09-29).
     "speech_rate TEXT NOT NULL DEFAULT 'normal' CHECK (speech_rate IN ('slower', 'normal', 'faster'))",
   ],
+  // 032 E: the ✨ / ❓ buttons a Spotlight list lights.
+  spotlight_list: "controls TEXT",
 };
 export function ensureAdditiveColumns(d) {
   for (const [table, defs] of Object.entries(ADDITIVE_COLUMNS)) {

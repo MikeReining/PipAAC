@@ -88,6 +88,7 @@
 
 .spot-sub { font-size: 15px !important; margin-top: 4px !important; }
 .spot-idea { background: #fff; border-style: dashed; }
+.spot-recipe { margin: 0 !important; }
 .spot-hero .row > .btn { flex: 0 1 auto; }
 
 /* Try it: the last card points at the 🔦 chip. */

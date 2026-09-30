@@ -1,5 +1,6 @@
 /**
- * 032 slice C live proof — Try it and suggested lists, through the real
+ * 032 slices C and E live proof — Try it, suggested lists, and ✨ / ❓ as
+ * targets, through the real
  * page on a fresh profile. Try it must glow the real grid while leaving no
  * trace: no spotlight_session row, no sync op, no tap in the log, nothing
  * in the sentence — measured in the tables and the DOM, never the demo's
@@ -120,10 +121,45 @@ out.running = await evalJs(`(async () => { ${w}
     glow: document.querySelectorAll('#grid .cell.glow').length };
 })()`);
 
+// 032 E — moves: a suggested list lights ✨ in the real top bar, and in
+// pick mode ✨ is a choosable target that lands on the saved list.
+out.moves = await evalJs(`(async () => { ${w}
+  document.querySelector('#spot-end')?.click(); await w(200);
+  const idea = [...document.querySelectorAll('.spot-idea')]
+    .find((c) => c.querySelector('.spot-list-name').textContent === 'Make it a sentence');
+  const recipe = idea.querySelector('.spot-recipe')?.textContent ?? '';
+  idea.querySelector('.btn').click(); await w(200);
+  [...document.querySelectorAll('.spot-card')]
+    .find((c) => c.querySelector('.spot-list-name').textContent === 'Make it a sentence')
+    .querySelector('.btn').click();
+  await w(400);
+  const lit = { fix: document.querySelector('#tx-fix').classList.contains('glow'),
+    question: document.querySelector('#tx-question').classList.contains('glow'),
+    cells: document.querySelectorAll('#grid .cell.glow').length,
+    walk: document.querySelector('#anchor-groups').classList.contains('glow') };
+  document.querySelector('#spot-chip').click(); await w(200);
+  // Pick mode: one word and ❓, then Save.
+  document.querySelector('#corner').click(); await w(500);
+  document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
+  document.querySelector('#spot-pick').click(); await w(200);
+  [...document.querySelectorAll('#grid .cell')].find((c) => c.textContent.trim().toLowerCase() === 'go').click();
+  const qDisabled = document.querySelector('#tx-question').disabled;
+  document.querySelector('#tx-question').click(); await w(100);
+  const picked = { count: document.querySelector('#spot-pick-count').textContent,
+    ring: document.querySelector('#tx-question').classList.contains('picked'), qDisabled,
+    sentence: window.pip.sentence.length };
+  document.querySelector('#spot-pick-save').click();
+  document.querySelector('#spot-list-name').value = 'Go ask';
+  document.querySelector('#spot-name-save').click(); await w(600);
+  const saved = window.pip.spotlight.lists().find((l) => l.name === 'Go ask');
+  return { recipe, lit, picked, saved: saved && { n: saved.n, controls: saved.controls },
+    afterPick: document.querySelector('#tx-question').disabled };
+})()`);
+
 console.log(JSON.stringify(out, null, 2));
 const ok =
-  out.ideas.before.join() === "First words,Snack time,Play time" &&
-  out.ideas.after.join() === "Snack time,Play time" &&
+  out.ideas.before.join() === "First words,Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
+  out.ideas.after.join() === "Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
   out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 6 &&
   out.demo.lit.glow === 6 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
   out.demo.step.includes("3 of 3") &&
@@ -131,7 +167,13 @@ const ok =
   out.demo.ledger.sessions === 0 && out.demo.ledger.sentence === 0 &&
   out.demo.after.glow === 0 && out.demo.after.dimmed === 0 && !out.demo.after.card &&
   out.demo.after.backOnPage &&
-  out.running.tryHidden && out.running.glow === 6;
+  out.running.tryHidden && out.running.glow === 6 &&
+  out.moves.recipe.includes("✨") &&
+  out.moves.lit.fix && !out.moves.lit.question && out.moves.lit.cells === 4 && !out.moves.lit.walk &&
+  !out.moves.picked.qDisabled && out.moves.picked.ring && out.moves.picked.count === "2 picked" &&
+  out.moves.picked.sentence === 0 &&
+  out.moves.saved?.n === 1 && out.moves.saved.controls.join() === "question" &&
+  out.moves.afterPick === true;
 console.log(ok ? "PASS spotlight try-it and suggested lists" : "FAIL — see output");
 chrome.kill();
 process.exit(ok ? 0 : 1);

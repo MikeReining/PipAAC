@@ -153,6 +153,7 @@ mark pass every use paints through:
 | Use | Trigger | Mark |
 | --- | --- | --- |
 | Spotlight | an adult starts a list of target words | `.glow` on targets, `.dimmed` on the rest |
+| Spotlight button | a list lights ✨ or ❓ (`control:fix` / `control:question`, 032 E) | `.glow` on the top-bar button; buttons are never dimmed |
 | Live modeling | an adult taps a word on their linked device | `.glow`, fades in seconds |
 | Pick mode | an adult choosing targets | `.picked` ring |
 | Upgrade highlight | a Cells change moved the word | `.moved` inner ring |

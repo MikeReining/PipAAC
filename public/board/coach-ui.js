@@ -3,7 +3,7 @@
  * above the mirror. One tap models the word on the child's board.
  * The child's own device renders none of this.
  */
-import { coachTap, coachTally, spotlight, tipFor } from "../shared/spotlight.mjs";
+import { CONTROLS, coachTap, coachTally, spotlight, tipFor } from "../shared/spotlight.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -21,6 +21,7 @@ export function mountCoach({ db, locale, all, catalog, me, syncSendModel }) {
   );
 
   function coachLabel(kind, id) {
+    if (kind === "control") return CONTROLS[id]?.label ?? id;
     if (kind === "entity") {
       return all(db, "SELECT spoken_name AS t FROM personal_entity WHERE id = ?",
         [id])[0]?.t ?? id;
@@ -56,7 +57,8 @@ export function mountCoach({ db, locale, all, catalog, me, syncSendModel }) {
         // The same transient path as Model mode — the word glows on the
         // child's board; the tally stays here, measuring the partner.
         syncSendModel(key, label);
-        coachTap(db, kind, id);
+        // The tally counts words modeled — a button press is not one.
+        if (kind !== "control") coachTap(db, kind, id);
         b.classList.add("sent");
         setTimeout(() => b.classList.remove("sent"), 700);
         const tip = tipFor(db, catalog, kind, id)
