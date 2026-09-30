@@ -24,6 +24,9 @@ import {
   lintHint, lintSpecFit, listLabTakes, mintLabTake, setTakeVerdict,
   LAB_TAKES_DIR, PLANNER_MODELS,
 } from "./lab.mjs";
+import { computeCoreGaps } from "../art/art_gaps.mjs";
+import { loadGlyphWords } from "../art/gen.mjs";
+import { DEFAULT_LEXICON_PATH } from "../catalog/paths.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const QUERIES_PATH = join(repoRoot, "data/pictures/calibration_queries.json");
@@ -368,6 +371,23 @@ function buildHandler() {
 
     if (path === "/api/lab/takes" && req.method === "GET") {
       return json(res, 200, { takes: listLabTakes() });
+    }
+
+    /** Launch words still missing a symbol (art_gaps) — the lab's "what
+     *  should I work on" dropdown. */
+    if (path === "/api/lab/gaps" && req.method === "GET") {
+      const lexicon = readJson(DEFAULT_LEXICON_PATH, { entries: [] });
+      const gaps = computeCoreGaps(
+        lexicon, join(repoRoot, "assets/symbols"), loadGlyphWords());
+      return json(res, 200, {
+        total: gaps.totalEntries,
+        have: gaps.haveSymbol,
+        missing: gaps.missing.filter((m) => !m.note).map((m) => ({
+          word: m.spokenText, slot: m.slot,
+          pos: m.partOfSpeech ?? null, cat: m.category ?? null,
+        })),
+        glyph_only: gaps.missing.filter((m) => m.note).length,
+      });
     }
 
     /** "Use this one" — copy the take into assets/symbols/ where

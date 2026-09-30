@@ -18,7 +18,7 @@
     button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
     button.mint { background: var(--warn); color: #fff; border-color: var(--warn); }
     button:disabled { opacity: .5; cursor: default; }
-    input[type=text] { font: inherit; padding: 8px 10px; border: 1px solid var(--edge); border-radius: 8px; }
+    input[type=text], select { font: inherit; padding: 8px 10px; border: 1px solid var(--edge); border-radius: 8px; background: #fff; }
     .probe { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
     .probe input { flex: 1; min-width: 160px; }
     .probe input.w { max-width: 260px; }
@@ -76,6 +76,7 @@
       <input type="text" class="w" id="q" placeholder="word or concept (e.g. trampoline)" autocomplete="off">
       <input type="text" id="desc" placeholder="description (optional — e.g. our golden retriever)" autocomplete="off">
       <button class="primary" id="go">Probe</button>
+      <select id="gapsel" title="Launch words still missing a picture"><option value="">missing images…</option></select>
       <button id="addq" disabled>+ keep as calibration query</button>
     </div>
     <p id="status"></p>
@@ -339,6 +340,27 @@ $("addq").addEventListener("click", async () => {
   $("addq").disabled = true;
   $("addq").textContent = "kept ✓";
 });
+
+/** Missing-launch-art dropdown — pick a word and it probes at once. */
+async function loadGaps() {
+  try {
+    const { missing, have, total, glyph_only } = await (await fetch("/api/lab/gaps")).json();
+    const sel = $("gapsel");
+    sel.innerHTML = `<option value="">missing images (${missing.length}/${total})</option>` +
+      missing.map((m) =>
+        `<option value="${esc(m.word)}">${esc(m.word)}${m.cat ? ` · ${esc(m.cat)}` : ""}</option>`).join("");
+    sel.title = `${have} have art · ${missing.length} missing · ${glyph_only} glyph-only`;
+  } catch { /* gaps are a nicety — leave the placeholder */ }
+}
+$("gapsel").addEventListener("change", () => {
+  const w = $("gapsel").value;
+  if (!w) return;
+  $("q").value = w;
+  $("desc").value = "";
+  $("gapsel").value = "";
+  probe();
+});
+loadGaps();
 renderTakes();
 </script>
 </body>
