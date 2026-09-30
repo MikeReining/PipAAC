@@ -175,7 +175,7 @@ await B.evalJs(`(async () => {
   document.querySelector('#corner').click();
   await new Promise((r) => setTimeout(r, 500)); // Settings opens through the PIN gate
   document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
-  [...document.querySelectorAll('.spot-list-row')]
+  [...document.querySelectorAll('.spot-card')]
     .find(r => r.textContent.includes('Mirror List'))
     .querySelector('button').click();
   return 1;
@@ -195,7 +195,7 @@ await A.evalJs(`(async () => {
   document.querySelector('#corner').click();
   await new Promise((r) => setTimeout(r, 500)); // Settings opens through the PIN gate
   document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
-  [...document.querySelectorAll('.spot-list-row')]
+  [...document.querySelectorAll('.spot-card')]
     .find(r => r.textContent.includes('Mirror List'))
     .querySelector('button').click();
   return 1;

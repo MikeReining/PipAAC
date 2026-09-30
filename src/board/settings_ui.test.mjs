@@ -69,3 +69,13 @@ test("Spotlight is its own Settings page, with no timer and no old name", () => 
   assert.ok(!html.includes('id="spot-minutes"'), "the session timer is still there");
   assert.ok(!html.includes("Practice words"), `"Practice words" is still in the app`);
 });
+
+// spot_dim is the dimmed words' opacity (board.js bindSpotSettings sets
+// --dim-o from it), so "A lot" of dimming is the lowest number. Before
+// 032 the labels ran the other way and "A little" dimmed the most.
+test("Dim the other words: A lot is the lowest opacity", () => {
+  const seg = html.slice(html.indexOf('id="spot-dim"'), html.indexOf("</div>", html.indexOf('id="spot-dim"')));
+  const v = (label) => Number(seg.match(new RegExp(`data-v="(\\d+)">${label}<`))[1]);
+  assert.ok(v("A little") > v("Medium") && v("Medium") > v("A lot"),
+    `A little ${v("A little")}, Medium ${v("Medium")}, A lot ${v("A lot")}`);
+});

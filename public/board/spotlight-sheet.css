@@ -1,8 +1,109 @@
-/* Spotlight saved-list rows and per-word tip editor. */
-.spot-list-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
-.spot-list-row .spot-list-name { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.spot-list-row button { flex: none; padding: 5px 10px; font-size: 13px; }
-.spot-tip-row { display: flex; align-items: center; gap: 8px; padding: 3px 0 3px 16px; }
-.spot-tip-row .spot-tip-word { width: 90px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.spot-tip-row input { flex: 1; padding: 4px 8px; font-size: 13px; border: 1px solid var(--line); border-radius: 8px; }
+/* Settings → Spotlight (032). The hero and the look preview draw real
+ * board tiles with the board's own .glow / .dimmed marks, so the page
+ * shows exactly what the board will do. */
+
+/* Hero: six tiles, two glowing; a tap lands on a dimmed one and it
+ * still speaks. The loop is slow and stops for reduced motion. */
+.spot-hero { gap: 16px !important; }
+.spot-hero-board { position: relative; padding: 18px 0 4px; max-width: 520px; }
+.spot-hero-tiles, .spot-hero-over {
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; pointer-events: none;
+}
+.spot-hero-over { position: absolute; inset: 18px 0 4px; z-index: 2; }
+.spot-hero-tiles .cell, .spot-prev .cell { width: auto; height: auto; aspect-ratio: 1; min-width: 0; }
+/* Column 5 is the tapped tile (HERO_TAP in spotlight-sheet.js). */
+.spot-hero-mark { grid-column: 5; position: relative; }
+.spot-hero-tap {
+  position: absolute; left: 50%; top: 58%; width: 26px; height: 26px; margin: -13px 0 0 -13px;
+  border-radius: 50%; background: rgba(30, 26, 20, .5); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
+  opacity: 0; animation: spot-tap 6s ease-in-out infinite;
+}
+.spot-hero-say {
+  position: absolute; left: 50%; top: -16px; transform: translateX(-50%);
+  background: var(--ink-text); color: #fff; font-weight: 700; font-size: 14px;
+  padding: 3px 10px; border-radius: 10px; white-space: nowrap;
+  opacity: 0; animation: spot-say 6s ease-in-out infinite;
+}
+.spot-hero-tapped { animation: spot-tapped 6s ease-in-out infinite; }
+@keyframes spot-tap {
+  0%, 30% { opacity: 0; transform: scale(1.6); }
+  40%, 55% { opacity: 1; transform: scale(1); }
+  65%, 100% { opacity: 0; transform: scale(1); }
+}
+@keyframes spot-say {
+  0%, 42% { opacity: 0; transform: translate(-50%, 4px); }
+  48%, 78% { opacity: 1; transform: translate(-50%, 0); }
+  88%, 100% { opacity: 0; transform: translate(-50%, 0); }
+}
+@keyframes spot-tapped {
+  0%, 40% { transform: none; }
+  45% { transform: scale(.94); }
+  52%, 100% { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spot-hero-tap, .spot-hero-tapped { animation: none; }
+  .spot-hero-say { animation: none; opacity: 1; }
+}
+.spot-steps { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+.spot-steps b { font-weight: 700; }
+
+/* Word chips: a list's words and the running session's words. */
+.spot-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.spot-chip {
+  padding: 3px 10px; border-radius: 999px; font-weight: 700; font-size: 14px;
+  border: 1.5px solid var(--glow); background: #fff; color: var(--ink-text);
+}
+#spot-running-label { margin: 0; font-weight: 700; }
+#spot-running { display: flex; flex-direction: column; gap: 10px; }
+#spot-running[hidden] { display: none; }
+#spot-off { display: flex; flex-direction: column; gap: 10px; }
+#spot-off[hidden] { display: none; }
+
+/* Lists as cards. */
+.spot-cards { display: flex; flex-direction: column; gap: 10px; }
+.spot-card {
+  border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+  display: flex; flex-direction: column; gap: 10px; background: var(--cream);
+}
+.spot-card-head { display: flex; align-items: baseline; gap: 10px; }
+.spot-card-head .spot-list-name { font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.spot-card-head .set-sum { font-size: 13px; color: var(--muted); flex: none; }
+.spot-card-acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.spot-card-acts .btn { flex: 0 1 auto; padding: 8px 14px; font-size: 15px; }
+.spot-toggle[aria-pressed="true"] { background: var(--tray); box-shadow: inset 0 0 0 2px var(--ink); }
+.spot-toggle[aria-pressed="true"]::before { content: "✓ "; }
+.spot-del {
+  margin-left: auto; border: 0; background: none; font: inherit; font-size: 14px;
+  color: var(--muted); text-decoration: underline; cursor: pointer; padding: 8px 4px;
+}
+.spot-tips { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); padding-top: 10px; }
+.spot-tip-row { display: flex; align-items: center; gap: 8px; }
+.spot-tip-row .spot-tip-word { width: 90px; flex: none; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.spot-tip-row input {
+  flex: 1; min-width: 0; padding: 8px 10px; font: inherit; font-size: 15px;
+  border: 1px solid var(--line); border-radius: 8px; background: #fff;
+}
 .spot-tip-row input::placeholder { color: var(--muted); }
+.spot-tips .btn { align-self: flex-start; }
+
+.spot-sub { font-size: 15px !important; margin-top: 4px !important; }
+
+/* Look: folded — set once, rarely touched. */
+.spot-look summary {
+  display: flex; align-items: baseline; gap: 10px; cursor: pointer; list-style: none;
+}
+.spot-look summary::-webkit-details-marker { display: none; }
+.spot-look summary::after { content: "▸"; margin-left: auto; color: var(--muted); }
+.spot-look[open] summary::after { content: "▾"; }
+.spot-look summary .set-sum { font-size: 14px; color: var(--muted); }
+.spot-look-body { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.spot-prev {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px;
+  max-width: 340px; padding: 8px 4px; pointer-events: none;
+}
+
+@media (max-width: 420px) {
+  .spot-hero-tiles, .spot-hero-over { gap: 6px; }
+  .spot-hero-tap { width: 20px; height: 20px; }
+  .spot-hero-say { font-size: 12px; }
+}

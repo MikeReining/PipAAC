@@ -131,14 +131,16 @@ out.saved = await evalJs(`(async () => {
 
 // Start the saved list from the page.
 await evalJs(`(() => {
-  [...document.querySelectorAll('.spot-list-row button')]
+  [...document.querySelectorAll('.spot-card button')]
     .find((b) => b.textContent === 'Start').click();
   return 1;
 })()`);
 await sleep(400);
 out.running = await evalJs(glowState);
 
-// Restart the app — the glow must come back from the synced row.
+// Restart the app — the glow must come back from the synced row. Saves
+// are debounced; a real restart comes long after, so flush first.
+await evalJs(`window.pip.flushDb().then(() => 1)`);
 await loadApp();
 out.afterRestart = await evalJs(glowState);
 

@@ -1,7 +1,8 @@
 /**
- * Spotlight page (013; Settings → Spotlight since 032): the running
- * session, saved lists, pick mode, and the synced look settings.
- * Picking happens on the board itself: taps choose targets, never speak.
+ * Spotlight page (013; Settings → Spotlight since 032): what it is, the
+ * running session, saved lists as cards, modeling from a phone, and the
+ * synced look settings. Picking happens on the board itself: taps choose
+ * targets, never speak.
  */
 import {
   deleteSpotList, endSession, listItems, listTargets,
@@ -11,9 +12,21 @@ import {
 import { setSetting } from "../shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+};
+
+/* The hero: six real board tiles, two glowing. The tap lands on a dimmed
+ * one — it still speaks. Sense ids are the shipped core words. */
+const HERO = ["sns_0001", "sns_0013", "sns_0055", "sns_0015", "sns_0026", "sns_0025"]; // I want more go stop help
+const HERO_GLOW = new Set(["sns_0055", "sns_0025"]); // more, help
+const HERO_TAP = "sns_0026"; // stop
 
 export function mountSpotlightSheet({
-  db, catalog, open, close, all, coachLabel, bindSpotSettings,
+  db, catalog, me, open, close, all, coachLabel, tileFor, bindSpotSettings,
   renderGrid, renderStrip, rerenderView, setModeling, setPicking,
   getPicking, getSpotPulse, getModelSpeaks, onSettingsOpen, openSettings,
 }) {
@@ -27,70 +40,82 @@ export function mountSpotlightSheet({
     rerenderView();
   }
 
-  function renderSpotForm() {
+  const chips = (keys) => {
+    const box = el("div", "spot-chips");
+    for (const k of keys) box.append(el("span", "spot-chip", coachLabel(...k.split(":"))));
+    return box;
+  };
+  const person = () => me.name?.trim() || "this person";
+
+  function renderHero() {
+    const box = $("spot-hero-tiles");
+    if (box.childElementCount) return;
+    for (const id of HERO) {
+      const t = tileFor(id);
+      t.classList.add(HERO_GLOW.has(id) ? "glow" : "dimmed");
+      if (id === HERO_TAP) t.classList.add("spot-hero-tapped");
+      box.append(t);
+    }
+    $("spot-hero-say").textContent = `“${coachLabel("sense", HERO_TAP)}”`;
+  }
+
+  function renderNow() {
     const s = spotSession(db);
     $("spot-running").hidden = !s;
     $("spot-off").hidden = !!s;
-    if (s) $("spot-running-label").textContent = `🔦 “${s.name}” glows ${untilText(s)}.`;
-    const lists = spotLists(db);
+    if (!s) return;
+    $("spot-running-label").textContent = `🔦 “${s.name}” glows ${untilText(s)}.`;
+    $("spot-running-words").replaceWith(Object.assign(chips(JSON.parse(s.targets)), { id: "spot-running-words" }));
+  }
+
+  function renderLists() {
     const box = $("spot-lists");
-    box.innerHTML = "";
+    box.replaceChildren();
+    const lists = spotLists(db);
     if (!lists.length) {
-      box.innerHTML = '<p class="hint">No lists yet. Pick words, then Save to keep them for next time.</p>';
+      box.append(el("p", "hint", "No lists yet. Pick words, then Save to keep them for next time."));
     }
     for (const l of lists) {
-      const row = document.createElement("div");
-      row.className = "spot-list-row";
-      const name = document.createElement("span");
-      name.className = "spot-list-name";
-      name.textContent = `${l.name} (${l.n} word${l.n === 1 ? "" : "s"})`;
-      const start = document.createElement("button");
-      start.className = "btn secondary";
-      start.textContent = "Start";
+      const card = el("div", "spot-card");
+      const head = el("div", "spot-card-head");
+      head.append(el("b", "spot-list-name", l.name),
+        el("span", "set-sum", `${l.n} word${l.n === 1 ? "" : "s"}`));
+      const acts = el("div", "spot-card-acts");
+      const start = el("button", "btn", "Start");
       start.addEventListener("click", () => startGlow(l.name, listTargets(db, l.id)));
       // 016 § 5: a list marked as a goal is tracked in the weekly
       // stats — target words on their own vs with the glow.
-      const goal = document.createElement("button");
-      goal.className = "btn secondary";
-      goal.textContent = l.is_goal ? "✓ Tracking progress" : "Track progress";
+      const goal = el("button", "btn secondary spot-toggle", "Track progress");
+      goal.setAttribute("aria-pressed", String(!!l.is_goal));
       goal.title = "Show this list's words in Progress";
       goal.addEventListener("click", () => {
         setListGoal(db, l.id, !l.is_goal);
-        renderSpotForm();
+        renderLists();
       });
-      const del = document.createElement("button");
-      del.className = "btn secondary";
-      del.textContent = "Delete";
-      del.addEventListener("click", () => { deleteSpotList(db, l.id); renderSpotForm(); });
-      const tipsBtn = document.createElement("button");
-      tipsBtn.className = "btn secondary";
-      tipsBtn.textContent = "Coaching tips";
+      const tipsBtn = el("button", "btn secondary", "Coaching tips");
+      tipsBtn.setAttribute("aria-expanded", "false");
       // An SLP edits a list's tips here (013 § 5a): each word gets one
       // line; the shipped default sits as the placeholder, an empty field
       // falls back to it. Writes are synced set_setting-style ops.
       tipsBtn.addEventListener("click", () => {
-        const next = row.nextSibling;
-        if (next?.classList?.contains("spot-tips")) { next.remove(); return; }
+        const shown = card.querySelector(".spot-tips");
+        tipsBtn.setAttribute("aria-expanded", String(!shown));
+        if (shown) { shown.remove(); return; }
         const items = listItems(db, l.id);
-        const editor = document.createElement("div");
-        editor.className = "spot-tips";
+        const editor = el("div", "spot-tips");
+        editor.append(el("p", "hint",
+          "One line per word: when to use it. It shows on a linked phone while this list glows."));
         for (const it of items) {
-          const r = document.createElement("div");
-          r.className = "spot-tip-row";
-          const w = document.createElement("span");
-          w.className = "spot-tip-word";
-          w.textContent = coachLabel(it.kind, it.item_id);
-          const input = document.createElement("input");
+          const r = el("label", "spot-tip-row");
+          const input = el("input");
           input.value = it.tip ?? "";
           input.placeholder = catalog.coachTips?.[it.item_id]
-            ?? "One-line tip, e.g. use it at snack time";
+            ?? "e.g. use it at snack time";
           input.dataset.key = `${it.kind}:${it.item_id}`;
-          r.append(w, input);
-          editor.appendChild(r);
+          r.append(el("span", "spot-tip-word", coachLabel(it.kind, it.item_id)), input);
+          editor.append(r);
         }
-        const save = document.createElement("button");
-        save.className = "btn secondary";
-        save.textContent = "Save coaching tips";
+        const save = el("button", "btn secondary", "Save coaching tips");
         save.addEventListener("click", () => {
           for (const inp of editor.querySelectorAll("input")) {
             const [kind, id] = inp.dataset.key.split(":");
@@ -98,18 +123,42 @@ export function mountSpotlightSheet({
             const v = inp.value.trim() || null;
             if (v !== (it?.tip ?? null)) setItemTip(db, l.id, kind, id, v);
           }
-          renderSpotForm();
+          renderLists();
         });
-        editor.appendChild(save);
-        row.after(editor);
+        editor.append(save);
+        card.append(editor);
       });
-      row.append(name, start, tipsBtn, goal, del);
-      box.appendChild(row);
+      const del = el("button", "spot-del", "Delete");
+      del.addEventListener("click", () => { deleteSpotList(db, l.id); renderLists(); });
+      acts.append(start, goal, tipsBtn, del);
+      card.append(head, chips(listTargets(db, l.id)), acts);
+      box.append(card);
     }
+  }
+
+  /* Modeling needs two devices. Only a partner device (a linked phone or
+   * a supporter's laptop) gets the button — on the child's own device
+   * it would glow nothing anyone sees; there the row explains linking. */
+  function renderModel() {
+    const partner = me.role === "partner";
+    const linked = !!me.sync?.userId;
+    $("spot-model").hidden = !partner;
+    $("spot-link").hidden = partner;
+    $("spot-link").textContent = linked ? "Add a device" : "Link a phone";
+    $("spot-model-title").textContent = partner ? "Model from this device" : "Model from your phone";
+    $("spot-model-hint").textContent = partner
+      ? `Tap a word here and it glows on ${person()}'s board for a few seconds. Say it out loud while you point. While a spotlight runs, its words also sit above the board here, with a tip for each.`
+      : linked
+        ? `On a linked phone, open Settings → Spotlight → Model from this device. Tap a word there and it glows here for a few seconds.`
+        : `Link your phone to ${person()}'s board. Then tap a word on your phone and it glows here for a few seconds, while you say it out loud.`;
+  }
+
+  function renderLook() {
     const { spot_dim: dim = 45 } = all(db,
       "SELECT spot_dim FROM learner_profile WHERE id = 'prf_local'")[0] ?? {};
+    const pulse = getSpotPulse();
     for (const b of $("spot-pulse").querySelectorAll("button")) {
-      b.classList.toggle("on", b.dataset.v === (getSpotPulse() ? "1" : "0"));
+      b.classList.toggle("on", b.dataset.v === (pulse ? "1" : "0"));
     }
     for (const b of $("spot-dim").querySelectorAll("button")) {
       b.classList.toggle("on", b.dataset.v === String(dim));
@@ -117,6 +166,26 @@ export function mountSpotlightSheet({
     for (const b of $("model-speaks").querySelectorAll("button")) {
       b.classList.toggle("on", b.dataset.v === (getModelSpeaks() ? "1" : "0"));
     }
+    const dimWord = $("spot-dim").querySelector("button.on")?.textContent.toLowerCase() ?? "";
+    $("spot-look-sum").textContent = `${pulse ? "Pulsing" : "Steady"} glow · dim ${dimWord}`;
+    // The preview is the board's own marks on the hero's tiles.
+    const prev = $("spot-prev");
+    if (!prev.childElementCount) {
+      for (const id of HERO.slice(1, 5)) {
+        const t = tileFor(id);
+        t.classList.add(HERO_GLOW.has(id) ? "glow" : "dimmed");
+        prev.append(t);
+      }
+    }
+    for (const t of prev.querySelectorAll(".glow")) t.classList.toggle("pulse", pulse);
+  }
+
+  function renderSpotForm() {
+    renderHero();
+    renderNow();
+    renderLists();
+    renderModel();
+    renderLook();
   }
 
   onSettingsOpen(renderSpotForm);
@@ -127,7 +196,7 @@ export function mountSpotlightSheet({
   $("model-done").addEventListener("click", () => setModeling(false));
   $("spot-end").addEventListener("click", () => {
     endSession(db);
-    renderSpotForm();
+    renderNow();
     renderGrid();
     rerenderView();
   });
@@ -172,7 +241,7 @@ export function mountSpotlightSheet({
       if (v === undefined) return;
       setSetting(db, seg.replaceAll("-", "_"), Number(v));
       bindSpotSettings();
-      renderSpotForm();
+      renderLook();
       renderGrid();
       renderStrip();
       rerenderView();

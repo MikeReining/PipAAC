@@ -11,6 +11,7 @@ import { mountSpotlightSheet } from "../../public/board/spotlight-sheet.js";
 function el() {
   const node = {
     children: [],
+    attrs: {},
     textContent: "",
     value: "",
     hidden: false,
@@ -19,6 +20,11 @@ function el() {
     listeners: {},
     classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } },
     append(...kids) { node.children.push(...kids); },
+    replaceChildren(...kids) { node.children = [...kids]; },
+    replaceWith() {},
+    setAttribute(k, v) { node.attrs[k] = v; },
+    get childElementCount() { return node.children.length; },
+    querySelector() { return null; },
     appendChild(kid) { node.children.push(kid); return kid; },
     addEventListener(type, fn) { (node.listeners[type] ??= []).push(fn); },
     querySelectorAll() { return []; },
@@ -42,7 +48,9 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
 
   const ids = [
     "spot-running", "spot-running-label", "spot-lists",
-    "spot-pulse", "spot-dim", "model-speaks", "spot-off",
+    "spot-pulse", "spot-dim", "model-speaks", "spot-off", "spot-hero-tiles",
+    "spot-hero-say", "spot-running-words", "spot-model-title", "spot-model-hint",
+    "spot-link", "spot-look-sum", "spot-prev",
     "spot-model", "model-done", "spot-end", "spot-pick", "spot-pick-cancel",
     "spot-pick-start", "spot-pick-save", "spot-list-name", "spot-name-save",
   ];
@@ -56,6 +64,8 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
   mountSpotlightSheet({
     db,
     catalog: {},
+    me: { name: "Sonja" },
+    tileFor: () => el(),
     open() {},
     close() {},
     all: (database, sql, p = []) => database.prepare(sql).all(...p),
@@ -75,6 +85,11 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
 
   assert.equal(onOpen.length, 1, "the page repaints when Settings opens");
   onOpen[0]();
-  assert.equal(nodes["spot-lists"].children.length, 1);
-  assert.equal(nodes["spot-lists"].children[0].children[0].textContent, "Snack (1 word)");
+  const cards = nodes["spot-lists"].children;
+  assert.equal(cards.length, 1);
+  const [head] = cards[0].children;
+  assert.deepEqual(head.children.map((c) => c.textContent), ["Snack", "1 word"]);
+  // The child's own device has no Model button — it would glow nothing.
+  assert.equal(nodes["spot-model"].hidden, true);
+  assert.equal(nodes["spot-link"].hidden, false);
 });

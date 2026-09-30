@@ -2217,9 +2217,16 @@ $("share-research").addEventListener("click", (e) => {
 });
 syncShareSeg();
 
-/* Spotlight sheet — public/board/spotlight-sheet.js */
+/** One word's board tile, outside the grid — the first-open preview and
+ *  the Spotlight page's pictures draw the tile the board draws. */
+function tileForSense(senseId) {
+  const w = senseById(senseId);
+  return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
+}
+
+/* Spotlight page — public/board/spotlight-sheet.js */
 mountSpotlightSheet({
-  db, catalog, open, close, all: ALL,
+  db, catalog, me, open, close, all: ALL, tileFor: tileForSense,
   coachLabel: (kind, id) => coachUi.coachLabel(kind, id),
   bindSpotSettings,
   renderGrid, renderStrip, rerenderView, setModeling, setPicking,
@@ -2639,10 +2646,7 @@ const onramp = mountOnramp({
   me, saveUser,
   setLook,
   say: (text) => speak(text), // the welcome talks — users can't read
-  tileFor: (senseId) => {
-    const w = senseById(senseId);
-    return wordTile({ label: w?.label ?? "", role: w?.fitzgerald_role, art: metaFor(senseId).art });
-  },
+  tileFor: tileForSense,
   fitLabels,
   onDone: () => { renderGrid(); renderStrip(); tourUi.start(); },
 });

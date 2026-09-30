@@ -934,31 +934,49 @@
             </section>
 
             <!-- Spotlight (013; its own page since 032). The controls are
-                 wired by public/board/spotlight-sheet.js. -->
+                 wired by public/board/spotlight-sheet.js. Order: what it
+                 is → right now → lists → model → progress → look. -->
             <section class="set-sec" data-sec="spotlight" data-title="Spotlight">
               <h2>Spotlight</h2>
               <p class="set-intro">Light up the words you're teaching. Everything else dims, but still speaks.</p>
+              <div class="seg-row spot-hero">
+                <div class="spot-hero-board" aria-hidden="true">
+                  <div class="spot-hero-tiles" id="spot-hero-tiles"></div>
+                  <div class="spot-hero-over">
+                    <span class="spot-hero-mark"><span class="spot-hero-say" id="spot-hero-say"></span><span class="spot-hero-tap"></span></span>
+                  </div>
+                </div>
+                <ol class="spot-steps">
+                  <li><b>Pick the words</b> you're teaching today.</li>
+                  <li><b>They glow</b> on <span data-person></span>'s board. The rest dim, and every word still speaks.</li>
+                  <li><b>Point and say them</b> as you go. It turns off by itself tonight, or tap 🔦 to end it.</li>
+                </ol>
+              </div>
               <div class="seg-row" id="spot-now-row">
                 <span class="seg-label">Right now</span>
                 <div id="spot-running" hidden>
                   <p id="spot-running-label"></p>
+                  <div class="spot-chips" id="spot-running-words"></div>
                   <div class="row"><button class="btn secondary" id="spot-end">End spotlight</button></div>
                 </div>
                 <div id="spot-off">
-                  <p class="hint">Off.</p>
+                  <p class="hint">Nothing is glowing.</p>
                   <div class="row"><button class="btn" id="spot-pick">Spotlight words</button></div>
-                  <p class="hint">Tap words on the board, or inside a group, to choose them. Then Start, or Save the list for next time.</p>
+                  <p class="hint">Tap words on the board, or inside a group. Then Start now, or Save the list for next time.</p>
                 </div>
               </div>
               <div class="seg-row">
                 <span class="seg-label">Your lists</span>
-                <div id="spot-lists"></div>
+                <div id="spot-lists" class="spot-cards"></div>
               </div>
-              <div class="seg-row">
-                <span class="seg-label">Model from this device</span>
-                <div class="row"><button class="btn secondary" id="spot-model">Model from this device</button></div>
-                <p class="hint">Tap a word here and it glows on <span data-person></span>'s board for a few seconds. Say the word out loud while you point.</p>
-                <span class="seg-label">Modeled words</span>
+              <div class="seg-row" id="spot-model-row">
+                <span class="seg-label" id="spot-model-title">Model from your phone</span>
+                <p class="hint" id="spot-model-hint"></p>
+                <div class="row">
+                  <button class="btn secondary" id="spot-model">Model from this device</button>
+                  <button class="btn secondary" id="spot-link" data-click="dev-choose">Link a phone</button>
+                </div>
+                <span class="seg-label spot-sub">When a modeled word arrives</span>
                 <div class="seg" id="model-speaks">
                   <button data-v="0">Glow silently</button>
                   <button data-v="1">Glow and speak</button>
@@ -966,19 +984,30 @@
                 <p class="hint">Silent is usually best: your voice does the teaching.</p>
               </div>
               <div class="seg-row">
-                <span class="seg-label">Glow</span>
-                <div class="seg" id="spot-pulse">
-                  <button data-v="0">Steady</button>
-                  <button data-v="1">Pulse</button>
-                </div>
+                <span class="seg-label">Progress</span>
+                <p class="hint">Turn on Track progress for a list. Progress then shows each of its words: said on their own, and said with the glow.</p>
+                <div class="row"><button class="btn secondary" data-click="open-progress">See progress</button></div>
               </div>
-              <div class="seg-row">
-                <span class="seg-label">Dim the other words</span>
-                <div class="seg" id="spot-dim">
-                  <button data-v="30">A little</button>
-                  <button data-v="45">Medium</button>
-                  <button data-v="60">A lot</button>
-                </div>
+              <div class="seg-row spot-look-row">
+                <details class="spot-look">
+                  <summary><span class="seg-label">Look</span><span class="set-sum" id="spot-look-sum"></span></summary>
+                  <div class="spot-look-body">
+                    <div class="spot-prev" id="spot-prev" aria-hidden="true"></div>
+                    <span class="seg-label spot-sub">Glow</span>
+                    <div class="seg" id="spot-pulse">
+                      <button data-v="0">Steady</button>
+                      <button data-v="1">Pulse</button>
+                    </div>
+                    <span class="seg-label spot-sub">Dim the other words</span>
+                    <!-- spot_dim is the dimmed words' opacity in percent:
+                         a little dimming keeps them brighter. -->
+                    <div class="seg" id="spot-dim">
+                      <button data-v="60">A little</button>
+                      <button data-v="45">Medium</button>
+                      <button data-v="30">A lot</button>
+                    </div>
+                  </div>
+                </details>
               </div>
             </section>
 
