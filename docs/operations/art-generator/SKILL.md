@@ -111,7 +111,24 @@ Judging evaluates **only** functional and clinical invariants, never subjective 
 
 ## 6. Operating Rules & Cadence
 
+0. **What still needs a picture:** Run `npm run catalog:art:gaps` (core launch
+   lexicon vs `assets/symbols/`). For the next ten in **group index order**:
+   `npm run catalog:art:gaps:groups`. Add `--extended` or `npm run catalog:art:gaps:extended`
+   for phase-010 rows vs `out/extended_art/`. Implementation:
+   `scripts/art/art_gaps.mjs` (`--json` for machines). Master lists stay in
+   `data/launch_lexicon.json` and `data/extended_lexicon.json`; this script is
+   only the diff.
+   Before Muse on any word, check `out/extended_art/<id>.png` and run
+   `npm run art:review` to clear the backlog (`review_lane.mjs`).
+
 1. **Zero Ceremonies During Art Sessions:** Never run test suites, test guards, or background lint gates during active art generation turns. Respect the 15–20 second feedback loop.
-2. **Cadence: Strictly ONE Image at a Time:** Generate exactly 1 roll per word, inspect against the 5 invariants, report verdict (Pass/Fail + Why), and wait for founder feedback before proceeding.
+2. **Cadence: plan ten → generate ten → review ten:**
+   * **Pick the next ten** from `npm run catalog:art:gaps -- --walk groups --limit 10`
+     (group index order) or `npm run catalog:art:gaps` (slot order). Name slot, word, and group.
+   * **Propose how each should look** — one plain sentence per word (§4C). Discuss with the founder until all ten concepts are settled. Do not send to Muse while concepts are still open.
+   * **Generate all ten in one slice** after founder approval on the list *and* the concepts — one Muse roll per word, ten rolls total. Trust Muse; no prompt micromanagement (§4C, §1 re-roll law).
+   * **Review the batch together** — grid or contact sheet at 240px and 48px. Founder approves the batch, or names the few to re-roll or fix (compositing only when a paired tile needs shared geometry).
+   * **Extended backlog:** `npm run art:review` — keyboard lane for ~1,930 local PNGs in `out/extended_art/` (A approve, R reject to `rejected/`). No Muse until reviewed or absent.
+   * **Never** run open-ended batch runners (`extended_batch.mjs`, hundreds of words) without explicit founder approval for that exact run. The cap is **ten paid generations per slice**, not “one API call per week.”
 3. **No Silent WIP:** Every approved image is copied into `assets/symbols/<word>.png` immediately at slice closeout.
 4. **Shipping is the catalog build:** `npm run catalog:build` turns every canonical file in `assets/symbols/` into an approved `image` row + `sense.default_image_id` and copies the bytes to `public/symbols/` — `_rollN` alternates never ship. Approving a symbol requires no extra wiring.

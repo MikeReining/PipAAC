@@ -2,8 +2,9 @@
 
 **Status:** In progress. Slice 1 word list generated (2026-09-26):
 `data/extended_lexicon.json` + `data/prediction/everyday_gaps.en.json`.
-Slice 2 art is NOT approved: generation stays one image at a time, ten at
-most, with the founder (`AGENTS.md` § Project Laws).
+Slice 2 art is NOT approved: work in **slices of up to ten** — agree list and
+picture plan, generate those rolls, founder review (`AGENTS.md` § Project Laws,
+`docs/operations/art-generator/SKILL.md` §6).
 
 **DECIDED 2026-09-22** (founder: "a thousand images only cost us $10 …
 high leverage and high wow if we really build out our image library").

@@ -23,8 +23,8 @@ tells us what Muse will draw. Holidays and occasions are their own groups.
 > 2. Generate only if there is no file or the review rejects it. Generate one
 >    image at a time, ten at most, with the founder (`AGENTS.md` § Project Laws).
 > 3. Record every review decision in `out/extended_art/review.json`
->    (`approve`, `reroll` or `reject`). `node scripts/art/review_server.mjs`
->    shows the unreviewed ones 50 at a time. It calls no paid API.
+>    (`approve` or `reject`). **`npm run art:review`** — one image, **A** approve,
+>    **R** reject (PNG moves to `rejected/`). Legacy grid: `review_server.mjs`.
 >
 > `out/` is gitignored, so these files exist only on the founder's machine. Do
 > not delete them. 1,472 rows were never drawn. 19 were blocked by Meta's content
