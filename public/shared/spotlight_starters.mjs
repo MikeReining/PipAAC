@@ -5,7 +5,7 @@
  * (data/coach_tips.json); "that" does not yet. Founder-reviewed; an adult
  * adds one to Your lists with a tap, and from then on it is theirs.
  *
- * `first` is also what Try it glows.
+ * `first` also decides which showcase tiles glow (SHOWCASE below).
  */
 export const STARTER_LISTS = [
   // Ask (want, more, help), refuse (not), point at the world (that), and
@@ -40,9 +40,9 @@ export const STARTER_LISTS = [
 
 /** The one worked example Spotlight teaches with (032, founder
  *  2026-09-30: the page and Try it showed three different examples and it
- *  read as nonsense). The page's picture and every Try it card use these
- *  tiles. What glows is never listed here — it is whatever First words
- *  holds, so the picture always matches what Try it lights on the board.
+ *  read as nonsense). The page's picture, every Try it card, and the board
+ *  during Try it use these tiles: the ones First words holds glow, and Try
+ *  it lights exactly those — no more — so card and board match.
  *  `tap` is a dimmed word: the picture taps it, card 2 asks for it, and
  *  card 3's move is First words' `more` + it + ✨. */
 export const SHOWCASE = {

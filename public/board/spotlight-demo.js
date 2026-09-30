@@ -14,7 +14,7 @@
  */
 import { endSpotlight, resumeSession, spotlight, startSpotlight } from "../shared/spotlight.mjs";
 import {
-  SHOWCASE, STARTER_LISTS, showcaseLit, starterTargets,
+  SHOWCASE, showcaseLit,
 } from "../shared/spotlight_starters.mjs";
 import { moveRow } from "./move-row.js";
 
@@ -126,7 +126,9 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
 
   function start() {
     board.showBoard();
-    startSpotlight(db, starterTargets(STARTER_LISTS[0]), "Try it");
+    // Exactly the example's glowing tiles — the board, the page's picture,
+    // and card 1 then show the same words lit (founder, 2026-09-30).
+    startSpotlight(db, GLOWS.map((id) => `sense:${id}`), "Try it");
     board.setDemo({
       onTap(kind, id) {
         // Step 2 is done the moment a dimmed word speaks.

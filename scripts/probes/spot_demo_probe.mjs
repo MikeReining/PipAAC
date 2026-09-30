@@ -123,6 +123,8 @@ out.demo = await evalJs(`(async () => { ${w}
     barSetAside: window.pip.sentence.length === 0,
     // Card 1 compares — glowing vs dimmed tiles, and no arrow to misread as an order.
     compare: document.querySelectorAll('.spot-demo-card .move-compare .cell').length,
+    // The board lights exactly what the card shows glowing.
+    cardGlow: document.querySelectorAll('.spot-demo-card .move-compare .cell.glow').length,
     arrows: document.querySelectorAll('.spot-demo-card .move-arrow').length };
   document.querySelector('.spot-demo-card .btn').click(); await w(200);
   // A dimmed word still speaks — and finishes step 2 by itself.
@@ -248,7 +250,7 @@ const ok =
   out.ideas.before.join() === "First words,Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
   out.ideas.after.join() === "Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
   out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 6 &&
-  out.demo.lit.glow === 6 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
+  out.demo.lit.glow === 3 && out.demo.lit.cardGlow === 3 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
   out.demo.lit.barSetAside && out.demo.lit.compare === 6 && out.demo.lit.arrows === 0 &&
   out.demo.moveStep.includes("3 of 4") && out.demo.moveLit.fix && out.demo.moveLit.cells === 2 &&
   out.demo.moveBar === "more go" &&
