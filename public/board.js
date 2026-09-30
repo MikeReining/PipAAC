@@ -1758,15 +1758,10 @@ function renderGrid() {
       el.dataset.slot = slot;
       el.dataset.item = `entity:${c.entity_id}`;
       if (edit) {
-        // D10: tap asks "what goes here" — the placement sheet. Drag
-        // still moves; the ✎ inside the sheet opens the word card. In
-        // the editor (031) a tap selects the word and opens its card.
+        // The editor (031): a tap selects the word and opens its card —
+        // the card's Replace opens the placement sheet (D10). Drag moves.
         editPointer(el, {
-          onTap: () => (view === "editor"
-            ? editorUi.select({ item_kind: "entity", item_id: c.entity_id, label: c.label })
-            : placeUi.openPicker(slot,
-              { kind: "entity", id: c.entity_id, label: c.label,
-                role: c.fitzgerald_role })),
+          onTap: () => editorUi.select({ item_kind: "entity", item_id: c.entity_id, label: c.label }),
           onDrop: (to) => {
             const mv = placeOnBoard(db, geom.name, "entity", c.entity_id, to, {
               anchors: new Set(geom.anchors.keys()),
@@ -1796,15 +1791,11 @@ function renderGrid() {
     el.dataset.item = `sense:${c.sense_id}`;
     if (edit) {
       // Adult move (014 § 2 ruling 1): drag onto a word swaps, onto an
-      // empty slot moves; anchors and reserved slots refuse. D10: a tap
-      // opens the placement sheet — ✎ inside it opens the word card; in
-      // the editor (031) a tap selects the word and opens its card.
+      // empty slot moves; anchors and reserved slots refuse. In the
+      // editor (031) a tap selects the word and opens its card — the
+      // card's Replace opens the placement sheet (D10).
       editPointer(el, {
-        onTap: () => (view === "editor"
-          ? editorUi.select({ item_kind: "sense", item_id: c.sense_id, label: c.label })
-          : placeUi.openPicker(slot,
-            { kind: "sense", id: c.sense_id, label: c.label,
-              role: c.fitzgerald_role })),
+        onTap: () => editorUi.select({ item_kind: "sense", item_id: c.sense_id, label: c.label }),
         onDrop: (to) => {
           const mv = moveCore(db, geom.name, c.sense_id, to, { anchors: new Set(geom.anchors.keys()) });
           if (!mv) return;
@@ -2839,6 +2830,7 @@ editorUi = mountEditor({
   addFlow: addUi,
   openWordCard: (item, opts) => wordCard.openWordCard(item, opts),
   closeCard: () => close("wordcard"),
+  replaceOnBoard: (slot, occ) => placeUi.openPicker(slot, occ),
   setView: (v) => kbUi.setView(v),
   openGroupView: (id, page = 0) => { groupsUi.setGroup(id, page); kbUi.setView("group"); },
   toast, undoLast,

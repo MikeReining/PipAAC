@@ -43,7 +43,7 @@ const tabPlace = {
 export function mountEditor({
   db, locale, all, catalog, me, userStore, flushDb,
   paintGroupPage, renderMainBoard, homeCells, boardGeom,
-  addFlow, openWordCard, closeCard,
+  addFlow, openWordCard, closeCard, replaceOnBoard,
   setView, openGroupView, toast, undoLast, syncState,
   renderLibrary, invalidateIndex, renderStrip,
   savePhoto, syncUploadBlob, tile, loadPhotoURL, artInto, flashCell,
@@ -469,7 +469,7 @@ export function mountEditor({
     if (restoreCard) {
       restoreCard = false;
       const only = selected.size === 1 ? [...selected.values()][0] : null;
-      if (only) openWordCard(only);
+      if (only) showCard(only);
       grid?.querySelector(`[data-item="${[...selected.keys()][0]}"]`)?.scrollIntoView?.({ block: "nearest" });
       $("ed-groups").querySelector?.(".ed-grow.on")?.scrollIntoView?.({ block: "nearest" });
     }
@@ -500,13 +500,32 @@ export function mountEditor({
     const k = keyOf(item);
     if (additive && where.kind === "group") {
       if (selected.has(k)) selected.delete(k); else selected.set(k, item);
-      if (selected.size === 1) openWordCard([...selected.values()][0]);
+      if (selected.size === 1) showCard([...selected.values()][0]);
       else closeCard();
     } else {
       selected = new Map([[k, item]]);
-      openWordCard(item);
+      showCard(item);
     }
     markSelection();
+  }
+
+  /** The card for a selected word. On the main board it offers Replace —
+   *  the placement sheet (018 D10) for the word's cell. */
+  function showCard(item) {
+    const cell = where.kind === "main"
+      ? (homeCells?.() ?? []).find((c) => (c.kind === "entity"
+        ? `entity:${c.entity_id}` : `sense:${c.sense_id}`) === keyOf(item))
+      : null;
+    if (!cell || !replaceOnBoard) return openWordCard(item);
+    openWordCard(item, {
+      onReplace: () => {
+        closeCard();
+        clearSelection();
+        replaceOnBoard(cell.slot_index, {
+          kind: item.item_kind, id: item.item_id, label: item.label, role: cell.fitzgerald_role,
+        });
+      },
+    });
   }
 
   function clearSelection() {

@@ -60,6 +60,7 @@ export function mountWordCard({
 }) {
   let cardItem = null; // { item_kind, item_id, label } currently shown
   let justAdded = null; // { groupName } while the card is the add's step 2
+  let onReplace = null; // set by the editor for a main-board word (018 D10)
   let playedOnce = false;
   let recorder = null;
   let recChunks = [];
@@ -465,10 +466,13 @@ export function mountWordCard({
     if (card.parentElement !== host) host.prepend(card);
   }
 
-  /** `opts.justAdded` = { groupName } when this is the add's step 2. */
+  /** `opts.justAdded` = { groupName } when this is the add's step 2;
+   *  `opts.onReplace` shows Replace — the caller owns what it opens. */
   function openWordCard(item, opts = {}) {
     cardItem = { item_kind: item.item_kind, item_id: item.item_id, label: item.label };
     justAdded = opts.justAdded ?? null;
+    onReplace = opts.onReplace ?? null;
+    $("wc-replace").hidden = !onReplace;
     playedOnce = false;
     const ent = isEnt();
     const meta = ent
@@ -684,6 +688,8 @@ export function mountWordCard({
     close("wordcard"); // the destinations sheet takes the screen
     openAddToBoards(item);
   });
+
+  $("wc-replace").addEventListener("click", () => onReplace?.());
 
   /** Show on board: jump to where the word lives and mark its cell for a
    *  beat. An entity or custom-group sense flashes in the group the card

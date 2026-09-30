@@ -24,9 +24,9 @@ function freshDb() {
   return db;
 }
 
-function harness({ db = freshDb() } = {}) {
+function harness({ db = freshDb(), homeCells = () => [] } = {}) {
   const $ = installDom();
-  const log = { main: 0, painted: [], cards: [], made: [], placed: [], bulk: [], views: [], flashed: [] };
+  const log = { main: 0, painted: [], cards: [], cardOpts: [], made: [], placed: [], bulk: [], views: [], flashed: [], replaced: [] };
   let editor = null;
   editor = mountEditor({
     db,
@@ -38,14 +38,19 @@ function harness({ db = freshDb() } = {}) {
     flushDb: async () => {},
     async paintGroupPage(zg, opts) { log.painted.push({ zg, ...opts }); return 1; },
     renderMainBoard: () => { log.main++; },
-    homeCells: () => [],
+    homeCells,
     boardGeom: () => ({ cols: 10, name: "grid60", anchors: new Map() }),
     addFlow: {
       makeWord: (text, o) => { log.made.push({ text, ...o }); return createEntity(db, { name: text }).id; },
       placeWord: (kind, id, label, o) => { log.placed.push({ kind, id, ...o }); },
       openBulkForm: (gid, text) => log.bulk.push({ gid, text }),
     },
-    openWordCard: (item) => { log.cards.push(item); $("wordcard").classList.add("open"); },
+    openWordCard: (item, opts = {}) => {
+      log.cards.push(item);
+      log.cardOpts.push(opts);
+      $("wordcard").classList.add("open");
+    },
+    replaceOnBoard: (slot, occ) => log.replaced.push({ slot, ...occ }),
     closeCard: () => $("wordcard").classList.remove("open"),
     // The app's setView("editor") repaints the editor; mirror that.
     setView: (v) => { log.views.push(v); if (v === "editor") editor.renderEditor(); },
@@ -222,6 +227,29 @@ test("the editor's gear opens Settings through the PIN gate, like the board's co
   const board = readFileSync(join(repoRoot, "public/board.js"), "utf8");
   assert.match(board, /\$\("ed-settings"\)\.addEventListener\("click", \(\) => gatePin\(\(\) => settingsUi\.open\(\)\)\)/,
     "never a way around the PIN");
+});
+
+test("a main-board word's card offers Replace — the placement sheet for its cell", async () => {
+  const cell = { kind: "sense", slot_index: 23, sense_id: "s_want", label: "want", fitzgerald_role: "Green" };
+  const h = harness({ homeCells: () => [cell] });
+  h.editor.renderEditor();
+  await flush();
+  h.editor.select({ item_kind: "sense", item_id: "s_want", label: "want" });
+  const { onReplace } = h.log.cardOpts.at(-1);
+  assert.equal(typeof onReplace, "function", "the card shows Replace");
+  onReplace();
+  assert.equal(h.$("wordcard").classList.contains("open"), false, "the card steps aside for the sheet");
+  assert.deepEqual(h.log.replaced, [{ slot: 23, kind: "sense", id: "s_want", label: "want", role: "Green" }]);
+});
+
+test("a group word's card has no Replace — groups have no cells to swap", async () => {
+  const h = harness();
+  const { id } = createEntity(h.db, { name: "Cooper" });
+  placeItem(h.db, "grp_mine", "entity", id);
+  h.editor.renderEditor();
+  await h.editor.openGroup("grp_mine");
+  h.editor.select({ item_kind: "entity", item_id: id, label: "Cooper" });
+  assert.equal(h.log.cardOpts.at(-1).onReplace, undefined);
 });
 
 test("leaving the editor repaints the main board out of edit gestures", async () => {

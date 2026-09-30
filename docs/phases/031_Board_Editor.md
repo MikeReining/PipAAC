@@ -325,6 +325,16 @@ card cleared the selection, and a reload always landed on the main board.
 Proof: `editor_ui.test.mjs` "Preview → Back / Esc / reload …" (seen failing
 with the card restore disabled).
 
+**Replace on the main board (founder, 2026-09-30).** Slices A–G made a tile
+tap select the word, which left the placement sheet (018 D10) reachable only
+from empty cells, so a filled tile couldn't be swapped for another word. A
+main-board word's card now has **Replace with another word**. It opens the
+placement sheet for that cell, and the pick goes through `placeOnBoard` with
+Undo, same as before. A group word's card has no Replace. Proof:
+`editor_ui.test.mjs` "a main-board word's card offers Replace…"; browser
+check on a fresh profile: like → see, Undo back to like; Done, then a tap on
+a tile speaks it.
+
 **Not done / deferred:** ⇧⌘Z redo (⌘Z undo is built); the 📊 tap counts toggle
 (018 D10) is not in the editor yet; hidden groups keep a Show action but the
 board's group index is unchanged.
