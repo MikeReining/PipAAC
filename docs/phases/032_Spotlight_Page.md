@@ -73,28 +73,34 @@ layer.
 ## Slice E — moves (founder, 2026-09-30)
 
 Why: for a Pip user the most valuable skill is not a word but two words
-and a button. ✨ is an automatic expansion — "more swing" is said back as
-a whole sentence, the recast an SLP does by hand. ❓ asks it with no
-question grammar to build. Research the founder brought: model refusal,
+and a button. ✨ is a grammar pass (023's wand law, 2026-09-30): it adds
+only the little words — is, are, a, the, to — and never a word the child
+didn't tap, never a guess at what they mean. "we play" → "We are
+playing." ❓ asks the same taps, with no question grammar to build: "Are
+we playing?" (First drafted here as "✨ expands 'more swing' into 'I want
+more swing'" — that adds a subject and a verb, exactly the guessing the
+wand law bans. Corrected in E7.) Research the founder brought: model refusal,
 pointing, and commenting from day one, and early sentences are two-word
 combinations.
 
 | Part | What | Status |
 | --- | --- | --- |
 | E1 | First words: want, more, help, not, that, look | built `687c3c6` |
-| E2 | ✨ / ❓ as targets (`control:fix` / `control:question` on `spotlight_list.controls`); pick them, model them from a phone; moves lists Make it a sentence, Ask a question, Say no, each with a recipe for the adult | built `1830806` |
+| E2 | ✨ / ❓ as targets (`control:fix` / `control:question` on `spotlight_list.controls`); pick them, model them from a phone; moves lists (now Add the little words, Ask a question, Say no), each with a recipe for the adult | built `1830806` |
 | E3 | Try it's third card: tap more, then go, then ✨ — a live transform. Demo taps build the bar but never the log; the child's bar is set aside and comes back | built `f941373` |
 | E5 | Instructions show what you press, not words to hunt for (founder, 2026-09-30): each Try it card draws the board's own tiles and the live ✨ / ❓ icon (`public/board/move-row.js`); the move card outlines the next one and fades pressed ones; each moves suggestion shows one example move as tiles | built |
 | E6 | One worked example (founder, 2026-09-30: the page, card 1, and card 3 showed three different examples). `SHOWCASE` in `spotlight_starters.mjs`: the page's picture and every Try it card use the same six tiles; what glows is read from First words; the picture taps `go`, card 2 asks for `go`, card 3 is more → go → ✨. No arrow on the comparison card | built |
+| E7 | Rebuilt on the wand law (founder, 2026-09-30). The showcase pair is **we play** — happy and shared (founder: never lead with a negative feeling), every button proven in battery v5: "We are playing." / "Are we playing?". Try it is five cards: compare → tap play → we → play → ✨ → tap ❓ → end, and after each press the card shows taps → what Pip said. "Make it a sentence" → **Add the little words** (we mom it play good + ✨); Ask a question uses the same words + ❓; move examples are battery-proven pairs only (a test enforces it). Copy says what ✨ does — "adds only the little words… never guesses" — never "whole sentence". Also fixed: Try it's Smart bar opened a sentence row and logged impressions, so the demo's speak counted as her spoken sentence | built |
 | E4 | Progress → Sentence buttons: ✨ ❓ ⏪ ⏩ presses on their own vs with the glow, by week. New device-local `transform_event` (additive table until the catalog ships it) → `stats_day.transforms` → `sentenceButtons()`. Research sharing is a whitelist and does not carry it | built |
 
 Rules kept: the glow invites, it never scripts an order; ✨ runs only on a
 press; recipes never state a button's output; no efficacy claim in copy.
 
-Open (founder): **real example sentences** for the recipes need one live
-✨ / ❓ run per recipe (≈6 Groq calls, well under a cent) — not run, per
-the paid-call rule. The transform prompts' live retest (023 § 5.6) is
-still pending and should land before families are taught the buttons.
+Open (founder): the **first-run tour** (`public/board/tour-ui.js`, not
+032's) still scripts "want apple" → ✨ → "I want an apple." — under the
+wand law the model says "Want an apple." (battery: "want cookie" → "Want
+a cookie."), and the tour's own header says scripted results must match
+live output. Needs a proven pair (e.g. we play) or a founder ruling.
 
 ## D — held, candidate scope (not decided)
 

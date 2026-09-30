@@ -16,13 +16,14 @@ import { recordOp } from "./ops.mjs";
 let active = null; // { name, targets: Set<"kind:id"> }
 
 /** Sentence buttons a spotlight may light (032 E), as "control:<name>"
- *  targets: ✨ turns two words into a sentence, ❓ asks it. Name → the
- *  button's id, its chip label, and the coach line a partner sees. */
+ *  targets: ✨ adds the little words (a grammar pass, never a guess — the
+ *  023 wand law), ❓ asks the same words. Name → the button's id, its chip
+ *  label (the button's own title), and the coach line a partner sees. */
 export const CONTROLS = {
-  fix: { button: "tx-fix", label: "✨ sentence",
-    tip: "✨ — after two words, tap ✨ and say the whole sentence along with Pip." },
-  question: { button: "tx-question", label: "❓ question",
-    tip: "❓ — after two words, tap ❓ to ask it. Then wait for an answer." },
+  fix: { button: "tx-fix", label: "✨ fix it",
+    tip: "✨ — after two words, tap ✨. It adds only the little words, like is, a, the — never a guess. Say it along with Pip." },
+  question: { button: "tx-question", label: "❓ ask it",
+    tip: "❓ — after two words, tap ❓ to ask them as a question. Then wait for an answer." },
 };
 
 /** Start a spotlight over `targets` (iterable of "kind:id"). Masked

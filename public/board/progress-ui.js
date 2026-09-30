@@ -26,7 +26,7 @@ const dayLabel = (day) =>
 const trendOf = (t) => t.map((v) => fmt(v)).join(" → ");
 
 const DOWS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const BUTTON_NAMES = { fix: "✨ sentence", question: "❓ question", past: "⏪ past", future: "⏩ future" };
+const BUTTON_NAMES = { fix: "✨ fix it", question: "❓ ask it", past: "⏪ past", future: "⏩ future" };
 
 export function mountProgress({ db, me, nameOf, entitlement, open, toast }) {
   let span = "month";

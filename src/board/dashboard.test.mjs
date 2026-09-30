@@ -265,6 +265,6 @@ test("Progress shows sentence buttons: on their own vs with the glow", async () 
   }));
   const text = life["prog-body"].textContent;
   assert.match(text, /Sentence buttons/);
-  assert.match(text, /✨ sentence — on their own 2 · with the glow 1/);
-  assert.doesNotMatch(text, /❓ question/, "an unpressed button is not listed");
+  assert.match(text, /✨ fix it — on their own 2 · with the glow 1/);
+  assert.doesNotMatch(text, /❓ ask it/, "an unpressed button is not listed");
 });

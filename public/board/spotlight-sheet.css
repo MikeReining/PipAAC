@@ -142,3 +142,5 @@
 .move-cap { font-size: 13px; font-weight: 700; color: var(--muted); }
 .move-compare .cell { width: 56px; height: 56px; }
 @media (max-width: 420px) { .move-compare .cell { width: 46px; height: 46px; } .move-compare { gap: 12px; } }
+/* Try it: after ✨ / ❓, exactly what was tapped → what Pip said. */
+.move-result { margin: 0; font-size: 17px; font-weight: 700; color: var(--ink-text); }

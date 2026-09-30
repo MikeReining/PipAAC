@@ -1,7 +1,8 @@
 /**
- * Try it (032 C, E): a spotlight on this person's own board, with four
+ * Try it (032 C, E): a spotlight on this person's own board, with five
  * coach cards. The adult sees the real thing instead of a video — and on
- * the third card, the move only Pip has: two words, then ✨.
+ * cards 3 and 4, the moves only Pip has: two words, then ✨ adds the
+ * little words; the same two words, then ❓ asks them.
  *
  * Local layer only: no spotlight_session row and no sync op, so linked
  * devices never see it and it cannot outlive the demo. While it runs a
@@ -23,20 +24,26 @@ import { withIcons } from "./inline-icons.js";
 // picture, then these cards, use the same tiles and the same glow. Card 1
 // is a comparison — two labelled groups, no arrow (an arrow read as word
 // order). Card 2 asks for the dimmed word the page's picture tapped.
-// Card 3 builds the move from what they've seen: more (glowing) + that
-// same word + ✨ — so its new glow reads as the next step, not a new
-// example.
+// Cards 3 and 4 light the showcase pair: ✨ adds the little words ("We
+// are playing."), then ❓ asks the same taps ("Are we playing?") — the
+// wand law's grammar pass, both outputs proven in the battery. After each
+// press the card shows her taps → what Pip said, so nothing is hidden.
 const GLOWS = SHOWCASE.tiles.filter(showcaseLit);
 const DIMS = SHOWCASE.tiles.filter((id) => !showcaseLit(id));
 const TAP = `sense:${SHOWCASE.tap}`;
-const MOVE = [`sense:${SHOWCASE.lead}`, TAP, "control:fix"];
+const PAIR = SHOWCASE.move.map((id) => `sense:${id}`);
+const FIX = [...PAIR, "control:fix"];
+const ASK = ["control:question"];
 const STEPS = [
   { say: "These words glow. The rest dim.", note: "Nothing moved, and nothing is switched off.", go: "Next",
     compare: true },
   { say: "Tap a dimmed word, like this one.", note: "It still speaks. Spotlight never takes a word away.", go: "Next",
     show: () => ({ steps: [TAP], mark: { [TAP]: "dimmed" } }) },
-  { say: "Now Spotlight lights a move. Tap these, in order.", note: "✨ turns two words into a whole sentence and says it.", go: "Next", move: true,
-    show: (moved) => ({ steps: MOVE, done: moved }) },
+  { say: "Spotlight can light a move. Tap these, in order.",
+    note: "✨ adds only the little words, like is, are, a, the. It never guesses or adds a word.",
+    go: "Next", press: "fix", seq: FIX, lights: FIX, buildsBar: true },
+  { say: "Now tap this.", note: "❓ asks the same two words as a question. Nobody has to build it.",
+    go: "Next", press: "question", seq: ASK, lights: [...PAIR, ...ASK] },
   { say: "Tap this to end a spotlight.", note: "While one runs, it sits up top. Next, pick your own words in Settings → Spotlight.", go: "Done",
     chip: true },
 ];
@@ -46,7 +53,9 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
   let card = null;
   let step = 0;
   let timer = null;
-  let moved = 0; // how much of MOVE has been pressed, in order
+  let moved = 0; // how much of this card's sequence has been pressed
+  let before = ""; // the bar as tapped, before a button changed it
+  let result = null; // "her taps" → "what Pip said", once pressed
 
   function paint() {
     const s = STEPS[step];
@@ -84,6 +93,8 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
     } else if (s.show) {
       const { steps, done, mark } = s.show(moved);
       picture = moveRow(steps, { tileFor, done, mark });
+    } else if (s.seq) {
+      picture = moveRow(s.seq, { tileFor, done: moved });
     } else if (s.chip) {
       picture = document.createElement("div");
       picture.className = "move-row";
@@ -103,7 +114,10 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
     go.textContent = s.go;
     go.onclick = () => (step < STEPS.length - 1 ? next() : end());
     row.append(stop, go);
-    card.append(count, say, ...(picture ? [picture] : []), note, row);
+    // After the press: exactly what went in and what Pip said.
+    const said = result ? [Object.assign(document.createElement("p"), {
+      className: "move-result", textContent: result })] : [];
+    card.append(count, say, ...(picture ? [picture] : []), ...said, note, row);
     // The last card points at the chip; the others keep it plain. The
     // move card sits low, away from the top bar's ✨.
     document.getElementById("spot-chip").classList.toggle("spot-demo-point", step === STEPS.length - 1);
@@ -119,8 +133,9 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
   function next() {
     step += 1;
     moved = 0;
-    if (STEPS[step].move) startSpotlight(db, MOVE, "Try it");
-    else if (STEPS[step - 1].move) board.clearBar();
+    result = null;
+    if (STEPS[step].lights) startSpotlight(db, STEPS[step].lights, "Try it");
+    if (STEPS[step].chip) board.clearBar(); // the demo's sentence is done
     paint();
     board.repaint();
   }
@@ -135,18 +150,23 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
         // Step 2 is done the moment a dimmed word speaks.
         const lit = spotlight()?.targets.has(`${kind}:${id}`);
         if (step === 1 && !lit) later(700);
-        // The move card ticks off each tile pressed in order.
-        if (STEPS[step]?.move && MOVE[moved] === `${kind}:${id}`) {
+        // A move card ticks off each tile pressed in order.
+        const seq = STEPS[step]?.seq;
+        if (seq && seq[moved] === `${kind}:${id}`) {
           moved += 1;
+          before = board.barText();
           paint();
         }
       },
-      buildsBar: () => !!STEPS[step]?.move,
-      // ✨ spoke the sentence: the move is done.
+      buildsBar: () => !!STEPS[step]?.buildsBar,
+      // The button spoke: show her taps → what Pip said, then move on.
       onTransform: (mode) => {
-        if (!STEPS[step]?.move) return;
-        if (MOVE[moved] === `control:${mode}`) { moved += 1; paint(); }
-        later(1200);
+        const s = STEPS[step];
+        if (s?.press !== mode) return;
+        moved = s.seq.length;
+        result = `“${before}” → “${board.barText()}”`;
+        paint();
+        later(2600);
       },
       end,
     });

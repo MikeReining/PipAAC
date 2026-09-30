@@ -100,8 +100,11 @@ out.demo = await evalJs(`(async () => { ${w}
   window.fetch = (url, opts) => {
     const u = String(url);
     if (u.includes('/api/v1/transform')) {
-      window.__tx.push(JSON.parse(opts.body));
-      return Promise.resolve(new Response(JSON.stringify({ text: 'I want to go more.' }),
+      const body = JSON.parse(opts.body);
+      window.__tx.push(body);
+      // The battery's proven answers for "we play" (wand law, run v5).
+      const text = body.mode === 'question' ? 'Are we playing?' : 'We are playing.';
+      return Promise.resolve(new Response(JSON.stringify({ text }),
         { status: 200, headers: { 'content-type': 'application/json' } }));
     }
     if (u.includes('/api/v1/voice/')) return Promise.resolve(new Response('', { status: 503 }));
@@ -111,11 +114,15 @@ out.demo = await evalJs(`(async () => { ${w}
     .find((c) => c.textContent.trim().toLowerCase() === t);
   // The child has a word in the bar before the adult opens Try it.
   document.querySelector('#set-done').click(); await w(200);
-  cell('i').click(); await w(200);
+  cell('i').click();
+  await w(3000); // her tap's stats refresh (2 s debounce) lands before the baseline
   const childBar = window.pip.sentence.map((i) => i.text).join(' ');
-  const ops0 = ${count("sync_op")}, taps0 = ${count("learner_event_log")}, tx0 = ${count("transform_event")};
   document.querySelector('#corner').click(); await w(500);
   document.querySelector('.set-nav-btn[data-sec="spotlight"]').click();
+  // Baseline once Settings is open: opening it refreshes the win card's
+  // day rows — the adult's doing, before Try it starts.
+  const ops0 = ${count("sync_op")}, taps0 = ${count("learner_event_log")}, tx0 = ${count("transform_event")};
+  const sent0 = ${count("sentence")}, imp0 = ${count("strip_impression")};
   document.querySelector('#spot-try').click(); await w(400);
   const lit = { glow: document.querySelectorAll('#grid .cell.glow').length,
     dimmed: document.querySelectorAll('#grid .cell.dimmed').length,
@@ -144,21 +151,32 @@ out.demo = await evalJs(`(async () => { ${w}
   // ✨ in the card's text is the button's own icon, not the emoji.
   const noteIcon = { svg: !!document.querySelector('.spot-demo-card .tour-note .text-icon svg'),
     emoji: document.querySelector('.spot-demo-card .tour-note').textContent.includes('✨') };
-  cell('more').click(); await w(150);
-  cell('go').click(); await w(150);
+  cell('we').click(); await w(150);
+  cell('play').click(); await w(150);
   const card2 = cardRow();
   const moveBar = window.pip.sentence.map((i) => i.text).join(' ');
+  const cardText = () => document.querySelector('.spot-demo-card')?.textContent ?? '';
+  const waitFor = async (f) => { for (let i = 0; i < 60 && !f(); i++) await w(250); };
   document.querySelector('#tx-fix').click();
-  // The card moves on once the sentence has been said (the stubbed voice
-  // falls to word-by-word slots, so allow for it).
-  for (let i = 0; i < 40 && !document.querySelector('.spot-demo-card .tour-note').textContent.includes('4 of'); i++) await w(250);
+  // After ✨ has spoken, the card shows her taps → what Pip said (the
+  // stubbed voice falls to word-by-word slots, so allow for it).
+  await waitFor(() => document.querySelector('.spot-demo-card .move-result'));
+  const fixResult = document.querySelector('.spot-demo-card .move-result')?.textContent;
+  await waitFor(() => cardText().includes('4 of 5'));
+  const askCard = { lit: document.querySelector('#tx-question').classList.contains('glow'),
+    words: document.querySelectorAll('#grid .cell.glow').length, bar: window.pip.sentence.map((i) => i.text).join(' ') };
+  document.querySelector('#tx-question').click();
+  await waitFor(() => document.querySelector('.spot-demo-card .move-result'));
+  const askResult = document.querySelector('.spot-demo-card .move-result')?.textContent;
+  await waitFor(() => cardText().includes('5 of 5'));
   const step = document.querySelector('.spot-demo-card .tour-note').textContent;
-  const ledger = { ops: ${count("sync_op")} - ops0, taps: ${count("learner_event_log")} - taps0,
+  const ledger = { ops: ${count("sync_op")} - ops0,
+    sentences: ${count("sentence")} - sent0, impressions: ${count("strip_impression")} - imp0, taps: ${count("learner_event_log")} - taps0,
     sessions: ${count("spotlight_session")}, tx: window.__tx.map((b) => b.mode + ':' + b.text),
     presses: ${count("transform_event")} - tx0,
     barAfterMove: window.pip.sentence.length };
   document.querySelector('#spot-chip').click(); await w(600);
-  return { lit, moveStep, moveLit, card0, noteIcon, card2, moveBar, step, ledger,
+  return { lit, moveStep, moveLit, card0, noteIcon, card2, moveBar, fixResult, askCard, askResult, step, ledger,
     after: { glow: document.querySelectorAll('#grid .cell.glow').length,
       dimmed: document.querySelectorAll('#grid .cell.dimmed').length,
       card: !!document.querySelector('.spot-demo-card'),
@@ -182,7 +200,7 @@ out.moves = await evalJs(`(async () => { ${w}
   document.querySelector('#spot-end')?.click(); await w(200);
   document.querySelector('#clear').click(); await w(100); // the demo leg left "I"
   const idea = [...document.querySelectorAll('.spot-idea')]
-    .find((c) => c.querySelector('.spot-list-name').textContent === 'Make it a sentence');
+    .find((c) => c.querySelector('.spot-list-name').textContent === 'Add the little words');
   const recipe = idea.querySelector('.spot-recipe')?.textContent ?? '';
   const recipeTiles = idea.querySelectorAll('.spot-recipe .move-row .cell').length;
   const recipeCtl = !!idea.querySelector('.spot-recipe .move-ctl svg');
@@ -190,7 +208,7 @@ out.moves = await evalJs(`(async () => { ${w}
     && !idea.querySelector('.spot-recipe .hint').textContent.includes('✨');
   idea.querySelector('.btn').click(); await w(200);
   [...document.querySelectorAll('.spot-card')]
-    .find((c) => c.querySelector('.spot-list-name').textContent === 'Make it a sentence')
+    .find((c) => c.querySelector('.spot-list-name').textContent === 'Add the little words')
     .querySelector('.btn').click();
   await w(400);
   const lit = { fix: document.querySelector('#tx-fix').classList.contains('glow'),
@@ -252,26 +270,31 @@ out.moves = await evalJs(`(async () => { ${w}
 
 console.log(JSON.stringify(out, null, 2));
 const ok =
-  out.ideas.before.join() === "First words,Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
-  out.ideas.after.join() === "Snack time,Play time,Make it a sentence,Ask a question,Say no" &&
+  out.ideas.before.join() === "First words,Snack time,Play time,Add the little words,Ask a question,Say no" &&
+  out.ideas.after.join() === "Snack time,Play time,Add the little words,Ask a question,Say no" &&
   out.ideas.lists.length === 1 && out.ideas.lists[0][1] === 6 &&
   out.demo.lit.glow === 3 && out.demo.lit.cardGlow === 3 && out.demo.lit.dimmed > 0 && out.demo.lit.settingsClosed &&
   out.demo.lit.barSetAside && out.demo.lit.compare === 6 && out.demo.lit.arrows === 0 &&
-  out.demo.moveStep.includes("3 of 4") && out.demo.moveLit.fix && out.demo.moveLit.cells === 2 &&
-  out.demo.moveBar === "more go" &&
-  out.demo.card0.tiles === 2 && out.demo.card0.ctl && out.demo.card0.done === 0 && out.demo.card0.now === "more" &&
+  out.demo.moveStep.includes("3 of 5") && out.demo.moveLit.fix && out.demo.moveLit.cells === 2 &&
+  out.demo.moveBar === "we play" &&
+  out.demo.card0.tiles === 2 && out.demo.card0.ctl && out.demo.card0.done === 0 && out.demo.card0.now === "we" &&
   out.demo.card2.done === 2 && out.demo.card2.now === "✨" &&
   out.demo.noteIcon.svg && !out.demo.noteIcon.emoji &&
-  out.demo.step.includes("4 of 4") &&
+  out.demo.fixResult === "“we play” → “We are playing.”" &&
+  out.demo.askCard.lit && out.demo.askCard.words === 2 && out.demo.askCard.bar === "We are playing." &&
+  out.demo.askResult === "“we play” → “Are we playing?”" &&
+  out.demo.step.includes("5 of 5") &&
   out.demo.ledger.ops === 0 && out.demo.ledger.taps === 0 && out.demo.ledger.sessions === 0 &&
-  out.demo.ledger.tx.join() === "fix:more go" && out.demo.ledger.barAfterMove === 0 &&
+  out.demo.ledger.sentences === 0 && out.demo.ledger.impressions === 0 &&
+  // ❓ reads her taps (the snapshot), never ✨'s output.
+  out.demo.ledger.tx.join() === "fix:we play,question:we play" && out.demo.ledger.barAfterMove === 0 &&
   out.demo.ledger.presses === 0 &&
   out.demo.after.glow === 0 && out.demo.after.dimmed === 0 && !out.demo.after.card &&
   out.demo.after.childBarBefore === "I" && out.demo.after.childBar === "I" &&
   out.demo.after.backOnPage &&
   out.running.tryHidden && out.running.glow === 6 &&
   out.moves.recipeIcon && out.moves.recipeTiles === 2 && out.moves.recipeCtl &&
-  out.moves.lit.fix && !out.moves.lit.question && out.moves.lit.cells === 4 && !out.moves.lit.walk &&
+  out.moves.lit.fix && !out.moves.lit.question && out.moves.lit.cells === 5 && !out.moves.lit.walk &&
   out.moves.presses.join() === "fix:1,fix:0" &&
   out.moves.faceTap.found && out.moves.faceTap.errs.length === 0 &&
   out.moves.dayRow?.fix?.own === 1 && out.moves.dayRow?.fix?.glow === 1 &&

@@ -88,12 +88,20 @@ test("the moves lists carry their buttons through a save", () => {
 });
 
 // The worked example must hold together (founder, 2026-09-30): the word
-// the picture taps and card 2 asks for is dimmed; the move starts on a
-// word that glows; and some tiles glow while others dim.
-test("the showcase tells one story: tap a dimmed word, start the move on a lit one", () => {
-  assert.ok(SHOWCASE.tiles.includes(SHOWCASE.tap) && SHOWCASE.tiles.includes(SHOWCASE.lead));
+// the picture taps and card 2 asks for is dimmed and is part of the pair
+// cards 3–4 light; some tiles glow and some dim; and every move pair is
+// one the sentence-lab battery has proven (not a guess about the model).
+const PROVEN = new Set(["we play", "it good", "mom play"]); // battery v5, all modes clean
+test("the showcase tells one story, on a proven pair", () => {
+  assert.ok(SHOWCASE.tiles.includes(SHOWCASE.tap));
   assert.equal(showcaseLit(SHOWCASE.tap), false, "the tapped word is dimmed");
-  assert.equal(showcaseLit(SHOWCASE.lead), true, "the move starts on a glowing word");
+  assert.ok(SHOWCASE.move.includes(SHOWCASE.tap), "cards 3–4 build on the word card 2 tapped");
   const lit = SHOWCASE.tiles.filter(showcaseLit).length;
   assert.ok(lit > 0 && lit < SHOWCASE.tiles.length, "some glow, some dim");
+  const label = (id) => catalog.labels.find((l) => l.sense_id === id && l.kind === "lemma" && l.locale === "en").text;
+  assert.ok(PROVEN.has(SHOWCASE.move.map(label).join(" ")));
+  for (const x of STARTER_LISTS.filter((l) => l.controls)) {
+    const pair = x.move.filter((k) => k.startsWith("sense:")).map((k) => label(k.slice(6))).join(" ");
+    assert.ok(PROVEN.has(pair), `${x.name}: "${pair}" is not a proven pair`);
+  }
 });

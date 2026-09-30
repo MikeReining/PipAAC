@@ -1169,13 +1169,16 @@ async function renderStrip() {
     // sentence so the impression row can exist. A row with no picks
     // stays invisible to stats (end_kind IS NULL). An empty bar —
     // start or mid-sentence — stays empty: no resting-card guesses
-    // (founder call, 2026-09-25).
-    ensureSentence();
-    maybeImpression(
-      ranked.ranked,
-      items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
-        gate: groupId ? { group: groupId } : { ending: ranked.ending } },
-    );
+    // (founder call, 2026-09-25). Try it (032) shows the bar but logs
+    // nothing: an adult's demo is never her sentence or her moment.
+    if (!spotDemo) {
+      ensureSentence();
+      maybeImpression(
+        ranked.ranked,
+        items, { mode: kbUi.isOpen() ? "keyboard" : "picture", cap,
+          gate: groupId ? { group: groupId } : { ending: ranked.ending } },
+      );
+    }
     cards = stripCards(items);
   }
   await paintStrip(cards);
@@ -2322,8 +2325,7 @@ const spotDemoUi = mountSpotlightDemo({
         demoBar = { items: sentence.splice(0), sentenceId, sentencePicks, bar: { ...barState } };
         sentenceId = null;
         sentencePicks = 0;
-        barState.tense = "present";
-        barState.question = false;
+        noteBarEdit(barState); // no tense, no question, no snapshot of hers
       } else if (!h && demoBar) {
         sentence.splice(0, sentence.length, ...demoBar.items);
         ({ sentenceId, sentencePicks } = demoBar);
@@ -2337,11 +2339,12 @@ const spotDemoUi = mountSpotlightDemo({
     },
     showBoard: () => { close("menu"); if (view !== "board") kbUi.setView("board"); },
     repaint: () => { renderGrid(); rerenderView(); },
+    // What the bar says right now — the card shows taps → result.
+    barText: () => sentence.map((it) => it.text).join(" "),
     // The move card's words leave the bar when the demo moves on.
     clearBar: () => {
       sentence.length = 0;
-      barState.tense = "present";
-      barState.question = false;
+      noteBarEdit(barState);
       renderBar();
       syncTxButtons();
       renderStrip();
