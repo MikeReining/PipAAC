@@ -93,6 +93,14 @@ const report = await evalJs(`(() => {
     touring: document.body.classList.contains("touring"),
     pipReady: !!window.pip?.db,
     bootFail: !!document.querySelector("#boot-fail"),
+    // The iPad-Chrome bug is the layout viewport left scrolled after the
+    // keyboard closes. Try to scroll; the clip must refuse it.
+    scrollLocked: (() => {
+      scrollTo(0, 300);
+      const y = scrollY;
+      scrollTo(0, 0);
+      return y === 0;
+    })(),
   };
 })()`);
 

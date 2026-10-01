@@ -28,6 +28,14 @@
     <link rel="stylesheet" href="/board/voice-ui.css" />
     <link rel="stylesheet" href="/board/base.css" />
     <script>
+      // The document never scrolls — iPad Chrome restores a stale scroll
+      // offset on reload (left by the software keyboard), painting the
+      // topbar off-screen. Take restoration out of the browser's hands
+      // and clamp any scroll that gets through anyway.
+      history.scrollRestoration = "manual";
+      addEventListener("scroll", () => {
+        if (scrollX || scrollY) scrollTo(0, 0);
+      }, { passive: true });
       // Boot watchdog — a failed script load must say so, not render half a page.
       window.__pipBoot = { errors: [] };
       addEventListener("error", (e) =>

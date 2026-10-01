@@ -47,6 +47,13 @@
    display (.sheet .row is flex) silently un-hides the element: Delete
    account showed while signed out. */
 [hidden] { display: none !important; }
+/* The app is exactly one viewport tall — the document itself never
+   scrolls (inner panes do). iOS browsers leave the layout viewport
+   offset after the software keyboard closes, and Chrome restores that
+   stale offset on reload: the topbar paints off-screen above a dark
+   band. Clip kills the scroll entirely; hidden is the fallback for
+   engines without clip. */
+html, body { overflow: hidden; overflow: clip; }
 body {
   font-family: -apple-system, "Helvetica Neue", sans-serif;
   background: var(--cream);
