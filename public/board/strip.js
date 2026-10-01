@@ -36,7 +36,6 @@ export function mountStrip({
    *  never trimmed. A pick returns the bar to Predict; a family item may
    *  chain one level deeper (Pain → how much → where), no more. --- */
   let expand = null; // { familyId, page, depth } — null means Predict mode
-  const expandCap = (cols) => Math.max(4, cols - 2); // one-wide tiles
   function openExpand(familyId, depth = 0) {
     expand = { familyId, page: 0, depth };
     renderStrip();
@@ -46,10 +45,13 @@ export function mountStrip({
   function clearExpand() { expand = null; }
 
   /** The tray's real width in grid columns: the strip's cols minus the
-   *  anchors showing — Groups and Keyboard always; Add joins them in
-   *  Edit mode on a group (027 B5). Painted cards can never exceed this
-   *  or they wrap into a second row inside the 80px strip. */
-  const traySpan = (cols) => cols - ($("anchor-add").hidden ? 2 : 3);
+   *  anchors actually showing — Groups always; the Keyboard column
+   *  folds while an open family needs it (renderExpand); Add joins them
+   *  in Edit mode on a group (027 B5). Painted cards can never exceed
+   *  this or they wrap into a second row inside the 80px strip. */
+  const traySpan = (cols) =>
+    cols - ["anchor-groups", "anchor-kb", "anchor-add"]
+      .filter((id) => { const el = $(id); return el && !el.hidden; }).length;
   function sizeStrip(cols) {
     $("strip").style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     const tray = $("tray");
@@ -217,8 +219,20 @@ export function mountStrip({
     const fam = familyRow(db, expand.familyId);
     if (!fam) { expand = null; return renderStrip(); }
     const items = familyItems(db, expand.familyId, locale, maskedSenseIds(db));
-    const cap = expandCap(boardGeom().cols);
-    // `more ›` only costs a slot when the family is longer than the bar.
+    const cols = boardGeom().cols;
+    const faces = facesOn() ? 1 : 0;
+    // A 5-column board shows four family tiles (Motor_Grid § 2.1), so
+    // the Keyboard column folds while an open family needs its slot —
+    // Core 15's `?` family would lose `who` behind it otherwise. Groups
+    // stays put: it is the clean way out that adds no word. Predict
+    // puts the Keyboard anchor back (renderStrip). Measure unfolded
+    // first so a previously folded span can't hide the need again.
+    $("anchor-kb").hidden = false;
+    $("anchor-kb").hidden = items.length > traySpan(cols) - faces;
+    sizeStrip(cols);
+    // `more ›` only costs a slot when the family is longer than the
+    // painted word slots — cap counts the faces slot too.
+    const cap = Math.max(1, traySpan(cols) - faces);
     const pages = items.length > cap ? Math.ceil(items.length / (cap - 1)) : 1;
     const pageSize = pages > 1 ? cap - 1 : cap;
     expand.page = Math.min(expand.page, pages - 1);
@@ -248,10 +262,15 @@ export function mountStrip({
         onTap: () => { expand.page = (expand.page + 1) % pages; renderStrip(); },
       });
     }
-    await paintStrip(cards, cap);
+    await paintStrip(cards, traySpan(boardGeom().cols));
   }
 
   async function renderStrip() {
+    // Predict always shows both utility anchors — an open family may
+    // have folded the Keyboard column for its slot, so put it back and
+    // give the tray its columns again (renderExpand re-folds as needed).
+    $("anchor-kb").hidden = false;
+    sizeStrip(boardGeom().cols);
     if (live.tour) return paintStrip(stripCards(live.tour.stripItems()));
     if (expand) return renderExpand();
     const cap = stripSlots(boardGeom().cols);

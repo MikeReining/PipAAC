@@ -102,5 +102,58 @@ const ok = out.cells === 15 && out.slot === 12
   && out.label === "question" && out.img === "/symbols/question.svg"
   && out.family?.name === "question";
 console.log(ok ? "PASS bf_q renders as a Purple word tile" : "FAIL — see output");
+
+// Expand mode on Core 15: tapping the tile must show all four family
+// words — the Keyboard column folds so `who` isn't clipped into a
+// second row, and Groups slides into the last slot (2026-10-01).
+await evalJs(`(() => {
+  const q = [...document.querySelectorAll('#grid .cell')]
+    .find((c) => (c.querySelector('.tlabel')?.textContent || '').trim() === 'question');
+  q?.click();
+})()`);
+await sleep(600);
+
+const expanded = await evalJs(`(() => {
+  const trayCols = document.querySelector('#tray').style.gridTemplateColumns;
+  const cards = [...document.querySelectorAll('#tray .pred')]
+    .map((e) => e.querySelector('.plabel')?.textContent?.trim() ?? '?');
+  return {
+    cards,
+    traySpan: document.querySelector('#tray').style.gridColumn,
+    trayCols,
+    kbHidden: document.getElementById('anchor-kb').hidden,
+    groupsShown: !document.getElementById('anchor-groups').hidden,
+  };
+})()`);
+console.log(JSON.stringify(expanded, null, 2));
+
+const shot2 = await send("Page.captureScreenshot", { format: "png", fromSurface: true });
+if (shot2.result?.data) writeFileSync("/tmp/qtile_expanded.png", Buffer.from(shot2.result.data, "base64"));
+
+const okExpand = JSON.stringify(expanded.cards.slice(0, 4))
+    === JSON.stringify(["why", "when", "where", "who"])
+  && expanded.kbHidden && expanded.groupsShown
+  && /span 4/.test(expanded.traySpan);
+console.log(okExpand
+  ? "PASS expand shows why · when · where · who; Keyboard folds, Groups stays"
+  : "FAIL expand — see output");
+
+// Pick `who` — the bar returns to Predict and the Keyboard anchor returns.
+await evalJs(`(() => {
+  [...document.querySelectorAll('#tray .pred')]
+    .find((e) => e.querySelector('.plabel')?.textContent?.trim() === 'who')
+    ?.click();
+})()`);
+await sleep(600);
+const after = await evalJs(`(() => ({
+  kbHidden: document.getElementById('anchor-kb').hidden,
+  sent: [...document.querySelectorAll('#sentence .word, #sent .word, .sent-word')]
+    .map((e) => e.textContent.trim()).join(' '),
+}))()`);
+console.log(JSON.stringify(after));
+const okBack = after.kbHidden === false;
+console.log(okBack ? "PASS Keyboard anchor restored after pick" : "FAIL anchor stayed hidden");
+
+const pass = ok && okExpand && okBack;
 chrome.kill();
-process.exit(ok ? 0 : 1);
+process.exit(pass ? 0 : 1);

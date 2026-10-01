@@ -11,7 +11,7 @@ import { spawn } from "node:child_process";
 import { rmSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 
-const PORT = 9264, ORIGIN = "http://localhost:8794";
+const PORT = 9264, ORIGIN = process.env.PIP_ORIGIN ?? "http://localhost:8794";
 rmSync("/tmp/pip-family-probe", { recursive: true, force: true });
 const chrome = spawn("open", ["-na", "Google Chrome", "--args",
   "--headless=new", `--remote-debugging-port=${PORT}`,
@@ -52,9 +52,33 @@ await send("Emulation.setDeviceMetricsOverride",
   { width: 820, height: 1100, deviceScaleFactor: 1, mobile: true });
 await loadApp();
 
+// Fresh profile: walk the welcome so the board is real, then clear the
+// tour/overlay sheets the way a tap would.
+for (let i = 0; i < 20; i++) {
+  await sleep(300);
+  if (await evalJs(`!!document.querySelector('.welcome-choice')`)
+    .catch(() => false)) break;
+}
+await evalJs(`(() => {
+  document.querySelector('.welcome-choice[data-v="child"]')?.click();
+})()`);
+await sleep(300);
+await evalJs(`(() => { document.querySelector('.welcome-go')?.click(); })()`);
+// Continue saves the profile and reloads — wait for the board again.
+await loadApp();
+await evalJs(`(() => { document.querySelector('.tour-skip')?.click(); })()`);
+await sleep(300);
+await evalJs(`(() => {
+  for (const el of document.querySelectorAll('.overlay, .welcome, .tour'))
+    el.style.display = 'none';
+})()`);
+
 const out = {};
 const trayWords = `[...document.querySelectorAll('#tray .pred')]
   .map((c) => (c.querySelector('.plabel')?.textContent || c.textContent || '').trim())`;
+// The bf_q tile reads "question" (the ? lives in its art).
+const qTile = `[...document.querySelectorAll('#grid .cell')]
+  .find((c) => (c.querySelector('.tlabel')?.textContent || '').trim() === 'question')`;
 
 // Clean slate — a prior run's edits must not skew the order assertions.
 // Emptying the family lets importCatalog re-seed the default order.
@@ -65,7 +89,7 @@ await evalJs(`(async () => {
   return 1;
 })()`);
 
-// Core 15 — the `?` tile lives at slot 13.
+// Core 15 — the question tile lives at slot 12.
 await evalJs(`(() => {
   window.pip.db.exec(
     "UPDATE learner_profile SET board_layout = 'grid15' WHERE id = 'prf_local'");
@@ -75,15 +99,13 @@ await sleep(400);
 
 out.tile = await evalJs(`(() => {
   const cells = [...document.querySelectorAll('#grid .cell')];
-  const q = cells.find((c) => (c.textContent || '').includes('?'));
+  const q = ${qTile};
   return { cells: cells.length, hasQ: !!q, slot: cells.indexOf(q) };
 })()`);
 
-// Tap `?` — the bar shows the family in fixed order.
-await evalJs(`(() => {
-  [...document.querySelectorAll('#grid .cell')]
-    .find((c) => (c.textContent || '').includes('?')).click();
-})()`);
+// Tap it — the bar shows the family in fixed order; on Core 15 the
+// Keyboard column folds so all four fit, and Groups keeps the last slot.
+await evalJs(`(() => { ${qTile}?.click(); })()`);
 await sleep(400);
 out.expanded = await evalJs(`(() => ({
   tiles: ${trayWords},
@@ -106,7 +128,7 @@ out.afterPick = await evalJs(`(() => ({
 out.editor = await evalJs(`(() => {
   document.querySelector('#corner').click();
   const chip = [...document.querySelectorAll('#fam-list .fam-chip')]
-    .find((c) => (c.textContent || '').includes('?'));
+    .find((c) => (c.textContent || '').includes('question'));
   chip?.click();
   const rows = [...document.querySelectorAll('#fam-items .fi-row')]
     .map((r) => (r.textContent || '').trim());
@@ -123,25 +145,19 @@ out.editor = await evalJs(`(() => {
 await sleep(300);
 
 // Reopen — the adult's order is what the bar shows.
-await evalJs(`(() => {
-  [...document.querySelectorAll('#grid .cell')]
-    .find((c) => (c.textContent || '').includes('?')).click();
-})()`);
+await evalJs(`(() => { ${qTile}?.click(); })()`);
 await sleep(400);
 out.reordered = await evalJs(trayWords);
 
 // Restart — the edited order persists.
 await loadApp();
-await evalJs(`(() => {
-  [...document.querySelectorAll('#grid .cell')]
-    .find((c) => (c.textContent || '').includes('?')).click();
-})()`);
+await evalJs(`(() => { ${qTile}?.click(); })()`);
 await sleep(400);
 out.afterReload = await evalJs(trayWords);
 
 console.log(JSON.stringify(out, null, 2));
 const ok =
-  out.tile.cells === 15 && out.tile.hasQ && out.tile.slot === 13 &&
+  out.tile.cells === 15 && out.tile.hasQ && out.tile.slot === 12 &&
   out.expanded.tiles.slice(0, 4).join(" ") === "why when where who" &&
   out.afterPick.bar.join(" ").toLowerCase().includes("why") &&
   out.reordered[0] === "who" &&

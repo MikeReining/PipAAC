@@ -208,7 +208,7 @@ Assignments: `docs/product/Core_Coordinate_Map.md`.
 Layout rules:
 
 - The strip sits directly under the sentence bar and directly above the core grid. **It never collapses.** Its height is fixed and rendered on first paint; an empty prediction state shows ghost cards, not a zero-height bar. A strip update must never shift the core grid's physical position — layout shift breaks motor planning.
-- **Fixed slot count on the board's columns.** The strip spans the same columns as the grid, and the last two columns hold permanent utility anchors — `🗂️ Groups` (the group index, § Groups) and `⌨ Keyboard` (type a word at any point; while the keyboard is open it reads `Board` and closes it — keyboard modes and key map: `docs/product/Profile_Presentation_Modes.md` § 4) — visible and tappable in every state. The remaining columns are the tray: it always holds three or four prediction slots, so the smart bar never collapses when the board gets sparser — the children on the biggest tiles are the ones who need prediction most. Cards go one column wide when that is what the count needs (**BUILT** 014 slice 1; floor raised 2026-10-01 — `stripSlots`/`sizeStrip` in `public/board/strip.js`); a layout may also declare an in-grid `Groups` cell (grid90 slot 89).
+- **Fixed slot count on the board's columns.** The strip spans the same columns as the grid, and the last two columns hold permanent utility anchors — `🗂️ Groups` (the group index, § Groups) and `⌨ Keyboard` (type a word at any point; while the keyboard is open it reads `Board` and closes it — keyboard modes and key map: `docs/product/Profile_Presentation_Modes.md` § 4) — visible and tappable in every state — save one: the Keyboard column folds while an open family needs its slot (§ 2.1). The remaining columns are the tray: it always holds three or four prediction slots, so the smart bar never collapses when the board gets sparser — the children on the biggest tiles are the ones who need prediction most. Cards go one column wide when that is what the count needs (**BUILT** 014 slice 1; floor raised 2026-10-01 — `stripSlots`/`sizeStrip` in `public/board/strip.js`); a layout may also declare an in-grid `Groups` cell (grid90 slot 89).
 - It shows at most four candidate tiles. Three or four is the whole set. A longer row is a scanning tax.
 - Every tile shows the word and its stick or object icon (a 1:1 square on the left, label on the right). Text alone is not enough for emerging and non-literate communicators. A sense with no art yet renders a Fitzgerald-tinted swatch; an entity renders its photo.
 - Idle state (empty sentence) shows conversational starters and routine anchors in priority order — the top personal entity, greeting, the Food group, help — never a blank strip. A narrow bar (three slots on Core 15) keeps the front of the list, so the child's person is always shown (`docs/phases/014_Grid_Density_And_Fit.md` § 7a).
@@ -267,7 +267,11 @@ ranked row is a scanning tax). Expand tiles are one column wide — never
 smaller than a board cell on that profile — so a 5-column board shows 4 and
 a 10-column board shows 8; fixed order means the child does not scan them.
 A family longer than the bar ends in a fixed `more ›` tile that pages it.
-The utility anchors (`🗂️ Groups`, `⌨ Keyboard`) stay put in every mode.
+**Amended 2026-10-01 (founder):** the `⌨ Keyboard` column folds while an
+open family needs its slot — that is what keeps "a 5-column board shows
+4" true on Core 15 (the `?` family's `who` was wrapping into a clipped
+second row). `🗂️ Groups` stays put in every mode: it is the clean way out
+of an open family that adds no word. Predict always restores the anchor.
 
 **Family tiles.** A family tile is a cell that opens its family in the bar
 and speaks its own label (`Pain` speaks "I'm in pain"). Each family tile
