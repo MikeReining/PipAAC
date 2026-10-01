@@ -122,3 +122,20 @@
   spotlight + design suites green; check:fast green.
 - Next: Q6b — settings-sync segs (corner, fresh, grammar, expressive,
   look, share) → board/settings-sync.js.
+
+## 2026-09-30 — batch 7 (lens: structure, founder queue Q6b)
+
+- Scope: `public/board.js` settings-synced segs → new
+  `public/board/settings-sync.js` (174 ln). Class: Extraction.
+- Moved: syncFreshSeg, syncGroupSegs, syncGrammarSeg, syncExpressiveSeg
+  + syncTryFaces + try-faces/expressive listeners, syncShareSeg,
+  syncLook/setLook + look-seg listener — with their boot-time calls.
+  Kept: the Highlight seg (keyboard-ui paints it via syncSettings),
+  syncCorner (mode chrome, not a settings seg).
+- `live` gained setters: freshAfterSpeak, grammarHelp, expressiveVoice;
+  `grammarHelp` hoisted beside the other shared lets (the mount's seg
+  syncs write it before its old declaration site — TDZ).
+- board.js: 1,754 → ~1,610 lines.
+- Proof: settings/forms/feeling/keyboard/pin/edit/strip/spotlight/
+  groups/design suites green (41 tests); check:fast green.
+- Next: Q6c — edit mode + undo/toast + flashCell → board/edit-shared.js.

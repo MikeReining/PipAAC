@@ -43,7 +43,7 @@ import { normalizeV1 } from "./shared/normalize.mjs";
 import {
   applyTransform, noteBarEdit, restoreBar, wordLemmaCandidates,
 } from "./shared/txbar.mjs";
-import { EOS, formFor, grammarHelpOn } from "./shared/forms.mjs";
+import { EOS, formFor } from "./shared/forms.mjs";
 import { expressiveOn, loadFeelingData } from "./shared/feeling.mjs";
 import { SENSE_ART_SQL } from "./shared/images.mjs";
 import { coreCells, placeOnBoard } from "./shared/coremove.mjs";
@@ -74,6 +74,7 @@ import { mountPictureFill } from "./board/picture-fill.js";
 import { mountSpeech } from "./board/speech.js";
 import { mountSpotlightLayer } from "./board/spotlight-layer.js";
 import { mountPin } from "./board/pin.js";
+import { mountSettingsSync } from "./board/settings-sync.js";
 import { mountGrid } from "./board/grid.js";
 import { mountStrip } from "./board/strip.js";
 import { pictureClient } from "./shared/pictures.mjs";
@@ -234,6 +235,7 @@ const ensureSentence = () => (sentenceId ??= openSentence(db));
  * pending fresh start is dropped. */
 let freshAfterSpeak = false;
 let freshNext = false;
+let grammarHelp = true; // synced from learner_profile by settings-sync.js
 const startFresh = (editing = false) => {
   if (freshNext && !editing) sentence.length = 0;
   freshNext = false;
@@ -309,6 +311,7 @@ const live = {
   get sentencePicks() { return sentencePicks; },
   set sentencePicks(v) { sentencePicks = v; },
   get freshAfterSpeak() { return freshAfterSpeak; },
+  set freshAfterSpeak(v) { freshAfterSpeak = v; },
   get freshNext() { return freshNext; },
   set freshNext(v) { freshNext = v; },
   get lastImpressionKey() { return lastImpressionKey; },
@@ -316,6 +319,7 @@ const live = {
   get openImpressionId() { return openImpressionId; },
   set openImpressionId(v) { openImpressionId = v; },
   get grammarHelp() { return grammarHelp; },
+  set grammarHelp(v) { grammarHelp = v; },
   get formTable() { return formTable; },
   get tour() { return tour; },
   get spotDemo() { return spotDemo; },
@@ -326,6 +330,7 @@ const live = {
   get coachUi() { return coachUi; },
   get settingsUi() { return settingsUi; },
   get expressiveVoice() { return expressiveVoice; },
+  set expressiveVoice(v) { expressiveVoice = v; },
   get kbUi() { return kbUi; },
   get groupsUi() { return groupsUi; },
   get editorUi() { return editorUi; },
@@ -393,6 +398,13 @@ const {
   artInto, fitLabels, applyLikely, boardGeom,
   ensureSentence, maybeImpression,
 });
+
+/* Settings-synced seg controls — public/board/settings-sync.js. */
+const { syncFreshSeg, syncGrammarSeg, syncExpressiveSeg, syncLook, setLook } =
+  mountSettingsSync({
+    db, live, toast, sampleVoice,
+    renderBar, renderGrid, renderStrip, rerenderView,
+  });
 
 /** Cache: sense id → { role, art } — the label-strip color and the
  *  approved symbol key (null while no art is shipped). */
@@ -470,7 +482,6 @@ function photoFor(entityId) {
  * sentence calls for; what she taps is what the item wears and says.
  * Lemma labels rule while editing (caregivers see canonical words) and
  * when the setting is off. */
-let grammarHelp = true;
 function shownLabel(senseId, fallback) {
   if (!grammarHelp || editing) return fallback;
   return formFor(db, formTable, sentence, senseId).text ?? fallback;
@@ -994,132 +1005,6 @@ $("hl-next").addEventListener("click", (e) => {
   kbUi.syncSettings();
   applyLikely();
 });
-/* After Speak — whether the next word adds on or starts a fresh bar. */
-function syncFreshSeg() {
-  freshAfterSpeak = (ALL(db,
-    "SELECT fresh_after_speak AS f FROM learner_profile WHERE id = 'prf_local'",
-  )[0]?.f ?? 0) === 1;
-  if (!freshAfterSpeak) freshNext = false;
-  for (const b of $("fresh-speak").querySelectorAll("button")) {
-    b.classList.toggle("on", (b.dataset.v === "1") === freshAfterSpeak);
-  }
-}
-$("fresh-speak").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (v === undefined) return;
-  setSetting(db, "fresh_after_speak", Number(v));
-  syncFreshSeg();
-});
-syncFreshSeg();
-/* Groups (027 B6, B8): the home top row on every group page, and the
- * four meal groups in the index (its switch is the Meals row of Show
- * groups). Both default ON; neither moves a cell — off leaves the top-row
- * cells empty and the meal doors' slots kept. */
-function syncGroupSegs() {
-  const p = ALL(db,
-    "SELECT group_top_row AS t FROM learner_profile WHERE id = 'prf_local'",
-  )[0] ?? {};
-  for (const [id, on] of [["group-toprow", (p.t ?? 1) === 1]]) {
-    for (const b of $(id).querySelectorAll("button")) b.classList.toggle("on", (b.dataset.v === "1") === on);
-  }
-}
-for (const [id, key] of [["group-toprow", "group_top_row"]]) {
-  $(id).addEventListener("click", (e) => {
-    const v = e.target.closest("button")?.dataset.v;
-    if (v === undefined) return;
-    setSetting(db, key, Number(v));
-    syncGroupSegs();
-    rerenderView();
-  });
-}
-syncGroupSegs();
-/* Grammar help (021) — forms on/off. Off is instant: tiles, bar, and
- * speech fall back to lemma labels on the next paint. */
-function syncGrammarSeg() {
-  grammarHelp = grammarHelpOn(db);
-  for (const b of $("grammar-help").querySelectorAll("button")) {
-    b.classList.toggle("on", (b.dataset.v === "1") === grammarHelp);
-  }
-}
-$("grammar-help").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (v === undefined) return;
-  setSetting(db, "grammar_help", Number(v));
-  syncGrammarSeg();
-  renderBar();
-  renderGrid();
-  renderStrip();
-  rerenderView();
-});
-syncGrammarSeg();
-/* Expressive voice (025 § 6) — the feeling faces. Off is instant: the
- * last slot returns to word suggestions, everything speaks neutral. */
-function syncExpressiveSeg() {
-  expressiveVoice = expressiveOn(db);
-  for (const b of $("expressive-voice").querySelectorAll("button")) {
-    b.classList.toggle("on", (b.dataset.v === "1") === expressiveVoice);
-  }
-  syncTryFaces();
-}
-/* Settings → Talking: the board's faces, live on the sample sentence.
- * Off dims and disables them; offline they stay but say why. */
-function syncTryFaces() {
-  const online = navigator.onLine !== false;
-  const live = expressiveVoice && online;
-  $("try-faces").classList.toggle("off", !live);
-  for (const b of $("try-faces").querySelectorAll(".face")) b.disabled = !live;
-  const note = $("try-faces-note");
-  note.dataset.full ??= note.innerHTML;
-  note.innerHTML = !expressiveVoice
-    ? "Off — the Smart bar shows word suggestions instead."
-    : !online ? "Needs internet to hear." : note.dataset.full;
-}
-window.addEventListener("online", syncTryFaces);
-window.addEventListener("offline", syncTryFaces);
-let tryBusy = false;
-$("try-faces").addEventListener("click", async (e) => {
-  const b = e.target.closest(".face");
-  if (!b || b.disabled || tryBusy) return;
-  tryBusy = true;
-  const img = b.querySelector("img");
-  const normal = img.src;
-  b.classList.add("speaking");
-  img.src = `/icons/selected/voice-${b.dataset.f}.svg`;
-  try {
-    if ((await sampleVoice(voiceId, b.dataset.f)) === false) toast("Couldn't play that — try again online.");
-  } finally {
-    tryBusy = false;
-    b.classList.remove("speaking");
-    img.src = normal;
-  }
-});
-$("expressive-voice").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (v === undefined) return;
-  setSetting(db, "expressive_voice", Number(v));
-  syncExpressiveSeg();
-  renderStrip();
-});
-syncExpressiveSeg();
-/* "Help improve Pip" (016 slice 6) — the research-totals switch. Same
- * synced-setting mechanics as the seg above. */
-const syncShareSeg = () => {
-  const on = (ALL(db,
-    "SELECT share_research AS s FROM learner_profile WHERE id = 'prf_local'",
-  )[0]?.s ?? 1) === 1;
-  for (const b of $("share-research").querySelectorAll("button")) {
-    b.classList.toggle("on", (b.dataset.v === "1") === on);
-  }
-};
-$("share-research").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (v === undefined) return;
-  setSetting(db, "share_research", v === "1" ? 1 : 0);
-  syncShareSeg();
-  if (v === "1") flushResearch(db); // turning it on sends what's pending
-});
-syncShareSeg();
-
 /* Try it — public/board/spotlight-demo.js. */
 const spotDemoUi = mountSpotlightDemo({
   db,
@@ -1510,29 +1395,6 @@ $("open-setup").addEventListener("click", () => {
   close("menu");
   setupUi.openWizard();
 });
-/* Words only (Profile_Presentation_Modes § 2.2):
- * learner_profile.presentation_mode, synced. A display filter only — the
- * body class hides every picture (index.html .words-only); no cell moves. */
-function syncLook() {
-  const m = ALL(db,
-    "SELECT presentation_mode AS m FROM learner_profile WHERE id = 'prf_local'",
-  )[0]?.m ?? "symbol";
-  document.body.classList.toggle("words-only", m === "label");
-  for (const b of $("look-seg").querySelectorAll("button")) b.classList.toggle("on", b.dataset.v === m);
-}
-function setLook(v) {
-  setSetting(db, "presentation_mode", v);
-  syncLook();
-  renderGrid();
-  renderBar();
-  renderStrip();
-  rerenderView();
-}
-$("look-seg").addEventListener("click", (e) => {
-  const v = e.target.closest("button")?.dataset.v;
-  if (v) setLook(v);
-});
-syncLook();
 /* Voice — public/board/voice-ui.js (Settings → Talking). One voice per
  * board: word clips and sentence voice together; the sample is the
  * demo sentence. */
