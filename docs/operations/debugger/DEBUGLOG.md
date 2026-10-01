@@ -2,6 +2,7 @@
 
 | Date | Tier | Summary | Truth owner | Resolution |
 | --- | --- | --- | --- | --- |
+| 2026-10-01 | T2 | Tour's ✨/⏪ set the bar but played no sentence audio — reported for both buttons | `sayBar` in `public/board/tour-ui.js`; clip inventory in `public/shared/onramp_audio.mjs` | The two clip keys were never minted (404), and `sayBar` burned the gesture window on a HEAD fetch then played a fresh `Audio()` element iOS refused. Now it rides `board.say` → the shared element (play() inside the tap), with `speakBar` fallback. `src/board/tour_audio.test.mjs` |
 | 2026-10-01 | T2 | After changing Buttons per screen, the Smart bar wrapped to two rows with faces filling half, and group doors lost their labels — all healed by reload | `renderStrip` in `public/board/strip.js` is the sole owner of tray contents; `cells-sheet.js` resized the template without repainting, and `stripSlots` let the bar collapse to 2 cards on sparse boards | Apply now calls `renderStrip()` after `renderGrid()`; `stripSlots` is `min(4, max(3, cols − 2))` — a 3–4 card promise at every size — clamped to the tray's real span so Edit mode's third anchor can't wrap it. `src/board/cells_density.test.mjs` + `scripts/probes/density_probe.mjs` |
 | 2026-10-01 | T3 | Sentence bar missing after the welcome name on iPad Chrome: the keyboard pans the visual viewport and can leave it panned with every JS metric reading normal — in-page repair is untrustworthy | The document, not a measurement — `finish()` in `public/board/onramp-ui.js` | The welcome's Continue leaves the document: persist, flush, `pip_tour` flag, `location.replace` (034). The board boots as a returning user — the path a reload proved correct every time |
 | 2026-10-01 | T1 | Wand press changed nothing: a failed first dev-license mint cached `null` forever in `licenseP`, and the transform's `res?.ok` gate turned every refusal into a silent speak-as-built — a license problem looked exactly like a dead button | `voiceLicense` + `transformAndSpeak` in `public/board/speech.js` | `licenseP` clears on null so the next press retries; a refused transform toasts in product voice — `bad_license` is the Lifetime upsell with an Open Settings action, not an error code. CDP probe: stubbed 403 → toast, live "want I" → "I want." |
@@ -72,6 +73,15 @@ Lie-prone layer: the geometry itself — `floor((cols - 2) / 2)` looked like hon
 Fix: `stripSlots` is now `clamp(3..4, cols - 2)` — the smart bar's job is a fixed promise, cards go one column wide on sparse boards. grid30: 3 words + faces; grid15: 2 words + faces; grid60/90 unchanged. Faces get a full column (~57px per face on iPad grid30) — no squeeze, since fewer columns means wider ones.
 Proof: node --test src/board/cells_density.test.mjs (new source assertion pins the floor); live CDP scripts/probes/density_probe.mjs on dev:agent — after Apply to grid30 the tray is `repeat(4, 1fr)` spanning cols 1–4, and with a word in the sentence the tray holds am/want/have + faces.
 Pattern candidate: when a control's capacity derives from an unrelated axis (grid density), ask what the control's own job needs — derive the floor from the job, not the neighbor's geometry.
+
+## 2026-10-01 tour-sentence-audio-silent
+
+Tier: T2
+Truth owner: `sayBar` in `public/board/tour-ui.js` for playback; `ONRAMP_CLIPS` in `public/shared/onramp_audio.mjs` for the shipped-clip inventory
+Lie-prone layer: two stacked failures hid each other. (1) `sayBar("i-want-an-apple")` / `("i-wanted-an-apple")` fetched clips that were never added to ONRAMP_CLIPS — so they were never minted and 404'd in prod. (2) Even with the files shipped, `sayBar` awaited a HEAD fetch before calling `new Audio().play()` — the tap's gesture window is spent by then, so iPad WebKit refuses the play and the code falls into `speakSentence()`, a license-gated pipeline a first-run user can't satisfy. Instruction clips played because they use `board.say` → `playClip` → the shared element inside the gesture.
+Proof: node --test src/board/tour_audio.test.mjs — sayBar must ride board.say and never open a fresh Audio or fetch gate; both clip keys must exist in ONRAMP_CLIPS. Deployed clips verified 200 audio/mpeg on prod.
+Resolution: `sayBar` is now `if (!(await board.say(name))) await board.speakBar()` — the shared element plays synchronously in the tap handler; a missing clip (falsy say) still falls back to live speech. Clips minted via scripts/voice/mint_onramp.mjs and shipped.
+Pattern candidate: a "check then play" fetch inside a gesture-dependent path silently forfeits the gesture — play through the element the first tap already unlocked, and let the shared player's error path be the existence check.
 
 ## 2026-10-01 strip-stale-after-density-switch
 

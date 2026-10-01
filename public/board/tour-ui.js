@@ -107,20 +107,13 @@ export function mountTour({ board, saveUser }) {
     place();
   }
 
-  /** Play a recorded clip if it ships; else speak the bar. */
+  /** Play the shipped clip through the app's shared audio element — the
+   *  same path every instruction clip uses, so play() runs inside the
+   *  tap's gesture window. A fresh Audio element after an awaited HEAD
+   *  fetch loses iOS user activation and never sounds. Missing or
+   *  refused clips fall back to the live voice pipeline. */
   async function sayBar(name) {
-    try {
-      const res = await fetch(`/audio/onramp/${name}.mp3`, { method: "HEAD" });
-      if (res.ok && res.headers.get("content-type")?.startsWith("audio/")) {
-        const a = new Audio(`/audio/onramp/${name}.mp3`);
-        const played = await a.play().then(() => true, () => false);
-        if (played) {
-          await new Promise((r) => { a.onended = r; a.onerror = r; });
-          return;
-        }
-      }
-    } catch { /* offline or missing — the voice path below */ }
-    await board.speakBar();
+    if (!(await board.say(name))) await board.speakBar();
   }
 
   // Board hooks while the tour runs (board.js checks `active`).
