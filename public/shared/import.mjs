@@ -140,11 +140,18 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
     ).run("prf_local", defaultVoice.locale, defaultVoice.id);
   }
 
-  // Smart bar families (014 § 5): same reconcile rule — a family's
-  // seeded rows land once; the adult's reorder/remove owns the rows.
+  // Smart bar families (014 § 5): the family row reconciles like sense
+  // rows — a family's contents land once below, and the adult's
+  // reorder/remove owns those item rows; the face itself
+  // (name/glyph/speaks) has no adult edit path, so a shipped rename
+  // reaches existing installs.
   for (const f of catalog.families ?? []) {
     db.prepare(
-      "INSERT OR IGNORE INTO bar_family (id, name, glyph, speaks, builtin) VALUES (?, ?, ?, ?, 1)",
+      `INSERT INTO bar_family (id, name, glyph, speaks, builtin) VALUES (?, ?, ?, ?, 1)
+       ON CONFLICT(id) DO UPDATE SET
+         name = excluded.name,
+         glyph = excluded.glyph,
+         speaks = excluded.speaks`,
     ).run(f.id, f.name, f.glyph ?? null, f.speaks ?? null);
   }
   const seededFamilies = new Set();

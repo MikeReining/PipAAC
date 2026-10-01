@@ -17,8 +17,8 @@ export function mountFamilyEditor({ db, locale, open, close, toast, resolveTyped
     for (const f of families(db)) {
       const chip = document.createElement("button");
       chip.className = "fam-chip";
-      // A family named only by its glyph (the question family is "?")
-      // read "? ?" here; it shows its words instead, in bar order.
+      // A family named only by its glyph read "? ?" here; it shows
+      // its words instead, in bar order.
       const symbolOnly = !f.name?.trim() || f.name === f.glyph;
       chip.textContent = symbolOnly
         ? `${f.glyph ?? ""} ${familyItems(db, f.id, locale).map((i) => i.label).join(", ")}`.trim()

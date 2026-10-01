@@ -17,6 +17,13 @@ import { tileStateBadge } from "../shared/voice_tile.mjs";
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
 
+/** Builtin family tiles that draw as word tiles (Design_System § Tiles)
+ *  instead of quiet chrome — the same role the family's words carry.
+ *  `?` is the question family: its tile is Purple like `what`. */
+const FAMILY_TILE = {
+  bf_q: { role: "Purple", art: "symbols/question.svg" },
+};
+
 export function mountGrid({
   db, locale, catalog, phrases, sentence, live, cellEls,
   speak, tileApi,
@@ -272,9 +279,14 @@ export function mountGrid({
         // one ("Pain" → "I'm in pain"; `?` opens silently), then opens the
         // family in the bar. Never a sentence pick, never a drop target.
         const f = familyRow(db, anchor.family);
-        const el = document.createElement("button");
-        el.className = "cell anchor-cell family-cell";
-        el.innerHTML = `<span class="glyph">${f?.glyph ?? "▸"}</span><span class="lbl">${f?.name ?? "?"}</span>`;
+        const look = FAMILY_TILE[anchor.family];
+        const el = look
+          ? wordTile({ label: f?.name ?? "?", role: look.role, art: look.art })
+          : document.createElement("button");
+        if (!look) {
+          el.className = "cell anchor-cell family-cell";
+          el.innerHTML = `<span class="glyph">${f?.glyph ?? "▸"}</span><span class="lbl">${f?.name ?? "?"}</span>`;
+        }
         el.addEventListener("click", () => {
           if (live.picking) return;
           if (f?.speaks) speak(f.speaks);

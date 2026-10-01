@@ -36,8 +36,19 @@ test("the ? family seeds why · when · where · who in fixed order", () => {
   const fams = families(db);
   const q = fams.find((f) => f.id === "bf_q");
   assert.ok(q);
+  assert.equal(q.name, "question");
   assert.equal(q.glyph, "?");
   assert.deepEqual(labelsOf(db, "bf_q"), ["why", "when", "where", "who"]);
+});
+
+test("a shipped family face reconciles — an installed '?' row gets the new name", () => {
+  const db = fresh();
+  // Profiles installed before the 2026-10-01 rename carry name = '?'.
+  db.prepare("UPDATE bar_family SET name = '?', glyph = '?' WHERE id = 'bf_q'").run();
+  importCatalog(db, catalog);
+  const q = families(db).find((f) => f.id === "bf_q");
+  assert.equal(q.name, "question");
+  assert.equal(q.glyph, "?");
 });
 
 test("grid15 slot 12 is the ? family tile in the catalog anchors", () => {

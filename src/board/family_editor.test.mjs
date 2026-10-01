@@ -65,6 +65,9 @@ test("a family named only by its glyph shows its words, not '? ?'", async () => 
   const { join } = await import("node:path");
   const db = createDatabase(":memory:");
   importCatalog(db, JSON.parse(readFileSync(join(import.meta.dirname, "../../data/catalog/catalog.json"), "utf8")));
+  // bf_q shipped name "?" once; the word-name seed now reads "question" —
+  // set the glyph-only shape back to prove the chip's words fallback.
+  db.prepare("UPDATE bar_family SET name = '?' WHERE id = 'bf_q'").run();
   const famList = el();
   const nodes = {
     "fam-list": famList, "fam-items": el(), "fam-title": el(), "fam-add": el(),
