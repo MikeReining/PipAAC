@@ -53,7 +53,7 @@ Executing phases only. Each row names the **next** slice.
 
 | Proposal | Ask |
 | --- | --- |
-| [034 — The welcome gets its own page](034_Welcome_Page.md) | Sanity-check the viewport-pan theory and the `/new/` split before building |
+| [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).

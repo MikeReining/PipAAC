@@ -1,140 +1,81 @@
-# 034 — The welcome gets its own page
+# 034 — Leave the panned document after the welcome
 
-**Status:** proposal — awaiting review. Written after the sixth failed fix
-for the missing sentence bar on first run (iPad Chrome). Nothing here is
-built.
+**Status:** ready to build (reviewed 2026-10-01). Replaces the earlier
+`/new/` page proposal — see § Why not a `/new/` page.
 
 ## The bug
 
-On a fresh profile at `app.pipaac.org` on iPad Chrome: finish the welcome
-(name → child/adult → Continue) and the board appears with `#topbar` off
-the top of the screen — sentence bar, Play, and the settings gear all
-gone — the grid shifted up and dead space at the bottom. The on-ramp tour
-is running and functional; only the shell's top is missing. **A plain
-reload renders correctly every time** (founder, repeated).
+Fresh profile, `app.pipaac.org`, iPad Chrome: name → child/adult → Continue,
+and the board shows with `#topbar` (sentence bar, Play, gear) off the top.
+**A plain reload is correct every time.** DEBUGLOG
+`2026-10-01 sentence-bar-offscreen-after-welcome` (T3).
 
-DEBUGLOG entry: `2026-10-01 sentence-bar-offscreen-after-welcome` (T3).
+Four deployed fixes failed on the device (scroll clamp, focus-aware clamp,
+self-heal + banner, `#app` pinned to the visual viewport). All tried to
+*measure and undo* the pan inside the poisoned document. Every metric read
+normal while the render was shifted, so no in-page measurement can drive a
+fix. The pan is **unproven theory**; the one proven fact is that a fresh
+document renders correctly.
 
-## What we have tried (all deployed, all failed on the real iPad)
+## Decision
 
-| Commit | Theory | Result |
-| --- | --- | --- |
-| `bce6acc` | Document scrolled — clamp `scrollTo(0,0)` | No: `scrollY` was already 0 |
-| `d71abac` | Clamp yields while a field is focused, re-clamps on focusout; welcome card lifts on focus | No |
-| `afab0f6` | Self-healing check: measure `#topbar`'s rect, re-pin, banner with real metrics if still off | No — and every metric reportedly looked fine while the bar was visually gone |
-| `d16b031` | Pan is a `visualViewport` offset `scrollTo` can't express: pin `#app` to the vv rect, correct by the measured bar gap, blur the name field before the overlay removes | No — same screenshot as before |
+Stop undoing the pan. **Discard the document the name field lived in.**
 
-`src/board/viewport.test.mjs` proves the arithmetic, not the device. The
-DEBUGLOG itself says: desktop Chrome cannot produce the iOS keyboard pan —
-**unproven on real hardware.**
+Continue → persist → hard navigation to `/` → the board boots as a returning
+user (the path that already works) → the tour starts from a one-shot flag.
 
-## Working theory — and why it may be unfalsifiable from inside
+No new page, no new boot path, no new routes.
 
-Focusing a real `<input>` opens the software keyboard; WKWebView pans the
-visual viewport to reveal the field. The pan is supposed to unwind when
-the keyboard closes. Everything we can measure — `scrollY`,
-`visualViewport.offsetTop`, `getBoundingClientRect` — can report normal
-while the rendering stays shifted. If the residue is invisible to JS, no
-measurement-based self-heal can ever work, and we cannot tell the
-difference between "our fix is wrong" and "the platform is lying" from
-inside the page.
+## Build
 
-That is the stopping condition `docs/operations/Debugger.md` names: after
-repeated reclassification, stop patching and change the boundary.
+1. `public/board/onramp-ui.js` `finish()`: blur the field, `await
+   saveUser({ needsSetup: false })` (look is already written by `setLook`
+   before `finish`; both are synchronous kvvfs/localStorage writes under the
+   awaited `putUser`), set `sessionStorage.pip_tour = "1"`, then
+   `location.replace(location.pathname)`. A navigation, not
+   `location.reload()`, so no scroll/viewport restoration is offered.
+   Remove `wrap.remove()` / `wrap = null` / `onDone()` — the page is leaving.
+2. `public/board.js`: drop `onDone`'s `renderGrid/renderStrip/tourUi.start`.
+   After `tourUi` is mounted (line ~1272), where `onramp.start()` is
+   decided: if `sessionStorage.pip_tour` is set, remove it and call
+   `tourUi.start()`; else `if (me.needsSetup) onramp.start()`.
+   Never start both. Consume the flag before starting so a refresh mid-tour
+   does not replay it.
+3. Revert the `appRoot()` plumbing for the **welcome** only
+   (`onramp-ui.js` appends to `document.body` again); the tour keeps
+   `appRoot()`.
+4. Keep `viewport.js` as defense for adult-side inputs (Settings, add-word).
+   Not touched.
 
-## The proposal
+## Honest limits
 
-**The welcome becomes its own document, `/new/`.** The board never hosts
-onboarding; onboarding never inherits the board's pinned shell.
+- This works only if a same-origin `location.replace` yields a fresh
+  viewport. The founder's reload is the evidence; a replace is the same
+  mechanism. If it fails on the device, the theory "the pan lives in the
+  document" is dead and the next move is a keyboard-free name field (Pip
+  keyboard) — not more pin logic. Log it in DEBUGLOG either way.
+- The first board boot runs behind the welcome and is then thrown away
+  (one extra boot, first run only). Accepted; it is the price of using the
+  proven path.
+- `pickPerson` for a new user with `needsSetup` is unchanged: it boots, shows
+  the welcome, and navigates the same way.
 
-The mechanism is not "we finally cleared the pan correctly." It is "the
-document that got panned is discarded." A navigation to a fresh document
-carries no viewport state — this is exactly why the founder's reload is
-correct every single time. The proposal converts the proven-good recovery
-path into the normal path, so the fix does not depend on the pan theory
-being right: whatever onboarding poisoned lives in a document that no
-longer exists.
+## Why not a `/new/` page
 
-### Flow
-
-```text
-/ boots → resolve user → me.needsSetup → location.replace("/new/")
-/new/ → name + who (+ look for adult) → write registry row →
-        sessionStorage tour flag → location.replace("/")
-/ boots → needsSetup false → board renders → tour starts from flag
-```
-
-### What `/new/` needs (slim boot, no board.js)
-
-- `openUserStore` + the active user id (`sessionStorage pip_active_user`,
-  already set before the redirect), `putUser`.
-- The recorded say-clips (`shared/onramp_audio.mjs`) — unchanged.
-- The two look-preview tiles (`sns_0013` want, `sns_0128` apple): real
-  catalog art without booting the board DB — resolve art URLs directly.
-- The existing welcome markup/CSS moves over largely intact
-  (`onramp-ui.js` becomes the new page's module; `onramp-ui.css` loads
-  there instead of in `index.html`).
-
-### What changes in `board.js`
-
-- Redirect placed right after `me` resolution + `touchOpened`, before the
-  heavy mounts — the redirect should be fast, not after a full board boot.
-- `mountOnramp` and `if (me.needsSetup) onramp.start()` deleted.
-- Boot reads the tour flag: `needsSetup` finished on `/new/` →
-  `tourUi.start()` where `onDone` ran it today.
-- `pickPerson` is unchanged: `pip_active_user` is set before the redirect,
-  so a newly picked user with `needsSetup` still lands on `/new/` for the
-  right person.
-
-### What it deletes
-
-- `onramp-ui.js`'s `appRoot()` plumbing and the blur-before-remove dance —
-  the page's own document owns its fields.
-- The whole class of "overlay contained by `#app`'s transform" wiring for
-  the welcome. (The tour's `appRoot()` stays — the tour still runs on the
-  board inside `#app`.)
-
-### What it does not fix — honest limits
-
-- The device keyboard still exists on `/new/`. If a residual pan could
-  somehow survive a same-origin navigation (we believe it cannot — fresh
-  WebCore viewport per document), the theory dies with it and the fallback
-  is a keyboard-free name field (Pip keyboard), not more pin logic.
-- Adult-side real inputs (Settings email, license key, add-word in
-  device-keyboard mode) can still pan the board page. The viewport pin in
-  `public/board/viewport.js` stays as defense-in-depth. This proposal
-  removes the trigger from the first-run path only.
-
-## Why not just `location.reload()` after Continue
-
-Same mechanism, honest version: a reload flag on `finish()` would work
-(`needsSetup` is persisted before the overlay closes). We choose the page
-because the reload keeps the god-file shape — onboarding code still lives
-inside `board.js`, still owns a piece of its boot, still fights `#app`.
-The page is the same fix plus separation of concerns; the reload remains
-the fallback if the review finds the split premature.
-
-## Sanity checks for the reviewer
-
-1. WKWebView viewport state across a same-origin forward navigation —
-  confirm it cannot be inherited. `history.scrollRestoration = "manual"`
-  is already set; bfcache/pageshow restore is the path to check.
-2. Redirect ordering in `board.js`: everything before it (migrate, user
-   resolution, the per-user write lock) must still run; the lock must not
-   be held across the navigation (it is session-scoped — verify release).
-3. `/new/` must be reachable directly (deep link / refresh mid-flow) and
-   route to `/` when the active user is not `needsSetup`.
-4. Confirm the worker serves `/new/` as a static route.
-5. Tour flag lifetime: `sessionStorage` so a stale flag can't fire a tour
-   on a later boot.
+It is the same mechanism (discard the document) plus a slim boot, art
+resolution without the board DB, a worker route, a redirect ordering and
+lock-release check, and deep-link handling. None of that is needed to get a
+fresh document; `location.replace` gets it in two edited files. If
+onboarding later outgrows `board.js` for its own reasons, split it then —
+not as a bug fix.
 
 ## Works test
 
-On the failing iPad, fresh profile: land on `/`, redirected to `/new/`;
-type a name on the real keyboard; pick *A child* → Continue. Expected:
-`/ ` loads, sentence bar at the top, tour ring on *want*. Founder check is
-the arbiter — no test substitutes for the device (established above).
+Founder, iPad Chrome, fresh/private profile at `app.pipaac.org`:
+name → *A child* → Continue. Expect: page reloads itself, sentence bar at the
+top, tour ring on *want*. Refresh mid-tour: no second tour, bar still there.
+The device is the arbiter (§ Honest limits).
 
-Plus automated: existing `src/board/viewport.test.mjs` stays green; add a
-boot-routing assertion (`needsSetup` → `/new/`, tour flag → tour starts)
-if a harness exists for it.
+Automated: a boot-routing unit — `pip_tour` set → tour starts and flag is
+consumed; `needsSetup` and no flag → welcome; neither → neither. Existing
+`src/board/viewport.test.mjs` stays green.
