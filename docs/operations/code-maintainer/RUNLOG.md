@@ -158,3 +158,21 @@
   on clean HEAD too (catalog drift, same class as add_word ordering).
 - Next: Q6d — meta caches (senseMeta/wordArt/entityRole/entityPhoto/
   sensePos/entityForSense-adjacent) → board/meta-cache.js.
+
+## 2026-09-30 — batch 9 (lens: structure, founder queue Q6d)
+
+- Scope: `public/board.js` metadata caches → new
+  `public/board/meta-cache.js` (109 ln). Class: Extraction.
+- Moved: senseMeta/metaFor, wordArt/artForWord, entityRole/
+  roleForEntity, entityPhoto/photoFor, sensePos/posOfSense, senseById.
+  The Maps come back in the mount's return so the sync drain clears
+  them wholesale — call sites unchanged.
+- `senseById` was a late const → now a mount return, so mountGrid's
+  thunk became a direct ref.
+- board.js: 1,497 → 1,412 lines.
+- Proof: forms/strip/groups/edit/image_override green; check:fast
+  green. Pre-existing failure noted: image_override expects no img_0384
+  in the override list — fails on clean HEAD (catalog drift).
+- Next: Q7 — src/worker/pictures.js route-family split. board.js is now
+  ~1,400 ln of taps + boot + mount wiring; scan again before deciding
+  whether more extraction pays.

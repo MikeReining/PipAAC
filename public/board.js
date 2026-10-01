@@ -39,13 +39,13 @@ import {
   resolveActiveUser, touchOpened,
 } from "./shared/users.mjs";
 import { voiceName } from "./shared/voices.mjs";
-import { normalizeV1 } from "./shared/normalize.mjs";
+
 import {
-  applyTransform, noteBarEdit, restoreBar, wordLemmaCandidates,
+  applyTransform, noteBarEdit, restoreBar,
 } from "./shared/txbar.mjs";
 import { EOS, formFor } from "./shared/forms.mjs";
 import { expressiveOn, loadFeelingData } from "./shared/feeling.mjs";
-import { SENSE_ART_SQL } from "./shared/images.mjs";
+
 import { coreCells, placeOnBoard } from "./shared/coremove.mjs";
 import { useCounts } from "./shared/usecounts.mjs";
 import { bindLayouts } from "./shared/movecost.mjs";
@@ -75,6 +75,7 @@ import { mountSpeech } from "./board/speech.js";
 import { mountSpotlightLayer } from "./board/spotlight-layer.js";
 import { mountPin } from "./board/pin.js";
 import { mountEditShared } from "./board/edit-shared.js";
+import { mountMetaCache } from "./board/meta-cache.js";
 import { mountSettingsSync } from "./board/settings-sync.js";
 import { mountGrid } from "./board/grid.js";
 import { mountStrip } from "./board/strip.js";
@@ -348,6 +349,13 @@ const live = {
   set likelySet(v) { likelySet = v; },
 };
 
+/* Read-through metadata caches — public/board/meta-cache.js. The Maps
+ * come back so the sync drain can clear them wholesale. */
+const {
+  senseMeta, wordArt, entityRole, entityPhoto, sensePos,
+  metaFor, artForWord, roleForEntity, photoFor, posOfSense, senseById,
+} = mountMetaCache({ db, locale });
+
 /* Speech, tile voices, transforms — public/board/speech.js. */
 const {
   speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
@@ -394,7 +402,7 @@ const {
 } = mountGrid({
   db, locale, catalog, phrases, sentence, live, cellEls,
   speak, tileApi,
-  tap, shownLabel, metaFor, photoFor, senseById: (...a) => senseById(...a),
+  tap, shownLabel, metaFor, photoFor, senseById,
   getCounts, editPointer, toast, layerMark, spotChrome,
   sizeStrip: (...a) => sizeStrip(...a), // strip mounts below — lazy
   openExpand: (...a) => openExpand(...a),
@@ -417,77 +425,6 @@ const { syncFreshSeg, syncGrammarSeg, syncExpressiveSeg, syncLook, setLook } =
     db, live, toast, sampleVoice,
     renderBar, renderGrid, renderStrip, rerenderView,
   });
-
-/** Cache: sense id → { role, art } — the label-strip color and the
- *  approved symbol key (null while no art is shipped). */
-const senseMeta = new Map();
-function metaFor(senseId) {
-  if (!senseMeta.has(senseId)) {
-    senseMeta.set(
-      senseId,
-      ALL(
-        db,
-        `SELECT s.fitzgerald_role AS role, ${SENSE_ART_SQL} AS art
-         FROM sense s WHERE s.id = ?`,
-        [senseId],
-      )[0] ?? { role: null, art: null },
-    );
-  }
-  return senseMeta.get(senseId);
-}
-
-/** Cache: normalized transform token → art key | null. A model-supplied
- *  word that resolves to a label ("wanted" lemmas to want) shows that
- *  sense's symbol — the bar stays readable after a transform. The item
- *  stays typed; the art is display only. */
-const wordArt = new Map();
-function artForWord(word) {
-  const w = normalizeV1(
-    String(word).replace(/^[^\p{L}\p{N}'-]+|[^\p{L}\p{N}'-]+$/gu, ""));
-  if (!w) return null;
-  if (!wordArt.has(w)) {
-    let art = null;
-    for (const cand of wordLemmaCandidates(w)) {
-      const row = ALL(
-        db,
-        `SELECT l.sense_id FROM label l
-         WHERE l.normalized_text = ? AND l.locale = ? AND l.status = 'approved'
-         ORDER BY (l.kind = 'lemma') DESC, l.default_for_text DESC LIMIT 1`,
-        [cand, locale],
-      )[0];
-      if (row) { art = metaFor(row.sense_id).art; break; }
-    }
-    wordArt.set(w, art);
-  }
-  return wordArt.get(w);
-}
-
-/** Cache: entity id → fitzgerald_role — the family's kind pick (018 D7),
- *  Yellow until classified. */
-const entityRole = new Map();
-function roleForEntity(entityId) {
-  if (!entityRole.has(entityId)) {
-    entityRole.set(
-      entityId,
-      ALL(db, "SELECT fitzgerald_role AS r FROM personal_entity WHERE id = ?",
-        [entityId])[0]?.r ?? "Yellow",
-    );
-  }
-  return entityRole.get(entityId);
-}
-
-/** Cache: entity id → photo_key (entities are few; the row rarely changes). */
-const entityPhoto = new Map();
-function photoFor(entityId) {
-  if (!entityPhoto.has(entityId)) {
-    entityPhoto.set(
-      entityId,
-      ALL(db, "SELECT photo_key FROM personal_entity WHERE id = ?", [entityId])[0]
-        ?.photo_key ?? null,
-    );
-  }
-  return entityPhoto.get(entityId);
-}
 
 /* Grammar help (021): every place a sense's label is PAINTED for the
  * child — grid cell, strip tile, group cell — shows the form the
@@ -652,16 +589,6 @@ $("backspace").addEventListener("click", () => {
   renderStrip();
 });
 
-const senseById = (senseId) =>
-  ALL(
-    db,
-    `SELECT s.id, l.text AS label, s.fitzgerald_role FROM sense s
-     JOIN label l ON l.sense_id = s.id
-       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
-     WHERE s.id = ?`,
-    [locale, senseId],
-  )[0];
-
 
 function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } = {}) {
   if (tour) return tour.onTap(kind, id);
@@ -746,18 +673,6 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
  *  one before it — "what do" + he -> does. Re-picks the previous sense
  *  item only (her fixed form picks and typed words never move); a
  *  changed form rewrites the bar item and the log row's label. */
-/** Cache: sense id → lemma part_of_speech (noun-test for the whose rule). */
-const sensePos = new Map();
-function posOfSense(senseId) {
-  if (!sensePos.has(senseId)) {
-    sensePos.set(senseId, ALL(db,
-      `SELECT part_of_speech AS p FROM label
-       WHERE sense_id = ? AND kind = 'lemma' AND status = 'approved' AND locale = ?`,
-      [senseId, locale])[0]?.p ?? null);
-  }
-  return sensePos.get(senseId);
-}
-
 function revisitPrev(atIndex) {
   if (!grammarHelp || atIndex < 1) return;
   const prev = sentence[atIndex - 1];
