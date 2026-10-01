@@ -22,19 +22,20 @@ import { createDatabase, importCatalog } from "./catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const html = readFileSync(join(repoRoot, "public/index.html"), "utf8");
+const css = readFileSync(join(repoRoot, "public/board/base.css"), "utf8");
 const catalog = JSON.parse(
   readFileSync(join(repoRoot, "data/catalog/catalog.json"), "utf8"),
 );
 
 test("palette: tuned role border hexes are shipped; retired colors are gone", () => {
   for (const hex of ["#b07f00", "#2e8b3a", "#2f6fd0", "#d0438c", "#c62828"]) {
-    assert.ok(html.includes(hex), `role border ${hex} missing from index.html`);
+    assert.ok(css.includes(hex), `role border ${hex} missing from base.css`);
   }
   for (const retired of ["#d9a410", "#8a7fbf", "#ece8f9"]) {
-    assert.ok(!html.includes(retired), `retired color ${retired} still in index.html`);
+    assert.ok(!css.includes(retired), `retired color ${retired} still in base.css`);
   }
   // Primary buttons are solid ink — blue never paints a button.
-  assert.match(html, /\.btn \{[^}]*background: var\(--ink\)/s);
+  assert.match(css, /\.btn \{[^}]*background: var\(--ink\)/s);
 });
 
 test("learner_profile.highlight_next defaults OFF, round-trips, rejects non-binary", () => {

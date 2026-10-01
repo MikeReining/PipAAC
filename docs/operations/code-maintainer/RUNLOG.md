@@ -42,3 +42,25 @@
 - Test fix: voice_sentence.test.mjs text-contract now reads speech.js
   for the wait cap + speakSentence (behavior contract unchanged).
 - Next: Q3 — prediction strip + expand mode → board/strip.js.
+
+## 2026-09-30 — batch 3 (lens: structure, founder queue Q3)
+
+- Scope: `public/board.js` prediction strip + expand mode → new
+  `public/board/strip.js` (289 ln). Class: Extraction.
+- Moved: stripSlots/sizeStrip, expand state + openExpand, predCard,
+  ghostCard, facesOn, faceCard, stripCards, paintStrip, renderExpand,
+  renderStrip, entityCat cache.
+- `live` hoisted to a named const shared by the speech and strip mounts;
+  added getters (editing, picking, modeling, view, expressiveVoice, kbUi,
+  groupsUi). renderStrip crosses into mountSpeech as a lazy thunk —
+  both mounts reference each other's returns (TDZ).
+- Dead weight: `closeExpand` had zero callers — deleted, not moved.
+- board.js: 2,627 → 2,382 lines.
+- Test fix: design.test.mjs palette contract now reads board/base.css
+  (the file the page serves; contract unchanged).
+- Proof: 150 board tests pass, 1 pre-existing failure —
+  `add_word.test.mjs` "find a group" A–Z list fails identically on HEAD
+  (verified via stash); NOT introduced here. check:fast green.
+- Skipped findings: pre-existing add_word failure (group list ordering)
+  — bug, not maintenance; left for a fix slice.
+- Next: Q4 — grid render + geometry → board/grid.js.
