@@ -37,7 +37,10 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
     card.append(mark);
     build(card);
     wrap.append(card);
-    card.querySelector("input, button")?.focus();
+    // Focus a button, never the input — on touch devices focusing a text
+    // field pops the software keyboard over the card before anyone has
+    // seen it. A focused button keeps keyboard/AT flow without that.
+    card.querySelector("button")?.focus();
   }
 
   function choiceRow(options, onPick) {
