@@ -5894,7 +5894,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0641",
       "negation": 0
     },
     {
@@ -5903,7 +5903,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0642",
       "negation": 0
     },
     {
@@ -5912,7 +5912,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0643",
       "negation": 0
     },
     {
@@ -5921,7 +5921,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0644",
       "negation": 0
     },
     {
@@ -5930,7 +5930,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0645",
       "negation": 0
     },
     {
@@ -5939,7 +5939,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0646",
       "negation": 0
     },
     {
@@ -5948,7 +5948,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0647",
       "negation": 0
     },
     {
@@ -5957,7 +5957,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0648",
       "negation": 0
     },
     {
@@ -5966,7 +5966,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0649",
       "negation": 0
     },
     {
@@ -5975,7 +5975,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0650",
       "negation": 0
     },
     {
@@ -34268,6 +34268,76 @@
       "key": "symbols/thing.png",
       "status": "approved",
       "sha256": "c2b2dd0b681ca3b51705644eb514281cd46ea249d75cb3821f8e00574ab73b68"
+    },
+    {
+      "id": "img_0641",
+      "sense_id": "sns_0641",
+      "key": "symbols/very.png",
+      "status": "approved",
+      "sha256": "bb81810ca77f165499e49a921c4f9dca879d87ac849177ed339f815e26d2c121"
+    },
+    {
+      "id": "img_0642",
+      "sense_id": "sns_0642",
+      "key": "symbols/too.png",
+      "status": "approved",
+      "sha256": "be3ec23d55c59ca4c519b5b3a8640f6a3115a360c5619f6dd3291d10d065b80e"
+    },
+    {
+      "id": "img_0643",
+      "sense_id": "sns_0643",
+      "key": "symbols/just.png",
+      "status": "approved",
+      "sha256": "97a8d9464ea9df23df41643861427872bad6e0b2bce28504695e160a4fd1f439"
+    },
+    {
+      "id": "img_0644",
+      "sense_id": "sns_0644",
+      "key": "symbols/also.png",
+      "status": "approved",
+      "sha256": "8a03005c4bf8e5c413193437afdc5818504a8638526d9effa8db7da1724070e3"
+    },
+    {
+      "id": "img_0645",
+      "sense_id": "sns_0645",
+      "key": "symbols/only.png",
+      "status": "approved",
+      "sha256": "e4b704e3a5fe8fcc17cfc2d08efb533893250724d5141e1cef1cd2441a5896ad"
+    },
+    {
+      "id": "img_0646",
+      "sense_id": "sns_0646",
+      "key": "symbols/still.png",
+      "status": "approved",
+      "sha256": "cce8e2645c66131da216646c6d2354cbc689fe6d78b4c935d519855085ec0b08"
+    },
+    {
+      "id": "img_0647",
+      "sense_id": "sns_0647",
+      "key": "symbols/one.png",
+      "status": "approved",
+      "sha256": "4acac3ff236cc456ac7b0784a747c4b239ca571354a7238161092b3ce7c34abc"
+    },
+    {
+      "id": "img_0648",
+      "sense_id": "sns_0648",
+      "key": "symbols/two.png",
+      "status": "approved",
+      "sha256": "78ac4f4958eb578191f3fcc31bf7e9b5c06fb119eb790bd88a6e2cf49fda9703"
+    },
+    {
+      "id": "img_0649",
+      "sense_id": "sns_0649",
+      "key": "symbols/three.png",
+      "status": "approved",
+      "sha256": "e1a6d2ddf381fe9a9f305e03f6b3a2dc97db08ff24d195bb08bea853da540d12"
+    },
+    {
+      "id": "img_0650",
+      "sense_id": "sns_0650",
+      "key": "symbols/four.png",
+      "status": "approved",
+      "sha256": "0ef84214fc0c153ed871d7284b44cdeec1bf9d85b17da5d4ad659df16e107d44"
     },
     {
       "id": "img_0672",
