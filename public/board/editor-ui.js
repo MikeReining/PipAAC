@@ -43,7 +43,7 @@ const tabPlace = {
 export function mountEditor({
   db, locale, all, catalog, me, userStore, flushDb,
   paintGroupPage, renderMainBoard, homeCells, boardGeom,
-  addFlow, openWordCard, closeCard, replaceOnBoard,
+  addFlow, openWordCard, closeCard, replaceOnBoard, replaceInGroup,
   setView, openGroupView, toast, undoLast, syncState,
   renderLibrary, invalidateIndex, renderStrip,
   savePhoto, syncUploadBlob, tile, loadPhotoURL, artInto, flashCell,
@@ -509,23 +509,44 @@ export function mountEditor({
     markSelection();
   }
 
-  /** The card for a selected word. On the main board it offers Replace —
-   *  the placement sheet (018 D10) for the word's cell. */
+  /** The card for a selected word. It offers Replace anywhere the word
+   *  holds a cell: on the main board the placement sheet (018 D10) swaps
+   *  the home cell's word; in a group it swaps this group's seat for a
+   *  non-member — the word keeps its cell, the occupant changes. */
   function showCard(item) {
-    const cell = where.kind === "main"
-      ? (homeCells?.() ?? []).find((c) => (c.kind === "entity"
-        ? `entity:${c.entity_id}` : `sense:${c.sense_id}`) === keyOf(item))
-      : null;
-    if (!cell || !replaceOnBoard) return openWordCard(item);
-    openWordCard(item, {
-      onReplace: () => {
-        closeCard();
-        clearSelection();
-        replaceOnBoard(cell.slot_index, {
-          kind: item.item_kind, id: item.item_id, label: item.label, role: cell.fitzgerald_role,
-        });
-      },
-    });
+    if (where.kind === "main") {
+      const cell = (homeCells?.() ?? []).find((c) => (c.kind === "entity"
+        ? `entity:${c.entity_id}` : `sense:${c.sense_id}`) === keyOf(item));
+      if (!cell || !replaceOnBoard) return openWordCard(item);
+      openWordCard(item, {
+        onReplace: () => {
+          closeCard();
+          clearSelection();
+          replaceOnBoard(cell.slot_index, {
+            kind: item.item_kind, id: item.item_id, label: item.label, role: cell.fitzgerald_role,
+          });
+        },
+      });
+      return;
+    }
+    if (where.kind === "group" && replaceInGroup) {
+      const cell = all(db,
+        `SELECT page, slot_index FROM group_cell
+         WHERE group_id = ? AND layout = ? AND item_kind = ? AND item_id = ?`,
+        [where.id, activeLayout(db), item.item_kind, item.item_id])[0];
+      if (!cell) return openWordCard(item);
+      openWordCard(item, {
+        onReplace: () => {
+          closeCard();
+          clearSelection();
+          replaceInGroup(where.id, {
+            kind: item.item_kind, id: item.item_id, label: item.label,
+          }, cell);
+        },
+      });
+      return;
+    }
+    openWordCard(item);
   }
 
   function clearSelection() {

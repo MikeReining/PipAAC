@@ -535,6 +535,27 @@ export function swapItems(db, groupId, a, b, layout = activeLayout(db)) {
   });
 }
 
+/** Replace one group seat's occupant (031): `into` takes `out`'s exact
+ *  cell at this size; `out` leaves the group (its record and other seats
+ *  are untouched). A remove_item + place_item pair, so replay rebuilds
+ *  the same state. Throws with nothing changed when the target refuses;
+ *  the returned undo() puts `out` back and drops `into`. */
+export function replaceGroupItem(db, groupId, out, into, cell) {
+  const restore = removeItemUndoable(db, groupId, out.kind, out.id);
+  try {
+    placeItem(db, groupId, into.kind, into.id, cell);
+  } catch (e) {
+    restore.undo();
+    throw e;
+  }
+  return {
+    undo() {
+      if (isMember(db, groupId, into.kind, into.id)) removeItem(db, groupId, into.kind, into.id);
+      restore.undo();
+    },
+  };
+}
+
 /**
  * Remove a word from one group: its membership and its positions at every
  * size. Leaves a hole — nothing reflows, in built-in groups too. The word

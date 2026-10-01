@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { createDatabase } from "./catalog.mjs";
 import { installDom, findAll } from "./fake_dom.mjs";
 import { mountEditor } from "../../public/board/editor-ui.js";
-import { createEntity, createGroup, placeItem } from "../../public/shared/groups.mjs";
+import { createEntity, createGroup, placeItem, replaceGroupItem } from "../../public/shared/groups.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
 const flush = async () => { for (let i = 0; i < 6; i++) await new Promise((r) => setTimeout(r, 0)); };
@@ -51,6 +51,7 @@ function harness({ db = freshDb(), homeCells = () => [] } = {}) {
       $("wordcard").classList.add("open");
     },
     replaceOnBoard: (slot, occ) => log.replaced.push({ slot, ...occ }),
+    replaceInGroup: (groupId, occ, cell) => log.replaced.push({ groupId, ...occ, cell }),
     closeCard: () => $("wordcard").classList.remove("open"),
     // The app's setView("editor") repaints the editor; mirror that.
     setView: (v) => { log.views.push(v); if (v === "editor") editor.renderEditor(); },
@@ -242,14 +243,46 @@ test("a main-board word's card offers Replace — the placement sheet for its ce
   assert.deepEqual(h.log.replaced, [{ slot: 23, kind: "sense", id: "s_want", label: "want", role: "Green" }]);
 });
 
-test("a group word's card has no Replace — groups have no cells to swap", async () => {
+test("a group word's card offers Replace — the seat's occupant changes", async () => {
   const h = harness();
   const { id } = createEntity(h.db, { name: "Cooper" });
-  placeItem(h.db, "grp_mine", "entity", id);
+  const cell = placeItem(h.db, "grp_mine", "entity", id);
   h.editor.renderEditor();
   await h.editor.openGroup("grp_mine");
   h.editor.select({ item_kind: "entity", item_id: id, label: "Cooper" });
-  assert.equal(h.log.cardOpts.at(-1).onReplace, undefined);
+  const { onReplace } = h.log.cardOpts.at(-1);
+  assert.equal(typeof onReplace, "function", "a group seat is swappable too");
+  onReplace();
+  assert.equal(h.$("wordcard").classList.contains("open"), false, "the card steps aside for the sheet");
+  const r = h.log.replaced.at(-1);
+  assert.equal(r.groupId, "grp_mine");
+  assert.equal(r.kind, "entity");
+  assert.equal(r.id, id);
+  assert.equal(r.cell.page, cell.page);
+  assert.equal(r.cell.slot_index, cell.slot_index);
+});
+
+test("group Replace takes the tapped word's exact cell; Undo puts it back", () => {
+  const h = harness();
+  const { id: cooper } = createEntity(h.db, { name: "Cooper" });
+  const { id: baba } = createEntity(h.db, { name: "Baba" });
+  const cell = placeItem(h.db, "grp_mine", "entity", cooper);
+  const seat = (id) => {
+    const r = h.db.prepare(
+      `SELECT page, slot_index FROM group_cell
+       WHERE group_id = 'grp_mine' AND item_kind = 'entity' AND item_id = ?`,
+    ).get(id);
+    return r ? { page: r.page, slot_index: r.slot_index } : null;
+  };
+
+  const rep = replaceGroupItem(h.db, "grp_mine",
+    { kind: "entity", id: cooper }, { kind: "entity", id: baba }, cell);
+  assert.deepEqual(seat(baba), cell, "the new word lands on the vacated seat");
+  assert.equal(seat(cooper), null, "the replaced word left the group");
+
+  rep.undo();
+  assert.deepEqual(seat(cooper), cell, "Undo restores the original word to its seat");
+  assert.equal(seat(baba), null);
 });
 
 test("leaving the editor repaints the main board out of edit gestures", async () => {

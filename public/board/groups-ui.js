@@ -221,12 +221,20 @@ export function mountGroups({
       ? () => {}
       : () => tap(item.label, item.item_kind, item.item_id, { source: "group" });
     if (item.item_kind === "sense" && maskedSenseIds(db).has(item.item_id)) {
+      // Masking § 2: the child sees a blank cell — the seat stays taken,
+      // nothing shows or taps. Only the editor's ghost reveals it.
+      if (!gestures) {
+        const blank = document.createElement("div");
+        blank.className = "gcell empty";
+        return blank;
+      }
       const ghost = senseCell(
         { fitzgerald_role: item.fitzgerald_role, label: item.label, art: item.art },
-        gestures ? () => openWordCard(item) : () => {},
+        () => openWordCard(item),
       );
       ghost.classList.add("masked");
-      ghost.style.pointerEvents = gestures ? "auto" : "none";
+      ghost.style.pointerEvents = "auto";
+      ghost.dataset.item = `sense:${item.item_id}`;
       return ghost;
     }
     const el = item.item_kind === "sense"
@@ -277,7 +285,10 @@ export function mountGroups({
    *  like on the home board, never group content, never a drop target.
    *  Top-row cells stay empty (still reserved) when the setting is off. */
   function reservedCell(c, gestures) {
-    if (!c) {
+    // A hidden home word shows blank to the child; in the editor the
+    // ghost stays tappable so it can be unhidden where it sits.
+    const ghosted = c && c.kind === "sense" && maskedSenseIds(db).has(c.sense_id);
+    if (!c || (ghosted && !gestures)) {
       const blank = document.createElement("div");
       blank.className = "gcell empty reserved";
       return blank;
@@ -285,8 +296,15 @@ export function mountGroups({
     const { el, say } = homeTile(c);
     el.classList.add("reserved");
     if (gestures) {
-      el.disabled = true;
-      el.title = "Always here — from the main board";
+      if (ghosted) {
+        el.disabled = false;
+        el.style.pointerEvents = "auto";
+        el.addEventListener("click", () =>
+          openWordCard({ item_kind: "sense", item_id: c.sense_id, label: c.label }));
+      } else {
+        el.disabled = true;
+        el.title = "Always here — from the main board";
+      }
     } else if (say) {
       el.addEventListener("click", () => tap(say, c.kind, c.kind === "entity" ? c.entity_id : c.sense_id,
         { source: "group" }));

@@ -64,3 +64,45 @@ export function offBoardItems(
     .sort((a, b) =>
       b.count - a.count || b.uni - a.uni || a.label.localeCompare(b.label));
 }
+
+/** Replace inside a group (031): a word can hold a home cell and group
+ *  seats at once, so the candidates are everything but this group's own
+ *  members — board words included. A globally hidden word is out of
+ *  circulation: offering it would land a ghost. Same ranking as the
+ *  placement sheet. */
+export function notInGroupItems(
+  db, groupId, locale,
+  { counts = new Map(), uni = {}, q = "" } = {},
+) {
+  const members = new Set(
+    all(db,
+      "SELECT item_kind, item_id FROM group_membership WHERE group_id = ?",
+      [groupId]).map((r) => `${r.item_kind}:${r.item_id}`),
+  );
+  const senses = all(
+    db,
+    `SELECT 'sense' AS kind, s.id, l.text AS label, s.fitzgerald_role AS role
+     FROM sense s
+     JOIN label l ON l.sense_id = s.id
+       AND l.kind = 'lemma' AND l.status = 'approved' AND l.locale = ?
+     WHERE s.id NOT IN (SELECT sense_id FROM sense_mask WHERE status = 'hidden')`,
+    [locale],
+  );
+  const entities = all(
+    db,
+    `SELECT 'entity' AS kind, e.id, e.spoken_name AS label,
+            COALESCE(e.fitzgerald_role, 'Yellow') AS role
+     FROM personal_entity e WHERE e.status = 'active'`,
+  );
+  const needle = q.trim().toLowerCase();
+  return [...senses, ...entities]
+    .filter((r) => !members.has(`${r.kind}:${r.id}`))
+    .map((r) => ({
+      ...r,
+      count: counts.get(`${r.kind}:${r.id}`) ?? 0,
+      uni: uni[r.id] ?? 0,
+    }))
+    .filter((r) => !needle || r.label.toLowerCase().includes(needle))
+    .sort((a, b) =>
+      b.count - a.count || b.uni - a.uni || a.label.localeCompare(b.label));
+}

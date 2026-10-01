@@ -43,10 +43,10 @@ the word card's Hide/Show (`wc-hide`). Works Test: `src/board/mask.test.mjs`
 ```
 
 ### The Masking Rules
-1. **The Ghost Cell Standard:** Masking a cell sets its visible status to `masked`. The cell renders as a quiet, unobtrusive blank background tile. It cannot be tapped or vocalized.
+1. **The Ghost Cell Standard:** Masking a cell sets its visible status to `masked`. To the child the cell is indistinguishable from an unallocated slot — a blank placeholder: no label, no picture, no tap, no speech. **Edit mode is where the ghost lives:** the adult sees the muted tile ("this spot is taken"), taps it to open the word card, and drags it like any placed word — Hide/Show is one tap on the card.
 2. **Zero Coordinate Shift:** The cell's spatial coordinate `(col, row)` remains allocated to that word. Other buttons never move into the empty space. Motor memory vectors for all surrounding words are 100% preserved.
-3. **Strip & Search Exclusion:** A masked word is automatically excluded from the predictive strip and keyboard search suggestions.
-4. **Unmasking:** Caregivers can unmask words in seconds from the Parent Corner as the child matures or when clinical readiness dictates.
+3. **Strip & Search Exclusion:** A masked word is automatically excluded from the predictive strip, keyboard search suggestions, and the group Replace picker (`notInGroupItems`) — a hidden word is never offered for a new seat.
+4. **Unmasking:** Caregivers can unmask words in seconds — the ghost's card in the editor (Show word), or from the Parent Corner — as the child matures or when clinical readiness dictates.
 
 ---
 
@@ -72,5 +72,6 @@ In accordance with [`docs/product/Language_And_Voice_Schema.md:24`](file:///User
 | Invariant | Test Proof |
 | --- | --- |
 | Masking does not alter coordinate map | Snapshot coordinates before masking a core cell; verify all remaining cell coordinates are byte-for-byte identical. |
-| Masked cell emits no speech | Programmatic tap event on a masked cell produces 0 audio and appends 0 words to the sentence bar. |
+| Masked cell shows and emits nothing | The child's render of a masked cell equals an unallocated cell (blank, `aria-hidden`); a programmatic tap produces 0 audio and appends 0 words to the sentence bar. |
+| The ghost is adult-facing | In the editor the masked cell renders muted, opens the word card on tap (Show word), and keeps its seat as a drop target like any placed word. |
 | Accidental delete is restorable | Retire an entity, verify it is hidden from the grid, execute restore from trash, verify entity reappears in original category. |

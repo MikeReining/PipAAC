@@ -31,6 +31,7 @@ import {
   groupIndex,
   maskedSenseIds,
   removeItem,
+  replaceGroupItem,
   setSetting,
 } from "./shared/groups.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
@@ -1807,6 +1808,37 @@ function renderGrid() {
     }
     const { el, say: cellLabel } = homeTile(c, masked);
     if (cellLabel === null) {
+      if (!edit) {
+        // Masking § 2: the child sees an empty cell — the spot is
+        // reserved, nothing shows, nothing taps. Only the adult's view
+        // reveals the hidden word.
+        const blank = document.createElement("div");
+        blank.className = "cell empty";
+        blank.setAttribute("aria-hidden", "true");
+        grid.appendChild(withCount(blank, "sense", c.sense_id));
+        continue;
+      }
+      // In the editor the ghost shows the word lives here: the slot is
+      // taken — a tap opens its card (Show word), a drop swaps its cell
+      // like any placed word.
+      el.disabled = false;
+      el.style.pointerEvents = "auto";
+      el.dataset.slot = slot;
+      el.dataset.item = `sense:${c.sense_id}`;
+      editPointer(el, {
+        onTap: () => editorUi.select({ item_kind: "sense", item_id: c.sense_id, label: c.label }),
+        onDrop: (to) => {
+          const mv = moveCore(db, geom.name, c.sense_id, to, { anchors: new Set(geom.anchors.keys()) });
+          if (!mv) return;
+          renderGrid();
+          toast(`Moved ${c.label}`, () => {
+            moveCore(db, geom.name, c.sense_id, mv.from);
+            renderGrid();
+          });
+        },
+      });
+      layerMark(el, `sense:${c.sense_id}`, { board: true });
+      cellEls.set(c.sense_id, el);
       grid.appendChild(withCount(el, "sense", c.sense_id));
       continue;
     }
@@ -2686,6 +2718,19 @@ const placeUi = mountPlacePicker({
     close("placeform");
     wordCard.openWordCard({ item_kind: item.kind, item_id: item.id, label: item.label });
   },
+  /* Replace inside a group (031): the picked word takes the tapped word's
+   * exact cell — a remove_item + place_item pair, Undo restores both. */
+  onGroupPick: (groupId, cell, occ, kind, id, label) => {
+    let rep;
+    try {
+      rep = replaceGroupItem(db, groupId, { kind: occ.kind, id: occ.id }, { kind, id }, cell);
+    } catch {
+      return; // the cell refused — nothing changed
+    }
+    close("placeform");
+    rerenderView();
+    toast(`Replaced ${occ.label} with ${label}`, () => { rep.undo(); rerenderView(); });
+  },
 });
 
 /* First-open setup (014 § 9 ruling 1 + 009 slice 11, Word_Library §
@@ -2854,6 +2899,7 @@ editorUi = mountEditor({
   openWordCard: (item, opts) => wordCard.openWordCard(item, opts),
   closeCard: () => close("wordcard"),
   replaceOnBoard: (slot, occ) => placeUi.openPicker(slot, occ),
+  replaceInGroup: (groupId, occ, cell) => placeUi.openGroupPicker(groupId, cell, occ),
   setView: (v) => kbUi.setView(v),
   openGroupView: (id, page = 0) => { groupsUi.setGroup(id, page); kbUi.setView("group"); },
   toast, undoLast,
