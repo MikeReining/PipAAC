@@ -27,6 +27,27 @@
     <link rel="stylesheet" href="/board/onramp-ui.css" />
     <link rel="stylesheet" href="/board/voice-ui.css" />
     <link rel="stylesheet" href="/board/base.css" />
+    <script>
+      // Boot watchdog — a failed script load must say so, not render half a page.
+      window.__pipBoot = { errors: [] };
+      addEventListener("error", (e) =>
+        window.__pipBoot.errors.push(String(e.message || e.error || e)));
+      addEventListener("unhandledrejection", (e) =>
+        window.__pipBoot.errors.push(String(e.reason)));
+      addEventListener("load", () => setTimeout(() => {
+        if (window.pip?.db) return;
+        const note = document.createElement("div");
+        note.id = "boot-fail";
+        note.style.cssText =
+          "position:fixed;top:12px;left:50%;transform:translateX(-50%);" +
+          "z-index:999;max-width:90vw;padding:10px 16px;border-radius:10px;" +
+          "background:#8a1f1f;color:#fff;font:600 14px/1.4 system-ui";
+        note.textContent = "Pip didn't finish loading — reload the page." +
+          (window.__pipBoot.errors[0]
+            ? " (" + String(window.__pipBoot.errors[0]).slice(0, 140) + ")" : "");
+        document.body.append(note);
+      }, 8000));
+    </script>
   </head>
   <body>
     <div id="topbar">
