@@ -57,7 +57,7 @@ Pattern candidate: (optional)
 Tier: T1
 Truth owner: `voiceLicense` and `transformAndSpeak` in `public/board/speech.js`
 Lie-prone layer: `licenseP ??=` cached the resolved value — including `null` — so one failed dev-license mint (server mid-reload, offline boot, non-loopback host) wedged every transform for the rest of the session; and `res?.ok ? … : null` discarded the refusal, so 403/503/network all looked identical: bar unchanged, speaks as built
-Proof: live CDP probe on dev:agent — live "want I" → "I want." still lands; stubbed 403 → toast "no license on this device"; rejected fetch → toast "no connection". `scripts/test.sh src/worker/transform.test.mjs src/board/txbar.test.mjs` 17/17; `npm run check:fast` green
+Proof: node --test src/worker/transform.test.mjs src/board/txbar.test.mjs — 17/17; plus live CDP probe on dev:agent: "want I" → "I want." still lands; stubbed 403 → toast "no license on this device"; rejected fetch → toast "no connection"
 Pattern candidate: a cached promise that resolves null is a permanent wedge — only cache successes, or clear the slot when it resolves empty
 
 ## 2026-09-30 speak-races-300ms-plays-word-clips

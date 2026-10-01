@@ -43,6 +43,40 @@
       addEventListener("focusout", () => setTimeout(() => {
         if (!pipEditing()) scrollTo(0, 0);
       }, 350));
+      // Layout sanity: after load and on any viewport shift, the topbar
+      // must be on screen. If a stale offset survives the clamps (or is a
+      // visualViewport pan document scroll can't express), retry the pin,
+      // then show a banner with the numbers so a screenshot explains it.
+      let pipLayoutTries = 0;
+      const pipLayoutCheck = () => {
+        if (pipEditing() || document.hidden) return;
+        const tb = document.getElementById("topbar");
+        if (!tb || document.getElementById("boot-fail")) return;
+        const r = tb.getBoundingClientRect();
+        if (r.top >= -10 && r.top <= innerHeight * 0.4) { pipLayoutTries = 0; return; }
+        scrollTo(0, 0);
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+        if (++pipLayoutTries < 4) { setTimeout(pipLayoutCheck, 400); return; }
+        pipLayoutTries = 0;
+        const vv = visualViewport ?? {};
+        const note = document.createElement("div");
+        note.id = "boot-fail";
+        note.style.cssText =
+          "position:fixed;top:12px;left:50%;transform:translateX(-50%);" +
+          "z-index:999;max-width:92vw;padding:10px 16px;border-radius:10px;" +
+          "background:#8a1f1f;color:#fff;font:600 13px/1.4 system-ui";
+        note.textContent = "Pip's top bar is off screen — tap to fix. " +
+          `(y=${scrollY} vo=${Math.round(vv.offsetTop ?? -1)} ` +
+          `vh=${Math.round(vv.height ?? -1)} ih=${innerHeight} ` +
+          `sc=${vv.scale ?? "?"} tb=${Math.round(r.top)} ` +
+          `cls=${document.body.className || "-"})`;
+        note.onclick = () => { scrollTo(0, 0); note.remove(); setTimeout(pipLayoutCheck, 300); };
+        document.body.append(note);
+      };
+      addEventListener("load", () => setTimeout(pipLayoutCheck, 600));
+      addEventListener("pageshow", () => setTimeout(pipLayoutCheck, 300));
+      visualViewport?.addEventListener("resize", () => setTimeout(pipLayoutCheck, 300));
+      visualViewport?.addEventListener("scroll", () => setTimeout(pipLayoutCheck, 300));
       // Boot watchdog — a failed script load must say so, not render half a page.
       window.__pipBoot = { errors: [] };
       addEventListener("error", (e) =>
