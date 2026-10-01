@@ -109,6 +109,12 @@ await evalJs(`document.getElementById('cells-apply').click()`);
 await sleep(600);
 out.afterApply = await evalJs(dump);
 
+// Tap a word so the faces claim the last slot — the 2026-10-01 fix's
+// proof: grid30 must still show three word cards + faces, not one.
+await evalJs(`document.querySelector('#grid .cell:not(.ghost)')?.click()`);
+await sleep(600);
+out.withWord = await evalJs(dump);
+
 // Into the Groups index — door labels at the new size.
 await evalJs(`document.getElementById('anchor-groups').click()`);
 await sleep(600);

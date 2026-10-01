@@ -64,6 +64,15 @@ Resolution (034): `finish()` blurs, `await saveUser`, `await flushDb` (sqlite de
 Follow-up same day: the bar was back but the grid sat scrunched above dead space — the fresh boot pinned `#app` to a `vv.height` read while the keyboard was still animating closed, and no reliable `resize` ever corrected it. `applyVisualFrame` now writes only `top`/`left`; CSS (`height: 100%`) owns the size so a stale measurement can never be baked in. Same law: never write a viewport measurement into durable state.
 Pattern candidate: when the observable layer is the suspect, stop measuring and discard the state — a fresh document inherits nothing. If this still fails on the device, the pan is not document-bound and the next move is a keyboard-free name field (Pip keyboard), never more pin logic.
 
+## 2026-10-01 strip-slots-shrink-with-board
+
+Tier: T2
+Truth owner: `stripSlots` in `public/board/strip.js`
+Lie-prone layer: the geometry itself — `floor((cols - 2) / 2)` looked like honest proportionality but quietly made suggestion count a function of grid density. On grid30 the tray's two slots meant one word + the faces: the least prediction for the children with the highest motor cost per tap, exactly backwards.
+Fix: `stripSlots` is now `clamp(3..4, cols - 2)` — the smart bar's job is a fixed promise, cards go one column wide on sparse boards. grid30: 3 words + faces; grid15: 2 words + faces; grid60/90 unchanged. Faces get a full column (~57px per face on iPad grid30) — no squeeze, since fewer columns means wider ones.
+Proof: node --test src/board/cells_density.test.mjs (new source assertion pins the floor); live CDP scripts/probes/density_probe.mjs on dev:agent — after Apply to grid30 the tray is `repeat(4, 1fr)` spanning cols 1–4, and with a word in the sentence the tray holds am/want/have + faces.
+Pattern candidate: when a control's capacity derives from an unrelated axis (grid density), ask what the control's own job needs — derive the floor from the job, not the neighbor's geometry.
+
 ## 2026-10-01 strip-stale-after-density-switch
 
 Tier: T2

@@ -20,11 +20,15 @@ export function mountStrip({
   artInto, fitLabels, applyLikely, boardGeom,
   ensureSentence, maybeImpression,
 }) {
-  /** Prediction slots in the strip at this width (014 slice 1): four on
-   *  a ten-column board, two on five — the Groups and Keyboard anchors
-   *  keep one column each so the whole vocabulary stays reachable. */
+  /** Prediction slots in the strip: a fixed promise, not a fraction of
+   *  the board — three to four at every size (Motor_Grid § Strip: a
+   *  longer row is a scanning tax, but the children on the biggest
+   *  tiles are the ones who need prediction most, so the bar never
+   *  collapses to a single word). Cards go one column wide when the
+   *  board is sparse; the Groups and Keyboard anchors keep one column
+   *  each so the whole vocabulary stays reachable. */
   function stripSlots(cols) {
-    return Math.min(4, Math.max(2, Math.floor((cols - 2) / 2)));
+    return Math.min(4, Math.max(3, cols - 2));
   }
 
   /* --- Expand mode (014 § 5, Motor_Grid § 2.1): a family tile opens its

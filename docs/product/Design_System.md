@@ -186,8 +186,10 @@ renders on the child's device.
 **BUILT** (`public/index.html` `#tray` / `.pred`, `public/board.js`
 `predCard`):
 
-- Four cards sit on a neutral tray (`#e8e3d6`) spanning strip columns
-  1–8; the `Groups` and `Keyboard` anchors hold columns 9–10.
+- Three or four cards sit on a neutral tray (`#e8e3d6`) ahead of the
+  `Groups` and `Keyboard` anchors, which hold the strip's last two
+  columns at every board size (on the ten-column board: cards span
+  columns 1–8, anchors 9–10).
 - A strip card is a normal word tile turned sideways: art on a white
   square at left, the label on the role fill at right.
 - Empty slots are ghost cards: dashed `#d8d4c8`, nothing else.

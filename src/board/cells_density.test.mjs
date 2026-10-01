@@ -17,6 +17,7 @@ import { readFileSync } from "node:fs";
 
 const cells = readFileSync(new URL("../../public/board/cells-sheet.js", import.meta.url), "utf8");
 const board = readFileSync(new URL("../../public/board.js", import.meta.url), "utf8");
+const strip = readFileSync(new URL("../../public/board/strip.js", import.meta.url), "utf8");
 
 test("cells-apply repaints the strip after renderGrid resizes its template", () => {
   const i = cells.indexOf('"cells-apply"');
@@ -36,4 +37,14 @@ test("mountCellsSheet receives renderStrip through board.js wiring", () => {
   assert.ok(i > 0);
   const call = board.slice(i, board.indexOf("})", i));
   assert.match(call, /renderStrip/, "the mount args must pass renderStrip");
+});
+
+test("strip slots hold a three-card floor at every board size", () => {
+  // Motor_Grid § Strip: the smart bar's job doesn't shrink with the
+  // grid — sparse boards get one-column cards, never one suggestion.
+  const i = strip.indexOf("function stripSlots");
+  assert.ok(i > 0);
+  const body = strip.slice(i, strip.indexOf("}", i));
+  assert.match(body, /Math\.min\(4, Math\.max\(3, cols - 2\)\)/,
+    "stripSlots must be clamp(3..4, cols - 2): floor 3, ceiling 4");
 });
