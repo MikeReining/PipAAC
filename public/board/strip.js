@@ -45,14 +45,17 @@ export function mountStrip({
   // render calls follow.
   function clearExpand() { expand = null; }
 
-  /** The strip spans the board's columns; the tray holds the prediction
-   *  slots and the two anchors keep a column each. */
+  /** The tray's real width in grid columns: the strip's cols minus the
+   *  anchors showing — Groups and Keyboard always; Add joins them in
+   *  Edit mode on a group (027 B5). Painted cards can never exceed this
+   *  or they wrap into a second row inside the 80px strip. */
+  const traySpan = (cols) => cols - ($("anchor-add").hidden ? 2 : 3);
   function sizeStrip(cols) {
     $("strip").style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     const tray = $("tray");
-    // Groups and Keyboard always; Add joins them in Edit mode on a group (027 B5).
-    tray.style.gridColumn = `span ${cols - ($("anchor-add").hidden ? 2 : 3)}`;
-    tray.style.gridTemplateColumns = `repeat(${stripSlots(cols)}, 1fr)`;
+    const span = traySpan(cols);
+    tray.style.gridColumn = `span ${span}`;
+    tray.style.gridTemplateColumns = `repeat(${Math.min(stripSlots(cols), span)}, 1fr)`;
   }
 
   // Idle-strip starters referenced by sense id — never by English text.
@@ -181,6 +184,10 @@ export function mountStrip({
    *  a superseded paint never touches the DOM. */
   let stripPaint = 0;
   async function paintStrip(cards, slots = stripSlots(boardGeom().cols)) {
+    // Never paint more children than the tray has columns — a third
+    // anchor (Edit mode's Add) shrinks the span, and extra cards wrap
+    // into a clipped second row.
+    slots = Math.min(slots, traySpan(boardGeom().cols));
     const mine = ++stripPaint;
     // 025 § 1: the last slot is the three faces whenever they show —
     // word suggestions fill the slots before it, same in every mode.
