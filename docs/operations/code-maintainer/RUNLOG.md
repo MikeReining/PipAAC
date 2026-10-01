@@ -139,3 +139,22 @@
 - Proof: settings/forms/feeling/keyboard/pin/edit/strip/spotlight/
   groups/design suites green (41 tests); check:fast green.
 - Next: Q6c — edit mode + undo/toast + flashCell → board/edit-shared.js.
+
+## 2026-09-30 — batch 8 (lens: structure, founder queue Q6c)
+
+- Scope: `public/board.js` edit mode + undo/toast → new
+  `public/board/edit-shared.js` (134 ln). Class: Extraction.
+- Moved: `setEditing`, `navCell`, `editPointer` (drag gesture),
+  `xBadge`, `undoStack`/`undoLast`/`toast`/`toastTimer`, `flashCell`.
+  `rerenderView` stays — it dispatches every view, not just edit.
+- `live` gained `set editing` / `set countsOn`. Mount order is now
+  speech → attention → editShared → pin → grid → strip → settingsSync;
+  editShared takes renderGrid/applyLikely as thunks (TDZ), and pin's
+  `toast` is the destructured const.
+- board.js: ~1,610 → 1,497 lines.
+- Proof: edit/editor/groups/library/design suites green; check:fast
+  green. Pre-existing failure noted (not mine): web_editor.test.mjs
+  "paste resolves own words" — 'orange juice' resolves 'sense' vs 'new'
+  on clean HEAD too (catalog drift, same class as add_word ordering).
+- Next: Q6d — meta caches (senseMeta/wordArt/entityRole/entityPhoto/
+  sensePos/entityForSense-adjacent) → board/meta-cache.js.
