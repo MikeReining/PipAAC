@@ -2,6 +2,7 @@
 
 | Date | Tier | Summary | Truth owner | Resolution |
 | --- | --- | --- | --- | --- |
+| 2026-10-01 | T2 | After changing Buttons per screen, the Smart bar wrapped to two rows with faces filling half, and group doors lost their labels — all healed by reload | `renderStrip` in `public/board/strip.js` is the sole owner of tray contents; `cells-sheet.js` resized the template without repainting | Apply now calls `renderStrip()` after `renderGrid()` — stale cards no longer wrap into a second implicit row. `src/board/cells_density.test.mjs` + `scripts/probes/density_probe.mjs` |
 | 2026-10-01 | T3 | Sentence bar missing after the welcome name on iPad Chrome: the keyboard pans the visual viewport and can leave it panned with every JS metric reading normal — in-page repair is untrustworthy | The document, not a measurement — `finish()` in `public/board/onramp-ui.js` | The welcome's Continue leaves the document: persist, flush, `pip_tour` flag, `location.replace` (034). The board boots as a returning user — the path a reload proved correct every time |
 | 2026-10-01 | T1 | Wand press changed nothing: a failed first dev-license mint cached `null` forever in `licenseP`, and the transform's `res?.ok` gate turned every refusal into a silent speak-as-built — a license problem looked exactly like a dead button | `voiceLicense` + `transformAndSpeak` in `public/board/speech.js` | `licenseP` clears on null so the next press retries; a refused transform toasts in product voice — `bad_license` is the Lifetime upsell with an Open Settings action, not an error code. CDP probe: stubbed 403 → toast, live "want I" → "I want." |
 | 2026-09-30 | T1 | ✨ fix-it (and every first-time sentence) spoke word by word instead of one ElevenLabs utterance — the 300 ms race always expired before a fresh mint landed | `speakSentence` deadline in `public/board.js` (024 rule 1) | Founder revised rule 1: speaks wait out the mint (10 s cap); word clips are the failure path only. `src/board/voice_sentence.test.mjs` |
@@ -62,6 +63,14 @@ Proof: node --test src/board/onramp_exit.test.mjs — red on the old wiring (`fi
 Resolution (034): `finish()` blurs, `await saveUser`, `await flushDb` (sqlite debounce), sets `pip_tour`, `location.replace(location.pathname)`. The board boots as a returning user and starts the tour from the flag. `viewport.js` stays as defense for adult-side inputs.
 Follow-up same day: the bar was back but the grid sat scrunched above dead space — the fresh boot pinned `#app` to a `vv.height` read while the keyboard was still animating closed, and no reliable `resize` ever corrected it. `applyVisualFrame` now writes only `top`/`left`; CSS (`height: 100%`) owns the size so a stale measurement can never be baked in. Same law: never write a viewport measurement into durable state.
 Pattern candidate: when the observable layer is the suspect, stop measuring and discard the state — a fresh document inherits nothing. If this still fails on the device, the pan is not document-bound and the next move is a keyboard-free name field (Pip keyboard), never more pin logic.
+
+## 2026-10-01 strip-stale-after-density-switch
+
+Tier: T2
+Truth owner: `renderStrip` in `public/board/strip.js` — tray contents (predictions, faces, expand) derive from `stripSlots(boardGeom().cols)`
+Lie-prone layer: `cells-apply` called `setBoardLayout` → `renderGrid` → `rerenderView`, which *looks* like a full repaint — but `renderGrid` only rewrites the strip's grid template via `sizeStrip`. The tray's children stayed painted for the old density, so grid60→grid30 left 4 cards in a `repeat(2, 1fr)` tray that wrapped into a second row.
+Proof: node --test src/board/cells_density.test.mjs — red on the old wiring (no renderStrip in the apply path), green after. Live CDP probe scripts/probes/density_probe.mjs on dev:agent: before fix trayCols repeat(2, 1fr) held 4 children after Apply; after fix it holds 2. Group-door labels never clipped in headless Chromium at either density — that half is device-verified only, plausible same-cause (a wrapped strip row steals grid height on WebKit, clipping .glabel under overflow:hidden).
+Pattern candidate: geometry writes and content writes are different renders — any caller that resizes a grid template must also repaint the contents sized by it. "Looks like a full repaint" is not a repaint.
 
 ## 2026-10-01 wand-silent-403
 

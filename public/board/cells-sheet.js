@@ -8,7 +8,7 @@ import { moveCost, setBoardLayout } from "../shared/movecost.mjs";
 const $ = (id) => document.getElementById(id);
 
 export function mountCellsSheet({
-  db, catalog, locale, boardGeom, open, close, toast, renderGrid, rerenderView,
+  db, catalog, locale, boardGeom, open, close, toast, renderGrid, renderStrip, rerenderView,
 }) {
   let cellsTarget = null;
 
@@ -69,6 +69,10 @@ export function mountCellsSheet({
     close("cellsform");
     renderCellsSeg();
     renderGrid();
+    // renderGrid only resizes the tray's grid template — the cards inside
+    // were painted for the old density. Repaint so the strip doesn't wrap
+    // stale cards into a second row.
+    renderStrip();
     rerenderView();
     if (r?.moved.length) {
       toast(`${r.moved.length} moved words stay highlighted for two weeks`);

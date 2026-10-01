@@ -1019,7 +1019,7 @@ mountSpotlightSheet({
 
 /* Cells picker — public/board/cells-sheet.js. onSyncApplied repaints this. */
 const renderCellsSeg = mountCellsSheet({
-  db, catalog, locale, boardGeom, open, close, toast, renderGrid, rerenderView,
+  db, catalog, locale, boardGeom, open, close, toast, renderGrid, renderStrip, rerenderView,
 });
 
 /* Smart bar family editor — public/board/family-editor.js */
