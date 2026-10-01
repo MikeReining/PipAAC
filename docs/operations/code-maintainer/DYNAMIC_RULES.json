@@ -1,4 +1,12 @@
 {
   "version": 1,
-  "suppressions": []
+  "suppressions": [
+    { "path": "wrangler/**", "signal": "*", "reason": "wrangler dev bundles — generated" },
+    { "path": "out/**", "signal": "*", "reason": "generated lab/sim artifacts" },
+    { "path": "public/vendor/**", "signal": "*", "reason": "vendored dependencies" },
+    { "path": "data/**", "signal": "*", "reason": "generated catalog/prediction data" },
+    { "path": "public/catalog.json", "signal": "*", "reason": "generated catalog copy" },
+    { "path": "public/phrase_table.en.json", "signal": "*", "reason": "generated prediction data copy" },
+    { "path": "scripts/prediction/phrase_jev/*.json", "signal": "*", "reason": "generated lab results" }
+  ]
 }
