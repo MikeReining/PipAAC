@@ -15,6 +15,15 @@ const GATES = [
   { name: "data:assets-sync", cmd: process.execPath, args: ["scripts/prediction/sync_data_assets.mjs", "--check"] },
   { name: "regression_law_meta_gate", cmd: process.execPath, args: ["scripts/regression_law_meta_gate.mjs"] },
   { name: "guard-liveness", cmd: "bash", args: ["scripts/check-test-guard-liveness.sh"] },
+  {
+    name: "maintainer:line-budget",
+    cmd: "python3",
+    args: [
+      "scripts/code_maintainer_scan.py",
+      "--ratchet",
+      "docs/operations/code-maintainer/LINE_BUDGET.json",
+    ],
+  },
 ];
 
 const results = [];

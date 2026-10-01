@@ -161,6 +161,27 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Include Markdown/docs. Default includes docs only when explicitly passed.",
     )
+    parser.add_argument(
+        "--ratchet",
+        metavar="BASELINE",
+        help=(
+            "Line-budget ratchet: fail when a scanned file exceeds its "
+            "baseline lines in BASELINE json, or reaches --ratchet-min "
+            "without a baseline entry. Rules with signal '*' or 'lines' "
+            "exempt a path."
+        ),
+    )
+    parser.add_argument(
+        "--ratchet-min",
+        type=int,
+        default=500,
+        help="Line count where an unlisted file fails ratchet mode. Default: 500.",
+    )
+    parser.add_argument(
+        "--emit-baseline",
+        action="store_true",
+        help="Print {path: lines} JSON for every scanned file at/over --ratchet-min.",
+    )
     return parser.parse_args()
 
 
@@ -473,9 +494,65 @@ def scan_file(path: Path, rules: list[dict]) -> Finding | None:
     )
 
 
+def ratchet_exempt(rules: list[dict], path: str) -> bool:
+    return any(
+        suppression_matches(rule, path, "lines") or suppression_matches(rule, path, "*")
+        for rule in rules
+    )
+
+
+def run_ratchet(args: argparse.Namespace, rules: list[dict]) -> int:
+    counts: dict[str, int] = {}
+    for path in iter_files(args.paths, args.include_docs):
+        normalized = normalize_path(path)
+        if ratchet_exempt(rules, normalized):
+            continue
+        try:
+            counts[normalized] = len(path.read_text(encoding="utf-8").splitlines())
+        except (OSError, UnicodeDecodeError):
+            continue
+
+    if args.emit_baseline:
+        budget = {p: n for p, n in sorted(counts.items()) if n >= args.ratchet_min}
+        print(json.dumps({"files": budget}, indent=2))
+        return 0
+
+    baseline_path = Path(args.ratchet)
+    baseline: dict[str, int] = {}
+    if baseline_path.exists():
+        try:
+            data = json.loads(baseline_path.read_text(encoding="utf-8"))
+            raw = data.get("files", data) if isinstance(data, dict) else {}
+            baseline = {p: int(n) for p, n in raw.items() if isinstance(n, (int, float))}
+        except (OSError, json.JSONDecodeError, ValueError):
+            print(f"line-budget: unreadable baseline {args.ratchet}")
+            return 1
+
+    offenders = []
+    for path, lines in sorted(counts.items()):
+        budget = baseline.get(path)
+        if budget is None:
+            if lines >= args.ratchet_min:
+                offenders.append((path, lines, None))
+        elif lines > budget:
+            offenders.append((path, lines, budget))
+
+    if not offenders:
+        print(f"line-budget: ok ({len(baseline)} files budgeted)")
+        return 0
+    print("line-budget FAILED:")
+    for path, lines, budget in offenders:
+        over = f"{budget} -> {lines}" if budget is not None else f"new oversized file: {lines}"
+        print(f"  {path}: {over} lines")
+    print("Split the file or raise its entry in the baseline deliberately.")
+    return 1
+
+
 def main() -> int:
     args = parse_args()
     rules = load_rules(args.rules)
+    if args.ratchet or args.emit_baseline:
+        return run_ratchet(args, rules)
     findings = [
         finding
         for path in iter_files(args.paths, args.include_docs)

@@ -213,3 +213,17 @@
   orange-juice paste) reproduce on clean HEAD — pre-existing drift,
   unchanged. check:fast green.
 - Next: Q10 — ratchet shape (scanner report in check, or growth-fail).
+
+## 2026-09-30 — batch 12 (founder queue Q10: ratchet)
+
+- Shape: growth-fail, not a passive report — a report would not have
+  stopped board.js regrowing either.
+- Scanner gains `--ratchet BASELINE` (fail on growth or unlisted
+  ≥500-ln files) and `--emit-baseline` (regenerate deliberately).
+  DYNAMIC_RULES suppressions with signal "*" exempt generated files.
+- LINE_BUDGET.json pins the 27 files currently ≥500 ln at their current
+  sizes; a +1 line fails. Budget bumps are a deliberate, reviewable edit.
+- Gate wired: maintainer:line-budget in check:fast (~170ms).
+- Proof: clean tree passes; +1 line on word-card.js fails with the
+  file/budget named; check:fast green.
+- Queue status: Q1–Q8, Q10 done. Q9 is a watch row — no action.
