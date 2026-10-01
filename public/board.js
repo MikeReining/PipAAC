@@ -40,7 +40,6 @@ import {
 } from "./shared/users.mjs";
 import { voiceName } from "./shared/voices.mjs";
 import { normalizeV1 } from "./shared/normalize.mjs";
-import { PIN_RE, RESET_PHRASE, checkPin, clearPin, hasPin, isResetPhrase, setPin } from "./shared/pin.mjs";
 import {
   applyTransform, noteBarEdit, restoreBar, wordLemmaCandidates,
 } from "./shared/txbar.mjs";
@@ -74,6 +73,7 @@ import { mountVoice } from "./board/voice-ui.js";
 import { mountPictureFill } from "./board/picture-fill.js";
 import { mountSpeech } from "./board/speech.js";
 import { mountSpotlightLayer } from "./board/spotlight-layer.js";
+import { mountPin } from "./board/pin.js";
 import { mountGrid } from "./board/grid.js";
 import { mountStrip } from "./board/strip.js";
 import { pictureClient } from "./shared/pictures.mjs";
@@ -324,6 +324,7 @@ const live = {
   get editing() { return editing; },
   get modeling() { return attention.modeling; },
   get coachUi() { return coachUi; },
+  get settingsUi() { return settingsUi; },
   get expressiveVoice() { return expressiveVoice; },
   get kbUi() { return kbUi; },
   get groupsUi() { return groupsUi; },
@@ -364,6 +365,10 @@ const {
   layerMark, bindSpotSettings, updatePickBar, setPicking, setModeling,
   onModel, spotChrome, controlPress, clearModel, modelSent, modelGlow,
 } = attention;
+
+/* Settings PIN gate + overlay helpers — public/board/pin.js. */
+const pin = mountPin({ live, toast });
+const { open, close, gatePin, renderPinRow } = pin;
 
 /* Grid render, tile primitives, likely-next halo — public/board/grid.js. */
 const {
@@ -781,19 +786,6 @@ let movedSet = new Set();
  *  repaint instead of vanishing until the next strip paint. */
 let highlightNext = false;
 let likelySet = new Set();
-/* --- overlays --- */
-const open = (id) => $(id).classList.add("open");
-const close = (id) => $(id).classList.remove("open");
-document.querySelectorAll("[data-close]").forEach((b) =>
-  b.addEventListener("click", () => b.closest(".overlay").classList.remove("open")),
-);
-// Backdrop tap and Escape dismiss any open overlay — a modal that can't be
-// dismissed strands the learner.
-document.querySelectorAll(".overlay").forEach((o) =>
-  o.addEventListener("click", (e) => {
-    if (e.target === o) o.classList.remove("open");
-  }),
-);
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
     const anyOverlay = document.querySelector(".overlay.open");
@@ -858,90 +850,6 @@ document.addEventListener("keydown", (e) => {
   if ($("kb-device")) kbUi.feed(e.key);
   else kbUi.press(e.key);
 });
-/** 023 §1e — the Settings PIN gates Settings. Every open asks once a
- *  PIN is set. Forgot: type the reset phrase, then choose a new PIN
- *  twice — the words are never touched. `change` (from Settings →
- *  Backup & privacy) asks for the new PIN twice and never for the old
- *  one: the gate was just passed. */
-const PIN_SHARE_HINT = "Pick one you're happy to share with the team. Don't reuse your phone or bank PIN.";
-async function gatePin(onOk, { change = false } = {}) {
-  const overlay = $("pinform"), input = $("pin-input"),
-        err = $("pin-error"), hint = $("pin-hint"),
-        title = $("pin-title"), go = $("pin-go"), forgot = $("pin-forgot");
-  const store = await openKeyStore();
-  const locked = await hasPin(store);
-  // No PIN yet: Settings opens with one tap (founder 2026-09-28).
-  if (!change && !locked) return onOk();
-  let mode = change ? "new" : "check";
-  let reset = false;
-  let first = "";
-  const render = () => {
-    const phrase = mode === "forgot";
-    err.textContent = "";
-    input.value = "";
-    input.type = phrase ? "text" : "password";
-    input.inputMode = phrase ? "text" : "numeric";
-    input.maxLength = phrase ? 20 : 4;
-    go.hidden = !phrase;
-    input.classList.toggle("phrase", phrase);
-    input.placeholder = phrase ? "" : mode === "check" ? "" : "4 digits";
-    forgot.hidden = mode !== "check";
-    if (mode === "new") {
-      title.textContent = reset ? "Choose a new PIN" : locked ? "New Settings PIN" : "Choose a PIN";
-      hint.textContent = "4 digits, for everyone on this device. " + PIN_SHARE_HINT;
-    } else if (mode === "confirm") {
-      title.textContent = "Type it again";
-      hint.textContent = "The same 4 digits, to be sure.";
-    } else if (mode === "check") {
-      title.textContent = "Settings PIN";
-      hint.textContent = "";
-    } else {
-      title.textContent = "Forgot the PIN?";
-      const word = document.createElement("strong");
-      word.textContent = RESET_PHRASE;
-      hint.replaceChildren("Your words stay just as they are. To choose a new PIN, type ",
-        word, " below.");
-      go.textContent = "Continue";
-    }
-    input.focus();
-  };
-  const finish = () => { overlay.classList.remove("open"); onOk(); };
-  go.onclick = async () => {
-    const v = input.value.trim();
-    if (mode === "check") {
-      if (await checkPin(store, v)) return finish();
-      input.value = "";
-      err.textContent = "Not that PIN.";
-      return;
-    }
-    if (mode === "forgot") {
-      if (isResetPhrase(v)) { reset = true; mode = "new"; render(); }
-      else err.textContent = `Type the two words: ${RESET_PHRASE}`;
-      return;
-    }
-    if (!PIN_RE.test(v)) { err.textContent = "4 digits."; return; }
-    if (mode === "new") { first = v; mode = "confirm"; render(); return; }
-    if (mode === "confirm" && v !== first) {
-      mode = "new"; render();
-      err.textContent = "Those didn't match. Start again.";
-      return;
-    }
-    await setPin(store, v);
-    if (reset) toast("New PIN saved.");
-    else if (change) toast(locked ? "Settings PIN changed." : "Settings is locked with a PIN.");
-    finish();
-  };
-  input.onkeydown = (e) => { if (e.key === "Enter") go.click(); };
-  // Four digits is the whole PIN: act on the fourth, no button.
-  input.oninput = () => {
-    if (mode !== "forgot" && /^\d{4}$/.test(input.value)) go.click();
-  };
-  forgot.onclick = () => { mode = "forgot"; render(); };
-  render();
-  overlay.classList.add("open");
-  input.focus();
-}
-
 /* Settings — public/board/settings-ui.js owns the page navigation;
  * every control inside keeps its own module's wiring. */
 const settingsUi = mountSettings({
@@ -957,27 +865,9 @@ const settingsUi = mountSettings({
         'swap_items', 'set_image_override', 'set_override', 'set_mask', 'rename_entity',
         'set_family_items', 'spot_list_save', 'set_group_hidden', 'move_group', 'swap_groups', 'reorder_groups',
         'delete_group') LIMIT 1`)[0],
-    pinOn,
+    pinOn: pin.pinOn,
     spot: { session: spotSession(db), lists: spotLists(db).length },
   }),
-});
-/** Settings → Backup & privacy → Settings PIN: lock, change, or off. */
-let pinOn = false; // Settings' Protect card reads it; renderPinRow keeps it
-async function renderPinRow() {
-  const on = await hasPin(await openKeyStore());
-  pinOn = on;
-  settingsUi.renderNav();
-  $("pin-state").textContent = on
-    ? "Settings is locked with a PIN."
-    : "No PIN yet: Settings opens with one tap.";
-  $("pin-change").textContent = on ? "Change PIN" : "Lock Settings with a PIN";
-  $("pin-off").hidden = !on;
-}
-$("pin-change").addEventListener("click", () => gatePin(renderPinRow, { change: true }));
-$("pin-off").addEventListener("click", async () => {
-  await clearPin(await openKeyStore());
-  toast("PIN turned off. Settings opens with one tap.");
-  renderPinRow();
 });
 settingsUi.onOpen(renderPinRow);
 // Set only by the post-switch reopen below: the corner click then skips

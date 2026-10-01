@@ -105,3 +105,20 @@
 - Proof: spotlight + edit/groups/strip/layout/editor/keyboard/design
   suites green; check:fast green.
 - Next: Q6 — PIN gate + overlay helpers → board/pin.js.
+
+## 2026-09-30 — batch 6 (lens: structure, founder queue Q6a)
+
+- Scope: `public/board.js` PIN gate + overlay helpers → new
+  `public/board/pin.js` (136 ln). Class: Extraction.
+- Moved: `gatePin`/`PIN_SHARE_HINT`, `pinOn`/`renderPinRow` + the
+  pin-change/pin-off listeners, `open`/`close`, the [data-close] and
+  overlay-backdrop wiring. The Escape/hotkey router stays — it routes
+  views, not overlays.
+- `settingsUi` reached lazily via `live.settingsUi` (mounts after pin);
+  `pinOn` read as `pin.pinOn` in the settings facts callback.
+- board.js: 1,864 → 1,754 lines. Dead import: shared/pin.mjs dropped
+  from board.js (openKeyStore still used elsewhere).
+- Proof: pin + settings_ui + edit_mode + keyboard_ui + groups_ui +
+  spotlight + design suites green; check:fast green.
+- Next: Q6b — settings-sync segs (corner, fresh, grammar, expressive,
+  look, share) → board/settings-sync.js.
