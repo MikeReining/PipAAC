@@ -64,3 +64,22 @@
 - Skipped findings: pre-existing add_word failure (group list ordering)
   — bug, not maintenance; left for a fix slice.
 - Next: Q4 — grid render + geometry → board/grid.js.
+
+## 2026-09-30 — batch 4 (lens: structure, founder queue Q4)
+
+- Scope: `public/board.js` grid render + geometry → new
+  `public/board/grid.js` (437 ln). Class: Extraction.
+- Moved: `boardGeom`, `artInto`, `wordTile`, `fitLabels` + the
+  ResizeObserver, `homeTile`, `renderGrid`, `applyLikely`,
+  `tileForSense`, `showGroupHint`/`clearGroupHint` + `hintTimer`.
+- `cellEls` hoisted above `live` (shared Map, passed into mountGrid);
+  `movedSet`/`likelySet`/`boardSenseIds`/`highlightNext`/`countsOn` stay
+  as board lets — `layerMark`/`spotChrome` read them, grid writes via
+  `live` setters. `editorUi`/`placeUi` added to `live` getters.
+- Mount order speech → grid → strip: speech gets `renderGrid` as a lazy
+  thunk, grid gets `sizeStrip`/`openExpand` thunks (TDZ).
+- board.js: 2,382 → 2,000 lines. Dead imports pruned (moveMarks,
+  moveCore, stripRanked, entityForSense, groupDisplayName,
+  maskedSenseIds, tileStateBadge, familyRow).
+- Proof: 86 board tests pass; check:fast green.
+- Next: Q5 — spotlight attention layer → board/spotlight-layer.js.

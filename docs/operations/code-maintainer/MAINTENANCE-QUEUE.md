@@ -9,7 +9,7 @@ order, then Q7, Q8. One slice per batch; commit before moving on.
 | Q1 | done 2026-09-30 | `public/index.html` inline `<style>` (~763 ln) → `public/board/base.css` | `css_surface`: hand-owned CSS >500 ln across many selector families. Cheapest batch; matches per-module CSS convention. |
 | Q2 | done 2026-09-30 | `public/board.js` speech/audio pipeline → `public/board/speech.js` | ~400 ln: `playClip`/`playBlob`/`speak`/`speakItem`/`speakSentence`, `transformAndSpeak`, tile-voice mint/sweep/prefetch, `voiceLicense`. board.js slice 1 of 5. |
 | Q3 | done 2026-09-30 | `public/board.js` prediction strip + expand mode → `public/board/strip.js` | ~400 ln: `paintStrip`/`renderStrip`/`predCard`/faces/`stripCards`/`stripSlots`/`sizeStrip`/expand. Slice 2. Dropped dead `closeExpand`. |
-| Q4 | open | `public/board.js` grid render + geometry → `public/board/grid.js` | ~450 ln: `wordTile`/`fitLabels`/`boardGeom`/`homeTile`/`renderGrid`/`applyLikely`/`cellEls`. Slice 3. |
+| Q4 | done 2026-09-30 | `public/board.js` grid render + geometry → `public/board/grid.js` | ~450 ln: `wordTile`/`fitLabels`/`boardGeom`/`homeTile`/`renderGrid`/`applyLikely`/`cellEls`. Slice 3. |
 | Q5 | open | `public/board.js` spotlight attention layer → `public/board/spotlight-layer.js` | ~250 ln: `layerMark`/`spotPulse`/`bindSpotSettings`/pick mode/modeling/`spotChrome`/`controlPress`. Slice 4. |
 | Q6 | open | `public/board.js` remainder: PIN gate, settings-sync segs, edit/undo/toast, meta caches | Slice 5. End state: ~800–1,000-line boot + wiring coordinator. |
 | Q7 | open | `src/worker/pictures.js` → find / draw / signals split | 1,137 ln, five route families. `pictures.test.mjs` + `pictures_draw.test.mjs` are the proof path. |
