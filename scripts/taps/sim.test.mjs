@@ -70,3 +70,25 @@ test("autoReturn never costs more than baseline under the oracle", () => {
   const ret = runCorpus(b.db, b.M, corpus, cfg("autoreturn"));
   assert.ok(ret.agg.taps <= base.agg.taps);
 });
+
+test("autoReturn punishes same-group naming runs (the shipped-case hazard)", () => {
+  const a = fresh();
+  const b = fresh();
+  const runs = ["apple banana grapes"];
+  const base = runCorpus(a.db, a.M, runs, cfg("baseline")).per[0].taps;
+  const ret = runCorpus(b.db, b.M, runs, cfg("autoreturn")).per[0].taps;
+  assert.ok(ret > base, `autoreturn ${ret} should exceed baseline ${base}`);
+});
+
+test("recents bounds repeat access but never makes a fresh fetch free", () => {
+  const a = fresh();
+  const b = fresh();
+  const twoRuns = ["throw the ball", "kick the ball"];
+  const base = runCorpus(a.db, a.M, twoRuns, cfg("baseline")).agg.taps;
+  const rec = runCorpus(b.db, b.M, twoRuns, cfg("recents")).agg.taps;
+  assert.ok(rec < base, `recents ${rec} should beat baseline ${base}`);
+  // A never-used buried word still pays the full group path — no free surface.
+  const c = fresh();
+  const first = runCorpus(c.db, c.M, ["the"], cfg("recents")).per[0].taps;
+  assert.ok(first >= 3, `first fetch cost ${first}`);
+});

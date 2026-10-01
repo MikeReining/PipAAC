@@ -123,16 +123,23 @@ function boardModel(db) {
 /* ---------------- strip contents ---------------- */
 
 /** Word predictions for the current view (the real ranker, cap lifted
- *  by the scenario's slot budget). */
-function wordRankedFor(db, M, view, items, now) {
+ *  by the scenario's slot budget). `homeInGroup`: inside a group the bar
+ *  also offers the general predictions (home words like "and", "want")
+ *  after the group's own ranked members — she stays where she is. */
+function wordRankedFor(db, M, view, items, now, scen) {
   if (view.kind === "group") {
-    if (!items.length) {
-      const visible = new Set(
-        [...(M.cellsOf.get(view.id)?.keys() ?? [])].map((k) => `sense:${k}`));
-      return groupStarters(db, view.id,
-        { starters: catalog.groupStarters ?? null, visible, cap: 16 }).ranked;
-    }
-    return groupRanked(db, items, view.id, now).ranked;
+    const grp = !items.length
+      ? groupStarters(db, view.id, {
+          starters: catalog.groupStarters ?? null,
+          visible: new Set([...(M.cellsOf.get(view.id)?.keys() ?? [])]
+            .map((k) => `sense:${k}`)),
+          cap: 16 }).ranked
+      : groupRanked(db, items, view.id, now).ranked;
+    if (!scen.homeInGroup) return grp;
+    const gen = stripRanked(db, items, now, LOCALE, kids).ranked
+      .filter((c) => !c.mask && !c.cut);
+    const seen = new Set(grp.map((c) => `${c.kind}:${M.fold(c.id)}`));
+    return [...grp, ...gen.filter((c) => !seen.has(`${c.kind}:${M.fold(c.id)}`))];
   }
   return stripRanked(db, items, now, LOCALE, kids).ranked
     .filter((c) => !c.mask && !c.cut);
@@ -168,12 +175,38 @@ function memberCardsFor(db, M, view, items, doorId, now) {
 }
 
 function stripFor(db, M, view, items, scen, now) {
-  const ranked = wordRankedFor(db, M, view, items, now);
+  let ranked = wordRankedFor(db, M, view, items, now, scen);
   const doorsAll = view.kind === "group" ? [] : likelyDoors(db, ranked);
   const members = scen.members ? memberCardsFor(db, M, view, items, doorsAll[0], now) : [];
-  const wordCols = scen.cols - scen.doors - scen.members - (scen.bigram ? 2 : 0);
+  const wordCols = scen.cols - scen.doors - scen.members - (scen.bigram ? 2 : 0)
+    - (scen.recents ? 1 : 0);
   const wordSlots = Math.max(0, Math.floor(wordCols / scen.wordWide));
-  const words = ranked.slice(0, wordSlots);
+  let words = ranked.slice(0, wordSlots);
+  // freqFill: "she has said this" outranks the population prior — used
+  // words keep ranked order first, then used-but-unpredicted words by
+  // frequency, then the unused ranked tail. Real slot competition: a
+  // used word wins the slot an unused kids-table guess would have held.
+  if (scen.freqFill && view.kind !== "group") {
+    const freq = new Map();
+    for (const r of db.prepare(
+      `SELECT item_kind AS kind, item_id AS id, COUNT(*) AS n
+       FROM learner_event_log GROUP BY 1, 2`).all())
+      freq.set(`${r.kind}:${M.fold(r.id)}`, r.n);
+    if (freq.size) {
+      const masked = new Set(db.prepare(
+        "SELECT sense_id AS s FROM sense_mask WHERE status = 'hidden'").all().map((r) => r.s));
+      const key = (c) => `${c.kind}:${M.fold(c.id)}`;
+      const usedRanked = ranked.filter((c) => freq.has(key(c)));
+      const rest = ranked.filter((c) => !freq.has(key(c)));
+      const inRanked = new Set(ranked.map(key));
+      const unrankedUsed = [...freq.entries()]
+        .filter(([k]) => !inRanked.has(k)
+          && !(k.startsWith("sense:") && masked.has(k.slice(6))))
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .map(([k]) => { const [kind, id] = k.split(":"); return { kind, id }; });
+      words = [...usedRanked, ...unrankedUsed, ...rest].slice(0, wordSlots);
+    }
+  }
   // bigram card: the top prediction, then the top prediction after it
   let bigram = null;
   if (scen.bigram && view.kind !== "group" && words.length) {
@@ -191,6 +224,8 @@ function runCorpus(db, M, corpus, scen, { warm = false } = {}) {
   let view = { kind: "home" };
   const promoted = new Set();       // folded ids pinned to the surface
   const buriedUse = new Map();      // folded id -> buried fetch count
+  const recentsWindow = new Set();  // last-used non-home senses (★ family)
+  const RECENTS_CAP = 12;
   const per = [];
   const agg = { taps: 0, words: 0, strip: 0, member: 0, doorCard: 0, folder: 0,
     door: 0, flip: 0, home: 0, board: 0, kb: 0, bigram: 0, wrongDoor: 0,
@@ -232,6 +267,13 @@ function runCorpus(db, M, corpus, scen, { warm = false } = {}) {
       path.push(t.w + (src === "strip" ? "~" : src === "member" ? "#"
         : src === "bigram" ? "§" : src === "promoted" ? "★" : ""));
       agg[src] = (agg[src] ?? 0) + 1;
+      // Recents window: every produced non-home word joins/leads the list.
+      if (!M.homeFolded.has(M.fold(form.senseId))) {
+        recentsWindow.delete(form.senseId);
+        recentsWindow.add(form.senseId);
+        if (recentsWindow.size > RECENTS_CAP)
+          recentsWindow.delete(recentsWindow.values().next().value);
+      }
       // TouchChat-style door: a word that names a group opens it.
       if (scen.autoDoors && view.kind !== "group") {
         const g = scen.doorMap?.get(M.fold(t.id))
@@ -305,6 +347,36 @@ function runCorpus(db, M, corpus, scen, { warm = false } = {}) {
         if (pendingDoor && pendingDoor === view.id) agg.autoBack++;
         path.push("⌂"); view = { kind: "home" };
         say(t, "board"); i++; continue;
+      }
+
+      // recents family: a strip door listing her recent buried words —
+      // open + pick = 2 taps, deterministic, no guessing (the honest
+      // "promotion" shape). A strip card, not a page: the grid view does
+      // not move. From inside a group she pays the trip home first.
+      if (scen.recents && !M.homeFolded.has(t.id)
+          && recentsWindow.has(t.id)) {
+        const leave = view.kind === "group" || view.kind === "index" ? 1 : 0;
+        taps += leave + 2; agg.taps += leave + 2;
+        if (leave) { agg.home += leave; path.push("⌂"); view = { kind: "home" }; }
+        agg.promoteUsed++;
+        path.push(`★:${t.w}`);
+        say(t, "promoted"); i++; continue;
+      }
+
+      // index members: the group index shows the predicted group's top
+      // members — folder + word = 2 taps when the prediction covers it.
+      if (scen.indexMembers && view.kind !== "group" && strip.doorsAll.length) {
+        const mem = new Set(memberCardsFor(db, M, view, items, strip.doorsAll[0], clock)
+          .slice(0, 6).map((c) => M.fold(c.id)));
+        if (mem.has(t.id)) {
+          taps += (view.kind === "index" ? 0 : 1) + 1;
+          agg.taps += (view.kind === "index" ? 0 : 1) + 1;
+          if (view.kind !== "index") { agg.folder++; path.push("F"); }
+          path.push(`◇${t.w}`);
+          // she never opened the group — the word was on the index; view stays index
+          view = { kind: "index" };
+          say(t, "member"); i++; continue;
+        }
       }
 
       // buried: find the cheapest group that holds it
@@ -383,15 +455,27 @@ const SCENARIOS = {
   autodoor:    { autoDoors: true },
   autoreturn:  { autoReturn: true },
   autodoor_ret:{ autoDoors: true, autoReturn: true },
-  promote1:    { promoteAfter: 1 },
+  promote1:    { promoteAfter: 1 },   // unlimited surface — a ceiling, not a design
   doors2_s:    { doors: 2, search: true },
+  ingroup:     { homeInGroup: true },  // group strip also offers home predictions
+  ingroup_s:   { homeInGroup: true, search: true },
+  freqfill:    { freqFill: true },     // her used words outrank the population prior
+  freqfill_s:  { freqFill: true, search: true },
+  indexmem:    { indexMembers: true }, // group index shows top group's members (2-tap fetch)
+  indexmem_s:  { indexMembers: true, search: true },
+  recents:     { recents: true },      // a "★ Recents" strip door: open + pick = 2 taps
+  combo:       { wordWide: 1, homeInGroup: true, freqFill: true, bigram: true },
+  combo_s:     { wordWide: 1, homeInGroup: true, freqFill: true, bigram: true, search: true },
+  combo2:      { wordWide: 1, homeInGroup: true, indexMembers: true, recents: true, bigram: true },
+  combo2_s:    { wordWide: 1, homeInGroup: true, indexMembers: true, recents: true, bigram: true, search: true },
   promote1_s:  { promoteAfter: 1, search: true },
   kitchen:     { wordWide: 1, doors: 1, members: 2, bigram: true, promoteAfter: 1 },
   kitchen_s:   { wordWide: 1, doors: 1, members: 2, bigram: true, promoteAfter: 1, search: true },
 };
 const base = { cols: STRIP_COLS, wordWide: 2, doors: 0, members: 0,
   bigram: false, autoDoors: false, autoReturn: false, promoteAfter: 0,
-  search: false, doorMap: null, doorPOS: null };
+  search: false, doorMap: null, doorPOS: null, homeInGroup: false,
+  freqFill: false, indexMembers: false, recents: false };
 const cfg = (name) => ({ ...base, ...(SCENARIOS[name] ?? JSON.parse(name)) });
 
 export { SCENARIOS, cfg };
