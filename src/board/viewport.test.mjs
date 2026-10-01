@@ -23,14 +23,16 @@ test("a stuck visual-viewport pan hides the sentence bar until #app moves with i
   assert.ok(pinned >= 0 && pinned < 40);
 });
 
-test("applyVisualFrame writes that rect onto the shell", () => {
-  const el = { style: {} };
+test("applyVisualFrame writes the pan offset onto the shell but never its size", () => {
+  const el = { style: { width: "500px", height: "400px" } };
   const frame = visualFrame({ offsetTop: 68, offsetLeft: 2, width: 800, height: 500 });
   applyVisualFrame(el, frame);
   assert.equal(el.style.top, "68px");
   assert.equal(el.style.left, "2px");
-  assert.equal(el.style.width, "800px");
-  assert.equal(el.style.height, "500px");
+  // A vv.height read mid-keyboard-close is the shrunken height; baking it
+  // inline was the scrunched-grid bug — CSS owns the size, JS only the pan.
+  assert.equal(el.style.width, "");
+  assert.equal(el.style.height, "");
 });
 
 test("a pan that offsetTop does not report is corrected from the bar's measured top", () => {

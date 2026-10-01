@@ -10,22 +10,25 @@ export function appRoot() {
   return document.getElementById("app") ?? document.body;
 }
 
-/** The rectangle #app must occupy. Null when the viewport has no size yet. */
+/** The origin #app must sit at. Null when the viewport has no size yet.
+ *  Width/height stay CSS-owned (100% of the layout viewport): a vv.height
+ *  read while the keyboard is still animating closed bakes the shrunken
+ *  size into the shell and nothing reliable corrects it — the founder's
+ *  scrunched-grid bug (2026-10-01). */
 export function visualFrame(vv) {
   if (!vv || !vv.width || !vv.height) return null;
   return {
     top: vv.offsetTop || 0,
     left: vv.offsetLeft || 0,
-    width: vv.width,
-    height: vv.height,
   };
 }
 
 export function applyVisualFrame(el, frame) {
   el.style.top = `${frame.top}px`;
   el.style.left = `${frame.left}px`;
-  el.style.width = `${frame.width}px`;
-  el.style.height = `${frame.height}px`;
+  // Clear any stale inline size left by an older pin — CSS owns it.
+  el.style.width = "";
+  el.style.height = "";
 }
 
 /** If the sentence bar is still above the visible rect after #app is
