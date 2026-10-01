@@ -175,7 +175,6 @@ bottom-right corner. Average on-screen move: 15 → 30 ≈ 35% of the board,
 | 5 | it · that · have · all done · help · hurt |
 
 Slot 17 (1-based; index 16) is the same `?` family tile as on `grid15`.
-Visual reference: `public/preview-core30.html`.
 
 Editing a slot assignment is a product decision. It lands here first, tagged
 with a new DECIDED date, and the generated `core_cell` rows are regenerated
