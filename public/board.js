@@ -367,7 +367,7 @@ const {
   renderBar, rerenderView,
   renderGrid: (...a) => renderGrid(...a), // grid mounts below — lazy
   renderStrip: (...a) => renderStrip(...a), // strip mounts below — lazy
-  scheduleStatsRefresh, artForWord, syncTxButtons,
+  scheduleStatsRefresh, artForWord, syncTxButtons, toast: (...a) => toast(...a),
 });
 
 /* Spotlight attention layer: marks, pick mode, model glows, chrome —

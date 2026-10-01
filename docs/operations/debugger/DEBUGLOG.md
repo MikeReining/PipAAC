@@ -2,6 +2,7 @@
 
 | Date | Tier | Summary | Truth owner | Resolution |
 | --- | --- | --- | --- | --- |
+| 2026-10-01 | T1 | Wand press changed nothing: a failed first dev-license mint cached `null` forever in `licenseP`, and the transform's `res?.ok` gate turned every refusal into a silent speak-as-built — a license problem looked exactly like a dead button | `voiceLicense` + `transformAndSpeak` in `public/board/speech.js` | `licenseP` clears on null so the next press retries; a refused transform toasts the reason (bad_license / offline / service off). CDP probe: stubbed 403 → toast, live "want I" → "I want." |
 | 2026-09-30 | T1 | ✨ fix-it (and every first-time sentence) spoke word by word instead of one ElevenLabs utterance — the 300 ms race always expired before a fresh mint landed | `speakSentence` deadline in `public/board.js` (024 rule 1) | Founder revised rule 1: speaks wait out the mint (10 s cap); word clips are the failure path only. `src/board/voice_sentence.test.mjs` |
 | 2026-09-24 | T2 | Predict strip offers words that don't continue the sentence (`want` after `go do play want`): the open sentence trains `history_count` on every tap, and `hist` falls through to a word's lifetime share when that word never followed the context | `history_count` + `hist` in `public/shared/funnel.mjs` | History is written only when a sentence closes spoken. `hist` is Witten-Bell interpolation. `src/board/strip_history.test.mjs` |
 | 2026-09-24 | T2 | Board stays blank: boot throws before `renderGrid` because a persisted DB is missing columns the shipped schema added (`spotlit`, `share_research`) | `public/shared/migrate.mjs` | Catalog regenerated from `schema.sql`. Migration now parses `CREATE TABLE` past semicolons in comments, and drops triggers that name a table being rebuilt so `ALTER RENAME` can finish. `src/board/migrate.test.mjs` |
@@ -51,6 +52,14 @@ Lie-prone layer:
 Proof: npm test
 Pattern candidate: (optional)
 ```
+## 2026-10-01 wand-silent-403
+
+Tier: T1
+Truth owner: `voiceLicense` and `transformAndSpeak` in `public/board/speech.js`
+Lie-prone layer: `licenseP ??=` cached the resolved value — including `null` — so one failed dev-license mint (server mid-reload, offline boot, non-loopback host) wedged every transform for the rest of the session; and `res?.ok ? … : null` discarded the refusal, so 403/503/network all looked identical: bar unchanged, speaks as built
+Proof: live CDP probe on dev:agent — live "want I" → "I want." still lands; stubbed 403 → toast "no license on this device"; rejected fetch → toast "no connection". `scripts/test.sh src/worker/transform.test.mjs src/board/txbar.test.mjs` 17/17; `npm run check:fast` green
+Pattern candidate: a cached promise that resolves null is a permanent wedge — only cache successes, or clear the slot when it resolves empty
+
 ## 2026-09-30 speak-races-300ms-plays-word-clips
 
 Tier: T1

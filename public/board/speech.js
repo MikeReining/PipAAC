@@ -24,7 +24,7 @@ const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 export function mountSpeech({
   db, me, locale, sentence, barState, live,
   renderBar, renderStrip, renderGrid, rerenderView,
-  scheduleStatsRefresh, artForWord, syncTxButtons,
+  scheduleStatsRefresh, artForWord, syncTxButtons, toast,
 }) {
   const SILENT_SLOT_MS = 400;
   const audio = new Audio();
@@ -154,7 +154,10 @@ export function mountSpeech({
         }
         return fresh;
       })
-      .catch(() => null);
+      // A failed first mint must not wedge the session — null clears the
+      // cache so the next call retries instead of 403ing forever.
+      .then((lic) => { if (!lic) licenseP = null; return lic; })
+      .catch(() => { licenseP = null; return null; });
     return licenseP;
   };
 
@@ -303,7 +306,8 @@ export function mountSpeech({
           question: barState.question,
         }),
       }).catch(() => null);
-      const out = res?.ok ? (await res.json().catch(() => ({}))).text : null;
+      const body = res ? await res.json().catch(() => ({})) : {};
+      const out = res?.ok ? body.text : null;
       if (out) {
         snapshotBar(sentence, barState); // her taps, saved before replace
         applyTransform(sentence, unmask(out), mode, barState);
@@ -312,6 +316,19 @@ export function mountSpeech({
         }
         renderBar();
         renderStrip();
+      } else {
+        /* Every press still speaks the bar as built — but a refused
+         * transform must say why, or the button just looks dead (a
+         * missing license reads exactly like "broken wand"). */
+        const why = !res ? "no connection"
+          : body?.error === "bad_license" ? "no license on this device"
+          : body?.error === "transform_unavailable" ? "the service is off"
+          : body?.error === "fair_use" ? "today's budget is spent"
+          : body?.error ?? `http ${res.status}`;
+        toast?.(`Couldn't ${{
+          fix: "fix it", question: "ask it",
+          past: "make it past", future: "make it future",
+        }[mode] ?? "change it"} — ${why}; spoke it as built.`);
       }
       await speakSentence();
       live.spotDemo?.onTransform?.(mode);
