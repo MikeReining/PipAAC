@@ -83,3 +83,25 @@
   maskedSenseIds, tileStateBadge, familyRow).
 - Proof: 86 board tests pass; check:fast green.
 - Next: Q5 — spotlight attention layer → board/spotlight-layer.js.
+
+## 2026-09-30 — batch 5 (lens: structure, founder queue Q5)
+
+- Scope: `public/board.js` spotlight attention layer → new
+  `public/board/spotlight-layer.js` (173 ln). Class: Extraction.
+- Moved: `layerMark`, `bindSpotSettings`, `spotPulse`, pick mode
+  (`picking`/`updatePickBar`/`setPicking`), live modeling (`modeling`,
+  `modelSpeaks`, `modelGlow`, `modelSent`, `clearModel`, `setModeling`,
+  `onModel`), `spotChrome`, `controlPress`.
+- State ownership flipped: `picking`/`modeling` now live in the module;
+  `live.picking`/`live.modeling` delegate to `attention.*`, board call
+  sites read `attention.picking`/`attention.modeling`. `modelSent`/
+  `modelGlow` are shared objects destructured back for tap/pip. Grid's
+  halo Sets (`movedSet`/`likelySet`/`boardSenseIds`) stay in board.js —
+  the layer reads them through `live`.
+- Mount order speech → attention → grid → strip. `initSync` gets
+  `(m) => attention.onModel(m)` (top-level, TDZ); grid's
+  `layerMark`/`spotChrome` params are the destructured consts.
+- board.js: 2,000 → 1,864 lines.
+- Proof: spotlight + edit/groups/strip/layout/editor/keyboard/design
+  suites green; check:fast green.
+- Next: Q6 — PIN gate + overlay helpers → board/pin.js.

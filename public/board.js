@@ -14,8 +14,8 @@ import {
   openSentence,
 } from "./shared/funnel.mjs";
 import {
-  CONTROLS, coachTap, deleteSpotList, endSession, endSpotlight,
-  listTargets, needsRouteWalk,
+  coachTap, deleteSpotList, endSession, endSpotlight,
+  listTargets,
   resumeSession, saveSpotList, spotLists, spotlight,
   spotlightGroups, spotSession, startSession, startSpotlight,
 } from "./shared/spotlight.mjs";
@@ -73,6 +73,7 @@ import { mountTour } from "./board/tour-ui.js";
 import { mountVoice } from "./board/voice-ui.js";
 import { mountPictureFill } from "./board/picture-fill.js";
 import { mountSpeech } from "./board/speech.js";
+import { mountSpotlightLayer } from "./board/spotlight-layer.js";
 import { mountGrid } from "./board/grid.js";
 import { mountStrip } from "./board/strip.js";
 import { pictureClient } from "./shared/pictures.mjs";
@@ -177,7 +178,7 @@ function onSyncApplied() {
   }, 150);
 }
 
-initSync(db, me, saveUser, location.origin, onSyncApplied, onModel)
+initSync(db, me, saveUser, location.origin, onSyncApplied, (m) => attention.onModel(m))
   .then(async (sync) => {
     if (!sync) return;
     // § 11 warning channel: a linked device returning inside the final
@@ -261,7 +262,6 @@ function maybeImpression(candidates, shown, { mode = "picture", cap = null, gate
 // A tap then speaks and nothing else — the adult's taps are not logged.
 let spotDemo = null;
 let demoBar = null; // the child's bar, set aside while Try it runs
-let picking = null; // Spotlight pick mode — see setPicking
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 let countsOn = false; // 018 D10: the 📊 badge — the child's own 30-day taps
@@ -284,7 +284,7 @@ function syncTxButtons() {
   for (const id of ["tx-fix", "tx-question", "tx-past", "tx-future"]) {
     $(id).classList.toggle("offline", offline);
     // In pick mode ✨ / ❓ are choosable targets, with or without words.
-    const pickable = !!picking && (id === "tx-fix" || id === "tx-question");
+    const pickable = !!attention.picking && (id === "tx-fix" || id === "tx-question");
     $(id).disabled = !pickable && (!sentence.length || (offline && !tour));
   }
 }
@@ -319,10 +319,11 @@ const live = {
   get formTable() { return formTable; },
   get tour() { return tour; },
   get spotDemo() { return spotDemo; },
-  get picking() { return picking; },
+  get picking() { return attention.picking; },
   get view() { return view; },
   get editing() { return editing; },
-  get modeling() { return modeling; },
+  get modeling() { return attention.modeling; },
+  get coachUi() { return coachUi; },
   get expressiveVoice() { return expressiveVoice; },
   get kbUi() { return kbUi; },
   get groupsUi() { return groupsUi; },
@@ -351,6 +352,18 @@ const {
   renderStrip: (...a) => renderStrip(...a), // strip mounts below — lazy
   scheduleStatsRefresh, artForWord, syncTxButtons,
 });
+
+/* Spotlight attention layer: marks, pick mode, model glows, chrome —
+ * public/board/spotlight-layer.js. */
+const attention = mountSpotlightLayer({
+  db, live,
+  speakItem, syncTxButtons, rerenderView,
+  renderGrid: (...a) => renderGrid(...a), // grid mounts below — lazy
+});
+const {
+  layerMark, bindSpotSettings, updatePickBar, setPicking, setModeling,
+  onModel, spotChrome, controlPress, clearModel, modelSent, modelGlow,
+} = attention;
 
 /* Grid render, tile primitives, likely-next halo — public/board/grid.js. */
 const {
@@ -637,18 +650,18 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     spotDemo.onTap(kind, id);
     return;
   }
-  if (picking) {
+  if (attention.picking) {
     // Pick mode: a tap chooses a target, never speaks or appends.
     if (id) {
       const key = `${kind}:${id}`;
-      picking.has(key) ? picking.delete(key) : picking.add(key);
+      attention.picking.has(key) ? attention.picking.delete(key) : attention.picking.add(key);
       updatePickBar();
       renderGrid();
       rerenderView();
     }
     return;
   }
-  if (modeling) {
+  if (attention.modeling) {
     // Model mode: a tap glows the word on linked boards — never speaks
     // or appends here; the adult's voice is the audio (013 § 4).
     if (id) {
@@ -744,158 +757,9 @@ function revisitPrev(atIndex) {
   }
 }
 
-/* --- the attention layer (013 § 2): a running spotlight glows its
- *  target words and dims the rest — every cell stays tappable and
- *  speaks; masked cells are skipped entirely (never unmask). Slice 2
- *  owns lists/sessions; this is the layer itself. --- */
-
-/** Pulse rides the synced glow-style setting (013 § 4). */
-let spotPulse = false;
-
-/* --- The attention layer's one mark pass (013 § 2, slice 7): every
- *  use of "brighten some words, dim the rest" applies here — spotlight
- *  targets, live-model glows, the picker's chosen words, and (board
- *  cells only) the 014 move marks and the prediction halos. No renderer
- *  sets these classes on its own. --- */
-function layerMark(el, key, { board = false } = {}) {
-  const [kind, id] = key.split(":");
-  const s = spotlight();
-  if (s) {
-    if (s.targets.has(key)) {
-      el.classList.add("glow");
-      if (spotPulse) el.classList.add("pulse");
-    } else {
-      el.classList.add("dimmed");
-    }
-  }
-  if (picking) el.classList.toggle("picked", picking.has(key));
-  if (modelGlow.has(key) || modelSent.has(key)) el.classList.add("glow");
-  if (board && kind === "sense" && movedSet.has(id)) el.classList.add("moved");
-  if (board && kind === "sense" && likelySet.has(id)) el.classList.add("likely");
-}
-
-/** Read the spotlight settings and apply the dim token — called at boot
- *  and after a sync drain so a setting changed on the other device
- *  lands here. */
-function bindSpotSettings() {
-  const p = ALL(db,
-    "SELECT spot_dim, spot_pulse, model_speaks FROM learner_profile WHERE id = 'prf_local'",
-  )[0] ?? {};
-  document.documentElement.style.setProperty("--dim-o", (p.spot_dim ?? 45) / 100);
-  spotPulse = (p.spot_pulse ?? 0) === 1;
-  modelSpeaks = (p.model_speaks ?? 0) === 1;
-}
-
-/* --- pick mode (013 slice 2): an adult taps words on the board or in
- *  groups to choose targets; taps never speak while picking. `picking`
- *  is the Set of "kind:id" being chosen, or null when off (declared up
- *  top: syncTxButtons reads it from boot). --- */
-function updatePickBar() {
-  const n = picking?.size ?? 0;
-  $("spot-pick-count").textContent = n
-    ? `${n} picked` : "Tap the words you'll teach. Taps won't speak.";
-  $("spot-pick-start").disabled = !picking?.size;
-  $("spot-pick-save").disabled = !picking?.size;
-}
-function setPicking(on) {
-  // Picking happens on the board: the editor has no pick marks.
-  if (on && view === "editor") kbUi.setView("board");
-  picking = on ? new Set() : null;
-  syncTxButtons(); // ✨ / ❓ become choosable
-  document.body.classList.toggle("picking", on);
-  $("spot-pickbar").hidden = !on;
-  if (on) updatePickBar();
-  renderGrid();
-  rerenderView();
-}
-
-/* --- live modeling (013 slice 4, § 4): a tap on the partner's device
- *  rides the ws to the child's board, glows the word a few seconds,
- *  then fades — or ends the moment the child taps it. Never saved,
- *  never in the sync log; the glow is silent unless the family turns
- *  on Speak (model_speaks). --- */
-let modeling = false;
-let modelSpeaks = false;
-const modelGlow = new Map(); // "kind:id" → fade timer
-const modelSent = new Set(); // local echo on the partner's device
-const MODEL_FADE_MS = 4000;
-
-function clearModel(key) {
-  const t = key ? modelGlow.get(key) : undefined;
-  if (t === undefined) return;
-  clearTimeout(t);
-  modelGlow.delete(key);
-  renderGrid();
-  rerenderView();
-}
-
-function setModeling(on) {
-  modeling = on;
-  document.body.classList.toggle("modeling", on);
-  $("modelbar").hidden = !on;
-}
-
-/** A modeled word arrived from the partner's device (ws, transient). */
-function onModel(m) {
-  if (m?.k !== "model" || typeof m.t !== "string") return;
-  clearTimeout(modelGlow.get(m.t));
-  modelGlow.set(m.t, setTimeout(() => {
-    modelGlow.delete(m.t);
-    renderGrid();
-    rerenderView();
-  }, MODEL_FADE_MS));
-  const [kind, id] = m.t.split(":");
-  // A modeled ✨ / ❓ only glows — a button has no word to say.
-  if (modelSpeaks && m.w && kind !== "control") speakItem({ kind, id, text: m.w });
-  renderGrid();
-  rerenderView();
-}
-
 /** The sense ids the home grid rendered — `spotChrome` walks routes
  *  against it from any view. */
 let boardSenseIds = new Set();
-
-/** Chrome the layer owns outside the cells: the Groups anchor glows when
- *  a target needs the route walk, and the end chip shows while running. */
-function spotChrome() {
-  const s = spotlight();
-  const walk = (!!s && needsRouteWalk(s.targets, boardSenseIds)) ||
-    (modelGlow.size > 0 && needsRouteWalk(new Set(modelGlow.keys()), boardSenseIds));
-  $("anchor-groups").classList.toggle("glow", walk);
-  const chip = $("spot-chip");
-  chip.hidden = !s;
-  if (s) chip.textContent = `🔦 ${s.name} · End`;
-  // 032 E: ✨ / ❓ are targets too — the same ring, never dimmed, and
-  // the picker's ring while choosing.
-  for (const [name, c] of Object.entries(CONTROLS)) {
-    const key = `control:${name}`;
-    $(c.button).classList.toggle("glow", !!s?.targets.has(key) || modelGlow.has(key));
-    $(c.button).classList.toggle("picked", !!picking?.has(key));
-  }
-  coachUi.renderCoach();
-}
-
-/** A press on ✨ / ❓ that isn't a transform: in pick mode it chooses the
- *  button as a target; in Model mode it glows it on linked boards. True
- *  when the press was taken. */
-function controlPress(name) {
-  const key = `control:${name}`;
-  if (picking) {
-    picking.has(key) ? picking.delete(key) : picking.add(key);
-    updatePickBar();
-    spotChrome();
-    return true;
-  }
-  if (modeling) {
-    syncSendModel(key, CONTROLS[name].label);
-    modelSent.add(key);
-    spotChrome();
-    setTimeout(() => { modelSent.delete(key); spotChrome(); }, 700);
-    return true;
-  }
-  clearModel(key); // the child pressed the glowing button — its glow is done
-  return false;
-}
 
 /* Coach bar — public/board/coach-ui.js. Partner devices only. */
 const coachUi = mountCoach({
@@ -937,7 +801,7 @@ document.addEventListener("keydown", (e) => {
       document.querySelectorAll(".overlay.open").forEach((o) => o.classList.remove("open"));
       return;
     }
-    if (picking) {
+    if (attention.picking) {
       setPicking(false);
       return;
     }
@@ -1414,9 +1278,9 @@ mountSpotlightSheet({
   coachLabel: (kind, id) => coachUi.coachLabel(kind, id),
   bindSpotSettings,
   renderGrid, renderStrip, rerenderView, setModeling, setPicking,
-  getPicking: () => picking,
-  getSpotPulse: () => spotPulse,
-  getModelSpeaks: () => modelSpeaks,
+  getPicking: () => attention.picking,
+  getSpotPulse: () => attention.spotPulse,
+  getModelSpeaks: () => attention.modelSpeaks,
   onSettingsOpen: settingsUi.onOpen,
   openSettings: (section) => gatePin(() => settingsUi.open(section)),
   startDemo: () => spotDemoUi.start(),
@@ -1984,8 +1848,8 @@ window.pip = {
     saveList: (name, targets) =>
       saveSpotList(db, `spl_${crypto.randomUUID().replaceAll("-", "")}`, name, targets),
     deleteList: (id) => { deleteSpotList(db, id); },
-    get picking() { return picking ? [...picking] : null; },
-    get modeling() { return modeling; },
+    get picking() { return attention.picking ? [...attention.picking] : null; },
+    get modeling() { return attention.modeling; },
     get modelGlow() { return [...modelGlow.keys()]; },
   },
   get sentence() {
