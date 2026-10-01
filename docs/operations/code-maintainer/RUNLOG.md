@@ -176,3 +176,21 @@
 - Next: Q7 — src/worker/pictures.js route-family split. board.js is now
   ~1,400 ln of taps + boot + mount wiring; scan again before deciding
   whether more extraction pays.
+
+## 2026-09-30 — batch 10 (lens: structure, founder queue Q7)
+
+- Scope: `src/worker/pictures.js` (1,137 ln) → five modules.
+  Class: Extraction (route families).
+- `pictures_shared.js` (298 ln): json/okUuid/cleanText, fair-use consts,
+  Jev classify, bge-m3 embed, pictureStub/picPost, rankSignals, findOne,
+  findGuard, isUnsafe + BLOCK_TERMS.
+- `pictures_find.js` (47 ln): handleFind, handleFindBatch.
+- `pictures_signals.js` (142 ln): handlePick, handleReject.
+- `pictures_draw.js` (486 ln): allowance/entitlement, blocklist-adjacent
+  draw pipeline (refs, synthesize, single-flight claim, planner lanes,
+  runDraw, handleDraw).
+- `pictures.js` (226 ln): barrel re-exports + handleAllowance,
+  handlePictureImage, handlePicturesAdmin — index.js untouched.
+- Proof: pictures.test.mjs + pictures_draw.test.mjs — 55/55 through the
+  real worker entry; check:fast green.
+- Next: Q8 — public/shared/groups.mjs split (geometry/seed/ops/CRUD).
