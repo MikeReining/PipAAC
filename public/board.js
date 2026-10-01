@@ -1287,11 +1287,10 @@ syncSpeed();
  * straight to the board. The old "their world" form is Settings-only. */
 const onramp = mountOnramp({
   me, saveUser,
-  setLook,
+  setLook, flushDb,
   say: sayClip, // recorded clips in the product voice, never device TTS
   tileFor: tileForSense,
   fitLabels,
-  onDone: () => { renderGrid(); renderStrip(); tourUi.start(); },
 });
 /* The demo — public/board/tour-ui.js. The board side: add a word, set
  * the bar to a scripted sentence, speak it — none of it logged. */
@@ -1326,7 +1325,13 @@ const tourUi = mountTour({
   },
 });
 $("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });
-if (me.needsSetup) onramp.start();
+// 034: the welcome's Continue navigates away (a fresh document is the only
+// proven fix for the iPad keyboard-pan residue); the flag resumes the tour
+// on that boot. Consume before starting so a mid-tour refresh can't replay.
+if (sessionStorage.getItem("pip_tour")) {
+  sessionStorage.removeItem("pip_tour");
+  tourUi.start();
+} else if (me.needsSetup) onramp.start();
 
 /* QR card — public/board/recovery-ui.js */
 mountRecovery({

@@ -14,8 +14,6 @@
  * registry row; the look is learner_profile.presentation_mode (synced).
  */
 
-import { appRoot } from "./viewport.js";
-
 const $ = (id) => document.getElementById(id);
 
 const el = (tag, cls, text) => {
@@ -28,7 +26,7 @@ const el = (tag, cls, text) => {
 /** Preview tiles for the look question: real board words, real art. */
 const PREVIEW = ["sns_0013", "sns_0128"]; // want, apple
 
-export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fitLabels = () => {}, onDone }) {
+export function mountOnramp({ me, saveUser, setLook, flushDb, tileFor, say = () => {}, fitLabels = () => {} }) {
   let wrap = null;
 
   function screen(build) {
@@ -118,14 +116,15 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
   }
 
   async function finish() {
-    // Drop focus before the field leaves the document. iOS pans the
-    // visual viewport toward a focused input and keeps the pan if that
-    // input is removed while it still has focus.
+    // Never show the board in this document. The name field's keyboard pan
+    // can outlive the keyboard on iPad Chrome with every JS metric reading
+    // normal — the only proven-good path is a fresh document (034).
+    // flushDb: the adult look choice sits in sqlite's 300 ms debounce.
     document.activeElement?.blur?.();
     await saveUser({ needsSetup: false });
-    wrap.remove();
-    wrap = null;
-    onDone();
+    await flushDb?.();
+    sessionStorage.setItem("pip_tour", "1");
+    location.replace(location.pathname);
   }
 
   function start() {
@@ -133,7 +132,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
     wrap.setAttribute("role", "dialog");
     wrap.setAttribute("aria-modal", "true");
     wrap.setAttribute("aria-label", "Welcome to Pip");
-    appRoot().append(wrap);
+    document.body.append(wrap);
     first();
   }
 

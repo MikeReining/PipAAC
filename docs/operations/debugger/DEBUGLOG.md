@@ -2,7 +2,7 @@
 
 | Date | Tier | Summary | Truth owner | Resolution |
 | --- | --- | --- | --- | --- |
-| 2026-10-01 | T3 | Sentence bar missing after the welcome name on iPad Chrome: the keyboard pans the visual viewport and leaves it there with scrollY still 0, so scrollTo cannot bring the bar back | `#app` frame in `public/board/viewport.js` | `#app` is placed on the visual viewport's rect; if the bar is still above the screen, the frame shifts by the measured gap. Chrome probe: name → Continue → bar at y=6, tour ring on want |
+| 2026-10-01 | T3 | Sentence bar missing after the welcome name on iPad Chrome: the keyboard pans the visual viewport and can leave it panned with every JS metric reading normal — in-page repair is untrustworthy | The document, not a measurement — `finish()` in `public/board/onramp-ui.js` | The welcome's Continue leaves the document: persist, flush, `pip_tour` flag, `location.replace` (034). The board boots as a returning user — the path a reload proved correct every time |
 | 2026-10-01 | T1 | Wand press changed nothing: a failed first dev-license mint cached `null` forever in `licenseP`, and the transform's `res?.ok` gate turned every refusal into a silent speak-as-built — a license problem looked exactly like a dead button | `voiceLicense` + `transformAndSpeak` in `public/board/speech.js` | `licenseP` clears on null so the next press retries; a refused transform toasts the reason (bad_license / offline / service off). CDP probe: stubbed 403 → toast, live "want I" → "I want." |
 | 2026-09-30 | T1 | ✨ fix-it (and every first-time sentence) spoke word by word instead of one ElevenLabs utterance — the 300 ms race always expired before a fresh mint landed | `speakSentence` deadline in `public/board.js` (024 rule 1) | Founder revised rule 1: speaks wait out the mint (10 s cap); word clips are the failure path only. `src/board/voice_sentence.test.mjs` |
 | 2026-09-24 | T2 | Predict strip offers words that don't continue the sentence (`want` after `go do play want`): the open sentence trains `history_count` on every tap, and `hist` falls through to a word's lifetime share when that word never followed the context | `history_count` + `hist` in `public/shared/funnel.mjs` | History is written only when a sentence closes spoken. `hist` is Witten-Bell interpolation. `src/board/strip_history.test.mjs` |
@@ -56,11 +56,11 @@ Pattern candidate: (optional)
 ## 2026-10-01 sentence-bar-offscreen-after-welcome
 
 Tier: T3
-Truth owner: the visual viewport. `#app` must occupy that rect (`public/board/viewport.js`). The sentence bar is in normal flow at the top of `#app`.
-Lie-prone layer: `window.scrollY` / `scrollTo`. After the name field, iOS Chrome pans `visualViewport` and leaves `offsetTop` set with `scrollY` still 0. Clamping scroll, including on reload, never moves the bar. A banner that prints the numbers does not either.
-Proof: `scripts/test.sh src/board/viewport.test.mjs`; `node scripts/probes/chrome_boot_probe.mjs` against dev:agent — after name → Continue the bar's rect is y=6 h=68, shifting `#app` by 72px moves the bar by 72px, and the tour ring overlaps want
-Status: UNPROVEN on a real iPad — desktop Chrome cannot produce the iOS keyboard pan; tests check the arithmetic only. Deployed 2026-10-01 for founder iPad test. If it fails, add an on-screen offsetTop/bar readout.
-Pattern candidate: a keyboard pan is not document scroll — if `scrollY` is 0 and the bar's visual top is negative, move the shell by the measured gap
+Truth owner: the document. A keyboard pan that no JS metric can see cannot be repaired by JS — the welcome's Continue must leave the document (`public/board/onramp-ui.js`).
+Lie-prone layer: every in-page measurement. Four deployed fixes all failed on the device — scroll clamp (`bce6acc`), focus-aware re-clamp (`d71abac`), self-heal + metrics banner (`afab0f6`), `#app` pinned to the visualViewport rect (`d16b031`). `scrollY`, `visualViewport.offsetTop`, and `getBoundingClientRect` can all read normal while the render stays shifted.
+Proof: node --test src/board/onramp_exit.test.mjs — red on the old wiring (`finish()` removed the overlay and stayed), green when it navigates and boot gates the tour on the consumed `pip_tour` flag. Device proof is the founder's iPad per `docs/phases/034_Welcome_Page.md` § Works test — desktop cannot reproduce the pan.
+Resolution (034): `finish()` blurs, `await saveUser`, `await flushDb` (sqlite debounce), sets `pip_tour`, `location.replace(location.pathname)`. The board boots as a returning user and starts the tour from the flag. `viewport.js` stays as defense for adult-side inputs.
+Pattern candidate: when the observable layer is the suspect, stop measuring and discard the state — a fresh document inherits nothing. If this still fails on the device, the pan is not document-bound and the next move is a keyboard-free name field (Pip keyboard), never more pin logic.
 
 ## 2026-10-01 wand-silent-403
 
