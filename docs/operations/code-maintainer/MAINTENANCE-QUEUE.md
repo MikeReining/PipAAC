@@ -13,6 +13,6 @@ order, then Q7, Q8. One slice per batch; commit before moving on.
 | Q5 | done 2026-09-30 | `public/board.js` spotlight attention layer → `public/board/spotlight-layer.js` | ~250 ln: `layerMark`/`spotPulse`/`bindSpotSettings`/pick mode/modeling/`spotChrome`/`controlPress`. Slice 4. |
 | Q6 | done 2026-09-30 | `public/board.js` remainder | PIN→`pin.js`, segs→`settings-sync.js`, edit/undo→`edit-shared.js`, caches→`meta-cache.js`. board.js 2,994→1,412 ln: taps + boot + mounts. |
 | Q7 | done 2026-09-30 | `src/worker/pictures.js` → find / draw / signals split | pictures_shared.js (298 ln) + pictures_find.js (47) + pictures_signals.js (142) + pictures_draw.js (486); pictures.js barrel 226 ln. |
-| Q8 | open | `public/shared/groups.mjs` → geometry / seeds / ops / entities split | 1,049 ln, ~50 exports, strong tests — safest big split, lowest urgency. |
+| Q8 | done 2026-09-30 | `public/shared/groups.mjs` → geometry / seeds / ops / entities split | groups_shared.mjs (266 ln cell math+plumbing) + groups_seed.mjs (79) + groups_ops.mjs (315); groups.mjs barrel+reads 430 ln. |
 | Q9 | watch | `editor-ui.js` (1,170), `devices-ui.js` (831), `word-card.js` (805), `relay.js` (730), `funnel.mjs` (655) | Cohesive enough today; re-score next scout. |
 | Q10 | open | Ratchet: scanner report in `npm run check`, or growth-fail on flagged files | Would have flagged board.js crossing 2k. Decide shape at first lookback. |

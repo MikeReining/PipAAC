@@ -194,3 +194,22 @@
 - Proof: pictures.test.mjs + pictures_draw.test.mjs — 55/55 through the
   real worker entry; check:fast green.
 - Next: Q8 — public/shared/groups.mjs split (geometry/seed/ops/CRUD).
+
+## 2026-09-30 — batch 11 (lens: structure, founder queue Q8)
+
+- Scope: `public/shared/groups.mjs` (1,049 ln) → four modules.
+  Class: Extraction (four domains).
+- `groups_shared.mjs` (266 ln): BAND_ORDER + pure geometry + db reads +
+  placement plumbing (all/one/requireLocale/txn exported for the leaves).
+- `groups_seed.mjs` (79 ln): installSeedGroups, applySeedInstall,
+  reseedBuiltinGroups.
+- `groups_ops.mjs` (315 ln): placement writes + group-order writes.
+- `groups.mjs` (430 ln): barrel — reads/identity/index CRUD kept in place,
+  all 51 public names re-exported; 20+ importers untouched.
+- Fix during assembly: moveGroupBlock needed groupIndex — moved to
+  groups_shared.mjs (index-order plumbing) rather than a barrel↔leaf cycle.
+- Proof: 14 groups-importing suites — 88/88 and 90/93; the 3 failures
+  (add_word "find a group", word_card library strip img_0384, web_editor
+  orange-juice paste) reproduce on clean HEAD — pre-existing drift,
+  unchanged. check:fast green.
+- Next: Q10 — ratchet shape (scanner report in check, or growth-fail).
