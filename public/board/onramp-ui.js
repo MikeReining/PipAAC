@@ -3,7 +3,8 @@
  * board. One screen — a name (optional) and "Who's it for?" — plus, for
  * a teen or adult, one more: "How should the buttons look?" Then the
  * short demo (tour-ui.js). Every prompt and every choice is said aloud
- * on show and on tap — users can't read. No photos, PIN, backup or
+ * on show and on tap — through shipped recordings in the product voice
+ * (shared/onramp_audio.mjs), never device TTS. No photos, PIN, backup or
  * sign-in up front:
  * those come later, once something is worth protecting (Settings →
  * Overview). The old four-step "their world" form still opens from
@@ -45,7 +46,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
 
   function choiceRow(options, onPick) {
     const row = el("div", "welcome-choices");
-    for (const [value, label, extra] of options) {
+    for (const [value, label, extra, clip] of options) {
       const b = el("button", "welcome-choice");
       b.dataset.v = value;
       b.setAttribute("aria-pressed", "false");
@@ -53,7 +54,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
       b.append(el("span", "welcome-choice-label", label));
       b.onclick = () => {
         for (const o of row.children) o.setAttribute("aria-pressed", String(o === b));
-        say(label);
+        if (clip) say(clip);
         onPick(value);
       };
       row.append(b);
@@ -77,7 +78,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
       card.append(el("p", "welcome-q", "Who's it for?"));
       const go = el("button", "btn welcome-go", "Continue");
       go.disabled = true;
-      card.append(choiceRow([["child", "A child"], ["adult", "A teen or adult"]], (v) => {
+      card.append(choiceRow([["child", "A child", null, "a-child"], ["adult", "A teen or adult", null, "a-teen-or-adult"]], (v) => {
         audience = v;
         go.disabled = false;
       }));
@@ -87,7 +88,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
         if (audience === "adult") look();
         else finish();
       };
-      say("Let's set up Pip. Who's it for?");
+      say("welcome-setup");
     });
   }
 
@@ -104,12 +105,12 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
       const go = el("button", "btn welcome-go", "Continue");
       go.disabled = true;
       card.append(choiceRow([
-        ["symbol", "Pictures and words", tiles(false)],
-        ["label", "Words only", tiles(true)],
+        ["symbol", "Pictures and words", tiles(false), "pictures-and-words"],
+        ["label", "Words only", tiles(true), "words-only"],
       ], (v) => { choice = v; go.disabled = false; }));
       card.append(go);
       go.onclick = () => { setLook(choice); finish(); };
-      say("How should the buttons look?");
+      say("welcome-look");
     });
     fitLabels(wrap);
   }

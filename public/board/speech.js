@@ -15,6 +15,7 @@ import { armUtcRollRetry, tileStateMessage, voiceTile } from "../shared/voice_ti
 import { entityNames, maskNames } from "../shared/name_shield.mjs";
 import { applyTransform, snapshotBar, transformSource } from "../shared/txbar.mjs";
 import { EOS, formFor } from "../shared/forms.mjs";
+import { ONRAMP_CLIPS, onrampClipPath } from "../shared/onramp_audio.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -261,6 +262,12 @@ export function mountSpeech({
     return new Promise((r) => setTimeout(r, SILENT_SLOT_MS));
   }
 
+  /* Welcome/demo prompts: shipped recordings in the product voice
+   * (shared/onramp_audio.mjs), never device TTS (founder 2026-10-01).
+   * A missing clip is silence, not a fallback. */
+  const sayClip = (key) =>
+    ONRAMP_CLIPS[key] ? playClip(onrampClipPath(key)) : Promise.resolve();
+
   addEventListener("online", () => { syncTxButtons(); renderStrip(); });
   addEventListener("offline", () => { syncTxButtons(); renderStrip(); });
 
@@ -427,7 +434,7 @@ export function mountSpeech({
 
   return {
     speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
-    playClip, playBlob, endPlaying,
+    playClip, playBlob, endPlaying, sayClip,
     tileApi, tileSweep, voiceLicense, syncSpeed,
     audio, sentenceVoice, SPEAK_VOICE_WAIT_MS,
     isTxBusy: () => txBusy,

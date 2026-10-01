@@ -12,10 +12,10 @@
  * - the last card says Fix it needs the internet on your own words.
  * Optional recorded clips (`/audio/onramp/<name>.mp3`) play when they
  * ship — founder listens first (AGENTS.md); until then the sentence
- * speaks through the normal sentence voice. The cards' words are said
- * aloud through the device voice — users can't read, so every step is
- * heard, not just seen. Each instruction speaks after the audio it
- * follows so they never overlap.
+ * speaks through the normal sentence voice. The cards' instructions are
+ * said aloud through shipped recordings in the product voice
+ * (shared/onramp_audio.mjs — `clip` per step), never device TTS. Each
+ * instruction speaks after the audio it follows so they never overlap.
  */
 
 import { withIcons } from "./inline-icons.js";
@@ -36,12 +36,14 @@ export function mountTour({ board, saveUser }) {
   let timer = null;
   let target = () => null;
 
+  // `say` is the card's display text (withIcons renders ✨/⏪ as icons);
+  // `clip` is the recording's key in shared/onramp_audio.mjs.
   const steps = [
-    { say: "Tap want.", target: () => board.cellEl(SCRIPT.want) },
-    { say: "Now tap apple in the Smart bar.", target: () => document.querySelector("#tray .pred:not(.ghost)") },
-    { say: "Tap ✨ to make it a sentence.", target: () => $("tx-fix") },
-    { say: "Now tap ⏪ to say it in the past.", target: () => $("tx-past") },
-    { say: "That's Pip. Now try your own.", target: () => null, done: true },
+    { say: "Tap want.", clip: "tour-want", target: () => board.cellEl(SCRIPT.want) },
+    { say: "Now tap apple in the Smart bar.", clip: "tour-apple", target: () => document.querySelector("#tray .pred:not(.ghost)") },
+    { say: "Tap ✨ to make it a sentence.", clip: "tour-fix", target: () => $("tx-fix") },
+    { say: "Now tap ⏪ to say it in the past.", clip: "tour-past", target: () => $("tx-past") },
+    { say: "That's Pip. Now try your own.", clip: "tour-done", target: () => null, done: true },
   ];
 
   function place() {
@@ -121,9 +123,9 @@ export function mountTour({ board, saveUser }) {
       // must already see the next step's card. The next instruction
       // speaks after the word's own audio lands.
       if (step === 0 && id === SCRIPT.want) {
-        show(1); await board.addWord(SCRIPT.want); board.say(steps[1].say);
+        show(1); await board.addWord(SCRIPT.want); board.say(steps[1].clip);
       } else if (step === 1 && id === SCRIPT.apple) {
-        show(2); await board.addWord(SCRIPT.apple); board.say(steps[2].say);
+        show(2); await board.addWord(SCRIPT.apple); board.say(steps[2].clip);
       }
     },
     stripItems: () => (step === 1 ? [{ kind: "sense", id: SCRIPT.apple }] : []),
@@ -132,12 +134,12 @@ export function mountTour({ board, saveUser }) {
         board.setBar(SCRIPT.fix, "fix");
         show(3);
         await sayBar("i-want-an-apple");
-        board.say(steps[3].say);
+        board.say(steps[3].clip);
       } else if (step === 3 && mode === "past") {
         board.setBar(SCRIPT.past, "past");
         show(4);
         await sayBar("i-wanted-an-apple");
-        board.say(steps[4].say);
+        board.say(steps[4].clip);
       }
     },
   };
@@ -164,7 +166,7 @@ export function mountTour({ board, saveUser }) {
     card.setAttribute("role", "status");
     document.body.append(ring, card);
     show(0);
-    board.say(steps[0].say);
+    board.say(steps[0].clip);
     timer = setInterval(place, 250);
   }
 

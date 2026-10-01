@@ -359,7 +359,7 @@ const {
 /* Speech, tile voices, transforms — public/board/speech.js. */
 const {
   speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
-  playClip, playBlob, endPlaying,
+  playClip, playBlob, endPlaying, sayClip,
   tileApi, tileSweep, voiceLicense, syncSpeed,
   audio, sentenceVoice, isTxBusy, SPEAK_VOICE_WAIT_MS,
 } = mountSpeech({
@@ -1260,7 +1260,7 @@ syncSpeed();
 const onramp = mountOnramp({
   me, saveUser,
   setLook,
-  say: (text) => speak(text), // the welcome talks — users can't read
+  say: sayClip, // recorded clips in the product voice, never device TTS
   tileFor: tileForSense,
   fitLabels,
   onDone: () => { renderGrid(); renderStrip(); tourUi.start(); },
@@ -1293,7 +1293,7 @@ const tourUi = mountTour({
     },
     speakBar: () => speakSentence(),
     clearBar: () => $("clear").click(),
-    say: (text) => speak(text), // instruction cards — the device voice
+    say: sayClip, // instruction cards — recorded clips, never device TTS
     openVoices: () => gatePin(() => { settingsUi.open("talking"); voiceUi.openPicker(); }),
   },
 });
