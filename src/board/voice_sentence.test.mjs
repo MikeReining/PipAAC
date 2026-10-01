@@ -207,11 +207,13 @@ test("the board waits out a mint — no sub-second race to word clips", () => {
   // sample must request with a mint-covering wait cap.
   const board = readFileSync(
     join(import.meta.dirname, "../../public/board.js"), "utf8");
-  const m = board.match(/SPEAK_VOICE_WAIT_MS = (\d[\d_]*)/);
-  assert.ok(m, "board.js must name the speak wait cap");
+  const speech = readFileSync(
+    join(import.meta.dirname, "../../public/board/speech.js"), "utf8");
+  const m = speech.match(/SPEAK_VOICE_WAIT_MS = (\d[\d_]*)/);
+  assert.ok(m, "speech.js must name the speak wait cap");
   assert.ok(Number(m[1].replaceAll("_", "")) >= 5000,
     `speak wait ${m[1]} ms is too short for a fresh mint`);
-  const speak = board.slice(board.indexOf("async function speakSentence"));
+  const speak = speech.slice(speech.indexOf("async function speakSentence"));
   assert.match(speak.slice(0, speak.indexOf("closeSentence")),
     /deadlineMs: SPEAK_VOICE_WAIT_MS/, "speakSentence must wait out the mint");
   const sample = board.slice(board.indexOf("async function sampleVoice"));
