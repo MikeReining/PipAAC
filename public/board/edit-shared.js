@@ -1,6 +1,8 @@
 /** Edit mode and the undo toast — shared by the board grid, the groups
  *  pages, the library, and the word card. `editing`/`countsOn` stay in
  *  board.js and cross through `live`; the paint calls arrive as deps. */
+import { appRoot } from "./viewport.js";
+
 const $ = (id) => document.getElementById(id);
 
 export function mountEditShared({ live, syncCorner, renderGrid, applyLikely }) {
@@ -54,7 +56,7 @@ export function mountEditShared({ live, syncCorner, renderGrid, applyLikely }) {
           clone.classList.add("drag-clone");
           clone.style.width = `${r.width}px`;
           clone.style.height = `${r.height}px`;
-          document.body.appendChild(clone);
+          appRoot().appendChild(clone);
           el.classList.add("drag-src");
         }
         clone.style.left = `${ev.clientX - clone.offsetWidth / 2}px`;

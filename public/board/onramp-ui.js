@@ -14,6 +14,8 @@
  * registry row; the look is learner_profile.presentation_mode (synced).
  */
 
+import { appRoot } from "./viewport.js";
+
 const $ = (id) => document.getElementById(id);
 
 const el = (tag, cls, text) => {
@@ -116,6 +118,10 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
   }
 
   async function finish() {
+    // Drop focus before the field leaves the document. iOS pans the
+    // visual viewport toward a focused input and keeps the pan if that
+    // input is removed while it still has focus.
+    document.activeElement?.blur?.();
     await saveUser({ needsSetup: false });
     wrap.remove();
     wrap = null;
@@ -127,7 +133,7 @@ export function mountOnramp({ me, saveUser, setLook, tileFor, say = () => {}, fi
     wrap.setAttribute("role", "dialog");
     wrap.setAttribute("aria-modal", "true");
     wrap.setAttribute("aria-label", "Welcome to Pip");
-    document.body.append(wrap);
+    appRoot().append(wrap);
     first();
   }
 

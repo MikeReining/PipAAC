@@ -14,6 +14,7 @@
  * never lets a child past the gate.
  */
 import { listUsers, setHome } from "../shared/users.mjs";
+import { appRoot } from "./viewport.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -53,7 +54,7 @@ export function pickPerson(rows) {
       list.append(b);
     }
     wrap.append(h, list);
-    document.body.append(wrap);
+    appRoot().append(wrap);
   });
 }
 

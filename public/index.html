@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#f6f4ef" />
     <link rel="preload" href="/fonts/andika-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/brand/pip-mark-32.svg" type="image/svg+xml" />
@@ -28,55 +28,14 @@
     <link rel="stylesheet" href="/board/voice-ui.css" />
     <link rel="stylesheet" href="/board/base.css" />
     <script>
-      // The document never scrolls on its own — but iOS pans it to reveal
-      // a focused field when the software keyboard opens, so the clamp
-      // yields while a field has focus and re-clamps when focus leaves.
-      // iPad Chrome restores a stale scroll offset on reload (left by the
-      // keyboard), painting the topbar off-screen — take restoration out
-      // of the browser's hands and pin any leftover offset at 0,0.
+      // The document itself never scrolls. A keyboard pan is a visual-
+      // viewport offset, which scrollTo cannot clear — public/board/viewport.js
+      // moves #app onto that rect. Lock scroll restoration so a leftover
+      // offset from the name field is not replayed on the next load.
       history.scrollRestoration = "manual";
-      const pipEditing = () =>
-        /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? "");
       addEventListener("scroll", () => {
-        if (!pipEditing() && (scrollX || scrollY)) scrollTo(0, 0);
+        if (scrollX || scrollY) scrollTo(0, 0);
       }, { passive: true });
-      addEventListener("focusout", () => setTimeout(() => {
-        if (!pipEditing()) scrollTo(0, 0);
-      }, 350));
-      // Layout sanity: after load and on any viewport shift, the topbar
-      // must be on screen. If a stale offset survives the clamps (or is a
-      // visualViewport pan document scroll can't express), retry the pin,
-      // then show a banner with the numbers so a screenshot explains it.
-      let pipLayoutTries = 0;
-      const pipLayoutCheck = () => {
-        if (pipEditing() || document.hidden) return;
-        const tb = document.getElementById("topbar");
-        if (!tb || document.getElementById("boot-fail")) return;
-        const r = tb.getBoundingClientRect();
-        if (r.top >= -10 && r.top <= innerHeight * 0.4) { pipLayoutTries = 0; return; }
-        scrollTo(0, 0);
-        if (document.documentElement) document.documentElement.scrollTop = 0;
-        if (++pipLayoutTries < 4) { setTimeout(pipLayoutCheck, 400); return; }
-        pipLayoutTries = 0;
-        const vv = visualViewport ?? {};
-        const note = document.createElement("div");
-        note.id = "boot-fail";
-        note.style.cssText =
-          "position:fixed;top:12px;left:50%;transform:translateX(-50%);" +
-          "z-index:999;max-width:92vw;padding:10px 16px;border-radius:10px;" +
-          "background:#8a1f1f;color:#fff;font:600 13px/1.4 system-ui";
-        note.textContent = "Pip's top bar is off screen — tap to fix. " +
-          `(y=${scrollY} vo=${Math.round(vv.offsetTop ?? -1)} ` +
-          `vh=${Math.round(vv.height ?? -1)} ih=${innerHeight} ` +
-          `sc=${vv.scale ?? "?"} tb=${Math.round(r.top)} ` +
-          `cls=${document.body.className || "-"})`;
-        note.onclick = () => { scrollTo(0, 0); note.remove(); setTimeout(pipLayoutCheck, 300); };
-        document.body.append(note);
-      };
-      addEventListener("load", () => setTimeout(pipLayoutCheck, 600));
-      addEventListener("pageshow", () => setTimeout(pipLayoutCheck, 300));
-      visualViewport?.addEventListener("resize", () => setTimeout(pipLayoutCheck, 300));
-      visualViewport?.addEventListener("scroll", () => setTimeout(pipLayoutCheck, 300));
       // Boot watchdog — a failed script load must say so, not render half a page.
       window.__pipBoot = { errors: [] };
       addEventListener("error", (e) =>
@@ -94,11 +53,13 @@
         note.textContent = "Pip didn't finish loading — reload the page." +
           (window.__pipBoot.errors[0]
             ? " (" + String(window.__pipBoot.errors[0]).slice(0, 140) + ")" : "");
-        document.body.append(note);
+        (document.getElementById("app") ?? document.body).append(note);
       }, 8000));
     </script>
   </head>
   <body>
+    <div id="app">
+    <div id="shell">
     <div id="topbar">
       <button id="corner" class="corner-btn" title="Settings" aria-label="Settings">
         <svg class="g-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.6M12 18.9v2.6M21.5 12h-2.6M5.1 12H2.5M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8M18.7 18.7l-1.8-1.8M7.1 7.1L5.3 5.3"/><circle cx="12" cy="12" r="6.6"/></svg>
@@ -1050,6 +1011,8 @@
     </div>
 
     <div id="pathhint" hidden></div>
+    </div>
+    </div>
     <script type="module" src="/board.js"></script>
   </body>
 </html>

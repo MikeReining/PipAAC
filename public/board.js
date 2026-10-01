@@ -67,6 +67,7 @@ import { mountFamilyEditor } from "./board/family-editor.js";
 import { mountSettings } from "./board/settings-ui.js";
 import { mountPeople, pickPerson, takeReopen } from "./board/people-ui.js";
 import { mountGroupShows } from "./board/group-shows.js";
+import { installViewportPin } from "./board/viewport.js";
 import { mountOnramp } from "./board/onramp-ui.js";
 import { mountTour } from "./board/tour-ui.js";
 import { mountVoice } from "./board/voice-ui.js";
@@ -83,6 +84,7 @@ import { pictureClient } from "./shared/pictures.mjs";
 import qrcode from "../vendor/qrcode.mjs";
 
 const $ = (id) => document.getElementById(id);
+installViewportPin();
 const ALL = (db, sql, p = []) => db.all(sql, p);
 const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 

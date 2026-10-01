@@ -60,7 +60,32 @@ await send("Page.enable");
 await send("Emulation.setDeviceMetricsOverride",
   { width: 1180, height: 820, deviceScaleFactor: 2, mobile: true });
 await send("Page.navigate", { url: `${ORIGIN}/?reseed` });
-await sleep(10000); // past the 8s boot-watchdog window, so a false positive shows
+
+const until = async (expr, ms = 8000) => {
+  const deadline = Date.now() + ms;
+  let last = null;
+  while (Date.now() < deadline) {
+    last = await evalJs(expr);
+    if (last && !last.__err) return last;
+    await sleep(200);
+  }
+  return last;
+};
+
+// Fresh profile: name → Continue is the path that hides the sentence bar
+// on iPad Chrome. Walk it, then measure the bar in the real viewport.
+await until(`!!document.querySelector("#welcome-name") || !!window.pip?.db`);
+const stepped = await evalJs(`(() => {
+  const name = document.querySelector("#welcome-name");
+  if (!name) return { skipped: true };
+  name.value = "Ada";
+  document.querySelector('.welcome-choice[data-v="child"]').click();
+  document.querySelector(".welcome-go").click();
+  return { skipped: false };
+})()`);
+if (stepped?.__err) throw new Error(JSON.stringify(stepped));
+await until(`!document.querySelector(".welcome") && document.body.classList.contains("touring")`);
+await sleep(400); // tour ring is placed on an interval
 
 const report = await evalJs(`(() => {
   const r = (el) => { if (!el) return null; const b = el.getBoundingClientRect();
@@ -93,16 +118,56 @@ const report = await evalJs(`(() => {
     touring: document.body.classList.contains("touring"),
     pipReady: !!window.pip?.db,
     bootFail: !!document.querySelector("#boot-fail"),
-    // The iPad-Chrome bug is the layout viewport left scrolled after the
-    // keyboard closes. Try to scroll; the clip must refuse it.
+    // The document must refuse a scroll. The iPad bug is not this number —
+    // it is a visual-viewport pan with scrollY still 0 — but a scrollable
+    // document is how that pan gets stuck.
     scrollLocked: (() => {
       scrollTo(0, 300);
       const y = scrollY;
       scrollTo(0, 0);
       return y === 0;
     })(),
+    // Moving #app moves the sentence bar by the same amount. A resize
+    // then re-pins #app to the real visual viewport (offset 0 here).
+    shift: (() => {
+      const app = document.getElementById("app");
+      const bar = document.querySelector("#topbar");
+      const before = bar.getBoundingClientRect().top;
+      app.style.top = "72px";
+      const moved = bar.getBoundingClientRect().top;
+      window.visualViewport.dispatchEvent(new Event("resize"));
+      const restored = bar.getBoundingClientRect().top;
+      return { before: before | 0, moved: moved | 0, restored: restored | 0,
+        delta: (moved - before) | 0 };
+    })(),
+    ring: (() => {
+      const want = [...document.querySelectorAll("#grid .cell")].find((el) =>
+        el.querySelector(".tlabel")?.textContent?.trim().toLowerCase() === "want");
+      const ring = document.querySelector(".tour-ring");
+      if (!want || !ring) return { want: !!want, ring: !!ring };
+      const w = want.getBoundingClientRect();
+      const g = ring.getBoundingClientRect();
+      const overlap = g.left < w.right && g.right > w.left && g.top < w.bottom && g.bottom > w.top;
+      return { overlap, want: [w.x|0, w.y|0, w.width|0, w.height|0],
+        ring: [g.x|0, g.y|0, g.width|0, g.height|0] };
+    })(),
   };
 })()`);
+
+if (stepped?.skipped) {
+  console.log(JSON.stringify({ report, logs, stepped }, null, 2));
+  chrome.kill();
+  throw new Error("welcome never appeared — the name-then-Continue path was not measured");
+}
+const top = report?.topbar?.rect;
+const barOnScreen = top && top[1] >= 0 && top[1] < 80 && top[3] > 40;
+const shiftOk = report?.shift && report.shift.delta >= 60 && report.shift.delta <= 84
+  && Math.abs(report.shift.restored - report.shift.before) <= 2;
+if (!barOnScreen || !shiftOk || report?.ring?.overlap !== true || report?.welcome || !report?.touring) {
+  console.log(JSON.stringify({ report, logs, stepped, barOnScreen, shiftOk }, null, 2));
+  chrome.kill();
+  throw new Error("sentence bar or tour ring failed the welcome-path check");
+}
 
 const shot = await send("Page.captureScreenshot", { format: "png" });
 if (shot.result?.data) {

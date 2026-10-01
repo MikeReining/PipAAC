@@ -43,22 +43,40 @@
 .r-None   { --rb: #8a8578; --rf: #f2efe6; } /* typed words — no role */
 
 * { box-sizing: border-box; margin: 0; }
+html { height: 100%; overflow: hidden; }
 /* The hidden attribute always wins. Without this, any class that sets
    display (.sheet .row is flex) silently un-hides the element: Delete
    account showed while signed out. */
 [hidden] { display: none !important; }
-/* The app is exactly one viewport tall — the document itself never
-   scrolls (inner panes do), except while the software keyboard pans it
-   to reveal a focused field. The scroll clamp lives in index.html so it
-   can tell a keyboard pan from a stuck offset. */
+/* One visual viewport. #app is positioned on that rect by
+   public/board/viewport.js — iOS pans the visual viewport when the
+   welcome name field is focused and leaves the pan after the keyboard
+   closes, which scrollTo cannot undo. #shell is the column body used
+   to be. position:fixed overlays are contained by #app's transform, so
+   they cover the visible rect rather than the layout viewport. */
 body {
   font-family: -apple-system, "Helvetica Neue", sans-serif;
   background: var(--cream);
-  height: 100dvh;
+  height: 100%;
+  overflow: hidden;
+}
+#app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cream);
+  transform: translateZ(0);
+}
+#shell {
+  height: 100%;
   display: flex;
   flex-direction: column;
   padding: var(--gap);
   gap: var(--gap);
+  min-height: 0;
 }
 button { font: inherit; cursor: pointer; }
 

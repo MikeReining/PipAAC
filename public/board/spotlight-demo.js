@@ -14,6 +14,7 @@
  * session that was running comes back.
  */
 import { endSpotlight, resumeSession, spotlight, startSpotlight } from "../shared/spotlight.mjs";
+import { appRoot } from "./viewport.js";
 import {
   SHOWCASE, showcaseLit,
 } from "../shared/spotlight_starters.mjs";
@@ -189,7 +190,7 @@ export function mountSpotlightDemo({ db, board, tileFor, openSettings }) {
     card.className = "tour-card spot-demo-card";
     card.setAttribute("role", "dialog");
     card.setAttribute("aria-label", "Try Spotlight");
-    document.body.append(card);
+    appRoot().append(card);
     paint();
     board.repaint();
     timer = setTimeout(() => end(), MAX_MS);

@@ -19,6 +19,7 @@
  */
 
 import { withIcons } from "./inline-icons.js";
+import { appRoot } from "./viewport.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -51,13 +52,19 @@ export function mountTour({ board, saveUser }) {
     if (!ring) return;
     if (!t) { ring.hidden = true; return; }
     const r = t.getBoundingClientRect();
+    // The ring is position:fixed inside #app, whose origin is the visual
+    // viewport — subtract that origin so a leftover pan doesn't park the
+    // ring a bar above the tile.
+    const host = document.getElementById("app")?.getBoundingClientRect();
     ring.hidden = false;
     Object.assign(ring.style, {
-      left: `${r.left - 6}px`, top: `${r.top - 6}px`,
+      left: `${r.left - (host?.left ?? 0) - 6}px`,
+      top: `${r.top - (host?.top ?? 0) - 6}px`,
       width: `${r.width + 12}px`, height: `${r.height + 12}px`,
     });
+    const vh = window.visualViewport?.height ?? innerHeight;
     // The card sits away from the target: bottom unless the target is low.
-    card.classList.toggle("top", r.top > innerHeight * 0.55);
+    card.classList.toggle("top", r.top > vh * 0.55);
   }
 
   function show(i) {
@@ -164,7 +171,7 @@ export function mountTour({ board, saveUser }) {
     card = document.createElement("div");
     card.className = "tour-card";
     card.setAttribute("role", "status");
-    document.body.append(ring, card);
+    appRoot().append(ring, card);
     show(0);
     board.say(steps[0].clip);
     timer = setInterval(place, 250);
