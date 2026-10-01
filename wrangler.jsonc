@@ -3,6 +3,8 @@
   "main": "src/worker/index.js",
   "compatibility_date": "2026-09-21",
   "workers_dev": true,
+  "routes": [{ "pattern": "app.pipaac.org", "custom_domain": true }],
+  "send_email": [{ "name": "EMAIL" }],
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",

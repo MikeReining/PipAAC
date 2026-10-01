@@ -17,7 +17,7 @@ One critical path. Replace this table when the literal next slice changes — do
 | Priority | Next slice | Doc |
 | --- | --- | --- |
 | **P1** | 027 founder review — seed curation on `public/preview-blocks.html`, then the CHILDES starter table on the founder's machine (both listed at the end of 027); the phase retires after | `docs/phases/027_Occasion_Boards.md` |
-| **P2** | User-testing readiness — shareable URL (deploy, stop/ask) and the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
+| **P2** | User-testing readiness — `app.pipaac.org` is live (deployed 2026-10-01); remaining: the first-open people question | `docs/phases/019_User_Testing_Readiness.md` |
 | **P3** | 010 slice 2 — the art (review page built; generation gated on founder, one image at a time) | `docs/phases/010_Extended_Picture_Library.md` |
 
 ## Live index
@@ -36,7 +36,7 @@ Executing phases only. Each row names the **next** slice.
 | [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 payments **deferred** (founder, 2026-09-23) — the phase stays live until billing lands or is discharged |
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Items 1–4 and 6 done; step-28 items 1–4 built (WPM quartiles, per-path timings, Jev-timing experiment, wrong-pick count — `predictionReport.speed`, whitelisted payload fields). Holdback **deferred — not authorized** (founder, 2026-09-24); step-28 item 6 (calibration) waits on real totals; steps 15 and 18 parked. Open: step 26 flywheel (decided, unbuilt) |
 | [018 — Core board v2 and groups](018_Core_Board_V2_And_Groups.md) | All six decided slices done — v2 `grid60` + Purple, `grid90`/`grid15` re-laid, setup's people seated, groups re-ordered + doors + glow + banded layout, kind-colored personal words, home-board edit (📊 counts + placement sheet). Open items only |
-| [019 — User-testing readiness](019_User_Testing_Readiness.md) | Local board paints and speaks, including a board saved before the v2 map. The first-open question now lands the 009 slice-11 world pass. Next: deploy (stop/ask) |
+| [019 — User-testing readiness](019_User_Testing_Readiness.md) | Deployed 2026-10-01: `https://app.pipaac.org` (custom domain + Email Sending + prod secrets). Local board paints and speaks, including a board saved before the v2 map. The first-open question now lands the 009 slice-11 world pass |
 | [022 — Whose and how many](022_Whose_And_How_Many.md) | Code done 2026-09-26 (1464e4c): whose/plurals/EOS ship, three never-show-a-mistake rulings landed (own-word plural spelling, same-length pooling, caregiver plural use). Remaining: shipped catalog.json waits on the Ara word-form clips (144 uncovered, `forms_audio.json`) |
 | [023 — Transform buttons](023_Transform_Buttons.md) | Proof of concept proven 2026-09-25 (Groq qwen3.8-27b, temperature 0, short prompts). Top bar previewed (⏪ ▶ ⏩ ✨ ❓), not wired; § 5 lists what's open before building |
 | [024 — Sentence TTS and audio cache](024_Sentence_TTS_And_Audio_Cache.md) | Slices 1–3 landed 2026-09-26: Worker endpoint (shared R2 cache, fair use, no ids upstream), client Tier-1 + ~300 ms clip fallback, transform buttons speak through it. Next: slice 4 clip re-mint — paid, founder-gated at ≤10/batch |

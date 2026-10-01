@@ -55,6 +55,18 @@ shell profile changes.
 | `bash scripts/install_dev_slot0.sh` | macOS LaunchAgent so the browse copy comes back if something kills it |
 | `scripts/test.sh <paths>` | Targeted proof while iterating |
 | `python3 scripts/commit_handoff_queue.py request ...` | Codex commit handoff |
+| `npx wrangler deploy` | Production: `https://app.pipaac.org` (custom domain) + `pippaac.emailmike.workers.dev` |
+
+## Production
+
+Live 2026-10-01. `app.pipaac.org` is a Workers custom domain on `pippaac` —
+origin-scoped local data makes `app.` a one-way decision (SSOT). Email
+Sending is verified for `accounts@pipaac.org` (SPF/DKIM/DMARC on the zone;
+`send_email` binding `EMAIL`). Prod secrets: `ELEVENLABS_API_KEY`,
+`PIP_ADMIN_TOKEN`, `PIP_LICENSE_SECRET`, `GROQ_API_KEY`, `TYPESAFE_API_KEY`,
+`TILE_LIVE=1` (live tile mints, `TILE_DAY_MINTS=500` cap). Mint a tester
+license: `node scripts/entitlement/mint.mjs <user-id>` — the same
+`PIP_LICENSE_SECRET` is in `.dev.vars`, so minted keys verify in prod.
 
 ## Local preview
 

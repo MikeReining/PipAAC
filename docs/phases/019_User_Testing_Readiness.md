@@ -34,7 +34,7 @@ works after a reload.
 
 | # | Blocker | Notes |
 | --- | --- | --- |
-| 1 | **No deploy** — the app only exists on localhost; nothing is published to a URL a tester can open | `wrangler.jsonc` bindings exist (DO/R2/AE) but `wrangler deploy` has never run; needs account/domain decisions — **stop/ask: publishing** |
+| 1 | ~~**No deploy**~~ — resolved 2026-10-01: `app.pipaac.org` is a Workers custom domain on `pippaac`; Email Sending verified for `pipaac.org` (`accounts@pipaac.org`); prod secrets pushed (`PIP_LICENSE_SECRET`, `GROQ_API_KEY`, `TYPESAFE_API_KEY`, `TILE_LIVE=1` — live mints, 500/day cap) | `https://app.pipaac.org/?reseed` on the tester device; license via `scripts/entitlement/mint.mjs` |
 | 2 | ~~**First-run setup**~~ — fixed 2026-09-28: the automatic first user is created with `needsSetup` and the "Who do they call for?" sheet opens on first boot | proven on screen: fresh profile → setupform open, save closed it (agent slot 8797) |
 | 3 | **Dev-server hygiene** — slot-0 (8787, founder's copy) still accepts TCP and never answers HTTP (workerd pid 19014, 2026-09-24). `npm run dev` treats that as already running | a working copy is on 8795 |
 
