@@ -7,11 +7,11 @@ const PUBLIC_DIR = "public/symbols";
 
 export const BATCH62 = [
   { slot: 631, word: "us", fileKey: "us", src: `${ASSETS_DIR}/we.png` },
-  { slot: 632, word: "them", fileKey: "them", src: `${ASSETS_DIR}/they.png` },
+  { slot: 632, word: "them", fileKey: "them", src: `${BRAIN_DIR}/batch62_proposed_they.png` },
   { slot: 633, word: "his", fileKey: "his", src: `${ASSETS_DIR}/he.png` },
-  { slot: 634, word: "your", fileKey: "your", src: `${ASSETS_DIR}/you.png` },
+  { slot: 634, word: "your", fileKey: "your", src: `${BRAIN_DIR}/batch62_proposed_you.png` },
   { slot: 635, word: "our", fileKey: "our", src: `${ASSETS_DIR}/we.png` },
-  { slot: 636, word: "their", fileKey: "their", src: `${ASSETS_DIR}/they.png` },
+  { slot: 636, word: "their", fileKey: "their", src: `${BRAIN_DIR}/batch62_proposed_they.png` },
   { slot: 637, word: "something", fileKey: "something", src: `${BRAIN_DIR}/batch62_something.png` },
   { slot: 638, word: "someone", fileKey: "someone", src: `${BRAIN_DIR}/batch62_someone.png` },
   { slot: 639, word: "everyone", fileKey: "everyone", src: `${ASSETS_DIR}/people.png` },
@@ -148,6 +148,15 @@ export async function masterAll() {
     copyFileSync(src, destPublic);
     console.log(`Mastered: ${targetName}.png -> assets & public`);
   }
+
+  // Master refreshed pronoun roots
+  copyFileSync(`${BRAIN_DIR}/batch62_proposed_you.png`, `${ASSETS_DIR}/you.png`);
+  copyFileSync(`${BRAIN_DIR}/batch62_proposed_you.png`, `${PUBLIC_DIR}/you.png`);
+  console.log(`Mastered: you.png -> assets & public`);
+
+  copyFileSync(`${BRAIN_DIR}/batch62_proposed_they.png`, `${ASSETS_DIR}/they.png`);
+  copyFileSync(`${BRAIN_DIR}/batch62_proposed_they.png`, `${PUBLIC_DIR}/they.png`);
+  console.log(`Mastered: they.png -> assets & public`);
 }
 
 async function main() {
