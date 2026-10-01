@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "publishedAt": "2026-09-29T18:31:33.804Z",
+  "publishedAt": "2026-09-30T23:31:22.267Z",
   "entries": {
     "7up": {
       "id": "7up",
@@ -10951,6 +10951,16 @@
       "localSource": "out/extended_art/anthill.png",
       "launchSlot": null,
       "publishedAt": "2026-09-29T18:31:33.804Z"
+    },
+    "crocs": {
+      "id": "crocs",
+      "label": "crocs",
+      "section": "Clothes",
+      "sha256": "28a148c1964f1e4628ffc0c2cf05180b4e76570f91622b9a8e6981d997eca196",
+      "r2Key": "symbols/extended/crocs.png",
+      "localSource": "out/extended_art/crocs.png",
+      "launchSlot": null,
+      "publishedAt": "2026-09-30T23:31:22.267Z"
     }
   }
 }
