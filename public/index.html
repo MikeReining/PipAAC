@@ -28,14 +28,21 @@
     <link rel="stylesheet" href="/board/voice-ui.css" />
     <link rel="stylesheet" href="/board/base.css" />
     <script>
-      // The document never scrolls — iPad Chrome restores a stale scroll
-      // offset on reload (left by the software keyboard), painting the
-      // topbar off-screen. Take restoration out of the browser's hands
-      // and clamp any scroll that gets through anyway.
+      // The document never scrolls on its own — but iOS pans it to reveal
+      // a focused field when the software keyboard opens, so the clamp
+      // yields while a field has focus and re-clamps when focus leaves.
+      // iPad Chrome restores a stale scroll offset on reload (left by the
+      // keyboard), painting the topbar off-screen — take restoration out
+      // of the browser's hands and pin any leftover offset at 0,0.
       history.scrollRestoration = "manual";
+      const pipEditing = () =>
+        /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? "");
       addEventListener("scroll", () => {
-        if (scrollX || scrollY) scrollTo(0, 0);
+        if (!pipEditing() && (scrollX || scrollY)) scrollTo(0, 0);
       }, { passive: true });
+      addEventListener("focusout", () => setTimeout(() => {
+        if (!pipEditing()) scrollTo(0, 0);
+      }, 350));
       // Boot watchdog — a failed script load must say so, not render half a page.
       window.__pipBoot = { errors: [] };
       addEventListener("error", (e) =>

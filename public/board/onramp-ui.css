@@ -10,6 +10,10 @@
 .welcome-card {
   width: min(560px, 100%); display: flex; flex-direction: column; gap: 18px;
 }
+/* iOS keyboard covers the bottom half; a centered card's name field
+   ends up behind it. Top-align while a field is focused so the input
+   stays in view without needing a document scroll. */
+.welcome:focus-within { align-items: flex-start; }
 .welcome-mark { width: 56px; height: 56px; }
 .welcome h1 { font-size: clamp(28px, 5vw, 36px); line-height: 1.15; }
 .welcome-sub { color: var(--muted); margin-top: -8px; }
