@@ -78,7 +78,11 @@ body {
   gap: var(--gap);
   min-height: 0;
 }
-button { font: inherit; cursor: pointer; }
+/* color: inherit — WebKit on iOS paints unstyled button text in the
+   system link blue instead of ButtonText; every seg/pill without an
+   explicit color went blue on the iPad. Inheriting the parent's text
+   color removes the whole class, not just one selector. */
+button { font: inherit; color: inherit; cursor: pointer; }
 
 /* Switch / keyboard / eye-gaze focus: cream + ink double ring.
    :focus-visible never fires for touch — the ring only shows for
