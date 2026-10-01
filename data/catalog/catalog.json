@@ -1988,7 +1988,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Feelings, Emotions & Sensory States",
-      "default_image_id": null,
+      "default_image_id": "img_0200",
       "negation": 0
     },
     {
@@ -3410,7 +3410,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
-      "default_image_id": null,
+      "default_image_id": "img_0358",
       "negation": 0
     },
     {
@@ -3428,7 +3428,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Toys, Play, Media & Leisure",
-      "default_image_id": null,
+      "default_image_id": "img_0360",
       "negation": 0
     },
     {
@@ -4535,7 +4535,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Vehicles & Transportation",
-      "default_image_id": null,
+      "default_image_id": "img_0483",
       "negation": 0
     },
     {
@@ -5462,7 +5462,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0593",
       "negation": 0
     },
     {
@@ -5471,7 +5471,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0594",
       "negation": 0
     },
     {
@@ -5480,7 +5480,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0595",
       "negation": 0
     },
     {
@@ -5489,7 +5489,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0596",
       "negation": 0
     },
     {
@@ -5498,7 +5498,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0597",
       "negation": 0
     },
     {
@@ -5507,7 +5507,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0598",
       "negation": 0
     },
     {
@@ -5516,7 +5516,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0599",
       "negation": 0
     },
     {
@@ -5525,7 +5525,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0600",
       "negation": 0
     },
     {
@@ -5534,7 +5534,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0601",
       "negation": 0
     },
     {
@@ -5543,7 +5543,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0602",
       "negation": 0
     },
     {
@@ -5552,7 +5552,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0603",
       "negation": 0
     },
     {
@@ -5561,7 +5561,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0604",
       "negation": 0
     },
     {
@@ -5570,7 +5570,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0605",
       "negation": 1
     },
     {
@@ -5633,7 +5633,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0612",
       "negation": 0
     },
     {
@@ -5642,7 +5642,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0613",
       "negation": 0
     },
     {
@@ -5669,7 +5669,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0616",
       "negation": 1
     },
     {
@@ -5678,7 +5678,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0617",
       "negation": 1
     },
     {
@@ -5687,7 +5687,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0618",
       "negation": 1
     },
     {
@@ -5728,38 +5728,38 @@
     },
     {
       "id": "sns_0623",
-      "fitzgerald_role": "Pink",
+      "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0623",
       "negation": 0
     },
     {
       "id": "sns_0624",
-      "fitzgerald_role": "Pink",
+      "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0624",
       "negation": 0
     },
     {
       "id": "sns_0625",
-      "fitzgerald_role": "Pink",
+      "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0625",
       "negation": 0
     },
     {
       "id": "sns_0626",
-      "fitzgerald_role": "Pink",
+      "fitzgerald_role": "Blue",
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0626",
       "negation": 0
     },
     {
@@ -5786,7 +5786,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0629",
       "negation": 0
     },
     {
@@ -5795,7 +5795,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0630",
       "negation": 0
     },
     {
@@ -5804,7 +5804,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0631",
       "negation": 0
     },
     {
@@ -5813,7 +5813,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0632",
       "negation": 0
     },
     {
@@ -5822,7 +5822,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0633",
       "negation": 0
     },
     {
@@ -5831,7 +5831,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0634",
       "negation": 0
     },
     {
@@ -5840,7 +5840,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0635",
       "negation": 0
     },
     {
@@ -5849,7 +5849,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0636",
       "negation": 0
     },
     {
@@ -5858,7 +5858,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0637",
       "negation": 0
     },
     {
@@ -5867,7 +5867,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0638",
       "negation": 0
     },
     {
@@ -5876,7 +5876,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0639",
       "negation": 0
     },
     {
@@ -5885,7 +5885,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0640",
       "negation": 0
     },
     {
@@ -6227,7 +6227,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0678",
       "negation": 0
     },
     {
@@ -6290,7 +6290,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0685",
       "negation": 0
     },
     {
@@ -6299,7 +6299,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0686",
       "negation": 0
     },
     {
@@ -6308,7 +6308,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0687",
       "negation": 0
     },
     {
@@ -29850,7 +29850,7 @@
       "sense_id": "sns_0002",
       "key": "symbols/you.png",
       "status": "approved",
-      "sha256": "31473777f12877aeb66e21cb8a39171808732b96ca46b9fce6df154300249fb5"
+      "sha256": "d5b2472e46a60a1a7d5b0aac26cb18a64a3026f6392f8db06e11ada1dbcdfbb5"
     },
     {
       "id": "img_0003",
@@ -29906,7 +29906,7 @@
       "sense_id": "sns_0010",
       "key": "symbols/they.png",
       "status": "approved",
-      "sha256": "4cde51bbf44211e4c938b6f8d765dcb076b6bf51fabbe8a3891d1d6e00a992ec"
+      "sha256": "10bda3a7b4553b8853c823356e24b0e5feeb7dd7eed77bb16a4e76ada6519060"
     },
     {
       "id": "img_0011",
@@ -31232,6 +31232,13 @@
       "sha256": "45e8f0fbc7301bb9008a247e6a4409d26016c9af3cfc820840bc3b6f00b01f74"
     },
     {
+      "id": "img_0200",
+      "sense_id": "sns_0200",
+      "key": "symbols/warm.png",
+      "status": "approved",
+      "sha256": "6b8495eceeed0c98b6dfa3ec8c00023285d5178b1fb857630b0396f2c7f8e65c"
+    },
+    {
       "id": "img_0201",
       "sense_id": "sns_0201",
       "key": "symbols/loud.png",
@@ -31691,7 +31698,7 @@
       "sense_id": "sns_0266",
       "key": "symbols/family.png",
       "status": "approved",
-      "sha256": "ff3b1f717a98cf9cff096f6b0eb6ddc9be24432a6d93f3e2599073aa350d6cc0"
+      "sha256": "53836904863ba7b9b04e592cb4d03472d1070c7eefa58e3fc7c4e698d1f32723"
     },
     {
       "id": "img_0267",
@@ -31733,14 +31740,14 @@
       "sense_id": "sns_0272",
       "key": "symbols/brother.png",
       "status": "approved",
-      "sha256": "73b72803cc09f2d39e163836e61a03857973f3ee8aec27503e94fbec272ba61c"
+      "sha256": "588ba08378138cd2edaff909b8d8e25c8de1043fc3d0003f47efa687f233fbbc"
     },
     {
       "id": "img_0273",
       "sense_id": "sns_0273",
       "key": "symbols/sister.png",
       "status": "approved",
-      "sha256": "774229c9720c9dec43697bcf1dd2a2bb67cf5506ef9eb1e243973b6da74bda05"
+      "sha256": "1cb1f648da2305c1e8c91e6c99217feb13e4e9f6c6910831d5ef7499170d6147"
     },
     {
       "id": "img_0274",
@@ -31775,21 +31782,21 @@
       "sense_id": "sns_0278",
       "key": "symbols/cousin.png",
       "status": "approved",
-      "sha256": "102f78f378a3b8e8225541c02076810dfc04a49f1910473c4807f62d265475d2"
+      "sha256": "5a24007246aec2f88d474937d7746fc95e189ae59e72a03650c6ede0d401ee11"
     },
     {
       "id": "img_0279",
       "sense_id": "sns_0279",
       "key": "symbols/pet.png",
       "status": "approved",
-      "sha256": "bc7a7ed95a469bdf3338bfefacb8546fd41f2dcef03e59a9ab02ddf92174e55d"
+      "sha256": "9e00a839021dd655416d3ff91bf8962ae843b4dd59cd1f48f25fc06ff9020dcb"
     },
     {
       "id": "img_0280",
       "sense_id": "sns_0280",
       "key": "symbols/teacher.png",
       "status": "approved",
-      "sha256": "1a99e57bc28b5bc9359f720cb4312b71c4065e47d672a171012f9e36003a268e"
+      "sha256": "d22a29af5ca3232986ce45ba2bbcbfe186e224c992ee0889d71e3d0eafa6a835"
     },
     {
       "id": "img_0281",
@@ -31866,14 +31873,14 @@
       "sense_id": "sns_0291",
       "key": "symbols/people.png",
       "status": "approved",
-      "sha256": "918751bf1617ef03cf9bb608cac2cfb19e5b97dd0bbd47c1aa69657f80875b4a"
+      "sha256": "b708e605c3642cf009dd2cad6d539648ce61362ddb59e5d60f933698a27c2d13"
     },
     {
       "id": "img_0292",
       "sense_id": "sns_0292",
       "key": "symbols/kids.png",
       "status": "approved",
-      "sha256": "6c22db0b910b5eb0192adba2d18d3aaaa120c3eef7d673e5a19e6d650b839b54"
+      "sha256": "f1afb592b856524c51f461483dcf74e5a3a8e6900d186207a480067cc135cda8"
     },
     {
       "id": "img_0293",
@@ -31894,14 +31901,14 @@
       "sense_id": "sns_0295",
       "key": "symbols/babysitter.png",
       "status": "approved",
-      "sha256": "9bce28e25925db1c92f1df5230b24f32da4f5044de09a637594da75e3a95fa3d"
+      "sha256": "a0f0a3dc5f79870225131f5769f727af55bb676cf974232181ebfbbd1bdb4967"
     },
     {
       "id": "img_0296",
       "sense_id": "sns_0296",
       "key": "symbols/name.png",
       "status": "approved",
-      "sha256": "d498b629f8e8004465d6e9cfb6b57d05f697e698c86ef9f1cc76586a4b3e3afc"
+      "sha256": "0a43dc881caa232f5aea1abf530c06cb3f5dbafab6223f4eddc66cf421dabd47"
     },
     {
       "id": "img_0297",
@@ -32331,11 +32338,25 @@
       "sha256": "cd167ddf23a09e3d6cb2d4615fdcb7f0a87567bde944d1cda9f89522c78e9361"
     },
     {
+      "id": "img_0358",
+      "sense_id": "sns_0358",
+      "key": "symbols/ipad.png",
+      "status": "approved",
+      "sha256": "ea021ec984184ec947aecc963161ceac7376e0f0b3c24b3fb4e3659ac03670f0"
+    },
+    {
       "id": "img_0359",
       "sense_id": "sns_0359",
       "key": "symbols/phone.png",
       "status": "approved",
       "sha256": "a3f61611f300916102235492e288da9638948fe65cc1176861705f4ea450edbc"
+    },
+    {
+      "id": "img_0360",
+      "sense_id": "sns_0360",
+      "key": "symbols/tv.png",
+      "status": "approved",
+      "sha256": "8fadb90ac5992efc20c5c88c06273508aae2807d58aa401260812ff2a47f1447"
     },
     {
       "id": "img_0361",
@@ -33192,6 +33213,13 @@
       "sha256": "beae15520d62c7db26c4197d149f3eb962c550c6ea3286fb05a4d363aa421929"
     },
     {
+      "id": "img_0483",
+      "sense_id": "sns_0483",
+      "key": "symbols/school_bus.png",
+      "status": "approved",
+      "sha256": "0119158b28576336b38f9bb7ff0dfbe6d951d83e23ecb60682ae416e62807c92"
+    },
+    {
       "id": "img_0484",
       "sense_id": "sns_0484",
       "key": "symbols/truck.png",
@@ -33906,6 +33934,97 @@
       "sha256": "ee0d4429f99e3e144f629b5c832cd68d048d578d35e46f5d31e0c4904c8aa2e2"
     },
     {
+      "id": "img_0593",
+      "sense_id": "sns_0593",
+      "key": "symbols/okay.png",
+      "status": "approved",
+      "sha256": "ff598cd9cf8bc9feb47ad89931a8b238a787d134284bd120c493ae2eb5375643"
+    },
+    {
+      "id": "img_0594",
+      "sense_id": "sns_0594",
+      "key": "symbols/ready to go.png",
+      "status": "approved",
+      "sha256": "937bf781dfcfc6d6e94f3c9c26eea22781d41f5a2962f29f0b0c68d4644da66f"
+    },
+    {
+      "id": "img_0595",
+      "sense_id": "sns_0595",
+      "key": "symbols/wow.png",
+      "status": "approved",
+      "sha256": "637d25e006528fef75e83ded9ab4c81cb618e520b1c48a61cded66cdef230b35"
+    },
+    {
+      "id": "img_0596",
+      "sense_id": "sns_0596",
+      "key": "symbols/really.png",
+      "status": "approved",
+      "sha256": "318ce634517fd06d37c304fdc050238f396c22e431293e84a3e799447790f333"
+    },
+    {
+      "id": "img_0597",
+      "sense_id": "sns_0597",
+      "key": "symbols/maybe.png",
+      "status": "approved",
+      "sha256": "81d5cad0fbef01a5249828539c4e11b34e37ae4a35929f9444e30c79ebe60633"
+    },
+    {
+      "id": "img_0598",
+      "sense_id": "sns_0598",
+      "key": "symbols/I don't know.png",
+      "status": "approved",
+      "sha256": "121f6ba2e63a06fdca60c9bf8580cad3cb49a44079e00830cc7ff8d176c63a6d"
+    },
+    {
+      "id": "img_0599",
+      "sense_id": "sns_0599",
+      "key": "symbols/look at this.png",
+      "status": "approved",
+      "sha256": "c99be8b8f945226b4149e87a13a9ef4ab0d0ab2a266c3d4299daaa0a9785fad4"
+    },
+    {
+      "id": "img_0600",
+      "sense_id": "sns_0600",
+      "key": "symbols/my turn.png",
+      "status": "approved",
+      "sha256": "216f2026eae5018fc5afcac6a914993fc5cb1db5e4f0e0be06e9ab04325d67b3"
+    },
+    {
+      "id": "img_0601",
+      "sense_id": "sns_0601",
+      "key": "symbols/your turn.png",
+      "status": "approved",
+      "sha256": "275db8ce142bb59f85f09cef455879896844e052bfcc478cd0bf85752ee7e573"
+    },
+    {
+      "id": "img_0602",
+      "sense_id": "sns_0602",
+      "key": "symbols/careful.png",
+      "status": "approved",
+      "sha256": "abcc78d5f25396f547b4d362f38bfb5df52f31afc512a0cb11946b6e1b46ee0c"
+    },
+    {
+      "id": "img_0603",
+      "sense_id": "sns_0603",
+      "key": "symbols/emergency.png",
+      "status": "approved",
+      "sha256": "8c61af5e173e34835d6d480974de9f79df59eb809b10246b899b26b454f0dc66"
+    },
+    {
+      "id": "img_0604",
+      "sense_id": "sns_0604",
+      "key": "symbols/no way.png",
+      "status": "approved",
+      "sha256": "018c691b08faf71da74c7d45149b30f0282f563c56c189d8365fc73048781741"
+    },
+    {
+      "id": "img_0605",
+      "sense_id": "sns_0605",
+      "key": "symbols/don't.png",
+      "status": "approved",
+      "sha256": "24896818ffc5f19a104468a5bfd14e563dae955f512b114368d32f2c8394b983"
+    },
+    {
       "id": "img_0606",
       "sense_id": "sns_0606",
       "key": "symbols/bathroom.png",
@@ -33948,6 +34067,20 @@
       "sha256": "4364a921a64f9dfd009674a891519e9b6c717cd201f33ea3c60770fa0b10ce8e"
     },
     {
+      "id": "img_0612",
+      "sense_id": "sns_0612",
+      "key": "symbols/has.png",
+      "status": "approved",
+      "sha256": "52eba9c7436d79e0b98895a8f8e99112e6263ff9653b25d88834c519ee55e8c4"
+    },
+    {
+      "id": "img_0613",
+      "sense_id": "sns_0613",
+      "key": "symbols/had.png",
+      "status": "approved",
+      "sha256": "f7e6c6592d74eaab60aa0dd35879a332c003246bd428209f61d312bbfb405558"
+    },
+    {
       "id": "img_0614",
       "sense_id": "sns_0614",
       "key": "symbols/will.svg",
@@ -33960,6 +34093,27 @@
       "key": "symbols/would.svg",
       "status": "approved",
       "sha256": "44db7bca8d0ca44f77035e56153430dc1bbd0524b9c13f1f08f80cc212d82859"
+    },
+    {
+      "id": "img_0616",
+      "sense_id": "sns_0616",
+      "key": "symbols/can't.png",
+      "status": "approved",
+      "sha256": "c06815b9ea9c834a9cdf760e18b6100787f00a7f0d8e953b004f6193634a858b"
+    },
+    {
+      "id": "img_0617",
+      "sense_id": "sns_0617",
+      "key": "symbols/won't.png",
+      "status": "approved",
+      "sha256": "331fd27d8bd1333a10b14d600f65bfa2d960bd63b21dd16c44b02beedf74032b"
+    },
+    {
+      "id": "img_0618",
+      "sense_id": "sns_0618",
+      "key": "symbols/didn't.png",
+      "status": "approved",
+      "sha256": "a4fe3e429cd24bd0b31532d5ba44f9d74a05149e72ff434594dd430123a86e1b"
     },
     {
       "id": "img_0619",
@@ -33990,6 +34144,34 @@
       "sha256": "dfdca6a97994ffd09ff95a44b0354b7355cf8c7e62c37e252750e53c13857bd2"
     },
     {
+      "id": "img_0623",
+      "sense_id": "sns_0623",
+      "key": "symbols/every.png",
+      "status": "approved",
+      "sha256": "cf8dbb04e0650e39a0ac3ef9a190944aaec40c4d227d21303da41603bca839f9"
+    },
+    {
+      "id": "img_0624",
+      "sense_id": "sns_0624",
+      "key": "symbols/each.png",
+      "status": "approved",
+      "sha256": "eac845982abc0ddaa45677771be7cbc69bb2062b044cbbd59ae23e8ede435e20"
+    },
+    {
+      "id": "img_0625",
+      "sense_id": "sns_0625",
+      "key": "symbols/another.png",
+      "status": "approved",
+      "sha256": "32c24d86f3eff083c47f86ac021dafe0b0ea86af6978ef0f1abc68d47ccbf31c"
+    },
+    {
+      "id": "img_0626",
+      "sense_id": "sns_0626",
+      "key": "symbols/other.png",
+      "status": "approved",
+      "sha256": "de119315a883bbedc6dee3f85045c7cfd8889a6636b2d5d40f1838535ede79d4"
+    },
+    {
       "id": "img_0627",
       "sense_id": "sns_0627",
       "key": "symbols/so.svg",
@@ -34002,6 +34184,90 @@
       "key": "symbols/if.svg",
       "status": "approved",
       "sha256": "e86d3b02627b466d983ccec39565cb047ee96f1b3437584fd9061b2bd745ebde"
+    },
+    {
+      "id": "img_0629",
+      "sense_id": "sns_0629",
+      "key": "symbols/him.png",
+      "status": "approved",
+      "sha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4"
+    },
+    {
+      "id": "img_0630",
+      "sense_id": "sns_0630",
+      "key": "symbols/her.png",
+      "status": "approved",
+      "sha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe"
+    },
+    {
+      "id": "img_0631",
+      "sense_id": "sns_0631",
+      "key": "symbols/us.png",
+      "status": "approved",
+      "sha256": "93473bfc0cb781bcfeb3d0afc4398a68557db74f9f015f2d6b4b340671b137ac"
+    },
+    {
+      "id": "img_0632",
+      "sense_id": "sns_0632",
+      "key": "symbols/them.png",
+      "status": "approved",
+      "sha256": "57923c3913b311cb884a9885f2639fbae58d45db650da370f2a29eeeeaf72e23"
+    },
+    {
+      "id": "img_0633",
+      "sense_id": "sns_0633",
+      "key": "symbols/his.png",
+      "status": "approved",
+      "sha256": "cdc846437e31c9312a37a74bd3f39662aa3ed87bfb56b386d32c42e7de8e73cb"
+    },
+    {
+      "id": "img_0634",
+      "sense_id": "sns_0634",
+      "key": "symbols/your.png",
+      "status": "approved",
+      "sha256": "b67bc6def3d8e399fb25b358dd13c8608a9a62b674a41b5525fbfd35601c9996"
+    },
+    {
+      "id": "img_0635",
+      "sense_id": "sns_0635",
+      "key": "symbols/our.png",
+      "status": "approved",
+      "sha256": "93473bfc0cb781bcfeb3d0afc4398a68557db74f9f015f2d6b4b340671b137ac"
+    },
+    {
+      "id": "img_0636",
+      "sense_id": "sns_0636",
+      "key": "symbols/their.png",
+      "status": "approved",
+      "sha256": "57923c3913b311cb884a9885f2639fbae58d45db650da370f2a29eeeeaf72e23"
+    },
+    {
+      "id": "img_0637",
+      "sense_id": "sns_0637",
+      "key": "symbols/something.png",
+      "status": "approved",
+      "sha256": "d88dbbc417b63a28e0d16ffd63aa7f1f906539ff8248209d137d33e230f97756"
+    },
+    {
+      "id": "img_0638",
+      "sense_id": "sns_0638",
+      "key": "symbols/someone.png",
+      "status": "approved",
+      "sha256": "c962f3101a29c266fc2f8b484593a560e8662cc1d77419894a3fcf39b37581dc"
+    },
+    {
+      "id": "img_0639",
+      "sense_id": "sns_0639",
+      "key": "symbols/everyone.png",
+      "status": "approved",
+      "sha256": "216f0a8b12567c765f3420c462bc37653f7d217b9595b676e3bce08bb46183cc"
+    },
+    {
+      "id": "img_0640",
+      "sense_id": "sns_0640",
+      "key": "symbols/thing.png",
+      "status": "approved",
+      "sha256": "c2b2dd0b681ca3b51705644eb514281cd46ea249d75cb3821f8e00574ab73b68"
     },
     {
       "id": "img_0672",
@@ -34030,6 +34296,34 @@
       "key": "symbols/woman.png",
       "status": "approved",
       "sha256": "a13ad6c00852a2b9bf55da74cca386e83e7f2d265157eed680051760e721e68c"
+    },
+    {
+      "id": "img_0678",
+      "sense_id": "sns_0678",
+      "key": "symbols/ow.png",
+      "status": "approved",
+      "sha256": "a97f0763c84bd407b0fd0519e88d205ae24c5255dc56577406e6128d01c0f4f3"
+    },
+    {
+      "id": "img_0685",
+      "sense_id": "sns_0685",
+      "key": "symbols/wait, I'm spelling.png",
+      "status": "approved",
+      "sha256": "5cef4353631d574c3760cbfb6e382fe7cf7bf458ea9e9c7b4697ce4ac81b2e71"
+    },
+    {
+      "id": "img_0686",
+      "sense_id": "sns_0686",
+      "key": "symbols/guess my word.png",
+      "status": "approved",
+      "sha256": "8c1de8a01c8e4452f55eab45189b3c344b30f33ffb98f2a69c6523d9426b228f"
+    },
+    {
+      "id": "img_0687",
+      "sense_id": "sns_0687",
+      "key": "symbols/oops.png",
+      "status": "approved",
+      "sha256": "d5e0217cafd1d499eaf9603cd280b51f58b0cf6fb6729e09d0f9cc81ed80b280"
     },
     {
       "id": "img_0688",
@@ -67635,7 +67929,7 @@
       "item_kind": "sense",
       "item_id": "sns_0623",
       "page": 0,
-      "slot_index": 34
+      "slot_index": 42
     },
     {
       "group_id": "grp_who_which",
@@ -67643,7 +67937,7 @@
       "item_kind": "sense",
       "item_id": "sns_0624",
       "page": 0,
-      "slot_index": 35
+      "slot_index": 43
     },
     {
       "group_id": "grp_who_which",
@@ -67651,7 +67945,7 @@
       "item_kind": "sense",
       "item_id": "sns_0625",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 40
     },
     {
       "group_id": "grp_who_which",
@@ -67659,7 +67953,7 @@
       "item_kind": "sense",
       "item_id": "sns_0626",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 41
     },
     {
       "group_id": "grp_who_which",
@@ -67675,7 +67969,7 @@
       "item_kind": "sense",
       "item_id": "sns_0681",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 31
     },
     {
       "group_id": "grp_describing",
@@ -74139,7 +74433,7 @@
       "item_kind": "sense",
       "item_id": "sns_0623",
       "page": 0,
-      "slot_index": 34
+      "slot_index": 42
     },
     {
       "group_id": "grp_who_which",
@@ -74147,7 +74441,7 @@
       "item_kind": "sense",
       "item_id": "sns_0624",
       "page": 0,
-      "slot_index": 35
+      "slot_index": 43
     },
     {
       "group_id": "grp_who_which",
@@ -74155,7 +74449,7 @@
       "item_kind": "sense",
       "item_id": "sns_0625",
       "page": 0,
-      "slot_index": 31
+      "slot_index": 40
     },
     {
       "group_id": "grp_who_which",
@@ -74163,7 +74457,7 @@
       "item_kind": "sense",
       "item_id": "sns_0626",
       "page": 0,
-      "slot_index": 33
+      "slot_index": 41
     },
     {
       "group_id": "grp_who_which",
@@ -74179,7 +74473,7 @@
       "item_kind": "sense",
       "item_id": "sns_0681",
       "page": 0,
-      "slot_index": 32
+      "slot_index": 31
     },
     {
       "group_id": "grp_describing",
@@ -80659,7 +80953,7 @@
       "item_kind": "sense",
       "item_id": "sns_0625",
       "page": 2,
-      "slot_index": 10
+      "slot_index": 11
     },
     {
       "group_id": "grp_who_which",
@@ -80683,7 +80977,7 @@
       "item_kind": "sense",
       "item_id": "sns_0681",
       "page": 2,
-      "slot_index": 11
+      "slot_index": 10
     },
     {
       "group_id": "grp_describing",
@@ -87531,7 +87825,7 @@
       "item_kind": "sense",
       "item_id": "sns_0625",
       "page": 0,
-      "slot_index": 25
+      "slot_index": 26
     },
     {
       "group_id": "grp_who_which",
@@ -87555,7 +87849,7 @@
       "item_kind": "sense",
       "item_id": "sns_0681",
       "page": 0,
-      "slot_index": 26
+      "slot_index": 25
     },
     {
       "group_id": "grp_describing",
