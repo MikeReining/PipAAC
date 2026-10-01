@@ -64,7 +64,7 @@ export function indexSymbolFiles(symbolsRoot) {
  */
 export function resolveCoreSymbol(spokenText, fileByWord, glyphWords) {
   const key = spokenText;
-  const file = fileByWord.get(key) ?? null;
+  const file = fileByWord.get(key) ?? fileByWord.get(key.toLowerCase()) ?? null;
   if (file) {
     return { file, kind: file.endsWith(".svg") ? "glyph" : "picture" };
   }

@@ -663,7 +663,7 @@ function buildImages(lexicon) {
   }
   mkdirSync(PUBLIC_SYMBOLS_ROOT, { recursive: true });
   for (const e of lexicon.entries) {
-    const file = fileByWord.get(e.spokenText);
+    const file = fileByWord.get(e.spokenText) ?? fileByWord.get(e.spokenText.toLowerCase());
     if (!file) continue;
     const bytes = readFileSync(join(SYMBOLS_ROOT, file));
     images.push({

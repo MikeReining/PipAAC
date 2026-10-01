@@ -5549,7 +5549,7 @@
       "tier": 2,
       "spokenText": "every",
       "partOfSpeech": "Determiner",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
       "category": "Function Words & Grammar"
     },
@@ -5558,7 +5558,7 @@
       "tier": 2,
       "spokenText": "each",
       "partOfSpeech": "Determiner",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
       "category": "Function Words & Grammar"
     },
@@ -5567,7 +5567,7 @@
       "tier": 2,
       "spokenText": "another",
       "partOfSpeech": "Determiner",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
       "category": "Function Words & Grammar"
     },
@@ -5576,7 +5576,7 @@
       "tier": 2,
       "spokenText": "other",
       "partOfSpeech": "Determiner",
-      "fitzgeraldColor": "Pink",
+      "fitzgeraldColor": "Blue",
       "visualStyle": "Diagrammatic",
       "category": "Function Words & Grammar"
     },

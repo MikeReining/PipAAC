@@ -14,7 +14,21 @@ The Art Generator produces vector-grade clipart symbols for Pip AAC motor-grid t
 * **An AAC symbol is a person's voice, not a kindergarten toy:** Communicators range from age 7 to non-speaking adults. Symbols represent their thoughts, choices, and autonomy in public (schools, restaurants, workplaces, doctors' offices).
 * **Anti-Circus / Anti-Toy-Store:** No clown stickers, no hyperactive cartoon styles, no rainbow confetti, no babyish facial caricatures.
 * **Calm, Mature Simplicity:** Bold black outlines, clean solid or vector-volume fills, calm visual fields, zero sensory overload.
-* **Functional Color Coding:** Color carries grammatical semantics (Yellow = people/pronouns/nouns, Green = verbs, Blue = descriptors, Pink = prepositions/social, Red = negation/emergency). Never splash random colors or use "colorful" in prompts.
+* **Functional Color Coding:** Color carries grammatical semantics (Yellow = people/pronouns/nouns, Green = verbs, Blue = descriptors/quantifiers, Pink = prepositions/social/articles, Red = negation/emergency). Never splash random colors or use "colorful" in prompts.
+* **The Quantifier Blue Family Rule (DECIDED 2026-09-30):** All words expressing quantity, distribution, or set comparison (`all`, `some`, `every`, `each`, `another`, `other`, `more`, `most`, `same`, `different`) belong to the **Blue** family (Descriptors / Quantifiers). They must never be colored Pink simply because school grammar calls them determiners. Pink is strictly for structural grammar glue (articles `a`/`an`/`the`, conjunctions `and`/`or`, prepositions `in`/`on`).
+
+---
+
+## 1.1 Grammatical Inflection, Tense & Form Invariance (The Root Law)
+
+* **Form and tense changes do not invent new pictures:** An AAC symbol anchors visual and motor recognition of the root concept. Changing the scene across grammatical inflections breaks recognition and burdens communicators.
+* **Agreement & Form Reuse:**
+  * 3rd-person singular present forms (`has`) reuse the base symbol directly (`has = have`).
+  * Objective / possessive pronouns (`him`, `her`) reuse the base pronoun symbol directly (`him = he`, `her = she`).
+* **The Past Tense Invariant (`[ ◀◀ ]` Badge):**
+  * Past-tense verbs (`had`, `did`, `was`, `were`) **keep the exact base symbol** and deterministically composite the standardized Pip AAC past badge in the top-right corner.
+  * Standard badge: white rounded pill with a thin black border containing two solid black triangles pointing backwards (`◀◀`).
+  * Never send past-tense verbs to Muse for an open-ended re-roll. Always apply the past badge onto the approved base symbol.
 
 ---
 
