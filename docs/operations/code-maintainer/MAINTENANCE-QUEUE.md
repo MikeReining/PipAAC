@@ -6,7 +6,7 @@ order, then Q7, Q8. One slice per batch; commit before moving on.
 
 | ID | Status | Target | Notes |
 | --- | --- | --- | --- |
-| Q1 | open | `public/index.html` inline `<style>` (~763 ln) → `public/board/base.css` | `css_surface`: hand-owned CSS >500 ln across many selector families. Cheapest batch; matches per-module CSS convention. |
+| Q1 | done 2026-09-30 | `public/index.html` inline `<style>` (~763 ln) → `public/board/base.css` | `css_surface`: hand-owned CSS >500 ln across many selector families. Cheapest batch; matches per-module CSS convention. |
 | Q2 | open | `public/board.js` speech/audio pipeline → `public/board/speech.js` | ~400 ln: `playClip`/`playBlob`/`speak`/`speakItem`/`speakSentence`, `transformAndSpeak`, tile-voice mint/sweep/prefetch, `voiceLicense`. board.js slice 1 of 5. |
 | Q3 | open | `public/board.js` prediction strip + expand mode → `public/board/strip.js` | ~400 ln: `paintStrip`/`renderStrip`/`predCard`/faces/`stripCards`/`stripSlots`/`sizeStrip`/expand. Slice 2. |
 | Q4 | open | `public/board.js` grid render + geometry → `public/board/grid.js` | ~450 ln: `wordTile`/`fitLabels`/`boardGeom`/`homeTile`/`renderGrid`/`applyLikely`/`cellEls`. Slice 3. |
