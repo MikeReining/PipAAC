@@ -397,6 +397,32 @@ const {
 const pin = mountPin({ live, toast });
 const { open, close, gatePin, renderPinRow } = pin;
 
+/* ?unlock=<token> — the founder's one-tap link for testing a licensed
+ * device (and for handing to early supporters before payments land).
+ * The worker mints this user's pip-life token; the device stores it the
+ * same place the Devices → Pip Lifetime paste does. The param is
+ * stripped at once so the token doesn't linger in the address bar. */
+{
+  const params = new URLSearchParams(location.search);
+  const unlock = params.get("unlock");
+  if (unlock) {
+    params.delete("unlock");
+    const qs = params.toString();
+    history.replaceState(null, "", location.pathname + (qs ? `?${qs}` : ""));
+    fetch("/api/v1/voice/unlock", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ user_id: me.id, token: unlock }),
+    }).then((r) => (r.ok ? r.json() : null))
+      .then(async (d) => {
+        if (!d?.license) { toast("That unlock link didn't work."); return; }
+        await openKeyStore().put(`user/${me.id}/license`, d.license);
+        toast("Pip Lifetime unlocked on this device.");
+      })
+      .catch(() => toast("Couldn't reach Pip to unlock — try again online."));
+  }
+}
+
 /* Grid render, tile primitives, likely-next halo — public/board/grid.js. */
 const {
   renderGrid, boardGeom, wordTile, artInto, fitLabels,

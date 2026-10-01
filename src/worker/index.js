@@ -133,6 +133,27 @@ export default {
       return json({ license: await licenseFor(env.PIP_LICENSE_SECRET, uid) });
     }
 
+    // Founder unlock link: the app opens /?unlock=<token>, posts it here
+    // with its own user id, and stores the returned license — the same
+    // token the Devices paste flow would carry. PIP_UNLOCK_TOKEN is
+    // mint-only; it cannot reach the admin surface.
+    if (path === "/api/v1/voice/unlock" && request.method === "POST") {
+      const body = await request.json().catch(() => null);
+      const tok = typeof body?.token === "string" ? body.token : "";
+      if (!env.PIP_UNLOCK_TOKEN || tok.length !== env.PIP_UNLOCK_TOKEN.length
+        || tok !== env.PIP_UNLOCK_TOKEN) {
+        return json({ error: "forbidden" }, { status: 403 });
+      }
+      const uid = typeof body?.user_id === "string" ? body.user_id : null;
+      if (!uid || !/^[0-9a-f-]{36}$/i.test(uid)) {
+        return json({ error: "bad_user_id" }, { status: 400 });
+      }
+      if (!env.PIP_LICENSE_SECRET) {
+        return json({ error: "unlicensed" }, { status: 503 });
+      }
+      return json({ license: await licenseFor(env.PIP_LICENSE_SECRET, uid) });
+    }
+
     // Transform buttons (023): the Groq key lives here — the client
     // sends the sentence with her names already masked to placeholders.
     if (path === "/api/v1/transform" && request.method === "POST") {
