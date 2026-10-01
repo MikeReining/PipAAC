@@ -48,7 +48,7 @@ Executing phases only. Each row names the **next** slice.
 | [030 — Picture Finder and drawing](030_Picture_Finder_And_Drawing.md) | Slices 1–7 built; open = founder calibration save, slice-4 live run (≤10, founder-approved), and Works Tests 11 and 13 |
 | [031 — The editor, rebuilt](031_Board_Editor.md) | Slices A–G built 2026-09-29. Open: Works Test 1 (first-timer stopwatch) and a real-tablet pass of the narrow layout |
 | [032 — Spotlight gets its own page](032_Spotlight_Page.md) | A–C built 2026-09-29, E (moves: ✨ / ❓ targets, Try it ✨, Progress counts) 2026-09-30 — founder review; D held until then |
-| [033 — Curated phrase boards and adult kits](033_Curated_Phrase_Boards_And_Adult_Kits.md) | Proposed 2026-09-30 (founder brief). Next: Slice A catalog & data schema |
+| [033 — Bedside and hospital kit](033_Bedside_And_Hospital_Kit.md) | Proposed 2026-09-30 (founder brief). Next: Slice A bedside kit data & phrasing |
 
 ## Proposals awaiting review
 

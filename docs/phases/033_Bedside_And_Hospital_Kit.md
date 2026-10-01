@@ -1,152 +1,153 @@
-# 033 — Curated Phrase Boards and Adult Kits
+# 033 — Bedside & Hospital Kit (/hospital)
 
 **Status:** Proposed 2026-09-30 (founder brief).
 
 ## Founder intent (2026-09-30)
 
-1. **Pre-curated phrase and sentence boards for broader markets:**
-   Add dedicated boards and groups populated with high-utility complete phrases and
-   sentences (not only single words) tailored to critical non-pediatric and specialized
-   cohorts: adult acquired conditions, stroke/aphasia, hospital/ICU, Gestalt language
-   processors, and fast-paced social banter.
-2. **Settings-driven discovery (never dumped at install):**
-   Do not overwhelm a 4-year-old or early language learner with dozens of phrase buttons on day
-   one. Keep default installation clean and generative. Make kits discoverable via
-   **Settings** (and during initial onboarding setup) so users can specify their user
-   type and activate the relevant kit cleanly.
-3. **No Fitzgerald Key color coding on phrase and adult boards:**
-   *"If you have a heart attack, you don't want to deal with our color coding.
-   That's for pediatric language learning, not for what this is now."*
-   A whole phrase (*"I can't breathe"*, *"Please call my daughter"*, *"Move me"*) is a
-   complete syntactic utterance, not a single part of speech. Staining it in kindergarten
-   grammar colors (yellow nouns, green verbs, pink prepositions) is both a category
-   error and clinically infantilizing to adults. Adult and medical phrase tiles must use
-   clean, dignified, high-contrast neutral styling with functional urgency accents
-   (e.g., medical emergency red or warning amber), not grammar pastels.
-4. **Color-neutral stick figures over words-only (clinical safety & dignity):**
-   Hospital and adult emergency boards must **not** be forced into words-only. Forcing
-   words-only is clinically dangerous for stroke survivors with reading deficits (alexia),
-   patients in ICU delirium or heavy sedation, patients without their reading glasses, and
-   non-English speakers. Instead, generate and display **color-neutral, monochrome stick
-   figures** (slate/charcoal torsos or clean line art) alongside clear text. Pip's stick
-   art is already calm, mature, and universal; removing the rainbow grammar fills
-   transforms them into professional medical pictograms (akin to ISO hospital wayfinding
-   signage or Apple SF Symbols) while preserving instant visual recognition in an emergency.
+1. **Acute and adult care as a distinct wedge:**
+   Children need a language system that grows over years. Adults with aphasia, ALS, or an
+   acute ICU stay already have language—they need a voice *today* for pain, breath, and
+   comfort. Traditional hospital patients are handed a laminated cardboard alphabet board
+   and a call bell. Pip can provide an immediate, dignified bedside voice.
+2. **Onboarding comes first, not last (60-second entry):**
+   An ICU family member or bedside nurse has about 60 seconds and zero patience for
+   settings or multi-step account creation. The entry URL (`pipaac.org/hospital` or
+   `app.pipaac.org/?kit=hospital`) boots straight into a working board. Onboarding and
+   settings share the exact same underlying component—never two diverging paths.
+3. **Fewer and bigger (8 to 12 tiles at `grid15`):**
+   A patient in acute physical distress cannot navigate 18+ small buttons. At Pip's
+   large `grid15` (5×3) density, targets are large, effortless to touch with trembling
+   hands, and stable for eye gaze. `Yes`, `No`, and `Help` remain permanently anchored,
+   leaving 9 to 11 high-priority message tiles. Everything else sits behind a clean
+   `🗂️ More needs...` door.
+4. **Calm, accurate phrasing (no emergency drama):**
+   Phrasing like *"I can't breathe"* sounds like a 911 telemetry alarm and creates
+   unnecessary panic and regulatory liability. We use calm, accurate bedside phrasing:
+   **"Trouble breathing"** or **"Hard to breathe"**.
+5. **The 30-second personalization wedge:**
+   Generic laminated boards say *"Call daughter"*. In 30 seconds, a supporter sets the
+   names, turning tiles into **"Call Maria"** and **"Call Nurse Sarah"**.
+6. **"Show the nurse" full-screen visual alert:**
+   In noisy ICUs with beeping monitors, tablet speakers cannot be heard across a room or
+   from the hallway. When an urgent tile is tapped, Pip briefly flashes a giant,
+   high-contrast visual card across the entire display (e.g., bold black text on white
+   with the pictogram: **TROUBLE BREATHING** or **PAIN: 8/10**). A nurse glancing
+   through the doorway sees the patient's need immediately.
+7. **Color-neutral pictograms (No Fitzgerald Key colors):**
+   *"If you have a heart attack, you don't want to deal with our color coding. That's for
+   pediatric language learning, not for what this is now."*
+   Rainbow grammar fills (yellow nouns, green verbs, pink prepositions) are infantilizing
+   and induce visual fatigue. Adult bedside boards use **clean, color-neutral monochrome
+   stick pictograms** (slate/charcoal) and high-contrast typography. Red is reserved
+   strictly for acute distress (pain, breathing).
+8. **Bilingual bedside bridge (Spanish, French, Chinese):**
+   Language barriers in hospitals are terrifying. A 1-tap language toggle lets a
+   Spanish-speaking patient tap a Spanish tile (*"Me cuesta respirar"*), hear speech in
+   Spanish, while the "Show the nurse" card flashes the English translation for medical
+   staff.
+9. **Separate Gestalt from hospital work:**
+   Gestalt Language Processing (GLP) serves children acquiring language and belongs in a
+   dedicated pediatric feature doc (`docs/backlog/Gestalt_Script_Capture.md`).
 
-## Market & Clinical Rationale
+---
 
-### 1. Market expansion (3x to 5x TAM)
+## Market & Clinical Sourcing
 
-Pediatric developmental AAC (autism, cerebral palsy, developmental speech delays) accounts
-for ~1M–1.5M individuals in the US. Pre-curated phrase boards unlock:
+The need for immediate bedside communication is backed by established clinical data:
 
-- **Adult Acquired Conditions (+2.5M US):** Stroke survivors living with aphasia (~2M in
-  the US), ALS/MND (~30k active; 80%+ lose speech), TBI, and Parkinson's. These users
-  already possess full language models; composing word-by-word (*"I" $\rightarrow$ "want"
-  $\rightarrow$ "water"*) causes severe physical fatigue. They need 1-tap situational
-  phrases for immediate relief, repositioning, and care.
-- **Hospital, ICU & Acute Care (+1.5M patients/yr US):** Conscious intubated,
-  tracheostomy, or post-surgical patients currently handed laminated paper alphabet boards
-  or call bells. A \$49 lifetime or free instant app on an iPad provides an immediate voice
-  for pain, breathing, and comfort without 6-month DME insurance hurdles.
-- **Gestalt Language Processors (GLP) in Autism (2x pediatric SLP adoption):**
-  Clinical research (Blanc, Prizant) indicates that 50%–80% of autistic children process
-  language in whole communicative scripts/gestalts (*"Let's go check it out!"*, *"I need a
-  break"*) before mitigating them down to single words. Standard core-word apps force
-  analytical word-by-word assembly, driving SLP frustration. Curated Gestalt kits turn
-  pediatric SLPs into active advocates for Pip.
-- **Senior & Memory Care:** Mild-to-moderate dementia and cognitive decline where
-  generative syntax assembly breaks down, but familiar comfort phrases and social rituals
-  remain intact.
+1. **Stroke & Aphasia:**
+   Each year, roughly **795,000 people in the United States have a stroke**
+   ([CDC Stroke Facts](https://www.cdc.gov/stroke/facts.htm)). An estimated **2 million
+   Americans are living with aphasia**, with 25% to 40% of stroke survivors acquiring the
+   condition ([National Aphasia Association](https://aphasia.org/)). Many experience
+   acquired alexia (reading impairment) while visual comprehension of pictograms remains
+   intact.
+2. **Mechanically Ventilated ICU Patients:**
+   Over **1 million patients receive mechanical ventilation in US ICUs annually**, out of
+   more than 4 million ICU admissions ([Wunsch et al., Crit Care Med, NIH](https://pubmed.ncbi.nlm.nih.gov/23385106/)).
+   Intubation prevents vocal speech entirely, leading to documented panic and acute
+   delirium.
+3. **Clinical Efficacy of Bedside AAC:**
+   Peer-reviewed ICU communication research ([VidaTalk study, PMC10833611](https://pmc.ncbi.nlm.nih.gov/articles/PMC10833611/))
+   demonstrates that providing nonvocal ICU patients with electronic picture/phrase
+   communication significantly reduces patient anxiety, eases family caregiver burden,
+   and clarifies urgent patient requests (repositioning, suction, pain, family contact).
 
-### 2. Visual Dignity: Color-Neutral Pictograms over Words-Only & No Fitzgerald Colors
+---
 
-- **Why Words-Only Alone Fails in Acute Care:**
-  - *Alexia & Reading Loss:* A substantial percentage of stroke survivors suffer from
-    alexia (inability to read orthographic text), even while visual comprehension of
-    drawings and actions remains intact.
-  - *ICU Fog, Sedation & Blurred Vision:* Patients coming off anesthesia or dealing with
-    acute trauma frequently lack their eyeglasses or suffer from diplopia (double vision).
-    Reading sentences requires fine visual convergence; a high-contrast pictogram can be
-    recognized instantly even with blurred vision.
-  - *Emergency Processing Speed:* During acute respiratory distress, severe pain spikes, or
-    panic, scanning a visual symbol (e.g. clutching chest, water glass, bed angle) is
-    cognitively faster than parsing written sentences.
-- **The Color-Neutral Pictogram Solution:**
-  - Pip's in-house stick art (clean posture, directional arrows, calm dot-eye head) is
-    already mature and non-infantilizing compared to competitor cartoon clipart.
-  - The problem was the **rainbow Fitzgerald Key fill** (bright yellow for nouns, green for
-    verbs, pink for prepositions).
-  - In phrase and hospital boards, the torso fill is rendered in **neutral slate, dark
-    charcoal, or clean line-art outline**. This converts the tile into a clean, dignified
-    medical pictogram matching ISO hospital wayfinding standards.
-- **Functional Urgency Accents Only:**
-  - Color is reserved strictly for life-critical signaling (e.g., medical emergency red for
-    breathing/pain, warning amber for toilet/assistance, neutral slate for comfort/social),
-    never parts of speech.
-- **The "Words Only" Setting Remains an Option:**
-  - For literate adults (e.g. ALS patients with intact vision who explicitly prefer pure
-    minimalist text), Pip's existing **Words only** mode (`presentation_mode = 'label'`)
-    remains toggleable in Settings, but is not the forced default.
+## Regulatory & Liability Law (AGENTS.md High-Risk Stop)
 
-## Architectural Fit & Laws
+Pip Bedside is a communication aid, **not a regulated medical device, telemetry monitor, or nurse call-bell replacement**.
 
-1. **The Motor Grid remains sacred:**
-   Curated phrase boards do NOT reorder or displace core cells on the main board. They
-   live either as **curated Groups** (behind topic doors under `🗂️ Groups`, built in 027)
-   or as **Starter presets** (`docs/phases/014_Grid_Density_And_Fit.md` § 5.2 `Urgent needs`).
-2. **Settings-driven toggle (Groups Kit Catalog):**
-   Kits are cataloged in `data/phrase_kits.json`. In Settings $\rightarrow$ Groups (or Board
-   Kits), a supporter can toggle any kit ON or OFF. Turning a kit ON mounts its group door
-   in the user's Groups catalog.
-3. **One Cells setting per profile:**
-   Phrase groups obey the profile's cell density dial (`grid15`, `grid30`, `grid60`),
-   flowing across pages with `Next ›` as specified in 014/027. For acute/motor-impaired
-   adults, `grid15` (5×3) provides large, stable touch and eye-gaze targets.
-4. **Eye-Gaze ready via iPadOS 18:**
-   No custom camera CV code needed. Uses native iPadOS 18 Eye Tracking + Dwell Control.
-   Pip's spacious `grid15` layout and neutral gutters prevent the "Midas Touch" (gaze
-   fatigue triggering unintended selections).
-5. **Full-Sentence TTS Engine:**
-   Phrase tiles speak using Pip's existing high-quality sentence TTS pipeline (024/028),
-   producing fluid prosody rather than concatenated robotic words.
+To comply with FDA and Health Canada medical software guidelines:
+- Phrasing avoids claiming to signal acute medical emergencies (e.g. *"Trouble breathing"* instead of *"I can't breathe"*).
+- Every bedside screen and setup card displays the prominent, permanent disclaimer:
+  > **Pip Bedside is a communication aid between patients, families, and care teams. It is not an emergency medical alert system or patient monitor. In a medical emergency, always use the hospital nurse call bell or call 911.**
 
-## Proposed Curated Kits
+---
 
-### 1. Urgent Needs & Hospital (Acute / ICU / Post-Op)
-*Target: ICU, acute trauma, stroke rehab, tracheostomy.*
-*Styling: High-contrast neutral cards; color-neutral medical pictograms; emergency red highlight on distress tiles.*
-*Sample Tiles:*
-- **Acute / Pain:** *"I'm in pain"* (opens 0–10 scale + body location), *"I can't breathe"*, *"Suction please"*, *"Call the nurse"*, *"What is happening?"*, *"I feel sick"*.
-- **Positioning & Body:** *"Move me / turn me"*, *"Sit me up"*, *"Lie me down"*, *"My mouth is dry"*, *"Need bathroom"*, *"Too hot / fan"*, *"Too cold / blanket"*.
-- **Emotional & Connection:** *"I'm scared"*, *"Don't leave"*, *"Thank you"*, *"I love you"*, *"Call my family"*.
+## The Bedside Board (grid15)
 
-### 2. Adult Comfort & Living (ALS / MND / Stroke / Senior Care)
-*Target: Home care, progressive illness, long-term rehab.*
-*Styling: Dignified slate/white cards, color-neutral stick icons or optional text-only mode.*
-*Sample Tiles:*
-- *"Please adjust my pillow"*, *"Turn on the TV"*, *"I'd like to sleep now"*, *"I want some quiet"*, *"Glasses please"*, *"Headphones please"*, *"Water please"*, *"Check my phone"*, *"What time is it?"*, *"Leave me be for a bit"*.
+The default home board uses Pip's 5×3 (`grid15`) layout:
 
-### 3. Gestalt Language Scripts (Autism / GLP Stages 1 & 2)
-*Target: Gestalt language processors, neurodivergent communicators.*
-*Styling: Calming neutral with subtle category accent and expressive stick art.*
-*Sample Tiles (organized by communicative intention):*
-- **Transition & Action:** *"Let's go check it out!"*, *"Time to get moving"*, *"Ready, set, go!"*, *"Where are we going?"*.
-- **Regulation & Protest:** *"I need a break right now"*, *"It's too loud in here"*, *"That's not what I want"*, *"I'm feeling overwhelmed"*, *"Stop that, please"*.
-- **Joy & Connection:** *"Look at that!"*, *"That is so cool!"*, *"We did it!"*, *"You're so silly"*, *"Come play with me"*.
+```text
++-------------------+-------------------+-------------------+-------------------+-------------------+
+|     (🚨 Red)      |     (🚨 Red)      |   (Slate/White)   |   (Slate/White)   |   (Neutral Blue)  |
+|      PAIN ▸       | TROUBLE BREATHING |      SUCTION      |   MOVE / TURN ME  |       YES         |
++-------------------+-------------------+-------------------+-------------------+-------------------+
+|   (Slate/White)   |   (Slate/White)   |   (Slate/White)   |   (Slate/White)   |   (Neutral Blue)  |
+|    WATER / MOUTH  |  TOILET / BEDPAN  |    HOT / COLD ▸   |  I'M SCARED / TALK|        NO         |
++-------------------+-------------------+-------------------+-------------------+-------------------+
+|   (Soft Green)    |   (Soft Green)    |   (Slate/White)   |   (Slate/White)   |     (🚨 Red)      |
+|    CALL NURSE ▸   |    CALL MARIA ▸   |     THANK YOU     | 🗂️ MORE NEEDS...  |       HELP        |
++-------------------+-------------------+-------------------+-------------------+-------------------+
+```
 
-### 4. Playground & Peer Banter (School-Age Social)
-*Target: Fast-paced school, recess, siblings.*
-*Styling: Dynamic, high-utility phrases.*
-*Sample Tiles:*
-- *"That's not fair!"*, *"My turn next!"*, *"Watch this!"*, *"No way!"*, *"Wait for me!"*, *"You're funny"*, *"Good job!"*, *"See you later"*.
+### Expanding Tiles (Inline Families in the Smart Bar)
+1. **PAIN ▸:** Opens an inline 0–10 numeric pain scale, followed by a 6-region body map
+   (`head · chest · belly · back · arm · leg`).
+2. **HOT / COLD ▸:** Expands to `too hot · too cold · blanket · fan`.
+3. **CALL NURSE ▸:** Defaults to *"Call nurse"*; personalized in setup to *"Call Sarah"*.
+4. **CALL MARIA ▸:** Defaults to *"Call family"*; personalized in setup to *"Call Maria"*.
+5. **🗂️ MORE NEEDS...:** Opens secondary group page: `glasses · TV on/off · lights · quiet · chaplain · dentures`.
+
+---
+
+## Technical Architecture
+
+1. **Zero-Account Entry (`/hospital`):**
+   Visiting `pipaac.org/hospital` boots an ephemeral local profile seeded with the
+   Bedside kit. No sign-up, passkey, or email required. Works 100% offline via service
+   worker once loaded.
+2. **30-Second Bedside Setup Header:**
+   The top bar features an unobtrusive `⚙️ Quick Setup` pill that slides open an inline
+   2-field drawer:
+   - Patient Name (e.g. "David")
+   - Nurse Name (e.g. "Sarah")
+   - Family Contact (e.g. "Maria")
+   - Language (English / Español / Français / 中文)
+   Closing the drawer immediately updates the board tiles.
+3. **"Show the Nurse" Flash Overlay:**
+   Tapping an urgent card (Pain, Breathing, Suction, Toilet) speaks the phrase via
+   Pip's sentence TTS and triggers a 4-second full-screen high-contrast visual alert:
+   - 80pt bold text centered on display.
+   - Large monochrome pictogram.
+   - For bilingual mode: Large English text on top, patient's native language below.
+   - One tap anywhere dismisses immediately.
+4. **iPadOS 18 Eye Tracking Compatibility:**
+   Because `grid15` cells are massive (~200px × 150px on an iPad 10.9"), patients using
+   iPadOS 18 native Eye Tracking with Dwell Control have effortless target acquisition
+   with zero custom CV code required.
+
+---
 
 ## Slices
 
 | Slice | Scope | Output / Proof |
 | :--- | :--- | :--- |
-| **Slice A: Phrase Kits Catalog & Data** | Curated starter kit definitions in `public/shared/phrase_kits.mjs` and seed definitions. | Data structure with id, title, audience, urgency, and phrase lists. Tests verify valid format and zero schema conflicts. |
-| **Slice B: Dignified Styling & Neutral Pictograms** | CSS rule for phrase and adult tiles: suppresses Fitzgerald color classes; applies neutral slate/dark tokens and urgency badges. Generates/maps color-neutral stick figures (slate/charcoal torsos or line art) for phrase tiles. | Visual proof on `public/preview-phrase-kits.html`. |
-| **Slice C: Board Kits in Settings** | Settings page / section allowing supporters to browse available kits and toggle them into the profile's Groups. | Toggle adds/removes kit door from Groups without touching the main board. |
-| **Slice D: Onboarding Profile Prompt** | First-run welcome question expanded: "Words First" (kids/generative) vs "Messages First" (hospital/adult recovery) vs "Gestalt Scripts". | Sets profile starter and pre-activates the chosen kit cleanly. |
-| **Slice E: Validation & Preview** | Preview harness `public/preview-phrase-kits.html` to review all phrases, voice playback, and density reflow. | Works Test: all kits render across 15, 30, and 60 densities and speak via TTS. |
+| **Slice A: Bedside Kit Data & Phrasing** | Catalog seed `public/shared/bedside_kit.mjs` containing the 12 primary tiles, families, and translations. | Unit tests verify tile definitions, bilingual text pairs, and 15-cell geometry. |
+| **Slice B: Dignified Styling & Monochrome Pictograms** | CSS classes (`.tile--bedside`, `.tile--distress-red`) stripping Fitzgerald colors and applying slate/charcoal styling to stick figures. | Visual proof in `public/preview-bedside.html`. |
+| **Slice C: "Show the Nurse" Visual Overlay** | Full-screen visual card component that displays upon speaking high-priority needs. | Interactive demo verifying overlay duration, dismiss tap, and bilingual text. |
+| **Slice D: Bedside Quick Setup & Personalization** | 30-second inline header drawer to set Nurse name, Family contact, and Language. | Works test: changing names immediately re-labels and re-voices tiles. |
+| **Slice E: Zero-Friction Route (`/hospital`)** | URL routing in worker and static app booting directly into Bedside mode without auth. | Clean URL test: navigating to `/hospital` loads working board in under 2 seconds. |
+| **Slice F: Hospital SLP Review Gate** | Review session with 1–2 practicing acute care or rehabilitation SLPs. | Feedback documented; adjustments made before general announcement. |
