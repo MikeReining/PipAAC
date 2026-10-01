@@ -51,7 +51,9 @@ Executing phases only. Each row names the **next** slice.
 
 ## Proposals awaiting review
 
-None currently.
+| Proposal | Ask |
+| --- | --- |
+| [034 — The welcome gets its own page](034_Welcome_Page.md) | Sanity-check the viewport-pan theory and the `/new/` split before building |
 
 The language and voice schema was accepted 2026-09-22 and moved to
 `docs/product/Language_And_Voice_Schema.md` (amendments in its § 12).
