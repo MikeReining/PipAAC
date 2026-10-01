@@ -24,7 +24,7 @@ const RUN = (db, sql, p = []) => db.prepare(sql).run(...p);
 export function mountSpeech({
   db, me, locale, sentence, barState, live,
   renderBar, renderStrip, renderGrid, rerenderView,
-  scheduleStatsRefresh, artForWord, syncTxButtons, toast,
+  scheduleStatsRefresh, artForWord, syncTxButtons, toast, openSettings,
 }) {
   const SILENT_SLOT_MS = 400;
   const audio = new Audio();
@@ -318,17 +318,24 @@ export function mountSpeech({
         renderStrip();
       } else {
         /* Every press still speaks the bar as built — but a refused
-         * transform must say why, or the button just looks dead (a
-         * missing license reads exactly like "broken wand"). */
-        const why = !res ? "no connection"
-          : body?.error === "bad_license" ? "no license on this device"
-          : body?.error === "transform_unavailable" ? "the service is off"
-          : body?.error === "fair_use" ? "today's budget is spent"
-          : body?.error ?? `http ${res.status}`;
-        toast?.(`Couldn't ${{
-          fix: "fix it", question: "ask it",
-          past: "make it past", future: "make it future",
-        }[mode] ?? "change it"} — ${why}; spoke it as built.`);
+         * transform must say why, or the button just looks dead.
+         * Unlicensed is the common case and an upsell: name the plan and
+         * hand the grown-up the door (Settings → Your account). */
+        const name = {
+          fix: "Fix it", question: "Ask it",
+          past: "Say it in the past", future: "Say it in the future",
+        }[mode] ?? "That button";
+        if (!res) {
+          toast?.(`${name} needs the internet — spoke it as it was.`);
+        } else if (body?.error === "bad_license") {
+          toast?.(`${name} comes with Pip Lifetime — a grown-up can unlock it in Settings.`,
+            null, { actionLabel: "Open Settings",
+              onAction: () => openSettings?.("you") });
+        } else if (body?.error === "fair_use") {
+          toast?.(`${name} reached today's limit — it will be back tomorrow.`);
+        } else {
+          toast?.(`${name} couldn't work just now — spoke it as it was.`);
+        }
       }
       await speakSentence();
       live.spotDemo?.onTransform?.(mode);
