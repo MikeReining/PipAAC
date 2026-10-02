@@ -242,7 +242,7 @@ export function mountDevices({
         const n = prompt("Name this person", u.name || "");
         if (n === null) return;
         if (u.id === me.id) await saveUser({ name: n.trim() });
-        else await putUser(userStore, { ...u, name: n.trim() });
+        else await putUser(userStore, { ...u, name: n.trim(), nameDirty: true });
         await renderUsers();
       };
       row.append(edit);

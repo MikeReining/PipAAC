@@ -162,7 +162,11 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- (off leaves those cells empty, still reserved), and the four occasion
   -- groups show in the index. Both default ON.
   group_top_row INTEGER NOT NULL DEFAULT 1 CHECK (group_top_row IN (0, 1)),
-  occasions_visible INTEGER NOT NULL DEFAULT 1 CHECK (occasions_visible IN (0, 1))
+  occasions_visible INTEGER NOT NULL DEFAULT 1 CHECK (occasions_visible IN (0, 1)),
+  -- The person's name (2026-10-02), synced and sealed like every edit so a
+  -- restored or newly linked device knows who this is. The device's people
+  -- list keeps a copy for the launch list, which reads it unopened.
+  person_name TEXT CHECK (person_name IS NULL OR length(person_name) BETWEEN 1 AND 80)
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

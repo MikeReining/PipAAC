@@ -31,6 +31,7 @@ import { setDeviceId } from "./shared/ops.mjs";
 import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
 import { initSync, syncHealth, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import { refreshStatsDays } from "./shared/stats.mjs";
+import { followProfileName, nameToProfile as nameToProfileDb } from "./shared/person_name.mjs";
 import { flushResearch } from "./shared/research.mjs";
 import { mountWincard } from "./board/wincard-ui.js";
 import { mountProgress } from "./board/progress-ui.js";
@@ -117,9 +118,11 @@ if (!me && users.length === 0) {
 if (!me) me = await pickPerson(users); // shared device, no home — ask
 sessionStorage.setItem("pip_active_user", me.id);
 await touchOpened(userStore, me.id);
+let nameToProfile = () => {}; // set once the db is open (below)
 const saveUser = async (patch) => {
   Object.assign(me, patch);
   await putUser(userStore, me);
+  nameToProfile(patch);
 };
 
 // One writer per user (§ 12.2): a second tab on the same user is told,
@@ -141,6 +144,11 @@ if (navigator.locks?.request) {
 navigator.storage?.persist?.().catch(() => {});
 
 const { db, catalog, phrases, formTable, flush: flushDb } = await bootDb(userStore, me.id);
+
+// The person's name syncs (public/shared/person_name.mjs).
+nameToProfile = (patch) => nameToProfileDb(db, patch);
+const followName = () => followProfileName(db, me, saveUser);
+await followName();
 // 025: the lit-face map — catalog.feelingVoice when the Ara rebuild
 // ships it, /feeling_voice.json until then.
 const feelingData = await loadFeelingData(catalog);
@@ -157,6 +165,7 @@ getDeviceIdentity().then(({ deviceId }) => setDeviceId(deviceId))
  *  screen. Debounced: a drain batch is one repaint, not one per op. */
 let syncRepaintTimer = null;
 function onSyncApplied() {
+  followName().catch(() => {});
   clearTimeout(syncRepaintTimer);
   syncRepaintTimer = setTimeout(() => {
     entityPhoto.clear(); // photo_key may have changed

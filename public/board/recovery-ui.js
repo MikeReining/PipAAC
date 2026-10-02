@@ -12,7 +12,7 @@ import {
 } from "../shared/recovery.mjs";
 import { RECOVERY_WORDS } from "../shared/recovery_words.mjs";
 import { restoreByProof } from "../shared/sync_client.mjs";
-import { addUser } from "../shared/users.mjs";
+import { addUser, putUser } from "../shared/users.mjs";
 
 const $ = (id) => document.getElementById(id);
 
@@ -103,19 +103,6 @@ export function mountRecovery({
       return;
     }
     const rootBytes = root instanceof Uint8Array ? root : new Uint8Array(root);
-    // A board set up before 12-word cards holds a 32-byte root, which
-    // 12 words can't carry (and whose proof the relay never indexed).
-    // Showing its card mints a 12-word one through Replace card.
-    if (rootBytes.length !== ROOT_BYTES) {
-      try {
-        await replaceCard();
-      } catch {
-        openRec("Recovery card");
-        recBody.innerHTML =
-          '<p class="hint">Connect to the internet to make the new 12-word card.</p>';
-      }
-      return;
-    }
     const payload = await cardLink(relayBase, rootBytes, RECOVERY_WORDS);
     const words = (await keyToWords(rootBytes, RECOVERY_WORDS)).split(" ");
     openRec("Recovery card");
@@ -231,10 +218,13 @@ export function mountRecovery({
       } catch { /* a bundle this root can't open stays ignored */ }
     }
     await getUserKey(store, userId, r.epoch);
+    // Restored from the card: this person has it in hand, so Backup and
+    // the Protect card don't ask for one.
     const restored = await addUser(userStore, {
       id: userId,
       sync: { userId, epoch: r.epoch, cursor: 0 },
     });
+    await putUser(userStore, { ...restored, cardShownAt: Date.now() });
     if (r.moved) sessionStorage.setItem("pip_restore_moved", "1");
     status.textContent = "Restoring the user…";
     sessionStorage.setItem("pip_active_user", restored.id);

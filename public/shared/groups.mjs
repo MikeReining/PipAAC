@@ -272,6 +272,7 @@ const SYNCED_SETTINGS = new Set([
   "expressive_voice",
   "group_top_row",
   "occasions_visible",
+  "person_name",
 ]);
 export function setSetting(db, key, value) {
   if (!SYNCED_SETTINGS.has(key)) throw new Error(`setSetting: ${key} is not a synced setting`);

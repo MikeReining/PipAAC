@@ -376,9 +376,9 @@ Restore (above the first-run welcome on a new device). The relay
 finds the user from the proof: `POST /restore` looks up R2
 `ri/<sha256(proof)>` → user id, written at bootstrap and replaced on
 Replace card (`restoreByProof`, `indexProof`, `src/worker/restore.js`)
-— keyed by the hash because the proof is itself the credential. A
-board set up before 12-word cards holds a 32-byte root: showing its
-card runs Replace card once, minting a 12-word root and indexing it. Card UI: **Email** (phones: share sheet; desktop: Gmail
+— keyed by the hash because the proof is itself the credential. The
+person's name rides the synced profile (`learner_profile.person_name`),
+so a restored device comes back named. Card UI: **Email** (phones: share sheet; desktop: Gmail
 compose), **Copy link**, **Print**, and **More…** (Save image, Replace
 card…) (`showCard`, `public/board/recovery-ui.js`). Pasting tolerates
 spaces, commas, hyphens, newlines. No users existed, so the 43-char
