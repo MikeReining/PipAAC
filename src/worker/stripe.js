@@ -124,6 +124,7 @@ export async function handleCheckout(request, env, url) {
 
   const res = await stripeApi(env, "/v1/checkout/sessions", {
     mode: "payment",
+    allow_promotion_codes: "true",
     "line_items[0][price]": env.STRIPE_PRICE_ID,
     "line_items[0][quantity]": "1",
     client_reference_id: userId,
@@ -154,9 +155,10 @@ export async function handleStripeWebhook(request, env) {
   }
   const s = event.data?.object ?? {};
   // payment_status "unpaid" happens with delayed methods (e.g. bank
-  // debits) — the grant waits for payment, or for checkout.session
-  // .async_payment_succeeded, which we treat as another completed event.
-  if (s.payment_status && s.payment_status !== "paid") {
+  // debits) — the grant waits for payment. "no_payment_required" is a
+  // fully-discounted checkout (100%-off coupon): it IS complete.
+  if (s.payment_status
+    && !["paid", "no_payment_required"].includes(s.payment_status)) {
     return json({ ok: true, ignored: "unpaid" });
   }
   const userId = s.client_reference_id || s.metadata?.user_id;

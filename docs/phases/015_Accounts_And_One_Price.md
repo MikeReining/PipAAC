@@ -528,7 +528,16 @@ price; local webhook proof runs `stripe listen --forward-to
 localhost:21087/api/v1/stripe/webhook` and pastes its session `whsec_`
 into `STRIPE_WEBHOOK_SECRET`. Prod secrets pushed 2026-10-02 —
 `STRIPE_SECRET_KEY` is a durable `sk_live` (verified against live mode).
-Routes reach prod on the next `wrangler deploy`.
+**Deployed 2026-10-02** (`wrangler deploy`, version 0a618cd0): all three
+routes verified live — checkout `bad_request`, webhook `bad_signature`,
+redeem `bad_code`. Checkout sessions enable `allow_promotion_codes`;
+a `no_payment_required` completion (100%-off coupon) grants the same as
+`paid`. Test coupons: `PIPTEST` promo code (100% off, once) exists in
+test and live mode — `promo_1UMEbfFPjZdfZdLbeiPx45kN` /
+`promo_1UMEbfFPjZdfZdLbWMDAVQqg`, coupons `6cO2A04j` / `gyyitngZ`.
+More coupons: `stripe coupons create [--live] -d percent_off=N
+-d duration=once` then `stripe promotion_codes create -d
+"promotion[type]=coupon" -d "promotion[coupon]=<id>" -d code=<CODE>`.
 
 Still owed by this slice: Stripe/Apple **confirmation wiring tested
 live** (test-mode purchase end-to-end), iOS consumable IAP (lands with

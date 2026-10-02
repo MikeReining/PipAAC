@@ -132,6 +132,15 @@ test("webhook ignores other events, unpaid sessions, and unsigned calls", async 
   assert.equal(res.status, 200);
   assert.equal(await relayEntitlement(env, UID), "free");
 
+  // A 100%-off coupon completes with no_payment_required — still grants.
+  ({ payload, header } = await signEvent({
+    type: "checkout.session.completed",
+    data: { object: { id: "cs_3", payment_status: "no_payment_required",
+      client_reference_id: UID } } }));
+  res = await webhook(env, payload, header);
+  assert.equal(res.status, 200);
+  assert.equal(await relayEntitlement(env, UID), "lifetime");
+
   assert.equal((await webhook(env, payload, "t=1,v1=forged")).status, 403);
   // Missing secret = payments not configured — never a silent grant.
   res = await webhook(fakeEnv({ PIP_INTERNAL_SECRET: INTERNAL }), payload, header);
@@ -174,6 +183,7 @@ test("checkout: session-gated, supporter-of-the-user only, opens a Stripe sessio
   assert.equal(sent.get("mode"), "payment");
   assert.equal(sent.get("line_items[0][price]"), "price_lifetime");
   assert.equal(sent.get("client_reference_id"), UID);
+  assert.equal(sent.get("allow_promotion_codes"), "true");
 });
 
 test("checkout without Stripe config is a clean 503", async () => {
