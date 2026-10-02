@@ -300,8 +300,11 @@ keeps its id and its owner module's wiring — Settings owns navigation only.
   people, no levels to pick. Whoever creates the board, a device an
   owner pairs, and a recovery-card restore are Owners; everyone invited
   joins as Team; an owner can Make owner / Make team. Team edits
-  everything; only owners invite, remove, add devices, manage the
-  license, replace the card, and delete the board. Enforced by the relay
+  everything; only owners invite, remove, add devices, replace the
+  card, and delete the board. **Amended 2026-10-02** (founder: "let
+  anybody buy because the license is linked to the user" — the SLP
+  sets the board up, the parent buys): anyone on the team may buy or
+  activate Pip Lifetime. Enforced by the relay
   (`src/worker/relay.js` `isOwner`), shown in Team & devices
   (`public/board/devices-ui.js` `applyOwner`); a Team device sees a
   "You're on the team" note and no management buttons, and is never

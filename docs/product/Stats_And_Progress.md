@@ -85,12 +85,21 @@ words, 38 different, longest sentence 4 words", "First time: *help*".
 
 - Wins only. A quieter week shows the most-used word or a streak, never
   a drop.
-- The card ends with the way in: "See all of Maya's progress with Pip
-  Lifetime."
+- The card ends with the way in: one button to Settings → Progress.
 
 **BUILT 2026-09-25** — `public/shared/wincard.mjs` (rules) +
 `public/board/wincard-ui.js` (Parent Corner card + once-a-week note).
 Wins are absolute-only by construction — no rule compares weeks.
+
+**Free view of Settings → Progress (BUILT 2026-10-02, design approved
+that day: https://claude.ai/artifact/WvXrkoXps4P5ERqfmiyEYZ).** No
+control that does nothing: the week's figures (words, different, then
+the longest sentence once it is 2+, else new words), wins drawn as the
+real word tiles (`winItems`), "Pip has counted N weeks of Maya's
+words" (`firstTapDay`, the first day with a tap), a locked drawing of
+the dashboard that never shows the child's numbers, five plain
+benefits, and one button with the price on it. Until checkout lands
+(015) the button opens Your account → Pip Lifetime.
 
 ### 4.2 The dashboard and the report (Pip Lifetime)
 
@@ -107,14 +116,33 @@ For a Lifetime user, every supporter sees the full dashboard:
   meeting: the numbers, the trends, goal words, and the date range.
   Shared from the device, through the system share sheet.
 
-BUILT: Parent Corner → Progress (`public/board/progress-ui.js` +
-`public/shared/dashboard.mjs` + `report.mjs`). Aggregation reads
-`stats_day` only — the raw tap log and sentence table are never
-opened. The headline toggle is a supporter preference stored per user
-(`pip_dash_mode:<user>`), separate from the child's presentation mode.
-Share report produces a real PDF via `navigator.share` with a download
-fallback. A missing or unreachable relay resolves to the free view —
-the win card and the offer — and never touches the board.
+BUILT: Settings → Progress draws in its own page, no overlay
+(`public/board/progress-ui.js` + `progress-charts.js` + `progress-ui.css`;
+numbers from `public/shared/dashboard.mjs`; PDF `report.mjs`).
+Redesigned 2026-10-02 (design above). Order: range and Share report
+in the header; three headline numbers with a trend line (ink, no
+judging color, "so far" on the running period); goal words — every
+target, on their own (ink) vs with the glow (amber), by week — with
+sentence buttons under them; new words as dated tiles; sentence
+length; most-used words; kinds of words and Smart bar help; when (hour
+and day as two charts — `stats_day` doesn't cross them); the
+week-by-week table; "Lead with Words / Speed" at the foot. Quiet
+periods are true zeros; a range of two weeks or less trends by day.
+The PDF follows the same order with vector bars and lines, WinAnsi
+text. Aggregation reads `stats_day` only — the raw tap log and
+sentence table are never opened. The headline choice is a supporter
+preference stored per user (`pip_dash_mode:<user>`), separate from the
+child's presentation mode. A missing or unreachable relay resolves to
+the free view and never touches the board.
+
+**Testing a Lifetime user** (no purchase yet): open the app with
+`?unlock`. On localhost a bare `?unlock` (e.g.
+`http://localhost:21087/?reseed&unlock`) mints the license from the
+dev-only endpoint; anywhere else `?unlock=<PIP_UNLOCK_TOKEN>`. The
+link activates exactly like a pasted key (`public/board/unlock.js` →
+devices-ui `activateLicense`): an unsynced board starts syncing, the
+relay records Lifetime, the device keeps a copy. The free view is any
+user that hasn't been unlocked (Settings → Team & devices → Add a person).
 
 ### 4.3 Never
 

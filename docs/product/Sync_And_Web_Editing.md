@@ -523,7 +523,8 @@ never shares a sibling.
 - **Owner and Team** (**BUILT 2026-09-28**, founder ruling). A supporter
   joins as Team: every edit, no management. Owners (untagged devices,
   or accounts marked owner) alone add/remove devices and supporters,
-  rotate keys, replace the card, set the license, and delete the board;
+  rotate keys, replace the card, and delete the board (anyone may set
+  the license — amended 2026-10-02, Design_System § Settings);
   the relay returns 403 `owner_only` otherwise and keeps the last owner
   (409 `last_owner`). A Team device's join tokens are stamped with its
   account. Contract and UI: `docs/product/Design_System.md` § Settings.
