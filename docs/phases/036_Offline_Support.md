@@ -62,20 +62,22 @@ fonts — any one failing while offline is a dead page.
   (`{path, sha256, bytes}` per file), `sw.js` reads it at install.
   Drift-checked in `npm run check:fast` — a hand-maintained list will
   lie.
-- Precache set ≈ **62 MB**: shell (index.html, `/board/*`, `/shared/*`,
+- Precache set ≈ **70 MB** (62 MB + ~8 MB symbols from 037): shell (index.html, `/board/*`, `/shared/*`,
   `/vendor/sqlite-wasm`, `/fonts`, `/brand`, `/icons`,
   `manifest.webmanifest`, `feeling_voice.json`, `/audio/onramp/*`)
   **plus** `catalog.json` (2.2 MB), `phrase_table.en.json` (12 MB),
   `form_table.en.json.gz` (5.3 MB), **and all of `/audio/*`** (41 MB) —
   precaching the catalog clips is what makes "every catalog word still
-  speaks" true offline, not just words tapped before.
+  speaks" true offline, not just words tapped before. **Plus all of
+  `/symbols/*`** (~8 MB WebP after 037) — likewise for pictures.
 - Navigations (`/`, `/index.html`) → cached shell. Single page, no
   SPA-fallback needed.
 
 ### B — Runtime caching
 
-- Cache-first: `/symbols/*`, `/api/v1/pictures/img/<id>`. First view
-  fills; repeats are local.
+- Cache-first: `/api/v1/pictures/img/<id>` (drawn/extended art — not in
+  the manifest). First view fills; repeats are local. `/symbols/*` is
+  precached (§ C), so it needs no runtime rule once 037 lands.
 - Never cache: `/api/*` POSTs, the relay WS upgrade, `/admin/*`,
   auth/passkey routes — all fall through to network; callers already
   degrade.
@@ -84,12 +86,13 @@ fonts — any one failing while offline is a dead page.
 
 ### C — `/symbols/` strategy (resolved by 037)
 
-`public/symbols/` is ~600 MB of master-resolution PNGs today — lazy
-cache-first (B) would be the only option. Once **037** lands (shipped
-art ≈ 15–25 MB WebP), the full symbol set joins the precache manifest
-and every word's picture is offline from the first visit — the real
-promise. If 037 stalls, ship B's lazy path anyway; the SW code is
-identical either way, only the manifest contents differ.
+**Decided: full precache.** `public/symbols/` is ~600 MB of
+master-resolution PNGs today — not precacheable. **037** (building
+first) ships ~8 MB of WebP, so the full symbol set joins the manifest
+and every word's picture is offline from the first visit. 036 does not
+start until 037's byte gate passes; there is no lazy-symbols fallback
+to maintain. (If 037 is ever abandoned, reopen this section — don't
+silently ship a lazy path under an "offline" claim.)
 
 ### D — Registration, updates, version pinning
 
