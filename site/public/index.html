@@ -15,7 +15,7 @@
   <meta property="og:url" content="https://pipaac.org/">
   <meta property="og:type" content="website">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Pip AAC", "applicationCategory": "EducationalApplication", "operatingSystem": "iPadOS, Web", "url": "https://pipaac.org", "offers": [{"@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD"}, {"@type": "Offer", "name": "Pip Lifetime", "price": "49", "priceCurrency": "USD"}]}</script>
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is it really free? What's the catch?", "acceptedAnswer": {"@type": "Answer", "text": "Every built-in word speaks, free, forever. You also get 20 words of your own, your child's device plus one helper, backup, all voices, and feelings. If you want more, it's $49 once. That's the whole catch."}}, {"@type": "Question", "name": "What does $49 get me?", "acceptedAnswer": {"@type": "Answer", "text": "Unlimited words of your own, every helper on the team, the full progress dashboard and report, and 300 drawings. Once. Forever."}}, {"@type": "Question", "name": "Will you ever make it a subscription?", "acceptedAnswer": {"@type": "Answer", "text": "No. A voice is not rented. And nothing your child already has is ever taken away, whether you pay or not."}}, {"@type": "Question", "name": "Will the buttons move around?", "acceptedAnswer": {"@type": "Answer", "text": "Never on their own. Suggestions live in a strip at the top; the board stays put. You decide if a word moves."}}, {"@type": "Question", "name": "Can I make it look and sound like our family?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Put any word in any spot. Add your people with your photos and their real names. Record your own voice for any word. What you add beats our defaults everywhere."}}, {"@type": "Question", "name": "Does it work on our iPad?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Pip runs on the iPad you already have, or any device with a modern browser. Tap Create your child's board and you're in. No download, no account to start."}}, {"@type": "Question", "name": "Is $49 per child or per family?", "acceptedAnswer": {"@type": "Answer", "text": "Per child: the person who speaks. Every adult helper is free, however many there are."}}, {"@type": "Question", "name": "I'm an SLP. Do I pay?", "acceptedAnswer": {"@type": "Answer", "text": "Never. Set up as many clients as you like, and each family starts free."}}]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is it really free? What's the catch?", "acceptedAnswer": {"@type": "Answer", "text": "Every built-in word speaks, free, forever. You also get 20 words of your own, your child's device plus one helper, backup, all voices, and feelings. If you want more, it's $49 once. That's the whole catch."}}, {"@type": "Question", "name": "What does $49 get me?", "acceptedAnswer": {"@type": "Answer", "text": "Unlimited words of your own, every helper on the team, the full progress dashboard and report, and 300 drawings. Once. Forever."}}, {"@type": "Question", "name": "Will you ever make it a subscription?", "acceptedAnswer": {"@type": "Answer", "text": "No. A voice is not rented. And nothing your child already has is ever taken away, whether you pay or not."}}, {"@type": "Question", "name": "Will the buttons move around?", "acceptedAnswer": {"@type": "Answer", "text": "Never on their own. Suggestions live in a strip at the top; the board stays put. You decide if a word moves."}}, {"@type": "Question", "name": "Can I make it look and sound like our family?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Put any word in any spot. Add your people with your photos and their real names. Record your own voice for any word. What you add beats our defaults everywhere."}}, {"@type": "Question", "name": "Does it work on our iPad?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Pip runs on the iPad you already have, or any device with a modern browser. Tap Create your child's board and you're in. No download, no account to start, and once it's open it speaks every word without Wi-Fi."}}, {"@type": "Question", "name": "Is $49 per child or per family?", "acceptedAnswer": {"@type": "Answer", "text": "Per child: the person who speaks. Every adult helper is free, however many there are."}}, {"@type": "Question", "name": "I'm an SLP. Do I pay?", "acceptedAnswer": {"@type": "Answer", "text": "Never. Set up as many clients as you like, and each family starts free."}}]}</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -58,6 +58,7 @@
           <li>$49 once, never monthly</li>
           <li>Every helper free</li>
           <li>SLPs free</li>
+          <li>Works offline</li>
         </ul>
       </div>
 
@@ -343,10 +344,12 @@
           </article>
 
           <article class="card">
-            <div class="card-art faces" aria-hidden="true"><span>😊</span><span>😢</span><span>😠</span></div>
-            <h3>Say it like you mean it.</h3>
-            <p>Any sentence, spoken happy, sad, or angry. A furious <em>"go away"</em>
-              shouldn't sound polite. <em>"I love you"</em> shouldn't sound like a weather report.</p>
+            <div class="card-art bars" aria-hidden="true">
+              <i style="--h:30%"></i><i style="--h:45%"></i><i style="--h:40%"></i><i style="--h:62%"></i><i style="--h:70%"></i><i class="now" style="--h:88%"></i>
+            </div>
+            <h3>Progress you can show.</h3>
+            <p>Every number comes from your child's own taps. A free weekly win card, and a full
+              report for the IEP meeting with Lifetime.</p>
           </article>
 
           <article class="card">
@@ -360,14 +363,12 @@
           </article>
 
           <article class="card">
-            <div class="card-art morph" aria-hidden="true">
-              <span class="chip">want apple</span>
-              <span class="morph-arrow">↓</span>
-              <span class="chip full">I wanted an apple.</span>
+            <div class="card-art" aria-hidden="true">
+              <svg class="wifi-off" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0"/><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16.1a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/><path d="M3 3l18 18" stroke="#c62828"/></svg>
             </div>
-            <h3>From "want apple" to "I wanted an apple."</h3>
-            <p>One tap turns your child's words into a full sentence, or into the past tense.
-              They say it their way, and Pip helps them say it the long way when they want to.</p>
+            <h3>Talks without Wi-Fi.</h3>
+            <p>In the car, at Grandma's, on the plane. Every word speaks with no connection.
+              Your child's voice never waits for a signal.</p>
           </article>
 
           <article class="card wide team">
@@ -418,6 +419,7 @@
               <li>20 words of your own: people, pets, places</li>
               <li>Your child's device + one helper</li>
               <li>All voices, suggestions, groups, feelings</li>
+              <li>Works offline</li>
               <li>Backup and card restore</li>
               <li>The weekly win card</li>
             </ul>
@@ -510,7 +512,7 @@
           </details>
           <details>
             <summary>Does it work on our iPad?</summary>
-            <p>Yes. Pip runs on the iPad you already have, or any device with a modern browser. Tap Create your child's board and you're in. No download, no account to start.</p>
+            <p>Yes. Pip runs on the iPad you already have, or any device with a modern browser. Tap Create your child's board and you're in. No download, no account to start, and once it's open it speaks every word without Wi-Fi.</p>
           </details>
           <details>
             <summary>Is $49 per child or per family?</summary>

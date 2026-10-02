@@ -1205,3 +1205,7 @@ p { margin: 0 0 1em; }
 .card-art .tile { width: 76px; }
 .card-art .tile b { font-size: .85rem; }
 .draw-arrow { font-size: 1.6rem; }
+.wifi-off { color: var(--ink); }
+.bars { align-items: flex-end; gap: 8px; padding: 18px 0; }
+.bars i { width: 18px; height: var(--h); border-radius: 5px 5px 2px 2px; background: var(--green-fill); border: 2px solid var(--green); }
+.bars .now { background: var(--pip-amber); border-color: var(--ink); }
