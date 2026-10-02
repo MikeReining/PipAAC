@@ -27,25 +27,26 @@ export function rangeTotals(db, fromDay, toDay) {
   const hours = Array(24).fill(0);
   const dows = Array(7).fill(0);
   const byWeek = new Map(); // weekIdx → {week, days:Set, words, different:Set, sentences, longest}
+  const byDay = new Map(); // day → the same shape, one bucket per local day
   const wpmPoints = []; // {median, samples} per day — weighted-median inputs
   const firstKeys = new Set();
+  const firstDays = {}; // key → the day it was first tapped (new words)
   let words = 0, sentences = 0, sentenceWords = 0, longest = 0, spotlit = 0;
   let core = 0, fringe = 0, own = 0, newCount = 0;
 
   for (const r of rows) {
     const p = JSON.parse(r.payload);
     const wk = Math.floor(r.day / WEEK_DAYS);
-    const w = byWeek.get(wk) ?? {
-      week: wk, days: new Set(), words: 0, wordSet: new Set(),
-      sentences: 0, sentenceWords: 0, longest: 0, wpm: [],
-    };
-    w.days.add(r.day);
-    w.words += p.words;
-    w.sentences += p.sentences;
-    w.sentenceWords += p.sentences * (p.words_per_sentence ?? 0);
-    w.longest = Math.max(w.longest, p.longest_sentence);
-    if (p.wpm_median != null) w.wpm.push({ median: p.wpm_median, samples: p.wpm_samples });
-    byWeek.set(wk, w);
+    const w = bucket(byWeek, wk);
+    const dy = bucket(byDay, r.day);
+    for (const b of [w, dy]) {
+      b.days.add(r.day);
+      b.words += p.words;
+      b.sentences += p.sentences;
+      b.sentenceWords += p.sentences * (p.words_per_sentence ?? 0);
+      b.longest = Math.max(b.longest, p.longest_sentence);
+      if (p.wpm_median != null) b.wpm.push({ median: p.wpm_median, samples: p.wpm_samples });
+    }
 
     words += p.words;
     sentences += p.sentences;
@@ -65,21 +66,36 @@ export function rangeTotals(db, fromDay, toDay) {
       const m = (perWord[key] ??= { taps: 0, spotlit: 0 });
       m.taps += e.taps;
       m.spotlit += e.spotlit ?? 0;
-      if (e.first) firstKeys.add(key);
+      if (e.first) {
+        firstKeys.add(key);
+        firstDays[key] = Math.min(firstDays[key] ?? r.day, r.day);
+      }
       w.wordSet.add(key);
+      dy.wordSet.add(key);
     }
   }
 
-  const weeks = [...byWeek.values()].sort((a, b) => a.week - b.week).map((w) => ({
-    week: w.week,
-    days: w.days.size,
-    words: w.words,
-    different: w.wordSet.size,
-    sentences: w.sentences,
-    wordsPerSentence: w.sentences ? w.sentenceWords / w.sentences : null,
-    longest: w.longest,
-    wpm: weightedMedian(w.wpm),
-  }));
+  // Every period in the range, quiet ones included: a week with no taps
+  // is a true 0, not a gap the trend line silently skips.
+  const series = (map, from, to, idKey) => {
+    const out = [];
+    for (let i = from; i <= to; i++) {
+      const b = map.get(i) ?? bucket(new Map(), i);
+      out.push({
+        [idKey]: i,
+        days: b.days.size,
+        words: b.words,
+        different: b.wordSet.size,
+        sentences: b.sentences,
+        wordsPerSentence: b.sentences ? b.sentenceWords / b.sentences : null,
+        longest: b.longest,
+        wpm: weightedMedian(b.wpm),
+      });
+    }
+    return out;
+  };
+  const weeks = series(byWeek, Math.floor(fromDay / WEEK_DAYS), Math.floor(toDay / WEEK_DAYS), "week");
+  const days = series(byDay, fromDay, toDay, "day");
 
   return {
     fromDay, toDay,
@@ -87,18 +103,28 @@ export function rangeTotals(db, fromDay, toDay) {
     different: Object.keys(perWord).length,
     newCount,
     firstKeys: [...firstKeys],
+    firstDays,
     sentences,
     wordsPerSentence: sentences ? sentenceWords / sentences : null,
     longest,
     wpm: weightedMedian(wpmPoints),
     core, fringe, own, spotlit,
     sources, hours, dows,
-    weeks,
+    weeks, days,
     topWords: Object.entries(perWord)
       .sort((a, b) => b[1].taps - a[1].taps)
       .slice(0, 10)
       .map(([key, v]) => ({ key, ...v })),
   };
+}
+
+function bucket(map, id) {
+  let b = map.get(id);
+  if (!b) {
+    b = { days: new Set(), words: 0, wordSet: new Set(), sentences: 0, sentenceWords: 0, longest: 0, wpm: [] };
+    map.set(id, b);
+  }
+  return b;
 }
 
 /** Median of per-day medians weighted by sample count — the honest
@@ -120,8 +146,9 @@ export function weightedMedian(points) {
  *  everyone else leads with breadth and sentence length. A supporter
  *  can change it — the caller passes the chosen mode. Each headline
  *  carries its weekly series so the screen can show the trend. */
-export function headlines(totals, mode = "symbol") {
-  const wk = (pick) => totals.weeks.map((w) => pick(w));
+export function headlines(totals, mode = "symbol", by = "week") {
+  const periods = by === "day" ? totals.days : totals.weeks;
+  const wk = (pick) => periods.map((w) => pick(w));
   const wpm = { label: "words per minute", value: totals.wpm,
     trend: wk((w) => w.wpm) };
   const breadth = { label: "different words", value: totals.different,
@@ -139,10 +166,15 @@ export function headlines(totals, mode = "symbol") {
 export function dashboard(db, fromDay, toDay, { nameOf = () => null, mode = "symbol" } = {}) {
   const totals = rangeTotals(db, fromDay, toDay);
   const name = (key) => nameOf(...key.split(":")) ?? key.split(":")[1];
+  // A trend needs points: a range of two weeks or less draws its days.
+  const by = toDay - fromDay < 2 * WEEK_DAYS ? "day" : "week";
   return {
     ...totals,
-    headline: headlines(totals, mode),
-    newWords: totals.firstKeys.map((k) => ({ key: k, name: name(k) })),
+    by,
+    headline: headlines(totals, mode, by),
+    newWords: totals.firstKeys
+      .map((k) => ({ key: k, name: name(k), day: totals.firstDays[k] }))
+      .sort((a, b) => b.day - a.day),
     topWords: totals.topWords.map((t) => ({ ...t, name: name(t.key) })),
     stripShare: totals.words ? totals.sources.strip / totals.words : 0,
     goals: goalWords(db, fromDay, toDay),
@@ -169,6 +201,17 @@ export function sentenceButtons(db, fromDay, toDay) {
     }
   }
   return { total, weeks };
+}
+
+/** The first local day with a tap, or null — the free view's "Pip has
+ *  counted N weeks" reads this. Rows for quiet days exist (the win card
+ *  backfills them), so the payload decides, not the row. */
+export function firstTapDay(db) {
+  let first = null;
+  for (const r of db.prepare("SELECT day, payload FROM stats_day ORDER BY day").all()) {
+    if (JSON.parse(r.payload).words > 0) { first = r.day; break; }
+  }
+  return first;
 }
 
 /** Day index helpers shared with the UI's range picker. */

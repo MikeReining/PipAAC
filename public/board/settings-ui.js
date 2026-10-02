@@ -58,7 +58,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   /** A page whose every block is hidden (e.g. Your account on the
    *  child's own device) drops out of the list. */
   const isEmpty = (sec) =>
-    ![...sec.querySelectorAll(":scope > .seg-row, :scope > .set-quick, :scope > .wincard")]
+    ![...sec.querySelectorAll(":scope > .seg-row, :scope > .set-quick, :scope > .wincard, :scope > .prog")]
       .some((el) => !el.hidden);
 
   /* One-line state per page, read from the controls themselves (their
@@ -249,6 +249,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     renderOverview();
   }
 
+  const onShow = [];
   function show(id, { focus = false } = {}) {
     current = id;
     for (const sec of sections) sec.classList.toggle("on", sec.dataset.sec === id);
@@ -256,6 +257,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     body.dataset.view = "pane";
     pane.scrollTop = 0;
     if (focus) pane.focus({ preventScroll: true });
+    for (const fn of onShow) fn(id);
   }
 
   nav.addEventListener("click", (e) => {
@@ -268,6 +270,9 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   pane.addEventListener("click", (e) => {
     const b = e.target.closest("[data-click]");
     if (b) $(b.dataset.click)?.click();
+    // A door to another page (Spotlight → See progress).
+    const to = e.target.closest("[data-show]");
+    if (to) show(to.dataset.show, { focus: true });
   });
   // Add a device: one door; the sheet asks which device this is and
   // hands off to the flow devices-ui owns (dev-link / dev-add).
@@ -283,7 +288,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   let queued = false;
   new MutationObserver((muts) => {
     if (queued || !$("menu").classList.contains("open")) return;
-    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance, #set-protect, #set-spot-now"))) return;
+    if (muts.every((m) => m.target.closest?.("#set-check, #set-glance, #set-protect, #set-spot-now, #prog-page"))) return;
     queued = true;
     queueMicrotask(() => { queued = false; renderNav(); });
   }).observe(pane, { subtree: true, attributes: true, attributeFilter: ["hidden", "class"] });
@@ -395,5 +400,6 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     open: openSettings, show, paintNames, renderNav,
     current: () => current,
     onOpen: (fn) => onOpen.push(fn),
+    onShow: (fn) => onShow.push(fn),
   };
 }

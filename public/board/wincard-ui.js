@@ -5,15 +5,15 @@
  * user's own device. Rules and totals live in shared/wincard.mjs; this
  * module only draws them. Wins only — the card never shows a drop, and
  * a week with no taps hides the card instead of scolding.
- * Free users get the Lifetime line; Lifetime users get the dashboard
- * instead (slice 4).
+ * One door to Settings → Progress: "See progress" for Lifetime, "What
+ * Lifetime adds" for everyone else — the same page draws either view.
  */
 import { weeklyCard, WINCARD_DAYS } from "../shared/wincard.mjs";
 import { dayIndex } from "../shared/stats.mjs";
 
 const $ = (id) => document.getElementById(id);
 
-export function mountWincard({ db, me, nameOf, entitlement, toast }) {
+export function mountWincard({ db, me, nameOf, entitlement, toast, settings }) {
   const el = () => $("wincard");
 
   function fill(card, life) {
@@ -28,19 +28,19 @@ export function mountWincard({ db, me, nameOf, entitlement, toast }) {
       p.textContent = `★ ${w}`;
       el().appendChild(p);
     }
-    if (!life) {
-      const pitch = document.createElement("p");
-      pitch.className = "hint";
-      pitch.textContent = `See all of ${me.name || "this person"}'s progress with Pip Lifetime.`;
-      el().appendChild(pitch);
-    }
+    if (life == null) return; // the door waits for the entitlement answer
+    const door = document.createElement("button");
+    door.className = "btn secondary wincard-door";
+    door.textContent = life ? "See progress" : "What Lifetime adds";
+    door.onclick = () => settings.show("progress", { focus: true });
+    el().appendChild(door);
   }
 
   async function render() {
     const card = weeklyCard(db, Date.now(), nameOf);
     el().hidden = card.empty;
     if (card.empty) return;
-    fill(card, true); // wins are never wrong while entitlement resolves
+    fill(card, null); // wins are never wrong while entitlement resolves
     const life = (await entitlement().catch(() => null)) === "lifetime";
     fill(card, life);
   }

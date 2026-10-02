@@ -180,9 +180,10 @@ export function goalWords(db, fromDay, toDay) {
   const goals = new Map();
   const keyToLists = new Map();
   for (const r of lists) {
-    const g = goals.get(r.list_id) ?? { list_id: r.list_id, name: r.name, weeks: {} };
+    const g = goals.get(r.list_id) ?? { list_id: r.list_id, name: r.name, targets: [], weeks: {} };
     goals.set(r.list_id, g);
     const key = `${r.kind}:${r.item_id}`;
+    g.targets.push(key);
     (keyToLists.get(key) ?? keyToLists.set(key, []).get(key)).push(r.list_id);
   }
   if (!goals.size) return [];

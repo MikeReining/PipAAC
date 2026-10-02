@@ -93,7 +93,6 @@ export function mountDevices({
     owner = isOwner;
     me.owner = isOwner;
     $("dev-choose").hidden = !isOwner;
-    $("dev-license-row").hidden = !isOwner || $("dev-license-row").hidden;
     if (!isOwner) $("dev-delete-row").hidden = true;
     $("team-note").hidden = isOwner;
   }
@@ -101,9 +100,12 @@ export function mountDevices({
   async function renderDevices() {
     const list = $("dev-list");
     const cfg = me.sync;
-    $("dev-lifetime-row").hidden = !cfg?.userId;
+    // Anyone may buy or activate Pip Lifetime, synced or not: activating
+    // turns the encrypted sync on, since the license lives on the relay.
+    $("dev-lifetime-row").hidden = false;
     $("dev-delete-row").hidden = !cfg?.userId;
     if (!cfg?.userId) {
+      renderEntitlement(null);
       applyOwner(true);
       list.innerHTML = '<p class="hint">Only on this device so far.</p>';
       return;
@@ -777,18 +779,27 @@ export function mountDevices({
 
   /* Pip Lifetime (dev path, 011/9): a minted license activates on the
    * relay — the client only transports it. Payments wire into the same
-   * seam later. */
+   * seam later. The license belongs to the user, so anyone on the team
+   * may activate it (founder 2026-10-02: the SLP sets the board up, the
+   * parent buys). An unsynced board starts syncing first. */
+  async function activateLicense(key, { quiet = false } = {}) {
+    // The license needs the relay user, not a finished first push: if
+    // the user was created but the first sync flush failed, go on.
+    await ensureUser({ quiet }).catch((e) => { if (!me.sync?.userId) throw e; });
+    const { client, store } = await userClient();
+    await client.setEntitlement(key);
+    // 024: the sentence-voice endpoint wants the license on every
+    // request — the relay keeps the status, the device keeps a copy.
+    await store.put(`user/${me.id}/license`, key);
+    await renderDevices();
+  }
+
   $("dev-activate").onclick = async () => {
     const key = $("dev-license").value.trim();
     if (!key) return;
     try {
-      const { client, store } = await userClient();
-      await client.setEntitlement(key);
-      // 024: the sentence-voice endpoint wants the license on every
-      // request — the relay keeps the status, the device keeps a copy.
-      await store.put(`user/${me.id}/license`, key);
+      await activateLicense(key);
       $("dev-license").value = "";
-      await renderDevices();
     } catch (e) {
       $("dev-lifetime").innerHTML =
         `<p class="hint">That key did not verify for this user.</p>`;
@@ -827,5 +838,5 @@ export function mountDevices({
     }
   };
 
-  return { userClient, renderAccount, renderUsers, ensureUser };
+  return { userClient, renderAccount, renderUsers, ensureUser, activateLicense };
 }

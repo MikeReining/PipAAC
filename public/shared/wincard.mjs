@@ -73,43 +73,57 @@ export function streakOf(days) {
 }
 
 /** Up to three wins from a week aggregate — § 4.1: "wins only". Every
- *  line is absolute; no rule compares to another week, so a quieter
+ *  item is absolute; no rule compares to another week, so a quieter
  *  week still reads as wins, never a drop. `nameOf(kind, id)` resolves
- *  an item to its display name; unknown items are skipped. */
-export function pickWins(agg, nameOf = () => null) {
+ *  an item to its display name; unknown items are skipped. Each item
+ *  carries its text and the word keys it names, so a screen can draw
+ *  the words as tiles. */
+export function winItems(agg, nameOf = () => null) {
   const wins = [];
   if (agg.firstKeys.length) {
-    const names = agg.firstKeys
-      .map((k) => nameOf(...k.split(":")))
-      .filter(Boolean);
-    if (names.length && names.length <= 2) wins.push(`First time: ${names.join(" and ")}`);
-    else if (names.length) wins.push(`First time: ${names[0]} and ${names.length - 1} more new words`);
+    const named = agg.firstKeys.filter((k) => nameOf(...k.split(":")));
+    const names = named.map((k) => nameOf(...k.split(":")));
+    if (names.length && names.length <= 2) {
+      wins.push({ kind: "first", keys: named, more: 0, text: `First time: ${names.join(" and ")}` });
+    } else if (names.length) {
+      wins.push({ kind: "first", keys: named.slice(0, 1), more: names.length - 1,
+        text: `First time: ${names[0]} and ${names.length - 1} more new words` });
+    }
   }
-  if (agg.longest >= 2) wins.push(`Longest sentence: ${agg.longest} words`);
+  if (agg.longest >= 2) wins.push({ kind: "longest", keys: [], text: `Longest sentence: ${agg.longest} words` });
   const streak = streakOf(agg.days);
-  if (streak >= 2) wins.push(`${streak} days in a row`);
+  if (streak >= 2) wins.push({ kind: "streak", keys: [], text: `${streak} days in a row` });
   const top = Object.entries(agg.perWord).sort((a, b) => b[1].taps - a[1].taps)[0];
   const topName = top ? nameOf(...top[0].split(":")) : null;
-  if (topName) wins.push(`Favorite this week: ${topName}`);
+  if (topName) wins.push({ kind: "favorite", keys: [top[0]], text: `Favorite this week: ${topName}` });
   return wins.slice(0, 3);
 }
 
+/** The wins as plain lines — the card's text form. */
+export const pickWins = (agg, nameOf = () => null) => winItems(agg, nameOf).map((w) => w.text);
+
 /** The card for the week ending today (rolling 7 local days). Returns
  *  `{ summary, wins, empty }` — `empty` means no taps at all; the UI
- *  hides the card rather than show a quiet week as a failure. */
+ *  hides the card rather than show a quiet week as a failure. `items`
+ *  are the same wins with their word keys; the counts feed the free
+ *  Progress view's three figures. */
 export function weeklyCard(db, now = Date.now(), nameOf = () => null) {
   const today = dayIndex(now, -new Date(now).getTimezoneOffset());
   ensureStatsDays(db, today - (WINCARD_DAYS - 1), today, now);
   const agg = weekAggregate(db, today - (WINCARD_DAYS - 1), today);
-  if (!agg.words) return { summary: "", wins: [], empty: true };
+  if (!agg.words) return { summary: "", wins: [], items: [], empty: true };
   const parts = [
     `${agg.words} word${agg.words === 1 ? "" : "s"}`,
     `${agg.different} different`,
   ];
   if (agg.longest >= 2) parts.push(`longest sentence ${agg.longest} words`);
+  const items = winItems(agg, nameOf);
   return {
     summary: `This week: ${parts.join(", ")}`,
-    wins: pickWins(agg, nameOf),
+    wins: items.map((w) => w.text),
+    items,
+    words: agg.words, different: agg.different, longest: agg.longest,
+    newCount: agg.firstKeys.length,
     empty: false,
   };
 }

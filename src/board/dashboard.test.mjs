@@ -182,11 +182,13 @@ test("weightedMedian: weighting, odd/even, empty", () => {
   assert.equal(weightedMedian([{ median: 7, samples: 0 }]), null);
 });
 
-/* --- The gate (Works Test 1): Lifetime → dashboard, free → card + offer. */
+/* --- The gate (Works Test 1): Lifetime → dashboard, free → card + offer.
+ * A DOM stub: text and visibility only. The drawn page is proven in the
+ * browser (docs/phases/016 § slice 4 closeout). */
 
-function domEl() {
+function domEl(tag = "div") {
   const n = {
-    children: [], text: "", hidden: false, dataset: {}, style: {}, value: "",
+    tag, children: [], text: "", hidden: false, dataset: {}, style: {}, value: "", attrs: {},
     _cls: new Set(),
     classList: {
       add: (c) => n._cls.add(c), remove: (c) => n._cls.delete(c),
@@ -195,14 +197,21 @@ function domEl() {
     },
     set className(v) { n._cls = new Set(String(v).split(" ").filter(Boolean)); },
     get className() { return [...n._cls].join(" "); },
-    set textContent(v) { n.text = v; n.children = []; },
+    set textContent(v) { n.text = String(v); n.children = []; },
     get textContent() { return n.text + n.children.map((c) => c.textContent).join(""); },
     appendChild(c) { n.children.push(c); return c; },
+    append(...cs) {
+      for (const c of cs) n.children.push(typeof c === "string" ? { textContent: c } : c);
+    },
     replaceChildren() { n.children = []; },
+    setAttribute(k, v) { n.attrs[k] = v; },
+    insertAdjacentHTML(_, html) { n.children.push({ textContent: html.replace(/<[^>]+>/g, "") }); },
     addEventListener(ev, fn) { (n._ev ??= {})[ev] = fn; },
     querySelectorAll() { return []; },
-    get innerHTML() { return n.text; }, set innerHTML(v) { n.text = v; n.children = []; },
-    click() { n._ev?.click?.({ target: n }); },
+    closest() { return n; },
+    focus() {}, scrollIntoView() {},
+    get innerHTML() { return n.text; }, set innerHTML(v) { n.text = String(v).replace(/<[^>]+>/g, ""); n.children = []; },
+    click() { (n.onclick ?? n._ev?.click)?.({ target: n }); },
   };
   return n;
 }
@@ -210,36 +219,69 @@ function domEl() {
 async function gateRun(ent, seed = () => {}) {
   const db = statsDb();
   seed(db);
-  const ids = ["prog-body", "prog-range", "prog-mode", "prog-share", "open-progress"];
+  const ids = ["prog-body", "prog-range", "prog-mode", "prog-share", "prog-foot", "prog-sub",
+    "dev-license", "dev-lifetime-row"];
   const nodes = Object.fromEntries(ids.map((id) => [id, domEl()]));
   for (const seg of ["prog-range", "prog-mode"]) {
     for (const v of seg === "prog-range" ? ["week", "month", "all"] : ["symbol", "label"]) {
-      const b = domEl(); b.dataset.v = v;
+      const b = domEl("button"); b.dataset.v = v;
       nodes[seg].children.push(b);
     }
   }
   globalThis.document = {
     getElementById: (id) => nodes[id],
-    createElement: () => domEl(),
+    createElement: (tag) => domEl(tag),
   };
   globalThis.localStorage = { getItem: () => null, setItem() {}, removeItem() {} };
+  const shown = [];
+  let onShow = null;
   mountProgress({
     db, me: { id: "usr_1", name: "Maya" }, nameOf,
-    entitlement: async () => ent, open: () => {}, toast: () => {},
+    entitlement: async () => ent,
+    settings: { show: (id) => shown.push(id), onShow: (fn) => { onShow = fn; } },
   });
-  nodes["open-progress"]._ev.click();
+  onShow("progress");
   await new Promise((r) => setTimeout(r, 10)); // render is async
-  return nodes;
+  return { ...nodes, shown };
 }
 
-test("gate: Lifetime sees the dashboard, free sees the card and the offer", async () => {
-  const free = await gateRun("free");
-  assert.equal(free["prog-share"].hidden, true);
-  assert.match(free["prog-body"].textContent, /Pip Lifetime/);
-  assert.doesNotMatch(free["prog-body"].textContent, /different words/);
+const find = (n, pred) => pred(n) ? n : (n.children ?? []).map((c) => find(c, pred)).find(Boolean);
+
+test("gate: free sees the win card and one way in, with no control that does nothing", async () => {
+  const today = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86_400_000);
+  const free = await gateRun("free", (db) => putDay(db, today - 20, {
+    words: 4, per_word: { "sense:more": { taps: 4, spotlit: 0, first: 1 } },
+  }));
+  for (const id of ["prog-range", "prog-share", "prog-foot"]) {
+    assert.equal(free[id].hidden, true, `${id} is hidden on the free view`);
+  }
+  const text = free["prog-body"].textContent;
+  assert.match(text, /Pip has counted 3 weeks of Maya's words/);
+  assert.doesNotMatch(text, /different words/, "no dashboard numbers");
+  const buy = find(free["prog-body"], (n) => n.id === "prog-buy");
+  assert.match(buy.textContent, /Get Pip Lifetime · \$49 once/);
+  buy.click();
+  assert.deepEqual(free.shown, ["you"], "the button opens the license row's page");
 
   const life = await gateRun("lifetime");
-  assert.equal(life["prog-share"].hidden, false);
+  for (const id of ["prog-range", "prog-share", "prog-foot"]) assert.equal(life[id].hidden, false);
+});
+
+test("Lifetime: goal words list every target, tapped or not, own vs glow", async () => {
+  const today = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86_400_000);
+  const life = await gateRun("lifetime", (db) => {
+    putDay(db, today, {
+      words: 5, sentences: 2, words_per_sentence: 2.5, longest_sentence: 3,
+      per_word: { "sense:more": { taps: 5, spotlit: 2, first: 1 } },
+    });
+    saveSpotList(db, "spl_g", "Goals", ["sense:more", "sense:help"], 1);
+    setListGoal(db, "spl_g", true);
+  });
+  const text = life["prog-body"].textContent;
+  assert.match(text, /Goal words/);
+  assert.match(text, /3 own · 2 with the glow/, "more: 5 taps, 2 under the glow");
+  assert.match(text, /0 own · 0 with the glow/, "help is a target with no taps yet");
+  assert.match(text, /New words/);
 });
 
 // 032 E4: ✨ / ❓ presses sum across days and devices, by week, own vs glow.
@@ -265,6 +307,6 @@ test("Progress shows sentence buttons: on their own vs with the glow", async () 
   }));
   const text = life["prog-body"].textContent;
   assert.match(text, /Sentence buttons/);
-  assert.match(text, /✨ fix it — on their own 2 · with the glow 1/);
+  assert.match(text, /✨ fix it.*2 own · 1 with the glow/);
   assert.doesNotMatch(text, /❓ ask it/, "an unpressed button is not listed");
 });

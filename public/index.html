@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="/board/editor-ui.css" />
     <link rel="stylesheet" href="/board/coach-ui.css" />
     <link rel="stylesheet" href="/board/settings-ui.css" />
+    <link rel="stylesheet" href="/board/progress-ui.css" />
     <link rel="stylesheet" href="/board/onramp-ui.css" />
     <link rel="stylesheet" href="/board/voice-ui.css" />
     <link rel="stylesheet" href="/board/base.css" />
@@ -252,7 +253,7 @@
               <div class="seg-row">
                 <span class="seg-label">Progress</span>
                 <p class="hint" data-icons>Turn on Track progress for a list. Progress then shows each of its words: said on their own, and said with the glow. It also counts ✨ and ❓ presses, the same way.</p>
-                <div class="row"><button class="btn secondary" data-click="open-progress">See progress</button></div>
+                <div class="row"><button class="btn secondary" data-show="progress">See progress</button></div>
               </div>
               <div class="seg-row spot-look-row">
                 <details class="spot-look">
@@ -400,11 +401,25 @@
               </div>
             </section>
 
-            <section class="set-sec" data-sec="progress" data-title="Progress">
-              <h2>Progress</h2>
-              <p class="set-intro">Every number comes from <span data-person></span>'s own taps on this device.</p>
-              <div class="seg-row">
-                <div class="row"><button class="btn secondary" id="open-progress">See progress</button></div>
+            <section class="set-sec prog-sec" data-sec="progress" data-title="Progress">
+              <div class="prog" id="prog-page">
+                <div class="prog-top">
+                  <div class="prog-title"><h2>Progress</h2><p class="set-intro" id="prog-sub"></p></div>
+                  <div class="seg" id="prog-range" hidden>
+                    <button data-v="week">Week</button>
+                    <button data-v="month">Month</button>
+                    <button data-v="all">90 days</button>
+                  </div>
+                  <button class="btn" id="prog-share" hidden>Share report</button>
+                </div>
+                <div id="prog-body"></div>
+                <div class="prog-foot" id="prog-foot" hidden>
+                  <span class="seg-label">Lead with</span>
+                  <div class="seg" id="prog-mode">
+                    <button data-v="symbol">Words</button>
+                    <button data-v="label">Speed</button>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -538,32 +553,6 @@
           <div id="voice-soon" class="voice-list"></div>
         </div>
         <button class="btn secondary" data-close>Done</button>
-      </div>
-    </div>
-
-    <div class="overlay" id="progress">
-      <div class="sheet">
-        <h2>Progress</h2>
-        <div class="seg-row">
-          <div class="seg" id="prog-range">
-            <button data-v="week">Week</button>
-            <button data-v="month">Month</button>
-            <button data-v="all">90 days</button>
-          </div>
-        </div>
-        <div class="seg-row">
-          <span class="seg-label">Headline</span>
-          <div class="seg" id="prog-mode">
-            <button data-v="symbol">Breadth</button>
-            <button data-v="label">Rate</button>
-          </div>
-          <p class="hint">Label-only users lead with words per minute; everyone else with breadth and sentence length.</p>
-        </div>
-        <div id="prog-body"></div>
-        <div class="row" style="margin-top:12px">
-          <button class="btn secondary" id="prog-share">Share report</button>
-          <button class="btn secondary" data-close>Close</button>
-        </div>
       </div>
     </div>
 

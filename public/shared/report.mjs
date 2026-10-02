@@ -30,7 +30,7 @@ export function reportLines(dash, { userName, fromLabel, toLabel }) {
       `mean sentence ${fmt(w.wordsPerSentence)}, wpm ${fmt(w.wpm)}`),
     "",
     `Top words: ${dash.topWords.map((t) => `${t.name} (${t.taps})`).join(", ") || "—"}`,
-    `First time: ${dash.newWords.map((w) => w.name).join(", ") || "—"}`,
+    `First time: ${[...dash.newWords].sort((a, b) => a.day - b.day).map((w) => w.name).join(", ") || "—"}`,
     "",
     `Core ${dash.core}  ·  fringe ${dash.fringe}  ·  own words ${dash.own}`,
     `Smart bar help: ${Math.round(dash.stripShare * 100)}% of taps`,

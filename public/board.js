@@ -58,6 +58,7 @@ import { mountAddFlow } from "./board/add-flow.js";
 import { mountLibrary } from "./board/library-ui.js";
 import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
+import { unlockFromUrl } from "./board/unlock.js";
 import { mountPlacePicker } from "./board/place-ui.js";
 import { mountSetup } from "./board/setup-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
@@ -397,32 +398,6 @@ const {
 /* Settings PIN gate + overlay helpers — public/board/pin.js. */
 const pin = mountPin({ live, toast });
 const { open, close, gatePin, renderPinRow } = pin;
-
-/* ?unlock=<token> — the founder's one-tap link for testing a licensed
- * device (and for handing to early supporters before payments land).
- * The worker mints this user's pip-life token; the device stores it the
- * same place the Devices → Pip Lifetime paste does. The param is
- * stripped at once so the token doesn't linger in the address bar. */
-{
-  const params = new URLSearchParams(location.search);
-  const unlock = params.get("unlock");
-  if (unlock) {
-    params.delete("unlock");
-    const qs = params.toString();
-    history.replaceState(null, "", location.pathname + (qs ? `?${qs}` : ""));
-    fetch("/api/v1/voice/unlock", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ user_id: me.id, token: unlock }),
-    }).then((r) => (r.ok ? r.json() : null))
-      .then(async (d) => {
-        if (!d?.license) { toast("That unlock link didn't work."); return; }
-        await openKeyStore().put(`user/${me.id}/license`, d.license);
-        toast("Pip Lifetime unlocked on this device.");
-      })
-      .catch(() => toast("Couldn't reach Pip to unlock — try again online."));
-  }
-}
 
 /* Grid render, tile primitives, likely-next halo — public/board/grid.js. */
 const {
@@ -1132,6 +1107,8 @@ const devicesUi = mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
   initSync, onSyncApplied, onModel, qrcode, syncRekey,
 });
+// ?unlock — the test link that turns Pip Lifetime on (public/board/unlock.js).
+unlockFromUrl({ me, activateLicense: devicesUi.activateLicense, toast });
 
 /* People — public/board/people-ui.js: the Settings header switcher and
  * "When Pip opens". */
@@ -1151,10 +1128,13 @@ const statNameOf = (kind, id) => kind === "entity"
   ? ALL(db, "SELECT spoken_name AS t FROM personal_entity WHERE id = ?", [id])[0]?.t
   : ALL(db, `SELECT text AS t FROM label WHERE sense_id = ?
       AND kind = 'lemma' AND status = 'approved' AND locale = ?`, [id, locale])[0]?.t;
+const statRoleOf = (kind, id) => kind === "entity" ? roleForEntity(id)
+  : kind === "sense" ? ALL(db, "SELECT fitzgerald_role AS r FROM sense WHERE id = ?", [id])[0]?.r
+  : "None";
 const relayEntitlement = async () =>
   (await devicesUi.userClient().then((u) => u?.client?.selfKey()))?.entitlement;
-mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement });
-mountProgress({ db, me, toast, open, nameOf: statNameOf, entitlement: relayEntitlement });
+mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement, settings: settingsUi });
+mountProgress({ db, me, nameOf: statNameOf, roleOf: statRoleOf, entitlement: relayEntitlement, settings: settingsUi });
 
 /* The placement sheet (018 D10): Edit mode, tap any tile or an empty
  * cell — the off-board list ranks by the child's own counts, the

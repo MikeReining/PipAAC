@@ -18,7 +18,7 @@ const html = readFileSync(join(import.meta.dirname, "../../public/index.html"), 
 // "Practice words" (open-spot) became the Spotlight page (032); its
 // controls are checked through spot-pick and SPOTLIGHT below.
 const CONTROLS = [
-  "wincard", "open-progress", "add-mywords", "open-setup", "edit-groups",
+  "wincard", "prog-page", "add-mywords", "open-setup", "edit-groups",
   "open-library", "hl-next", "group-toprow", "group-shows",
   "fresh-speak", "grammar-help", "expressive-voice", "share-research",
   "spot-pick", "cells-seg", "fam-list", "kb-mode", "kb-order", "usr-list",
@@ -28,7 +28,7 @@ const CONTROLS = [
 
 function menuBlock() {
   const a = html.indexOf('<div class="overlay settings" id="menu">');
-  const b = html.indexOf('<div class="overlay" id="progress">');
+  const b = html.indexOf('<div class="overlay" id="spotname">');
   assert.ok(a > 0 && b > a, "Settings overlay not found");
   return html.slice(a, b);
 }
