@@ -118,9 +118,12 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   const deadline = Date.now() + 2000;
   while (Date.now() < deadline && !received.length) await sleep(50);
   assert.ok(received.length, "B did not receive the op within 2 s");
-  const decrypted = await openOp(userKey, received[0].ops[0].env);
-  assert.equal(decrypted.op_id, opsA[0].op_id);
-  assert.match(decrypted.args, /Cooper/); // readable only after user-key decrypt
+  // A fresh board's first op is the catalog seed install (~160 KB,
+  // deflated inside the seal); the edit follows it.
+  const opened = await Promise.all(received[0].ops.map((o) => openOp(userKey, o.env)));
+  assert.deepEqual(opened.map((o) => o.op_id), opsA.map((o) => o.op_id));
+  const cooper = opened.find((o) => o.kind === "create_entity");
+  assert.match(cooper.args, /Cooper/); // readable only after user-key decrypt
 
   // An unsigned and an unknown-device request both get 403.
   assert.equal((await fetch(`${BASE}/users/${user.user_id}/ops?after=0`)).status, 403);
@@ -139,8 +142,9 @@ test("relay: sequence, fan-out, auth, catch-up, blobs", async () => {
   }
   await clientA.submit(listOps(dbA).slice(opsA.length));
   const catchup = await clientB.fetchOps(0);
-  assert.equal(catchup.latest, 1 + 40); // 1 first op + 20×(create+place)
-  assert.equal(catchup.ops.length, 41);
+  // The first submit (seed install + Cooper) + 20×(create+place).
+  assert.equal(catchup.latest, opsA.length + 40);
+  assert.equal(catchup.ops.length, opsA.length + 40);
   const ids = new Set();
   for (const r of catchup.ops) ids.add((await clientB.openOp(r.env)).op_id);
   assert.equal(ids.size, listOps(dbA).length); // every local op confirmed

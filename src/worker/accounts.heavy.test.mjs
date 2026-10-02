@@ -52,7 +52,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let wrangler;
 before(async () => {
   const stateDir = mkdtempSync(join(tmpdir(), "pip-acct-"));
+  // --local-upstream as scripts/dev.mjs does: without it wrangler rewrites
+  // request.url to the custom domain (app.pipaac.org), and the passkey
+  // origin check sees production instead of this copy.
   wrangler = spawn("npx", ["wrangler", "dev", "--port", String(PORT), "--ip", "127.0.0.1",
+    "--local-upstream", `127.0.0.1:${PORT}`, "--upstream-protocol", "http",
     "--persist-to", stateDir], { cwd: repoRoot, stdio: "ignore" });
   for (let i = 0; i < 120; i++) {
     await sleep(500);
@@ -205,7 +209,7 @@ test("sign in by email + passkey; keys stay sealed end to end", async () => {
     challenge: ch2.body.challenge, credential_id: "cred-1",
     ...(await makeAssertion(cred, ch2.body.challenge)),
   });
-  assert.equal(good.status, 200);
+  assert.equal(good.status, 200, JSON.stringify(good.body));
   assert.equal(good.body.users[0].user_id, "u-maya");
   assert.equal(good.body.users[0].keys[0].epoch, 2);
 
@@ -308,7 +312,7 @@ test("supporter invites: claim → Allow → grant → revoke", async () => {
   const sign = await post(`/accounts/${s.acctId}/assert`, {
     challenge: ch.body.challenge, credential_id: `cred-${s.acctId}`,
     ...(await makeAssertion(s.cred, ch.body.challenge)) });
-  assert.equal(sign.status, 200);
+  assert.equal(sign.status, 200, JSON.stringify(sign.body));
   const claimed = await post(`/accounts/invites/${invToken}`, {
     action: "claim", session: sign.body.session });
   assert.equal(claimed.status, 200);
@@ -400,9 +404,11 @@ test("research intake: whitelist enforced on the live worker", async () => {
   const good = {
     v: 1, rid: "res_00000000-0000-4000-8000-000000000000", day: 14000,
     words: { sns_want: 8 }, own_taps: 3, sent_lengths: { 2: 3 },
-    wpm: 5, wpm_n: 4, strip_share: 0.31,
+    wpm: 5, wpm_n: 4, wpm_q1: 4, wpm_q3: 6, strip_share: 0.31,
+    path_ms: { strip: { q1: 900, median: 1200, q3: 1800, n: 6 } }, wrong_n: 1,
     layout: "grid60", mode: "symbol", age_days: 0, ver: "2026-09-25",
   };
+  // The payload research.mjs sends today (speed fields since 017 step 28).
   assert.equal((await post("/research", good)).status, 200);
   assert.equal((await post("/research", { ...good, user_id: "u-1" })).status, 400);
   assert.equal((await post("/research", { ...good, words: { ent_x: 1 } })).status, 400);

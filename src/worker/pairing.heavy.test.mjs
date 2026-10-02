@@ -133,7 +133,9 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   createEntity(dbB, { name: "Bee toy" });
   await clientB.submit(listOps(dbB));
   const seenA = await clientA.fetchOps(0);
-  assert.equal(seenA.ops.length, 2);
+  // Each device's first push carries its seed install (first one wins,
+  // 027 § 4) plus its edit.
+  assert.equal(seenA.ops.length, listOps(dbA).length + listOps(dbB).length);
 
   // Remove B → its next write and read are rejected.
   await clientA.removeDevice(b.deviceId);
@@ -152,12 +154,13 @@ test("pair through the real flow; revoke locks out and rotates", async () => {
   await putUserKey(aStore, userId, aKey2, 2);
 
   // A's post-removal op is sealed under the epoch-2 key — B never got it.
+  const sent = listOps(dbA).length;
   createEntity(dbA, { name: "After" });
   const { ops: seqs } = await relayClient(
     { userId: user.user_id, baseUrl: BASE, identity: a, userKey: aKey2 },
-  ).submit(listOps(dbA).slice(1));
+  ).submit(listOps(dbA).slice(sent));
   assert.equal(seqs[0].epoch, 2);
-  const fetched = (await clientA.fetchOps(2)).ops[0];
+  const fetched = (await clientA.fetchOps(seqs[0].relay_seq - 1)).ops[0];
   await assert.rejects(openOp(userKey, fetched.env)); // B's key opens nothing
   assert.equal((await openOp(aKey2, fetched.env)).kind, "create_entity");
 });
