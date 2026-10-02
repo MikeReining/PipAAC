@@ -56,6 +56,17 @@
             ? " (" + String(window.__pipBoot.errors[0]).slice(0, 140) + ")" : "");
         (document.getElementById("app") ?? document.body).append(note);
       }, 8000));
+      // 036 — app-shell service worker. Registers after load so the
+      // precache install never races the module boot; update() makes each
+      // visit check for a new shell. A new build waits for all tabs to
+      // close — never reloads mid-session (036 § D, no toast).
+      if ("serviceWorker" in navigator && isSecureContext) {
+        addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" })
+            .then((reg) => reg.update())
+            .catch(() => {});
+        });
+      }
     </script>
   </head>
   <body>
