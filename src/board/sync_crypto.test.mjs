@@ -30,6 +30,7 @@ import {
   unwrapUserKey,
   verifyPayload,
   wrapUserKey,
+  openData,
 } from "../../public/shared/sync_crypto.mjs";
 import { listUsers, memoryUserStore, migrateLegacy } from "../../public/shared/users.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
@@ -118,6 +119,23 @@ test("a different user key opens nothing; tampering is detected", async () => {
 
   const blob = await sealBlob(userKey, new Uint8Array([1, 2, 3]));
   await assert.rejects(openBlob(userKey, { sha: "00".repeat(32), env: blob.env }));
+});
+
+test("the catalog's seed install op seals under the relay's 64 KB cap and opens intact", async () => {
+  // The real op a fresh board records first — ~160 KB of JSON. Unsealed
+  // it broke every first sync (op_too_large); deflated inside the
+  // ciphertext it fits, and opens byte-identical.
+  const db = openDb();
+  const seed = listOps(db).find((o) => o.kind === "seed_install");
+  assert.ok(seed.args.length > 64 * 1024, "the fixture is the oversized op");
+  const key = await getUserKey(memoryKeyStore(), "u1");
+  const env = await sealOp(key, seed);
+  assert.ok(JSON.stringify(env).length < 64 * 1024, `sealed ${JSON.stringify(env).length} bytes`);
+  assert.deepEqual(await openOp(key, env), { ...seed });
+  // Small ops stay as they were: plain JSON under the seal.
+  const small = { kind: "rename_entity", args: { id: "ent_x", name: "Cooper" } };
+  const plain = await openData(key, await sealOp(key, small));
+  assert.equal(plain[0], "{".charCodeAt(0));
 });
 
 test("recorded ops carry the device fingerprint", async () => {

@@ -242,8 +242,31 @@ export async function openData(key, env) {
     { name: "AES-GCM", iv: unb64u(env.iv) }, key, unb64u(env.ct)));
 }
 
-export const sealOp = (key, op) => sealData(key, te.encode(JSON.stringify(op)));
-export const openOp = async (key, env) => JSON.parse(td.decode(await openData(key, env)));
+/* Ops over DEFLATE_OVER bytes are deflated before sealing: the seed
+ * install op alone is ~160 KB of JSON (~17 KB deflated) and the relay
+ * refuses envelopes over 64 KB. The marker is inside the ciphertext —
+ * a leading 0x00 byte, which plain JSON ("{") never starts with — so it
+ * is authenticated and the envelope shape doesn't change. */
+const DEFLATE_OVER = 4096;
+const pipe = async (bytes, stream) =>
+  new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+
+export async function sealOp(key, op) {
+  const plain = te.encode(JSON.stringify(op));
+  if (plain.length <= DEFLATE_OVER) return sealData(key, plain);
+  const z = await pipe(plain, new CompressionStream("deflate-raw"));
+  const marked = new Uint8Array(z.length + 1);
+  marked.set(z, 1);
+  return sealData(key, marked);
+}
+
+export async function openOp(key, env) {
+  const bytes = await openData(key, env);
+  const plain = bytes[0] === 0
+    ? await pipe(bytes.subarray(1), new DecompressionStream("deflate-raw"))
+    : bytes;
+  return JSON.parse(td.decode(plain));
+}
 
 /**
  * Blob envelope: { sha, env } — env carries `e`, the key epoch it was
