@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { createDatabase, importCatalog } from "./catalog.mjs";
 import { installDom, findAll } from "./fake_dom.mjs";
 import { mountAddFlow } from "../../public/board/add-flow.js";
-import { createGroup } from "../../public/shared/groups.mjs";
+import { createGroup, groupDisplayName, groupIndex } from "../../public/shared/groups.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const repoRoot = join(import.meta.dirname, "../..");
@@ -149,15 +149,19 @@ test("the destination is the group the adult came from — no guess", async () =
   assert.ok(row);
 });
 
-test("find a group: typing narrows the A–Z list; Return picks the first", async () => {
+test("find a group: the list is the board's order; typing narrows it; Return picks the first", async () => {
   globalThis.localStorage = memoryStorage();
   const h = harness();
   h.add.openAddForm("grp_my_words");
   await h.$("add-dest").click();
   assert.equal(h.$("add-destlist").hidden, false);
   assert.equal(h.$("add-name").hidden, true, "the list takes the results' place");
+  // One group order everywhere (2026-09-30): the board's index_slot,
+  // read straight from the table.
   const all = groupNames(h).filter((n) => !/^(New group|Make a group)/.test(n));
-  assert.deepEqual(all, [...all].sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" })));
+  const boardOrder = groupIndex(h.db).filter((g) => !g.hidden)
+    .map((g) => groupDisplayName(h.db, g, "en"));
+  assert.deepEqual(all, boardOrder);
   h.$("add-groupq").value = "min";
   await h.$("add-groupq").fire("input");
   assert.deepEqual(groupNames(h), ["Mine", "New group"]);

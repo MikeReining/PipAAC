@@ -214,9 +214,11 @@ test("bans: fringe sense and duplicate slot cannot enter core_cell", () => {
   );
 });
 
-test("device import carries the full 680-sense lexicon (labels only — no art gate)", () => {
+test("device import carries the full launch lexicon (labels only — no art gate)", () => {
+  // The lexicon grows as words are added (680 → 712 by batch 66), so the
+  // instrument is the source file's entry count, not a frozen number.
   const db = openDb();
-  assert.equal(catalog.senses.length, 680);
+  assert.equal(catalog.senses.length, lexicon.entries.length);
   const onDevice = db.prepare("SELECT COUNT(*) AS n FROM sense").get().n;
-  assert.equal(onDevice, 680);
+  assert.equal(onDevice, lexicon.entries.length);
 });

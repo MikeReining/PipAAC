@@ -55,7 +55,7 @@ test("paste resolves own words, catalog words, and new — exact only", () => {
   addPersonalEntity(db, { spokenName: "Cooper", category: "Animals & Nature" });
   const rows = resolvePasteRows(
     db,
-    "Cooper\njuice\nCooper\n\norange juice\nAunt Deb",
+    "Cooper\njuice\nCooper\n\ncold juice\nAunt Deb",
     { groupId: FOOD, locale: "en" },
   );
   assert.deepEqual(
@@ -63,7 +63,7 @@ test("paste resolves own words, catalog words, and new — exact only", () => {
     [
       ["Cooper", "entity", false, false],
       ["juice", "sense", false, false],
-      ["orange juice", "new", false, true], // catalog has 'juice' — a fuzzy miss must not place it
+      ["cold juice", "new", false, true], // catalog has 'juice' — a fuzzy miss must not place it
       ["Aunt Deb", "new", false, true],
     ],
   );

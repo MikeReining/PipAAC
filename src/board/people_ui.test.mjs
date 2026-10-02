@@ -48,7 +48,11 @@ test("Show the list: no one opens first, so boot asks who's talking", async () =
   await ui.renderOpens();
   assert.equal(nodes["opens-row"].hidden, false);
   const choices = nodes["opens-seg"].children;
-  assert.deepEqual(choices.map((b) => b.textContent), ["Maya", "Leo", "Show the list"]);
+  // People come most-recently-opened first (listUsers); the two were
+  // added in the same breath, so only the set and the last choice are fixed.
+  const labels = choices.map((b) => b.textContent);
+  assert.deepEqual(labels.slice(0, 2).sort(), ["Leo", "Maya"]);
+  assert.equal(labels[2], "Show the list");
   assert.equal(resolveActiveUser(await listUsers(store))?.name, "Maya");
   await choices[2].onclick();
   const rows = await listUsers(store);

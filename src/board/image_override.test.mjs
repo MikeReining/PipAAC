@@ -141,6 +141,9 @@ test("the card's library strip lists only approved images of the sense", () => {
   const db = openDb();
   const cup = senseOf(db, "cup");
   const apple = senseOf(db, "apple");
+  // The shipped catalog may already carry approved pictures of cup.
+  const shipped = db.prepare("SELECT id FROM image WHERE sense_id = ? AND status = 'approved'")
+    .all(cup).map((r) => r.id);
   addImage(db, "img_cup_a", cup, "art/cup_a.png");
   addImage(db, "img_cup_b", cup, "art/cup_b.png");
   addImage(db, "img_apple", apple, "art/apple.png");
@@ -148,5 +151,5 @@ test("the card's library strip lists only approved images of the sense", () => {
     .run(cup);
   assert.deepEqual(
     libraryImagesFor(db, cup).map((i) => i.id).sort(),
-    ["img_cup_a", "img_cup_b"]);
+    [...shipped, "img_cup_a", "img_cup_b"].sort());
 });
