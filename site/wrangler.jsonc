@@ -1,0 +1,22 @@
+{
+  // pipaac.org — the marketing site. A SEPARATE Cloudflare project from the
+  // app on purpose (SSOT, Vision § Domain): marketing never shares an origin
+  // with child data — no app cookies or analytics here — and a site deploy
+  // can never break the offline app on app.pipaac.org.
+  //
+  // Deploy: npm run deploy:site   (from the repo root)
+  // Dev:    npm run dev:site      (http://localhost:21200)
+  "name": "pipaac-site",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "pipaac.org", "custom_domain": true },
+    { "pattern": "www.pipaac.org", "custom_domain": true }
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}

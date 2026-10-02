@@ -56,6 +56,11 @@ PipAAC/
     install_dev_slot0.sh
     commit_handoff_queue.py
     health/
+  site/
+    wrangler.jsonc
+    src/index.js
+    public/
+    README.md
   src/
     worker/
       index.js
@@ -93,3 +98,5 @@ PipAAC/
 - `scripts/dev.mjs` — founder browse copy vs agent copies.
 - `scripts/install_dev_slot0.sh` — macOS LaunchAgent for the browse copy.
 - `src/worker/index.js` — Cloudflare Worker entrypoint (`/health` stub today).
+- `site/` — pipaac.org marketing site; separate Cloudflare project
+  (`pipaac-site`, its own wrangler config). Handoff doc: `site/README.md`.

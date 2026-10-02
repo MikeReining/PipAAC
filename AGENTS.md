@@ -32,6 +32,7 @@ files touched, proof state, and next action.
 | ElevenLabs tile gap-fill, R2 publish | `docs/operations/ElevenLabs_Tile_Minting.md` |
 | Default + extra tile voice full-library coverage (plan) | `docs/operations/Catalog_Tile_Voice_Coverage_Plan.md` |
 | Tile voice library, on-demand mint of typed words, review page | `docs/phases/028_Tile_Voice_Library.md` |
+| Marketing site (pipaac.org), designer/copywriter handoff | `site/README.md` + `docs/phases/035_Marketing_Site.md` |
 | Add a word: sheet, new-word card, picture/voice states | `docs/phases/029_Add_A_Word.md` |
 | Picture reuse by meaning, drawing once, allowance, calibration | `docs/phases/030_Picture_Finder_And_Drawing.md` |
 | Spotlight page, try-it demo, suggested lists | `docs/phases/032_Spotlight_Page.md` |
