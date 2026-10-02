@@ -539,12 +539,22 @@ More coupons: `stripe coupons create [--live] -d percent_off=N
 -d duration=once` then `stripe promotion_codes create -d
 "promotion[type]=coupon" -d "promotion[coupon]=<id>" -d code=<CODE>`.
 
+Client wiring BUILT 2026-11-02: the Progress upsell button calls
+`checkout()` when a supporter account is signed in (else falls back to
+the license row — the purchase runs through the account, § 4.5);
+`?purchased=` strips and polls `GET /users/:id/entitlement` — a new
+device-signed relay read that hands a lifetime user its `pip-life-*`
+copy after a worker-side grant (webhook or code), so voice calls can
+present it; `renderDevices` picks the same copy up opportunistically;
+the license field accepts `PIP-` codes (bearer `/api/v1/license/redeem`)
+alongside pasted keys. Proof: `entitlement.test.mjs` GET leg +
+`stripe.test.mjs` checkout legs.
+
 Still owed by this slice: Stripe/Apple **confirmation wiring tested
 live** (test-mode purchase end-to-end), iOS consumable IAP (lands with
 the iOS shell — Out of scope), the 20-word and 5-drawing counters, the
 web-editor gate, the own-device + one-supporter cap replacing the
-one-device cap, the server-signed offline license statement, and the
-client-side `?purchased=` return handling.
+one-device cap, and the server-signed offline license statement.
 
 Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 
