@@ -535,17 +535,24 @@ because their dog is their world.
 ### 6. More than requests.
 
 Too many AAC boards are built for asking for snacks. Children need to
-protest, joke, comment, ask why, and say how they feel. Pip's board has
-*don't*, *stop*, *why*, and *silly* up front, and a voice that can say any
-sentence happy, sad, or angry.
+protest, joke, comment, and ask why. Pip's board puts *stop*, *not*,
+*what*, and *help* up front, so your child can push back, ask questions,
+and join the conversation, not just place an order.
 
-### 7. Model, don't grab.
+### 7. Say it like you mean it.
+
+Most AAC voices say everything the same way. A furious *"go away"* comes
+out polite. *"I love you"* sounds like a weather report. In Pip, any
+sentence can be spoken happy, sad, or angry, with one tap on a face. The
+words are your child's. Now the feeling is too.
+
+### 8. Model, don't grab.
 
 Children learn AAC by watching it used. In other apps, modeling means
 reaching over your child's shoulder or taking the device away. In Pip, you
 tap on your phone and the word glows on theirs.
 
-### 8. We never act on a guess.
+### 9. We never act on a guess.
 
 Pip suggests. It never decides. It never hides a word, clears a sentence,
 or finishes a thought because it *thinks* your child is done. If Pip is
