@@ -57,6 +57,10 @@ no tracking). Every primary CTA → `app.pipaac.org` (board first; the account
 ask is the app's Protect card). Home first paint 147 KB (fonts are latin
 subsets; below-fold images lazy). Works Test: `npm run dev:site`, every
 internal link 200 except `/privacy` (owed), unknown paths serve the 404 page.
+Compare pages are generated from `site/compare-data.json` by
+`scripts/site/build_compare.mjs` (`npm run site:compare`; `--check` in
+`check:fast`). Offline is claimed on the site: it ships before launch
+(founder, 2026-10-02; `036_Offline_Support.md`).
 
 ## Still owed (not this repo's agents — people)
 

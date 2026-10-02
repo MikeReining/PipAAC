@@ -35,7 +35,12 @@ npm run deploy:site   # deploy to pipaac.org (uses the repo's wrangler auth)
   in `index.html`, then make the same edit in every other `.html` file
   (`grep -l site-nav site/public -r`).
 - Pages: `index`, `method`, `slps`, `pricing`, `faq`, `schools`, `about`,
-  `404`, `compare/` (hub + one page per competitor). Spec and copy source:
+  `404`, `compare/` (hub + one page per competitor).
+- **`compare/*.html` are generated.** Edit `site/compare-data.json` (the
+  feature matrix, ratings 0–4 as Harvey balls) and run `npm run
+  site:compare`; `check:fast` fails if the pages drift. The generator also
+  copies the header, footer, and the `ONLY-IN-PIP` section from
+  `index.html`, so rerun it after changing those. Spec and copy source:
   `docs/phases/035_Marketing_Site_Proposal.md`.
 - Art: bird poses as transparent WebP in `pip/`, tile art in `tiles/`
   (from `public/symbols/`). Fonts are Andika latin subsets.
