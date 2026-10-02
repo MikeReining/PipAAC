@@ -1,8 +1,10 @@
 # 035 — The marketing site (pipaac.org)
 
-**Executing.** Slice A (skeleton) BUILT 2026-10-02. Next: founder review of
-the design + copy proposal (`035_Marketing_Site_Proposal.md`), then the
-build pass (hero mockup, then the full home page) in the `site/` tree.
+**Executing.** Slice A (skeleton) BUILT 2026-10-02. **Slice B (design +
+copy) BUILT 2026-10-02** per `035_Marketing_Site_Proposal.md`: home, /method,
+/slps, /pricing, /faq, /compare (hub + 6), /schools, /about, 404. Next:
+founder story for /about, /privacy (founder + legal), `hello@pipaac.org`
+routing, then the DNS fix and `npm run deploy:site`.
 
 Intake: founder 2026-10-02 — "set up the skeleton … designer and
 copywriter take over once the back-end main website is set up."
@@ -47,10 +49,20 @@ Deploy 2026-10-02: `pipaac-site` uploaded and live at
 zone's DNS page, then `npm run deploy:site` attaches both domains — no
 API token on this machine covers zone DNS.
 
+## Slice B — design + copy
+
+**BUILT 2026-10-02.** Spec: `035_Marketing_Site_Proposal.md`. Static pages in
+`site/public/`; one stylesheet, one tiny script (`site.js`, sticky phone CTA,
+no tracking). Every primary CTA → `app.pipaac.org` (board first; the account
+ask is the app's Protect card). Home first paint 147 KB (fonts are latin
+subsets; below-fold images lazy). Works Test: `npm run dev:site`, every
+internal link 200 except `/privacy` (owed), unknown paths serve the 404 page.
+
 ## Still owed (not this repo's agents — people)
 
-- Copy + design pass (all `TODO(copy)` markers in `public/index.html`).
-- Additional pages (`for-families`, `for-slps`, privacy) as copy demands.
+- Founder story for /about (`<!-- TODO(founder) -->` in `about.html`).
+- `/privacy` — founder + legal (footer links to it today).
+- Email Routing for `hello@pipaac.org` (schools CTA and /about use it).
 - First production deploy (`npm run deploy:site`) once DNS/custom domains
   are confirmed on the Cloudflare zone.
 - Legal pages (privacy policy) — founder call, COPPA-sensitive claims.

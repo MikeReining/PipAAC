@@ -29,8 +29,16 @@ npm run deploy:site   # deploy to pipaac.org (uses the repo's wrangler auth)
 ## For the designer / copywriter
 
 - Everything user-facing lives in `site/public/` — plain HTML + one
-  stylesheet (`styles.css`). No build step, no framework.
-- `<!-- TODO(copy) -->` markers mark what is waiting on you.
+  stylesheet (`styles.css`) + `site.js` (sticky phone CTA only). No build
+  step, no framework.
+- **Header and footer are copied into every page.** Change nav or footer
+  in `index.html`, then make the same edit in every other `.html` file
+  (`grep -l site-nav site/public -r`).
+- Pages: `index`, `method`, `slps`, `pricing`, `faq`, `schools`, `about`,
+  `404`, `compare/` (hub + one page per competitor). Spec and copy source:
+  `docs/phases/035_Marketing_Site_Proposal.md`.
+- Art: bird poses as transparent WebP in `pip/`, tile art in `tiles/`
+  (from `public/symbols/`). Fonts are Andika latin subsets.
 - Brand tokens are CSS custom properties at the top of `styles.css`; they
   trace to `docs/product/Design_System.md`. The Pip marks and poses are in
   `site/public/brand/` (masters in `assets/brand/`).
