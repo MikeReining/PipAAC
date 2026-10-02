@@ -130,7 +130,17 @@ export function voiceTile({
         await remember(body.voice, body.text, blob);
         return { ok: true, blob, cache: res.headers.get("x-tile-cache") ?? "mint" };
       })().catch(() => ({ ok: false, reason: "offline" }))
-        .finally(() => inflight.delete(key)));
+        .then((r) => {
+          // Settle grace on success: a burst caller still inside its
+          // cache lookup (digest + caches.match are a few microtasks
+          // out) must still find the shared entry — deleting at settle
+          // let a loaded wall slip a second fetch past the flight. A
+          // failure frees the slot at once so a retry isn't told the
+          // stale answer.
+          if (r.ok) setTimeout(() => inflight.delete(key), 50);
+          else inflight.delete(key);
+          return r;
+        }));
     }
     return inflight.get(key);
   };
