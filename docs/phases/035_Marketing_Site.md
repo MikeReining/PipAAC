@@ -2,7 +2,7 @@
 
 **Executing.** Slice A (skeleton) BUILT 2026-10-02. Next: founder review of
 the design + copy proposal (`035_Marketing_Site_Proposal.md`), then the
-build pass (slice B1: hero + try-it board) in the `site/` tree.
+build pass (hero mockup, then the full home page) in the `site/` tree.
 
 Intake: founder 2026-10-02 — "set up the skeleton … designer and
 copywriter take over once the back-end main website is set up."

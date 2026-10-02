@@ -1,101 +1,128 @@
-# 035 — pipaac.org: the proposal
+# 035 — pipaac.org: design + copy spec
 
-**PROPOSED 2026-10-02** (lead designer + copywriter). Nothing built from
-this yet. Founder decisions are in § 10. Phase doc: `035_Marketing_Site.md`.
+**PROPOSED 2026-10-02; revised the same day with founder direction.**
+Lead designer + copywriter. Phase doc: `035_Marketing_Site.md`. Price
+truth: `docs/product/Pricing_And_Packaging.md` § 4. Brand:
+`docs/product/Design_System.md`.
 
-Truth owners don't change: price and free tier are owned by
-`docs/product/Pricing_And_Packaging.md` § 4, brand by
-`docs/product/Design_System.md`, and words by `docs/product/SSOT.md`. Every
-claim below is checked against code or a phase banner. Claims that aren't
-true yet are listed in § 2 and don't appear in any copy.
+Founder direction (2026-10-02):
 
----
-
-## 0. The idea in one paragraph
-
-Every AAC company sells **software**. Pip sells **tonight**. Tonight is when
-a parent leaves the SLP's office, opens Pip on the iPad they already own,
-and hears their child say *Grandma* at dinner, free. With everyone else,
-that night comes after a $250–$300 purchase, a subscription, or a
-months-long funding wait. The site has one job: get a parent or SLP to
-**hear Pip speak on the page** and then tap **Start free**. Every section
-either builds the case for that tap or answers the fear that stops it.
-
-**The wow is that the page is the product.** The headline is made of real
-Pip word tiles that speak when tapped. Two screens down sits a working
-mini-board. No other AAC site lets a visitor build a sentence and hear it,
-angry voice included, before they've decided anything. We need to check
-that claim (§ 2) before we print it, but we don't need to print it: the
-visitor will feel it.
+- Headline attacks price and rent: **"Your child's voice shouldn't cost $300."**
+- **Attack the competition aggressively** on one-size-fits-all. Mom knows
+  best. Every user is unique. Pip is fully customizable, and tiles still
+  never move on their own.
+- A **methodology page** that makes that argument in full.
+- **The most wanted response is creating the child's board**, not clicking
+  around a demo. **Board first, account second**: they get invested before
+  we ask.
 
 ---
 
-## 1. What makes Pip better (the copy's raw material)
+## 0. The big idea
 
-Ranked by how hard a competitor would find it to copy. Every row is
-**BUILT** unless marked.
+Every AAC company sells you **their** app. Pip builds **your child's**.
 
-| # | Truth | Why a competitor can't just match it | Source |
+The incumbents charge $250–$300, or rent the voice by the month, and then
+hand every child the same locked layout because *they* decided that's what's
+best. Pip is free to start, $49 once for the whole family, and built around
+one belief: **nobody knows your child better than you.**
+
+The site makes one argument in three beats:
+
+1. **The price is wrong.** $300 or a monthly rent for a child to speak.
+2. **The philosophy is wrong.** One app for every child, locked, "for their
+   own good."
+3. **Pip fixes both.** Free, yours, fully customizable, and stable, so
+   nothing moves unless you move it.
+
+Then it asks for one thing: **Create your child's board, free.**
+
+---
+
+## 1. The conversion path: board first
+
+```text
+pipaac.org  ──[Create your child's board — free]──►  app.pipaac.org
+                                                          │
+            Welcome: child's name + "Who's it for?"  (one screen, built)
+                                                          │
+            60-second demo: want → apple → ✨ "I want an apple."
+                            ⏪ "I wanted an apple."    (built)
+                                                          │
+            "Now try your own."  Free play on their board
+                                                          │
+            First customization (Grandma, the dog)  →  Save [Name]'s board
+            = supporter account: email + passkey  (Protect card, built)
+```
+
+The app's on-ramp already does this
+(`docs/product/Design_System.md` § Welcome and first-run demo: "No
+photos, PIN, backup or sign-in before the wow"). The demo **is** the try-it
+experience, so there's no separate try page and no demo on the home page.
+One path.
+
+**What the site promises is exactly what happens next.** The hero
+microcopy describes the first 60 seconds in the app, so the click feels
+safe and the payoff arrives before the ask.
+
+**The account ask** happens inside the app (the Protect card), and it's the
+second conversion. App-side copy for it, for the app's owner to adopt:
+
+> **Save Maya's board.**
+> You just built something. Keep it safe: if this iPad breaks, scan
+> Maya's card and everything comes back. Free.
+> [Save with email] — *No password. Your phone's passkey does it.*
+
+---
+
+## 2. Positioning
+
+### 2.1 The enemy: the one-size-fits-all app
+
+The incumbents' doctrine: every communicator should learn the same
+layout, so the layout is theirs to decide and lock. The newest generation of
+those apps takes it further and won't let a family customize the board at
+all. They call it consistency. It's really their design choice, made
+permanent.
+
+**Our attack:** consistency and control aren't the same thing. The
+incumbents sell rigidity as if it were stability. Pip separates the two:
+
+| They give you | Pip gives you |
+| --- | --- |
+| **Frozen:** you can't change it | **Stable:** nothing moves *on its own* |
+| One layout, designed for "everyone" | Great defaults, then **your** call |
+| Their pictures, their names | Your photos, your people, your recordings, everywhere |
+| Start over when your child outgrows it | Grow from 15 to 30, 60, or 90 words without starting over |
+| Suggestions that reshuffle the screen (or none) | Suggestions in one strip; the board never budges |
+| $250–$300, or rent by the month | **Free.** $49 once for the whole family |
+
+### 2.2 The three cores (every page draws on these)
+
+- **Mom knows best.** You know your child. The SLP knows your child. A
+  software company doesn't.
+- **A voice is not rented.** Never a subscription for a child to speak.
+- **No child waits.** Start tonight, free, on the iPad you already have.
+
+### 2.3 Voice and tone
+
+Direct, warm, a little angry on the family's behalf. Short sentences.
+Name the enemy. Never talk down to parents and never use jargon above the
+fold. Every section ends on the CTA.
+
+---
+
+## 3. Who we're talking to
+
+| Visitor | Their 3 a.m. question | Landing | The yes |
 | --- | --- | --- | --- |
-| 1 | **Free forever, with every built-in word.** $49 once per user unlocks the whole team. Never a subscription. Every supporter and every SLP is free. | Matching it costs them their revenue model. The moat is the business, not a feature. | Pricing § 4 |
-| 2 | **No child waits.** The SLP builds the board in session one and emails a QR card, and the family has it that night. | Needs free + web editor + QR transfer together. | SLP_Channel § 3; 011, 015 |
-| 3 | **Runs on the iPad you already own**, in the browser, with no download, no account, and no dedicated device. | Their business is built on App Store purchases and dedicated hardware. | app.pipaac.org live 2026-10-01 |
-| 4 | **Say it with feeling.** Any sentence can be spoken happy, sad, or angry. | New voice pipeline. | 025 |
-| 5 | **A natural voice on every word**, never a robot fallback for a tile. | Shared audio library plus mint-on-demand for typed words. | 028 |
-| 6 | **Model from your phone.** You tap a word on your phone and it glows on your child's iPad. You don't have to take the device away. | Needs live multi-device sync. | Attention layer, 032 |
-| 7 | **Spotlight.** Choose this week's words; they glow and the rest dim, and nothing is ever disabled. | Same sync spine. | 032 |
-| 8 | **The board never moves on its own.** Suggestions live in the Smart bar. The grid stays put, and you decide when to grow it (15 → 30 → 60 → 90) without starting over. | Clean-room grid design. | 014, 018 |
-| 9 | **Your family on the board in seconds**: a name, a photo, done. No photo? Picture Finder or *Draw it for me* draws it in Pip's style. | Pipeline + art system. | 029, 030 |
-| 10 | **Family knows best.** Any word can go in any cell. Your recordings, photos, and names beat our defaults everywhere, predictions included. | Philosophical opposite of "one layout for everyone". | memory: positioning |
-| 11 | **Edit on your laptop; the iPad has it.** Free backup. If the iPad breaks, scan the QR card and everything comes back. | Sync + accounts. | 011, 015 |
-| 12 | **Progress you can show.** A free weekly win card; the full dashboard and a PDF report come with Lifetime. | Built from the child's own taps. | 016 (discharged) |
-| 13 | **Pip never listens.** No microphone except when an adult chooses to record a word. No ads. The marketing site has no trackers. | Posture, not code. | SSOT R20 |
+| **Parent** of a child who doesn't speak, or doesn't speak enough | *Can I afford this, will it fit my kid, will I break it?* | Home | Create your child's board |
+| **SLP** (the #1 channel) | *Will this save my evenings and make me look good to the family?* | /slps | Set up your first client free |
+| **School / district** | *Can we buy 30?* | /schools | Request license codes |
+| **Teen or adult communicator** | *Is this a toy?* | Home → FAQ | Create your board |
 
-**The emotional core:** *a voice is not rented* (Pricing § 1).
-**The professional core:** *no child waits for a voice* (SLP_Channel § 2).
-**The family core:** *you know your child best* (positioning).
-
----
-
-## 2. Claims gate: what the site may NOT say yet
-
-These are the things I would most like to write. Each one is either untrue
-today or unsourced. The site ships without them, and each gets a named
-owner who can unlock it.
-
-| Tempting claim | Status | Unlock |
-| --- | --- | --- |
-| "Works offline" | **Not true from a cold start.** No service worker exists (`grep serviceWorker public/` returns nothing). Tile clips cache; the app shell doesn't. | Ship an app-shell service worker plus an airplane-mode Works Test, then the claim goes in. Big one: offline is in the brand promise. |
-| "On the App Store" / "Download" | iOS app not built (`Platforms_iOS_And_Web.md` § 3). | Say "opens in Safari on iPad → Add to Home Screen." |
-| "Android, Chromebook, Fire tablet" | Web should run there; **no device pass on record.** | One real-device pass each, then list them. Until then say "iPad, and any modern browser." |
-| "Real human voice" | Tile voices are ElevenLabs synthesis, not recordings. | Say "natural voice". Never "recorded by a person." |
-| "The first AAC with emotional voice" | Unsourced. Acapela has sold expressive voice variants for years. | Say what Pip does, not that it's first. |
-| "30–50% of AAC devices are abandoned" | Vision cites a range without a specific study behind each number. | Find the exact paper and figure, or drop it. |
-| "Mom's voice / voice cloning" | Not built (`Voice_Cloning_And_Synthesis.md`). | — |
-| Visual scenes, literacy bridge, label-only adult mode, other languages | Not built. | — |
-| "Funded by Medicaid / insurance" | Not today (Pricing § 4.5). | FAQ says so honestly. |
-| Testimonials, family stories, "loved by SLPs" | **There are no users yet** (memory, 2026-10-02). | Founding Families program (§ 8, Phase 5). Never fabricate, composite, or stage. |
-| "AAC won't stop your child talking" | True to the research, but a **health claim** (High-Risk Stop). | Founder approval plus cited papers (Millar, Light & Schlosser 2006; Schlosser & Wendt 2008). Drafted in the FAQ, gated. |
-| Competitor prices and features | Sourced from founder research **2026-09-23**; platform cells unverified. | Re-verify every cell with a dated screenshot archive before publishing (§ 6). |
-
----
-
-## 3. Who we are talking to
-
-| Visitor | Arrives from | Their 3 a.m. question | Page | Their yes |
-| --- | --- | --- | --- | --- |
-| **Parent** of a non-speaking or minimally-speaking child (autism, apraxia, Down syndrome, CP …) | SLP recommendation, Facebook parent groups, a Google search for "free AAC app" or "Proloquo2Go too expensive" | *Can my child do this, can I afford it, and will I break it?* | Home | **Start free** |
-| **SLP** (the #1 channel, SLP_Channel) | Peer, conference, a family who brought Pip in | *Will this make me look good to the family, and save me evenings?* | /slps | **Set up your first client free** |
-| **Teacher / school / district** | SLP, procurement | *Can we buy 30, and does it handle the privacy rules?* | /schools | **Request license codes** |
-| **Teen or adult communicator**, or their family | Search | *Is this a toy?* | Home → FAQ (adults line) | **Start free** |
-
-Design rule from this table: **mobile-first, written for a tired parent on a
-phone at night.** Short paragraphs, big tap targets, sound only on tap, and
-nothing that makes them sign up to look.
-
-Vocabulary on the site follows SSOT § Words: *board*, *group*, never "page"
-for a group. In marketing, "your child" is natural for parents. Adults get
-their own line, and copy never says "patients".
+The page is mobile-first and written for a tired parent reading a phone at
+night.
 
 ---
 
@@ -103,572 +130,622 @@ their own line, and copy never says "patients".
 
 ```text
 pipaac.org
-├─ /                     Home — the long-form sales page (families first)     ← START HERE
-├─ /slps                 For SLPs — "No child waits for a voice"
-├─ /pricing              Free vs Pip Lifetime, schools, the promises
-├─ /compare              "Pip vs …" hub (honest table + how to choose)
-│   ├─ /compare/proloquo2go
+├─ /                Home: the sales page. MWR = Create your child's board   ← START
+├─ /method          "Your child is not a template." The methodology + the attack
+├─ /slps            "Start AAC in the first session. The family has it tonight."
+├─ /pricing         Free vs $49 once; schools; our promises
+├─ /compare         Pip vs the field (hub)
 │   ├─ /compare/proloquo
+│   ├─ /compare/proloquo2go
 │   ├─ /compare/touchchat
 │   ├─ /compare/lamp-words-for-life
 │   ├─ /compare/td-snap
-│   ├─ /compare/coughdrop
-│   └─ /compare/free-aac-apps     (Cboard and other free options)
-├─ /faq                  The full FAQ (home carries the top 8)
-├─ /about                Why Pip exists, our promises, who we are
-├─ /schools              License codes, 50% off 20+, purchase orders, privacy
-├─ /start                Handoff: "Open Pip" + Add to Home Screen + Guided Access
-├─ /privacy              Plain-English privacy (founder + legal)          [founder]
-├─ /learn                Later: modeling guide, core words, printable boards with QR
-└─ /press                Later: kit (marks, poses, facts, screenshots)
+│   └─ /compare/coughdrop
+├─ /faq             Every objection, answered
+├─ /about           Why Pip exists (founder story)
+├─ /schools         License codes, 50% off 20+, purchase orders
+├─ /privacy         Plain English
+└─ later: /learn (modeling guide, printable boards with QR), /press
 ```
 
-Navigation: **How it works · For SLPs · Pricing · Compare · FAQ** with
-**[Start free]** in the header. Footer: About, Schools, Privacy, Press,
-contact address, and the *no trackers* line.
+Header nav: **Our method · For SLPs · Pricing · Compare · FAQ** with
+**[Create a board — free]**. Footer: About, Schools, Privacy, contact,
+"This site has no trackers."
 
-Folder-native: each page is `site/public/<name>.html` (or
-`<name>/index.html` for clean URLs), per `site/README.md`.
-
----
-
-## 5. Design vision
-
-### 5.1 The look: "the board, at the size of a billboard"
-
-- **Canvas:** Cream `#f6f4ef` with Ink `#2a241d` type. Sections alternate
-  cream, white, and one **ink section** (the price receipt) for contrast.
-- **The bird gets to fly here.** Pip Amber and Ember are marketing-only
-  colors (Design_System), so the site is where they live. The bird appears
-  in the six poses at section turns: *welcome* in the hero, *looking up* at
-  the demo, *listening* at privacy, *resting* at the FAQ, *hopping* at the
-  final CTA.
-- **The grammar band:** a thin six-color stripe in the real Fitzgerald
-  hexes (yellow, green, blue, pink, purple, red) as the section divider.
-  It's the brand signature and it's honest, because those are the colors
-  on the child's board.
-- **Real tiles as the illustration system.** No stock photos of kids
-  holding iPads (every competitor has them, and we have no consented
-  families yet). The product's own tiles, at 2–3× scale, are the imagery.
-- **Type:** Andika throughout, Bold for display and Regular for body. Add
-  `andika-regular.woff2`, SIL OFL, self-hosted. It's the face the child
-  reads on the board, so the site reads in the child's own type. Self-hosting
-  also means no Google Fonts request (privacy posture). Display size is
-  clamp(2.5rem, 7vw, 5.5rem), and body is 1.125rem/1.6 at 60–68ch.
-
-### 5.2 Motion and sound, by the product's own laws
-
-The attention-layer laws apply to the site: **gentle, no flashing, no
-autoplay sound, nothing moves that you didn't touch.**
-`prefers-reduced-motion` turns every transition into a cut. Sound plays
-only on a tap, with a visible 🔊 cue on tappable tiles.
-
-### 5.3 The five signature moments
-
-1. **The tile headline.** The H1 is real word tiles in a sentence bar:
-   `[No] [child] [waits] [for a] [voice]`. Each one speaks when tapped.
-   Screen readers get a plain `<h1>` with the tiles marked
-   `aria-hidden` and a separate "Hear it" button.
-2. **Try Pip right here.** A 3×5 mini-board (the Core 15 starter words,
-   real art, real clips) with the sentence bar, Speak, and the three
-   feeling faces. A visitor can build "no — stop!", tap 😠, and hear it
-   angry (Core 15: I · want · more · yes · stop / you · like · all done ·
-   no · help / what · go · ? · not · hurt). Then: *"That's Pip. The whole thing is free. [Open the full
-   board →]"*
-3. **The receipt.** An ink section styled as a till receipt: *"What it
-   costs for a child to say 'more'"*, with sourced competitor prices, then
-   **Pip: $0.00**. Below it: *"Want the whole team? $49. Once."*
-4. **Tonight.** A horizontal timeline: *3:30 pm SLP session → 3:55 QR card
-   emailed → 6:40 pm iPad scans it → 7:10 pm "Grandma" at dinner.* Labeled
-   **"An example evening"**. It's a scenario, not a testimonial.
-5. **Phone to iPad.** A looping, reduced-motion-safe illustration: a
-   parent's phone taps *eat*, and *eat* glows on the iPad across the table.
-   Caption: *"Model from your phone. Never take the iPad away."*
-
-### 5.4 Engineering bar
-
-- Static HTML plus one stylesheet. The only JS is the demo (~6 KB, vanilla).
-  No framework and no build step (`site/README.md`).
-- **First load under 150 KB** including fonts. Demo clips (~15 short MP3s,
-  copied into `site/public/audio/`) load on the first tap, not before.
-- **WCAG 2.2 AA minimum**, AAA contrast on body text, full keyboard path
-  through the demo, and visible focus in the product's cream-and-ink double
-  ring.
-- **Zero third-party requests and zero cookies.** The footer says so. For a
-  child-adjacent brand, that's a conversion asset as well as a compliance
-  fact.
-- Structured data: `SoftwareApplication` (offers $0 and $49), `FAQPage`,
-  and `Organization`. OG image: the tile headline on cream.
+Every page's primary CTA is **Create your child's board — free** →
+`app.pipaac.org`. The SLP page's CTA reads "Set up your first client free"
+and goes to the same place.
 
 ---
 
-## 6. Competitive frame
+## 5. Design
 
-**Posture: generous, specific, sourced.** SLPs respect these products, and
-many own them. Trashing incumbents loses the channel. The line is: *they
-built the field; we built for the family's budget and the family's
-evening.* Every compare page opens with **"If it's working for your
-child, keep it."** That honesty is what makes the rest believable.
+### 5.1 The look: "the board, at billboard size"
 
-Pip's honest weaknesses get printed too: no App Store app yet, no Medicaid
-route, no board import, a younger vocabulary than 20-year-old systems, and
-no published research on Pip itself. Naming them first earns the right to
-claim the strengths.
+- **Canvas:** Cream `#f6f4ef`, Ink `#2a241d` type. Sections alternate
+  cream and white. **Two ink sections**: the price receipt, and the "frozen
+  vs stable" attack.
+- **The bird flies here.** Pip Amber `#fcb82b` and Ember `#fc7419` are
+  marketing-only colors, so the site is where they live. Poses at the
+  section turns: *welcome* (hero), *looking up* (method), *listening*
+  (privacy), *resting* (FAQ), *hopping* (final CTA).
+- **The grammar band:** a six-color stripe in the real Fitzgerald hexes
+  (yellow, green, blue, pink, purple, red) as the section divider and the
+  brand signature.
+- **Real tiles are the illustration system.** Product tiles at 2–3×
+  scale, never stock photos of kids with iPads (every competitor does that).
+- **Type:** Andika everywhere. Bold for display, Regular for body (add
+  `andika-regular.woff2`, self-hosted). It's the face your child reads on
+  the board. Display: clamp(2.5rem, 7vw, 5.5rem). Body: 1.125rem/1.6 at
+  60–68ch.
+- **CTA button:** solid ink, cream text, 56px tall, full-width on phones,
+  and a sticky bottom bar on mobile after the hero scrolls away.
 
-### 6.1 The comparison table (/compare and each compare page)
+### 5.2 Signature visuals
 
-Prices are from founder research **2026-09-23**
-(`docs/founder/2026-09-23_Accounts_And_Pricing.md` § Research). Every
-**[verify]** cell needs a dated source and a screenshot in
-`docs/strategy/competitive/` before publishing.
+1. **Hero:** the headline set as a sentence bar of real tiles,
+   `[Your child's] [voice] [shouldn't] [cost] [$300]`, with **$300**
+   struck through in red and **$0** stamped beside it. On the right (on
+   phones, below), an iPad showing a child's board with *their own* photos:
+   Grandma, the dog, the park. Bird in the welcome pose on the iPad's edge.
+2. **The receipt:** an ink section styled as a till receipt. *"What it
+   costs for a child to say 'more.'"* The competitors' prices, then
+   **Pip ........ $0.00**.
+3. **Frozen vs Stable:** a split screen. Left: a grey, padlocked grid with
+   generic tiles labeled *"Their board."* Right: the same grid in full
+   color with family photos dropped in, labeled *"Your child's board."* The
+   tile positions are identical on both sides, which is the point: stable,
+   not frozen.
+4. **Grow without starting over:** 15 → 30 → 60 → 90 grids in a row,
+   with *I · want · more* in the same relative spots, lit on each.
+5. **Phone to iPad:** the parent's phone taps *eat*, and *eat* glows on the
+   iPad across the table. *"Model from your phone. Never grab the iPad."*
 
-| | **Pip** | Proloquo2Go | Proloquo | TouchChat w/ WordPower | LAMP WFL | TD Snap | CoughDrop |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| To start speaking | **Free** | $249.99 | $9.99/mo or $99.99/yr | $299.99 | $299.99 | Subscription after trial | $295 or $9/mo |
-| Subscription required | **Never** | No | Yes | No | No | Yes [verify] | Option |
-| Extra adults editing | **Free, every supporter** | [verify] | [verify] | [verify] | [verify] | [verify] | $45 to edit |
-| SLPs pay | **No** | No (pro license) | [verify] | No (after training) | [verify] | [verify] | [verify] |
-| Runs on | **iPad + any browser** | iOS / Mac [verify] | iOS [verify] | iOS [verify] | iOS [verify] | iPad, Windows [verify] | Web, iOS, Android [verify] |
-| Model from your phone | **Yes** | [verify] | [verify] | [verify] | [verify] | [verify] | [verify] |
-| Say it happy / sad / angry | **Yes** | [verify] | [verify] | [verify] | [verify] | [verify] | [verify] |
+### 5.3 Motion and sound
 
-Rule: a row whose competitor cells can't all be verified is cut, not
-guessed. Comparative advertising must be true and current. Each compare
-page carries "Prices checked on [date]. Tell us if something changed:
-[address]."
+Gentle, with no flashing and nothing that moves unless it's scrolled into
+view; one fade-up per section, max. `prefers-reduced-motion` turns it all
+off. **No audio on the marketing site:** the sound happens in the app,
+after the click.
 
-### 6.2 "Five families for one" — the line that does the math
+### 5.4 Build bar
 
-$249.99 ÷ $49 ≈ 5.1. **"For the price of one Proloquo2Go license, five
-families get Pip Lifetime."** It's only true while both prices hold, so it
-gets the same dated source.
-
----
-
-## 7. The copy
-
-Voice: warm, plain, specific, short sentences, no jargon above the fold.
-Hope without promises about outcomes: we promise **access**, never
-"your child will talk." Numbers come from the pricing doc.
-
-### 7.1 Home page — long form
-
-**`<title>`** Pip AAC — the free AAC app. Every word speaks. $49 once, never a subscription.
-**Meta:** Pip is a complete AAC app that runs on the iPad you already own. Every word speaks, free. The SLP sets it up in session; your child has it tonight.
-
----
-
-**[HERO]** *(pose: welcome)*
-
-Eyebrow: **AAC for every voice**
-
-H1 (tiles): **No child waits for a voice.**
-
-Sub: Pip is a complete AAC app, and every word speaks for free. Open it
-tonight on the iPad you already have: no download, no account, no $300
-app. When the whole family and your SLP want in, it's **$49 once**. Never
-a subscription.
-
-**[Start free →]** *Opens right in your browser*
-Secondary: **Hear Pip first ↓**
-
-Trust row: *Free forever · $49 once, never monthly · Supporters & SLPs free · No ads, no trackers*
+Static HTML, one stylesheet, near-zero JS (sticky CTA bar only). First load
+under 150 KB including fonts. WCAG 2.2 AA. No third-party requests and no
+cookies. Structured data: `SoftwareApplication` (offers $0 and $49),
+`FAQPage`, `Organization`.
 
 ---
 
-**[TRY IT]** *(pose: looking up)*
+## 6. Home page copy
 
-### Tap a word. Hear your child's new voice.
-
-*(Mini-board. Under it:)* Try **I** → **want** → **more**, then tap 😊.
-Now **no** → **stop**, and tap 😠. Same board, and now they mean it.
-
-> That's Pip. Not a demo version or a trial. The real board has 677 words,
-> and every one of them is free. **[Open the full board →]**
+**`<title>`** Pip AAC: your child's voice shouldn't cost $300. Free AAC app, $49 once.
+**Meta:** Pip is the AAC app built around your child, not around everyone. Every word free, forever. $49 once for the whole family. Never a subscription.
 
 ---
 
-**[THE PROBLEM]**
+**[HERO]**
 
-### You were told your child needs a voice. Then you were handed a bill.
+Eyebrow: **The AAC app built around your child**
 
-Here's how it usually goes. The SLP says your child would benefit from
-AAC. You go home and look it up. The best-known apps cost **$250 to $300**,
-or they want a monthly subscription. Some families wait months for an
-evaluation, a funding request, and a device.
+# Your child's voice shouldn't cost $300.
 
-All that time, your child still has things to say.
+### And it should never be rented by the month.
 
-And when the app finally arrives, the setup often lands on you, at night,
-with a manual. The device can only be in one place. If you want to show
-your child how to use it, you have to take it out of their hands.
+Pip is a complete AAC app that you shape around *your* child. Your
+people, your photos, your words. Every built-in word speaks, free,
+forever. When the whole family wants in, it's **$49 once**. Never a
+subscription.
 
-**None of that is your child's fault. And none of it is necessary.**
+**[Create your child's board — free →]**
 
----
+*Type your child's name. Sixty seconds later, they're saying "I want an
+apple." No credit card. Nothing is ever taken away.*
 
-**[THE TURN]**
-
-### Pip starts free tonight. It stays yours forever.
-
-Pip is a full AAC app (core words, groups, a keyboard, next-word
-suggestions, a natural voice) that runs in the browser on the iPad you
-already own. Every built-in word speaks, free, forever. No trial that runs
-out. No word that gets locked later.
-
-**A voice is not rented.** We will never charge a subscription for your
-child to speak.
+Trust row: **Free forever · $49 once, never monthly · Every helper free · SLPs free**
 
 ---
 
-**[TONIGHT — the SLP story]**
+**[THE PAIN]**
 
-### From the therapy room to the dinner table in one evening.
+## You were told your child needs a voice. Then you saw the price.
 
-1. **In session.** Your SLP builds your child's board on a laptop: starter
-   words, your family's photos, the things your child loves.
-2. **On the way home.** They email you a QR card.
-3. **After dinner.** You scan it on your child's iPad. Everything's there.
-4. **That week.** Your SLP keeps adding words from the office. Your iPad
-   gets them the same day.
+The SLP says your child would benefit from AAC. You go home and look it
+up.
 
-*An example evening:* 3:30 session · 3:55 card emailed · 6:40 scanned · 7:10 *"Grandma."*
+**$249.99.** **$299.99.** Or **$9.99 a month, every month,** for as long as
+your child needs to talk. Some families are told to wait months for an
+evaluation, a funding request, a device.
 
-**[Start free →]**  ·  Are you an SLP? **[See how it works for you →]**
+All that time, your child has things to say.
+
+And when the app finally arrives, it's the same app every other child
+gets. Same layout. Same pictures. Same "someone else knows best."
+
+**Your child isn't every other child.**
+
+**[Create your child's board — free →]**
 
 ---
 
-**[FEATURES — benefit-first, six cards]**
+**[THE ENEMY — ink section]**
 
-### Built for the way families actually talk.
+## They decided your child should have the same app as everyone else.
 
-**🗣 Say it like you mean it.**
-Any sentence, spoken happy, sad, or angry. A furious *"go away"* shouldn't
-sound polite. *"I love you"* shouldn't sound like a weather report.
+The biggest names in AAC have a philosophy: every communicator should
+learn the same board, laid out their way, and families shouldn't change
+it. Their newest app takes it all the way: a board you can't customize.
 
-**📱 Model from your phone. Never take the iPad away.**
-Children learn to talk by hearing talk all around them. With Pip you tap a
-word on your phone and it glows on your child's iPad across the table. You
-show them how without leaning over their shoulder.
+They call it consistency. We call it what it is: **a company deciding it
+knows your child better than you do.**
 
-**✨ Spotlight this week's words.**
-Pick the words you're working on. They glow and everything else dims, but
-nothing is ever turned off. Your child can still say anything.
+It doesn't.
+
+Your daughter calls her grandmother *Mimi*. Your son's whole world right
+now is trains. Your child needs *stop* bigger, *help* closer, and the dog
+on the first screen. No template knows that.
+
+**You do.**
+
+### At Pip, mom knows best.
+
+Dad, Grandma, the SLP, and the teacher who sees your child every day know
+best too. Pip starts with a great board designed from research on the
+words children use most. **Then it's yours.** Put any word in any spot.
+Add your people with your photos. Record your own voice for a word. What
+you add beats our defaults everywhere, including suggestions.
+
+**[See our method: "Your child is not a template" →]**
+
+---
+
+**[STABLE, NOT FROZEN]**
+
+## "But the buttons shouldn't move." We agree. Completely.
+
+Kids learn where words live, the way your fingers know where the keys are.
+Moving them breaks that. The big apps use this as their reason to lock
+everything down.
+
+They're mixing up two different things.
+
+**Stable** means nothing moves *on its own*. **Frozen** means *you* can't
+move anything either.
+
+Pip is stable:
+
+- **Words never jump around.** Pip's next-word suggestions live in their
+  own strip at the top. The board underneath stays exactly where your
+  child's hands learned it.
+- **Pip never hides a word or clears a sentence on a guess.** Your child
+  always has every word they had a second ago.
+- **Grow without starting over.** Go from 15 words to 30, 60, or 90 when
+  they're ready. The words they know stay where their hands expect them.
+
+And Pip is *not* frozen. When **you** decide a word should move, it moves.
+
+**[Create your child's board — free →]**
+
+---
+
+**[BENEFITS — six cards]**
+
+## Everything your child needs to say. Everything you need to help.
 
 **👵 Grandma's on the board in ten seconds.**
-A name, a photo, done. No photo? Pip finds a picture that fits, or draws
-one in the same friendly style as the rest of the board.
+Type her name, snap her photo, done. No photo? Pip finds a picture that
+fits, or draws one in the same friendly style as the rest of the board.
 
-**🧭 The buttons never move on their own.**
-Pip's suggestions live in one strip at the top. The board underneath stays
-exactly where your child's hands learned it. When they're ready for more
-words, you grow the board without starting over.
+**🗣 Say it like you mean it.**
+Any sentence, spoken happy, sad, or angry. A furious *"go away"*
+shouldn't sound polite. *"I love you"* shouldn't sound like a weather
+report.
 
-**💻 Edit from your laptop. The iPad already has it.**
-Everyone who helps, including parents, grandparents, the SLP, and the
-teacher, can add words from their own device. If the iPad breaks, scan the
-QR card on a new one and everything comes back. Backup is free.
+**📱 Model from your phone. Never grab the iPad.**
+Kids learn to talk by hearing talk all around them. Tap a word on your
+phone and it glows on your child's iPad across the room. You show them
+how, and the iPad stays theirs.
 
----
+**✨ Spotlight this week's words.**
+Pick the words you're practicing. They glow and the rest dim, but nothing
+is ever turned off. Your child can still say anything.
 
-**[YOU KNOW YOUR CHILD]**
+**⏪ From "want apple" to "I wanted an apple."**
+One tap turns your child's words into a full sentence, or into the past
+tense. They say it their way, and Pip helps them say it the long way when
+they want to.
 
-### Great defaults. Your rules.
+**💻 The whole team, on their own devices.**
+Parents, grandparents, the SLP, the teacher: everyone adds words from
+their own phone or laptop, and the iPad has them the same day. If the iPad
+breaks, scan your child's card on a new one and everything comes back.
+Backup is free.
 
-Some AAC apps decide the layout for you and lock it. Pip starts with a
-board designed from open research on the words young communicators use
-most. After that, **you and your SLP decide.** Put any word in any spot.
-Record your own voice for a word. Your photos, your names, and your
-recordings override ours everywhere, suggestions included.
-
-*Nobody knows your child better than the people who love them.*
+**[Create your child's board — free →]**
 
 ---
 
 **[THE RECEIPT — ink section]**
 
-### What it costs for a child to say "more."
+## What it costs for a child to say "more."
 
 ```
 Proloquo2Go ..................... $249.99
 TouchChat with WordPower ........ $299.99
 LAMP Words for Life ............. $299.99
-Proloquo ................ $99.99 every year
+Proloquo ......... $9.99 a month, forever
 ──────────────────────────────────────────
 Pip ............................... $0.00
 ```
-*Prices checked [date]. [Sources →]*
 
-**Free, forever:** every built-in word · 20 words of your own · your
-child's device plus one helper · all voices, suggestions, and groups ·
-backup and QR restore · the weekly win card · 5 drawings.
+For the price of one Proloquo2Go, **five families** get Pip Lifetime.
 
-**Pip Lifetime — $49 once, per child:** unlimited words of your own ·
-**every** helper: both parents, grandparents, SLP, teachers · the full
-progress dashboard and report · 300 drawings.
+| **Free, forever** | **Pip Lifetime — $49 once** |
+| --- | --- |
+| Every built-in word speaks | Everything in Free, plus: |
+| 20 words of your own: people, pets, places | **Unlimited** words of your own |
+| Your child's device + one helper | **Every** helper: both parents, grandparents, SLP, teachers |
+| All voices, suggestions, groups, feelings | The full progress dashboard + report for IEP meetings |
+| Backup and card restore | 300 drawings |
+| Weekly win card | |
 
-Supporters and SLPs never pay. Schools: 50% off 20 or more.
-**[Start free →]**
+*One price per child. Every adult helper is free. SLPs never pay.
+Schools: 50% off 20 or more.*
 
-> Free isn't a trial. Nothing you add is ever taken away, even if you
-> never pay.
+### Our promise: nothing is ever taken away.
+
+Not a trial. Not a countdown. A word your child has keeps speaking whether
+you ever pay or not. **A voice is not rented.**
+
+**[Create your child's board — free →]**
 
 ---
 
-**[PRIVACY]** *(pose: listening)*
+**[FOR SLPs — strip]**
 
-### Pip never listens.
+## SLPs: start AAC in the first session. The family has it tonight.
 
-No microphone, ever, unless you choose to record a word. The things your
-child says stay on their device. To suggest the next word, Pip can ask
-our ranking service about the words in the current sentence. It never
-sends names, photos, or who your child is, and you can turn it off with
-one switch. No ads. No selling data. This website doesn't even have a
+Build the board on your laptop during the session. Email the family a
+card. They scan it at home, and you keep adding words from the office.
+Free for you, free for the family to start.
+
+**[How Pip works for SLPs →]**
+
+---
+
+**[PRIVACY — short]** *(pose: listening)*
+
+## Pip never listens.
+
+No microphone, ever, unless you choose to record a word. No ads. No
+selling anything about your child. This website doesn't even have a
 tracker.
 
-*(Copy must match `Dual_Engine_Predictive_Intelligence.md` § 3.2 and
-`Stats_And_Progress.md` § 6 word for word in meaning; founder + privacy
-review before launch.)*
-
 ---
 
-**[THE SCIENCE — light touch]**
+**[FAQ — top 8]**
 
-### Built on what the research says helps.
+1. Is it really free? What's the catch?
+2. What does $49 get me?
+3. Will you ever make it a subscription?
+4. Will the buttons move around?
+5. Can I make it look and sound like *our* family?
+6. Does it work on our iPad?
+7. Is $49 per child or per family?
+8. I'm an SLP. Do I pay?
 
-- **Presume competence.** Every word is there from day one. No tests to
-  pass first.
-- **Core words.** A few hundred words do most of the work in everyday
-  talk, so they're always on the board.
-- **Modeling.** Children learn AAC the way they learn speech, by seeing it
-  used. That's why Pip lets you model from your phone.
-- **More than requests.** Your child can protest, joke, comment, ask, and
-  say how they feel, not just ask for snacks.
-
-*(Citations on /about#research. Framed as practices Pip supports, not as
-laws or outcome claims.)*
-
----
-
-**[FAQ — top 8 on home; full list § 7.5]**
+*(Answers in § 11.)* **[All questions →]**
 
 ---
 
 **[FINAL CTA]** *(pose: hopping)*
 
-### Your child has something to say tonight.
+## Your child has something to say tonight.
 
-Every word is free. It opens in your browser. It takes about a minute to
-start.
+Type their name. In sixty seconds they're speaking. Every word free,
+forever.
 
-**[Start free →]**
+**[Create your child's board — free →]**
 
-*Free forever · $49 once for the whole team · Never a subscription*
+*Free forever · $49 once for the whole family · Never a subscription*
+
+**P.S.** If you remember one thing: the people who love your child know
+what your child needs. Not an app company. Pip is built on that. Start
+free tonight, and make it theirs. **[Create your child's board →]**
 
 ---
 
-### 7.2 /slps
+## 7. /method — "Your child is not a template."
+
+**`<title>`** Our method: your child is not a template | Pip AAC
+
+**[HERO]** *(pose: looking up)*
+
+# Your child is not a template.
+
+### Why Pip lets families shape the board, and why the big AAC apps won't.
+
+---
+
+## The one-size-fits-all mistake
+
+For twenty years, the AAC industry has been built on one idea: every
+communicator should learn the same board, designed by the company, and
+nobody should change it.
+
+The newest apps take it to the end of the line: **a board you can't
+customize.** Same words, same places, same pictures, for every child on
+earth.
+
+Ask any parent of a child with special needs how well "the same for
+everyone" has worked out for them. Schools, doctors, therapies, forms: all
+of it built for an average child who doesn't exist.
+
+**AAC should be the one place that's different.** It's your child's
+*voice*.
+
+---
+
+## What we believe
+
+### 1. Mom knows best.
+
+The people who love your child, and the professionals who work with
+them, know things no company can. Pip gives them the final say on every
+word, every picture, every spot on the board. Our defaults are a starting
+point, never a cage.
+
+### 2. Stable, not frozen.
+
+Motor memory matters. Children learn where words live, and moving words
+around on them is wrong. The big apps are right about that.
+
+Where they go wrong is the conclusion. *"Words shouldn't move"* became
+*"families can't change anything."* Those are different rules. Pip keeps
+the first and throws out the second:
+
+- **Nothing moves on its own.** No reshuffling, no "smart" rearranging,
+  ever.
+- **Suggestions live beside the board, never in it.** The next-word strip
+  changes so the board never has to.
+- **When you move a word, Pip shows you the cost first,** so it's a
+  decision, not an accident.
+
+### 3. Grow without starting over.
+
+Most children outgrow their first board. In a locked app, "upgrading" can
+mean learning a new one from scratch. Pip's boards (15, 30, 60, 90 words)
+are designed as one family. The words your child knows stay where their
+hands expect them. Pip highlights anything that moved so you can practice
+it together.
+
+### 4. Every word, from day one.
+
+No tests to pass first. No "earn your next words." Your child gets the
+whole vocabulary on the first day, through groups and a keyboard, and you
+decide what's on the front screen.
+
+### 5. Their people, their world.
+
+A generic "grandma" picture isn't *their* Grandma. Pip puts your
+photos, your names, and your recordings on the board, and they override
+ours everywhere, including next-word suggestions. Their dog is on the board
+because their dog is their world.
+
+### 6. More than requests.
+
+Too many AAC boards are built for asking for snacks. Children need to
+protest, joke, comment, ask why, and say how they feel. Pip's board has
+*don't*, *stop*, *why*, and *silly* up front, and a voice that can say any
+sentence happy, sad, or angry.
+
+### 7. Model, don't grab.
+
+Children learn AAC by watching it used. In other apps, modeling means
+reaching over your child's shoulder or taking the device away. In Pip, you
+tap on your phone and the word glows on theirs.
+
+### 8. We never act on a guess.
+
+Pip suggests. It never decides. It never hides a word, clears a sentence,
+or finishes a thought because it *thinks* your child is done. If Pip is
+wrong, your child loses nothing.
+
+---
+
+## Side by side
+
+*(The Frozen vs Stable table from § 2.1, designed as the ink split-screen
+visual.)*
+
+---
+
+## The bottom line
+
+The big apps protect their design. Pip protects your child's.
+
+**[Create your child's board — free →]**
+
+---
+
+## 8. /slps
 
 **H1:** Start AAC in the first session. The family has it tonight.
-**Sub:** Pip is free for you, free for every family to try, and $49 once
-when they want the whole team. You'll never wait on a funding request to
-see a child communicate.
+**Sub:** No funding request. No device to order. No $300 for the family to
+find. Pip is free for you, free for every family to start, and $49 once
+when they want the whole team.
 
-Sections:
-1. **Your evenings back.** Build the board on your laptop during the
-   session: starter words, bulk paste, the family's photos. One sign-in for
-   your whole caseload.
-2. **The QR card.** Email it. The family scans it. You stay on the team,
-   and keep editing from the office.
-3. **Practice that happens at home.** Send this week's Spotlight words.
-   The parent models from their phone and the iPad lights the way.
-4. **Progress you can bring to the IEP meeting.** Every number comes from
-   the child's own taps. Full dashboard and PDF report with Lifetime.
-5. **A free demo user** on your account for evaluations.
-6. **What we'll never do:** pay referral fees, lock a family out, or
-   delete a child's words over payment.
+1. **Build it in the session.** Sign in on your laptop, add the client,
+   paste a word list, drop in the family's photos. One sign-in for your
+   whole caseload.
+2. **Hand over a card, not a device.** Email the family a QR card. They
+   scan it at home on the iPad they already own. You stay on the team.
+3. **Keep editing from your office.** New words reach the family the same
+   day, not at the next session.
+4. **Homework that actually happens.** Send this week's Spotlight words.
+   Parents model from their phone, and the iPad lights the way.
+5. **Data for the IEP.** Every number comes from the child's own taps.
+   Full dashboard and PDF report with Lifetime.
+6. **Your clinical judgment, finally respected.** You're not stuck with a
+   layout someone else locked. Move the words *this* child needs.
+7. **A free demo user** on your account for evaluations.
 
-CTA: **[Set up your first client free →]**
+**What we'll never do:** pay you referral fees, lock a family out, or
+delete a child's words over money.
 
-### 7.3 /about — structure (founder story required)
+**[Set up your first client free →]**
 
-> **I can't write this section without you.** The most persuasive About
-> page in this market is a true story about why one person built this.
-> I'll draft it from a 20-minute interview. Questions are in § 10, Q4.
+---
 
-1. **Why Pip exists** — [FOUNDER STORY, in founder's words]
-2. **Our promises**, which are the product laws in plain English:
-   - *A voice is not rented.* Never a subscription to speak.
-   - *Nothing is taken away.* A word your child has keeps speaking, paid
-     or not.
-   - *Family knows best.* Great defaults; your call.
-   - *We never act on a guess.* Pip adds and suggests. It never hides or
-     clears your child's words because it thinks they're done.
-   - *Pip never listens.*
-   - *Everything is ours.* Our pictures, our voices, our layout. We don't
-     copy anyone's board.
-3. **Research we build on** — the bibliography from `Vision.md` § 6,
-   honestly framed.
-4. **Contact** — an address (Q8).
+## 9. Compare pages: aggressive, specific
 
-### 7.4 /compare/proloquo2go — template (applies to every compare page)
+**Hub H1:** Same app for every child? Or an app for *your* child?
+**Hub lede:** The big AAC apps were built in the early iPad era, priced
+like medical devices, and designed around one idea: their board, their
+way. Here's how Pip is different.
 
-**H1:** Pip vs Proloquo2Go: an honest comparison
-**Lede:** Proloquo2Go helped put AAC on the iPad, and AssistiveWare has
-done a great deal for the field. **If it's working for your child, keep
-it.** If cost, setup, or getting the whole family involved is in the way,
-here's how Pip differs.
+The hub carries the full table, with Pip first:
 
-1. **The short version** (3 bullets): price ($249.99 vs free / $49 once),
-   where it runs, and the family team (every supporter free).
-2. **The table** (§ 6.1, two columns).
-3. **Where Proloquo2Go is ahead**, stated plainly: years of clinical use,
-   a native iOS app, a larger vocabulary set, and published training.
-4. **Where Pip is different**: try free tonight, model from a phone,
-   feelings, the board never moves on its own, every supporter free.
-5. **Switching honestly:** Pip doesn't copy anyone's layout, so word
-   positions are different and there's no import. Many families **run
-   both** while they decide. Pip is free, so trying it costs nothing.
-6. CTA: **[Try Pip free alongside →]**
+| | **Pip** | Proloquo | Proloquo2Go | TouchChat | LAMP WFL | TD Snap | CoughDrop |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| To start speaking | **Free** | $9.99/mo | $249.99 | $299.99 | $299.99 | Subscription | $295 or $9/mo |
+| Subscription | **Never** | Yes | — | — | — | Yes | Optional |
+| Shape the board around your child | **Fully** | Locked | | | | | |
+| Every helper edits free | **Yes** | | | | | | $45 to edit |
+| Model from your phone | **Yes** | | | | | | |
+| Happy / sad / angry voice | **Yes** | | | | | | |
+| Runs on the iPad you own | **Yes, in the browser** | | | | | | |
 
-Each competitor page swaps sections 3–4 for the specific truth: TouchChat
-(PRC-Saltillo's vocabulary sets, dedicated devices), LAMP (built around
-motor planning; Pip respects that, and its board never moves on its own),
-TD Snap (Windows and eye-gaze hardware ecosystem), CoughDrop (the closest
-in architecture: web and multi-device; Pip is free to start and every
-supporter edits free), and free apps (Cboard is free and open source;
-Pip adds a natural voice, feelings, phone modeling, and drawings).
-**Every claim needs a source.**
+*(Blank cells are filled in at build time.)*
 
-### 7.5 FAQ — full list
+**Per-competitor angle** (each page: H1, the knockout line, 3 sections,
+CTA):
+
+| Page | H1 | Knockout line |
+| --- | --- | --- |
+| Proloquo | **Pip vs Proloquo: your child's board, or theirs?** | "Proloquo rents your child's voice for $9.99 a month and won't let you customize the board. Pip is free, $49 once, and yours to shape." |
+| Proloquo2Go | **Pip vs Proloquo2Go: $0 vs $249.99** | "Five families get Pip Lifetime for the price of one Proloquo2Go." |
+| TouchChat | **Pip vs TouchChat: $0 vs $299.99** | "$299.99 before your child says a word. Pip: every word free tonight." |
+| LAMP WFL | **Pip vs LAMP: motor planning without the lock** | "LAMP is right that words shouldn't move. Pip agrees, and still lets you make the board your child's." |
+| TD Snap | **Pip vs TD Snap: no subscription to speak** | "Your child's voice shouldn't stop when a payment does." |
+| CoughDrop | **Pip vs CoughDrop: every helper free** | "CoughDrop charges helpers to edit. In Pip, Grandma, the SLP, and the teacher are always free." |
+
+Each page closes with: **"Try Pip tonight alongside what you have. It's
+free, so it costs you nothing to see the difference."**
+**[Create your child's board — free →]**
+
+---
+
+## 10. /pricing and /about
+
+**/pricing.** H1: **Free. Or $49 once. Never a subscription.** The free vs
+Lifetime table from § 6, the schools row (license codes, 50% off 20+, POs),
+and the promise block: *nothing is ever taken away · no time limits ·
+never deleted for money · every helper free · SLPs free.* Close: **"Why
+so cheap? Because a voice shouldn't be a profit center. Pictures and
+voices are shared by every family, storage costs pennies, and we price
+what it costs us plus a fair margin, not what the market has put up
+with."**
+
+**/about.** H1: **We built Pip because [founder story].** Structure:
+the founder's story (from the interview, in the founder's words) → why the
+industry made us angry (price, rent, one-size-fits-all) → our promises
+(the § 7 beliefs as one-liners) → contact.
+
+---
+
+## 11. FAQ (full)
 
 **Money**
+
 1. **Is Pip really free? What's the catch?** Every built-in word speaks,
    free, forever. You also get 20 words of your own, your child's device
-   plus one helper, backup, and all voices. If you want more, it's $49
-   once. That's the whole catch.
+   plus one helper, backup, all voices, and feelings. If you want more,
+   it's $49 once. That's the whole catch.
 2. **What does $49 get me?** Unlimited words of your own, every helper on
-   the team, the full progress dashboard and report, and 300 drawings.
-3. **Is it a subscription? Will you take features away later?** No, and no.
-   Nothing your child has is ever taken away, even if you never pay.
+   the team, the full progress dashboard and report, and 300 drawings. Once.
+   Forever.
+3. **Will you ever make it a subscription?** No. A voice is not rented.
 4. **Is it $49 per child or per family?** Per child: the person who
-   speaks. Siblings each have their own. Every adult helper is free.
-5. **I'm an SLP. Do I pay?** Never. Set up as many clients as you like.
-6. **Can our school or district buy it?** Yes. License codes, 50% off 20
-   or more, purchase orders welcome. → /schools
-7. **Will Medicaid or insurance pay for Pip?** Not today. They fund
-   dedicated speech devices through medical suppliers. At $0 to start and
-   $49 once, most families don't need to wait for funding.
-8. **Why is it so cheap?** Pictures and voices are shared by everyone, and
-   storage costs pennies. We price what it costs us, plus a fair margin,
-   not what the market has tolerated.
+   speaks. Every adult helper is free.
+5. **I'm an SLP. Do I pay?** Never.
+6. **Can our school buy it?** Yes: license codes, 50% off 20 or more,
+   purchase orders welcome.
+7. **Why is it so much cheaper than the others?** Because we price what it
+   costs us, not what families have been forced to pay.
+
+**Making it yours**
+
+8. **Can I really change anything?** Any word in any spot. Your photos,
+   your names, your recordings. Show or hide groups. Start with 15
+   buttons or 90.
+9. **Won't changing things confuse my child?** Nothing changes unless you
+   change it. Pip never moves, hides, or reshuffles words on its own, and
+   when you do move one, Pip shows you first.
+10. **Will the buttons move around?** Never on their own. Suggestions live
+    in a strip at the top; the board stays put.
+11. **Can I record my own voice for a word?** Yes, for any word or name.
+12. **Can my child say things with feeling?** Yes: happy, sad, or angry,
+    for any sentence.
+13. **What if my child outgrows the board?** Grow from 15 to 30, 60, or 90
+    words without starting over.
 
 **Getting started**
-9. **What do I need?** An iPad, or any device with a modern browser. Open
-   Pip and tap Start. No download and no account.
-10. **Is there an App Store app?** Not yet. Pip runs in Safari. Add it to
-    your Home Screen and it opens full screen like any app. *(Update when
-    iOS ships.)*
-11. **Does it work without Wi-Fi?** *(GATED, see § 2. Don't publish until the
-    service worker ships.)*
-12. **How do I keep my child from leaving the app?** Use the iPad's
-    Guided Access. → /start shows how.
-13. **Can I start with fewer buttons?** Yes. Start with 15 and grow to 30,
-    60, or 90 without starting over.
 
-**Daily life**
-14. **Will the buttons move around?** Never on their own. Suggestions live
-    in one strip. You decide if a word moves.
-15. **Can I record my own voice for a word?** Yes, for any word or name.
-16. **Can my child say things with feeling?** Yes: happy, sad, or angry,
-    for any sentence.
-17. **What if the iPad breaks?** Open Pip on any device and scan the QR
-    card. Everything comes back. Backup is free.
-18. **How do grandparents and teachers join?** Invite them as helpers.
-    Free gets one helper; Lifetime gets everyone.
+14. **What do I need?** An iPad, or any device with a modern browser.
+    Tap *Create your child's board*. That's it.
+15. **Do I need an account to start?** No. Build the board first. When
+    you've added your own people, save it with your email so it's backed
+    up.
+16. **What if the iPad breaks?** Open Pip on any device and scan your
+    child's card. Everything comes back.
+17. **How do grandparents and teachers join?** Invite them as helpers on
+    their own phones or laptops.
+18. **Is Pip for teens and adults?** Yes. Choose "a teen or adult" when
+    you start, and you can choose words-only buttons.
+19. **Can I bring my board over from another app?** Pip is built
+    differently, so you'll set up fresh, but it's quick, and many families
+    run Pip alongside their old app while they switch.
 
 **Trust**
-19. **Does Pip listen to us?** No. The microphone is only used when you
+
+20. **Does Pip listen to us?** No. The microphone is only used when you
     choose to record a word.
-20. **What leaves my child's device?** *(Precise copy from the privacy
-    owner docs, founder-reviewed.)*
-21. **Is Pip for teens and adults too?** Yes. You choose child, teen, or
-    adult when you start.
-
-**The big worries** *(GATED: health claims, founder + citations)*
-22. **Will AAC stop my child from learning to talk?** Research has looked
-    at this for decades, and AAC doesn't hold back speech; studies often
-    find the opposite. [citations]
-23. **Is my child ready for AAC?** There's no test to pass first. Every
-    child deserves words now. [citations]
-24. **Does Pip replace speech therapy?** No. Pip is a tool; your SLP is the
-    expert. Pip makes it easy to work together.
-25. **Can I bring my board over from Proloquo2Go or TouchChat?** No. Pip
-    has its own layout, built from scratch. Many families try Pip
-    alongside their current app, since it costs nothing.
+21. **Does Pip replace speech therapy?** No. It makes therapy and home
+    work together.
 
 ---
 
-## 8. Roadmap
+## 12. Roadmap
 
-| Phase | Ships | Done when |
-| --- | --- | --- |
-| **0 — Unblock** | Founder decisions (§ 10). DNS fix (035: delete stale apex/www records). Competitor price re-verification with screenshots. Andika Regular added. | `pipaac.org` resolves to `pipaac-site`; § 10 answered. |
-| **1 — Home page** | Long-form home: tile headline, Try it board, receipt, Tonight, features, privacy, top-8 FAQ, final CTA. `/start` handoff. | Owner Works Test: on a phone, a cold visitor hears a tile within 1 tap, builds a sentence, and lands on app.pipaac.org. Lighthouse ≥ 95 on all four. Zero third-party requests (DevTools). |
-| **2 — The channel** | `/slps`, `/pricing`, full `/faq`, `/about` (after the founder interview), `/privacy` (legal). | SLP_Channel § 5 test: 10 SLPs read /slps; record whether "same session" lands. |
-| **3 — Compare** | `/compare` hub + 7 pages, every cell sourced and dated. | Each page has a source list and a check date. |
-| **4 — Resources** | `/schools`, `/learn` (modeling guide; printable core boards with "Try this board free" QR; SLP_Channel § 4), `/press`. | — |
-| **5 — Proof** | Founding Families: real families with written consent, real words, and a measured **time from session start to first word** (SLP_Channel § 5: "that number is the marketing"). Offline claim lands after the service worker. | First consented story is live. |
-| **Ongoing** | Copy tests only with an honest instrument (§ 10, Q5). | — |
-
----
-
-## 9. Where we start
-
-**The home page, starting with the hero and the Try it board.**
-
-Why this first:
-
-- It's the **one asset every other page reuses.** /slps, every compare
-  page, and every SLP's email all point to "hear it yourself."
-- It **proves the wow before we write 5,000 more words.** If tapping
-  tiles on a marketing page doesn't move people, we learn that in a week.
-- It turns the skeleton into something a founder can text to an SLP
-  **tomorrow**.
-
-Slice B1, the first build after approval:
-
-1. Hero with the tile H1 (speaking), sub, and CTA.
-2. The Core 15 Try it board with 3 feelings (clips copied from the
-   shipped catalog; no new mints).
-3. The receipt, then the final CTA.
-4. Deploy (after DNS).
-
-Then B2 fills in the long copy between them, in the order of § 7.1.
+| Step | Ships |
+| --- | --- |
+| **1 — Home** | Full long-form home page (§ 6), designed and deployed. DNS: delete the stale apex/www records, then `npm run deploy:site`. |
+| **2 — The argument** | /method (§ 7). |
+| **3 — The channel** | /slps, /pricing, /faq. |
+| **4 — The attack** | /compare hub + six competitor pages. |
+| **5 — The rest** | /about (founder interview), /schools, /privacy. Later: /learn, /press. |
+| **6 — Proof** | Founding families: real stories, real words, with consent. |
 
 ---
 
-## 10. Decisions I need from you
+## 13. Where we start
 
-1. **Headline.** Recommend **A: "No child waits for a voice."** Options:
-   B "Your child's voice shouldn't cost $300." or C "Every word free.
-   Tonight." (A is the mission and owns the SLP pitch; B is sharper
-   direct response. Later we could test B on /compare traffic.)
-2. **The Try it board on the marketing site.** It's interactive, so it
-   needs your call (`site/README.md`). It's static files only: ~15 shipped
-   clips, no network calls, nothing stored. OK?
-3. **Name competitors** on the receipt and compare pages? It's legal when
-   true and dated. I recommend yes, with the generous tone in § 6.
-4. **Founder story for /about.** 20 minutes: Why AAC? Who was the child
-   or family that made it personal? What made you angry about the market?
-   What do you want a parent to feel when they first open Pip?
-5. **Measurement.** The site has no trackers (decided). To learn anything,
-   I propose **one cookieless, IP-less counter**: the site Worker counts
-   `Start free` clicks per page section and nothing else. The alternative
-   is to measure nothing and rely on SLP interviews. Your call.
-6. **Offline.** Build the app-shell service worker before launch so "works
-   without Wi-Fi" can go on the page, or launch without the claim?
-7. **Audience.** Families of children first, with teens and adults
-   welcomed in one line plus the FAQ. Agree?
-8. **Contact address.** For example `hello@pipaac.org` (Email Routing).
-   No forms (decided posture).
+**The home page: the hero first, as a designed mockup, then the full
+page.**
+
+1. **Hero mockup** (desktop + phone): the struck-through $300 headline,
+   the sub, the CTA, the iPad with a family board. One review with the
+   founder.
+2. **Full home build** in `site/public/index.html`, top to bottom from
+   § 6, with the receipt and Frozen vs Stable visuals.
+3. **Deploy** once DNS is cleared.
+
+---
+
+## 14. Founder inputs still needed
+
+1. **Founder story** for /about: a 20-minute interview.
+2. **Contact address**, e.g. `hello@pipaac.org`.
+3. **The Protect card copy** in § 1 is a suggestion for the app; adopt it
+   or not.
