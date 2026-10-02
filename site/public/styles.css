@@ -1048,3 +1048,6 @@ p { margin: 0 0 1em; }
   .field-table th, .field-table td { padding: .75rem .55rem; }
   .field-table.duo th:first-child { width: 34%; }
 }
+.promises.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 860px) { .promises.three { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .promises.three { grid-template-columns: 1fr; } }
