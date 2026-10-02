@@ -6362,7 +6362,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0694",
       "negation": 0
     },
     {
@@ -6371,7 +6371,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0695",
       "negation": 0
     },
     {
@@ -6380,7 +6380,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0696",
       "negation": 0
     },
     {
@@ -6389,7 +6389,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0697",
       "negation": 0
     },
     {
@@ -6416,7 +6416,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0700",
       "negation": 0
     },
     {
@@ -6524,7 +6524,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0712",
       "negation": 0
     },
     {
@@ -6587,7 +6587,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0719",
       "negation": 0
     },
     {
@@ -6596,7 +6596,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0720",
       "negation": 0
     }
   ],
@@ -34634,6 +34634,34 @@
       "sha256": "7921c36dfe0ae9b4d202c9aec994ec1c318e5e1e1f54fd52fdd025a84f9e1bef"
     },
     {
+      "id": "img_0694",
+      "sense_id": "sns_0694",
+      "key": "symbols/banana_bread.png",
+      "status": "approved",
+      "sha256": "a4d3f7e3d7665645df2a1e25089f8f57ba60bdc548a46df004f7eb67e510cbc9"
+    },
+    {
+      "id": "img_0695",
+      "sense_id": "sns_0695",
+      "key": "symbols/goldfish_crackers.png",
+      "status": "approved",
+      "sha256": "ef23d4e908f05c9fdfa7e34c1644a8fffee8d61411bf509c8439ba5e15fe3837"
+    },
+    {
+      "id": "img_0696",
+      "sense_id": "sns_0696",
+      "key": "symbols/pudding.png",
+      "status": "approved",
+      "sha256": "395d88310bc8cb9599ac649cfdcdbf53b2d9c96baa1c2453f5615f9b938e2fd6"
+    },
+    {
+      "id": "img_0697",
+      "sense_id": "sns_0697",
+      "key": "symbols/jello.png",
+      "status": "approved",
+      "sha256": "aafd3873c79c55a76a17454ec6cd4deaf104828d166f1f725c22223f639645c2"
+    },
+    {
       "id": "img_0698",
       "sense_id": "sns_0698",
       "key": "symbols/brownie.png",
@@ -34646,6 +34674,13 @@
       "key": "symbols/cupcake.png",
       "status": "approved",
       "sha256": "8c6f467cb08f1d4feb788289c476af3c447b2b36a65dd98ea3100dfbda80b7e6"
+    },
+    {
+      "id": "img_0700",
+      "sense_id": "sns_0700",
+      "key": "symbols/chocolate.png",
+      "status": "approved",
+      "sha256": "de4b9161e3be220d45df00472c38f4690400ab923a89482b86542935a11d41bc"
     },
     {
       "id": "img_0701",
@@ -34725,6 +34760,13 @@
       "sha256": "2c6b409d970bc60c17c62eca787a14870eae1805443612ebcce4aeedcc64e5cd"
     },
     {
+      "id": "img_0712",
+      "sense_id": "sns_0712",
+      "key": "symbols/cantaloupe.png",
+      "status": "approved",
+      "sha256": "4f9b2d08e8c25fb48b2abf8acba9eab73428ce98382f8058c7a9ee1ba5c4fa36"
+    },
+    {
       "id": "img_0713",
       "sense_id": "sns_0713",
       "key": "symbols/melon.png",
@@ -34765,6 +34807,20 @@
       "key": "symbols/lemonade.png",
       "status": "approved",
       "sha256": "1d78173f006a4038c7a9f0a598a5063d388c15f87fd5d50f097c5171c859ddb3"
+    },
+    {
+      "id": "img_0719",
+      "sense_id": "sns_0719",
+      "key": "symbols/hot_chocolate.png",
+      "status": "approved",
+      "sha256": "81e006ab1b1ae870987073903f035ba3ae094d35336a638d6a5c46ed551491a9"
+    },
+    {
+      "id": "img_0720",
+      "sense_id": "sns_0720",
+      "key": "symbols/milkshake.png",
+      "status": "approved",
+      "sha256": "bc62db5f734299338d62f7d13153a902bb4278bad3314a23d9356c29f291ea0f"
     }
   ],
   "voices": [
