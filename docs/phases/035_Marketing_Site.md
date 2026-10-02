@@ -1,6 +1,7 @@
 # 035 — The marketing site (pipaac.org)
 
-**Executing.** Slice A (skeleton) BUILT 2026-10-02. Next: design + copy
+**Executing.** Slice A (skeleton) BUILT 2026-10-02. Next: founder review of
+the design + copy proposal (`035_Marketing_Site_Proposal.md`), then the
 pass — designer and copywriter take over the `site/` tree.
 
 Intake: founder 2026-10-02 — "set up the skeleton … designer and

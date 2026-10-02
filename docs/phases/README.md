@@ -54,6 +54,7 @@ Executing phases only. Each row names the **next** slice.
 
 | Proposal | Ask |
 | --- | --- |
+| [035 — pipaac.org design + copy proposal](035_Marketing_Site_Proposal.md) | Founder answers § 10 (headline, try-it board, naming competitors, founder story, measurement, offline claim, audience, contact) |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
 
 The language and voice schema was accepted 2026-09-22 and moved to
