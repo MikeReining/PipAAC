@@ -17,6 +17,7 @@
     "dev:status": "node scripts/dev.mjs status",
     "dev:site": "wrangler dev --config site/wrangler.jsonc --port 21200",
     "deploy:site": "wrangler deploy --config site/wrangler.jsonc",
+    "site:compare": "node scripts/site/build_compare.mjs",
     "catalog:lexicon": "node scripts/catalog/extract_launch_lexicon.mjs",
     "catalog:lexicon:check": "node scripts/catalog/extract_launch_lexicon.mjs --check",
     "catalog:build": "node scripts/catalog/build_catalog.mjs",

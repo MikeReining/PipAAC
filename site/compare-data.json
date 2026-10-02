@@ -1,0 +1,421 @@
+{
+  "_comment": "Source for site/public/compare/*.html. Edit here, then run: npm run site:compare. Ratings are quarters (0-4) read from each app's own published features; notes say why. A note may be a string (every page) or an object keyed by \"hub\" or a competitor slug.",
+  "checked": "October 2026",
+  "legend": [
+    [
+      4,
+      "Built in, one tap"
+    ],
+    [
+      3,
+      "Strong"
+    ],
+    [
+      2,
+      "Partial, or buried in menus"
+    ],
+    [
+      1,
+      "Limited, paid extra, or a workaround"
+    ],
+    [
+      0,
+      "Not available"
+    ]
+  ],
+  "competitors": [
+    {
+      "slug": "proloquo",
+      "name": "Proloquo",
+      "maker": "AssistiveWare",
+      "h1": "Pip vs Proloquo: your child's board, or theirs?",
+      "knock": "Proloquo rents your child's voice for $9.99 a month and won't let you move a single core word. Pip is free, $49 once, and yours to shape.",
+      "quote": {
+        "text": "Because the preprogrammed words cannot be moved or removed, the motor plan remains consistent throughout the user's life.",
+        "who": "AssistiveWare, on how they designed Proloquo",
+        "url": "https://www.assistiveware.com/blog/proloquo-4-grows-with-users",
+        "answer": "Read that again. The words can't be moved or removed. Not by you, not by your SLP, not ever. Pip keeps words stable too: nothing moves on its own. But when the people who know your child decide a word belongs somewhere else, it moves."
+      },
+      "diff": [
+        [
+          "They rent it. You own it.",
+          "Proloquo is a subscription: $9.99 a month or $99.99 a year, for as long as your child needs to talk. Every built-in word in Pip is free forever, and Pip Lifetime is $49 once."
+        ],
+        [
+          "Their board. Or yours.",
+          "In Proloquo, the preprogrammed words can't be moved or removed. In Pip, any word goes in any spot, with your photos, your people, and your voice."
+        ],
+        [
+          "One tap, whole sentence.",
+          "Pip's ✨ Fix it, tense buttons, and question button change the whole sentence at once. No word-by-word popups."
+        ]
+      ]
+    },
+    {
+      "slug": "proloquo2go",
+      "name": "Proloquo2Go",
+      "maker": "AssistiveWare",
+      "h1": "Pip vs Proloquo2Go: $0 vs $249.99",
+      "knock": "Five families get Pip Lifetime for the price of one Proloquo2Go.",
+      "diff": [
+        [
+          "$249.99 before the first word.",
+          "Proloquo2Go costs $249.99 up front. Every built-in word in Pip speaks free, tonight, on the iPad you already own. Lifetime for the whole team is $49."
+        ],
+        [
+          "Word by word, or the whole sentence.",
+          "Proloquo2Go has every tense, one word at a time, through a touch-and-hold popup. Pip changes the whole sentence to past, present, or future with one tap."
+        ],
+        [
+          "The whole team, on their own devices.",
+          "Proloquo2Go keeps devices in step by passing backup files around. In Pip, every helper edits from their own phone or laptop, free, and the iPad has it the same day."
+        ]
+      ]
+    },
+    {
+      "slug": "touchchat",
+      "name": "TouchChat",
+      "maker": "PRC-Saltillo",
+      "h1": "Pip vs TouchChat: $0 vs $299.99",
+      "knock": "$299.99 before your child says a word, plus a subscription to back it up. Pip: every word free tonight, backup included.",
+      "diff": [
+        [
+          "$299.99, or $0.",
+          "TouchChat with WordPower costs $299.99 before your child can say anything, and cloud backup is a separate iShare subscription. Pip's every built-in word is free forever, and backup is free."
+        ],
+        [
+          "Edit from any laptop.",
+          "TouchChat's desktop editor is Windows software for PRC's own devices. Pip's editor runs in any browser, and the iPad gets the change the same day."
+        ],
+        [
+          "Say it like you mean it.",
+          "Any sentence in Pip can be spoken happy, sad, or angry, because a furious \"go away\" shouldn't sound polite."
+        ]
+      ]
+    },
+    {
+      "slug": "lamp-words-for-life",
+      "name": "LAMP Words for Life",
+      "maker": "PRC-Saltillo",
+      "h1": "Pip vs LAMP: motor planning without the lock",
+      "knock": "LAMP is right that words shouldn't move. Pip agrees, and still lets you make the board your child's.",
+      "diff": [
+        [
+          "We agree on motor memory.",
+          "Children learn where words live, and moving them breaks that. In Pip, nothing on the board ever moves on its own, and suggestions live in their own strip, never in the grid."
+        ],
+        [
+          "We disagree on who decides.",
+          "Stable doesn't have to mean frozen. In Pip, you and your SLP can put any word in any spot, and Pip shows you the cost of a move before you make it."
+        ],
+        [
+          "$299.99, or $0.",
+          "LAMP Words for Life costs $299.99. Pip's every built-in word is free forever, and Lifetime for the whole team is $49 once."
+        ]
+      ],
+      "short": "LAMP WFL"
+    },
+    {
+      "slug": "td-snap",
+      "name": "TD Snap",
+      "maker": "Tobii Dynavox",
+      "h1": "Pip vs TD Snap: no paywall on speech",
+      "knock": "TD Snap lets you build pages for free, then charges before the board can actually talk. Pip speaks every word, free, from the first tap.",
+      "diff": [
+        [
+          "Speech is the product. It should be free.",
+          "On an iPad, TD Snap keeps full speech behind a purchase. Every built-in word in Pip speaks free, forever, and nothing your child has is ever taken away."
+        ],
+        [
+          "$49 once for the whole team.",
+          "When you want every helper, unlimited words of your own, and the progress report, it's $49 once. Not per month. Once."
+        ],
+        [
+          "One tap, whole sentence.",
+          "✨ Fix it, past, present, future, and question buttons change the whole sentence at once."
+        ]
+      ]
+    },
+    {
+      "slug": "coughdrop",
+      "name": "CoughDrop",
+      "maker": "CoughDrop",
+      "h1": "Pip vs CoughDrop: every helper free",
+      "knock": "CoughDrop charges helpers to edit. In Pip, Grandma, the SLP, and the teacher are always free.",
+      "diff": [
+        [
+          "Helpers never pay.",
+          "CoughDrop charges $45 for a supporter to edit. In Pip, every helper on your child's team is free, forever."
+        ],
+        [
+          "$295, or $0.",
+          "CoughDrop costs $295, or $9 a month. Pip's every built-in word is free forever, and Lifetime is $49 once."
+        ],
+        [
+          "One tap, whole sentence.",
+          "✨ Fix it, past, present, future, and question buttons, plus any sentence in a happy, sad, or angry voice."
+        ]
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "name": "Price & ownership",
+      "rows": [
+        {
+          "label": "To start speaking",
+          "text": {
+            "pip": "$0",
+            "proloquo": "$9.99/mo or $99.99/yr",
+            "proloquo2go": "$249.99",
+            "touchchat": "$299.99",
+            "lamp-words-for-life": "$299.99",
+            "td-snap": "Pay to unlock speech",
+            "coughdrop": "$295 or $9/mo"
+          }
+        },
+        {
+          "label": "Every word free, forever",
+          "only": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 0,
+            "proloquo2go": 0,
+            "touchchat": 0,
+            "lamp-words-for-life": 0,
+            "td-snap": 0,
+            "coughdrop": 0
+          }
+        },
+        {
+          "label": "Never a subscription",
+          "q": {
+            "pip": 4,
+            "proloquo": 0,
+            "proloquo2go": 4,
+            "touchchat": 3,
+            "lamp-words-for-life": 4,
+            "td-snap": 2,
+            "coughdrop": 2
+          },
+          "note": {
+            "hub": "TouchChat backup is an iShare subscription; TD Snap and CoughDrop sell monthly options.",
+            "touchchat": "TouchChat's cloud backup is an iShare subscription.",
+            "td-snap": "TD Snap sells monthly page-set subscriptions.",
+            "coughdrop": "CoughDrop sells a $9/month plan.",
+            "proloquo": "Proloquo is $9.99 a month or $99.99 a year."
+          }
+        },
+        {
+          "label": "Every helper edits free, on their own device",
+          "q": {
+            "pip": 4,
+            "proloquo": 2,
+            "proloquo2go": 1,
+            "touchchat": 1,
+            "lamp-words-for-life": 1,
+            "td-snap": 2,
+            "coughdrop": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sentences & grammar",
+      "rows": [
+        {
+          "label": "✨ Fix it: a whole sentence, one tap",
+          "only": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 0,
+            "proloquo2go": 0,
+            "touchchat": 0,
+            "lamp-words-for-life": 0,
+            "td-snap": 0,
+            "coughdrop": 0
+          }
+        },
+        {
+          "label": "Past, present, future for the whole sentence",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 2,
+            "proloquo2go": 2,
+            "touchchat": 1,
+            "lamp-words-for-life": 1,
+            "td-snap": 1,
+            "coughdrop": 1
+          },
+          "note": "Others change one word at a time, through popups or ending buttons."
+        },
+        {
+          "label": "❓ Turn it into a question, one tap",
+          "only": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 0,
+            "proloquo2go": 0,
+            "touchchat": 0,
+            "lamp-words-for-life": 0,
+            "td-snap": 0,
+            "coughdrop": 0
+          }
+        },
+        {
+          "label": "Say any sentence happy, sad, or angry",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 1,
+            "proloquo2go": 1,
+            "touchchat": 1,
+            "lamp-words-for-life": 1,
+            "td-snap": 1,
+            "coughdrop": 1
+          },
+          "note": "Others offer special expressive words or a different voice, not a feeling for any sentence."
+        },
+        {
+          "label": "Next-word suggestions that never move the board",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 1,
+            "proloquo2go": 1,
+            "touchchat": 2,
+            "lamp-words-for-life": 1,
+            "td-snap": 1,
+            "coughdrop": 1
+          },
+          "note": "Mostly keyboard word prediction; Pip suggests picture tiles in a strip above the board."
+        }
+      ]
+    },
+    {
+      "name": "Making it yours",
+      "rows": [
+        {
+          "label": "Easy to customize",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 1,
+            "proloquo2go": 2,
+            "touchchat": 2,
+            "lamp-words-for-life": 1,
+            "td-snap": 2,
+            "coughdrop": 3
+          }
+        },
+        {
+          "label": "Your own photos and recordings",
+          "q": {
+            "pip": 4,
+            "proloquo": 3,
+            "proloquo2go": 4,
+            "touchchat": 4,
+            "lamp-words-for-life": 4,
+            "td-snap": 4,
+            "coughdrop": 4
+          }
+        },
+        {
+          "label": "No picture? Pip draws one in the board's style",
+          "only": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 0,
+            "proloquo2go": 0,
+            "touchchat": 0,
+            "lamp-words-for-life": 0,
+            "td-snap": 0,
+            "coughdrop": 0
+          }
+        },
+        {
+          "label": "Grow from 15 to 90 words without starting over",
+          "q": {
+            "pip": 4,
+            "proloquo": 3,
+            "proloquo2go": 3,
+            "touchchat": 2,
+            "lamp-words-for-life": 3,
+            "td-snap": 3,
+            "coughdrop": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "Team & devices",
+      "rows": [
+        {
+          "label": "Model from your phone: the word glows on theirs",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 0,
+            "proloquo2go": 0,
+            "touchchat": 0,
+            "lamp-words-for-life": 0,
+            "td-snap": 0,
+            "coughdrop": 4
+          }
+        },
+        {
+          "label": "Spotlight practice words, nothing turned off",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 2,
+            "proloquo2go": 2,
+            "touchchat": 1,
+            "lamp-words-for-life": 2,
+            "td-snap": 1,
+            "coughdrop": 2
+          },
+          "note": "Others teach by hiding words; Pip dims them and every word still speaks."
+        },
+        {
+          "label": "Edit on any laptop; the iPad has it the same day",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 2,
+            "proloquo2go": 1,
+            "touchchat": 1,
+            "lamp-words-for-life": 1,
+            "td-snap": 3,
+            "coughdrop": 4
+          }
+        },
+        {
+          "label": "Runs on the devices you already own",
+          "q": {
+            "pip": 4,
+            "proloquo": 2,
+            "proloquo2go": 2,
+            "touchchat": 1,
+            "lamp-words-for-life": 1,
+            "td-snap": 2,
+            "coughdrop": 4
+          }
+        },
+        {
+          "label": "Works offline",
+          "q": {
+            "pip": 4,
+            "proloquo": 4,
+            "proloquo2go": 4,
+            "touchchat": 4,
+            "lamp-words-for-life": 4,
+            "td-snap": 4,
+            "coughdrop": 4
+          }
+        }
+      ]
+    }
+  ]
+}
