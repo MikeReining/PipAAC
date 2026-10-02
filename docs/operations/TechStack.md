@@ -75,13 +75,19 @@ turns Pip Lifetime on for the person that opens it (localhost: bare
 approved the cost 2026-10-02): `DRAW_LIVE=1` + `OPENROUTER_API_KEY`
 (030). Spend is capped per person (5 free, 300 Lifetime) and by the
 OpenRouter key's own limit — there is no global daily draw cap.
-Payments (015 slice 6, built 2026-10-02): Stripe secrets are NOT yet in
-prod — `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`
-plus a registered webhook endpoint
-`app.pipaac.org/api/v1/stripe/webhook` for `checkout.session.completed`.
-Until then `/api/v1/checkout` and the webhook return 503; license codes
-(`POST /admin/v1/license-codes`, Bearer `PIP_ADMIN_TOKEN`) and
-`POST /api/v1/license/redeem` work with existing secrets. Marketing
+Payments (015 slice 6, built 2026-10-02): Stripe objects exist (see 015
+slice 6 for ids — test + live products/prices/webhook endpoints on
+`acct_1U43csFPjZdfZdLb`, the PipAAC account). Prod secrets pushed
+2026-10-02: `STRIPE_WEBHOOK_SECRET` (live endpoint whsec),
+`STRIPE_PRICE_ID` (live $49 price), `STRIPE_SECRET_KEY` (**expiring** —
+the CLI's `rk_live`, dies 2026-11-11; swap for a dashboard-created
+restricted key with Checkout write before launch). Checkout/webhook
+routes reach prod on the next `wrangler deploy` — until then the webhook
+endpoint 404s, harmlessly. License codes (`POST /admin/v1/license-codes`,
+Bearer `PIP_ADMIN_TOKEN`) and `POST /api/v1/license/redeem` work with
+existing secrets. Local dev: `.dev.vars` has the test-mode key + price;
+`stripe listen --forward-to localhost:21087/api/v1/stripe/webhook`
+supplies the webhook signing secret per session. Marketing
 site: `pipaac.org` is a separate project `pipaac-site` (`site/`) — not
 yet deployed; `npm run deploy:site` attaches the custom domains.
 
