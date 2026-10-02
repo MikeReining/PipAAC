@@ -1,0 +1,2840 @@
+{
+  "files": {
+    "symbols/I.webp": {
+      "masterSha256": "6291366c60616fd698d46bf72cc32f73a7a9d9a4cb7600bfd8cbe33bae7651ba",
+      "params": "webp-q82-e512"
+    },
+    "symbols/you.webp": {
+      "masterSha256": "d5b2472e46a60a1a7d5b0aac26cb18a64a3026f6392f8db06e11ada1dbcdfbb5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/me.webp": {
+      "masterSha256": "1f00f5b9407ed1dbd543c104966eecf505b5a61cff4120b91fca6ce211e25511",
+      "params": "webp-q82-e512"
+    },
+    "symbols/my.webp": {
+      "masterSha256": "6172655b743e64ac80712cbfdb4a314f6f418d7aac166e0ff091b9d6785f50a1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mine.webp": {
+      "masterSha256": "29d65db39bff47c35e33e656a5bb30f5ef6e9d1e3f6b2f1654399c580dec6495",
+      "params": "webp-q82-e512"
+    },
+    "symbols/he.webp": {
+      "masterSha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/she.webp": {
+      "masterSha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe",
+      "params": "webp-q82-e512"
+    },
+    "symbols/it.webp": {
+      "masterSha256": "cb7973f6497e489c153db78fbcede870b0f2777a1b2064ebcccba54b06c4d09e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/we.webp": {
+      "masterSha256": "80ce2025c7ab586e72368632b414e0f4114e78ba5a6c1bba1cab8193a082a8c8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/they.webp": {
+      "masterSha256": "10bda3a7b4553b8853c823356e24b0e5feeb7dd7eed77bb16a4e76ada6519060",
+      "params": "webp-q82-e512"
+    },
+    "symbols/that.webp": {
+      "masterSha256": "6a9d80c1263d1568da4a511302a00528d421e9c32b1f02703d51afd01107b309",
+      "params": "webp-q82-e512"
+    },
+    "symbols/this.webp": {
+      "masterSha256": "99150273558d606fc4f01dbfa371e8cbd0a55a74994142ec7571fee86fb32e18",
+      "params": "webp-q82-e512"
+    },
+    "symbols/want.webp": {
+      "masterSha256": "de21f393788c8af39e260a0e64bf16f18fc2a0ba9e4c13c137557cd7de7ca68d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/like.webp": {
+      "masterSha256": "f848d1cc377a5b9ab59dcd5cbaaf8f255aefff8c64baaa65b975e0a624454b0d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/go.webp": {
+      "masterSha256": "3e3a5dbf22cb43ac73953ca598f8cf1acd29a8613f91f7d0927d8cd84beaca7a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/come.webp": {
+      "masterSha256": "c6e9b89b806681f939b94466093a0cd846c61b1bc9c26c38ea853c0b3f30bf10",
+      "params": "webp-q82-e512"
+    },
+    "symbols/get.webp": {
+      "masterSha256": "ff384b85aaab892238d2eefd8aa31a772b7b5ae2e4105a57ef946852edbbf92a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/make.webp": {
+      "masterSha256": "52249dac8747b6e5b7fc92f1f117eb9153f5d05edd18ad2e3d97fd863215f8c6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/do.webp": {
+      "masterSha256": "9a3aa175a28d2b4fbd501e44acc9a61ccf2defb268aa63d7938d4cd2a32757ad",
+      "params": "webp-q82-e512"
+    },
+    "symbols/see.webp": {
+      "masterSha256": "182531def9ee1bdc602d73b102023b95c044a22ab76bc7e69b2b5418db7b4d4e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/look.webp": {
+      "masterSha256": "4cad68918db215a6207c9e399f71ac7a8306f6e6aa4e780675b4abda3b9df4e1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/put.webp": {
+      "masterSha256": "72215ea133240636d7c315321390d455bd8a0a7907d8e8baec0b5dc5325dcca6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/take.webp": {
+      "masterSha256": "33a43af5e19aa345fde29fb4a0ae471ae19a3291a429f04ca6daa3cda5057c2a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/give.webp": {
+      "masterSha256": "76c61d0e4b277e5d5e6eea839ae9d439c74fd9957babfe2a152e3893c7732ace",
+      "params": "webp-q82-e512"
+    },
+    "symbols/help.webp": {
+      "masterSha256": "0910b3cff2c72996f6a9c4d1265c0f26c9de5ca4ba71e4ad0ccfaf7fa4845dbd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/stop.webp": {
+      "masterSha256": "a585d0c69033635c93483d7703ca144d15da50e7ed8cc7f2581b4bdc69294746",
+      "params": "webp-q82-e512"
+    },
+    "symbols/play.webp": {
+      "masterSha256": "3e2eb2e9deb63f31af71f58f49fc5b2f2300f78dd6a0e23343d7b13ba6badc4c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/eat.webp": {
+      "masterSha256": "78ff69af31953dc917ef08c352c2175920aa473d75a5ebcf5609d4f3aed83139",
+      "params": "webp-q82-e512"
+    },
+    "symbols/drink.webp": {
+      "masterSha256": "b7d74b7729cbeed64465f8b2f74e9ff6c2bc35c86a03e816adaa18f497b8aec7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/open.webp": {
+      "masterSha256": "d2594d13fd26fc96f148559c4277dd09181b6f907190ec806603b50bc6f4d925",
+      "params": "webp-q82-e512"
+    },
+    "symbols/turn.webp": {
+      "masterSha256": "0a59051b5fd652ff293544f32d07a519894a18e72c32e84fc5a40969820cb46f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/read.webp": {
+      "masterSha256": "fa93f722d744d2914b136f5a0a23725baa113f67e0ee0b43c3252d445b83d76a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/can.svg": {
+      "masterSha256": "c62f72094c8f3a6445d91d27929b3f022cd805d7ee98b737b09dbb831607f46d",
+      "params": "svg"
+    },
+    "symbols/need.webp": {
+      "masterSha256": "7892193282e6fdf882d8ce1a792c31550efd8e62d145c3169bcb12f827760b99",
+      "params": "webp-q82-e512"
+    },
+    "symbols/feel.webp": {
+      "masterSha256": "759abacefb2e0f468a81bdaac5fda30715c248e2432eeb506de1d61787b9119c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tell.webp": {
+      "masterSha256": "bfe659c2ae55f672a77fc235178ee8c5f8a384823c9a3285234da3ba0776d5aa",
+      "params": "webp-q82-e512"
+    },
+    "symbols/think.webp": {
+      "masterSha256": "85f6a1382e149b04b549c85c34cf99fc1207c285ff1ef4f5bf9f9ebafe4336ce",
+      "params": "webp-q82-e512"
+    },
+    "symbols/find.webp": {
+      "masterSha256": "221a63a40f491d2ccd58616265718ae35b3d50aea3c98c43f325f40941b02b0f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/work.webp": {
+      "masterSha256": "48fa8cbc6f4efce1f5be0cefbe21086cd662c7ce9cc2681c4e027faca633fd5b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wait.webp": {
+      "masterSha256": "4c9bd78c210b163c930f20402f7ffde8759ec560070e06075ab1ad92c99563bc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/in.webp": {
+      "masterSha256": "07bad3bf866a979e275c21f129dc71befebbe2cd0fefacc9807b36342177483c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/out.webp": {
+      "masterSha256": "38ed278a8f117cc6de2ae3a953a82ec7ab0020b7dddae3bf364086aa08dffdc9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/on.webp": {
+      "masterSha256": "e6599d5f341759816230c75a95c0fd48e7cc4f6ffd73f446bef499596bee6971",
+      "params": "webp-q82-e512"
+    },
+    "symbols/off.webp": {
+      "masterSha256": "034d9799e89c2caa6bec2c2274b85147c90338d98c83b1d24dde51f5530ffcde",
+      "params": "webp-q82-e512"
+    },
+    "symbols/up.webp": {
+      "masterSha256": "b9eb374bfb7c15402ab278e9a0676c98ae4ebd51adf3c6601f53a0512db465e8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/down.webp": {
+      "masterSha256": "6b84442aeb04cb74af1a1c4c62e8c52cee6f202fb652785fe9f021ba9a614a41",
+      "params": "webp-q82-e512"
+    },
+    "symbols/away.webp": {
+      "masterSha256": "3d0a731fe89087dc97279b9e77d9ec3f4b59dd220391670a99151e1843509e12",
+      "params": "webp-q82-e512"
+    },
+    "symbols/here.webp": {
+      "masterSha256": "801854d59e4cced17be983f22baff3a28524ddc9689be0e96fc1e3ace33c1ccd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/there.webp": {
+      "masterSha256": "cbe3f13bfc25d262e94ecf8ed0302ceb16def1abc80101cfadc10ae8bc5994fc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/with.webp": {
+      "masterSha256": "d056cfa9bb2dba6ebe07e650e2ae4bf7c095e34052107ece90352488f2cdc144",
+      "params": "webp-q82-e512"
+    },
+    "symbols/under.webp": {
+      "masterSha256": "12c67f8a6aab0939cd6e4f1e81c9503bbe5b58af0bb9f2b338015e19a90036c7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/over.webp": {
+      "masterSha256": "7250b84b379c02c24add9474db40599b36e1bf42d87e98a5f03e5ee0a9d25a50",
+      "params": "webp-q82-e512"
+    },
+    "symbols/to.svg": {
+      "masterSha256": "f491eb4fbf19f024e6635ef581bf7bfed27bcc83aa24bd515515a818edba7590",
+      "params": "svg"
+    },
+    "symbols/for.svg": {
+      "masterSha256": "9b2e62b2cc4b178f7ec9557fcabf8e7ae524323faa30e334108f782ab1bb91e3",
+      "params": "svg"
+    },
+    "symbols/more.webp": {
+      "masterSha256": "5a8a0a713df34ba64872e156da05bfe4950d44d0aee77a974558ecf588cfd8a4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/all done.webp": {
+      "masterSha256": "6378ac2f2e9ec90e06e34e85323368acbc5ce927b4ab2389166cd1962ab0926a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/big.webp": {
+      "masterSha256": "1912d2a39b604a9c42f6b20fa701110b97b025078ccc526910bf5c28a949c27b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/little.webp": {
+      "masterSha256": "7113e7432824923b1cee477d474c3f58c4b40e48d1574c1950d1176be35f16b4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/good.webp": {
+      "masterSha256": "fc649456cd2d823999ffc3fef2cd5c4a51da4d659b237114ff7feea902eb6117",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bad.webp": {
+      "masterSha256": "ed2cec8f8fdfb7d854c77d9428ae44055ec66575969363be2c7e4c646f14952a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/happy.webp": {
+      "masterSha256": "982bdcef23ad6fe2fc802dc8d487e60200d067bd64665bb721eccd78c1550a33",
+      "params": "webp-q82-e512"
+    },
+    "symbols/same.webp": {
+      "masterSha256": "0638a1b4589ac69c127e01a2302a7900b920a233e6e220284f26e145402de829",
+      "params": "webp-q82-e512"
+    },
+    "symbols/different.webp": {
+      "masterSha256": "e2f0c79782d3d2eebe360cb131b630fc4468831dfdc5ae7dce7a0b948f00a3fc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/some.webp": {
+      "masterSha256": "20eb1d947f8ff1d72d7f004ba709a5e78bb4d647f58da3ca75dfcef093b09461",
+      "params": "webp-q82-e512"
+    },
+    "symbols/all.webp": {
+      "masterSha256": "f28d53a0c4654b1b84d26031519c76771371be84f66159466d0c38cb04751480",
+      "params": "webp-q82-e512"
+    },
+    "symbols/what.webp": {
+      "masterSha256": "c45bd68729d67fc8a428e8aa1343af793501bb4f83396b301259d70e6c228389",
+      "params": "webp-q82-e512"
+    },
+    "symbols/where.webp": {
+      "masterSha256": "c9a33c97932b0ae3f464f4626c8891c8c6b12ba58ff03ec0fbebf66020bcb528",
+      "params": "webp-q82-e512"
+    },
+    "symbols/who.webp": {
+      "masterSha256": "31f0a8436ad5d1583be3ef9b5a356fb41f86c74d63aa3ef1c0b29734741a4c0f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/why.webp": {
+      "masterSha256": "8b34a6d61591789d11e11d5423c0616b060fd5b0c86b85fd8dcca6bec4a7e787",
+      "params": "webp-q82-e512"
+    },
+    "symbols/how.webp": {
+      "masterSha256": "dc2ddc35f16518687d363f54985c39239d0a58fe5ad62d8e714aa7cdc68d6063",
+      "params": "webp-q82-e512"
+    },
+    "symbols/when.webp": {
+      "masterSha256": "7ec5384c29247a1a25c60589aaa417eeafb27f5b9df2840a0143a0949fea0d3f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/no.webp": {
+      "masterSha256": "5e4a60669c6e245ffc228ea9eeb5ff12b7e55613a22d4790a3b7e58162b54c3e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/yes.webp": {
+      "masterSha256": "81a7390665c6317e72b0e3070cbacb649589db1e101b6f317666744b8690d848",
+      "params": "webp-q82-e512"
+    },
+    "symbols/not.webp": {
+      "masterSha256": "afeee54c9619379bdce27a9abed99752da536a7b1d5562a7c0fe5d48d07d4249",
+      "params": "webp-q82-e512"
+    },
+    "symbols/please.webp": {
+      "masterSha256": "e5baeb3e4babafd4932235a88d809dc0658181c884ff93dca9e4990ebf36e358",
+      "params": "webp-q82-e512"
+    },
+    "symbols/and.svg": {
+      "masterSha256": "de44b62ff65618d13d4e23d30cac503fc088617eb88c3557a6db06420bfbafec",
+      "params": "svg"
+    },
+    "symbols/but.svg": {
+      "masterSha256": "6fd12412629e989241383188a24a71dab4274e9eafdc7a1323f5b9a876e699d3",
+      "params": "svg"
+    },
+    "symbols/or.svg": {
+      "masterSha256": "953120639c2a0c79f9a93b880371336d6687234fbc48840b8682ed1a526dd96a",
+      "params": "svg"
+    },
+    "symbols/because.svg": {
+      "masterSha256": "1ca3dae2d36d43486d6ad731dbd6fc2754ebf9a4863b549054fd3ec2fb335b1c",
+      "params": "svg"
+    },
+    "symbols/have.webp": {
+      "masterSha256": "52eba9c7436d79e0b98895a8f8e99112e6263ff9653b25d88834c519ee55e8c4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/at.svg": {
+      "masterSha256": "edf09a0e4a2e012daac368ab068e6a52414540e7a09a5fa27d75eb7ee0804b9c",
+      "params": "svg"
+    },
+    "symbols/water.webp": {
+      "masterSha256": "a0220933fc51a44df15ecb219a27f8a64aadb4a5c96edf0e4423372da93da05c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/milk.webp": {
+      "masterSha256": "abd62f412fc1b20eff6773e47f837cb1e748bef34f9cda1f653464430e2ff50a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/juice.webp": {
+      "masterSha256": "f05f52aa86e0275dc12c2a6e54af3fbf162d9a0cd32ba4feaacffe1738992745",
+      "params": "webp-q82-e512"
+    },
+    "symbols/apple juice.webp": {
+      "masterSha256": "abf616b7eb3508d1363aa7a0541af1d4da27daafeb530112d082b60c042b1b3b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/chocolate milk.webp": {
+      "masterSha256": "56c6dc3a933b23020275e38c875291f94f686cc691b1f1d3b4f5c372f35d697f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tea.webp": {
+      "masterSha256": "a52760109b90c26ab7c8dde203a8dba24f4bb65443e86dae84ad3436f4e4a4da",
+      "params": "webp-q82-e512"
+    },
+    "symbols/smoothie.webp": {
+      "masterSha256": "90d93775c31d12a734bad2aaec447c78c6e6b1119efb947a2cc1bedfe7556f31",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bread.webp": {
+      "masterSha256": "8466285249a96310860ef0f96e7cdb32766e53cfb248cd6cd2c279b17f9866dc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toast.webp": {
+      "masterSha256": "74aa5b846987bbce2c200ec1dda4308ae9fd5c413d4c1c424071663c3de9329e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cereal.webp": {
+      "masterSha256": "fa0f26461ca2a42be9b461d9d855f7edff0f9746fa39e270261ade06c88b2c64",
+      "params": "webp-q82-e512"
+    },
+    "symbols/oatmeal.webp": {
+      "masterSha256": "c4de35933498c553e4c69ac2bba2c52068b29a8ac84b7d1761d2b2a48eb0902e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pancake.webp": {
+      "masterSha256": "ccea1144855cebfd8031b354f58ba35142b97f4a92a6bdab0c41bee5cc56caa5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/waffle.webp": {
+      "masterSha256": "0b9260501bbfd6a0e8be9363798774462447c4198bc09f71da745092c6d4e9d4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bagel.webp": {
+      "masterSha256": "70ab531ecf1ed080f16b9f5a18fb19fe0a810e83925141adc2950d8ae2959540",
+      "params": "webp-q82-e512"
+    },
+    "symbols/egg.webp": {
+      "masterSha256": "f62a86172ea6d060c32e2b0cf0774f9ed2d510b34fa026f30ed20cb2f699113a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/butter.webp": {
+      "masterSha256": "c7efa7a31074b377c038308ba66ad5a33e415e5bcd1fa5bc31caecbef51292ab",
+      "params": "webp-q82-e512"
+    },
+    "symbols/jam.webp": {
+      "masterSha256": "e4bec8e1341610e5b9c16714950d396dad10628c7cbaa82de9682af7782d79d9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/syrup.webp": {
+      "masterSha256": "46dd411f3c3fb5df5f509f48d865c94a5ede5822c611909ab08a107643cc6821",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pizza.webp": {
+      "masterSha256": "973e8bbde84b4ee56768d87dec0149dad49f2a990739f0dd85ee6b4f0b3ba4e3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pasta.webp": {
+      "masterSha256": "2b49371282e877e56a3ea73acc8d9e76327ff96ea12f0c8f4f5c93f2d8a34605",
+      "params": "webp-q82-e512"
+    },
+    "symbols/macaroni.webp": {
+      "masterSha256": "9dddc10c9e101e88ef5e4500791c5c30b2f92efddd0ba3e01b43eef88b5af622",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sandwich.webp": {
+      "masterSha256": "adfbfbfcc20f8ab233e13f3b9688e12ad9fa51a48425746e427fde1552048f37",
+      "params": "webp-q82-e512"
+    },
+    "symbols/chicken.webp": {
+      "masterSha256": "57e86964657799013e3c58c5eafafc6183004339e4290e03e5d50482f1a02be8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/nuggets.webp": {
+      "masterSha256": "b7f88382a2e8ff51f974228a16601d71c26ebbc02ac391a20c1b5f4c86e52296",
+      "params": "webp-q82-e512"
+    },
+    "symbols/burger.webp": {
+      "masterSha256": "b5f361bf400fb7d2a76db1210f5368cdfc06f6d6c30a950e7d276899bf317b5e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hot_dog.webp": {
+      "masterSha256": "ec6e9eb712fccdaa2e7a727e982ef1e0c3041fb339ad5f151bdb30d0d3902012",
+      "params": "webp-q82-e512"
+    },
+    "symbols/soup.webp": {
+      "masterSha256": "6500ec4744ea4d079757eedd2fac491bf79afff7da73e7baaecb6ef19bd3433d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/rice.webp": {
+      "masterSha256": "67d553aad5412f0b23b0178c62723e29a34b6bed219ebbd6bae963c313aa816e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cheese.webp": {
+      "masterSha256": "5063ef655ff3fd92bca204ad30e86a71aa6254035f85ddc6eedbebbc70b6fcb6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/meat.webp": {
+      "masterSha256": "1247092002d978e893c5dd6fa18bd033b52f03be125a72aeced10211ec642d0b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fish.webp": {
+      "masterSha256": "dcae2983031f880cd20580cea3be5bbbb8ea3cbe5f493902e10658585688b0a3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/snack.webp": {
+      "masterSha256": "d95b0ccae741ed342eb615c89f7c94e2b452797fc30bfd43a0fdd6382128efda",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cracker.webp": {
+      "masterSha256": "5cd3a63eb33e3982048dff108bfc6629493969d6f6ae86bc246cdbb009d8a234",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cookie.webp": {
+      "masterSha256": "9d6dc5558e945d28d03e257eb945f315c4950535f9f32e939aaacc7173039ab4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/chips.webp": {
+      "masterSha256": "d3db60f119ad020ca90b2833f328c97aef87f7f61c7664384d4caac370f3c9fd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/popcorn.webp": {
+      "masterSha256": "6cb2cf8ce2b7ec12a0d18c7f240d8615d72cd5b2c3ff26b51f8519d862320a1a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pretzel.webp": {
+      "masterSha256": "26967cb503e5a125fd9569792ca8ccf645c46da0034dde07f85590149fdcf6b8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/yogurt.webp": {
+      "masterSha256": "ba2cfa88453f6746029659d2d61e9fcdb035cbfcbea77b936bfef5fb8af532e0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fruit_snack.webp": {
+      "masterSha256": "fea384b973bc2d27735da3eb4e77540d4cf299c26932470161b50193ddb88942",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ice_cream.webp": {
+      "masterSha256": "652c50ca084eac8a5bb1b94fa40fa78bdf0db652eb57dd4d9895c309b147f136",
+      "params": "webp-q82-e512"
+    },
+    "symbols/popsicle.webp": {
+      "masterSha256": "addf320a97e330423aab776321c27d79006568d79ba17655bb020e06c9206ccc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/candy.webp": {
+      "masterSha256": "3ccf9e952c98cda9e5b3b1e28b7092d0078e9979afa62a0ef235b3ab63599859",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cake.webp": {
+      "masterSha256": "a6004e5f959e634c81dc959680048820f3570209abf34f0f01a71bdcc079c662",
+      "params": "webp-q82-e512"
+    },
+    "symbols/muffin.webp": {
+      "masterSha256": "0956764ea2cf7a435eaf42a4c19288a0fbbefe10fcfc6cb65fe00d2103ee5a55",
+      "params": "webp-q82-e512"
+    },
+    "symbols/donut.webp": {
+      "masterSha256": "cdd15cafa5b47726f9df47aa4225793421ca6a3555d54a85910e9477ab6e4005",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fruit.webp": {
+      "masterSha256": "6044bd4b1927cb61915ebc39882443f2d382291aa7a1d957f29c29e8c9f0d00b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/apple.webp": {
+      "masterSha256": "26c9eddbb55b801219962025a1895fb50e8749aac3e602dc1e19c90f98c8d1de",
+      "params": "webp-q82-e512"
+    },
+    "symbols/banana.webp": {
+      "masterSha256": "f9a1d6a8a6660d435f60197312a38d94c45e06470661576a414ea383826cd0d3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/strawberry.webp": {
+      "masterSha256": "3eb80b1b1fc6f6b1ddbc4b8106ddf8fe00657d153e1107baec6cfbb5ef51013a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/orange.webp": {
+      "masterSha256": "3ff4e36b3e9457869caac22135dcdfb83debacc2019eb1fb4e577f59bea627eb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/grapes.webp": {
+      "masterSha256": "cb81b342fe8d9ff04af4ea43348217e0581e41f1911347a13ac99fe3cfe16b4d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/watermelon.webp": {
+      "masterSha256": "2ec49ef3af556d391860c8407502202f2d8d70f312972970a19bd707a1ae117d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/carrot.webp": {
+      "masterSha256": "5744638ddef2e4fa21636c6429b39811859cb797dc814c646689ab28c644c7a8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/broccoli.webp": {
+      "masterSha256": "5e6d829901d3dc011617966bbe2cbbee9f42cc609da7b92dc361ba9cff7e8d85",
+      "params": "webp-q82-e512"
+    },
+    "symbols/corn.webp": {
+      "masterSha256": "4623c4e2c1861c96d9e760400a81da03a8b2a35de51fecb3cc8c5cf30e0a1dd4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/body.webp": {
+      "masterSha256": "b8f48b5177505a49ccae6a8181bdaf1e53a706fd2213ff5a22456baaf1e60d5f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/head.webp": {
+      "masterSha256": "8b16d0200f6f3a943343fb6d8152834bd24e252ba79063b74e66651ce0fabf10",
+      "params": "webp-q82-e512"
+    },
+    "symbols/face.webp": {
+      "masterSha256": "057cbee3fc73b43f17b2b774d8483f3f13ec4409eb3f576e39b85c9c017926d6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hair.webp": {
+      "masterSha256": "ca4c8465afd3ddfa91e43de3b971dca09e925645a72855d4485b19cc6b590569",
+      "params": "webp-q82-e512"
+    },
+    "symbols/eye.webp": {
+      "masterSha256": "99c2169d790461fe6fed50b9b20118a27eb5d8cbaed2891a9afc0ca378a6bd2d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ear.webp": {
+      "masterSha256": "d86f4c1e0ddb9712794f6e1e3a86f5b235a679be01604a123dfe83cf93409fb8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/nose.webp": {
+      "masterSha256": "f8d4a3af512e180098d20741e9f501c2a7330c1cfbe9c3289c76ca4b338a2163",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mouth.webp": {
+      "masterSha256": "c7bc8a1cf21b981b65e3e46d6b6d48445bc77192b5ce25f700b0d9a526479924",
+      "params": "webp-q82-e512"
+    },
+    "symbols/teeth.webp": {
+      "masterSha256": "7a1b824e1620c4d3906d413e6b3cd0980aa2cc9aa6123fb53fa2220e45ed18f3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tongue.webp": {
+      "masterSha256": "b31c86819f8dcf061745eaf572af1d4aeb86a34b20f81a674f1be0b2ef9842ec",
+      "params": "webp-q82-e512"
+    },
+    "symbols/neck.webp": {
+      "masterSha256": "fa0b0477cf0ad0ae38f2a1273879186768fbcda5fad7745630cfbcb1ce582a23",
+      "params": "webp-q82-e512"
+    },
+    "symbols/shoulder.webp": {
+      "masterSha256": "85adce1136e94da3626471bbb24b0749607c6c287ef3b30333e8796e2f4743ce",
+      "params": "webp-q82-e512"
+    },
+    "symbols/arm.webp": {
+      "masterSha256": "2b84cd5c95beb44db106f67f137c83441262870e67ee24ae2264711afe5f9f8e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hand.webp": {
+      "masterSha256": "97f9dba3502d037c644f66383c598d83a328795bd67ed6ceec4474c257dcfc52",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fingers.webp": {
+      "masterSha256": "bad4c99504788a1f51c956d28769d0a1fe05eacf4018ea4554977cd891ca5cb5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tummy.webp": {
+      "masterSha256": "239b7a0a26088cb92e944e04ec1a37c5cd50ec8f46ab010dd544c113513186c8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/back.webp": {
+      "masterSha256": "32e99698d80c8c31e70c2eabf6e2db174c3c3cd6f94dcd90ac4313b83692d2a3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/leg.webp": {
+      "masterSha256": "6df4372821b1e4d250777d99a1677e2f052da8e68a45c95494a2766a9c2968d2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/knee.webp": {
+      "masterSha256": "cf246fde5884a00c2f0da680d876b7485a8b617d2c2ded11a23b5323a4d7ba8e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/foot.webp": {
+      "masterSha256": "21ec5353f479ed92a8f71835a24252b15105a444599b6b7f92bc93a039cf7ecf",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toes.webp": {
+      "masterSha256": "765c84b55829a4f77013d76c392a8025ad770cd16db33623986dfcd323bec71d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bathroom.webp": {
+      "masterSha256": "5ff5bb588be18c87bde2ab33ce6ff1398f5cdf29a49aa58ec4df6f00c0d46846",
+      "params": "webp-q82-e512"
+    },
+    "symbols/potty.webp": {
+      "masterSha256": "678b870d86aff0120f2c483212bfe2835188a03a27cf47812cab6a6c18594e41",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toilet.webp": {
+      "masterSha256": "b26d6b144270962218434a4c825ab3e166f09cc7c4153ca427acfcf5219eec76",
+      "params": "webp-q82-e512"
+    },
+    "symbols/diaper.webp": {
+      "masterSha256": "f627b8fd49317d15ba090186fa9f521a2ae2d22b5a1fde0048a67624a66adf8d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wet_wipe.webp": {
+      "masterSha256": "a33130d4e9893a49dbed849d0c18f72fc8aca9e2d4140333cf78eaf7e86f71fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bath.webp": {
+      "masterSha256": "cd6ffb84246c764e42f4951a106b9e7171f1f782e3a849d0c40afcd7a5fdc398",
+      "params": "webp-q82-e512"
+    },
+    "symbols/shower.webp": {
+      "masterSha256": "cbe94146d72359297fef3cf9d83b68be9b3c8c47a6ccf69bc8296fbc4a7a9f51",
+      "params": "webp-q82-e512"
+    },
+    "symbols/soap.webp": {
+      "masterSha256": "08d263be98d85a36e8cf8cf2ccc54495589bfdbf21e29ee7e791b57eca284493",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toothbrush.webp": {
+      "masterSha256": "59a00230cc3664bb3dc1efc795065012e4de1de736464e6274d28ac9f6b358b2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toothpaste.webp": {
+      "masterSha256": "728d4180df86da41b3f3f7643b006c38c212b09cfdcab3ee450f3089b64420e1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/towel.webp": {
+      "masterSha256": "e5cd314f4f40e120da37e13321d617e458c162614a1b3d46d9c7c92d287b1f3f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/comb.webp": {
+      "masterSha256": "66aa233856a3ce00d16b854549183774ce3f374d76217457c96edfd50bc92087",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tissue.webp": {
+      "masterSha256": "caf734761cffe6bd63d99c865269a94d9f469f2b5cee6e71e475be09e62e0f55",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bandage.webp": {
+      "masterSha256": "e98a0be651bc6dda8ba1b44f146a0a0b20ae145f769d3b6fa62fc244b612536b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hurt.webp": {
+      "masterSha256": "67d8abf523ed056506f6ccf95c365b74dea5b8704fe32e907b82b7b7cfd03d0a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sick.webp": {
+      "masterSha256": "ebdf8a2b5f8253e17331c49727ae9c504d4f9f00046e5dbec411b7f4b47d5e36",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pain.webp": {
+      "masterSha256": "1540c8c76fc9a9c0ac8d96de2e64bbfe8a8eed640edc18f1d4ff80694f0d3562",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fever.webp": {
+      "masterSha256": "2c5d20f2e29e77529d9356e1c2cb6534c223c673eed717b06ecde53623353209",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cough.webp": {
+      "masterSha256": "a9875217aa238b57323fb79afc11262b0689978aa636d7d2df66dbad29a806a0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/medicine.webp": {
+      "masterSha256": "1bc7701115a7e34914d929d8d29e0c7ef5b945c46f18f369c0df90795cbf5e68",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dentist.webp": {
+      "masterSha256": "b5b613a398d51b03754f8c4fadf90fb5b0aed4c1dd49cb108c62b6c21e7c703a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sad.webp": {
+      "masterSha256": "13e2f1ba05860ed73049712e1cfd252ee864275bc5fd84d648103cbba3f8c2e4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mad.webp": {
+      "masterSha256": "dce5686274de8dee1f8ef208b6aacb1cf45da4dc09e49afe318b359e9ee489e4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/angry.webp": {
+      "masterSha256": "23c8bc9ca9914ab759331d81a4a7d3055fefcef6141682b37d0aadff17475391",
+      "params": "webp-q82-e512"
+    },
+    "symbols/scared.webp": {
+      "masterSha256": "bc9bd45db5aeacbdf091aae3d0775166455e2a1332df73988f746dce69ffb948",
+      "params": "webp-q82-e512"
+    },
+    "symbols/excited.webp": {
+      "masterSha256": "8b3d67d87f849eba0c017ddfb2adb7d9e448b5d4ce0bc163dd5e0908e894510f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/silly.webp": {
+      "masterSha256": "14c915c6fb3fd22b7ae39b09628743f40c35877f41f37d1675023c800c57740c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/nervous.webp": {
+      "masterSha256": "d77d4edbdb5de9f94006926521e44d43918d7523cfed3fc0bfd34a16cd762551",
+      "params": "webp-q82-e512"
+    },
+    "symbols/calm.webp": {
+      "masterSha256": "d2159bbfab2fd91c63b18166cf00125fa9e736062120722c5530171648b4c056",
+      "params": "webp-q82-e512"
+    },
+    "symbols/frustrated.webp": {
+      "masterSha256": "c4915cac5e4d873df52200f1a82a1badf62ec9fe7a96ec5e0338b130cbc3b129",
+      "params": "webp-q82-e512"
+    },
+    "symbols/proud.webp": {
+      "masterSha256": "2e71e0b4fd422640e9521e0824feb75cd5b52929d04c423e1e94385c0911a468",
+      "params": "webp-q82-e512"
+    },
+    "symbols/shy.webp": {
+      "masterSha256": "fad674159c3255355158eea285d3f8777bca51ea87fbc71c3bc5ca4d4cbf1e37",
+      "params": "webp-q82-e512"
+    },
+    "symbols/surprised.webp": {
+      "masterSha256": "a939c0c7f56c4b4156a8dc317bfdec97bb0d201284c133ee49d85125c5462d67",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bored.webp": {
+      "masterSha256": "a79fb3d5fe6afc41cf4b2b9bc46489d433c1e1796fe4a4a9f7c019beb5ab8192",
+      "params": "webp-q82-e512"
+    },
+    "symbols/lonely.webp": {
+      "masterSha256": "cdf81cad3ef65b72136809498931e840fa06682fb50168509c8ef5f2fc360e94",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hungry.webp": {
+      "masterSha256": "40669e790afaf5786d1e732101e65ec8b6da4d8284ccd5713b1d69db87df160c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/thirsty.webp": {
+      "masterSha256": "c1006845bbe8ff920aff4e458888cf961d18a0144785a5583099ae6971b449ee",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tired.webp": {
+      "masterSha256": "86c76cb391d8efa5580cdca97e84dc7f7f66cb9982429c3e12b1f3c0a4e26694",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sleepy.webp": {
+      "masterSha256": "5c65f13f5135297aa4d118810550f704e3dcd621e3b3fd8fd03fd9916c61e868",
+      "params": "webp-q82-e512"
+    },
+    "symbols/energetic.webp": {
+      "masterSha256": "656cbbef71d9edb528cd65f382e13fce4c0ee166fa62330524b43e6b6c6a72d7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hot.webp": {
+      "masterSha256": "97f8abba78fc5e43b600ad43608c938f8e94f28255e053d9458155bb4c9fb11e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cold.webp": {
+      "masterSha256": "45e8f0fbc7301bb9008a247e6a4409d26016c9af3cfc820840bc3b6f00b01f74",
+      "params": "webp-q82-e512"
+    },
+    "symbols/warm.webp": {
+      "masterSha256": "6b8495eceeed0c98b6dfa3ec8c00023285d5178b1fb857630b0396f2c7f8e65c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/loud.webp": {
+      "masterSha256": "f463fd13727ec967810c21f75df9423ab856a0c28ca755ac7627262548be02ec",
+      "params": "webp-q82-e512"
+    },
+    "symbols/quiet.webp": {
+      "masterSha256": "f0492064030665598dbfdcb25343137d8f9cc5606cfa79c5f89e489b61270a62",
+      "params": "webp-q82-e512"
+    },
+    "symbols/noisy.webp": {
+      "masterSha256": "c6b49ac7c857a96fa3164d60e9331dae3e3fd63ecb3db6e4773fd5f9d2173721",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bright.webp": {
+      "masterSha256": "9b7ce2dd3b9f86da573c7332023ea5cd6eb1cb52044c6122bae6fdc54f5d9e5f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dark.webp": {
+      "masterSha256": "ca5471db76735f492862a745202a9bbd49efaff93618557a676ab0003611ba40",
+      "params": "webp-q82-e512"
+    },
+    "symbols/soft.webp": {
+      "masterSha256": "97aad9bac215d7c3884d57f251bef05746846e657b4ebf97be8c7e362be1b6e4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/rough.webp": {
+      "masterSha256": "812e2bbba0c95545734ee368bb70186d81ae5bb20fcf7a3dda72d21bb7d39982",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sticky.webp": {
+      "masterSha256": "12945077aa47f7a6a7a05d8c31d0703b3972eb8fac207f409e3a1f1b605c58c9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dizzy.webp": {
+      "masterSha256": "0c66e5283b1a15a8b393aa05a6155f9700696ecb609ae65b8d30e057ec78cae4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/gross.webp": {
+      "masterSha256": "07b6dde4ae482231a3e895981f367870db0c0658e628f5d8b340aaa8b57902fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/comfortable.webp": {
+      "masterSha256": "375e994fe18169c47ef71412a12820ea4bdaf772582c7226ee3a3ab6c67adc5e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/uncomfortable.webp": {
+      "masterSha256": "93b17d2fb4e761b20aee6aa32ed179b3b43a472836166707c0640877316d11b9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/overwhelmed.webp": {
+      "masterSha256": "55afd009a1ee9009a1478707d6a71f44f2be2bdc9d6af94a2569d789ccbab571",
+      "params": "webp-q82-e512"
+    },
+    "symbols/run.webp": {
+      "masterSha256": "3ff4bd722efb6a1ff87ab79a776615bd98e418e87e1fbeeec1410d16fbd360c5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/jump.webp": {
+      "masterSha256": "d564585652505ba6e68e0c3508ecdbeba023d5c4296a07487a52a1ad91be2a87",
+      "params": "webp-q82-e512"
+    },
+    "symbols/walk.webp": {
+      "masterSha256": "f6885f03f48be3e17f5ebea40c9bc312ffd6bba44d861c4b5f586a6fc3f11f4d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sit.webp": {
+      "masterSha256": "d920a1eb615bcd424c1615b89469bba9eb0081c5f0b448fe719474d4ce283df4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/stand.webp": {
+      "masterSha256": "f557e6c08e372d778586f1afc5f1fb099c5e89d339724f373e55c85dab24f52f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/climb.webp": {
+      "masterSha256": "01036bbdab4317658bc5e7e571ac595da190334915d9a666989227122e3bcd85",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dance.webp": {
+      "masterSha256": "5e33b85a64ff391d689be9ea794e2e8c72257eeb116a8ae7c90c273d4cae83fd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/swim.webp": {
+      "masterSha256": "f5117ea2ed41ca475c7cf7d5b97fe3939213e9adb299a767e7252b5771565d0a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ride.webp": {
+      "masterSha256": "5083054614624d252f88f5e3a9d392de3a3a092977952453c2c895374b14a52f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/crawl.webp": {
+      "masterSha256": "551eb5b5fb83e337278172b030a21beae77f6f2bef0dd6aab2da78f679c72338",
+      "params": "webp-q82-e512"
+    },
+    "symbols/kick.webp": {
+      "masterSha256": "ff8f53ef78344c0b6a0d29f8c00701bbcf1622a9a59388ca163fc9376b51353f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/throw.webp": {
+      "masterSha256": "90d2d6cf1b3f5c41fd5d3f6c15b4712dcf1e7d1923ed8260e8dca20b2bea4eb7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/catch.webp": {
+      "masterSha256": "be4eb227638b8cd2c09b99edd434e59dd1d60ffe74d5519588f750aee432db41",
+      "params": "webp-q82-e512"
+    },
+    "symbols/push.webp": {
+      "masterSha256": "c45949bb41be8dd9ed9b4565445bda8d6248eed1c64a543fe3a495d5c943fa69",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pull.webp": {
+      "masterSha256": "369c6e84876dc277046f06522fd72f6f1a7c44f9241a3feeaaeab6214ff8b265",
+      "params": "webp-q82-e512"
+    },
+    "symbols/swing.webp": {
+      "masterSha256": "aaedc2c9889545c443a616c839e7576c82eef35960e8d9b40dae5a158a43b92a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/slide.webp": {
+      "masterSha256": "0b5a2c419602f75b22fb5ddce31198a90852251bda536563fbae237703d23ca7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fall.webp": {
+      "masterSha256": "d673af813d3ddeab47b0e4195e1f7fd9adb2dc22f356db9af2cbd253e1f079b3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/carry.webp": {
+      "masterSha256": "a03c2688241f41bb769e0252235a3af6e3ef790e91fa449f6cae7ac6c89b842b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/drop.webp": {
+      "masterSha256": "afba5a06162b1818f86029341103ec02dfcc394e7fd49c4674ba135eec66c386",
+      "params": "webp-q82-e512"
+    },
+    "symbols/write.webp": {
+      "masterSha256": "4bce2968c3b8447dc0addc4f939cfa29721d21bc2269589b9930fada4a48deaa",
+      "params": "webp-q82-e512"
+    },
+    "symbols/draw.webp": {
+      "masterSha256": "2abffacae8a3e99cc4c0d4fe0462e47488b8f23651cf6622d3b5285d4e2b2d04",
+      "params": "webp-q82-e512"
+    },
+    "symbols/color.webp": {
+      "masterSha256": "a60f1d54a15419c3f57995df017fb5152fe03cd8cdf8275ba4988e602c198785",
+      "params": "webp-q82-e512"
+    },
+    "symbols/paint.webp": {
+      "masterSha256": "3083a50dfe22f39d9b781c9efaf9859fdf03d4a1c5eafd03469067f1f43302f2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cut.webp": {
+      "masterSha256": "fbe0d1c4095cbbd455f05d15eeac5fc761025cedf051d25abcc4d769bc58b111",
+      "params": "webp-q82-e512"
+    },
+    "symbols/glue.webp": {
+      "masterSha256": "cb42d0762427e1de3c7d3eb144a6353edf3e57ac331625c7159c10a0b05e8c41",
+      "params": "webp-q82-e512"
+    },
+    "symbols/listen.webp": {
+      "masterSha256": "1f8343704a5e84ae2b7ef4e0a3ff6d1e80ddbe40f97deb6c0e98984b86d73f3f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/speak.webp": {
+      "masterSha256": "675056e4a435885cac75f78d0696d5ff9cb5bc00dc1c5b84706a5c2ed7d11467",
+      "params": "webp-q82-e512"
+    },
+    "symbols/talk.webp": {
+      "masterSha256": "cc6343c69eb4773b1f2ffae8609263cff74cf83469c4647a9a4846388ab2dc3e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sing.webp": {
+      "masterSha256": "1321ca1e21860593e5eb1cdb364ba4f5dfc1ab8ca537bf9f253a476f5e6a2045",
+      "params": "webp-q82-e512"
+    },
+    "symbols/count.webp": {
+      "masterSha256": "8123c188d65316d6d0dba08fc3322327cbb0dddeba45cd4866b04a5fd3b70c6b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/share.webp": {
+      "masterSha256": "7d5f0005ef6f6e46caf2f82f5376d45065ce4d6f9126545cfdbeeec619d7935e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/clean_up.webp": {
+      "masterSha256": "b32280ebb43672287b0026d9ee5c4a001b14e9a833396cabe34d72791a4e02a0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wash.webp": {
+      "masterSha256": "9e83bd9788504810e792d6b584419694d8103a5d508aa309038a8e8aa6684ef5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wipe.webp": {
+      "masterSha256": "7608d523126a0403224756c6053daf71179aa44d95f88c68e74428925f374543",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cook.webp": {
+      "masterSha256": "7f45d86261ba2e0f5718b3b835dce11f38bea36dd46f43767e0604221c505b6f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/build.webp": {
+      "masterSha256": "05aa4bd6998331381943094ed2f559fd0b64b56d75ff2dd1826cd2e421fc18aa",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fix.webp": {
+      "masterSha256": "82449ac6120fb29ef69f966f52117480b60e1be4bddcfda004a5a384c89a4d32",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hold.webp": {
+      "masterSha256": "1baffd515767fef083bfb98fd8bf37f0ae10fea023737c293187fcf8c4aaa440",
+      "params": "webp-q82-e512"
+    },
+    "symbols/touch.webp": {
+      "masterSha256": "7244da3539f9ef23ebc825d5adaff4aa4b71dc7e5b703f04a7c9d28a5a1f9e41",
+      "params": "webp-q82-e512"
+    },
+    "symbols/know.webp": {
+      "masterSha256": "08e023f4d9f69009db7bfff10ba4f0affc08fdcca755154c79aa1b9dd4c4f04a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/remember.webp": {
+      "masterSha256": "1a642fa50e5cee4f350f827a0384294870a84fe1ff5dcde8bd373e538473b9d5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/forget.webp": {
+      "masterSha256": "9ed8fa133530b41d02b05d65cc7a5d08065cba1fc40e75155262cbd4d1234881",
+      "params": "webp-q82-e512"
+    },
+    "symbols/choose.webp": {
+      "masterSha256": "c7110d793d036c27f3288f6eb3ac979d43662961c8c6976b9c617e54a4dcf0ad",
+      "params": "webp-q82-e512"
+    },
+    "symbols/show.webp": {
+      "masterSha256": "92fa7a67538c2741822f1c1407f22dbb07c509a55ed6f936fa04b94727f97ba5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ask.webp": {
+      "masterSha256": "e52702f5f89f2c47e8ea2005004c976bd490062e8d90996ee6f4794c986c669e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hug.webp": {
+      "masterSha256": "90868314c2f26cfa551d81497e9d7d8d621361c2c94592c31a15560fc106779b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/kiss.webp": {
+      "masterSha256": "623159a04ca86830200863ad2d75be0c64ff6b6190b33c394781553bda7f3102",
+      "params": "webp-q82-e512"
+    },
+    "symbols/laugh.webp": {
+      "masterSha256": "b7ec1d8dacf780527053aa0d0def6cf759dbc6ae9d426d3e810b949c9948057b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cry.webp": {
+      "masterSha256": "ec35ef244980beafe36bfe0320d6b0fceee9c3995e21b3e75102ec4ea039f9b9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sleep.webp": {
+      "masterSha256": "cac234b064ac83bffc78279cf0b813eb6d1376d4a8ee3a6a7c8c0fc2304fb162",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wake_up.webp": {
+      "masterSha256": "3fc1819ba6ca652af0d9fce5ccbf92cab8db33ca6b45fdb93bb8fd277daeac9e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/family.webp": {
+      "masterSha256": "53836904863ba7b9b04e592cb4d03472d1070c7eefa58e3fc7c4e698d1f32723",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mom.webp": {
+      "masterSha256": "7cd27569ae8a5872557fde82a0452dc0d405b86407224af9800a48d2d4514aa6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dad.webp": {
+      "masterSha256": "47c93c0b81a6d499dd2b2252651f9fb359724eced38acb2f2076f39d28463a71",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mama.webp": {
+      "masterSha256": "7cd27569ae8a5872557fde82a0452dc0d405b86407224af9800a48d2d4514aa6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dada.webp": {
+      "masterSha256": "47c93c0b81a6d499dd2b2252651f9fb359724eced38acb2f2076f39d28463a71",
+      "params": "webp-q82-e512"
+    },
+    "symbols/baby.webp": {
+      "masterSha256": "594a09207f5fdd824208c9f32206f9a98b04993287f6978e46740847951f0443",
+      "params": "webp-q82-e512"
+    },
+    "symbols/brother.webp": {
+      "masterSha256": "588ba08378138cd2edaff909b8d8e25c8de1043fc3d0003f47efa687f233fbbc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sister.webp": {
+      "masterSha256": "1cb1f648da2305c1e8c91e6c99217feb13e4e9f6c6910831d5ef7499170d6147",
+      "params": "webp-q82-e512"
+    },
+    "symbols/grandma.webp": {
+      "masterSha256": "e07334e703b43065702557830dc959e94fb6423d79596af1b5e5ee0b788786a5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/grandpa.webp": {
+      "masterSha256": "9e0a58088baa96ea252e4a27664675c79bd7aa2c3b342e9e08c3fda116b4528b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/aunt.webp": {
+      "masterSha256": "2daa1bcf9e16b1ce528b6b049954dbf3ae295c5db09f042dc0c1a5305466038e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/uncle.webp": {
+      "masterSha256": "bf971ed8f0a6ef270c08dfd34b90b692c1d60594444481516a83d7e7c1384fe2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cousin.webp": {
+      "masterSha256": "5a24007246aec2f88d474937d7746fc95e189ae59e72a03650c6ede0d401ee11",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pet.webp": {
+      "masterSha256": "9e00a839021dd655416d3ff91bf8962ae843b4dd59cd1f48f25fc06ff9020dcb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/teacher.webp": {
+      "masterSha256": "d22a29af5ca3232986ce45ba2bbcbfe186e224c992ee0889d71e3d0eafa6a835",
+      "params": "webp-q82-e512"
+    },
+    "symbols/therapist.webp": {
+      "masterSha256": "6b008d1a80ffabecfebaf945e7bb6dfc7e4467efe991296a6bd97e062e81a48b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/aide.webp": {
+      "masterSha256": "d90175bfba7e72c5c9b2701106900eceb57e527d06763428af82e7b1a3d73355",
+      "params": "webp-q82-e512"
+    },
+    "symbols/student.webp": {
+      "masterSha256": "e322331a4eba9cda927896ac88ccab3f66db63e3122e9f07fcb22b6ee6f076d8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/friend.webp": {
+      "masterSha256": "39e0ba006f402b8aa1197afa87bca2f47b0ff1f6f8efa653ff16fed528453c56",
+      "params": "webp-q82-e512"
+    },
+    "symbols/class.webp": {
+      "masterSha256": "308a960415d73c9ef07ee52357573689eb9586577f2f32ac20727e88d1977fef",
+      "params": "webp-q82-e512"
+    },
+    "symbols/firefighter.webp": {
+      "masterSha256": "18004df4301479f4dcf43ad4994582144ea050e101721d60ad8ba9f3df25b27e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/police_officer.webp": {
+      "masterSha256": "8e496b26b5db0eab54121574c3d5458eafc97ba72ee9c701d1b8021b7ce7e78d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bus_driver.webp": {
+      "masterSha256": "cc4ed2f49226a25ac69d925cf9b4cedf69c130cc6b2fa57db5d94da61ae1ceff",
+      "params": "webp-q82-e512"
+    },
+    "symbols/neighbor.webp": {
+      "masterSha256": "bc7ad20120137f20357ddc89413f6025951b3902b76a5d26306f07e85c9fe27a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/person.webp": {
+      "masterSha256": "be80b3edd798533d6b166c61736ac0abf0200b12e6705cfee9295d75977b27e8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/people.webp": {
+      "masterSha256": "b708e605c3642cf009dd2cad6d539648ce61362ddb59e5d60f933698a27c2d13",
+      "params": "webp-q82-e512"
+    },
+    "symbols/kids.webp": {
+      "masterSha256": "f1afb592b856524c51f461483dcf74e5a3a8e6900d186207a480067cc135cda8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/doctor.webp": {
+      "masterSha256": "4a30093eae18480170950a0c4094e547c08b3ad773af8afcaffbbe70b8ad5004",
+      "params": "webp-q82-e512"
+    },
+    "symbols/nurse.webp": {
+      "masterSha256": "3237db801a985bf290bcba8d961d28cd0df168547ac7e9895bcc2e3138c328e8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/babysitter.webp": {
+      "masterSha256": "a0f0a3dc5f79870225131f5769f727af55bb676cf974232181ebfbbd1bdb4967",
+      "params": "webp-q82-e512"
+    },
+    "symbols/name.webp": {
+      "masterSha256": "0a43dc881caa232f5aea1abf530c06cb3f5dbafab6223f4eddc66cf421dabd47",
+      "params": "webp-q82-e512"
+    },
+    "symbols/home.webp": {
+      "masterSha256": "3dd5a35f5851eaf64d7e29afd093b3948f46857464fef74d734a6e66fe7d4a84",
+      "params": "webp-q82-e512"
+    },
+    "symbols/house.webp": {
+      "masterSha256": "c3b255987904e121f9e2c229cec1a0bf1d8f6d389ef21e50575bbd372e4da96c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bedroom.webp": {
+      "masterSha256": "9f378e3490cde3a7a029e336728a9798e5804684ba635ae64b7e13ce594d90de",
+      "params": "webp-q82-e512"
+    },
+    "symbols/living_room.webp": {
+      "masterSha256": "2e4d8963db17f292fdda05b9fceda192bf3e9676242e12cbd8cea29fd5681526",
+      "params": "webp-q82-e512"
+    },
+    "symbols/kitchen.webp": {
+      "masterSha256": "ac18ee9cefefe0fb5d5f605ab71606546db2dee655af58cbfa576340bb330026",
+      "params": "webp-q82-e512"
+    },
+    "symbols/basement.webp": {
+      "masterSha256": "c94c2df72217c6fae9b03c494fb7c428467ed301411dda3f5456f18b26b7abc0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/stairs.webp": {
+      "masterSha256": "ae8da382a57589515d258c8deafcc5bc18f3a6cca4ce140d56c0db91ba04c920",
+      "params": "webp-q82-e512"
+    },
+    "symbols/yard.webp": {
+      "masterSha256": "191f63812b88aea6e17623d6d1ac8b4474fe7c70f1a4ef3bbcc3195a155a8c13",
+      "params": "webp-q82-e512"
+    },
+    "symbols/school.webp": {
+      "masterSha256": "dffb1bc2ea1d0b467a20d0c73b5405d4494e0928dd7eb7f1ebecdb0c03a68ff7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/classroom.webp": {
+      "masterSha256": "653a75be6a1ce97b49a6cbffdbfd408dee440e3b4c1fec35bd5809ba68aede2d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/playground.webp": {
+      "masterSha256": "c45cd4e4a43787fd3d12c8d0000eff94c11ae377897aaf4ace89e72ca015decc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/gym.webp": {
+      "masterSha256": "543c1eeaa2a661c96ec4217b31cfb1c634d2eb5b3013964cb2bb4d4ffd8bb066",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cafeteria.webp": {
+      "masterSha256": "893fc85450a9d5c537c685d35f20d5219ae7f5a982f9626aedca002da626072d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/library.webp": {
+      "masterSha256": "4138ddda8f89ed2be8e1810157112d7372a9f99a41f547222090cbdb4551f2cc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hallway.webp": {
+      "masterSha256": "b3386748634ce0ac35e9ec4d08b60d666894a61b31ef3059ef2bac561b042f2a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/desk.webp": {
+      "masterSha256": "0be46ab03d99b713ca043d8608461143ecca4d9937ba3866e64c6b93fa4ca577",
+      "params": "webp-q82-e512"
+    },
+    "symbols/park.webp": {
+      "masterSha256": "406b0b629fd7cc212cbe1b5c8f1f5810399838d92e9b02469c7aaabbf1c79b78",
+      "params": "webp-q82-e512"
+    },
+    "symbols/store.webp": {
+      "masterSha256": "841ede3dc2743338f5a5e763e1fa33c1b1baf25272e230f6dd61c7571ff6b3ef",
+      "params": "webp-q82-e512"
+    },
+    "symbols/grocery_store.webp": {
+      "masterSha256": "3722284e05e3cbe114a2dff29224eea91dbd23198ca93d3ddc993674ac1d46a1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/restaurant.webp": {
+      "masterSha256": "7d9e40b0556b3954f64e0a4bf8372a87d3935c7dfd5bff04b768cd3aa7247aa4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pool.webp": {
+      "masterSha256": "35c78d5e96db9f6ae2dc1473dc4ac375d5fa377d26910112575fd6fe4b98aa97",
+      "params": "webp-q82-e512"
+    },
+    "symbols/beach.webp": {
+      "masterSha256": "6e9286a197098f13bfd98b6dfc418f5b431f7ba7bf65af5b08eb2bf82d3af7fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/zoo.webp": {
+      "masterSha256": "4807070d298c7a0c20dc5d6ffd817840fbb2d5edc17378395fadfc069d5f4f47",
+      "params": "webp-q82-e512"
+    },
+    "symbols/doctor_office.webp": {
+      "masterSha256": "72fc1d68f5a02d878ace3a5bfb0cd2b2bef8e227e6c6312149e8a06145a00c5f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hospital.webp": {
+      "masterSha256": "9a87a21ccbad15c54d502a1a06270b10cf1dedde4f5bf1aef446632e281d9303",
+      "params": "webp-q82-e512"
+    },
+    "symbols/museum.webp": {
+      "masterSha256": "637d65d3e99216879c121e84dd947f959a06289affd5d46bfe3ef4b340a73de8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/movie_theater.webp": {
+      "masterSha256": "754daed6ca2f3c6085680cd79b362db7a8be786f2069a1150cc6a541baa99b77",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mall.webp": {
+      "masterSha256": "e798f2035595d6f80bc0129d7f7a1fcb3082ab7016d08f7785358cf6de0683a6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/farm.webp": {
+      "masterSha256": "37e3bf32d166af5495f00c31ff482cd261af46f3a1475a5f901c129203900415",
+      "params": "webp-q82-e512"
+    },
+    "symbols/airport.webp": {
+      "masterSha256": "708455223bcd881831629985d6b7266063ded9b2f28ee9db135504fee4d4a47b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/outside.webp": {
+      "masterSha256": "a028320cce40cb4a03cccc001c8c929dfdf987d64db353c2d509160419be0f27",
+      "params": "webp-q82-e512"
+    },
+    "symbols/inside.webp": {
+      "masterSha256": "4da6df0f318f4a843c3a6cbfd7cc173df53430ab4c94617cdba544dd4ec2418c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/street.webp": {
+      "masterSha256": "641445348e124c68f8c95e6105ea342726175f351c51b56c4375ae89bc2b415f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/town.webp": {
+      "masterSha256": "ec80655ec4c495fcd70ec04439c5a753de89e90d7f238785d8d45266be65db31",
+      "params": "webp-q82-e512"
+    },
+    "symbols/church.webp": {
+      "masterSha256": "80b87ab5d842f6a2940a68e822d20c566b9a6e74b5b55d436b7e88bc19db4d9f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toy.webp": {
+      "masterSha256": "1161c3b65ce8d9e26a3f320b2d954f2e293f36bfddd9d3199b3ef550dd1c88d9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ball.webp": {
+      "masterSha256": "1914e0fc94f4ab369abb0d04f09f13c0e1f69c76f3a43da521dee9854f050af9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/blocks.webp": {
+      "masterSha256": "805ec218a7e9da4f5d00dc5a541a9cbe08b3a072cf5a8135e9fb14507fb23db8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/puzzle.webp": {
+      "masterSha256": "05174f3885e8f5d08958ba5710e0057dd25254a6e2c0f083597fb8d7c86eea62",
+      "params": "webp-q82-e512"
+    },
+    "symbols/doll.webp": {
+      "masterSha256": "bdc1d8e8f2d3fbcea26d5571c111cfec5e00db4459d076791e58b2f8e02fa8b9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/action_figure.webp": {
+      "masterSha256": "405ef6576796b9f1427f26d00895f6c838a868a703956aa65b9d001d85874343",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bubbles.webp": {
+      "masterSha256": "fb8b37f8691960961bac7a0c2c27bce81e64e50d077e96651c6c4c96bf3d92c7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/play_dough.webp": {
+      "masterSha256": "902f7f8eca9523877723676b906e040128b8e427e0efd18ca7708dbfa57d831f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toy_car.webp": {
+      "masterSha256": "249679c3882e59ba10e57c2298e260fe00cc7bc8fa601431433f56cc0e6d081d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/toy_train.webp": {
+      "masterSha256": "2f18c8b513014ff95b0e9c105aaa21315e16ffcedeefdacf6291c06733252cdd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/stuffed_animal.webp": {
+      "masterSha256": "28dbf8d0e52221eea14b2eccea752eabbb29edacd1ec76953d21ba5f7580b970",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dinosaur.webp": {
+      "masterSha256": "8d394f889297bf8d63d3507f530b45dd5ade841b18e126ee2a03b2f20ac923e6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/robot.webp": {
+      "masterSha256": "7e26ba000621243499bb1928d1785705c6ac98512ba6955027e87c285bb62ff6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/legos.webp": {
+      "masterSha256": "31a4f24be85b6ac4242bacc120b368ff77a46c8029e0352082dacefb8e2ab97d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/board_game.webp": {
+      "masterSha256": "0e16831bdb113f63d637de86f02c76bfa98a0b57436caca10f9ff3ef27658064",
+      "params": "webp-q82-e512"
+    },
+    "symbols/swing_set.webp": {
+      "masterSha256": "b5d0443404a6a1fb1d5fb82399c685c7368f65fd7ec05af57620be7f69f20ce5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sandbox.webp": {
+      "masterSha256": "6c3c88c5c1dba0586c28a6ef6ff5146d25792b31a6cae9ce976f5831fa6759c7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bike.webp": {
+      "masterSha256": "a4ce0ba2bd1f8913b34eecfa76028ff13510aab3965f893cb802177f18979dd0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/scooter.webp": {
+      "masterSha256": "b68b6819ead4141f4365c3718fa0a25b60b2632b659064323bcc85e9c53c9e63",
+      "params": "webp-q82-e512"
+    },
+    "symbols/skateboard.webp": {
+      "masterSha256": "1c13a441e0607432c712cfd46e686770a8ebc229e252b1cbb1e46b09348957a0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wagon.webp": {
+      "masterSha256": "fcf3dbaaeabd50153d5f6b8edd447c489bb7a622eb5084037d023a69c3bf3121",
+      "params": "webp-q82-e512"
+    },
+    "symbols/chalk.webp": {
+      "masterSha256": "6e53f24461656a1bd39d37c485d4100b5e41246d820d0a990f309c3aa00f2ca6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/jump_rope.webp": {
+      "masterSha256": "ebabf6e28b9b4f003ab67bbbd6ae62143d6bbb842fa3f4ad180d73f895b42bd4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/music.webp": {
+      "masterSha256": "00ad1adfcc5c3f74d388b3ed4709827cfbdc9f782a8c299e6b1ebc261602d1b0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/song.webp": {
+      "masterSha256": "59b58c4e18d52577a0eced60b64522b159229870945c50b79a5ee8aee3a6a735",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tablet.webp": {
+      "masterSha256": "cd167ddf23a09e3d6cb2d4615fdcb7f0a87567bde944d1cda9f89522c78e9361",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ipad.webp": {
+      "masterSha256": "ea021ec984184ec947aecc963161ceac7376e0f0b3c24b3fb4e3659ac03670f0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/phone.webp": {
+      "masterSha256": "a3f61611f300916102235492e288da9638948fe65cc1176861705f4ea450edbc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tv.webp": {
+      "masterSha256": "8fadb90ac5992efc20c5c88c06273508aae2807d58aa401260812ff2a47f1447",
+      "params": "webp-q82-e512"
+    },
+    "symbols/movie.webp": {
+      "masterSha256": "f0d4d7c46d33788fcb48d427d044f6aa36de5c9e097be97835fa945133fdefa1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/video.webp": {
+      "masterSha256": "98a0be42fad8813c1d42055ce386d40254192320f1d95e48d1fc022db836a4db",
+      "params": "webp-q82-e512"
+    },
+    "symbols/headphones.webp": {
+      "masterSha256": "5a78999adc76cef7522a10f005d73696acb1615072cfb18c9869a709f9142cc4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/computer.webp": {
+      "masterSha256": "9c4c0c8c1fb13eee4b1ef81944e3745200a4aa0cabdb2b0867217c71c38ff803",
+      "params": "webp-q82-e512"
+    },
+    "symbols/camera.webp": {
+      "masterSha256": "1d24de836db3fd0c59c9b054315f9b6e1e117bd6f1a8654df1af4470e0b08e95",
+      "params": "webp-q82-e512"
+    },
+    "symbols/paper.webp": {
+      "masterSha256": "119b6ee2094d9a1414fbecd0eac1d5aafe8383c4851135de741f9d2c6175ca83",
+      "params": "webp-q82-e512"
+    },
+    "symbols/markers.webp": {
+      "masterSha256": "4a7ee7531c900fdc014005101d2568c242a2454c982d899fcc108c698971f394",
+      "params": "webp-q82-e512"
+    },
+    "symbols/crayons.webp": {
+      "masterSha256": "1427bfc77e5f3135cf130f88402579c7fd60c48de2dae34381d75cbd6ca517d9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/book.webp": {
+      "masterSha256": "f2fdc756d542c347ec8bd37289c139e32797eeaddf900a3af349b91fbf355d2b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/chair.webp": {
+      "masterSha256": "b9a05f3bb190d0b7f3539e126417445013935aafa5c4436a00d696d6294646ea",
+      "params": "webp-q82-e512"
+    },
+    "symbols/couch.webp": {
+      "masterSha256": "54060d8e0d22239a7742c1dc125671ddd17481ffd54120126fd3b6f68d467f2c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/table.webp": {
+      "masterSha256": "aae595188302a0641ad6058829c621dee7fe721c5b2ca9c2a5e1f2d48d5e5865",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bed.webp": {
+      "masterSha256": "3e3d828a4ae70ad1e9e4ce6bf58cad34a2475eec356eaf2d02ab0dbd5c76ae33",
+      "params": "webp-q82-e512"
+    },
+    "symbols/door.webp": {
+      "masterSha256": "ec05c65f7521d2012de2303dca173a177062fdcc0dcec699e7bfd6a17c7ceb04",
+      "params": "webp-q82-e512"
+    },
+    "symbols/window.webp": {
+      "masterSha256": "15d9e5767d77856f3237a092771c1adf69bba9fda041f8dbc6dfd03d566a4617",
+      "params": "webp-q82-e512"
+    },
+    "symbols/lamp.webp": {
+      "masterSha256": "80668773e8e9db4aefec18d9d4d5d832ed4c5fb49491c211dcba6163703c12cc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/clock.webp": {
+      "masterSha256": "39df9f21a9969110923d3686845b1d30da9a1a6c9d15ba879a49734fd39d00a7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/trash.webp": {
+      "masterSha256": "e24a7b7172e20b78a11c75a714a6e87381f9b2896c5cd18cad296d97fccabc0a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sink.webp": {
+      "masterSha256": "6198c8407e6d0c22f6ae6ce3cef89e5a63e2c3abd96fad1f803969a420bcb709",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mirror.webp": {
+      "masterSha256": "e96223430fec564eca3a2e30d8ee22d48aa3edf6db9e4bfe4206173ff2430ec1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/rug.webp": {
+      "masterSha256": "b9c18f8fdebb6091876a3da53ae9984e693aae91b38b1899c8b4f6f45eb74867",
+      "params": "webp-q82-e512"
+    },
+    "symbols/plate.webp": {
+      "masterSha256": "b1514d4e48be0d4e329bf14f2c91a275672a938d678648879b0d9b0e735b0942",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bowl.webp": {
+      "masterSha256": "30ae369c0ac952ede14272bd42f83797fb11d1b12e8c2c02d674e3dea77866e0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cup.webp": {
+      "masterSha256": "0d29d101b30e5b52d5f263436f6f3ce9f18e92f60855aa97811b3f48f1a2767e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fork.webp": {
+      "masterSha256": "ef1a71277e3e19fd92b4d35eaa389da8c0c2af206b2d544d8ff3f32a8ec62f57",
+      "params": "webp-q82-e512"
+    },
+    "symbols/spoon.webp": {
+      "masterSha256": "1790679c1c80360df895b9e94cb19732d472b5d3ed808ceb126146cded57d75b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/knife.webp": {
+      "masterSha256": "b6617dcbc007cdc5627a6f2ac0b7b9f87ab8eb67b5d14e604460ff44bcaf3650",
+      "params": "webp-q82-e512"
+    },
+    "symbols/napkin.webp": {
+      "masterSha256": "c32875335762791bbfe2c7b880355f4b8fc926a765c584c03e4d4a5f7bb82f7f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bottle.webp": {
+      "masterSha256": "be7b81bfac7876eccedf1ec2dff5fa8ce6b6c74fb134d2cb21f5b461a51d2626",
+      "params": "webp-q82-e512"
+    },
+    "symbols/straw.webp": {
+      "masterSha256": "e3ace7775e1b9bfc0cdc2e40879bd1217e368abdebbce581d90d66714e7bf2e9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fridge.webp": {
+      "masterSha256": "9f15ba362a4757e745c41f0d2aa50bcb02823f8d83762db5ddfe0f1f4768d4fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/microwave.webp": {
+      "masterSha256": "42af99d7aed539281105634626c56a92c3269a1582d6f20048612c0e6f969158",
+      "params": "webp-q82-e512"
+    },
+    "symbols/backpack.webp": {
+      "masterSha256": "dfae4bc89fe19b2f5f722b66fec0331de73eff04b7e356d4bb2d54c76fc98a93",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bag.webp": {
+      "masterSha256": "cacd64df456662cce5fe8301263473a02b4ea7d0053270bd52201a6a90c0a396",
+      "params": "webp-q82-e512"
+    },
+    "symbols/keys.webp": {
+      "masterSha256": "05362440a9050bdc323bcec1977ed7cc0fb745b2ae1444cfdab637ad26c77dbd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wallet.webp": {
+      "masterSha256": "5d6949f35e14b6c596113a9a4e8570ba2f1b6336c14caa8510ba529c111ab99a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/glasses.webp": {
+      "masterSha256": "8de54f4cdf77b2ab502796fe19da674f7c44907b9fd4abc8e84a9b74b7258aaa",
+      "params": "webp-q82-e512"
+    },
+    "symbols/umbrella.webp": {
+      "masterSha256": "91497b5d3733edf3aa903124508f4a27b4683851cd241cf92c108e1b8189ddd3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/blanket.webp": {
+      "masterSha256": "1a4c12425c5b42ba25f4d4b17b629612a1af92900c21337d61d2b866e821ce62",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pillow.webp": {
+      "masterSha256": "3efff93bff84c4e3f42d87e2a0cc36ef5ccbe41c7a891933d66c4a0a4e7e8607",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fan.webp": {
+      "masterSha256": "e13eee022eab03ceffdbf439ca3e449aa73618ea6f03a379b70f239c480e44d8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/charger.webp": {
+      "masterSha256": "ebca9cc34064075bdf5bfca5617762f7c1c805263180659ea079b448091795ac",
+      "params": "webp-q82-e512"
+    },
+    "symbols/box.webp": {
+      "masterSha256": "ce665763ef39882d8672776fdbbf07d9121be91d510cb56a07d15159d0aefe1f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/battery.webp": {
+      "masterSha256": "cb8df05582b4a12e41977baf517048d1fdd9967f1dc35fe2ee7176fc9abc4eef",
+      "params": "webp-q82-e512"
+    },
+    "symbols/broom.webp": {
+      "masterSha256": "391a94855ca30b8b9ae38bdc314ad10c8a30c50d87c9fb8fcdf0102126e83f81",
+      "params": "webp-q82-e512"
+    },
+    "symbols/vacuum.webp": {
+      "masterSha256": "ba58636f0780c299224a57d6b92efcbf55fd7a9df55cdbdb971b30b27b9eca2a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sponge.webp": {
+      "masterSha256": "c385dc8fbaf56e2d67902c39c606218ae2e343e3a449d263062131a29dbb9052",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tape.webp": {
+      "masterSha256": "05c4e18d2d5d7d63a566380d96174497e6b0132e6b007217f0bf1a6c0d421505",
+      "params": "webp-q82-e512"
+    },
+    "symbols/flashlight.webp": {
+      "masterSha256": "9cef9cd33cc2b7964538526185daa9a7744e40792a1462446ec92213b8ab07e8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bucket.webp": {
+      "masterSha256": "187cdaf46fa8ee5be796931066f2b37cd79fc6183eaa76397ba9f8fe5f1d2649",
+      "params": "webp-q82-e512"
+    },
+    "symbols/paper towel.webp": {
+      "masterSha256": "48e455b0282be6b535ae07e25f9b5324653b8d5ab3f5c3769a34868316ee3618",
+      "params": "webp-q82-e512"
+    },
+    "symbols/shirt.webp": {
+      "masterSha256": "cc80dcd6410a01744cae48e99f9eb767639cbe215b931de93c5f6772d2f1b37c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pants.webp": {
+      "masterSha256": "534a6184948a705f5cebfd86f7deb41f835ee150202d2892b1d0190035384893",
+      "params": "webp-q82-e512"
+    },
+    "symbols/shorts.webp": {
+      "masterSha256": "447dec291a0112ae61346d723954ce1e5654997912afabc9e2c786023ee1fca6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/underwear.webp": {
+      "masterSha256": "8cd7df3b7f98d6debea606cdd15fa6a22f8c8e8bdafc222ad09d50ed57825378",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dress.webp": {
+      "masterSha256": "2c228b76562590cdc917d67185087781d1f9a532482514b7170a0c620f7cf7fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/skirt.webp": {
+      "masterSha256": "789abbd96aaf8f29c1b4a1730ecc95f4039e68e6a1250acf54c3ce3dd22c3e28",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sweater.webp": {
+      "masterSha256": "b295e61998f9de36f1703fde2b862ed3f530b4ff2f8f24b004f49f9aeecb725d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sweatshirt.webp": {
+      "masterSha256": "11ab98b14e0b1fe5d616a27f67caa9680eecc93ffa4bfee498936737a5aa25c5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/socks.webp": {
+      "masterSha256": "fadbdc455ac80dacb71c826d526224e25befeebc500f4526e99710ba7bde171b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/shoes.webp": {
+      "masterSha256": "a17264b84723c5d4b30ae20673a7d7a40757828dee805a9918b722560c23b54f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pajamas.webp": {
+      "masterSha256": "6c0a4bd2aa7c7d7c5953918fdb5f755118ea7ebaf8286d79a5fa17fb8acf0219",
+      "params": "webp-q82-e512"
+    },
+    "symbols/robe.webp": {
+      "masterSha256": "4c4c3faf03bba50b9c1cde9c48d78cf4e5c2b5d20f9e44b59878ee82b6ee3cd7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/slippers.webp": {
+      "masterSha256": "24681cc0ea54eec61eeaea67c9cfc8691c3d04410694a5801370891de330725e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/jacket.webp": {
+      "masterSha256": "62e0ae41e3deb872ce58ffcef6c885a049e97527a271cd4948cd06acfcd10216",
+      "params": "webp-q82-e512"
+    },
+    "symbols/coat.webp": {
+      "masterSha256": "a46b3648fbf61bcc7ac11bffeabaa74c71d9a02bde715d2c8bb67d14b0e6f0f1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hat.webp": {
+      "masterSha256": "da034c4b0d032a282f81decc2e70cb5ad11d0ff64cb1af4ae2064d7f9e951697",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mittens.webp": {
+      "masterSha256": "a3969a1541f796406eb6b38819c23c2e5b40d5be165d6f931b7c77fab856f80f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/gloves.webp": {
+      "masterSha256": "02140c909a47612296fd1872ab59cc62507c596a34c687b3bc35f14130492d8f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/scarf.webp": {
+      "masterSha256": "7ac2aca70dc450883f88fed5991cea0e90025d1120a05bfc4ff9e892f7f39fa0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/boots.webp": {
+      "masterSha256": "8d4663f74f530ff2c5e309bbe69b30e3c71e9765188fa05697b36e1bc43032c3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/raincoat.webp": {
+      "masterSha256": "95db5255afe37c3982dcc8811a10fcd8b3879559704ca7c5ec9e8e3e810c3589",
+      "params": "webp-q82-e512"
+    },
+    "symbols/swimsuit.webp": {
+      "masterSha256": "e6a6d6e68d1c7df0ba9a60f4e4771f2866834417fa13105299e885e293bbf215",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sunglasses.webp": {
+      "masterSha256": "d9e67fe9d751c802f990fdd903074307f1280097f552bcc1342e6c5ce99f7217",
+      "params": "webp-q82-e512"
+    },
+    "symbols/zipper.webp": {
+      "masterSha256": "2facb6e4aa929837f5c221e47d5d877b657f16dd4e61a7b399d8d048e516a55e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/button.webp": {
+      "masterSha256": "fbc13e7d84fb8f847d0469261e6d63ce00448471ce5e8748e7338fdb785febab",
+      "params": "webp-q82-e512"
+    },
+    "symbols/belt.webp": {
+      "masterSha256": "78a83ddb3db057926bbca49caa78ee95f6c95969bcbfd16e6b4ae084ae2cffeb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pocket.webp": {
+      "masterSha256": "5c4ef901b02b38d163d222206c94e0c5a86554fdacc50ee6757081dffc84a729",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sandals.webp": {
+      "masterSha256": "1727c8520c68d07048ebbe412f71e4b39cc43a28bd4699ed246bbf796418e5d3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/animal.webp": {
+      "masterSha256": "516fbb1dc4dd67048172305b74b4d9bc5d87ed0b16ed8bec8f2dc9f09b4d7ac6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dog.webp": {
+      "masterSha256": "521fdbd696134e1b94e99d37e61cbc4029763ff45cf0d1161f38cc563bf114bf",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cat.webp": {
+      "masterSha256": "60e61ad26556433366dad059ec25c48eee92179c499d5859ce4c3511548d0247",
+      "params": "webp-q82-e512"
+    },
+    "symbols/puppy.webp": {
+      "masterSha256": "2459c0941bd1f80f5ebcfe713c3b385a1187f285ce8447d7d78a178e58eaabd5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/kitten.webp": {
+      "masterSha256": "4be3818a7c8775fb36f160963061ef4cd81e98ce11abe22dbe46a6055980bf61",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bird.webp": {
+      "masterSha256": "4ff1a127175431ee95c652739d46c350555950a55bc1562933117df705b3adfd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bunny.webp": {
+      "masterSha256": "ca1cf3734f561bd5db9592f5b5b5f3f9d34103236a9961b88071dc390ccf1807",
+      "params": "webp-q82-e512"
+    },
+    "symbols/duck.webp": {
+      "masterSha256": "9c0787c22382765ceafd292c869136494a171df0005750a57b85e27694307896",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hen.webp": {
+      "masterSha256": "41283c1aa16c155a3d2bb8af30b29903be0cac6b3a18954157f8ffd1f43bd563",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cow.webp": {
+      "masterSha256": "15c44cef55d4681e3526a743a036b8c7352767d94c42872846bba77c16a80081",
+      "params": "webp-q82-e512"
+    },
+    "symbols/horse.webp": {
+      "masterSha256": "d1f23207bedbfc99cf64206e0dc4caa0af1233c86e1f848c4b93135c76ae854b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pig.webp": {
+      "masterSha256": "0828818d410b530e774bfd471a03a73b960fff19757673f8d912e97e1d0caaab",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sheep.webp": {
+      "masterSha256": "072a833f82cbe776708d4f02e24b6e5e4cf02adb97eaab5fd6f6c6a00ebad737",
+      "params": "webp-q82-e512"
+    },
+    "symbols/goat.webp": {
+      "masterSha256": "fa25c25c51c68e347ec4aa14c7826184d4398315b0f0120c70122315be9f29ad",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bear.webp": {
+      "masterSha256": "f17025472e6952c9bf2a3f087e7b23b1879cad9401478f825c232f5bcdebaf7e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/lion.webp": {
+      "masterSha256": "6a3ecab8de69aeb3119e5993ae942fc2db80f75b5d5cec1dcc50c66be3e64285",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tiger.webp": {
+      "masterSha256": "4c442afcbca9c174fdfae944ded466aa196a838fd7d86f90ae66b7d9da0fa4c3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/elephant.webp": {
+      "masterSha256": "25c8e5b1f4f1dd50400f94e57b3fed5324a6388cbcb61fb0fc87dc4f4a0e9814",
+      "params": "webp-q82-e512"
+    },
+    "symbols/monkey.webp": {
+      "masterSha256": "a2d6fee5df9f3656592192f73c7092906d681a25dab55de803e1f072dea1a045",
+      "params": "webp-q82-e512"
+    },
+    "symbols/giraffe.webp": {
+      "masterSha256": "66a739e4f089dcf774bc06c4db824bd87249113020807452da3ea806474753bd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/zebra.webp": {
+      "masterSha256": "5ae24ba00f423fd01f145de8703f0f2543f5c6ff9678539dc6713c29c4a03875",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hippo.webp": {
+      "masterSha256": "280de59448ba5d859b7a204694537484640cefa08dcf482a0dfc15ea8623cd39",
+      "params": "webp-q82-e512"
+    },
+    "symbols/penguin.webp": {
+      "masterSha256": "89d52ccda241f6b0fa4780dcd7fbb9eda7375a3100553e0bf100be0983ce77fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dolphin.webp": {
+      "masterSha256": "286ab7d49a6eb02991f4b1aa3df40b8e3b019cd19dfc02c54664fa5ad40cd413",
+      "params": "webp-q82-e512"
+    },
+    "symbols/whale.webp": {
+      "masterSha256": "38f6a4e9741226e4ab819764c4dc9f9fed38084bcf51599dbde908089a44117e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/snake.webp": {
+      "masterSha256": "b6438eb2554596b768943b2c2985882f8e8cc4bbdead63836f8de03c60f22697",
+      "params": "webp-q82-e512"
+    },
+    "symbols/turtle.webp": {
+      "masterSha256": "ec16547b28b711955ac73524eddc966ee088188c97bb168db3ec9f405a9944f7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/frog.webp": {
+      "masterSha256": "cce552ea9b24a0a02cfc85b89d79b485547ef2805b3edac9a4ff46aef2707f31",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bug.webp": {
+      "masterSha256": "69c41a429bcb97f3eeecfbe6b9a99d5f6bfc7640f44a19bad2cd24787aef05d8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/spider.webp": {
+      "masterSha256": "e904c8b9c97c15e7d8bcc3c7410231ffa65b8791eb3fefe8a603b192dce5f25f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/butterfly.webp": {
+      "masterSha256": "b4481fa58693f95994eacadcbb7c5b9903ddea4d4d529414119cbbc8a97521f3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tree.webp": {
+      "masterSha256": "69d5ea0e9fb49e5a55ecacae168f7779af0e54054aa3e79bc43cf92ffc64b275",
+      "params": "webp-q82-e512"
+    },
+    "symbols/grass.webp": {
+      "masterSha256": "c0c28a4c76f06f3b009d98a3a6f733299640026cbf9f7bd5771abadc37ab028a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/flower.webp": {
+      "masterSha256": "9431c05055c5f8e6e04e7aa262c4c22e54d01b69ae7c062bf67602bb70b24037",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sun.webp": {
+      "masterSha256": "9e0d7217cce34b8e5c9af9b64c1e524c0c952c64ede0c95b7f88aaf322a44e91",
+      "params": "webp-q82-e512"
+    },
+    "symbols/rain.webp": {
+      "masterSha256": "298c54717a1b55d9178421d2894d693f28feb05455eb954ff3ce2862a418360a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/snow.webp": {
+      "masterSha256": "7c657409d4d0d0363a3c74c0da7782bcaf00bf3b67e7fcc8d728fd9b8c827378",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wind.webp": {
+      "masterSha256": "23c2ba70b261226d48d01451dd2893b4b994daf40c8b2e6c010cabf80bfd8aa2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cloud.webp": {
+      "masterSha256": "58a869f05b3706afe527cbed1daf8aa3963fe00c86494a5a18cfee54db1e8d8b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/moon.webp": {
+      "masterSha256": "7078366bd320eb2f817b5e027dd6f849d92f6c1d7e34c2e5c008b1821408a440",
+      "params": "webp-q82-e512"
+    },
+    "symbols/vehicle.webp": {
+      "masterSha256": "85017d2ad4344b7b485c1ec08248d6a0e027ed81949893c8d7f9e4022398a3a4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/car.webp": {
+      "masterSha256": "b85680efe2c3d9e3c8b4da7ecb765d4a586bd7734cb8989d797c1d8ed6c8a16e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bus.webp": {
+      "masterSha256": "beae15520d62c7db26c4197d149f3eb962c550c6ea3286fb05a4d363aa421929",
+      "params": "webp-q82-e512"
+    },
+    "symbols/school_bus.webp": {
+      "masterSha256": "0119158b28576336b38f9bb7ff0dfbe6d951d83e23ecb60682ae416e62807c92",
+      "params": "webp-q82-e512"
+    },
+    "symbols/truck.webp": {
+      "masterSha256": "c57ad8406af94bb554923586760cb185f70648e77bdf7550df7162e1fad09fba",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fire truck.webp": {
+      "masterSha256": "6525061c709565fb0ada7c52035482171135b3068342a9d11c8bd389cb25cf0b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/police car.webp": {
+      "masterSha256": "410c19f2a5cbd26d63ab1b911aa2a822e1208d9d42ecf0a4c5070e9c97f6cb60",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ambulance.webp": {
+      "masterSha256": "6dc2a534dd5cbfeb9e15aba42888f137e92f33c48d2064069cdbeb6123da56f8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/train.webp": {
+      "masterSha256": "4e4207d5fa30a85c2cfe769de464fd24c71c30ba671738c69007d7b74266b196",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bicycle.webp": {
+      "masterSha256": "0cf57594f909987f5b99bb183de4278d39dae7165ec015d3efb0334d31049344",
+      "params": "webp-q82-e512"
+    },
+    "symbols/motorcycle.webp": {
+      "masterSha256": "0afff58fdeb6a4340ed2eac9187127155b78ea7cb6d0cfa08eba987d3b818eec",
+      "params": "webp-q82-e512"
+    },
+    "symbols/van.webp": {
+      "masterSha256": "724b5663c4fb41630d030cec2b2a682889cc1d8f7dc23cd7c67c57c6930c2318",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tractor.webp": {
+      "masterSha256": "c42f9d556411555f2d3c32ea31c835b5c1cfe1c42d0f7b0b80d1d92e89c423fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/stroller.webp": {
+      "masterSha256": "b3f148e1f078880e47091acb8f9b6bb9316b7b520f9d25149fa345076046ba0f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/airplane.webp": {
+      "masterSha256": "b140b3d9b32811d3e3510f0afeea0e4e9ee8b09eb56f8d0ccec8ae45d001b38a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/helicopter.webp": {
+      "masterSha256": "c8bc4edf5df8afa883c0b83d89bcd4671fec44bf0799a32aa4f69bfa8ba1329e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/rocket.webp": {
+      "masterSha256": "2c9f22930181c118ae5929108144fd523842dff22d5eb255f32f7de153c4f46b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/boat.webp": {
+      "masterSha256": "daab24f22719935b9025ad10e23384ec1a18cda8597b376a0d1b2768ab5978c9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ship.webp": {
+      "masterSha256": "a4de1e2b396778484e1289ec02bb80bfc95944f4b44ffa614ad9d5116512848e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/canoe.webp": {
+      "masterSha256": "4e2c0ebbe68d64eb7e30e7223b121422f26cca922905846a6e10ac5acce133b3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/subway.webp": {
+      "masterSha256": "bdadb6a392921626ebcca3a5ba860a9398a1b4150ae474e061eb52ce2414f56d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/road.webp": {
+      "masterSha256": "a8460789724f67065fbfaa04983c2b03943152acf0480d879da4e62680c4cb9a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/track.webp": {
+      "masterSha256": "41e02cc13c5aba22484561803cd29c26ab764d89f6c8878d1e211ae06f11ecc4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/stoplight.webp": {
+      "masterSha256": "2b6b9aab8bcfada9440cdf343b5cb55df48d01e2cc2fabe76d9e5613323ff4c9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/gas station.webp": {
+      "masterSha256": "5e4a8fc3effceac85f710e8b702e2bff2eb2fe425f926471deb2776c342cd6a0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/red.webp": {
+      "masterSha256": "b1432625d7a9d406f1f5b5ca454e3554fb830ec31576f81639cd29cc19a67e01",
+      "params": "webp-q82-e512"
+    },
+    "symbols/blue.webp": {
+      "masterSha256": "54cc6c264a5a0e86d5e9e8a499086b4a04646863cf2d2aeb47b640f8e9bb1f71",
+      "params": "webp-q82-e512"
+    },
+    "symbols/green.webp": {
+      "masterSha256": "4888a114d53a36bdf15484a8b5eb262629ec83612c3c3d537cc2c39bf5e8c953",
+      "params": "webp-q82-e512"
+    },
+    "symbols/yellow.webp": {
+      "masterSha256": "5ce9c987fdde0471e21eeaf0debd1b879666b8992fda42f1663edcc743d8b635",
+      "params": "webp-q82-e512"
+    },
+    "symbols/purple.webp": {
+      "masterSha256": "b57892b148e9a8dddb9a63d28b9051f52adf19ec6ce397b67742d5a0efd2c0f2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pink.webp": {
+      "masterSha256": "8dfeef4d2dbbc6b6949771fdd9ec2efc1ef186de83294e43a76cb8bff05478e7",
+      "params": "webp-q82-e512"
+    },
+    "symbols/brown.webp": {
+      "masterSha256": "7744cd218bafb3206eaaa8953bf707b85bc7620450521a2c80d5011445d84673",
+      "params": "webp-q82-e512"
+    },
+    "symbols/black.webp": {
+      "masterSha256": "6ec1b9b89ef1f5eaffe7ad43fa81de127217ddb8e579cbd37950b6dc5b43ac45",
+      "params": "webp-q82-e512"
+    },
+    "symbols/white.webp": {
+      "masterSha256": "f198b652d4a9efeb82efcb9e9bbb39a6ee4b7d8732819b373261ec6007d64d88",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fast.webp": {
+      "masterSha256": "8c55ac2d446db151b31f5317cbf059d329551173697abb3a64fd532f462b2359",
+      "params": "webp-q82-e512"
+    },
+    "symbols/slow.webp": {
+      "masterSha256": "a08c4849ceeea41719195284b260d80a6860eb7335372c1b0fc1b78c314f2ae1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tall.webp": {
+      "masterSha256": "677748e806eb8fdbac7b397f88ef4e0c5663a71d7b3d644917cdd85cc35456ee",
+      "params": "webp-q82-e512"
+    },
+    "symbols/short.webp": {
+      "masterSha256": "e1309cd2d24fdfd903f8770940d5f4e2d02dfcd6bb52380218b1b2d8a0d26a05",
+      "params": "webp-q82-e512"
+    },
+    "symbols/long.webp": {
+      "masterSha256": "36833d484e7b12e4983f2bb638baa0275368d629ee2989b9d0d89c631d6a4d75",
+      "params": "webp-q82-e512"
+    },
+    "symbols/heavy.webp": {
+      "masterSha256": "8d222f4d6c6f2a1fb1e2816190c0e3867bec2af58f7a2710eb1a33478783f32c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/light.webp": {
+      "masterSha256": "a82372875559aff1eafba2814224cbb1316136ad23138dac2cd777bf0035408c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/thick.webp": {
+      "masterSha256": "ed85c3933c960d7e9d61ff7b795b858756fe09d40161508dd1d8692cde06c017",
+      "params": "webp-q82-e512"
+    },
+    "symbols/thin.webp": {
+      "masterSha256": "6f61bedf7ddfe288d3816b0f22f7a17568c67a03e5452a4ae77255365b45550d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wide.webp": {
+      "masterSha256": "98461279eb63381824958708e3a9dfc6ba340e3814c6510626d8fc911c471434",
+      "params": "webp-q82-e512"
+    },
+    "symbols/narrow.webp": {
+      "masterSha256": "922f775061dd813b369ba6fba9689668622e59df12324874a6074dac28f76c2a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hard.webp": {
+      "masterSha256": "cb7d0250f10c702fddcd5ca196c422a18b9c3c2948bb1208b22ba3a325a7ea0a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wet.webp": {
+      "masterSha256": "ba1bdbe01e4c32f267924313fdbcffa862f8c33e735139a97b28b31d4e12bce3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dry.webp": {
+      "masterSha256": "3c12db3b459c8157484ae8d7bd4999e0ee5f05d1949cecd589cd33f810905631",
+      "params": "webp-q82-e512"
+    },
+    "symbols/clean.webp": {
+      "masterSha256": "96683db2dc4c325530809ae883d14b3ad273fcd0b3c72d5634ce06c20fa39871",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dirty.webp": {
+      "masterSha256": "7b8019009fe00f7fc95fccc992fb1eb22b640862c2fb96182c9a8032b4ea6ff6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/smooth.webp": {
+      "masterSha256": "196ceeeaaae637b950a5f1eec04ed42c4751fbb9a08d515679201670d1e6b38e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/broken.webp": {
+      "masterSha256": "91292169d7c6d75cf60a608bdee17577dc7d521effaa24e00a31e8c7ed29e245",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fixed.webp": {
+      "masterSha256": "d97f55649bac930d46622259c77c961ff1fbde270b854d46fb94a8b1b2015f1f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/empty.webp": {
+      "masterSha256": "c791080bde700d26d9c464db37554d41347475c49c0bf99405ea034f30f25c5a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/full.webp": {
+      "masterSha256": "1f7c01a823f782ffa781a2cf6b9158e55a26c432d04ffc979ba4326f9d926d39",
+      "params": "webp-q82-e512"
+    },
+    "symbols/safe.webp": {
+      "masterSha256": "9815ec2049969ccc199891b74c26e7c0db944ea8dd4e5562d48171693e4d51bc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dangerous.webp": {
+      "masterSha256": "589763cb4775926c75224425365aa94d7840a76737b93b7bb48d04c23df534ad",
+      "params": "webp-q82-e512"
+    },
+    "symbols/easy.webp": {
+      "masterSha256": "edfa8956849dd99e08af0bcd2d8a972e469d1370631f28d5612de071acb20358",
+      "params": "webp-q82-e512"
+    },
+    "symbols/difficult.webp": {
+      "masterSha256": "45b4aaf174a4faa787b0ca152c6135fe7ee63871e2765a29b89f6ebab1390a44",
+      "params": "webp-q82-e512"
+    },
+    "symbols/right.webp": {
+      "masterSha256": "0d6db4107621a8661e3ef5513cd64b199bc12a1aa54204ef514ccecefb1ed81d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wrong.webp": {
+      "masterSha256": "7e71d893082511ec9a52b694888841b3b38bd65a8195a5185c1718880cc95d20",
+      "params": "webp-q82-e512"
+    },
+    "symbols/new.webp": {
+      "masterSha256": "424467e5fa7cb6127b7d1736604fae3b64f37e16da34f83e9a966349275d8e64",
+      "params": "webp-q82-e512"
+    },
+    "symbols/old.webp": {
+      "masterSha256": "e067a59de213a4e56087182acffeecd01d5c64b7e2fbf813af45e6b5d3db9f29",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pretty.webp": {
+      "masterSha256": "9d680da3fb1e4db0f7071654f6ef471fa9e766351a7ebb4c9440be4d91f389cc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cool.webp": {
+      "masterSha256": "930419e93c38480e0b6a45ddf669ccff73751445fffdd7fa9b42a94ef33a45d6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/special.webp": {
+      "masterSha256": "75efbce2f9e5c1fcba1fef12bf5779dd3bacb59e1c690ee7b3e31f55e3eb07b9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ready.webp": {
+      "masterSha256": "28ff038fdb36562570a4b0b5a2200a40150b7bffcc53bfbb4e430d81332526cb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/favorite.webp": {
+      "masterSha256": "1beecb0a3aa8e2b64b1a565199b3a2f78e486c5a953a56e2e0833dbdd89efcc8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/weird.webp": {
+      "masterSha256": "e09b81f8d455ec2e086806a946f9d93eb4fdce08e12ff8ace9a48b09e0236b72",
+      "params": "webp-q82-e512"
+    },
+    "symbols/funny.webp": {
+      "masterSha256": "0f4423ab8b229e365e319c6255f290c3e05d75b6c3454a62483be452113df0c2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/morning.webp": {
+      "masterSha256": "cf2334ea54fa888db4e89fc7c20f1aec6292c8efa39843cbb3ca25b4713c6278",
+      "params": "webp-q82-e512"
+    },
+    "symbols/afternoon.webp": {
+      "masterSha256": "b5bba6aab3dc44d05d1074fe7fd90766d4d6435d836f3ba8fb0f2c7494885bc3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/evening.webp": {
+      "masterSha256": "4bafdfb9ece411dc5857470e794242bdf131af4243ddf00dca1f1e981608ad0b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/night.webp": {
+      "masterSha256": "faffd74a3573db614fabb5afdb3affb9500a3038ec8ffefa5684b26dd0e56ec5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bedtime.webp": {
+      "masterSha256": "a1fed9db9553e9f1f6c1bf0fbef740a109db82bcc336eefc8647bf75921195fb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/naptime.webp": {
+      "masterSha256": "3cea11b79d9f1183253b6e50dadfbf53ddba7f5774f46804d6ef896614b39755",
+      "params": "webp-q82-e512"
+    },
+    "symbols/now.webp": {
+      "masterSha256": "94dbe9bacb8b6aec979af55d9b835d2802fc4ef11eb562dd53a40104a9db2ee3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/later.webp": {
+      "masterSha256": "e0318302286f50b4892e8d9abbcd8290479dbb8bdc291346bbec90bfd54d4ef5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/soon.webp": {
+      "masterSha256": "6e9af6886aa8ef4b079df89b12d4d75862f73479631059179dabdcc68ac9676e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/today.webp": {
+      "masterSha256": "54fe9d68e93482ff5cc3540f8ebb506e51e343f792279dbe8f23333f81243245",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tomorrow.webp": {
+      "masterSha256": "67d8ff1c5b09419ea7d842ddb688418d78c98db56d073cfbdc7bcac7363058b5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/yesterday.webp": {
+      "masterSha256": "1b090ca9baf1669837126cd6eceb8c951027667a716260db8fe85a3e521ea06f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/before.webp": {
+      "masterSha256": "44bf1131ff93e52ea1bbd76666ad529f2e6aacb318af25395219c4ccee57f1f1",
+      "params": "webp-q82-e512"
+    },
+    "symbols/after.webp": {
+      "masterSha256": "beda32390746d969ca307369313a17afefa37474b311e51ede4467660c1d7103",
+      "params": "webp-q82-e512"
+    },
+    "symbols/again.webp": {
+      "masterSha256": "d87b15296a4075f43eac51fe46eef51eecc3aba2fdf9e5ec773c8245fda2c435",
+      "params": "webp-q82-e512"
+    },
+    "symbols/always.webp": {
+      "masterSha256": "789e88e7b44fc017946adc2e20f6cd84972f62bddaa82802d29805095dc0182a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/never.webp": {
+      "masterSha256": "e18b356866a645b25dad0e9181da0c4fe16c7780b67b840f0294e812fa9d6268",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sometimes.webp": {
+      "masterSha256": "2eca7d8c3900fac938f3468023fde32d28e515ae39466b86b3ea8a5251dd0d33",
+      "params": "webp-q82-e512"
+    },
+    "symbols/first.webp": {
+      "masterSha256": "6d0b2ebae3eea7dc5ef347ec7edac13d89d6c3f08418a3b8c5a4daa17ca891a0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/next.webp": {
+      "masterSha256": "116ced1eb7b37a00df06991bd2bc51818af10f7f4947ccad556664ad2e944d08",
+      "params": "webp-q82-e512"
+    },
+    "symbols/then.webp": {
+      "masterSha256": "beb5b12f982396b513636106323f09c8b380f265fe658d32daf7f5fd9bfe6390",
+      "params": "webp-q82-e512"
+    },
+    "symbols/last.webp": {
+      "masterSha256": "93eb8e1775b409089fa3211e768da49aff3452116500487383d7585c830cf024",
+      "params": "webp-q82-e512"
+    },
+    "symbols/minute.webp": {
+      "masterSha256": "ad6f929ca4d0efa7d7549bfaef0ec4490a7a458e790527e0601596e47dba3c3d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hour.webp": {
+      "masterSha256": "2f8276802c54bbc20d20cf902c48db0e6a948de5d5d63b57f0427391ad2fcfc8",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hello.webp": {
+      "masterSha256": "67590b4b0efa30ec3033e6296fc1e4d5803e8c91e96c1656c857bc0f6a4074ab",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hi.webp": {
+      "masterSha256": "4cb8add1719ff3dcaf2b3ae47439b1ec8514580d8f8bb57b7c8e01a7cb0942b3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/goodbye.webp": {
+      "masterSha256": "12972f396176fbc58575e9d248a8f700bbf8a3a52faa1b3d8875e4cabd087113",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bye.webp": {
+      "masterSha256": "999c09045a506fc56a6775783bc229dba20484f3d058999c50905463f924b86a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/thank you.webp": {
+      "masterSha256": "8c179446f2ac3a6a5f4b98ebbd24a05aa15e5fc223f9f89d6dcc619262176e39",
+      "params": "webp-q82-e512"
+    },
+    "symbols/you're welcome.webp": {
+      "masterSha256": "f5c19697b80b494936e45f38b2ec13ca89a73a648a25a0ba141a6364d9e9c0ba",
+      "params": "webp-q82-e512"
+    },
+    "symbols/sorry.webp": {
+      "masterSha256": "98ac3557f32a2931c7e0ca5d6098d430229fc9aa22a7595d4a94423315079361",
+      "params": "webp-q82-e512"
+    },
+    "symbols/excuse me.webp": {
+      "masterSha256": "d4c86393312172c6f904a3187cf94246bc9343150403d273089c7249f6206344",
+      "params": "webp-q82-e512"
+    },
+    "symbols/good morning.webp": {
+      "masterSha256": "a19606d93ec630e76bec299e6558bdda1b6891abb73a7e9fbb93f27c55a47a5c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/good night.webp": {
+      "masterSha256": "ee0d4429f99e3e144f629b5c832cd68d048d578d35e46f5d31e0c4904c8aa2e2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/okay.webp": {
+      "masterSha256": "ff598cd9cf8bc9feb47ad89931a8b238a787d134284bd120c493ae2eb5375643",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ready to go.webp": {
+      "masterSha256": "937bf781dfcfc6d6e94f3c9c26eea22781d41f5a2962f29f0b0c68d4644da66f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wow.webp": {
+      "masterSha256": "637d25e006528fef75e83ded9ab4c81cb618e520b1c48a61cded66cdef230b35",
+      "params": "webp-q82-e512"
+    },
+    "symbols/really.webp": {
+      "masterSha256": "318ce634517fd06d37c304fdc050238f396c22e431293e84a3e799447790f333",
+      "params": "webp-q82-e512"
+    },
+    "symbols/maybe.webp": {
+      "masterSha256": "81d5cad0fbef01a5249828539c4e11b34e37ae4a35929f9444e30c79ebe60633",
+      "params": "webp-q82-e512"
+    },
+    "symbols/I don't know.webp": {
+      "masterSha256": "121f6ba2e63a06fdca60c9bf8580cad3cb49a44079e00830cc7ff8d176c63a6d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/look at this.webp": {
+      "masterSha256": "c99be8b8f945226b4149e87a13a9ef4ab0d0ab2a266c3d4299daaa0a9785fad4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/my turn.webp": {
+      "masterSha256": "216f2026eae5018fc5afcac6a914993fc5cb1db5e4f0e0be06e9ab04325d67b3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/your turn.webp": {
+      "masterSha256": "275db8ce142bb59f85f09cef455879896844e052bfcc478cd0bf85752ee7e573",
+      "params": "webp-q82-e512"
+    },
+    "symbols/careful.webp": {
+      "masterSha256": "abcc78d5f25396f547b4d362f38bfb5df52f31afc512a0cb11946b6e1b46ee0c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/emergency.webp": {
+      "masterSha256": "8c61af5e173e34835d6d480974de9f79df59eb809b10246b899b26b454f0dc66",
+      "params": "webp-q82-e512"
+    },
+    "symbols/no way.webp": {
+      "masterSha256": "018c691b08faf71da74c7d45149b30f0282f563c56c189d8365fc73048781741",
+      "params": "webp-q82-e512"
+    },
+    "symbols/don't.webp": {
+      "masterSha256": "24896818ffc5f19a104468a5bfd14e563dae955f512b114368d32f2c8394b983",
+      "params": "webp-q82-e512"
+    },
+    "symbols/is.svg": {
+      "masterSha256": "04d997a2a73e63f3fcd0ce70bf9d1bda20064a91e618551b0373e741ef67d8cf",
+      "params": "svg"
+    },
+    "symbols/are.svg": {
+      "masterSha256": "0b044ed4668d5cc60547de0fd004e1495cf41ab2d99365b2f2bd135807476d58",
+      "params": "svg"
+    },
+    "symbols/am.svg": {
+      "masterSha256": "5f0b6b3b3131025d560ef215884a8456ac8067811ca1cd4d71d706cbb3f694aa",
+      "params": "svg"
+    },
+    "symbols/was.svg": {
+      "masterSha256": "875c85076c22113fcc51a3be830f0f8a20357204df2f7234c6db2cf07d1a4e77",
+      "params": "svg"
+    },
+    "symbols/were.svg": {
+      "masterSha256": "4364a921a64f9dfd009674a891519e9b6c717cd201f33ea3c60770fa0b10ce8e",
+      "params": "svg"
+    },
+    "symbols/has.webp": {
+      "masterSha256": "52eba9c7436d79e0b98895a8f8e99112e6263ff9653b25d88834c519ee55e8c4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/had.webp": {
+      "masterSha256": "f7e6c6592d74eaab60aa0dd35879a332c003246bd428209f61d312bbfb405558",
+      "params": "webp-q82-e512"
+    },
+    "symbols/will.svg": {
+      "masterSha256": "5ca9d3d5fbed4f17e9c344aea75307110e6ea93792323339956a7143dc8eb6c6",
+      "params": "svg"
+    },
+    "symbols/would.svg": {
+      "masterSha256": "44db7bca8d0ca44f77035e56153430dc1bbd0524b9c13f1f08f80cc212d82859",
+      "params": "svg"
+    },
+    "symbols/can't.webp": {
+      "masterSha256": "c06815b9ea9c834a9cdf760e18b6100787f00a7f0d8e953b004f6193634a858b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/won't.webp": {
+      "masterSha256": "331fd27d8bd1333a10b14d600f65bfa2d960bd63b21dd16c44b02beedf74032b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/didn't.webp": {
+      "masterSha256": "a4fe3e429cd24bd0b31532d5ba44f9d74a05149e72ff434594dd430123a86e1b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/a.svg": {
+      "masterSha256": "e0e752e1fdf7d97be01c53016f338ceb0d1b30bf61afd2cf5431de0d2909fd34",
+      "params": "svg"
+    },
+    "symbols/an.svg": {
+      "masterSha256": "f86b9f6b558911d06ba524eb4b2b9173552ad204aec04033651ffe0fa3b00f73",
+      "params": "svg"
+    },
+    "symbols/the.svg": {
+      "masterSha256": "a0b5332eb3c6b9354389a42949b60f510756757ed9e3a9ff3ac3e873f642cc6d",
+      "params": "svg"
+    },
+    "symbols/of.svg": {
+      "masterSha256": "dfdca6a97994ffd09ff95a44b0354b7355cf8c7e62c37e252750e53c13857bd2",
+      "params": "svg"
+    },
+    "symbols/every.webp": {
+      "masterSha256": "cf8dbb04e0650e39a0ac3ef9a190944aaec40c4d227d21303da41603bca839f9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/each.webp": {
+      "masterSha256": "eac845982abc0ddaa45677771be7cbc69bb2062b044cbbd59ae23e8ede435e20",
+      "params": "webp-q82-e512"
+    },
+    "symbols/another.webp": {
+      "masterSha256": "32c24d86f3eff083c47f86ac021dafe0b0ea86af6978ef0f1abc68d47ccbf31c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/other.webp": {
+      "masterSha256": "de119315a883bbedc6dee3f85045c7cfd8889a6636b2d5d40f1838535ede79d4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/so.svg": {
+      "masterSha256": "2e63525dcb1ee1a3b22c4f95f1364e9ec8782f7b6a917dcff1f01acec4fc9ef4",
+      "params": "svg"
+    },
+    "symbols/if.svg": {
+      "masterSha256": "e86d3b02627b466d983ccec39565cb047ee96f1b3437584fd9061b2bd745ebde",
+      "params": "svg"
+    },
+    "symbols/him.webp": {
+      "masterSha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/her.webp": {
+      "masterSha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe",
+      "params": "webp-q82-e512"
+    },
+    "symbols/us.webp": {
+      "masterSha256": "93473bfc0cb781bcfeb3d0afc4398a68557db74f9f015f2d6b4b340671b137ac",
+      "params": "webp-q82-e512"
+    },
+    "symbols/them.webp": {
+      "masterSha256": "57923c3913b311cb884a9885f2639fbae58d45db650da370f2a29eeeeaf72e23",
+      "params": "webp-q82-e512"
+    },
+    "symbols/his.webp": {
+      "masterSha256": "cdc846437e31c9312a37a74bd3f39662aa3ed87bfb56b386d32c42e7de8e73cb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/your.webp": {
+      "masterSha256": "b67bc6def3d8e399fb25b358dd13c8608a9a62b674a41b5525fbfd35601c9996",
+      "params": "webp-q82-e512"
+    },
+    "symbols/our.webp": {
+      "masterSha256": "93473bfc0cb781bcfeb3d0afc4398a68557db74f9f015f2d6b4b340671b137ac",
+      "params": "webp-q82-e512"
+    },
+    "symbols/their.webp": {
+      "masterSha256": "57923c3913b311cb884a9885f2639fbae58d45db650da370f2a29eeeeaf72e23",
+      "params": "webp-q82-e512"
+    },
+    "symbols/something.webp": {
+      "masterSha256": "d88dbbc417b63a28e0d16ffd63aa7f1f906539ff8248209d137d33e230f97756",
+      "params": "webp-q82-e512"
+    },
+    "symbols/someone.webp": {
+      "masterSha256": "c962f3101a29c266fc2f8b484593a560e8662cc1d77419894a3fcf39b37581dc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/everyone.webp": {
+      "masterSha256": "216f0a8b12567c765f3420c462bc37653f7d217b9595b676e3bce08bb46183cc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/thing.webp": {
+      "masterSha256": "c2b2dd0b681ca3b51705644eb514281cd46ea249d75cb3821f8e00574ab73b68",
+      "params": "webp-q82-e512"
+    },
+    "symbols/very.webp": {
+      "masterSha256": "bb81810ca77f165499e49a921c4f9dca879d87ac849177ed339f815e26d2c121",
+      "params": "webp-q82-e512"
+    },
+    "symbols/too.webp": {
+      "masterSha256": "be3ec23d55c59ca4c519b5b3a8640f6a3115a360c5619f6dd3291d10d065b80e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/just.webp": {
+      "masterSha256": "97a8d9464ea9df23df41643861427872bad6e0b2bce28504695e160a4fd1f439",
+      "params": "webp-q82-e512"
+    },
+    "symbols/also.webp": {
+      "masterSha256": "8a03005c4bf8e5c413193437afdc5818504a8638526d9effa8db7da1724070e3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/only.webp": {
+      "masterSha256": "e4b704e3a5fe8fcc17cfc2d08efb533893250724d5141e1cef1cd2441a5896ad",
+      "params": "webp-q82-e512"
+    },
+    "symbols/still.webp": {
+      "masterSha256": "cce8e2645c66131da216646c6d2354cbc689fe6d78b4c935d519855085ec0b08",
+      "params": "webp-q82-e512"
+    },
+    "symbols/one.webp": {
+      "masterSha256": "4acac3ff236cc456ac7b0784a747c4b239ca571354a7238161092b3ce7c34abc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/two.webp": {
+      "masterSha256": "78ac4f4958eb578191f3fcc31bf7e9b5c06fb119eb790bd88a6e2cf49fda9703",
+      "params": "webp-q82-e512"
+    },
+    "symbols/three.webp": {
+      "masterSha256": "e1a6d2ddf381fe9a9f305e03f6b3a2dc97db08ff24d195bb08bea853da540d12",
+      "params": "webp-q82-e512"
+    },
+    "symbols/four.webp": {
+      "masterSha256": "0ef84214fc0c153ed871d7284b44cdeec1bf9d85b17da5d4ad659df16e107d44",
+      "params": "webp-q82-e512"
+    },
+    "symbols/five.webp": {
+      "masterSha256": "259153c70ab955e0f0996ce2c99c9e408bffc98d0ac429132858ef01348b9e0a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/six.webp": {
+      "masterSha256": "04a0d7b1f8e15e96d3e7f901d8ea39746759eb2883b6b4cd62a73d8a97499edb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/seven.webp": {
+      "masterSha256": "3f1514af74b99df353d5e3e53fb018a8665e1782ba7e99d068f4b6a447e3eca2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/eight.webp": {
+      "masterSha256": "397e7f3eb28023554d7b0c87babe150056685e809efaf429c4d3e41d3846ddf0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/nine.webp": {
+      "masterSha256": "04b48c23339fa3dd96b3c91c59dde2acb14124217ccd9ab0379e9a3ee34c81a2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ten.webp": {
+      "masterSha256": "3135e45251bf09a0bbff755cb6f663134d5a532080ad045ce23e0760bfd90db4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/breakfast.webp": {
+      "masterSha256": "8de6d43969ba8cc01d128d30773445cbd4b94f522f0ccc95097f7f97db607504",
+      "params": "webp-q82-e512"
+    },
+    "symbols/lunch.webp": {
+      "masterSha256": "b941507e0c52fd53439c9ad2a0862d2ca859ce58f51fcdfd2361280dde00c0f0",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dinner.webp": {
+      "masterSha256": "171faff1caa9455fd0a323147d0b4525cc6cf51de9cce8e2b36aff6746e4d24f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/food.webp": {
+      "masterSha256": "887f43bc3c288a7868e543424daa9da1bb266adedc2bd7dca8ec5a13f3bf61d6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ketchup.webp": {
+      "masterSha256": "da388de07ddcb7f9f12ff3ec29c52114e5851746f11103ace17e258c4e70f2a9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/fries.webp": {
+      "masterSha256": "978e366686c6cf14617c5a422cbc8c8efcb04a8f953608ac9ca1509783de4ffb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/poop.webp": {
+      "masterSha256": "65660b6ff85417ed33d5badea310217108760f1d82f5e1827c8dd99793a51153",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pee.webp": {
+      "masterSha256": "179df00dd9359c9553c9f4e73bf8a92106778a835c2556514413720ce3264746",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hit.webp": {
+      "masterSha256": "84f536d37dec5b14b0b04124a7cb29f4160a92c5cbb16e5a8222bd4dc1f80a93",
+      "params": "webp-q82-e512"
+    },
+    "symbols/bite.webp": {
+      "masterSha256": "5ee5cfaf6714b956d50c27069374f9e55ba9a24e8837f76f332b1edb9415e6a9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/break.webp": {
+      "masterSha256": "a5ede10848738fc7ebd4d7dfe0a5af4ab231cb38a53374225be3c8bbd51eb3b4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/scratch.webp": {
+      "masterSha256": "da293daabe8b8f9b3e43487d9a6321d77bf019fc0e60d07e614a69d7402f18fa",
+      "params": "webp-q82-e512"
+    },
+    "symbols/close.webp": {
+      "masterSha256": "c93acf768936bab9c7927b26f3391cab20bd68a058fb4da9dc344063b6988bda",
+      "params": "webp-q82-e512"
+    },
+    "symbols/shut.webp": {
+      "masterSha256": "9d670ec85589f3aaeb34324619bd49e05b71d740ef379ac8984e7774668092ec",
+      "params": "webp-q82-e512"
+    },
+    "symbols/tickle.webp": {
+      "masterSha256": "56d160b3c806c15cac4de032a7d1d742cdd6657f4037571e1223155a3d121b0e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/boy.webp": {
+      "masterSha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4",
+      "params": "webp-q82-e512"
+    },
+    "symbols/girl.webp": {
+      "masterSha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe",
+      "params": "webp-q82-e512"
+    },
+    "symbols/man.webp": {
+      "masterSha256": "b9b58098c49814b6351e6335b244b3ed9a003137f09556e733f4d7e2cd6ecd44",
+      "params": "webp-q82-e512"
+    },
+    "symbols/woman.webp": {
+      "masterSha256": "a13ad6c00852a2b9bf55da74cca386e83e7f2d265157eed680051760e721e68c",
+      "params": "webp-q82-e512"
+    },
+    "symbols/love.webp": {
+      "masterSha256": "7e1b208912dfea35cd355b7f079a9aaadb10bcc27b29ccb5b6e42c0dafeaf18a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/together.webp": {
+      "masterSha256": "8760354b2b419254790cd65019d73da65be753ab33ae9da2df2b3dec9e7d1899",
+      "params": "webp-q82-e512"
+    },
+    "symbols/ow.webp": {
+      "masterSha256": "a97f0763c84bd407b0fd0519e88d205ae24c5255dc56577406e6128d01c0f4f3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/yours.webp": {
+      "masterSha256": "7131b6d66dfc2d4348a0df643c4170b41b5d9e387e730f3c3c6b193e4e61cd79",
+      "params": "webp-q82-e512"
+    },
+    "symbols/these.webp": {
+      "masterSha256": "235ad0e0355587e39f091cbf2f687831f51d13ca4b03cb7affb65d1d9efbb304",
+      "params": "webp-q82-e512"
+    },
+    "symbols/those.webp": {
+      "masterSha256": "3a7cbaba640b975663a8f35fe909157126eda0553b29262df1585089e8469ae9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/nothing.webp": {
+      "masterSha256": "ff2979c0562d1cc77863137303711f4299c80175161a0706b26c03b2a4b6034b",
+      "params": "webp-q82-e512"
+    },
+    "symbols/behind.webp": {
+      "masterSha256": "04663290824f985e11cb52bd49ae16390d307b32aa72e5bac6168edd5c360446",
+      "params": "webp-q82-e512"
+    },
+    "symbols/did.webp": {
+      "masterSha256": "dbe452275de5f9fe1cf981f031a7fabb7243ef15fd3118c85598cd1e40ef8ab9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/wait, I'm spelling.webp": {
+      "masterSha256": "5cef4353631d574c3760cbfb6e382fe7cf7bf458ea9e9c7b4697ce4ac81b2e71",
+      "params": "webp-q82-e512"
+    },
+    "symbols/guess my word.webp": {
+      "masterSha256": "8c1de8a01c8e4452f55eab45189b3c344b30f33ffb98f2a69c6523d9426b228f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/oops.webp": {
+      "masterSha256": "d5e0217cafd1d499eaf9603cd280b51f58b0cf6fb6729e09d0f9cc81ed80b280",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cucumber.webp": {
+      "masterSha256": "53eba39e8bdc193ee45b49c0900204f8ad380c02af0c2d187851c4bac677d165",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pepper.webp": {
+      "masterSha256": "0ee97192c8ad6af0cf5496d7278817eb1d4a9d1567abdda4bfacf001a60d386a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/granola_bar.webp": {
+      "masterSha256": "4dc06bbb10dec278b44e60af630320b22a39a6dab012a45f8b29ba080cff050d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/string_cheese.webp": {
+      "masterSha256": "6291458b3044597dba1d067dadc41e63eb0b54dd94e489437d808fe62009353f",
+      "params": "webp-q82-e512"
+    },
+    "symbols/applesauce.webp": {
+      "masterSha256": "7921c36dfe0ae9b4d202c9aec994ec1c318e5e1e1f54fd52fdd025a84f9e1bef",
+      "params": "webp-q82-e512"
+    },
+    "symbols/banana_bread.webp": {
+      "masterSha256": "a4d3f7e3d7665645df2a1e25089f8f57ba60bdc548a46df004f7eb67e510cbc9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/goldfish_crackers.webp": {
+      "masterSha256": "ef23d4e908f05c9fdfa7e34c1644a8fffee8d61411bf509c8439ba5e15fe3837",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pudding.webp": {
+      "masterSha256": "395d88310bc8cb9599ac649cfdcdbf53b2d9c96baa1c2453f5615f9b938e2fd6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/jello.webp": {
+      "masterSha256": "aafd3873c79c55a76a17454ec6cd4deaf104828d166f1f725c22223f639645c2",
+      "params": "webp-q82-e512"
+    },
+    "symbols/brownie.webp": {
+      "masterSha256": "00ba5f513f17ec666597f051218d10e2a878d113aa2348637bf3cf7416d0047e",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cupcake.webp": {
+      "masterSha256": "8c6f467cb08f1d4feb788289c476af3c447b2b36a65dd98ea3100dfbda80b7e6",
+      "params": "webp-q82-e512"
+    },
+    "symbols/chocolate.webp": {
+      "masterSha256": "de4b9161e3be220d45df00472c38f4690400ab923a89482b86542935a11d41bc",
+      "params": "webp-q82-e512"
+    },
+    "symbols/lollipop.webp": {
+      "masterSha256": "39ac50a428a50b0abe1348f816e3948d8e5239087e8a01a6c3008bf87cb9da08",
+      "params": "webp-q82-e512"
+    },
+    "symbols/dessert.webp": {
+      "masterSha256": "bf010db774e1a29409685401a95cf687db98d97ed2a559ff7561de1cc6bb4087",
+      "params": "webp-q82-e512"
+    },
+    "symbols/blueberry.webp": {
+      "masterSha256": "23267c396b1364d2078bf6b4c25343e7fa7b3b4ffb3dbe92315d60dd2ef4dfda",
+      "params": "webp-q82-e512"
+    },
+    "symbols/raspberry.webp": {
+      "masterSha256": "abe2f72a3cd5dcaadc88be1f4a11f7230544b5463e4f4b392d3053c4353ba51a",
+      "params": "webp-q82-e512"
+    },
+    "symbols/blackberry.webp": {
+      "masterSha256": "7d771c7ec36c2af5d09595fb9474918689524d9462da4f217b256717613fba8d",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cherry.webp": {
+      "masterSha256": "91fcde7534f06b1b6804c45f1c9b07994f0200894c0caa65e4d0c06d1e5255aa",
+      "params": "webp-q82-e512"
+    },
+    "symbols/peach.webp": {
+      "masterSha256": "da73f3d3c17d09cbc398c16d28cfd2a6bc1d3c7e572eedf1724357c7bb201cb5",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pear.webp": {
+      "masterSha256": "ebb94b001174c4d1755b5b5f90eb07d629a21c9da84067f71d8cdeb0e9ae9096",
+      "params": "webp-q82-e512"
+    },
+    "symbols/mango.webp": {
+      "masterSha256": "52a6a421016379649b3b4c56b4fcddcb2e1c31985ec93096d7bcd343245f5c73",
+      "params": "webp-q82-e512"
+    },
+    "symbols/pineapple.webp": {
+      "masterSha256": "d5d724c0130d0dbbfed2525fcb0728577ad245635d52d50c9288e36e9608cd90",
+      "params": "webp-q82-e512"
+    },
+    "symbols/kiwi.webp": {
+      "masterSha256": "2c6b409d970bc60c17c62eca787a14870eae1805443612ebcce4aeedcc64e5cd",
+      "params": "webp-q82-e512"
+    },
+    "symbols/cantaloupe.webp": {
+      "masterSha256": "4f9b2d08e8c25fb48b2abf8acba9eab73428ce98382f8058c7a9ee1ba5c4fa36",
+      "params": "webp-q82-e512"
+    },
+    "symbols/melon.webp": {
+      "masterSha256": "5a6ac4bf84619988365469d9f2a0f3d9481ee537e91bbccdb090c576ab7d0dcb",
+      "params": "webp-q82-e512"
+    },
+    "symbols/coconut.webp": {
+      "masterSha256": "183645eb05d6b7a880af6049460a38e587568d76becc05ced9152d2343378342",
+      "params": "webp-q82-e512"
+    },
+    "symbols/orange_juice.webp": {
+      "masterSha256": "a4894f489422cdd5dec888bb57d16a0b95150b49cb7f09011c44582212455685",
+      "params": "webp-q82-e512"
+    },
+    "symbols/grape_juice.webp": {
+      "masterSha256": "fc71b1785b1e896790fe28f3bf634045920be88054b7510ef80ddec1cb801945",
+      "params": "webp-q82-e512"
+    },
+    "symbols/strawberry_milk.webp": {
+      "masterSha256": "92d7dfedd754168bd7ef7a8722e2f6bde10e4dc20729a71885726f604d3a4773",
+      "params": "webp-q82-e512"
+    },
+    "symbols/lemonade.webp": {
+      "masterSha256": "1d78173f006a4038c7a9f0a598a5063d388c15f87fd5d50f097c5171c859ddb3",
+      "params": "webp-q82-e512"
+    },
+    "symbols/hot_chocolate.webp": {
+      "masterSha256": "81e006ab1b1ae870987073903f035ba3ae094d35336a638d6a5c46ed551491a9",
+      "params": "webp-q82-e512"
+    },
+    "symbols/milkshake.webp": {
+      "masterSha256": "bc62db5f734299338d62f7d13153a902bb4278bad3314a23d9356c29f291ea0f",
+      "params": "webp-q82-e512"
+    }
+  }
+}

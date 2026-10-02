@@ -21,7 +21,7 @@ const ALL = (db, sql, p = []) => db.all(sql, p);
  *  instead of quiet chrome — the same role the family's words carry.
  *  `?` is the question family: its tile is Purple like `what`. */
 const FAMILY_TILE = {
-  bf_q: { role: "Purple", art: "symbols/question.svg" },
+  bf_q: { role: "Purple", art: "icons/question-mark.svg" },
 };
 
 export function mountGrid({

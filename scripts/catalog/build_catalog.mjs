@@ -18,6 +18,7 @@ import { dirname, join } from "node:path";
 
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { buildGroups } from "./build_groups.mjs";
+import { checkSymbolEmission, emitSymbols } from "./symbol_emit.mjs";
 import {
   DEFAULT_AUDIO_CACHE_ROOT,
   DEFAULT_AUDIO_IMPORT_PATH,
@@ -40,7 +41,6 @@ const WORD_FREQ = join(repoRoot, "data/prediction/word_frequency.en.json");
 const CATALOG_OUT = join(repoRoot, "data/catalog/catalog.json");
 const PUBLIC_AUDIO_ROOT = join(repoRoot, "public");
 const SYMBOLS_ROOT = join(repoRoot, "assets/symbols");
-const PUBLIC_SYMBOLS_ROOT = join(repoRoot, "public/symbols");
 const SYMBOL_EXT_PREF = [".png", ".svg", ".jpg", ".jpeg"];
 const DEFAULT_VOICE_ID = "voi_default_en";
 const CATALOG_SCHEMA_VERSION = 1;
@@ -297,7 +297,7 @@ export function buildCatalog(
   },
   numberAliases = JSON.parse(readFileSync(NUMBER_ALIASES, "utf8")),
   familySeed = JSON.parse(readFileSync(FAMILY_SEED, "utf8")),
-  { allowMissingFormClips = true } = {},
+  { allowMissingFormClips = true, images: givenImages = null } = {},
 ) {
   const tier1ByWord = new Map();
   for (const e of lexicon.entries) {
@@ -309,7 +309,7 @@ export function buildCatalog(
     tier1ByWord.set(key, e);
   }
 
-  const images = buildImages(lexicon);
+  const images = givenImages ?? buildImages(lexicon).images;
   const imageBySense = new Map(images.map((i) => [i.sense_id, i.id]));
 
   const senses = lexicon.entries.map((e) => ({
@@ -634,19 +634,24 @@ function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtte
 }
 
 /**
- * Image rows: approved clipart lives in assets/symbols/<word>.<ext> —
- * the art-generator contract (SKILL §7) lands a file there only when it
- * is approved, so every canonical file ships as status 'approved'.
- * `_rollN` files are review alternates and never ship. Matching is on
- * spoken text with underscores read as spaces (wet_wipe → "wet wipe");
- * when several extensions exist for one word, the first in
- * SYMBOL_EXT_PREF wins. Referenced files are copied into
- * public/symbols/ so image.key serves from the app shell — the same
- * shape as clips → public/audio/.
+ * Image rows + emit jobs: approved clipart lives in
+ * assets/symbols/<word>.<ext> — the art-generator contract (SKILL §7)
+ * lands a file there only when it is approved, so every canonical file
+ * ships as status 'approved'. `_rollN` files are review alternates and
+ * never ship. Matching is on spoken text with underscores read as spaces
+ * (wet_wipe → "wet wipe"); when several extensions exist for one word,
+ * the first in SYMBOL_EXT_PREF wins.
+ *
+ * 037: the shipped file is a transcode of the master — raster masters
+ * emit as <word>.webp, SVGs copy byte-for-byte. `image.sha256` keeps
+ * hashing the master (the approval identity); `image.key` names the
+ * shipped file. Pure: no writes — emitSymbols owns public/symbols/ so
+ * `--check` stays read-only.
  */
 function buildImages(lexicon) {
   const images = [];
-  if (!existsSync(SYMBOLS_ROOT)) return images;
+  const jobs = [];
+  if (!existsSync(SYMBOLS_ROOT)) return { images, jobs };
   const fileByWord = new Map(); // spokenText -> filename (preferred ext wins)
   for (const file of readdirSync(SYMBOLS_ROOT)) {
     if (/_roll\d*\./.test(file)) continue;
@@ -661,46 +666,55 @@ function buildImages(lexicon) {
       fileByWord.set(word, file);
     }
   }
-  mkdirSync(PUBLIC_SYMBOLS_ROOT, { recursive: true });
   for (const e of lexicon.entries) {
     const file = fileByWord.get(e.spokenText) ?? fileByWord.get(e.spokenText.toLowerCase());
     if (!file) continue;
     const bytes = readFileSync(join(SYMBOLS_ROOT, file));
+    const masterSha256 = createHash("sha256").update(bytes).digest("hex");
+    const ext = file.slice(file.lastIndexOf("."));
+    const stem = file.slice(0, -ext.length);
+    const shipped = ext === ".svg" ? file : `${stem}.webp`;
     images.push({
       id: `img_${pad4(e.slot)}`,
       sense_id: `sns_${pad4(e.slot)}`,
-      key: `symbols/${file}`,
+      key: `symbols/${shipped}`,
       status: "approved",
-      sha256: createHash("sha256").update(bytes).digest("hex"),
+      sha256: masterSha256,
     });
-    copyFileSync(join(SYMBOLS_ROOT, file), join(PUBLIC_SYMBOLS_ROOT, file));
+    jobs.push({ key: `symbols/${shipped}`, masterFile: file, masterSha256, stem });
   }
-  return images;
+  return { images, jobs };
 }
 
-function main() {
+async function main() {
   const check = process.argv.includes("--check");
   const lexicon = JSON.parse(readFileSync(DEFAULT_LEXICON_PATH, "utf8"));
   const map = parseCoordinateMapMarkdown(readFileSync(MAP_MD, "utf8"));
+  // One symbol scan serves both the rows and the emit jobs — hashing
+  // ~700 masters twice per build is the waste this avoids.
+  const { images, jobs } = buildImages(lexicon);
   // The shipped artifact stays strict — every form utterance needs a
   // clip (021 slice 2). Library callers (tests, resolvers) get the
   // permissive default and clip-less utterances speak device voice.
   const catalog = buildCatalog(lexicon, map,
-    undefined, undefined, undefined, { allowMissingFormClips: false });
+    undefined, undefined, undefined, { allowMissingFormClips: false, images });
 
   if (check) {
+    const failures = checkSymbolEmission(jobs);
     const existing = JSON.parse(readFileSync(CATALOG_OUT, "utf8"));
     if (JSON.stringify(existing) !== JSON.stringify(catalog)) {
-      console.error("catalog.json is stale — run build_catalog.mjs");
-      process.exit(1);
+      failures.unshift("catalog.json is stale — run build_catalog.mjs");
     }
     const served = join(repoRoot, "public/catalog.json");
     if (!existsSync(served)
         || readFileSync(served, "utf8") !== `${JSON.stringify(catalog, null, 2)}\n`) {
-      console.error("public/catalog.json is stale — run build_catalog.mjs");
+      failures.unshift("public/catalog.json is stale — run build_catalog.mjs");
+    }
+    if (failures.length) {
+      for (const f of failures) console.error(`check: ${f}`);
       process.exit(1);
     }
-    console.log(`catalog.json OK (${catalog.senses.length} senses, ${catalog.coreCells.length} cells)`);
+    console.log(`catalog.json OK (${catalog.senses.length} senses, ${catalog.coreCells.length} cells, ${jobs.length} symbols)`);
     return;
   }
 
@@ -709,6 +723,7 @@ function main() {
   // is too big to import into the worker bundle; DOs OOM'd, 2026-09-30).
   writeFileSync(join(repoRoot, "public/catalog.json"),
     `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+  await emitSymbols(jobs);
   console.log(
     `Wrote ${CATALOG_OUT} (${catalog.senses.length} senses, ${catalog.coreCells.length} core cells)`,
   );

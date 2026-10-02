@@ -1,8 +1,8 @@
 /**
  * Shipped-symbol Works Test — the 2026-09-30 readiness slice. Approved
  * clipart in assets/symbols/ becomes image rows + sense.default_image_id
- * in the catalog, and the bytes are copied into public/symbols/ so
- * `/${key}` serves from the app shell.
+ * in the catalog, and a 512px WebP transcode lands in public/symbols/
+ * (037) so `/${key}` serves from the app shell.
  *
  * What is measured: the built catalog's rows point at files that exist
  * under public/, and after importCatalog the shared SENSE_ART_SQL
@@ -72,13 +72,13 @@ test("SENSE_ART_SQL resolves the symbol on the read path the board uses", () => 
     ).all(text)[0]?.sense_id;
 
   // A covered core word paints its symbol; `in` has both .png and .jpg
-  // on disk — the deterministic preference ships the .png.
-  assert.equal(artFor(senseOf("want")), "symbols/want.png");
-  assert.equal(artFor(senseOf("in")), "symbols/in.png");
+  // masters — the deterministic preference transcodes the .png.
+  assert.equal(artFor(senseOf("want")), "symbols/want.webp");
+  assert.equal(artFor(senseOf("in")), "symbols/in.webp");
   // mom/dad ship default symbols so the board works out of the box —
   // setup or a family photo can still replace them per child.
-  assert.equal(artFor(senseOf("mom")), "symbols/mom.png");
-  assert.equal(artFor(senseOf("dad")), "symbols/dad.png");
+  assert.equal(artFor(senseOf("mom")), "symbols/mom.webp");
+  assert.equal(artFor(senseOf("dad")), "symbols/dad.webp");
 
   // The home board itself: every grid60 cell resolves art through the
   // same metaFor query the renderer runs per tile.

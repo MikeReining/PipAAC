@@ -99,7 +99,7 @@ else writeFileSync("/tmp/qtile_board.png", Buffer.from(shot.result.data, "base64
 
 const ok = out.cells === 15 && out.slot === 12
   && /r-Purple/.test(out.cls ?? "") && !/anchor-cell/.test(out.cls ?? "")
-  && out.label === "question" && out.img === "/symbols/question.svg"
+  && out.label === "question" && out.img === "/icons/question-mark.svg"
   && out.family?.name === "question";
 console.log(ok ? "PASS bf_q renders as a Purple word tile" : "FAIL — see output");
 

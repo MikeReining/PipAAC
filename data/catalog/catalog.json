@@ -29841,224 +29841,224 @@
     {
       "id": "img_0001",
       "sense_id": "sns_0001",
-      "key": "symbols/I.png",
+      "key": "symbols/I.webp",
       "status": "approved",
       "sha256": "6291366c60616fd698d46bf72cc32f73a7a9d9a4cb7600bfd8cbe33bae7651ba"
     },
     {
       "id": "img_0002",
       "sense_id": "sns_0002",
-      "key": "symbols/you.png",
+      "key": "symbols/you.webp",
       "status": "approved",
       "sha256": "d5b2472e46a60a1a7d5b0aac26cb18a64a3026f6392f8db06e11ada1dbcdfbb5"
     },
     {
       "id": "img_0003",
       "sense_id": "sns_0003",
-      "key": "symbols/me.png",
+      "key": "symbols/me.webp",
       "status": "approved",
       "sha256": "1f00f5b9407ed1dbd543c104966eecf505b5a61cff4120b91fca6ce211e25511"
     },
     {
       "id": "img_0004",
       "sense_id": "sns_0004",
-      "key": "symbols/my.png",
+      "key": "symbols/my.webp",
       "status": "approved",
       "sha256": "6172655b743e64ac80712cbfdb4a314f6f418d7aac166e0ff091b9d6785f50a1"
     },
     {
       "id": "img_0005",
       "sense_id": "sns_0005",
-      "key": "symbols/mine.png",
+      "key": "symbols/mine.webp",
       "status": "approved",
       "sha256": "29d65db39bff47c35e33e656a5bb30f5ef6e9d1e3f6b2f1654399c580dec6495"
     },
     {
       "id": "img_0006",
       "sense_id": "sns_0006",
-      "key": "symbols/he.png",
+      "key": "symbols/he.webp",
       "status": "approved",
       "sha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4"
     },
     {
       "id": "img_0007",
       "sense_id": "sns_0007",
-      "key": "symbols/she.png",
+      "key": "symbols/she.webp",
       "status": "approved",
       "sha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe"
     },
     {
       "id": "img_0008",
       "sense_id": "sns_0008",
-      "key": "symbols/it.png",
+      "key": "symbols/it.webp",
       "status": "approved",
       "sha256": "cb7973f6497e489c153db78fbcede870b0f2777a1b2064ebcccba54b06c4d09e"
     },
     {
       "id": "img_0009",
       "sense_id": "sns_0009",
-      "key": "symbols/we.png",
+      "key": "symbols/we.webp",
       "status": "approved",
       "sha256": "80ce2025c7ab586e72368632b414e0f4114e78ba5a6c1bba1cab8193a082a8c8"
     },
     {
       "id": "img_0010",
       "sense_id": "sns_0010",
-      "key": "symbols/they.png",
+      "key": "symbols/they.webp",
       "status": "approved",
       "sha256": "10bda3a7b4553b8853c823356e24b0e5feeb7dd7eed77bb16a4e76ada6519060"
     },
     {
       "id": "img_0011",
       "sense_id": "sns_0011",
-      "key": "symbols/that.png",
+      "key": "symbols/that.webp",
       "status": "approved",
       "sha256": "6a9d80c1263d1568da4a511302a00528d421e9c32b1f02703d51afd01107b309"
     },
     {
       "id": "img_0012",
       "sense_id": "sns_0012",
-      "key": "symbols/this.png",
+      "key": "symbols/this.webp",
       "status": "approved",
       "sha256": "99150273558d606fc4f01dbfa371e8cbd0a55a74994142ec7571fee86fb32e18"
     },
     {
       "id": "img_0013",
       "sense_id": "sns_0013",
-      "key": "symbols/want.png",
+      "key": "symbols/want.webp",
       "status": "approved",
       "sha256": "de21f393788c8af39e260a0e64bf16f18fc2a0ba9e4c13c137557cd7de7ca68d"
     },
     {
       "id": "img_0014",
       "sense_id": "sns_0014",
-      "key": "symbols/like.png",
+      "key": "symbols/like.webp",
       "status": "approved",
       "sha256": "f848d1cc377a5b9ab59dcd5cbaaf8f255aefff8c64baaa65b975e0a624454b0d"
     },
     {
       "id": "img_0015",
       "sense_id": "sns_0015",
-      "key": "symbols/go.png",
+      "key": "symbols/go.webp",
       "status": "approved",
       "sha256": "3e3a5dbf22cb43ac73953ca598f8cf1acd29a8613f91f7d0927d8cd84beaca7a"
     },
     {
       "id": "img_0016",
       "sense_id": "sns_0016",
-      "key": "symbols/come.png",
+      "key": "symbols/come.webp",
       "status": "approved",
       "sha256": "c6e9b89b806681f939b94466093a0cd846c61b1bc9c26c38ea853c0b3f30bf10"
     },
     {
       "id": "img_0017",
       "sense_id": "sns_0017",
-      "key": "symbols/get.png",
+      "key": "symbols/get.webp",
       "status": "approved",
       "sha256": "ff384b85aaab892238d2eefd8aa31a772b7b5ae2e4105a57ef946852edbbf92a"
     },
     {
       "id": "img_0018",
       "sense_id": "sns_0018",
-      "key": "symbols/make.png",
+      "key": "symbols/make.webp",
       "status": "approved",
       "sha256": "52249dac8747b6e5b7fc92f1f117eb9153f5d05edd18ad2e3d97fd863215f8c6"
     },
     {
       "id": "img_0019",
       "sense_id": "sns_0019",
-      "key": "symbols/do.png",
+      "key": "symbols/do.webp",
       "status": "approved",
       "sha256": "9a3aa175a28d2b4fbd501e44acc9a61ccf2defb268aa63d7938d4cd2a32757ad"
     },
     {
       "id": "img_0020",
       "sense_id": "sns_0020",
-      "key": "symbols/see.png",
+      "key": "symbols/see.webp",
       "status": "approved",
       "sha256": "182531def9ee1bdc602d73b102023b95c044a22ab76bc7e69b2b5418db7b4d4e"
     },
     {
       "id": "img_0021",
       "sense_id": "sns_0021",
-      "key": "symbols/look.png",
+      "key": "symbols/look.webp",
       "status": "approved",
       "sha256": "4cad68918db215a6207c9e399f71ac7a8306f6e6aa4e780675b4abda3b9df4e1"
     },
     {
       "id": "img_0022",
       "sense_id": "sns_0022",
-      "key": "symbols/put.png",
+      "key": "symbols/put.webp",
       "status": "approved",
       "sha256": "72215ea133240636d7c315321390d455bd8a0a7907d8e8baec0b5dc5325dcca6"
     },
     {
       "id": "img_0023",
       "sense_id": "sns_0023",
-      "key": "symbols/take.png",
+      "key": "symbols/take.webp",
       "status": "approved",
       "sha256": "33a43af5e19aa345fde29fb4a0ae471ae19a3291a429f04ca6daa3cda5057c2a"
     },
     {
       "id": "img_0024",
       "sense_id": "sns_0024",
-      "key": "symbols/give.png",
+      "key": "symbols/give.webp",
       "status": "approved",
       "sha256": "76c61d0e4b277e5d5e6eea839ae9d439c74fd9957babfe2a152e3893c7732ace"
     },
     {
       "id": "img_0025",
       "sense_id": "sns_0025",
-      "key": "symbols/help.png",
+      "key": "symbols/help.webp",
       "status": "approved",
       "sha256": "0910b3cff2c72996f6a9c4d1265c0f26c9de5ca4ba71e4ad0ccfaf7fa4845dbd"
     },
     {
       "id": "img_0026",
       "sense_id": "sns_0026",
-      "key": "symbols/stop.png",
+      "key": "symbols/stop.webp",
       "status": "approved",
       "sha256": "a585d0c69033635c93483d7703ca144d15da50e7ed8cc7f2581b4bdc69294746"
     },
     {
       "id": "img_0027",
       "sense_id": "sns_0027",
-      "key": "symbols/play.png",
+      "key": "symbols/play.webp",
       "status": "approved",
       "sha256": "3e2eb2e9deb63f31af71f58f49fc5b2f2300f78dd6a0e23343d7b13ba6badc4c"
     },
     {
       "id": "img_0028",
       "sense_id": "sns_0028",
-      "key": "symbols/eat.png",
+      "key": "symbols/eat.webp",
       "status": "approved",
       "sha256": "78ff69af31953dc917ef08c352c2175920aa473d75a5ebcf5609d4f3aed83139"
     },
     {
       "id": "img_0029",
       "sense_id": "sns_0029",
-      "key": "symbols/drink.png",
+      "key": "symbols/drink.webp",
       "status": "approved",
       "sha256": "b7d74b7729cbeed64465f8b2f74e9ff6c2bc35c86a03e816adaa18f497b8aec7"
     },
     {
       "id": "img_0030",
       "sense_id": "sns_0030",
-      "key": "symbols/open.png",
+      "key": "symbols/open.webp",
       "status": "approved",
       "sha256": "d2594d13fd26fc96f148559c4277dd09181b6f907190ec806603b50bc6f4d925"
     },
     {
       "id": "img_0031",
       "sense_id": "sns_0031",
-      "key": "symbols/turn.png",
+      "key": "symbols/turn.webp",
       "status": "approved",
       "sha256": "0a59051b5fd652ff293544f32d07a519894a18e72c32e84fc5a40969820cb46f"
     },
     {
       "id": "img_0032",
       "sense_id": "sns_0032",
-      "key": "symbols/read.png",
+      "key": "symbols/read.webp",
       "status": "approved",
       "sha256": "fa93f722d744d2914b136f5a0a23725baa113f67e0ee0b43c3252d445b83d76a"
     },
@@ -30072,133 +30072,133 @@
     {
       "id": "img_0034",
       "sense_id": "sns_0034",
-      "key": "symbols/need.png",
+      "key": "symbols/need.webp",
       "status": "approved",
       "sha256": "7892193282e6fdf882d8ce1a792c31550efd8e62d145c3169bcb12f827760b99"
     },
     {
       "id": "img_0035",
       "sense_id": "sns_0035",
-      "key": "symbols/feel.png",
+      "key": "symbols/feel.webp",
       "status": "approved",
       "sha256": "759abacefb2e0f468a81bdaac5fda30715c248e2432eeb506de1d61787b9119c"
     },
     {
       "id": "img_0036",
       "sense_id": "sns_0036",
-      "key": "symbols/tell.png",
+      "key": "symbols/tell.webp",
       "status": "approved",
       "sha256": "bfe659c2ae55f672a77fc235178ee8c5f8a384823c9a3285234da3ba0776d5aa"
     },
     {
       "id": "img_0037",
       "sense_id": "sns_0037",
-      "key": "symbols/think.png",
+      "key": "symbols/think.webp",
       "status": "approved",
       "sha256": "85f6a1382e149b04b549c85c34cf99fc1207c285ff1ef4f5bf9f9ebafe4336ce"
     },
     {
       "id": "img_0038",
       "sense_id": "sns_0038",
-      "key": "symbols/find.png",
+      "key": "symbols/find.webp",
       "status": "approved",
       "sha256": "221a63a40f491d2ccd58616265718ae35b3d50aea3c98c43f325f40941b02b0f"
     },
     {
       "id": "img_0039",
       "sense_id": "sns_0039",
-      "key": "symbols/work.png",
+      "key": "symbols/work.webp",
       "status": "approved",
       "sha256": "48fa8cbc6f4efce1f5be0cefbe21086cd662c7ce9cc2681c4e027faca633fd5b"
     },
     {
       "id": "img_0040",
       "sense_id": "sns_0040",
-      "key": "symbols/wait.png",
+      "key": "symbols/wait.webp",
       "status": "approved",
       "sha256": "4c9bd78c210b163c930f20402f7ffde8759ec560070e06075ab1ad92c99563bc"
     },
     {
       "id": "img_0041",
       "sense_id": "sns_0041",
-      "key": "symbols/in.png",
+      "key": "symbols/in.webp",
       "status": "approved",
       "sha256": "07bad3bf866a979e275c21f129dc71befebbe2cd0fefacc9807b36342177483c"
     },
     {
       "id": "img_0042",
       "sense_id": "sns_0042",
-      "key": "symbols/out.png",
+      "key": "symbols/out.webp",
       "status": "approved",
       "sha256": "38ed278a8f117cc6de2ae3a953a82ec7ab0020b7dddae3bf364086aa08dffdc9"
     },
     {
       "id": "img_0043",
       "sense_id": "sns_0043",
-      "key": "symbols/on.png",
+      "key": "symbols/on.webp",
       "status": "approved",
       "sha256": "e6599d5f341759816230c75a95c0fd48e7cc4f6ffd73f446bef499596bee6971"
     },
     {
       "id": "img_0044",
       "sense_id": "sns_0044",
-      "key": "symbols/off.png",
+      "key": "symbols/off.webp",
       "status": "approved",
       "sha256": "034d9799e89c2caa6bec2c2274b85147c90338d98c83b1d24dde51f5530ffcde"
     },
     {
       "id": "img_0045",
       "sense_id": "sns_0045",
-      "key": "symbols/up.png",
+      "key": "symbols/up.webp",
       "status": "approved",
       "sha256": "b9eb374bfb7c15402ab278e9a0676c98ae4ebd51adf3c6601f53a0512db465e8"
     },
     {
       "id": "img_0046",
       "sense_id": "sns_0046",
-      "key": "symbols/down.png",
+      "key": "symbols/down.webp",
       "status": "approved",
       "sha256": "6b84442aeb04cb74af1a1c4c62e8c52cee6f202fb652785fe9f021ba9a614a41"
     },
     {
       "id": "img_0047",
       "sense_id": "sns_0047",
-      "key": "symbols/away.png",
+      "key": "symbols/away.webp",
       "status": "approved",
       "sha256": "3d0a731fe89087dc97279b9e77d9ec3f4b59dd220391670a99151e1843509e12"
     },
     {
       "id": "img_0048",
       "sense_id": "sns_0048",
-      "key": "symbols/here.png",
+      "key": "symbols/here.webp",
       "status": "approved",
       "sha256": "801854d59e4cced17be983f22baff3a28524ddc9689be0e96fc1e3ace33c1ccd"
     },
     {
       "id": "img_0049",
       "sense_id": "sns_0049",
-      "key": "symbols/there.png",
+      "key": "symbols/there.webp",
       "status": "approved",
       "sha256": "cbe3f13bfc25d262e94ecf8ed0302ceb16def1abc80101cfadc10ae8bc5994fc"
     },
     {
       "id": "img_0050",
       "sense_id": "sns_0050",
-      "key": "symbols/with.png",
+      "key": "symbols/with.webp",
       "status": "approved",
       "sha256": "d056cfa9bb2dba6ebe07e650e2ae4bf7c095e34052107ece90352488f2cdc144"
     },
     {
       "id": "img_0051",
       "sense_id": "sns_0051",
-      "key": "symbols/under.png",
+      "key": "symbols/under.webp",
       "status": "approved",
       "sha256": "12c67f8a6aab0939cd6e4f1e81c9503bbe5b58af0bb9f2b338015e19a90036c7"
     },
     {
       "id": "img_0052",
       "sense_id": "sns_0052",
-      "key": "symbols/over.png",
+      "key": "symbols/over.webp",
       "status": "approved",
       "sha256": "7250b84b379c02c24add9474db40599b36e1bf42d87e98a5f03e5ee0a9d25a50"
     },
@@ -30219,147 +30219,147 @@
     {
       "id": "img_0055",
       "sense_id": "sns_0055",
-      "key": "symbols/more.png",
+      "key": "symbols/more.webp",
       "status": "approved",
       "sha256": "5a8a0a713df34ba64872e156da05bfe4950d44d0aee77a974558ecf588cfd8a4"
     },
     {
       "id": "img_0056",
       "sense_id": "sns_0056",
-      "key": "symbols/all done.png",
+      "key": "symbols/all done.webp",
       "status": "approved",
       "sha256": "6378ac2f2e9ec90e06e34e85323368acbc5ce927b4ab2389166cd1962ab0926a"
     },
     {
       "id": "img_0057",
       "sense_id": "sns_0057",
-      "key": "symbols/big.png",
+      "key": "symbols/big.webp",
       "status": "approved",
       "sha256": "1912d2a39b604a9c42f6b20fa701110b97b025078ccc526910bf5c28a949c27b"
     },
     {
       "id": "img_0058",
       "sense_id": "sns_0058",
-      "key": "symbols/little.png",
+      "key": "symbols/little.webp",
       "status": "approved",
       "sha256": "7113e7432824923b1cee477d474c3f58c4b40e48d1574c1950d1176be35f16b4"
     },
     {
       "id": "img_0059",
       "sense_id": "sns_0059",
-      "key": "symbols/good.png",
+      "key": "symbols/good.webp",
       "status": "approved",
       "sha256": "fc649456cd2d823999ffc3fef2cd5c4a51da4d659b237114ff7feea902eb6117"
     },
     {
       "id": "img_0060",
       "sense_id": "sns_0060",
-      "key": "symbols/bad.png",
+      "key": "symbols/bad.webp",
       "status": "approved",
       "sha256": "ed2cec8f8fdfb7d854c77d9428ae44055ec66575969363be2c7e4c646f14952a"
     },
     {
       "id": "img_0061",
       "sense_id": "sns_0061",
-      "key": "symbols/happy.png",
+      "key": "symbols/happy.webp",
       "status": "approved",
       "sha256": "982bdcef23ad6fe2fc802dc8d487e60200d067bd64665bb721eccd78c1550a33"
     },
     {
       "id": "img_0062",
       "sense_id": "sns_0062",
-      "key": "symbols/same.png",
+      "key": "symbols/same.webp",
       "status": "approved",
       "sha256": "0638a1b4589ac69c127e01a2302a7900b920a233e6e220284f26e145402de829"
     },
     {
       "id": "img_0063",
       "sense_id": "sns_0063",
-      "key": "symbols/different.png",
+      "key": "symbols/different.webp",
       "status": "approved",
       "sha256": "e2f0c79782d3d2eebe360cb131b630fc4468831dfdc5ae7dce7a0b948f00a3fc"
     },
     {
       "id": "img_0064",
       "sense_id": "sns_0064",
-      "key": "symbols/some.png",
+      "key": "symbols/some.webp",
       "status": "approved",
       "sha256": "20eb1d947f8ff1d72d7f004ba709a5e78bb4d647f58da3ca75dfcef093b09461"
     },
     {
       "id": "img_0065",
       "sense_id": "sns_0065",
-      "key": "symbols/all.png",
+      "key": "symbols/all.webp",
       "status": "approved",
       "sha256": "f28d53a0c4654b1b84d26031519c76771371be84f66159466d0c38cb04751480"
     },
     {
       "id": "img_0066",
       "sense_id": "sns_0066",
-      "key": "symbols/what.png",
+      "key": "symbols/what.webp",
       "status": "approved",
       "sha256": "c45bd68729d67fc8a428e8aa1343af793501bb4f83396b301259d70e6c228389"
     },
     {
       "id": "img_0067",
       "sense_id": "sns_0067",
-      "key": "symbols/where.png",
+      "key": "symbols/where.webp",
       "status": "approved",
       "sha256": "c9a33c97932b0ae3f464f4626c8891c8c6b12ba58ff03ec0fbebf66020bcb528"
     },
     {
       "id": "img_0068",
       "sense_id": "sns_0068",
-      "key": "symbols/who.png",
+      "key": "symbols/who.webp",
       "status": "approved",
       "sha256": "31f0a8436ad5d1583be3ef9b5a356fb41f86c74d63aa3ef1c0b29734741a4c0f"
     },
     {
       "id": "img_0069",
       "sense_id": "sns_0069",
-      "key": "symbols/why.png",
+      "key": "symbols/why.webp",
       "status": "approved",
       "sha256": "8b34a6d61591789d11e11d5423c0616b060fd5b0c86b85fd8dcca6bec4a7e787"
     },
     {
       "id": "img_0070",
       "sense_id": "sns_0070",
-      "key": "symbols/how.png",
+      "key": "symbols/how.webp",
       "status": "approved",
       "sha256": "dc2ddc35f16518687d363f54985c39239d0a58fe5ad62d8e714aa7cdc68d6063"
     },
     {
       "id": "img_0071",
       "sense_id": "sns_0071",
-      "key": "symbols/when.png",
+      "key": "symbols/when.webp",
       "status": "approved",
       "sha256": "7ec5384c29247a1a25c60589aaa417eeafb27f5b9df2840a0143a0949fea0d3f"
     },
     {
       "id": "img_0072",
       "sense_id": "sns_0072",
-      "key": "symbols/no.png",
+      "key": "symbols/no.webp",
       "status": "approved",
       "sha256": "5e4a60669c6e245ffc228ea9eeb5ff12b7e55613a22d4790a3b7e58162b54c3e"
     },
     {
       "id": "img_0073",
       "sense_id": "sns_0073",
-      "key": "symbols/yes.png",
+      "key": "symbols/yes.webp",
       "status": "approved",
       "sha256": "81a7390665c6317e72b0e3070cbacb649589db1e101b6f317666744b8690d848"
     },
     {
       "id": "img_0074",
       "sense_id": "sns_0074",
-      "key": "symbols/not.png",
+      "key": "symbols/not.webp",
       "status": "approved",
       "sha256": "afeee54c9619379bdce27a9abed99752da536a7b1d5562a7c0fe5d48d07d4249"
     },
     {
       "id": "img_0075",
       "sense_id": "sns_0075",
-      "key": "symbols/please.png",
+      "key": "symbols/please.webp",
       "status": "approved",
       "sha256": "e5baeb3e4babafd4932235a88d809dc0658181c884ff93dca9e4990ebf36e358"
     },
@@ -30394,7 +30394,7 @@
     {
       "id": "img_0080",
       "sense_id": "sns_0080",
-      "key": "symbols/have.png",
+      "key": "symbols/have.webp",
       "status": "approved",
       "sha256": "52eba9c7436d79e0b98895a8f8e99112e6263ff9653b25d88834c519ee55e8c4"
     },
@@ -30408,3626 +30408,3626 @@
     {
       "id": "img_0082",
       "sense_id": "sns_0082",
-      "key": "symbols/water.png",
+      "key": "symbols/water.webp",
       "status": "approved",
       "sha256": "a0220933fc51a44df15ecb219a27f8a64aadb4a5c96edf0e4423372da93da05c"
     },
     {
       "id": "img_0083",
       "sense_id": "sns_0083",
-      "key": "symbols/milk.png",
+      "key": "symbols/milk.webp",
       "status": "approved",
       "sha256": "abd62f412fc1b20eff6773e47f837cb1e748bef34f9cda1f653464430e2ff50a"
     },
     {
       "id": "img_0084",
       "sense_id": "sns_0084",
-      "key": "symbols/juice.png",
+      "key": "symbols/juice.webp",
       "status": "approved",
       "sha256": "f05f52aa86e0275dc12c2a6e54af3fbf162d9a0cd32ba4feaacffe1738992745"
     },
     {
       "id": "img_0085",
       "sense_id": "sns_0085",
-      "key": "symbols/apple juice.png",
+      "key": "symbols/apple juice.webp",
       "status": "approved",
       "sha256": "abf616b7eb3508d1363aa7a0541af1d4da27daafeb530112d082b60c042b1b3b"
     },
     {
       "id": "img_0086",
       "sense_id": "sns_0086",
-      "key": "symbols/chocolate milk.png",
+      "key": "symbols/chocolate milk.webp",
       "status": "approved",
       "sha256": "56c6dc3a933b23020275e38c875291f94f686cc691b1f1d3b4f5c372f35d697f"
     },
     {
       "id": "img_0087",
       "sense_id": "sns_0087",
-      "key": "symbols/tea.png",
+      "key": "symbols/tea.webp",
       "status": "approved",
       "sha256": "a52760109b90c26ab7c8dde203a8dba24f4bb65443e86dae84ad3436f4e4a4da"
     },
     {
       "id": "img_0088",
       "sense_id": "sns_0088",
-      "key": "symbols/smoothie.png",
+      "key": "symbols/smoothie.webp",
       "status": "approved",
       "sha256": "90d93775c31d12a734bad2aaec447c78c6e6b1119efb947a2cc1bedfe7556f31"
     },
     {
       "id": "img_0089",
       "sense_id": "sns_0089",
-      "key": "symbols/bread.png",
+      "key": "symbols/bread.webp",
       "status": "approved",
       "sha256": "8466285249a96310860ef0f96e7cdb32766e53cfb248cd6cd2c279b17f9866dc"
     },
     {
       "id": "img_0090",
       "sense_id": "sns_0090",
-      "key": "symbols/toast.png",
+      "key": "symbols/toast.webp",
       "status": "approved",
       "sha256": "74aa5b846987bbce2c200ec1dda4308ae9fd5c413d4c1c424071663c3de9329e"
     },
     {
       "id": "img_0091",
       "sense_id": "sns_0091",
-      "key": "symbols/cereal.png",
+      "key": "symbols/cereal.webp",
       "status": "approved",
       "sha256": "fa0f26461ca2a42be9b461d9d855f7edff0f9746fa39e270261ade06c88b2c64"
     },
     {
       "id": "img_0092",
       "sense_id": "sns_0092",
-      "key": "symbols/oatmeal.png",
+      "key": "symbols/oatmeal.webp",
       "status": "approved",
       "sha256": "c4de35933498c553e4c69ac2bba2c52068b29a8ac84b7d1761d2b2a48eb0902e"
     },
     {
       "id": "img_0093",
       "sense_id": "sns_0093",
-      "key": "symbols/pancake.png",
+      "key": "symbols/pancake.webp",
       "status": "approved",
       "sha256": "ccea1144855cebfd8031b354f58ba35142b97f4a92a6bdab0c41bee5cc56caa5"
     },
     {
       "id": "img_0094",
       "sense_id": "sns_0094",
-      "key": "symbols/waffle.png",
+      "key": "symbols/waffle.webp",
       "status": "approved",
       "sha256": "0b9260501bbfd6a0e8be9363798774462447c4198bc09f71da745092c6d4e9d4"
     },
     {
       "id": "img_0095",
       "sense_id": "sns_0095",
-      "key": "symbols/bagel.png",
+      "key": "symbols/bagel.webp",
       "status": "approved",
       "sha256": "70ab531ecf1ed080f16b9f5a18fb19fe0a810e83925141adc2950d8ae2959540"
     },
     {
       "id": "img_0096",
       "sense_id": "sns_0096",
-      "key": "symbols/egg.png",
+      "key": "symbols/egg.webp",
       "status": "approved",
       "sha256": "f62a86172ea6d060c32e2b0cf0774f9ed2d510b34fa026f30ed20cb2f699113a"
     },
     {
       "id": "img_0097",
       "sense_id": "sns_0097",
-      "key": "symbols/butter.png",
+      "key": "symbols/butter.webp",
       "status": "approved",
       "sha256": "c7efa7a31074b377c038308ba66ad5a33e415e5bcd1fa5bc31caecbef51292ab"
     },
     {
       "id": "img_0098",
       "sense_id": "sns_0098",
-      "key": "symbols/jam.png",
+      "key": "symbols/jam.webp",
       "status": "approved",
       "sha256": "e4bec8e1341610e5b9c16714950d396dad10628c7cbaa82de9682af7782d79d9"
     },
     {
       "id": "img_0099",
       "sense_id": "sns_0099",
-      "key": "symbols/syrup.png",
+      "key": "symbols/syrup.webp",
       "status": "approved",
       "sha256": "46dd411f3c3fb5df5f509f48d865c94a5ede5822c611909ab08a107643cc6821"
     },
     {
       "id": "img_0100",
       "sense_id": "sns_0100",
-      "key": "symbols/pizza.png",
+      "key": "symbols/pizza.webp",
       "status": "approved",
       "sha256": "973e8bbde84b4ee56768d87dec0149dad49f2a990739f0dd85ee6b4f0b3ba4e3"
     },
     {
       "id": "img_0101",
       "sense_id": "sns_0101",
-      "key": "symbols/pasta.png",
+      "key": "symbols/pasta.webp",
       "status": "approved",
       "sha256": "2b49371282e877e56a3ea73acc8d9e76327ff96ea12f0c8f4f5c93f2d8a34605"
     },
     {
       "id": "img_0102",
       "sense_id": "sns_0102",
-      "key": "symbols/macaroni.png",
+      "key": "symbols/macaroni.webp",
       "status": "approved",
       "sha256": "9dddc10c9e101e88ef5e4500791c5c30b2f92efddd0ba3e01b43eef88b5af622"
     },
     {
       "id": "img_0103",
       "sense_id": "sns_0103",
-      "key": "symbols/sandwich.png",
+      "key": "symbols/sandwich.webp",
       "status": "approved",
       "sha256": "adfbfbfcc20f8ab233e13f3b9688e12ad9fa51a48425746e427fde1552048f37"
     },
     {
       "id": "img_0104",
       "sense_id": "sns_0104",
-      "key": "symbols/chicken.png",
+      "key": "symbols/chicken.webp",
       "status": "approved",
       "sha256": "57e86964657799013e3c58c5eafafc6183004339e4290e03e5d50482f1a02be8"
     },
     {
       "id": "img_0105",
       "sense_id": "sns_0105",
-      "key": "symbols/nuggets.png",
+      "key": "symbols/nuggets.webp",
       "status": "approved",
       "sha256": "b7f88382a2e8ff51f974228a16601d71c26ebbc02ac391a20c1b5f4c86e52296"
     },
     {
       "id": "img_0106",
       "sense_id": "sns_0106",
-      "key": "symbols/burger.png",
+      "key": "symbols/burger.webp",
       "status": "approved",
       "sha256": "b5f361bf400fb7d2a76db1210f5368cdfc06f6d6c30a950e7d276899bf317b5e"
     },
     {
       "id": "img_0107",
       "sense_id": "sns_0107",
-      "key": "symbols/hot_dog.png",
+      "key": "symbols/hot_dog.webp",
       "status": "approved",
       "sha256": "ec6e9eb712fccdaa2e7a727e982ef1e0c3041fb339ad5f151bdb30d0d3902012"
     },
     {
       "id": "img_0108",
       "sense_id": "sns_0108",
-      "key": "symbols/soup.png",
+      "key": "symbols/soup.webp",
       "status": "approved",
       "sha256": "6500ec4744ea4d079757eedd2fac491bf79afff7da73e7baaecb6ef19bd3433d"
     },
     {
       "id": "img_0109",
       "sense_id": "sns_0109",
-      "key": "symbols/rice.png",
+      "key": "symbols/rice.webp",
       "status": "approved",
       "sha256": "67d553aad5412f0b23b0178c62723e29a34b6bed219ebbd6bae963c313aa816e"
     },
     {
       "id": "img_0110",
       "sense_id": "sns_0110",
-      "key": "symbols/cheese.png",
+      "key": "symbols/cheese.webp",
       "status": "approved",
       "sha256": "5063ef655ff3fd92bca204ad30e86a71aa6254035f85ddc6eedbebbc70b6fcb6"
     },
     {
       "id": "img_0111",
       "sense_id": "sns_0111",
-      "key": "symbols/meat.png",
+      "key": "symbols/meat.webp",
       "status": "approved",
       "sha256": "1247092002d978e893c5dd6fa18bd033b52f03be125a72aeced10211ec642d0b"
     },
     {
       "id": "img_0112",
       "sense_id": "sns_0112",
-      "key": "symbols/fish.png",
+      "key": "symbols/fish.webp",
       "status": "approved",
       "sha256": "dcae2983031f880cd20580cea3be5bbbb8ea3cbe5f493902e10658585688b0a3"
     },
     {
       "id": "img_0113",
       "sense_id": "sns_0113",
-      "key": "symbols/snack.png",
+      "key": "symbols/snack.webp",
       "status": "approved",
       "sha256": "d95b0ccae741ed342eb615c89f7c94e2b452797fc30bfd43a0fdd6382128efda"
     },
     {
       "id": "img_0114",
       "sense_id": "sns_0114",
-      "key": "symbols/cracker.png",
+      "key": "symbols/cracker.webp",
       "status": "approved",
       "sha256": "5cd3a63eb33e3982048dff108bfc6629493969d6f6ae86bc246cdbb009d8a234"
     },
     {
       "id": "img_0115",
       "sense_id": "sns_0115",
-      "key": "symbols/cookie.png",
+      "key": "symbols/cookie.webp",
       "status": "approved",
       "sha256": "9d6dc5558e945d28d03e257eb945f315c4950535f9f32e939aaacc7173039ab4"
     },
     {
       "id": "img_0116",
       "sense_id": "sns_0116",
-      "key": "symbols/chips.png",
+      "key": "symbols/chips.webp",
       "status": "approved",
       "sha256": "d3db60f119ad020ca90b2833f328c97aef87f7f61c7664384d4caac370f3c9fd"
     },
     {
       "id": "img_0117",
       "sense_id": "sns_0117",
-      "key": "symbols/popcorn.png",
+      "key": "symbols/popcorn.webp",
       "status": "approved",
       "sha256": "6cb2cf8ce2b7ec12a0d18c7f240d8615d72cd5b2c3ff26b51f8519d862320a1a"
     },
     {
       "id": "img_0118",
       "sense_id": "sns_0118",
-      "key": "symbols/pretzel.png",
+      "key": "symbols/pretzel.webp",
       "status": "approved",
       "sha256": "26967cb503e5a125fd9569792ca8ccf645c46da0034dde07f85590149fdcf6b8"
     },
     {
       "id": "img_0119",
       "sense_id": "sns_0119",
-      "key": "symbols/yogurt.png",
+      "key": "symbols/yogurt.webp",
       "status": "approved",
       "sha256": "ba2cfa88453f6746029659d2d61e9fcdb035cbfcbea77b936bfef5fb8af532e0"
     },
     {
       "id": "img_0120",
       "sense_id": "sns_0120",
-      "key": "symbols/fruit_snack.png",
+      "key": "symbols/fruit_snack.webp",
       "status": "approved",
       "sha256": "fea384b973bc2d27735da3eb4e77540d4cf299c26932470161b50193ddb88942"
     },
     {
       "id": "img_0121",
       "sense_id": "sns_0121",
-      "key": "symbols/ice_cream.png",
+      "key": "symbols/ice_cream.webp",
       "status": "approved",
       "sha256": "652c50ca084eac8a5bb1b94fa40fa78bdf0db652eb57dd4d9895c309b147f136"
     },
     {
       "id": "img_0122",
       "sense_id": "sns_0122",
-      "key": "symbols/popsicle.png",
+      "key": "symbols/popsicle.webp",
       "status": "approved",
       "sha256": "addf320a97e330423aab776321c27d79006568d79ba17655bb020e06c9206ccc"
     },
     {
       "id": "img_0123",
       "sense_id": "sns_0123",
-      "key": "symbols/candy.png",
+      "key": "symbols/candy.webp",
       "status": "approved",
       "sha256": "3ccf9e952c98cda9e5b3b1e28b7092d0078e9979afa62a0ef235b3ab63599859"
     },
     {
       "id": "img_0124",
       "sense_id": "sns_0124",
-      "key": "symbols/cake.png",
+      "key": "symbols/cake.webp",
       "status": "approved",
       "sha256": "a6004e5f959e634c81dc959680048820f3570209abf34f0f01a71bdcc079c662"
     },
     {
       "id": "img_0125",
       "sense_id": "sns_0125",
-      "key": "symbols/muffin.png",
+      "key": "symbols/muffin.webp",
       "status": "approved",
       "sha256": "0956764ea2cf7a435eaf42a4c19288a0fbbefe10fcfc6cb65fe00d2103ee5a55"
     },
     {
       "id": "img_0126",
       "sense_id": "sns_0126",
-      "key": "symbols/donut.png",
+      "key": "symbols/donut.webp",
       "status": "approved",
       "sha256": "cdd15cafa5b47726f9df47aa4225793421ca6a3555d54a85910e9477ab6e4005"
     },
     {
       "id": "img_0127",
       "sense_id": "sns_0127",
-      "key": "symbols/fruit.png",
+      "key": "symbols/fruit.webp",
       "status": "approved",
       "sha256": "6044bd4b1927cb61915ebc39882443f2d382291aa7a1d957f29c29e8c9f0d00b"
     },
     {
       "id": "img_0128",
       "sense_id": "sns_0128",
-      "key": "symbols/apple.png",
+      "key": "symbols/apple.webp",
       "status": "approved",
       "sha256": "26c9eddbb55b801219962025a1895fb50e8749aac3e602dc1e19c90f98c8d1de"
     },
     {
       "id": "img_0129",
       "sense_id": "sns_0129",
-      "key": "symbols/banana.png",
+      "key": "symbols/banana.webp",
       "status": "approved",
       "sha256": "f9a1d6a8a6660d435f60197312a38d94c45e06470661576a414ea383826cd0d3"
     },
     {
       "id": "img_0130",
       "sense_id": "sns_0130",
-      "key": "symbols/strawberry.png",
+      "key": "symbols/strawberry.webp",
       "status": "approved",
       "sha256": "3eb80b1b1fc6f6b1ddbc4b8106ddf8fe00657d153e1107baec6cfbb5ef51013a"
     },
     {
       "id": "img_0131",
       "sense_id": "sns_0131",
-      "key": "symbols/orange.png",
+      "key": "symbols/orange.webp",
       "status": "approved",
       "sha256": "3ff4e36b3e9457869caac22135dcdfb83debacc2019eb1fb4e577f59bea627eb"
     },
     {
       "id": "img_0132",
       "sense_id": "sns_0132",
-      "key": "symbols/grapes.png",
+      "key": "symbols/grapes.webp",
       "status": "approved",
       "sha256": "cb81b342fe8d9ff04af4ea43348217e0581e41f1911347a13ac99fe3cfe16b4d"
     },
     {
       "id": "img_0133",
       "sense_id": "sns_0133",
-      "key": "symbols/watermelon.png",
+      "key": "symbols/watermelon.webp",
       "status": "approved",
       "sha256": "2ec49ef3af556d391860c8407502202f2d8d70f312972970a19bd707a1ae117d"
     },
     {
       "id": "img_0134",
       "sense_id": "sns_0134",
-      "key": "symbols/carrot.png",
+      "key": "symbols/carrot.webp",
       "status": "approved",
       "sha256": "5744638ddef2e4fa21636c6429b39811859cb797dc814c646689ab28c644c7a8"
     },
     {
       "id": "img_0135",
       "sense_id": "sns_0135",
-      "key": "symbols/broccoli.png",
+      "key": "symbols/broccoli.webp",
       "status": "approved",
       "sha256": "5e6d829901d3dc011617966bbe2cbbee9f42cc609da7b92dc361ba9cff7e8d85"
     },
     {
       "id": "img_0136",
       "sense_id": "sns_0136",
-      "key": "symbols/corn.png",
+      "key": "symbols/corn.webp",
       "status": "approved",
       "sha256": "4623c4e2c1861c96d9e760400a81da03a8b2a35de51fecb3cc8c5cf30e0a1dd4"
     },
     {
       "id": "img_0137",
       "sense_id": "sns_0137",
-      "key": "symbols/body.png",
+      "key": "symbols/body.webp",
       "status": "approved",
       "sha256": "b8f48b5177505a49ccae6a8181bdaf1e53a706fd2213ff5a22456baaf1e60d5f"
     },
     {
       "id": "img_0138",
       "sense_id": "sns_0138",
-      "key": "symbols/head.png",
+      "key": "symbols/head.webp",
       "status": "approved",
       "sha256": "8b16d0200f6f3a943343fb6d8152834bd24e252ba79063b74e66651ce0fabf10"
     },
     {
       "id": "img_0139",
       "sense_id": "sns_0139",
-      "key": "symbols/face.png",
+      "key": "symbols/face.webp",
       "status": "approved",
       "sha256": "057cbee3fc73b43f17b2b774d8483f3f13ec4409eb3f576e39b85c9c017926d6"
     },
     {
       "id": "img_0140",
       "sense_id": "sns_0140",
-      "key": "symbols/hair.png",
+      "key": "symbols/hair.webp",
       "status": "approved",
       "sha256": "ca4c8465afd3ddfa91e43de3b971dca09e925645a72855d4485b19cc6b590569"
     },
     {
       "id": "img_0141",
       "sense_id": "sns_0141",
-      "key": "symbols/eye.png",
+      "key": "symbols/eye.webp",
       "status": "approved",
       "sha256": "99c2169d790461fe6fed50b9b20118a27eb5d8cbaed2891a9afc0ca378a6bd2d"
     },
     {
       "id": "img_0142",
       "sense_id": "sns_0142",
-      "key": "symbols/ear.png",
+      "key": "symbols/ear.webp",
       "status": "approved",
       "sha256": "d86f4c1e0ddb9712794f6e1e3a86f5b235a679be01604a123dfe83cf93409fb8"
     },
     {
       "id": "img_0143",
       "sense_id": "sns_0143",
-      "key": "symbols/nose.png",
+      "key": "symbols/nose.webp",
       "status": "approved",
       "sha256": "f8d4a3af512e180098d20741e9f501c2a7330c1cfbe9c3289c76ca4b338a2163"
     },
     {
       "id": "img_0144",
       "sense_id": "sns_0144",
-      "key": "symbols/mouth.png",
+      "key": "symbols/mouth.webp",
       "status": "approved",
       "sha256": "c7bc8a1cf21b981b65e3e46d6b6d48445bc77192b5ce25f700b0d9a526479924"
     },
     {
       "id": "img_0145",
       "sense_id": "sns_0145",
-      "key": "symbols/teeth.png",
+      "key": "symbols/teeth.webp",
       "status": "approved",
       "sha256": "7a1b824e1620c4d3906d413e6b3cd0980aa2cc9aa6123fb53fa2220e45ed18f3"
     },
     {
       "id": "img_0146",
       "sense_id": "sns_0146",
-      "key": "symbols/tongue.png",
+      "key": "symbols/tongue.webp",
       "status": "approved",
       "sha256": "b31c86819f8dcf061745eaf572af1d4aeb86a34b20f81a674f1be0b2ef9842ec"
     },
     {
       "id": "img_0147",
       "sense_id": "sns_0147",
-      "key": "symbols/neck.png",
+      "key": "symbols/neck.webp",
       "status": "approved",
       "sha256": "fa0b0477cf0ad0ae38f2a1273879186768fbcda5fad7745630cfbcb1ce582a23"
     },
     {
       "id": "img_0148",
       "sense_id": "sns_0148",
-      "key": "symbols/shoulder.png",
+      "key": "symbols/shoulder.webp",
       "status": "approved",
       "sha256": "85adce1136e94da3626471bbb24b0749607c6c287ef3b30333e8796e2f4743ce"
     },
     {
       "id": "img_0149",
       "sense_id": "sns_0149",
-      "key": "symbols/arm.png",
+      "key": "symbols/arm.webp",
       "status": "approved",
       "sha256": "2b84cd5c95beb44db106f67f137c83441262870e67ee24ae2264711afe5f9f8e"
     },
     {
       "id": "img_0150",
       "sense_id": "sns_0150",
-      "key": "symbols/hand.png",
+      "key": "symbols/hand.webp",
       "status": "approved",
       "sha256": "97f9dba3502d037c644f66383c598d83a328795bd67ed6ceec4474c257dcfc52"
     },
     {
       "id": "img_0151",
       "sense_id": "sns_0151",
-      "key": "symbols/fingers.png",
+      "key": "symbols/fingers.webp",
       "status": "approved",
       "sha256": "bad4c99504788a1f51c956d28769d0a1fe05eacf4018ea4554977cd891ca5cb5"
     },
     {
       "id": "img_0152",
       "sense_id": "sns_0152",
-      "key": "symbols/tummy.png",
+      "key": "symbols/tummy.webp",
       "status": "approved",
       "sha256": "239b7a0a26088cb92e944e04ec1a37c5cd50ec8f46ab010dd544c113513186c8"
     },
     {
       "id": "img_0153",
       "sense_id": "sns_0153",
-      "key": "symbols/back.png",
+      "key": "symbols/back.webp",
       "status": "approved",
       "sha256": "32e99698d80c8c31e70c2eabf6e2db174c3c3cd6f94dcd90ac4313b83692d2a3"
     },
     {
       "id": "img_0154",
       "sense_id": "sns_0154",
-      "key": "symbols/leg.png",
+      "key": "symbols/leg.webp",
       "status": "approved",
       "sha256": "6df4372821b1e4d250777d99a1677e2f052da8e68a45c95494a2766a9c2968d2"
     },
     {
       "id": "img_0155",
       "sense_id": "sns_0155",
-      "key": "symbols/knee.png",
+      "key": "symbols/knee.webp",
       "status": "approved",
       "sha256": "cf246fde5884a00c2f0da680d876b7485a8b617d2c2ded11a23b5323a4d7ba8e"
     },
     {
       "id": "img_0156",
       "sense_id": "sns_0156",
-      "key": "symbols/foot.png",
+      "key": "symbols/foot.webp",
       "status": "approved",
       "sha256": "21ec5353f479ed92a8f71835a24252b15105a444599b6b7f92bc93a039cf7ecf"
     },
     {
       "id": "img_0157",
       "sense_id": "sns_0157",
-      "key": "symbols/toes.png",
+      "key": "symbols/toes.webp",
       "status": "approved",
       "sha256": "765c84b55829a4f77013d76c392a8025ad770cd16db33623986dfcd323bec71d"
     },
     {
       "id": "img_0158",
       "sense_id": "sns_0158",
-      "key": "symbols/bathroom.png",
+      "key": "symbols/bathroom.webp",
       "status": "approved",
       "sha256": "5ff5bb588be18c87bde2ab33ce6ff1398f5cdf29a49aa58ec4df6f00c0d46846"
     },
     {
       "id": "img_0159",
       "sense_id": "sns_0159",
-      "key": "symbols/potty.png",
+      "key": "symbols/potty.webp",
       "status": "approved",
       "sha256": "678b870d86aff0120f2c483212bfe2835188a03a27cf47812cab6a6c18594e41"
     },
     {
       "id": "img_0160",
       "sense_id": "sns_0160",
-      "key": "symbols/toilet.png",
+      "key": "symbols/toilet.webp",
       "status": "approved",
       "sha256": "b26d6b144270962218434a4c825ab3e166f09cc7c4153ca427acfcf5219eec76"
     },
     {
       "id": "img_0161",
       "sense_id": "sns_0161",
-      "key": "symbols/diaper.png",
+      "key": "symbols/diaper.webp",
       "status": "approved",
       "sha256": "f627b8fd49317d15ba090186fa9f521a2ae2d22b5a1fde0048a67624a66adf8d"
     },
     {
       "id": "img_0162",
       "sense_id": "sns_0162",
-      "key": "symbols/wet_wipe.png",
+      "key": "symbols/wet_wipe.webp",
       "status": "approved",
       "sha256": "a33130d4e9893a49dbed849d0c18f72fc8aca9e2d4140333cf78eaf7e86f71fb"
     },
     {
       "id": "img_0163",
       "sense_id": "sns_0163",
-      "key": "symbols/bath.png",
+      "key": "symbols/bath.webp",
       "status": "approved",
       "sha256": "cd6ffb84246c764e42f4951a106b9e7171f1f782e3a849d0c40afcd7a5fdc398"
     },
     {
       "id": "img_0164",
       "sense_id": "sns_0164",
-      "key": "symbols/shower.png",
+      "key": "symbols/shower.webp",
       "status": "approved",
       "sha256": "cbe94146d72359297fef3cf9d83b68be9b3c8c47a6ccf69bc8296fbc4a7a9f51"
     },
     {
       "id": "img_0165",
       "sense_id": "sns_0165",
-      "key": "symbols/soap.png",
+      "key": "symbols/soap.webp",
       "status": "approved",
       "sha256": "08d263be98d85a36e8cf8cf2ccc54495589bfdbf21e29ee7e791b57eca284493"
     },
     {
       "id": "img_0166",
       "sense_id": "sns_0166",
-      "key": "symbols/toothbrush.png",
+      "key": "symbols/toothbrush.webp",
       "status": "approved",
       "sha256": "59a00230cc3664bb3dc1efc795065012e4de1de736464e6274d28ac9f6b358b2"
     },
     {
       "id": "img_0167",
       "sense_id": "sns_0167",
-      "key": "symbols/toothpaste.png",
+      "key": "symbols/toothpaste.webp",
       "status": "approved",
       "sha256": "728d4180df86da41b3f3f7643b006c38c212b09cfdcab3ee450f3089b64420e1"
     },
     {
       "id": "img_0168",
       "sense_id": "sns_0168",
-      "key": "symbols/towel.png",
+      "key": "symbols/towel.webp",
       "status": "approved",
       "sha256": "e5cd314f4f40e120da37e13321d617e458c162614a1b3d46d9c7c92d287b1f3f"
     },
     {
       "id": "img_0169",
       "sense_id": "sns_0169",
-      "key": "symbols/comb.png",
+      "key": "symbols/comb.webp",
       "status": "approved",
       "sha256": "66aa233856a3ce00d16b854549183774ce3f374d76217457c96edfd50bc92087"
     },
     {
       "id": "img_0170",
       "sense_id": "sns_0170",
-      "key": "symbols/tissue.png",
+      "key": "symbols/tissue.webp",
       "status": "approved",
       "sha256": "caf734761cffe6bd63d99c865269a94d9f469f2b5cee6e71e475be09e62e0f55"
     },
     {
       "id": "img_0171",
       "sense_id": "sns_0171",
-      "key": "symbols/bandage.png",
+      "key": "symbols/bandage.webp",
       "status": "approved",
       "sha256": "e98a0be651bc6dda8ba1b44f146a0a0b20ae145f769d3b6fa62fc244b612536b"
     },
     {
       "id": "img_0172",
       "sense_id": "sns_0172",
-      "key": "symbols/hurt.png",
+      "key": "symbols/hurt.webp",
       "status": "approved",
       "sha256": "67d8abf523ed056506f6ccf95c365b74dea5b8704fe32e907b82b7b7cfd03d0a"
     },
     {
       "id": "img_0173",
       "sense_id": "sns_0173",
-      "key": "symbols/sick.png",
+      "key": "symbols/sick.webp",
       "status": "approved",
       "sha256": "ebdf8a2b5f8253e17331c49727ae9c504d4f9f00046e5dbec411b7f4b47d5e36"
     },
     {
       "id": "img_0174",
       "sense_id": "sns_0174",
-      "key": "symbols/pain.png",
+      "key": "symbols/pain.webp",
       "status": "approved",
       "sha256": "1540c8c76fc9a9c0ac8d96de2e64bbfe8a8eed640edc18f1d4ff80694f0d3562"
     },
     {
       "id": "img_0175",
       "sense_id": "sns_0175",
-      "key": "symbols/fever.png",
+      "key": "symbols/fever.webp",
       "status": "approved",
       "sha256": "2c5d20f2e29e77529d9356e1c2cb6534c223c673eed717b06ecde53623353209"
     },
     {
       "id": "img_0176",
       "sense_id": "sns_0176",
-      "key": "symbols/cough.png",
+      "key": "symbols/cough.webp",
       "status": "approved",
       "sha256": "a9875217aa238b57323fb79afc11262b0689978aa636d7d2df66dbad29a806a0"
     },
     {
       "id": "img_0177",
       "sense_id": "sns_0177",
-      "key": "symbols/medicine.png",
+      "key": "symbols/medicine.webp",
       "status": "approved",
       "sha256": "1bc7701115a7e34914d929d8d29e0c7ef5b945c46f18f369c0df90795cbf5e68"
     },
     {
       "id": "img_0178",
       "sense_id": "sns_0178",
-      "key": "symbols/dentist.png",
+      "key": "symbols/dentist.webp",
       "status": "approved",
       "sha256": "b5b613a398d51b03754f8c4fadf90fb5b0aed4c1dd49cb108c62b6c21e7c703a"
     },
     {
       "id": "img_0179",
       "sense_id": "sns_0179",
-      "key": "symbols/sad.png",
+      "key": "symbols/sad.webp",
       "status": "approved",
       "sha256": "13e2f1ba05860ed73049712e1cfd252ee864275bc5fd84d648103cbba3f8c2e4"
     },
     {
       "id": "img_0180",
       "sense_id": "sns_0180",
-      "key": "symbols/mad.png",
+      "key": "symbols/mad.webp",
       "status": "approved",
       "sha256": "dce5686274de8dee1f8ef208b6aacb1cf45da4dc09e49afe318b359e9ee489e4"
     },
     {
       "id": "img_0181",
       "sense_id": "sns_0181",
-      "key": "symbols/angry.png",
+      "key": "symbols/angry.webp",
       "status": "approved",
       "sha256": "23c8bc9ca9914ab759331d81a4a7d3055fefcef6141682b37d0aadff17475391"
     },
     {
       "id": "img_0182",
       "sense_id": "sns_0182",
-      "key": "symbols/scared.png",
+      "key": "symbols/scared.webp",
       "status": "approved",
       "sha256": "bc9bd45db5aeacbdf091aae3d0775166455e2a1332df73988f746dce69ffb948"
     },
     {
       "id": "img_0183",
       "sense_id": "sns_0183",
-      "key": "symbols/excited.png",
+      "key": "symbols/excited.webp",
       "status": "approved",
       "sha256": "8b3d67d87f849eba0c017ddfb2adb7d9e448b5d4ce0bc163dd5e0908e894510f"
     },
     {
       "id": "img_0184",
       "sense_id": "sns_0184",
-      "key": "symbols/silly.png",
+      "key": "symbols/silly.webp",
       "status": "approved",
       "sha256": "14c915c6fb3fd22b7ae39b09628743f40c35877f41f37d1675023c800c57740c"
     },
     {
       "id": "img_0185",
       "sense_id": "sns_0185",
-      "key": "symbols/nervous.png",
+      "key": "symbols/nervous.webp",
       "status": "approved",
       "sha256": "d77d4edbdb5de9f94006926521e44d43918d7523cfed3fc0bfd34a16cd762551"
     },
     {
       "id": "img_0186",
       "sense_id": "sns_0186",
-      "key": "symbols/calm.png",
+      "key": "symbols/calm.webp",
       "status": "approved",
       "sha256": "d2159bbfab2fd91c63b18166cf00125fa9e736062120722c5530171648b4c056"
     },
     {
       "id": "img_0187",
       "sense_id": "sns_0187",
-      "key": "symbols/frustrated.png",
+      "key": "symbols/frustrated.webp",
       "status": "approved",
       "sha256": "c4915cac5e4d873df52200f1a82a1badf62ec9fe7a96ec5e0338b130cbc3b129"
     },
     {
       "id": "img_0188",
       "sense_id": "sns_0188",
-      "key": "symbols/proud.png",
+      "key": "symbols/proud.webp",
       "status": "approved",
       "sha256": "2e71e0b4fd422640e9521e0824feb75cd5b52929d04c423e1e94385c0911a468"
     },
     {
       "id": "img_0189",
       "sense_id": "sns_0189",
-      "key": "symbols/shy.png",
+      "key": "symbols/shy.webp",
       "status": "approved",
       "sha256": "fad674159c3255355158eea285d3f8777bca51ea87fbc71c3bc5ca4d4cbf1e37"
     },
     {
       "id": "img_0190",
       "sense_id": "sns_0190",
-      "key": "symbols/surprised.png",
+      "key": "symbols/surprised.webp",
       "status": "approved",
       "sha256": "a939c0c7f56c4b4156a8dc317bfdec97bb0d201284c133ee49d85125c5462d67"
     },
     {
       "id": "img_0191",
       "sense_id": "sns_0191",
-      "key": "symbols/bored.png",
+      "key": "symbols/bored.webp",
       "status": "approved",
       "sha256": "a79fb3d5fe6afc41cf4b2b9bc46489d433c1e1796fe4a4a9f7c019beb5ab8192"
     },
     {
       "id": "img_0192",
       "sense_id": "sns_0192",
-      "key": "symbols/lonely.png",
+      "key": "symbols/lonely.webp",
       "status": "approved",
       "sha256": "cdf81cad3ef65b72136809498931e840fa06682fb50168509c8ef5f2fc360e94"
     },
     {
       "id": "img_0193",
       "sense_id": "sns_0193",
-      "key": "symbols/hungry.png",
+      "key": "symbols/hungry.webp",
       "status": "approved",
       "sha256": "40669e790afaf5786d1e732101e65ec8b6da4d8284ccd5713b1d69db87df160c"
     },
     {
       "id": "img_0194",
       "sense_id": "sns_0194",
-      "key": "symbols/thirsty.png",
+      "key": "symbols/thirsty.webp",
       "status": "approved",
       "sha256": "c1006845bbe8ff920aff4e458888cf961d18a0144785a5583099ae6971b449ee"
     },
     {
       "id": "img_0195",
       "sense_id": "sns_0195",
-      "key": "symbols/tired.png",
+      "key": "symbols/tired.webp",
       "status": "approved",
       "sha256": "86c76cb391d8efa5580cdca97e84dc7f7f66cb9982429c3e12b1f3c0a4e26694"
     },
     {
       "id": "img_0196",
       "sense_id": "sns_0196",
-      "key": "symbols/sleepy.png",
+      "key": "symbols/sleepy.webp",
       "status": "approved",
       "sha256": "5c65f13f5135297aa4d118810550f704e3dcd621e3b3fd8fd03fd9916c61e868"
     },
     {
       "id": "img_0197",
       "sense_id": "sns_0197",
-      "key": "symbols/energetic.png",
+      "key": "symbols/energetic.webp",
       "status": "approved",
       "sha256": "656cbbef71d9edb528cd65f382e13fce4c0ee166fa62330524b43e6b6c6a72d7"
     },
     {
       "id": "img_0198",
       "sense_id": "sns_0198",
-      "key": "symbols/hot.png",
+      "key": "symbols/hot.webp",
       "status": "approved",
       "sha256": "97f8abba78fc5e43b600ad43608c938f8e94f28255e053d9458155bb4c9fb11e"
     },
     {
       "id": "img_0199",
       "sense_id": "sns_0199",
-      "key": "symbols/cold.png",
+      "key": "symbols/cold.webp",
       "status": "approved",
       "sha256": "45e8f0fbc7301bb9008a247e6a4409d26016c9af3cfc820840bc3b6f00b01f74"
     },
     {
       "id": "img_0200",
       "sense_id": "sns_0200",
-      "key": "symbols/warm.png",
+      "key": "symbols/warm.webp",
       "status": "approved",
       "sha256": "6b8495eceeed0c98b6dfa3ec8c00023285d5178b1fb857630b0396f2c7f8e65c"
     },
     {
       "id": "img_0201",
       "sense_id": "sns_0201",
-      "key": "symbols/loud.png",
+      "key": "symbols/loud.webp",
       "status": "approved",
       "sha256": "f463fd13727ec967810c21f75df9423ab856a0c28ca755ac7627262548be02ec"
     },
     {
       "id": "img_0202",
       "sense_id": "sns_0202",
-      "key": "symbols/quiet.png",
+      "key": "symbols/quiet.webp",
       "status": "approved",
       "sha256": "f0492064030665598dbfdcb25343137d8f9cc5606cfa79c5f89e489b61270a62"
     },
     {
       "id": "img_0203",
       "sense_id": "sns_0203",
-      "key": "symbols/noisy.png",
+      "key": "symbols/noisy.webp",
       "status": "approved",
       "sha256": "c6b49ac7c857a96fa3164d60e9331dae3e3fd63ecb3db6e4773fd5f9d2173721"
     },
     {
       "id": "img_0204",
       "sense_id": "sns_0204",
-      "key": "symbols/bright.png",
+      "key": "symbols/bright.webp",
       "status": "approved",
       "sha256": "9b7ce2dd3b9f86da573c7332023ea5cd6eb1cb52044c6122bae6fdc54f5d9e5f"
     },
     {
       "id": "img_0205",
       "sense_id": "sns_0205",
-      "key": "symbols/dark.png",
+      "key": "symbols/dark.webp",
       "status": "approved",
       "sha256": "ca5471db76735f492862a745202a9bbd49efaff93618557a676ab0003611ba40"
     },
     {
       "id": "img_0206",
       "sense_id": "sns_0206",
-      "key": "symbols/soft.png",
+      "key": "symbols/soft.webp",
       "status": "approved",
       "sha256": "97aad9bac215d7c3884d57f251bef05746846e657b4ebf97be8c7e362be1b6e4"
     },
     {
       "id": "img_0207",
       "sense_id": "sns_0207",
-      "key": "symbols/rough.png",
+      "key": "symbols/rough.webp",
       "status": "approved",
       "sha256": "812e2bbba0c95545734ee368bb70186d81ae5bb20fcf7a3dda72d21bb7d39982"
     },
     {
       "id": "img_0208",
       "sense_id": "sns_0208",
-      "key": "symbols/sticky.png",
+      "key": "symbols/sticky.webp",
       "status": "approved",
       "sha256": "12945077aa47f7a6a7a05d8c31d0703b3972eb8fac207f409e3a1f1b605c58c9"
     },
     {
       "id": "img_0209",
       "sense_id": "sns_0209",
-      "key": "symbols/dizzy.png",
+      "key": "symbols/dizzy.webp",
       "status": "approved",
       "sha256": "0c66e5283b1a15a8b393aa05a6155f9700696ecb609ae65b8d30e057ec78cae4"
     },
     {
       "id": "img_0210",
       "sense_id": "sns_0210",
-      "key": "symbols/gross.png",
+      "key": "symbols/gross.webp",
       "status": "approved",
       "sha256": "07b6dde4ae482231a3e895981f367870db0c0658e628f5d8b340aaa8b57902fb"
     },
     {
       "id": "img_0211",
       "sense_id": "sns_0211",
-      "key": "symbols/comfortable.png",
+      "key": "symbols/comfortable.webp",
       "status": "approved",
       "sha256": "375e994fe18169c47ef71412a12820ea4bdaf772582c7226ee3a3ab6c67adc5e"
     },
     {
       "id": "img_0212",
       "sense_id": "sns_0212",
-      "key": "symbols/uncomfortable.png",
+      "key": "symbols/uncomfortable.webp",
       "status": "approved",
       "sha256": "93b17d2fb4e761b20aee6aa32ed179b3b43a472836166707c0640877316d11b9"
     },
     {
       "id": "img_0213",
       "sense_id": "sns_0213",
-      "key": "symbols/overwhelmed.png",
+      "key": "symbols/overwhelmed.webp",
       "status": "approved",
       "sha256": "55afd009a1ee9009a1478707d6a71f44f2be2bdc9d6af94a2569d789ccbab571"
     },
     {
       "id": "img_0214",
       "sense_id": "sns_0214",
-      "key": "symbols/run.jpg",
+      "key": "symbols/run.webp",
       "status": "approved",
       "sha256": "3ff4bd722efb6a1ff87ab79a776615bd98e418e87e1fbeeec1410d16fbd360c5"
     },
     {
       "id": "img_0215",
       "sense_id": "sns_0215",
-      "key": "symbols/jump.png",
+      "key": "symbols/jump.webp",
       "status": "approved",
       "sha256": "d564585652505ba6e68e0c3508ecdbeba023d5c4296a07487a52a1ad91be2a87"
     },
     {
       "id": "img_0216",
       "sense_id": "sns_0216",
-      "key": "symbols/walk.png",
+      "key": "symbols/walk.webp",
       "status": "approved",
       "sha256": "f6885f03f48be3e17f5ebea40c9bc312ffd6bba44d861c4b5f586a6fc3f11f4d"
     },
     {
       "id": "img_0217",
       "sense_id": "sns_0217",
-      "key": "symbols/sit.png",
+      "key": "symbols/sit.webp",
       "status": "approved",
       "sha256": "d920a1eb615bcd424c1615b89469bba9eb0081c5f0b448fe719474d4ce283df4"
     },
     {
       "id": "img_0218",
       "sense_id": "sns_0218",
-      "key": "symbols/stand.png",
+      "key": "symbols/stand.webp",
       "status": "approved",
       "sha256": "f557e6c08e372d778586f1afc5f1fb099c5e89d339724f373e55c85dab24f52f"
     },
     {
       "id": "img_0219",
       "sense_id": "sns_0219",
-      "key": "symbols/climb.png",
+      "key": "symbols/climb.webp",
       "status": "approved",
       "sha256": "01036bbdab4317658bc5e7e571ac595da190334915d9a666989227122e3bcd85"
     },
     {
       "id": "img_0220",
       "sense_id": "sns_0220",
-      "key": "symbols/dance.png",
+      "key": "symbols/dance.webp",
       "status": "approved",
       "sha256": "5e33b85a64ff391d689be9ea794e2e8c72257eeb116a8ae7c90c273d4cae83fd"
     },
     {
       "id": "img_0221",
       "sense_id": "sns_0221",
-      "key": "symbols/swim.png",
+      "key": "symbols/swim.webp",
       "status": "approved",
       "sha256": "f5117ea2ed41ca475c7cf7d5b97fe3939213e9adb299a767e7252b5771565d0a"
     },
     {
       "id": "img_0222",
       "sense_id": "sns_0222",
-      "key": "symbols/ride.png",
+      "key": "symbols/ride.webp",
       "status": "approved",
       "sha256": "5083054614624d252f88f5e3a9d392de3a3a092977952453c2c895374b14a52f"
     },
     {
       "id": "img_0223",
       "sense_id": "sns_0223",
-      "key": "symbols/crawl.png",
+      "key": "symbols/crawl.webp",
       "status": "approved",
       "sha256": "551eb5b5fb83e337278172b030a21beae77f6f2bef0dd6aab2da78f679c72338"
     },
     {
       "id": "img_0224",
       "sense_id": "sns_0224",
-      "key": "symbols/kick.png",
+      "key": "symbols/kick.webp",
       "status": "approved",
       "sha256": "ff8f53ef78344c0b6a0d29f8c00701bbcf1622a9a59388ca163fc9376b51353f"
     },
     {
       "id": "img_0225",
       "sense_id": "sns_0225",
-      "key": "symbols/throw.png",
+      "key": "symbols/throw.webp",
       "status": "approved",
       "sha256": "90d2d6cf1b3f5c41fd5d3f6c15b4712dcf1e7d1923ed8260e8dca20b2bea4eb7"
     },
     {
       "id": "img_0226",
       "sense_id": "sns_0226",
-      "key": "symbols/catch.png",
+      "key": "symbols/catch.webp",
       "status": "approved",
       "sha256": "be4eb227638b8cd2c09b99edd434e59dd1d60ffe74d5519588f750aee432db41"
     },
     {
       "id": "img_0227",
       "sense_id": "sns_0227",
-      "key": "symbols/push.png",
+      "key": "symbols/push.webp",
       "status": "approved",
       "sha256": "c45949bb41be8dd9ed9b4565445bda8d6248eed1c64a543fe3a495d5c943fa69"
     },
     {
       "id": "img_0228",
       "sense_id": "sns_0228",
-      "key": "symbols/pull.png",
+      "key": "symbols/pull.webp",
       "status": "approved",
       "sha256": "369c6e84876dc277046f06522fd72f6f1a7c44f9241a3feeaaeab6214ff8b265"
     },
     {
       "id": "img_0229",
       "sense_id": "sns_0229",
-      "key": "symbols/swing.png",
+      "key": "symbols/swing.webp",
       "status": "approved",
       "sha256": "aaedc2c9889545c443a616c839e7576c82eef35960e8d9b40dae5a158a43b92a"
     },
     {
       "id": "img_0230",
       "sense_id": "sns_0230",
-      "key": "symbols/slide.png",
+      "key": "symbols/slide.webp",
       "status": "approved",
       "sha256": "0b5a2c419602f75b22fb5ddce31198a90852251bda536563fbae237703d23ca7"
     },
     {
       "id": "img_0231",
       "sense_id": "sns_0231",
-      "key": "symbols/fall.png",
+      "key": "symbols/fall.webp",
       "status": "approved",
       "sha256": "d673af813d3ddeab47b0e4195e1f7fd9adb2dc22f356db9af2cbd253e1f079b3"
     },
     {
       "id": "img_0232",
       "sense_id": "sns_0232",
-      "key": "symbols/carry.png",
+      "key": "symbols/carry.webp",
       "status": "approved",
       "sha256": "a03c2688241f41bb769e0252235a3af6e3ef790e91fa449f6cae7ac6c89b842b"
     },
     {
       "id": "img_0233",
       "sense_id": "sns_0233",
-      "key": "symbols/drop.png",
+      "key": "symbols/drop.webp",
       "status": "approved",
       "sha256": "afba5a06162b1818f86029341103ec02dfcc394e7fd49c4674ba135eec66c386"
     },
     {
       "id": "img_0234",
       "sense_id": "sns_0234",
-      "key": "symbols/write.png",
+      "key": "symbols/write.webp",
       "status": "approved",
       "sha256": "4bce2968c3b8447dc0addc4f939cfa29721d21bc2269589b9930fada4a48deaa"
     },
     {
       "id": "img_0235",
       "sense_id": "sns_0235",
-      "key": "symbols/draw.png",
+      "key": "symbols/draw.webp",
       "status": "approved",
       "sha256": "2abffacae8a3e99cc4c0d4fe0462e47488b8f23651cf6622d3b5285d4e2b2d04"
     },
     {
       "id": "img_0236",
       "sense_id": "sns_0236",
-      "key": "symbols/color.png",
+      "key": "symbols/color.webp",
       "status": "approved",
       "sha256": "a60f1d54a15419c3f57995df017fb5152fe03cd8cdf8275ba4988e602c198785"
     },
     {
       "id": "img_0237",
       "sense_id": "sns_0237",
-      "key": "symbols/paint.png",
+      "key": "symbols/paint.webp",
       "status": "approved",
       "sha256": "3083a50dfe22f39d9b781c9efaf9859fdf03d4a1c5eafd03469067f1f43302f2"
     },
     {
       "id": "img_0238",
       "sense_id": "sns_0238",
-      "key": "symbols/cut.png",
+      "key": "symbols/cut.webp",
       "status": "approved",
       "sha256": "fbe0d1c4095cbbd455f05d15eeac5fc761025cedf051d25abcc4d769bc58b111"
     },
     {
       "id": "img_0239",
       "sense_id": "sns_0239",
-      "key": "symbols/glue.png",
+      "key": "symbols/glue.webp",
       "status": "approved",
       "sha256": "cb42d0762427e1de3c7d3eb144a6353edf3e57ac331625c7159c10a0b05e8c41"
     },
     {
       "id": "img_0240",
       "sense_id": "sns_0240",
-      "key": "symbols/listen.png",
+      "key": "symbols/listen.webp",
       "status": "approved",
       "sha256": "1f8343704a5e84ae2b7ef4e0a3ff6d1e80ddbe40f97deb6c0e98984b86d73f3f"
     },
     {
       "id": "img_0241",
       "sense_id": "sns_0241",
-      "key": "symbols/speak.png",
+      "key": "symbols/speak.webp",
       "status": "approved",
       "sha256": "675056e4a435885cac75f78d0696d5ff9cb5bc00dc1c5b84706a5c2ed7d11467"
     },
     {
       "id": "img_0242",
       "sense_id": "sns_0242",
-      "key": "symbols/talk.png",
+      "key": "symbols/talk.webp",
       "status": "approved",
       "sha256": "cc6343c69eb4773b1f2ffae8609263cff74cf83469c4647a9a4846388ab2dc3e"
     },
     {
       "id": "img_0243",
       "sense_id": "sns_0243",
-      "key": "symbols/sing.png",
+      "key": "symbols/sing.webp",
       "status": "approved",
       "sha256": "1321ca1e21860593e5eb1cdb364ba4f5dfc1ab8ca537bf9f253a476f5e6a2045"
     },
     {
       "id": "img_0244",
       "sense_id": "sns_0244",
-      "key": "symbols/count.png",
+      "key": "symbols/count.webp",
       "status": "approved",
       "sha256": "8123c188d65316d6d0dba08fc3322327cbb0dddeba45cd4866b04a5fd3b70c6b"
     },
     {
       "id": "img_0245",
       "sense_id": "sns_0245",
-      "key": "symbols/share.png",
+      "key": "symbols/share.webp",
       "status": "approved",
       "sha256": "7d5f0005ef6f6e46caf2f82f5376d45065ce4d6f9126545cfdbeeec619d7935e"
     },
     {
       "id": "img_0246",
       "sense_id": "sns_0246",
-      "key": "symbols/clean_up.png",
+      "key": "symbols/clean_up.webp",
       "status": "approved",
       "sha256": "b32280ebb43672287b0026d9ee5c4a001b14e9a833396cabe34d72791a4e02a0"
     },
     {
       "id": "img_0247",
       "sense_id": "sns_0247",
-      "key": "symbols/wash.png",
+      "key": "symbols/wash.webp",
       "status": "approved",
       "sha256": "9e83bd9788504810e792d6b584419694d8103a5d508aa309038a8e8aa6684ef5"
     },
     {
       "id": "img_0248",
       "sense_id": "sns_0248",
-      "key": "symbols/wipe.png",
+      "key": "symbols/wipe.webp",
       "status": "approved",
       "sha256": "7608d523126a0403224756c6053daf71179aa44d95f88c68e74428925f374543"
     },
     {
       "id": "img_0249",
       "sense_id": "sns_0249",
-      "key": "symbols/cook.png",
+      "key": "symbols/cook.webp",
       "status": "approved",
       "sha256": "7f45d86261ba2e0f5718b3b835dce11f38bea36dd46f43767e0604221c505b6f"
     },
     {
       "id": "img_0250",
       "sense_id": "sns_0250",
-      "key": "symbols/build.png",
+      "key": "symbols/build.webp",
       "status": "approved",
       "sha256": "05aa4bd6998331381943094ed2f559fd0b64b56d75ff2dd1826cd2e421fc18aa"
     },
     {
       "id": "img_0251",
       "sense_id": "sns_0251",
-      "key": "symbols/fix.png",
+      "key": "symbols/fix.webp",
       "status": "approved",
       "sha256": "82449ac6120fb29ef69f966f52117480b60e1be4bddcfda004a5a384c89a4d32"
     },
     {
       "id": "img_0252",
       "sense_id": "sns_0252",
-      "key": "symbols/hold.png",
+      "key": "symbols/hold.webp",
       "status": "approved",
       "sha256": "1baffd515767fef083bfb98fd8bf37f0ae10fea023737c293187fcf8c4aaa440"
     },
     {
       "id": "img_0253",
       "sense_id": "sns_0253",
-      "key": "symbols/touch.png",
+      "key": "symbols/touch.webp",
       "status": "approved",
       "sha256": "7244da3539f9ef23ebc825d5adaff4aa4b71dc7e5b703f04a7c9d28a5a1f9e41"
     },
     {
       "id": "img_0254",
       "sense_id": "sns_0254",
-      "key": "symbols/know.png",
+      "key": "symbols/know.webp",
       "status": "approved",
       "sha256": "08e023f4d9f69009db7bfff10ba4f0affc08fdcca755154c79aa1b9dd4c4f04a"
     },
     {
       "id": "img_0255",
       "sense_id": "sns_0255",
-      "key": "symbols/remember.png",
+      "key": "symbols/remember.webp",
       "status": "approved",
       "sha256": "1a642fa50e5cee4f350f827a0384294870a84fe1ff5dcde8bd373e538473b9d5"
     },
     {
       "id": "img_0256",
       "sense_id": "sns_0256",
-      "key": "symbols/forget.png",
+      "key": "symbols/forget.webp",
       "status": "approved",
       "sha256": "9ed8fa133530b41d02b05d65cc7a5d08065cba1fc40e75155262cbd4d1234881"
     },
     {
       "id": "img_0257",
       "sense_id": "sns_0257",
-      "key": "symbols/choose.png",
+      "key": "symbols/choose.webp",
       "status": "approved",
       "sha256": "c7110d793d036c27f3288f6eb3ac979d43662961c8c6976b9c617e54a4dcf0ad"
     },
     {
       "id": "img_0258",
       "sense_id": "sns_0258",
-      "key": "symbols/show.png",
+      "key": "symbols/show.webp",
       "status": "approved",
       "sha256": "92fa7a67538c2741822f1c1407f22dbb07c509a55ed6f936fa04b94727f97ba5"
     },
     {
       "id": "img_0259",
       "sense_id": "sns_0259",
-      "key": "symbols/ask.png",
+      "key": "symbols/ask.webp",
       "status": "approved",
       "sha256": "e52702f5f89f2c47e8ea2005004c976bd490062e8d90996ee6f4794c986c669e"
     },
     {
       "id": "img_0260",
       "sense_id": "sns_0260",
-      "key": "symbols/hug.png",
+      "key": "symbols/hug.webp",
       "status": "approved",
       "sha256": "90868314c2f26cfa551d81497e9d7d8d621361c2c94592c31a15560fc106779b"
     },
     {
       "id": "img_0261",
       "sense_id": "sns_0261",
-      "key": "symbols/kiss.png",
+      "key": "symbols/kiss.webp",
       "status": "approved",
       "sha256": "623159a04ca86830200863ad2d75be0c64ff6b6190b33c394781553bda7f3102"
     },
     {
       "id": "img_0262",
       "sense_id": "sns_0262",
-      "key": "symbols/laugh.png",
+      "key": "symbols/laugh.webp",
       "status": "approved",
       "sha256": "b7ec1d8dacf780527053aa0d0def6cf759dbc6ae9d426d3e810b949c9948057b"
     },
     {
       "id": "img_0263",
       "sense_id": "sns_0263",
-      "key": "symbols/cry.png",
+      "key": "symbols/cry.webp",
       "status": "approved",
       "sha256": "ec35ef244980beafe36bfe0320d6b0fceee9c3995e21b3e75102ec4ea039f9b9"
     },
     {
       "id": "img_0264",
       "sense_id": "sns_0264",
-      "key": "symbols/sleep.png",
+      "key": "symbols/sleep.webp",
       "status": "approved",
       "sha256": "cac234b064ac83bffc78279cf0b813eb6d1376d4a8ee3a6a7c8c0fc2304fb162"
     },
     {
       "id": "img_0265",
       "sense_id": "sns_0265",
-      "key": "symbols/wake_up.png",
+      "key": "symbols/wake_up.webp",
       "status": "approved",
       "sha256": "3fc1819ba6ca652af0d9fce5ccbf92cab8db33ca6b45fdb93bb8fd277daeac9e"
     },
     {
       "id": "img_0266",
       "sense_id": "sns_0266",
-      "key": "symbols/family.png",
+      "key": "symbols/family.webp",
       "status": "approved",
       "sha256": "53836904863ba7b9b04e592cb4d03472d1070c7eefa58e3fc7c4e698d1f32723"
     },
     {
       "id": "img_0267",
       "sense_id": "sns_0267",
-      "key": "symbols/mom.png",
+      "key": "symbols/mom.webp",
       "status": "approved",
       "sha256": "7cd27569ae8a5872557fde82a0452dc0d405b86407224af9800a48d2d4514aa6"
     },
     {
       "id": "img_0268",
       "sense_id": "sns_0268",
-      "key": "symbols/dad.png",
+      "key": "symbols/dad.webp",
       "status": "approved",
       "sha256": "47c93c0b81a6d499dd2b2252651f9fb359724eced38acb2f2076f39d28463a71"
     },
     {
       "id": "img_0269",
       "sense_id": "sns_0269",
-      "key": "symbols/mama.png",
+      "key": "symbols/mama.webp",
       "status": "approved",
       "sha256": "7cd27569ae8a5872557fde82a0452dc0d405b86407224af9800a48d2d4514aa6"
     },
     {
       "id": "img_0270",
       "sense_id": "sns_0270",
-      "key": "symbols/dada.png",
+      "key": "symbols/dada.webp",
       "status": "approved",
       "sha256": "47c93c0b81a6d499dd2b2252651f9fb359724eced38acb2f2076f39d28463a71"
     },
     {
       "id": "img_0271",
       "sense_id": "sns_0271",
-      "key": "symbols/baby.png",
+      "key": "symbols/baby.webp",
       "status": "approved",
       "sha256": "594a09207f5fdd824208c9f32206f9a98b04993287f6978e46740847951f0443"
     },
     {
       "id": "img_0272",
       "sense_id": "sns_0272",
-      "key": "symbols/brother.png",
+      "key": "symbols/brother.webp",
       "status": "approved",
       "sha256": "588ba08378138cd2edaff909b8d8e25c8de1043fc3d0003f47efa687f233fbbc"
     },
     {
       "id": "img_0273",
       "sense_id": "sns_0273",
-      "key": "symbols/sister.png",
+      "key": "symbols/sister.webp",
       "status": "approved",
       "sha256": "1cb1f648da2305c1e8c91e6c99217feb13e4e9f6c6910831d5ef7499170d6147"
     },
     {
       "id": "img_0274",
       "sense_id": "sns_0274",
-      "key": "symbols/grandma.png",
+      "key": "symbols/grandma.webp",
       "status": "approved",
       "sha256": "e07334e703b43065702557830dc959e94fb6423d79596af1b5e5ee0b788786a5"
     },
     {
       "id": "img_0275",
       "sense_id": "sns_0275",
-      "key": "symbols/grandpa.png",
+      "key": "symbols/grandpa.webp",
       "status": "approved",
       "sha256": "9e0a58088baa96ea252e4a27664675c79bd7aa2c3b342e9e08c3fda116b4528b"
     },
     {
       "id": "img_0276",
       "sense_id": "sns_0276",
-      "key": "symbols/aunt.png",
+      "key": "symbols/aunt.webp",
       "status": "approved",
       "sha256": "2daa1bcf9e16b1ce528b6b049954dbf3ae295c5db09f042dc0c1a5305466038e"
     },
     {
       "id": "img_0277",
       "sense_id": "sns_0277",
-      "key": "symbols/uncle.png",
+      "key": "symbols/uncle.webp",
       "status": "approved",
       "sha256": "bf971ed8f0a6ef270c08dfd34b90b692c1d60594444481516a83d7e7c1384fe2"
     },
     {
       "id": "img_0278",
       "sense_id": "sns_0278",
-      "key": "symbols/cousin.png",
+      "key": "symbols/cousin.webp",
       "status": "approved",
       "sha256": "5a24007246aec2f88d474937d7746fc95e189ae59e72a03650c6ede0d401ee11"
     },
     {
       "id": "img_0279",
       "sense_id": "sns_0279",
-      "key": "symbols/pet.png",
+      "key": "symbols/pet.webp",
       "status": "approved",
       "sha256": "9e00a839021dd655416d3ff91bf8962ae843b4dd59cd1f48f25fc06ff9020dcb"
     },
     {
       "id": "img_0280",
       "sense_id": "sns_0280",
-      "key": "symbols/teacher.png",
+      "key": "symbols/teacher.webp",
       "status": "approved",
       "sha256": "d22a29af5ca3232986ce45ba2bbcbfe186e224c992ee0889d71e3d0eafa6a835"
     },
     {
       "id": "img_0281",
       "sense_id": "sns_0281",
-      "key": "symbols/therapist.png",
+      "key": "symbols/therapist.webp",
       "status": "approved",
       "sha256": "6b008d1a80ffabecfebaf945e7bb6dfc7e4467efe991296a6bd97e062e81a48b"
     },
     {
       "id": "img_0282",
       "sense_id": "sns_0282",
-      "key": "symbols/aide.png",
+      "key": "symbols/aide.webp",
       "status": "approved",
       "sha256": "d90175bfba7e72c5c9b2701106900eceb57e527d06763428af82e7b1a3d73355"
     },
     {
       "id": "img_0283",
       "sense_id": "sns_0283",
-      "key": "symbols/student.png",
+      "key": "symbols/student.webp",
       "status": "approved",
       "sha256": "e322331a4eba9cda927896ac88ccab3f66db63e3122e9f07fcb22b6ee6f076d8"
     },
     {
       "id": "img_0284",
       "sense_id": "sns_0284",
-      "key": "symbols/friend.png",
+      "key": "symbols/friend.webp",
       "status": "approved",
       "sha256": "39e0ba006f402b8aa1197afa87bca2f47b0ff1f6f8efa653ff16fed528453c56"
     },
     {
       "id": "img_0285",
       "sense_id": "sns_0285",
-      "key": "symbols/class.png",
+      "key": "symbols/class.webp",
       "status": "approved",
       "sha256": "308a960415d73c9ef07ee52357573689eb9586577f2f32ac20727e88d1977fef"
     },
     {
       "id": "img_0286",
       "sense_id": "sns_0286",
-      "key": "symbols/firefighter.png",
+      "key": "symbols/firefighter.webp",
       "status": "approved",
       "sha256": "18004df4301479f4dcf43ad4994582144ea050e101721d60ad8ba9f3df25b27e"
     },
     {
       "id": "img_0287",
       "sense_id": "sns_0287",
-      "key": "symbols/police_officer.png",
+      "key": "symbols/police_officer.webp",
       "status": "approved",
       "sha256": "8e496b26b5db0eab54121574c3d5458eafc97ba72ee9c701d1b8021b7ce7e78d"
     },
     {
       "id": "img_0288",
       "sense_id": "sns_0288",
-      "key": "symbols/bus_driver.png",
+      "key": "symbols/bus_driver.webp",
       "status": "approved",
       "sha256": "cc4ed2f49226a25ac69d925cf9b4cedf69c130cc6b2fa57db5d94da61ae1ceff"
     },
     {
       "id": "img_0289",
       "sense_id": "sns_0289",
-      "key": "symbols/neighbor.png",
+      "key": "symbols/neighbor.webp",
       "status": "approved",
       "sha256": "bc7ad20120137f20357ddc89413f6025951b3902b76a5d26306f07e85c9fe27a"
     },
     {
       "id": "img_0290",
       "sense_id": "sns_0290",
-      "key": "symbols/person.png",
+      "key": "symbols/person.webp",
       "status": "approved",
       "sha256": "be80b3edd798533d6b166c61736ac0abf0200b12e6705cfee9295d75977b27e8"
     },
     {
       "id": "img_0291",
       "sense_id": "sns_0291",
-      "key": "symbols/people.png",
+      "key": "symbols/people.webp",
       "status": "approved",
       "sha256": "b708e605c3642cf009dd2cad6d539648ce61362ddb59e5d60f933698a27c2d13"
     },
     {
       "id": "img_0292",
       "sense_id": "sns_0292",
-      "key": "symbols/kids.png",
+      "key": "symbols/kids.webp",
       "status": "approved",
       "sha256": "f1afb592b856524c51f461483dcf74e5a3a8e6900d186207a480067cc135cda8"
     },
     {
       "id": "img_0293",
       "sense_id": "sns_0293",
-      "key": "symbols/doctor.png",
+      "key": "symbols/doctor.webp",
       "status": "approved",
       "sha256": "4a30093eae18480170950a0c4094e547c08b3ad773af8afcaffbbe70b8ad5004"
     },
     {
       "id": "img_0294",
       "sense_id": "sns_0294",
-      "key": "symbols/nurse.png",
+      "key": "symbols/nurse.webp",
       "status": "approved",
       "sha256": "3237db801a985bf290bcba8d961d28cd0df168547ac7e9895bcc2e3138c328e8"
     },
     {
       "id": "img_0295",
       "sense_id": "sns_0295",
-      "key": "symbols/babysitter.png",
+      "key": "symbols/babysitter.webp",
       "status": "approved",
       "sha256": "a0f0a3dc5f79870225131f5769f727af55bb676cf974232181ebfbbd1bdb4967"
     },
     {
       "id": "img_0296",
       "sense_id": "sns_0296",
-      "key": "symbols/name.png",
+      "key": "symbols/name.webp",
       "status": "approved",
       "sha256": "0a43dc881caa232f5aea1abf530c06cb3f5dbafab6223f4eddc66cf421dabd47"
     },
     {
       "id": "img_0297",
       "sense_id": "sns_0297",
-      "key": "symbols/home.png",
+      "key": "symbols/home.webp",
       "status": "approved",
       "sha256": "3dd5a35f5851eaf64d7e29afd093b3948f46857464fef74d734a6e66fe7d4a84"
     },
     {
       "id": "img_0298",
       "sense_id": "sns_0298",
-      "key": "symbols/house.png",
+      "key": "symbols/house.webp",
       "status": "approved",
       "sha256": "c3b255987904e121f9e2c229cec1a0bf1d8f6d389ef21e50575bbd372e4da96c"
     },
     {
       "id": "img_0299",
       "sense_id": "sns_0299",
-      "key": "symbols/bedroom.png",
+      "key": "symbols/bedroom.webp",
       "status": "approved",
       "sha256": "9f378e3490cde3a7a029e336728a9798e5804684ba635ae64b7e13ce594d90de"
     },
     {
       "id": "img_0300",
       "sense_id": "sns_0300",
-      "key": "symbols/living_room.png",
+      "key": "symbols/living_room.webp",
       "status": "approved",
       "sha256": "2e4d8963db17f292fdda05b9fceda192bf3e9676242e12cbd8cea29fd5681526"
     },
     {
       "id": "img_0301",
       "sense_id": "sns_0301",
-      "key": "symbols/kitchen.png",
+      "key": "symbols/kitchen.webp",
       "status": "approved",
       "sha256": "ac18ee9cefefe0fb5d5f605ab71606546db2dee655af58cbfa576340bb330026"
     },
     {
       "id": "img_0302",
       "sense_id": "sns_0302",
-      "key": "symbols/basement.png",
+      "key": "symbols/basement.webp",
       "status": "approved",
       "sha256": "c94c2df72217c6fae9b03c494fb7c428467ed301411dda3f5456f18b26b7abc0"
     },
     {
       "id": "img_0303",
       "sense_id": "sns_0303",
-      "key": "symbols/stairs.png",
+      "key": "symbols/stairs.webp",
       "status": "approved",
       "sha256": "ae8da382a57589515d258c8deafcc5bc18f3a6cca4ce140d56c0db91ba04c920"
     },
     {
       "id": "img_0304",
       "sense_id": "sns_0304",
-      "key": "symbols/yard.png",
+      "key": "symbols/yard.webp",
       "status": "approved",
       "sha256": "191f63812b88aea6e17623d6d1ac8b4474fe7c70f1a4ef3bbcc3195a155a8c13"
     },
     {
       "id": "img_0305",
       "sense_id": "sns_0305",
-      "key": "symbols/school.png",
+      "key": "symbols/school.webp",
       "status": "approved",
       "sha256": "dffb1bc2ea1d0b467a20d0c73b5405d4494e0928dd7eb7f1ebecdb0c03a68ff7"
     },
     {
       "id": "img_0306",
       "sense_id": "sns_0306",
-      "key": "symbols/classroom.png",
+      "key": "symbols/classroom.webp",
       "status": "approved",
       "sha256": "653a75be6a1ce97b49a6cbffdbfd408dee440e3b4c1fec35bd5809ba68aede2d"
     },
     {
       "id": "img_0307",
       "sense_id": "sns_0307",
-      "key": "symbols/playground.png",
+      "key": "symbols/playground.webp",
       "status": "approved",
       "sha256": "c45cd4e4a43787fd3d12c8d0000eff94c11ae377897aaf4ace89e72ca015decc"
     },
     {
       "id": "img_0308",
       "sense_id": "sns_0308",
-      "key": "symbols/gym.png",
+      "key": "symbols/gym.webp",
       "status": "approved",
       "sha256": "543c1eeaa2a661c96ec4217b31cfb1c634d2eb5b3013964cb2bb4d4ffd8bb066"
     },
     {
       "id": "img_0309",
       "sense_id": "sns_0309",
-      "key": "symbols/cafeteria.png",
+      "key": "symbols/cafeteria.webp",
       "status": "approved",
       "sha256": "893fc85450a9d5c537c685d35f20d5219ae7f5a982f9626aedca002da626072d"
     },
     {
       "id": "img_0310",
       "sense_id": "sns_0310",
-      "key": "symbols/library.png",
+      "key": "symbols/library.webp",
       "status": "approved",
       "sha256": "4138ddda8f89ed2be8e1810157112d7372a9f99a41f547222090cbdb4551f2cc"
     },
     {
       "id": "img_0311",
       "sense_id": "sns_0311",
-      "key": "symbols/hallway.png",
+      "key": "symbols/hallway.webp",
       "status": "approved",
       "sha256": "b3386748634ce0ac35e9ec4d08b60d666894a61b31ef3059ef2bac561b042f2a"
     },
     {
       "id": "img_0312",
       "sense_id": "sns_0312",
-      "key": "symbols/desk.png",
+      "key": "symbols/desk.webp",
       "status": "approved",
       "sha256": "0be46ab03d99b713ca043d8608461143ecca4d9937ba3866e64c6b93fa4ca577"
     },
     {
       "id": "img_0313",
       "sense_id": "sns_0313",
-      "key": "symbols/park.png",
+      "key": "symbols/park.webp",
       "status": "approved",
       "sha256": "406b0b629fd7cc212cbe1b5c8f1f5810399838d92e9b02469c7aaabbf1c79b78"
     },
     {
       "id": "img_0314",
       "sense_id": "sns_0314",
-      "key": "symbols/store.png",
+      "key": "symbols/store.webp",
       "status": "approved",
       "sha256": "841ede3dc2743338f5a5e763e1fa33c1b1baf25272e230f6dd61c7571ff6b3ef"
     },
     {
       "id": "img_0315",
       "sense_id": "sns_0315",
-      "key": "symbols/grocery_store.png",
+      "key": "symbols/grocery_store.webp",
       "status": "approved",
       "sha256": "3722284e05e3cbe114a2dff29224eea91dbd23198ca93d3ddc993674ac1d46a1"
     },
     {
       "id": "img_0316",
       "sense_id": "sns_0316",
-      "key": "symbols/restaurant.png",
+      "key": "symbols/restaurant.webp",
       "status": "approved",
       "sha256": "7d9e40b0556b3954f64e0a4bf8372a87d3935c7dfd5bff04b768cd3aa7247aa4"
     },
     {
       "id": "img_0317",
       "sense_id": "sns_0317",
-      "key": "symbols/pool.png",
+      "key": "symbols/pool.webp",
       "status": "approved",
       "sha256": "35c78d5e96db9f6ae2dc1473dc4ac375d5fa377d26910112575fd6fe4b98aa97"
     },
     {
       "id": "img_0318",
       "sense_id": "sns_0318",
-      "key": "symbols/beach.png",
+      "key": "symbols/beach.webp",
       "status": "approved",
       "sha256": "6e9286a197098f13bfd98b6dfc418f5b431f7ba7bf65af5b08eb2bf82d3af7fb"
     },
     {
       "id": "img_0319",
       "sense_id": "sns_0319",
-      "key": "symbols/zoo.png",
+      "key": "symbols/zoo.webp",
       "status": "approved",
       "sha256": "4807070d298c7a0c20dc5d6ffd817840fbb2d5edc17378395fadfc069d5f4f47"
     },
     {
       "id": "img_0320",
       "sense_id": "sns_0320",
-      "key": "symbols/doctor_office.png",
+      "key": "symbols/doctor_office.webp",
       "status": "approved",
       "sha256": "72fc1d68f5a02d878ace3a5bfb0cd2b2bef8e227e6c6312149e8a06145a00c5f"
     },
     {
       "id": "img_0321",
       "sense_id": "sns_0321",
-      "key": "symbols/hospital.png",
+      "key": "symbols/hospital.webp",
       "status": "approved",
       "sha256": "9a87a21ccbad15c54d502a1a06270b10cf1dedde4f5bf1aef446632e281d9303"
     },
     {
       "id": "img_0322",
       "sense_id": "sns_0322",
-      "key": "symbols/museum.png",
+      "key": "symbols/museum.webp",
       "status": "approved",
       "sha256": "637d65d3e99216879c121e84dd947f959a06289affd5d46bfe3ef4b340a73de8"
     },
     {
       "id": "img_0323",
       "sense_id": "sns_0323",
-      "key": "symbols/movie_theater.png",
+      "key": "symbols/movie_theater.webp",
       "status": "approved",
       "sha256": "754daed6ca2f3c6085680cd79b362db7a8be786f2069a1150cc6a541baa99b77"
     },
     {
       "id": "img_0324",
       "sense_id": "sns_0324",
-      "key": "symbols/mall.png",
+      "key": "symbols/mall.webp",
       "status": "approved",
       "sha256": "e798f2035595d6f80bc0129d7f7a1fcb3082ab7016d08f7785358cf6de0683a6"
     },
     {
       "id": "img_0325",
       "sense_id": "sns_0325",
-      "key": "symbols/farm.png",
+      "key": "symbols/farm.webp",
       "status": "approved",
       "sha256": "37e3bf32d166af5495f00c31ff482cd261af46f3a1475a5f901c129203900415"
     },
     {
       "id": "img_0326",
       "sense_id": "sns_0326",
-      "key": "symbols/airport.png",
+      "key": "symbols/airport.webp",
       "status": "approved",
       "sha256": "708455223bcd881831629985d6b7266063ded9b2f28ee9db135504fee4d4a47b"
     },
     {
       "id": "img_0327",
       "sense_id": "sns_0327",
-      "key": "symbols/outside.png",
+      "key": "symbols/outside.webp",
       "status": "approved",
       "sha256": "a028320cce40cb4a03cccc001c8c929dfdf987d64db353c2d509160419be0f27"
     },
     {
       "id": "img_0328",
       "sense_id": "sns_0328",
-      "key": "symbols/inside.png",
+      "key": "symbols/inside.webp",
       "status": "approved",
       "sha256": "4da6df0f318f4a843c3a6cbfd7cc173df53430ab4c94617cdba544dd4ec2418c"
     },
     {
       "id": "img_0329",
       "sense_id": "sns_0329",
-      "key": "symbols/street.png",
+      "key": "symbols/street.webp",
       "status": "approved",
       "sha256": "641445348e124c68f8c95e6105ea342726175f351c51b56c4375ae89bc2b415f"
     },
     {
       "id": "img_0330",
       "sense_id": "sns_0330",
-      "key": "symbols/town.png",
+      "key": "symbols/town.webp",
       "status": "approved",
       "sha256": "ec80655ec4c495fcd70ec04439c5a753de89e90d7f238785d8d45266be65db31"
     },
     {
       "id": "img_0331",
       "sense_id": "sns_0331",
-      "key": "symbols/church.png",
+      "key": "symbols/church.webp",
       "status": "approved",
       "sha256": "80b87ab5d842f6a2940a68e822d20c566b9a6e74b5b55d436b7e88bc19db4d9f"
     },
     {
       "id": "img_0332",
       "sense_id": "sns_0332",
-      "key": "symbols/toy.png",
+      "key": "symbols/toy.webp",
       "status": "approved",
       "sha256": "1161c3b65ce8d9e26a3f320b2d954f2e293f36bfddd9d3199b3ef550dd1c88d9"
     },
     {
       "id": "img_0333",
       "sense_id": "sns_0333",
-      "key": "symbols/ball.png",
+      "key": "symbols/ball.webp",
       "status": "approved",
       "sha256": "1914e0fc94f4ab369abb0d04f09f13c0e1f69c76f3a43da521dee9854f050af9"
     },
     {
       "id": "img_0334",
       "sense_id": "sns_0334",
-      "key": "symbols/blocks.png",
+      "key": "symbols/blocks.webp",
       "status": "approved",
       "sha256": "805ec218a7e9da4f5d00dc5a541a9cbe08b3a072cf5a8135e9fb14507fb23db8"
     },
     {
       "id": "img_0335",
       "sense_id": "sns_0335",
-      "key": "symbols/puzzle.png",
+      "key": "symbols/puzzle.webp",
       "status": "approved",
       "sha256": "05174f3885e8f5d08958ba5710e0057dd25254a6e2c0f083597fb8d7c86eea62"
     },
     {
       "id": "img_0336",
       "sense_id": "sns_0336",
-      "key": "symbols/doll.png",
+      "key": "symbols/doll.webp",
       "status": "approved",
       "sha256": "bdc1d8e8f2d3fbcea26d5571c111cfec5e00db4459d076791e58b2f8e02fa8b9"
     },
     {
       "id": "img_0337",
       "sense_id": "sns_0337",
-      "key": "symbols/action_figure.png",
+      "key": "symbols/action_figure.webp",
       "status": "approved",
       "sha256": "405ef6576796b9f1427f26d00895f6c838a868a703956aa65b9d001d85874343"
     },
     {
       "id": "img_0338",
       "sense_id": "sns_0338",
-      "key": "symbols/bubbles.png",
+      "key": "symbols/bubbles.webp",
       "status": "approved",
       "sha256": "fb8b37f8691960961bac7a0c2c27bce81e64e50d077e96651c6c4c96bf3d92c7"
     },
     {
       "id": "img_0339",
       "sense_id": "sns_0339",
-      "key": "symbols/play_dough.png",
+      "key": "symbols/play_dough.webp",
       "status": "approved",
       "sha256": "902f7f8eca9523877723676b906e040128b8e427e0efd18ca7708dbfa57d831f"
     },
     {
       "id": "img_0340",
       "sense_id": "sns_0340",
-      "key": "symbols/toy_car.png",
+      "key": "symbols/toy_car.webp",
       "status": "approved",
       "sha256": "249679c3882e59ba10e57c2298e260fe00cc7bc8fa601431433f56cc0e6d081d"
     },
     {
       "id": "img_0341",
       "sense_id": "sns_0341",
-      "key": "symbols/toy_train.png",
+      "key": "symbols/toy_train.webp",
       "status": "approved",
       "sha256": "2f18c8b513014ff95b0e9c105aaa21315e16ffcedeefdacf6291c06733252cdd"
     },
     {
       "id": "img_0342",
       "sense_id": "sns_0342",
-      "key": "symbols/stuffed_animal.png",
+      "key": "symbols/stuffed_animal.webp",
       "status": "approved",
       "sha256": "28dbf8d0e52221eea14b2eccea752eabbb29edacd1ec76953d21ba5f7580b970"
     },
     {
       "id": "img_0343",
       "sense_id": "sns_0343",
-      "key": "symbols/dinosaur.png",
+      "key": "symbols/dinosaur.webp",
       "status": "approved",
       "sha256": "8d394f889297bf8d63d3507f530b45dd5ade841b18e126ee2a03b2f20ac923e6"
     },
     {
       "id": "img_0344",
       "sense_id": "sns_0344",
-      "key": "symbols/robot.png",
+      "key": "symbols/robot.webp",
       "status": "approved",
       "sha256": "7e26ba000621243499bb1928d1785705c6ac98512ba6955027e87c285bb62ff6"
     },
     {
       "id": "img_0345",
       "sense_id": "sns_0345",
-      "key": "symbols/legos.png",
+      "key": "symbols/legos.webp",
       "status": "approved",
       "sha256": "31a4f24be85b6ac4242bacc120b368ff77a46c8029e0352082dacefb8e2ab97d"
     },
     {
       "id": "img_0346",
       "sense_id": "sns_0346",
-      "key": "symbols/board_game.png",
+      "key": "symbols/board_game.webp",
       "status": "approved",
       "sha256": "0e16831bdb113f63d637de86f02c76bfa98a0b57436caca10f9ff3ef27658064"
     },
     {
       "id": "img_0347",
       "sense_id": "sns_0347",
-      "key": "symbols/swing_set.png",
+      "key": "symbols/swing_set.webp",
       "status": "approved",
       "sha256": "b5d0443404a6a1fb1d5fb82399c685c7368f65fd7ec05af57620be7f69f20ce5"
     },
     {
       "id": "img_0348",
       "sense_id": "sns_0348",
-      "key": "symbols/sandbox.png",
+      "key": "symbols/sandbox.webp",
       "status": "approved",
       "sha256": "6c3c88c5c1dba0586c28a6ef6ff5146d25792b31a6cae9ce976f5831fa6759c7"
     },
     {
       "id": "img_0349",
       "sense_id": "sns_0349",
-      "key": "symbols/bike.png",
+      "key": "symbols/bike.webp",
       "status": "approved",
       "sha256": "a4ce0ba2bd1f8913b34eecfa76028ff13510aab3965f893cb802177f18979dd0"
     },
     {
       "id": "img_0350",
       "sense_id": "sns_0350",
-      "key": "symbols/scooter.png",
+      "key": "symbols/scooter.webp",
       "status": "approved",
       "sha256": "b68b6819ead4141f4365c3718fa0a25b60b2632b659064323bcc85e9c53c9e63"
     },
     {
       "id": "img_0351",
       "sense_id": "sns_0351",
-      "key": "symbols/skateboard.png",
+      "key": "symbols/skateboard.webp",
       "status": "approved",
       "sha256": "1c13a441e0607432c712cfd46e686770a8ebc229e252b1cbb1e46b09348957a0"
     },
     {
       "id": "img_0352",
       "sense_id": "sns_0352",
-      "key": "symbols/wagon.png",
+      "key": "symbols/wagon.webp",
       "status": "approved",
       "sha256": "fcf3dbaaeabd50153d5f6b8edd447c489bb7a622eb5084037d023a69c3bf3121"
     },
     {
       "id": "img_0353",
       "sense_id": "sns_0353",
-      "key": "symbols/chalk.png",
+      "key": "symbols/chalk.webp",
       "status": "approved",
       "sha256": "6e53f24461656a1bd39d37c485d4100b5e41246d820d0a990f309c3aa00f2ca6"
     },
     {
       "id": "img_0354",
       "sense_id": "sns_0354",
-      "key": "symbols/jump_rope.png",
+      "key": "symbols/jump_rope.webp",
       "status": "approved",
       "sha256": "ebabf6e28b9b4f003ab67bbbd6ae62143d6bbb842fa3f4ad180d73f895b42bd4"
     },
     {
       "id": "img_0355",
       "sense_id": "sns_0355",
-      "key": "symbols/music.png",
+      "key": "symbols/music.webp",
       "status": "approved",
       "sha256": "00ad1adfcc5c3f74d388b3ed4709827cfbdc9f782a8c299e6b1ebc261602d1b0"
     },
     {
       "id": "img_0356",
       "sense_id": "sns_0356",
-      "key": "symbols/song.png",
+      "key": "symbols/song.webp",
       "status": "approved",
       "sha256": "59b58c4e18d52577a0eced60b64522b159229870945c50b79a5ee8aee3a6a735"
     },
     {
       "id": "img_0357",
       "sense_id": "sns_0357",
-      "key": "symbols/tablet.png",
+      "key": "symbols/tablet.webp",
       "status": "approved",
       "sha256": "cd167ddf23a09e3d6cb2d4615fdcb7f0a87567bde944d1cda9f89522c78e9361"
     },
     {
       "id": "img_0358",
       "sense_id": "sns_0358",
-      "key": "symbols/ipad.png",
+      "key": "symbols/ipad.webp",
       "status": "approved",
       "sha256": "ea021ec984184ec947aecc963161ceac7376e0f0b3c24b3fb4e3659ac03670f0"
     },
     {
       "id": "img_0359",
       "sense_id": "sns_0359",
-      "key": "symbols/phone.png",
+      "key": "symbols/phone.webp",
       "status": "approved",
       "sha256": "a3f61611f300916102235492e288da9638948fe65cc1176861705f4ea450edbc"
     },
     {
       "id": "img_0360",
       "sense_id": "sns_0360",
-      "key": "symbols/tv.png",
+      "key": "symbols/tv.webp",
       "status": "approved",
       "sha256": "8fadb90ac5992efc20c5c88c06273508aae2807d58aa401260812ff2a47f1447"
     },
     {
       "id": "img_0361",
       "sense_id": "sns_0361",
-      "key": "symbols/movie.png",
+      "key": "symbols/movie.webp",
       "status": "approved",
       "sha256": "f0d4d7c46d33788fcb48d427d044f6aa36de5c9e097be97835fa945133fdefa1"
     },
     {
       "id": "img_0362",
       "sense_id": "sns_0362",
-      "key": "symbols/video.png",
+      "key": "symbols/video.webp",
       "status": "approved",
       "sha256": "98a0be42fad8813c1d42055ce386d40254192320f1d95e48d1fc022db836a4db"
     },
     {
       "id": "img_0363",
       "sense_id": "sns_0363",
-      "key": "symbols/headphones.png",
+      "key": "symbols/headphones.webp",
       "status": "approved",
       "sha256": "5a78999adc76cef7522a10f005d73696acb1615072cfb18c9869a709f9142cc4"
     },
     {
       "id": "img_0364",
       "sense_id": "sns_0364",
-      "key": "symbols/computer.png",
+      "key": "symbols/computer.webp",
       "status": "approved",
       "sha256": "9c4c0c8c1fb13eee4b1ef81944e3745200a4aa0cabdb2b0867217c71c38ff803"
     },
     {
       "id": "img_0365",
       "sense_id": "sns_0365",
-      "key": "symbols/camera.png",
+      "key": "symbols/camera.webp",
       "status": "approved",
       "sha256": "1d24de836db3fd0c59c9b054315f9b6e1e117bd6f1a8654df1af4470e0b08e95"
     },
     {
       "id": "img_0366",
       "sense_id": "sns_0366",
-      "key": "symbols/paper.png",
+      "key": "symbols/paper.webp",
       "status": "approved",
       "sha256": "119b6ee2094d9a1414fbecd0eac1d5aafe8383c4851135de741f9d2c6175ca83"
     },
     {
       "id": "img_0367",
       "sense_id": "sns_0367",
-      "key": "symbols/markers.png",
+      "key": "symbols/markers.webp",
       "status": "approved",
       "sha256": "4a7ee7531c900fdc014005101d2568c242a2454c982d899fcc108c698971f394"
     },
     {
       "id": "img_0368",
       "sense_id": "sns_0368",
-      "key": "symbols/crayons.png",
+      "key": "symbols/crayons.webp",
       "status": "approved",
       "sha256": "1427bfc77e5f3135cf130f88402579c7fd60c48de2dae34381d75cbd6ca517d9"
     },
     {
       "id": "img_0369",
       "sense_id": "sns_0369",
-      "key": "symbols/book.png",
+      "key": "symbols/book.webp",
       "status": "approved",
       "sha256": "f2fdc756d542c347ec8bd37289c139e32797eeaddf900a3af349b91fbf355d2b"
     },
     {
       "id": "img_0370",
       "sense_id": "sns_0370",
-      "key": "symbols/chair.png",
+      "key": "symbols/chair.webp",
       "status": "approved",
       "sha256": "b9a05f3bb190d0b7f3539e126417445013935aafa5c4436a00d696d6294646ea"
     },
     {
       "id": "img_0371",
       "sense_id": "sns_0371",
-      "key": "symbols/couch.png",
+      "key": "symbols/couch.webp",
       "status": "approved",
       "sha256": "54060d8e0d22239a7742c1dc125671ddd17481ffd54120126fd3b6f68d467f2c"
     },
     {
       "id": "img_0372",
       "sense_id": "sns_0372",
-      "key": "symbols/table.png",
+      "key": "symbols/table.webp",
       "status": "approved",
       "sha256": "aae595188302a0641ad6058829c621dee7fe721c5b2ca9c2a5e1f2d48d5e5865"
     },
     {
       "id": "img_0373",
       "sense_id": "sns_0373",
-      "key": "symbols/bed.png",
+      "key": "symbols/bed.webp",
       "status": "approved",
       "sha256": "3e3d828a4ae70ad1e9e4ce6bf58cad34a2475eec356eaf2d02ab0dbd5c76ae33"
     },
     {
       "id": "img_0374",
       "sense_id": "sns_0374",
-      "key": "symbols/door.png",
+      "key": "symbols/door.webp",
       "status": "approved",
       "sha256": "ec05c65f7521d2012de2303dca173a177062fdcc0dcec699e7bfd6a17c7ceb04"
     },
     {
       "id": "img_0375",
       "sense_id": "sns_0375",
-      "key": "symbols/window.png",
+      "key": "symbols/window.webp",
       "status": "approved",
       "sha256": "15d9e5767d77856f3237a092771c1adf69bba9fda041f8dbc6dfd03d566a4617"
     },
     {
       "id": "img_0376",
       "sense_id": "sns_0376",
-      "key": "symbols/lamp.png",
+      "key": "symbols/lamp.webp",
       "status": "approved",
       "sha256": "80668773e8e9db4aefec18d9d4d5d832ed4c5fb49491c211dcba6163703c12cc"
     },
     {
       "id": "img_0377",
       "sense_id": "sns_0377",
-      "key": "symbols/clock.png",
+      "key": "symbols/clock.webp",
       "status": "approved",
       "sha256": "39df9f21a9969110923d3686845b1d30da9a1a6c9d15ba879a49734fd39d00a7"
     },
     {
       "id": "img_0378",
       "sense_id": "sns_0378",
-      "key": "symbols/trash.png",
+      "key": "symbols/trash.webp",
       "status": "approved",
       "sha256": "e24a7b7172e20b78a11c75a714a6e87381f9b2896c5cd18cad296d97fccabc0a"
     },
     {
       "id": "img_0379",
       "sense_id": "sns_0379",
-      "key": "symbols/sink.png",
+      "key": "symbols/sink.webp",
       "status": "approved",
       "sha256": "6198c8407e6d0c22f6ae6ce3cef89e5a63e2c3abd96fad1f803969a420bcb709"
     },
     {
       "id": "img_0380",
       "sense_id": "sns_0380",
-      "key": "symbols/mirror.png",
+      "key": "symbols/mirror.webp",
       "status": "approved",
       "sha256": "e96223430fec564eca3a2e30d8ee22d48aa3edf6db9e4bfe4206173ff2430ec1"
     },
     {
       "id": "img_0381",
       "sense_id": "sns_0381",
-      "key": "symbols/rug.png",
+      "key": "symbols/rug.webp",
       "status": "approved",
       "sha256": "b9c18f8fdebb6091876a3da53ae9984e693aae91b38b1899c8b4f6f45eb74867"
     },
     {
       "id": "img_0382",
       "sense_id": "sns_0382",
-      "key": "symbols/plate.png",
+      "key": "symbols/plate.webp",
       "status": "approved",
       "sha256": "b1514d4e48be0d4e329bf14f2c91a275672a938d678648879b0d9b0e735b0942"
     },
     {
       "id": "img_0383",
       "sense_id": "sns_0383",
-      "key": "symbols/bowl.png",
+      "key": "symbols/bowl.webp",
       "status": "approved",
       "sha256": "30ae369c0ac952ede14272bd42f83797fb11d1b12e8c2c02d674e3dea77866e0"
     },
     {
       "id": "img_0384",
       "sense_id": "sns_0384",
-      "key": "symbols/cup.png",
+      "key": "symbols/cup.webp",
       "status": "approved",
       "sha256": "0d29d101b30e5b52d5f263436f6f3ce9f18e92f60855aa97811b3f48f1a2767e"
     },
     {
       "id": "img_0385",
       "sense_id": "sns_0385",
-      "key": "symbols/fork.png",
+      "key": "symbols/fork.webp",
       "status": "approved",
       "sha256": "ef1a71277e3e19fd92b4d35eaa389da8c0c2af206b2d544d8ff3f32a8ec62f57"
     },
     {
       "id": "img_0386",
       "sense_id": "sns_0386",
-      "key": "symbols/spoon.png",
+      "key": "symbols/spoon.webp",
       "status": "approved",
       "sha256": "1790679c1c80360df895b9e94cb19732d472b5d3ed808ceb126146cded57d75b"
     },
     {
       "id": "img_0387",
       "sense_id": "sns_0387",
-      "key": "symbols/knife.png",
+      "key": "symbols/knife.webp",
       "status": "approved",
       "sha256": "b6617dcbc007cdc5627a6f2ac0b7b9f87ab8eb67b5d14e604460ff44bcaf3650"
     },
     {
       "id": "img_0388",
       "sense_id": "sns_0388",
-      "key": "symbols/napkin.png",
+      "key": "symbols/napkin.webp",
       "status": "approved",
       "sha256": "c32875335762791bbfe2c7b880355f4b8fc926a765c584c03e4d4a5f7bb82f7f"
     },
     {
       "id": "img_0389",
       "sense_id": "sns_0389",
-      "key": "symbols/bottle.png",
+      "key": "symbols/bottle.webp",
       "status": "approved",
       "sha256": "be7b81bfac7876eccedf1ec2dff5fa8ce6b6c74fb134d2cb21f5b461a51d2626"
     },
     {
       "id": "img_0390",
       "sense_id": "sns_0390",
-      "key": "symbols/straw.png",
+      "key": "symbols/straw.webp",
       "status": "approved",
       "sha256": "e3ace7775e1b9bfc0cdc2e40879bd1217e368abdebbce581d90d66714e7bf2e9"
     },
     {
       "id": "img_0391",
       "sense_id": "sns_0391",
-      "key": "symbols/fridge.png",
+      "key": "symbols/fridge.webp",
       "status": "approved",
       "sha256": "9f15ba362a4757e745c41f0d2aa50bcb02823f8d83762db5ddfe0f1f4768d4fb"
     },
     {
       "id": "img_0392",
       "sense_id": "sns_0392",
-      "key": "symbols/microwave.png",
+      "key": "symbols/microwave.webp",
       "status": "approved",
       "sha256": "42af99d7aed539281105634626c56a92c3269a1582d6f20048612c0e6f969158"
     },
     {
       "id": "img_0393",
       "sense_id": "sns_0393",
-      "key": "symbols/backpack.png",
+      "key": "symbols/backpack.webp",
       "status": "approved",
       "sha256": "dfae4bc89fe19b2f5f722b66fec0331de73eff04b7e356d4bb2d54c76fc98a93"
     },
     {
       "id": "img_0394",
       "sense_id": "sns_0394",
-      "key": "symbols/bag.png",
+      "key": "symbols/bag.webp",
       "status": "approved",
       "sha256": "cacd64df456662cce5fe8301263473a02b4ea7d0053270bd52201a6a90c0a396"
     },
     {
       "id": "img_0395",
       "sense_id": "sns_0395",
-      "key": "symbols/keys.png",
+      "key": "symbols/keys.webp",
       "status": "approved",
       "sha256": "05362440a9050bdc323bcec1977ed7cc0fb745b2ae1444cfdab637ad26c77dbd"
     },
     {
       "id": "img_0396",
       "sense_id": "sns_0396",
-      "key": "symbols/wallet.png",
+      "key": "symbols/wallet.webp",
       "status": "approved",
       "sha256": "5d6949f35e14b6c596113a9a4e8570ba2f1b6336c14caa8510ba529c111ab99a"
     },
     {
       "id": "img_0397",
       "sense_id": "sns_0397",
-      "key": "symbols/glasses.png",
+      "key": "symbols/glasses.webp",
       "status": "approved",
       "sha256": "8de54f4cdf77b2ab502796fe19da674f7c44907b9fd4abc8e84a9b74b7258aaa"
     },
     {
       "id": "img_0398",
       "sense_id": "sns_0398",
-      "key": "symbols/umbrella.png",
+      "key": "symbols/umbrella.webp",
       "status": "approved",
       "sha256": "91497b5d3733edf3aa903124508f4a27b4683851cd241cf92c108e1b8189ddd3"
     },
     {
       "id": "img_0399",
       "sense_id": "sns_0399",
-      "key": "symbols/blanket.png",
+      "key": "symbols/blanket.webp",
       "status": "approved",
       "sha256": "1a4c12425c5b42ba25f4d4b17b629612a1af92900c21337d61d2b866e821ce62"
     },
     {
       "id": "img_0400",
       "sense_id": "sns_0400",
-      "key": "symbols/pillow.png",
+      "key": "symbols/pillow.webp",
       "status": "approved",
       "sha256": "3efff93bff84c4e3f42d87e2a0cc36ef5ccbe41c7a891933d66c4a0a4e7e8607"
     },
     {
       "id": "img_0401",
       "sense_id": "sns_0401",
-      "key": "symbols/fan.png",
+      "key": "symbols/fan.webp",
       "status": "approved",
       "sha256": "e13eee022eab03ceffdbf439ca3e449aa73618ea6f03a379b70f239c480e44d8"
     },
     {
       "id": "img_0402",
       "sense_id": "sns_0402",
-      "key": "symbols/charger.png",
+      "key": "symbols/charger.webp",
       "status": "approved",
       "sha256": "ebca9cc34064075bdf5bfca5617762f7c1c805263180659ea079b448091795ac"
     },
     {
       "id": "img_0403",
       "sense_id": "sns_0403",
-      "key": "symbols/box.png",
+      "key": "symbols/box.webp",
       "status": "approved",
       "sha256": "ce665763ef39882d8672776fdbbf07d9121be91d510cb56a07d15159d0aefe1f"
     },
     {
       "id": "img_0404",
       "sense_id": "sns_0404",
-      "key": "symbols/battery.png",
+      "key": "symbols/battery.webp",
       "status": "approved",
       "sha256": "cb8df05582b4a12e41977baf517048d1fdd9967f1dc35fe2ee7176fc9abc4eef"
     },
     {
       "id": "img_0405",
       "sense_id": "sns_0405",
-      "key": "symbols/broom.png",
+      "key": "symbols/broom.webp",
       "status": "approved",
       "sha256": "391a94855ca30b8b9ae38bdc314ad10c8a30c50d87c9fb8fcdf0102126e83f81"
     },
     {
       "id": "img_0406",
       "sense_id": "sns_0406",
-      "key": "symbols/vacuum.png",
+      "key": "symbols/vacuum.webp",
       "status": "approved",
       "sha256": "ba58636f0780c299224a57d6b92efcbf55fd7a9df55cdbdb971b30b27b9eca2a"
     },
     {
       "id": "img_0407",
       "sense_id": "sns_0407",
-      "key": "symbols/sponge.png",
+      "key": "symbols/sponge.webp",
       "status": "approved",
       "sha256": "c385dc8fbaf56e2d67902c39c606218ae2e343e3a449d263062131a29dbb9052"
     },
     {
       "id": "img_0408",
       "sense_id": "sns_0408",
-      "key": "symbols/tape.png",
+      "key": "symbols/tape.webp",
       "status": "approved",
       "sha256": "05c4e18d2d5d7d63a566380d96174497e6b0132e6b007217f0bf1a6c0d421505"
     },
     {
       "id": "img_0409",
       "sense_id": "sns_0409",
-      "key": "symbols/flashlight.png",
+      "key": "symbols/flashlight.webp",
       "status": "approved",
       "sha256": "9cef9cd33cc2b7964538526185daa9a7744e40792a1462446ec92213b8ab07e8"
     },
     {
       "id": "img_0410",
       "sense_id": "sns_0410",
-      "key": "symbols/bucket.png",
+      "key": "symbols/bucket.webp",
       "status": "approved",
       "sha256": "187cdaf46fa8ee5be796931066f2b37cd79fc6183eaa76397ba9f8fe5f1d2649"
     },
     {
       "id": "img_0411",
       "sense_id": "sns_0411",
-      "key": "symbols/paper towel.png",
+      "key": "symbols/paper towel.webp",
       "status": "approved",
       "sha256": "48e455b0282be6b535ae07e25f9b5324653b8d5ab3f5c3769a34868316ee3618"
     },
     {
       "id": "img_0412",
       "sense_id": "sns_0412",
-      "key": "symbols/shirt.png",
+      "key": "symbols/shirt.webp",
       "status": "approved",
       "sha256": "cc80dcd6410a01744cae48e99f9eb767639cbe215b931de93c5f6772d2f1b37c"
     },
     {
       "id": "img_0413",
       "sense_id": "sns_0413",
-      "key": "symbols/pants.png",
+      "key": "symbols/pants.webp",
       "status": "approved",
       "sha256": "534a6184948a705f5cebfd86f7deb41f835ee150202d2892b1d0190035384893"
     },
     {
       "id": "img_0414",
       "sense_id": "sns_0414",
-      "key": "symbols/shorts.png",
+      "key": "symbols/shorts.webp",
       "status": "approved",
       "sha256": "447dec291a0112ae61346d723954ce1e5654997912afabc9e2c786023ee1fca6"
     },
     {
       "id": "img_0415",
       "sense_id": "sns_0415",
-      "key": "symbols/underwear.png",
+      "key": "symbols/underwear.webp",
       "status": "approved",
       "sha256": "8cd7df3b7f98d6debea606cdd15fa6a22f8c8e8bdafc222ad09d50ed57825378"
     },
     {
       "id": "img_0416",
       "sense_id": "sns_0416",
-      "key": "symbols/dress.png",
+      "key": "symbols/dress.webp",
       "status": "approved",
       "sha256": "2c228b76562590cdc917d67185087781d1f9a532482514b7170a0c620f7cf7fb"
     },
     {
       "id": "img_0417",
       "sense_id": "sns_0417",
-      "key": "symbols/skirt.png",
+      "key": "symbols/skirt.webp",
       "status": "approved",
       "sha256": "789abbd96aaf8f29c1b4a1730ecc95f4039e68e6a1250acf54c3ce3dd22c3e28"
     },
     {
       "id": "img_0418",
       "sense_id": "sns_0418",
-      "key": "symbols/sweater.png",
+      "key": "symbols/sweater.webp",
       "status": "approved",
       "sha256": "b295e61998f9de36f1703fde2b862ed3f530b4ff2f8f24b004f49f9aeecb725d"
     },
     {
       "id": "img_0419",
       "sense_id": "sns_0419",
-      "key": "symbols/sweatshirt.png",
+      "key": "symbols/sweatshirt.webp",
       "status": "approved",
       "sha256": "11ab98b14e0b1fe5d616a27f67caa9680eecc93ffa4bfee498936737a5aa25c5"
     },
     {
       "id": "img_0420",
       "sense_id": "sns_0420",
-      "key": "symbols/socks.png",
+      "key": "symbols/socks.webp",
       "status": "approved",
       "sha256": "fadbdc455ac80dacb71c826d526224e25befeebc500f4526e99710ba7bde171b"
     },
     {
       "id": "img_0421",
       "sense_id": "sns_0421",
-      "key": "symbols/shoes.png",
+      "key": "symbols/shoes.webp",
       "status": "approved",
       "sha256": "a17264b84723c5d4b30ae20673a7d7a40757828dee805a9918b722560c23b54f"
     },
     {
       "id": "img_0422",
       "sense_id": "sns_0422",
-      "key": "symbols/pajamas.png",
+      "key": "symbols/pajamas.webp",
       "status": "approved",
       "sha256": "6c0a4bd2aa7c7d7c5953918fdb5f755118ea7ebaf8286d79a5fa17fb8acf0219"
     },
     {
       "id": "img_0423",
       "sense_id": "sns_0423",
-      "key": "symbols/robe.png",
+      "key": "symbols/robe.webp",
       "status": "approved",
       "sha256": "4c4c3faf03bba50b9c1cde9c48d78cf4e5c2b5d20f9e44b59878ee82b6ee3cd7"
     },
     {
       "id": "img_0424",
       "sense_id": "sns_0424",
-      "key": "symbols/slippers.png",
+      "key": "symbols/slippers.webp",
       "status": "approved",
       "sha256": "24681cc0ea54eec61eeaea67c9cfc8691c3d04410694a5801370891de330725e"
     },
     {
       "id": "img_0425",
       "sense_id": "sns_0425",
-      "key": "symbols/jacket.png",
+      "key": "symbols/jacket.webp",
       "status": "approved",
       "sha256": "62e0ae41e3deb872ce58ffcef6c885a049e97527a271cd4948cd06acfcd10216"
     },
     {
       "id": "img_0426",
       "sense_id": "sns_0426",
-      "key": "symbols/coat.png",
+      "key": "symbols/coat.webp",
       "status": "approved",
       "sha256": "a46b3648fbf61bcc7ac11bffeabaa74c71d9a02bde715d2c8bb67d14b0e6f0f1"
     },
     {
       "id": "img_0427",
       "sense_id": "sns_0427",
-      "key": "symbols/hat.png",
+      "key": "symbols/hat.webp",
       "status": "approved",
       "sha256": "da034c4b0d032a282f81decc2e70cb5ad11d0ff64cb1af4ae2064d7f9e951697"
     },
     {
       "id": "img_0428",
       "sense_id": "sns_0428",
-      "key": "symbols/mittens.png",
+      "key": "symbols/mittens.webp",
       "status": "approved",
       "sha256": "a3969a1541f796406eb6b38819c23c2e5b40d5be165d6f931b7c77fab856f80f"
     },
     {
       "id": "img_0429",
       "sense_id": "sns_0429",
-      "key": "symbols/gloves.png",
+      "key": "symbols/gloves.webp",
       "status": "approved",
       "sha256": "02140c909a47612296fd1872ab59cc62507c596a34c687b3bc35f14130492d8f"
     },
     {
       "id": "img_0430",
       "sense_id": "sns_0430",
-      "key": "symbols/scarf.png",
+      "key": "symbols/scarf.webp",
       "status": "approved",
       "sha256": "7ac2aca70dc450883f88fed5991cea0e90025d1120a05bfc4ff9e892f7f39fa0"
     },
     {
       "id": "img_0431",
       "sense_id": "sns_0431",
-      "key": "symbols/boots.png",
+      "key": "symbols/boots.webp",
       "status": "approved",
       "sha256": "8d4663f74f530ff2c5e309bbe69b30e3c71e9765188fa05697b36e1bc43032c3"
     },
     {
       "id": "img_0432",
       "sense_id": "sns_0432",
-      "key": "symbols/raincoat.png",
+      "key": "symbols/raincoat.webp",
       "status": "approved",
       "sha256": "95db5255afe37c3982dcc8811a10fcd8b3879559704ca7c5ec9e8e3e810c3589"
     },
     {
       "id": "img_0433",
       "sense_id": "sns_0433",
-      "key": "symbols/swimsuit.png",
+      "key": "symbols/swimsuit.webp",
       "status": "approved",
       "sha256": "e6a6d6e68d1c7df0ba9a60f4e4771f2866834417fa13105299e885e293bbf215"
     },
     {
       "id": "img_0434",
       "sense_id": "sns_0434",
-      "key": "symbols/sunglasses.png",
+      "key": "symbols/sunglasses.webp",
       "status": "approved",
       "sha256": "d9e67fe9d751c802f990fdd903074307f1280097f552bcc1342e6c5ce99f7217"
     },
     {
       "id": "img_0435",
       "sense_id": "sns_0435",
-      "key": "symbols/zipper.png",
+      "key": "symbols/zipper.webp",
       "status": "approved",
       "sha256": "2facb6e4aa929837f5c221e47d5d877b657f16dd4e61a7b399d8d048e516a55e"
     },
     {
       "id": "img_0436",
       "sense_id": "sns_0436",
-      "key": "symbols/button.png",
+      "key": "symbols/button.webp",
       "status": "approved",
       "sha256": "fbc13e7d84fb8f847d0469261e6d63ce00448471ce5e8748e7338fdb785febab"
     },
     {
       "id": "img_0437",
       "sense_id": "sns_0437",
-      "key": "symbols/belt.png",
+      "key": "symbols/belt.webp",
       "status": "approved",
       "sha256": "78a83ddb3db057926bbca49caa78ee95f6c95969bcbfd16e6b4ae084ae2cffeb"
     },
     {
       "id": "img_0438",
       "sense_id": "sns_0438",
-      "key": "symbols/pocket.png",
+      "key": "symbols/pocket.webp",
       "status": "approved",
       "sha256": "5c4ef901b02b38d163d222206c94e0c5a86554fdacc50ee6757081dffc84a729"
     },
     {
       "id": "img_0439",
       "sense_id": "sns_0439",
-      "key": "symbols/sandals.png",
+      "key": "symbols/sandals.webp",
       "status": "approved",
       "sha256": "1727c8520c68d07048ebbe412f71e4b39cc43a28bd4699ed246bbf796418e5d3"
     },
     {
       "id": "img_0440",
       "sense_id": "sns_0440",
-      "key": "symbols/animal.png",
+      "key": "symbols/animal.webp",
       "status": "approved",
       "sha256": "516fbb1dc4dd67048172305b74b4d9bc5d87ed0b16ed8bec8f2dc9f09b4d7ac6"
     },
     {
       "id": "img_0441",
       "sense_id": "sns_0441",
-      "key": "symbols/dog.png",
+      "key": "symbols/dog.webp",
       "status": "approved",
       "sha256": "521fdbd696134e1b94e99d37e61cbc4029763ff45cf0d1161f38cc563bf114bf"
     },
     {
       "id": "img_0442",
       "sense_id": "sns_0442",
-      "key": "symbols/cat.png",
+      "key": "symbols/cat.webp",
       "status": "approved",
       "sha256": "60e61ad26556433366dad059ec25c48eee92179c499d5859ce4c3511548d0247"
     },
     {
       "id": "img_0443",
       "sense_id": "sns_0443",
-      "key": "symbols/puppy.png",
+      "key": "symbols/puppy.webp",
       "status": "approved",
       "sha256": "2459c0941bd1f80f5ebcfe713c3b385a1187f285ce8447d7d78a178e58eaabd5"
     },
     {
       "id": "img_0444",
       "sense_id": "sns_0444",
-      "key": "symbols/kitten.png",
+      "key": "symbols/kitten.webp",
       "status": "approved",
       "sha256": "4be3818a7c8775fb36f160963061ef4cd81e98ce11abe22dbe46a6055980bf61"
     },
     {
       "id": "img_0445",
       "sense_id": "sns_0445",
-      "key": "symbols/bird.png",
+      "key": "symbols/bird.webp",
       "status": "approved",
       "sha256": "4ff1a127175431ee95c652739d46c350555950a55bc1562933117df705b3adfd"
     },
     {
       "id": "img_0446",
       "sense_id": "sns_0446",
-      "key": "symbols/bunny.png",
+      "key": "symbols/bunny.webp",
       "status": "approved",
       "sha256": "ca1cf3734f561bd5db9592f5b5b5f3f9d34103236a9961b88071dc390ccf1807"
     },
     {
       "id": "img_0447",
       "sense_id": "sns_0447",
-      "key": "symbols/duck.png",
+      "key": "symbols/duck.webp",
       "status": "approved",
       "sha256": "9c0787c22382765ceafd292c869136494a171df0005750a57b85e27694307896"
     },
     {
       "id": "img_0448",
       "sense_id": "sns_0448",
-      "key": "symbols/hen.png",
+      "key": "symbols/hen.webp",
       "status": "approved",
       "sha256": "41283c1aa16c155a3d2bb8af30b29903be0cac6b3a18954157f8ffd1f43bd563"
     },
     {
       "id": "img_0449",
       "sense_id": "sns_0449",
-      "key": "symbols/cow.png",
+      "key": "symbols/cow.webp",
       "status": "approved",
       "sha256": "15c44cef55d4681e3526a743a036b8c7352767d94c42872846bba77c16a80081"
     },
     {
       "id": "img_0450",
       "sense_id": "sns_0450",
-      "key": "symbols/horse.png",
+      "key": "symbols/horse.webp",
       "status": "approved",
       "sha256": "d1f23207bedbfc99cf64206e0dc4caa0af1233c86e1f848c4b93135c76ae854b"
     },
     {
       "id": "img_0451",
       "sense_id": "sns_0451",
-      "key": "symbols/pig.png",
+      "key": "symbols/pig.webp",
       "status": "approved",
       "sha256": "0828818d410b530e774bfd471a03a73b960fff19757673f8d912e97e1d0caaab"
     },
     {
       "id": "img_0452",
       "sense_id": "sns_0452",
-      "key": "symbols/sheep.png",
+      "key": "symbols/sheep.webp",
       "status": "approved",
       "sha256": "072a833f82cbe776708d4f02e24b6e5e4cf02adb97eaab5fd6f6c6a00ebad737"
     },
     {
       "id": "img_0453",
       "sense_id": "sns_0453",
-      "key": "symbols/goat.png",
+      "key": "symbols/goat.webp",
       "status": "approved",
       "sha256": "fa25c25c51c68e347ec4aa14c7826184d4398315b0f0120c70122315be9f29ad"
     },
     {
       "id": "img_0454",
       "sense_id": "sns_0454",
-      "key": "symbols/bear.png",
+      "key": "symbols/bear.webp",
       "status": "approved",
       "sha256": "f17025472e6952c9bf2a3f087e7b23b1879cad9401478f825c232f5bcdebaf7e"
     },
     {
       "id": "img_0455",
       "sense_id": "sns_0455",
-      "key": "symbols/lion.png",
+      "key": "symbols/lion.webp",
       "status": "approved",
       "sha256": "6a3ecab8de69aeb3119e5993ae942fc2db80f75b5d5cec1dcc50c66be3e64285"
     },
     {
       "id": "img_0456",
       "sense_id": "sns_0456",
-      "key": "symbols/tiger.png",
+      "key": "symbols/tiger.webp",
       "status": "approved",
       "sha256": "4c442afcbca9c174fdfae944ded466aa196a838fd7d86f90ae66b7d9da0fa4c3"
     },
     {
       "id": "img_0457",
       "sense_id": "sns_0457",
-      "key": "symbols/elephant.png",
+      "key": "symbols/elephant.webp",
       "status": "approved",
       "sha256": "25c8e5b1f4f1dd50400f94e57b3fed5324a6388cbcb61fb0fc87dc4f4a0e9814"
     },
     {
       "id": "img_0458",
       "sense_id": "sns_0458",
-      "key": "symbols/monkey.png",
+      "key": "symbols/monkey.webp",
       "status": "approved",
       "sha256": "a2d6fee5df9f3656592192f73c7092906d681a25dab55de803e1f072dea1a045"
     },
     {
       "id": "img_0459",
       "sense_id": "sns_0459",
-      "key": "symbols/giraffe.png",
+      "key": "symbols/giraffe.webp",
       "status": "approved",
       "sha256": "66a739e4f089dcf774bc06c4db824bd87249113020807452da3ea806474753bd"
     },
     {
       "id": "img_0460",
       "sense_id": "sns_0460",
-      "key": "symbols/zebra.png",
+      "key": "symbols/zebra.webp",
       "status": "approved",
       "sha256": "5ae24ba00f423fd01f145de8703f0f2543f5c6ff9678539dc6713c29c4a03875"
     },
     {
       "id": "img_0461",
       "sense_id": "sns_0461",
-      "key": "symbols/hippo.png",
+      "key": "symbols/hippo.webp",
       "status": "approved",
       "sha256": "280de59448ba5d859b7a204694537484640cefa08dcf482a0dfc15ea8623cd39"
     },
     {
       "id": "img_0462",
       "sense_id": "sns_0462",
-      "key": "symbols/penguin.png",
+      "key": "symbols/penguin.webp",
       "status": "approved",
       "sha256": "89d52ccda241f6b0fa4780dcd7fbb9eda7375a3100553e0bf100be0983ce77fb"
     },
     {
       "id": "img_0463",
       "sense_id": "sns_0463",
-      "key": "symbols/dolphin.png",
+      "key": "symbols/dolphin.webp",
       "status": "approved",
       "sha256": "286ab7d49a6eb02991f4b1aa3df40b8e3b019cd19dfc02c54664fa5ad40cd413"
     },
     {
       "id": "img_0464",
       "sense_id": "sns_0464",
-      "key": "symbols/whale.png",
+      "key": "symbols/whale.webp",
       "status": "approved",
       "sha256": "38f6a4e9741226e4ab819764c4dc9f9fed38084bcf51599dbde908089a44117e"
     },
     {
       "id": "img_0465",
       "sense_id": "sns_0465",
-      "key": "symbols/snake.png",
+      "key": "symbols/snake.webp",
       "status": "approved",
       "sha256": "b6438eb2554596b768943b2c2985882f8e8cc4bbdead63836f8de03c60f22697"
     },
     {
       "id": "img_0466",
       "sense_id": "sns_0466",
-      "key": "symbols/turtle.png",
+      "key": "symbols/turtle.webp",
       "status": "approved",
       "sha256": "ec16547b28b711955ac73524eddc966ee088188c97bb168db3ec9f405a9944f7"
     },
     {
       "id": "img_0467",
       "sense_id": "sns_0467",
-      "key": "symbols/frog.png",
+      "key": "symbols/frog.webp",
       "status": "approved",
       "sha256": "cce552ea9b24a0a02cfc85b89d79b485547ef2805b3edac9a4ff46aef2707f31"
     },
     {
       "id": "img_0468",
       "sense_id": "sns_0468",
-      "key": "symbols/bug.png",
+      "key": "symbols/bug.webp",
       "status": "approved",
       "sha256": "69c41a429bcb97f3eeecfbe6b9a99d5f6bfc7640f44a19bad2cd24787aef05d8"
     },
     {
       "id": "img_0469",
       "sense_id": "sns_0469",
-      "key": "symbols/spider.png",
+      "key": "symbols/spider.webp",
       "status": "approved",
       "sha256": "e904c8b9c97c15e7d8bcc3c7410231ffa65b8791eb3fefe8a603b192dce5f25f"
     },
     {
       "id": "img_0470",
       "sense_id": "sns_0470",
-      "key": "symbols/butterfly.png",
+      "key": "symbols/butterfly.webp",
       "status": "approved",
       "sha256": "b4481fa58693f95994eacadcbb7c5b9903ddea4d4d529414119cbbc8a97521f3"
     },
     {
       "id": "img_0471",
       "sense_id": "sns_0471",
-      "key": "symbols/tree.png",
+      "key": "symbols/tree.webp",
       "status": "approved",
       "sha256": "69d5ea0e9fb49e5a55ecacae168f7779af0e54054aa3e79bc43cf92ffc64b275"
     },
     {
       "id": "img_0472",
       "sense_id": "sns_0472",
-      "key": "symbols/grass.png",
+      "key": "symbols/grass.webp",
       "status": "approved",
       "sha256": "c0c28a4c76f06f3b009d98a3a6f733299640026cbf9f7bd5771abadc37ab028a"
     },
     {
       "id": "img_0473",
       "sense_id": "sns_0473",
-      "key": "symbols/flower.png",
+      "key": "symbols/flower.webp",
       "status": "approved",
       "sha256": "9431c05055c5f8e6e04e7aa262c4c22e54d01b69ae7c062bf67602bb70b24037"
     },
     {
       "id": "img_0474",
       "sense_id": "sns_0474",
-      "key": "symbols/sun.png",
+      "key": "symbols/sun.webp",
       "status": "approved",
       "sha256": "9e0d7217cce34b8e5c9af9b64c1e524c0c952c64ede0c95b7f88aaf322a44e91"
     },
     {
       "id": "img_0475",
       "sense_id": "sns_0475",
-      "key": "symbols/rain.png",
+      "key": "symbols/rain.webp",
       "status": "approved",
       "sha256": "298c54717a1b55d9178421d2894d693f28feb05455eb954ff3ce2862a418360a"
     },
     {
       "id": "img_0476",
       "sense_id": "sns_0476",
-      "key": "symbols/snow.png",
+      "key": "symbols/snow.webp",
       "status": "approved",
       "sha256": "7c657409d4d0d0363a3c74c0da7782bcaf00bf3b67e7fcc8d728fd9b8c827378"
     },
     {
       "id": "img_0477",
       "sense_id": "sns_0477",
-      "key": "symbols/wind.png",
+      "key": "symbols/wind.webp",
       "status": "approved",
       "sha256": "23c2ba70b261226d48d01451dd2893b4b994daf40c8b2e6c010cabf80bfd8aa2"
     },
     {
       "id": "img_0478",
       "sense_id": "sns_0478",
-      "key": "symbols/cloud.png",
+      "key": "symbols/cloud.webp",
       "status": "approved",
       "sha256": "58a869f05b3706afe527cbed1daf8aa3963fe00c86494a5a18cfee54db1e8d8b"
     },
     {
       "id": "img_0479",
       "sense_id": "sns_0479",
-      "key": "symbols/moon.png",
+      "key": "symbols/moon.webp",
       "status": "approved",
       "sha256": "7078366bd320eb2f817b5e027dd6f849d92f6c1d7e34c2e5c008b1821408a440"
     },
     {
       "id": "img_0480",
       "sense_id": "sns_0480",
-      "key": "symbols/vehicle.png",
+      "key": "symbols/vehicle.webp",
       "status": "approved",
       "sha256": "85017d2ad4344b7b485c1ec08248d6a0e027ed81949893c8d7f9e4022398a3a4"
     },
     {
       "id": "img_0481",
       "sense_id": "sns_0481",
-      "key": "symbols/car.png",
+      "key": "symbols/car.webp",
       "status": "approved",
       "sha256": "b85680efe2c3d9e3c8b4da7ecb765d4a586bd7734cb8989d797c1d8ed6c8a16e"
     },
     {
       "id": "img_0482",
       "sense_id": "sns_0482",
-      "key": "symbols/bus.png",
+      "key": "symbols/bus.webp",
       "status": "approved",
       "sha256": "beae15520d62c7db26c4197d149f3eb962c550c6ea3286fb05a4d363aa421929"
     },
     {
       "id": "img_0483",
       "sense_id": "sns_0483",
-      "key": "symbols/school_bus.png",
+      "key": "symbols/school_bus.webp",
       "status": "approved",
       "sha256": "0119158b28576336b38f9bb7ff0dfbe6d951d83e23ecb60682ae416e62807c92"
     },
     {
       "id": "img_0484",
       "sense_id": "sns_0484",
-      "key": "symbols/truck.png",
+      "key": "symbols/truck.webp",
       "status": "approved",
       "sha256": "c57ad8406af94bb554923586760cb185f70648e77bdf7550df7162e1fad09fba"
     },
     {
       "id": "img_0485",
       "sense_id": "sns_0485",
-      "key": "symbols/fire truck.png",
+      "key": "symbols/fire truck.webp",
       "status": "approved",
       "sha256": "6525061c709565fb0ada7c52035482171135b3068342a9d11c8bd389cb25cf0b"
     },
     {
       "id": "img_0486",
       "sense_id": "sns_0486",
-      "key": "symbols/police car.png",
+      "key": "symbols/police car.webp",
       "status": "approved",
       "sha256": "410c19f2a5cbd26d63ab1b911aa2a822e1208d9d42ecf0a4c5070e9c97f6cb60"
     },
     {
       "id": "img_0487",
       "sense_id": "sns_0487",
-      "key": "symbols/ambulance.png",
+      "key": "symbols/ambulance.webp",
       "status": "approved",
       "sha256": "6dc2a534dd5cbfeb9e15aba42888f137e92f33c48d2064069cdbeb6123da56f8"
     },
     {
       "id": "img_0488",
       "sense_id": "sns_0488",
-      "key": "symbols/train.png",
+      "key": "symbols/train.webp",
       "status": "approved",
       "sha256": "4e4207d5fa30a85c2cfe769de464fd24c71c30ba671738c69007d7b74266b196"
     },
     {
       "id": "img_0489",
       "sense_id": "sns_0489",
-      "key": "symbols/bicycle.png",
+      "key": "symbols/bicycle.webp",
       "status": "approved",
       "sha256": "0cf57594f909987f5b99bb183de4278d39dae7165ec015d3efb0334d31049344"
     },
     {
       "id": "img_0490",
       "sense_id": "sns_0490",
-      "key": "symbols/motorcycle.png",
+      "key": "symbols/motorcycle.webp",
       "status": "approved",
       "sha256": "0afff58fdeb6a4340ed2eac9187127155b78ea7cb6d0cfa08eba987d3b818eec"
     },
     {
       "id": "img_0491",
       "sense_id": "sns_0491",
-      "key": "symbols/van.png",
+      "key": "symbols/van.webp",
       "status": "approved",
       "sha256": "724b5663c4fb41630d030cec2b2a682889cc1d8f7dc23cd7c67c57c6930c2318"
     },
     {
       "id": "img_0492",
       "sense_id": "sns_0492",
-      "key": "symbols/tractor.png",
+      "key": "symbols/tractor.webp",
       "status": "approved",
       "sha256": "c42f9d556411555f2d3c32ea31c835b5c1cfe1c42d0f7b0b80d1d92e89c423fb"
     },
     {
       "id": "img_0493",
       "sense_id": "sns_0493",
-      "key": "symbols/stroller.png",
+      "key": "symbols/stroller.webp",
       "status": "approved",
       "sha256": "b3f148e1f078880e47091acb8f9b6bb9316b7b520f9d25149fa345076046ba0f"
     },
     {
       "id": "img_0494",
       "sense_id": "sns_0494",
-      "key": "symbols/airplane.png",
+      "key": "symbols/airplane.webp",
       "status": "approved",
       "sha256": "b140b3d9b32811d3e3510f0afeea0e4e9ee8b09eb56f8d0ccec8ae45d001b38a"
     },
     {
       "id": "img_0495",
       "sense_id": "sns_0495",
-      "key": "symbols/helicopter.png",
+      "key": "symbols/helicopter.webp",
       "status": "approved",
       "sha256": "c8bc4edf5df8afa883c0b83d89bcd4671fec44bf0799a32aa4f69bfa8ba1329e"
     },
     {
       "id": "img_0496",
       "sense_id": "sns_0496",
-      "key": "symbols/rocket.png",
+      "key": "symbols/rocket.webp",
       "status": "approved",
       "sha256": "2c9f22930181c118ae5929108144fd523842dff22d5eb255f32f7de153c4f46b"
     },
     {
       "id": "img_0497",
       "sense_id": "sns_0497",
-      "key": "symbols/boat.png",
+      "key": "symbols/boat.webp",
       "status": "approved",
       "sha256": "daab24f22719935b9025ad10e23384ec1a18cda8597b376a0d1b2768ab5978c9"
     },
     {
       "id": "img_0498",
       "sense_id": "sns_0498",
-      "key": "symbols/ship.png",
+      "key": "symbols/ship.webp",
       "status": "approved",
       "sha256": "a4de1e2b396778484e1289ec02bb80bfc95944f4b44ffa614ad9d5116512848e"
     },
     {
       "id": "img_0499",
       "sense_id": "sns_0499",
-      "key": "symbols/canoe.png",
+      "key": "symbols/canoe.webp",
       "status": "approved",
       "sha256": "4e2c0ebbe68d64eb7e30e7223b121422f26cca922905846a6e10ac5acce133b3"
     },
     {
       "id": "img_0500",
       "sense_id": "sns_0500",
-      "key": "symbols/subway.png",
+      "key": "symbols/subway.webp",
       "status": "approved",
       "sha256": "bdadb6a392921626ebcca3a5ba860a9398a1b4150ae474e061eb52ce2414f56d"
     },
     {
       "id": "img_0501",
       "sense_id": "sns_0501",
-      "key": "symbols/road.png",
+      "key": "symbols/road.webp",
       "status": "approved",
       "sha256": "a8460789724f67065fbfaa04983c2b03943152acf0480d879da4e62680c4cb9a"
     },
     {
       "id": "img_0502",
       "sense_id": "sns_0502",
-      "key": "symbols/track.png",
+      "key": "symbols/track.webp",
       "status": "approved",
       "sha256": "41e02cc13c5aba22484561803cd29c26ab764d89f6c8878d1e211ae06f11ecc4"
     },
     {
       "id": "img_0503",
       "sense_id": "sns_0503",
-      "key": "symbols/stoplight.png",
+      "key": "symbols/stoplight.webp",
       "status": "approved",
       "sha256": "2b6b9aab8bcfada9440cdf343b5cb55df48d01e2cc2fabe76d9e5613323ff4c9"
     },
     {
       "id": "img_0504",
       "sense_id": "sns_0504",
-      "key": "symbols/gas station.png",
+      "key": "symbols/gas station.webp",
       "status": "approved",
       "sha256": "5e4a8fc3effceac85f710e8b702e2bff2eb2fe425f926471deb2776c342cd6a0"
     },
     {
       "id": "img_0505",
       "sense_id": "sns_0505",
-      "key": "symbols/red.png",
+      "key": "symbols/red.webp",
       "status": "approved",
       "sha256": "b1432625d7a9d406f1f5b5ca454e3554fb830ec31576f81639cd29cc19a67e01"
     },
     {
       "id": "img_0506",
       "sense_id": "sns_0506",
-      "key": "symbols/blue.png",
+      "key": "symbols/blue.webp",
       "status": "approved",
       "sha256": "54cc6c264a5a0e86d5e9e8a499086b4a04646863cf2d2aeb47b640f8e9bb1f71"
     },
     {
       "id": "img_0507",
       "sense_id": "sns_0507",
-      "key": "symbols/green.png",
+      "key": "symbols/green.webp",
       "status": "approved",
       "sha256": "4888a114d53a36bdf15484a8b5eb262629ec83612c3c3d537cc2c39bf5e8c953"
     },
     {
       "id": "img_0508",
       "sense_id": "sns_0508",
-      "key": "symbols/yellow.png",
+      "key": "symbols/yellow.webp",
       "status": "approved",
       "sha256": "5ce9c987fdde0471e21eeaf0debd1b879666b8992fda42f1663edcc743d8b635"
     },
     {
       "id": "img_0509",
       "sense_id": "sns_0509",
-      "key": "symbols/orange.png",
+      "key": "symbols/orange.webp",
       "status": "approved",
       "sha256": "3ff4e36b3e9457869caac22135dcdfb83debacc2019eb1fb4e577f59bea627eb"
     },
     {
       "id": "img_0510",
       "sense_id": "sns_0510",
-      "key": "symbols/purple.png",
+      "key": "symbols/purple.webp",
       "status": "approved",
       "sha256": "b57892b148e9a8dddb9a63d28b9051f52adf19ec6ce397b67742d5a0efd2c0f2"
     },
     {
       "id": "img_0511",
       "sense_id": "sns_0511",
-      "key": "symbols/pink.png",
+      "key": "symbols/pink.webp",
       "status": "approved",
       "sha256": "8dfeef4d2dbbc6b6949771fdd9ec2efc1ef186de83294e43a76cb8bff05478e7"
     },
     {
       "id": "img_0512",
       "sense_id": "sns_0512",
-      "key": "symbols/brown.png",
+      "key": "symbols/brown.webp",
       "status": "approved",
       "sha256": "7744cd218bafb3206eaaa8953bf707b85bc7620450521a2c80d5011445d84673"
     },
     {
       "id": "img_0513",
       "sense_id": "sns_0513",
-      "key": "symbols/black.png",
+      "key": "symbols/black.webp",
       "status": "approved",
       "sha256": "6ec1b9b89ef1f5eaffe7ad43fa81de127217ddb8e579cbd37950b6dc5b43ac45"
     },
     {
       "id": "img_0514",
       "sense_id": "sns_0514",
-      "key": "symbols/white.png",
+      "key": "symbols/white.webp",
       "status": "approved",
       "sha256": "f198b652d4a9efeb82efcb9e9bbb39a6ee4b7d8732819b373261ec6007d64d88"
     },
     {
       "id": "img_0515",
       "sense_id": "sns_0515",
-      "key": "symbols/fast.png",
+      "key": "symbols/fast.webp",
       "status": "approved",
       "sha256": "8c55ac2d446db151b31f5317cbf059d329551173697abb3a64fd532f462b2359"
     },
     {
       "id": "img_0516",
       "sense_id": "sns_0516",
-      "key": "symbols/slow.png",
+      "key": "symbols/slow.webp",
       "status": "approved",
       "sha256": "a08c4849ceeea41719195284b260d80a6860eb7335372c1b0fc1b78c314f2ae1"
     },
     {
       "id": "img_0517",
       "sense_id": "sns_0517",
-      "key": "symbols/tall.png",
+      "key": "symbols/tall.webp",
       "status": "approved",
       "sha256": "677748e806eb8fdbac7b397f88ef4e0c5663a71d7b3d644917cdd85cc35456ee"
     },
     {
       "id": "img_0518",
       "sense_id": "sns_0518",
-      "key": "symbols/short.png",
+      "key": "symbols/short.webp",
       "status": "approved",
       "sha256": "e1309cd2d24fdfd903f8770940d5f4e2d02dfcd6bb52380218b1b2d8a0d26a05"
     },
     {
       "id": "img_0519",
       "sense_id": "sns_0519",
-      "key": "symbols/long.png",
+      "key": "symbols/long.webp",
       "status": "approved",
       "sha256": "36833d484e7b12e4983f2bb638baa0275368d629ee2989b9d0d89c631d6a4d75"
     },
     {
       "id": "img_0520",
       "sense_id": "sns_0520",
-      "key": "symbols/heavy.png",
+      "key": "symbols/heavy.webp",
       "status": "approved",
       "sha256": "8d222f4d6c6f2a1fb1e2816190c0e3867bec2af58f7a2710eb1a33478783f32c"
     },
     {
       "id": "img_0521",
       "sense_id": "sns_0521",
-      "key": "symbols/light.png",
+      "key": "symbols/light.webp",
       "status": "approved",
       "sha256": "a82372875559aff1eafba2814224cbb1316136ad23138dac2cd777bf0035408c"
     },
     {
       "id": "img_0522",
       "sense_id": "sns_0522",
-      "key": "symbols/thick.png",
+      "key": "symbols/thick.webp",
       "status": "approved",
       "sha256": "ed85c3933c960d7e9d61ff7b795b858756fe09d40161508dd1d8692cde06c017"
     },
     {
       "id": "img_0523",
       "sense_id": "sns_0523",
-      "key": "symbols/thin.png",
+      "key": "symbols/thin.webp",
       "status": "approved",
       "sha256": "6f61bedf7ddfe288d3816b0f22f7a17568c67a03e5452a4ae77255365b45550d"
     },
     {
       "id": "img_0524",
       "sense_id": "sns_0524",
-      "key": "symbols/wide.png",
+      "key": "symbols/wide.webp",
       "status": "approved",
       "sha256": "98461279eb63381824958708e3a9dfc6ba340e3814c6510626d8fc911c471434"
     },
     {
       "id": "img_0525",
       "sense_id": "sns_0525",
-      "key": "symbols/narrow.png",
+      "key": "symbols/narrow.webp",
       "status": "approved",
       "sha256": "922f775061dd813b369ba6fba9689668622e59df12324874a6074dac28f76c2a"
     },
     {
       "id": "img_0526",
       "sense_id": "sns_0526",
-      "key": "symbols/hard.png",
+      "key": "symbols/hard.webp",
       "status": "approved",
       "sha256": "cb7d0250f10c702fddcd5ca196c422a18b9c3c2948bb1208b22ba3a325a7ea0a"
     },
     {
       "id": "img_0527",
       "sense_id": "sns_0527",
-      "key": "symbols/wet.png",
+      "key": "symbols/wet.webp",
       "status": "approved",
       "sha256": "ba1bdbe01e4c32f267924313fdbcffa862f8c33e735139a97b28b31d4e12bce3"
     },
     {
       "id": "img_0528",
       "sense_id": "sns_0528",
-      "key": "symbols/dry.png",
+      "key": "symbols/dry.webp",
       "status": "approved",
       "sha256": "3c12db3b459c8157484ae8d7bd4999e0ee5f05d1949cecd589cd33f810905631"
     },
     {
       "id": "img_0529",
       "sense_id": "sns_0529",
-      "key": "symbols/clean.png",
+      "key": "symbols/clean.webp",
       "status": "approved",
       "sha256": "96683db2dc4c325530809ae883d14b3ad273fcd0b3c72d5634ce06c20fa39871"
     },
     {
       "id": "img_0530",
       "sense_id": "sns_0530",
-      "key": "symbols/dirty.png",
+      "key": "symbols/dirty.webp",
       "status": "approved",
       "sha256": "7b8019009fe00f7fc95fccc992fb1eb22b640862c2fb96182c9a8032b4ea6ff6"
     },
     {
       "id": "img_0531",
       "sense_id": "sns_0531",
-      "key": "symbols/smooth.png",
+      "key": "symbols/smooth.webp",
       "status": "approved",
       "sha256": "196ceeeaaae637b950a5f1eec04ed42c4751fbb9a08d515679201670d1e6b38e"
     },
     {
       "id": "img_0532",
       "sense_id": "sns_0532",
-      "key": "symbols/broken.png",
+      "key": "symbols/broken.webp",
       "status": "approved",
       "sha256": "91292169d7c6d75cf60a608bdee17577dc7d521effaa24e00a31e8c7ed29e245"
     },
     {
       "id": "img_0533",
       "sense_id": "sns_0533",
-      "key": "symbols/fixed.png",
+      "key": "symbols/fixed.webp",
       "status": "approved",
       "sha256": "d97f55649bac930d46622259c77c961ff1fbde270b854d46fb94a8b1b2015f1f"
     },
     {
       "id": "img_0534",
       "sense_id": "sns_0534",
-      "key": "symbols/empty.png",
+      "key": "symbols/empty.webp",
       "status": "approved",
       "sha256": "c791080bde700d26d9c464db37554d41347475c49c0bf99405ea034f30f25c5a"
     },
     {
       "id": "img_0535",
       "sense_id": "sns_0535",
-      "key": "symbols/full.png",
+      "key": "symbols/full.webp",
       "status": "approved",
       "sha256": "1f7c01a823f782ffa781a2cf6b9158e55a26c432d04ffc979ba4326f9d926d39"
     },
     {
       "id": "img_0536",
       "sense_id": "sns_0536",
-      "key": "symbols/safe.png",
+      "key": "symbols/safe.webp",
       "status": "approved",
       "sha256": "9815ec2049969ccc199891b74c26e7c0db944ea8dd4e5562d48171693e4d51bc"
     },
     {
       "id": "img_0537",
       "sense_id": "sns_0537",
-      "key": "symbols/dangerous.png",
+      "key": "symbols/dangerous.webp",
       "status": "approved",
       "sha256": "589763cb4775926c75224425365aa94d7840a76737b93b7bb48d04c23df534ad"
     },
     {
       "id": "img_0538",
       "sense_id": "sns_0538",
-      "key": "symbols/easy.png",
+      "key": "symbols/easy.webp",
       "status": "approved",
       "sha256": "edfa8956849dd99e08af0bcd2d8a972e469d1370631f28d5612de071acb20358"
     },
     {
       "id": "img_0539",
       "sense_id": "sns_0539",
-      "key": "symbols/difficult.png",
+      "key": "symbols/difficult.webp",
       "status": "approved",
       "sha256": "45b4aaf174a4faa787b0ca152c6135fe7ee63871e2765a29b89f6ebab1390a44"
     },
     {
       "id": "img_0540",
       "sense_id": "sns_0540",
-      "key": "symbols/right.png",
+      "key": "symbols/right.webp",
       "status": "approved",
       "sha256": "0d6db4107621a8661e3ef5513cd64b199bc12a1aa54204ef514ccecefb1ed81d"
     },
     {
       "id": "img_0541",
       "sense_id": "sns_0541",
-      "key": "symbols/wrong.png",
+      "key": "symbols/wrong.webp",
       "status": "approved",
       "sha256": "7e71d893082511ec9a52b694888841b3b38bd65a8195a5185c1718880cc95d20"
     },
     {
       "id": "img_0542",
       "sense_id": "sns_0542",
-      "key": "symbols/new.png",
+      "key": "symbols/new.webp",
       "status": "approved",
       "sha256": "424467e5fa7cb6127b7d1736604fae3b64f37e16da34f83e9a966349275d8e64"
     },
     {
       "id": "img_0543",
       "sense_id": "sns_0543",
-      "key": "symbols/old.png",
+      "key": "symbols/old.webp",
       "status": "approved",
       "sha256": "e067a59de213a4e56087182acffeecd01d5c64b7e2fbf813af45e6b5d3db9f29"
     },
     {
       "id": "img_0544",
       "sense_id": "sns_0544",
-      "key": "symbols/pretty.png",
+      "key": "symbols/pretty.webp",
       "status": "approved",
       "sha256": "9d680da3fb1e4db0f7071654f6ef471fa9e766351a7ebb4c9440be4d91f389cc"
     },
     {
       "id": "img_0545",
       "sense_id": "sns_0545",
-      "key": "symbols/cool.png",
+      "key": "symbols/cool.webp",
       "status": "approved",
       "sha256": "930419e93c38480e0b6a45ddf669ccff73751445fffdd7fa9b42a94ef33a45d6"
     },
     {
       "id": "img_0546",
       "sense_id": "sns_0546",
-      "key": "symbols/special.png",
+      "key": "symbols/special.webp",
       "status": "approved",
       "sha256": "75efbce2f9e5c1fcba1fef12bf5779dd3bacb59e1c690ee7b3e31f55e3eb07b9"
     },
     {
       "id": "img_0547",
       "sense_id": "sns_0547",
-      "key": "symbols/ready.png",
+      "key": "symbols/ready.webp",
       "status": "approved",
       "sha256": "28ff038fdb36562570a4b0b5a2200a40150b7bffcc53bfbb4e430d81332526cb"
     },
     {
       "id": "img_0548",
       "sense_id": "sns_0548",
-      "key": "symbols/favorite.png",
+      "key": "symbols/favorite.webp",
       "status": "approved",
       "sha256": "1beecb0a3aa8e2b64b1a565199b3a2f78e486c5a953a56e2e0833dbdd89efcc8"
     },
     {
       "id": "img_0549",
       "sense_id": "sns_0549",
-      "key": "symbols/weird.png",
+      "key": "symbols/weird.webp",
       "status": "approved",
       "sha256": "e09b81f8d455ec2e086806a946f9d93eb4fdce08e12ff8ace9a48b09e0236b72"
     },
     {
       "id": "img_0550",
       "sense_id": "sns_0550",
-      "key": "symbols/funny.png",
+      "key": "symbols/funny.webp",
       "status": "approved",
       "sha256": "0f4423ab8b229e365e319c6255f290c3e05d75b6c3454a62483be452113df0c2"
     },
     {
       "id": "img_0552",
       "sense_id": "sns_0552",
-      "key": "symbols/light.png",
+      "key": "symbols/light.webp",
       "status": "approved",
       "sha256": "a82372875559aff1eafba2814224cbb1316136ad23138dac2cd777bf0035408c"
     },
     {
       "id": "img_0553",
       "sense_id": "sns_0553",
-      "key": "symbols/morning.png",
+      "key": "symbols/morning.webp",
       "status": "approved",
       "sha256": "cf2334ea54fa888db4e89fc7c20f1aec6292c8efa39843cbb3ca25b4713c6278"
     },
     {
       "id": "img_0554",
       "sense_id": "sns_0554",
-      "key": "symbols/afternoon.png",
+      "key": "symbols/afternoon.webp",
       "status": "approved",
       "sha256": "b5bba6aab3dc44d05d1074fe7fd90766d4d6435d836f3ba8fb0f2c7494885bc3"
     },
     {
       "id": "img_0555",
       "sense_id": "sns_0555",
-      "key": "symbols/evening.png",
+      "key": "symbols/evening.webp",
       "status": "approved",
       "sha256": "4bafdfb9ece411dc5857470e794242bdf131af4243ddf00dca1f1e981608ad0b"
     },
     {
       "id": "img_0556",
       "sense_id": "sns_0556",
-      "key": "symbols/night.png",
+      "key": "symbols/night.webp",
       "status": "approved",
       "sha256": "faffd74a3573db614fabb5afdb3affb9500a3038ec8ffefa5684b26dd0e56ec5"
     },
     {
       "id": "img_0557",
       "sense_id": "sns_0557",
-      "key": "symbols/bedtime.png",
+      "key": "symbols/bedtime.webp",
       "status": "approved",
       "sha256": "a1fed9db9553e9f1f6c1bf0fbef740a109db82bcc336eefc8647bf75921195fb"
     },
     {
       "id": "img_0558",
       "sense_id": "sns_0558",
-      "key": "symbols/naptime.png",
+      "key": "symbols/naptime.webp",
       "status": "approved",
       "sha256": "3cea11b79d9f1183253b6e50dadfbf53ddba7f5774f46804d6ef896614b39755"
     },
     {
       "id": "img_0559",
       "sense_id": "sns_0559",
-      "key": "symbols/now.png",
+      "key": "symbols/now.webp",
       "status": "approved",
       "sha256": "94dbe9bacb8b6aec979af55d9b835d2802fc4ef11eb562dd53a40104a9db2ee3"
     },
     {
       "id": "img_0560",
       "sense_id": "sns_0560",
-      "key": "symbols/later.png",
+      "key": "symbols/later.webp",
       "status": "approved",
       "sha256": "e0318302286f50b4892e8d9abbcd8290479dbb8bdc291346bbec90bfd54d4ef5"
     },
     {
       "id": "img_0561",
       "sense_id": "sns_0561",
-      "key": "symbols/soon.png",
+      "key": "symbols/soon.webp",
       "status": "approved",
       "sha256": "6e9af6886aa8ef4b079df89b12d4d75862f73479631059179dabdcc68ac9676e"
     },
     {
       "id": "img_0562",
       "sense_id": "sns_0562",
-      "key": "symbols/today.png",
+      "key": "symbols/today.webp",
       "status": "approved",
       "sha256": "54fe9d68e93482ff5cc3540f8ebb506e51e343f792279dbe8f23333f81243245"
     },
     {
       "id": "img_0563",
       "sense_id": "sns_0563",
-      "key": "symbols/tomorrow.png",
+      "key": "symbols/tomorrow.webp",
       "status": "approved",
       "sha256": "67d8ff1c5b09419ea7d842ddb688418d78c98db56d073cfbdc7bcac7363058b5"
     },
     {
       "id": "img_0564",
       "sense_id": "sns_0564",
-      "key": "symbols/yesterday.png",
+      "key": "symbols/yesterday.webp",
       "status": "approved",
       "sha256": "1b090ca9baf1669837126cd6eceb8c951027667a716260db8fe85a3e521ea06f"
     },
     {
       "id": "img_0565",
       "sense_id": "sns_0565",
-      "key": "symbols/before.png",
+      "key": "symbols/before.webp",
       "status": "approved",
       "sha256": "44bf1131ff93e52ea1bbd76666ad529f2e6aacb318af25395219c4ccee57f1f1"
     },
     {
       "id": "img_0566",
       "sense_id": "sns_0566",
-      "key": "symbols/after.png",
+      "key": "symbols/after.webp",
       "status": "approved",
       "sha256": "beda32390746d969ca307369313a17afefa37474b311e51ede4467660c1d7103"
     },
     {
       "id": "img_0567",
       "sense_id": "sns_0567",
-      "key": "symbols/again.png",
+      "key": "symbols/again.webp",
       "status": "approved",
       "sha256": "d87b15296a4075f43eac51fe46eef51eecc3aba2fdf9e5ec773c8245fda2c435"
     },
     {
       "id": "img_0568",
       "sense_id": "sns_0568",
-      "key": "symbols/always.png",
+      "key": "symbols/always.webp",
       "status": "approved",
       "sha256": "789e88e7b44fc017946adc2e20f6cd84972f62bddaa82802d29805095dc0182a"
     },
     {
       "id": "img_0569",
       "sense_id": "sns_0569",
-      "key": "symbols/never.png",
+      "key": "symbols/never.webp",
       "status": "approved",
       "sha256": "e18b356866a645b25dad0e9181da0c4fe16c7780b67b840f0294e812fa9d6268"
     },
     {
       "id": "img_0570",
       "sense_id": "sns_0570",
-      "key": "symbols/sometimes.png",
+      "key": "symbols/sometimes.webp",
       "status": "approved",
       "sha256": "2eca7d8c3900fac938f3468023fde32d28e515ae39466b86b3ea8a5251dd0d33"
     },
     {
       "id": "img_0571",
       "sense_id": "sns_0571",
-      "key": "symbols/first.png",
+      "key": "symbols/first.webp",
       "status": "approved",
       "sha256": "6d0b2ebae3eea7dc5ef347ec7edac13d89d6c3f08418a3b8c5a4daa17ca891a0"
     },
     {
       "id": "img_0572",
       "sense_id": "sns_0572",
-      "key": "symbols/next.png",
+      "key": "symbols/next.webp",
       "status": "approved",
       "sha256": "116ced1eb7b37a00df06991bd2bc51818af10f7f4947ccad556664ad2e944d08"
     },
     {
       "id": "img_0573",
       "sense_id": "sns_0573",
-      "key": "symbols/then.png",
+      "key": "symbols/then.webp",
       "status": "approved",
       "sha256": "beb5b12f982396b513636106323f09c8b380f265fe658d32daf7f5fd9bfe6390"
     },
     {
       "id": "img_0574",
       "sense_id": "sns_0574",
-      "key": "symbols/last.png",
+      "key": "symbols/last.webp",
       "status": "approved",
       "sha256": "93eb8e1775b409089fa3211e768da49aff3452116500487383d7585c830cf024"
     },
     {
       "id": "img_0575",
       "sense_id": "sns_0575",
-      "key": "symbols/minute.png",
+      "key": "symbols/minute.webp",
       "status": "approved",
       "sha256": "ad6f929ca4d0efa7d7549bfaef0ec4490a7a458e790527e0601596e47dba3c3d"
     },
     {
       "id": "img_0576",
       "sense_id": "sns_0576",
-      "key": "symbols/hour.png",
+      "key": "symbols/hour.webp",
       "status": "approved",
       "sha256": "2f8276802c54bbc20d20cf902c48db0e6a948de5d5d63b57f0427391ad2fcfc8"
     },
     {
       "id": "img_0583",
       "sense_id": "sns_0583",
-      "key": "symbols/hello.png",
+      "key": "symbols/hello.webp",
       "status": "approved",
       "sha256": "67590b4b0efa30ec3033e6296fc1e4d5803e8c91e96c1656c857bc0f6a4074ab"
     },
     {
       "id": "img_0584",
       "sense_id": "sns_0584",
-      "key": "symbols/hi.png",
+      "key": "symbols/hi.webp",
       "status": "approved",
       "sha256": "4cb8add1719ff3dcaf2b3ae47439b1ec8514580d8f8bb57b7c8e01a7cb0942b3"
     },
     {
       "id": "img_0585",
       "sense_id": "sns_0585",
-      "key": "symbols/goodbye.png",
+      "key": "symbols/goodbye.webp",
       "status": "approved",
       "sha256": "12972f396176fbc58575e9d248a8f700bbf8a3a52faa1b3d8875e4cabd087113"
     },
     {
       "id": "img_0586",
       "sense_id": "sns_0586",
-      "key": "symbols/bye.png",
+      "key": "symbols/bye.webp",
       "status": "approved",
       "sha256": "999c09045a506fc56a6775783bc229dba20484f3d058999c50905463f924b86a"
     },
     {
       "id": "img_0587",
       "sense_id": "sns_0587",
-      "key": "symbols/thank you.png",
+      "key": "symbols/thank you.webp",
       "status": "approved",
       "sha256": "8c179446f2ac3a6a5f4b98ebbd24a05aa15e5fc223f9f89d6dcc619262176e39"
     },
     {
       "id": "img_0588",
       "sense_id": "sns_0588",
-      "key": "symbols/you're welcome.png",
+      "key": "symbols/you're welcome.webp",
       "status": "approved",
       "sha256": "f5c19697b80b494936e45f38b2ec13ca89a73a648a25a0ba141a6364d9e9c0ba"
     },
     {
       "id": "img_0589",
       "sense_id": "sns_0589",
-      "key": "symbols/sorry.png",
+      "key": "symbols/sorry.webp",
       "status": "approved",
       "sha256": "98ac3557f32a2931c7e0ca5d6098d430229fc9aa22a7595d4a94423315079361"
     },
     {
       "id": "img_0590",
       "sense_id": "sns_0590",
-      "key": "symbols/excuse me.png",
+      "key": "symbols/excuse me.webp",
       "status": "approved",
       "sha256": "d4c86393312172c6f904a3187cf94246bc9343150403d273089c7249f6206344"
     },
     {
       "id": "img_0591",
       "sense_id": "sns_0591",
-      "key": "symbols/good morning.png",
+      "key": "symbols/good morning.webp",
       "status": "approved",
       "sha256": "a19606d93ec630e76bec299e6558bdda1b6891abb73a7e9fbb93f27c55a47a5c"
     },
     {
       "id": "img_0592",
       "sense_id": "sns_0592",
-      "key": "symbols/good night.png",
+      "key": "symbols/good night.webp",
       "status": "approved",
       "sha256": "ee0d4429f99e3e144f629b5c832cd68d048d578d35e46f5d31e0c4904c8aa2e2"
     },
     {
       "id": "img_0593",
       "sense_id": "sns_0593",
-      "key": "symbols/okay.png",
+      "key": "symbols/okay.webp",
       "status": "approved",
       "sha256": "ff598cd9cf8bc9feb47ad89931a8b238a787d134284bd120c493ae2eb5375643"
     },
     {
       "id": "img_0594",
       "sense_id": "sns_0594",
-      "key": "symbols/ready to go.png",
+      "key": "symbols/ready to go.webp",
       "status": "approved",
       "sha256": "937bf781dfcfc6d6e94f3c9c26eea22781d41f5a2962f29f0b0c68d4644da66f"
     },
     {
       "id": "img_0595",
       "sense_id": "sns_0595",
-      "key": "symbols/wow.png",
+      "key": "symbols/wow.webp",
       "status": "approved",
       "sha256": "637d25e006528fef75e83ded9ab4c81cb618e520b1c48a61cded66cdef230b35"
     },
     {
       "id": "img_0596",
       "sense_id": "sns_0596",
-      "key": "symbols/really.png",
+      "key": "symbols/really.webp",
       "status": "approved",
       "sha256": "318ce634517fd06d37c304fdc050238f396c22e431293e84a3e799447790f333"
     },
     {
       "id": "img_0597",
       "sense_id": "sns_0597",
-      "key": "symbols/maybe.png",
+      "key": "symbols/maybe.webp",
       "status": "approved",
       "sha256": "81d5cad0fbef01a5249828539c4e11b34e37ae4a35929f9444e30c79ebe60633"
     },
     {
       "id": "img_0598",
       "sense_id": "sns_0598",
-      "key": "symbols/I don't know.png",
+      "key": "symbols/I don't know.webp",
       "status": "approved",
       "sha256": "121f6ba2e63a06fdca60c9bf8580cad3cb49a44079e00830cc7ff8d176c63a6d"
     },
     {
       "id": "img_0599",
       "sense_id": "sns_0599",
-      "key": "symbols/look at this.png",
+      "key": "symbols/look at this.webp",
       "status": "approved",
       "sha256": "c99be8b8f945226b4149e87a13a9ef4ab0d0ab2a266c3d4299daaa0a9785fad4"
     },
     {
       "id": "img_0600",
       "sense_id": "sns_0600",
-      "key": "symbols/my turn.png",
+      "key": "symbols/my turn.webp",
       "status": "approved",
       "sha256": "216f2026eae5018fc5afcac6a914993fc5cb1db5e4f0e0be06e9ab04325d67b3"
     },
     {
       "id": "img_0601",
       "sense_id": "sns_0601",
-      "key": "symbols/your turn.png",
+      "key": "symbols/your turn.webp",
       "status": "approved",
       "sha256": "275db8ce142bb59f85f09cef455879896844e052bfcc478cd0bf85752ee7e573"
     },
     {
       "id": "img_0602",
       "sense_id": "sns_0602",
-      "key": "symbols/careful.png",
+      "key": "symbols/careful.webp",
       "status": "approved",
       "sha256": "abcc78d5f25396f547b4d362f38bfb5df52f31afc512a0cb11946b6e1b46ee0c"
     },
     {
       "id": "img_0603",
       "sense_id": "sns_0603",
-      "key": "symbols/emergency.png",
+      "key": "symbols/emergency.webp",
       "status": "approved",
       "sha256": "8c61af5e173e34835d6d480974de9f79df59eb809b10246b899b26b454f0dc66"
     },
     {
       "id": "img_0604",
       "sense_id": "sns_0604",
-      "key": "symbols/no way.png",
+      "key": "symbols/no way.webp",
       "status": "approved",
       "sha256": "018c691b08faf71da74c7d45149b30f0282f563c56c189d8365fc73048781741"
     },
     {
       "id": "img_0605",
       "sense_id": "sns_0605",
-      "key": "symbols/don't.png",
+      "key": "symbols/don't.webp",
       "status": "approved",
       "sha256": "24896818ffc5f19a104468a5bfd14e563dae955f512b114368d32f2c8394b983"
     },
     {
       "id": "img_0606",
       "sense_id": "sns_0606",
-      "key": "symbols/bathroom.png",
+      "key": "symbols/bathroom.webp",
       "status": "approved",
       "sha256": "5ff5bb588be18c87bde2ab33ce6ff1398f5cdf29a49aa58ec4df6f00c0d46846"
     },
@@ -34069,14 +34069,14 @@
     {
       "id": "img_0612",
       "sense_id": "sns_0612",
-      "key": "symbols/has.png",
+      "key": "symbols/has.webp",
       "status": "approved",
       "sha256": "52eba9c7436d79e0b98895a8f8e99112e6263ff9653b25d88834c519ee55e8c4"
     },
     {
       "id": "img_0613",
       "sense_id": "sns_0613",
-      "key": "symbols/had.png",
+      "key": "symbols/had.webp",
       "status": "approved",
       "sha256": "f7e6c6592d74eaab60aa0dd35879a332c003246bd428209f61d312bbfb405558"
     },
@@ -34097,21 +34097,21 @@
     {
       "id": "img_0616",
       "sense_id": "sns_0616",
-      "key": "symbols/can't.png",
+      "key": "symbols/can't.webp",
       "status": "approved",
       "sha256": "c06815b9ea9c834a9cdf760e18b6100787f00a7f0d8e953b004f6193634a858b"
     },
     {
       "id": "img_0617",
       "sense_id": "sns_0617",
-      "key": "symbols/won't.png",
+      "key": "symbols/won't.webp",
       "status": "approved",
       "sha256": "331fd27d8bd1333a10b14d600f65bfa2d960bd63b21dd16c44b02beedf74032b"
     },
     {
       "id": "img_0618",
       "sense_id": "sns_0618",
-      "key": "symbols/didn't.png",
+      "key": "symbols/didn't.webp",
       "status": "approved",
       "sha256": "a4fe3e429cd24bd0b31532d5ba44f9d74a05149e72ff434594dd430123a86e1b"
     },
@@ -34146,28 +34146,28 @@
     {
       "id": "img_0623",
       "sense_id": "sns_0623",
-      "key": "symbols/every.png",
+      "key": "symbols/every.webp",
       "status": "approved",
       "sha256": "cf8dbb04e0650e39a0ac3ef9a190944aaec40c4d227d21303da41603bca839f9"
     },
     {
       "id": "img_0624",
       "sense_id": "sns_0624",
-      "key": "symbols/each.png",
+      "key": "symbols/each.webp",
       "status": "approved",
       "sha256": "eac845982abc0ddaa45677771be7cbc69bb2062b044cbbd59ae23e8ede435e20"
     },
     {
       "id": "img_0625",
       "sense_id": "sns_0625",
-      "key": "symbols/another.png",
+      "key": "symbols/another.webp",
       "status": "approved",
       "sha256": "32c24d86f3eff083c47f86ac021dafe0b0ea86af6978ef0f1abc68d47ccbf31c"
     },
     {
       "id": "img_0626",
       "sense_id": "sns_0626",
-      "key": "symbols/other.png",
+      "key": "symbols/other.webp",
       "status": "approved",
       "sha256": "de119315a883bbedc6dee3f85045c7cfd8889a6636b2d5d40f1838535ede79d4"
     },
@@ -34188,637 +34188,637 @@
     {
       "id": "img_0629",
       "sense_id": "sns_0629",
-      "key": "symbols/him.png",
+      "key": "symbols/him.webp",
       "status": "approved",
       "sha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4"
     },
     {
       "id": "img_0630",
       "sense_id": "sns_0630",
-      "key": "symbols/her.png",
+      "key": "symbols/her.webp",
       "status": "approved",
       "sha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe"
     },
     {
       "id": "img_0631",
       "sense_id": "sns_0631",
-      "key": "symbols/us.png",
+      "key": "symbols/us.webp",
       "status": "approved",
       "sha256": "93473bfc0cb781bcfeb3d0afc4398a68557db74f9f015f2d6b4b340671b137ac"
     },
     {
       "id": "img_0632",
       "sense_id": "sns_0632",
-      "key": "symbols/them.png",
+      "key": "symbols/them.webp",
       "status": "approved",
       "sha256": "57923c3913b311cb884a9885f2639fbae58d45db650da370f2a29eeeeaf72e23"
     },
     {
       "id": "img_0633",
       "sense_id": "sns_0633",
-      "key": "symbols/his.png",
+      "key": "symbols/his.webp",
       "status": "approved",
       "sha256": "cdc846437e31c9312a37a74bd3f39662aa3ed87bfb56b386d32c42e7de8e73cb"
     },
     {
       "id": "img_0634",
       "sense_id": "sns_0634",
-      "key": "symbols/your.png",
+      "key": "symbols/your.webp",
       "status": "approved",
       "sha256": "b67bc6def3d8e399fb25b358dd13c8608a9a62b674a41b5525fbfd35601c9996"
     },
     {
       "id": "img_0635",
       "sense_id": "sns_0635",
-      "key": "symbols/our.png",
+      "key": "symbols/our.webp",
       "status": "approved",
       "sha256": "93473bfc0cb781bcfeb3d0afc4398a68557db74f9f015f2d6b4b340671b137ac"
     },
     {
       "id": "img_0636",
       "sense_id": "sns_0636",
-      "key": "symbols/their.png",
+      "key": "symbols/their.webp",
       "status": "approved",
       "sha256": "57923c3913b311cb884a9885f2639fbae58d45db650da370f2a29eeeeaf72e23"
     },
     {
       "id": "img_0637",
       "sense_id": "sns_0637",
-      "key": "symbols/something.png",
+      "key": "symbols/something.webp",
       "status": "approved",
       "sha256": "d88dbbc417b63a28e0d16ffd63aa7f1f906539ff8248209d137d33e230f97756"
     },
     {
       "id": "img_0638",
       "sense_id": "sns_0638",
-      "key": "symbols/someone.png",
+      "key": "symbols/someone.webp",
       "status": "approved",
       "sha256": "c962f3101a29c266fc2f8b484593a560e8662cc1d77419894a3fcf39b37581dc"
     },
     {
       "id": "img_0639",
       "sense_id": "sns_0639",
-      "key": "symbols/everyone.png",
+      "key": "symbols/everyone.webp",
       "status": "approved",
       "sha256": "216f0a8b12567c765f3420c462bc37653f7d217b9595b676e3bce08bb46183cc"
     },
     {
       "id": "img_0640",
       "sense_id": "sns_0640",
-      "key": "symbols/thing.png",
+      "key": "symbols/thing.webp",
       "status": "approved",
       "sha256": "c2b2dd0b681ca3b51705644eb514281cd46ea249d75cb3821f8e00574ab73b68"
     },
     {
       "id": "img_0641",
       "sense_id": "sns_0641",
-      "key": "symbols/very.png",
+      "key": "symbols/very.webp",
       "status": "approved",
       "sha256": "bb81810ca77f165499e49a921c4f9dca879d87ac849177ed339f815e26d2c121"
     },
     {
       "id": "img_0642",
       "sense_id": "sns_0642",
-      "key": "symbols/too.png",
+      "key": "symbols/too.webp",
       "status": "approved",
       "sha256": "be3ec23d55c59ca4c519b5b3a8640f6a3115a360c5619f6dd3291d10d065b80e"
     },
     {
       "id": "img_0643",
       "sense_id": "sns_0643",
-      "key": "symbols/just.png",
+      "key": "symbols/just.webp",
       "status": "approved",
       "sha256": "97a8d9464ea9df23df41643861427872bad6e0b2bce28504695e160a4fd1f439"
     },
     {
       "id": "img_0644",
       "sense_id": "sns_0644",
-      "key": "symbols/also.png",
+      "key": "symbols/also.webp",
       "status": "approved",
       "sha256": "8a03005c4bf8e5c413193437afdc5818504a8638526d9effa8db7da1724070e3"
     },
     {
       "id": "img_0645",
       "sense_id": "sns_0645",
-      "key": "symbols/only.png",
+      "key": "symbols/only.webp",
       "status": "approved",
       "sha256": "e4b704e3a5fe8fcc17cfc2d08efb533893250724d5141e1cef1cd2441a5896ad"
     },
     {
       "id": "img_0646",
       "sense_id": "sns_0646",
-      "key": "symbols/still.png",
+      "key": "symbols/still.webp",
       "status": "approved",
       "sha256": "cce8e2645c66131da216646c6d2354cbc689fe6d78b4c935d519855085ec0b08"
     },
     {
       "id": "img_0647",
       "sense_id": "sns_0647",
-      "key": "symbols/one.png",
+      "key": "symbols/one.webp",
       "status": "approved",
       "sha256": "4acac3ff236cc456ac7b0784a747c4b239ca571354a7238161092b3ce7c34abc"
     },
     {
       "id": "img_0648",
       "sense_id": "sns_0648",
-      "key": "symbols/two.png",
+      "key": "symbols/two.webp",
       "status": "approved",
       "sha256": "78ac4f4958eb578191f3fcc31bf7e9b5c06fb119eb790bd88a6e2cf49fda9703"
     },
     {
       "id": "img_0649",
       "sense_id": "sns_0649",
-      "key": "symbols/three.png",
+      "key": "symbols/three.webp",
       "status": "approved",
       "sha256": "e1a6d2ddf381fe9a9f305e03f6b3a2dc97db08ff24d195bb08bea853da540d12"
     },
     {
       "id": "img_0650",
       "sense_id": "sns_0650",
-      "key": "symbols/four.png",
+      "key": "symbols/four.webp",
       "status": "approved",
       "sha256": "0ef84214fc0c153ed871d7284b44cdeec1bf9d85b17da5d4ad659df16e107d44"
     },
     {
       "id": "img_0651",
       "sense_id": "sns_0651",
-      "key": "symbols/five.png",
+      "key": "symbols/five.webp",
       "status": "approved",
       "sha256": "259153c70ab955e0f0996ce2c99c9e408bffc98d0ac429132858ef01348b9e0a"
     },
     {
       "id": "img_0652",
       "sense_id": "sns_0652",
-      "key": "symbols/six.png",
+      "key": "symbols/six.webp",
       "status": "approved",
       "sha256": "04a0d7b1f8e15e96d3e7f901d8ea39746759eb2883b6b4cd62a73d8a97499edb"
     },
     {
       "id": "img_0653",
       "sense_id": "sns_0653",
-      "key": "symbols/seven.png",
+      "key": "symbols/seven.webp",
       "status": "approved",
       "sha256": "3f1514af74b99df353d5e3e53fb018a8665e1782ba7e99d068f4b6a447e3eca2"
     },
     {
       "id": "img_0654",
       "sense_id": "sns_0654",
-      "key": "symbols/eight.png",
+      "key": "symbols/eight.webp",
       "status": "approved",
       "sha256": "397e7f3eb28023554d7b0c87babe150056685e809efaf429c4d3e41d3846ddf0"
     },
     {
       "id": "img_0655",
       "sense_id": "sns_0655",
-      "key": "symbols/nine.png",
+      "key": "symbols/nine.webp",
       "status": "approved",
       "sha256": "04b48c23339fa3dd96b3c91c59dde2acb14124217ccd9ab0379e9a3ee34c81a2"
     },
     {
       "id": "img_0656",
       "sense_id": "sns_0656",
-      "key": "symbols/ten.png",
+      "key": "symbols/ten.webp",
       "status": "approved",
       "sha256": "3135e45251bf09a0bbff755cb6f663134d5a532080ad045ce23e0760bfd90db4"
     },
     {
       "id": "img_0657",
       "sense_id": "sns_0657",
-      "key": "symbols/breakfast.png",
+      "key": "symbols/breakfast.webp",
       "status": "approved",
       "sha256": "8de6d43969ba8cc01d128d30773445cbd4b94f522f0ccc95097f7f97db607504"
     },
     {
       "id": "img_0658",
       "sense_id": "sns_0658",
-      "key": "symbols/lunch.png",
+      "key": "symbols/lunch.webp",
       "status": "approved",
       "sha256": "b941507e0c52fd53439c9ad2a0862d2ca859ce58f51fcdfd2361280dde00c0f0"
     },
     {
       "id": "img_0659",
       "sense_id": "sns_0659",
-      "key": "symbols/dinner.png",
+      "key": "symbols/dinner.webp",
       "status": "approved",
       "sha256": "171faff1caa9455fd0a323147d0b4525cc6cf51de9cce8e2b36aff6746e4d24f"
     },
     {
       "id": "img_0660",
       "sense_id": "sns_0660",
-      "key": "symbols/food.png",
+      "key": "symbols/food.webp",
       "status": "approved",
       "sha256": "887f43bc3c288a7868e543424daa9da1bb266adedc2bd7dca8ec5a13f3bf61d6"
     },
     {
       "id": "img_0661",
       "sense_id": "sns_0661",
-      "key": "symbols/ketchup.png",
+      "key": "symbols/ketchup.webp",
       "status": "approved",
       "sha256": "da388de07ddcb7f9f12ff3ec29c52114e5851746f11103ace17e258c4e70f2a9"
     },
     {
       "id": "img_0662",
       "sense_id": "sns_0662",
-      "key": "symbols/fries.png",
+      "key": "symbols/fries.webp",
       "status": "approved",
       "sha256": "978e366686c6cf14617c5a422cbc8c8efcb04a8f953608ac9ca1509783de4ffb"
     },
     {
       "id": "img_0663",
       "sense_id": "sns_0663",
-      "key": "symbols/poop.png",
+      "key": "symbols/poop.webp",
       "status": "approved",
       "sha256": "65660b6ff85417ed33d5badea310217108760f1d82f5e1827c8dd99793a51153"
     },
     {
       "id": "img_0664",
       "sense_id": "sns_0664",
-      "key": "symbols/pee.png",
+      "key": "symbols/pee.webp",
       "status": "approved",
       "sha256": "179df00dd9359c9553c9f4e73bf8a92106778a835c2556514413720ce3264746"
     },
     {
       "id": "img_0665",
       "sense_id": "sns_0665",
-      "key": "symbols/hit.png",
+      "key": "symbols/hit.webp",
       "status": "approved",
       "sha256": "84f536d37dec5b14b0b04124a7cb29f4160a92c5cbb16e5a8222bd4dc1f80a93"
     },
     {
       "id": "img_0666",
       "sense_id": "sns_0666",
-      "key": "symbols/bite.png",
+      "key": "symbols/bite.webp",
       "status": "approved",
       "sha256": "5ee5cfaf6714b956d50c27069374f9e55ba9a24e8837f76f332b1edb9415e6a9"
     },
     {
       "id": "img_0667",
       "sense_id": "sns_0667",
-      "key": "symbols/break.png",
+      "key": "symbols/break.webp",
       "status": "approved",
       "sha256": "a5ede10848738fc7ebd4d7dfe0a5af4ab231cb38a53374225be3c8bbd51eb3b4"
     },
     {
       "id": "img_0668",
       "sense_id": "sns_0668",
-      "key": "symbols/scratch.png",
+      "key": "symbols/scratch.webp",
       "status": "approved",
       "sha256": "da293daabe8b8f9b3e43487d9a6321d77bf019fc0e60d07e614a69d7402f18fa"
     },
     {
       "id": "img_0669",
       "sense_id": "sns_0669",
-      "key": "symbols/close.png",
+      "key": "symbols/close.webp",
       "status": "approved",
       "sha256": "c93acf768936bab9c7927b26f3391cab20bd68a058fb4da9dc344063b6988bda"
     },
     {
       "id": "img_0670",
       "sense_id": "sns_0670",
-      "key": "symbols/shut.png",
+      "key": "symbols/shut.webp",
       "status": "approved",
       "sha256": "9d670ec85589f3aaeb34324619bd49e05b71d740ef379ac8984e7774668092ec"
     },
     {
       "id": "img_0671",
       "sense_id": "sns_0671",
-      "key": "symbols/tickle.png",
+      "key": "symbols/tickle.webp",
       "status": "approved",
       "sha256": "56d160b3c806c15cac4de032a7d1d742cdd6657f4037571e1223155a3d121b0e"
     },
     {
       "id": "img_0672",
       "sense_id": "sns_0672",
-      "key": "symbols/boy.png",
+      "key": "symbols/boy.webp",
       "status": "approved",
       "sha256": "f98190c646d0c383f155ae83c03b26e9f91320a4b43a2798b3b599582f229dd4"
     },
     {
       "id": "img_0673",
       "sense_id": "sns_0673",
-      "key": "symbols/girl.png",
+      "key": "symbols/girl.webp",
       "status": "approved",
       "sha256": "226b3fc32af59c17ff9d0e6d0cc7304c581bf9fbd5e154909b5fb716f9ae5dbe"
     },
     {
       "id": "img_0674",
       "sense_id": "sns_0674",
-      "key": "symbols/man.png",
+      "key": "symbols/man.webp",
       "status": "approved",
       "sha256": "b9b58098c49814b6351e6335b244b3ed9a003137f09556e733f4d7e2cd6ecd44"
     },
     {
       "id": "img_0675",
       "sense_id": "sns_0675",
-      "key": "symbols/woman.png",
+      "key": "symbols/woman.webp",
       "status": "approved",
       "sha256": "a13ad6c00852a2b9bf55da74cca386e83e7f2d265157eed680051760e721e68c"
     },
     {
       "id": "img_0676",
       "sense_id": "sns_0676",
-      "key": "symbols/love.png",
+      "key": "symbols/love.webp",
       "status": "approved",
       "sha256": "7e1b208912dfea35cd355b7f079a9aaadb10bcc27b29ccb5b6e42c0dafeaf18a"
     },
     {
       "id": "img_0677",
       "sense_id": "sns_0677",
-      "key": "symbols/together.png",
+      "key": "symbols/together.webp",
       "status": "approved",
       "sha256": "8760354b2b419254790cd65019d73da65be753ab33ae9da2df2b3dec9e7d1899"
     },
     {
       "id": "img_0678",
       "sense_id": "sns_0678",
-      "key": "symbols/ow.png",
+      "key": "symbols/ow.webp",
       "status": "approved",
       "sha256": "a97f0763c84bd407b0fd0519e88d205ae24c5255dc56577406e6128d01c0f4f3"
     },
     {
       "id": "img_0679",
       "sense_id": "sns_0679",
-      "key": "symbols/yours.png",
+      "key": "symbols/yours.webp",
       "status": "approved",
       "sha256": "7131b6d66dfc2d4348a0df643c4170b41b5d9e387e730f3c3c6b193e4e61cd79"
     },
     {
       "id": "img_0680",
       "sense_id": "sns_0680",
-      "key": "symbols/these.png",
+      "key": "symbols/these.webp",
       "status": "approved",
       "sha256": "235ad0e0355587e39f091cbf2f687831f51d13ca4b03cb7affb65d1d9efbb304"
     },
     {
       "id": "img_0681",
       "sense_id": "sns_0681",
-      "key": "symbols/those.png",
+      "key": "symbols/those.webp",
       "status": "approved",
       "sha256": "3a7cbaba640b975663a8f35fe909157126eda0553b29262df1585089e8469ae9"
     },
     {
       "id": "img_0682",
       "sense_id": "sns_0682",
-      "key": "symbols/nothing.png",
+      "key": "symbols/nothing.webp",
       "status": "approved",
       "sha256": "ff2979c0562d1cc77863137303711f4299c80175161a0706b26c03b2a4b6034b"
     },
     {
       "id": "img_0683",
       "sense_id": "sns_0683",
-      "key": "symbols/behind.png",
+      "key": "symbols/behind.webp",
       "status": "approved",
       "sha256": "04663290824f985e11cb52bd49ae16390d307b32aa72e5bac6168edd5c360446"
     },
     {
       "id": "img_0684",
       "sense_id": "sns_0684",
-      "key": "symbols/did.png",
+      "key": "symbols/did.webp",
       "status": "approved",
       "sha256": "dbe452275de5f9fe1cf981f031a7fabb7243ef15fd3118c85598cd1e40ef8ab9"
     },
     {
       "id": "img_0685",
       "sense_id": "sns_0685",
-      "key": "symbols/wait, I'm spelling.png",
+      "key": "symbols/wait, I'm spelling.webp",
       "status": "approved",
       "sha256": "5cef4353631d574c3760cbfb6e382fe7cf7bf458ea9e9c7b4697ce4ac81b2e71"
     },
     {
       "id": "img_0686",
       "sense_id": "sns_0686",
-      "key": "symbols/guess my word.png",
+      "key": "symbols/guess my word.webp",
       "status": "approved",
       "sha256": "8c1de8a01c8e4452f55eab45189b3c344b30f33ffb98f2a69c6523d9426b228f"
     },
     {
       "id": "img_0687",
       "sense_id": "sns_0687",
-      "key": "symbols/oops.png",
+      "key": "symbols/oops.webp",
       "status": "approved",
       "sha256": "d5e0217cafd1d499eaf9603cd280b51f58b0cf6fb6729e09d0f9cc81ed80b280"
     },
     {
       "id": "img_0688",
       "sense_id": "sns_0688",
-      "key": "symbols/cucumber.png",
+      "key": "symbols/cucumber.webp",
       "status": "approved",
       "sha256": "53eba39e8bdc193ee45b49c0900204f8ad380c02af0c2d187851c4bac677d165"
     },
     {
       "id": "img_0689",
       "sense_id": "sns_0689",
-      "key": "symbols/pepper.png",
+      "key": "symbols/pepper.webp",
       "status": "approved",
       "sha256": "0ee97192c8ad6af0cf5496d7278817eb1d4a9d1567abdda4bfacf001a60d386a"
     },
     {
       "id": "img_0690",
       "sense_id": "sns_0690",
-      "key": "symbols/granola_bar.png",
+      "key": "symbols/granola_bar.webp",
       "status": "approved",
       "sha256": "4dc06bbb10dec278b44e60af630320b22a39a6dab012a45f8b29ba080cff050d"
     },
     {
       "id": "img_0691",
       "sense_id": "sns_0691",
-      "key": "symbols/string_cheese.png",
+      "key": "symbols/string_cheese.webp",
       "status": "approved",
       "sha256": "6291458b3044597dba1d067dadc41e63eb0b54dd94e489437d808fe62009353f"
     },
     {
       "id": "img_0692",
       "sense_id": "sns_0692",
-      "key": "symbols/applesauce.png",
+      "key": "symbols/applesauce.webp",
       "status": "approved",
       "sha256": "7921c36dfe0ae9b4d202c9aec994ec1c318e5e1e1f54fd52fdd025a84f9e1bef"
     },
     {
       "id": "img_0694",
       "sense_id": "sns_0694",
-      "key": "symbols/banana_bread.png",
+      "key": "symbols/banana_bread.webp",
       "status": "approved",
       "sha256": "a4d3f7e3d7665645df2a1e25089f8f57ba60bdc548a46df004f7eb67e510cbc9"
     },
     {
       "id": "img_0695",
       "sense_id": "sns_0695",
-      "key": "symbols/goldfish_crackers.png",
+      "key": "symbols/goldfish_crackers.webp",
       "status": "approved",
       "sha256": "ef23d4e908f05c9fdfa7e34c1644a8fffee8d61411bf509c8439ba5e15fe3837"
     },
     {
       "id": "img_0696",
       "sense_id": "sns_0696",
-      "key": "symbols/pudding.png",
+      "key": "symbols/pudding.webp",
       "status": "approved",
       "sha256": "395d88310bc8cb9599ac649cfdcdbf53b2d9c96baa1c2453f5615f9b938e2fd6"
     },
     {
       "id": "img_0697",
       "sense_id": "sns_0697",
-      "key": "symbols/jello.png",
+      "key": "symbols/jello.webp",
       "status": "approved",
       "sha256": "aafd3873c79c55a76a17454ec6cd4deaf104828d166f1f725c22223f639645c2"
     },
     {
       "id": "img_0698",
       "sense_id": "sns_0698",
-      "key": "symbols/brownie.png",
+      "key": "symbols/brownie.webp",
       "status": "approved",
       "sha256": "00ba5f513f17ec666597f051218d10e2a878d113aa2348637bf3cf7416d0047e"
     },
     {
       "id": "img_0699",
       "sense_id": "sns_0699",
-      "key": "symbols/cupcake.png",
+      "key": "symbols/cupcake.webp",
       "status": "approved",
       "sha256": "8c6f467cb08f1d4feb788289c476af3c447b2b36a65dd98ea3100dfbda80b7e6"
     },
     {
       "id": "img_0700",
       "sense_id": "sns_0700",
-      "key": "symbols/chocolate.png",
+      "key": "symbols/chocolate.webp",
       "status": "approved",
       "sha256": "de4b9161e3be220d45df00472c38f4690400ab923a89482b86542935a11d41bc"
     },
     {
       "id": "img_0701",
       "sense_id": "sns_0701",
-      "key": "symbols/lollipop.png",
+      "key": "symbols/lollipop.webp",
       "status": "approved",
       "sha256": "39ac50a428a50b0abe1348f816e3948d8e5239087e8a01a6c3008bf87cb9da08"
     },
     {
       "id": "img_0702",
       "sense_id": "sns_0702",
-      "key": "symbols/dessert.png",
+      "key": "symbols/dessert.webp",
       "status": "approved",
       "sha256": "bf010db774e1a29409685401a95cf687db98d97ed2a559ff7561de1cc6bb4087"
     },
     {
       "id": "img_0703",
       "sense_id": "sns_0703",
-      "key": "symbols/blueberry.png",
+      "key": "symbols/blueberry.webp",
       "status": "approved",
       "sha256": "23267c396b1364d2078bf6b4c25343e7fa7b3b4ffb3dbe92315d60dd2ef4dfda"
     },
     {
       "id": "img_0704",
       "sense_id": "sns_0704",
-      "key": "symbols/raspberry.png",
+      "key": "symbols/raspberry.webp",
       "status": "approved",
       "sha256": "abe2f72a3cd5dcaadc88be1f4a11f7230544b5463e4f4b392d3053c4353ba51a"
     },
     {
       "id": "img_0705",
       "sense_id": "sns_0705",
-      "key": "symbols/blackberry.png",
+      "key": "symbols/blackberry.webp",
       "status": "approved",
       "sha256": "7d771c7ec36c2af5d09595fb9474918689524d9462da4f217b256717613fba8d"
     },
     {
       "id": "img_0706",
       "sense_id": "sns_0706",
-      "key": "symbols/cherry.png",
+      "key": "symbols/cherry.webp",
       "status": "approved",
       "sha256": "91fcde7534f06b1b6804c45f1c9b07994f0200894c0caa65e4d0c06d1e5255aa"
     },
     {
       "id": "img_0707",
       "sense_id": "sns_0707",
-      "key": "symbols/peach.png",
+      "key": "symbols/peach.webp",
       "status": "approved",
       "sha256": "da73f3d3c17d09cbc398c16d28cfd2a6bc1d3c7e572eedf1724357c7bb201cb5"
     },
     {
       "id": "img_0708",
       "sense_id": "sns_0708",
-      "key": "symbols/pear.png",
+      "key": "symbols/pear.webp",
       "status": "approved",
       "sha256": "ebb94b001174c4d1755b5b5f90eb07d629a21c9da84067f71d8cdeb0e9ae9096"
     },
     {
       "id": "img_0709",
       "sense_id": "sns_0709",
-      "key": "symbols/mango.png",
+      "key": "symbols/mango.webp",
       "status": "approved",
       "sha256": "52a6a421016379649b3b4c56b4fcddcb2e1c31985ec93096d7bcd343245f5c73"
     },
     {
       "id": "img_0710",
       "sense_id": "sns_0710",
-      "key": "symbols/pineapple.png",
+      "key": "symbols/pineapple.webp",
       "status": "approved",
       "sha256": "d5d724c0130d0dbbfed2525fcb0728577ad245635d52d50c9288e36e9608cd90"
     },
     {
       "id": "img_0711",
       "sense_id": "sns_0711",
-      "key": "symbols/kiwi.png",
+      "key": "symbols/kiwi.webp",
       "status": "approved",
       "sha256": "2c6b409d970bc60c17c62eca787a14870eae1805443612ebcce4aeedcc64e5cd"
     },
     {
       "id": "img_0712",
       "sense_id": "sns_0712",
-      "key": "symbols/cantaloupe.png",
+      "key": "symbols/cantaloupe.webp",
       "status": "approved",
       "sha256": "4f9b2d08e8c25fb48b2abf8acba9eab73428ce98382f8058c7a9ee1ba5c4fa36"
     },
     {
       "id": "img_0713",
       "sense_id": "sns_0713",
-      "key": "symbols/melon.png",
+      "key": "symbols/melon.webp",
       "status": "approved",
       "sha256": "5a6ac4bf84619988365469d9f2a0f3d9481ee537e91bbccdb090c576ab7d0dcb"
     },
     {
       "id": "img_0714",
       "sense_id": "sns_0714",
-      "key": "symbols/coconut.png",
+      "key": "symbols/coconut.webp",
       "status": "approved",
       "sha256": "183645eb05d6b7a880af6049460a38e587568d76becc05ced9152d2343378342"
     },
     {
       "id": "img_0715",
       "sense_id": "sns_0715",
-      "key": "symbols/orange_juice.png",
+      "key": "symbols/orange_juice.webp",
       "status": "approved",
       "sha256": "a4894f489422cdd5dec888bb57d16a0b95150b49cb7f09011c44582212455685"
     },
     {
       "id": "img_0716",
       "sense_id": "sns_0716",
-      "key": "symbols/grape_juice.png",
+      "key": "symbols/grape_juice.webp",
       "status": "approved",
       "sha256": "fc71b1785b1e896790fe28f3bf634045920be88054b7510ef80ddec1cb801945"
     },
     {
       "id": "img_0717",
       "sense_id": "sns_0717",
-      "key": "symbols/strawberry_milk.png",
+      "key": "symbols/strawberry_milk.webp",
       "status": "approved",
       "sha256": "92d7dfedd754168bd7ef7a8722e2f6bde10e4dc20729a71885726f604d3a4773"
     },
     {
       "id": "img_0718",
       "sense_id": "sns_0718",
-      "key": "symbols/lemonade.png",
+      "key": "symbols/lemonade.webp",
       "status": "approved",
       "sha256": "1d78173f006a4038c7a9f0a598a5063d388c15f87fd5d50f097c5171c859ddb3"
     },
     {
       "id": "img_0719",
       "sense_id": "sns_0719",
-      "key": "symbols/hot_chocolate.png",
+      "key": "symbols/hot_chocolate.webp",
       "status": "approved",
       "sha256": "81e006ab1b1ae870987073903f035ba3ae094d35336a638d6a5c46ed551491a9"
     },
     {
       "id": "img_0720",
       "sense_id": "sns_0720",
-      "key": "symbols/milkshake.png",
+      "key": "symbols/milkshake.webp",
       "status": "approved",
       "sha256": "bc62db5f734299338d62f7d13153a902bb4278bad3314a23d9356c29f291ea0f"
     }
