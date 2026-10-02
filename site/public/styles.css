@@ -4,6 +4,13 @@
  * then here. Deliberately plain: the designer owns layout and voice.
  */
 
+@font-face {
+  font-family: "Andika";
+  src: url("/fonts/andika-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
   /* Brand */
   --pip-amber: #fcb82b;   /* bird body — marketing only, never app chrome */

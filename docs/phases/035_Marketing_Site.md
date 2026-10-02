@@ -37,8 +37,14 @@ so the brand assets and the pricing truth stay next to the product.
 
 Works Test: `npx wrangler dev --config site/wrangler.jsonc --port 21200`
 serves `/`, `/styles.css`, `/brand/*` 200 with the security headers
-(verified locally 2026-10-02). Deploy proof owed — first `deploy:site`
-needs the `pipaac.org` and `www.pipaac.org` custom domains to attach.
+(verified locally 2026-10-02).
+
+Deploy 2026-10-02: `pipaac-site` uploaded and live at
+`pipaac-site.emailmike.workers.dev`. **Custom domains blocked:** apex and
+`www` hold stale A/CNAME records proxied to a dead origin (both return
+525 today). Founder step: delete the `pipaac.org`/`www` records in the
+zone's DNS page, then `npm run deploy:site` attaches both domains — no
+API token on this machine covers zone DNS.
 
 ## Still owed (not this repo's agents — people)
 
