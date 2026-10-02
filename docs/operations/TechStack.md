@@ -79,9 +79,8 @@ Payments (015 slice 6, built 2026-10-02): Stripe objects exist (see 015
 slice 6 for ids — test + live products/prices/webhook endpoints on
 `acct_1U43csFPjZdfZdLb`, the PipAAC account). Prod secrets pushed
 2026-10-02: `STRIPE_WEBHOOK_SECRET` (live endpoint whsec),
-`STRIPE_PRICE_ID` (live $49 price), `STRIPE_SECRET_KEY` (**expiring** —
-the CLI's `rk_live`, dies 2026-11-11; swap for a dashboard-created
-restricted key with Checkout write before launch). Checkout/webhook
+`STRIPE_PRICE_ID` (live $49 price), `STRIPE_SECRET_KEY` (durable
+`sk_live`, verified against live mode 2026-10-02). Checkout/webhook
 routes reach prod on the next `wrangler deploy` — until then the webhook
 endpoint 404s, harmlessly. License codes (`POST /admin/v1/license-codes`,
 Bearer `PIP_ADMIN_TOKEN`) and `POST /api/v1/license/redeem` work with

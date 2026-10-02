@@ -526,11 +526,9 @@ on `app.pipaac.org/api/v1/stripe/webhook` for
 `checkout.session.completed`. `.dev.vars` carries the test key + test
 price; local webhook proof runs `stripe listen --forward-to
 localhost:21087/api/v1/stripe/webhook` and pastes its session `whsec_`
-into `STRIPE_WEBHOOK_SECRET`. Prod secrets pushed 2026-10-02 — but
-`STRIPE_SECRET_KEY` is the CLI's `rk_live`, which **expires 2026-11-11**:
-live checkout works until then; a durable dashboard-created restricted
-key (Checkout Sessions write) replaces it before launch. Routes reach
-prod on the next `wrangler deploy`.
+into `STRIPE_WEBHOOK_SECRET`. Prod secrets pushed 2026-10-02 —
+`STRIPE_SECRET_KEY` is a durable `sk_live` (verified against live mode).
+Routes reach prod on the next `wrangler deploy`.
 
 Still owed by this slice: Stripe/Apple **confirmation wiring tested
 live** (test-mode purchase end-to-end), iOS consumable IAP (lands with
