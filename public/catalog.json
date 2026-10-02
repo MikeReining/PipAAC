@@ -6074,7 +6074,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0661",
       "negation": 0
     },
     {
@@ -6083,7 +6083,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0662",
       "negation": 0
     },
     {
@@ -6092,7 +6092,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
-      "default_image_id": null,
+      "default_image_id": "img_0663",
       "negation": 0
     },
     {
@@ -6101,7 +6101,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Body, Health & Hygiene",
-      "default_image_id": null,
+      "default_image_id": "img_0664",
       "negation": 0
     },
     {
@@ -6110,7 +6110,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0665",
       "negation": 0
     },
     {
@@ -6119,7 +6119,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0666",
       "negation": 0
     },
     {
@@ -6128,7 +6128,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0667",
       "negation": 0
     },
     {
@@ -6137,7 +6137,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0668",
       "negation": 0
     },
     {
@@ -6146,7 +6146,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0669",
       "negation": 0
     },
     {
@@ -6155,7 +6155,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0670",
       "negation": 0
     },
     {
@@ -34408,6 +34408,76 @@
       "key": "symbols/food.png",
       "status": "approved",
       "sha256": "887f43bc3c288a7868e543424daa9da1bb266adedc2bd7dca8ec5a13f3bf61d6"
+    },
+    {
+      "id": "img_0661",
+      "sense_id": "sns_0661",
+      "key": "symbols/ketchup.png",
+      "status": "approved",
+      "sha256": "da388de07ddcb7f9f12ff3ec29c52114e5851746f11103ace17e258c4e70f2a9"
+    },
+    {
+      "id": "img_0662",
+      "sense_id": "sns_0662",
+      "key": "symbols/fries.png",
+      "status": "approved",
+      "sha256": "978e366686c6cf14617c5a422cbc8c8efcb04a8f953608ac9ca1509783de4ffb"
+    },
+    {
+      "id": "img_0663",
+      "sense_id": "sns_0663",
+      "key": "symbols/poop.png",
+      "status": "approved",
+      "sha256": "65660b6ff85417ed33d5badea310217108760f1d82f5e1827c8dd99793a51153"
+    },
+    {
+      "id": "img_0664",
+      "sense_id": "sns_0664",
+      "key": "symbols/pee.png",
+      "status": "approved",
+      "sha256": "179df00dd9359c9553c9f4e73bf8a92106778a835c2556514413720ce3264746"
+    },
+    {
+      "id": "img_0665",
+      "sense_id": "sns_0665",
+      "key": "symbols/hit.png",
+      "status": "approved",
+      "sha256": "84f536d37dec5b14b0b04124a7cb29f4160a92c5cbb16e5a8222bd4dc1f80a93"
+    },
+    {
+      "id": "img_0666",
+      "sense_id": "sns_0666",
+      "key": "symbols/bite.png",
+      "status": "approved",
+      "sha256": "5ee5cfaf6714b956d50c27069374f9e55ba9a24e8837f76f332b1edb9415e6a9"
+    },
+    {
+      "id": "img_0667",
+      "sense_id": "sns_0667",
+      "key": "symbols/break.png",
+      "status": "approved",
+      "sha256": "a5ede10848738fc7ebd4d7dfe0a5af4ab231cb38a53374225be3c8bbd51eb3b4"
+    },
+    {
+      "id": "img_0668",
+      "sense_id": "sns_0668",
+      "key": "symbols/scratch.png",
+      "status": "approved",
+      "sha256": "da293daabe8b8f9b3e43487d9a6321d77bf019fc0e60d07e614a69d7402f18fa"
+    },
+    {
+      "id": "img_0669",
+      "sense_id": "sns_0669",
+      "key": "symbols/close.png",
+      "status": "approved",
+      "sha256": "c93acf768936bab9c7927b26f3391cab20bd68a058fb4da9dc344063b6988bda"
+    },
+    {
+      "id": "img_0670",
+      "sense_id": "sns_0670",
+      "key": "symbols/shut.png",
+      "status": "approved",
+      "sha256": "9d670ec85589f3aaeb34324619bd49e05b71d740ef379ac8984e7774668092ec"
     },
     {
       "id": "img_0672",
