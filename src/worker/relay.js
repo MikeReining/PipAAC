@@ -347,10 +347,10 @@ export class UserRelay {
     }
 
     // Owner-only: adding or removing people and devices, the key they
-    // are re-keyed under, the QR card, the license, and deleting the
-    // board. Team devices keep every read and every edit.
+    // are re-keyed under, the QR card, and deleting the board. Team keeps
+    // every read and edit, and may buy Pip Lifetime (founder 2026-10-02).
     const ownerOnly =
-      (method === "POST" && ["devices", "supporters", "keys", "recovery", "entitlement", "undelete"]
+      (method === "POST" && ["devices", "supporters", "keys", "recovery", "undelete"]
         .includes(route))
       || (method === "POST" && /^supporters\/[^/]+\/owner$/.test(route))
       || (method === "DELETE"

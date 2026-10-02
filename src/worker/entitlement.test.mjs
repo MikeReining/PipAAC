@@ -311,10 +311,11 @@ test("op pruning follows the snapshot, never entitlement", async () => {
   assert.deepEqual(left.map((r) => r.op_id), ["c"], "op beyond snapshot pruned");
 });
 
-test("owner and team: team edits and reads; only owners manage people, devices, license, deletion", async () => {
+test("owner and team: team edits, reads and may buy; only owners manage people, devices, deletion", async () => {
   // Founder 2026-09-28: an Owner, and a Team that can edit everything
-  // except deleting the board, managing people, and the license. The
-  // relay — not the UI — refuses the owner-only calls.
+  // except deleting the board and managing people. Founder 2026-10-02:
+  // anyone may buy — the license belongs to the user. The relay — not
+  // the UI — refuses the owner-only calls.
   const userId = "user-owner";
   const { relay, dev: a } = await userAt(userId);
   const p = `/users/${userId}`;
@@ -354,7 +355,6 @@ test("owner and team: team edits and reads; only owners manage people, devices, 
     ["DELETE", "/supporters/acct_slp"],
     ["POST", "/supporters", { acct_id: "acct_x" }],
     ["POST", "/supporters/acct_slp/owner", { owner: true }],
-    ["POST", "/entitlement", { license: "x" }],
     ["POST", "/devices", { device_id: "d", pubkey: "k" }],
     ["POST", "/keys", { epoch: 9, wrapped: {} }],
     ["POST", "/recovery", { recovery_proof: "x" }],
@@ -363,6 +363,13 @@ test("owner and team: team edits and reads; only owners manage people, devices, 
     assert.equal(res.status, 403, `${m} ${path} should be owner-only`);
     assert.equal((await res.json()).error, "owner_only");
   }
+  // Team may activate Pip Lifetime: a bad key is refused on its merits
+  // (bad_license, not owner_only), a real one is accepted.
+  res = await call(s, "POST", "/entitlement", { license: "x" });
+  assert.equal(res.status, 403);
+  assert.equal((await res.json()).error, "bad_license");
+  res = await call(s, "POST", "/entitlement", { license: await licenseFor(SECRET, userId) });
+  assert.equal(res.status, 200);
 
   // A team device's join tokens carry its account: the next device it
   // brings is team too, never an untagged owner.
