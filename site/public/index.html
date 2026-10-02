@@ -3,51 +3,105 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- TODO(copy): title + meta description are first-contact SEO — owner: copywriter -->
-  <title>Pip — AAC that a family can afford</title>
-  <meta name="description" content="TODO(copy)">
+  <title>Pip AAC: your child's voice shouldn't cost $300. Free AAC app, $49 once.</title>
+  <meta name="description" content="Pip is the AAC app built around your child, not around everyone. Every word free, forever. $49 once for the whole family. Never a subscription.">
+  <meta name="theme-color" content="#f6f4ef">
+  <link rel="preload" href="/fonts/andika-bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png">
   <link rel="apple-touch-icon" href="/brand/icon-180.png">
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="band" aria-hidden="true"></div>
+
   <header class="site-header wrap">
-    <a href="/" aria-label="Pip home"><img src="/brand/pip-mark.svg" alt="Pip"></a>
-    <nav class="site-nav">
-      <!-- TODO(copy): final nav labels -->
-      <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a class="button" href="https://app.pipaac.org">Open Pip</a>
+    <a class="brand" href="/" aria-label="Pip AAC home">
+      <img src="/brand/pip-mark.svg" alt="" width="40" height="40">
+      <span>Pip</span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="/method">Our method</a>
+      <a href="/slps">For SLPs</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/compare">Compare</a>
+      <a href="/faq">FAQ</a>
+      <a class="button button-small" href="https://app.pipaac.org">Create a board — free</a>
     </nav>
   </header>
 
-  <main>
-    <!-- TODO(copy): hero — headline, sub, primary CTA. pip-05-welcome.png is
-         the marketing hero pose (Motor_Grid_And_Art §5). -->
-    <section class="wrap" id="hero">
-      <img src="/brand/pip-05-welcome.png" alt="Pip, a small amber bird" width="160">
-      <h1>Pip</h1>
-      <p>AAC for every voice.</p>
-      <a class="button" href="https://app.pipaac.org">Open Pip</a>
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div>
+        <span class="eyebrow">The AAC app built around your child</span>
+        <h1 id="hero-title">Your child's voice shouldn't cost
+          <span class="price-strike"><s>$300</s>.<span class="stamp" aria-hidden="true">$0</span></span></h1>
+        <p class="sub">And it should never be rented by the month.</p>
+        <p class="lede">Pip is a complete AAC app that you shape around <em>your</em> child.
+          Your people, your photos, your words. Every built-in word speaks, free,
+          forever. When the whole family wants in, it's <strong>$49 once</strong>.
+          Never a subscription.</p>
+        <div class="cta-block">
+          <a class="button" id="hero-cta" href="https://app.pipaac.org">Create your child's board — free <span class="arrow" aria-hidden="true">→</span></a>
+          <p class="cta-note">Type your child's name. Sixty seconds later, they're saying
+            "I want an apple." No credit card. Nothing is ever taken away.</p>
+        </div>
+        <ul class="trust" aria-label="Our promises">
+          <li>Free forever</li>
+          <li>$49 once, never monthly</li>
+          <li>Every helper free</li>
+          <li>SLPs free</li>
+        </ul>
+      </div>
+
+      <figure class="device-stage" aria-label="A Pip board on an iPad, with the family's own words: Mimi, Biscuit, trains and park.">
+        <img class="device-bird" src="/pip/welcome.webp" alt="" width="150" height="150">
+        <div class="ipad" aria-hidden="true">
+          <div class="screen">
+            <div class="sentence-bar">
+              <span class="said"><img src="/tiles/I.webp" alt="">I</span>
+              <span class="said"><img src="/tiles/want.webp" alt="">want</span>
+              <span class="said"><img src="/tiles/grandma.webp" alt="">Mimi</span>
+              <span class="speak"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5.5a9 9 0 0 1 0 13"/></svg></span>
+            </div>
+            <div class="smart-bar">
+              <span><img src="/tiles/hug.webp" alt="">hug</span>
+              <span><img src="/tiles/play.webp" alt="">play</span>
+              <span><img src="/tiles/eat.webp" alt="">eat</span>
+              <span class="feel">😊 😢 😠</span>
+            </div>
+            <div class="board">
+              <span class="tile y"><b>I</b><img src="/tiles/I.webp" alt=""></span>
+              <span class="tile g"><b>want</b><img src="/tiles/want.webp" alt=""></span>
+              <span class="tile bl"><b>more</b><img src="/tiles/more.webp" alt=""></span>
+              <span class="tile r"><b>yes</b><img src="/tiles/yes.webp" alt=""></span>
+              <span class="tile r"><b>stop</b><img src="/tiles/stop.webp" alt=""></span>
+
+              <span class="tile y mine glow"><b>Mimi</b><img src="/tiles/grandma.webp" alt=""></span>
+              <span class="tile y mine"><b>Biscuit</b><img src="/tiles/dog.webp" alt=""></span>
+              <span class="tile y mine"><b>trains</b><img src="/tiles/train.webp" alt=""></span>
+              <span class="tile y mine"><b>park</b><img src="/tiles/park.webp" alt=""></span>
+              <span class="tile r"><b>help</b><img src="/tiles/help.webp" alt=""></span>
+
+              <span class="tile y"><b>you</b><img src="/tiles/you.webp" alt=""></span>
+              <span class="tile g"><b>like</b><img src="/tiles/like.webp" alt=""></span>
+              <span class="tile g"><b>go</b><img src="/tiles/go.webp" alt=""></span>
+              <span class="tile r"><b>no</b><img src="/tiles/no.webp" alt=""></span>
+              <span class="tile r"><b>hurt</b><img src="/tiles/hurt.webp" alt=""></span>
+            </div>
+          </div>
+        </div>
+        <figcaption class="device-caption"><strong>Mimi. Biscuit. Trains.</strong> Her words, on her board.
+          <span aria-hidden="true">♥</span> = added by her family in seconds.</figcaption>
+      </figure>
     </section>
 
-    <!-- TODO(copy): what it is — speaks offline, every word free -->
-    <section class="wrap" id="how">
-      <h2>How it works</h2>
-    </section>
-
-    <!-- TODO(copy): pricing block — the durable claims live in
-         docs/product/Pricing_And_Packaging.md § 4: $49 once per user,
-         never a subscription, free tier facts. Do not invent numbers. -->
-    <section class="wrap" id="pricing">
-      <h2>Pricing</h2>
-    </section>
+    <div class="band" aria-hidden="true"></div>
   </main>
 
   <footer class="site-footer wrap">
-    <!-- TODO(copy): footer links (privacy, contact) — COPPA posture:
-         no analytics or tracking pixels on this site without a founder call -->
-    <p>&copy; Pip AAC</p>
+    <p>© Pip AAC · This site has no trackers and no cookies.</p>
   </footer>
 </body>
 </html>
