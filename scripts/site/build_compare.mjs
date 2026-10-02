@@ -17,6 +17,9 @@ const between = (s, a, b) => s.slice(s.indexOf(a), s.indexOf(b));
 const header = between(index, '  <a class="skip"', '  <main id="main">')
   .replace('<a href="/compare/">', '<a href="/compare/" aria-current="page">');
 const footer = between(index, '  <div class="sticky-cta"', "</body>");
+const onlyInPip = between(index, "    <!-- ONLY-IN-PIP", "    <!-- /ONLY-IN-PIP -->")
+  .replace(/^.*\n/, "")
+  .replace(/<p class="center cta-row">.*?<\/p>\n/s, "");
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const WORDS = ["Not available", "Limited", "Partial", "Strong", "Built in"];
@@ -148,6 +151,7 @@ ${quote}
       </div>
     </section>
 
+${onlyInPip}
     <section class="section" aria-labelledby="diff-title">
       <div class="wrap">
         <h2 id="diff-title" class="center narrow">Where Pip is different.</h2>
@@ -186,6 +190,7 @@ pages["compare/index.html"] = page({
       </div>
     </section>
 
+${onlyInPip}
     <section class="section" aria-labelledby="cards-title">
       <div class="wrap">
         <h2 id="cards-title" class="center">Pip, one by one.</h2>
