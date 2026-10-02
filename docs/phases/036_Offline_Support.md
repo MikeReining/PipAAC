@@ -5,6 +5,8 @@ the gate for the "works offline" marketing claim; the 035 proposal's
 claims table already flags it as untrue from a cold start.
 **Sequenced after 037** (founder 2026-10-02): the payload diet lands
 first so the precache covers every symbol, not just art seen before.
+037's code landed 2026-10-02 and its byte gate passes — 036 is unblocked;
+the shipped-art story it caches goes live when 037 deploys.
 **Related:** `037_Shipped_Payload_Diet.md` (the § 3C input),
 `docs/phases/035_Marketing_Site_Proposal.md` (claims table,
 § "Offline"), 024 (sentence clip cache — the pattern this copies), 028

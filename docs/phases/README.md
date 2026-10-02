@@ -55,7 +55,7 @@ Executing phases only. Each row names the **next** slice.
 | Proposal | Ask |
 | --- | --- |
 | [035 — pipaac.org design + copy proposal](035_Marketing_Site_Proposal.md) | Direction set 2026-10-02 (board first, $300 headline, /method attack page). Next: hero mockup (§ 13); founder story + contact (§ 14) |
-| [037 — Shipped payload diet](037_Shipped_Payload_Diet.md) | Decided 2026-10-02, ready to build. Symbols 600 MB → ~8 MB WebP (`sharp`, in `catalog:build`); `_headers` so assets stop invoking the Worker. Lands **before** 036 |
+| [037 — Shipped payload diet](037_Shipped_Payload_Diet.md) | Executed 2026-10-02 — symbols 600 MB → 7.3 MB WebP in `catalog:build`, byte + stamp gates live, `_headers` shipped. Open: founder tile-size art review, `pictures:index` re-embed, deploy |
 | [036 — Works offline](036_Offline_Support.md) | Founder go/no-go on the service-worker phase; § 3C decided: full symbol precache; starts after 037's byte gate passes. Gates the "works offline" claim |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
 

@@ -1,8 +1,22 @@
 # 037 — Shipped payload diet (ship the tile, not the master)
 
-**Status:** DECIDED, ready to build 2026-10-02 — nothing built yet.
+**Status:** EXECUTED 2026-10-02 in four commits (`e1ab297` transcode,
+`d68f053` byte gate, `4c50b83` review page, `805abbc` `_headers`) —
+founder gates below are open before deploy.
 Sequenced **ahead of 036** (founder 2026-10-02): fix what we ship before
 teaching the app to cache it. Both open decisions are closed in § 7.
+
+**Landed:** emit/check half extracted to `scripts/catalog/symbol_emit.mjs`;
+`catalog:build` emits 691 WebP + 21 SVGs (~7.3 MB shipped, largest 43 KB);
+stamp file + orphan scan in `catalog:build:check`; byte gate in
+`check:fast` (`scripts/check_symbol_bytes.mjs`); `public/_headers` +
+`run_worker_first` removed (asset requests bypass the Worker, verified
+locally); question glyph → `icons/question-mark.svg`; review page
+`public/preview-symbol-diet.html` (34 rows).
+**Founder-gated, not yet done:** § 5 items — tile-size art review
+(`http://localhost:21087/?reseed` + the preview page), the iPadOS 14+
+device floor, preview-deploy serving check, `npm run pictures:index`
+(paid Workers AI run, needs explicit yes), then deploy.
 **Related:** `docs/operations/art-generator/SKILL.md` (pipeline owner —
 "Shipping is the catalog build"), 036 (service worker; § 3C resolves to
 full precache once this lands), `docs/operations/TechStack.md`
@@ -39,8 +53,6 @@ phase adds it.
 
 ## 2. Work order A — transcode in `catalog:build`
 
-- `assets/symbols/` keeps the masters (source of truth — print, future
-  sizes, re-rolls).
 - `assets/symbols/` keeps the masters (source of truth — print, future
   sizes, re-rolls).
 - `build_catalog.mjs` emits `public/symbols/<word>.webp` — **WebP q82,
