@@ -1,7 +1,8 @@
 /* QR card. */
 .rec-code {
-  font-size: 15px; text-align: center; font-family: ui-monospace, monospace;
-  word-break: break-all; margin: 10px 0 4px; letter-spacing: 1px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 12px;
+  list-style: decimal inside; padding: 0; margin: 10px 0 4px;
+  font-size: 16px; font-family: ui-monospace, monospace;
 }
 .rec-video { width: 100%; border-radius: 8px; margin-bottom: 8px; }
 #rec-paste {
@@ -18,3 +19,5 @@
   #recform.open .sheet { width: auto; max-height: none; box-shadow: none; }
   #recform.open .row { display: none; }
 }
+/* A tapped recovery link opens Restore above the first-run welcome. */
+#recform.over-welcome { z-index: 95; }

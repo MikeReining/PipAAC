@@ -366,20 +366,25 @@ card (§ 12.3). The recovery root and its derivation stay.*
   and they can show it again from any linked device that holds the
   recovery root (see the amendment below).
 
-**BUILT 2026-09-25** (015 slice 3, amends the slice-8 sheet). The card
-is a `pip:recover:<userId>:<b64u32>` QR plus the same 43-character
-base64url code printed beneath it for camera-less devices — Parent
-corner → Backup → QR card → **Print**, **Save image** (a PNG of the
-card), **Share** (the system sheet covers email), **Replace card…**
-(`public/index.html` `#recform`; `showCard`, `cardPngBlob`,
-`replaceCard` in `public/board.js`). The payload carries the 256-bit
-**recovery root** itself (`cardPayload`, `public/shared/recovery.mjs`).
-Every epoch's user key derives from the root by HKDF
-(`deriveEpochKey`, `public/shared/sync_crypto.mjs`), so a card printed
-at any time opens every epoch of its era — including ops sealed after
-a device removal rotated the key. Pre-card sheets
-(`pip:recover:<id>:<24 words>` and bare `id + 24 words`) still parse —
-the words encode the same root (`recoverFromText`).
+**BUILT 2026-10-01** (amends 015 slice 3). The card is a QR plus the
+**12 recovery words** (128-bit root + 4-bit checksum, BIP-0039 list).
+The words alone are the code: the QR and the email carry one link,
+`<origin>/#restore=<word-word-…-word>` (`cardLink`,
+`public/shared/recovery.mjs`). The fragment never reaches a server;
+tapping it opens Restore with the words filled in, and the adult presses
+Restore (above the first-run welcome on a new device). The relay
+finds the user from the proof: `POST /restore` looks up R2
+`ri/<sha256(proof)>` → user id, written at bootstrap and replaced on
+Replace card (`restoreByProof`, `indexProof`, `src/worker/restore.js`)
+— keyed by the hash because the proof is itself the credential. A
+board set up before 12-word cards holds a 32-byte root: showing its
+card runs Replace card once, minting a 12-word root and indexing it. Card UI: **Email** (phones: share sheet; desktop: Gmail
+compose), **Copy link**, **Print**, and **More…** (Save image, Replace
+card…) (`showCard`, `public/board/recovery-ui.js`). Pasting tolerates
+spaces, commas, hyphens, newlines. No users existed, so the 43-char
+code, 24-word sheets and the user-id-in-code format no longer parse. The
+link may sit in a mailbox: this guards an AAC board, not funds. Every
+epoch's user key derives from the root by HKDF (`deriveEpochKey`).
 
 - The relay stores only `SHA-256(root ‖ "pip-recovery-v1")`, written at
   user bootstrap. `POST /users/:id/restore` is the one unsigned call

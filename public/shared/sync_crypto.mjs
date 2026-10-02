@@ -124,7 +124,7 @@ export async function ensureRecoveryRoot(store = openKeyStore(), userId) {
   const name = userRootName(userId);
   let root = await store.get(name);
   if (!root) {
-    root = globalThis.crypto.getRandomValues(new Uint8Array(32));
+    root = globalThis.crypto.getRandomValues(new Uint8Array(16)); // 12 recovery words
     await store.put(name, root);
   }
   return root instanceof Uint8Array ? root : new Uint8Array(root);

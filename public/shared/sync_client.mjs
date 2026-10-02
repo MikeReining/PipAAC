@@ -135,6 +135,17 @@ export async function restoreDevice(baseUrl, userId, { proof, device_id, pubkey,
   return res.json(); // { ok, epoch }
 }
 
+/** Restore from the card's words alone: the relay finds the user by the
+ *  proof. → { user_id, ok, epoch, moved, recovery_bundle }. */
+export async function restoreByProof(baseUrl, { proof, device_id, pubkey, dh_pub }) {
+  const res = await fetch(`${baseUrl}/restore`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ device_id, pubkey, dh_pub, proof }),
+  });
+  if (!res.ok) throw new Error(`restore: ${res.status}`);
+  return res.json();
+}
+
 /** Account sign-in (§ 12.3): unsigned — the single-use join token a
  *  linked device minted stands in for a device signature. Registers
  *  non-destructively like a Lifetime restore. */

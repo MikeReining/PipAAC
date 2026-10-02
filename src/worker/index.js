@@ -6,6 +6,7 @@
 // including each Durable Object — and crash-looped the TileLedger DO
 // over the 128 MB isolate memory limit.
 import { UserRelay } from "./relay.js";
+import { restoreByProof } from "./restore.js";
 import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
 import { verifyAssertion } from "./webauthn.mjs";
@@ -188,6 +189,10 @@ export default {
           dh_pub: body.dh_pub, recovery_proof: body.recovery_proof }) }));
       if (!init.ok) return init;
       return json({ user_id: userId });
+    }
+    // Restore by card: the 12 words' proof finds the user (restore.js).
+    if (path === "/restore" && request.method === "POST" && env?.RELAY && env?.BLOBS) {
+      return restoreByProof(request, env);
     }
     const userMatch = env?.RELAY && path.match(/^\/users\/([^/]+)(\/.*)?$/);
     if (userMatch) {

@@ -16,6 +16,7 @@
  * the worker graph without cloudflare:workers.
  */
 import { checkLicense } from "./license.mjs";
+import { indexProof } from "./restore.js";
 
 const te = new TextEncoder();
 const td = new TextDecoder();
@@ -214,7 +215,10 @@ export class UserRelay {
         `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
          VALUES (?, ?, ?, ?, 1, ?)`,
         device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, Date.now());
-      if (recovery_proof) this.metaSet("recovery_proof", recovery_proof);
+      if (recovery_proof) {
+        this.metaSet("recovery_proof", recovery_proof);
+        await indexProof(this.env, url.pathname.split("/")[2], null, recovery_proof);
+      }
       // Retention bookkeeping starts at birth: the alarm sweeps daily.
       this.metaSet("user_id", url.pathname.split("/")[2]);
       this.metaSet("last_seen", Date.now());
@@ -479,6 +483,8 @@ export class UserRelay {
     if (method === "POST" && route === "recovery") {
       const { recovery_proof, recovery_bundle } = JSON.parse(td.decode(bodyBytes));
       if (!recovery_proof) return bad("bad_recovery");
+      await indexProof(this.env, url.pathname.split("/")[2],
+        this.metaGet("recovery_proof"), recovery_proof);
       this.metaSet("recovery_proof", recovery_proof);
       if (recovery_bundle) this.metaSet("recovery_bundle", recovery_bundle);
       return json({ ok: true });

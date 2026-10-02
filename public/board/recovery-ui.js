@@ -7,9 +7,11 @@ import {
   getUserKey, openEpochBundle, openKeyStore, putUserKey, retireRoot,
   sealEpochBundle, userRootName, wrapUserKey,
 } from "../shared/sync_crypto.mjs";
-import { cardPayload, recoverFromText, recoveryProof } from "../shared/recovery.mjs";
+import {
+  cardLink, keyToWords, recoverFromText, recoveryProof, ROOT_BYTES, wordsFromHash,
+} from "../shared/recovery.mjs";
 import { RECOVERY_WORDS } from "../shared/recovery_words.mjs";
-import { restoreDevice } from "../shared/sync_client.mjs";
+import { restoreByProof } from "../shared/sync_client.mjs";
 import { addUser } from "../shared/users.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -45,8 +47,8 @@ export function mountRecovery({
     }
   });
 
-  /** The card as one PNG: QR plus the short code for devices without a camera. */
-  async function cardPngBlob(payload, userId) {
+  /** The card as one PNG: QR plus the 12 words for devices without a camera. */
+  async function cardPngBlob(payload, words) {
     const q = qrcode(0, "M");
     q.addData(payload);
     q.make();
@@ -56,7 +58,7 @@ export function mountRecovery({
       i.onerror = rej;
       i.src = q.createDataURL(8, 4);
     });
-    const W = 640, H = 640 + 128;
+    const W = 640, H = 640 + 224;
     const c = document.createElement("canvas");
     c.width = W; c.height = H;
     const ctx = c.getContext("2d");
@@ -67,8 +69,11 @@ export function mountRecovery({
     ctx.font = "600 26px " + getComputedStyle(document.body).fontFamily;
     ctx.textAlign = "center";
     ctx.fillText("Pip QR card", W / 2, 640);
-    ctx.font = "20px ui-monospace, monospace";
-    ctx.fillText(`${userId.slice(0, 8)}… ${payload.split(":").pop()}`, W / 2, 672);
+    ctx.font = "24px ui-monospace, monospace";
+    ctx.textAlign = "left";
+    words.forEach((w, i) => {
+      ctx.fillText(`${i + 1} ${w}`, 70 + (i % 3) * 190, 690 + Math.floor(i / 3) * 36);
+    });
     return new Promise((res) => c.toBlob(res, "image/png"));
   }
 
@@ -98,7 +103,21 @@ export function mountRecovery({
       return;
     }
     const rootBytes = root instanceof Uint8Array ? root : new Uint8Array(root);
-    const payload = cardPayload(cfg.userId, rootBytes);
+    // A board set up before 12-word cards holds a 32-byte root, which
+    // 12 words can't carry (and whose proof the relay never indexed).
+    // Showing its card mints a 12-word one through Replace card.
+    if (rootBytes.length !== ROOT_BYTES) {
+      try {
+        await replaceCard();
+      } catch {
+        openRec("Recovery card");
+        recBody.innerHTML =
+          '<p class="hint">Connect to the internet to make the new 12-word card.</p>';
+      }
+      return;
+    }
+    const payload = await cardLink(relayBase, rootBytes, RECOVERY_WORDS);
+    const words = (await keyToWords(rootBytes, RECOVERY_WORDS)).split(" ");
     openRec("Recovery card");
     // Settings' checklist and Backup warning read this: the card has
     // been on screen on this device at least once (registry, device-local).
@@ -109,49 +128,52 @@ export function mountRecovery({
     q.addData(payload);
     q.make();
     qr.innerHTML = q.createSvgTag({ cellSize: 3, margin: 8, scalable: true });
-    const code = document.createElement("p");
+    const code = document.createElement("ol");
     code.className = "rec-code";
-    code.textContent = payload.split(":").pop().replace(/(.{4})/g, "$1 ").trim();
+    for (const w of words) code.append(Object.assign(document.createElement("li"), { textContent: w }));
     const warn = document.createElement("p");
     warn.className = "hint";
-    warn.textContent = "Anyone holding this card can restore the whole user — keep it "
-      + "private. What the child says is not on it: speech history never leaves a device.";
+    warn.textContent = "Anyone with this link can open your user.";
+    const btn = (label, onclick) => Object.assign(document.createElement("button"),
+      { className: "btn secondary", textContent: label, onclick });
+    const emailBody = `Open this link on the device you want Pip on:\n\n${payload}\n`;
+    const mail = btn("Email", async () => {
+      // Phones: the share sheet lists Gmail and every other mail app.
+      if (matchMedia("(pointer: coarse)").matches && navigator.share) {
+        await navigator.share({ title: "Pip recovery link", text: emailBody }).catch(() => {});
+        return;
+      }
+      const q = new URLSearchParams({ view: "cm", fs: "1", su: "Pip recovery link",
+        body: emailBody }).toString().replaceAll("+", "%20");
+      window.open(`https://mail.google.com/mail/?${q}`, "_blank", "noopener");
+    });
+    const copy = btn("Copy link", async () => {
+      await navigator.clipboard.writeText(payload).catch(() => {});
+      toast("Link copied");
+    });
+    const more = document.createElement("details");
+    more.innerHTML = "<summary>More…</summary>";
+    const moreRow = document.createElement("div");
+    moreRow.className = "row";
+    moreRow.append(
+      btn("Save image", async () => {
+        const blob = await cardPngBlob(payload, words);
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "pip-qr-card.png";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+      }),
+      btn("Replace card…", async () => {
+        if (!confirm("Replace this card? Every link and print so far stops working.")) return;
+        await replaceCard();
+      }),
+    );
+    more.append(moreRow);
     const actions = document.createElement("div");
     actions.className = "row";
-    const save = document.createElement("button");
-    save.className = "btn secondary";
-    save.textContent = "Save image";
-    save.onclick = async () => {
-      const blob = await cardPngBlob(payload, cfg.userId);
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "pip-qr-card.png";
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 10000);
-    };
-    const share = document.createElement("button");
-    share.className = "btn secondary";
-    share.textContent = "Share…";
-    share.onclick = async () => {
-      const blob = await cardPngBlob(payload, cfg.userId);
-      const file = new File([blob], "pip-qr-card.png", { type: "image/png" });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: "Pip QR card" }).catch(() => {});
-      } else {
-        await navigator.clipboard.writeText(payload);
-        toast("Copied — send it to yourself and print it");
-      }
-    };
-    const replace = document.createElement("button");
-    replace.className = "btn secondary";
-    replace.textContent = "Replace card…";
-    replace.onclick = async () => {
-      if (!confirm("Replace this QR card? Every card printed so far stops working — "
-        + "print the new one.")) return;
-      await replaceCard();
-    };
-    actions.append(save, share, replace);
-    recBody.append(qr, code, actions, warn);
+    actions.append(mail, copy);
+    recBody.append(qr, code, actions, more, warn);
     recPrint.hidden = false;
     recPrint.onclick = () => window.print();
   }
@@ -164,7 +186,7 @@ export function mountRecovery({
     const store = openKeyStore();
     const oldRoot = await store.get(userRootName(me.id));
     const oldEpoch = me.sync?.epoch ?? 1;
-    const newRoot = crypto.getRandomValues(new Uint8Array(32));
+    const newRoot = crypto.getRandomValues(new Uint8Array(ROOT_BYTES));
     // Seal the old era's keys to the new root BEFORE swapping roots — the
     // bundle is what a new-card restore opens the whole backlog with.
     const bundle = await sealEpochBundle(store, me.id, newRoot, oldEpoch);
@@ -187,16 +209,17 @@ export function mountRecovery({
     await showCard();
   }
 
-  /** Shared restore: { userId, root } → relay restore → registry → reload. */
-  async function doRestore(userId, root, status) {
+  /** Shared restore: root → relay restore → registry → reload. */
+  async function doRestore(root, status) {
     const store = openKeyStore();
     const identity = await getDeviceIdentity(store);
-    const r = await restoreDevice(relayBase, userId, {
+    const r = await restoreByProof(relayBase, {
       proof: await recoveryProof(root),
       device_id: identity.deviceId,
       pubkey: await exportPublicKey(identity.verify),
       dh_pub: await exportDhPublic(identity.dh.publicKey),
     });
+    const userId = r.user_id;
     await store.put(userRootName(userId), root);
     if (r.recovery_bundle) {
       try {
@@ -223,13 +246,13 @@ export function mountRecovery({
   async function scanBitmap(bitmap) {
     const det = new BarcodeDetector({ formats: ["qr_code"] });
     for (const b of await det.detect(bitmap)) {
-      if (b.rawValue?.startsWith("pip:recover:")) return b.rawValue;
+      if (b.rawValue?.includes("#restore=")) return b.rawValue;
     }
     return null;
   }
 
   /** Fresh device: scan the QR card, pick a photo of it, or paste its code. */
-  function restoreFlow() {
+  function restoreFlow(prefill = "") {
     if (me.sync?.userId) {
       openRec("Restore a user");
       recBody.innerHTML =
@@ -247,17 +270,17 @@ export function mountRecovery({
         const found = await recoverFromText(text, RECOVERY_WORDS);
         if (!found) {
           recGo.hidden = false;
-          status.textContent = "That doesn't look like a QR card — paste the code "
-            + "under the square, or an old sheet's words.";
+          status.textContent = "That doesn't look like a recovery link — paste the "
+            + "link or the 12 words.";
           return;
         }
-        await doRestore(found.userId, found.root, status);
+        await doRestore(found.root, status);
       } catch (e) {
         recGo.hidden = false;
         status.textContent = /checksum|word/i.test(e.message)
           ? e.message
-          : "That card doesn't open this user — print a fresh card on a linked "
-            + "device, or use its code.";
+          : "That card doesn't open a user — make a fresh card on a linked "
+            + "device.";
       }
     };
     if (canScan) {
@@ -283,7 +306,7 @@ export function mountRecovery({
           const det = new BarcodeDetector({ formats: ["qr_code"] });
           for (;;) {
             const found = (await det.detect(video))
-              .find((b) => b.rawValue?.startsWith("pip:recover:"));
+              .find((b) => b.rawValue?.includes("#restore="));
             if (found) { video.remove(); await run(found.rawValue); break; }
             await new Promise((r) => setTimeout(r, 300));
           }
@@ -320,13 +343,14 @@ export function mountRecovery({
     const hint = document.createElement("p");
     hint.className = "hint";
     hint.textContent = (canScan
-      ? "No camera? Paste the code printed under the square. "
-      : "Paste the code printed under the card's square. ")
+      ? "No camera? Paste the link or the 12 words. "
+      : "Paste the link or the 12 words. ")
       + "On a free user, restoring moves the user here — the other "
       + "devices are unlinked.";
     const ta = document.createElement("textarea");
     ta.id = "rec-paste";
-    ta.placeholder = "card code, or an old sheet's user id + 24 words";
+    ta.placeholder = "recovery link, or the 12 words";
+    ta.value = prefill;
     recBody.append(hint, ta, status);
     recGo.hidden = false;
     recGo.textContent = "Restore";
@@ -341,6 +365,20 @@ export function mountRecovery({
     recBody.innerHTML = `<p class="hint">Could not build the card: ${e.message}</p>`;
   });
   $("dev-restore").onclick = () => restoreFlow();
+
+  // A tapped recovery link lands here with the words in the hash: open
+  // Restore with them filled in. Restoring can move the user off other
+  // devices, so the adult still presses Restore.
+  const linked = wordsFromHash(location.hash);
+  if (linked) {
+    history.replaceState(null, "", location.pathname + location.search);
+    restoreFlow(linked.replaceAll("-", " "));
+    // On a new device the welcome is up; the link's whole point is to
+    // skip it, so Restore sits above it — at the body's level, since #app
+    // is its own stacking context under the welcome.
+    document.body.append($("recform"));
+    $("recform").classList.add("over-welcome");
+  }
 
   return { showCard };
 }

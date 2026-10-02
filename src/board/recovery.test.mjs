@@ -8,8 +8,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
-  cardPayload, keyToWords, parseRecoveryPayload, recoverFromText,
-  recoveryPayload, recoveryProof, wordsToKey,
+  cardLink, keyToWords, recoverFromText, recoveryProof, wordsFromHash, wordsToKey,
 } from "../../public/shared/recovery.mjs";
 import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
@@ -21,7 +20,7 @@ const FILE_WORDS = readFileSync(
   new URL("../../data/recovery/words_en.txt", import.meta.url), "utf8")
   .trim().split("\n");
 
-const randRoot = () => crypto.getRandomValues(new Uint8Array(32));
+const randRoot = () => crypto.getRandomValues(new Uint8Array(16));
 
 test("wordlist is the BIP-0039 English list: 2048 unique lowercase words", () => {
   assert.equal(RECOVERY_WORDS.length, 2048);
@@ -30,27 +29,33 @@ test("wordlist is the BIP-0039 English list: 2048 unique lowercase words", () =>
   assert.ok(RECOVERY_WORDS.every((w) => /^[a-z]+$/.test(w)));
 });
 
-test("words round-trip a 32-byte root", async () => {
+test("words round-trip a 16-byte root as 12 words", async () => {
   for (let i = 0; i < 8; i++) {
     const root = randRoot();
     const phrase = await keyToWords(root, RECOVERY_WORDS);
-    assert.equal(phrase.split(" ").length, 24);
+    assert.equal(phrase.split(" ").length, 12);
     assert.deepEqual(await wordsToKey(phrase, RECOVERY_WORDS), root);
   }
 });
 
 test("words reject typos, wrong counts, and bad checksums", async () => {
   const phrase = await keyToWords(randRoot(), RECOVERY_WORDS);
-  await assert.rejects(() => wordsToKey("apple ".repeat(24), RECOVERY_WORDS),
-    /checksum/);
-  await assert.rejects(() => wordsToKey(phrase.split(" ").slice(0, 23).join(" "),
-    RECOVERY_WORDS), /24 words/);
-  const swapped = phrase.split(" ");
-  [swapped[0], swapped[23]] = [swapped[23], swapped[0]];
-  await assert.rejects(() => wordsToKey(swapped.join(" "), RECOVERY_WORDS));
+  await assert.rejects(() => wordsToKey(phrase.split(" ").slice(0, 11).join(" "),
+    RECOVERY_WORDS), /12 words/);
   await assert.rejects(
-    () => wordsToKey(`notaword ${"apple ".repeat(22)}apple`, RECOVERY_WORDS),
+    () => wordsToKey(`notaword ${"apple ".repeat(10)}apple`, RECOVERY_WORDS),
     /unknown recovery word/);
+  // A 4-bit checksum catches 15 of 16 single-word typos; every swap of
+  // the last word to a different one in a 16-word window fails or
+  // changes the root — prove the checksum is live.
+  let caught = 0;
+  const base = phrase.split(" ");
+  for (let i = 0; i < 64; i++) {
+    const t = [...base];
+    t[0] = RECOVERY_WORDS[(RECOVERY_WORDS.indexOf(t[0]) + 1 + i) % 2048];
+    await wordsToKey(t.join(" "), RECOVERY_WORDS).then(() => {}, () => caught++);
+  }
+  assert.ok(caught >= 48, `checksum caught ${caught}/64`);
 });
 
 test("the proof is stable and root-specific", async () => {
@@ -59,50 +64,22 @@ test("the proof is stable and root-specific", async () => {
   assert.notEqual(await recoveryProof(a), await recoveryProof(b));
 });
 
-test("the card payload round-trips the root as a 43-char code", async () => {
-  const userId = "11111111-2222-3333-4444-555555555555";
+test("the card link is one space-free line; the words restore however carried", async () => {
   const root = randRoot();
-  const payload = cardPayload(userId, root);
-  const code = payload.split(":").pop();
-  assert.match(payload, /^pip:recover:[0-9a-f-]{36}:[A-Za-z0-9_-]{43}$/);
-  assert.equal(code.length, 43);
-  for (const text of [
-    payload,                       // scanned QR
-    `${userId} ${code}`,           // code typed bare
-    `${userId} ${code.match(/.{1,4}/g).join(" ")}`, // display grouping retyped
-  ]) {
-    const found = await recoverFromText(text, RECOVERY_WORDS);
-    assert.equal(found.userId, userId);
-    assert.deepEqual(found.root, root);
-  }
-  assert.equal(await recoverFromText("not a card", RECOVERY_WORDS), null);
-  assert.equal(await recoverFromText(`${userId} ${code.slice(0, 30)}`, RECOVERY_WORDS), null);
-});
-
-test("pre-card sheets still restore: word payloads and bare words", async () => {
-  const userId = "11111111-2222-3333-4444-555555555555";
-  const root = randRoot();
+  const link = await cardLink("https://app.pipaac.org", root, RECOVERY_WORDS);
+  assert.match(link, /^https:\/\/app\.pipaac\.org\/#restore=[a-z]+(-[a-z]+){11}$/);
+  assert.equal(wordsFromHash(new URL(link).hash), link.split("#restore=")[1]);
   const phrase = await keyToWords(root, RECOVERY_WORDS);
   for (const text of [
-    recoveryPayload(userId, phrase),
-    `${userId} ${phrase}`,
+    link,                                     // tapped / scanned
+    `  ${link}\n`,                             // with mail whitespace
+    phrase,                                   // the 12 words, spaced
+    phrase.replaceAll(" ", ",\n"),            // retyped with commas/newlines
   ]) {
-    const found = await recoverFromText(text, RECOVERY_WORDS);
-    assert.equal(found.userId, userId);
-    assert.deepEqual(found.root, root);
+    assert.deepEqual((await recoverFromText(text, RECOVERY_WORDS)).root, root);
   }
-});
-
-test("payload parse: pip:recover URI and bare user-id + words", async () => {
-  const userId = "11111111-2222-3333-4444-555555555555";
-  const phrase = await keyToWords(randRoot(), RECOVERY_WORDS);
-  const fromUri = parseRecoveryPayload(recoveryPayload(userId, phrase));
-  assert.equal(fromUri.userId, userId);
-  assert.equal(fromUri.phrase, phrase);
-  const bare = parseRecoveryPayload(`${userId} ${phrase}`);
-  assert.equal(bare.userId, userId);
-  assert.equal(parseRecoveryPayload("not a sheet"), null);
-  assert.equal(parseRecoveryPayload(`${userId} ${phrase.split(" ").slice(0, 5).join(" ")}`), null);
+  assert.equal(await recoverFromText("12", RECOVERY_WORDS), null);
+  await assert.rejects(() => recoverFromText("hello there", RECOVERY_WORDS), /12 words/);
 });
 
 test("a fresh keystore holding only the root opens every epoch's ops", async () => {

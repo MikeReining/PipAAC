@@ -23,7 +23,7 @@ import { createDatabase, importCatalog } from "../board/catalog.mjs";
 import { createEntity, renameEntity } from "../../public/shared/groups.mjs";
 import { drainOps, ensureBaseline, listOps } from "../../public/shared/ops.mjs";
 import {
-  cardPayload, recoverFromText, recoveryProof,
+  cardLink, recoverFromText, recoveryProof,
 } from "../../public/shared/recovery.mjs";
 import { RECOVERY_WORDS } from "../../public/shared/recovery_words.mjs";
 import {
@@ -32,7 +32,7 @@ import {
   putUserKey, retireRoot, sealEpochBundle, userRootName, wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
 import { licenseFor } from "./license.mjs";
-import { relayClient, restoreDevice } from "../../public/shared/sync_client.mjs";
+import { relayClient, restoreByProof, restoreDevice } from "../../public/shared/sync_client.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
 const PORT = 8880;
@@ -90,7 +90,7 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
   importCatalog(dbA, catalog);
   ensureBaseline(dbA);
 
-  // The sheet is just the user id + 24 words. A creates the user and
+  // The card is just 12 words. A creates the user and
   // leaves only the proof — the relay never sees the key.
   const user = await fetch(`${BASE}/users`, {
     method: "POST", headers: { "content-type": "application/json" },
@@ -128,25 +128,25 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
   const badStore = memoryKeyStore();
   const bad = await getDeviceIdentity(badStore);
   await assert.rejects(restoreDevice(BASE, user.user_id, {
-    proof: await recoveryProof(crypto.getRandomValues(new Uint8Array(32))),
+    proof: await recoveryProof(crypto.getRandomValues(new Uint8Array(16))),
     device_id: bad.deviceId,
     pubkey: await exportPublicKey(bad.verify),
   }), /403/);
 
-  // C — fresh device, fresh database, holding only what the QR card's
-  // scanned text decodes to (015 slice 3: the root itself, not words).
-  const card = await recoverFromText(cardPayload(user.user_id, root), RECOVERY_WORDS);
-  assert.equal(card.userId, user.user_id);
+  // C — fresh device, fresh database, holding only the card's link (the
+  // 12 words). No user id: the relay finds the user from the proof.
+  const card = await recoverFromText(await cardLink("https://x", root, RECOVERY_WORDS), RECOVERY_WORDS);
   const restoredRoot = card.root;
 
   const cStore = memoryKeyStore();
   const c = await getDeviceIdentity(cStore);
-  const reg = await restoreDevice(BASE, user.user_id, {
+  const reg = await restoreByProof(BASE, {
     proof: await recoveryProof(restoredRoot),
     device_id: c.deviceId,
     pubkey: await exportPublicKey(c.verify),
     dh_pub: await exportDhPublic(c.dh.publicKey),
   });
+  assert.equal(reg.user_id, user.user_id, "the proof found the user");
   assert.equal(reg.epoch, 2);
   await cStore.put(userRootName(user.user_id), restoredRoot);
 
@@ -159,7 +159,9 @@ test("restore from the sheet on a fresh device; history stays behind", async () 
     userKey: await getUserKey(cStore, user.user_id, reg.epoch),
   });
   const fetched = await clientC.fetchOps(0);
-  assert.equal(fetched.ops.length, 3); // create_entity, rename_entity, create_entity
+  // seed_install (the catalog's groups, ~160 KB before sealing),
+  // create_entity, rename_entity, create_entity.
+  assert.equal(fetched.ops.length, 4);
   const plain = [];
   for (const r of fetched.ops) {
     plain.push({ ...(await openOp(await getUserKey(cStore, user.user_id, r.epoch ?? 1), r.env)),
@@ -204,7 +206,7 @@ test("replace card: the old proof dies at the relay, the new card restores", asy
   // Replace card — what board.js's replaceCard does: seal the old
   // era's keys to the new root, post the new proof + bundle, retire
   // the old root, and rotate to a new-root epoch.
-  const newRoot = crypto.getRandomValues(new Uint8Array(32));
+  const newRoot = crypto.getRandomValues(new Uint8Array(16));
   const bundle = await sealEpochBundle(aStore, user.user_id, newRoot, 1);
   await clientA.replaceRecovery(await recoveryProof(newRoot), bundle);
   await retireRoot(aStore, user.user_id, root, 1);
@@ -221,28 +223,31 @@ test("replace card: the old proof dies at the relay, the new card restores", asy
   await relayClient({ userId: user.user_id, baseUrl: BASE, identity: a, userKey: key2 })
     .submit(listOps(dbA).filter((o) => o.relay_seq === null));
 
-  // The old card is dead.
+  // The old card is dead — at the user and in the proof index.
   const eStore = memoryKeyStore();
   const e = await getDeviceIdentity(eStore);
-  await assert.rejects(restoreDevice(BASE, user.user_id, {
+  const oldCard = {
     proof: await recoveryProof(root),
     device_id: e.deviceId,
     pubkey: await exportPublicKey(e.verify),
     dh_pub: await exportDhPublic(e.dh.publicKey),
-  }), /403/);
+  };
+  await assert.rejects(restoreDevice(BASE, user.user_id, oldCard), /403/);
+  await assert.rejects(restoreByProof(BASE, oldCard), /403/);
 
   // The new card restores: scanned text → root → proof → epoch 2 plus
   // the bundle — the old era's keys land in the keystore and the whole
   // backlog opens, byte-identical.
   const dStore = memoryKeyStore();
   const d = await getDeviceIdentity(dStore);
-  const card = await recoverFromText(cardPayload(user.user_id, newRoot), RECOVERY_WORDS);
-  const reg = await restoreDevice(BASE, user.user_id, {
+  const card = await recoverFromText(await cardLink("https://x", newRoot, RECOVERY_WORDS), RECOVERY_WORDS);
+  const reg = await restoreByProof(BASE, {
     proof: await recoveryProof(card.root),
     device_id: d.deviceId,
     pubkey: await exportPublicKey(d.verify),
     dh_pub: await exportDhPublic(d.dh.publicKey),
   });
+  assert.equal(reg.user_id, user.user_id);
   assert.equal(reg.epoch, 2);
   assert.ok(reg.recovery_bundle);
   await dStore.put(userRootName(user.user_id), card.root);
