@@ -340,6 +340,25 @@ export class UserRelay {
       return json({ entitlement: this.entitlement() });
     }
 
+    // Worker-internal entitlement write (015 slice 6): a verified Stripe
+    // webhook or a redeemed license code grants lifetime from the worker
+    // side — no device signature exists at webhook time. Same secret as
+    // the internal read; provenance lands in meta for the audit trail.
+    if (method === "POST" && route === "internal/entitlement") {
+      const secret = this.env.PIP_INTERNAL_SECRET ?? this.env.PIP_LICENSE_SECRET;
+      if (!secret) return bad("internal_unavailable", 503);
+      if (request.headers.get("x-pip-internal") !== secret) {
+        return bad("forbidden", 403);
+      }
+      let parsed = null;
+      try { parsed = JSON.parse(td.decode(bodyBytes)); } catch { /* fall */ }
+      this.metaSet("entitlement", "lifetime");
+      this.metaSet("license_source", String(parsed?.source ?? "unknown"));
+      this.metaSet("license_ref", String(parsed?.ref ?? ""));
+      this.metaSet("licensed_at", Date.now());
+      return json({ ok: true, entitlement: "lifetime" });
+    }
+
     const device = await this.verify(request, bodyBytes);
     if (!device) return bad("forbidden", 403);
     // last_seen BEFORE this request — a long-absent device refreshing it

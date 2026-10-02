@@ -29,5 +29,14 @@ XAI_API_KEY=
 # Sentence speak uses the key only (no TILE_LIVE).
 ELEVENLABS_API_KEY=
 TILE_LIVE=
-# Founder-only /admin/v1/tile-voice/* review routes (Bearer token).
+# Founder-only /admin/v1/tile-voice/* and /admin/v1/license-codes routes
+# (Bearer token).
 PIP_ADMIN_TOKEN=
+# 015 slice 6 — Stripe Checkout + webhook (web purchases of Pip
+# Lifetime). STRIPE_PRICE_ID is the $49 Price created in the Stripe
+# dashboard; STRIPE_WEBHOOK_SECRET is the endpoint's signing secret.
+# Without these, /api/v1/checkout and /api/v1/stripe/webhook return 503
+# payments_unavailable — license codes and dev licenses still work.
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_PRICE_ID=

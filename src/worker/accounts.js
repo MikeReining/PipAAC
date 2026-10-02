@@ -100,6 +100,13 @@ export class SupporterAccounts {
           join_tokens TEXT,
           added_at INTEGER NOT NULL
         );
+        CREATE TABLE IF NOT EXISTS license_code (
+          hash TEXT PRIMARY KEY,
+          batch TEXT,
+          redeemed_by TEXT,
+          redeemed_at INTEGER,
+          created_at INTEGER NOT NULL
+        );
       `);
       // Existing dev objects predate the auth flag — add it if absent.
       for (const alter of [
@@ -345,6 +352,56 @@ export class SupporterAccounts {
         normEmail(url.searchParams.get("email")));
       if (!m) return bad("no_mail", 404);
       return json(m);
+    }
+
+    /* --- license codes (015 slice 6) ---
+     * Bearer codes for schools/grants/SLPs buying ahead (Pricing § 4.5).
+     * The dir stores only the SHA-256 — a code in the clear exists once,
+     * in the admin response that minted it. */
+
+    // Admin-minted (index.js gates on PIP_ADMIN_TOKEN): {count, batch} →
+    // plaintext codes, shown once and never stored.
+    if (path === "/dir/license/grant" && request.method === "POST") {
+      const count = Math.min(Math.max(Number(body?.count) || 0, 1), 200);
+      const batch = String(body?.batch ?? `batch-${now}`);
+      const ABC = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+      const codes = [];
+      for (let i = 0; i < count; i++) {
+        const raw = crypto.getRandomValues(new Uint8Array(12));
+        const code = "PIP-" + [...raw].map((b) => ABC[b % ABC.length]).join("")
+          .replace(/(.{4})(.{4})(.{4})/, "$1-$2-$3");
+        sql.exec(
+          "INSERT INTO license_code (hash, batch, created_at) VALUES (?, ?, ?)",
+          await sha(code), batch, now);
+        codes.push(code);
+      }
+      return json({ ok: true, batch, codes });
+    }
+
+    // Bearer redemption: the code itself is the authority, like the QR
+    // card. Single-use — a spent code is spent forever.
+    if (path === "/dir/license/redeem" && request.method === "POST") {
+      const code = String(body?.code ?? "").trim().toUpperCase();
+      const userId = String(body?.user_id ?? "");
+      const row = one("SELECT batch, redeemed_by FROM license_code WHERE hash = ?",
+        await sha(code));
+      if (!row) return bad("bad_code", 403);
+      if (row.redeemed_by) return bad("code_used", 409);
+      sql.exec(
+        "UPDATE license_code SET redeemed_by = ?, redeemed_at = ? WHERE hash = ?",
+        userId, now, await sha(code));
+      return json({ ok: true, batch: row.batch });
+    }
+
+    // index.js un-spends a code when the relay grant that should follow
+    // it fails — a family must never lose a paid code to an outage.
+    if (path === "/dir/license/release" && request.method === "POST") {
+      sql.exec(
+        `UPDATE license_code SET redeemed_by = NULL, redeemed_at = NULL
+         WHERE hash = ? AND redeemed_by = ?`,
+        await sha(String(body?.code ?? "").trim().toUpperCase()),
+        String(body?.user_id ?? ""));
+      return json({ ok: true });
     }
 
     /* A deleted account's dir-side rows (015 slice 7): email mapping,

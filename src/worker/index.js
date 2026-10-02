@@ -13,7 +13,8 @@ import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
 import { handleSpeak } from "./voice.js";
 import { handleTransform } from "./transform.js";
-import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger } from "./tile.js";
+import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger, adminOk } from "./tile.js";
+import { handleCheckout, handleStripeWebhook, grantLifetime } from "./stripe.js";
 import {
   handleAllowance, handleDraw, handleFind, handleFindBatch,
   handlePick, handlePictureImage, handlePicturesAdmin, handleReject,
@@ -489,6 +490,53 @@ export default {
         }
       }
       return json({ error: "not_found" }, { status: 404 });
+    }
+
+    /* --- payments (015 slice 6, web leg) ---
+     * Stripe Checkout for the supporter, the webhook that lands the
+     * license on the user's relay, and bearer license codes for
+     * schools/grants (Pricing_And_Packaging § 4.5). */
+    if (path === "/api/v1/checkout" && request.method === "POST") {
+      return handleCheckout(request, env, url);
+    }
+    if (path === "/api/v1/stripe/webhook" && request.method === "POST") {
+      return handleStripeWebhook(request, env);
+    }
+    // Code redeem is bearer — the code is the authority, like the QR
+    // card. The dir marks it spent, then the relay grants; a failed
+    // grant releases the code so a family never loses it to an outage.
+    if (path === "/api/v1/license/redeem" && request.method === "POST" && env?.ACCOUNTS) {
+      const body = await request.json().catch(() => null);
+      const userId = String(body?.user_id ?? "");
+      if (!/^[0-9a-f-]{36}$/i.test(userId)) {
+        return json({ error: "bad_user_id" }, { status: 400 });
+      }
+      const r = await acctDir().fetch(new Request(
+        "https://accounts/dir/license/redeem", {
+          method: "POST", body: JSON.stringify({ code: body?.code, user_id: userId }),
+        }));
+      if (!r.ok) return r;
+      const { batch } = await r.json();
+      const g = await grantLifetime(env, userId, "code", batch);
+      if (!g.ok) {
+        await acctDir().fetch(new Request("https://accounts/dir/license/release", {
+          method: "POST", body: JSON.stringify({ code: body?.code, user_id: userId }),
+        }));
+        return json({ error: "grant_failed" }, { status: 502 });
+      }
+      return json({ ok: true, entitlement: "lifetime" });
+    }
+    // Founder mints code batches (schools, grants) — Bearer
+    // PIP_ADMIN_TOKEN, same as the tile-voice admin routes.
+    if (path === "/admin/v1/license-codes" && request.method === "POST" && env?.ACCOUNTS) {
+      if (!(await adminOk(request, env))) {
+        return json({ error: "unauthorized" }, { status: 401 });
+      }
+      const body = await request.json().catch(() => null);
+      return acctDir().fetch(new Request("https://accounts/dir/license/grant", {
+        method: "POST",
+        body: JSON.stringify({ count: body?.count ?? 1, batch: body?.batch ?? null }),
+      }));
     }
 
     // Static shell. COOP/COEP make the page cross-origin isolated so the

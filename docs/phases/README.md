@@ -33,7 +33,7 @@ Executing phases only. Each row names the **next** slice.
 | [010 — Extended picture library](010_Extended_Picture_Library.md) | Slice 1 done 2026-09-26 (4,000-entry JSON + 170-word everyday-gaps list, data only). Slice 2 — the art: review page built, generation waits on founder approval |
 | [011 — Sync and web editing](011_Sync_And_Web_Editing.md) | Code-complete. Slice 9 moved to 015 slices 6–7; its relay legs (device cap, restore-move, retention sweep, dev license) are built there |
 | [014 — Grid density and individual fit](014_Grid_Density_And_Fit.md) | Slices 1–5, 7, 9–11 built. Remaining: slice 6 message tiles (waits on 010's phrase list), slice 8 keyguard (later). Nothing unblocked — the phase idles until 010 slice 1 lands |
-| [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 payments **deferred** (founder, 2026-09-23) — the phase stays live until billing lands or is discharged |
+| [015 — Accounts and one price](015_Accounts_And_One_Price.md) | Slices 1–5 and 7 built (through supporter email warnings + account deletion). Slice 6 web leg built 2026-10-02 (Stripe checkout + webhook, license codes) — owed: live Stripe wiring/secrets, free-limit gates, iOS IAP with the shell |
 | [017 — Prediction you can prove](017_Prediction_Hardening.md) | Re-planned 2026-09-24 (R16–R19): real children are the scoreboard. Items 1–4 and 6 done; step-28 items 1–4 built (WPM quartiles, per-path timings, Jev-timing experiment, wrong-pick count — `predictionReport.speed`, whitelisted payload fields). Holdback **deferred — not authorized** (founder, 2026-09-24); step-28 item 6 (calibration) waits on real totals; steps 15 and 18 parked. Open: step 26 flywheel (decided, unbuilt) |
 | [018 — Core board v2 and groups](018_Core_Board_V2_And_Groups.md) | All six decided slices done — v2 `grid60` + Purple, `grid90`/`grid15` re-laid, setup's people seated, groups re-ordered + doors + glow + banded layout, kind-colored personal words, home-board edit (📊 counts + placement sheet). Open items only |
 | [019 — User-testing readiness](019_User_Testing_Readiness.md) | Deployed 2026-10-01: `https://app.pipaac.org` (custom domain + Email Sending + prod secrets). Local board paints and speaks, including a board saved before the v2 map. The first-open question now lands the 009 slice-11 world pass |
@@ -48,6 +48,7 @@ Executing phases only. Each row names the **next** slice.
 | [030 — Picture Finder and drawing](030_Picture_Finder_And_Drawing.md) | Slices 1–7 built; open = founder calibration save, slice-4 live run (≤10, founder-approved), and Works Tests 11 and 13 |
 | [031 — The editor, rebuilt](031_Board_Editor.md) | Slices A–G built 2026-09-29. Open: Works Test 1 (first-timer stopwatch) and a real-tablet pass of the narrow layout |
 | [032 — Spotlight gets its own page](032_Spotlight_Page.md) | A–C built 2026-09-29, E (moves: ✨ / ❓ targets, Try it ✨, Progress counts) 2026-09-30 — founder review; D held until then |
+| [035 — Marketing site](035_Marketing_Site.md) | Slice A skeleton built 2026-10-02 (`site/` — separate `pipaac-site` project). Next: designer/copywriter pass; first `deploy:site` |
 
 ## Proposals awaiting review
 

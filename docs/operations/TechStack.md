@@ -53,6 +53,8 @@ shell profile changes.
 | `npm run dev:agent` | Agent copy on the first free port 21088–21098 |
 | `npm run dev:status` | Which local copies are listening |
 | `bash scripts/install_dev_slot0.sh` | macOS LaunchAgent so the browse copy comes back if something kills it |
+| `npm run dev:site` | Marketing site preview at `http://localhost:21200` (`site/`, 035) |
+| `npm run deploy:site` | Deploy `pipaac.org` + `www.pipaac.org` (separate project `pipaac-site`) |
 | `scripts/test.sh <paths>` | Targeted proof while iterating |
 | `python3 scripts/commit_handoff_queue.py request ...` | Codex commit handoff |
 | `npx wrangler deploy` | Production: `https://app.pipaac.org` (custom domain) + `pippaac.emailmike.workers.dev` |
@@ -73,6 +75,15 @@ turns Pip Lifetime on for the person that opens it (localhost: bare
 approved the cost 2026-10-02): `DRAW_LIVE=1` + `OPENROUTER_API_KEY`
 (030). Spend is capped per person (5 free, 300 Lifetime) and by the
 OpenRouter key's own limit — there is no global daily draw cap.
+Payments (015 slice 6, built 2026-10-02): Stripe secrets are NOT yet in
+prod — `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`
+plus a registered webhook endpoint
+`app.pipaac.org/api/v1/stripe/webhook` for `checkout.session.completed`.
+Until then `/api/v1/checkout` and the webhook return 503; license codes
+(`POST /admin/v1/license-codes`, Bearer `PIP_ADMIN_TOKEN`) and
+`POST /api/v1/license/redeem` work with existing secrets. Marketing
+site: `pipaac.org` is a separate project `pipaac-site` (`site/`) — not
+yet deployed; `npm run deploy:site` attaches the custom domains.
 
 ## Local preview
 

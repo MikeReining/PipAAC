@@ -502,10 +502,31 @@ on a second `POST /devices`), restore on a free board replaces the
 device set, and `POST /entitlement` activates a board-bound HMAC license
 (`src/worker/license.mjs` + `scripts/entitlement/mint.mjs`,
 `PIP_LICENSE_SECRET` dev var — founder ruling: payments are their own
-slice, dev flag for now). Still owed by this slice: user-scoped license
-records (needs slice 4), Stripe/Apple confirmations, the 20-word and
-5-drawing counters, the web-editor gate, license codes, and the
-server-signed offline license statement.
+slice, dev flag for now).
+
+**Web leg BUILT 2026-10-02** (`src/worker/stripe.js`, relay + accounts
+legs, `src/worker/stripe.test.mjs` 6/6):
+`POST /api/v1/checkout` opens a Stripe Checkout Session for
+`STRIPE_PRICE_ID`, session-gated to a supporter of that user
+(`client_reference_id` carries the user id); `POST
+/api/v1/stripe/webhook` verifies `Stripe-Signature` (HMAC + 5-min
+tolerance) and `checkout.session.completed`/`paid` grants lifetime via
+the relay's new `POST internal/entitlement` (same `x-pip-internal` guard
+as the read; provenance `license_source`/`license_ref`/`licensed_at` in
+meta). License codes live in the accounts dir (`license_code`, hashes
+only): founder mints batches at `POST /admin/v1/license-codes` (Bearer
+`PIP_ADMIN_TOKEN`), anyone redeems `POST /api/v1/license/redeem` —
+single-use, and a failed relay grant releases the code. Needed in prod:
+`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`, and the
+`checkout.session.completed` webhook endpoint registered at
+`app.pipaac.org/api/v1/stripe/webhook`.
+
+Still owed by this slice: Stripe/Apple **confirmation wiring tested
+live** (test-mode purchase end-to-end), iOS consumable IAP (lands with
+the iOS shell — Out of scope), the 20-word and 5-drawing counters, the
+web-editor gate, the own-device + one-supporter cap replacing the
+one-device cap, the server-signed offline license statement, and the
+client-side `?purchased=` return handling.
 
 Goal: `docs/product/Pricing_And_Packaging.md` § 4 enforced, honestly.
 

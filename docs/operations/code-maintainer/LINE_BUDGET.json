@@ -22,12 +22,13 @@
     "scripts/test.sh": 519,
     "scripts/works-test-test-guard.sh": 785,
     "src/board/groups.test.mjs": 660,
-    "src/board/schema.sql": 829,
-    "src/worker/accounts.heavy.test.mjs": 507,
-    "src/worker/index.js": 506,
+    "src/board/schema.sql": 833,
+    "src/worker/accounts.heavy.test.mjs": 513,
+    "src/worker/accounts.js": 522,
+    "src/worker/index.js": 554,
     "src/worker/pictures.test.mjs": 795,
     "src/worker/pictures_draw.test.mjs": 628,
-    "src/worker/relay.js": 736,
+    "src/worker/relay.js": 755,
     "src/worker/tile.js": 739
   }
 }
