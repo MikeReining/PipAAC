@@ -23,7 +23,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { dashboard, headlines, rangeTotals, sentenceButtons, weightedMedian } from "../../public/shared/dashboard.mjs";
-import { reportPdf, reportLines } from "../../public/shared/report.mjs";
+import { reportPdf } from "../../public/shared/report.mjs";
 import { saveSpotList, setListGoal } from "../../public/shared/spotlight.mjs";
 import { mountProgress } from "../../public/board/progress-ui.js";
 
@@ -145,34 +145,58 @@ test("dashboard: names resolve, strip share and goals land", () => {
   assert.deepEqual({ ...g[W0 + 1]["sense:help"] }, { own: 5, glow: 0 });
 });
 
-test("the report carries the hand-computed numbers and is a valid PDF", () => {
+/** Every string the PDF draws, in page order — read back out of the
+ *  content streams, so the test measures the file, not the code's
+ *  intent. WinAnsi octal escapes decode to their characters. */
+function pdfText(pdf) {
+  const WIN = { 0o227: "—", 0o226: "–", 0o267: "·" };
+  const raw = new TextDecoder("latin1").decode(pdf);
+  return [...raw.matchAll(/\(((?:\\.|[^\\)])*)\) Tj/g)].map((m) => m[1]
+    .replace(/\\([0-7]{3})/g, (_, o) => WIN[parseInt(o, 8)] ?? String.fromCharCode(parseInt(o, 8)))
+    .replace(/\\([()\\])/g, "$1"));
+}
+
+test("the report carries the hand-computed numbers, in the page's order, as a valid PDF", () => {
   const db = fixture();
   const { pdf, dash } = reportPdf(db, D0, D14, {
     userName: "Maya", fromLabel: "Jan 1", toLabel: "Jan 31",
   }, nameOf, "symbol");
-  // The lines carry the numbers; the PDF carries the lines (parens
-  // escaped in the content stream — assert on both layers honestly).
-  const lines = reportLines(dash, { userName: "Maya", fromLabel: "Jan 1", toLabel: "Jan 31" });
-  for (const needle of [
-    "Pip progress report — Maya", "Jan 1 to Jan 31",
-    "44 words  ·  5 different  ·  3 new",
-    "Top words: want (27)",
-    "First time: more, help, Cooper",
-    "Smart bar help: 18%",
-    "Goals:", "on their own 0, with the glow 2",
-  ]) {
-    assert.ok(lines.some((l) => l.includes(needle)), `report missing: ${needle}`);
-  }
-  const text = new TextDecoder().decode(pdf);
-  assert.ok(text.startsWith("%PDF-1.4") && text.endsWith("%%EOF"));
-  assert.ok(text.includes("44 words"), "PDF body missing the headline counts");
-  assert.ok(text.includes("want \\(27\\)"), "PDF body missing escaped text");
+  const raw = new TextDecoder("latin1").decode(pdf);
+  assert.ok(raw.startsWith("%PDF-1.4") && raw.endsWith("%%EOF"));
+  assert.match(raw, /\/BaseFont\/Helvetica\/Encoding\/WinAnsiEncoding/);
+  const text = pdfText(pdf);
+  const at = (needle) => {
+    const i = text.findIndex((t) => t.includes(needle));
+    assert.ok(i >= 0, `report missing: ${needle}\n${text.join(" | ")}`);
+    return i;
+  };
+  at("Maya · Jan 1 – Jan 31");
+  at("5"); // different words, the breadth headline
   assert.equal(dash.words, 44);
+  at("44"); // words
+  const goals = at("Goal words");
+  at("0 own · 2 with the glow"); // more: 2 taps, both under the glow
+  at("5 own · 0 with the glow"); // help: 5 taps, none glowing
+  const newWords = at("New words");
+  at("3 first said in this range");
+  at("Cooper (");
+  const sentences = at("Sentences");
+  const top = at("Most-used words");
+  at("want");
+  at("27");
+  at("Smart bar picked 18% of taps");
+  const table = at("Week by week");
+  assert.ok(goals < newWords && newWords < sentences && sentences < top && top < table,
+    "sections follow the page's order");
+  // The fill operators are there: bars and lines, not just text.
+  assert.match(raw, /re f/);
+  assert.match(raw, / l S/);
   // Escaping: a name with parens can't break the content stream.
   const { pdf: p2 } = reportPdf(db, D0, D14, {
     userName: "A (kid)", fromLabel: "x", toLabel: "y",
   }, nameOf, "symbol");
-  assert.ok(new TextDecoder().decode(p2).includes("A \\(kid\\)"));
+  assert.ok(pdfText(p2).some((t) => t.includes("A (kid) · x – y")));
+  assert.match(new TextDecoder("latin1").decode(p2), /A \\\(kid\\\)/);
 });
 
 test("weightedMedian: weighting, odd/even, empty", () => {
