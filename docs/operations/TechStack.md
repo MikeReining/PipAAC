@@ -69,8 +69,10 @@ cap). Mint a tester license: `node scripts/entitlement/mint.mjs <user-id>` —
 the same `PIP_LICENSE_SECRET` is in `.dev.vars`, so minted keys verify in
 prod. One-tap tester link: `https://app.pipaac.org/?unlock=<PIP_UNLOCK_TOKEN>`
 turns Pip Lifetime on for the person that opens it (localhost: bare
-`?unlock`; Stats_And_Progress § 4.2). Live drawing stays off until the
-founder sets `DRAW_LIVE=1` + `OPENROUTER_API_KEY` (030).
+`?unlock`; Stats_And_Progress § 4.2). Live drawing is on (founder
+approved the cost 2026-10-02): `DRAW_LIVE=1` + `OPENROUTER_API_KEY`
+(030). Spend is capped per person (5 free, 300 Lifetime) and by the
+OpenRouter key's own limit — there is no global daily draw cap.
 
 ## Local preview
 
