@@ -518,22 +518,6 @@
     </div>
     <p class="wrap footer-small">© Pip AAC · This site has no trackers and no cookies.</p>
   </footer>
-  <script>
-    // Sticky CTA on phones: shown once the hero CTA has scrolled away,
-    // hidden again while the final CTA is on screen.
-    (() => {
-      const bar = document.getElementById("sticky-cta");
-      const hero = document.getElementById("hero-cta");
-      const last = document.getElementById("final-cta");
-      const update = () => {
-        const pastHero = hero.getBoundingClientRect().bottom < 0;
-        const r = last.getBoundingClientRect();
-        const lastVisible = r.top < innerHeight && r.bottom > 0;
-        bar.classList.toggle("show", pastHero && !lastVisible);
-      };
-      addEventListener("scroll", update, { passive: true });
-      update();
-    })();
-  </script>
+  <script src="/site.js" defer></script>
 </body>
 </html>

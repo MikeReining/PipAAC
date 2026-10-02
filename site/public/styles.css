@@ -858,3 +858,90 @@ p { margin: 0 0 1em; }
 .footer-grid nav a:hover { text-decoration: underline; }
 .footer-small { font-size: .9rem; margin: 0; }
 @media (max-width: 900px) { .site-footer { padding-bottom: 6rem; } }
+
+/* ── Simple page hero (method, slps, …) ── */
+.hero-simple {
+  text-align: center;
+  padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(3rem, 8vw, 6rem);
+  max-width: 52rem;
+}
+.hero-simple h1 { font-size: clamp(2.6rem, 7vw, 5.4rem); line-height: 1.02; }
+.hero-simple .sub { font-size: clamp(1.25rem, 2.4vw, 1.6rem); color: #3b342b; margin-bottom: 2rem; }
+.hero-simple-bird { width: clamp(120px, 16vw, 180px); margin: 0 auto 1rem; }
+
+/* ── Method: beliefs ── */
+.beliefs { display: grid; gap: clamp(1rem, 2.5vw, 1.5rem); margin-top: clamp(2.5rem, 6vw, 4rem); }
+.belief {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr) minmax(0, 15rem);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  background: var(--white);
+  border-radius: 24px;
+  padding: clamp(1.4rem, 3.5vw, 2.4rem);
+}
+.b-num {
+  width: 4rem; height: 4rem; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--pip-amber); color: var(--ink);
+  font-weight: 700; font-size: 1.8rem;
+  border: 3px solid var(--ink);
+  align-self: start;
+}
+.b-copy h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
+.b-copy p { font-size: 1.12rem; color: #3b342b; }
+.b-copy p:last-child, .b-copy ul:last-child { margin-bottom: 0; }
+.ticks { list-style: none; padding: 0; margin: 0; }
+.ticks li { position: relative; padding: .4rem 0 .4rem 1.9rem; font-size: 1.08rem; }
+.ticks li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+.b-art {
+  display: flex; align-items: center; justify-content: center; gap: .6rem;
+  min-height: 130px;
+  background: var(--cream); border-radius: 18px; padding: 1rem;
+  position: relative;
+}
+.b-art .tile { width: 76px; flex: none; }
+.b-art .tile b { font-size: .8rem; }
+.b-art .pin { position: absolute; top: 8px; right: 14px; font-size: 1.4rem; }
+.b-art .grow-arrow { padding: 0; font-size: 1.1rem; }
+.mini-num {
+  font-weight: 700; font-size: 1.2rem; color: var(--ink);
+  width: 2.6rem; height: 2.6rem; border-radius: 10px;
+  display: grid; place-items: center; background: var(--white); border: 2px solid var(--yellow);
+}
+.mini-num:last-child { background: var(--pip-amber); border-color: var(--ink); }
+.big-num { font-weight: 700; font-size: 3.4rem; line-height: 1; color: var(--ink); }
+.big-num-label { font-weight: 700; color: var(--muted); line-height: 1.2; }
+.b-art .emoji { font-size: 2.6rem; }
+.b-art .beam { width: 40px; }
+.b-art .check { font-weight: 700; color: var(--green); font-size: .95rem; }
+@media (max-width: 820px) {
+  .belief { grid-template-columns: 3.4rem minmax(0, 1fr); }
+  .b-num { width: 3rem; height: 3rem; font-size: 1.35rem; }
+  .b-art { grid-column: 1 / -1; }
+}
+@media (max-width: 480px) {
+  .belief { grid-template-columns: 1fr; }
+  .b-art .tile { width: 64px; }
+}
+
+/* ── Frozen vs Stable table ── */
+.compare-wrap { max-width: 58rem; margin: 2.5rem auto 0; overflow-x: auto; }
+.vs-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 1.1rem; }
+.vs-table th {
+  text-align: left; padding: 1rem 1.2rem; font-size: 1.15rem;
+  vertical-align: middle;
+}
+.vs-table th img { display: inline-block; vertical-align: -6px; margin-right: .3rem; }
+.vs-table th:first-child { color: #a39c8a; }
+.vs-table th:last-child { background: var(--pip-amber); color: var(--ink); border-radius: 16px 16px 0 0; }
+.vs-table td { padding: 1rem 1.2rem; border-top: 1px solid rgba(246, 244, 239, .14); vertical-align: top; }
+.vs-table td:first-child { color: #a39c8a; text-decoration: line-through; text-decoration-color: rgba(198, 40, 40, .7); }
+.vs-table td:last-child { background: var(--cream); color: var(--ink-text); font-weight: 700; border-top-color: var(--line); }
+.vs-table tr:last-child td:last-child { border-radius: 0 0 16px 16px; }
+.vs-table td:last-child strong { color: var(--ink); }
+@media (max-width: 560px) {
+  .vs-table { font-size: .98rem; }
+  .vs-table th, .vs-table td { padding: .8rem .7rem; }
+}
+.site-nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--pip-amber); text-decoration-thickness: 3px; text-underline-offset: 6px; }
