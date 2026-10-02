@@ -6164,7 +6164,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Daily Actions & Activity Verbs",
-      "default_image_id": null,
+      "default_image_id": "img_0671",
       "negation": 0
     },
     {
@@ -6209,7 +6209,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0676",
       "negation": 0
     },
     {
@@ -6218,7 +6218,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Social Etiquette, Pragmatic Interjections & Urgent/Safety",
-      "default_image_id": null,
+      "default_image_id": "img_0677",
       "negation": 0
     },
     {
@@ -6236,7 +6236,7 @@
       "art_archetype": "Stick Figure",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0679",
       "negation": 0
     },
     {
@@ -6245,7 +6245,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0680",
       "negation": 0
     },
     {
@@ -6254,7 +6254,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0681",
       "negation": 0
     },
     {
@@ -6263,7 +6263,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0682",
       "negation": 0
     },
     {
@@ -6272,7 +6272,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0683",
       "negation": 0
     },
     {
@@ -6281,7 +6281,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Function Words & Grammar",
-      "default_image_id": null,
+      "default_image_id": "img_0684",
       "negation": 0
     },
     {
@@ -6344,7 +6344,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0691",
       "negation": 0
     },
     {
@@ -34480,6 +34480,13 @@
       "sha256": "9d670ec85589f3aaeb34324619bd49e05b71d740ef379ac8984e7774668092ec"
     },
     {
+      "id": "img_0671",
+      "sense_id": "sns_0671",
+      "key": "symbols/tickle.png",
+      "status": "approved",
+      "sha256": "56d160b3c806c15cac4de032a7d1d742cdd6657f4037571e1223155a3d121b0e"
+    },
+    {
       "id": "img_0672",
       "sense_id": "sns_0672",
       "key": "symbols/boy.png",
@@ -34508,11 +34515,67 @@
       "sha256": "a13ad6c00852a2b9bf55da74cca386e83e7f2d265157eed680051760e721e68c"
     },
     {
+      "id": "img_0676",
+      "sense_id": "sns_0676",
+      "key": "symbols/love.png",
+      "status": "approved",
+      "sha256": "7e1b208912dfea35cd355b7f079a9aaadb10bcc27b29ccb5b6e42c0dafeaf18a"
+    },
+    {
+      "id": "img_0677",
+      "sense_id": "sns_0677",
+      "key": "symbols/together.png",
+      "status": "approved",
+      "sha256": "8760354b2b419254790cd65019d73da65be753ab33ae9da2df2b3dec9e7d1899"
+    },
+    {
       "id": "img_0678",
       "sense_id": "sns_0678",
       "key": "symbols/ow.png",
       "status": "approved",
       "sha256": "a97f0763c84bd407b0fd0519e88d205ae24c5255dc56577406e6128d01c0f4f3"
+    },
+    {
+      "id": "img_0679",
+      "sense_id": "sns_0679",
+      "key": "symbols/yours.png",
+      "status": "approved",
+      "sha256": "7131b6d66dfc2d4348a0df643c4170b41b5d9e387e730f3c3c6b193e4e61cd79"
+    },
+    {
+      "id": "img_0680",
+      "sense_id": "sns_0680",
+      "key": "symbols/these.png",
+      "status": "approved",
+      "sha256": "235ad0e0355587e39f091cbf2f687831f51d13ca4b03cb7affb65d1d9efbb304"
+    },
+    {
+      "id": "img_0681",
+      "sense_id": "sns_0681",
+      "key": "symbols/those.png",
+      "status": "approved",
+      "sha256": "3a7cbaba640b975663a8f35fe909157126eda0553b29262df1585089e8469ae9"
+    },
+    {
+      "id": "img_0682",
+      "sense_id": "sns_0682",
+      "key": "symbols/nothing.png",
+      "status": "approved",
+      "sha256": "ff2979c0562d1cc77863137303711f4299c80175161a0706b26c03b2a4b6034b"
+    },
+    {
+      "id": "img_0683",
+      "sense_id": "sns_0683",
+      "key": "symbols/behind.png",
+      "status": "approved",
+      "sha256": "04663290824f985e11cb52bd49ae16390d307b32aa72e5bac6168edd5c360446"
+    },
+    {
+      "id": "img_0684",
+      "sense_id": "sns_0684",
+      "key": "symbols/did.png",
+      "status": "approved",
+      "sha256": "dbe452275de5f9fe1cf981f031a7fabb7243ef15fd3118c85598cd1e40ef8ab9"
     },
     {
       "id": "img_0685",
@@ -34555,6 +34618,13 @@
       "key": "symbols/granola_bar.png",
       "status": "approved",
       "sha256": "4dc06bbb10dec278b44e60af630320b22a39a6dab012a45f8b29ba080cff050d"
+    },
+    {
+      "id": "img_0691",
+      "sense_id": "sns_0691",
+      "key": "symbols/string_cheese.png",
+      "status": "approved",
+      "sha256": "6291458b3044597dba1d067dadc41e63eb0b54dd94e489437d808fe62009353f"
     },
     {
       "id": "img_0692",
