@@ -15,7 +15,7 @@
  * Plain class (not extends DurableObject) so Node unit tests can import
  * the worker graph without cloudflare:workers.
  */
-import { checkLicense } from "./license.mjs";
+import { checkLicense, licenseFor } from "./license.mjs";
 import { indexProof } from "./restore.js";
 
 const te = new TextEncoder();
@@ -522,6 +522,20 @@ export class UserRelay {
       }
       this.metaSet("entitlement", "lifetime");
       return json({ ok: true, entitlement: "lifetime" });
+    }
+
+    // The device-side read of the same seam: a Stripe webhook or a
+    // redeemed code lands lifetime worker-side with no device
+    // round-trip, so a signed device asks for its license copy here —
+    // the pip-life-* token voice calls present (024). Minted fresh from
+    // the relay's own truth; the relay is what proved lifetime.
+    if (method === "GET" && route === "entitlement") {
+      const ent = this.entitlement();
+      const license = ent === "lifetime" && this.env.PIP_LICENSE_SECRET
+        ? await licenseFor(this.env.PIP_LICENSE_SECRET,
+            this.metaGet("user_id") ?? this.metaGet("board_id") ?? url.pathname.split("/")[2])
+        : null;
+      return json({ entitlement: ent, ...(license ? { license } : {}) });
     }
 
     // Family-requested deletion (§ 11): a signed device schedules the

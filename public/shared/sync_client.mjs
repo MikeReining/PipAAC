@@ -75,6 +75,9 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
     rotateKeys: (epoch, wrapped) => call("POST", "/keys", { epoch, wrapped }),
     /** Activate Pip Lifetime with a user-bound license key (dev path). */
     setEntitlement: (license) => call("POST", "/entitlement", { license }),
+    /** Device-side read: after a purchase or redeemed code lands
+     *  lifetime worker-side, the relay hands back the license copy. */
+    entitlement: () => call("GET", "/entitlement"),
     /** Replace the QR card: new proof + the epoch-key bundle sealed to
      *  the new root — old cards stop restoring (015/3). */
     replaceRecovery: (proof, bundle) =>

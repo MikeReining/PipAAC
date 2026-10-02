@@ -164,6 +164,40 @@ test("free user: the relay refuses a second device; lifetime allows it", async (
   assert.equal(res.status, 200);
 });
 
+test("GET entitlement: a signed device picks up its license copy (015 slice 6)", async () => {
+  // A Stripe webhook or a redeemed code lands lifetime worker-side —
+  // no device round-trip exists. The device asks for its copy; the
+  // pip-life-* token is the same one the dev path mints, so voice
+  // calls and offline checks keep working.
+  const userId = "user-license-copy";
+  const { relay, dev, env } = await userAt(userId);
+  const p = `/users/${userId}`;
+
+  // Free: entitlement only, no license.
+  let res = await relay.fetch(await signed(dev.identity, "GET", `${p}/entitlement`, undefined));
+  let body = await res.json();
+  assert.equal(body.entitlement, "free");
+  assert.equal(body.license, undefined);
+
+  // The internal grant is the webhook/code path — not a pasted key.
+  env.PIP_INTERNAL_SECRET = "internal-test";
+  res = await relay.fetch(new Request(`https://relay${p}/internal/entitlement`, {
+    method: "POST",
+    headers: { "x-pip-internal": "internal-test" },
+    body: JSON.stringify({ source: "stripe", ref: "cs_test_x" }),
+  }));
+  assert.equal(res.status, 200);
+
+  res = await relay.fetch(await signed(dev.identity, "GET", `${p}/entitlement`, undefined));
+  body = await res.json();
+  assert.equal(body.entitlement, "lifetime");
+  assert.equal(body.license, await licenseFor(SECRET, userId));
+
+  // An unsigned caller gets nothing.
+  res = await relay.fetch(new Request(`https://relay${p}/entitlement`));
+  assert.equal(res.status, 403);
+});
+
 test("restore on a free user moves the user; lifetime keeps every device", async () => {
   // Free: the restoring device replaces the whole set.
   let userId = "user-free-move";

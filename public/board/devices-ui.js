@@ -11,8 +11,8 @@ import { joinDeviceWithToken, pairClient, relayClient } from "../shared/sync_cli
 import {
   accountPub, accountState, claimInvite, claimToken, createInvite,
   declineInvite, deleteAccount, grantInvite, importAccountUsers, inviteStatus,
-  listInvites, openInvite, registerAccount, requestLink, revokeInvite,
-  saveAccountState, shareUserToAccount, signInAccount,
+  listInvites, openInvite, redeemLicense, registerAccount, requestLink,
+  revokeInvite, saveAccountState, shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
 import { addUser, listUsers, putUser, removeUser } from "../shared/users.mjs";
 
@@ -138,9 +138,26 @@ export function mountDevices({
       }
       renderEntitlement(self);
       applyOwner(isOwner);
+      // A purchase or redeemed code lands lifetime worker-side — pick
+      // the license copy up so voice calls can present it (024).
+      if (self?.entitlement === "lifetime"
+          && !(await store.get(`user/${me.id}/license`))) {
+        await claimLicense(client, store, { quiet: true }).catch(() => {});
+      }
     } catch (err) {
       list.innerHTML = '<p class="hint">Relay unreachable — devices cannot be listed.</p>';
     }
+  }
+
+  /** The relay is the truth: when it says lifetime, hand the device its
+   *  license copy (the pip-life-* token voice calls present). Returns
+   *  the token, or null while the grant hasn't landed. */
+  async function claimLicense(client, store, { quiet = false } = {}) {
+    const { entitlement, license } = await client.entitlement();
+    if (entitlement !== "lifetime" || !license) return null;
+    await store.put(`user/${me.id}/license`, license);
+    if (!quiet) toast(`Pip Lifetime is on for ${me.name || "this person"}.`);
+    return license;
   }
 
   /** Entitlement + pending-deletion state in the corner rows. selfKey is
@@ -794,12 +811,23 @@ export function mountDevices({
     await renderDevices();
   }
 
+  // One field, two shapes (015 slice 6): a pip-life-* key activates
+  // straight on the relay; a PIP-XXXX-… code redeems worker-side —
+  // then the license copy comes back from the same relay read.
   $("dev-activate").onclick = async () => {
     const key = $("dev-license").value.trim();
     if (!key) return;
     try {
-      await activateLicense(key);
+      if (key.startsWith("pip-life-")) {
+        await activateLicense(key);
+      } else {
+        await ensureUser({ quiet: true }).catch((e) => { if (!me.sync?.userId) throw e; });
+        await redeemLicense(me.id, key);
+        const { client, store } = await userClient();
+        await claimLicense(client, store, { quiet: true });
+      }
       $("dev-license").value = "";
+      await renderDevices();
     } catch (e) {
       $("dev-lifetime").innerHTML =
         `<p class="hint">That key did not verify for this user.</p>`;
@@ -838,5 +866,14 @@ export function mountDevices({
     }
   };
 
-  return { userClient, renderAccount, renderUsers, ensureUser, activateLicense };
+  /** After Stripe Checkout returns (?purchased=), poll the relay for
+   *  the license copy — the webhook usually lands within a second. */
+  async function claimPurchasedLicense() {
+    if (!me.sync?.userId) return null;
+    const { client, store } = await userClient();
+    return claimLicense(client, store);
+  }
+
+  return { userClient, renderAccount, renderUsers, ensureUser, activateLicense,
+    claimPurchasedLicense };
 }

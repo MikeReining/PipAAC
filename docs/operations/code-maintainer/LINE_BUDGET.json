@@ -6,7 +6,7 @@
     "public/board.js": 1447,
     "public/board/add-flow.js": 676,
     "public/board/base.css": 786,
-    "public/board/devices-ui.js": 842,
+    "public/board/devices-ui.js": 879,
     "public/board/editor-ui.js": 1170,
     "public/board/word-card.js": 805,
     "public/index.html": 1018,
@@ -28,7 +28,7 @@
     "src/worker/index.js": 554,
     "src/worker/pictures.test.mjs": 795,
     "src/worker/pictures_draw.test.mjs": 628,
-    "src/worker/relay.js": 755,
+    "src/worker/relay.js": 769,
     "src/worker/tile.js": 739
   }
 }

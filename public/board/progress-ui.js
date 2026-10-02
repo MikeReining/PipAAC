@@ -10,6 +10,7 @@
  * from stats_day; this module only draws them. No norms, no
  * comparisons, no judging colors — a trend is the user's own periods.
  */
+import { accountState, checkout } from "../shared/account.mjs";
 import { WEEK_DAYS, dashboard, firstTapDay, rangeFor } from "../shared/dashboard.mjs";
 import { weeklyCard } from "../shared/wincard.mjs";
 import { reportPdf } from "../shared/report.mjs";
@@ -128,9 +129,21 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", entitleme
     const cta = el("div", "prog-cta");
     const buy = el("button", "btn", "Get Pip Lifetime · $49 once");
     buy.id = "prog-buy";
-    // Until checkout lands (015), the way in is the license row in Your
-    // account — the same seam a purchase will write through.
-    buy.onclick = () => {
+    // The web purchase runs through a supporter account (§ 4.5): signed
+    // in, go straight to Stripe Checkout; not signed in — or this
+    // account doesn't support this user — the way in is still the
+    // license row in Your account, the same seam the grant lands on.
+    buy.onclick = async () => {
+      const st = accountState();
+      if (st) {
+        buy.disabled = true;
+        try {
+          const { url } = await checkout(st.acct_id, st.session, me.id);
+          location.assign(url);
+          return;
+        } catch { /* no session support, or Stripe unreachable */ }
+        buy.disabled = false;
+      }
       settings.show("you", { focus: true });
       $("dev-lifetime-row")?.scrollIntoView({ block: "center" });
       $("dev-license")?.focus({ preventScroll: true });

@@ -232,6 +232,17 @@ export async function importAccountUsers({
   return out;
 }
 
+/* --- purchases + license codes (015 slice 6) ---
+ * The web purchase runs through the supporter account (§ 4.5): the
+ * worker checks the session supports this user, then hands back a
+ * hosted Stripe Checkout URL. Codes (schools, grants, SLPs) are bearer
+ * — redeem lands lifetime on the relay; the device picks its license
+ * copy up from there. */
+export const checkout = (acctId, session, userId) =>
+  post("/api/v1/checkout", { session, acct_id: acctId, user_id: userId });
+export const redeemLicense = (userId, code) =>
+  post("/api/v1/license/redeem", { user_id: userId, code });
+
 /* --- supporter invites (015 slice 5) ---
  * P's device creates an invite for S's email; S's emailed link lands on
  * ?invite=, opens a normal sign-in, then claims. The invite sits at

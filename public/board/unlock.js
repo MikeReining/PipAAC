@@ -38,3 +38,25 @@ export function unlockFromUrl({ me, activateLicense, toast }) {
       toast("Couldn't reach Pip to unlock — try again online.");
     });
 }
+
+/** ?purchased=<session-id> — back from Stripe Checkout (015 slice 6).
+ *  The webhook usually lands within a second of the redirect, so poll
+ *  the relay briefly for the license copy; if it hasn't arrived the
+ *  purchase is still safe — the grant lands when Stripe confirms. */
+export function purchasedFromUrl({ me, claimPurchasedLicense, toast }) {
+  const params = new URLSearchParams(location.search);
+  if (!params.has("purchased")) return;
+  params.delete("purchased");
+  const qs = params.toString();
+  history.replaceState(null, "", location.pathname + (qs ? `?${qs}` : ""));
+  const who = me.name || "this person";
+  (async () => {
+    for (let i = 0; i < 8; i++) {
+      try {
+        if (await claimPurchasedLicense()) return;
+      } catch { /* relay or sync not ready yet — try again */ }
+      await new Promise((r) => setTimeout(r, 1500));
+    }
+    toast(`Payment received — Pip Lifetime turns on for ${who} the next time this device is online.`);
+  })();
+}

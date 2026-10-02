@@ -59,7 +59,7 @@ import { mountAddFlow } from "./board/add-flow.js";
 import { mountLibrary } from "./board/library-ui.js";
 import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
-import { unlockFromUrl } from "./board/unlock.js";
+import { purchasedFromUrl, unlockFromUrl } from "./board/unlock.js";
 import { mountPlacePicker } from "./board/place-ui.js";
 import { mountSetup } from "./board/setup-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
@@ -1118,6 +1118,9 @@ const devicesUi = mountDevices({
 });
 // ?unlock — the test link that turns Pip Lifetime on (public/board/unlock.js).
 unlockFromUrl({ me, activateLicense: devicesUi.activateLicense, toast });
+// ?purchased — back from Stripe Checkout; the webhook grants lifetime
+// and the device picks its license copy up from the relay.
+purchasedFromUrl({ me, claimPurchasedLicense: devicesUi.claimPurchasedLicense, toast });
 
 /* People — public/board/people-ui.js: the Settings header switcher and
  * "When Pip opens". */
