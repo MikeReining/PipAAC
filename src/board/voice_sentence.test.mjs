@@ -79,7 +79,11 @@ test("deadline answers null but the fetch still warms the cache", async () => {
     const missed = await vs.request(ARGS);
     assert.equal(missed, null);           // she hears the word clips now
     release();
-    await new Promise((r) => setTimeout(r, 20)); // the fetch lands anyway
+    // The fetch lands anyway — wait for the warm to be observable, not a
+    // fixed sleep: blob() + cache put can outlast 20 ms under wall load.
+    for (let i = 0; i < 100 && !(await vs.cached(ARGS.voice, ARGS.text)); i++) {
+      await new Promise((r) => setTimeout(r, 20));
+    }
     const b = await vs.request(ARGS);
     assert.equal(await b.text(), "LATE"); // next tap is instant
     assert.equal(calls, 1);
