@@ -979,3 +979,32 @@ p { margin: 0 0 1em; }
 }
 .step-card.banner .step-icon { grid-row: span 2; margin: 0; background: var(--white); }
 .step-card.banner h3 { margin: 0 0 .2rem; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+.section.ink .plans { margin-top: 0; }
+
+/* ── Pricing: schools math + promises ── */
+.school-math {
+  background: var(--yellow-fill); border: 2px solid var(--yellow);
+  border-radius: 24px; padding: clamp(1.4rem, 4vw, 2.2rem);
+}
+.school-math p { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0; padding: .6rem 0; }
+.school-math span { font-weight: 700; color: var(--muted); }
+.school-math strong { font-size: 3rem; color: var(--ink); line-height: 1; }
+.school-math .old { border-top: 2px dashed var(--yellow); }
+.school-math s { font-size: 1.5rem; font-weight: 700; color: var(--muted); text-decoration-color: var(--red); text-decoration-thickness: 3px; }
+.promises {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.5rem); margin-top: clamp(2.5rem, 6vw, 3.5rem);
+}
+.promises > div { background: var(--white); border-radius: 24px; padding: 1.6rem; }
+.promises span {
+  display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%;
+  background: var(--pip-amber); border: 2.5px solid var(--ink);
+  font-weight: 700; font-size: 1.2rem; margin-bottom: 1rem;
+}
+.promises h3 { font-size: 1.3rem; margin-bottom: .4rem; }
+.promises p { margin: 0; color: #3b342b; }
