@@ -5984,7 +5984,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0651",
       "negation": 0
     },
     {
@@ -5993,7 +5993,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0652",
       "negation": 0
     },
     {
@@ -6002,7 +6002,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0653",
       "negation": 0
     },
     {
@@ -6011,7 +6011,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0654",
       "negation": 0
     },
     {
@@ -6020,7 +6020,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0655",
       "negation": 0
     },
     {
@@ -6029,7 +6029,7 @@
       "art_archetype": "Diagrammatic",
       "tier": "primary_fringe",
       "category": "Numbers & Counting",
-      "default_image_id": null,
+      "default_image_id": "img_0656",
       "negation": 0
     },
     {
@@ -6038,7 +6038,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0657",
       "negation": 0
     },
     {
@@ -6047,7 +6047,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0658",
       "negation": 0
     },
     {
@@ -6056,7 +6056,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0659",
       "negation": 0
     },
     {
@@ -6065,7 +6065,7 @@
       "art_archetype": "Illustrated Object",
       "tier": "primary_fringe",
       "category": "Food & Drink",
-      "default_image_id": null,
+      "default_image_id": "img_0660",
       "negation": 0
     },
     {
@@ -34338,6 +34338,76 @@
       "key": "symbols/four.png",
       "status": "approved",
       "sha256": "0ef84214fc0c153ed871d7284b44cdeec1bf9d85b17da5d4ad659df16e107d44"
+    },
+    {
+      "id": "img_0651",
+      "sense_id": "sns_0651",
+      "key": "symbols/five.png",
+      "status": "approved",
+      "sha256": "259153c70ab955e0f0996ce2c99c9e408bffc98d0ac429132858ef01348b9e0a"
+    },
+    {
+      "id": "img_0652",
+      "sense_id": "sns_0652",
+      "key": "symbols/six.png",
+      "status": "approved",
+      "sha256": "04a0d7b1f8e15e96d3e7f901d8ea39746759eb2883b6b4cd62a73d8a97499edb"
+    },
+    {
+      "id": "img_0653",
+      "sense_id": "sns_0653",
+      "key": "symbols/seven.png",
+      "status": "approved",
+      "sha256": "3f1514af74b99df353d5e3e53fb018a8665e1782ba7e99d068f4b6a447e3eca2"
+    },
+    {
+      "id": "img_0654",
+      "sense_id": "sns_0654",
+      "key": "symbols/eight.png",
+      "status": "approved",
+      "sha256": "397e7f3eb28023554d7b0c87babe150056685e809efaf429c4d3e41d3846ddf0"
+    },
+    {
+      "id": "img_0655",
+      "sense_id": "sns_0655",
+      "key": "symbols/nine.png",
+      "status": "approved",
+      "sha256": "04b48c23339fa3dd96b3c91c59dde2acb14124217ccd9ab0379e9a3ee34c81a2"
+    },
+    {
+      "id": "img_0656",
+      "sense_id": "sns_0656",
+      "key": "symbols/ten.png",
+      "status": "approved",
+      "sha256": "3135e45251bf09a0bbff755cb6f663134d5a532080ad045ce23e0760bfd90db4"
+    },
+    {
+      "id": "img_0657",
+      "sense_id": "sns_0657",
+      "key": "symbols/breakfast.png",
+      "status": "approved",
+      "sha256": "8de6d43969ba8cc01d128d30773445cbd4b94f522f0ccc95097f7f97db607504"
+    },
+    {
+      "id": "img_0658",
+      "sense_id": "sns_0658",
+      "key": "symbols/lunch.png",
+      "status": "approved",
+      "sha256": "b941507e0c52fd53439c9ad2a0862d2ca859ce58f51fcdfd2361280dde00c0f0"
+    },
+    {
+      "id": "img_0659",
+      "sense_id": "sns_0659",
+      "key": "symbols/dinner.png",
+      "status": "approved",
+      "sha256": "171faff1caa9455fd0a323147d0b4525cc6cf51de9cce8e2b36aff6746e4d24f"
+    },
+    {
+      "id": "img_0660",
+      "sense_id": "sns_0660",
+      "key": "symbols/food.png",
+      "status": "approved",
+      "sha256": "887f43bc3c288a7868e543424daa9da1bb266adedc2bd7dca8ec5a13f3bf61d6"
     },
     {
       "id": "img_0672",
