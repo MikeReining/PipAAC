@@ -1008,3 +1008,7 @@ p { margin: 0 0 1em; }
 }
 .promises h3 { font-size: 1.3rem; margin-bottom: .4rem; }
 .promises p { margin: 0; color: #3b342b; }
+.faq-group { font-size: clamp(1.6rem, 3.4vw, 2.2rem); margin: 3rem 0 0; }
+.faq-group:first-child { margin-top: 0; }
+.faq-group + .faq { margin-top: 1.2rem; }
+.section.white .faq summary::after { background: var(--cream); }
