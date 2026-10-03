@@ -1,5 +1,5 @@
 /**
- * Tour sentence-audio law: the demo's scripted sentences ("I want an
+ * Tour sentence-audio law: the demo's scripted sentences ("You want an
  * apple.") must play through the app's shared audio element (board.say →
  * playClip), which is unlocked by the tap's gesture. A fresh Audio() or
  * an awaited fetch before play() loses iOS user activation and the
@@ -27,7 +27,7 @@ test("sayBar plays through the shared element and falls back to the live pipelin
 });
 
 test("every sentence the tour speaks has a shipped clip key", () => {
-  for (const key of ["i-want-an-apple", "i-wanted-an-apple"]) {
+  for (const key of ["you-want-an-apple", "do-you-want-an-apple"]) {
     assert.ok(tour.includes(`"${key}"`), `tour must call sayBar("${key}")`);
     assert.ok(audio.includes(`"${key}":`), `ONRAMP_CLIPS must mint "${key}"`);
   }

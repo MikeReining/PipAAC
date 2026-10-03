@@ -23,11 +23,18 @@ import { appRoot } from "./viewport.js";
 
 const $ = (id) => document.getElementById(id);
 
+/* The demo is scripted (free, offline, no model call), so every result
+ * must be what the live buttons return for the same taps — the wand law
+ * (docs/product/Sentence_Bar.md): her words plus glue, never an added
+ * subject. Verified live 2026-10-03 on qwen3.8-27b, temperature 0:
+ *   "you want apple" → ✨ "You want an apple." · ❓ "Do you want an apple?"
+ * Re-verify (scripts/sentences lab) if the prompts change. */
 export const SCRIPT = {
+  you: "sns_0002",
   want: "sns_0013",
   apple: "sns_0128",
-  fix: "I want an apple.",
-  past: "I wanted an apple.",
+  fix: "You want an apple.",
+  question: "Do you want an apple?",
 };
 
 export function mountTour({ board, saveUser }) {
@@ -40,21 +47,21 @@ export function mountTour({ board, saveUser }) {
   // `say` is the card's display text (withIcons renders ✨/⏪ as icons);
   // `clip` is the recording's key in shared/onramp_audio.mjs.
   // 038: only the buttons the person has — read at start() so a Replay
-  // after a Settings change walks the bar as it is now. ⏪'s scripted
-  // sentence follows ✨'s ("I want an apple" → "I wanted an apple"), so
-  // it needs both.
+  // after a Settings change walks the bar as it is now. Both transforms
+  // read the same taps ("you want apple"), so each stands alone.
   let steps = [];
   function buildSteps() {
-    const shown = board.shownControls?.() ?? new Set(["fix", "past"]);
+    const shown = board.shownControls?.() ?? new Set(["fix", "question"]);
     steps = [
+      { id: "you", say: "Tap you.", clip: "tour-you", target: () => board.cellEl(SCRIPT.you) },
       { id: "want", say: "Tap want.", clip: "tour-want", target: () => board.cellEl(SCRIPT.want) },
       { id: "apple", say: "Now tap apple in the Smart bar.", clip: "tour-apple", target: () => document.querySelector("#tray .pred:not(.ghost)") },
     ];
     if (shown.has("fix")) {
       steps.push({ id: "fix", say: "Tap ✨ to make it a sentence.", clip: "tour-fix", target: () => $("tx-fix") });
     }
-    if (shown.has("fix") && shown.has("past")) {
-      steps.push({ id: "past", say: "Now tap ⏪ to say it in the past.", clip: "tour-past", target: () => $("tx-past") });
+    if (shown.has("question")) {
+      steps.push({ id: "question", say: "Now tap ❓ to ask it.", clip: "tour-question", target: () => $("tx-question") });
     }
     steps.push({ id: "done", say: "That's Pip. Now try your own.", clip: "tour-done", target: () => null, done: true });
   }
@@ -93,11 +100,11 @@ export function mountTour({ board, saveUser }) {
     if (s.done) {
       const note = document.createElement("p");
       note.className = "tour-note";
-      withIcons(note, !steps.some((x) => x.id === "fix" || x.id === "past")
+      withIcons(note, !steps.some((x) => x.id === "fix" || x.id === "question")
         ? "Build a sentence and ▶ speaks it."
         : navigator.onLine === false
-          ? "✨ and the time buttons need the internet to work on your own sentences. Connect when you can."
-          : "✨ and the time buttons work on any sentence you build.");
+          ? "✨ and ❓ need the internet to work on your own sentences. Connect when you can."
+          : "✨ and ❓ work on any sentence you build.");
       card.append(note);
       // The first sentence is when a parent notices the voice: offer the
       // rest right here (founder 2026-09-29).
@@ -136,23 +143,23 @@ export function mountTour({ board, saveUser }) {
       // Advance first: adding the word repaints the Smart bar, which
       // must already see the next step's card. The next instruction
       // speaks after the word's own audio lands.
-      if (steps[step]?.id === "want" && id === SCRIPT.want) {
-        show(step + 1); await board.addWord(SCRIPT.want); board.say(steps[step].clip);
-      } else if (steps[step]?.id === "apple" && id === SCRIPT.apple) {
-        show(step + 1); await board.addWord(SCRIPT.apple); board.say(steps[step].clip);
+      const cur = steps[step]?.id;
+      if (["you", "want", "apple"].includes(cur) && id === SCRIPT[cur]) {
+        show(step + 1); await board.addWord(SCRIPT[cur]); board.say(steps[step].clip);
       }
     },
     stripItems: () => (steps[step]?.id === "apple" ? [{ kind: "sense", id: SCRIPT.apple }] : []),
     async onTransform(mode) {
-      if (steps[step]?.id === "fix" && mode === "fix") {
+      const cur = steps[step]?.id;
+      if (cur === "fix" && mode === "fix") {
         board.setBar(SCRIPT.fix, "fix");
         show(step + 1);
-        await sayBar("i-want-an-apple");
+        await sayBar("you-want-an-apple");
         board.say(steps[step].clip);
-      } else if (steps[step]?.id === "past" && mode === "past") {
-        board.setBar(SCRIPT.past, "past");
+      } else if (cur === "question" && mode === "question") {
+        board.setBar(SCRIPT.question, "question");
         show(step + 1);
-        await sayBar("i-wanted-an-apple");
+        await sayBar("do-you-want-an-apple");
         board.say(steps[step].clip);
       }
     },

@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-a9b84f577213",
+  "buildId": "r1-e0a9421971bf",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -7862,16 +7862,6 @@
       "sha256": "92cc6acddf13e87089d9ba4ef85bf5543732b6609603ffc42477e2d8ba85c53e"
     },
     {
-      "path": "/audio/onramp/i-want-an-apple.mp3",
-      "bytes": 26793,
-      "sha256": "3e635101109186b9d1d2986057ecf3677ae50eee50813981a31d8a35b50be194"
-    },
-    {
-      "path": "/audio/onramp/i-wanted-an-apple.mp3",
-      "bytes": 28047,
-      "sha256": "24c14bbdec89ea35ae5deef69469a587d5dec1c0dcfe668821488d98460b6678"
-    },
-    {
       "path": "/audio/onramp/pictures-and-words.mp3",
       "bytes": 31808,
       "sha256": "9339b80a5970611c7724d41e82d89671aa78d362be3620703cbe778163a5516a"
@@ -7890,11 +7880,6 @@
       "path": "/audio/onramp/tour-fix.mp3",
       "bytes": 43511,
       "sha256": "735930700188907f30104dd15964e5a2db0c2e860a293383ab898be82e4f28f9"
-    },
-    {
-      "path": "/audio/onramp/tour-past.mp3",
-      "bytes": 54796,
-      "sha256": "3c8385bab3cbac88e62b8e1804cbc5a8712e9e2b414f699984cd783273613e8a"
     },
     {
       "path": "/audio/onramp/tour-want.mp3",
@@ -13098,8 +13083,8 @@
     },
     {
       "path": "/board.js",
-      "bytes": 59256,
-      "sha256": "3672048e97d1c1504e5ec1497c434c69c384b85b7724669fd0907f326ffc4ee2"
+      "bytes": 59918,
+      "sha256": "3bb4bf6f72737c127ff6fdbc5bf48924ef8fb7a24b8aae37922625064e134d67"
     },
     {
       "path": "/board/add-flow.css",
@@ -13313,8 +13298,8 @@
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 18532,
-      "sha256": "1e378123d3a2871e1173fa7e29f56da214ad5e41d1f0e9a7209d9d31292e516e"
+      "bytes": 18828,
+      "sha256": "013b30247059eadcf415e2a60596aaecb20bf6aea7a3c73535cd2302a81c5324"
     },
     {
       "path": "/board/setup-ui.css",
@@ -13328,8 +13313,8 @@
     },
     {
       "path": "/board/speech.js",
-      "bytes": 21100,
-      "sha256": "4a9a462be69eff0c4362638e48d746ada0c66159d897c3d00dd90d1b3687a990"
+      "bytes": 23978,
+      "sha256": "fdc179c4a09ad96558f885e15fa20c02a8b44f0fb9411cf9b4a73b8014f6fd0c"
     },
     {
       "path": "/board/spotlight-demo.js",
@@ -13358,8 +13343,8 @@
     },
     {
       "path": "/board/tour-ui.js",
-      "bytes": 7547,
-      "sha256": "a5cad4b31495a745b148d7b138e0dc1151ae5b4a25bd003a68b1280c964c452e"
+      "bytes": 7959,
+      "sha256": "0243c36f765fc4f7ce9bc99d74d1996d09da9cfcabfc6f92add475e6219e2da0"
     },
     {
       "path": "/board/unlock.js",
@@ -13924,8 +13909,8 @@
     },
     {
       "path": "/shared/onramp_audio.mjs",
-      "bytes": 1497,
-      "sha256": "e1b23d1e17f966ffc128000a80fa4388f2c2b11ac899170bad22bd6bef131eef"
+      "bytes": 1525,
+      "sha256": "3c0a20e51485655ebe1015853ab27bcb67130701236c1083e4eebce6147c553d"
     },
     {
       "path": "/shared/ops.mjs",
@@ -14029,8 +14014,8 @@
     },
     {
       "path": "/shared/voice_sentence.mjs",
-      "bytes": 4807,
-      "sha256": "e5a7fdaa310a65d33ca903fd843fca9347af323ef11cebcd099c69183f2ec309"
+      "bytes": 5117,
+      "sha256": "460dc2ca5a1f62bf5990a5fa9a75d748729c7fde15988b61ad4d73c413538953"
     },
     {
       "path": "/shared/voice_tile.mjs",

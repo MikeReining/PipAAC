@@ -18,15 +18,16 @@ export const ONRAMP_CLIPS = {
   "pictures-and-words": "Pictures and words.",
   "words-only": "Words only.",
   // first-run demo (tour-ui.js)
+  "tour-you": "Tap you.",
   "tour-want": "Tap want.",
   "tour-apple": "Now tap apple in the Smart bar.",
   "tour-fix": "Tap the sparkle to make it a sentence.",
-  "tour-past": "Now tap the rewind button to say it in the past.",
+  "tour-question": "Now tap the question mark to ask it.",
   "tour-done": "That's Pip. Now try your own.",
   // the scripted sentences the demo speaks — shipped clips, because a
   // first-run user has no license and the voice pipeline would be silent
-  "i-want-an-apple": "I want an apple.",
-  "i-wanted-an-apple": "I wanted an apple.",
+  "you-want-an-apple": "You want an apple.",
+  "do-you-want-an-apple": "Do you want an apple?",
 };
 
 /** Path under public/ — playClip prepends the slash. */
