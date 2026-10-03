@@ -8,6 +8,7 @@ in routed docs; add links here, not long prose.
 ```text
 Read route -> name slice + truth owner + proof -> edit narrowly -> focused proof
 -> deslop -> code audit -> log durable lessons -> commit when saving
+-> deploy + verify the live surface (done means live — see Project Laws)
 ```
 
 No silent WIP: if work stops mid-slice, leave a short status note naming scope,
@@ -61,6 +62,13 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
 
 ## Project Laws
 
+- **Done means live.** If the change touches a deployed surface (the
+  worker, `public/`, `site/`), deploy it and smoke-check production
+  before reporting done. Ending a slice with "to go live, run X" is a
+  failed handoff — you run X. Only a named gate stops a deploy: missing
+  secret, founder-flagged item, paid run, or destructive step — and you
+  say which gate, not a checklist.
+  → `docs/operations/Execution-Playbook.md` § Closeout & Human Stops
 - Founder/user input is intent, not final authority.
 - UI and API responses may render truth; they must not invent durable product truth.
 - Prompt prose may request work; it must not be the only owner of semantics.

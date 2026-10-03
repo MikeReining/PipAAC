@@ -102,9 +102,11 @@ routing failure in disguise.
 8. Run Code Audit for non-trivial product or architecture changes.
 9. Update durable docs/logs only when the lesson should survive the turn.
 10. If changed work should be saved, commit directly with `git add` and `git commit` (Antigravity/interactive agents) or enqueue Codex commit handoff and wait for `done` (hookless Codex CLI).
-11. **If the founder asked for live / shipped / production / end-to-end:**
-    ship per `docs/operations/TechStack.md` once a deploy path exists —
-    do not end the slice at commit or push alone.
+11. **Ship it.** If the slice touched a deployed surface, deploy per
+    `docs/operations/TechStack.md` and smoke-check production — a slice
+    is not done at commit. "To go live, run X" in a report means you
+    still owe step 11; the only exceptions are a named gate (missing
+    secret, founder-flagged item, paid run, destructive step).
 
 ## Commits & Codex Commit Handoff
 
@@ -178,9 +180,11 @@ Closeout is complete when all are true:
 - **Creation check:** For format, schema, or architecture decisions, verified what site/artifact creation actually emits (`Folder_Native_Design_Invariants.md` §1e).
 - Changed work that should be saved has a Codex commit handoff item marked
   `done`, or the save waiver/blocker is explicit.
-- **If the founder asked for live ship:** production deploy completed and
-  smoke-checked, or deploy failed with a concrete error (not a handoff checklist).
-  See `docs/operations/Deployment_Runbook.md` § Live ship closeout.
+- **Deployed surfaces are live:** if the diff touched the worker,
+  `public/`, or `site/`, production deploy completed and smoke-checked,
+  or a named gate blocked it with a concrete error — never a "to go
+  live, run X" checklist. See `docs/operations/Deployment_Runbook.md`
+  § Live ship closeout.
 
 ## Post-mortem: the dead-code cleanup round — KILLED 2026-08-07
 
@@ -304,12 +308,12 @@ touches secrets, changes privacy/security posture, creates regulated
 health/legal/financial claims, or requires choosing between two business
 meanings.
 
-**Not a stop:** production deploy when the founder already asked for the slice
-to be live — that is agent closeout, not a permission prompt.
+**Not a stop:** production deploy of requested work — done means live, and
+deploy is agent closeout, not a permission prompt (founder 2026-10-03).
 
 Not stops: ordinary refactors, audit findings, missing tests that can be added,
-format failures, proof failures with an obvious local fix, or **deploying after
-an explicit live-ship request**.
+format failures, proof failures with an obvious local fix, or **deploying the
+slice you were asked to build**.
 
 ## Progress Note Format
 

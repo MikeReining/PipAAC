@@ -561,7 +561,8 @@ AES-GCM — `license_code` still stores hashes only) and emails them when
 `EMAIL` is bound. `GET /api/v1/license/order?session=` feeds
 `app.pipaac.org/codes.html`, which polls and renders the codes. Codes
 redeem through the existing bearer path. Amends § 4.5: 50% off **10**
-or more.
+or more. **Deployed 2026-10-03** — worker `bccf2c5a` on app.pipaac.org
+(live `cs_live_` session verified), site `eb6efe6d` on pipaac.org.
 
 Still owed by this slice: Stripe/Apple **confirmation wiring tested
 live** (test-mode purchase end-to-end), iOS consumable IAP (lands with
