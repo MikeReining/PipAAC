@@ -78,6 +78,28 @@ guess them. (Running it calls Groq: confirm first.)
 - Cost is not a concern (founder 2026-10-03; 023 § 2 measured ~$0.01 per
   1,000 taps).
 
+## Verified live outputs (qwen3.8-27b, temp 0, 2026-10-03)
+
+| Taps | ✨ | ❓ | ⏪ | ⏩ |
+| --- | --- | --- | --- | --- |
+| more | More. | More? | More | More. |
+| you want juice | You want juice. | Do you want juice? | You wanted juice. | You want juice. |
+| you want apple | You want an apple. | Do you want an apple? | You wanted an apple. | You want an apple. |
+| i want apple | I want an apple. | **Do I want an apple?** | I wanted an apple. | I want an apple. |
+| want apple | Want an apple. | Want an apple? | Wanted an apple. | Want an apple. |
+| go park | Go to the park. | Go to the park? | Went to the park. | Going to the park. |
+| me hungry | I am hungry. | I am hungry? | I was hungry. | I am hungry. |
+| we play | We are playing. | Are we playing? | We played. | We are going to play. |
+| mom play | Mom is playing. | Is Mom playing? | Mom played. | Mom is going to play. |
+| eat cookie | Eat a cookie. | Eat a cookie? | Ate a cookie. | Going to eat a cookie. |
+| i go park | I am going to the park. | Do I go to the park? | I went to the park. | I am going to the park. |
+
+Read the bold cell: **❓ on an "I …" sentence asks about herself** ("Do I want
+an apple?") — faithful to her taps, but not a request. ❓ is useful on
+*you …* sentences, thing-first fragments, and bare words ("More?"). Any demo
+or copy for ❓ must use those. ⏩ often leaves a present want unchanged — by
+design ("a present want of a future thing is already future-facing").
+
 ## What the value actually is (and isn't)
 
 - **Is:** her own words, grammatical, spoken in an adult-sounding voice;

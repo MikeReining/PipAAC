@@ -329,12 +329,16 @@ sign-in before the wow.
   wanted an apple." → "Now try your own." Scripted, so it plays offline
   and instantly; while it runs, board.js routes taps, the Smart bar and
   the transforms to it and nothing reaches the tap log, stats or the
-  ranker. The last card says ✨ needs the internet on your own
-  sentences. **Open:** the founder confirms the live Fix it / past
-  output for "want apple" matches the script; optional recorded clips
-  (`/audio/onramp/i-want-an-apple.mp3`, `i-wanted-an-apple.mp3`) wait
-  for a founder listen (AGENTS.md) — until then the normal sentence
-  voice speaks.
+  ranker. The last card says ✨ and ❓ need the internet on your own
+  sentences. **Rewritten 2026-10-03:** the old script ("want apple" → "I want an apple")
+  did not match the live buttons (live: "Want an apple." — the wand law never
+  adds a subject). The tour now taps *you · want · apple*; ✨ → "You want an
+  apple.", ❓ → "Do you want an apple?" — both verified live (see
+  `docs/product/Sentence_Bar.md`). Past/Future are no longer toured. New
+  clips (`tour-you`, `tour-question`, `you-want-an-apple`,
+  `do-you-want-an-apple`) are minted to `data/samples/onramp/takes/` and wait
+  for a founder listen before `--ship` (AGENTS.md); until shipped, those
+  steps are silent for a first-run user.
 - **Voice** (**BUILT 2026-09-29**, founder: "very important and highly
   requested"). Settings → Talking opens on Voice: the voice in use, ▶
   Hear it, Change voice. The picker (`public/board/voice-ui.js`) lists
