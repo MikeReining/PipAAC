@@ -17,7 +17,7 @@ test("listTileReviewVoices includes Pip and Leo", () => {
   assert.ok(keys.includes("voi_eve_en"));
 });
 
-test("resolveTileReviewLane derives the Eve seed lane", () => {
+test("resolveTileReviewLane derives the voi_eve_en (Mia) seed lane", () => {
   const lane = resolveTileReviewLane("voi_eve_en", "tiles");
   assert.equal(lane.batch, tileSeedBatchForVoice("voi_eve_en"));
   assert.equal(lane.batch, "elevenlabs-tiles-eve");

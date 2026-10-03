@@ -20,7 +20,7 @@
 
 export const VOICE_LINEUP = [
   { isDefault: true, name: "Pip", note: "Pip's own voice" },
-  { key: "voi_eve_en", name: "Eve", note: "Younger, female" },
+  { key: "voi_eve_en", name: "Mia", note: "Younger, female" },
   { key: "voi_leo_en", name: "Leo", note: "Grown-up, male" },
   { key: "voi_sam_en", name: "Sam", note: "Younger, male" },
 ];

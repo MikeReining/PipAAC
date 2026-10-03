@@ -23,10 +23,10 @@ function fresh() {
   return db;
 }
 
-test("today: Pip, Eve, Leo in use; Sam is coming soon", () => {
+test("today: Pip, Leo, Mia in use; Sam is coming soon", () => {
   const db = fresh();
   const { available, coming } = voiceChoices(db, "en");
-  assert.deepEqual(available.map((v) => voiceName(db, v.id)), ["Pip", "Eve", "Leo"]); // default first
+  assert.deepEqual(available.map((v) => voiceName(db, v.id)), ["Pip", "Leo", "Mia"]); // default first, then alphabetical
   assert.equal(available[0].id, "voi_default_en");
   assert.equal(available.find((v) => v.id === "voi_leo_en").note, "Grown-up, male");
   assert.equal(available.find((v) => v.id === "voi_eve_en").note, "Younger, female");
@@ -52,19 +52,19 @@ test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.jso
 
 test("a shipped voice leaves coming soon and can be chosen; the choice is a synced setting", () => {
   const db = fresh();
-  // Eve ships in the seed catalog since 2026-10-03 — no insert needed.
+  // Mia ships in the seed catalog since 2026-10-03 — no insert needed.
   const { available, coming } = voiceChoices(db, "en");
   assert.ok(available.some((v) => v.id === "voi_eve_en" && v.note === "Younger, female"));
-  assert.ok(!coming.some((v) => v.name === "Eve"));
+  assert.ok(!coming.some((v) => v.name === "Mia"));
   setSetting(db, "preferred_voice_id", "voi_eve_en");
   assert.equal(resolveProfile(db).voiceId, "voi_eve_en");
   const op = db.prepare("SELECT args FROM sync_op WHERE kind = 'set_setting' ORDER BY rowid DESC LIMIT 1").all()[0];
   assert.match(op.args, /preferred_voice_id/);
 });
 
-test("a re-import renames a voice an older catalog installed (Eve → Pip)", () => {
+test("a re-import renames a voice an older catalog installed (stale → Pip)", () => {
   const db = fresh();
-  db.prepare("UPDATE voice SET display_name = 'Eve' WHERE id = 'voi_default_en'").run();
+  db.prepare("UPDATE voice SET display_name = 'Pippy' WHERE id = 'voi_default_en'").run();
   importCatalog(db, catalog);
   assert.equal(voiceName(db, "voi_default_en"), "Pip");
 });

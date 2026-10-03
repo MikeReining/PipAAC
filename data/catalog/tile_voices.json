@@ -24,7 +24,7 @@
     },
     {
       "voice_key": "voi_eve_en",
-      "display_name": "Eve",
+      "display_name": "Mia",
       "provider": "elevenlabs",
       "voice_id": "94pmIckCYkqYPVrgIvUH",
       "model": "eleven_v4",
