@@ -9,7 +9,7 @@ import {
   voiceLaneForBatch,
 } from "./tile_review_voices.mjs";
 
-test("listTileReviewVoices includes Eve and Leo", () => {
+test("listTileReviewVoices includes Pip and Leo", () => {
   const voices = listTileReviewVoices();
   const keys = voices.map((v) => v.voice_key);
   assert.ok(keys.includes("voi_default_en"));
@@ -22,7 +22,7 @@ test("resolveTileReviewLane maps Leo to leo batch", () => {
   assert.equal(lane.canPublishCatalog, false);
 });
 
-test("voiceLaneForBatch round-trips Eve tiles", () => {
+test("voiceLaneForBatch round-trips Pip tiles", () => {
   const lane = voiceLaneForBatch(TILE_REVIEW_BATCH);
   assert.equal(lane?.voice_key, "voi_default_en");
   assert.equal(lane?.surfaceId, "tiles");

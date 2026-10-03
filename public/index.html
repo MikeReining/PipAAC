@@ -189,6 +189,10 @@
                 </div>
               </div>
               <div class="seg-row life-card">
+                <span class="seg-label">See it work</span>
+                <div data-bar-example></div>
+              </div>
+              <div class="seg-row life-card">
                 <span class="seg-label">What Lifetime adds</span>
                 <ul class="life-feats">
                   <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5.5a9 9 0 0 1 0 13"/></svg></span>
@@ -200,7 +204,7 @@
                     <span><b>Feeling faces</b>Say it excited, sad or angry.
                       <em class="life-mini"><img src="/icons/voice-happy.svg" alt=""><img src="/icons/voice-sad.svg" alt=""><img src="/icons/voice-angry.svg" alt=""></em></span></li>
                   <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5"/><path d="M16 6.5a4 4 0 0 1 0 5"/><path d="M18.5 4a7.5 7.5 0 0 1 0 10"/></svg></span>
-                    <span><b>Choose a voice</b>Girl, boy, woman or man.</span></li>
+                    <span><b>Choose a voice</b>Pick the one that sounds like them.</span></li>
                   <li><span class="life-ico"><img src="/icons/keyboard.svg" alt=""></span>
                     <span><b>A voice for the words you type</b>New words speak in Pip's voice too.</span></li>
                   <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg></span>
@@ -403,7 +407,7 @@
                   <button class="btn secondary" id="voice-hear">▶ Hear it</button>
                   <button class="btn secondary" id="voice-change">Change voice</button>
                 </div>
-                <p class="hint">Girl, boy, teen and adult voices are coming. Every word and sentence speaks in the one voice you choose.</p>
+                <p class="hint">More voices are coming. Every word and sentence speaks in the one voice you choose.</p>
               </div>
               <div class="seg-row">
                 <span class="seg-label">Speaking speed</span>
@@ -468,6 +472,10 @@
                   <button data-v="all"><span class="bar-mini" data-ids="backspace clear tx-fix tx-question tx-past speak tx-future"></span><span class="bar-pname">Everything</span></button>
                 </div>
                 <p class="hint">Play is always there. Hidden buttons give their space to Play.</p>
+                <details class="bar-example">
+                  <summary>See an example</summary>
+                  <div data-bar-example></div>
+                </details>
               </div>
             </section>
 
@@ -645,7 +653,6 @@
       <div class="sheet voice-sheet">
         <h2>Voice</h2>
         <p class="hint">Tap ▶ to hear a voice say "I want an apple."</p>
-        <div class="seg voice-filters" id="voice-filters"></div>
         <div id="voice-now-row" class="voice-group">
           <span class="seg-label">Available now</span>
           <div id="voice-now" class="voice-list"></div>

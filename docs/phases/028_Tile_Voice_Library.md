@@ -27,7 +27,7 @@ mint ledger (what we made), and what a real tablet plays (§ 11).
    who later asks for the same text in the same voice. No per-user re-mint.
 2. **No device TTS for tiles, ever.** Apple/system voices are the wrong voice
    and feel cheap. While the clip is being made the editor says
-   *"Making Eve's voice for 'scientist'…"* (voice display name). The child's
+   *"Making Pip's voice for 'scientist'…"* (voice display name). The child's
    board never waits: minting happens in the supporter's editor.
 3. **English only for auto-mint in v1.** Other locales are accepted, held, and
    counted (§ 4.3). When v2 opens a locale is decided later.
@@ -38,7 +38,7 @@ mint ledger (what we made), and what a real tablet plays (§ 11).
    Seed clips (ours) and user-typed clips are told apart by a `source` field.
 6. **One mint path.** Bulk pre-seed is the same mint core called with a list;
    there is no second pipeline.
-7. **Voices:** the default female tile voice is **Eve**
+7. **Voices:** the default female tile voice is **Pip**
    (`WWMMC6k9tdar0BthUenK`, in use today); the male voice is **Leo**
    (`4sAJvpuF0iHhO9nptfOD` — final pick, round leo-compare-002 c3).
 8. **Keyboard text mints too.** Typed words are committed to the message bar
@@ -88,10 +88,10 @@ names), not with users × vocabulary. Marginal cost of a hit is an R2 read.
 ## 3. Architecture
 
 ```text
-Supporter adds "scientist" (voice: Eve, locale en)         [editor, adult side]
+Supporter adds "scientist" (voice: Pip, locale en)         [editor, adult side]
   │  normalizeV1 → validate (§ 4.2) → locale gate (§ 4.3)
   │  local Cache Storage hit?  ── yes ─▶ done (already on this device)
-  │  no ▶ "Making Eve's voice for 'scientist'…"
+  │  no ▶ "Making Pip's voice for 'scientist'…"
   ▼
 POST /api/v1/voice/tile          (Worker, src/worker/tile.js)
   │  license check (024 pattern)  → per-license quota (misses only)
@@ -125,7 +125,7 @@ TileLedger  (one Durable Object, SQLite)      key = sha256(voice|locale|profile|
 ```json
 { "schema": "pippaac.tile-voices.v1",
   "voices": [
-    { "voice_key": "voi_default_en", "display_name": "Eve",
+    { "voice_key": "voi_default_en", "display_name": "Pip",
       "provider": "elevenlabs", "voice_id": "WWMMC6k9tdar0BthUenK",
       "model": "eleven_v4", "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"], "status": "active" },
@@ -140,12 +140,12 @@ TileLedger  (one Durable Object, SQLite)      key = sha256(voice|locale|profile|
   400 `bad_voice`.
 - `status`: `active` (selectable, minted), `planned` (listed here, **not**
   selectable, Worker rejects with 400 `bad_voice`), `retired`.
-- **Eve** launches `active`. **Leo** stays `planned` until slice 6 flips it:
+- **Pip** launches `active`. **Leo** stays `planned` until slice 6 flips it:
   Leo has no seeded catalog clips yet, so selecting him would silence every
   catalog tile on the board. Leo becomes selectable only when launch-set
   seed coverage for `voi_leo_en` is 100% (slice 6 gate, measured by the
   coverage tool). Typed-word mint works for Leo the moment he is `active`.
-- Local `voice` rows: `voi_default_en` display name "Eve"; add `voi_leo_en`
+- Local `voice` rows: `voi_default_en` display name "Pip"; add `voi_leo_en`
   "Leo" with the catalog import in slice 6.
 - Settings come from this file, not from `voices.json` `tiles` (that stays for
   bulk tooling; slice 1 makes `voices.json` `tiles` and this file agree, or
@@ -327,7 +327,7 @@ bulk path: `bulk_add.test.mjs`; library adds: `library_add.test.mjs`).
 ### 5.3 Bulk add and prefetch
 
 - Bulk add (`bulk_add`): mint sequentially, ≤ 10 concurrent-free, one progress
-  line ("Making Eve's voice, 12 of 50"); respects 429 by pausing.
+  line ("Making Pip's voice, 12 of 50"); respects 429 by pausing.
 - **Prefetch** on device link/restore, voice switch, and app start (idle):
   for every active entity name + label without a local clip, request it. Hits
   are free; misses mint (they are the user's own words).
@@ -336,7 +336,7 @@ bulk path: `bulk_add.test.mjs`; library adds: `library_add.test.mjs`).
 
 ### 5.4 Voice switch
 
-Switching the board voice shows progress ("Making Eve's voice, 12 of 40") and
+Switching the board voice shows progress ("Making Pip's voice, 12 of 40") and
 **keeps the old voice on the board until the new set is complete**; voices
 never mix on one board. Misses mint; everything else is a hit. Failures leave
 the old voice active and offer retry.
@@ -615,7 +615,7 @@ with `source=catalog_lazy` (today it is silence). Same endpoint, same ledger.
 | Per-license mints / minute | 20 (runaway guard) | same |
 | Text max | 60 chars | same |
 | Failed-mint retry delay | 30 s | ledger const |
-| Voice names | Eve (default), Leo (male, planned) | `tile_voices.json` |
+| Voice names | Pip (default), Leo (male, planned) | `tile_voices.json` |
 | ElevenLabs overage billing | off | vendor account |
 
 ## Related

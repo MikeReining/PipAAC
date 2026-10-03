@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Mint Leo (or other tile_voices.json) plain takes for launch lexicon rows —
- * local samples only; does not publish to Eve catalog / R2.
+ * local samples only; does not publish to Pip catalog / R2.
  *
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10 --offset 10

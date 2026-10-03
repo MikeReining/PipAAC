@@ -1,5 +1,5 @@
 /**
- * 025 expressive sentences on Eleven v4 — same voice as tile playback (Eve/Leo per
+ * 025 expressive sentences on Eleven v4 — same voice as tile playback (Pip/Leo per
  * tile_voices.json). Founder decision 2026-09-29: migrate off Grok Ara for feelings
  * so tiles and sentences share one Eleven clone.
  *

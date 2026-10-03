@@ -1,8 +1,6 @@
 /* Settings → Talking → Voice and the picker sheet (voice-ui.js). */
 .set-voice-name { font-size: 20px; font-weight: 800; margin: 0; }
 .voice-sheet { width: min(640px, 94vw); max-height: 88dvh; text-align: left; }
-.voice-filters { flex-wrap: wrap; }
-.voice-filters button { flex: 1 1 80px; }
 .voice-group { display: flex; flex-direction: column; gap: 8px; }
 .voice-list { display: flex; flex-direction: column; gap: 8px; }
 .voice-card {

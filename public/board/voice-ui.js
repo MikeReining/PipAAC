@@ -8,7 +8,7 @@
  * non-default card shows a lock and its tap opens the Lifetime page;
  * the board voice itself reverts to the default in board.js.
  */
-import { VOICE_FILTERS, voiceChoices, voiceName } from "../shared/voices.mjs";
+import { voiceChoices, voiceName } from "../shared/voices.mjs";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -19,8 +19,6 @@ const el = (tag, cls, text) => {
 };
 
 export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, locked = () => false, onLocked = () => {} }) {
-  let filter = "all";
-
   function renderRow() {
     $("voice-name").textContent = voiceName(db, getVoiceId());
   }
@@ -61,24 +59,15 @@ export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, 
 
   function renderSheet() {
     const { available, coming } = voiceChoices(db, locale);
-    const chips = $("voice-filters");
-    chips.replaceChildren();
-    for (const [key, label] of VOICE_FILTERS) {
-      const b = el("button", key === filter ? "on" : "", label);
-      b.onclick = () => { filter = key; renderSheet(); };
-      chips.append(b);
-    }
-    const keep = (v) => filter === "all" || v.group === filter;
     const now = $("voice-now");
-    now.replaceChildren(...available.filter(keep).map((v) => card(v, { coming: false })));
+    now.replaceChildren(...available.map((v) => card(v, { coming: false })));
     $("voice-now-row").hidden = !now.children.length;
     const soon = $("voice-soon");
-    soon.replaceChildren(...coming.filter(keep).map((v) => card(v, { coming: true })));
+    soon.replaceChildren(...coming.map((v) => card(v, { coming: true })));
     $("voice-soon-row").hidden = !soon.children.length;
   }
 
   function openPicker() {
-    filter = "all";
     renderSheet();
     open("voiceform");
   }

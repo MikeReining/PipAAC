@@ -338,3 +338,18 @@ button.set-who:hover { background: var(--tray); }
   border: 0; background: none; font: inherit; font-size: inherit;
   color: var(--ink); text-decoration: underline; cursor: pointer; padding: 0;
 }
+
+/* The fixed "what each button does" example (settings + Lifetime page). */
+.bar-example { margin-top: 12px; }
+.bar-example summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
+.bar-ex-taps { margin: 8px 0 10px; font-size: 15px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.bar-ex-taps i {
+  font-style: normal; font-weight: 700; padding: 3px 12px; border-radius: 8px;
+  border: 2px solid #b07f00; background: #fdf0c8;
+}
+.bar-ex-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.bar-ex-rows li { display: grid; grid-template-columns: 36px 84px 1fr; gap: 10px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.bar-ex-rows li:first-child { border-top: 0; }
+.bar-ex-ico { width: 36px; height: 36px; border-radius: 10px; background: #efeadf; display: grid; place-items: center; }
+.bar-ex-ico svg { width: 22px; height: 22px; }
+.bar-ex-out { font-size: 17px; font-weight: 700; }

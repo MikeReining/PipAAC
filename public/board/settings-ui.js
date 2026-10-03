@@ -362,7 +362,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     spotlight: "practice goal target model modeling teach lesson glow highlight dim coach tips",
     words: "vocabulary library photo picture name add list people places family meal breakfast lunch dinner snack groups folder hide",
     board: "cells size bigger smaller grid layout top row core keyboard typing letters spell qwerty abc alphabet pictures images symbols words text only",
-    talking: "voice voices speak sound speed slow slower fast faster rate girl boy man woman teen change expressive emotion feelings happy sad angry tone play sentence clear fresh",
+    talking: "voice voices speak sound speed slow slower fast faster rate pip eve leo sam younger change expressive emotion feelings happy sad angry tone play sentence clear fresh",
     lang: "grammar forms endings plural tense highlight predict prediction hint next smart bar question families",
     progress: "stats report iep evidence week numbers",
     team: "invite supporter slp teacher therapist share device link pair ipad phone tablet code person people user switch client add",

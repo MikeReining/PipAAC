@@ -112,7 +112,7 @@ Open [http://127.0.0.1:3747/audio-review/elevenlabs-voice-selector](http://127.0
 
 After `catalog:tiles:mint-gaps` or `mint_elevenlabs_tile_batch.mjs --mint-run`, the CLI prints a review URL. In [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles): **Show → mint run (spot check)**, pick the run, **↑ / ↓** through spoken labels.
 
-32 launch food/drink gaps (Eve):  
+32 launch food/drink gaps (Pip):  
 [http://127.0.0.1:3747/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&folder=takes&ship=mint-run&runId=gap-launch-food-2026-09-29](http://127.0.0.1:3747/audio-review/elevenlabs-tiles?batch=elevenlabs-tiles-core&folder=takes&ship=mint-run&runId=gap-launch-food-2026-09-29)
 
 **Look up catalog** uses `launch_lexicon.json` + `generated_audio.json` (any launch label, including gap-fill rows not in `audio_import.json`).

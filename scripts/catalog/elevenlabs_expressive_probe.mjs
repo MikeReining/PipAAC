@@ -201,7 +201,7 @@ export function resolveProbeRound(roundKey) {
   if (key === COMPARE_ROUND_KEY) {
     return {
       roundId: COMPARE_ROUND_KEY,
-      title: "Grok Ara vs Eve — three winning feelings",
+      title: "Grok Ara vs Pip — three winning feelings",
     };
   }
   const round = EXPRESSIVE_PROBE_ROUNDS[key];
@@ -254,7 +254,7 @@ export async function mintExpressiveCompare(opts = {}) {
       {
         id: `${feeling}_eleven`,
         provider: "elevenlabs",
-        label: `${feeling} — Eve`,
+        label: `${feeling} — Pip`,
         synthText: elevenText,
         mint: async () =>
           synthesizeElevenLabs({
@@ -301,7 +301,7 @@ export async function mintExpressiveCompare(opts = {}) {
     layout: "compare",
     roundKey: COMPARE_ROUND_KEY,
     roundId: COMPARE_ROUND_KEY,
-    title: "Grok Ara vs Eve — three winning feelings",
+    title: "Grok Ara vs Pip — three winning feelings",
     generatedAt: new Date().toISOString(),
     sentence,
     grokVoice: {
@@ -309,7 +309,7 @@ export async function mintExpressiveCompare(opts = {}) {
       voice_id: grokVoice.voice_id ?? "ara",
     },
     voice: {
-      label: eve.label ?? "Eve",
+      label: eve.label ?? "Pip",
       voice_id: eve.voice_id,
       model,
     },
@@ -377,7 +377,7 @@ export async function mintExpressiveProbe(opts = {}) {
     generatedAt: new Date().toISOString(),
     sentence,
     voice: {
-      label: voice.label ?? "Eve",
+      label: voice.label ?? "Pip",
       voice_id: voice.voice_id,
       model,
       voice_settings: voice.voice_settings ?? {},
@@ -398,7 +398,7 @@ async function main() {
 
   if (roundKey === COMPARE_ROUND_KEY) {
     const grokVoice = catalogGrokPrimaryVoice();
-    console.log(`Expressive compare — Grok ${grokVoice.voice_id} vs Eve (${EXPRESSIVE_PROBE_MODEL})`);
+    console.log(`Expressive compare — Grok ${grokVoice.voice_id} vs Pip (${EXPRESSIVE_PROBE_MODEL})`);
     console.log(`Round: ${roundKey} — ${round.title}`);
     console.log(`Sentence: "${sentence}"`);
     for (const feeling of EXPRESSIVE_COMPARE_FEELINGS) {

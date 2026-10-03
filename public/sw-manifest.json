@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-91622fdac572",
+  "buildId": "r1-1a26b14d8450",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -13318,13 +13318,13 @@
     },
     {
       "path": "/board/settings-sync.js",
-      "bytes": 9728,
-      "sha256": "af75af890a4ada77e2078e04987900722053807a0006fab6f1b91bd03487fdbc"
+      "bytes": 10988,
+      "sha256": "8c134c6d4952b8af2a0d43e7246c76ed059b88a8eb52c0263170a011753ed958"
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 19087,
-      "sha256": "7dacf746267f036f0798dd70058261f61a90ea1ba0eec194c5afeb4ac51e5e98"
+      "bytes": 20059,
+      "sha256": "8b7a23db880a366e770e639bf9affb1e7d9a0f31682cce7ec25021a397c89e48"
     },
     {
       "path": "/board/settings-ui.js",
@@ -13814,8 +13814,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 65304,
-      "sha256": "e295df9f49649ac1eca6e2ca514aeb42fee5ce70cfea9aad1cdfe705300a63c4"
+      "bytes": 65647,
+      "sha256": "ad4b689d64e8fab931c064e849e78344bafd362c9d296c2becb99ae263b87e1f"
     },
     {
       "path": "/manifest.webmanifest",
@@ -13831,6 +13831,11 @@
       "path": "/shared/account.mjs",
       "bytes": 12815,
       "sha256": "7d6d17cb5fe1cdbba83ad893aaca23dadc289517f76db8359f5d175652ad7a06"
+    },
+    {
+      "path": "/shared/bar_example.mjs",
+      "bytes": 810,
+      "sha256": "7d5f1bb90b50e6d93dad1fb25edf73cf3f8748223ff07e3a20b90b2e09d0d45f"
     },
     {
       "path": "/shared/bar.mjs",

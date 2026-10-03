@@ -95,7 +95,7 @@ Sections § 1–5 remain the acoustic record for **Grok Ara** (`applyEmotionalPr
 
 ## 7. Eleven v4 expressive sentences (025 — shipping target)
 
-**Founder decision 2026-09-29:** migrate **all** sentence feelings (neutral + happy/sad/angry) to **ElevenLabs `eleven_v4`**, using the **same voice as tiles** (`tile_voices.json` — Eve default, Leo when selected). Rationale: better delivery, one voice identity (tiles + bar), cost amortized by **024-style cache** (mint once per sentence × feeling × voice, replay from R2/device). AAC users need a **narrow, repeatable** expressive range — the probe winners are sufficient.
+**Founder decision 2026-09-29:** migrate **all** sentence feelings (neutral + happy/sad/angry) to **ElevenLabs `eleven_v4`**, using the **same voice as tiles** (`tile_voices.json` — Pip default, Leo when selected). Rationale: better delivery, one voice identity (tiles + bar), cost amortized by **024-style cache** (mint once per sentence × feeling × voice, replay from R2/device). AAC users need a **narrow, repeatable** expressive range — the probe winners are sufficient.
 
 **Truth owner for mint text:** `src/shared/expressive_eleven.mjs` (`elevenExpressiveMintText`). **Do not** send Grok XML to Eleven.
 

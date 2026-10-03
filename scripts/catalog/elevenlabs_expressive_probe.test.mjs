@@ -26,7 +26,7 @@ test("happy-v2 round — prose prefixes", () => {
   assert.match(elevenTextForProbeVariant("I want an apple", warm), /^\[warm, conversational tone/);
 });
 
-test("winners — Eve tags vs Grok XML differ", () => {
+test("winners — Pip tags vs Grok XML differ", () => {
   assert.equal(
     elevenWinnerText("I want an apple", "angry"),
     "[frustrated] I want an apple!",

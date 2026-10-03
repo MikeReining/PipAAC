@@ -34,7 +34,7 @@ board never changes on a guess.
 ## 2. The setting
 
 Home: **Settings → Talking** (already holds feeling faces; the menu subtitle
-today reads "Eve · feeling faces on"). Name: **Sentence bar**.
+today reads "Pip · feeling faces on"). Name: **Sentence bar**.
 
 Controls (one toggle each, per person):
 
@@ -57,7 +57,7 @@ Presets above the toggles (a preset just sets the toggles):
 - **Play + Question + Fix it**
 - **Everything** (today's bar)
 
-Menu subtitle: "Eve · Play + Question".
+Menu subtitle: "Pip · Play + Question".
 
 ## 3. Who it serves
 

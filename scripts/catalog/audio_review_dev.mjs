@@ -1046,7 +1046,7 @@ if (invoked) {
       `Pip AAC Leo A/B (2 male voices): http://127.0.0.1:${PORT}/audio-review/elevenlabs-voice-selector — round leo-compare-001`,
     );
     console.log(
-      `Pip AAC tile review (Eve):  http://127.0.0.1:${PORT}${tileReviewUrlForRun("gap-launch-food-2026-09-29", "elevenlabs-tiles-core")}`,
+      `Pip AAC tile review (Pip):  http://127.0.0.1:${PORT}${tileReviewUrlForRun("gap-launch-food-2026-09-29", "elevenlabs-tiles-core")}`,
     );
     console.log(
       `Pip AAC tile review (Leo):  http://127.0.0.1:${PORT}${tileReviewUrlForRun("leo-pilot-10-1", ELEVENLABS_TILES_LEO_BATCH)}`,

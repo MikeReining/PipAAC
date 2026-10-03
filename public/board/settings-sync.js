@@ -9,6 +9,7 @@ import { setSetting } from "../shared/groups.mjs";
 import { grammarHelpOn } from "../shared/forms.mjs";
 import { expressiveOn } from "../shared/feeling.mjs";
 import { flushResearch } from "../shared/research.mjs";
+import { BAR_EXAMPLE } from "../shared/bar_example.mjs";
 import { BAR_BUTTON, BAR_CONTROLS, BAR_PRESETS, barControls, barLabel, barPreset } from "../shared/bar.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -189,6 +190,37 @@ export function mountSettingsSync({
       const ico = iconOf(id);
       if (ico) m.append(ico);
     }
+  }
+  /* The fixed example (shared/bar_example.mjs), drawn with the same
+   * cloned icons wherever a [data-bar-example] slot exists. */
+  for (const slot of document.querySelectorAll("[data-bar-example]")) {
+    const taps = document.createElement("p");
+    taps.className = "bar-ex-taps";
+    taps.append("They tap ");
+    for (const w of BAR_EXAMPLE.taps) {
+      const chip = document.createElement("i");
+      chip.textContent = w;
+      taps.append(chip);
+    }
+    const list = document.createElement("ul");
+    list.className = "bar-ex-rows";
+    for (const r of BAR_EXAMPLE.rows) {
+      const li = document.createElement("li");
+      const ico = document.createElement("span");
+      ico.className = "bar-ex-ico";
+      ico.append(iconOf(BAR_BUTTON[r.c]) ?? "");
+      const name = document.createElement("b");
+      name.textContent = r.name;
+      const out = document.createElement("span");
+      out.className = "bar-ex-out";
+      out.textContent = r.out;
+      li.append(ico, name, out);
+      list.append(li);
+    }
+    const note = document.createElement("p");
+    note.className = "hint";
+    note.textContent = "Pip only uses the words they tap.";
+    slot.append(taps, list, note);
   }
   function syncBarSeg() {
     const shown = barControls(db);

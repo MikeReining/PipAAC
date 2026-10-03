@@ -2,7 +2,7 @@
 
 **Status:** slices 1–4 landed 2026-09-26 (`97c968d` + faces commit).
 **2026-09-29:** founder approved **Eleven v4** for all sentence feelings
-(same voice as tiles — Eve/Leo per `tile_voices.json`). Compare lab
+(same voice as tiles — Pip/Leo per `tile_voices.json`). Compare lab
 `compare-v1` passed vs Grok Ara. **Worker shipped:** `POST /api/v1/voice/speak`
 uses Eleven + `src/shared/expressive_eleven.mjs`; board sends `voice_key`
 from `preferred_voice_id`. UI/faces unchanged; cache-once economics unchanged.

@@ -111,6 +111,28 @@ an apple?") — faithful to her taps, but not a request. ❓ is useful on
 or copy for ❓ must use those. ⏩ often leaves a present want unchanged — by
 design ("a present want of a future thing is already future-facing").
 
+### Keep every tapped word (2026-10-03)
+
+The old prompt's own example ("daddy work" → "Daddy is working.") taught the
+model to swap "dad" for "Daddy". The rules now say: keep every tapped word
+exactly as tapped, never a nickname or synonym (dad stays Dad, mom stays Mom,
+mommy stays Mommy). Re-run of the 46-fragment battery plus extras, 212 cells:
+10 flagged before, 9 after, no new flags. Verified rows:
+
+| Taps | ✨ | ❓ | ⏪ | ⏩ |
+| --- | --- | --- | --- | --- |
+| **mom work** (the settings/Lifetime example) | Mom is working. | Is Mom working? | Mom worked. | Mom is going to work. |
+| dad work | Dad is working. | Is Dad working? | Dad worked. | Dad is going to work. |
+| mom cook | Mom is cooking. | Is Mom cooking? | Mom cooked. | Mom is going to cook. |
+| dad drive | Dad is driving. | Is Dad driving? | Dad drove. | Dad is going to drive. |
+| mom busy | Mom is busy. | Is Mom busy? | Mom was busy. | Mom is busy. (unchanged) |
+
+Still flagged (open, not fixed): `want park` / `want outside` add the verb
+"go" ("Want to go to the park.") in four to six cells — a content word the
+child did not tap; `go park now` past drops "now". The example card is
+static data in `public/shared/bar_example.mjs`; re-verify it whenever the
+prompts change.
+
 ## What the value actually is (and isn't)
 
 - **Is:** her own words, grammatical, spoken in an adult-sounding voice;

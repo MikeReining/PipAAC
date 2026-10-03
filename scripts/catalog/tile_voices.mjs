@@ -1,5 +1,5 @@
 /**
- * Tile voice library (`data/catalog/tile_voices.json`) — Eve, Leo, etc.
+ * Tile voice library (`data/catalog/tile_voices.json`) — Pip, Leo, etc.
  */
 
 import { readFileSync } from "node:fs";

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Mint (and optionally publish) ElevenLabs plain takes for launch lexicon
- * rows that have no ready clip in the built catalog — default tile voice (Eve).
+ * rows that have no ready clip in the built catalog — default tile voice (Pip).
  *
  *   node scripts/catalog/mint_launch_audio_gaps.mjs
  *   node scripts/catalog/mint_launch_audio_gaps.mjs --dry-run
@@ -82,7 +82,7 @@ async function main() {
     return;
   }
 
-  console.log(`launch clip gaps: ${gaps.length} word(s) (tile voice / Eve)`);
+  console.log(`launch clip gaps: ${gaps.length} word(s) (tile voice / Pip)`);
   for (const g of gaps) {
     console.log(`  - ${g.spokenText} (slot ${g.slot})`);
   }

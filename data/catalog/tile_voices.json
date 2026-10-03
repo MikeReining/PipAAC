@@ -3,7 +3,7 @@
   "voices": [
     {
       "voice_key": "voi_default_en",
-      "display_name": "Eve",
+      "display_name": "Pip",
       "provider": "elevenlabs",
       "voice_id": "WWMMC6k9tdar0BthUenK",
       "model": "eleven_v4",
@@ -20,18 +20,29 @@
       "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"],
       "status": "active",
-      "profile_tag": "young_adult"
+      "profile_tag": "adult"
+    },
+    {
+      "voice_key": "voi_eve_en",
+      "display_name": "Eve",
+      "provider": "elevenlabs",
+      "voice_id": "94pmIckCYkqYPVrgIvUH",
+      "model": "eleven_v4",
+      "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
+      "locales": ["en"],
+      "status": "planned",
+      "profile_tag": "younger"
     },
     {
       "voice_key": "voi_sam_en",
       "display_name": "Sam",
       "provider": "elevenlabs",
-      "voice_id": "4JVOFy4SLQs9my0OLhEw",
+      "voice_id": null,
       "model": "eleven_v4",
       "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"],
       "status": "planned",
-      "profile_tag": "mature_adult"
+      "profile_tag": "younger"
     }
   ]
 }

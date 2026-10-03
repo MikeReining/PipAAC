@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 028 slice 6 — mint Leo's clips for the form surfaces (utt_f#### words
- * like "wants", "going", "doesn't"). Eve's forms went through
+ * like "wants", "going", "doesn't"). Pip's forms went through
  * elevenlabs-forms-core; Leo mints plain takes to
  * data/samples/elevenlabs-forms-leo/takes/ — local samples only, the
  * publish step is publish_leo_seed.mjs.

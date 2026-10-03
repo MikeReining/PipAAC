@@ -19,6 +19,7 @@ import { dirname, join } from "node:path";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { buildGroups } from "./build_groups.mjs";
 import { checkSymbolEmission, emitSymbols } from "./symbol_emit.mjs";
+import { getTileVoiceByKey } from "./tile_voices.mjs";
 import {
   DEFAULT_AUDIO_CACHE_ROOT,
   DEFAULT_AUDIO_IMPORT_PATH,
@@ -53,7 +54,6 @@ const CATALOG_SCHEMA_VERSION = 1;
 const EXTRA_VOICES = [
   {
     id: "voi_leo_en",
-    displayName: "Leo",
     audioPlan: join(repoRoot, "data/catalog/generated_audio.leo.json"),
     formsPlan: join(repoRoot, "data/catalog/forms_audio.leo.json"),
     clipNs: "leo",
@@ -447,7 +447,8 @@ export function buildCatalog(
       {
         id: DEFAULT_VOICE_ID,
         locale: "en",
-        display_name: "Eve", // 028: the default tile voice has a name
+        // Names live in tile_voices.json with the ElevenLabs voice ids.
+        display_name: getTileVoiceByKey(DEFAULT_VOICE_ID).display_name,
         source: "bundled",
         engine_id: null,
         is_default: 1,
@@ -456,7 +457,7 @@ export function buildCatalog(
       ...EXTRA_VOICES.filter((v) => existsSync(v.audioPlan)).map((v) => ({
         id: v.id,
         locale: "en",
-        display_name: v.displayName,
+        display_name: getTileVoiceByKey(v.id).display_name,
         source: "bundled",
         engine_id: null,
         is_default: 0,
@@ -559,7 +560,7 @@ function buildClips(lexicon, entryBySlot, ownerSlotByNorm, slotsByNorm, formUtte
 
   /* 028 slice 6 — an extra voice's clips mirror the default layout:
    * lemma clips by owner slot, form clips by utt_f#### id, clip ids
-   * namespaced `clp_<ns>_…` so Eve's ids never move. A shipped voice is
+   * namespaced `clp_<ns>_…` so Pip's ids never move. A shipped voice is
    * all-or-nothing: the strict build throws on any uncovered launch
    * utterance or form surface. */
   for (const v of EXTRA_VOICES) {

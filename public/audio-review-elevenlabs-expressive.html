@@ -75,7 +75,7 @@
 
     function renderCompare(body) {
       $("head").innerHTML =
-        "<tr><th>Feeling</th><th>Grok Ara</th><th>Eve (Eleven v4)</th></tr>";
+        "<tr><th>Feeling</th><th>Grok Ara</th><th>Pip (Eleven v4)</th></tr>";
       const byFeel = new Map();
       for (const v of body.variants ?? []) {
         const f = v.feeling ?? "?";
@@ -139,7 +139,7 @@
       if (!res.ok) throw new Error(body.error || res.statusText);
       const voices =
         body.layout === "compare"
-          ? `Grok ${body.grokVoice?.voice_id ?? "?"} vs Eve ${body.voice?.voice_id ?? "?"}`
+          ? `Grok ${body.grokVoice?.voice_id ?? "?"} vs Pip ${body.voice?.voice_id ?? "?"}`
           : body.voice?.label ?? "?";
       $("meta").textContent =
         `${body.title ?? body.roundId ?? "probe"} · “${body.sentence}” · ${voices} · ${body.generatedAt ?? ""}`;

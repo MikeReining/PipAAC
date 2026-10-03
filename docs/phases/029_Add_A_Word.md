@@ -149,7 +149,7 @@ tile (reuse `public/board/word-card.js`; one card, a "just added" state).
 │        │  apple sauce   │  ← tile, real size │
 │        └────────────────┘    and real color  │
 │                                              │
-│  🔊  Making Eve's voice…   →   plays once     │
+│  🔊  Making Pip's voice…   →   plays once     │
 │                                              │
 │  Other pictures  [▢] [▢] [▢]   📷 Photo       │
 │  Not right?  [ Describe it… ] [Draw it again] │
@@ -194,7 +194,7 @@ Driven by 030 `find` (text only) the moment the card opens:
   it **plays once** so the adult hears it without asking. Cache hit = instant.
 - Held / failed: 028 § 5.2 messages + **Record your own**. Never device TTS.
 - **Handoff from 028 (founder 2026-09-29):** the shipped minting copy —
-  "Making Eve's voice…", the tile badge, the word-card voice line, and
+  "Making Pip's voice…", the tile badge, the word-card voice line, and
   "Try again" — is engineer prose, not designed UI. Slice C owns its
   visual treatment: where minting progress lives, how a "voice pending"
   tile reads on the board, and how Try again sits next to Record. The

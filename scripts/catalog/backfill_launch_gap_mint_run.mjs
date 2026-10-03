@@ -22,7 +22,7 @@ const items = Object.entries(doc.bySlug ?? {})
 
 const run = writeMintRun({
   runId: "gap-launch-food-2026-09-29",
-  label: "Launch food/drink gaps (32) — Eve",
+  label: "Launch food/drink gaps (32) — Pip",
   note: "Retroactive manifest for spot-check; clips were mint+published before mint-run UI existed.",
   items,
 });
