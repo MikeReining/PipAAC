@@ -5,9 +5,12 @@
  * cache. Everything else — POSTs, /api/*, /admin/*, the relay WS — falls
  * through to the network; callers degrade honestly per the phase doc.
  *
- * Update path is deliberately boring: no skipWaiting, no reload prompts.
- * A new build waits for every tab to close, then activates and swaps the
- * shell wholesale — a mid-session reload can lose a half-built sentence.
+ * Update path: no reload prompts. A new build precaches fully, then
+ * skipWaiting()s and swaps the shell wholesale; open tabs are never
+ * reloaded (a mid-session reload can lose a half-built sentence) — they
+ * pick the new shell up on their next navigation. Waiting for every tab
+ * to close stranded a device on a stale shell (2026-10-03: old `.png`
+ * art keys after the WebP switch).
  * `self.SW_BUILD` comes from generated sw-build.js; bumping the manifest
  * bytes is what triggers the browser's update check (importScripts
  * resources are byte-compared).
@@ -43,6 +46,7 @@ self.addEventListener("install", (e) => {
     for (let i = 0; i < files.length; i += CHUNK) {
       await Promise.all(files.slice(i, i + CHUNK).map((f) => precachePut(cache, f.path)));
     }
+    await self.skipWaiting(); // only after the whole shell is cached
   })());
 });
 

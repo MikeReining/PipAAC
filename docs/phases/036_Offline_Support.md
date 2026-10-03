@@ -131,10 +131,12 @@ claim.)
   reload can lose a half-built sentence in a fullscreen app). If a
   grown-up-visible "update ready" toast is wanted it goes to the
   adult surface only. Decide at build time and record it here.
-  **Decided 2026-10-02:** no toast. `sw.js` ships without
-  `skipWaiting()` — a new build installs its new `pip-shell-*` cache in
-  the background, waits for every tab to close, and takes over on the
-  next cold start. `index.html` only registers and calls `update()`.
+  **Decided 2026-10-02:** no toast. **Revised 2026-10-03:** `sw.js` calls
+  `skipWaiting()` once the new `pip-shell-*` cache is fully populated —
+  waiting for every tab to close stranded a device on a stale shell
+  (broken art after the WebP switch). Open tabs are never reloaded; they
+  get the new shell on their next navigation. `index.html` only registers
+  and calls `update()`.
 - `sw.js` itself stays outside `pip-shell-*` (browsers revalidate it on
   their own ≤24 h cycle; registration also passes
   `updateViaCache: "none"` so the script and `sw-build.js` are
