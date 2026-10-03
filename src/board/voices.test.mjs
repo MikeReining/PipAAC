@@ -23,13 +23,14 @@ function fresh() {
   return db;
 }
 
-test("today: Pip + Leo in use; Eve and Sam are coming soon", () => {
+test("today: Pip, Eve, Leo in use; Sam is coming soon", () => {
   const db = fresh();
   const { available, coming } = voiceChoices(db, "en");
-  assert.deepEqual(available.map((v) => voiceName(db, v.id)), ["Pip", "Leo"]); // default first
+  assert.deepEqual(available.map((v) => voiceName(db, v.id)), ["Pip", "Eve", "Leo"]); // default first
   assert.equal(available[0].id, "voi_default_en");
   assert.equal(available.find((v) => v.id === "voi_leo_en").note, "Grown-up, male");
-  assert.deepEqual(coming.map((v) => v.name), ["Eve", "Sam"]);
+  assert.equal(available.find((v) => v.id === "voi_eve_en").note, "Younger, female");
+  assert.deepEqual(coming.map((v) => v.name), ["Sam"]);
 });
 
 test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.json", () => {
@@ -51,10 +52,7 @@ test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.jso
 
 test("a shipped voice leaves coming soon and can be chosen; the choice is a synced setting", () => {
   const db = fresh();
-  db.prepare(
-    `INSERT INTO voice (id, locale, display_name, source, engine_id, is_default, status)
-     VALUES ('voi_eve_en', 'en', 'Eve', 'bundled', NULL, 0, 'active')`,
-  ).run();
+  // Eve ships in the seed catalog since 2026-10-03 — no insert needed.
   const { available, coming } = voiceChoices(db, "en");
   assert.ok(available.some((v) => v.id === "voi_eve_en" && v.note === "Younger, female"));
   assert.ok(!coming.some((v) => v.name === "Eve"));

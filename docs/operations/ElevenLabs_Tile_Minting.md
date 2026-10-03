@@ -121,7 +121,7 @@ After `catalog:tiles:mint-gaps` or `mint_elevenlabs_tile_batch.mjs --mint-run`, 
 
 ### Leo seed (pilot — listen before bulk)
 
-Male tile voice **Leo** (`4sAJvpuF0iHhO9nptfOD`, custom clone — see `data/catalog/tile_voices.json`) is minted in a **separate sample lane** (`elevenlabs-tiles-leo`). **Eve** (`94pmIckCYkqYPVrgIvUH`, younger female) is `planned`; **Sam** (`M5U4lAuMpwU8AGX0x6l2`, younger male) is `planned`. The lineup is Pip, Eve, Leo, Sam (founder 2026-10-03, `public/shared/voices.mjs`).
+Male tile voice **Leo** (`4sAJvpuF0iHhO9nptfOD`, custom clone — see `data/catalog/tile_voices.json`) was minted in a **separate sample lane** (`elevenlabs-tiles-leo`). **Eve** (`94pmIckCYkqYPVrgIvUH`, younger female) shipped 2026-10-03 — full launch seed + forms (709 + 378) minted to `elevenlabs-{tiles,forms}-eve` after a 10-clip founder-approved pilot, published by `publish_tile_voice_seed.mjs`. **Sam** (`M5U4lAuMpwU8AGX0x6l2`, younger male) is `planned`. The lineup is Pip, Eve, Leo, Sam (founder 2026-10-03, `public/shared/voices.mjs`).
 
 Founder review: `npm run catalog:audio:review` → [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles) → **Voice: Leo** → **Show: mint run (spot check)** → pick the run → **↑ / ↓**. **Reload list** after an off-screen mint. Agents mint with:
 
@@ -132,11 +132,13 @@ npm run catalog:tiles:mint-leo-seed -- --words cough,laugh --run-id my-probe --f
 npm run catalog:tiles:mint-leo-seed -- --all --run-id leo-final-c3-full-seed
 ```
 
-Any `tile_voices.json` voice works the same way: `--voice-key voi_eve_en`
-(Eve pilot minted 2026-10-03, run `eve-seed-2026-10-03-o0-n10`). The seed
-lane derives from the key — `elevenlabs-tiles-<name>` /
+Any `tile_voices.json` voice works the same way: `--voice-key voi_eve_en`.
+The seed lane derives from the key — `elevenlabs-tiles-<name>` /
 `elevenlabs-forms-<name>` — and appears in the review Voice picker
-automatically. Same for `voi_sam_en` when his turn comes.
+automatically. Same for `voi_sam_en` when his turn comes. Full ship per
+voice: `mint_tile_voice_seed.mjs --all` → `mint_tile_voice_forms.mjs
+--all` → `publish_tile_voice_seed.mjs --voice-key … --run-id <full run>`
+→ `npm run catalog:build` → flip `status` to `active` → deploy.
 
 `--all` walks the full launch lemma list (~709), **skips** takes that already exist on disk, writes one mint-run manifest. Use `--force` only to remint. Full launch pre-seed only after founder OK on pilots (30-word gate passed 2026-09-29).
 ## Audio inventory (what is “missing”?)

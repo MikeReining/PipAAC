@@ -30,7 +30,7 @@
       "model": "eleven_v4",
       "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"],
-      "status": "planned",
+      "status": "active",
       "profile_tag": "younger"
     },
     {

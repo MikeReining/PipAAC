@@ -1,0 +1,5687 @@
+{
+  "schemaVersion": 1,
+  "runId": "eve-full-seed-2026-10-03",
+  "label": "Eve full launch seed (709)",
+  "note": "Pilot seed — Eve, plain only, not published",
+  "batch": "elevenlabs-tiles-eve",
+  "createdAt": "2026-10-03T22:51:34.485Z",
+  "voice": {
+    "label": "Eve",
+    "voice_id": "94pmIckCYkqYPVrgIvUH",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": 1,
+      "spokenText": "I",
+      "slug": "i",
+      "takeRel": "elevenlabs-tiles-eve/takes/i_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 2,
+      "spokenText": "you",
+      "slug": "you",
+      "takeRel": "elevenlabs-tiles-eve/takes/you_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 3,
+      "spokenText": "me",
+      "slug": "me",
+      "takeRel": "elevenlabs-tiles-eve/takes/me_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 4,
+      "spokenText": "my",
+      "slug": "my",
+      "takeRel": "elevenlabs-tiles-eve/takes/my_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 5,
+      "spokenText": "mine",
+      "slug": "mine",
+      "takeRel": "elevenlabs-tiles-eve/takes/mine_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 6,
+      "spokenText": "he",
+      "slug": "he",
+      "takeRel": "elevenlabs-tiles-eve/takes/he_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 7,
+      "spokenText": "she",
+      "slug": "she",
+      "takeRel": "elevenlabs-tiles-eve/takes/she_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 8,
+      "spokenText": "it",
+      "slug": "it",
+      "takeRel": "elevenlabs-tiles-eve/takes/it_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 9,
+      "spokenText": "we",
+      "slug": "we",
+      "takeRel": "elevenlabs-tiles-eve/takes/we_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 10,
+      "spokenText": "they",
+      "slug": "they",
+      "takeRel": "elevenlabs-tiles-eve/takes/they_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 11,
+      "spokenText": "that",
+      "slug": "that",
+      "takeRel": "elevenlabs-tiles-eve/takes/that_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 12,
+      "spokenText": "this",
+      "slug": "this",
+      "takeRel": "elevenlabs-tiles-eve/takes/this_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 13,
+      "spokenText": "want",
+      "slug": "want",
+      "takeRel": "elevenlabs-tiles-eve/takes/want_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 14,
+      "spokenText": "like",
+      "slug": "like",
+      "takeRel": "elevenlabs-tiles-eve/takes/like_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 15,
+      "spokenText": "go",
+      "slug": "go",
+      "takeRel": "elevenlabs-tiles-eve/takes/go_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 16,
+      "spokenText": "come",
+      "slug": "come",
+      "takeRel": "elevenlabs-tiles-eve/takes/come_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 17,
+      "spokenText": "get",
+      "slug": "get",
+      "takeRel": "elevenlabs-tiles-eve/takes/get_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 18,
+      "spokenText": "make",
+      "slug": "make",
+      "takeRel": "elevenlabs-tiles-eve/takes/make_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 19,
+      "spokenText": "do",
+      "slug": "do",
+      "takeRel": "elevenlabs-tiles-eve/takes/do_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 20,
+      "spokenText": "see",
+      "slug": "see",
+      "takeRel": "elevenlabs-tiles-eve/takes/see_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 21,
+      "spokenText": "look",
+      "slug": "look",
+      "takeRel": "elevenlabs-tiles-eve/takes/look_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 22,
+      "spokenText": "put",
+      "slug": "put",
+      "takeRel": "elevenlabs-tiles-eve/takes/put_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 23,
+      "spokenText": "take",
+      "slug": "take",
+      "takeRel": "elevenlabs-tiles-eve/takes/take_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 24,
+      "spokenText": "give",
+      "slug": "give",
+      "takeRel": "elevenlabs-tiles-eve/takes/give_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 25,
+      "spokenText": "help",
+      "slug": "help",
+      "takeRel": "elevenlabs-tiles-eve/takes/help_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 26,
+      "spokenText": "stop",
+      "slug": "stop",
+      "takeRel": "elevenlabs-tiles-eve/takes/stop_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 27,
+      "spokenText": "play",
+      "slug": "play",
+      "takeRel": "elevenlabs-tiles-eve/takes/play_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 28,
+      "spokenText": "eat",
+      "slug": "eat",
+      "takeRel": "elevenlabs-tiles-eve/takes/eat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 29,
+      "spokenText": "drink",
+      "slug": "drink",
+      "takeRel": "elevenlabs-tiles-eve/takes/drink_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 30,
+      "spokenText": "open",
+      "slug": "open",
+      "takeRel": "elevenlabs-tiles-eve/takes/open_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 31,
+      "spokenText": "turn",
+      "slug": "turn",
+      "takeRel": "elevenlabs-tiles-eve/takes/turn_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 32,
+      "spokenText": "read",
+      "slug": "read",
+      "takeRel": "elevenlabs-tiles-eve/takes/read_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 33,
+      "spokenText": "can",
+      "slug": "can",
+      "takeRel": "elevenlabs-tiles-eve/takes/can_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 34,
+      "spokenText": "need",
+      "slug": "need",
+      "takeRel": "elevenlabs-tiles-eve/takes/need_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 35,
+      "spokenText": "feel",
+      "slug": "feel",
+      "takeRel": "elevenlabs-tiles-eve/takes/feel_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 36,
+      "spokenText": "tell",
+      "slug": "tell",
+      "takeRel": "elevenlabs-tiles-eve/takes/tell_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 37,
+      "spokenText": "think",
+      "slug": "think",
+      "takeRel": "elevenlabs-tiles-eve/takes/think_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 38,
+      "spokenText": "find",
+      "slug": "find",
+      "takeRel": "elevenlabs-tiles-eve/takes/find_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 39,
+      "spokenText": "work",
+      "slug": "work",
+      "takeRel": "elevenlabs-tiles-eve/takes/work_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 40,
+      "spokenText": "wait",
+      "slug": "wait",
+      "takeRel": "elevenlabs-tiles-eve/takes/wait_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 41,
+      "spokenText": "in",
+      "slug": "in",
+      "takeRel": "elevenlabs-tiles-eve/takes/in_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 42,
+      "spokenText": "out",
+      "slug": "out",
+      "takeRel": "elevenlabs-tiles-eve/takes/out_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 43,
+      "spokenText": "on",
+      "slug": "on",
+      "takeRel": "elevenlabs-tiles-eve/takes/on_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 44,
+      "spokenText": "off",
+      "slug": "off",
+      "takeRel": "elevenlabs-tiles-eve/takes/off_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 45,
+      "spokenText": "up",
+      "slug": "up",
+      "takeRel": "elevenlabs-tiles-eve/takes/up_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 46,
+      "spokenText": "down",
+      "slug": "down",
+      "takeRel": "elevenlabs-tiles-eve/takes/down_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 47,
+      "spokenText": "away",
+      "slug": "away",
+      "takeRel": "elevenlabs-tiles-eve/takes/away_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 48,
+      "spokenText": "here",
+      "slug": "here",
+      "takeRel": "elevenlabs-tiles-eve/takes/here_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 49,
+      "spokenText": "there",
+      "slug": "there",
+      "takeRel": "elevenlabs-tiles-eve/takes/there_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 50,
+      "spokenText": "with",
+      "slug": "with",
+      "takeRel": "elevenlabs-tiles-eve/takes/with_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 51,
+      "spokenText": "under",
+      "slug": "under",
+      "takeRel": "elevenlabs-tiles-eve/takes/under_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 52,
+      "spokenText": "over",
+      "slug": "over",
+      "takeRel": "elevenlabs-tiles-eve/takes/over_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 53,
+      "spokenText": "to",
+      "slug": "to",
+      "takeRel": "elevenlabs-tiles-eve/takes/to_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 54,
+      "spokenText": "for",
+      "slug": "for",
+      "takeRel": "elevenlabs-tiles-eve/takes/for_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 55,
+      "spokenText": "more",
+      "slug": "more",
+      "takeRel": "elevenlabs-tiles-eve/takes/more_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 56,
+      "spokenText": "all done",
+      "slug": "all_done",
+      "takeRel": "elevenlabs-tiles-eve/takes/all_done_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 57,
+      "spokenText": "big",
+      "slug": "big",
+      "takeRel": "elevenlabs-tiles-eve/takes/big_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 58,
+      "spokenText": "little",
+      "slug": "little",
+      "takeRel": "elevenlabs-tiles-eve/takes/little_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 59,
+      "spokenText": "good",
+      "slug": "good",
+      "takeRel": "elevenlabs-tiles-eve/takes/good_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 60,
+      "spokenText": "bad",
+      "slug": "bad",
+      "takeRel": "elevenlabs-tiles-eve/takes/bad_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 61,
+      "spokenText": "happy",
+      "slug": "happy",
+      "takeRel": "elevenlabs-tiles-eve/takes/happy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 62,
+      "spokenText": "same",
+      "slug": "same",
+      "takeRel": "elevenlabs-tiles-eve/takes/same_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 63,
+      "spokenText": "different",
+      "slug": "different",
+      "takeRel": "elevenlabs-tiles-eve/takes/different_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 64,
+      "spokenText": "some",
+      "slug": "some",
+      "takeRel": "elevenlabs-tiles-eve/takes/some_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 65,
+      "spokenText": "all",
+      "slug": "all",
+      "takeRel": "elevenlabs-tiles-eve/takes/all_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 66,
+      "spokenText": "what",
+      "slug": "what",
+      "takeRel": "elevenlabs-tiles-eve/takes/what_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 67,
+      "spokenText": "where",
+      "slug": "where",
+      "takeRel": "elevenlabs-tiles-eve/takes/where_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 68,
+      "spokenText": "who",
+      "slug": "who",
+      "takeRel": "elevenlabs-tiles-eve/takes/who_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 69,
+      "spokenText": "why",
+      "slug": "why",
+      "takeRel": "elevenlabs-tiles-eve/takes/why_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 70,
+      "spokenText": "how",
+      "slug": "how",
+      "takeRel": "elevenlabs-tiles-eve/takes/how_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 71,
+      "spokenText": "when",
+      "slug": "when",
+      "takeRel": "elevenlabs-tiles-eve/takes/when_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 72,
+      "spokenText": "no",
+      "slug": "no",
+      "takeRel": "elevenlabs-tiles-eve/takes/no_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 73,
+      "spokenText": "yes",
+      "slug": "yes",
+      "takeRel": "elevenlabs-tiles-eve/takes/yes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 74,
+      "spokenText": "not",
+      "slug": "not",
+      "takeRel": "elevenlabs-tiles-eve/takes/not_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 75,
+      "spokenText": "please",
+      "slug": "please",
+      "takeRel": "elevenlabs-tiles-eve/takes/please_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 76,
+      "spokenText": "and",
+      "slug": "and",
+      "takeRel": "elevenlabs-tiles-eve/takes/and_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 77,
+      "spokenText": "but",
+      "slug": "but",
+      "takeRel": "elevenlabs-tiles-eve/takes/but_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 78,
+      "spokenText": "or",
+      "slug": "or",
+      "takeRel": "elevenlabs-tiles-eve/takes/or_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 79,
+      "spokenText": "because",
+      "slug": "because",
+      "takeRel": "elevenlabs-tiles-eve/takes/because_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 80,
+      "spokenText": "have",
+      "slug": "have",
+      "takeRel": "elevenlabs-tiles-eve/takes/have_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 81,
+      "spokenText": "at",
+      "slug": "at",
+      "takeRel": "elevenlabs-tiles-eve/takes/at_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 82,
+      "spokenText": "water",
+      "slug": "water",
+      "takeRel": "elevenlabs-tiles-eve/takes/water_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 83,
+      "spokenText": "milk",
+      "slug": "milk",
+      "takeRel": "elevenlabs-tiles-eve/takes/milk_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 84,
+      "spokenText": "juice",
+      "slug": "juice",
+      "takeRel": "elevenlabs-tiles-eve/takes/juice_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 85,
+      "spokenText": "apple juice",
+      "slug": "apple_juice",
+      "takeRel": "elevenlabs-tiles-eve/takes/apple_juice_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 86,
+      "spokenText": "chocolate milk",
+      "slug": "chocolate_milk",
+      "takeRel": "elevenlabs-tiles-eve/takes/chocolate_milk_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 87,
+      "spokenText": "tea",
+      "slug": "tea",
+      "takeRel": "elevenlabs-tiles-eve/takes/tea_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 88,
+      "spokenText": "smoothie",
+      "slug": "smoothie",
+      "takeRel": "elevenlabs-tiles-eve/takes/smoothie_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 89,
+      "spokenText": "bread",
+      "slug": "bread",
+      "takeRel": "elevenlabs-tiles-eve/takes/bread_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 90,
+      "spokenText": "toast",
+      "slug": "toast",
+      "takeRel": "elevenlabs-tiles-eve/takes/toast_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 91,
+      "spokenText": "cereal",
+      "slug": "cereal",
+      "takeRel": "elevenlabs-tiles-eve/takes/cereal_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 92,
+      "spokenText": "oatmeal",
+      "slug": "oatmeal",
+      "takeRel": "elevenlabs-tiles-eve/takes/oatmeal_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 93,
+      "spokenText": "pancake",
+      "slug": "pancake",
+      "takeRel": "elevenlabs-tiles-eve/takes/pancake_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 94,
+      "spokenText": "waffle",
+      "slug": "waffle",
+      "takeRel": "elevenlabs-tiles-eve/takes/waffle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 95,
+      "spokenText": "bagel",
+      "slug": "bagel",
+      "takeRel": "elevenlabs-tiles-eve/takes/bagel_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 96,
+      "spokenText": "egg",
+      "slug": "egg",
+      "takeRel": "elevenlabs-tiles-eve/takes/egg_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 97,
+      "spokenText": "butter",
+      "slug": "butter",
+      "takeRel": "elevenlabs-tiles-eve/takes/butter_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 98,
+      "spokenText": "jam",
+      "slug": "jam",
+      "takeRel": "elevenlabs-tiles-eve/takes/jam_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 99,
+      "spokenText": "syrup",
+      "slug": "syrup",
+      "takeRel": "elevenlabs-tiles-eve/takes/syrup_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 100,
+      "spokenText": "pizza",
+      "slug": "pizza",
+      "takeRel": "elevenlabs-tiles-eve/takes/pizza_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 101,
+      "spokenText": "pasta",
+      "slug": "pasta",
+      "takeRel": "elevenlabs-tiles-eve/takes/pasta_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 102,
+      "spokenText": "macaroni",
+      "slug": "macaroni",
+      "takeRel": "elevenlabs-tiles-eve/takes/macaroni_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 103,
+      "spokenText": "sandwich",
+      "slug": "sandwich",
+      "takeRel": "elevenlabs-tiles-eve/takes/sandwich_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 104,
+      "spokenText": "chicken",
+      "slug": "chicken",
+      "takeRel": "elevenlabs-tiles-eve/takes/chicken_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 105,
+      "spokenText": "nuggets",
+      "slug": "nuggets",
+      "takeRel": "elevenlabs-tiles-eve/takes/nuggets_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 106,
+      "spokenText": "burger",
+      "slug": "burger",
+      "takeRel": "elevenlabs-tiles-eve/takes/burger_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 107,
+      "spokenText": "hot dog",
+      "slug": "hot_dog",
+      "takeRel": "elevenlabs-tiles-eve/takes/hot_dog_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 108,
+      "spokenText": "soup",
+      "slug": "soup",
+      "takeRel": "elevenlabs-tiles-eve/takes/soup_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 109,
+      "spokenText": "rice",
+      "slug": "rice",
+      "takeRel": "elevenlabs-tiles-eve/takes/rice_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 110,
+      "spokenText": "cheese",
+      "slug": "cheese",
+      "takeRel": "elevenlabs-tiles-eve/takes/cheese_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 111,
+      "spokenText": "meat",
+      "slug": "meat",
+      "takeRel": "elevenlabs-tiles-eve/takes/meat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 112,
+      "spokenText": "fish",
+      "slug": "fish",
+      "takeRel": "elevenlabs-tiles-eve/takes/fish_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 113,
+      "spokenText": "snack",
+      "slug": "snack",
+      "takeRel": "elevenlabs-tiles-eve/takes/snack_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 114,
+      "spokenText": "cracker",
+      "slug": "cracker",
+      "takeRel": "elevenlabs-tiles-eve/takes/cracker_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 115,
+      "spokenText": "cookie",
+      "slug": "cookie",
+      "takeRel": "elevenlabs-tiles-eve/takes/cookie_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 116,
+      "spokenText": "chips",
+      "slug": "chips",
+      "takeRel": "elevenlabs-tiles-eve/takes/chips_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 117,
+      "spokenText": "popcorn",
+      "slug": "popcorn",
+      "takeRel": "elevenlabs-tiles-eve/takes/popcorn_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 118,
+      "spokenText": "pretzel",
+      "slug": "pretzel",
+      "takeRel": "elevenlabs-tiles-eve/takes/pretzel_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 119,
+      "spokenText": "yogurt",
+      "slug": "yogurt",
+      "takeRel": "elevenlabs-tiles-eve/takes/yogurt_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 120,
+      "spokenText": "fruit snack",
+      "slug": "fruit_snack",
+      "takeRel": "elevenlabs-tiles-eve/takes/fruit_snack_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 121,
+      "spokenText": "ice cream",
+      "slug": "ice_cream",
+      "takeRel": "elevenlabs-tiles-eve/takes/ice_cream_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 122,
+      "spokenText": "popsicle",
+      "slug": "popsicle",
+      "takeRel": "elevenlabs-tiles-eve/takes/popsicle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 123,
+      "spokenText": "candy",
+      "slug": "candy",
+      "takeRel": "elevenlabs-tiles-eve/takes/candy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 124,
+      "spokenText": "cake",
+      "slug": "cake",
+      "takeRel": "elevenlabs-tiles-eve/takes/cake_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 125,
+      "spokenText": "muffin",
+      "slug": "muffin",
+      "takeRel": "elevenlabs-tiles-eve/takes/muffin_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 126,
+      "spokenText": "donut",
+      "slug": "donut",
+      "takeRel": "elevenlabs-tiles-eve/takes/donut_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 127,
+      "spokenText": "fruit",
+      "slug": "fruit",
+      "takeRel": "elevenlabs-tiles-eve/takes/fruit_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 128,
+      "spokenText": "apple",
+      "slug": "apple",
+      "takeRel": "elevenlabs-tiles-eve/takes/apple_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 129,
+      "spokenText": "banana",
+      "slug": "banana",
+      "takeRel": "elevenlabs-tiles-eve/takes/banana_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 130,
+      "spokenText": "strawberry",
+      "slug": "strawberry",
+      "takeRel": "elevenlabs-tiles-eve/takes/strawberry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 131,
+      "spokenText": "orange",
+      "slug": "orange",
+      "takeRel": "elevenlabs-tiles-eve/takes/orange_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 132,
+      "spokenText": "grapes",
+      "slug": "grapes",
+      "takeRel": "elevenlabs-tiles-eve/takes/grapes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 133,
+      "spokenText": "watermelon",
+      "slug": "watermelon",
+      "takeRel": "elevenlabs-tiles-eve/takes/watermelon_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 134,
+      "spokenText": "carrot",
+      "slug": "carrot",
+      "takeRel": "elevenlabs-tiles-eve/takes/carrot_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 135,
+      "spokenText": "broccoli",
+      "slug": "broccoli",
+      "takeRel": "elevenlabs-tiles-eve/takes/broccoli_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 136,
+      "spokenText": "corn",
+      "slug": "corn",
+      "takeRel": "elevenlabs-tiles-eve/takes/corn_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 137,
+      "spokenText": "body",
+      "slug": "body",
+      "takeRel": "elevenlabs-tiles-eve/takes/body_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 138,
+      "spokenText": "head",
+      "slug": "head",
+      "takeRel": "elevenlabs-tiles-eve/takes/head_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 139,
+      "spokenText": "face",
+      "slug": "face",
+      "takeRel": "elevenlabs-tiles-eve/takes/face_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 140,
+      "spokenText": "hair",
+      "slug": "hair",
+      "takeRel": "elevenlabs-tiles-eve/takes/hair_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 141,
+      "spokenText": "eye",
+      "slug": "eye",
+      "takeRel": "elevenlabs-tiles-eve/takes/eye_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 142,
+      "spokenText": "ear",
+      "slug": "ear",
+      "takeRel": "elevenlabs-tiles-eve/takes/ear_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 143,
+      "spokenText": "nose",
+      "slug": "nose",
+      "takeRel": "elevenlabs-tiles-eve/takes/nose_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 144,
+      "spokenText": "mouth",
+      "slug": "mouth",
+      "takeRel": "elevenlabs-tiles-eve/takes/mouth_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 145,
+      "spokenText": "teeth",
+      "slug": "teeth",
+      "takeRel": "elevenlabs-tiles-eve/takes/teeth_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 146,
+      "spokenText": "tongue",
+      "slug": "tongue",
+      "takeRel": "elevenlabs-tiles-eve/takes/tongue_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 147,
+      "spokenText": "neck",
+      "slug": "neck",
+      "takeRel": "elevenlabs-tiles-eve/takes/neck_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 148,
+      "spokenText": "shoulder",
+      "slug": "shoulder",
+      "takeRel": "elevenlabs-tiles-eve/takes/shoulder_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 149,
+      "spokenText": "arm",
+      "slug": "arm",
+      "takeRel": "elevenlabs-tiles-eve/takes/arm_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 150,
+      "spokenText": "hand",
+      "slug": "hand",
+      "takeRel": "elevenlabs-tiles-eve/takes/hand_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 151,
+      "spokenText": "fingers",
+      "slug": "fingers",
+      "takeRel": "elevenlabs-tiles-eve/takes/fingers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 152,
+      "spokenText": "tummy",
+      "slug": "tummy",
+      "takeRel": "elevenlabs-tiles-eve/takes/tummy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 153,
+      "spokenText": "back",
+      "slug": "back",
+      "takeRel": "elevenlabs-tiles-eve/takes/back_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 154,
+      "spokenText": "leg",
+      "slug": "leg",
+      "takeRel": "elevenlabs-tiles-eve/takes/leg_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 155,
+      "spokenText": "knee",
+      "slug": "knee",
+      "takeRel": "elevenlabs-tiles-eve/takes/knee_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 156,
+      "spokenText": "foot",
+      "slug": "foot",
+      "takeRel": "elevenlabs-tiles-eve/takes/foot_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 157,
+      "spokenText": "toes",
+      "slug": "toes",
+      "takeRel": "elevenlabs-tiles-eve/takes/toes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 158,
+      "spokenText": "bathroom",
+      "slug": "bathroom",
+      "takeRel": "elevenlabs-tiles-eve/takes/bathroom_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 159,
+      "spokenText": "potty",
+      "slug": "potty",
+      "takeRel": "elevenlabs-tiles-eve/takes/potty_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 160,
+      "spokenText": "toilet",
+      "slug": "toilet",
+      "takeRel": "elevenlabs-tiles-eve/takes/toilet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 161,
+      "spokenText": "diaper",
+      "slug": "diaper",
+      "takeRel": "elevenlabs-tiles-eve/takes/diaper_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 162,
+      "spokenText": "wet wipe",
+      "slug": "wet_wipe",
+      "takeRel": "elevenlabs-tiles-eve/takes/wet_wipe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 163,
+      "spokenText": "bath",
+      "slug": "bath",
+      "takeRel": "elevenlabs-tiles-eve/takes/bath_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 164,
+      "spokenText": "shower",
+      "slug": "shower",
+      "takeRel": "elevenlabs-tiles-eve/takes/shower_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 165,
+      "spokenText": "soap",
+      "slug": "soap",
+      "takeRel": "elevenlabs-tiles-eve/takes/soap_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 166,
+      "spokenText": "toothbrush",
+      "slug": "toothbrush",
+      "takeRel": "elevenlabs-tiles-eve/takes/toothbrush_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 167,
+      "spokenText": "toothpaste",
+      "slug": "toothpaste",
+      "takeRel": "elevenlabs-tiles-eve/takes/toothpaste_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 168,
+      "spokenText": "towel",
+      "slug": "towel",
+      "takeRel": "elevenlabs-tiles-eve/takes/towel_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 169,
+      "spokenText": "comb",
+      "slug": "comb",
+      "takeRel": "elevenlabs-tiles-eve/takes/comb_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 170,
+      "spokenText": "tissue",
+      "slug": "tissue",
+      "takeRel": "elevenlabs-tiles-eve/takes/tissue_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 171,
+      "spokenText": "bandage",
+      "slug": "bandage",
+      "takeRel": "elevenlabs-tiles-eve/takes/bandage_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 172,
+      "spokenText": "hurt",
+      "slug": "hurt",
+      "takeRel": "elevenlabs-tiles-eve/takes/hurt_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 173,
+      "spokenText": "sick",
+      "slug": "sick",
+      "takeRel": "elevenlabs-tiles-eve/takes/sick_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 174,
+      "spokenText": "pain",
+      "slug": "pain",
+      "takeRel": "elevenlabs-tiles-eve/takes/pain_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 175,
+      "spokenText": "fever",
+      "slug": "fever",
+      "takeRel": "elevenlabs-tiles-eve/takes/fever_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 176,
+      "spokenText": "cough",
+      "slug": "cough",
+      "takeRel": "elevenlabs-tiles-eve/takes/cough_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 177,
+      "spokenText": "medicine",
+      "slug": "medicine",
+      "takeRel": "elevenlabs-tiles-eve/takes/medicine_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 178,
+      "spokenText": "dentist",
+      "slug": "dentist",
+      "takeRel": "elevenlabs-tiles-eve/takes/dentist_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 179,
+      "spokenText": "sad",
+      "slug": "sad",
+      "takeRel": "elevenlabs-tiles-eve/takes/sad_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 180,
+      "spokenText": "mad",
+      "slug": "mad",
+      "takeRel": "elevenlabs-tiles-eve/takes/mad_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 181,
+      "spokenText": "angry",
+      "slug": "angry",
+      "takeRel": "elevenlabs-tiles-eve/takes/angry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 182,
+      "spokenText": "scared",
+      "slug": "scared",
+      "takeRel": "elevenlabs-tiles-eve/takes/scared_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 183,
+      "spokenText": "excited",
+      "slug": "excited",
+      "takeRel": "elevenlabs-tiles-eve/takes/excited_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 184,
+      "spokenText": "silly",
+      "slug": "silly",
+      "takeRel": "elevenlabs-tiles-eve/takes/silly_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 185,
+      "spokenText": "nervous",
+      "slug": "nervous",
+      "takeRel": "elevenlabs-tiles-eve/takes/nervous_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 186,
+      "spokenText": "calm",
+      "slug": "calm",
+      "takeRel": "elevenlabs-tiles-eve/takes/calm_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 187,
+      "spokenText": "frustrated",
+      "slug": "frustrated",
+      "takeRel": "elevenlabs-tiles-eve/takes/frustrated_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 188,
+      "spokenText": "proud",
+      "slug": "proud",
+      "takeRel": "elevenlabs-tiles-eve/takes/proud_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 189,
+      "spokenText": "shy",
+      "slug": "shy",
+      "takeRel": "elevenlabs-tiles-eve/takes/shy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 190,
+      "spokenText": "surprised",
+      "slug": "surprised",
+      "takeRel": "elevenlabs-tiles-eve/takes/surprised_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 191,
+      "spokenText": "bored",
+      "slug": "bored",
+      "takeRel": "elevenlabs-tiles-eve/takes/bored_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 192,
+      "spokenText": "lonely",
+      "slug": "lonely",
+      "takeRel": "elevenlabs-tiles-eve/takes/lonely_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 193,
+      "spokenText": "hungry",
+      "slug": "hungry",
+      "takeRel": "elevenlabs-tiles-eve/takes/hungry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 194,
+      "spokenText": "thirsty",
+      "slug": "thirsty",
+      "takeRel": "elevenlabs-tiles-eve/takes/thirsty_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 195,
+      "spokenText": "tired",
+      "slug": "tired",
+      "takeRel": "elevenlabs-tiles-eve/takes/tired_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 196,
+      "spokenText": "sleepy",
+      "slug": "sleepy",
+      "takeRel": "elevenlabs-tiles-eve/takes/sleepy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 197,
+      "spokenText": "energetic",
+      "slug": "energetic",
+      "takeRel": "elevenlabs-tiles-eve/takes/energetic_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 198,
+      "spokenText": "hot",
+      "slug": "hot",
+      "takeRel": "elevenlabs-tiles-eve/takes/hot_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 199,
+      "spokenText": "cold",
+      "slug": "cold",
+      "takeRel": "elevenlabs-tiles-eve/takes/cold_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 200,
+      "spokenText": "warm",
+      "slug": "warm",
+      "takeRel": "elevenlabs-tiles-eve/takes/warm_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 201,
+      "spokenText": "loud",
+      "slug": "loud",
+      "takeRel": "elevenlabs-tiles-eve/takes/loud_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 202,
+      "spokenText": "quiet",
+      "slug": "quiet",
+      "takeRel": "elevenlabs-tiles-eve/takes/quiet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 203,
+      "spokenText": "noisy",
+      "slug": "noisy",
+      "takeRel": "elevenlabs-tiles-eve/takes/noisy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 204,
+      "spokenText": "bright",
+      "slug": "bright",
+      "takeRel": "elevenlabs-tiles-eve/takes/bright_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 205,
+      "spokenText": "dark",
+      "slug": "dark",
+      "takeRel": "elevenlabs-tiles-eve/takes/dark_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 206,
+      "spokenText": "soft",
+      "slug": "soft",
+      "takeRel": "elevenlabs-tiles-eve/takes/soft_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 207,
+      "spokenText": "rough",
+      "slug": "rough",
+      "takeRel": "elevenlabs-tiles-eve/takes/rough_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 208,
+      "spokenText": "sticky",
+      "slug": "sticky",
+      "takeRel": "elevenlabs-tiles-eve/takes/sticky_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 209,
+      "spokenText": "dizzy",
+      "slug": "dizzy",
+      "takeRel": "elevenlabs-tiles-eve/takes/dizzy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 210,
+      "spokenText": "gross",
+      "slug": "gross",
+      "takeRel": "elevenlabs-tiles-eve/takes/gross_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 211,
+      "spokenText": "comfortable",
+      "slug": "comfortable",
+      "takeRel": "elevenlabs-tiles-eve/takes/comfortable_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 212,
+      "spokenText": "uncomfortable",
+      "slug": "uncomfortable",
+      "takeRel": "elevenlabs-tiles-eve/takes/uncomfortable_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 213,
+      "spokenText": "overwhelmed",
+      "slug": "overwhelmed",
+      "takeRel": "elevenlabs-tiles-eve/takes/overwhelmed_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 214,
+      "spokenText": "run",
+      "slug": "run",
+      "takeRel": "elevenlabs-tiles-eve/takes/run_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 215,
+      "spokenText": "jump",
+      "slug": "jump",
+      "takeRel": "elevenlabs-tiles-eve/takes/jump_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 216,
+      "spokenText": "walk",
+      "slug": "walk",
+      "takeRel": "elevenlabs-tiles-eve/takes/walk_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 217,
+      "spokenText": "sit",
+      "slug": "sit",
+      "takeRel": "elevenlabs-tiles-eve/takes/sit_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 218,
+      "spokenText": "stand",
+      "slug": "stand",
+      "takeRel": "elevenlabs-tiles-eve/takes/stand_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 219,
+      "spokenText": "climb",
+      "slug": "climb",
+      "takeRel": "elevenlabs-tiles-eve/takes/climb_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 220,
+      "spokenText": "dance",
+      "slug": "dance",
+      "takeRel": "elevenlabs-tiles-eve/takes/dance_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 221,
+      "spokenText": "swim",
+      "slug": "swim",
+      "takeRel": "elevenlabs-tiles-eve/takes/swim_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 222,
+      "spokenText": "ride",
+      "slug": "ride",
+      "takeRel": "elevenlabs-tiles-eve/takes/ride_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 223,
+      "spokenText": "crawl",
+      "slug": "crawl",
+      "takeRel": "elevenlabs-tiles-eve/takes/crawl_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 224,
+      "spokenText": "kick",
+      "slug": "kick",
+      "takeRel": "elevenlabs-tiles-eve/takes/kick_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 225,
+      "spokenText": "throw",
+      "slug": "throw",
+      "takeRel": "elevenlabs-tiles-eve/takes/throw_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 226,
+      "spokenText": "catch",
+      "slug": "catch",
+      "takeRel": "elevenlabs-tiles-eve/takes/catch_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 227,
+      "spokenText": "push",
+      "slug": "push",
+      "takeRel": "elevenlabs-tiles-eve/takes/push_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 228,
+      "spokenText": "pull",
+      "slug": "pull",
+      "takeRel": "elevenlabs-tiles-eve/takes/pull_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 229,
+      "spokenText": "swing",
+      "slug": "swing",
+      "takeRel": "elevenlabs-tiles-eve/takes/swing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 230,
+      "spokenText": "slide",
+      "slug": "slide",
+      "takeRel": "elevenlabs-tiles-eve/takes/slide_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 231,
+      "spokenText": "fall",
+      "slug": "fall",
+      "takeRel": "elevenlabs-tiles-eve/takes/fall_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 232,
+      "spokenText": "carry",
+      "slug": "carry",
+      "takeRel": "elevenlabs-tiles-eve/takes/carry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 233,
+      "spokenText": "drop",
+      "slug": "drop",
+      "takeRel": "elevenlabs-tiles-eve/takes/drop_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 234,
+      "spokenText": "write",
+      "slug": "write",
+      "takeRel": "elevenlabs-tiles-eve/takes/write_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 235,
+      "spokenText": "draw",
+      "slug": "draw",
+      "takeRel": "elevenlabs-tiles-eve/takes/draw_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 236,
+      "spokenText": "color",
+      "slug": "color",
+      "takeRel": "elevenlabs-tiles-eve/takes/color_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 237,
+      "spokenText": "paint",
+      "slug": "paint",
+      "takeRel": "elevenlabs-tiles-eve/takes/paint_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 238,
+      "spokenText": "cut",
+      "slug": "cut",
+      "takeRel": "elevenlabs-tiles-eve/takes/cut_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 239,
+      "spokenText": "glue",
+      "slug": "glue",
+      "takeRel": "elevenlabs-tiles-eve/takes/glue_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 240,
+      "spokenText": "listen",
+      "slug": "listen",
+      "takeRel": "elevenlabs-tiles-eve/takes/listen_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 241,
+      "spokenText": "speak",
+      "slug": "speak",
+      "takeRel": "elevenlabs-tiles-eve/takes/speak_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 242,
+      "spokenText": "talk",
+      "slug": "talk",
+      "takeRel": "elevenlabs-tiles-eve/takes/talk_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 243,
+      "spokenText": "sing",
+      "slug": "sing",
+      "takeRel": "elevenlabs-tiles-eve/takes/sing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 244,
+      "spokenText": "count",
+      "slug": "count",
+      "takeRel": "elevenlabs-tiles-eve/takes/count_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 245,
+      "spokenText": "share",
+      "slug": "share",
+      "takeRel": "elevenlabs-tiles-eve/takes/share_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 246,
+      "spokenText": "clean up",
+      "slug": "clean_up",
+      "takeRel": "elevenlabs-tiles-eve/takes/clean_up_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 247,
+      "spokenText": "wash",
+      "slug": "wash",
+      "takeRel": "elevenlabs-tiles-eve/takes/wash_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 248,
+      "spokenText": "wipe",
+      "slug": "wipe",
+      "takeRel": "elevenlabs-tiles-eve/takes/wipe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 249,
+      "spokenText": "cook",
+      "slug": "cook",
+      "takeRel": "elevenlabs-tiles-eve/takes/cook_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 250,
+      "spokenText": "build",
+      "slug": "build",
+      "takeRel": "elevenlabs-tiles-eve/takes/build_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 251,
+      "spokenText": "fix",
+      "slug": "fix",
+      "takeRel": "elevenlabs-tiles-eve/takes/fix_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 252,
+      "spokenText": "hold",
+      "slug": "hold",
+      "takeRel": "elevenlabs-tiles-eve/takes/hold_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 253,
+      "spokenText": "touch",
+      "slug": "touch",
+      "takeRel": "elevenlabs-tiles-eve/takes/touch_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 254,
+      "spokenText": "know",
+      "slug": "know",
+      "takeRel": "elevenlabs-tiles-eve/takes/know_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 255,
+      "spokenText": "remember",
+      "slug": "remember",
+      "takeRel": "elevenlabs-tiles-eve/takes/remember_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 256,
+      "spokenText": "forget",
+      "slug": "forget",
+      "takeRel": "elevenlabs-tiles-eve/takes/forget_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 257,
+      "spokenText": "choose",
+      "slug": "choose",
+      "takeRel": "elevenlabs-tiles-eve/takes/choose_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 258,
+      "spokenText": "show",
+      "slug": "show",
+      "takeRel": "elevenlabs-tiles-eve/takes/show_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 259,
+      "spokenText": "ask",
+      "slug": "ask",
+      "takeRel": "elevenlabs-tiles-eve/takes/ask_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 260,
+      "spokenText": "hug",
+      "slug": "hug",
+      "takeRel": "elevenlabs-tiles-eve/takes/hug_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 261,
+      "spokenText": "kiss",
+      "slug": "kiss",
+      "takeRel": "elevenlabs-tiles-eve/takes/kiss_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 262,
+      "spokenText": "laugh",
+      "slug": "laugh",
+      "takeRel": "elevenlabs-tiles-eve/takes/laugh_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 263,
+      "spokenText": "cry",
+      "slug": "cry",
+      "takeRel": "elevenlabs-tiles-eve/takes/cry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 264,
+      "spokenText": "sleep",
+      "slug": "sleep",
+      "takeRel": "elevenlabs-tiles-eve/takes/sleep_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 265,
+      "spokenText": "wake up",
+      "slug": "wake_up",
+      "takeRel": "elevenlabs-tiles-eve/takes/wake_up_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 266,
+      "spokenText": "family",
+      "slug": "family",
+      "takeRel": "elevenlabs-tiles-eve/takes/family_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 267,
+      "spokenText": "mom",
+      "slug": "mom",
+      "takeRel": "elevenlabs-tiles-eve/takes/mom_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 268,
+      "spokenText": "dad",
+      "slug": "dad",
+      "takeRel": "elevenlabs-tiles-eve/takes/dad_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 269,
+      "spokenText": "mama",
+      "slug": "mama",
+      "takeRel": "elevenlabs-tiles-eve/takes/mama_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 270,
+      "spokenText": "dada",
+      "slug": "dada",
+      "takeRel": "elevenlabs-tiles-eve/takes/dada_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 271,
+      "spokenText": "baby",
+      "slug": "baby",
+      "takeRel": "elevenlabs-tiles-eve/takes/baby_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 272,
+      "spokenText": "brother",
+      "slug": "brother",
+      "takeRel": "elevenlabs-tiles-eve/takes/brother_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 273,
+      "spokenText": "sister",
+      "slug": "sister",
+      "takeRel": "elevenlabs-tiles-eve/takes/sister_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 274,
+      "spokenText": "grandma",
+      "slug": "grandma",
+      "takeRel": "elevenlabs-tiles-eve/takes/grandma_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 275,
+      "spokenText": "grandpa",
+      "slug": "grandpa",
+      "takeRel": "elevenlabs-tiles-eve/takes/grandpa_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 276,
+      "spokenText": "aunt",
+      "slug": "aunt",
+      "takeRel": "elevenlabs-tiles-eve/takes/aunt_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 277,
+      "spokenText": "uncle",
+      "slug": "uncle",
+      "takeRel": "elevenlabs-tiles-eve/takes/uncle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 278,
+      "spokenText": "cousin",
+      "slug": "cousin",
+      "takeRel": "elevenlabs-tiles-eve/takes/cousin_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 279,
+      "spokenText": "pet",
+      "slug": "pet",
+      "takeRel": "elevenlabs-tiles-eve/takes/pet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 280,
+      "spokenText": "teacher",
+      "slug": "teacher",
+      "takeRel": "elevenlabs-tiles-eve/takes/teacher_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 281,
+      "spokenText": "therapist",
+      "slug": "therapist",
+      "takeRel": "elevenlabs-tiles-eve/takes/therapist_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 282,
+      "spokenText": "aide",
+      "slug": "aide",
+      "takeRel": "elevenlabs-tiles-eve/takes/aide_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 283,
+      "spokenText": "student",
+      "slug": "student",
+      "takeRel": "elevenlabs-tiles-eve/takes/student_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 284,
+      "spokenText": "friend",
+      "slug": "friend",
+      "takeRel": "elevenlabs-tiles-eve/takes/friend_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 285,
+      "spokenText": "class",
+      "slug": "class",
+      "takeRel": "elevenlabs-tiles-eve/takes/class_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 286,
+      "spokenText": "firefighter",
+      "slug": "firefighter",
+      "takeRel": "elevenlabs-tiles-eve/takes/firefighter_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 287,
+      "spokenText": "police officer",
+      "slug": "police_officer",
+      "takeRel": "elevenlabs-tiles-eve/takes/police_officer_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 288,
+      "spokenText": "bus driver",
+      "slug": "bus_driver",
+      "takeRel": "elevenlabs-tiles-eve/takes/bus_driver_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 289,
+      "spokenText": "neighbor",
+      "slug": "neighbor",
+      "takeRel": "elevenlabs-tiles-eve/takes/neighbor_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 290,
+      "spokenText": "person",
+      "slug": "person",
+      "takeRel": "elevenlabs-tiles-eve/takes/person_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 291,
+      "spokenText": "people",
+      "slug": "people",
+      "takeRel": "elevenlabs-tiles-eve/takes/people_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 292,
+      "spokenText": "kids",
+      "slug": "kids",
+      "takeRel": "elevenlabs-tiles-eve/takes/kids_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 293,
+      "spokenText": "doctor",
+      "slug": "doctor",
+      "takeRel": "elevenlabs-tiles-eve/takes/doctor_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 294,
+      "spokenText": "nurse",
+      "slug": "nurse",
+      "takeRel": "elevenlabs-tiles-eve/takes/nurse_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 295,
+      "spokenText": "babysitter",
+      "slug": "babysitter",
+      "takeRel": "elevenlabs-tiles-eve/takes/babysitter_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 296,
+      "spokenText": "name",
+      "slug": "name",
+      "takeRel": "elevenlabs-tiles-eve/takes/name_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 297,
+      "spokenText": "home",
+      "slug": "home",
+      "takeRel": "elevenlabs-tiles-eve/takes/home_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 298,
+      "spokenText": "house",
+      "slug": "house",
+      "takeRel": "elevenlabs-tiles-eve/takes/house_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 299,
+      "spokenText": "bedroom",
+      "slug": "bedroom",
+      "takeRel": "elevenlabs-tiles-eve/takes/bedroom_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 300,
+      "spokenText": "living room",
+      "slug": "living_room",
+      "takeRel": "elevenlabs-tiles-eve/takes/living_room_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 301,
+      "spokenText": "kitchen",
+      "slug": "kitchen",
+      "takeRel": "elevenlabs-tiles-eve/takes/kitchen_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 302,
+      "spokenText": "basement",
+      "slug": "basement",
+      "takeRel": "elevenlabs-tiles-eve/takes/basement_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 303,
+      "spokenText": "stairs",
+      "slug": "stairs",
+      "takeRel": "elevenlabs-tiles-eve/takes/stairs_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 304,
+      "spokenText": "yard",
+      "slug": "yard",
+      "takeRel": "elevenlabs-tiles-eve/takes/yard_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 305,
+      "spokenText": "school",
+      "slug": "school",
+      "takeRel": "elevenlabs-tiles-eve/takes/school_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 306,
+      "spokenText": "classroom",
+      "slug": "classroom",
+      "takeRel": "elevenlabs-tiles-eve/takes/classroom_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 307,
+      "spokenText": "playground",
+      "slug": "playground",
+      "takeRel": "elevenlabs-tiles-eve/takes/playground_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 308,
+      "spokenText": "gym",
+      "slug": "gym",
+      "takeRel": "elevenlabs-tiles-eve/takes/gym_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 309,
+      "spokenText": "cafeteria",
+      "slug": "cafeteria",
+      "takeRel": "elevenlabs-tiles-eve/takes/cafeteria_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 310,
+      "spokenText": "library",
+      "slug": "library",
+      "takeRel": "elevenlabs-tiles-eve/takes/library_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 311,
+      "spokenText": "hallway",
+      "slug": "hallway",
+      "takeRel": "elevenlabs-tiles-eve/takes/hallway_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 312,
+      "spokenText": "desk",
+      "slug": "desk",
+      "takeRel": "elevenlabs-tiles-eve/takes/desk_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 313,
+      "spokenText": "park",
+      "slug": "park",
+      "takeRel": "elevenlabs-tiles-eve/takes/park_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 314,
+      "spokenText": "store",
+      "slug": "store",
+      "takeRel": "elevenlabs-tiles-eve/takes/store_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 315,
+      "spokenText": "grocery store",
+      "slug": "grocery_store",
+      "takeRel": "elevenlabs-tiles-eve/takes/grocery_store_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 316,
+      "spokenText": "restaurant",
+      "slug": "restaurant",
+      "takeRel": "elevenlabs-tiles-eve/takes/restaurant_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 317,
+      "spokenText": "pool",
+      "slug": "pool",
+      "takeRel": "elevenlabs-tiles-eve/takes/pool_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 318,
+      "spokenText": "beach",
+      "slug": "beach",
+      "takeRel": "elevenlabs-tiles-eve/takes/beach_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 319,
+      "spokenText": "zoo",
+      "slug": "zoo",
+      "takeRel": "elevenlabs-tiles-eve/takes/zoo_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 320,
+      "spokenText": "doctor office",
+      "slug": "doctor_office",
+      "takeRel": "elevenlabs-tiles-eve/takes/doctor_office_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 321,
+      "spokenText": "hospital",
+      "slug": "hospital",
+      "takeRel": "elevenlabs-tiles-eve/takes/hospital_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 322,
+      "spokenText": "museum",
+      "slug": "museum",
+      "takeRel": "elevenlabs-tiles-eve/takes/museum_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 323,
+      "spokenText": "movie theater",
+      "slug": "movie_theater",
+      "takeRel": "elevenlabs-tiles-eve/takes/movie_theater_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 324,
+      "spokenText": "mall",
+      "slug": "mall",
+      "takeRel": "elevenlabs-tiles-eve/takes/mall_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 325,
+      "spokenText": "farm",
+      "slug": "farm",
+      "takeRel": "elevenlabs-tiles-eve/takes/farm_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 326,
+      "spokenText": "airport",
+      "slug": "airport",
+      "takeRel": "elevenlabs-tiles-eve/takes/airport_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 327,
+      "spokenText": "outside",
+      "slug": "outside",
+      "takeRel": "elevenlabs-tiles-eve/takes/outside_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 328,
+      "spokenText": "inside",
+      "slug": "inside",
+      "takeRel": "elevenlabs-tiles-eve/takes/inside_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 329,
+      "spokenText": "street",
+      "slug": "street",
+      "takeRel": "elevenlabs-tiles-eve/takes/street_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 330,
+      "spokenText": "town",
+      "slug": "town",
+      "takeRel": "elevenlabs-tiles-eve/takes/town_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 331,
+      "spokenText": "church",
+      "slug": "church",
+      "takeRel": "elevenlabs-tiles-eve/takes/church_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 332,
+      "spokenText": "toy",
+      "slug": "toy",
+      "takeRel": "elevenlabs-tiles-eve/takes/toy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 333,
+      "spokenText": "ball",
+      "slug": "ball",
+      "takeRel": "elevenlabs-tiles-eve/takes/ball_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 334,
+      "spokenText": "blocks",
+      "slug": "blocks",
+      "takeRel": "elevenlabs-tiles-eve/takes/blocks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 335,
+      "spokenText": "puzzle",
+      "slug": "puzzle",
+      "takeRel": "elevenlabs-tiles-eve/takes/puzzle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 336,
+      "spokenText": "doll",
+      "slug": "doll",
+      "takeRel": "elevenlabs-tiles-eve/takes/doll_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 337,
+      "spokenText": "action figure",
+      "slug": "action_figure",
+      "takeRel": "elevenlabs-tiles-eve/takes/action_figure_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 338,
+      "spokenText": "bubbles",
+      "slug": "bubbles",
+      "takeRel": "elevenlabs-tiles-eve/takes/bubbles_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 339,
+      "spokenText": "play dough",
+      "slug": "play_dough",
+      "takeRel": "elevenlabs-tiles-eve/takes/play_dough_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 340,
+      "spokenText": "toy car",
+      "slug": "toy_car",
+      "takeRel": "elevenlabs-tiles-eve/takes/toy_car_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 341,
+      "spokenText": "toy train",
+      "slug": "toy_train",
+      "takeRel": "elevenlabs-tiles-eve/takes/toy_train_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 342,
+      "spokenText": "stuffed animal",
+      "slug": "stuffed_animal",
+      "takeRel": "elevenlabs-tiles-eve/takes/stuffed_animal_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 343,
+      "spokenText": "dinosaur",
+      "slug": "dinosaur",
+      "takeRel": "elevenlabs-tiles-eve/takes/dinosaur_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 344,
+      "spokenText": "robot",
+      "slug": "robot",
+      "takeRel": "elevenlabs-tiles-eve/takes/robot_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 345,
+      "spokenText": "legos",
+      "slug": "legos",
+      "takeRel": "elevenlabs-tiles-eve/takes/legos_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 346,
+      "spokenText": "board game",
+      "slug": "board_game",
+      "takeRel": "elevenlabs-tiles-eve/takes/board_game_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 347,
+      "spokenText": "swing set",
+      "slug": "swing_set",
+      "takeRel": "elevenlabs-tiles-eve/takes/swing_set_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 348,
+      "spokenText": "sandbox",
+      "slug": "sandbox",
+      "takeRel": "elevenlabs-tiles-eve/takes/sandbox_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 349,
+      "spokenText": "bike",
+      "slug": "bike",
+      "takeRel": "elevenlabs-tiles-eve/takes/bike_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 350,
+      "spokenText": "scooter",
+      "slug": "scooter",
+      "takeRel": "elevenlabs-tiles-eve/takes/scooter_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 351,
+      "spokenText": "skateboard",
+      "slug": "skateboard",
+      "takeRel": "elevenlabs-tiles-eve/takes/skateboard_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 352,
+      "spokenText": "wagon",
+      "slug": "wagon",
+      "takeRel": "elevenlabs-tiles-eve/takes/wagon_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 353,
+      "spokenText": "chalk",
+      "slug": "chalk",
+      "takeRel": "elevenlabs-tiles-eve/takes/chalk_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 354,
+      "spokenText": "jump rope",
+      "slug": "jump_rope",
+      "takeRel": "elevenlabs-tiles-eve/takes/jump_rope_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 355,
+      "spokenText": "music",
+      "slug": "music",
+      "takeRel": "elevenlabs-tiles-eve/takes/music_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 356,
+      "spokenText": "song",
+      "slug": "song",
+      "takeRel": "elevenlabs-tiles-eve/takes/song_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 357,
+      "spokenText": "tablet",
+      "slug": "tablet",
+      "takeRel": "elevenlabs-tiles-eve/takes/tablet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 358,
+      "spokenText": "iPad",
+      "slug": "ipad",
+      "takeRel": "elevenlabs-tiles-eve/takes/ipad_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 359,
+      "spokenText": "phone",
+      "slug": "phone",
+      "takeRel": "elevenlabs-tiles-eve/takes/phone_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 360,
+      "spokenText": "TV",
+      "slug": "tv",
+      "takeRel": "elevenlabs-tiles-eve/takes/tv_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 361,
+      "spokenText": "movie",
+      "slug": "movie",
+      "takeRel": "elevenlabs-tiles-eve/takes/movie_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 362,
+      "spokenText": "video",
+      "slug": "video",
+      "takeRel": "elevenlabs-tiles-eve/takes/video_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 363,
+      "spokenText": "headphones",
+      "slug": "headphones",
+      "takeRel": "elevenlabs-tiles-eve/takes/headphones_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 364,
+      "spokenText": "computer",
+      "slug": "computer",
+      "takeRel": "elevenlabs-tiles-eve/takes/computer_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 365,
+      "spokenText": "camera",
+      "slug": "camera",
+      "takeRel": "elevenlabs-tiles-eve/takes/camera_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 366,
+      "spokenText": "paper",
+      "slug": "paper",
+      "takeRel": "elevenlabs-tiles-eve/takes/paper_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 367,
+      "spokenText": "markers",
+      "slug": "markers",
+      "takeRel": "elevenlabs-tiles-eve/takes/markers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 368,
+      "spokenText": "crayons",
+      "slug": "crayons",
+      "takeRel": "elevenlabs-tiles-eve/takes/crayons_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 369,
+      "spokenText": "book",
+      "slug": "book",
+      "takeRel": "elevenlabs-tiles-eve/takes/book_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 370,
+      "spokenText": "chair",
+      "slug": "chair",
+      "takeRel": "elevenlabs-tiles-eve/takes/chair_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 371,
+      "spokenText": "couch",
+      "slug": "couch",
+      "takeRel": "elevenlabs-tiles-eve/takes/couch_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 372,
+      "spokenText": "table",
+      "slug": "table",
+      "takeRel": "elevenlabs-tiles-eve/takes/table_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 373,
+      "spokenText": "bed",
+      "slug": "bed",
+      "takeRel": "elevenlabs-tiles-eve/takes/bed_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 374,
+      "spokenText": "door",
+      "slug": "door",
+      "takeRel": "elevenlabs-tiles-eve/takes/door_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 375,
+      "spokenText": "window",
+      "slug": "window",
+      "takeRel": "elevenlabs-tiles-eve/takes/window_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 376,
+      "spokenText": "lamp",
+      "slug": "lamp",
+      "takeRel": "elevenlabs-tiles-eve/takes/lamp_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 377,
+      "spokenText": "clock",
+      "slug": "clock",
+      "takeRel": "elevenlabs-tiles-eve/takes/clock_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 378,
+      "spokenText": "trash",
+      "slug": "trash",
+      "takeRel": "elevenlabs-tiles-eve/takes/trash_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 379,
+      "spokenText": "sink",
+      "slug": "sink",
+      "takeRel": "elevenlabs-tiles-eve/takes/sink_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 380,
+      "spokenText": "mirror",
+      "slug": "mirror",
+      "takeRel": "elevenlabs-tiles-eve/takes/mirror_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 381,
+      "spokenText": "rug",
+      "slug": "rug",
+      "takeRel": "elevenlabs-tiles-eve/takes/rug_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 382,
+      "spokenText": "plate",
+      "slug": "plate",
+      "takeRel": "elevenlabs-tiles-eve/takes/plate_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 383,
+      "spokenText": "bowl",
+      "slug": "bowl",
+      "takeRel": "elevenlabs-tiles-eve/takes/bowl_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 384,
+      "spokenText": "cup",
+      "slug": "cup",
+      "takeRel": "elevenlabs-tiles-eve/takes/cup_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 385,
+      "spokenText": "fork",
+      "slug": "fork",
+      "takeRel": "elevenlabs-tiles-eve/takes/fork_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 386,
+      "spokenText": "spoon",
+      "slug": "spoon",
+      "takeRel": "elevenlabs-tiles-eve/takes/spoon_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 387,
+      "spokenText": "knife",
+      "slug": "knife",
+      "takeRel": "elevenlabs-tiles-eve/takes/knife_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 388,
+      "spokenText": "napkin",
+      "slug": "napkin",
+      "takeRel": "elevenlabs-tiles-eve/takes/napkin_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 389,
+      "spokenText": "bottle",
+      "slug": "bottle",
+      "takeRel": "elevenlabs-tiles-eve/takes/bottle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 390,
+      "spokenText": "straw",
+      "slug": "straw",
+      "takeRel": "elevenlabs-tiles-eve/takes/straw_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 391,
+      "spokenText": "fridge",
+      "slug": "fridge",
+      "takeRel": "elevenlabs-tiles-eve/takes/fridge_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 392,
+      "spokenText": "microwave",
+      "slug": "microwave",
+      "takeRel": "elevenlabs-tiles-eve/takes/microwave_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 393,
+      "spokenText": "backpack",
+      "slug": "backpack",
+      "takeRel": "elevenlabs-tiles-eve/takes/backpack_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 394,
+      "spokenText": "bag",
+      "slug": "bag",
+      "takeRel": "elevenlabs-tiles-eve/takes/bag_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 395,
+      "spokenText": "keys",
+      "slug": "keys",
+      "takeRel": "elevenlabs-tiles-eve/takes/keys_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 396,
+      "spokenText": "wallet",
+      "slug": "wallet",
+      "takeRel": "elevenlabs-tiles-eve/takes/wallet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 397,
+      "spokenText": "glasses",
+      "slug": "glasses",
+      "takeRel": "elevenlabs-tiles-eve/takes/glasses_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 398,
+      "spokenText": "umbrella",
+      "slug": "umbrella",
+      "takeRel": "elevenlabs-tiles-eve/takes/umbrella_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 399,
+      "spokenText": "blanket",
+      "slug": "blanket",
+      "takeRel": "elevenlabs-tiles-eve/takes/blanket_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 400,
+      "spokenText": "pillow",
+      "slug": "pillow",
+      "takeRel": "elevenlabs-tiles-eve/takes/pillow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 401,
+      "spokenText": "fan",
+      "slug": "fan",
+      "takeRel": "elevenlabs-tiles-eve/takes/fan_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 402,
+      "spokenText": "charger",
+      "slug": "charger",
+      "takeRel": "elevenlabs-tiles-eve/takes/charger_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 403,
+      "spokenText": "box",
+      "slug": "box",
+      "takeRel": "elevenlabs-tiles-eve/takes/box_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 404,
+      "spokenText": "battery",
+      "slug": "battery",
+      "takeRel": "elevenlabs-tiles-eve/takes/battery_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 405,
+      "spokenText": "broom",
+      "slug": "broom",
+      "takeRel": "elevenlabs-tiles-eve/takes/broom_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 406,
+      "spokenText": "vacuum",
+      "slug": "vacuum",
+      "takeRel": "elevenlabs-tiles-eve/takes/vacuum_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 407,
+      "spokenText": "sponge",
+      "slug": "sponge",
+      "takeRel": "elevenlabs-tiles-eve/takes/sponge_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 408,
+      "spokenText": "tape",
+      "slug": "tape",
+      "takeRel": "elevenlabs-tiles-eve/takes/tape_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 409,
+      "spokenText": "flashlight",
+      "slug": "flashlight",
+      "takeRel": "elevenlabs-tiles-eve/takes/flashlight_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 410,
+      "spokenText": "bucket",
+      "slug": "bucket",
+      "takeRel": "elevenlabs-tiles-eve/takes/bucket_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 411,
+      "spokenText": "paper towel",
+      "slug": "paper_towel",
+      "takeRel": "elevenlabs-tiles-eve/takes/paper_towel_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 412,
+      "spokenText": "shirt",
+      "slug": "shirt",
+      "takeRel": "elevenlabs-tiles-eve/takes/shirt_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 413,
+      "spokenText": "pants",
+      "slug": "pants",
+      "takeRel": "elevenlabs-tiles-eve/takes/pants_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 414,
+      "spokenText": "shorts",
+      "slug": "shorts",
+      "takeRel": "elevenlabs-tiles-eve/takes/shorts_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 415,
+      "spokenText": "underwear",
+      "slug": "underwear",
+      "takeRel": "elevenlabs-tiles-eve/takes/underwear_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 416,
+      "spokenText": "dress",
+      "slug": "dress",
+      "takeRel": "elevenlabs-tiles-eve/takes/dress_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 417,
+      "spokenText": "skirt",
+      "slug": "skirt",
+      "takeRel": "elevenlabs-tiles-eve/takes/skirt_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 418,
+      "spokenText": "sweater",
+      "slug": "sweater",
+      "takeRel": "elevenlabs-tiles-eve/takes/sweater_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 419,
+      "spokenText": "sweatshirt",
+      "slug": "sweatshirt",
+      "takeRel": "elevenlabs-tiles-eve/takes/sweatshirt_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 420,
+      "spokenText": "socks",
+      "slug": "socks",
+      "takeRel": "elevenlabs-tiles-eve/takes/socks_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 421,
+      "spokenText": "shoes",
+      "slug": "shoes",
+      "takeRel": "elevenlabs-tiles-eve/takes/shoes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 422,
+      "spokenText": "pajamas",
+      "slug": "pajamas",
+      "takeRel": "elevenlabs-tiles-eve/takes/pajamas_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 423,
+      "spokenText": "robe",
+      "slug": "robe",
+      "takeRel": "elevenlabs-tiles-eve/takes/robe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 424,
+      "spokenText": "slippers",
+      "slug": "slippers",
+      "takeRel": "elevenlabs-tiles-eve/takes/slippers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 425,
+      "spokenText": "jacket",
+      "slug": "jacket",
+      "takeRel": "elevenlabs-tiles-eve/takes/jacket_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 426,
+      "spokenText": "coat",
+      "slug": "coat",
+      "takeRel": "elevenlabs-tiles-eve/takes/coat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 427,
+      "spokenText": "hat",
+      "slug": "hat",
+      "takeRel": "elevenlabs-tiles-eve/takes/hat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 428,
+      "spokenText": "mittens",
+      "slug": "mittens",
+      "takeRel": "elevenlabs-tiles-eve/takes/mittens_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 429,
+      "spokenText": "gloves",
+      "slug": "gloves",
+      "takeRel": "elevenlabs-tiles-eve/takes/gloves_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 430,
+      "spokenText": "scarf",
+      "slug": "scarf",
+      "takeRel": "elevenlabs-tiles-eve/takes/scarf_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 431,
+      "spokenText": "boots",
+      "slug": "boots",
+      "takeRel": "elevenlabs-tiles-eve/takes/boots_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 432,
+      "spokenText": "raincoat",
+      "slug": "raincoat",
+      "takeRel": "elevenlabs-tiles-eve/takes/raincoat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 433,
+      "spokenText": "swimsuit",
+      "slug": "swimsuit",
+      "takeRel": "elevenlabs-tiles-eve/takes/swimsuit_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 434,
+      "spokenText": "sunglasses",
+      "slug": "sunglasses",
+      "takeRel": "elevenlabs-tiles-eve/takes/sunglasses_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 435,
+      "spokenText": "zipper",
+      "slug": "zipper",
+      "takeRel": "elevenlabs-tiles-eve/takes/zipper_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 436,
+      "spokenText": "button",
+      "slug": "button",
+      "takeRel": "elevenlabs-tiles-eve/takes/button_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 437,
+      "spokenText": "belt",
+      "slug": "belt",
+      "takeRel": "elevenlabs-tiles-eve/takes/belt_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 438,
+      "spokenText": "pocket",
+      "slug": "pocket",
+      "takeRel": "elevenlabs-tiles-eve/takes/pocket_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 439,
+      "spokenText": "sandals",
+      "slug": "sandals",
+      "takeRel": "elevenlabs-tiles-eve/takes/sandals_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 440,
+      "spokenText": "animal",
+      "slug": "animal",
+      "takeRel": "elevenlabs-tiles-eve/takes/animal_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 441,
+      "spokenText": "dog",
+      "slug": "dog",
+      "takeRel": "elevenlabs-tiles-eve/takes/dog_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 442,
+      "spokenText": "cat",
+      "slug": "cat",
+      "takeRel": "elevenlabs-tiles-eve/takes/cat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 443,
+      "spokenText": "puppy",
+      "slug": "puppy",
+      "takeRel": "elevenlabs-tiles-eve/takes/puppy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 444,
+      "spokenText": "kitten",
+      "slug": "kitten",
+      "takeRel": "elevenlabs-tiles-eve/takes/kitten_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 445,
+      "spokenText": "bird",
+      "slug": "bird",
+      "takeRel": "elevenlabs-tiles-eve/takes/bird_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 446,
+      "spokenText": "bunny",
+      "slug": "bunny",
+      "takeRel": "elevenlabs-tiles-eve/takes/bunny_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 447,
+      "spokenText": "duck",
+      "slug": "duck",
+      "takeRel": "elevenlabs-tiles-eve/takes/duck_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 448,
+      "spokenText": "hen",
+      "slug": "hen",
+      "takeRel": "elevenlabs-tiles-eve/takes/hen_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 449,
+      "spokenText": "cow",
+      "slug": "cow",
+      "takeRel": "elevenlabs-tiles-eve/takes/cow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 450,
+      "spokenText": "horse",
+      "slug": "horse",
+      "takeRel": "elevenlabs-tiles-eve/takes/horse_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 451,
+      "spokenText": "pig",
+      "slug": "pig",
+      "takeRel": "elevenlabs-tiles-eve/takes/pig_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 452,
+      "spokenText": "sheep",
+      "slug": "sheep",
+      "takeRel": "elevenlabs-tiles-eve/takes/sheep_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 453,
+      "spokenText": "goat",
+      "slug": "goat",
+      "takeRel": "elevenlabs-tiles-eve/takes/goat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 454,
+      "spokenText": "bear",
+      "slug": "bear",
+      "takeRel": "elevenlabs-tiles-eve/takes/bear_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 455,
+      "spokenText": "lion",
+      "slug": "lion",
+      "takeRel": "elevenlabs-tiles-eve/takes/lion_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 456,
+      "spokenText": "tiger",
+      "slug": "tiger",
+      "takeRel": "elevenlabs-tiles-eve/takes/tiger_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 457,
+      "spokenText": "elephant",
+      "slug": "elephant",
+      "takeRel": "elevenlabs-tiles-eve/takes/elephant_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 458,
+      "spokenText": "monkey",
+      "slug": "monkey",
+      "takeRel": "elevenlabs-tiles-eve/takes/monkey_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 459,
+      "spokenText": "giraffe",
+      "slug": "giraffe",
+      "takeRel": "elevenlabs-tiles-eve/takes/giraffe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 460,
+      "spokenText": "zebra",
+      "slug": "zebra",
+      "takeRel": "elevenlabs-tiles-eve/takes/zebra_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 461,
+      "spokenText": "hippo",
+      "slug": "hippo",
+      "takeRel": "elevenlabs-tiles-eve/takes/hippo_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 462,
+      "spokenText": "penguin",
+      "slug": "penguin",
+      "takeRel": "elevenlabs-tiles-eve/takes/penguin_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 463,
+      "spokenText": "dolphin",
+      "slug": "dolphin",
+      "takeRel": "elevenlabs-tiles-eve/takes/dolphin_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 464,
+      "spokenText": "whale",
+      "slug": "whale",
+      "takeRel": "elevenlabs-tiles-eve/takes/whale_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 465,
+      "spokenText": "snake",
+      "slug": "snake",
+      "takeRel": "elevenlabs-tiles-eve/takes/snake_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 466,
+      "spokenText": "turtle",
+      "slug": "turtle",
+      "takeRel": "elevenlabs-tiles-eve/takes/turtle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 467,
+      "spokenText": "frog",
+      "slug": "frog",
+      "takeRel": "elevenlabs-tiles-eve/takes/frog_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 468,
+      "spokenText": "bug",
+      "slug": "bug",
+      "takeRel": "elevenlabs-tiles-eve/takes/bug_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 469,
+      "spokenText": "spider",
+      "slug": "spider",
+      "takeRel": "elevenlabs-tiles-eve/takes/spider_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 470,
+      "spokenText": "butterfly",
+      "slug": "butterfly",
+      "takeRel": "elevenlabs-tiles-eve/takes/butterfly_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 471,
+      "spokenText": "tree",
+      "slug": "tree",
+      "takeRel": "elevenlabs-tiles-eve/takes/tree_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 472,
+      "spokenText": "grass",
+      "slug": "grass",
+      "takeRel": "elevenlabs-tiles-eve/takes/grass_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 473,
+      "spokenText": "flower",
+      "slug": "flower",
+      "takeRel": "elevenlabs-tiles-eve/takes/flower_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 474,
+      "spokenText": "sun",
+      "slug": "sun",
+      "takeRel": "elevenlabs-tiles-eve/takes/sun_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 475,
+      "spokenText": "rain",
+      "slug": "rain",
+      "takeRel": "elevenlabs-tiles-eve/takes/rain_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 476,
+      "spokenText": "snow",
+      "slug": "snow",
+      "takeRel": "elevenlabs-tiles-eve/takes/snow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 477,
+      "spokenText": "wind",
+      "slug": "wind",
+      "takeRel": "elevenlabs-tiles-eve/takes/wind_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 478,
+      "spokenText": "cloud",
+      "slug": "cloud",
+      "takeRel": "elevenlabs-tiles-eve/takes/cloud_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 479,
+      "spokenText": "moon",
+      "slug": "moon",
+      "takeRel": "elevenlabs-tiles-eve/takes/moon_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 480,
+      "spokenText": "vehicle",
+      "slug": "vehicle",
+      "takeRel": "elevenlabs-tiles-eve/takes/vehicle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 481,
+      "spokenText": "car",
+      "slug": "car",
+      "takeRel": "elevenlabs-tiles-eve/takes/car_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 482,
+      "spokenText": "bus",
+      "slug": "bus",
+      "takeRel": "elevenlabs-tiles-eve/takes/bus_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 483,
+      "spokenText": "school bus",
+      "slug": "school_bus",
+      "takeRel": "elevenlabs-tiles-eve/takes/school_bus_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 484,
+      "spokenText": "truck",
+      "slug": "truck",
+      "takeRel": "elevenlabs-tiles-eve/takes/truck_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 485,
+      "spokenText": "fire truck",
+      "slug": "fire_truck",
+      "takeRel": "elevenlabs-tiles-eve/takes/fire_truck_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 486,
+      "spokenText": "police car",
+      "slug": "police_car",
+      "takeRel": "elevenlabs-tiles-eve/takes/police_car_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 487,
+      "spokenText": "ambulance",
+      "slug": "ambulance",
+      "takeRel": "elevenlabs-tiles-eve/takes/ambulance_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 488,
+      "spokenText": "train",
+      "slug": "train",
+      "takeRel": "elevenlabs-tiles-eve/takes/train_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 489,
+      "spokenText": "bicycle",
+      "slug": "bicycle",
+      "takeRel": "elevenlabs-tiles-eve/takes/bicycle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 490,
+      "spokenText": "motorcycle",
+      "slug": "motorcycle",
+      "takeRel": "elevenlabs-tiles-eve/takes/motorcycle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 491,
+      "spokenText": "van",
+      "slug": "van",
+      "takeRel": "elevenlabs-tiles-eve/takes/van_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 492,
+      "spokenText": "tractor",
+      "slug": "tractor",
+      "takeRel": "elevenlabs-tiles-eve/takes/tractor_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 493,
+      "spokenText": "stroller",
+      "slug": "stroller",
+      "takeRel": "elevenlabs-tiles-eve/takes/stroller_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 494,
+      "spokenText": "airplane",
+      "slug": "airplane",
+      "takeRel": "elevenlabs-tiles-eve/takes/airplane_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 495,
+      "spokenText": "helicopter",
+      "slug": "helicopter",
+      "takeRel": "elevenlabs-tiles-eve/takes/helicopter_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 496,
+      "spokenText": "rocket",
+      "slug": "rocket",
+      "takeRel": "elevenlabs-tiles-eve/takes/rocket_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 497,
+      "spokenText": "boat",
+      "slug": "boat",
+      "takeRel": "elevenlabs-tiles-eve/takes/boat_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 498,
+      "spokenText": "ship",
+      "slug": "ship",
+      "takeRel": "elevenlabs-tiles-eve/takes/ship_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 499,
+      "spokenText": "canoe",
+      "slug": "canoe",
+      "takeRel": "elevenlabs-tiles-eve/takes/canoe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 500,
+      "spokenText": "subway",
+      "slug": "subway",
+      "takeRel": "elevenlabs-tiles-eve/takes/subway_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 501,
+      "spokenText": "road",
+      "slug": "road",
+      "takeRel": "elevenlabs-tiles-eve/takes/road_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 502,
+      "spokenText": "track",
+      "slug": "track",
+      "takeRel": "elevenlabs-tiles-eve/takes/track_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 503,
+      "spokenText": "stoplight",
+      "slug": "stoplight",
+      "takeRel": "elevenlabs-tiles-eve/takes/stoplight_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 504,
+      "spokenText": "gas station",
+      "slug": "gas_station",
+      "takeRel": "elevenlabs-tiles-eve/takes/gas_station_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 505,
+      "spokenText": "red",
+      "slug": "red",
+      "takeRel": "elevenlabs-tiles-eve/takes/red_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 506,
+      "spokenText": "blue",
+      "slug": "blue",
+      "takeRel": "elevenlabs-tiles-eve/takes/blue_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 507,
+      "spokenText": "green",
+      "slug": "green",
+      "takeRel": "elevenlabs-tiles-eve/takes/green_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 508,
+      "spokenText": "yellow",
+      "slug": "yellow",
+      "takeRel": "elevenlabs-tiles-eve/takes/yellow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 510,
+      "spokenText": "purple",
+      "slug": "purple",
+      "takeRel": "elevenlabs-tiles-eve/takes/purple_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 511,
+      "spokenText": "pink",
+      "slug": "pink",
+      "takeRel": "elevenlabs-tiles-eve/takes/pink_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 512,
+      "spokenText": "brown",
+      "slug": "brown",
+      "takeRel": "elevenlabs-tiles-eve/takes/brown_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 513,
+      "spokenText": "black",
+      "slug": "black",
+      "takeRel": "elevenlabs-tiles-eve/takes/black_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 514,
+      "spokenText": "white",
+      "slug": "white",
+      "takeRel": "elevenlabs-tiles-eve/takes/white_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 515,
+      "spokenText": "fast",
+      "slug": "fast",
+      "takeRel": "elevenlabs-tiles-eve/takes/fast_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 516,
+      "spokenText": "slow",
+      "slug": "slow",
+      "takeRel": "elevenlabs-tiles-eve/takes/slow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 517,
+      "spokenText": "tall",
+      "slug": "tall",
+      "takeRel": "elevenlabs-tiles-eve/takes/tall_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 518,
+      "spokenText": "short",
+      "slug": "short",
+      "takeRel": "elevenlabs-tiles-eve/takes/short_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 519,
+      "spokenText": "long",
+      "slug": "long",
+      "takeRel": "elevenlabs-tiles-eve/takes/long_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 520,
+      "spokenText": "heavy",
+      "slug": "heavy",
+      "takeRel": "elevenlabs-tiles-eve/takes/heavy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 521,
+      "spokenText": "light",
+      "slug": "light",
+      "takeRel": "elevenlabs-tiles-eve/takes/light_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 522,
+      "spokenText": "thick",
+      "slug": "thick",
+      "takeRel": "elevenlabs-tiles-eve/takes/thick_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 523,
+      "spokenText": "thin",
+      "slug": "thin",
+      "takeRel": "elevenlabs-tiles-eve/takes/thin_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 524,
+      "spokenText": "wide",
+      "slug": "wide",
+      "takeRel": "elevenlabs-tiles-eve/takes/wide_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 525,
+      "spokenText": "narrow",
+      "slug": "narrow",
+      "takeRel": "elevenlabs-tiles-eve/takes/narrow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 526,
+      "spokenText": "hard",
+      "slug": "hard",
+      "takeRel": "elevenlabs-tiles-eve/takes/hard_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 527,
+      "spokenText": "wet",
+      "slug": "wet",
+      "takeRel": "elevenlabs-tiles-eve/takes/wet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 528,
+      "spokenText": "dry",
+      "slug": "dry",
+      "takeRel": "elevenlabs-tiles-eve/takes/dry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 529,
+      "spokenText": "clean",
+      "slug": "clean",
+      "takeRel": "elevenlabs-tiles-eve/takes/clean_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 530,
+      "spokenText": "dirty",
+      "slug": "dirty",
+      "takeRel": "elevenlabs-tiles-eve/takes/dirty_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 531,
+      "spokenText": "smooth",
+      "slug": "smooth",
+      "takeRel": "elevenlabs-tiles-eve/takes/smooth_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 532,
+      "spokenText": "broken",
+      "slug": "broken",
+      "takeRel": "elevenlabs-tiles-eve/takes/broken_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 533,
+      "spokenText": "fixed",
+      "slug": "fixed",
+      "takeRel": "elevenlabs-tiles-eve/takes/fixed_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 534,
+      "spokenText": "empty",
+      "slug": "empty",
+      "takeRel": "elevenlabs-tiles-eve/takes/empty_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 535,
+      "spokenText": "full",
+      "slug": "full",
+      "takeRel": "elevenlabs-tiles-eve/takes/full_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 536,
+      "spokenText": "safe",
+      "slug": "safe",
+      "takeRel": "elevenlabs-tiles-eve/takes/safe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 537,
+      "spokenText": "dangerous",
+      "slug": "dangerous",
+      "takeRel": "elevenlabs-tiles-eve/takes/dangerous_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 538,
+      "spokenText": "easy",
+      "slug": "easy",
+      "takeRel": "elevenlabs-tiles-eve/takes/easy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 539,
+      "spokenText": "difficult",
+      "slug": "difficult",
+      "takeRel": "elevenlabs-tiles-eve/takes/difficult_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 540,
+      "spokenText": "right",
+      "slug": "right",
+      "takeRel": "elevenlabs-tiles-eve/takes/right_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 541,
+      "spokenText": "wrong",
+      "slug": "wrong",
+      "takeRel": "elevenlabs-tiles-eve/takes/wrong_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 542,
+      "spokenText": "new",
+      "slug": "new",
+      "takeRel": "elevenlabs-tiles-eve/takes/new_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 543,
+      "spokenText": "old",
+      "slug": "old",
+      "takeRel": "elevenlabs-tiles-eve/takes/old_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 544,
+      "spokenText": "pretty",
+      "slug": "pretty",
+      "takeRel": "elevenlabs-tiles-eve/takes/pretty_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 545,
+      "spokenText": "cool",
+      "slug": "cool",
+      "takeRel": "elevenlabs-tiles-eve/takes/cool_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 546,
+      "spokenText": "special",
+      "slug": "special",
+      "takeRel": "elevenlabs-tiles-eve/takes/special_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 547,
+      "spokenText": "ready",
+      "slug": "ready",
+      "takeRel": "elevenlabs-tiles-eve/takes/ready_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 548,
+      "spokenText": "favorite",
+      "slug": "favorite",
+      "takeRel": "elevenlabs-tiles-eve/takes/favorite_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 549,
+      "spokenText": "weird",
+      "slug": "weird",
+      "takeRel": "elevenlabs-tiles-eve/takes/weird_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 550,
+      "spokenText": "funny",
+      "slug": "funny",
+      "takeRel": "elevenlabs-tiles-eve/takes/funny_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 553,
+      "spokenText": "morning",
+      "slug": "morning",
+      "takeRel": "elevenlabs-tiles-eve/takes/morning_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 554,
+      "spokenText": "afternoon",
+      "slug": "afternoon",
+      "takeRel": "elevenlabs-tiles-eve/takes/afternoon_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 555,
+      "spokenText": "evening",
+      "slug": "evening",
+      "takeRel": "elevenlabs-tiles-eve/takes/evening_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 556,
+      "spokenText": "night",
+      "slug": "night",
+      "takeRel": "elevenlabs-tiles-eve/takes/night_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 557,
+      "spokenText": "bedtime",
+      "slug": "bedtime",
+      "takeRel": "elevenlabs-tiles-eve/takes/bedtime_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 558,
+      "spokenText": "naptime",
+      "slug": "naptime",
+      "takeRel": "elevenlabs-tiles-eve/takes/naptime_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 559,
+      "spokenText": "now",
+      "slug": "now",
+      "takeRel": "elevenlabs-tiles-eve/takes/now_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 560,
+      "spokenText": "later",
+      "slug": "later",
+      "takeRel": "elevenlabs-tiles-eve/takes/later_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 561,
+      "spokenText": "soon",
+      "slug": "soon",
+      "takeRel": "elevenlabs-tiles-eve/takes/soon_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 562,
+      "spokenText": "today",
+      "slug": "today",
+      "takeRel": "elevenlabs-tiles-eve/takes/today_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 563,
+      "spokenText": "tomorrow",
+      "slug": "tomorrow",
+      "takeRel": "elevenlabs-tiles-eve/takes/tomorrow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 564,
+      "spokenText": "yesterday",
+      "slug": "yesterday",
+      "takeRel": "elevenlabs-tiles-eve/takes/yesterday_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 565,
+      "spokenText": "before",
+      "slug": "before",
+      "takeRel": "elevenlabs-tiles-eve/takes/before_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 566,
+      "spokenText": "after",
+      "slug": "after",
+      "takeRel": "elevenlabs-tiles-eve/takes/after_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 567,
+      "spokenText": "again",
+      "slug": "again",
+      "takeRel": "elevenlabs-tiles-eve/takes/again_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 568,
+      "spokenText": "always",
+      "slug": "always",
+      "takeRel": "elevenlabs-tiles-eve/takes/always_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 569,
+      "spokenText": "never",
+      "slug": "never",
+      "takeRel": "elevenlabs-tiles-eve/takes/never_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 570,
+      "spokenText": "sometimes",
+      "slug": "sometimes",
+      "takeRel": "elevenlabs-tiles-eve/takes/sometimes_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 571,
+      "spokenText": "first",
+      "slug": "first",
+      "takeRel": "elevenlabs-tiles-eve/takes/first_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 572,
+      "spokenText": "next",
+      "slug": "next",
+      "takeRel": "elevenlabs-tiles-eve/takes/next_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 573,
+      "spokenText": "then",
+      "slug": "then",
+      "takeRel": "elevenlabs-tiles-eve/takes/then_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 574,
+      "spokenText": "last",
+      "slug": "last",
+      "takeRel": "elevenlabs-tiles-eve/takes/last_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 575,
+      "spokenText": "minute",
+      "slug": "minute",
+      "takeRel": "elevenlabs-tiles-eve/takes/minute_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 576,
+      "spokenText": "hour",
+      "slug": "hour",
+      "takeRel": "elevenlabs-tiles-eve/takes/hour_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 583,
+      "spokenText": "hello",
+      "slug": "hello",
+      "takeRel": "elevenlabs-tiles-eve/takes/hello_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 584,
+      "spokenText": "hi",
+      "slug": "hi",
+      "takeRel": "elevenlabs-tiles-eve/takes/hi_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 585,
+      "spokenText": "goodbye",
+      "slug": "goodbye",
+      "takeRel": "elevenlabs-tiles-eve/takes/goodbye_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 586,
+      "spokenText": "bye",
+      "slug": "bye",
+      "takeRel": "elevenlabs-tiles-eve/takes/bye_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 587,
+      "spokenText": "thank you",
+      "slug": "thank_you",
+      "takeRel": "elevenlabs-tiles-eve/takes/thank_you_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 588,
+      "spokenText": "you're welcome",
+      "slug": "you_re_welcome",
+      "takeRel": "elevenlabs-tiles-eve/takes/you_re_welcome_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 589,
+      "spokenText": "sorry",
+      "slug": "sorry",
+      "takeRel": "elevenlabs-tiles-eve/takes/sorry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 590,
+      "spokenText": "excuse me",
+      "slug": "excuse_me",
+      "takeRel": "elevenlabs-tiles-eve/takes/excuse_me_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 591,
+      "spokenText": "good morning",
+      "slug": "good_morning",
+      "takeRel": "elevenlabs-tiles-eve/takes/good_morning_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 592,
+      "spokenText": "good night",
+      "slug": "good_night",
+      "takeRel": "elevenlabs-tiles-eve/takes/good_night_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 593,
+      "spokenText": "okay",
+      "slug": "okay",
+      "takeRel": "elevenlabs-tiles-eve/takes/okay_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 594,
+      "spokenText": "ready to go",
+      "slug": "ready_to_go",
+      "takeRel": "elevenlabs-tiles-eve/takes/ready_to_go_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 595,
+      "spokenText": "wow",
+      "slug": "wow",
+      "takeRel": "elevenlabs-tiles-eve/takes/wow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 596,
+      "spokenText": "really",
+      "slug": "really",
+      "takeRel": "elevenlabs-tiles-eve/takes/really_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 597,
+      "spokenText": "maybe",
+      "slug": "maybe",
+      "takeRel": "elevenlabs-tiles-eve/takes/maybe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 598,
+      "spokenText": "I don't know",
+      "slug": "i_don_t_know",
+      "takeRel": "elevenlabs-tiles-eve/takes/i_don_t_know_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 599,
+      "spokenText": "look at this",
+      "slug": "look_at_this",
+      "takeRel": "elevenlabs-tiles-eve/takes/look_at_this_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 600,
+      "spokenText": "my turn",
+      "slug": "my_turn",
+      "takeRel": "elevenlabs-tiles-eve/takes/my_turn_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 601,
+      "spokenText": "your turn",
+      "slug": "your_turn",
+      "takeRel": "elevenlabs-tiles-eve/takes/your_turn_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 602,
+      "spokenText": "careful",
+      "slug": "careful",
+      "takeRel": "elevenlabs-tiles-eve/takes/careful_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 603,
+      "spokenText": "emergency",
+      "slug": "emergency",
+      "takeRel": "elevenlabs-tiles-eve/takes/emergency_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 604,
+      "spokenText": "no way",
+      "slug": "no_way",
+      "takeRel": "elevenlabs-tiles-eve/takes/no_way_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 605,
+      "spokenText": "don't",
+      "slug": "don_t",
+      "takeRel": "elevenlabs-tiles-eve/takes/don_t_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 607,
+      "spokenText": "is",
+      "slug": "is",
+      "takeRel": "elevenlabs-tiles-eve/takes/is_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 608,
+      "spokenText": "are",
+      "slug": "are",
+      "takeRel": "elevenlabs-tiles-eve/takes/are_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 609,
+      "spokenText": "am",
+      "slug": "am",
+      "takeRel": "elevenlabs-tiles-eve/takes/am_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 610,
+      "spokenText": "was",
+      "slug": "was",
+      "takeRel": "elevenlabs-tiles-eve/takes/was_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 611,
+      "spokenText": "were",
+      "slug": "were",
+      "takeRel": "elevenlabs-tiles-eve/takes/were_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 612,
+      "spokenText": "has",
+      "slug": "has",
+      "takeRel": "elevenlabs-tiles-eve/takes/has_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 613,
+      "spokenText": "had",
+      "slug": "had",
+      "takeRel": "elevenlabs-tiles-eve/takes/had_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 614,
+      "spokenText": "will",
+      "slug": "will",
+      "takeRel": "elevenlabs-tiles-eve/takes/will_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 615,
+      "spokenText": "would",
+      "slug": "would",
+      "takeRel": "elevenlabs-tiles-eve/takes/would_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 616,
+      "spokenText": "can't",
+      "slug": "can_t",
+      "takeRel": "elevenlabs-tiles-eve/takes/can_t_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 617,
+      "spokenText": "won't",
+      "slug": "won_t",
+      "takeRel": "elevenlabs-tiles-eve/takes/won_t_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 618,
+      "spokenText": "didn't",
+      "slug": "didn_t",
+      "takeRel": "elevenlabs-tiles-eve/takes/didn_t_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 619,
+      "spokenText": "a",
+      "slug": "a",
+      "takeRel": "elevenlabs-tiles-eve/takes/a_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 620,
+      "spokenText": "an",
+      "slug": "an",
+      "takeRel": "elevenlabs-tiles-eve/takes/an_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 621,
+      "spokenText": "the",
+      "slug": "the",
+      "takeRel": "elevenlabs-tiles-eve/takes/the_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 622,
+      "spokenText": "of",
+      "slug": "of",
+      "takeRel": "elevenlabs-tiles-eve/takes/of_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 623,
+      "spokenText": "every",
+      "slug": "every",
+      "takeRel": "elevenlabs-tiles-eve/takes/every_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 624,
+      "spokenText": "each",
+      "slug": "each",
+      "takeRel": "elevenlabs-tiles-eve/takes/each_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 625,
+      "spokenText": "another",
+      "slug": "another",
+      "takeRel": "elevenlabs-tiles-eve/takes/another_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 626,
+      "spokenText": "other",
+      "slug": "other",
+      "takeRel": "elevenlabs-tiles-eve/takes/other_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 627,
+      "spokenText": "so",
+      "slug": "so",
+      "takeRel": "elevenlabs-tiles-eve/takes/so_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 628,
+      "spokenText": "if",
+      "slug": "if",
+      "takeRel": "elevenlabs-tiles-eve/takes/if_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 629,
+      "spokenText": "him",
+      "slug": "him",
+      "takeRel": "elevenlabs-tiles-eve/takes/him_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 630,
+      "spokenText": "her",
+      "slug": "her",
+      "takeRel": "elevenlabs-tiles-eve/takes/her_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 631,
+      "spokenText": "us",
+      "slug": "us",
+      "takeRel": "elevenlabs-tiles-eve/takes/us_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 632,
+      "spokenText": "them",
+      "slug": "them",
+      "takeRel": "elevenlabs-tiles-eve/takes/them_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 633,
+      "spokenText": "his",
+      "slug": "his",
+      "takeRel": "elevenlabs-tiles-eve/takes/his_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 634,
+      "spokenText": "your",
+      "slug": "your",
+      "takeRel": "elevenlabs-tiles-eve/takes/your_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 635,
+      "spokenText": "our",
+      "slug": "our",
+      "takeRel": "elevenlabs-tiles-eve/takes/our_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 636,
+      "spokenText": "their",
+      "slug": "their",
+      "takeRel": "elevenlabs-tiles-eve/takes/their_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 637,
+      "spokenText": "something",
+      "slug": "something",
+      "takeRel": "elevenlabs-tiles-eve/takes/something_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 638,
+      "spokenText": "someone",
+      "slug": "someone",
+      "takeRel": "elevenlabs-tiles-eve/takes/someone_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 639,
+      "spokenText": "everyone",
+      "slug": "everyone",
+      "takeRel": "elevenlabs-tiles-eve/takes/everyone_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 640,
+      "spokenText": "thing",
+      "slug": "thing",
+      "takeRel": "elevenlabs-tiles-eve/takes/thing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 641,
+      "spokenText": "very",
+      "slug": "very",
+      "takeRel": "elevenlabs-tiles-eve/takes/very_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 642,
+      "spokenText": "too",
+      "slug": "too",
+      "takeRel": "elevenlabs-tiles-eve/takes/too_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 643,
+      "spokenText": "just",
+      "slug": "just",
+      "takeRel": "elevenlabs-tiles-eve/takes/just_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 644,
+      "spokenText": "also",
+      "slug": "also",
+      "takeRel": "elevenlabs-tiles-eve/takes/also_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 645,
+      "spokenText": "only",
+      "slug": "only",
+      "takeRel": "elevenlabs-tiles-eve/takes/only_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 646,
+      "spokenText": "still",
+      "slug": "still",
+      "takeRel": "elevenlabs-tiles-eve/takes/still_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 647,
+      "spokenText": "one",
+      "slug": "one",
+      "takeRel": "elevenlabs-tiles-eve/takes/one_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 648,
+      "spokenText": "two",
+      "slug": "two",
+      "takeRel": "elevenlabs-tiles-eve/takes/two_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 649,
+      "spokenText": "three",
+      "slug": "three",
+      "takeRel": "elevenlabs-tiles-eve/takes/three_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 650,
+      "spokenText": "four",
+      "slug": "four",
+      "takeRel": "elevenlabs-tiles-eve/takes/four_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 651,
+      "spokenText": "five",
+      "slug": "five",
+      "takeRel": "elevenlabs-tiles-eve/takes/five_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 652,
+      "spokenText": "six",
+      "slug": "six",
+      "takeRel": "elevenlabs-tiles-eve/takes/six_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 653,
+      "spokenText": "seven",
+      "slug": "seven",
+      "takeRel": "elevenlabs-tiles-eve/takes/seven_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 654,
+      "spokenText": "eight",
+      "slug": "eight",
+      "takeRel": "elevenlabs-tiles-eve/takes/eight_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 655,
+      "spokenText": "nine",
+      "slug": "nine",
+      "takeRel": "elevenlabs-tiles-eve/takes/nine_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 656,
+      "spokenText": "ten",
+      "slug": "ten",
+      "takeRel": "elevenlabs-tiles-eve/takes/ten_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 657,
+      "spokenText": "breakfast",
+      "slug": "breakfast",
+      "takeRel": "elevenlabs-tiles-eve/takes/breakfast_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 658,
+      "spokenText": "lunch",
+      "slug": "lunch",
+      "takeRel": "elevenlabs-tiles-eve/takes/lunch_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 659,
+      "spokenText": "dinner",
+      "slug": "dinner",
+      "takeRel": "elevenlabs-tiles-eve/takes/dinner_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 660,
+      "spokenText": "food",
+      "slug": "food",
+      "takeRel": "elevenlabs-tiles-eve/takes/food_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 661,
+      "spokenText": "ketchup",
+      "slug": "ketchup",
+      "takeRel": "elevenlabs-tiles-eve/takes/ketchup_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 662,
+      "spokenText": "fries",
+      "slug": "fries",
+      "takeRel": "elevenlabs-tiles-eve/takes/fries_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 663,
+      "spokenText": "poop",
+      "slug": "poop",
+      "takeRel": "elevenlabs-tiles-eve/takes/poop_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 664,
+      "spokenText": "pee",
+      "slug": "pee",
+      "takeRel": "elevenlabs-tiles-eve/takes/pee_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 665,
+      "spokenText": "hit",
+      "slug": "hit",
+      "takeRel": "elevenlabs-tiles-eve/takes/hit_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 666,
+      "spokenText": "bite",
+      "slug": "bite",
+      "takeRel": "elevenlabs-tiles-eve/takes/bite_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 667,
+      "spokenText": "break",
+      "slug": "break",
+      "takeRel": "elevenlabs-tiles-eve/takes/break_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 668,
+      "spokenText": "scratch",
+      "slug": "scratch",
+      "takeRel": "elevenlabs-tiles-eve/takes/scratch_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 669,
+      "spokenText": "close",
+      "slug": "close",
+      "takeRel": "elevenlabs-tiles-eve/takes/close_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 670,
+      "spokenText": "shut",
+      "slug": "shut",
+      "takeRel": "elevenlabs-tiles-eve/takes/shut_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 671,
+      "spokenText": "tickle",
+      "slug": "tickle",
+      "takeRel": "elevenlabs-tiles-eve/takes/tickle_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 672,
+      "spokenText": "boy",
+      "slug": "boy",
+      "takeRel": "elevenlabs-tiles-eve/takes/boy_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 673,
+      "spokenText": "girl",
+      "slug": "girl",
+      "takeRel": "elevenlabs-tiles-eve/takes/girl_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 674,
+      "spokenText": "man",
+      "slug": "man",
+      "takeRel": "elevenlabs-tiles-eve/takes/man_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 675,
+      "spokenText": "woman",
+      "slug": "woman",
+      "takeRel": "elevenlabs-tiles-eve/takes/woman_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 676,
+      "spokenText": "love",
+      "slug": "love",
+      "takeRel": "elevenlabs-tiles-eve/takes/love_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 677,
+      "spokenText": "together",
+      "slug": "together",
+      "takeRel": "elevenlabs-tiles-eve/takes/together_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 678,
+      "spokenText": "ow",
+      "slug": "ow",
+      "takeRel": "elevenlabs-tiles-eve/takes/ow_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 679,
+      "spokenText": "yours",
+      "slug": "yours",
+      "takeRel": "elevenlabs-tiles-eve/takes/yours_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 680,
+      "spokenText": "these",
+      "slug": "these",
+      "takeRel": "elevenlabs-tiles-eve/takes/these_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 681,
+      "spokenText": "those",
+      "slug": "those",
+      "takeRel": "elevenlabs-tiles-eve/takes/those_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 682,
+      "spokenText": "nothing",
+      "slug": "nothing",
+      "takeRel": "elevenlabs-tiles-eve/takes/nothing_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 683,
+      "spokenText": "behind",
+      "slug": "behind",
+      "takeRel": "elevenlabs-tiles-eve/takes/behind_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 684,
+      "spokenText": "did",
+      "slug": "did",
+      "takeRel": "elevenlabs-tiles-eve/takes/did_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 685,
+      "spokenText": "wait, I'm spelling",
+      "slug": "wait_i_m_spelling",
+      "takeRel": "elevenlabs-tiles-eve/takes/wait_i_m_spelling_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 686,
+      "spokenText": "guess my word",
+      "slug": "guess_my_word",
+      "takeRel": "elevenlabs-tiles-eve/takes/guess_my_word_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 687,
+      "spokenText": "oops",
+      "slug": "oops",
+      "takeRel": "elevenlabs-tiles-eve/takes/oops_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 688,
+      "spokenText": "cucumber",
+      "slug": "cucumber",
+      "takeRel": "elevenlabs-tiles-eve/takes/cucumber_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 689,
+      "spokenText": "pepper",
+      "slug": "pepper",
+      "takeRel": "elevenlabs-tiles-eve/takes/pepper_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 690,
+      "spokenText": "granola bar",
+      "slug": "granola_bar",
+      "takeRel": "elevenlabs-tiles-eve/takes/granola_bar_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 691,
+      "spokenText": "string cheese",
+      "slug": "string_cheese",
+      "takeRel": "elevenlabs-tiles-eve/takes/string_cheese_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 692,
+      "spokenText": "applesauce",
+      "slug": "applesauce",
+      "takeRel": "elevenlabs-tiles-eve/takes/applesauce_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 694,
+      "spokenText": "banana bread",
+      "slug": "banana_bread",
+      "takeRel": "elevenlabs-tiles-eve/takes/banana_bread_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 695,
+      "spokenText": "goldfish crackers",
+      "slug": "goldfish_crackers",
+      "takeRel": "elevenlabs-tiles-eve/takes/goldfish_crackers_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 696,
+      "spokenText": "pudding",
+      "slug": "pudding",
+      "takeRel": "elevenlabs-tiles-eve/takes/pudding_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 697,
+      "spokenText": "jello",
+      "slug": "jello",
+      "takeRel": "elevenlabs-tiles-eve/takes/jello_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 698,
+      "spokenText": "brownie",
+      "slug": "brownie",
+      "takeRel": "elevenlabs-tiles-eve/takes/brownie_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 699,
+      "spokenText": "cupcake",
+      "slug": "cupcake",
+      "takeRel": "elevenlabs-tiles-eve/takes/cupcake_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 700,
+      "spokenText": "chocolate",
+      "slug": "chocolate",
+      "takeRel": "elevenlabs-tiles-eve/takes/chocolate_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 701,
+      "spokenText": "lollipop",
+      "slug": "lollipop",
+      "takeRel": "elevenlabs-tiles-eve/takes/lollipop_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 702,
+      "spokenText": "dessert",
+      "slug": "dessert",
+      "takeRel": "elevenlabs-tiles-eve/takes/dessert_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 703,
+      "spokenText": "blueberry",
+      "slug": "blueberry",
+      "takeRel": "elevenlabs-tiles-eve/takes/blueberry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 704,
+      "spokenText": "raspberry",
+      "slug": "raspberry",
+      "takeRel": "elevenlabs-tiles-eve/takes/raspberry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 705,
+      "spokenText": "blackberry",
+      "slug": "blackberry",
+      "takeRel": "elevenlabs-tiles-eve/takes/blackberry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 706,
+      "spokenText": "cherry",
+      "slug": "cherry",
+      "takeRel": "elevenlabs-tiles-eve/takes/cherry_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 707,
+      "spokenText": "peach",
+      "slug": "peach",
+      "takeRel": "elevenlabs-tiles-eve/takes/peach_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 708,
+      "spokenText": "pear",
+      "slug": "pear",
+      "takeRel": "elevenlabs-tiles-eve/takes/pear_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 709,
+      "spokenText": "mango",
+      "slug": "mango",
+      "takeRel": "elevenlabs-tiles-eve/takes/mango_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 710,
+      "spokenText": "pineapple",
+      "slug": "pineapple",
+      "takeRel": "elevenlabs-tiles-eve/takes/pineapple_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 711,
+      "spokenText": "kiwi",
+      "slug": "kiwi",
+      "takeRel": "elevenlabs-tiles-eve/takes/kiwi_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 712,
+      "spokenText": "cantaloupe",
+      "slug": "cantaloupe",
+      "takeRel": "elevenlabs-tiles-eve/takes/cantaloupe_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 713,
+      "spokenText": "melon",
+      "slug": "melon",
+      "takeRel": "elevenlabs-tiles-eve/takes/melon_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 714,
+      "spokenText": "coconut",
+      "slug": "coconut",
+      "takeRel": "elevenlabs-tiles-eve/takes/coconut_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 715,
+      "spokenText": "orange juice",
+      "slug": "orange_juice",
+      "takeRel": "elevenlabs-tiles-eve/takes/orange_juice_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 716,
+      "spokenText": "grape juice",
+      "slug": "grape_juice",
+      "takeRel": "elevenlabs-tiles-eve/takes/grape_juice_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 717,
+      "spokenText": "strawberry milk",
+      "slug": "strawberry_milk",
+      "takeRel": "elevenlabs-tiles-eve/takes/strawberry_milk_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 718,
+      "spokenText": "lemonade",
+      "slug": "lemonade",
+      "takeRel": "elevenlabs-tiles-eve/takes/lemonade_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 719,
+      "spokenText": "hot chocolate",
+      "slug": "hot_chocolate",
+      "takeRel": "elevenlabs-tiles-eve/takes/hot_chocolate_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 720,
+      "spokenText": "milkshake",
+      "slug": "milkshake",
+      "takeRel": "elevenlabs-tiles-eve/takes/milkshake_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    }
+  ]
+}
