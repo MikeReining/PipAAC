@@ -33,8 +33,8 @@ export function mountLifetime({ me, sayClip, hearFree, show, toast, trial }) {
     line.hidden = false;
     const days = t.endsAt ? Math.ceil((t.endsAt - Date.now()) / 86_400_000) : 0;
     line.textContent = days > 0
-      ? `Free trial · ${days} day${days === 1 ? "" : "s"} left — everything below is on`
-      : "Free trial ended — everything below is waiting";
+      ? `Free trial · ${days} day${days === 1 ? "" : "s"} left. Everything below is on.`
+      : "Free trial ended. Buy to turn it all back on.";
   }
 
   /* Hear the difference — the real thing both ways: the free side plays
