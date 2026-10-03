@@ -13,6 +13,7 @@
  * resources are byte-compared).
  */
 importScripts("/sw-build.js");
+if (!self.SW_BUILD) throw new Error("sw-build.js missing SW_BUILD");
 
 const SHELL = `pip-shell-${self.SW_BUILD}`;
 const IMG_CACHE = "pip-img-v1";

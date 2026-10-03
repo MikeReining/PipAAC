@@ -1,8 +1,25 @@
 # 036 — Works offline (app-shell service worker)
 
-**Status:** PROPOSED 2026-10-02 — plan only, nothing built. This phase is
+**Status:** EXECUTED 2026-10-02 (commits `8492b83` SW + manifest +
+registration + gate, `bb07965` offline probe, `724e6bd` budget entry) —
+the scripted gate passes; the real-device Works Test is the founder gate
+before the claim goes live. This phase is
 the gate for the "works offline" marketing claim; the 035 proposal's
 claims table already flags it as untrue from a cold start.
+
+**Landed:** `scripts/sw/sw_manifest.mjs` generates `public/sw-manifest.json`
+(3,519 files, 66.8 MB — includes all symbols + audio) and
+`public/sw-build.js`; `public/sw.js` precaches at install, cleans old
+`pip-shell-*` at activate, serves `/`+`/index.html` navigations from
+cache, answers Range from cached media, runtime-caches
+`/api/v1/pictures/img/*`, and never caches api/admin/auth paths;
+`index.html` registers the SW post-load. Drift gate `sw:manifest` is in
+`check:fast`; `scripts/probes/offline_probe.mjs` is the repeatable gate
+— it emulates offline on page *and* SW targets and asserts board boot,
+form_table decode, art, and audio.
+**Founder-gated:** § 5 steps 1–5 on the real iPad (Add to Home Screen,
+airplane-mode cold launch, speech, offline edit, reconnect), then the
+claim goes live.
 **Sequenced after 037** (founder 2026-10-02): the payload diet lands
 first so the precache covers every symbol, not just art seen before.
 037's code landed 2026-10-02 and its byte gate passes — 036 is unblocked;
@@ -60,10 +77,13 @@ fonts — any one failing while offline is a dead page.
 - `public/sw.js`: on install, precache the shell into a versioned cache
   (`pip-shell-v<N>`).
 - No bundler → the file list is **generated**:
-  `scripts/build/sw_manifest.mjs` writes `public/sw-manifest.json`
-  (`{path, sha256, bytes}` per file), `sw.js` reads it at install.
+  `scripts/sw/sw_manifest.mjs` writes `public/sw-manifest.json`
+  (`{path, sha256, bytes}` per file) plus `public/sw-build.js` (the build
+  id `sw.js` imports — a manifest bump byte-changes it, which is what the
+  browser's SW update check compares), `sw.js` reads it at install.
   Drift-checked in `npm run check:fast` — a hand-maintained list will
-  lie.
+  lie. Any unclassified file at the `public/` root fails the build —
+  precache or exclude it deliberately.
 - Precache set ≈ **70 MB** (62 MB + ~8 MB symbols from 037): shell (index.html, `/board/*`, `/shared/*`,
   `/vendor/sqlite-wasm`, `/fonts`, `/brand`, `/icons`,
   `manifest.webmanifest`, `feeling_voice.json`, `/audio/onramp/*`)
@@ -109,8 +129,14 @@ silently ship a lazy path under an "offline" claim.)
   reload can lose a half-built sentence in a fullscreen app). If a
   grown-up-visible "update ready" toast is wanted it goes to the
   adult surface only. Decide at build time and record it here.
+  **Decided 2026-10-02:** no toast. `sw.js` ships without
+  `skipWaiting()` — a new build installs its new `pip-shell-*` cache in
+  the background, waits for every tab to close, and takes over on the
+  next cold start. `index.html` only registers and calls `update()`.
 - `sw.js` itself stays outside `pip-shell-*` (browsers revalidate it on
-  their own ≤24 h cycle).
+  their own ≤24 h cycle; registration also passes
+  `updateViaCache: "none"` so the script and `sw-build.js` are
+  byte-fresh on every check).
 
 ### E — iOS install surface
 
@@ -126,6 +152,11 @@ silently ship a lazy path under an "offline" claim.)
   Worker route — everything precached is a real file under `public/`
   today except `/form_table.en.json`, which the SW should cache as the
   `.gz` asset or let the Worker response land in the runtime cache.
+  **Resolved 2026-10-02:** the manifest lists `/form_table.en.json` as a
+  synthetic entry (hashed from the `.gz` file); the SW fetches the Worker
+  route at install — `fetch()` transparently gunzips — and stores the
+  decoded body with the stale `content-encoding` header stripped, so
+  replays are plain JSON on every browser. Verified offline in the probe.
 - SW and `run_worker_first` don't conflict (SW is client-side), but note
   the header story: COOP/COEP/CORP are attached in `src/worker/index.js`
   — a served `sw.js` is same-origin and unaffected.

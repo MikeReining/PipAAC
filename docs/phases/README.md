@@ -56,7 +56,7 @@ Executing phases only. Each row names the **next** slice.
 | --- | --- |
 | [035 — pipaac.org design + copy proposal](035_Marketing_Site_Proposal.md) | Direction set 2026-10-02 (board first, $300 headline, /method attack page). Next: hero mockup (§ 13); founder story + contact (§ 14) |
 | [037 — Shipped payload diet](037_Shipped_Payload_Diet.md) | Executed 2026-10-02 — symbols 600 MB → 7.3 MB WebP in `catalog:build`, byte + stamp gates live, `_headers` shipped. Open: founder tile-size art review, `pictures:index` re-embed, deploy |
-| [036 — Works offline](036_Offline_Support.md) | Founder go/no-go on the service-worker phase; § 3C decided: full symbol precache; starts after 037's byte gate passes. Gates the "works offline" claim |
+| [036 — Works offline](036_Offline_Support.md) | Executed 2026-10-02 — `sw.js` + generated precache (3,519 files, 66.8 MB), offline probe passes (board boots with page+SW networks dead). Open: real-iPad Works Test, then the claim goes live |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
 
 The language and voice schema was accepted 2026-09-22 and moved to
