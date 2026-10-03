@@ -166,7 +166,12 @@ CREATE TABLE IF NOT EXISTS learner_profile (
   -- The person's name (2026-10-02), synced and sealed like every edit so a
   -- restored or newly linked device knows who this is. The device's people
   -- list keeps a copy for the launch list, which reads it unopened.
-  person_name TEXT CHECK (person_name IS NULL OR length(person_name) BETWEEN 1 AND 80)
+  person_name TEXT CHECK (person_name IS NULL OR length(person_name) BETWEEN 1 AND 80),
+  -- Sentence bar (038): which buttons the person sees, as a JSON list of
+  -- shown control names (fix question past future backspace clear). NULL
+  -- is Everything, the pre-038 bar. Play is never listed: it always
+  -- shows. Synced, adult-set only.
+  bar_controls TEXT
 );
 
 CREATE TABLE IF NOT EXISTS personal_entity (

@@ -160,6 +160,8 @@ export const ADDITIVE_COLUMNS = {
     "speech_rate TEXT NOT NULL DEFAULT 'normal' CHECK (speech_rate IN ('slower', 'normal', 'faster'))",
     // The person's name, synced (2026-10-02, shared/person_name.mjs).
     "person_name TEXT CHECK (person_name IS NULL OR length(person_name) BETWEEN 1 AND 80)",
+    // Sentence bar settings (038): JSON list of shown controls; NULL = all.
+    "bar_controls TEXT",
   ],
   // 032 E: the ✨ / ❓ buttons a Spotlight list lights.
   spotlight_list: "controls TEXT",

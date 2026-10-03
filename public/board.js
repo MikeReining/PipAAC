@@ -46,6 +46,7 @@ import {
 } from "./shared/txbar.mjs";
 import { EOS, formFor } from "./shared/forms.mjs";
 import { expressiveOn, loadFeelingData } from "./shared/feeling.mjs";
+import { barControls } from "./shared/bar.mjs";
 
 import { coreCells, placeOnBoard } from "./shared/coremove.mjs";
 import { useCounts } from "./shared/usecounts.mjs";
@@ -181,6 +182,7 @@ function onSyncApplied() {
     syncFreshSeg();
     syncGrammarSeg();    // Grammar help syncs like the other segs
     syncLook();          // Words only syncs too
+    syncBarSeg();        // the bar's button set syncs too (038)
     voiceId = resolveProfile(db).voiceId; // a voice chosen on another device
     syncSpeed();
     voiceUi.renderRow();
@@ -433,7 +435,7 @@ const {
 });
 
 /* Settings-synced seg controls — public/board/settings-sync.js. */
-const { syncFreshSeg, syncGrammarSeg, syncExpressiveSeg, syncLook, setLook } =
+const { syncFreshSeg, syncGrammarSeg, syncExpressiveSeg, syncLook, setLook, syncBarSeg } =
   mountSettingsSync({
     db, live, toast, sampleVoice,
     renderBar, renderGrid, renderStrip, rerenderView,
@@ -1315,6 +1317,8 @@ const tourUi = mountTour({
     clearBar: () => $("clear").click(),
     say: sayClip, // instruction cards — recorded clips, never device TTS
     openVoices: () => gatePin(() => { settingsUi.open("talking"); voiceUi.openPicker(); }),
+    // 038: the tour only walks buttons the person actually has.
+    shownControls: () => barControls(db),
   },
 });
 $("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });

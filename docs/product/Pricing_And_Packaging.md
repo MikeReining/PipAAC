@@ -129,6 +129,7 @@ subscription before a child can speak
 | The web editor, for that supporter | The web editor, for every supporter |
 | The weekly win card (a preview of the stats) | The full stats dashboard and the progress report (`docs/product/Stats_And_Progress.md` § 4) |
 | 5 drawings (Draw it for me) | 300 drawings, then top-up packs near cost |
+| **10 free ✨ ❓ ⏪ ⏩ taps, one time** (taste of the sentence buttons; DECIDED 2026-10-03, `docs/phases/039_Free_Taste.md`, not built) | Unlimited ✨ ❓ ⏪ ⏩ (fair use) |
 | All voices, prediction, groups, hiding words, Record my own | (same) |
 | Backup, QR card restore, moving to a new device | (same) |
 

@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-b4f467b8734f",
+  "buildId": "r1-a9b84f577213",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -13098,8 +13098,8 @@
     },
     {
       "path": "/board.js",
-      "bytes": 59024,
-      "sha256": "d2ef1a95afafcb8f7b4e50716e041bfc7005f8f661275a4b8715af1a5e25ba86"
+      "bytes": 59256,
+      "sha256": "3672048e97d1c1504e5ec1497c434c69c384b85b7724669fd0907f326ffc4ee2"
     },
     {
       "path": "/board/add-flow.css",
@@ -13113,8 +13113,8 @@
     },
     {
       "path": "/board/base.css",
-      "bytes": 25066,
-      "sha256": "23fa4611fd9158878d8aa173513241902eca169bb8bbc3480bce149de24ed151"
+      "bytes": 25985,
+      "sha256": "70f565e3726dee3bfb955d0c4a1f04943e5e00ae708bdb07ce65da5e868befa6"
     },
     {
       "path": "/board/cells-sheet.css",
@@ -13278,8 +13278,8 @@
     },
     {
       "path": "/board/progress-ui.js",
-      "bytes": 19755,
-      "sha256": "2cbdfac2ac902a5aa5f6c7b17f5f7898eeb11df23b74c048ca59613273eb7243"
+      "bytes": 19937,
+      "sha256": "0c4d348818562773ff63fb24b736e76c71eef1a8f85b1564fcb23e79fc2d55d3"
     },
     {
       "path": "/board/recovery-ui.css",
@@ -13303,18 +13303,18 @@
     },
     {
       "path": "/board/settings-sync.js",
-      "bytes": 6906,
-      "sha256": "2471cb09e178f90ffed53ba9c4fbe1ed4e807cf0a5f3be7425747a7c097f7b47"
+      "bytes": 8951,
+      "sha256": "0b1f5a87e19a794721a862dd504087825cb28677efeef7b494e67f1d779d8aca"
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 12440,
-      "sha256": "1bcc20119232fb23604fa4b85b335e94d8274f17026f5aba27c07d355ac793ab"
+      "bytes": 13126,
+      "sha256": "866527f33f2cb8ec1ddeb52f57b4d9909eae90f9b6504b1354a93d7208a1c8e7"
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 18480,
-      "sha256": "205cc58cc06cf612eb33d2c870f6cd85e8d7f54dd7b9c4d825828c41f8278a20"
+      "bytes": 18532,
+      "sha256": "1e378123d3a2871e1173fa7e29f56da214ad5e41d1f0e9a7209d9d31292e516e"
     },
     {
       "path": "/board/setup-ui.css",
@@ -13333,8 +13333,8 @@
     },
     {
       "path": "/board/spotlight-demo.js",
-      "bytes": 8839,
-      "sha256": "22b72cce1f6adfc239280ac7586c478b9487ee111c92e3680574f224e1e39699"
+      "bytes": 9607,
+      "sha256": "d7c5a3eb21a1b36064cf5d23ae6603cf392638f261245bc7b7a582c783f4e679"
     },
     {
       "path": "/board/spotlight-layer.js",
@@ -13348,8 +13348,8 @@
     },
     {
       "path": "/board/spotlight-sheet.js",
-      "bytes": 12320,
-      "sha256": "0a9234607b1f1558d45c035eafde8ead717aff16a444aefd2b97f811bcd4ef84"
+      "bytes": 12579,
+      "sha256": "12f4f2f9ad3f0ecbecfadfe5fd6c986f5d0fe41c6320805bc019117139c8dd0e"
     },
     {
       "path": "/board/strip.js",
@@ -13358,8 +13358,8 @@
     },
     {
       "path": "/board/tour-ui.js",
-      "bytes": 6740,
-      "sha256": "33be460a26cb6a9f6fa50cc73d39a19855d0a44e5275f0619e9a697418697a13"
+      "bytes": 7547,
+      "sha256": "a5cad4b31495a745b148d7b138e0dc1151ae5b4a25bd003a68b1280c964c452e"
     },
     {
       "path": "/board/unlock.js",
@@ -13799,8 +13799,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 56344,
-      "sha256": "f63bfe4db892611e9860bbf4bc4bdf3004720b7b518d70aa7b6fad9abdcb631a"
+      "bytes": 58095,
+      "sha256": "2afefacd3ac4ea1f17c69da3781d7ecdcdbadd62ccf3bd365e7ac07f2019b664"
     },
     {
       "path": "/manifest.webmanifest",
@@ -13816,6 +13816,11 @@
       "path": "/shared/account.mjs",
       "bytes": 12251,
       "sha256": "42d734986ef1773927e502625c2465c82dea53df95ce8c13f7a68fc14c32c292"
+    },
+    {
+      "path": "/shared/bar.mjs",
+      "bytes": 2473,
+      "sha256": "bf421d158e929fd1cd6bee2cb9170a043008ac2152e92ca04261c06b1ec0ba6a"
     },
     {
       "path": "/shared/bulk.mjs",
@@ -13869,8 +13874,8 @@
     },
     {
       "path": "/shared/groups.mjs",
-      "bytes": 17965,
-      "sha256": "0061dccffb8a96bb11d9ddf835a637f71728713179eabb779c50fece6d2a7ef5"
+      "bytes": 17983,
+      "sha256": "5929a444474795ae69ff3970f0b54b2324de9f5c970fb1ac1685f2ce09b4e899"
     },
     {
       "path": "/shared/images.mjs",
@@ -13899,8 +13904,8 @@
     },
     {
       "path": "/shared/migrate.mjs",
-      "bytes": 8723,
-      "sha256": "b046520080f44a0276d8a6950f74523f3a148d022ab6691c799c0ffacaf22169"
+      "bytes": 8825,
+      "sha256": "45fb619b83bcfa42ed62198cd43b9f43c32aa769384ab904faaf81ff8065d641"
     },
     {
       "path": "/shared/movecost.mjs",
@@ -13984,8 +13989,8 @@
     },
     {
       "path": "/shared/spotlight.mjs",
-      "bytes": 12416,
-      "sha256": "1feef8e970fc47f4bcf170182179d7ecf8e63918f4262cdee06d87143b97eef6"
+      "bytes": 12809,
+      "sha256": "a8f37aa54cd1cecd33d090a852bfb498a7fb4b244b41ce6c5d524579ecc55233"
     },
     {
       "path": "/shared/stats.mjs",

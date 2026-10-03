@@ -9,6 +9,7 @@ import { setSetting } from "../shared/groups.mjs";
 import { grammarHelpOn } from "../shared/forms.mjs";
 import { expressiveOn } from "../shared/feeling.mjs";
 import { flushResearch } from "../shared/research.mjs";
+import { BAR_BUTTON, BAR_CONTROLS, BAR_PRESETS, barControls, barLabel, barPreset } from "../shared/bar.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -170,5 +171,50 @@ export function mountSettingsSync({
   });
   syncLook();
 
-  return { syncFreshSeg, syncGrammarSeg, syncExpressiveSeg, syncLook, setLook };
+  /* Sentence bar (038): which buttons the person sees. The synced
+   * bar_controls column is the truth — these paint it and the top bar
+   * renders it. Play is never a toggle. Hidden buttons leave the layout,
+   * and Play grows into the freed top-bar space (--play-grow counts the
+   * hidden model buttons; Backspace and Clear free chip room inside the
+   * bar instead). */
+  function syncBarSeg() {
+    const shown = barControls(db);
+    for (const b of $("bar-toggles").querySelectorAll("button")) {
+      b.classList.toggle("on", b.dataset.c === "play" || shown.has(b.dataset.c));
+    }
+    const preset = barPreset(shown);
+    for (const b of $("bar-preset").querySelectorAll("button")) {
+      b.classList.toggle("on", b.dataset.v === preset?.id);
+    }
+    let grow = 0;
+    for (const c of BAR_CONTROLS) {
+      const el = $(BAR_BUTTON[c]);
+      el.hidden = !shown.has(c);
+      if (el.hidden && el.classList.contains("tx")) grow++;
+    }
+    $("topbar").style.setProperty("--play-grow", grow);
+    // An empty in-bar dock keeps no space — renderBar re-seats it either way.
+    $("bar-btns").hidden = !shown.has("backspace") && !shown.has("clear");
+    $("bar-warn").hidden = shown.has("backspace");
+    $("bar-row").dataset.summary = barLabel(db); // the nav list reads this
+  }
+  function setBar(shown) {
+    setSetting(db, "bar_controls",
+      JSON.stringify(BAR_CONTROLS.filter((c) => shown.has(c))));
+    syncBarSeg();
+  }
+  $("bar-preset").addEventListener("click", (e) => {
+    const p = BAR_PRESETS.find((x) => x.id === e.target.closest("button")?.dataset.v);
+    if (p) setBar(new Set(p.controls));
+  });
+  $("bar-toggles").addEventListener("click", (e) => {
+    const c = e.target.closest("button")?.dataset.c;
+    if (!c || c === "play") return; // Play never hides
+    const shown = barControls(db);
+    shown.has(c) ? shown.delete(c) : shown.add(c);
+    setBar(shown);
+  });
+  syncBarSeg();
+
+  return { syncFreshSeg, syncGrammarSeg, syncExpressiveSeg, syncLook, setLook, syncBarSeg };
 }

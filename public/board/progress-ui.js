@@ -16,6 +16,7 @@ import { weeklyCard } from "../shared/wincard.mjs";
 import { mountReportShare } from "./report-share.js";
 import { columns, ownGlowBars, sparkline } from "./progress-charts.js";
 import { withIcons } from "./inline-icons.js";
+import { barControls } from "../shared/bar.mjs";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, text) => {
@@ -287,7 +288,10 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", artOf = a
         for (const t of g.targets) c.append(ogRow(tile(t.key, "pic"), t.own, t.glow, max, labels));
       }
     }
-    const presses = Object.entries(BUTTON_NAMES).filter(([m]) => d.buttons.total[m]);
+    // 038: Progress counts only the buttons the person's bar shows.
+    const shownBar = barControls(db);
+    const presses = Object.entries(BUTTON_NAMES)
+      .filter(([m]) => d.buttons.total[m] && shownBar.has(m));
     if (presses.length) {
       const h = el("div", "prog-card-h prog-sub-h");
       h.append(el("h3", null, "Sentence buttons"));

@@ -74,7 +74,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   const SUMMARIES = {
     board: () => [onText("cells-seg") && `${onText("cells-seg")} buttons`,
       onText("look-seg") === "Words only" ? "words only" : "", onText("kb-mode")].filter(Boolean).join(" · "),
-    talking: () => `${$("voice-name")?.textContent ?? "Voice"} · feeling faces ${onOff("expressive-voice")}`,
+    talking: () => `${$("voice-name")?.textContent ?? "Voice"} · ${$("bar-row")?.dataset.summary ?? "Everything"} · feeling faces ${onOff("expressive-voice")}`,
     lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
     backup: () => (team() ? "Owners keep the recovery card" : cardMade() ? "Recovery card made" : "No recovery card yet"),
     spotlight: () => {

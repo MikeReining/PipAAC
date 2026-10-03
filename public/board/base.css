@@ -210,6 +210,17 @@ button { font: inherit; color: inherit; cursor: pointer; }
   background: var(--mask-f);
   color: var(--mask-t);
 }
+/* 038: a hidden bar button leaves the layout entirely ([hidden] alone
+   loses to .bar-btn.glyph's display:grid). Play grows into the space
+   the hidden model buttons freed — --play-grow counts them (each frees
+   its 60px + the 6px gap), capped so Play stays sane on a phone. */
+.bar-btn[hidden] { display: none; }
+#bar-btns[hidden] { display: none; }
+#speak { width: min(336px, calc(88px + 66px * var(--play-grow, 0))); }
+#speak svg {
+  width: calc(34px + 6px * var(--play-grow, 0));
+  height: calc(34px + 6px * var(--play-grow, 0));
+}
 .corner-btn {
   flex: none;
   width: 56px;
@@ -729,6 +740,19 @@ body.editing #corner { font-size: 15px; }
 /* Author `display` beats the hidden attribute, so an idle toast
    was painting a stray Undo on the board. */
 #toast[hidden] { display: none; }
+/* The action button (e.g. Open Settings) had no rules: cream text on the
+   browser's light default button. Cream outline on the dark toast. */
+#toast-act {
+  background: none;
+  border: 2px solid var(--cream);
+  border-radius: 8px;
+  color: var(--cream);
+  font: inherit;
+  padding: 4px 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+#toast-act[hidden] { display: none; }
 #toast-undo {
   background: none;
   border: none;

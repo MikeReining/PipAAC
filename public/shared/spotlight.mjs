@@ -11,6 +11,7 @@
  */
 
 import { maskedSenseIds } from "./groups.mjs";
+import { barControls } from "./bar.mjs";
 import { recordOp } from "./ops.mjs";
 
 let active = null; // { name, targets: Set<"kind:id"> }
@@ -28,16 +29,19 @@ export const CONTROLS = {
 
 /** Start a spotlight over `targets` (iterable of "kind:id"). Masked
  *  senses are skipped — the law is never unmask; the caller is told
- *  which — and so is a control this build doesn't know. Returns
- *  { skipped } — an all-skipped call leaves the layer off. */
+ *  which — and so is a control this build doesn't know, or one the
+ *  person's sentence-bar setting hides (038: a hidden button is never
+ *  a target — it stays on the saved list and lights again if shown).
+ *  Returns { skipped } — an all-skipped call leaves the layer off. */
 export function startSpotlight(db, targets, name = "Spotlight") {
   const masked = maskedSenseIds(db);
+  const shown = barControls(db);
   const set = new Set();
   const skipped = [];
   for (const key of targets) {
     const [kind, id] = key.split(":");
     if (kind === "sense" && masked.has(id)) skipped.push(key);
-    else if (kind === "control" && !CONTROLS[id]) skipped.push(key);
+    else if (kind === "control" && (!CONTROLS[id] || !shown.has(id))) skipped.push(key);
     else set.add(key);
   }
   active = set.size ? { name, targets: set } : null;
@@ -100,12 +104,15 @@ export function spotLists(db) {
   ).all().map((l) => ({ ...l, controls: controlsOf(l.controls) }));
 }
 
-/** Every target of a list: its words, then its buttons. */
+/** Every target of a list: its words, then its buttons — buttons the
+ *  person's bar setting hides stay on the list but are not targets
+ *  (038). */
 export function listTargets(db, id) {
   const keys = db.prepare("SELECT kind, item_id FROM spotlight_item WHERE list_id = ?")
     .all(id).map((r) => `${r.kind}:${r.item_id}`);
   const row = db.prepare("SELECT controls FROM spotlight_list WHERE id = ?").all(id)[0];
-  for (const c of controlsOf(row?.controls)) keys.push(`control:${c}`);
+  const shown = barControls(db);
+  for (const c of controlsOf(row?.controls)) if (shown.has(c)) keys.push(`control:${c}`);
   return new Set(keys);
 }
 

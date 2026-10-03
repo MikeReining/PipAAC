@@ -378,6 +378,29 @@
                 </div>
                 <p class="hint">After "I want juice" is played, tapping "more" either adds on or starts a fresh sentence.</p>
               </div>
+              <!-- 038: which sentence buttons the person sees. A preset
+                   just sets the toggles; Play is never a toggle. Hidden
+                   buttons free top-bar space and Play grows into it. -->
+              <div class="seg-row" id="bar-row">
+                <span class="seg-label">Sentence bar</span>
+                <div class="seg" id="bar-preset">
+                  <button data-v="play"><span class="set-opt">Just play</span></button>
+                  <button data-v="question"><span class="set-opt">Play + Question</span></button>
+                  <button data-v="fix"><span class="set-opt">Play + Question + Fix it</span></button>
+                  <button data-v="all"><span class="set-opt">Everything</span></button>
+                </div>
+                <div class="bar-toggles" id="bar-toggles">
+                  <button data-c="play" class="on" disabled>▶ Play</button>
+                  <button data-c="fix">Fix it <span class="bar-tag">Lifetime</span></button>
+                  <button data-c="question">Question <span class="bar-tag">Lifetime</span></button>
+                  <button data-c="past">Past <span class="bar-tag">Lifetime</span></button>
+                  <button data-c="future">Future <span class="bar-tag">Lifetime</span></button>
+                  <button data-c="backspace">Backspace</button>
+                  <button data-c="clear">Clear</button>
+                </div>
+                <p class="hint" id="bar-warn" hidden>No Backspace — a wrong word can only go with Clear.</p>
+                <p class="hint">Play always shows and grows into the space hidden buttons free. Fix it, Question, Past and Future need the internet and come with Pip Lifetime.</p>
+              </div>
             </section>
 
             <section class="set-sec" data-sec="lang" data-title="Language help">

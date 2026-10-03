@@ -39,13 +39,25 @@ export function mountTour({ board, saveUser }) {
 
   // `say` is the card's display text (withIcons renders ✨/⏪ as icons);
   // `clip` is the recording's key in shared/onramp_audio.mjs.
-  const steps = [
-    { say: "Tap want.", clip: "tour-want", target: () => board.cellEl(SCRIPT.want) },
-    { say: "Now tap apple in the Smart bar.", clip: "tour-apple", target: () => document.querySelector("#tray .pred:not(.ghost)") },
-    { say: "Tap ✨ to make it a sentence.", clip: "tour-fix", target: () => $("tx-fix") },
-    { say: "Now tap ⏪ to say it in the past.", clip: "tour-past", target: () => $("tx-past") },
-    { say: "That's Pip. Now try your own.", clip: "tour-done", target: () => null, done: true },
-  ];
+  // 038: only the buttons the person has — read at start() so a Replay
+  // after a Settings change walks the bar as it is now. ⏪'s scripted
+  // sentence follows ✨'s ("I want an apple" → "I wanted an apple"), so
+  // it needs both.
+  let steps = [];
+  function buildSteps() {
+    const shown = board.shownControls?.() ?? new Set(["fix", "past"]);
+    steps = [
+      { id: "want", say: "Tap want.", clip: "tour-want", target: () => board.cellEl(SCRIPT.want) },
+      { id: "apple", say: "Now tap apple in the Smart bar.", clip: "tour-apple", target: () => document.querySelector("#tray .pred:not(.ghost)") },
+    ];
+    if (shown.has("fix")) {
+      steps.push({ id: "fix", say: "Tap ✨ to make it a sentence.", clip: "tour-fix", target: () => $("tx-fix") });
+    }
+    if (shown.has("fix") && shown.has("past")) {
+      steps.push({ id: "past", say: "Now tap ⏪ to say it in the past.", clip: "tour-past", target: () => $("tx-past") });
+    }
+    steps.push({ id: "done", say: "That's Pip. Now try your own.", clip: "tour-done", target: () => null, done: true });
+  }
 
   function place() {
     const t = target();
@@ -81,9 +93,11 @@ export function mountTour({ board, saveUser }) {
     if (s.done) {
       const note = document.createElement("p");
       note.className = "tour-note";
-      withIcons(note, navigator.onLine === false
-        ? "✨ and the time buttons need the internet to work on your own sentences. Connect when you can."
-        : "✨ and the time buttons work on any sentence you build.");
+      withIcons(note, !steps.some((x) => x.id === "fix" || x.id === "past")
+        ? "Build a sentence and ▶ speaks it."
+        : navigator.onLine === false
+          ? "✨ and the time buttons need the internet to work on your own sentences. Connect when you can."
+          : "✨ and the time buttons work on any sentence you build.");
       card.append(note);
       // The first sentence is when a parent notices the voice: offer the
       // rest right here (founder 2026-09-29).
@@ -122,24 +136,24 @@ export function mountTour({ board, saveUser }) {
       // Advance first: adding the word repaints the Smart bar, which
       // must already see the next step's card. The next instruction
       // speaks after the word's own audio lands.
-      if (step === 0 && id === SCRIPT.want) {
-        show(1); await board.addWord(SCRIPT.want); board.say(steps[1].clip);
-      } else if (step === 1 && id === SCRIPT.apple) {
-        show(2); await board.addWord(SCRIPT.apple); board.say(steps[2].clip);
+      if (steps[step]?.id === "want" && id === SCRIPT.want) {
+        show(step + 1); await board.addWord(SCRIPT.want); board.say(steps[step].clip);
+      } else if (steps[step]?.id === "apple" && id === SCRIPT.apple) {
+        show(step + 1); await board.addWord(SCRIPT.apple); board.say(steps[step].clip);
       }
     },
-    stripItems: () => (step === 1 ? [{ kind: "sense", id: SCRIPT.apple }] : []),
+    stripItems: () => (steps[step]?.id === "apple" ? [{ kind: "sense", id: SCRIPT.apple }] : []),
     async onTransform(mode) {
-      if (step === 2 && mode === "fix") {
+      if (steps[step]?.id === "fix" && mode === "fix") {
         board.setBar(SCRIPT.fix, "fix");
-        show(3);
+        show(step + 1);
         await sayBar("i-want-an-apple");
-        board.say(steps[3].clip);
-      } else if (step === 3 && mode === "past") {
+        board.say(steps[step].clip);
+      } else if (steps[step]?.id === "past" && mode === "past") {
         board.setBar(SCRIPT.past, "past");
-        show(4);
+        show(step + 1);
         await sayBar("i-wanted-an-apple");
-        board.say(steps[4].clip);
+        board.say(steps[step].clip);
       }
     },
   };
@@ -157,6 +171,7 @@ export function mountTour({ board, saveUser }) {
 
   function start() {
     board.showBoard();
+    buildSteps();
     board.setTour(hooks);
     document.body.classList.add("touring");
     ring = document.createElement("div");

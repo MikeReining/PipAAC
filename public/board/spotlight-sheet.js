@@ -10,6 +10,7 @@ import {
   untilText,
 } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
+import { barControls } from "../shared/bar.mjs";
 import {
   SHOWCASE, STARTER_LISTS, showcaseLit, starterFor, starterTargets,
 } from "../shared/spotlight_starters.mjs";
@@ -153,9 +154,12 @@ export function mountSpotlightSheet({
       box.append(card);
     }
     // Suggested lists (032 C): one tap makes one theirs; an added one
-    // leaves the suggestions.
+    // leaves the suggestions. A list built around a button the person's
+    // bar hides (038) isn't offered — its whole move is that button.
+    const shownBar = barControls(db);
     const saved = new Set(lists.map((l) => l.name));
-    const ideas = STARTER_LISTS.filter((x) => !saved.has(x.name));
+    const ideas = STARTER_LISTS.filter((x) => !saved.has(x.name)
+      && (x.controls ?? []).every((c) => shownBar.has(c)));
     if (ideas.length) box.append(el("span", "seg-label spot-sub", "Suggested"));
     for (const x of ideas) {
       const card = el("div", "spot-card spot-idea");

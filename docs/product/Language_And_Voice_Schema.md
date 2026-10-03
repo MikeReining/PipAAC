@@ -677,6 +677,16 @@ ALTER TABLE learner_profile ADD COLUMN grammar_help INTEGER NOT NULL DEFAULT 1
   CHECK (grammar_help IN (0, 1));
 ```
 
+**Amendment — DECIDED, BUILT** (038, 2026-10-03). `bar_controls` is the
+per-person sentence-bar setting: a JSON list of the shown control names
+(`fix`, `question`, `past`, `future`, `backspace`, `clear`), synced like
+every other `set_setting`. NULL is Everything, the pre-038 bar. Play is
+never listed — it always shows.
+
+```sql
+ALTER TABLE learner_profile ADD COLUMN bar_controls TEXT;
+```
+
 ### 6.3 Override
 
 A caregiver recording of one catalog utterance, or of one personal name.
