@@ -39,7 +39,7 @@ export function personWords(name) {
 
 const NARROW = "(max-width: 760px)";
 
-export function mountSettings({ me, open, facts = () => ({ entities: 0, invested: false, pinOn: false }) }) {
+export function mountSettings({ me, open, facts = () => ({ entities: 0, invested: false, pinOn: false }), taste = () => null }) {
   const body = $("set-body");
   const nav = $("set-nav");
   const pane = $("set-pane");
@@ -74,7 +74,13 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   const SUMMARIES = {
     board: () => [onText("cells-seg") && `${onText("cells-seg")} buttons`,
       onText("look-seg") === "Words only" ? "words only" : "", onText("kb-mode")].filter(Boolean).join(" · "),
-    talking: () => `${$("voice-name")?.textContent ?? "Voice"} · ${$("bar-row")?.dataset.summary ?? "Everything"} · feeling faces ${onOff("expressive-voice")}`,
+    // 039 § 4.5 — the quiet counter: free sentence-button taps left,
+    // shown only while the person is unlicensed and below the pool.
+    talking: () => {
+      const t = taste();
+      const free = typeof t === "number" && t < 10 ? ` · ${t} free left` : "";
+      return `${$("voice-name")?.textContent ?? "Voice"} · ${$("bar-row")?.dataset.summary ?? "Everything"} · feeling faces ${onOff("expressive-voice")}${free}`;
+    },
     lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
     backup: () => (team() ? "Owners keep the recovery card" : cardMade() ? "Recovery card made" : "No recovery card yet"),
     spotlight: () => {

@@ -91,16 +91,20 @@ export function voiceSentence({ cacheName = "pip-voice", deadlineMs = 300 } = {}
    *  or a request still unanswered past the deadline cap. A late
    *  answer still lands in the cache for the next tap. `feeling`
    *  rides to the Worker, which applies Eleven expressive text
-   *  (025 § 4); `deadlineMs` is per call. */
+   *  (025 § 4); `deadlineMs` is per call. 039: `tasteText` is the
+   *  transform's masked output echoed back so a spent taste tap's
+   *  one-shot speak grant can serve this exact sentence — it is the
+   *  only way an unlicensed request reaches the network. */
   async function request({ userId, license, voice, text,
     feeling = "neutral", endpoint = "/api/v1/voice/speak",
-    deadlineMs: deadline = deadlineMs }) {
-    if (!userId || !license || !voice || !text) return null;
+    deadlineMs: deadline = deadlineMs, tasteText = null }) {
+    if (!userId || !(license || tasteText) || !voice || !text) return null;
     const hit = await cached(voice, text, feeling);
     if (hit) return hit;
     const key = await urlFor(voice, text, feeling);
     const first = await Promise.race([
-      fetchOnce(key, endpoint, { user_id: userId, license, voice, text, feeling }),
+      fetchOnce(key, endpoint, { user_id: userId, license, voice, text, feeling,
+        ...(tasteText ? { taste_text: tasteText } : {}) }),
       new Promise((r) => setTimeout(() => r("deadline"), deadline)),
     ]);
     return first === "deadline" ? null : first;

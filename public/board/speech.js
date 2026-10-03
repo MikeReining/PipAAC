@@ -280,6 +280,11 @@ export function mountSpeech({
    *  the bar as built, per § 1's every-press-produces-audio rule.
    *  Every transform reads her saved taps (transformSource), never the
    *  last model output — chains can't compound a guess. */
+  /* 039 — the free taste: `tasteEcho` is the masked model output the
+   * next speak may claim a grant with (consumed once); the at-0 offer
+   * shows once per session; the ≤3-left nudge once per day. */
+  let tasteEcho = null;
+  let tasteOfferShown = false;
   let txBusy = false;
   async function transformAndSpeak(mode) {
     if (live.tour) return live.tour.onTransform(mode);
@@ -309,6 +314,14 @@ export function mountSpeech({
       const body = res ? await res.json().catch(() => ({})) : {};
       const out = res?.ok ? body.text : null;
       if (out) {
+        /* 039: a taste-spent transform returns the pool count and leaves
+         * the worker a speak grant keyed to the masked output — echo it
+         * back as taste_text so the result speaks in the real sentence
+         * voice even without a license. */
+        if (typeof body.taste?.left === "number") {
+          live.tasteLeft = body.taste.left;
+          tasteEcho = out;
+        }
         snapshotBar(sentence, barState); // her taps, saved before replace
         applyTransform(sentence, unmask(out), mode, barState);
         for (const it of sentence) {
@@ -327,6 +340,17 @@ export function mountSpeech({
         }[mode] ?? "That button";
         if (!res) {
           toast?.(`${name} needs the internet — spoke it as it was.`);
+        } else if (body?.error === "taste_exhausted") {
+          /* 039 § 4.5 — the pool is empty. The press still speaks the
+           * bar as built; the adult gets the offer once per session,
+           * then only the quiet Settings counter — never a wall. */
+          live.tasteLeft = 0;
+          if (!tasteOfferShown) {
+            tasteOfferShown = true;
+            toast?.("All 10 free taps used — keep ✨ ❓ ⏪ ⏩ for good: $49 once.",
+              null, { actionLabel: "Open Settings",
+                onAction: () => openSettings?.("you") });
+          }
         } else if (body?.error === "bad_license") {
           toast?.(`${name} comes with Pip Lifetime — a grown-up can unlock it in Settings.`,
             null, { actionLabel: "Open Settings",
@@ -338,6 +362,19 @@ export function mountSpeech({
         }
       }
       await speakSentence();
+      /* 039 § 4.5 — at 3 left or fewer, one quiet offer a day, raised
+       * only after the press has spoken and only while the taste is
+       * what served it (out set + count present). */
+      if (out && typeof live.tasteLeft === "number"
+          && live.tasteLeft > 0 && live.tasteLeft <= 3) {
+        const day = new Date().toISOString().slice(0, 10);
+        if (localStorage.getItem("pip-taste-nag") !== day) {
+          localStorage.setItem("pip-taste-nag", day);
+          toast?.(`${live.tasteLeft} free left — keep ✨ ❓ ⏪ ⏩ for good: $49 once.`,
+            null, { actionLabel: "Open Settings",
+              onAction: () => openSettings?.("you") });
+        }
+      }
       live.spotDemo?.onTransform?.(mode);
     } finally {
       txBusy = false;
@@ -386,7 +423,12 @@ export function mountSpeech({
     // offline, unlicensed, over budget) falls through to the clip loop —
     // she is always heard, the feeling is the extra (025 § 2).
     let spoken = false;
-    if (sentence.length >= 2 || feeling) {
+    /* 039: a taste transform's echo is consumed here, once — a single
+     * word counts too ("More?" keeps its question lift in the real
+     * voice, which a word clip would flatten). */
+    const echo = tasteEcho;
+    tasteEcho = null;
+    if (sentence.length >= 2 || feeling || echo) {
       const text = sentenceSpeakText(sentence);
       const blob = await sentenceVoice.request({
         userId: me.id,
@@ -395,6 +437,7 @@ export function mountSpeech({
         text,
         feeling: feeling ?? "neutral",
         deadlineMs: SPEAK_VOICE_WAIT_MS,
+        tasteText: echo,
       });
       if (seq !== speakSeq) return; // a newer speak owns the audio now
       if (text !== sentenceSpeakText(sentence)) {
@@ -456,10 +499,28 @@ export function mountSpeech({
     }
   }
 
+  /* 039 § 4.5 — the quiet counter's read: Settings asks before any
+   * press has happened. The server is the truth; live.tasteLeft is only
+   * this session's mirror (null = licensed or unknown). */
+  async function refreshTaste() {
+    const res = await fetch("/api/v1/taste", {
+      headers: {
+        "x-pip-user": me.id,
+        "x-pip-license": (await voiceLicense()) ?? "",
+      },
+    }).catch(() => null);
+    if (!res?.ok) return false;
+    const body = await res.json().catch(() => ({}));
+    live.tasteLeft = body.licensed === true
+      ? null
+      : (typeof body.left === "number" ? body.left : null);
+    return true;
+  }
+
   return {
     speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
     playClip, playBlob, endPlaying, sayClip,
-    tileApi, tileSweep, voiceLicense, syncSpeed,
+    tileApi, tileSweep, voiceLicense, syncSpeed, refreshTaste,
     audio, sentenceVoice, SPEAK_VOICE_WAIT_MS,
     isTxBusy: () => txBusy,
   };

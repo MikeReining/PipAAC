@@ -283,6 +283,9 @@ let demoBar = null; // the child's bar, set aside while Try it runs
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 let countsOn = false; // 018 D10: the 📊 badge — the child's own 30-day taps
+// 039: the free taste — sentence-button taps left this session; null is
+// licensed or not yet asked, the server is the truth (speech.js mirrors it).
+let tasteLeft = null;
 const getCounts = () => useCounts(db);
 
 // 023: the bar's current shape — which tense it holds and whether it
@@ -353,6 +356,8 @@ const live = {
   get placeUi() { return placeUi; },
   get countsOn() { return countsOn; },
   set countsOn(v) { countsOn = v; },
+  get tasteLeft() { return tasteLeft; },
+  set tasteLeft(v) { tasteLeft = v; },
   set editing(v) { editing = v; },
   get highlightNext() { return highlightNext; },
   get boardSenseIds() { return boardSenseIds; },
@@ -374,7 +379,7 @@ const {
 const {
   speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
   playClip, playBlob, endPlaying, sayClip,
-  tileApi, tileSweep, voiceLicense, syncSpeed,
+  tileApi, tileSweep, voiceLicense, syncSpeed, refreshTaste,
   audio, sentenceVoice, isTxBusy, SPEAK_VOICE_WAIT_MS,
 } = mountSpeech({
   db, me, locale, sentence, barState, live,
@@ -821,8 +826,16 @@ const settingsUi = mountSettings({
     pinOn: pin.pinOn,
     spot: { session: spotSession(db), lists: spotLists(db).length },
   }),
+  // 039: the Talking subtitle's quiet counter — a number only while the
+  // person is unlicensed with free taps left; the server is the truth.
+  taste: () => tasteLeft,
 });
 settingsUi.onOpen(renderPinRow);
+// 039: refresh the taste count on open, then repaint the summaries —
+// the fetch lands after renderNav's first paint.
+settingsUi.onOpen(() => {
+  refreshTaste().then((ok) => { if (ok) settingsUi.renderNav(); });
+});
 // Set only by the post-switch reopen below: the corner click then skips
 // the PIN (it was just entered in this tab) and opens that page, so every
 // module's corner-click refresh runs as on a normal open.
