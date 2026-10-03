@@ -34,7 +34,7 @@ const BUTTON_NAMES = { fix: "✨ fix it", question: "❓ ask it", past: "⏪ pas
 const NEW_SHOWN = 12;
 const TOP_SHOWN = 8;
 
-export function mountProgress({ db, me, nameOf, roleOf = () => "None", entitlement, settings }) {
+export function mountProgress({ db, me, nameOf, roleOf = () => "None", artOf = async () => null, entitlement, settings }) {
   let span = "month";
   let mode = localStorage.getItem(`pip_dash_mode:${me.id}`) ?? "symbol";
   let current = null; // {fromDay, toDay} of the rendered view
@@ -43,11 +43,31 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", entitleme
   const who = () => me.name || "this person";
   const whose = () => (me.name ? `${me.name}'s` : "this person's");
 
-  /** A word as the board draws it: its grammar color and label. */
+  /** A word as the board draws it: its grammar color, label and
+   *  picture. `pic` is the board's tile (label strip over the art);
+   *  otherwise a chip with a small icon. The picture arrives async and
+   *  a word without one keeps its label. */
   const tile = (key, cls = "") => {
     const [kind, id] = key.split(":");
-    return el("span", `prog-tile r-${roleOf(kind, id) ?? "None"} ${cls}`.trim(),
-      nameOf(kind, id) ?? id);
+    const t = el("span", `prog-tile r-${roleOf(kind, id) ?? "None"} ${cls}`.trim());
+    const label = nameOf(kind, id) ?? id;
+    const img = el("img");
+    img.alt = "";
+    if (cls.split(" ").includes("pic")) {
+      const art = el("span", "pt-a");
+      art.append(img);
+      t.append(el("span", "pt-l", label), art);
+    } else {
+      img.hidden = true;
+      t.append(img, label);
+    }
+    artOf(kind, id).then((a) => {
+      if (!a) return;
+      img.src = a.url;
+      img.hidden = false;
+      if (a.photo) t.classList.add("photo");
+    }).catch(() => {});
+    return t;
   };
 
   async function render() {
@@ -263,7 +283,7 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", entitleme
       const max = Math.max(1, ...rows.flatMap((g) => g.targets.flatMap((t) => t.own.map((o, i) => o + t.glow[i]))));
       for (const g of rows) {
         c.append(el("p", "prog-goal-name", g.name));
-        for (const t of g.targets) c.append(ogRow(tile(t.key), t.own, t.glow, max, labels));
+        for (const t of g.targets) c.append(ogRow(tile(t.key, "pic"), t.own, t.glow, max, labels));
       }
     }
     const presses = Object.entries(BUTTON_NAMES).filter(([m]) => d.buttons.total[m]);
@@ -309,7 +329,7 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", entitleme
     const shown = showAllNew ? d.newWords : d.newWords.slice(0, NEW_SHOWN);
     for (const w of shown) {
       const t = el("span", "prog-new-w");
-      t.append(tile(w.key), el("small", null, dayLabel(w.day)));
+      t.append(tile(w.key, "pic"), el("small", null, dayLabel(w.day)));
       box.append(t);
     }
     if (n > shown.length) {

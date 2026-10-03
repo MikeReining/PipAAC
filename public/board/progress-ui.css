@@ -19,6 +19,19 @@
   border: 2.5px solid var(--rb); background: var(--rf);
 }
 .prog-tile.sm { font-size: 13px; padding: 4px 7px 3px; border-width: 2px; }
+.prog-tile img { width: 20px; height: 20px; object-fit: contain; }
+.prog-tile.sm img { width: 16px; height: 16px; }
+/* The board's tile: label strip on the role fill over white art. */
+.prog-tile.pic {
+  display: inline-grid; grid-template-rows: auto 1fr; gap: 0;
+  width: 76px; padding: 0; overflow: hidden; white-space: normal;
+  border-width: 3px; border-radius: 10px; background: #fff;
+}
+.prog-tile.pic .pt-l { background: var(--rf); padding: 5px 3px 4px; text-align: center; font-size: 13px; line-height: 1.05; }
+.prog-tile.pic .pt-a { display: grid; place-items: center; aspect-ratio: 4 / 3; padding: 4px; }
+.prog-tile.pic img { width: 100%; height: 100%; }
+.prog-tile.pic.photo .pt-a { padding: 0; }
+.prog-tile.pic.photo img { object-fit: cover; }
 .prog-btn-tile { font-family: inherit; }
 .prog-btn-tile svg { width: 16px; height: 16px; }
 
