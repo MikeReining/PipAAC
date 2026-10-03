@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-1a26b14d8450",
+  "buildId": "r1-6961f3dd2f90",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -13329,7 +13329,7 @@
     {
       "path": "/board/settings-ui.js",
       "bytes": 20749,
-      "sha256": "8d57d40b171d8c75cb8029c09d7294388f70a376148900049faae6c821d2e891"
+      "sha256": "c05dccd552cf7b552b29e126484a9847ef8e80ea517f8179a304147894e4d706"
     },
     {
       "path": "/board/setup-ui.css",
@@ -13388,13 +13388,13 @@
     },
     {
       "path": "/board/voice-ui.css",
-      "bytes": 1274,
-      "sha256": "10833cbd14ac73ea7be315580a7da8fac059d7153d4a7160f8f0d4c3ae6b37eb"
+      "bytes": 1196,
+      "sha256": "68d7a481464e49d1dbd8d073a9a8eb13191bfa2668ba026c107a41e4230dbf6f"
     },
     {
       "path": "/board/voice-ui.js",
-      "bytes": 3531,
-      "sha256": "1c99249a7922a19b468823d83b6546e90f0e70a13f30d35f3a3ac66d6a815833"
+      "bytes": 3116,
+      "sha256": "34c77ecd5a42821fb84e3121bd2cc2741e1bb819bdc706eb7082ed8628c7393a"
     },
     {
       "path": "/board/wincard-ui.js",
@@ -13459,7 +13459,7 @@
     {
       "path": "/catalog.json",
       "bytes": 2345572,
-      "sha256": "adb403ad3558c7d848e076cd0418df22e5a44e46977c53a2d8165d5bf7013c80"
+      "sha256": "15985c579d827bde6444480883293d8ddc49e5db816820347444688da5068e52"
     },
     {
       "path": "/db.js",
@@ -13814,8 +13814,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 65647,
-      "sha256": "ad4b689d64e8fab931c064e849e78344bafd362c9d296c2becb99ae263b87e1f"
+      "bytes": 65572,
+      "sha256": "a454da26ac824f0b706e3d69511c3bed5121220195f14f1951d173f873c0589e"
     },
     {
       "path": "/manifest.webmanifest",
@@ -14064,8 +14064,8 @@
     },
     {
       "path": "/shared/voices.mjs",
-      "bytes": 2749,
-      "sha256": "80f52f42a14be4a58708369f6a6bb8608076516c7f46e2a72c6a11ad8a98b282"
+      "bytes": 2124,
+      "sha256": "d8e1a45c704ee2a657464ef3da2867f4762f501470790ae7e4d78fec518b41b6"
     },
     {
       "path": "/shared/wincard.mjs",
