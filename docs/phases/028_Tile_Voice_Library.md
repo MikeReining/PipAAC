@@ -38,7 +38,7 @@ mint ledger (what we made), and what a real tablet plays (§ 11).
    Seed clips (ours) and user-typed clips are told apart by a `source` field.
 6. **One mint path.** Bulk pre-seed is the same mint core called with a list;
    there is no second pipeline.
-7. **Voices:** the default female tile voice is **Pip**
+7. **Voices:** the default tile voice is **Pip**
    (`WWMMC6k9tdar0BthUenK`, in use today); the male voice is **Leo**
    (`4sAJvpuF0iHhO9nptfOD` — final pick, round leo-compare-002 c3).
 8. **Keyboard text mints too.** Typed words are committed to the message bar
@@ -615,7 +615,7 @@ with `source=catalog_lazy` (today it is silence). Same endpoint, same ledger.
 | Per-license mints / minute | 20 (runaway guard) | same |
 | Text max | 60 chars | same |
 | Failed-mint retry delay | 30 s | ledger const |
-| Voice names | Pip (default), Leo (male, planned) | `tile_voices.json` |
+| Voice names | Pip (default), Leo (grown-up male), Eve and Sam (younger, planned) | `tile_voices.json` |
 | ElevenLabs overage billing | off | vendor account |
 
 ## Related

@@ -19,7 +19,7 @@
  */
 
 export const VOICE_LINEUP = [
-  { key: "voi_default_en", name: "Pip", note: "Pip's own voice" },
+  { isDefault: true, name: "Pip", note: "Pip's own voice" },
   { key: "voi_eve_en", name: "Eve", note: "Younger, female" },
   { key: "voi_leo_en", name: "Leo", note: "Grown-up, male" },
   { key: "voi_sam_en", name: "Sam", note: "Younger, male" },
@@ -35,9 +35,9 @@ export function voiceChoices(db, locale) {
   return {
     available: available.map((v) => ({
       ...v,
-      note: VOICE_LINEUP.find((l) => l.key === v.id)?.note ?? "",
+      note: VOICE_LINEUP.find((l) => (v.is_default ? l.isDefault : l.key === v.id))?.note ?? "",
     })),
-    coming: VOICE_LINEUP.filter((v) => !shipped.has(v.key)),
+    coming: VOICE_LINEUP.filter((v) => !v.isDefault && !shipped.has(v.key)),
   };
 }
 

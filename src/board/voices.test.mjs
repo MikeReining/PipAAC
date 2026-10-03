@@ -34,13 +34,15 @@ test("today: Pip + Leo in use; Eve and Sam are coming soon", () => {
 
 test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.json", () => {
   const rows = new Map(tileVoices.voices.map((v) => [v.voice_key, v]));
-  for (const { key, name } of VOICE_LINEUP) {
+  for (const { key, name, isDefault } of VOICE_LINEUP) {
+    if (isDefault) continue; // the default voice is found by is_default, not a key literal (locale gate)
     const row = rows.get(key);
     assert.ok(row, `${key} is in tile_voices.json`);
     assert.equal(row.display_name, name);
     assert.equal(row.provider, "elevenlabs");
     if (row.status === "active") assert.match(row.voice_id, /^[A-Za-z0-9]{20}$/);
   }
+  assert.equal(rows.get("voi_default_en").display_name, "Pip");
   assert.equal(rows.get("voi_default_en").voice_id, "WWMMC6k9tdar0BthUenK");
   assert.equal(rows.get("voi_leo_en").voice_id, "4sAJvpuF0iHhO9nptfOD");
   assert.equal(rows.get("voi_eve_en").voice_id, "94pmIckCYkqYPVrgIvUH");
@@ -59,4 +61,11 @@ test("a shipped voice leaves coming soon and can be chosen; the choice is a sync
   assert.equal(resolveProfile(db).voiceId, "voi_eve_en");
   const op = db.prepare("SELECT args FROM sync_op WHERE kind = 'set_setting' ORDER BY rowid DESC LIMIT 1").all()[0];
   assert.match(op.args, /preferred_voice_id/);
+});
+
+test("a re-import renames a voice an older catalog installed (Eve → Pip)", () => {
+  const db = fresh();
+  db.prepare("UPDATE voice SET display_name = 'Eve' WHERE id = 'voi_default_en'").run();
+  importCatalog(db, catalog);
+  assert.equal(voiceName(db, "voi_default_en"), "Pip");
 });

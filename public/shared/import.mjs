@@ -74,8 +74,13 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
       );
     }
 
+    // Voice rows are catalog-owned (names live in tile_voices.json): an
+    // install keeps up when a voice is renamed or ships.
     const insVoice = db.prepare(
-      "INSERT OR IGNORE INTO voice (id, locale, display_name, source, engine_id, is_default, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      `INSERT INTO voice (id, locale, display_name, source, engine_id, is_default, status) VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET locale = excluded.locale, display_name = excluded.display_name,
+         source = excluded.source, engine_id = excluded.engine_id, is_default = excluded.is_default,
+         status = excluded.status`,
     );
     for (const v of catalog.voices) {
       insVoice.run(v.id, v.locale, v.display_name, v.source, v.engine_id, v.is_default, v.status);
