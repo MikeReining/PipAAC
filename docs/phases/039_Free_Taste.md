@@ -162,16 +162,35 @@ existing `usage` counters. Not a data-retention change; no new telemetry
 fields. Child never gated, never shown a price. Billing logic is untouched —
 checkout and license issuance are the existing 015 path.
 
-## 7. The tour (already reworked, separate from the pool)
+## 7. The tour (separate slice, not built — do it first, it is small)
 
-`public/board/tour-ui.js` now scripts *you · want · apple* → ✨ "You want an
-apple." → ❓ "Do you want an apple?" — both verified live against the real
-prompts (`Sentence_Bar.md` table). Results are recorded clips (no model call,
-no cost, works offline, first-run users are unlicensed so the live voice would
-be silent). Four new clips are minted to `data/samples/onramp/takes/` and
-**wait for a founder listen, then `node scripts/voice/mint_onramp.mjs --ship`**,
-then `scripts/sw/sw_manifest.mjs`. Do not deploy the tour change before the
-clips ship — the new steps would be silent.
+The current tour is **untrue**: it taps *want · apple* and scripts ✨ →
+"I want an apple.", but the live button returns "Want an apple." (the wand law
+never adds a subject). Replace it. Everything stays **scripted with recorded
+clips — no model call, no cost, no latency, works offline** (first-run users
+are unlicensed, so the live voice would be silent anyway; every sentence is
+minted once and shipped):
+
+- Taps: **you · want · apple** (`sns_0002`, `sns_0013`, `sns_0128`).
+- ✨ → bar shows and speaks "You want an apple." (clip `you-want-an-apple`).
+- ❓ → "Do you want an apple?" (clip `do-you-want-an-apple`). Question is
+  toured; ⏪/⏩ are not (grammar goals, taught later via Spotlight).
+- Both results were verified live 2026-10-03 on the production prompts
+  (`Sentence_Bar.md`, table). Do not tour ❓ on an "I …" sentence ("Do I want
+  an apple?").
+- New instruction clips: `tour-you` ("Tap you.") and `tour-question` ("Now tap
+  the question mark to ask it."). Drop `tour-past`, `i-want-an-apple`,
+  `i-wanted-an-apple` from `public/shared/onramp_audio.mjs` and the tour.
+- Honour phase 038: steps appear only for buttons the person has
+  (`board.shownControls()`); update `src/board/tour_audio.test.mjs` to the new
+  clip keys; the done-card note should read "✨ and ❓ work on any sentence you
+  build" (offline variant: need the internet).
+- **The four new takes are already minted** locally (gitignored,
+  `data/samples/onramp/takes/`: `tour-you`, `tour-question`, `you-want-an-apple`,
+  `do-you-want-an-apple`; re-mint with `node scripts/voice/mint_onramp.mjs
+  --only …`). **Founder listens, then** `mint_onramp.mjs --ship` and
+  `scripts/sw/sw_manifest.mjs`. Do not deploy the tour code before the clips
+  ship — the new steps would be silent.
 
 ## 8. Works Test (owner-visible)
 
