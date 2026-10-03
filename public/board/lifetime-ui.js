@@ -12,9 +12,9 @@
  * real one) plus the trial clock that drives the whole phase.
  */
 import { buyCodes } from "../shared/account.mjs";
-import { ALL } from "../shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
+const ALL = (db, sql, p = []) => db.all(sql, p);
 
 export function mountLifetime({ me, sayClip, hearFree, show, toast, trial }) {
   /* iOS stays Apple IAP only (Pricing § 4.5): the web checkout is never

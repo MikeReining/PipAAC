@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-9e0d4c67312c",
+  "buildId": "r1-4bd35557362d",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -13213,8 +13213,8 @@
     },
     {
       "path": "/board/lifetime-ui.js",
-      "bytes": 5222,
-      "sha256": "5f4ac3e4be196aab211a687a24dbf7c5dc109fa2808920cb4c2d6143725bc0cd"
+      "bytes": 5227,
+      "sha256": "4b53c6ddc7835fd7678bb18d105a3722c969d08ff213ef5f8ab131a91c6099dc"
     },
     {
       "path": "/board/meta-cache.js",
