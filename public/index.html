@@ -445,23 +445,29 @@
                    buttons free top-bar space and Play grows into it. -->
               <div class="seg-row" id="bar-row">
                 <span class="seg-label">Sentence bar</span>
-                <div class="seg" id="bar-preset">
-                  <button data-v="play"><span class="set-opt">Just play</span></button>
-                  <button data-v="question"><span class="set-opt">Play + Question</span></button>
-                  <button data-v="fix"><span class="set-opt">Play + Question + Fix it</span></button>
-                  <button data-v="all"><span class="set-opt">Everything</span></button>
+                <p class="hint">This is the bar <span data-person></span> sees. Tap a button to hide it or bring it back.</p>
+                <div class="bar-live" id="bar-toggles">
+                  <div class="bar-live-msg">
+                    <span class="bar-live-ph">Sentence</span>
+                    <button class="bar-t" data-c="backspace" aria-pressed="true"><span class="bar-ico" aria-hidden="true"></span><span class="bar-cap">Backspace</span><span class="bar-st"></span></button>
+                    <button class="bar-t" data-c="clear" aria-pressed="true"><span class="bar-ico" aria-hidden="true"></span><span class="bar-cap">Clear</span><span class="bar-st"></span></button>
+                  </div>
+                  <button class="bar-t life" data-c="fix" aria-pressed="true"><span class="bar-ico" aria-hidden="true"></span><span class="bar-cap">Fix it</span><span class="bar-st"></span></button>
+                  <button class="bar-t life" data-c="question" aria-pressed="true"><span class="bar-ico" aria-hidden="true"></span><span class="bar-cap">Question</span><span class="bar-st"></span></button>
+                  <button class="bar-t life" data-c="past" aria-pressed="true"><span class="bar-ico" aria-hidden="true"></span><span class="bar-cap">Past</span><span class="bar-st"></span></button>
+                  <button class="bar-t play" data-c="play" aria-pressed="true" disabled><span class="bar-ico" aria-hidden="true"></span><span class="bar-cap">Play</span><span class="bar-st">Always on</span></button>
+                  <button class="bar-t life" data-c="future" aria-pressed="true"><span class="bar-ico" aria-hidden="true"></span><span class="bar-cap">Future</span><span class="bar-st"></span></button>
                 </div>
-                <div class="bar-toggles" id="bar-toggles">
-                  <button data-c="play" class="on" disabled>▶ Play</button>
-                  <button data-c="fix">Fix it <span class="bar-tag">Lifetime</span></button>
-                  <button data-c="question">Question <span class="bar-tag">Lifetime</span></button>
-                  <button data-c="past">Past <span class="bar-tag">Lifetime</span></button>
-                  <button data-c="future">Future <span class="bar-tag">Lifetime</span></button>
-                  <button data-c="backspace">Backspace</button>
-                  <button data-c="clear">Clear</button>
+                <p class="hint bar-legend"><span class="bar-key"></span> Gold buttons need the internet and Pip Lifetime.</p>
+                <p class="hint" id="bar-warn" hidden>Without Backspace, a wrong word can only be removed with Clear.</p>
+                <span class="seg-label bar-presets-label">Quick setups</span>
+                <div class="bar-presets" id="bar-preset">
+                  <button data-v="play"><span class="bar-mini" data-ids="speak"></span><span class="bar-pname">Just play</span></button>
+                  <button data-v="question"><span class="bar-mini" data-ids="tx-question speak"></span><span class="bar-pname">Play + Question</span></button>
+                  <button data-v="fix"><span class="bar-mini" data-ids="tx-fix tx-question speak"></span><span class="bar-pname">Play + Question + Fix it</span></button>
+                  <button data-v="all"><span class="bar-mini" data-ids="backspace clear tx-fix tx-question tx-past speak tx-future"></span><span class="bar-pname">Everything</span></button>
                 </div>
-                <p class="hint" id="bar-warn" hidden>No Backspace — a wrong word can only go with Clear.</p>
-                <p class="hint">Play always shows and grows into the space hidden buttons free. Fix it, Question, Past and Future need the internet and come with Pip Lifetime.</p>
+                <p class="hint">Play is always there. Hidden buttons give their space to Play.</p>
               </div>
             </section>
 

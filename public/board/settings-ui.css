@@ -96,18 +96,45 @@
 .set-switch:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--ink-text); }
 @media (prefers-reduced-motion: reduce) { .set-switch, .set-switch::after { transition: none; } }
 
-/* 038 Sentence bar: each button its own toggle — several may be on at
-   once, so chips (not a single-select seg). The preset above is a seg:
-   it just sets these. */
-.bar-toggles { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.bar-toggles button {
-  border: 2px solid var(--line); border-radius: 10px; background: #fff;
-  color: var(--ink-text); font: inherit; font-weight: 700; padding: 10px 14px;
-  cursor: pointer;
+/* 038 Sentence bar: a live copy of the real bar. Each button is its own
+ * toggle (icons cloned from the live bar); the presets draw their own
+ * mini bars. Hidden = faded with a dashed edge and "Off", never colour alone. */
+.bar-live {
+  display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin-top: 10px;
+  padding: 10px; background: var(--tray); border-radius: 14px;
 }
-.bar-toggles button.on { border-color: var(--ink-text); background: var(--tray); }
-.bar-toggles button:disabled { opacity: .6; cursor: default; }
-.bar-toggles .bar-tag { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
+.bar-live-msg {
+  flex: 1 1 230px; min-width: 230px; display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+  padding: 8px 10px; background: #fff; border: 2px solid var(--line); border-radius: 12px;
+}
+.bar-live-ph { margin-right: auto; color: var(--mask-t); font-size: 15px; white-space: nowrap; }
+.bar-t {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  min-width: 64px; min-height: 64px; padding: 8px 6px 6px; border-radius: 12px;
+  border: 2px solid var(--line); background: #efeadf; color: var(--ink-text);
+  font: inherit; cursor: pointer;
+}
+.bar-t .bar-ico svg { width: 26px; height: 26px; display: block; }
+.bar-cap { font-size: 12px; font-weight: 700; line-height: 1.1; }
+.bar-st { font-size: 11px; line-height: 1; min-height: 11px; color: var(--muted); }
+.bar-t.life { box-shadow: inset 0 -4px 0 var(--glow); }
+.bar-t.play { min-width: 84px; border-color: var(--ink-text); background: #fff; cursor: default; }
+.bar-t[aria-pressed="false"] { opacity: .5; border-style: dashed; background: #fff; box-shadow: none; }
+.bar-t:focus-visible, .bar-presets button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--ink-text); }
+.bar-legend { display: flex; align-items: center; gap: 8px; }
+.bar-key { flex: none; width: 18px; height: 5px; border-radius: 3px; background: var(--glow); }
+.bar-presets-label { margin-top: 14px; display: block; }
+.bar-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 6px; }
+.bar-presets button {
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 8px; border: 2px solid var(--line); border-radius: 12px; background: #fff;
+  color: var(--ink-text); font: inherit; font-weight: 700; font-size: 14px; line-height: 1.2; cursor: pointer;
+  text-wrap: balance;
+}
+.bar-presets button.on { border-color: var(--ink-text); background: var(--tray); }
+.bar-mini { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; min-height: 28px; align-items: center; }
+.bar-mini svg { width: 22px; height: 22px; padding: 3px; border-radius: 7px; background: #efeadf; }
+@media (max-width: 640px) { .bar-presets { grid-template-columns: repeat(2, 1fr); } }
 .set-shell {
   flex: 1; display: flex; flex-direction: column; min-height: 0; min-width: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;

@@ -177,10 +177,26 @@ export function mountSettingsSync({
    * and Play grows into the freed top-bar space (--play-grow counts the
    * hidden model buttons; Backspace and Clear free chip room inside the
    * bar instead). */
+  /* The settings bar is drawn from the real bar's own icons (cloned from
+   * the live buttons), so it can never drift from what the person sees. */
+  const iconOf = (id) => $(id)?.querySelector("svg")?.cloneNode(true);
+  for (const b of $("bar-toggles").querySelectorAll(".bar-t")) {
+    const ico = iconOf(b.dataset.c === "play" ? "speak" : BAR_BUTTON[b.dataset.c]);
+    if (ico) b.querySelector(".bar-ico").append(ico);
+  }
+  for (const m of $("bar-preset").querySelectorAll(".bar-mini")) {
+    for (const id of m.dataset.ids.split(" ")) {
+      const ico = iconOf(id);
+      if (ico) m.append(ico);
+    }
+  }
   function syncBarSeg() {
     const shown = barControls(db);
     for (const b of $("bar-toggles").querySelectorAll("button")) {
-      b.classList.toggle("on", b.dataset.c === "play" || shown.has(b.dataset.c));
+      const on = b.dataset.c === "play" || shown.has(b.dataset.c);
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", String(on));
+      if (b.dataset.c !== "play") b.querySelector(".bar-st").textContent = on ? "" : "Off";
     }
     const preset = barPreset(shown);
     for (const b of $("bar-preset").querySelectorAll("button")) {
