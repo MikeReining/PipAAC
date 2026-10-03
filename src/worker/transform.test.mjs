@@ -12,7 +12,6 @@ import { DatabaseSync } from "node:sqlite";
 import worker from "./index.js";
 import { licenseFor } from "./license.mjs";
 import { TileLedger } from "./tile.js";
-import { grantKey } from "./taste.mjs";
 
 const SECRET = "tfm-test-secret";
 const UID = "11111111-2222-3333-4444-555555555555";
@@ -51,6 +50,9 @@ const makeEnv = (chat) => {
     PIP_LICENSE_SECRET: SECRET,
     VOICE: fakeBucket(),
     GROQ_CHAT: chat ?? (async (mode, text) => `${mode}: ${text}`),
+    // TILE_NOW is the DO's clock seam — tests set env.__now to move
+    // the trial forward to day 8 without sleeping.
+    TILE_NOW: () => env.__now ?? Date.now(),
   };
   const db = new DatabaseSync(":memory:");
   env.__db = db;
@@ -70,9 +72,20 @@ const call = async (env, body, headers = {}) =>
     body: JSON.stringify(body),
   }), env);
 
-/** An unlicensed press — no license field at all, the taste path. */
+/** An unlicensed press — no license field at all; the trial decides. */
 const free = (env, over = {}, headers) =>
   call(env, { user_id: UID, mode: "fix", text: "want apple", ...over }, headers);
+
+const DAY = 86_400_000;
+const startTrial = (env, uid = UID, headers = {}) =>
+  worker.fetch(new Request("https://x/api/v1/trial/start", {
+    method: "POST", headers: { "content-type": "application/json", ...headers },
+    body: JSON.stringify({ user_id: uid }),
+  }), env);
+const trialGet = (env, uid = UID, license = "") =>
+  worker.fetch(new Request("https://x/api/v1/trial", {
+    headers: { "x-pip-user": uid, "x-pip-license": license },
+  }), env);
 
 const good = async (env, over = {}) => {
   const license = await licenseFor(SECRET, UID);
@@ -152,91 +165,80 @@ test("no Groq key and no seam -> 503, button speaks the bar as-is", async () => 
   assert.equal(r.status, 503);
 });
 
-/* ------------------------- 039: the free taste ------------------------ */
+/* ---------------------- 040: the 7-day trial ---------------------- */
 
-test("unlicensed presses ride the pool: taste.left counts 9 down to exhausted", async () => {
+test("unlicensed with no trial record is bad_license — the clock starts at install", async () => {
   const env = makeEnv();
-  for (let left = 9; left >= 0; left--) {
-    const r = await free(env);
-    assert.equal(r.status, 200);
-    const body = await r.json();
-    assert.equal(body.text, "fix: want apple");
-    assert.equal(body.taste.left, left);
-  }
   const r = await free(env);
   assert.equal(r.status, 403);
-  assert.equal((await r.json()).error, "taste_exhausted");
+  assert.equal((await r.json()).error, "bad_license");
 });
 
-test("licensed responses carry no taste field", async () => {
+test("a live trial entitles the transform — nothing is counted", async () => {
   const env = makeEnv();
-  const r = await good(env, { mode: "fix" });
-  assert.equal(r.status, 200);
-  assert.equal((await r.json()).taste, undefined);
+  const start = await (await startTrial(env)).json();
+  assert.equal(typeof start.endsAt, "number");
+  for (let i = 0; i < 12; i++) {
+    const r = await free(env);
+    assert.equal(r.status, 200);
+    assert.equal((await r.json()).text, "fix: want apple");
+  }
 });
 
-test("a failed model call spends nothing — 503 and 502 both refund", async () => {
-  const env = makeEnv(async () => null);
-  assert.equal((await free(env)).status, 503); // no text -> refund
-  env.GROQ_CHAT = async () => { throw new Error("groq_down"); };
-  assert.equal((await free(env)).status, 502); // throws -> refund
-  env.GROQ_CHAT = async () => "Want an apple.";
-  const r = await free(env);
-  assert.equal((await r.json()).taste.left, 9); // still the first spend
-});
-
-test("a taste transform writes one speak grant for its output text", async () => {
-  const env = makeEnv(async () => "Want an apple.");
-  const r = await free(env);
-  assert.equal(r.status, 200);
-  assert.ok(env.VOICE.store.has(await grantKey(UID, "Want an apple.")));
-});
-
-test("a presented-but-bad license stays bad_license and never touches the pool", async () => {
+test("day 8 denies with the existing code — nothing is hidden, the press is over", async () => {
   const env = makeEnv();
+  env.__now = 1_700_000_000_000;
+  await startTrial(env);
+  env.__now += 8 * DAY;
+  const r = await free(env);
+  assert.equal(r.status, 403);
+  assert.equal((await r.json()).error, "bad_license");
+});
+
+test("the first start wins: a second start returns the same endsAt", async () => {
+  const env = makeEnv();
+  env.__now = 1_700_000_000_000;
+  const first = await (await startTrial(env)).json();
+  env.__now += 3 * DAY;
+  const second = await (await startTrial(env)).json();
+  assert.equal(second.endsAt, first.endsAt);
+});
+
+test("a forged license is bad_license even inside the trial", async () => {
+  const env = makeEnv();
+  await startTrial(env);
   const r = await call(env, { user_id: UID, license: "pip-life-forged", mode: "fix", text: "hi" });
   assert.equal(r.status, 403);
   assert.equal((await r.json()).error, "bad_license");
-  const next = await free(env); // pool untouched — still the first spend
-  assert.equal((await next.json()).taste.left, 9);
 });
 
-test("the last tap can only be spent once across parallel presses", async () => {
-  const env = makeEnv();
-  for (let i = 0; i < 9; i++) assert.equal((await free(env)).status, 200);
-  const [a, b] = await Promise.all([free(env), free(env)]);
-  const statuses = [a.status, b.status].sort();
-  assert.deepEqual(statuses, [200, 403]);
-  const ok = a.status === 200 ? a : b;
-  assert.equal((await ok.json()).taste.left, 0);
-});
-
-test("the per-connection cap refuses the 6th new tasting profile of the day", async () => {
+test("the per-connection cap refuses the 6th new profile — and refuses it nothing else", async () => {
   const env = makeEnv();
   const headers = { "cf-connecting-ip": "203.0.113.7" };
   const first = crypto.randomUUID();
   for (let i = 0; i < 5; i++) {
     const uid = i === 0 ? first : crypto.randomUUID();
-    const r = await free(env, { user_id: uid }, headers);
-    assert.equal(r.status, 200, `profile ${i + 1} should taste`);
+    const r = await startTrial(env, uid, headers);
+    assert.equal(typeof (await r.json()).endsAt, "number", `profile ${i + 1} should trial`);
   }
-  const refused = await free(env, { user_id: crypto.randomUUID() }, headers);
-  assert.equal(refused.status, 403);
-  assert.equal((await refused.json()).error, "taste_exhausted");
-  // The cap counts new profiles only — an existing one keeps spending.
-  assert.equal((await free(env, { user_id: first }, headers)).status, 200);
-  // And another connection is unaffected.
-  assert.equal((await free(env, {}, { "cf-connecting-ip": "198.51.100.4" })).status, 200);
+  const capped = await (await startTrial(env, crypto.randomUUID(), headers)).json();
+  assert.equal(capped.endsAt, null);
+  // The cap counts new profiles only — an existing one keeps its trial,
+  // and another connection is unaffected.
+  assert.equal(typeof (await (await startTrial(env, first, headers)).json()).endsAt, "number");
+  assert.equal(typeof (await (await startTrial(env, crypto.randomUUID(),
+    { "cf-connecting-ip": "198.51.100.4" })).json()).endsAt, "number");
+  // A refused start is not recorded: a later, uncapped start can still win.
+  env.__now = (env.__now ?? Date.now()) + DAY;
+  assert.equal(typeof (await (await startTrial(env,
+    crypto.randomUUID(), headers)).json()).endsAt, "number");
 });
 
-test("GET /api/v1/taste reads the pool for the quiet counter", async () => {
+test("GET /api/v1/trial answers licensed or the trial's endsAt", async () => {
   const env = makeEnv();
-  const get = (license = "") => worker.fetch(new Request("https://x/api/v1/taste", {
-    headers: { "x-pip-user": UID, "x-pip-license": license },
-  }), env);
-  assert.equal((await (await get()).json()).left, 10); // never spent
-  await free(env);
-  assert.equal((await (await get()).json()).left, 9);
+  assert.equal((await (await trialGet(env)).json()).endsAt, null); // never started
+  const { endsAt } = await (await startTrial(env)).json();
+  assert.equal((await (await trialGet(env)).json()).endsAt, endsAt);
   const license = await licenseFor(SECRET, UID);
-  assert.equal((await (await get(license)).json()).licensed, true);
+  assert.equal((await (await trialGet(env, UID, license)).json()).licensed, true);
 });

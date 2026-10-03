@@ -5,9 +5,10 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { DatabaseSync } from "node:sqlite";
 import worker from "./index.js";
 import { licenseFor } from "./license.mjs";
-import { grantKey, writeSpeakGrant } from "./taste.mjs";
+import { TileLedger } from "./tile.js";
 
 const SECRET = "voice-test-secret";
 const UID = "11111111-2222-3333-4444-555555555555";
@@ -30,11 +31,44 @@ const fakeBucket = () => {
   };
 };
 
-const makeEnv = ({ synth } = {}) => ({
-  PIP_LICENSE_SECRET: SECRET,
-  VOICE: fakeBucket(),
-  VOICE_SYNTH: synth ?? (async (text) => new TextEncoder().encode(`AUDIO:${text}`)),
+/** node:sqlite behind the DO's minimal sql.exec().toArray() surface —
+ *  the same adapter tile.test.mjs drives the real ledger DO with. */
+const sqlFor = (db) => ({
+  exec: (q, ...params) => {
+    const reads = /^\s*(SELECT|WITH)/i.test(q) || /RETURNING/i.test(q);
+    if (reads || params.length) {
+      const st = db.prepare(q);
+      const rows = reads ? st.all(...params) : (st.run(...params), []);
+      return { toArray: () => rows };
+    }
+    db.exec(q);
+    return { toArray: () => [] };
+  },
 });
+
+const makeEnv = ({ synth } = {}) => {
+  const env = {
+    PIP_LICENSE_SECRET: SECRET,
+    VOICE: fakeBucket(),
+    VOICE_SYNTH: synth ?? (async (text) => new TextEncoder().encode(`AUDIO:${text}`)),
+    TILE_NOW: () => env.__now ?? Date.now(),
+  };
+  env.__db = new DatabaseSync(":memory:");
+  env.__ledger = new TileLedger(
+    { storage: { sql: sqlFor(env.__db) }, blockConcurrencyWhile: (fn) => fn() }, env);
+  env.TILE_LEDGER = {
+    idFromName: () => "ledger",
+    get: () => ({ fetch: (req) => env.__ledger.fetch(req) }),
+  };
+  return env;
+};
+
+const DAY = 86_400_000;
+const startTrial = (env, uid = UID) =>
+  worker.fetch(new Request("https://x/api/v1/trial/start", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: uid }),
+  }), env);
 
 const speak = async (env, body) =>
   worker.fetch(new Request("https://x/api/v1/voice/speak", {
@@ -177,53 +211,36 @@ test("one sentence x four feelings = four recordings, each synthesized once", as
   assert.equal(calls, 4);
 });
 
-/* ---------------------- 039: taste speak grants ---------------------- */
+/* ------------------------ 040: the 7-day trial ------------------------ */
 
-test("a speak grant serves its exact text once — the second play is bad_license", async () => {
+test("a live trial speaks any sentence in any feeling — no license needed", async () => {
   const env = makeEnv();
-  await writeSpeakGrant(env, UID, "Do you want an apple?");
-  const r = await speak(env, { user_id: UID, voice: VOICE, text: "Do you want an apple?" });
+  await startTrial(env);
+  const r = await speak(env, { user_id: UID, voice: VOICE, text: "i want a cookie" });
   assert.equal(r.status, 200);
-  assert.equal(r.headers.get("x-voice-cache"), "miss");
-  // Consumed: a second unlicensed ask is refused (the client's local
-  // cache is what serves re-speaks — the grant never covers it).
-  const again = await speak(env, { user_id: UID, voice: VOICE, text: "Do you want an apple?" });
-  assert.equal(again.status, 403);
-  assert.equal((await again.json()).error, "bad_license");
+  const felt = await speak(env, { user_id: UID, voice: VOICE, text: "i am happy.", feeling: "happy" });
+  assert.equal(felt.status, 200);
 });
 
-test("a grant never covers other text or a non-neutral feeling", async () => {
+test("day 8 falls silent on the worker: bad_license, the client speaks word-by-word", async () => {
   const env = makeEnv();
-  await writeSpeakGrant(env, UID, "You want an apple.");
-  const wrong = await speak(env, { user_id: UID, voice: VOICE, text: "Some other sentence." });
-  assert.equal(wrong.status, 403);
-  const felt = await speak(env, { user_id: UID, voice: VOICE, text: "You want an apple.", feeling: "happy" });
-  assert.equal(felt.status, 403);
-  // Neither refusal consumed it — the real ask still serves.
-  const ok = await speak(env, { user_id: UID, voice: VOICE, text: "You want an apple." });
-  assert.equal(ok.status, 200);
-});
-
-test("an expired grant is refused and deletes itself", async () => {
-  const env = makeEnv();
-  await writeSpeakGrant(env, UID, "Old sentence.", Date.now() - 11 * 60_000);
-  const r = await speak(env, { user_id: UID, voice: VOICE, text: "Old sentence." });
+  env.__now = 1_700_000_000_000;
+  await startTrial(env);
+  env.__now += 8 * DAY;
+  const r = await speak(env, { user_id: UID, voice: VOICE, text: "i want a cookie" });
   assert.equal(r.status, 403);
-  assert.equal(env.VOICE.store.has(await grantKey(UID, "Old sentence.")), false);
+  assert.equal((await r.json()).error, "bad_license");
 });
 
-test("the taste_text echo claims the grant when the spoken text differs (masked names)", async () => {
+test("a forged license is bad_license even inside the trial", async () => {
   const env = makeEnv();
-  await writeSpeakGrant(env, UID, "PERSON1 want an apple.");
-  const r = await speak(env, {
-    user_id: UID, voice: VOICE,
-    text: "Leo want an apple.",          // her real name is spoken…
-    taste_text: "PERSON1 want an apple.", // …the grant only saw the mask
-  });
-  assert.equal(r.status, 200);
+  await startTrial(env);
+  const r = await speak(env, { user_id: UID, license: "pip-life-forged", voice: VOICE, text: "i want a cookie" });
+  assert.equal(r.status, 403);
+  assert.equal((await r.json()).error, "bad_license");
 });
 
-test("no license and no grant is still bad_license", async () => {
+test("no license and no trial is still bad_license", async () => {
   const env = makeEnv();
   const r = await speak(env, { user_id: UID, voice: VOICE, text: "i want a cookie" });
   assert.equal(r.status, 403);

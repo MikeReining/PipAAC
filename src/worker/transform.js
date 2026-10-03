@@ -11,17 +11,14 @@
  *
  * Same license gate + fair-use shape as the voice endpoint: transforms
  * cost ~100× less, so the budgets are looser, in their own usage-tr/
- * namespace so voice can't starve them. 039: a press with no license
- * rides the one-time taste pool (taste.mjs — atomic spend, a speak
- * grant for the result, a per-connection cap on new tasting profiles).
+ * namespace so voice can't starve them. 040: the gate is entitled() —
+ * a Lifetime license OR a live 7-day trial (trial.mjs). After the trial
+ * a press speaks the sentence as built and the adult gets the ask.
  * env.GROQ_CHAT is the test seam; without it or GROQ_API_KEY the caller
  * gets 503 and the button speaks the sentence as built.
  */
-import { checkLicense } from "./license.mjs";
 import { usageCheck, usageRecord } from "./voice.js";
-import {
-  ipHashFor, tasteRefund, tasteReserve, writeSpeakGrant,
-} from "./taste.mjs";
+import { entitled } from "./trial.mjs";
 import { TRANSFORM_PROMPTS, transformPrompt } from "../shared/transform_prompts.mjs";
 
 export { TRANSFORM_PROMPTS };
@@ -66,12 +63,11 @@ export async function handleTransform(request, env) {
   if (!uid || !/^[0-9a-f-]{36}$/i.test(uid)) {
     return json({ error: "bad_user_id" }, { status: 400 });
   }
-  /* 039: no license presented rides the one-time taste pool; a token
-   * that was offered and failed stays a hard bad_license, so the client
-   * can tell a forged/stale license from an empty pool. */
+  /* 040: license or live trial — a presented-but-forged token and an
+   *  expired trial both answer bad_license (§ 5.1, § 9's existing
+   *  codes). */
   const presented = typeof body?.license === "string" && body.license ? body.license : null;
-  const licensed = await checkLicense(env.PIP_LICENSE_SECRET, uid, presented);
-  if (!licensed && presented) {
+  if (!(await entitled(env, uid, presented))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   const mode = body?.mode;
@@ -81,9 +77,6 @@ export async function handleTransform(request, env) {
     return json({ error: "bad_text" }, { status: 400 });
   }
   if (!env.VOICE) return json({ error: "transform_unavailable" }, { status: 503 });
-  if (!licensed && !env.TILE_LEDGER) {
-    return json({ error: "transform_unavailable" }, { status: 503 });
-  }
 
   const gate = await usageCheck(env, { ns: "usage-tr", uid, chars: text.length,
     maxChars: MAX_INPUT_CHARS, dayBudget: DAY_CHAR_BUDGET,
@@ -101,35 +94,14 @@ export async function handleTransform(request, env) {
     question: body?.question === true,
   };
 
-  /* 039 § 4.1 — a tap is one successful model call. Reserve before the
-   * call (the ledger DO is atomic: two parallel presses can't both take
-   * the last tap); a call that returns no text refunds it, so failures,
-   * offline presses and re-speaks cost nothing. */
-  let taste = null;
-  if (!licensed) {
-    taste = await tasteReserve(env, { uid, ipHash: await ipHashFor(env, request) });
-    if (!taste?.ok) return json({ error: "taste_exhausted" }, { status: 403 });
-  }
-
   let out;
   try {
     out = await groq(env, mode, text, shape);
   } catch {
-    if (taste) await tasteRefund(env, uid);
     return json({ error: "groq_failed" }, { status: 502 });
   }
-  if (!out) {
-    if (taste) await tasteRefund(env, uid);
-    return json({ error: "transform_unavailable" }, { status: 503 });
-  }
+  if (!out) return json({ error: "transform_unavailable" }, { status: 503 });
 
   await usageRecord(env, { ns: "usage-tr", uid, chars: text.length });
-  if (taste) {
-    /* The result deserves the real sentence voice (§ 2): grant one
-     * speak of this exact text — still name-masked; the client echoes
-     * it back as taste_text. */
-    await writeSpeakGrant(env, uid, out);
-    return json({ text: out, taste: { left: taste.left } });
-  }
   return json({ text: out });
 }

@@ -13,7 +13,6 @@
  * mp3 with x-tile-cache: stub — a dev server never spends money.
  */
 import tileVoices from "../../data/catalog/tile_voices.json" with { type: "json" };
-import { checkLicense } from "./license.mjs";
 import { usageCheck, usageRecord } from "./voice.js";
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import {
@@ -27,7 +26,7 @@ import {
 } from "../shared/tile_recipe.mjs";
 import * as ledger from "./tile_ledger.mjs";
 import * as pictureLedger from "./picture_ledger.mjs";
-import * as taste from "./taste.mjs";
+import * as trial from "./trial.mjs";
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -108,7 +107,7 @@ export async function handleTile(request, env, ctx) {
   const body = await request.json().catch(() => null);
   const uid = typeof body?.user_id === "string" ? body.user_id : null;
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license))) {
+  if (!(await trial.entitled(env, uid, body?.license))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   if (!env.VOICE || !env.TILE_LEDGER) {
@@ -177,7 +176,7 @@ export async function handleTileFlag(request, env) {
   const body = await request.json().catch(() => null);
   const uid = typeof body?.user_id === "string" ? body.user_id : null;
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license))) {
+  if (!(await trial.entitled(env, uid, body?.license))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   if (!env.VOICE || !env.TILE_LEDGER) {
@@ -210,8 +209,7 @@ export async function handleTileFlag(request, env) {
 export async function handleTileReplaced(request, env, url) {
   const uid = request.headers.get("x-pip-user");
   if (!okUuid(uid)) return json({ error: "bad_user_id" }, { status: 400 });
-  if (!(await checkLicense(
-    env.PIP_LICENSE_SECRET, uid, request.headers.get("x-pip-license")))) {
+  if (!(await trial.entitled(env, uid, request.headers.get("x-pip-license")))) {
     return json({ error: "bad_license" }, { status: 403 });
   }
   if (!env.TILE_LEDGER) return json({ error: "voice_unavailable" }, { status: 503 });
@@ -302,7 +300,7 @@ export class TileLedger {
     ctx.blockConcurrencyWhile(() => {
       ledger.ensureSchema(ctx.storage.sql);
       pictureLedger.ensureSchema(ctx.storage.sql);
-      taste.ensureSchema(ctx.storage.sql);
+      trial.ensureSchema(ctx.storage.sql);
     });
   }
 
@@ -311,6 +309,10 @@ export class TileLedger {
     return typeof this.env.TILE_NOW === "function" ? this.env.TILE_NOW() : Date.now();
   }
   dayCap() { return Number(this.env.TILE_DAY_MINTS ?? 500) || 500; }
+  trialDays() {
+    const v = this.env.TRIAL_DAYS;
+    return v == null ? trial.TRIAL_DAYS : Number(v) || 0;
+  }
 
   async fetch(request) {
     const url = new URL(request.url);
@@ -508,22 +510,20 @@ export class TileLedger {
         limit: url.searchParams.get("limit"),
       }) });
     }
-    /** 039 — the free-taste pool: two integers per user, atomic spends.
-     *  Same shared-DO pattern as the picture ledger; grants live in R2. */
-    if (p === "/taste/reserve" && request.method === "POST") {
+    /** 040 — the 7-day trial: one timestamp per user, insert-if-absent.
+     *  Same shared-DO pattern as the picture ledger. env.TRIAL_DAYS is
+     *  the Works-Test seam (§ 9: forced to 0 shows the day-8 product). */
+    if (p === "/trial/start" && request.method === "POST") {
       const { uid, ip_hash } = (await body()) ?? {};
-      return json(taste.reserveTaste(this.sql, {
+      return json(trial.trialStart(this.sql, {
         uid: String(uid), ipHash: typeof ip_hash === "string" ? ip_hash : null,
-        day: ledger.utcDay(this.now()), now: this.now() }));
+        day: ledger.utcDay(this.now()), now: this.now(),
+        trialDays: this.trialDays() }));
     }
-    if (p === "/taste/refund" && request.method === "POST") {
-      const { uid } = (await body()) ?? {};
-      taste.refundTaste(this.sql, { uid: String(uid), now: this.now() });
-      return new Response(null, { status: 204 });
-    }
-    if (p === "/taste/left" && request.method === "GET") {
-      return json({ left: taste.tasteLeft(this.sql, {
-        uid: String(url.searchParams.get("uid") ?? "") }) });
+    if (p === "/trial/status" && request.method === "GET") {
+      return json(trial.trialStatus(this.sql, {
+        uid: String(url.searchParams.get("uid") ?? ""), now: this.now(),
+        trialDays: this.trialDays() }));
     }
     if (p === "/usage" && request.method === "GET") {
       return json(ledger.mintedChars(this.sql, {

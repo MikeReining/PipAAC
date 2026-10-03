@@ -30,7 +30,8 @@ const te = new TextEncoder();
 const STRIPE_API = "https://api.stripe.com";
 const WEBHOOK_TOLERANCE_MS = 5 * 60 * 1000;
 // $49 × 50% (Pricing_And_Packaging § 4.5: 10+ codes, half price).
-const CODE_UNIT_CENTS = 2450;
+const CODE_UNIT_CENTS = 2450;    // 10+ — the half-price school tier
+const SINGLE_CODE_CENTS = 4900;  // 1–9 — the family price (040 § 8)
 
 const hex = (buf) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -99,7 +100,9 @@ export async function verifyStripeSignature(payload, header, secret, nowMs,
 }
 
 /** POST /api/v1/checkout — session-gated. The supporter buys for a user
- *  already in their account bundle (wrapped keys prove the relation). */
+ *  already in their account bundle (wrapped keys prove the relation).
+ *  Everyone else buys a code through /checkout/codes and redeems it
+ *  (040 § 8 — the app's Buy button uses that route too). */
 export async function handleCheckout(request, env, url) {
   if (!env.STRIPE_SECRET_KEY || !env.STRIPE_PRICE_ID) {
     return bad("payments_unavailable", 503);
@@ -140,33 +143,41 @@ export async function handleCheckout(request, env, url) {
   return json({ url: data.url });
 }
 
-/** POST /api/v1/checkout/codes — self-serve school codes (Pricing § 4.5:
- *  50% off 10 or more, anyone). The marketing site's plain form POSTs
- *  here and gets a 303 to Stripe; a JSON caller gets {url}. No session
- *  or account needed — the codes are the deliverable, not a license on
- *  a user. */
+/** POST /api/v1/checkout/codes — self-serve codes, no account (Pricing
+ *  § 4.5 + 040 § 8). One to nine codes are $49 each — the family's
+ *  in-app purchase and the unlock link; ten or more is the half-price
+ *  school tier. The marketing site's plain form POSTs here and gets a
+ *  303 to Stripe; a JSON caller gets {url}. No session needed — the
+ *  codes are the deliverable, not a license on a user. `redeem:"self"`
+ *  is the app's own Buy: the buyer returns to the app, where the code
+ *  is claimed for the board on this device automatically. */
 export async function handleCheckoutCodes(request, env, url) {
   if (!env.STRIPE_SECRET_KEY) return bad("payments_unavailable", 503);
   const ct = request.headers.get("content-type") ?? "";
-  let count, asForm;
+  let count, redeem, asForm;
   if (ct.includes("application/x-www-form-urlencoded")) {
-    count = Number(new URLSearchParams(await request.text()).get("count"));
+    const form = new URLSearchParams(await request.text());
+    count = Number(form.get("count"));
+    redeem = String(form.get("redeem") ?? "");
     asForm = true;
   } else {
-    count = Number((await request.json().catch(() => null))?.count);
+    const body = await request.json().catch(() => null);
+    count = Number(body?.count);
+    redeem = String(body?.redeem ?? "");
     asForm = false;
   }
-  // Under-10 orders are the family's in-app $49 purchase, not this
-  // half-price tier — reject, never silently reprice.
-  if (!Number.isInteger(count) || count < 10 || count > 200) {
+  if (!Number.isInteger(count) || count < 1 || count > 200) {
     return bad("bad_count");
   }
+  // 040 § 8: the licence is per person — under ten is $49 a code, the
+  // school tier's half price starts at ten. Never silently reprice.
+  const unit = count >= 10 ? CODE_UNIT_CENTS : SINGLE_CODE_CENTS;
   const referer = request.headers.get("referer") ?? "";
   const res = await stripeApi(env, "/v1/checkout/sessions", {
     mode: "payment",
     allow_promotion_codes: "true",
     "line_items[0][price_data][currency]": "usd",
-    "line_items[0][price_data][unit_amount]": String(CODE_UNIT_CENTS),
+    "line_items[0][price_data][unit_amount]": String(unit),
     "line_items[0][price_data][product_data][name]": "Pip Lifetime license code",
     "line_items[0][price_data][product_data][description]":
       "One code unlocks Pip Lifetime for one student, forever.",
@@ -175,7 +186,12 @@ export async function handleCheckoutCodes(request, env, url) {
     "invoice_creation[enabled]": "true",
     "metadata[kind]": "license_codes",
     "metadata[count]": String(count),
-    success_url: `${url.origin}/codes.html?session={CHECKOUT_SESSION_ID}`,
+    // redeem=self: back to the app, which claims the minted code for
+    // this board (?order=). Anything else: the codes page hands the
+    // buyer the code(s) to pass along.
+    success_url: redeem === "self"
+      ? `${url.origin}/?order={CHECKOUT_SESSION_ID}`
+      : `${url.origin}/codes.html?session={CHECKOUT_SESSION_ID}`,
     cancel_url: referer.startsWith("http") ? referer : `${url.origin}/`,
   });
   const data = await res.json().catch(() => null);

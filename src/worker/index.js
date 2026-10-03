@@ -13,7 +13,7 @@ import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
 import { handleSpeak } from "./voice.js";
 import { handleTransform } from "./transform.js";
-import { handleTaste } from "./taste.mjs";
+import { handleTrial } from "./trial.mjs";
 import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger, adminOk } from "./tile.js";
 import { handleCheckout, handleCheckoutCodes, handleLicenseOrder, handleStripeWebhook, grantLifetime } from "./stripe.js";
 import {
@@ -163,10 +163,12 @@ export default {
       return handleTransform(request, env);
     }
 
-    // The free taste (039): the quiet counter's read — taps left for
-    // an unlicensed user, licensed:true otherwise.
-    if (path === "/api/v1/taste" && request.method === "GET") {
-      return handleTaste(request, env);
+    // The 7-day trial (040): POST starts the clock at install (first
+    // online boot; idempotent); GET answers {licensed, endsAt} for the
+    // Settings countdown.
+    if ((path === "/api/v1/trial" && request.method === "GET")
+        || (path === "/api/v1/trial/start" && request.method === "POST")) {
+      return handleTrial(request, env, url);
     }
 
     // "Help improve Pip" intake (Stats_And_Progress § 6.3): whitelisted

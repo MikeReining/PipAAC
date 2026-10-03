@@ -192,7 +192,7 @@ test("checkout without Stripe config is a clean 503", async () => {
   assert.equal(res.status, 503);
 });
 
-test("code checkout: 10+ at half price, a form POST 303s, under 10 rejected", async () => {
+test("code checkout: 1–9 at $49, 10+ at half price, a form POST 303s", async () => {
   const calls = [];
   const env = fakeEnv({
     STRIPE_SECRET_KEY: "sk_test",
@@ -206,12 +206,25 @@ test("code checkout: 10+ at half price, a form POST 303s, under 10 rejected", as
     "http://localhost/api/v1/checkout/codes",
     { method: "POST", headers, body }), env);
 
-  // The half-price tier starts at 10 — under that is the in-app $49
-  // purchase, and we never silently reprice.
-  assert.equal((await post(JSON.stringify({ count: 5 }),
+  /* 040 § 8 — under ten is the family's $49 purchase, no account: the
+   * count is one code at the full price, and redeem:"self" is the
+   * app's own Buy — it returns to the app, which claims the code. */
+  assert.equal((await post(JSON.stringify({ count: 0 }),
     { "content-type": "application/json" })).status, 400);
-  assert.equal((await post(JSON.stringify({ count: 9 }),
-    { "content-type": "application/json" })).status, 400);
+  const single = await post(JSON.stringify({ count: 5 }),
+    { "content-type": "application/json" });
+  assert.equal(single.status, 200);
+  const sent1 = new URLSearchParams(calls.at(-1).init.body);
+  assert.equal(sent1.get("line_items[0][price_data][unit_amount]"), "4900");
+  assert.equal(sent1.get("line_items[0][quantity]"), "5");
+
+  const self = await post(JSON.stringify({ count: 1, redeem: "self" }),
+    { "content-type": "application/json" });
+  assert.equal(self.status, 200);
+  const sentSelf = new URLSearchParams(calls.at(-1).init.body);
+  assert.equal(sentSelf.get("line_items[0][price_data][unit_amount]"), "4900");
+  assert.equal(sentSelf.get("success_url"),
+    "http://localhost/?order={CHECKOUT_SESSION_ID}");
 
   const res = await post(JSON.stringify({ count: 15 }),
     { "content-type": "application/json" });
