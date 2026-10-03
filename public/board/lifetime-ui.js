@@ -40,6 +40,12 @@ export function mountLifetime({ me, sayClip, hearFree, show, toast, trial }) {
   /* Hear the difference — the real thing both ways: the free side plays
    * the actual word clips for "I want an apple" (exactly what a free
    * Play does), the Lifetime side the shipped natural-sentence clip. */
+  /* Until the demo clip is shipped (founder listen), a silent player is
+   * worse than none — hide the card on a 404. Offline or any other
+   * failure leaves it alone. */
+  fetch("/audio/onramp/demo-sentence.mp3", { method: "HEAD" })
+    .then((r) => { if (r.status === 404) $("life-hear-life").closest(".life-card").hidden = true; })
+    .catch(() => {});
   $("life-hear-free").onclick = () => hearFree();
   $("life-hear-life").onclick = () => sayClip("demo-sentence");
 
