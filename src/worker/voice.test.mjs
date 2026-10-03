@@ -7,6 +7,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "./index.js";
 import { licenseFor } from "./license.mjs";
+import { grantKey, writeSpeakGrant } from "./taste.mjs";
 
 const SECRET = "voice-test-secret";
 const UID = "11111111-2222-3333-4444-555555555555";
@@ -25,6 +26,7 @@ const fakeBucket = () => {
       };
     },
     async put(key, v) { store.set(key, v); },
+    async delete(key) { store.delete(key); },
   };
 };
 
@@ -173,6 +175,59 @@ test("one sentence x four feelings = four recordings, each synthesized once", as
     assert.equal(r.headers.get("x-voice-cache"), "hit");
   }
   assert.equal(calls, 4);
+});
+
+/* ---------------------- 039: taste speak grants ---------------------- */
+
+test("a speak grant serves its exact text once — the second play is bad_license", async () => {
+  const env = makeEnv();
+  await writeSpeakGrant(env, UID, "Do you want an apple?");
+  const r = await speak(env, { user_id: UID, voice: VOICE, text: "Do you want an apple?" });
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get("x-voice-cache"), "miss");
+  // Consumed: a second unlicensed ask is refused (the client's local
+  // cache is what serves re-speaks — the grant never covers it).
+  const again = await speak(env, { user_id: UID, voice: VOICE, text: "Do you want an apple?" });
+  assert.equal(again.status, 403);
+  assert.equal((await again.json()).error, "bad_license");
+});
+
+test("a grant never covers other text or a non-neutral feeling", async () => {
+  const env = makeEnv();
+  await writeSpeakGrant(env, UID, "You want an apple.");
+  const wrong = await speak(env, { user_id: UID, voice: VOICE, text: "Some other sentence." });
+  assert.equal(wrong.status, 403);
+  const felt = await speak(env, { user_id: UID, voice: VOICE, text: "You want an apple.", feeling: "happy" });
+  assert.equal(felt.status, 403);
+  // Neither refusal consumed it — the real ask still serves.
+  const ok = await speak(env, { user_id: UID, voice: VOICE, text: "You want an apple." });
+  assert.equal(ok.status, 200);
+});
+
+test("an expired grant is refused and deletes itself", async () => {
+  const env = makeEnv();
+  await writeSpeakGrant(env, UID, "Old sentence.", Date.now() - 11 * 60_000);
+  const r = await speak(env, { user_id: UID, voice: VOICE, text: "Old sentence." });
+  assert.equal(r.status, 403);
+  assert.equal(env.VOICE.store.has(await grantKey(UID, "Old sentence.")), false);
+});
+
+test("the taste_text echo claims the grant when the spoken text differs (masked names)", async () => {
+  const env = makeEnv();
+  await writeSpeakGrant(env, UID, "PERSON1 want an apple.");
+  const r = await speak(env, {
+    user_id: UID, voice: VOICE,
+    text: "Leo want an apple.",          // her real name is spoken…
+    taste_text: "PERSON1 want an apple.", // …the grant only saw the mask
+  });
+  assert.equal(r.status, 200);
+});
+
+test("no license and no grant is still bad_license", async () => {
+  const env = makeEnv();
+  const r = await speak(env, { user_id: UID, voice: VOICE, text: "i want a cookie" });
+  assert.equal(r.status, 403);
+  assert.equal((await r.json()).error, "bad_license");
 });
 
 test("an unknown feeling is 400; launch voice is active tile voice_key only", async () => {

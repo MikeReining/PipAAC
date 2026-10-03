@@ -9,6 +9,7 @@
  */
 import tileVoices from "../../data/catalog/tile_voices.json" with { type: "json" };
 import { checkLicense } from "./license.mjs";
+import { consumeSpeakGrant, peekSpeakGrant } from "./taste.mjs";
 import { FEELINGS } from "./prosody.mjs";
 import { elevenExpressiveMintText } from "../shared/expressive_eleven.mjs";
 
@@ -135,8 +136,24 @@ export async function handleSpeak(request, env, ctx) {
   if (!uid || !/^[0-9a-f-]{36}$/i.test(uid)) {
     return json({ error: "bad_user_id" }, { status: 400 });
   }
-  if (!(await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license))) {
-    return json({ error: "bad_license" }, { status: 403 });
+  const licensed = await checkLicense(env.PIP_LICENSE_SECRET, uid, body?.license);
+  /* 039 § 4.2 — a taste-spent transform leaves a one-shot speak grant
+   * keyed by the transform's output text. The client echoes that text
+   * back as taste_text (it is still name-masked — the spoken text may
+   * carry her real names, the grant never does). Neutral feeling only,
+   * consumed once audio is served, never covers other text. */
+  let grantedText = null;
+  if (!licensed) {
+    const echo = typeof body?.taste_text === "string" && body.taste_text
+      ? body.taste_text
+      : (typeof body?.text === "string" ? body.text : "");
+    const feelingAsked = body?.feeling == null ? "neutral" : body.feeling;
+    if (env.VOICE && feelingAsked === "neutral"
+        && await peekSpeakGrant(env, uid, echo)) {
+      grantedText = echo;
+    } else {
+      return json({ error: "bad_license" }, { status: 403 });
+    }
   }
   const text = typeof body?.text === "string" ? body.text.trim() : "";
   if (!text || text.length > MAX_SENTENCE_CHARS) {
@@ -158,6 +175,7 @@ export async function handleSpeak(request, env, ctx) {
   if (eligible) {
     const obj = await env.VOICE.get(key).catch(() => null);
     if (obj) {
+      if (grantedText) await consumeSpeakGrant(env, uid, grantedText);
       return new Response(obj.body, {
         headers: { "content-type": "audio/mpeg", "x-voice-cache": "hit" },
       });
@@ -190,6 +208,7 @@ export async function handleSpeak(request, env, ctx) {
     }
   })();
   if (ctx?.waitUntil) ctx.waitUntil(after); else await after;
+  if (grantedText) await consumeSpeakGrant(env, uid, grantedText);
 
   return new Response(audio, {
     headers: {

@@ -27,6 +27,7 @@ import {
 } from "../shared/tile_recipe.mjs";
 import * as ledger from "./tile_ledger.mjs";
 import * as pictureLedger from "./picture_ledger.mjs";
+import * as taste from "./taste.mjs";
 
 const json = (data, init = {}) =>
   new Response(JSON.stringify(data), {
@@ -301,6 +302,7 @@ export class TileLedger {
     ctx.blockConcurrencyWhile(() => {
       ledger.ensureSchema(ctx.storage.sql);
       pictureLedger.ensureSchema(ctx.storage.sql);
+      taste.ensureSchema(ctx.storage.sql);
     });
   }
 
@@ -505,6 +507,23 @@ export class TileLedger {
         before: url.searchParams.get("before"),
         limit: url.searchParams.get("limit"),
       }) });
+    }
+    /** 039 — the free-taste pool: two integers per user, atomic spends.
+     *  Same shared-DO pattern as the picture ledger; grants live in R2. */
+    if (p === "/taste/reserve" && request.method === "POST") {
+      const { uid, ip_hash } = (await body()) ?? {};
+      return json(taste.reserveTaste(this.sql, {
+        uid: String(uid), ipHash: typeof ip_hash === "string" ? ip_hash : null,
+        day: ledger.utcDay(this.now()), now: this.now() }));
+    }
+    if (p === "/taste/refund" && request.method === "POST") {
+      const { uid } = (await body()) ?? {};
+      taste.refundTaste(this.sql, { uid: String(uid), now: this.now() });
+      return new Response(null, { status: 204 });
+    }
+    if (p === "/taste/left" && request.method === "GET") {
+      return json({ left: taste.tasteLeft(this.sql, {
+        uid: String(url.searchParams.get("uid") ?? "") }) });
     }
     if (p === "/usage" && request.method === "GET") {
       return json(ledger.mintedChars(this.sql, {
