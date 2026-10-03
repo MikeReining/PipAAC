@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pip AAC pricing: free, or $49 once. Never a subscription.</title>
-  <meta name="description" content="Every built-in word free, forever. Pip Lifetime is $49 once per child for the whole team. Every helper and SLP free. Schools 50% off 10+.">
+  <meta name="description" content="Every built-in word free, forever. Pip Lifetime is $49 once per child for the whole team. Helpers never pay. Schools 50% off 10+.">
   <meta name="theme-color" content="#f6f4ef">
   <link rel="preload" href="/fonts/andika-bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png">
   <link rel="apple-touch-icon" href="/brand/icon-180.png">
   <meta property="og:title" content="Pip AAC pricing: free, or $49 once. Never a subscription.">
-  <meta property="og:description" content="Every built-in word free, forever. Pip Lifetime is $49 once per child for the whole team. Every helper and SLP free. Schools 50% off 10+.">
+  <meta property="og:description" content="Every built-in word free, forever. Pip Lifetime is $49 once per child for the whole team. Helpers never pay. Schools 50% off 10+.">
   <meta property="og:url" content="https://pipaac.org/pricing">
   <meta property="og:type" content="website">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Pip really free? What's the catch?", "acceptedAnswer": {"@type": "Answer", "text": "Every built-in word speaks, free, forever. You also get 20 words of your own, your child's device plus one helper, backup, all voices, and feelings. If you want more, it's $49 once. That's the whole catch."}}, {"@type": "Question", "name": "Will you ever make it a subscription?", "acceptedAnswer": {"@type": "Answer", "text": "No. A voice is not rented."}}, {"@type": "Question", "name": "Is it $49 per child or per family?", "acceptedAnswer": {"@type": "Answer", "text": "Per child: the person who speaks. Every adult helper is free."}}, {"@type": "Question", "name": "What happens to our words if we never pay?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing. They keep speaking. Free has a limit on adding your own words, never on using the ones you have."}}, {"@type": "Question", "name": "I'm an SLP. Do I pay?", "acceptedAnswer": {"@type": "Answer", "text": "Never. Set up as many clients as you like."}}, {"@type": "Question", "name": "Can our school or district buy it?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: license codes, 50% off 10 or more, purchase orders welcome."}}]}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Pip really free? What's the catch?", "acceptedAnswer": {"@type": "Answer", "text": "Every built-in word speaks, free, forever. You also get 20 words of your own, your child's device plus one helper, backup, and Spotlight. If you want more, it's $49 once — and every new board gets a free week of the paid extras first. That's the whole catch."}}, {"@type": "Question", "name": "Will you ever make it a subscription?", "acceptedAnswer": {"@type": "Answer", "text": "No. A voice is not rented."}}, {"@type": "Question", "name": "Is it $49 per child or per family?", "acceptedAnswer": {"@type": "Answer", "text": "Per child: the person who speaks. Helpers never buy their own license."}}, {"@type": "Question", "name": "What happens to our words if we never pay?", "acceptedAnswer": {"@type": "Answer", "text": "Nothing. They keep speaking. Free has a limit on adding your own words, never on using the ones you have."}}, {"@type": "Question", "name": "I'm an SLP. Do I pay?", "acceptedAnswer": {"@type": "Answer", "text": "Never. Set up as many clients as you like."}}, {"@type": "Question", "name": "Can our school or district buy it?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: license codes, 50% off 10 or more, purchase orders welcome."}}]}</script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -51,10 +51,11 @@
             <h3>Free, forever</h3>
             <p class="plan-price">$0</p>
             <ul>
-              <li>Every built-in word speaks</li>
+              <li>Every word speaks, one word at a time</li>
               <li>20 words of your own: people, pets, places</li>
               <li>Your child's device + one helper</li>
-              <li>All voices, suggestions, groups, feelings</li>
+              <li>Suggestions, groups, Spotlight</li>
+              <li>5 Draw-it-for-me pictures</li>
               <li>Works offline</li>
               <li>Backup and card restore</li>
               <li>The weekly win card</li>
@@ -67,15 +68,22 @@
             <p class="plan-price">$49 <small>once, per child</small></p>
             <ul>
               <li>Everything in Free, plus:</li>
-              <li><strong>Unlimited</strong> words of your own</li>
-              <li><strong>Every</strong> helper: both parents, grandparents, SLP, teachers</li>
+              <li>A <strong>natural voice</strong> reads the whole sentence</li>
+              <li>The sentence buttons: <strong>✨ ❓ ⏪ ⏩</strong></li>
+              <li>Feeling faces, and a choice of voices</li>
+              <li>A voice for the words you type</li>
               <li>The full progress dashboard + report for IEP meetings</li>
+              <li><strong>Unlimited</strong> words, <strong>every</strong> helper, every device</li>
               <li>300 drawings</li>
             </ul>
-            <a class="button" href="https://app.pipaac.org">Start free, upgrade anytime</a>
+            <form method="post" action="https://app.pipaac.org/api/v1/checkout/codes">
+              <input type="hidden" name="count" value="1">
+              <button class="button" type="submit">Buy Pip Lifetime · $49 once — no account needed</button>
+            </form>
           </div>
         </div>
-        <p class="plans-note">One price per child. Every adult helper is free. SLPs never pay.</p>
+        <p class="plans-note">One price per child; the license belongs to the child, so helpers never buy their own.
+          Every new board gets a free week of the paid extras — after it, every word still speaks.</p>
       </div>
     </section>
 
@@ -100,9 +108,9 @@
         <h2 id="promise-title" class="center narrow">Five promises we'll never break.</h2>
         <div class="promises">
           <div><span>1</span><h3>Nothing is taken away.</h3><p>A word your child has keeps speaking, paid or not.</p></div>
-          <div><span>2</span><h3>No time limits.</h3><p>No trials, no countdowns, no features that switch off after 30 days.</p></div>
+          <div><span>2</span><h3>Words never lock.</h3><p>The paid extras get a free first week; after it, every word your child has keeps speaking.</p></div>
           <div><span>3</span><h3>Never deleted for money.</h3><p>Your child's board and backup stay, whether you ever pay or not.</p></div>
-          <div><span>4</span><h3>Every helper free.</h3><p>Parents, grandparents, teachers, and SLPs never pay to help.</p></div>
+          <div><span>4</span><h3>Helpers never pay.</h3><p>The license belongs to the child — parents, grandparents, teachers, and SLPs never buy their own.</p></div>
           <div><span>5</span><h3>Never a subscription.</h3><p>A voice is not rented. Not now, not ever.</p></div>
         </div>
       </div>
@@ -133,7 +141,7 @@
         <div class="faq">
           <details>
             <summary>Is Pip really free? What's the catch?</summary>
-            <p>Every built-in word speaks, free, forever. You also get 20 words of your own, your child's device plus one helper, backup, all voices, and feelings. If you want more, it's $49 once. That's the whole catch.</p>
+            <p>Every built-in word speaks, free, forever. You also get 20 words of your own, your child's device plus one helper, backup, and Spotlight. If you want more, it's $49 once — and every new board gets a free week of the paid extras first. That's the whole catch.</p>
           </details>
           <details>
             <summary>Will you ever make it a subscription?</summary>
@@ -141,7 +149,7 @@
           </details>
           <details>
             <summary>Is it $49 per child or per family?</summary>
-            <p>Per child: the person who speaks. Every adult helper is free.</p>
+            <p>Per child: the person who speaks. Helpers never buy their own license.</p>
           </details>
           <details>
             <summary>What happens to our words if we never pay?</summary>

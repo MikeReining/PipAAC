@@ -68,7 +68,7 @@
         ],
         [
           "The whole team, on their own devices.",
-          "Proloquo2Go keeps devices in step by passing backup files around. In Pip, every helper edits from their own phone or laptop, free, and the iPad has it the same day."
+          "Proloquo2Go keeps devices in step by passing backup files around. In Pip, helpers edit from their own phone or laptop — the license belongs to the child, never the helper — and the iPad has it the same day."
         ]
       ]
     },
@@ -140,12 +140,12 @@
       "slug": "coughdrop",
       "name": "CoughDrop",
       "maker": "CoughDrop",
-      "h1": "Pip vs CoughDrop: every helper free",
-      "knock": "CoughDrop charges helpers to edit. In Pip, Grandma, the SLP, and the teacher are always free.",
+      "h1": "Pip vs CoughDrop: helpers never pay",
+      "knock": "CoughDrop charges helpers to edit. In Pip the license belongs to the child — Grandma, the SLP, and the teacher never buy their own.",
       "diff": [
         [
           "Helpers never pay.",
-          "CoughDrop charges $45 for a supporter to edit. In Pip, every helper on your child's team is free, forever."
+          "CoughDrop charges $45 for a supporter to edit. In Pip, one helper is free forever; the whole team comes with the child's $49 once."
         ],
         [
           "$295, or $0.",
@@ -207,7 +207,7 @@
           }
         },
         {
-          "label": "Every helper edits free, on their own device",
+          "label": "Helpers covered by the child's license — never their own fee",
           "q": {
             "pip": 4,
             "proloquo": 2,

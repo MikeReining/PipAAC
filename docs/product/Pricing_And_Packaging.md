@@ -4,6 +4,11 @@
 user, § 4. Where § 2 and § 4 disagree, § 4 wins.
 **Amended 2026-10-03:** school codes are self-serve on the web at 50%
 off **10** or more (was 20, by request).
+**Amended 2026-10-04:** the 039 ten-tap pool is superseded by the 040
+7-day trial; the voice features (natural sentence voice, sentence
+buttons, faces, voice choice, typed-word voice, Progress) are the paid
+surface and are tried, not gated forever. § 4.2's table is the canonical
+list (`docs/phases/040_Trial_And_Upgrade_Page.md` § 3).
 Intake: `docs/founder/2026-09-22_Customization_Pricing_VoiceCloning.md`,
 `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
 Fact map: `docs/product/SSOT.md`.
@@ -42,7 +47,7 @@ Pip AAC establishes a permanent architectural and business invariant:
 |    - Local storage (SQLite WASM / OPFS)                                       |
 |    - Encrypted backup, QR card restore (own device + one supporter)          |
 |    - 5 "Draw it for me" drawings as a taste                                   |
-|    - 10 free ✨ ❓ ⏪ ⏩ taps, one time (a taste of the sentence buttons)      |
+|    - 7 days of the paid extras, one time (040 trial — § 4.2)                  |
 +-------------------------------------------------------------------------------+
                                        |
                                        v
@@ -90,7 +95,7 @@ above:
 | Invariant | Enforcement |
 | --- | --- |
 | Core board speaks offline with zero payment | Works Test: fresh install speaks all 677 catalog words and personal entities without an account or network. |
-| No time-bomb expiration | The app never disables speech or locks vocabulary after a 30-day trial period. |
+| No time-bomb expiration | **Speech and vocabulary never lock.** The app never disables speech or locks vocabulary after a trial period — the 040 trial adds paid extras for 7 days and then politely asks the adult; every word keeps speaking either way. |
 | Zero loss upon cloud disconnection | If cloud sync or credits expire, the local database remains 100% intact, readable, and speakable. |
 | No deletion for payment | A free user's backup is kept and restorable; only a family's request or 3 idle years deletes a user. |
 | Nothing is taken away | A free user's own words past the limit (added before a downgrade, a restore, or a limit change) keep speaking; the limit only stops adding. |
@@ -122,17 +127,28 @@ subscription before a child can speak
 
 ### 4.2 Free vs Pip Lifetime
 
-| Free, forever | Pip Lifetime (\$49 once, per user) |
-| --- | --- |
-| Every built-in word speaks | |
-| **20 words of your own** (people, pets, places, with your photos) | Unlimited words of your own |
-| **The user's own device + one supporter** (all of that supporter's devices: laptop, phone, tablet) | **Every supporter** (both parents, grandparents, the SLP, teachers) |
-| The web editor, for that supporter | The web editor, for every supporter |
-| The weekly win card (a preview of the stats) | The full stats dashboard and the progress report (`docs/product/Stats_And_Progress.md` § 4) |
-| 5 drawings (Draw it for me) | 300 drawings, then top-up packs near cost |
-| **10 free ✨ ❓ ⏪ ⏩ taps, one time** (taste of the sentence buttons; DECIDED 2026-10-03, built in `docs/phases/039_Free_Taste.md`) | Unlimited ✨ ❓ ⏪ ⏩ (fair use) |
-| All voices, prediction, groups, hiding words, Record my own | (same) |
-| Backup, QR card restore, moving to a new device | (same) |
+Canonical list — the page, the site and app copy must use these rows and
+no others (`docs/phases/040_Trial_And_Upgrade_Page.md` § 3, DECIDED
+2026-10-04; the 039 ten-tap pool is removed).
+
+| Free, forever | Pip Lifetime (\$49 once, per person) | In the 7-day trial? |
+| --- | --- | --- |
+| Every word speaks, **one word at a time**, default voice | **Natural full-sentence voice** | **Yes** |
+| | ✨ Fix it · ❓ Question · ⏪ Past · ⏩ Future | **Yes** |
+| | Feeling faces: excited, sad, angry | **Yes** |
+| | Choose a voice | **Yes** |
+| | Voice for the words you type | **Yes**, inside its existing per-license caps |
+| | Progress: weekly charts, goal words, new words, PDF/IEP report | **Yes** — shown in full, locked back to the preview after |
+| **20 words of your own** (people, pets, places, with your photos) | Unlimited words of your own | **No** — structural, never unwound |
+| **The user's own device + one supporter** (all of that supporter's devices: laptop, phone, tablet) | **Every supporter**, every web editor | **No** — structural, people are never removed |
+| The user's own device | Sync across unlimited devices | **No** |
+| 5 drawings (Draw it for me) | 300 drawings, then top-up packs near cost | **No** — has its own quota |
+| Spotlight, prediction, groups, hiding words, Record my own, backup, QR card restore | (same) | n/a |
+
+The trial covers only the six feature rows — the cost-bearing, instantly
+reversible ones. Words, supporters and devices hold the family's data
+and people; taking them away on day 8 would mean deleting words or
+removing a teacher. Those stay behind Lifetime during the trial.
 
 - **A word of your own** is a live `personal_entity`. Retiring one frees a
   slot; changing a built-in word's picture or recording does not count.
@@ -179,8 +195,8 @@ subscription before a child can speak
 | --- | --- |
 | Charge for backup or restore | Asks for money at the moment a child lost their voice |
 | Lock custom groups | Words land in My Words anyway; nobody hits the wall |
-| Charge to switch voices | The voice is identity; the system voices are free |
-| Prediction that turns off after X days | A time bomb (§ 3); the child learns to rely on it |
+| ~~Charge to switch voices~~ **reversed 2026-10-04 (040)** | Choosing a voice is now paid/trial: minting and serving a voice costs per voice and per sentence, so the feature carries a real per-use cost. The **default** voice stays free forever — identity never goes silent. |
+| ~~Prediction that turns off after X days~~ **partially reversed 2026-10-04 (040)** | Prediction itself stays free (rejected stands). What did change: paid extras — the natural sentence voice, sentence buttons, faces, voice choice — run as a 7-day trial then ask the adult, never the child. This is not a time bomb on speech: § 3's invariant holds because words and vocabulary never lock. |
 | Per-supporter license covering all their users | SLPs are the channel and each brings many users; per user is how every funder counts |
 | Discount for additional users | Unfair to the first client; confusing |
 | One free laptop (by hardware id) | Browsers expose no hardware id, by design; a website cannot reliably tell a laptop from an iPad in landscape |
@@ -207,7 +223,11 @@ subscription before a child can speak
   permanently unlocks one user in our account system and is restored by
   sign-in or the QR card. Model Apple's cut at 30%.
 - **Schools, grants, SLPs buying ahead:** license codes, each redeemable
-  on one user. **50% off 10 or more** — self-serve on the web
+  on one user. **\$49 a code for 1–9; 50% off 10 or more** — self-serve
+  on the web, no account needed (040 § 8: the app's own Buy button and
+  the "send an unlock link" flow use the same route; the in-app buyer
+  returns to the app and the minted code redeems for that board
+  automatically)
   (`pipaac.org/schools` → Stripe Checkout on the app worker; the buyer's
   codes render on screen and arrive by email, redeemable like any
   founder-minted code), or by purchase order for districts that need

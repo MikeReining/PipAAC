@@ -68,20 +68,24 @@ guess them. (Running it calls Groq: confirm first.)
 
 ## Gates and failure (today)
 
-- **Every model button needs Pip Lifetime — or one of the 10 free taps.**
-  The taste pool (039, built 2026-10-03) gives every user 10 successful
-  transforms, one time, shared across ✨ ❓ ⏪ ⏩; a tap spends only when
-  the model returned text, and the result speaks through the real
-  sentence voice via a one-shot Worker grant. The count is server-side
-  (`src/worker/taste.mjs`, the shared ledger DO); the client mirrors it.
-  After that: the internet and fair use (20,000 chars/day ≈ 200
+- **Every model button needs Pip Lifetime — or the 7-day trial.** The
+  trial (040, superseding the 039 ten-tap pool) starts at install and
+  opens every paid feature for `TRIAL_DAYS = 7`; the Worker decides
+  (`src/worker/trial.mjs`, the shared ledger DO — one timestamp per
+  user, a per-IP day cap on starts), and the client only mirrors it.
+  While the trial runs the buttons work like Lifetime: the transform
+  returns text and it speaks through the natural sentence voice. After
+  that: the internet and fair use (20,000 chars/day ≈ 200
   sentences; 30 requests/min). Source: `transform.js` (`checkLicense`,
-  `usageCheck`, `tasteReserve`).
+  `usageCheck`, `trialEntitled`).
+- **Day 8 changes the voice, not the board.** A press on a paid button
+  after expiry still **speaks the bar as built** — word by word, the
+  free way — and shows the adult-facing ask once per session. Nothing
+  is hidden or removed; the child is never asked to buy.
 - Failure never silences a press: it **speaks the bar as built** and toasts —
-  offline ("needs the internet"), pool empty (`taste_exhausted` → the
-  adult's offer, once per session), forged license ("comes with Pip
-  Lifetime", with an *Open Settings* action), fair use ("back
-  tomorrow"), or "couldn't work just now."
+  offline ("needs the internet"), trial ended (`bad_license` → the
+  adult's offer, once per session), forged license (also `bad_license`),
+  fair use ("back tomorrow"), or "couldn't work just now."
 - Cost is not a concern (founder 2026-10-03; 023 § 2 measured ~$0.01 per
   1,000 taps).
 
