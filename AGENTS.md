@@ -8,7 +8,7 @@ in routed docs; add links here, not long prose.
 ```text
 Read route -> name slice + truth owner + proof -> edit narrowly -> focused proof
 -> deslop -> code audit -> log durable lessons -> commit when saving
--> deploy + verify the live surface (done means live — see Project Laws)
+-> deploy + verify the live surface (always deploy — see Project Laws)
 ```
 
 No silent WIP: if work stops mid-slice, leave a short status note naming scope,
@@ -63,12 +63,19 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
 
 ## Project Laws
 
-- **Done means live.** If the change touches a deployed surface (the
-  worker, `public/`, `site/`), deploy it and smoke-check production
-  before reporting done. Ending a slice with "to go live, run X" is a
-  failed handoff — you run X. Only a named gate stops a deploy: missing
-  secret, founder-flagged item, paid run, or destructive step — and you
-  say which gate, not a checklist.
+- **Always deploy. A fix that is not deployed does not count.** Any change
+  to a deployed surface (the worker, `public/`, `site/`) — a feature, a fix,
+  a copy edit, a one-line import — ends with the deploy and a smoke check of
+  production, in the same turn, without being asked. Deploy the app before the
+  site when the site links to new app behavior. "Fixed in the working tree" /
+  "committed" / "to go live, run X" is a failed handoff. Founder ruling
+  2026-10-03: an open design or copy review does not hold a deploy — ship,
+  then report what the founder should check. The only things that stop a
+  deploy: a missing secret, a destructive step, a paid batch run (batch art /
+  bulk voice), or new or replaced shipped voice audio awaiting the founder's
+  listen (the audio law below still stands) — name the gate, never a
+  checklist. A failing gate (`npm run check`,
+  or a browser boot of the changed page) blocks the deploy: fix it first.
   → `docs/operations/Execution-Playbook.md` § Closeout & Human Stops
 - Founder/user input is intent, not final authority.
 - UI and API responses may render truth; they must not invent durable product truth.
