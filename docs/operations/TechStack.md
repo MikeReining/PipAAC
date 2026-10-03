@@ -85,7 +85,7 @@ routes are LIVE (deployed 2026-10-02); checkout sessions accept
 promotion codes (`PIPTEST` = 100% off, in test and live). License codes (`POST /admin/v1/license-codes`,
 Bearer `PIP_ADMIN_TOKEN`) and `POST /api/v1/license/redeem` work with
 existing secrets. Self-serve codes (2026-10-03): `POST
-/api/v1/checkout/codes` {count 10–200} — the schools page form-POSTs it
+/api/v1/checkout/codes` {count 1–200; $49 each under 10, half price 10+} — the pricing and schools pages form-POST it
 for a 303 to Stripe — then the webhook mints the batch (`code_order` in
 the accounts dir, sealed codes) and `/codes.html?session=` displays
 them (`GET /api/v1/license/order`). Local dev: `.dev.vars` has the test-mode key + price;
