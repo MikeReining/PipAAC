@@ -1,7 +1,9 @@
 # 039 — The Free Taste: let everyone feel ✨ ❓ ⏪ ⏩ before paying
 
-**Status:** spec for a developer, not built. Founder approved the idea and the
-numbers 2026-10-03.
+**Status:** built 2026-10-03 — pool DO (`taste.mjs` on the shared
+TileLedger DO), speak grants, per-IP cap, client counter and asks. Held
+from deploy by two named gates: founder sign-off on the § 4.5 strings
+and a founder listen of the four tour takes before `--ship` (§ 7).
 **Read first:** `docs/product/Sentence_Bar.md` (what the buttons do — never
 infer their outputs) and `docs/product/Pricing_And_Packaging.md` § 4.2.
 **Truth owner:** the Worker. The count of free taps left lives server-side;

@@ -68,13 +68,20 @@ guess them. (Running it calls Groq: confirm first.)
 
 ## Gates and failure (today)
 
-- **Every model button needs Pip Lifetime**, the internet, and fair use
-  (20,000 chars/day ≈ 200 sentences; 30 requests/min). Source:
-  `transform.js` (`checkLicense`, `usageCheck`).
+- **Every model button needs Pip Lifetime — or one of the 10 free taps.**
+  The taste pool (039, built 2026-10-03) gives every user 10 successful
+  transforms, one time, shared across ✨ ❓ ⏪ ⏩; a tap spends only when
+  the model returned text, and the result speaks through the real
+  sentence voice via a one-shot Worker grant. The count is server-side
+  (`src/worker/taste.mjs`, the shared ledger DO); the client mirrors it.
+  After that: the internet and fair use (20,000 chars/day ≈ 200
+  sentences; 30 requests/min). Source: `transform.js` (`checkLicense`,
+  `usageCheck`, `tasteReserve`).
 - Failure never silences a press: it **speaks the bar as built** and toasts —
-  offline ("needs the internet"), unlicensed ("comes with Pip Lifetime", with
-  an *Open Settings* action), fair use ("back tomorrow"), or "couldn't work
-  just now."
+  offline ("needs the internet"), pool empty (`taste_exhausted` → the
+  adult's offer, once per session), forged license ("comes with Pip
+  Lifetime", with an *Open Settings* action), fair use ("back
+  tomorrow"), or "couldn't work just now."
 - Cost is not a concern (founder 2026-10-03; 023 § 2 measured ~$0.01 per
   1,000 taps).
 

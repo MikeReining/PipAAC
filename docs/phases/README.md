@@ -58,7 +58,7 @@ Executing phases only. Each row names the **next** slice.
 | [037 — Shipped payload diet](037_Shipped_Payload_Diet.md) | **Shipped 2026-10-03** — symbols 600 MB → 7.7 MB WebP (709 files) deployed, `_headers` live, assets bypass the Worker (tail-verified), picture indexes re-embedded (thumbnails return `.webp`) |
 | [036 — Works offline](036_Offline_Support.md) | **Deployed 2026-10-03** — `sw.js` + generated precache (3,522 files, 70.0 MB) live; offline probe passes against the deployed origin. Open: real-iPad Works Test — the claim is already live on pipaac.org |
 | [038 — Sentence bar settings](038_Sentence_Bar_Settings.md) | Built 2026-10-03: per-person choice of which sentence buttons show under Settings → Talking (`bar_controls`, synced); Play grows into freed space. Open: licensed-default question in § 7 |
-| [039 — The free taste](039_Free_Taste.md) | Spec for a developer 2026-10-03: 10 free ✨ ❓ ⏪ ⏩ taps per user (real transform + real voice), then the adult ask. Not built; tour clips await a founder listen |
+| [039 — The free taste](039_Free_Taste.md) | Built 2026-10-03: taste pool on the shared ledger DO + speak grants + client ask. Owed: founder sign-off on the § 4.5 strings and a listen of the four tour takes, then `--ship` + deploy + Works Test |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
 
 The language and voice schema was accepted 2026-09-22 and moved to
