@@ -96,12 +96,17 @@ one-time taste of the real thing, then ask.**
 
 ### 4.3 Worker: abuse limits
 
-A new profile = a new user id = a new 10. Add a per-IP daily cap on *taste
-spends* (starting value: 30/IP/day, one constant; coarse, no IP stored beyond
-a hashed counter with day rollover). Over the cap → `taste_exhausted` as if the
-pool were empty. Existing minute-burst and daily-char fair use still apply.
-Sentence-voice spend per taste tap is at most one fresh synth (cached text is
-free, shared across users).
+**The allowance is 10 per person, once, ever — there is no daily or per-IP
+allowance.** The only extra limit is anti-farming: a new profile = a new user
+id = a new 10, so cap how many **new tasting profiles** one connection may
+start per day (placeholder: 5, one constant; hashed per-IP day counter, no IP
+stored). Over the cap → `taste_exhausted`, as if that profile's pool were
+empty. A real family (2–3 children) never notices; a farmer must keep creating
+profiles and gets nothing permanent. This is a speed bump, not a wall —
+profiles are local with no sign-in, so farming cannot be fully prevented, and
+10 taps cost pennies. Existing minute-burst and daily-char fair use still
+apply. Sentence-voice spend per taste tap is at most one fresh synth (cached
+text is free, shared across users).
 
 ### 4.4 Client (`public/board/speech.js`, `public/board.js`)
 
@@ -216,5 +221,5 @@ exactly that text once; wrong text / second use / expired grant →
 ## 10. Open items for the founder (the developer should not guess these)
 
 - Final ask strings (§ 4.5).
-- IP cap value (30/day is a placeholder).
+- New-tasting-profiles-per-connection cap (5/day is a placeholder). Note schools: a classroom of kids on one network may hit it — fine if schools buy codes (`/schools`) rather than taste.
 - Whether the quiet counter should also show on the Overview screen.

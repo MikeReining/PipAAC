@@ -113,6 +113,20 @@ design ("a present want of a future thing is already future-facing").
   the TTS. Check `docs/phases/024_Sentence_TTS_And_Audio_Cache.md` and
   `025` before leaning on it in marketing.
 
+## Which buttons show (phase 038, built 2026-10-03)
+
+An adult picks the set in Settings → Talking → Sentence bar; the truth
+owner is the synced `learner_profile.bar_controls` column — a JSON list
+of the shown control names (`fix question past future backspace clear`).
+NULL is Everything, the bar that shipped before 038. ▶ is never in the
+list — it always shows, and it grows into the space hidden model buttons
+free (`--play-grow` on `#topbar`). Hidden buttons leave the layout
+entirely — nothing tappable, no dead gap. Past and Future are two
+independent toggles (founder 2026-10-03). Spotlight never targets a
+hidden control; the tour and Progress only walk the buttons the person
+has. Nothing infers this from the child's behaviour — the board never
+changes on a guess.
+
 ## Change rules
 
 Change a prompt only in `src/shared/transform_prompts.mjs`; show the founder
