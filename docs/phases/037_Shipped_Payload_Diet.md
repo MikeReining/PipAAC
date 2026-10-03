@@ -1,5 +1,9 @@
 # 037 — Shipped payload diet (ship the tile, not the master)
 
+Keep-in-phases: § 7 still owns the live spec for the shipped
+`public/preview-symbol-diet.html` review set — the rule-based art
+spot-check list and the per-file edge-override path (§ 2A).
+
 **Status:** SHIPPED 2026-10-03 — executed 2026-10-02 in four commits
 (`e1ab297` transcode, `d68f053` byte gate, `4c50b83` review page,
 `805abbc` `_headers`); deployed and verified live on `app.pipaac.org`.
