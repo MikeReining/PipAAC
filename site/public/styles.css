@@ -272,7 +272,8 @@ p { margin: 0 0 1em; }
   font-weight: 700; font-size: .72rem;
 }
 .smart-bar img { width: 22px; height: 22px; object-fit: contain; }
-.smart-bar .feel { justify-content: space-around; font-size: 1rem; padding-inline: 2px; }
+.smart-bar .feel { justify-content: space-around; padding-inline: 2px; }
+.smart-bar .feel svg { width: 22px; height: 22px; }
 
 .board {
   display: grid;
@@ -347,7 +348,7 @@ p { margin: 0 0 1em; }
   .tile { border-width: 2px; border-radius: 7px; }
   .smart-bar span { font-size: .6rem; padding: 2px 3px; }
   .smart-bar img { width: 16px; height: 16px; }
-  .smart-bar .feel { font-size: .72rem; letter-spacing: -.1em; white-space: nowrap; }
+  .smart-bar .feel svg { width: 16px; height: 16px; }
   .button { font-size: 1.05rem; padding-inline: 1.1rem; white-space: nowrap; }
 }
 
