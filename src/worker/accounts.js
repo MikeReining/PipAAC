@@ -36,6 +36,34 @@ const sha = async (s) =>
     new TextEncoder().encode(s))));
 const normEmail = (e) => String(e ?? "").trim().toLowerCase();
 
+const CODE_ABC = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+const mintCode = () =>
+  "PIP-" + [...crypto.getRandomValues(new Uint8Array(12))]
+    .map((b) => CODE_ABC[b % CODE_ABC.length]).join("")
+    .replace(/(.{4})(.{4})(.{4})/, "$1-$2-$3");
+
+/* Self-serve code orders (Pricing § 4.5): the buyer's codes must stay
+ * retrievable — license_code itself keeps only SHA-256s — so the order
+ * row carries them sealed (AES-GCM under the internal secret). A DO dump
+ * alone still can't spend an unredeemed code. */
+const orderSecret = (env) => env.PIP_INTERNAL_SECRET ?? env.PIP_LICENSE_SECRET;
+const orderKey = (env) => crypto.subtle.digest("SHA-256",
+  new TextEncoder().encode(orderSecret(env)))
+  .then((raw) => crypto.subtle.importKey("raw", raw, "AES-GCM", false,
+    ["encrypt", "decrypt"]));
+const sealCodes = async (env, codes) => {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv },
+    await orderKey(env), new TextEncoder().encode(JSON.stringify(codes)));
+  return `${b64u(iv)}.${b64u(new Uint8Array(ct))}`;
+};
+const openCodes = async (env, enc) => {
+  const [iv, ct] = String(enc).split(".");
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64u(iv) },
+    await orderKey(env), unb64u(ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+};
+
 export class SupporterAccounts {
   constructor(ctx, env) {
     this.ctx = ctx;
@@ -105,6 +133,13 @@ export class SupporterAccounts {
           batch TEXT,
           redeemed_by TEXT,
           redeemed_at INTEGER,
+          created_at INTEGER NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS code_order (
+          session_id TEXT PRIMARY KEY,
+          codes_enc TEXT NOT NULL,
+          email TEXT,
+          count INTEGER NOT NULL,
           created_at INTEGER NOT NULL
         );
       `);
@@ -364,18 +399,58 @@ export class SupporterAccounts {
     if (path === "/dir/license/grant" && request.method === "POST") {
       const count = Math.min(Math.max(Number(body?.count) || 0, 1), 200);
       const batch = String(body?.batch ?? `batch-${now}`);
-      const ABC = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
       const codes = [];
       for (let i = 0; i < count; i++) {
-        const raw = crypto.getRandomValues(new Uint8Array(12));
-        const code = "PIP-" + [...raw].map((b) => ABC[b % ABC.length]).join("")
-          .replace(/(.{4})(.{4})(.{4})/, "$1-$2-$3");
+        const code = mintCode();
         sql.exec(
           "INSERT INTO license_code (hash, batch, created_at) VALUES (?, ?, ?)",
           await sha(code), batch, now);
         codes.push(code);
       }
       return json({ ok: true, batch, codes });
+    }
+
+    /* Paid code orders (Stripe webhook calls this). Idempotent on the
+     * Stripe session id — a retried delivery returns the same codes, it
+     * never mints a second batch. Codes go in license_code (hashes, so
+     * they redeem) and sealed into code_order (so they deliver). */
+    if (path === "/dir/license/order" && request.method === "POST") {
+      const sessionId = String(body?.session_id ?? "");
+      if (!sessionId) return bad("bad_request");
+      const existing = one(
+        "SELECT codes_enc, email, count FROM code_order WHERE session_id = ?",
+        sessionId);
+      if (existing) {
+        return json({ ok: true, codes: await openCodes(this.env, existing.codes_enc),
+          email: existing.email, count: existing.count });
+      }
+      if (!orderSecret(this.env)) return bad("internal_unavailable", 503);
+      const count = Math.min(Math.max(Number(body?.count) || 0, 1), 200);
+      const email = body?.email ? String(body.email) : null;
+      const codes = [];
+      for (let i = 0; i < count; i++) {
+        const code = mintCode();
+        sql.exec(
+          "INSERT INTO license_code (hash, batch, created_at) VALUES (?, ?, ?)",
+          await sha(code), sessionId, now);
+        codes.push(code);
+      }
+      sql.exec(
+        `INSERT INTO code_order (session_id, codes_enc, email, count, created_at)
+         VALUES (?, ?, ?, ?, ?)`,
+        sessionId, await sealCodes(this.env, codes), email, codes.length, now);
+      return json({ ok: true, codes, email, count: codes.length });
+    }
+
+    // The success page reads the order back; the Stripe session id in
+    // the URL is the bearer (unguessable, like the codes it returns).
+    if (path === "/dir/license/order/codes" && request.method === "POST") {
+      const row = one(
+        "SELECT codes_enc, email, count FROM code_order WHERE session_id = ?",
+        String(body?.session_id ?? ""));
+      if (!row) return bad("no_order", 404);
+      return json({ ok: true, codes: await openCodes(this.env, row.codes_enc),
+        email: row.email, count: row.count });
     }
 
     // Bearer redemption: the code itself is the authority, like the QR

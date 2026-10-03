@@ -996,6 +996,25 @@ p { margin: 0 0 1em; }
 .school-math strong { font-size: 3rem; color: var(--ink); line-height: 1; }
 .school-math .old { border-top: 2px dashed var(--yellow); }
 .school-math s { font-size: 1.5rem; font-weight: 700; color: var(--muted); text-decoration-color: var(--red); text-decoration-thickness: 3px; }
+
+/* ── Schools: self-serve license codes ── */
+.buy-box {
+  background: var(--white); border: 2px solid var(--line); border-radius: 24px;
+  padding: clamp(1.5rem, 4vw, 2.4rem); margin-top: 1.5rem;
+}
+.buy-label { display: block; font-weight: 700; color: var(--ink); margin-bottom: .5rem; }
+.buy-box input[type="number"] {
+  font: 700 1.6rem/1 var(--font); color: var(--ink); text-align: center;
+  width: 7ch; padding: .55rem .4rem; border: 2px solid var(--edge);
+  border-radius: var(--radius); background: var(--cream);
+}
+.buy-box input[type="number"]:focus {
+  outline: none; border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--cream), 0 0 0 6px var(--ink);
+}
+.buy-price { margin: 1.1rem 0 1.3rem; }
+.buy-price strong { font-size: 2.8rem; color: var(--ink); line-height: 1; }
+.buy-price span { color: var(--muted); font-size: 1rem; }
 .promises {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
   gap: clamp(1rem, 2.5vw, 1.5rem); margin-top: clamp(2.5rem, 6vw, 3.5rem);

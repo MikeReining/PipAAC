@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pip AAC for schools: 50% off 20 or more, purchase orders welcome</title>
-  <meta name="description" content="Every student starts free. Pip Lifetime license codes are 50% off at 20 or more. Teachers, aides and SLPs join free.">
+  <title>Pip AAC for schools: 50% off 10 or more, purchase orders welcome</title>
+  <meta name="description" content="Every student starts free. Pip Lifetime license codes are 50% off at 10 or more — buy them yourself in minutes. Teachers, aides and SLPs join free.">
   <meta name="theme-color" content="#f6f4ef">
   <link rel="preload" href="/fonts/andika-bold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png">
   <link rel="apple-touch-icon" href="/brand/icon-180.png">
-  <meta property="og:title" content="Pip AAC for schools: 50% off 20 or more, purchase orders welcome">
-  <meta property="og:description" content="Every student starts free. Pip Lifetime license codes are 50% off at 20 or more. Teachers, aides and SLPs join free.">
+  <meta property="og:title" content="Pip AAC for schools: 50% off 10 or more, purchase orders welcome">
+  <meta property="og:description" content="Every student starts free. Pip Lifetime license codes are 50% off at 10 or more — buy them yourself in minutes. Teachers, aides and SLPs join free.">
   <meta property="og:url" content="https://pipaac.org/schools">
   <meta property="og:type" content="website">
 </head>
@@ -38,8 +38,28 @@
     <section class="hero-simple wrap" aria-labelledby="hero-title">
       <span class="eyebrow">Schools and districts</span>
       <h1 id="hero-title">Every student who needs a voice. One fair price.</h1>
-      <p class="sub">Pip is free for every student to start. When a student's whole team needs in, Pip Lifetime is $49 once, and schools get <strong>50% off 20 or more</strong>.</p>
-      <a class="button" id="hero-cta" href="mailto:hello@pipaac.org?subject=Pip%20license%20codes%20for%20our%20school">Request license codes <span class="arrow" aria-hidden="true">→</span></a>
+      <p class="sub">Pip is free for every student to start. When a student's whole team needs in, Pip Lifetime is $49 once — and license codes are <strong>half price at 10 or more</strong>. Buy them yourself, right now.</p>
+      <a class="button" id="hero-cta" href="#buy">Buy license codes <span class="arrow" aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="section" id="buy" aria-labelledby="buy-title">
+      <div class="wrap narrow center">
+        <h2 id="buy-title">Buy license codes.</h2>
+        <p>10 or more codes, half price — <strong>$24.50 each</strong>, once, forever. Your codes
+          arrive on screen the moment you pay, and by email too.</p>
+        <form class="buy-box" id="buy-codes" method="post"
+          action="https://app.pipaac.org/api/v1/checkout/codes">
+          <label class="buy-label" for="buy-count">How many students?</label>
+          <input id="buy-count" name="count" type="number" min="10" max="200" step="1"
+            value="20" inputmode="numeric" required>
+          <p class="buy-price"><strong id="buy-total">$490</strong><br>
+            <span id="buy-each">20 codes × $24.50 — you save $490</span></p>
+          <button class="button big" type="submit">Buy license codes
+            <span class="arrow" aria-hidden="true">→</span></button>
+          <p class="cta-note">Need a purchase order or an invoice first, or more than 200?
+            <a class="text-link" href="mailto:hello@pipaac.org?subject=Pip%20license%20codes%20for%20our%20school">Email us</a></p>
+        </form>
+      </div>
     </section>
 
     <section class="section white" aria-labelledby="math-title">
@@ -47,8 +67,8 @@
         <div>
           <h2 id="math-title">Your budget goes ten times further.</h2>
           <p>Twenty students on a $299.99 app cost your district $5,999.80. Twenty students on
-            Pip Lifetime cost $490. Every student gets every word, free, from day one, whether
-            you buy a single code or not.</p>
+            Pip Lifetime cost $490 — codes are half price from ten. Every student gets every
+            word, free, from day one, whether you buy a single code or not.</p>
           <p><strong>Purchase orders welcome.</strong> Each license code unlocks Pip Lifetime for
             one student, for life. It travels with the student from classroom to classroom and
             school to home.</p>
@@ -78,8 +98,8 @@
       <div class="wrap narrow center">
         <img loading="lazy" decoding="async" class="final-bird" src="/pip/welcome.webp" alt="" width="180" height="180">
         <h2 id="final-title">Start a student tonight. Buy codes when you're ready.</h2>
-        <p class="final-sub">Every word is free from day one. Codes are 50% off at 20 or more.</p>
-        <a class="button big" id="final-cta" href="mailto:hello@pipaac.org?subject=Pip%20license%20codes%20for%20our%20school">Request license codes <span class="arrow" aria-hidden="true">→</span></a>
+        <p class="final-sub">Every word is free from day one. Codes are 50% off at 10 or more.</p>
+        <a class="button big" id="final-cta" href="#buy">Buy license codes <span class="arrow" aria-hidden="true">→</span></a>
         <p class="cta-note center"><a class="text-link" href="https://app.pipaac.org">Or create a student's board free now →</a></p>
       </div>
     </section>

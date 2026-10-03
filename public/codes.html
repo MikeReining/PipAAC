@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Pip license codes</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" sizes="32x32" href="/brand/favicon-32.png">
+  <style>
+    @font-face { font-family: "Andika"; src: url("/fonts/andika-bold.woff2") format("woff2"); font-weight: 700; }
+    :root { --ink: #2a241d; --muted: #5b5348; --cream: #f6f4ef; --white: #fff; --line: #d8d4c8; --green: #2e8b3a; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--cream); color: var(--ink);
+      font: 400 1.05rem/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 40rem; margin: 0 auto; padding: 3rem 1.25rem 4rem; }
+    .brand { display: flex; align-items: center; gap: .6rem; font: 700 1.4rem "Andika", system-ui, sans-serif; }
+    .card { background: var(--white); border: 1.5px solid var(--line); border-radius: 14px;
+      padding: 1.75rem; margin-top: 1.5rem; }
+    h1 { font-family: "Andika", system-ui, sans-serif; font-size: 1.9rem; line-height: 1.2; margin: .4rem 0 0; }
+    .sub { color: var(--muted); }
+    ol.codes { list-style: none; margin: 1.25rem 0 0; padding: 0; columns: 2; column-gap: 1rem; }
+    ol.codes li { break-inside: avoid; font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 1rem; padding: .4rem .6rem; border: 1px solid var(--line); border-radius: 8px;
+      margin-bottom: .5rem; background: var(--cream); }
+    button { font: 700 1rem system-ui, sans-serif; background: var(--ink); color: var(--cream);
+      border: 0; border-radius: 999px; padding: .7rem 1.5rem; cursor: pointer; }
+    .hint { color: var(--muted); font-size: .95rem; }
+    .hint a { color: var(--ink); font-weight: 700; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="brand"><img src="/brand/pip-mark.svg" alt="" width="36" height="36"> Pip</p>
+    <div class="card" id="waiting">
+      <h1>Getting your license codes…</h1>
+      <p class="sub">Payment received. Your codes are being minted — this takes a few seconds.</p>
+    </div>
+    <div class="card" id="ready" hidden>
+      <h1>Your license codes</h1>
+      <p class="sub"><span id="howmany"></span> Each code unlocks <strong>Pip Lifetime for one
+        student, forever</strong>. A code works once: in Pip, open the board's settings and paste
+        it into the <strong>License key or PIP- code</strong> field.</p>
+      <ol class="codes" id="list"></ol>
+      <p><button id="copy" type="button">Copy all codes</button></p>
+      <p class="hint" id="emailed" hidden></p>
+      <p class="hint">Keep this page — you can come back to it any time. The link is in the email
+        we sent too.</p>
+    </div>
+    <div class="card" id="stuck" hidden>
+      <h1>Still minting…</h1>
+      <p class="sub">Your payment is safe — the codes land as soon as Stripe confirms. Reload this
+        page in a minute, or <a href="mailto:hello@pipaac.org">email us</a> and we'll send them over.</p>
+    </div>
+  </main>
+  <script>
+    (() => {
+      const session = new URLSearchParams(location.search).get("session") ?? "";
+      const waiting = document.getElementById("waiting");
+      const ready = document.getElementById("ready");
+      const stuck = document.getElementById("stuck");
+      const list = document.getElementById("list");
+      const show = (el) => { waiting.hidden = ready.hidden = stuck.hidden = true; el.hidden = false; };
+      if (!session.startsWith("cs_")) { show(stuck); return; }
+      let tries = 0;
+      const poll = async () => {
+        tries += 1;
+        try {
+          const r = await fetch("/api/v1/license/order?session=" + encodeURIComponent(session));
+          if (r.ok) {
+            const d = await r.json();
+            document.getElementById("howmany").textContent =
+              d.codes.length === 1 ? "One code." : `${d.codes.length} codes.`;
+            for (const c of d.codes) {
+              const li = document.createElement("li");
+              li.textContent = c;
+              list.appendChild(li);
+            }
+            if (d.email) {
+              const em = document.getElementById("emailed");
+              em.hidden = false;
+              em.textContent = `A copy was also emailed to ${d.email}.`;
+            }
+            document.getElementById("copy").onclick = async (e) => {
+              await navigator.clipboard.writeText(d.codes.join("\n"));
+              e.target.textContent = "Copied";
+            };
+            show(ready);
+            return;
+          }
+        } catch { /* offline or worker busy — keep polling */ }
+        if (tries < 30) setTimeout(poll, 2000); else show(stuck);
+      };
+      poll();
+    })();
+  </script>
+</body>
+</html>

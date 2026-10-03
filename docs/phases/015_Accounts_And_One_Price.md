@@ -550,6 +550,19 @@ the license field accepts `PIP-` codes (bearer `/api/v1/license/redeem`)
 alongside pasted keys. Proof: `entitlement.test.mjs` GET leg +
 `stripe.test.mjs` checkout legs.
 
+**Self-serve code checkout BUILT 2026-10-03** (founder: "let anybody buy
+bulk licenses at 50% off … 10 or more"): `POST /api/v1/checkout/codes`
+takes a count 10–200 — the schools page's plain form POSTs it and gets
+a 303 to Stripe (JSON callers get `{url}`) — priced inline at $24.50 a
+code (`price_data`, no new Stripe price). The webhook's
+`metadata.kind=license_codes` branch mints the batch in the accounts
+dir (`code_order`, idempotent on the Stripe session id; codes sealed
+AES-GCM — `license_code` still stores hashes only) and emails them when
+`EMAIL` is bound. `GET /api/v1/license/order?session=` feeds
+`app.pipaac.org/codes.html`, which polls and renders the codes. Codes
+redeem through the existing bearer path. Amends § 4.5: 50% off **10**
+or more.
+
 Still owed by this slice: Stripe/Apple **confirmation wiring tested
 live** (test-mode purchase end-to-end), iOS consumable IAP (lands with
 the iOS shell — Out of scope), the 20-word and 5-drawing counters, the

@@ -84,11 +84,25 @@ slice 6 for ids — test + live products/prices/webhook endpoints on
 routes are LIVE (deployed 2026-10-02); checkout sessions accept
 promotion codes (`PIPTEST` = 100% off, in test and live). License codes (`POST /admin/v1/license-codes`,
 Bearer `PIP_ADMIN_TOKEN`) and `POST /api/v1/license/redeem` work with
-existing secrets. Local dev: `.dev.vars` has the test-mode key + price;
+existing secrets. Self-serve codes (2026-10-03): `POST
+/api/v1/checkout/codes` {count 10–200} — the schools page form-POSTs it
+for a 303 to Stripe — then the webhook mints the batch (`code_order` in
+the accounts dir, sealed codes) and `/codes.html?session=` displays
+them (`GET /api/v1/license/order`). Local dev: `.dev.vars` has the test-mode key + price;
 `stripe listen --forward-to localhost:21087/api/v1/stripe/webhook`
 supplies the webhook signing secret per session. Marketing
-site: `pipaac.org` is a separate project `pipaac-site` (`site/`) — not
-yet deployed; `npm run deploy:site` attaches the custom domains.
+site: `pipaac.org` + `www.pipaac.org` are live on the separate project
+`pipaac-site` (`site/`, deployed 2026-10-02); `npm run deploy:site`
+pushes updates. Note the "works offline" copy shipped with the site —
+036 § 5 makes the real-iPad Works Test the gate for that claim, so a
+site redeploy before the device test should hold or soften it.
+
+**Killed release / bad SW pin:** bump `RELEASE` in
+`scripts/sw/sw_manifest.mjs` (the buildId `r<N>` prefix is the manual
+escape hatch — `sw-manifest.json` and `sw-build.js` are generated, so
+never hand-edit them), re-run `node scripts/sw/sw_manifest.mjs`,
+redeploy. Clients pick up the fresh `pip-shell-r<N>-*` cache on the
+next update check (036 § 6).
 
 ## Local preview
 

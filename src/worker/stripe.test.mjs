@@ -192,6 +192,79 @@ test("checkout without Stripe config is a clean 503", async () => {
   assert.equal(res.status, 503);
 });
 
+test("code checkout: 10+ at half price, a form POST 303s, under 10 rejected", async () => {
+  const calls = [];
+  const env = fakeEnv({
+    STRIPE_SECRET_KEY: "sk_test",
+    STRIPE_FETCH: async (u, init) => {
+      calls.push({ u, init });
+      return new Response(JSON.stringify(
+        { id: "cs_bulk", url: "https://checkout.stripe.com/bulk" }));
+    },
+  });
+  const post = (body, headers = {}) => worker.fetch(new Request(
+    "http://localhost/api/v1/checkout/codes",
+    { method: "POST", headers, body }), env);
+
+  // The half-price tier starts at 10 — under that is the in-app $49
+  // purchase, and we never silently reprice.
+  assert.equal((await post(JSON.stringify({ count: 5 }),
+    { "content-type": "application/json" })).status, 400);
+  assert.equal((await post(JSON.stringify({ count: 9 }),
+    { "content-type": "application/json" })).status, 400);
+
+  const res = await post(JSON.stringify({ count: 15 }),
+    { "content-type": "application/json" });
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).url, "https://checkout.stripe.com/bulk");
+  const sent = new URLSearchParams(calls.at(-1).init.body);
+  assert.equal(sent.get("line_items[0][price_data][unit_amount]"), "2450");
+  assert.equal(sent.get("line_items[0][quantity]"), "15");
+  assert.equal(sent.get("metadata[kind]"), "license_codes");
+  assert.equal(sent.get("success_url"),
+    "http://localhost/codes.html?session={CHECKOUT_SESSION_ID}");
+
+  // The schools page's plain form POST gets a 303 straight to Stripe.
+  const form = await post("count=20",
+    { "content-type": "application/x-www-form-urlencoded" });
+  assert.equal(form.status, 303);
+  assert.equal(form.headers.get("location"), "https://checkout.stripe.com/bulk");
+});
+
+test("code order: webhook mints once, order endpoint delivers, codes redeem", async () => {
+  const env = fakeEnv({ STRIPE_WEBHOOK_SECRET: WHSEC, PIP_INTERNAL_SECRET: INTERNAL });
+  const session = "cs_bulk_1";
+  const { payload, header } = await signEvent({
+    type: "checkout.session.completed",
+    data: { object: { id: session, payment_status: "paid",
+      customer_details: { email: "slp@school.edu" },
+      metadata: { kind: "license_codes", count: "3" } } },
+  });
+  let res = await webhook(env, payload, header);
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).codes, 3);
+
+  const order = () => worker.fetch(new Request(
+    `http://localhost/api/v1/license/order?session=${session}`), env);
+  const d = await (await order()).json();
+  assert.equal(d.codes.length, 3);
+  assert.equal(d.email, "slp@school.edu");
+  assert.match(d.codes[0], /^PIP-[2-9A-HJKMNP-Z]{4}-[2-9A-HJKMNP-Z]{4}-[2-9A-HJKMNP-Z]{4}$/);
+
+  // A Stripe retry returns the same batch — never a second mint.
+  res = await webhook(env, payload, header);
+  assert.equal(res.status, 200);
+  assert.deepEqual((await (await order()).json()).codes, d.codes);
+
+  // Unknown session 404s; a delivered code redeems through the bearer path.
+  assert.equal((await worker.fetch(new Request(
+    "http://localhost/api/v1/license/order?session=cs_nope"), env)).status, 404);
+  res = await worker.fetch(new Request("http://localhost/api/v1/license/redeem", {
+    method: "POST", body: JSON.stringify({ code: d.codes[0], user_id: UID }) }), env);
+  assert.equal(res.status, 200);
+  assert.equal(await relayEntitlement(env, UID), "lifetime");
+});
+
 test("license codes: admin mints, bearer redeems once, release on grant failure", async () => {
   const env = fakeEnv({ PIP_ADMIN_TOKEN: "adm", PIP_INTERNAL_SECRET: INTERNAL });
   const mint = (tok = "adm") => worker.fetch(new Request(

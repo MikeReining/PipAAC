@@ -29,6 +29,8 @@ const bad = (error, status = 400) => json({ error }, { status });
 const te = new TextEncoder();
 const STRIPE_API = "https://api.stripe.com";
 const WEBHOOK_TOLERANCE_MS = 5 * 60 * 1000;
+// $49 × 50% (Pricing_And_Packaging § 4.5: 10+ codes, half price).
+const CODE_UNIT_CENTS = 2450;
 
 const hex = (buf) =>
   [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -138,6 +140,100 @@ export async function handleCheckout(request, env, url) {
   return json({ url: data.url });
 }
 
+/** POST /api/v1/checkout/codes — self-serve school codes (Pricing § 4.5:
+ *  50% off 10 or more, anyone). The marketing site's plain form POSTs
+ *  here and gets a 303 to Stripe; a JSON caller gets {url}. No session
+ *  or account needed — the codes are the deliverable, not a license on
+ *  a user. */
+export async function handleCheckoutCodes(request, env, url) {
+  if (!env.STRIPE_SECRET_KEY) return bad("payments_unavailable", 503);
+  const ct = request.headers.get("content-type") ?? "";
+  let count, asForm;
+  if (ct.includes("application/x-www-form-urlencoded")) {
+    count = Number(new URLSearchParams(await request.text()).get("count"));
+    asForm = true;
+  } else {
+    count = Number((await request.json().catch(() => null))?.count);
+    asForm = false;
+  }
+  // Under-10 orders are the family's in-app $49 purchase, not this
+  // half-price tier — reject, never silently reprice.
+  if (!Number.isInteger(count) || count < 10 || count > 200) {
+    return bad("bad_count");
+  }
+  const referer = request.headers.get("referer") ?? "";
+  const res = await stripeApi(env, "/v1/checkout/sessions", {
+    mode: "payment",
+    allow_promotion_codes: "true",
+    "line_items[0][price_data][currency]": "usd",
+    "line_items[0][price_data][unit_amount]": String(CODE_UNIT_CENTS),
+    "line_items[0][price_data][product_data][name]": "Pip Lifetime license code",
+    "line_items[0][price_data][product_data][description]":
+      "One code unlocks Pip Lifetime for one student, forever.",
+    "line_items[0][quantity]": String(count),
+    // Schools expense this — a Stripe receipt plus a proper invoice.
+    "invoice_creation[enabled]": "true",
+    "metadata[kind]": "license_codes",
+    "metadata[count]": String(count),
+    success_url: `${url.origin}/codes.html?session={CHECKOUT_SESSION_ID}`,
+    cancel_url: referer.startsWith("http") ? referer : `${url.origin}/`,
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data?.url) return bad("stripe_error", 502);
+  if (asForm) return Response.redirect(data.url, 303);
+  return json({ url: data.url });
+}
+
+/** GET /api/v1/license/order?session=cs_… — the success page polls this
+ *  until the webhook has minted the order's codes. The Stripe session
+ *  id is the bearer. */
+export async function handleLicenseOrder(request, env, url) {
+  if (!env.ACCOUNTS) return bad("accounts_unavailable", 503);
+  const session = String(url.searchParams.get("session") ?? "");
+  if (!session.startsWith("cs_")) return bad("bad_session");
+  return acctDir(env).fetch(new Request(
+    "https://accounts/dir/license/order/codes", {
+      method: "POST", body: JSON.stringify({ session_id: session }) }));
+}
+
+/** Paid code order: mint the batch in the dir (idempotent on the Stripe
+ *  session id), then email the buyer — best-effort; the codes page
+ *  already shows them. */
+async function fulfillCodeOrder(env, s) {
+  if (!env.ACCOUNTS) return bad("accounts_unavailable", 503);
+  const count = Math.min(Math.max(Number(s.metadata?.count) || 0, 1), 200);
+  const email = s.customer_details?.email ?? s.customer_email ?? null;
+  const r = await acctDir(env).fetch(new Request(
+    "https://accounts/dir/license/order", {
+      method: "POST",
+      body: JSON.stringify({ session_id: String(s.id ?? ""), count, email }),
+    }));
+  if (!r.ok) return bad("order_failed", 502);
+  const order = await r.json();
+  if (env.EMAIL && email && order.codes?.length) {
+    try {
+      const { EmailMessage } = await import("cloudflare:email");
+      const raw = [
+        `From: Pip <accounts@pipaac.org>`,
+        `To: ${email}`,
+        `Subject: Your Pip license codes (${order.codes.length})`,
+        `Content-Type: text/plain; charset=utf-8`,
+        ``,
+        `Thank you — each code below unlocks Pip Lifetime for one student,`,
+        `forever. A code works once: in Pip, open the board's settings and`,
+        `paste it into the license field.`,
+        ``,
+        ...order.codes,
+        ``,
+        `You can see this list again any time at:`,
+        `https://app.pipaac.org/codes.html?session=${s.id}`,
+      ].join("\r\n");
+      await env.EMAIL.send(new EmailMessage("accounts@pipaac.org", email, raw));
+    } catch { /* the codes page is the delivery of record */ }
+  }
+  return json({ ok: true, codes: order.codes?.length ?? 0 });
+}
+
 /** POST /api/v1/stripe/webhook — signature-verified Stripe events.
  *  checkout.session.completed grants lifetime; everything else is a 200
  *  so Stripe stops retrying. */
@@ -160,6 +256,9 @@ export async function handleStripeWebhook(request, env) {
   if (s.payment_status
     && !["paid", "no_payment_required"].includes(s.payment_status)) {
     return json({ ok: true, ignored: "unpaid" });
+  }
+  if (s.metadata?.kind === "license_codes") {
+    return fulfillCodeOrder(env, s);
   }
   const userId = s.client_reference_id || s.metadata?.user_id;
   if (!userId || !/^[0-9a-f-]{36}$/i.test(userId)) return bad("no_user", 400);

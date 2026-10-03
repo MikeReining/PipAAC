@@ -2,6 +2,8 @@
 
 **DECIDED 2026-09-22** (not built). **Amended 2026-09-23:** one price per
 user, § 4. Where § 2 and § 4 disagree, § 4 wins.
+**Amended 2026-10-03:** school codes are self-serve on the web at 50%
+off **10** or more (was 20, by request).
 Intake: `docs/founder/2026-09-22_Customization_Pricing_VoiceCloning.md`,
 `docs/founder/2026-09-23_Accounts_And_Pricing.md`.
 Fact map: `docs/product/SSOT.md`.
@@ -104,7 +106,8 @@ Execution: `docs/phases/015_Accounts_And_One_Price.md`.
 
 **Pip Lifetime: \$49 once, per user** (the person who speaks). No
 subscription. No discount for a second user: an SLP's first client and
-tenth pay the same, and so do siblings. Schools get 50% off 20 or more.
+tenth pay the same, and so do siblings. License codes are 50% off 10 or
+more — anyone can buy them, self-serve, no quote or email thread (§ 4.5).
 
 Every **supporter** (parent, grandparent, SLP, teacher) is free. Once a
 user has Pip Lifetime, every supporter of that user gets everything, and
@@ -202,8 +205,11 @@ subscription before a child can speak
   permanently unlocks one user in our account system and is restored by
   sign-in or the QR card. Model Apple's cut at 30%.
 - **Schools, grants, SLPs buying ahead:** license codes, each redeemable
-  on one user. 50% off 20 or more, bought on the web or by purchase
-  order. Apple School Manager's volume discount covers a paid app's
+  on one user. **50% off 10 or more** — self-serve on the web
+  (`pipaac.org/schools` → Stripe Checkout on the app worker; the buyer's
+  codes render on screen and arrive by email, redeemable like any
+  founder-minted code), or by purchase order for districts that need
+  one. Apple School Manager's volume discount covers a paid app's
   price, not an in-app purchase, so codes are the school path. A code
   bought outside the app works in the iOS app because the same unlock is
   sold in the app (App Review Guideline 3.1.3(b); schools 3.1.3(c)).

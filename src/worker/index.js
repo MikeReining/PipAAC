@@ -14,7 +14,7 @@ import { handleResearch } from "./research.js";
 import { handleSpeak } from "./voice.js";
 import { handleTransform } from "./transform.js";
 import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger, adminOk } from "./tile.js";
-import { handleCheckout, handleStripeWebhook, grantLifetime } from "./stripe.js";
+import { handleCheckout, handleCheckoutCodes, handleLicenseOrder, handleStripeWebhook, grantLifetime } from "./stripe.js";
 import {
   handleAllowance, handleDraw, handleFind, handleFindBatch,
   handlePick, handlePictureImage, handlePicturesAdmin, handleReject,
@@ -498,6 +498,15 @@ export default {
      * schools/grants (Pricing_And_Packaging § 4.5). */
     if (path === "/api/v1/checkout" && request.method === "POST") {
       return handleCheckout(request, env, url);
+    }
+    // Self-serve code checkout (Pricing § 4.5): the schools page's form
+    // POSTs here unauthenticated; the buyer's codes arrive on
+    // /codes.html and by email after the webhook mints them.
+    if (path === "/api/v1/checkout/codes" && request.method === "POST") {
+      return handleCheckoutCodes(request, env, url);
+    }
+    if (path === "/api/v1/license/order" && request.method === "GET") {
+      return handleLicenseOrder(request, env, url);
     }
     if (path === "/api/v1/stripe/webhook" && request.method === "POST") {
       return handleStripeWebhook(request, env);
