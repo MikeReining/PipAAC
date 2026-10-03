@@ -202,6 +202,3 @@ board is synced. A parent who taps Buy cannot buy.
 - Accent colour; final page and toast strings; the "hear the difference"
   sentence.
 - Guest checkout route and the unlock-link privacy call (§ 8).
-- The SLP wrinkle: the clock starts at install, so a board an SLP builds weeks
-  ahead burns its trial before the family has it. Accepted as the standard
-  model; the "Send an unlock link" and 50%-off codes are the SLP's answer.
