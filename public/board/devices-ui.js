@@ -20,7 +20,7 @@ const $ = (id) => document.getElementById(id);
 
 export function mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
-  initSync, onSyncApplied, onModel, qrcode,
+  initSync, onSyncApplied, onModel, qrcode, settings,
   // Re-seals the running sync client after a key rotation (015 s5) —
   // injected so this module stays free of the sqlite-backed db graph.
   syncRekey = async () => null,
@@ -770,6 +770,18 @@ export function mountDevices({
           ? "A free user allows one linked device. Pip Lifetime unlocks more."
           : `The relay refused: ${e.message}`;
         pairBody.querySelector(".hint").textContent = msg;
+        if (e.message === "upgrade_required") {
+          // 040: every paid wall ends at the same page — one destination,
+          // one button.
+          const door = document.createElement("button");
+          door.className = "btn secondary";
+          door.textContent = "See Pip Lifetime · $49";
+          door.onclick = () => {
+            $("pairform").classList.remove("open");
+            settings?.show?.("lifetime", { focus: true });
+          };
+          pairBody.appendChild(door);
+        }
         await pairClient(relayBase).grant(pending.code, { refused: msg });
         return;
       }
@@ -808,6 +820,7 @@ export function mountDevices({
     // 024: the sentence-voice endpoint wants the license on every
     // request — the relay keeps the status, the device keeps a copy.
     await store.put(`user/${me.id}/license`, key);
+    localStorage.removeItem(`pip-unlicensed:${me.id}`); // ends the 040 preview flag
     await renderDevices();
   }
 

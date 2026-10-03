@@ -333,7 +333,8 @@ test("gate: free sees the win card and one way in, with no control that does not
   const buy = find(free["prog-body"], (n) => n.id === "prog-buy");
   assert.match(buy.textContent, /Get Pip Lifetime · \$49 once/);
   buy.click();
-  assert.deepEqual(free.shown, ["you"], "the button opens the license row's page");
+  // 040 § 7 — one destination: the Lifetime page owns Buy.
+  assert.deepEqual(free.shown, ["lifetime"], "the button opens the Lifetime page");
 
   const life = await gateRun("lifetime");
   for (const id of ["prog-range", "prog-share", "prog-foot"]) assert.equal(life[id].hidden, false);

@@ -3,6 +3,10 @@
  * picker only: which voices exist comes from shared/voices.mjs (catalog
  * `voice` rows + the coming-soon lineup); choosing writes
  * learner_profile.preferred_voice_id through board.js (synced).
+ *
+ * 040: choosing a voice is a paid feature. After the trial a
+ * non-default card shows a lock and its tap opens the Lifetime page;
+ * the board voice itself reverts to the default in board.js.
  */
 import { VOICE_FILTERS, voiceChoices, voiceName } from "../shared/voices.mjs";
 
@@ -14,7 +18,7 @@ const el = (tag, cls, text) => {
   return n;
 };
 
-export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample }) {
+export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, locked = () => false, onLocked = () => {} }) {
   let filter = "all";
 
   function renderRow() {
@@ -28,6 +32,14 @@ export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample }
     c.append(text);
     if (coming) {
       c.append(el("span", "voice-badge", "Coming soon"));
+      return c;
+    }
+    // 040 — the default voice is free forever; every other voice locks
+    // when the trial ends. The lock opens the page, never a dead button.
+    if (locked() && !v.is_default && v.id !== getVoiceId()) {
+      const pick = el("button", "btn secondary voice-pick", "🔒 Pip Lifetime");
+      pick.onclick = () => onLocked();
+      c.append(pick);
       return c;
     }
     const play = el("button", "btn secondary voice-play", "▶ Hear it");

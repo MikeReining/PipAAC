@@ -28,6 +28,7 @@ import {
   setSetting,
 } from "./shared/groups.mjs";
 import { setDeviceId } from "./shared/ops.mjs";
+import { redeemLicense } from "./shared/account.mjs";
 import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
 import { initSync, syncHealth, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import { refreshStatsDays } from "./shared/stats.mjs";
@@ -60,7 +61,7 @@ import { mountAddFlow } from "./board/add-flow.js";
 import { mountLibrary } from "./board/library-ui.js";
 import { mountWordCard } from "./board/word-card.js";
 import { mountDevices } from "./board/devices-ui.js";
-import { purchasedFromUrl, unlockFromUrl } from "./board/unlock.js";
+import { checkoutFromUrl, orderFromUrl, purchasedFromUrl, unlicensedFromUrl, unlockFromUrl } from "./board/unlock.js";
 import { mountPlacePicker } from "./board/place-ui.js";
 import { mountSetup } from "./board/setup-ui.js";
 import { mountRecovery } from "./board/recovery-ui.js";
@@ -74,6 +75,7 @@ import { installViewportPin } from "./board/viewport.js";
 import { mountOnramp } from "./board/onramp-ui.js";
 import { mountTour } from "./board/tour-ui.js";
 import { mountVoice } from "./board/voice-ui.js";
+import { mountLifetime, mountTrialClock } from "./board/lifetime-ui.js";
 import { mountPictureFill } from "./board/picture-fill.js";
 import { mountSpeech } from "./board/speech.js";
 import { mountSpotlightLayer } from "./board/spotlight-layer.js";
@@ -283,9 +285,10 @@ let demoBar = null; // the child's bar, set aside while Try it runs
 let view = "board";    // 'board' | 'groupIndex' | 'group' — groups are a board mode, not a modal
 let editing = false; // caregiver Edit mode — same gesture on index and pages
 let countsOn = false; // 018 D10: the 📊 badge — the child's own 30-day taps
-// 039: the free taste — sentence-button taps left this session; null is
-// licensed or not yet asked, the server is the truth (speech.js mirrors it).
-let tasteLeft = null;
+// 040: the 7-day trial — endsAt in ms while unlicensed; the server is
+// the truth and speech.js mirrors it into these for UI reads.
+let trialEndsAt = null;
+let trialLicensed = false;
 const getCounts = () => useCounts(db);
 
 // 023: the bar's current shape — which tense it holds and whether it
@@ -356,8 +359,10 @@ const live = {
   get placeUi() { return placeUi; },
   get countsOn() { return countsOn; },
   set countsOn(v) { countsOn = v; },
-  get tasteLeft() { return tasteLeft; },
-  set tasteLeft(v) { tasteLeft = v; },
+  get trialEndsAt() { return trialEndsAt; },
+  set trialEndsAt(v) { trialEndsAt = v; },
+  get trialLicensed() { return trialLicensed; },
+  set trialLicensed(v) { trialLicensed = v; },
   set editing(v) { editing = v; },
   get highlightNext() { return highlightNext; },
   get boardSenseIds() { return boardSenseIds; },
@@ -379,7 +384,8 @@ const {
 const {
   speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
   playClip, playBlob, endPlaying, sayClip,
-  tileApi, tileSweep, voiceLicense, syncSpeed, refreshTaste,
+  tileApi, tileSweep, voiceLicense, syncSpeed, refreshTrial, trialNudge,
+  trialActive, entitledNow,
   audio, sentenceVoice, isTxBusy, SPEAK_VOICE_WAIT_MS,
 } = mountSpeech({
   db, me, locale, sentence, barState, live,
@@ -826,15 +832,15 @@ const settingsUi = mountSettings({
     pinOn: pin.pinOn,
     spot: { session: spotSession(db), lists: spotLists(db).length },
   }),
-  // 039: the Talking subtitle's quiet counter — a number only while the
-  // person is unlicensed with free taps left; the server is the truth.
-  taste: () => tasteLeft,
+  // 040: the Lifetime page's countdown — the nav item's subtitle and
+  // its accent styling read this; the server is the truth.
+  trial: () => ({ licensed: trialLicensed, endsAt: trialEndsAt }),
 });
 settingsUi.onOpen(renderPinRow);
-// 039: refresh the taste count on open, then repaint the summaries —
+// 040: refresh the trial state on open, then repaint the summaries —
 // the fetch lands after renderNav's first paint.
 settingsUi.onOpen(() => {
-  refreshTaste().then((ok) => { if (ok) settingsUi.renderNav(); });
+  refreshTrial().then((ok) => { if (ok) { trialClock.syncTrialVoice(); settingsUi.renderNav(); } });
 });
 // Set only by the post-switch reopen below: the corner click then skips
 // the PIN (it was just entered in this tab) and opens that page, so every
@@ -1129,13 +1135,56 @@ wordCard = mountWordCard({
 /* Devices, users, and supporter sign-in — public/board/devices-ui.js */
 const devicesUi = mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
-  initSync, onSyncApplied, onModel, qrcode, syncRekey,
+  initSync, onSyncApplied, onModel, qrcode, settings: settingsUi, syncRekey,
 });
 // ?unlock — the test link that turns Pip Lifetime on (public/board/unlock.js).
+// ?unlicensed — the 040 trial preview: no dev-license self-mint.
+unlicensedFromUrl({ me });
 unlockFromUrl({ me, activateLicense: devicesUi.activateLicense, toast });
 // ?purchased — back from Stripe Checkout; the webhook grants lifetime
 // and the device picks its license copy up from the relay.
 purchasedFromUrl({ me, claimPurchasedLicense: devicesUi.claimPurchasedLicense, toast });
+// ?buy — the "Send an unlock link" URL: a hosted $49 code checkout,
+// no account, nothing personal in the link (040 § 8).
+checkoutFromUrl({ toast });
+// ?order=cs_… — the app's own Buy returning: redeem the minted code
+// for this board automatically.
+orderFromUrl({ me, ensureUser: devicesUi.ensureUser, redeemLicense,
+  claimPurchasedLicense: devicesUi.claimPurchasedLicense, toast });
+
+/* 040 — the Pip Lifetime page (public/board/lifetime-ui.js): the one
+ * destination for every upgrade door, and the countdown's home. */
+const lifeUi = mountLifetime({
+  me, sayClip, toast,
+  /* The free side of "Hear the difference" is the real thing: the
+   * word clips for "I want an apple", exactly as a free Play speaks. */
+  hearFree: async () => {
+    endPlaying();
+    for (const text of ["I", "want", "an", "apple"]) {
+      const sid = senseIdOf(text);
+      await speakItem({ kind: sid ? "sense" : "typed", id: sid, text },
+        { chained: true, voice: voiceId });
+    }
+  },
+  show: (sec, opts) => settingsUi.show(sec, opts),
+  trial: () => ({ licensed: trialLicensed, endsAt: trialEndsAt }),
+});
+settingsUi.onOpen(() => lifeUi.renderTrial());
+/* 040 — the trial clock lives with its owner page (lifetime-ui.js):
+ * boot() starts the clock at install/first-online and mirrors
+ * {licensed, endsAt}; expiry reverts a locked voice to the default. */
+const trialClock = mountTrialClock({
+  me, db, locale, refreshTrial, trialNudge,
+  isEntitled: () => trialLicensed || trialActive(),
+  getVoiceId: () => voiceId,
+  setVoiceId: (id) => {
+    setSetting(db, "preferred_voice_id", id);
+    voiceId = resolveProfile(db).voiceId;
+  },
+  repaint: () => { settingsUi.renderNav(); voiceUi.renderRow(); },
+});
+if (navigator.onLine) trialClock.boot();
+addEventListener("online", () => { if (!trialActive()) trialClock.boot(); });
 
 /* People — public/board/people-ui.js: the Settings header switcher and
  * "When Pip opens". */
@@ -1160,8 +1209,14 @@ const statRoleOf = (kind, id) => kind === "entity" ? roleForEntity(id)
   : "None";
 const relayEntitlement = async () =>
   (await devicesUi.userClient().then((u) => u?.client?.selfKey()))?.entitlement;
-mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement, settings: settingsUi });
-mountProgress({ db, me, nameOf: statNameOf, roleOf: statRoleOf, artOf: artUrlOf, entitlement: relayEntitlement, settings: settingsUi });
+/* 040 § 3 — Progress is a trial feature too: "shown in full, locked
+ * back to the preview after". The win card and the dashboard read the
+ * same answer: lifetime on the relay, or the trial clock still running. */
+const fullProgress = async () =>
+  (await relayEntitlement().catch(() => null)) === "lifetime" || trialActive()
+    ? "lifetime" : null;
+mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: fullProgress, settings: settingsUi });
+mountProgress({ db, me, nameOf: statNameOf, roleOf: statRoleOf, artOf: artUrlOf, entitlement: fullProgress, settings: settingsUi });
 
 /* The placement sheet (018 D10): Edit mode, tap any tile or an empty
  * cell — the off-board list ranks by the child's own counts, the
@@ -1253,6 +1308,10 @@ function senseIdOf(text) {
 const voiceUi = mountVoice({
   db, locale, open,
   getVoiceId: () => voiceId,
+  /* 040: choosing a voice is a paid feature — after the trial a
+   *  non-default card is locked and its tap opens the Lifetime page. */
+  locked: () => !(trialLicensed || trialActive()),
+  onLocked: () => { close("voiceform"); settingsUi.show("lifetime"); },
   chooseVoice: async (id) => {
     if (id === voiceId) return;
     // 028 § 5.4: the old voice keeps playing while the new voice's clips

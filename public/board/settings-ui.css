@@ -244,3 +244,30 @@ button.set-who:hover { background: var(--tray); }
   background: #fff; font: inherit; font-size: 18px; font-weight: 700; cursor: pointer;
 }
 .launch-person .set-avatar { width: 64px; height: 64px; font-size: 28px; }
+
+/* 040 — the Lifetime page. The sidebar's top item wears the attention
+ * gold (never the stop/no red); after purchase it quiets to a plain row
+ * in the You group (the .set-nav-accent class drops with trial().licensed). */
+.set-nav-btn.set-nav-accent {
+  background: #fdf0c8;
+  box-shadow: inset 0 0 0 2px var(--glow);
+  font-weight: 700;
+}
+.set-nav-btn.set-nav-accent:hover { background: #f7e7ae; }
+.set-nav-btn.set-nav-accent .set-sum { color: #8a5a00; }
+.set-nav-btn.set-nav-accent svg { color: var(--glow); }
+
+.life-hero h2 { font-size: 30px; margin: 0; }
+.life-price { font-size: 19px; font-weight: 700; margin: 4px 0 0; }
+.life-table { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.life-table li {
+  display: flex; gap: 12px; align-items: baseline;
+  padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px;
+}
+.life-table li:first-child { border-top: 0; }
+.life-table li b { flex: none; min-width: 52px; font-size: 17px; }
+.life-buy { font-size: 19px !important; min-height: 56px; }
+.set-link {
+  border: 0; background: none; font: inherit; font-size: inherit;
+  color: var(--ink); text-decoration: underline; cursor: pointer; padding: 0;
+}

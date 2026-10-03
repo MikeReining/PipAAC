@@ -177,11 +177,14 @@ export function voiceTile({
   /** One mint/fetch attempt. `deadlineMs: null` waits forever (editor
    *  ensure); a number races the fetch so a tap never blocks. A late
    *  answer still caches — the next tap is instant. */
-  async function request({ userId, license, voice, locale, text, source = "user_typed", deadlineMs: deadline = deadlineMs }) {
+  /* 040: `trial` lets a license-free call reach the Worker while the
+   *  trial runs — the request carries no token and the worker's
+   *  entitled() check decides. */
+  async function request({ userId, license, trial = false, voice, locale, text, source = "user_typed", deadlineMs: deadline = deadlineMs }) {
     if (!voice || !text) return { ok: false, reason: "unavailable" };
     const hit = await cached(voice, text);
     if (hit) return { ok: true, blob: hit, cache: "hit" };
-    if (!userId || !license) return { ok: false, reason: "unavailable" };
+    if (!userId || !(license || trial)) return { ok: false, reason: "unavailable" };
     // The dedupe key carries locale+source: two different request bodies
     // must never share one POST, even when their cache URL coincides.
     const key = `${await urlFor(voice, text)}|${locale}|${source}`;
@@ -212,8 +215,8 @@ export function voiceTile({
 
   /** Replay the offline/budget queue — sequential (§ 5.3: no burst),
    *  stops at the first entry still transient so a 429 pauses the run. */
-  async function drainQueue({ userId, license, onProgress } = {}) {
-    if (typeof caches === "undefined" || !userId || !license) return { done: 0, pending: 0 };
+  async function drainQueue({ userId, license, trial = false, onProgress } = {}) {
+    if (typeof caches === "undefined" || !userId || !(license || trial)) return { done: 0, pending: 0 };
     const reqs = await (await qstore()).keys().catch(() => []);
     let done = 0, pending = 0;
     for (const req of reqs) {
@@ -223,7 +226,7 @@ export function voiceTile({
         await (await qstore()).delete(req).catch(() => {});
         continue;
       }
-      const r = await request({ userId, license, ...entry, deadlineMs: null });
+      const r = await request({ userId, license, trial, ...entry, deadlineMs: null });
       if (r.ok || !TRANSIENT.has(r.reason)) {
         await (await qstore()).delete(req).catch(() => {});
         if (r.ok) {
@@ -257,8 +260,8 @@ export function voiceTile({
   }
 
   /** § 5.5 — "Sounds wrong": a review signal, never a takedown. */
-  async function flag({ userId, license, voice, locale, text }) {
-    if (!userId || !license) return false;
+  async function flag({ userId, license, trial = false, voice, locale, text }) {
+    if (!userId || !(license || trial)) return false;
     const res = await fetch(flagEndpoint, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -269,11 +272,11 @@ export function voiceTile({
 
   /** § 5.3 — daily sweep: text hashes of clips replaced or withheld
    *  since `since`; the caller evicts them from Cache Storage. */
-  async function replacedSince({ userId, license, voice, since }) {
-    if (!userId || !license) return null;
+  async function replacedSince({ userId, license, trial = false, voice, since }) {
+    if (!userId || !(license || trial)) return null;
     const res = await fetch(
       `${replacedEndpoint}?since=${Number(since) || 0}&voice=${encodeURIComponent(voice)}`, {
-        headers: { "x-pip-user": userId, "x-pip-license": license },
+        headers: { "x-pip-user": userId, "x-pip-license": license ?? "" },
       }).catch(() => null);
     return res?.ok ? res.json().catch(() => null) : null;
   }

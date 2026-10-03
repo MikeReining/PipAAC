@@ -5,8 +5,9 @@
  * user's own device. Rules and totals live in shared/wincard.mjs; this
  * module only draws them. Wins only — the card never shows a drop, and
  * a week with no taps hides the card instead of scolding.
- * One door to Settings → Progress: "See progress" for Lifetime, "What
- * Lifetime adds" for everyone else — the same page draws either view.
+ * One door: "See progress" for Lifetime opens Settings → Progress;
+ * "What Lifetime adds" opens the Lifetime page itself (040 § 7) — the
+ * preview it advertises lives there.
  */
 import { weeklyCard, WINCARD_DAYS } from "../shared/wincard.mjs";
 import { dayIndex } from "../shared/stats.mjs";
@@ -32,7 +33,7 @@ export function mountWincard({ db, me, nameOf, entitlement, toast, settings }) {
     const door = document.createElement("button");
     door.className = "btn secondary wincard-door";
     door.textContent = life ? "See progress" : "What Lifetime adds";
-    door.onclick = () => settings.show("progress", { focus: true });
+    door.onclick = () => settings.show(life ? "progress" : "lifetime", { focus: true });
     el().appendChild(door);
   }
 

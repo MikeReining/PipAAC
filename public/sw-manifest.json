@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-e0a9421971bf",
+  "buildId": "r1-9e0d4c67312c",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -13083,8 +13083,8 @@
     },
     {
       "path": "/board.js",
-      "bytes": 59918,
-      "sha256": "3bb4bf6f72737c127ff6fdbc5bf48924ef8fb7a24b8aae37922625064e134d67"
+      "bytes": 62874,
+      "sha256": "ecbf7d6693ac3677f0e6b14563afad67266777afa44cf9f35ac32aaf2ff83eab"
     },
     {
       "path": "/board/add-flow.css",
@@ -13128,8 +13128,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 38527,
-      "sha256": "d90ded52acf05965d066c37b7a4a57b146aec3bf18a6fa71d0a8500480e18883"
+      "bytes": 39134,
+      "sha256": "2bd015814df77be1ebcc9f6c5d8c74ace826258011f6c572d0d6edc9bc06aa43"
     },
     {
       "path": "/board/edit-shared.js",
@@ -13212,6 +13212,11 @@
       "sha256": "08118c8ce7a48eeed6f8d26ddcb7296ec1dd418605b8762341c7c1fbb53e76ba"
     },
     {
+      "path": "/board/lifetime-ui.js",
+      "bytes": 5222,
+      "sha256": "5f4ac3e4be196aab211a687a24dbf7c5dc109fa2808920cb4c2d6143725bc0cd"
+    },
+    {
       "path": "/board/meta-cache.js",
       "bytes": 4351,
       "sha256": "8ef543aac1485a76762662987c45926dcb48d27dc17698b5a557fc64c200bb10"
@@ -13263,8 +13268,8 @@
     },
     {
       "path": "/board/progress-ui.js",
-      "bytes": 19937,
-      "sha256": "0c4d348818562773ff63fb24b736e76c71eef1a8f85b1564fcb23e79fc2d55d3"
+      "bytes": 19311,
+      "sha256": "a5ba1cd82039045c41cb011a7134d657a71beaef6087a05e919a41cb8b86e1fd"
     },
     {
       "path": "/board/recovery-ui.css",
@@ -13293,13 +13298,13 @@
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 13126,
-      "sha256": "866527f33f2cb8ec1ddeb52f57b4d9909eae90f9b6504b1354a93d7208a1c8e7"
+      "bytes": 14325,
+      "sha256": "e357eb787610928da61794ee1f37e8cd81cb902be1c150165c86bef3ff6828ae"
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 18828,
-      "sha256": "013b30247059eadcf415e2a60596aaecb20bf6aea7a3c73535cd2302a81c5324"
+      "bytes": 20654,
+      "sha256": "9536da23d7a8babf108af35ffa3a00ed47f1d8cfb58b6ba0abbb16bdcb0abeba"
     },
     {
       "path": "/board/setup-ui.css",
@@ -13313,8 +13318,8 @@
     },
     {
       "path": "/board/speech.js",
-      "bytes": 23978,
-      "sha256": "fdc179c4a09ad96558f885e15fa20c02a8b44f0fb9411cf9b4a73b8014f6fd0c"
+      "bytes": 25265,
+      "sha256": "429a4c30614cc0704c7340adef06e113f54653bc2d5c94c824de627addacc799"
     },
     {
       "path": "/board/spotlight-demo.js",
@@ -13348,8 +13353,8 @@
     },
     {
       "path": "/board/unlock.js",
-      "bytes": 2713,
-      "sha256": "8022f1878205cf34103e6ad109b57f6f50bbbcdc44f3665c7f6d55bbcd4e4f8e"
+      "bytes": 5764,
+      "sha256": "a910c242dcfc734fa7409db868f88ec5050767e3a177e8dccb487992cb47c350"
     },
     {
       "path": "/board/viewport.js",
@@ -13363,13 +13368,13 @@
     },
     {
       "path": "/board/voice-ui.js",
-      "bytes": 2916,
-      "sha256": "bea0c50f87a7b5faa7fd0dfdb160570ab625c7e604bf67f3614aefcd6f18622d"
+      "bytes": 3531,
+      "sha256": "1c99249a7922a19b468823d83b6546e90f0e70a13f30d35f3a3ac66d6a815833"
     },
     {
       "path": "/board/wincard-ui.js",
-      "bytes": 2501,
-      "sha256": "1d9694b5bc09b884e6eb28145b9aa743d1bd739b180e44a23d6acab8df3ab26a"
+      "bytes": 2557,
+      "sha256": "c9fe31bf2b33be2b5c5d40b50de080d33426eb058e30799a52e7b75b765eace9"
     },
     {
       "path": "/board/word-card.css",
@@ -13428,8 +13433,8 @@
     },
     {
       "path": "/catalog.json",
-      "bytes": 2345293,
-      "sha256": "3485dbed61f72c0ae1ae39ea410f6fe19cf0c5e14be3458c2499bde5b32d1644"
+      "bytes": 2345572,
+      "sha256": "adb403ad3558c7d848e076cd0418df22e5a44e46977c53a2d8165d5bf7013c80"
     },
     {
       "path": "/db.js",
@@ -13784,8 +13789,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 58095,
-      "sha256": "2afefacd3ac4ea1f17c69da3781d7ecdcdbadd62ccf3bd365e7ac07f2019b664"
+      "bytes": 61271,
+      "sha256": "0ea6a9d3413d66ad21b7f017e66f2cc077500a6df3b31dfcba679b913c4777e9"
     },
     {
       "path": "/manifest.webmanifest",
@@ -13799,8 +13804,8 @@
     },
     {
       "path": "/shared/account.mjs",
-      "bytes": 12251,
-      "sha256": "42d734986ef1773927e502625c2465c82dea53df95ce8c13f7a68fc14c32c292"
+      "bytes": 12815,
+      "sha256": "7d6d17cb5fe1cdbba83ad893aaca23dadc289517f76db8359f5d175652ad7a06"
     },
     {
       "path": "/shared/bar.mjs",
@@ -13909,8 +13914,8 @@
     },
     {
       "path": "/shared/onramp_audio.mjs",
-      "bytes": 1525,
-      "sha256": "3c0a20e51485655ebe1015853ab27bcb67130701236c1083e4eebce6147c553d"
+      "bytes": 1702,
+      "sha256": "35b0beea8328c3666eb39f6dc7b75b00c4026cd85519678d94803f56f07202de"
     },
     {
       "path": "/shared/ops.mjs",
@@ -14014,13 +14019,13 @@
     },
     {
       "path": "/shared/voice_sentence.mjs",
-      "bytes": 5117,
-      "sha256": "460dc2ca5a1f62bf5990a5fa9a75d748729c7fde15988b61ad4d73c413538953"
+      "bytes": 4977,
+      "sha256": "dd0e9fa69e7062bb9e0873add83d4a063ab88eddb9103f90ccdb6a6c40538ff8"
     },
     {
       "path": "/shared/voice_tile.mjs",
-      "bytes": 13683,
-      "sha256": "af2c63ccd7f848190cf548e2de8d8adc8927baa9385f40296fcecfef9744bffa"
+      "bytes": 13972,
+      "sha256": "2ed02fee46644e81b6bb821c2e1db17ab64bf0b2625598fdd92f0b3f4a1047f3"
     },
     {
       "path": "/shared/voice.mjs",
@@ -14244,8 +14249,8 @@
     },
     {
       "path": "/symbols/bathroom.webp",
-      "bytes": 7004,
-      "sha256": "e5a53731f08a99aff0be524c656b7db764cf44dca7233c08473ccd403f5915bf"
+      "bytes": 13256,
+      "sha256": "54bda8068670ffb1ad820bafae39ccdf7fd617c27eaad092f458b1bfa8e4cd73"
     },
     {
       "path": "/symbols/battery.webp",
@@ -15979,8 +15984,8 @@
     },
     {
       "path": "/symbols/naptime.webp",
-      "bytes": 9800,
-      "sha256": "c751f467a0a8e82ac21c5641894c47567771acf5954f22f583a670ec299f54d7"
+      "bytes": 15180,
+      "sha256": "4c5daf2dea1a3f44c09699fb9fe84119b9adff904ca03236c58ecb1f8150fca4"
     },
     {
       "path": "/symbols/narrow.webp",

@@ -240,6 +240,15 @@ export async function importAccountUsers({
  * copy up from there. */
 export const checkout = (acctId, session, userId) =>
   post("/api/v1/checkout", { session, acct_id: acctId, user_id: userId });
+/* 040 § 8 — anyone buys a code, no account. count 1–9 is $49 a code
+ * (the app's Buy button and the unlock link); 10+ is the school tier.
+ * redeem:"self" returns the buyer to the app, which claims the minted
+ * code for this board — no pasting. */
+export const buyCodes = (count, redeem) =>
+  post("/api/v1/checkout/codes", { count, ...(redeem ? { redeem } : {}) });
+/** Poll the order the Stripe webhook mints (codes.html does the same). */
+export const licenseOrder = (session) =>
+  get(`/api/v1/license/order?session=${encodeURIComponent(session)}`);
 export const redeemLicense = (userId, code) =>
   post("/api/v1/license/redeem", { user_id: userId, code });
 

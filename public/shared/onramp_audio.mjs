@@ -28,6 +28,9 @@ export const ONRAMP_CLIPS = {
   // first-run user has no license and the voice pipeline would be silent
   "you-want-an-apple": "You want an apple.",
   "do-you-want-an-apple": "Do you want an apple?",
+  // 040 — the Lifetime page's "Hear the difference": the natural
+  // sentence side. The free side plays the real word clips, no mint.
+  "demo-sentence": "I want an apple.",
 };
 
 /** Path under public/ — playClip prepends the slash. */

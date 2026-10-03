@@ -65,7 +65,7 @@ export function mountSpeech({
      *  caller can message; failures that can heal are already queued. */
     ensure: async (text, { source = "user_typed" } = {}) =>
       tileVoice.ensure({
-        userId: me.id, license: await voiceLicense(),
+        userId: me.id, license: await voiceLicense(), trial: trialActive(),
         voice: live.voiceId, locale, text, source,
       }).catch(() => ({ ok: false, reason: "failed" })),
     /** Sequential ensures (§ 5.3 bulk/prefetch) — hits are free, a budget
@@ -73,12 +73,13 @@ export function mountSpeech({
      *  switch prefetch. */
     prefetch: (texts, { voice = live.voiceId, onProgress } = {}) =>
       voiceLicense().then((license) => tileVoice.prefetch({
-        userId: me.id, license, voice, locale, texts, onProgress,
+        userId: me.id, license, trial: trialActive(),
+        voice, locale, texts, onProgress,
       })),
     /** § 5.5 — "Sounds wrong": flags the shared clip for founder review;
      *  the tile keeps playing meanwhile (a signal, never a takedown). */
     flag: async (text) => tileVoice.flag({
-      userId: me.id, license: await voiceLicense(),
+      userId: me.id, license: await voiceLicense(), trial: trialActive(),
       voice: live.voiceId, locale, text,
     }).catch(() => false),
     /** Shared library voice on the board (not device TTS) → tiles resolve
@@ -103,7 +104,7 @@ export function mountSpeech({
     const since = Number(localStorage.getItem(key) ?? 0);
     if (since && Date.now() - since < 86_400_000) return;
     const res = await tileVoice.sweepReplaced({
-      userId: me.id, license: await voiceLicense(), voice, since,
+      userId: me.id, license: await voiceLicense(), trial: trialActive(), voice, since,
     }).catch(() => null);
     if (res?.next) localStorage.setItem(key, String(res.next));
   };
@@ -115,7 +116,7 @@ export function mountSpeech({
       "SELECT spoken_name AS t FROM personal_entity WHERE status = 'active'")
       .map((r) => r.t);
     await tileVoice.drainQueue({
-      userId: me.id, license: await voiceLicense() }).catch(() => {});
+      userId: me.id, license: await voiceLicense(), trial: trialActive() }).catch(() => {});
     await tileSweep();
     tileApi.prefetch(texts).catch(() => {});
   };
@@ -126,12 +127,13 @@ export function mountSpeech({
   }
   addEventListener("online", () => {
     voiceLicense().then((license) =>
-      tileVoice.drainQueue({ userId: me.id, license })).catch(() => {});
+      tileVoice.drainQueue({ userId: me.id, license, trial: trialActive() })).catch(() => {});
   });
   /* The per-day budget rolls on the UTC day — queued "ready tomorrow"
      mints retry at the roll, not just on boot/reconnect (§ 5.2). */
   armUtcRollRetry(async () =>
-    tileVoice.drainQueue({ userId: me.id, license: await voiceLicense() }));
+    tileVoice.drainQueue({
+      userId: me.id, license: await voiceLicense(), trial: trialActive() }));
   let licenseP = null;
   const LOCALHOST = ["localhost", "127.0.0.1", "[::1]"];
   const voiceLicense = () => {
@@ -142,6 +144,10 @@ export function mountSpeech({
     licenseP ??= Promise.resolve()
       .then(() => openKeyStore().get(`user/${me.id}/license`))
       .then(async (lic) => {
+        // ?unlicensed (unlock.js): the founder's trial preview — the
+        // stored dev-license is ignored, no fresh mint either.
+        if (LOCALHOST.includes(location.hostname)
+            && localStorage.getItem(`pip-unlicensed:${me.id}`) === "1") return null;
         if (lic || !LOCALHOST.includes(location.hostname)) return lic;
         const res = await fetch("/api/v1/voice/dev-license", {
           method: "POST",
@@ -156,6 +162,9 @@ export function mountSpeech({
       })
       // A failed first mint must not wedge the session — null clears the
       // cache so the next call retries instead of 403ing forever.
+      // A real token means Lifetime — mirror it so the trial UI and the
+      // voice picker treat the board as licensed without a server read.
+      .then((lic) => { if (lic) live.trialLicensed = true; return lic; })
       .then((lic) => { if (!lic) licenseP = null; return lic; })
       .catch(() => { licenseP = null; return null; });
     return licenseP;
@@ -252,7 +261,7 @@ export function mountSpeech({
       // deadline — the fill lands for the next tap. Any failure is the
       // silent slot; tiles never speak through the device voice.
       const r = await tileVoice.request({
-        userId: me.id, license: await voiceLicense(),
+        userId: me.id, license: await voiceLicense(), trial: trialActive(),
         voice: slot.voice, locale: slot.locale, text: slot.text,
       }).catch(() => null);
       if (r?.ok && (await playBlob(r.blob, { chained })) !== false) return;
@@ -280,11 +289,21 @@ export function mountSpeech({
    *  the bar as built, per § 1's every-press-produces-audio rule.
    *  Every transform reads her saved taps (transformSource), never the
    *  last model output — chains can't compound a guess. */
-  /* 039 — the free taste: `tasteEcho` is the masked model output the
-   * next speak may claim a grant with (consumed once); the at-0 offer
-   * shows once per session; the ≤3-left nudge once per day. */
-  let tasteEcho = null;
-  let tasteOfferShown = false;
+  /* 040 — the trial: `entitledNow` is the client's read of "paid
+   * features on" (a license, or the server's trial clock still running).
+   * The ask shows once per session; day-count and expiry nudges run at
+   * boot, never on the child's board. */
+  const trialActive = () => (live.trialEndsAt ?? 0) > Date.now();
+  const entitledNow = async () =>
+    !!((await voiceLicense()) || trialActive());
+  let askShown = false;
+  const askOnce = (what) => {
+    if (askShown) return;
+    askShown = true;
+    toast?.(`${what} comes with Pip Lifetime — the free trial has ended.`,
+      null, { actionLabel: "See Pip Lifetime",
+        onAction: () => openSettings?.("lifetime") });
+  };
   let txBusy = false;
   async function transformAndSpeak(mode) {
     if (live.tour) return live.tour.onTransform(mode);
@@ -314,14 +333,6 @@ export function mountSpeech({
       const body = res ? await res.json().catch(() => ({})) : {};
       const out = res?.ok ? body.text : null;
       if (out) {
-        /* 039: a taste-spent transform returns the pool count and leaves
-         * the worker a speak grant keyed to the masked output — echo it
-         * back as taste_text so the result speaks in the real sentence
-         * voice even without a license. */
-        if (typeof body.taste?.left === "number") {
-          live.tasteLeft = body.taste.left;
-          tasteEcho = out;
-        }
         snapshotBar(sentence, barState); // her taps, saved before replace
         applyTransform(sentence, unmask(out), mode, barState);
         for (const it of sentence) {
@@ -340,21 +351,11 @@ export function mountSpeech({
         }[mode] ?? "That button";
         if (!res) {
           toast?.(`${name} needs the internet — spoke it as it was.`);
-        } else if (body?.error === "taste_exhausted") {
-          /* 039 § 4.5 — the pool is empty. The press still speaks the
-           * bar as built; the adult gets the offer once per session,
-           * then only the quiet Settings counter — never a wall. */
-          live.tasteLeft = 0;
-          if (!tasteOfferShown) {
-            tasteOfferShown = true;
-            toast?.("All 10 free taps used — keep ✨ ❓ ⏪ ⏩ for good: $49 once.",
-              null, { actionLabel: "Open Settings",
-                onAction: () => openSettings?.("you") });
-          }
         } else if (body?.error === "bad_license") {
-          toast?.(`${name} comes with Pip Lifetime — a grown-up can unlock it in Settings.`,
-            null, { actionLabel: "Open Settings",
-              onAction: () => openSettings?.("you") });
+          // 040 § 4 — trial over (or never started): the press still
+          // speaks the bar as built; the adult gets the ask once per
+          // session, never a wall.
+          askOnce(name);
         } else if (body?.error === "fair_use") {
           toast?.(`${name} reached today's limit — it will be back tomorrow.`);
         } else {
@@ -362,19 +363,6 @@ export function mountSpeech({
         }
       }
       await speakSentence();
-      /* 039 § 4.5 — at 3 left or fewer, one quiet offer a day, raised
-       * only after the press has spoken and only while the taste is
-       * what served it (out set + count present). */
-      if (out && typeof live.tasteLeft === "number"
-          && live.tasteLeft > 0 && live.tasteLeft <= 3) {
-        const day = new Date().toISOString().slice(0, 10);
-        if (localStorage.getItem("pip-taste-nag") !== day) {
-          localStorage.setItem("pip-taste-nag", day);
-          toast?.(`${live.tasteLeft} free left — keep ✨ ❓ ⏪ ⏩ for good: $49 once.`,
-            null, { actionLabel: "Open Settings",
-              onAction: () => openSettings?.("you") });
-        }
-      }
       live.spotDemo?.onTransform?.(mode);
     } finally {
       txBusy = false;
@@ -423,21 +411,16 @@ export function mountSpeech({
     // offline, unlicensed, over budget) falls through to the clip loop —
     // she is always heard, the feeling is the extra (025 § 2).
     let spoken = false;
-    /* 039: a taste transform's echo is consumed here, once — a single
-     * word counts too ("More?" keeps its question lift in the real
-     * voice, which a word clip would flatten). */
-    const echo = tasteEcho;
-    tasteEcho = null;
-    if (sentence.length >= 2 || feeling || echo) {
+    if (sentence.length >= 2 || feeling) {
       const text = sentenceSpeakText(sentence);
       const blob = await sentenceVoice.request({
         userId: me.id,
         license: await voiceLicense(),
+        trial: trialActive(),
         voice: live.voiceId,
         text,
         feeling: feeling ?? "neutral",
         deadlineMs: SPEAK_VOICE_WAIT_MS,
-        tasteText: echo,
       });
       if (seq !== speakSeq) return; // a newer speak owns the audio now
       if (text !== sentenceSpeakText(sentence)) {
@@ -480,7 +463,9 @@ export function mountSpeech({
 
   /** § 2: a face tap speaks the bar in that feeling, once — pressed at
    *  once, dark until the audio ends, and only one control is dark at a
-   *  time. Nothing stays on. */
+   *  time. Nothing stays on. 040: after the trial the face speaks the
+   *  bar the free way (word-by-word, neutral) and the adult gets the
+   *  ask once a session. */
   async function speakFeeling(feeling, btn) {
     if (txBusy || !sentence.length) return;
     txBusy = true;
@@ -491,7 +476,9 @@ export function mountSpeech({
     btn.classList.add("speaking");
     img.src = `/icons/selected/voice-${feeling}.svg`;
     try {
-      await speakSentence(feeling);
+      const entitled = await entitledNow();
+      if (entitled) await speakSentence(feeling);
+      else { askOnce("A feeling voice"); await speakSentence(); }
     } finally {
       txBusy = false;
       btn.classList.remove("speaking");
@@ -499,28 +486,61 @@ export function mountSpeech({
     }
   }
 
-  /* 039 § 4.5 — the quiet counter's read: Settings asks before any
-   * press has happened. The server is the truth; live.tasteLeft is only
-   * this session's mirror (null = licensed or unknown). */
-  async function refreshTaste() {
-    const res = await fetch("/api/v1/taste", {
-      headers: {
-        "x-pip-user": me.id,
-        "x-pip-license": (await voiceLicense()) ?? "",
-      },
+  /* 040 — the trial clock. Start is idempotent (first call wins) so the
+   * client posts it once per profile, retrying until it lands (offline
+   * first run starts nothing until online, § 5.2); the GET then mirrors
+   * the server's {licensed, endsAt} into live. The worker is the truth —
+   * live.trialEndsAt is only this session's mirror. */
+  async function refreshTrial() {
+    const license = await voiceLicense();
+    if (!localStorage.getItem(`pip-trial-ok:${me.id}`) && !license) {
+      const res = await fetch("/api/v1/trial/start", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ user_id: me.id }),
+      }).catch(() => null);
+      if (res?.ok) localStorage.setItem(`pip-trial-ok:${me.id}`, "1");
+    }
+    const res = await fetch("/api/v1/trial", {
+      headers: { "x-pip-user": me.id, "x-pip-license": license ?? "" },
     }).catch(() => null);
     if (!res?.ok) return false;
     const body = await res.json().catch(() => ({}));
-    live.tasteLeft = body.licensed === true
-      ? null
-      : (typeof body.left === "number" ? body.left : null);
+    live.trialLicensed = license ? true : body.licensed === true;
+    live.trialEndsAt = typeof body.endsAt === "number" ? body.endsAt : null;
     return true;
+  }
+
+  /* 040 § 6.3 — the adult-facing countdown nudges: one toast on each of
+   * the last two days and one at expiry, raised at boot only and each
+   * with the door to the Lifetime page. Never on the child's board. */
+  function trialNudge() {
+    if (live.trialLicensed || !live.trialEndsAt) return;
+    const daysLeft = Math.ceil((live.trialEndsAt - Date.now()) / 86_400_000);
+    let marks = [];
+    try { marks = JSON.parse(localStorage.getItem(`pip-trial-nudge:${me.id}`) ?? "[]"); }
+    catch { /* fresh marks */ }
+    const fire = (tag, msg) => {
+      if (marks.includes(tag)) return;
+      marks.push(tag);
+      localStorage.setItem(`pip-trial-nudge:${me.id}`, JSON.stringify(marks));
+      toast?.(msg, null, { actionLabel: "See Pip Lifetime",
+        onAction: () => openSettings?.("lifetime") });
+    };
+    if (daysLeft <= 0) {
+      fire("expired", "The free trial is over — Pip Lifetime keeps the natural voice and every helper: $49 once.");
+    } else if (daysLeft === 3) { // trial day 5 (040 § 6.3)
+      fire("d5", "Free trial · 3 days left — Pip Lifetime keeps it all: $49 once.");
+    } else if (daysLeft === 2) { // trial day 6
+      fire("d6", "Free trial · 2 days left — Pip Lifetime keeps it all: $49 once.");
+    }
   }
 
   return {
     speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
     playClip, playBlob, endPlaying, sayClip,
-    tileApi, tileSweep, voiceLicense, syncSpeed, refreshTaste,
+    tileApi, tileSweep, voiceLicense, syncSpeed, refreshTrial, trialNudge,
+    entitledNow, trialActive,
     audio, sentenceVoice, SPEAK_VOICE_WAIT_MS,
     isTxBusy: () => txBusy,
   };

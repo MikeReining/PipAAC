@@ -2,13 +2,14 @@
   "files": {
     "public/audio-review-elevenlabs-tiles.html": 754,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
-    "public/board.js": 1447,
+    "public/board.js": 1515,
     "public/board/add-flow.js": 676,
     "public/board/base.css": 797,
-    "public/board/devices-ui.js": 879,
+    "public/board/devices-ui.js": 892,
     "public/board/editor-ui.js": 1170,
+    "public/board/speech.js": 547,
     "public/board/word-card.js": 805,
-    "public/index.html": 1041,
+    "public/index.html": 1089,
     "public/shared/funnel.mjs": 655,
     "public/sw-manifest.json": 25000,
     "scripts/art/batch52.mjs": 513,
@@ -21,16 +22,16 @@
     "scripts/taps/sim.mjs": 574,
     "scripts/test.sh": 519,
     "scripts/works-test-test-guard.sh": 785,
-    "site/public/index.html": 575,
+    "site/public/index.html": 583,
     "site/public/styles.css": 1320,
     "src/board/groups.test.mjs": 660,
     "src/board/schema.sql": 838,
     "src/worker/accounts.heavy.test.mjs": 513,
     "src/worker/accounts.js": 597,
-    "src/worker/index.js": 563,
+    "src/worker/index.js": 572,
     "src/worker/pictures.test.mjs": 795,
     "src/worker/pictures_draw.test.mjs": 628,
     "src/worker/relay.js": 769,
-    "src/worker/tile.js": 739
+    "src/worker/tile.js": 758
   }
 }

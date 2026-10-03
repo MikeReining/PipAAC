@@ -25,6 +25,7 @@ export const SECTION_ICONS = {
   progress: svg('<path d="M5 20V12M12 20V5M19 20v-8"/>'),
   team: svg('<circle cx="9" cy="8" r="3"/><path d="M3.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5"/><rect x="15" y="7" width="6" height="10" rx="1.2"/>'),
   backup: svg('<path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/><path d="M9 12l2 2 4-4"/>'),
+  lifetime: svg('<path d="M12 3l2.5 5.6L20.5 9.5l-4.3 4 1.2 6-5.4-3.1-5.4 3.1 1.2-6-4.3-4 6-0.9z"/>'),
   you: svg('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-3.5 3.8-5.5 7-5.5s6 2 7 5.5"/>'),
 };
 
@@ -39,7 +40,7 @@ export function personWords(name) {
 
 const NARROW = "(max-width: 760px)";
 
-export function mountSettings({ me, open, facts = () => ({ entities: 0, invested: false, pinOn: false }), taste = () => null }) {
+export function mountSettings({ me, open, facts = () => ({ entities: 0, invested: false, pinOn: false }), trial = () => ({ licensed: false, endsAt: null }) }) {
   const body = $("set-body");
   const nav = $("set-nav");
   const pane = $("set-pane");
@@ -74,12 +75,17 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
   const SUMMARIES = {
     board: () => [onText("cells-seg") && `${onText("cells-seg")} buttons`,
       onText("look-seg") === "Words only" ? "words only" : "", onText("kb-mode")].filter(Boolean).join(" · "),
-    // 039 § 4.5 — the quiet counter: free sentence-button taps left,
-    // shown only while the person is unlicensed and below the pool.
-    talking: () => {
-      const t = taste();
-      const free = typeof t === "number" && t < 10 ? ` · ${t} free left` : "";
-      return `${$("voice-name")?.textContent ?? "Voice"} · ${$("bar-row")?.dataset.summary ?? "Everything"} · feeling faces ${onOff("expressive-voice")}${free}`;
+    talking: () =>
+      `${$("voice-name")?.textContent ?? "Voice"} · ${$("bar-row")?.dataset.summary ?? "Everything"} · feeling faces ${onOff("expressive-voice")}`,
+    // 040 — the trial countdown sits under the sidebar's first item;
+    // licensed it becomes the quiet confirmation lower in the list.
+    lifetime: () => {
+      const t = trial();
+      if (t.licensed) return "Every helper, forever";
+      const days = t.endsAt ? Math.ceil((t.endsAt - Date.now()) / 86_400_000) : 0;
+      return days > 0
+        ? `Free trial · ${days} day${days === 1 ? "" : "s"} left`
+        : "$49 once · no subscription";
     },
     lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
     backup: () => (team() ? "Owners keep the recovery card" : cardMade() ? "Recovery card made" : "No recovery card yet"),
@@ -216,7 +222,37 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     }
   }
 
+  /* 040 — the Lifetime item is the sidebar's first row while unlicensed
+   *  (accent, the trial countdown under it); after purchase it turns
+   *  into a quiet "Pip Lifetime ✓" down in the You group. Position is
+   *  DOM order — the section node moves and the nav follows. */
+  function syncLifetimeSpot() {
+    const life = sections.find((s) => s.dataset.sec === "lifetime");
+    const you = sections.find((s) => s.dataset.sec === "you");
+    if (!life) return;
+    if (trial().licensed && you) {
+      if (life.dataset.group !== "you") life.dataset.group = "you";
+      if (life.dataset.title !== "Pip Lifetime ✓") life.dataset.title = "Pip Lifetime ✓";
+      if (life.nextElementSibling !== you) {
+        pane.insertBefore(life, you);
+        const li = sections.indexOf(life);
+        sections.splice(li, 1);
+        sections.splice(sections.indexOf(you), 0, life);
+      }
+    } else if (!trial().licensed) {
+      if (life.dataset.group !== "person") life.dataset.group = "person";
+      if (life.dataset.title !== "Get Pip Lifetime · $49 once") {
+        life.dataset.title = "Get Pip Lifetime · $49 once";
+      }
+      if (sections[0] !== life) {
+        pane.insertBefore(life, sections[0]);
+        sections.unshift(...sections.splice(sections.indexOf(life), 1));
+      }
+    }
+  }
+
   function renderNav() {
+    syncLifetimeSpot();
     nav.replaceChildren();
     let grp = null;
     for (const sec of sections) {
@@ -231,6 +267,9 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
       }
       const b = document.createElement("button");
       b.className = "set-nav-btn" + (sec.dataset.sec === current ? " on" : "");
+      if (sec.dataset.sec === "lifetime" && !trial().licensed) {
+        b.classList.add("set-nav-accent");
+      }
       b.dataset.sec = sec.dataset.sec;
       b.innerHTML = SECTION_ICONS[sec.dataset.sec] ?? "";
       const t = document.createElement("span");
@@ -318,6 +357,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
    * everyday words people use for a page ("voice", "bigger", "teacher").
    * A hit opens the page and marks the row. */
   const SYNONYMS = {
+    lifetime: "lifetime upgrade buy price trial",
     overview: "add word edit",
     spotlight: "practice goal target model modeling teach lesson glow highlight dim coach tips",
     words: "vocabulary library photo picture name add list people places family meal breakfast lunch dinner snack groups folder hide",
