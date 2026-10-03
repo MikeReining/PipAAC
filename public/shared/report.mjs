@@ -13,10 +13,17 @@ import { WEEK_DAYS, dashboard } from "./dashboard.mjs";
 
 const te = new TextEncoder();
 const PAGE_W = 612, PAGE_H = 792, M = 48, W = PAGE_W - 2 * M;
+/** The report's content width in points (the color header is drawn to it). */
+export const REPORT_W = W;
 const C = {
   ink: "0.165 0.141 0.114", edge: "0.541 0.522 0.471", glow: "0.910 0.635 0",
   line: "0.847 0.831 0.784", muted: "0.357 0.325 0.282", own: "0.812 0.788 0.733",
 };
+/* The color report: tile and chip sizes in points, and the board's six
+ * role borders for the band (Design_System § Palette). */
+const TILE_W = 44, CHIP_H = 16;
+const BAND = ["0.690 0.498 0", "0.180 0.545 0.227", "0.184 0.435 0.816",
+  "0.816 0.263 0.549", "0.435 0.333 0.690", "0.776 0.157 0.157"];
 const BUTTONS = { fix: "fix it", question: "ask it", past: "past", future: "future" };
 const fmt = (n) => (n == null ? "—" : Number.isInteger(n) ? n.toLocaleString("en-US") : n.toFixed(1));
 const dayLabel = (day) => new Date(day * 86_400_000)
@@ -62,6 +69,10 @@ function canvas() {
     rect(x, top, w, h, color) {
       if (w <= 0 || h <= 0) return;
       ops.push(`${color} rg ${x.toFixed(1)} ${Y(top + h)} ${w.toFixed(1)} ${h.toFixed(1)} re f`);
+    },
+    /** A JPEG placed by name (pagesToPdf's `images`), top-left at (x, top). */
+    image(name, x, top, w, h) {
+      ops.push(`q ${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(1)} ${Y(top + h)} cm /${name} Do Q`);
     },
     stroke(points, color, width = 1) {
       if (points.length < 2) return;
@@ -119,17 +130,31 @@ function legend(c) {
 /** The report's pages for a dashboard aggregate. Pure — the same
  *  drawing feeds the PDF and the tests. `nameOf(kind, id)` names goal
  *  targets the way the page does. */
-export function reportPages(dash, { userName, fromLabel, toLabel }, nameOf = () => null) {
+export function reportPages(dash, { userName, fromLabel, toLabel }, nameOf = () => null, { art = null } = {}) {
   const c = canvas();
   const name = (key) => nameOf(...key.split(":")) ?? key.split(":")[1];
   const week = (w) => dayLabel(Math.max(w * WEEK_DAYS, dash.fromDay));
   const periods = dash.by === "day" ? dash.days : dash.weeks;
   const plabels = periods.map((p) => (dash.by === "day" ? dayLabel(p.day) : week(p.week)));
+  // The color report (art supplied): the board's six role colors as a
+  // band, a drawn header, and words as their tiles. Without art, the
+  // printer-friendly report: Helvetica, ink and grey, amber only for glow.
+  const tileOf = (key) => art?.tiles?.get(key) ?? null;
+  const chipOf = (key) => art?.chips?.get(key) ?? null;
 
-  c.text(M, c.y + 14, "Pip progress report", { size: 20, bold: true });
-  c.text(M, c.y + 32, `${userName} · ${fromLabel} – ${toLabel}`, { size: 11 });
-  c.text(M, c.y + 46, `Every number comes from ${userName}'s own taps on the board. No comparisons with other children.`, { size: 8, color: C.muted });
-  c.y += 62;
+  if (art?.header) {
+    BAND.forEach((color, i) => c.rect((PAGE_W / BAND.length) * i, 0, PAGE_W / BAND.length + 0.5, 6, color));
+    const h = art.header;
+    c.image(h.name, M, c.y, W, (W * h.h) / h.w);
+    c.y += (W * h.h) / h.w + 8;
+    c.text(M, c.y + 4, `Every number comes from ${userName}'s own taps on the board. No comparisons with other children.`, { size: 8, color: C.muted });
+    c.y += 18;
+  } else {
+    c.text(M, c.y + 14, "Pip progress report", { size: 20, bold: true });
+    c.text(M, c.y + 32, `${userName} · ${fromLabel} – ${toLabel}`, { size: 11 });
+    c.text(M, c.y + 46, `Every number comes from ${userName}'s own taps on the board. No comparisons with other children.`, { size: 8, color: C.muted });
+    c.y += 62;
+  }
 
   // Headline numbers with their trend.
   const bw = (W - 24) / 3, bh = 96;
@@ -159,6 +184,7 @@ export function reportPages(dash, { userName, fromLabel, toLabel }, nameOf = () 
     ogRows.push({ title: g.name });
     for (const key of g.targets) {
       ogRows.push({
+        key,
         name: name(key),
         own: weeks.map((w) => g.weeks[w]?.[key]?.own ?? 0),
         glow: weeks.map((w) => g.weeks[w]?.[key]?.glow ?? 0),
@@ -182,13 +208,16 @@ export function reportPages(dash, { userName, fromLabel, toLabel }, nameOf = () 
     const max = Math.max(1, ...ogRows.filter((r) => r.own).flatMap((r) => r.own.map((o, i) => o + r.glow[i])));
     for (const r of ogRows) {
       if (r.title) { c.need(18); c.y += 12; c.text(M, c.y, r.title, { size: 10, bold: true }); c.y += 4; continue; }
-      c.need(24);
-      c.text(M + 6, c.y + 14, r.name, { size: 10 });
-      drawOwnGlow(c, M + 110, c.y + 2, 250, 18, r.own, r.glow, max);
+      const t = r.key ? tileOf(r.key) : null;
+      const rh = t ? TILE_W * t.h / t.w + 6 : 24, mid = (rh - 24) / 2;
+      c.need(rh);
+      if (t) c.image(t.name, M + 6, c.y + 3, TILE_W, TILE_W * t.h / t.w);
+      else c.text(M + 6, c.y + 14, r.name, { size: 10 });
+      drawOwnGlow(c, M + 110, c.y + 2 + mid, 250, 18, r.own, r.glow, max);
       const own = r.own.reduce((a, b) => a + b, 0), glow = r.glow.reduce((a, b) => a + b, 0);
-      c.text(M + 375, c.y + 10, `${r.own.at(-1) ?? 0} on their own this week`, { size: 8 });
-      c.text(M + 375, c.y + 20, `${own} own · ${glow} with the glow`, { size: 8, color: C.muted });
-      c.y += 24;
+      c.text(M + 375, c.y + 10 + mid, `${r.own.at(-1) ?? 0} on their own this week`, { size: 8 });
+      c.text(M + 375, c.y + 20 + mid, `${own} own · ${glow} with the glow`, { size: 8, color: C.muted });
+      c.y += rh;
     }
   }
 
@@ -197,6 +226,18 @@ export function reportPages(dash, { userName, fromLabel, toLabel }, nameOf = () 
   if (!dash.newWords.length) {
     c.text(M, c.y + 10, "No new words in this range.", { size: 10, color: C.muted });
     c.y += 16;
+  } else if (dash.newWords.every((w) => tileOf(w.key))) {
+    const gap = 10, per = Math.floor((W + gap) / (TILE_W + gap));
+    c.y += 8;
+    dash.newWords.forEach((w, i) => {
+      const t = tileOf(w.key), th = TILE_W * t.h / t.w;
+      if (i % per === 0) { if (i) c.y += th + 18; c.need(th + 18); }
+      const x = M + (i % per) * (TILE_W + gap);
+      c.image(t.name, x, c.y, TILE_W, th);
+      c.text(x + TILE_W / 2, c.y + th + 10, dayLabel(w.day), { size: 7.5, color: C.muted, align: "center" });
+    });
+    const last = tileOf(dash.newWords.at(-1).key);
+    c.y += TILE_W * last.h / last.w + 20;
   } else {
     let x = M;
     c.y += 12;
@@ -222,11 +263,14 @@ export function reportPages(dash, { userName, fromLabel, toLabel }, nameOf = () 
   const top = dash.topWords.slice(0, 10);
   heading(c, "Most-used words", "taps");
   for (const t of top) {
-    c.need(14);
-    c.text(M, c.y + 10, t.name, { size: 9 });
-    c.rect(M + 100, c.y + 3, ((W - 140) * t.taps) / (top[0]?.taps || 1), 8, C.ink);
-    c.text(M + W, c.y + 10, fmt(t.taps), { size: 9, color: C.muted, align: "right" });
-    c.y += 14;
+    const chip = chipOf(t.key);
+    const rh = chip ? 18 : 14, mid = (rh - 14) / 2;
+    c.need(rh);
+    if (chip) c.image(chip.name, M, c.y + 1, Math.min(92, (CHIP_H * chip.w) / chip.h), CHIP_H);
+    else c.text(M, c.y + 10, t.name, { size: 9 });
+    c.rect(M + 100, c.y + 3 + mid, ((W - 140) * t.taps) / (top[0]?.taps || 1), 8, C.ink);
+    c.text(M + W, c.y + 10 + mid, fmt(t.taps), { size: 9, color: C.muted, align: "right" });
+    c.y += rh;
   }
 
   // Kinds of words.
@@ -268,14 +312,20 @@ export function reportPages(dash, { userName, fromLabel, toLabel }, nameOf = () 
   }
 
   c.pages.forEach((ops, i) => ops.push(
-    `BT /F1 7 Tf ${C.muted} rg ${M} 28 Td (${pdfString(`Pip progress report · ${userName} · page ${i + 1} of ${c.pages.length}`)}) Tj ET`));
+    `BT /F1 7 Tf ${C.muted} rg ${M} 28 Td (${pdfString(`Pip progress report · ${userName} · page ${i + 1} of ${c.pages.length}${art ? " · pipaac.org" : ""}`)}) Tj ET`));
   return c.pages;
 }
 
-/** A valid PDF of drawn pages (two standard fonts, WinAnsi). */
-export function pagesToPdf(pages) {
+/** A valid PDF of drawn pages (two standard fonts, WinAnsi), plus any
+ *  JPEGs the pages place: [{ name, jpeg: Uint8Array, w, h }] in pixels.
+ *  JPEG bytes go in as-is (DCTDecode), so the file is built as bytes. */
+export function pagesToPdf(pages, images = []) {
   const kids = pages.map((_, i) => 3 + i * 2);
   const f1 = 3 + pages.length * 2, f2 = f1 + 1;
+  const img0 = f2 + 1;
+  const xobjects = images.length
+    ? `/XObject<<${images.map((im, i) => `/${im.name} ${img0 + i} 0 R`).join("")}>>`
+    : "";
   const objs = [];
   objs[0] = "<</Type/Catalog/Pages 2 0 R>>";
   objs[1] = `<</Type/Pages/Kids[${kids.map((k) => `${k} 0 R`).join(" ")}]/Count ${pages.length}>>`;
@@ -283,27 +333,46 @@ export function pagesToPdf(pages) {
     const content = ops.join("\n");
     objs[kids[i] - 1] =
       `<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${PAGE_W} ${PAGE_H}]/Contents ${kids[i] + 1} 0 R` +
-      `/Resources<</Font<</F1 ${f1} 0 R/F2 ${f2} 0 R>>>>>>`;
+      `/Resources<</Font<</F1 ${f1} 0 R/F2 ${f2} 0 R>>${xobjects}>>>>`;
     objs[kids[i]] = `<</Length ${te.encode(content).length}>>stream\n${content}\nendstream`;
   });
   objs[f1 - 1] = "<</Type/Font/Subtype/Type1/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>";
   objs[f2 - 1] = "<</Type/Font/Subtype/Type1/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>";
+  images.forEach((im, i) => {
+    objs[img0 - 1 + i] = [
+      `<</Type/XObject/Subtype/Image/Width ${im.w}/Height ${im.h}/ColorSpace/DeviceRGB` +
+        `/BitsPerComponent 8/Filter/DCTDecode/Length ${im.jpeg.length}>>stream\n`,
+      im.jpeg,
+      "\nendstream",
+    ];
+  });
 
-  let out = "%PDF-1.4\n";
+  const parts = [];
+  let at = 0;
+  const put = (p) => { const b = typeof p === "string" ? te.encode(p) : p; parts.push(b); at += b.length; };
+  put("%PDF-1.4\n");
   const xref = [0];
   objs.forEach((body, i) => {
-    xref.push(te.encode(out).length);
-    out += `${i + 1} 0 obj\n${body}\nendobj\n`;
+    xref.push(at);
+    put(`${i + 1} 0 obj\n`);
+    for (const p of [].concat(body)) put(p);
+    put("\nendobj\n");
   });
-  const xrefAt = te.encode(out).length;
-  out += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n`;
-  for (let i = 1; i <= objs.length; i++) out += `${String(xref[i]).padStart(10, "0")} 00000 n \n`;
-  out += `trailer\n<</Size ${objs.length + 1}/Root 1 0 R>>\nstartxref\n${xrefAt}\n%%EOF`;
-  return te.encode(out);
+  const xrefAt = at;
+  let tail = `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n`;
+  for (let i = 1; i <= objs.length; i++) tail += `${String(xref[i]).padStart(10, "0")} 00000 n \n`;
+  tail += `trailer\n<</Size ${objs.length + 1}/Root 1 0 R>>\nstartxref\n${xrefAt}\n%%EOF`;
+  put(tail);
+  const out = new Uint8Array(at);
+  let o = 0;
+  for (const b of parts) { out.set(b, o); o += b.length; }
+  return out;
 }
 
-/** The report for a range: aggregate → pages → PDF bytes. */
-export function reportPdf(db, fromDay, toDay, meta, nameOf, mode) {
+/** The report for a range: aggregate → pages → PDF bytes. The
+ *  printer-friendly report; the color one passes `art` and `images`
+ *  (drawn on the device by board/report-art.js) to the same pages. */
+export function reportPdf(db, fromDay, toDay, meta, nameOf, mode, { art = null, images = [] } = {}) {
   const dash = dashboard(db, fromDay, toDay, { nameOf, mode });
-  return { pdf: pagesToPdf(reportPages(dash, meta, nameOf)), dash };
+  return { pdf: pagesToPdf(reportPages(dash, meta, nameOf, { art }), images), dash };
 }

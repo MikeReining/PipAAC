@@ -13,7 +13,7 @@
 import { accountState, checkout } from "../shared/account.mjs";
 import { WEEK_DAYS, dashboard, firstTapDay, rangeFor } from "../shared/dashboard.mjs";
 import { weeklyCard } from "../shared/wincard.mjs";
-import { reportPdf } from "../shared/report.mjs";
+import { mountReportShare } from "./report-share.js";
 import { columns, ownGlowBars, sparkline } from "./progress-charts.js";
 import { withIcons } from "./inline-icons.js";
 
@@ -75,6 +75,7 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", artOf = a
     body.replaceChildren();
     const life = (await entitlement().catch(() => null)) === "lifetime";
     for (const id of ["prog-range", "prog-share", "prog-foot"]) $(id).hidden = !life;
+    share.close();
     if (!life) return renderFree(body);
 
     const range = rangeFor(span);
@@ -457,23 +458,10 @@ export function mountProgress({ db, me, nameOf, roleOf = () => "None", artOf = a
   for (const b of $("prog-mode").children) b.classList.toggle("on", b.dataset.v === mode);
   for (const b of $("prog-range").children) b.classList.toggle("on", b.dataset.v === span);
 
-  $("prog-share").addEventListener("click", async () => {
-    const { fromDay, toDay } = current ?? rangeFor(span);
-    const label = (day) => new Date(day * DAY).toLocaleDateString([], { timeZone: "UTC" });
-    const { pdf } = reportPdf(db, fromDay, toDay,
-      { userName: me.name || "This person", fromLabel: label(fromDay), toLabel: label(toDay) },
-      nameOf, mode);
-    const file = new File([pdf], `pip-progress-${label(toDay).replaceAll("/", "-")}.pdf`,
-      { type: "application/pdf" });
-    if (navigator.canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file], title: "Pip progress" }).catch(() => {});
-    } else {
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
-      a.download = file.name;
-      a.click();
-      setTimeout(() => URL.revokeObjectURL(a.href), 10_000);
-    }
+  const share = mountReportShare({
+    db, me, nameOf, roleOf, artOf,
+    range: () => current ?? rangeFor(span),
+    mode: () => mode,
   });
 
   settings.onShow((id) => { if (id === "progress") render(); });

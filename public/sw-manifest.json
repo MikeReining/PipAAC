@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-9257f85b50b8",
+  "buildId": "r1-b4f467b8734f",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -13098,8 +13098,8 @@
     },
     {
       "path": "/board.js",
-      "bytes": 58997,
-      "sha256": "c6e96cef016e717f2c6793d597410b87f270f4b25eaeff773ccde5e7aa7f0bd2"
+      "bytes": 59024,
+      "sha256": "d2ef1a95afafcb8f7b4e50716e041bfc7005f8f661275a4b8715af1a5e25ba86"
     },
     {
       "path": "/board/add-flow.css",
@@ -13228,8 +13228,8 @@
     },
     {
       "path": "/board/meta-cache.js",
-      "bytes": 3769,
-      "sha256": "97e7d72a9290ced30ee070798d9a509abac0b348db01ed3b89f16ac961ea2bae"
+      "bytes": 4351,
+      "sha256": "8ef543aac1485a76762662987c45926dcb48d27dc17698b5a557fc64c200bb10"
     },
     {
       "path": "/board/move-row.js",
@@ -13273,13 +13273,13 @@
     },
     {
       "path": "/board/progress-ui.css",
-      "bytes": 9293,
-      "sha256": "5fa7586de80e94fa3b18e0e1ab00e6d4a7527c3e2fc648196daef6626943d72f"
+      "bytes": 10742,
+      "sha256": "4cd5bfdabe4563b5cf34c3f77ceff8bdfaea120b4993da3556546e16321b8f1e"
     },
     {
       "path": "/board/progress-ui.js",
-      "bytes": 19795,
-      "sha256": "c0d3a36ddc38a28f104ff0862a1bc23400b12e1186dfceef52523743e2ce1666"
+      "bytes": 19755,
+      "sha256": "2cbdfac2ac902a5aa5f6c7b17f5f7898eeb11df23b74c048ca59613273eb7243"
     },
     {
       "path": "/board/recovery-ui.css",
@@ -13290,6 +13290,16 @@
       "path": "/board/recovery-ui.js",
       "bytes": 15251,
       "sha256": "22a3a1be69674e67d05d614439697b84b178281e10c7958be2ff3baf15bc822b"
+    },
+    {
+      "path": "/board/report-art.js",
+      "bytes": 6558,
+      "sha256": "3001ee6a1af0b53c9fe5be2b50ebbcec3d133523a34f26f3933bcd8eb9c8fe37"
+    },
+    {
+      "path": "/board/report-share.js",
+      "bytes": 3245,
+      "sha256": "990525343474ce25a2b19f1795a713c8572e8561fb9e99f3eaf728a5462b0ae5"
     },
     {
       "path": "/board/settings-sync.js",
@@ -13425,6 +13435,11 @@
       "path": "/brand/pip-mark-ink.svg",
       "bytes": 8829,
       "sha256": "73c760bc03dce542995d286931ee6c63bb7f2e5cf1a8342b86275c41a52ace80"
+    },
+    {
+      "path": "/brand/pip-mark.svg",
+      "bytes": 8826,
+      "sha256": "6b2c8e5bab321673c73d93f6e36caee2baa8a30ef8ad3ce31bd160425b8b2203"
     },
     {
       "path": "/catalog.json",
@@ -13784,8 +13799,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 56301,
-      "sha256": "a3ee4a041752b80193d62d521ea270423ca176412fdf587a4047201198b1d68b"
+      "bytes": 56344,
+      "sha256": "f63bfe4db892611e9860bbf4bc4bdf3004720b7b518d70aa7b6fad9abdcb631a"
     },
     {
       "path": "/manifest.webmanifest",
@@ -13944,8 +13959,8 @@
     },
     {
       "path": "/shared/report.mjs",
-      "bytes": 14021,
-      "sha256": "c521ff57110b9ae2fb096886011232690269fd5a435d91e4b9c72611893b765f"
+      "bytes": 17550,
+      "sha256": "7a47016f373e12db7fe3b3f14ac5166c056d221be25c25f5bc731fa041e41d38"
     },
     {
       "path": "/shared/research.mjs",

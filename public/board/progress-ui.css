@@ -176,3 +176,19 @@
   .prog-when { grid-template-columns: minmax(0, 1fr); }
   .prog-stat-n { font-size: 26px; }
 }
+
+/* Share report: Color or Printer-friendly */
+.prog-top { position: relative; }
+.prog-share-pop {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 5;
+  display: grid; min-width: 190px; padding: 6px;
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 12px 28px -14px rgba(42, 36, 29, .45);
+}
+.prog-share-pop[hidden] { display: none; }
+.prog-share-pop button {
+  border: 0; background: none; text-align: left; cursor: pointer;
+  font: inherit; font-weight: 700; font-size: 15px; color: var(--ink-text);
+  padding: 10px 12px; border-radius: 8px;
+}
+.prog-share-pop button:hover, .prog-share-pop button:focus-visible { background: var(--tray); }

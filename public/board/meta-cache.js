@@ -5,6 +5,7 @@
 import { normalizeV1 } from "../shared/normalize.mjs";
 import { wordLemmaCandidates } from "../shared/txbar.mjs";
 import { SENSE_ART_SQL } from "../shared/images.mjs";
+import { loadPhotoURL } from "../db.js";
 
 const ALL = (db, sql, p = []) => db.all(sql, p);
 
@@ -102,8 +103,19 @@ export function mountMetaCache({ db, locale }) {
       [locale, senseId],
     )[0];
 
+  /** A word's picture as an image URL, for surfaces that draw words
+   *  off the board (Progress, the color report): the sense's art, or
+   *  the family photo for an entity. `photo` means cover-fit. */
+  async function artUrlOf(kind, id) {
+    const art = kind === "sense" ? metaFor(id).art : kind === "entity" ? photoFor(id) : null;
+    if (!art) return null;
+    if (!art.startsWith("blob:")) return { url: `/${art}`, photo: false };
+    const url = await loadPhotoURL(art);
+    return url ? { url, photo: true } : null;
+  }
+
   return {
     senseMeta, wordArt, entityRole, entityPhoto, sensePos,
-    metaFor, artForWord, roleForEntity, photoFor, posOfSense, senseById,
+    metaFor, artForWord, roleForEntity, photoFor, posOfSense, senseById, artUrlOf,
   };
 }

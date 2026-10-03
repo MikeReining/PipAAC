@@ -1,6 +1,5 @@
 {
   "files": {
-    "src/worker/index.js": 506,
     "public/audio-review-elevenlabs-tiles.html": 754,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
     "public/board.js": 1447,
@@ -22,6 +21,8 @@
     "scripts/taps/sim.mjs": 574,
     "scripts/test.sh": 519,
     "scripts/works-test-test-guard.sh": 785,
+    "site/public/index.html": 575,
+    "site/public/styles.css": 1270,
     "src/board/groups.test.mjs": 660,
     "src/board/schema.sql": 833,
     "src/worker/accounts.heavy.test.mjs": 513,

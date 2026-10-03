@@ -199,6 +199,54 @@ test("the report carries the hand-computed numbers, in the page's order, as a va
   assert.match(new TextDecoder("latin1").decode(p2), /A \\\(kid\\\)/);
 });
 
+test("the color report embeds every picture intact and places each one, numbers unchanged", () => {
+  const db = fixture();
+  const dash = dashboard(db, D0, D14, { nameOf, mode: "symbol" });
+  // Stand-in JPEG bytes: report.mjs carries them, never decodes them, so
+  // the test checks they arrive byte for byte (0xFF/0xD8 survive).
+  const images = [];
+  const pic = (w, h) => {
+    const name = `Im${images.length + 1}`;
+    const jpeg = Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, images.length, 0x80, 0xfe, 0xff, 0xd9]);
+    images.push({ name, jpeg, w: w * 4, h: h * 4 });
+    return { name, w, h };
+  };
+  const tiles = new Map([...new Set([...dash.goals.flatMap((g) => g.targets), ...dash.newWords.map((w) => w.key)])]
+    .map((k) => [k, pic(44, 46)]));
+  const chips = new Map(dash.topWords.slice(0, 10).map((t) => [t.key, pic(60, 16)]));
+  const art = { header: pic(516, 54), tiles, chips };
+  const { pdf } = reportPdf(db, D0, D14, { userName: "Maya", fromLabel: "Jan 1", toLabel: "Jan 31" },
+    nameOf, "symbol", { art, images });
+  const raw = new TextDecoder("latin1").decode(pdf);
+  assert.ok(raw.startsWith("%PDF-1.4") && raw.endsWith("%%EOF"));
+
+  // Every cross-reference offset lands on its object: the file is read
+  // the way a PDF viewer reads it, through the xref table.
+  const xrefAt = Number(raw.match(/startxref\n(\d+)/)[1]);
+  const offsets = raw.slice(xrefAt).match(/^\d{10} 00000 n $/gm).map((l) => Number(l.slice(0, 10)));
+  offsets.forEach((o, i) => assert.ok(raw.startsWith(`${i + 1} 0 obj`, o), `object ${i + 1} at ${o}`));
+
+  // Each picture is an image object holding its bytes unchanged.
+  assert.equal((raw.match(/\/Subtype\/Image/g) ?? []).length, images.length);
+  const bytes = Array.from(pdf);
+  for (const im of images) {
+    const at = bytes.findIndex((_, i) => im.jpeg.every((b, j) => bytes[i + j] === b));
+    assert.ok(at > 0, `${im.name} bytes intact`);
+  }
+  // Each one is placed: header, every goal target, every new word, every chip.
+  const placed = new Set([...raw.matchAll(/\/(Im\d+) Do/g)].map((m) => m[1]));
+  for (const im of images) assert.ok(placed.has(im.name), `${im.name} drawn on a page`);
+
+  // The numbers are the printer-friendly report's numbers.
+  const text = pdfText(pdf);
+  for (const needle of ["0 own · 2 with the glow", "5 own · 0 with the glow", "3 first said in this range",
+    "Smart bar picked 18% of taps", "Week by week", "pipaac.org"]) {
+    assert.ok(text.some((t) => t.includes(needle)), `color report missing: ${needle}`);
+  }
+  const { pdf: print } = reportPdf(db, D0, D14, { userName: "Maya", fromLabel: "Jan 1", toLabel: "Jan 31" }, nameOf, "symbol");
+  assert.doesNotMatch(new TextDecoder("latin1").decode(print), /XObject|pipaac\.org/, "printer-friendly has no pictures");
+});
+
 test("weightedMedian: weighting, odd/even, empty", () => {
   assert.equal(weightedMedian([{ median: 4, samples: 8 }, { median: 9, samples: 1 }]), 4);
   assert.equal(weightedMedian([{ median: 3, samples: 1 }, { median: 9, samples: 1 }]), 9);

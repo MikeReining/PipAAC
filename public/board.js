@@ -365,7 +365,7 @@ const live = {
  * come back so the sync drain can clear them wholesale. */
 const {
   senseMeta, wordArt, entityRole, entityPhoto, sensePos,
-  metaFor, artForWord, roleForEntity, photoFor, posOfSense, senseById,
+  metaFor, artForWord, roleForEntity, photoFor, posOfSense, senseById, artUrlOf,
 } = mountMetaCache({ db, locale });
 
 /* Speech, tile voices, transforms — public/board/speech.js. */
@@ -1143,21 +1143,10 @@ const statNameOf = (kind, id) => kind === "entity"
 const statRoleOf = (kind, id) => kind === "entity" ? roleForEntity(id)
   : kind === "sense" ? ALL(db, "SELECT fitzgerald_role AS r FROM sense WHERE id = ?", [id])[0]?.r
   : "None";
-/** A stat key's picture as an image URL: the board's own art for a
- *  sense, the family photo for an entity (photo = cover-fit). */
-const statArtOf = async (kind, id) => {
-  const art = kind === "sense" ? metaFor(id).art : kind === "entity" ? photoFor(id) : null;
-  if (!art) return null;
-  if (art.startsWith("blob:")) {
-    const url = await loadPhotoURL(art);
-    return url ? { url, photo: true } : null;
-  }
-  return { url: `/${art}`, photo: false };
-};
 const relayEntitlement = async () =>
   (await devicesUi.userClient().then((u) => u?.client?.selfKey()))?.entitlement;
 mountWincard({ db, me, toast, nameOf: statNameOf, entitlement: relayEntitlement, settings: settingsUi });
-mountProgress({ db, me, nameOf: statNameOf, roleOf: statRoleOf, artOf: statArtOf, entitlement: relayEntitlement, settings: settingsUi });
+mountProgress({ db, me, nameOf: statNameOf, roleOf: statRoleOf, artOf: artUrlOf, entitlement: relayEntitlement, settings: settingsUi });
 
 /* The placement sheet (018 D10): Edit mode, tap any tile or an empty
  * cell — the off-board list ranks by the child's own counts, the

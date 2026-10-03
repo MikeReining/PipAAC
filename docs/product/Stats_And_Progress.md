@@ -114,7 +114,13 @@ For a Lifetime user, every supporter sees the full dashboard:
   supporter can change it.
 - **A one-tap progress report** (PDF) for a date range, for an IEP
   meeting: the numbers, the trends, goal words, and the date range.
-  Shared from the device, through the system share sheet.
+  Shared from the device, through the system share sheet. **Two
+  styles (founder, 2026-10-03; BUILT):** *Color* (the default) draws
+  the board's six-color band, a header with the Pip mark and the
+  person's name in Andika, and goal words, new words and most-used words
+  as their board tiles with pictures; *Printer-friendly* is the ink-and-
+  grey report. Same numbers, same order. Samples:
+  `docs/product/samples/progress-report-color.pdf`, `…-print.pdf`.
 
 BUILT: Settings → Progress draws in its own page, no overlay
 (`public/board/progress-ui.js` + `progress-charts.js` + `progress-ui.css`;
@@ -129,7 +135,12 @@ and day as two charts — `stats_day` doesn't cross them); the
 week-by-week table; "Lead with Words / Speed" at the foot. Quiet
 periods are true zeros; a range of two weeks or less trends by day.
 The PDF follows the same order with vector bars and lines, WinAnsi
-text. Aggregation reads `stats_day` only — the raw tap log and
+text. The color report's pictures are drawn on the device
+(`public/board/report-art.js`: canvas → JPEG, the one image format a
+PDF carries as-is) and placed by `report.mjs`, which never decodes an
+image; Share report's menu is `public/board/report-share.js`. Goal and
+new words on the Progress page are board tiles with their pictures
+(`artUrlOf` in `public/board/meta-cache.js`). Aggregation reads `stats_day` only — the raw tap log and
 sentence table are never opened. The headline choice is a supporter
 preference stored per user (`pip_dash_mode:<user>`), separate from the
 child's presentation mode. A missing or unreachable relay resolves to
