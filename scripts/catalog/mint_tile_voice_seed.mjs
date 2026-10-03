@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /**
- * Mint Leo (or other tile_voices.json) plain takes for launch lexicon rows —
- * local samples only; does not publish to Pip catalog / R2.
+ * Mint plain takes for launch lexicon rows in a tile_voices.json voice —
+ * local samples only; does not publish to Pip catalog / R2. Each extra
+ * voice writes to its own seed lane (elevenlabs-tiles-<name>).
  *
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10
+ *   node scripts/catalog/mint_tile_voice_seed.mjs --voice-key voi_eve_en --limit 10
  *   node scripts/catalog/mint_tile_voice_seed.mjs --limit 10 --offset 10
  *   node scripts/catalog/mint_tile_voice_seed.mjs --dry-run
  *   node scripts/catalog/mint_tile_voice_seed.mjs --all --run-id leo-final-c3-full-seed
@@ -13,9 +15,9 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
-  ELEVENLABS_TILES_LEO_BATCH,
   TILE_VARIATION_IDS,
   catalogSlug,
+  tileSeedBatchForVoice,
   tileTakeFilename,
   tileVariationText,
 } from "./elevenlabs_tile_variations.mjs";
@@ -27,8 +29,6 @@ import { repoRoot } from "./paths.mjs";
 import { tileMintTextForVariation } from "../../src/shared/tile_recipe.mjs";
 
 const DEFAULT_VOICE_KEY = "voi_leo_en";
-const BATCH = ELEVENLABS_TILES_LEO_BATCH;
-const BATCH_ROOT = join(repoRoot, "data/samples", BATCH);
 
 function loadEnv() {
   try {
@@ -47,8 +47,8 @@ function argValue(flag) {
   return process.argv[idx + 1] ?? null;
 }
 
-function ensureLeoRecipes(tileVoice, rows) {
-  mkdirSync(join(BATCH_ROOT, "takes"), { recursive: true });
+function ensureSeedRecipes(batchRoot, batch, tileVoice, rows) {
+  mkdirSync(join(batchRoot, "takes"), { recursive: true });
   const words = rows.map((r) => ({
     slot: r.slot,
     slug: r.slug,
@@ -60,7 +60,7 @@ function ensureLeoRecipes(tileVoice, rows) {
   }));
   const recipes = {
     schema: "pippaac.elevenlabs-tiles-recipes.v1",
-    batch: BATCH,
+    batch,
     generatedAt: new Date().toISOString(),
     defaults: {
       provider: "elevenlabs",
@@ -72,7 +72,7 @@ function ensureLeoRecipes(tileVoice, rows) {
     },
     words,
   };
-  writeFileSync(join(BATCH_ROOT, "recipes.json"), `${JSON.stringify(recipes, null, 2)}\n`);
+  writeFileSync(join(batchRoot, "recipes.json"), `${JSON.stringify(recipes, null, 2)}\n`);
 }
 
 async function main() {
@@ -81,6 +81,10 @@ async function main() {
   const mintAll = process.argv.includes("--all");
   const voiceKey = argValue("--voice-key") ?? DEFAULT_VOICE_KEY;
   const tileVoice = getTileVoiceByKey(voiceKey);
+  const batch = tileSeedBatchForVoice(voiceKey);
+  if (!batch) throw new Error(`no seed lane for voice_key: ${voiceKey} (Pip uses elevenlabs-tiles-core)`);
+  const batchRoot = join(repoRoot, "data/samples", batch);
+  const voiceShort = tileVoice.display_name.toLowerCase();
   const limitRaw = argValue("--limit");
   const offsetRaw = argValue("--offset");
   const limit = limitRaw != null ? Number(limitRaw) : 10;
@@ -88,8 +92,8 @@ async function main() {
   const runId =
     argValue("--run-id") ??
     (mintAll
-      ? `leo-seed-full-${new Date().toISOString().slice(0, 10)}`
-      : `leo-seed-${new Date().toISOString().slice(0, 10)}-o${offset}-n${limit}`);
+      ? `${voiceShort}-seed-full-${new Date().toISOString().slice(0, 10)}`
+      : `${voiceShort}-seed-${new Date().toISOString().slice(0, 10)}-o${offset}-n${limit}`);
 
   const wordsArg = argValue("--words");
   const force = process.argv.includes("--force");
@@ -106,7 +110,7 @@ async function main() {
   }
 
   const allRows = listLaunchLemmaRows();
-  ensureLeoRecipes(tileVoice, allRows);
+  ensureSeedRecipes(batchRoot, batch, tileVoice, allRows);
 
   let slice;
   if (wordsArg?.trim()) {
@@ -139,10 +143,10 @@ async function main() {
   if (dryRun) return;
 
   if (process.argv.includes("--publish")) {
-    throw new Error("Leo seed mints are listen-only — publish with publish_leo_seed.mjs (028 slice 6)");
+    throw new Error("Seed mints are listen-only — publish with the voice's publish script (028 slice 6)");
   }
 
-  const takesRoot = join(BATCH_ROOT, "takes");
+  const takesRoot = join(batchRoot, "takes");
   const runItems = [];
   let minted = 0;
 
@@ -150,7 +154,7 @@ async function main() {
     const plainPath = join(takesRoot, tileTakeFilename(r.slug, "plain"));
     if (force || !existsSync(plainPath)) {
       const out = await mintTileVariation({
-        batch: BATCH,
+        batch,
         slug: r.slug,
         variationId: "plain",
         spokenText: r.spokenText,
@@ -169,7 +173,7 @@ async function main() {
 
   const doc = writeMintRun({
     runId,
-    batch: BATCH,
+    batch,
     label: wordsArg
       ? `${tileVoice.display_name} tricky probe (${slice.length})`
       : mintAll
@@ -185,8 +189,8 @@ async function main() {
     items: runItems,
   });
 
-  const rel = reviewUrlQuery(doc.runId, BATCH);
-  console.log(`Review in catalog:audio:review → Voice: Leo, Show: mint run, run ${doc.runId}`);
+  const rel = reviewUrlQuery(doc.runId, batch);
+  console.log(`Review in catalog:audio:review → Voice: ${tileVoice.display_name}, Show: mint run, run ${doc.runId}`);
   console.log(`  http://127.0.0.1:${process.env.PIP_AUDIO_REVIEW_PORT || 3747}${rel}`);
 }
 

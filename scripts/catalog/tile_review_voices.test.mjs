@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { ELEVENLABS_TILES_LEO_BATCH, TILE_REVIEW_BATCH } from "./elevenlabs_tile_variations.mjs";
+import { ELEVENLABS_TILES_LEO_BATCH, TILE_REVIEW_BATCH, tileSeedBatchForVoice } from "./elevenlabs_tile_variations.mjs";
 import {
   listTileReviewVoices,
   resolveTileReviewLane,
@@ -14,6 +14,16 @@ test("listTileReviewVoices includes Pip and Leo", () => {
   const keys = voices.map((v) => v.voice_key);
   assert.ok(keys.includes("voi_default_en"));
   assert.ok(keys.includes("voi_leo_en"));
+  assert.ok(keys.includes("voi_eve_en"));
+});
+
+test("resolveTileReviewLane derives the Eve seed lane", () => {
+  const lane = resolveTileReviewLane("voi_eve_en", "tiles");
+  assert.equal(lane.batch, tileSeedBatchForVoice("voi_eve_en"));
+  assert.equal(lane.batch, "elevenlabs-tiles-eve");
+  assert.equal(lane.canPublishCatalog, false);
+  const forms = resolveTileReviewLane("voi_eve_en", "forms");
+  assert.equal(forms.batch, "elevenlabs-forms-eve");
 });
 
 test("resolveTileReviewLane maps Leo to leo batch", () => {

@@ -3,57 +3,66 @@
  */
 
 import {
-  ELEVENLABS_FORMS_LEO_BATCH,
-  ELEVENLABS_TILES_LEO_BATCH,
   FORMS_REVIEW_BATCH,
   TILE_REVIEW_BATCH,
+  formsSeedBatchForVoice,
+  tileSeedBatchForVoice,
 } from "./elevenlabs_tile_variations.mjs";
 import { loadTileVoices } from "./tile_voices.mjs";
 
 /** @typedef {{ surfaceId: string, label: string, batch: string, canPublishCatalog: boolean }} TileReviewSurface */
 
-/** @type {Record<string, TileReviewSurface[]>} */
-export const REVIEW_SURFACES_BY_VOICE = {
-  voi_default_en: [
+const PIP_SURFACES = [
+  {
+    surfaceId: "tiles",
+    label: "Launch tiles",
+    batch: TILE_REVIEW_BATCH,
+    canPublishCatalog: true,
+  },
+  {
+    surfaceId: "forms",
+    label: "Word forms",
+    batch: FORMS_REVIEW_BATCH,
+    canPublishCatalog: true,
+  },
+];
+
+/**
+ * Review surfaces for a tile voice. Extra voices get their derived seed
+ * lanes (elevenlabs-{tiles,forms}-<name>); null when a voice has no lanes.
+ * @param {string} voiceKey
+ * @returns {TileReviewSurface[] | null}
+ */
+export function reviewSurfacesForVoice(voiceKey) {
+  if (voiceKey === "voi_default_en") return PIP_SURFACES;
+  const tiles = tileSeedBatchForVoice(voiceKey);
+  if (!tiles) return null;
+  return [
     {
       surfaceId: "tiles",
       label: "Launch tiles",
-      batch: TILE_REVIEW_BATCH,
-      canPublishCatalog: true,
-    },
-    {
-      surfaceId: "forms",
-      label: "Word forms",
-      batch: FORMS_REVIEW_BATCH,
-      canPublishCatalog: true,
-    },
-  ],
-  voi_leo_en: [
-    {
-      surfaceId: "tiles",
-      label: "Launch tiles",
-      batch: ELEVENLABS_TILES_LEO_BATCH,
+      batch: tiles,
       canPublishCatalog: false,
     },
     {
       surfaceId: "forms",
       label: "Word forms",
-      batch: ELEVENLABS_FORMS_LEO_BATCH,
+      batch: formsSeedBatchForVoice(voiceKey),
       canPublishCatalog: false,
     },
-  ],
-};
+  ];
+}
 
 export function listTileReviewVoices() {
   const doc = loadTileVoices();
   return (doc.voices ?? [])
-    .filter((v) => REVIEW_SURFACES_BY_VOICE[v.voice_key])
     .map((v) => ({
       voice_key: v.voice_key,
       display_name: v.display_name,
       status: v.status,
-      surfaces: REVIEW_SURFACES_BY_VOICE[v.voice_key],
-    }));
+      surfaces: reviewSurfacesForVoice(v.voice_key),
+    }))
+    .filter((v) => v.surfaces);
 }
 
 /**
@@ -61,7 +70,7 @@ export function listTileReviewVoices() {
  * @param {string} [surfaceId]
  */
 export function resolveTileReviewLane(voiceKey, surfaceId = "tiles") {
-  const surfaces = REVIEW_SURFACES_BY_VOICE[voiceKey];
+  const surfaces = reviewSurfacesForVoice(voiceKey);
   if (!surfaces?.length) throw new Error(`no review lane for voice: ${voiceKey}`);
   const surface = surfaces.find((s) => s.surfaceId === surfaceId) ?? surfaces[0];
   return { voice_key: voiceKey, ...surface };
@@ -69,9 +78,9 @@ export function resolveTileReviewLane(voiceKey, surfaceId = "tiles") {
 
 /** @param {string} batch */
 export function voiceLaneForBatch(batch) {
-  for (const [voice_key, surfaces] of Object.entries(REVIEW_SURFACES_BY_VOICE)) {
-    for (const s of surfaces) {
-      if (s.batch === batch) return { voice_key, surfaceId: s.surfaceId, ...s };
+  for (const v of loadTileVoices().voices ?? []) {
+    for (const s of reviewSurfacesForVoice(v.voice_key) ?? []) {
+      if (s.batch === batch) return { voice_key: v.voice_key, surfaceId: s.surfaceId, ...s };
     }
   }
   return null;

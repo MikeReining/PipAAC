@@ -6,22 +6,19 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { join } from "node:path";
 
 import {
-  ELEVENLABS_FORMS_LEO_BATCH,
-  ELEVENLABS_TILES_LEO_BATCH,
-  FORMS_REVIEW_BATCH,
   TILE_REVIEW_BATCH,
   catalogSlug,
   tileTakeFilename,
 } from "./elevenlabs_tile_variations.mjs";
 import { getCatalogTileVoice } from "./voices.mjs";
-import { tileReviewUrlForRun } from "./tile_review_voices.mjs";
+import { listTileReviewVoices, tileReviewUrlForRun } from "./tile_review_voices.mjs";
 import { repoRoot } from "./paths.mjs";
 
+/** Every review lane across tile_voices.json voices (Pip's core + seed lanes). */
 const MINT_RUN_BATCHES = [
-  TILE_REVIEW_BATCH,
-  ELEVENLABS_TILES_LEO_BATCH,
-  FORMS_REVIEW_BATCH,
-  ELEVENLABS_FORMS_LEO_BATCH,
+  ...new Set(
+    listTileReviewVoices().flatMap((v) => v.surfaces.map((s) => s.batch)),
+  ),
 ];
 
 export function mintRunsDir(batch = TILE_REVIEW_BATCH) {

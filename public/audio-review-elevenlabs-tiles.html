@@ -119,6 +119,22 @@
           { surfaceId: "tiles", label: "Launch tiles", batch: "elevenlabs-tiles-leo", canPublishCatalog: false },
         ],
       },
+      {
+        voice_key: "builtin_eve",
+        display_name: "Eve",
+        status: "planned",
+        surfaces: [
+          { surfaceId: "tiles", label: "Launch tiles", batch: "elevenlabs-tiles-eve", canPublishCatalog: false },
+        ],
+      },
+      {
+        voice_key: "builtin_sam",
+        display_name: "Sam",
+        status: "planned",
+        surfaces: [
+          { surfaceId: "tiles", label: "Launch tiles", batch: "elevenlabs-tiles-sam", canPublishCatalog: false },
+        ],
+      },
     ];
     /** @type {typeof BUILTIN_REVIEW_VOICES} */
     let reviewVoices = [];
@@ -517,7 +533,7 @@
     }
 
     function isElevenlabsReviewBatch(batch) {
-      return /^elevenlabs-(tiles-leo|tiles-core|forms-core)$/.test(batch);
+      return /^elevenlabs-(tiles|forms)-[a-z]+$/.test(batch);
     }
 
     async function selectFile(path) {

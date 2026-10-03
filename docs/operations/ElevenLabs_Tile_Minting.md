@@ -132,6 +132,12 @@ npm run catalog:tiles:mint-leo-seed -- --words cough,laugh --run-id my-probe --f
 npm run catalog:tiles:mint-leo-seed -- --all --run-id leo-final-c3-full-seed
 ```
 
+Any `tile_voices.json` voice works the same way: `--voice-key voi_eve_en`
+(Eve pilot minted 2026-10-03, run `eve-seed-2026-10-03-o0-n10`). The seed
+lane derives from the key — `elevenlabs-tiles-<name>` /
+`elevenlabs-forms-<name>` — and appears in the review Voice picker
+automatically. Same for `voi_sam_en` when his turn comes.
+
 `--all` walks the full launch lemma list (~709), **skips** takes that already exist on disk, writes one mint-run manifest. Use `--force` only to remint. Full launch pre-seed only after founder OK on pilots (30-word gate passed 2026-09-29).
 ## Audio inventory (what is “missing”?)
 

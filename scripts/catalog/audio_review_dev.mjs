@@ -259,7 +259,7 @@ export function listBatches(pipeline) {
     .filter((d) => d.isDirectory())
     .map((d) => d.name);
   const grok = dirs.filter((n) => /^batch-\d+-core$/.test(n));
-  const elevenlabs = dirs.filter((n) => /^elevenlabs-(tiles-leo|tiles-core|forms-core)$/.test(n));
+  const elevenlabs = dirs.filter((n) => isElevenlabsReviewBatch(n));
   if (pipeline === GROK_PIPELINE) return grok.sort();
   if (pipeline === ELEVENLABS_V4_LAB_PIPELINE) return [V4_LAB_BATCH];
   if (pipeline === VOICE_SELECTOR_PIPELINE) return [VOICE_SELECTOR_BATCH];

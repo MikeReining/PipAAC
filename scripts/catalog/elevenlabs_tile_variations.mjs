@@ -13,12 +13,30 @@ export const ELEVENLABS_TILES_LEO_BATCH = "elevenlabs-tiles-leo";
 /** Leo's word-form takes (028 slice 6). */
 export const ELEVENLABS_FORMS_LEO_BATCH = "elevenlabs-forms-leo";
 
+/**
+ * Sample lane for an extra tile voice: "voi_eve_en" → "elevenlabs-tiles-eve".
+ * Pip (voi_default_en) has no seed lane — the core review batches are hers.
+ */
+export function tileSeedBatchForVoice(voiceKey) {
+  const short = /^voi_([a-z]+)_en$/.exec(String(voiceKey ?? ""))?.[1];
+  if (!short || short === "default") return null;
+  return `elevenlabs-tiles-${short}`;
+}
+
+/** @param {string} voiceKey e.g. "voi_eve_en" → "elevenlabs-forms-eve" */
+export function formsSeedBatchForVoice(voiceKey) {
+  return tileSeedBatchForVoice(voiceKey)?.replace("tiles", "forms") ?? null;
+}
+
 const ELEVENLABS_REVIEW_BATCHES = new Set([
   TILE_REVIEW_BATCH,
   FORMS_REVIEW_BATCH,
   ELEVENLABS_TILES_LEO_BATCH,
   ELEVENLABS_FORMS_LEO_BATCH,
 ]);
+
+/** Seed lanes for extra voices follow the same naming as the batches above. */
+const ELEVENLABS_SEED_LANE_RE = /^elevenlabs-(tiles|forms)-[a-z]+$/;
 
 /** @typedef {"plain" | "period" | "emphasis"} TileVariationId */
 
@@ -56,7 +74,7 @@ export function tileTakeFilename(slug, variationId) {
 }
 
 export function isElevenlabsReviewBatch(batch) {
-  return ELEVENLABS_REVIEW_BATCHES.has(batch);
+  return ELEVENLABS_REVIEW_BATCHES.has(batch) || ELEVENLABS_SEED_LANE_RE.test(batch);
 }
 
 /** @deprecated use isElevenlabsReviewBatch */
