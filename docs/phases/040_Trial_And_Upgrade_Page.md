@@ -156,22 +156,34 @@ fallback), the 20-word limit, the second-supporter and second-device walls
 5. **"Send an unlock link"** for an SLP or grandparent to hand to whoever pays
    (§ 8).
 
-## 8. Making the purchase actually work
+## 8. Making the purchase actually work (no account, ever)
 
 Today checkout needs a signed-in supporter account (`account.mjs checkout`
 needs `acct_id` + `session`), and the Settings sign-in row is hidden until the
 board is synced. A parent who taps Buy cannot buy.
 
-- **Required:** Buy works for anyone on the page — account or not.
-  **Founder confirm** the route: Stripe Checkout collects the email, then
-  the license is bound to the person (`user_id`, the same webhook seam that
-  exists) and the sign-in link goes to that email afterward. A buyer must
-  never be asked to create an account *before* paying.
-- **SLP → parent:** "Send an unlock link" shares a hosted checkout URL for that
-  person (QR or link). The licence binds to the person; once bought **every
-  supporter gets everything** (including the SLP who built the board).
-  The link carries the person's opaque random id, which is not personal data;
-  **Founder confirm** — the repo's rule is no sensitive data in URLs.
+- **No account to buy. Anywhere. Say so plainly.** Buying a licence never
+  asks for an account, sign-in, or email-then-password step — in the app, on
+  pipaac.org, or from a link. State it at every Buy button: "No account
+  needed."
+- **Build on what exists.** `POST /api/v1/checkout/codes` (commit `d1f3f2e`)
+  is already unauthenticated: it takes a count, redirects to Stripe Checkout,
+  and lands on `app.pipaac.org/codes.html`, where the webhook mints the codes.
+  It is priced at $24.50 a code from 10 up. Extend it: **count 1–9 is $49 a
+  code** (the licence is per person; 10 or more stays 50% off). Same
+  idempotent order record, same bearer-code redeem path.
+- **In the app** the Buy button uses that same route and returns to the app,
+  where the code redeems automatically for this person (no pasting). The
+  "Have a code or key?" box stays as the secondary path.
+- **On the marketing site:** a "Buy Pip Lifetime · $49 once — no account
+  needed" button on `/pricing` and the home page, using the same checkout.
+  After payment the buyer gets the code on the confirmation page and by email
+  (existing `EMAIL` binding) with a one-line "open the app → Settings → Get
+  Pip Lifetime → Enter code". A buyer who has not created a board yet can buy
+  first and redeem later.
+- **SLP → parent:** "Send an unlock link" on the page shares that same
+  no-account checkout (link or QR). Once bought **every supporter gets
+  everything** (including the SLP who built the board).
 - iOS stays Apple IAP only (Pricing § 4.5); this page links no web checkout there.
 
 ## 9. Docs, site, and proof
@@ -201,4 +213,3 @@ board is synced. A parent who taps Buy cannot buy.
 - Confirm the trial scope in § 3 (six rows) and Spotlight staying free.
 - Accent colour; final page and toast strings; the "hear the difference"
   sentence.
-- Guest checkout route and the unlock-link privacy call (§ 8).
