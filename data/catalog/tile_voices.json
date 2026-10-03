@@ -37,7 +37,7 @@
       "voice_key": "voi_sam_en",
       "display_name": "Sam",
       "provider": "elevenlabs",
-      "voice_id": "2gwgWhvX5ZUI1HdRf4Dh",
+      "voice_id": "M5U4lAuMpwU8AGX0x6l2",
       "model": "eleven_v4",
       "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
       "locales": ["en"],

@@ -46,7 +46,7 @@ test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.jso
   assert.equal(rows.get("voi_default_en").voice_id, "WWMMC6k9tdar0BthUenK");
   assert.equal(rows.get("voi_leo_en").voice_id, "4sAJvpuF0iHhO9nptfOD");
   assert.equal(rows.get("voi_eve_en").voice_id, "94pmIckCYkqYPVrgIvUH");
-  assert.equal(rows.get("voi_sam_en").voice_id, "2gwgWhvX5ZUI1HdRf4Dh");
+  assert.equal(rows.get("voi_sam_en").voice_id, "M5U4lAuMpwU8AGX0x6l2");
 });
 
 test("a shipped voice leaves coming soon and can be chosen; the choice is a synced setting", () => {
