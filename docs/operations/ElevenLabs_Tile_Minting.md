@@ -121,7 +121,7 @@ After `catalog:tiles:mint-gaps` or `mint_elevenlabs_tile_batch.mjs --mint-run`, 
 
 ### Leo seed (pilot — listen before bulk)
 
-Male tile voice **Leo** (`4sAJvpuF0iHhO9nptfOD`, custom clone — see `data/catalog/tile_voices.json`) is minted in a **separate sample lane** (`elevenlabs-tiles-leo`). **Eve** (`94pmIckCYkqYPVrgIvUH`, younger female) is `planned`; **Sam** (younger male) is `planned` with no voice id yet. The lineup is Pip, Eve, Leo, Sam (founder 2026-10-03, `public/shared/voices.mjs`).
+Male tile voice **Leo** (`4sAJvpuF0iHhO9nptfOD`, custom clone — see `data/catalog/tile_voices.json`) is minted in a **separate sample lane** (`elevenlabs-tiles-leo`). **Eve** (`94pmIckCYkqYPVrgIvUH`, younger female) is `planned`; **Sam** (`2gwgWhvX5ZUI1HdRf4Dh`, younger male) is `planned`. The lineup is Pip, Eve, Leo, Sam (founder 2026-10-03, `public/shared/voices.mjs`).
 
 Founder review: `npm run catalog:audio:review` → [tile review](http://127.0.0.1:3747/audio-review/elevenlabs-tiles) → **Voice: Leo** → **Show: mint run (spot check)** → pick the run → **↑ / ↓**. **Reload list** after an off-screen mint. Agents mint with:
 
