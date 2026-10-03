@@ -4,7 +4,8 @@
  * sqlite-wasm oo1 adapter in the browser — one body of logic, both drivers.
  * Insert order follows schema doc §6.
  *
- * All inserts are OR IGNORE with deterministic ids, so the import is also
+ * Inserts are OR IGNORE with deterministic ids (image keys upsert, so a
+ * re-encoded asset path reaches old devices), so the import is also
  * the reconcile: a persisted DB from an older catalog (pre-fringe,
  * pre-audio) converges on re-run without a destructive reset.
  *
@@ -45,7 +46,8 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
     }
 
     const insImage = db.prepare(
-      "INSERT OR IGNORE INTO image (id, sense_id, key, status, sha256) VALUES (?, ?, ?, ?, ?)",
+      `INSERT INTO image (id, sense_id, key, status, sha256) VALUES (?, ?, ?, ?, ?)
+       ON CONFLICT(id) DO UPDATE SET key = excluded.key, status = excluded.status, sha256 = excluded.sha256`,
     );
     for (const i of images) insImage.run(i.id, i.sense_id, i.key, i.status, i.sha256);
     const setDefault = db.prepare("UPDATE sense SET default_image_id = ? WHERE id = ?");
