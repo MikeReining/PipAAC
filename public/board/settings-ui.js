@@ -84,7 +84,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
       if (t.licensed) return "Every helper, forever";
       const days = t.endsAt ? Math.ceil((t.endsAt - Date.now()) / 86_400_000) : 0;
       return days > 0
-        ? `Free trial · ${days} day${days === 1 ? "" : "s"} left`
+        ? `$49 once · ${days} day${days === 1 ? "" : "s"} free`
         : "$49 once · no subscription";
     },
     lang: () => `Grammar help ${onOff("grammar-help")} · outlines ${onOff("hl-next")}`,
@@ -209,6 +209,8 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     for (const sec of sections) {
       const sum = SUMMARIES[sec.dataset.sec];
       if (!sum || isEmpty(sec)) continue;
+      // The unlicensed Lifetime offer already leads the sidebar.
+      if (sec.dataset.sec === "lifetime" && !trial().licensed) continue;
       const b = document.createElement("button");
       b.className = "set-glance-row";
       const t = document.createElement("b");
@@ -241,9 +243,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
       }
     } else if (!trial().licensed) {
       if (life.dataset.group !== "person") life.dataset.group = "person";
-      if (life.dataset.title !== "Get Pip Lifetime · $49 once") {
-        life.dataset.title = "Get Pip Lifetime · $49 once";
-      }
+      if (life.dataset.title !== "Get Pip Lifetime") life.dataset.title = "Get Pip Lifetime";
       if (sections[0] !== life) {
         pane.insertBefore(life, sections[0]);
         sections.unshift(...sections.splice(sections.indexOf(life), 1));

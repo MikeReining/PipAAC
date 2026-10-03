@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-4bd35557362d",
+  "buildId": "r1-cb5fee80cd3b",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -13213,8 +13213,8 @@
     },
     {
       "path": "/board/lifetime-ui.js",
-      "bytes": 5227,
-      "sha256": "4b53c6ddc7835fd7678bb18d105a3722c969d08ff213ef5f8ab131a91c6099dc"
+      "bytes": 5195,
+      "sha256": "8e204b5e085af39cb0980f410cb8a4d01038a69766e1fa5eb36b394198e7fe48"
     },
     {
       "path": "/board/meta-cache.js",
@@ -13298,13 +13298,13 @@
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 14325,
-      "sha256": "e357eb787610928da61794ee1f37e8cd81cb902be1c150165c86bef3ff6828ae"
+      "bytes": 17101,
+      "sha256": "c747b446b2c3fee8d5bae0aa5974574b98ea4e3684471608b93d824c2ac4464d"
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 20654,
-      "sha256": "9536da23d7a8babf108af35ffa3a00ed47f1d8cfb58b6ba0abbb16bdcb0abeba"
+      "bytes": 20749,
+      "sha256": "8d57d40b171d8c75cb8029c09d7294388f70a376148900049faae6c821d2e891"
     },
     {
       "path": "/board/setup-ui.css",
@@ -13789,8 +13789,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 61271,
-      "sha256": "0ea6a9d3413d66ad21b7f017e66f2cc077500a6df3b31dfcba679b913c4777e9"
+      "bytes": 63733,
+      "sha256": "c4f7d8c6f5db8f8b8d7f4995ce719c877ce0968cba55ffafd0699ab4c8cd1335"
     },
     {
       "path": "/manifest.webmanifest",

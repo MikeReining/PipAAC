@@ -257,16 +257,56 @@ button.set-who:hover { background: var(--tray); }
 .set-nav-btn.set-nav-accent .set-sum { color: #8a5a00; }
 .set-nav-btn.set-nav-accent svg { color: var(--glow); }
 
-.life-hero h2 { font-size: 30px; margin: 0; }
-.life-price { font-size: 19px; font-weight: 700; margin: 4px 0 0; }
-.life-table { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.life-table li {
-  display: flex; gap: 12px; align-items: baseline;
-  padding: 9px 0; border-top: 1px solid var(--line); font-size: 15px;
+/* The page itself: a gold hero that sells, then white cards like every
+ * other Settings page. Real icons only — the app's own SVGs, never emoji. */
+.life-hero {
+  background: #fdf0c8; border: 2px solid var(--glow); border-radius: 18px;
+  padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 8px;
 }
-.life-table li:first-child { border-top: 0; }
-.life-table li b { flex: none; min-width: 52px; font-size: 17px; }
-.life-buy { font-size: 19px !important; min-height: 56px; }
+.life-hero h2 { font-size: 30px; margin: 0; }
+.life-pill {
+  align-self: flex-start; margin: 0 0 2px; padding: 4px 12px; border-radius: 999px;
+  background: var(--ink); color: var(--cream); font-size: 14px; font-weight: 700;
+}
+.life-price { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; font-size: 22px; font-weight: 700; }
+.life-price b { font-size: 46px; line-height: 1; font-weight: 800; }
+.life-price span { flex-basis: 100%; font-size: 15px; font-weight: 600; color: var(--muted); }
+.life-lede { margin: 2px 0 6px; font-size: 16px; line-height: 1.4; }
+.life-buy { font-size: 19px !important; min-height: 58px; width: 100%; }
+.life-fine { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+.life-foot { text-align: center; margin: 4px 0 24px; }
+.life-card { margin-top: 12px; }
+
+.life-hear { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.life-play {
+  display: flex; align-items: center; gap: 10px; text-align: left;
+  padding: 12px 14px; border-radius: 14px; border: 2px solid var(--ink);
+  background: #fff; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer;
+}
+.life-play.on { background: var(--ink); color: var(--cream); }
+.life-play i {
+  flex: none; width: 0; height: 0; margin-left: 4px;
+  border-left: 14px solid currentColor; border-top: 9px solid transparent; border-bottom: 9px solid transparent;
+}
+.life-play span { display: flex; flex-direction: column; gap: 1px; line-height: 1.25; }
+.life-play b { font-size: 16px; }
+
+.life-feats { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.life-feats li { display: flex; gap: 14px; align-items: flex-start; padding: 12px 0; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.4; }
+.life-feats li:first-child { border-top: 0; }
+.life-feats li > span:last-child b { display: block; font-size: 16px; margin-bottom: 1px; }
+.life-ico {
+  flex: none; width: 44px; height: 44px; border-radius: 12px; background: var(--tray);
+  display: grid; place-items: center; color: var(--ink);
+}
+.life-ico svg { width: 24px; height: 24px; }
+.life-ico img { width: 26px; height: 26px; }
+.life-mini { display: flex; gap: 6px; margin-top: 6px; }
+.life-mini img { width: 26px; height: 26px; padding: 4px; border-radius: 8px; background: var(--tray); }
+.life-checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+.life-checks li { display: flex; gap: 10px; }
+.life-checks li::before { content: ""; flex: none; width: 18px; height: 18px; margin-top: 2px; border-radius: 50%; background: #dcf0dd url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e8b3a' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.500l4 4 8-9'/%3E%3C/svg%3E") center / 12px no-repeat; }
+@media (max-width: 520px) { .life-hear { grid-template-columns: 1fr; } .life-price b { font-size: 40px; } }
 .set-link {
   border: 0; background: none; font: inherit; font-size: inherit;
   color: var(--ink); text-decoration: underline; cursor: pointer; padding: 0;

@@ -168,49 +168,63 @@
             <!-- 040: the Pip Lifetime page — the sidebar's first item
                  while unlicensed, and the one place every upgrade door
                  lands (public/board/lifetime-ui.js). -->
-            <section class="set-sec" data-sec="lifetime" data-title="Get Pip Lifetime · $49 once">
+            <section class="set-sec" data-sec="lifetime" data-title="Get Pip Lifetime">
               <div class="life-hero">
+                <p class="life-pill" id="life-trial-line" hidden></p>
                 <h2>Pip Lifetime</h2>
-                <p class="life-price">$49 once. No subscription.</p>
-                <p class="hint" id="life-trial-line" hidden></p>
+                <p class="life-price"><b>$49</b> once<span>No subscription. Ever.</span></p>
+                <p class="life-lede">Every word still speaks free, forever. Lifetime makes Pip sound like <span data-person></span> is really talking — and gives the whole team in.</p>
+                <div id="life-buy-row">
+                  <button class="btn life-buy" id="life-buy">Get Pip Lifetime · $49</button>
+                  <p class="life-fine"><b>No account needed.</b> Whoever pays, the license lands on <span data-person></span>'s board.</p>
+                </div>
+                <p class="life-fine" id="life-ios" hidden>On iPhone and iPad, Pip Lifetime is bought inside the app.</p>
               </div>
-              <div class="seg-row">
+              <div class="seg-row life-card">
                 <span class="seg-label">Hear the difference</span>
-                <p class="hint">One sentence, both ways — real recordings.</p>
-                <div class="row">
-                  <button class="btn secondary" id="life-hear-free">▶ Free · one word at a time</button>
-                  <button class="btn" id="life-hear-life">▶ Lifetime · a natural sentence</button>
+                <p class="hint">The same sentence, both ways — real recordings.</p>
+                <div class="life-hear">
+                  <button class="life-play" id="life-hear-free"><i></i><span><b>Free</b>One word at a time</span></button>
+                  <button class="life-play on" id="life-hear-life"><i></i><span><b>Lifetime</b>A natural sentence</span></button>
                 </div>
               </div>
-              <div class="seg-row">
+              <div class="seg-row life-card">
                 <span class="seg-label">What Lifetime adds</span>
-                <ul class="life-table">
-                  <li><b>🔊</b> A natural voice reads the whole sentence — not one word at a time</li>
-                  <li><b>✨❓⏪⏩</b> The sentence buttons — her words, grammatical, never guessed</li>
-                  <li><b>🙂</b> Feeling faces: excited, sad, angry</li>
-                  <li><b>🗣️</b> Choose a voice — girl, boy, woman, man</li>
-                  <li><b>🎤</b> A voice for the words you type yourself</li>
-                  <li><b>📊</b> Progress: weekly charts, goal words, a PDF for school and therapy</li>
-                  <li><b>♾️</b> Unlimited own words, every supporter, every device, 300 pictures</li>
+                <ul class="life-feats">
+                  <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5.5a9 9 0 0 1 0 13"/></svg></span>
+                    <span><b>A natural voice for the whole sentence</b>Play reads it the way a person would — not one word at a time.</span></li>
+                  <li><span class="life-ico"><img src="/icons/fix-wand.svg" alt=""></span>
+                    <span><b>The sentence buttons</b>Fix it, Question, Past, Future — her own words, made grammatical. Pip never adds a word she didn't tap.
+                      <em class="life-mini"><img src="/icons/fix-wand.svg" alt=""><img src="/icons/question.svg" alt=""><img src="/icons/tense-past.svg" alt=""><img src="/icons/tense-future.svg" alt=""></em></span></li>
+                  <li><span class="life-ico"><img src="/icons/voice-happy.svg" alt=""></span>
+                    <span><b>Feeling faces</b>Say it excited, sad or angry.
+                      <em class="life-mini"><img src="/icons/voice-happy.svg" alt=""><img src="/icons/voice-sad.svg" alt=""><img src="/icons/voice-angry.svg" alt=""></em></span></li>
+                  <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5"/><path d="M16 6.5a4 4 0 0 1 0 5"/><path d="M18.5 4a7.5 7.5 0 0 1 0 10"/></svg></span>
+                    <span><b>Choose a voice</b>Girl, boy, woman or man.</span></li>
+                  <li><span class="life-ico"><img src="/icons/keyboard.svg" alt=""></span>
+                    <span><b>A voice for the words you type</b>New words speak in Pip's voice too.</span></li>
+                  <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg></span>
+                    <span><b>Progress and the report</b>Weekly charts, goal words, and a PDF for school and therapy.</span></li>
+                  <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="3.6"/><circle cx="16" cy="12" r="3.6"/></svg></span>
+                    <span><b>The whole team, no limits</b>Unlimited words of your own, every supporter, every device, 300 pictures.</span></li>
                 </ul>
-                <p class="hint">Free forever: every word speaks, one word at a time — plus 20 words of your own, one supporter, 5 pictures.</p>
               </div>
-              <div class="seg-row" id="life-buy-row">
-                <span class="seg-label">Buy</span>
-                <button class="btn life-buy" id="life-buy">Get Pip Lifetime · $49</button>
-                <p class="hint">No account needed. Whoever pays, the license lands on <span data-person></span>'s board.</p>
-                <p class="hint"><a href="https://pipaac.org/schools">Buying for 10 or more? Half price.</a>
-                  · <button class="set-link" id="life-code">Have a code or key?</button></p>
+              <div class="seg-row life-card life-free">
+                <span class="seg-label">Free forever</span>
+                <ul class="life-checks">
+                  <li>Every word speaks, one word at a time</li>
+                  <li>20 words of your own</li>
+                  <li>One supporter, backup and restore</li>
+                  <li>5 pictures drawn for you</li>
+                </ul>
               </div>
-              <div class="seg-row" id="life-link-row">
+              <div class="seg-row life-card" id="life-link-row">
                 <span class="seg-label">Someone else pays</span>
-                <p class="hint">Send an unlock link — an SLP or grandparent opens it, pays, and gets a code for <span data-person></span>.</p>
+                <p class="hint">An SLP or grandparent can open a link, pay, and get a code for <span data-person></span>.</p>
                 <button class="btn secondary" id="life-link">Copy unlock link</button>
               </div>
-              <div class="seg-row" id="life-ios" hidden>
-                <span class="seg-label">Pip Lifetime</span>
-                <p class="hint">On iPhone and iPad, Pip Lifetime is bought inside the app.</p>
-              </div>
+              <p class="life-fine life-foot"><a class="set-link" href="https://pipaac.org/schools">Buying for 10 or more? Half price.</a>
+                · <button class="set-link" id="life-code">Have a code or key?</button></p>
             </section>
 
             <section class="set-sec" data-sec="overview" data-title="Overview">
