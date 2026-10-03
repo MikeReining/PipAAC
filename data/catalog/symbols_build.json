@@ -629,7 +629,7 @@
       "params": "webp-q82-e512"
     },
     "symbols/bathroom.webp": {
-      "masterSha256": "5ff5bb588be18c87bde2ab33ce6ff1398f5cdf29a49aa58ec4df6f00c0d46846",
+      "masterSha256": "aabf6856187c3efcb5488c9d2af2b1d7c08c59c5b71215ffbf6ef5c3b2844e18",
       "params": "webp-q82-e512"
     },
     "symbols/potty.webp": {
@@ -2217,7 +2217,7 @@
       "params": "webp-q82-e512"
     },
     "symbols/naptime.webp": {
-      "masterSha256": "3cea11b79d9f1183253b6e50dadfbf53ddba7f5774f46804d6ef896614b39755",
+      "masterSha256": "eb9cd7966135c1e098ca52ef95a5608ed018ba9b5e1121ca836f208a1d4ed956",
       "params": "webp-q82-e512"
     },
     "symbols/now.webp": {

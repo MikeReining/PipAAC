@@ -1,5 +1,6 @@
 import sharp from "sharp";
 import { writeFileSync, existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 
 const BRAIN_DIR = "/Users/mike/.gemini/antigravity/brain/c15bf114-5b79-4930-9236-a703da47f805";
 
@@ -21,35 +22,26 @@ async function normalizeWhite(inputBuf, threshold = 238) {
     .toBuffer();
 }
 
-// 1. Bit: clean dashed box around pinch hand, ensure pure white
+// 1. Bit: clean hand-only pinch gesture with pure white skin and background
 async function polishBit() {
-  const orig = sharp(`${BRAIN_DIR}/batch69_muse_bit.png`);
+  const orig = sharp(`${BRAIN_DIR}/batch69_muse_bit_hand.png`);
   const { data, info } = await orig.raw().toBuffer({ resolveWithObject: true });
 
-  // Erase the rough bounding box dashed lines to the left and top of hand
-  // In bit.png, hand is at x: 1050 to 1550, y: 150 to 800.
-  // Dashed lines were around x: 1020 to 1250, y: 130 to 450.
-  // Erase only pixels in that specific rough dashed zone that are not the hand:
-  for (let y = 100; y < 550; y++) {
-    for (let x = 1000; x < 1300; x++) {
-      const idx = (y * info.width + x) * info.channels;
-      // Dashed lines are thin black pixels isolated from hand
-      // Hand finger tip is around x: 1100 to 1250, y: 250 to 450.
-      if (x < 1100 && y < 450) {
-        data[idx] = 255;
-        data[idx + 1] = 255;
-        data[idx + 2] = 255;
-      }
-      if (y < 210 && x < 1250) {
-        data[idx] = 255;
-        data[idx + 1] = 255;
-        data[idx + 2] = 255;
-      }
+  for (let i = 0; i < data.length; i += info.channels) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+    if (lum >= 140) {
+      data[i] = 255;
+      data[i + 1] = 255;
+      data[i + 2] = 255;
+    } else {
+      const v = Math.min(255, Math.max(0, Math.round(lum * (255 / 140))));
+      data[i] = v;
+      data[i + 1] = v;
+      data[i + 2] = v;
     }
   }
 
-  // Draw two crisp, neat dimension ticks between index finger and thumb:
-  // Gap is around x: 1140, y: 310.
   const buf = await sharp(data, {
     raw: { width: info.width, height: info.height, channels: info.channels },
   })
@@ -61,72 +53,10 @@ async function polishBit() {
   console.log("Polished bit");
 }
 
-// 2. Time: Pip blue torso fill, clean baseline, normalize white
+// 2. Time: clean wrist and watch with green arrow pointing down, pure white skin and background
 async function polishTime() {
-  const orig = sharp(`${BRAIN_DIR}/batch69_muse_time.png`);
-  const { data, info } = await orig.raw().toBuffer({ resolveWithObject: true });
-
-  // Seal bottom of torso at y=1280 between x=220 and x=1050
-  for (let x = 220; x <= 1050; x++) {
-    for (let dy = 0; dy < 6; dy++) {
-      const idx = ((1278 + dy) * info.width + x) * info.channels;
-      data[idx] = 17;
-      data[idx + 1] = 17;
-      data[idx + 2] = 17;
-    }
-  }
-
-  // Flood fill torso from (850, 1150) with #2b6cb0
-  const queue = [[850, 1150]];
-  const visited = new Uint8Array(info.width * info.height);
-  visited[1150 * info.width + 850] = 1;
-
-  while (queue.length > 0) {
-    const [cx, cy] = queue.shift();
-    const idx = (cy * info.width + cx) * info.channels;
-    data[idx] = 43;
-    data[idx + 1] = 108;
-    data[idx + 2] = 176;
-
-    const neighbors = [
-      [cx + 1, cy],
-      [cx - 1, cy],
-      [cx, cy + 1],
-      [cx, cy - 1],
-    ];
-    for (const [nx, ny] of neighbors) {
-      if (nx >= 0 && nx < info.width && ny >= 0 && ny < 1280) {
-        const nidx = ny * info.width + nx;
-        if (!visited[nidx]) {
-          visited[nidx] = 1;
-          const pidx = nidx * info.channels;
-          if (data[pidx] > 140 && data[pidx + 1] > 140 && data[pidx + 2] > 140) {
-            queue.push([nx, ny]);
-          }
-        }
-      }
-    }
-  }
-
-  // Erase any baseline extension outside torso
-  for (let y = 1276; y < 1310; y++) {
-    for (let x = 0; x < info.width; x++) {
-      if (x < 240 || x > 1030) {
-        const idx = (y * info.width + x) * info.channels;
-        data[idx] = 255;
-        data[idx + 1] = 255;
-        data[idx + 2] = 255;
-      }
-    }
-  }
-
-  const buf = await sharp(data, {
-    raw: { width: info.width, height: info.height, channels: info.channels },
-  })
-    .png()
-    .toBuffer();
-
-  const clean = await normalizeWhite(buf);
+  execFileSync("python3", ["scripts/art/polish_time_arrow.py"], { stdio: "inherit" });
+  const clean = await normalizeWhite(`${BRAIN_DIR}/batch69_norm_time.png`);
   await sharp(clean).png().toFile(`${BRAIN_DIR}/batch69_norm_time.png`);
   console.log("Polished time");
 }
@@ -179,32 +109,62 @@ async function polishNice() {
   console.log("Polished nice");
 }
 
-// 7. About: clean air gap on speech bubble pointer tail
+// 7. About: Pip from why.png with green shirt, both canonical arms, and floating vector speech bubble with ~80px air gap
 async function polishAbout() {
-  const orig = sharp(`${BRAIN_DIR}/batch69_muse_about.png`);
-  const { data, info } = await orig.raw().toBuffer({ resolveWithObject: true });
+  const whyImg = sharp("assets/symbols/why.png");
+  const { data, info } = await whyImg.raw().toBuffer({ resolveWithObject: true });
 
-  // In about.png, trim the pointer tip around x: 950 to 1030, y: 550 to 620 so it has a generous ~85px air gap
-  for (let y = 560; y < 630; y++) {
-    for (let x = 940; x < 1020; x++) {
-      // Clear pixels within 40px of the tail tip to white
-      const dist = Math.hypot(x - 980, y - 600);
-      if (dist < 35) {
-        const idx = (y * info.width + x) * info.channels;
-        data[idx] = 255;
-        data[idx + 1] = 255;
-        data[idx + 2] = 255;
-      }
+  for (let i = 0; i < data.length; i += info.channels) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    if (r > 190 && g < 150 && b > 120) {
+      data[i] = 56;
+      data[i + 1] = 161;
+      data[i + 2] = 105;
+    } else if (r > 160 && b > 100 && r > g + 25) {
+      const blend = (r - g) / 100;
+      data[i] = Math.round(data[i] * (1 - blend) + 56 * blend);
+      data[i + 1] = Math.round(data[i + 1] * (1 - blend) + 161 * blend);
+      data[i + 2] = Math.round(data[i + 2] * (1 - blend) + 105 * blend);
     }
   }
 
-  const buf = await sharp(data, {
+  const basePip = await sharp(data, {
     raw: { width: info.width, height: info.height, channels: info.channels },
   })
     .png()
     .toBuffer();
 
-  const clean = await normalizeWhite(buf);
+  const svg = Buffer.from(`
+    <svg width="480" height="480" viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg">
+      <path d="
+        M 270,30
+        A 175,175 0 0,1 445,205
+        A 175,175 0 0,1 270,380
+        A 175,175 0 0,1 155,340
+        L 90,400
+        L 125,310
+        A 175,175 0 0,1 95,205
+        A 175,175 0 0,1 270,30
+        Z"
+        fill="#ffffff"
+        stroke="#111111"
+        stroke-width="24"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+      />
+      <path d="M 270,305 A 100,100 0 1,1 365,170" fill="none" stroke="#111111" stroke-width="20" stroke-linecap="round"/>
+      <polygon points="345,145 385,155 375,195" fill="#111111"/>
+      <text x="268" y="245" font-family="system-ui, -apple-system, BlinkMacSystemFont, sans-serif" font-size="115" font-weight="900" fill="#111111" text-anchor="middle">?</text>
+    </svg>
+  `);
+  const bubbleBuf = await sharp(svg).png().toBuffer();
+
+  const comp = await sharp(basePip)
+    .composite([{ input: bubbleBuf, left: 1110, top: 30 }])
+    .png()
+    .toBuffer();
+
+  const clean = await normalizeWhite(comp);
   await sharp(clean).png().toFile(`${BRAIN_DIR}/batch69_norm_about.png`);
   console.log("Polished about");
 }
