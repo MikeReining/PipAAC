@@ -47,7 +47,7 @@
         ],
         [
           "One tap, whole sentence.",
-          "Pip's ✨ Fix it, tense buttons, and question button change the whole sentence at once. No word-by-word popups."
+          "Pip's Fix it, tense buttons, and question button change the whole sentence at once. No word-by-word popups."
         ]
       ]
     },
@@ -132,7 +132,7 @@
         ],
         [
           "One tap, whole sentence.",
-          "✨ Fix it, past, present, future, and question buttons change the whole sentence at once."
+          "Fix it, past, present, future, and question buttons change the whole sentence at once."
         ]
       ]
     },
@@ -153,7 +153,7 @@
         ],
         [
           "One tap, whole sentence.",
-          "✨ Fix it, past, present, future, and question buttons, plus any sentence in a happy, sad, or angry voice."
+          "Fix it, past, present, future, and question buttons, plus any sentence in a happy, sad, or angry voice."
         ]
       ]
     }
@@ -224,7 +224,7 @@
       "name": "Sentences & grammar",
       "rows": [
         {
-          "label": "✨ Fix it: a whole sentence, one tap",
+          "label": "Fix it: a whole sentence, one tap",
           "only": true,
           "q": {
             "pip": 4,
@@ -251,7 +251,7 @@
           "note": "Others change one word at a time, through popups or ending buttons."
         },
         {
-          "label": "❓ Turn it into a question, one tap",
+          "label": "Turn it into a question, one tap",
           "only": true,
           "q": {
             "pip": 4,

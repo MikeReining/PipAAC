@@ -1318,3 +1318,9 @@ p { margin: 0 0 1em; }
   .goal-sum { grid-column: 2; }
   .paper-nums .ends i:first-child { display: none; }
 }
+
+/* Real button icons inline in plan lists — never emoji (040). */
+.ico-inline { display: inline-flex; gap: 4px; vertical-align: middle; margin-left: 4px; }
+.ico-inline img { width: 22px; height: 22px; padding: 3px; border-radius: 7px; background: var(--cream); border: 1px solid var(--line); }
+.plan form { display: flex; flex-direction: column; gap: 8px; }
+.buy-note { margin: 0; text-align: center; font-size: .85rem; color: var(--muted, #5b5348); }
