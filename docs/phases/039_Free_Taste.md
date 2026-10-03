@@ -1,5 +1,8 @@
 # 039 — The Free Taste: let everyone feel ✨ ❓ ⏪ ⏩ before paying
 
+> **Pool superseded 2026-10-03 by `040_Trial_And_Upgrade_Page.md`** (10 taps → a
+> 7-day trial from install). The tour rewrite in § 7 stays.
+
 **Status:** built 2026-10-03 — pool DO (`taste.mjs` on the shared
 TileLedger DO), speak grants, per-IP cap, client counter and asks. Held
 from deploy by two named gates: founder sign-off on the § 4.5 strings
