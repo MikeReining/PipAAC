@@ -1,11 +1,12 @@
 # 036 — Works offline (app-shell service worker)
 
-**Status:** EXECUTED 2026-10-02 (commits `8492b83` SW + manifest +
+**Status:** DEPLOYED 2026-10-03 (commits `8492b83` SW + manifest +
 registration + gate, `bb07965` offline probe, `724e6bd` budget entry) —
-the scripted gate passes; the real-device Works Test is the founder gate
-before the claim goes live. This phase is
-the gate for the "works offline" marketing claim; the 035 proposal's
-claims table already flags it as untrue from a cold start.
+the scripted gate passes, and the offline probe passes against the
+deployed origin. The real-device Works Test (§ 5 steps 1–5) is the
+remaining founder proof; note the "works offline" copy is already live
+on pipaac.org (deployed 2026-10-02), so the claim preceded its own
+gate — the iPad run now decides whether the live copy is honest.
 
 **Landed:** `scripts/sw/sw_manifest.mjs` generates `public/sw-manifest.json`
 (3,522 files, 70.0 MB — includes all symbols + audio) and

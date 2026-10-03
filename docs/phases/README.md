@@ -55,8 +55,9 @@ Executing phases only. Each row names the **next** slice.
 | Proposal | Ask |
 | --- | --- |
 | [035 — pipaac.org design + copy proposal](035_Marketing_Site_Proposal.md) | Direction set 2026-10-02 (board first, $300 headline, /method attack page). Next: hero mockup (§ 13); founder story + contact (§ 14) |
-| [037 — Shipped payload diet](037_Shipped_Payload_Diet.md) | Executed 2026-10-02 — symbols 600 MB → 7.3 MB WebP in `catalog:build`, byte + stamp gates live, `_headers` shipped. Open: founder tile-size art review, `pictures:index` re-embed, deploy |
-| [036 — Works offline](036_Offline_Support.md) | Executed 2026-10-02 — `sw.js` + generated precache (3,519 files, 66.8 MB), offline probe passes (board boots with page+SW networks dead). Open: real-iPad Works Test, then the claim goes live |
+| [037 — Shipped payload diet](037_Shipped_Payload_Diet.md) | **Shipped 2026-10-03** — symbols 600 MB → 7.7 MB WebP (709 files) deployed, `_headers` live, assets bypass the Worker (tail-verified), picture indexes re-embedded (thumbnails return `.webp`) |
+| [036 — Works offline](036_Offline_Support.md) | **Deployed 2026-10-03** — `sw.js` + generated precache (3,522 files, 70.0 MB) live; offline probe passes against the deployed origin. Open: real-iPad Works Test — the claim is already live on pipaac.org |
+| [038 — Sentence bar settings](038_Sentence_Bar_Settings.md) | Proposed 2026-10-03: per-person choice of which sentence buttons show (Just play / Play + Question / …) under Settings → Talking. Ask: answer the § 7 questions |
 | [034 — Leave the panned document after the welcome](034_Welcome_Page.md) | Reviewed; ready to build: `location.replace` after Continue + one-shot tour flag |
 
 The language and voice schema was accepted 2026-09-22 and moved to

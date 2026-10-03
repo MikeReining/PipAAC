@@ -1,8 +1,8 @@
 # 037 — Shipped payload diet (ship the tile, not the master)
 
-**Status:** EXECUTED 2026-10-02 in four commits (`e1ab297` transcode,
-`d68f053` byte gate, `4c50b83` review page, `805abbc` `_headers`) —
-founder gates below are open before deploy.
+**Status:** SHIPPED 2026-10-03 — executed 2026-10-02 in four commits
+(`e1ab297` transcode, `d68f053` byte gate, `4c50b83` review page,
+`805abbc` `_headers`); deployed and verified live on `app.pipaac.org`.
 Sequenced **ahead of 036** (founder 2026-10-02): fix what we ship before
 teaching the app to cache it. Both open decisions are closed in § 7.
 
@@ -22,11 +22,21 @@ showed zero Worker invocations for `/`, `/index.html`, `/board.js`,
 `/health` invoked; `.png` symbol paths 404; the 036 offline probe
 (`PIP_ORIGIN=<preview> scripts/probes/offline_probe.mjs`) passed —
 3,522-file precache, board + art + tables + audio all local.
-**Founder-gated, not yet done:** tile-size art review
-(`http://localhost:21087/?reseed` + the preview page), the iPadOS 14+
-device floor, `npx wrangler deploy`, then `npm run pictures:index` +
-`pictures:index:calib` (paid Workers AI run, needs explicit yes),
-then the find/suggest thumbnail check.
+**Deployed 2026-10-03** (`npx wrangler deploy`, version
+`6ff8f8a7-eb26-4b7b-88df-d4d2d9c936f7`): same checks green on
+`app.pipaac.org` — WebP live, `.png` 404s, headers on, `sw.js` +
+`sw-manifest.json` (build `r1-b4f467b8734f`) serving.
+**iPadOS floor confirmed by founder 2026-10-03:** nothing older than
+iPadOS 14 needs support — WebP (Safari 14+) is fine, later versions
+can be dropped too.
+**Art review closed 2026-10-03** — founder reviewed the shipped set and
+waived the formal tile-size pass ("I reviewed everything").
+**Index rebuilds done 2026-10-03** (founder yes): `pictures:index`
+upserted 1,808 vectors → `pip-pictures`; `pictures:index:calib` 1,877 →
+`pip-pictures-calibration`. Verified live: `POST /api/v1/pictures/find`
+returns `asset: /symbols/dog.webp` → 200 `image/webp`; extended-art
+`/api/v1/pictures/img/*` streams (license-gated GET — HEAD 404s by
+route design). Phase 037 is fully shipped.
 **Related:** `docs/operations/art-generator/SKILL.md` (pipeline owner —
 "Shipping is the catalog build"), 036 (service worker; § 3C full precache —
 decided and built), `docs/operations/TechStack.md`
