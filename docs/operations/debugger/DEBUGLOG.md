@@ -2,6 +2,7 @@
 
 | Date | Tier | Summary | Truth owner | Resolution |
 | --- | --- | --- | --- | --- |
+| 2026-10-03 | T1 | Tour's ❓ step rang a dead button: the card said "Now tap ❓ to ask it." while `body.touring` kept `#tx-question` at `pointer-events:none; opacity:.35` — the dim list still reflected the old ⏪ script | `buildSteps` in `public/board/tour-ui.js` (which controls the tour walks); `onramp-ui.css`'s `body.touring` dim list was a stale copy | 039's re-script (ef19c12) swapped ⏪ for ❓ in the steps but never touched the CSS. Swapped `#tx-question`→`#tx-past` in the rule so both walked buttons are live and both unwalked stay quiet. `src/board/tour_target_dim.test.mjs` |
 | 2026-10-01 | T2 | Tour's ✨/⏪ set the bar but played no sentence audio — reported for both buttons | `sayBar` in `public/board/tour-ui.js`; clip inventory in `public/shared/onramp_audio.mjs` | The two clip keys were never minted (404), and `sayBar` burned the gesture window on a HEAD fetch then played a fresh `Audio()` element iOS refused. Now it rides `board.say` → the shared element (play() inside the tap), with `speakBar` fallback. `src/board/tour_audio.test.mjs` |
 | 2026-10-01 | T2 | After changing Buttons per screen, the Smart bar wrapped to two rows with faces filling half, and group doors lost their labels — all healed by reload | `renderStrip` in `public/board/strip.js` is the sole owner of tray contents; `cells-sheet.js` resized the template without repainting, and `stripSlots` let the bar collapse to 2 cards on sparse boards | Apply now calls `renderStrip()` after `renderGrid()`; `stripSlots` is `min(4, max(3, cols − 2))` — a 3–4 card promise at every size — clamped to the tray's real span so Edit mode's third anchor can't wrap it. `src/board/cells_density.test.mjs` + `scripts/probes/density_probe.mjs` |
 | 2026-10-01 | T3 | Sentence bar missing after the welcome name on iPad Chrome: the keyboard pans the visual viewport and can leave it panned with every JS metric reading normal — in-page repair is untrustworthy | The document, not a measurement — `finish()` in `public/board/onramp-ui.js` | The welcome's Continue leaves the document: persist, flush, `pip_tour` flag, `location.replace` (034). The board boots as a returning user — the path a reload proved correct every time |
@@ -82,6 +83,14 @@ Lie-prone layer: two stacked failures hid each other. (1) `sayBar("i-want-an-app
 Proof: node --test src/board/tour_audio.test.mjs — sayBar must ride board.say and never open a fresh Audio or fetch gate; both clip keys must exist in ONRAMP_CLIPS. Deployed clips verified 200 audio/mpeg on prod.
 Resolution: `sayBar` is now `if (!(await board.say(name))) await board.speakBar()` — the shared element plays synchronously in the tap handler; a missing clip (falsy say) still falls back to live speech. Clips minted via scripts/voice/mint_onramp.mjs and shipped.
 Pattern candidate: a "check then play" fetch inside a gesture-dependent path silently forfeits the gesture — play through the element the first tap already unlocked, and let the shared player's error path be the existence check.
+
+## 2026-10-03 tour-question-dimmed
+
+Tier: T1
+Truth owner: `buildSteps` in `public/board/tour-ui.js` — the step list decides which controls the tour rings
+Lie-prone layer: the `body.touring` quiet rule in `public/board/onramp-ui.css` — a hand-maintained copy of "which tx buttons the tour doesn't walk", silently stale since ef19c12 moved the second transform step from ⏪ to ❓
+Proof: node --test src/board/tour_target_dim.test.mjs — red on the stale list (dimmed `tx-question`, un-dimmed `tx-past`), green after; parses targets out of tour-ui.js so a future re-script can't drift again
+Pattern candidate: a "quiet everything else" list is a copy of the step list — the test derives the dim set from the tour's own targets instead of trusting the parallel enumeration
 
 ## 2026-10-01 strip-stale-after-density-switch
 

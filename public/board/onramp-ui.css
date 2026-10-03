@@ -65,6 +65,6 @@
 .tour-row .btn { flex: 1; min-height: 52px; }
 .tour-skip { border: 0; background: none; font: inherit; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 6px; }
 body.touring #corner, body.touring .anchor, body.touring #backspace, body.touring #clear,
-body.touring #tx-question, body.touring #tx-future, body.touring #speak, body.touring #edit-counts {
+body.touring #tx-past, body.touring #tx-future, body.touring #speak, body.touring #edit-counts {
   pointer-events: none; opacity: .35;
 }
