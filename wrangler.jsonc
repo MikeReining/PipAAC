@@ -3,6 +3,9 @@
   "main": "src/worker/index.js",
   "compatibility_date": "2026-09-21",
   "workers_dev": true,
+  // Versioned preview URLs (<version>-pippaac.emailmike.workers.dev) so a
+  // deploy can be serving-checked before traffic moves (037 § 5.4).
+  "preview_urls": true,
   "routes": [{ "pattern": "app.pipaac.org", "custom_domain": true }],
   "send_email": [{ "name": "EMAIL" }],
   "assets": {

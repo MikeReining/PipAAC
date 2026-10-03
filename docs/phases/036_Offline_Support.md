@@ -8,7 +8,7 @@ the gate for the "works offline" marketing claim; the 035 proposal's
 claims table already flags it as untrue from a cold start.
 
 **Landed:** `scripts/sw/sw_manifest.mjs` generates `public/sw-manifest.json`
-(3,519 files, 66.8 MB — includes all symbols + audio) and
+(3,522 files, 70.0 MB — includes all symbols + audio) and
 `public/sw-build.js`; `public/sw.js` precaches at install, cleans old
 `pip-shell-*` at activate, serves `/`+`/index.html` navigations from
 cache, answers Range from cached media, runtime-caches
@@ -84,14 +84,15 @@ fonts — any one failing while offline is a dead page.
   Drift-checked in `npm run check:fast` — a hand-maintained list will
   lie. Any unclassified file at the `public/` root fails the build —
   precache or exclude it deliberately.
-- Precache set ≈ **70 MB** (62 MB + ~8 MB symbols from 037): shell (index.html, `/board/*`, `/shared/*`,
+- Precache set = **70.0 MB measured** (`sw-manifest.json`, 3,522 files):
+  shell (index.html, `/board/*`, `/shared/*`,
   `/vendor/sqlite-wasm`, `/fonts`, `/brand`, `/icons`,
   `manifest.webmanifest`, `feeling_voice.json`, `/audio/onramp/*`)
-  **plus** `catalog.json` (2.2 MB), `phrase_table.en.json` (12 MB),
-  `form_table.en.json.gz` (5.3 MB), **and all of `/audio/*`** (41 MB) —
+  **plus** `catalog.json` (2.3 MB), `phrase_table.en.json` (12.3 MB),
+  `form_table.en.json` (5.5 MB decoded), **and all of `/audio/*`** (39 MB) —
   precaching the catalog clips is what makes "every catalog word still
   speaks" true offline, not just words tapped before. **Plus all of
-  `/symbols/*`** (~8 MB WebP after 037) — likewise for pictures.
+  `/symbols/*`** (7.7 MB WebP from 037) — likewise for pictures.
 - Navigations (`/`, `/index.html`) → cached shell. Single page, no
   SPA-fallback needed.
 
@@ -108,13 +109,13 @@ fonts — any one failing while offline is a dead page.
 
 ### C — `/symbols/` strategy (resolved by 037)
 
-**Decided: full precache.** `public/symbols/` is ~600 MB of
-master-resolution PNGs today — not precacheable. **037** (building
-first) ships ~8 MB of WebP, so the full symbol set joins the manifest
-and every word's picture is offline from the first visit. 036 does not
-start until 037's byte gate passes; there is no lazy-symbols fallback
-to maintain. (If 037 is ever abandoned, reopen this section — don't
-silently ship a lazy path under an "offline" claim.)
+**Decided and built: full precache.** `public/symbols/` was ~600 MB of
+master-resolution PNGs — not precacheable. **037** (landed 2026-10-02)
+ships 7.7 MB of WebP, so the full symbol set is in the manifest
+and every word's picture is offline from the first visit. There is no
+lazy-symbols fallback to maintain. (If 037 is ever abandoned, reopen
+this section — don't silently ship a lazy path under an "offline"
+claim.)
 
 ### D — Registration, updates, version pinning
 
@@ -208,3 +209,19 @@ tablet.
   update check.
 - **Update while offline** is impossible by definition; the stale shell
   is the *correct* behavior there (that's the feature).
+- **Bad-connection install (audited 2026-10-03):** a failed precache
+  fetch rejects `waitUntil` → install fails → the SW never activates,
+  so a half-filled `pip-shell-<buildId>` cache is never *read* — only
+  a successfully-installed SW can open its own SHELL name, and a same-build
+  retry `put`s every entry over the residue. Each page load re-registers
+  + `update()`s, so install retries on the next visit; a different build's
+  `activate` deletes the orphan. The failure mode is bounded and
+  self-healing; the app just stays online-only.
+- **Metered deferral — decided against (2026-10-03):** the honest signal
+  (`navigator.connection.saveData`/`effectiveType`) does not exist on
+  iOS/iPadOS Safari — the device this claim is for — so a "defer audio
+  on metered" gate would be dead code on target. If the ~39 MB audio
+  tier ever needs deferring, the real lever is a two-tier install
+  (core at install, `/audio/*` as a post-activate background warm);
+  that trades "every word offline from first visit" for eventual
+  audio-fill and is a founder product call.

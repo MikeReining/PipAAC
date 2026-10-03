@@ -7,19 +7,29 @@ Sequenced **ahead of 036** (founder 2026-10-02): fix what we ship before
 teaching the app to cache it. Both open decisions are closed in § 7.
 
 **Landed:** emit/check half extracted to `scripts/catalog/symbol_emit.mjs`;
-`catalog:build` emits 691 WebP + 21 SVGs (~7.3 MB shipped, largest 43 KB);
+`catalog:build` emits 688 WebP + 21 SVGs (709 files, ~7.7 MB shipped,
+largest 43 KB);
 stamp file + orphan scan in `catalog:build:check`; byte gate in
 `check:fast` (`scripts/check_symbol_bytes.mjs`); `public/_headers` +
 `run_worker_first` removed (asset requests bypass the Worker, verified
 locally); question glyph → `icons/question-mark.svg`; review page
 `public/preview-symbol-diet.html` (34 rows).
-**Founder-gated, not yet done:** § 5 items — tile-size art review
+**Done 2026-10-03:** serving check (§ 5.4) on a disposable preview
+worker (`pippaac-prev037.emailmike.workers.dev`, since deleted):
+index + assets carry COOP/COEP/CORP from `_headers`; `wrangler tail`
+showed zero Worker invocations for `/`, `/index.html`, `/board.js`,
+`/symbols/*.webp` — only `/form_table.en.json` (decoded JSON) and
+`/health` invoked; `.png` symbol paths 404; the 036 offline probe
+(`PIP_ORIGIN=<preview> scripts/probes/offline_probe.mjs`) passed —
+3,522-file precache, board + art + tables + audio all local.
+**Founder-gated, not yet done:** tile-size art review
 (`http://localhost:21087/?reseed` + the preview page), the iPadOS 14+
-device floor, preview-deploy serving check, `npm run pictures:index`
-(paid Workers AI run, needs explicit yes), then deploy.
+device floor, `npx wrangler deploy`, then `npm run pictures:index` +
+`pictures:index:calib` (paid Workers AI run, needs explicit yes),
+then the find/suggest thumbnail check.
 **Related:** `docs/operations/art-generator/SKILL.md` (pipeline owner —
-"Shipping is the catalog build"), 036 (service worker; § 3C resolves to
-full precache once this lands), `docs/operations/TechStack.md`
+"Shipping is the catalog build"), 036 (service worker; § 3C full precache —
+decided and built), `docs/operations/TechStack.md`
 (deploy/serving notes).
 **Truth owner:** measured bytes at the network layer and rendered tiles
 on a real device. Lie-prone layer: the art judge — it approves masters,
