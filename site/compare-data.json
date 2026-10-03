@@ -349,7 +349,7 @@
       ]
     },
     {
-      "name": "Team & devices",
+      "name": "Team, progress & devices",
       "rows": [
         {
           "label": "Model from your phone: the word glows on theirs",
@@ -377,6 +377,28 @@
             "coughdrop": 2
           },
           "note": "Others teach by hiding words; Pip dims them and every word still speaks."
+        },
+        {
+          "label": "IEP-ready progress report, one tap",
+          "better": true,
+          "q": {
+            "pip": 4,
+            "proloquo": 0,
+            "proloquo2go": 0,
+            "touchchat": 1,
+            "lamp-words-for-life": 1,
+            "td-snap": 2,
+            "coughdrop": 2
+          },
+          "note": {
+            "hub": "Pip separates words said on their own from words said with a prompt. TouchChat and LAMP log through Realize Language, a separate yearly service; TD Snap and CoughDrop report raw counts.",
+            "touchchat": "TouchChat's usage data goes through Realize Language, a separate yearly service.",
+            "lamp-words-for-life": "LAMP's usage data goes through Realize Language, a separate yearly service.",
+            "td-snap": "TD Snap reports button and message counts, exported to Excel.",
+            "coughdrop": "CoughDrop reports word counts; Pip separates words said on their own from words said with a prompt.",
+            "proloquo": "Pip's report separates words said on their own from words said with a prompt.",
+            "proloquo2go": "Pip's report separates words said on their own from words said with a prompt."
+          }
         },
         {
           "label": "Edit on any laptop; the iPad has it the same day",
