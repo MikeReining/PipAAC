@@ -1,10 +1,34 @@
 {
   "permissions": {
     "allow": [
-      "Shell(git)", "Shell(swift)", "Shell(python3)", "Shell(ls)", "Shell(cat)",
-      "Shell(grep)", "Shell(rg)", "Shell(sed)", "Shell(find)", "Shell(head)",
-      "Shell(tail)", "Shell(mkdir)", "Shell(mv)", "Shell(cp)", "Shell(wc)",
-      "Shell(xcodegen)", "Shell(xcodebuild)", "Shell(bash)", "Shell(sh)", "Shell(diff)"
+      "Shell(git)",
+      "Shell(npm)",
+      "Shell(npx)",
+      "Shell(node)",
+      "Shell(bash)",
+      "Shell(sh)",
+      "Shell(scripts/test.sh)",
+      "Shell(ls)",
+      "Shell(cat)",
+      "Shell(grep)",
+      "Shell(rg)",
+      "Shell(sed)",
+      "Shell(find)",
+      "Shell(head)",
+      "Shell(tail)",
+      "Shell(mkdir)",
+      "Shell(mv)",
+      "Shell(cp)",
+      "Shell(wc)",
+      "Shell(diff)",
+      "Shell(curl)",
+      "Shell(pwd)",
+      "Shell(which)",
+      "Shell(env)",
+      "Shell(python3)",
+      "Shell(swift)",
+      "Shell(xcodegen)",
+      "Shell(xcodebuild)"
     ],
     "deny": []
   }
