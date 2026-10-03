@@ -24,6 +24,9 @@ with the prompts in § 3 and the live test results recorded there.
 - Each button always does the same thing, regardless of current state. No
   toggles.
 - Control positions never change, hide, or reorder (motor planning).
+  **Amended 2026-10-03 (038):** an adult's stored Settings → Talking
+  choice may hide buttons — per person, synced, PIN-gated. The bar never
+  changes mid-use on its own, so motor planning holds per person.
 - Every control has a visible "selected/active" state where noted below.
 
 ### Top row, left to right
@@ -184,6 +187,12 @@ Tested live against Groq's API on 2026-09-25:
 ---
 
 ## 3. The Transform Prompts & Battle-Tested Results
+
+> **SUPERSEDED (2026-09-30 wand law).** The prompts and result tables in this
+> section are the *pre-wand-law* versions. They put words in the child's
+> mouth ("go park now" → "Can we go to the park now?"). Shipped behavior
+> is in `docs/product/Sentence_Bar.md` and `src/shared/transform_prompts.mjs`.
+> Do not quote the tables below as what the buttons do.
 
 **Model rules (founder ruling, 2026-09-25):**
 

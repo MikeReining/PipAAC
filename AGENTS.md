@@ -26,6 +26,7 @@ files touched, proof state, and next action.
 | Code cleanup, maintainability, file hygiene | `docs/operations/code-maintainer/SKILL.md` |
 | Pre-closeout architecture review | `docs/operations/Code_Audit.md` |
 | Hunk-level cleanup after product work | `docs/operations/Deslop.md` |
+| ✨ ❓ ⏪ ▶ ⏩ — what the sentence buttons do, gating, demos, copy about them | `docs/product/Sentence_Bar.md` (read before reasoning; never infer outputs) |
 | Product vocabulary and durable truths | `docs/product/SSOT.md` |
 | Visual design: tokens, tiles, brand marks | `docs/product/Design_System.md` |
 | Clipart, tile symbols, framing lenses | `docs/operations/art-generator/SKILL.md` |
