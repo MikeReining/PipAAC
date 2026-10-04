@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-025651d79d26",
+  "buildId": "r1-f3cfe0f61de8",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -24684,8 +24684,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 65657,
-      "sha256": "8279cff39443b5eac8bbaffd9683cd2ea8b6a10b1aae4c5a238868271ba5e4d3"
+      "bytes": 66097,
+      "sha256": "083f12830b00dcefa7ff6d979f0818e6f046ecee7ade67d10786b63a1f072906"
     },
     {
       "path": "/manifest.webmanifest",
@@ -24934,8 +24934,8 @@
     },
     {
       "path": "/shared/voices.mjs",
-      "bytes": 2350,
-      "sha256": "91a8f58f2f555dec88e4550452b42e2955741263014f04252696f2414ff616ef"
+      "bytes": 2413,
+      "sha256": "2950627ad2177f5e25ebd12b5631a43e308db8bf661047e9ddf642977f00abc6"
     },
     {
       "path": "/shared/wincard.mjs",
