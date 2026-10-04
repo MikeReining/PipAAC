@@ -116,6 +116,13 @@ close. Interactive IDE agents (Cursor, Antigravity) commit directly — see
   sentences + optional future extra voices, never a silent swap** (024 §2,
   `Grok_Voice_Synthesis_Best_Practices.md`). Tiles never fall back to device
   TTS.
+- **Paid API fan-out goes through the persistent tools — never a scratchpad
+  loop.** Prompt verification uses `scripts/sentences/lab.mjs` (it caches
+  cells on disk, so re-runs and old-vs-new compares are nearly free). A
+  hand-rolled script that loops over a paid endpoint (Groq, ElevenLabs,
+  OpenRouter, xAI) is a paid batch run and needs the same explicit founder
+  approval as bulk mint/art — on 2026-10-03 an agent's ad-hoc batteries
+  burned ~720 Groq calls (~315k input tokens) verifying one prompt tweak.
 - Agents preview with `npm run dev:agent`. `npm run dev` is the founder browse
   copy — do not kill it or reuse `.wrangler/slot-0`.
 - **When asking the founder to look at a change, always give

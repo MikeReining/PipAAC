@@ -102,6 +102,27 @@ test("askTransform posts to Groq with the key; returns text + ms + usage", async
     }), /groq_429/);
 });
 
+test("askTransform caches cells on disk; a repeat call is free", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "slab-cache-"));
+  try {
+    let calls = 0;
+    const fetchImpl = async () => { calls++; return okReply("I want to play."); };
+    const args = {
+      lane: "qwen", mode: "fix", text: "want play",
+      apiKey: "k", fetchImpl, cacheDir: dir,
+    };
+    const a = await askTransform(args);
+    assert.equal(a.cached, false);
+    const b = await askTransform(args);
+    assert.equal(b.cached, true);
+    assert.equal(b.text, a.text);
+    assert.equal(calls, 1);
+    // a different text is a different cell — it still calls out
+    await askTransform({ ...args, text: "go park" });
+    assert.equal(calls, 2);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
+});
+
 test("runTransformSuite fills every mode × lane; a dead cell never sinks the run", async () => {
   const fetchImpl = async (_url, init) => {
     const body = JSON.parse(init.body);

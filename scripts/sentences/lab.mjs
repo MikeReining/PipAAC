@@ -11,10 +11,15 @@
  * Runs persist as JSON files in out/sentence_lab/ (one per run, like the
  * picture lab's take sidecars) so verdicts stick across sessions and the
  * qwen-vs-gptoss decision has a record.
+ *
+ * Cells are deterministic (temperature 0), so every response also lands in
+ * out/sentence_lab/cache/ keyed by the request body: re-runs, retries, and
+ * old-vs-new prompt compares only pay for cells the cache hasn't seen.
  */
 import {
   existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync,
 } from "node:fs";
+import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -26,6 +31,7 @@ import { normalizeV1 } from "../../public/shared/normalize.mjs";
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../..");
 export const SENTENCE_RUNS_DIR = join(repoRoot, "out/sentence_lab");
+export const SENTENCE_CACHE_DIR = join(repoRoot, "out/sentence_lab/cache");
 export const GROQ_CHAT_URL = "https://api.groq.com/openai/v1/chat/completions";
 export const MAX_INPUT_CHARS = 160; // same ceiling as transform.js
 
@@ -76,14 +82,42 @@ export function parseTransformReply(payload) {
   return { text, think };
 }
 
-/** One cell of the grid → { text, ms, think, usage }. */
+/** Cache file for one request body — sha256 keeps it collision-safe. */
+const cacheFile = (cacheDir, body) => join(
+  cacheDir,
+  `${createHash("sha256").update(JSON.stringify(body)).digest("hex").slice(0, 24)}.json`,
+);
+
+const cacheRead = (file) => {
+  try {
+    const rec = JSON.parse(readFileSync(file, "utf8"));
+    return typeof rec?.text === "string" ? rec : null;
+  } catch { return null; }
+};
+
+/** One cell of the grid → { text, ms, think, usage, cached }. Real calls
+ *  (no injected fetch) read/write SENTENCE_CACHE_DIR by default — pass
+ *  cacheDir: null to opt out, or a dir to opt a custom fetchImpl in. */
 export async function askTransform({
   lane, mode, text, system,
   apiKey = process.env.GROQ_API_KEY,
   fetchImpl = globalThis.fetch,
+  cacheDir,
 } = {}) {
   const key = apiKey?.trim();
   if (!key) throw new Error("GROQ_API_KEY is not set (.env)");
+  const body = transformChatBody({ lane, mode, text, system });
+  const cache = cacheDir === undefined
+    ? (fetchImpl === globalThis.fetch ? SENTENCE_CACHE_DIR : null)
+    : cacheDir;
+  const file = cache ? cacheFile(cache, body) : null;
+  const hit = file ? cacheRead(file) : null;
+  if (hit) {
+    return {
+      text: hit.text, ms: 0, think: hit.think ?? false,
+      usage: hit.usage ?? null, cached: true,
+    };
+  }
   const t0 = Date.now();
   const res = await fetchImpl(GROQ_CHAT_URL, {
     method: "POST",
@@ -91,14 +125,23 @@ export async function askTransform({
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(transformChatBody({ lane, mode, text, system })),
+    body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(`groq_${res.status}: ${data?.error?.message ?? res.status}`.slice(0, 200));
   }
   const { text: out, think } = parseTransformReply(data);
-  return { text: out, ms: Date.now() - t0, think, usage: data.usage ?? null };
+  if (file) {
+    try {
+      mkdirSync(cache, { recursive: true });
+      writeFileSync(file, JSON.stringify({ text: out, think, usage: data.usage ?? null }) + "\n");
+    } catch { /* a cache miss is cheap; the call itself succeeded */ }
+  }
+  return {
+    text: out, ms: Date.now() - t0, think,
+    usage: data.usage ?? null, cached: false,
+  };
 }
 
 /** The whole grid for one fragment — every mode × every lane in
@@ -109,6 +152,7 @@ export async function runTransformSuite({
   lanes = Object.keys(TRANSFORM_LANES),
   apiKey,
   fetchImpl,
+  cacheDir,
 } = {}) {
   const frag = String(text ?? "").trim();
   if (!frag || frag.length > MAX_INPUT_CHARS) throw new Error("bad_text");
@@ -116,7 +160,10 @@ export async function runTransformSuite({
   const cells = await Promise.all(
     modes.flatMap((mode) => lanes.map(async (lane) => {
       try {
-        return { mode, lane, ...(await askTransform({ lane, mode, text: frag, apiKey, fetchImpl })) };
+        return {
+          mode, lane,
+          ...(await askTransform({ lane, mode, text: frag, apiKey, fetchImpl, cacheDir })),
+        };
       } catch (e) {
         return { mode, lane, ms: null, error: String(e?.message ?? e) };
       }
@@ -200,6 +247,7 @@ export async function runBattery({
   modes = TRANSFORM_MODES,
   apiKey,
   fetchImpl,
+  cacheDir,
 } = {}) {
   if (!Array.isArray(fragments) || !fragments.length || fragments.length > 60) {
     throw new Error("bad_fragments");
@@ -213,13 +261,16 @@ export async function runBattery({
     for (const mode of modes) cells[frag][mode] = {};
   }
   /** Bounded fan-out + one retry on 429/503 — a full battery is ~165
-   *  calls and Groq rate-limits the burst. */
+   *  calls and Groq rate-limits the burst. Cached cells are free, so a
+   *  re-run or an old-vs-new compare only pays for what changed. */
   const tasks = frags.flatMap((frag) => modes.flatMap((mode) =>
     lanes.map((lane) => ({ frag, mode, lane }))));
+  let cacheHits = 0;
   const run1 = async ({ frag, mode, lane }, attempt = 0) => {
     const system = prompts[mode] ?? TRANSFORM_PROMPTS[mode];
     try {
-      const r = await askTransform({ lane, mode, text: frag, system, apiKey, fetchImpl });
+      const r = await askTransform({ lane, mode, text: frag, system, apiKey, fetchImpl, cacheDir });
+      if (r.cached) cacheHits++;
       cells[frag][mode][lane] = { ...r, score: scoreCell(frag, r.text) };
     } catch (e) {
       const msg = String(e?.message ?? e);
@@ -234,7 +285,7 @@ export async function runBattery({
   for (let i = 0; i < tasks.length; i += CONCURRENCY) {
     await Promise.all(tasks.slice(i, i + CONCURRENCY).map((t) => run1(t)));
   }
-  return { fragments: frags, modes, lanes, cells, ms: Date.now() - t0 };
+  return { fragments: frags, modes, lanes, cells, cache_hits: cacheHits, ms: Date.now() - t0 };
 }
 
 export function batteryFileName(label = "run", ts = Date.now()) {
