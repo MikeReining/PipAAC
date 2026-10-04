@@ -50,6 +50,11 @@ export function mountDevices({
   syncRekey = async () => null,
   // People on this device lives in people-ui.js; repaint it after changes.
   renderUsers = async () => {},
+  // The relay's plan answer, once known: {lifetime, owner}. board.js
+  // mirrors it into the Lifetime page and the sidebar.
+  onPlan = () => {},
+  // speech.js caches the stored license; drop the cache when it changes.
+  resetLicense = () => {},
 }) {
   /* ------------------------------------------------------------------ *
    * Linked devices + pairing (sync § 3). The device that already has the
@@ -120,7 +125,6 @@ export function mountDevices({
   function applyOwner(isOwner) {
     owner = isOwner;
     me.owner = isOwner;
-    $("dev-add").hidden = !isOwner;
     if (!isOwner) $("dev-delete-row").hidden = true;
     $("team-note").hidden = isOwner;
   }
@@ -128,12 +132,9 @@ export function mountDevices({
   async function renderDevices() {
     const list = $("dev-list");
     const cfg = me.sync;
-    // Anyone may buy or activate Pip Lifetime, synced or not: activating
-    // turns the encrypted sync on, since the license lives on the relay.
-    $("dev-lifetime-row").hidden = false;
     $("dev-delete-row").hidden = !cfg?.userId;
     if (!cfg?.userId) {
-      renderEntitlement(null);
+      renderEntitlement(null, false);
       applyOwner(true);
       list.innerHTML = '<p class="hint">Only on this device so far.</p>';
       return;
@@ -170,14 +171,10 @@ export function mountDevices({
         }
         list.append(row);
       }
-      renderEntitlement(self);
+      const lifetime = await reconcilePlan(client, store, self);
+      renderEntitlement(self, lifetime);
       applyOwner(isOwner);
-      // A purchase or redeemed code lands lifetime worker-side — pick
-      // the license copy up so voice calls can present it (024).
-      if (self?.entitlement === "lifetime"
-          && !(await store.get(`user/${me.id}/license`))) {
-        await claimLicense(client, store, { quiet: true }).catch(() => {});
-      }
+      onPlan({ lifetime, owner: isOwner });
     } catch (err) {
       list.innerHTML = '<p class="hint">Relay unreachable — devices cannot be listed.</p>';
     }
@@ -194,13 +191,43 @@ export function mountDevices({
     return license;
   }
 
-  /** Entitlement + pending-deletion state in the corner rows. selfKey is
-   *  the relay's own answer — nothing here is a client guess. */
-  function renderEntitlement(self) {
-    const life = self?.entitlement === "lifetime";
-    $("dev-lifetime").innerHTML = `<p class="hint">${
-      life ? "Pip Lifetime — unlimited linked devices." : "Free — one linked device."}</p>`;
-    $("dev-license-row").hidden = life;
+  /** One answer to "does this person have Pip Lifetime?" — the relay's.
+   *  The device's stored license (what voice calls present) is a copy
+   *  kept in step with it: missing while the relay says lifetime → fetched
+   *  (a purchase or redeemed code lands worker-side); present while the
+   *  relay says free → handed to the relay, which verifies it, and a bad
+   *  one is dropped so no screen claims what the relay denies. */
+  async function reconcilePlan(client, store, self) {
+    const key = `user/${me.id}/license`;
+    const local = await store.get(key);
+    if (self?.entitlement === "lifetime") {
+      if (!local && await claimLicense(client, store, { quiet: true }).catch(() => null)) resetLicense();
+      return true;
+    }
+    if (!local) return false;
+    try {
+      await client.setEntitlement(local);
+      return true;
+    } catch (e) {
+      if (e.message === "bad_license") {
+        await store.del(key);
+        resetLicense();
+      }
+      return false;
+    }
+  }
+
+  /** The plan line in Team & devices, the Lifetime page's status line,
+   *  and the pending-deletion state. */
+  function renderEntitlement(self, life) {
+    const who = me.name || "This person";
+    const status = document.createElement("p");
+    status.className = "hint";
+    status.textContent = life ? `${who} has Pip Lifetime.` : "";
+    $("dev-lifetime").replaceChildren(status);
+    $("dev-plan").textContent = !me.sync?.userId ? ""
+      : life ? `Pip Lifetime: ${who} can be on every device.`
+        : `Free: ${who} is on one device. Pip Lifetime adds every other device.`;
     const state = $("dev-delete-state");
     if (self?.delete_at) {
       const when = new Date(self.delete_at).toLocaleDateString();
@@ -735,20 +762,33 @@ export function mountDevices({
    *  new device, then hand it the key the moment it claims the code. */
   async function offerFlow() {
     await ensureUser();
-    const { client, identity, userKey } = await userClient();
+    const { client, identity, userKey, store } = await userClient();
     const who = me.name || "this board";
-    // The relay's own answer decides the free limit (one device); the
-    // sheet asks first so nobody types a code only to be refused.
+    const say = (text) => {
+      const p = document.createElement("p");
+      p.className = "hint";
+      p.textContent = text;
+      pairBody.append(p);
+    };
+    // The relay's own answer decides who may add and the free limit (one
+    // device); the sheet says so first, so nobody types a code only to
+    // be refused.
     const [{ devices }, self] = await Promise.all([client.listDevices(), client.selfKey()]);
-    if (self?.entitlement !== "lifetime" && devices.length >= 1) {
+    if (self?.owner === false) {
       openPair("Add a device");
-      const why = document.createElement("p");
-      why.className = "hint";
-      why.textContent = `Free Pip lives on one device. Pip Lifetime puts ${who} on every phone, laptop, and tablet you use.`;
-      pairBody.append(why);
+      say(`Only ${who}'s owner can add devices. On the owner's phone or tablet: Settings → Team & devices → Add a device. It shows a code to type on the new device.`);
+      say(`The owner can also make you an owner in Team & devices.`);
+      return;
+    }
+    const lifetime = await reconcilePlan(client, store, self);
+    // ensureUser may have just turned sync on — repaint Team & devices.
+    renderDevices();
+    if (!lifetime && devices.length >= 1) {
+      openPair("Add a device");
+      say(`Free Pip is on one device. Pip Lifetime puts ${who} on every phone, laptop, and tablet — $49 once.`);
       const door = document.createElement("button");
       door.className = "btn";
-      door.textContent = "See Pip Lifetime · $49";
+      door.textContent = "Get Pip Lifetime · $49";
       door.onclick = () => { closePair(); settings?.show?.("lifetime", { focus: true }); };
       pairBody.append(door);
       return;
@@ -867,6 +907,7 @@ export function mountDevices({
     // 024: the sentence-voice endpoint wants the license on every
     // request — the relay keeps the status, the device keeps a copy.
     await store.put(`user/${me.id}/license`, key);
+    resetLicense();
     localStorage.removeItem(`pip-unlicensed:${me.id}`); // ends the 040 preview flag
     await renderDevices();
   }
@@ -885,12 +926,14 @@ export function mountDevices({
         await redeemLicense(me.id, key);
         const { client, store } = await userClient();
         await claimLicense(client, store, { quiet: true });
+        resetLicense();
       }
       $("dev-license").value = "";
       await renderDevices();
+      toast(`Pip Lifetime is on for ${me.name || "this person"}.`);
     } catch (e) {
       $("dev-lifetime").innerHTML =
-        `<p class="hint">That key did not verify for this user.</p>`;
+        `<p class="hint">That code didn't work. Check it and try again.</p>`;
     }
   };
 
@@ -931,9 +974,11 @@ export function mountDevices({
   async function claimPurchasedLicense() {
     if (!me.sync?.userId) return null;
     const { client, store } = await userClient();
-    return claimLicense(client, store);
+    const license = await claimLicense(client, store);
+    if (license) { resetLicense(); await renderDevices(); }
+    return license;
   }
 
   return { userClient, renderAccount, renderUsers, ensureUser, activateLicense,
-    claimPurchasedLicense, join };
+    claimPurchasedLicense, join, refreshPlan: renderDevices };
 }

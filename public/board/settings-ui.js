@@ -82,7 +82,7 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
     // licensed it becomes the quiet confirmation lower in the list.
     lifetime: () => {
       const t = trial();
-      if (t.licensed) return "Every helper, forever";
+      if (t.licensed) return "Paid · every device, every helper";
       const days = t.endsAt ? Math.ceil((t.endsAt - Date.now()) / 86_400_000) : 0;
       return days > 0
         ? `$49 once · ${days} day${days === 1 ? "" : "s"} free`
@@ -227,14 +227,15 @@ export function mountSettings({ me, open, facts = () => ({ entities: 0, invested
 
   /* 040 — the Lifetime item is the sidebar's first row while unlicensed
    *  (accent, the trial countdown under it); after purchase it turns
-   *  into a quiet "Pip Lifetime ✓" down in the You group. Position is
-   *  DOM order — the section node moves and the nav follows. */
+   *  into a quiet "Pip Lifetime ✓" at the end of the person's group —
+   *  the license is the person's, not the adult's. Position is DOM
+   *  order — the section node moves and the nav follows. */
   function syncLifetimeSpot() {
     const life = sections.find((s) => s.dataset.sec === "lifetime");
     const you = sections.find((s) => s.dataset.sec === "you");
     if (!life) return;
     if (trial().licensed && you) {
-      if (life.dataset.group !== "you") life.dataset.group = "you";
+      if (life.dataset.group !== "person") life.dataset.group = "person";
       if (life.dataset.title !== "Pip Lifetime ✓") life.dataset.title = "Pip Lifetime ✓";
       if (life.nextElementSibling !== you) {
         pane.insertBefore(life, you);

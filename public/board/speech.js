@@ -506,7 +506,10 @@ export function mountSpeech({
     }).catch(() => null);
     if (!res?.ok) return false;
     const body = await res.json().catch(() => ({}));
-    live.trialLicensed = license ? true : body.licensed === true;
+    // The server verifies the stored license; holding one is not proof.
+    // A synced person's plan is the relay's (devices-ui reconciles it) —
+    // this read only answers for a board that has no relay user.
+    if (!me.sync?.userId) live.trialLicensed = body.licensed === true;
     live.trialEndsAt = typeof body.endsAt === "number" ? body.endsAt : null;
     return true;
   }
@@ -541,6 +544,8 @@ export function mountSpeech({
     playClip, playBlob, endPlaying, sayClip,
     tileApi, tileSweep, voiceLicense, syncSpeed, refreshTrial, trialNudge,
     entitledNow, trialActive,
+    // devices-ui changed the stored license — read it again next call.
+    resetLicense: () => { licenseP = null; },
     audio, sentenceVoice, SPEAK_VOICE_WAIT_MS,
     isTxBusy: () => txBusy,
   };

@@ -71,8 +71,8 @@ async function device(name, port, profile) {
     return r.result?.result?.value;
   };
   await connect();
-  const loadApp = async () => {
-    await send("Page.navigate", { url: ORIGIN });
+  const loadApp = async (path = "") => {
+    await send("Page.navigate", { url: ORIGIN + path });
     for (let i = 0; i < 40; i++) {
       await sleep(500);
       if (await evalJs("typeof window.pip === 'object' && !!window.pip")
@@ -109,7 +109,8 @@ const C = await device("phone", 9277, "/tmp/pip-add-c-probe");
 const out = {};
 
 // A: a named, set-up board (Luca), then Add a device while free.
-await A.loadApp();
+// ?unlicensed: localhost would otherwise self-mint a dev license.
+await A.loadApp("/?unlicensed");
 await A.evalJs(`(async () => {
   document.querySelector('.welcome')?.remove();
   window.pip.user.needsSetup = false;

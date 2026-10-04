@@ -181,9 +181,18 @@
 
             <!-- 040: the Pip Lifetime page — the sidebar's first item
                  while unlicensed, and the one place every upgrade door
-                 lands (public/board/lifetime-ui.js). -->
+                 lands (public/board/lifetime-ui.js). Two states: owned
+                 (#life-owned, nothing for sale) or for sale (.life-sale). -->
             <section class="set-sec" data-sec="lifetime" data-title="Get Pip Lifetime">
-              <div class="life-hero">
+              <div class="seg-row life-owned" id="life-owned" hidden>
+                <span class="life-owned-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+                <h2><span data-person-cap></span> has Pip Lifetime</h2>
+                <p class="life-owned-sub">Paid once. Nothing more to buy, ever. Everything below is on, on every device.</p>
+                <div class="row">
+                  <button class="btn" data-click="dev-add">Add a device</button>
+                </div>
+              </div>
+              <div class="life-hero life-sale">
                 <p class="life-pill" id="life-trial-line" hidden></p>
                 <h2>Pip Lifetime</h2>
                 <p class="life-price"><b>$49</b> once<span>No subscription. Ever.</span></p>
@@ -192,9 +201,18 @@
                   <button class="btn life-buy" id="life-buy">Get Pip Lifetime · $49</button>
                   <p class="life-fine"><b>No account needed.</b> Whoever pays, the license lands on <span data-person></span>'s board.</p>
                 </div>
-                <p class="life-fine" id="life-ios" hidden>On iPhone and iPad, Pip Lifetime is bought inside the app.</p>
+                <p class="life-fine" id="life-ios" hidden>In the Pip app from the App Store, Pip Lifetime is bought inside the app.</p>
               </div>
-              <div class="seg-row life-card">
+              <div class="seg-row life-card life-sale" id="dev-lifetime-row">
+                <span class="seg-label">Have a code?</span>
+                <div class="row" id="dev-license-row">
+                  <input type="text" id="dev-license" placeholder="PIP-… code" autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:1" />
+                  <button class="btn secondary" id="dev-activate" style="flex:none">Use code</button>
+                </div>
+                <div id="dev-lifetime"></div>
+                <p class="hint">From a school, a grant, or someone who bought Pip Lifetime for <span data-person></span>.</p>
+              </div>
+              <div class="seg-row life-card life-sale">
                 <span class="seg-label">Hear the difference</span>
                 <p class="hint">The same sentence, both ways. Real recordings.</p>
                 <div class="life-hear">
@@ -202,12 +220,12 @@
                   <button class="life-play on" id="life-hear-life"><i></i><span><b>Lifetime</b>A natural sentence</span></button>
                 </div>
               </div>
-              <div class="seg-row life-card">
+              <div class="seg-row life-card life-sale">
                 <span class="seg-label">See it work</span>
                 <div data-bar-example></div>
               </div>
               <div class="seg-row life-card">
-                <span class="seg-label">What Lifetime adds</span>
+                <span class="seg-label" id="life-feats-label">What Lifetime adds</span>
                 <ul class="life-feats">
                   <li><span class="life-ico"><svg stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5.5a9 9 0 0 1 0 13"/></svg></span>
                     <span><b>A natural voice for the whole sentence</b>Play reads the whole sentence the way a person would, not one word at a time.</span></li>
@@ -230,7 +248,7 @@
                     <span><b>The whole team, no limits</b>Unlimited words of your own, every supporter, every device.</span></li>
                 </ul>
               </div>
-              <div class="seg-row life-card life-free">
+              <div class="seg-row life-card life-free life-sale">
                 <span class="seg-label">Free forever</span>
                 <ul class="life-checks">
                   <li>Tap a word and Pip says it out loud</li>
@@ -239,13 +257,12 @@
                   <li>5 pictures drawn for you</li>
                 </ul>
               </div>
-              <div class="seg-row life-card" id="life-link-row">
+              <div class="seg-row life-card life-sale" id="life-link-row">
                 <span class="seg-label">Someone else pays</span>
                 <p class="hint">An SLP or grandparent can open a link, pay, and get a code for <span data-person></span>.</p>
                 <button class="btn secondary" id="life-link">Copy unlock link</button>
               </div>
-              <p class="life-fine life-foot"><a class="set-link" href="https://pipaac.org/schools">Buying for 10 or more? Half price.</a>
-                · <button class="set-link" id="life-code">Have a code or key?</button></p>
+              <p class="life-fine life-foot life-sale"><a class="set-link" href="https://pipaac.org/schools">Buying for 10 or more? Half price.</a></p>
             </section>
 
             <section class="set-sec" data-sec="overview" data-title="Overview">
@@ -597,6 +614,7 @@
                 <div class="row">
                   <button class="btn secondary" id="dev-add">Add a device</button>
                 </div>
+                <p class="hint" id="dev-plan"></p>
                 <p class="hint">Add a device shows a code here — type it on the other device. A linked device sees and edits everything for this person. Removing one locks it out.</p>
               </div>
             </section>
@@ -663,15 +681,6 @@
                 <div class="row set-danger" id="acct-danger" hidden>
                   <button class="btn secondary" id="acct-delete">Delete your account…</button>
                 </div>
-              </div>
-              <div class="seg-row" id="dev-lifetime-row" hidden>
-                <span class="seg-label">Pip Lifetime</span>
-                <div id="dev-lifetime"><p class="hint">Checking…</p></div>
-                <div class="row" id="dev-license-row">
-                  <input type="text" id="dev-license" placeholder="License key or PIP- code" autocomplete="off" style="flex:1" />
-                  <button class="btn secondary" id="dev-activate">Activate</button>
-                </div>
-                <p class="hint">Lifetime links more than one device and unlocks the web editor. A school or grant code (PIP-…) goes here too.</p>
               </div>
             </section>
           </div>

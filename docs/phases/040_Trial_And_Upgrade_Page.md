@@ -136,7 +136,12 @@ checks at the on-demand mint routes), and wherever the voice list marks voices
 **Entry:** the **first item of the Settings sidebar**, above Overview,
 unlicensed only, in an accent colour (Founder: pick; not the red used for
 stop/no tiles). Label: "Get Pip Lifetime · $49 once", with the trial countdown
-under it. After purchase it becomes a quiet "Pip Lifetime ✓" lower in the list.
+under it. After purchase it becomes a quiet "Pip Lifetime ✓" at the end of
+the person's group (the license is the person's), and the page itself turns
+into "<Name> has Pip Lifetime" — what's on, and Add a device; nothing for sale
+(founder 2026-10-04: a licensed iPad showed the sales page with no Buy).
+"Has Lifetime" is one answer: the relay's entitlement. The device's stored
+license is a copy `devices-ui.js reconcilePlan` keeps in step with it.
 Add `lifetime upgrade buy price` to the search keywords (`settings-ui.js`).
 
 **Every dead end routes here** (one destination, one button): the ❓/✨ ask,
@@ -153,9 +158,10 @@ fallback), the 20-word limit, the second-supporter and second-device walls
 3. The table in § 3, trimmed to words a parent reads; each paid row shows its
    real icon (✨ ❓ ⏪ ⏩, faces, the speaker). **Copy may never promise more
    than `Sentence_Bar.md`:** her own words, grammatical, never guessed.
-4. One large Buy button. Below it: "Buying for 10 or more? Half price" →
-   `/schools`; and "Have a code or key?" as a small secondary link (the box
-   that exists today, demoted).
+4. One large Buy button — in every browser, iPad Safari included (Apple's
+   in-app-only rule binds the future App Store app, not the web). Then a
+   "Have a code?" card with the field itself, and "Buying for 10 or more?
+   Half price" → `/schools` at the foot.
 5. **"Send an unlock link"** for an SLP or grandparent to hand to whoever pays
    (§ 8).
 

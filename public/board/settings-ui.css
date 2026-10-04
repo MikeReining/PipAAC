@@ -304,6 +304,15 @@ button.set-who:hover { background: var(--tray); }
 .life-fine { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
 .life-foot { text-align: center; margin: 4px 0 24px; }
 .life-card { margin-top: 12px; }
+/* Owned: one calm confirmation instead of the sales page. */
+.life-owned { display: flex; flex-direction: column; gap: 8px; }
+.life-owned h2 { font-size: 28px; margin: 0; }
+.life-owned-mark {
+  width: 44px; height: 44px; border-radius: 50%; background: #2e8b3a; color: #fff;
+  display: grid; place-items: center;
+}
+.life-owned-mark svg { width: 26px; height: 26px; }
+.life-owned-sub { margin: 0 0 6px; font-size: 16px; line-height: 1.4; }
 
 .life-hear { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .life-play {

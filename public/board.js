@@ -397,7 +397,7 @@ const {
   speak, speakItem, speakSentence, speakFeeling, transformAndSpeak,
   playClip, playBlob, endPlaying, sayClip,
   tileApi, tileSweep, voiceLicense, syncSpeed, refreshTrial, trialNudge,
-  trialActive, entitledNow,
+  trialActive, entitledNow, resetLicense,
   audio, sentenceVoice, isTxBusy, SPEAK_VOICE_WAIT_MS,
 } = mountSpeech({
   db, me, locale, sentence, barState, live,
@@ -1145,10 +1145,19 @@ wordCard = mountWordCard({
 });
 
 /* Devices, users, and supporter sign-in — public/board/devices-ui.js */
+// The Lifetime page mounts below; the relay's plan answer can land first.
+let renderLifePage = () => {};
 const devicesUi = mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
   initSync, onSyncApplied, onModel, qrcode, settings: settingsUi, syncRekey,
   renderUsers: () => peopleUi.renderUsers(),
+  // One answer to "has Pip Lifetime?": the relay's, for every screen.
+  onPlan: ({ lifetime }) => {
+    trialLicensed = lifetime;
+    settingsUi.renderNav();
+    renderLifePage();
+  },
+  resetLicense,
 });
 // ?unlock — the test link that turns Pip Lifetime on (public/board/unlock.js).
 // ?unlicensed — the 040 trial preview: no dev-license self-mint.
@@ -1179,10 +1188,13 @@ const lifeUi = mountLifetime({
         { chained: true, voice: voiceId });
     }
   },
-  show: (sec, opts) => settingsUi.show(sec, opts),
   trial: () => ({ licensed: trialLicensed, endsAt: trialEndsAt }),
 });
+renderLifePage = () => lifeUi.renderTrial();
 settingsUi.onOpen(() => lifeUi.renderTrial());
+// A synced person's plan is the relay's: ask once at boot so the
+// sidebar and the Lifetime page never contradict Add a device.
+if (navigator.onLine && me.sync?.userId) devicesUi.refreshPlan();
 /* 040 — the trial clock lives with its owner page (lifetime-ui.js):
  * boot() starts the clock at install/first-online and mirrors
  * {licensed, endsAt}; expiry reverts a locked voice to the default. */

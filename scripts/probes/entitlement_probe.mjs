@@ -65,7 +65,7 @@ await evalJs(`(() => { const i = document.querySelector('#dev-license');
   i.value = ${JSON.stringify(license)}; })()`);
 await evalJs(`document.querySelector('#dev-activate').click()`); await sleep(1200);
 out.lifetimeLabel = await evalJs(`document.querySelector('#dev-lifetime').textContent.trim()`);
-out.licenseRowHidden = await evalJs(`document.querySelector('#dev-license-row').hidden`);
+out.licenseRowHidden = await evalJs(`document.querySelector('#dev-lifetime-row').hidden`);
 if (!/Lifetime/.test(out.lifetimeLabel) || !out.licenseRowHidden) {
   fail("license did not activate");
 }

@@ -7,29 +7,39 @@
  * The page sells on truth only: every row in "What Lifetime adds" is a
  * shipped feature, and "Hear the difference" plays real recordings
  * (shipped onramp clips — never device TTS). The module owns page
- * behaviour (the countdown line, the demo buttons, the no-account code
- * checkout, the unlock link, and the demoted code field's door to the
- * real one) plus the trial clock that drives the whole phase.
+ * behaviour (owned vs for sale, the countdown line, the demo buttons,
+ * the no-account code checkout, the unlock link) plus the trial clock
+ * that drives the whole phase. The code field's handler lives with the
+ * relay calls in devices-ui.js.
  */
 import { buyCodes } from "../shared/account.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
 
-export function mountLifetime({ me, sayClip, hearFree, show, toast, trial }) {
-  /* iOS stays Apple IAP only (Pricing § 4.5): the web checkout is never
-   * linked there — Buy and the unlock link hide behind a pointer. */
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  $("life-ios") && ($("life-ios").hidden = !isIOS);
-  $("life-buy-row") && ($("life-buy-row").hidden = isIOS);
-  $("life-link-row") && ($("life-link-row").hidden = isIOS);
+export function mountLifetime({ me, sayClip, hearFree, toast, trial }) {
+  /* The App Store app is Apple IAP only (Pricing § 4.5): no web checkout
+   * is linked inside it. That app does not exist yet; its shell will
+   * announce itself in the user agent. Safari on an iPad is the web —
+   * it buys like any browser. */
+  const inAppStoreApp = /\bPipApp\//.test(navigator.userAgent);
+  $("life-ios") && ($("life-ios").hidden = !inAppStoreApp);
+  $("life-buy-row") && ($("life-buy-row").hidden = inAppStoreApp);
+  $("life-link-row") && ($("life-link-row").classList.toggle("life-off", inAppStoreApp));
 
-  /** The countdown line under the hero — reads the server's mirror. */
+  /** Two states, one answer (trial().licensed — the relay's, reconciled
+   *  by devices-ui): owned shows a confirmation and what's on; for sale
+   *  shows the offer. Never both. */
   function renderTrial() {
     const t = trial();
+    const owned = !!t.licensed;
+    $("life-owned").hidden = !owned;
+    for (const el of document.querySelectorAll('[data-sec="lifetime"] .life-sale')) {
+      el.hidden = owned || el.classList.contains("life-off");
+    }
+    $("life-feats-label").textContent = owned ? "What's on" : "What Lifetime adds";
     const line = $("life-trial-line");
-    if (t.licensed) { line.hidden = true; return; }
+    if (owned) { line.hidden = true; return; }
     line.hidden = false;
     const days = t.endsAt ? Math.ceil((t.endsAt - Date.now()) / 86_400_000) : 0;
     line.textContent = days > 0
@@ -44,7 +54,12 @@ export function mountLifetime({ me, sayClip, hearFree, show, toast, trial }) {
    * worse than none — hide the card on a 404. Offline or any other
    * failure leaves it alone. */
   fetch("/audio/onramp/demo-sentence.mp3", { method: "HEAD" })
-    .then((r) => { if (r.status === 404) $("life-hear-life").closest(".life-card").hidden = true; })
+    .then((r) => {
+      if (r.status !== 404) return;
+      const card = $("life-hear-life").closest(".life-card");
+      card.classList.add("life-off");
+      card.hidden = true;
+    })
     .catch(() => {});
   $("life-hear-free").onclick = () => hearFree();
   $("life-hear-life").onclick = () => sayClip("demo-sentence");
@@ -63,14 +78,6 @@ export function mountLifetime({ me, sayClip, hearFree, show, toast, trial }) {
       buy.disabled = false;
       toast("Couldn't open checkout — try again online.");
     }
-  };
-
-  // "Have a code or key?" — the real field lives in Your account; this
-  // is a door to it, demoted (040 § 7.4).
-  $("life-code").onclick = () => {
-    show("you", { focus: true });
-    $("dev-lifetime-row")?.scrollIntoView({ block: "center" });
-    $("dev-license")?.focus({ preventScroll: true });
   };
 
   /* "Send an unlock link" (040 § 8): the same no-account checkout,

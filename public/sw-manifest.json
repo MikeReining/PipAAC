@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-1065b91bfc9d",
+  "buildId": "r1-f626a3af3723",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 66001,
-      "sha256": "40956beafadb7a849634b0e17ad7b896909ab8607a18ceb6f0206b58a8082e24"
+      "bytes": 66513,
+      "sha256": "00f34659fea3ce6531a349b87e87fd02b86c108a70b3f7dfbfd3ec46adf7f585"
     },
     {
       "path": "/board/add-flow.css",
@@ -53,8 +53,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 41743,
-      "sha256": "9f7f6c641a415c985518bc39aa43c40f5128e34d080d3e8b9b31fb4a57823471"
+      "bytes": 43520,
+      "sha256": "4b6897d0ad1d9a547b8d15051653d7339401522c5f595fef2eaec9ca06c1e42b"
     },
     {
       "path": "/board/edit-shared.js",
@@ -138,8 +138,8 @@
     },
     {
       "path": "/board/lifetime-ui.js",
-      "bytes": 5552,
-      "sha256": "4bd8f8b4ee88c7a788174d808777b604ff33c68f50e94d04d880e82c4c597086"
+      "bytes": 5855,
+      "sha256": "20313de59f777160ebcdf81fecb2212dec162b983f7a6800218b2df6a0ab0d9e"
     },
     {
       "path": "/board/meta-cache.js",
@@ -228,13 +228,13 @@
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 21419,
-      "sha256": "800406818bda4d1d80eed2b2ea26195481c5a97f8f954b00f5f294abd3ad1d47"
+      "bytes": 21859,
+      "sha256": "b568a8177cb510cd1b2422a6848b9c0e322c5509341da5a06c9e8247b91f2b5d"
     },
     {
       "path": "/board/settings-ui.js",
-      "bytes": 20392,
-      "sha256": "dc145c5a941f77a7d0a000856541faf0514ab27c114096261feb2b33829b732b"
+      "bytes": 20477,
+      "sha256": "68f0508a12d67b49e99ec4ea22c5fd7826f0fa715eecd4f0cc3e29ba66ea852d"
     },
     {
       "path": "/board/setup-ui.css",
@@ -248,8 +248,8 @@
     },
     {
       "path": "/board/speech.js",
-      "bytes": 25265,
-      "sha256": "429a4c30614cc0704c7340adef06e113f54653bc2d5c94c824de627addacc799"
+      "bytes": 25605,
+      "sha256": "0db9cebe9e5b8ec6aba0672fc9c87da1647ba73a81716fbca48b2ab298e897f8"
     },
     {
       "path": "/board/spotlight-demo.js",
@@ -728,8 +728,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 67409,
-      "sha256": "bee6e36ac6137ef787ac100137b1810813d72dc8fc47971c1b3799208a0c5db7"
+      "bytes": 68237,
+      "sha256": "6db6b894419606e8db4aa9c4a8c03f2de5eb52dfaf9584fc00d6b5b9e736a758"
     },
     {
       "path": "/manifest.webmanifest",
