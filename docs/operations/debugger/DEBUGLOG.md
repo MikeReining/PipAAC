@@ -141,3 +141,12 @@ Truth owner: `src/worker/tile.heavy.test.mjs` — spawns its own `wrangler dev`
 Lie-prone layer: the spawned wrangler read the developer's `.dev.vars`, so a later `TILE_LIVE=1` turned the "stub mint" assertion into a real vendor call
 Proof: node --test src/worker/tile.heavy.test.mjs — green with `--env-file` pointed at a minimal vars file the test writes itself
 Pattern candidate: a test that launches a real server must control the server's env file, not inherit the developer's — `.dev.vars` drifts as features ship
+
+## 2026-10-04 library-rows-squash-and-sw-stale-precache
+
+Tier: T1
+Truth owner: `.addmatch` row component in `public/board/add-flow.css`; install-time fetches in `public/sw.js`
+Lie-prone layer: two stacked. (1) `.addmatch` is `overflow:hidden`, which zeroes a flex item's automatic minimum — inside `#lib-list` (flex column capped at 50vh) every row shrank to a ~6px sliver once results overflowed. (2) The deployed fix still rendered slivers: `precachePut`'s plain `fetch(path)` answered from the browser HTTP cache, which held a pre-deploy body that revalidated 304 — the versioned shell pinned stale bytes and serves them cache-first.
+Proof: `src/board/library_ui.test.mjs` "addmatch rows can't squash" (red before, green after); `scripts/sw/sw_nav.test.mjs` "install-time fetches never trust the HTTP cache"; measured live on app.pipaac.org via CDP — before: 399 search rows at 6px, flexShrink 1, minHeight auto; after re-deploy + SW update: 399 rows at 60px, computed min-height 60px.
+Same-day revision: deploy ≠ served. A deployed surface is verified only when a fresh client measures the thing that changed — curl proved the version was up while the page still rendered stale CSS.
+Pattern candidate: a fetch whose job is recording truth (precache, manifest) must never answer from a cache it can't audit — `no-store`, or verify the body against the manifest hash.
