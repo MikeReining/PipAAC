@@ -118,7 +118,7 @@ export function mountDevices({
     const { user_id } = await res.json();
     const next = { userId: user_id, epoch: 1, cursor: 0 };
     await saveUser({ sync: next });
-    await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel);
+    await initSync(db, me, saveUser, location.origin, onSyncApplied, onModel, flushDb);
     if (!quiet) toast(`${me.name || "This person"} syncs now — make the recovery card: Settings → Backup & privacy`);
     return next;
   }

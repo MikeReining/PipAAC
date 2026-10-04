@@ -25,21 +25,26 @@ let running = null;
  *  the relay fail? Pending ops themselves are read from sync_op
  *  (relay_seq IS NULL until the relay accepted them). */
 let flushError = null;
-export const syncHealth = () => ({ running: !!running, flushError });
+/** 043 B — a drain that threw leaves ops logged but unapplied and the
+ *  cursor behind; surface it instead of wedging silently. */
+let ingestError = null;
+export const syncHealth = () => ({ running: !!running, flushError, ingestError });
 /**
  * `user` is the registry row (id, sync). `saveUser(patch)` persists
  * sync-state changes back to the row (epoch bumps on rotation).
+ * `persist` (043 B) is the DB's own flush — the cursor is only durable
+ * if the ops it counts are, so ingest awaits it before advancing.
  */
-export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}, onModel = null) {
+export async function initSync(db, user, saveUser, baseUrl = location.origin, onApplied = () => {}, onModel = null, persist = null) {
   if (running) return running;
   const cfg = user?.sync;
   if (!cfg?.userId) return null;
-  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel)
+  running = startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist)
     .catch((err) => { running = null; throw err; });
   return running;
 }
 
-async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
+async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, persist) {
   const store = openKeyStore();
   const identity = await getDeviceIdentity(store);
   setDeviceId(identity.deviceId);
@@ -129,18 +134,40 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
   };
   setOpSink(scheduleFlush);
 
-  const ingest = async (rows) => {
+  /* 043 B — one serialized chain for every op application: drainOps is a
+   * full restore + replay and must never interleave with itself (a ws
+   * push racing a catch-up could). A failed job must be loud — a silent
+   * throw wedges the device with ops logged but never applied. */
+  let chain = Promise.resolve();
+  const enqueue = (job) => (chain = chain.then(job).catch((err) => {
+    ingestError = String(err?.stack || err);
+    console.warn("sync: ingest failed", err);
+  }));
+
+  /** Apply a batch. `markSeen` is only for catch-up fetches — the cursor
+   *  says "everything up to here was fetched and applied", so a live
+   *  push (which proves nothing about the ops before it) must not move
+   *  it. Apply first, persist, then advance the cursor: the old order
+   *  saved the cursor before the drain, so a kill in between lost the
+   *  ops it had just claimed. A failed drain leaves the cursor behind —
+   *  the next recover refetches and retries. */
+  const ingest = async (rows, markSeen = false) => {
     const plain = [];
     let cursor = cfg.cursor ?? 0;
     for (const r of rows) {
       plain.push({ ...(await openOp(await keyFor(r.epoch ?? 1), r.env)), relay_seq: r.relay_seq });
       if (r.relay_seq > cursor) cursor = r.relay_seq;
     }
-    if (cursor !== (cfg.cursor ?? 0)) {
+    if (plain.length) {
+      drainOps(db, plain);
+      ingestError = null;
+      onApplied();
+      await persist?.();
+    }
+    if (markSeen && cursor !== (cfg.cursor ?? 0)) {
       cfg.cursor = cursor;
       await saveUser({ sync: cfg });
     }
-    if (plain.length) { drainOps(db, plain); onApplied(); }
   };
 
   /** § 5 — every 500 confirmed ops a device uploads the sealed synced
@@ -178,18 +205,63 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
     } catch { /* a snapshot is an optimization — full replay still works */ }
   }
 
-  await ingest((await client.fetchOps(cfg.cursor ?? 0)).ops);
-  await maybeSnapshot();
-  await flush();
+  /* 043 B — the one recovery flow, entered from boot, every socket
+   * (re)open, and online events: fetch everything after the cursor,
+   * apply it durably, advance the cursor, resend our pending ops.
+   * A hole between the cursor and the first row means the relay pruned
+   * ops we never saw — rebase on the sealed snapshot and tail from its
+   * watermark (the adopt only counts when it moves the cursor forward,
+   * so a seq hole that is not pruning can't loop). */
+  const recover = async () => {
+    for (;;) {
+      const { ops: rows } = await client.fetchOps(cfg.cursor ?? 0);
+      if (rows?.length && rows[0].relay_seq > (cfg.cursor ?? 0) + 1) {
+        const stored = await client.getSnapshot().catch(() => null);
+        const plain = stored?.env
+          ? await openOp(await keyFor(stored.e ?? 1), stored.env).catch(() => null)
+          : null;
+        if (plain?.snap && (plain.seq ?? 0) > (cfg.cursor ?? 0)) {
+          adoptSnapshot(db, plain.snap);
+          cfg.cursor = plain.seq;
+          await saveUser({ sync: cfg });
+          continue;
+        }
+      }
+      await ingest(rows ?? [], true);
+      break;
+    }
+    await maybeSnapshot().catch(() => {});
+    await flush();
+  };
+  let recoverTimer = null;
+  /** Debounced catch-up: live pushes apply without moving the cursor,
+   *  so a burst ends with one fetchOps that marks it honestly. */
+  const scheduleRecover = () => {
+    clearTimeout(recoverTimer);
+    recoverTimer = setTimeout(() => enqueue(recover), 2000);
+  };
+
+  // Boot no longer dies on an offline start: recovery rides the same
+  // queue as everything else, and the socket loop below owns retries.
+  enqueue(recover);
 
   let live = null;
+  let dialing = false;
   const connect = () => {
+    if (dialing || (live && live.readyState <= WebSocket.OPEN)) return;
+    dialing = true;
     client.wsUrl().then((url) => {
       const ws = new WebSocket(url);
       live = ws;
+      // Every (re)open may follow a gap — catch up before treating the
+      // socket as live. The push handler below is not a backlog.
+      ws.onopen = () => { dialing = false; enqueue(recover); };
       ws.onmessage = (ev) => {
         const msg = JSON.parse(ev.data);
-        if (msg.t === "ops") ingest(msg.ops).then(scheduleFlush).catch(() => {});
+        if (msg.t === "ops") {
+          enqueue(() => ingest(msg.ops)).then(scheduleFlush);
+          scheduleRecover();
+        }
         // Live modeling (013 slice 4): transient, sealed, never logged —
         // the sender's own socket is relay-excluded and we ignore echoes.
         if (msg.t === "model" && msg.from !== identity.deviceId) {
@@ -197,11 +269,23 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
             .then((plain) => onModel?.(plain)).catch(() => {});
         }
       };
-      ws.onclose = () => { if (live === ws) live = null; setTimeout(connect, 2000); };
+      ws.onclose = () => {
+        if (live === ws) live = null;
+        dialing = false;
+        setTimeout(connect, 2000);
+      };
       ws.onerror = () => ws.close();
-    }).catch(() => setTimeout(connect, 5000));
+    }).catch(() => { dialing = false; setTimeout(connect, 5000); });
   };
   connect();
+  if (typeof addEventListener === "function") {
+    addEventListener("online", () => { connect(); scheduleRecover(); });
+  }
+  if (typeof document !== "undefined") {
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") { connect(); scheduleRecover(); }
+    });
+  }
 
   /** A live message (013 § 4): sealed under the current epoch key and
    *  sent up the ws — the relay broadcasts it, nothing is stored. The

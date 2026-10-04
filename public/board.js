@@ -201,7 +201,7 @@ function onSyncApplied() {
   }, 150);
 }
 
-initSync(db, me, saveUser, location.origin, onSyncApplied, (m) => attention.onModel(m))
+initSync(db, me, saveUser, location.origin, onSyncApplied, (m) => attention.onModel(m), flushDb)
   .then(async (sync) => {
     if (!sync) return;
     // § 11 warning channel: a linked device returning inside the final

@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-69cfb8f09578",
+  "buildId": "r1-f7b81444a3d9",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 66932,
-      "sha256": "bc3911b23eabc87b012f72fc95203e98439ed3ee19a5cf3beb813d1082fab19f"
+      "bytes": 66941,
+      "sha256": "ef74e62db6fe709c844d61eb955da2272e95cb91cf9ab7ff4e4a7eb7f31d6d52"
     },
     {
       "path": "/board/add-flow.css",
@@ -48,8 +48,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 45372,
-      "sha256": "2fe65c6111ef269c2beffd2850cc647c75db31b4f1da1fdeda7b7fb70aedd6c6"
+      "bytes": 45381,
+      "sha256": "9f706ee7186205a66024278a06e65765128da3dc4d8e09d03f6e601aacb0d756"
     },
     {
       "path": "/board/edit-shared.js",
@@ -963,8 +963,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 9850,
-      "sha256": "e180710595f74ca9d539d83ba329d79c81a53881b83773a4333c680619f6430a"
+      "bytes": 13596,
+      "sha256": "c35cf7c8483f92e71e4466a14b29875e566e91f470303cbc25a744fb0b7d8fd9"
     },
     {
       "path": "/shared/team_names.mjs",
