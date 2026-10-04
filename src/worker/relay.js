@@ -51,6 +51,10 @@ const IDLE_DELETE_MS = 3 * 365 * DAY_MS;
 const IDLE_WARN_MS = IDLE_DELETE_MS - 183 * DAY_MS;
 const OP_PRUNE_MS = 30 * DAY_MS;
 const ALARM_PERIOD_MS = DAY_MS;
+const SEEN_FLUSH_MS = 60 * 60 * 1000;
+
+/** A device's own name for itself — short plain text, or nothing. */
+const deviceLabel = (l) => (typeof l === "string" && l.trim() ? l.trim().slice(0, 40) : null);
 
 export class UserRelay {
   constructor(ctx, env) {
@@ -95,6 +99,7 @@ export class UserRelay {
         "ALTER TABLE device ADD COLUMN wrapped_key TEXT",
         "ALTER TABLE device ADD COLUMN epoch INTEGER NOT NULL DEFAULT 1",
         "ALTER TABLE device ADD COLUMN via_acct TEXT",
+        "ALTER TABLE device ADD COLUMN label TEXT",
         "ALTER TABLE join_token ADD COLUMN for_acct TEXT",
         "ALTER TABLE supporter ADD COLUMN owner INTEGER NOT NULL DEFAULT 0",
         "ALTER TABLE op ADD COLUMN epoch INTEGER NOT NULL DEFAULT 1",
@@ -123,8 +128,11 @@ export class UserRelay {
     return this.metaGet("entitlement") ?? "free";
   }
 
-  /** Any signed request counts as the user being alive (§ 11). */
-  touchSeen() {
+  /** Any signed request counts as the user being alive (§ 11). The row
+   *  is rewritten at most once an hour — a per-request write is the
+   *  relay's biggest row-write source, and nothing reads a finer clock. */
+  touchSeen(prev = Number(this.metaGet("last_seen") ?? 0)) {
+    if (Date.now() - prev < SEEN_FLUSH_MS) return;
     this.metaSet("last_seen", Date.now());
   }
 
@@ -208,13 +216,13 @@ export class UserRelay {
       if (this.metaGet("user_id") ?? this.metaGet("board_id")) {
         return bad("conflict", 409);
       }
-      const { device_id, pubkey, dh_pub, wrapped_key, recovery_proof } =
+      const { device_id, pubkey, dh_pub, wrapped_key, recovery_proof, label } =
         await request.json().catch(() => ({}));
       if (!device_id || !pubkey) return bad("bad_bootstrap");
       this.ctx.storage.sql.exec(
-        `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
-         VALUES (?, ?, ?, ?, 1, ?)`,
-        device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, Date.now());
+        `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at, label)
+         VALUES (?, ?, ?, ?, 1, ?, ?)`,
+        device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, Date.now(), deviceLabel(label));
       if (recovery_proof) {
         this.metaSet("recovery_proof", recovery_proof);
         await indexProof(this.env, url.pathname.split("/")[2], null, recovery_proof);
@@ -363,8 +371,9 @@ export class UserRelay {
     if (!device) return bad("forbidden", 403);
     // last_seen BEFORE this request — a long-absent device refreshing it
     // now must still get its "nearly deleted" warning this once.
-    const prevSeen = Number(this.metaGet("last_seen") ?? Date.now());
-    this.touchSeen();
+    const lastSeen = this.metaGet("last_seen");
+    const prevSeen = Number(lastSeen ?? Date.now());
+    this.touchSeen(Number(lastSeen ?? 0));
     if (!(await this.ctx.storage.getAlarm())) {
       this.ctx.storage.setAlarm(Date.now() + ALARM_PERIOD_MS);
     }
@@ -386,7 +395,7 @@ export class UserRelay {
     // not the UI — refuses a second registration; pairing surfaces the
     // upgrade message from this response.
     if (method === "POST" && route === "devices") {
-      const { device_id, pubkey, dh_pub, wrapped_key } = JSON.parse(td.decode(bodyBytes));
+      const { device_id, pubkey, dh_pub, wrapped_key, label } = JSON.parse(td.decode(bodyBytes));
       if (!device_id || !pubkey) return bad("bad_device");
       if (this.entitlement() !== "lifetime") {
         const known = this.ctx.storage.sql.exec(
@@ -399,9 +408,19 @@ export class UserRelay {
       }
       const epoch = this.epoch();
       this.ctx.storage.sql.exec(
-        `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, epoch, Date.now());
+        `INSERT OR IGNORE INTO device (device_id, pubkey, dh_pub, wrapped_key, epoch, added_at, label)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        device_id, pubkey, dh_pub ?? null, wrapped_key ?? null, epoch, Date.now(), deviceLabel(label));
+      return json({ ok: true });
+    }
+
+    // A device names itself ("iPad · Safari") so the device list reads
+    // like the family's devices, not key ids. Any device, its own row.
+    if (method === "POST" && route === "label") {
+      let label = null;
+      try { label = JSON.parse(td.decode(bodyBytes)).label; } catch { /* none */ }
+      this.ctx.storage.sql.exec(
+        "UPDATE device SET label = ? WHERE device_id = ?", deviceLabel(label), device);
       return json({ ok: true });
     }
 
@@ -554,7 +573,7 @@ export class UserRelay {
 
     if (method === "GET" && route === "devices") {
       const rows = this.ctx.storage.sql.exec(
-        "SELECT device_id, dh_pub, epoch, added_at, via_acct FROM device ORDER BY added_at").toArray();
+        "SELECT device_id, dh_pub, epoch, added_at, via_acct, label FROM device ORDER BY added_at").toArray();
       return json({ devices: rows, current_epoch: this.epoch() });
     }
 
