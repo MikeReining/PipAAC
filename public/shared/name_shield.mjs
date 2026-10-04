@@ -14,13 +14,18 @@
  */
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+/* 043 H — \b is ASCII: "Ömer" after a space never matched and went
+ * upstream unmasked. A word boundary for names is "not a Unicode
+ * letter, digit, or underscore" on either side. */
+const bound = (inner) => `(?<![\\p{L}\\p{N}_])${inner}(?![\\p{L}\\p{N}_])`;
+
 export function maskNames(text, names) {
   const seen = new Set();
   const hits = [];
   for (const n of [...names].filter(Boolean).sort((a, b) => b.length - a.length)) {
     const key = n.trim().toLowerCase();
     if (!key || seen.has(key)) continue;
-    if (new RegExp(`\\b${escape(key)}\\b`).test(text.toLowerCase())) {
+    if (new RegExp(bound(escape(key)), "u").test(text.toLowerCase())) {
       seen.add(key);
       hits.push(n.trim());
     }
@@ -29,7 +34,7 @@ export function maskNames(text, names) {
 
   const map = new Map(hits.map((n, i) => [`PERSON${i + 1}`, n]));
   const masked = text.replace(
-    new RegExp(`\\b(?:${hits.map(escape).join("|")})\\b`, "gi"),
+    new RegExp(bound(`(?:${hits.map(escape).join("|")})`), "giu"),
     (m) => `PERSON${hits.findIndex((n) => n.toLowerCase() === m.toLowerCase()) + 1}`);
 
   const unmask = (out) =>

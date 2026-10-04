@@ -43,3 +43,23 @@ test("no names in the sentence means identity masking and unmasking", () => {
   assert.equal(masked, "i want a cookie");
   assert.equal(unmask("I want a cookie."), "I want a cookie.");
 });
+
+/* 043 H — the boundary was ASCII \b: a name starting with a non-ASCII
+ * letter after a space never matched, so it went upstream unmasked. */
+test("non-ASCII names mask too — Ömer, José, multiword", () => {
+  const a = maskNames("ömer wants juice", ["Ömer"]);
+  assert.equal(a.masked, "PERSON1 wants juice");
+  assert.equal(a.unmask("PERSON1 wants juice."), "Ömer wants juice.");
+
+  const b = maskNames("i go with josé", ["José"]);
+  assert.equal(b.masked, "i go with PERSON1");
+
+  const c = maskNames("tía maría is here", ["Tía María"]);
+  assert.equal(c.masked, "PERSON1 is here");
+});
+
+test("a non-ASCII name still respects boundaries — no partial match", () => {
+  // "Om" must not mask inside "Ömer" or inside a longer word.
+  const { masked } = maskNames("ömer came home", ["Om", "Ömer"]);
+  assert.equal(masked, "PERSON1 came home");
+});

@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-5f649e0225b6",
+  "buildId": "r1-7e344a89a1ca",
   "files": [
     {
       "path": "/board.js",
@@ -868,8 +868,8 @@
     },
     {
       "path": "/shared/name_shield.mjs",
-      "bytes": 1788,
-      "sha256": "d589f031286f67a3cdb1a52ab7fc59c7d228ac7b18362b42552bd0604830a835"
+      "bytes": 2057,
+      "sha256": "562aaaa52a216db2ddc70e29c0ad93082babb300e824adf9a020880f3424c2a9"
     },
     {
       "path": "/shared/normalize.mjs",
