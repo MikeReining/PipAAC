@@ -47,6 +47,13 @@ export function transformSource(sentence, barState) {
   return barState.preTransform ?? sentence;
 }
 
+/** 043 D — the bar's words as one string. A transform applies only when
+ *  this is unchanged between request and response: a cleared or edited
+ *  bar produces a different text and the late answer is dropped. */
+export function sourceText(sentence, barState) {
+  return transformSource(sentence, barState).map((it) => it.text).join(" ");
+}
+
 /** ▶ puts her words back exactly — no model, works offline. Only on a
  *  past/future bar: after ✨ or ❓ the bar is already present, so ▶
  *  just speaks what's shown. Returns true when a restore happened. */

@@ -12,7 +12,7 @@ import { voiceName } from "../shared/voices.mjs";
 import { sentenceSpeakText, voiceSentence } from "../shared/voice_sentence.mjs";
 import { armUtcRollRetry, tileStateMessage, voiceTile } from "../shared/voice_tile.mjs";
 import { entityNames, maskNames } from "../shared/name_shield.mjs";
-import { applyTransform, snapshotBar, transformSource } from "../shared/txbar.mjs";
+import { applyTransform, snapshotBar, sourceText } from "../shared/txbar.mjs";
 import { EOS, formFor } from "../shared/forms.mjs";
 import { ONRAMP_CLIPS, onrampClipPath } from "../shared/onramp_audio.mjs";
 
@@ -49,6 +49,10 @@ export function mountSpeech({
    * and fair-use answers come back fast and fall to the clip loop at once —
    * she is always heard. */
   const SPEAK_VOICE_WAIT_MS = 10_000;
+  // 043 D — a transform answer older than this is abandoned; the bar
+  // speaks as built. Longer than a healthy Groq call by design — the
+  // cap exists to unpin txBusy and bound staleness, not to hurry speech.
+  const TRANSFORM_WAIT_MS = 15_000;
   // 028: tile voice library — entity names and committed typed words play
   // minted clips from Cache Storage + the ledger; never device TTS.
   const tileVoice = voiceTile();
@@ -316,12 +320,18 @@ export function mountSpeech({
     const btn = $(`tx-${mode}`);
     btn?.classList.add("speaking");
     try {
-      const raw = transformSource(sentence, barState)
-        .map((it) => it.text).join(" ");
+      const raw = sourceText(sentence, barState);
       const { masked, unmask } = maskNames(raw, entityNames(db));
+      /* 043 D — bounded wait: a stalled transform must not pin txBusy or
+       * land after the bar moved on. Aborted reads as null below. */
+      let timedOut = false;
+      const ctrl = new AbortController();
+      const timer = setTimeout(
+        () => { timedOut = true; ctrl.abort(); }, TRANSFORM_WAIT_MS);
       const res = await fetch("/api/v1/transform", {
         method: "POST",
         headers: { "content-type": "application/json" },
+        signal: ctrl.signal,
         body: JSON.stringify({
           user_id: me.id, license: await voiceLicense(), mode, text: masked,
           // ❓ asks in the bar's tense; ⏪/⏩ on a question keep it one.
@@ -329,9 +339,14 @@ export function mountSpeech({
           question: barState.question,
         }),
       }).catch(() => null);
+      clearTimeout(timer);
       const body = res ? await res.json().catch(() => ({})) : {};
       const out = res?.ok ? body.text : null;
-      if (out) {
+      /* The bar must still hold exactly what we sent — a tap, typed word,
+       * or clear since then means this answer is stale and the newer bar
+       * owns the bar (and the speak below). */
+      const fresh = sourceText(sentence, barState) === raw;
+      if (out && fresh) {
         snapshotBar(sentence, barState); // her taps, saved before replace
         applyTransform(sentence, unmask(out), mode, barState);
         for (const it of sentence) {
@@ -339,7 +354,7 @@ export function mountSpeech({
         }
         renderBar();
         renderStrip();
-      } else {
+      } else if (!out) {
         /* Every press still speaks the bar as built — but a refused
          * transform must say why, or the button just looks dead.
          * Unlicensed is the common case and an upsell: name the plan and
@@ -349,7 +364,9 @@ export function mountSpeech({
           past: "Say it in the past", future: "Say it in the future",
         }[mode] ?? "That button";
         if (!res) {
-          toast?.(`${name} needs the internet — spoke it as it was.`);
+          toast?.(timedOut
+            ? `${name} took too long — spoke it as it was.`
+            : `${name} needs the internet — spoke it as it was.`);
         } else if (body?.error === "bad_license") {
           // 040 § 4 — trial over (or never started): the press still
           // speaks the bar as built; the adult gets the ask once per

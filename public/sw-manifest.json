@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-7e344a89a1ca",
+  "buildId": "r1-69cfb8f09578",
   "files": [
     {
       "path": "/board.js",
@@ -253,8 +253,8 @@
     },
     {
       "path": "/board/speech.js",
-      "bytes": 25539,
-      "sha256": "df3305f6a5b94ddcc2c8f08dfa8123749284a924c3a8163f5c32b274df730c8c"
+      "bytes": 26480,
+      "sha256": "d053c63de698650649ce5ea2aae39ad3f2e1aff681b0ad2ac9e9fe747ff3250f"
     },
     {
       "path": "/board/spotlight-demo.js",
@@ -973,8 +973,8 @@
     },
     {
       "path": "/shared/txbar.mjs",
-      "bytes": 5265,
-      "sha256": "4889d5f738615d866903008d93d75b901f4c773b11f410bbd163de984cde8b7f"
+      "bytes": 5610,
+      "sha256": "3af1d56f33f5dea2f90f68930a567abe277ced7790d58180fef6c3d8d0ad6142"
     },
     {
       "path": "/shared/usecounts.mjs",
