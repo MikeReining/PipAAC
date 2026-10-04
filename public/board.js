@@ -74,6 +74,7 @@ import { mountGroupShows } from "./board/group-shows.js";
 import { installViewportPin } from "./board/viewport.js";
 import { mountOnramp } from "./board/onramp-ui.js";
 import { mountTour } from "./board/tour-ui.js";
+import { showVersion } from "./board/version.js";
 import { mountVoice } from "./board/voice-ui.js";
 import { mountLifetime, mountTrialClock } from "./board/lifetime-ui.js";
 import { mountPictureFill } from "./board/picture-fill.js";
@@ -1438,6 +1439,7 @@ const tourUi = mountTour({
   },
 });
 $("replay-tour").addEventListener("click", () => { close("menu"); tourUi.start(); });
+settingsUi.onShow((id) => { if (id === "overview") showVersion(); }); // stale shells show
 // 034: the welcome's Continue navigates away (a fresh document is the only
 // proven fix for the iPad keyboard-pan residue); the flag resumes the tour
 // on that boot. Consume before starting so a mid-tour refresh can't replay.

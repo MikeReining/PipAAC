@@ -139,6 +139,8 @@ async function fillVoice(voice) {
 }
 
 self.addEventListener("message", (e) => {
+  // board/version.js: the page asks which shell it was served from.
+  if (e.data?.type === "pip-build") e.ports[0]?.postMessage(self.SW_BUILD);
   if (e.data?.type === "pip-active-voice") {
     activeVoice = e.data.voice;
     e.waitUntil?.(fillVoice(activeVoice));
