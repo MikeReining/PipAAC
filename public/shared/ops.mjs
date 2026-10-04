@@ -323,7 +323,7 @@ const SYNCED_TABLES = [
 ];
 
 /** Every synced table's rows, with rowids, oldest first. */
-function snapshotSynced(db) {
+export function snapshotSynced(db) {
   const snap = {};
   for (const t of SYNCED_TABLES) {
     snap[t] = db.prepare(`SELECT rowid AS _r, * FROM ${t} ORDER BY rowid`).all();
@@ -359,6 +359,17 @@ function restoreSynced(db, snap) {
 function saveBaseline(db) {
   db.prepare("INSERT OR REPLACE INTO sync_baseline (id, tables) VALUES (1, ?)")
     .run(JSON.stringify(snapshotSynced(db)));
+}
+
+/**
+ * A relay snapshot lands on a device that never synced: the synced
+ * tables adopt it wholesale and it becomes the rebase baseline, so the
+ * op tail after it replays on top (§ 5). Pending local ops are
+ * untouched — the next drainOps rebases them over the snapshot.
+ */
+export function adoptSnapshot(db, tables) {
+  restoreSynced(db, tables);
+  saveBaseline(db);
 }
 
 /**

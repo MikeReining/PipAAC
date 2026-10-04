@@ -17,7 +17,7 @@ import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "../board/catalog.mjs";
 import { createEntity, placeItem } from "../../public/shared/groups.mjs";
-import { drainOps, ensureBaseline, listOps, setDeviceId } from "../../public/shared/ops.mjs";
+import { adoptSnapshot, drainOps, ensureBaseline, listOps, setDeviceId, snapshotSynced } from "../../public/shared/ops.mjs";
 import { upsertStatsDay } from "../../public/shared/stats.mjs";
 import {
   exportDhPublic,
@@ -29,6 +29,7 @@ import {
   putUserKey,
   sealBlob,
   openBlob,
+  sealOp,
   wrapUserKey,
 } from "../../public/shared/sync_crypto.mjs";
 import { licenseFor } from "./license.mjs";
@@ -381,4 +382,72 @@ test("016 slice 3: stats_day rows sync sealed and add up per device", async () =
   assert.deepEqual(rows.map((r) => r.device_id), [a.deviceId, b.deviceId].sort());
   assert.equal(
     rows.reduce((n, r) => n + JSON.parse(r.payload).words, 0), 4);
+});
+
+test("snapshots: sealed state round-trips; the watermark only advances", async () => {
+  // § 5 — A edits, seals the synced tables at the log's head, uploads.
+  // C fast-boots from the snapshot + the op tail and lands byte-equal.
+  const aStore = memoryKeyStore();
+  const a = await getDeviceIdentity(aStore);
+  const userId = crypto.randomUUID();
+  const userKey = await getUserKey(aStore, userId);
+  const cStore = memoryKeyStore();
+  const c = await getDeviceIdentity(cStore);
+  await putUserKey(cStore, userId, userKey, 1);
+
+  const openDb = () => {
+    const db = createDatabase(":memory:");
+    importCatalog(db, catalog);
+    ensureBaseline(db);
+    return db;
+  };
+  const dbA = openDb();
+  const { id: dog } = createEntity(dbA, { name: "SnapDog" });
+  placeItem(dbA, "grp_people", "entity", dog);
+
+  await fetch(`${BASE}/users`, {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ user_id: userId,
+      device_id: a.deviceId, pubkey: await exportPublicKey(a.verify) }),
+  });
+  const clientA = relayClient({ userId, baseUrl: BASE, identity: a, userKey });
+  await makeLifetime(clientA, userId);
+  await clientA.addDevice(c.deviceId, await exportPublicKey(c.verify));
+  const clientC = relayClient({ userId, baseUrl: BASE, identity: c, userKey });
+
+  const { ops: seqs } = await clientA.submit(listOps(dbA));
+  const head = Math.max(...seqs.map((s) => s.relay_seq));
+
+  // Nothing stored yet → null, not an error.
+  assert.equal(await clientC.getSnapshot(), null);
+
+  const env = await sealOp(userKey, { seq: head, snap: snapshotSynced(dbA) });
+  await clientA.putSnapshot({ e: 1, env }, head);
+
+  // C boots from the snapshot, then A's post-snapshot edits ride the tail.
+  const stored = await clientC.getSnapshot();
+  const plain = await openOp(userKey, stored.env);
+  assert.equal(plain.seq, head);
+  const dbC = openDb();
+  adoptSnapshot(dbC, plain.snap);
+
+  const beforeTail = listOps(dbA).length;
+  const { id: cat } = createEntity(dbA, { name: "AfterSnap" });
+  placeItem(dbA, "grp_people", "entity", cat);
+  await clientA.submit(listOps(dbA).slice(beforeTail));
+
+  const tail = await clientC.fetchOps(head);
+  const plainTail = [];
+  for (const r of tail.ops) {
+    plainTail.push({ ...(await clientC.openOp(r.env)), relay_seq: r.relay_seq });
+  }
+  assert.equal(plainTail.length, 2); // create + place, nothing earlier
+  drainOps(dbC, plainTail);
+  assert.deepEqual(snapshotSynced(dbC), snapshotSynced(dbA));
+
+  // The watermark only advances: a stale PUT behind it is dropped, the
+  // stored snapshot still opens at the newer seq.
+  await clientA.putSnapshot({ e: 1, env: await sealOp(userKey, { seq: 1, snap: {} }) }, 1);
+  const still = await clientC.getSnapshot();
+  assert.equal((await openOp(userKey, still.env)).seq, head);
 });

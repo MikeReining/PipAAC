@@ -12,7 +12,7 @@
  * recordOp calls the registered sink after every adult edit; sync.mjs
  * debounces a submit so edits reach the relay without the UI knowing.
  */
-import { confirmOps, drainOps, listOps, setDeviceId, setOpSink } from "./ops.mjs";
+import { adoptSnapshot, confirmOps, drainOps, listOps, setDeviceId, setOpSink, snapshotSynced } from "./ops.mjs";
 import { setBlobFetcher } from "../db.js";
 import {
   getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey, sealOp,
@@ -115,6 +115,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
     try {
       const { ops: assigned } = await client.submit(ops);
       confirmOps(db, assigned);
+      await maybeSnapshot();
       flushError = null;
     } catch (err) {
       flushError = String(err?.message ?? err);
@@ -142,7 +143,43 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
     if (plain.length) { drainOps(db, plain); onApplied(); }
   };
 
+  /** § 5 — every 500 confirmed ops a device uploads the sealed synced
+   *  tables so the relay can prune the log they cover. The seq pairs
+   *  with confirmed state only: a live snapshot taken while local ops
+   *  are still pending would bake unconfirmed edits into the baseline,
+   *  so we wait for a quiet log. Best-effort — a failure retries on the
+   *  next drain. */
+  const maybeSnapshot = async () => {
+    const seq = db.prepare(
+      "SELECT MAX(relay_seq) AS m FROM sync_op WHERE relay_seq IS NOT NULL",
+    ).all()[0]?.m ?? 0;
+    if (!seq || seq - (cfg.snap_seq ?? 0) < 500 || pendingOps().length) return;
+    const snap = snapshotSynced(db);
+    try {
+      const env = await sealOp(await keyFor(epoch), { seq, snap });
+      await client.putSnapshot({ e: epoch, env }, seq);
+      cfg.snap_seq = seq;
+      await saveUser({ sync: cfg });
+    } catch { /* the next drain retries */ }
+  };
+
+  // § 5 fast path: a device that never synced boots from the sealed
+  // snapshot — adopt the synced tables at their seq, then replay only
+  // the tail. Pending local edits survive: the drain rebases them.
+  if (!cfg.cursor) {
+    try {
+      const stored = await client.getSnapshot();
+      if (stored?.env) {
+        const plain = await openOp(await keyFor(stored.e ?? 1), stored.env);
+        adoptSnapshot(db, plain.snap);
+        cfg.cursor = plain.seq ?? 0;
+        await saveUser({ sync: cfg });
+      }
+    } catch { /* a snapshot is an optimization — full replay still works */ }
+  }
+
   await ingest((await client.fetchOps(cfg.cursor ?? 0)).ops);
+  await maybeSnapshot();
   await flush();
 
   let live = null;

@@ -96,6 +96,29 @@ export function relayClient({ userId, baseUrl, identity, userKey }) {
     /** Catch-up: ops after a relay_seq. Envelopes stay sealed — caller decrypts. */
     fetchOps: (after) => call("GET", `/ops?after=${after}`),
     openOp: (env) => openOp(userKey, env),
+    /** Sealed snapshot transport (§ 5): PUT marks the op log covered
+     *  through seq; GET returns the stored payload or null. */
+    async putSnapshot(payload, seq) {
+      const p = path(`/snapshot?seq=${seq}`);
+      const body = te.encode(JSON.stringify(payload));
+      const res = await fetch(`${baseUrl}${p}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json",
+          ...(await signedHeaders(identity, "PUT", p.split("?")[0], body)) },
+        body,
+      });
+      if (!res.ok) throw new Error(`relay PUT snapshot: ${res.status}`);
+      return res.json();
+    },
+    async getSnapshot() {
+      const p = path("/snapshot");
+      const res = await fetch(`${baseUrl}${p}`, {
+        headers: await signedHeaders(identity, "GET", p, null),
+      });
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error(`relay GET snapshot: ${res.status}`);
+      return JSON.parse(await res.text());
+    },
     /** Blob transport — the envelope's sha is the address. */
     async putBlob(sealed) {
       const p = path(`/blobs/${sealed.sha}`);

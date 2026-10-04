@@ -660,12 +660,18 @@ export class UserRelay {
     if (route === "snapshot") {
       const userId = url.pathname.split("/")[2];
       if (method === "PUT") {
-        await this.env.BLOBS.put(`s/${userId}`, bodyBytes);
-        this.metaSet("snapshot_at", Date.now());
         // ?seq=N marks how much of the op log the snapshot covers —
-        // the retention sweep prunes only ops it has folded away.
+        // the retention sweep prunes only ops it has folded away. The
+        // pair (file, watermark) only ever advances: a stale device's
+        // PUT must not overwrite a newer snapshot or regress the seq
+        // under it — a file behind the watermark would leave a gap in
+        // the log a bootstrap can't bridge.
         const seq = Number(url.searchParams.get("seq") ?? 0);
-        if (seq > 0) this.metaSet("snapshot_seq", seq);
+        if (seq > Number(this.metaGet("snapshot_seq") ?? 0)) {
+          await this.env.BLOBS.put(`s/${userId}`, bodyBytes);
+          this.metaSet("snapshot_at", Date.now());
+          this.metaSet("snapshot_seq", seq);
+        }
         return json({ ok: true });
       }
       if (method === "GET") {
