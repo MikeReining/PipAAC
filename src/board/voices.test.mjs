@@ -23,16 +23,17 @@ function fresh() {
   return db;
 }
 
-test("today: Pip, Leo, Mia, Sam, Zoe in use; Tom, Rey, Joy are coming soon", () => {
+test("today: Pip, Leo, Mia, Sam, Tom, Zoe in use; Rey, Joy are coming soon", () => {
   const db = fresh();
   const { available, coming } = voiceChoices(db, "en");
-  assert.deepEqual(available.map((v) => voiceName(db, v.id)), ["Pip", "Leo", "Mia", "Sam", "Zoe"]); // default first, then alphabetical
+  assert.deepEqual(available.map((v) => voiceName(db, v.id)), ["Pip", "Leo", "Mia", "Sam", "Tom", "Zoe"]); // default first, then alphabetical
   assert.equal(available[0].id, "voi_default_en");
   assert.equal(available.find((v) => v.id === "voi_leo_en").note, "Grown-up, male");
   assert.equal(available.find((v) => v.id === "voi_eve_en").note, "Younger, female");
   assert.equal(available.find((v) => v.id === "voi_sam_en").note, "Younger, male");
   assert.equal(available.find((v) => v.id === "voi_zoe_en").note, "Southern, female");
-  assert.deepEqual(coming.map((v) => v.name), ["Tom", "Rey", "Joy"]);
+  assert.equal(available.find((v) => v.id === "voi_tom_en").note, "British, male");
+  assert.deepEqual(coming.map((v) => v.name), ["Rey", "Joy"]);
 });
 
 test("every lineup voice is linked to its ElevenLabs voice id in tile_voices.json", () => {

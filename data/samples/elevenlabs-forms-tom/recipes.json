@@ -1,0 +1,4176 @@
+{
+  "schema": "pippaac.elevenlabs-forms-recipes.v1",
+  "batch": "elevenlabs-forms-tom",
+  "generatedAt": "2026-10-04T03:13:28.514Z",
+  "defaults": {
+    "provider": "elevenlabs",
+    "voice_id": "RliWjSXK3mZtypIjNgvO",
+    "model": "eleven_v4",
+    "voice_settings": {
+      "stability": 0.4,
+      "similarity_boost": 0.8
+    },
+    "voice_key": "voi_tom_en",
+    "display_name": "Tom"
+  },
+  "words": [
+    {
+      "utterance_id": "utt_f0005",
+      "slug": "wants",
+      "word": "wants",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wants"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0007",
+      "slug": "wanting",
+      "word": "wanting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wanting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0009",
+      "slug": "likes",
+      "word": "likes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "likes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0011",
+      "slug": "liking",
+      "word": "liking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "liking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0013",
+      "slug": "goes",
+      "word": "goes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "goes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0015",
+      "slug": "going",
+      "word": "going",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "going"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0017",
+      "slug": "comes",
+      "word": "comes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "comes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0019",
+      "slug": "coming",
+      "word": "coming",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "coming"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0021",
+      "slug": "gets",
+      "word": "gets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "gets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0023",
+      "slug": "getting",
+      "word": "getting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "getting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0025",
+      "slug": "makes",
+      "word": "makes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "makes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0027",
+      "slug": "making",
+      "word": "making",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "making"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0029",
+      "slug": "does",
+      "word": "does",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "does"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0031",
+      "slug": "doing",
+      "word": "doing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "doing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0033",
+      "slug": "sees",
+      "word": "sees",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sees"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0035",
+      "slug": "seeing",
+      "word": "seeing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "seeing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0037",
+      "slug": "looks",
+      "word": "looks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "looks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0039",
+      "slug": "looking",
+      "word": "looking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "looking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0041",
+      "slug": "puts",
+      "word": "puts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "puts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0043",
+      "slug": "putting",
+      "word": "putting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "putting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0045",
+      "slug": "takes",
+      "word": "takes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "takes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0047",
+      "slug": "taking",
+      "word": "taking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "taking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0049",
+      "slug": "gives",
+      "word": "gives",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "gives"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0051",
+      "slug": "giving",
+      "word": "giving",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "giving"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0053",
+      "slug": "helps",
+      "word": "helps",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "helps"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0055",
+      "slug": "helping",
+      "word": "helping",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "helping"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0057",
+      "slug": "stops",
+      "word": "stops",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "stops"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0059",
+      "slug": "stopping",
+      "word": "stopping",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "stopping"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0061",
+      "slug": "plays",
+      "word": "plays",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "plays"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0063",
+      "slug": "playing",
+      "word": "playing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "playing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0065",
+      "slug": "eats",
+      "word": "eats",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "eats"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0067",
+      "slug": "eating",
+      "word": "eating",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "eating"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0069",
+      "slug": "drinks",
+      "word": "drinks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "drinks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0071",
+      "slug": "drinking",
+      "word": "drinking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "drinking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0073",
+      "slug": "opens",
+      "word": "opens",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "opens"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0075",
+      "slug": "opening",
+      "word": "opening",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "opening"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0077",
+      "slug": "turns",
+      "word": "turns",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "turns"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0079",
+      "slug": "turning",
+      "word": "turning",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "turning"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0081",
+      "slug": "reads",
+      "word": "reads",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "reads"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0083",
+      "slug": "reading",
+      "word": "reading",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "reading"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0085",
+      "slug": "needs",
+      "word": "needs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "needs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0087",
+      "slug": "needing",
+      "word": "needing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "needing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0089",
+      "slug": "feels",
+      "word": "feels",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "feels"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0091",
+      "slug": "feeling",
+      "word": "feeling",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "feeling"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0093",
+      "slug": "tells",
+      "word": "tells",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tells"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0095",
+      "slug": "telling",
+      "word": "telling",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "telling"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0097",
+      "slug": "thinks",
+      "word": "thinks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "thinks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0099",
+      "slug": "thinking",
+      "word": "thinking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "thinking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0101",
+      "slug": "finds",
+      "word": "finds",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "finds"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0103",
+      "slug": "finding",
+      "word": "finding",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "finding"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0105",
+      "slug": "works",
+      "word": "works",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "works"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0107",
+      "slug": "working",
+      "word": "working",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "working"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0109",
+      "slug": "waits",
+      "word": "waits",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "waits"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0111",
+      "slug": "waiting",
+      "word": "waiting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "waiting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0114",
+      "slug": "having",
+      "word": "having",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "having"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0116",
+      "slug": "hurts",
+      "word": "hurts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hurts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0118",
+      "slug": "hurting",
+      "word": "hurting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hurting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0120",
+      "slug": "coughs",
+      "word": "coughs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "[isolated dictionary word, do not make the sound] coughs."
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0122",
+      "slug": "coughing",
+      "word": "coughing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "[isolated dictionary word, do not make the sound] coughing."
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0124",
+      "slug": "runs",
+      "word": "runs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "runs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0126",
+      "slug": "running",
+      "word": "running",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "running"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0128",
+      "slug": "jumps",
+      "word": "jumps",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "jumps"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0130",
+      "slug": "jumping",
+      "word": "jumping",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "jumping"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0132",
+      "slug": "walks",
+      "word": "walks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "walks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0134",
+      "slug": "walking",
+      "word": "walking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "walking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0136",
+      "slug": "sits",
+      "word": "sits",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sits"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0138",
+      "slug": "sitting",
+      "word": "sitting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sitting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0140",
+      "slug": "stands",
+      "word": "stands",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "stands"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0142",
+      "slug": "standing",
+      "word": "standing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "standing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0144",
+      "slug": "climbs",
+      "word": "climbs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "climbs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0146",
+      "slug": "climbing",
+      "word": "climbing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "climbing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0148",
+      "slug": "dances",
+      "word": "dances",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dances"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0150",
+      "slug": "dancing",
+      "word": "dancing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dancing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0152",
+      "slug": "swims",
+      "word": "swims",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "swims"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0154",
+      "slug": "swimming",
+      "word": "swimming",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "swimming"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0156",
+      "slug": "rides",
+      "word": "rides",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "rides"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0158",
+      "slug": "riding",
+      "word": "riding",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "riding"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0160",
+      "slug": "crawls",
+      "word": "crawls",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "crawls"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0162",
+      "slug": "crawling",
+      "word": "crawling",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "crawling"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0164",
+      "slug": "kicks",
+      "word": "kicks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "kicks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0166",
+      "slug": "kicking",
+      "word": "kicking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "kicking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0168",
+      "slug": "throws",
+      "word": "throws",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "throws"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0170",
+      "slug": "throwing",
+      "word": "throwing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "throwing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0172",
+      "slug": "catches",
+      "word": "catches",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "catches"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0174",
+      "slug": "catching",
+      "word": "catching",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "catching"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0176",
+      "slug": "pushes",
+      "word": "pushes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pushes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0178",
+      "slug": "pushing",
+      "word": "pushing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pushing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0180",
+      "slug": "pulls",
+      "word": "pulls",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pulls"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0182",
+      "slug": "pulling",
+      "word": "pulling",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pulling"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0184",
+      "slug": "swings",
+      "word": "swings",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "swings"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0187",
+      "slug": "slides",
+      "word": "slides",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "slides"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0189",
+      "slug": "sliding",
+      "word": "sliding",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sliding"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0191",
+      "slug": "falls",
+      "word": "falls",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "falls"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0193",
+      "slug": "falling",
+      "word": "falling",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "falling"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0195",
+      "slug": "carries",
+      "word": "carries",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "carries"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0197",
+      "slug": "carrying",
+      "word": "carrying",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "carrying"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0199",
+      "slug": "drops",
+      "word": "drops",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "drops"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0201",
+      "slug": "dropping",
+      "word": "dropping",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dropping"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0203",
+      "slug": "writes",
+      "word": "writes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "writes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0205",
+      "slug": "writing",
+      "word": "writing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "writing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0207",
+      "slug": "draws",
+      "word": "draws",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "draws"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0209",
+      "slug": "drawing",
+      "word": "drawing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "drawing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0211",
+      "slug": "colors",
+      "word": "colors",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "colors"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0213",
+      "slug": "coloring",
+      "word": "coloring",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "coloring"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0215",
+      "slug": "paints",
+      "word": "paints",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "paints"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0217",
+      "slug": "painting",
+      "word": "painting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "painting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0219",
+      "slug": "cuts",
+      "word": "cuts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cuts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0221",
+      "slug": "cutting",
+      "word": "cutting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cutting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0223",
+      "slug": "glues",
+      "word": "glues",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "glues"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0225",
+      "slug": "gluing",
+      "word": "gluing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "gluing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0227",
+      "slug": "listens",
+      "word": "listens",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "listens"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0229",
+      "slug": "listening",
+      "word": "listening",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "listening"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0231",
+      "slug": "speaks",
+      "word": "speaks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "speaks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0233",
+      "slug": "speaking",
+      "word": "speaking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "speaking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0235",
+      "slug": "talks",
+      "word": "talks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "talks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0237",
+      "slug": "talking",
+      "word": "talking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "talking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0239",
+      "slug": "sings",
+      "word": "sings",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sings"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0241",
+      "slug": "singing",
+      "word": "singing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "singing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0243",
+      "slug": "counts",
+      "word": "counts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "counts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0245",
+      "slug": "counting",
+      "word": "counting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "counting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0247",
+      "slug": "shares",
+      "word": "shares",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "shares"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0249",
+      "slug": "sharing",
+      "word": "sharing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sharing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0251",
+      "slug": "cleans_up",
+      "word": "cleans up",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cleans up"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0253",
+      "slug": "cleaning_up",
+      "word": "cleaning up",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cleaning up"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0255",
+      "slug": "washes",
+      "word": "washes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "washes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0257",
+      "slug": "washing",
+      "word": "washing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "washing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0259",
+      "slug": "wipes",
+      "word": "wipes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wipes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0261",
+      "slug": "wiping",
+      "word": "wiping",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wiping"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0263",
+      "slug": "cooks",
+      "word": "cooks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cooks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0265",
+      "slug": "cooking",
+      "word": "cooking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cooking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0267",
+      "slug": "builds",
+      "word": "builds",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "builds"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0269",
+      "slug": "building",
+      "word": "building",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "building"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0271",
+      "slug": "fixes",
+      "word": "fixes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "fixes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0273",
+      "slug": "fixing",
+      "word": "fixing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "fixing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0275",
+      "slug": "holds",
+      "word": "holds",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "holds"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0277",
+      "slug": "holding",
+      "word": "holding",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "holding"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0279",
+      "slug": "touches",
+      "word": "touches",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "touches"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0281",
+      "slug": "touching",
+      "word": "touching",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "touching"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0283",
+      "slug": "knows",
+      "word": "knows",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "knows"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0285",
+      "slug": "knowing",
+      "word": "knowing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "knowing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0287",
+      "slug": "remembers",
+      "word": "remembers",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "remembers"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0289",
+      "slug": "remembering",
+      "word": "remembering",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "remembering"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0291",
+      "slug": "forgets",
+      "word": "forgets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "forgets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0293",
+      "slug": "forgetting",
+      "word": "forgetting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "forgetting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0295",
+      "slug": "chooses",
+      "word": "chooses",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "chooses"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0297",
+      "slug": "choosing",
+      "word": "choosing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "choosing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0299",
+      "slug": "shows",
+      "word": "shows",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "shows"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0301",
+      "slug": "showing",
+      "word": "showing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "showing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0303",
+      "slug": "asks",
+      "word": "asks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "asks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0305",
+      "slug": "asking",
+      "word": "asking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "asking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0307",
+      "slug": "hugs",
+      "word": "hugs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hugs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0309",
+      "slug": "hugging",
+      "word": "hugging",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hugging"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0312",
+      "slug": "kissing",
+      "word": "kissing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "kissing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0314",
+      "slug": "laughs",
+      "word": "laughs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "/lævz/"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0316",
+      "slug": "laughing",
+      "word": "laughing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "/ˈlæfɪŋ/"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0318",
+      "slug": "cries",
+      "word": "cries",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cries"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0320",
+      "slug": "crying",
+      "word": "crying",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "crying"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0322",
+      "slug": "sleeps",
+      "word": "sleeps",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sleeps"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0324",
+      "slug": "sleeping",
+      "word": "sleeping",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sleeping"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0326",
+      "slug": "wakes_up",
+      "word": "wakes up",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "wakes up"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0328",
+      "slug": "waking_up",
+      "word": "waking up",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "waking up"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0330",
+      "slug": "rains",
+      "word": "rains",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "rains"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0332",
+      "slug": "raining",
+      "word": "raining",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "raining"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0334",
+      "slug": "doesn_t",
+      "word": "doesn't",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "doesn't"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0336",
+      "slug": "be",
+      "word": "be",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "be"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0341",
+      "slug": "hits",
+      "word": "hits",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hits"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0343",
+      "slug": "hitting",
+      "word": "hitting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hitting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0345",
+      "slug": "bites",
+      "word": "bites",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bites"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0347",
+      "slug": "biting",
+      "word": "biting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "biting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0349",
+      "slug": "breaks",
+      "word": "breaks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "breaks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0351",
+      "slug": "breaking",
+      "word": "breaking",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "breaking"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0353",
+      "slug": "scratches",
+      "word": "scratches",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "scratches"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0355",
+      "slug": "scratching",
+      "word": "scratching",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "scratching"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0357",
+      "slug": "closes",
+      "word": "closes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "closes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0359",
+      "slug": "closing",
+      "word": "closing",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "closing"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0361",
+      "slug": "shuts",
+      "word": "shuts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "shuts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0363",
+      "slug": "shutting",
+      "word": "shutting",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "shutting"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0365",
+      "slug": "tickles",
+      "word": "tickles",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tickles"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0367",
+      "slug": "tickling",
+      "word": "tickling",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tickling"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0369",
+      "slug": "loves",
+      "word": "loves",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "loves"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0371",
+      "slug": "loving",
+      "word": "loving",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "loving"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0377",
+      "slug": "hers",
+      "word": "hers",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hers"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0380",
+      "slug": "ours",
+      "word": "ours",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "ours"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0383",
+      "slug": "theirs",
+      "word": "theirs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "theirs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0385",
+      "slug": "water_s",
+      "word": "water's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "water's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0387",
+      "slug": "pancakes",
+      "word": "pancakes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pancakes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0389",
+      "slug": "waffles",
+      "word": "waffles",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "waffles"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0391",
+      "slug": "bagels",
+      "word": "bagels",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bagels"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0393",
+      "slug": "eggs",
+      "word": "eggs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "eggs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0395",
+      "slug": "sandwiches",
+      "word": "sandwiches",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sandwiches"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0397",
+      "slug": "chicken_s",
+      "word": "chicken's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "chicken's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0399",
+      "slug": "crackers",
+      "word": "crackers",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "crackers"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0401",
+      "slug": "cookies",
+      "word": "cookies",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cookies"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0403",
+      "slug": "pretzels",
+      "word": "pretzels",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pretzels"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0405",
+      "slug": "muffins",
+      "word": "muffins",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "muffins"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0407",
+      "slug": "donuts",
+      "word": "donuts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "donuts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0409",
+      "slug": "apples",
+      "word": "apples",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "apples"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0411",
+      "slug": "bananas",
+      "word": "bananas",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bananas"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0413",
+      "slug": "strawberries",
+      "word": "strawberries",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "strawberries"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0415",
+      "slug": "carrots",
+      "word": "carrots",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "carrots"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0417",
+      "slug": "head_s",
+      "word": "head's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "head's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0419",
+      "slug": "hair_s",
+      "word": "hair's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hair's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0421",
+      "slug": "eyes",
+      "word": "eyes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "eyes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0423",
+      "slug": "ears",
+      "word": "ears",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "ears"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0425",
+      "slug": "arms",
+      "word": "arms",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "arms"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0427",
+      "slug": "hands",
+      "word": "hands",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hands"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0429",
+      "slug": "hand_s",
+      "word": "hand's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hand's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0431",
+      "slug": "legs",
+      "word": "legs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "legs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0433",
+      "slug": "feet",
+      "word": "feet",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "feet"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0435",
+      "slug": "foot_s",
+      "word": "foot's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "foot's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0437",
+      "slug": "diapers",
+      "word": "diapers",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "diapers"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0439",
+      "slug": "toothbrushes",
+      "word": "toothbrushes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "toothbrushes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0441",
+      "slug": "towels",
+      "word": "towels",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "towels"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0443",
+      "slug": "combs",
+      "word": "combs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "combs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0445",
+      "slug": "tissues",
+      "word": "tissues",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tissues"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0447",
+      "slug": "bandages",
+      "word": "bandages",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bandages"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0449",
+      "slug": "moms",
+      "word": "moms",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "moms"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0451",
+      "slug": "mom_s",
+      "word": "mom's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "mom's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0453",
+      "slug": "dads",
+      "word": "dads",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dads"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0455",
+      "slug": "dad_s",
+      "word": "dad's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dad's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0457",
+      "slug": "mama_s",
+      "word": "mama's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "mama's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0459",
+      "slug": "dada_s",
+      "word": "dada's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dada's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0461",
+      "slug": "babies",
+      "word": "babies",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "babies"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0463",
+      "slug": "baby_s",
+      "word": "baby's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "baby's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0465",
+      "slug": "brothers",
+      "word": "brothers",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "brothers"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0467",
+      "slug": "brother_s",
+      "word": "brother's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "brother's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0469",
+      "slug": "sisters",
+      "word": "sisters",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sisters"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0471",
+      "slug": "sister_s",
+      "word": "sister's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sister's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0473",
+      "slug": "grandmas",
+      "word": "grandmas",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "grandmas"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0475",
+      "slug": "grandma_s",
+      "word": "grandma's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "grandma's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0477",
+      "slug": "grandpa_s",
+      "word": "grandpa's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "grandpa's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0479",
+      "slug": "aunts",
+      "word": "aunts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "aunts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0481",
+      "slug": "cousins",
+      "word": "cousins",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cousins"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0483",
+      "slug": "pets",
+      "word": "pets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0485",
+      "slug": "teachers",
+      "word": "teachers",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "teachers"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0487",
+      "slug": "teacher_s",
+      "word": "teacher's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "teacher's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0489",
+      "slug": "students",
+      "word": "students",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "students"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0491",
+      "slug": "friends",
+      "word": "friends",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "friends"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0493",
+      "slug": "friend_s",
+      "word": "friend's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "friend's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0495",
+      "slug": "firefighters",
+      "word": "firefighters",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "firefighters"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0497",
+      "slug": "neighbors",
+      "word": "neighbors",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "neighbors"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0499",
+      "slug": "person_s",
+      "word": "person's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "person's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0501",
+      "slug": "people_s",
+      "word": "people's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "people's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0503",
+      "slug": "doctor_s",
+      "word": "doctor's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "doctor's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0505",
+      "slug": "nurses",
+      "word": "nurses",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "nurses"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0507",
+      "slug": "nurse_s",
+      "word": "nurse's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "nurse's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0509",
+      "slug": "names",
+      "word": "names",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "names"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0511",
+      "slug": "name_s",
+      "word": "name's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "name's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0513",
+      "slug": "houses",
+      "word": "houses",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "houses"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0515",
+      "slug": "school_s",
+      "word": "school's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "school's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0517",
+      "slug": "parks",
+      "word": "parks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "parks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0519",
+      "slug": "museums",
+      "word": "museums",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "museums"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0521",
+      "slug": "toys",
+      "word": "toys",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "toys"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0523",
+      "slug": "balls",
+      "word": "balls",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "balls"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0525",
+      "slug": "puzzles",
+      "word": "puzzles",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "puzzles"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0527",
+      "slug": "dolls",
+      "word": "dolls",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dolls"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0529",
+      "slug": "doll_s",
+      "word": "doll's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "doll's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0531",
+      "slug": "dinosaurs",
+      "word": "dinosaurs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dinosaurs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0533",
+      "slug": "dinosaur_s",
+      "word": "dinosaur's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dinosaur's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0535",
+      "slug": "robots",
+      "word": "robots",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "robots"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0537",
+      "slug": "bikes",
+      "word": "bikes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bikes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0539",
+      "slug": "songs",
+      "word": "songs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "songs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0541",
+      "slug": "tablets",
+      "word": "tablets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tablets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0543",
+      "slug": "phone_s",
+      "word": "phone's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "phone's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0545",
+      "slug": "movies",
+      "word": "movies",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "movies"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0547",
+      "slug": "videos",
+      "word": "videos",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "videos"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0549",
+      "slug": "books",
+      "word": "books",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "books"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0551",
+      "slug": "book_s",
+      "word": "book's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "book's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0553",
+      "slug": "chairs",
+      "word": "chairs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "chairs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0555",
+      "slug": "doors",
+      "word": "doors",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "doors"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0557",
+      "slug": "door_s",
+      "word": "door's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "door's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0559",
+      "slug": "windows",
+      "word": "windows",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "windows"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0561",
+      "slug": "lamps",
+      "word": "lamps",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "lamps"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0563",
+      "slug": "mirrors",
+      "word": "mirrors",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "mirrors"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0565",
+      "slug": "plates",
+      "word": "plates",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "plates"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0567",
+      "slug": "bowls",
+      "word": "bowls",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bowls"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0569",
+      "slug": "cups",
+      "word": "cups",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cups"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0571",
+      "slug": "forks",
+      "word": "forks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "forks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0573",
+      "slug": "spoons",
+      "word": "spoons",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "spoons"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0575",
+      "slug": "knives",
+      "word": "knives",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "knives"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0577",
+      "slug": "napkins",
+      "word": "napkins",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "napkins"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0579",
+      "slug": "bottles",
+      "word": "bottles",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bottles"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0581",
+      "slug": "bags",
+      "word": "bags",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bags"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0583",
+      "slug": "blankets",
+      "word": "blankets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "blankets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0585",
+      "slug": "pillows",
+      "word": "pillows",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pillows"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0587",
+      "slug": "fans",
+      "word": "fans",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "fans"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0589",
+      "slug": "boxes",
+      "word": "boxes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "boxes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0591",
+      "slug": "batteries",
+      "word": "batteries",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "batteries"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0593",
+      "slug": "brooms",
+      "word": "brooms",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "brooms"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0595",
+      "slug": "tape_s",
+      "word": "tape's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tape's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0597",
+      "slug": "buckets",
+      "word": "buckets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "buckets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0599",
+      "slug": "shirts",
+      "word": "shirts",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "shirts"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0601",
+      "slug": "dresses",
+      "word": "dresses",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dresses"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0603",
+      "slug": "coats",
+      "word": "coats",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "coats"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0605",
+      "slug": "hats",
+      "word": "hats",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hats"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0607",
+      "slug": "buttons",
+      "word": "buttons",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "buttons"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0609",
+      "slug": "pockets",
+      "word": "pockets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pockets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0611",
+      "slug": "animals",
+      "word": "animals",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "animals"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0613",
+      "slug": "dogs",
+      "word": "dogs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dogs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0615",
+      "slug": "dog_s",
+      "word": "dog's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dog's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0617",
+      "slug": "cats",
+      "word": "cats",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cats"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0619",
+      "slug": "cat_s",
+      "word": "cat's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cat's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0621",
+      "slug": "puppies",
+      "word": "puppies",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "puppies"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0623",
+      "slug": "puppy_s",
+      "word": "puppy's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "puppy's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0625",
+      "slug": "kittens",
+      "word": "kittens",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "kittens"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0627",
+      "slug": "birds",
+      "word": "birds",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "birds"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0629",
+      "slug": "bird_s",
+      "word": "bird's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bird's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0631",
+      "slug": "bunnies",
+      "word": "bunnies",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bunnies"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0633",
+      "slug": "bunny_s",
+      "word": "bunny's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bunny's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0635",
+      "slug": "ducks",
+      "word": "ducks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "ducks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0637",
+      "slug": "duck_s",
+      "word": "duck's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "duck's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0639",
+      "slug": "hens",
+      "word": "hens",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hens"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0641",
+      "slug": "cows",
+      "word": "cows",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cows"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0643",
+      "slug": "cow_s",
+      "word": "cow's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cow's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0645",
+      "slug": "horses",
+      "word": "horses",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "horses"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0647",
+      "slug": "horse_s",
+      "word": "horse's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "horse's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0649",
+      "slug": "pigs",
+      "word": "pigs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pigs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0651",
+      "slug": "pig_s",
+      "word": "pig's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "pig's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0653",
+      "slug": "sheep_s",
+      "word": "sheep's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sheep's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0655",
+      "slug": "goats",
+      "word": "goats",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "goats"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0657",
+      "slug": "bears",
+      "word": "bears",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bears"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0659",
+      "slug": "bear_s",
+      "word": "bear's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bear's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0661",
+      "slug": "lions",
+      "word": "lions",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "lions"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0663",
+      "slug": "lion_s",
+      "word": "lion's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "lion's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0665",
+      "slug": "tiger_s",
+      "word": "tiger's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tiger's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0667",
+      "slug": "elephants",
+      "word": "elephants",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "elephants"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0669",
+      "slug": "elephant_s",
+      "word": "elephant's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "elephant's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0671",
+      "slug": "monkeys",
+      "word": "monkeys",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "monkeys"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0673",
+      "slug": "monkey_s",
+      "word": "monkey's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "monkey's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0675",
+      "slug": "giraffes",
+      "word": "giraffes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "giraffes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0677",
+      "slug": "giraffe_s",
+      "word": "giraffe's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "giraffe's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0679",
+      "slug": "zebras",
+      "word": "zebras",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "zebras"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0681",
+      "slug": "hippos",
+      "word": "hippos",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hippos"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0683",
+      "slug": "hippo_s",
+      "word": "hippo's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hippo's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0685",
+      "slug": "penguins",
+      "word": "penguins",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "penguins"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0687",
+      "slug": "dolphins",
+      "word": "dolphins",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "dolphins"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0689",
+      "slug": "whales",
+      "word": "whales",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "whales"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0691",
+      "slug": "snakes",
+      "word": "snakes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "snakes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0693",
+      "slug": "snake_s",
+      "word": "snake's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "snake's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0695",
+      "slug": "turtles",
+      "word": "turtles",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "turtles"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0697",
+      "slug": "frogs",
+      "word": "frogs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "frogs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0699",
+      "slug": "frog_s",
+      "word": "frog's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "frog's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0701",
+      "slug": "bugs",
+      "word": "bugs",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bugs"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0703",
+      "slug": "spiders",
+      "word": "spiders",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "spiders"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0705",
+      "slug": "spider_s",
+      "word": "spider's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "spider's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0707",
+      "slug": "butterflies",
+      "word": "butterflies",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "butterflies"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0709",
+      "slug": "trees",
+      "word": "trees",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "trees"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0711",
+      "slug": "flowers",
+      "word": "flowers",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "flowers"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0713",
+      "slug": "sun_s",
+      "word": "sun's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "sun's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0715",
+      "slug": "clouds",
+      "word": "clouds",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "clouds"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0717",
+      "slug": "vehicles",
+      "word": "vehicles",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "vehicles"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0719",
+      "slug": "cars",
+      "word": "cars",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "cars"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0721",
+      "slug": "car_s",
+      "word": "car's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "car's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0723",
+      "slug": "trucks",
+      "word": "trucks",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "trucks"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0725",
+      "slug": "trains",
+      "word": "trains",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "trains"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0727",
+      "slug": "train_s",
+      "word": "train's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "train's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0729",
+      "slug": "bicycles",
+      "word": "bicycles",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "bicycles"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0731",
+      "slug": "vans",
+      "word": "vans",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "vans"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0733",
+      "slug": "tractors",
+      "word": "tractors",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tractors"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0735",
+      "slug": "tractor_s",
+      "word": "tractor's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tractor's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0737",
+      "slug": "airplanes",
+      "word": "airplanes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "airplanes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0739",
+      "slug": "rockets",
+      "word": "rockets",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "rockets"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0741",
+      "slug": "boats",
+      "word": "boats",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "boats"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0743",
+      "slug": "ships",
+      "word": "ships",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "ships"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0745",
+      "slug": "today_s",
+      "word": "today's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "today's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0747",
+      "slug": "tomorrow_s",
+      "word": "tomorrow's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "tomorrow's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0749",
+      "slug": "minutes",
+      "word": "minutes",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "minutes"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0751",
+      "slug": "hours",
+      "word": "hours",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "hours"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0753",
+      "slug": "things",
+      "word": "things",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "things"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0755",
+      "slug": "thing_s",
+      "word": "thing's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "thing's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0757",
+      "slug": "boys",
+      "word": "boys",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "boys"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0759",
+      "slug": "boy_s",
+      "word": "boy's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "boy's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0761",
+      "slug": "girls",
+      "word": "girls",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "girls"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0763",
+      "slug": "girl_s",
+      "word": "girl's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "girl's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0765",
+      "slug": "men",
+      "word": "men",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "men"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0767",
+      "slug": "man_s",
+      "word": "man's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "man's"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0769",
+      "slug": "women",
+      "word": "women",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "women"
+        }
+      ]
+    },
+    {
+      "utterance_id": "utt_f0771",
+      "slug": "woman_s",
+      "word": "woman's",
+      "variations": [
+        {
+          "id": "plain",
+          "text": "woman's"
+        }
+      ]
+    }
+  ]
+}
