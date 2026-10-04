@@ -1,0 +1,9 @@
+{
+  "_comment": "041 Slice D budgets — the definition of done. Headless Chrome, fresh profile, iPad landscape, 4x CPU throttle (a classroom iPad). Times are ms from navigationStart. The founder's iPad stopwatch is the final verdict.",
+  "firstVisitMs": 2000,
+  "repeatLaunchMs": 1000,
+  "addPersonMs": 1500,
+  "tapToSpeakMs": 300,
+  "languageReadyAfterBoardMs": 5000,
+  "requestsBeforeBoard": 40
+}

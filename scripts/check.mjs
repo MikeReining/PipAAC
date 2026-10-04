@@ -13,6 +13,7 @@ const GATES = [
   { name: "lint:lockfile-sync", cmd: "npm", args: ["run", "lint:lockfile-sync"] },
   { name: "regression_law_meta_gate", cmd: process.execPath, args: ["scripts/regression_law_meta_gate.mjs"] },
   { name: "churn_report", cmd: process.execPath, args: ["scripts/churn_report.mjs"] },
+  { name: "speed:probe", cmd: process.execPath, args: ["scripts/probes/speed_gate.mjs"] },
 ];
 
 const results = [];
