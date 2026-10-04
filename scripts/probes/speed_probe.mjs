@@ -19,6 +19,7 @@
  *  the device, it never asks the device how it feels (measure-the-
  *  actual-thing rule). */
 import { spawn } from "node:child_process";
+import { resolveChrome } from "./chrome.mjs";
 import { rmSync, readFileSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 import { fileURLToPath } from "node:url";
@@ -55,7 +56,7 @@ const MARKS_SOURCE = `(() => {
 })();`;
 
 rmSync(PROFILE, { recursive: true, force: true });
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME = resolveChrome();
 const chrome = spawn(CHROME, [
   "--headless=new", `--remote-debugging-port=${PORT}`,
   `--user-data-dir=${PROFILE}`, "--no-first-run", "about:blank"],

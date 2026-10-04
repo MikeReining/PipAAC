@@ -7,13 +7,13 @@
  *   PIP_ORIGIN=http://localhost:21089 node scripts/probes/bar_settings_probe.mjs
  */
 import { spawn } from "node:child_process";
+import { resolveChrome } from "./chrome.mjs";
 import { rmSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 
 const PORT = 9261, ORIGIN = process.env.PIP_ORIGIN ?? "http://localhost:21089";
 rmSync("/tmp/pip-bar-settings-probe", { recursive: true, force: true });
-const CHROME = process.env.CHROME_BIN
-  ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME = resolveChrome();
 const chrome = spawn(CHROME, ["--headless=new", `--remote-debugging-port=${PORT}`,
   "--user-data-dir=/tmp/pip-bar-settings-probe", "--no-first-run", "about:blank"], { stdio: "ignore" });
 for (let i = 0; i < 40; i++) {

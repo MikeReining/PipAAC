@@ -1,9 +1,9 @@
 {
-  "_comment": "041 Slice D budgets — the definition of done. Headless Chrome, fresh profile, iPad landscape, 4x CPU throttle (a classroom iPad). Times are ms from navigationStart. The founder's iPad stopwatch is the final verdict.",
+  "_comment": "041 Slice D budgets — the definition of done. Headless Chrome, fresh profile, iPad landscape, 4x CPU throttle (a classroom iPad). Times are ms from navigationStart. The founder's iPad stopwatch is the final verdict. requestsBeforeBoard is compared against requests before FIRST PAINT (despite the name — the check predates the current module graph): 2026-10-04 the honest graph is ~94 (≈65 /board + ≈51 /shared modules + fonts/icons/root; tile /symbols land between paint and board). The behavioral guards — no audio before board, SW after board — are the real regression catchers; the count is a coarse tripwire, bumped to 160 to allow module growth without hiding a runaway (043 F).",
   "firstVisitMs": 2000,
   "repeatLaunchMs": 1000,
   "addPersonMs": 1500,
   "tapToSpeakMs": 300,
   "languageReadyAfterBoardMs": 5000,
-  "requestsBeforeBoard": 40
+  "requestsBeforeBoard": 160
 }

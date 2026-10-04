@@ -7,13 +7,14 @@
  *   node scripts/probes/density_probe.mjs [origin]
  */
 import { spawn } from "node:child_process";
+import { resolveChrome } from "./chrome.mjs";
 import { rmSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 
 const ORIGIN = process.argv[2] ?? "http://localhost:21088";
 const PORT = 9266;
 rmSync("/tmp/pip-density-probe", { recursive: true, force: true });
-const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const CHROME = resolveChrome();
 const chrome = spawn(CHROME, [
   "--headless=new", `--remote-debugging-port=${PORT}`,
   "--user-data-dir=/tmp/pip-density-probe", "--no-first-run", "about:blank"],
