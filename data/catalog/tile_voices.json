@@ -54,6 +54,28 @@
       "locales": ["en"],
       "status": "planned",
       "profile_tag": "younger"
+    },
+    {
+      "voice_key": "voi_tom_en",
+      "display_name": "Tom",
+      "provider": "elevenlabs",
+      "voice_id": "RliWjSXK3mZtypIjNgvO",
+      "model": "eleven_v4",
+      "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
+      "locales": ["en"],
+      "status": "planned",
+      "profile_tag": "younger"
+    },
+    {
+      "voice_key": "voi_rey_en",
+      "display_name": "Rey",
+      "provider": "elevenlabs",
+      "voice_id": "eb1698hSoNbHSWKDmVLe",
+      "model": "eleven_v4",
+      "voice_settings": { "stability": 0.4, "similarity_boost": 0.8 },
+      "locales": ["en"],
+      "status": "planned",
+      "profile_tag": "younger"
     }
   ]
 }

@@ -615,7 +615,7 @@ with `source=catalog_lazy` (today it is silence). Same endpoint, same ledger.
 | Per-license mints / minute | 20 (runaway guard) | same |
 | Text max | 60 chars | same |
 | Failed-mint retry delay | 30 s | ledger const |
-| Voice names | Pip (default), Leo (grown-up male), Mia (younger female), Sam (younger male, planned), Zoe (southern female, planned) | `tile_voices.json` |
+| Voice names | Pip (default), Leo (grown-up male), Mia (younger female), Sam (younger male); planned: Zoe (southern female), Tom (British male), Rey (Latino male) | `tile_voices.json` |
 | ElevenLabs overage billing | off | vendor account |
 
 ## Related
