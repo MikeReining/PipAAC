@@ -114,8 +114,8 @@ if (!(await poll(() => evalJs("typeof window.pip === 'object' && !!window.pip"))
 
 const off = await evalJs(`(async () => {
   const controlled = !!navigator.serviceWorker.controller;
-  const form = await fetch('/form_table.en.json').then((r) => r.json())
-    .then((j) => !!j.aSense).catch(() => false);
+  const form = await fetch('/form_answers.en.json').then((r) => r.json())
+    .then((j) => !!j.e).catch(() => false);
   const cat = await fetch('/catalog.json').then((r) => r.ok).catch(() => false);
   const sym = await fetch('/symbols/want.webp')
     .then(async (r) => r.ok && r.headers.get('content-type') === 'image/webp'

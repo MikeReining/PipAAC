@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- 041 — the last-resort launch page. The service worker serves this
+     only when a navigation can't be answered: no network AND the shell
+     cache is missing (e.g. iOS evicted it under storage pressure).
+     A home-screen web app has no browser chrome — no reload button —
+     so this page carries its own: tap to retry, or it retries by itself
+     the moment the network comes back. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f6f4ef">
+<title>Pip AAC</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+         background: #f6f4ef; color: #2b2a26;
+         font: 500 18px/1.5 -apple-system, system-ui, sans-serif;
+         text-align: center; padding: 24px; box-sizing: border-box; }
+  .card { max-width: 320px; }
+  h1 { font-size: 22px; margin: 0 0 8px; }
+  p { margin: 0 0 24px; color: #6b675f; }
+  button { appearance: none; border: 0; border-radius: 14px;
+           background: #2f6df6; color: #fff; font: 600 18px/1 system-ui;
+           padding: 16px 28px; }
+  button:active { transform: scale(.97); }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Pip can't reach the network</h1>
+    <p>Check Wi-Fi, then try again.</p>
+    <button id="retry">Try again</button>
+  </div>
+  <script>
+    const retry = () => location.reload();
+    document.getElementById("retry").addEventListener("click", retry);
+    addEventListener("online", retry);
+  </script>
+</body>
+</html>

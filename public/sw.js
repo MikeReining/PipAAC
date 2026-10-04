@@ -14,6 +14,12 @@
  * voice cache is pruned on the next fill. Voices already cached stay —
  * an online switch back is instant.
  *
+ * Launch path: navigations take the network first; when it can't
+ * answer they fall back to the shell, then /offline.html — a dead
+ * home-screen launch (no browser chrome, no reload affordance) gets
+ * a page with a retry instead of Safari's permanent error. Install
+ * retries failed files once: a blip must not strand the worker.
+ *
  * Update path: no reload prompts. A new build precaches fully, then
  * skipWaiting()s and swaps the shell wholesale; open tabs are never
  * reloaded (a mid-session reload can lose a half-built sentence) — they
@@ -53,10 +59,25 @@ self.addEventListener("install", (e) => {
     if (!res.ok) throw new Error(`sw-manifest: HTTP ${res.status}`);
     const { files } = await res.json();
     const cache = await caches.open(SHELL);
-    // Every shell file is required — the manifest is the offline boot
-    // promise. Optional payloads (audio) live outside this install.
-    for (let i = 0; i < files.length; i += CHUNK) {
-      await Promise.all(files.slice(i, i + CHUNK).map((f) => precachePut(cache, f.path)));
+    /* Every shell file is required — the manifest is the offline boot
+     * promise; optional payloads (audio) live outside this install.
+     * A failed file gets one more pass: a network blip during install
+     * must not strand the whole worker — an uninstalled SW means a
+     * home-screen launch hits the bare network error with no way back
+     * (2026-10-04 founder report: the iPad icon went permanently dead). */
+    const fetchAll = async (list) => {
+      const failed = [];
+      for (let i = 0; i < list.length; i += CHUNK) {
+        await Promise.all(list.slice(i, i + CHUNK).map(async (f) => {
+          try { await precachePut(cache, f.path); } catch { failed.push(f); }
+        }));
+      }
+      return failed;
+    };
+    const failed = await fetchAll(files);
+    const left = await fetchAll(failed);
+    if (left.length) {
+      throw new Error(`precache: ${left.length} file(s) failed — ${left[0].path}`);
     }
     await self.skipWaiting(); // only after the whole shell is cached
   })());
@@ -217,12 +238,34 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(audioCacheFirst(req));
     return;
   }
-  if (req.mode === "navigate"
-      && (url.pathname === "/" || url.pathname === "/index.html")) {
-    e.respondWith(caches.open(SHELL)
-      .then((c) => c.match("/index.html"))
-      .then((hit) => hit || fetch(req)));
+  /* A navigation tries the network first — real documents (privacy,
+   * admin) must keep their own responses and real 404s must stay 404s.
+   * When the network can't answer — down, or the request is an app
+   * route — fall back to the shell, then the offline page rather than
+   * let the navigation reject: a home-screen web app has no browser
+   * chrome and Safari's error page has no way back, so the fallback
+   * carries the retry. (If the registration itself was evicted, nothing
+   * can intercept — the honest limit.) The '/' path is precached as
+   * 'index.html', so the shell answers offline. */
+  if (req.mode === "navigate") {
+    e.respondWith(serveNav(req));
     return;
   }
   e.respondWith(shellFirst(req));
 });
+
+async function serveNav(req) {
+  const cache = await caches.open(SHELL);
+  const u = new URL(req.url);
+  const exact = await cache.match(u.pathname === "/" ? "/index.html" : u.pathname);
+  if (exact) return exact;
+  try {
+    const res = await fetch(req);
+    if (res.ok) return res;
+  } catch { /* network down — fall through to the shell */ }
+  return (await cache.match("/index.html"))
+    ?? (await cache.match("/offline.html"))
+    ?? new Response(
+      "<!doctype html><title>Pip AAC</title>Pip can't reach the network — reconnect and reopen.",
+      { status: 503, headers: { "content-type": "text/html; charset=utf-8" } });
+}

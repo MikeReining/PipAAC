@@ -34,6 +34,7 @@ const PRECACHE_FILES = [
   "db.js",
   "catalog.json",
   "fresh_db.sqlite",
+  "offline.html",
   "form_answers.en.json",
   "suggest_answers.en.json",
   "feeling_voice.json",
