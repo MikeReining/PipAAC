@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "runId": "zoe-seed-2026-10-04-o0-n10",
+  "label": "Zoe seed 1–10",
+  "note": "Pilot seed — Zoe, plain only, not published",
+  "batch": "elevenlabs-tiles-zoe",
+  "createdAt": "2026-10-04T02:11:29.540Z",
+  "voice": {
+    "label": "Zoe",
+    "voice_id": "fkNQrdHI0J7vOhlSK5fE",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": 1,
+      "spokenText": "I",
+      "slug": "i",
+      "takeRel": "elevenlabs-tiles-zoe/takes/i_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 2,
+      "spokenText": "you",
+      "slug": "you",
+      "takeRel": "elevenlabs-tiles-zoe/takes/you_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 3,
+      "spokenText": "me",
+      "slug": "me",
+      "takeRel": "elevenlabs-tiles-zoe/takes/me_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 4,
+      "spokenText": "my",
+      "slug": "my",
+      "takeRel": "elevenlabs-tiles-zoe/takes/my_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 5,
+      "spokenText": "mine",
+      "slug": "mine",
+      "takeRel": "elevenlabs-tiles-zoe/takes/mine_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 6,
+      "spokenText": "he",
+      "slug": "he",
+      "takeRel": "elevenlabs-tiles-zoe/takes/he_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 7,
+      "spokenText": "she",
+      "slug": "she",
+      "takeRel": "elevenlabs-tiles-zoe/takes/she_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 8,
+      "spokenText": "it",
+      "slug": "it",
+      "takeRel": "elevenlabs-tiles-zoe/takes/it_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 9,
+      "spokenText": "we",
+      "slug": "we",
+      "takeRel": "elevenlabs-tiles-zoe/takes/we_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 10,
+      "spokenText": "they",
+      "slug": "they",
+      "takeRel": "elevenlabs-tiles-zoe/takes/they_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    }
+  ]
+}

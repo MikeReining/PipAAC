@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "runId": "zoe-tricky-probe",
+  "label": "Zoe tricky probe (9)",
+  "note": "Pilot seed — Zoe, plain only, not published",
+  "batch": "elevenlabs-tiles-zoe",
+  "createdAt": "2026-10-04T02:11:39.928Z",
+  "voice": {
+    "label": "Zoe",
+    "voice_id": "fkNQrdHI0J7vOhlSK5fE",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": 619,
+      "spokenText": "a",
+      "slug": "a",
+      "takeRel": "elevenlabs-tiles-zoe/takes/a_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 620,
+      "spokenText": "an",
+      "slug": "an",
+      "takeRel": "elevenlabs-tiles-zoe/takes/an_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 176,
+      "spokenText": "cough",
+      "slug": "cough",
+      "takeRel": "elevenlabs-tiles-zoe/takes/cough_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 262,
+      "spokenText": "laugh",
+      "slug": "laugh",
+      "takeRel": "elevenlabs-tiles-zoe/takes/laugh_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 662,
+      "spokenText": "fries",
+      "slug": "fries",
+      "takeRel": "elevenlabs-tiles-zoe/takes/fries_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 527,
+      "spokenText": "wet",
+      "slug": "wet",
+      "takeRel": "elevenlabs-tiles-zoe/takes/wet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 32,
+      "spokenText": "read",
+      "slug": "read",
+      "takeRel": "elevenlabs-tiles-zoe/takes/read_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 30,
+      "spokenText": "open",
+      "slug": "open",
+      "takeRel": "elevenlabs-tiles-zoe/takes/open_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 669,
+      "spokenText": "close",
+      "slug": "close",
+      "takeRel": "elevenlabs-tiles-zoe/takes/close_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    }
+  ]
+}
