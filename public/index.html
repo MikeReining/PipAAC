@@ -63,16 +63,24 @@
         (document.getElementById("app") ?? document.body).append(note);
       }, waited ? 4000 : 8000);
       addEventListener("load", () => bootWatch(0));
-      // 036 — app-shell service worker. Registers after load so the
-      // precache install never races the module boot; update() makes each
-      // visit check for a new shell. A new build waits for all tabs to
-      // close — never reloads mid-session (036 § D, no toast).
+      // 036/041 A1 — app-shell service worker. Registers only after the
+      // board's first frame is interactive (pip:board-ready from
+      // board.js) and the main thread is idle — the precache install
+      // never competes with the first boot. update() makes each visit
+      // check for a new shell. A new build waits for all tabs to close —
+      // never reloads mid-session (036 § D, no toast).
+      // __pipSwReg is the registration timestamp the speed gate reads.
       if ("serviceWorker" in navigator && isSecureContext) {
-        addEventListener("load", () => {
+        const registerSw = () => {
+          window.__pipSwReg = performance.now();
           navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" })
             .then((reg) => reg.update())
             .catch(() => {});
-        });
+        };
+        addEventListener("pip:board-ready", () => {
+          (window.requestIdleCallback || ((fn) => setTimeout(fn, 50)))(
+            registerSw, { timeout: 2000 });
+        }, { once: true });
       }
     </script>
   </head>

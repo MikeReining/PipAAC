@@ -46,6 +46,13 @@ export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, 
     c.append(play);
     if (v.id === getVoiceId()) {
       c.append(el("span", "voice-badge current", "In use"));
+    } else if (!navigator.onLine) {
+      // 041 A3 — the new voice's clips live on the network. Offline the
+      // card greys and says why; it never pretends a switch can happen.
+      const pick = el("button", "btn voice-pick", "Needs Wi-Fi");
+      pick.disabled = true;
+      c.classList.add("offline");
+      c.append(pick);
     } else {
       const pick = el("button", "btn voice-pick", "Use this voice");
       // 028 § 5.4: chooseVoice waits for the new voice's clips before
@@ -65,12 +72,24 @@ export function mountVoice({ db, locale, open, getVoiceId, chooseVoice, sample, 
     const soon = $("voice-soon");
     soon.replaceChildren(...coming.map((v) => card(v, { coming: true })));
     $("voice-soon-row").hidden = !soon.children.length;
+    let offlineNote = $("voice-offline-note");
+    if (!offlineNote) {
+      offlineNote = el("p", "hint");
+      offlineNote.id = "voice-offline-note";
+      offlineNote.textContent = "Changing voices needs Wi-Fi.";
+      now.after(offlineNote);
+    }
+    offlineNote.hidden = navigator.onLine;
   }
 
   function openPicker() {
     renderSheet();
     open("voiceform");
   }
+
+  // Wi-Fi state can change mid-pick — repaint the cards when it does.
+  addEventListener("online", renderSheet);
+  addEventListener("offline", renderSheet);
 
   $("voice-change").addEventListener("click", openPicker);
   $("voice-hear").addEventListener("click", () => sample(getVoiceId()));

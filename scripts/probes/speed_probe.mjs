@@ -206,9 +206,10 @@ const repeat = await pollUntil(async () => {
 }, 60_000);
 if (!repeat) bail("repeat launch: board never visible", { marks: await marks() });
 const repeatBoard = Math.max(repeat.tile, repeat.picture);
-// Read the SW-registration stamp in THIS document before scenario 3
-// navigates away (index.html sets window.__pipSwReg — A1).
-const swReg = await evalJs("window.__pipSwReg ?? null");
+// index.html stamps window.__pipSwReg when registration starts — the
+// board-ready + idle hop takes a beat, so poll briefly (A1).
+const swReg = await pollUntil(() => evalJs("window.__pipSwReg ?? null")
+  .then((v) => (v == null || v?.__err) ? null : v), 15_000);
 const language = repeat.language ?? (await pollUntil(async () =>
   (await marks()).language ?? null, 30_000)) ?? null;
 
@@ -284,11 +285,11 @@ const checks = [
   ["add a person ≤ budget", addBoard <= BUDGETS.addPersonMs],
   ["requests before board ≤ budget", reqsBeforeBoardExact <= BUDGETS.requestsBeforeBoard],
   ["no welcome for an added person", !sawWelcome],
-  // Registration is timestamped by index.html (A1). Until that lands,
-  // this check reads the page's own audio fetches (tour/demo clips) —
-  // also required to be zero before the board.
+  // index.html stamps window.__pipSwReg when registration starts; it must
+  // follow the board DOM (tile mark) — the precache never competes with
+  // the first boot fetches (041 A1).
   ["SW registered only after the board",
-    swReg == null ? audioBeforeBoard === 0 : swReg >= repeatBoard],
+    swReg != null && swReg >= repeat.tile],
   ["language ready within budget of the board",
     language == null || (language - repeatBoard) <= BUDGETS.languageReadyAfterBoardMs],
 ];

@@ -5,6 +5,15 @@
  * cache. Everything else — POSTs, /api/*, /admin/*, the relay WS — falls
  * through to the network; callers degrade honestly per the phase doc.
  *
+ * 041 Slice A — audio is out of the shell. The offline promise is the
+ * ACTIVE voice only: when the page announces it (postMessage
+ * "pip-active-voice"), that voice's clips fill `pip-audio-<voice>-<hash>`
+ * in the background — after the board, never before. `sw-audio.json`
+ * carries each voice's clip list and its hash; a clip-list change gets a
+ * new cache name, so a shell deploy never re-downloads audio and a stale
+ * voice cache is pruned on the next fill. Voices already cached stay —
+ * an online switch back is instant.
+ *
  * Update path: no reload prompts. A new build precaches fully, then
  * skipWaiting()s and swaps the shell wholesale; open tabs are never
  * reloaded (a mid-session reload can lose a half-built sentence) — they
@@ -20,7 +29,8 @@ if (!self.SW_BUILD) throw new Error("sw-build.js missing SW_BUILD");
 
 const SHELL = `pip-shell-${self.SW_BUILD}`;
 const IMG_CACHE = "pip-img-v1";
-const CHUNK = 48; // install fetches per parallel batch
+const AUDIO_PREFIX = "pip-audio-"; // + <voice>-<clip-list-hash>
+const CHUNK = 6; // install/fill fetches per parallel batch (041 A1)
 
 /* fetch() transparently decodes content codings, so a stored response
  * whose headers still claim gzip would lie about its body (SW replays do
@@ -43,6 +53,8 @@ self.addEventListener("install", (e) => {
     if (!res.ok) throw new Error(`sw-manifest: HTTP ${res.status}`);
     const { files } = await res.json();
     const cache = await caches.open(SHELL);
+    // Every shell file is required — the manifest is the offline boot
+    // promise. Optional payloads (audio) live outside this install.
     for (let i = 0; i < files.length; i += CHUNK) {
       await Promise.all(files.slice(i, i + CHUNK).map((f) => precachePut(cache, f.path)));
     }
@@ -56,8 +68,60 @@ self.addEventListener("activate", (e) => {
     await Promise.all(keys
       .filter((k) => k.startsWith("pip-shell-") && k !== SHELL)
       .map((k) => caches.delete(k)));
+    // The voice caches survive deploys — the shell build does not own
+    // them (041 A4). Stale per-voice versions prune inside fillVoice.
     await clients.claim();
   })());
+});
+
+/* --- per-voice audio (041 A2) ------------------------------------ */
+let audioMap = null;          // /sw-audio.json, memoized per SW lifetime
+let activeVoice = null;
+const filling = new Set();    // voice ids with a fill in flight
+
+async function loadAudioMap() {
+  if (!audioMap) {
+    const res = await fetch("/sw-audio.json", { cache: "no-cache" });
+    if (res.ok) audioMap = (await res.json()).voices ?? {};
+  }
+  return audioMap;
+}
+
+/** Fill the active voice's cache in the background — best effort: a
+ *  clip that misses is skipped (that word mints or stays silent once),
+ *  it never strands the others. Stale versions of THIS voice prune;
+ *  other voices keep their caches. */
+async function fillVoice(voice) {
+  if (!voice || filling.has(voice)) return;
+  const map = await loadAudioMap();
+  const entry = map[voice];
+  if (!entry) return;
+  const name = `${AUDIO_PREFIX}${voice}-${entry.hash}`;
+  filling.add(voice);
+  try {
+    const cache = await caches.open(name);
+    for (const k of await caches.keys()) {
+      if (k.startsWith(`${AUDIO_PREFIX}${voice}-`) && k !== name) await caches.delete(k);
+    }
+    for (let i = 0; i < entry.files.length; i += CHUNK) {
+      await Promise.all(entry.files.slice(i, i + CHUNK).map(async (path) => {
+        if (await cache.match(path)) return;
+        try {
+          const res = await fetch(path);
+          if (res.ok) await cache.put(path, res);
+        } catch { /* offline or a missing clip — skipped, see header */ }
+      }));
+    }
+  } finally {
+    filling.delete(voice);
+  }
+}
+
+self.addEventListener("message", (e) => {
+  if (e.data?.type === "pip-active-voice") {
+    activeVoice = e.data.voice;
+    e.waitUntil?.(fillVoice(activeVoice));
+  }
 });
 
 /* Cached media must still answer Range requests — <audio> asks for
@@ -101,6 +165,28 @@ async function shellFirst(req) {
   return fetch(req);
 }
 
+/* Voice caches are content-keyed — a path is in one voice's list or
+ * none. A network hit lands in the ACTIVE voice's cache when the map
+ * owns the path (it would fetch it next anyway); otherwise the audio
+ * plays once from the network and stays out of every cache. */
+async function audioCacheFirst(req) {
+  const u = new URL(req.url);
+  const keys = (await caches.keys()).filter((k) => k.startsWith(AUDIO_PREFIX));
+  for (const k of keys) {
+    const hit = await (await caches.open(k)).match(u.origin + u.pathname);
+    if (hit) return maybeRange(req, hit);
+  }
+  const res = await fetch(req);
+  if (res.ok && activeVoice) {
+    const entry = (await loadAudioMap().catch(() => null))?.[activeVoice];
+    if (entry?.files.includes(u.pathname)) {
+      const cache = await caches.open(`${AUDIO_PREFIX}${activeVoice}-${entry.hash}`);
+      await cache.put(u.origin + u.pathname, res.clone());
+    }
+  }
+  return res;
+}
+
 async function imgCacheFirst(req) {
   const cache = await caches.open(IMG_CACHE);
   const hit = await cache.match(req);
@@ -125,6 +211,10 @@ self.addEventListener("fetch", (e) => {
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/admin/")
       || url.pathname.startsWith("/accounts/")
       || ["/health", "/research", "/users", "/restore", "/pair"].includes(url.pathname)) {
+    return;
+  }
+  if (url.pathname.startsWith("/audio/")) {
+    e.respondWith(audioCacheFirst(req));
     return;
   }
   if (req.mode === "navigate"

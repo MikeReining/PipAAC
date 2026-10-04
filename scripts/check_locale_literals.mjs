@@ -17,7 +17,7 @@ const SKIP = new Set(["vendor"]);
 // contain voice/locale ids as data — the gate scans code, not cargo.
 const SKIP_FILES = new Set([
   "catalog.json", "phrase_table.en.json", "form_table.en.json.gz",
-  "feeling_voice.json",
+  "feeling_voice.json", "sw-audio.json",
 ]);
 
 const PATTERNS = [/locale\s*=\s*['"]en['"]/, /voi_default_en/];

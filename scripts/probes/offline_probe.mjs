@@ -77,12 +77,25 @@ const warm = await evalJs(`(async () => {
   const m = await (await fetch('/sw-manifest.json')).json();
   const c = await caches.open('pip-shell-' + m.buildId);
   const keys = await c.keys();
-  const audio = m.files.find((f) => f.path.startsWith('/audio/'))?.path;
-  return { buildId: m.buildId, expected: m.files.length, cached: keys.length, audio };
+  const am = await (await fetch('/sw-audio.json')).json();
+  const voice = 'voi_default_en'; // a fresh install speaks the default voice
+  const entry = am.voices[voice];
+  return { buildId: m.buildId, expected: m.files.length, cached: keys.length,
+    voice, audioCache: 'pip-audio-' + voice + '-' + entry.hash,
+    audioExpected: entry.files.length, audio: entry.files[0] };
 })()`);
 console.log("precache:", JSON.stringify(warm));
 if (warm.cached !== warm.expected)
   fail(`precache incomplete — ${warm.cached}/${warm.expected} cached`);
+
+// 041 A2 — the active voice's clips fill AFTER the board, in their own
+// cache. The offline promise is that voice, so the fill must land first.
+const audioFull = () => evalJs(`(async () => {
+  const c = await caches.open(${JSON.stringify(warm.audioCache)});
+  return (await c.keys()).length >= ${warm.audioExpected};
+})()`);
+if (!(await poll(audioFull, 480)))
+  fail(`active-voice audio fill never completed — ${warm.audioCache}`);
 
 // Go offline on the page AND on the SW target — a SW-side fetch falling
 // through to the network must fail honestly.

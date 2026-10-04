@@ -237,6 +237,14 @@ const scheduleStatsRefresh = () => {
 const { locale } = resolveProfile(db);
 // The board's voice (Settings → Talking → Voice); a synced change re-resolves it.
 let { voiceId } = resolveProfile(db);
+/* 041 A2 — tell the service worker which voice this person speaks with,
+ * so its clips fill their `pip-audio-<voice>` cache in the background.
+ * Fires once the SW controls the page; every voice switch re-announces. */
+const announceVoice = () => {
+  navigator.serviceWorker?.ready
+    .then((reg) => reg.active?.postMessage({ type: "pip-active-voice", voice: voiceId }))
+    .catch(() => {});
+};
 document.documentElement.lang = locale;
 const sentence = []; // [{kind, id, text}]
 
@@ -1316,6 +1324,12 @@ const voiceUi = mountVoice({
   onLocked: () => { close("voiceform"); settingsUi.show("lifetime"); },
   chooseVoice: async (id) => {
     if (id === voiceId) return;
+    // 041 A3 — a new voice's clips need the network; offline the picker
+    // greys and this is the backstop. Honest, never a silent stall.
+    if (!navigator.onLine) {
+      toast("Changing voices needs Wi-Fi.");
+      return;
+    }
     // 028 § 5.4: the old voice keeps playing while the new voice's clips
     // fill (hits for seeded words, mints for the family's own). Only a
     // clean fill swaps — failures leave the old voice active.
@@ -1337,6 +1351,7 @@ const voiceUi = mountVoice({
     tileSweep(id).catch(() => {}); // evict the new voice's rejects too
     setSetting(db, "preferred_voice_id", id);
     voiceId = resolveProfile(db).voiceId;
+    announceVoice(); // 041 A3 — the new voice's clips fill in the background
     settingsUi.renderNav();
   },
   sample: sampleVoice,
@@ -1467,6 +1482,33 @@ setInterval(() => {
     rerenderView();
   }
 }, 30000);
+
+/* 041 A1/A2 — the service worker and the active voice's offline audio
+ * wait for the first board frame. board-ready fires once the first
+ * tile picture is actually on screen (or a slow-image cap — a stuck
+ * decode must not hold offline support hostage). The voice announce
+ * goes once the SW controls us; each later voice switch re-announces. */
+{
+  let readyFired = false;
+  const fireBoardReady = () => {
+    if (readyFired) return;
+    readyFired = true;
+    dispatchEvent(new Event("pip:board-ready"));
+  };
+  const armReady = () => {
+    if (readyFired) return;
+    const img = document.querySelector("#grid .cell .tart img");
+    if (!img || (img.complete && img.naturalWidth > 0)) return fireBoardReady();
+    img.addEventListener("load", fireBoardReady, { once: true });
+    setTimeout(fireBoardReady, 2500);
+  };
+  // RAF can starve on a hidden or heavily throttled page — the timer is
+  // the honest fallback either way.
+  requestAnimationFrame(armReady);
+  setTimeout(armReady, 600);
+  addEventListener("pip:board-ready", announceVoice, { once: true });
+  navigator.serviceWorker?.addEventListener("controllerchange", announceVoice);
+}
 
 // Console handle for works tests and founder debugging — read-only access
 // to the live db and resolved profile. Product truth still flows through

@@ -38,7 +38,6 @@ const PRECACHE_FILES = [
   "manifest.webmanifest",
 ];
 const PRECACHE_DIRS = [
-  "audio",
   "board",
   "brand",
   "fonts",
@@ -47,6 +46,12 @@ const PRECACHE_DIRS = [
   "symbols",
   "vendor",
 ];
+/** 041 Slice A: audio is deliberately out of the shell precache. Each
+ *  voice's clips fill their own `pip-audio-<voice>-<hash>` cache after
+ *  the board appears — sw-audio.json below is the map. */
+const EXCLUDE_DIRS = new Set([
+  "audio",
+]);
 /** Named exclusions — SW machinery and the raw .gz source the Worker
  *  route reads. */
 const EXCLUDE_FILES = new Set([
@@ -54,6 +59,7 @@ const EXCLUDE_FILES = new Set([
   "sw.js",
   "sw-build.js",
   "sw-manifest.json",
+  "sw-audio.json",
   "form_table.en.json.gz",
 ]);
 
@@ -79,7 +85,9 @@ for (const entry of readdirSync(PUBLIC).sort()) {
   const stat = statSync(join(PUBLIC, entry));
   if (stat.isDirectory()) {
     if (!PRECACHE_DIRS.includes(entry)) {
-      failures.push(`unclassified public/${entry}/ — add to PRECACHE_DIRS or name its exclusions`);
+      if (!EXCLUDE_DIRS.has(entry)) {
+        failures.push(`unclassified public/${entry}/ — add to PRECACHE_DIRS or name its exclusions`);
+      }
       continue;
     }
     const under = [];
@@ -109,6 +117,27 @@ for (const entry of readdirSync(PUBLIC).sort()) {
 }
 files.sort((a, b) => a.path.localeCompare(b.path));
 
+/* Per-voice audio map for the background fill (041 A2/A4). The shell
+ * never carries clips; the SW reads this file when the page announces
+ * the active voice, then fills `pip-audio-<voice>-<hash>`. The hash is
+ * the voice's clip-list identity — a voice whose clips changed gets a
+ * new cache, untouched voices keep theirs. */
+const catalog = JSON.parse(readFileSync(join(PUBLIC, "catalog.json"), "utf8"));
+const audioVoices = {};
+for (const clip of catalog.clips) {
+  if (clip.status !== "ready") continue;
+  (audioVoices[clip.voice_id] ??= []).push({ path: `/${clip.key}`, sha256: clip.sha256 });
+}
+const swAudio = { voices: {} };
+for (const [voice, clips] of Object.entries(audioVoices)) {
+  clips.sort((a, b) => a.path.localeCompare(b.path));
+  const hash = sha256(Buffer.from(
+    clips.map((c) => `${c.sha256} ${c.path}`).join("\n"))).slice(0, 12);
+  swAudio.voices[voice] = { hash, files: clips.map((c) => c.path) };
+}
+// Compact — the map is SW cargo, not a human-reviewed document.
+const swAudioJson = JSON.stringify(swAudio) + "\n";
+
 const buildId = `r${RELEASE}-${sha256(
   Buffer.from(files.map((f) => `${f.sha256} ${f.path}`).join("\n")),
 ).slice(0, 12)}`;
@@ -126,6 +155,7 @@ const readOr = (name) => {
 const drift = [
   ["sw-manifest.json", manifest],
   ["sw-build.js", swBuild],
+  ["sw-audio.json", swAudioJson],
 ].filter(([name, want]) => readOr(name) !== want).map(([name]) => name);
 
 const stats = `${files.length} files, ${(files.reduce((s, f) => s + f.bytes, 0) / 1048576).toFixed(1)} MB, build ${buildId}`;
@@ -138,5 +168,6 @@ if (process.argv.includes("--check")) {
 } else {
   writeFileSync(join(PUBLIC, "sw-manifest.json"), manifest, "utf8");
   writeFileSync(join(PUBLIC, "sw-build.js"), swBuild, "utf8");
+  writeFileSync(join(PUBLIC, "sw-audio.json"), swAudioJson, "utf8");
   console.log(`sw-manifest: ${stats}`);
 }
