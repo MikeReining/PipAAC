@@ -45,7 +45,8 @@ export const KEYMAPS = {
 };
 
 /**
- * Answer keys (row 6, far right — slots 58–59, all locales, every order):
+ * Answer keys (bottom-right corner — slots 48–49, after ⌫; all locales,
+ * every order):
  * yes, no — sense ids, never English text, so each locale shows its own
  * label, drawn as the word's board tile. Founder 2026-10-03 dropped
  * wait-I'm-spelling, guess-my-word and oops (still catalog words).

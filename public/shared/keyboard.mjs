@@ -1,14 +1,15 @@
 /**
  * Pip keys — the board-mode keyboard (docs/product/Profile_Presentation_Modes.md
  * § 4). Pure module: no DOM, no db. Key maps are data per locale in
- * keymaps.mjs; this module resolves them and lays out the 60 slots.
+ * keymaps.mjs; this module resolves them and lays out the 50 slots
+ * (5 rows of 10).
  */
 import { KEYMAPS, PARTNER_SENSES } from "./keymaps.mjs";
 
 const DIGITS = "1234567890";
 const ROW5_START = 40;
-const BACKSPACE_SLOT = 48;
-const PARTNER_ROW_START = 50;
+const BACKSPACE_SLOT = 47;
+const ANSWER_START = 48; // yes, no — the bottom-right corner
 
 /**
  * Key-map lookup: exact BCP 47 tag first, then the language subtag
@@ -24,7 +25,7 @@ export function resolveKeymap(locale) {
 /**
  * One entry per key (not per cell): { slot, span, kind, value }.
  * kind: "char" | "dead" | "space" | "backspace" | "partner".
- * Space's span is computed so it always ends at slot 47.
+ * Space's span is computed so it always ends at slot 46.
  *
  * @returns {object[] | null} null when the locale has no key map.
  */
@@ -48,11 +49,9 @@ export function keyMap(locale, order = "standard") {
     keys.push({ slot: slot++, span: 1, kind: "char", value: ch });
   }
   keys.push({ slot, span: BACKSPACE_SLOT - slot, kind: "space", value: " " });
-  keys.push({ slot: BACKSPACE_SLOT, span: 2, kind: "backspace", value: "Backspace" });
-  // Row 6 holds only the answer keys, at its right end; the rest is empty.
-  const answerStart = PARTNER_ROW_START + 10 - PARTNER_SENSES.length;
+  keys.push({ slot: BACKSPACE_SLOT, span: 1, kind: "backspace", value: "Backspace" });
   PARTNER_SENSES.forEach((id, i) => {
-    keys.push({ slot: answerStart + i, span: 1, kind: "partner", value: id });
+    keys.push({ slot: ANSWER_START + i, span: 1, kind: "partner", value: id });
   });
   return keys;
 }

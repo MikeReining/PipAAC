@@ -1,7 +1,7 @@
 /**
- * Phase 004 slice 1 Works Test — every key map covers the 60 slots
- * exactly once (row 6 holds only yes/no at its right end), keeps the fixed
- * skeleton (digits, space, ⌫, yes/no),
+ * Phase 004 slice 1 Works Test — every key map covers the 50 slots
+ * exactly once, keeps the fixed skeleton (digits, space, ⌫, yes/no in the
+ * bottom-right corner),
  * and never loses a key between standard and ABC order.
  */
 import { test } from "node:test";
@@ -18,19 +18,19 @@ import {
 const LOCALES = Object.keys(KEYMAPS);
 const ORDERS = ["standard", "abc"];
 
-test("every slot is covered by exactly one key; row 6 is yes, no at the right", () => {
+test("every slot is covered by exactly one key; yes, no end the last row", () => {
   for (const locale of LOCALES) {
     for (const order of ORDERS) {
-      const cover = new Array(60).fill(0);
+      const cover = new Array(50).fill(0);
       for (const k of keyMap(locale, order)) {
         for (let s = k.slot; s < k.slot + k.span; s++) cover[s]++;
       }
       cover.forEach((n, s) =>
-        assert.equal(n, s >= 50 && s < 58 ? 0 : 1, `${locale}/${order}: slot ${s} covered ${n} times`),
+        assert.equal(n, 1, `${locale}/${order}: slot ${s} covered ${n} times`),
       );
       const answers = keyMap(locale, order).filter((k) => k.kind === "partner")
         .map((k) => `${k.slot}:${k.value}`);
-      assert.deepEqual(answers, ["58:sns_0073", "59:sns_0072"], `${locale}/${order}: yes, no`);
+      assert.deepEqual(answers, ["48:sns_0073", "49:sns_0072"], `${locale}/${order}: yes, no`);
     }
   }
 });
@@ -58,30 +58,30 @@ test("every alphabet letter and every digit appears exactly once", () => {
   }
 });
 
-test("⌫ is fixed at 48–49; space ends at 47 and is at least 4 wide", () => {
+test("⌫ is fixed at 47; space ends at 46 and is at least 3 wide", () => {
   for (const locale of LOCALES) {
     for (const order of ORDERS) {
       const keys = keyMap(locale, order);
       const back = keys.find((k) => k.kind === "backspace");
-      assert.equal(back.slot, 48, `${locale}/${order}: ⌫ slot`);
-      assert.equal(back.span, 2, `${locale}/${order}: ⌫ span`);
+      assert.equal(back.slot, 47, `${locale}/${order}: ⌫ slot`);
+      assert.equal(back.span, 1, `${locale}/${order}: ⌫ span`);
       const space = keys.find((k) => k.kind === "space");
-      assert.equal(space.slot + space.span - 1, 47, `${locale}/${order}: space ends at 47`);
-      assert.ok(space.span >= 4, `${locale}/${order}: space at least 4 wide`);
+      assert.equal(space.slot + space.span - 1, 46, `${locale}/${order}: space ends at 46`);
+      assert.ok(space.span >= 3, `${locale}/${order}: space at least 3 wide`);
     }
   }
 });
 
-test("rows 1 and 6 are identical across all locales and orders", () => {
+test("row 1, ⌫ and yes/no are identical across all locales and orders", () => {
   const baseline = keyMap("en", "standard")
-    .filter((k) => k.slot < 10 || k.slot >= 50)
+    .filter((k) => k.slot < 10 || k.slot >= 47)
     .map((k) => `${k.slot}:${k.span}:${k.kind}:${k.value}`);
   for (const locale of LOCALES) {
     for (const order of ORDERS) {
       const rows = keyMap(locale, order)
-        .filter((k) => k.slot < 10 || k.slot >= 50)
+        .filter((k) => k.slot < 10 || k.slot >= 47)
         .map((k) => `${k.slot}:${k.span}:${k.kind}:${k.value}`);
-      assert.deepEqual(rows, baseline, `${locale}/${order} rows 1 and 6`);
+      assert.deepEqual(rows, baseline, `${locale}/${order} row 1, ⌫, yes/no`);
     }
   }
 });

@@ -1,5 +1,5 @@
 /* Keyboard: a board mode, same 10×6 geometry, never a modal. */
-#kb { flex: 1; min-height: 0; display: none; grid-template-columns: repeat(10, minmax(0, 1fr)); grid-template-rows: repeat(6, minmax(0, 1fr)); gap: var(--gap); }
+#kb { flex: 1; min-height: 0; display: none; grid-template-columns: repeat(10, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); gap: var(--gap); }
 body.kb #grid { display: none; }
 body.kb #kb { display: grid; }
 /* Keycaps size their glyph from the key's own box

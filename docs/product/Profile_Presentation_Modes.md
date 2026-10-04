@@ -108,7 +108,7 @@ name.
 
 ### 4.2 Pip keys (default)
 
-Every key is one cell, except space (at least 4 wide) and ⌫ (2 wide).
+Every key is one cell, except space (at least 3 wide).
 Numbers, letters, and punctuation are on one page, with no folders. Keycaps
 are lowercase, in a literacy font with the single-story *a* and *g* that
 covers every letter below. The glyph fills at least half the key height.
@@ -120,8 +120,8 @@ row 1   1   2   3   4   5   6   7   8   9   0            same everywhere
 row 2   ┐
 row 3   │  the locale's letters (30 cells); spare cells take punctuation
 row 4   ┘
-row 5   [locale punctuation][──── space ────][ ⌫ ]        ⌫ never moves
-row 6                                           [yes][no]   board tiles
+row 5   [locale punctuation][── space ──][⌫][yes][no]   ⌫ yes no never move
+                                                yes / no are board tiles
 ```
 
 English standard order, for example:
@@ -131,8 +131,7 @@ English standard order, for example:
  q   w   e   r   t   y   u   i   o   p
  a   s   d   f   g   h   j   k   l   '
  z   x   c   v   b   n   m   ,   .   ?
- !   -  [──────── space ────────] [ ⌫ ]
-                                     [yes] [no]
+ !   -  [──────── space ────────]  ⌫  yes  no
 ```
 
 | Locale | Standard letters | Extra keys | Row 5 punctuation |
@@ -153,8 +152,8 @@ who knows the alphabet song find letters today, but it does not carry over
 to any other device. Changing letter order moves every letter, so the Parent
 corner warns: pick one and keep it.
 
-**yes / no.** Typing is slow, and partners guess ("is it pizza?"). Row 6
-holds only **yes** and **no**, at its right end, drawn as the words' own
+**yes / no.** Typing is slow, and partners guess ("is it pizza?"). **yes**
+and **no** take the bottom-right corner, after ⌫, drawn as the words' own
 board tiles (same picture, color and label as on the board). A tap speaks
 right away and **does not change the sentence or the word in progress**.
 They are catalog senses referenced by id (`PARTNER_SENSES` in
@@ -162,7 +161,9 @@ They are catalog senses referenced by id (`PARTNER_SENSES` in
 locale cannot ship without labels and clips for both. Founder 2026-10-03
 dropped "wait, I'm spelling", "guess my word" and "oops": nobody could
 tell what they were for, and ⌫ already fixes a wrong key. They stay
-catalog words a family can add.
+catalog words a family can add. The keyboard keeps its own one-cell ⌫
+(founder asked 2026-10-03): it deletes one letter, while the sentence
+bar's ⌫ drops the whole word in progress and can be hidden in Settings.
 
 ### 4.3 Device keyboard
 

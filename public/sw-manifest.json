@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-dcc394313713",
+  "buildId": "r1-fee3fe364b08",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -24089,7 +24089,7 @@
     {
       "path": "/board/keyboard-ui.css",
       "bytes": 1786,
-      "sha256": "7b8c8aee9dd858924da0bf141c79d319c64a8c847ecc7d2771f5a0ef12098807"
+      "sha256": "d2892523eedcee9b6b5bbdbf6eb34d43c3db6cf896ec653f74948208d45b9f35"
     },
     {
       "path": "/board/keyboard-ui.js",
@@ -24779,13 +24779,13 @@
     },
     {
       "path": "/shared/keyboard.mjs",
-      "bytes": 7339,
-      "sha256": "76cd9fe05765eca4ba3532209b5aae52e7ef9365b21cf67b7f1bb8bdba6565f1"
+      "bytes": 7246,
+      "sha256": "83dabc157be3bdd8c8561a90eb6d5ee4eeb2c1e82b1b13b0b546bb2f10ab760d"
     },
     {
       "path": "/shared/keymaps.mjs",
-      "bytes": 2384,
-      "sha256": "b1be13b4a91bd22c1fb6f936c508c7a52a97c0475df395b5006f58485a6a9393"
+      "bytes": 2401,
+      "sha256": "64ee93dd39ce811f218e542ecb24d2f4f233ac87db3eefd90a4ea4fff9c489f4"
     },
     {
       "path": "/shared/library.mjs",
