@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-e12198fa7d71",
+  "buildId": "r1-025651d79d26",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -24188,13 +24188,13 @@
     },
     {
       "path": "/board/settings-sync.js",
-      "bytes": 10988,
-      "sha256": "8c134c6d4952b8af2a0d43e7246c76ed059b88a8eb52c0263170a011753ed958"
+      "bytes": 11273,
+      "sha256": "383f15548cf4a40d6e44077ccea87abee7eb02b3c01bb0569fca2aa648b95e1d"
     },
     {
       "path": "/board/settings-ui.css",
-      "bytes": 20059,
-      "sha256": "8b7a23db880a366e770e639bf9affb1e7d9a0f31682cce7ec25021a397c89e48"
+      "bytes": 20096,
+      "sha256": "0b0958dff553ada69282f3b3959fb6f65fc978c93c6d51aaed38913ef264315a"
     },
     {
       "path": "/board/settings-ui.js",
@@ -24684,8 +24684,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 65572,
-      "sha256": "a454da26ac824f0b706e3d69511c3bed5121220195f14f1951d173f873c0589e"
+      "bytes": 65657,
+      "sha256": "8279cff39443b5eac8bbaffd9683cd2ea8b6a10b1aae4c5a238868271ba5e4d3"
     },
     {
       "path": "/manifest.webmanifest",
@@ -24709,8 +24709,8 @@
     },
     {
       "path": "/shared/bar.mjs",
-      "bytes": 2473,
-      "sha256": "bf421d158e929fd1cd6bee2cb9170a043008ac2152e92ca04261c06b1ec0ba6a"
+      "bytes": 2873,
+      "sha256": "a4f3435d0b39b3833e1a193fb00fe8b924951806222841d2bdc71988ae4346d5"
     },
     {
       "path": "/shared/bulk.mjs",
@@ -24934,8 +24934,8 @@
     },
     {
       "path": "/shared/voices.mjs",
-      "bytes": 2229,
-      "sha256": "6cb4df00be2171e10658ac09d0a288e00eba3b73a0f50c407f521ebf3b91ecc5"
+      "bytes": 2350,
+      "sha256": "91a8f58f2f555dec88e4550452b42e2955741263014f04252696f2414ff616ef"
     },
     {
       "path": "/shared/wincard.mjs",
