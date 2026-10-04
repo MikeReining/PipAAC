@@ -79,6 +79,7 @@ import { mountVoice } from "./board/voice-ui.js";
 import { mountLifetime, mountTrialClock } from "./board/lifetime-ui.js";
 import { mountPictureFill } from "./board/picture-fill.js";
 import { mountSpeech } from "./board/speech.js";
+import { reportDbHealth } from "./board/db-health.js";
 import { mountSpotlightLayer } from "./board/spotlight-layer.js";
 import { mountPin } from "./board/pin.js";
 import { mountEditShared } from "./board/edit-shared.js";
@@ -147,8 +148,8 @@ if (navigator.locks?.request) {
 }
 navigator.storage?.persist?.().catch(() => {});
 
-const { db, catalog, flush: flushDb, loadLanguage } = await bootDb(userStore, me.id);
-// 041 B3 — the language tables load after the first frame; until they
+const dbHandle = await bootDb(userStore, me.id);
+const { db, catalog, flush: flushDb, loadLanguage, dbHealth } = dbHandle;
 // land a tap speaks the base word and the strip uses her own history.
 let phrases = null, formTable = null;
 
@@ -430,6 +431,7 @@ const {
   renderGrid: (...a) => renderGrid(...a), // grid mounts below — lazy
   applyLikely: (...a) => applyLikely(...a),
 });
+reportDbHealth(dbHandle, toast, flushDb); // 043 A — say what boot found
 
 /* Settings PIN gate + overlay helpers — public/board/pin.js. */
 const pin = mountPin({ live, toast });
@@ -1479,6 +1481,8 @@ editorUi = mountEditor({
     pending: ALL(db, "SELECT COUNT(*) AS n FROM sync_op WHERE relay_seq IS NULL")[0]?.n ?? 0,
     online: navigator.onLine,
     flushError: syncHealth().flushError,
+    saveBlocked: dbHealth().saveBlocked,
+    saveError: dbHealth().saveError,
   }),
   renderLibrary: () => libUi.renderLibrary(),
   invalidateIndex: () => kbUi.invalidateIndex(),
@@ -1562,6 +1566,7 @@ window.pip = {
   get user() { return me; },
   users: () => listUsers(userStore),
   flushDb,
+  dbHealth,
   repaint() { renderGrid(); renderStrip(); rerenderView(); },
   spotlight: {
     start(targets, name) {

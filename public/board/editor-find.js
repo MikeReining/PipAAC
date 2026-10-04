@@ -7,8 +7,12 @@ import { normalizeV1 } from "../shared/normalize.mjs";
 
 /** § 8 — say only what we know. Pending = ops the relay has not
  *  accepted yet (sync_op.relay_seq IS NULL). Never "on Maya's iPad":
- *  nothing tells us a device received it. */
-export function editorStatus({ linked, pending, online, flushError }) {
+ *  nothing tells us a device received it. 043 A: a board that cannot
+ *  persist (blocked or last save failed) outranks the sync states —
+ *  losing the local copy is worse than missing the relay. */
+export function editorStatus({ linked, pending, online, flushError, saveBlocked, saveError }) {
+  if (saveBlocked) return { text: "Not saving — saved board couldn't open", tone: "warn" };
+  if (saveError) return { text: "Couldn't save — keep this open", tone: "warn" };
   if (!linked) return { text: "Saved on this device", tone: "ok" };
   if (pending === 0) return { text: "✓ Saved", tone: "ok" };
   if (!online || flushError) return { text: "Offline — will sync", tone: "warn" };

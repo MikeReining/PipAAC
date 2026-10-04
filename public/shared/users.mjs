@@ -49,6 +49,7 @@ export function openUserStore() {
 
 const USER_PREFIX = "user/";
 const DB_PREFIX = "db/";
+const DB_PREV_SUFFIX = ".prev";
 
 /** All registry rows, last-opened first. */
 export async function listUsers(store) {
@@ -69,6 +70,11 @@ export const delUser = (store, id) => store.del(USER_PREFIX + id);
 export const getDbBytes = (store, id) => store.get(DB_PREFIX + id);
 export const putDbBytes = (store, id, bytes) => store.put(DB_PREFIX + id, bytes);
 export const delDbBytes = (store, id) => store.del(DB_PREFIX + id);
+/* 043 A — the previous copy: the bytes that last opened cleanly, kept
+ * beside the live one so a corrupt current save still has a way back. */
+export const getDbPrev = (store, id) => store.get(DB_PREFIX + id + DB_PREV_SUFFIX);
+export const putDbPrev = (store, id, bytes) => store.put(DB_PREFIX + id + DB_PREV_SUFFIX, bytes);
+export const delDbPrev = (store, id) => store.del(DB_PREFIX + id + DB_PREV_SUFFIX);
 
 /**
  * Create a registry row. The id is the future relay id — a 128-bit
@@ -104,6 +110,7 @@ export async function addUser(store, { id, name = "", photo = null, home = false
 export async function removeUser(store, id) {
   await delUser(store, id);
   await delDbBytes(store, id);
+  await delDbPrev(store, id);
 }
 
 export async function setHome(store, id) {

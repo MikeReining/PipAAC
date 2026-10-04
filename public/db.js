@@ -10,7 +10,7 @@
 import sqlite3InitModule from "/vendor/sqlite-wasm/sqlite3.mjs";
 import { importCatalog } from "./shared/import.mjs";
 import { reseedBuiltinGroups } from "./shared/groups.mjs";
-import { getDbBytes, putDbBytes } from "./shared/users.mjs";
+import { getDbBytes, getDbPrev, putDbBytes, putDbPrev } from "./shared/users.mjs";
 import { ADDITIVE_COLUMNS, beforeCleanBreak, migrateSchema, ensureAdditiveColumns } from "./shared/migrate.mjs";
 
 let handle = null;
@@ -53,35 +53,100 @@ export async function bootDb(userStore, userId) {
    * first frame, and the strip/grammar quietly upgrade when it lands.
    * B4: the shipped tables are the small ANSWER tables — the raw
    * corpora stay in data/ as build inputs and never reach the device. */
-  const [sqlite3, catalog, saved] = await Promise.all([
+  /* 043 A — a failed read is NOT a fresh install: the old code treated
+   * getDbBytes throwing like "no saved data", then the first flush
+   * overwrote the (probably intact) bytes. Read failure now boots a
+   * temporary board whose saves are blocked, so the stored copy is
+   * never touched. A corrupt current save falls back to the previous
+   * copy that last opened cleanly. */
+  let readFailed = false, restoredFromPrev = false, readError = null;
+  let saved = null, prev = null;
+  try {
+    [saved, prev] = await Promise.all([
+      getDbBytes(userStore, userId),
+      getDbPrev(userStore, userId),
+    ]);
+  } catch (err) {
+    readFailed = true;
+    readError = String(err?.message ?? err);
+  }
+  const [sqlite3, catalog] = await Promise.all([
     sqlite3InitModule(),
     fetch("/catalog.json").then((r) => r.json()),
-    getDbBytes(userStore, userId).catch(() => null),
   ]);
 
-  let db;
-  db = new sqlite3.oo1.DB(":memory:");
   // 041 B1 — a person's first database is the shipped ready-made one:
   // the rows importCatalog would write, minus the ~20k-statement run.
   // A saved database always wins; a pre-clean-break save (or a missing
   // fresh_db on an older deploy) falls through to schema + import.
-  const bytes = saved?.length && !beforeCleanBreak(saved)
-    ? (saved instanceof Uint8Array ? saved : new Uint8Array(saved))
-    : await fetch("/fresh_db.sqlite").then((r) => r.ok ? r.arrayBuffer() : null)
-      .then((b) => b ? new Uint8Array(b) : null).catch(() => null);
-  if (bytes) {
-    const p = sqlite3.wasm.allocFromTypedArray(bytes);
-    // FREEONCLOSE | RESIZEABLE — sqlite owns the wasm buffer now.
-    sqlite3.capi.sqlite3_deserialize(
-      db.pointer, "main", p, bytes.byteLength, bytes.byteLength, 1 | 2);
+  const usable = (bytes) => {
+    try {
+      return !!bytes?.length && !beforeCleanBreak(bytes);
+    } catch { return false; }
+  };
+  /* Deserialize installs pages sight-unseen — touch the schema to learn
+   * whether these bytes are really a database. Each attempt gets its own
+   * handle: a failure must not leave half-installed pages behind. */
+  const tryOpen = (bytes) => {
+    if (!usable(bytes)) return null;
+    try {
+      const trial = new sqlite3.oo1.DB(":memory:");
+      const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+      const p = sqlite3.wasm.allocFromTypedArray(b);
+      // FREEONCLOSE | RESIZEABLE — sqlite owns the wasm buffer now.
+      sqlite3.capi.sqlite3_deserialize(
+        trial.pointer, "main", p, b.byteLength, b.byteLength, 1 | 2);
+      trial.exec("SELECT name FROM sqlite_master LIMIT 1");
+      return { db: trial, bytes: b };
+    } catch { return null; }
+  };
+  let opened = null;
+  if (!readFailed) {
+    // Saved bytes that fail to open are corrupt, not absent: the
+    // previous copy — the one that last opened cleanly — is the way back.
+    opened = tryOpen(saved);
+    if (!opened && usable(saved)) {
+      opened = tryOpen(prev);
+      if (opened) restoredFromPrev = true;
+    }
+    // A pre-clean-break save is superseded, not corrupt: fresh_db + the
+    // idempotent import reconciles it like before.
+    if (!opened && !usable(saved)) {
+      const fresh = await fetch("/fresh_db.sqlite").then((r) => r.ok ? r.arrayBuffer() : null)
+        .then((b) => b ? new Uint8Array(b) : null).catch(() => null);
+      opened = fresh && tryOpen(fresh);
+    }
   }
+  const corrupt = !readFailed && !opened && usable(saved);
+  const db = opened?.db ?? new sqlite3.oo1.DB(":memory:");
 
+  /* Saves stay blocked when we could not read the stored copy (transient
+   * IndexedDB failure) or it was corrupt — the temporary board must not
+   * overwrite what is still the family's real data. */
+  const saveBlocked = readFailed || corrupt;
+  let saveError = null, savedAt = null;
   let saveTimer = null;
+  // The copy that opened is already proven-good; keep it beside the
+  // live save once per boot. When we restored FROM prev it is that copy.
+  let prevKept = !opened || opened.bytes === prev;
   const flush = () => {
     clearTimeout(saveTimer); saveTimer = null;
+    if (saveBlocked) return Promise.resolve(false);
     const bytes = sqlite3.capi.sqlite3_js_db_export(db.pointer);
-    return putDbBytes(userStore, userId, bytes).catch(
-      (err) => console.warn("db: save failed", err));
+    return putDbBytes(userStore, userId, bytes).then(async () => {
+      savedAt = Date.now();
+      saveError = null;
+      if (!prevKept) {
+        prevKept = true;
+        await putDbPrev(userStore, userId, opened.bytes).catch(() => {});
+      }
+      return true;
+    }).catch((err) => {
+      saveError = String(err?.message ?? err);
+      console.warn("db: save failed", err);
+      handle.onSaveIssue?.(saveError);
+      return false;
+    });
   };
   const scheduleSave = () => {
     clearTimeout(saveTimer);
@@ -143,7 +208,13 @@ export async function bootDb(userStore, userId) {
     return langPromise;
   };
 
-  handle = { db: d, catalog, phrases: null, formTable: null, flush, loadLanguage };
+  handle = { db: d, catalog, phrases: null, formTable: null, flush, loadLanguage,
+    // 043 A — the honest save surface: the board reads this for the
+    // status line and the recovery path; onSaveIssue fires on a failed
+    // flush so the UI can say it.
+    dbHealth: () => ({ readFailed, readError, restoredFromPrev, corrupt,
+      saveBlocked, saveError, savedAt }),
+    onSaveIssue: null };
   return handle;
 }
 
