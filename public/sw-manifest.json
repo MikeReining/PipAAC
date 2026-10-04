@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-f97ff1cc3382",
+  "buildId": "r1-eb3b9eeceef1",
   "files": [
     {
       "path": "/board.js",
@@ -173,8 +173,8 @@
     },
     {
       "path": "/board/people-ui.js",
-      "bytes": 9266,
-      "sha256": "c4e2b178daec290c34d2cc6c8d221860efbff1ffc53f3f6e54217ff73e19d516"
+      "bytes": 9360,
+      "sha256": "90431e3079979a790135e3935cf9438f0c599b0193fe8fbcea07706468d2d7d5"
     },
     {
       "path": "/board/person-card.js",

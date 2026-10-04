@@ -158,6 +158,7 @@ export function mountPeople({
         if (u.id === me.id) await saveUser({ name: n });
         else await putUser(userStore, { ...u, name: n, nameDirty: true });
         settings.paintNames();
+        await renderOpens();
       };
       // Locked (015 slice 4): the account brought this user but not its
       // keys — they arrive by an Allow on another device or a QR card.
@@ -193,6 +194,7 @@ export function mountPeople({
       // (people-ui.js), one control for one fact.
       list.append(row);
     }
+    await renderOpens(); // the opens choice reads the same rows
   }
 
 

@@ -27,7 +27,7 @@ function memStorage() {
   return { getItem: (k) => m.get(k) ?? null, setItem: (k, v) => m.set(k, String(v)), removeItem: (k) => m.delete(k) };
 }
 function dom() {
-  const nodes = { "set-who": el(), "set-pop": el(), "opens-row": el(), "opens-seg": el(), "usr-add": el() };
+  const nodes = { "set-who": el(), "set-pop": el(), "opens-row": el(), "opens-seg": el(), "usr-add": el(), "usr-list": el() };
   globalThis.document = {
     getElementById: (id) => nodes[id],
     createElement: () => el(),
@@ -59,6 +59,28 @@ test("Show the list: no one opens first, so boot asks who's talking", async () =
   assert.equal(rows.some((u) => u.home), false);
   assert.equal(resolveActiveUser(rows), null);
   assert.equal(maya.home, false);
+});
+
+test("removing a person repaints 'When Pip opens' — no stale choice", async () => {
+  const nodes = dom();
+  const store = memoryUserStore();
+  const maya = await addUser(store, { name: "Maya", home: true });
+  await addUser(store, { name: "Full" });
+  globalThis.confirm = () => true;
+  const ui = mountPeople({
+    me: maya, userStore: store, keyStore: memoryUserStore(), flushDb: async () => {},
+    settings: { current: () => "team", show() {}, paintNames() {} }, storage: memStorage(), reload() {},
+  });
+  await ui.renderUsers();
+  assert.equal(nodes["opens-seg"].children.length, 3); // both people + the list choice
+  const remove = nodes["usr-list"].children
+    .flatMap((r) => r.children)
+    .find((c) => c.textContent === "Remove");
+  await remove.onclick();
+  assert.equal((await listUsers(store)).length, 1); // the registry really dropped it
+  const labels = nodes["opens-seg"].children.map((b) => b.textContent);
+  assert.deepEqual(labels, ["Maya", "Show the list"]);
+  assert.equal(nodes["opens-row"].hidden, true);
 });
 
 test("one person: the choice is hidden", async () => {
