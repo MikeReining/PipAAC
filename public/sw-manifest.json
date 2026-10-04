@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-f626a3af3723",
+  "buildId": "r1-2fc4239a66b9",
   "files": [
     {
       "path": "/board.js",
@@ -863,8 +863,8 @@
     },
     {
       "path": "/shared/ops.mjs",
-      "bytes": 16357,
-      "sha256": "3ddd09713291e34f7050d0fee35f32a5c14d24149e34f25a7a30b9f1c5ec7918"
+      "bytes": 16740,
+      "sha256": "6b5b945b25d8edab1c49a54e7fbb53579d845327d7529dbfa715fd47d2211376"
     },
     {
       "path": "/shared/person_name.mjs",
@@ -933,8 +933,8 @@
     },
     {
       "path": "/shared/sync_client.mjs",
-      "bytes": 9612,
-      "sha256": "6892bb46aa8f356fe0e5bc9e647a24c324ee3e5bd0cb2666fe605223792161fa"
+      "bytes": 10572,
+      "sha256": "c9bce42af07819d6e2faae587273252b3c1f2bb2bb3a49651b5fccf16e417652"
     },
     {
       "path": "/shared/sync_crypto.mjs",
@@ -943,8 +943,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 7951,
-      "sha256": "718ad288a700bb39729912d004d099fb061a89765de9a5644daab9e6ce0bee9e"
+      "bytes": 9552,
+      "sha256": "400f84e92b4203aa10bc863ceaefac8b9530f6639b7546a7ba76a50cc362aed8"
     },
     {
       "path": "/shared/team_names.mjs",

@@ -237,6 +237,16 @@ choose, and it never moves an item that was already placed.
 encrypted snapshot of the synced tables and their sequence number. A new
 device loads the latest snapshot, then the ops after it.
 
+**BUILT** (2026-12-16): `snapshotSynced`/`adoptSnapshot` in
+`public/shared/ops.mjs` (the payload is the `sync_baseline` format —
+confirmed state only, never pending edits); transport
+`putSnapshot`/`getSnapshot` on `relayClient`; the sync loop uploads
+when the confirmed log grew 500 seqs past the last upload, and a
+never-synced device (`cursor` unset) adopts the snapshot before
+replaying the tail. The relay stores the pair `(file, snapshot_seq)`
+monotonically — a stale device can't regress the prune watermark.
+Proof: `src/worker/relay.heavy.test.mjs` snapshot round-trip.
+
 ## 6. The relay (Cloudflare)
 
 | Piece | Holds |
