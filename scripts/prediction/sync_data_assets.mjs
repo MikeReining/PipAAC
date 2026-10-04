@@ -8,13 +8,13 @@
  *   node scripts/prediction/sync_data_assets.mjs
  *   node scripts/prediction/sync_data_assets.mjs --check   # diff only
  *
- * catalog.json is copied by build_catalog.mjs itself; this script owns
- * the prediction tables and feeling_voice. form_table ships gzipped —
- * the 45 MB source exceeds the per-asset limit; the worker serves it
- * with content-encoding so fetch().json() decodes transparently.
+ * catalog.json is copied by build_catalog.mjs itself. The prediction
+ * tables moved out in 041 B4 — the raw corpora stay in data/ as build
+ * inputs and build_answer_tables.mjs emits the compact answer tables
+ * into public/ directly.
  */
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
-import { gzipSync, gunzipSync } from "node:zlib";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { gzipSync } from "node:zlib";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,8 +22,6 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 
 /** [source, public target, gzip?] */
 const ASSETS = [
-  ["data/prediction/phrase_table.en.json", "public/phrase_table.en.json", false],
-  ["data/prediction/form_table.en.json", "public/form_table.en.json.gz", true],
   ["data/catalog/feeling_voice.json", "public/feeling_voice.json", false],
 ];
 

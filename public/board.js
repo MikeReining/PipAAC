@@ -146,7 +146,10 @@ if (navigator.locks?.request) {
 }
 navigator.storage?.persist?.().catch(() => {});
 
-const { db, catalog, phrases, formTable, flush: flushDb } = await bootDb(userStore, me.id);
+const { db, catalog, flush: flushDb, loadLanguage } = await bootDb(userStore, me.id);
+// 041 B3 — the language tables load after the first frame; until they
+// land a tap speaks the base word and the strip uses her own history.
+let phrases = null, formTable = null;
 
 // The person's name syncs (public/shared/person_name.mjs).
 nameToProfile = (patch) => nameToProfileDb(db, patch);
@@ -351,6 +354,7 @@ const live = {
   get grammarHelp() { return grammarHelp; },
   set grammarHelp(v) { grammarHelp = v; },
   get formTable() { return formTable; },
+  get phrases() { return phrases; },
   get tour() { return tour; },
   get spotDemo() { return spotDemo; },
   get picking() { return attention.picking; },
@@ -434,7 +438,7 @@ const {
   renderGrid, boardGeom, wordTile, artInto, fitLabels,
   homeTile, tileForSense, applyLikely, showGroupHint,
 } = mountGrid({
-  db, locale, catalog, phrases, sentence, live, cellEls,
+  db, locale, catalog, sentence, live, cellEls,
   speak, tileApi,
   tap, shownLabel, metaFor, photoFor, senseById,
   getCounts, editPointer, toast, layerMark, spotChrome,
@@ -446,7 +450,7 @@ const {
 const {
   renderStrip, sizeStrip, openExpand, clearExpand,
 } = mountStrip({
-  db, locale, catalog, phrases, feelingData, sentence, live,
+  db, locale, catalog, feelingData, sentence, live,
   speak, speakFeeling,
   tap, shownLabel, metaFor, roleForEntity, posOfSense,
   artInto, fitLabels, applyLikely, boardGeom,
@@ -1069,7 +1073,7 @@ groupsUi = mountGroups({
   db, locale, all: ALL, boardGeom, getEditing: () => editing, getModelGlow: () => modelGlow,
   getLikelyGroups: () => likelyGroups(
     db, sentence.map((s) => ({ kind: s.kind, id: s.id })),
-    Date.now(), locale, phrases),
+    Date.now(), locale, live.phrases),
   setView: (v) => kbUi.setView(v), open, close, toast, wordTile, layerMark, fitLabels, tap,
   shownLabel,
   navCell, editPointer, xBadge,
@@ -1233,18 +1237,28 @@ mountProgress({ db, me, nameOf: statNameOf, roleOf: statRoleOf, artOf: artUrlOf,
  * children table's unigram on day one. The pick writes a placement
  * with an undo toast, same as a drag; ✎ in the head row opens the
  * word card. */
-const kidsUni = (() => {
+// 041 B3 — lazy: the place picker asks after the tables have landed.
+let kidsUniCache = null;
+const kidsUni = () => {
+  if (kidsUniCache) return kidsUniCache;
   const uni = {};
+  if (phrases?.uni) {
+    // 041 B4 — the answer table carries the same unigram prior as b36 ids.
+    for (const [k, n] of Object.entries(phrases.uni)) {
+      uni[`sns_${String(parseInt(k, 36)).padStart(4, "0")}`] = n;
+    }
+    return (kidsUniCache = uni);
+  }
   for (const row of Object.values(phrases?.contexts ?? {})) {
     for (const [id, n] of Object.entries(row)) uni[id] = (uni[id] ?? 0) + n;
   }
-  return uni;
-})();
+  return (kidsUniCache = uni);
+};
 const placeUi = mountPlacePicker({
   db, locale,
   getLayout: () => boardGeom().name,
   getCounts,
-  getUni: () => kidsUni,
+  getUni: kidsUni,
   onPick: (slot, kind, id, label) => {
     const mv = placeOnBoard(db, boardGeom().name, kind, id, slot, {
       anchors: new Set(boardGeom().anchors.keys()),
@@ -1508,6 +1522,14 @@ setInterval(() => {
   setTimeout(armReady, 600);
   addEventListener("pip:board-ready", announceVoice, { once: true });
   navigator.serviceWorker?.addEventListener("controllerchange", announceVoice);
+  // 041 B3 — grammar + suggestions land now, never on the paint path:
+  // the strip and form picks quietly upgrade, no reload.
+  loadLanguage().then((lang) => {
+    phrases = lang.phrases;
+    formTable = lang.formTable;
+    renderStrip();
+    window.pip && (window.pip.languageReady = performance.now());
+  }).catch((err) => console.warn("lang: load failed", err));
 }
 
 // Console handle for works tests and founder debugging — read-only access

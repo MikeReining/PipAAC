@@ -48,13 +48,14 @@ function adapt(db, onWrite) {
 export async function bootDb(userStore, userId) {
   if (handle) return handle;
 
-  const [sqlite3, catalog, phrases, formTable, saved] = await Promise.all([
+  /* 041 B3 — the language tables are off the first-paint path. Boot
+   * carries only what draws the board; loadLanguage runs after the
+   * first frame, and the strip/grammar quietly upgrade when it lands.
+   * B4: the shipped tables are the small ANSWER tables — the raw
+   * corpora stay in data/ as build inputs and never reach the device. */
+  const [sqlite3, catalog, saved] = await Promise.all([
     sqlite3InitModule(),
     fetch("/catalog.json").then((r) => r.json()),
-    fetch("/phrase_table.en.json").then((r) => r.json()).catch(() => null),
-    // Grammar help's table is required when it ships — a missing or
-    // malformed file must fail the boot loudly, never degrade silently.
-    fetch("/form_table.en.json").then((r) => r.json()),
     getDbBytes(userStore, userId).catch(() => null),
   ]);
 
@@ -125,7 +126,24 @@ export async function bootDb(userStore, userId) {
   // (importCatalog owns that order).
   importCatalog(d, catalog);
 
-  handle = { db: d, catalog, phrases, formTable, flush };
+  /* The two tables arrive together — a tap before they land speaks the
+   * base word and the strip falls back to her own history/first words.
+   * Grammar help's table is required when it ships: a missing or
+   * malformed answer table fails loudly, never degrades silently. */
+  let langPromise = null;
+  const loadLanguage = () => {
+    langPromise ??= Promise.all([
+      fetch("/suggest_answers.en.json").then((r) => r.json()).catch(() => null),
+      fetch("/form_answers.en.json").then((r) => r.json()),
+    ]).then(([phrases, formTable]) => {
+      handle.phrases = phrases;
+      handle.formTable = formTable;
+      return { phrases, formTable };
+    });
+    return langPromise;
+  };
+
+  handle = { db: d, catalog, phrases: null, formTable: null, flush, loadLanguage };
   return handle;
 }
 

@@ -13,6 +13,7 @@ const GATES = [
   { name: "lint:locale-literals", cmd: process.execPath, args: ["scripts/check_locale_literals.mjs"] },
   { name: "lint:childes-git-guard", cmd: process.execPath, args: ["scripts/check_childes_git.mjs"] },
   { name: "data:assets-sync", cmd: process.execPath, args: ["scripts/prediction/sync_data_assets.mjs", "--check"] },
+  { name: "data:answer-tables", cmd: process.execPath, args: ["scripts/prediction/build_answer_tables.mjs", "--check"] },
   { name: "regression_law_meta_gate", cmd: process.execPath, args: ["scripts/regression_law_meta_gate.mjs"] },
   { name: "bytes:symbols", cmd: process.execPath, args: ["scripts/check_symbol_bytes.mjs"] },
   { name: "sw:manifest", cmd: process.execPath, args: ["scripts/sw/sw_manifest.mjs", "--check"] },

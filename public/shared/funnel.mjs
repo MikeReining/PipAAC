@@ -295,13 +295,31 @@ export const KIDS_MIN_SHARE = 0.05;
  *  and followed it with nothing we know. */
 function kidsRows(kidsTable, ending, db) {
   if (!kidsTable?.contexts || ending.some((it) => it.kind !== "sense")) return null;
-  const key = ending.map((it) => foldItem(db, it).id).join(" ");
+  const ids = ending.map((it) => foldItem(db, it).id);
+  /* 041 B4 answer table: a prefix trie over b36 ids with the passing
+   *  ordered list under "$" (a lone id ships bare). The 5% cut already
+   *  ran at build — seen: 0 keeps every listed word. An ending whose
+   *  candidates all failed the cut still won the longest-first race in
+   *  the raw table — `had` keeps it winning here, painting nothing. */
+  if (kidsTable.version?.startsWith("suggest-answers")) {
+    let node = kidsTable.contexts;
+    for (const id of ids) {
+      node = node?.[parseInt(id.slice(4), 10).toString(36)];
+      if (node == null) return null;
+    }
+    const v = node.$;
+    if (v === undefined) return null;
+    const arr = Array.isArray(v) ? v : [v];
+    return {
+      rows: arr.map((n) => ({ kind: "sense", id: `sns_${String(n).padStart(4, "0")}`, n: 1 })),
+      seen: 0, had: true,
+    };
+  }
+  const key = ids.join(" ");
   const row = kidsTable.contexts[key];
   if (!row) return null;
-  return {
-    rows: Object.entries(row).map(([id, n]) => ({ kind: "sense", id, n })),
-    seen: kidsTable.seen?.[key] ?? 0,
-  };
+  const rows = Object.entries(row).map(([id, n]) => ({ kind: "sense", id, n }));
+  return { rows, seen: kidsTable.seen?.[key] ?? 0, had: rows.length > 0 };
 }
 
 /** Senses the caregiver hid never enter the bar (Masking § 2). */
@@ -341,7 +359,7 @@ export function stripRanked(db, sentence, now, locale, kidsTable = null) {
       ["all", allTbl.get(ctxKeyDb(db, e))],
       ["kids", kid?.rows],
     ];
-    if (!rows.some(([, r]) => r?.length)) continue;
+    if (!rows.some(([, r]) => r?.length) && !kid?.had) continue;
     ending = e.length;
     for (const [src, r] of rows) {
       // Stable by count: ties keep the source's own order (the children

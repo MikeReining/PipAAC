@@ -25,7 +25,7 @@ const FAMILY_TILE = {
 };
 
 export function mountGrid({
-  db, locale, catalog, phrases, sentence, live, cellEls,
+  db, locale, catalog, sentence, live, cellEls,
   speak, tileApi,
   tap, shownLabel, metaFor, photoFor, senseById, getCounts,
   editPointer, toast, layerMark, spotChrome, sizeStrip, openExpand,
@@ -420,7 +420,7 @@ export function mountGrid({
     const next = new Set();
     if (live.highlightNext && !live.editing && live.view === "board" && !live.kbUi.isOpen() && sentence.length) {
       const sents = sentence.map((s) => ({ kind: s.kind, id: s.id }));
-      for (const c of stripRanked(db, sents, Date.now(), locale, phrases).shown) {
+      for (const c of stripRanked(db, sents, Date.now(), locale, live.phrases).shown) {
         if (c.kind !== "sense") continue;
         // A stand-in person on the board takes the word's halo too —
         // Mama's cell glows when `mom` is likely (014 slice 11).

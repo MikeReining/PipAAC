@@ -2,7 +2,7 @@
   "files": {
     "public/audio-review-elevenlabs-tiles.html": 802,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
-    "public/board.js": 1559,
+    "public/board.js": 1581,
     "public/board/add-flow.js": 676,
     "public/board/base.css": 797,
     "public/board/devices-ui.js": 892,
@@ -10,7 +10,7 @@
     "public/board/speech.js": 547,
     "public/board/word-card.js": 805,
     "public/index.html": 1150,
-    "public/shared/funnel.mjs": 655,
+    "public/shared/funnel.mjs": 673,
     "public/sw-manifest.json": 34000,
     "scripts/art/batch52.mjs": 513,
     "scripts/catalog/audio_review_dev.mjs": 1056,

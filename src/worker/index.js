@@ -1,10 +1,8 @@
 // 2026-09-30: the data payloads moved to public/ assets — catalog.json,
-// phrase_table.en.json and feeling_voice.json fall through to ASSETS
-// below; form_table.en.json is over the per-asset size limit, so it
-// ships gzipped and is served by the route under /health. A static
-// import of tens of MB of JSON here is parsed by EVERY isolate —
-// including each Durable Object — and crash-looped the TileLedger DO
-// over the 128 MB isolate memory limit.
+// the prediction answer tables (041 B4) and feeling_voice.json fall
+// through to ASSETS below. A static import of tens of MB of JSON here
+// is parsed by EVERY isolate — including each Durable Object — and
+// crash-looped the TileLedger DO over the 128 MB isolate memory limit.
 import { UserRelay } from "./relay.js";
 import { restoreByProof } from "./restore.js";
 import { PairingLobby } from "./lobby.js";
@@ -44,30 +42,6 @@ export default {
 
     if (path === "/health") {
       return json({ ok: true, service: "pipaac" });
-    }
-
-    // Grammar help (021): phrase-context → form-feature counts —
-    // counts on sense ids only, no text. The 45 MB source is over the
-    // per-asset limit, so public/ carries the gzipped file and this
-    // route forwards it with content-encoding; fetch().json() decodes
-    // transparently, so the client contract is unchanged. The outer
-    // response must not be edge-cached: the cache ignores
-    // vary:accept-encoding and would serve the gzipped body to a
-    // client that never sent the header (or without the encoding
-    // marker), corrupting the payload.
-    if (path === "/form_table.en.json") {
-      const asset = await env?.ASSETS?.fetch(new Request(
-        new URL("/form_table.en.json.gz", request.url))).catch(() => null);
-      if (!asset?.ok) return json({ error: "not_found" }, { status: 404 });
-      const headers = new Headers();
-      headers.set("content-type", "application/json; charset=utf-8");
-      headers.set("content-encoding", "gzip");
-      headers.set("cache-control", "no-store");
-      // encodeBody:"manual" — the body is already gzip bytes; without it
-      // the runtime applies the declared encoding again and clients
-      // decode one layer into still-gzipped data.
-      return new Response(asset.body,
-        { status: 200, headers, encodeBody: "manual" });
     }
 
     // Whole-sentence voice (024 slice 1): shared R2 cache for Pip-word

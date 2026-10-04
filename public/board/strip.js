@@ -14,7 +14,7 @@ const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
 
 export function mountStrip({
-  db, locale, catalog, phrases, feelingData, sentence, live,
+  db, locale, catalog, feelingData, sentence, live,
   speak, speakFeeling,
   tap, shownLabel, metaFor, roleForEntity, posOfSense,
   artInto, fitLabels, applyLikely, boardGeom,
@@ -291,7 +291,7 @@ export function mountStrip({
       const groupId = live.view === "group" ? live.groupsUi.getGroupKey() : null;
       const starting = !sents.length || live.freshNext;
       const ranked = !groupId
-        ? stripRanked(db, sents, Date.now(), locale, phrases)
+        ? stripRanked(db, sents, Date.now(), locale, live.phrases)
         : starting
           ? groupStarters(db, groupId, { starters: catalog.groupStarters, visible: live.groupsUi.visibleKeys() })
           : groupRanked(db, sents, groupId, Date.now());

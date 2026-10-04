@@ -72,8 +72,79 @@ function pickFromLevels(levels, keyFor) {
   return null;
 }
 
+/* --- 041 B4 answer table ------------------------------------------------
+ * The shipped form_answers table holds the answers the raw corpus
+ * produces, keyed by (ending, word, next, worn) — "the longest matching
+ * ending wins". Keys are b36 sense ids ("sns_0270" -> "7i") joined with
+ * "."; "S." marks the '<s>'-anchored twin; values are index codes into
+ * f[] — or null, the tie veto that skips the whole ending. */
+const b36 = (id) => String(parseInt(id.slice(4), 10).toString(36));
+const k36 = (ctx) =>
+  ctx.split(" ").map((w) => (w === "<s>" ? "S" : b36(w))).join(".");
+const ansSets = new WeakMap();
+const setsFor = (t) => {
+  let s = ansSets.get(t);
+  if (!s) {
+    s = { verbs: new Set(t.verbs), pl: new Set(t.pl),
+      nouns: new Set(t.nouns), quants: new Set(t.quants) };
+    ansSets.set(t, s);
+  }
+  return s;
+};
+
+function pickFromAns(table, ctxIds, senseId, nextSenseId, currentFeat) {
+  const F = table.f, sets = setsFor(table);
+  const snid = +senseId.slice(4), s = b36(senseId);
+  const n = nextSenseId && nextSenseId !== EOS ? b36(nextSenseId) : null;
+  if (snid === table.aSense) {
+    const v = n !== null ? table.a?.[n] : undefined;
+    return v !== undefined ? F[v] : "BASE";
+  }
+  if (nextSenseId) {
+    if (nextSenseId === EOS) {
+      const v = table.e?.[`${s}|${F.indexOf(currentFeat)}`];
+      if (v !== undefined) return F[v];
+      // The row existed: a worn form stands, BASE defers to context.
+      if (table.e?.[`${s}|_`] !== undefined && currentFeat !== "BASE") {
+        return currentFeat;
+      }
+    } else {
+      const cls = sets.nouns.has(+nextSenseId.slice(4)) ? "N" : "X";
+      const v = table.p?.[`${s}|${n}`] ?? table.p?.[`${s}|${cls}`];
+      if (v !== undefined) return F[v];
+    }
+  }
+  const levels = ctxLevels(ctxIds);
+  if (n !== null) {
+    for (const lvl of levels) {
+      if (table.n?.[`${k36(lvl[lvl.length - 1])}|${s}|${n}`] === null) continue;
+      for (const ctx of lvl) {
+        const v = table.n?.[`${k36(ctx)}|${s}|${n}`];
+        if (v !== undefined && v !== null) return F[v];
+      }
+    }
+  }
+  const poolName = sets.verbs.has(snid) ? "poolV"
+    : sets.pl.has(snid) ? "poolP" : null;
+  const quant = sets.quants;
+  for (const lvl of levels) {
+    if (table.c?.[`${k36(lvl[lvl.length - 1])}|${s}`] === null) continue;
+    for (const ctx of lvl) {
+      const key = k36(ctx);
+      const own = table.c?.[`${key}|${s}`];
+      if (own !== undefined && own !== null) return F[own];
+      const pool = poolName === "poolP"
+          && !ctx.split(" ").some((w) => w.startsWith("sns_") && quant.has(+w.slice(4)))
+        ? undefined : poolName ? table[poolName]?.[key] : undefined;
+      if (pool !== undefined) return F[pool];
+    }
+  }
+  return "BASE";
+}
+
 /**
- * @param table  parsed form_table.en.json
+ * @param table  parsed form_answers.en.json (or the raw corpus table —
+ *               the parity test drives both through one signature)
  * @param ctxIds  sense ids of the items before this word (folded — the
  *                caller merges has->have etc. the same way the bar does)
  * @param senseId the word's sense id
@@ -85,6 +156,9 @@ function pickFromLevels(levels, keyFor) {
  */
 export function pickForm(table, ctxIds, senseId, nextSenseId = null,
   currentFeat = "BASE") {
+  if (table?.c) {
+    return pickFromAns(table, ctxIds, senseId, nextSenseId, currentFeat);
+  }
   if (!table?.contexts) return "BASE";
 
   // a / an is decided by the next word alone, learned from caregivers.

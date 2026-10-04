@@ -34,7 +34,8 @@ const PRECACHE_FILES = [
   "db.js",
   "catalog.json",
   "fresh_db.sqlite",
-  "phrase_table.en.json",
+  "form_answers.en.json",
+  "suggest_answers.en.json",
   "feeling_voice.json",
   "manifest.webmanifest",
 ];
@@ -53,15 +54,13 @@ const PRECACHE_DIRS = [
 const EXCLUDE_DIRS = new Set([
   "audio",
 ]);
-/** Named exclusions — SW machinery and the raw .gz source the Worker
- *  route reads. */
+/** Named exclusions — SW machinery. */
 const EXCLUDE_FILES = new Set([
   "_headers",
   "sw.js",
   "sw-build.js",
   "sw-manifest.json",
   "sw-audio.json",
-  "form_table.en.json.gz",
 ]);
 
 const sha256 = (buf) => createHash("sha256").update(buf).digest("hex");
@@ -98,8 +97,6 @@ for (const entry of readdirSync(PUBLIC).sort()) {
     }
   } else if (PRECACHE_FILES.includes(entry)) {
     push(entry, readFileSync(join(PUBLIC, entry)));
-  } else if (entry === "form_table.en.json") {
-    failures.push("unexpected real file public/form_table.en.json — the .gz + Worker route own that path");
   } else if (EXCLUDE_FILES.has(entry) || entry.endsWith(".html")) {
     continue; // preview/review/lab pages are dev tooling, not shell
   } else {
@@ -107,15 +104,6 @@ for (const entry of readdirSync(PUBLIC).sort()) {
   }
 }
 
-/* /form_table.en.json is served by the Worker from the .gz bytes — no
- * real file exists at that path. The SW fetches the route at install and
- * stores the decoded body (network fetch transparently gunzips; sw.js
- * strips the stale content-encoding header). The manifest entry's hash
- * is the .gz file's hash — the deterministic identity of the payload. */
-{
-  const gz = readFileSync(join(PUBLIC, "form_table.en.json.gz"));
-  files.push({ path: "/form_table.en.json", bytes: gz.length, sha256: sha256(gz), via: "worker-gz" });
-}
 files.sort((a, b) => a.path.localeCompare(b.path));
 
 /* Per-voice audio map for the background fill (041 A2/A4). The shell
