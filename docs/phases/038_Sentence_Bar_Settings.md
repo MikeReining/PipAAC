@@ -45,13 +45,13 @@ Controls (one toggle each, per person):
 | ❓ Question (label: "Question", not "What does it mean") | yes | yes |
 | ⏪ Past | yes | yes (own toggle — founder 2026-10-03) |
 | ⏩ Future | yes | yes (own toggle) |
-| ⌫ Backspace | no | yes, with warning |
-| ✕ Clear | no | yes |
+| ⌫ Backspace | no | yes, with warning — but not both with Clear |
+| ✕ Clear | no | yes — but not both with Backspace |
 | Feeling faces | no | already exists |
 
 Presets above the toggles (a preset just sets the toggles):
 
-- **Just play** — Play only.
+- **Just play** — Play + Clear.
 - **Play + Question** — asking is the hardest AAC skill; both buttons do
   something the person can't do alone.
 - **Play + Question + Fix it**
@@ -81,8 +81,11 @@ Menu subtitle: "Pip · Play + Question".
 - **Freed space goes to Play** (larger target), not a gap. Decided
   2026-10-03: the bar reflows — hidden buttons leave the layout and Play
   grows by the space each freed (`--play-grow` on `#topbar`, capped).
-- **Delete/Clear:** a person who can tap once or twice needs undo. Hiding
-  Backspace shows a one-line warning; Clear's 5 s undo pill stays.
+- **Delete/Clear:** a person who can tap once or twice needs undo. Clear or
+  Backspace always shows (founder 2026-10-03): every preset keeps Clear, the
+  last one on is locked in Settings ("Keep one"), and a stored list holding
+  neither reads as Clear (`barControls`). Hiding Backspace shows a one-line
+  warning; Clear's 5 s undo pill stays.
 - Instructions and tour show the real tiles/icons, and only the buttons that
   person has (`instructions-show-tiles`).
 - Spotlight (032) targets `control:fix` / `control:question`; a hidden control

@@ -42,21 +42,37 @@ test("an absent or NULL bar_controls is Everything — the pre-038 bar", () => {
   // Stored garbage can never hide a button or crash the read.
   db.prepare("UPDATE learner_profile SET bar_controls = 'not json' WHERE id = 'prf_local'").run();
   assert.deepEqual([...barControls(db)].sort(), [...BAR_CONTROLS].sort());
-  db.prepare("UPDATE learner_profile SET bar_controls = '[\"fix\",\"bogus\"]' WHERE id = 'prf_local'").run();
-  assert.deepEqual([...barControls(db)], ["fix"], "unknown names are dropped");
+  db.prepare("UPDATE learner_profile SET bar_controls = '[\"fix\",\"bogus\",\"backspace\"]' WHERE id = 'prf_local'").run();
+  assert.deepEqual([...barControls(db)], ["fix", "backspace"], "unknown names are dropped");
+});
+
+test("Clear or Backspace always shows — a word can always come off", () => {
+  const db = device();
+  for (const stored of [[], ["fix"], ["question", "past", "future"]]) {
+    setSetting(db, "bar_controls", JSON.stringify(stored));
+    const shown = barControls(db);
+    assert.ok(shown.has("clear"), `${JSON.stringify(stored)} reads with Clear`);
+    assert.equal(shown.has("backspace"), false, "Backspace is not invented");
+  }
+  setSetting(db, "bar_controls", JSON.stringify(["backspace"]));
+  assert.deepEqual([...barControls(db)], ["backspace"], "Backspace alone is enough");
+  for (const p of BAR_PRESETS) {
+    assert.ok(p.controls.includes("clear") || p.controls.includes("backspace"),
+      `${p.name} keeps an editing button`);
+  }
 });
 
 test("the setting writes a set_setting op and replays on another device", () => {
   const a = device();
-  setSetting(a, "bar_controls", JSON.stringify(["question"]));
-  assert.deepEqual([...barControls(a)], ["question"]);
+  setSetting(a, "bar_controls", JSON.stringify(["question", "clear"]));
+  assert.deepEqual([...barControls(a)], ["question", "clear"]);
   const op = listOps(a).filter((o) => o.kind === "set_setting")
     .map((o) => JSON.parse(o.args)).find((o) => o.key === "bar_controls");
   assert.ok(op, "the change is a synced op");
 
   const b = device();
   drainOps(b, listOps(a).map((o, i) => ({ ...o, relay_seq: i + 1 })));
-  assert.deepEqual([...barControls(b)], ["question"], "the other device's bar matches");
+  assert.deepEqual([...barControls(b)], ["question", "clear"], "the other device's bar matches");
 });
 
 test("a hidden control is never a Spotlight target — and returns when shown", () => {
@@ -91,5 +107,5 @@ test("presets and labels read the shown set", () => {
   }
   setSetting(db, "bar_controls", JSON.stringify(["fix", "future"]));
   assert.equal(barPreset(barControls(db)), null, "a custom mix is no preset");
-  assert.equal(barLabel(db), "Play + Fix it + Future");
+  assert.equal(barLabel(db), "Play + Fix it + Future + Clear");
 });

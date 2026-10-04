@@ -4,6 +4,9 @@
  * — a JSON list of the shown control names; the bar renders it, it never
  * decides it. Play is never in the list: it always shows. An absent
  * column or a NULL row is Everything, the bar that shipped before 038.
+ * Clear or Backspace always shows too (founder 2026-10-03): a person
+ * must always be able to take a word back, so a list holding neither
+ * reads as Clear.
  * An adult sets this in Settings → Talking; nothing infers it from the
  * child's behaviour.
  */
@@ -22,12 +25,14 @@ export const BAR_NAMES = {
   past: "Past", future: "Future",
   backspace: "Backspace", clear: "Clear",
 };
+/** At least one of these always shows — the read adds Clear if neither. */
+export const BAR_EDIT = ["backspace", "clear"];
 /** A preset just sets the toggles (038 § 2). `controls` is the shown
  *  list the row writes — copy it before storing. */
 export const BAR_PRESETS = [
-  { id: "play", name: "Just play", controls: [] },
-  { id: "question", name: "Play + Question", controls: ["question"] },
-  { id: "fix", name: "Play + Question + Fix it", controls: ["question", "fix"] },
+  { id: "play", name: "Just play", controls: ["clear"] },
+  { id: "question", name: "Play + Question", controls: ["question", "clear"] },
+  { id: "fix", name: "Play + Question + Fix it", controls: ["question", "fix", "clear"] },
   { id: "all", name: "Everything", controls: BAR_CONTROLS },
 ];
 
@@ -38,7 +43,9 @@ export function barControls(db) {
       "SELECT bar_controls AS c FROM learner_profile WHERE id = 'prf_local'",
     ).all()[0]?.c;
     if (v == null) return new Set(BAR_CONTROLS);
-    return new Set((JSON.parse(v) ?? []).filter((c) => BAR_CONTROLS.includes(c)));
+    const shown = new Set((JSON.parse(v) ?? []).filter((c) => BAR_CONTROLS.includes(c)));
+    if (!BAR_EDIT.some((c) => shown.has(c))) shown.add("clear");
+    return shown;
   } catch {
     return new Set(BAR_CONTROLS);
   }

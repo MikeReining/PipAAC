@@ -154,7 +154,9 @@ of the shown control names (`fix question past future backspace clear`).
 NULL is Everything, the bar that shipped before 038. ▶ is never in the
 list — it always shows, and it grows into the space hidden model buttons
 free (`--play-grow` on `#topbar`). Hidden buttons leave the layout
-entirely — nothing tappable, no dead gap. Past and Future are two
+entirely — nothing tappable, no dead gap. Clear or Backspace always
+shows (founder 2026-10-03) — a list holding neither reads as Clear, so a
+word can always come off. Past and Future are two
 independent toggles (founder 2026-10-03). Spotlight never targets a
 hidden control; the tour and Progress only walk the buttons the person
 has. Nothing infers this from the child's behaviour — the board never

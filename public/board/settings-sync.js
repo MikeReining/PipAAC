@@ -10,7 +10,7 @@ import { grammarHelpOn } from "../shared/forms.mjs";
 import { expressiveOn } from "../shared/feeling.mjs";
 import { flushResearch } from "../shared/research.mjs";
 import { BAR_EXAMPLE } from "../shared/bar_example.mjs";
-import { BAR_BUTTON, BAR_CONTROLS, BAR_PRESETS, barControls, barLabel, barPreset } from "../shared/bar.mjs";
+import { BAR_BUTTON, BAR_CONTROLS, BAR_EDIT, BAR_PRESETS, barControls, barLabel, barPreset } from "../shared/bar.mjs";
 
 const $ = (id) => document.getElementById(id);
 const ALL = (db, sql, p = []) => db.all(sql, p);
@@ -224,11 +224,16 @@ export function mountSettingsSync({
   }
   function syncBarSeg() {
     const shown = barControls(db);
+    // The last editing button left can't be turned off (bar.mjs BAR_EDIT).
+    const lastEdit = BAR_EDIT.filter((c) => shown.has(c));
     for (const b of $("bar-toggles").querySelectorAll("button")) {
       const on = b.dataset.c === "play" || shown.has(b.dataset.c);
       b.classList.toggle("on", on);
       b.setAttribute("aria-pressed", String(on));
-      if (b.dataset.c !== "play") b.querySelector(".bar-st").textContent = on ? "" : "Off";
+      if (b.dataset.c === "play") continue;
+      const locked = lastEdit.length === 1 && lastEdit[0] === b.dataset.c;
+      b.disabled = locked;
+      b.querySelector(".bar-st").textContent = locked ? "Keep one" : on ? "" : "Off";
     }
     const preset = barPreset(shown);
     for (const b of $("bar-preset").querySelectorAll("button")) {
