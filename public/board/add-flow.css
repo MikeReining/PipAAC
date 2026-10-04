@@ -48,9 +48,13 @@
 #add-matches { display: flex; flex-direction: column; gap: 8px; }
 #add-matches:empty { display: none; }
 
-/* A row: the whole row adds; ▶ only plays. */
+/* A row: the whole row adds; ▶ only plays. Rows live in capped flex
+   columns (#lib-list 50vh, sheets under the iPad keyboard) where
+   overflow:hidden zeroes the shrink floor — flex:none + min-height keep
+   a row a row; the list scrolls instead of squashing results. */
 .addmatch {
   display: flex; align-items: stretch;
+  flex: none; min-height: 60px;
   border: 2px solid var(--line); border-radius: 12px; background: #fff;
   overflow: hidden;
 }
