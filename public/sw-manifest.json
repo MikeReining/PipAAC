@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-42c76a9cfdcd",
+  "buildId": "r1-1d6df7ad5b2b",
   "files": [
     {
       "path": "/board.js",
@@ -103,8 +103,8 @@
     },
     {
       "path": "/board/groups-ui.js",
-      "bytes": 17931,
-      "sha256": "836a75bd0398428f6eb16f8f935a66779c89cdadf5b6c0645394121b17972907"
+      "bytes": 17945,
+      "sha256": "47f00970910213ddf3e3d85b72de7298e2042680eb545a99d2d6ee6e0f4faf14"
     },
     {
       "path": "/board/inline-icons.js",

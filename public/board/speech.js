@@ -5,7 +5,6 @@
  *  through `live` getters/setters; the object refs (sentence, barState)
  *  are shared directly. */
 import { closeSentence, logTransform } from "../shared/funnel.mjs";
-import { spotlight } from "../shared/spotlight.mjs";
 import { openKeyStore } from "../shared/sync_crypto.mjs";
 import { loadPhotoURL } from "../db.js";
 import { resolveSlot } from "../shared/voice.mjs";
@@ -311,7 +310,7 @@ export function mountSpeech({
     txBusy = true;
     // 032 E4: her press is the move Progress counts — never Try it's.
     if (!live.spotDemo) {
-      logTransform(db, mode, !!spotlight()?.targets.has(`control:${mode}`));
+      logTransform(db, mode, live.childTap(`control:${mode}`));
       scheduleStatsRefresh();
     }
     const btn = $(`tx-${mode}`);

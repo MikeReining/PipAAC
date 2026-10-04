@@ -27,7 +27,7 @@ test("the account row says when nobody is signed in", () => {
     "pairform", "pair-body", "pair-title", "pair-go",
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
     "acct-danger", "acct-delete", "my-name-row",
-    "usr-join", "dev-add", "corner", "dev-activate", "dev-license",
+    "usr-join", "dev-add", "dev-role", "corner", "dev-activate", "dev-license",
     "dev-delete", "dev-undelete",
     "sup-row", "sup-list", "sup-form", "sup-email", "sup-invite",
   ];
@@ -61,7 +61,7 @@ test("Add a user opens their board directly — no first-open setup (041 B5)", a
     "pairform", "pair-body", "pair-title", "pair-go",
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
     "acct-danger", "acct-delete", "my-name-row",
-    "usr-join", "dev-add", "corner", "dev-activate", "dev-license",
+    "usr-join", "dev-add", "dev-role", "corner", "dev-activate", "dev-license",
     "dev-delete", "dev-undelete",
     "sup-row", "sup-list", "sup-form", "sup-email", "sup-invite",
   ];

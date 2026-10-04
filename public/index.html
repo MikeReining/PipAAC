@@ -22,7 +22,6 @@
     <link rel="stylesheet" href="/board/devices-ui.css" />
     <link rel="stylesheet" href="/board/recovery-ui.css" />
     <link rel="stylesheet" href="/board/editor-ui.css" />
-    <link rel="stylesheet" href="/board/coach-ui.css" />
     <link rel="stylesheet" href="/board/settings-ui.css" />
     <link rel="stylesheet" href="/board/progress-ui.css" />
     <link rel="stylesheet" href="/board/onramp-ui.css" />
@@ -131,19 +130,15 @@
     <!-- Coach view (013 § 5a): partner devices only — the session's
          words, one tap to model live; tips, a rotating basic, today's
          tally. The child's device never renders this bar. -->
-    <div id="coachbar" hidden>
-      <div id="coach-targets" class="coach-targets"></div>
-      <p class="coach-line" id="coach-tip" hidden></p>
-      <p class="coach-line" id="coach-basic">
-        <span id="coach-basic-text"></span>
-        <button class="coach-x" id="coach-basic-x" aria-label="Got it — hide this tip">✕</button>
-      </p>
-      <p class="coach-line" id="coach-tally"></p>
-    </div>
     <div id="strip">
       <!-- The tray holds the four prediction cards; the two utility
            anchors are permanent markup. -->
       <div id="tray"></div>
+      <!-- A supporter's spotlight: what their taps do, in the tray's place. -->
+      <div id="modelbar" hidden>
+        <span id="model-line"></span>
+        <b id="model-count"></b>
+      </div>
       <button class="anchor" id="anchor-add" title="Add" hidden>
         <span class="glyph">＋</span><span>Add</span>
       </button>
@@ -360,13 +355,14 @@
                 <div id="spot-lists" class="spot-cards"></div>
               </div>
               <div class="seg-row" id="spot-model-row">
-                <span class="seg-label" id="spot-model-title">Model from your phone</span>
+                <span class="seg-label">With two devices</span>
+                <p class="hint" id="spot-role-now"></p>
                 <p class="hint" id="spot-model-hint"></p>
                 <div class="row">
-                  <button class="btn secondary" id="spot-model">Model from this device</button>
-                  <button class="btn secondary" id="spot-link" data-click="dev-add">Link a phone</button>
+                  <button class="btn secondary" data-show="team">Change in Team &amp; devices</button>
+                  <button class="btn secondary" id="spot-link" data-click="dev-add">Link a device</button>
                 </div>
-                <span class="seg-label spot-sub">When a modeled word arrives</span>
+                <span class="seg-label spot-sub">When a supporter's tap lights a word</span>
                 <div class="seg" id="model-speaks">
                   <button data-v="0">Glow silently</button>
                   <button data-v="1">Glow and speak</button>
@@ -610,6 +606,14 @@
                 <p class="hint">People you invite join the team: they edit everything, on their own phone or laptop. Make owner lets them manage people and devices too. Remove locks them out.</p>
               </div>
               <div class="seg-row">
+                <span class="seg-label">This device</span>
+                <div class="seg" id="dev-role">
+                  <button data-v="board"><span data-person-cap></span>'s board</button>
+                  <button data-v="supporter">A supporter's</button>
+                </div>
+                <p class="hint">Spotlight uses this. On a supporter's device, a spotlight's words light up there, and each tap lights that word on <span data-person></span>'s board.</p>
+              </div>
+              <div class="seg-row">
                 <span class="seg-label">Devices</span>
                 <div id="dev-list"><p class="hint">Only on this device so far.</p></div>
                 <div class="row">
@@ -722,10 +726,6 @@
       <button class="pick-start" id="spot-pick-start">Start</button>
       <button class="pick-quiet" id="spot-pick-save">Save…</button>
       <button class="pick-quiet" id="spot-pick-cancel">Cancel</button>
-    </div>
-    <div id="modelbar" hidden>
-      <span>🔦 Modeling — taps glow on linked devices</span>
-      <button class="pick-quiet" id="model-done">Done</button>
     </div>
 
     <div class="overlay" id="cellsform">

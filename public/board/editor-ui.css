@@ -2,7 +2,7 @@
    one field, status, Preview), groups left, the real board center, the
    word card right only while a word is selected. Calm by default. --- */
 #editor { display: none; }
-body.editor #topbar, body.editor #strip, body.editor #coachbar,
+body.editor #topbar, body.editor #strip,
 body.editor #groupgrid, body.editor #kb,
 body.editor #shell > #grid { display: none !important; } /* home when a group shows */
 body.editor #editor { display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 10px; }

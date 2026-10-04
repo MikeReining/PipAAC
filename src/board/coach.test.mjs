@@ -1,14 +1,10 @@
 /**
- * 013 slice 6 Works Test — the coach view's data layer: a list's tips
- *  sync like every other edit, the partner's tally is device-local, and
- *  re-saving a list never wipes its tips.
+ * 013 slice 6 — coaching tips: a list's tips sync like every other edit,
+ *  re-saving a list never wipes them, and the tip a supporter sees after
+ *  modeling resolves edit → catalog default → none.
  *
- * Proves against rows and op replay, not the module's report: tip edits
- * land in spotlight_item and replay onto a second database; coach_event
- * rows survive a drainOps rebuild because the table is not synced; the
- * tally counts distinct words modeled today only. The DOM leg — the
- * coach bar on the partner's mirror and none on the child's device —
- * is scripts/probes/spot_coach_probe.mjs.
+ * Proves against rows and op replay, not the module's report. The DOM
+ * leg (the tip in the supporter's bar) is scripts/probes/spot_remote_probe.mjs.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -16,9 +12,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { createDatabase, importCatalog } from "./catalog.mjs";
-import { applyOp, drainOps, ensureBaseline, listOps } from "../../public/shared/ops.mjs";
+import { applyOp, listOps } from "../../public/shared/ops.mjs";
 import {
-  coachTap, coachTally, listItems, saveSpotList, setItemTip, tipFor,
+  listItems, saveSpotList, setItemTip, tipFor,
 } from "../../public/shared/spotlight.mjs";
 import { buildCatalog, parseCoordinateMapMarkdown } from "../../scripts/catalog/build_catalog.mjs";
 
@@ -57,24 +53,6 @@ test("re-saving a list keeps each item's tip", () => {
   const items = listItems(db, "spl_t");
   assert.equal(items.find((i) => i.item_id === juice)?.tip, "the SLP's line");
   assert.equal(items.find((i) => i.item_id === milk)?.tip ?? null, null);
-});
-
-test("the tally counts distinct words modeled today — device-local, drains never touch it", () => {
-  const db = fresh();
-  const juice = senseOf(db, "juice"), milk = senseOf(db, "milk");
-  ensureBaseline(db);
-  const today = Date.now();
-  coachTap(db, "sense", juice, today);
-  coachTap(db, "sense", juice, today + 1000); // a repeat models the same word
-  coachTap(db, "sense", milk, today);
-  coachTap(db, "sense", juice, today - 26 * 3600_000); // yesterday doesn't count
-  assert.equal(coachTally(db, today), 2);
-  // A sync drain rebuilds the synced tables — the local tally is untouched.
-  saveSpotList(db, "spl_t", "Drinks", [`sense:${juice}`]);
-  const ops = listOps(db).filter((o) => o.kind === "spot_list_save");
-  drainOps(db, ops);
-  assert.equal(coachTally(db, today), 2, "coach_event survived the drain");
-  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM coach_event").all()[0].n, 4);
 });
 
 test("tip resolution: a list item's edit wins, then the catalog default, then null", () => {

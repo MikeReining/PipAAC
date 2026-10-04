@@ -14,7 +14,7 @@ import {
   openSentence,
 } from "./shared/funnel.mjs";
 import {
-  coachTap, deleteSpotList, endSession, endSpotlight,
+  deleteSpotList, endSession, endSpotlight,
   listTargets,
   resumeSession, saveSpotList, spotLists, spotlight,
   spotlightGroups, spotSession, startSession, startSpotlight,
@@ -30,7 +30,7 @@ import {
 import { setDeviceId } from "./shared/ops.mjs";
 import { redeemLicense } from "./shared/account.mjs";
 import { getDeviceIdentity, openKeyStore } from "./shared/sync_crypto.mjs";
-import { initSync, syncHealth, syncRekey, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
+import { initSync, syncHealth, syncRekey, syncSendLive, syncSendModel, syncUploadBlob } from "./shared/sync.mjs";
 import { refreshStatsDays } from "./shared/stats.mjs";
 import { followProfileName, nameToProfile as nameToProfileDb } from "./shared/person_name.mjs";
 import { flushResearch } from "./shared/research.mjs";
@@ -362,6 +362,7 @@ const live = {
   get view() { return view; },
   get editing() { return editing; },
   get modeling() { return attention.modeling; },
+  childTap: (key) => attention.childTap(key),
   get coachUi() { return coachUi; },
   get settingsUi() { return settingsUi; },
   get expressiveVoice() { return expressiveVoice; },
@@ -412,13 +413,13 @@ const {
 /* Spotlight attention layer: marks, pick mode, model glows, chrome —
  * public/board/spotlight-layer.js. */
 const attention = mountSpotlightLayer({
-  db, live,
+  db, live, isSupporter: () => me.role === "partner", sendLive: syncSendLive,
   speakItem, syncTxButtons, rerenderView,
   renderGrid: (...a) => renderGrid(...a), // grid mounts below — lazy
 });
 const {
-  layerMark, bindSpotSettings, updatePickBar, setPicking, setModeling,
-  onModel, spotChrome, controlPress, clearModel, modelSent, modelGlow,
+  layerMark, bindSpotSettings, updatePickBar, setPicking,
+  onModel, spotChrome, controlPress, modelSent, modelGlow,
 } = attention;
 
 /* Edit mode, undo toast, shared cell helpers — public/board/edit-shared.js. */
@@ -656,13 +657,12 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     return;
   }
   if (attention.modeling) {
-    // Model mode: a tap glows the word on linked boards — never speaks
-    // or appends here; the adult's voice is the audio (013 § 4).
+    // A supporter's spotlight: a tap lights the word on the child's board
+    // — never speaks or appends here; the adult's voice is the audio.
     if (id) {
       const key = `${kind}:${id}`;
       syncSendModel(key, text);
-      coachTap(db, kind, id); // the partner's tally — device-local (§ 5a)
-      coachUi.renderCoachTally();
+      coachUi.onModeled(kind, id);
       modelSent.add(key);
       renderGrid();
       rerenderView();
@@ -674,8 +674,9 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     }
     return;
   }
-  // The child tapping a word the partner just modeled ends its glow.
-  clearModel(id ? `${kind}:${id}` : null);
+  // Lit when pressed? (Progress's "with the glow"); ends a modeled
+  // light and tells the supporter's devices during a session.
+  const lit = id ? attention.childTap(`${kind}:${id}`) : false;
   // 021: the sense keeps its identity — only its label changes. A form
   // pick (wants, him) stores the KEPT sense id plus the label she saw
   // and heard; merged tiles (the 'him' cell) carry their fixed form.
@@ -697,7 +698,7 @@ function tap(text, kind = "sense", id = null, { hint = false, source = "grid" } 
     fillChosen(db, sentenceId, { kind, id: item.id ?? id, source });
     logSelection(db, kind, item.id ?? id, Date.now(), {
       sentenceId, position: sentencePicks++, source,
-      spotlit: !!spotlight()?.targets.has(`${kind}:${id}`),
+      spotlit: lit,
       labelId: item.labelId ?? null,
       groupId: view === "group" ? groupsUi.getGroupKey() : null,
     });
@@ -743,9 +744,10 @@ function revisitPrev(atIndex) {
  *  against it from any view. */
 let boardSenseIds = new Set();
 
-/* Coach bar — public/board/coach-ui.js. Partner devices only. */
+/* The supporter's side of a spotlight — public/board/coach-ui.js. */
 const coachUi = mountCoach({
-  db, locale, all: ALL, catalog, me, syncSendModel,
+  db, locale, all: ALL, catalog, me,
+  repaint: () => { renderGrid(); rerenderView(); },
 });
 
 
@@ -937,7 +939,7 @@ let libUi;
 let wordCard;
 let editorUi;
 const kbUi = mountKeyboard({
-  db, locale, profile: kbProfile, all: ALL,
+  db, locale, profile: kbProfile, all: ALL, childTap: (key) => attention.childTap(key),
   sentence, getSentenceId: () => sentenceId, ensureSentence,
   startFresh,
   getSentencePicks: () => sentencePicks,
@@ -1026,7 +1028,7 @@ mountSpotlightSheet({
   db, catalog, me, open, close, all: ALL, tileFor: tileForSense,
   coachLabel: (kind, id) => coachUi.coachLabel(kind, id),
   bindSpotSettings,
-  renderGrid, renderStrip, rerenderView, setModeling, setPicking,
+  renderGrid, renderStrip, rerenderView, setPicking,
   getPicking: () => attention.picking,
   getSpotPulse: () => attention.spotPulse,
   getModelSpeaks: () => attention.modelSpeaks,
@@ -1072,6 +1074,7 @@ function rerenderView() {
 /* Groups board mode — public/board/groups-ui.js */
 groupsUi = mountGroups({
   db, locale, all: ALL, boardGeom, getEditing: () => editing, getModelGlow: () => modelGlow,
+  isSupporter: () => me.role === "partner",
   getLikelyGroups: () => likelyGroups(
     db, sentence.map((s) => ({ kind: s.kind, id: s.id })),
     Date.now(), locale, live.phrases),
@@ -1152,6 +1155,7 @@ const devicesUi = mountDevices({
   db, me, saveUser, userStore, flushDb, toast,
   initSync, onSyncApplied, onModel, qrcode, settings: settingsUi, syncRekey,
   renderUsers: () => peopleUi.renderUsers(),
+  onRoleChange: () => { renderGrid(); rerenderView(); },
   // One answer to "has Pip Lifetime?": the relay's, for every screen.
   onPlan: ({ lifetime }) => {
     trialLicensed = lifetime;
@@ -1583,6 +1587,7 @@ window.pip = {
     get picking() { return attention.picking ? [...attention.picking] : null; },
     get modeling() { return attention.modeling; },
     get modelGlow() { return [...modelGlow.keys()]; },
+    count: (key) => coachUi.countOf(key),
   },
   get sentence() {
     return sentence.map((i) => ({ ...i }));

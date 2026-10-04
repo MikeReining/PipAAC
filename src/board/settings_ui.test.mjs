@@ -55,7 +55,7 @@ test("the person is named, never given a role", () => {
 // 032: Spotlight is a Settings page, not a sheet behind a button — its
 // controls live in that page, the timer is gone, and the old name too.
 const SPOTLIGHT = ["spot-running", "spot-end", "spot-pick", "spot-lists",
-  "spot-model", "model-speaks", "spot-pulse", "spot-dim"];
+  "spot-role-now", "model-speaks", "spot-pulse", "spot-dim"];
 
 test("Spotlight is its own Settings page, with no timer and no old name", () => {
   const block = menuBlock();

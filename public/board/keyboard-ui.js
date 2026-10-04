@@ -8,7 +8,6 @@ import { PARTNER_SENSES } from "../shared/keymaps.mjs";
 import { buildIndex, suggest } from "../shared/spelling.mjs";
 import { normalizeV1 } from "../shared/normalize.mjs";
 import { detachEvent, fillChosen, logSelection } from "../shared/funnel.mjs";
-import { spotlight } from "../shared/spotlight.mjs";
 import { setSetting } from "../shared/groups.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -24,6 +23,7 @@ export function mountKeyboard({
   grammar,
   getHighlightNext,
   getView, setViewName, renderGroupIndex, renderGroupPage, renderEditor,
+  childTap,
 }) {
   let kbMode = profile.keyboard_mode ?? "pip";
   let kbOrder = profile.keyboard_order ?? "standard";
@@ -155,7 +155,7 @@ export function mountKeyboard({
       setTimeout(() => el.classList.remove("flash"), 350);
       logSelection(db, "sense", s.id, Date.now(), {
         sentenceId: getSentenceId(), position: null, source: "keyboard",
-        spotlit: !!spotlight()?.targets.has(`sense:${s.id}`),
+        spotlit: childTap(`sense:${s.id}`),
       });
       await speakItem({ kind: "sense", id: s.id });
     });
@@ -244,7 +244,7 @@ export function mountKeyboard({
       fillChosen(db, getSentenceId(), { kind: item.kind, id: item.id, source: "keyboard" });
       logSelection(db, item.kind, item.id, Date.now(), {
         sentenceId: getSentenceId(), position, source: "keyboard",
-        spotlit: !!spotlight()?.targets.has(`${item.kind}:${item.id}`),
+        spotlit: childTap(`${item.kind}:${item.id}`),
         labelId: item.labelId ?? null,
       });
       grammar?.revisit?.(index); // "what do" + typed he -> does

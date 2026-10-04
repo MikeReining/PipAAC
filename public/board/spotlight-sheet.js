@@ -1,7 +1,7 @@
 /**
  * Spotlight page (013; Settings → Spotlight since 032): what it is, the
- * running session, saved lists as cards, modeling from a phone, and the
- * synced look settings. Picking happens on the board itself: taps choose
+ * running session, saved lists as cards, how two devices work together,
+ * and the synced look settings. Picking happens on the board itself: taps choose
  * targets, never speak.
  */
 import {
@@ -33,15 +33,19 @@ const HERO_TAP = SHOWCASE.tap;
 
 export function mountSpotlightSheet({
   db, catalog, me, open, close, all, coachLabel, tileFor, bindSpotSettings,
-  renderGrid, renderStrip, rerenderView, setModeling, setPicking,
+  renderGrid, renderStrip, rerenderView, setPicking,
   getPicking, getSpotPulse, getModelSpeaks, onSettingsOpen, openSettings,
   startDemo,
 }) {
   bindSpotSettings();
 
-  /** Start a spotlight and go look at it: Settings closes onto the board. */
+  const supporter = () => me.role === "partner";
+
+  /** Start a spotlight and go look at it: Settings closes onto the board.
+   *  Started on a supporter's device, the child's board stays plain until
+   *  a word is tapped here (spotlight.mjs glowsHere). */
   function startGlow(name, targets) {
-    startSession(db, { name, targets });
+    startSession(db, { name, targets, by_supporter: supporter() });
     close("menu");
     renderGrid();
     rerenderView();
@@ -120,7 +124,7 @@ export function mountSpotlightSheet({
         const items = listItems(db, l.id);
         const editor = el("div", "spot-tips");
         editor.append(el("p", "hint",
-          "One line per word: when to use it. It shows on a linked phone while this list glows."));
+          "One line per word: when to use it. A supporter sees it after tapping the word during a spotlight."));
         for (const it of items) {
           const r = el("label", "spot-tip-row");
           const input = el("input");
@@ -179,21 +183,17 @@ export function mountSpotlightSheet({
     }
   }
 
-  /* Modeling needs two devices. Only a partner device (a linked phone or
-   * a supporter's laptop) gets the button — on the child's own device
-   * it would glow nothing anyone sees; there the row explains linking. */
+  /* Two devices (founder, 2026-10-04): which one this is decides what a
+   * spotlight does here — the switch lives in Team & devices. */
   function renderModel() {
-    const partner = me.role === "partner";
-    const linked = !!me.sync?.userId;
-    $("spot-model").hidden = !partner;
-    $("spot-link").hidden = partner;
-    $("spot-link").textContent = linked ? "Add a device" : "Link a phone";
-    $("spot-model-title").textContent = partner ? "Model from this device" : "Model from your phone";
-    $("spot-model-hint").textContent = partner
-      ? `Tap a word here and it glows on ${person()}'s board for a few seconds. Say it out loud while you point. While a spotlight runs, its words also sit above the board here, with a tip for each.`
-      : linked
-        ? `On a linked phone, open Settings → Spotlight → Model from this device. Tap a word there and it glows here for a few seconds.`
-        : `Link your phone to ${person()}'s board. Then tap a word on your phone and it glows here for a few seconds, while you say it out loud.`;
+    const name = person();
+    $("spot-role-now").textContent = supporter()
+      ? "This is a supporter's device."
+      : `This is ${name}'s board.`;
+    $("spot-model-hint").textContent = supporter()
+      ? `Start a spotlight here. Its words light up on this screen, with a number for each time ${name} presses it. Tap a word here and it lights up on ${name}'s board for a few seconds. Say it as you tap.`
+      : `A spotlight started here glows on this board. Started from a supporter's device, nothing glows here until the supporter taps a word. Then that word lights up for a few seconds.`;
+    $("spot-link").hidden = supporter();
   }
 
   function renderLook() {
@@ -236,11 +236,6 @@ export function mountSpotlightSheet({
   for (const p of document.querySelectorAll?.("[data-icons]") ?? []) withIcons(p, p.textContent);
   onSettingsOpen(renderSpotForm);
   $("spot-try").addEventListener("click", () => startDemo());
-  $("spot-model").addEventListener("click", () => {
-    setModeling(true);
-    close("menu");
-  });
-  $("model-done").addEventListener("click", () => setModeling(false));
   $("spot-end").addEventListener("click", () => {
     endSession(db);
     renderNow();

@@ -522,23 +522,54 @@ body.groups #corner .g-home { display: block; }
   50% { box-shadow: 0 0 0 4px var(--glow), 0 0 24px rgba(232, 162, 0, 0.7); }
 }
 .cell.glow.pulse, .gcell.glow.pulse { animation: spot-pulse 2s ease-in-out infinite; }
+/* A word a supporter just tapped (2026-10-04): brighter than the steady
+   glow, so it shows even on a word that already glows. Fades with it. */
+@keyframes spot-modeled {
+  0%, 100% { box-shadow: 0 0 0 6px var(--glow), 0 0 28px rgba(232, 162, 0, 0.85); }
+  50% { box-shadow: 0 0 0 6px var(--glow), 0 0 10px rgba(232, 162, 0, 0.4); }
+}
+.cell.modeled, .gcell.modeled, .bar-btn.modeled {
+  opacity: 1; animation: spot-modeled 1s ease-in-out infinite; z-index: 2;
+}
+/* The supporter's count: how many times the child pressed this word
+   in the running spotlight. */
+.bar-btn[data-spot-count] { position: relative; }
+[data-spot-count]::after {
+  content: attr(data-spot-count);
+  position: absolute; bottom: 4px; right: 4px; z-index: 3;
+  min-width: 1.6em; padding: 1px 6px; border-radius: 999px;
+  background: var(--glow); color: var(--ink-text);
+  font-weight: 800; font-size: clamp(12px, 1.4vw, 17px); text-align: center;
+}
+.cell[data-spot-count] .ucount { display: none; }
 /* Pick mode: tapping a word adds it to the list instead of
    speaking. Picked cells get the glow outline; the bar counts. */
 body.picking .cell, body.picking .gcell { cursor: copy; }
 .cell.picked, .gcell.picked, .bar-btn.picked { box-shadow: 0 0 0 4px var(--glow); }
-#spot-pickbar, #modelbar {
+#spot-pickbar {
   position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
   background: var(--ink-text); color: #fff; border-radius: 14px;
   padding: 10px 14px; display: flex; gap: 10px; align-items: center;
   z-index: 11; font-size: 15px;
 }
 #spot-pickbar[hidden], #modelbar[hidden] { display: none; }
-#spot-pickbar button, #modelbar button {
+#spot-pickbar button {
   border: 0; border-radius: 9px; padding: 7px 12px;
   font-weight: 700; font-size: 14px; cursor: pointer;
 }
 #spot-pickbar .pick-start { background: var(--glow); }
-#spot-pickbar .pick-quiet, #modelbar .pick-quiet { background: #4a4539; color: #fff; }
+#spot-pickbar .pick-quiet { background: #4a4539; color: #fff; }
+/* The supporter's line sits where the suggestions were — nothing to
+   press is ever under it. */
+body.modeling #tray { display: none; }
+#modelbar {
+  min-width: 0; min-height: 0; border-radius: 12px; padding: 8px 14px;
+  background: var(--ink-text); color: #fff; font-size: 15px; line-height: 1.3;
+  display: flex; gap: 14px; align-items: center; justify-content: space-between;
+  overflow: hidden;
+}
+#model-count { flex: none; color: var(--glow); }
+#model-count:empty { display: none; }
 /* Transition highlight (014 § 4): a moved word keeps a soft inner
    ring for the window — quieter than the spotlight's outer glow,
    and it dims nothing. */

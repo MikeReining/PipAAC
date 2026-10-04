@@ -51,9 +51,9 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
   const ids = [
     "spot-running", "spot-running-label", "spot-lists",
     "spot-pulse", "spot-dim", "model-speaks", "spot-off", "spot-hero-tiles",
-    "spot-hero-say", "spot-running-words", "spot-model-title", "spot-model-hint",
+    "spot-hero-say", "spot-running-words", "spot-role-now", "spot-model-hint",
     "spot-link", "spot-look-sum", "spot-prev", "spot-try", "spot-hero-mark",
-    "spot-model", "model-done", "spot-end", "spot-pick", "spot-pick-cancel",
+    "spot-end", "spot-pick", "spot-pick-cancel",
     "spot-pick-start", "spot-pick-save", "spot-list-name", "spot-name-save",
   ];
   const nodes = Object.fromEntries(ids.map((id) => [id, el()]));
@@ -76,7 +76,6 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
     renderGrid() {},
     renderStrip() {},
     rerenderView() {},
-    setModeling() {},
     setPicking() {},
     getPicking: () => null,
     getSpotPulse: () => false,
@@ -95,7 +94,7 @@ test("the Spotlight page paints a saved list when Settings opens", () => {
   assert.equal(kids.filter((c) => c.className === "spot-card spot-idea").length, STARTER_LISTS.length);
   const [head] = cards[0].children;
   assert.deepEqual(head.children.map((c) => c.textContent), ["Snack", "1 word"]);
-  // The child's own device has no Model button — it would glow nothing.
-  assert.equal(nodes["spot-model"].hidden, true);
+  // The page says whose device this is; the person's own board offers linking.
+  assert.equal(nodes["spot-role-now"].textContent, "This is Sonja's board.");
   assert.equal(nodes["spot-link"].hidden, false);
 });

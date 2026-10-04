@@ -143,11 +143,21 @@ test("a pre-025 device gains spoken_feeling and expressive_voice additively", ()
     is_goal INTEGER NOT NULL DEFAULT 0
   )`);
   db.prepare("INSERT INTO spotlight_list (id, name, created_at) VALUES ('spl_a', 'Snack', 1)").run();
+  // Pre-2026-10-04: a running session without by_supporter.
+  db.exec(`CREATE TABLE spotlight_session (
+    id INTEGER PRIMARY KEY, name TEXT NOT NULL, targets TEXT NOT NULL,
+    started_at INTEGER NOT NULL, ends_at INTEGER NOT NULL
+  )`);
+  db.prepare("INSERT INTO spotlight_session VALUES (1, 'Snack', '[]', 1, 2)").run();
 
   ensureAdditiveColumns(facade(db));
   assert.equal(
     db.prepare("SELECT controls FROM spotlight_list WHERE id = 'spl_a'").get().controls, null,
     "an old list gains controls, empty",
+  );
+  assert.equal(
+    db.prepare("SELECT by_supporter FROM spotlight_session").get().by_supporter, 0,
+    "a running session gains by_supporter: started on this board",
   );
 
   assert.equal(
@@ -227,6 +237,7 @@ test("the additive tables are verbatim schema.sql, and a device gains them", () 
   db.exec("CREATE TABLE sentence (id INTEGER PRIMARY KEY, spoken_feeling TEXT)");
   db.exec("CREATE TABLE learner_profile (id TEXT PRIMARY KEY, expressive_voice INTEGER, speech_rate TEXT)");
   db.exec("CREATE TABLE spotlight_list (id TEXT PRIMARY KEY, controls TEXT)");
+  db.exec("CREATE TABLE spotlight_session (id INTEGER PRIMARY KEY)");
   ensureAdditiveColumns(facade(db));
   ensureAdditiveColumns(facade(db)); // twice is a no-op
   db.prepare("INSERT INTO transform_event (mode, pressed_at, tz_offset_min, spotlit) VALUES ('fix', 1, 0, 1)").run();

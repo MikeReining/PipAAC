@@ -168,6 +168,9 @@ export const ADDITIVE_COLUMNS = {
   ],
   // 032 E: the ✨ / ❓ buttons a Spotlight list lights.
   spotlight_list: "controls TEXT",
+  // Started on a supporter's device: the child's board stays plain
+  // until a word is modeled (2026-10-04, spotlight.mjs glowsHere).
+  spotlight_session: "by_supporter INTEGER NOT NULL DEFAULT 0 CHECK (by_supporter IN (0, 1))",
 };
 /** 032 E4: whole tables the shipped catalog doesn't carry yet — created
  *  here until it does. Verbatim schema.sql (asserted in migrate.test.mjs);

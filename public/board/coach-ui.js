@@ -1,25 +1,26 @@
 /**
- * Coach bar. On a partner device, the running spotlight's words sit
- * above the mirror. One tap models the word on the child's board.
- * The child's own device renders none of this.
+ * The supporter's side of a Spotlight (founder, 2026-10-04). On a device
+ * marked Supporter, a running spotlight turns the board itself into the
+ * controller: a tap lights that word on the child's board (board.js /
+ * spotlight-layer.js send it). This module owns what the supporter reads:
+ * the bar line, the word's coaching tip after a tap, and how many times
+ * the child pressed each word this session — counted from the child's
+ * taps as they arrive live. The child's own device renders none of this.
  */
-import { CONTROLS, coachTap, coachTally, spotlight, tipFor } from "../shared/spotlight.mjs";
+import { CONTROLS, spotlight, tipFor } from "../shared/spotlight.mjs";
 import { withIcons } from "./inline-icons.js";
 
 const $ = (id) => document.getElementById(id);
+const COUNTS_KEY = "spot_counts";
 
-const COACH_BASICS = [
-  "Point while you talk — your voice does the teaching.",
-  "Model without expecting a response.",
-  "Wait — silently count to five before helping.",
-  "Model one step above their level, not a whole sentence.",
-  "Come back to it tomorrow — repetition is the lesson.",
-];
+export function mountCoach({ db, locale, all, catalog, me, repaint }) {
+  /** { s: session started_at, c: { "kind:id": n } } — device-local, so a
+   *  reload keeps the session's counts; a new session starts at zero. */
+  let counts = { s: null, c: {} };
+  try { counts = JSON.parse(localStorage.getItem(COUNTS_KEY)) ?? counts; } catch { /* fresh */ }
+  let tip = null; // the last modeled word's tip, until the next tap
 
-export function mountCoach({ db, locale, all, catalog, me, syncSendModel }) {
-  const coachSeen = new Set(
-    JSON.parse(localStorage.getItem("coach_basics_seen") ?? "[]"),
-  );
+  const name = () => me.name?.trim() || null;
 
   function coachLabel(kind, id) {
     if (kind === "control") return CONTROLS[id]?.label ?? id;
@@ -33,58 +34,38 @@ export function mountCoach({ db, locale, all, catalog, me, syncSendModel }) {
       [id, locale])[0]?.t ?? id;
   }
 
-  function renderCoachTally() {
-    const n = coachTally(db);
-    $("coach-tally").textContent = n
-      ? `You modeled ${n} word${n === 1 ? "" : "s"} today`
-      : "Tap a word — it glows on their board.";
-  }
-
-  function renderCoach() {
-    const bar = $("coachbar");
+  /** The child's presses in the running session, by "kind:id". */
+  const sessionCounts = () => {
     const s = spotlight();
-    const on = me?.role === "partner" && !!s;
-    bar.hidden = !on;
-    if (!on) return;
-    const box = $("coach-targets");
-    box.innerHTML = "";
-    for (const key of s.targets) {
-      const [kind, id] = key.split(":");
-      const label = coachLabel(kind, id);
-      const b = document.createElement("button");
-      b.className = "coach-word";
-      withIcons(b, label);
-      b.addEventListener("click", () => {
-        // The same transient path as Model mode — the word glows on the
-        // child's board; the tally stays here, measuring the partner.
-        syncSendModel(key, label);
-        // The tally counts words modeled — a button press is not one.
-        if (kind !== "control") coachTap(db, kind, id);
-        b.classList.add("sent");
-        setTimeout(() => b.classList.remove("sent"), 700);
-        const tip = tipFor(db, catalog, kind, id)
-          ?? `"${label}" — tap it while you say it, then wait.`;
-        const tipEl = $("coach-tip");
-        withIcons(tipEl, tip);
-        tipEl.hidden = false;
-        renderCoachTally();
-      });
-      box.appendChild(b);
-    }
-    // The basics, one line at a time — each shows once, then it's out of
-    // the way. Seen state is device-local: it coaches this partner.
-    const idx = COACH_BASICS.findIndex((_, i) => !coachSeen.has(i));
-    $("coach-basic").hidden = idx < 0;
-    if (idx >= 0) {
-      $("coach-basic-text").textContent = COACH_BASICS[idx];
-      $("coach-basic-x").onclick = () => {
-        coachSeen.add(idx);
-        localStorage.setItem("coach_basics_seen", JSON.stringify([...coachSeen]));
-        renderCoach();
-      };
-    }
-    renderCoachTally();
+    return s?.session && counts.s === s.startedAt ? counts.c : {};
+  };
+  const countOf = (key) => sessionCounts()[key] ?? 0;
+
+  /** The child pressed a word on their board (ws, transient). */
+  function onChildTap(m) {
+    const s = spotlight();
+    if (me.role !== "partner" || !s?.session || typeof m.t !== "string") return;
+    if (m.s !== s.startedAt) return; // a tap from another session
+    if (counts.s !== s.startedAt) counts = { s: s.startedAt, c: {} };
+    counts.c[m.t] = (counts.c[m.t] ?? 0) + 1;
+    try { localStorage.setItem(COUNTS_KEY, JSON.stringify(counts)); } catch { /* memory only */ }
+    repaint();
   }
 
-  return { renderCoach, renderCoachTally, coachLabel };
+  /** The supporter just modeled a word: its tip replaces the bar line. */
+  function onModeled(kind, id) {
+    const label = coachLabel(kind, id);
+    tip = tipFor(db, catalog, kind, id) ?? `Say “${label}” as you tap it, then wait.`;
+    renderBar();
+  }
+
+  function renderBar() {
+    withIcons($("model-line"), tip
+      ?? `Your taps light up on ${name() ? `${name()}'s` : "their"} board. Say each word as you tap it.`);
+    const total = Object.values(sessionCounts()).reduce((a, b) => a + b, 0);
+    $("model-count").textContent = total
+      ? `${name() ?? "They"} pressed ${total} time${total === 1 ? "" : "s"}` : "";
+  }
+
+  return { coachLabel, countOf, onChildTap, onModeled, renderBar };
 }

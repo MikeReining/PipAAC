@@ -778,9 +778,9 @@ export class UserRelay {
   }
 
   webSocketMessage(ws, msg) {
-    // Live modeling (013 § 4): a tap on the partner's device rides the
-    // authenticated ws to the user's other devices — sealed, transient,
-    // never stored. The relay stamps `from` itself; clients cannot
+    // Live spotlight (013 § 4): a supporter's modeled word, or the
+    // child's tap back, rides the authenticated ws to the user's other
+    // devices — sealed, transient, never stored. The relay stamps `from` itself; clients cannot
     // forge it.
     let m;
     try { m = JSON.parse(msg); } catch { return; }

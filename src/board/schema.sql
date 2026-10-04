@@ -421,7 +421,8 @@ CREATE TABLE IF NOT EXISTS spotlight_session (
   -- mid-session does not change the running glow.
   targets TEXT NOT NULL,
   started_at INTEGER NOT NULL,
-  ends_at INTEGER NOT NULL
+  ends_at INTEGER NOT NULL,
+  by_supporter INTEGER NOT NULL DEFAULT 0 CHECK (by_supporter IN (0, 1))
 );
 
 -- Coach tally (013 § 5a): one row per live-model tap the adult makes on

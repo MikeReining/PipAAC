@@ -8,7 +8,7 @@
  * corner and Add beside Groups (board.js wires both). Writes go through
  * shared/groups.mjs.
  */
-import { spotlight, spotlightGroups } from "../shared/spotlight.mjs";
+import { glowsHere, spotlight, spotlightGroups } from "../shared/spotlight.mjs";
 import {
   addToGroups, createGroup, deleteGroup, geometryOf, groupDisplayName, groupIndex,
   groupPage, indexSlotAt, indexVisual, maskedSenseIds, moveGroup, moveItem, pageCount,
@@ -20,7 +20,7 @@ import { groupGlyph } from "./group-glyph.js";
 const $ = (id) => document.getElementById(id);
 
 export function mountGroups({
-  db, locale, all, boardGeom, getEditing, getModelGlow, getLikelyGroups,
+  db, locale, all, boardGeom, getEditing, getModelGlow, getLikelyGroups, isSupporter = () => false,
   setView, open, close, toast, wordTile, layerMark, fitLabels, tap, shownLabel,
   navCell, editPointer, xBadge, openAddForm, openWordCard, homeCells, homeTile, rerenderView,
   loadPhotoURL, savePhoto, syncUploadBlob,
@@ -144,7 +144,7 @@ export function mountGroups({
       indexPages = Math.max(indexPages, v.page + 1);
       if (v.page === indexPageNo) placed.set(v.slot, g);
     }
-    const spotGroups = spotlight()
+    const spotGroups = glowsHere(spotlight(), isSupporter())
       ? spotlightGroups(db, spotlight().targets) : null;
     const modelGlow = getModelGlow();
     const modelGroups = !spotGroups && modelGlow.size

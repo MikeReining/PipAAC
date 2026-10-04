@@ -57,6 +57,7 @@ export function mountStrip({
     const tray = $("tray");
     const span = traySpan(cols);
     tray.style.gridColumn = `span ${span}`;
+    $("modelbar").style.gridColumn = tray.style.gridColumn;
     tray.style.gridTemplateColumns = `repeat(${Math.min(stripSlots(cols), span)}, 1fr)`;
   }
 

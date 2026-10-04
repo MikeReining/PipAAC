@@ -1,8 +1,8 @@
 # 032 — Spotlight gets its own page
 
-**Status:** A, B, C built 2026-09-29; E built 2026-09-30. Waiting on
-founder review of A–C and E. D (partner-phone coach polish) is held until
-then (founder, 2026-09-29).
+**Status:** A, B, C built 2026-09-29; E built 2026-09-30; F built
+2026-10-04 (replaces D's candidate scope). Waiting on founder review of F
+on two real devices.
 
 ## Founder intent (2026-09-29)
 
@@ -103,18 +103,57 @@ wand law the model says "Want an apple." (battery: "want cookie" → "Want
 a cookie."), and the tour's own header says scripted results must match
 live output. Needs a proven pair (e.g. we play) or a founder ruling.
 
-## D — held, candidate scope (not decided)
+## F — Two devices (founder, 2026-10-04)
+
+Why: the founder could not tell which device did what. Pip marked
+whichever device joined second as the supporter's (the iPad meant for the
+child got the coach strip), and a coach tap lit a word that was already
+lit, so nothing visibly happened. Rulings:
+
+1. **Each device is marked, never guessed.** Team & devices → *This
+   device*: the person's board or a supporter's. A joining device is
+   asked "Who uses this device?" before its code works. Stored on the
+   device's registry row (`role: "partner" | "board"`).
+2. **Start on the supporter's device.** Its words light up there. The
+   session row carries `by_supporter`; `spotlight.mjs glowsHere` is the
+   one rule: the child's board shows **no** steady glow for a supporter's
+   spotlight (founder chose this over glow-plus-flash).
+3. **The supporter's board is the controller.** While their spotlight
+   runs, every tap there lights that word (or ✨ / ❓) on the child's
+   board for a few seconds, with a stronger flash than the steady glow.
+   It never speaks or builds a sentence on the supporter's device. The
+   old coach strip and its "you modeled N words" tally are gone; the
+   word's coaching tip shows in the supporter's bar after a tap, in the
+   suggestion row (nothing to press is under it).
+4. **Counts.** Each press on the child's board during a session rides the
+   same live channel back (sealed, never stored); the supporter sees a
+   number on the word and a total. Counts are this session only, and
+   only while the supporter's device is online.
+5. **One device still works.** Started on the child's own board, the
+   spotlight glows there as before and the adult points.
+6. Progress's "with the glow" now means lit when pressed: a steady
+   target, or a word the supporter just lit.
+
+Proof: `src/board/spotlight_roles.test.mjs`;
+`scripts/probes/spot_remote_probe.mjs` (two Chrome profiles on the local
+relay — the role question, plain child board, the lit word, the press
+logged with the glow, counts 1 then 2, no sync ops). Replaces
+`spot_model_probe` and `spot_coach_probe`.
+
+Founder check: on the computer, Team & devices → This device → *A
+supporter's*; on the iPad, *[Name]'s board*. Start a list on the
+computer, tap a word, watch the iPad; press it on the iPad, watch the
+number on the computer.
+
+## D — superseded by F (kept for the open items)
 
 Written down so it isn't lost; the founder decides after reviewing A–E.
-- The coach bar on a linked phone: today a row of word chips, one tip
-  line, and a tally. Candidates: show the list's recipe (moves), group
-  ✨ / ❓ apart from words, and a clearer "you're modeling" state.
 - Starting, switching, and ending a spotlight from the phone without
   opening Settings.
 - Phone-width top bar: the 🔦 End chip is off-screen at 390px (see
   below) — if D owns the phone experience, it needs this fixed first.
-- The older spot probes (mirror, model, coach) still launch Chrome via
-  `open -na`; move them to the binary when D touches them.
+- The older spot probes (mirror, layer) still launch Chrome via
+  `open -na`; move them to the binary when they are next touched.
 
 ## Works Test
 

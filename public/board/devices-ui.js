@@ -38,6 +38,11 @@ export function deviceName(nav = globalThis.navigator) {
   return browser ? `${kind} · ${browser}` : kind;
 }
 
+/** The stored device role: "partner" is a supporter's device, "board"
+ *  the person's own (an unset role reads as the person's own). */
+const SUPPORTER = "partner";
+const roleValue = (v) => (v === "supporter" ? SUPPORTER : "board");
+
 /** A typed or scanned code: letters and digits only, upper case. */
 const cleanCode = (v) => String(v ?? "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
 const showCode = (c) => `${c.slice(0, 4)} ${c.slice(4)}`;
@@ -55,6 +60,8 @@ export function mountDevices({
   onPlan = () => {},
   // speech.js caches the stored license; drop the cache when it changes.
   resetLicense = () => {},
+  // The board repaints when this device's role changes (Spotlight reads it).
+  onRoleChange = () => {},
 }) {
   /* ------------------------------------------------------------------ *
    * Linked devices + pairing (sync § 3). The device that already has the
@@ -129,7 +136,26 @@ export function mountDevices({
     $("team-note").hidden = isOwner;
   }
 
+  /* Whose device is this: the person's own board, or a supporter's.
+   * Spotlight reads it (spotlight.mjs glowsHere). Asked when a device
+   * joins; this switch changes it. Stored "partner" for a supporter. */
+  function renderRole() {
+    const supporter = me.role === SUPPORTER;
+    for (const b of $("dev-role").querySelectorAll("button")) {
+      b.classList.toggle("on", (b.dataset.v === "supporter") === supporter);
+    }
+  }
+  $("dev-role").addEventListener("click", async (e) => {
+    const v = e.target.closest("button")?.dataset.v;
+    if (!v) return;
+    await saveUser({ role: roleValue(v) });
+    renderRole();
+    renderAccount();
+    onRoleChange();
+  });
+
   async function renderDevices() {
+    renderRole();
     const list = $("dev-list");
     const cfg = me.sync;
     $("dev-delete-row").hidden = !cfg?.userId;
@@ -664,16 +690,36 @@ export function mountDevices({
     pairBody.innerHTML = `
       <p class="hint">On the device that already has the board, open
         <b>Settings → Team &amp; devices → Add a device</b>. Type the code it shows.</p>
+      <p class="seg-label">Who uses this device?</p>
+      <div class="seg" id="pair-role">
+        <button data-v="board">The person who talks with Pip</button>
+        <button data-v="supporter">A supporter: parent, teacher, therapist</button>
+      </div>
       <input type="text" id="pair-code" maxlength="9" autocomplete="off" autocapitalize="characters"
         spellcheck="false" aria-label="Code"
-        style="width:100%; box-sizing:border-box; text-transform:uppercase; letter-spacing:4px; font-size:24px; text-align:center;" />
+        style="width:100%; box-sizing:border-box; text-transform:uppercase; letter-spacing:4px; font-size:24px; text-align:center; margin-top:12px;" />
       <p class="hint" id="pair-status" role="status"></p>`;
     const input = pairBody.querySelector("#pair-code");
     const status = pairBody.querySelector("#pair-status");
+    // Whose device this is is asked, never guessed (founder, 2026-10-04).
+    const roleSeg = pairBody.querySelector("#pair-role");
+    let role = null;
+    roleSeg.addEventListener("click", (e) => {
+      const v = e.target.closest("button")?.dataset.v;
+      if (!v) return;
+      role = v;
+      for (const b of roleSeg.querySelectorAll("button")) b.classList.toggle("on", b.dataset.v === v);
+      if (status.textContent.startsWith("Choose")) status.textContent = "";
+      tryCode();
+    });
     let busy = false;
     const tryCode = async () => {
       const code = cleanCode(input.value);
       if (code.length !== 8 || busy) return;
+      if (!role) {
+        status.textContent = "Choose who uses this device first.";
+        return;
+      }
       busy = true;
       status.textContent = "Connecting…";
       try {
@@ -688,7 +734,7 @@ export function mountDevices({
         if (!input.isConnected) return;
         input.disabled = true;
         status.textContent = "Connected — finishing on the other device…";
-        waitForGrant(code, identity, store, status);
+        waitForGrant(code, identity, store, status, role);
       } catch (e) {
         busy = false;
         status.textContent = e.status === 410
@@ -705,7 +751,7 @@ export function mountDevices({
     if (prefill) tryCode(); else input.focus();
   }
 
-  function waitForGrant(code, identity, store, status) {
+  function waitForGrant(code, identity, store, status, role) {
     pairPoll = setInterval(async () => {
       try {
         const st = await pairClient(relayBase).status(code);
@@ -728,13 +774,12 @@ export function mountDevices({
         const fresh = me.needsSetup && me.id !== st.grant.user_id;
         if (fresh) await removeUser(userStore, me.id);
         // 015 slice 2: the linked user joins this device's registry — the
-        // relay id is the registry id — and the app opens it. A user that
-        // joins by link is the partner device (013 § 5a: the coach view
-        // renders only for role 'partner').
+        // relay id is the registry id — and the app opens it, in the role
+        // the person chose above.
         const linked = await addUser(userStore, {
           id: st.grant.user_id,
           sync: { userId: st.grant.user_id, epoch, cursor: 0 },
-          role: "partner",
+          role: roleValue(role),
           home: fresh,
         });
         status.textContent = "Joined — opening the board…";

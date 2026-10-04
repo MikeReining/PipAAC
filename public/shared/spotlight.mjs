@@ -14,7 +14,9 @@ import { maskedSenseIds } from "./groups.mjs";
 import { barControls } from "./bar.mjs";
 import { recordOp } from "./ops.mjs";
 
-let active = null; // { name, targets: Set<"kind:id"> }
+// { name, targets: Set<"kind:id">, session, bySupporter, startedAt } —
+// `session` is false for Try it's local layer (no row behind it).
+let active = null;
 
 /** Sentence buttons a spotlight may light (032 E), as "control:<name>"
  *  targets: ✨ adds the little words (a grammar pass, never a guess — the
@@ -33,7 +35,7 @@ export const CONTROLS = {
  *  person's sentence-bar setting hides (038: a hidden button is never
  *  a target — it stays on the saved list and lights again if shown).
  *  Returns { skipped } — an all-skipped call leaves the layer off. */
-export function startSpotlight(db, targets, name = "Spotlight") {
+export function startSpotlight(db, targets, name = "Spotlight", extra = {}) {
   const masked = maskedSenseIds(db);
   const shown = barControls(db);
   const set = new Set();
@@ -44,7 +46,9 @@ export function startSpotlight(db, targets, name = "Spotlight") {
     else if (kind === "control" && (!CONTROLS[id] || !shown.has(id))) skipped.push(key);
     else set.add(key);
   }
-  active = set.size ? { name, targets: set } : null;
+  active = set.size
+    ? { name, targets: set, session: false, bySupporter: false, startedAt: null, ...extra }
+    : null;
   return { skipped };
 }
 
@@ -55,6 +59,16 @@ export function endSpotlight() {
 /** The running spotlight, or null. Renderers consult this. */
 export function spotlight() {
   return active;
+}
+
+/** Does this device show the steady glow? A spotlight started on a
+ *  supporter's device leaves the child's board plain — there a word
+ *  lights only when the supporter taps it (founder, 2026-10-04). Every
+ *  other case glows: the device that started it, any supporter device,
+ *  and the child's board when it was started there (one device, the
+ *  adult points). */
+export function glowsHere(s, supporterDevice) {
+  return !!s && (supporterDevice || !s.bySupporter);
 }
 
 /** The groups that contain at least one target — the tiles the route
@@ -216,25 +230,9 @@ export function spotSession(db) {
   return db.prepare("SELECT * FROM spotlight_session WHERE id = 1").all()[0] ?? null;
 }
 
-/* --- Coach view (013 § 5a): the partner's tips and tally. --- */
+/* --- Coach tips (013 § 5a): the line a supporter sees after modeling. --- */
 
-/** One live-model tap by the adult — device-local, never synced. */
-export function coachTap(db, kind, id, at = Date.now()) {
-  db.prepare(
-    "INSERT INTO coach_event (item_kind, item_id, modeled_at) VALUES (?, ?, ?)",
-  ).run(kind, id, at);
-}
-
-/** How many distinct words the adult modeled today on this device. */
-export function coachTally(db, now = Date.now()) {
-  const d = new Date(now);
-  d.setHours(0, 0, 0, 0);
-  return db.prepare(
-    "SELECT COUNT(DISTINCT item_kind || ':' || item_id) AS n FROM coach_event WHERE modeled_at >= ?",
-  ).all(d.getTime())[0].n;
-}
-
-/** The tip a target shows in the coach bar: a list item's SLP edit wins,
+/** The tip a supporter sees after modeling a word: a list item's SLP edit wins,
  *  then the shipped catalog default, else null (caller falls back). */
 export function tipFor(db, catalog, kind, id) {
   if (kind === "control") return CONTROLS[id]?.tip ?? null;
@@ -261,8 +259,10 @@ export function untilText(row) {
   return `until ${t}`;
 }
 
-/** Start a session: `{ name, targets }`, or `{ …, started_at, ends_at }`
- *  when replaying another device's op. There is no timer (032): a session
+/** Start a session: `{ name, targets, by_supporter }`, or `{ …,
+ *  started_at, ends_at }` when replaying another device's op.
+ *  `by_supporter` (0/1): started on a supporter's device, so the child's
+ *  board stays plain until a word is modeled (`glowsHere`). There is no timer (032): a session
  *  runs until someone ends it and always ends at local midnight. A row
  *  synced from an older device keeps the ends_at it was given. Writes the
  *  synced row, lights the layer, and records the op. */
@@ -270,16 +270,20 @@ export function startSession(db, s) {
   const started_at = s.started_at ?? Date.now();
   const ends_at = s.ends_at ?? nextMidnight(started_at);
   const targets = [...s.targets];
+  const by_supporter = s.by_supporter ? 1 : 0;
   db.prepare(
-    `INSERT INTO spotlight_session (id, name, targets, started_at, ends_at)
-     VALUES (1, ?, ?, ?, ?)
+    `INSERT INTO spotlight_session (id, name, targets, started_at, ends_at, by_supporter)
+     VALUES (1, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO UPDATE SET name = excluded.name,
        targets = excluded.targets, started_at = excluded.started_at,
-       ends_at = excluded.ends_at`,
-  ).run(s.name, JSON.stringify(targets), started_at, ends_at);
-  recordOp(db, "spot_start", { name: s.name, targets, started_at, ends_at });
-  return startSpotlight(db, targets, s.name);
+       ends_at = excluded.ends_at, by_supporter = excluded.by_supporter`,
+  ).run(s.name, JSON.stringify(targets), started_at, ends_at, by_supporter);
+  recordOp(db, "spot_start", { name: s.name, targets, started_at, ends_at, by_supporter });
+  return startSpotlight(db, targets, s.name, sessionExtra({ started_at, by_supporter }));
 }
+
+const sessionExtra = (row) =>
+  ({ session: true, bySupporter: !!row.by_supporter, startedAt: row.started_at });
 
 /** End the session: delete the synced row, dim the board, record it. */
 export function endSession(db) {
@@ -301,6 +305,6 @@ export function resumeSession(db) {
     endSession(db);
     return null;
   }
-  const r = startSpotlight(db, JSON.parse(row.targets), row.name);
+  const r = startSpotlight(db, JSON.parse(row.targets), row.name, sessionExtra(row));
   return { name: row.name, ends_at: row.ends_at, skipped: r.skipped };
 }

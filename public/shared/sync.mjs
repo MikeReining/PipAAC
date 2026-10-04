@@ -203,16 +203,19 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel) {
   };
   connect();
 
-  /** A live-model tap (013 § 4): sealed under the current epoch key and
-   *  sent up the ws — the relay broadcasts it, nothing is stored. */
-  const sendModel = async (target, word) => {
+  /** A live message (013 § 4): sealed under the current epoch key and
+   *  sent up the ws — the relay broadcasts it, nothing is stored. The
+   *  relay frame is always `model`; the sealed `k` says what it is: a
+   *  supporter's modeled word (`model`) or the child's tap during a
+   *  spotlight (`tap`, spotlight-layer.js). */
+  const sendLive = async (plain) => {
     if (!live || live.readyState !== WebSocket.OPEN) return false;
-    const env = await sealOp(await keyFor(epoch), { k: "model", t: target, w: word });
+    const env = await sealOp(await keyFor(epoch), plain);
     live.send(JSON.stringify({ t: "model", e: epoch, env }));
     return true;
   };
   return { get client() { return client; }, identity,
-    getEpoch: () => epoch, uploadBlob, sendModel, rekey };
+    getEpoch: () => epoch, uploadBlob, sendLive, rekey };
 }
 
 /** Tell the running sync to re-seal under a rotated epoch (015 s5). */
@@ -221,11 +224,15 @@ export async function syncRekey(epoch) {
   return handle?.rekey(epoch) ?? null;
 }
 
-/** A live-model tap for the running sync — false when unlinked/offline. */
-export async function syncSendModel(target, word) {
+/** A live message for the running sync — false when unlinked/offline. */
+export async function syncSendLive(plain) {
   const handle = running ? await running.catch(() => null) : null;
-  return handle?.sendModel(target, word) ?? false;
+  return handle?.sendLive(plain) ?? false;
 }
+
+/** A supporter's modeled word: it lights on the child's board. */
+export const syncSendModel = (target, word) =>
+  syncSendLive({ k: "model", t: target, w: word });
 
 /** Upload a photo/recording blob if the user is linked. Callers don't
  *  await — the blob rides behind the op that references its sha. */
