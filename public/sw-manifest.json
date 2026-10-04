@@ -1,10 +1,10 @@
 {
-  "buildId": "r1-e1c7dde8cfb1",
+  "buildId": "r1-0f0f834fb6d2",
   "files": [
     {
       "path": "/board.js",
-      "bytes": 66932,
-      "sha256": "bc3911b23eabc87b012f72fc95203e98439ed3ee19a5cf3beb813d1082fab19f"
+      "bytes": 66654,
+      "sha256": "7cea03a493052bfbaa9671f65f23fd3a0e4caa829b7dc0c08ea48d6224255cdf"
     },
     {
       "path": "/board/add-flow.css",
@@ -23,8 +23,8 @@
     },
     {
       "path": "/board/base.css",
-      "bytes": 27400,
-      "sha256": "13fbba14c963a550cb291911929179eff1f43e1155ae9d7c1c79dd5b7e0f9601"
+      "bytes": 25985,
+      "sha256": "70f565e3726dee3bfb955d0c4a1f04943e5e00ae708bdb07ce65da5e868befa6"
     },
     {
       "path": "/board/cells-sheet.css",
@@ -37,9 +37,14 @@
       "sha256": "7b85c0a14cd19ccfaeaf4cb9a6790783f1fbf666d8d38a78c7070cb06dd8feb6"
     },
     {
+      "path": "/board/coach-ui.css",
+      "bytes": 775,
+      "sha256": "cd9d46f8110d4f32ba3dc932dc4edae15b27da5806ed00270e87d6f004e6b0f4"
+    },
+    {
       "path": "/board/coach-ui.js",
-      "bytes": 3070,
-      "sha256": "7bfae3d2464f188913974a1288cbbfa5bfe04c03015464e5f80d5b21cf7bd98a"
+      "bytes": 3301,
+      "sha256": "1fc9aa16f120cd4c0e326ca59a4e7e2e773db156ba4bfd160ba9425c48782800"
     },
     {
       "path": "/board/devices-ui.css",
@@ -48,8 +53,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 45372,
-      "sha256": "2fe65c6111ef269c2beffd2850cc647c75db31b4f1da1fdeda7b7fb70aedd6c6"
+      "bytes": 43520,
+      "sha256": "4b6897d0ad1d9a547b8d15051653d7339401522c5f595fef2eaec9ca06c1e42b"
     },
     {
       "path": "/board/edit-shared.js",
@@ -63,8 +68,8 @@
     },
     {
       "path": "/board/editor-ui.css",
-      "bytes": 14430,
-      "sha256": "22cb7ef7488c128cb04348530fe3b040a173bfc412abc96a5eb6e229dd8f7326"
+      "bytes": 14453,
+      "sha256": "692911de9a1a2ede476f4d4bedc4194fdd52c01dfec5c51fd5acf7ec853ffb1a"
     },
     {
       "path": "/board/editor-ui.js",
@@ -103,8 +108,8 @@
     },
     {
       "path": "/board/groups-ui.js",
-      "bytes": 17931,
-      "sha256": "836a75bd0398428f6eb16f8f935a66779c89cdadf5b6c0645394121b17972907"
+      "bytes": 17881,
+      "sha256": "55873288ed9a93095cbe5bcfa81a8156606efc87910f62ac1b2fe9f1cb4e951f"
     },
     {
       "path": "/board/inline-icons.js",
@@ -118,8 +123,8 @@
     },
     {
       "path": "/board/keyboard-ui.js",
-      "bytes": 14533,
-      "sha256": "e8f641c9f0de16deaf3721a75b0283027b1b3b2520fc629d9e529c7cbb10ce0d"
+      "bytes": 14610,
+      "sha256": "82ab2f09f747b1af6aeeb9b7c211d682f641923e17f6d50cde4e83eb75a8a131"
     },
     {
       "path": "/board/library-ui.css",
@@ -243,8 +248,8 @@
     },
     {
       "path": "/board/speech.js",
-      "bytes": 25539,
-      "sha256": "df3305f6a5b94ddcc2c8f08dfa8123749284a924c3a8163f5c32b274df730c8c"
+      "bytes": 25605,
+      "sha256": "0db9cebe9e5b8ec6aba0672fc9c87da1647ba73a81716fbca48b2ab298e897f8"
     },
     {
       "path": "/board/spotlight-demo.js",
@@ -253,8 +258,8 @@
     },
     {
       "path": "/board/spotlight-layer.js",
-      "bytes": 8722,
-      "sha256": "de77ba190305dbc2efb2ea7b44d9942e300619dea93a4cf9c96f75a04ae7c19b"
+      "bytes": 6883,
+      "sha256": "5061b21f5f0763b47938c45d0ddf717fcbf60cd3c5cf2ca76dc111e778cdfca5"
     },
     {
       "path": "/board/spotlight-sheet.css",
@@ -263,13 +268,13 @@
     },
     {
       "path": "/board/spotlight-sheet.js",
-      "bytes": 12297,
-      "sha256": "5bcd096015967e33bba4e0b5fea0e7dbbb77e3ec23ae59c3f8b4975ce12460e1"
+      "bytes": 12579,
+      "sha256": "12f4f2f9ad3f0ecbecfadfe5fd6c986f5d0fe41c6320805bc019117139c8dd0e"
     },
     {
       "path": "/board/strip.js",
-      "bytes": 14157,
-      "sha256": "de8abda252f64fa8297dcb09e84d0fd6a8dd275a5a18be518255b408316ded5f"
+      "bytes": 14097,
+      "sha256": "e23d75809f8cdb3215b4136df75812c4a0b9f7eac7674313fdc5bd37c707c77a"
     },
     {
       "path": "/board/team-name-ui.js",
@@ -368,8 +373,8 @@
     },
     {
       "path": "/catalog.json",
-      "bytes": 3757663,
-      "sha256": "3acecfb2e3896d5498e73573169808f8a9dbcf43a1bc3e1ef201214c7e572006"
+      "bytes": 3757588,
+      "sha256": "537558992abcf93c48db80b5368509fa1b5dfb8aedc2d4d806046c5f61daa400"
     },
     {
       "path": "/db.js",
@@ -399,7 +404,7 @@
     {
       "path": "/fresh_db.sqlite",
       "bytes": 2981888,
-      "sha256": "22027da0e6fdd4dc1757e3f55fd7d99deeabc443ebde68d8e8a98c2fbe38ad58"
+      "sha256": "d344d3d590ae1173e6518be61af341b2b6937d6f0c6e6623cccb9ec8a37cde6c"
     },
     {
       "path": "/icons/backspace.svg",
@@ -728,8 +733,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 68433,
-      "sha256": "c5922fd4fb7f210efd4ac95bd9fd96de54c90d3d27bd34074a26a68d30855b10"
+      "bytes": 68296,
+      "sha256": "b0f29ec3d9ed9cf5ea292b8c85c1f708624784000db2d4cc3517882538e97409"
     },
     {
       "path": "/manifest.webmanifest",
@@ -838,8 +843,8 @@
     },
     {
       "path": "/shared/migrate.mjs",
-      "bytes": 9472,
-      "sha256": "90dfb2ab041c670f9faaa3ba7b196d6d9a28da1f8d6a9a5ae5393c8ad7f56b78"
+      "bytes": 9241,
+      "sha256": "6bd544421d682f68e4eb7eb2652d31a29767e9a1cf4641b82c2e5440b3ad0739"
     },
     {
       "path": "/shared/movecost.mjs",
@@ -923,8 +928,8 @@
     },
     {
       "path": "/shared/spotlight.mjs",
-      "bytes": 13371,
-      "sha256": "d71da54b8c5a3bdd0717f6fcb4a73fc96612d3f430210b2d511f0d3217e23c6b"
+      "bytes": 12809,
+      "sha256": "a8f37aa54cd1cecd33d090a852bfb498a7fb4b244b41ce6c5d524579ecc55233"
     },
     {
       "path": "/shared/stats.mjs",
@@ -943,8 +948,8 @@
     },
     {
       "path": "/shared/sync.mjs",
-      "bytes": 9850,
-      "sha256": "e180710595f74ca9d539d83ba329d79c81a53881b83773a4333c680619f6430a"
+      "bytes": 9552,
+      "sha256": "400f84e92b4203aa10bc863ceaefac8b9530f6639b7546a7ba76a50cc362aed8"
     },
     {
       "path": "/shared/team_names.mjs",
