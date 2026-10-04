@@ -19,6 +19,20 @@ import { installSeedGroups } from "./groups.mjs";
 import { ensureBaseline } from "./ops.mjs";
 
 export function importCatalog(db, catalog, { tiers = ["root_core", "primary_fringe"] } = {}) {
+  // 041 B2 — the fingerprint is the reconcile's skip gate. A persisted
+  // DB whose last-applied fingerprint equals the shipped catalog's holds
+  // exactly what the reconcile would write, so the ~20k-statement replay
+  // is a no-op in disguise — skip it. A catalog change still converges
+  // once, on the next boot. The tail (profile, families, baseline, seed
+  // check) always runs: it is cheap, idempotent, and what ?reseed needs.
+  let already = false;
+  if (catalog.fingerprint) {
+    try {
+      already = db.prepare(
+        "SELECT fingerprint AS f FROM catalog_meta WHERE id = 1",
+      ).all()[0]?.f === catalog.fingerprint;
+    } catch { /* catalog_meta predates this deploy — reconcile runs */ }
+  }
   const keep = new Set(tiers);
   const senses = catalog.senses.filter((s) => keep.has(s.tier));
   const senseIds = new Set(senses.map((s) => s.id));
@@ -29,6 +43,7 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
   const clips = catalog.clips.filter((c) => utteranceIds.has(c.utterance_id));
   const cells = catalog.coreCells.filter((c) => senseIds.has(c.sense_id));
 
+  if (!already) {
   db.exec("BEGIN");
   try {
     const insSense = db.prepare(
@@ -134,10 +149,16 @@ export function importCatalog(db, catalog, { tiers = ["root_core", "primary_frin
     );
     for (const gl of catalog.groupLabels ?? []) insGroupLabel.run(gl.group_id, gl.locale, gl.text);
 
+    if (catalog.fingerprint) {
+      db.prepare(
+        "INSERT OR REPLACE INTO catalog_meta (id, fingerprint) VALUES (1, ?)",
+      ).run(catalog.fingerprint);
+    }
     db.exec("COMMIT");
   } catch (err) {
     db.exec("ROLLBACK");
     throw err;
+  }
   }
 
   const defaultVoice = catalog.voices.find((v) => v.is_default === 1 && v.status === "active");

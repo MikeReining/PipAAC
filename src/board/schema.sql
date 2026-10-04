@@ -847,4 +847,13 @@ CREATE TABLE IF NOT EXISTS stats_day (
   PRIMARY KEY (day, device_id)
 );
 
+-- Which catalog fingerprint the row reconcile last applied (041 B2).
+-- importCatalog reads this first: a match skips the ~20k-statement
+-- replay — the reconcile only re-runs when the shipped catalog changed.
+-- Device-local, never synced.
+CREATE TABLE IF NOT EXISTS catalog_meta (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  fingerprint TEXT NOT NULL
+);
+
 PRAGMA user_version = 20;

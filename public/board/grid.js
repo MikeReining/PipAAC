@@ -74,6 +74,7 @@ export function mountGrid({
     if (art || photoURL) {
       const img = document.createElement("img");
       img.alt = "";
+      img.decoding = "async"; // 041 B7 — tile decodes off the paint path
       ar.appendChild(img);
       if (photoURL) {
         img.src = photoURL;
@@ -224,6 +225,7 @@ export function mountGrid({
         const img = document.createElement("img");
         img.src = url;
         img.alt = "";
+        img.decoding = "async";
         el.querySelector(".tart").appendChild(img);
         el.classList.add("photo");
       });

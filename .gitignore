@@ -101,6 +101,9 @@ assets/catalog/audio/
 *.webm
 *.db
 *.sqlite
+# 041 B1: the shipped ready-made new-person database — a generated
+# artifact like catalog.json, committed so the drift gate can compare.
+!public/fresh_db.sqlite
 
 # Wrangler local state
 .wrangler/

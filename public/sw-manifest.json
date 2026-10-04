@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-2470cc2254f4",
+  "buildId": "r1-241a14bc9f8b",
   "files": [
     {
       "path": "/board.js",
@@ -53,8 +53,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 36650,
-      "sha256": "77ed680a4fa89180c62f6e10afe13c68750e38e6b3324b9674aafbf63e29a610"
+      "bytes": 36606,
+      "sha256": "6ca9c42e34585f791ae33b0a4704099f2ac899dbabe0afa35291acedfeb446cd"
     },
     {
       "path": "/board/edit-shared.js",
@@ -88,8 +88,8 @@
     },
     {
       "path": "/board/grid.js",
-      "bytes": 19115,
-      "sha256": "9378f511835c47e0b7c240513993b1d1297b5d4e87b840118861e53470d99b54"
+      "bytes": 19223,
+      "sha256": "e38a909690929b4c58740258efc4996190d73d7ac51e4a73b99c2cd9c7c485bc"
     },
     {
       "path": "/board/group-glyph.js",
@@ -368,13 +368,13 @@
     },
     {
       "path": "/catalog.json",
-      "bytes": 3757135,
-      "sha256": "1ab694317e5966b7a081f287b7dede0c5de954f968aca2a01150137b1d0e2875"
+      "bytes": 3757588,
+      "sha256": "537558992abcf93c48db80b5368509fa1b5dfb8aedc2d4d806046c5f61daa400"
     },
     {
       "path": "/db.js",
-      "bytes": 7638,
-      "sha256": "19a70d104c1dc5bd54de564ddf23e5e05b52a6365dad98e03b22472027b46495"
+      "bytes": 8028,
+      "sha256": "2a7564c77394cc49646ae269a6c5bcd045fa28b4d18fdfb76b6ee52cbda82508"
     },
     {
       "path": "/feeling_voice.json",
@@ -396,6 +396,11 @@
       "bytes": 5526386,
       "sha256": "4992b99f2fe0b62b989687266e6b767e900cf6fcc4fde78f207d187b6db9107f",
       "via": "worker-gz"
+    },
+    {
+      "path": "/fresh_db.sqlite",
+      "bytes": 2981888,
+      "sha256": "d344d3d590ae1173e6518be61af341b2b6937d6f0c6e6623cccb9ec8a37cde6c"
     },
     {
       "path": "/icons/backspace.svg",
@@ -814,8 +819,8 @@
     },
     {
       "path": "/shared/import.mjs",
-      "bytes": 8651,
-      "sha256": "94750fc391dc85e48cc1af16f1d3c6c989aecb9ef93eba65f2cf41f3d4a47714"
+      "bytes": 9564,
+      "sha256": "54cf08ddc6c9cb1c927be5ac8de91084c3c1fd02a64048d2de045aa7517d0be3"
     },
     {
       "path": "/shared/keyboard.mjs",
@@ -834,8 +839,8 @@
     },
     {
       "path": "/shared/migrate.mjs",
-      "bytes": 9221,
-      "sha256": "bc4f9a831f4c043e94aab545961d9f7d7778ceb5dabffd150856f4d89ec7ef98"
+      "bytes": 9241,
+      "sha256": "6bd544421d682f68e4eb7eb2652d31a29767e9a1cf4641b82c2e5440b3ad0739"
     },
     {
       "path": "/shared/movecost.mjs",

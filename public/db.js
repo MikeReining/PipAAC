@@ -59,15 +59,20 @@ export async function bootDb(userStore, userId) {
   ]);
 
   let db;
-  if (saved?.length && !beforeCleanBreak(saved)) {
-    db = new sqlite3.oo1.DB(":memory:");
-    const bytes = saved instanceof Uint8Array ? saved : new Uint8Array(saved);
+  db = new sqlite3.oo1.DB(":memory:");
+  // 041 B1 — a person's first database is the shipped ready-made one:
+  // the rows importCatalog would write, minus the ~20k-statement run.
+  // A saved database always wins; a pre-clean-break save (or a missing
+  // fresh_db on an older deploy) falls through to schema + import.
+  const bytes = saved?.length && !beforeCleanBreak(saved)
+    ? (saved instanceof Uint8Array ? saved : new Uint8Array(saved))
+    : await fetch("/fresh_db.sqlite").then((r) => r.ok ? r.arrayBuffer() : null)
+      .then((b) => b ? new Uint8Array(b) : null).catch(() => null);
+  if (bytes) {
     const p = sqlite3.wasm.allocFromTypedArray(bytes);
     // FREEONCLOSE | RESIZEABLE — sqlite owns the wasm buffer now.
     sqlite3.capi.sqlite3_deserialize(
       db.pointer, "main", p, bytes.byteLength, bytes.byteLength, 1 | 2);
-  } else {
-    db = new sqlite3.oo1.DB(":memory:");
   }
 
   let saveTimer = null;

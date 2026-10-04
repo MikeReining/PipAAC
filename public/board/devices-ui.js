@@ -14,7 +14,7 @@ import {
   listInvites, openInvite, redeemLicense, registerAccount, requestLink,
   revokeInvite, saveAccountState, shareUserToAccount, signInAccount,
 } from "../shared/account.mjs";
-import { addUser, listUsers, putUser } from "../shared/users.mjs";
+import { addUser, listUsers } from "../shared/users.mjs";
 import { supporterNames } from "../shared/team_names.mjs";
 
 const $ = (id) => document.getElementById(id);
@@ -211,10 +211,9 @@ export function mountDevices({
     const name = prompt("Name this person", "");
     if (name === null) return; // Cancel adds no one
     const added = await addUser(userStore, { name: name.trim() });
-    // 014 § 9 ruling 1: a new profile gets the setup question on first
-    // open — "Who do they call for?" — so the family's people can sit
-    // in home cells from day one.
-    await putUser(userStore, { ...added, needsSetup: true });
+    // 041 B5: the welcome is the first-family flow — an added person
+    // lands on their board. People-and-places stays on the Overview
+    // checklist (Settings) instead of a forced first-open question.
     sessionStorage.setItem("pip_active_user", added.id);
     await flushDb();
     location.reload();

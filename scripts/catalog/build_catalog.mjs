@@ -13,11 +13,12 @@
  * — never device rows.
  */
 import { createHash } from "node:crypto";
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
 import { normalizeV1 } from "../../public/shared/normalize.mjs";
 import { buildGroups } from "./build_groups.mjs";
+import { buildFreshDb, dumpHash } from "./fresh_db.mjs";
 import { checkSymbolEmission, emitSymbols } from "./symbol_emit.mjs";
 import { getTileVoiceByKey } from "./tile_voices.mjs";
 import {
@@ -433,7 +434,7 @@ export function buildCatalog(
   for (const [name, g] of Object.entries(groupLayouts)) layouts[name].frame = g.frame;
   const { families, familyItems } = buildFamilies(lexicon, familySeed, mapLayouts);
 
-  return {
+  const out = {
     schemaVersion: CATALOG_SCHEMA_VERSION,
     source: {
       lexicon: "data/launch_lexicon.json",
@@ -501,6 +502,17 @@ export function buildCatalog(
     families,
     familyItems,
   };
+  // 041 B2: the reconcile's skip gate (public/shared/import.mjs). Hash
+  // the fields the reconcile + seed tail actually apply — a catalog
+  // change to any of them reruns it once; a coachTips/wordFreq-only
+  // change doesn't make devices replay 20k statements.
+  out.fingerprint = createHash("sha256").update(JSON.stringify(
+    ["senses", "utterances", "labels", "images", "voices", "clips",
+      "coreCells", "layouts", "groups", "groupMembers", "groupCells",
+      "groupLabels", "families", "familyItems", "groupSeedVersion",
+    ].map((k) => [k, out[k]])),
+  ).digest("hex");
+  return out;
 }
 
 /**
@@ -724,6 +736,8 @@ async function main() {
   const catalog = buildCatalog(lexicon, map,
     undefined, undefined, undefined, { allowMissingFormClips: false, images });
 
+  const freshDbOut = join(repoRoot, "public/fresh_db.sqlite");
+
   if (check) {
     const failures = checkSymbolEmission(jobs);
     const existing = JSON.parse(readFileSync(CATALOG_OUT, "utf8"));
@@ -734,6 +748,18 @@ async function main() {
     if (!existsSync(served)
         || readFileSync(served, "utf8") !== `${JSON.stringify(catalog, null, 2)}\n`) {
       failures.unshift("public/catalog.json is stale — run build_catalog.mjs");
+    }
+    // 041 B1 — the shipped ready-made db must equal what this catalog
+    // would build today. Content hash, not bytes: file-level counters
+    // don't matter, the rows a device boots into do.
+    const probe = join(repoRoot, "public/.fresh_db.check.tmp");
+    try {
+      buildFreshDb(catalog, probe);
+      if (!existsSync(freshDbOut) || dumpHash(probe) !== dumpHash(freshDbOut)) {
+        failures.unshift("public/fresh_db.sqlite is stale — run build_catalog.mjs");
+      }
+    } finally {
+      if (existsSync(probe)) unlinkSync(probe);
     }
     if (failures.length) {
       for (const f of failures) console.error(`check: ${f}`);
@@ -748,6 +774,7 @@ async function main() {
   // is too big to import into the worker bundle; DOs OOM'd, 2026-09-30).
   writeFileSync(join(repoRoot, "public/catalog.json"),
     `${JSON.stringify(catalog, null, 2)}\n`, "utf8");
+  buildFreshDb(catalog, freshDbOut);
   await emitSymbols(jobs);
   console.log(
     `Wrote ${CATALOG_OUT} (${catalog.senses.length} senses, ${catalog.coreCells.length} core cells)`,

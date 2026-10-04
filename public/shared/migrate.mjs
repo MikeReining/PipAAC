@@ -42,6 +42,7 @@ export function migrateSchema(d, schemaSql, additive = {}) {
     "strip_impression", "spotlight_list", "spotlight_item",
     "spotlight_session", "coach_event", "core_override", "move_mark",
     "bar_family", "bar_family_item", "stats_day", "transform_event",
+    "catalog_meta",
   ];
   const canon = (s) =>
     s.replace(/\s+/g, " ").replace(/;$/, "").replace("IF NOT EXISTS ", "").trim();

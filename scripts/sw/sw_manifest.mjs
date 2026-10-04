@@ -33,6 +33,7 @@ const PRECACHE_FILES = [
   "board.js",
   "db.js",
   "catalog.json",
+  "fresh_db.sqlite",
   "phrase_table.en.json",
   "feeling_voice.json",
   "manifest.webmanifest",
