@@ -13,7 +13,7 @@
  * debounces a submit so edits reach the relay without the UI knowing.
  */
 import { adoptSnapshot, confirmOps, drainOps, listOps, setDeviceId, setOpSink, snapshotSynced } from "./ops.mjs";
-import { setBlobFetcher } from "../db.js";
+import { loadBlobBytes, saveBlobBytes, setBlobFetcher } from "../db.js";
 import {
   getDeviceIdentity, getUserKey, openBlob, openKeyStore, openOp, putUserKey, sealOp,
   sealBlob, unwrapUserKey,
@@ -28,7 +28,11 @@ let flushError = null;
 /** 043 B — a drain that threw leaves ops logged but unapplied and the
  *  cursor behind; surface it instead of wedging silently. */
 let ingestError = null;
-export const syncHealth = () => ({ running: !!running, flushError, ingestError });
+/** 043 C — shas this device still owes the relay (photos/recordings). */
+let mediaPending = 0;
+let mediaError = null;
+export const syncHealth = () =>
+  ({ running: !!running, flushError, ingestError, mediaPending, mediaError });
 /**
  * `user` is the registry row (id, sync). `saveUser(patch)` persists
  * sync-state changes back to the row (epoch bumps on rotation).
@@ -111,6 +115,74 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     const sealed = await sealBlob(await keyFor(epoch), bytes, epoch);
     await client.putBlob(sealed);
     return sealed.sha;
+  };
+
+  /* 043 C — the durable media queue. savePhoto writes OPFS blobs/<sha>
+   * before its caller hands the blob up, so an entry is just the sha;
+   * bytes come back from OPFS on drain. The queue lives in the device
+   * keystore — device-local, survives a kill, outlives this handle.
+   * An entry leaves only after the relay holds the bytes (or held them
+   * already), so an offline or killed upload retries on every recover. */
+  const BLOBQ = `blobq/${user.id}`;
+  // Entries are {sha, fails}: a sha whose local copy is gone and that
+  // the relay never got can never be recovered — after BLOB_MAX_FAILS
+  // drains it drops out instead of wedging "Saving…" forever.
+  const BLOB_MAX_FAILS = 10;
+  const queueGet = async () => (await store.get(BLOBQ)) ?? [];
+  const queueBlob = async (sha) => {
+    const q = await queueGet();
+    if (!q.some((e) => e.sha === sha)) { q.push({ sha, fails: 0 }); await store.put(BLOBQ, q); }
+    mediaPending = q.length;
+    enqueue(drainBlobs);
+  };
+  const drainBlobs = async () => {
+    const q = await queueGet();
+    const kept = [];
+    for (const e of q) {
+      try {
+        const bytes = await loadBlobBytes(e.sha);
+        if (bytes) await uploadBlob(bytes);
+        else {
+          // Local copy gone — if the relay already has it, heal the
+          // cache instead of re-uploading; if not, count the miss.
+          const env = await client.getBlob(e.sha);
+          await saveBlobBytes(e.sha, await openBlob(await keyFor(env.e ?? 1), { sha: e.sha, env }));
+        }
+        mediaError = null;
+      } catch (err) {
+        mediaError = String(err?.message ?? err);
+        if (++e.fails < BLOB_MAX_FAILS) kept.push(e);
+      }
+    }
+    await store.put(BLOBQ, kept);
+    mediaPending = kept.length;
+    // A failed drain re-arms: the entry may be a blob whose uploader
+    // hasn't landed yet or a transient network miss — without this an
+    // idle device would wait for the next socket event to retry.
+    if (kept.length) scheduleDrain(Math.min(30000 * kept[0].fails, 300000));
+  };
+  let drainTimer = null;
+  const scheduleDrain = (ms) => {
+    clearTimeout(drainTimer);
+    drainTimer = setTimeout(() => enqueue(drainBlobs), ms);
+  };
+  /* Media saved before linking (or queued on another path): every blob:
+   * ref in the synced tables belongs in the queue — a sha the relay
+   * already holds costs one open+heal, not an upload. */
+  const reconcileBlobs = async () => {
+    const refs = db.prepare(
+      `SELECT photo_key AS k FROM personal_entity WHERE photo_key LIKE 'blob:%'
+       UNION SELECT photo_key FROM image_override WHERE photo_key LIKE 'blob:%'
+       UNION SELECT key FROM clip_override WHERE key LIKE 'blob:%'
+       UNION SELECT person_photo FROM learner_profile WHERE person_photo LIKE 'blob:%'`,
+    ).all();
+    const q = await queueGet();
+    let dirty = false;
+    for (const r of refs) {
+      const sha = r.k.slice(5);
+      if (!q.some((e) => e.sha === sha)) { q.push({ sha, fails: 0 }); dirty = true; }
+    }
+    if (dirty) await store.put(BLOBQ, q);
   };
 
   const pendingOps = () => listOps(db).filter((o) => o.relay_seq === null);
@@ -232,6 +304,11 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     }
     await maybeSnapshot().catch(() => {});
     await flush();
+    // Ops applied above may carry new blob: refs, and the queue may
+    // still owe the relay media from before this session — both are
+    // reconciled + drained here, on every recovery pass.
+    await reconcileBlobs();
+    await drainBlobs();
   };
   let recoverTimer = null;
   /** Debounced catch-up: live pushes apply without moving the cursor,
@@ -243,6 +320,9 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
 
   // Boot no longer dies on an offline start: recovery rides the same
   // queue as everything else, and the socket loop below owns retries.
+  // Media goes first — pre-link photos/recordings land in the queue
+  // before the first recover drains it.
+  enqueue(reconcileBlobs);
   enqueue(recover);
 
   let live = null;
@@ -299,7 +379,7 @@ async function startSync(db, baseUrl, user, cfg, saveUser, onApplied, onModel, p
     return true;
   };
   return { get client() { return client; }, identity,
-    getEpoch: () => epoch, uploadBlob, sendLive, rekey };
+    getEpoch: () => epoch, uploadBlob, queueBlob, sendLive, rekey };
 }
 
 /** Tell the running sync to re-seal under a rotated epoch (015 s5). */
@@ -318,9 +398,15 @@ export async function syncSendLive(plain) {
 export const syncSendModel = (target, word) =>
   syncSendLive({ k: "model", t: target, w: word });
 
-/** Upload a photo/recording blob if the user is linked. Callers don't
- *  await — the blob rides behind the op that references its sha. */
+/** Queue a photo/recording blob for upload (043 C). The bytes are
+ *  already in OPFS under their sha; the queue entry is what makes the
+ *  upload survive a kill or an offline stretch. Unlinked callers get
+ *  null — reconcileBlobs picks their media up when linking happens. */
 export async function syncUploadBlob(bytes) {
+  const sha = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
   const handle = running ? await running.catch(() => null) : null;
-  return handle?.uploadBlob(bytes) ?? null;
+  if (!handle) return null;
+  await handle.queueBlob(sha);
+  return sha;
 }

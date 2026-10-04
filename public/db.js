@@ -252,13 +252,30 @@ export async function savePhoto(file) {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const sha = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))]
     .map((b) => b.toString(16).padStart(2, "0")).join("");
+  await saveBlobBytes(sha, bytes);
+  return { key: `blob:${sha}`, bytes };
+}
+
+/** Raw access to the OPFS blob store — the media queue drains bytes by
+ *  sha and heals a missing local copy the same way (043 C). */
+export async function saveBlobBytes(sha, bytes) {
   const root = await navigator.storage.getDirectory();
   const dir = await root.getDirectoryHandle("blobs", { create: true });
   const fh = await dir.getFileHandle(sha, { create: true });
   const w = await fh.createWritable();
   await w.write(bytes);
   await w.close();
-  return { key: `blob:${sha}`, bytes };
+}
+
+export async function loadBlobBytes(sha) {
+  try {
+    const root = await navigator.storage.getDirectory();
+    const dir = await root.getDirectoryHandle("blobs");
+    const file = await (await dir.getFileHandle(sha)).getFile();
+    return new Uint8Array(await file.arrayBuffer());
+  } catch {
+    return null;
+  }
 }
 
 export async function loadPhotoURL(photoKey) {
@@ -275,10 +292,7 @@ export async function loadPhotoURL(photoKey) {
         if (!blobFetcher) return null;
         const bytes = await blobFetcher(sha);
         if (!bytes) return null;
-        const fh = await dir.getFileHandle(sha, { create: true });
-        const w = await fh.createWritable();
-        await w.write(bytes);
-        await w.close();
+        await saveBlobBytes(sha, bytes);
         return URL.createObjectURL(new Blob([bytes]));
       }
     }

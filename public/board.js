@@ -1481,6 +1481,7 @@ editorUi = mountEditor({
     pending: ALL(db, "SELECT COUNT(*) AS n FROM sync_op WHERE relay_seq IS NULL")[0]?.n ?? 0,
     online: navigator.onLine,
     flushError: syncHealth().flushError,
+    mediaPending: syncHealth().mediaPending,
     saveBlocked: dbHealth().saveBlocked,
     saveError: dbHealth().saveError,
   }),
