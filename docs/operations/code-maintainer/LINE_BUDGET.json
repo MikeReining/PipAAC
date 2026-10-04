@@ -1,6 +1,6 @@
 {
   "files": {
-    "public/audio-review-elevenlabs-tiles.html": 770,
+    "public/audio-review-elevenlabs-tiles.html": 778,
     "public/audio-review-elevenlabs-v4-lab.html": 758,
     "public/board.js": 1515,
     "public/board/add-flow.js": 676,
@@ -11,11 +11,11 @@
     "public/board/word-card.js": 805,
     "public/index.html": 1116,
     "public/shared/funnel.mjs": 655,
-    "public/sw-manifest.json": 25000,
+    "public/sw-manifest.json": 28511,
     "scripts/art/batch52.mjs": 513,
     "scripts/catalog/audio_review_dev.mjs": 1056,
     "scripts/catalog/audio_stop_burst.mjs": 534,
-    "scripts/catalog/build_catalog.mjs": 741,
+    "scripts/catalog/build_catalog.mjs": 747,
     "scripts/commit_handoff_queue.py": 527,
     "scripts/fetch_app_reviews.py": 566,
     "scripts/pictures/calibration_dev.mjs": 573,

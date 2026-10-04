@@ -64,6 +64,12 @@ const EXTRA_VOICES = [
     formsPlan: join(repoRoot, "data/catalog/forms_audio.eve.json"),
     clipNs: "eve",
   },
+  {
+    id: "voi_sam_en",
+    audioPlan: join(repoRoot, "data/catalog/generated_audio.sam.json"),
+    formsPlan: join(repoRoot, "data/catalog/forms_audio.sam.json"),
+    clipNs: "sam",
+  },
 ];
 
 const pad4 = (n) => String(n).padStart(4, "0");

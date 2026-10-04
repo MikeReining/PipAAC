@@ -23,6 +23,7 @@ export const VOICE_LINEUP = [
   { key: "voi_eve_en", name: "Mia", note: "Younger, female" },
   { key: "voi_leo_en", name: "Leo", note: "Grown-up, male" },
   { key: "voi_sam_en", name: "Sam", note: "Younger, male" },
+  { key: "voi_zoe_en", name: "Zoe", note: "Southern, female" },
 ];
 
 /** Available (active, this locale) and coming-soon voices. */
