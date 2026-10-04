@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "runId": "rey-tricky-probe",
+  "label": "Rey tricky probe (9)",
+  "note": "Pilot seed — Rey, plain only, not published",
+  "batch": "elevenlabs-tiles-rey",
+  "createdAt": "2026-10-04T03:26:28.135Z",
+  "voice": {
+    "label": "Rey",
+    "voice_id": "eb1698hSoNbHSWKDmVLe",
+    "model": "eleven_v4"
+  },
+  "items": [
+    {
+      "slot": 619,
+      "spokenText": "a",
+      "slug": "a",
+      "takeRel": "elevenlabs-tiles-rey/takes/a_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 620,
+      "spokenText": "an",
+      "slug": "an",
+      "takeRel": "elevenlabs-tiles-rey/takes/an_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 176,
+      "spokenText": "cough",
+      "slug": "cough",
+      "takeRel": "elevenlabs-tiles-rey/takes/cough_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 262,
+      "spokenText": "laugh",
+      "slug": "laugh",
+      "takeRel": "elevenlabs-tiles-rey/takes/laugh_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 662,
+      "spokenText": "fries",
+      "slug": "fries",
+      "takeRel": "elevenlabs-tiles-rey/takes/fries_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 527,
+      "spokenText": "wet",
+      "slug": "wet",
+      "takeRel": "elevenlabs-tiles-rey/takes/wet_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 32,
+      "spokenText": "read",
+      "slug": "read",
+      "takeRel": "elevenlabs-tiles-rey/takes/read_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 30,
+      "spokenText": "open",
+      "slug": "open",
+      "takeRel": "elevenlabs-tiles-rey/takes/open_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    },
+    {
+      "slot": 669,
+      "spokenText": "close",
+      "slug": "close",
+      "takeRel": "elevenlabs-tiles-rey/takes/close_plain.mp3",
+      "publishedAt": null,
+      "review": null
+    }
+  ]
+}
