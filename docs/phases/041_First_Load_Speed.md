@@ -1,9 +1,12 @@
 # 041 — First load is the product (speed plan)
 
-**Status:** READY TO BUILD 2026-10-03. Audit by a second developer,
-reviewed, re-measured, and finalized the same day. Every number below
-is either measured (stated how) or cited to a file. Execute the slices
-in order; each ends with its proof and a deploy.
+**Status:** DONE 2026-10-04. All slices landed and deployed; every § 1
+budget verified by the probe (which stays in `npm run check` as the
+permanent gate). Founder verdict on real iPad: "loaded fine, loaded
+fast." Post-phase addition: navigation fallback + resilient install
+(`8c0fd07b`) for the dead home-screen launch. This file retires — git
+history is the archive; the budgets live on in
+`scripts/probes/speed_budgets.json`.
 
 **Owner of the truth:** the boot path in `public/board.js` →
 `public/db.js` (`bootDb`) and the service worker `public/sw.js` +
@@ -336,6 +339,7 @@ download, words keep speaking.
 | 2026-10-03 | `3fd2efe` | 13.6 s (6.5 s with SW off) | 19.5–21.8 s (5.3–5.8 s with SW off) | not timed separately | Fast Mac, local, no throttle. `ignoreSearch` lookup 463 ms vs exact 0 ms on 7,879 entries; form table parse 1.0 s; reconcile 2.4 s. |
 | 2026-10-03 | `a101334a` | 4456 ms (probe, 4× CPU) | 6613 ms | 4839 ms (welcome shown — B5 gap) | Slice D baseline, before B. 205 requests before the board; the ~57 MB corpus parse dominated. |
 | 2026-10-03 | `a101334a` | **1391 ms** | **395 ms** | **349 ms, no welcome** | Slices 0+D+A+B landed. 37 requests before first paint, 0 audio requests before the board, SW registered at 693 ms (after the board), answer tables 2.65 MB vs the 57 MB corpus. All § 1 budgets pass. |
+| 2026-10-04 | `8c0fd07b` | — | — | — | Closeout: tap→speak 88 ms cold / instant warm (budget 300 ms); nav fallback + offline retry page + install retry for the dead home-screen launch (evicted-shell navigation proven in-browser); C1 headers + 8 s watchdog live (`22a5faff`). Answer tables waived at 2.65 MB vs the 2 MB target (founder). |
 
 ## 6 — Decisions log
 
