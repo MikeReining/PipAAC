@@ -1,5 +1,5 @@
 {
-  "buildId": "r1-1470500ec59b",
+  "buildId": "r1-a2ca653a37d5",
   "files": [
     {
       "path": "/audio/1/882d0ee59798.mp3",
@@ -34898,8 +34898,8 @@
     },
     {
       "path": "/board/devices-ui.js",
-      "bytes": 36603,
-      "sha256": "51affb25526d5b127c24e5fe1fc9dec2343c7d98f9505bbb711649b98c168a95"
+      "bytes": 36650,
+      "sha256": "77ed680a4fa89180c62f6e10afe13c68750e38e6b3324b9674aafbf63e29a610"
     },
     {
       "path": "/board/edit-shared.js",
@@ -35569,8 +35569,8 @@
     },
     {
       "path": "/index.html",
-      "bytes": 67438,
-      "sha256": "b7c9937e7bb55e55a6b822e83c8c6429945a8b9d257ee314b34816b29e51ae9a"
+      "bytes": 67950,
+      "sha256": "b4f490e29c924519e6e21330f9e059eaed6c16f7de3670edf8bdfea05d562cbc"
     },
     {
       "path": "/manifest.webmanifest",

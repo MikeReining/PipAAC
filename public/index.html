@@ -39,12 +39,18 @@
       }, { passive: true });
       // Boot watchdog — a failed script load must say so, not render half a page.
       window.__pipBoot = { errors: [] };
+      // Each error keeps where it happened (file:line), so a report names
+      // the line, not just the message.
       addEventListener("error", (e) =>
-        window.__pipBoot.errors.push(String(e.message || e.error || e)));
+        window.__pipBoot.errors.push(String(e.message || e.error || e)
+          + (e.filename ? " at " + e.filename.split("/").pop() + ":" + e.lineno : "")));
       addEventListener("unhandledrejection", (e) =>
         window.__pipBoot.errors.push(String(e.reason)));
-      addEventListener("load", () => setTimeout(() => {
+      // A first boot imports the whole catalog and can pass 8 s while
+      // healthy: without an error, keep waiting (to 45 s) before saying so.
+      const bootWatch = (waited) => setTimeout(() => {
         if (window.pip?.db) return;
+        if (!window.__pipBoot.errors.length && waited < 45000) return bootWatch(waited + 4000);
         const note = document.createElement("div");
         note.id = "boot-fail";
         note.style.cssText =
@@ -53,9 +59,10 @@
           "background:#8a1f1f;color:#fff;font:600 14px/1.4 system-ui";
         note.textContent = "Pip didn't finish loading — reload the page." +
           (window.__pipBoot.errors[0]
-            ? " (" + String(window.__pipBoot.errors[0]).slice(0, 140) + ")" : "");
+            ? " (" + String(window.__pipBoot.errors[0]).slice(0, 180) + ")" : "");
         (document.getElementById("app") ?? document.body).append(note);
-      }, 8000));
+      }, waited ? 4000 : 8000);
+      addEventListener("load", () => bootWatch(0));
       // 036 — app-shell service worker. Registers after load so the
       // precache install never races the module boot; update() makes each
       // visit check for a new shell. A new build waits for all tabs to
