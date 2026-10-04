@@ -1,6 +1,6 @@
 # 042 — Help: answers, one search, Write to us
 
-**Status:** Built 2026-10-04. Founder review open: the "Is this normal?"
+**Status:** Deployed 2026-10-04 (app version a1860ebd, build r1-5f649e0225b6; site 58a0e41a). Founder review open: the "Is this normal?"
 answers (§ 4), then the founder checks the hello@pipaac.org inbox for the
 production smoke message (§ 6).
 
@@ -90,7 +90,7 @@ page → "How do I teach them to use it?" first. Seen in Chrome against
 40 parent-phrased queries, written before the results were seen, against
 the real models. Embeddings alone scored 25/39, then 34/39 after the
 question-alone vectors and dropping near-empty rows. The reranker brought
-it to **37/39**. The misses: "teacher" (the
+it to **37/39**, the same on production after deploy. The misses: "teacher" (the
 on-device pass still returns the helpers answer) and "robot voice reads
 each word separately". "refund" has no answer and falls through to Write to
 us.
