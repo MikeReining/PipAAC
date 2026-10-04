@@ -69,6 +69,9 @@ export class PairingLobby {
       if (offer) return bad("exists", 409);
       this.ctx.storage.sql.exec(
         "INSERT INTO offer (id, created_at) VALUES (1, ?)", Date.now());
+      // Self-destruct a minute after the window lapses — a lobby has no
+      // other cleanup, so expired codes would otherwise persist forever.
+      this.ctx.storage.setAlarm(Date.now() + WINDOW_MS + 60_000);
       return json({ ok: true });
     }
 
@@ -122,5 +125,10 @@ export class PairingLobby {
     }
 
     return bad("not_found", 404);
+  }
+
+  /** The window's cleanup: drop every row so the DO's storage is gone. */
+  async alarm() {
+    await this.ctx.storage.deleteAll();
   }
 }

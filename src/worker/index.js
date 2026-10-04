@@ -9,9 +9,9 @@ import { PairingLobby } from "./lobby.js";
 import { SupporterAccounts } from "./accounts.js";
 import { verifyAssertion } from "./webauthn.mjs";
 import { handleResearch } from "./research.js";
-import { handleSpeak } from "./voice.js";
+import { handleSpeak, usageCheck, usageRecord } from "./voice.js";
 import { handleTransform } from "./transform.js";
-import { handleTrial } from "./trial.mjs";
+import { handleTrial, ipHashFor } from "./trial.mjs";
 import { handleTile, handleTileAdmin, handleTileFlag, handleTileReplaced, TileLedger, adminOk } from "./tile.js";
 import { handleCheckout, handleCheckoutCodes, handleLicenseOrder, handleStripeWebhook, grantLifetime } from "./stripe.js";
 import {
@@ -34,6 +34,22 @@ const json = (data, init = {}) =>
 const rpIdFor = (hostname) =>
   hostname === "pipaac.org" || hostname.endsWith(".pipaac.org")
     ? "pipaac.org" : hostname;
+
+/** Fair-use gate for anonymous endpoints that create state or send
+ *  email (pair lobbies, sign-in links): keyed on the hashed connection
+ *  IP — no IP header → no gate (wrangler dev, tests). Returns a 429
+ *  Response or null when the call may proceed. */
+const abuseGate = async (request, env, ns) => {
+  if (env?.ENVIRONMENT === "development" || !env?.VOICE) return null;
+  const ipHash = await ipHashFor(env, request);
+  if (!ipHash) return null;
+  const gate = await usageCheck(env, {
+    ns, uid: ipHash, chars: 1, maxChars: 1, dayBudget: 30, minBudget: 5,
+  });
+  await usageRecord(env, { ns, uid: ipHash, chars: 1, over: gate.allowed ? null : gate.over });
+  return gate.allowed ? null
+    : json({ error: "fair_use", over: gate.over }, { status: 429 });
+};
 
 export default {
   async fetch(request, env, ctx) {
@@ -188,6 +204,8 @@ export default {
     // Pairing lobby (§ 3): the device that has the user opens a short-
     // lived code; the new device claims it; the offering device grants.
     if (path === "/pair" && request.method === "POST" && env?.PAIR) {
+      const limited = await abuseGate(request, env, "usage-pair");
+      if (limited) return limited;
       // 8-char code, unambiguous alphabet — the adult types this.
       const ABC = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
       const bytes = crypto.getRandomValues(new Uint8Array(8));
@@ -213,6 +231,8 @@ export default {
       env.ACCOUNTS.get(env.ACCOUNTS.idFromName(`acct:${id}`));
 
     if (path === "/accounts/link" && request.method === "POST" && env?.ACCOUNTS) {
+      const limited = await abuseGate(request, env, "usage-link");
+      if (limited) return limited;
       const body = await request.json().catch(() => null);
       const email = String(body?.email ?? "").trim().toLowerCase();
       if (!email.includes("@")) return json({ error: "bad_email" }, { status: 400 });

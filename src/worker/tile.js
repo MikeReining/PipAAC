@@ -319,6 +319,12 @@ export class TileLedger {
     const p = url.pathname;
     const body = async () => request.json().catch(() => null);
 
+    // Arm the daily prune once (test fakes lack the alarm API).
+    if (typeof this.ctx.storage.getAlarm === "function"
+        && !(await this.ctx.storage.getAlarm())) {
+      await this.ctx.storage.setAlarm(this.now() + 24 * 60 * 60 * 1000);
+    }
+
     if (p === "/peek" && request.method === "POST") {
       const { id } = (await body()) ?? {};
       return json({ disposition: ledger.clipDisposition(this.sql, id, this.now()) });
@@ -754,5 +760,14 @@ export class TileLedger {
     } catch {
       return json({ error: "mint_failed" }, { status: 502 });
     }
+  }
+
+  /** Daily sweep: trial_ip rows are a per-day abuse counter — only
+   *  today's row is ever read, so older days delete. Ledger truth
+   *  (tile_clip, tile_mint, pic_*, trial) is append-only by design and
+   *  stays. */
+  async alarm() {
+    this.sql.exec("DELETE FROM trial_ip WHERE day < ?", ledger.utcDay(this.now()));
+    await this.ctx.storage.setAlarm(this.now() + 24 * 60 * 60 * 1000);
   }
 }

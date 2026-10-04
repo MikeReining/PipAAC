@@ -29,6 +29,8 @@ const bad = (error, status = 400) => json({ error }, { status });
 const LINK_TTL_MS = 15 * 60 * 1000;
 const CHALLENGE_TTL_MS = 5 * 60 * 1000;
 const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const LINK_COOLDOWN_MS = 60 * 1000;
 
 const rand = (n = 18) => b64u(crypto.getRandomValues(new Uint8Array(n)));
 const sha = async (s) =>
@@ -164,9 +166,24 @@ export class SupporterAccounts {
 
     /* --- the directory --- */
 
+    // Arm the daily expiry sweep once (test fakes lack the alarm API).
+    if (path.startsWith("/dir") && typeof this.ctx.storage.getAlarm === "function"
+        && !(await this.ctx.storage.getAlarm())) {
+      await this.ctx.storage.setAlarm(now + DAY_MS);
+    }
+
     if (path === "/dir/link" && request.method === "POST") {
       const email = normEmail(body?.email);
       if (!email || !email.includes("@")) return bad("bad_email");
+      // A live EMAIL binding means real sends: one link per email per
+      // minute, so a script can't turn us into a mail bomber. The dev
+      // mailbox path (no binding) stays unthrottled for tests.
+      if (this.env.EMAIL && this.env.ENVIRONMENT !== "development") {
+        const prev = one("SELECT sent_at FROM mailbox WHERE email = ?", email);
+        if (prev && now - prev.sent_at < LINK_COOLDOWN_MS) {
+          return json({ error: "rate_limited" }, { status: 429 });
+        }
+      }
       const row = one("SELECT acct_id FROM acct_map WHERE email = ?", email);
       const acctId = row?.acct_id ?? `acct_${crypto.randomUUID().replaceAll("-", "")}`;
       if (!row) {
@@ -593,5 +610,16 @@ export class SupporterAccounts {
     }
 
     return bad("not_found", 404);
+  }
+
+  /** Daily sweep: expired sign-in material was never meant to outlive
+   *  its TTL — sessions, link tokens, and challenges delete at exp. */
+  async alarm() {
+    const now = Date.now();
+    const sql = this.ctx.storage.sql;
+    sql.exec("DELETE FROM session WHERE exp < ?", now);
+    sql.exec("DELETE FROM token WHERE exp < ?", now);
+    sql.exec("DELETE FROM challenge WHERE exp < ?", now);
+    await this.ctx.storage.setAlarm(now + DAY_MS);
   }
 }
