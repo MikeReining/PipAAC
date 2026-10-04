@@ -41,9 +41,13 @@ const CHUNK = 6; // install/fill fetches per parallel batch (041 A1)
 /* fetch() transparently decodes content codings, so a stored response
  * whose headers still claim gzip would lie about its body (SW replays do
  * not re-run decoding). Strip the stale header — this is what makes
- * /form_table.en.json (Worker-served raw .gz) safe to precache. */
+ * /form_table.en.json (Worker-served raw .gz) safe to precache.
+ * no-store: the precache must record network truth. A plain fetch answers
+ * from the HTTP cache, which can hold a pre-deploy body whose etag still
+ * revalidates 304 — baking stale assets into a fresh shell (measured live
+ * 2026-10-04: deployed CSS fix, precached stale bytes, rows stayed slivers). */
 async function precachePut(cache, path) {
-  const res = await fetch(path);
+  const res = await fetch(path, { cache: "no-store" });
   if (!res.ok) throw new Error(`precache ${path}: HTTP ${res.status}`);
   if (!res.headers.has("content-encoding")) return cache.put(path, res);
   const body = await res.arrayBuffer();
@@ -55,7 +59,7 @@ async function precachePut(cache, path) {
 
 self.addEventListener("install", (e) => {
   e.waitUntil((async () => {
-    const res = await fetch("/sw-manifest.json", { cache: "no-cache" });
+    const res = await fetch("/sw-manifest.json", { cache: "no-store" });
     if (!res.ok) throw new Error(`sw-manifest: HTTP ${res.status}`);
     const { files } = await res.json();
     const cache = await caches.open(SHELL);
@@ -102,7 +106,7 @@ const filling = new Set();    // voice ids with a fill in flight
 
 async function loadAudioMap() {
   if (!audioMap) {
-    const res = await fetch("/sw-audio.json", { cache: "no-cache" });
+    const res = await fetch("/sw-audio.json", { cache: "no-store" });
     if (res.ok) audioMap = (await res.json()).voices ?? {};
   }
   return audioMap;

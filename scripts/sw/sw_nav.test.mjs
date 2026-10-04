@@ -37,3 +37,20 @@ test("install retries failed precache files once", () => {
   assert.ok(sw.includes("fetchAll(failed)"),
     "install lost its retry pass — one failed file strands the worker");
 });
+
+test("install-time fetches never trust the HTTP cache", () => {
+  /* 2026-10-04: a deploy shipped fixed add-flow.css but the precache
+   * baked the pre-deploy body in — a plain fetch answered from the HTTP
+   * cache, which held a stale entry whose etag still revalidated 304.
+   * Every fetch inside install/precache must be no-store. */
+  const install = sw.slice(sw.indexOf('addEventListener("install"'),
+    sw.indexOf('addEventListener("activate"'));
+  for (const m of install.matchAll(/fetch\([^)]*\)/g)) {
+    assert.ok(m[0].includes('"no-store"'),
+      `install fetch without no-store can precache stale bytes: ${m[0]}`);
+  }
+  assert.ok(sw.includes('fetch(path, { cache: "no-store" })'),
+    "precachePut lost its no-store fetch");
+  assert.ok(sw.includes('fetch("/sw-audio.json", { cache: "no-store" })'),
+    "sw-audio.json fetch can revalidate a stale clip map");
+});
