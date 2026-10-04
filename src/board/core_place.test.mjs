@@ -86,9 +86,10 @@ test("restart + catalog regen: the person is still there", () => {
   assert.equal(at(db, v.slot_index)?.entity_id, maya, "person survived the reopen");
 
   // A real catalog update: core_cell regenerates from scratch — the
-  // adult's placement is profile data and still wins.
+  // adult's placement is profile data and still wins. The fingerprint
+  // bump is what a shipped update looks like to the 041 B2 skip gate.
   db.exec("DELETE FROM core_cell");
-  importCatalog(db, catalog);
+  importCatalog(db, { ...catalog, fingerprint: catalog.fingerprint + "+regen" });
   assert.equal(at(db, v.slot_index)?.entity_id, maya, "person survived the regen");
   assert.equal(
     db.prepare("SELECT slot_index FROM core_cell WHERE layout = 'grid15' AND sense_id = ?")
@@ -137,7 +138,7 @@ test("a device saved before a word joined the core board opens on the shipped ma
   const { id: maya } = createEntity(db, { name: "Maya" });
   placeOnBoard(db, "grid60", "entity", maya, hold.slot_index, { anchors });
 
-  importCatalog(db, catalog);
+  importCatalog(db, { ...catalog, fingerprint: catalog.fingerprint + "+ship" });
 
   assert.equal(
     db.prepare("SELECT tier FROM sense WHERE id = ?").all(cell.sense_id)[0].tier,

@@ -22,7 +22,9 @@ test("re-import repairs stale image keys on a persisted DB", () => {
   const db = createDatabase(":memory:");
   importCatalog(db, catalog);
   db.exec("UPDATE image SET key = replace(replace(key, '.webp', '.png'), '.svg', '.png')");
-  importCatalog(db, catalog);
+  // The bumped fingerprint reads as a shipped catalog update to the
+  // 041 B2 skip gate — an unchanged catalog's re-import correctly skips.
+  importCatalog(db, { ...catalog, fingerprint: catalog.fingerprint + "+webp" });
   const art = db.prepare(`SELECT ${SENSE_ART_SQL} AS art FROM sense s WHERE s.default_image_id IS NOT NULL`).all();
   assert.ok(art.length > 0);
   assert.ok(art.every((r) => !r.art?.endsWith(".png")), "no stale .png art keys");

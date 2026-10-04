@@ -72,6 +72,8 @@ test("a shipped voice leaves coming soon and can be chosen; the choice is a sync
 test("a re-import renames a voice an older catalog installed (stale → Pip)", () => {
   const db = fresh();
   db.prepare("UPDATE voice SET display_name = 'Pippy' WHERE id = 'voi_default_en'").run();
-  importCatalog(db, catalog);
+  // A shipped catalog update carries a new fingerprint — the 041 B2
+  // skip gate only short-circuits an unchanged catalog.
+  importCatalog(db, { ...catalog, fingerprint: catalog.fingerprint + "+rename" });
   assert.equal(voiceName(db, "voi_default_en"), "Pip");
 });

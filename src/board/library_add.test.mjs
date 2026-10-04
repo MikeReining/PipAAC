@@ -83,6 +83,9 @@ test("the group ranks catalog meanings but never hides one (the two bats)", () =
   // sharing one utterance (homographs share a recording, schema § 5.3).
   const bats = {
     ...catalog,
+    // A changed catalog is a changed fingerprint — the 041 B2 skip gate
+    // keys on it, so the fixture declares itself an update.
+    fingerprint: catalog.fingerprint + "+bats",
     senses: [
       ...catalog.senses,
       { id: "sns_9001", fitzgerald_role: "Yellow", art_archetype: "Illustrated Object",

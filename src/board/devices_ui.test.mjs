@@ -56,7 +56,7 @@ test("the account row says when nobody is signed in", () => {
   assert.match(state.html, /Not signed in/);
 });
 
-test("Add a user flags first-open setup — 'Who do they call for?'", async () => {
+test("Add a user opens their board directly — no first-open setup (041 B5)", async () => {
   const ids = [
     "pairform", "pair-body", "pair-title", "pair-go",
     "usr-add", "acct-send", "acct-email", "acct-form", "acct-row",
@@ -92,6 +92,8 @@ test("Add a user flags first-open setup — 'Who do they call for?'", async () =
   await nodes["usr-add"].onclick();
   const row = (await listUsers(userStore))[0];
   assert.equal(row.name, "Kid");
-  assert.equal(row.needsSetup, true, "the setup question is armed for first open");
+  // 041 B5: the welcome is for a new family — a person added on a
+  // device that already has one opens their board, no setup question.
+  assert.equal(row.needsSetup ?? false, false, "an added person skips the welcome");
   assert.equal(reloaded, true);
 });
